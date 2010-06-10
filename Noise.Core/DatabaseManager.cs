@@ -6,6 +6,8 @@ using Noise.Infrastructure;
 namespace Noise.Core {
 	[Export(typeof(IDatabaseManager))]
 	public class DatabaseManager : IDatabaseManager {
+		private string	mDatabaseLocation;
+		private string	mDatabaseName;
 		private DB		mDatabase;
 
 		[Import]
@@ -14,8 +16,10 @@ namespace Noise.Core {
 		public bool InitializeDatabase( string databaseLocation ) {
 			var retValue = true;
 
+			mDatabaseLocation = databaseLocation;
+
 			try {
-				mDatabase = new DB( string.Format( "server={0};password=;options=none;", databaseLocation ) );
+				mDatabase = new DB( string.Format( "server={0};password=;options=none;", mDatabaseLocation ) );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( ex );
@@ -27,17 +31,22 @@ namespace Noise.Core {
 		}
 
 		public void OpenWithCreateDatabase( string databaseName ) {
-			if(!OpenDatabase( databaseName )) {
-				CreateDatabase( databaseName );
-				OpenDatabase( databaseName );
+			mDatabaseName = databaseName;
+
+			if(!OpenDatabase( mDatabaseName )) {
+				CreateDatabase( mDatabaseName );
+				OpenDatabase( mDatabaseName );
 			}
 		}
 
 		public bool OpenDatabase( string databaseName ) {
 			var retValue = true;
 
+			mDatabaseName = databaseName;
+
 			try {
-				mDatabase.OpenDatabase( databaseName );
+				mDatabase.OpenDatabase( mDatabaseName );
+				mLog.LogMessage( "Opened database: {0} on server: {1}", mDatabaseName, mDatabaseLocation );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Opening database failed", ex );
@@ -49,7 +58,7 @@ namespace Noise.Core {
 		}
 
 		private void CreateDatabase( string databaseName ) {
-			mLog.LogMessage( "Creating Noise database." );
+			mLog.LogMessage( "Creating Noise database: {0}", databaseName );
 
 			try {
 				mDatabase.CreateDatabase( databaseName );

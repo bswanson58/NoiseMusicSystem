@@ -9,7 +9,7 @@ namespace Noise.Core {
 		private readonly CompositionContainer	mContainer;
 
 		[Import]
-		private ILog mLog;
+		private ILog				mLog;
 		[Import]
 		private IDatabaseManager	mDatabase;
 

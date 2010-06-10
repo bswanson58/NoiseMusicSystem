@@ -15,8 +15,16 @@ namespace Noise.Infrastructure {
 			mLogger.ErrorException( message, ex );
 		}
 
+		public void LogMessage( string format, params object[] parameters ) {
+			LogMessage( string.Format( format, parameters ));
+		}
+
 		public void LogMessage( string message ) {
 			mLogger.Info( message );
+		}
+
+		public void LogInfo( string format, params object[] parameters ) {
+			LogInfo( string.Format( format, parameters ));
 		}
 
 		public void LogInfo( string message ) {
