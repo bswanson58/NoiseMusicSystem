@@ -1,17 +1,21 @@
 ﻿using System;
-using System.ComponentModel.Composition;
+using CuttingEdge.Conditions;
 using Eloquera.Client;
+using Microsoft.Practices.Unity;
+using Noise.Core.FileStore;
 using Noise.Infrastructure;
 
 namespace Noise.Core {
-	[Export(typeof(IDatabaseManager))]
 	public class DatabaseManager : IDatabaseManager {
-		private string	mDatabaseLocation;
-		private string	mDatabaseName;
-		private DB		mDatabase;
+		private readonly ILog				mLog;
+		private string						mDatabaseLocation;
+		private string						mDatabaseName;
 
-		[Import]
-		private ILog		mLog;
+		public	DB		Database { get; private set; }
+
+		public DatabaseManager() {
+			mLog = new Log();
+		}
 
 		public bool InitializeDatabase( string databaseLocation ) {
 			var retValue = true;
@@ -19,7 +23,7 @@ namespace Noise.Core {
 			mDatabaseLocation = databaseLocation;
 
 			try {
-				mDatabase = new DB( string.Format( "server={0};password=;options=none;", mDatabaseLocation ) );
+				Database = new DB( string.Format( "server={0};password=;options=none;", mDatabaseLocation ) );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( ex );
@@ -27,6 +31,7 @@ namespace Noise.Core {
 				retValue = false;
 			}
 
+			Condition.Ensures( Database ).IsNotNull();
 			return( retValue );
 		}
 
@@ -36,16 +41,21 @@ namespace Noise.Core {
 			if(!OpenDatabase( mDatabaseName )) {
 				CreateDatabase( mDatabaseName );
 				OpenDatabase( mDatabaseName );
+
+				RegisterDatabaseTypes();
+				LoadDatabaseDefaults();
 			}
 		}
 
 		public bool OpenDatabase( string databaseName ) {
+			Condition.Requires( Database ).IsNotNull();
+
 			var retValue = true;
 
 			mDatabaseName = databaseName;
 
 			try {
-				mDatabase.OpenDatabase( mDatabaseName );
+				Database.OpenDatabase( mDatabaseName );
 				mLog.LogMessage( "Opened database: {0} on server: {1}", mDatabaseName, mDatabaseLocation );
 			}
 			catch( Exception ex ) {
@@ -58,14 +68,29 @@ namespace Noise.Core {
 		}
 
 		private void CreateDatabase( string databaseName ) {
+			Condition.Requires( Database ).IsNotNull();
 			mLog.LogMessage( "Creating Noise database: {0}", databaseName );
 
 			try {
-				mDatabase.CreateDatabase( databaseName );
+				Database.CreateDatabase( databaseName );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( ex );
 			}
+		}
+
+		private void RegisterDatabaseTypes() {
+			Database.RegisterType( typeof( RootFolder ));
+			Database.RegisterType( typeof( StorageFolder ));
+			Database.RegisterType( typeof( StorageFile ));
+		}
+
+		private void LoadDatabaseDefaults() {
+			Condition.Requires( Database ).IsNotNull();
+
+			var root = new RootFolder( @"D:\Music", "Music Storage" );
+
+			Database.Store( root );
 		}
 	}
 }

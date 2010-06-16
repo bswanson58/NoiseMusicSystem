@@ -1,18 +1,22 @@
 ﻿using System.Windows;
-using Noise.Core;
+using Noise.Infrastructure;
 
 namespace Noise.Desktop {
 	/// <summary>
 	/// Interaction logic for App.xaml
 	/// </summary>
 	public partial class App : Application {
-		private NoiseManager	mNoise;
+		private INoiseManager	mNoise;
 
 		protected override void OnStartup( StartupEventArgs e ) {
 			base.OnStartup( e );
 
-			mNoise = new NoiseManager();
+			var bootstrapper = new Bootstrapper();
+			bootstrapper.Run();
+
+			mNoise = bootstrapper.Container.Resolve<INoiseManager>();
 			mNoise.Initialize();
+			mNoise.Explore();
 		}
 	}
 }

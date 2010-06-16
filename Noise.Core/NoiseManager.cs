@@ -1,26 +1,27 @@
-﻿using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
+﻿using Microsoft.Practices.Unity;
+using Noise.Core.FileStore;
 using Noise.Infrastructure;
 
 namespace Noise.Core {
-	public class NoiseManager {
-		private	string							mDatabaseName;
-		private string							mDatabaseLocation;
-		private readonly CompositionContainer	mContainer;
+	public class NoiseManager : INoiseManager {
+		private readonly IUnityContainer	mContainer;
+		private	string						mDatabaseName;
+		private string						mDatabaseLocation;
+		private readonly ILog				mLog;
+		private readonly IDatabaseManager	mDatabase;
 
-		[Import]
-		private ILog				mLog;
-		[Import]
-		private IDatabaseManager	mDatabase;
+		public NoiseManager( IUnityContainer container ) {
+			mContainer = container;
 
-		public NoiseManager() {
-			var catalog = new DirectoryCatalog( @".\" );
+			mDatabase = mContainer.Resolve<IDatabaseManager>();
+			mContainer.RegisterInstance( typeof( IDatabaseManager ), mDatabase );
 
-			mContainer = new CompositionContainer( catalog );
-			mContainer.ComposeParts( this );
+			mLog = new Log();
 		}
 
 		public bool Initialize() {
+			mLog.LogMessage( "-------------------------" );
+
 			LoadConfiguration();
 			if( mDatabase.InitializeDatabase( mDatabaseLocation ) ) {
 				mDatabase.OpenWithCreateDatabase( mDatabaseName );
@@ -29,6 +30,12 @@ namespace Noise.Core {
 			mLog.LogMessage( "Initialized NoiseManager." );
 
 			return ( true );
+		}
+
+		public void Explore() {
+			var		explorer = mContainer.Resolve<IFolderExplorer>();
+
+			explorer.SynchronizeDatabaseFolders();
 		}
 
 		private void LoadConfiguration() {

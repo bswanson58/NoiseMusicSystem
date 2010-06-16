@@ -61,11 +61,30 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Accessibility">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="CuttingEdge.Conditions">
+      <HintPath>..\lib\CuttingEdge.Conditions\CuttingEdge.Conditions.dll</HintPath>
+    </Reference>
     <Reference Include="Eloquera.Client">
       <HintPath>..\lib\Eloquera\Eloquera.Client.dll</HintPath>
     </Reference>
     <Reference Include="Eloquera.Server">
       <HintPath>..\lib\Eloquera\Eloquera.Server.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Composite">
+      <HintPath>..\lib\CAL\Microsoft.Practices.Composite.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Composite.UnityExtensions">
+      <HintPath>..\lib\CAL\Microsoft.Practices.Composite.UnityExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ObjectBuilder2, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Practices.Unity">
+      <HintPath>..\lib\CAL\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Recls.100.Net">
+      <HintPath>..\lib\recls\Recls.100.Net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -78,7 +97,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DatabaseManager.cs" />
+    <Compile Include="FileStore\StorageFile.cs" />
+    <Compile Include="FileStore\StorageFolder.cs" />
+    <Compile Include="FileStore\FolderExplorer.cs" />
+    <Compile Include="FileStore\IFolderExplorer.cs" />
+    <Compile Include="FileStore\RootFolder.cs" />
+    <Compile Include="FileStore\StorageHelpers.cs" />
     <Compile Include="IDatabaseManager.cs" />
+    <Compile Include="NoiseCoreModule.cs" />
     <Compile Include="NoiseManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

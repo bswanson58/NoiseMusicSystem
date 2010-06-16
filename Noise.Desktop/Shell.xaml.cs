@@ -2,10 +2,10 @@
 
 namespace Noise.Desktop {
 	/// <summary>
-	/// Interaction logic for MainWindow.xaml
+	/// Interaction logic for Shell.xaml
 	/// </summary>
-	public partial class MainWindow : Window {
-		public MainWindow() {
+	public partial class Shell : Window {
+		public Shell() {
 			InitializeComponent();
 		}
 	}
