@@ -1,0 +1,1810 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Recls.100.Net</name>
+    </assembly>
+    <members>
+        <member name="T:Recls.IEntry">
+            <summary>
+             Represents a file-system entry.
+            </summary>
+            <remarks>
+             This interface is used to provide information regarding a
+             file-system entry - file or directory - that has been
+             enumerated via the
+             <see cref="M:Recls.FileSearcher.Search(System.String,System.String,Recls.SearchOptions,System.Int32)">FileSearcher.Search()</see>
+             (or
+             <see cref="M:Recls.FileSearcher.BreadthFirst.Search(System.String,System.String,Recls.SearchOptions,System.Int32)">FileSearcher.BreadthFirst.Search()</see>
+             or
+             <see cref="M:Recls.FileSearcher.DepthFirst.Search(System.String,System.String,Recls.SearchOptions,System.Int32)">FileSearcher.DepthFirst.Search()</see>)
+             methods.
+            </remarks>
+        </member>
+        <member name="P:Recls.IEntry.Path">
+            <summary>
+             Gets the full path of the entry.
+            </summary>
+            <value>
+             The full path of the entry.
+            </value>
+            <remarks>
+             If <see cref="T:Recls.SearchOptions"/>.<see cref="F:Recls.SearchOptions.MarkDirectories"/>
+             is specified, the returned value includes a trailing slash
+             character.
+            </remarks>
+        </member>
+        <member name="P:Recls.IEntry.SearchRelativePath">
+            <summary>
+             Gets the search relative path.
+            </summary>
+            <value>
+             The path of the entry relative to the search directory.
+            </value>
+            <remarks>
+             If <see cref="T:Recls.SearchOptions"/>.<see cref="F:Recls.SearchOptions.MarkDirectories"/>
+             is specified, the returned value includes a trailing slash
+             character.
+            </remarks>
+        </member>
+        <member name="P:Recls.IEntry.Drive">
+            <summary>
+             Gets the entry's drive.
+            </summary>
+            <value>
+             The drive part of the entry's path, which may be either a
+             volume (e.g. <c>H:</c>)
+             or a Universal Naming
+             Convention (UNC) share (e.g. <c>\\SERVER\share</c>).
+            </value>
+        </member>
+        <member name="P:Recls.IEntry.DirectoryPath">
+            <summary>
+             Gets the full path of the entry's directory.
+            </summary>
+            <value>
+             The directory + drive of the entry's path.
+            </value>
+            <remarks>
+             Always contains a trailing path name separator.
+            </remarks>
+            
+            <seealso cref="P:Recls.IEntry.Directory"/>
+        </member>
+        <member name="P:Recls.IEntry.Directory">
+            <summary>
+             Gets the entry's directory.
+            </summary>
+            <value>
+             The directory of the entry's path, excluding
+             the <see cref="P:Recls.IEntry.Drive"/>.
+            </value>
+            <remarks>
+             Always contains a trailing path name separator.
+            </remarks>
+            
+            <seealso cref="P:Recls.IEntry.DirectoryPath"/>
+        </member>
+        <member name="P:Recls.IEntry.SearchDirectory">
+            <summary>
+             Gets the search directory.
+            </summary>
+            <value>
+             The directory from which the search was conducted.
+            </value>
+        </member>
+        <member name="P:Recls.IEntry.UncDrive">
+            <summary>
+             Gets the UNC drive component of the entry's path.
+            </summary>
+            <value>
+             The Universal Naming Convention (UNC) share, or
+             <b>null</b> if the path begins with a volume drive.
+            </value>
+            <remarks>
+             Consider the following examples:
+            </remarks>
+            <example>
+             <code>
+              IEntry entry = FileSearch.Stat(@"\\myserver\myshare\dir1");
+              
+              Debug.Assert(@"\\myserver\myshare\" == entry.UncDrive);
+             </code>
+            </example>
+            <example>
+             <code>
+              IEntry entry = FileSearch.Stat(@"H:\dir1");
+              
+              Debug.Assert(null == entry.UncDrive);
+             </code>
+            </example>
+            
+            <seealso cref="P:Recls.IEntry.Drive"/>
+        </member>
+        <member name="P:Recls.IEntry.File">
+            <summary>
+             Gets the full file name of the entry's path.
+            </summary>
+            <value>
+             The file (file name + extension) part of the entry's path.
+            </value>
+            <remarks>
+             If <see cref="T:Recls.SearchOptions"/>.<see cref="F:Recls.SearchOptions.MarkDirectories"/>
+             is specified, the returned value includes a trailing slash
+             character.
+            </remarks>
+            
+            <seealso cref="P:Recls.IEntry.FileName"/>
+            <seealso cref="P:Recls.IEntry.FileExtension"/>
+        </member>
+        <member name="P:Recls.IEntry.FileName">
+            <summary>
+             Gets the file name without extension.
+            </summary>
+            <value>
+             The file part of the entry's path without extension.
+            </value>
+            
+            <seealso cref="P:Recls.IEntry.File"/>
+            <seealso cref="P:Recls.IEntry.FileExtension"/>
+        </member>
+        <member name="P:Recls.IEntry.FileExtension">
+            <summary>
+             Gets the file extension.
+            </summary>
+            <value>
+             The file extension of the entry's path.
+            </value>
+            
+            <seealso cref="P:Recls.IEntry.File"/>
+            <seealso cref="P:Recls.IEntry.FileName"/>
+        </member>
+        <member name="P:Recls.IEntry.CreationTime">
+            <summary>
+             Gets the entry's creation time.
+            </summary>
+            <value>
+             The time that the entry was created.
+            </value>
+        </member>
+        <member name="P:Recls.IEntry.ModificationTime">
+            <summary>
+             Gets the entry's modification time.
+            </summary>
+            <value>
+             The time that the entry was last modified.
+            </value>
+        </member>
+        <member name="P:Recls.IEntry.LastAccessTime">
+            <summary>
+             Gets the entry's last access time.
+            </summary>
+            <value>
+             The time that the entry was last accessed.
+            </value>
+        </member>
+        <member name="P:Recls.IEntry.LastStatusChangeTime">
+            <summary>
+             Gets the entry's modification time.
+            </summary>
+            <value>
+             The time that the entry was last modified.
+            </value>
+        </member>
+        <member name="P:Recls.IEntry.Size">
+            <summary>
+             Gets the entry's size.
+            </summary>
+            <value>
+             The size of the entry if it is a file; <c>0</c> if it is a
+             directory.
+            </value>
+            <remarks>
+             Users should not use a size of 0 to determine whether an entry
+             is a file or a directory, since some files may have zero size.
+             Use <see cref="P:Recls.IEntry.IsDirectory"/> instead.
+            </remarks>
+            
+            <seealso cref="P:Recls.IEntry.IsDirectory"/>
+        </member>
+        <member name="P:Recls.IEntry.Attributes">
+            <summary>
+             Gets the entry's attributes.
+            </summary>
+            <value>
+             The <see cref="T:System.IO.FileAttributes">attributes</see> of the
+             entry.
+            </value>
+            <remarks>
+             This property gets the attributes of the entry at the time of
+             enumeration. To get the current settings, use
+             <see cref="M:System.IO.File.GetAttributes(System.String)">System.IO.File.GetAttributes</see>.
+            </remarks>
+        </member>
+        <member name="P:Recls.IEntry.IsReadOnly">
+            <summary>
+             Indicates whether the entry is read only.
+            </summary>
+            <value>
+             <b>true</b> if the entry is read only; <b>false</b> otherwise.
+            </value>
+            <remarks>
+             This value is always <b>false</b> for directories. To get more
+             specific information about a directory's characteristics, use
+             the <see cref="P:Recls.IEntry.Attributes"/>
+            </remarks>
+        </member>
+        <member name="P:Recls.IEntry.IsDirectory">
+            <summary>
+             Indicates whether the entry is a directory.
+            </summary>
+            <value>
+             <b>true</b> if the entry is a directory; <b>false</b>
+             otherwise.
+            </value>
+        </member>
+        <member name="P:Recls.IEntry.IsUnc">
+            <summary>
+             Indicates whether the entry path is UNC.
+            </summary>
+            <value>
+             <b>true</b> if the entry's drive is a Universal Naming
+             Convention (UNC) share; <b>false</b> otherwise
+            </value>
+        </member>
+        <member name="P:Recls.IEntry.DirectoryParts">
+            <summary>
+             Gets all parts of the entry's
+             <see cref="P:Recls.IEntry.DirectoryPath">directory path</see>.
+            </summary>
+            <value>
+             An array of all parts of the directory.
+            </value>
+            <remarks>
+             Each element of the directory parts array has a trailing
+             separator. For example, if the path is
+             <c>C:\Windows\System32\user32.dll</c>, then the directory parts
+             array will consist of three elements:
+             <c>\</c>, <c>Windows\</c> and <c>System32\</c>
+            </remarks>
+        </member>
+        <member name="T:Recls.IDirectoryParts">
+            <summary>
+             Defines methods and properties for querying directory parts.
+            </summary>
+        </member>
+        <member name="M:Recls.IDirectoryParts.Contains(System.String)">
+            <summary>
+             Indicates whether the given part is contained in the
+             parts collection.
+            </summary>
+            <param name="item">
+             The item.
+            </param>
+            <returns>
+             <b>true</b> if the item is contained; <b>false</b> otherwise.
+            </returns>
+        </member>
+        <member name="M:Recls.IDirectoryParts.CopyTo(System.String[],System.Int32)">
+            <summary>
+             Copies the parts to the given array.
+            </summary>
+            <param name="array">
+            </param>
+            <param name="index">
+            </param>
+        </member>
+        <member name="P:Recls.IDirectoryParts.Count">
+            <summary>
+             The number of parts
+            </summary>
+        </member>
+        <member name="P:Recls.IDirectoryParts.Item(System.Int32)">
+            <summary>
+             Gets the part at the given <paramref name="index"/>.
+            </summary>
+            <param name="index">
+             The index. Must be in the <b>range [0, <see cref="P:Recls.IDirectoryParts.Count"/>)</b>.
+            </param>
+            <returns>
+             The part corresponding to the given index.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+             If the index is out of range.
+            </exception>
+        </member>
+        <member name="T:Recls.IProgressHandler">
+            <summary>
+             Interface providing search progress notifications and control.
+            </summary>
+        </member>
+        <member name="M:Recls.IProgressHandler.OnProgress(System.String,System.Int32)">
+            <summary>
+             Invoked for each directory traversed in a search.
+            </summary>
+            <param name="directory">
+             The directory searched, or <b>null</b> to indicate that
+             the search has been successfully completed.
+            </param>
+            <param name="depth">
+             The search depth corresponding to the directory.
+            </param>
+            <returns>
+             A <see cref="T:Recls.ProgressHandlerResult">value</see> that
+             determines how the search should proceed. Return
+             <b><see cref="F:Recls.ProgressHandlerResult.Continue"/></b>
+             to allow enumeration of remaining entries to proceed; return
+             <b><see cref="F:Recls.ProgressHandlerResult.CancelDirectory"/></b>
+             to skip the given <paramref name="directory"/> and all its
+             sub-directories; return
+             <b><see cref="F:Recls.ProgressHandlerResult.CancelSearch"/></b>
+             to cancel the search.
+            </returns>
+        </member>
+        <member name="T:Recls.SearchExtensions">
+            <summary>
+             Defines extended search operations to be applied to the results of
+             <see cref="T:Recls.FileSearcher"/>'s search operations.
+            </summary>
+        </member>
+        <member name="M:Recls.SearchExtensions.ForEach(System.Collections.Generic.IEnumerable{Recls.IEntry},System.Action{Recls.IEntry})">
+            <summary>
+             Applies the given action to each element in the given sequence.
+            </summary>
+            <param name="sequence">
+             The sequence whose entries are to be enumerated.
+            </param>
+            <param name="action">
+             The action to be applied to each element in the sequence.
+            </param>
+        </member>
+        <member name="M:Recls.SearchExtensions.Select``1(System.Collections.Generic.IEnumerable{Recls.IEntry},System.Func{Recls.IEntry,``0})">
+            <summary>
+             Applies the given transformation to each element in the given
+             sequence to form a sequence of the transformed type.
+            </summary>
+            <typeparam name="TTarget">
+             Type of the elements in the target sequence.
+            </typeparam>
+            <param name="sequence">
+             The sequence whose entries are to be transformed.
+            </param>
+            <param name="function">
+             The function used to translate the entries into the target type.
+            </param>
+            <returns>
+             A sequence containing values obtained by applying the given transformation function
+            </returns>
+        </member>
+        <member name="M:Recls.SearchExtensions.Where(System.Collections.Generic.IEnumerable{Recls.IEntry},System.Func{Recls.IEntry,System.Boolean})">
+            <summary>
+             Filters the entries in the source sequence based on the
+             filtering predicate, to form a resulting sequence of filtered
+             entries.
+            </summary>
+            <param name="sequence">
+             The sequence whose entries are to be filtered.
+            </param>
+            <param name="predicate">
+             The predicate that determines which entries are selected into
+             the result sequence.
+            </param>
+            <returns>
+             A sequence containing only entries that match the given
+             predicate.
+            </returns>
+        </member>
+        <member name="T:Recls.PathUtil">
+            <summary>
+             Provides methods for manipulating paths.
+            </summary>
+            <remarks>
+             Except where documented, paths are treated as independent from any
+             corresponding file-system entries.
+            </remarks>
+        </member>
+        <member name="M:Recls.PathUtil.DeriveRelativePath(System.String,System.String)">
+            <summary>
+             Determines the relative path between two paths.
+            </summary>
+            <param name="origin">
+             The path against which the relativity of
+             <paramref name="target"/> will be evaluated. If <b>null</b> or
+             the empty string, then the resultant path is equivalent to
+             <paramref name="target"/>
+            </param>
+            <param name="target">
+             The path whose relatively (against <paramref name="origin"/>)
+             will be evaluated. If this is on a different drive than
+             <paramref name="origin"/>, <paramref name="target"/> is
+             returned
+            </param>
+            <returns>
+             The equivalent of the <paramref name="target"/> relative to the
+             <paramref name="origin"/>
+            </returns>
+            <exception cref="T:Recls.IllformedUncPathException">
+             If <paramref name="path"/> is a malformed UNC path. A correctly
+             formed UNC path must contain at least server and share, e.g.
+             <c>\\myserver\myshare</c>. Any path beginning with <c>\\</c>
+             and containing less than the required server+share is deemed
+             invalid
+            </exception>
+        </member>
+        <member name="M:Recls.PathUtil.CanonicalizePath(System.String)">
+            <summary>
+             Canonicalizes a path.
+            </summary>
+            <param name="path">
+             The path to canonicalize.
+            </param>
+            <returns>
+             The canonicalized path. There is no error return: all problems
+             are indicated by exceptions.
+            </returns>
+            <exception cref="T:Recls.IllformedUncPathException">
+             If <paramref name="path"/> is a malformed UNC path. A correctly
+             formed UNC path must contain at least server and share, e.g.
+             <c>\\myserver\myshare</c>. Any path beginning with <c>\\</c>
+             and containing less than the required server+share is deemed
+             invalid.
+            </exception>
+        </member>
+        <member name="M:Recls.PathUtil.GetAbsolutePath(System.String)">
+            <summary>
+             Evaluates the absolute path of the given path.
+            </summary>
+            <param name="path">
+             The path whose absolute equivalent, relative to the current
+             working directory, is to be evaluated.
+            </param>
+            <returns>
+             The absolute path equivalent of <paramref name="path"/>.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+             If <paramref name="path"/> is empty, contains invalid
+             characters, or contains only whitespace, or the system could
+             not retrieve the absolute path.
+            </exception>
+            <exception cref="T:System.Security.SecurityException">
+             If the caller does not have the required permissions.
+            </exception>
+            <exception cref="T:System.ArgumentNullException">
+             If <paramref name="path"/> is <b>null</b>.
+            </exception>
+            <exception cref="T:System.NotSupportedException">
+             If <paramref name="path"/> contains a colon (<c>':'</c>) that
+             is not part of a volume identifier.
+            </exception>
+            <exception cref="T:System.IO.PathTooLongException">
+             If the specified path, file name, or both exceed the
+             system-defined maximum length.
+            </exception>
+            <remarks>
+             The CLR's facilities for determing absolute paths is defective
+             in a few important ways, for which this function provides
+             corrective behaviour.
+            </remarks>
+        </member>
+        <member name="M:Recls.PathUtil.GetDirectoryPath(System.String)">
+            <summary>
+             Evaluates the "<em>directory path</em>" of the given path.
+            </summary>
+            <param name="path">
+             The path whose "<em>directory path</em>" is to be evaluated.
+            </param>
+            <returns>
+             The evaluated "<em>directory path</em>".
+            </returns>
+            <remarks>
+             The returned value will always be a directory, and will always
+             have a trailing path name separator, ready to be combined with
+             a relative path.
+            </remarks>
+            <exception cref="T:System.ArgumentNullException">
+             If <paramref name="path"/> is <b>null</b>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+             If <paramref name="path"/> is empty, contains invalid
+             characters, or contains only whitespace.
+            </exception>
+            <exception cref="T:Recls.IllformedUncPathException">
+             If <paramref name="path"/> is a malformed UNC path. A correctly
+             formed UNC path must contain at least server and share, e.g.
+             <c>\\myserver\myshare</c>. Any path beginning with <c>\\</c>
+             and containing less than the required server+share is deemed
+             invalid.
+            </exception>
+            <exception cref="T:System.IO.PathTooLongException">
+             If the path parameter is longer than the system-defined maximum
+             length.
+            </exception>
+        </member>
+        <member name="M:Recls.PathUtil.GetFile(System.String)">
+            <summary>
+             Evaluates the file part of the given path.
+            </summary>
+            <param name="path">
+             The path whose file is to be evaluated.
+            </param>
+            <returns>
+             The evaluated file part of the path.
+            </returns>
+            <remarks>
+             The returned value will never contain a leading path name
+             separator, and will always be ready to be combined with a
+             directory.
+            </remarks>
+            <exception cref="T:Recls.IllformedUncPathException">
+             If <paramref name="path"/> is a malformed UNC path. A correctly
+             formed UNC path must contain at least server and share, e.g.
+             <c>\\myserver\myshare</c>. Any path beginning with <c>\\</c>
+             and containing less than the required server+share is deemed
+             invalid.
+            </exception>
+            <exception cref="T:System.IO.PathTooLongException">
+             If the path parameter is longer than the system-defined maximum
+             length.
+            </exception>
+        </member>
+        <member name="M:Recls.PathUtil.GetDrive(System.String)">
+            <summary>
+             Evaluates the drive part of the given path.
+            </summary>
+            <param name="path">
+             The path whose drive is to be evaluated.
+            </param>
+            <returns>
+             The evaluated drive part of the path.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+             If <paramref name="path"/> is <b>null</b>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+             If <paramref name="path"/> is empty, is not absolute, contains
+             invalid characters, or contains only whitespace.
+            </exception>
+            <exception cref="T:Recls.IllformedUncPathException">
+             If <paramref name="path"/> is a malformed UNC path. A correctly
+             formed UNC path must contain at least server and share, e.g.
+             <c>\\myserver\myshare</c>. Any path beginning with <c>\\</c>
+             and containing less than the required server+share is deemed
+             invalid.
+            </exception>
+        </member>
+        <member name="F:Recls.Internal.PathRelativity.None">
+            <summary>
+             Path is null or empty.
+            </summary>
+        </member>
+        <member name="F:Recls.Internal.PathRelativity.Invalid">
+            <summary>
+             Path contains invalid characters.
+            </summary>
+        </member>
+        <member name="F:Recls.Internal.PathRelativity.Relative">
+            <summary>
+             Is relative.
+            </summary>
+        </member>
+        <member name="F:Recls.Internal.PathRelativity.AbsoluteDrive">
+            <summary>
+             Is an absolute path that is rooted.
+            </summary>
+        </member>
+        <member name="F:Recls.Internal.PathRelativity.AbsoluteUnc">
+            <summary>
+             Is an absolute path that is a UNC drive.
+            </summary>
+        </member>
+        <member name="F:Recls.Internal.PathRelativity.Rooted">
+            <summary>
+             Is a rooted path, beginning with a path name separator.
+            </summary>
+        </member>
+        <member name="T:Recls.ProgressHandlerResult">
+             <summary>
+              Value to be returned by 
+              <see cref="M:Recls.IProgressHandler.OnProgress(System.String,System.Int32)">IProgressHandler.OnProgress()</see>
+              to control further processing.
+             </summary>
+            
+             <seealso cref="T:Recls.OnProgress"/>
+             <seealso cref="M:Recls.IProgressHandler.OnProgress(System.String,System.Int32)"/>
+        </member>
+        <member name="F:Recls.ProgressHandlerResult.Continue">
+            <summary>
+             The search should continue.
+            </summary>
+        </member>
+        <member name="F:Recls.ProgressHandlerResult.CancelDirectory">
+            <summary>
+             All search within the current directory, or any of its
+             subdirectories, is cancelled. Searching in other directories is
+             not affected.
+            </summary>
+        </member>
+        <member name="F:Recls.ProgressHandlerResult.CancelSearch">
+            <summary>
+             The entire search is cancelled. Subsequent use of the search
+             enumerator will fail (until it is reset).
+            </summary>
+        </member>
+        <member name="T:Recls.ExceptionHandlerResult">
+             <summary>
+              Value to be returned by 
+              <see cref="M:Recls.IExceptionHandler.OnException(System.String,System.Exception)">IExceptionHandler.OnException()</see>
+              to control further processing.
+             </summary>
+            
+             <seealso cref="T:Recls.OnException"/>
+             <seealso cref="M:Recls.IExceptionHandler.OnException(System.String,System.Exception)"/>
+        </member>
+        <member name="F:Recls.ExceptionHandlerResult.PropagateException">
+            <summary>
+             Allows the exception to propagate to the caller, causing the
+             search to be terminated.
+            </summary>
+        </member>
+        <member name="F:Recls.ExceptionHandlerResult.ConsumeExceptionAndContinue">
+            <summary>
+             Causes the exception to be consumed and the search to continue.
+            </summary>
+        </member>
+        <member name="T:Recls.NamespaceDoc">
+             <summary>
+              <para>
+               The
+               <a href="#{9F534D7B-49E3-4471-A12D-0B2735FBAB54}">Recls namespace</a>
+               defines types for recursive search.
+              </para>
+              <para>
+               <strong><u>History</u></strong><br/><br/>
+               The <a ref="http://www.recls.org/">recls</a> -
+               <em>rec</em>ursive <em>ls</em> - project began in 2003, as an
+               open-source C/C++ library, forked from an internal project of
+               <a href="http://www.synesis.com.au">Synesis Software Pty Ltd</a>.
+               As time went on, the library evolved new features, and also
+               added mappings for other languages, including C#, Ch, D, Java,
+               Python and Ruby.
+              </para>
+              <para>
+               Between 2003 and 2006 the library was used as the exemplar
+               project for
+               <a href="http://www.synesis.com.au/publications.html">Matthew Wilson</a>'s
+               <strong>Positive Integration</strong> column, for
+               <a href="http://www.ddj.com/">Dr. Dobb's Journal</a>
+               (formerly in C/C++ User's Journal). The column instalments
+               discussed many of the design and implementation techniques of the
+               core library, and the mappings to other languages, through
+               versions 1.0 to 1.6.
+              </para>
+              <para>
+               As of November 2009, the latest publicly released version of the
+               library is
+               <a href="http://synesis.com.au/software/recls/downloads.html#recls_1_8_13">1.8.13</a>.
+              </para>
+              <para>
+               The last version of "classic" recls will be 1.9, which is
+               expected to be released in November or December 2009.
+              </para>
+              <para>
+               The next phase for recls will be <strong>recls 100%</strong>.
+              </para>
+              <para>
+               <strong><u>recls 100%</u></strong><br/><br/>
+               The <strong>recls 100%</strong> stream aims to implement recls
+               functionality for each language purely in that language.
+              </para>
+              <para>
+               The first language to be covered in the recls 100% stream is
+               C# (.NET). The resulting library, known as <i>recls 100% .NET</i>,
+               is based around the static <see cref="T:Recls.FileSearcher"/> class,
+               which defines methods, constants and delegates for file-system
+               enumeration. File-system entries are represented by the
+               <see cref="T:Recls.IEntry"/> interface, which defines a number
+               of properties representing the entry's characteristics.
+              </para>
+              <para>
+               The version numbers for the recls 100% stream will start from
+               <strong>1.100</strong>.
+              </para>
+              <para>
+               <strong><u>Distribution and Support</u></strong><br/><br/>
+               <i>recls 100% .NET</i> is a
+               <a href="http://en.wikipedia.org/wiki/Donationware">donationware</a>
+               product. It is written to production-quality standards, yet is
+               available for free, and may be used without restriction in
+               commercial and/or non-commercial software systems. Users are asked
+               to <a href="http://recls.org/donate.html">make a donation to the recls project</a>
+               in order to ensure that the project is actively maintained and
+               improved.
+              </para>
+              <para>
+               <strong><u>Examples</u></strong><br/><br/>
+               A few examples to give you a feel for how <i>recls 100% .NET</i>
+               provides recursive file-system enumeration.
+              </para>
+              <para>
+               <strong>Example 1</strong><br/><br/>
+               List all font files in the windows directory or any of its
+               subdirectories.
+               <code>
+                foreach(IEntry entry in FileSearcher.Search(@"C:\windows", "*.fon|*.ttf"))
+                {
+                    Console.WriteLine(entry.Path);
+                }
+               </code>
+              </para>
+              <para>
+               <strong>Example 2</strong><br/><br/>
+               Search for all program and DLL files (including hidden) smaller
+               than 10k in the current directory and all sub-directories up to
+               3 deep, reporting on any entries that cannot be enumerated. This
+               example uses an anonymous delegate for the error handling, and
+               LINQ for filtering and selecting the entry members.
+               <code>
+                var files = FileSearcher.DepthFirst.Search( // search in depth-first manner
+                    null,                                   // search current directory
+                    "m*.exe|n*.dll",                        // all programs beginning with m; all DLLs beginning with n
+                    SearchOptions.IncludeHidden,            // include hidden files/directories
+                    3,                                      // descend at most 3 directories
+                    null,                                   // don't need progress callback
+                    delegate(string path, Exception x)
+                    {
+                        // report on any entries that could not be enumerated, but ...
+                        Console.Error.WriteLine("could not enumerate {0}: {1}", path, x.Message);
+                        // ... continue the enumeration
+                        return ExceptionHandlerResult.ConsumeExceptionAndContinue;
+                    }
+                );
+            
+                var results = from file in files
+                              where file.Size &lt; 10240
+                              select file.SearchRelativePath;
+            
+                foreach(var path in results)
+                {
+                    Console.WriteLine("entry: {0}", path);
+                }
+               </code>
+              </para>
+              <para>
+               <strong>Example 3</strong><br/><br/>
+               Display the names and sizes of all the immediate sub-directories
+               of the current directory. The example uses the Recls extension
+               method ForEach() in combination with a lambda expression.
+               <code>
+                FileSearcher.BreadthFirst.Search(
+                    null,                        // search current directory
+                    null,                        // all names
+                    SearchOptions.Directories | SearchOptions.IgnoreInaccessibleNodes, // only want dirs; don't worry about inaccessible entries
+                    0							// do not recurse
+                 )
+                     .ForEach((d) =&gt; Console.WriteLine("{0} : {1}", d.Path, FileSearcher.CalculateDirectorySize(d.Path, FileSearcher.UnrestrictedDepth)));
+               </code>
+               This can also be expressed in a more conventional syntax.
+               <code>
+               	foreach(IEntry entry in FileSearcher.BreadthFirst.Search(null, null, SearchOptions.Directories | SearchOptions.IgnoreInaccessibleNodes, 0))
+               	{
+               	    Console.WriteLine("{0} : {1}", entry.Path, FileSearcher.CalculateDirectorySize(entry, FileSearcher.UnrestrictedDepth));
+               	}
+               </code>
+              </para>
+              <para>
+               <strong>Example 4</strong><br/><br/>
+               Get an entry representing a given path.
+               <code>
+                IEntry entry = FileSearcher.Stat(@"H:\freelibs\recls\100\recls.net\recls.100.sln");
+            
+                if(null == entry)
+                {
+                    Console.Error.Write("file not found");
+                }
+                else
+                {
+                    Console.WriteLine("{0,20}:\t{1}", "Path", entry.Path);
+                    Console.WriteLine("{0,20}:\t{1}", "SearchRelativePath", entry.SearchRelativePath);
+                    Console.WriteLine("{0,20}:\t{1}", "Drive", entry.Drive);
+                    Console.WriteLine("{0,20}:\t{1}", "DirectoryPath", entry.DirectoryPath);
+                    Console.WriteLine("{0,20}:\t{1}", "Directory", entry.Directory);
+                    Console.WriteLine("{0,20}:\t{1}", "SearchDirectory", entry.SearchDirectory);
+                    Console.WriteLine("{0,20}:\t{1}", "UncDrive", entry.UncDrive);
+                    Console.WriteLine("{0,20}:\t{1}", "File", entry.File);
+                    Console.WriteLine("{0,20}:\t{1}", "FileName", entry.FileName);
+                    Console.WriteLine("{0,20}:\t{1}", "FileExtension", entry.FileExtension);
+                    Console.WriteLine("{0,20}:\t{1}", "CreationTime", entry.CreationTime);
+                    Console.WriteLine("{0,20}:\t{1}", "ModificationTime", entry.ModificationTime);
+                    Console.WriteLine("{0,20}:\t{1}", "LastAccessTime", entry.LastAccessTime);
+                    Console.WriteLine("{0,20}:\t{1}", "LastStatusChangeTime", entry.LastStatusChangeTime);
+                    Console.WriteLine("{0,20}:\t{1}", "Size", entry.Size);
+                    Console.WriteLine("{0,20}:\t{1}", "Attributes", entry.Attributes);
+                    Console.WriteLine("{0,20}:\t{1}", "IsReadOnly", entry.IsReadOnly);
+                    Console.WriteLine("{0,20}:\t{1}", "IsDirectory", entry.IsDirectory);
+                    Console.WriteLine("{0,20}:\t{1}", "IsUnc", entry.IsUnc);
+                    Console.WriteLine("{0,20}:\t[{1}]", "DirectoryParts", String.Join(", ", entry.DirectoryParts));
+                }
+               </code>
+               Gives the following results:
+              </para>
+              <para>
+               <pre>
+                                Path:   H:\freelibs\recls\100\recls.net\recls.100.sln
+                  SearchRelativePath:   recls.100.sln
+                               Drive:   H:
+                       DirectoryPath:   H:\freelibs\recls\100\recls.net\
+                           Directory:   \freelibs\recls\100\recls.net\
+                     SearchDirectory:   H:\freelibs\recls\100\recls.net\
+                            UncDrive:
+                                File:   recls.100.sln
+                            FileName:   recls.100
+                       FileExtension:   .sln
+                        CreationTime:   31/07/2009 11:40:44 AM
+                    ModificationTime:   20/08/2009 3:40:00 PM
+                      LastAccessTime:   20/08/2009 3:46:33 PM
+                LastStatusChangeTime:   20/08/2009 3:40:00 PM
+                                Size:   34157
+                          Attributes:   ReadOnly, Archive, Compressed
+                          IsReadOnly:   True
+                         IsDirectory:   False
+                               IsUnc:   False
+                      DirectoryParts:   [\, freelibs\, recls\, 100\, recls.net\]
+               </pre>
+              </para>
+              <para>
+               <br/><br/>
+              </para>
+              
+             <a name="#{9F534D7B-49E3-4471-A12D-0B2735FBAB54}"></a>
+             <strong><u>The Recls namespace</u></strong>
+             </summary>
+        </member>
+        <member name="T:Recls.IExceptionHandler">
+            <summary>
+             Interface providing control when enumeration fails.
+            </summary>
+            <remarks>
+             <para>
+              The methods of this class are never called when
+              <see cref="T:System.OutOfMemoryException"/> is thrown, because
+              in such conditions it is not appropriate to attempt to continue
+              the search operation. Users are strongly advised to return
+              <b><see cref="F:Recls.ExceptionHandlerResult.PropagateException"/></b>
+              when invoked with any other practically-unrecoverable
+              exception type. The implementation may change in the future to
+              exclude other exceptions from the error-handler callback.
+             </para>
+            </remarks>
+        </member>
+        <member name="M:Recls.IExceptionHandler.OnException(System.String,System.Exception)">
+            <summary>
+             Called when enumeration in a directory entry fails.
+            </summary>
+            <param name="path">
+             The full path of the directory in which enumeration was
+             attempted.
+            </param>
+            <param name="exception">
+             The exception thrown to indicate the enumeration failure.
+            </param>
+            <returns>
+             A <see cref="T:Recls.ExceptionHandlerResult">value</see> that
+             determines how the search should proceed. Return
+             <b><see cref="F:Recls.ExceptionHandlerResult.ConsumeExceptionAndContinue"/></b>
+             to ignore the failure and allow enumeration of
+             remaining entries to proceed; return
+             <b><see cref="F:Recls.ExceptionHandlerResult.PropagateException"/></b>
+             to cancel the search.
+            </returns>
+        </member>
+        <member name="T:Recls.OnException">
+            <summary>
+             Delegate defining function to be called on enumeration failure.
+            </summary>
+            <param name="path">
+             The full path of the file/directory.
+            </param>
+            <param name="exception">
+             The exception thrown to indicate the enumeration failure.
+            </param>
+            <returns>
+             <b>true</b> to ignore the failure and allow enumeration of
+             remaining entries to proceed; <b>false</b> to cancel the
+             search.
+            </returns>
+            <remarks>
+             The delegate may be invoked for files and/or directories for
+             which enumeration has failed.
+            </remarks>
+            
+            <seealso cref="M:Recls.FileSearcher.Search(System.String,System.String,Recls.SearchOptions,System.Int32,Recls.OnProgress,Recls.OnException)"/>
+            <seealso cref="M:Recls.FileSearcher.BreadthFirst.Search(System.String,System.String,Recls.SearchOptions,System.Int32,Recls.OnProgress,Recls.OnException)"/>
+            <seealso cref="M:Recls.FileSearcher.DepthFirst.Search(System.String,System.String,Recls.SearchOptions,System.Int32,Recls.OnProgress,Recls.OnException)"/>
+        </member>
+        <member name="T:Recls.OnProgress">
+            <summary>
+             Delegate defining function to be called for each directory
+             traversed in a search.
+            </summary>
+            <param name="directory">
+             The directory searched, or <b>null</b> to indicate that
+             the search has been successfully completed.
+            </param>
+            <param name="depth">
+             The search depth corresponding to the directory.
+            </param>
+            <returns>
+             A <see cref="T:Recls.ProgressHandlerResult">value</see> that
+             determines how the search should proceed.
+            </returns>
+            
+            <seealso cref="M:Recls.FileSearcher.Search(System.String,System.String,Recls.SearchOptions,System.Int32,Recls.OnProgress,Recls.OnException)"/>
+            <seealso cref="M:Recls.FileSearcher.BreadthFirst.Search(System.String,System.String,Recls.SearchOptions,System.Int32,Recls.OnProgress,Recls.OnException)"/>
+            <seealso cref="M:Recls.FileSearcher.DepthFirst.Search(System.String,System.String,Recls.SearchOptions,System.Int32,Recls.OnProgress,Recls.OnException)"/>
+        </member>
+        <member name="T:Recls.ReclsException">
+            <summary>
+             Root exception for <see cref="N:Recls"/> namespace.
+            </summary>
+        </member>
+        <member name="M:Recls.ReclsException.#ctor">
+            <summary>
+             Constructs an instance.
+            </summary>
+        </member>
+        <member name="M:Recls.ReclsException.#ctor(System.String)">
+            <summary>
+             Constructs an instance from the given
+             <paramref name="message"/>.
+            </summary>
+            <param name="message">
+             The error message that explains the reason for the exception.
+            </param>
+        </member>
+        <member name="M:Recls.ReclsException.#ctor(System.String,System.Exception)">
+            <summary>
+             Constructs an instance of the exception from the given
+             <paramref name="message"/>
+             and inner exception.
+            </summary>
+            <param name="message">
+             The error message that explains the reason for the exception.
+            </param>
+            <param name="innerException">
+             The exception that is the cause of the current exception.
+            </param>
+        </member>
+        <member name="M:Recls.ReclsException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+             Initializes a new instance of the exception with serialized
+             data.
+            </summary>
+            <param name="info">
+             The object that holds the serialized object data.
+            </param>
+            <param name="context">
+             The contextual information about the source or destination.
+            </param>
+        </member>
+        <member name="T:Recls.IllformedUncPathException">
+            <summary>
+             The exception that is thrown when a path containing a mal-formed
+             UNC drive is found.
+            </summary>
+        </member>
+        <member name="M:Recls.IllformedUncPathException.#ctor">
+            <summary>
+             Constructs an instance of the exception.
+            </summary>
+        </member>
+        <member name="M:Recls.IllformedUncPathException.#ctor(System.String)">
+            <summary>
+             Constructs an instance from the given
+             <paramref name="message"/>.
+            </summary>
+            <param name="message">
+             The error message that explains the reason for the exception.
+            </param>
+        </member>
+        <member name="M:Recls.IllformedUncPathException.#ctor(System.String,System.Exception)">
+            <summary>
+             Constructs an instance of the exception from the given
+             <paramref name="message"/>
+             and inner exception.
+            </summary>
+            <param name="message">
+             The error message that explains the reason for the exception.
+            </param>
+            <param name="innerException">
+             The exception that is the cause of the current exception.
+            </param>
+        </member>
+        <member name="M:Recls.IllformedUncPathException.#ctor(System.String,System.String)">
+            <summary>
+             Constructs an instance of the exception from the given
+             <paramref name="message"/>
+             and
+             <paramref name="path"/>.
+            </summary>
+            <param name="message">
+             The error message that explains the reason for the exception.
+            </param>
+            <param name="path">
+             The illformed path.
+            </param>
+        </member>
+        <member name="M:Recls.IllformedUncPathException.#ctor(System.String,System.String,System.Exception)">
+            <summary>
+             Constructs an instance of the exception from the given
+             <paramref name="message"/>
+             and inner exception.
+            </summary>
+            <param name="message">
+             The error message that explains the reason for the exception.
+            </param>
+            <param name="path">
+             The illformed path.
+            </param>
+            <param name="innerException">
+             The exception that is the cause of the current exception.
+            </param>
+        </member>
+        <member name="M:Recls.IllformedUncPathException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+             Initializes a new instance of the <see cref="T:Recls.IllformedUncPathException"/>
+             class with serialized data.
+            </summary>
+            <param name="info">
+             The object that holds the serialized object data.
+            </param>
+            <param name="context">
+             The contextual information about the source or destination.
+            </param>
+        </member>
+        <member name="M:Recls.IllformedUncPathException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+             Populates the serialisation info with the data needed to
+             serialize the target object.
+            </summary>
+            <param name="info">
+             The object that holds the serialized object data.
+            </param>
+            <param name="context">
+             The contextual information about the source or destination.
+            </param>
+        </member>
+        <member name="P:Recls.IllformedUncPathException.Path">
+            <summary>
+             The illformed path.
+            </summary>
+        </member>
+        <member name="T:Recls.SearchOptions">
+            <summary>
+             Constants that control the enumeration of file-system entries.
+            </summary>
+            <remarks>
+             <para>
+              If neither <see cref="F:Recls.SearchOptions.Files"/> nor <see cref="F:Recls.SearchOptions.Directories"/> is
+              specified, then <see cref="F:Recls.SearchOptions.Files"/> is assumed.
+             </para>
+             
+             <para>
+              If <see cref="F:Recls.SearchOptions.MarkDirectories"/> is specified, the
+              <see cref="P:Recls.IEntry.Path"/>,
+              <see cref="P:Recls.IEntry.SearchRelativePath"/>
+              and
+              <see cref="P:Recls.IEntry.File"/>
+              properties include a trailing slash character.
+             </para>
+            </remarks>
+            
+            <seealso cref="M:Recls.FileSearcher.DepthFirst.Search(System.String,System.String,Recls.SearchOptions,System.Int32)">DepthFirst.Search(String, String, SearchOptions, int)</seealso>
+            <seealso cref="M:Recls.FileSearcher.BreadthFirst.Search(System.String,System.String,Recls.SearchOptions,System.Int32)">BreadthFirst.Search(String, String, SearchOptions, int)</seealso>
+            <seealso cref="M:Recls.FileSearcher.Search(System.String,System.String,Recls.SearchOptions,System.Int32)">Search(String, String, SearchOptions, int)</seealso>
+        </member>
+        <member name="F:Recls.SearchOptions.None">
+            <summary>
+             No options specified.
+            </summary>
+        </member>
+        <member name="F:Recls.SearchOptions.Files">
+            <summary>
+             Include files in search. Included by default if neither
+             <see cref="F:Recls.SearchOptions.Files"/> nor <see cref="F:Recls.SearchOptions.Directories"/> specified.
+            </summary>
+        </member>
+        <member name="F:Recls.SearchOptions.Directories">
+            <summary>
+             Include directories in search.
+            </summary>
+        </member>
+        <member name="F:Recls.SearchOptions.IgnoreInaccessibleNodes">
+            <summary>
+             Causes the search to ignore any inaccessible nodes. This is
+             ignored if an error handler is specified.
+            </summary>
+        </member>
+        <member name="F:Recls.SearchOptions.MarkDirectories">
+             <summary>
+              Marks directory entries with a trailing slash. The
+              <see cref="P:Recls.IEntry.Path"/>,
+              <see cref="P:Recls.IEntry.SearchRelativePath"/>,
+              and
+              <see cref="P:Recls.IEntry.File"/>,
+              properties of directory entries
+              are marked with a trailing back-slash.
+             </summary>
+            
+             <seealso cref="P:Recls.IEntry.Path"/>
+             <seealso cref="P:Recls.IEntry.SearchRelativePath"/>
+             <seealso cref="P:Recls.IEntry.File"/>
+        </member>
+        <member name="F:Recls.SearchOptions.IncludeHidden">
+            <summary>
+             Includes hidden files/directories in the search processing and
+             results.
+            </summary>
+        </member>
+        <member name="F:Recls.SearchOptions.IncludeSystem">
+            <summary>
+             Includes system files/directories in the search processing and
+             results.
+            </summary>
+        </member>
+        <member name="F:Recls.SearchOptions.DoNotTranslatePathSeparators">
+            <summary>
+             Unless specified, platform-specific path separators -
+             <c>':'</c> on UNIX; <c>';'</c> on Windows - will be recognised,
+             and translated into <c>'|'</c> before processing.
+            </summary>
+        </member>
+        <member name="M:Recls.Internal.IDirectorySearchNode.GetNextNode">
+            <summary>
+             Returns the next directory search node under this node.
+            </summary>
+            <returns>
+             A reference to the next directory search node, or null if
+             there are no more search nodes under this node.
+            </returns>
+        </member>
+        <member name="M:Recls.Internal.IDirectorySearchNode.GetNextEntry">
+            <summary>
+             Returns the next directory entry under this node.
+            </summary>
+            <returns>
+             A reference to the next directory entry, or null if
+             there are no more entries under this node.
+            </returns>
+        </member>
+        <member name="T:Recls.FileSearcher">
+            <summary>
+             Provides methods for enumerating file-system entities.
+            </summary>
+            <remarks>
+             This class defines the API for file-system entity enumeration
+             and inspection.
+            </remarks>
+        </member>
+        <member name="M:Recls.FileSearcher.Search(System.String,System.String)">
+            <summary>
+             Returns an enumerable collection of <see cref="T:Recls.IEntry"/>
+             instances representing all file-system entries
+             under <paramref name="directory"/>
+             matching the given <paramref name="patterns"/>,
+             searched in an implementation-defined manner.
+            </summary>
+            <param name="directory">
+             The directory in which to search; the local directory if
+             <b>null</b> or empty.
+            </param>
+            <param name="patterns">
+             One or more search patterns, separated by the <c>|</c>
+             character; searches for all if <b>null</b> or
+             <see cref="P:Recls.FileSearcher.WildcardsAll"/>.
+            </param>
+            <returns>
+             An instance of a type exhibiting the
+             <see name="System.Collections.IEnumerable{T}">IEnumerable</see>&lt;<see cref="T:Recls.IEntry"/>&gt;
+             interface.
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.Search(System.String,System.String,Recls.SearchOptions)">
+            <summary>
+             Returns an enumerable collection of <see cref="T:Recls.IEntry"/>
+             instances representing all file-system entries
+             under <paramref name="directory"/>
+             matching the given <paramref name="patterns"/>,
+             according to the given <paramref name="options"/>,
+             searched in an implementation-defined manner.
+            </summary>
+            <param name="directory">
+             The directory in which to search; the local directory if
+             <b>null</b> or empty.
+            </param>
+            <param name="patterns">
+             One or more search patterns, separated by the <c>|</c>
+             character; searches for all if <b>null</b> or
+             <see cref="P:Recls.FileSearcher.WildcardsAll"/>.
+            </param>
+            <param name="options">
+             Combination of <see cref="T:Recls.SearchOptions"/> to moderate the search
+            </param>
+            <returns>
+             An instance of a type exhibiting the
+             <see name="System.Collections.IEnumerable{T}">IEnumerable</see>&lt;<see cref="T:Recls.IEntry"/>&gt;
+             interface.
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.Search(System.String,System.String,Recls.SearchOptions,System.Int32)">
+            <summary>
+             Returns an enumerable collection of <see cref="T:Recls.IEntry"/>
+             instances representing all file-system entries
+             under <paramref name="directory"/>
+             matching the given <paramref name="patterns"/>,
+             according to the given <paramref name="options"/>,
+             to the given maximum <paramref name="depth"/>,
+             searched in an implementation-defined manner.
+            </summary>
+            <param name="directory">
+             The directory in which to search; the local directory if
+             <b>null</b> or empty.
+            </param>
+            <param name="patterns">
+             One or more search patterns, separated by the <c>|</c>
+             character; searches for all if <b>null</b> or
+             <see cref="P:Recls.FileSearcher.WildcardsAll"/>.
+            </param>
+            <param name="options">
+             Combination of <see cref="T:Recls.SearchOptions"/> to moderate the search
+            </param>
+            <param name="depth">
+             The maximum search depth; 0 to perform a non-recursive search.
+            </param>
+            <returns>
+             An instance of a type exhibiting the
+             <see name="System.Collections.IEnumerable{T}">IEnumerable</see>&lt;<see cref="T:Recls.IEntry"/>&gt;
+             interface.
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.Search(System.String,System.String,Recls.SearchOptions,System.Int32,Recls.IProgressHandler,Recls.IExceptionHandler)">
+            <summary>
+             Returns an enumerable collection of <see cref="T:Recls.IEntry"/>
+             instances representing all file-system entries
+             under <paramref name="directory"/>
+             matching the given <paramref name="patterns"/>,
+             according to the given <paramref name="options"/>,
+             using the given <paramref name="progressHandler"/>
+              and <paramref name="exceptionHandler"/>,
+             to the given maximum <paramref name="depth"/>,
+             searched in an implementation-defined manner.
+            </summary>
+            <param name="directory">
+             The directory in which to search; the local directory if
+             <b>null</b> or empty.
+            </param>
+            <param name="patterns">
+             One or more search patterns, separated by the <c>|</c>
+             character; searches for all if <b>null</b> or
+             <see cref="P:Recls.FileSearcher.WildcardsAll"/>.
+            </param>
+            <param name="options">
+             Combination of <see cref="T:Recls.SearchOptions"/> to moderate the search
+            </param>
+            <param name="depth">
+             The maximum search depth; 0 to perform a non-recursive search.
+            </param>
+            <param name="progressHandler">
+             A <see cref="T:Recls.IProgressHandler">progress handler</see> instance. 
+            </param>
+            <param name="exceptionHandler">
+             An <see cref="T:Recls.IExceptionHandler">error handler</see> instance.
+            </param>
+            <returns>
+             An instance of a type exhibiting the
+             <see name="System.Collections.IEnumerable{T}">IEnumerable</see>&lt;<see cref="T:Recls.IEntry"/>&gt;
+             interface.
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.Search(System.String,System.String,Recls.SearchOptions,System.Int32,Recls.OnProgress,Recls.OnException)">
+            <summary>
+             Returns an enumerable collection of <see cref="T:Recls.IEntry"/>
+             instances representing all file-system entries
+             under <paramref name="directory"/>
+             matching the given <paramref name="patterns"/>,
+             according to the given <paramref name="options"/>,
+             using the given <paramref name="progressHandler"/>
+              and <paramref name="exceptionHandler"/>,
+             to the given maximum <paramref name="depth"/>,
+             searched in an implementation-defined manner.
+            </summary>
+            <param name="directory">
+             The directory in which to search; the local directory if
+             <b>null</b> or empty.
+            </param>
+            <param name="patterns">
+             One or more search patterns, separated by the <c>|</c>
+             character; searches for all if <b>null</b> or
+             <see cref="P:Recls.FileSearcher.WildcardsAll"/>.
+            </param>
+            <param name="options">
+             Combination of <see cref="T:Recls.SearchOptions"/> to moderate the search
+            </param>
+            <param name="depth">
+             The maximum search depth; 0 to perform a non-recursive search.
+            </param>
+            <param name="progressHandler">
+             A <see cref="T:Recls.OnProgress">progress handler</see> delegate.
+            </param>
+            <param name="exceptionHandler">
+             An <see cref="T:Recls.OnException">error handler</see> delegate.
+            </param>
+            <returns>
+             An instance of a type exhibiting the
+             <see name="System.Collections.IEnumerable{T}">IEnumerable</see>&lt;<see cref="T:Recls.IEntry"/>&gt;
+             interface.
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.Stat(System.String)">
+            <summary>
+             Returns an entry representing the given path.
+            </summary>
+            <param name="path">
+             The path of the entry to be evaluated.
+            </param>
+            <returns>
+             An instance of <see cref="T:Recls.IEntry"/> corresponding to the
+             file-system entry, or <b>null</b> if no such entry exists.
+            </returns>
+            <remarks>
+             If no file-system entry exists, <b>null</b> is returned. In all
+             other error cases, an exception is thrown.
+            </remarks>
+            <exception cref="T:System.ArgumentNullException">
+             If <paramref name="path"/> is <b>null</b>.
+            </exception>
+            <exception cref="T:System.Security.SecurityException">
+             If the caller does not have the required permission.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+             If <paramref name="path"/> is empty, contains only white
+             spaces, or contains invalid characters.
+            </exception>
+            <exception cref="T:System.UnauthorizedAccessException">
+             If access to the file is denied.
+            </exception>
+            <exception cref="T:System.IO.PathTooLongException">
+             If the specified path exceeds the system-defined maximum
+             length.
+            </exception>
+        </member>
+        <member name="M:Recls.FileSearcher.CalculateDirectorySize(System.String,System.Int32)">
+            <summary>
+             Calculates the size of the given <paramref name="directory"/> as
+             a sum of the sizes of all files within it, to the given
+             sub-directory <paramref name="depth"/>.
+            </summary>
+            <param name="directory">
+             The directory whose size will be calculated.
+            </param>
+            <param name="depth">
+             The maximum depth of the calculation search. To search all
+             sub-directories without depth limit, specify
+             <see cref="P:Recls.FileSearcher.UnrestrictedDepth">UnrestrictedDepth</see>.
+            </param>
+            <returns>
+             The size of all files in the given directory and in all
+             sub-directories (up to the given depth).
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.CalculateDirectorySize(System.String)">
+            <summary>
+             Calculates the size of the given <paramref name="directory"/>
+             as a sum of the sizes of all files within it and all its
+             sub-directories.
+            </summary>
+            <param name="directory">
+             The directory whose size will be calculated.
+            </param>
+            <returns>
+             The size of all files in the given directory and all its
+             sub-directories.
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.CalculateDirectorySize(Recls.IEntry,System.Int32)">
+            <summary>
+             Convenience alias for
+             <see cref="M:Recls.FileSearcher.CalculateDirectorySize(System.String,System.Int32)"/>
+             that takes an <see cref="T:Recls.IEntry">IEntry</see> reference
+             to a directory entry.
+            </summary>
+            <param name="directory">
+             The directory whose size will be calculated.
+            </param>
+            <param name="depth">
+             The maximum depth of the calculation search. To search all
+             sub-directories without depth limit, specify
+             <see cref="P:Recls.FileSearcher.UnrestrictedDepth">UnrestrictedDepth</see>.
+            </param>
+            <returns>
+             The size of all files in the given directory and in all
+             sub-directories (up to the given depth).
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.CalculateDirectorySize(Recls.IEntry)">
+            <summary>
+             Convenience alias for
+             <see cref="M:Recls.FileSearcher.CalculateDirectorySize(System.String)"/>
+             that takes an <see cref="T:Recls.IEntry">IEntry</see> reference
+             to a directory entry.
+            </summary>
+            <param name="directory">
+             The directory whose size will be calculated.
+            </param>
+            <returns>
+             The size of all files in the given directory and all its
+             sub-directories.
+            </returns>
+        </member>
+        <member name="P:Recls.FileSearcher.UnrestrictedDepth">
+            <summary>
+             A sentinel value that may be passed as the <c>depth</c>
+             parameter to request a search of unrestricted depth.
+            </summary>
+            <remarks>
+             <para>
+              The current implementation defines this as the largest
+              possible positive value of type <c>int</c>, on the
+              assumption that no file-system will ever be able to
+              provide paths with more than 2 billion directory parts.
+             </para>
+             <para>
+              Notwithstanding, clients should use this read-only property,
+              rather than specifying <c>int.MaxValue</c>, or any
+              other large positive value, because the algorithm used
+              to perform depth-limited search may change in a future
+              version.
+             </para>
+            </remarks>
+        </member>
+        <member name="P:Recls.FileSearcher.WildcardsAll">
+            <summary>
+             The wildcard pattern specifying "all files/directories" for the
+             given platform.
+            </summary>
+            <remarks>
+             On UNIX systems, this will be <c>"*"</c>; on Windows systems it
+             will be <c>"*.*"</c>.
+            </remarks>
+        </member>
+        <member name="T:Recls.FileSearcher.DepthFirst">
+            <summary>
+             Depth-first search operations.
+            </summary>
+        </member>
+        <member name="M:Recls.FileSearcher.DepthFirst.Search(System.String,System.String)">
+            <summary>
+             Returns an enumerable collection of <see cref="T:Recls.IEntry"/>
+             instances representing all file-system entries
+             under <paramref name="directory"/>
+             matching the given <paramref name="patterns"/>,
+             searched in a depth-first manner.
+            </summary>
+            <param name="directory">
+             The directory in which to search; the local directory if
+             <b>null</b> or empty.
+            </param>
+            <param name="patterns">
+             One or more search patterns, separated by the <c>|</c>
+             character; searches for all if <b>null</b> or
+             <see cref="P:Recls.FileSearcher.WildcardsAll"/>.
+            </param>
+            <returns>
+             An instance of a type exhibiting the
+             <see name="System.Collections.IEnumerable{T}">IEnumerable</see>&lt;<see cref="T:Recls.IEntry"/>&gt;
+             interface.
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.DepthFirst.Search(System.String,System.String,Recls.SearchOptions)">
+            <summary>
+             Returns an enumerable collection of <see cref="T:Recls.IEntry"/>
+             instances representing all file-system entries
+             under <paramref name="directory"/>
+             matching the given <paramref name="patterns"/>,
+             according to the given <paramref name="options"/>,
+             searched in a depth-first manner.
+            </summary>
+            <param name="directory">
+             The directory in which to search; the local directory if
+             <b>null</b> or empty.
+            </param>
+            <param name="patterns">
+             One or more search patterns, separated by the <c>|</c>
+             character; searches for all if <b>null</b> or
+             <see cref="P:Recls.FileSearcher.WildcardsAll"/>.
+            </param>
+            <param name="options">
+             Combination of <see cref="T:Recls.SearchOptions"/> to moderate the
+             search.
+            </param>
+            <returns>
+             An instance of a type exhibiting the
+             <see name="System.Collections.IEnumerable{T}">IEnumerable</see>&lt;<see cref="T:Recls.IEntry"/>&gt;
+             interface.
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.DepthFirst.Search(System.String,System.String,Recls.SearchOptions,System.Int32)">
+            <summary>
+             Returns an enumerable collection of <see cref="T:Recls.IEntry"/>
+             instances representing all file-system entries
+             under <paramref name="directory"/>
+             matching the given <paramref name="patterns"/>,
+             according to the given <paramref name="options"/>,
+             to the given maximum <paramref name="depth"/>,
+             searched in a depth-first manner.
+            </summary>
+            <param name="directory">
+             The directory in which to search; the local directory if
+             <b>null</b> or empty.
+            </param>
+            <param name="patterns">
+             One or more search patterns, separated by the <c>|</c>
+             character; searches for all if <b>null</b> or
+             <see cref="P:Recls.FileSearcher.WildcardsAll"/>.
+            </param>
+            <param name="options">
+             Combination of <see cref="T:Recls.SearchOptions"/> to moderate the
+             search.
+            </param>
+            <param name="depth">
+             The maximum search depth; 0 to perform a non-recursive
+             search.
+            </param>
+            <returns>
+             An instance of a type exhibiting the
+             <see name="System.Collections.IEnumerable{T}">IEnumerable</see>&lt;<see cref="T:Recls.IEntry"/>&gt;
+             interface.
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.DepthFirst.Search(System.String,System.String,Recls.SearchOptions,System.Int32,Recls.IProgressHandler,Recls.IExceptionHandler)">
+            <summary>
+             Returns an enumerable collection of <see cref="T:Recls.IEntry"/>
+             instances representing all file-system entries
+             under <paramref name="directory"/>
+             matching the given <paramref name="patterns"/>,
+             according to the given <paramref name="options"/>,
+             using the given <paramref name="progressHandler"/>
+              and <paramref name="exceptionHandler"/>,
+             to the given maximum <paramref name="depth"/>,
+             searched in a depth-first manner.
+            </summary>
+            <param name="directory">
+             The directory in which to search; the local directory if
+             <b>null</b> or empty.
+            </param>
+            <param name="patterns">
+             One or more search patterns, separated by the <c>|</c>
+             character; searches for all if <b>null</b> or
+             <see cref="P:Recls.FileSearcher.WildcardsAll"/>.
+            </param>
+            <param name="options">
+             Combination of <see cref="T:Recls.SearchOptions"/> to moderate the search
+            </param>
+            <param name="depth">
+             The maximum search depth; 0 to perform a non-recursive search.
+            </param>
+            <param name="progressHandler">
+             A <see cref="T:Recls.IProgressHandler">progress handler</see> instance. 
+            </param>
+            <param name="exceptionHandler">
+             An <see cref="T:Recls.IExceptionHandler">error handler</see> instance.
+            </param>
+            <returns>
+             An instance of a type exhibiting the
+             <see name="System.Collections.IEnumerable{T}">IEnumerable</see>&lt;<see cref="T:Recls.IEntry"/>&gt;
+             interface.
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.DepthFirst.Search(System.String,System.String,Recls.SearchOptions,System.Int32,Recls.OnProgress,Recls.OnException)">
+            <summary>
+             Returns an enumerable collection of <see cref="T:Recls.IEntry"/>
+             instances representing all file-system entries
+             under <paramref name="directory"/>
+             matching the given <paramref name="patterns"/>,
+             according to the given <paramref name="options"/>,
+             using the given <paramref name="progressHandler"/>
+              and <paramref name="exceptionHandler"/>,
+             to the given maximum <paramref name="depth"/>,
+             searched in a depth-first manner.
+            </summary>
+            <param name="directory">
+             The directory in which to search; the local directory if
+             <b>null</b> or empty.
+            </param>
+            <param name="patterns">
+             One or more search patterns, separated by the <c>|</c>
+             character; searches for all if <b>null</b> or
+             <see cref="P:Recls.FileSearcher.WildcardsAll"/>.
+            </param>
+            <param name="options">
+             Combination of <see cref="T:Recls.SearchOptions"/> to moderate the search
+            </param>
+            <param name="depth">
+             The maximum search depth; 0 to perform a non-recursive search.
+            </param>
+            <param name="progressHandler">
+             A <see cref="T:Recls.OnProgress">progress handler</see> delegate.
+            </param>
+            <param name="exceptionHandler">
+             An <see cref="T:Recls.OnException">error handler</see> delegate.
+            </param>
+            <returns>
+             An instance of a type exhibiting the
+             <see name="System.Collections.IEnumerable{T}">IEnumerable</see>&lt;<see cref="T:Recls.IEntry"/>&gt;
+             interface.
+            </returns>
+        </member>
+        <member name="T:Recls.FileSearcher.BreadthFirst">
+            <summary>
+             Breadth-first search operations.
+            </summary>
+        </member>
+        <member name="M:Recls.FileSearcher.BreadthFirst.Search(System.String,System.String)">
+            <summary>
+             Returns an enumerable collection of <see cref="T:Recls.IEntry"/>
+             instances representing all file-system entries
+             under <paramref name="directory"/>
+             matching the given <paramref name="patterns"/>,
+             searched in a breadth-first manner.
+            </summary>
+            <param name="directory">
+             The directory in which to search; the local directory if
+             <b>null</b> or empty.
+            </param>
+            <param name="patterns">
+             One or more search patterns, separated by the <c>|</c>
+             character; searches for all if <b>null</b> or
+             <see cref="P:Recls.FileSearcher.WildcardsAll"/>.
+            </param>
+            <returns>
+             An instance of a type exhibiting the
+             <see name="System.Collections.IEnumerable{T}">IEnumerable</see>&lt;<see cref="T:Recls.IEntry"/>&gt;
+             interface.
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.BreadthFirst.Search(System.String,System.String,Recls.SearchOptions)">
+            <summary>
+             Returns an enumerable collection of <see cref="T:Recls.IEntry"/>
+             instances representing all file-system entries
+             under <paramref name="directory"/>
+             matching the given <paramref name="patterns"/>,
+             according to the given <paramref name="options"/>,
+             searched in a breadth-first manner.
+            </summary>
+            <param name="directory">
+             The directory in which to search; the local directory if
+             <b>null</b> or empty.
+            </param>
+            <param name="patterns">
+             One or more search patterns, separated by the <c>|</c>
+             character; searches for all if <b>null</b> or
+             <see cref="P:Recls.FileSearcher.WildcardsAll"/>.
+            </param>
+            <param name="options">
+             Combination of <see cref="T:Recls.SearchOptions"/> to moderate the search
+            </param>
+            <returns>
+             An instance of a type exhibiting the
+             <see name="System.Collections.IEnumerable{T}">IEnumerable</see>&lt;<see cref="T:Recls.IEntry"/>&gt;
+             interface.
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.BreadthFirst.Search(System.String,System.String,Recls.SearchOptions,System.Int32)">
+            <summary>
+             Returns an enumerable collection of <see cref="T:Recls.IEntry"/>
+             instances representing all file-system entries
+             under <paramref name="directory"/>
+             matching the given <paramref name="patterns"/>,
+             according to the given <paramref name="options"/>,
+             to the given maximum <paramref name="depth"/>,
+             searched in a breadth-first manner.
+            </summary>
+            <param name="directory">
+             The directory in which to search; the local directory if
+             <b>null</b> or empty.
+            </param>
+            <param name="patterns">
+             One or more search patterns, separated by the <c>|</c>
+             character; searches for all if <b>null</b> or
+             <see cref="P:Recls.FileSearcher.WildcardsAll"/>.
+            </param>
+            <param name="options">
+             Combination of <see cref="T:Recls.SearchOptions"/> to moderate the search
+            </param>
+            <param name="depth">
+             The maximum search depth; 0 to perform a non-recursive search.
+            </param>
+            <returns>
+             An instance of a type exhibiting the
+             <see name="System.Collections.IEnumerable{T}">IEnumerable</see>&lt;<see cref="T:Recls.IEntry"/>&gt;
+             interface.
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.BreadthFirst.Search(System.String,System.String,Recls.SearchOptions,System.Int32,Recls.IProgressHandler,Recls.IExceptionHandler)">
+            <summary>
+             Returns an enumerable collection of <see cref="T:Recls.IEntry"/>
+             instances representing all file-system entries
+             under <paramref name="directory"/>
+             matching the given <paramref name="patterns"/>,
+             according to the given <paramref name="options"/>,
+             using the given <paramref name="progressHandler"/>
+              and <paramref name="exceptionHandler"/>,
+             to the given maximum <paramref name="depth"/>,
+             searched in a breadth-first manner.
+            </summary>
+            <param name="directory">
+             The directory in which to search; the local directory if
+             <b>null</b> or empty.
+            </param>
+            <param name="patterns">
+             One or more search patterns, separated by the <c>|</c>
+             character; searches for all if <b>null</b> or
+             <see cref="P:Recls.FileSearcher.WildcardsAll"/>.
+            </param>
+            <param name="options">
+             Combination of <see cref="T:Recls.SearchOptions"/> to moderate the search
+            </param>
+            <param name="depth">
+             The maximum search depth; 0 to perform a non-recursive search.
+            </param>
+            <param name="progressHandler">
+             A <see cref="T:Recls.IProgressHandler">progress handler</see> instance. 
+            </param>
+            <param name="exceptionHandler">
+             An <see cref="T:Recls.IExceptionHandler">error handler</see> instance.
+            </param>
+            <returns>
+             An instance of a type exhibiting the
+             <see name="System.Collections.IEnumerable{T}">IEnumerable</see>&lt;<see cref="T:Recls.IEntry"/>&gt;
+             interface.
+            </returns>
+        </member>
+        <member name="M:Recls.FileSearcher.BreadthFirst.Search(System.String,System.String,Recls.SearchOptions,System.Int32,Recls.OnProgress,Recls.OnException)">
+            <summary>
+             Returns an enumerable collection of <see cref="T:Recls.IEntry"/>
+             instances representing all file-system entries
+             under <paramref name="directory"/>
+             matching the given <paramref name="patterns"/>,
+             according to the given <paramref name="options"/>,
+             using the given <paramref name="progressHandler"/>
+              and <paramref name="exceptionHandler"/>,
+             to the given maximum <paramref name="depth"/>,
+             searched in a breadth-first manner.
+            </summary>
+            <param name="directory">
+             The directory in which to search; the local directory if
+             <b>null</b> or empty.
+            </param>
+            <param name="patterns">
+             One or more search patterns, separated by the <c>|</c>
+             character; searches for all if <b>null</b> or
+             <see cref="P:Recls.FileSearcher.WildcardsAll"/>.
+            </param>
+            <param name="options">
+             Combination of <see cref="T:Recls.SearchOptions"/> to moderate the search
+            </param>
+            <param name="depth">
+             The maximum search depth; 0 to perform a non-recursive search.
+            </param>
+            <param name="progressHandler">
+             A <see cref="T:Recls.OnProgress">progress handler</see> delegate.
+            </param>
+            <param name="exceptionHandler">
+             An <see cref="T:Recls.OnException">error handler</see> delegate.
+            </param>
+            <returns>
+             An instance of a type exhibiting the
+             <see name="System.Collections.IEnumerable{T}">IEnumerable</see>&lt;<see cref="T:Recls.IEntry"/>&gt;
+             interface.
+            </returns>
+        </member>
+    </members>
+</doc>
