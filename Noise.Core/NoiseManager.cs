@@ -35,13 +35,14 @@ namespace Noise.Core {
 		}
 
 		public void Explore() {
-			var		folderExplorer = mContainer.Resolve<IFolderExplorer>();
-
+			var	folderExplorer = mContainer.Resolve<IFolderExplorer>();
 			folderExplorer.SynchronizeDatabaseFolders();
 
-			var		dataExplorer = mContainer.Resolve<IMetaDataExplorer>();
-
+			var	dataExplorer = mContainer.Resolve<IMetaDataExplorer>();
 			dataExplorer.BuildMetaData();
+
+			var statistics = new DatabaseStatistics( mDatabase );
+			statistics.GatherStatistics();
 		}
 
 		private void LoadConfiguration() {

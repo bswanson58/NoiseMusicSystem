@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using Eloquera.Client;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
 using Noise.Core.MetaData;
@@ -7,7 +6,7 @@ using Noise.Core.MetaData;
 namespace Noise.Core.DataProviders {
 	public class FileTagProvider {
 		private readonly IDatabaseManager	mDatabase;
-		private Mp3TagProvider				mMpsTagProvider;
+		private readonly Mp3TagProvider		mMpsTagProvider;
 
 		public FileTagProvider( IDatabaseManager database ) {
 			mDatabase = database;

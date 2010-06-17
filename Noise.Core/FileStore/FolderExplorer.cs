@@ -23,11 +23,6 @@ namespace Noise.Core.FileStore {
 					BuildFolder( rootFolder );
 				}
 			}
-
-//			var folders = from StorageFolder folder in mDatabase.Database where true select folder;
-//			var	count = folders.Select( folder => folder.Name ).Count();
-//			var files = from StorageFile file in mDatabase.Database where true select file;
-//			var fileCount = files.Select( file => file.Name ).Count();
 		}
 
 /*		private void BuildDatabaseFolders( RootFolder rootFolder ) {
