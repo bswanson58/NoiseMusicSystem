@@ -99,6 +99,7 @@
     <Compile Include="Database\DatabaseManager.cs" />
     <Compile Include="DataBuilders\IMetaDataExplorer.cs" />
     <Compile Include="DataBuilders\MetaDataExplorer.cs" />
+    <Compile Include="DataProviders\FileNameProvider.cs" />
     <Compile Include="FileStore\FileTypes.cs" />
     <Compile Include="FileStore\StorageFile.cs" />
     <Compile Include="FileStore\StorageFolder.cs" />
@@ -127,9 +128,7 @@
       <Name>Noise.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DataProviders\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

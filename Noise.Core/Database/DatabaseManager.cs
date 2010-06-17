@@ -2,6 +2,7 @@
 using CuttingEdge.Conditions;
 using Eloquera.Client;
 using Noise.Core.FileStore;
+using Noise.Core.MetaData;
 using Noise.Infrastructure;
 
 namespace Noise.Core.Database {
@@ -84,6 +85,9 @@ namespace Noise.Core.Database {
 			Database.RegisterType( typeof( RootFolder ));
 			Database.RegisterType( typeof( StorageFolder ));
 			Database.RegisterType( typeof( StorageFile ));
+			Database.RegisterType( typeof( MusicTrack ));
+			Database.RegisterType( typeof( Album ));
+			Database.RegisterType( typeof( Artist ));
 		}
 
 		private void LoadDatabaseDefaults() {

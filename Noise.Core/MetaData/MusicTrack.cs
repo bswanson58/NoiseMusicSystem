@@ -14,6 +14,9 @@ namespace Noise.Core.MetaData {
 
 		public MusicTrack() {
 			DateAdded = DateTime.Now.Date;
+
+			Encoding = eAudioEncoding.Unknown;
+			Genre = eMusicGenre.Unknown;
 		}
 	}
 }
