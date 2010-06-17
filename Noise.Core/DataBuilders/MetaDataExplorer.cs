@@ -18,6 +18,7 @@ namespace Noise.Core.DataBuilders {
 
 		public void BuildMetaData() {
 			var		fileNameProvider = new FileNameProvider( mDatabase );
+			var		tagProvider = new FileTagProvider( mDatabase );
 			var		fileEnum = from StorageFile file in mDatabase.Database where file.FileType == eFileType.Undetermined orderby file.ParentFolder select file;
 
 			foreach( var file in fileEnum ) {
@@ -29,6 +30,7 @@ namespace Noise.Core.DataBuilders {
 						var		track = new MusicTrack();
 
 						fileNameProvider.BuildMetaData( file, track  );
+						tagProvider.BuildMetaData( file, track );
 
 						mDatabase.Database.Store( track );
 						break;

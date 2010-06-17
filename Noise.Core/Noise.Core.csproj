@@ -94,12 +94,17 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="taglib-sharp">
+      <HintPath>..\lib\TagLibSharp\taglib-sharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database\DatabaseManager.cs" />
     <Compile Include="DataBuilders\IMetaDataExplorer.cs" />
     <Compile Include="DataBuilders\MetaDataExplorer.cs" />
     <Compile Include="DataProviders\FileNameProvider.cs" />
+    <Compile Include="DataProviders\FileTagProvider.cs" />
+    <Compile Include="DataProviders\Mp3TagProvider.cs" />
     <Compile Include="FileStore\FileTypes.cs" />
     <Compile Include="FileStore\StorageFile.cs" />
     <Compile Include="FileStore\StorageFolder.cs" />

@@ -2,6 +2,7 @@
 using System.IO;
 using CuttingEdge.Conditions;
 using Eloquera.Client;
+using Eloquera.Linq;
 using Noise.Core.Database;
 
 namespace Noise.Core.FileStore {
@@ -37,6 +38,17 @@ namespace Noise.Core.FileStore {
 			Condition.Ensures( retValue ).IsNotEmpty();
 
 			return( retValue );
+		}
+
+		public static string GetPath( DB database, StorageFile forFile ) {
+			var param = database.CreateParameters();
+
+			param["id"] = forFile.ParentFolder;
+
+			var folder = database.ExecuteScalar( "SELECT StorageFolder WHERE $ID = @id", param) as StorageFolder;
+			var path = GetPath( database, folder );
+
+			return( Path.Combine( path, forFile.Name ));
 		}
 	}
 }
