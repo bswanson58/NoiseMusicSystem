@@ -1,12 +1,13 @@
 ﻿using System;
 using CuttingEdge.Conditions;
 using Eloquera.Client;
-using Microsoft.Practices.Unity;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 
-namespace Noise.Core {
+namespace Noise.Core.Database {
 	public class DatabaseManager : IDatabaseManager {
+		public	const long					cNullOid = 0;
+
 		private readonly ILog				mLog;
 		private string						mDatabaseLocation;
 		private string						mDatabaseName;

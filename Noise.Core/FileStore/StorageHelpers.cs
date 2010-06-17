@@ -2,11 +2,10 @@
 using System.IO;
 using CuttingEdge.Conditions;
 using Eloquera.Client;
+using Noise.Core.Database;
 
 namespace Noise.Core.FileStore {
 	public static class StorageHelpers {
-		public	const long	cNullOid = 0;
-
 		public static string GetPath( DB database, StorageFolder forFolder ) {
 			var retValue = "";
 			var pathParts = new Stack<string>();
@@ -17,7 +16,7 @@ namespace Noise.Core.FileStore {
 
 			pathParts.Push( folder.Name );
 
-			while( folder.ParentFolder != cNullOid ) {
+			while( folder.ParentFolder != DatabaseManager.cNullOid ) {
 				var param = database.CreateParameters();
 
 				param["id"] = folder.ParentFolder;

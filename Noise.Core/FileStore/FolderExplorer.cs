@@ -2,6 +2,7 @@
 using System.Linq;
 using Eloquera.Linq;
 using Microsoft.Practices.Unity;
+using Noise.Core.Database;
 using Recls;
 
 namespace Noise.Core.FileStore {
@@ -23,10 +24,10 @@ namespace Noise.Core.FileStore {
 				}
 			}
 
-			var folders = from StorageFolder folder in mDatabase.Database where true select folder;
-			var	count = folders.Select( folder => folder.Name ).Count();
-			var files = from StorageFile file in mDatabase.Database where true select file;
-			var fileCount = files.Select( file => file.Name ).Count();
+//			var folders = from StorageFolder folder in mDatabase.Database where true select folder;
+//			var	count = folders.Select( folder => folder.Name ).Count();
+//			var files = from StorageFile file in mDatabase.Database where true select file;
+//			var fileCount = files.Select( file => file.Name ).Count();
 		}
 
 /*		private void BuildDatabaseFolders( RootFolder rootFolder ) {
@@ -81,7 +82,7 @@ namespace Noise.Core.FileStore {
 				var fileName = file.File;
 
 				if(!dbList.Exists( dbFile => dbFile.Name == fileName )) {
-					mDatabase.Database.Store( new StorageFile( file.File, parentId ));
+					mDatabase.Database.Store( new StorageFile( file.File, parentId, file.Size, file.ModificationTime ));
 				}
 			}
 		}

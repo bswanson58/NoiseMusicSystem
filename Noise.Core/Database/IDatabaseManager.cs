@@ -1,4 +1,4 @@
-﻿namespace Noise.Core {
+﻿namespace Noise.Core.Database {
 	public interface IDatabaseManager {
 		Eloquera.Client.DB	Database { get; }
 

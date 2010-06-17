@@ -1,4 +1,6 @@
 ﻿using Microsoft.Practices.Unity;
+using Noise.Core.Database;
+using Noise.Core.DataBuilders;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 
@@ -33,9 +35,13 @@ namespace Noise.Core {
 		}
 
 		public void Explore() {
-			var		explorer = mContainer.Resolve<IFolderExplorer>();
+			var		folderExplorer = mContainer.Resolve<IFolderExplorer>();
 
-			explorer.SynchronizeDatabaseFolders();
+			folderExplorer.SynchronizeDatabaseFolders();
+
+			var		dataExplorer = mContainer.Resolve<IMetaDataExplorer>();
+
+			dataExplorer.BuildMetaData();
 		}
 
 		private void LoadConfiguration() {
