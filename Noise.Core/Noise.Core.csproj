@@ -96,25 +96,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DatabaseManager.cs" />
+    <Compile Include="Database\DatabaseManager.cs" />
     <Compile Include="FileStore\StorageFile.cs" />
     <Compile Include="FileStore\StorageFolder.cs" />
     <Compile Include="FileStore\FolderExplorer.cs" />
     <Compile Include="FileStore\IFolderExplorer.cs" />
     <Compile Include="FileStore\RootFolder.cs" />
     <Compile Include="FileStore\StorageHelpers.cs" />
-    <Compile Include="IDatabaseManager.cs" />
+    <Compile Include="Database\IDatabaseManager.cs" />
     <Compile Include="NoiseCoreModule.cs" />
     <Compile Include="NoiseManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Eloquera.config">
+    <None Include="Database\Eloquera.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +118,10 @@
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataProviders\" />
+    <Folder Include="MetaData\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
