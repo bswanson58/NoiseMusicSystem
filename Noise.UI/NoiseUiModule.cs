@@ -23,6 +23,13 @@ namespace Noise.UI {
 
 			shellRegion.Add( shellView );
 			shellRegion.Activate( shellView );
+
+			var explorerRegion = mRegionManager.Regions[RegionNames.LibraryExplorerRegion];
+			var explorerView = new LibraryExplorerView();
+
+			explorerView.DataContext = new LibraryExplorerViewModel();
+			explorerRegion.Add( explorerView );
+			explorerRegion.Activate( explorerView );
 		}
 	}
 }
