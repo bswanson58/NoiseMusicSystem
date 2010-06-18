@@ -15,9 +15,16 @@ namespace Noise.Desktop {
 		protected override IModuleCatalog GetModuleCatalog() {
 			var catalog = new ModuleCatalog();
 
-			catalog.AddModule( typeof( Core.NoiseCoreModule ));
+			catalog.AddModule( typeof( Core.NoiseCoreModule ))
+				.AddModule( typeof( UI.NoiseUiModule ), "NoiseCoreModule" );
 
 			return( catalog );
+		}
+
+		protected override void ConfigureContainer() {
+			Container.RegisterType<Shell, Shell>();
+
+			base.ConfigureContainer();
 		}
 	}
 }

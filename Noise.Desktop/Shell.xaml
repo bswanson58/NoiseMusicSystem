@@ -1,8 +1,10 @@
 ﻿<Window x:Class="Noise.Desktop.Shell"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
+        xmlns:cal="http://www.codeplex.com/CompositeWPF"
+        xmlns:Infrastructure="clr-namespace:Noise.Infrastructure;assembly=Noise.Infrastructure"
+        Title="Noise" Height="1000" Width="1600">
+    <ContentControl cal:RegionManager.RegionName="{x:Static Infrastructure:RegionNames.ShellRegion}">
         
-    </Grid>
+    </ContentControl>
 </Window>
