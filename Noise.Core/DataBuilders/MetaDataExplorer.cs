@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 using Eloquera.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
@@ -37,6 +39,8 @@ namespace Noise.Core.DataBuilders {
 				}
 			}
 
+			UpdateCounts();
+
 			var	lastFmProvider = new LastFmProvider( mDatabase );
 			lastFmProvider.BuildMetaData();
 		}
@@ -52,6 +56,26 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			return( retValue );
+		}
+
+		private void UpdateCounts() {
+			var artists = from DbArtist artist in mDatabase.Database select artist;
+
+			foreach( var artist in artists ) {
+				var artistId = mDatabase.Database.GetUid( artist );
+				var albums = from DbAlbum album in mDatabase.Database where album.Artist == artistId select album;
+
+				foreach( var album in albums ) {
+					var albumId = mDatabase.Database.GetUid( album );
+					var tracks = from DbTrack track in mDatabase.Database where track.Album == albumId select track;
+
+					album.TrackCount = (Int16)tracks.Count();
+					mDatabase.Database.Store( album );
+				}
+
+				artist.AlbumCount = (Int16)albums.Count();
+				mDatabase.Database.Store( artist );
+			}
 		}
 	}
 }

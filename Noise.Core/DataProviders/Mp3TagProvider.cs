@@ -17,24 +17,24 @@ namespace Noise.Core.DataProviders {
 			try {
 				var	tags = File.Create( StorageHelpers.GetPath( mDatabase.Database, storageFile ));
 				var	parm = mDatabase.Database.CreateParameters();
+				var artistName = "";
 
-				parm["artistName"] = tags.Tag.FirstAlbumArtist;
+				if(!String.IsNullOrEmpty( tags.Tag.FirstAlbumArtist )) {
+					artistName = tags.Tag.FirstAlbumArtist;
+				}
+				else {
+					if(!String.IsNullOrEmpty( tags.Tag.FirstPerformer )) {
+						artistName = tags.Tag.FirstPerformer;
+					}
+				}
+				Condition.Requires( artistName ).IsNotNullOrEmpty( "Artist name must not be empty." );
+
+				parm["artistName"] = artistName;
 				parm["albumName"] = tags.Tag.Album;
 
 				var	artist = mDatabase.Database.ExecuteScalar( "SELECT DbArtist WHERE Name = @artistName", parm ) as DbArtist;
 				if( artist == null ) {
-					artist = new DbArtist();
-
-					if(!String.IsNullOrEmpty( tags.Tag.FirstAlbumArtist )) {
-						artist.Name = tags.Tag.FirstAlbumArtist;
-					}
-					else {
-						if(!String.IsNullOrEmpty( tags.Tag.FirstPerformer )) {
-							artist.Name = tags.Tag.FirstPerformer;
-						}
-					}
-
-					Condition.Requires( artist.Name ).IsNotNullOrEmpty( "Artist name must not be empty." );
+					artist = new DbArtist { Name = artistName };
 
 					mDatabase.Database.Store( artist );
 				}
