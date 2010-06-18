@@ -27,7 +27,7 @@ namespace Noise.Core.DataBuilders {
 
 				switch( file.FileType ) {
 					case eFileType.Music:
-						var		track = new MusicTrack();
+						var		track = new DbTrack();
 
 						fileNameProvider.BuildMetaData( file, track  );
 						tagProvider.BuildMetaData( file, track );
@@ -36,6 +36,9 @@ namespace Noise.Core.DataBuilders {
 						break;
 				}
 			}
+
+			var	lastFmProvider = new LastFmProvider( mDatabase );
+			lastFmProvider.BuildMetaData();
 		}
 
 		private static eFileType DetermineFileType( StorageFile file ) {

@@ -24,13 +24,13 @@ namespace Noise.Core.Database {
 			var files = from StorageFile file in mDatabase.Database select file;
 			FileCount = files.Select( file => file.Name ).Count();
 
-			var artists = from Artist artist in mDatabase.Database select artist;
+			var artists = from DbArtist artist in mDatabase.Database select artist;
 			ArtistCount = artists.Select( artist => artist.Name ).Count();
 
-			var albums = from Album album in mDatabase.Database select album;
+			var albums = from DbAlbum album in mDatabase.Database select album;
 			AlbumCount = albums.Select( album => album.Name ).Count();
 
-			var tracks = from MusicTrack track in mDatabase.Database select track;
+			var tracks = from DbTrack track in mDatabase.Database select track;
 			TrackCount = tracks.Select( track => track.Name ).Count();
 		}
 	}

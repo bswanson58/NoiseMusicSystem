@@ -13,7 +13,7 @@ namespace Noise.Core.DataProviders {
 			mMpsTagProvider = new Mp3TagProvider( mDatabase );
 		}
 
-		public void BuildMetaData( StorageFile storageFile, MusicTrack track ) {
+		public void BuildMetaData( StorageFile storageFile, DbTrack track ) {
 			track.Encoding = DetermineAudioEncoding( storageFile );
 
 			switch( track.Encoding ) {

@@ -105,6 +105,7 @@
     <Compile Include="DataBuilders\MetaDataExplorer.cs" />
     <Compile Include="DataProviders\FileNameProvider.cs" />
     <Compile Include="DataProviders\FileTagProvider.cs" />
+    <Compile Include="DataProviders\LastFmProvider.cs" />
     <Compile Include="DataProviders\Mp3TagProvider.cs" />
     <Compile Include="FileStore\FileTypes.cs" />
     <Compile Include="FileStore\StorageFile.cs" />
@@ -114,11 +115,11 @@
     <Compile Include="FileStore\RootFolder.cs" />
     <Compile Include="FileStore\StorageHelpers.cs" />
     <Compile Include="Database\IDatabaseManager.cs" />
-    <Compile Include="MetaData\Album.cs" />
-    <Compile Include="MetaData\Artist.cs" />
+    <Compile Include="MetaData\DbAlbum.cs" />
+    <Compile Include="MetaData\DbArtist.cs" />
     <Compile Include="MetaData\AudioEncoding.cs" />
     <Compile Include="MetaData\MusicGenre.cs" />
-    <Compile Include="MetaData\MusicTrack.cs" />
+    <Compile Include="MetaData\DbTrack.cs" />
     <Compile Include="NoiseCoreModule.cs" />
     <Compile Include="NoiseManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -129,6 +130,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LastFmSharp\LastFmSharp.csproj">
+      <Project>{B57A7572-5F5C-4166-AE0B-9814B550E9B2}</Project>
+      <Name>LastFmSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>

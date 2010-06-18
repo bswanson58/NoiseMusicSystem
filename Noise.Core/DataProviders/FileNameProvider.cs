@@ -19,7 +19,7 @@ namespace Noise.Core.DataProviders {
 			mFolderId = DatabaseManager.cNullOid;
 		}
 
-		public void BuildMetaData( StorageFile storageFile, MusicTrack track ) {
+		public void BuildMetaData( StorageFile storageFile, DbTrack track ) {
 			if( storageFile.ParentFolder != mFolderId ) {
 				BuildFolderFiles( storageFile.ParentFolder );
 			}

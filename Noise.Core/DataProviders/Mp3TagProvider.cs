@@ -12,7 +12,7 @@ namespace Noise.Core.DataProviders {
 			mDatabase = databaseManager;
 		}
 
-		public void BuildMetaData( StorageFile storageFile, MusicTrack track ) {
+		public void BuildMetaData( StorageFile storageFile, DbTrack track ) {
 			try {
 				var	tags = File.Create( StorageHelpers.GetPath( mDatabase.Database, storageFile ));
 				var	parm = mDatabase.Database.CreateParameters();
@@ -20,16 +20,16 @@ namespace Noise.Core.DataProviders {
 				parm["artistName"] = tags.Tag.FirstAlbumArtist;
 				parm["albumName"] = tags.Tag.Album;
 
-				var	artist = mDatabase.Database.ExecuteScalar( "SELECT Artist WHERE Name = @artistName", parm ) as Artist;
+				var	artist = mDatabase.Database.ExecuteScalar( "SELECT DbArtist WHERE Name = @artistName", parm ) as DbArtist;
 				if( artist == null ) {
-					artist = new Artist { Name = tags.Tag.FirstAlbumArtist };
+					artist = new DbArtist { Name = tags.Tag.FirstAlbumArtist };
 
 					mDatabase.Database.Store( artist );
 				}
 
-				var	album = mDatabase.Database.ExecuteScalar( "SELECT Album WHERE Name = @albumName", parm ) as Album;
+				var	album = mDatabase.Database.ExecuteScalar( "SELECT DbAlbum WHERE Name = @albumName", parm ) as DbAlbum;
 				if( album == null ) {
-					album = new Album { Name = tags.Tag.Album, Artist = mDatabase.Database.GetUid( artist ) };
+					album = new DbAlbum { Name = tags.Tag.Album, Artist = mDatabase.Database.GetUid( artist ) };
 
 					mDatabase.Database.Store( album );
 				}

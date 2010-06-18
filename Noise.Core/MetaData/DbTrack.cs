@@ -2,7 +2,7 @@
 using Noise.Core.Database;
 
 namespace Noise.Core.MetaData {
-	public class MusicTrack {
+	public class DbTrack {
 		public string			Name { get; set; }
 		public long				Album { get; set; }
 		public TimeSpan			Duration { get; set; }
@@ -16,7 +16,7 @@ namespace Noise.Core.MetaData {
 		public eAudioEncoding	Encoding { get; set; }
 		public eMusicGenre		Genre { get; set; }
 
-		public MusicTrack() {
+		public DbTrack() {
 			DateAdded = DateTime.Now.Date;
 
 			Album = DatabaseManager.cNullOid;
