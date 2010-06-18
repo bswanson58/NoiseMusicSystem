@@ -1,4 +1,5 @@
 ﻿using System;
+using CuttingEdge.Conditions;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
 using Noise.Core.MetaData;
@@ -22,7 +23,18 @@ namespace Noise.Core.DataProviders {
 
 				var	artist = mDatabase.Database.ExecuteScalar( "SELECT DbArtist WHERE Name = @artistName", parm ) as DbArtist;
 				if( artist == null ) {
-					artist = new DbArtist { Name = tags.Tag.FirstAlbumArtist };
+					artist = new DbArtist();
+
+					if(!String.IsNullOrEmpty( tags.Tag.FirstAlbumArtist )) {
+						artist.Name = tags.Tag.FirstAlbumArtist;
+					}
+					else {
+						if(!String.IsNullOrEmpty( tags.Tag.FirstPerformer )) {
+							artist.Name = tags.Tag.FirstPerformer;
+						}
+					}
+
+					Condition.Requires( artist.Name ).IsNotNullOrEmpty( "Artist name must not be empty." );
 
 					mDatabase.Database.Store( artist );
 				}
@@ -31,6 +43,7 @@ namespace Noise.Core.DataProviders {
 				if( album == null ) {
 					album = new DbAlbum { Name = tags.Tag.Album, Artist = mDatabase.Database.GetUid( artist ) };
 
+					Condition.Requires( album.Name ).IsNotNullOrEmpty( "Album name must not be empty." );
 					mDatabase.Database.Store( album );
 				}
 				track.Album = mDatabase.Database.GetUid( album );

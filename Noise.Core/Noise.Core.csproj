@@ -119,6 +119,8 @@
     <Compile Include="MetaData\DbArtist.cs" />
     <Compile Include="MetaData\AudioEncoding.cs" />
     <Compile Include="MetaData\DbBiography.cs" />
+    <Compile Include="MetaData\DbSimilarItems.cs" />
+    <Compile Include="MetaData\DbTopItems.cs" />
     <Compile Include="MetaData\ExpiringContent.cs" />
     <Compile Include="MetaData\MusicGenre.cs" />
     <Compile Include="MetaData\DbTrack.cs" />

@@ -89,6 +89,8 @@ namespace Noise.Core.Database {
 			Database.RegisterType( typeof( DbAlbum ));
 			Database.RegisterType( typeof( DbTrack ));
 			Database.RegisterType( typeof( DbBiography ));
+			Database.RegisterType( typeof( DbTopItems ));
+			Database.RegisterType( typeof( DbSimilarItems ));
 		}
 
 		private void LoadDatabaseDefaults() {

@@ -20,38 +20,80 @@ namespace Noise.Core.DataProviders {
 			try {
 				var session = new Session( cApiKey, cApiSecret );
 
-				UpdateArtistBios( session );
+				UpdateArtistInfo( session );
 			}
 			catch( Exception ex ) {
-				
+
 			}
 		}
 
-		private void UpdateArtistBios( Session session ) {
+		private void UpdateArtistInfo( Session session ) {
 			var artists = from DbArtist artist in mDatabase.Database select artist;
 			var queryCount = 0;
 
 			foreach( var artist in artists ) {
 				try {
 					var parm = mDatabase.Database.CreateParameters();
+					var artistId = mDatabase.Database.GetUid( artist );
+					parm["artist"] = artistId;
 
-					parm["artist"] = mDatabase.Database.GetUid( artist );
 					var bio = mDatabase.Database.ExecuteScalar( "SELECT DbBiography WHERE Artist = @artist", parm ) as DbBiography;
+					var similarArtists = mDatabase.Database.ExecuteScalar( "SELECT DbSimilarItems WHERE AssociatedItem = @artist", parm ) as DbSimilarItems;
+					var topAlbums = mDatabase.Database.ExecuteScalar( "SELECT DbTopItems WHERE AssociatedItem = @artist", parm ) as DbTopItems;
 
-					if( bio == null ) {
+					if(( bio == null ) ||
+					   ( similarArtists == null ) ||
+					   ( topAlbums == null )) {
 						var	artistSearch = Artist.Search( artist.Name, session );
 						var	artistMatch = artistSearch.GetFirstMatch();
 
 						if( artistMatch != null ) {
-							bio = new DbBiography( mDatabase.Database.GetUid( artist ));
+							var	tags = artistMatch.GetTopTags( 3 );
+							if( tags.GetLength( 0 ) > 0 ) {
+								artist.Genre = tags[0].Item.Name;
+								mDatabase.Database.Store( artist );
+							}
 
-							bio.Biography = artistMatch.Bio.getContent();
-							bio.PublishedDate = artistMatch.Bio.GetPublishedDate();
-							bio.ExpireDate = DateTime.Now.Date + new TimeSpan( 30, 0, 0, 0 );
+							if( bio == null ) {
+								bio = new DbBiography( artistId );
 
-							mDatabase.Database.Store( bio );
+								bio.Biography = artistMatch.Bio.getContent();
+								bio.PublishedDate = artistMatch.Bio.GetPublishedDate();
+								bio.ExpireDate = DateTime.Now.Date + new TimeSpan( 30, 0, 0, 0 );
 
-							queryCount++;
+								mDatabase.Database.Store( bio );
+
+								queryCount++;
+							}
+
+							if( similarArtists == null ) {
+								var	sim = artistMatch.GetSimilar( 5 );
+								similarArtists = new DbSimilarItems( artistId );
+
+								similarArtists.SimilarItems = new string[sim.GetLength( 0 )];
+								for( int index = 0; index < sim.GetLength( 0 ); index++ ) {
+									similarArtists.SimilarItems[index] = sim[index].Name;
+								}
+
+								mDatabase.Database.Store( similarArtists );
+
+								queryCount++;
+							}
+
+							if( topAlbums == null ) {
+								var top = artistMatch.GetTopAlbums();
+								topAlbums = new DbTopItems( artistId );
+
+								topAlbums.TopItems = new string[top.GetLength( 0 ) > 5 ? 5 : top.GetLength( 0 )];
+								for( int index = 0; index < topAlbums.TopItems.GetLength( 0 ); index++ ) {
+									topAlbums.TopItems[index] = top[index].Item.Name;
+								}
+
+								mDatabase.Database.Store( topAlbums );
+
+								queryCount++;
+							}
+
 							if( queryCount > cMaximumQueries ) {
 								break;
 							}
@@ -59,7 +101,7 @@ namespace Noise.Core.DataProviders {
 					}
 				}
 				catch( Exception ex ) {
-					
+
 				}
 			}
 		}
