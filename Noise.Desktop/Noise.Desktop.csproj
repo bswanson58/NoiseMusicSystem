@@ -151,6 +151,10 @@
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Noise.UI\Noise.UI.csproj">
+      <Project>{D9F288A7-A0EF-4237-A9D6-BA9CCE9C9C09}</Project>
+      <Name>Noise.UI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
