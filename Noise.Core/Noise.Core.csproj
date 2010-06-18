@@ -118,6 +118,8 @@
     <Compile Include="MetaData\DbAlbum.cs" />
     <Compile Include="MetaData\DbArtist.cs" />
     <Compile Include="MetaData\AudioEncoding.cs" />
+    <Compile Include="MetaData\DbBiography.cs" />
+    <Compile Include="MetaData\ExpiringContent.cs" />
     <Compile Include="MetaData\MusicGenre.cs" />
     <Compile Include="MetaData\DbTrack.cs" />
     <Compile Include="NoiseCoreModule.cs" />
