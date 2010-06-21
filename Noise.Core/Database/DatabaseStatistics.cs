@@ -1,6 +1,5 @@
 ﻿using System.Linq;
-using Noise.Core.FileStore;
-using Noise.Core.MetaData;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.Database {
 	public class DatabaseStatistics {

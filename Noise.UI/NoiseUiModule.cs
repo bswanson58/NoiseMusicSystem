@@ -19,7 +19,7 @@ namespace Noise.UI {
 			var shellRegion = mRegionManager.Regions[RegionNames.ShellRegion];
 			var shellView = new ShellView();
 
-			shellView.DataContext = new ShellViewModel();
+			shellView.DataContext = new ShellViewModel( mContainer );
 
 			shellRegion.Add( shellView );
 			shellRegion.Activate( shellView );

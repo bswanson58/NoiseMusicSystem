@@ -1,4 +1,4 @@
-﻿namespace Noise.Core.FileStore {
+﻿namespace Noise.Infrastructure.Dto {
 	public class StorageFolder {
 		public string	Name { get; set; }
 		public long		ParentFolder { get; set; }

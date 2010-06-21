@@ -2,7 +2,7 @@
 using CuttingEdge.Conditions;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
-using Noise.Core.MetaData;
+using Noise.Infrastructure.Dto;
 using TagLib;
 
 namespace Noise.Core.DataProviders {

@@ -2,8 +2,8 @@
 using System.IO;
 using CuttingEdge.Conditions;
 using Eloquera.Client;
-using Eloquera.Linq;
-using Noise.Core.Database;
+using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.FileStore {
 	public static class StorageHelpers {
@@ -17,7 +17,7 @@ namespace Noise.Core.FileStore {
 
 			pathParts.Push( folder.Name );
 
-			while( folder.ParentFolder != DatabaseManager.cNullOid ) {
+			while( folder.ParentFolder != Constants.cDatabaseNullOid ) {
 				var param = database.CreateParameters();
 
 				param["id"] = folder.ParentFolder;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Noise.Core.MetaData {
+namespace Noise.Infrastructure.Dto {
 	public class ExpiringContent {
 		public	DateTime	HarvestDate { get; private set; }
 		public	DateTime	ExpireDate	{ get; set; }

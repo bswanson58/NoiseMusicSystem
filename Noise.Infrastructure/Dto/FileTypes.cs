@@ -1,4 +1,4 @@
-﻿namespace Noise.Core.FileStore {
+﻿namespace Noise.Infrastructure.Dto {
 	public enum eFileType {
 		Music,
 		Picture,

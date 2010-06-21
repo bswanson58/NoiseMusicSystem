@@ -2,13 +2,11 @@
 using CuttingEdge.Conditions;
 using Eloquera.Client;
 using Noise.Core.FileStore;
-using Noise.Core.MetaData;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.Database {
 	public class DatabaseManager : IDatabaseManager {
-		public	const long					cNullOid = 0;
-
 		private readonly ILog				mLog;
 		private string						mDatabaseLocation;
 		private string						mDatabaseName;

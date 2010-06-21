@@ -1,4 +1,4 @@
-﻿namespace Noise.Core.MetaData {
+﻿namespace Noise.Infrastructure.Dto {
 	public enum eMusicGenre {
 		Pop,
 		Rock,

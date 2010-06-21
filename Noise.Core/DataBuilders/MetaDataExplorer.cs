@@ -1,12 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Eloquera.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataProviders;
-using Noise.Core.FileStore;
-using Noise.Core.MetaData;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.DataBuilders {
 	public class MetaDataExplorer : IMetaDataExplorer {

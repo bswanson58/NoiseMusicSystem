@@ -1,7 +1,6 @@
 ﻿using System;
-using Noise.Core.Database;
 
-namespace Noise.Core.FileStore {
+namespace Noise.Infrastructure.Dto {
 	public class StorageFile {
 		public string		Name { get; private set; }
 		public long			ParentFolder { get; private set; }
@@ -17,7 +16,7 @@ namespace Noise.Core.FileStore {
 			FileModifiedDate = modifiedDate;
 
 			FileType = eFileType.Undetermined;
-			MetaDataPointer = DatabaseManager.cNullOid;
+			MetaDataPointer = Constants.cDatabaseNullOid;
 		}
 	}
 }

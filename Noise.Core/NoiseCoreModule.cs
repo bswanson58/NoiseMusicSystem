@@ -15,6 +15,7 @@ namespace Noise.Core {
 
 		public void Initialize() {
 			mContainer.RegisterType<IDatabaseManager, DatabaseManager>();
+			mContainer.RegisterType<IDataProvider, DataProvider>();
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>();
 			mContainer.RegisterType<IMetaDataExplorer, MetaDataExplorer>();
 			mContainer.RegisterType<INoiseManager, NoiseManager>();

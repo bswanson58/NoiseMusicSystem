@@ -1,7 +1,9 @@
 ﻿namespace Noise.Infrastructure {
 	public interface INoiseManager {
-		bool	Initialize();
+		bool			Initialize();
 
-		void	Explore();
+		IDataProvider	DataProvider { get; }
+
+		void			Explore();
 	}
 }

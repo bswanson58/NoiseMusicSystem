@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Noise.Core.MetaData {
+namespace Noise.Infrastructure.Dto {
 	public class DbBiography : ExpiringContent {
 		public	long		Artist { get; private set; }
 		public	DateTime	PublishedDate { get; set; }

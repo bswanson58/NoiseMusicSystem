@@ -1,7 +1,6 @@
 ﻿using System;
-using Noise.Core.FileStore;
 
-namespace Noise.Core.MetaData {
+namespace Noise.Infrastructure.Dto {
 	public class DbPlayHistory {
 		public	DateTime	PlayedOn { get; private set; }
 		public	StorageFile	Track { get; private set; }

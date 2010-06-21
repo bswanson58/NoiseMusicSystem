@@ -3,6 +3,7 @@ using System.Linq;
 using Eloquera.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
+using Noise.Infrastructure.Dto;
 using Recls;
 
 namespace Noise.Core.FileStore {

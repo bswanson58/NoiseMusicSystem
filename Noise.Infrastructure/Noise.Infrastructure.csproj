@@ -70,9 +70,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
+    <Compile Include="IDataProvider.cs" />
     <Compile Include="ILog.cs" />
     <Compile Include="INoiseManager.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="Dto\AudioEncoding.cs" />
+    <Compile Include="Dto\DbAlbum.cs" />
+    <Compile Include="Dto\DbArtist.cs" />
+    <Compile Include="Dto\DbBiography.cs" />
+    <Compile Include="Dto\DbPlayHistory.cs" />
+    <Compile Include="Dto\DbSimilarItems.cs" />
+    <Compile Include="Dto\DbTopItems.cs" />
+    <Compile Include="Dto\DbTrack.cs" />
+    <Compile Include="Dto\ExpiringContent.cs" />
+    <Compile Include="Dto\FileTypes.cs" />
+    <Compile Include="Dto\MusicGenre.cs" />
+    <Compile Include="Dto\StorageFile.cs" />
+    <Compile Include="Dto\StorageFolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegionNames.cs" />
   </ItemGroup>

@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using Eloquera.Linq;
 using Noise.Core.Database;
-using Noise.Core.FileStore;
-using Noise.Core.MetaData;
+using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.DataProviders {
 	public class FileNameProvider {
@@ -16,7 +16,7 @@ namespace Noise.Core.DataProviders {
 		public FileNameProvider( IDatabaseManager databaseManager ) {
 			mDatabase = databaseManager;
 
-			mFolderId = DatabaseManager.cNullOid;
+			mFolderId = Constants.cDatabaseNullOid;
 		}
 
 		public void BuildMetaData( StorageFile storageFile, DbTrack track ) {

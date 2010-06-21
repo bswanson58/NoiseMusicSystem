@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Noise.Core.MetaData {
+namespace Noise.Infrastructure.Dto {
 	public class DbArtist {
 		public string			Name { get; set; }
 		public string			Genre { get; set; }

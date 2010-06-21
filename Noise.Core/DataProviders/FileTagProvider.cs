@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using Noise.Core.Database;
-using Noise.Core.FileStore;
-using Noise.Core.MetaData;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.DataProviders {
 	public class FileTagProvider {

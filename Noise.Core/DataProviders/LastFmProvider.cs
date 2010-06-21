@@ -2,7 +2,7 @@
 using System.Linq;
 using Lastfm.Services;
 using Noise.Core.Database;
-using Noise.Core.MetaData;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.DataProviders {
 	public class LastFmProvider {
