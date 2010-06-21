@@ -6,22 +6,51 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Control.Resources>
-        <HierarchicalDataTemplate x:Key="TreeDataTemplate">
+        <DataTemplate x:Key="AlbumTemplate">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="300"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <TextBlock Grid.Column="0" Text="{Binding Path=Name}"/>
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <TextBlock Text="Albums: "/>
-                    <TextBlock Text="{Binding Path=AlbumCount}"/>
+                    <TextBlock Text="Tracks: "/>
+                    <TextBlock Text="{Binding Path=TrackCount}"/>
                 </StackPanel>
-                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <HierarchicalDataTemplate x:Name="ArtistTreeTemplate" x:Key="ArtistTreeTemplate" ItemsSource="{Binding Path=Children}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="{Binding Path=Parent.Name}"/>
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <TextBlock Text="Albums: "/>
+                    <TextBlock Text="{Binding Path=Parent.AlbumCount}"/>
+                </StackPanel>
+            </Grid>
         </HierarchicalDataTemplate>
     </Control.Resources>
 
-    <TreeView x:Name="TreeView" ItemsSource="{Binding Path=TreeData}" ItemTemplate="{StaticResource TreeDataTemplate}"/>
+    <TreeView x:Name="TreeView" ItemsSource="{Binding Path=TreeData}">
+        <TreeView.ItemContainerStyle>
+            <Style TargetType="{x:Type TreeViewItem}">
+                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                <Setter Property="FontWeight" Value="Normal" />
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="FontWeight" Value="Bold" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </TreeView.ItemContainerStyle>
+    </TreeView>
 </UserControl>
