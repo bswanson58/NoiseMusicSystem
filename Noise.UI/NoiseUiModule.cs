@@ -17,17 +17,14 @@ namespace Noise.UI {
 
 		public void Initialize() {
 			var shellRegion = mRegionManager.Regions[RegionNames.ShellRegion];
-			var shellView = new ShellView();
-
-			shellView.DataContext = new ShellViewModel( mContainer );
+			var shellView = new ShellView { DataContext = new ShellViewModel( mContainer ) };
 
 			shellRegion.Add( shellView );
 			shellRegion.Activate( shellView );
 
 			var explorerRegion = mRegionManager.Regions[RegionNames.LibraryExplorerRegion];
-			var explorerView = new LibraryExplorerView();
+			var explorerView = new LibraryExplorerView { DataContext = new LibraryExplorerViewModel( mContainer ) };
 
-			explorerView.DataContext = new LibraryExplorerViewModel();
 			explorerRegion.Add( explorerView );
 			explorerRegion.Activate( explorerView );
 		}

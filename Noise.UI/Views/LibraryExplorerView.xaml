@@ -5,6 +5,23 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-    </Grid>
+    <Control.Resources>
+        <HierarchicalDataTemplate x:Key="TreeDataTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Grid.Column="0" Text="{Binding Path=Name}"/>
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <TextBlock Text="Albums: "/>
+                    <TextBlock Text="{Binding Path=AlbumCount}"/>
+                </StackPanel>
+                </Grid>
+        </HierarchicalDataTemplate>
+    </Control.Resources>
+
+    <TreeView x:Name="TreeView" ItemsSource="{Binding Path=TreeData}" ItemTemplate="{StaticResource TreeDataTemplate}"/>
 </UserControl>

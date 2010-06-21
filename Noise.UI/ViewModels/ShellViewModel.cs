@@ -9,9 +9,10 @@ namespace Noise.UI.ViewModels {
 		public ShellViewModel( IUnityContainer container ) {
 			mContainer = container;
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
+			mContainer.RegisterInstance<INoiseManager>( mNoiseManager );
 			
 			if( mNoiseManager.Initialize()) {
-				mNoiseManager.Explore();
+//				mNoiseManager.Explore();
 			}
 		}
 	}
