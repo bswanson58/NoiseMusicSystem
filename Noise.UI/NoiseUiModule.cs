@@ -20,13 +20,16 @@ namespace Noise.UI {
 			var shellView = new ShellView { DataContext = new ShellViewModel( mContainer ) };
 
 			shellRegion.Add( shellView );
-			shellRegion.Activate( shellView );
 
 			var explorerRegion = mRegionManager.Regions[RegionNames.LibraryExplorerRegion];
 			var explorerView = new LibraryExplorerView { DataContext = new LibraryExplorerViewModel( mContainer ) };
 
 			explorerRegion.Add( explorerView );
-			explorerRegion.Activate( explorerView );
+
+			var tracklistRegion = mRegionManager.Regions[RegionNames.TrackListRegion];
+			var trackListView = new TrackListView { DataContext = new TrackListViewModel( mContainer ) };
+
+			tracklistRegion.Add( trackListView );
 		}
 	}
 }

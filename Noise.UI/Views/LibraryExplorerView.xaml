@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
+             xmlns:Dto="clr-namespace:Noise.Infrastructure.Dto;assembly=Noise.Infrastructure" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Control.Resources>
-        <DataTemplate x:Key="AlbumTemplate">
+        <DataTemplate x:Key="AlbumTemplate" DataType="{x:Type Dto:DbAlbum}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="300"/>
@@ -22,7 +22,7 @@
             </Grid>
         </DataTemplate>
 
-        <HierarchicalDataTemplate x:Name="ArtistTreeTemplate" x:Key="ArtistTreeTemplate" ItemsSource="{Binding Path=Children}">
+        <HierarchicalDataTemplate x:Key="ArtistTreeTemplate" DataType="{x:Type Dto:DbArtist}" ItemsSource="{Binding Path=Children}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="300"/>

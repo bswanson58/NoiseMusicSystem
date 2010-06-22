@@ -7,7 +7,23 @@
              xmlns:cal="clr-namespace:Microsoft.Practices.Composite.Presentation.Regions;assembly=Microsoft.Practices.Composite.Presentation"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <ContentControl cal:RegionManager.RegionName="{x:Static Infrastructure:RegionNames.LibraryExplorerRegion}">
-        
-    </ContentControl>
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="100"/>
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="Explorer" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <ContentControl Grid.Column="0" Margin="0,0,7,0" cal:RegionManager.RegionName="{x:Static Infrastructure:RegionNames.LibraryExplorerRegion}"/>
+            <GridSplitter Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"/>
+            <ContentControl Grid.Column="1" cal:RegionManager.RegionName="{x:Static Infrastructure:RegionNames.TrackListRegion}"/>
+        </Grid>
+
+        <ContentControl Grid.Row="1" cal:RegionManager.RegionName="{x:Static Infrastructure:RegionNames.PlaybackRegion}"/>
+    </Grid>
 </UserControl>
