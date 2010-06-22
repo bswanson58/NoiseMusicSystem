@@ -97,6 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapters\ExplorerTreeNode.cs" />
+    <Compile Include="Adapters\TrackViewNode.cs" />
     <Compile Include="NoiseUiModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\LibraryExplorerViewModel.cs" />

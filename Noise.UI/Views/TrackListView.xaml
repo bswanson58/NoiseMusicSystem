@@ -6,13 +6,18 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <ListView x:Name="TrackList" ItemsSource="{Binding Path=TrackList}">
+        <ListView.ItemContainerStyle>
+            <Style TargetType="{x:Type ListViewItem}">
+                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+            </Style>
+        </ListView.ItemContainerStyle>
         <ListView.View>
             <GridView>
-                <GridViewColumn Header="#" DisplayMemberBinding="{Binding Path=TrackNumber}" />
-                <GridViewColumn Header="Track Name" DisplayMemberBinding="{Binding Path=Name}" />
-                <GridViewColumn Header="Duration" DisplayMemberBinding="{Binding Path=Duration}" />
-                <GridViewColumn Header="Published" DisplayMemberBinding="{Binding Path=PublishedYear}" />
-                <GridViewColumn Header="Added" DisplayMemberBinding="{Binding Path=DateAdded}" />
+                <GridViewColumn Header="#" DisplayMemberBinding="{Binding Path=Track.TrackNumber}" />
+                <GridViewColumn Header="Track Name" DisplayMemberBinding="{Binding Path=Track.Name}" />
+                <GridViewColumn Header="Duration" DisplayMemberBinding="{Binding Path=Track.Duration}" />
+                <GridViewColumn Header="Published" DisplayMemberBinding="{Binding Path=Track.PublishedYear}" />
+                <GridViewColumn Header="Added" DisplayMemberBinding="{Binding Path=Track.DateAdded}" />
             </GridView>
         </ListView.View>
     </ListView>
