@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
 
-namespace Noise.Infrastructure {
+namespace Noise.Infrastructure.Support {
 	/// <summary>
 	/// Implements the INotifyPropertyChanged interface and 
 	/// exposes a RaisePropertyChanged method for derived 

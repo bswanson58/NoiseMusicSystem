@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using Microsoft.Practices.Composite.Events;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Adapters {
 	class ExplorerTreeNode : BindableObject {

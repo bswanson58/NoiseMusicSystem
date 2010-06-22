@@ -5,7 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        <TextBlock Text="Track List"/>
-    </Grid>
+    <ListView x:Name="TrackList" ItemsSource="{Binding Path=TrackList}">
+        <ListView.View>
+            <GridView>
+                <GridViewColumn Header="#" DisplayMemberBinding="{Binding Path=TrackNumber}" />
+                <GridViewColumn Header="Track Name" DisplayMemberBinding="{Binding Path=Name}" />
+                <GridViewColumn Header="Duration" DisplayMemberBinding="{Binding Path=Duration}" />
+                <GridViewColumn Header="Published" DisplayMemberBinding="{Binding Path=PublishedYear}" />
+                <GridViewColumn Header="Added" DisplayMemberBinding="{Binding Path=DateAdded}" />
+            </GridView>
+        </ListView.View>
+    </ListView>
 </UserControl>
