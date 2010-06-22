@@ -23,7 +23,6 @@ namespace Noise.Core.DataBuilders {
 
 			foreach( var file in fileEnum ) {
 				file.FileType = DetermineFileType( file );
-				mDatabase.Database.Store( file );
 
 				switch( file.FileType ) {
 					case eFileType.Music:
@@ -32,7 +31,8 @@ namespace Noise.Core.DataBuilders {
 						fileNameProvider.BuildMetaData( file, track  );
 						tagProvider.BuildMetaData( file, track );
 
-						mDatabase.Database.Store( track );
+						file.MetaDataPointer = mDatabase.Database.Store( track );
+						mDatabase.Database.Store( file );
 						break;
 				}
 			}

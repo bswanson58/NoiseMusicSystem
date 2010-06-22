@@ -30,6 +30,11 @@ namespace Noise.UI {
 			var trackListView = new TrackListView { DataContext = new TrackListViewModel( mContainer ) };
 
 			tracklistRegion.Add( trackListView );
+
+			var playerRegion = mRegionManager.Regions[RegionNames.PlaybackRegion];
+			var playerView = new PlayerView { DataContext = new PlayerViewModel( mContainer ) };
+
+			playerRegion.Add( playerView );
 		}
 	}
 }

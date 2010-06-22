@@ -7,5 +7,7 @@ namespace Noise.Infrastructure.Interfaces {
 		IEnumerable<DbAlbum>	GetAlbumList( DbArtist forArtist );
 		IEnumerable<DbTrack>	GetTrackList( DbAlbum forAlbum );
 		IEnumerable<DbTrack>	GetTrackList( DbArtist forArtist );
+
+		StorageFile				GetPhysicalFile( DbTrack forTrack );
 	}
 }
