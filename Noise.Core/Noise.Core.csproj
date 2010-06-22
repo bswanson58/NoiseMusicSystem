@@ -64,6 +64,9 @@
     <Reference Include="Accessibility">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Bass.Net">
+      <HintPath>..\lib\BASS.Net\Bass.Net.dll</HintPath>
+    </Reference>
     <Reference Include="CuttingEdge.Conditions">
       <HintPath>..\lib\CuttingEdge.Conditions\CuttingEdge.Conditions.dll</HintPath>
     </Reference>
@@ -113,6 +116,7 @@
     <Compile Include="FileStore\RootFolder.cs" />
     <Compile Include="FileStore\StorageHelpers.cs" />
     <Compile Include="Database\IDatabaseManager.cs" />
+    <Compile Include="MediaPlayer\AudioPlayer.cs" />
     <Compile Include="NoiseCoreModule.cs" />
     <Compile Include="NoiseManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
