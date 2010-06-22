@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using NLog;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure {
 	[Export( typeof(ILog))]

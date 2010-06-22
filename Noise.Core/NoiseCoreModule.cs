@@ -3,7 +3,7 @@ using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
 using Noise.Core.FileStore;
-using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core {
 	public class NoiseCoreModule : IModule {

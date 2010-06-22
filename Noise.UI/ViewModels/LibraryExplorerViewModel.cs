@@ -1,20 +1,23 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
 
 namespace Noise.UI.ViewModels {
 	class LibraryExplorerViewModel {
 		private readonly IUnityContainer			mContainer;
+		private readonly IEventAggregator			mEventAggregator;
 		private	readonly INoiseManager				mNoiseManager;
 
-		private ObservableCollection<ExplorerTreeNode>	mTreeItems;
+		private readonly ObservableCollection<ExplorerTreeNode>	mTreeItems;
 
 		public LibraryExplorerViewModel( IUnityContainer container ) {
 			mContainer = container;
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
+			mEventAggregator = mContainer.Resolve<IEventAggregator>();
 
 			mTreeItems = new ObservableCollection<ExplorerTreeNode>();
 
@@ -22,15 +25,13 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void PopulateTreeData() {
-//			mTreeItems = new ObservableCollection<ExplorerTreeNode>((from artist in mNoiseManager.DataProvider.GetArtistList() orderby artist.Name select new ExplorerTreeNode( artist, emptyList )).ToList());
-
 			mTreeItems.Clear();
 
 			var artistList = from artist in mNoiseManager.DataProvider.GetArtistList() orderby artist.Name select artist;
 			foreach( DbArtist artist in artistList ) {
-				var albumList = from album in mNoiseManager.DataProvider.GetAlbumList( artist ) orderby album.Name select album;
-
-				mTreeItems.Add( new ExplorerTreeNode( artist, albumList ));
+				var parent = new ExplorerTreeNode( mEventAggregator, artist );
+				parent.SetChildren( from album in mNoiseManager.DataProvider.GetAlbumList( artist ) orderby album.Name select new ExplorerTreeNode( mEventAggregator, parent, album ));
+				mTreeItems.Add( parent );
 			}
 		}
 

@@ -4,6 +4,7 @@ using Eloquera.Client;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	public class DatabaseManager : IDatabaseManager {

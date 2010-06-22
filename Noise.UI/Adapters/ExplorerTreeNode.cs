@@ -1,23 +1,42 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Microsoft.Practices.Composite.Events;
 using Noise.Infrastructure;
 
 namespace Noise.UI.Adapters {
 	class ExplorerTreeNode : BindableObject {
-		public ExplorerTreeNode				Parent { get; private set; }
-		public ObservableCollection<object> Children { get; private set; }
-		public	object						Item { get; private set; }
+		private readonly IEventAggregator	mEventAggregator;
 		private bool						mIsSelected;
 		private bool						mIsExpanded;
 
-		public ExplorerTreeNode( object item, IEnumerable<object> children ) :
-			this( null, item, children ) {
+		public	ExplorerTreeNode			Parent { get; private set; }
+		public	object						Item { get; private set; }
+		public	ObservableCollection<ExplorerTreeNode>	Children { get; set; }
+
+		public ExplorerTreeNode( IEventAggregator eventAggregator, object item ) :
+			this( eventAggregator, item, null ) {
 		}
 
-		public ExplorerTreeNode( ExplorerTreeNode parent, object item, IEnumerable<object> children ) {
+		public ExplorerTreeNode( IEventAggregator eventAggregator, object item, IEnumerable<ExplorerTreeNode> children ) :
+			this( eventAggregator, null, item, children ) {
+		}
+
+		public ExplorerTreeNode( IEventAggregator eventAggregator, ExplorerTreeNode parent, object item ) :
+			this( eventAggregator, parent, item, null ) {
+		}
+
+		public ExplorerTreeNode( IEventAggregator eventAggregator, ExplorerTreeNode parent, object item, IEnumerable<ExplorerTreeNode> children ) {
+			mEventAggregator = eventAggregator;
 			Parent = parent;
 			Item = item;
-			Children = new ObservableCollection<object>( children );
+
+			if( children != null ) {
+				Children = new ObservableCollection<ExplorerTreeNode>( children );
+			}
+		}
+
+		public void SetChildren( IEnumerable<ExplorerTreeNode> children ) {
+			Children = new ObservableCollection<ExplorerTreeNode>( children );
 		}
 
 		public bool IsSelected {
@@ -27,6 +46,10 @@ namespace Noise.UI.Adapters {
 					mIsSelected = value;
 
 					NotifyOfPropertyChange( () => IsSelected );
+
+					if( mIsSelected ) {
+						mEventAggregator.GetEvent<Events.ExplorerItemSelected>().Publish( Item );
+					}
 				}
 			}
 		}

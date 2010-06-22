@@ -9,9 +9,9 @@ namespace Noise.UI.Views {
 		public LibraryExplorerView() {
 			InitializeComponent();
 
-			var template = FindResource( "ArtistTreeTemplate" ) as HierarchicalDataTemplate;
+			var template = FindResource( "ArtistTemplate" ) as HierarchicalDataTemplate;
 			if( template != null ) {
-				template.ItemTemplate = FindResource( "AlbumTemplate" ) as DataTemplate;
+				template.ItemTemplate = FindResource( "AlbumTemplate" ) as HierarchicalDataTemplate;
 
 				TreeView.ItemTemplate = template;
 			}

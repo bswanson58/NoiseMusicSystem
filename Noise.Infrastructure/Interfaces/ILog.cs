@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Noise.Infrastructure {
+namespace Noise.Infrastructure.Interfaces {
 	public interface ILog {
 		void	LogException( string message, Exception ex );
 		void	LogException( Exception ex );

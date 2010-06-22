@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Dto="clr-namespace:Noise.Infrastructure.Dto;assembly=Noise.Infrastructure" mc:Ignorable="d" 
+             xmlns:Adapters="clr-namespace:Noise.UI.Adapters" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Control.Resources>
-        <DataTemplate x:Key="AlbumTemplate" DataType="{x:Type Dto:DbAlbum}">
+        <HierarchicalDataTemplate x:Key="AlbumTemplate" DataType="{x:Type Adapters:ExplorerTreeNode}" ItemsSource="{Binding Path=Children}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="300"/>
@@ -14,15 +14,15 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Text="{Binding Path=Name}"/>
+                <TextBlock Grid.Column="0" Text="{Binding Path=Item.Name}"/>
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <TextBlock Text="Tracks: "/>
-                    <TextBlock Text="{Binding Path=TrackCount}"/>
+                    <TextBlock Text="{Binding Path=Item.TrackCount}"/>
                 </StackPanel>
             </Grid>
-        </DataTemplate>
+        </HierarchicalDataTemplate>
 
-        <HierarchicalDataTemplate x:Key="ArtistTreeTemplate" DataType="{x:Type Dto:DbArtist}" ItemsSource="{Binding Path=Children}">
+        <HierarchicalDataTemplate x:Key="ArtistTemplate" DataType="{x:Type Adapters:ExplorerTreeNode}" ItemsSource="{Binding Path=Children}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="300"/>

@@ -1,5 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
-using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.UI.ViewModels {
 	class ShellViewModel {
