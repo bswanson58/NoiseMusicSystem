@@ -1,15 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Noise.Infrastructure;
 
 namespace Noise.UI.Adapters {
-	class ExplorerTreeNode {
-		public object Parent { get; private set; }
-		private bool	mIsSelected;
-		private bool	mIsExpanded;
+	class ExplorerTreeNode : BindableObject {
+		public ExplorerTreeNode				Parent { get; private set; }
 		public ObservableCollection<object> Children { get; private set; }
+		public	object						Item { get; private set; }
+		private bool						mIsSelected;
+		private bool						mIsExpanded;
 
-		public ExplorerTreeNode( object parent, IEnumerable<object> children ) {
+		public ExplorerTreeNode( object item, IEnumerable<object> children ) :
+			this( null, item, children ) {
+		}
+
+		public ExplorerTreeNode( ExplorerTreeNode parent, object item, IEnumerable<object> children ) {
 			Parent = parent;
+			Item = item;
 			Children = new ObservableCollection<object>( children );
 		}
 
@@ -18,7 +25,8 @@ namespace Noise.UI.Adapters {
 			set {
 				if( value != mIsSelected ) {
 					mIsSelected = value;
-					//					this.OnPropertyChanged( "IsSelected" );
+
+					NotifyOfPropertyChange( () => IsSelected );
 				}
 			}
 		}
@@ -28,12 +36,14 @@ namespace Noise.UI.Adapters {
 			set {
 				if( value != mIsExpanded ) {
 					mIsExpanded = value;
-//					this.OnPropertyChanged( "IsExpanded" );
+
+					NotifyOfPropertyChange( () => IsExpanded );
 				}
 
 				// Expand all the way up to the root.
-//				if( mIsExpanded && _parent != null )
-//					_parent.IsExpanded = true;
+				if( mIsExpanded && Parent != null ) {
+					Parent.IsExpanded = true;
+				}
 			}
 		}
 	}

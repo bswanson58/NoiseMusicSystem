@@ -70,10 +70,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BindableObject.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="IDataProvider.cs" />
-    <Compile Include="ILog.cs" />
-    <Compile Include="INoiseManager.cs" />
+    <Compile Include="Interfaces\IDataProvider.cs" />
+    <Compile Include="Interfaces\ILog.cs" />
+    <Compile Include="Interfaces\INoiseManager.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Dto\AudioEncoding.cs" />
     <Compile Include="Dto\DbAlbum.cs" />

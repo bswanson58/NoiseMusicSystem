@@ -30,10 +30,10 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Text="{Binding Path=Parent.Name}"/>
+                <TextBlock Grid.Column="0" Text="{Binding Path=Item.Name}"/>
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <TextBlock Text="Albums: "/>
-                    <TextBlock Text="{Binding Path=Parent.AlbumCount}"/>
+                    <TextBlock Text="{Binding Path=Item.AlbumCount}"/>
                 </StackPanel>
             </Grid>
         </HierarchicalDataTemplate>
