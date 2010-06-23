@@ -52,33 +52,32 @@ namespace Noise.Core.MediaPlayer {
 
 		private void OnUpdateTimer( object sender, ElapsedEventArgs args ) {
 			var shouldStopTimer = true;
+			var streams = new List<AudioStream>( mCurrentStreams.Values );
 
-			lock( mCurrentStreams ) {
-				foreach( var stream in mCurrentStreams.Values ) {
-					var mode = Bass.BASS_ChannelIsActive( stream.Channel );
+			foreach( var stream in streams ) {
+				var mode = Bass.BASS_ChannelIsActive( stream.Channel );
 
-					if( stream.Mode != mode ) {
-						stream.Mode = mode;
+				if( stream.Mode != mode ) {
+					stream.Mode = mode;
 
-						mEventAggregator.GetEvent<Events.AudioPlayStatusChanged>().Publish( stream.Channel );
-					}
+					mEventAggregator.GetEvent<Events.AudioPlayStatusChanged>().Publish( stream.Channel );
+				}
 
-					if( stream.Mode != BASSActive.BASS_ACTIVE_STOPPED ) {
-						shouldStopTimer = false;
-					}
+				if( stream.Mode != BASSActive.BASS_ACTIVE_STOPPED ) {
+					shouldStopTimer = false;
+				}
 
-					if( stream.InSlide ) {
-						var sliding = Bass.BASS_ChannelIsSliding( stream.Channel, BASSAttribute.BASS_ATTRIB_VOL );
+				if( stream.InSlide ) {
+					var sliding = Bass.BASS_ChannelIsSliding( stream.Channel, BASSAttribute.BASS_ATTRIB_VOL );
 					
-						if(!sliding ) {
-							stream.InSlide = false;
+					if(!sliding ) {
+						stream.InSlide = false;
 
-							if( stream.PauseOnSlide ) {
-								Bass.BASS_ChannelPause( stream.Channel );
-							}
-							if( stream.StopOnSlide ) {
-								Bass.BASS_ChannelStop( stream.Channel );
-							}
+						if( stream.PauseOnSlide ) {
+							Bass.BASS_ChannelPause( stream.Channel );
+						}
+						if( stream.StopOnSlide ) {
+							Bass.BASS_ChannelStop( stream.Channel );
 						}
 					}
 				}
@@ -97,9 +96,7 @@ namespace Noise.Core.MediaPlayer {
 				try {
 					var channel = Bass.BASS_StreamCreateFile( path, 0, 0, BASSFlag.BASS_DEFAULT );
 
-					lock( mCurrentStreams ) {
-						mCurrentStreams.Add( channel, new AudioStream( channel, file ));
-					}
+					mCurrentStreams.Add( channel, new AudioStream( channel, file ));
 
 					retValue = channel;
 				}
@@ -136,9 +133,7 @@ namespace Noise.Core.MediaPlayer {
 			if( stream != null ) {
 				Bass.BASS_StreamFree( stream.Channel );
 
-				lock( mCurrentStreams ) {
-					mCurrentStreams.Remove( channel );
-				}
+				mCurrentStreams.Remove( channel );
 			}
 		}
 
