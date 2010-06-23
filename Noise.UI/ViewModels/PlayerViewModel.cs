@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Composite.Presentation.Commands;
@@ -13,8 +14,9 @@ namespace Noise.UI.ViewModels {
 		private	readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
 		private readonly INoiseManager		mNoiseManager;
-		private DbTrack						mCurrentTrack;
-		private StorageFile					mCurrentFile;
+		private PlayQueueTrack				mCurrentTrack;
+		private int							mCurrentChannel;
+		private readonly Dictionary<int, PlayQueueTrack>	mOpenTracks;
 
 		private readonly DelegateCommand<object>	mPlayCommand;
 		private readonly DelegateCommand<object>	mPauseCommand;
@@ -23,8 +25,10 @@ namespace Noise.UI.ViewModels {
 			mContainer = container;
 			mEvents = mContainer.Resolve<IEventAggregator>();
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
+			mOpenTracks = new Dictionary<int, PlayQueueTrack>();
 
 			mEvents.GetEvent<Events.TrackSelected>().Subscribe( OnTrackSelected );
+			mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
 
 			mPlayCommand = new DelegateCommand<object>( OnPlay, CanPlay );
 			mPauseCommand = new DelegateCommand<object>( OnPause, CanPause );
@@ -35,7 +39,7 @@ namespace Noise.UI.ViewModels {
 				var retValue = "None";
 
 				if( mCurrentTrack != null ) {
-					retValue = mCurrentTrack.Name;
+					retValue = mCurrentTrack.Track.Name;
 				}
 
 				return( retValue );
@@ -43,17 +47,34 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public TimeSpan TrackPosition {
-			get{ return( mNoiseManager.AudioPlayer.PlayPosition ); }
+			get {
+				var	retValue = new TimeSpan();
+
+				if( mCurrentTrack != null ) {
+					retValue = mNoiseManager.AudioPlayer.PlayPosition( mCurrentChannel );
+				}
+
+				return( retValue );
+			}
 		}
 
 		public void OnTrackSelected( DbTrack track ) {
-			mCurrentTrack = track;
-			mCurrentFile = mNoiseManager.DataProvider.GetPhysicalFile( mCurrentTrack );
+			mNoiseManager.PlayQueue.Add( track );
+		}
 
-			NotifyOfPropertyChange( () => TrackName );
+		public void OnPlayQueueChanged( IPlayQueue playQueue ) {
+			if( mCurrentTrack == null ) {
+				StartPlaying();
+			}
+		}
 
-			if( mNoiseManager.AudioPlayer.OpenFile( mCurrentFile )) {
-				mNoiseManager.AudioPlayer.Play();
+		private void StartPlaying() {
+			mCurrentTrack = mNoiseManager.PlayQueue.PlayNextTrack();
+			if( mCurrentTrack != null ) {
+				mCurrentChannel = mNoiseManager.AudioPlayer.OpenFile( mCurrentTrack.File );
+
+				mOpenTracks.Add( mCurrentChannel, mCurrentTrack );
+				mNoiseManager.AudioPlayer.Play( mCurrentChannel );
 
 				mPlayCommand.RaiseCanExecuteChanged();
 				mPauseCommand.RaiseCanExecuteChanged();
@@ -61,24 +82,24 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnPlay( object sender ) {
-			mNoiseManager.AudioPlayer.Play();
+			mNoiseManager.AudioPlayer.Play( mCurrentChannel );
 
 			NotifyOfPropertyChange( () => TrackPosition );
 		}
 		private bool CanPlay( object sender ) {
-			return( mNoiseManager.AudioPlayer.IsOpen );
+			return( mCurrentTrack != null );
 		}
 		public ICommand PlayCommand {
 			get{ return( mPlayCommand ); }
 		}
 
 		private void OnPause( object sender ) {
-			mNoiseManager.AudioPlayer.Pause();
+			mNoiseManager.AudioPlayer.Pause( mCurrentChannel );
 
 			NotifyOfPropertyChange( () => TrackPosition );
 		}
 		private bool CanPause( object sender ) {
-			return( mNoiseManager.AudioPlayer.IsOpen );
+			return( mCurrentTrack != null );
 		}
 		public ICommand PauseCommand {
 			get{ return( mPauseCommand ); }

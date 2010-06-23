@@ -3,15 +3,15 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface IAudioPlayer {
-		bool		OpenFile( StorageFile file );
-		void		CloseFile();
-		bool		IsOpen { get; }
+		int			OpenFile( StorageFile file );
+		void		CloseFile( int channel );
 
-		void		Play();
-		void		Pause();
-		void		Stop();
+		void		Play( int channel );
+		void		Fade( int channel );
+		void		Pause( int channel );
+		void		Stop( int channel );
+		TimeSpan	PlayPosition( int channel );
 
-		TimeSpan	PlayPosition { get; set; }
 		float		Volume { get; set; }
 	}
 }

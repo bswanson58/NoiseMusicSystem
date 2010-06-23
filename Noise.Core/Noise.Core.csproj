@@ -79,6 +79,7 @@
     <Reference Include="Microsoft.Practices.Composite">
       <HintPath>..\lib\CAL\Microsoft.Practices.Composite.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.Composite.Presentation, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Practices.Composite.UnityExtensions">
       <HintPath>..\lib\CAL\Microsoft.Practices.Composite.UnityExtensions.dll</HintPath>
     </Reference>
@@ -119,6 +120,10 @@
     <Compile Include="MediaPlayer\AudioPlayer.cs" />
     <Compile Include="NoiseCoreModule.cs" />
     <Compile Include="NoiseManager.cs" />
+    <Compile Include="PlayQueue\IPlayStrategy.cs" />
+    <Compile Include="PlayQueue\PlayQueueMgr.cs" />
+    <Compile Include="PlayQueue\PlayStrategyRandom.cs" />
+    <Compile Include="PlayQueue\PlayStrategySingle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

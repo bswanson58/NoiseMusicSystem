@@ -4,6 +4,7 @@
 
 		IAudioPlayer	AudioPlayer { get; }
 		IDataProvider	DataProvider { get; }
+		IPlayQueue		PlayQueue { get; }
 
 		void			Explore();
 	}

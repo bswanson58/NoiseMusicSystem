@@ -12,16 +12,18 @@ namespace Noise.Core {
 		private string						mDatabaseLocation;
 		private readonly ILog				mLog;
 		private readonly IDatabaseManager	mDatabase;
-		private readonly IDataProvider		mDataProvider;
-		private readonly IAudioPlayer		mAudioPlayer;
+		public	IDataProvider				DataProvider { get; private set; }
+		public	IAudioPlayer				AudioPlayer { get; private set; }
+		public	IPlayQueue					PlayQueue { get; private set; }
 
 		public NoiseManager( IUnityContainer container ) {
 			mContainer = container;
 
 			mDatabase = mContainer.Resolve<IDatabaseManager>();
 			mContainer.RegisterInstance( typeof( IDatabaseManager ), mDatabase );
-			mDataProvider = mContainer.Resolve<IDataProvider>();
-			mAudioPlayer = mContainer.Resolve<IAudioPlayer>();
+			DataProvider = mContainer.Resolve<IDataProvider>();
+			AudioPlayer = mContainer.Resolve<IAudioPlayer>();
+			PlayQueue = mContainer.Resolve<IPlayQueue>();
 
 			mLog = new Log();
 		}
@@ -37,14 +39,6 @@ namespace Noise.Core {
 			mLog.LogMessage( "Initialized NoiseManager." );
 
 			return ( true );
-		}
-
-		public IAudioPlayer AudioPlayer {
-			get{ return( mAudioPlayer ); }
-		}
-
-		public IDataProvider DataProvider {
-			get{ return( mDataProvider ); }
 		}
 
 		public void Explore() {

@@ -76,7 +76,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dto\PlayQueueTrack.cs" />
     <Compile Include="Interfaces\IAudioPlayer.cs" />
+    <Compile Include="Interfaces\IPlayQueue.cs" />
     <Compile Include="Support\BindableObject.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Events.cs" />
