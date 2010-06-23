@@ -4,7 +4,7 @@ namespace Noise.Infrastructure.Dto {
 	public class DbTrack {
 		public string			Name { get; set; }
 		public long				Album { get; set; }
-		public TimeSpan			Duration { get; set; }
+		public Int32			DurationMilliseconds { get; set; }
 		public Int32			Bitrate { get; set; }
 		public Int32			SampleRate { get; set; }
 		public Int16			Channels { get; set; }
@@ -22,6 +22,10 @@ namespace Noise.Infrastructure.Dto {
 
 			Encoding = eAudioEncoding.Unknown;
 			Genre = eMusicGenre.Unknown;
+		}
+
+		public TimeSpan Duration {
+			get{ return( new TimeSpan( 0, 0, 0, 0, DurationMilliseconds )); }
 		}
 	}
 }

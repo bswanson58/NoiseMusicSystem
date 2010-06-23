@@ -54,7 +54,7 @@ namespace Noise.Core.DataProviders {
 
 				track.Bitrate = tags.Properties.AudioBitrate;
 				track.SampleRate = tags.Properties.AudioSampleRate;
-				track.Duration = tags.Properties.Duration;
+				track.DurationMilliseconds = (Int32)tags.Properties.Duration.TotalMilliseconds;
 				track.Channels = (Int16)tags.Properties.AudioChannels;
 
 				if(( tags.Tag.Genres != null ) &&
