@@ -21,9 +21,11 @@
                 <TextBlock Text="{Binding Path=TrackName}"/>
             </StackPanel>
             
-            <StackPanel Grid.Row="1" Orientation="Horizontal" Height="27">
-                <Button Command="{Binding Path=PlayCommand}">Play</Button>
-                <Button Command="{Binding Path=PauseCommand}">Pause</Button>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Height="35">
+                <Button Margin="3" Command="{Binding Path=PlayCommand}">Play</Button>
+                <Button Margin="3" Command="{Binding Path=PauseCommand}">Pause</Button>
+                <Button Margin="3" Command="{Binding Path=StopCommand}">Stop</Button>
+                <Button Margin="3" Command="{Binding Path=NextTrackCommand}">Next Track</Button>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Position: "/>
                     <TextBlock Text="{Binding Path=TrackPosition, Converter={StaticResource TimeSpanConverter}}"/>
