@@ -70,6 +70,17 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		private ePlayingChannelStatus CurrentStatus {
+			get{ return( mCurrentStatus ); }
+			set {
+				mCurrentStatus = value;
+
+				mPlayCommand.RaiseCanExecuteChanged();
+				mPauseCommand.RaiseCanExecuteChanged();
+				mStopCommand.RaiseCanExecuteChanged();
+			}
+		}
+
 		public void OnTrackSelected( DbTrack track ) {
 			mNoiseManager.PlayQueue.Add( track );
 		}
@@ -85,9 +96,9 @@ namespace Noise.UI.ViewModels {
 		public void OnPlayStatusChanged( int channel ) {
 			if( mOpenTracks.ContainsKey( channel )) {
 				if( channel == mCurrentChannel ) {
-					mCurrentStatus = mNoiseManager.AudioPlayer.GetChannelStatus( channel );
+					CurrentStatus = mNoiseManager.AudioPlayer.GetChannelStatus( channel );
 
-					if( mCurrentStatus == ePlayingChannelStatus.Stopped ) {
+					if( CurrentStatus == ePlayingChannelStatus.Stopped ) {
 						mNoiseManager.AudioPlayer.CloseFile( channel );
 
 						mCurrentTrack = null;
@@ -98,9 +109,6 @@ namespace Noise.UI.ViewModels {
 
 						NotifyOfPropertyChange( () => TrackName );
 					}
-
-					mPlayCommand.RaiseCanExecuteChanged();
-					mPauseCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -146,7 +154,7 @@ namespace Noise.UI.ViewModels {
 			NotifyOfPropertyChange( () => TrackPosition );
 		}
 		private bool CanPlay( object sender ) {
-			return(( mCurrentTrack != null ) && ( mCurrentStatus != ePlayingChannelStatus.Playing ));
+			return(( mCurrentTrack != null ) && ( CurrentStatus != ePlayingChannelStatus.Playing ));
 		}
 		public ICommand PlayCommand {
 			get{ return( mPlayCommand ); }
@@ -158,7 +166,7 @@ namespace Noise.UI.ViewModels {
 			NotifyOfPropertyChange( () => TrackPosition );
 		}
 		private bool CanPause( object sender ) {
-			return(( mCurrentTrack != null ) && ( mCurrentStatus == ePlayingChannelStatus.Playing ));
+			return(( mCurrentTrack != null ) && ( CurrentStatus == ePlayingChannelStatus.Playing ));
 		}
 		public ICommand PauseCommand {
 			get{ return( mPauseCommand ); }
@@ -170,7 +178,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 		private bool CanStop( object sender ) {
-			return(( mCurrentTrack != null ) && ( mCurrentStatus == ePlayingChannelStatus.Paused || mCurrentStatus == ePlayingChannelStatus.Playing ));
+			return(( mCurrentTrack != null ) && ( CurrentStatus == ePlayingChannelStatus.Paused || CurrentStatus == ePlayingChannelStatus.Playing ));
 		}
 		public ICommand StopCommand {
 			get{ return( mStopCommand ); }
