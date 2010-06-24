@@ -12,19 +12,21 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.UI.ViewModels {
 	class PlayerViewModel : BindableObject {
-		private	readonly IUnityContainer	mContainer;
-		private readonly IEventAggregator	mEvents;
-		private readonly INoiseManager		mNoiseManager;
-		private PlayQueueTrack				mCurrentTrack;
-		private int							mCurrentChannel;
-		private ePlayingChannelStatus		mCurrentStatus;
-		private readonly Timer				mInfoUpdateTimer;
+		private	readonly IUnityContainer		mContainer;
+		private readonly IEventAggregator		mEvents;
+		private readonly INoiseManager			mNoiseManager;
+		private int								mCurrentChannel;
+		private ePlayingChannelStatus			mCurrentStatus;
+		private	bool							mContinuePlaying;
+		private readonly Timer					mInfoUpdateTimer;
 		private readonly Dictionary<int, PlayQueueTrack>	mOpenTracks;
 
 		private readonly DelegateCommand<object>	mPlayCommand;
 		private readonly DelegateCommand<object>	mPauseCommand;
-		private readonly DelegateCommand<object>	mNextTrackCommand;
 		private readonly DelegateCommand<object>	mStopCommand;
+		private readonly DelegateCommand<object>	mNextTrackCommand;
+		private readonly DelegateCommand<object>	mPrevTrackCommand;
+		private readonly DelegateCommand<object>	mClearQueueCommand;
 
 		public PlayerViewModel( IUnityContainer container ) {
 			mContainer = container;
@@ -40,6 +42,8 @@ namespace Noise.UI.ViewModels {
 			mPauseCommand = new DelegateCommand<object>( OnPause, CanPause );
 			mStopCommand = new DelegateCommand<object>( OnStop, CanStop );
 			mNextTrackCommand = new DelegateCommand<object>( OnNextTrack, CanNextTrack );
+			mPrevTrackCommand = new DelegateCommand<object>( OnPreviousTrack, CanPreviousTrack );
+			mClearQueueCommand = new DelegateCommand<object>( OnClearQueue, CanClearQueue );
 
 			mInfoUpdateTimer = new Timer { AutoReset = true, Enabled = false, Interval = 250 };
 			mInfoUpdateTimer.Elapsed += OnInfoUpdateTimer;
@@ -50,8 +54,8 @@ namespace Noise.UI.ViewModels {
 			get {
 				var retValue = "None";
 
-				if( mCurrentTrack != null ) {
-					retValue = mCurrentTrack.Track.Name;
+				if( CurrentTrack != null ) {
+					retValue = CurrentTrack.Track.Name;
 				}
 
 				return( retValue );
@@ -62,8 +66,8 @@ namespace Noise.UI.ViewModels {
 			get {
 				var	retValue = new TimeSpan();
 
-				if( mCurrentTrack != null ) {
-					retValue = mNoiseManager.AudioPlayer.GetPlayPosition( mCurrentChannel );
+				if( CurrentChannel != 0 ) {
+					retValue = mNoiseManager.AudioPlayer.GetPlayPosition( CurrentChannel );
 				}
 
 				return( retValue );
@@ -81,59 +85,132 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		private PlayQueueTrack CurrentTrack {
+			get { return( GetTrack( CurrentChannel )); }
+		}
+
+		private int CurrentChannel {
+			get{ return( mCurrentChannel ); }
+			set {
+				mCurrentChannel = value;
+
+				NotifyOfPropertyChange( () => TrackPosition );
+				NotifyOfPropertyChange( () => TrackName );
+			} 
+		}
+
+		private PlayQueueTrack GetTrack( int channel ) {
+			PlayQueueTrack	retValue = null;
+
+			if( mOpenTracks.ContainsKey( channel )) {
+				retValue = mOpenTracks[channel];
+			}
+
+			return( retValue );
+		}
+
+
 		public void OnTrackSelected( DbTrack track ) {
 			mNoiseManager.PlayQueue.Add( track );
 		}
 
 		public void OnPlayQueueChanged( IPlayQueue playQueue ) {
-			if( mCurrentTrack == null ) {
-				StartPlaying();
+			if( playQueue.IsQueueEmpty ) {
+				StopPlaying();
+			}
+			else {
+				if( mOpenTracks.Count == 0 ) {
+					StartPlaying();
+				}
 			}
 
 			mNextTrackCommand.RaiseCanExecuteChanged();
+			mPrevTrackCommand.RaiseCanExecuteChanged();
+			mClearQueueCommand.RaiseCanExecuteChanged();
 		}
 
 		public void OnPlayStatusChanged( int channel ) {
-			if( mOpenTracks.ContainsKey( channel )) {
-				if( channel == mCurrentChannel ) {
-					CurrentStatus = mNoiseManager.AudioPlayer.GetChannelStatus( channel );
+			var status = mNoiseManager.AudioPlayer.GetChannelStatus( channel );
+			if( channel == CurrentChannel ) {
+				CurrentStatus = status;
+			}
+			else {
+				if( CurrentChannel != 0 ) {
+					CurrentStatus = mNoiseManager.AudioPlayer.GetChannelStatus( CurrentChannel );
+				}
+			}
 
-					if( CurrentStatus == ePlayingChannelStatus.Stopped ) {
-						mNoiseManager.AudioPlayer.CloseFile( channel );
+			var track = GetTrack( channel );
+			if( track != null ) {
+				if( status == ePlayingChannelStatus.Stopped ) {
+					track.PercentPlayed = mNoiseManager.AudioPlayer.GetPercentPlayed( channel );
+					mNoiseManager.PlayQueue.TrackPlayCompleted( track );
+					mNoiseManager.AudioPlayer.CloseFile( channel );
+					mOpenTracks.Remove( channel );
 
-						mCurrentTrack = null;
-						mCurrentChannel = 0;
+					if( channel == CurrentChannel ) {
+						CurrentChannel = 0;
 
 						StopInfoUpdate();
-						StartPlaying();
 
-						NotifyOfPropertyChange( () => TrackName );
+						if( mContinuePlaying ) {
+							StartNextPlaying();
+						}
 					}
 				}
 			}
 		}
 
 		private void StartPlaying() {
-			mCurrentTrack = mNoiseManager.PlayQueue.PlayNextTrack();
-			if( mCurrentTrack != null ) {
-				mCurrentChannel = mNoiseManager.AudioPlayer.OpenFile( mCurrentTrack.File );
-
-				mOpenTracks.Add( mCurrentChannel, mCurrentTrack );
-				mNoiseManager.AudioPlayer.Play( mCurrentChannel );
-
-				StartInfoUpdate();
+			if( CurrentStatus == ePlayingChannelStatus.Paused ) {
+				mNoiseManager.AudioPlayer.Play( CurrentChannel );
 			}
-
-			mNextTrackCommand.RaiseCanExecuteChanged();
-			NotifyOfPropertyChange( () => TrackName );
+			else {
+				StartTrack( mNoiseManager.PlayQueue.PlayingTrack ?? mNoiseManager.PlayQueue.PlayNextTrack());
+			}
 		}
 
-		private void NextTrack() {
-			if( mCurrentTrack != null ) {
-				mNoiseManager.AudioPlayer.FadeAndStop( mCurrentChannel );
+		private void StartNextPlaying() {
+			StartTrack( mNoiseManager.PlayQueue.PlayNextTrack());
+		}
+
+		private void StartPreviousPlaying() {
+			StartTrack( mNoiseManager.PlayQueue.PlayPreviousTrack());
+		}
+
+		private void StartTrack( PlayQueueTrack track ) {
+			if( CurrentTrack != null ) {
+				mNoiseManager.AudioPlayer.FadeAndStop( CurrentChannel );
 			}
 
-			StartPlaying();
+			if( track != null ) {
+				var	channel = mNoiseManager.AudioPlayer.OpenFile( track.File );
+
+				mOpenTracks.Add( channel, track );
+				CurrentChannel = channel;
+				mNoiseManager.AudioPlayer.Play( CurrentChannel );
+
+				StartInfoUpdate();
+				mContinuePlaying = true;
+			}
+
+			NotifyOfPropertyChange( () => TrackName );
+			mNextTrackCommand.RaiseCanExecuteChanged();
+			mPrevTrackCommand.RaiseCanExecuteChanged();
+		}
+
+		private void PausePlaying() {
+			if( CurrentTrack != null ) {
+				mNoiseManager.AudioPlayer.FadeAndPause( CurrentChannel );
+			}
+		}
+
+		private void StopPlaying() {
+			mContinuePlaying = false;
+
+			foreach( int channel in mOpenTracks.Keys ) {
+				mNoiseManager.AudioPlayer.FadeAndStop( channel );
+			}
 		}
 
 		private void OnInfoUpdateTimer( object sender, ElapsedEventArgs arg ) {
@@ -149,49 +226,63 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnPlay( object sender ) {
-			mNoiseManager.AudioPlayer.Play( mCurrentChannel );
-
-			NotifyOfPropertyChange( () => TrackPosition );
+			StartPlaying();
 		}
 		private bool CanPlay( object sender ) {
-			return(( mCurrentTrack != null ) && ( CurrentStatus != ePlayingChannelStatus.Playing ));
+			return((!mNoiseManager.PlayQueue.IsQueueEmpty ) && ( CurrentStatus != ePlayingChannelStatus.Playing ));
 		}
 		public ICommand PlayCommand {
 			get{ return( mPlayCommand ); }
 		}
 
 		private void OnPause( object sender ) {
-			mNoiseManager.AudioPlayer.FadeAndPause( mCurrentChannel );
-
-			NotifyOfPropertyChange( () => TrackPosition );
+			PausePlaying();
 		}
 		private bool CanPause( object sender ) {
-			return(( mCurrentTrack != null ) && ( CurrentStatus == ePlayingChannelStatus.Playing ));
+			return(( CurrentTrack != null ) && ( CurrentStatus == ePlayingChannelStatus.Playing ));
 		}
 		public ICommand PauseCommand {
 			get{ return( mPauseCommand ); }
 		}
 
 		private void OnStop( object sender ) {
-			if( mCurrentTrack != null ) {
-				mNoiseManager.AudioPlayer.FadeAndStop( mCurrentChannel );
-			}
+			StopPlaying();
 		}
 		private bool CanStop( object sender ) {
-			return(( mCurrentTrack != null ) && ( CurrentStatus == ePlayingChannelStatus.Paused || CurrentStatus == ePlayingChannelStatus.Playing ));
+			return( CurrentStatus == ePlayingChannelStatus.Paused || CurrentStatus == ePlayingChannelStatus.Playing );
 		}
 		public ICommand StopCommand {
 			get{ return( mStopCommand ); }
 		}
 
 		private void OnNextTrack( object sender ) {
-			NextTrack();
+			StartNextPlaying();
 		}
 		private bool CanNextTrack( object sender ) {
 			return( mNoiseManager.PlayQueue.NextTrack != null );
 		}
 		public ICommand NextTrackCommand {
 			get{ return( mNextTrackCommand ); }
+		}
+
+		private void OnPreviousTrack( object sender ) {
+			StartPreviousPlaying();
+		}
+		private bool CanPreviousTrack( object sender ) {
+			return( mNoiseManager.PlayQueue.PreviousTrack != null );
+		}
+		public ICommand PreviousTrackCommand {
+			get{ return( mPrevTrackCommand ); }
+		}
+
+		private void OnClearQueue( object sender ) {
+			mNoiseManager.PlayQueue.ClearQueue();
+		}
+		private bool CanClearQueue( object sender ) {
+			return(!mNoiseManager.PlayQueue.IsQueueEmpty );
+		}
+		public ICommand ClearQueueCommand {
+			get{ return( mClearQueueCommand ); }
 		}
 	}
 }

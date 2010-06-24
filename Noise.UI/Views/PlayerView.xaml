@@ -25,7 +25,9 @@
                 <Button Margin="3" Command="{Binding Path=PlayCommand}">Play</Button>
                 <Button Margin="3" Command="{Binding Path=PauseCommand}">Pause</Button>
                 <Button Margin="3" Command="{Binding Path=StopCommand}">Stop</Button>
+                <Button Margin="3" Command="{Binding Path=PreviousTrackCommand}">Prev Track</Button>
                 <Button Margin="3" Command="{Binding Path=NextTrackCommand}">Next Track</Button>
+                <Button Margin="3" Command="{Binding Path=ClearQueueCommand}">Clear Queue</Button>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Position: "/>
                     <TextBlock Text="{Binding Path=TrackPosition, Converter={StaticResource TimeSpanConverter}}"/>

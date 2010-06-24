@@ -51,7 +51,6 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		private void OnUpdateTimer( object sender, ElapsedEventArgs args ) {
-			var shouldStopTimer = true;
 			var streams = new List<AudioStream>( mCurrentStreams.Values );
 
 			foreach( var stream in streams ) {
@@ -61,10 +60,6 @@ namespace Noise.Core.MediaPlayer {
 					stream.Mode = mode;
 
 					mEventAggregator.GetEvent<Events.AudioPlayStatusChanged>().Publish( stream.Channel );
-				}
-
-				if( stream.Mode != BASSActive.BASS_ACTIVE_STOPPED ) {
-					shouldStopTimer = false;
 				}
 
 				if( stream.InSlide ) {
@@ -83,7 +78,7 @@ namespace Noise.Core.MediaPlayer {
 				}
 			}
 
-			if( shouldStopTimer ) {
+			if( mCurrentStreams.Count == 0 ) {
 				mUpdateTimer.Stop();
 			}
 		}
@@ -103,7 +98,11 @@ namespace Noise.Core.MediaPlayer {
 				catch( Exception ex ) {
 					
 				}
-				return( retValue );
+			}
+
+			if(( mCurrentStreams.Count > 0 ) &&
+			   (!mUpdateTimer.Enabled )) {
+				mUpdateTimer.Start();
 			}
 
 			return ( retValue );
@@ -148,8 +147,6 @@ namespace Noise.Core.MediaPlayer {
 				}
 
 				Bass.BASS_ChannelPlay( stream.Channel, false );
-
-				mUpdateTimer.Start();
 			}
 		}
 
@@ -220,6 +217,23 @@ namespace Noise.Core.MediaPlayer {
 			}
 
 			return ( retValue );
+		}
+
+		public double GetPercentPlayed( int channel ) {
+			var retValue = 0.0;
+			var stream = GetStream( channel );
+
+			if( stream != null ) {
+				var length = Bass.BASS_ChannelGetLength( channel );
+				var position = Bass.BASS_ChannelGetPosition( channel );
+
+				if(( length > 0 ) &&
+				   ( position > 0 )) {
+					retValue = (double)position / length;
+				}
+			}
+
+			return( retValue );
 		}
 
 		public float Volume {

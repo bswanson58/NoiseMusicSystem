@@ -4,6 +4,7 @@ namespace Noise.Infrastructure.Dto {
 	public class PlayQueueTrack : BindableObject {
 		public	DbTrack		Track { get; private set; }
 		public	StorageFile	File { get; private set; }
+		public	double		PercentPlayed { get; set; }
 		private	bool		mIsPlaying;
 		private	bool		mHasPlayed;
 

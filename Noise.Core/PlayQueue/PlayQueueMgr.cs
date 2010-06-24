@@ -12,6 +12,7 @@ namespace Noise.Core.PlayQueue {
 		private readonly IDataProvider			mDataProvider;
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly List<PlayQueueTrack>	mPlayQueue;
+		private readonly List<DbPlayHistory>	mPlayHistory;
 		private	ePlayStrategy					mPlayStrategy;
 		private IPlayStrategy					mStrategy;
 
@@ -21,6 +22,7 @@ namespace Noise.Core.PlayQueue {
 			mEventAggregator = mContainer.Resolve<IEventAggregator>();
 
 			mPlayQueue = new List<PlayQueueTrack>();
+			mPlayHistory = new List<DbPlayHistory>();
 
 			PlayStrategy = ePlayStrategy.PlaySingle;
 		}
@@ -53,6 +55,10 @@ namespace Noise.Core.PlayQueue {
 			FirePlayQueueChanged();
 		}
 
+		public bool IsQueueEmpty {
+			get{ return( mPlayQueue.Count == 0 ); }
+		}
+
 		public PlayQueueTrack PlayNextTrack() {
 			var	track = PlayingTrack;
 
@@ -81,6 +87,23 @@ namespace Noise.Core.PlayQueue {
 			get{ return( mStrategy.NextTrack( mPlayQueue )); }
 		}
 
+		public PlayQueueTrack PlayPreviousTrack() {
+			var	track = PlayingTrack;
+
+			if( track != null ) {
+				track.HasPlayed = true;
+				track.IsPlaying = false;
+			}
+
+			track = PreviousTrack;
+
+			return( track );
+		}
+
+		public PlayQueueTrack PreviousTrack {
+			get{ return( null ); }
+		}
+
 		public PlayQueueTrack PlayingTrack {
 			get { return( mPlayQueue.FirstOrDefault( track => ( track.IsPlaying ))); }
 		}
@@ -102,8 +125,16 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
+		public void TrackPlayCompleted( PlayQueueTrack track ) {
+			mPlayHistory.Add( new DbPlayHistory( track.File ));
+		}
+
 		public IEnumerable<PlayQueueTrack> PlayList {
 			get{ return( from track in mPlayQueue select track ); }
+		}
+
+		public IEnumerable<DbPlayHistory> PlayHistory {
+			get{ return( from track in mPlayHistory select track ); }
 		}
 
 		private void FirePlayQueueChanged() {

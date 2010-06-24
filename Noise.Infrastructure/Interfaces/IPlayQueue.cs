@@ -15,12 +15,18 @@ namespace Noise.Infrastructure.Interfaces {
 		void			ClearQueue();
 
 		PlayQueueTrack	PlayNextTrack();
+		PlayQueueTrack	PlayPreviousTrack();
 		void			StopPlay();
+		void			TrackPlayCompleted( PlayQueueTrack track );
 
 		PlayQueueTrack	NextTrack { get; }
+		PlayQueueTrack	PreviousTrack { get; }
 		PlayQueueTrack	PlayingTrack { get; }
+		bool			IsQueueEmpty { get; }
 
 		ePlayStrategy				PlayStrategy { get; set; }
 		IEnumerable<PlayQueueTrack>	PlayList { get; }
+
+		IEnumerable<DbPlayHistory>	PlayHistory { get; }
 	}
 }
