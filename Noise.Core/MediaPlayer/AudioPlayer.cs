@@ -236,6 +236,34 @@ namespace Noise.Core.MediaPlayer {
 			return( retValue );
 		}
 
+		public double GetLeftLevel( int channel ) {
+			var retValue = 0.0;
+			var stream = GetStream( channel );
+
+			if( stream != null ) {
+				retValue = Utils.LowWord32( Bass.BASS_ChannelGetLevel( channel ));
+				if( retValue > 0.0 ) {
+					retValue = retValue / 32768;
+				}
+			}
+
+			return( retValue );
+		}
+
+		public double GetRightLevel( int channel ) {
+			var retValue = 0.0;
+			var stream = GetStream( channel );
+
+			if( stream != null ) {
+				retValue = Utils.HighWord32( Bass.BASS_ChannelGetLevel( channel ));
+				if( retValue > 0.0 ) {
+					retValue = retValue / 32768;
+				}
+			}
+
+			return( retValue );
+		}
+
 		public float Volume {
 			get { return( Bass.BASS_GetVolume()); }
 			set{ Bass.BASS_SetVolume( value ); }

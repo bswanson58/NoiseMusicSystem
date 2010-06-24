@@ -101,6 +101,7 @@
     <Compile Include="NoiseUiModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueConverters\TimeSpanConverter.cs" />
+    <Compile Include="ValueConverters\VolumeLevelConverter.cs" />
     <Compile Include="ViewModels\LibraryExplorerViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueViewModel.cs" />

@@ -45,7 +45,7 @@ namespace Noise.UI.ViewModels {
 			mPrevTrackCommand = new DelegateCommand<object>( OnPreviousTrack, CanPreviousTrack );
 			mClearQueueCommand = new DelegateCommand<object>( OnClearQueue, CanClearQueue );
 
-			mInfoUpdateTimer = new Timer { AutoReset = true, Enabled = false, Interval = 250 };
+			mInfoUpdateTimer = new Timer { AutoReset = true, Enabled = false, Interval = 100 };
 			mInfoUpdateTimer.Elapsed += OnInfoUpdateTimer;
 			mCurrentStatus = ePlayingChannelStatus.Unknown;
 		}
@@ -68,6 +68,30 @@ namespace Noise.UI.ViewModels {
 
 				if( CurrentChannel != 0 ) {
 					retValue = mNoiseManager.AudioPlayer.GetPlayPosition( CurrentChannel );
+				}
+
+				return( retValue );
+			}
+		}
+
+		public double LeftLevel {
+			get {
+				var retValue = 0.0;
+
+				if( CurrentChannel != 0 ) {
+					retValue = mNoiseManager.AudioPlayer.GetLeftLevel( CurrentChannel );
+				}
+
+				return( retValue );
+			}
+		}
+
+		public double RightLevel {
+			get {
+				var retValue = 0.0;
+
+				if( CurrentChannel != 0 ) {
+					retValue = mNoiseManager.AudioPlayer.GetRightLevel( CurrentChannel );
 				}
 
 				return( retValue );
@@ -215,6 +239,8 @@ namespace Noise.UI.ViewModels {
 
 		private void OnInfoUpdateTimer( object sender, ElapsedEventArgs arg ) {
 			NotifyOfPropertyChange( () => TrackPosition );
+			NotifyOfPropertyChange( () => LeftLevel );
+			NotifyOfPropertyChange( () => RightLevel );
 		}
 
 		private void StartInfoUpdate() {

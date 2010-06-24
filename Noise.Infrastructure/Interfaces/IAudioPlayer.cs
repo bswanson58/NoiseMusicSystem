@@ -22,6 +22,9 @@ namespace Noise.Infrastructure.Interfaces {
 		ePlayingChannelStatus	GetChannelStatus( int channel );
 		double					GetPercentPlayed( int channel );
 
+		double					GetLeftLevel( int channel );
+		double					GetRightLevel( int channel );
+
 		float		Volume { get; set; }
 	}
 }
