@@ -10,7 +10,12 @@ namespace Noise.UI.ValueConverters {
 			if( value is TimeSpan ) {
 				var timeSpan = (TimeSpan)value;
 
-				retValue = timeSpan.ToString();
+				if( timeSpan.Hours > 0 ) {
+					retValue = string.Format( "{0:D2}:{1:D2}:{2:D2}", timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds );
+				}
+				else {
+					retValue = string.Format( "{0}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds );
+				}
 			}
 			return( retValue );
 		}

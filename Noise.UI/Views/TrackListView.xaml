@@ -2,9 +2,12 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <Control.Resources>
+        <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
+    </Control.Resources>
+
     <ListView x:Name="TrackList" ItemsSource="{Binding Path=TrackList}">
         <ListView.ItemContainerStyle>
             <Style TargetType="{x:Type ListViewItem}">
@@ -15,7 +18,7 @@
             <GridView>
                 <GridViewColumn Header="#" DisplayMemberBinding="{Binding Path=Track.TrackNumber}" />
                 <GridViewColumn Header="Track Name" DisplayMemberBinding="{Binding Path=Track.Name}" />
-                <GridViewColumn Header="Duration" DisplayMemberBinding="{Binding Path=Track.Duration}" />
+                <GridViewColumn Header="Duration" DisplayMemberBinding="{Binding Path=Track.Duration, Converter={StaticResource TimeSpanConverter}}" />
                 <GridViewColumn Header="Published" DisplayMemberBinding="{Binding Path=Track.PublishedYear}" />
                 <GridViewColumn Header="Added" DisplayMemberBinding="{Binding Path=Track.DateAdded}" />
             </GridView>
