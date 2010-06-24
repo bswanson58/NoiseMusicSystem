@@ -47,5 +47,13 @@ namespace Noise.Core.Database {
 
 			return((from StorageFile file in mDatabase.Database where file.MetaDataPointer == trackId select file ).FirstOrDefault());
 		}
+
+		public object GetMetaData( StorageFile forFile ) {
+			var parm = mDatabase.Database.CreateParameters();
+
+			parm["id"] = forFile.MetaDataPointer;
+
+			return( mDatabase.Database.ExecuteScalar( "SELECT data WHERE $ID = @id", parm ));
+		}
 	}
 }

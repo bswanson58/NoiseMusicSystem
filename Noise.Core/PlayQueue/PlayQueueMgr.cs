@@ -91,17 +91,31 @@ namespace Noise.Core.PlayQueue {
 			var	track = PlayingTrack;
 
 			if( track != null ) {
-				track.HasPlayed = true;
 				track.IsPlaying = false;
 			}
 
 			track = PreviousTrack;
+			if( track != null ) {
+				track.IsPlaying = true;
+
+				mPlayHistory.Remove( mPlayHistory.Last());
+			}
 
 			return( track );
 		}
 
 		public PlayQueueTrack PreviousTrack {
-			get{ return( null ); }
+			get {
+				PlayQueueTrack	retValue = null;
+				
+				if( mPlayHistory.Count > 0 ) {
+					var file = mPlayHistory.Last().Track;
+
+					retValue = ( from queueFile in mPlayQueue where queueFile.File.MetaDataPointer == file.MetaDataPointer select queueFile ).FirstOrDefault();
+				}
+
+				return( retValue );
+			}
 		}
 
 		public PlayQueueTrack PlayingTrack {

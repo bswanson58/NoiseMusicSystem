@@ -9,5 +9,6 @@ namespace Noise.Infrastructure.Interfaces {
 		IEnumerable<DbTrack>	GetTrackList( DbArtist forArtist );
 
 		StorageFile				GetPhysicalFile( DbTrack forTrack );
+		object					GetMetaData( StorageFile forFile );
 	}
 }
