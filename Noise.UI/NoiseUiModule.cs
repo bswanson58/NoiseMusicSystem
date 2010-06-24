@@ -35,6 +35,11 @@ namespace Noise.UI {
 			var playerView = new PlayerView { DataContext = new PlayerViewModel( mContainer ) };
 
 			playerRegion.Add( playerView );
+
+			var playQueueRegion = mRegionManager.Regions[RegionNames.PlayQueueRegion];
+			var queueView = new PlayQueueView { DataContext = new PlayQueueViewModel( mContainer ) };
+
+			playQueueRegion.Add( queueView );
 		}
 	}
 }

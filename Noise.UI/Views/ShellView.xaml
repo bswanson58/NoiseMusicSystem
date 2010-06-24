@@ -24,6 +24,15 @@
             <ContentControl Grid.Column="1" cal:RegionManager.RegionName="{x:Static Infrastructure:RegionNames.TrackListRegion}"/>
         </Grid>
 
-        <ContentControl Grid.Row="1" cal:RegionManager.RegionName="{x:Static Infrastructure:RegionNames.PlaybackRegion}"/>
+        <Grid x:Name="Player" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <ContentControl Grid.Column="0" Margin="0,0,0,7" cal:RegionManager.RegionName="{x:Static Infrastructure:RegionNames.PlayQueueRegion}"/>
+            <GridSplitter Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"/>
+            <ContentControl Grid.Column="1" cal:RegionManager.RegionName="{x:Static Infrastructure:RegionNames.PlaybackRegion}"/>
+        </Grid>
     </Grid>
 </UserControl>
