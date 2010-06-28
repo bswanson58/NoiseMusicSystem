@@ -51,6 +51,7 @@ namespace Noise.Core.PlayQueue {
 
 		public void ClearQueue() {
 			mPlayQueue.Clear();
+			mPlayHistory.Clear();
 
 			FirePlayQueueChanged();
 		}
