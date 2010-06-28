@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbTrack {
@@ -26,6 +27,11 @@ namespace Noise.Infrastructure.Dto {
 
 		public TimeSpan Duration {
 			get{ return( new TimeSpan( 0, 0, 0, 0, DurationMilliseconds )); }
+		}
+
+		[Export("PersistenceType")]
+		public static Type PersistenceType {
+			get{ return( typeof( DbTrack )); }
 		}
 	}
 }

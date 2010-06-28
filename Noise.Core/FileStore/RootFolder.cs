@@ -1,4 +1,6 @@
-﻿using CuttingEdge.Conditions;
+﻿using System;
+using System.ComponentModel.Composition;
+using CuttingEdge.Conditions;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 
@@ -11,6 +13,11 @@ namespace Noise.Core.FileStore {
 			Condition.Requires( path ).IsNotNullOrEmpty();
 
 			DisplayName = displayName;
+		}
+
+		[Export("PersistenceType")]
+		public static new Type PersistenceType {
+			get{ return( typeof( RootFolder )); }
 		}
 	}
 }

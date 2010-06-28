@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
 	public class StorageFile {
@@ -17,6 +18,11 @@ namespace Noise.Infrastructure.Dto {
 
 			FileType = eFileType.Undetermined;
 			MetaDataPointer = Constants.cDatabaseNullOid;
+		}
+
+		[Export("PersistenceType")]
+		public static Type PersistenceType {
+			get{ return( typeof( StorageFile )); }
 		}
 	}
 }

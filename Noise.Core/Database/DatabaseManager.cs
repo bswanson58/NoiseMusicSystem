@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using CuttingEdge.Conditions;
 using Eloquera.Client;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
@@ -13,6 +15,9 @@ namespace Noise.Core.Database {
 		private string						mDatabaseName;
 
 		public	DB		Database { get; private set; }
+
+		[ImportMany("PersistenceType")]
+		public IEnumerable<Type>	PersistenceTypes;
 
 		public DatabaseManager() {
 			mLog = new Log();
@@ -81,16 +86,13 @@ namespace Noise.Core.Database {
 		}
 
 		private void RegisterDatabaseTypes() {
-			Database.RegisterType( typeof( RootFolder ));
-			Database.RegisterType( typeof( StorageFolder ));
-			Database.RegisterType( typeof( StorageFile ));
-			Database.RegisterType( typeof( DbArtist ));
-			Database.RegisterType( typeof( DbAlbum ));
-			Database.RegisterType( typeof( DbTrack ));
-			Database.RegisterType( typeof( DbBiography ));
-			Database.RegisterType( typeof( DbTopItems ));
-			Database.RegisterType( typeof( DbSimilarItems ));
-			Database.RegisterType( typeof( DbPlayHistory ));
+			var catalog = new DirectoryCatalog(  @".\" );
+			var container = new CompositionContainer( catalog );
+			container.ComposeParts( this );
+
+			foreach( Type type in PersistenceTypes ) {
+				Database.RegisterType( type );
+			}
 		}
 
 		private void LoadDatabaseDefaults() {

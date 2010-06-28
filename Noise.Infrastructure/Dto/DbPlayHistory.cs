@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbPlayHistory {
@@ -8,6 +9,11 @@ namespace Noise.Infrastructure.Dto {
 		public DbPlayHistory( StorageFile track ) {
 			Track = track;
 			PlayedOn = DateTime.Now;
+		}
+
+		[Export("PersistenceType")]
+		public static Type PersistenceType {
+			get{ return( typeof( DbPlayHistory )); }
 		}
 	}
 }

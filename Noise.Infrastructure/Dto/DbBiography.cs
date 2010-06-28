@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbBiography : ExpiringContent {
@@ -8,6 +9,11 @@ namespace Noise.Infrastructure.Dto {
 
 		public DbBiography( long artist ) {
 			Artist = artist;
+		}
+
+		[Export("PersistenceType")]
+		public static Type PersistenceType {
+			get{ return( typeof( DbBiography )); }
 		}
 	}
 }
