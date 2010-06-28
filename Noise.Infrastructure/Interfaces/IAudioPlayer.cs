@@ -18,12 +18,12 @@ namespace Noise.Infrastructure.Interfaces {
 		void					FadeAndStop( int channel );
 		void					Pause( int channel );
 		void					Stop( int channel );
+		TimeSpan				GetLength( int channel );
 		TimeSpan				GetPlayPosition( int channel );
 		ePlayingChannelStatus	GetChannelStatus( int channel );
 		double					GetPercentPlayed( int channel );
 
-		double					GetLeftLevel( int channel );
-		double					GetRightLevel( int channel );
+		AudioLevels				GetSampleLevels( int channel );
 
 		float		Volume { get; set; }
 	}

@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dto\AudioLevels.cs" />
     <Compile Include="Dto\PlayQueueTrack.cs" />
     <Compile Include="Interfaces\IAudioPlayer.cs" />
     <Compile Include="Interfaces\IPlayHistory.cs" />

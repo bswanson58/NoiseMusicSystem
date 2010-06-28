@@ -17,6 +17,9 @@ namespace Noise.UI.ViewModels {
 		private readonly INoiseManager			mNoiseManager;
 		private int								mCurrentChannel;
 		private ePlayingChannelStatus			mCurrentStatus;
+		private TimeSpan						mCurrentPosition;
+		private TimeSpan						mCurrentLength;
+		private AudioLevels						mSampleLevels;
 		private	bool							mContinuePlaying;
 		private readonly Timer					mInfoUpdateTimer;
 		private readonly Dictionary<int, PlayQueueTrack>	mOpenTracks;
@@ -67,7 +70,7 @@ namespace Noise.UI.ViewModels {
 				var	retValue = new TimeSpan();
 
 				if( CurrentChannel != 0 ) {
-					retValue = mNoiseManager.AudioPlayer.GetPlayPosition( CurrentChannel );
+					retValue = mCurrentLength - mCurrentPosition;
 				}
 
 				return( retValue );
@@ -79,7 +82,7 @@ namespace Noise.UI.ViewModels {
 				var retValue = 0.0;
 
 				if( CurrentChannel != 0 ) {
-					retValue = mNoiseManager.AudioPlayer.GetLeftLevel( CurrentChannel );
+					retValue = mSampleLevels.LeftLevel;
 				}
 
 				return( retValue );
@@ -91,7 +94,7 @@ namespace Noise.UI.ViewModels {
 				var retValue = 0.0;
 
 				if( CurrentChannel != 0 ) {
-					retValue = mNoiseManager.AudioPlayer.GetRightLevel( CurrentChannel );
+					retValue = mSampleLevels.RightLevel;
 				}
 
 				return( retValue );
@@ -214,6 +217,8 @@ namespace Noise.UI.ViewModels {
 				CurrentChannel = channel;
 				mNoiseManager.AudioPlayer.Play( CurrentChannel );
 
+				mCurrentLength = mNoiseManager.AudioPlayer.GetLength( CurrentChannel );
+
 				StartInfoUpdate();
 				mContinuePlaying = true;
 			}
@@ -238,6 +243,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnInfoUpdateTimer( object sender, ElapsedEventArgs arg ) {
+			if( CurrentChannel != 0 ) {
+				mSampleLevels = mNoiseManager.AudioPlayer.GetSampleLevels( CurrentChannel );
+				mCurrentPosition = mNoiseManager.AudioPlayer.GetPlayPosition( CurrentChannel );
+			}
+			else {
+				mSampleLevels = new AudioLevels( 0.0, 0.0 );
+			}
+
 			NotifyOfPropertyChange( () => TrackPosition );
 			NotifyOfPropertyChange( () => LeftLevel );
 			NotifyOfPropertyChange( () => RightLevel );
@@ -249,6 +262,13 @@ namespace Noise.UI.ViewModels {
 
 		private void StopInfoUpdate() {
 			mInfoUpdateTimer.Stop();
+
+			mSampleLevels = new AudioLevels( 0.0, 0.0 );
+			mCurrentPosition = new TimeSpan();
+
+			NotifyOfPropertyChange( () => TrackPosition );
+			NotifyOfPropertyChange( () => LeftLevel );
+			NotifyOfPropertyChange( () => RightLevel );
 		}
 
 		private void OnPlay( object sender ) {

@@ -204,6 +204,14 @@ namespace Noise.Core.MediaPlayer {
 			return( retValue );
 		}
 
+		public TimeSpan GetLength( int channel ) {
+			var length = Bass.BASS_ChannelGetLength( channel );
+			var seconds = Bass.BASS_ChannelBytes2Seconds( channel, length );
+			var	retValue = new TimeSpan( 0, 0,0, (int)seconds );
+
+			return( retValue );
+		}
+
 		public TimeSpan GetPlayPosition( int channel ) {
 			var retValue = new TimeSpan();
 			var stream = GetStream( channel );
@@ -235,28 +243,22 @@ namespace Noise.Core.MediaPlayer {
 			return( retValue );
 		}
 
-		public double GetLeftLevel( int channel ) {
-			var retValue = 0.0;
+		public AudioLevels GetSampleLevels( int channel ) {
+			AudioLevels	retValue = null;
+
 			var stream = GetStream( channel );
 
 			if( stream != null ) {
-				retValue = Utils.LowWord32( Bass.BASS_ChannelGetLevel( channel ));
-				if( retValue > 0.0 ) {
-					retValue = retValue / 32768;
+				if( stream.Mode == BASSActive.BASS_ACTIVE_PLAYING ) {
+					var levels = Bass.BASS_ChannelGetLevel( channel );
+					var leftLevel = Utils.LowWord32( levels ) > 0.0 ? (double)Utils.LowWord32( levels ) / 32768 : Utils.LowWord32( levels );
+					var rightLevel = Utils.HighWord32( levels ) > 0.0 ? (double)Utils.HighWord32( levels ) / 32768 : Utils.HighWord32( levels );
+
+
+					retValue = new AudioLevels( leftLevel, rightLevel );
 				}
-			}
-
-			return( retValue );
-		}
-
-		public double GetRightLevel( int channel ) {
-			var retValue = 0.0;
-			var stream = GetStream( channel );
-
-			if( stream != null ) {
-				retValue = Utils.HighWord32( Bass.BASS_ChannelGetLevel( channel ));
-				if( retValue > 0.0 ) {
-					retValue = retValue / 32768;
+				else {
+					retValue = new AudioLevels( 0.0, 0.0 );
 				}
 			}
 
