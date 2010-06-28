@@ -15,6 +15,7 @@ namespace Noise.Core {
 		public	IDataProvider				DataProvider { get; private set; }
 		public	IAudioPlayer				AudioPlayer { get; private set; }
 		public	IPlayQueue					PlayQueue { get; private set; }
+		public	IPlayHistory				PlayHistory { get; private set; }
 
 		public NoiseManager( IUnityContainer container ) {
 			mContainer = container;
@@ -24,6 +25,7 @@ namespace Noise.Core {
 			DataProvider = mContainer.Resolve<IDataProvider>();
 			AudioPlayer = mContainer.Resolve<IAudioPlayer>();
 			PlayQueue = mContainer.Resolve<IPlayQueue>();
+			PlayHistory = mContainer.Resolve<IPlayHistory>();
 
 			mLog = new Log();
 		}

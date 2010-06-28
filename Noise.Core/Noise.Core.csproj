@@ -120,6 +120,7 @@
     <Compile Include="MediaPlayer\AudioPlayer.cs" />
     <Compile Include="NoiseCoreModule.cs" />
     <Compile Include="NoiseManager.cs" />
+    <Compile Include="PlayHistory\PlayHistoryMgr.cs" />
     <Compile Include="PlayQueue\IPlayStrategy.cs" />
     <Compile Include="PlayQueue\PlayQueueMgr.cs" />
     <Compile Include="PlayQueue\PlayStrategyRandom.cs" />

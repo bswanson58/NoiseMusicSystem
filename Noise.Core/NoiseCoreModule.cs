@@ -4,6 +4,7 @@ using Noise.Core.Database;
 using Noise.Core.DataBuilders;
 using Noise.Core.FileStore;
 using Noise.Core.MediaPlayer;
+using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
 using Noise.Infrastructure.Interfaces;
 
@@ -23,6 +24,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IMetaDataExplorer, MetaDataExplorer>();
 			mContainer.RegisterType<INoiseManager, NoiseManager>();
 			mContainer.RegisterType<IPlayQueue, PlayQueueMgr>();
+			mContainer.RegisterType<IPlayHistory, PlayHistoryMgr>();
 		}
 	}
 }

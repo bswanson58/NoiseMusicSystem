@@ -12,7 +12,7 @@ namespace Noise.Core.PlayQueue {
 		private readonly IDataProvider			mDataProvider;
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly List<PlayQueueTrack>	mPlayQueue;
-		private readonly List<DbPlayHistory>	mPlayHistory;
+		private readonly List<PlayQueueTrack>	mPlayHistory;
 		private	ePlayStrategy					mPlayStrategy;
 		private IPlayStrategy					mStrategy;
 
@@ -22,7 +22,7 @@ namespace Noise.Core.PlayQueue {
 			mEventAggregator = mContainer.Resolve<IEventAggregator>();
 
 			mPlayQueue = new List<PlayQueueTrack>();
-			mPlayHistory = new List<DbPlayHistory>();
+			mPlayHistory = new List<PlayQueueTrack>();
 
 			PlayStrategy = ePlayStrategy.PlaySingle;
 		}
@@ -65,6 +65,8 @@ namespace Noise.Core.PlayQueue {
 			if( track != null ) {
 				track.HasPlayed = true;
 				track.IsPlaying = false;
+
+				mPlayHistory.Add( track );
 			}
 
 			track = NextTrack;
@@ -96,6 +98,7 @@ namespace Noise.Core.PlayQueue {
 
 			track = PreviousTrack;
 			if( track != null ) {
+				track.HasPlayed = false;
 				track.IsPlaying = true;
 
 				mPlayHistory.Remove( mPlayHistory.Last());
@@ -109,9 +112,7 @@ namespace Noise.Core.PlayQueue {
 				PlayQueueTrack	retValue = null;
 				
 				if( mPlayHistory.Count > 0 ) {
-					var file = mPlayHistory.Last().Track;
-
-					retValue = ( from queueFile in mPlayQueue where queueFile.File.MetaDataPointer == file.MetaDataPointer select queueFile ).FirstOrDefault();
+					retValue = mPlayHistory.Last();
 				}
 
 				return( retValue );
@@ -139,16 +140,8 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
-		public void TrackPlayCompleted( PlayQueueTrack track ) {
-			mPlayHistory.Add( new DbPlayHistory( track.File ));
-		}
-
 		public IEnumerable<PlayQueueTrack> PlayList {
 			get{ return( from track in mPlayQueue select track ); }
-		}
-
-		public IEnumerable<DbPlayHistory> PlayHistory {
-			get{ return( from track in mPlayHistory select track ); }
 		}
 
 		private void FirePlayQueueChanged() {
