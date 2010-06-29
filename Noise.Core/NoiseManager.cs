@@ -7,7 +7,7 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager {
-		private readonly IUnityContainer	mContainer;
+		private	readonly IUnityContainer	mContainer;
 		private	string						mDatabaseName;
 		private string						mDatabaseLocation;
 		private readonly ILog				mLog;

@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters" mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+              DataContext="{Binding TrackListViewModel, Source={StaticResource ViewModelLocator}}"
+             >
     <Control.Resources>
         <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
     </Control.Resources>

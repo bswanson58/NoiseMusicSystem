@@ -2,7 +2,7 @@
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
-using Noise.UI.ViewModels;
+using Noise.UI.Support;
 using Noise.UI.Views;
 
 namespace Noise.UI {
@@ -13,33 +13,16 @@ namespace Noise.UI {
 		public NoiseUiModule( IUnityContainer container ) {
 			mContainer = container;
 			mRegionManager = mContainer.Resolve<IRegionManager>();
+
+			ViewModelResolver.Container = mContainer;
 		}
 
 		public void Initialize() {
-			var shellRegion = mRegionManager.Regions[RegionNames.ShellRegion];
-			var shellView = new ShellView { DataContext = new ShellViewModel( mContainer ) };
-
-			shellRegion.Add( shellView );
-
-			var explorerRegion = mRegionManager.Regions[RegionNames.LibraryExplorerRegion];
-			var explorerView = new LibraryExplorerView { DataContext = new LibraryExplorerViewModel( mContainer ) };
-
-			explorerRegion.Add( explorerView );
-
-			var tracklistRegion = mRegionManager.Regions[RegionNames.TrackListRegion];
-			var trackListView = new TrackListView { DataContext = new TrackListViewModel( mContainer ) };
-
-			tracklistRegion.Add( trackListView );
-
-			var playerRegion = mRegionManager.Regions[RegionNames.PlaybackRegion];
-			var playerView = new PlayerView { DataContext = new PlayerViewModel( mContainer ) };
-
-			playerRegion.Add( playerView );
-
-			var playQueueRegion = mRegionManager.Regions[RegionNames.PlayQueueRegion];
-			var queueView = new PlayQueueView { DataContext = new PlayQueueViewModel( mContainer ) };
-
-			playQueueRegion.Add( queueView );
+			mRegionManager.Regions[RegionNames.ShellRegion].Add( new ShellView());
+			mRegionManager.Regions[RegionNames.LibraryExplorerRegion].Add( new LibraryExplorerView());
+			mRegionManager.Regions[RegionNames.TrackListRegion].Add( new TrackListView());
+			mRegionManager.Regions[RegionNames.PlaybackRegion].Add( new PlayerView());
+			mRegionManager.Regions[RegionNames.PlayQueueRegion].Add( new PlayQueueView());
 		}
 	}
 }
