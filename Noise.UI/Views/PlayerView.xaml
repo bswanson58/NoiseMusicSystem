@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters" mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="92" d:DesignWidth="600"
              DataContext="{Binding PlayerViewModel, Source={StaticResource ViewModelLocator}}"             
              >
     <Control.Resources>
@@ -25,12 +25,12 @@
             </StackPanel>
 
             <StackPanel Grid.Row="1" Orientation="Horizontal" Height="35">
-                <Button Margin="3" Command="{Binding Path=PlayCommand}">Play</Button>
-                <Button Margin="3" Command="{Binding Path=PauseCommand}">Pause</Button>
-                <Button Margin="3" Command="{Binding Path=StopCommand}">Stop</Button>
-                <Button Margin="3" Command="{Binding Path=PreviousTrackCommand}">Prev Track</Button>
-                <Button Margin="3" Command="{Binding Path=NextTrackCommand}">Next Track</Button>
-                <Button Margin="3" Command="{Binding Path=ClearQueueCommand}">Clear Queue</Button>
+                <Button Margin="3" Command="{Binding Path=Play}">Play</Button>
+                <Button Margin="3" Command="{Binding Path=Pause}">Pause</Button>
+                <Button Margin="3" Command="{Binding Path=Stop}">Stop</Button>
+                <Button Margin="3" Command="{Binding Path=PreviousTrack}">Prev Track</Button>
+                <Button Margin="3" Command="{Binding Path=NextTrack}">Next Track</Button>
+                <Button Margin="3" Command="{Binding Path=ClearQueue}">Clear Queue</Button>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Position: "/>
                     <TextBlock Text="{Binding Path=TrackPosition, Converter={StaticResource TimeSpanConverter}}"/>
