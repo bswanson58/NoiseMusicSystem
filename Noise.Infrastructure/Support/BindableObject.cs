@@ -70,7 +70,7 @@ namespace Noise.Infrastructure.Support {
 			}
 		}
 
-		protected void NotifyOfPropertyChange<TProperty>( Expression<Func<TProperty>> property ) {
+		protected void RaisePropertyChanged<TProperty>( Expression<Func<TProperty>> property ) {
 			var lambda = (LambdaExpression)property;
 
 			MemberExpression memberExpression;

@@ -7,7 +7,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
 
 namespace Noise.UI.ViewModels {
-	class LibraryExplorerViewModel {
+	public class LibraryExplorerViewModel {
 		private readonly IUnityContainer			mContainer;
 		private readonly IEventAggregator			mEventAggregator;
 		private	readonly INoiseManager				mNoiseManager;

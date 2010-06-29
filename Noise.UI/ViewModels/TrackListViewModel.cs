@@ -9,7 +9,7 @@ using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 
 namespace Noise.UI.ViewModels {
-	class TrackListViewModel {
+	public class TrackListViewModel {
 		private readonly IUnityContainer					mContainer;
 		private readonly IEventAggregator					mEvents;
 		private readonly INoiseManager						mNoiseManager;

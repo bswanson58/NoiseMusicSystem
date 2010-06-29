@@ -18,7 +18,7 @@ namespace Noise.Infrastructure.Dto {
 			set {
 				mIsPlaying = value;
 
-				NotifyOfPropertyChange( () => IsPlaying );
+				RaisePropertyChanged( () => IsPlaying );
 			}
 		}
 
@@ -27,7 +27,7 @@ namespace Noise.Infrastructure.Dto {
 			set {
 				mHasPlayed = value;
 
-				NotifyOfPropertyChange( () => HasPlayed );
+				RaisePropertyChanged( () => HasPlayed );
 			}
 		}
 	}

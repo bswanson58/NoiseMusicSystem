@@ -2,7 +2,7 @@
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.UI.ViewModels {
-	class ShellViewModel {
+	public class ShellViewModel {
 		private readonly IUnityContainer	mContainer;
 		private readonly INoiseManager		mNoiseManager;
 

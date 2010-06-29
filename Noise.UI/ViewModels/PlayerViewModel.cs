@@ -9,7 +9,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.UI.ViewModels {
-	class PlayerViewModel : ViewModelBase {
+	public class PlayerViewModel : ViewModelBase {
 		private	readonly IUnityContainer		mContainer;
 		private readonly IEventAggregator		mEvents;
 		private readonly INoiseManager			mNoiseManager;

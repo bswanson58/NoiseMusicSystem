@@ -20,7 +20,7 @@ namespace Noise.UI.Adapters {
 				if( value != mIsSelected ) {
 					mIsSelected = value;
 
-					NotifyOfPropertyChange( () => IsSelected );
+					RaisePropertyChanged( () => IsSelected );
 
 					if( mIsSelected ) {
 						mEventAggregator.GetEvent<Events.TrackSelected>().Publish( Track );

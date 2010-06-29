@@ -46,7 +46,7 @@ namespace Noise.UI.Adapters {
 				if( value != mIsSelected ) {
 					mIsSelected = value;
 
-					NotifyOfPropertyChange( () => IsSelected );
+					RaisePropertyChanged( () => IsSelected );
 
 					if( mIsSelected ) {
 						mEventAggregator.GetEvent<Events.ExplorerItemSelected>().Publish( Item );
@@ -61,7 +61,7 @@ namespace Noise.UI.Adapters {
 				if( value != mIsExpanded ) {
 					mIsExpanded = value;
 
-					NotifyOfPropertyChange( () => IsExpanded );
+					RaisePropertyChanged( () => IsExpanded );
 				}
 
 				// Expand all the way up to the root.
