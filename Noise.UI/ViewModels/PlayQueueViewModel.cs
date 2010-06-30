@@ -7,17 +7,23 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.UI.ViewModels {
 	public class PlayQueueViewModel {
-		private readonly IUnityContainer	mContainer;
-		private readonly IEventAggregator	mEventAggregator;
+		private IUnityContainer		mContainer;
+		private IEventAggregator	mEventAggregator;
 		private readonly ObservableCollectionEx<PlayQueueTrack>	mPlayQueue;
 
-		public PlayQueueViewModel( IUnityContainer container ) {
-			mContainer = container;
-			mEventAggregator = mContainer.Resolve<IEventAggregator>();
-
+		public PlayQueueViewModel() {
 			mPlayQueue = new ObservableCollectionEx<PlayQueueTrack>();
+		}
 
-			mEventAggregator.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
+		[Dependency]
+		public IUnityContainer Container {
+			get { return( mContainer ); }
+			set {
+				mContainer = value;
+
+				mEventAggregator = mContainer.Resolve<IEventAggregator>();
+				mEventAggregator.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
+			}
 		}
 
 		public ObservableCollectionEx<PlayQueueTrack> QueueList {

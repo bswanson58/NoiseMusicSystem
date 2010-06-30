@@ -3,16 +3,20 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.UI.ViewModels {
 	public class ShellViewModel {
-		private readonly IUnityContainer	mContainer;
-		private readonly INoiseManager		mNoiseManager;
+		private IUnityContainer		mContainer;
+		private INoiseManager		mNoiseManager;
 
-		public ShellViewModel( IUnityContainer container ) {
-			mContainer = container;
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
-			mContainer.RegisterInstance<INoiseManager>( mNoiseManager );
-			
-			if( mNoiseManager.Initialize()) {
-//				mNoiseManager.Explore();
+		[Dependency]
+		public IUnityContainer Container {
+			get { return( mContainer ); }
+			set {
+				mContainer = value;
+
+				mNoiseManager = mContainer.Resolve<INoiseManager>();
+				mContainer.RegisterInstance( mNoiseManager );
+				if( mNoiseManager.Initialize()) {
+//					mNoiseManager.Explore();
+				}
 			}
 		}
 	}

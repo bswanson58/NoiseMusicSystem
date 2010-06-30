@@ -8,20 +8,27 @@ using Noise.UI.Adapters;
 
 namespace Noise.UI.ViewModels {
 	public class LibraryExplorerViewModel {
-		private readonly IUnityContainer			mContainer;
-		private readonly IEventAggregator			mEventAggregator;
-		private	readonly INoiseManager				mNoiseManager;
+		private IUnityContainer		mContainer;
+		private IEventAggregator	mEventAggregator;
+		private	INoiseManager		mNoiseManager;
 
 		private readonly ObservableCollection<ExplorerTreeNode>	mTreeItems;
 
-		public LibraryExplorerViewModel( IUnityContainer container ) {
-			mContainer = container;
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
-			mEventAggregator = mContainer.Resolve<IEventAggregator>();
-
+		public LibraryExplorerViewModel() {
 			mTreeItems = new ObservableCollection<ExplorerTreeNode>();
+		}
 
-			PopulateTreeData();
+		[Dependency]
+		public IUnityContainer Container {
+			get { return( mContainer ); }
+			set {
+				mContainer = value;
+
+				mEventAggregator = mContainer.Resolve<IEventAggregator>();
+				mNoiseManager = mContainer.Resolve<INoiseManager>();
+
+				PopulateTreeData();
+			}
 		}
 
 		private void PopulateTreeData() {
