@@ -4,10 +4,16 @@
              xmlns:vml="clr-namespace:Noise.UI.Support;assembly=Noise.UI"
              >
     <Application.Resources>
-        <vml:ViewModelLocator x:Key="ViewModelLocator">
-            <vml:ViewModelLocator.Resolver>
-                <vml:ViewModelResolver />
-            </vml:ViewModelLocator.Resolver>
-        </vml:ViewModelLocator>
+    	<ResourceDictionary>
+    		<ResourceDictionary.MergedDictionaries>
+    			<ResourceDictionary Source="Resources/GlobalResources.xaml"/>
+    		</ResourceDictionary.MergedDictionaries>
+            
+    		<vml:ViewModelLocator x:Key="ViewModelLocator">
+    			<vml:ViewModelLocator.Resolver>
+    				<vml:ViewModelResolver />
+    			</vml:ViewModelLocator.Resolver>
+    		</vml:ViewModelLocator>
+    	</ResourceDictionary>
     </Application.Resources>
 </Application>
