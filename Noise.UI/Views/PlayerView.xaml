@@ -1,16 +1,21 @@
-﻿<UserControl x:Class="Noise.UI.Views.PlayerView"
+﻿<UserControl
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters" mc:Ignorable="d" 
-             d:DesignHeight="92" d:DesignWidth="600"
-             DataContext="{Binding PlayerViewModel, Source={StaticResource ViewModelLocator}}"             
+             xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters" xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels" x:Class="Noise.UI.Views.PlayerView"
+             mc:Ignorable="d" 
+             d:DesignHeight="92" d:DesignWidth="600"             
              >
-    <Control.Resources>
+    <UserControl.Resources>
+    	<Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True"/>
         <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
         <ValueConverters:VolumeLevelConverter x:Key="VolumeLevelConverter"/>
-    </Control.Resources>
+</UserControl.Resources>
+
+	<UserControl.DataContext>
+		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}"/>
+	</UserControl.DataContext>
 
     <Grid x:Name="PlayerViewRoot">
         <Grid x:Name="Layout">
@@ -21,19 +26,19 @@
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
                 <TextBlock Text="Current Track: " />
-                <TextBlock Text="{Binding Path=TrackName}"/>
+                <TextBlock Text="{Binding TrackName}"/>
             </StackPanel>
 
             <StackPanel Grid.Row="1" Orientation="Horizontal" Height="35">
-                <Button Margin="3" Command="{Binding Path=Play}">Play</Button>
-                <Button Margin="3" Command="{Binding Path=Pause}">Pause</Button>
-                <Button Margin="3" Command="{Binding Path=Stop}">Stop</Button>
-                <Button Margin="3" Command="{Binding Path=PreviousTrack}">Prev Track</Button>
-                <Button Margin="3" Command="{Binding Path=NextTrack}">Next Track</Button>
-                <Button Margin="3" Command="{Binding Path=ClearQueue}">Clear Queue</Button>
+                <Button Margin="3" Command="{Binding Play}" Content="Play"/>
+                <Button Margin="3" Command="{Binding Pause}" Content="Pause"/>
+                <Button Margin="3" Command="{Binding Stop}" Content="Stop"/>
+                <Button Margin="3" Command="{Binding PreviousTrack}" Content="Prev Track"/>
+                <Button Margin="3" Command="{Binding NextTrack}" Content="Next Track"/>
+                <Button Margin="3" Command="{Binding ClearQueue}" Content="Clear Queue"/>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Position: "/>
-                    <TextBlock Text="{Binding Path=TrackPosition, Converter={StaticResource TimeSpanConverter}}"/>
+                    <TextBlock Text="{Binding TrackPosition, Converter={StaticResource TimeSpanConverter}}"/>
                 </StackPanel>
 
                 <Grid Margin="10,5,0,0">
@@ -42,8 +47,8 @@
                         <RowDefinition Height="11"/>
                     </Grid.RowDefinitions>
 
-                    <Rectangle Grid.Row="0" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding Path=LeftLevel, Converter={StaticResource VolumeLevelConverter}}"/>
-                    <Rectangle Grid.Row="1" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding Path=RightLevel, Converter={StaticResource VolumeLevelConverter}}"/>
+                    <Rectangle Grid.Row="0" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding LeftLevel, Converter={StaticResource VolumeLevelConverter}}"/>
+                    <Rectangle Grid.Row="1" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding RightLevel, Converter={StaticResource VolumeLevelConverter}}"/>
                 </Grid>
             </StackPanel>
         </Grid>

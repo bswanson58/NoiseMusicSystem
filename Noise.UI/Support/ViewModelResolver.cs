@@ -1,4 +1,5 @@
-﻿using System.Dynamic;
+﻿using System;
+using System.Dynamic;
 using System.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
@@ -36,9 +37,8 @@ namespace Noise.UI.Support {
 
 			var foundType = GetType().Assembly.GetTypes().FirstOrDefault(type => type.Name == viewModelName );
 
-			if(( foundType != null ) &&
-			   ( Container != null )) {
-				retValue = Container.Resolve(foundType);
+			if( foundType != null ) {
+				retValue = Container != null ? Container.Resolve(foundType) : Activator.CreateInstance( foundType );
 			}
 
 			return( retValue );

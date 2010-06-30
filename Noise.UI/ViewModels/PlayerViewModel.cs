@@ -10,33 +10,35 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.UI.ViewModels {
 	public class PlayerViewModel : ViewModelBase {
-		private	readonly IUnityContainer		mContainer;
-		private readonly IEventAggregator		mEvents;
-		private readonly INoiseManager			mNoiseManager;
-		private TimeSpan						mCurrentPosition;
-		private TimeSpan						mCurrentLength;
-		private AudioLevels						mSampleLevels;
-		private	bool							mContinuePlaying;
-		private readonly Timer					mInfoUpdateTimer;
+		private	IUnityContainer		mContainer;
+		private IEventAggregator	mEvents;
+		private INoiseManager		mNoiseManager;
+		private TimeSpan			mCurrentPosition;
+		private TimeSpan			mCurrentLength;
+		private AudioLevels			mSampleLevels;
+		private	bool				mContinuePlaying;
+		private readonly Timer		mInfoUpdateTimer;
 		private readonly Dictionary<int, PlayQueueTrack>	mOpenTracks;
 
-		public PlayerViewModel( IUnityContainer container ) {
-			mContainer = container;
-			mEvents = mContainer.Resolve<IEventAggregator>();
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
+		public PlayerViewModel() {
 			mOpenTracks = new Dictionary<int, PlayQueueTrack>();
-
-			mEvents.GetEvent<Events.TrackSelected>().Subscribe( OnTrackSelected );
-			mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
-			mEvents.GetEvent<Events.AudioPlayStatusChanged>().Subscribe( OnPlayStatusChanged );
 
 			mInfoUpdateTimer = new Timer { AutoReset = true, Enabled = false, Interval = 100 };
 			mInfoUpdateTimer.Elapsed += OnInfoUpdateTimer;
+		}
 
-			if( IsInDesignMode ) {
-				mCurrentPosition = new TimeSpan( 0, 1, 23 );
-				mCurrentLength = new TimeSpan( 0, 2, 33 );
-				mSampleLevels = new AudioLevels( 0.5, 0.6 );
+		[Dependency]
+		public IUnityContainer Container {
+			get { return( mContainer ); }
+			set {
+				mContainer = value;
+
+				mEvents = mContainer.Resolve<IEventAggregator>();
+				mNoiseManager = mContainer.Resolve<INoiseManager>();
+
+				mEvents.GetEvent<Events.TrackSelected>().Subscribe( OnTrackSelected );
+				mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
+				mEvents.GetEvent<Events.AudioPlayStatusChanged>().Subscribe( OnPlayStatusChanged );
 			}
 		}
 
@@ -213,6 +215,9 @@ namespace Noise.UI.ViewModels {
 				if( CurrentTrack != null ) {
 					retValue = CurrentTrack.Track.Name;
 				}
+				else if( IsInDesignMode ) {
+					retValue = "The Flying Dutchmens Tribute";
+				}
 
 				return( retValue );
 			} 
@@ -225,6 +230,9 @@ namespace Noise.UI.ViewModels {
 
 				if( CurrentChannel != 0 ) {
 					retValue = mCurrentLength - mCurrentPosition;
+				}
+				else if( IsInDesignMode ) {
+					retValue = new TimeSpan( 0, 0, 1, 23 );
 				}
 
 				return( retValue );
@@ -239,6 +247,9 @@ namespace Noise.UI.ViewModels {
 				if( CurrentChannel != 0 ) {
 					retValue = mSampleLevels.LeftLevel;
 				}
+				else if( IsInDesignMode ) {
+					retValue = 0.75;
+				}
 
 				return( retValue );
 			}
@@ -252,6 +263,9 @@ namespace Noise.UI.ViewModels {
 				if( CurrentChannel != 0 ) {
 					retValue = mSampleLevels.RightLevel;
 				}
+				else if( IsInDesignMode ) {
+					retValue = 0.75;
+				}
 
 				return( retValue );
 			}
@@ -261,8 +275,15 @@ namespace Noise.UI.ViewModels {
 			StartPlaying();
 		}
 		[DependsUpon( "CurrentStatus" )]
+		[DependsUpon( "PlayQueueChangedFlag" )]
 		public bool CanExecute_Play( object sender ) {
-			return((!mNoiseManager.PlayQueue.IsQueueEmpty ) && ( CurrentStatus != ePlayingChannelStatus.Playing ));
+			var retValue = true;
+
+			if( mNoiseManager != null ) {
+				retValue = (!mNoiseManager.PlayQueue.IsQueueEmpty ) && ( CurrentStatus != ePlayingChannelStatus.Playing );
+			}
+
+			return( retValue );
 		}
 
 		public void Execute_Pause( object sender ) {
@@ -287,7 +308,13 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "PlayQueueChangedFlag" )]
 		[DependsUpon( "StartTrackFlag" )]
 		public bool CanExecute_NextTrack( object sender ) {
-			return( mNoiseManager.PlayQueue.NextTrack != null );
+			var retValue = true;
+
+			if( mNoiseManager != null ) {
+				retValue = mNoiseManager.PlayQueue.NextTrack != null ;
+			}
+
+			return( retValue );
 		}
 
 		public void Execute_PreviousTrack( object sender ) {
@@ -296,15 +323,29 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "PlayQueueChangedFlag" )]
 		[DependsUpon( "StartTrackFlag" )]
 		public bool CanExecute_PreviousTrack( object sender ) {
-			return( mNoiseManager.PlayQueue.PreviousTrack != null );
+			var retValue = true;
+
+			if( mNoiseManager != null ) {
+				retValue = mNoiseManager.PlayQueue.PreviousTrack != null;
+			}
+
+			return( retValue );
 		}
 
 		public void Execute_ClearQueue( object sender ) {
-			mNoiseManager.PlayQueue.ClearQueue();
+			if( mNoiseManager != null ) {
+				mNoiseManager.PlayQueue.ClearQueue();
+			}
 		}
 		[DependsUpon( "PlayQueueChangedFlag" )]
 		public bool CanExecute_ClearQueue( object sender ) {
-			return(!mNoiseManager.PlayQueue.IsQueueEmpty );
+			var retValue = true;
+
+			if( mNoiseManager != null ) {
+				retValue = !mNoiseManager.PlayQueue.IsQueueEmpty;
+			}
+
+			return( retValue );
 		}
 	}
 }
