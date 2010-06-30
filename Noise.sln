@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LastFmSharp", "LastFmSharp\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.UI", "Noise.UI\Noise.UI.csproj", "{D9F288A7-A0EF-4237-A9D6-BA9CCE9C9C09}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Layout Manager", "LayoutManager\Layout Manager.csproj", "{28833337-BDB1-412F-B378-575901285100}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,18 @@ Global
 		{D9F288A7-A0EF-4237-A9D6-BA9CCE9C9C09}.Release|x64.ActiveCfg = Release|x64
 		{D9F288A7-A0EF-4237-A9D6-BA9CCE9C9C09}.Release|x64.Build.0 = Release|x64
 		{D9F288A7-A0EF-4237-A9D6-BA9CCE9C9C09}.Release|x86.ActiveCfg = Release|Any CPU
+		{28833337-BDB1-412F-B378-575901285100}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28833337-BDB1-412F-B378-575901285100}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28833337-BDB1-412F-B378-575901285100}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{28833337-BDB1-412F-B378-575901285100}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{28833337-BDB1-412F-B378-575901285100}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{28833337-BDB1-412F-B378-575901285100}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{28833337-BDB1-412F-B378-575901285100}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28833337-BDB1-412F-B378-575901285100}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28833337-BDB1-412F-B378-575901285100}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{28833337-BDB1-412F-B378-575901285100}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{28833337-BDB1-412F-B378-575901285100}.Release|x64.ActiveCfg = Release|Any CPU
+		{28833337-BDB1-412F-B378-575901285100}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

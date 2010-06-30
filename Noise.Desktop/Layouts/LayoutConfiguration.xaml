@@ -1,0 +1,23 @@
+﻿<Layout:LayoutManager xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:Layout="clr-namespace:Composite.Layout;assembly=Composite.Layout"
+                      xmlns:Views="clr-namespace:Noise.UI.Views;assembly=Noise.UI" ShellName="Shell">
+    <Layout:LayoutManager.Layouts>
+        <Layout:Layout x:Name="DefaultLayout"
+                       Fullname="Default Layout"
+                       Filename="Layouts\DefaultLayout.xaml"
+                       Description="This is the default layout"
+                       IsDefault="True">
+            <Layout:Layout.Views>
+                <Layout:View RegionName="TopLeft"
+                             Type="{x:Type Views:LibraryExplorerView}" />
+                <Layout:View RegionName="TopRight"
+                             Type="{x:Type Views:TrackListView}" />
+                <Layout:View RegionName="BottomLeft"
+                             Type="{x:Type Views:PlayQueueView}" />
+                <Layout:View RegionName="BottomRight"
+                             Type="{x:Type Views:PlayerView}" />
+            </Layout:Layout.Views>
+        </Layout:Layout>
+    </Layout:LayoutManager.Layouts>
+</Layout:LayoutManager>

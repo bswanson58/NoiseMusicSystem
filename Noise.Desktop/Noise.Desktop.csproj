@@ -78,6 +78,7 @@
     <Reference Include="Microsoft.Practices.Composite.UnityExtensions">
       <HintPath>..\lib\CAL\Microsoft.Practices.Composite.UnityExtensions.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.ObjectBuilder2, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\lib\CAL\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -103,6 +104,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Content Include="Layouts\DefaultLayout.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Layouts\LayoutConfiguration.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Page Include="Shell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -143,6 +154,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LayoutManager\Layout Manager.csproj">
+      <Project>{28833337-BDB1-412F-B378-575901285100}</Project>
+      <Name>Layout Manager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Noise.Core\Noise.Core.csproj">
       <Project>{33A45442-71E5-4BFE-B37F-129EDB4F18E8}</Project>
       <Name>Noise.Core</Name>
