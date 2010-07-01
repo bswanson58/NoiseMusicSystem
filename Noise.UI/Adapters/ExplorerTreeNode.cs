@@ -2,10 +2,11 @@
 using System.Collections.ObjectModel;
 using Microsoft.Practices.Composite.Events;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Adapters {
-	class ExplorerTreeNode : BindableObject {
+	class ExplorerTreeNode : ViewModelBase {
 		private readonly IEventAggregator	mEventAggregator;
 		private bool						mIsSelected;
 		private bool						mIsExpanded;
@@ -69,6 +70,26 @@ namespace Noise.UI.Adapters {
 					Parent.IsExpanded = true;
 				}
 			}
+		}
+
+		public void Execute_PlayAlbum() {
+			var album = Item as DbAlbum;
+
+			if( album != null ) {
+				mEventAggregator.GetEvent<Events.AlbumPlayRequested>().Publish( album );
+			}
+		}
+
+		public bool CanExecute_PlayAlbum() {
+			var retValue = false;
+			var album = Item as DbAlbum;
+
+			if(( album != null ) &&
+			   ( album.TrackCount > 0 )) {
+				retValue = true;
+			}
+
+			return( retValue );
 		}
 	}
 }

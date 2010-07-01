@@ -25,12 +25,23 @@ namespace Noise.Core.PlayQueue {
 			mPlayHistory = new List<PlayQueueTrack>();
 
 			PlayStrategy = ePlayStrategy.PlaySingle;
+
+			mEventAggregator.GetEvent<Events.AlbumPlayRequested>().Subscribe( OnAlbumPlayRequest );
+			mEventAggregator.GetEvent<Events.TrackPlayRequested>().Subscribe( OnTrackPlayRequest );
+		}
+
+		public void OnTrackPlayRequest( DbTrack track ) {
+			Add( track );
 		}
 
 		public void Add( DbTrack track ) {
 			mPlayQueue.Add( new PlayQueueTrack( track, mDataProvider.GetPhysicalFile( track )));
 
 			FirePlayQueueChanged();
+		}
+
+		public void OnAlbumPlayRequest( DbAlbum album ) {
+			Add( album );
 		}
 
 		public void Add( DbAlbum album ) {
