@@ -50,6 +50,9 @@ namespace Noise.Core {
 			var	dataExplorer = mContainer.Resolve<IMetaDataExplorer>();
 			dataExplorer.BuildMetaData();
 
+			var summaryBuilder = mContainer.Resolve<ISummaryBuilder>();
+			summaryBuilder.BuildSummaryData( mDatabase );
+
 			var statistics = new DatabaseStatistics( mDatabase );
 			statistics.GatherStatistics();
 		}

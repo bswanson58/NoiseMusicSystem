@@ -8,6 +8,7 @@
              >
     <Control.Resources>
         <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
+        <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter"/>
     </Control.Resources>
 
     <ListView x:Name="TrackList" ItemsSource="{Binding Path=TrackList}">
@@ -21,7 +22,7 @@
                 <GridViewColumn Header="#" DisplayMemberBinding="{Binding Path=Track.TrackNumber}" />
                 <GridViewColumn Header="Track Name" DisplayMemberBinding="{Binding Path=Track.Name}" />
                 <GridViewColumn Header="Duration" DisplayMemberBinding="{Binding Path=Track.Duration, Converter={StaticResource TimeSpanConverter}}" />
-                <GridViewColumn Header="Published" DisplayMemberBinding="{Binding Path=Track.PublishedYear}" />
+                <GridViewColumn Header="Published" DisplayMemberBinding="{Binding Path=Track.PublishedYear, Converter={StaticResource PublishedYearConverter}}" />
                 <GridViewColumn Header="Added" DisplayMemberBinding="{Binding Path=Track.DateAdded}" />
             </GridView>
         </ListView.View>

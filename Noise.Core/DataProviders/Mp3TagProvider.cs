@@ -52,6 +52,8 @@ namespace Noise.Core.DataProviders {
 					track.PublishedYear = tags.Tag.Year;
 				}
 
+				track.Performer = !String.IsNullOrWhiteSpace( tags.Tag.FirstPerformer ) ? tags.Tag.FirstPerformer : artistName;
+
 				track.Bitrate = tags.Properties.AudioBitrate;
 				track.SampleRate = tags.Properties.AudioSampleRate;
 				track.DurationMilliseconds = (Int32)tags.Properties.Duration.TotalMilliseconds;
@@ -59,7 +61,7 @@ namespace Noise.Core.DataProviders {
 
 				if(( tags.Tag.Genres != null ) &&
 				   ( tags.Tag.Genres.GetLength( 0 ) > 0 )) {
-	//				track.Genre = tags.Tag.Genres[0];
+					track.Genre = tags.Tag.Genres[0];
 				}
 			}
 			catch( Exception ex ) {

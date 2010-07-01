@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 namespace Noise.Infrastructure.Dto {
 	public class DbTrack {
 		public string			Name { get; set; }
+		public string			Performer { get; set; }
 		public long				Album { get; set; }
 		public Int32			DurationMilliseconds { get; set; }
 		public Int32			Bitrate { get; set; }
@@ -14,7 +15,7 @@ namespace Noise.Infrastructure.Dto {
 		public UInt32			PublishedYear { get; set; }
 		public DateTime			DateAdded { get; private set; }
 		public eAudioEncoding	Encoding { get; set; }
-		public eMusicGenre		Genre { get; set; }
+		public string			Genre { get; set; }
 
 		public DbTrack() {
 			DateAdded = DateTime.Now.Date;
@@ -22,7 +23,6 @@ namespace Noise.Infrastructure.Dto {
 			Album = Constants.cDatabaseNullOid;
 
 			Encoding = eAudioEncoding.Unknown;
-			Genre = eMusicGenre.Unknown;
 		}
 
 		public TimeSpan Duration {

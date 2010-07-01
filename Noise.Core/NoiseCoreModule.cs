@@ -22,6 +22,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IDataProvider, DataProvider>();
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>();
 			mContainer.RegisterType<IMetaDataExplorer, MetaDataExplorer>();
+			mContainer.RegisterType<ISummaryBuilder, SummaryBuilder>();
 			mContainer.RegisterType<INoiseManager, NoiseManager>();
 			mContainer.RegisterType<IPlayQueue, PlayQueueMgr>();
 			mContainer.RegisterType<IPlayHistory, PlayHistoryMgr>();

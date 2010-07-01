@@ -3,11 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Adapters="clr-namespace:Noise.UI.Adapters" mc:Ignorable="d" 
+             xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
+             xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              DataContext="{Binding LibraryExplorerViewModel, Source={StaticResource ViewModelLocator}}"
              >
     <Control.Resources>
+        <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter"/>
+        
         <ContextMenu x:Key="ArtistMenu">
             <MenuItem Header="Rename Artist" Command="{Binding Path=Rename}"/>
         </ContextMenu>
@@ -127,7 +130,7 @@
         </Style>
 
         <HierarchicalDataTemplate x:Key="AlbumTemplate" DataType="{x:Type Adapters:ExplorerTreeNode}" ItemsSource="{Binding Path=Children}">
-            <Grid>
+            <Grid Margin="0,0,3,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -138,6 +141,9 @@
                 <Button Grid.Column="0" Width="12" Height="12" Margin="0,0,3,0" Command="{Binding Path=PlayAlbum}"/>
                 <TextBlock Grid.Column="1" Text="{Binding Path=Item.Name}"/>
                 <StackPanel Grid.Column="3" Orientation="Horizontal">
+                    <TextBlock Text="("/>
+                    <TextBlock Text="{Binding Path=Item.PublishedYear, Converter={StaticResource PublishedYearConverter}}"/>
+                    <TextBlock Margin="0,0,3,0" Text=")"/>
                     <TextBlock Foreground="{DynamicResource ControlTextColor}" Text="Tracks: "/>
                     <TextBlock Text="{Binding Path=Item.TrackCount}"/>
                 </StackPanel>
