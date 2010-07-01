@@ -1,12 +1,15 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-                    xmlns:vml="clr-namespace:Noise.UI.Support"
-                    >
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+					xmlns:vml="clr-namespace:Noise.UI.Support"
+					xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+					xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+					mc:Ignorable="d"
+					>
 
-    <vml:ViewModelLocator x:Key="ViewModelLocator">
-        <vml:ViewModelLocator.Resolver>
-            <vml:ViewModelResolver />
-        </vml:ViewModelLocator.Resolver>
-    </vml:ViewModelLocator>
-
+	<vml:ViewModelLocator x:Key="ViewModelLocator">
+		<vml:ViewModelLocator.Resolver>
+			<vml:ViewModelResolver />
+		</vml:ViewModelLocator.Resolver>
+	</vml:ViewModelLocator>
+	
 </ResourceDictionary>

@@ -1,58 +1,71 @@
 ﻿<UserControl x:Class="Noise.UI.Views.LibraryExplorerView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Adapters="clr-namespace:Noise.UI.Adapters" mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
-             DataContext="{Binding LibraryExplorerViewModel, Source={StaticResource ViewModelLocator}}"
-             >
-    <Control.Resources>
-        <HierarchicalDataTemplate x:Key="AlbumTemplate" DataType="{x:Type Adapters:ExplorerTreeNode}" ItemsSource="{Binding Path=Children}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="300"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:Adapters="clr-namespace:Noise.UI.Adapters" mc:Ignorable="d" 
+			 d:DesignHeight="300" d:DesignWidth="300"
+			 DataContext="{Binding LibraryExplorerViewModel, Source={StaticResource ViewModelLocator}}"
+			 >
+	<Control.Resources>
+        <Style x:Key="ListboxStyle">
+            <Style.Resources>
+                <!-- Background of selected item when focussed -->
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FF7070C8" />
+                <!-- Background of selected item when not focussed -->
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#FF857FAF" />
+            </Style.Resources>
+        </Style>
 
-                <TextBlock Grid.Column="0" Text="{Binding Path=Item.Name}"/>
-                <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <TextBlock Text="Tracks: "/>
-                    <TextBlock Text="{Binding Path=Item.TrackCount}"/>
-                </StackPanel>
-            </Grid>
-        </HierarchicalDataTemplate>
+        <DataTemplate x:Key="ListItemTemplate" DataType="{x:Type Adapters:ExplorerTreeNode}">
+			<Grid Margin="3,0,3,0" d:DesignWidth="600" d:DesignHeight="100">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
 
-        <HierarchicalDataTemplate x:Key="ArtistTemplate" DataType="{x:Type Adapters:ExplorerTreeNode}" ItemsSource="{Binding Path=Children}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="300"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+				<Grid Grid.Row="0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Text="{Binding Path=Item.Name}"/>
-                <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <TextBlock Text="Albums: "/>
-                    <TextBlock Text="{Binding Path=Item.AlbumCount}"/>
-                </StackPanel>
-            </Grid>
-        </HierarchicalDataTemplate>
-    </Control.Resources>
+					<TextBlock x:Name="ArtistName" Grid.Column="0" Text="{Binding Path=Item.Name}" FontSize="16"/>
+					<TextBlock x:Name="ArtistRating" Grid.Column="2" Text="Rating" Width="100" Foreground="{DynamicResource ControlTextColor}"/>
+				</Grid>
 
-    <TreeView x:Name="TreeView" ItemsSource="{Binding Path=TreeData}">
-        <TreeView.ItemContainerStyle>
-            <Style TargetType="{x:Type TreeViewItem}">
-                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+				<Grid Grid.Row="1">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="17"/>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+
+					<StackPanel Grid.Column="1" Orientation="Horizontal">
+						<TextBlock Text="Genre: " Foreground="{DynamicResource ControlTextColor}"/>
+						<TextBlock x:Name="ArtistGenre" Text="{Binding Path=Item.Genre}"/>
+					</StackPanel>
+					<StackPanel Grid.Column="2" Orientation="Horizontal">
+						<TextBlock Text="Albums: " Foreground="{DynamicResource ControlTextColor}"/>
+						<TextBlock x:Name="AlbumCount" Text="{Binding Path=Item.AlbumCount}"/>
+					</StackPanel>
+				</Grid>
+			</Grid>
+		</DataTemplate>
+	</Control.Resources>
+
+	<ListView x:Name="ExplorerList" HorizontalContentAlignment="Stretch" Style="{StaticResource ListboxStyle}" ItemsSource="{Binding Path=TreeData}" ItemTemplate="{StaticResource ListItemTemplate}">
+		<ListView.ItemContainerStyle>
+            <Style TargetType="{x:Type ListViewItem}">
                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                <Setter Property="FontWeight" Value="Normal" />
-                <Style.Triggers>
-                    <Trigger Property="IsSelected" Value="True">
-                        <Setter Property="FontWeight" Value="Bold" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-        </TreeView.ItemContainerStyle>
-    </TreeView>
+				<Setter Property="FontWeight" Value="Normal" />
+				<Style.Triggers>
+					<Trigger Property="IsSelected" Value="True">
+						<Setter Property="FontWeight" Value="Bold" />
+					</Trigger>
+				</Style.Triggers>
+			</Style>
+		</ListView.ItemContainerStyle>
+	</ListView>
 </UserControl>

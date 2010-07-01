@@ -18,27 +18,27 @@
 	</UserControl.DataContext>
 
     <Grid x:Name="PlayerViewRoot">
-        <Grid x:Name="Layout">
+        <Grid x:Name="Layout" Background="White">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
-                <TextBlock Text="Current Track: " />
-                <TextBlock Text="{Binding TrackName}"/>
+                <TextBlock Text="Current Track: " FontSize="16" FontWeight="Bold" Foreground="{DynamicResource ControlTextColor}" />
+                <TextBlock Text="{Binding TrackName}" FontWeight="Bold" FontSize="16"/>
             </StackPanel>
 
             <StackPanel Grid.Row="1" Orientation="Horizontal" Height="35">
-                <Button Margin="3" Command="{Binding Play}" Content="Play"/>
-                <Button Margin="3" Command="{Binding Pause}" Content="Pause"/>
-                <Button Margin="3" Command="{Binding Stop}" Content="Stop"/>
-                <Button Margin="3" Command="{Binding PreviousTrack}" Content="Prev Track"/>
-                <Button Margin="3" Command="{Binding NextTrack}" Content="Next Track"/>
-                <Button Margin="3" Command="{Binding ClearQueue}" Content="Clear Queue"/>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Position: "/>
-                    <TextBlock Text="{Binding TrackPosition, Converter={StaticResource TimeSpanConverter}}"/>
+                <Button Margin="3" Command="{Binding Play}" Content="Play" Width="43"/>
+                <Button Margin="3" Command="{Binding Pause}" Content="Pause" Width="43"/>
+                <Button Margin="3" Command="{Binding Stop}" Content="Stop" Width="43"/>
+                <Button Margin="3" Command="{Binding PreviousTrack}" Content="Prev" Width="43"/>
+                <Button Margin="3" Command="{Binding NextTrack}" Content="Next" Width="43"/>
+                <Button Margin="3" Command="{Binding ClearQueue}" Content="Clear" Width="43"/>
+                <StackPanel Orientation="Horizontal" Margin="11,0">
+                    <TextBlock Text="Position: " Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding TrackPosition, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center"/>
                 </StackPanel>
 
                 <Grid Margin="10,5,0,0">
