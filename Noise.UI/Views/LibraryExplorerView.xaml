@@ -8,6 +8,10 @@
              DataContext="{Binding LibraryExplorerViewModel, Source={StaticResource ViewModelLocator}}"
              >
     <Control.Resources>
+        <ContextMenu x:Key="ArtistMenu">
+            <MenuItem Header="Rename Artist" Command="{Binding Path=Rename}"/>
+        </ContextMenu>
+        
         <Style x:Key="TreeViewItemFocusVisual">
             <Setter Property="Control.Template">
                 <Setter.Value>
@@ -141,7 +145,7 @@
         </HierarchicalDataTemplate>
 
         <HierarchicalDataTemplate x:Key="ArtistTemplate" DataType="{x:Type Adapters:ExplorerTreeNode}" ItemsSource="{Binding Path=Children}">
-            <Border Margin="0,1,0,2" CornerRadius="3" Background="{DynamicResource TreeItemBackground}" BorderBrush="{DynamicResource ControlTextColor}">
+            <Border Margin="0,1,0,2" CornerRadius="3" ContextMenu="{DynamicResource ArtistMenu}" Background="{DynamicResource TreeItemBackground}" BorderBrush="{DynamicResource ControlTextColor}">
                 <Grid Margin="3,0,3,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

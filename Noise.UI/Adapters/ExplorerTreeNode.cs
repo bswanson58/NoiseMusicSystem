@@ -79,13 +79,30 @@ namespace Noise.UI.Adapters {
 				mEventAggregator.GetEvent<Events.AlbumPlayRequested>().Publish( album );
 			}
 		}
-
 		public bool CanExecute_PlayAlbum() {
 			var retValue = false;
 			var album = Item as DbAlbum;
 
 			if(( album != null ) &&
 			   ( album.TrackCount > 0 )) {
+				retValue = true;
+			}
+
+			return( retValue );
+		}
+
+		public void Execute_Rename() {
+			var artist = Item as DbArtist;
+
+			if( artist != null ) {
+				
+			}
+		}
+		public bool CanExecute_Rename() {
+			var retValue = false;
+			var artist = Item as DbArtist;
+
+			if( artist != null ) {
 				retValue = true;
 			}
 
