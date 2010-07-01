@@ -10,5 +10,8 @@ namespace Noise.Infrastructure {
 		public class PlayQueueChanged : CompositePresentationEvent<IPlayQueue> { }
 
 		public class AudioPlayStatusChanged : CompositePresentationEvent<int> { }
+
+		public class TrackPlayRequested : CompositePresentationEvent<DbTrack> { }
+		public class AlbumPlayRequested : CompositePresentationEvent<DbAlbum> { }
 	}
 }
