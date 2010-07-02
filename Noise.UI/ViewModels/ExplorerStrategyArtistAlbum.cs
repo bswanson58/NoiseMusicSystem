@@ -1,18 +1,56 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using Microsoft.Practices.Composite.Events;
+using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
+using CuttingEdge.Conditions;
+using Condition = CuttingEdge.Conditions.Condition;
 
 namespace Noise.UI.ViewModels {
 	internal class ExplorerStrategyArtistAlbum : IExplorerViewStrategy {
-		private readonly LibraryExplorerViewModel	mViewModel;
-		private IEnumerator<ExplorerTreeNode>		mTreeEnumerator;
+		private readonly IUnityContainer		mContainer;
+		private readonly IEventAggregator		mEventAggregator;
+		private readonly INoiseManager			mNoiseManager;
+		private	LibraryExplorerViewModel		mViewModel;
+		private IEnumerator<ExplorerTreeNode>	mTreeEnumerator;
 
-		public ExplorerStrategyArtistAlbum( LibraryExplorerViewModel viewModel ) {
+		public ExplorerStrategyArtistAlbum( IUnityContainer container ) {
+			mContainer = container;
+			mEventAggregator = mContainer.Resolve<IEventAggregator>();
+			mNoiseManager = mContainer.Resolve<INoiseManager>();
+		}
+
+		public void Initialize( LibraryExplorerViewModel viewModel ) {
 			mViewModel = viewModel;
 
 			mViewModel.TreeViewItemTemplate = Application.Current.TryFindResource( "ArtistAlbumTemplate" ) as HierarchicalDataTemplate;
+		}
+
+		public void PopulateTree( ObservableCollection<ExplorerTreeNode> tree ) {
+			Condition.Requires( mViewModel ).IsNotNull();
+
+			var artistList = from artist in mNoiseManager.DataProvider.GetArtistList() orderby artist.Name select artist;
+
+			foreach( DbArtist artist in artistList ) {
+				var parent = artist.AlbumCount > 0 ? new ExplorerTreeNode( mEventAggregator, artist, FillChildren ) : new ExplorerTreeNode( mEventAggregator, artist );
+
+				tree.Add( parent );
+			}
+		}
+
+		private IEnumerable<ExplorerTreeNode> FillChildren( ExplorerTreeNode parent ) {
+			IEnumerable<ExplorerTreeNode>	retValue = null;
+			var artist = parent.Item as DbArtist;
+
+			if( artist != null ) {
+				retValue = from album in mNoiseManager.DataProvider.GetAlbumList( artist ) orderby album.Name select new ExplorerTreeNode( mEventAggregator, parent, album );
+			}
+
+			return( retValue );
 		}
 
 		public bool Search( string searchText ) {

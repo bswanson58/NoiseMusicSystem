@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Microsoft.Practices.Composite.Events;
 using Noise.Infrastructure;
@@ -8,13 +9,15 @@ using Noise.Infrastructure.Support;
 namespace Noise.UI.Adapters {
 	public class ExplorerTreeNode : ViewModelBase {
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly Func<ExplorerTreeNode,IEnumerable<ExplorerTreeNode>>	mChildFillFunction;
 
 		public	ExplorerTreeNode			Parent { get; private set; }
 		public	object						Item { get; private set; }
+		public	bool						RequiresChildren{ get; private set; }
 		public	ObservableCollection<ExplorerTreeNode>	Children { get; set; }
 
 		public ExplorerTreeNode( IEventAggregator eventAggregator, object item ) :
-			this( eventAggregator, item, null ) {
+			this( eventAggregator, null, item, null ) {
 		}
 
 		public ExplorerTreeNode( IEventAggregator eventAggregator, object item, IEnumerable<ExplorerTreeNode> children ) :
@@ -23,6 +26,16 @@ namespace Noise.UI.Adapters {
 
 		public ExplorerTreeNode( IEventAggregator eventAggregator, ExplorerTreeNode parent, object item ) :
 			this( eventAggregator, parent, item, null ) {
+		}
+
+		public ExplorerTreeNode( IEventAggregator eventAggregator, object item, Func<ExplorerTreeNode,IEnumerable<ExplorerTreeNode>> fillFunc ) :
+			this( eventAggregator, null, item, null ) {
+			var dummyChild = new DbArtist { Name = "Albums are being loaded" };
+			var dummyNode = new ExplorerTreeNode( eventAggregator, this, dummyChild );
+
+			mChildFillFunction = fillFunc;
+			Children = new ObservableCollection<ExplorerTreeNode> { dummyNode };
+			RequiresChildren = true;
 		}
 
 		public ExplorerTreeNode( IEventAggregator eventAggregator, ExplorerTreeNode parent, object item, IEnumerable<ExplorerTreeNode> children ) {
@@ -37,6 +50,9 @@ namespace Noise.UI.Adapters {
 
 		public void SetChildren( IEnumerable<ExplorerTreeNode> children ) {
 			Children = new ObservableCollection<ExplorerTreeNode>( children );
+
+			RequiresChildren = false;
+			RaisePropertyChanged( () => Children );
 		}
 
 		public bool IsSelected {
@@ -58,6 +74,12 @@ namespace Noise.UI.Adapters {
 				// Expand all the way up to the root.
 				if( value && Parent != null ) {
 					Parent.IsExpanded = true;
+				}
+
+				if(( value ) &&
+				   ( RequiresChildren ) &&
+				   ( mChildFillFunction != null )) {
+					SetChildren( mChildFillFunction( this ));
 				}
 			}
 		}

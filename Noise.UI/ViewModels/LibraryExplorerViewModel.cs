@@ -1,56 +1,36 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
-using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 
 namespace Noise.UI.ViewModels {
 	public class LibraryExplorerViewModel : ViewModelBase {
 		private IUnityContainer			mContainer;
-		private IEventAggregator		mEventAggregator;
-		private	INoiseManager			mNoiseManager;
 		private IExplorerViewStrategy	mViewStrategy;
-
-		private readonly ObservableCollection<ExplorerTreeNode>	mTreeItems;
-
-		public LibraryExplorerViewModel() {
-			mTreeItems = new ObservableCollection<ExplorerTreeNode>();
-
-			mViewStrategy = new ExplorerStrategyArtistAlbum( this );
-		}
+		private ObservableCollection<ExplorerTreeNode>	mTreeItems;
 
 		[Dependency]
 		public IUnityContainer Container {
 			get { return( mContainer ); }
 			set {
-				mContainer = value;
-
-				mEventAggregator = mContainer.Resolve<IEventAggregator>();
-				mNoiseManager = mContainer.Resolve<INoiseManager>();
-
-				PopulateTreeData();
-			}
-		}
-
-		private void PopulateTreeData() {
-			mTreeItems.Clear();
-
-			var artistList = from artist in mNoiseManager.DataProvider.GetArtistList() orderby artist.Name select artist;
-			foreach( DbArtist artist in artistList ) {
-				var parent = new ExplorerTreeNode( mEventAggregator, artist );
-				parent.SetChildren( from album in mNoiseManager.DataProvider.GetAlbumList( artist ) orderby album.Name select new ExplorerTreeNode( mEventAggregator, parent, album ));
-				mTreeItems.Add( parent );
+				mContainer = value; 
+				mViewStrategy = mContainer.Resolve<IExplorerViewStrategy>( "ArtistAlbum" );
+				mViewStrategy.Initialize( this );
 			}
 		}
 
 		public IEnumerable<ExplorerTreeNode> TreeData {
-			get{ return( mTreeItems ); }
+			get {
+				if(( mTreeItems == null ) &&
+				   ( mViewStrategy != null )) {
+					mTreeItems = new ObservableCollection<ExplorerTreeNode>();
+					mViewStrategy.PopulateTree( mTreeItems );
+				}
+
+				return( mTreeItems );
+			}
 		}
 
 		public DataTemplate TreeViewItemTemplate {
