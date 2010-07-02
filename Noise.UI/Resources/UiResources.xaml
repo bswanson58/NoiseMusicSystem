@@ -4,7 +4,9 @@
 					xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 					xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 					xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
-					xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters" mc:Ignorable="d"
+					xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters" 
+					xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary" 
+					mc:Ignorable="d"
 					>
 
 	<vml:ViewModelLocator x:Key="ViewModelLocator">
@@ -15,10 +17,22 @@
 
 	<ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter"/>
 
+	<ControlTemplate x:Key="RatingTemplate"  TargetType="{x:Type Controls:RatingSelector}">
+		<!--It is important to set a backgroud color outwise the Mouse over event will not be fire and the items would not highlight on mouse over-->
+		<Border BorderThickness="0" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="1">
+			<StackPanel Orientation="Horizontal" IsItemsHost="True"/>
+		</Border>
+	</ControlTemplate>
+
+	<Style x:Key="RatingStyle" TargetType="{x:Type Controls:RatingSelector}">
+		<Setter Property="RateItemColor" Value="Blue"/>
+		<Setter Property="RateItemHoverColor" Value="LightBlue"/>
+	</Style>
+
 	<ContextMenu x:Key="ArtistMenu">
 		<MenuItem Header="Rename Artist" Command="{Binding Path=Rename}"/>
 	</ContextMenu>
-	
+
 	<HierarchicalDataTemplate x:Key="AlbumTemplate" DataType="{x:Type Adapters:ExplorerTreeNode}" ItemsSource="{Binding Path=Children}">
 		<Grid Margin="0,0,3,0">
 			<Grid.ColumnDefinitions>
@@ -54,7 +68,8 @@
 				</Grid.ColumnDefinitions>
 
 				<TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" Text="{Binding Path=Item.Name}"/>
-				<TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="{DynamicResource ControlTextColor}" Text="Rating"/>
+				<Controls:RatingSelector Grid.Row="0" Grid.Column="2" Margin="0,1,0,0" HorizontalAlignment="Right"  VerticalAlignment="Bottom" 
+										 Style="{StaticResource RatingStyle}" Template="{StaticResource RatingTemplate}" RatingSelected="{Binding Path=Item.Rating}"/>
 				<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="11,0,0,0">
 					<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="Albums: "/>
 					<TextBlock Text="{Binding Path=Item.AlbumCount}"/>
