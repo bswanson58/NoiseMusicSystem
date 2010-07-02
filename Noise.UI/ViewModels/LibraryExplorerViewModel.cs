@@ -1,21 +1,28 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 
 namespace Noise.UI.ViewModels {
-	public class LibraryExplorerViewModel {
-		private IUnityContainer		mContainer;
-		private IEventAggregator	mEventAggregator;
-		private	INoiseManager		mNoiseManager;
+	public class LibraryExplorerViewModel : ViewModelBase {
+		private IUnityContainer			mContainer;
+		private IEventAggregator		mEventAggregator;
+		private	INoiseManager			mNoiseManager;
+		private IExplorerViewStrategy	mViewStrategy;
 
 		private readonly ObservableCollection<ExplorerTreeNode>	mTreeItems;
 
 		public LibraryExplorerViewModel() {
 			mTreeItems = new ObservableCollection<ExplorerTreeNode>();
+
+			mViewStrategy = new ExplorerStrategyArtistAlbum( this );
 		}
 
 		[Dependency]
@@ -42,8 +49,31 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public object TreeData {
+		public IEnumerable<ExplorerTreeNode> TreeData {
 			get{ return( mTreeItems ); }
+		}
+
+		public DataTemplate TreeViewItemTemplate {
+			get{ return( Get( () => TreeViewItemTemplate )); }
+			set{ Set( () => TreeViewItemTemplate, value ); }
+		}
+
+		public string SearchText {
+			get{ return( Get( () => SearchText )); }
+			set {
+				Set( () => SearchText, value );
+
+				mViewStrategy.ClearCurrentSearch();
+			}
+		}
+
+		public void Execute_Search() {
+			mViewStrategy.Search( SearchText );
+		}
+
+		[DependsUpon( "SearchText" )]
+		public bool CanExecute_Search() {
+			return(!string.IsNullOrWhiteSpace( SearchText ));
 		}
 	}
 }

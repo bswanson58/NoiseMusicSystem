@@ -108,6 +108,8 @@
     <Compile Include="ValueConverters\PublishedYearConverter.cs" />
     <Compile Include="ValueConverters\TimeSpanConverter.cs" />
     <Compile Include="ValueConverters\VolumeLevelConverter.cs" />
+    <Compile Include="ViewModels\ExplorerStrategyArtistAlbum.cs" />
+    <Compile Include="ViewModels\IExplorerViewStrategy.cs" />
     <Compile Include="ViewModels\LibraryExplorerViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueViewModel.cs" />

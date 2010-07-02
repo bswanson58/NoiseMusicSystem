@@ -6,10 +6,8 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Adapters {
-	class ExplorerTreeNode : ViewModelBase {
+	public class ExplorerTreeNode : ViewModelBase {
 		private readonly IEventAggregator	mEventAggregator;
-		private bool						mIsSelected;
-		private bool						mIsExpanded;
 
 		public	ExplorerTreeNode			Parent { get; private set; }
 		public	object						Item { get; private set; }
@@ -42,31 +40,23 @@ namespace Noise.UI.Adapters {
 		}
 
 		public bool IsSelected {
-			get { return mIsSelected; }
+			get { return( Get( () => IsSelected )); }
 			set {
-				if( value != mIsSelected ) {
-					mIsSelected = value;
+				Set( () => IsSelected, value  );
 
-					RaisePropertyChanged( () => IsSelected );
-
-					if( mIsSelected ) {
-						mEventAggregator.GetEvent<Events.ExplorerItemSelected>().Publish( Item );
-					}
+				if( value ) {
+					mEventAggregator.GetEvent<Events.ExplorerItemSelected>().Publish( Item );
 				}
 			}
 		}
 
 		public bool IsExpanded {
-			get { return mIsExpanded; }
-			set {
-				if( value != mIsExpanded ) {
-					mIsExpanded = value;
-
-					RaisePropertyChanged( () => IsExpanded );
-				}
+			get { return( Get( () => IsExpanded )); }
+			set { 
+				Set( () => IsExpanded, value  );
 
 				// Expand all the way up to the root.
-				if( mIsExpanded && Parent != null ) {
+				if( value && Parent != null ) {
 					Parent.IsExpanded = true;
 				}
 			}
