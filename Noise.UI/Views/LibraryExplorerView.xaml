@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
-             xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters" mc:Ignorable="d" 
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+             mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              DataContext="{Binding LibraryExplorerViewModel, Source={StaticResource ViewModelLocator}}"
              >
@@ -56,7 +56,8 @@
             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
             <Setter Property="FontWeight" Value="Normal" />
-            
+            <Setter Property="Behaviours:TreeViewItemBehaviour.IsBroughtIntoViewWhenSelected" Value="True" />
+
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
             <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
@@ -131,7 +132,11 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <TreeView x:Name="TreeView" Grid.Row="0" ItemsSource="{Binding Path=TreeData}" ItemTemplate="{Binding Path=TreeViewItemTemplate}" ItemContainerStyle="{DynamicResource TreeViewItemStyle}"/>
+        <TreeView x:Name="TreeView" Grid.Row="0"
+                  ItemsSource="{Binding Path=TreeData}"
+                  ItemTemplate="{Binding Path=TreeViewItemTemplate}"
+                  ItemContainerStyle="{DynamicResource TreeViewItemStyle}"
+                  />
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="15"/>
