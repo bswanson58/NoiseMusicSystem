@@ -9,12 +9,6 @@
              DataContext="{Binding LibraryExplorerViewModel, Source={StaticResource ViewModelLocator}}"
              >
     <Control.Resources>
-        <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter"/>
-        
-        <ContextMenu x:Key="ArtistMenu">
-            <MenuItem Header="Rename Artist" Command="{Binding Path=Rename}"/>
-        </ContextMenu>
-        
         <Style x:Key="TreeViewItemFocusVisual">
             <Setter Property="Control.Template">
                 <Setter.Value>
@@ -128,54 +122,6 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-
-        <HierarchicalDataTemplate x:Key="AlbumTemplate" DataType="{x:Type Adapters:ExplorerTreeNode}" ItemsSource="{Binding Path=Children}">
-            <Grid Margin="0,0,3,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <Button Grid.Column="0" Width="12" Height="12" Margin="0,0,3,0" Command="{Binding Path=PlayAlbum}"/>
-                <TextBlock Grid.Column="1" Text="{Binding Path=Item.Name}"/>
-                <StackPanel Grid.Column="3" Orientation="Horizontal">
-                    <TextBlock Text="("/>
-                    <TextBlock Text="{Binding Path=Item.PublishedYear, Converter={StaticResource PublishedYearConverter}}"/>
-                    <TextBlock Margin="0,0,3,0" Text=")"/>
-                    <TextBlock Foreground="{DynamicResource ControlTextColor}" Text="Tracks: "/>
-                    <TextBlock Text="{Binding Path=Item.TrackCount}"/>
-                </StackPanel>
-            </Grid>
-        </HierarchicalDataTemplate>
-
-        <HierarchicalDataTemplate x:Key="ArtistTemplate" DataType="{x:Type Adapters:ExplorerTreeNode}" ItemsSource="{Binding Path=Children}">
-            <Border Margin="0,1,0,2" CornerRadius="3" ContextMenu="{DynamicResource ArtistMenu}" Background="{DynamicResource TreeItemBackground}" BorderBrush="{DynamicResource ControlTextColor}">
-                <Grid Margin="3,0,3,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" Text="{Binding Path=Item.Name}"/>
-                    <TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="{DynamicResource ControlTextColor}" Text="Rating"/>
-                    <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="11,0,0,0">
-                        <TextBlock Foreground="{DynamicResource ControlTextColor}" Text="Albums: "/>
-                        <TextBlock Text="{Binding Path=Item.AlbumCount}"/>
-                    </StackPanel>
-                    <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
-                        <TextBlock Foreground="{DynamicResource ControlTextColor}" Text="Genre: "/>
-                        <TextBlock Text="{Binding Path=Item.Genre}"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
-        </HierarchicalDataTemplate>
 
     </Control.Resources>
 

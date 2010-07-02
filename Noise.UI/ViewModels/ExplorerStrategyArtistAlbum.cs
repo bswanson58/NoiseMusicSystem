@@ -12,13 +12,8 @@ namespace Noise.UI.ViewModels {
 		public ExplorerStrategyArtistAlbum( LibraryExplorerViewModel viewModel ) {
 			mViewModel = viewModel;
 
-/*			var template = FindResource( "ArtistTemplate" ) as HierarchicalDataTemplate;
-			if( template != null ) {
-				template.ItemTemplate = FindResource( "AlbumTemplate" ) as HierarchicalDataTemplate;
-
-				mViewModel.TreeViewItemTemplate = template;
-			}
-*/		}
+			mViewModel.TreeViewItemTemplate = Application.Current.TryFindResource( "ArtistAlbumTemplate" ) as HierarchicalDataTemplate;
+		}
 
 		public bool Search( string searchText ) {
 			var retValue = false;

@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace Noise.UI.Views {
 	/// <summary>
@@ -8,13 +7,6 @@ namespace Noise.UI.Views {
 	public partial class LibraryExplorerView : UserControl {
 		public LibraryExplorerView() {
 			InitializeComponent();
-
-			var template = FindResource( "ArtistTemplate" ) as HierarchicalDataTemplate;
-			if( template != null ) {
-				template.ItemTemplate = FindResource( "AlbumTemplate" ) as HierarchicalDataTemplate;
-
-				TreeView.ItemTemplate = template;
-			}
 		}
 	}
 }
