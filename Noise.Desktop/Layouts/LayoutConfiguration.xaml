@@ -12,6 +12,8 @@
                 <Layout:View RegionName="TopLeft"
                              Type="{x:Type Views:LibraryExplorerView}" />
                 <Layout:View RegionName="TopRight"
+                             Type="{x:Type Views:ArtistView}" />
+                <Layout:View RegionName="MiddleRight"
                              Type="{x:Type Views:TrackListView}" />
                 <Layout:View RegionName="BottomLeft"
                              Type="{x:Type Views:PlayQueueView}" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using CuttingEdge.Conditions;
 using Lastfm.Services;
 using Noise.Core.Database;
 using Noise.Infrastructure.Dto;
@@ -63,6 +64,10 @@ namespace Noise.Core.DataProviders {
 
 								mDatabase.Database.Store( bio );
 
+								if(!string.IsNullOrWhiteSpace( artistMatch.GetImageURL())) {
+									new ImageDownloader( artistMatch.GetImageURL(), bio, ArtistImageDownloadComplete );
+								}
+
 								queryCount++;
 							}
 
@@ -103,6 +108,17 @@ namespace Noise.Core.DataProviders {
 				catch( Exception ex ) {
 
 				}
+			}
+		}
+
+		private void ArtistImageDownloadComplete( object parentObject, byte[] imageData ) {
+			Condition.Requires( parentObject ).IsNotNull();
+			Condition.Requires( imageData ).IsNotNull();
+
+			var	bio = parentObject as DbBiography;
+			if( bio != null ) {
+				bio.ArtistImage = imageData;
+				mDatabase.Database.Store( bio );
 			}
 		}
 	}

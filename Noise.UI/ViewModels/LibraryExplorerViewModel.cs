@@ -1,13 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 
 namespace Noise.UI.ViewModels {
 	public class LibraryExplorerViewModel : ViewModelBase {
 		private IUnityContainer			mContainer;
+		private IEventAggregator		mEvents;
 		private IExplorerViewStrategy	mViewStrategy;
 		private ObservableCollection<ExplorerTreeNode>	mTreeItems;
 
@@ -18,6 +22,15 @@ namespace Noise.UI.ViewModels {
 				mContainer = value; 
 				mViewStrategy = mContainer.Resolve<IExplorerViewStrategy>( "ArtistAlbum" );
 				mViewStrategy.Initialize( this );
+
+				mEvents = mContainer.Resolve<IEventAggregator>();
+				mEvents.GetEvent<Events.ExplorerItemSelected>().Subscribe( OnExplorerItemSelected );
+			}
+		}
+
+		public void OnExplorerItemSelected( object item ) {
+			if( item is DbArtist ) {
+				mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( item as DbArtist );
 			}
 		}
 

@@ -55,5 +55,14 @@ namespace Noise.Core.Database {
 
 			return( mDatabase.Database.ExecuteScalar( "SELECT data WHERE $ID = @id", parm ));
 		}
+
+		public ArtistSupportInfo GetArtistSupportInfo( DbArtist forArtist ) {
+			var artistId = mDatabase.Database.GetUid( forArtist );
+
+			return( new ArtistSupportInfo(( from DbBiography bio in mDatabase.Database where bio.Artist == artistId select bio ).FirstOrDefault(),
+										  ( from DbSimilarItems items in mDatabase.Database where items.AssociatedItem == artistId select items ).FirstOrDefault(),
+										  ( from DbTopItems items in mDatabase.Database where  items.AssociatedItem == artistId select  items ).FirstOrDefault()));
+		}
+
 	}
 }

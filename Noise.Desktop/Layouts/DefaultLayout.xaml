@@ -16,7 +16,16 @@
 
             <ContentControl Grid.Column="0" Margin="0,0,7,0" cal:RegionManager.RegionName="TopLeft"/>
             <GridSplitter Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"/>
-            <ContentControl Grid.Column="1" cal:RegionManager.RegionName="TopRight"/>
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+
+                <ContentControl Grid.Row="0" cal:RegionManager.RegionName="TopRight"/>
+                <ContentControl Grid.Row="1" cal:RegionManager.RegionName="MiddleRight"/>
+            </Grid>
         </Grid>
 
         <Grid x:Name="Player" Grid.Row="1">

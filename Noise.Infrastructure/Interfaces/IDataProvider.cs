@@ -10,5 +10,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 		StorageFile				GetPhysicalFile( DbTrack forTrack );
 		object					GetMetaData( StorageFile forFile );
+
+		ArtistSupportInfo		GetArtistSupportInfo( DbArtist forArtist );
 	}
 }
