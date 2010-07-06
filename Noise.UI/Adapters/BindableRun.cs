@@ -6,14 +6,13 @@ using System.Windows.Documents;
 namespace Noise.UI.Adapters {
 	public class BindableRun : Run {
 		public static readonly DependencyProperty BoundTextProperty = DependencyProperty.Register( "BoundText", typeof( string ), typeof( BindableRun ),
-			new PropertyMetadata( new PropertyChangedCallback( BindableRun.OnBoundTextChanged ) ) );
+			new PropertyMetadata( new PropertyChangedCallback( OnBoundTextChanged ) ) );
 
 		private static void OnBoundTextChanged( DependencyObject d, DependencyPropertyChangedEventArgs e ) {
-			( (Run)d ).Text = (string)e.NewValue;
+			((Run)d ).Text = (string)e.NewValue;
 		}
 
-		public BindableRun()
-			: base() {
+		public BindableRun() {
 			var b = new Binding( "DataContext" ) { RelativeSource = new RelativeSource( RelativeSourceMode.FindAncestor, typeof( FrameworkElement ), 1 ) };
 
 			SetBinding( DataContextProperty, b );

@@ -25,9 +25,9 @@
         <FlowDocumentScrollViewer Grid.Row="0">
             <FlowDocument ColumnWidth="100" IsHyphenationEnabled="True" IsOptimalParagraphEnabled="True">
                 <Paragraph>
-                        <InlineUIContainer>
-                            <Image Width="100" Source="{Binding Path=ArtistImage, Converter={StaticResource imageConverter}}"/>
-                        </InlineUIContainer>
+                    <InlineUIContainer>
+                        <Image Width="100" Source="{Binding Path=ArtistImage, Converter={StaticResource imageConverter}}"/>
+                    </InlineUIContainer>
                 </Paragraph>
                 <Paragraph>
                     <adapters:BindableRun BoundText="{Binding Path=ArtistBio}" />
