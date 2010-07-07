@@ -110,6 +110,7 @@
     <Compile Include="DataBuilders\ISummaryBuilder.cs" />
     <Compile Include="DataBuilders\MetaDataExplorer.cs" />
     <Compile Include="DataBuilders\SummaryBuilder.cs" />
+    <Compile Include="DataProviders\FileArtworkProvider.cs" />
     <Compile Include="DataProviders\FileNameProvider.cs" />
     <Compile Include="DataProviders\FileTagProvider.cs" />
     <Compile Include="DataProviders\ImageDownloader.cs" />

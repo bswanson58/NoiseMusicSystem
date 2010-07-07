@@ -65,10 +65,23 @@ namespace Noise.Core.Database {
 		}
 
 		public AlbumSupportInfo GetAlbumSupportInfo( DbAlbum forAlbum ) {
+			AlbumSupportInfo	retValue = null;
+
 			var albumId = mDatabase.Database.GetUid( forAlbum );
+			var albumTrack = ( from DbTrack track in mDatabase.Database where track.Album == albumId select track ).FirstOrDefault();
 
-			return( new AlbumSupportInfo());
+			if( albumTrack != null ) {
+				var trackId = mDatabase.Database.GetUid( albumTrack );
+				var	fileTrack = ( from StorageFile file in mDatabase.Database where file.MetaDataPointer == trackId select file ).FirstOrDefault();
+
+				if( fileTrack != null ) {
+					retValue = new AlbumSupportInfo(( from DbArtwork artwork in mDatabase.Database
+													  where artwork.FolderLocation == fileTrack.ParentFolder && artwork.ArtworkType == ArtworkTypes.AlbumCover select artwork ).ToArray(),
+												    ( from DbArtwork artwork in mDatabase.Database
+													  where artwork.FolderLocation == fileTrack.ParentFolder && artwork.ArtworkType == ArtworkTypes.AlbumOther select artwork ).ToArray());
+				}
+			}
+			return( retValue );
 		}
-
 	}
 }

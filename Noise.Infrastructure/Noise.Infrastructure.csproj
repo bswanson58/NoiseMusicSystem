@@ -85,7 +85,10 @@
   <ItemGroup>
     <Compile Include="Dto\AlbumSupportInfo.cs" />
     <Compile Include="Dto\ArtistSupportInfo.cs" />
+    <Compile Include="Dto\ArtworkTypes.cs" />
     <Compile Include="Dto\AudioLevels.cs" />
+    <Compile Include="Dto\DbArtwork.cs" />
+    <Compile Include="Dto\InfoSource.cs" />
     <Compile Include="Dto\PlayQueueTrack.cs" />
     <Compile Include="Interfaces\IAudioPlayer.cs" />
     <Compile Include="Interfaces\IPlayHistory.cs" />

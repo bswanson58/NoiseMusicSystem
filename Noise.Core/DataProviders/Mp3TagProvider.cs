@@ -59,6 +59,20 @@ namespace Noise.Core.DataProviders {
 				track.DurationMilliseconds = (Int32)tags.Properties.Duration.TotalMilliseconds;
 				track.Channels = (Int16)tags.Properties.AudioChannels;
 
+				var pictures = tags.Tag.Pictures;
+				if(( pictures != null ) &&
+				   ( pictures.GetLength( 0 ) > 0 )) {
+					foreach( var picture in pictures ) {
+						var dbPicture = new DbArtwork( track.Album ) { ArtworkType = picture.Type == PictureType.FrontCover ? ArtworkTypes.AlbumCover : ArtworkTypes.AlbumOther,
+																	   Source = InfoSource.Tag,
+																	   FolderLocation = storageFile.ParentFolder };
+						dbPicture.Image = new byte[picture.Data.Count];
+						picture.Data.CopyTo( dbPicture.Image, 0 );
+
+						mDatabase.Database.Store( dbPicture );
+					}
+				}
+
 				if(( tags.Tag.Genres != null ) &&
 				   ( tags.Tag.Genres.GetLength( 0 ) > 0 )) {
 					track.Genre = tags.Tag.Genres[0];

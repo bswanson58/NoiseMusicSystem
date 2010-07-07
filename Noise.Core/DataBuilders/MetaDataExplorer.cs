@@ -18,6 +18,7 @@ namespace Noise.Core.DataBuilders {
 		public void BuildMetaData() {
 			var		fileNameProvider = new FileNameProvider( mDatabase );
 			var		tagProvider = new FileTagProvider( mDatabase );
+			var		artworkProvider = new FileArtworkProvider( mDatabase );
 			var		fileEnum = from StorageFile file in mDatabase.Database where file.FileType == eFileType.Undetermined orderby file.ParentFolder select file;
 
 			foreach( var file in fileEnum ) {
@@ -31,6 +32,12 @@ namespace Noise.Core.DataBuilders {
 						tagProvider.BuildMetaData( file, track );
 
 						file.MetaDataPointer = mDatabase.Database.Store( track );
+						mDatabase.Database.Store( file );
+						break;
+
+					case eFileType.Picture:
+						artworkProvider.BuildMetaData( file );
+
 						mDatabase.Database.Store( file );
 						break;
 				}
@@ -47,6 +54,10 @@ namespace Noise.Core.DataBuilders {
 			switch( ext ) {
 				case ".mp3":
 					retValue = eFileType.Music;
+					break;
+
+				case ".jpg":
+					retValue = eFileType.Picture;
 					break;
 			}
 
