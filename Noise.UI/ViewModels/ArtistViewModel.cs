@@ -1,9 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Windows.Documents;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
@@ -17,11 +12,6 @@ namespace Noise.UI.ViewModels {
 		private IEventAggregator	mEvents;
 		private INoiseManager		mNoiseManager;
 		private DbArtist			mCurrentArtist;
-		private Image				mArtistImage;
-
-		public ArtistViewModel() {
-			
-		}
 
 		[Dependency]
 		public IUnityContainer Container {

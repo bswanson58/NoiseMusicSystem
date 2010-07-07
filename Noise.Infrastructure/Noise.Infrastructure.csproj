@@ -83,6 +83,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dto\AlbumSupportInfo.cs" />
     <Compile Include="Dto\ArtistSupportInfo.cs" />
     <Compile Include="Dto\AudioLevels.cs" />
     <Compile Include="Dto\PlayQueueTrack.cs" />

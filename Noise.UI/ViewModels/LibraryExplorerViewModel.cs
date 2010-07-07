@@ -32,6 +32,9 @@ namespace Noise.UI.ViewModels {
 			if( item is DbArtist ) {
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( item as DbArtist );
 			}
+			else if( item is DbAlbum ) {
+				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( item as DbAlbum );
+			}
 		}
 
 		public IEnumerable<ExplorerTreeNode> TreeData {

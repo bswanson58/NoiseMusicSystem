@@ -8,6 +8,7 @@ namespace Noise.Infrastructure {
 		public class TrackSelected : CompositePresentationEvent<DbTrack> { }
 
 		public class ArtistFocusRequested : CompositePresentationEvent<DbArtist> { }
+		public class AlbumFocusRequested : CompositePresentationEvent<DbAlbum> { }
 
 		public class PlayQueueChanged : CompositePresentationEvent<IPlayQueue> { }
 

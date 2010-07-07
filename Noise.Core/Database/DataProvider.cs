@@ -64,5 +64,11 @@ namespace Noise.Core.Database {
 										  ( from DbTopItems items in mDatabase.Database where  items.AssociatedItem == artistId select  items ).FirstOrDefault()));
 		}
 
+		public AlbumSupportInfo GetAlbumSupportInfo( DbAlbum forAlbum ) {
+			var albumId = mDatabase.Database.GetUid( forAlbum );
+
+			return( new AlbumSupportInfo());
+		}
+
 	}
 }

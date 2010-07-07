@@ -12,5 +12,6 @@ namespace Noise.Infrastructure.Interfaces {
 		object					GetMetaData( StorageFile forFile );
 
 		ArtistSupportInfo		GetArtistSupportInfo( DbArtist forArtist );
+		AlbumSupportInfo		GetAlbumSupportInfo( DbAlbum forAlbum );
 	}
 }

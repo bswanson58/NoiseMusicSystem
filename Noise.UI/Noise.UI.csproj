@@ -115,6 +115,7 @@
     <Compile Include="ValueConverters\PublishedYearConverter.cs" />
     <Compile Include="ValueConverters\TimeSpanConverter.cs" />
     <Compile Include="ValueConverters\VolumeLevelConverter.cs" />
+    <Compile Include="ViewModels\AlbumViewModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
     <Compile Include="ViewModels\ExplorerStrategyArtistAlbum.cs" />
     <Compile Include="ViewModels\IExplorerViewStrategy.cs" />
@@ -122,6 +123,9 @@
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueViewModel.cs" />
     <Compile Include="ViewModels\TrackListViewModel.cs" />
+    <Compile Include="Views\AlbumView.xaml.cs">
+      <DependentUpon>AlbumView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ArtistView.xaml.cs">
       <DependentUpon>ArtistView.xaml</DependentUpon>
     </Compile>
@@ -153,6 +157,10 @@
     <Page Include="Resources\UiResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AlbumView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ArtistView.xaml">
       <SubType>Designer</SubType>
