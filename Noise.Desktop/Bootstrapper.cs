@@ -40,7 +40,7 @@ namespace Noise.Desktop {
 			var	noiseManager = Container.Resolve<INoiseManager>();
 			Container.RegisterInstance( noiseManager );
 			if( noiseManager.Initialize()) {
-//				noiseManager.Explore();
+				noiseManager.Explore();
 			}
 		}
 

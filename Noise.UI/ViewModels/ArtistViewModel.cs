@@ -45,7 +45,7 @@ namespace Noise.UI.ViewModels {
 				byte[]	retValue = null;
 
 				if(( SupportInfo != null ) &&
-				   ( SupportInfo.Biography != null )) {
+				   ( SupportInfo.ArtistImage != null )) {
 					retValue = SupportInfo.ArtistImage.Image;
 				}
 

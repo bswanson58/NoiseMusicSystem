@@ -56,12 +56,15 @@ namespace Noise.Core.DataProviders {
 							}
 
 							if( bio == null ) {
-								bio = new DbTextInfo( artistId ) { Text = artistMatch.Bio.getContent(), Source = InfoSource.External, ExpireDate = DateTime.Now.Date + new TimeSpan( 30, 0, 0, 0 ) };
-
+								bio = new DbTextInfo( artistId ) { Text = artistMatch.Bio.getContent(),
+																   InfoType = TextInfoTypes.Biography,
+																   Source = InfoSource.External,
+																   ExpireDate = DateTime.Now.Date + new TimeSpan( 30, 0, 0, 0 ) };
 								mDatabase.Database.Store( bio );
 
-								if(!string.IsNullOrWhiteSpace( artistMatch.GetImageURL())) {
-									new ImageDownloader( artistMatch.GetImageURL(), artistId, ArtistImageDownloadComplete );
+								var imageUrl = artistMatch.GetImageURL();
+								if(!string.IsNullOrWhiteSpace( imageUrl )) {
+									new ImageDownloader( imageUrl, artistId, ArtistImageDownloadComplete );
 								}
 
 								queryCount++;
