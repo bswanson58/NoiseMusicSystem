@@ -113,6 +113,7 @@
     <Compile Include="DataProviders\FileArtworkProvider.cs" />
     <Compile Include="DataProviders\FileNameProvider.cs" />
     <Compile Include="DataProviders\FileTagProvider.cs" />
+    <Compile Include="DataProviders\FileTextProvider.cs" />
     <Compile Include="DataProviders\ImageDownloader.cs" />
     <Compile Include="DataProviders\LastFmProvider.cs" />
     <Compile Include="DataProviders\Mp3TagProvider.cs" />

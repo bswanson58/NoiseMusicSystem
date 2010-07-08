@@ -38,9 +38,9 @@ namespace Noise.Core.DataProviders {
 					var artistId = mDatabase.Database.GetUid( artist );
 					parm["artist"] = artistId;
 
-					var bio = mDatabase.Database.ExecuteScalar( "SELECT DbBiography WHERE Artist = @artist", parm ) as DbBiography;
-					var similarArtists = mDatabase.Database.ExecuteScalar( "SELECT DbSimilarItems WHERE AssociatedItem = @artist", parm ) as DbSimilarItems;
-					var topAlbums = mDatabase.Database.ExecuteScalar( "SELECT DbTopItems WHERE AssociatedItem = @artist", parm ) as DbTopItems;
+					var bio = ( from DbTextInfo info in mDatabase.Database where info.AssociatedItem == artistId && info.InfoType == TextInfoTypes.Biography select info ).FirstOrDefault();
+					var similarArtists = ( from DbSimilarItems item in mDatabase.Database where item.AssociatedItem == artistId select item ).FirstOrDefault();
+					var topAlbums = ( from DbTopItems item in mDatabase.Database where item.AssociatedItem == artistId select  item ).FirstOrDefault();
 
 					if(( bio == null ) ||
 					   ( similarArtists == null ) ||
@@ -56,16 +56,12 @@ namespace Noise.Core.DataProviders {
 							}
 
 							if( bio == null ) {
-								bio = new DbBiography( artistId );
-
-								bio.Biography = artistMatch.Bio.getContent();
-								bio.PublishedDate = artistMatch.Bio.GetPublishedDate();
-								bio.ExpireDate = DateTime.Now.Date + new TimeSpan( 30, 0, 0, 0 );
+								bio = new DbTextInfo( artistId ) { Text = artistMatch.Bio.getContent(), Source = InfoSource.External, ExpireDate = DateTime.Now.Date + new TimeSpan( 30, 0, 0, 0 ) };
 
 								mDatabase.Database.Store( bio );
 
 								if(!string.IsNullOrWhiteSpace( artistMatch.GetImageURL())) {
-									new ImageDownloader( artistMatch.GetImageURL(), bio, ArtistImageDownloadComplete );
+									new ImageDownloader( artistMatch.GetImageURL(), artistId, ArtistImageDownloadComplete );
 								}
 
 								queryCount++;
@@ -111,15 +107,14 @@ namespace Noise.Core.DataProviders {
 			}
 		}
 
-		private void ArtistImageDownloadComplete( object parentObject, byte[] imageData ) {
-			Condition.Requires( parentObject ).IsNotNull();
+		private void ArtistImageDownloadComplete( long parentId, byte[] imageData ) {
 			Condition.Requires( imageData ).IsNotNull();
 
-			var	bio = parentObject as DbBiography;
-			if( bio != null ) {
-				bio.ArtistImage = imageData;
-				mDatabase.Database.Store( bio );
-			}
+			var image = new DbArtwork( parentId ) { ArtworkType = ArtworkTypes.ArtistImage,
+													Source = InfoSource.External,
+													Image = imageData,
+													ExpireDate = DateTime.Now + new TimeSpan( 30, 0, 0, 0 ) };
+			mDatabase.Database.Store( image );
 		}
 	}
 }

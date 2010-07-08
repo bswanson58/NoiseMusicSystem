@@ -34,7 +34,8 @@ namespace Noise.Core.DataProviders {
 			var retValue = false;
 			var name = Path.GetFileNameWithoutExtension( fileName ).ToLower();
 
-			if(( name.Equals( "cover" )) ||
+			if(( name.Equals( "albumartsmall" )) ||
+			   ( name.Equals( "cover" )) ||
 			   ( name.Equals( "folder" )) ||
 			   ( name.Equals( "front" ))) {
 				retValue = true;

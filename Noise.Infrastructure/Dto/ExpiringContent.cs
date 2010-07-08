@@ -7,6 +7,7 @@ namespace Noise.Infrastructure.Dto {
 
 		public ExpiringContent() {
 			HarvestDate = DateTime.Now.Date;
+			ExpireDate = Constants.cNoExpirationDate;
 		}
 	}
 }

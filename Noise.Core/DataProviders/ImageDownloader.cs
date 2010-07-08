@@ -4,10 +4,10 @@ using System.Net;
 namespace Noise.Core.DataProviders {
 	internal class ImageDownloader {
 		private readonly WebClient	mWebClient;
-		private readonly object		mParentObject;
-		private readonly Action<object, byte[]>	mOnDownloadComplete;
+		private readonly long		mParentObject;
+		private readonly Action<long, byte[]>	mOnDownloadComplete;
 
-		public ImageDownloader( string uriString, object parentObject, Action<object, byte[]> onCompleted ) {
+		public ImageDownloader( string uriString, long parentObject, Action<long, byte[]> onCompleted ) {
 			mWebClient = new WebClient();
 			mParentObject = parentObject;
 			mOnDownloadComplete = onCompleted;

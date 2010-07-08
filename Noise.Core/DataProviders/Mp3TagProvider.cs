@@ -62,14 +62,22 @@ namespace Noise.Core.DataProviders {
 				var pictures = tags.Tag.Pictures;
 				if(( pictures != null ) &&
 				   ( pictures.GetLength( 0 ) > 0 )) {
-					foreach( var picture in pictures ) {
-						var dbPicture = new DbArtwork( track.Album ) { ArtworkType = picture.Type == PictureType.FrontCover ? ArtworkTypes.AlbumCover : ArtworkTypes.AlbumOther,
-																	   Source = InfoSource.Tag,
-																	   FolderLocation = storageFile.ParentFolder };
-						dbPicture.Image = new byte[picture.Data.Count];
-						picture.Data.CopyTo( dbPicture.Image, 0 );
+					// Only pull the pictures from the first file in the folder.
+					var parms = mDatabase.Database.CreateParameters();
 
-						mDatabase.Database.Store( dbPicture );
+					parms["folderId"] = storageFile.ParentFolder;
+
+					if( mDatabase.Database.ExecuteScalar( "SELECT DbArtwork WHERE FolderLocation = @folderId", parms ) == null ) {
+//					if(( from DbArtwork artwork in mDatabase.Database where artwork.FolderLocation == storageFile.ParentFolder select artwork ).Count() == 0 ) {
+						foreach( var picture in pictures ) {
+							var dbPicture = new DbArtwork( track.Album ) { ArtworkType = picture.Type == PictureType.FrontCover ? ArtworkTypes.AlbumCover : ArtworkTypes.AlbumOther,
+																		   Source = InfoSource.Tag,
+																		   FolderLocation = storageFile.ParentFolder };
+							dbPicture.Image = new byte[picture.Data.Count];
+							picture.Data.CopyTo( dbPicture.Image, 0 );
+
+							mDatabase.Database.Store( dbPicture );
+						}
 					}
 				}
 

@@ -72,7 +72,8 @@ namespace Noise.Core.FileStore {
 
 			var databaseFiles = mDatabase.Database.ExecuteQuery( "SELECT StorageFile WHERE ParentFolder = @parent", param );
 			var dbList = databaseFiles.Cast<StorageFile>().ToList();
-			var files = FileSearcher.Search( StorageHelpers.GetPath( mDatabase.Database, storageFolder ), null, SearchOptions.Files, 0 );
+			var files = FileSearcher.BreadthFirst.Search( StorageHelpers.GetPath( mDatabase.Database, storageFolder ), null,
+														  SearchOptions.Files | SearchOptions.IncludeSystem | SearchOptions.IncludeHidden, 0 );
 
 			foreach( var file in files ) {
 				var fileName = file.File;

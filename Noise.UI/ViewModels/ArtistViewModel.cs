@@ -46,7 +46,7 @@ namespace Noise.UI.ViewModels {
 
 				if(( SupportInfo != null ) &&
 				   ( SupportInfo.Biography != null )) {
-					retValue = SupportInfo.Biography.ArtistImage;
+					retValue = SupportInfo.ArtistImage.Image;
 				}
 
 				return( retValue );
@@ -60,7 +60,7 @@ namespace Noise.UI.ViewModels {
 
 				if(( SupportInfo != null ) &&
 				   ( SupportInfo.Biography != null )) {
-					retValue = SupportInfo.Biography.Biography;
+					retValue = SupportInfo.Biography.Text;
 				}
 
 				return( retValue );

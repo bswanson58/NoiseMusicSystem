@@ -59,6 +59,12 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Accessibility">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Eloquera.Client">
+      <HintPath>..\lib\Eloquera\Eloquera.Client.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Composite">
       <HintPath>..\lib\CAL\Microsoft.Practices.Composite.dll</HintPath>
     </Reference>
@@ -88,8 +94,10 @@
     <Compile Include="Dto\ArtworkTypes.cs" />
     <Compile Include="Dto\AudioLevels.cs" />
     <Compile Include="Dto\DbArtwork.cs" />
+    <Compile Include="Dto\DbTextInfo.cs" />
     <Compile Include="Dto\InfoSource.cs" />
     <Compile Include="Dto\PlayQueueTrack.cs" />
+    <Compile Include="Dto\TextInfoTypes.cs" />
     <Compile Include="Interfaces\IAudioPlayer.cs" />
     <Compile Include="Interfaces\IPlayHistory.cs" />
     <Compile Include="Interfaces\IPlayQueue.cs" />
@@ -104,7 +112,6 @@
     <Compile Include="Dto\AudioEncoding.cs" />
     <Compile Include="Dto\DbAlbum.cs" />
     <Compile Include="Dto\DbArtist.cs" />
-    <Compile Include="Dto\DbBiography.cs" />
     <Compile Include="Dto\DbPlayHistory.cs" />
     <Compile Include="Dto\DbSimilarItems.cs" />
     <Compile Include="Dto\DbTopItems.cs" />

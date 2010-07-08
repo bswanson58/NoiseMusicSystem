@@ -2,6 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:cal="http://www.codeplex.com/CompositeWPF"
-        Title="Noise" Height="1000" Width="1600">
+        Title="Noise" Height="1000" Width="1600"
+        Icon="Noise.ico"
+        >
     <ContentControl cal:RegionManager.RegionName="Shell"/>
 </Window>

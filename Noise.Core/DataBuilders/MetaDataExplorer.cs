@@ -19,6 +19,7 @@ namespace Noise.Core.DataBuilders {
 			var		fileNameProvider = new FileNameProvider( mDatabase );
 			var		tagProvider = new FileTagProvider( mDatabase );
 			var		artworkProvider = new FileArtworkProvider( mDatabase );
+			var		textProvider =new FileTextProvider( mDatabase );
 			var		fileEnum = from StorageFile file in mDatabase.Database where file.FileType == eFileType.Undetermined orderby file.ParentFolder select file;
 
 			foreach( var file in fileEnum ) {
@@ -40,6 +41,12 @@ namespace Noise.Core.DataBuilders {
 
 						mDatabase.Database.Store( file );
 						break;
+
+					case eFileType.Text:
+						textProvider.BuildMetaData( file );
+
+						mDatabase.Database.Store( file );
+						break;
 				}
 			}
 
@@ -58,6 +65,11 @@ namespace Noise.Core.DataBuilders {
 
 				case ".jpg":
 					retValue = eFileType.Picture;
+					break;
+
+				case ".txt":
+				case ".nfo":
+					retValue = eFileType.Text;
 					break;
 			}
 

@@ -2,23 +2,24 @@
 using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
-	public class DbArtwork : ExpiringContent {
+	public class DbTextInfo : ExpiringContent {
 		public	long			AssociatedItem { get; private set; }
 		public	long			FolderLocation { get; set; }
-		public	ArtworkTypes	ArtworkType { get; set; }
+		public	TextInfoTypes	InfoType { get; set; }
 		public	InfoSource		Source { get; set; }
-		public	byte[]			Image { get; set; }
+		public	string			Text { get; set; }
 
-		public DbArtwork( long associatedItem ) {
+		public DbTextInfo( long associatedItem ) {
 			AssociatedItem = associatedItem;
-			ArtworkType = ArtworkTypes.Unknown;
-			Source = InfoSource.Unknown;
+
 			FolderLocation = Constants.cDatabaseNullOid;
+			InfoType = TextInfoTypes.Unknown;
+			Source = InfoSource.Unknown;
 		}
 
 		[Export("PersistenceType")]
 		public static Type PersistenceType {
-			get{ return( typeof( DbArtwork )); }
+			get{ return( typeof( DbTextInfo )); }
 		}
 	}
 }
