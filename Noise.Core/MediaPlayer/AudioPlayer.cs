@@ -35,6 +35,7 @@ namespace Noise.Core.MediaPlayer {
 		private readonly IUnityContainer				mContainer;
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IDatabaseManager				mDatabase;
+		private readonly ILog							mLog;
 		private readonly Timer							mUpdateTimer;
 		private readonly Dictionary<int, AudioStream>	mCurrentStreams;
 
@@ -42,6 +43,7 @@ namespace Noise.Core.MediaPlayer {
 			mContainer = container;
 			mEventAggregator = mContainer.Resolve<IEventAggregator>();
 			mDatabase = mContainer.Resolve<IDatabaseManager>();
+			mLog = mContainer.Resolve<ILog>();
 			mCurrentStreams = new Dictionary<int, AudioStream>();
 			mUpdateTimer = new Timer { Enabled = false, Interval = 50, AutoReset = true };
 			mUpdateTimer.Elapsed += OnUpdateTimer;
@@ -95,7 +97,7 @@ namespace Noise.Core.MediaPlayer {
 					retValue = channel;
 				}
 				catch( Exception ex ) {
-					
+					mLog.LogException( String.Format( "AudioPlayer opening {0}", path ), ex );
 				}
 			}
 

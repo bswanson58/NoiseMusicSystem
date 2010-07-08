@@ -3,7 +3,9 @@ using System.Linq;
 using CuttingEdge.Conditions;
 using Lastfm.Services;
 using Noise.Core.Database;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	public class LastFmProvider {
@@ -12,9 +14,12 @@ namespace Noise.Core.DataProviders {
 		private const int			cMaximumQueries = 5;
 
 		private readonly IDatabaseManager	mDatabase;
+		private readonly ILog				mLog;
 
 		public LastFmProvider( IDatabaseManager databaseManager ) {
 			mDatabase = databaseManager;
+
+			mLog = new Log();
 		}
 
 		public void BuildMetaData() {
@@ -24,7 +29,7 @@ namespace Noise.Core.DataProviders {
 				UpdateArtistInfo( session );
 			}
 			catch( Exception ex ) {
-
+				mLog.LogException( "LastFmProvider", ex );
 			}
 		}
 
@@ -105,7 +110,7 @@ namespace Noise.Core.DataProviders {
 					}
 				}
 				catch( Exception ex ) {
-
+					mLog.LogException( "LastFmProvider UpdateArtistInfo:", ex );
 				}
 			}
 		}

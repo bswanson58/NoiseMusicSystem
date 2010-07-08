@@ -7,9 +7,9 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayHistory {
 	public class PlayHistoryMgr : IPlayHistory {
-		private readonly IUnityContainer	mContainter;
-		private readonly IDatabaseManager	mDatabase;
-		private List<DbPlayHistory>			mPlayHistory;
+		private readonly IUnityContainer		mContainter;
+		private readonly IDatabaseManager		mDatabase;
+		private readonly List<DbPlayHistory>	mPlayHistory;
 
 		public PlayHistoryMgr( IUnityContainer container ) {
 			mContainter = container;

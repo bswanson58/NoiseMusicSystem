@@ -2,14 +2,19 @@
 using System.IO;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	internal class FileArtworkProvider {
 		private readonly IDatabaseManager	mDatabase;
+		private readonly ILog				mLog;
 
 		public FileArtworkProvider( IDatabaseManager database ) {
 			mDatabase =database;
+
+			mLog = new Log();
 		}
 
 		public void BuildMetaData( StorageFile file ) {
@@ -26,7 +31,7 @@ namespace Noise.Core.DataProviders {
 				mDatabase.Database.Store( dbPicture );
 			}
 			catch( Exception ex ) {
-				
+				mLog.LogException( "FileArtworkProvider exception:", ex );
 			}
 		}
 

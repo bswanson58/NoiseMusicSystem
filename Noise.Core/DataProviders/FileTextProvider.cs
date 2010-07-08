@@ -2,14 +2,19 @@
 using System.IO;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	internal class FileTextProvider {
 		private readonly IDatabaseManager	mDatabase;
+		private readonly ILog				mLog;
 
 		public FileTextProvider( IDatabaseManager database ) {
 			mDatabase = database;
+
+			mLog = new Log();
 		}
 
 		public void BuildMetaData( StorageFile file ) {
@@ -24,7 +29,7 @@ namespace Noise.Core.DataProviders {
 				mDatabase.Database.Store( dbText );
 			}
 			catch( Exception ex ) {
-				
+				mLog.LogException( "FileTextProvider exception:", ex );
 			}
 		}
 	}

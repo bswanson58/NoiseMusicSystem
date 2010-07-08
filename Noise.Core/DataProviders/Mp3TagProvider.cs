@@ -2,15 +2,20 @@
 using CuttingEdge.Conditions;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 using TagLib;
 
 namespace Noise.Core.DataProviders {
 	public class Mp3TagProvider {
 		private readonly IDatabaseManager	mDatabase;
+		private readonly ILog				mLog;
 
 		public Mp3TagProvider( IDatabaseManager databaseManager ) {
 			mDatabase = databaseManager;
+
+			mLog = new Log();
 		}
 
 		public void BuildMetaData( StorageFile storageFile, DbTrack track ) {
@@ -87,7 +92,7 @@ namespace Noise.Core.DataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				
+				mLog.LogException( "Mp3TagProvider", ex );
 			}
 		}
 	}
