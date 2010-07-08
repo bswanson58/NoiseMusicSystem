@@ -7,6 +7,7 @@
 		IPlayQueue		PlayQueue { get; }
 		IPlayHistory	PlayHistory { get; }
 
-		void			Explore();
+		void			StartExploring();
+		void			StopExploring();
 	}
 }

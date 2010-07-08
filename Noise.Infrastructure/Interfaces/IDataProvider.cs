@@ -3,7 +3,10 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface IDataProvider {
+		long					GetObjectIdentifier( object dbObject );
+
 		IEnumerable<DbArtist>	GetArtistList();
+		DbArtist				GetArtistForAlbum( DbAlbum album );
 		IEnumerable<DbAlbum>	GetAlbumList( DbArtist forArtist );
 		IEnumerable<DbTrack>	GetTrackList( DbAlbum forAlbum );
 		IEnumerable<DbTrack>	GetTrackList( DbArtist forArtist );

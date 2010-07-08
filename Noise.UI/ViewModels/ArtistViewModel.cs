@@ -23,6 +23,7 @@ namespace Noise.UI.ViewModels {
 				mNoiseManager = mContainer.Resolve<INoiseManager>();
 
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
+				mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
 			}
 		}
 
@@ -36,6 +37,14 @@ namespace Noise.UI.ViewModels {
 
 			if( mCurrentArtist != null ) {
 				SupportInfo = mNoiseManager.DataProvider.GetArtistSupportInfo( artist );
+			}
+		}
+
+		public void OnAlbumFocus( DbAlbum album ) {
+			if( mCurrentArtist != null ) {
+				if( album.Artist != mNoiseManager.DataProvider.GetObjectIdentifier( mCurrentArtist )) {
+					OnArtistFocus( mNoiseManager.DataProvider.GetArtistForAlbum( album ));
+				}
 			}
 		}
 

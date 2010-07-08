@@ -11,8 +11,20 @@ namespace Noise.Core.Database {
 			mDatabase = database;
 		}
 
+		public long GetObjectIdentifier( object dbObject ) {
+			return( mDatabase.Database.GetUid( dbObject ));
+		}
+
 		public IEnumerable<DbArtist> GetArtistList() {
 			return( from DbArtist artist in mDatabase.Database select artist );
+		}
+
+		public DbArtist GetArtistForAlbum( DbAlbum album ) {
+			var parms = mDatabase.Database.CreateParameters();
+
+			parms["artistId"] = album.Artist;
+
+			return( mDatabase.Database.ExecuteScalar( "SELECT DbArtist WHERE $ID = @artistId", parms ) as DbArtist );
 		}
 
 		public IEnumerable<DbAlbum> GetAlbumList( DbArtist forArtist ) {

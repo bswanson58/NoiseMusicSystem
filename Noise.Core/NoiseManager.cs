@@ -1,8 +1,8 @@
-﻿using Microsoft.Practices.Unity;
+﻿using System.Threading;
+using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
 using Noise.Core.FileStore;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core {
@@ -12,6 +12,7 @@ namespace Noise.Core {
 		private string						mDatabaseLocation;
 		private readonly ILog				mLog;
 		private readonly IDatabaseManager	mDatabase;
+		private bool						mContinueExploring;
 		public	IDataProvider				DataProvider { get; private set; }
 		public	IAudioPlayer				AudioPlayer { get; private set; }
 		public	IPlayQueue					PlayQueue { get; private set; }
@@ -20,14 +21,13 @@ namespace Noise.Core {
 		public NoiseManager( IUnityContainer container ) {
 			mContainer = container;
 
+			mLog = mContainer.Resolve<ILog>();
 			mDatabase = mContainer.Resolve<IDatabaseManager>();
 			mContainer.RegisterInstance( typeof( IDatabaseManager ), mDatabase );
 			DataProvider = mContainer.Resolve<IDataProvider>();
 			AudioPlayer = mContainer.Resolve<IAudioPlayer>();
 			PlayQueue = mContainer.Resolve<IPlayQueue>();
 			PlayHistory = mContainer.Resolve<IPlayHistory>();
-
-			mLog = new Log();
 		}
 
 		public bool Initialize() {
@@ -43,18 +43,39 @@ namespace Noise.Core {
 			return ( true );
 		}
 
-		public void Explore() {
-			var	folderExplorer = mContainer.Resolve<IFolderExplorer>();
-			folderExplorer.SynchronizeDatabaseFolders();
+		public void StartExploring() {
+			mContinueExploring = true;
+			mLog.LogMessage( "Starting Explorer." );
 
-			var	dataExplorer = mContainer.Resolve<IMetaDataExplorer>();
-			dataExplorer.BuildMetaData();
+			ThreadPool.QueueUserWorkItem( Explore );
+		}
 
-			var summaryBuilder = mContainer.Resolve<ISummaryBuilder>();
-			summaryBuilder.BuildSummaryData( mDatabase );
+		public void StopExploring() {
+			mContinueExploring = false;
+		}
 
-			var statistics = new DatabaseStatistics( mDatabase );
-			statistics.GatherStatistics();
+		private void Explore(object state ) {
+			if( mContinueExploring ) {
+				var	folderExplorer = mContainer.Resolve<IFolderExplorer>();
+				folderExplorer.SynchronizeDatabaseFolders();
+			}
+
+			if( mContinueExploring ) {
+				var	dataExplorer = mContainer.Resolve<IMetaDataExplorer>();
+				dataExplorer.BuildMetaData();
+			}
+
+			if( mContinueExploring ) {
+				var summaryBuilder = mContainer.Resolve<ISummaryBuilder>();
+				summaryBuilder.BuildSummaryData( mDatabase );
+			}
+
+			if( mContinueExploring ) {
+				var statistics = new DatabaseStatistics( mDatabase );
+				statistics.GatherStatistics();
+			}
+
+			mLog.LogMessage( "Explorer Finished." );
 		}
 
 		private void LoadConfiguration() {
