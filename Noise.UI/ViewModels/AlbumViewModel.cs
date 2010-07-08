@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
@@ -13,6 +15,7 @@ namespace Noise.UI.ViewModels {
 		private IEventAggregator	mEvents;
 		private INoiseManager		mNoiseManager;
 		private DbAlbum				mCurrentAlbum;
+		private BackgroundWorker	mBackgroundWorker;
 
 		[Dependency]
 		public IUnityContainer Container {
@@ -23,9 +26,18 @@ namespace Noise.UI.ViewModels {
 				mEvents = mContainer.Resolve<IEventAggregator>();
 				mNoiseManager = mContainer.Resolve<INoiseManager>();
 
+				mBackgroundWorker = new BackgroundWorker();
+				mBackgroundWorker.DoWork += UpdateAlbumInfo;
+
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
 				mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
 			}
+		}
+
+		private void UpdateAlbumInfo( object o, DoWorkEventArgs args ) {
+			var info = mNoiseManager.DataProvider.GetAlbumSupportInfo( args.Argument as DbAlbum );
+
+			System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke((Action)delegate { SupportInfo = info; });
 		}
 
 		private void OnArtistFocus( DbArtist artist ) {
@@ -45,7 +57,7 @@ namespace Noise.UI.ViewModels {
 			mCurrentAlbum = album;
 
 			if( mCurrentAlbum != null ) {
-				SupportInfo = mNoiseManager.DataProvider.GetAlbumSupportInfo( mCurrentAlbum );
+				mBackgroundWorker.RunWorkerAsync( mCurrentAlbum );
 			}
 		}
 
