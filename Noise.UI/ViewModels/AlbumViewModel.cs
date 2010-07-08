@@ -1,4 +1,6 @@
-﻿using Microsoft.Practices.Composite.Events;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -38,5 +40,47 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		[DependsUpon( "SupportInfo" )]
+		public byte[] AlbumCover {
+			get {
+				byte[]	retValue = null;
+
+				if(( SupportInfo != null ) &&
+				   ( SupportInfo.AlbumCovers != null ) &&
+				   ( SupportInfo.AlbumCovers.GetLength( 0 ) > 0 )) {
+					var cover = ( from DbArtwork artwork in SupportInfo.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault();
+
+					if( cover == null ) {
+						cover = ( from DbArtwork artwork in SupportInfo.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault();
+					}
+					if( cover == null ) {
+						cover = SupportInfo.AlbumCovers[0];
+					}
+
+					if( cover != null ) {
+						retValue = cover.Image;
+					}
+				}
+
+				return( retValue );
+			}
+		}
+
+		[DependsUpon( "SupportInfo" )]
+		public IList<byte[]> AlbumArtwork {
+			get {
+				List<byte[]>	retValue;
+
+				if(( SupportInfo != null ) &&
+				   ( SupportInfo.Artwork != null )) {
+					retValue = ( from DbArtwork artwork in SupportInfo.Artwork select artwork.Image ).ToList();
+				}
+				else {
+					retValue = new List<byte[]>();
+				}
+
+				return( retValue );
+			}
+		}
 	}
 }
