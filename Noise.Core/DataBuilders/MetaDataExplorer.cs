@@ -60,10 +60,12 @@ namespace Noise.Core.DataBuilders {
 
 			switch( ext ) {
 				case ".mp3":
+				case ".flac":
 					retValue = eFileType.Music;
 					break;
 
 				case ".jpg":
+				case ".bmp":
 					retValue = eFileType.Picture;
 					break;
 

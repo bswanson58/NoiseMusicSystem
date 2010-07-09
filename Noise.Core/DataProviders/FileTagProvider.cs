@@ -5,11 +5,11 @@ using Noise.Infrastructure.Dto;
 namespace Noise.Core.DataProviders {
 	public class FileTagProvider {
 		private readonly IDatabaseManager	mDatabase;
-		private readonly Mp3TagProvider		mMpsTagProvider;
+		private readonly Mp3TagProvider		mMp3TagProvider;
 
 		public FileTagProvider( IDatabaseManager database ) {
 			mDatabase = database;
-			mMpsTagProvider = new Mp3TagProvider( mDatabase );
+			mMp3TagProvider = new Mp3TagProvider( mDatabase );
 		}
 
 		public void BuildMetaData( StorageFile storageFile, DbTrack track ) {
@@ -17,7 +17,8 @@ namespace Noise.Core.DataProviders {
 
 			switch( track.Encoding ) {
 				case eAudioEncoding.MP3:
-					mMpsTagProvider.BuildMetaData( storageFile, track );
+				case eAudioEncoding.FLAC:
+					mMp3TagProvider.BuildMetaData( storageFile, track );
 					break;
 			}
 		}
@@ -27,6 +28,10 @@ namespace Noise.Core.DataProviders {
 			var ext = Path.GetExtension( file.Name ).ToLower();
 
 			switch( ext ) {
+				case ".flac":
+					retValue = eAudioEncoding.FLAC;
+					break;
+
 				case ".mp3":
 					retValue = eAudioEncoding.MP3;
 					break;

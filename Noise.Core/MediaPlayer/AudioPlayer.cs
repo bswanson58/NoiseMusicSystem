@@ -52,6 +52,7 @@ namespace Noise.Core.MediaPlayer {
 			mUpdateTimer.Elapsed += OnUpdateTimer;
 
 			Bass.BASS_Init( -1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero );
+			Bass.BASS_PluginLoad( "bassflac.dll" );
 		}
 
 		public float PlaySpeed {
