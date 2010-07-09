@@ -39,6 +39,7 @@ namespace Noise.Core.MediaPlayer {
 		private readonly IDatabaseManager				mDatabase;
 		private readonly ILog							mLog;
 		private float									mPlaySpeed;
+		private float									mPan;
 		private readonly Timer							mUpdateTimer;
 		private readonly Dictionary<int, AudioStream>	mCurrentStreams;
 
@@ -53,6 +54,15 @@ namespace Noise.Core.MediaPlayer {
 
 			Bass.BASS_Init( -1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero );
 			Bass.BASS_PluginLoad( "bassflac.dll" );
+		}
+
+		public float Pan {
+			get { return( mPan ); }
+			set {
+				mPan = value;
+
+				SetPan();
+			}
 		}
 
 		public float PlaySpeed {
@@ -111,6 +121,7 @@ namespace Noise.Core.MediaPlayer {
 					mCurrentStreams.Add( channel, stream );
 
 					InitializeEq( channel );
+					SetPan( stream );
 					SetPlaySpeed( stream );
 					retValue = channel;
 				}
@@ -149,6 +160,16 @@ namespace Noise.Core.MediaPlayer {
 			eq.fGain = 10F;
 			Bass.BASS_FXSetParameters( fxChannels[2], eq );
 */		}
+
+		private void SetPan() {
+			foreach( var stream in mCurrentStreams.Values ) {
+				SetPan( stream );
+			}
+		}
+
+		private void SetPan( AudioStream stream ) {
+			Bass.BASS_ChannelSetAttribute( stream.Channel, BASSAttribute.BASS_ATTRIB_PAN, mPan );
+		}
 
 		private void SetPlaySpeed() {
 			foreach( var stream in mCurrentStreams.Values ) {
