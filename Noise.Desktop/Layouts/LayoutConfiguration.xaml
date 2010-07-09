@@ -9,6 +9,8 @@
                        Description="This is the default layout"
                        IsDefault="True">
             <Layout:Layout.Views>
+                <Layout:View RegionName="Toolbar"
+                             Type="{x:Type Views:ToolbarView}"/>
                 <Layout:View RegionName="TopLeft"
                              Type="{x:Type Views:LibraryExplorerView}" />
                 <Layout:View RegionName="TopRight"

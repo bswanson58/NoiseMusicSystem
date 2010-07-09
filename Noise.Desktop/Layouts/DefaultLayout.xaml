@@ -4,11 +4,16 @@
              xmlns:cal="clr-namespace:Microsoft.Practices.Composite.Presentation.Regions;assembly=Microsoft.Practices.Composite.Presentation">
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
+        
+        <DockPanel Grid.Row="0">
+            <ContentControl cal:RegionManager.RegionName="Toolbar"/>
+        </DockPanel>
 
-        <Grid x:Name="Explorer" Grid.Row="0">
+        <Grid x:Name="Explorer" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="2*"/>
@@ -30,7 +35,7 @@
             </Grid>
         </Grid>
 
-        <Grid x:Name="Player" Grid.Row="1">
+        <Grid x:Name="Player" Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="2*"/>
