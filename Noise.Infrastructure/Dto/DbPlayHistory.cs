@@ -3,7 +3,7 @@ using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbPlayHistory {
-		public	DateTime	PlayedOn { get; private set; }
+		public	DateTime	PlayedOn { get; set; }
 		public	StorageFile	Track { get; private set; }
 
 		public DbPlayHistory( StorageFile track ) {

@@ -27,7 +27,6 @@ namespace Noise.Core {
 			DataProvider = mContainer.Resolve<IDataProvider>();
 			AudioPlayer = mContainer.Resolve<IAudioPlayer>();
 			PlayQueue = mContainer.Resolve<IPlayQueue>();
-			PlayHistory = mContainer.Resolve<IPlayHistory>();
 		}
 
 		public bool Initialize() {
@@ -39,6 +38,8 @@ namespace Noise.Core {
 			}
 
 			mLog.LogMessage( "Initialized NoiseManager." );
+
+			PlayHistory = mContainer.Resolve<IPlayHistory>();
 
 			return ( true );
 		}
