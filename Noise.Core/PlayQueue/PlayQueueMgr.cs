@@ -26,7 +26,7 @@ namespace Noise.Core.PlayQueue {
 			mPlayQueue = new List<PlayQueueTrack>();
 			mPlayHistory = new List<PlayQueueTrack>();
 
-			PlayStrategy = ePlayStrategy.PlaySingle;
+			PlayStrategy = ePlayStrategy.Next;
 			PlayExhaustedStrategy = ePlayExhaustedStrategy.Stop;
 
 			mEventAggregator.GetEvent<Events.AlbumPlayRequested>().Subscribe( OnAlbumPlayRequest );
@@ -38,9 +38,13 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void Add( DbTrack track ) {
-			mPlayQueue.Add( new PlayQueueTrack( track, mDataProvider.GetPhysicalFile( track )));
+			AddTrack( track );
 
 			FirePlayQueueChanged();
+		}
+
+		private void AddTrack( DbTrack track ) {
+			mPlayQueue.Add( new PlayQueueTrack( track, mDataProvider.GetPhysicalFile( track )));
 		}
 
 		public void OnAlbumPlayRequest( DbAlbum album ) {
@@ -48,10 +52,16 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void Add( DbAlbum album ) {
+			AddAlbum( album );
+
+			FirePlayQueueChanged();
+		}
+
+		private void AddAlbum( DbAlbum album ) {
 			var tracks = mDataProvider.GetTrackList( album );
 
 			foreach( DbTrack track in tracks ) {
-				Add( track );
+				AddTrack( track );
 			}
 		}
 
@@ -154,7 +164,7 @@ namespace Noise.Core.PlayQueue {
 				mPlayStrategy = value;
 
 				switch( mPlayStrategy ) {
-					case ePlayStrategy.PlaySingle:
+					case ePlayStrategy.Next:
 						mStrategy = new PlayStrategySingle();
 						break;
 

@@ -3,8 +3,7 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
 	public enum ePlayStrategy {
-		PlaySingle,
-		PlayRepeat,
+		Next,
 		Random
 	}
 
