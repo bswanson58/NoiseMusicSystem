@@ -1,10 +1,8 @@
 ﻿using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
-using Noise.Infrastructure.Support;
-using Noise.UI.Views;
 
 namespace Noise.UI.ViewModels {
-	public class ToolbarViewModel : ViewModelBase {
+	public class ConfigurationDialogViewModel {
 		private IUnityContainer		mContainer;
 		private IEventAggregator	mEvents;
 
@@ -18,10 +16,5 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Execute_Configuration() {
-			var	dialog = new ConfigurationDialog();
-
-			dialog.ShowDialog();
-		}
 	}
 }
