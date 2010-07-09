@@ -15,6 +15,8 @@ namespace Noise.Core.PlayQueue {
 		private readonly List<PlayQueueTrack>	mPlayHistory;
 		private	ePlayStrategy					mPlayStrategy;
 		private IPlayStrategy					mStrategy;
+		private ePlayExhaustedStrategy			mPlayExhaustedStrategy;
+		private IPlayExhaustedStrategy			mExhaustedStrategy;
 
 		public PlayQueueMgr( IUnityContainer container ) {
 			mContainer = container;
@@ -25,6 +27,7 @@ namespace Noise.Core.PlayQueue {
 			mPlayHistory = new List<PlayQueueTrack>();
 
 			PlayStrategy = ePlayStrategy.PlaySingle;
+			PlayExhaustedStrategy = ePlayExhaustedStrategy.Stop;
 
 			mEventAggregator.GetEvent<Events.AlbumPlayRequested>().Subscribe( OnAlbumPlayRequest );
 			mEventAggregator.GetEvent<Events.TrackPlayRequested>().Subscribe( OnTrackPlayRequest );
@@ -98,7 +101,17 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public PlayQueueTrack NextTrack {
-			get{ return( mStrategy.NextTrack( mPlayQueue )); }
+			get {
+				var	retValue = mStrategy.NextTrack( mPlayQueue );
+
+				if( retValue == null ) {
+					if( mExhaustedStrategy.QueueExhausted( this )) {
+						retValue = mStrategy.NextTrack( mPlayQueue );
+					}
+				}
+
+				return( retValue );
+			}
 		}
 
 		public PlayQueueTrack PlayPreviousTrack() {
@@ -147,6 +160,23 @@ namespace Noise.Core.PlayQueue {
 
 					case ePlayStrategy.Random:
 						mStrategy = new	PlayStrategyRandom();
+						break;
+				}
+			}
+		}
+
+		public ePlayExhaustedStrategy PlayExhaustedStrategy {
+			get { return( mPlayExhaustedStrategy ); }
+			set {
+				mPlayExhaustedStrategy = value;
+
+				switch( mPlayExhaustedStrategy ) {
+					case ePlayExhaustedStrategy.Stop:
+						mExhaustedStrategy = new PlayExhaustedStrategyStop();
+						break;
+
+					case ePlayExhaustedStrategy.Replay:
+						mExhaustedStrategy = new PlayQueueExhaustedStrategyReplay();
 						break;
 				}
 			}

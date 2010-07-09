@@ -8,6 +8,12 @@ namespace Noise.Infrastructure.Interfaces {
 		Random
 	}
 
+	public enum ePlayExhaustedStrategy {
+		Stop,
+		Replay,
+		AddSimilar
+	}
+
 	public interface IPlayQueue {
 		void			Add( DbTrack track );
 		void			Add( DbAlbum album );
@@ -24,6 +30,8 @@ namespace Noise.Infrastructure.Interfaces {
 		bool			IsQueueEmpty { get; }
 
 		ePlayStrategy				PlayStrategy { get; set; }
+		ePlayExhaustedStrategy		PlayExhaustedStrategy { get; set; }
+
 		IEnumerable<PlayQueueTrack>	PlayList { get; }
 	}
 }
