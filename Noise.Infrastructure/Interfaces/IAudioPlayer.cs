@@ -26,5 +26,6 @@ namespace Noise.Infrastructure.Interfaces {
 		AudioLevels				GetSampleLevels( int channel );
 
 		float		Volume { get; set; }
+		float		PlaySpeed { get; set; }
 	}
 }

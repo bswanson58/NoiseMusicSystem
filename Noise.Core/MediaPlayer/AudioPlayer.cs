@@ -22,10 +22,12 @@ namespace Noise.Core.MediaPlayer {
 		public	bool			StopOnSlide { get; set; }
 		public	bool			Faded { get; set; }
 		public	BASSActive		Mode { get; set; }
+		public	float			SampleRate { get; private set; }
 
-		public AudioStream( int channel, StorageFile file ) {
+		public AudioStream( int channel, StorageFile file, float sampleRate ) {
 			Channel = channel;
 			PhysicalFile = file;
+			SampleRate = sampleRate;
 
 			Mode = BASSActive.BASS_ACTIVE_STOPPED;
 		}
@@ -36,6 +38,7 @@ namespace Noise.Core.MediaPlayer {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IDatabaseManager				mDatabase;
 		private readonly ILog							mLog;
+		private float									mPlaySpeed;
 		private readonly Timer							mUpdateTimer;
 		private readonly Dictionary<int, AudioStream>	mCurrentStreams;
 
@@ -49,6 +52,14 @@ namespace Noise.Core.MediaPlayer {
 			mUpdateTimer.Elapsed += OnUpdateTimer;
 
 			Bass.BASS_Init( -1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero );
+		}
+
+		public float PlaySpeed {
+			get{ return( mPlaySpeed ); }
+			set{
+				mPlaySpeed = value; 
+				SetPlaySpeed();
+			}
 		}
 
 		private void OnUpdateTimer( object sender, ElapsedEventArgs args ) {
@@ -91,9 +102,15 @@ namespace Noise.Core.MediaPlayer {
 			if( File.Exists( path )) {
 				try {
 					var channel = Bass.BASS_StreamCreateFile( path, 0, 0, BASSFlag.BASS_DEFAULT );
+					
+					Single	sampleRate = 0;
+					Bass.BASS_ChannelGetAttribute( channel, BASSAttribute.BASS_ATTRIB_FREQ, ref sampleRate );
 
-					mCurrentStreams.Add( channel, new AudioStream( channel, file ));
+					var stream = new AudioStream( channel, file, sampleRate );
+					mCurrentStreams.Add( channel, stream );
 
+					InitializeEq( channel );
+					SetPlaySpeed( stream );
 					retValue = channel;
 				}
 				catch( Exception ex ) {
@@ -107,6 +124,43 @@ namespace Noise.Core.MediaPlayer {
 			}
 
 			return ( retValue );
+		}
+
+		private static void InitializeEq( int channel ) {
+/*			int[] fxChannels = {0, 0, 0};
+
+			// 3-band EQ
+			var eq = new BASS_DX8_PARAMEQ();
+
+			fxChannels[0] = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_DX8_PARAMEQ, 0 );
+			fxChannels[1] = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_DX8_PARAMEQ, 0 );
+			fxChannels[2] = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_DX8_PARAMEQ, 0 );
+
+			eq.fBandwidth = 18f;
+			eq.fCenter = 100f;
+			eq.fGain = -10f;
+
+			Bass.BASS_FXSetParameters( fxChannels[0], eq );
+			eq.fCenter = 1000f;
+			Bass.BASS_FXSetParameters( fxChannels[1], eq );
+
+			eq.fCenter = 8000f;
+			eq.fGain = 10F;
+			Bass.BASS_FXSetParameters( fxChannels[2], eq );
+*/		}
+
+		private void SetPlaySpeed() {
+			foreach( var stream in mCurrentStreams.Values ) {
+				SetPlaySpeed( stream );
+			}
+		}
+
+		private void SetPlaySpeed( AudioStream stream ) {
+			if( stream.SampleRate > 0 ) {
+				float	multiplier = 1.0f + ( mPlaySpeed * 0.5f );
+
+				Bass.BASS_ChannelSetAttribute( stream.Channel, BASSAttribute.BASS_ATTRIB_FREQ, stream.SampleRate * multiplier );
+			}
 		}
 
 		private AudioStream GetStream( int channel ) {
