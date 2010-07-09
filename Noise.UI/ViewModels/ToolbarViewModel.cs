@@ -7,6 +7,7 @@ namespace Noise.UI.ViewModels {
 	public class ToolbarViewModel : ViewModelBase {
 		private IUnityContainer		mContainer;
 		private IEventAggregator	mEvents;
+		private SmallPlayerView		mPlayerView;
 
 		[Dependency]
 		public IUnityContainer Container {
@@ -22,6 +23,17 @@ namespace Noise.UI.ViewModels {
 			var	dialog = new ConfigurationDialog();
 
 			dialog.ShowDialog();
+		}
+
+		public void Execute_SmallPlayerView() {
+			if( mPlayerView == null ) {
+				mPlayerView = new SmallPlayerView();
+				mPlayerView.Show();
+			}
+			else {
+				mPlayerView.Close();
+				mPlayerView = null;
+			}
 		}
 	}
 }

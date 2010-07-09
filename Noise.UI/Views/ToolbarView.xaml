@@ -13,6 +13,7 @@
     <ToolBarTray DockPanel.Dock="Top">
         <ToolBar Band="1" BandIndex="1">
             <Button Margin="3" Command="{Binding Path=Configuration}">Configuration</Button>
+            <Button Margin="3" Command="{Binding Path=SmallPlayerView}">Player</Button>
         </ToolBar>
     </ToolBarTray>
 </UserControl>

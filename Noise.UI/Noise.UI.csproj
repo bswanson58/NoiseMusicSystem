@@ -140,6 +140,9 @@
     <Compile Include="Views\PlayQueueView.xaml.cs">
       <DependentUpon>PlayQueueView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SmallPlayerView.xaml.cs">
+      <DependentUpon>SmallPlayerView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ToolbarView.xaml.cs">
       <DependentUpon>ToolbarView.xaml</DependentUpon>
     </Compile>
@@ -183,6 +186,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlayQueueView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SmallPlayerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
