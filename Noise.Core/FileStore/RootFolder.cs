@@ -6,13 +6,17 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.FileStore {
 	public class RootFolder : StorageFolder {
-		public string	DisplayName { get; set; }
+		private const int					cMaxStrategyLevel = 5;
+
+		public string			DisplayName { get; set; }
+		public FolderStrategy	FolderStrategy { get; set; }
 
 		public RootFolder( string path, string displayName ) :
 			base( path, Constants.cDatabaseNullOid ) {
 			Condition.Requires( path ).IsNotNullOrEmpty();
 
 			DisplayName = displayName;
+			FolderStrategy = new FolderStrategy();
 		}
 
 		[Export("PersistenceType")]

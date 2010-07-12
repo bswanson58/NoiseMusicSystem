@@ -8,25 +8,47 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.DataProviders {
-	public class FileNameProvider {
+	internal class FileNameProvider {
 		private readonly IDatabaseManager	mDatabase;
-		private long						mFolderId;
-		private List<StorageFile>			mFolderFiles;
 
 		public FileNameProvider( IDatabaseManager databaseManager ) {
 			mDatabase = databaseManager;
+		}
+
+		public IMetaDataProvider GetProvider( StorageFile forFile ) {
+			return( new NameProvider( mDatabase, forFile ));
+		}
+	}
+
+	internal class NameProvider : IMetaDataProvider {
+		private readonly IDatabaseManager	mDatabase;
+		private readonly StorageFile		mFile;
+		private long						mFolderId;
+		private List<StorageFile>			mFolderFiles;
+
+		public NameProvider( IDatabaseManager databaseManager, StorageFile file ) {
+			mDatabase = databaseManager;
+			mFile = file;
 
 			mFolderId = Constants.cDatabaseNullOid;
 		}
 
-		public void BuildMetaData( StorageFile storageFile, DbTrack track ) {
-			if( storageFile.ParentFolder != mFolderId ) {
-				BuildFolderFiles( storageFile.ParentFolder );
+		public string Artist {
+			get{ return( "" ); }
+		}
+
+		public string Album {
+			get{ return( "" ); }
+		}
+
+		public void AddAvailableMetaData( DbArtist artist, DbAlbum album, DbTrack track ) {
+			if( mFile.ParentFolder != mFolderId ) {
+				BuildFolderFiles( mFile.ParentFolder );
 			}
 
-			track.TrackNumber = (UInt16)( mFolderFiles.IndexOf( storageFile ) + 1 );
+			track.TrackNumber = (UInt16)( mFolderFiles.IndexOf( mFile ) + 1 );
 
-			var	trackName = Path.GetFileNameWithoutExtension( storageFile.Name );
+			var	trackName = Path.GetFileNameWithoutExtension( mFile.Name );
 			var nameParts = trackName.Split( new []{ '-' });
 			track.Name = nameParts.Last().Trim();
 		}

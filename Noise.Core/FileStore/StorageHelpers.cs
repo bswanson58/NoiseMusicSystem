@@ -50,5 +50,58 @@ namespace Noise.Core.FileStore {
 
 			return( Path.Combine( path, forFile.Name ));
 		}
+
+		public static FolderStrategyInformation GetFolderStrategy( DB database, StorageFile forFile ) {
+			Condition.Requires( database ).IsNotNull();
+			Condition.Requires( forFile ).IsNotNull();
+
+			var	retValue = new FolderStrategyInformation();
+			var pathParts = new Stack<string>();
+			var param = database.CreateParameters();
+			FolderStrategy	strategy = null;
+
+			param["id"] = forFile.ParentFolder;
+			var folder = database.ExecuteScalar( "SELECT StorageFolder WHERE $ID = @id", param ) as StorageFolder;
+
+			if( folder != null ) {
+				pathParts.Push( folder.Name );
+
+				while( folder.ParentFolder != Constants.cDatabaseNullOid ) {
+					param["id"] = folder.ParentFolder;
+
+					folder = database.ExecuteScalar( "SELECT StorageFolder WHERE $ID = @id", param ) as StorageFolder;
+					if( folder != null ) {
+						if( folder is RootFolder ) {
+							strategy = (folder as RootFolder).FolderStrategy;
+							
+							break;
+						}
+
+						pathParts.Push( folder.Name );
+					}
+					else {
+						break;
+					}
+				}
+
+				if( strategy != null ) {
+					int	level = 0;
+
+					while( pathParts.Count > 0 ) {
+						var folderStrategy = strategy.StrategyForLevel( level );
+						var folderName = pathParts.Pop();
+
+						if( folderStrategy != eFolderStrategy.Undefined ) {
+							retValue.SetStrategyInformation( folderStrategy, folderName );
+							level++;
+						}
+					}
+
+					retValue.PreferFolderStrategy = strategy.PreferFolderStrategy;
+				}
+			}
+
+			return( retValue );
+		}
 	}
 }

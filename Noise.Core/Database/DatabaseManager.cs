@@ -6,6 +6,7 @@ using CuttingEdge.Conditions;
 using Eloquera.Client;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
@@ -99,6 +100,11 @@ namespace Noise.Core.Database {
 			Condition.Requires( Database ).IsNotNull();
 
 			var root = new RootFolder( @"D:\Music", "Music Storage" );
+
+			root.FolderStrategy.SetStrategyForLevel( 0, eFolderStrategy.Artist );
+			root.FolderStrategy.SetStrategyForLevel( 1, eFolderStrategy.Album );
+			root.FolderStrategy.SetStrategyForLevel( 2, eFolderStrategy.Volume );
+			root.FolderStrategy.PreferFolderStrategy = true;
 
 			Database.Store( root );
 		}

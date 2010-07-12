@@ -95,6 +95,7 @@
     <Compile Include="Dto\AudioLevels.cs" />
     <Compile Include="Dto\DbArtwork.cs" />
     <Compile Include="Dto\DbTextInfo.cs" />
+    <Compile Include="Dto\FolderStrategy.cs" />
     <Compile Include="Dto\InfoSource.cs" />
     <Compile Include="Dto\PlayQueueTrack.cs" />
     <Compile Include="Dto\TextInfoTypes.cs" />
