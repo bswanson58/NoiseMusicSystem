@@ -14,6 +14,7 @@
 
     <UserControl.Resources>
         <local:ByteImageConverter x:Key="imageConverter" />
+        <local:HtmlTextConverter x:Key="htmlConverter" />
     </UserControl.Resources>
 
     <Grid>
@@ -30,7 +31,7 @@
                     </InlineUIContainer>
                 </Paragraph>
                 <Paragraph>
-                    <adapters:BindableRun BoundText="{Binding Path=ArtistBio}" />
+                    <adapters:BindableRun BoundText="{Binding Path=ArtistBio, Converter={StaticResource htmlConverter}}" />
                 </Paragraph>
             </FlowDocument>
         </FlowDocumentScrollViewer>
