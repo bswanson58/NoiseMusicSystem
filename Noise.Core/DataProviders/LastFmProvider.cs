@@ -11,7 +11,7 @@ namespace Noise.Core.DataProviders {
 	public class LastFmProvider {
 		private const string		cApiKey		= "2cc6cebb071ba39a2d6fa71fc60255e8";
 		private const string		cApiSecret	= "e01705ce5fa579cc070811ebfe5206f0";
-		private const int			cMaximumQueries = 5;
+		private const int			cMaximumQueries = 10;
 
 		private readonly IDatabaseManager	mDatabase;
 		private readonly ILog				mLog;
@@ -102,6 +102,8 @@ namespace Noise.Core.DataProviders {
 
 								queryCount++;
 							}
+
+							mLog.LogInfo( "Updating LastFm artist: {0}", artist.Name );
 
 							if( queryCount > cMaximumQueries ) {
 								break;

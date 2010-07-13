@@ -3,6 +3,7 @@ using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
 using Noise.Core.FileStore;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core {
@@ -22,7 +23,7 @@ namespace Noise.Core {
 			mContainer = container;
 
 			mLog = mContainer.Resolve<ILog>();
-			mDatabase = mContainer.Resolve<IDatabaseManager>();
+			mDatabase = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
 			mContainer.RegisterInstance( typeof( IDatabaseManager ), mDatabase );
 			DataProvider = mContainer.Resolve<IDataProvider>();
 			AudioPlayer = mContainer.Resolve<IAudioPlayer>();

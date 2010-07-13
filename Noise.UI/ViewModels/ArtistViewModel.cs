@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
@@ -26,17 +25,12 @@ namespace Noise.UI.ViewModels {
 				mNoiseManager = mContainer.Resolve<INoiseManager>();
 
 				mBackgroundWorker = new BackgroundWorker();
-				mBackgroundWorker.DoWork += UpdateArtistInfo;
+				mBackgroundWorker.DoWork += ( o, args ) => args.Result = mNoiseManager.DataProvider.GetArtistSupportInfo( args.Argument as DbArtist );
+				mBackgroundWorker.RunWorkerCompleted += ( o, result ) => SupportInfo = result.Result as ArtistSupportInfo;
 
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
 				mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
 			}
-		}
-
-		private void UpdateArtistInfo( object o, DoWorkEventArgs args ) {
-			var info = mNoiseManager.DataProvider.GetArtistSupportInfo( args.Argument as DbArtist );
-
-			System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke((Action)delegate { SupportInfo = info; });
 		}
 
 		private ArtistSupportInfo SupportInfo {
@@ -48,7 +42,9 @@ namespace Noise.UI.ViewModels {
 			mCurrentArtist = artist;
 
 			if( mCurrentArtist != null ) {
-				mBackgroundWorker.RunWorkerAsync( artist );
+				if(!mBackgroundWorker.IsBusy ) {
+					mBackgroundWorker.RunWorkerAsync( artist );
+				}
 			}
 		}
 

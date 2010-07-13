@@ -9,6 +9,8 @@ namespace Noise.Infrastructure {
 
 		public	static DateTime			cNoExpirationDate { get; private set; }
 
+		public	static string			NewInstance = "NewInstance";
+
 		static Constants() {
 			cNoExpirationDate = DateTime.MaxValue;
 		}

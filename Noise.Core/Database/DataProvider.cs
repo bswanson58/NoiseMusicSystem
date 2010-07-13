@@ -1,14 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	public class DataProvider : IDataProvider {
+		private readonly object				mLockObject;
+		private readonly IUnityContainer	mContainer;
 		private readonly IDatabaseManager	mDatabase;
 
-		public DataProvider( IDatabaseManager database ) {
-			mDatabase = database;
+		public DataProvider( IUnityContainer container ) {
+			mLockObject = new object();
+
+			mContainer = container;
+			mDatabase = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
+			if( mDatabase.InitializeDatabase( "(local)" )) {
+				mDatabase.OpenDatabase( "Noise" );
+			}
 		}
 
 		public long GetObjectIdentifier( object dbObject ) {
@@ -69,47 +79,56 @@ namespace Noise.Core.Database {
 		}
 
 		public ArtistSupportInfo GetArtistSupportInfo( DbArtist forArtist ) {
-			var artistId = mDatabase.Database.GetUid( forArtist );
-			var parms = mDatabase.Database.CreateParameters();
+			ArtistSupportInfo	retValue;
 
-			parms["artistId"] = artistId;
-			parms["type"] = ArtworkTypes.ArtistImage;
+			lock( mLockObject ) {
+				var artistId = mDatabase.Database.GetUid( forArtist );
+				var parms = mDatabase.Database.CreateParameters();
 
-			return( new ArtistSupportInfo(( from DbTextInfo bio in mDatabase.Database where bio.AssociatedItem == artistId && bio.InfoType == TextInfoTypes.Biography select bio ).FirstOrDefault(),
-//										  ( from DbArtwork artwork in mDatabase.Database where artwork.AssociatedItem == artistId && artwork.ArtworkType == ArtworkTypes.ArtistImage select artwork ).FirstOrDefault(),
-											mDatabase.Database.ExecuteScalar( "SELECT DbArtwork Where AssociatedItem = @artistId AND ArtworkType = @type", parms ) as DbArtwork,
-										  ( from DbSimilarItems items in mDatabase.Database where items.AssociatedItem == artistId select items ).FirstOrDefault(),
-										  ( from DbTopItems items in mDatabase.Database where  items.AssociatedItem == artistId select  items ).FirstOrDefault()));
+				parms["artistId"] = artistId;
+				parms["type"] = ArtworkTypes.ArtistImage;
+
+				retValue = new ArtistSupportInfo(( from DbTextInfo bio in mDatabase.Database where bio.AssociatedItem == artistId && bio.InfoType == TextInfoTypes.Biography select bio ).FirstOrDefault(),
+//												 ( from DbArtwork artwork in mDatabase.Database where artwork.AssociatedItem == artistId && artwork.ArtworkType == ArtworkTypes.ArtistImage select artwork ).FirstOrDefault(),
+												   mDatabase.Database.ExecuteScalar( "SELECT DbArtwork Where AssociatedItem = @artistId AND ArtworkType = @type", parms ) as DbArtwork,
+												 ( from DbSimilarItems items in mDatabase.Database where items.AssociatedItem == artistId select items ).FirstOrDefault(),
+												 ( from DbTopItems items in mDatabase.Database where  items.AssociatedItem == artistId select  items ).FirstOrDefault());
+			}
+
+			return( retValue );
 		}
 
 		public AlbumSupportInfo GetAlbumSupportInfo( DbAlbum forAlbum ) {
 			AlbumSupportInfo	retValue = null;
 
-			var albumId = mDatabase.Database.GetUid( forAlbum );
-			var albumTrack = ( from DbTrack track in mDatabase.Database where track.Album == albumId select track ).FirstOrDefault();
+			lock( mLockObject ) {
+				var albumId = mDatabase.Database.GetUid( forAlbum );
+				var albumTrack = ( from DbTrack track in mDatabase.Database where track.Album == albumId select track ).FirstOrDefault();
 
-			if( albumTrack != null ) {
-				var trackId = mDatabase.Database.GetUid( albumTrack );
-				var	fileTrack = ( from StorageFile file in mDatabase.Database where file.MetaDataPointer == trackId select file ).FirstOrDefault();
+				if( albumTrack != null ) {
+					var trackId = mDatabase.Database.GetUid( albumTrack );
+					var	fileTrack = ( from StorageFile file in mDatabase.Database where file.MetaDataPointer == trackId select file ).FirstOrDefault();
 
-				if( fileTrack != null ) {
-					var parms = mDatabase.Database.CreateParameters();
+					if( fileTrack != null ) {
+						var parms = mDatabase.Database.CreateParameters();
 
-					parms["folderId"] = fileTrack.ParentFolder;
-					parms["coverType"] = ArtworkTypes.AlbumCover;
-					parms["otherType"] = ArtworkTypes.AlbumOther;
+						parms["folderId"] = fileTrack.ParentFolder;
+						parms["coverType"] = ArtworkTypes.AlbumCover;
+						parms["otherType"] = ArtworkTypes.AlbumOther;
 
-					retValue = new AlbumSupportInfo( mDatabase.Database.ExecuteQuery( "SELECT DbArtwork WHERE FolderLocation = @folderId AND ArtworkType = @coverType", parms ).OfType<DbArtwork>().ToArray(),
-													 mDatabase.Database.ExecuteQuery( "SELECT DbArtwork WHERE FolderLocation = @folderId AND ArtworkType = @otherType", parms ).OfType<DbArtwork>().ToArray(),
-													 ( from DbTextInfo info in mDatabase.Database where info.FolderLocation == fileTrack.ParentFolder select info ).ToArray());
+						retValue = new AlbumSupportInfo( mDatabase.Database.ExecuteQuery( "SELECT DbArtwork WHERE FolderLocation = @folderId AND ArtworkType = @coverType", parms ).OfType<DbArtwork>().ToArray(),
+														 mDatabase.Database.ExecuteQuery( "SELECT DbArtwork WHERE FolderLocation = @folderId AND ArtworkType = @otherType", parms ).OfType<DbArtwork>().ToArray(),
+														 ( from DbTextInfo info in mDatabase.Database where info.FolderLocation == fileTrack.ParentFolder select info ).ToArray());
 
-//					retValue = new AlbumSupportInfo(( from DbArtwork artwork in mDatabase.Database
-//													  where artwork.FolderLocation == fileTrack.ParentFolder && artwork.ArtworkType == ArtworkTypes.AlbumCover select artwork ).ToArray(),
-//												    ( from DbArtwork artwork in mDatabase.Database
-//													  where artwork.FolderLocation == fileTrack.ParentFolder && artwork.ArtworkType == ArtworkTypes.AlbumOther select artwork ).ToArray(),
-//													( from DbTextInfo info in mDatabase.Database where info.FolderLocation == fileTrack.ParentFolder select info ).ToArray());
+	//					retValue = new AlbumSupportInfo(( from DbArtwork artwork in mDatabase.Database
+	//													  where artwork.FolderLocation == fileTrack.ParentFolder && artwork.ArtworkType == ArtworkTypes.AlbumCover select artwork ).ToArray(),
+	//												    ( from DbArtwork artwork in mDatabase.Database
+	//													  where artwork.FolderLocation == fileTrack.ParentFolder && artwork.ArtworkType == ArtworkTypes.AlbumOther select artwork ).ToArray(),
+	//													( from DbTextInfo info in mDatabase.Database where info.FolderLocation == fileTrack.ParentFolder select info ).ToArray());
+					}
 				}
 			}
+
 			return( retValue );
 		}
 	}
