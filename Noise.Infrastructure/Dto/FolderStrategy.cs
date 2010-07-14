@@ -41,7 +41,7 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		[Export("PersistenceType")]
-		public static new Type PersistenceType {
+		public static Type PersistenceType {
 			get{ return( typeof( FolderStrategy )); }
 		}
 	}

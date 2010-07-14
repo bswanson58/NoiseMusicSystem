@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Configuration {
 	public class StorageConfiguration : ConfigurationSection {
@@ -21,6 +22,9 @@ namespace Noise.Infrastructure.Configuration {
 	public class RootFolderConfiguration : ConfigurationElement {
 		internal const string cKeyPropertyName = "key";
 		internal const string cPathPropertyName = "path";
+		internal const string cDescriptionName = "description";
+		internal const string cPreferStrategyProperty = "preferFolderStrategy";
+		internal const string cFolderStrategyProperty = "folderStrategy";
 
 		public RootFolderConfiguration() {
 			Key = Guid.NewGuid().ToString();
@@ -30,16 +34,34 @@ namespace Noise.Infrastructure.Configuration {
 			return( false );
 		}
 
-		[ConfigurationPropertyAttribute( cKeyPropertyName, IsRequired = true, IsKey = true, IsDefaultCollection = false )]
+		[ConfigurationProperty( cKeyPropertyName, IsRequired = true, IsKey = true, IsDefaultCollection = false )]
 		public string Key {
 			get { return((string)( base[cKeyPropertyName])); }
 			set { base[cKeyPropertyName] = value; }
 		}
 
-		[ConfigurationPropertyAttribute( cPathPropertyName, IsRequired = true, IsKey = false, IsDefaultCollection = false )]
+		[ConfigurationProperty( cPathPropertyName, IsRequired = true, IsKey = false, IsDefaultCollection = false )]
 		public string Path {
 			get { return((string)( base[cPathPropertyName])); }
 			set { base[cPathPropertyName] = value; }
+		}
+
+		[ConfigurationProperty( cDescriptionName, IsRequired = true, IsKey = false, IsDefaultCollection = false )]
+		public string Description {
+			get { return((string)( base[cDescriptionName])); }
+			set { base[cDescriptionName] = value; }
+		}
+
+		[ConfigurationProperty( cPreferStrategyProperty, IsRequired = true, IsKey = false, IsDefaultCollection = false )]
+		public bool PreferFolderStrategy {
+			get { return((bool) base[cPreferStrategyProperty]); }
+			set { base[cPreferStrategyProperty] = value; }
+		}
+
+		[ConfigurationProperty( cFolderStrategyProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false )]
+		public ConfigurationElementCollection<FolderStrategyConfiguration> StorageStrategy {
+			get { return((ConfigurationElementCollection<FolderStrategyConfiguration>)( base[cFolderStrategyProperty])); }
+			set { base[cFolderStrategyProperty] = value; }
 		}
 
 		public override string ToString() {
@@ -48,6 +70,31 @@ namespace Noise.Infrastructure.Configuration {
 	}
 
 	public class FolderStrategyConfiguration : ConfigurationElement {
-		
+		internal const string cLevelProperty = "level";
+		internal const string cStrategyProperty = "strategy";
+
+		public FolderStrategyConfiguration() {
+		}
+
+		public FolderStrategyConfiguration( int level, eFolderStrategy strategy ) {
+			Level = level;
+			Strategy = (int)strategy;
+		}
+
+		[ConfigurationProperty( cLevelProperty, IsRequired = true, IsKey = true, IsDefaultCollection = false )]
+		public int Level {
+			get { return((int)( base[cLevelProperty])); }
+			set { base[cLevelProperty] = value; }
+		}
+
+		[ConfigurationProperty( cStrategyProperty, IsRequired = true, IsKey = true, IsDefaultCollection = false )]
+		public int Strategy {
+			get { return((int)( base[cStrategyProperty])); }
+			set { base[cStrategyProperty] = value; }
+		}
+
+		public override string ToString() {
+			return( Level.ToString());
+		}
 	}
 }

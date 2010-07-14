@@ -4,6 +4,8 @@ using Eloquera.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.Exceptions;
+using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Recls;
@@ -16,12 +18,22 @@ namespace Noise.Core.FileStore {
 
 		public  FolderExplorer( IUnityContainer container ) {
 			mContainer = container;
-			mDatabase = mContainer.Resolve<IDatabaseManager>();
 			mLog = mContainer.Resolve<ILog>();
+
+			mDatabase = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
+			if( mDatabase.InitializeDatabase()) {
+				mDatabase.OpenDatabase();
+			}
 		}
 
 		public void SynchronizeDatabaseFolders() {
 			var rootFolders = from RootFolder root in mDatabase.Database where true select root;
+
+			if( rootFolders.Count() == 0 ) {
+				LoadConfiguration();
+
+				rootFolders = from RootFolder root in mDatabase.Database where true select root;
+			}
 
 			if( rootFolders.Count() > 0 ) {
 				foreach( var rootFolder in rootFolders ) {
@@ -36,6 +48,26 @@ namespace Noise.Core.FileStore {
 			}
 			else {
 				throw( new StorageConfigurationException());
+			}
+		}
+
+		private void LoadConfiguration() {
+			var configMgr = mContainer.Resolve<ISystemConfiguration>();
+			var storageConfig = configMgr.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName  );
+
+			if(( storageConfig != null ) &&
+			   ( storageConfig.RootFolders != null )) {
+				foreach( RootFolderConfiguration folderConfig in storageConfig.RootFolders ) {
+					var root = new RootFolder( folderConfig.Path, folderConfig.Description );
+
+					foreach( FolderStrategyConfiguration strategy in folderConfig.StorageStrategy ) {
+						root.FolderStrategy.SetStrategyForLevel( strategy.Level, (eFolderStrategy)strategy.Strategy );
+					}
+
+					root.FolderStrategy.PreferFolderStrategy = folderConfig.PreferFolderStrategy;
+
+					mDatabase.Database.Store( root );
+				}
 			}
 		}
 

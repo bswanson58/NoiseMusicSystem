@@ -6,6 +6,7 @@ using Noise.Core.Exceptions;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core {
@@ -25,9 +26,7 @@ namespace Noise.Core {
 			mLog = mContainer.Resolve<ILog>();
 			mDatabase = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
 			mContainer.RegisterInstance( typeof( IDatabaseManager ), mDatabase );
-			DataProvider = mContainer.Resolve<IDataProvider>();
 			AudioPlayer = mContainer.Resolve<IAudioPlayer>();
-			PlayQueue = mContainer.Resolve<IPlayQueue>();
 		}
 
 		public bool Initialize() {
@@ -35,6 +34,9 @@ namespace Noise.Core {
 
 			if( mDatabase.InitializeDatabase()) {
 				mDatabase.OpenWithCreateDatabase();
+
+				DataProvider = mContainer.Resolve<IDataProvider>();
+				PlayQueue = mContainer.Resolve<IPlayQueue>();
 			}
 
 			mLog.LogMessage( "Initialized NoiseManager." );
@@ -62,7 +64,7 @@ namespace Noise.Core {
 
 					folderExplorer.SynchronizeDatabaseFolders();
 				}
-				catch( StorageConfigurationException ex ) {
+				catch( StorageConfigurationException ) {
 					InitializeStorageConfiguration();
 				}
 			}
@@ -90,7 +92,12 @@ namespace Noise.Core {
 			var storageConfig = configMgr.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName );
 
 			if( storageConfig.RootFolders.Count == 0 ) {
-				var rootFolder = new RootFolderConfiguration { Path = @"D:\Music" };
+				var rootFolder = new RootFolderConfiguration { Path = @"D:\Music", Description = "Music Folder" };
+
+				rootFolder.PreferFolderStrategy = true;
+				rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 0, eFolderStrategy.Artist ));
+				rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 1, eFolderStrategy.Album  ));
+				rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 2, eFolderStrategy.Volume ));
 
 				storageConfig.RootFolders.Add( rootFolder );
 				configMgr.Save( storageConfig );

@@ -5,9 +5,7 @@ using System.ComponentModel.Composition.Hosting;
 using CuttingEdge.Conditions;
 using Eloquera.Client;
 using Microsoft.Practices.Unity;
-using Noise.Core.FileStore;
 using Noise.Infrastructure.Configuration;
-using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
@@ -42,7 +40,7 @@ namespace Noise.Core.Database {
 			var retValue = true;
 
 			try {
-				Database = new DB( string.Format( "server={0};password=;options=none;", mDatabaseLocation ) );
+				Database = new DB( string.Format( "server={0};password=;options=none;", mDatabaseLocation ));
 			}
 			catch( Exception ex ) {
 				mLog.LogException( ex );
@@ -60,7 +58,6 @@ namespace Noise.Core.Database {
 				OpenDatabase();
 
 				RegisterDatabaseTypes();
-				LoadDatabaseDefaults();
 			}
 		}
 
@@ -102,19 +99,6 @@ namespace Noise.Core.Database {
 			foreach( Type type in PersistenceTypes ) {
 				Database.RegisterType( type );
 			}
-		}
-
-		private void LoadDatabaseDefaults() {
-			Condition.Requires( Database ).IsNotNull();
-
-			var root = new RootFolder( @"D:\Music", "Music Storage" );
-
-			root.FolderStrategy.SetStrategyForLevel( 0, eFolderStrategy.Artist );
-			root.FolderStrategy.SetStrategyForLevel( 1, eFolderStrategy.Album );
-			root.FolderStrategy.SetStrategyForLevel( 2, eFolderStrategy.Volume );
-			root.FolderStrategy.PreferFolderStrategy = true;
-
-			Database.Store( root );
 		}
 	}
 }
