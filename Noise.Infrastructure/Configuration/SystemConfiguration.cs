@@ -9,7 +9,9 @@ namespace Noise.Infrastructure.Configuration {
 
 		}
 		public T RetrieveConfiguration<T>( string sectionName ) {
-			return((T)ConfigurationManager.GetSection( sectionName ));
+			object section = mConfiguration.GetSection( sectionName );
+
+			return((T)section);
 		}
 
 		public void Save( ConfigurationSection section ) {

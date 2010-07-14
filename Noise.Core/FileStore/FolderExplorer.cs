@@ -3,26 +3,39 @@ using System.Linq;
 using Eloquera.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
+using Noise.Core.Exceptions;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 using Recls;
 
 namespace Noise.Core.FileStore {
 	public class FolderExplorer : IFolderExplorer {
 		private readonly IUnityContainer	mContainer;
 		private readonly IDatabaseManager	mDatabase;
+		private readonly ILog				mLog;
 
 		public  FolderExplorer( IUnityContainer container ) {
 			mContainer = container;
 			mDatabase = mContainer.Resolve<IDatabaseManager>();
+			mLog = mContainer.Resolve<ILog>();
 		}
 
 		public void SynchronizeDatabaseFolders() {
 			var rootFolders = from RootFolder root in mDatabase.Database where true select root;
 
-			foreach( var rootFolder in rootFolders ) {
-				if( Directory.Exists( StorageHelpers.GetPath( mDatabase.Database, rootFolder ))) {
-					BuildFolder( rootFolder );
+			if( rootFolders.Count() > 0 ) {
+				foreach( var rootFolder in rootFolders ) {
+					if( Directory.Exists( StorageHelpers.GetPath( mDatabase.Database, rootFolder ))) {
+						mLog.LogInfo( "Synchronizing folder: {0}", rootFolder.DisplayName );
+						BuildFolder( rootFolder );
+					}
+					else {
+						mLog.LogMessage( "Storage folder does not exists: {0}", rootFolder.DisplayName );
+					}
 				}
+			}
+			else {
+				throw( new StorageConfigurationException());
 			}
 		}
 

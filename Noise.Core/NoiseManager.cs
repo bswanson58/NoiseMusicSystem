@@ -2,8 +2,10 @@
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
+using Noise.Core.Exceptions;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core {
@@ -55,8 +57,14 @@ namespace Noise.Core {
 
 		private void Explore(object state ) {
 			if( mContinueExploring ) {
-				var	folderExplorer = mContainer.Resolve<IFolderExplorer>();
-				folderExplorer.SynchronizeDatabaseFolders();
+				try {
+					var	folderExplorer = mContainer.Resolve<IFolderExplorer>();
+
+					folderExplorer.SynchronizeDatabaseFolders();
+				}
+				catch( StorageConfigurationException ex ) {
+					InitializeStorageConfiguration();
+				}
 			}
 
 			if( mContinueExploring ) {
@@ -75,6 +83,18 @@ namespace Noise.Core {
 			}
 
 			mLog.LogMessage( "Explorer Finished." );
+		}
+
+		private void InitializeStorageConfiguration() {
+			var configMgr = mContainer.Resolve<ISystemConfiguration>();
+			var storageConfig = configMgr.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName );
+
+			if( storageConfig.RootFolders.Count == 0 ) {
+				var rootFolder = new RootFolderConfiguration { Path = @"D:\Music" };
+
+				storageConfig.RootFolders.Add( rootFolder );
+				configMgr.Save( storageConfig );
+			}
 		}
 	}
 }
