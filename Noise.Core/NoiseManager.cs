@@ -9,8 +9,6 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager {
 		private	readonly IUnityContainer	mContainer;
-		private	string						mDatabaseName;
-		private string						mDatabaseLocation;
 		private readonly ILog				mLog;
 		private readonly IDatabaseManager	mDatabase;
 		private bool						mContinueExploring;
@@ -33,9 +31,8 @@ namespace Noise.Core {
 		public bool Initialize() {
 			mLog.LogMessage( "-------------------------" );
 
-			LoadConfiguration();
-			if( mDatabase.InitializeDatabase( mDatabaseLocation ) ) {
-				mDatabase.OpenWithCreateDatabase( mDatabaseName );
+			if( mDatabase.InitializeDatabase()) {
+				mDatabase.OpenWithCreateDatabase();
 			}
 
 			mLog.LogMessage( "Initialized NoiseManager." );
@@ -78,11 +75,6 @@ namespace Noise.Core {
 			}
 
 			mLog.LogMessage( "Explorer Finished." );
-		}
-
-		private void LoadConfiguration() {
-			mDatabaseLocation = "(local)";
-			mDatabaseName = "Noise";
 		}
 	}
 }

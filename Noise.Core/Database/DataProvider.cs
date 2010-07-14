@@ -16,8 +16,8 @@ namespace Noise.Core.Database {
 
 			mContainer = container;
 			mDatabase = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
-			if( mDatabase.InitializeDatabase( "(local)" )) {
-				mDatabase.OpenDatabase( "Noise" );
+			if( mDatabase.InitializeDatabase()) {
+				mDatabase.OpenDatabase();
 			}
 		}
 

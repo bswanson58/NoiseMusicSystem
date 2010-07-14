@@ -4,30 +4,42 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using CuttingEdge.Conditions;
 using Eloquera.Client;
+using Microsoft.Practices.Unity;
 using Noise.Core.FileStore;
-using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	public class DatabaseManager : IDatabaseManager {
+		private readonly IUnityContainer	mContainer;
 		private readonly ILog				mLog;
-		private string						mDatabaseLocation;
-		private string						mDatabaseName;
+		private readonly string				mDatabaseLocation;
+		private readonly string				mDatabaseName;
 
 		public	DB		Database { get; private set; }
 
 		[ImportMany("PersistenceType")]
 		public IEnumerable<Type>	PersistenceTypes;
 
-		public DatabaseManager() {
-			mLog = new Log();
+		public DatabaseManager( IUnityContainer container ) {
+			mContainer = container;
+			mLog = mContainer.Resolve<ILog>();
+
+			var configMgr = mContainer.Resolve<ISystemConfiguration>();
+			var config = configMgr.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
+
+			if( config != null ) {
+				mDatabaseName = config.DatabaseName;
+				mDatabaseLocation = config.ServerName;
+			}
+			else {
+				mLog.LogMessage( "Database configuration could not be loaded." );
+			}
 		}
 
-		public bool InitializeDatabase( string databaseLocation ) {
+		public bool InitializeDatabase() {
 			var retValue = true;
-
-			mDatabaseLocation = databaseLocation;
 
 			try {
 				Database = new DB( string.Format( "server={0};password=;options=none;", mDatabaseLocation ) );
@@ -42,24 +54,20 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
-		public void OpenWithCreateDatabase( string databaseName ) {
-			mDatabaseName = databaseName;
-
-			if(!OpenDatabase( mDatabaseName )) {
+		public void OpenWithCreateDatabase() {
+			if(!OpenDatabase()) {
 				CreateDatabase( mDatabaseName );
-				OpenDatabase( mDatabaseName );
+				OpenDatabase();
 
 				RegisterDatabaseTypes();
 				LoadDatabaseDefaults();
 			}
 		}
 
-		public bool OpenDatabase( string databaseName ) {
+		public bool OpenDatabase() {
 			Condition.Requires( Database ).IsNotNull();
 
 			var retValue = true;
-
-			mDatabaseName = databaseName;
 
 			try {
 				Database.OpenDatabase( mDatabaseName );

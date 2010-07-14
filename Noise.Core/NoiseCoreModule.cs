@@ -7,6 +7,7 @@ using Noise.Core.MediaPlayer;
 using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core {
@@ -28,6 +29,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IPlayQueue, PlayQueueMgr>();
 			mContainer.RegisterType<IPlayHistory, PlayHistoryMgr>();
 			mContainer.RegisterType<ILog, Log>();
+			mContainer.RegisterType<ISystemConfiguration, SystemConfiguration>();
 		}
 	}
 }
