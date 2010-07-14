@@ -22,5 +22,65 @@ namespace Noise.Desktop.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640")]
+        public double ApplicationWidth {
+            get {
+                return ((double)(this["ApplicationWidth"]));
+            }
+            set {
+                this["ApplicationWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("480")]
+        public double ApplicationHeight {
+            get {
+                return ((double)(this["ApplicationHeight"]));
+            }
+            set {
+                this["ApplicationHeight"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double ApplicationTop {
+            get {
+                return ((double)(this["ApplicationTop"]));
+            }
+            set {
+                this["ApplicationTop"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double ApplicationLeft {
+            get {
+                return ((double)(this["ApplicationLeft"]));
+            }
+            set {
+                this["ApplicationLeft"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.WindowState ApplicationWindowState {
+            get {
+                return ((global::System.Windows.WindowState)(this["ApplicationWindowState"]));
+            }
+            set {
+                this["ApplicationWindowState"] = value;
+            }
+        }
     }
 }

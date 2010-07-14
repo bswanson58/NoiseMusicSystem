@@ -11,5 +11,11 @@ namespace Noise.Desktop {
 			var bootstrapper = new Bootstrapper();
 			bootstrapper.Run();
 		}
+
+		protected override void OnExit( ExitEventArgs e ) {
+			Desktop.Properties.Settings.Default.Save();
+
+			base.OnExit( e );
+		}
 	}
 }
