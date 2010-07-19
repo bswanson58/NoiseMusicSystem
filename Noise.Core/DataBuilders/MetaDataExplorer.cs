@@ -58,6 +58,9 @@ namespace Noise.Core.DataBuilders {
 
 			var	lastFmProvider = new LastFmProvider( mDatabase );
 			lastFmProvider.BuildMetaData();
+
+//			var musicBrainzProvider = new MusicBrainzProvider( mDatabase );
+//			musicBrainzProvider.BuildMetaData();
 		}
 
 		private void BuildMusicMetaData( StorageFile file ) {
