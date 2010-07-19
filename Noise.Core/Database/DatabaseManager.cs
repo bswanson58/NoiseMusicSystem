@@ -9,7 +9,7 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
-	public class DatabaseManager : IDatabaseManager {
+	public class DatabaseManager : IDatabaseManager, IDisposable {
 		private readonly IUnityContainer	mContainer;
 		private readonly ILog				mLog;
 		private readonly string				mDatabaseLocation;
@@ -37,15 +37,15 @@ namespace Noise.Core.Database {
 		}
 
 		public bool InitializeDatabase() {
-			var retValue = true;
+			var retValue = false;
 
 			try {
 				Database = new DB( string.Format( "server={0};password=;options=none;", mDatabaseLocation ));
+
+				retValue = true;
 			}
 			catch( Exception ex ) {
 				mLog.LogException( ex );
-
-				retValue = false;
 			}
 
 			Condition.Ensures( Database ).IsNotNull();
@@ -98,6 +98,14 @@ namespace Noise.Core.Database {
 
 			foreach( Type type in PersistenceTypes ) {
 				Database.RegisterType( type );
+			}
+		}
+
+		public void Dispose() {
+			if( Database != null ) {
+				Database.Close();
+
+				Database = null;
 			}
 		}
 	}

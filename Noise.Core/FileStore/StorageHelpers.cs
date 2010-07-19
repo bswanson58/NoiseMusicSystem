@@ -41,6 +41,9 @@ namespace Noise.Core.FileStore {
 		}
 
 		public static string GetPath( DB database, StorageFile forFile ) {
+			Condition.Requires( database ).IsNotNull();
+			Condition.Requires( forFile ).IsNotNull();
+
 			var param = database.CreateParameters();
 
 			param["id"] = forFile.ParentFolder;

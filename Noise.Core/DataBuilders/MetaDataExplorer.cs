@@ -144,11 +144,9 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			if(!string.IsNullOrWhiteSpace( albumName )) {
+				var artistId = mDatabase.Database.GetUid( artist );
 
-				var parm = mDatabase.Database.CreateParameters();
-
-				parm["albumName"] = albumName;
-				retValue = mDatabase.Database.ExecuteScalar( "SELECT DbAlbum WHERE Name = @albumName", parm ) as DbAlbum;
+				retValue = ( from DbAlbum album in mDatabase.Database where album.Name == albumName && album.Artist == artistId select album ).FirstOrDefault();
 				if( retValue == null ) {
 					retValue = new DbAlbum { Name = albumName, Artist = mDatabase.Database.GetUid( artist ) };
 

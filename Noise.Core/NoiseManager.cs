@@ -26,7 +26,6 @@ namespace Noise.Core {
 			mLog = mContainer.Resolve<ILog>();
 			mDatabase = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
 			mContainer.RegisterInstance( typeof( IDatabaseManager ), mDatabase );
-			AudioPlayer = mContainer.Resolve<IAudioPlayer>();
 		}
 
 		public bool Initialize() {
@@ -34,14 +33,17 @@ namespace Noise.Core {
 
 			if( mDatabase.InitializeDatabase()) {
 				mDatabase.OpenWithCreateDatabase();
-
-				DataProvider = mContainer.Resolve<IDataProvider>();
-				PlayQueue = mContainer.Resolve<IPlayQueue>();
+			}
+			else {
+				mLog.LogMessage( "Noise Manager: Database could not be initialized" );
 			}
 
-			mLog.LogMessage( "Initialized NoiseManager." );
-
+			DataProvider = mContainer.Resolve<IDataProvider>();
+			PlayQueue = mContainer.Resolve<IPlayQueue>();
 			PlayHistory = mContainer.Resolve<IPlayHistory>();
+			AudioPlayer = mContainer.Resolve<IAudioPlayer>();
+
+			mLog.LogMessage( "Initialized NoiseManager." );
 
 			return ( true );
 		}

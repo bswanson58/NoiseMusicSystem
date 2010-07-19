@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -15,10 +15,7 @@ namespace Noise.Core.Database {
 			mLockObject = new object();
 
 			mContainer = container;
-			mDatabase = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
-			if( mDatabase.InitializeDatabase()) {
-				mDatabase.OpenDatabase();
-			}
+			mDatabase = mContainer.Resolve<IDatabaseManager>();
 		}
 
 		public long GetObjectIdentifier( object dbObject ) {
@@ -65,7 +62,11 @@ namespace Noise.Core.Database {
 		}
 
 		public StorageFile GetPhysicalFile( DbTrack forTrack ) {
+			Condition.Requires( forTrack ).IsNotNull();
+
 			var trackId = mDatabase.Database.GetUid( forTrack );
+
+			Condition.Requires( trackId ).IsNotLessOrEqual( 0 );
 
 			return(( from StorageFile file in mDatabase.Database where file.MetaDataPointer == trackId select file ).FirstOrDefault());
 		}

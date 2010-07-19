@@ -4,7 +4,6 @@ using Eloquera.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.Exceptions;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -19,11 +18,7 @@ namespace Noise.Core.FileStore {
 		public  FolderExplorer( IUnityContainer container ) {
 			mContainer = container;
 			mLog = mContainer.Resolve<ILog>();
-
-			mDatabase = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
-			if( mDatabase.InitializeDatabase()) {
-				mDatabase.OpenDatabase();
-			}
+			mDatabase = mContainer.Resolve<IDatabaseManager>();
 		}
 
 		public void SynchronizeDatabaseFolders() {
