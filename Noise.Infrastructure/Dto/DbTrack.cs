@@ -12,6 +12,7 @@ namespace Noise.Infrastructure.Dto {
 		public Int16			Channels { get; set; }
 		public Int16			Rating { get; set; }
 		public UInt16			TrackNumber { get; set; }
+		public string			VolumeName { get; set; }
 		public UInt32			PublishedYear { get; set; }
 		public DateTime			DateAdded { get; private set; }
 		public eAudioEncoding	Encoding { get; set; }

@@ -16,6 +16,14 @@ namespace Noise.Core.DataProviders {
 			get{ return( "Unknown Album" ); }
 		}
 
+		public string TrackName {
+			get{ return( "Unknown Track" ); }
+		}
+
+		public string VolumeName {
+			get{ return( "" ); }
+		}
+
 		public void AddAvailableMetaData( DbArtist artist, DbAlbum album, DbTrack track ) {
 			
 		}

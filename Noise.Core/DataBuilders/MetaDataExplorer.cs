@@ -85,13 +85,22 @@ namespace Noise.Core.DataBuilders {
 				var album = DetermineAlbum( dataProviders, artist );
 
 				if( album != null ) {
-					foreach( var provider in dataProviders ) {
-						provider.AddAvailableMetaData( artist, album, track );
-					}
+					track.Name = DetermineTrackName( dataProviders );
 
-					track.Album = mDatabase.Database.GetUid( album );
-					file.MetaDataPointer = mDatabase.Database.Store( track );
-					mDatabase.Database.Store( file );
+					if(!string.IsNullOrWhiteSpace( track.Name )) {
+						track.VolumeName = DetermineVolumeName( dataProviders );
+
+						foreach( var provider in dataProviders ) {
+							provider.AddAvailableMetaData( artist, album, track );
+						}
+
+						track.Album = mDatabase.Database.GetUid( album );
+						file.MetaDataPointer = mDatabase.Database.Store( track );
+						mDatabase.Database.Store( file );
+					}
+					else {
+						mLog.LogMessage( "Track name cannot be determined for file: {0}", StorageHelpers.GetPath( mDatabase.Database, file ));
+					}
 				}
 				else {
 					mLog.LogMessage( "Album cannot be determined for file: {0}", StorageHelpers.GetPath( mDatabase.Database, file ));
@@ -152,6 +161,34 @@ namespace Noise.Core.DataBuilders {
 
 					mDatabase.Database.Store( retValue );
 					mLog.LogInfo( "Added album: {0}", retValue.Name );
+				}
+			}
+
+			return( retValue );
+		}
+
+		private static string DetermineTrackName( IEnumerable<IMetaDataProvider> providers ) {
+			var retValue = "";
+
+			foreach( var provider in providers ) {
+				retValue = provider.TrackName;
+
+				if(!string.IsNullOrWhiteSpace( retValue )) {
+					break;
+				}
+			}
+
+			return( retValue );
+		}
+
+		private static string DetermineVolumeName( IEnumerable<IMetaDataProvider> providers ) {
+			var retValue = "";
+
+			foreach( var provider in providers ) {
+				retValue = provider.VolumeName;
+
+				if(!string.IsNullOrWhiteSpace( retValue )) {
+					break;
 				}
 			}
 

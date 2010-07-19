@@ -49,15 +49,23 @@ namespace Noise.Core.DataProviders {
 			get{ return( "" ); }
 		}
 
+		public string TrackName {
+			get {
+				var	trackName = Path.GetFileNameWithoutExtension( mFile.Name );
+				var nameParts = trackName.Split( new []{ '-' });
+
+				return( nameParts.Count() > 0 ? nameParts[1].Trim() : trackName );
+			}
+		}
+
+		public string VolumeName {
+			get{ return( "" ); }
+		}
+
 		public void AddAvailableMetaData( DbArtist artist, DbAlbum album, DbTrack track ) {
 			if( mFolderFiles != null ) {
 				track.TrackNumber = (UInt16)( mFolderFiles.IndexOf( mFile ) + 1 );
 			}
-
-			var	trackName = Path.GetFileNameWithoutExtension( mFile.Name );
-			var nameParts = trackName.Split( new []{ '-' });
-			track.Name = nameParts.Last().Trim();
 		}
-
 	}
 }

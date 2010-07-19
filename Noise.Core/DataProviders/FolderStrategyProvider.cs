@@ -40,8 +40,15 @@ namespace Noise.Core.DataProviders {
 			get { return( StrategyInformation.GetStrategyDefinition( eFolderStrategy.Album )); }
 		}
 
+		public string TrackName {
+			get{ return( "" ); }
+		}
+
+		public string VolumeName {
+			get{ return( StrategyInformation.GetStrategyDefinition( eFolderStrategy.Volume )); }
+		}
+
 		public void AddAvailableMetaData( DbArtist artist, DbAlbum album, DbTrack track ) {
-			
 		}
 	}
 }

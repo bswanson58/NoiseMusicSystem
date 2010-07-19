@@ -47,9 +47,15 @@ namespace Noise.Core.DataProviders {
 		}
 
 		public string Album {
-			get {
-				return( Tags.Tag.Album );
-			}
+			get { return( Tags.Tag.Album ); }
+		}
+
+		public string TrackName {
+			get{ return( Tags.Tag.Title ); }
+		}
+
+		public string VolumeName {
+			get{ return( Tags.Tag.Disc > 0 ? Tags.Tag.Disc.ToString() : "" ); }
 		}
 
 		public void AddAvailableMetaData( DbArtist artist, DbAlbum album, DbTrack track ) {
