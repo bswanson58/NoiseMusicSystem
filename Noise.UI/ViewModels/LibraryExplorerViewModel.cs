@@ -1,19 +1,20 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Forms;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
+using Application = System.Windows.Application;
 
 namespace Noise.UI.ViewModels {
 	public class LibraryExplorerViewModel : ViewModelBase {
 		private IUnityContainer			mContainer;
 		private IEventAggregator		mEvents;
 		private IExplorerViewStrategy	mViewStrategy;
-		private ObservableCollection<ExplorerTreeNode>	mTreeItems;
+		private ObservableCollectionEx<ExplorerTreeNode>	mTreeItems;
 
 		[Dependency]
 		public IUnityContainer Container {
@@ -25,6 +26,7 @@ namespace Noise.UI.ViewModels {
 
 				mEvents = mContainer.Resolve<IEventAggregator>();
 				mEvents.GetEvent<Events.ExplorerItemSelected>().Subscribe( OnExplorerItemSelected );
+				mEvents.GetEvent<Events.DatabaseChanged>().Subscribe( OnDatabaseUpdate );
 			}
 		}
 
@@ -37,12 +39,29 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public void OnDatabaseUpdate( DatabaseChangeSummary summary ) {
+			if( summary.ArtistChanges || summary.AlbumChanges ) {
+				if(( mViewStrategy != null ) &&
+				   ( mTreeItems != null )) {
+					Application.Current.Dispatcher.BeginInvoke((MethodInvoker)UpdateTree );
+				}
+			}
+		}
+
+		private void UpdateTree() {
+			mTreeItems.SuspendNotification();
+			mTreeItems.Clear();
+			mViewStrategy.PopulateTree( mTreeItems );
+			mTreeItems.ResumeNotification();
+		}
+
 		public IEnumerable<ExplorerTreeNode> TreeData {
 			get {
 				if(( mTreeItems == null ) &&
 				   ( mViewStrategy != null )) {
-					mTreeItems = new ObservableCollection<ExplorerTreeNode>();
-					mViewStrategy.PopulateTree( mTreeItems );
+					mTreeItems = new ObservableCollectionEx<ExplorerTreeNode>();
+
+					UpdateTree();
 				}
 
 				return( mTreeItems );

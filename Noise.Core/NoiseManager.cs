@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
@@ -12,6 +13,7 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager {
 		private	readonly IUnityContainer	mContainer;
+		private readonly IEventAggregator	mEvents;
 		private readonly ILog				mLog;
 		private readonly IDatabaseManager	mDatabase;
 		private bool						mContinueExploring;
@@ -24,6 +26,7 @@ namespace Noise.Core {
 			mContainer = container;
 
 			mLog = mContainer.Resolve<ILog>();
+			mEvents = mContainer.Resolve<IEventAggregator>();
 			mDatabase = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
 			mContainer.RegisterInstance( typeof( IDatabaseManager ), mDatabase );
 		}
@@ -60,6 +63,8 @@ namespace Noise.Core {
 		}
 
 		private void Explore(object state ) {
+			var results = new DatabaseChangeSummary();
+
 			if( mContinueExploring ) {
 				try {
 					var	folderExplorer = mContainer.Resolve<IFolderExplorer>();
@@ -73,7 +78,7 @@ namespace Noise.Core {
 
 			if( mContinueExploring ) {
 				var	dataExplorer = mContainer.Resolve<IMetaDataExplorer>();
-				dataExplorer.BuildMetaData();
+				dataExplorer.BuildMetaData( results );
 			}
 
 			if( mContinueExploring ) {
@@ -87,6 +92,11 @@ namespace Noise.Core {
 			}
 
 			mLog.LogMessage( "Explorer Finished." );
+
+			if( results.HaveChanges ) {
+				mEvents.GetEvent<Events.DatabaseChanged>().Publish( results );
+				mLog.LogInfo( string.Format( "Database changes: {0}", results ));
+			}
 		}
 
 		private void InitializeStorageConfiguration() {

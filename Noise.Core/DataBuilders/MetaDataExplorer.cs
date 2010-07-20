@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataProviders;
@@ -18,6 +19,7 @@ namespace Noise.Core.DataBuilders {
 		private readonly FolderStrategyProvider	mStrategyProvider;
 		private readonly DefaultProvider		mDefaultProvider;
 		private readonly ILog					mLog;
+		private DatabaseChangeSummary			mSummary;
 
 		public  MetaDataExplorer( IUnityContainer container ) {
 			mContainer = container;
@@ -30,7 +32,10 @@ namespace Noise.Core.DataBuilders {
 			mDefaultProvider = new DefaultProvider();
 		}
 
-		public void BuildMetaData() {
+		public void BuildMetaData( DatabaseChangeSummary summary ) {
+			Condition.Requires( summary ).IsNotNull();
+			mSummary = summary;
+
 			try {
 				var		artworkProvider = new FileArtworkProvider( mDatabase );
 				var		textProvider =new FileTextProvider( mDatabase );
@@ -106,6 +111,7 @@ namespace Noise.Core.DataBuilders {
 						track.Album = mDatabase.Database.GetUid( album );
 						file.MetaDataPointer = mDatabase.Database.Store( track );
 						mDatabase.Database.Store( file );
+						mSummary.TracksAdded++;
 					}
 					else {
 						mLog.LogMessage( "Track name cannot be determined for file: {0}", StorageHelpers.GetPath( mDatabase.Database, file ));
@@ -142,6 +148,7 @@ namespace Noise.Core.DataBuilders {
 					retValue = new DbArtist { Name = artistName };
 
 					mDatabase.Database.Store( retValue );
+					mSummary.ArtistsAdded++;
 					mLog.LogInfo( "Added artist: {0}", retValue.Name );
 				}
 			}
@@ -169,6 +176,7 @@ namespace Noise.Core.DataBuilders {
 					retValue = new DbAlbum { Name = albumName, Artist = mDatabase.Database.GetUid( artist ) };
 
 					mDatabase.Database.Store( retValue );
+					mSummary.AlbumsAdded++;
 					mLog.LogInfo( "Added album: {0}", retValue.Name );
 				}
 			}

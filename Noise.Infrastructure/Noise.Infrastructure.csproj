@@ -102,6 +102,7 @@
     <Compile Include="Dto\ArtistSupportInfo.cs" />
     <Compile Include="Dto\ArtworkTypes.cs" />
     <Compile Include="Dto\AudioLevels.cs" />
+    <Compile Include="Dto\DatabaseChangeSummary.cs" />
     <Compile Include="Dto\DbArtwork.cs" />
     <Compile Include="Dto\DbTextInfo.cs" />
     <Compile Include="Dto\FolderStrategy.cs" />

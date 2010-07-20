@@ -1,5 +1,7 @@
-﻿namespace Noise.Core.DataBuilders {
+﻿using Noise.Infrastructure.Dto;
+
+namespace Noise.Core.DataBuilders {
 	public interface IMetaDataExplorer {
-		void	BuildMetaData();
+		void	BuildMetaData( DatabaseChangeSummary summary );
 	}
 }
