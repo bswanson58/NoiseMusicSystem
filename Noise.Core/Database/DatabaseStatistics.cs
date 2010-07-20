@@ -42,5 +42,10 @@ namespace Noise.Core.Database {
 				mLog.LogException( "Building Summary Data.", ex );
 			}
 		}
+
+		public override string ToString() {
+			return( String.Format( "Database Statistics - Artists: {0}, Albums: {1}, Tracks: {2}, Folders: {3}, Files: {4}",
+									ArtistCount, AlbumCount, TrackCount, FolderCount, FileCount ));
+		}
 	}
 }

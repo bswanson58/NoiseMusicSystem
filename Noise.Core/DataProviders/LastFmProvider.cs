@@ -39,10 +39,7 @@ namespace Noise.Core.DataProviders {
 
 			foreach( var artist in artists ) {
 				try {
-					var parm = mDatabase.Database.CreateParameters();
 					var artistId = mDatabase.Database.GetUid( artist );
-					parm["artist"] = artistId;
-
 					var bio = ( from DbTextInfo info in mDatabase.Database where info.AssociatedItem == artistId && info.InfoType == TextInfoTypes.Biography select info ).FirstOrDefault();
 					var similarArtists = ( from DbSimilarItems item in mDatabase.Database where item.AssociatedItem == artistId select item ).FirstOrDefault();
 					var topAlbums = ( from DbTopItems item in mDatabase.Database where item.AssociatedItem == artistId select  item ).FirstOrDefault();

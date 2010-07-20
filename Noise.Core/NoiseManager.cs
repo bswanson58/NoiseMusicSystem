@@ -86,8 +86,9 @@ namespace Noise.Core {
 				summaryBuilder.BuildSummaryData();
 			}
 
+			DatabaseStatistics	statistics = null;
 			if( mContinueExploring ) {
-				var statistics = new DatabaseStatistics( mDatabase );
+				statistics = new DatabaseStatistics( mDatabase );
 				statistics.GatherStatistics();
 			}
 
@@ -96,6 +97,10 @@ namespace Noise.Core {
 			if( results.HaveChanges ) {
 				mEvents.GetEvent<Events.DatabaseChanged>().Publish( results );
 				mLog.LogInfo( string.Format( "Database changes: {0}", results ));
+			}
+
+			if( statistics != null ) {
+				mLog.LogInfo( statistics.ToString());
 			}
 		}
 
