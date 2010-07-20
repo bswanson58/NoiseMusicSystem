@@ -2,7 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters" mc:Ignorable="d" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+             mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
               DataContext="{Binding TrackListViewModel, Source={StaticResource ViewModelLocator}}"
              >
@@ -11,19 +14,44 @@
         <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter"/>
     </Control.Resources>
 
-    <ListView x:Name="TrackList" ItemsSource="{Binding Path=TrackList}">
+    <ListView x:Name="TrackList" ItemsSource="{Binding Path=TrackList}" Behaviours:ListViewColumns.Stretch="true">
         <ListView.ItemContainerStyle>
             <Style TargetType="{x:Type ListViewItem}">
                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             </Style>
         </ListView.ItemContainerStyle>
         <ListView.View>
             <GridView>
-                <GridViewColumn Header="#" DisplayMemberBinding="{Binding Path=Track.TrackNumber}" />
-                <GridViewColumn Header="Track Name" DisplayMemberBinding="{Binding Path=Track.Name}" />
-                <GridViewColumn Header="Duration" DisplayMemberBinding="{Binding Path=Track.Duration, Converter={StaticResource TimeSpanConverter}}" />
-                <GridViewColumn Header="Published" DisplayMemberBinding="{Binding Path=Track.PublishedYear, Converter={StaticResource PublishedYearConverter}}" />
-                <GridViewColumn Header="Added" DisplayMemberBinding="{Binding Path=Track.DateAdded}" />
+                <GridViewColumn Header="#" Width="27">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=Track.TrackNumber}" TextAlignment="Right" />
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+                <GridViewColumn Header="Track Name" DisplayMemberBinding="{Binding Path=Track.Name}"/>
+                <GridViewColumn Header="Duration" Width="75">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" />
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+                <GridViewColumn Header="Published" Width="75">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=Track.PublishedYear, Converter={StaticResource PublishedYearConverter}}" TextAlignment="Right" />
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+                <GridViewColumn Header="Added" Width="150">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=Track.DateAdded}" TextAlignment="Right" />
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
             </GridView>
         </ListView.View>
     </ListView>

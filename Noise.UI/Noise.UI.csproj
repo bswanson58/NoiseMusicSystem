@@ -110,6 +110,7 @@
     <Compile Include="Adapters\BindableRun.cs" />
     <Compile Include="Adapters\ExplorerTreeNode.cs" />
     <Compile Include="Adapters\TrackViewNode.cs" />
+    <Compile Include="Behaviours\ListViewColumnStretch.cs" />
     <Compile Include="Behaviours\TreeViewItemBehaviour.cs" />
     <Compile Include="NoiseUiModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
