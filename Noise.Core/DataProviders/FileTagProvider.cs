@@ -15,6 +15,7 @@ namespace Noise.Core.DataProviders {
 			switch( encoding ) {
 				case eAudioEncoding.MP3:
 				case eAudioEncoding.FLAC:
+				case eAudioEncoding.WMA:
 					retValue = new Mp3TagProvider( mDatabase, storageFile );
 					break;
 			}

@@ -211,6 +211,7 @@ namespace Noise.Core.DataBuilders {
 			switch( ext ) {
 				case ".mp3":
 				case ".flac":
+				case ".wma":
 					retValue = eFileType.Music;
 					break;
 
@@ -239,6 +240,10 @@ namespace Noise.Core.DataBuilders {
 
 				case ".mp3":
 					retValue = eAudioEncoding.MP3;
+					break;
+
+				case".wma":
+					retValue = eAudioEncoding.WMA;
 					break;
 			}
 

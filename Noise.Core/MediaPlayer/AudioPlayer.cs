@@ -54,6 +54,7 @@ namespace Noise.Core.MediaPlayer {
 
 			Bass.BASS_Init( -1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero );
 			Bass.BASS_PluginLoad( "bassflac.dll" );
+			Bass.BASS_PluginLoad( "basswma.dll" );
 		}
 
 		public float Pan {
