@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Forms;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
-using Application = System.Windows.Application;
 
 namespace Noise.UI.ViewModels {
 	public class LibraryExplorerViewModel : ViewModelBase {
@@ -43,7 +41,7 @@ namespace Noise.UI.ViewModels {
 			if( summary.ArtistChanges || summary.AlbumChanges ) {
 				if(( mViewStrategy != null ) &&
 				   ( mTreeItems != null )) {
-					Application.Current.Dispatcher.BeginInvoke((MethodInvoker)UpdateTree );
+					Execute.OnUiThread( UpdateTree );
 				}
 			}
 		}

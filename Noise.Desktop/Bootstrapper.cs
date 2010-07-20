@@ -4,10 +4,13 @@ using Microsoft.Practices.Composite.Modularity;
 using Microsoft.Practices.Composite.UnityExtensions;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
 
 namespace Noise.Desktop {
 	public class Bootstrapper : UnityBootstrapper {
 		protected override DependencyObject CreateShell() {
+			Execute.InitializeWithDispatcher();
+
 			var shell = Container.Resolve<Shell>();
 
 			shell.Show();

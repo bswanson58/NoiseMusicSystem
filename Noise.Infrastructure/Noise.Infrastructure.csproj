@@ -133,6 +133,7 @@
     <Compile Include="Dto\StorageFile.cs" />
     <Compile Include="Dto\StorageFolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Support\Execute.cs" />
     <Compile Include="Support\Extensions.cs" />
     <Compile Include="Support\ObservableCollectionEx.cs" />
     <Compile Include="Support\ViewModelBase.cs" />
