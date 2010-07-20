@@ -9,6 +9,10 @@ namespace Noise.Infrastructure.Dto {
 		public Int16			TrackCount { get; set; }
 		public UInt32			PublishedYear { get; set; }
 
+		public DbAlbum() {
+			Name = "";
+		}
+
 		[Export("PersistenceType")]
 		public static Type PersistenceType {
 			get{ return( typeof( DbAlbum )); }

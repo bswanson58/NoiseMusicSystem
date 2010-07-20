@@ -8,6 +8,7 @@ namespace Noise.Infrastructure.Dto {
 
 		public DbSimilarItems( long associatedItem ) {
 			AssociatedItem = associatedItem;
+			SimilarItems = new string[0];
 		}
 
 		[Export("PersistenceType")]

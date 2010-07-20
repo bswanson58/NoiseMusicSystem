@@ -8,6 +8,7 @@ namespace Noise.Infrastructure.Dto {
 
 		public DbTopItems( long associatedItem ) {
 			AssociatedItem = associatedItem;
+			TopItems = new string[0];
 		}
 
 		[Export("PersistenceType")]

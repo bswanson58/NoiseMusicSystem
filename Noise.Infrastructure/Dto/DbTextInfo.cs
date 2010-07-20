@@ -15,6 +15,7 @@ namespace Noise.Infrastructure.Dto {
 			FolderLocation = Constants.cDatabaseNullOid;
 			InfoType = TextInfoTypes.Unknown;
 			Source = InfoSource.Unknown;
+			Text = "";
 		}
 
 		[Export("PersistenceType")]

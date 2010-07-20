@@ -90,7 +90,7 @@ namespace Lastfm.Services
 		/// </param>
 		public void SpecifyItemsPerPage(int itemsPerPage)
 		{
-			this.searchTerms["limit"] = itemsPerPage.ToString();
+			searchTerms["limit"] = itemsPerPage.ToString();
 		}
 		
 		/// <summary>
@@ -99,9 +99,16 @@ namespace Lastfm.Services
 		/// <returns>
 		/// A <see cref="T"/>
 		/// </returns>
-		public T GetFirstMatch()
-		{
-			return GetPage(1)[0];
+		public T GetFirstMatch() {
+			T	retValue = default( T );
+			
+			var matches = GetPage( 1 );
+
+			if( matches.GetLength( 0 ) > 0 ) {
+				retValue = matches[0];
+			}
+
+			return( retValue );
 		}
 	}
 }
