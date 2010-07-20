@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Practices.Unity;
@@ -30,37 +31,42 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		public void BuildMetaData() {
-			var		artworkProvider = new FileArtworkProvider( mDatabase );
-			var		textProvider =new FileTextProvider( mDatabase );
-			var		fileEnum = from StorageFile file in mDatabase.Database where file.FileType == eFileType.Undetermined orderby file.ParentFolder select file;
+			try {
+				var		artworkProvider = new FileArtworkProvider( mDatabase );
+				var		textProvider =new FileTextProvider( mDatabase );
+				var		fileEnum = from StorageFile file in mDatabase.Database where file.FileType == eFileType.Undetermined orderby file.ParentFolder select file;
 
-			foreach( var file in fileEnum ) {
-				file.FileType = DetermineFileType( file );
+				foreach( var file in fileEnum ) {
+					file.FileType = DetermineFileType( file );
 
-				switch( file.FileType ) {
-					case eFileType.Music:
-						BuildMusicMetaData( file );
-						break;
+					switch( file.FileType ) {
+						case eFileType.Music:
+							BuildMusicMetaData( file );
+							break;
 
-					case eFileType.Picture:
-						artworkProvider.BuildMetaData( file );
+						case eFileType.Picture:
+							artworkProvider.BuildMetaData( file );
 
-						mDatabase.Database.Store( file );
-						break;
+							mDatabase.Database.Store( file );
+							break;
 
-					case eFileType.Text:
-						textProvider.BuildMetaData( file );
+						case eFileType.Text:
+							textProvider.BuildMetaData( file );
 
-						mDatabase.Database.Store( file );
-						break;
+							mDatabase.Database.Store( file );
+							break;
+					}
 				}
-			}
 
-			var	lastFmProvider = new LastFmProvider( mDatabase );
-			lastFmProvider.BuildMetaData();
+				var	lastFmProvider = new LastFmProvider( mDatabase );
+				lastFmProvider.BuildMetaData();
 
 //			var musicBrainzProvider = new MusicBrainzProvider( mDatabase );
 //			musicBrainzProvider.BuildMetaData();
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Building Metadata:", ex );
+			}
 		}
 
 		private void BuildMusicMetaData( StorageFile file ) {
@@ -73,14 +79,14 @@ namespace Noise.Core.DataBuilders {
 			if( folderStrategy.PreferFolderStrategy ) {
 				dataProviders.Add( mStrategyProvider.GetProvider( file ));
 				dataProviders.Add( mTagProvider.GetProvider( file, track.Encoding ));
-				dataProviders.Add( mDefaultProvider.GetProvider( file ));
 				dataProviders.Add( mFileNameProvider.GetProvider( file ));
+				dataProviders.Add( mDefaultProvider.GetProvider( file ));
 			}
 			else {
 				dataProviders.Add( mTagProvider.GetProvider( file, track.Encoding ));
 				dataProviders.Add( mStrategyProvider.GetProvider( file ));
-				dataProviders.Add( mDefaultProvider.GetProvider( file ));
 				dataProviders.Add( mFileNameProvider.GetProvider( file ));
+				dataProviders.Add( mDefaultProvider.GetProvider( file ));
 			}
 
 			var artist = DetermineArtist( dataProviders );

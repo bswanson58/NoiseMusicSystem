@@ -94,6 +94,10 @@ namespace Noise.Core.FileStore {
 				var databaseFolder = mDatabase.Database.ExecuteScalar( "SELECT StorageFolder WHERE ParentFolder = @parent AND Name = @name", param ) as StorageFolder;
 				if( databaseFolder == null ) {
 					mDatabase.Database.Store( folder );
+
+					if( parent is RootFolder ) {
+						mLog.LogInfo( string.Format( "Adding folder: {0}", StorageHelpers.GetPath( mDatabase.Database, folder )));
+					}
 				}
 				else {
 					folder = databaseFolder;

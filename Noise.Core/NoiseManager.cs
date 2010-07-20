@@ -78,7 +78,7 @@ namespace Noise.Core {
 
 			if( mContinueExploring ) {
 				var summaryBuilder = mContainer.Resolve<ISummaryBuilder>();
-				summaryBuilder.BuildSummaryData( mDatabase );
+				summaryBuilder.BuildSummaryData();
 			}
 
 			if( mContinueExploring ) {

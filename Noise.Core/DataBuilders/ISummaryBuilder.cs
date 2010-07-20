@@ -1,7 +1,5 @@
-﻿using Noise.Core.Database;
-
-namespace Noise.Core.DataBuilders {
+﻿namespace Noise.Core.DataBuilders {
 	public interface ISummaryBuilder {
-		void BuildSummaryData( IDatabaseManager database );
+		void BuildSummaryData();
 	}
 }

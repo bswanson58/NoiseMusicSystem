@@ -19,11 +19,13 @@ namespace Noise.Infrastructure.Dto {
 		public string			Genre { get; set; }
 
 		public DbTrack() {
-			DateAdded = DateTime.Now.Date;
-
 			Album = Constants.cDatabaseNullOid;
-
+			DateAdded = DateTime.Now.Date;
 			Encoding = eAudioEncoding.Unknown;
+
+			Genre = "";
+			Performer = "";
+			VolumeName = "";
 		}
 
 		public TimeSpan Duration {

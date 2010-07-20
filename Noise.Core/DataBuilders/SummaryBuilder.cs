@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.DataBuilders {
 	internal class SummaryBuilder : ISummaryBuilder {
-		public void BuildSummaryData( IDatabaseManager database ) {
-			UpdateCounts( database );
+		private readonly IDatabaseManager	mDatabase;
+
+		public SummaryBuilder( IUnityContainer container ) {
+			mDatabase = container.Resolve<IDatabaseManager>();
+		}
+
+		public void BuildSummaryData() {
+			UpdateCounts( mDatabase );
 		}
 
 		private static void UpdateCounts( IDatabaseManager database ) {
