@@ -80,7 +80,9 @@ namespace Noise.UI.Behaviours {
 			var lv = ( sender as ListView );
 
 			//Set our initial widths.
-			SetColumnWidths( lv );
+			if( lv != null ) {
+				SetColumnWidths( lv );
+			}
 		}
 
 		/// <summary>
@@ -113,12 +115,22 @@ namespace Noise.UI.Behaviours {
 				}
 
 				// Add in the width of a vertical scroll bar if one is needed.
-				specifiedWidth += 17;
+				var scrollBarWidth = SystemParameters.VerticalScrollBarWidth;
+//				var scrollBarWidth = 0.0;
+//				var border = VisualTreeHelper.GetChild( listView, 0 ) as Decorator;
+//				if( border != null ) {
+//					var scrollViewer = border.Child as ScrollViewer;
+//					if( scrollViewer != null ) {
+//						scrollBarWidth = scrollViewer.ScrollableHeight > 0 ? SystemParameters.VerticalScrollBarWidth : 0;
+//					}
+//				}
 
 				// Allocate remaining space equally.
 				foreach( GridViewColumn column in columns ) {
-					double newWidth = ( listView.ActualWidth - specifiedWidth ) / columns.Count;
-					if( newWidth >= 0 ) column.Width = newWidth - 10;
+					double newWidth = ( listView.ActualWidth - scrollBarWidth - specifiedWidth ) / columns.Count - 10;
+					if( newWidth >= 0 ) {
+						column.Width = newWidth;
+					}
 				}
 
 				//Store the columns in the TAG property for later use. 
