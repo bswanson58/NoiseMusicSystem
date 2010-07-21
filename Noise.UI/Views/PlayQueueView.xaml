@@ -11,6 +11,7 @@
              >
     <Control.Resources>
         <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
+        <ValueConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
     </Control.Resources>
 
     <ListView x:Name="PlayQueueList" ItemsSource="{Binding Path=QueueList}" Behaviours:ListViewColumns.Stretch="true">
@@ -22,7 +23,13 @@
         </ListView.ItemContainerStyle>
         <ListView.View>
             <GridView>
-                <GridViewColumn Header="|>" Width="40" DisplayMemberBinding="{Binding Path=IsPlaying}" />
+                <GridViewColumn Header="|>" Width="40">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=IsPlaying}" Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
                 <GridViewColumn Header="Track Name" DisplayMemberBinding="{Binding Path=Track.Name}"/>
                 <GridViewColumn Header="Duration" Width="75">
                     <GridViewColumn.CellTemplate>
