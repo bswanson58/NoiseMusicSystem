@@ -40,10 +40,10 @@
 				<Button Margin="3" Command="{Binding ClearQueue}" Content="Clear" Width="43"/>
 				<StackPanel Orientation="Horizontal" Margin="11,0">
 					<TextBlock Text="Position: " Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center"/>
-					<TextBlock Text="{Binding TrackPosition, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center"/>
 				</StackPanel>
 
-				<Grid Margin="10,5,0,0">
+				<Grid Width="120" Margin="10,5,0,0">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="11"/>
 						<RowDefinition Height="11"/>
@@ -52,7 +52,8 @@
 					<Rectangle Grid.Row="0" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding LeftLevel, Converter={StaticResource VolumeLevelConverter}}"/>
 					<Rectangle Grid.Row="1" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding RightLevel, Converter={StaticResource VolumeLevelConverter}}"/>
 				</Grid>
-			</StackPanel>
+                <Slider Orientation="Horizontal" Width="200" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}"/>
+            </StackPanel>
 		</Grid>
 	</Grid>
 </UserControl>

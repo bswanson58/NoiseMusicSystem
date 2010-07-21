@@ -305,6 +305,14 @@ namespace Noise.Core.MediaPlayer {
 			return ( retValue );
 		}
 
+		public void SetPlayPosition( int channel, TimeSpan position ) {
+			var stream = GetStream( channel );
+
+			if( stream != null ) {
+				Bass.BASS_ChannelSetPosition( stream.Channel, position.TotalSeconds );
+			}
+		}
+
 		public double GetPercentPlayed( int channel ) {
 			var retValue = 0.0;
 			var stream = GetStream( channel );

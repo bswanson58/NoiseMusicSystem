@@ -20,6 +20,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void					Stop( int channel );
 		TimeSpan				GetLength( int channel );
 		TimeSpan				GetPlayPosition( int channel );
+		void					SetPlayPosition( int channel, TimeSpan position );
 		ePlayingChannelStatus	GetChannelStatus( int channel );
 		double					GetPercentPlayed( int channel );
 

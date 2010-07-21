@@ -219,7 +219,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
-		public TimeSpan TrackPosition {
+		public TimeSpan TrackTime {
 			get {
 				var	retValue = new TimeSpan();
 
@@ -228,6 +228,37 @@ namespace Noise.UI.ViewModels {
 				}
 				else if( IsInDesignMode ) {
 					retValue = new TimeSpan( 0, 0, 1, 23 );
+				}
+
+				return( retValue );
+			}
+		}
+
+		[DependsUpon( "InfoUpdateFlag" )]
+		public long TrackPosition {
+			get {
+				var retValue = 0L;
+
+				if( CurrentChannel != 0 ) {
+					retValue = (long)mCurrentPosition.Ticks;
+				}
+
+				return( retValue );
+			}
+			set {
+				if( CurrentChannel != 0 ) {
+					mNoiseManager.AudioPlayer.SetPlayPosition( CurrentChannel, new TimeSpan( value ));
+				}
+			}
+		}
+
+		[DependsUpon( "InfoUpdateFlag" )]
+		public long TrackEndPosition {
+			get {
+				var retValue = 1l;
+
+				if( CurrentChannel != 0 ) {
+					retValue = (long)mCurrentLength.Ticks;
 				}
 
 				return( retValue );
