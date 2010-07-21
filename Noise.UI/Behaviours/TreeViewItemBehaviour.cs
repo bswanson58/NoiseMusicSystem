@@ -32,7 +32,6 @@ namespace Noise.UI.Behaviours {
 			}
 		}
 
-
 		static void OnItemSelected( object sender, RoutedEventArgs e ) {
 			var item = e.OriginalSource as TreeViewItem;
 

@@ -3,6 +3,7 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
 			 xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
 			 xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
 			 x:Class="Noise.UI.Views.PlayerView"
@@ -57,7 +58,7 @@
 					<Rectangle Grid.Row="1" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding RightLevel, Converter={StaticResource VolumeLevelConverter}}"/>
 				</Grid>
                 <Slider Orientation="Horizontal" Width="200" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}"/>
-                <Slider Orientation="Horizontal" Width="50" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}"/>
+                <Slider Orientation="Horizontal" Width="50" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}" Behaviours:AnimateAfterTrigger.AnimateToValue="true"/>
                 <Slider Orientation="Horizontal" Width="50" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}"/>
                 <StackPanel Orientation="Vertical" Margin="10,0,0,0">
                     <CheckBox Content="Random Play" IsChecked="{Binding Path=RandomPlay, Mode=TwoWay}"/>
