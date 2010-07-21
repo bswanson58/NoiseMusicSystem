@@ -116,6 +116,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\ViewModelResolver.cs" />
     <Compile Include="ValueConverters\ByteImageConverter.cs" />
+    <Compile Include="ValueConverters\DateOnlyConverter.cs" />
     <Compile Include="ValueConverters\HtmlTextConverter.cs" />
     <Compile Include="ValueConverters\PublishedYearConverter.cs" />
     <Compile Include="ValueConverters\TimeSpanConverter.cs" />

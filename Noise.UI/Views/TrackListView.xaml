@@ -12,6 +12,7 @@
     <Control.Resources>
         <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
         <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter"/>
+        <ValueConverters:DateOnlyConverter x:Key="DateOnlyConverter"/>
     </Control.Resources>
 
     <ListView x:Name="TrackList" ItemsSource="{Binding Path=TrackList}" Behaviours:ListViewColumns.Stretch="true">
@@ -45,10 +46,10 @@
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
-                <GridViewColumn Header="Added" Width="150">
+                <GridViewColumn Header="Added" Width="90">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=Track.DateAdded}" TextAlignment="Right" />
+                            <TextBlock Text="{Binding Path=Track.DateAdded, Converter={StaticResource DateOnlyConverter}}" TextAlignment="Right" />
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
