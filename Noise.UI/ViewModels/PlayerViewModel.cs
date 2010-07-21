@@ -36,7 +36,6 @@ namespace Noise.UI.ViewModels {
 				mEvents = mContainer.Resolve<IEventAggregator>();
 				mNoiseManager = mContainer.Resolve<INoiseManager>();
 
-				mEvents.GetEvent<Events.TrackSelected>().Subscribe( OnTrackSelected );
 				mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
 				mEvents.GetEvent<Events.AudioPlayStatusChanged>().Subscribe( OnPlayStatusChanged );
 			}
@@ -64,10 +63,6 @@ namespace Noise.UI.ViewModels {
 			}
 
 			return( retValue );
-		}
-
-		public void OnTrackSelected( DbTrack track ) {
-			mNoiseManager.PlayQueue.Add( track );
 		}
 
 		private int PlayQueueChangedFlag {

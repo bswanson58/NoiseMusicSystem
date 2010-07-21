@@ -24,6 +24,17 @@
         </ListView.ItemContainerStyle>
         <ListView.View>
             <GridView>
+                <GridViewColumn Header="|>" Width="27">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Width="12" Height="12" Command="{Binding Path=PlayTrack}">
+                                <Button.CommandParameter>
+                                    <Binding Path="Track"/>
+                                </Button.CommandParameter>
+                            </Button>
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
                 <GridViewColumn Header="#" Width="27">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>

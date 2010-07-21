@@ -4,7 +4,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Adapters {
-	public class TrackViewNode : BindableObject {
+	public class TrackViewNode : ViewModelBase {
 		private readonly IEventAggregator	mEventAggregator;
 		private bool						mIsSelected;
 		public	DbTrack						Track { get; private set; }
@@ -26,6 +26,14 @@ namespace Noise.UI.Adapters {
 						mEventAggregator.GetEvent<Events.TrackSelected>().Publish( Track );
 					}
 				}
+			}
+		}
+
+		public void Execute_PlayTrack( object sender ) {
+			var track = sender as DbTrack;
+
+			if( track != null ) {
+				mEventAggregator.GetEvent<Events.TrackPlayRequested>().Publish( track );
 			}
 		}
 	}
