@@ -280,6 +280,16 @@ namespace Noise.UI.ViewModels {
 			set{ mNoiseManager.AudioPlayer.Pan = (float)value; }
 		}
 
+		public bool RandomPlay {
+			get{ return( mNoiseManager.PlayQueue.PlayStrategy == ePlayStrategy.Random ); }
+			set{ mNoiseManager.PlayQueue.PlayStrategy = value ? ePlayStrategy.Random : ePlayStrategy.Next; }
+		}
+
+		public bool QueueReplay {
+			get{ return( mNoiseManager.PlayQueue.PlayExhaustedStrategy == ePlayExhaustedStrategy.Replay ); }
+			set{ mNoiseManager.PlayQueue.PlayExhaustedStrategy = value ? ePlayExhaustedStrategy.Replay : ePlayExhaustedStrategy.Stop; }
+		}
+
 		[DependsUpon( "InfoUpdateFlag" )]
 		public double LeftLevel {
 			get {
