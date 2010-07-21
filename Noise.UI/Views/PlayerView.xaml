@@ -25,6 +25,10 @@
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="*"/>
 			</Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
 			<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
 				<TextBlock Text="Current Track: " FontSize="16" FontWeight="Bold" Foreground="{DynamicResource ControlTextColor}" />
@@ -53,7 +57,10 @@
 					<Rectangle Grid.Row="1" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding RightLevel, Converter={StaticResource VolumeLevelConverter}}"/>
 				</Grid>
                 <Slider Orientation="Horizontal" Width="200" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}"/>
+                <Slider Orientation="Horizontal" Width="50" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}"/>
+                <Slider Orientation="Horizontal" Width="50" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}"/>
             </StackPanel>
-		</Grid>
+            <Slider Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Height="50" Margin="0,0,10,0" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
+        </Grid>
 	</Grid>
 </UserControl>

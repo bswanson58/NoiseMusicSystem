@@ -265,6 +265,21 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public double Volume {
+			get{ return( mNoiseManager.AudioPlayer.Volume ); }
+			set{ mNoiseManager.AudioPlayer.Volume = (float)value; }
+		}
+
+		public double PlaySpeed {
+			get{ return( mNoiseManager.AudioPlayer.PlaySpeed ); }
+			set{ mNoiseManager.AudioPlayer.PlaySpeed = (float)value; }
+		}
+
+		public double PanPosition {
+			get{ return( mNoiseManager.AudioPlayer.Pan ); }
+			set{ mNoiseManager.AudioPlayer.Pan = (float)value; }
+		}
+
 		[DependsUpon( "InfoUpdateFlag" )]
 		public double LeftLevel {
 			get {
