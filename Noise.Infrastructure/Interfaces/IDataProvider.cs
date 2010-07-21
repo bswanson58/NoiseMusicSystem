@@ -8,6 +8,7 @@ namespace Noise.Infrastructure.Interfaces {
 		IEnumerable<DbArtist>	GetArtistList();
 		DbArtist				GetArtistForAlbum( DbAlbum album );
 		IEnumerable<DbAlbum>	GetAlbumList( DbArtist forArtist );
+		DbAlbum					GetAlbumForTrack( DbTrack track );
 		IEnumerable<DbTrack>	GetTrackList( DbAlbum forAlbum );
 		IEnumerable<DbTrack>	GetTrackList( DbArtist forArtist );
 

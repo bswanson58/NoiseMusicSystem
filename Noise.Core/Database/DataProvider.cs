@@ -40,6 +40,14 @@ namespace Noise.Core.Database {
 			return( from DbAlbum album in mDatabase.Database where album.Artist == artistId select album );
 		}
 
+		public DbAlbum GetAlbumForTrack( DbTrack track ) {
+			var parms = mDatabase.Database.CreateParameters();
+
+			parms["albumId"] = track.Album;
+
+			return( mDatabase.Database.ExecuteScalar( "SELECT DbAlbum WHERE $ID = @albumId", parms ) as DbAlbum );
+		}
+
 		public IEnumerable<DbTrack> GetTrackList( DbAlbum forAlbum ) {
 			var albumId = mDatabase.Database.GetUid( forAlbum );
 

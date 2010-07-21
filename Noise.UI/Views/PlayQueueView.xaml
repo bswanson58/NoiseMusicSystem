@@ -30,7 +30,20 @@
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
-                <GridViewColumn Header="Track Name" DisplayMemberBinding="{Binding Path=Track.Name}"/>
+                <GridViewColumn Header="Track Name">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Path=Track.Name}"/>
+                                <TextBlock Text=" - ("/>
+                                <TextBlock Text="{Binding Path=Artist.Name}"/>
+                                <TextBlock Text="/"/>
+                                <TextBlock Text="{Binding Path=Album.Name}"/>
+                                <TextBlock Text=")"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
                 <GridViewColumn Header="Duration" Width="75">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>

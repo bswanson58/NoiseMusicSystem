@@ -44,7 +44,14 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		private void AddTrack( DbTrack track ) {
-			mPlayQueue.Add( new PlayQueueTrack( track, mDataProvider.GetPhysicalFile( track )));
+			DbArtist	artist = null;
+
+			var album = mDataProvider.GetAlbumForTrack( track );
+			if( album != null ) {
+				artist = mDataProvider.GetArtistForAlbum( album );
+			}
+
+			mPlayQueue.Add( new PlayQueueTrack( artist, album, track, mDataProvider.GetPhysicalFile( track )));
 		}
 
 		public void OnAlbumPlayRequest( DbAlbum album ) {
