@@ -52,10 +52,16 @@ namespace Noise.Core {
 		}
 
 		public void StartExploring() {
-			mContinueExploring = true;
-			mLog.LogMessage( "Starting Explorer." );
+			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
-			ThreadPool.QueueUserWorkItem( Explore );
+			if(( configuration != null ) &&
+			   ( configuration.EnableExplorer )) {
+				mContinueExploring = true;
+				mLog.LogMessage( "Starting Explorer." );
+
+				ThreadPool.QueueUserWorkItem( Explore );
+			}
 		}
 
 		public void StopExploring() {
@@ -109,15 +115,19 @@ namespace Noise.Core {
 			var storageConfig = configMgr.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName );
 
 			if( storageConfig.RootFolders.Count == 0 ) {
-				var rootFolder = new RootFolderConfiguration { Path = @"D:\Music", Description = "Music Folder" };
+				var rootFolder = new RootFolderConfiguration { Path = @"D:\Music", Description = "Music Folder", PreferFolderStrategy = true };
 
-				rootFolder.PreferFolderStrategy = true;
 				rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 0, eFolderStrategy.Artist ));
 				rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 1, eFolderStrategy.Album  ));
 				rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 2, eFolderStrategy.Volume ));
 
 				storageConfig.RootFolders.Add( rootFolder );
 				configMgr.Save( storageConfig );
+
+				var explorerConfig = configMgr.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName  );
+
+				explorerConfig.EnableExplorer = false;
+				configMgr.Save( explorerConfig );
 			}
 		}
 	}

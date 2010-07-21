@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -108,11 +109,7 @@ namespace Noise.UI.Behaviours {
 				}
 				else {
 					// Get all columns with no width having been set.
-					foreach( var column in gridView.Columns ) {
-						if( !columns.Contains( column )) {
-							specifiedWidth += column.ActualWidth;
-						}
-					}
+					specifiedWidth += gridView.Columns.Where( column => !columns.Contains( column )).Sum( column => column.ActualWidth );
 				}
 
 				// Add in the width of a vertical scroll bar if one is needed.
