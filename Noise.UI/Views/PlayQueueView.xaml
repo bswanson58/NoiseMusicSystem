@@ -17,8 +17,12 @@
     <ListView x:Name="PlayQueueList" ItemsSource="{Binding Path=QueueList}" Behaviours:ListViewColumns.Stretch="true">
         <ListView.ItemContainerStyle>
             <Style TargetType="{x:Type ListViewItem}">
-                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Path=IsPlaying}" Value="true">
+                        <Setter Property="FontWeight" Value="Bold"/>
+                    </DataTrigger>
+                </Style.Triggers>
             </Style>
         </ListView.ItemContainerStyle>
         <ListView.View>
