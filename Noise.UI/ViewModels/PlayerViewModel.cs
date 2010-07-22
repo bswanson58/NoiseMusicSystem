@@ -240,7 +240,7 @@ namespace Noise.UI.ViewModels {
 				var retValue = 0L;
 
 				if( CurrentChannel != 0 ) {
-					retValue = (long)mCurrentPosition.Ticks;
+					retValue = mCurrentPosition.Ticks;
 				}
 
 				return( retValue );
@@ -258,7 +258,7 @@ namespace Noise.UI.ViewModels {
 				var retValue = 1l;
 
 				if( CurrentChannel != 0 ) {
-					retValue = (long)mCurrentLength.Ticks;
+					retValue = mCurrentLength.Ticks;
 				}
 
 				return( retValue );
