@@ -76,6 +76,9 @@
     <Reference Include="Eloquera.Server">
       <HintPath>..\lib\Eloquera\Eloquera.Server.dll</HintPath>
     </Reference>
+    <Reference Include="Hammock.ClientProfile">
+      <HintPath>..\lib\Hammock\Hammock.ClientProfile.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Composite">
       <HintPath>..\lib\CAL\Microsoft.Practices.Composite.dll</HintPath>
     </Reference>
@@ -114,6 +117,7 @@
     <Compile Include="Database\DatabaseStatistics.cs" />
     <Compile Include="Database\DataProvider.cs" />
     <Compile Include="DataBuilders\IMetaDataExplorer.cs" />
+    <Compile Include="DataProviders\DiscogsProvider.cs" />
     <Compile Include="DataProviders\IMetaDataProvider.cs" />
     <Compile Include="DataBuilders\ISummaryBuilder.cs" />
     <Compile Include="DataBuilders\MetaDataExplorer.cs" />
