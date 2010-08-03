@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Eloquera.Linq;
 using Noise.Core.Database;
 using Noise.Infrastructure.Dto;
 

@@ -6,7 +6,7 @@ namespace Noise.Infrastructure.Configuration {
 
 		private const string	cEnableExplorerProperty	= "enableExplorer";
 
-		[ConfigurationPropertyAttribute( cEnableExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
+		[ConfigurationPropertyAttribute( cEnableExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "true" )]
 		public bool EnableExplorer {
 			get { return ((bool)( base[cEnableExplorerProperty] ) ); }
 			set { base[cEnableExplorerProperty] = value; }

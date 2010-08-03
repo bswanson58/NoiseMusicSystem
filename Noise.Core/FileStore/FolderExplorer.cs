@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Linq;
-using Eloquera.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.Exceptions;

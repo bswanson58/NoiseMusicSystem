@@ -56,8 +56,6 @@ namespace Noise.Core.Database {
 			if(!OpenDatabase()) {
 				CreateDatabase( mDatabaseName );
 				OpenDatabase();
-
-				RegisterDatabaseTypes();
 			}
 		}
 
@@ -68,6 +66,8 @@ namespace Noise.Core.Database {
 
 			try {
 				Database.OpenDatabase( mDatabaseName );
+				RegisterDatabaseTypes();
+
 				mLog.LogMessage( "Opened database: {0} on server: {1}", mDatabaseName, mDatabaseLocation );
 			}
 			catch( Exception ex ) {
