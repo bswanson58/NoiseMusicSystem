@@ -43,9 +43,12 @@ namespace Noise.Core.DataBuilders {
 				var contentUpdated = false;
 
 				foreach( var provider in selectedProviders ) {
-					var contentType = provider.ContentType;
-					var	providerContent = from ExpiringContent content in mDatabase.Database
-										  where (( content.ContentType == contentType ) && ( content.AssociatedItem == artistId )) select  content;
+					var parms = mDatabase.Database.CreateParameters();
+
+					parms["contentType"] = provider.ContentType;
+					parms["artistId"] = artistId;
+
+					var providerContent = mDatabase.Database.ExecuteQuery( "SELECT ExpiringContent WHERE AssociatedItem = @artistId AND ContentType = @contentType", parms ).Cast<ExpiringContent>();
 
 					if( providerContent.Count() > 0 ) {
 						foreach( var content in providerContent ) {
