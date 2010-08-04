@@ -122,9 +122,9 @@ namespace Noise.Core.DataProviders {
 						if( mDatabase.Database.ExecuteScalar( "SELECT DbArtwork WHERE FolderLocation = @folderId", parms ) == null ) {
 	//					if(( from DbArtwork artwork in mDatabase.Database where artwork.FolderLocation == storageFile.ParentFolder select artwork ).Count() == 0 ) {
 							foreach( var picture in pictures ) {
-								var dbPicture = new DbArtwork( track.Album ) { ArtworkType = picture.Type == PictureType.FrontCover ? ArtworkTypes.AlbumCover : ArtworkTypes.AlbumOther,
-																			   Source = InfoSource.Tag,
-																			   FolderLocation = mFile.ParentFolder };
+								var dbPicture = new DbArtwork( track.Album, picture.Type == PictureType.FrontCover ? ContentType.AlbumCover : ContentType.AlbumArtwork )
+										{ Source = InfoSource.Tag,
+										  FolderLocation = mFile.ParentFolder };
 								dbPicture.Image = new byte[picture.Data.Count];
 								picture.Data.CopyTo( dbPicture.Image, 0 );
 

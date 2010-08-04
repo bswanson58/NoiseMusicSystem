@@ -30,6 +30,7 @@ namespace Noise.UI.ViewModels {
 
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
 				mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
+				mEvents.GetEvent<Events.ArtistContentUpdated>().Subscribe( OnArtistFocus );
 			}
 		}
 

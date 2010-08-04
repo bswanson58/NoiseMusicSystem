@@ -20,6 +20,7 @@ namespace Noise.Core {
 
 		public void Initialize() {
 			mContainer.RegisterType<IAudioPlayer, AudioPlayer>();
+			mContainer.RegisterType<IContentManager, ContentManager>();
 			mContainer.RegisterType<IDatabaseManager, DatabaseManager>( Constants.NewInstance );
 			mContainer.RegisterType<IDataProvider, DataProvider>();
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>();

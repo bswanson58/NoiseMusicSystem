@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Net;
 using System.Xml.Linq;
 using Hammock;
 using Hammock.Serialization;
+using Microsoft.Practices.Unity;
+using Noise.Core.DataBuilders;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.DataProviders {
 	public class DiscogsArtist {
@@ -110,6 +114,46 @@ namespace Noise.Core.DataProviders {
 
 		public T Deserialize<T>( string content ) {
 			return((T)Deserialize( content, typeof( T )));
+		}
+	}
+
+//	[Export( typeof( IContentProvider ))]
+	internal class DiscographyProvider : IContentProvider {
+		[Dependency]
+		private IUnityContainer	Container { get; set; }
+
+		public ContentType ContentType {
+			get { return( ContentType.Discography ); }
+		}
+
+		public TimeSpan ExpirationPeriod {
+			get { return( new TimeSpan( 30, 0, 0, 0 )); }
+		}
+
+		public bool CanUpdateArtist {
+			get{ return( true ); }
+		}
+
+		public bool CanUpdateAlbum {
+			get{ return( false ); }
+		}
+
+		public bool CanUpdateTrack {
+			get{ return( false ); }
+		}
+
+		public void UpdateContent( DbArtist forArtist ) {
+			var discogsProvider = new DiscogsProvider();
+
+			discogsProvider.UpdateDiscography( forArtist.Name );
+		}
+
+		public void UpdateContent( DbAlbum forAlbum ) {
+			throw new NotImplementedException();
+		}
+
+		public void UpdateContent( DbTrack forTrack ) {
+			throw new NotImplementedException();
 		}
 	}
 

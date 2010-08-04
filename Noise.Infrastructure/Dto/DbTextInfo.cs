@@ -3,17 +3,13 @@ using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbTextInfo : ExpiringContent {
-		public	long			AssociatedItem { get; private set; }
 		public	long			FolderLocation { get; set; }
-		public	TextInfoTypes	InfoType { get; set; }
 		public	InfoSource		Source { get; set; }
 		public	string			Text { get; set; }
 
-		public DbTextInfo( long associatedItem ) {
-			AssociatedItem = associatedItem;
-
+		public DbTextInfo( long associatedItem, ContentType contentType ) :
+		base( associatedItem, contentType ) {
 			FolderLocation = Constants.cDatabaseNullOid;
-			InfoType = TextInfoTypes.Unknown;
 			Source = InfoSource.Unknown;
 			Text = "";
 		}

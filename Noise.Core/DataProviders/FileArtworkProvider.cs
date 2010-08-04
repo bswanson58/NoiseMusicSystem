@@ -20,9 +20,9 @@ namespace Noise.Core.DataProviders {
 		public void BuildMetaData( StorageFile file ) {
 			try {
 				var fileId = mDatabase.Database.GetUid( file );
-				var dbPicture = new DbArtwork( fileId ) { ArtworkType = IsCoverFile( file.Name ) ? ArtworkTypes.AlbumCover : ArtworkTypes.AlbumOther,
-														  Source = InfoSource.File,
-														  FolderLocation = file.ParentFolder };
+				var dbPicture = new DbArtwork( fileId, IsCoverFile( file.Name ) ? ContentType.AlbumCover : ContentType.AlbumArtwork )
+					{ Source = InfoSource.File,
+					  FolderLocation = file.ParentFolder };
 				var	fileName = StorageHelpers.GetPath( mDatabase.Database, file );
 
 				dbPicture.Image = File.ReadAllBytes( fileName );

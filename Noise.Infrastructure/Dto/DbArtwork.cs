@@ -3,15 +3,12 @@ using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbArtwork : ExpiringContent {
-		public	long			AssociatedItem { get; private set; }
 		public	long			FolderLocation { get; set; }
-		public	ArtworkTypes	ArtworkType { get; set; }
 		public	InfoSource		Source { get; set; }
 		public	byte[]			Image { get; set; }
 
-		public DbArtwork( long associatedItem ) {
-			AssociatedItem = associatedItem;
-			ArtworkType = ArtworkTypes.Unknown;
+		public DbArtwork( long associatedItem, ContentType contentType ) :
+			base( associatedItem, contentType ) {
 			Source = InfoSource.Unknown;
 			FolderLocation = Constants.cDatabaseNullOid;
 		}

@@ -62,12 +62,6 @@ namespace Noise.Core.DataBuilders {
 							break;
 					}
 				}
-
-				var	lastFmProvider = new LastFmProvider( mDatabase );
-				lastFmProvider.BuildMetaData();
-
-//			var musicBrainzProvider = new MusicBrainzProvider( mDatabase );
-//			musicBrainzProvider.BuildMetaData();
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Building Metadata:", ex );

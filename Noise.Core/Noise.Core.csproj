@@ -116,6 +116,8 @@
     <Compile Include="Database\DatabaseManager.cs" />
     <Compile Include="Database\DatabaseStatistics.cs" />
     <Compile Include="Database\DataProvider.cs" />
+    <Compile Include="DataBuilders\ContentManager.cs" />
+    <Compile Include="DataBuilders\IContentManager.cs" />
     <Compile Include="DataBuilders\IMetaDataExplorer.cs" />
     <Compile Include="DataProviders\DiscogsProvider.cs" />
     <Compile Include="DataProviders\IMetaDataProvider.cs" />

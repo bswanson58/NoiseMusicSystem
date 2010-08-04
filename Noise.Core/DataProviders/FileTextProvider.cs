@@ -20,7 +20,7 @@ namespace Noise.Core.DataProviders {
 		public void BuildMetaData( StorageFile file ) {
 			try {
 				var fileId = mDatabase.Database.GetUid( file );
-				var dbText = new DbTextInfo( fileId ) { InfoType = TextInfoTypes.Unknown, Source = InfoSource.File, FolderLocation = file.ParentFolder };
+				var dbText = new DbTextInfo( fileId, ContentType.TextInfo ) { Source = InfoSource.File, FolderLocation = file.ParentFolder };
 
 				var	fileName = StorageHelpers.GetPath( mDatabase.Database, file );
 
