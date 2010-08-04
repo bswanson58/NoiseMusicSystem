@@ -18,12 +18,11 @@ namespace Noise.Core.DataProviders {
 		}
 
 		public void BuildMetaData( StorageFile file ) {
-			var fileId = mDatabase.Database.GetUid( file );
-			var dbPicture = new DbArtwork( fileId ) { ArtworkType = IsCoverFile( file.Name ) ? ArtworkTypes.AlbumCover : ArtworkTypes.AlbumOther,
-													  Source = InfoSource.File,
-													  FolderLocation = file.ParentFolder };
-
 			try {
+				var fileId = mDatabase.Database.GetUid( file );
+				var dbPicture = new DbArtwork( fileId ) { ArtworkType = IsCoverFile( file.Name ) ? ArtworkTypes.AlbumCover : ArtworkTypes.AlbumOther,
+														  Source = InfoSource.File,
+														  FolderLocation = file.ParentFolder };
 				var	fileName = StorageHelpers.GetPath( mDatabase.Database, file );
 
 				dbPicture.Image = File.ReadAllBytes( fileName );
@@ -31,7 +30,7 @@ namespace Noise.Core.DataProviders {
 				mDatabase.Database.Store( dbPicture );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "FileArtworkProvider exception:", ex );
+				mLog.LogException( String.Format( "FileArtworkProvider file: {0}", StorageHelpers.GetPath( mDatabase.Database, file )), ex );
 			}
 		}
 

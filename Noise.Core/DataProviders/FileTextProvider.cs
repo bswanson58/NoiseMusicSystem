@@ -18,10 +18,10 @@ namespace Noise.Core.DataProviders {
 		}
 
 		public void BuildMetaData( StorageFile file ) {
-			var fileId = mDatabase.Database.GetUid( file );
-			var dbText = new DbTextInfo( fileId ) { InfoType = TextInfoTypes.Unknown, Source = InfoSource.File, FolderLocation = file.ParentFolder };
-
 			try {
+				var fileId = mDatabase.Database.GetUid( file );
+				var dbText = new DbTextInfo( fileId ) { InfoType = TextInfoTypes.Unknown, Source = InfoSource.File, FolderLocation = file.ParentFolder };
+
 				var	fileName = StorageHelpers.GetPath( mDatabase.Database, file );
 
 				dbText.Text = File.ReadAllText( fileName );
@@ -29,7 +29,7 @@ namespace Noise.Core.DataProviders {
 				mDatabase.Database.Store( dbText );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "FileTextProvider exception:", ex );
+				mLog.LogException( String.Format( "FileTextProvider file: {0}", StorageHelpers.GetPath( mDatabase.Database, file )), ex );
 			}
 		}
 	}

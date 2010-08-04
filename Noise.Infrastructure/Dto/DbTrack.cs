@@ -17,6 +17,7 @@ namespace Noise.Infrastructure.Dto {
 		public DateTime			DateAdded { get; private set; }
 		public eAudioEncoding	Encoding { get; set; }
 		public string			Genre { get; set; }
+		public bool				IsFavorite { get; set; }
 
 		public DbTrack() {
 			Album = Constants.cDatabaseNullOid;

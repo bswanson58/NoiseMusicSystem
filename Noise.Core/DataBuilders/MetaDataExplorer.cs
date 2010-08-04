@@ -75,54 +75,61 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		private void BuildMusicMetaData( StorageFile file ) {
-			var	track = new DbTrack();
-			var folderStrategy = StorageHelpers.GetFolderStrategy( mDatabase.Database, file );
-			var dataProviders = new List<IMetaDataProvider>();
+			Condition.Requires( file ).IsNotNull();
 
-			track.Encoding = DetermineAudioEncoding( file );
+			try {
+				var	track = new DbTrack();
+				var folderStrategy = StorageHelpers.GetFolderStrategy( mDatabase.Database, file );
+				var dataProviders = new List<IMetaDataProvider>();
 
-			if( folderStrategy.PreferFolderStrategy ) {
-				dataProviders.Add( mStrategyProvider.GetProvider( file ));
-				dataProviders.Add( mTagProvider.GetProvider( file, track.Encoding ));
-				dataProviders.Add( mFileNameProvider.GetProvider( file ));
-				dataProviders.Add( mDefaultProvider.GetProvider( file ));
-			}
-			else {
-				dataProviders.Add( mTagProvider.GetProvider( file, track.Encoding ));
-				dataProviders.Add( mStrategyProvider.GetProvider( file ));
-				dataProviders.Add( mFileNameProvider.GetProvider( file ));
-				dataProviders.Add( mDefaultProvider.GetProvider( file ));
-			}
+				track.Encoding = DetermineAudioEncoding( file );
 
-			var artist = DetermineArtist( dataProviders );
-			if( artist != null ) {
-				var album = DetermineAlbum( dataProviders, artist );
+				if( folderStrategy.PreferFolderStrategy ) {
+					dataProviders.Add( mStrategyProvider.GetProvider( file ));
+					dataProviders.Add( mTagProvider.GetProvider( file, track.Encoding ));
+					dataProviders.Add( mFileNameProvider.GetProvider( file ));
+					dataProviders.Add( mDefaultProvider.GetProvider( file ));
+				}
+				else {
+					dataProviders.Add( mTagProvider.GetProvider( file, track.Encoding ));
+					dataProviders.Add( mStrategyProvider.GetProvider( file ));
+					dataProviders.Add( mFileNameProvider.GetProvider( file ));
+					dataProviders.Add( mDefaultProvider.GetProvider( file ));
+				}
 
-				if( album != null ) {
-					track.Name = DetermineTrackName( dataProviders );
+				var artist = DetermineArtist( dataProviders );
+				if( artist != null ) {
+					var album = DetermineAlbum( dataProviders, artist );
 
-					if(!string.IsNullOrWhiteSpace( track.Name )) {
-						track.VolumeName = DetermineVolumeName( dataProviders );
+					if( album != null ) {
+						track.Name = DetermineTrackName( dataProviders );
 
-						foreach( var provider in dataProviders ) {
-							provider.AddAvailableMetaData( artist, album, track );
+						if(!string.IsNullOrWhiteSpace( track.Name )) {
+							track.VolumeName = DetermineVolumeName( dataProviders );
+
+							foreach( var provider in dataProviders ) {
+								provider.AddAvailableMetaData( artist, album, track );
+							}
+
+							track.Album = mDatabase.Database.GetUid( album );
+							file.MetaDataPointer = mDatabase.Database.Store( track );
+							mDatabase.Database.Store( file );
+							mSummary.TracksAdded++;
 						}
-
-						track.Album = mDatabase.Database.GetUid( album );
-						file.MetaDataPointer = mDatabase.Database.Store( track );
-						mDatabase.Database.Store( file );
-						mSummary.TracksAdded++;
+						else {
+							mLog.LogMessage( "Track name cannot be determined for file: {0}", StorageHelpers.GetPath( mDatabase.Database, file ));
+						}
 					}
 					else {
-						mLog.LogMessage( "Track name cannot be determined for file: {0}", StorageHelpers.GetPath( mDatabase.Database, file ));
+						mLog.LogMessage( "Album cannot be determined for file: {0}", StorageHelpers.GetPath( mDatabase.Database, file ));
 					}
 				}
 				else {
-					mLog.LogMessage( "Album cannot be determined for file: {0}", StorageHelpers.GetPath( mDatabase.Database, file ));
+					mLog.LogMessage( "Artist cannot determined for file: {0}", StorageHelpers.GetPath( mDatabase.Database, file ));
 				}
 			}
-			else {
-				mLog.LogMessage( "Artist cannot determined for file: {0}", StorageHelpers.GetPath( mDatabase.Database, file ));
+			catch( Exception ex ) {
+				mLog.LogException( String.Format( "Building Music Metadata for: {0}", StorageHelpers.GetPath( mDatabase.Database, file )), ex );
 			}
 		}
 
