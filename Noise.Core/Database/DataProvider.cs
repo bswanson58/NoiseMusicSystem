@@ -97,11 +97,13 @@ namespace Noise.Core.Database {
 
 			parms["artistId"] = artistId;
 			parms["artistImage"] = ContentType.ArtistPrimaryImage;
+			parms["similarArtists"] = ContentType.SimilarArtists;
+			parms["topAlbums"] = ContentType.TopAlbums;
 
 			var retValue = new ArtistSupportInfo(( from DbTextInfo bio in mDatabase.Database where bio.AssociatedItem == artistId && bio.ContentType == ContentType.Biography select bio ).FirstOrDefault(),
 												   mDatabase.Database.ExecuteScalar( "SELECT DbArtwork Where AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork,
-												 ( from DbSimilarItems items in mDatabase.Database where items.AssociatedItem == artistId select items ).FirstOrDefault(),
-												 ( from DbTopItems items in mDatabase.Database where  items.AssociatedItem == artistId select  items ).FirstOrDefault());
+												 ( from DbAssociatedItems item in mDatabase.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault(),
+												 ( from DbAssociatedItems item in mDatabase.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select item ).FirstOrDefault());
 
 			return( retValue );
 		}

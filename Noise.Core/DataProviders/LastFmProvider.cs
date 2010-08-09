@@ -100,8 +100,8 @@ namespace Noise.Core.DataProviders {
 
 				var	artwork = mDatabase.Database.ExecuteScalar( "SELECT DbArtwork WHERE AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork;
 				var bio = ( from DbTextInfo info in mDatabase.Database where info.AssociatedItem == artistId && info.ContentType == ContentType.Biography select info ).FirstOrDefault();
-				var similarArtists = ( from DbSimilarItems item in mDatabase.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault();
-				var topAlbums = ( from DbTopItems item in mDatabase.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select  item ).FirstOrDefault();
+				var similarArtists = ( from DbAssociatedItems item in mDatabase.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault();
+				var topAlbums = ( from DbAssociatedItems item in mDatabase.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select  item ).FirstOrDefault();
 				if( artwork == null ) {
 					artwork = new DbArtwork( artistId, ContentType.ArtistPrimaryImage );
 				}
@@ -110,11 +110,11 @@ namespace Noise.Core.DataProviders {
 				}
 
 				if( similarArtists == null ) {
-					similarArtists = new DbSimilarItems( artistId, ContentType.SimilarArtists );
+					similarArtists = new DbAssociatedItems( artistId, ContentType.SimilarArtists );
 				}
 
 				if( topAlbums == null ) {
-					topAlbums = new DbTopItems( artistId, ContentType.TopAlbums );
+					topAlbums = new DbAssociatedItems( artistId, ContentType.TopAlbums );
 				}
 
 				artwork.UpdateExpiration();
@@ -144,16 +144,16 @@ namespace Noise.Core.DataProviders {
 					}
 
 					var	sim = artistMatch.GetSimilar( 5 );
-					similarArtists.SimilarItems = new string[sim.GetLength( 0 )];
+					similarArtists.Items = new string[sim.GetLength( 0 )];
 					for( int index = 0; index < sim.GetLength( 0 ); index++ ) {
-						similarArtists.SimilarItems[index] = sim[index].Name;
+						similarArtists.Items[index] = sim[index].Name;
 					}
 					similarArtists.IsContentAvailable = true;
 
 					var top = artistMatch.GetTopAlbums();
-					topAlbums.TopItems = new string[top.GetLength( 0 ) > 5 ? 5 : top.GetLength( 0 )];
-					for( int index = 0; index < topAlbums.TopItems.GetLength( 0 ); index++ ) {
-						topAlbums.TopItems[index] = top[index].Item.Name;
+					topAlbums.Items = new string[top.GetLength( 0 ) > 5 ? 5 : top.GetLength( 0 )];
+					for( int index = 0; index < topAlbums.Items.GetLength( 0 ); index++ ) {
+						topAlbums.Items[index] = top[index].Item.Name;
 					}
 					topAlbums.IsContentAvailable = true;
 

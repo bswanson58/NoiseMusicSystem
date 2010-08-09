@@ -95,7 +95,7 @@ namespace Noise.UI.ViewModels {
 
 				if(( SupportInfo != null ) &&
 				   ( SupportInfo.TopAlbums != null )) {
-				retValue = SupportInfo.TopAlbums.TopItems;
+				retValue = SupportInfo.TopAlbums.Items;
 				}
 
 				return( retValue );
@@ -109,7 +109,7 @@ namespace Noise.UI.ViewModels {
 
 				if(( SupportInfo != null ) &&
 				   ( SupportInfo.SimilarArtist != null )) {
-					retValue = SupportInfo.SimilarArtist.SimilarItems;
+					retValue = SupportInfo.SimilarArtist.Items;
 				}
 
 				return( retValue );
