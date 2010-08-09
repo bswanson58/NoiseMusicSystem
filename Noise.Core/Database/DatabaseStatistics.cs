@@ -24,19 +24,19 @@ namespace Noise.Core.Database {
 		public void GatherStatistics() {
 			try {
 				var folders = from StorageFolder folder in mDatabase.Database select folder;
-				FolderCount = folders.Select( folder => folder.Name ).Count();
+				FolderCount = folders.Count();
 
 				var files = from StorageFile file in mDatabase.Database select file;
-				FileCount = files.Select( file => file.Name ).Count();
+				FileCount = files.Count();
 
 				var artists = from DbArtist artist in mDatabase.Database select artist;
-				ArtistCount = artists.Select( artist => artist.Name ).Count();
+				ArtistCount = artists.Count();
 
 				var albums = from DbAlbum album in mDatabase.Database select album;
-				AlbumCount = albums.Select( album => album.Name ).Count();
+				AlbumCount = albums.Count();
 
 				var tracks = from DbTrack track in mDatabase.Database select track;
-				TrackCount = tracks.Select( track => track.Name ).Count();
+				TrackCount = tracks.Count();
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Building Summary Data.", ex );
