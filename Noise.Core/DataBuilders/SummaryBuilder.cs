@@ -18,23 +18,23 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		public void BuildSummaryData() {
-			UpdateCounts( mDatabase );
+			SummarizeArtists();
 		}
 
-		private void UpdateCounts( IDatabaseManager database ) {
+		private void SummarizeArtists() {
 			try {
-				var artists = from DbArtist artist in database.Database select artist;
+				var artists = from DbArtist artist in mDatabase.Database select artist;
 
 				foreach( var artist in artists ) {
 					mLog.LogInfo( string.Format( "Building summary data for: {0}", artist.Name ));
 
-					var artistId = database.Database.GetUid( artist );
-					var albums = from DbAlbum album in database.Database where album.Artist == artistId select album;
+					var artistId = mDatabase.Database.GetUid( artist );
+					var albums = from DbAlbum album in mDatabase.Database where album.Artist == artistId select album;
 					var albumCount = 0;
 
 					foreach( var album in albums ) {
-						var albumId = database.Database.GetUid( album );
-						var tracks = from DbTrack track in database.Database where track.Album == albumId select track;
+						var albumId = mDatabase.Database.GetUid( album );
+						var tracks = from DbTrack track in mDatabase.Database where track.Album == albumId select track;
 
 						album.TrackCount = (Int16)tracks.Count();
 
@@ -54,12 +54,12 @@ namespace Noise.Core.DataBuilders {
 							album.PublishedYear = Constants.cVariousYears;
 						}
 
-						database.Database.Store( album );
+						mDatabase.Database.Store( album );
 						albumCount++;
 					}
 
 					artist.AlbumCount = (Int16)albumCount;
-					database.Database.Store( artist );
+					mDatabase.Database.Store( artist );
 				}
 			}
 			catch( Exception ex ) {

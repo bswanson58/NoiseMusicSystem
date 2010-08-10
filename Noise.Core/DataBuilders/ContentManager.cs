@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
+using System.Threading;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
@@ -35,6 +36,10 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		public void RequestContent( DbArtist forArtist ) {
+			ThreadPool.QueueUserWorkItem( f => RequestArtistContent( forArtist ));
+		}
+
+		private void RequestArtistContent( DbArtist forArtist ) {
 			Condition.Requires( forArtist ).IsNotNull();
 
 			try {
