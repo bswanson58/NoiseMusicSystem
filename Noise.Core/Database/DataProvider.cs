@@ -95,10 +95,14 @@ namespace Noise.Core.Database {
 			return( mDatabase.Database.ExecuteScalar( "SELECT data WHERE $ID = @id", parm ));
 		}
 
-		public ArtistSupportInfo GetArtistSupportInfo( DbArtist forArtist ) {
+		public void UpdateArtistInfo( DbArtist forArtist ) {
 			Condition.Requires( forArtist ).IsNotNull();
 
 			mContentManager.RequestContent( forArtist );
+		}
+
+		public ArtistSupportInfo GetArtistSupportInfo( DbArtist forArtist ) {
+			Condition.Requires( forArtist ).IsNotNull();
 
 			var artistId = mDatabase.Database.GetUid( forArtist );
 			var parms = mDatabase.Database.CreateParameters();
@@ -116,12 +120,16 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public void UpdateAlbumInfo( DbAlbum forAlbum ) {
+			Condition.Requires( forAlbum ).IsNotNull();
+
+			mContentManager.RequestContent( forAlbum );
+		}
+
 		public AlbumSupportInfo GetAlbumSupportInfo( DbAlbum forAlbum ) {
 			Condition.Requires( forAlbum ).IsNotNull();
 
 			AlbumSupportInfo	retValue = null;
-
-//			mContentManager.RequestContent( forAlbum );
 
 			var albumId = mDatabase.Database.GetUid( forAlbum );
 			var albumTrack = ( from DbTrack track in mDatabase.Database where track.Album == albumId select track ).FirstOrDefault();

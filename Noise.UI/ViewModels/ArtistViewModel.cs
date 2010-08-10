@@ -30,7 +30,7 @@ namespace Noise.UI.ViewModels {
 
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
 				mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
-				mEvents.GetEvent<Events.ArtistContentUpdated>().Subscribe( OnArtistFocus );
+				mEvents.GetEvent<Events.ArtistContentUpdated>().Subscribe( OnArtistUpdate );
 			}
 		}
 
@@ -41,8 +41,15 @@ namespace Noise.UI.ViewModels {
 
 		public void OnArtistFocus( DbArtist artist ) {
 			mCurrentArtist = artist;
+			mNoiseManager.DataProvider.UpdateArtistInfo( artist );
 
-			if( mCurrentArtist != null ) {
+			OnArtistUpdate( artist );
+		}
+
+		public void OnArtistUpdate( DbArtist artist ) {
+			if(( artist != null ) &&
+			   ( mCurrentArtist != null ) &&
+			   ( string.Equals( mCurrentArtist.Name, artist.Name ))) {
 				if(!mBackgroundWorker.IsBusy ) {
 					mBackgroundWorker.RunWorkerAsync( artist );
 				}

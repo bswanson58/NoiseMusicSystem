@@ -140,8 +140,11 @@ namespace Noise.Core.DataProviders {
 						}
 					}
 
+					var year = Constants.cUnknownYear;
 					element = releaseRoot.Element( "released" );
-					var year = element != null ? uint.Parse( element.Value ) : Constants.cUnknownYear;
+					if( element != null ) {
+						uint.TryParse( element.Value, out year );
+					}
 				
 					retValue = new DbDiscographyRelease( mArtistId, title, format, label, year );
 				}
@@ -152,6 +155,20 @@ namespace Noise.Core.DataProviders {
 
 		public T Deserialize<T>( string content ) {
 			return((T)Deserialize( content, typeof( T )));
+		}
+	}
+
+	[Export( typeof( IContentProvider ))]
+	internal class DiscographyProvider : DiscogsProvider {
+		public override ContentType ContentType {
+			get { return( ContentType.Discography ); }
+		}
+	}
+
+	[Export( typeof( IContentProvider ))]
+	internal class BandMembersProvider : DiscogsProvider {
+		public override ContentType ContentType {
+			get { return( ContentType.BandMembers ); }
 		}
 	}
 
@@ -168,7 +185,7 @@ namespace Noise.Core.DataProviders {
 
 		public	abstract ContentType	ContentType { get; }
 
-		public DiscogsProvider() {
+		protected DiscogsProvider() {
 			mClient = new RestClient { Authority = cAuthority, UserAgent = "Noise", DecompressionMethods = DecompressionMethods.GZip };
 			mClient.AddParameter( "f", "xml" );
 			mClient.AddParameter( "api_key", cApiKey );
@@ -211,20 +228,6 @@ namespace Noise.Core.DataProviders {
 			get{ return( false ); }
 		}
 
-		[Export( typeof( IContentProvider ))]
-		public class DiscographyProvider : DiscogsProvider {
-			public override ContentType ContentType {
-				get { return( ContentType.Discography ); }
-			}
-		}
-
-		[Export( typeof( IContentProvider ))]
-		public class BandMembersProvider : DiscogsProvider {
-			public override ContentType ContentType {
-				get { return( ContentType.BandMembers ); }
-			}
-		}
-
 		public void UpdateContent( DbArtist forArtist ) {
 			try {
 				var	request = new RestRequest { VersionPath = "artist", Path = forArtist.Name, Deserializer = new ArtistDeserializer() };
@@ -262,7 +265,7 @@ namespace Noise.Core.DataProviders {
 
 					var releaseAdded = false;
 					foreach( var release in response.ContentEntity.ReleaseList ) {
-						AddRelease( artistId, release.Id );
+						AddRelease( forArtist.Name, artistId, release.Id );
 
 						releaseAdded = true;
 					}
@@ -281,14 +284,19 @@ namespace Noise.Core.DataProviders {
 			}
 		}
 
-		private void AddRelease( long artistId, string releaseId ) {
-			var	request = new RestRequest { VersionPath = "release", Path = releaseId, Deserializer = new ReleaseDeserializer( artistId ) };
-			var response = mClient.Request<DbDiscographyRelease>( request );
+		private void AddRelease( string artistName, long artistId, string releaseId ) {
+			try {
+				var	request = new RestRequest { VersionPath = "release", Path = releaseId, Deserializer = new ReleaseDeserializer( artistId ) };
+				var response = mClient.Request<DbDiscographyRelease>( request );
 
-			if(( response.StatusCode == HttpStatusCode.OK ) &&
-			   ( response.ContentEntity != null )) {
-				response.ContentEntity.IsContentAvailable = true;
-				mDatabase.Database.Store( response.ContentEntity );
+				if(( response.StatusCode == HttpStatusCode.OK ) &&
+				   ( response.ContentEntity != null )) {
+					response.ContentEntity.IsContentAvailable = true;
+					mDatabase.Database.Store( response.ContentEntity );
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( String.Format( "Discogs requesting release {0} from artist: {1}", releaseId, artistName ), ex );
 			}
 		}
 
