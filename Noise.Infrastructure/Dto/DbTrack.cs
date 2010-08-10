@@ -2,7 +2,7 @@
 using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
-	public class DbTrack {
+	public class DbTrack : IUserSettings {
 		public string			Name { get; set; }
 		public string			Performer { get; set; }
 		public long				Album { get; set; }

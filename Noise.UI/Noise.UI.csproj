@@ -87,6 +87,9 @@
     <Reference Include="Microsoft.Practices.Unity">
       <HintPath>..\lib\CAL\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
+    <Reference Include="Observal">
+      <HintPath>..\lib\Observal\Observal.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="PresentationFramework.Aero" />
@@ -111,6 +114,7 @@
     <Compile Include="Adapters\BindableRun.cs" />
     <Compile Include="Adapters\ExplorerTreeNode.cs" />
     <Compile Include="Adapters\TrackViewNode.cs" />
+    <Compile Include="Adapters\UserSettingsNotifier.cs" />
     <Compile Include="Behaviours\SliderAnimateAfterDrag.cs" />
     <Compile Include="Behaviours\ListViewColumnStretch.cs" />
     <Compile Include="Behaviours\TreeViewItemBehaviour.cs" />
@@ -172,7 +176,6 @@
       <Name>Noise.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Page Include="Resources\UiResources.xaml">
       <Generator>MSBuild:Compile</Generator>

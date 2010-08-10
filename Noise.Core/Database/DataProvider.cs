@@ -22,6 +22,14 @@ namespace Noise.Core.Database {
 			return( mDatabase.Database.GetUid( dbObject ));
 		}
 
+		public void UpdateItem( object item ) {
+			if(( item is DbArtist ) ||
+			   ( item is DbAlbum ) ||
+			   ( item is DbTrack )) {
+				mDatabase.Database.Store( item );
+			}
+		}
+
 		public IEnumerable<DbArtist> GetArtistList() {
 			return( from DbArtist artist in mDatabase.Database select artist );
 		}

@@ -109,6 +109,7 @@
     <Compile Include="Dto\DbTextInfo.cs" />
     <Compile Include="Dto\FolderStrategy.cs" />
     <Compile Include="Dto\InfoSource.cs" />
+    <Compile Include="Dto\IUserSettings.cs" />
     <Compile Include="Dto\PlayQueueTrack.cs" />
     <Compile Include="Interfaces\IAudioPlayer.cs" />
     <Compile Include="Interfaces\IPlayHistory.cs" />

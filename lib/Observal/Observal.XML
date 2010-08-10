@@ -1,0 +1,380 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Observal</name>
+    </assembly>
+    <members>
+        <member name="T:Observal.Extensions.CollectionExpansionExtension">
+            <summary>
+            When collections that implement <see cref="T:System.Collections.Specialized.INotifyCollectionChanged"/> are added to the observer, 
+            this extension will expand the collection and add all items to the observer. 
+            </summary>
+            <remarks>
+            Works by using the <see cref="T:Observal.ObservableCollectionTracker"/> to do the dirty work of managing the 
+            collection changed events.
+            </remarks>
+        </member>
+        <member name="T:Observal.Extensions.ObserverExtension">
+            <summary>
+            A base class that should be used for custom implementations of <see cref="T:Observal.IObserverExtension"/>.
+            </summary>
+        </member>
+        <member name="T:Observal.IObserverExtension">
+            <summary>
+            An interface implemented by objects that add capabilities to an <see cref="T:Observal.Observer"/>.
+            </summary>
+        </member>
+        <member name="M:Observal.IObserverExtension.Configure(Observal.Observer)">
+            <summary>
+            Configures this extension for a given observer. This allows the extension to initialize itself
+            or add any other extensions that it depends on.
+            </summary>
+            <param name="observer">The observer.</param>
+        </member>
+        <member name="M:Observal.IObserverExtension.Attach(System.Object)">
+            <summary>
+            Notifies this extension that an item has been added to the current observer.
+            </summary>
+            <param name="attachedItem">The attached item that was just added to the observer.</param>
+            <remarks>
+            This method is guaranteed to only be called once per item (unless the item is added, removed, 
+            and added again). 
+            </remarks>
+        </member>
+        <member name="M:Observal.IObserverExtension.Detach(System.Object)">
+            <summary>
+            Notifies this extension that an item has been removed from the current observer.
+            </summary>
+            <param name="detachedItem">The detached item that was just removed from the observer.</param>
+        </member>
+        <member name="M:Observal.Extensions.ObserverExtension.AssertNotConfiguredYet(System.String)">
+            <summary>
+            Ensures that the Configure method has not already been called on this extension. This method 
+            should be called whenever options are set that should only be set before the first item is added
+            to the observer.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Observal.Extensions.ObserverExtension.Configure(Observal.Observer)">
+            <summary>
+            Configures this extension for a given observer. This allows the extension to initialize itself
+            or add any other extensions that it depends on.
+            </summary>
+            <param name="observer">The observer.</param>
+        </member>
+        <member name="M:Observal.Extensions.ObserverExtension.Attach(System.Object)">
+            <summary>
+            Notifies this extension that an item has been added to the current observer.
+            </summary>
+            <param name="attachedItem">The attached item that was just added to the observer.</param>
+            <remarks>
+            This method is guaranteed to only be called once per item (unless the item is added, removed,
+            and added again).
+            </remarks>
+        </member>
+        <member name="M:Observal.Extensions.ObserverExtension.Detach(System.Object)">
+            <summary>
+            Notifies this extension that an item has been removed from the current observer.
+            </summary>
+            <param name="detachedItem">The detached item that was just removed from the observer.</param>
+        </member>
+        <member name="P:Observal.Extensions.ObserverExtension.Observer">
+            <summary>
+            Gets the current observer that this extension is attached to.
+            </summary>
+            <value>The observer.</value>
+        </member>
+        <member name="M:Observal.Extensions.CollectionExpansionExtension.UseWeakEvents">
+            <summary>
+            Specifies that weak events should be used. This allows the observer to be garbage collected even 
+            if the events are still subscribed to on child items. This feature is NOT enabled by default.
+            </summary>
+            <returns>This instance, for fluent interfaces.</returns>
+        </member>
+        <member name="M:Observal.Extensions.CollectionExpansionExtension.Attach(System.Object)">
+            <summary>
+            Notifies this extension that an item has been added to the current observer.
+            </summary>
+            <param name="attachedItem">The attached item that was just added to the observer.</param>
+            <remarks>
+            This method is guaranteed to only be called once per item (unless the item is added, removed,
+            and added again).
+            </remarks>
+        </member>
+        <member name="M:Observal.Extensions.CollectionExpansionExtension.Detach(System.Object)">
+            <summary>
+            Notifies this extension that an item has been removed from the current observer.
+            </summary>
+            <param name="detachedItem">The detached item that was just removed from the observer.</param>
+        </member>
+        <member name="T:Observal.Extensions.TraverseExtension">
+            <summary>
+            When items are added to an observer, this extension can be used to access child properties on the 
+            item, adding the property value to the observer. To set up a hierarchy of objects, combine this 
+            extension with <see cref="T:Observal.Extensions.CollectionExpansionExtension"/>.
+            </summary>
+        </member>
+        <member name="M:Observal.Extensions.TraverseExtension.Follow``1(System.Func{``0,System.Object})">
+            <summary>
+            Sets a path that will be followed and added to the collection. For example, 
+            <c>Follow&lt;Customer&gt;(c =&gt; c.Address)</c> would specify that anytime a Customer is added 
+            to the observer, its address should also be added.
+            </summary>
+            <typeparam name="TObject">The type of object being added, which contains properties to follow.</typeparam>
+            <param name="childrenSelector">The children selector.</param>
+            <returns>This instance, for fluent interfaces.</returns>
+        </member>
+        <member name="M:Observal.Extensions.TraverseExtension.Attach(System.Object)">
+            <summary>
+            Notifies this extension that an item has been added to the current observer.
+            </summary>
+            <param name="attachedItem">The attached item that was just added to the observer.</param>
+            <remarks>
+            This method is guaranteed to only be called once per item (unless the item is added, removed,
+            and added again).
+            </remarks>
+        </member>
+        <member name="M:Observal.Extensions.TraverseExtension.Detach(System.Object)">
+            <summary>
+            Notifies this extension that an item has been removed from the current observer.
+            </summary>
+            <param name="detachedItem">The detached item that was just removed from the observer.</param>
+        </member>
+        <member name="T:Observal.Extensions.ItemsChangedExtension">
+            <summary>
+            When objects are added to or removed from the observer, this extension can notify a set of callbacks
+            about the change.
+            </summary>
+        </member>
+        <member name="M:Observal.Extensions.ItemsChangedExtension.WhenAdded(System.Action{System.Object})">
+            <summary>
+            Sets up a callback that will be invoked any time an object is added to the observer.
+            </summary>
+            <param name="callback">The callback.</param>
+            <returns>This instance, for fluent interfaces.</returns>
+        </member>
+        <member name="M:Observal.Extensions.ItemsChangedExtension.WhenAdded``1(System.Action{``0})">
+            <summary>
+            Sets up a callback that will be invoked any time an object of the given type is added to the 
+            observer.
+            </summary>
+            <param name="callback">The callback that will be invoked on addition of new <see cref="!:TObject"/> 
+            instances.</param>
+            <returns>This instance, for fluent interfaces.</returns>
+        </member>
+        <member name="M:Observal.Extensions.ItemsChangedExtension.WhenRemoved(System.Action{System.Object})">
+            <summary>
+            Sets up a callback that will be invoked any time an object is removed from the observer.
+            </summary>
+            <param name="callback">The callback that will be invoked on removal of object instances.
+            </param>
+            <returns>This instance, for fluent interfaces.</returns>
+        </member>
+        <member name="M:Observal.Extensions.ItemsChangedExtension.WhenRemoved``1(System.Action{``0})">
+            <summary>
+            Sets up a callback that will be invoked any time an object of the given type is removed to the 
+            observer.
+            </summary>
+            <param name="callback">The callback that will be invoked on removal of <see cref="!:TObject"/> 
+            instances.</param>
+            <returns>This instance, for fluent interfaces.</returns>
+        </member>
+        <member name="M:Observal.Extensions.ItemsChangedExtension.WhenAddedOrRemoved(System.Action{System.Object})">
+            <summary>
+            Sets up a callback that will be invoked any time an object is added to or removed from the 
+            observer.
+            </summary>
+            <param name="callback">The callback that will be invoked on addition or removal of object 
+            instances.</param>
+            <returns>This instance, for fluent interfaces.</returns>
+        </member>
+        <member name="M:Observal.Extensions.ItemsChangedExtension.WhenAddedOrRemoved``1(System.Action{``0})">
+            <summary>
+            Sets up a callback that will be invoked any time an object of the given type is added to or 
+            removed from the observer.
+            </summary>
+            <param name="callback">The callback that will be invoked on addition or removal of 
+            <see cref="!:TObject"/> instances.</param>
+            <returns>This instance, for fluent interfaces.</returns>
+        </member>
+        <member name="M:Observal.Extensions.ItemsChangedExtension.Attach(System.Object)">
+            <summary>
+            Notifies this extension that an item has been added to the current observer.
+            </summary>
+            <param name="attachedItem">The attached item that was just added to the observer.</param>
+            <remarks>
+            This method is guaranteed to only be called once per item (unless the item is added, removed,
+            and added again).
+            </remarks>
+        </member>
+        <member name="M:Observal.Extensions.ItemsChangedExtension.Detach(System.Object)">
+            <summary>
+            Notifies this extension that an item has been removed from the current observer.
+            </summary>
+            <param name="detachedItem">The detached item that was just removed from the observer.</param>
+        </member>
+        <member name="T:Observal.Extensions.PropertyChangedExtension">
+            <summary>
+            When objects that implement the <see cref="T:System.ComponentModel.INotifyPropertyChanged"/> interface are added to an 
+            observer, this extension will subscribe to their <see cref="E:System.ComponentModel.INotifyPropertyChanged.PropertyChanged"/>
+            event, and invoke a given set of callbacks whenever a property changes.
+            </summary>
+        </member>
+        <member name="M:Observal.Extensions.PropertyChangedExtension.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Observal.Extensions.PropertyChangedExtension"/> class.
+            </summary>
+        </member>
+        <member name="M:Observal.Extensions.PropertyChangedExtension.UseWeakEvents">
+            <summary>
+            Specifies that weak events should be used. This allows the observer to be garbage collected even 
+            if the events are still subscribed to on child items. This feature is NOT enabled by default.
+            </summary>
+            <returns>This instance, for fluent interfaces.</returns>
+        </member>
+        <member name="M:Observal.Extensions.PropertyChangedExtension.WhenPropertyChanges(System.Action{Observal.Extensions.PropertyChangeNotification})">
+            <summary>
+            Sets up a callback that will be invoked whenever a property changes on any object.
+            </summary>
+            <param name="callback">The callback.</param>
+            <returns>This instance, for fluent interfaces.</returns>
+        </member>
+        <member name="M:Observal.Extensions.PropertyChangedExtension.WhenPropertyChanges``1(System.Action{Observal.Extensions.PropertyChangeNotification{``0}})">
+            <summary>
+            Sets up a callback that will be invoked whenever a property changes on any object derived from 
+            the specified.
+            </summary>
+            <param name="callback">The callback.</param>
+            <returns>This instance, for fluent interfaces.</returns>
+        </member>
+        <member name="M:Observal.Extensions.PropertyChangedExtension.Attach(System.Object)">
+            <summary>
+            Notifies this extension that an item has been added to the current observer.
+            </summary>
+            <param name="attachedItem">The attached item that was just added to the observer.</param>
+            <remarks>
+            This method is guaranteed to only be called once per item (unless the item is added, removed,
+            and added again).
+            </remarks>
+        </member>
+        <member name="M:Observal.Extensions.PropertyChangedExtension.Detach(System.Object)">
+            <summary>
+            Notifies this extension that an item has been removed from the current observer.
+            </summary>
+            <param name="detachedItem">The detached item that was just removed from the observer.</param>
+        </member>
+        <member name="T:Observal.Extensions.PropertyChangeNotification">
+            <summary>
+            A payload for the WhenPropertyChanged callback of the <see cref="T:Observal.Extensions.PropertyChangedExtension"/>.
+            </summary>
+        </member>
+        <member name="T:Observal.Extensions.PropertyChangeNotification`1">
+            <summary>
+            A payload for the WhenPropertyChanged callback of the <see cref="T:Observal.Extensions.PropertyChangedExtension"/>.
+            </summary>
+            <typeparam name="TElement">The type of object that the property was changed on.</typeparam>
+        </member>
+        <member name="M:Observal.Extensions.PropertyChangeNotification`1.#ctor(`0,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Observal.Extensions.PropertyChangeNotification`1"/> class.
+            </summary>
+            <param name="source">The source object that the PropertyChanged event was raised by.</param>
+            <param name="propertyName">Name of the property that was changed.</param>
+        </member>
+        <member name="P:Observal.Extensions.PropertyChangeNotification`1.Source">
+            <summary>
+            Gets the source object that the PropertyChanged event was raised by.
+            </summary>
+            <value>The source.</value>
+        </member>
+        <member name="P:Observal.Extensions.PropertyChangeNotification`1.PropertyName">
+            <summary>
+            Gets the name of the property that was changed.
+            </summary>
+            <value>The name of the property.</value>
+        </member>
+        <member name="M:Observal.Extensions.PropertyChangeNotification.#ctor(System.Object,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Observal.Extensions.PropertyChangeNotification"/> class.
+            </summary>
+            <param name="source">The source.</param>
+            <param name="propertyName">Name of the property.</param>
+        </member>
+        <member name="T:Observal.Observer">
+            <summary>
+            The core Observal kernel, which monitors objects for changes. You can add capabilities to this 
+            observer using extensions, such as the <see cref="T:Observal.Extensions.PropertyChangedExtension"/> for monitoring property 
+            changed events, or the <see cref="T:Observal.Extensions.TraverseExtension"/> for expanding items into child items.
+            </summary>
+        </member>
+        <member name="M:Observal.Observer.HasExtension(System.Func{Observal.IObserverExtension,System.Boolean})">
+            <summary>
+            Determines whether this observer has a given extension as indicated by a filter callback.
+            </summary>
+            <param name="filter">The filter.</param>
+            <returns>
+            	<c>true</c> if the specified filter has extension; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Observal.Observer.Extend``1(``0)">
+            <summary>
+            Adds an extension.
+            </summary>
+            <param name="extension">The extension.</param>
+        </member>
+        <member name="M:Observal.Observer.Add(System.Object)">
+            <summary>
+            Adds an item to the list of objects observed by this observer. If the item is already being 
+            observed, the reference count will be incremented. When released, the reference count is 
+            decremented until 0.
+            </summary>
+            <param name="item">The item.</param>
+        </member>
+        <member name="M:Observal.Observer.Release(System.Object)">
+            <summary>
+            Removes an item from the collection, by decrementing the reference count. When the reference 
+            count reaches zero, the item will be removed from the collection and should be garbage 
+            collectable.
+            </summary>
+            <param name="item">The item.</param>
+        </member>
+        <member name="M:Observal.Observer.GetAll">
+            <summary>
+            Gets a snapshot of all elements currently in the observed collection list.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Observal.Eventing.WeakEventHandler`1">
+            <summary>
+            Wraps an event handler with a weak reference, allowing the subscriber to be garbage collected without 
+            being kept alive by the publisher of the event. 
+            </summary>
+            <typeparam name="TEventArgs">The type of the event args.</typeparam>
+            <remarks>
+            Usage example:
+            <code>
+                Alarm.Beep += new WeakEventHandler&lt;FooEventArgs&gt;(FooHappened).WeakHandler;
+            </code>
+            </remarks>
+        </member>
+        <member name="M:Observal.Eventing.WeakEventHandler`1.#ctor(System.EventHandler{`0})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Observal.Eventing.WeakEventHandler`1"/> class.
+            </summary>
+            <param name="callback">The callback.</param>
+        </member>
+        <member name="M:Observal.Eventing.WeakEventHandler`1.WeakHandler(System.Object,System.Object)">
+            <summary>
+            Used as the event handler which should be subscribed to the event.
+            </summary>
+            <param name="sender">The object raising the event.</param>
+            <param name="e">The event args.</param>
+        </member>
+        <member name="M:Observal.Eventing.WeakEventHandler`1.CreateDelegateInvoker(System.Reflection.MethodInfo)">
+            <remarks>
+            Creates an open delegate for invoking the callback - see Jon Skeet's blog post for an example:
+            http://msmvps.com/blogs/jon_skeet/archive/2008/08/09/making-reflection-fly-and-exploring-delegates.aspx
+            </remarks>
+        </member>
+    </members>
+</doc>

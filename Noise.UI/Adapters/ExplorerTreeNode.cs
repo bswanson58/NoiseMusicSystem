@@ -14,6 +14,7 @@ namespace Noise.UI.Adapters {
 		public	ExplorerTreeNode			Parent { get; private set; }
 		public	object						Item { get; private set; }
 		public	bool						RequiresChildren{ get; private set; }
+		public	UserSettingsNotifier		SettingsNotifier { get; private set; }
 		public	ObservableCollection<ExplorerTreeNode>	Children { get; set; }
 
 		public ExplorerTreeNode( IEventAggregator eventAggregator, object item ) :
@@ -42,6 +43,8 @@ namespace Noise.UI.Adapters {
 			mEventAggregator = eventAggregator;
 			Parent = parent;
 			Item = item;
+
+			SettingsNotifier = new UserSettingsNotifier( Item as IUserSettings );
 
 			if( children != null ) {
 				Children = new ObservableCollection<ExplorerTreeNode>( children );

@@ -68,15 +68,18 @@
 				</Grid.ColumnDefinitions>
 
 				<TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" Text="{Binding Path=Item.Name}"/>
-				<Controls:RatingSelector Grid.Row="0" Grid.Column="2" Margin="0,1,0,0" HorizontalAlignment="Right"  VerticalAlignment="Bottom" 
-										 Style="{StaticResource RatingStyle}" Template="{StaticResource RatingTemplate}" RatingSelected="{Binding Path=Item.Rating}"/>
+				<StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+					<CheckBox Margin="0,9,9,0" IsChecked="{Binding Path=SettingsNotifier.IsFavorite, Mode=TwoWay}"/>
+					<Controls:RatingSelector Margin="0,1,0,0" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Style="{StaticResource RatingStyle}"
+											 Template="{StaticResource RatingTemplate}" RatingSelected="{Binding Path=SettingsNotifier.Rating, Mode=TwoWay}"/>
+				</StackPanel>
 				<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="11,0,0,0">
 					<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="Albums: "/>
 					<TextBlock Text="{Binding Path=Item.AlbumCount}"/>
 				</StackPanel>
 				<StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
 					<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="Genre: "/>
-					<TextBlock Text="{Binding Path=Item.Genre}"/>
+					<TextBlock Text="{Binding Path=SettingsNotifier.Genre}"/>
 				</StackPanel>
 			</Grid>
 		</Border>

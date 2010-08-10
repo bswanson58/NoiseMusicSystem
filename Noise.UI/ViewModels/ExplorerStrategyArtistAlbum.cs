@@ -8,13 +8,16 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
 using CuttingEdge.Conditions;
+using Observal;
+using Observal.Extensions;
 using Condition = CuttingEdge.Conditions.Condition;
 
 namespace Noise.UI.ViewModels {
-	internal class ExplorerStrategyArtistAlbum : IExplorerViewStrategy {
+	public class ExplorerStrategyArtistAlbum : IExplorerViewStrategy {
 		private readonly IUnityContainer		mContainer;
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly INoiseManager			mNoiseManager;
+		private readonly Observer				mChangeObserver;
 		private	LibraryExplorerViewModel		mViewModel;
 		private IEnumerator<ExplorerTreeNode>	mTreeEnumerator;
 
@@ -22,6 +25,17 @@ namespace Noise.UI.ViewModels {
 			mContainer = container;
 			mEventAggregator = mContainer.Resolve<IEventAggregator>();
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
+
+			mChangeObserver = new Observer();
+			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( node => OnNodeChanged( node.Source ));
+		}
+
+		private void OnNodeChanged( object source ) {
+			var notifier = source as UserSettingsNotifier;
+
+			if( notifier != null ) {
+				mNoiseManager.DataProvider.UpdateItem( notifier.TargetItem );
+			}
 		}
 
 		public void Initialize( LibraryExplorerViewModel viewModel ) {
@@ -39,6 +53,7 @@ namespace Noise.UI.ViewModels {
 				var parent = artist.AlbumCount > 0 ? new ExplorerTreeNode( mEventAggregator, artist, FillChildren ) : new ExplorerTreeNode( mEventAggregator, artist );
 
 				tree.Add( parent );
+				mChangeObserver.Add( parent.SettingsNotifier );
 			}
 		}
 

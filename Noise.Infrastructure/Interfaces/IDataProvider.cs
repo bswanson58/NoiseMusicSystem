@@ -17,5 +17,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 		ArtistSupportInfo		GetArtistSupportInfo( DbArtist forArtist );
 		AlbumSupportInfo		GetAlbumSupportInfo( DbAlbum forAlbum );
+
+		void					UpdateItem( object dbItem );
 	}
 }

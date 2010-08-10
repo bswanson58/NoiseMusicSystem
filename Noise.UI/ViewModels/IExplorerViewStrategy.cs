@@ -2,7 +2,7 @@
 using Noise.UI.Adapters;
 
 namespace Noise.UI.ViewModels {
-	public interface IExplorerViewStrategy {
+	internal interface IExplorerViewStrategy {
 		void	Initialize( LibraryExplorerViewModel viewModel );
 		void	PopulateTree( ObservableCollection<ExplorerTreeNode> tree );
 

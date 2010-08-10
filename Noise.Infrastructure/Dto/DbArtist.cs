@@ -2,7 +2,7 @@
 using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
-	public class DbArtist {
+	public class DbArtist : IUserSettings {
 		public string			Name { get; set; }
 		public string			Genre { get; set; }
 		public Int16			Rating { get; set; }
