@@ -11,6 +11,7 @@ namespace Noise.Core.DataBuilders {
 	internal class SummaryBuilder : ISummaryBuilder {
 		private readonly IDatabaseManager	mDatabase;
 		private	readonly ILog				mLog;
+		private bool						mStop;
 
 		public SummaryBuilder( IUnityContainer container ) {
 			mDatabase = container.Resolve<IDatabaseManager>();
@@ -18,7 +19,13 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		public void BuildSummaryData() {
+			mStop = false;
+
 			SummarizeArtists();
+		}
+
+		public void Stop() {
+			mStop = true;
 		}
 
 		private void SummarizeArtists() {
@@ -56,10 +63,18 @@ namespace Noise.Core.DataBuilders {
 
 						mDatabase.Database.Store( album );
 						albumCount++;
+
+						if( mStop ) {
+							break;
+						}
 					}
 
 					artist.AlbumCount = (Int16)albumCount;
 					mDatabase.Database.Store( artist );
+
+					if( mStop ) {
+						break;
+					}
 				}
 			}
 			catch( Exception ex ) {

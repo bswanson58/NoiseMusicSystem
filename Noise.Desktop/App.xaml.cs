@@ -5,15 +5,18 @@ namespace Noise.Desktop {
 	/// Interaction logic for App.xaml
 	/// </summary>
 	public partial class App : Application {
+		private Bootstrapper	mBootstrapper;
+
 		protected override void OnStartup( StartupEventArgs e ) {
 			base.OnStartup( e );
 
-			var bootstrapper = new Bootstrapper();
-			bootstrapper.Run();
+			mBootstrapper = new Bootstrapper();
+			mBootstrapper.Run();
 		}
 
 		protected override void OnExit( ExitEventArgs e ) {
 			Desktop.Properties.Settings.Default.Save();
+			mBootstrapper.StopNoise();
 
 			base.OnExit( e );
 		}

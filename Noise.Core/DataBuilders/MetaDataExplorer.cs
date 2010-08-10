@@ -19,6 +19,7 @@ namespace Noise.Core.DataBuilders {
 		private readonly FolderStrategyProvider	mStrategyProvider;
 		private readonly DefaultProvider		mDefaultProvider;
 		private readonly ILog					mLog;
+		private bool							mStopExploring;
 		private DatabaseChangeSummary			mSummary;
 
 		public  MetaDataExplorer( IUnityContainer container ) {
@@ -34,6 +35,7 @@ namespace Noise.Core.DataBuilders {
 
 		public void BuildMetaData( DatabaseChangeSummary summary ) {
 			Condition.Requires( summary ).IsNotNull();
+			mStopExploring = false;
 			mSummary = summary;
 
 			try {
@@ -61,11 +63,19 @@ namespace Noise.Core.DataBuilders {
 							mDatabase.Database.Store( file );
 							break;
 					}
+
+					if( mStopExploring ) {
+						break;
+					}
 				}
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Building Metadata:", ex );
 			}
+		}
+
+		public void Stop() {
+			mStopExploring = true;
 		}
 
 		private void BuildMusicMetaData( StorageFile file ) {

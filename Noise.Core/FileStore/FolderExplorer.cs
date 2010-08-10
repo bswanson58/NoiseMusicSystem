@@ -13,6 +13,7 @@ namespace Noise.Core.FileStore {
 		private readonly IUnityContainer	mContainer;
 		private readonly IDatabaseManager	mDatabase;
 		private readonly ILog				mLog;
+		private bool						mStopExploring;
 
 		public  FolderExplorer( IUnityContainer container ) {
 			mContainer = container;
@@ -21,6 +22,8 @@ namespace Noise.Core.FileStore {
 		}
 
 		public void SynchronizeDatabaseFolders() {
+			mStopExploring = false;
+
 			var rootFolders = from RootFolder root in mDatabase.Database where true select root;
 
 			if( rootFolders.Count() == 0 ) {
@@ -38,11 +41,19 @@ namespace Noise.Core.FileStore {
 					else {
 						mLog.LogMessage( "Storage folder does not exists: {0}", rootFolder.DisplayName );
 					}
+
+					if( mStopExploring ) {
+						break;
+					}
 				}
 			}
 			else {
 				throw( new StorageConfigurationException());
 			}
+		}
+
+		public void Stop() {
+			mStopExploring = true;
 		}
 
 		private void LoadConfiguration() {
@@ -104,6 +115,10 @@ namespace Noise.Core.FileStore {
 
 				BuildFolderFiles( folder );
 				BuildFolder( folder );
+
+				if( mStopExploring ) {
+					break;
+				}
 			}
 		}
 
@@ -123,6 +138,10 @@ namespace Noise.Core.FileStore {
 
 				if(!dbList.Exists( dbFile => dbFile.Name == fileName )) {
 					mDatabase.Database.Store( new StorageFile( file.File, parentId, file.Size, file.ModificationTime ));
+				}
+
+				if( mStopExploring ) {
+					break;
 				}
 			}
 		}

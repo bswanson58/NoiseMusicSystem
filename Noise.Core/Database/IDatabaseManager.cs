@@ -5,5 +5,7 @@
 		bool		InitializeDatabase();
 		void		OpenWithCreateDatabase();
 		bool		OpenDatabase();
+
+		void		CloseDatabase();
 	}
 }

@@ -8,6 +8,8 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Desktop {
 	public class Bootstrapper : UnityBootstrapper {
+		private INoiseManager	mNoiseManager;
+
 		protected override DependencyObject CreateShell() {
 			Execute.InitializeWithDispatcher();
 
@@ -40,10 +42,16 @@ namespace Noise.Desktop {
 		}
 
 		private void StartNoise() {
-			var	noiseManager = Container.Resolve<INoiseManager>();
-			Container.RegisterInstance( noiseManager );
-			if( noiseManager.Initialize()) {
-				noiseManager.StartExploring();
+			mNoiseManager = Container.Resolve<INoiseManager>();
+			Container.RegisterInstance( mNoiseManager );
+			if( mNoiseManager.Initialize()) {
+				mNoiseManager.StartExploring();
+			}
+		}
+
+		public void StopNoise() {
+			if( mNoiseManager != null ) {
+				mNoiseManager.Shutdown();
 			}
 		}
 
