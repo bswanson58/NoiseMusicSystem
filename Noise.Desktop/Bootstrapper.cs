@@ -44,9 +44,7 @@ namespace Noise.Desktop {
 		private void StartNoise() {
 			mNoiseManager = Container.Resolve<INoiseManager>();
 			Container.RegisterInstance( mNoiseManager );
-			if( mNoiseManager.Initialize()) {
-				mNoiseManager.StartExploring();
-			}
+			mNoiseManager.Initialize();
 		}
 
 		public void StopNoise() {

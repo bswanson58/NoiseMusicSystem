@@ -10,18 +10,25 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Quartz;
+using Quartz.Impl;
 
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager {
+		internal const string				cBackgroundContentExplorer = "BackgroundContentExplorer";
+
 		private	readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
 		private readonly ILog				mLog;
 		private readonly IDatabaseManager	mDatabase;
+		private	readonly ISchedulerFactory	mSchedulerFactory;
+		private	readonly IScheduler			mJobScheduler;
 		private bool						mExploring;
 		private bool						mContinueExploring;
 		private IFolderExplorer				mFolderExplorer;
 		private IMetaDataExplorer			mMetaDataExplorer;
 		private	ISummaryBuilder				mSummaryBuilder;
+
 		public IDataProvider DataProvider { get; private set; }
 		public IAudioPlayer AudioPlayer { get; private set; }
 		public IPlayQueue PlayQueue { get; private set; }
@@ -34,6 +41,10 @@ namespace Noise.Core {
 			mEvents = mContainer.Resolve<IEventAggregator>();
 			mDatabase = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
 			mContainer.RegisterInstance( typeof( IDatabaseManager ), mDatabase );
+
+			mSchedulerFactory = new StdSchedulerFactory();
+			mJobScheduler = mSchedulerFactory.GetScheduler();
+			mJobScheduler.Start();
 		}
 
 		public bool Initialize() {
@@ -53,10 +64,14 @@ namespace Noise.Core {
 
 			mLog.LogMessage( "Initialized NoiseManager." );
 
+			StartExplorerJobs();
+
 			return ( true );
 		}
 
 		public void Shutdown() {
+			mJobScheduler.Shutdown( true );
+
 			StopExploring();
 			WaitForExplorer();
 
@@ -75,36 +90,47 @@ namespace Noise.Core {
 			}
 		}
 
-		public void StartExploring() {
+		private void StartExplorerJobs() {
 			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
-			if(( configuration != null ) &&
-			   ( configuration.EnableExplorer )) {
-				mContinueExploring = true;
-				mLog.LogMessage( "Starting Explorer." );
+			if( configuration != null ) {
+				if( configuration.EnableLibraryExplorer ) {
+					StartLibraryExplorer();
+				}
 
-				ThreadPool.QueueUserWorkItem( Explore );
+				if( configuration.EnableBackgroundContentExplorer ) {
+					StartBackgroundContentExplorer();
+				}
+			}
+			
+		}
+
+		private void StartLibraryExplorer() {
+			mLog.LogMessage( "Starting Library Explorer." );
+
+			ThreadPool.QueueUserWorkItem( UpdateLibrary );
+		}
+
+		private void StartBackgroundContentExplorer() {
+			var jobDetail = new JobDetail( cBackgroundContentExplorer, "Explorer", typeof( BackgroundContentExplorerJob ));
+			var trigger = new SimpleTrigger( cBackgroundContentExplorer, "Explorer",
+											 DateTime.UtcNow + TimeSpan.FromMinutes( 1 ), null, SimpleTrigger.RepeatIndefinitely, TimeSpan.FromMinutes( 1 )); 
+			var explorer = new BackgroundContentExplorer( mContainer );
+
+			if( explorer.Initialize()) {
+				trigger.JobDataMap[cBackgroundContentExplorer] = explorer;
+
+				mJobScheduler.ScheduleJob( jobDetail, trigger );
+				mLog.LogMessage( "Starting Background Content Explorer." );
+			}
+			else {
+				mLog.LogInfo( "BackgroundContentExplorer could not be initialized." );
 			}
 		}
 
-		public void StopExploring() {
-			mContinueExploring = false;
-
-			if( mFolderExplorer != null ) {
-				mFolderExplorer.Stop();
-			}
-
-			if( mMetaDataExplorer != null ) {
-				mMetaDataExplorer.Stop();
-			}
-
-			if( mSummaryBuilder != null ) {
-				mSummaryBuilder.Stop();
-			}
-		}
-
-		private void Explore( object state ) {
+		private void UpdateLibrary( object state ) {
+			mContinueExploring = true;
 			mExploring = true;
 
 			try {
@@ -158,6 +184,22 @@ namespace Noise.Core {
 			}
 		}
 
+		private void StopExploring() {
+			mContinueExploring = false;
+
+			if( mFolderExplorer != null ) {
+				mFolderExplorer.Stop();
+			}
+
+			if( mMetaDataExplorer != null ) {
+				mMetaDataExplorer.Stop();
+			}
+
+			if( mSummaryBuilder != null ) {
+				mSummaryBuilder.Stop();
+			}
+		}
+
 		private void InitializeStorageConfiguration() {
 			var configMgr = mContainer.Resolve<ISystemConfiguration>();
 			var storageConfig = configMgr.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName );
@@ -174,7 +216,8 @@ namespace Noise.Core {
 
 				var explorerConfig = configMgr.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
-				explorerConfig.EnableExplorer = false;
+				explorerConfig.EnableLibraryExplorer = true;
+				explorerConfig.EnableBackgroundContentExplorer = true;
 				configMgr.Save( explorerConfig );
 			}
 		}

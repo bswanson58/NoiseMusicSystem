@@ -7,8 +7,5 @@
 		IDataProvider	DataProvider { get; }
 		IPlayQueue		PlayQueue { get; }
 		IPlayHistory	PlayHistory { get; }
-
-		void			StartExploring();
-		void			StopExploring();
 	}
 }

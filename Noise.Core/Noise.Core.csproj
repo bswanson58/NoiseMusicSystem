@@ -67,6 +67,9 @@
     <Reference Include="Bass.Net">
       <HintPath>..\lib\BASS.Net\Bass.Net.dll</HintPath>
     </Reference>
+    <Reference Include="Common.Logging">
+      <HintPath>..\lib\Quartz\v1.02\Common.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="CuttingEdge.Conditions">
       <HintPath>..\lib\CuttingEdge.Conditions\CuttingEdge.Conditions.dll</HintPath>
     </Reference>
@@ -93,6 +96,9 @@
     <Reference Include="MusicBrainz">
       <HintPath>..\lib\MusicBrainz\MusicBrainz.dll</HintPath>
     </Reference>
+    <Reference Include="Quartz">
+      <HintPath>..\lib\Quartz\v1.02\Quartz.dll</HintPath>
+    </Reference>
     <Reference Include="Recls.100.Net">
       <HintPath>..\lib\recls\Recls.100.Net.dll</HintPath>
     </Reference>
@@ -116,6 +122,7 @@
     <Compile Include="Database\DatabaseManager.cs" />
     <Compile Include="Database\DatabaseStatistics.cs" />
     <Compile Include="Database\DataProvider.cs" />
+    <Compile Include="DataBuilders\BackgroundContentExplorer.cs" />
     <Compile Include="DataBuilders\ContentManager.cs" />
     <Compile Include="DataBuilders\IContentManager.cs" />
     <Compile Include="DataBuilders\IMetaDataExplorer.cs" />
