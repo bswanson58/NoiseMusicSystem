@@ -39,10 +39,7 @@ namespace Noise.UI.ViewModels {
 		public void OnExplorerItemSelected( object item ) {
 			mTracks.Clear();
 
-			if( item is DbArtist ) {
-				mTracks.AddRange( from track in mNoiseManager.DataProvider.GetTrackList( item as DbArtist ) select new TrackViewNode( mEventAggregator, track ));
-			}
-			else if( item is DbAlbum ) {
+			if( item is DbAlbum ) {
 				mTracks.AddRange( from track in mNoiseManager.DataProvider.GetTrackList( item as DbAlbum ) select new TrackViewNode( mEventAggregator, track ));
 			}
 		}
