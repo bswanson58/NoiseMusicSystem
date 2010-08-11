@@ -40,10 +40,12 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <ListBox Grid.Column="0" ItemsSource="{Binding Path=SimilarArtist}"/>
-            <ListBox Grid.Column="1" ItemsSource="{Binding Path=TopAlbums}"/>
+            <ListBox Grid.Column="0" ItemsSource="{Binding Path=TopAlbums}"/>
+            <ListBox Grid.Column="1" ItemsSource="{Binding Path=BandMembers}"/>
+            <ListBox Grid.Column="2" ItemsSource="{Binding Path=SimilarArtist}"/>
         </Grid>
     </Grid>
 </UserControl>

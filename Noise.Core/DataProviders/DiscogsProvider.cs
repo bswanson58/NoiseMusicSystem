@@ -30,6 +30,7 @@ namespace Noise.Core.DataProviders {
 	internal class DiscogRelease {
 		public string	Id { get; private set; }
 		public string	Status { get; private set; }
+		public string	Type { get; private set; }
 		public string	Title { get; private set; }
 		public string	Format { get; private set; }
 		public string	Label { get; private set; }
@@ -41,6 +42,8 @@ namespace Noise.Core.DataProviders {
 				Id = attrib != null ? attrib.Value : "";
 				attrib = root.Attribute( "status" );
 				Status = attrib != null ? attrib.Value : "";
+				attrib = root.Attribute( "type" );
+				Type = attrib != null ? attrib.Value : "";
 
 				var element = root.Element( "title" );
 				Title = element != null ? element.Value : "";
@@ -146,7 +149,7 @@ namespace Noise.Core.DataProviders {
 						uint.TryParse( element.Value, out year );
 					}
 				
-					retValue = new DbDiscographyRelease( mArtistId, title, format, label, year );
+					retValue = new DbDiscographyRelease( mArtistId, title, format, label, year, DiscographyReleaseType.Unknown );
 				}
 			}
 
@@ -263,15 +266,40 @@ namespace Noise.Core.DataProviders {
 						mDatabase.Database.Delete( release );
 					}
 
-					var releaseAdded = false;
-					foreach( var release in response.ContentEntity.ReleaseList ) {
-						AddRelease( forArtist.Name, artistId, release.Id );
+					if( response.ContentEntity.ReleaseList.Count > 0 ) {
+						foreach( DiscogRelease release in response.ContentEntity.ReleaseList ) {
+							var releaseType = DiscographyReleaseType.Unknown;
 
-						releaseAdded = true;
+							if( release.Type.Length > 0 ) {
+								releaseType = DiscographyReleaseType.Other;
+
+								if( String.Compare( release.Type, "Main", true ) == 0 ) {
+									releaseType = DiscographyReleaseType.Release;
+								}
+								else if( String.Compare( release.Type, "Appearance", true ) == 0 ) {
+									releaseType = DiscographyReleaseType.Appearance;
+								}
+								else if( String.Compare( release.Type, "TrackAppearance", true ) == 0 ) {
+									releaseType = DiscographyReleaseType.TrackAppearance;
+								}
+							}
+							Database.Database.Store( new DbDiscographyRelease( artistId, release.Title, release.Format, release.Label, release.Year, releaseType )
+																{ IsContentAvailable = true });
+						}
 					}
-					if(!releaseAdded ) {
-						Database.Database.Store( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear ));
+					else {
+						Database.Database.Store( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear, DiscographyReleaseType.Unknown ));
 					}
+
+//					var releaseAdded = false;
+//					foreach( var release in response.ContentEntity.ReleaseList ) {
+//						AddRelease( forArtist.Name, artistId, release.Id );
+//
+//						releaseAdded = true;
+//					}
+//					if(!releaseAdded ) {
+//						Database.Database.Store( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear ));
+//					}
 
 					Log.LogInfo( String.Format( "Discogs updated artist: {0}", forArtist.Name ));
 				}
@@ -284,7 +312,7 @@ namespace Noise.Core.DataProviders {
 			}
 		}
 
-		private void AddRelease( string artistName, long artistId, string releaseId ) {
+/*		private void AddRelease( string artistName, long artistId, string releaseId ) {
 			try {
 				var	request = new RestRequest { VersionPath = "release", Path = releaseId, Deserializer = new ReleaseDeserializer( artistId ) };
 				var response = mClient.Request<DbDiscographyRelease>( request );
@@ -292,14 +320,14 @@ namespace Noise.Core.DataProviders {
 				if(( response.StatusCode == HttpStatusCode.OK ) &&
 				   ( response.ContentEntity != null )) {
 					response.ContentEntity.IsContentAvailable = true;
-					mDatabase.Database.Store( response.ContentEntity );
+					Database.Database.Store( response.ContentEntity );
 				}
 			}
 			catch( Exception ex ) {
 				mLog.LogException( String.Format( "Discogs requesting release {0} from artist: {1}", releaseId, artistName ), ex );
 			}
 		}
-
+*/
 		public void UpdateContent( DbAlbum forAlbum ) {
 			throw new NotImplementedException();
 		}

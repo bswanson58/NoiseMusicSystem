@@ -122,5 +122,19 @@ namespace Noise.UI.ViewModels {
 				return( retValue );
 			}
 		}
+
+		[DependsUpon( "SupportInfo" )]
+		public IList<string> BandMembers {
+			get {
+				IList<string>	retValue = null;
+
+				if(( SupportInfo != null ) &&
+				   ( SupportInfo.BandMembers != null )) {
+					retValue = SupportInfo.BandMembers.Items;
+				}
+
+				return( retValue );
+			}
+		}
 	}
 }
