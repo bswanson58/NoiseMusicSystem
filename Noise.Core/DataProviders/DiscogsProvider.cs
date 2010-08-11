@@ -291,82 +291,78 @@ namespace Noise.Core.DataProviders {
 				var requestUri = SearchForArtist( forArtist );
 				if( requestUri != null ) {
 					request.Path = requestUri.AbsolutePath;
-				}
-				else {
-					request.VersionPath = "artist";
-					request.Path = Uri.EscapeDataString( forArtist.Name );
-				}
 
-				var	response = mClient.Request<DiscogsArtist>( request );
-				if(( response.StatusCode == HttpStatusCode.OK ) &&
-				   ( response.ContentEntity != null )) {
-					var artistId = Database.Database.GetUid( forArtist );
-					var	bandMembers = ( from DbAssociatedItems item in Database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select  item ).FirstOrDefault();
+					var	response = mClient.Request<DiscogsArtist>( request );
+					if(( response.StatusCode == HttpStatusCode.OK ) &&
+					   ( response.ContentEntity != null )) {
+						var artistId = Database.Database.GetUid( forArtist );
+						var	bandMembers = ( from DbAssociatedItems item in Database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select  item ).FirstOrDefault();
 
-					if( bandMembers == null ) {
-						bandMembers = new DbAssociatedItems( artistId, ContentType.BandMembers );
-					}
-					bandMembers.UpdateExpiration();
-
-					if(( response.ContentEntity.Members != null ) &&
-					   ( response.ContentEntity.Members.Count > 0 )) {
-
-						bandMembers.IsContentAvailable = true;
-
-						bandMembers.Items = new string[response.ContentEntity.Members.Count];
-						response.ContentEntity.Members.CopyTo( bandMembers.Items );
-
-					}
-					else {
-						bandMembers.IsContentAvailable = false;
-					}
-
-					Database.Database.Store( bandMembers );
-
-					var releases = from DbDiscographyRelease release in mDatabase.Database where release.AssociatedItem == artistId select release;
-					foreach( var release in releases ) {
-						mDatabase.Database.Delete( release );
-					}
-
-					if( response.ContentEntity.ReleaseList.Count > 0 ) {
-						foreach( DiscogRelease release in response.ContentEntity.ReleaseList ) {
-							var releaseType = DiscographyReleaseType.Unknown;
-
-							if( release.Type.Length > 0 ) {
-								releaseType = DiscographyReleaseType.Other;
-
-								if( String.Compare( release.Type, "Main", true ) == 0 ) {
-									releaseType = DiscographyReleaseType.Release;
-								}
-								else if( String.Compare( release.Type, "Appearance", true ) == 0 ) {
-									releaseType = DiscographyReleaseType.Appearance;
-								}
-								else if( String.Compare( release.Type, "TrackAppearance", true ) == 0 ) {
-									releaseType = DiscographyReleaseType.TrackAppearance;
-								}
-							}
-							Database.Database.Store( new DbDiscographyRelease( artistId, release.Title, release.Format, release.Label, release.Year, releaseType )
-																{ IsContentAvailable = true });
+						if( bandMembers == null ) {
+							bandMembers = new DbAssociatedItems( artistId, ContentType.BandMembers );
 						}
+						bandMembers.UpdateExpiration();
+
+						if(( response.ContentEntity.Members != null ) &&
+						   ( response.ContentEntity.Members.Count > 0 )) {
+
+							bandMembers.IsContentAvailable = true;
+
+							bandMembers.Items = new string[response.ContentEntity.Members.Count];
+							response.ContentEntity.Members.CopyTo( bandMembers.Items );
+
+						}
+						else {
+							bandMembers.IsContentAvailable = false;
+						}
+
+						Database.Database.Store( bandMembers );
+
+						var releases = from DbDiscographyRelease release in mDatabase.Database where release.AssociatedItem == artistId select release;
+						foreach( var release in releases ) {
+							mDatabase.Database.Delete( release );
+						}
+
+						if( response.ContentEntity.ReleaseList.Count > 0 ) {
+							foreach( DiscogRelease release in response.ContentEntity.ReleaseList ) {
+								var releaseType = DiscographyReleaseType.Unknown;
+
+								if( release.Type.Length > 0 ) {
+									releaseType = DiscographyReleaseType.Other;
+
+									if( String.Compare( release.Type, "Main", true ) == 0 ) {
+										releaseType = DiscographyReleaseType.Release;
+									}
+									else if( String.Compare( release.Type, "Appearance", true ) == 0 ) {
+										releaseType = DiscographyReleaseType.Appearance;
+									}
+									else if( String.Compare( release.Type, "TrackAppearance", true ) == 0 ) {
+										releaseType = DiscographyReleaseType.TrackAppearance;
+									}
+								}
+								Database.Database.Store( new DbDiscographyRelease( artistId, release.Title, release.Format, release.Label, release.Year, releaseType )
+																	{ IsContentAvailable = true });
+							}
+						}
+						else {
+							Database.Database.Store( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear, DiscographyReleaseType.Unknown ));
+						}
+
+	//					var releaseAdded = false;
+	//					foreach( var release in response.ContentEntity.ReleaseList ) {
+	//						AddRelease( forArtist.Name, artistId, release.Id );
+	//
+	//						releaseAdded = true;
+	//					}
+	//					if(!releaseAdded ) {
+	//						Database.Database.Store( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear ));
+	//					}
+
+						Log.LogInfo( String.Format( "Discogs updated artist: {0}", forArtist.Name ));
 					}
 					else {
-						Database.Database.Store( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear, DiscographyReleaseType.Unknown ));
+						Log.LogMessage( String.Format( "Discogs: {0}", response.StatusCode ));
 					}
-
-//					var releaseAdded = false;
-//					foreach( var release in response.ContentEntity.ReleaseList ) {
-//						AddRelease( forArtist.Name, artistId, release.Id );
-//
-//						releaseAdded = true;
-//					}
-//					if(!releaseAdded ) {
-//						Database.Database.Store( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear ));
-//					}
-
-					Log.LogInfo( String.Format( "Discogs updated artist: {0}", forArtist.Name ));
-				}
-				else {
-					Log.LogMessage( String.Format( "Discogs: {0}", response.StatusCode ));
 				}
 			}
 			catch( Exception ex ) {
