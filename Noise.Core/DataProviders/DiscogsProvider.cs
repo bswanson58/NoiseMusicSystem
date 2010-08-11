@@ -14,6 +14,10 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
+	internal class DiscogsSearch {
+		public	string Uri { get; set; }
+	}
+
 	internal class DiscogsArtist {
 		public string				Name { get; set; }
 		public string				ImageUrl { get; set; }
@@ -57,6 +61,40 @@ namespace Noise.Core.DataProviders {
 		}
 	}
 
+	internal class SearchDeserializer : IDeserializer {
+		public object Deserialize( string content, Type type ) {
+			var retValue = new DiscogsSearch();
+
+			if( type == typeof( DiscogsSearch )) {
+				XElement	root = XElement.Parse( content );
+				XElement	searchRoot = root.Element( "exactresults" );
+
+				if( searchRoot != null ) {
+					var	result = searchRoot.Element( "result" );
+
+					if( result != null ) {
+						var attrib = result.Attribute( "type" );
+
+						if(( attrib != null ) &&
+						   ( String.Compare( attrib.Value, "artist", true ) == 0 )) {
+							var element = result.Element( "uri" );
+
+							if( element != null ) {
+								retValue.Uri = element.Value;
+							}
+						}
+					}
+				}
+			}
+
+			return( retValue );
+		}
+
+		public T Deserialize<T>( string content ) {
+			return((T)Deserialize( content, typeof (T)));
+		}
+	}
+
 	internal class ArtistDeserializer : IDeserializer {
 		public object Deserialize( string content, Type type ) {
 			var retValue = new DiscogsArtist();
@@ -72,11 +110,11 @@ namespace Noise.Core.DataProviders {
 
 					elements = from url in artistRoot.Descendants( "urls" ) select url;
 					var urlList = from url in elements.Descendants( "url" ) select url;
-					retValue.WebsiteUrl = urlList.First() != null ? urlList.First().Value : "";
+					retValue.WebsiteUrl = urlList.FirstOrDefault() != null ? urlList.First().Value : "";
 
 					elements = from images in artistRoot.Descendants( "images" ) select images;
 					var imageList = from image in elements.Descendants( "image" ) select image;
-					if( imageList.First() != null ) {
+					if( imageList.FirstOrDefault() != null ) {
 						var attrib = imageList.First().Attribute( "uri" );
 						retValue.ImageUrl = attrib != null ? attrib.Value : "";
 					}
@@ -192,7 +230,6 @@ namespace Noise.Core.DataProviders {
 			mClient = new RestClient { Authority = cAuthority, UserAgent = "Noise", DecompressionMethods = DecompressionMethods.GZip };
 			mClient.AddParameter( "f", "xml" );
 			mClient.AddParameter( "api_key", cApiKey );
-
 		}
 
 		private IDatabaseManager Database {
@@ -231,9 +268,34 @@ namespace Noise.Core.DataProviders {
 			get{ return( false ); }
 		}
 
+		private Uri SearchForArtist( DbArtist forArtist ) {
+			Uri retValue = null;
+			var request = new RestRequest { VersionPath = "search", Deserializer = new SearchDeserializer() };
+
+			request.AddParameter( "type", "all" );
+			request.AddParameter( "q", forArtist.Name );
+
+			var response = mClient.Request<DiscogsSearch>( request );
+			if(( response.StatusCode == HttpStatusCode.OK ) &&
+			   ( response.ContentEntity != null ) &&
+			   ( response.ContentEntity.Uri != null )) {
+				retValue = new Uri( response.ContentEntity.Uri );
+			}
+
+			return( retValue );
+		}
+
 		public void UpdateContent( DbArtist forArtist ) {
 			try {
-				var	request = new RestRequest { VersionPath = "artist", Path = forArtist.Name, Deserializer = new ArtistDeserializer() };
+				var request = new RestRequest {  Deserializer = new ArtistDeserializer() };
+				var requestUri = SearchForArtist( forArtist );
+				if( requestUri != null ) {
+					request.Path = requestUri.AbsolutePath;
+				}
+				else {
+					request.VersionPath = "artist";
+					request.Path = Uri.EscapeDataString( forArtist.Name );
+				}
 
 				var	response = mClient.Request<DiscogsArtist>( request );
 				if(( response.StatusCode == HttpStatusCode.OK ) &&
