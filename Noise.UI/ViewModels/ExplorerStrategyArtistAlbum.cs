@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
@@ -28,6 +29,8 @@ namespace Noise.UI.ViewModels {
 
 			mChangeObserver = new Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( node => OnNodeChanged( node.Source ));
+
+			mEventAggregator.GetEvent<Events.ArtistContentUpdated>().Subscribe( OnArtistUpdated );
 		}
 
 		private void OnNodeChanged( object source ) {
@@ -35,6 +38,19 @@ namespace Noise.UI.ViewModels {
 
 			if( notifier != null ) {
 				mNoiseManager.DataProvider.UpdateItem( notifier.TargetItem );
+			}
+		}
+
+		public void OnArtistUpdated( DbArtist forArtist ) {
+			foreach( var treeNode in mViewModel.TreeData ) {
+				var artist = treeNode.Item as DbArtist;
+
+				if(( artist != null ) &&
+				   ( string.Compare( artist.Name, forArtist.Name, true ) == 0 )) {
+					treeNode.SetItem( forArtist );
+
+					break;
+				}
 			}
 		}
 

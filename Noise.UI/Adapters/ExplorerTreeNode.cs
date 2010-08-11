@@ -51,6 +51,12 @@ namespace Noise.UI.Adapters {
 			}
 		}
 
+		public void SetItem( object item ) {
+			Item = item;
+
+			RaisePropertyChanged( () => Item );
+		}
+
 		public void SetChildren( IEnumerable<ExplorerTreeNode> children ) {
 			Children = new ObservableCollection<ExplorerTreeNode>( children );
 
