@@ -157,7 +157,7 @@ namespace Noise.Core.DataProviders {
 					}
 					topAlbums.IsContentAvailable = true;
 
-					mLog.LogInfo( "Updating LastFm artist: {0}", artist.Name );
+					mLog.LogInfo( "LastFm updated artist: {0}", artist.Name );
 				}
 
 				mDatabase.Database.Store( bio );
@@ -172,22 +172,27 @@ namespace Noise.Core.DataProviders {
 		private void ArtistImageDownloadComplete( long parentId, byte[] imageData ) {
 			Condition.Requires( imageData ).IsNotNull();
 
-			var parms = mDatabase.Database.CreateParameters();
+			try {
+				var parms = mDatabase.Database.CreateParameters();
 
-			parms["artistId"] = parentId;
-			parms["artistImage"] = ContentType.ArtistPrimaryImage;
+				parms["artistId"] = parentId;
+				parms["artistImage"] = ContentType.ArtistPrimaryImage;
 
-			var	artwork = mDatabase.Database.ExecuteScalar( "SELECT DbArtwork WHERE AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork;
-			if( artwork == null ) {
-				artwork = new DbArtwork( parentId, ContentType.ArtistPrimaryImage );
+				var	artwork = mDatabase.Database.ExecuteScalar( "SELECT DbArtwork WHERE AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork;
+				if( artwork == null ) {
+					artwork = new DbArtwork( parentId, ContentType.ArtistPrimaryImage );
+				}
+
+				artwork.Image = imageData;
+				artwork.Source = InfoSource.External;
+				artwork.IsContentAvailable = true;
+				artwork.UpdateExpiration();
+
+				mDatabase.Database.Store( artwork );
 			}
-
-			artwork.Image = imageData;
-			artwork.Source = InfoSource.External;
-			artwork.IsContentAvailable = true;
-			artwork.UpdateExpiration();
-
-			mDatabase.Database.Store( artwork );
+			catch( Exception ex ) {
+				mLog.LogException( "LastFm: Image Download: ", ex );
+			}
 		}
 	}
 }
