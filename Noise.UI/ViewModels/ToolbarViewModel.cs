@@ -40,7 +40,7 @@ namespace Noise.UI.ViewModels {
 		public void Execute_OpenUrl() {
 			var noiseManager = mContainer.Resolve<INoiseManager>();
 
-			noiseManager.AudioPlayer.OpenStream( "http://provisioning.streamtheworld.com/pls/WXRTFM.pls" );
+			noiseManager.AudioPlayer.OpenStream( "http://provisioning.streamtheworld.com/pls/WXRTFMAAC.pls" );
 		}
 	}
 }

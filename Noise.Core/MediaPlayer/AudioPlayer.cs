@@ -67,10 +67,18 @@ namespace Noise.Core.MediaPlayer {
 			mUpdateTimer.Elapsed += OnUpdateTimer;
 
 			Bass.BASS_Init( -1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero );
-			Bass.BASS_PluginLoad( "bassflac.dll" );
-			Bass.BASS_PluginLoad( "basswma.dll" );
+
+			LoadPlugin( "bassflac.dll" );
+			LoadPlugin( "basswma.dll" );
+			LoadPlugin( "bass_aac.dll" );
 
 			mStreamSync = new SYNCPROC( SyncProc );
+		}
+
+		private void LoadPlugin( string plugin ) {
+			if( Bass.BASS_PluginLoad( plugin ) == 0 ) {
+				mLog.LogMessage( String.Format( "Cannot load Bass Plugin: {0}", plugin ));
+			}
 		}
 
 		public float Pan {
