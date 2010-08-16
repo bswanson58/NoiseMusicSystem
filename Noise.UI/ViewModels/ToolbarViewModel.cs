@@ -1,5 +1,4 @@
-﻿using Microsoft.Practices.Composite.Events;
-using Microsoft.Practices.Unity;
+﻿using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Views;
@@ -7,17 +6,12 @@ using Noise.UI.Views;
 namespace Noise.UI.ViewModels {
 	public class ToolbarViewModel : ViewModelBase {
 		private IUnityContainer		mContainer;
-		private IEventAggregator	mEvents;
 		private SmallPlayerView		mPlayerView;
 
 		[Dependency]
 		public IUnityContainer Container {
 			get { return( mContainer ); }
-			set {
-				mContainer = value;
-
-				mEvents = mContainer.Resolve<IEventAggregator>();
-			}
+			set { mContainer = value; }
 		}
 
 		public void Execute_Configuration() {
