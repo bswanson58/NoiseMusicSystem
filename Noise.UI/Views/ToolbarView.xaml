@@ -14,6 +14,7 @@
         <ToolBar Band="1" BandIndex="1">
             <Button Margin="3" Command="{Binding Path=Configuration}">Configuration</Button>
             <Button Margin="3" Command="{Binding Path=SmallPlayerView}">Player</Button>
+            <Button Margin="3" Command="{Binding Path=OpenUrl}">Stream WXRT</Button>
         </ToolBar>
     </ToolBarTray>
 </UserControl>

@@ -99,7 +99,7 @@ namespace Noise.UI.ViewModels {
 				if( status == ePlayingChannelStatus.Stopped ) {
 					track.PercentPlayed = mNoiseManager.AudioPlayer.GetPercentPlayed( channel );
 					mNoiseManager.PlayHistory.TrackPlayCompleted( track );
-					mNoiseManager.AudioPlayer.CloseFile( channel );
+					mNoiseManager.AudioPlayer.CloseChannel( channel );
 					mOpenTracks.Remove( channel );
 
 					if( channel == CurrentChannel ) {

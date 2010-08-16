@@ -10,12 +10,14 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Un4seen.Bass;
+using Un4seen.Bass.AddOn.Tags;
 using Timer = System.Timers.Timer;
 
 namespace Noise.Core.MediaPlayer {
 	internal class AudioStream {
 		public	int				Channel { get; private set; }
 		public	StorageFile		PhysicalFile { get; private set; }
+		public	string			Url { get; private set; }
 		public	bool			IsActive { get; set; }
 		public	bool			InSlide { get; set; }
 		public	bool			PauseOnSlide { get; set; }
@@ -24,12 +26,21 @@ namespace Noise.Core.MediaPlayer {
 		public	BASSActive		Mode { get; set; }
 		public	float			SampleRate { get; private set; }
 
-		public AudioStream( int channel, StorageFile file, float sampleRate ) {
+		private AudioStream( int channel, float sampleRate ) {
 			Channel = channel;
-			PhysicalFile = file;
 			SampleRate = sampleRate;
 
 			Mode = BASSActive.BASS_ACTIVE_STOPPED;
+		}
+
+		public AudioStream( StorageFile file, int channel, float sampleRate ) :
+			this( channel, sampleRate ) {
+			PhysicalFile = file;
+		}
+
+		public AudioStream( string url, int channel, float sampleRate ) :
+			this( channel, sampleRate ) {
+			Url = url;
 		}
 	}
 
@@ -43,6 +54,9 @@ namespace Noise.Core.MediaPlayer {
 		private readonly Timer							mUpdateTimer;
 		private readonly Dictionary<int, AudioStream>	mCurrentStreams;
 
+		private readonly SYNCPROC	mStreamSync;
+		private string				mStreamUrl;
+
 		public AudioPlayer( IUnityContainer container ) {
 			mContainer = container;
 			mEventAggregator = mContainer.Resolve<IEventAggregator>();
@@ -55,6 +69,8 @@ namespace Noise.Core.MediaPlayer {
 			Bass.BASS_Init( -1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero );
 			Bass.BASS_PluginLoad( "bassflac.dll" );
 			Bass.BASS_PluginLoad( "basswma.dll" );
+
+			mStreamSync = new SYNCPROC( SyncProc );
 		}
 
 		public float Pan {
@@ -118,7 +134,7 @@ namespace Noise.Core.MediaPlayer {
 					Single	sampleRate = 0;
 					Bass.BASS_ChannelGetAttribute( channel, BASSAttribute.BASS_ATTRIB_FREQ, ref sampleRate );
 
-					var stream = new AudioStream( channel, file, sampleRate );
+					var stream = new AudioStream( file, channel, sampleRate );
 					mCurrentStreams.Add( channel, stream );
 
 					InitializeEq( channel );
@@ -137,6 +153,64 @@ namespace Noise.Core.MediaPlayer {
 			}
 
 			return ( retValue );
+		}
+
+		public int OpenStream( string url ) {
+			var retValue = 0;
+
+			if(!String.IsNullOrWhiteSpace( url )) {
+				try {
+					if(!Bass.BASS_SetConfig( BASSConfig.BASS_CONFIG_NET_PLAYLIST, url.EndsWith( ".pls" ) ? 1 : 0 )) {
+						mLog.LogMessage( String.Format( "AudioPlayer - OpenStream cannot set _CONFIG_NET_PLAYLIST for: {0}", url ));
+					}
+
+					var channel = Bass.BASS_StreamCreateURL( url, 0, BASSFlag.BASS_DEFAULT, null, IntPtr.Zero );
+					if( channel != 0 ) {
+						Single	sampleRate = 0;
+						Bass.BASS_ChannelGetAttribute( channel, BASSAttribute.BASS_ATTRIB_FREQ, ref sampleRate );
+
+						var stream = new AudioStream( url, channel, sampleRate );
+						mCurrentStreams.Add( channel, stream );
+
+						InitializeEq( channel );
+						SetPan( stream );
+						SetPlaySpeed( stream );
+						retValue = channel;
+						mStreamUrl = url;
+
+						Play( channel );
+
+						var	sync = Bass.BASS_ChannelSetSync( channel, BASSSync.BASS_SYNC_META, 0, mStreamSync, IntPtr.Zero );
+
+						var tagInfo = new TAG_INFO( url );
+						if( BassTags.BASS_TAG_GetFromURL( channel, tagInfo )) {
+							
+						}
+
+						if(( mCurrentStreams.Count > 0 ) &&
+						   (!mUpdateTimer.Enabled )) {
+							mUpdateTimer.Start();
+						}
+					}
+					else {
+						var errorCode = Bass.BASS_ErrorGetCode();
+
+						mLog.LogMessage( String.Format( "AudioPlayer OpenUrl failed: {0}", errorCode ));
+					}
+				}
+				catch( Exception ex ) {
+					mLog.LogException( String.Format( "AudioPlayer opening url: {0}", url ), ex );
+				}
+			}
+
+			return( retValue );
+		}
+
+		private void SyncProc( int handle, int channel, int data, IntPtr user ) {
+			var tagInfo = new TAG_INFO( mStreamUrl );
+			if( BassTags.BASS_TAG_GetFromURL( channel, tagInfo )) {
+							
+			}
 		}
 
 		private static void InitializeEq( int channel ) {
@@ -204,7 +278,7 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
-		public void CloseFile( int channel ) {
+		public void CloseChannel( int channel ) {
 			var stream = GetStream( channel );
 
 			if( stream != null ) {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Views;
 
@@ -34,6 +35,12 @@ namespace Noise.UI.ViewModels {
 				mPlayerView.Close();
 				mPlayerView = null;
 			}
+		}
+
+		public void Execute_OpenUrl() {
+			var noiseManager = mContainer.Resolve<INoiseManager>();
+
+			noiseManager.AudioPlayer.OpenStream( "http://provisioning.streamtheworld.com/pls/WXRTFM.pls" );
 		}
 	}
 }

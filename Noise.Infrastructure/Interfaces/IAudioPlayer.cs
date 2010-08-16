@@ -11,7 +11,8 @@ namespace Noise.Infrastructure.Interfaces {
 
 	public interface IAudioPlayer {
 		int						OpenFile( StorageFile file );
-		void					CloseFile( int channel );
+		int						OpenStream( string url );
+		void					CloseChannel( int channel );
 
 		void					Play( int channel );
 		void					FadeAndPause( int channel );
