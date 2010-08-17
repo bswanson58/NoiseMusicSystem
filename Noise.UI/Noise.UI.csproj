@@ -115,10 +115,13 @@
     <Compile Include="Adapters\ExplorerTreeNode.cs" />
     <Compile Include="Adapters\TrackViewNode.cs" />
     <Compile Include="Adapters\UserSettingsNotifier.cs" />
+    <Compile Include="Behaviours\EventBehaviourFactory.cs" />
     <Compile Include="Behaviours\ListViewSort.cs" />
     <Compile Include="Behaviours\SliderAnimateAfterDrag.cs" />
     <Compile Include="Behaviours\ListViewColumnStretch.cs" />
     <Compile Include="Behaviours\TreeViewItemBehaviour.cs" />
+    <Compile Include="Controls\ListBoxEx.cs" />
+    <Compile Include="Controls\SearchTextBox.cs" />
     <Compile Include="NoiseUiModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\ViewModelResolver.cs" />
@@ -178,6 +181,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Resources\ListBoxEx.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Resources\UiResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -218,6 +225,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SearchClear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SearchPrevious.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SearchCategory.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
