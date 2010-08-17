@@ -53,7 +53,7 @@ namespace Noise.Core.DataProviders {
 				var	trackName = Path.GetFileNameWithoutExtension( mFile.Name );
 				var nameParts = trackName.Split( new []{ '-' });
 
-				return( nameParts.Count() > 0 ? nameParts[1].Trim() : trackName );
+				return( nameParts.Count() > 1 ? nameParts[1].Trim() : trackName );
 			}
 		}
 
