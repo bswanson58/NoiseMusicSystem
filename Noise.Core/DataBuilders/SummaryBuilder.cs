@@ -37,6 +37,7 @@ namespace Noise.Core.DataBuilders {
 
 					var artistId = mDatabase.Database.GetUid( artist );
 					var albums = from DbAlbum album in mDatabase.Database where album.Artist == artistId select album;
+					var albumGenre = new Dictionary<string, int>();
 					var albumCount = 0;
 
 					foreach( var album in albums ) {
@@ -46,11 +47,15 @@ namespace Noise.Core.DataBuilders {
 						album.TrackCount = (Int16)tracks.Count();
 
 						var years = new List<UInt32>();
+						var trackGenre = new Dictionary<string, int>();
 						foreach( var track in tracks ) {
 							if(!years.Contains( track.PublishedYear )) {
 								years.Add( track.PublishedYear );
 							}
+
+							AddGenre( trackGenre, track.CalculatedGenre );
 						}
+
 						if( years.Count == 0 ) {
 							album.PublishedYear = Constants.cUnknownYear;
 						}
@@ -61,6 +66,9 @@ namespace Noise.Core.DataBuilders {
 							album.PublishedYear = Constants.cVariousYears;
 						}
 
+						album.CalculatedGenre = DetermineTopGenre( trackGenre );
+						AddGenre( albumGenre, album.CalculatedGenre );
+
 						mDatabase.Database.Store( album );
 						albumCount++;
 
@@ -70,6 +78,8 @@ namespace Noise.Core.DataBuilders {
 					}
 
 					artist.AlbumCount = (Int16)albumCount;
+					artist.CalculatedGenre = DetermineTopGenre( albumGenre );
+
 					mDatabase.Database.Store( artist );
 
 					if( mStop ) {
@@ -80,6 +90,34 @@ namespace Noise.Core.DataBuilders {
 			catch( Exception ex ) {
 				mLog.LogException( "Building summary data: ", ex );
 			}
+		}
+
+		private static void AddGenre( Dictionary<string, int> genres, string genre ) {
+			if(!String.IsNullOrWhiteSpace( genre )) {
+				if( genres.ContainsKey( genre )) {
+					genres[genre]++;
+				}
+				else {
+					genres.Add( genre, 1 );
+				}
+			}
+		}
+
+		private static string DetermineTopGenre( Dictionary<string, int> genres ) {
+			var retValue = "";
+
+			if( genres.Count > 0 ) {
+				var genreCount = 0;
+
+				foreach( var genre in genres.Keys ) {
+					if( genres[genre] > genreCount ) {
+						genreCount = genres[genre];
+						retValue = genre;
+					}
+				}
+			}
+
+			return( retValue );
 		}
 	}
 }

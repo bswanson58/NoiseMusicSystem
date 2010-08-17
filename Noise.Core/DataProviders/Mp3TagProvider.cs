@@ -133,9 +133,10 @@ namespace Noise.Core.DataProviders {
 						}
 					}
 
-					if(( Tags.Tag.Genres != null ) &&
+					if(( String.IsNullOrWhiteSpace( track.CalculatedGenre )) &&
+					   ( Tags.Tag.Genres != null ) &&
 					   ( Tags.Tag.Genres.GetLength( 0 ) > 0 )) {
-						track.Genre = Tags.Tag.Genres[0];
+						track.CalculatedGenre = Tags.Tag.Genres[0];
 					}
 				}
 				catch( Exception ex ) {

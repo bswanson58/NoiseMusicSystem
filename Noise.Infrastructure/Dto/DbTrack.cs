@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbTrack : IUserSettings {
@@ -16,7 +17,9 @@ namespace Noise.Infrastructure.Dto {
 		public UInt32			PublishedYear { get; set; }
 		public DateTime			DateAdded { get; private set; }
 		public eAudioEncoding	Encoding { get; set; }
-		public string			Genre { get; set; }
+		public string			CalculatedGenre { get; set; }
+		public string			ExternalGenre { get; set; }
+		public string			UserGenre { get; set; }
 		public bool				IsFavorite { get; set; }
 
 		public DbTrack() {
@@ -24,13 +27,22 @@ namespace Noise.Infrastructure.Dto {
 			DateAdded = DateTime.Now.Date;
 			Encoding = eAudioEncoding.Unknown;
 
-			Genre = "";
+			CalculatedGenre = "";
+			ExternalGenre = "";
+			UserGenre = "";
 			Performer = "";
 			VolumeName = "";
 		}
 
+		[Ignore]
 		public TimeSpan Duration {
 			get{ return( new TimeSpan( 0, 0, 0, 0, DurationMilliseconds )); }
+		}
+
+		[Ignore]
+		public string Genre {
+			get{ return( String.IsNullOrWhiteSpace( UserGenre ) ? ( String.IsNullOrWhiteSpace( ExternalGenre ) ? CalculatedGenre : ExternalGenre ) : UserGenre ); }
+			set{ UserGenre = value; }
 		}
 
 		[Export("PersistenceType")]

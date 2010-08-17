@@ -49,6 +49,9 @@ namespace Noise.Core.DataProviders {
 		}
 
 		public void AddAvailableMetaData( DbArtist artist, DbAlbum album, DbTrack track ) {
+			if( String.IsNullOrWhiteSpace( track.CalculatedGenre )) {
+				track.CalculatedGenre = StrategyInformation.GetStrategyDefinition( eFolderStrategy.Genre );
+			}
 		}
 	}
 }
