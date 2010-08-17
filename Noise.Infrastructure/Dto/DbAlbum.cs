@@ -6,7 +6,8 @@ namespace Noise.Infrastructure.Dto {
 	public class DbAlbum : IUserSettings {
 		public string			Name { get; set; }
 		public long				Artist { get; set; }
-		public Int16			Rating { get; set; }
+		public Int16			UserRating { get; set; }
+		public Int16			CalculatedRating { get; set; }
 		public Int16			TrackCount { get; set; }
 		public UInt32			PublishedYear { get; set; }
 		public string			CalculatedGenre { get; set; }
@@ -25,6 +26,17 @@ namespace Noise.Infrastructure.Dto {
 		public string Genre {
 			get{ return( String.IsNullOrWhiteSpace( UserGenre ) ? ( String.IsNullOrWhiteSpace( ExternalGenre ) ? CalculatedGenre : ExternalGenre ) : UserGenre ); }
 			set{ UserGenre = value; }
+		}
+
+		[Ignore]
+		public Int16 Rating {
+			get{ return( IsUserRating ? UserRating : CalculatedRating ); }
+			set{ UserRating = value; }
+		}
+
+		[Ignore]
+		public bool IsUserRating {
+			get{ return( UserRating != 0 ); }
 		}
 
 		[Export("PersistenceType")]

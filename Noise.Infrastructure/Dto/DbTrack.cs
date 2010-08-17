@@ -45,6 +45,11 @@ namespace Noise.Infrastructure.Dto {
 			set{ UserGenre = value; }
 		}
 
+		[Ignore]
+		public bool IsUserRating {
+			get{ return( true ); }
+		}
+
 		[Export("PersistenceType")]
 		public static Type PersistenceType {
 			get{ return( typeof( DbTrack )); }

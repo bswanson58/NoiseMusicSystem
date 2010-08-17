@@ -8,7 +8,8 @@ namespace Noise.Infrastructure.Dto {
 		public string			CalculatedGenre { get; set; }
 		public string			ExternalGenre { get; set; }
 		public string			UserGenre { get; set; }
-		public Int16			Rating { get; set; }
+		public Int16			CalculatedRating { get; set; }
+		public Int16			UserRating { get; set; }
 		public Int16			AlbumCount { get; set; }
 		public bool				IsFavorite { get; set; }
 
@@ -23,6 +24,17 @@ namespace Noise.Infrastructure.Dto {
 		public string Genre {
 			get{ return( String.IsNullOrWhiteSpace( UserGenre ) ? ( String.IsNullOrWhiteSpace( ExternalGenre ) ? CalculatedGenre : ExternalGenre ) : UserGenre ); }
 			set{ UserGenre = value; }
+		}
+
+		[Ignore]
+		public Int16 Rating {
+			get{ return( IsUserRating ? UserRating : CalculatedRating ); }
+			set{ UserRating = value; }
+		}
+
+		[Ignore]
+		public bool IsUserRating {
+			get{ return( UserRating != 0 ); }
 		}
 
 		[Export("PersistenceType")]
