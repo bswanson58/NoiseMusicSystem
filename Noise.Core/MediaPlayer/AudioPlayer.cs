@@ -163,34 +163,34 @@ namespace Noise.Core.MediaPlayer {
 			return ( retValue );
 		}
 
-		public int OpenStream( string url ) {
+		public int OpenStream( DbInternetStream stream ) {
 			var retValue = 0;
 
-			if(!String.IsNullOrWhiteSpace( url )) {
+			if(!String.IsNullOrWhiteSpace( stream.Url )) {
 				try {
-					if(!Bass.BASS_SetConfig( BASSConfig.BASS_CONFIG_NET_PLAYLIST, url.EndsWith( ".pls" ) ? 1 : 0 )) {
-						mLog.LogMessage( String.Format( "AudioPlayer - OpenStream cannot set _CONFIG_NET_PLAYLIST for: {0}", url ));
+					if(!Bass.BASS_SetConfig( BASSConfig.BASS_CONFIG_NET_PLAYLIST, stream.IsPlaylistWrapped ? 1 : 0 )) {
+						mLog.LogMessage( String.Format( "AudioPlayer - OpenStream cannot set _CONFIG_NET_PLAYLIST for: {0}", stream.Url ));
 					}
 
-					var channel = Bass.BASS_StreamCreateURL( url, 0, BASSFlag.BASS_DEFAULT, null, IntPtr.Zero );
+					var channel = Bass.BASS_StreamCreateURL( stream.Url, 0, BASSFlag.BASS_DEFAULT, null, IntPtr.Zero );
 					if( channel != 0 ) {
 						Single	sampleRate = 0;
 						Bass.BASS_ChannelGetAttribute( channel, BASSAttribute.BASS_ATTRIB_FREQ, ref sampleRate );
 
-						var stream = new AudioStream( url, channel, sampleRate );
-						mCurrentStreams.Add( channel, stream );
+						var audioStream = new AudioStream( stream.Url, channel, sampleRate );
+						mCurrentStreams.Add( channel, audioStream );
 
 						InitializeEq( channel );
-						SetPan( stream );
-						SetPlaySpeed( stream );
+						SetPan( audioStream );
+						SetPlaySpeed( audioStream );
 						retValue = channel;
-						mStreamUrl = url;
+						mStreamUrl = stream.Url;
 
 						Play( channel );
 
 						var	sync = Bass.BASS_ChannelSetSync( channel, BASSSync.BASS_SYNC_META, 0, mStreamSync, IntPtr.Zero );
 
-						var tagInfo = new TAG_INFO( url );
+						var tagInfo = new TAG_INFO( stream.Url );
 						if( BassTags.BASS_TAG_GetFromURL( channel, tagInfo )) {
 							
 						}
@@ -207,7 +207,7 @@ namespace Noise.Core.MediaPlayer {
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( String.Format( "AudioPlayer opening url: {0}", url ), ex );
+					mLog.LogException( String.Format( "AudioPlayer opening url: {0}", stream.Url ), ex );
 				}
 			}
 

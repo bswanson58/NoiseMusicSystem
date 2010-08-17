@@ -1,4 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Views;
@@ -33,8 +34,10 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_OpenUrl() {
 			var noiseManager = mContainer.Resolve<INoiseManager>();
+			var stream = new DbInternetStream { Url = "http://provisioning.streamtheworld.com/pls/WXRTFMAAC.pls", Encoding = eAudioEncoding.AAC,
+												IsPlaylistWrapped = true, Name = "WXRT" };
 
-			noiseManager.AudioPlayer.OpenStream( "http://provisioning.streamtheworld.com/pls/WXRTFMAAC.pls" );
+			noiseManager.AudioPlayer.OpenStream( stream );
 		}
 	}
 }

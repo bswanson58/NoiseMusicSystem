@@ -106,6 +106,7 @@
     <Compile Include="Dto\DatabaseChangeSummary.cs" />
     <Compile Include="Dto\DbArtwork.cs" />
     <Compile Include="Dto\DbDiscographyRelease.cs" />
+    <Compile Include="Dto\DbInternetStream.cs" />
     <Compile Include="Dto\DbTextInfo.cs" />
     <Compile Include="Dto\FolderStrategy.cs" />
     <Compile Include="Dto\InfoSource.cs" />
