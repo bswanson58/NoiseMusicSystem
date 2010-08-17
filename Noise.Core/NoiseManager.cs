@@ -98,6 +98,9 @@ namespace Noise.Core {
 				if( configuration.EnableLibraryExplorer ) {
 					StartLibraryExplorer();
 				}
+				else {
+					StartLogStatistics();
+				}
 
 				if( configuration.EnableBackgroundContentExplorer ) {
 					StartBackgroundContentExplorer();
@@ -156,12 +159,6 @@ namespace Noise.Core {
 					mSummaryBuilder.BuildSummaryData();
 				}
 
-				DatabaseStatistics	statistics = null;
-				if( mContinueExploring ) {
-					statistics = new DatabaseStatistics( mDatabase );
-					statistics.GatherStatistics();
-				}
-
 				mLog.LogMessage( "Explorer Finished." );
 
 				if( results.HaveChanges ) {
@@ -169,8 +166,8 @@ namespace Noise.Core {
 					mLog.LogInfo( string.Format( "Database changes: {0}", results ) );
 				}
 
-				if( statistics != null ) {
-					mLog.LogInfo( statistics.ToString() );
+				if( mContinueExploring ) {
+					LogStatistics();
 				}
 			}
 			catch( Exception ex ) {
@@ -182,6 +179,21 @@ namespace Noise.Core {
 				mSummaryBuilder = null;
 				mExploring = false;
 			}
+		}
+
+		private void StartLogStatistics() {
+			ThreadPool.QueueUserWorkItem( LogStatistics );
+		}
+
+		private void LogStatistics( object state ) {
+			LogStatistics();
+		}
+
+		private void LogStatistics() {
+			var	statistics = new DatabaseStatistics( mDatabase );
+
+			statistics.GatherStatistics();
+			mLog.LogInfo( statistics.ToString());
 		}
 
 		private void StopExploring() {
