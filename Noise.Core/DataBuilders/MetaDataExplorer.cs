@@ -228,8 +228,9 @@ namespace Noise.Core.DataBuilders {
 			var ext = Path.GetExtension( file.Name ).ToLower();
 
 			switch( ext ) {
-				case ".mp3":
 				case ".flac":
+				case ".mp3":
+				case ".ogg":
 				case ".wma":
 					retValue = eFileType.Music;
 					break;
@@ -259,6 +260,10 @@ namespace Noise.Core.DataBuilders {
 
 				case ".mp3":
 					retValue = eAudioEncoding.MP3;
+					break;
+
+				case ".ogg":
+					retValue = eAudioEncoding.OGG;
 					break;
 
 				case".wma":

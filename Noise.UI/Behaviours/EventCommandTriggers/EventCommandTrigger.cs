@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 
+// from: http://blogs.microsoft.co.il/blogs/tomershamam/archive/2009/04/14/wpf-commands-everywhere.aspx
+
 namespace Noise.UI.Behaviours.EventCommandTriggers {
 	public sealed class EventCommandTrigger : CommandTrigger {
 		/// <value>Identifies the RoutedEvent dependency property</value>

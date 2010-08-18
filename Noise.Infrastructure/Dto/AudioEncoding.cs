@@ -3,6 +3,7 @@
 		AAC,
 		FLAC,
 		MP3,
+		OGG,
 		WMA,
 		Unknown
 	}
