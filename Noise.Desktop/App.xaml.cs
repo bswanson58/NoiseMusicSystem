@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Desktop {
@@ -12,12 +13,21 @@ namespace Noise.Desktop {
 			base.OnStartup( e );
 
 			DispatcherUnhandledException += App_DispatcherUnhandledException;
+			AppDomain.CurrentDomain.UnhandledException +=CurrentDomain_UnhandledException;
 
 			mBootstrapper = new Bootstrapper();
 			mBootstrapper.Run();
 		}
 
-		void App_DispatcherUnhandledException( object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e ) {
+		private void CurrentDomain_UnhandledException( object sender, UnhandledExceptionEventArgs e ) {
+			var	log = mBootstrapper.Container.Resolve<ILog>();
+
+			log.LogException( "Application domain unhandled exception:", e.ExceptionObject as Exception );
+
+			Shutdown( -1 );
+		}
+
+		private void App_DispatcherUnhandledException( object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e ) {
 			var	log = mBootstrapper.Container.Resolve<ILog>();
 
 			log.LogException( "Application unhandled exception:", e.Exception );
