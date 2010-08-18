@@ -6,6 +6,8 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
+using Noise.UI.Behaviours.EventCommandTriggers;
+using Noise.UI.Controls;
 
 namespace Noise.UI.ViewModels {
 	public class LibraryExplorerViewModel : ViewModelBase {
@@ -13,12 +15,15 @@ namespace Noise.UI.ViewModels {
 		private IEventAggregator		mEvents;
 		private IExplorerViewStrategy	mViewStrategy;
 		private ObservableCollectionEx<ExplorerTreeNode>	mTreeItems;
+		private List<string>			mSearchOptions;
 
 		[Dependency]
 		public IUnityContainer Container {
 			get { return( mContainer ); }
 			set {
 				mContainer = value; 
+				mSearchOptions = new List<string>();
+
 				mViewStrategy = mContainer.Resolve<IExplorerViewStrategy>( "ArtistAlbum" );
 				mViewStrategy.Initialize( this );
 
@@ -80,13 +85,25 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Execute_Search() {
-			mViewStrategy.Search( SearchText );
+		public void Execute_Search( EventCommandParameter<object, RoutedEventArgs> args ) {
+			var searchArgs = args.EventArgs as SearchEventArgs;
+
+			if( searchArgs != null ) {
+				mViewStrategy.Search( searchArgs.Keyword, searchArgs.Sections );
+			}
 		}
 
 		[DependsUpon( "SearchText" )]
 		public bool CanExecute_Search() {
 			return(!string.IsNullOrWhiteSpace( SearchText ));
+		}
+
+		public List<string> SearchOptions {
+			get{ return( mSearchOptions ); }
+		}
+
+		public bool HaveSearchOptions {
+			get{ return(( mSearchOptions != null ) && ( mSearchOptions.Count > 0 )); }
 		}
 	}
 }

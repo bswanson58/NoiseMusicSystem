@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -15,12 +16,18 @@ using Condition = CuttingEdge.Conditions.Condition;
 
 namespace Noise.UI.ViewModels {
 	public class ExplorerStrategyArtistAlbum : IExplorerViewStrategy {
+		private const string					cSearchOptionDefault = "!";
+		private const string					cSearchArtists = "Artists";
+		private const string					cSearchAlbums = "Albums";
+		private const string					cSearchIgnoreCase = "Ignore Case";
+
 		private readonly IUnityContainer		mContainer;
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly INoiseManager			mNoiseManager;
 		private readonly Observer				mChangeObserver;
 		private	LibraryExplorerViewModel		mViewModel;
 		private IEnumerator<ExplorerTreeNode>	mTreeEnumerator;
+		private string							mLastSearchOptions;
 
 		public ExplorerStrategyArtistAlbum( IUnityContainer container ) {
 			mContainer = container;
@@ -58,6 +65,10 @@ namespace Noise.UI.ViewModels {
 			mViewModel = viewModel;
 
 			mViewModel.TreeViewItemTemplate = Application.Current.TryFindResource( "ArtistAlbumTemplate" ) as HierarchicalDataTemplate;
+
+			mViewModel.SearchOptions.Add( cSearchOptionDefault + cSearchArtists );
+			mViewModel.SearchOptions.Add( cSearchAlbums );
+			mViewModel.SearchOptions.Add( cSearchOptionDefault + cSearchIgnoreCase );
 		}
 
 		public void PopulateTree( ObservableCollection<ExplorerTreeNode> tree ) {
@@ -84,8 +95,15 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
-		public bool Search( string searchText ) {
+		public bool Search( string searchText, IEnumerable<string> searchOptions ) {
 			var retValue = false;
+
+			var theseOptions = String.Concat( searchOptions );
+			if(!theseOptions.Equals( mLastSearchOptions )) {
+				mLastSearchOptions = theseOptions;
+
+				ClearCurrentSearch();
+			}
 
 			if(( mTreeEnumerator != null ) &&
 			   ( mTreeEnumerator.Current != null )) {
@@ -94,7 +112,7 @@ namespace Noise.UI.ViewModels {
 
 			if(( mTreeEnumerator == null ) ||
 			   ( !mTreeEnumerator.MoveNext())) {
-				mTreeEnumerator = FindMatches( searchText, mViewModel.TreeData ).GetEnumerator();
+				mTreeEnumerator = FindMatches( searchText, mViewModel.TreeData, searchOptions ).GetEnumerator();
 				mTreeEnumerator.MoveNext();
 			}
 
@@ -116,11 +134,23 @@ namespace Noise.UI.ViewModels {
 			return ( retValue );
 		}
 
-		static IEnumerable<ExplorerTreeNode> FindMatches( string searchText, IEnumerable<ExplorerTreeNode> list ) {
-			return( from node in list
-					let artist = node.Item as DbArtist
-					where artist != null where artist.Name.Contains( searchText ) 
-					select node );
+		static IEnumerable<ExplorerTreeNode> FindMatches( string searchText, IEnumerable<ExplorerTreeNode> list, IEnumerable<string> options ) {
+			IEnumerable<ExplorerTreeNode>	retValue;
+
+			if( options.Contains( cSearchIgnoreCase )) {
+				var matchText = searchText.ToUpper();
+
+				retValue = from node in list
+						   let artist = node.Item as DbArtist
+						   where artist != null where artist.Name.ToUpper().Contains( matchText )
+						   select node;
+			}
+			else {
+				retValue = from node in list
+						   let artist = node.Item as DbArtist
+						   where artist != null where artist.Name.Contains( searchText )
+						   select node;
+			}
 
 /*			foreach( var node in list ) {
 				var artist = node.Item as DbArtist;
@@ -130,8 +160,10 @@ namespace Noise.UI.ViewModels {
 						yield return node;
 					}
 				}
-			}
-*/		}
+			} */
+
+			return( retValue );
+		}
 
 		public void ClearCurrentSearch() {
 			mTreeEnumerator = null;

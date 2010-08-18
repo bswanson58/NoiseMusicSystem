@@ -3,7 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" xmlns:Controls="clr-namespace:Noise.UI.Controls" mc:Ignorable="d" 
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" 
+             xmlns:Controls="clr-namespace:Noise.UI.Controls"
+             xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
+             mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              DataContext="{Binding LibraryExplorerViewModel, Source={StaticResource ViewModelLocator}}"
              >
@@ -145,9 +148,13 @@
             </Grid.ColumnDefinitions>
             
             <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="Search for: "/>
-            <Controls:SearchTextBox Grid.Column="2" Margin="3" VerticalAlignment="Center" LabelText="Search Library" ShowSectionButton="false" 
-                                    Controls:SearchTextBoxBehaviour.SearchCommand="{Binding Path=Search}" Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"/>
-<!--            <Button Grid.Column="3" Margin="3" VerticalAlignment="Center" Content="Search" Command="{Binding Path=Search}"/> -->
+            <Controls:SearchTextBox Grid.Column="2" Margin="3" VerticalAlignment="Center" LabelText="Search Library" 
+                                    Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                    ShowSectionsList="{Binding Path=HaveSearchOptions}" SectionsStyle="CheckBoxStyle" SectionsList="{Binding Path=SearchOptions}">
+                <EventCommandTriggers:CommandSource.Trigger>
+                    <EventCommandTriggers:EventCommandTrigger RoutedEvent="Controls:SearchTextBox.Search" Command="{Binding Path=Search}"/>
+                </EventCommandTriggers:CommandSource.Trigger>
+            </Controls:SearchTextBox>
         </Grid>
     </Grid>
 </UserControl>

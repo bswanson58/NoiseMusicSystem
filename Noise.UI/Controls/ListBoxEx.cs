@@ -17,7 +17,7 @@ namespace Noise.UI.Controls {
 				mExtendedStyle = value;
 
 				// load resources
-				var resDict = new ResourceDictionary() { Source = new Uri( "pack://application:,,,/Noise.UI;component/Resources/ListBoxEx.xaml" ) };
+				var resDict = new ResourceDictionary { Source = new Uri( "pack://application:,,,/Noise.UI;component/Resources/ListBoxEx.xaml" ) };
 				if( resDict.Source == null ) {
 					throw new SystemException();
 				}

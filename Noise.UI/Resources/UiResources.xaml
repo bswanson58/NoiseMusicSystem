@@ -87,6 +87,7 @@
 
 	<!-- SearchTextBox -->
 	<SolidColorBrush x:Key="SearchTextBox_Background" Color="White" />
+	<SolidColorBrush x:Key="SearchTextBox_InactiveBackground" Color="#CCE0F8"/>
 	<SolidColorBrush x:Key="SearchTextBox_Foreground" Color="Black" />
 	<LinearGradientBrush x:Key="SearchTextBox_Border" StartPoint="0,0" EndPoint="0,1">
 		<GradientStop Color="#FFABADB3" Offset="0.05" />
@@ -156,21 +157,7 @@
 						 Padding="2,0,0,0"
 						 VerticalAlignment="Center"
 						 FontStyle="Italic" />
-							<Border x:Name="PART_SearchIconBorder"
-						  Grid.Column="2"
-						  VerticalAlignment="Stretch"
-						  HorizontalAlignment="Stretch"
-						  BorderBrush="{StaticResource SearchTextBox_SearchIconBorder}"
-						  >
-								<Image x:Name="SearchIcon"
-							   Stretch="None"
-							   Width="15"
-							   Height="15" 
-							   HorizontalAlignment="Center"
-							   VerticalAlignment="Center"
-							   Source="pack://application:,,,/Noise.UI;component/Resources/Search.png" ToolTip="Click to search"/>
-							</Border>
-
+							
 							<Border x:Name="PART_SpecifySearchType"
 						  Grid.Column="1"
 						  VerticalAlignment="Stretch"
@@ -179,14 +166,30 @@
 						  >
 								<Image x:Name="SpecifySearchType"
 							   Stretch="None"
-							   Width="15"
+							   Width="17"
 							   Height="15" 
 							   HorizontalAlignment="Center"
 							   VerticalAlignment="Center"
-							   Source="pack://application:,,,/Noise.UI;component/Resources/SearchCategory.png" ToolTip="Choose categories"
+							   Source="pack://application:,,,/Noise.UI;component/Resources/SearchCategory.png" ToolTip="Search Options"
 							   
 							   />
 							</Border>
+							
+							<Border x:Name="PART_SearchIconBorder"
+						  Grid.Column="2"
+						  VerticalAlignment="Stretch"
+						  HorizontalAlignment="Stretch"
+						  BorderBrush="{StaticResource SearchTextBox_SearchIconBorder}"
+						  >
+								<Image x:Name="SearchIcon"
+							   Stretch="None"
+							   Width="17"
+							   Height="15" 
+							   HorizontalAlignment="Center"
+							   VerticalAlignment="Center"
+							   Source="pack://application:,,,/Noise.UI;component/Resources/Search.png" ToolTip="Click to search"/>
+							</Border>
+
 
 							<Border x:Name="PART_PreviousItem"
 						Grid.Column="3"
@@ -195,7 +198,7 @@
 						BorderBrush="{StaticResource SearchTextBox_SearchIconBorder}">
 								<Image x:Name="PreviousIcon"
 						   Stretch="None"
-						   Width="15"
+						   Width="17"
 						   Height="15" 
 						   HorizontalAlignment="Center"
 						   VerticalAlignment="Center"
@@ -211,7 +214,7 @@
 						</Trigger>
 
 						<Trigger Property="IsMouseOver" Value="False">
-							<Setter Property="Background" TargetName="LayoutGrid" Value="#DCEED9" />
+							<Setter Property="Background" TargetName="LayoutGrid" Value="{StaticResource SearchTextBox_InactiveBackground}" />
 						</Trigger>
 
 						<Trigger Property="IsKeyboardFocusWithin" Value="True">
@@ -222,7 +225,7 @@
 							<Setter Property="Visibility" TargetName="LabelText" Value="Hidden" />
 						</Trigger>
 
-<!--						<MultiTrigger>
+						<!--						<MultiTrigger>
 							<MultiTrigger.Conditions>
 								<Condition Property="HasText" Value="True" />
 							</MultiTrigger.Conditions>

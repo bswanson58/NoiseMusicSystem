@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Noise.UI.Adapters;
 
 namespace Noise.UI.ViewModels {
@@ -6,7 +7,7 @@ namespace Noise.UI.ViewModels {
 		void	Initialize( LibraryExplorerViewModel viewModel );
 		void	PopulateTree( ObservableCollection<ExplorerTreeNode> tree );
 
-		bool	Search( string searchText );
+		bool	Search( string searchText, IEnumerable<string> searchOptions );
 		void	ClearCurrentSearch();
 	}
 }

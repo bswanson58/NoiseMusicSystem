@@ -115,7 +115,13 @@
     <Compile Include="Adapters\ExplorerTreeNode.cs" />
     <Compile Include="Adapters\TrackViewNode.cs" />
     <Compile Include="Adapters\UserSettingsNotifier.cs" />
-    <Compile Include="Behaviours\EventBehaviourFactory.cs" />
+    <Compile Include="Behaviours\EventCommandTriggers\CommandParameter.cs" />
+    <Compile Include="Behaviours\EventCommandTriggers\CommandSource.cs" />
+    <Compile Include="Behaviours\EventCommandTriggers\CommandTrigger.cs" />
+    <Compile Include="Behaviours\EventCommandTriggers\CommandTriggerGroup.cs" />
+    <Compile Include="Behaviours\EventCommandTriggers\EventCommandTrigger.cs" />
+    <Compile Include="Behaviours\EventCommandTriggers\ICommandTrigger.cs" />
+    <Compile Include="Behaviours\EventCommandTriggers\PropertyCommandTrigger.cs" />
     <Compile Include="Behaviours\ListViewSort.cs" />
     <Compile Include="Behaviours\SliderAnimateAfterDrag.cs" />
     <Compile Include="Behaviours\ListViewColumnStretch.cs" />

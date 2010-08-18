@@ -6,7 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using Noise.UI.Behaviours;
 
 namespace Noise.UI.Controls {
 	public class SearchEventArgs : RoutedEventArgs {
@@ -20,18 +19,6 @@ namespace Noise.UI.Controls {
 		public SearchEventArgs( RoutedEvent routedEvent )
 			: base( routedEvent ) {
 			Sections = new List<string>();
-		}
-	}
-
-	public static class SearchTextBoxBehaviour {
-		public static readonly DependencyProperty SearchCommand = EventBehaviourFactory.CreateCommandExecutionEventBehaviour( SearchTextBox.SearchEvent, "SearchCommand", typeof( SearchTextBoxBehaviour ));
-
-		public static void SetSearchCommand( DependencyObject o, ICommand value ) {
-			o.SetValue( SearchCommand, value );
-		}
-
-		public static ICommand GetSearchCommand( DependencyObject o ) {
-			return o.GetValue( SearchCommand ) as ICommand;
 		}
 	}
 
@@ -112,7 +99,7 @@ namespace Noise.UI.Controls {
 			}
 
 			int size = 0;
-			if( ShowSectionButton ) {
+			if( ShowSectionsList ) {
 				iconBorder = GetTemplateChild( "PART_SpecifySearchType" ) as Border;
 				if( iconBorder != null ) {
 					iconBorder.MouseDown += ChooseSection_MouseDown;
@@ -218,23 +205,25 @@ namespace Noise.UI.Controls {
 				"SectionsList",
 				typeof( List<string> ),
 				typeof( SearchTextBox ),
-				new FrameworkPropertyMetadata( null,
-												FrameworkPropertyMetadataOptions.None )
+				new FrameworkPropertyMetadata( null, FrameworkPropertyMetadataOptions.None )
 			 );
 
 		public List<string> SectionsList {
 			get { return (List<string>)GetValue( SectionsListProperty ); }
-			set {
-				SetValue( SectionsListProperty, value );
-
-			}
+			set { SetValue( SectionsListProperty, value ); }
 		}
 
-		private bool mShowSectionButton = true;
+		public static DependencyProperty ShowSectionsListProperty =
+			DependencyProperty.Register(
+				"ShowSectionsList",
+				typeof( bool ),
+				typeof( SearchTextBox ),
+				new FrameworkPropertyMetadata( false, FrameworkPropertyMetadataOptions.None )
+			 );
 
-		public bool ShowSectionButton {
-			get { return mShowSectionButton; }
-			set { mShowSectionButton = value; }
+		public bool ShowSectionsList {
+			get { return (bool)GetValue( ShowSectionsListProperty ); }
+			set { SetValue( ShowSectionsListProperty, value ); }
 		}
 
 		public enum SectionsStyles {
@@ -257,13 +246,21 @@ namespace Noise.UI.Controls {
 			mListPopup.PlacementRectangle = new Rect( 0, ActualHeight, 30, 30 );
 			mListPopup.Width = ActualWidth;
 			// initialize the sections' list
-			if( ShowSectionButton ) {
+			if( ShowSectionsList ) {
 				mListSection = new ListBoxEx( (int)mItemStyle + ListBoxEx.ItemStyles.NormalStyle );
 
 				mListSection.Items.Clear();
 				if( SectionsList != null ) {
 					foreach( string item in SectionsList ) {
-						mListSection.Items.Add( item );
+						if( item.StartsWith( "!" )) {
+							var itemText = item.Remove( 0, 1 );
+
+							mListSection.Items.Add( itemText );
+							mListSection.SelectedItems.Add( itemText );
+						}
+						else {
+							mListSection.Items.Add( item );
+						}
 					}
 				}
 
