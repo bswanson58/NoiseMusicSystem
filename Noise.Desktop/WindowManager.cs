@@ -23,8 +23,8 @@ namespace Noise.Desktop {
 
 		public void Initialize() {
 			mLayoutManager.Initialize( mContainer );
-			//parameterless LoadLayout loads the default Layout into the Shell
-			mLayoutManager.LoadLayout();
+
+			mLayoutManager.LoadLayout( Constants.LibraryLayout );
 		}
 
 		public void Shutdown() {
@@ -47,6 +47,14 @@ namespace Noise.Desktop {
 					else {
 						mPlayerView.Close();
 						mPlayerView = null;
+					}
+					break;
+
+				default:
+					if(( mLayoutManager.CurrentLayout != null ) &&
+					   (!string.Equals( mLayoutManager.CurrentLayout.Name, forLayout )) &&
+					   ( mLayoutManager.Layouts.Exists( layout => string.Equals( layout.Name, forLayout )))) {
+						mLayoutManager.LoadLayout( forLayout );
 					}
 					break;
 			}

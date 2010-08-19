@@ -25,5 +25,27 @@
                              Type="{x:Type Views:PlayerView}" />
             </Layout:Layout.Views>
         </Layout:Layout>
+        <Layout:Layout x:Name="StreamLayout"
+                       Fullname="Internet Stream Layout"
+                       Filename="Layouts\StreamLayout.xaml"
+                       Description="This is the layout for internet streams"
+                       IsDefault="True">
+            <Layout:Layout.Views>
+                <Layout:View RegionName="Toolbar"
+                             Type="{x:Type Views:ToolbarView}"/>
+                <Layout:View RegionName="TopLeft"
+                             Type="{x:Type Views:StreamView}" />
+                <Layout:View RegionName="TopRight"
+                             Type="{x:Type Views:ArtistView}" />
+                <Layout:View RegionName="TopRightLower"
+                             Type="{x:Type Views:AlbumView}"/>
+                <Layout:View RegionName="MiddleRight"
+                             Type="{x:Type Views:TrackListView}" />
+                <Layout:View RegionName="BottomLeft"
+                             Type="{x:Type Views:PlayQueueView}" />
+                <Layout:View RegionName="BottomRight"
+                             Type="{x:Type Views:PlayerView}" />
+            </Layout:Layout.Views>
+        </Layout:Layout>
     </Layout:LayoutManager.Layouts>
 </Layout:LayoutManager>

@@ -33,12 +33,16 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Execute_OpenUrl() {
-//			var noiseManager = mContainer.Resolve<INoiseManager>();
-//			var stream = new DbInternetStream { Url = "http://provisioning.streamtheworld.com/pls/WXRTFMAAC.pls", Encoding = eAudioEncoding.AAC,
-//												IsPlaylistWrapped = true, Name = "WXRT" };
+		public void Execute_LibraryLayout() {
+			if( mEvents != null ) {
+				mEvents.GetEvent<Events.WindowLayoutRequest>().Publish( Constants.LibraryLayout );
+			}
+		}
 
-//			noiseManager.AudioPlayer.OpenStream( stream );
+		public void Execute_StreamLayout() {
+			if( mEvents != null ) {
+				mEvents.GetEvent<Events.WindowLayoutRequest>().Publish( Constants.StreamLayout );
+			}
 		}
 	}
 }

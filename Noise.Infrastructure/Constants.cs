@@ -13,6 +13,9 @@ namespace Noise.Infrastructure {
 
 		public	const string			SmallPlayerView = "SmallPlayerView";
 
+		public	const string			LibraryLayout = "DefaultLayout";
+		public	const string			StreamLayout = "StreamLayout";
+
 		static Constants() {
 			cNoExpirationDate = DateTime.MaxValue;
 		}

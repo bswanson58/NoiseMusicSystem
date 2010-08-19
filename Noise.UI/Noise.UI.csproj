@@ -146,6 +146,7 @@
     <Compile Include="ViewModels\LibraryExplorerViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueViewModel.cs" />
+    <Compile Include="ViewModels\StreamViewModel.cs" />
     <Compile Include="ViewModels\ToolbarViewModel.cs" />
     <Compile Include="ViewModels\TrackListViewModel.cs" />
     <Compile Include="Views\AlbumView.xaml.cs">
@@ -165,6 +166,9 @@
     </Compile>
     <Compile Include="Views\SmallPlayerView.xaml.cs">
       <DependentUpon>SmallPlayerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\StreamView.xaml.cs">
+      <DependentUpon>StreamView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ToolbarView.xaml.cs">
       <DependentUpon>ToolbarView.xaml</DependentUpon>
@@ -216,6 +220,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SmallPlayerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\StreamView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
