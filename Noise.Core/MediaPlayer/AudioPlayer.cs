@@ -25,6 +25,7 @@ namespace Noise.Core.MediaPlayer {
 		public	bool			Faded { get; set; }
 		public	BASSActive		Mode { get; set; }
 		public	float			SampleRate { get; private set; }
+		public	int				MetaDataSync { get; set; }
 
 		private AudioStream( int channel, float sampleRate ) {
 			Channel = channel;
@@ -42,6 +43,10 @@ namespace Noise.Core.MediaPlayer {
 			this( channel, sampleRate ) {
 			Url = url;
 		}
+
+		public bool IsStream {
+			get{ return(!String.IsNullOrWhiteSpace( Url )); }
+		}
 	}
 
 	public class AudioPlayer : IAudioPlayer {
@@ -51,11 +56,9 @@ namespace Noise.Core.MediaPlayer {
 		private readonly ILog							mLog;
 		private float									mPlaySpeed;
 		private float									mPan;
+		private readonly SYNCPROC						mStreamMetadataSync;
 		private readonly Timer							mUpdateTimer;
 		private readonly Dictionary<int, AudioStream>	mCurrentStreams;
-
-		private readonly SYNCPROC	mStreamSync;
-		private string				mStreamUrl;
 
 		public AudioPlayer( IUnityContainer container ) {
 			mContainer = container;
@@ -63,6 +66,7 @@ namespace Noise.Core.MediaPlayer {
 			mDatabase = mContainer.Resolve<IDatabaseManager>();
 			mLog = mContainer.Resolve<ILog>();
 			mCurrentStreams = new Dictionary<int, AudioStream>();
+			mStreamMetadataSync = new SYNCPROC( SyncProc );
 			mUpdateTimer = new Timer { Enabled = false, Interval = 50, AutoReset = true };
 			mUpdateTimer.Elapsed += OnUpdateTimer;
 
@@ -71,8 +75,6 @@ namespace Noise.Core.MediaPlayer {
 			LoadPlugin( "bassflac.dll" );
 			LoadPlugin( "basswma.dll" );
 			LoadPlugin( "bass_aac.dll" );
-
-			mStreamSync = new SYNCPROC( SyncProc );
 		}
 
 		private void LoadPlugin( string plugin ) {
@@ -177,23 +179,14 @@ namespace Noise.Core.MediaPlayer {
 						Single	sampleRate = 0;
 						Bass.BASS_ChannelGetAttribute( channel, BASSAttribute.BASS_ATTRIB_FREQ, ref sampleRate );
 
-						var audioStream = new AudioStream( stream.Url, channel, sampleRate );
+						var audioStream = new AudioStream( stream.Url, channel, sampleRate ) {
+													MetaDataSync = Bass.BASS_ChannelSetSync( channel, BASSSync.BASS_SYNC_META, 0, mStreamMetadataSync, IntPtr.Zero ) };
 						mCurrentStreams.Add( channel, audioStream );
 
 						InitializeEq( channel );
 						SetPan( audioStream );
 						SetPlaySpeed( audioStream );
 						retValue = channel;
-						mStreamUrl = stream.Url;
-
-						Play( channel );
-
-						var	sync = Bass.BASS_ChannelSetSync( channel, BASSSync.BASS_SYNC_META, 0, mStreamSync, IntPtr.Zero );
-
-						var tagInfo = new TAG_INFO( stream.Url );
-						if( BassTags.BASS_TAG_GetFromURL( channel, tagInfo )) {
-							
-						}
 
 						if(( mCurrentStreams.Count > 0 ) &&
 						   (!mUpdateTimer.Enabled )) {
@@ -215,9 +208,20 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		private void SyncProc( int handle, int channel, int data, IntPtr user ) {
-			var tagInfo = new TAG_INFO( mStreamUrl );
-			if( BassTags.BASS_TAG_GetFromURL( channel, tagInfo )) {
-							
+			PublishStreamInfo( channel );
+		}
+
+		private void PublishStreamInfo( int channel ) {
+			if( mCurrentStreams.ContainsKey( channel )) {
+				var audioStream = mCurrentStreams[channel];
+
+				if( audioStream != null ) {
+					var tagInfo = new TAG_INFO( audioStream.Url );
+					if( BassTags.BASS_TAG_GetFromURL( channel, tagInfo )) {
+						mEventAggregator.GetEvent<Events.AudioPlayStreamInfo>().Publish( new StreamInfo( channel, tagInfo.artist, tagInfo.album, 
+																										 tagInfo.title, tagInfo.genre ) );
+					}
+				}
 			}
 		}
 
@@ -290,6 +294,9 @@ namespace Noise.Core.MediaPlayer {
 			var stream = GetStream( channel );
 
 			if( stream != null ) {
+				if( stream.MetaDataSync != 0 ) {
+					Bass.BASS_ChannelRemoveSync( channel, stream.MetaDataSync );
+				}
 				Bass.BASS_StreamFree( stream.Channel );
 
 				mCurrentStreams.Remove( channel );
@@ -307,6 +314,10 @@ namespace Noise.Core.MediaPlayer {
 				}
 
 				Bass.BASS_ChannelPlay( stream.Channel, false );
+
+				if( stream.IsStream ) {
+					PublishStreamInfo( stream.Channel );
+				}
 			}
 		}
 

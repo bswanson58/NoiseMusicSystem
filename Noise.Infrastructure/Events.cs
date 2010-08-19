@@ -16,9 +16,11 @@ namespace Noise.Infrastructure {
 		public class PlayHistoryChanged : CompositePresentationEvent<IPlayHistory> { }
 
 		public class AudioPlayStatusChanged : CompositePresentationEvent<int> { }
+		public class AudioPlayStreamInfo : CompositePresentationEvent<StreamInfo> { }
 
-		public class TrackPlayRequested : CompositePresentationEvent<DbTrack> { }
 		public class AlbumPlayRequested : CompositePresentationEvent<DbAlbum> { }
+		public class TrackPlayRequested : CompositePresentationEvent<DbTrack> { }
+		public class StreamPlayRequested : CompositePresentationEvent<DbInternetStream> { }
 
 		public class DatabaseChanged : CompositePresentationEvent<DatabaseChangeSummary> { }
 

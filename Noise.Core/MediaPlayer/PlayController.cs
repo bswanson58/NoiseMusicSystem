@@ -35,6 +35,7 @@ namespace Noise.Core.MediaPlayer {
 
 			mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
 			mEvents.GetEvent<Events.AudioPlayStatusChanged>().Subscribe( OnPlayStatusChanged );
+			mEvents.GetEvent<Events.AudioPlayStreamInfo>().Subscribe( OnStreamInfo );
 		}
 
 		public PlayQueueTrack CurrentTrack {
@@ -105,6 +106,16 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
+		public void OnStreamInfo( StreamInfo info ) {
+			var track = GetTrack( info.Channel );
+
+			if( track != null ) {
+				track.StreamInfo = info;
+
+				FirePlaybackTrackUpdate();
+			}
+		}
+
 		public void Play() {
 			if( CurrentStatus == ePlaybackStatus.Paused ) {
 				mAudioPlayer.Play( CurrentChannel );
@@ -148,7 +159,7 @@ namespace Noise.Core.MediaPlayer {
 			}
 
 			if( track != null ) {
-				var	channel = mAudioPlayer.OpenFile( track.File );
+				var	channel = track.IsStream ? mAudioPlayer.OpenStream( track.Stream ) : mAudioPlayer.OpenFile( track.File );
 
 				mOpenTracks.Add( channel, track );
 				CurrentChannel = channel;
@@ -208,10 +219,6 @@ namespace Noise.Core.MediaPlayer {
 			mCurrentPosition = new TimeSpan();
 
 			FireInfoUpdate();
-		}
-
-		public string TrackName {
-			get { return( CurrentTrack != null ? CurrentTrack.Track.Name : "None" ); } 
 		}
 
 		public TimeSpan TrackTime {

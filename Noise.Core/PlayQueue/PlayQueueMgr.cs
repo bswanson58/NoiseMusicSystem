@@ -31,6 +31,7 @@ namespace Noise.Core.PlayQueue {
 
 			mEventAggregator.GetEvent<Events.AlbumPlayRequested>().Subscribe( OnAlbumPlayRequest );
 			mEventAggregator.GetEvent<Events.TrackPlayRequested>().Subscribe( OnTrackPlayRequest );
+			mEventAggregator.GetEvent<Events.StreamPlayRequested>().Subscribe( OnStreamPlayRequest );
 		}
 
 		public void OnTrackPlayRequest( DbTrack track ) {
@@ -78,6 +79,16 @@ namespace Noise.Core.PlayQueue {
 			foreach( DbAlbum album in albums ) {
 				Add( album );
 			}
+		}
+
+		public void OnStreamPlayRequest( DbInternetStream stream ) {
+			Add( stream  );
+		}
+
+		public void Add( DbInternetStream stream ) {
+			mPlayQueue.Add( new PlayQueueTrack( stream ));
+
+			FirePlayQueueChanged();
 		}
 
 		public void ClearQueue() {

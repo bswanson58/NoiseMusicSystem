@@ -72,7 +72,9 @@ namespace Noise.UI.ViewModels {
 				if( mNoiseManager.PlayController.CurrentTrack != null ) {
 					var track = mNoiseManager.PlayController.CurrentTrack;
 
-					retValue = String.Format( "{0} ({1}/{2})", track.Track.Name, track.Artist.Name, track.Album.Name );
+					retValue = track.IsStream ? track.StreamInfo != null ? String.Format( "{0} ({1}/{2})", track.StreamInfo.Title, track.StreamInfo.Artist, track.StreamInfo.Album ) :
+													String.Format( "{0} - {1}", track.Stream.Name, track.Stream.Description ) :
+												String.Format( "{0} ({1}/{2})", track.Track.Name, track.Artist.Name, track.Album.Name );
 				}
 				else if( IsInDesignMode ) {
 					retValue = "The Flying Dutchmens Tribute";

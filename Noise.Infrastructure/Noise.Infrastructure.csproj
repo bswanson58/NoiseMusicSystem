@@ -113,6 +113,7 @@
     <Compile Include="Dto\IUserSettings.cs" />
     <Compile Include="Dto\PlaybackStatus.cs" />
     <Compile Include="Dto\PlayQueueTrack.cs" />
+    <Compile Include="Dto\StreamInfo.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
     <Compile Include="Interfaces\IPlayHistory.cs" />
     <Compile Include="Interfaces\IPlayQueue.cs" />

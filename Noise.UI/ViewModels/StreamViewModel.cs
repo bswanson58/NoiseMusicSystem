@@ -48,7 +48,9 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_AddStream( object sender ) {
-			var stream = new DbInternetStream { Name = "WXRT", Description = "WXRT in Chicago", Url = "http://provisioning.streamtheworld.com/pls/WXRTFMAAC.pls" };
+			var stream = new DbInternetStream { Name = "WXRT", Description = "WXRT in Chicago",
+												Url = "http://provisioning.streamtheworld.com/pls/WXRTFMAAC.pls",
+												IsPlaylistWrapped = true, Encoding = eAudioEncoding.AAC };
 			mNoiseManager.DataProvider.UpdateItem( stream );
 
 			UpdateStreams();

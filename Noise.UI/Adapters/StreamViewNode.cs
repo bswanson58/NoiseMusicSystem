@@ -1,4 +1,5 @@
 ﻿using Microsoft.Practices.Composite.Events;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 
@@ -32,7 +33,7 @@ namespace Noise.UI.Adapters {
 			var stream = sender as DbInternetStream;
 
 			if( stream != null ) {
-//				mEventAggregator.GetEvent<Events.TrackPlayRequested>().Publish( track );
+				mEventAggregator.GetEvent<Events.StreamPlayRequested>().Publish( stream );
 			}
 		}
 	}

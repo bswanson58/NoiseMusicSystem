@@ -2,19 +2,29 @@
 
 namespace Noise.Infrastructure.Dto {
 	public class PlayQueueTrack : BindableObject {
-		public	DbTrack		Track { get; private set; }
-		public	DbAlbum		Album { get; private set; }
-		public	DbArtist	Artist { get; private set; }
-		public	StorageFile	File { get; private set; }
-		public	double		PercentPlayed { get; set; }
-		private	bool		mIsPlaying;
-		private	bool		mHasPlayed;
+		public	DbTrack				Track { get; private set; }
+		public	DbAlbum				Album { get; private set; }
+		public	DbArtist			Artist { get; private set; }
+		public	DbInternetStream	Stream { get; private set; }
+		public	StreamInfo			StreamInfo { get; set; }
+		public	StorageFile			File { get; private set; }
+		public	double				PercentPlayed { get; set; }
+		private	bool				mIsPlaying;
+		private	bool				mHasPlayed;
 
 		public PlayQueueTrack( DbArtist artist, DbAlbum album, DbTrack track, StorageFile file ) {
 			Artist = artist;
 			Album = album;
 			Track = track;
 			File = file;
+		}
+
+		public PlayQueueTrack( DbInternetStream stream ) {
+			Stream = stream;
+		}
+
+		public bool IsStream {
+			get{ return( Stream != null ); }
 		}
 
 		public bool IsPlaying {

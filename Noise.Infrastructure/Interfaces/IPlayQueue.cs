@@ -17,6 +17,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void			Add( DbTrack track );
 		void			Add( DbAlbum album );
 		void			Add( DbArtist artist );
+		void			Add( DbInternetStream stream );
 		void			ClearQueue();
 
 		PlayQueueTrack	PlayNextTrack();
