@@ -342,22 +342,22 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
-		public ePlayingChannelStatus GetChannelStatus( int channel ) {
-			var retValue = ePlayingChannelStatus.Unknown;
+		public ePlaybackStatus GetChannelStatus( int channel ) {
+			var retValue = ePlaybackStatus.Unknown;
 			var stream = GetStream( channel );
 
 			if(stream != null ) {
 				switch( stream.Mode ) {
 					case BASSActive.BASS_ACTIVE_STOPPED:
-						retValue = ePlayingChannelStatus.Stopped;
+						retValue = ePlaybackStatus.Stopped;
 						break;
 
 					case BASSActive.BASS_ACTIVE_PAUSED:
-						retValue = ePlayingChannelStatus.Paused;
+						retValue = ePlaybackStatus.Paused;
 						break;
 
 					case BASSActive.BASS_ACTIVE_PLAYING:
-						retValue = ePlayingChannelStatus.Playing;
+						retValue = ePlaybackStatus.Playing;
 						break;
 				}
 			}

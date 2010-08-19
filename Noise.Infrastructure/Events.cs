@@ -13,14 +13,17 @@ namespace Noise.Infrastructure {
 		public class ArtistContentUpdated : CompositePresentationEvent<DbArtist> { }
 
 		public class PlayQueueChanged : CompositePresentationEvent<IPlayQueue> { }
+		public class PlayHistoryChanged : CompositePresentationEvent<IPlayHistory> { }
 
 		public class AudioPlayStatusChanged : CompositePresentationEvent<int> { }
 
 		public class TrackPlayRequested : CompositePresentationEvent<DbTrack> { }
 		public class AlbumPlayRequested : CompositePresentationEvent<DbAlbum> { }
 
-		public class PlayHistoryChanged : CompositePresentationEvent<IPlayHistory> { }
-
 		public class DatabaseChanged : CompositePresentationEvent<DatabaseChangeSummary> { }
+
+		public class PlaybackStatusChanged : CompositePresentationEvent<ePlaybackStatus> { }
+		public class PlaybackTrackChanged : CompositePresentationEvent<object> { }
+		public class PlaybackInfoChanged : CompositePresentationEvent<object> { }
 	}
 }

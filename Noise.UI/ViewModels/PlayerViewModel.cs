@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Timers;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
@@ -13,19 +11,6 @@ namespace Noise.UI.ViewModels {
 		private	IUnityContainer		mContainer;
 		private IEventAggregator	mEvents;
 		private INoiseManager		mNoiseManager;
-		private TimeSpan			mCurrentPosition;
-		private TimeSpan			mCurrentLength;
-		private AudioLevels			mSampleLevels;
-		private	bool				mContinuePlaying;
-		private readonly Timer		mInfoUpdateTimer;
-		private readonly Dictionary<int, PlayQueueTrack>	mOpenTracks;
-
-		public PlayerViewModel() {
-			mOpenTracks = new Dictionary<int, PlayQueueTrack>();
-
-			mInfoUpdateTimer = new Timer { AutoReset = true, Enabled = false, Interval = 100 };
-			mInfoUpdateTimer.Elapsed += OnInfoUpdateTimer;
-		}
 
 		[Dependency]
 		public IUnityContainer Container {
@@ -37,32 +22,31 @@ namespace Noise.UI.ViewModels {
 				mNoiseManager = mContainer.Resolve<INoiseManager>();
 
 				mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
-				mEvents.GetEvent<Events.AudioPlayStatusChanged>().Subscribe( OnPlayStatusChanged );
+				mEvents.GetEvent<Events.PlaybackStatusChanged>().Subscribe( OnPlaybackStatusChanged );
+				mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnPlaybackTrackChanged );
+				mEvents.GetEvent<Events.PlaybackInfoChanged>().Subscribe( OnPlaybackInfoChanged );
 			}
 		}
 
-		private ePlayingChannelStatus CurrentStatus {
-			get { return( Get(() => CurrentStatus, ePlayingChannelStatus.Stopped ));  }
+		public void OnPlayQueueChanged( IPlayQueue playQueue ) {
+			PlayQueueChangedFlag++;
+		}
+
+		public void OnPlaybackStatusChanged( ePlaybackStatus status ) {
+			CurrentStatus = status;
+		}
+
+		public void OnPlaybackTrackChanged( object sender ) {
+			StartTrackFlag++;
+		}
+
+		public void OnPlaybackInfoChanged( object sender ) {
+			InfoUpdateFlag++;
+		}
+
+		private ePlaybackStatus CurrentStatus {
+			get { return( Get(() => CurrentStatus, ePlaybackStatus.Stopped ));  }
 			set { Set(() => CurrentStatus, value ); }
-		}
-
-		private PlayQueueTrack CurrentTrack {
-			get { return( GetTrack( CurrentChannel )); }
-		}
-
-		private int CurrentChannel {
-			get{ return ( Get(() => CurrentChannel, 0 )); }
-			set{ Set(() => CurrentChannel, value ); }
-		}
-
-		private PlayQueueTrack GetTrack( int channel ) {
-			PlayQueueTrack	retValue = null;
-
-			if( mOpenTracks.ContainsKey( channel )) {
-				retValue = mOpenTracks[channel];
-			}
-
-			return( retValue );
 		}
 
 		private int PlayQueueChangedFlag {
@@ -70,106 +54,9 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => PlayQueueChangedFlag, value  ); }
 		}
 
-		public void OnPlayQueueChanged( IPlayQueue playQueue ) {
-			if( playQueue.IsQueueEmpty ) {
-				StopPlaying();
-			}
-			else {
-				if( mOpenTracks.Count == 0 ) {
-					StartPlaying();
-				}
-			}
-
-			PlayQueueChangedFlag++;
-		}
-
-		public void OnPlayStatusChanged( int channel ) {
-			var status = mNoiseManager.AudioPlayer.GetChannelStatus( channel );
-			if( channel == CurrentChannel ) {
-				CurrentStatus = status;
-			}
-			else {
-				if( CurrentChannel != 0 ) {
-					CurrentStatus = mNoiseManager.AudioPlayer.GetChannelStatus( CurrentChannel );
-				}
-			}
-
-			var track = GetTrack( channel );
-			if( track != null ) {
-				if( status == ePlayingChannelStatus.Stopped ) {
-					track.PercentPlayed = mNoiseManager.AudioPlayer.GetPercentPlayed( channel );
-					mNoiseManager.PlayHistory.TrackPlayCompleted( track );
-					mNoiseManager.AudioPlayer.CloseChannel( channel );
-					mOpenTracks.Remove( channel );
-
-					if( channel == CurrentChannel ) {
-						CurrentChannel = 0;
-
-						StopInfoUpdate();
-
-						if( mContinuePlaying ) {
-							StartNextPlaying();
-						}
-					}
-				}
-			}
-		}
-
-		private void StartPlaying() {
-			if( CurrentStatus == ePlayingChannelStatus.Paused ) {
-				mNoiseManager.AudioPlayer.Play( CurrentChannel );
-			}
-			else {
-				StartTrack( mNoiseManager.PlayQueue.PlayingTrack ?? mNoiseManager.PlayQueue.PlayNextTrack());
-			}
-		}
-
-		private void StartNextPlaying() {
-			StartTrack( mNoiseManager.PlayQueue.PlayNextTrack());
-		}
-
-		private void StartPreviousPlaying() {
-			StartTrack( mNoiseManager.PlayQueue.PlayPreviousTrack());
-		}
-
 		private int StartTrackFlag {
 			get{ return( Get( () => StartTrackFlag, 0 )); }
 			set{ Set( () => StartTrackFlag, value  ); }
-		}
-
-		private void StartTrack( PlayQueueTrack track ) {
-			if( CurrentTrack != null ) {
-				mNoiseManager.AudioPlayer.FadeAndStop( CurrentChannel );
-			}
-
-			if( track != null ) {
-				var	channel = mNoiseManager.AudioPlayer.OpenFile( track.File );
-
-				mOpenTracks.Add( channel, track );
-				CurrentChannel = channel;
-				mNoiseManager.AudioPlayer.Play( CurrentChannel );
-
-				mCurrentLength = mNoiseManager.AudioPlayer.GetLength( CurrentChannel );
-
-				StartInfoUpdate();
-				mContinuePlaying = true;
-			}
-
-			StartTrackFlag++;
-		}
-
-		private void PausePlaying() {
-			if( CurrentTrack != null ) {
-				mNoiseManager.AudioPlayer.FadeAndPause( CurrentChannel );
-			}
-		}
-
-		private void StopPlaying() {
-			mContinuePlaying = false;
-
-			foreach( int channel in mOpenTracks.Keys ) {
-				mNoiseManager.AudioPlayer.FadeAndStop( channel );
-			}
 		}
 
 		private int InfoUpdateFlag {
@@ -177,38 +64,13 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => InfoUpdateFlag, value ); }
 		}
 
-		private void OnInfoUpdateTimer( object sender, ElapsedEventArgs arg ) {
-			if( CurrentChannel != 0 ) {
-				mSampleLevels = mNoiseManager.AudioPlayer.GetSampleLevels( CurrentChannel );
-				mCurrentPosition = mNoiseManager.AudioPlayer.GetPlayPosition( CurrentChannel );
-			}
-			else {
-				mSampleLevels = new AudioLevels( 0.0, 0.0 );
-			}
-
-			InfoUpdateFlag++;
-		}
-
-		private void StartInfoUpdate() {
-			mInfoUpdateTimer.Start();
-		}
-
-		private void StopInfoUpdate() {
-			mInfoUpdateTimer.Stop();
-
-			mSampleLevels = new AudioLevels( 0.0, 0.0 );
-			mCurrentPosition = new TimeSpan();
-
-			InfoUpdateFlag++;
-		}
-
 		[DependsUpon( "StartTrackFlag" )]
 		public string TrackName {
-			get {
+			get { 
 				var retValue = "None";
 
-				if( CurrentTrack != null ) {
-					retValue = CurrentTrack.Track.Name;
+				if( mNoiseManager.PlayController.CurrentTrack != null ) {
+					retValue = mNoiseManager.PlayController.CurrentTrack.Track.Name;
 				}
 				else if( IsInDesignMode ) {
 					retValue = "The Flying Dutchmens Tribute";
@@ -220,64 +82,36 @@ namespace Noise.UI.ViewModels {
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public TimeSpan TrackTime {
-			get {
-				var	retValue = new TimeSpan();
-
-				if( CurrentChannel != 0 ) {
-					retValue = mCurrentLength - mCurrentPosition;
-				}
-				else if( IsInDesignMode ) {
-					retValue = new TimeSpan( 0, 0, 1, 23 );
-				}
-
-				return( retValue );
-			}
+			get { return( mNoiseManager.PlayController.TrackTime ); }
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public long TrackPosition {
-			get {
-				var retValue = 0L;
-
-				if( CurrentChannel != 0 ) {
-					retValue = mCurrentPosition.Ticks;
-				}
-
-				return( retValue );
-			}
-			set {
-				if( CurrentChannel != 0 ) {
-					mNoiseManager.AudioPlayer.SetPlayPosition( CurrentChannel, new TimeSpan( value ));
-				}
-			}
+			get { return( mNoiseManager.PlayController.PlayPosition ); }
+			set { mNoiseManager.PlayController.PlayPosition = value; }
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public long TrackEndPosition {
-			get {
-				var retValue = 1l;
-
-				if( CurrentChannel != 0 ) {
-					retValue = mCurrentLength.Ticks;
-				}
-
-				return( retValue );
-			}
+			get { return( mNoiseManager.PlayController.TrackEndPosition ); }
 		}
 
+		[DependsUpon( "InfoUpdateFlag" )]
 		public double Volume {
-			get{ return( mNoiseManager.AudioPlayer.Volume ); }
-			set{ mNoiseManager.AudioPlayer.Volume = (float)value; }
+			get{ return( mNoiseManager.PlayController.Volume ); }
+			set{ mNoiseManager.PlayController.Volume = (float)value; }
 		}
 
+		[DependsUpon( "InfoUpdateFlag" )]
 		public double PlaySpeed {
-			get{ return( mNoiseManager.AudioPlayer.PlaySpeed ); }
-			set{ mNoiseManager.AudioPlayer.PlaySpeed = (float)value; }
+			get{ return( mNoiseManager.PlayController.PlaySpeed ); }
+			set{ mNoiseManager.PlayController.PlaySpeed = (float)value; }
 		}
 
+		[DependsUpon( "InfoUpdateFlag" )]
 		public double PanPosition {
-			get{ return( mNoiseManager.AudioPlayer.Pan ); }
-			set{ mNoiseManager.AudioPlayer.Pan = (float)value; }
+			get{ return( mNoiseManager.PlayController.PanPosition ); }
+			set{ mNoiseManager.PlayController.PanPosition = (float)value; }
 		}
 
 		public bool RandomPlay {
@@ -292,95 +126,55 @@ namespace Noise.UI.ViewModels {
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public double LeftLevel {
-			get {
-				var retValue = 0.0;
-
-				if( CurrentChannel != 0 ) {
-					retValue = mSampleLevels.LeftLevel;
-				}
-				else if( IsInDesignMode ) {
-					retValue = 0.75;
-				}
-
-				return( retValue );
-			}
+			get { return( mNoiseManager.PlayController.LeftLevel ); }
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public double RightLevel {
-			get {
-				var retValue = 0.0;
-
-				if( CurrentChannel != 0 ) {
-					retValue = mSampleLevels.RightLevel;
-				}
-				else if( IsInDesignMode ) {
-					retValue = 0.75;
-				}
-
-				return( retValue );
-			}
+			get { return( mNoiseManager.PlayController.RightLevel ); }
 		}
 
 		public void Execute_Play( object sender ) {
-			StartPlaying();
+			mNoiseManager.PlayController.Play();
 		}
 		[DependsUpon( "CurrentStatus" )]
 		[DependsUpon( "PlayQueueChangedFlag" )]
 		public bool CanExecute_Play( object sender ) {
-			var retValue = true;
-
-			if( mNoiseManager != null ) {
-				retValue = (!mNoiseManager.PlayQueue.IsQueueEmpty ) && ( CurrentStatus != ePlayingChannelStatus.Playing );
-			}
-
-			return( retValue );
+			return( mNoiseManager.PlayController.CanPlay );
 		}
 
 		public void Execute_Pause( object sender ) {
-			PausePlaying();
+			mNoiseManager.PlayController.Pause();
 		}
 		[DependsUpon( "CurrentStatus" )]
 		public bool CanExecute_Pause( object sender ) {
-			return(( CurrentTrack != null ) && ( CurrentStatus == ePlayingChannelStatus.Playing ));
+			return( mNoiseManager.PlayController.CanPause );
 		}
 
 		public void Execute_Stop( object sender ) {
-			StopPlaying();
+			mNoiseManager.PlayController.Stop();
 		}
 		[DependsUpon( "CurrentStatus" )]
 		public bool CanExecute_Stop( object sender ) {
-			return( CurrentStatus == ePlayingChannelStatus.Paused || CurrentStatus == ePlayingChannelStatus.Playing );
+			return( mNoiseManager.PlayController.CanStop );
 		}
 
 		public void Execute_NextTrack( object sender ) {
-			StartNextPlaying();
+			mNoiseManager.PlayController.PlayNextTrack();
 		}
 		[DependsUpon( "PlayQueueChangedFlag" )]
 		[DependsUpon( "StartTrackFlag" )]
 		public bool CanExecute_NextTrack( object sender ) {
-			var retValue = true;
-
-			if( mNoiseManager != null ) {
-				retValue = mNoiseManager.PlayQueue.NextTrack != null ;
-			}
-
-			return( retValue );
+			return( mNoiseManager.PlayController.CanPlayNextTrack );
 		}
 
 		public void Execute_PreviousTrack( object sender ) {
-			StartPreviousPlaying();
+			mNoiseManager.PlayController.PlayPreviousTrack();
 		}
 		[DependsUpon( "PlayQueueChangedFlag" )]
 		[DependsUpon( "StartTrackFlag" )]
 		public bool CanExecute_PreviousTrack( object sender ) {
-			var retValue = true;
-
-			if( mNoiseManager != null ) {
-				retValue = mNoiseManager.PlayQueue.PreviousTrack != null;
-			}
-
-			return( retValue );
+			return( mNoiseManager.PlayController.CanPlayPreviousTrack );
 		}
 
 		public void Execute_ClearQueue( object sender ) {

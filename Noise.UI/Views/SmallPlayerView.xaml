@@ -3,9 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
+        xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
         mc:Ignorable="d" 
-        d:DesignHeight="40" d:DesignWidth="200"
-        Height="40" Width="200"
+        d:DesignHeight="90" d:DesignWidth="600"
+        Height="90" Width="600"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="LightGray"
@@ -14,8 +16,58 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         >
+
+    <Window.Resources>
+        <Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True"/>
+        <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
+        <ValueConverters:VolumeLevelConverter x:Key="VolumeLevelConverter"/>
+    </Window.Resources>
+    
+    <Window.DataContext>
+        <Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}"/>
+    </Window.DataContext>
     
     <Border BorderBrush="LightBlue" BorderThickness="1" CornerRadius="3">
-        <TextBlock Margin="7" Text="Small Player View"/>
+        <Grid x:Name="PlayerViewRoot">
+            <Grid x:Name="Layout" Background="White">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
+                    <TextBlock Text="Current Track: " FontSize="16" FontWeight="Bold" Foreground="{DynamicResource ControlTextColor}" />
+                    <TextBlock Text="{Binding TrackName}" FontWeight="Bold" FontSize="16"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Height="35">
+                    <Button Margin="3" Command="{Binding Play}" Content="Play" Width="43"/>
+                    <Button Margin="3" Command="{Binding Pause}" Content="Pause" Width="43"/>
+                    <Button Margin="3" Command="{Binding Stop}" Content="Stop" Width="43"/>
+                    <Button Margin="3" Command="{Binding PreviousTrack}" Content="Prev" Width="43"/>
+                    <Button Margin="3" Command="{Binding NextTrack}" Content="Next" Width="43"/>
+                    <StackPanel Orientation="Horizontal" Margin="11,0">
+                        <TextBlock Text="Position: " Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <Grid Width="120" Margin="10,5,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="11"/>
+                            <RowDefinition Height="11"/>
+                        </Grid.RowDefinitions>
+
+                        <Rectangle Grid.Row="0" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding LeftLevel, Converter={StaticResource VolumeLevelConverter}}"/>
+                        <Rectangle Grid.Row="1" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding RightLevel, Converter={StaticResource VolumeLevelConverter}}"/>
+                    </Grid>
+                    <Slider Orientation="Horizontal" Width="100" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}"/>
+                </StackPanel>
+                <Slider Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Height="50" Margin="0,0,10,0" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
+            </Grid>
+        </Grid>
     </Border>
 </Window>

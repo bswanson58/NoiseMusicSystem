@@ -29,6 +29,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<INoiseManager, NoiseManager>();
 			mContainer.RegisterType<IPlayQueue, PlayQueueMgr>();
 			mContainer.RegisterType<IPlayHistory, PlayHistoryMgr>();
+			mContainer.RegisterType<IPlayController, PlayController>();
 			mContainer.RegisterType<ILog, Log>();
 			mContainer.RegisterType<ISystemConfiguration, SystemConfiguration>();
 		}

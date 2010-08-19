@@ -149,6 +149,8 @@
     <Compile Include="FileStore\StorageHelpers.cs" />
     <Compile Include="Database\IDatabaseManager.cs" />
     <Compile Include="MediaPlayer\AudioPlayer.cs" />
+    <Compile Include="MediaPlayer\IAudioPlayer.cs" />
+    <Compile Include="MediaPlayer\PlayController.cs" />
     <Compile Include="NoiseCoreModule.cs" />
     <Compile Include="NoiseManager.cs" />
     <Compile Include="PlayHistory\PlayHistoryMgr.cs" />

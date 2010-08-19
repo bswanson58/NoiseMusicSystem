@@ -29,10 +29,10 @@ namespace Noise.Core {
 		private IMetaDataExplorer			mMetaDataExplorer;
 		private	ISummaryBuilder				mSummaryBuilder;
 
-		public IDataProvider DataProvider { get; private set; }
-		public IAudioPlayer AudioPlayer { get; private set; }
-		public IPlayQueue PlayQueue { get; private set; }
-		public IPlayHistory PlayHistory { get; private set; }
+		public IDataProvider				DataProvider { get; private set; }
+		public IPlayQueue					PlayQueue { get; private set; }
+		public IPlayHistory					PlayHistory { get; private set; }
+		public IPlayController				PlayController { get; private set; }
 
 		public NoiseManager( IUnityContainer container ) {
 			mContainer = container;
@@ -60,7 +60,7 @@ namespace Noise.Core {
 			DataProvider = mContainer.Resolve<IDataProvider>();
 			PlayQueue = mContainer.Resolve<IPlayQueue>();
 			PlayHistory = mContainer.Resolve<IPlayHistory>();
-			AudioPlayer = mContainer.Resolve<IAudioPlayer>();
+			PlayController = mContainer.Resolve<IPlayController>();
 
 			mLog.LogMessage( "Initialized NoiseManager." );
 

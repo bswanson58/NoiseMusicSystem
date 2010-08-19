@@ -111,8 +111,9 @@
     <Compile Include="Dto\FolderStrategy.cs" />
     <Compile Include="Dto\InfoSource.cs" />
     <Compile Include="Dto\IUserSettings.cs" />
+    <Compile Include="Dto\PlaybackStatus.cs" />
     <Compile Include="Dto\PlayQueueTrack.cs" />
-    <Compile Include="Interfaces\IAudioPlayer.cs" />
+    <Compile Include="Interfaces\IPlayController.cs" />
     <Compile Include="Interfaces\IPlayHistory.cs" />
     <Compile Include="Interfaces\IPlayQueue.cs" />
     <Compile Include="Interfaces\IViewModelResolver.cs" />
