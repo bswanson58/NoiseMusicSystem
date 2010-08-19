@@ -82,5 +82,29 @@ namespace Noise.Desktop.Properties {
                 this["ApplicationWindowState"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("200")]
+        public double SmallPlayerTop {
+            get {
+                return ((double)(this["SmallPlayerTop"]));
+            }
+            set {
+                this["SmallPlayerTop"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("200")]
+        public double SmallPlayerLeft {
+            get {
+                return ((double)(this["SmallPlayerLeft"]));
+            }
+            set {
+                this["SmallPlayerLeft"] = value;
+            }
+        }
     }
 }

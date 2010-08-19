@@ -35,12 +35,5 @@ namespace Noise.Desktop {
 
 			Shutdown( -1 );
 		}
-
-		protected override void OnExit( ExitEventArgs e ) {
-			Desktop.Properties.Settings.Default.Save();
-			mBootstrapper.StopNoise();
-
-			base.OnExit( e );
-		}
 	}
 }

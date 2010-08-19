@@ -25,5 +25,7 @@ namespace Noise.Infrastructure {
 		public class PlaybackStatusChanged : CompositePresentationEvent<ePlaybackStatus> { }
 		public class PlaybackTrackChanged : CompositePresentationEvent<object> { }
 		public class PlaybackInfoChanged : CompositePresentationEvent<object> { }
+
+		public class WindowLayoutRequest : CompositePresentationEvent<string> { }
 	}
 }

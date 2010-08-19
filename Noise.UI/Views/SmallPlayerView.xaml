@@ -6,7 +6,6 @@
         xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
         xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
         mc:Ignorable="d" 
-        d:DesignHeight="90" d:DesignWidth="600"
         Height="55" Width="540"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -14,7 +13,6 @@
         Opacity="0.6"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterOwner"
         >
 
     <Window.Resources>

@@ -11,6 +11,8 @@ namespace Noise.Infrastructure {
 
 		public	static string			NewInstance = "NewInstance";
 
+		public	const string			SmallPlayerView = "SmallPlayerView";
+
 		static Constants() {
 			cNoExpirationDate = DateTime.MaxValue;
 		}

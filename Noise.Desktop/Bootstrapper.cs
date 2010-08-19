@@ -1,14 +1,13 @@
 ﻿using System.Windows;
-using Composite.Layout.Configuration;
 using Microsoft.Practices.Composite.Modularity;
 using Microsoft.Practices.Composite.UnityExtensions;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.Desktop {
 	public class Bootstrapper : UnityBootstrapper {
 		private INoiseManager	mNoiseManager;
+		private WindowManager	mWindowManager;
 
 		protected override DependencyObject CreateShell() {
 			Execute.InitializeWithDispatcher();
@@ -16,8 +15,13 @@ namespace Noise.Desktop {
 			var shell = Container.Resolve<Shell>();
 
 			shell.Show();
+			shell.Closing += OnShellClosing;
 
 			return ( shell );
+		}
+
+		private void OnShellClosing( object sender, System.ComponentModel.CancelEventArgs e ) {
+			StopNoise();
 		}
 
 		protected override IModuleCatalog GetModuleCatalog() {
@@ -38,7 +42,9 @@ namespace Noise.Desktop {
 			base.InitializeModules();
 
 			StartNoise();
-			InitializeLayoutManager();
+
+			mWindowManager = new WindowManager( Container );
+			mWindowManager.Initialize();
 		}
 
 		private void StartNoise() {
@@ -50,16 +56,16 @@ namespace Noise.Desktop {
 		public void StopNoise() {
 			if( mNoiseManager != null ) {
 				mNoiseManager.Shutdown();
+
+				mNoiseManager = null;
 			}
-		}
+			if( mWindowManager != null ) {
+				mWindowManager.Shutdown();
 
-		private void InitializeLayoutManager() {
-			var layoutManager = LayoutConfigurationManager.LayoutManager;
+				mWindowManager = null;
+			}
 
-			layoutManager.Initialize( Container );
-			Container.RegisterInstance( layoutManager, new ContainerControlledLifetimeManager());
-			//parameterless LoadLayout loads the default Layout into the Shell
-			layoutManager.LoadLayout();
+			Properties.Settings.Default.Save();
 		}
 	}
 }

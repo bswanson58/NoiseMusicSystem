@@ -1,16 +1,24 @@
-﻿using Microsoft.Practices.Unity;
+﻿using Microsoft.Practices.Composite.Events;
+using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Support;
 using Noise.UI.Views;
 
 namespace Noise.UI.ViewModels {
 	public class ToolbarViewModel : ViewModelBase {
 		private IUnityContainer		mContainer;
-		private SmallPlayerView		mPlayerView;
+		private IEventAggregator	mEvents;
 
 		[Dependency]
 		public IUnityContainer Container {
 			get { return( mContainer ); }
-			set { mContainer = value; }
+			set {
+				mContainer = value;
+
+				if( mContainer != null ) {
+					mEvents = mContainer.Resolve<IEventAggregator>();
+				}
+			}
 		}
 
 		public void Execute_Configuration() {
@@ -20,13 +28,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_SmallPlayerView() {
-			if( mPlayerView == null ) {
-				mPlayerView = new SmallPlayerView();
-				mPlayerView.Show();
-			}
-			else {
-				mPlayerView.Close();
-				mPlayerView = null;
+			if( mEvents != null ) {
+				mEvents.GetEvent<Events.WindowLayoutRequest>().Publish( Constants.SmallPlayerView );
 			}
 		}
 
