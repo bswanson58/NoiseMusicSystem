@@ -113,6 +113,7 @@
     </Compile>
     <Compile Include="Adapters\BindableRun.cs" />
     <Compile Include="Adapters\ExplorerTreeNode.cs" />
+    <Compile Include="Adapters\StreamViewNode.cs" />
     <Compile Include="Adapters\TrackViewNode.cs" />
     <Compile Include="Adapters\UserSettingsNotifier.cs" />
     <Compile Include="Behaviours\EventCommandTriggers\CommandParameter.cs" />

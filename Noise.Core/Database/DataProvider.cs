@@ -25,8 +25,15 @@ namespace Noise.Core.Database {
 		public void UpdateItem( object item ) {
 			if(( item is DbArtist ) ||
 			   ( item is DbAlbum ) ||
-			   ( item is DbTrack )) {
+			   ( item is DbTrack ) ||
+			   ( item is DbInternetStream )) {
 				mDatabase.Database.Store( item );
+			}
+		}
+
+		public void DeleteItem( object dbItem ) {
+			if( dbItem is DbInternetStream ) {
+				mDatabase.Database.Delete( dbItem );
 			}
 		}
 
@@ -151,6 +158,10 @@ namespace Noise.Core.Database {
 			}
 
 			return( retValue );
+		}
+
+		public IEnumerable<DbInternetStream> GetStreamList() {
+			return( from DbInternetStream stream in mDatabase.Database select stream );
 		}
 	}
 }

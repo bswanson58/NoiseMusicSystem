@@ -22,5 +22,8 @@ namespace Noise.Infrastructure.Interfaces {
 		void					UpdateAlbumInfo( DbAlbum forAlbum );
 
 		void					UpdateItem( object dbItem );
+		void					DeleteItem( object dbItem );
+
+		IEnumerable<DbInternetStream>	GetStreamList();
 	}
 }
