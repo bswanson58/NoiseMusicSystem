@@ -70,7 +70,9 @@ namespace Noise.UI.ViewModels {
 				var retValue = "None";
 
 				if( mNoiseManager.PlayController.CurrentTrack != null ) {
-					retValue = mNoiseManager.PlayController.CurrentTrack.Track.Name;
+					var track = mNoiseManager.PlayController.CurrentTrack;
+
+					retValue = String.Format( "{0} ({1}/{2})", track.Track.Name, track.Artist.Name, track.Album.Name );
 				}
 				else if( IsInDesignMode ) {
 					retValue = "The Flying Dutchmens Tribute";
