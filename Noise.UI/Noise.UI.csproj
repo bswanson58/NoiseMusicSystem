@@ -96,6 +96,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -151,7 +152,6 @@
     <Compile Include="ValueConverters\VolumeLevelConverter.cs" />
     <Compile Include="ViewModels\AlbumViewModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
-    <Compile Include="ViewModels\ConfigurationDialogViewModel.cs" />
     <Compile Include="ViewModels\ExplorerStrategyArtistAlbum.cs" />
     <Compile Include="ViewModels\IExplorerViewStrategy.cs" />
     <Compile Include="ViewModels\LibraryExplorerViewModel.cs" />

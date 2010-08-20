@@ -106,7 +106,6 @@ namespace Noise.Core {
 					StartBackgroundContentExplorer();
 				}
 			}
-			
 		}
 
 		private void StartLibraryExplorer() {

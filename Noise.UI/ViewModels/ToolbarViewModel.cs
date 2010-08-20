@@ -1,7 +1,9 @@
 ﻿using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Support;
+using Noise.UI.Support;
 using Noise.UI.Views;
 
 namespace Noise.UI.ViewModels {
@@ -22,9 +24,15 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_Configuration() {
-			var	dialog = new ConfigurationDialog();
+			if( mContainer != null ) {
+				var	dialogService = mContainer.Resolve<IDialogService>();
+				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
-			dialog.ShowDialog();
+				if( dialogService.ShowDialog( new ConfigurationDialog(), configuration ) == true ) {
+					systemConfig.Save( configuration );
+				}
+			}
 		}
 
 		public void Execute_SmallPlayerView() {
