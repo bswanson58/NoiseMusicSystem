@@ -24,7 +24,7 @@ namespace Noise.Desktop {
 		public void Initialize() {
 			mLayoutManager.Initialize( mContainer );
 
-			mLayoutManager.LoadLayout( Constants.StreamLayout );
+			mLayoutManager.LoadLayout( Constants.LibraryLayout );
 		}
 
 		public void Shutdown() {
