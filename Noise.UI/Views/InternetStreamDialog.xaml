@@ -28,20 +28,24 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" Content="Name:"/>
-        <TextBox Grid.Column="1" Grid.Row="0" Margin="3" Text="{Binding Path=EditObject.Name,  UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
-        <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" Content="Description:"/>
-        <TextBox Grid.Column="1" Grid.Row="1" Margin="3" Text="{Binding Path=EditObject.Description, Mode=TwoWay}"/>
-        <Label Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" Content="Url:"/>
-        <TextBox Grid.Column="1" Grid.Row="2" Margin="3" Text="{Binding Path=EditObject.Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
-        <Label Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" Content="Genre:"/>
-        <TextBox Grid.Column="1" Grid.Row="4" Margin="3" Text="{Binding Path=EditObject.UserGenre, Mode=TwoWay}"/>
+        <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Content="Enter information for an internet stream:"/>
+        <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" Content="Name:"/>
+        <TextBox Grid.Column="1" Grid.Row="1" Margin="3,3,200,3" Text="{Binding Path=EditObject.Name,  UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+        <Label Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" Content="Description:"/>
+        <TextBox Grid.Column="1" Grid.Row="2" Margin="3" Text="{Binding Path=EditObject.Description, Mode=TwoWay}"/>
+        <Label Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" Content="Url:"/>
+        <TextBox Grid.Column="1" Grid.Row="3" Margin="3" Text="{Binding Path=EditObject.Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+        <CheckBox Grid.Column="1" Grid.Row="4" Content="Does this Url target a playlist?" IsChecked="{Binding Path=EditObject.IsPlaylistWrapped}" Margin="7,3,0,5"/>
+        <Label Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" Content="Genre:"/>
+        <TextBox Grid.Column="1" Grid.Row="5" Margin="3,3,200,3" Text="{Binding Path=EditObject.UserGenre, Mode=TwoWay}"/>
+        <CheckBox Grid.Column="1" Grid.Row="6" Content="Favorite" IsChecked="{Binding Path=EditObject.IsFavorite}" Margin="7,5,0,5"/>
 
-        <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="OK" Command="{Binding Path=Ok}" Width="50" IsDefault="True"/>
-            <Button Content="Cancel" Command="{Binding Path=Cancel}" Width="50" Margin="7,0" IsCancel="True"/>
+        <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="OK" Command="{Binding Path=Ok}" Width="70" IsDefault="True" Height="22" VerticalAlignment="Bottom"/>
+            <Button Content="Cancel" Command="{Binding Path=Cancel}" Width="70" Margin="7,0" IsCancel="True" Height="22" VerticalAlignment="Bottom"/>
         </StackPanel>
     </Grid>
 </Window>
