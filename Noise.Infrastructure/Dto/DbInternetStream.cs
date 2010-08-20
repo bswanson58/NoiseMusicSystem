@@ -1,11 +1,14 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.ComponentModel.DataAnnotations;
 using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbInternetStream : IUserSettings {
+		[Required( AllowEmptyStrings=false, ErrorMessage = "Emty stream name is not allowed.")]
 		public string			Name { get; set; }
 		public string			Description { get; set; }
+		[Required( AllowEmptyStrings=false, ErrorMessage = "Emty stream Url is not allowed.")]
 		public string			Url { get; set; }
 		public Int32			Bitrate { get; set; }
 		public Int16			Channels { get; set; }

@@ -6,6 +6,8 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
+using Noise.UI.Support;
+using Noise.UI.Views;
 
 namespace Noise.UI.ViewModels {
 	class StreamViewModel : ViewModelBase {
@@ -48,12 +50,27 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_AddStream( object sender ) {
-			var stream = new DbInternetStream { Name = "WXRT", Description = "WXRT in Chicago",
-												Url = "http://provisioning.streamtheworld.com/pls/WXRTFMAAC.pls",
-												IsPlaylistWrapped = true, Encoding = eAudioEncoding.AAC };
-			mNoiseManager.DataProvider.UpdateItem( stream );
+			EditStream( new DbInternetStream());
+		}
 
-			UpdateStreams();
+		public void Execute_EditStream( object sender ) {
+			if( CurrentStream != null ) {
+				EditStream( CurrentStream.Stream );
+			}			
+		}
+
+		private void EditStream( DbInternetStream stream ) {
+			var	dialogService = mContainer.Resolve<IDialogService>();
+			if( dialogService.ShowDialog( new InternetStreamDialog(), stream ) == true ) {
+				mNoiseManager.DataProvider.UpdateItem( stream );
+
+				UpdateStreams();
+			}
+		}
+
+		[DependsUpon( "CurrentStream" )]
+		public bool CanExecute_EditStream( object sender ) {
+			return( CurrentStream != null );
 		}
 
 		public void Execute_DeleteStream( object sender ) {
