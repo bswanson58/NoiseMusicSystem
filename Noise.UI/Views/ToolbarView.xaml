@@ -13,6 +13,7 @@
     <ToolBarTray DockPanel.Dock="Top">
         <ToolBar Band="1" BandIndex="1">
             <Button Margin="3" Command="{Binding Path=DatabaseConfiguration}">Configuration</Button>
+            <Button Margin="3" Command="{Binding Path=LibraryConfiguration}">Library</Button>
             <Button Margin="3" Command="{Binding Path=NoiseOptions}">Options</Button>
             <Button Margin="3" Command="{Binding Path=SmallPlayerView}">Player</Button>
             <Button Margin="3" Command="{Binding Path=LibraryLayout}">Library Layout</Button>

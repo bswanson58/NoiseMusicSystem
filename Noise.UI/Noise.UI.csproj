@@ -173,6 +173,9 @@
     <Compile Include="Views\InternetStreamDialog.xaml.cs">
       <DependentUpon>InternetStreamDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\LibraryConfigurationDialog.xaml.cs">
+      <DependentUpon>LibraryConfigurationDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LibraryExplorerView.xaml.cs">
       <DependentUpon>LibraryExplorerView.xaml</DependentUpon>
     </Compile>
@@ -230,6 +233,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\InternetStreamDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LibraryConfigurationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

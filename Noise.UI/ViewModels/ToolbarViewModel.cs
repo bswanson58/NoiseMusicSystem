@@ -2,6 +2,7 @@
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 using Noise.UI.Support;
 using Noise.UI.Views;
@@ -42,6 +43,29 @@ namespace Noise.UI.ViewModels {
 				var configuration = systemConfig.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
 
 				if( dialogService.ShowDialog( new DatabaseConfigurationDialog(), configuration ) == true ) {
+					systemConfig.Save( configuration );
+				}
+			}
+		}
+
+		public void Execute_LibraryConfiguration() {
+			if( mContainer != null ) {
+				var	dialogService = mContainer.Resolve<IDialogService>();
+				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+				var configuration = systemConfig.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName );
+
+				if( configuration.RootFolders.Count == 0 ) {
+					configuration.RootFolders.Add( new RootFolderConfiguration());
+				}
+				var rootFolder = configuration.RootFolders[0];
+
+				if( dialogService.ShowDialog( new LibraryConfigurationDialog(), rootFolder ) == true ) {
+					if( rootFolder.PreferFolderStrategy ) {
+						rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 0, eFolderStrategy.Artist ));
+						rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 1, eFolderStrategy.Album ));
+						rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 2, eFolderStrategy.Volume ));
+					}
+
 					systemConfig.Save( configuration );
 				}
 			}
