@@ -6,6 +6,8 @@ namespace Noise.Infrastructure.Configuration {
 
 		private const string	cDatabaseNameProperty = "databaseName";
 		private	const string	cServerNameProperty = "serverName";
+		private const string	cDatabaseUserNameProperty = "databaseUserName";
+		private const string	cDatabasePasswordProperty = "databasePassword";
 
 		[ConfigurationPropertyAttribute( cDatabaseNameProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "Noise" )]
 		public string DatabaseName {
@@ -17,6 +19,18 @@ namespace Noise.Infrastructure.Configuration {
 		public string ServerName {
 			get { return ( (string)( base[cServerNameProperty] ) ); }
 			set { base[cServerNameProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cDatabaseUserNameProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "" )]
+		public string UserName {
+			get { return ( (string)( base[cDatabaseUserNameProperty] ) ); }
+			set { base[cDatabaseUserNameProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cDatabasePasswordProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "" )]
+		public string UserPassword {
+			get { return ( (string)( base[cDatabasePasswordProperty] ) ); }
+			set { base[cDatabasePasswordProperty] = value; }
 		}
 	}
 }

@@ -123,6 +123,7 @@
     <Compile Include="Adapters\StreamViewNode.cs" />
     <Compile Include="Adapters\TrackViewNode.cs" />
     <Compile Include="Adapters\UserSettingsNotifier.cs" />
+    <Compile Include="Behaviours\BindablePasswordBox.cs" />
     <Compile Include="Behaviours\DialogResult.cs" />
     <Compile Include="Behaviours\EventCommandTriggers\CommandParameter.cs" />
     <Compile Include="Behaviours\EventCommandTriggers\CommandSource.cs" />
@@ -165,6 +166,9 @@
     </Compile>
     <Compile Include="Views\ArtistView.xaml.cs">
       <DependentUpon>ArtistView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DatabaseConfigurationDialog.xaml.cs">
+      <DependentUpon>DatabaseConfigurationDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\InternetStreamDialog.xaml.cs">
       <DependentUpon>InternetStreamDialog.xaml</DependentUpon>
@@ -218,6 +222,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ArtistView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DatabaseConfigurationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -10,7 +10,7 @@
         Height="150" Width="350"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
-        Title="Noise Configuration"
+        Title="Noise Options"
         WindowStyle="ToolWindow"
         DataContext="{Binding DialogModelBase, Source={StaticResource ViewModelLocator}}" Topmost="True"
         Behaviours:DialogCloser.DialogResult="{Binding DialogResult}"
@@ -28,7 +28,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Content="Noise Configuration Settings:" Margin="5,0,0,0"/>
+        <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Content="Noise Option Settings:" Margin="5,0,0,0"/>
         <CheckBox Grid.Column="0" Grid.Row="1" Content="Update library on application startup." IsChecked="{Binding Path=EditObject.EnableLibraryExplorer}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
         <CheckBox Grid.Column="0" Grid.Row="2" Content="Enable background metadata updating." IsChecked="{Binding Path=EditObject.EnableBackgroundContentExplorer}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
 

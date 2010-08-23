@@ -12,6 +12,7 @@ namespace Noise.Infrastructure.Dto {
 		public Int16			UserRating { get; set; }
 		public Int16			AlbumCount { get; set; }
 		public bool				IsFavorite { get; set; }
+		public bool				HasFavorites { get; set; }
 
 		public DbArtist() {
 			Name = "";

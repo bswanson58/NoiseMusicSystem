@@ -14,6 +14,7 @@ namespace Noise.Infrastructure.Dto {
 		public string			ExternalGenre { get; set; }
 		public string			UserGenre { get; set; }
 		public bool				IsFavorite { get; set; }
+		public bool				HasFavorites { get; set; }
 
 		public DbAlbum() {
 			Name = "";

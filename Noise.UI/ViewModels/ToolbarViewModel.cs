@@ -23,13 +23,25 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Execute_Configuration() {
+		public void Execute_NoiseOptions() {
 			if( mContainer != null ) {
 				var	dialogService = mContainer.Resolve<IDialogService>();
 				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 				if( dialogService.ShowDialog( new ConfigurationDialog(), configuration ) == true ) {
+					systemConfig.Save( configuration );
+				}
+			}
+		}
+
+		public void Execute_DatabaseConfiguration() {
+			if( mContainer != null ) {
+				var	dialogService = mContainer.Resolve<IDialogService>();
+				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+				var configuration = systemConfig.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
+
+				if( dialogService.ShowDialog( new DatabaseConfigurationDialog(), configuration ) == true ) {
 					systemConfig.Save( configuration );
 				}
 			}
