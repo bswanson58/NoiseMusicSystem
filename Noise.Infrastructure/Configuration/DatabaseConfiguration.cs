@@ -11,25 +11,25 @@ namespace Noise.Infrastructure.Configuration {
 
 		[ConfigurationPropertyAttribute( cDatabaseNameProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "Noise" )]
 		public string DatabaseName {
-			get { return ( (string)( base[cDatabaseNameProperty] ) ); }
+			get { return ((string)( base[cDatabaseNameProperty] )); }
 			set { base[cDatabaseNameProperty] = value; }
 		}
 
-		[ConfigurationPropertyAttribute( cServerNameProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "(local)" )]
+		[ConfigurationPropertyAttribute( cServerNameProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "localhost" )]
 		public string ServerName {
-			get { return ( (string)( base[cServerNameProperty] ) ); }
+			get { return ((string)( base[cServerNameProperty] )); }
 			set { base[cServerNameProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cDatabaseUserNameProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "" )]
 		public string UserName {
-			get { return ( (string)( base[cDatabaseUserNameProperty] ) ); }
+			get { return ((string)( base[cDatabaseUserNameProperty] )); }
 			set { base[cDatabaseUserNameProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cDatabasePasswordProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "" )]
 		public string UserPassword {
-			get { return ( (string)( base[cDatabasePasswordProperty] ) ); }
+			get { return ((string)( base[cDatabasePasswordProperty] )); }
 			set { base[cDatabasePasswordProperty] = value; }
 		}
 	}

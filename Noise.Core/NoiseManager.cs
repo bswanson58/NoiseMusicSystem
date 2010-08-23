@@ -34,6 +34,8 @@ namespace Noise.Core {
 		public IPlayHistory					PlayHistory { get; private set; }
 		public IPlayController				PlayController { get; private set; }
 
+		public bool							IsInitialized { get; set; }
+
 		public NoiseManager( IUnityContainer container ) {
 			mContainer = container;
 
@@ -51,22 +53,24 @@ namespace Noise.Core {
 			mLog.LogMessage( "-------------------------" );
 
 			if( mDatabase.InitializeDatabase()) {
-				mDatabase.OpenWithCreateDatabase();
+				if( mDatabase.OpenWithCreateDatabase()) {
+					DataProvider = mContainer.Resolve<IDataProvider>();
+					PlayQueue = mContainer.Resolve<IPlayQueue>();
+					PlayHistory = mContainer.Resolve<IPlayHistory>();
+					PlayController = mContainer.Resolve<IPlayController>();
+
+					mLog.LogMessage( "Initialized NoiseManager." );
+
+					StartExplorerJobs();
+
+					IsInitialized = true;
+				}
 			}
 			else {
 				mLog.LogMessage( "Noise Manager: Database could not be initialized" );
 			}
 
-			DataProvider = mContainer.Resolve<IDataProvider>();
-			PlayQueue = mContainer.Resolve<IPlayQueue>();
-			PlayHistory = mContainer.Resolve<IPlayHistory>();
-			PlayController = mContainer.Resolve<IPlayController>();
-
-			mLog.LogMessage( "Initialized NoiseManager." );
-
-			StartExplorerJobs();
-
-			return ( true );
+			return ( IsInitialized );
 		}
 
 		public void Shutdown() {

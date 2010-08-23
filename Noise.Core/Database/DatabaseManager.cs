@@ -52,11 +52,19 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
-		public void OpenWithCreateDatabase() {
+		public bool OpenWithCreateDatabase() {
+			var retValue = false;
+
 			if(!OpenDatabase()) {
-				CreateDatabase( mDatabaseName );
-				OpenDatabase();
+				if( CreateDatabase( mDatabaseName )) {
+					retValue = OpenDatabase();
+				}
 			}
+			else {
+				retValue = true;
+			}
+
+			return( retValue );
 		}
 
 		public bool OpenDatabase() {
@@ -87,16 +95,22 @@ namespace Noise.Core.Database {
 			}
 		}
 
-		private void CreateDatabase( string databaseName ) {
+		private bool CreateDatabase( string databaseName ) {
+			var retValue =false;
+
 			Condition.Requires( Database ).IsNotNull();
 			mLog.LogMessage( "Creating Noise database: {0}", databaseName );
 
 			try {
 				Database.CreateDatabase( databaseName );
+
+				retValue = true;
 			}
 			catch( Exception ex ) {
 				mLog.LogException( ex );
 			}
+
+			return( retValue );
 		}
 
 		private void RegisterDatabaseTypes() {

@@ -197,6 +197,14 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(SolutionDir)lib\BASS.Net\bass.dll $(TargetDir)
+copy $(SolutionDir)lib\BASS.Net\bass_aac.dll $(TargetDir)
+copy $(SolutionDir)lib\BASS.Net\bassflac.dll $(TargetDir)
+copy $(SolutionDir)lib\BASS.Net\basswma.dll $(TargetDir)
+copy $(SolutionDir)lib\Eloquera\Eloquera.Client.dll $(TargetDir)
+copy $(SolutionDir)lib\Eloquera\Eloquera.Common.dll $(TargetDir)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

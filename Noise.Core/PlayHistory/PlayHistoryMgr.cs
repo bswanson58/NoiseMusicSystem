@@ -16,11 +16,13 @@ namespace Noise.Core.PlayHistory {
 		private readonly IEventAggregator		mEvents;
 		private readonly IDatabaseManager		mDatabase;
 		private readonly List<DbPlayHistory>	mPlayHistory;
+		private readonly ILog					mLog;
 
 		public PlayHistoryMgr( IUnityContainer container ) {
 			mContainer = container;
 			mDatabase = mContainer.Resolve<IDatabaseManager>();
 			mEvents = mContainer.Resolve<IEventAggregator>();
+			mLog = mContainer.Resolve<ILog>();
 
 			mPlayHistory = new List<DbPlayHistory>();
 			UpdateHistoryList();
@@ -59,8 +61,13 @@ namespace Noise.Core.PlayHistory {
 		}
 
 		private void UpdateHistoryList() {
-			mPlayHistory.Clear();
-			mPlayHistory.AddRange( from DbPlayHistory history in mDatabase.Database orderby history.PlayedOn select history );
+			try {
+				mPlayHistory.Clear();
+				mPlayHistory.AddRange( from DbPlayHistory history in mDatabase.Database orderby history.PlayedOn select history );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "PlayHistoryMgr: Could not update play history.", ex );
+			}
 		}
 
 		public IEnumerable<DbPlayHistory> PlayHistory {

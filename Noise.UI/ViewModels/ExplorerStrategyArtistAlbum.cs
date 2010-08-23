@@ -74,13 +74,15 @@ namespace Noise.UI.ViewModels {
 		public void PopulateTree( ObservableCollection<ExplorerTreeNode> tree ) {
 			Condition.Requires( mViewModel ).IsNotNull();
 
-			var artistList = from artist in mNoiseManager.DataProvider.GetArtistList() orderby artist.Name select artist;
+			if( mNoiseManager.IsInitialized ) {
+				var artistList = from artist in mNoiseManager.DataProvider.GetArtistList() orderby artist.Name select artist;
 
-			foreach( DbArtist artist in artistList ) {
-				var parent = artist.AlbumCount > 0 ? new ExplorerTreeNode( mEventAggregator, artist, FillChildren ) : new ExplorerTreeNode( mEventAggregator, artist );
-
-				tree.Add( parent );
-				mChangeObserver.Add( parent.SettingsNotifier );
+				foreach( DbArtist artist in artistList ) {
+					var parent = artist.AlbumCount > 0 ? new ExplorerTreeNode( mEventAggregator, artist, FillChildren ) :
+														 new ExplorerTreeNode( mEventAggregator, artist );
+					tree.Add( parent );
+					mChangeObserver.Add( parent.SettingsNotifier );
+				}
 			}
 		}
 

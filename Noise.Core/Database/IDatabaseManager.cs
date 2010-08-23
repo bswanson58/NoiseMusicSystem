@@ -3,7 +3,7 @@
 		Eloquera.Client.DB	Database { get; }
 
 		bool		InitializeDatabase();
-		void		OpenWithCreateDatabase();
+		bool		OpenWithCreateDatabase();
 		bool		OpenDatabase();
 
 		void		CloseDatabase();

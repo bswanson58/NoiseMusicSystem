@@ -70,7 +70,12 @@ namespace Noise.Core.MediaPlayer {
 			mUpdateTimer = new Timer { Enabled = false, Interval = 50, AutoReset = true };
 			mUpdateTimer.Elapsed += OnUpdateTimer;
 
-			Bass.BASS_Init( -1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero );
+			try {
+				Bass.BASS_Init( -1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Bass Audio could not be initialized. ", ex);
+			}
 
 			LoadPlugin( "bassflac.dll" );
 			LoadPlugin( "basswma.dll" );
@@ -78,8 +83,13 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		private void LoadPlugin( string plugin ) {
+			try {
 			if( Bass.BASS_PluginLoad( plugin ) == 0 ) {
 				mLog.LogMessage( String.Format( "Cannot load Bass Plugin: {0}", plugin ));
+			}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( String.Format( "Could not load Bass plugin: {0}", plugin ), ex );
 			}
 		}
 
