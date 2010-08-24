@@ -265,6 +265,59 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
+		private IUserSettings GetChannelSettings( int channel ) {
+			IUserSettings	retValue = null;
+			var				currentTrack = GetTrack( channel );
+
+			if( currentTrack != null ) {
+				retValue = currentTrack.Track ?? currentTrack.Stream as IUserSettings;
+			}
+
+			return( retValue );
+		}
+
+		public bool IsFavorite {
+			get {
+				var	retValue = false;
+				var settings = GetChannelSettings( CurrentChannel );
+
+				if( settings != null ) {
+					retValue = settings.IsFavorite;
+				}
+
+				return( retValue );
+			}
+			set {
+				var settings = GetChannelSettings( CurrentChannel );
+
+				if( settings != null ) {
+					settings.IsFavorite = value;
+					mNoiseManager.DataProvider.UpdateItem( settings );
+				}
+			}
+		}
+
+		public Int16 Rating {
+			get {
+				Int16	retValue = 0;
+				var		settings = GetChannelSettings( CurrentChannel );
+
+				if( settings != null ) {
+					retValue = settings.Rating;
+				}
+
+				return( retValue );
+			}
+			set {
+				var settings = GetChannelSettings( CurrentChannel );
+
+				if( settings != null ) {
+					settings.Rating = value;
+					mNoiseManager.DataProvider.UpdateItem( settings );
+				}
+			}
+		}
+
 		public double LeftLevel {
 			get { return( CurrentChannel != 0 ? mSampleLevels.LeftLevel : 0.0 ); }
 		}

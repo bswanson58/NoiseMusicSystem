@@ -5,6 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
         xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
+        xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary"
         mc:Ignorable="d" 
         Height="55" Width="540"
         WindowStyle="None"
@@ -37,10 +38,20 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5,3,3,0">
-                    <TextBlock Text="Current Track: " FontSize="13.333" FontWeight="Bold" Foreground="{DynamicResource ControlTextColor}" />
-                    <TextBlock Text="{Binding TrackName}" FontWeight="Bold" FontSize="13.333"/>
-                </StackPanel>
+                <Grid Grid.Row="0" Grid.Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5,3,3,0">
+                        <TextBlock Text="Current Track: " FontSize="13.333" FontWeight="Bold" Foreground="{DynamicResource ControlTextColor}" />
+                        <TextBlock Text="{Binding TrackName}" FontWeight="Bold" FontSize="13.333"/>
+                    </StackPanel>
+                    <CheckBox Grid.Column="1" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
+                    <Controls:RatingSelector Grid.Column="2" Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
+                                             RatingSelected="{Binding Path=Rating, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
+                </Grid>
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Height="23" Margin="5,0,0,0">
                     <Button Margin="0,0,3,0" Command="{Binding Play}" Content="Play" Width="39" FontSize="10.667"/>

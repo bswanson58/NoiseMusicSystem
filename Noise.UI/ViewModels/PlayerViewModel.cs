@@ -138,6 +138,18 @@ namespace Noise.UI.ViewModels {
 			get { return( mNoiseManager.PlayController.RightLevel ); }
 		}
 
+		[DependsUpon( "StartTrackFlag" )]
+		public bool IsFavorite {
+			get { return( mNoiseManager.PlayController.IsFavorite ); }
+			set { mNoiseManager.PlayController.IsFavorite = value; }
+		}
+
+		[DependsUpon( "StartTrackFlag" )]
+		public Int16 Rating {
+			get{ return( mNoiseManager.PlayController.Rating ); }
+			set { mNoiseManager.PlayController.Rating = value; }
+		}
+
 		public void Execute_Play( object sender ) {
 			mNoiseManager.PlayController.Play();
 		}

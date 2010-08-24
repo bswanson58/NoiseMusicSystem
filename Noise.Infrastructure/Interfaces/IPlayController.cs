@@ -21,6 +21,9 @@ namespace Noise.Infrastructure.Interfaces {
 		double			LeftLevel { get; }
 		double			RightLevel { get; }
 
+		bool			IsFavorite {get; set; }
+		Int16			Rating { get; set; }
+
 		PlayQueueTrack	CurrentTrack { get; }
 		TimeSpan		TrackTime { get; }
 		long			PlayPosition { get; set; }
