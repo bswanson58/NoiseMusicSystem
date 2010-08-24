@@ -1,10 +1,13 @@
-﻿using System.Windows;
+﻿using System.ComponentModel.Composition;
+using System.Windows;
+using Noise.UI.Support;
 
 namespace Noise.UI.Views {
 	/// <summary>
 	/// Interaction logic for InternetStreamDialog.xaml
 	/// </summary>
-	public partial class InternetStreamDialog : Window {
+	[Export( DialogNames.InternetStreamEdit, typeof( FrameworkElement ))]
+	public partial class InternetStreamDialog {
 		public InternetStreamDialog() {
 			InitializeComponent();
 		}

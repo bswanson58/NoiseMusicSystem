@@ -5,7 +5,6 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 using Noise.UI.Support;
-using Noise.UI.Views;
 
 namespace Noise.UI.ViewModels {
 	public class ToolbarViewModel : ViewModelBase {
@@ -30,7 +29,7 @@ namespace Noise.UI.ViewModels {
 				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
-				if( dialogService.ShowDialog( new ConfigurationDialog(), configuration ) == true ) {
+				if( dialogService.ShowDialog( DialogNames.NoiseOptions, configuration ) == true ) {
 					systemConfig.Save( configuration );
 				}
 			}
@@ -42,7 +41,7 @@ namespace Noise.UI.ViewModels {
 				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 				var configuration = systemConfig.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
 
-				if( dialogService.ShowDialog( new DatabaseConfigurationDialog(), configuration ) == true ) {
+				if( dialogService.ShowDialog( DialogNames.DatabaseConfiguration, configuration ) == true ) {
 					systemConfig.Save( configuration );
 				}
 			}
@@ -59,7 +58,7 @@ namespace Noise.UI.ViewModels {
 				}
 				var rootFolder = configuration.RootFolders[0];
 
-				if( dialogService.ShowDialog( new LibraryConfigurationDialog(), rootFolder ) == true ) {
+				if( dialogService.ShowDialog( DialogNames.LibraryConfiguration, rootFolder, new LibraryConfigurationDialogModel( dialogService )) == true ) {
 					if( rootFolder.PreferFolderStrategy ) {
 						rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 0, eFolderStrategy.Artist ));
 						rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 1, eFolderStrategy.Album ));

@@ -141,7 +141,15 @@
     <Compile Include="NoiseUiModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\DialogModelBase.cs" />
+    <Compile Include="Support\DialogNames.cs" />
     <Compile Include="Support\DialogService.cs" />
+    <Compile Include="Support\DialogWindow.xaml.cs">
+      <DependentUpon>DialogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Support\DialogWindowModel.cs" />
+    <Compile Include="Support\FolderBrowserDialogEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Support\IDialogService.cs" />
     <Compile Include="Support\ViewModelResolver.cs" />
     <Compile Include="ValueConverters\BooleanVisibilityConverter.cs" />
@@ -155,6 +163,7 @@
     <Compile Include="ViewModels\ArtistViewModel.cs" />
     <Compile Include="ViewModels\ExplorerStrategyArtistAlbum.cs" />
     <Compile Include="ViewModels\IExplorerViewStrategy.cs" />
+    <Compile Include="ViewModels\LibraryConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\LibraryExplorerViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueViewModel.cs" />
@@ -219,6 +228,10 @@
     <Page Include="Resources\UiResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Support\DialogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\AlbumView.xaml">
       <SubType>Designer</SubType>

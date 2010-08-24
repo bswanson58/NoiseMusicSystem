@@ -7,7 +7,6 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Support;
-using Noise.UI.Views;
 
 namespace Noise.UI.ViewModels {
 	class StreamViewModel : ViewModelBase {
@@ -61,7 +60,7 @@ namespace Noise.UI.ViewModels {
 
 		private void EditStream( DbInternetStream stream ) {
 			var	dialogService = mContainer.Resolve<IDialogService>();
-			if( dialogService.ShowDialog( new InternetStreamDialog(), stream ) == true ) {
+			if( dialogService.ShowDialog( DialogNames.InternetStreamEdit, stream ) == true ) {
 				mNoiseManager.DataProvider.UpdateItem( stream );
 
 				UpdateStreams();

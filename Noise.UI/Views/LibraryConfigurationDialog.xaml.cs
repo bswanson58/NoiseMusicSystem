@@ -1,10 +1,13 @@
-﻿using System.Windows;
+﻿using System.ComponentModel.Composition;
+using System.Windows;
+using Noise.UI.Support;
 
 namespace Noise.UI.Views {
 	/// <summary>
 	/// Interaction logic for LibraryConfigurationDialog.xaml
 	/// </summary>
-	public partial class LibraryConfigurationDialog : Window {
+	[Export( DialogNames.LibraryConfiguration, typeof( FrameworkElement ))]
+	public partial class LibraryConfigurationDialog {
 		public LibraryConfigurationDialog() {
 			InitializeComponent();
 		}
