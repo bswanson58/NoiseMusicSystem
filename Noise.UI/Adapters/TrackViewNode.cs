@@ -8,10 +8,13 @@ namespace Noise.UI.Adapters {
 		private readonly IEventAggregator	mEventAggregator;
 		private bool						mIsSelected;
 		public	DbTrack						Track { get; private set; }
+		public	UserSettingsNotifier		SettingsNotifier { get; private set; }
 
 		public TrackViewNode( IEventAggregator eventAggregator, DbTrack track ) {
 			mEventAggregator = eventAggregator;
 			Track = track;
+
+			SettingsNotifier = new UserSettingsNotifier( track );
 		}
 
 		public bool IsSelected {
