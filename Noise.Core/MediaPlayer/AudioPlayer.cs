@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Timers;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
@@ -60,6 +61,11 @@ namespace Noise.Core.MediaPlayer {
 		private readonly Timer							mUpdateTimer;
 		private readonly Dictionary<int, AudioStream>	mCurrentStreams;
 
+		private readonly DOWNLOADPROC					mDownloadProc;
+		private FileStream								mRecordStream;
+		private byte[]									mRecordBuffer;
+		private bool									mRecord;
+
 		public AudioPlayer( IUnityContainer container ) {
 			mContainer = container;
 			mEventAggregator = mContainer.Resolve<IEventAggregator>();
@@ -69,6 +75,7 @@ namespace Noise.Core.MediaPlayer {
 			mStreamMetadataSync = new SYNCPROC( SyncProc );
 			mUpdateTimer = new Timer { Enabled = false, Interval = 50, AutoReset = true };
 			mUpdateTimer.Elapsed += OnUpdateTimer;
+			mDownloadProc = new DOWNLOADPROC( RecordProc );
 
 			try {
 				Bass.BASS_Init( -1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero );
@@ -80,6 +87,8 @@ namespace Noise.Core.MediaPlayer {
 			LoadPlugin( "bassflac.dll" );
 			LoadPlugin( "basswma.dll" );
 			LoadPlugin( "bass_aac.dll" );
+
+			mRecord = false;
 		}
 
 		private void LoadPlugin( string plugin ) {
@@ -184,7 +193,7 @@ namespace Noise.Core.MediaPlayer {
 						mLog.LogMessage( String.Format( "AudioPlayer - OpenStream cannot set _CONFIG_NET_PLAYLIST for: {0}", stream.Url ));
 					}
 
-					var channel = Bass.BASS_StreamCreateURL( stream.Url, 0, BASSFlag.BASS_DEFAULT, null, IntPtr.Zero );
+					var channel = Bass.BASS_StreamCreateURL( stream.Url, 0, BASSFlag.BASS_DEFAULT, mDownloadProc, IntPtr.Zero );
 					if( channel != 0 ) {
 						Single	sampleRate = 0;
 						Bass.BASS_ChannelGetAttribute( channel, BASSAttribute.BASS_ATTRIB_FREQ, ref sampleRate );
@@ -231,6 +240,32 @@ namespace Noise.Core.MediaPlayer {
 						mEventAggregator.GetEvent<Events.AudioPlayStreamInfo>().Publish( new StreamInfo( channel, tagInfo.artist, tagInfo.album, 
 																										 tagInfo.title, tagInfo.genre ) );
 					}
+				}
+			}
+		}
+
+		private void RecordProc( IntPtr buffer, int length, IntPtr user ) {
+			if( mRecord ) {
+				if( mRecordStream == null ) {
+					mRecordStream = new FileStream( "recording.mp3", FileMode.Create, FileAccess.Write, FileShare.Read );
+				}
+
+				if( buffer == IntPtr.Zero ) {
+					// finished downloading
+					mRecordStream.Flush();
+					mRecordStream.Close();
+
+					mRecordStream = null;
+				}
+				else {
+					// size the data buffer as needed
+					if(( mRecordBuffer == null ) ||
+					   ( mRecordBuffer.Length < length )) {
+						mRecordBuffer = new byte[length];
+					}
+					Marshal.Copy( buffer, mRecordBuffer, 0, length );
+
+					mRecordStream.Write( mRecordBuffer, 0, length );
 				}
 			}
 		}
