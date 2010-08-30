@@ -52,6 +52,19 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public bool InitializeAndOpenDatabase( string clientName) {
+			Condition.Requires( clientName ).IsNotNullOrEmpty();
+
+			var retValue = false;
+
+			mLog.LogMessage( String.Format( "{0} - Initialize and open {1} database on server: {2}.", clientName, mDatabaseName, mDatabaseLocation ));
+			if( InitializeDatabase()) {
+				retValue = InternalOpenDatabase();
+			}
+
+			return( retValue );
+		}
+
 		public bool OpenWithCreateDatabase() {
 			var retValue = false;
 
@@ -70,21 +83,35 @@ namespace Noise.Core.Database {
 		public bool OpenDatabase() {
 			Condition.Requires( Database ).IsNotNull();
 
-			var retValue = true;
+			var retValue = InternalOpenDatabase();
+
+			mLog.LogMessage( "Opened database: {0} on server: {1}", mDatabaseName, mDatabaseLocation );
+
+			return ( retValue );
+		}
+
+		private bool InternalOpenDatabase() {
+			var			retValue = false;
 
 			try {
 				Database.OpenDatabase( mDatabaseName );
 				RegisterDatabaseTypes();
 
-				mLog.LogMessage( "Opened database: {0} on server: {1}", mDatabaseName, mDatabaseLocation );
+				retValue = true;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Opening database failed", ex );
-
-				retValue = false;
+				mLog.LogException( String.Format( "Opening database {0} on server: {1} failed", mDatabaseName, mDatabaseLocation ), ex );
 			}
 
-			return ( retValue );
+			return( retValue );
+		}
+
+		public void CloseDatabase( string clientName ) {
+			Condition.Requires( clientName ).IsNotNullOrEmpty();
+
+			mLog.LogMessage( String.Format( "{0} - Closing database.", clientName ));
+
+			CloseDatabase();
 		}
 
 		public void CloseDatabase() {

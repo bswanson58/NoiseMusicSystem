@@ -22,22 +22,22 @@ namespace Noise.Core.DataBuilders {
 
 	internal class BackgroundContentExplorer {
 		private readonly IUnityContainer	mContainer;
-		private readonly INoiseManager		mNoiseManager;
-		private readonly IDatabaseManager	mDatabase;
+		private readonly IDataProvider		mDataProvider;
 		private	IEnumerator<DbArtist>		mArtistEnum;
 
 		public BackgroundContentExplorer( IUnityContainer container ) {
 			mContainer = container;
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
-			mDatabase = mContainer.Resolve<IDatabaseManager>();
+			mDataProvider = mContainer.Resolve<IDataProvider>();
 		}
 
 		public bool Initialize() {
-			var	list = from DbArtist artist in mDatabase.Database select artist;
-			var seed = new Random( DateTime.Now.Millisecond );
-			var random = seed.Next( list.Count() - 1 );
+			if( mDataProvider.Initialize()) {
+				var	list = mDataProvider.GetArtistList();
+				var seed = new Random( DateTime.Now.Millisecond );
+				var random = seed.Next( list.Count() - 1 );
 
-			mArtistEnum =  list.Skip( random ).AsEnumerable().GetEnumerator();
+				mArtistEnum =  list.Skip( random ).AsEnumerable().GetEnumerator();
+			}
 
 			return( true );
 		}
@@ -46,7 +46,7 @@ namespace Noise.Core.DataBuilders {
 			bool	retValue = false;
 
 			if( mArtistEnum.MoveNext()) {
-				mNoiseManager.DataProvider.UpdateArtistInfo( mArtistEnum.Current );
+				mDataProvider.UpdateArtistInfo( mArtistEnum.Current );
 
 				retValue = true;
 			}

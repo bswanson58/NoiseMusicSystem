@@ -6,7 +6,6 @@ using Lastfm.Services;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -16,6 +15,8 @@ namespace Noise.Core.DataProviders {
 
 		[Import]
 		protected IUnityContainer	Container { get; set; }
+		[Import]
+		protected IDatabaseManager	Database { get; set; }
 
 		public TimeSpan ExpirationPeriod {
 			get { return( new TimeSpan( 30, 0, 0, 0 )); }
@@ -34,7 +35,7 @@ namespace Noise.Core.DataProviders {
 		}
 
 		public void UpdateContent( DbArtist forArtist ) {
-			var provider = new LastFmProvider( Container );
+			var provider = new LastFmProvider( Container, Database );
 
 			provider.UpdateArtist( forArtist );
 		}
@@ -77,10 +78,10 @@ namespace Noise.Core.DataProviders {
 		private readonly ILog				mLog;
 		private readonly Session			mSession;
 
-		public LastFmProvider( IUnityContainer container ) {
-			mDatabase = container.Resolve<IDatabaseManager>();
+		public LastFmProvider( IUnityContainer container, IDatabaseManager database ) {
+			mDatabase = database;
 
-			mLog = new Log();
+			mLog = container.Resolve<ILog>();
 
 			try {
 				mSession = new Session( cApiKey, cApiSecret );

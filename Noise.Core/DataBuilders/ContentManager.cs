@@ -25,6 +25,7 @@ namespace Noise.Core.DataBuilders {
 		public ContentManager( IUnityContainer unityContainer ) {
 			mContainer = unityContainer;
 			mDatabase = mContainer.Resolve<IDatabaseManager>();
+			mDatabase.InitializeAndOpenDatabase( "ContentProvider" );
 			mEvents =mContainer.Resolve<IEventAggregator>();
 			mLog = mContainer.Resolve<ILog>();
 
@@ -32,6 +33,7 @@ namespace Noise.Core.DataBuilders {
 			var container = new CompositionContainer( catalog );
 
 			container.ComposeExportedValue( mContainer );
+			container.ComposeExportedValue( mDatabase );
 			container.ComposeParts( this );
 		}
 

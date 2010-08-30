@@ -218,11 +218,13 @@ namespace Noise.Core.DataProviders {
 		private const string	cAuthority = "http://www.discogs.com";
 
 		private	readonly RestClient	mClient;
-		private IDatabaseManager	mDatabase;
 		private ILog				mLog;
 
 		[Import]
-		private IUnityContainer	Container { get; set; }
+		private IUnityContainer		Container { get; set; }
+		[Import]
+		private IDatabaseManager	Database { get; set; }
+
 
 		public	abstract ContentType	ContentType { get; }
 
@@ -230,16 +232,6 @@ namespace Noise.Core.DataProviders {
 			mClient = new RestClient { Authority = cAuthority, UserAgent = "Noise", DecompressionMethods = DecompressionMethods.GZip };
 			mClient.AddParameter( "f", "xml" );
 			mClient.AddParameter( "api_key", cApiKey );
-		}
-
-		private IDatabaseManager Database {
-			get {
-				if( mDatabase == null ) {
-					mDatabase = Container.Resolve<IDatabaseManager>();
-				}
-
-				return( mDatabase );
-			}
 		}
 
 		private ILog Log {
@@ -318,9 +310,9 @@ namespace Noise.Core.DataProviders {
 
 						Database.Database.Store( bandMembers );
 
-						var releases = from DbDiscographyRelease release in mDatabase.Database where release.AssociatedItem == artistId select release;
+						var releases = from DbDiscographyRelease release in Database.Database where release.AssociatedItem == artistId select release;
 						foreach( var release in releases ) {
-							mDatabase.Database.Delete( release );
+							Database.Database.Delete( release );
 						}
 
 						if( response.ContentEntity.ReleaseList.Count > 0 ) {

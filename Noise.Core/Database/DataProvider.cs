@@ -18,6 +18,16 @@ namespace Noise.Core.Database {
 			mContentManager = mContainer.Resolve<IContentManager>();
 		}
 
+		public bool Initialize() {
+			return( mDatabase.InitializeAndOpenDatabase( "DataProvider" ));
+		}
+
+		public void Shutdown() {
+			if( mDatabase != null ) {
+				mDatabase.CloseDatabase( "DataProvider" );
+			}
+		}
+
 		public long GetObjectIdentifier( object dbObject ) {
 			return( mDatabase.Database.GetUid( dbObject ));
 		}

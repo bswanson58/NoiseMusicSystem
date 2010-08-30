@@ -20,7 +20,6 @@ namespace Noise.Core {
 		private	readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
 		private readonly ILog				mLog;
-		private readonly IDatabaseManager	mDatabase;
 		private	readonly ISchedulerFactory	mSchedulerFactory;
 		private	readonly IScheduler			mJobScheduler;
 		private bool						mExploring;
@@ -41,8 +40,6 @@ namespace Noise.Core {
 
 			mLog = mContainer.Resolve<ILog>();
 			mEvents = mContainer.Resolve<IEventAggregator>();
-			mDatabase = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
-			mContainer.RegisterInstance( typeof( IDatabaseManager ), mDatabase );
 
 			mSchedulerFactory = new StdSchedulerFactory();
 			mJobScheduler = mSchedulerFactory.GetScheduler();
@@ -52,18 +49,25 @@ namespace Noise.Core {
 		public bool Initialize() {
 			mLog.LogMessage( "-------------------------" );
 
-			if( mDatabase.InitializeDatabase()) {
-				if( mDatabase.OpenWithCreateDatabase()) {
+			var database = mContainer.Resolve<IDatabaseManager>();
+
+			if( database.InitializeDatabase()) {
+				if( database.OpenWithCreateDatabase()) {
 					DataProvider = mContainer.Resolve<IDataProvider>();
-					PlayQueue = mContainer.Resolve<IPlayQueue>();
-					PlayHistory = mContainer.Resolve<IPlayHistory>();
-					PlayController = mContainer.Resolve<IPlayController>();
 
-					mLog.LogMessage( "Initialized NoiseManager." );
+					if( DataProvider.Initialize()) {
+						PlayQueue = mContainer.Resolve<IPlayQueue>();
+						PlayHistory = mContainer.Resolve<IPlayHistory>();
+						PlayController = mContainer.Resolve<IPlayController>();
 
-					StartExplorerJobs();
+						mLog.LogMessage( "Initialized NoiseManager." );
 
-					IsInitialized = true;
+						StartExplorerJobs();
+
+						IsInitialized = true;
+					}
+
+					database.CloseDatabase();
 				}
 			}
 			else {
@@ -79,9 +83,7 @@ namespace Noise.Core {
 			StopExploring();
 			WaitForExplorer();
 
-			if( mDatabase != null ) {
-				mDatabase.CloseDatabase();
-			}
+			DataProvider.Shutdown();
 		}
 
 		private void WaitForExplorer() {
@@ -193,7 +195,7 @@ namespace Noise.Core {
 		}
 
 		private void LogStatistics() {
-			var	statistics = new DatabaseStatistics( mDatabase );
+			var	statistics = mContainer.Resolve<DatabaseStatistics>();
 
 			statistics.GatherStatistics();
 			mLog.LogInfo( statistics.ToString());

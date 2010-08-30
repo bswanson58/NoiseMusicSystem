@@ -24,31 +24,35 @@ namespace Noise.Core.FileStore {
 		public void SynchronizeDatabaseFolders() {
 			mStopExploring = false;
 
-			var rootFolders = from RootFolder root in mDatabase.Database where true select root;
+			if( mDatabase.InitializeAndOpenDatabase( "FolderExplorer" )) {
+				var rootFolders = from RootFolder root in mDatabase.Database where true select root;
 
-			if( rootFolders.Count() == 0 ) {
-				LoadConfiguration();
+				if( rootFolders.Count() == 0 ) {
+					LoadConfiguration();
 
-				rootFolders = from RootFolder root in mDatabase.Database where true select root;
-			}
+					rootFolders = from RootFolder root in mDatabase.Database where true select root;
+				}
 
-			if( rootFolders.Count() > 0 ) {
-				foreach( var rootFolder in rootFolders ) {
-					if( Directory.Exists( StorageHelpers.GetPath( mDatabase.Database, rootFolder ))) {
-						mLog.LogInfo( "Synchronizing folder: {0}", rootFolder.DisplayName );
-						BuildFolder( rootFolder );
-					}
-					else {
-						mLog.LogMessage( "Storage folder does not exists: {0}", rootFolder.DisplayName );
-					}
+				if( rootFolders.Count() > 0 ) {
+					foreach( var rootFolder in rootFolders ) {
+						if( Directory.Exists( StorageHelpers.GetPath( mDatabase.Database, rootFolder ))) {
+							mLog.LogInfo( "Synchronizing folder: {0}", rootFolder.DisplayName );
+							BuildFolder( rootFolder );
+						}
+						else {
+							mLog.LogMessage( "Storage folder does not exists: {0}", rootFolder.DisplayName );
+						}
 
-					if( mStopExploring ) {
-						break;
+						if( mStopExploring ) {
+							break;
+						}
 					}
 				}
-			}
-			else {
-				throw( new StorageConfigurationException());
+				else {
+					throw( new StorageConfigurationException());
+				}
+
+				mDatabase.CloseDatabase( "FolderExplorer" );
 			}
 		}
 

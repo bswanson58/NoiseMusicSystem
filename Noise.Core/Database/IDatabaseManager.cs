@@ -5,7 +5,9 @@
 		bool		InitializeDatabase();
 		bool		OpenWithCreateDatabase();
 		bool		OpenDatabase();
+		bool		InitializeAndOpenDatabase( string clientName );
 
 		void		CloseDatabase();
+		void		CloseDatabase( string clientName );
 	}
 }

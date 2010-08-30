@@ -38,39 +38,44 @@ namespace Noise.Core.DataBuilders {
 			mStopExploring = false;
 			mSummary = summary;
 
-			try {
-				var		artworkProvider = new FileArtworkProvider( mDatabase );
-				var		textProvider =new FileTextProvider( mDatabase );
-				var		fileEnum = from StorageFile file in mDatabase.Database where file.FileType == eFileType.Undetermined orderby file.ParentFolder select file;
 
-				foreach( var file in fileEnum ) {
-					file.FileType = DetermineFileType( file );
+			if( mDatabase.InitializeAndOpenDatabase( "MetaDataExplorer" )) {
+				try {
+					var		artworkProvider = new FileArtworkProvider( mDatabase );
+					var		textProvider =new FileTextProvider( mDatabase );
+					var		fileEnum = from StorageFile file in mDatabase.Database where file.FileType == eFileType.Undetermined orderby file.ParentFolder select file;
 
-					switch( file.FileType ) {
-						case eFileType.Music:
-							BuildMusicMetaData( file );
+					foreach( var file in fileEnum ) {
+						file.FileType = DetermineFileType( file );
+
+						switch( file.FileType ) {
+							case eFileType.Music:
+								BuildMusicMetaData( file );
+								break;
+
+							case eFileType.Picture:
+								artworkProvider.BuildMetaData( file );
+
+								mDatabase.Database.Store( file );
+								break;
+
+							case eFileType.Text:
+								textProvider.BuildMetaData( file );
+
+								mDatabase.Database.Store( file );
+								break;
+						}
+
+						if( mStopExploring ) {
 							break;
-
-						case eFileType.Picture:
-							artworkProvider.BuildMetaData( file );
-
-							mDatabase.Database.Store( file );
-							break;
-
-						case eFileType.Text:
-							textProvider.BuildMetaData( file );
-
-							mDatabase.Database.Store( file );
-							break;
-					}
-
-					if( mStopExploring ) {
-						break;
+						}
 					}
 				}
-			}
-			catch( Exception ex ) {
-				mLog.LogException( "Building Metadata:", ex );
+				catch( Exception ex ) {
+					mLog.LogException( "Building Metadata:", ex );
+				}
+
+				mDatabase.CloseDatabase( "MetaDataExplorer" );
 			}
 		}
 

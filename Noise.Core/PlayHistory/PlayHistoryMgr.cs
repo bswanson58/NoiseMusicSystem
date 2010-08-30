@@ -25,7 +25,10 @@ namespace Noise.Core.PlayHistory {
 			mLog = mContainer.Resolve<ILog>();
 
 			mPlayHistory = new List<DbPlayHistory>();
-			UpdateHistoryList();
+
+			if( mDatabase.InitializeAndOpenDatabase( "PlayHistoryManager" )) {
+				UpdateHistoryList();
+			}
 		}
 
 		public void TrackPlayCompleted( PlayQueueTrack track ) {

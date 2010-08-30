@@ -3,6 +3,9 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface IDataProvider {
+		bool					Initialize();
+		void					Shutdown();
+
 		long					GetObjectIdentifier( object dbObject );
 
 		IEnumerable<DbArtist>	GetArtistList();
