@@ -21,8 +21,7 @@ namespace Noise.Core.DataProviders {
 			var database = dbManager.ReserveDatabase( "FileTextProvider" );
 
 			try {
-				var fileId = database.Database.GetUid( file );
-				var dbText = new DbTextInfo( fileId, ContentType.TextInfo ) { Source = InfoSource.File, FolderLocation = file.ParentFolder };
+				var dbText = new DbTextInfo( file.DbId, ContentType.TextInfo ) { Source = InfoSource.File, FolderLocation = file.ParentFolder };
 
 				var	fileName = StorageHelpers.GetPath( database.Database, file );
 

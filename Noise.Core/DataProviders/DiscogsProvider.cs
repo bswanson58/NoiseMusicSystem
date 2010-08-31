@@ -284,7 +284,7 @@ namespace Noise.Core.DataProviders {
 					var	response = mClient.Request<DiscogsArtist>( request );
 					if(( response.StatusCode == HttpStatusCode.OK ) &&
 					   ( response.ContentEntity != null )) {
-						var artistId = database.Database.GetUid( forArtist );
+						var artistId = forArtist.DbId;
 						var	bandMembers = ( from DbAssociatedItems item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select  item ).FirstOrDefault();
 
 						if( bandMembers == null ) {

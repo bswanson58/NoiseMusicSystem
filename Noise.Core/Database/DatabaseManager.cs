@@ -34,6 +34,11 @@ namespace Noise.Core.Database {
 		}
 
 		public void Shutdown() {
+			if( mReservedDatabases.Count > 0 ) {
+				mLog.LogMessage( string.Format( "DatabaseManager has {0} reserved databases on shutdown!", mReservedDatabases.Count ));
+			}
+			mLog.LogMessage( string.Format( "DatabaseManager closing {0} databases.", mReservedDatabases.Count + mAvailableDatabases.Count ));
+
 			lock( mLockObject ) {
 				foreach( var database in mReservedDatabases.Values ) {
 					database.CloseDatabase();

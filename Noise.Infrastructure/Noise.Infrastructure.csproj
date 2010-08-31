@@ -107,6 +107,7 @@
     <Compile Include="Dto\DatabaseChangeSummary.cs" />
     <Compile Include="Dto\DataProviderList.cs" />
     <Compile Include="Dto\DbArtwork.cs" />
+    <Compile Include="Dto\DbBase.cs" />
     <Compile Include="Dto\DbDiscographyRelease.cs" />
     <Compile Include="Dto\DbInternetStream.cs" />
     <Compile Include="Dto\DbTextInfo.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="Dto\PlaybackStatus.cs" />
     <Compile Include="Dto\PlayQueueTrack.cs" />
     <Compile Include="Dto\StreamInfo.cs" />
+    <Compile Include="Interfaces\IDbBase.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
     <Compile Include="Interfaces\IPlayHistory.cs" />
     <Compile Include="Interfaces\IPlayQueue.cs" />

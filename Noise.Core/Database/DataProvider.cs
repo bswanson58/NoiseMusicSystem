@@ -29,20 +29,13 @@ namespace Noise.Core.Database {
 			Condition.Requires( dbObject ).IsNotNull();
 
 			long	retValue = 0L;
-			var		database = mDatabaseManager.ReserveDatabase( "GetObjectIdentifier" );
 
-			try {
-				retValue = database.Database.GetUid( dbObject );
-
-				Condition.Requires( retValue ).IsNotEqualTo( -1 );
+			if( dbObject is DbBase ) {
+				retValue = ( dbObject as DbBase ).DbId;
 			}
-			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetObjectIdentifier:", ex );
+			else {
+				mLog.LogMessage( "DbId requested for non DbBase object {0}", dbObject.GetType());
 			}
-			finally {
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
-			}
-
 			return( retValue );
 		}
 
@@ -110,10 +103,7 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase( "GetArtistForAlbum" );
 
 			try {
-				var parms = database.Database.CreateParameters();
-
-				parms["artistId"] = album.Artist;
-				retValue = database.Database.ExecuteScalar( "SELECT DbArtist WHERE $ID = @artistId", parms ) as DbArtist;
+				retValue = ( from DbArtist artist in database.Database where artist.DbId == album.Artist select artist ).FirstOrDefault();
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetArtistForAlbum:", ex );
@@ -133,7 +123,7 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase( "GetAlbumList" );
 
 			try {
-				var artistId = database.Database.GetUid( forArtist );
+				var artistId = GetObjectIdentifier( forArtist );
 
 				retValue = new DataProviderList<DbAlbum>( database.DatabaseId, FreeDatabase,
 															from DbAlbum album in database.Database where album.Artist == artistId select album );
@@ -154,14 +144,13 @@ namespace Noise.Core.Database {
 			var		database = mDatabaseManager.ReserveDatabase( "GetAlbumList" );
 
 			try {
-				var parms = database.Database.CreateParameters();
-
-				parms["albumId"] = track.Album;
-
-				retValue = database.Database.ExecuteScalar( "SELECT DbAlbum WHERE $ID = @albumId", parms ) as DbAlbum;
+				retValue = ( from DbAlbum album in database.Database where album.DbId == track.Album select album ).FirstOrDefault();
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetAlbumForTrack:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
 			}
 
 			return( retValue );
@@ -174,7 +163,7 @@ namespace Noise.Core.Database {
 
 			var database = mDatabaseManager.ReserveDatabase( "GetTrackList" );
 			try {
-				var albumId = database.Database.GetUid( forAlbum );
+				var albumId = GetObjectIdentifier( forAlbum );
 
 				retValue = new DataProviderList<DbTrack>( database.DatabaseId, FreeDatabase,
 															from DbTrack track in database.Database where track.Album == albumId select track );
@@ -195,11 +184,11 @@ namespace Noise.Core.Database {
 			var database =mDatabaseManager.ReserveDatabase( "GetTrackList" );
 
 			try {
-				var artistId = database.Database.GetUid( forArtist );
+				var artistId = GetObjectIdentifier( forArtist );
 				var albumList = from DbAlbum album in database.Database where album.Artist == artistId select album;
 
 				foreach( DbAlbum album in albumList ) {
-					var albumId = database.Database.GetUid( album );
+					var albumId = GetObjectIdentifier( album );
 					var trackList = from DbTrack track in database.Database where track.Album == albumId select track;
 
 					retValue.AddRange( trackList );
@@ -222,7 +211,7 @@ namespace Noise.Core.Database {
 
 			var database = mDatabaseManager.ReserveDatabase( "GetPhysicalFile" );
 			try {
-				var trackId = database.Database.GetUid( forTrack );
+				var trackId = GetObjectIdentifier( forTrack );
 
 				Condition.Requires( trackId ).IsNotLessOrEqual( 0 );
 
@@ -273,7 +262,7 @@ namespace Noise.Core.Database {
 			ArtistSupportInfo	retValue = null;
 			var database = mDatabaseManager.ReserveDatabase( "GetArtistSupportInfo" );
 			try {
-				var artistId = database.Database.GetUid( forArtist );
+				var artistId = GetObjectIdentifier( forArtist );
 				var parms = database.Database.CreateParameters();
 
 				parms["artistId"] = artistId;
@@ -308,11 +297,11 @@ namespace Noise.Core.Database {
 
 			var database = mDatabaseManager.ReserveDatabase( "GetAlbumSupportInfo" );
 			try {
-				var albumId = database.Database.GetUid( forAlbum );
+				var albumId = GetObjectIdentifier( forAlbum );
 				var albumTrack = ( from DbTrack track in database.Database where track.Album == albumId select track ).FirstOrDefault();
 
 				if( albumTrack != null ) {
-					var trackId = database.Database.GetUid( albumTrack );
+					var trackId = GetObjectIdentifier( albumTrack );
 					var	fileTrack = ( from StorageFile file in database.Database where file.MetaDataPointer == trackId select file ).FirstOrDefault();
 
 					if( fileTrack != null ) {

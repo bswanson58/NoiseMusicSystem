@@ -119,9 +119,12 @@ namespace Noise.Core.DataBuilders {
 								provider.AddAvailableMetaData( artist, album, track );
 							}
 
-							track.Album = database.Database.GetUid( album );
-							file.MetaDataPointer = database.Database.Store( track );
+							track.Album = album.DbId;
+							database.Database.Store( track );
+
+							file.MetaDataPointer = track.DbId;
 							database.Database.Store( file );
+
 							mSummary.TracksAdded++;
 						}
 						else {
@@ -184,11 +187,9 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			if(!string.IsNullOrWhiteSpace( albumName )) {
-				var artistId = database.Database.GetUid( artist );
-
-				retValue = ( from DbAlbum album in database.Database where album.Name == albumName && album.Artist == artistId select album ).FirstOrDefault();
+				retValue = ( from DbAlbum album in database.Database where album.Name == albumName && album.Artist == artist.DbId select album ).FirstOrDefault();
 				if( retValue == null ) {
-					retValue = new DbAlbum { Name = albumName, Artist = database.Database.GetUid( artist ) };
+					retValue = new DbAlbum { Name = albumName, Artist = artist.DbId };
 
 					database.Database.Store( retValue );
 					mSummary.AlbumsAdded++;

@@ -21,7 +21,7 @@ namespace Noise.Core.DataProviders {
 			var database = dbManager.ReserveDatabase( "FileArtworkProvider" );
 
 			try {
-				var fileId = database.Database.GetUid( file );
+				var fileId = file.DbId;
 				var dbPicture = new DbArtwork( fileId, IsCoverFile( file.Name ) ? ContentType.AlbumCover : ContentType.AlbumArtwork )
 					{ Source = InfoSource.File,
 					  FolderLocation = file.ParentFolder };

@@ -22,7 +22,7 @@ namespace Noise.Core.FileStore {
 
 				param["id"] = folder.ParentFolder;
 
-				folder = database.ExecuteScalar("Select StorageFolder Where $ID = @id", param ) as StorageFolder;
+				folder = database.ExecuteScalar("Select StorageFolder Where DbId = @id", param ) as StorageFolder;
 				if( folder != null ) {
 					pathParts.Push( folder.Name );
 				}
@@ -48,7 +48,7 @@ namespace Noise.Core.FileStore {
 
 			param["id"] = forFile.ParentFolder;
 
-			var folder = database.ExecuteScalar( "SELECT StorageFolder WHERE $ID = @id", param) as StorageFolder;
+			var folder = database.ExecuteScalar( "SELECT StorageFolder WHERE DbId = @id", param) as StorageFolder;
 			var path = GetPath( database, folder );
 
 			return( Path.Combine( path, forFile.Name ));
@@ -64,7 +64,7 @@ namespace Noise.Core.FileStore {
 			FolderStrategy	strategy = null;
 
 			param["id"] = forFile.ParentFolder;
-			var folder = database.ExecuteScalar( "SELECT StorageFolder WHERE $ID = @id", param ) as StorageFolder;
+			var folder = database.ExecuteScalar( "SELECT StorageFolder WHERE DbId = @id", param ) as StorageFolder;
 
 			if( folder != null ) {
 				pathParts.Push( folder.Name );
@@ -72,7 +72,7 @@ namespace Noise.Core.FileStore {
 				while( folder.ParentFolder != Constants.cDatabaseNullOid ) {
 					param["id"] = folder.ParentFolder;
 
-					folder = database.ExecuteScalar( "SELECT StorageFolder WHERE $ID = @id", param ) as StorageFolder;
+					folder = database.ExecuteScalar( "SELECT StorageFolder WHERE DbId = @id", param ) as StorageFolder;
 					if( folder != null ) {
 						if( folder is RootFolder ) {
 							strategy = (folder as RootFolder).FolderStrategy;

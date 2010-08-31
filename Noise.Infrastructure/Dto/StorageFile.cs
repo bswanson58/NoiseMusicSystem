@@ -2,7 +2,7 @@
 using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
-	public class StorageFile {
+	public class StorageFile : DbBase {
 		public string		Name { get; private set; }
 		public long			ParentFolder { get; private set; }
 		public long			FileSize { get; private set; }

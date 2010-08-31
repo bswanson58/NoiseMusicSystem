@@ -90,10 +90,8 @@ namespace Noise.Core.DataProviders {
 
 		public void UpdateArtist( IDatabase database, DbArtist artist ) {
 			try {
-				var artistId = database.Database.GetUid( artist );
+				var artistId = artist.DbId;
 				var parms = database.Database.CreateParameters();
-
-				Condition.Requires( artistId ).IsNotEqualTo( -1 );
 
 				parms["artistId"] = artistId;
 				parms["artistImage"] = ContentType.ArtistPrimaryImage;

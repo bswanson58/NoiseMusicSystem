@@ -39,14 +39,14 @@ namespace Noise.Core.DataBuilders {
 					foreach( var artist in artists ) {
 						mLog.LogInfo( string.Format( "Building summary data for: {0}", artist.Name ));
 
-						var artistId = database.Database.GetUid( artist );
+						var artistId = artist.DbId;
 						var albums = from DbAlbum album in database.Database where album.Artist == artistId select album;
 						var albumGenre = new Dictionary<string, int>();
 						var albumCount = 0;
 						var albumRating = 0;
 
 						foreach( var album in albums ) {
-							var albumId = database.Database.GetUid( album );
+							var albumId = album.DbId;
 							var tracks = from DbTrack track in database.Database where track.Album == albumId select track;
 							var years = new List<UInt32>();
 							var trackGenre = new Dictionary<string, int>();
@@ -103,7 +103,7 @@ namespace Noise.Core.DataBuilders {
 					mLog.LogException( "Building summary data: ", ex );
 				}
 				finally {
-					databaseMgr.FreeDatabase( "SummaryBuilder" );
+					databaseMgr.FreeDatabase( database.DatabaseId );
 				}
 			}
 		}

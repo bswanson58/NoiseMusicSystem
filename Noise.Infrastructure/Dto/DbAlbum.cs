@@ -3,7 +3,7 @@ using System.ComponentModel.Composition;
 using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
-	public class DbAlbum : IUserSettings {
+	public class DbAlbum : DbBase, IUserSettings {
 		public string			Name { get; set; }
 		public long				Artist { get; set; }
 		public Int16			UserRating { get; set; }

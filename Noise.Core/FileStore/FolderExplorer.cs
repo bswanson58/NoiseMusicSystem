@@ -103,7 +103,7 @@ namespace Noise.Core.FileStore {
 			var directories = FileSearcher.Search( StorageHelpers.GetPath( database.Database, parent ), null, SearchOptions.Directories, 0 );
 
 			foreach( var directory in directories ) {
-				var folder = new StorageFolder( directory.File, database.Database.GetUid( parent ));
+				var folder = new StorageFolder( directory.File, parent.DbId );
 				var param = database.Database.CreateParameters();
 
 				param["parent"] = folder.ParentFolder;
@@ -131,21 +131,14 @@ namespace Noise.Core.FileStore {
 		}
 
 		private void BuildFolderFiles( IDatabase database, StorageFolder storageFolder ) {
-			var	parentId =  database.Database.GetUid( storageFolder );
-			var param = database.Database.CreateParameters();
-
-			param["parent"] = parentId;
-
-			var databaseFiles = database.Database.ExecuteQuery( "SELECT StorageFile WHERE ParentFolder = @parent", param );
-			var dbList = databaseFiles.Cast<StorageFile>().ToList();
+			var dbList = ( from StorageFile file in database.Database where file.ParentFolder == storageFolder.DbId select file ).ToList();
 			var files = FileSearcher.BreadthFirst.Search( StorageHelpers.GetPath( database.Database, storageFolder ), null,
 														  SearchOptions.Files | SearchOptions.IncludeSystem | SearchOptions.IncludeHidden, 0 );
-
 			foreach( var file in files ) {
 				var fileName = file.File;
 
 				if(!dbList.Exists( dbFile => dbFile.Name == fileName )) {
-					database.Database.Store( new StorageFile( file.File, parentId, file.Size, file.ModificationTime ));
+					database.Database.Store( new StorageFile( file.File, storageFolder.DbId, file.Size, file.ModificationTime ));
 				}
 
 				if( mStopExploring ) {
