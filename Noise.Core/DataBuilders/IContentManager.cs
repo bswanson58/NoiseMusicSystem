@@ -1,4 +1,5 @@
 ﻿using System;
+using Noise.Core.Database;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.DataBuilders {
@@ -10,9 +11,9 @@ namespace Noise.Core.DataBuilders {
 		bool			CanUpdateAlbum { get; }
 		bool			CanUpdateTrack { get; }
 
-		void			UpdateContent( DbArtist forArtist );
-		void			UpdateContent( DbAlbum forAlbum );
-		void			UpdateContent( DbTrack forTrack );
+		void			UpdateContent( IDatabase database, DbArtist forArtist );
+		void			UpdateContent( IDatabase database, DbAlbum forAlbum );
+		void			UpdateContent( IDatabase database, DbTrack forTrack );
 	}
 
 	public interface IContentManager {

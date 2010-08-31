@@ -9,12 +9,12 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	internal class SummaryBuilder : ISummaryBuilder {
-		private readonly IDatabaseManager	mDatabase;
+		private readonly IUnityContainer	mContainer;
 		private	readonly ILog				mLog;
 		private bool						mStop;
 
 		public SummaryBuilder( IUnityContainer container ) {
-			mDatabase = container.Resolve<IDatabaseManager>();
+			mContainer =container;
 			mLog = container.Resolve<ILog>();
 		}
 
@@ -29,22 +29,25 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		private void SummarizeArtists() {
-			try {
-				if( mDatabase.InitializeAndOpenDatabase( "SummaryBuilder" )) {
-					var artists = from DbArtist artist in mDatabase.Database select artist;
+			var databaseMgr = mContainer.Resolve<IDatabaseManager>();
+			var database = databaseMgr.ReserveDatabase( "SummaryBuilder" );
+
+			if( database != null ) {
+				try {
+					var artists = from DbArtist artist in database.Database select artist;
 
 					foreach( var artist in artists ) {
 						mLog.LogInfo( string.Format( "Building summary data for: {0}", artist.Name ));
 
-						var artistId = mDatabase.Database.GetUid( artist );
-						var albums = from DbAlbum album in mDatabase.Database where album.Artist == artistId select album;
+						var artistId = database.Database.GetUid( artist );
+						var albums = from DbAlbum album in database.Database where album.Artist == artistId select album;
 						var albumGenre = new Dictionary<string, int>();
 						var albumCount = 0;
 						var albumRating = 0;
 
 						foreach( var album in albums ) {
-							var albumId = mDatabase.Database.GetUid( album );
-							var tracks = from DbTrack track in mDatabase.Database where track.Album == albumId select track;
+							var albumId = database.Database.GetUid( album );
+							var tracks = from DbTrack track in database.Database where track.Album == albumId select track;
 							var years = new List<UInt32>();
 							var trackGenre = new Dictionary<string, int>();
 							var trackRating = 0;
@@ -77,7 +80,7 @@ namespace Noise.Core.DataBuilders {
 							album.CalculatedRating = (Int16)( trackRating / album.TrackCount );
 							albumRating += album.CalculatedRating;
 
-							mDatabase.Database.Store( album );
+							database.Database.Store( album );
 							albumCount++;
 
 							if( mStop ) {
@@ -89,18 +92,19 @@ namespace Noise.Core.DataBuilders {
 						artist.CalculatedGenre = DetermineTopGenre( albumGenre );
 						artist.CalculatedRating = (Int16)( albumRating / albumCount );
 
-						mDatabase.Database.Store( artist );
+						database.Database.Store( artist );
 
 						if( mStop ) {
 							break;
 						}
 					}
-
-					mDatabase.CloseDatabase( "SummaryBuilder" );
 				}
-			}
-			catch( Exception ex ) {
-				mLog.LogException( "Building summary data: ", ex );
+				catch( Exception ex ) {
+					mLog.LogException( "Building summary data: ", ex );
+				}
+				finally {
+					databaseMgr.FreeDatabase( "SummaryBuilder" );
+				}
 			}
 		}
 

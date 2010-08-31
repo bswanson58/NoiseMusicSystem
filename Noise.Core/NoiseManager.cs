@@ -4,7 +4,6 @@ using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
-using Noise.Core.Exceptions;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -19,6 +18,7 @@ namespace Noise.Core {
 
 		private	readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
+		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly ILog				mLog;
 		private	readonly ISchedulerFactory	mSchedulerFactory;
 		private	readonly IScheduler			mJobScheduler;
@@ -28,10 +28,10 @@ namespace Noise.Core {
 		private IMetaDataExplorer			mMetaDataExplorer;
 		private	ISummaryBuilder				mSummaryBuilder;
 
-		public IDataProvider				DataProvider { get; private set; }
-		public IPlayQueue					PlayQueue { get; private set; }
-		public IPlayHistory					PlayHistory { get; private set; }
-		public IPlayController				PlayController { get; private set; }
+		public	IDataProvider				DataProvider { get; private set; }
+		public	IPlayQueue					PlayQueue { get; private set; }
+		public	IPlayHistory				PlayHistory { get; private set; }
+		public	IPlayController				PlayController { get; private set; }
 
 		public bool							IsInitialized { get; set; }
 
@@ -39,6 +39,8 @@ namespace Noise.Core {
 			mContainer = container;
 
 			mLog = mContainer.Resolve<ILog>();
+			mDatabaseManager = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
+			mContainer.RegisterInstance( mDatabaseManager );
 			mEvents = mContainer.Resolve<IEventAggregator>();
 
 			mSchedulerFactory = new StdSchedulerFactory();
@@ -49,29 +51,21 @@ namespace Noise.Core {
 		public bool Initialize() {
 			mLog.LogMessage( "-------------------------" );
 
-			var database = mContainer.Resolve<IDatabaseManager>();
+			if( mDatabaseManager.Initialize()) {
+				DataProvider = mContainer.Resolve<IDataProvider>();
 
-			if( database.InitializeDatabase()) {
-				if( database.OpenWithCreateDatabase()) {
-					DataProvider = mContainer.Resolve<IDataProvider>();
+				PlayQueue = mContainer.Resolve<IPlayQueue>();
+				PlayHistory = mContainer.Resolve<IPlayHistory>();
+				PlayController = mContainer.Resolve<IPlayController>();
 
-					if( DataProvider.Initialize()) {
-						PlayQueue = mContainer.Resolve<IPlayQueue>();
-						PlayHistory = mContainer.Resolve<IPlayHistory>();
-						PlayController = mContainer.Resolve<IPlayController>();
+				mLog.LogMessage( "Initialized NoiseManager." );
 
-						mLog.LogMessage( "Initialized NoiseManager." );
+				StartExplorerJobs();
 
-						StartExplorerJobs();
-
-						IsInitialized = true;
-					}
-
-					database.CloseDatabase();
-				}
+				IsInitialized = true;
 			}
 			else {
-				mLog.LogMessage( "Noise Manager: Database could not be initialized" );
+				mLog.LogMessage( "Noise Manager: DatabaseManager could not be initialized" );
 			}
 
 			return ( IsInitialized );
@@ -83,7 +77,7 @@ namespace Noise.Core {
 			StopExploring();
 			WaitForExplorer();
 
-			DataProvider.Shutdown();
+			mDatabaseManager.Shutdown();
 		}
 
 		private void WaitForExplorer() {
@@ -143,13 +137,8 @@ namespace Noise.Core {
 
 			try {
 				if( mContinueExploring ) {
-					try {
-						mFolderExplorer = mContainer.Resolve<IFolderExplorer>();
-						mFolderExplorer.SynchronizeDatabaseFolders();
-					}
-					catch( StorageConfigurationException ) {
-						InitializeStorageConfiguration();
-					}
+					mFolderExplorer = mContainer.Resolve<IFolderExplorer>();
+					mFolderExplorer.SynchronizeDatabaseFolders();
 				}
 
 				var results = new DatabaseChangeSummary();
@@ -217,7 +206,7 @@ namespace Noise.Core {
 			}
 		}
 
-		private void InitializeStorageConfiguration() {
+/*		private void InitializeStorageConfiguration() {
 			var configMgr = mContainer.Resolve<ISystemConfiguration>();
 			var storageConfig = configMgr.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName );
 
@@ -238,5 +227,5 @@ namespace Noise.Core {
 				configMgr.Save( explorerConfig );
 			}
 		}
-	}
+*/	}
 }

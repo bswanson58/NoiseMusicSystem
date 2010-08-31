@@ -1,5 +1,7 @@
-﻿namespace Noise.Infrastructure.Dto {
-	public class ArtistSupportInfo {
+﻿using System;
+
+namespace Noise.Infrastructure.Dto {
+	public class ArtistSupportInfo  {
 		public	DbTextInfo			Biography { get; private set; }
 		public	DbArtwork			ArtistImage { get; private set; }
 		public	DbAssociatedItems	SimilarArtist { get; private set; }

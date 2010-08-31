@@ -44,7 +44,11 @@ namespace Noise.UI.ViewModels {
 		private void UpdateStreams() {
 			mStreams.SuspendNotification();
 			mStreams.Clear();
-			mStreams.AddRange( from stream in mNoiseManager.DataProvider.GetStreamList() select new StreamViewNode( mEventAggregator, stream ));
+
+			using( var streams = mNoiseManager.DataProvider.GetStreamList()) {
+				mStreams.AddRange( from stream in streams.List select new StreamViewNode( mEventAggregator, stream ));
+			}
+
 			mStreams.ResumeNotification();
 		}
 

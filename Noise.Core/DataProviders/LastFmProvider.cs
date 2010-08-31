@@ -15,8 +15,6 @@ namespace Noise.Core.DataProviders {
 
 		[Import]
 		protected IUnityContainer	Container { get; set; }
-		[Import]
-		protected IDatabaseManager	Database { get; set; }
 
 		public TimeSpan ExpirationPeriod {
 			get { return( new TimeSpan( 30, 0, 0, 0 )); }
@@ -34,17 +32,17 @@ namespace Noise.Core.DataProviders {
 			get{ return( false ); }
 		}
 
-		public void UpdateContent( DbArtist forArtist ) {
-			var provider = new LastFmProvider( Container, Database );
+		public void UpdateContent( IDatabase database, DbArtist forArtist ) {
+			var provider = new LastFmProvider( Container );
 
-			provider.UpdateArtist( forArtist );
+			provider.UpdateArtist( database, forArtist );
 		}
 
-		public void UpdateContent( DbAlbum forAlbum ) {
+		public void UpdateContent( IDatabase database, DbAlbum forAlbum ) {
 			throw new NotImplementedException();
 		}
 
-		public void UpdateContent( DbTrack forTrack ) {
+		public void UpdateContent( IDatabase database, DbTrack forTrack ) {
 			throw new NotImplementedException();
 		}
 	}
@@ -74,13 +72,12 @@ namespace Noise.Core.DataProviders {
 		private const string		cApiKey		= "2cc6cebb071ba39a2d6fa71fc60255e8";
 		private const string		cApiSecret	= "e01705ce5fa579cc070811ebfe5206f0";
 
-		private readonly IDatabaseManager	mDatabase;
+		private readonly IUnityContainer	mContainer;
 		private readonly ILog				mLog;
 		private readonly Session			mSession;
 
-		public LastFmProvider( IUnityContainer container, IDatabaseManager database ) {
-			mDatabase = database;
-
+		public LastFmProvider( IUnityContainer container ) {
+			mContainer = container;
 			mLog = container.Resolve<ILog>();
 
 			try {
@@ -91,18 +88,20 @@ namespace Noise.Core.DataProviders {
 			}
 		}
 
-		public void UpdateArtist( DbArtist artist ) {
+		public void UpdateArtist( IDatabase database, DbArtist artist ) {
 			try {
-				var artistId = mDatabase.Database.GetUid( artist );
-				var parms = mDatabase.Database.CreateParameters();
+				var artistId = database.Database.GetUid( artist );
+				var parms = database.Database.CreateParameters();
+
+				Condition.Requires( artistId ).IsNotEqualTo( -1 );
 
 				parms["artistId"] = artistId;
 				parms["artistImage"] = ContentType.ArtistPrimaryImage;
 
-				var	artwork = mDatabase.Database.ExecuteScalar( "SELECT DbArtwork WHERE AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork;
-				var bio = ( from DbTextInfo info in mDatabase.Database where info.AssociatedItem == artistId && info.ContentType == ContentType.Biography select info ).FirstOrDefault();
-				var similarArtists = ( from DbAssociatedItems item in mDatabase.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault();
-				var topAlbums = ( from DbAssociatedItems item in mDatabase.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select  item ).FirstOrDefault();
+				var	artwork = database.Database.ExecuteScalar( "SELECT DbArtwork WHERE AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork;
+				var bio = ( from DbTextInfo info in database.Database where info.AssociatedItem == artistId && info.ContentType == ContentType.Biography select info ).FirstOrDefault();
+				var similarArtists = ( from DbAssociatedItems item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault();
+				var topAlbums = ( from DbAssociatedItems item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select  item ).FirstOrDefault();
 				if( artwork == null ) {
 					artwork = new DbArtwork( artistId, ContentType.ArtistPrimaryImage );
 				}
@@ -119,7 +118,7 @@ namespace Noise.Core.DataProviders {
 				}
 
 				artwork.UpdateExpiration();
-				mDatabase.Database.Store( artwork );
+				database.Database.Store( artwork );
 
 				bio.UpdateExpiration();
 				similarArtists.UpdateExpiration();
@@ -132,7 +131,7 @@ namespace Noise.Core.DataProviders {
 					var	tags = artistMatch.GetTopTags( 3 );
 					if( tags.GetLength( 0 ) > 0 ) {
 						artist.Genre = tags[0].Item.Name;
-						mDatabase.Database.Store( artist );
+						database.Database.Store( artist );
 					}
 
 					bio.Text = artistMatch.Bio.getContent();
@@ -161,9 +160,9 @@ namespace Noise.Core.DataProviders {
 					mLog.LogInfo( "LastFm updated artist: {0}", artist.Name );
 				}
 
-				mDatabase.Database.Store( bio );
-				mDatabase.Database.Store( similarArtists );
-				mDatabase.Database.Store( topAlbums );
+				database.Database.Store( bio );
+				database.Database.Store( similarArtists );
+				database.Database.Store( topAlbums );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "LastFmProvider UpdateArtistInfo:", ex );
@@ -173,13 +172,16 @@ namespace Noise.Core.DataProviders {
 		private void ArtistImageDownloadComplete( long parentId, byte[] imageData ) {
 			Condition.Requires( imageData ).IsNotNull();
 
+			var dbManager = mContainer.Resolve<IDatabaseManager>();
+			var database = dbManager.ReserveDatabase( "ArtistImageDownloader" );
+
 			try {
-				var parms = mDatabase.Database.CreateParameters();
+				var parms = database.Database.CreateParameters();
 
 				parms["artistId"] = parentId;
 				parms["artistImage"] = ContentType.ArtistPrimaryImage;
 
-				var	artwork = mDatabase.Database.ExecuteScalar( "SELECT DbArtwork WHERE AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork;
+				var	artwork = database.Database.ExecuteScalar( "SELECT DbArtwork WHERE AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork;
 				if( artwork == null ) {
 					artwork = new DbArtwork( parentId, ContentType.ArtistPrimaryImage );
 				}
@@ -189,10 +191,13 @@ namespace Noise.Core.DataProviders {
 				artwork.IsContentAvailable = true;
 				artwork.UpdateExpiration();
 
-				mDatabase.Database.Store( artwork );
+				database.Database.Store( artwork );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "LastFm: Image Download: ", ex );
+			}
+			finally {
+				dbManager.FreeDatabase( database.DatabaseId );
 			}
 		}
 	}

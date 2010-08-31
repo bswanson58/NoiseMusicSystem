@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
@@ -9,86 +10,206 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.Database {
 	public class DataProvider : IDataProvider {
 		private readonly IUnityContainer	mContainer;
-		private readonly IDatabaseManager	mDatabase;
+		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly IContentManager	mContentManager;
+		private readonly ILog				mLog;
 
 		public DataProvider( IUnityContainer container ) {
 			mContainer = container;
-			mDatabase = mContainer.Resolve<IDatabaseManager>();
+			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
 			mContentManager = mContainer.Resolve<IContentManager>();
+			mLog = mContainer.Resolve<ILog>();
 		}
 
-		public bool Initialize() {
-			return( mDatabase.InitializeAndOpenDatabase( "DataProvider" ));
-		}
-
-		public void Shutdown() {
-			if( mDatabase != null ) {
-				mDatabase.CloseDatabase( "DataProvider" );
-			}
+		private void FreeDatabase( string databaseId ) {
+			mDatabaseManager.FreeDatabase( databaseId );
 		}
 
 		public long GetObjectIdentifier( object dbObject ) {
-			return( mDatabase.Database.GetUid( dbObject ));
+			Condition.Requires( dbObject ).IsNotNull();
+
+			long	retValue = 0L;
+			var		database = mDatabaseManager.ReserveDatabase( "GetObjectIdentifier" );
+
+			try {
+				retValue = database.Database.GetUid( dbObject );
+
+				Condition.Requires( retValue ).IsNotEqualTo( -1 );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetObjectIdentifier:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
+			}
+
+			return( retValue );
 		}
 
 		public void UpdateItem( object item ) {
+			Condition.Requires( item ).IsNotNull();
+
 			if(( item is DbArtist ) ||
 			   ( item is DbAlbum ) ||
 			   ( item is DbTrack ) ||
 			   ( item is DbInternetStream )) {
-				mDatabase.Database.Store( item );
+				var database = mDatabaseManager.ReserveDatabase( "UpdateItem" );
+
+				try {
+					database.Database.Store( item );
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - UpdateItem:", ex );
+				}
+				finally {
+					mDatabaseManager.FreeDatabase( database.DatabaseId );
+				}
 			}
 		}
 
 		public void DeleteItem( object dbItem ) {
+			Condition.Requires( dbItem ).IsNotNull();
+
 			if( dbItem is DbInternetStream ) {
-				mDatabase.Database.Delete( dbItem );
+				var database = mDatabaseManager.ReserveDatabase( "UpdateItem" );
+
+				try {
+					database.Database.Delete( dbItem );
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - UpdateItem:", ex );
+				}
+				finally {
+					mDatabaseManager.FreeDatabase( database.DatabaseId );
+				}
 			}
 		}
 
-		public IEnumerable<DbArtist> GetArtistList() {
-			return( from DbArtist artist in mDatabase.Database select artist );
+		public DataProviderList<DbArtist> GetArtistList() {
+			DataProviderList<DbArtist>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase( "GetArtistList" );
+
+			try {
+				retValue = new DataProviderList<DbArtist>( database.DatabaseId, FreeDatabase, from DbArtist artist in database.Database select artist );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( ex );
+
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
+			}
+
+			return( retValue );
 		}
 
 		public DbArtist GetArtistForAlbum( DbAlbum album ) {
-			var parms = mDatabase.Database.CreateParameters();
+			Condition.Requires( album ).IsNotNull();
 
-			parms["artistId"] = album.Artist;
+			DbArtist	retValue = null;
 
-			return( mDatabase.Database.ExecuteScalar( "SELECT DbArtist WHERE $ID = @artistId", parms ) as DbArtist );
+			var database = mDatabaseManager.ReserveDatabase( "GetArtistForAlbum" );
+
+			try {
+				var parms = database.Database.CreateParameters();
+
+				parms["artistId"] = album.Artist;
+				retValue = database.Database.ExecuteScalar( "SELECT DbArtist WHERE $ID = @artistId", parms ) as DbArtist;
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetArtistForAlbum:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
+			}
+
+			return( retValue );
 		}
 
-		public IEnumerable<DbAlbum> GetAlbumList( DbArtist forArtist ) {
-			var artistId = mDatabase.Database.GetUid( forArtist );
+		public DataProviderList<DbAlbum> GetAlbumList( DbArtist forArtist ) {
+			Condition.Requires( forArtist ).IsNotNull();
 
-			return( from DbAlbum album in mDatabase.Database where album.Artist == artistId select album );
+			DataProviderList<DbAlbum>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase( "GetAlbumList" );
+
+			try {
+				var artistId = database.Database.GetUid( forArtist );
+
+				retValue = new DataProviderList<DbAlbum>( database.DatabaseId, FreeDatabase,
+															from DbAlbum album in database.Database where album.Artist == artistId select album );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetAlbumList:", ex );
+
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
+			}
+
+			return( retValue );
 		}
 
 		public DbAlbum GetAlbumForTrack( DbTrack track ) {
-			var parms = mDatabase.Database.CreateParameters();
+			Condition.Requires( track ).IsNotNull();
 
-			parms["albumId"] = track.Album;
+			DbAlbum	retValue = null;
+			var		database = mDatabaseManager.ReserveDatabase( "GetAlbumList" );
 
-			return( mDatabase.Database.ExecuteScalar( "SELECT DbAlbum WHERE $ID = @albumId", parms ) as DbAlbum );
+			try {
+				var parms = database.Database.CreateParameters();
+
+				parms["albumId"] = track.Album;
+
+				retValue = database.Database.ExecuteScalar( "SELECT DbAlbum WHERE $ID = @albumId", parms ) as DbAlbum;
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetAlbumForTrack:", ex );
+			}
+
+			return( retValue );
 		}
 
-		public IEnumerable<DbTrack> GetTrackList( DbAlbum forAlbum ) {
-			var albumId = mDatabase.Database.GetUid( forAlbum );
+		public DataProviderList<DbTrack> GetTrackList( DbAlbum forAlbum ) {
+			Condition.Requires( forAlbum ).IsNotNull();
 
-			return( from DbTrack track in mDatabase.Database where track.Album == albumId select track );
+			DataProviderList<DbTrack>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase( "GetTrackList" );
+			try {
+				var albumId = database.Database.GetUid( forAlbum );
+
+				retValue = new DataProviderList<DbTrack>( database.DatabaseId, FreeDatabase,
+															from DbTrack track in database.Database where track.Album == albumId select track );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetTrackList(forAlbum):", ex );
+
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
+			}
+
+			return( retValue );
 		}
 
-		public IEnumerable<DbTrack> GetTrackList( DbArtist forArtist ) {
+		public List<DbTrack> GetTrackList( DbArtist forArtist ) {
+			Condition.Requires( forArtist ).IsNotNull();
+
 			var	retValue = new List<DbTrack>();
-			var artistId = mDatabase.Database.GetUid( forArtist );
-			var albumList = from DbAlbum album in mDatabase.Database where album.Artist == artistId select album;
+			var database =mDatabaseManager.ReserveDatabase( "GetTrackList" );
 
-			foreach( DbAlbum album in albumList ) {
-				var albumId = mDatabase.Database.GetUid( album );
-				var trackList = from DbTrack track in mDatabase.Database where track.Album == albumId select track;
+			try {
+				var artistId = database.Database.GetUid( forArtist );
+				var albumList = from DbAlbum album in database.Database where album.Artist == artistId select album;
 
-				retValue.AddRange( trackList );
+				foreach( DbAlbum album in albumList ) {
+					var albumId = database.Database.GetUid( album );
+					var trackList = from DbTrack track in database.Database where track.Album == albumId select track;
+
+					retValue.AddRange( trackList );
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetTrackList(forArtist):", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
 			}
 
 			return( retValue );
@@ -97,19 +218,47 @@ namespace Noise.Core.Database {
 		public StorageFile GetPhysicalFile( DbTrack forTrack ) {
 			Condition.Requires( forTrack ).IsNotNull();
 
-			var trackId = mDatabase.Database.GetUid( forTrack );
+			StorageFile	retValue = null;
 
-			Condition.Requires( trackId ).IsNotLessOrEqual( 0 );
+			var database = mDatabaseManager.ReserveDatabase( "GetPhysicalFile" );
+			try {
+				var trackId = database.Database.GetUid( forTrack );
 
-			return(( from StorageFile file in mDatabase.Database where file.MetaDataPointer == trackId select file ).FirstOrDefault());
+				Condition.Requires( trackId ).IsNotLessOrEqual( 0 );
+
+				retValue = ( from StorageFile file in database.Database where file.MetaDataPointer == trackId select file ).FirstOrDefault();
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetPhysicalFile:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
+			}
+
+			return( retValue );
 		}
 
 		public object GetMetaData( StorageFile forFile ) {
-			var parm = mDatabase.Database.CreateParameters();
+			Condition.Requires( forFile ).IsNotNull();
 
-			parm["id"] = forFile.MetaDataPointer;
+			object	retValue = null;
+			var		database = mDatabaseManager.ReserveDatabase( "GetMetaData" );
 
-			return( mDatabase.Database.ExecuteScalar( "SELECT data WHERE $ID = @id", parm ));
+			try {
+				var parm = database.Database.CreateParameters();
+
+				parm["id"] = forFile.MetaDataPointer;
+
+				retValue = database.Database.ExecuteScalar( "SELECT data WHERE $ID = @id", parm );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetMetaData:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
+			}
+
+			return( retValue );
 		}
 
 		public void UpdateArtistInfo( DbArtist forArtist ) {
@@ -121,17 +270,27 @@ namespace Noise.Core.Database {
 		public ArtistSupportInfo GetArtistSupportInfo( DbArtist forArtist ) {
 			Condition.Requires( forArtist ).IsNotNull();
 
-			var artistId = mDatabase.Database.GetUid( forArtist );
-			var parms = mDatabase.Database.CreateParameters();
+			ArtistSupportInfo	retValue = null;
+			var database = mDatabaseManager.ReserveDatabase( "GetArtistSupportInfo" );
+			try {
+				var artistId = database.Database.GetUid( forArtist );
+				var parms = database.Database.CreateParameters();
 
-			parms["artistId"] = artistId;
-			parms["artistImage"] = ContentType.ArtistPrimaryImage;
+				parms["artistId"] = artistId;
+				parms["artistImage"] = ContentType.ArtistPrimaryImage;
 
-			var retValue = new ArtistSupportInfo(( from DbTextInfo bio in mDatabase.Database where bio.AssociatedItem == artistId && bio.ContentType == ContentType.Biography select bio ).FirstOrDefault(),
-												   mDatabase.Database.ExecuteScalar( "SELECT DbArtwork Where AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork,
-												 ( from DbAssociatedItems item in mDatabase.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault(),
-												 ( from DbAssociatedItems item in mDatabase.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select item ).FirstOrDefault(),
-												 ( from DbAssociatedItems item in mDatabase.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select item ).FirstOrDefault());
+				retValue = new ArtistSupportInfo(( from DbTextInfo bio in database.Database where bio.AssociatedItem == artistId && bio.ContentType == ContentType.Biography select bio ).FirstOrDefault(),
+												   database.Database.ExecuteScalar( "SELECT DbArtwork Where AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork,
+												 ( from DbAssociatedItems item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault(),
+												 ( from DbAssociatedItems item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select item ).FirstOrDefault(),
+												 ( from DbAssociatedItems item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select item ).FirstOrDefault());
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetArtistSupportInfo:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
+			}
 
 			return( retValue );
 		}
@@ -147,31 +306,53 @@ namespace Noise.Core.Database {
 
 			AlbumSupportInfo	retValue = null;
 
-			var albumId = mDatabase.Database.GetUid( forAlbum );
-			var albumTrack = ( from DbTrack track in mDatabase.Database where track.Album == albumId select track ).FirstOrDefault();
+			var database = mDatabaseManager.ReserveDatabase( "GetAlbumSupportInfo" );
+			try {
+				var albumId = database.Database.GetUid( forAlbum );
+				var albumTrack = ( from DbTrack track in database.Database where track.Album == albumId select track ).FirstOrDefault();
 
-			if( albumTrack != null ) {
-				var trackId = mDatabase.Database.GetUid( albumTrack );
-				var	fileTrack = ( from StorageFile file in mDatabase.Database where file.MetaDataPointer == trackId select file ).FirstOrDefault();
+				if( albumTrack != null ) {
+					var trackId = database.Database.GetUid( albumTrack );
+					var	fileTrack = ( from StorageFile file in database.Database where file.MetaDataPointer == trackId select file ).FirstOrDefault();
 
-				if( fileTrack != null ) {
-					var parms = mDatabase.Database.CreateParameters();
+					if( fileTrack != null ) {
+						var parms = database.Database.CreateParameters();
 
-					parms["folderId"] = fileTrack.ParentFolder;
-					parms["coverType"] = ContentType.AlbumCover;
-					parms["otherType"] = ContentType.AlbumArtwork;
+						parms["folderId"] = fileTrack.ParentFolder;
+						parms["coverType"] = ContentType.AlbumCover;
+						parms["otherType"] = ContentType.AlbumArtwork;
 
-					retValue = new AlbumSupportInfo( mDatabase.Database.ExecuteQuery( "SELECT DbArtwork WHERE FolderLocation = @folderId AND ContentType = @coverType", parms ).OfType<DbArtwork>().ToArray(),
-													 mDatabase.Database.ExecuteQuery( "SELECT DbArtwork WHERE FolderLocation = @folderId AND ContentType = @otherType", parms ).OfType<DbArtwork>().ToArray(),
-													( from DbTextInfo info in mDatabase.Database where info.FolderLocation == fileTrack.ParentFolder select info ).ToArray());
+						retValue = new AlbumSupportInfo( database.Database.ExecuteQuery( "SELECT DbArtwork WHERE FolderLocation = @folderId AND ContentType = @coverType", parms ).OfType<DbArtwork>().ToArray(),
+														 database.Database.ExecuteQuery( "SELECT DbArtwork WHERE FolderLocation = @folderId AND ContentType = @otherType", parms ).OfType<DbArtwork>().ToArray(),
+														( from DbTextInfo info in database.Database where info.FolderLocation == fileTrack.ParentFolder select info ).ToArray());
+					}
 				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetAlbumSupportInfo:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
 			}
 
 			return( retValue );
 		}
 
-		public IEnumerable<DbInternetStream> GetStreamList() {
-			return( from DbInternetStream stream in mDatabase.Database select stream );
+		public DataProviderList<DbInternetStream> GetStreamList() {
+			DataProviderList<DbInternetStream>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase( "GetStreamList" );
+			try {
+			retValue = new DataProviderList<DbInternetStream>( database.DatabaseId, FreeDatabase,
+																from DbInternetStream stream in database.Database select stream );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetStreamList:", ex );
+
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
+			}
+
+			return( retValue );
 		}
 	}
 }

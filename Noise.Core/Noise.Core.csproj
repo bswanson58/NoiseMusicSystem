@@ -119,9 +119,11 @@
     <Compile Include="..\Common\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Database\Database.cs" />
     <Compile Include="Database\DatabaseManager.cs" />
     <Compile Include="Database\DatabaseStatistics.cs" />
     <Compile Include="Database\DataProvider.cs" />
+    <Compile Include="Database\IDatabaseManager.cs" />
     <Compile Include="DataBuilders\BackgroundContentExplorer.cs" />
     <Compile Include="DataBuilders\ContentManager.cs" />
     <Compile Include="DataBuilders\IContentManager.cs" />
@@ -147,7 +149,7 @@
     <Compile Include="FileStore\IFolderExplorer.cs" />
     <Compile Include="FileStore\RootFolder.cs" />
     <Compile Include="FileStore\StorageHelpers.cs" />
-    <Compile Include="Database\IDatabaseManager.cs" />
+    <Compile Include="Database\IDatabase.cs" />
     <Compile Include="MediaPlayer\AudioPlayer.cs" />
     <Compile Include="MediaPlayer\IAudioPlayer.cs" />
     <Compile Include="MediaPlayer\PlayController.cs" />

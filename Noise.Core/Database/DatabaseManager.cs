@@ -1,152 +1,89 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using CuttingEdge.Conditions;
-using Eloquera.Client;
+﻿using System.Collections.Generic;
 using Microsoft.Practices.Unity;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
-	public class DatabaseManager : IDatabaseManager {
+	class DatabaseManager : IDatabaseManager {
+		private readonly object				mLockObject;
 		private readonly IUnityContainer	mContainer;
 		private readonly ILog				mLog;
-		private readonly string				mDatabaseLocation;
-		private readonly string				mDatabaseName;
-
-		public	DB		Database { get; private set; }
-
-		[ImportMany("PersistenceType")]
-		public IEnumerable<Type>	PersistenceTypes;
+		private readonly List<IDatabase>	mAvailableDatabases;
+		private readonly Dictionary<string, IDatabase>	mReservedDatabases;
 
 		public DatabaseManager( IUnityContainer container ) {
+			mLockObject = new object();
 			mContainer = container;
 			mLog = mContainer.Resolve<ILog>();
-
-			var configMgr = mContainer.Resolve<ISystemConfiguration>();
-			var config = configMgr.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
-
-			if( config != null ) {
-				mDatabaseName = config.DatabaseName;
-				mDatabaseLocation = config.ServerName;
-			}
-			else {
-				mLog.LogMessage( "Database configuration could not be loaded." );
-			}
+			mReservedDatabases = new Dictionary<string, IDatabase>();
+			mAvailableDatabases = new List<IDatabase>();
 		}
 
-		public bool InitializeDatabase() {
+		public bool Initialize() {
 			var retValue = false;
 
-			try {
-				Database = new DB( string.Format( "server={0};password=;options=none;", mDatabaseLocation ));
+			var database = mContainer.Resolve<IDatabase>();
+			if( database.InitializeDatabase()) {
+				if( database.OpenWithCreateDatabase()) {
+					mAvailableDatabases.Add( database );
 
-				retValue = true;
-			}
-			catch( Exception ex ) {
-				mLog.LogException( ex );
-			}
-
-			Condition.Ensures( Database ).IsNotNull();
-			return( retValue );
-		}
-
-		public bool InitializeAndOpenDatabase( string clientName) {
-			Condition.Requires( clientName ).IsNotNullOrEmpty();
-
-			var retValue = false;
-
-			mLog.LogMessage( String.Format( "{0} - Initialize and open {1} database on server: {2}.", clientName, mDatabaseName, mDatabaseLocation ));
-			if( InitializeDatabase()) {
-				retValue = InternalOpenDatabase();
-			}
-
-			return( retValue );
-		}
-
-		public bool OpenWithCreateDatabase() {
-			var retValue = false;
-
-			if(!OpenDatabase()) {
-				if( CreateDatabase( mDatabaseName )) {
-					retValue = OpenDatabase();
+					retValue = true;
 				}
 			}
-			else {
-				retValue = true;
+
+			return( retValue );
+		}
+
+		public void Shutdown() {
+			lock( mLockObject ) {
+				foreach( var database in mReservedDatabases.Values ) {
+					database.CloseDatabase();
+				}
+
+				mReservedDatabases.Clear();
+
+				foreach( var database in mAvailableDatabases ) {
+					database.CloseDatabase();
+				}
+
+				mAvailableDatabases.Clear();
+			}
+		}
+
+		public IDatabase ReserveDatabase( string clientName ) {
+			IDatabase	retValue;
+
+			lock( mLockObject ) {
+				if( mAvailableDatabases.Count > 0 ) {
+					retValue = mAvailableDatabases[0];
+
+					mAvailableDatabases.RemoveAt( 0 );
+					mReservedDatabases.Add( retValue.DatabaseId, retValue );
+				}
+				else {
+					retValue = mContainer.Resolve<IDatabase>();
+
+					if( retValue.InitializeAndOpenDatabase( clientName )) {
+						mReservedDatabases.Add( retValue.DatabaseId, retValue );
+
+						mLog.LogInfo( string.Format( "Database Created. (Count: {0})", mReservedDatabases.Count + mAvailableDatabases.Count ));
+					}
+				}
 			}
 
 			return( retValue );
 		}
 
-		public bool OpenDatabase() {
-			Condition.Requires( Database ).IsNotNull();
+		public void FreeDatabase( string databaseId ) {
+			lock( mLockObject ) {
+				if( mReservedDatabases.ContainsKey( databaseId )) {
+					var database = mReservedDatabases[databaseId];
 
-			var retValue = InternalOpenDatabase();
-
-			mLog.LogMessage( "Opened database: {0} on server: {1}", mDatabaseName, mDatabaseLocation );
-
-			return ( retValue );
-		}
-
-		private bool InternalOpenDatabase() {
-			var			retValue = false;
-
-			try {
-				Database.OpenDatabase( mDatabaseName );
-				RegisterDatabaseTypes();
-
-				retValue = true;
-			}
-			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Opening database {0} on server: {1} failed", mDatabaseName, mDatabaseLocation ), ex );
-			}
-
-			return( retValue );
-		}
-
-		public void CloseDatabase( string clientName ) {
-			Condition.Requires( clientName ).IsNotNullOrEmpty();
-
-			mLog.LogMessage( String.Format( "{0} - Closing database.", clientName ));
-
-			CloseDatabase();
-		}
-
-		public void CloseDatabase() {
-			if( Database.IsOpen ) {
-				Database.Close();
-
-				mLog.LogMessage( "Closed database {0} on server: {1}", mDatabaseName, mDatabaseLocation );
-			}
-		}
-
-		private bool CreateDatabase( string databaseName ) {
-			var retValue =false;
-
-			Condition.Requires( Database ).IsNotNull();
-			mLog.LogMessage( "Creating Noise database: {0}", databaseName );
-
-			try {
-				Database.CreateDatabase( databaseName );
-
-				retValue = true;
-			}
-			catch( Exception ex ) {
-				mLog.LogException( ex );
-			}
-
-			return( retValue );
-		}
-
-		private void RegisterDatabaseTypes() {
-			var catalog = new DirectoryCatalog(  @".\" );
-			var container = new CompositionContainer( catalog );
-			container.ComposeParts( this );
-
-			foreach( Type type in PersistenceTypes ) {
-				Database.RegisterType( type );
+					mReservedDatabases.Remove( databaseId );
+					mAvailableDatabases.Add( database );
+				}
+				else {
+					mLog.LogMessage( string.Format( "Database ID not reserved:{0}", databaseId ));
+				}
 			}
 		}
 	}

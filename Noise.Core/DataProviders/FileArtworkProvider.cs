@@ -1,36 +1,41 @@
 ﻿using System;
 using System.IO;
+using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	internal class FileArtworkProvider {
-		private readonly IDatabaseManager	mDatabase;
+		private readonly IUnityContainer	mContainer;
 		private readonly ILog				mLog;
 
-		public FileArtworkProvider( IDatabaseManager database ) {
-			mDatabase =database;
-
-			mLog = new Log();
+		public FileArtworkProvider( IUnityContainer container ) {
+			mContainer = container;
+			mLog = mContainer.Resolve<ILog>();
 		}
 
 		public void BuildMetaData( StorageFile file ) {
+			var dbManager = mContainer.Resolve<IDatabaseManager>();
+			var database = dbManager.ReserveDatabase( "FileArtworkProvider" );
+
 			try {
-				var fileId = mDatabase.Database.GetUid( file );
+				var fileId = database.Database.GetUid( file );
 				var dbPicture = new DbArtwork( fileId, IsCoverFile( file.Name ) ? ContentType.AlbumCover : ContentType.AlbumArtwork )
 					{ Source = InfoSource.File,
 					  FolderLocation = file.ParentFolder };
-				var	fileName = StorageHelpers.GetPath( mDatabase.Database, file );
+				var	fileName = StorageHelpers.GetPath( database.Database, file );
 
 				dbPicture.Image = File.ReadAllBytes( fileName );
 
-				mDatabase.Database.Store( dbPicture );
+				database.Database.Store( dbPicture );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "FileArtworkProvider file: {0}", StorageHelpers.GetPath( mDatabase.Database, file )), ex );
+				mLog.LogException( String.Format( "FileArtworkProvider file: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
+			}
+			finally {
+				dbManager.FreeDatabase( database.DatabaseId );
 			}
 		}
 

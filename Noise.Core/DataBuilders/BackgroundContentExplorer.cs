@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.Unity;
-using Noise.Core.Database;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Quartz;
@@ -31,13 +30,11 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		public bool Initialize() {
-			if( mDataProvider.Initialize()) {
-				var	list = mDataProvider.GetArtistList();
-				var seed = new Random( DateTime.Now.Millisecond );
-				var random = seed.Next( list.Count() - 1 );
+			var	list = mDataProvider.GetArtistList();
+			var seed = new Random( DateTime.Now.Millisecond );
+			var random = seed.Next( list.List.Count() - 1 );
 
-				mArtistEnum =  list.Skip( random ).AsEnumerable().GetEnumerator();
-			}
+			mArtistEnum =  list.List.Skip( random ).AsEnumerable().GetEnumerator();
 
 			return( true );
 		}

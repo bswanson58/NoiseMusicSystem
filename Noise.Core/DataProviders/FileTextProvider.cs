@@ -1,35 +1,40 @@
 ﻿using System;
 using System.IO;
+using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	internal class FileTextProvider {
-		private readonly IDatabaseManager	mDatabase;
+		private readonly IUnityContainer	mContainer;
 		private readonly ILog				mLog;
 
-		public FileTextProvider( IDatabaseManager database ) {
-			mDatabase = database;
-
-			mLog = new Log();
+		public FileTextProvider( IUnityContainer container ) {
+			mContainer = container;
+			mLog = mContainer.Resolve<ILog>();
 		}
 
 		public void BuildMetaData( StorageFile file ) {
+			var dbManager = mContainer.Resolve<IDatabaseManager>();
+			var database = dbManager.ReserveDatabase( "FileTextProvider" );
+
 			try {
-				var fileId = mDatabase.Database.GetUid( file );
+				var fileId = database.Database.GetUid( file );
 				var dbText = new DbTextInfo( fileId, ContentType.TextInfo ) { Source = InfoSource.File, FolderLocation = file.ParentFolder };
 
-				var	fileName = StorageHelpers.GetPath( mDatabase.Database, file );
+				var	fileName = StorageHelpers.GetPath( database.Database, file );
 
 				dbText.Text = File.ReadAllText( fileName );
 
-				mDatabase.Database.Store( dbText );
+				database.Database.Store( dbText );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "FileTextProvider file: {0}", StorageHelpers.GetPath( mDatabase.Database, file )), ex );
+				mLog.LogException( String.Format( "FileTextProvider file: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
+			}
+			finally {
+				dbManager.FreeDatabase( database.DatabaseId );
 			}
 		}
 	}

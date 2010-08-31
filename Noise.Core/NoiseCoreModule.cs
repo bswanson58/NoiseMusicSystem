@@ -21,8 +21,9 @@ namespace Noise.Core {
 		public void Initialize() {
 			mContainer.RegisterType<IAudioPlayer, AudioPlayer>();
 			mContainer.RegisterType<IContentManager, ContentManager>();
-			mContainer.RegisterType<IDatabaseManager, DatabaseManager>();
+			mContainer.RegisterType<IDatabase, EloqueraDatabase>();
 			mContainer.RegisterType<IDataProvider, DataProvider>();
+			mContainer.RegisterType<IDatabaseManager, DatabaseManager>( Constants.NewInstance );
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>();
 			mContainer.RegisterType<IMetaDataExplorer, MetaDataExplorer>();
 			mContainer.RegisterType<ISummaryBuilder, SummaryBuilder>();

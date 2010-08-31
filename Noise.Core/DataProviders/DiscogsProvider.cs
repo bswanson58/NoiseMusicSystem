@@ -222,9 +222,6 @@ namespace Noise.Core.DataProviders {
 
 		[Import]
 		private IUnityContainer		Container { get; set; }
-		[Import]
-		private IDatabaseManager	Database { get; set; }
-
 
 		public	abstract ContentType	ContentType { get; }
 
@@ -277,7 +274,7 @@ namespace Noise.Core.DataProviders {
 			return( retValue );
 		}
 
-		public void UpdateContent( DbArtist forArtist ) {
+		public void UpdateContent( IDatabase database, DbArtist forArtist ) {
 			try {
 				var request = new RestRequest {  Deserializer = new ArtistDeserializer() };
 				var requestUri = SearchForArtist( forArtist );
@@ -287,8 +284,8 @@ namespace Noise.Core.DataProviders {
 					var	response = mClient.Request<DiscogsArtist>( request );
 					if(( response.StatusCode == HttpStatusCode.OK ) &&
 					   ( response.ContentEntity != null )) {
-						var artistId = Database.Database.GetUid( forArtist );
-						var	bandMembers = ( from DbAssociatedItems item in Database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select  item ).FirstOrDefault();
+						var artistId = database.Database.GetUid( forArtist );
+						var	bandMembers = ( from DbAssociatedItems item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select  item ).FirstOrDefault();
 
 						if( bandMembers == null ) {
 							bandMembers = new DbAssociatedItems( artistId, ContentType.BandMembers );
@@ -308,11 +305,11 @@ namespace Noise.Core.DataProviders {
 							bandMembers.IsContentAvailable = false;
 						}
 
-						Database.Database.Store( bandMembers );
+						database.Database.Store( bandMembers );
 
-						var releases = from DbDiscographyRelease release in Database.Database where release.AssociatedItem == artistId select release;
+						var releases = from DbDiscographyRelease release in database.Database where release.AssociatedItem == artistId select release;
 						foreach( var release in releases ) {
-							Database.Database.Delete( release );
+							database.Database.Delete( release );
 						}
 
 						if( response.ContentEntity.ReleaseList.Count > 0 ) {
@@ -332,12 +329,12 @@ namespace Noise.Core.DataProviders {
 										releaseType = DiscographyReleaseType.TrackAppearance;
 									}
 								}
-								Database.Database.Store( new DbDiscographyRelease( artistId, release.Title, release.Format, release.Label, release.Year, releaseType )
+								database.Database.Store( new DbDiscographyRelease( artistId, release.Title, release.Format, release.Label, release.Year, releaseType )
 																	{ IsContentAvailable = true });
 							}
 						}
 						else {
-							Database.Database.Store( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear, DiscographyReleaseType.Unknown ));
+							database.Database.Store( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear, DiscographyReleaseType.Unknown ));
 						}
 
 	//					var releaseAdded = false;
@@ -378,11 +375,11 @@ namespace Noise.Core.DataProviders {
 			}
 		}
 */
-		public void UpdateContent( DbAlbum forAlbum ) {
+		public void UpdateContent( IDatabase database, DbAlbum forAlbum ) {
 			throw new NotImplementedException();
 		}
 
-		public void UpdateContent( DbTrack forTrack ) {
+		public void UpdateContent( IDatabase database, DbTrack forTrack ) {
 			throw new NotImplementedException();
 		}
 	}

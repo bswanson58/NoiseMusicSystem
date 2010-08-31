@@ -2,17 +2,21 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	internal class FileNameProvider {
-		private readonly IDatabaseManager	mDatabase;
+		private readonly IDatabaseManager	mDatabaseManager;
+		private readonly ILog				mLog;
 		private long						mFolderId;
 		private List<StorageFile>			mFolderFiles;
 
-		public FileNameProvider( IDatabaseManager databaseManager ) {
-			mDatabase = databaseManager;
+		public FileNameProvider( IUnityContainer container ) {
+			mDatabaseManager = container.Resolve<IDatabaseManager>();
+			mLog = container.Resolve<ILog>();
 		}
 
 		public IMetaDataProvider GetProvider( StorageFile forFile ) {
@@ -24,15 +28,25 @@ namespace Noise.Core.DataProviders {
 		}
 
 		private void BuildFolderFiles( long parentId ) {
-			var files = from StorageFile file in mDatabase.Database where file.ParentFolder == parentId orderby file.Name select file;
+			var database = mDatabaseManager.ReserveDatabase( "FileNameProvider" );
 
-			mFolderFiles = new List<StorageFile>( files.ToList());
-			mFolderId = parentId;
+			try {
+				var files = from StorageFile file in database.Database where file.ParentFolder == parentId orderby file.Name select file;
+
+				mFolderFiles = new List<StorageFile>( files.ToList());
+				mFolderId = parentId;
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - FileNameProvider", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
+			}
 		}
 	}
 
 	internal class NameProvider : IMetaDataProvider {
-		private readonly StorageFile				mFile;
+		private readonly StorageFile		mFile;
 		private readonly IList<StorageFile>	mFolderFiles;
 
 		public NameProvider( StorageFile file, IList<StorageFile> folderFiles ) {

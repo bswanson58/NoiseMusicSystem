@@ -13,63 +13,76 @@ namespace Noise.Core.PlayHistory {
 		private const int						cMaximumHistory = 100;
 
 		private readonly IUnityContainer		mContainer;
+		private readonly IDatabaseManager		mDatabaseManager;
 		private readonly IEventAggregator		mEvents;
-		private readonly IDatabaseManager		mDatabase;
 		private readonly List<DbPlayHistory>	mPlayHistory;
 		private readonly ILog					mLog;
 
 		public PlayHistoryMgr( IUnityContainer container ) {
 			mContainer = container;
-			mDatabase = mContainer.Resolve<IDatabaseManager>();
+			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
 			mEvents = mContainer.Resolve<IEventAggregator>();
 			mLog = mContainer.Resolve<ILog>();
 
 			mPlayHistory = new List<DbPlayHistory>();
 
-			if( mDatabase.InitializeAndOpenDatabase( "PlayHistoryManager" )) {
-				UpdateHistoryList();
-			}
+			UpdateHistoryList();
 		}
 
 		public void TrackPlayCompleted( PlayQueueTrack track ) {
 			if( track.PercentPlayed > 0.8 ) {
-				var lastPlayed = ( from DbPlayHistory history in mDatabase.Database where history.Track.MetaDataPointer == track.File.MetaDataPointer select history ).FirstOrDefault();
+				var database = mDatabaseManager.ReserveDatabase( "TrackPlayCompleted" );
 
-				if( lastPlayed != null ) {
-					lastPlayed.PlayedOn = DateTime.Now;
+				try {
+					var lastPlayed = ( from DbPlayHistory history in database.Database where history.Track.MetaDataPointer == track.File.MetaDataPointer select history ).FirstOrDefault();
 
-					mDatabase.Database.Store( lastPlayed );
+					if( lastPlayed != null ) {
+						lastPlayed.PlayedOn = DateTime.Now;
+
+						database.Database.Store( lastPlayed );
+					}
+					else {
+						database.Database.Store( new DbPlayHistory( track.File ));
+					}
+
+					TrimHistoryList( database );
+					UpdateHistoryList();
+
+					mEvents.GetEvent<Events.PlayHistoryChanged>().Publish( this );
 				}
-				else {
-					mDatabase.Database.Store( new DbPlayHistory( track.File ));
+				catch( Exception ex) {
+					mLog.LogException( "Exception - TrackPlayCompleted:", ex );
 				}
-
-				TrimHistoryList();
-				UpdateHistoryList();
-
-				mEvents.GetEvent<Events.PlayHistoryChanged>().Publish( this );
+				finally {
+					mDatabaseManager.FreeDatabase( database.DatabaseId );
+				}
 			}
 		}
 
-		private void TrimHistoryList() {
-			var historyList = from DbPlayHistory history in mDatabase.Database orderby history.PlayedOn select history;
+		private static void TrimHistoryList( IDatabase database ) {
+			var historyList = from DbPlayHistory history in database.Database orderby history.PlayedOn select history;
 			var historyCount = historyList.Count();
 			var historyEnum = historyList.GetEnumerator();
 
 			while(( historyCount > cMaximumHistory ) &&
 				  ( historyEnum.MoveNext())) {
-				mDatabase.Database.Delete( historyEnum.Current );
+				database.Database.Delete( historyEnum.Current );
 				historyCount--;
 			}
 		}
 
 		private void UpdateHistoryList() {
+			var database = mDatabaseManager.ReserveDatabase( "UpdateHistoryList" );
+
 			try {
 				mPlayHistory.Clear();
-				mPlayHistory.AddRange( from DbPlayHistory history in mDatabase.Database orderby history.PlayedOn select history );
+				mPlayHistory.AddRange( from DbPlayHistory history in database.Database orderby history.PlayedOn select history );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "PlayHistoryMgr: Could not update play history.", ex );
+				mLog.LogException( "Exception - PlayHistoryMgr: Could not update play history.", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
 			}
 		}
 

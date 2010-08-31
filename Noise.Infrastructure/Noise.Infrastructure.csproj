@@ -105,6 +105,7 @@
     <Compile Include="Dto\AudioLevels.cs" />
     <Compile Include="Dto\ContentType.cs" />
     <Compile Include="Dto\DatabaseChangeSummary.cs" />
+    <Compile Include="Dto\DataProviderList.cs" />
     <Compile Include="Dto\DbArtwork.cs" />
     <Compile Include="Dto\DbDiscographyRelease.cs" />
     <Compile Include="Dto\DbInternetStream.cs" />

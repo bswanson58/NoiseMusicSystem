@@ -3,30 +3,27 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface IDataProvider {
-		bool					Initialize();
-		void					Shutdown();
+		long						GetObjectIdentifier( object dbObject );
 
-		long					GetObjectIdentifier( object dbObject );
+		DataProviderList<DbArtist>	GetArtistList();
+		DbArtist					GetArtistForAlbum( DbAlbum album );
+		DataProviderList<DbAlbum>	GetAlbumList( DbArtist forArtist );
+		DbAlbum						GetAlbumForTrack( DbTrack track );
+		DataProviderList<DbTrack>	GetTrackList( DbAlbum forAlbum );
+		List<DbTrack>				GetTrackList( DbArtist forArtist );
 
-		IEnumerable<DbArtist>	GetArtistList();
-		DbArtist				GetArtistForAlbum( DbAlbum album );
-		IEnumerable<DbAlbum>	GetAlbumList( DbArtist forArtist );
-		DbAlbum					GetAlbumForTrack( DbTrack track );
-		IEnumerable<DbTrack>	GetTrackList( DbAlbum forAlbum );
-		IEnumerable<DbTrack>	GetTrackList( DbArtist forArtist );
+		StorageFile					GetPhysicalFile( DbTrack forTrack );
+		object						GetMetaData( StorageFile forFile );
 
-		StorageFile				GetPhysicalFile( DbTrack forTrack );
-		object					GetMetaData( StorageFile forFile );
+		ArtistSupportInfo			GetArtistSupportInfo( DbArtist forArtist );
+		AlbumSupportInfo			GetAlbumSupportInfo( DbAlbum forAlbum );
 
-		ArtistSupportInfo		GetArtistSupportInfo( DbArtist forArtist );
-		AlbumSupportInfo		GetAlbumSupportInfo( DbAlbum forAlbum );
+		void						UpdateArtistInfo( DbArtist forArtist );
+		void						UpdateAlbumInfo( DbAlbum forAlbum );
 
-		void					UpdateArtistInfo( DbArtist forArtist );
-		void					UpdateAlbumInfo( DbAlbum forAlbum );
+		void						UpdateItem( object dbItem );
+		void						DeleteItem( object dbItem );
 
-		void					UpdateItem( object dbItem );
-		void					DeleteItem( object dbItem );
-
-		IEnumerable<DbInternetStream>	GetStreamList();
+		DataProviderList<DbInternetStream>	GetStreamList();
 	}
 }

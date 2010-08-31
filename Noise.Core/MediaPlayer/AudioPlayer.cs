@@ -53,7 +53,6 @@ namespace Noise.Core.MediaPlayer {
 	public class AudioPlayer : IAudioPlayer {
 		private readonly IUnityContainer				mContainer;
 		private readonly IEventAggregator				mEventAggregator;
-		private readonly IDatabaseManager				mDatabase;
 		private readonly ILog							mLog;
 		private float									mPlaySpeed;
 		private float									mPan;
@@ -69,7 +68,6 @@ namespace Noise.Core.MediaPlayer {
 		public AudioPlayer( IUnityContainer container ) {
 			mContainer = container;
 			mEventAggregator = mContainer.Resolve<IEventAggregator>();
-			mDatabase = mContainer.Resolve<IDatabaseManager>();
 			mLog = mContainer.Resolve<ILog>();
 			mCurrentStreams = new Dictionary<int, AudioStream>();
 			mStreamMetadataSync = new SYNCPROC( SyncProc );
@@ -154,7 +152,19 @@ namespace Noise.Core.MediaPlayer {
 
 		public int OpenFile( StorageFile file ) {
 			var retValue = 0;
-			var path = StorageHelpers.GetPath( mDatabase.Database, file );
+			var dbManager = mContainer.Resolve<IDatabaseManager>();
+			var database = dbManager.ReserveDatabase( "AudioPlayer:OpenFile" );
+			var path = "";
+
+			try {
+				path = StorageHelpers.GetPath( database.Database, file );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - AudioPlayer:OpenFile", ex );
+			}
+			finally {
+				dbManager.FreeDatabase( database.DatabaseId );
+			}
 
 			if( File.Exists( path )) {
 				try {

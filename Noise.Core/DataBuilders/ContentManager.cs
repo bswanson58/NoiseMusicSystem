@@ -16,7 +16,7 @@ namespace Noise.Core.DataBuilders {
 	internal class ContentManager : IContentManager {
 		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
-		private readonly IDatabaseManager	mDatabase;
+		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly ILog				mLog;
 
 		[ImportMany( typeof( IContentProvider ))]
@@ -24,8 +24,7 @@ namespace Noise.Core.DataBuilders {
 
 		public ContentManager( IUnityContainer unityContainer ) {
 			mContainer = unityContainer;
-			mDatabase = mContainer.Resolve<IDatabaseManager>();
-			mDatabase.InitializeAndOpenDatabase( "ContentProvider" );
+			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
 			mEvents =mContainer.Resolve<IEventAggregator>();
 			mLog = mContainer.Resolve<ILog>();
 
@@ -33,7 +32,7 @@ namespace Noise.Core.DataBuilders {
 			var container = new CompositionContainer( catalog );
 
 			container.ComposeExportedValue( mContainer );
-			container.ComposeExportedValue( mDatabase );
+			container.ComposeExportedValue( mDatabaseManager );
 			container.ComposeParts( this );
 		}
 
@@ -44,30 +43,33 @@ namespace Noise.Core.DataBuilders {
 		private void RequestArtistContent( DbArtist forArtist ) {
 			Condition.Requires( forArtist ).IsNotNull();
 
+			var database = mDatabaseManager.ReserveDatabase( "ContentManager:RequestContent" );
 			try {
-				var	artistId = mDatabase.Database.GetUid( forArtist );
+				var	artistId = database.Database.GetUid( forArtist );
 				var selectedProviders = from IContentProvider provider in ContentProviders where provider.CanUpdateArtist select provider;
 				var contentUpdated = false;
 
+				Condition.Requires( artistId ).IsNotEqualTo( -1 );
+
 				foreach( var provider in selectedProviders ) {
-					var parms = mDatabase.Database.CreateParameters();
+					var parms = database.Database.CreateParameters();
 
 					parms["contentType"] = provider.ContentType;
 					parms["artistId"] = artistId;
 
-					var providerContent = mDatabase.Database.ExecuteQuery( "SELECT ExpiringContent WHERE AssociatedItem = @artistId AND ContentType = @contentType", parms ).Cast<ExpiringContent>();
+					var providerContent = database.Database.ExecuteQuery( "SELECT ExpiringContent WHERE AssociatedItem = @artistId AND ContentType = @contentType", parms ).Cast<ExpiringContent>();
 
 					if( providerContent.Count() > 0 ) {
 						foreach( var content in providerContent ) {
 							if( IsContentExpired( content, provider )) {
-								provider.UpdateContent( forArtist );
+								provider.UpdateContent( database, forArtist );
 
 								contentUpdated = true;
 							}
 						}
 					}
 					else {
-						provider.UpdateContent( forArtist );
+						provider.UpdateContent( database, forArtist );
 
 						contentUpdated = true;
 					}
@@ -78,7 +80,10 @@ namespace Noise.Core.DataBuilders {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "ContentManager updating Artist: {0}", forArtist.Name ), ex );
+				mLog.LogException( String.Format( "Exception - ContentManager updating Artist: {0}", forArtist.Name ), ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
 			}
 		}
 

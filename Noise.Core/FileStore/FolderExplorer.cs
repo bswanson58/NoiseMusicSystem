@@ -1,8 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
-using Noise.Core.Exceptions;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -11,48 +11,52 @@ using Recls;
 namespace Noise.Core.FileStore {
 	public class FolderExplorer : IFolderExplorer {
 		private readonly IUnityContainer	mContainer;
-		private readonly IDatabaseManager	mDatabase;
 		private readonly ILog				mLog;
 		private bool						mStopExploring;
 
 		public  FolderExplorer( IUnityContainer container ) {
 			mContainer = container;
 			mLog = mContainer.Resolve<ILog>();
-			mDatabase = mContainer.Resolve<IDatabaseManager>();
 		}
 
 		public void SynchronizeDatabaseFolders() {
 			mStopExploring = false;
 
-			if( mDatabase.InitializeAndOpenDatabase( "FolderExplorer" )) {
-				var rootFolders = from RootFolder root in mDatabase.Database where true select root;
+			var databaseMgr = mContainer.Resolve<IDatabaseManager>();
+			var database = databaseMgr.ReserveDatabase( "FolderExplorer" );
 
-				if( rootFolders.Count() == 0 ) {
-					LoadConfiguration();
+			if( database != null ) {
+				try {
+					var rootFolders = from RootFolder root in database.Database where true select root;
 
-					rootFolders = from RootFolder root in mDatabase.Database where true select root;
-				}
+					if( rootFolders.Count() == 0 ) {
+						LoadConfiguration( database );
 
-				if( rootFolders.Count() > 0 ) {
-					foreach( var rootFolder in rootFolders ) {
-						if( Directory.Exists( StorageHelpers.GetPath( mDatabase.Database, rootFolder ))) {
-							mLog.LogInfo( "Synchronizing folder: {0}", rootFolder.DisplayName );
-							BuildFolder( rootFolder );
-						}
-						else {
-							mLog.LogMessage( "Storage folder does not exists: {0}", rootFolder.DisplayName );
-						}
+						rootFolders = from RootFolder root in database.Database where true select root;
+					}
 
-						if( mStopExploring ) {
-							break;
+					if( rootFolders.Count() > 0 ) {
+						foreach( var rootFolder in rootFolders ) {
+							if( Directory.Exists( StorageHelpers.GetPath( database.Database, rootFolder ))) {
+								mLog.LogInfo( "Synchronizing folder: {0}", rootFolder.DisplayName );
+								BuildFolder( database, rootFolder );
+							}
+							else {
+								mLog.LogMessage( "Storage folder does not exists: {0}", rootFolder.DisplayName );
+							}
+
+							if( mStopExploring ) {
+								break;
+							}
 						}
 					}
 				}
-				else {
-					throw( new StorageConfigurationException());
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - FolderExplorer:", ex );
 				}
-
-				mDatabase.CloseDatabase( "FolderExplorer" );
+				finally {
+					databaseMgr.FreeDatabase( database.DatabaseId );
+				}
 			}
 		}
 
@@ -60,7 +64,7 @@ namespace Noise.Core.FileStore {
 			mStopExploring = true;
 		}
 
-		private void LoadConfiguration() {
+		private void LoadConfiguration( IDatabase database ) {
 			var configMgr = mContainer.Resolve<ISystemConfiguration>();
 			var storageConfig = configMgr.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName  );
 
@@ -75,7 +79,7 @@ namespace Noise.Core.FileStore {
 
 					root.FolderStrategy.PreferFolderStrategy = folderConfig.PreferFolderStrategy;
 
-					mDatabase.Database.Store( root );
+					database.Database.Store( root );
 				}
 			}
 		}
@@ -95,30 +99,30 @@ namespace Noise.Core.FileStore {
 			}
 		}
 */
-		private void BuildFolder( StorageFolder parent ) {
-			var directories = FileSearcher.Search( StorageHelpers.GetPath( mDatabase.Database, parent ), null, SearchOptions.Directories, 0 );
+		private void BuildFolder( IDatabase database, StorageFolder parent ) {
+			var directories = FileSearcher.Search( StorageHelpers.GetPath( database.Database, parent ), null, SearchOptions.Directories, 0 );
 
 			foreach( var directory in directories ) {
-				var folder = new StorageFolder( directory.File, mDatabase.Database.GetUid( parent ));
-				var param = mDatabase.Database.CreateParameters();
+				var folder = new StorageFolder( directory.File, database.Database.GetUid( parent ));
+				var param = database.Database.CreateParameters();
 
 				param["parent"] = folder.ParentFolder;
 				param["name"] = folder.Name;
 
-				var databaseFolder = mDatabase.Database.ExecuteScalar( "SELECT StorageFolder WHERE ParentFolder = @parent AND Name = @name", param ) as StorageFolder;
+				var databaseFolder = database.Database.ExecuteScalar( "SELECT StorageFolder WHERE ParentFolder = @parent AND Name = @name", param ) as StorageFolder;
 				if( databaseFolder == null ) {
-					mDatabase.Database.Store( folder );
+					database.Database.Store( folder );
 
 					if( parent is RootFolder ) {
-						mLog.LogInfo( string.Format( "Adding folder: {0}", StorageHelpers.GetPath( mDatabase.Database, folder )));
+						mLog.LogInfo( string.Format( "Adding folder: {0}", StorageHelpers.GetPath( database.Database, folder )));
 					}
 				}
 				else {
 					folder = databaseFolder;
 				}
 
-				BuildFolderFiles( folder );
-				BuildFolder( folder );
+				BuildFolderFiles( database, folder );
+				BuildFolder( database, folder );
 
 				if( mStopExploring ) {
 					break;
@@ -126,22 +130,22 @@ namespace Noise.Core.FileStore {
 			}
 		}
 
-		private void BuildFolderFiles( StorageFolder storageFolder ) {
-			var	parentId =  mDatabase.Database.GetUid( storageFolder );
-			var param = mDatabase.Database.CreateParameters();
+		private void BuildFolderFiles( IDatabase database, StorageFolder storageFolder ) {
+			var	parentId =  database.Database.GetUid( storageFolder );
+			var param = database.Database.CreateParameters();
 
 			param["parent"] = parentId;
 
-			var databaseFiles = mDatabase.Database.ExecuteQuery( "SELECT StorageFile WHERE ParentFolder = @parent", param );
+			var databaseFiles = database.Database.ExecuteQuery( "SELECT StorageFile WHERE ParentFolder = @parent", param );
 			var dbList = databaseFiles.Cast<StorageFile>().ToList();
-			var files = FileSearcher.BreadthFirst.Search( StorageHelpers.GetPath( mDatabase.Database, storageFolder ), null,
+			var files = FileSearcher.BreadthFirst.Search( StorageHelpers.GetPath( database.Database, storageFolder ), null,
 														  SearchOptions.Files | SearchOptions.IncludeSystem | SearchOptions.IncludeHidden, 0 );
 
 			foreach( var file in files ) {
 				var fileName = file.File;
 
 				if(!dbList.Exists( dbFile => dbFile.Name == fileName )) {
-					mDatabase.Database.Store( new StorageFile( file.File, parentId, file.Size, file.ModificationTime ));
+					database.Database.Store( new StorageFile( file.File, parentId, file.Size, file.ModificationTime ));
 				}
 
 				if( mStopExploring ) {

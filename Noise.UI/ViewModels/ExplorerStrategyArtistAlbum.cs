@@ -75,23 +75,27 @@ namespace Noise.UI.ViewModels {
 			Condition.Requires( mViewModel ).IsNotNull();
 
 			if( mNoiseManager.IsInitialized ) {
-				var artistList = from artist in mNoiseManager.DataProvider.GetArtistList() orderby artist.Name select artist;
+				using( var list = mNoiseManager.DataProvider.GetArtistList()) {
+					var artistList = from artist in list.List orderby artist.Name select artist;
 
-				foreach( DbArtist artist in artistList ) {
-					var parent = artist.AlbumCount > 0 ? new ExplorerTreeNode( mEventAggregator, artist, FillChildren ) :
-														 new ExplorerTreeNode( mEventAggregator, artist );
-					tree.Add( parent );
-					mChangeObserver.Add( parent.SettingsNotifier );
+					foreach( DbArtist artist in artistList ) {
+						var parent = artist.AlbumCount > 0 ? new ExplorerTreeNode( mEventAggregator, artist, FillChildren ) :
+															 new ExplorerTreeNode( mEventAggregator, artist );
+						tree.Add( parent );
+						mChangeObserver.Add( parent.SettingsNotifier );
+					}
 				}
 			}
 		}
 
-		private IEnumerable<ExplorerTreeNode> FillChildren( ExplorerTreeNode parent ) {
-			IEnumerable<ExplorerTreeNode>	retValue = null;
+		private List<ExplorerTreeNode> FillChildren( ExplorerTreeNode parent ) {
+			List<ExplorerTreeNode>	retValue = null;
 			var artist = parent.Item as DbArtist;
 
 			if( artist != null ) {
-				retValue = from album in mNoiseManager.DataProvider.GetAlbumList( artist ) orderby album.Name select new ExplorerTreeNode( mEventAggregator, parent, album );
+				using( var albumList = mNoiseManager.DataProvider.GetAlbumList( artist )) {
+					retValue = new List<ExplorerTreeNode>( from album in albumList.List orderby album.Name select new ExplorerTreeNode( mEventAggregator, parent, album ));
+				}
 			}
 
 			return( retValue );

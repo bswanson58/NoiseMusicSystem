@@ -1,5 +1,6 @@
 ﻿using System;
 using CuttingEdge.Conditions;
+using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
@@ -9,19 +10,34 @@ using TagLib;
 
 namespace Noise.Core.DataProviders {
 	public class Mp3TagProvider : IMetaDataProvider {
+		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly StorageFile		mFile;
-		private readonly IDatabaseManager	mDatabase;
 		private readonly ILog				mLog;
 		private	readonly Lazy<File>			mTags;
 
-		public Mp3TagProvider( IDatabaseManager databaseManager, StorageFile file ) {
-			mDatabase = databaseManager;
+		public Mp3TagProvider( IUnityContainer container, StorageFile file ) {
+			mDatabaseManager = container.Resolve<IDatabaseManager>();
 			mFile = file;
 
-			Condition.Requires( mDatabase ).IsNotNull();
+			Condition.Requires( mDatabaseManager ).IsNotNull();
 			Condition.Requires( mFile ).IsNotNull();
 
-			mTags =new Lazy<File>(() => OpenTagFile( StorageHelpers.GetPath( mDatabase.Database, mFile )));
+			mTags =new Lazy<File>(() => {
+				File	retValue = null;
+				var		database = mDatabaseManager.ReserveDatabase( "Mp3TagProvider:OpenTagFile" );
+
+				try {
+					retValue = OpenTagFile( StorageHelpers.GetPath( database.Database, mFile ));
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - Mp3TagProvider:OpenTagFile:", ex );
+				}
+				finally {
+					mDatabaseManager.FreeDatabase( database.DatabaseId );
+				}
+
+				return( retValue );	});
+
 			mLog = new Log();
 		}
 
@@ -99,6 +115,7 @@ namespace Noise.Core.DataProviders {
 
 		public void AddAvailableMetaData( DbArtist artist, DbAlbum album, DbTrack track ) {
 			if( Tags != null ) {
+				var database = mDatabaseManager.ReserveDatabase( "Mp3TagProvider:AddAvailableMetadata" );
 				try {
 					if( Tags.Tag.Year != 0 ) {
 						track.PublishedYear = Tags.Tag.Year;
@@ -115,11 +132,11 @@ namespace Noise.Core.DataProviders {
 					if(( pictures != null ) &&
 					   ( pictures.GetLength( 0 ) > 0 )) {
 						// Only pull the pictures from the first file in the folder.
-						var parms = mDatabase.Database.CreateParameters();
+						var parms = database.Database.CreateParameters();
 
 						parms["folderId"] = mFile.ParentFolder;
 
-						if( mDatabase.Database.ExecuteScalar( "SELECT DbArtwork WHERE FolderLocation = @folderId", parms ) == null ) {
+						if( database.Database.ExecuteScalar( "SELECT DbArtwork WHERE FolderLocation = @folderId", parms ) == null ) {
 	//					if(( from DbArtwork artwork in mDatabase.Database where artwork.FolderLocation == storageFile.ParentFolder select artwork ).Count() == 0 ) {
 							foreach( var picture in pictures ) {
 								var dbPicture = new DbArtwork( track.Album, picture.Type == PictureType.FrontCover ? ContentType.AlbumCover : ContentType.AlbumArtwork )
@@ -128,7 +145,7 @@ namespace Noise.Core.DataProviders {
 								dbPicture.Image = new byte[picture.Data.Count];
 								picture.Data.CopyTo( dbPicture.Image, 0 );
 
-								mDatabase.Database.Store( dbPicture );
+								database.Database.Store( dbPicture );
 							}
 						}
 					}
@@ -141,6 +158,9 @@ namespace Noise.Core.DataProviders {
 				}
 				catch( Exception ex ) {
 					mLog.LogException( "Mp3TagProvider", ex );
+				}
+				finally {
+					mDatabaseManager.FreeDatabase( database.DatabaseId );
 				}
 			}
 		}

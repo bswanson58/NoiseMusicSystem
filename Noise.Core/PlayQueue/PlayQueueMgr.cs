@@ -66,18 +66,18 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		private void AddAlbum( DbAlbum album ) {
-			var tracks = mDataProvider.GetTrackList( album );
-
-			foreach( DbTrack track in tracks ) {
-				AddTrack( track );
+			using( var tracks = mDataProvider.GetTrackList( album )) {
+				foreach( DbTrack track in tracks.List ) {
+					AddTrack( track );
+				}
 			}
 		}
 
 		public void Add( DbArtist artist ) {
-			var	albums = mDataProvider.GetAlbumList( artist );
-
-			foreach( DbAlbum album in albums ) {
-				Add( album );
+			using( var albums = mDataProvider.GetAlbumList( artist )) {
+				foreach( DbAlbum album in albums.List ) {
+					Add( album );
+				}
 			}
 		}
 

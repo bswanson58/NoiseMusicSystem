@@ -47,7 +47,9 @@ namespace Noise.UI.ViewModels {
 			mTracks.Each( node => mChangeObserver.Release( node ));
 
 			if( item is DbAlbum ) {
-				mTracks.AddRange( from track in mNoiseManager.DataProvider.GetTrackList( item as DbAlbum ) select new TrackViewNode( mEventAggregator, track ));
+				using( var tracks = mNoiseManager.DataProvider.GetTrackList( item as DbAlbum )) {
+					mTracks.AddRange( from track in tracks.List select new TrackViewNode( mEventAggregator, track ));
+				}
 				mTracks.Each( track => mChangeObserver.Add( track.SettingsNotifier ));
 			}
 		}

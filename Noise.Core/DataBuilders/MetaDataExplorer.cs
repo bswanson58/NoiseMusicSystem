@@ -13,7 +13,7 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.DataBuilders {
 	public class MetaDataExplorer : IMetaDataExplorer {
 		private readonly IUnityContainer		mContainer;
-		private readonly IDatabaseManager		mDatabase;
+		private readonly IDatabaseManager		mDatabaseManager;
 		private readonly FileTagProvider		mTagProvider;
 		private readonly FileNameProvider		mFileNameProvider;
 		private readonly FolderStrategyProvider	mStrategyProvider;
@@ -24,12 +24,12 @@ namespace Noise.Core.DataBuilders {
 
 		public  MetaDataExplorer( IUnityContainer container ) {
 			mContainer = container;
-			mDatabase = mContainer.Resolve<IDatabaseManager>();
+			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
 			mLog = mContainer.Resolve<ILog>();
 
-			mTagProvider = new FileTagProvider( mDatabase );
-			mFileNameProvider = new FileNameProvider( mDatabase );
-			mStrategyProvider = new FolderStrategyProvider( mDatabase );
+			mTagProvider = new FileTagProvider( mContainer );
+			mFileNameProvider = new FileNameProvider( mContainer );
+			mStrategyProvider = new FolderStrategyProvider( mContainer );
 			mDefaultProvider = new DefaultProvider();
 		}
 
@@ -38,44 +38,43 @@ namespace Noise.Core.DataBuilders {
 			mStopExploring = false;
 			mSummary = summary;
 
+			var database = mDatabaseManager.ReserveDatabase( "MetaDataExplorer:BuildMetaData" );
+			try {
+				var		artworkProvider = new FileArtworkProvider( mContainer );
+				var		textProvider =new FileTextProvider( mContainer );
+				var		fileEnum = from StorageFile file in database.Database where file.FileType == eFileType.Undetermined orderby file.ParentFolder select file;
 
-			if( mDatabase.InitializeAndOpenDatabase( "MetaDataExplorer" )) {
-				try {
-					var		artworkProvider = new FileArtworkProvider( mDatabase );
-					var		textProvider =new FileTextProvider( mDatabase );
-					var		fileEnum = from StorageFile file in mDatabase.Database where file.FileType == eFileType.Undetermined orderby file.ParentFolder select file;
+				foreach( var file in fileEnum ) {
+					file.FileType = DetermineFileType( file );
 
-					foreach( var file in fileEnum ) {
-						file.FileType = DetermineFileType( file );
-
-						switch( file.FileType ) {
-							case eFileType.Music:
-								BuildMusicMetaData( file );
-								break;
-
-							case eFileType.Picture:
-								artworkProvider.BuildMetaData( file );
-
-								mDatabase.Database.Store( file );
-								break;
-
-							case eFileType.Text:
-								textProvider.BuildMetaData( file );
-
-								mDatabase.Database.Store( file );
-								break;
-						}
-
-						if( mStopExploring ) {
+					switch( file.FileType ) {
+						case eFileType.Music:
+							BuildMusicMetaData( database, file );
 							break;
-						}
+
+						case eFileType.Picture:
+							artworkProvider.BuildMetaData( file );
+
+							database.Database.Store( file );
+							break;
+
+						case eFileType.Text:
+							textProvider.BuildMetaData( file );
+
+							database.Database.Store( file );
+							break;
+					}
+
+					if( mStopExploring ) {
+						break;
 					}
 				}
-				catch( Exception ex ) {
-					mLog.LogException( "Building Metadata:", ex );
-				}
-
-				mDatabase.CloseDatabase( "MetaDataExplorer" );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Building Metadata:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database.DatabaseId );
 			}
 		}
 
@@ -83,12 +82,12 @@ namespace Noise.Core.DataBuilders {
 			mStopExploring = true;
 		}
 
-		private void BuildMusicMetaData( StorageFile file ) {
+		private void BuildMusicMetaData( IDatabase database, StorageFile file ) {
 			Condition.Requires( file ).IsNotNull();
 
 			try {
 				var	track = new DbTrack();
-				var folderStrategy = StorageHelpers.GetFolderStrategy( mDatabase.Database, file );
+				var folderStrategy = StorageHelpers.GetFolderStrategy( database.Database, file );
 				var dataProviders = new List<IMetaDataProvider>();
 
 				track.Encoding = DetermineAudioEncoding( file );
@@ -106,9 +105,9 @@ namespace Noise.Core.DataBuilders {
 					dataProviders.Add( mDefaultProvider.GetProvider( file ));
 				}
 
-				var artist = DetermineArtist( dataProviders );
+				var artist = DetermineArtist( database, dataProviders );
 				if( artist != null ) {
-					var album = DetermineAlbum( dataProviders, artist );
+					var album = DetermineAlbum( database, dataProviders, artist );
 
 					if( album != null ) {
 						track.Name = DetermineTrackName( dataProviders );
@@ -120,29 +119,29 @@ namespace Noise.Core.DataBuilders {
 								provider.AddAvailableMetaData( artist, album, track );
 							}
 
-							track.Album = mDatabase.Database.GetUid( album );
-							file.MetaDataPointer = mDatabase.Database.Store( track );
-							mDatabase.Database.Store( file );
+							track.Album = database.Database.GetUid( album );
+							file.MetaDataPointer = database.Database.Store( track );
+							database.Database.Store( file );
 							mSummary.TracksAdded++;
 						}
 						else {
-							mLog.LogMessage( "Track name cannot be determined for file: {0}", StorageHelpers.GetPath( mDatabase.Database, file ));
+							mLog.LogMessage( "Track name cannot be determined for file: {0}", StorageHelpers.GetPath( database.Database, file ));
 						}
 					}
 					else {
-						mLog.LogMessage( "Album cannot be determined for file: {0}", StorageHelpers.GetPath( mDatabase.Database, file ));
+						mLog.LogMessage( "Album cannot be determined for file: {0}", StorageHelpers.GetPath( database.Database, file ));
 					}
 				}
 				else {
-					mLog.LogMessage( "Artist cannot determined for file: {0}", StorageHelpers.GetPath( mDatabase.Database, file ));
+					mLog.LogMessage( "Artist cannot determined for file: {0}", StorageHelpers.GetPath( database.Database, file ));
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Building Music Metadata for: {0}", StorageHelpers.GetPath( mDatabase.Database, file )), ex );
+				mLog.LogException( String.Format( "Building Music Metadata for: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
 			}
 		}
 
-		private DbArtist DetermineArtist( IEnumerable<IMetaDataProvider> providers ) {
+		private DbArtist DetermineArtist( IDatabase database, IEnumerable<IMetaDataProvider> providers ) {
 			DbArtist	retValue = null;
 			var			artistName = "";
 
@@ -155,15 +154,15 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			if(!string.IsNullOrWhiteSpace( artistName )) {
-				var parm = mDatabase.Database.CreateParameters();
+				var parm = database.Database.CreateParameters();
 
 				parm["artistName"] = artistName;
 
-				retValue = mDatabase.Database.ExecuteScalar( "SELECT DbArtist WHERE Name = @artistName", parm ) as DbArtist;
+				retValue = database.Database.ExecuteScalar( "SELECT DbArtist WHERE Name = @artistName", parm ) as DbArtist;
 				if( retValue == null ) {
 					retValue = new DbArtist { Name = artistName };
 
-					mDatabase.Database.Store( retValue );
+					database.Database.Store( retValue );
 					mSummary.ArtistsAdded++;
 					mLog.LogInfo( "Added artist: {0}", retValue.Name );
 				}
@@ -172,7 +171,7 @@ namespace Noise.Core.DataBuilders {
 			return( retValue );
 		}
 
-		private DbAlbum DetermineAlbum( IEnumerable<IMetaDataProvider> providers, DbArtist artist ) {
+		private DbAlbum DetermineAlbum( IDatabase database, IEnumerable<IMetaDataProvider> providers, DbArtist artist ) {
 			DbAlbum		retValue = null;
 			var			albumName = "";
 
@@ -185,13 +184,13 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			if(!string.IsNullOrWhiteSpace( albumName )) {
-				var artistId = mDatabase.Database.GetUid( artist );
+				var artistId = database.Database.GetUid( artist );
 
-				retValue = ( from DbAlbum album in mDatabase.Database where album.Name == albumName && album.Artist == artistId select album ).FirstOrDefault();
+				retValue = ( from DbAlbum album in database.Database where album.Name == albumName && album.Artist == artistId select album ).FirstOrDefault();
 				if( retValue == null ) {
-					retValue = new DbAlbum { Name = albumName, Artist = mDatabase.Database.GetUid( artist ) };
+					retValue = new DbAlbum { Name = albumName, Artist = database.Database.GetUid( artist ) };
 
-					mDatabase.Database.Store( retValue );
+					database.Database.Store( retValue );
 					mSummary.AlbumsAdded++;
 					mLog.LogInfo( "Added album: {0}", retValue.Name );
 				}
