@@ -49,7 +49,7 @@ namespace Noise.Core.DataBuilders {
 				var selectedProviders = from IContentProvider provider in ContentProviders where provider.CanUpdateArtist select provider;
 				var contentUpdated = false;
 
-				Condition.Requires( artistId ).IsNotEqualTo( -1 );
+				Condition.Requires( artistId ).IsNotEqualTo( -1, "ContentManager:RequestArtistContent (artistId)" );
 
 				foreach( var provider in selectedProviders ) {
 					var parms = database.Database.CreateParameters();
