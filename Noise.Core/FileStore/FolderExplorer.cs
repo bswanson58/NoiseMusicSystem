@@ -13,6 +13,8 @@ namespace Noise.Core.FileStore {
 		private readonly IUnityContainer	mContainer;
 		private readonly ILog				mLog;
 		private bool						mStopExploring;
+		private DatabaseCache<StorageFile>	mFileCache;
+		private DatabaseCache<StorageFolder>	mFolderCache;
 
 		public  FolderExplorer( IUnityContainer container ) {
 			mContainer = container;
@@ -36,6 +38,9 @@ namespace Noise.Core.FileStore {
 					}
 
 					if( rootFolders.Count() > 0 ) {
+						mFileCache = new DatabaseCache<StorageFile>( from StorageFile file in database.Database select file );
+						mFolderCache = new DatabaseCache<StorageFolder>( from StorageFolder folder in database.Database select folder );
+
 						foreach( var rootFolder in rootFolders ) {
 							if( Directory.Exists( StorageHelpers.GetPath( database.Database, rootFolder ))) {
 								mLog.LogInfo( "Synchronizing folder: {0}", rootFolder.DisplayName );
@@ -49,6 +54,9 @@ namespace Noise.Core.FileStore {
 								break;
 							}
 						}
+
+						mFileCache.Clear();
+						mFolderCache.Clear();
 					}
 				}
 				catch( Exception ex ) {
@@ -84,39 +92,20 @@ namespace Noise.Core.FileStore {
 			}
 		}
 
-/*		private void BuildDatabaseFolders( RootFolder rootFolder ) {
-			if( Directory.Exists( rootFolder.FullPath )) {
-				var directories = FileSearcher.DepthFirst.Search( rootFolder.FullPath,
-																  null,
-																  SearchOptions.Directories, 
-																  FileSearcher.UnrestrictedDepth,
-																  delegate( string directory, int depth ) {
-																		return( ProgressHandlerResult.Continue );
-																  },
-																  delegate( string path, Exception ex ) {
-																  		return( ExceptionHandlerResult.ConsumeExceptionAndContinue );
-																  });
-			}
-		}
-*/
 		private void BuildFolder( IDatabase database, StorageFolder parent ) {
 			var directories = FileSearcher.Search( StorageHelpers.GetPath( database.Database, parent ), null, SearchOptions.Directories, 0 );
 
 			foreach( var directory in directories ) {
-				var folder = new StorageFolder( directory.File, parent.DbId );
-				var parentFolder = folder.ParentFolder;
-				var parentName = folder.Name;
-				var	databaseFolder = ( from StorageFolder dbFolder in database.Database
-									   where dbFolder.ParentFolder == parentFolder && dbFolder.Name == parentName select dbFolder ).FirstOrDefault();
-				if( databaseFolder == null ) {
+				var folderName = directory.File;
+				var folder = mFolderCache.Find( dbFolder => dbFolder.ParentFolder == parent.DbId && dbFolder.Name == folderName );
+				if( folder == null ) {
+					folder = new StorageFolder( directory.File, parent.DbId );
+
 					database.Insert( folder );
 
 					if( parent is RootFolder ) {
 						mLog.LogInfo( string.Format( "Adding folder: {0}", StorageHelpers.GetPath( database.Database, folder )));
 					}
-				}
-				else {
-					folder = databaseFolder;
 				}
 
 				BuildFolderFiles( database, folder );
@@ -129,7 +118,8 @@ namespace Noise.Core.FileStore {
 		}
 
 		private void BuildFolderFiles( IDatabase database, StorageFolder storageFolder ) {
-			var dbList = ( from StorageFile file in database.Database where file.ParentFolder == storageFolder.DbId select file ).ToList();
+//			var dbList = ( from StorageFile file in database.Database where file.ParentFolder == storageFolder.DbId select file ).ToList();
+			var dbList = mFileCache.FindList( file => file.ParentFolder == storageFolder.DbId );
 			var files = FileSearcher.BreadthFirst.Search( StorageHelpers.GetPath( database.Database, storageFolder ), null,
 														  SearchOptions.Files | SearchOptions.IncludeSystem | SearchOptions.IncludeHidden, 0 );
 			foreach( var file in files ) {

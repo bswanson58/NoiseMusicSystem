@@ -170,7 +170,7 @@ namespace Noise.Core.DataProviders {
 				database.Store( topAlbums );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "LastFmProvider UpdateArtistInfo:", ex );
+				mLog.LogException( "Exception - LastFmProvider:UpdateArtistInfo:", ex );
 			}
 		}
 
@@ -201,7 +201,7 @@ namespace Noise.Core.DataProviders {
 				database.Store( artwork );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "LastFm: Image Download: ", ex );
+				mLog.LogException( "Exception - LastFmProvider:ImageDownload: ", ex );
 			}
 			finally {
 				dbManager.FreeDatabase( database );
