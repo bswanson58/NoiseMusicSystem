@@ -77,7 +77,11 @@ namespace Noise.Core.DataProviders {
 
 		public void AddAvailableMetaData( DbArtist artist, DbAlbum album, DbTrack track ) {
 			if( mFolderFiles != null ) {
-				track.TrackNumber = (UInt16)( mFolderFiles.IndexOf( mFile ) + 1 );
+				var listTrack = mFolderFiles.FirstOrDefault( item => item.Name == mFile.Name );
+
+				if( listTrack != null ) {
+					track.TrackNumber = (UInt16)( mFolderFiles.IndexOf( listTrack ) + 1 );
+				}
 			}
 		}
 	}
