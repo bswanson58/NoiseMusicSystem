@@ -19,6 +19,8 @@ namespace Noise.Core.DataBuilders {
 		private readonly FolderStrategyProvider	mStrategyProvider;
 		private readonly DefaultProvider		mDefaultProvider;
 		private readonly ILog					mLog;
+		private DatabaseCache<DbArtist>			mArtistCache;
+		private DatabaseCache<DbAlbum>			mAlbumCache;
 		private bool							mStopExploring;
 		private DatabaseChangeSummary			mSummary;
 
@@ -43,6 +45,9 @@ namespace Noise.Core.DataBuilders {
 				var		artworkProvider = new FileArtworkProvider( mContainer );
 				var		textProvider =new FileTextProvider( mContainer );
 				var		fileEnum = from StorageFile file in database.Database where file.FileType == eFileType.Undetermined orderby file.ParentFolder select file;
+
+				mArtistCache = new DatabaseCache<DbArtist>( from DbArtist artist in database.Database select artist );
+				mAlbumCache = new DatabaseCache<DbAlbum>( from DbAlbum album in database.Database select album );
 
 				foreach( var file in fileEnum ) {
 					file.FileType = DetermineFileType( file );
@@ -69,6 +74,9 @@ namespace Noise.Core.DataBuilders {
 						break;
 					}
 				}
+
+				mArtistCache.Clear();
+				mAlbumCache.Clear();
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Building Metadata:", ex );
@@ -157,11 +165,14 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			if(!string.IsNullOrWhiteSpace( artistName )) {
-				retValue = ( from DbArtist artist in database.Database where artist.Name == artistName select artist ).FirstOrDefault();
+//				retValue = ( from DbArtist artist in database.Database where artist.Name == artistName select artist ).FirstOrDefault();
+				retValue = mArtistCache.Find( artist => artist.Name == artistName );
 				if( retValue == null ) {
 					retValue = new DbArtist { Name = artistName };
 
 					database.Insert( retValue );
+					mArtistCache.Add( retValue );
+
 					mSummary.ArtistsAdded++;
 					mLog.LogInfo( "Added artist: {0}", retValue.Name );
 				}
@@ -183,11 +194,14 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			if(!string.IsNullOrWhiteSpace( albumName )) {
-				retValue = ( from DbAlbum album in database.Database where album.Name == albumName && album.Artist == artist.DbId select album ).FirstOrDefault();
+//				retValue = ( from DbAlbum album in database.Database where album.Name == albumName && album.Artist == artist.DbId select album ).FirstOrDefault();
+				retValue = mAlbumCache.Find( album => album.Name == albumName && album.Artist == artist.DbId );
 				if( retValue == null ) {
 					retValue = new DbAlbum { Name = albumName, Artist = artist.DbId };
 
 					database.Insert( retValue );
+					mAlbumCache.Add( retValue );
+
 					mSummary.AlbumsAdded++;
 					mLog.LogInfo( "Added album: {0}", retValue.Name );
 				}

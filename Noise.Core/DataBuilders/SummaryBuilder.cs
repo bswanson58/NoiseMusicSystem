@@ -35,12 +35,13 @@ namespace Noise.Core.DataBuilders {
 			if( database != null ) {
 				try {
 					var artists = from DbArtist artist in database.Database select artist;
+					var albumCache = new DatabaseCache<DbAlbum>( from DbAlbum album in database.Database select album );
 
 					foreach( var artist in artists ) {
 						mLog.LogInfo( string.Format( "Building summary data for: {0}", artist.Name ));
 
 						var artistId = artist.DbId;
-						var albums = from DbAlbum album in database.Database where album.Artist == artistId select album;
+						var	albums = albumCache.FindList( album => album.Artist == artistId );
 						var albumGenre = new Dictionary<string, int>();
 						var albumCount = 0;
 						var albumRating = 0;
