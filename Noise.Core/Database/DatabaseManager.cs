@@ -54,7 +54,7 @@ namespace Noise.Core.Database {
 			}
 		}
 
-		public IDatabase ReserveDatabase( string clientName ) {
+		public IDatabase ReserveDatabase() {
 			IDatabase	retValue;
 
 			lock( mLockObject ) {
@@ -67,7 +67,7 @@ namespace Noise.Core.Database {
 				else {
 					retValue = mContainer.Resolve<IDatabase>();
 
-					if( retValue.InitializeAndOpenDatabase( clientName )) {
+					if( retValue.InitializeAndOpenDatabase()) {
 						mReservedDatabases.Add( retValue.DatabaseId, retValue );
 
 						mLog.LogInfo( string.Format( "Database Created. (Count: {0})", mReservedDatabases.Count + mAvailableDatabases.Count ));
@@ -76,6 +76,10 @@ namespace Noise.Core.Database {
 			}
 
 			return( retValue );
+		}
+
+		public void FreeDatabase( IDatabase database ) {
+			FreeDatabase( database.DatabaseId );
 		}
 
 		public void FreeDatabase( string databaseId ) {

@@ -32,7 +32,7 @@ namespace Noise.Core.DataProviders {
 			mStrategyInformation = new Lazy<FolderStrategyInformation>(() => {
 				FolderStrategyInformation	retValue = null;
 
-				var database = mDatabaseManager.ReserveDatabase( "FileStrategyProvider" );
+				var database = mDatabaseManager.ReserveDatabase();
 
 				try {
 					retValue = StorageHelpers.GetFolderStrategy( database.Database, mFile );
@@ -41,7 +41,7 @@ namespace Noise.Core.DataProviders {
 					mLog.LogException( "Exception - FileStrategyProvider:", ex );
 				}
 				finally {
-					mDatabaseManager.FreeDatabase( database.DatabaseId );
+					mDatabaseManager.FreeDatabase( database );
 				}
 
 				return( retValue );

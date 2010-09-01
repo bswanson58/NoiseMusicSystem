@@ -28,7 +28,7 @@ namespace Noise.Core.DataProviders {
 		}
 
 		private void BuildFolderFiles( long parentId ) {
-			var database = mDatabaseManager.ReserveDatabase( "FileNameProvider" );
+			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
 				var files = from StorageFile file in database.Database where file.ParentFolder == parentId orderby file.Name select file;
@@ -40,7 +40,7 @@ namespace Noise.Core.DataProviders {
 				mLog.LogException( "Exception - FileNameProvider", ex );
 			}
 			finally {
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
+				mDatabaseManager.FreeDatabase( database );
 			}
 		}
 	}

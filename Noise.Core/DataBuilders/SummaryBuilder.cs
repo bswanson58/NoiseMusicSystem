@@ -30,7 +30,7 @@ namespace Noise.Core.DataBuilders {
 
 		private void SummarizeArtists() {
 			var databaseMgr = mContainer.Resolve<IDatabaseManager>();
-			var database = databaseMgr.ReserveDatabase( "SummaryBuilder" );
+			var database = databaseMgr.ReserveDatabase();
 
 			if( database != null ) {
 				try {
@@ -80,7 +80,7 @@ namespace Noise.Core.DataBuilders {
 							album.CalculatedRating = (Int16)( trackRating / album.TrackCount );
 							albumRating += album.CalculatedRating;
 
-							database.Database.Store( album );
+							database.Store( album );
 							albumCount++;
 
 							if( mStop ) {
@@ -92,7 +92,7 @@ namespace Noise.Core.DataBuilders {
 						artist.CalculatedGenre = DetermineTopGenre( albumGenre );
 						artist.CalculatedRating = (Int16)( albumRating / albumCount );
 
-						database.Database.Store( artist );
+						database.Store( artist );
 
 						if( mStop ) {
 							break;
@@ -103,7 +103,7 @@ namespace Noise.Core.DataBuilders {
 					mLog.LogException( "Building summary data: ", ex );
 				}
 				finally {
-					databaseMgr.FreeDatabase( database.DatabaseId );
+					databaseMgr.FreeDatabase( database );
 				}
 			}
 		}

@@ -18,7 +18,7 @@ namespace Noise.Core.DataProviders {
 
 		public void BuildMetaData( StorageFile file ) {
 			var dbManager = mContainer.Resolve<IDatabaseManager>();
-			var database = dbManager.ReserveDatabase( "FileArtworkProvider" );
+			var database = dbManager.ReserveDatabase();
 
 			try {
 				var fileId = file.DbId;
@@ -29,13 +29,13 @@ namespace Noise.Core.DataProviders {
 
 				dbPicture.Image = File.ReadAllBytes( fileName );
 
-				database.Database.Store( dbPicture );
+				database.Insert( dbPicture );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( String.Format( "FileArtworkProvider file: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
 			}
 			finally {
-				dbManager.FreeDatabase( database.DatabaseId );
+				dbManager.FreeDatabase( database );
 			}
 		}
 

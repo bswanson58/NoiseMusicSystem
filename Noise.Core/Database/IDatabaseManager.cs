@@ -3,7 +3,8 @@
 		bool		Initialize();
 		void		Shutdown();
 
-		IDatabase	ReserveDatabase( string clientName );
+		IDatabase	ReserveDatabase();
 		void		FreeDatabase( string databaseId );
+		void		FreeDatabase( IDatabase database );
 	}
 }

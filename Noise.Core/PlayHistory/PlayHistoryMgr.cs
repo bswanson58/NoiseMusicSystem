@@ -31,7 +31,7 @@ namespace Noise.Core.PlayHistory {
 
 		public void TrackPlayCompleted( PlayQueueTrack track ) {
 			if( track.PercentPlayed > 0.8 ) {
-				var database = mDatabaseManager.ReserveDatabase( "TrackPlayCompleted" );
+				var database = mDatabaseManager.ReserveDatabase();
 
 				try {
 					var lastPlayed = ( from DbPlayHistory history in database.Database where history.Track.MetaDataPointer == track.File.MetaDataPointer select history ).FirstOrDefault();
@@ -39,10 +39,10 @@ namespace Noise.Core.PlayHistory {
 					if( lastPlayed != null ) {
 						lastPlayed.PlayedOn = DateTime.Now;
 
-						database.Database.Store( lastPlayed );
+						database.Store( lastPlayed );
 					}
 					else {
-						database.Database.Store( new DbPlayHistory( track.File ));
+						database.Insert( new DbPlayHistory( track.File ));
 					}
 
 					TrimHistoryList( database );
@@ -54,7 +54,7 @@ namespace Noise.Core.PlayHistory {
 					mLog.LogException( "Exception - TrackPlayCompleted:", ex );
 				}
 				finally {
-					mDatabaseManager.FreeDatabase( database.DatabaseId );
+					mDatabaseManager.FreeDatabase( database );
 				}
 			}
 		}
@@ -66,13 +66,13 @@ namespace Noise.Core.PlayHistory {
 
 			while(( historyCount > cMaximumHistory ) &&
 				  ( historyEnum.MoveNext())) {
-				database.Database.Delete( historyEnum.Current );
+				database.Delete( historyEnum.Current );
 				historyCount--;
 			}
 		}
 
 		private void UpdateHistoryList() {
-			var database = mDatabaseManager.ReserveDatabase( "UpdateHistoryList" );
+			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
 				mPlayHistory.Clear();
@@ -82,7 +82,7 @@ namespace Noise.Core.PlayHistory {
 				mLog.LogException( "Exception - PlayHistoryMgr: Could not update play history.", ex );
 			}
 			finally {
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
+				mDatabaseManager.FreeDatabase( database );
 			}
 		}
 

@@ -24,7 +24,7 @@ namespace Noise.Core.DataProviders {
 
 			mTags =new Lazy<File>(() => {
 				File	retValue = null;
-				var		database = mDatabaseManager.ReserveDatabase( "Mp3TagProvider:OpenTagFile" );
+				var		database = mDatabaseManager.ReserveDatabase();
 
 				try {
 					retValue = OpenTagFile( StorageHelpers.GetPath( database.Database, mFile ));
@@ -33,7 +33,7 @@ namespace Noise.Core.DataProviders {
 					mLog.LogException( "Exception - Mp3TagProvider:OpenTagFile:", ex );
 				}
 				finally {
-					mDatabaseManager.FreeDatabase( database.DatabaseId );
+					mDatabaseManager.FreeDatabase( database );
 				}
 
 				return( retValue );	});
@@ -48,7 +48,7 @@ namespace Noise.Core.DataProviders {
 				retValue = File.Create( path );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Opening mp3 tag for file: {0}", path ), ex );
+				mLog.LogException( String.Format( "Exception - Mp3TagProvider opening file: {0}", path ), ex );
 			}
 
 			return( retValue );			
@@ -115,7 +115,7 @@ namespace Noise.Core.DataProviders {
 
 		public void AddAvailableMetaData( DbArtist artist, DbAlbum album, DbTrack track ) {
 			if( Tags != null ) {
-				var database = mDatabaseManager.ReserveDatabase( "Mp3TagProvider:AddAvailableMetadata" );
+				var database = mDatabaseManager.ReserveDatabase();
 				try {
 					if( Tags.Tag.Year != 0 ) {
 						track.PublishedYear = Tags.Tag.Year;
@@ -145,7 +145,7 @@ namespace Noise.Core.DataProviders {
 								dbPicture.Image = new byte[picture.Data.Count];
 								picture.Data.CopyTo( dbPicture.Image, 0 );
 
-								database.Database.Store( dbPicture );
+								database.Insert( dbPicture );
 							}
 						}
 					}
@@ -160,7 +160,7 @@ namespace Noise.Core.DataProviders {
 					mLog.LogException( "Mp3TagProvider", ex );
 				}
 				finally {
-					mDatabaseManager.FreeDatabase( database.DatabaseId );
+					mDatabaseManager.FreeDatabase( database );
 				}
 			}
 		}

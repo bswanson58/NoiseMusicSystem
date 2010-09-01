@@ -153,7 +153,7 @@ namespace Noise.Core.MediaPlayer {
 		public int OpenFile( StorageFile file ) {
 			var retValue = 0;
 			var dbManager = mContainer.Resolve<IDatabaseManager>();
-			var database = dbManager.ReserveDatabase( "AudioPlayer:OpenFile" );
+			var database = dbManager.ReserveDatabase();
 			var path = "";
 
 			try {
@@ -163,7 +163,7 @@ namespace Noise.Core.MediaPlayer {
 				mLog.LogException( "Exception - AudioPlayer:OpenFile", ex );
 			}
 			finally {
-				dbManager.FreeDatabase( database.DatabaseId );
+				dbManager.FreeDatabase( database );
 			}
 
 			if( File.Exists( path )) {

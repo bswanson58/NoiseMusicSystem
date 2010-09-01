@@ -46,16 +46,16 @@ namespace Noise.Core.Database {
 			   ( item is DbAlbum ) ||
 			   ( item is DbTrack ) ||
 			   ( item is DbInternetStream )) {
-				var database = mDatabaseManager.ReserveDatabase( "UpdateItem" );
+				var database = mDatabaseManager.ReserveDatabase();
 
 				try {
-					database.Database.Store( item );
+					database.Store( item );
 				}
 				catch( Exception ex ) {
 					mLog.LogException( "Exception - UpdateItem:", ex );
 				}
 				finally {
-					mDatabaseManager.FreeDatabase( database.DatabaseId );
+					mDatabaseManager.FreeDatabase( database );
 				}
 			}
 		}
@@ -64,16 +64,16 @@ namespace Noise.Core.Database {
 			Condition.Requires( dbItem ).IsNotNull();
 
 			if( dbItem is DbInternetStream ) {
-				var database = mDatabaseManager.ReserveDatabase( "UpdateItem" );
+				var database = mDatabaseManager.ReserveDatabase();
 
 				try {
-					database.Database.Delete( dbItem );
+					database.Delete( dbItem );
 				}
 				catch( Exception ex ) {
 					mLog.LogException( "Exception - UpdateItem:", ex );
 				}
 				finally {
-					mDatabaseManager.FreeDatabase( database.DatabaseId );
+					mDatabaseManager.FreeDatabase( database );
 				}
 			}
 		}
@@ -81,7 +81,7 @@ namespace Noise.Core.Database {
 		public DataProviderList<DbArtist> GetArtistList() {
 			DataProviderList<DbArtist>	retValue = null;
 
-			var database = mDatabaseManager.ReserveDatabase( "GetArtistList" );
+			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
 				retValue = new DataProviderList<DbArtist>( database.DatabaseId, FreeDatabase, from DbArtist artist in database.Database select artist );
@@ -89,7 +89,7 @@ namespace Noise.Core.Database {
 			catch( Exception ex ) {
 				mLog.LogException( ex );
 
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
+				mDatabaseManager.FreeDatabase( database );
 			}
 
 			return( retValue );
@@ -100,7 +100,7 @@ namespace Noise.Core.Database {
 
 			DbArtist	retValue = null;
 
-			var database = mDatabaseManager.ReserveDatabase( "GetArtistForAlbum" );
+			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
 				retValue = ( from DbArtist artist in database.Database where artist.DbId == album.Artist select artist ).FirstOrDefault();
@@ -109,7 +109,7 @@ namespace Noise.Core.Database {
 				mLog.LogException( "Exception - GetArtistForAlbum:", ex );
 			}
 			finally {
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
+				mDatabaseManager.FreeDatabase( database );
 			}
 
 			return( retValue );
@@ -120,7 +120,7 @@ namespace Noise.Core.Database {
 
 			DataProviderList<DbAlbum>	retValue = null;
 
-			var database = mDatabaseManager.ReserveDatabase( "GetAlbumList" );
+			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
 				var artistId = GetObjectIdentifier( forArtist );
@@ -131,7 +131,7 @@ namespace Noise.Core.Database {
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetAlbumList:", ex );
 
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
+				mDatabaseManager.FreeDatabase( database );
 			}
 
 			return( retValue );
@@ -141,7 +141,7 @@ namespace Noise.Core.Database {
 			Condition.Requires( track ).IsNotNull();
 
 			DbAlbum	retValue = null;
-			var		database = mDatabaseManager.ReserveDatabase( "GetAlbumList" );
+			var		database = mDatabaseManager.ReserveDatabase();
 
 			try {
 				retValue = ( from DbAlbum album in database.Database where album.DbId == track.Album select album ).FirstOrDefault();
@@ -150,7 +150,7 @@ namespace Noise.Core.Database {
 				mLog.LogException( "Exception - GetAlbumForTrack:", ex );
 			}
 			finally {
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
+				mDatabaseManager.FreeDatabase( database );
 			}
 
 			return( retValue );
@@ -161,7 +161,7 @@ namespace Noise.Core.Database {
 
 			DataProviderList<DbTrack>	retValue = null;
 
-			var database = mDatabaseManager.ReserveDatabase( "GetTrackList" );
+			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				var albumId = GetObjectIdentifier( forAlbum );
 
@@ -171,7 +171,7 @@ namespace Noise.Core.Database {
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetTrackList(forAlbum):", ex );
 
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
+				mDatabaseManager.FreeDatabase( database );
 			}
 
 			return( retValue );
@@ -181,7 +181,7 @@ namespace Noise.Core.Database {
 			Condition.Requires( forArtist ).IsNotNull();
 
 			var	retValue = new List<DbTrack>();
-			var database =mDatabaseManager.ReserveDatabase( "GetTrackList" );
+			var database =mDatabaseManager.ReserveDatabase();
 
 			try {
 				var artistId = GetObjectIdentifier( forArtist );
@@ -198,7 +198,7 @@ namespace Noise.Core.Database {
 				mLog.LogException( "Exception - GetTrackList(forArtist):", ex );
 			}
 			finally {
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
+				mDatabaseManager.FreeDatabase( database );
 			}
 
 			return( retValue );
@@ -209,7 +209,7 @@ namespace Noise.Core.Database {
 
 			StorageFile	retValue = null;
 
-			var database = mDatabaseManager.ReserveDatabase( "GetPhysicalFile" );
+			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				var trackId = GetObjectIdentifier( forTrack );
 
@@ -221,30 +221,7 @@ namespace Noise.Core.Database {
 				mLog.LogException( "Exception - GetPhysicalFile:", ex );
 			}
 			finally {
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
-			}
-
-			return( retValue );
-		}
-
-		public object GetMetaData( StorageFile forFile ) {
-			Condition.Requires( forFile ).IsNotNull();
-
-			object	retValue = null;
-			var		database = mDatabaseManager.ReserveDatabase( "GetMetaData" );
-
-			try {
-				var parm = database.Database.CreateParameters();
-
-				parm["id"] = forFile.MetaDataPointer;
-
-				retValue = database.Database.ExecuteScalar( "SELECT data WHERE $ID = @id", parm );
-			}
-			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetMetaData:", ex );
-			}
-			finally {
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
+				mDatabaseManager.FreeDatabase( database );
 			}
 
 			return( retValue );
@@ -260,7 +237,7 @@ namespace Noise.Core.Database {
 			Condition.Requires( forArtist ).IsNotNull();
 
 			ArtistSupportInfo	retValue = null;
-			var database = mDatabaseManager.ReserveDatabase( "GetArtistSupportInfo" );
+			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				var artistId = GetObjectIdentifier( forArtist );
 				var parms = database.Database.CreateParameters();
@@ -278,7 +255,7 @@ namespace Noise.Core.Database {
 				mLog.LogException( "Exception - GetArtistSupportInfo:", ex );
 			}
 			finally {
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
+				mDatabaseManager.FreeDatabase( database );
 			}
 
 			return( retValue );
@@ -295,7 +272,7 @@ namespace Noise.Core.Database {
 
 			AlbumSupportInfo	retValue = null;
 
-			var database = mDatabaseManager.ReserveDatabase( "GetAlbumSupportInfo" );
+			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				var albumId = GetObjectIdentifier( forAlbum );
 				var albumTrack = ( from DbTrack track in database.Database where track.Album == albumId select track ).FirstOrDefault();
@@ -321,7 +298,7 @@ namespace Noise.Core.Database {
 				mLog.LogException( "Exception - GetAlbumSupportInfo:", ex );
 			}
 			finally {
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
+				mDatabaseManager.FreeDatabase( database );
 			}
 
 			return( retValue );
@@ -330,7 +307,7 @@ namespace Noise.Core.Database {
 		public DataProviderList<DbInternetStream> GetStreamList() {
 			DataProviderList<DbInternetStream>	retValue = null;
 
-			var database = mDatabaseManager.ReserveDatabase( "GetStreamList" );
+			var database = mDatabaseManager.ReserveDatabase();
 			try {
 			retValue = new DataProviderList<DbInternetStream>( database.DatabaseId, FreeDatabase,
 																from DbInternetStream stream in database.Database select stream );
@@ -338,7 +315,7 @@ namespace Noise.Core.Database {
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetStreamList:", ex );
 
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
+				mDatabaseManager.FreeDatabase( database );
 			}
 
 			return( retValue );

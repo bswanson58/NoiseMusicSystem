@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq;
 using CuttingEdge.Conditions;
 using Eloquera.Client;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
@@ -54,12 +56,10 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
-		public bool InitializeAndOpenDatabase( string clientName) {
-			Condition.Requires( clientName ).IsNotNullOrEmpty();
-
+		public bool InitializeAndOpenDatabase() {
 			var retValue = false;
 
-			mLog.LogMessage( String.Format( "{0} - Initialize and open '{1}' database on server '{2}'.", clientName, mDatabaseName, mDatabaseLocation ));
+			mLog.LogMessage( String.Format( "Initialize and open '{0}' database on server '{1}'.", mDatabaseName, mDatabaseLocation ));
 			if( InitializeDatabase()) {
 				retValue = InternalOpenDatabase();
 			}
@@ -109,14 +109,6 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
-		public void CloseDatabase( string clientName ) {
-			Condition.Requires( clientName ).IsNotNullOrEmpty();
-
-			mLog.LogMessage( String.Format( "{0} - Closing database '{1}' on server '{2}'.", clientName, mDatabaseName, mDatabaseLocation ));
-
-			CloseDatabase();
-		}
-
 		public void CloseDatabase() {
 			if( Database.IsOpen ) {
 				Database.Close();
@@ -148,6 +140,52 @@ namespace Noise.Core.Database {
 
 			foreach( Type type in PersistenceTypes ) {
 				Database.RegisterType( type );
+			}
+		}
+
+		public object ValidateOnThread( object dbObject ) {
+			Condition.Requires( dbObject ).IsNotNull();
+			Condition.Requires( dbObject ).IsOfType( typeof( DbBase ));
+
+			var retValue = dbObject;
+
+			if(( Database.GetUid( dbObject ) == -1 ) &&
+			   ( dbObject is DbBase )) {
+				var dbId = ( dbObject as DbBase ).DbId;
+
+				retValue = ( from DbBase o in Database where o.DbId == dbId select o ).FirstOrDefault();
+			}
+
+			Condition.Ensures( retValue ).IsNotNull();
+
+			return( retValue );
+		}
+
+		public void Insert( object dbObject ) {
+			Condition.Requires( dbObject ).IsNotNull();
+
+			Database.Store( dbObject );
+		}
+
+		public void Store( object dbObject ) {
+			Condition.Requires( dbObject ).IsNotNull();
+
+			if( Database.GetUid( dbObject ) != -1 ) {
+				Database.Store( dbObject );
+			}
+			else {
+				mLog.LogMessage( String.Format( "Database:Store - Unknown dbObject: {0}", dbObject.GetType()));
+			}
+		}
+
+		public void Delete( object dbObject ) {
+			Condition.Requires( dbObject ).IsNotNull();
+
+			if( Database.GetUid( dbObject ) != -1 ) {
+				Database.Delete( dbObject );
+			}
+			else {
+				mLog.LogMessage( String.Format( "Database:Delete - Unknown dbObject: {0}", dbObject.GetType()));
 			}
 		}
 	}

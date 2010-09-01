@@ -102,24 +102,31 @@ namespace Noise.Core.DataProviders {
 				var topAlbums = ( from DbAssociatedItems item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select  item ).FirstOrDefault();
 				if( artwork == null ) {
 					artwork = new DbArtwork( artistId, ContentType.ArtistPrimaryImage );
+
+					database.Insert( artwork );
 				}
+				artwork.UpdateExpiration();
+				database.Store( artwork );
+
 				if( bio == null ) {
 					bio = new DbTextInfo( artistId, ContentType.Biography );
+
+					database.Insert( bio );
 				}
+				bio.UpdateExpiration();
 
 				if( similarArtists == null ) {
 					similarArtists = new DbAssociatedItems( artistId, ContentType.SimilarArtists );
+
+					database.Insert( similarArtists );
 				}
+				similarArtists.UpdateExpiration();
 
 				if( topAlbums == null ) {
 					topAlbums = new DbAssociatedItems( artistId, ContentType.TopAlbums );
+
+					database.Insert( topAlbums );
 				}
-
-				artwork.UpdateExpiration();
-				database.Database.Store( artwork );
-
-				bio.UpdateExpiration();
-				similarArtists.UpdateExpiration();
 				topAlbums.UpdateExpiration();
 
 				var	artistSearch = Artist.Search( artist.Name, mSession );
@@ -129,7 +136,7 @@ namespace Noise.Core.DataProviders {
 					var	tags = artistMatch.GetTopTags( 3 );
 					if( tags.GetLength( 0 ) > 0 ) {
 						artist.Genre = tags[0].Item.Name;
-						database.Database.Store( artist );
+						database.Store( artist );
 					}
 
 					bio.Text = artistMatch.Bio.getContent();
@@ -158,9 +165,9 @@ namespace Noise.Core.DataProviders {
 					mLog.LogInfo( "LastFm updated artist: {0}", artist.Name );
 				}
 
-				database.Database.Store( bio );
-				database.Database.Store( similarArtists );
-				database.Database.Store( topAlbums );
+				database.Store( bio );
+				database.Store( similarArtists );
+				database.Store( topAlbums );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "LastFmProvider UpdateArtistInfo:", ex );
@@ -171,7 +178,7 @@ namespace Noise.Core.DataProviders {
 			Condition.Requires( imageData ).IsNotNull();
 
 			var dbManager = mContainer.Resolve<IDatabaseManager>();
-			var database = dbManager.ReserveDatabase( "ArtistImageDownloader" );
+			var database = dbManager.ReserveDatabase();
 
 			try {
 				var parms = database.Database.CreateParameters();
@@ -182,6 +189,8 @@ namespace Noise.Core.DataProviders {
 				var	artwork = database.Database.ExecuteScalar( "SELECT DbArtwork WHERE AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork;
 				if( artwork == null ) {
 					artwork = new DbArtwork( parentId, ContentType.ArtistPrimaryImage );
+
+					database.Insert( artwork );
 				}
 
 				artwork.Image = imageData;
@@ -189,13 +198,13 @@ namespace Noise.Core.DataProviders {
 				artwork.IsContentAvailable = true;
 				artwork.UpdateExpiration();
 
-				database.Database.Store( artwork );
+				database.Store( artwork );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "LastFm: Image Download: ", ex );
 			}
 			finally {
-				dbManager.FreeDatabase( database.DatabaseId );
+				dbManager.FreeDatabase( database );
 			}
 		}
 	}

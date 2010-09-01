@@ -22,7 +22,7 @@ namespace Noise.Core.Database {
 		}
 
 		public void GatherStatistics() {
-			var database = mDatabaseManager.ReserveDatabase( "DatabaseStatistics" );
+			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				var folders = from StorageFolder folder in database.Database select folder;
 				FolderCount = folders.Count();
@@ -43,7 +43,7 @@ namespace Noise.Core.Database {
 				mLog.LogException( "Exception - Building Database Statistical Data.", ex );
 			}
 			finally {
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
+				mDatabaseManager.FreeDatabase( database );
 			}
 		}
 

@@ -30,19 +30,26 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		public bool Initialize() {
+			var retValue = false;
 			var	list = mDataProvider.GetArtistList();
-			var seed = new Random( DateTime.Now.Millisecond );
-			var random = seed.Next( list.List.Count() - 1 );
 
-			mArtistEnum =  list.List.Skip( random ).AsEnumerable().GetEnumerator();
+			if( list.List.Count() > 0 ) {
+				var seed = new Random( DateTime.Now.Millisecond );
+				var random = seed.Next( list.List.Count() - 1 );
 
-			return( true );
+				mArtistEnum =  list.List.Skip( random ).AsEnumerable().GetEnumerator();
+
+				retValue = true;
+			}
+
+			return( retValue );
 		}
 
 		public bool BuildContent() {
 			bool	retValue = false;
 
-			if( mArtistEnum.MoveNext()) {
+			if(( mArtistEnum != null ) &&
+			   ( mArtistEnum.MoveNext())) {
 				mDataProvider.UpdateArtistInfo( mArtistEnum.Current );
 
 				retValue = true;

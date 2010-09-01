@@ -18,7 +18,7 @@ namespace Noise.Core.DataProviders {
 
 		public void BuildMetaData() {
 			var dbManager = mContainer.Resolve<IDatabaseManager>();
-			var database = dbManager.ReserveDatabase( "MusicBrainzProvider" );
+			var database = dbManager.ReserveDatabase();
 
 			try {
 				var artists = from DbArtist artist in database.Database select artist;
@@ -43,7 +43,7 @@ namespace Noise.Core.DataProviders {
 				mLog.LogException( "Exception - MusicBrainzProvider:", ex );
 			}
 			finally {
-				dbManager.FreeDatabase( database.DatabaseId );
+				dbManager.FreeDatabase( database );
 			}
 		}
 	}

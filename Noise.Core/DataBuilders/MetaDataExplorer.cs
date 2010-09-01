@@ -38,7 +38,7 @@ namespace Noise.Core.DataBuilders {
 			mStopExploring = false;
 			mSummary = summary;
 
-			var database = mDatabaseManager.ReserveDatabase( "MetaDataExplorer:BuildMetaData" );
+			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				var		artworkProvider = new FileArtworkProvider( mContainer );
 				var		textProvider =new FileTextProvider( mContainer );
@@ -55,13 +55,13 @@ namespace Noise.Core.DataBuilders {
 						case eFileType.Picture:
 							artworkProvider.BuildMetaData( file );
 
-							database.Database.Store( file );
+							database.Store( file );
 							break;
 
 						case eFileType.Text:
 							textProvider.BuildMetaData( file );
 
-							database.Database.Store( file );
+							database.Store( file );
 							break;
 					}
 
@@ -74,7 +74,7 @@ namespace Noise.Core.DataBuilders {
 				mLog.LogException( "Building Metadata:", ex );
 			}
 			finally {
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
+				mDatabaseManager.FreeDatabase( database );
 			}
 		}
 
@@ -120,10 +120,10 @@ namespace Noise.Core.DataBuilders {
 							}
 
 							track.Album = album.DbId;
-							database.Database.Store( track );
+							database.Insert( track );
 
 							file.MetaDataPointer = track.DbId;
-							database.Database.Store( file );
+							database.Store( file );
 
 							mSummary.TracksAdded++;
 						}
@@ -157,15 +157,11 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			if(!string.IsNullOrWhiteSpace( artistName )) {
-				var parm = database.Database.CreateParameters();
-
-				parm["artistName"] = artistName;
-
-				retValue = database.Database.ExecuteScalar( "SELECT DbArtist WHERE Name = @artistName", parm ) as DbArtist;
+				retValue = ( from DbArtist artist in database.Database where artist.Name == artistName select artist ).FirstOrDefault();
 				if( retValue == null ) {
 					retValue = new DbArtist { Name = artistName };
 
-					database.Database.Store( retValue );
+					database.Insert( retValue );
 					mSummary.ArtistsAdded++;
 					mLog.LogInfo( "Added artist: {0}", retValue.Name );
 				}
@@ -191,7 +187,7 @@ namespace Noise.Core.DataBuilders {
 				if( retValue == null ) {
 					retValue = new DbAlbum { Name = albumName, Artist = artist.DbId };
 
-					database.Database.Store( retValue );
+					database.Insert( retValue );
 					mSummary.AlbumsAdded++;
 					mLog.LogInfo( "Added album: {0}", retValue.Name );
 				}

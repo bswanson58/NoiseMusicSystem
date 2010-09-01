@@ -6,9 +6,14 @@
 		bool		InitializeDatabase();
 		bool		OpenWithCreateDatabase();
 		bool		OpenDatabase();
-		bool		InitializeAndOpenDatabase( string clientName );
+		bool		InitializeAndOpenDatabase();
+
+		object		ValidateOnThread( object dbObject );
+
+		void		Insert( object dbObject );
+		void		Store( object dbObject );
+		void		Delete( object dbObject );
 
 		void		CloseDatabase();
-		void		CloseDatabase( string clientName );
 	}
 }

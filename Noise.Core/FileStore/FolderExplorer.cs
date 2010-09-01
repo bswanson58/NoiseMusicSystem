@@ -23,7 +23,7 @@ namespace Noise.Core.FileStore {
 			mStopExploring = false;
 
 			var databaseMgr = mContainer.Resolve<IDatabaseManager>();
-			var database = databaseMgr.ReserveDatabase( "FolderExplorer" );
+			var database = databaseMgr.ReserveDatabase();
 
 			if( database != null ) {
 				try {
@@ -55,7 +55,7 @@ namespace Noise.Core.FileStore {
 					mLog.LogException( "Exception - FolderExplorer:", ex );
 				}
 				finally {
-					databaseMgr.FreeDatabase( database.DatabaseId );
+					databaseMgr.FreeDatabase( database );
 				}
 			}
 		}
@@ -79,7 +79,7 @@ namespace Noise.Core.FileStore {
 
 					root.FolderStrategy.PreferFolderStrategy = folderConfig.PreferFolderStrategy;
 
-					database.Database.Store( root );
+					database.Insert( root );
 				}
 			}
 		}
@@ -104,14 +104,12 @@ namespace Noise.Core.FileStore {
 
 			foreach( var directory in directories ) {
 				var folder = new StorageFolder( directory.File, parent.DbId );
-				var param = database.Database.CreateParameters();
-
-				param["parent"] = folder.ParentFolder;
-				param["name"] = folder.Name;
-
-				var databaseFolder = database.Database.ExecuteScalar( "SELECT StorageFolder WHERE ParentFolder = @parent AND Name = @name", param ) as StorageFolder;
+				var parentFolder = folder.ParentFolder;
+				var parentName = folder.Name;
+				var	databaseFolder = ( from StorageFolder dbFolder in database.Database
+									   where dbFolder.ParentFolder == parentFolder && dbFolder.Name == parentName select dbFolder ).FirstOrDefault();
 				if( databaseFolder == null ) {
-					database.Database.Store( folder );
+					database.Insert( folder );
 
 					if( parent is RootFolder ) {
 						mLog.LogInfo( string.Format( "Adding folder: {0}", StorageHelpers.GetPath( database.Database, folder )));
@@ -138,7 +136,7 @@ namespace Noise.Core.FileStore {
 				var fileName = file.File;
 
 				if(!dbList.Exists( dbFile => dbFile.Name == fileName )) {
-					database.Database.Store( new StorageFile( file.File, storageFolder.DbId, file.Size, file.ModificationTime ));
+					database.Insert( new StorageFile( file.File, storageFolder.DbId, file.Size, file.ModificationTime ));
 				}
 
 				if( mStopExploring ) {

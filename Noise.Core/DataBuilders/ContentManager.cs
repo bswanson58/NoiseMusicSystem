@@ -43,45 +43,49 @@ namespace Noise.Core.DataBuilders {
 		private void RequestArtistContent( DbArtist forArtist ) {
 			Condition.Requires( forArtist ).IsNotNull();
 
-			var database = mDatabaseManager.ReserveDatabase( "ContentManager:RequestContent" );
+			var artistName = forArtist.Name;
+			var database = mDatabaseManager.ReserveDatabase();
 			try {
-				var	artistId = forArtist.DbId;
-				var selectedProviders = from IContentProvider provider in ContentProviders where provider.CanUpdateArtist select provider;
-				var contentUpdated = false;
+				forArtist = database.ValidateOnThread( forArtist ) as DbArtist;
+				if( forArtist != null ) {
+					var	artistId = forArtist.DbId;
+					var selectedProviders = from IContentProvider provider in ContentProviders where provider.CanUpdateArtist select provider;
+					var contentUpdated = false;
 
-				foreach( var provider in selectedProviders ) {
-					var parms = database.Database.CreateParameters();
+					foreach( var provider in selectedProviders ) {
+						var parms = database.Database.CreateParameters();
 
-					parms["contentType"] = provider.ContentType;
-					parms["artistId"] = artistId;
+						parms["contentType"] = provider.ContentType;
+						parms["artistId"] = artistId;
 
-					var providerContent = database.Database.ExecuteQuery( "SELECT ExpiringContent WHERE AssociatedItem = @artistId AND ContentType = @contentType", parms ).Cast<ExpiringContent>();
+						var providerContent = database.Database.ExecuteQuery( "SELECT ExpiringContent WHERE AssociatedItem = @artistId AND ContentType = @contentType", parms ).Cast<ExpiringContent>();
 
-					if( providerContent.Count() > 0 ) {
-						foreach( var content in providerContent ) {
-							if( IsContentExpired( content, provider )) {
-								provider.UpdateContent( database, forArtist );
+						if( providerContent.Count() > 0 ) {
+							foreach( var content in providerContent ) {
+								if( IsContentExpired( content, provider )) {
+									provider.UpdateContent( database, forArtist );
 
-								contentUpdated = true;
+									contentUpdated = true;
+								}
 							}
 						}
-					}
-					else {
-						provider.UpdateContent( database, forArtist );
+						else {
+							provider.UpdateContent( database, forArtist );
 
-						contentUpdated = true;
+							contentUpdated = true;
+						}
 					}
-				}
 
-				if( contentUpdated ) {
-					mEvents.GetEvent<Events.ArtistContentUpdated>().Publish( forArtist );
+					if( contentUpdated ) {
+						mEvents.GetEvent<Events.ArtistContentUpdated>().Publish( forArtist );
+					}
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Exception - ContentManager updating Artist: {0}", forArtist.Name ), ex );
+				mLog.LogException( String.Format( "Exception - ContentManager updating Artist: {0}", artistName ), ex );
 			}
 			finally {
-				mDatabaseManager.FreeDatabase( database.DatabaseId );
+				mDatabaseManager.FreeDatabase( database );
 			}
 		}
 
