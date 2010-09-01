@@ -22,7 +22,8 @@ namespace Noise.Core.DataBuilders {
 	internal class BackgroundContentExplorer {
 		private readonly IUnityContainer	mContainer;
 		private readonly IDataProvider		mDataProvider;
-		private	IEnumerator<DbArtist>		mArtistEnum;
+		private	List<DbArtist>				mArtistList;
+		private IEnumerator<DbArtist>		mArtistEnum;
 
 		public BackgroundContentExplorer( IUnityContainer container ) {
 			mContainer = container;
@@ -31,15 +32,17 @@ namespace Noise.Core.DataBuilders {
 
 		public bool Initialize() {
 			var retValue = false;
-			var	list = mDataProvider.GetArtistList();
 
-			if( list.List.Count() > 0 ) {
-				var seed = new Random( DateTime.Now.Millisecond );
-				var random = seed.Next( list.List.Count() - 1 );
+			using( var list = mDataProvider.GetArtistList()) {
+				if( list.List.Count() > 0 ) {
+					var seed = new Random( DateTime.Now.Millisecond );
+					var random = seed.Next( list.List.Count() - 1 );
 
-				mArtistEnum =  list.List.Skip( random ).AsEnumerable().GetEnumerator();
+					mArtistList =  list.List.Skip( random ).ToList();
+					mArtistEnum = mArtistList.GetEnumerator();
 
-				retValue = true;
+					retValue = true;
+				}
 			}
 
 			return( retValue );
