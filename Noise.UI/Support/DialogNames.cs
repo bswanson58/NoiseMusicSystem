@@ -1,5 +1,6 @@
 ﻿namespace Noise.UI.Support {
 	public class DialogNames {
+		public const string		ApplicationLogView		= "ApplicationLogView";
 		public const string		NoiseOptions			= "NoiseOptions";
 		public const string		DatabaseConfiguration	= "DatabaseConfiguration";
 		public const string		LibraryConfiguration	= "LibraryConfiguration";

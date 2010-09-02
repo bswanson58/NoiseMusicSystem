@@ -124,6 +124,7 @@
     <Compile Include="Interfaces\IPlayHistory.cs" />
     <Compile Include="Interfaces\IPlayQueue.cs" />
     <Compile Include="Interfaces\IViewModelResolver.cs" />
+    <Compile Include="Support\ApplicationLogReader.cs" />
     <Compile Include="Support\BaseValueConverter.cs" />
     <Compile Include="Support\BindableObject.cs" />
     <Compile Include="Constants.cs" />

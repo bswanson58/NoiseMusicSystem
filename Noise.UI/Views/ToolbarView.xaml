@@ -18,6 +18,7 @@
             <Button Margin="3" Command="{Binding Path=SmallPlayerView}">Player</Button>
             <Button Margin="3" Command="{Binding Path=LibraryLayout}">Library Layout</Button>
             <Button Margin="3" Command="{Binding Path=StreamLayout}">Stream Layout</Button>
+            <Button Margin="3" Command="{Binding Path=DisplayLog}">Log</Button>
         </ToolBar>
     </ToolBarTray>
 </UserControl>

@@ -35,6 +35,5 @@
                 <PasswordBox Margin="3"/>
             </Behaviours:BindablePasswordBox>
         </Grid>
-
     </Grid>
 </UserControl>

@@ -16,6 +16,8 @@ namespace Noise.Infrastructure {
 		public	const string			LibraryLayout = "DefaultLayout";
 		public	const string			StreamLayout = "StreamLayout";
 
+		public const string				ApplicationLogName = "noise.log";
+
 		static Constants() {
 			cNoExpirationDate = DateTime.MaxValue;
 		}

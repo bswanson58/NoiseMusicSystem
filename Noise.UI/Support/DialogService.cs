@@ -86,6 +86,29 @@ namespace Noise.UI.Support {
 			return ( retValue );
 		}
 
+		public bool? ShowDialog( string dialogName, DialogModelBase viewModel ) {
+			bool?	retValue = false;
+
+			var dialogEnum = mContainer.GetExports<FrameworkElement>( dialogName );
+			if( dialogEnum != null ) {
+				var lazyDialog = ( from control in dialogEnum select control ).FirstOrDefault();
+
+				if( lazyDialog != null ) {
+					var dialogWindow = new DialogWindow();
+					var dialogModel = new DialogWindowModel();
+					var	dialogContent = lazyDialog.Value;
+
+					dialogContent.DataContext = viewModel;
+					dialogModel.DialogContent = dialogContent;
+					dialogWindow.DataContext = dialogModel;
+
+					retValue = dialogWindow.ShowDialog();
+				}
+			}
+
+			return ( retValue );
+		}
+
 		public bool? OpenFileDialog( string title, string extensions, string filter, out string fileName ) {
 			fileName = "";
 

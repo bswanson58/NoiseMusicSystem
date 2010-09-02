@@ -87,5 +87,21 @@ namespace Noise.UI.ViewModels {
 				mEvents.GetEvent<Events.WindowLayoutRequest>().Publish( Constants.StreamLayout );
 			}
 		}
+
+		public void Execute_DisplayLog() {
+			if( mContainer != null ) {
+				var applicationLog = new ApplicationLogReader();
+
+				if( applicationLog.ReadLog( Constants.ApplicationLogName )) {
+					var dialogModel = new	ApplicationLogDialogModel();
+
+					if( dialogModel.Initialize()) {
+						var	dialogService = mContainer.Resolve<IDialogService>();
+					
+						dialogService.ShowDialog( DialogNames.ApplicationLogView, dialogModel );
+					}
+				}
+			}
+		}
 	}
 }
