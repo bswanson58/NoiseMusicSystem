@@ -95,6 +95,31 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public DataProviderList<DbArtist> GetArtistList( IDatabaseFilter filter ) {
+			Condition.Requires( filter ).IsNotNull();
+
+			DataProviderList<DbArtist>	retValue = null;
+
+			if( filter.IsEnabled ) {
+				var database = mDatabaseManager.ReserveDatabase();
+
+				try {
+					retValue = new DataProviderList<DbArtist>( database.DatabaseId, FreeDatabase,
+																from DbArtist artist in database.Database where filter.ArtistMatch( artist ) select artist );
+				}
+				catch( Exception ex ) {
+					mLog.LogException( ex );
+
+					mDatabaseManager.FreeDatabase( database );
+				}
+			}
+			else {
+				retValue = GetArtistList();
+			}
+
+			return( retValue );
+		}
+
 		public DbArtist GetArtistForAlbum( DbAlbum album ) {
 			Condition.Requires( album ).IsNotNull();
 

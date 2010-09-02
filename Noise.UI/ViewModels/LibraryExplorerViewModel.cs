@@ -8,14 +8,21 @@ using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Behaviours.EventCommandTriggers;
 using Noise.UI.Controls;
+using Noise.UI.Dto;
+using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class LibraryExplorerViewModel : ViewModelBase {
-		private IUnityContainer			mContainer;
-		private IEventAggregator		mEvents;
-		private IExplorerViewStrategy	mViewStrategy;
+		private IUnityContainer					mContainer;
+		private IEventAggregator				mEvents;
+		private IExplorerViewStrategy			mViewStrategy;
 		private ObservableCollectionEx<ExplorerTreeNode>	mTreeItems;
-		private List<string>			mSearchOptions;
+		private List<string>					mSearchOptions;
+		private readonly LibraryExplorerFilter	mExplorerFilter;
+
+		public LibraryExplorerViewModel() {
+			mExplorerFilter = new LibraryExplorerFilter { IsEnabled = false };
+		}
 
 		[Dependency]
 		public IUnityContainer Container {
@@ -54,7 +61,7 @@ namespace Noise.UI.ViewModels {
 		private void UpdateTree() {
 			mTreeItems.SuspendNotification();
 			mTreeItems.Clear();
-			mViewStrategy.PopulateTree( mTreeItems );
+			mViewStrategy.PopulateTree( mTreeItems, mExplorerFilter );
 			mTreeItems.ResumeNotification();
 		}
 
@@ -82,6 +89,16 @@ namespace Noise.UI.ViewModels {
 				Set( () => SearchText, value );
 
 				mViewStrategy.ClearCurrentSearch();
+			}
+		}
+
+		public void Execute_Filter() {
+			if( mContainer != null ) {
+				var	dialogService = mContainer.Resolve<IDialogService>();
+
+				if( dialogService.ShowDialog( DialogNames.LibraryExplorerFilter, mExplorerFilter ) == true ) {
+					UpdateTree();
+				}
 			}
 		}
 

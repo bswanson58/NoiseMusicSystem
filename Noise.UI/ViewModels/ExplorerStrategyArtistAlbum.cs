@@ -71,11 +71,11 @@ namespace Noise.UI.ViewModels {
 			mViewModel.SearchOptions.Add( cSearchOptionDefault + cSearchIgnoreCase );
 		}
 
-		public void PopulateTree( ObservableCollection<ExplorerTreeNode> tree ) {
+		public void PopulateTree( ObservableCollection<ExplorerTreeNode> tree, IDatabaseFilter filter ) {
 			Condition.Requires( mViewModel ).IsNotNull();
 
 			if( mNoiseManager.IsInitialized ) {
-				using( var list = mNoiseManager.DataProvider.GetArtistList()) {
+				using( var list = mNoiseManager.DataProvider.GetArtistList( filter )) {
 					var artistList = from artist in list.List orderby artist.Name select artist;
 
 					foreach( DbArtist artist in artistList ) {

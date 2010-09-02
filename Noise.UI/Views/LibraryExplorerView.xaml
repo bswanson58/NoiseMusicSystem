@@ -145,6 +145,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             
             <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="Search for: "/>
@@ -155,6 +156,7 @@
                     <EventCommandTriggers:EventCommandTrigger RoutedEvent="Controls:SearchTextBox.Search" Command="{Binding Path=Search}"/>
                 </EventCommandTriggers:CommandSource.Trigger>
             </Controls:SearchTextBox>
+            <Button Grid.Column="4" Margin="3" Command="{Binding Path=Filter}" Content="Filter"/>
         </Grid>
     </Grid>
 </UserControl>
