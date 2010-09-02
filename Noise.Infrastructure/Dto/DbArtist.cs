@@ -5,6 +5,7 @@ using Eloquera.Client;
 namespace Noise.Infrastructure.Dto {
 	public class DbArtist : DbBase, IUserSettings {
 		public string			Name { get; set; }
+		public string			Website { get; set; }
 		public string			CalculatedGenre { get; set; }
 		public string			ExternalGenre { get; set; }
 		public string			UserGenre { get; set; }
