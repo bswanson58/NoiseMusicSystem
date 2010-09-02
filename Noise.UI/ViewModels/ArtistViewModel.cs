@@ -1,19 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using Noise.UI.Adapters;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistViewModel : ViewModelBase {
-		private IUnityContainer		mContainer;
-		private IEventAggregator	mEvents;
-		private INoiseManager		mNoiseManager;
-		private DbArtist			mCurrentArtist;
-		private BackgroundWorker	mBackgroundWorker;
+		private IUnityContainer			mContainer;
+		private IEventAggregator		mEvents;
+		private INoiseManager			mNoiseManager;
+		private DbArtist				mCurrentArtist;
+		private BackgroundWorker		mBackgroundWorker;
+		private readonly ObservableCollectionEx<LinkNode>	mSimilarArtists;
+
+		public ArtistViewModel() {
+			mSimilarArtists = new ObservableCollectionEx<LinkNode>();
+		}
 
 		[Dependency]
 		public IUnityContainer Container {
@@ -36,7 +43,16 @@ namespace Noise.UI.ViewModels {
 
 		private ArtistSupportInfo SupportInfo {
 			get{ return( Get( () => SupportInfo )); }
-			set{ Set( () => SupportInfo, value );  }
+			set {
+				mSimilarArtists.Clear();
+
+				if(( value.SimilarArtist != null ) &&
+				   ( value.SimilarArtist.Items.GetLength( 0 ) > 0 )) {
+					mSimilarArtists.AddRange( from string artist in value.SimilarArtist.Items select new LinkNode( artist ));
+				}
+
+				Set( () => SupportInfo, value );
+			}
 		}
 
 		public void OnArtistFocus( DbArtist artist ) {
@@ -110,17 +126,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "SupportInfo" )]
-		public IList<string> SimilarArtist {
-			get {
-				IList<string>	retValue = null;
-
-				if(( SupportInfo != null ) &&
-				   ( SupportInfo.SimilarArtist != null )) {
-					retValue = SupportInfo.SimilarArtist.Items;
-				}
-
-				return( retValue );
-			}
+		public ObservableCollectionEx<LinkNode> SimilarArtist {
+			get { return( mSimilarArtists ); }
 		}
 
 		[DependsUpon( "SupportInfo" )]

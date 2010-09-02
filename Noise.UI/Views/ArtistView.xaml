@@ -45,7 +45,13 @@
 
             <ListBox Grid.Column="0" ItemsSource="{Binding Path=TopAlbums}"/>
             <ListBox Grid.Column="1" ItemsSource="{Binding Path=BandMembers}"/>
-            <ListBox Grid.Column="2" ItemsSource="{Binding Path=SimilarArtist}"/>
+            <ListBox Grid.Column="2" ItemsSource="{Binding Path=SimilarArtist}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>     
+                        <Label Content="{Binding Path=DisplayText}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Grid>
     </Grid>
 </UserControl>

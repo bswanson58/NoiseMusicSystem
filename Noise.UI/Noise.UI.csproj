@@ -120,6 +120,7 @@
     <Compile Include="Adapters\DynamicProxies\EditableProxy.cs" />
     <Compile Include="Adapters\DynamicProxies\ValidatingProxy.cs" />
     <Compile Include="Adapters\ExplorerTreeNode.cs" />
+    <Compile Include="Adapters\LinkNode.cs" />
     <Compile Include="Adapters\StreamViewNode.cs" />
     <Compile Include="Adapters\TrackViewNode.cs" />
     <Compile Include="Adapters\UserSettingsNotifier.cs" />
