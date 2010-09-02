@@ -12,13 +12,17 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	public class EloqueraDatabase : IDatabase {
+		private const UInt16				cDatabaseVersionMajor = 0;
+		private const UInt16				cDatabaseVersionMinor = 2;
+
 		private readonly IUnityContainer	mContainer;
 		private readonly ILog				mLog;
 		private readonly string				mDatabaseLocation;
 		private readonly string				mDatabaseName;
 
-		public	DB		Database { get; private set; }
-		public	string	DatabaseId { get; private set; }
+		public	DB			Database { get; private set; }
+		public	string		DatabaseId { get; private set; }
+		public	DbVersion	DatabaseVersion { get; private set; }
 
 		[ImportMany("PersistenceType")]
 		public IEnumerable<Type>	PersistenceTypes;
@@ -59,24 +63,31 @@ namespace Noise.Core.Database {
 		public bool InitializeAndOpenDatabase() {
 			var retValue = false;
 
-			mLog.LogMessage( String.Format( "Initialize and open '{0}' database on server '{1}'.", mDatabaseName, mDatabaseLocation ));
 			if( InitializeDatabase()) {
-				retValue = InternalOpenDatabase();
+				retValue = OpenDatabase();
 			}
 
 			return( retValue );
 		}
 
 		public bool OpenWithCreateDatabase() {
+			Condition.Requires( Database ).IsNotNull();
+
 			var retValue = false;
 
 			if(!OpenDatabase()) {
 				if( CreateDatabase( mDatabaseName )) {
-					retValue = InternalOpenDatabase();
+					if( InternalOpenDatabase()) {
+						RegisterDatabaseTypes();
 
-					RegisterDatabaseTypes();
-					CloseDatabase();
-					OpenDatabase();
+						var dbVersion = new DbVersion( cDatabaseVersionMajor, cDatabaseVersionMinor );
+						Insert( dbVersion );
+
+						CloseDatabase();
+						if( OpenDatabase()) {
+							retValue = true;
+						}
+					}
 				}
 			}
 			else {
@@ -89,9 +100,18 @@ namespace Noise.Core.Database {
 		public bool OpenDatabase() {
 			Condition.Requires( Database ).IsNotNull();
 
-			mLog.LogMessage( "Opening database '{0}' on server '{1}'", mDatabaseName, mDatabaseLocation );
+			var retValue = false;
 
-			return ( InternalOpenDatabase());
+			if( InternalOpenDatabase()) {
+				if( ReadDatabaseVersion()) {
+					mLog.LogMessage( String.Format( "Initialize and open '{0}' database version {1}.{2} on server '{3}'.",
+														mDatabaseName, DatabaseVersion.MajorVersion, DatabaseVersion.MinorVersion, mDatabaseLocation ));
+
+					retValue = true;
+				}
+			}
+
+			return( retValue );
 		}
 
 		private bool InternalOpenDatabase() {
@@ -103,7 +123,18 @@ namespace Noise.Core.Database {
 				retValue = true;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Opening database '{0}' on server '{1}' failed", mDatabaseName, mDatabaseLocation ), ex );
+				mLog.LogException( String.Format( "Exception - Opening database '{0}' on server '{1}'", mDatabaseName, mDatabaseLocation ), ex );
+			}
+
+			return( retValue );
+		}
+
+		private bool ReadDatabaseVersion() {
+			var retValue = false;
+
+			DatabaseVersion = Database.ExecuteScalar( "Select DbVersion" ) as DbVersion;
+			if( DatabaseVersion != null ) {
+				retValue = true;
 			}
 
 			return( retValue );
@@ -119,15 +150,15 @@ namespace Noise.Core.Database {
 			var retValue =false;
 
 			Condition.Requires( Database ).IsNotNull();
-			mLog.LogMessage( "Creating database: '{0}' on server '{1}'.", databaseName, mDatabaseLocation );
 
 			try {
 				Database.CreateDatabase( databaseName );
+				mLog.LogMessage( "Created database: '{0}' on server '{1}'.", databaseName, mDatabaseLocation );
 
 				retValue = true;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( ex );
+				mLog.LogException( String.Format( "Exception - Creating database '{0}' on server '{1}'", databaseName, mDatabaseLocation ), ex );
 			}
 
 			return( retValue );
