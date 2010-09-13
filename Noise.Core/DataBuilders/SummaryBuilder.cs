@@ -45,6 +45,7 @@ namespace Noise.Core.DataBuilders {
 						var albumGenre = new Dictionary<string, int>();
 						var albumCount = 0;
 						var albumRating = 0;
+						var maxAlbumRating = 0;
 
 						foreach( var album in albums ) {
 							var albumId = album.DbId;
@@ -52,6 +53,7 @@ namespace Noise.Core.DataBuilders {
 							var years = new List<UInt32>();
 							var trackGenre = new Dictionary<string, int>();
 							var trackRating = 0;
+							var maxTrackRating = 0;
 
 							album.TrackCount = 0;
 
@@ -63,6 +65,10 @@ namespace Noise.Core.DataBuilders {
 								AddGenre( trackGenre, track.CalculatedGenre );
 								album.TrackCount++;
 								trackRating += track.Rating;
+
+								if( track.Rating > maxTrackRating ) {
+									maxTrackRating = track.Rating;
+								}
 							}
 
 							if( years.Count == 0 ) {
@@ -79,7 +85,11 @@ namespace Noise.Core.DataBuilders {
 							AddGenre( albumGenre, album.CalculatedGenre );
 
 							album.CalculatedRating = (Int16)( trackRating / album.TrackCount );
+							album.MaxChildRating = (Int16)maxTrackRating;
 							albumRating += album.CalculatedRating;
+							if( maxTrackRating > maxAlbumRating ) {
+								maxAlbumRating = maxTrackRating;
+							}
 
 							database.Store( album );
 							albumCount++;
@@ -92,6 +102,7 @@ namespace Noise.Core.DataBuilders {
 						artist.AlbumCount = (Int16)albumCount;
 						artist.CalculatedGenre = DetermineTopGenre( albumGenre );
 						artist.CalculatedRating = (Int16)( albumRating / albumCount );
+						artist.MaxChildRating = (Int16)maxAlbumRating;
 
 						database.Store( artist );
 

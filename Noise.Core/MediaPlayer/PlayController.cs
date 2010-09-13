@@ -289,10 +289,17 @@ namespace Noise.Core.MediaPlayer {
 			}
 			set {
 				var settings = GetChannelSettings( CurrentChannel );
-
 				if( settings != null ) {
+					var track = GetTrack( CurrentChannel );
+
 					settings.IsFavorite = value;
-					mNoiseManager.DataProvider.UpdateItem( settings );
+
+					if( track != null ) {
+						mNoiseManager.DataProvider.SetFavorite( track.Track, value );
+					}
+					else {
+						mNoiseManager.DataProvider.UpdateItem( settings );
+					}
 				}
 			}
 		}
@@ -312,8 +319,16 @@ namespace Noise.Core.MediaPlayer {
 				var settings = GetChannelSettings( CurrentChannel );
 
 				if( settings != null ) {
+					var track = GetTrack( CurrentChannel );
+
 					settings.Rating = value;
-					mNoiseManager.DataProvider.UpdateItem( settings );
+
+					if( track.Track != null ) {
+						mNoiseManager.DataProvider.SetRating( track.Track, value );
+					}
+					else {
+						mNoiseManager.DataProvider.UpdateItem( settings );
+					}
 				}
 			}
 		}

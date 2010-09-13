@@ -22,7 +22,7 @@ namespace Noise.UI.ViewModels {
 			mTracks = new ObservableCollectionEx<TrackViewNode>();
 
 			mChangeObserver = new Observer();
-			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( node => OnNodeChanged( node.Source ));
+			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( node => OnNodeChanged( node ));
 		}
 
 		[Dependency]
@@ -54,11 +54,16 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnNodeChanged( object source ) {
-			var notifier = source as UserSettingsNotifier;
+		private void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
+			var notifier = propertyNotification.Source as UserSettingsNotifier;
 
 			if( notifier != null ) {
-				mNoiseManager.DataProvider.UpdateItem( notifier.TargetItem );
+				if( propertyNotification.PropertyName == "Rating" ) {
+					mNoiseManager.DataProvider.SetRating( notifier.TargetItem as DbTrack, notifier.Rating );
+				}
+				if( propertyNotification.PropertyName == "IsFavorite" ) {
+					mNoiseManager.DataProvider.SetFavorite( notifier.TargetItem as DbTrack, notifier.IsFavorite );
+				}
 			}
 		}
 	}

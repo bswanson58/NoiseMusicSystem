@@ -35,16 +35,21 @@ namespace Noise.UI.ViewModels {
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
 
 			mChangeObserver = new Observer();
-			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( node => OnNodeChanged( node.Source ));
+			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( node => OnNodeChanged( node ));
 
 			mEventAggregator.GetEvent<Events.ArtistContentUpdated>().Subscribe( OnArtistUpdated );
 		}
 
-		private void OnNodeChanged( object source ) {
-			var notifier = source as UserSettingsNotifier;
+		private void OnNodeChanged( PropertyChangeNotification changeNotification ) {
+			var notifier = changeNotification.Source as UserSettingsNotifier;
 
 			if( notifier != null ) {
-				mNoiseManager.DataProvider.UpdateItem( notifier.TargetItem );
+				if( changeNotification.PropertyName == "Rating" ) {
+					mNoiseManager.DataProvider.SetRating( notifier.TargetItem as DbArtist, notifier.Rating );
+				}
+				if( changeNotification.PropertyName == "IsFavorite" ) {
+					mNoiseManager.DataProvider.SetFavorite( notifier.TargetItem as DbArtist, notifier.TargetItem.IsFavorite );
+				}
 			}
 		}
 

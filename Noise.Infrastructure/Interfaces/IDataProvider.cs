@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
@@ -20,6 +21,14 @@ namespace Noise.Infrastructure.Interfaces {
 
 		void						UpdateArtistInfo( DbArtist forArtist );
 		void						UpdateAlbumInfo( DbAlbum forAlbum );
+
+		void						SetFavorite( DbArtist forArtist, bool isFavorite );
+		void						SetFavorite( DbAlbum forAlbum, bool isFavorite );
+		void						SetFavorite( DbTrack forTrack, bool isFavorite );
+
+		void						SetRating( DbArtist forArtist, Int16 rating );
+		void						SetRating( DbAlbum forAlbum, Int16 rating );
+		void						SetRating( DbTrack forTrack, Int16 rating );
 
 		void						UpdateItem( object dbItem );
 		void						DeleteItem( object dbItem );
