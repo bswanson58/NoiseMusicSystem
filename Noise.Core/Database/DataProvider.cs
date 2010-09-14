@@ -39,6 +39,27 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public void InsertItem( object item ) {
+			Condition.Requires( item ).IsNotNull();
+
+			if(( item is DbArtist ) ||
+			   ( item is DbAlbum ) ||
+			   ( item is DbTrack ) ||
+			   ( item is DbInternetStream )) {
+				var database = mDatabaseManager.ReserveDatabase();
+
+				try {
+					database.Insert( item );
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - InsertItem:", ex );
+				}
+				finally {
+					mDatabaseManager.FreeDatabase( database );
+				}
+			}
+		}
+
 		public void UpdateItem( object item ) {
 			Condition.Requires( item ).IsNotNull();
 

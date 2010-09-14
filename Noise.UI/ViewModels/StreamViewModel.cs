@@ -53,7 +53,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_AddStream( object sender ) {
-			EditStream( new DbInternetStream());
+			var	stream = new DbInternetStream();
+
+			var	dialogService = mContainer.Resolve<IDialogService>();
+			if( dialogService.ShowDialog( DialogNames.InternetStreamEdit, stream ) == true ) {
+				mNoiseManager.DataProvider.InsertItem( stream );
+
+				UpdateStreams();
+			}
 		}
 
 		public void Execute_EditStream( object sender ) {

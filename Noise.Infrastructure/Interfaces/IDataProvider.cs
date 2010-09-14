@@ -30,6 +30,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void						SetRating( DbAlbum forAlbum, Int16 rating );
 		void						SetRating( DbTrack forTrack, Int16 rating );
 
+		void						InsertItem( object dbItem );
 		void						UpdateItem( object dbItem );
 		void						DeleteItem( object dbItem );
 
