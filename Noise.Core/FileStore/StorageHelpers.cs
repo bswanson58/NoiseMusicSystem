@@ -106,5 +106,56 @@ namespace Noise.Core.FileStore {
 
 			return( retValue );
 		}
+
+		public static eFileType DetermineFileType( StorageFile file ) {
+			var retValue = eFileType.Unknown;
+			var ext = Path.GetExtension( file.Name ).ToLower();
+
+			switch( ext ) {
+				case ".flac":
+				case ".mp3":
+				case ".ogg":
+				case ".wma":
+					retValue = eFileType.Music;
+					break;
+
+				case ".jpg":
+				case ".bmp":
+					retValue = eFileType.Picture;
+					break;
+
+				case ".txt":
+				case ".nfo":
+					retValue = eFileType.Text;
+					break;
+			}
+
+			return( retValue );
+		}
+
+		public static eAudioEncoding DetermineAudioEncoding( StorageFile file ) {
+			var retValue = eAudioEncoding.Unknown;
+			var ext = Path.GetExtension( file.Name ).ToLower();
+
+			switch( ext ) {
+				case ".flac":
+					retValue = eAudioEncoding.FLAC;
+					break;
+
+				case ".mp3":
+					retValue = eAudioEncoding.MP3;
+					break;
+
+				case ".ogg":
+					retValue = eAudioEncoding.OGG;
+					break;
+
+				case".wma":
+					retValue = eAudioEncoding.WMA;
+					break;
+			}
+
+			return( retValue );
+		}
 	}
 }

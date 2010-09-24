@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
+using Noise.Core.FileStore;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -31,7 +32,9 @@ namespace Noise.Core.DataProviders {
 			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
-				var files = from StorageFile file in database.Database where file.ParentFolder == parentId orderby file.Name select file;
+				var files = from StorageFile file in database.Database
+							where ( file.ParentFolder == parentId ) && ( StorageHelpers.DetermineFileType( file ) == eFileType.Music )
+							orderby file.Name select file;
 
 				mFolderFiles = new List<StorageFile>( files.ToList());
 				mFolderId = parentId;

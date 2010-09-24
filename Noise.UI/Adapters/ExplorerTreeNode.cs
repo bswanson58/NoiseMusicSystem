@@ -83,9 +83,20 @@ namespace Noise.UI.Adapters {
 				}
 
 				if(( value ) &&
-				   ( RequiresChildren ) &&
 				   ( mChildFillFunction != null )) {
-					SetChildren( mChildFillFunction( this ));
+					if( RequiresChildren ) {
+						SetChildren( mChildFillFunction( this ) );
+					}
+					else {
+						if( Item is DbArtist ) {
+							var artist = Item as DbArtist;
+
+							if(( Children == null ) ||
+							   ( artist.AlbumCount != Children.Count )) {
+								SetChildren( mChildFillFunction( this ));
+							}
+						}
+					}
 				}
 			}
 		}

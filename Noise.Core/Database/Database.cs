@@ -200,10 +200,15 @@ namespace Noise.Core.Database {
 		public void Insert( object dbObject ) {
 			Condition.Requires( dbObject ).IsNotNull();
 
-			Database.Store( dbObject );
+			if( Database.GetUid( dbObject ) == -1 ) {
+				Database.Store( dbObject );
 
-			if( dbObject is DbBase ) {
-				mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Insert ));
+				if( dbObject is DbBase ) {
+					mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Insert ) );
+				}
+			}
+			else {
+				mLog.LogMessage( String.Format( "Database:Insert - Inserting known item: {0}", dbObject.GetType()));
 			}
 		}
 

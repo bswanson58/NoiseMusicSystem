@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
@@ -50,7 +49,7 @@ namespace Noise.Core.DataBuilders {
 				mAlbumCache = new DatabaseCache<DbAlbum>( from DbAlbum album in database.Database select album );
 
 				foreach( var file in fileEnum ) {
-					file.FileType = DetermineFileType( file );
+					file.FileType = StorageHelpers.DetermineFileType( file );
 
 					switch( file.FileType ) {
 						case eFileType.Music:
@@ -98,7 +97,7 @@ namespace Noise.Core.DataBuilders {
 				var folderStrategy = StorageHelpers.GetFolderStrategy( database.Database, file );
 				var dataProviders = new List<IMetaDataProvider>();
 
-				track.Encoding = DetermineAudioEncoding( file );
+				track.Encoding = StorageHelpers.DetermineAudioEncoding( file );
 
 				if( folderStrategy.PreferFolderStrategy ) {
 					dataProviders.Add( mStrategyProvider.GetProvider( file ));
@@ -234,57 +233,6 @@ namespace Noise.Core.DataBuilders {
 				if(!string.IsNullOrWhiteSpace( retValue )) {
 					break;
 				}
-			}
-
-			return( retValue );
-		}
-
-		private static eFileType DetermineFileType( StorageFile file ) {
-			var retValue = eFileType.Unknown;
-			var ext = Path.GetExtension( file.Name ).ToLower();
-
-			switch( ext ) {
-				case ".flac":
-				case ".mp3":
-				case ".ogg":
-				case ".wma":
-					retValue = eFileType.Music;
-					break;
-
-				case ".jpg":
-				case ".bmp":
-					retValue = eFileType.Picture;
-					break;
-
-				case ".txt":
-				case ".nfo":
-					retValue = eFileType.Text;
-					break;
-			}
-
-			return( retValue );
-		}
-
-		private static eAudioEncoding DetermineAudioEncoding( StorageFile file ) {
-			var retValue = eAudioEncoding.Unknown;
-			var ext = Path.GetExtension( file.Name ).ToLower();
-
-			switch( ext ) {
-				case ".flac":
-					retValue = eAudioEncoding.FLAC;
-					break;
-
-				case ".mp3":
-					retValue = eAudioEncoding.MP3;
-					break;
-
-				case ".ogg":
-					retValue = eAudioEncoding.OGG;
-					break;
-
-				case".wma":
-					retValue = eAudioEncoding.WMA;
-					break;
 			}
 
 			return( retValue );

@@ -115,8 +115,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void AddArtist( ICollection<ExplorerTreeNode> tree, DbArtist artist ) {
-			var parent = artist.AlbumCount > 0 ? new ExplorerTreeNode( mEventAggregator, artist, FillChildren ) :
-													new ExplorerTreeNode( mEventAggregator, artist );
+			var parent = new ExplorerTreeNode( mEventAggregator, artist, FillChildren );
+
 			tree.Add( parent );
 			mChangeObserver.Add( parent.UiEdit );
 		}
