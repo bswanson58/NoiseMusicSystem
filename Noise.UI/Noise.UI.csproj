@@ -116,8 +116,9 @@
     <Compile Include="Adapters\BindableRun.cs" />
     <Compile Include="Adapters\DynamicProxies\CustomValidatingProxy.cs" />
     <Compile Include="Adapters\DynamicProxies\DataErrorInfoProxy.cs" />
-    <Compile Include="Adapters\DynamicProxies\DynamicProxy.cs" />
+    <Compile Include="Adapters\DynamicProxies\NotifyingProxy.cs" />
     <Compile Include="Adapters\DynamicProxies\EditableProxy.cs" />
+    <Compile Include="Adapters\DynamicProxies\UpdatingProxy.cs" />
     <Compile Include="Adapters\DynamicProxies\ValidatingProxy.cs" />
     <Compile Include="Adapters\ExplorerTreeNode.cs" />
     <Compile Include="Adapters\LinkNode.cs" />

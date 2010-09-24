@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using Microsoft.Practices.Composite.Events;
@@ -8,6 +9,7 @@ using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using CuttingEdge.Conditions;
 using Observal;
@@ -15,7 +17,7 @@ using Observal.Extensions;
 using Condition = CuttingEdge.Conditions.Condition;
 
 namespace Noise.UI.ViewModels {
-	public class ExplorerStrategyArtistAlbum : IExplorerViewStrategy {
+	public class ExplorerStrategyArtistAlbum : ViewModelBase, IExplorerViewStrategy {
 		private const string					cSearchOptionDefault = "!";
 		private const string					cSearchArtists = "Artists";
 		private const string					cSearchAlbums = "Albums";
@@ -35,34 +37,56 @@ namespace Noise.UI.ViewModels {
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
 
 			mChangeObserver = new Observer();
-			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( node => OnNodeChanged( node ));
+			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
-			mEventAggregator.GetEvent<Events.ArtistContentUpdated>().Subscribe( OnArtistUpdated );
+			mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 		}
 
 		private void OnNodeChanged( PropertyChangeNotification changeNotification ) {
 			var notifier = changeNotification.Source as UserSettingsNotifier;
 
 			if( notifier != null ) {
-				if( changeNotification.PropertyName == "Rating" ) {
-					mNoiseManager.DataProvider.SetRating( notifier.TargetItem as DbArtist, notifier.Rating );
+				if( changeNotification.PropertyName == "UiRating" ) {
+					mNoiseManager.DataProvider.SetRating( notifier.TargetItem as DbArtist, notifier.UiRating );
 				}
-				if( changeNotification.PropertyName == "IsFavorite" ) {
-					mNoiseManager.DataProvider.SetFavorite( notifier.TargetItem as DbArtist, notifier.TargetItem.IsFavorite );
+				if( changeNotification.PropertyName == "UiIsFavorite" ) {
+					mNoiseManager.DataProvider.SetFavorite( notifier.TargetItem as DbArtist, notifier.UiIsFavorite );
 				}
 			}
 		}
 
-		public void OnArtistUpdated( DbArtist forArtist ) {
-			foreach( var treeNode in mViewModel.TreeData ) {
-				var artist = treeNode.Item as DbArtist;
+		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
+			if( args.Item is DbArtist ) {
+				BeginInvoke( () => {
+					var artist = args.Item as DbArtist;
 
-				if(( artist != null ) &&
-				   ( string.Compare( artist.Name, forArtist.Name, true ) == 0 )) {
-					treeNode.SetItem( forArtist );
+					if( artist != null ) {
+						var treeNode = ( from ExplorerTreeNode node in mViewModel.TreeData
+										 where artist.DbId == ( node.Item is DbArtist ? ( node.Item as DbArtist ).DbId : 0 )
+										 select node ).FirstOrDefault();
 
-					break;
-				}
+						switch( args.Change ) {
+							case DbItemChanged.Update:
+								if( treeNode != null ) {
+									treeNode.UiDisplay.UpdateObject( artist );
+								}
+								break;
+
+							case DbItemChanged.Insert:
+								mViewModel.TreeData.SuspendNotification();
+								AddArtist( mViewModel.TreeData, artist );
+								mViewModel.TreeData.Sort( node => node.Item is DbArtist ? ( node.Item as DbArtist ).Name : "", ListSortDirection.Ascending );
+								mViewModel.TreeData.ResumeNotification();
+								break;
+
+							case DbItemChanged.Delete:
+								if( treeNode != null ) {
+									mViewModel.TreeData.Remove( treeNode );
+								}
+								break;
+						}
+					}
+				} );
 			}
 		}
 
@@ -84,13 +108,17 @@ namespace Noise.UI.ViewModels {
 					var artistList = from artist in list.List orderby artist.Name select artist;
 
 					foreach( DbArtist artist in artistList ) {
-						var parent = artist.AlbumCount > 0 ? new ExplorerTreeNode( mEventAggregator, artist, FillChildren ) :
-															 new ExplorerTreeNode( mEventAggregator, artist );
-						tree.Add( parent );
-						mChangeObserver.Add( parent.SettingsNotifier );
+						AddArtist( tree, artist );
 					}
 				}
 			}
+		}
+
+		private void AddArtist( ICollection<ExplorerTreeNode> tree, DbArtist artist ) {
+			var parent = artist.AlbumCount > 0 ? new ExplorerTreeNode( mEventAggregator, artist, FillChildren ) :
+													new ExplorerTreeNode( mEventAggregator, artist );
+			tree.Add( parent );
+			mChangeObserver.Add( parent.UiEdit );
 		}
 
 		private List<ExplorerTreeNode> FillChildren( ExplorerTreeNode parent ) {

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Dynamic;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.ComponentModel;
 using System;
@@ -7,13 +8,13 @@ using System;
 // from: http://www.codeproject.com/KB/cs/dynamicobjectproxy.aspx
 
 namespace Noise.UI.Adapters.DynamicProxies {
-	public class DynamicProxy : DynamicObject, INotifyPropertyChanged {
+	public class NotifyingProxy : DynamicObject, INotifyPropertyChanged {
 		public object	ProxiedObject { get; set; }
 		public event	PropertyChangedEventHandler PropertyChanged;
 
-		public DynamicProxy() { }
+		public NotifyingProxy() { }
 
-		public DynamicProxy( object proxiedObject ) {
+		public NotifyingProxy( object proxiedObject ) {
 			ProxiedObject = proxiedObject;
 		}
 
@@ -24,7 +25,8 @@ namespace Noise.UI.Adapters.DynamicProxies {
 		protected virtual void SetMember( string propertyName, object value ) {
 			var propertyInfo = GetPropertyInfo( propertyName );
 
-			if( propertyInfo.PropertyType == value.GetType()) {
+			if(( value != null ) &&
+			   ( propertyInfo.PropertyType == value.GetType())) {
 				propertyInfo.SetValue( ProxiedObject, value, null );
 			}
 			else {
@@ -42,6 +44,21 @@ namespace Noise.UI.Adapters.DynamicProxies {
 			if( PropertyChanged != null ) {
 				PropertyChanged( this, new PropertyChangedEventArgs( propertyName ));
 			}
+		}
+
+		protected void RaisePropertyChanged<TProperty>( Expression<Func<TProperty>> property ) {
+			var lambda = (LambdaExpression)property;
+
+			MemberExpression memberExpression;
+			if( lambda.Body is UnaryExpression ) {
+				var unaryExpression = (UnaryExpression)lambda.Body;
+				memberExpression = (MemberExpression)unaryExpression.Operand;
+			}
+			else {
+				memberExpression = (MemberExpression)lambda.Body;
+			}
+
+			RaisePropertyChanged( memberExpression.Member.Name );
 		}
 
 		protected virtual void RaisePropertyChanged( string propertyName ) {

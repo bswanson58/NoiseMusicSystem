@@ -11,7 +11,7 @@ using Observal;
 using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
-	public class TrackListViewModel {
+	public class TrackListViewModel : ViewModelBase {
 		private IUnityContainer		mContainer;
 		private IEventAggregator	mEventAggregator;
 		private INoiseManager		mNoiseManager;
@@ -22,7 +22,7 @@ namespace Noise.UI.ViewModels {
 			mTracks = new ObservableCollectionEx<TrackViewNode>();
 
 			mChangeObserver = new Observer();
-			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( node => OnNodeChanged( node ));
+			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 		}
 
 		[Dependency]
@@ -35,6 +35,7 @@ namespace Noise.UI.ViewModels {
 				mNoiseManager = mContainer.Resolve<INoiseManager>();
 
 				mEventAggregator.GetEvent<Events.ExplorerItemSelected>().Subscribe( OnExplorerItemSelected );
+				mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 			}
 		}
 
@@ -50,7 +51,27 @@ namespace Noise.UI.ViewModels {
 				using( var tracks = mNoiseManager.DataProvider.GetTrackList( item as DbAlbum )) {
 					mTracks.AddRange( from track in tracks.List select new TrackViewNode( mEventAggregator, track ));
 				}
-				mTracks.Each( track => mChangeObserver.Add( track.SettingsNotifier ));
+				mTracks.Each( track => mChangeObserver.Add( track.UiEdit ));
+			}
+		}
+
+		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
+			if( args.Item is DbTrack ) {
+				BeginInvoke( () => {
+					var track = ( from TrackViewNode node in mTracks where node.Track.DbId == args.Item.DbId select node ).FirstOrDefault();
+
+					if( track != null ) {
+						switch( args.Change ) {
+							case DbItemChanged.Update:
+								track.UiDisplay.UpdateObject( args.Item );
+								break;
+							case DbItemChanged.Delete:
+								mTracks.Remove( track );
+
+								break;
+						}
+					}
+				});
 			}
 		}
 
@@ -58,11 +79,15 @@ namespace Noise.UI.ViewModels {
 			var notifier = propertyNotification.Source as UserSettingsNotifier;
 
 			if( notifier != null ) {
-				if( propertyNotification.PropertyName == "Rating" ) {
-					mNoiseManager.DataProvider.SetRating( notifier.TargetItem as DbTrack, notifier.Rating );
-				}
-				if( propertyNotification.PropertyName == "IsFavorite" ) {
-					mNoiseManager.DataProvider.SetFavorite( notifier.TargetItem as DbTrack, notifier.IsFavorite );
+				var track = notifier.TargetItem as DbTrack;
+
+				if( track != null ) {
+					if( propertyNotification.PropertyName == "UiRating" ) {
+						mNoiseManager.DataProvider.SetRating( track, notifier.UiRating );
+					}
+					if( propertyNotification.PropertyName == "UiIsFavorite" ) {
+						mNoiseManager.DataProvider.SetFavorite( track, notifier.UiIsFavorite );
+					}
 				}
 			}
 		}

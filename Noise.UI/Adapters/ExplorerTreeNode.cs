@@ -5,6 +5,7 @@ using Microsoft.Practices.Composite.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
+using Noise.UI.Adapters.DynamicProxies;
 
 namespace Noise.UI.Adapters {
 	public class ExplorerTreeNode : ViewModelBase {
@@ -13,8 +14,9 @@ namespace Noise.UI.Adapters {
 
 		public	ExplorerTreeNode			Parent { get; private set; }
 		public	object						Item { get; private set; }
+		public	UpdatingProxy				UiDisplay { get; private set; }
+		public	UserSettingsNotifier		UiEdit { get; private set; }
 		public	bool						RequiresChildren{ get; private set; }
-		public	UserSettingsNotifier		SettingsNotifier { get; private set; }
 		public	ObservableCollection<ExplorerTreeNode>	Children { get; set; }
 
 		public ExplorerTreeNode( IEventAggregator eventAggregator, object item ) :
@@ -42,19 +44,14 @@ namespace Noise.UI.Adapters {
 		public ExplorerTreeNode( IEventAggregator eventAggregator, ExplorerTreeNode parent, object item, IEnumerable<ExplorerTreeNode> children ) {
 			mEventAggregator = eventAggregator;
 			Parent = parent;
-			Item = item;
 
-			SettingsNotifier = new UserSettingsNotifier( Item as IUserSettings );
+			Item = item;
+			UiDisplay = new UpdatingProxy( item );
+			UiEdit = new UserSettingsNotifier( item as IUserSettings, UiDisplay );
 
 			if( children != null ) {
 				Children = new ObservableCollection<ExplorerTreeNode>( children );
 			}
-		}
-
-		public void SetItem( object item ) {
-			Item = item;
-
-			RaisePropertyChanged( () => Item );
 		}
 
 		public void SetChildren( IEnumerable<ExplorerTreeNode> children ) {
@@ -70,7 +67,7 @@ namespace Noise.UI.Adapters {
 				Set( () => IsSelected, value  );
 
 				if( value ) {
-					mEventAggregator.GetEvent<Events.ExplorerItemSelected>().Publish( Item );
+					mEventAggregator.GetEvent<Events.ExplorerItemSelected>().Publish( UiDisplay.ProxiedObject );
 				}
 			}
 		}

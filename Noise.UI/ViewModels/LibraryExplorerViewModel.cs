@@ -36,7 +36,6 @@ namespace Noise.UI.ViewModels {
 
 				mEvents = mContainer.Resolve<IEventAggregator>();
 				mEvents.GetEvent<Events.ExplorerItemSelected>().Subscribe( OnExplorerItemSelected );
-				mEvents.GetEvent<Events.DatabaseChanged>().Subscribe( OnDatabaseUpdate );
 			}
 		}
 
@@ -49,15 +48,6 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void OnDatabaseUpdate( DatabaseChangeSummary summary ) {
-			if( summary.ArtistChanges || summary.AlbumChanges ) {
-				if(( mViewStrategy != null ) &&
-				   ( mTreeItems != null )) {
-					Execute.OnUiThread( UpdateTree );
-				}
-			}
-		}
-
 		private void UpdateTree() {
 			mTreeItems.SuspendNotification();
 			mTreeItems.Clear();
@@ -65,7 +55,7 @@ namespace Noise.UI.ViewModels {
 			mTreeItems.ResumeNotification();
 		}
 
-		public IEnumerable<ExplorerTreeNode> TreeData {
+		public ObservableCollectionEx<ExplorerTreeNode> TreeData {
 			get {
 				if(( mTreeItems == null ) &&
 				   ( mViewStrategy != null )) {

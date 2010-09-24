@@ -36,6 +36,7 @@ namespace Noise.Core.MediaPlayer {
 			mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
 			mEvents.GetEvent<Events.AudioPlayStatusChanged>().Subscribe( OnPlayStatusChanged );
 			mEvents.GetEvent<Events.AudioPlayStreamInfo>().Subscribe( OnStreamInfo );
+			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 		}
 
 		public PlayQueueTrack CurrentTrack {
@@ -101,6 +102,22 @@ namespace Noise.Core.MediaPlayer {
 						if( mContinuePlaying ) {
 							PlayNextTrack();
 						}
+					}
+				}
+			}
+		}
+
+		public void OnDatabaseItemChanged( DbItemChangedArgs args ) {
+			if( args.Item is DbTrack ) {
+				var track = args.Item as DbTrack;
+
+				foreach( var queueItem in mOpenTracks.Values ) {
+					if(( !queueItem.IsStream ) &&
+					   ( queueItem.Track.DbId == track.DbId )) {
+						queueItem.UpdateTrack( track );
+
+						FirePlaybackTrackUpdate();
+						break;
 					}
 				}
 			}

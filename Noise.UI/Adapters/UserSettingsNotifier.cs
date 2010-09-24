@@ -1,14 +1,25 @@
 ﻿using System;
+using System.ComponentModel;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Adapters {
 	public class UserSettingsNotifier : BindableObject {
 		private readonly IUserSettings	mTargetObject;
+		public	string					UiGenre { get; private set; }
+		public	bool					UiIsFavorite { get; private set; }
+		public	Int16					UiRating { get; private set; }
 
-		public UserSettingsNotifier( IUserSettings targetObject ) {
+		public UserSettingsNotifier( IUserSettings targetObject, INotifyPropertyChanged changer ) {
 			mTargetObject = targetObject;
+
+			changer.PropertyChanged += OnPropertyChanged;
 		}
+
+		private void OnPropertyChanged( object sender, PropertyChangedEventArgs args ) {
+			RaisePropertyChanged( args.PropertyName );
+		}
+
 
 		public IUserSettings TargetItem {
 			get{ return( mTargetObject ); }
@@ -17,27 +28,27 @@ namespace Noise.UI.Adapters {
 		public string Genre {
 			get{ return( mTargetObject.Genre ); }
 			set {
-				mTargetObject.Genre = value;
+				UiGenre = value;
 
-				RaisePropertyChanged( () => Genre );
+				RaisePropertyChanged( () => UiGenre );
 			}
 		}
 
 		public bool IsFavorite {
 			get{ return( mTargetObject.IsFavorite ); }
 			set {
-				mTargetObject.IsFavorite = value;
+				UiIsFavorite = value;
 
-				RaisePropertyChanged( () => IsFavorite );
+				RaisePropertyChanged( () => UiIsFavorite );
 			}
 		}
 
 		public Int16 Rating {
 			get{ return( mTargetObject.Rating ); }
 			set {
-				mTargetObject.Rating = value;
+				UiRating = value;
 
-				RaisePropertyChanged( () => Rating );
+				RaisePropertyChanged( () => UiRating );
 			}
 		}
 	}

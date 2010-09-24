@@ -5,7 +5,9 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Eloquera.Client;
+using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -16,6 +18,7 @@ namespace Noise.Core.Database {
 		private const UInt16				cDatabaseVersionMinor = 2;
 
 		private readonly IUnityContainer	mContainer;
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly ILog				mLog;
 		private readonly string				mDatabaseLocation;
 		private readonly string				mDatabaseName;
@@ -29,6 +32,7 @@ namespace Noise.Core.Database {
 
 		public EloqueraDatabase( IUnityContainer container ) {
 			mContainer = container;
+			mEventAggregator = mContainer.Resolve<IEventAggregator>();
 			mLog = mContainer.Resolve<ILog>();
 			DatabaseId = Guid.NewGuid().ToString();
 
@@ -84,6 +88,7 @@ namespace Noise.Core.Database {
 						Insert( dbVersion );
 
 						CloseDatabase();
+
 						if( OpenDatabase()) {
 							retValue = true;
 						}
@@ -196,6 +201,10 @@ namespace Noise.Core.Database {
 			Condition.Requires( dbObject ).IsNotNull();
 
 			Database.Store( dbObject );
+
+			if( dbObject is DbBase ) {
+				mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Insert ));
+			}
 		}
 
 		public void Store( object dbObject ) {
@@ -203,6 +212,10 @@ namespace Noise.Core.Database {
 
 			if( Database.GetUid( dbObject ) != -1 ) {
 				Database.Store( dbObject );
+
+				if( dbObject is DbBase ) {
+					mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Update ));
+				}
 			}
 			else {
 				mLog.LogMessage( String.Format( "Database:Store - Unknown dbObject: {0}", dbObject.GetType()));
@@ -214,6 +227,10 @@ namespace Noise.Core.Database {
 
 			if( Database.GetUid( dbObject ) != -1 ) {
 				Database.Delete( dbObject );
+
+				if( dbObject is DbBase ) {
+					mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Delete ));
+				}
 			}
 			else {
 				mLog.LogMessage( String.Format( "Database:Delete - Unknown dbObject: {0}", dbObject.GetType()));

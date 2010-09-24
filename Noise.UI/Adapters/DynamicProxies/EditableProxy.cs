@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Dynamic;
 
 namespace Noise.UI.Adapters.DynamicProxies {
-	public class EditableProxy : DynamicProxy, IEditableObject {
+	public class EditableProxy : NotifyingProxy, IEditableObject {
 		private class BackupState {
 			private	Dictionary<string, object> OriginalValues { get; set; }
 			public	Dictionary<string, object> NewValues { get; private set; }

@@ -58,7 +58,7 @@ namespace Noise.Infrastructure.Support {
 		/// <param name="propertyName">
 		/// The property which was changed.
 		/// </param>
-		private void RaisePropertyChanged( string propertyName ) {
+		protected void RaisePropertyChanged( string propertyName ) {
 
 			PropertyChangedEventHandler handler = PropertyChanged;
 			if( handler != null ) {

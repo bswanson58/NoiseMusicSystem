@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows;
+using System.Windows.Threading;
 using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Windows;
 using Microsoft.Practices.Composite.Presentation.Commands;
 
 namespace Noise.Infrastructure.Support {
 	public class ViewModelBase : DynamicObject, INotifyPropertyChanged {
-		private readonly Dictionary<string, object> mValues = new Dictionary<string, object>();
-		private readonly IDictionary<string, List<string>> mPropertyMap;
-		private readonly IDictionary<string, List<string>> mMethodMap;
-		private readonly IDictionary<string, List<string>> mCommandMap;
+		private readonly Dictionary<string, object>			mValues;
+		private readonly IDictionary<string, List<string>>	mPropertyMap;
+		private readonly IDictionary<string, List<string>>	mMethodMap;
+		private readonly IDictionary<string, List<string>>	mCommandMap;
+		private readonly Dispatcher							mDispatcher;
 
 		[AttributeUsage( AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = true )]
 		protected class DependsUponAttribute : Attribute {
@@ -48,10 +50,18 @@ namespace Noise.Infrastructure.Support {
 			}
 		}
 
-		public ViewModelBase() {
-			mPropertyMap = MapDependencies<DependsUponAttribute>( () => GetType().GetProperties() );
+		public ViewModelBase() :
+			this( Dispatcher.CurrentDispatcher ) {
+		}
+
+		public ViewModelBase( Dispatcher dispatcher ) {
+			mDispatcher = dispatcher;
+			mValues = new Dictionary<string, object>();
+
+			mPropertyMap = MapDependencies<DependsUponAttribute>( () => GetType().GetProperties());
 			mMethodMap = MapDependencies<DependsUponAttribute>( () => GetType().GetMethods().Cast<MemberInfo>().Where( method => !method.Name.StartsWith( cCanExecutePrefix ) ) );
 			mCommandMap = MapDependencies<DependsUponAttribute>( () => GetType().GetMethods().Cast<MemberInfo>().Where( method => method.Name.StartsWith( cCanExecutePrefix ) ) );
+
 			CreateCommands();
 			VerifyDependancies();
 		}
@@ -107,7 +117,7 @@ namespace Noise.Infrastructure.Support {
 		}
 
 		protected void RaisePropertyChanged<TProperty>( Expression<Func<TProperty>> property ) {
-			RaisePropertyChanged( PropertyName( property ));
+			RaisePropertyChanged( PropertyName( property ) );
 		}
 
 		protected void RaisePropertyChanged( string name ) {
@@ -261,6 +271,18 @@ namespace Noise.Infrastructure.Support {
 			var property = GetType().GetProperty( propertyName );
 			if( property == null )
 				throw new ArgumentException( "DependsUpon Property Does Not Exist: " + propertyName );
+		}
+
+		public bool CheckAccess() {
+			return( mDispatcher == Dispatcher.CurrentDispatcher );
+		}
+
+		public void Invoke( Action action ) {
+			mDispatcher.Invoke( action );
+		}
+
+		public void BeginInvoke( Action action ) {
+			mDispatcher.BeginInvoke( action );
 		}
 	}
 }

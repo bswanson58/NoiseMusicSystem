@@ -44,14 +44,16 @@ namespace Noise.UI.ViewModels {
 		private ArtistSupportInfo SupportInfo {
 			get{ return( Get( () => SupportInfo )); }
 			set {
-				mSimilarArtists.Clear();
+				Invoke( () => {
+					mSimilarArtists.Clear();
 
-				if(( value.SimilarArtist != null ) &&
-				   ( value.SimilarArtist.Items.GetLength( 0 ) > 0 )) {
-					mSimilarArtists.AddRange( from string artist in value.SimilarArtist.Items select new LinkNode( artist ));
-				}
+					if(( value.SimilarArtist != null ) &&
+					   ( value.SimilarArtist.Items.GetLength( 0 ) > 0 )) {
+						mSimilarArtists.AddRange( from string artist in value.SimilarArtist.Items select new LinkNode( artist ));
+					}
 
-				Set( () => SupportInfo, value );
+					Set( () => SupportInfo, value );
+				});
 			}
 		}
 

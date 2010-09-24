@@ -165,7 +165,6 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			if(!string.IsNullOrWhiteSpace( artistName )) {
-//				retValue = ( from DbArtist artist in database.Database where artist.Name == artistName select artist ).FirstOrDefault();
 				retValue = mArtistCache.Find( artist => artist.Name == artistName );
 				if( retValue == null ) {
 					retValue = new DbArtist { Name = artistName };
@@ -194,13 +193,15 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			if(!string.IsNullOrWhiteSpace( albumName )) {
-//				retValue = ( from DbAlbum album in database.Database where album.Name == albumName && album.Artist == artist.DbId select album ).FirstOrDefault();
 				retValue = mAlbumCache.Find( album => album.Name == albumName && album.Artist == artist.DbId );
 				if( retValue == null ) {
 					retValue = new DbAlbum { Name = albumName, Artist = artist.DbId };
 
 					database.Insert( retValue );
 					mAlbumCache.Add( retValue );
+
+					artist.AlbumCount++;
+					database.Store( artist );
 
 					mSummary.AlbumsAdded++;
 					mLog.LogInfo( "Added album: {0}", retValue.Name );

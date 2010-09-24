@@ -19,6 +19,10 @@ namespace Noise.Infrastructure.Dto {
 			File = file;
 		}
 
+		public void UpdateTrack( DbTrack track ) {
+			Track = track;
+		}
+
 		public PlayQueueTrack( DbInternetStream stream ) {
 			Stream = stream;
 		}

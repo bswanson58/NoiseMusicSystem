@@ -21,6 +21,7 @@ namespace Noise.Infrastructure.Dto {
 			CalculatedGenre = "";
 			ExternalGenre = "";
 			UserGenre = "";
+			Website = "";
 		}
 
 		[Ignore]

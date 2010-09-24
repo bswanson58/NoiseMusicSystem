@@ -36,33 +36,33 @@
 						</DataTemplate>
 					</GridViewColumn.CellTemplate>
 				</GridViewColumn>
-				<GridViewColumn Header="#" Width="33" Behaviours:GridViewSort.PropertyName="Track.TrackNumber">
+				<GridViewColumn Header="#" Width="33" Behaviours:GridViewSort.PropertyName="UiDisplay.TrackNumber">
 					<GridViewColumn.CellTemplate>
 						<DataTemplate>
-							<TextBlock Text="{Binding Path=Track.TrackNumber}" TextAlignment="Right" />
+							<TextBlock Text="{Binding Path=UiDisplay.TrackNumber}" TextAlignment="Right" />
 						</DataTemplate>
 					</GridViewColumn.CellTemplate>
 				</GridViewColumn>
-				<GridViewColumn Header="Track Name" DisplayMemberBinding="{Binding Path=Track.Name}" Behaviours:GridViewSort.PropertyName="Track.Name"/>
-				<GridViewColumn Header="Duration" Width="75" Behaviours:GridViewSort.PropertyName="Track.Duration">
+				<GridViewColumn Header="Track Name" DisplayMemberBinding="{Binding Path=UiDisplay.Name}" Behaviours:GridViewSort.PropertyName="UiDisplay.Name"/>
+				<GridViewColumn Header="Duration" Width="75" Behaviours:GridViewSort.PropertyName="UiDisplay.Duration">
 					<GridViewColumn.CellTemplate>
 						<DataTemplate>
-							<TextBlock Text="{Binding Path=Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" />
+							<TextBlock Text="{Binding Path=UiDisplay.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" />
 						</DataTemplate>
 					</GridViewColumn.CellTemplate>
 				</GridViewColumn>
-				<GridViewColumn Header="Fav" Width="30" Behaviours:GridViewSort.PropertyName="Track.IsFavorite">
+				<GridViewColumn Header="Fav" Width="30" Behaviours:GridViewSort.PropertyName="UiEdit.IsFavorite">
 					<GridViewColumn.CellTemplate>
 						<DataTemplate>
-							<CheckBox HorizontalAlignment="Center" IsChecked="{Binding Path=SettingsNotifier.IsFavorite, Mode=TwoWay}"/>
+							<CheckBox HorizontalAlignment="Center" IsChecked="{Binding Path=UiEdit.IsFavorite, Mode=TwoWay}"/>
 						</DataTemplate>
 					</GridViewColumn.CellTemplate>
 				</GridViewColumn>
-				<GridViewColumn Header="Rating" Width="70" Behaviours:GridViewSort.PropertyName="Track.Rating">
+				<GridViewColumn Header="Rating" Width="70" Behaviours:GridViewSort.PropertyName="UiEdit.Rating">
 					<GridViewColumn.CellTemplate>
 						<DataTemplate>
 							<Controls:RatingSelector Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}" HorizontalAlignment="Center"
-													 RatingSelected="{Binding Path=SettingsNotifier.Rating, Mode=TwoWay}"/>
+													 RatingSelected="{Binding Path=UiEdit.Rating, Mode=TwoWay}"/>
 						</DataTemplate>
 					</GridViewColumn.CellTemplate>
 				</GridViewColumn>

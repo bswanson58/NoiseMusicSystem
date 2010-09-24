@@ -43,13 +43,13 @@
 			</Grid.ColumnDefinitions>
 
 			<Button Grid.Column="0" Width="12" Height="12" Margin="0,0,3,0" Command="{Binding Path=PlayAlbum}"/>
-			<TextBlock Grid.Column="1" Text="{Binding Path=Item.Name}"/>
+			<TextBlock Grid.Column="1" Text="{Binding Path=UiDisplay.Name}"/>
 			<StackPanel Grid.Column="3" Orientation="Horizontal">
 				<TextBlock Text="("/>
-				<TextBlock Text="{Binding Path=Item.PublishedYear, Converter={StaticResource PublishedYearConverter}}"/>
+				<TextBlock Text="{Binding Path=UiDisplay.PublishedYear, Converter={StaticResource PublishedYearConverter}}"/>
 				<TextBlock Margin="0,0,3,0" Text=")"/>
 				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="Tracks: "/>
-				<TextBlock Text="{Binding Path=Item.TrackCount}"/>
+				<TextBlock Text="{Binding Path=UiDisplay.TrackCount}"/>
 			</StackPanel>
 		</Grid>
 	</HierarchicalDataTemplate>
@@ -67,19 +67,19 @@
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 
-				<TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" Text="{Binding Path=Item.Name}"/>
+				<TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" Text="{Binding Path=UiDisplay.Name}"/>
 				<StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
-					<CheckBox Margin="0,9,9,0" IsChecked="{Binding Path=SettingsNotifier.IsFavorite, Mode=TwoWay}"/>
+					<CheckBox Margin="0,9,9,0" IsChecked="{Binding Path=UiEdit.IsFavorite, Mode=TwoWay}"/>
 					<Controls:RatingSelector Margin="0,1,0,0" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Style="{StaticResource RatingStyle}"
-											 Template="{StaticResource RatingTemplate}" RatingSelected="{Binding Path=SettingsNotifier.Rating, Mode=TwoWay}"/>
+											 Template="{StaticResource RatingTemplate}" RatingSelected="{Binding Path=UiEdit.Rating, Mode=TwoWay}"/>
 				</StackPanel>
 				<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="11,0,0,0">
 					<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="Albums: "/>
-					<TextBlock Text="{Binding Path=Item.AlbumCount}"/>
+					<TextBlock Text="{Binding Path=UiDisplay.AlbumCount}"/>
 				</StackPanel>
 				<StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
 					<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="Genre: "/>
-					<TextBlock Text="{Binding Path=SettingsNotifier.Genre}"/>
+					<TextBlock Text="{Binding Path=UiDisplay.Genre}"/>
 				</StackPanel>
 			</Grid>
 		</Border>
