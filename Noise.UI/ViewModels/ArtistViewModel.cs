@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
@@ -17,9 +16,13 @@ namespace Noise.UI.ViewModels {
 		private DbArtist				mCurrentArtist;
 		private BackgroundWorker		mBackgroundWorker;
 		private readonly ObservableCollectionEx<LinkNode>	mSimilarArtists;
+		private readonly ObservableCollectionEx<LinkNode>	mTopAlbums;
+		private readonly ObservableCollectionEx<LinkNode>	mBandMembers;
 
 		public ArtistViewModel() {
 			mSimilarArtists = new ObservableCollectionEx<LinkNode>();
+			mTopAlbums = new ObservableCollectionEx<LinkNode>();
+			mBandMembers = new ObservableCollectionEx<LinkNode>();
 		}
 
 		[Dependency]
@@ -46,15 +49,27 @@ namespace Noise.UI.ViewModels {
 			set {
 				Invoke( () => {
 					mSimilarArtists.Clear();
+					mTopAlbums.Clear();
+					mBandMembers.Clear();
 
 					if(( value.SimilarArtist != null ) &&
 					   ( value.SimilarArtist.Items.GetLength( 0 ) > 0 )) {
-						mSimilarArtists.AddRange( from string artist in value.SimilarArtist.Items select new LinkNode( artist ));
+						mSimilarArtists.AddRange( from DbAssociatedItem artist in value.SimilarArtist.Items
+												  select artist.IsLinked ? new LinkNode( artist.Item, artist.AssociatedId, OnSimilarArtistClicked ) : new LinkNode( artist.Item ));
+						mTopAlbums.AddRange( from DbAssociatedItem album in value.TopAlbums.Items 
+											 select album.IsLinked ? new LinkNode( album.Item, album.AssociatedId, OnSimilarArtistClicked ) : new LinkNode( album.Item ));
+						mBandMembers.AddRange( from DbAssociatedItem member in value.BandMembers.Items select new LinkNode( member.Item ));
 					}
 
 					Set( () => SupportInfo, value );
 				});
 			}
+		}
+
+		private void OnSimilarArtistClicked( long artistId ) {
+			var artist = mNoiseManager.DataProvider.GetArtist( artistId  );
+
+			mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( artist );
 		}
 
 		public void OnArtistFocus( DbArtist artist ) {
@@ -114,17 +129,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "SupportInfo" )]
-		public IList<string> TopAlbums {
-			get{
-				IList<string>	retValue = null;
-
-				if(( SupportInfo != null ) &&
-				   ( SupportInfo.TopAlbums != null )) {
-				retValue = SupportInfo.TopAlbums.Items;
-				}
-
-				return( retValue );
-			}
+		public ObservableCollectionEx<LinkNode> TopAlbums {
+			get{ return( mTopAlbums ); }
 		}
 
 		[DependsUpon( "SupportInfo" )]
@@ -133,17 +139,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "SupportInfo" )]
-		public IList<string> BandMembers {
-			get {
-				IList<string>	retValue = null;
-
-				if(( SupportInfo != null ) &&
-				   ( SupportInfo.BandMembers != null )) {
-					retValue = SupportInfo.BandMembers.Items;
-				}
-
-				return( retValue );
-			}
+		public ObservableCollectionEx<LinkNode> BandMembers {
+			get { return( mBandMembers ); }
 		}
 	}
 }

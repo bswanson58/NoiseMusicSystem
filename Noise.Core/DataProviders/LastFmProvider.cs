@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using CuttingEdge.Conditions;
@@ -98,8 +99,8 @@ namespace Noise.Core.DataProviders {
 
 				var	artwork = database.Database.ExecuteScalar( "SELECT DbArtwork WHERE AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork;
 				var bio = ( from DbTextInfo info in database.Database where info.AssociatedItem == artistId && info.ContentType == ContentType.Biography select info ).FirstOrDefault();
-				var similarArtists = ( from DbAssociatedItems item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault();
-				var topAlbums = ( from DbAssociatedItems item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select  item ).FirstOrDefault();
+				var similarArtists = ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault();
+				var topAlbums = ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select  item ).FirstOrDefault();
 				if( artwork == null ) {
 					artwork = new DbArtwork( artistId, ContentType.ArtistPrimaryImage );
 
@@ -116,14 +117,14 @@ namespace Noise.Core.DataProviders {
 				bio.UpdateExpiration();
 
 				if( similarArtists == null ) {
-					similarArtists = new DbAssociatedItems( artistId, ContentType.SimilarArtists );
+					similarArtists = new DbAssociatedItemList( artistId, ContentType.SimilarArtists );
 
 					database.Insert( similarArtists );
 				}
 				similarArtists.UpdateExpiration();
 
 				if( topAlbums == null ) {
-					topAlbums = new DbAssociatedItems( artistId, ContentType.TopAlbums );
+					topAlbums = new DbAssociatedItemList( artistId, ContentType.TopAlbums );
 
 					database.Insert( topAlbums );
 				}
@@ -149,17 +150,30 @@ namespace Noise.Core.DataProviders {
 					}
 
 					var	sim = artistMatch.GetSimilar( 5 );
-					similarArtists.Items = new string[sim.GetLength( 0 )];
+					var artistList = new List<string>();
 					for( int index = 0; index < sim.GetLength( 0 ); index++ ) {
-						similarArtists.Items[index] = sim[index].Name;
+						artistList.Add( sim[index].Name );
 					}
+					similarArtists.SetItems( artistList );
+
+					var artistCache = new DatabaseCache<DbArtist>( from DbArtist dbArtist in database.Database select dbArtist );
+					foreach( var similarArtist in similarArtists.Items ) {
+						var artistName = similarArtist.Item;
+						var art = artistCache.Find( a => String.Compare( a.Name, artistName, true ) == 0 );
+						if( art != null ) {
+							similarArtist.SetAssociatedId( art.DbId );
+						}
+					}
+
 					similarArtists.IsContentAvailable = true;
 
 					var top = artistMatch.GetTopAlbums();
-					topAlbums.Items = new string[top.GetLength( 0 ) > 5 ? 5 : top.GetLength( 0 )];
-					for( int index = 0; index < topAlbums.Items.GetLength( 0 ); index++ ) {
-						topAlbums.Items[index] = top[index].Item.Name;
+					var albumList = new List<string>();
+
+					for( int index = 0; index < ( top.GetLength( 0 ) > 5 ? 5 : top.GetLength( 0 )); index++ ) {
+						albumList.Add( top[index].Item.Name );
 					}
+					topAlbums.SetItems( albumList );
 					topAlbums.IsContentAvailable = true;
 
 					mLog.LogInfo( "LastFm updated artist: {0}", artist.Name );

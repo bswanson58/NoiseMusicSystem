@@ -1,13 +1,12 @@
-﻿using Microsoft.Practices.Composite.Events;
+﻿using System;
 using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Adapters {
 	public class LinkNode : ViewModelBase {
-		private readonly IEventAggregator	mEvents;
-
-		public	string		DisplayText { get; private set; }
-		public	string		LinkText { get; private set; }
-		public	bool		IsLinked { get; private set; }
+		public	string					DisplayText { get; private set; }
+		public	long					LinkId { get; private set; }
+		public	bool					IsLinked { get; private set; }
+		private readonly Action<long>	mLinkAction;
 
 		public LinkNode( string displayText ) {
 			DisplayText = displayText;
@@ -15,18 +14,17 @@ namespace Noise.UI.Adapters {
 			IsLinked = false;
 		}
 
-		public LinkNode( IEventAggregator eventAggregator, string displayText, string linkText ) {
-			mEvents = eventAggregator;
-
+		public LinkNode( string displayText, long linkId, Action<long> linkAction ) {
 			DisplayText = displayText;
-			LinkText = linkText;
+			LinkId = linkId;
+			mLinkAction = linkAction;
 
 			IsLinked = true;
 		}
 
 		public void Execute_LinkClicked() {
-			if( mEvents != null ) {
-				
+			if( mLinkAction != null ) {
+				mLinkAction( LinkId );
 			}
 		}
 	}

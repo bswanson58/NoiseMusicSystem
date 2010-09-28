@@ -10,6 +10,10 @@ namespace Noise.Core.Database {
 			mCacheList = new List<T>( cacheSource );
 		}
 
+		public List<T> List {
+			get{ return( mCacheList ); }
+		}
+
 		public void Add( T item ) {
 			mCacheList.Add( item );
 		}

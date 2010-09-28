@@ -138,7 +138,7 @@
     <Compile Include="Dto\DbAlbum.cs" />
     <Compile Include="Dto\DbArtist.cs" />
     <Compile Include="Dto\DbPlayHistory.cs" />
-    <Compile Include="Dto\DbAssociatedItems.cs" />
+    <Compile Include="Dto\DbAssociatedItemList.cs" />
     <Compile Include="Dto\DbTrack.cs" />
     <Compile Include="Dto\ExpiringContent.cs" />
     <Compile Include="Dto\FileTypes.cs" />

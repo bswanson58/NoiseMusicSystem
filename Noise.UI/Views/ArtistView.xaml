@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Noise.UI.ValueConverters"
              xmlns:adapters="clr-namespace:Noise.UI.Adapters"
+             xmlns:Controls="clr-namespace:Noise.UI.Controls"
+             xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
@@ -43,12 +45,28 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <ListBox Grid.Column="0" ItemsSource="{Binding Path=TopAlbums}"/>
-            <ListBox Grid.Column="1" ItemsSource="{Binding Path=BandMembers}"/>
+            <ListBox Grid.Column="0" ItemsSource="{Binding Path=TopAlbums}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Path=DisplayText}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <ListBox Grid.Column="1" ItemsSource="{Binding Path=BandMembers}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Path=DisplayText}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
             <ListBox Grid.Column="2" ItemsSource="{Binding Path=SimilarArtist}">
                 <ListBox.ItemTemplate>
-                    <DataTemplate>     
-                        <Label Content="{Binding Path=DisplayText}" />
+                    <DataTemplate>
+                        <Controls:LinkLabel Padding="0" Content="{Binding Path=DisplayText}" IsEnabled="{Binding Path=IsLinked}"  LinkLabelBehavior="HoverUnderline">
+                            <EventCommandTriggers:CommandSource.Trigger>
+                                <EventCommandTriggers:EventCommandTrigger RoutedEvent="Controls:LinkLabel.Click" Command="{Binding Path=LinkClicked}"/>
+                            </EventCommandTriggers:CommandSource.Trigger>
+                        </Controls:LinkLabel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

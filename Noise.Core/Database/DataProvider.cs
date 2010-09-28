@@ -99,6 +99,23 @@ namespace Noise.Core.Database {
 			}
 		}
 
+		public DbArtist GetArtist( long dbid ) {
+			var			database = mDatabaseManager.ReserveDatabase();
+			DbArtist	retValue = null;
+
+			try {
+				retValue = ( from DbArtist artist in database.Database where artist.DbId == dbid select artist ).FirstOrDefault();
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetArtist:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
 		public DataProviderList<DbArtist> GetArtistList() {
 			DataProviderList<DbArtist>	retValue = null;
 
@@ -293,9 +310,9 @@ namespace Noise.Core.Database {
 
 				retValue = new ArtistSupportInfo(( from DbTextInfo bio in database.Database where bio.AssociatedItem == artistId && bio.ContentType == ContentType.Biography select bio ).FirstOrDefault(),
 												   database.Database.ExecuteScalar( "SELECT DbArtwork Where AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork,
-												 ( from DbAssociatedItems item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault(),
-												 ( from DbAssociatedItems item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select item ).FirstOrDefault(),
-												 ( from DbAssociatedItems item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select item ).FirstOrDefault());
+												 ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault(),
+												 ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select item ).FirstOrDefault(),
+												 ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select item ).FirstOrDefault());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetArtistSupportInfo:", ex );

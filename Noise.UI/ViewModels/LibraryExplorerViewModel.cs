@@ -19,6 +19,7 @@ namespace Noise.UI.ViewModels {
 		private ObservableCollectionEx<ExplorerTreeNode>	mTreeItems;
 		private List<string>					mSearchOptions;
 		private readonly LibraryExplorerFilter	mExplorerFilter;
+		private DbArtist						mCurrentArtist;
 
 		public LibraryExplorerViewModel() {
 			mExplorerFilter = new LibraryExplorerFilter { IsEnabled = false };
@@ -36,15 +37,27 @@ namespace Noise.UI.ViewModels {
 
 				mEvents = mContainer.Resolve<IEventAggregator>();
 				mEvents.GetEvent<Events.ExplorerItemSelected>().Subscribe( OnExplorerItemSelected );
+				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistRequested );
 			}
 		}
 
 		public void OnExplorerItemSelected( object item ) {
 			if( item is DbArtist ) {
+				mCurrentArtist = item as DbArtist;
+
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( item as DbArtist );
 			}
 			else if( item is DbAlbum ) {
 				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( item as DbAlbum );
+			}
+		}
+
+		private void OnArtistRequested( DbArtist artist ) {
+			if(( artist != null ) &&
+			   ( mCurrentArtist != null ) &&
+			   ( mCurrentArtist.DbId != artist.DbId )) {
+				mViewStrategy.ClearCurrentSearch();
+				mViewStrategy.Search( artist.Name, new List<string> { "Artist" });
 			}
 		}
 

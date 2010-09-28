@@ -34,10 +34,10 @@ namespace Noise.Core.DataBuilders {
 
 			if( database != null ) {
 				try {
-					var artists = from DbArtist artist in database.Database select artist;
+					var artistCache = new DatabaseCache<DbArtist>( from DbArtist artist in database.Database select artist );
 					var albumCache = new DatabaseCache<DbAlbum>( from DbAlbum album in database.Database select album );
 
-					foreach( var artist in artists ) {
+					foreach( var artist in artistCache.List ) {
 						mLog.LogInfo( string.Format( "Building summary data for: {0}", artist.Name ));
 
 						var artistId = artist.DbId;
@@ -108,6 +108,27 @@ namespace Noise.Core.DataBuilders {
 
 						if( mStop ) {
 							break;
+						}
+					}
+
+					mLog.LogInfo( "Building similar artist associations." );
+					var similarArtistLists = from DbAssociatedItemList list in database.Database where list.ContentType == ContentType.SimilarArtists select list;
+					foreach( var similarArtistList in similarArtistLists ) {
+						bool	needUpdate = false;
+
+						foreach( var similarArtist in similarArtistList.Items ) {
+							var artistName = similarArtist.Item;
+							var dbArtist = artistCache.Find( artist => String.Compare( artist.Name, artistName, true ) == 0 );
+
+							if( dbArtist != null ) {
+								similarArtist.SetAssociatedId( dbArtist.DbId );
+
+								needUpdate = true;
+							}
+						}
+
+						if( needUpdate ) {
+							database.Store( similarArtistList );
 						}
 					}
 				}

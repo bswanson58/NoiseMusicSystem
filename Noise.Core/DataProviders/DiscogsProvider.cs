@@ -285,10 +285,10 @@ namespace Noise.Core.DataProviders {
 					if(( response.StatusCode == HttpStatusCode.OK ) &&
 					   ( response.ContentEntity != null )) {
 						var artistId = forArtist.DbId;
-						var	bandMembers = ( from DbAssociatedItems item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select  item ).FirstOrDefault();
+						var	bandMembers = ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select  item ).FirstOrDefault();
 
 						if( bandMembers == null ) {
-							bandMembers = new DbAssociatedItems( artistId, ContentType.BandMembers );
+							bandMembers = new DbAssociatedItemList( artistId, ContentType.BandMembers );
 
 							database.Insert( bandMembers );
 						}
@@ -298,9 +298,7 @@ namespace Noise.Core.DataProviders {
 						   ( response.ContentEntity.Members.Count > 0 )) {
 
 							bandMembers.IsContentAvailable = true;
-
-							bandMembers.Items = new string[response.ContentEntity.Members.Count];
-							response.ContentEntity.Members.CopyTo( bandMembers.Items );
+							bandMembers.SetItems( response.ContentEntity.Members );
 
 						}
 						else {
