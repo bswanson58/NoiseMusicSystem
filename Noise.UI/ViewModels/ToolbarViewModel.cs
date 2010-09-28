@@ -41,7 +41,7 @@ namespace Noise.UI.ViewModels {
 				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 				var configuration = systemConfig.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
 
-				if( dialogService.ShowDialog( DialogNames.DatabaseConfiguration, configuration ) == true ) {
+				if( dialogService.ShowDialog( DialogNames.DatabaseConfiguration, configuration, new DatabaseConfigurationDialogModel( dialogService )) == true ) {
 					systemConfig.Save( configuration );
 				}
 			}

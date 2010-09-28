@@ -8,6 +8,7 @@ namespace Noise.Infrastructure.Configuration {
 		private	const string	cServerNameProperty = "serverName";
 		private const string	cDatabaseUserNameProperty = "databaseUserName";
 		private const string	cDatabasePasswordProperty = "databasePassword";
+		private const string	cSearchIndexProperty = "searchIndexLocation";
 
 		[ConfigurationPropertyAttribute( cDatabaseNameProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "Noise" )]
 		public string DatabaseName {
@@ -31,6 +32,12 @@ namespace Noise.Infrastructure.Configuration {
 		public string UserPassword {
 			get { return ((string)( base[cDatabasePasswordProperty] )); }
 			set { base[cDatabasePasswordProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cSearchIndexProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "" )]
+		public string SearchIndexLocation {
+			get { return ((string)( base[cSearchIndexProperty] )); }
+			set { base[cSearchIndexProperty] = value; }
 		}
 	}
 }

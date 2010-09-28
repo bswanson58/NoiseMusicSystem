@@ -6,6 +6,7 @@
 		void			Shutdown();
 
 		IDataProvider	DataProvider { get; }
+		ISearchProvider	SearchProvider { get; }
 		IPlayQueue		PlayQueue { get; }
 		IPlayHistory	PlayHistory { get; }
 		IPlayController	PlayController { get; }

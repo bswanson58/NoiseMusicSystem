@@ -26,9 +26,11 @@ namespace Noise.Core {
 		private bool						mContinueExploring;
 		private IFolderExplorer				mFolderExplorer;
 		private IMetaDataExplorer			mMetaDataExplorer;
+		private ISearchBuilder				mSearchBuilder;
 		private	ISummaryBuilder				mSummaryBuilder;
 
 		public	IDataProvider				DataProvider { get; private set; }
+		public	ISearchProvider				SearchProvider { get; private set; }
 		public	IPlayQueue					PlayQueue { get; private set; }
 		public	IPlayHistory				PlayHistory { get; private set; }
 		public	IPlayController				PlayController { get; private set; }
@@ -53,6 +55,7 @@ namespace Noise.Core {
 
 			if( mDatabaseManager.Initialize()) {
 				DataProvider = mContainer.Resolve<IDataProvider>();
+				SearchProvider = mContainer.Resolve<ISearchProvider>();
 
 				PlayQueue = mContainer.Resolve<IPlayQueue>();
 				PlayHistory = mContainer.Resolve<IPlayHistory>();
@@ -153,6 +156,11 @@ namespace Noise.Core {
 					mSummaryBuilder.BuildSummaryData();
 				}
 
+				if( mContinueExploring ) {
+					mSearchBuilder = mContainer.Resolve<ISearchBuilder>();
+					mSearchBuilder.BuildSearchIndex();
+				}
+
 				mLog.LogMessage( "Explorer Finished." );
 
 				if( results.HaveChanges ) {
@@ -203,6 +211,10 @@ namespace Noise.Core {
 
 			if( mSummaryBuilder != null ) {
 				mSummaryBuilder.Stop();
+			}
+
+			if( mSearchBuilder != null ) {
+				mSearchBuilder.Stop();
 			}
 		}
 

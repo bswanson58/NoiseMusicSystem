@@ -166,6 +166,7 @@
     <Compile Include="ViewModels\AlbumViewModel.cs" />
     <Compile Include="ViewModels\ApplicationLogDialogModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
+    <Compile Include="ViewModels\DatabaseConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\ExplorerStrategyArtistAlbum.cs" />
     <Compile Include="ViewModels\IExplorerViewStrategy.cs" />
     <Compile Include="ViewModels\LibraryConfigurationDialogModel.cs" />

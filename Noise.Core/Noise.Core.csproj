@@ -82,6 +82,9 @@
     <Reference Include="Hammock.ClientProfile">
       <HintPath>..\lib\Hammock\Hammock.ClientProfile.dll</HintPath>
     </Reference>
+    <Reference Include="Lucene.Net">
+      <HintPath>..\lib\Lucene.NET\v2.9.2\Lucene.Net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Composite">
       <HintPath>..\lib\CAL\Microsoft.Practices.Composite.dll</HintPath>
     </Reference>
@@ -125,10 +128,13 @@
     <Compile Include="Database\DatabaseStatistics.cs" />
     <Compile Include="Database\DataProvider.cs" />
     <Compile Include="Database\IDatabaseManager.cs" />
+    <Compile Include="Database\LuceneSearchProvider.cs" />
     <Compile Include="DataBuilders\BackgroundContentExplorer.cs" />
     <Compile Include="DataBuilders\ContentManager.cs" />
     <Compile Include="DataBuilders\IContentManager.cs" />
     <Compile Include="DataBuilders\IMetaDataExplorer.cs" />
+    <Compile Include="DataBuilders\ISearchBuilder.cs" />
+    <Compile Include="DataBuilders\SearchBuilder.cs" />
     <Compile Include="DataProviders\DiscogsProvider.cs" />
     <Compile Include="DataProviders\IMetaDataProvider.cs" />
     <Compile Include="DataBuilders\ISummaryBuilder.cs" />
