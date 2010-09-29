@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
@@ -44,6 +45,10 @@ namespace Noise.Infrastructure.Dto {
 					Items[index] = new DbAssociatedItem( items[index]);
 				}
 			} 
+		}
+
+		public IEnumerable<string> GetItems() {
+			return( Items.Select( item => item.Item ).ToList());
 		}
 
 		[Export("PersistenceType")]

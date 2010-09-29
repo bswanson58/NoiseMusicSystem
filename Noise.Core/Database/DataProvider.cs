@@ -178,6 +178,23 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public DbAlbum GetAlbum( long dbid ) {
+			var			database = mDatabaseManager.ReserveDatabase();
+			DbAlbum		retValue = null;
+
+			try {
+				retValue = ( from DbAlbum album in database.Database where album.DbId == dbid select album ).FirstOrDefault();
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetAlbum:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
 		public DataProviderList<DbAlbum> GetAlbumList( DbArtist forArtist ) {
 			Condition.Requires( forArtist ).IsNotNull();
 

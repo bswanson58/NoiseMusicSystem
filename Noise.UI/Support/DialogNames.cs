@@ -6,5 +6,6 @@
 		public const string		LibraryConfiguration	= "LibraryConfiguration";
 		public const string		InternetStreamEdit		= "InternetStreamEdit";
 		public const string		LibraryExplorerFilter	= "LibraryExplorerFilter";
+		public const string		Search					= "Search";
 	}
 }
