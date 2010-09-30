@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using Noise.UI.Adapters.DynamicProxies;
+using Application = System.Windows.Application;
 
 namespace Noise.UI.Support {
 	public class DialogService : IDialogService {
@@ -35,6 +36,7 @@ namespace Noise.UI.Support {
 					proxy.Validate();
 
 					dialogWindow.DataContext = dialogModel;
+					dialogWindow.Owner = Application.Current.MainWindow;
 
 					retValue = dialogWindow.ShowDialog();
 					if( retValue.GetValueOrDefault( false ) ) {
@@ -72,6 +74,7 @@ namespace Noise.UI.Support {
 					proxy.Validate();
 
 					dialogWindow.DataContext = dialogModel;
+					dialogWindow.Owner = Application.Current.MainWindow;
 
 					retValue = dialogWindow.ShowDialog();
 					if( retValue.GetValueOrDefault( false ) ) {
@@ -101,6 +104,7 @@ namespace Noise.UI.Support {
 					dialogContent.DataContext = viewModel;
 					dialogModel.DialogContent = dialogContent;
 					dialogWindow.DataContext = dialogModel;
+					dialogWindow.Owner = Application.Current.MainWindow;
 
 					retValue = dialogWindow.ShowDialog();
 				}

@@ -11,7 +11,7 @@
         ResizeMode="NoResize"
         Title="{Binding ElementName=Content, Path=Content.Tag}"
         WindowStyle="ToolWindow"
-        Topmost="True"
+        Topmost="False"
         DataContext="{Binding DialogWindowModel, Source={StaticResource ViewModelLocator}}"
         Behaviours:DialogCloser.DialogResult="{Binding DialogResult}"
 >
