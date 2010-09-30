@@ -2,7 +2,6 @@
 using System.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -37,7 +36,7 @@ namespace Noise.Core.DataBuilders {
 
 							var artistId = artist.DbId;
 							var associatedItems = from DbAssociatedItemList itemList in database.Database 
-												  where itemList.AssociatedItem == artistId && itemList.IsContentAvailable select itemList;
+												  where itemList.Artist == artistId && itemList.IsContentAvailable select itemList;
 							foreach( var item in associatedItems ) {
 								var itemType = eSearchItemType.Unknown;
 
@@ -61,7 +60,7 @@ namespace Noise.Core.DataBuilders {
 							}
 
 							var biography = ( from DbTextInfo text in database.Database 
-											  where text.AssociatedItem == artistId & text.ContentType == ContentType.Discography && text.IsContentAvailable 
+											  where text.Artist == artistId & text.ContentType == ContentType.Discography && text.IsContentAvailable 
 											  select text ).FirstOrDefault();
 							if( biography != null ) {
 								mNoiseManager.SearchProvider.AddSearchItem( artist, eSearchItemType.Biography, biography.Text );
@@ -73,7 +72,7 @@ namespace Noise.Core.DataBuilders {
 
 								var albumId = album.DbId;
 								var infoList = from DbTextInfo text in database.Database
-											   where text.AssociatedItem == albumId && text.ContentType == ContentType.TextInfo select text;
+											   where text.Album == albumId && text.ContentType == ContentType.TextInfo select text;
 
 								foreach( var info in infoList ) {
 									mNoiseManager.SearchProvider.AddSearchItem( artist, album, eSearchItemType.TextInfo, info.Text );

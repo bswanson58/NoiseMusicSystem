@@ -325,11 +325,11 @@ namespace Noise.Core.Database {
 				parms["artistId"] = artistId;
 				parms["artistImage"] = ContentType.ArtistPrimaryImage;
 
-				retValue = new ArtistSupportInfo(( from DbTextInfo bio in database.Database where bio.AssociatedItem == artistId && bio.ContentType == ContentType.Biography select bio ).FirstOrDefault(),
-												   database.Database.ExecuteScalar( "SELECT DbArtwork Where AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork,
-												 ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault(),
-												 ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select item ).FirstOrDefault(),
-												 ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select item ).FirstOrDefault());
+				retValue = new ArtistSupportInfo(( from DbTextInfo bio in database.Database where bio.Artist == artistId && bio.ContentType == ContentType.Biography select bio ).FirstOrDefault(),
+												   database.Database.ExecuteScalar( "SELECT DbArtwork Where Artist = @artistId AND ContentType = @artistImage", parms ) as DbArtwork,
+												 ( from DbAssociatedItemList item in database.Database where item.Artist == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault(),
+												 ( from DbAssociatedItemList item in database.Database where item.Artist == artistId && item.ContentType == ContentType.TopAlbums select item ).FirstOrDefault(),
+												 ( from DbAssociatedItemList item in database.Database where item.Artist == artistId && item.ContentType == ContentType.BandMembers select item ).FirstOrDefault());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetArtistSupportInfo:", ex );
@@ -354,25 +354,16 @@ namespace Noise.Core.Database {
 
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
-				var albumId = GetObjectIdentifier( forAlbum );
-				var albumTrack = ( from DbTrack track in database.Database where track.Album == albumId select track ).FirstOrDefault();
+				var parms = database.Database.CreateParameters();
+				var albumId = forAlbum.DbId;
 
-				if( albumTrack != null ) {
-					var trackId = GetObjectIdentifier( albumTrack );
-					var	fileTrack = ( from StorageFile file in database.Database where file.MetaDataPointer == trackId select file ).FirstOrDefault();
+				parms["albumId"] = forAlbum.DbId;
+				parms["coverType"] = ContentType.AlbumCover;
+				parms["otherType"] = ContentType.AlbumArtwork;
 
-					if( fileTrack != null ) {
-						var parms = database.Database.CreateParameters();
-
-						parms["folderId"] = fileTrack.ParentFolder;
-						parms["coverType"] = ContentType.AlbumCover;
-						parms["otherType"] = ContentType.AlbumArtwork;
-
-						retValue = new AlbumSupportInfo( database.Database.ExecuteQuery( "SELECT DbArtwork WHERE FolderLocation = @folderId AND ContentType = @coverType", parms ).OfType<DbArtwork>().ToArray(),
-														 database.Database.ExecuteQuery( "SELECT DbArtwork WHERE FolderLocation = @folderId AND ContentType = @otherType", parms ).OfType<DbArtwork>().ToArray(),
-														( from DbTextInfo info in database.Database where info.FolderLocation == fileTrack.ParentFolder select info ).ToArray());
-					}
-				}
+				retValue = new AlbumSupportInfo( database.Database.ExecuteQuery( "SELECT DbArtwork WHERE Album = @albumId AND ContentType = @coverType", parms ).OfType<DbArtwork>().ToArray(),
+												 database.Database.ExecuteQuery( "SELECT DbArtwork WHERE Album = @albumId AND ContentType = @otherType", parms ).OfType<DbArtwork>().ToArray(),
+												( from DbTextInfo info in database.Database where info.Album == albumId select info ).ToArray());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetAlbumSupportInfo:", ex );

@@ -84,7 +84,7 @@ namespace Noise.Core.DataBuilders {
 							album.CalculatedGenre = DetermineTopGenre( trackGenre );
 							AddGenre( albumGenre, album.CalculatedGenre );
 
-							album.CalculatedRating = (Int16)( trackRating / album.TrackCount );
+							album.CalculatedRating = trackRating > 0 ? (Int16)( trackRating / album.TrackCount ) : (Int16)0;
 							album.MaxChildRating = (Int16)maxTrackRating;
 							albumRating += album.CalculatedRating;
 							if( maxTrackRating > maxAlbumRating ) {
@@ -101,7 +101,7 @@ namespace Noise.Core.DataBuilders {
 
 						artist.AlbumCount = (Int16)albumCount;
 						artist.CalculatedGenre = DetermineTopGenre( albumGenre );
-						artist.CalculatedRating = (Int16)( albumRating / albumCount );
+						artist.CalculatedRating = albumRating > 0 ? (Int16)( albumRating / albumCount ) : (Int16)0;
 						artist.MaxChildRating = (Int16)maxAlbumRating;
 
 						database.Store( artist );

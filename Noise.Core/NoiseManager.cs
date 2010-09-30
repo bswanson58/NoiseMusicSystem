@@ -156,7 +156,8 @@ namespace Noise.Core {
 					mSummaryBuilder.BuildSummaryData();
 				}
 
-				if( mContinueExploring ) {
+				if(( mContinueExploring ) &&
+				   ( results.HaveChanges )) {
 					mSearchBuilder = mContainer.Resolve<ISearchBuilder>();
 					mSearchBuilder.BuildSearchIndex();
 				}

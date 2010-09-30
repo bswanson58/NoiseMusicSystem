@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
@@ -41,8 +42,6 @@ namespace Noise.Core.DataBuilders {
 
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
-				var		artworkProvider = new FileArtworkProvider( mContainer );
-				var		textProvider =new FileTextProvider( mContainer );
 				var		fileEnum = from StorageFile file in database.Database where file.FileType == eFileType.Undetermined orderby file.ParentFolder select file;
 
 				mArtistCache = new DatabaseCache<DbArtist>( from DbArtist artist in database.Database select artist );
@@ -57,15 +56,11 @@ namespace Noise.Core.DataBuilders {
 							break;
 
 						case eFileType.Picture:
-							artworkProvider.BuildMetaData( file );
-
-							database.Store( file );
+							BuildArtworkMetaData( database, file );
 							break;
 
 						case eFileType.Text:
-							textProvider.BuildMetaData( file );
-
-							database.Store( file );
+							BuildInfoMetaData( database, file );
 							break;
 					}
 
@@ -145,6 +140,74 @@ namespace Noise.Core.DataBuilders {
 				else {
 					mLog.LogMessage( "Artist cannot determined for file: {0}", StorageHelpers.GetPath( database.Database, file ));
 				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( String.Format( "Building Music Metadata for: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
+			}
+		}
+
+		private void BuildInfoMetaData( IDatabase database, StorageFile file ) {
+			Condition.Requires( file ).IsNotNull();
+
+			try {
+				var	info = new DbTextInfo( file.DbId, ContentType.TextInfo )
+											{ Source = InfoSource.File, FolderLocation = file.ParentFolder, IsContentAvailable = true };
+				var dataProviders = new List<IMetaDataProvider> { mStrategyProvider.GetProvider( file ),
+																  mFileNameProvider.GetProvider( file ),
+																  mDefaultProvider.GetProvider( file ) };
+
+				var artist = DetermineArtist( database, dataProviders );
+				if( artist != null ) {
+					info.Artist = artist.DbId;
+
+					var album = DetermineAlbum( database, dataProviders, artist );
+
+					if( album != null ) {
+						info.Album = album.DbId;
+					}
+				}
+
+				var	fileName = StorageHelpers.GetPath( database.Database, file );
+				info.Text = File.ReadAllText( fileName );
+
+				database.Insert( info );
+
+				file.MetaDataPointer = info.DbId;
+				database.Store( file );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( String.Format( "Building Music Metadata for: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
+			}
+		}
+
+		private void BuildArtworkMetaData( IDatabase database, StorageFile file ) {
+			Condition.Requires( file ).IsNotNull();
+
+			try {
+				var	artwork = new DbArtwork( file.DbId, StorageHelpers.IsCoverFile( file.Name ) ? ContentType.AlbumCover : ContentType.AlbumArtwork )
+											{ Source = InfoSource.File, FolderLocation = file.ParentFolder, IsContentAvailable = true };
+				var dataProviders = new List<IMetaDataProvider> { mStrategyProvider.GetProvider( file ),
+																  mFileNameProvider.GetProvider( file ),
+																  mDefaultProvider.GetProvider( file ) };
+
+				var artist = DetermineArtist( database, dataProviders );
+				if( artist != null ) {
+					artwork.Artist = artist.DbId;
+
+					var album = DetermineAlbum( database, dataProviders, artist );
+
+					if( album != null ) {
+						artwork.Album = album.DbId;
+					}
+				}
+
+				var	fileName = StorageHelpers.GetPath( database.Database, file );
+				artwork.Image = File.ReadAllBytes( fileName );
+
+				database.Insert( artwork );
+
+				file.MetaDataPointer = artwork.DbId;
+				database.Store( file );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( String.Format( "Building Music Metadata for: {0}", StorageHelpers.GetPath( database.Database, file )), ex );

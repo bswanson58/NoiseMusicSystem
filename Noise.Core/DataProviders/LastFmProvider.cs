@@ -102,7 +102,7 @@ namespace Noise.Core.DataProviders {
 				var similarArtists = ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault();
 				var topAlbums = ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select  item ).FirstOrDefault();
 				if( artwork == null ) {
-					artwork = new DbArtwork( artistId, ContentType.ArtistPrimaryImage );
+					artwork = new DbArtwork( artistId, ContentType.ArtistPrimaryImage ) { Artist = artist.DbId };
 
 					database.Insert( artwork );
 				}
@@ -110,21 +110,21 @@ namespace Noise.Core.DataProviders {
 				database.Store( artwork );
 
 				if( bio == null ) {
-					bio = new DbTextInfo( artistId, ContentType.Biography );
+					bio = new DbTextInfo( artistId, ContentType.Biography ) { Artist = artist.DbId };
 
 					database.Insert( bio );
 				}
 				bio.UpdateExpiration();
 
 				if( similarArtists == null ) {
-					similarArtists = new DbAssociatedItemList( artistId, ContentType.SimilarArtists );
+					similarArtists = new DbAssociatedItemList( artistId, ContentType.SimilarArtists ) { Artist = artist.DbId };
 
 					database.Insert( similarArtists );
 				}
 				similarArtists.UpdateExpiration();
 
 				if( topAlbums == null ) {
-					topAlbums = new DbAssociatedItemList( artistId, ContentType.TopAlbums );
+					topAlbums = new DbAssociatedItemList( artistId, ContentType.TopAlbums ) { Artist = artist.DbId };
 
 					database.Insert( topAlbums );
 				}
@@ -202,14 +202,13 @@ namespace Noise.Core.DataProviders {
 
 				var	artwork = database.Database.ExecuteScalar( "SELECT DbArtwork WHERE AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork;
 				if( artwork == null ) {
-					artwork = new DbArtwork( parentId, ContentType.ArtistPrimaryImage );
+					artwork = new DbArtwork( parentId, ContentType.ArtistPrimaryImage )
+											{ Artist = parentId, Source = InfoSource.External, IsContentAvailable = true };
 
 					database.Insert( artwork );
 				}
 
 				artwork.Image = imageData;
-				artwork.Source = InfoSource.External;
-				artwork.IsContentAvailable = true;
 				artwork.UpdateExpiration();
 
 				database.Store( artwork );
