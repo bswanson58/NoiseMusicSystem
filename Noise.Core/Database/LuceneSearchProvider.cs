@@ -33,6 +33,34 @@ namespace Noise.Core.Database {
 			if( album != null ) {
 				mDocument.Add( new Field( SearchItemFieldName.cAlbumId, album.DbId.ToString(), Field.Store.YES, Field.Index.NO ));
 			}
+
+			var	boost = 1.0f;
+			switch( itemType ) {
+				case eSearchItemType.Album:
+					boost = 1.3f;
+					break;
+
+				case eSearchItemType.Artist:
+					boost = 1.2f;
+					break;
+
+				case eSearchItemType.Track:
+					boost = 1.1f;
+					break;
+
+				case eSearchItemType.BandMember:
+				case eSearchItemType.Biography:
+				case eSearchItemType.TextInfo:
+				case eSearchItemType.TopAlbum:
+					break;
+
+				case eSearchItemType.Discography:
+				case eSearchItemType.SimilarArtist:
+					boost = 0.8f;
+					break;
+			}
+
+			mDocument.SetBoost( boost );
 		}
 
 		internal SearchItemDetails( IndexWriter writer, eSearchItemType itemType, DbArtist artist ) :
