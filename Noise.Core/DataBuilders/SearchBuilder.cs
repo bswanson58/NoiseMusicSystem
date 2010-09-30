@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
@@ -18,7 +19,7 @@ namespace Noise.Core.DataBuilders {
 			mLog = mContainer.Resolve<ILog>();
 		}
 
-		public void BuildSearchIndex() {
+		public void BuildSearchIndex( IEnumerable<DbArtist> aRtistList ) {
 			mStopBuilding = false;
 
 			var databaseMgr = mContainer.Resolve<IDatabaseManager>();

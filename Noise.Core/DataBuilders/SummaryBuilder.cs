@@ -18,17 +18,17 @@ namespace Noise.Core.DataBuilders {
 			mLog = container.Resolve<ILog>();
 		}
 
-		public void BuildSummaryData() {
+		public void BuildSummaryData( IEnumerable<DbArtist> artistList ) {
 			mStop = false;
 
-			SummarizeArtists();
+			SummarizeArtists( artistList );
 		}
 
 		public void Stop() {
 			mStop = true;
 		}
 
-		private void SummarizeArtists() {
+		private void SummarizeArtists( IEnumerable<DbArtist> artistList ) {
 			var databaseMgr = mContainer.Resolve<IDatabaseManager>();
 			var database = databaseMgr.ReserveDatabase();
 
@@ -37,77 +37,81 @@ namespace Noise.Core.DataBuilders {
 					var artistCache = new DatabaseCache<DbArtist>( from DbArtist artist in database.Database select artist );
 					var albumCache = new DatabaseCache<DbAlbum>( from DbAlbum album in database.Database select album );
 
-					foreach( var artist in artistCache.List ) {
-						mLog.LogInfo( string.Format( "Building summary data for: {0}", artist.Name ));
+					foreach( var inputArtist in artistList ) {
+						var	artist = database.ValidateOnThread( inputArtist ) as DbArtist;
 
-						var artistId = artist.DbId;
-						var	albums = albumCache.FindList( album => album.Artist == artistId );
-						var albumGenre = new Dictionary<string, int>();
-						var albumCount = 0;
-						var albumRating = 0;
-						var maxAlbumRating = 0;
+						if( artist != null ) {
+							mLog.LogInfo( string.Format( "Building summary data for: {0}", artist.Name ));
 
-						foreach( var album in albums ) {
-							var albumId = album.DbId;
-							var tracks = from DbTrack track in database.Database where track.Album == albumId select track;
-							var years = new List<UInt32>();
-							var trackGenre = new Dictionary<string, int>();
-							var trackRating = 0;
-							var maxTrackRating = 0;
+							var artistId = artist.DbId;
+							var	albums = albumCache.FindList( album => album.Artist == artistId );
+							var albumGenre = new Dictionary<string, int>();
+							var albumCount = 0;
+							var albumRating = 0;
+							var maxAlbumRating = 0;
 
-							album.TrackCount = 0;
+							foreach( var album in albums ) {
+								var albumId = album.DbId;
+								var tracks = from DbTrack track in database.Database where track.Album == albumId select track;
+								var years = new List<UInt32>();
+								var trackGenre = new Dictionary<string, int>();
+								var trackRating = 0;
+								var maxTrackRating = 0;
 
-							foreach( var track in tracks ) {
-								if(!years.Contains( track.PublishedYear )) {
-									years.Add( track.PublishedYear );
+								album.TrackCount = 0;
+
+								foreach( var track in tracks ) {
+									if(!years.Contains( track.PublishedYear )) {
+										years.Add( track.PublishedYear );
+									}
+
+									AddGenre( trackGenre, track.CalculatedGenre );
+									album.TrackCount++;
+									trackRating += track.Rating;
+
+									if( track.Rating > maxTrackRating ) {
+										maxTrackRating = track.Rating;
+									}
 								}
 
-								AddGenre( trackGenre, track.CalculatedGenre );
-								album.TrackCount++;
-								trackRating += track.Rating;
+								if( years.Count == 0 ) {
+									album.PublishedYear = Constants.cUnknownYear;
+								}
+								else if( years.Count == 1 ) {
+									album.PublishedYear = years.First();
+								}
+								else {
+									album.PublishedYear = Constants.cVariousYears;
+								}
 
-								if( track.Rating > maxTrackRating ) {
-									maxTrackRating = track.Rating;
+								album.CalculatedGenre = DetermineTopGenre( trackGenre );
+								AddGenre( albumGenre, album.CalculatedGenre );
+
+								album.CalculatedRating = trackRating > 0 ? (Int16)( trackRating / album.TrackCount ) : (Int16)0;
+								album.MaxChildRating = (Int16)maxTrackRating;
+								albumRating += album.CalculatedRating;
+								if( maxTrackRating > maxAlbumRating ) {
+									maxAlbumRating = maxTrackRating;
+								}
+
+								database.Store( album );
+								albumCount++;
+
+								if( mStop ) {
+									break;
 								}
 							}
 
-							if( years.Count == 0 ) {
-								album.PublishedYear = Constants.cUnknownYear;
-							}
-							else if( years.Count == 1 ) {
-								album.PublishedYear = years.First();
-							}
-							else {
-								album.PublishedYear = Constants.cVariousYears;
-							}
+							artist.AlbumCount = (Int16)albumCount;
+							artist.CalculatedGenre = DetermineTopGenre( albumGenre );
+							artist.CalculatedRating = albumRating > 0 ? (Int16)( albumRating / albumCount ) : (Int16)0;
+							artist.MaxChildRating = (Int16)maxAlbumRating;
 
-							album.CalculatedGenre = DetermineTopGenre( trackGenre );
-							AddGenre( albumGenre, album.CalculatedGenre );
-
-							album.CalculatedRating = trackRating > 0 ? (Int16)( trackRating / album.TrackCount ) : (Int16)0;
-							album.MaxChildRating = (Int16)maxTrackRating;
-							albumRating += album.CalculatedRating;
-							if( maxTrackRating > maxAlbumRating ) {
-								maxAlbumRating = maxTrackRating;
-							}
-
-							database.Store( album );
-							albumCount++;
+							database.Store( artist );
 
 							if( mStop ) {
 								break;
 							}
-						}
-
-						artist.AlbumCount = (Int16)albumCount;
-						artist.CalculatedGenre = DetermineTopGenre( albumGenre );
-						artist.CalculatedRating = albumRating > 0 ? (Int16)( albumRating / albumCount ) : (Int16)0;
-						artist.MaxChildRating = (Int16)maxAlbumRating;
-
-						database.Store( artist );
-
-						if( mStop ) {
-							break;
 						}
 					}
 

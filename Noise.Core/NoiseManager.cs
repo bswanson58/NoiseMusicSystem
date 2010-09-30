@@ -153,13 +153,13 @@ namespace Noise.Core {
 				if(( mContinueExploring ) &&
 				   ( results.HaveChanges )) {
 					mSummaryBuilder = mContainer.Resolve<ISummaryBuilder>();
-					mSummaryBuilder.BuildSummaryData();
+					mSummaryBuilder.BuildSummaryData( results.ChangedArtists );
 				}
 
 				if(( mContinueExploring ) &&
 				   ( results.HaveChanges )) {
 					mSearchBuilder = mContainer.Resolve<ISearchBuilder>();
-					mSearchBuilder.BuildSearchIndex();
+					mSearchBuilder.BuildSearchIndex( results.ChangedArtists );
 				}
 
 				mLog.LogMessage( "Explorer Finished." );
