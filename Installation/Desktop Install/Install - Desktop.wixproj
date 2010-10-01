@@ -31,7 +31,7 @@
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Desktop.wxs" />
+    <Compile Include="Desktop Install.wxs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Noise.Desktop\Noise.Desktop.csproj">
