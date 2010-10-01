@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+    <WixVariable Id="WixUILicenseRtf" Value="..\Resources\license.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="..\Resources\InstallTopBannerLogo.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="..\Resources\InstallLeftBanner.bmp" />
+
+    <UI Id="InstallUI">
+      <UIRef Id="WixUI_InstallDir" />
+
+      <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIRECTORY" />
+
+    </UI>
+
+    <!-- Set up ARP properties -->
+    <Property Id="ARPCONTACT" Value="http://www.secretsquirrel.com/nobodyshome.htm" />
+    <Property Id="ARPHELPLINK" Value="http://www.secretsquirrel.com" />
+    <Property Id="ARPHELPTELEPHONE" Value="+1.800.123.8700" />
+    <Property Id="ARPURLINFOABOUT" Value="http://www.secretsquirrel.com/productinfo.htm" />
+    <Property Id="ARPURLUPDATEINFO" Value="http://www.secretsquirrel.com/updateinfo.htm" />
+    <CustomAction Id="SetARPINSTALLLOCATION" Property="ARPINSTALLLOCATION" Value="[INSTALLDIRECTORY]" />
+    <InstallExecuteSequence>
+      <RemoveExistingProducts After="InstallInitialize"/>
+      <Custom Action="SetARPINSTALLLOCATION" After="InstallValidate" />
+    </InstallExecuteSequence>
+  </Fragment>
+</Wix>

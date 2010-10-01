@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="Noise.Core" Guid="9c54113f-f515-407b-beaa-db95c082c165">
+      <File Id="Noise.Core.dll" DiskId="10" Source="$(var.Noise.Core.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Noise.Infrastructure" Guid="89d9bf19-146a-427e-a102-f45e3c71f02b">
+      <File Id="Noise.Infrastructure.dll" DiskId="10" Source="$(var.Noise.Infrastructure.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Noise.UI" Guid="382bd861-7acc-4da5-b170-67d12ad72ad3">
+      <File Id="Noise.UI.dll" DiskId="10" Source="$(var.Noise.UI.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="LastFmSharp.dll" Guid="584075d6-36fd-45bd-82b9-b4ede1d83368">
+      <File Id="LastFmSharp.dll" DiskId="10" Source="$(var.LastFmSharp.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Composite.Layout.dll" Guid="7920fa7c-527b-4ed0-9844-25b4f4680c5b">
+      <File Id="Composite.Layout.dll" DiskId="10" Source="$(var.Layout Manager.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="CoreFiles">
+    <ComponentRef Id="Noise.Core" />
+    <ComponentRef Id="Noise.Infrastructure" />
+    <ComponentRef Id="Noise.UI" />
+    <ComponentRef Id="LastFmSharp.dll" />
+    <ComponentRef Id="Composite.Layout.dll"/>
+  </ComponentGroup>
+</Include>

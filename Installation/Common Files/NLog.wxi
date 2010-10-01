@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <?define NLogLibraryFolder="$(var.SolutionDir)\lib\NLog\v1.0.0.505\"?>
+
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="NLog.dll" Guid="899cbf3c-a5d3-4368-b45e-3cd95e323d16">
+      <File Id="NLog.dll" DiskId="10" Source="$(var.NLogLibraryFolder)NLog.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="NLog.config" Guid="d4128207-69cc-444e-8dc9-82caaf43d9dc">
+      <File Id="NLog.config" DiskId="10" Source="$(var.Noise.Infrastructure.ProjectDir)NLog.config" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="NLogFiles">
+    <ComponentRef Id="NLog.dll" />
+    <ComponentRef Id="NLog.config" />
+  </ComponentGroup>
+</Include>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <?define EloqueraLibraryFolder="$(var.SolutionDir)\lib\Eloquera\v2.8.0.0\"?>
+  <?define EloqueraConfigFolder=$(var.Noise.Core.ProjectDir)\Database\?>
+
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="Eloquera.Client.dll" Guid="c9f3a798-6a67-4109-bb5a-b54b9b356d73">
+      <File Id="Eloquera.Client.dll" DiskId="10" Source="$(var.EloqueraLibraryFolder)Eloquera.Client.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Eloquera.Common.dll" Guid="22222335-ee35-4587-bf39-dff2fa02b844">
+      <File Id="Eloquera.Common.dll" DiskId="10" Source="$(var.EloqueraLibraryFolder)Eloquera.Common.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Directory Id="DatabaseConfigFolder" Name="Database">
+      <Component Id="Eloquera.config" Guid="11165752-3a9d-4ff1-b617-d2e9d293bf37">
+        <File Id="Eloquera.config" DiskId="10" Source="$(var.EloqueraConfigFolder)Eloquera.config" KeyPath="yes" Checksum="yes" />
+      </Component>
+    </Directory>
+  </DirectoryRef>
+
+  <ComponentGroup Id="EloqueraFiles">
+    <ComponentRef Id="Eloquera.Client.dll" />
+    <ComponentRef Id="Eloquera.Common.dll" />
+    <ComponentRef Id="Eloquera.config"/>
+  </ComponentGroup>
+</Include>

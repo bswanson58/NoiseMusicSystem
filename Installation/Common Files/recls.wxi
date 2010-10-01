@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <?define reclsLibraryFolder="$(var.SolutionDir)\lib\recls\"?>
+
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="recls.dll" Guid="4b450795-243a-4188-83bf-3a82a4201867">
+      <File Id="recls.dll" DiskId="10" Source="$(var.reclsLibraryFolder)Recls.100.Net.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="ReclsFiles">
+    <ComponentRef Id="recls.dll" />
+  </ComponentGroup>
+</Include>

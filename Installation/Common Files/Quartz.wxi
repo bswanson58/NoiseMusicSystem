@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <?define QuartzLibraryFolder="$(var.SolutionDir)\lib\Quartz\v1.0.2.3\"?>
+
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="Quartz.dll" Guid="49cf24b3-bc3d-4b86-bd6c-615623b064eb">
+      <File Id="Quartz.dll" DiskId="10" Source="$(var.QuartzLibraryFolder)Quartz.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Common.Logging.dll" Guid="ae5b1a2c-0017-46e6-b7ce-349ade0f0e96">
+      <File Id="Common.Logging.dll" DiskId="10" Source="$(var.QuartzLibraryFolder)Common.Logging.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="QuartzFiles">
+    <ComponentRef Id="Quartz.dll" />
+    <ComponentRef Id="Common.Logging.dll"/>
+  </ComponentGroup>
+</Include>

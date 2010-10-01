@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+    <Media Id="10" Cabinet="CommonFiles.cab" EmbedCab="yes" />
+
+    <?include Noise.Core.wxi ?>
+    <?include AvalonControls.wxi ?>
+    <?include BASS Audio.wxi ?>
+    <?include CuttingEdge.wxi ?>
+    <?include Eloquera.wxi ?>
+    <?include Hammock.wxi ?>
+    <?include Lucene.wxi ?>
+    <?include Microsoft.wxi ?>
+    <?include NLog.wxi ?>
+    <?include Observal.wxi ?>
+    <?include Prism.wxi ?>
+    <?include Quartz.wxi ?>
+    <?include recls.wxi ?>
+    <?include TagLibSharp.wxi ?>
+  </Fragment>
+</Wix>

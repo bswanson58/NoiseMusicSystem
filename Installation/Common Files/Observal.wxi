@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <?define ObservalLibraryFolder="$(var.SolutionDir)\lib\Observal\v1.0.0.0\"?>
+
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="Observal.dll" Guid="225c5563-d225-4520-bf85-3809522b9902">
+      <File Id="Observal.dll" DiskId="10" Source="$(var.ObservalLibraryFolder)Observal.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="ObservalFiles">
+    <ComponentRef Id="Observal.dll" />
+  </ComponentGroup>
+</Include>

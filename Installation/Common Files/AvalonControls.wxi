@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <?define AvalonControlsLibraryFolder="$(var.SolutionDir)\lib\AvalonControls\v2.0\"?>
+
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="AvalonControlsLibrary.dll" Guid="39cc338e-9628-4395-8aa9-53e05e3506ac">
+      <File Id="AvalonControlsLibrary.dll" DiskId="10" Source="$(var.AvalonControlsLibraryFolder)AvalonControlsLibrary.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="AvalonControlsFiles">
+    <ComponentRef Id="AvalonControlsLibrary.dll" />
+  </ComponentGroup>
+</Include>
