@@ -87,8 +87,9 @@
     <Reference Include="Microsoft.Practices.Unity">
       <HintPath>..\lib\CAL\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Observal">
-      <HintPath>..\lib\Observal\Observal.dll</HintPath>
+    <Reference Include="Observal, Version=1.0.0.0, Culture=neutral, PublicKeyToken=55d77739a7b12116, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Observal\v1.0.0.0\Observal.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
