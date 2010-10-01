@@ -96,9 +96,6 @@
     <Reference Include="Microsoft.Practices.Unity">
       <HintPath>..\lib\CAL\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="MusicBrainz">
-      <HintPath>..\lib\MusicBrainz\MusicBrainz.dll</HintPath>
-    </Reference>
     <Reference Include="Quartz">
       <HintPath>..\lib\Quartz\v1.02\Quartz.dll</HintPath>
     </Reference>
@@ -147,7 +144,6 @@
     <Compile Include="DataProviders\ImageDownloader.cs" />
     <Compile Include="DataProviders\LastFmProvider.cs" />
     <Compile Include="DataProviders\Mp3TagProvider.cs" />
-    <Compile Include="DataProviders\MusicBrainzProvider.cs" />
     <Compile Include="Exceptions\StorageConfigurationException.cs" />
     <Compile Include="FileStore\FolderExplorer.cs" />
     <Compile Include="FileStore\FolderStrategyInformation.cs" />
