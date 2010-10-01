@@ -6,7 +6,9 @@
 			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
 			 xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
 			 xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
-			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary" x:Class="Noise.UI.Views.PlayerView"
+			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary" 
+             x:Class="Noise.UI.Views.PlayerView"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="92" d:DesignWidth="600"             
 			 >
