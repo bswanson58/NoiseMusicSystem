@@ -75,7 +75,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AvalonControlsLibrary">
-      <HintPath>..\lib\AvalonControls\AvalonControlsLibrary.dll</HintPath>
+      <HintPath>..\lib\AvalonControls\v2.0\AvalonControlsLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Composite">
       <HintPath>..\lib\CAL\Microsoft.Practices.Composite.dll</HintPath>

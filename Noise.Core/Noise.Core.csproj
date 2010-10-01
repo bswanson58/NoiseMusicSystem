@@ -80,7 +80,7 @@
       <HintPath>..\lib\Eloquera\Eloquera.Server.dll</HintPath>
     </Reference>
     <Reference Include="Hammock.ClientProfile">
-      <HintPath>..\lib\Hammock\Hammock.ClientProfile.dll</HintPath>
+      <HintPath>..\lib\Hammock\v1.0.4.0\Hammock.ClientProfile.dll</HintPath>
     </Reference>
     <Reference Include="Lucene.Net">
       <HintPath>..\lib\Lucene.NET\v2.9.2\Lucene.Net.dll</HintPath>
