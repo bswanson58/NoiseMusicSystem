@@ -66,13 +66,13 @@
       <HintPath>..\lib\Eloquera\Eloquera.Client.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Composite">
-      <HintPath>..\lib\CAL\Microsoft.Practices.Composite.dll</HintPath>
+      <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.Composite.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Composite.Presentation">
-      <HintPath>..\lib\CAL\Microsoft.Practices.Composite.Presentation.dll</HintPath>
+      <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.Composite.Presentation.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity">
-      <HintPath>..\lib\CAL\Microsoft.Practices.Unity.dll</HintPath>
+      <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=1.0.0.505, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL" />
     <Reference Include="PresentationCore" />
