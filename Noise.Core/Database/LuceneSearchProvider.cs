@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using CuttingEdge.Conditions;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -115,10 +117,25 @@ namespace Noise.Core.Database {
 			var config = configMgr.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
 
 			if( config != null ) {
-				mIndexLocation = config.SearchIndexLocation;
+				try {
+					mIndexLocation = config.SearchIndexLocation;
 
-				if( System.IO.Directory.Exists( mIndexLocation )) {
-					mIsInitialized = true;
+					var index = mIndexLocation.ToUpper().IndexOf( "%APPDATA%", StringComparison.OrdinalIgnoreCase );
+					if( index != -1 ) {
+						mIndexLocation = mIndexLocation.Remove( index, "%APPDATA%".Length );
+						mIndexLocation = mIndexLocation.Insert( index, Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), 
+																					 Constants.CompanyName ));
+						if(!Directory.Exists( mIndexLocation )) {
+							Directory.CreateDirectory( mIndexLocation );
+						}
+					}
+
+					if( Directory.Exists( mIndexLocation )) {
+						mIsInitialized = true;
+					}
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - Initializing the Lucene Search Provider", ex );
 				}
 			}
 			else {
@@ -138,7 +155,7 @@ namespace Noise.Core.Database {
 			if( mIsInitialized ) {
 				try {
 					var noiseManager = mContainer.Resolve<INoiseManager>();
-					var directory = new Lucene.Net.Store.SimpleFSDirectory( new System.IO.DirectoryInfo( mIndexLocation ));
+					var directory = new Lucene.Net.Store.SimpleFSDirectory( new DirectoryInfo( mIndexLocation ));
 					var	searcher = new IndexSearcher( directory, true );
 					var queryParser = new QueryParser( Lucene.Net.Util.Version.LUCENE_29, "content", 
 														new Lucene.Net.Analysis.Standard.StandardAnalyzer( Lucene.Net.Util.Version.LUCENE_29 ));
@@ -196,7 +213,7 @@ namespace Noise.Core.Database {
 
 			if( mIsInitialized ) {
 				try {
-					var directory = new Lucene.Net.Store.SimpleFSDirectory( new System.IO.DirectoryInfo( mIndexLocation ));
+					var directory = new Lucene.Net.Store.SimpleFSDirectory( new DirectoryInfo( mIndexLocation ));
 					var analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer( Lucene.Net.Util.Version.LUCENE_29 );
 
 					mIndexWriter = new IndexWriter( directory, analyzer, createIndex, IndexWriter.MaxFieldLength.UNLIMITED );

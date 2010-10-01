@@ -18,6 +18,8 @@ namespace Noise.Infrastructure {
 
 		public const string				ApplicationLogName = "noise.log";
 
+		public const string				CompanyName = "Secret_Squirrel_Products";
+
 		static Constants() {
 			cNoExpirationDate = DateTime.MaxValue;
 		}

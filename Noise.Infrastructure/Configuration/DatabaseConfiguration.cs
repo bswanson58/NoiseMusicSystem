@@ -34,7 +34,7 @@ namespace Noise.Infrastructure.Configuration {
 			set { base[cDatabasePasswordProperty] = value; }
 		}
 
-		[ConfigurationPropertyAttribute( cSearchIndexProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "" )]
+		[ConfigurationPropertyAttribute( cSearchIndexProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = @"%AppData%\Search Index" )]
 		public string SearchIndexLocation {
 			get { return ((string)( base[cSearchIndexProperty] )); }
 			set { base[cSearchIndexProperty] = value; }
