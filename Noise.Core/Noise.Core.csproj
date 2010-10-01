@@ -105,8 +105,9 @@
     <Reference Include="Microsoft.Practices.Unity">
       <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Quartz">
-      <HintPath>..\lib\Quartz\v1.02\Quartz.dll</HintPath>
+    <Reference Include="Quartz, Version=1.0.2.3, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Quartz\v1.0.2.3\Quartz.dll</HintPath>
     </Reference>
     <Reference Include="Recls.100.Net">
       <HintPath>..\lib\recls\Recls.100.Net.dll</HintPath>
