@@ -1,4 +1,6 @@
-﻿using Noise.Infrastructure;
+﻿using System;
+using System.IO;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Support;
 using Noise.UI.Support;
 
@@ -11,7 +13,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public bool Initialize() {
-			var	retValue = mLogReader.ReadLog( Constants.ApplicationLogName );
+			var logPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName );
+			var	retValue = mLogReader.ReadLog( Path.Combine( logPath, Constants.ApplicationLogName ));
 
 			RaisePropertyChanged( () => LogText );
 
