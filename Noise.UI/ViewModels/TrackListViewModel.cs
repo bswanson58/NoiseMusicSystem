@@ -34,8 +34,8 @@ namespace Noise.UI.ViewModels {
 				mEventAggregator = mContainer.Resolve<IEventAggregator>();
 				mNoiseManager = mContainer.Resolve<INoiseManager>();
 
-				mEventAggregator.GetEvent<Events.ExplorerItemSelected>().Subscribe( OnExplorerItemSelected );
 				mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
+				mEventAggregator.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumRequested );
 			}
 		}
 
@@ -43,16 +43,17 @@ namespace Noise.UI.ViewModels {
 			get{ return( mTracks ); }
 		}
 
-		public void OnExplorerItemSelected( object item ) {
-			mTracks.Clear();
-			mTracks.Each( node => mChangeObserver.Release( node ));
+		private void OnAlbumRequested( DbAlbum album ) {
+			Invoke( () => {
+				mTracks.Clear();
+				mTracks.Each( node => mChangeObserver.Release( node ));
 
-			if( item is DbAlbum ) {
-				using( var tracks = mNoiseManager.DataProvider.GetTrackList( item as DbAlbum )) {
+				using( var tracks = mNoiseManager.DataProvider.GetTrackList( album )) {
 					mTracks.AddRange( from track in tracks.List select new TrackViewNode( mEventAggregator, track ));
 				}
+
 				mTracks.Each( track => mChangeObserver.Add( track.UiEdit ));
-			}
+			});
 		}
 
 		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {

@@ -186,6 +186,8 @@ namespace Noise.Core.MediaPlayer {
 
 				StartInfoUpdate();
 				mContinuePlaying = true;
+
+				FirePlaybackTrackStarted( track );
 			}
 
 			FirePlaybackTrackUpdate();
@@ -366,5 +368,8 @@ namespace Noise.Core.MediaPlayer {
 			mEvents.GetEvent<Events.PlaybackTrackChanged>().Publish( null );
 		}
 
+		private void FirePlaybackTrackStarted( PlayQueueTrack track ) {
+			mEvents.GetEvent<Events.PlaybackTrackStarted>().Publish( track );
+		}
 	}
 }

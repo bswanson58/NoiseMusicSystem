@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
@@ -20,9 +21,14 @@ namespace Noise.UI.ViewModels {
 		private List<string>					mSearchOptions;
 		private readonly LibraryExplorerFilter	mExplorerFilter;
 		private DbArtist						mCurrentArtist;
+		private DateTime						mLastExplorerRequest;
+		private	readonly TimeSpan				mPlayTrackDelay;
 
 		public LibraryExplorerViewModel() {
 			mExplorerFilter = new LibraryExplorerFilter { IsEnabled = false };
+
+			mPlayTrackDelay = new TimeSpan( 0, 0, 30 );
+			mLastExplorerRequest = DateTime.Now - mPlayTrackDelay;
 		}
 
 		[Dependency]
@@ -38,6 +44,8 @@ namespace Noise.UI.ViewModels {
 				mEvents = mContainer.Resolve<IEventAggregator>();
 				mEvents.GetEvent<Events.ExplorerItemSelected>().Subscribe( OnExplorerItemSelected );
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistRequested );
+				mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumRequested );
+				mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnPlaybackStarted );
 			}
 		}
 
@@ -58,6 +66,23 @@ namespace Noise.UI.ViewModels {
 			   ( mCurrentArtist.DbId != artist.DbId )) {
 				mViewStrategy.ClearCurrentSearch();
 				mViewStrategy.Search( artist.Name, new List<string> { "Artist" });
+			}
+
+			mLastExplorerRequest = DateTime.Now;
+		}
+
+		private void OnAlbumRequested( DbAlbum album ) {
+			mLastExplorerRequest = DateTime.Now;
+		}
+
+		private void OnPlaybackStarted( PlayQueueTrack track ) {
+			if( mLastExplorerRequest + mPlayTrackDelay < DateTime.Now ) {
+				var savedTime = mLastExplorerRequest;
+
+				mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( track.Artist );
+				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( track.Album );
+
+				mLastExplorerRequest = savedTime;
 			}
 		}
 

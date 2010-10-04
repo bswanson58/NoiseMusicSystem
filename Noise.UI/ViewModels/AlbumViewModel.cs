@@ -44,7 +44,8 @@ namespace Noise.UI.ViewModels {
 
 		private AlbumSupportInfo SupportInfo {
 			get{ return( Get( () => SupportInfo )); }
-			set{ Set( () => SupportInfo, value );  }
+			set { Set( () => SupportInfo, value );
+			}
 		}
 
 		public void OnAlbumFocus( DbAlbum album ) {
