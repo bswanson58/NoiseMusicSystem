@@ -13,12 +13,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public bool Initialize() {
-			var logPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName );
-			var	retValue = mLogReader.ReadLog( Path.Combine( logPath, Constants.ApplicationLogName ));
-
-			RaisePropertyChanged( () => LogText );
-
-			return( retValue );
+			return( ReadLog());
 		}
 
 		public string LogText {
@@ -26,9 +21,16 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_Update() {
-			mLogReader.ReadLog( Constants.ApplicationLogName );
+			ReadLog();
+		}
+
+		private bool ReadLog() {
+			var logPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName );
+			var	retValue = mLogReader.ReadLog( Path.Combine( logPath, Constants.ApplicationLogName ));
 
 			RaisePropertyChanged( () => LogText );
+
+			return( retValue );
 		}
 	}
 }
