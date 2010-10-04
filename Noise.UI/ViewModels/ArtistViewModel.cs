@@ -55,9 +55,19 @@ namespace Noise.UI.ViewModels {
 					if(( value.SimilarArtist != null ) &&
 					   ( value.SimilarArtist.Items.GetLength( 0 ) > 0 )) {
 						mSimilarArtists.AddRange( from DbAssociatedItem artist in value.SimilarArtist.Items
-												  select artist.IsLinked ? new LinkNode( artist.Item, artist.AssociatedId, OnSimilarArtistClicked ) : new LinkNode( artist.Item ));
+													select artist.IsLinked ? new LinkNode( artist.Item, artist.AssociatedId, OnSimilarArtistClicked ) :
+																			 new LinkNode( artist.Item ));
+					}
+
+					if(( value.TopAlbums != null ) &&
+					   ( value.TopAlbums.Items.GetLength( 0 ) > 0 )) {
 						mTopAlbums.AddRange( from DbAssociatedItem album in value.TopAlbums.Items 
-											 select album.IsLinked ? new LinkNode( album.Item, album.AssociatedId, OnSimilarArtistClicked ) : new LinkNode( album.Item ));
+											 select album.IsLinked ? new LinkNode( album.Item, album.AssociatedId, OnSimilarArtistClicked ) :
+																	 new LinkNode( album.Item ));
+					}
+
+					if(( value.BandMembers != null ) &&
+					   ( value.BandMembers.Items.GetLength( 0 ) > 0 )) {
 						mBandMembers.AddRange( from DbAssociatedItem member in value.BandMembers.Items select new LinkNode( member.Item ));
 					}
 

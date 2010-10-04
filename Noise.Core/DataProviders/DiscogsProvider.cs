@@ -285,10 +285,11 @@ namespace Noise.Core.DataProviders {
 					if(( response.StatusCode == HttpStatusCode.OK ) &&
 					   ( response.ContentEntity != null )) {
 						var artistId = forArtist.DbId;
-						var	bandMembers = ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select  item ).FirstOrDefault();
+						var	bandMembers = ( from DbAssociatedItemList item in database.Database 
+											where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select  item ).FirstOrDefault();
 
 						if( bandMembers == null ) {
-							bandMembers = new DbAssociatedItemList( artistId, ContentType.BandMembers );
+							bandMembers = new DbAssociatedItemList( artistId, ContentType.BandMembers ) { Artist = forArtist.DbId };
 
 							database.Insert( bandMembers );
 						}
