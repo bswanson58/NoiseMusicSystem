@@ -8,7 +8,7 @@
         xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary" 
         xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
         mc:Ignorable="d" 
-        Height="55" Width="540"
+        Height="55" Width="553"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="LightGray"
@@ -62,14 +62,14 @@
                     <Button Margin="3,0" Command="{Binding NextTrack}" Content="Next" Width="39" FontSize="10.667"/>
                     <StackPanel Orientation="Horizontal" Margin="5,0,11,0">
                         <TextBlock Text="Position: " Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center"/>
-                        <TextBlock Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center" Width="35">
                         <EventCommandTriggers:CommandSource.Trigger>
                             <EventCommandTriggers:EventCommandTrigger RoutedEvent="TextBlock.MouseLeftButtonDown" Command="{Binding Path=ToggleTimeDisplay}"/>
                         </EventCommandTriggers:CommandSource.Trigger>
                         </TextBlock>
                     </StackPanel>
 
-                    <Grid Width="110" Margin="10,5,0,0">
+                    <Grid Width="110" Margin="5,5,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="11"/>
                             <RowDefinition Height="11"/>
@@ -78,7 +78,7 @@
                         <Rectangle Grid.Row="0" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding LeftLevel, Converter={StaticResource VolumeLevelConverter}}"/>
                         <Rectangle Grid.Row="1" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding RightLevel, Converter={StaticResource VolumeLevelConverter}}"/>
                     </Grid>
-                    <Slider Orientation="Horizontal" Width="100" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}"/>
+                    <Slider Orientation="Horizontal" Width="80" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}"/>
                 </StackPanel>
                 <Slider Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Height="50" Margin="3,0" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
             </Grid>

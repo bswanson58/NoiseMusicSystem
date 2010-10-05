@@ -276,12 +276,17 @@ namespace Noise.Core.MediaPlayer {
 					}
 				}
 
+				if( mCurrentLength < mCurrentPosition ) {
+					mCurrentLength = mCurrentPosition;
+				}
+
 				return( retValue );
 			}
 		}
 
 		public long PlayPosition {
-			get { return( CurrentChannel != 0 ? mCurrentPosition.Ticks : 0L ); }
+			get { return( CurrentChannel != 0 ? 
+								( mCurrentPosition.Ticks < mCurrentLength.Ticks ? mCurrentPosition.Ticks : mCurrentLength.Ticks ) : 0L ); }
 			set {
 				if( CurrentChannel != 0 ) {
 					mAudioPlayer.SetPlayPosition( CurrentChannel, new TimeSpan( value ));
