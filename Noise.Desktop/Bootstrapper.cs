@@ -6,18 +6,18 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Desktop {
 	public class Bootstrapper : UnityBootstrapper {
-		private INoiseManager	mNoiseManager;
-		private WindowManager	mWindowManager;
+		private INoiseManager		mNoiseManager;
+		private WindowManager		mWindowManager;
+		private Window				mShell;
 
 		protected override DependencyObject CreateShell() {
 			Execute.InitializeWithDispatcher();
 
-			var shell = Container.Resolve<Shell>();
+			mShell = Container.Resolve<Shell>();
+			mShell.Show();
+			mShell.Closing += OnShellClosing;
 
-			shell.Show();
-			shell.Closing += OnShellClosing;
-
-			return ( shell );
+			return ( mShell );
 		}
 
 		private void OnShellClosing( object sender, System.ComponentModel.CancelEventArgs e ) {
@@ -38,13 +38,14 @@ namespace Noise.Desktop {
 
 			base.ConfigureContainer();
 		}
+
 		protected override void InitializeModules() {
 			base.InitializeModules();
 
 			StartNoise();
 
 			mWindowManager = new WindowManager( Container );
-			mWindowManager.Initialize();
+			mWindowManager.Initialize( mShell );
 		}
 
 		private void StartNoise() {

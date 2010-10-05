@@ -11,13 +11,14 @@ namespace Noise.Infrastructure {
 
 		public	static string			NewInstance = "NewInstance";
 
-		public	const string			SmallPlayerView = "SmallPlayerView";
+		public	const string			SmallPlayerViewToggle = "SmallPlayerView";
 
 		public	const string			LibraryLayout = "DefaultLayout";
 		public	const string			StreamLayout = "StreamLayout";
 
 		public const string				ApplicationLogName = "noise.log";
 
+		public const string				ApplicationName = "Noise";
 		public const string				CompanyName = "Secret_Squirrel_Products";
 
 		static Constants() {

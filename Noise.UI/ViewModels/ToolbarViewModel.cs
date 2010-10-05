@@ -83,7 +83,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_SmallPlayerView() {
 			if( mEvents != null ) {
-				mEvents.GetEvent<Events.WindowLayoutRequest>().Publish( Constants.SmallPlayerView );
+				mEvents.GetEvent<Events.WindowLayoutRequest>().Publish( Constants.SmallPlayerViewToggle );
 			}
 		}
 
