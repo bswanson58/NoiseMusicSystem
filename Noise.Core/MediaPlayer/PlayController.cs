@@ -4,6 +4,7 @@ using System.Timers;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -15,6 +16,7 @@ namespace Noise.Core.MediaPlayer {
 		private readonly IAudioPlayer		mAudioPlayer;
 		private TimeSpan					mCurrentPosition;
 		private TimeSpan					mCurrentLength;
+		private bool						mDisplayTimeElapsed;
 		private AudioLevels					mSampleLevels;
 		private	bool						mContinuePlaying;
 		private readonly Timer				mInfoUpdateTimer;
@@ -37,6 +39,13 @@ namespace Noise.Core.MediaPlayer {
 			mEvents.GetEvent<Events.AudioPlayStatusChanged>().Subscribe( OnPlayStatusChanged );
 			mEvents.GetEvent<Events.AudioPlayStreamInfo>().Subscribe( OnStreamInfo );
 			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
+
+			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+
+			if( configuration != null ) {
+				mDisplayTimeElapsed = configuration.DisplayPlayTimeElapsed;
+			}
 		}
 
 		public PlayQueueTrack CurrentTrack {
@@ -240,8 +249,35 @@ namespace Noise.Core.MediaPlayer {
 			FireInfoUpdate();
 		}
 
+		public void ToggleTimeDisplay() {
+			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+
+			if( configuration != null ) {
+				configuration.DisplayPlayTimeElapsed = !configuration.DisplayPlayTimeElapsed;
+				mDisplayTimeElapsed = configuration.DisplayPlayTimeElapsed;
+
+				systemConfig.Save( configuration );
+			}
+
+			FireInfoUpdate();
+		}
+
 		public TimeSpan TrackTime {
-			get { return( CurrentChannel != 0 ? mCurrentLength - mCurrentPosition : new TimeSpan()); }
+			get {
+				var retValue = new TimeSpan();
+
+				if( CurrentChannel != 0 ) {
+					if( mDisplayTimeElapsed ) {
+						retValue = mCurrentPosition;
+					}
+					else {
+						retValue = mCurrentPosition - mCurrentLength;
+					}
+				}
+
+				return( retValue );
+			}
 		}
 
 		public long PlayPosition {

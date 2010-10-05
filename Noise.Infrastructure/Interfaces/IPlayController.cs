@@ -26,6 +26,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 		PlayQueueTrack	CurrentTrack { get; }
 		TimeSpan		TrackTime { get; }
+		void			ToggleTimeDisplay();
 		long			PlayPosition { get; set; }
 		long			TrackEndPosition { get; }
 	}

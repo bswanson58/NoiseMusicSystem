@@ -1,17 +1,18 @@
 ﻿<UserControl
-			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
-			 xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
-			 xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
-			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary" 
-             x:Class="Noise.UI.Views.PlayerView"
-			 mc:Ignorable="d" 
-			 d:DesignHeight="92" d:DesignWidth="600"             
-			 >
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+        xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
+        xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary" 
+        xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
+        x:Class="Noise.UI.Views.PlayerView"
+        mc:Ignorable="d" 
+        d:DesignHeight="92" d:DesignWidth="600"             
+		>
 	<UserControl.Resources>
 		<Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True"/>
 		<ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
@@ -63,8 +64,12 @@
 				<Button Margin="3" Command="{Binding ClearQueue}" Content="Clear" Width="43"/>
 				<StackPanel Orientation="Horizontal" Margin="11,0">
 					<TextBlock Text="Position: " Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center"/>
-					<TextBlock Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center"/>
-				</StackPanel>
+                    <TextBlock Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center">
+                        <EventCommandTriggers:CommandSource.Trigger>
+                            <EventCommandTriggers:EventCommandTrigger RoutedEvent="TextBlock.MouseLeftButtonDown" Command="{Binding Path=ToggleTimeDisplay}"/>
+                        </EventCommandTriggers:CommandSource.Trigger>
+                    </TextBlock>
+                </StackPanel>
 
 				<Grid Width="120" Margin="10,5,0,0">
 					<Grid.RowDefinitions>

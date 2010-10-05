@@ -5,7 +5,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
         xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
-        xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary"
+        xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary" 
+        xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
         mc:Ignorable="d" 
         Height="55" Width="540"
         WindowStyle="None"
@@ -61,7 +62,11 @@
                     <Button Margin="3,0" Command="{Binding NextTrack}" Content="Next" Width="39" FontSize="10.667"/>
                     <StackPanel Orientation="Horizontal" Margin="5,0,11,0">
                         <TextBlock Text="Position: " Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center"/>
-                        <TextBlock Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center">
+                        <EventCommandTriggers:CommandSource.Trigger>
+                            <EventCommandTriggers:EventCommandTrigger RoutedEvent="TextBlock.MouseLeftButtonDown" Command="{Binding Path=ToggleTimeDisplay}"/>
+                        </EventCommandTriggers:CommandSource.Trigger>
+                        </TextBlock>
                     </StackPanel>
 
                     <Grid Width="110" Margin="10,5,0,0">

@@ -95,6 +95,10 @@ namespace Noise.UI.ViewModels {
 			set { mNoiseManager.PlayController.PlayPosition = value; }
 		}
 
+		public void Execute_ToggleTimeDisplay() {
+			mNoiseManager.PlayController.ToggleTimeDisplay();
+		}
+
 		[DependsUpon( "InfoUpdateFlag" )]
 		public long TrackEndPosition {
 			get { return( mNoiseManager.PlayController.TrackEndPosition ); }

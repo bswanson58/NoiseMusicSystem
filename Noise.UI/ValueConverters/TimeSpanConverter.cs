@@ -10,11 +10,21 @@ namespace Noise.UI.ValueConverters {
 			if( value is TimeSpan ) {
 				var timeSpan = (TimeSpan)value;
 
-				if( timeSpan.Hours > 0 ) {
-					retValue = string.Format( "{0:D2}:{1:D2}:{2:D2}", timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds );
+				if( Math.Abs( timeSpan.Hours ) > 0 ) {
+					retValue = string.Format( "{0:D2}:{1:D2}:{2:D2}", timeSpan.Hours, Math.Abs( timeSpan.Minutes ), Math.Abs( timeSpan.Seconds ));
 				}
 				else {
-					retValue = string.Format( "{0}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds );
+					if( Math.Abs( timeSpan.Minutes ) > 0 ) {
+						retValue = string.Format( "{0}:{1:D2}", timeSpan.Minutes, Math.Abs( timeSpan.Seconds ));
+					}
+					else {
+						if( timeSpan.Seconds > 0 ) {
+							retValue = string.Format(  "0:{0:D2}", Math.Abs( timeSpan.Seconds ));
+						}
+						else {
+							retValue = string.Format(  "-0:{0:D2}", Math.Abs( timeSpan.Seconds ));
+						}
+					}
 				}
 			}
 			return( retValue );

@@ -7,6 +7,7 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cEnableLibraryExplorerProperty				= "enableLibraryExplorer";
 		private const string	cEnableBackgroundContentExplorerProperty	= "enableBackgroundContentExplorer";
 		private const string	cMinimizeToTrayProperty						= "minimizeToTray";
+		private const string	cDisplayPlayTimeElapsedProperty				= "displayPlayTimeElapsed";
 
 		[ConfigurationPropertyAttribute( cEnableLibraryExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "true" )]
 		public bool EnableLibraryExplorer {
@@ -24,6 +25,12 @@ namespace Noise.Infrastructure.Configuration {
 		public bool MinimizeToTray {
 			get { return ((bool)( base[cMinimizeToTrayProperty] ) ); }
 			set { base[cMinimizeToTrayProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cDisplayPlayTimeElapsedProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
+		public bool DisplayPlayTimeElapsed {
+			get { return ((bool)( base[cDisplayPlayTimeElapsedProperty] ) ); }
+			set { base[cDisplayPlayTimeElapsedProperty] = value; }
 		}
 	}
 }
