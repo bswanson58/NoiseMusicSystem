@@ -135,6 +135,7 @@
     <Compile Include="Behaviours\EventCommandTriggers\EventCommandTrigger.cs" />
     <Compile Include="Behaviours\EventCommandTriggers\ICommandTrigger.cs" />
     <Compile Include="Behaviours\EventCommandTriggers\PropertyCommandTrigger.cs" />
+    <Compile Include="Behaviours\ListViewEnsureVisible.cs" />
     <Compile Include="Behaviours\ListViewSort.cs" />
     <Compile Include="Behaviours\SliderAnimateAfterDrag.cs" />
     <Compile Include="Behaviours\ListViewColumnStretch.cs" />

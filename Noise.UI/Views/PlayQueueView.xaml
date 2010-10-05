@@ -14,7 +14,9 @@
         <ValueConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
     </Control.Resources>
 
-    <ListView x:Name="PlayQueueList" ItemsSource="{Binding Path=QueueList}" Behaviours:ListViewColumns.Stretch="true">
+    <ListView x:Name="PlayQueueList" ItemsSource="{Binding Path=QueueList}"
+              Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex, Mode=OneWay}"
+              Behaviours:ListViewColumns.Stretch="true">
         <ListView.ItemContainerStyle>
             <Style TargetType="{x:Type ListViewItem}">
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
