@@ -17,6 +17,8 @@ namespace Noise.Core.PlayQueue {
 		private IPlayStrategy					mStrategy;
 		private ePlayExhaustedStrategy			mPlayExhaustedStrategy;
 		private IPlayExhaustedStrategy			mExhaustedStrategy;
+		private	int								mReplayTrackCount;
+		private PlayQueueTrack					mReplayTrack;
 
 		public PlayQueueMgr( IUnityContainer container ) {
 			mContainer = container;
@@ -100,6 +102,7 @@ namespace Noise.Core.PlayQueue {
 		public void ClearQueue() {
 			mPlayQueue.Clear();
 			mPlayHistory.Clear();
+			PlayingTrackReplayCount = 0;
 
 			FirePlayQueueChanged();
 		}
@@ -116,6 +119,24 @@ namespace Noise.Core.PlayQueue {
 			get{ return(( from PlayQueueTrack track in mPlayQueue where track.IsStrategyQueued select track ).Count() > 0 ); }
 		}
 
+		public int PlayingTrackReplayCount {
+			get{ return( mReplayTrackCount ); }
+			set {
+				if( value > 0 ) {
+					if( mReplayTrack == null ) {
+						mReplayTrack = PlayingTrack;
+					}
+					if( mReplayTrack != null ) {
+						mReplayTrackCount = value;
+					}
+				}
+				else {
+					mReplayTrack = null;
+					mReplayTrackCount = 0;
+				}
+			}
+		}
+
 		public PlayQueueTrack PlayNextTrack() {
 			var	track = PlayingTrack;
 
@@ -129,6 +150,10 @@ namespace Noise.Core.PlayQueue {
 			track = NextTrack;
 			if( track != null ) {
 				track.IsPlaying = true;
+
+				if( PlayingTrackReplayCount > 0 ) {
+					PlayingTrackReplayCount--;
+				}
 			}
 
 			mExhaustedStrategy.NextTrackPlayed();
@@ -146,12 +171,20 @@ namespace Noise.Core.PlayQueue {
 
 		public PlayQueueTrack NextTrack {
 			get {
-				var	retValue = mStrategy.NextTrack( mPlayQueue );
+				PlayQueueTrack	retValue = null;
 
-				if(( retValue == null ) &&
-				   ( mPlayQueue.Count > 0 )) {
-					if( mExhaustedStrategy.QueueExhausted( this )) {
-						retValue = mStrategy.NextTrack( mPlayQueue );
+				if( PlayingTrackReplayCount > 0 ) {
+					retValue = mReplayTrack;
+				}
+
+				if( retValue == null ) {
+					retValue = mStrategy.NextTrack( mPlayQueue );
+
+					if(( retValue == null ) &&
+					   ( mPlayQueue.Count > 0 )) {
+						if( mExhaustedStrategy.QueueExhausted( this )) {
+							retValue = mStrategy.NextTrack( mPlayQueue );
+						}
 					}
 				}
 

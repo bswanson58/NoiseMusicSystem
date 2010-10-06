@@ -254,5 +254,25 @@ namespace Noise.UI.ViewModels {
 
 			return( retValue );
 		}
+
+		public void Execute_ReplayTrack() {
+			if( mNoiseManager != null ) {
+				mNoiseManager.PlayQueue.PlayingTrackReplayCount++;
+			}
+			RaiseCanExecuteChangedEvent( "CanExecute_ReplayTrack" );
+		}
+		[DependsUpon( "CurrentStatus" )]
+		[DependsUpon( "PlayQueueChangedFlag" )]
+		[DependsUpon( "StartTrackFlag" )]
+		public bool CanExecute_ReplayTrack() {
+			var retValue = false;
+
+			if(( mNoiseManager != null ) &&
+			   ( mNoiseManager.PlayController.CanStop ) &&
+			   ( mNoiseManager.PlayQueue.PlayingTrackReplayCount == 0 )) {
+				retValue = true;
+			}
+			return( retValue );
+		}
 	}
 }

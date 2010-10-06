@@ -8,7 +8,7 @@
         xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary" 
         xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
         mc:Ignorable="d" 
-        Height="55" Width="553"
+        Height="57" Width="553"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="LightGray"
@@ -44,13 +44,15 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5,3,3,0">
                         <TextBlock Text="Current Track: " FontSize="13.333" FontWeight="Bold" Foreground="{DynamicResource ControlTextColor}" />
                         <TextBlock Text="{Binding TrackName}" FontWeight="Bold" FontSize="13.333"/>
                     </StackPanel>
-                    <CheckBox Grid.Column="1" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
-                    <Controls:RatingSelector Grid.Column="2" Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
+                    <Button Content="Replay" HorizontalAlignment="Left" d:LayoutOverrides="Height" Grid.Column="1" Command="{Binding Path=ReplayTrack}" Margin="3"/>
+                    <CheckBox Grid.Column="2" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
+                    <Controls:RatingSelector Grid.Column="3" Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
                                              RatingSelected="{Binding Path=Rating, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
                 </Grid>
 
