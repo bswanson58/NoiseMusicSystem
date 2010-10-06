@@ -147,6 +147,11 @@ namespace Noise.Core.MediaPlayer {
 				mAudioPlayer.Play( CurrentChannel );
 			}
 			else {
+				if(( mNoiseManager.PlayQueue.PlayingTrack == null ) &&
+				   ( mNoiseManager.PlayQueue.NextTrack == null )) {
+					mNoiseManager.PlayQueue.ReplayQueue();
+				}
+
 				StartTrack( mNoiseManager.PlayQueue.PlayingTrack ?? mNoiseManager.PlayQueue.PlayNextTrack());
 			}
 		}

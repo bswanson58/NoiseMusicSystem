@@ -111,6 +111,14 @@ namespace Noise.Core.PlayQueue {
 			get{ return( mPlayQueue.Count == 0 ); }
 		}
 
+		public void ReplayQueue() {
+			foreach( var track in mPlayQueue ) {
+				if(!track.IsPlaying ) {
+					track.HasPlayed = false;
+				}
+			}
+		}
+
 		public int UnplayedTrackCount {
 			get { return(( from PlayQueueTrack track in mPlayQueue where !track.HasPlayed select track ).Count()); }
 		}
