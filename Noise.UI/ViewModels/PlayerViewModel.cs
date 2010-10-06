@@ -29,7 +29,8 @@ namespace Noise.UI.ViewModels {
 			mExhaustedStrategies = new ObservableCollectionEx<ExhaustedStrategyItem>{
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Stop, "Stop" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Replay, "Replay" ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayFavorites, "Play Favorites" ) };
+												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayFavorites, "Play Favorites" ),
+												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlaySimilar, "Play Similar" )};
 		}
 
 		[Dependency]

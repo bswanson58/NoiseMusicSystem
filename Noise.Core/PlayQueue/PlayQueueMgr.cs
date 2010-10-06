@@ -268,6 +268,10 @@ namespace Noise.Core.PlayQueue {
 					case ePlayExhaustedStrategy.PlayFavorites:
 						mExhaustedStrategy = new PlayExhaustedStrategyFavorites( mContainer );
 						break;
+
+					case ePlayExhaustedStrategy.PlaySimilar:
+						mExhaustedStrategy = new PlayExhaustedStrategySimilar( mContainer );
+						break;
 				}
 			}
 		}
