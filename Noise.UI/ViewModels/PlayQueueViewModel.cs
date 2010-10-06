@@ -34,8 +34,10 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnPlayQueueChanged( IPlayQueue playQueue ) {
-			mPlayQueue.Clear();
-			mPlayQueue.AddRange( playQueue.PlayList );
+			Invoke( () => {
+				mPlayQueue.Clear();
+				mPlayQueue.AddRange( playQueue.PlayList );
+			});
 		}
 
 		private void OnTrackStarted( PlayQueueTrack track ) {

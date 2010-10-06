@@ -284,6 +284,22 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public DataProviderList<DbTrack> GetFavoriteTracks() {
+			DataProviderList<DbTrack>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				retValue = new DataProviderList<DbTrack>( database.DatabaseId, FreeDatabase,
+															from DbTrack track in database.Database where track.IsFavorite select track );				
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetFavoriteTracks: ", ex );
+
+				mDatabaseManager.FreeDatabase( database );
+			}
+			return( retValue );
+		}
+
 		public StorageFile GetPhysicalFile( DbTrack forTrack ) {
 			Condition.Requires( forTrack ).IsNotNull();
 

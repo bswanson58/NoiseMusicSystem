@@ -9,8 +9,14 @@ namespace Noise.Infrastructure.Dto {
 		public	StreamInfo			StreamInfo { get; set; }
 		public	StorageFile			File { get; private set; }
 		public	double				PercentPlayed { get; set; }
+		public	bool				IsStrategyQueued { get; private set; }
 		private	bool				mIsPlaying;
 		private	bool				mHasPlayed;
+
+		public PlayQueueTrack( DbArtist artist, DbAlbum album, DbTrack track, StorageFile file, bool strategyRequest ) :
+			this( artist, album, track, file ) {
+			IsStrategyQueued = strategyRequest;
+		}
 
 		public PlayQueueTrack( DbArtist artist, DbAlbum album, DbTrack track, StorageFile file ) {
 			Artist = artist;

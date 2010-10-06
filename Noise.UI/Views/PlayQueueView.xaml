@@ -24,6 +24,9 @@
                     <DataTrigger Binding="{Binding Path=IsPlaying}" Value="true">
                         <Setter Property="FontWeight" Value="Bold"/>
                     </DataTrigger>
+                    <DataTrigger Binding="{Binding Path=IsStrategyQueued, Mode=OneTime}" Value="true">
+                        <Setter Property="FontStyle" Value="Italic"/>
+                    </DataTrigger>
                 </Style.Triggers>
             </Style>
         </ListView.ItemContainerStyle>
