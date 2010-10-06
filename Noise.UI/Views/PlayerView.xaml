@@ -11,7 +11,7 @@
         xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
         x:Class="Noise.UI.Views.PlayerView"
         mc:Ignorable="d" 
-        d:DesignHeight="92" d:DesignWidth="600"             
+        d:DesignHeight="92" d:DesignWidth="1000"             
 		>
 	<UserControl.Resources>
 		<Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True"/>
@@ -45,15 +45,17 @@
 					<ColumnDefinition Width="*"/>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 				<StackPanel Grid.Column="0" Orientation="Horizontal" Margin="10">
 					<TextBlock Text="Current Track: " FontSize="16" FontWeight="Bold" Foreground="{DynamicResource ControlTextColor}" />
 					<TextBlock Text="{Binding TrackName}" FontWeight="Bold" FontSize="16"/>
 				</StackPanel>
-				<CheckBox Grid.Column="1" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
-				<Controls:RatingSelector Grid.Column="2"
+				<CheckBox Grid.Column="2" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
+				<Controls:RatingSelector Grid.Column="3"
 										 Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
 										 RatingSelected="{Binding Path=Rating, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
+				<Button Content="Replay" Margin="3" d:LayoutOverrides="Height" Grid.Column="1" VerticalAlignment="Center"/>
 			</Grid>
 			<StackPanel Grid.Row="1" Orientation="Horizontal" Height="35">
 				<Button Margin="3" Command="{Binding Play}" Content="Play" Width="43"/>
@@ -71,7 +73,7 @@
                     </TextBlock>
                 </StackPanel>
 
-				<Grid Width="120" Margin="10,5,0,0">
+				<Grid x:Name="VU_Meter" Width="120" Margin="10,5,0,0">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="11"/>
 						<RowDefinition Height="11"/>
@@ -80,19 +82,25 @@
 					<Rectangle Grid.Row="0" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding LeftLevel, Converter={StaticResource VolumeLevelConverter}}"/>
 					<Rectangle Grid.Row="1" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding RightLevel, Converter={StaticResource VolumeLevelConverter}}"/>
 				</Grid>
-				<Slider Orientation="Horizontal" Width="200" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}"/>
+				<Slider x:Name="PositionSlider" Orientation="Horizontal" Width="100" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}"/>
 				<Slider x:Name="SpeedSlider" Orientation="Horizontal" Width="50" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}">
 					<i:Interaction.Behaviors>
 						<Behaviours:SliderAnimateAfterDrag Storyboard="{StaticResource SliderValueAnimate}" />
 					</i:Interaction.Behaviors>
 				</Slider>
-				<Slider Orientation="Horizontal" Width="50" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}"/>
-				<StackPanel Orientation="Vertical" Margin="10,0,0,0">
-					<CheckBox Content="Random Play" IsChecked="{Binding Path=RandomPlay, Mode=TwoWay}"/>
-					<CheckBox Content="Replay Queue" IsChecked="{Binding Path=QueueReplay, Mode=TwoWay}"/>
+				<Slider x:Name="Balance" Orientation="Horizontal" Width="50" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}"/>
+				<StackPanel Orientation="Vertical" Margin="10,5,0,0" VerticalAlignment="Top">
+					<CheckBox Content="Random" IsChecked="{Binding Path=RandomPlay, Mode=TwoWay}"/>
+				</StackPanel>
+				<StackPanel Orientation="Horizontal" Margin="7,0,0,0"  VerticalAlignment="Top">
+					<Label Content="Exhausted:"/>
+					<ComboBox x:Name="ExhaustedStrategy" Width="100"
+                              ItemsSource="{Binding Path=ExhaustedStrategyList}"
+                              DisplayMemberPath="Title" SelectedValuePath="Strategy"
+                              SelectedValue="{Binding Path=ExhaustedStrategy}"/>
 				</StackPanel>
 			</StackPanel>
-			<Slider Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Height="50" Margin="0,0,10,0" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
+			<Slider x:Name="Volume" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Height="50" Margin="0,0,10,0" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
 		</Grid>
 	</Grid>
 </UserControl>

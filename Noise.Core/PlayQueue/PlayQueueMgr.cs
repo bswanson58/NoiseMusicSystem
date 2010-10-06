@@ -27,7 +27,7 @@ namespace Noise.Core.PlayQueue {
 			mPlayHistory = new List<PlayQueueTrack>();
 
 			PlayStrategy = ePlayStrategy.Next;
-			PlayExhaustedStrategy = ePlayExhaustedStrategy.PlayFavorites;
+			PlayExhaustedStrategy = ePlayExhaustedStrategy.Stop;
 
 			mEventAggregator.GetEvent<Events.AlbumPlayRequested>().Subscribe( OnAlbumPlayRequest );
 			mEventAggregator.GetEvent<Events.TrackPlayRequested>().Subscribe( OnTrackPlayRequest );

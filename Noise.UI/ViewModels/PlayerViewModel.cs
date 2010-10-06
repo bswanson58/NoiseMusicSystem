@@ -2,15 +2,35 @@
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.UI.ViewModels {
+	public class ExhaustedStrategyItem {
+		public string		Title { get; private set; }
+		public ePlayExhaustedStrategy	Strategy { get; private set; }
+
+		public ExhaustedStrategyItem( ePlayExhaustedStrategy strategy, string title ) {
+			Strategy = strategy;
+			Title = title;
+		}
+	}
+
 	public class PlayerViewModel : ViewModelBase {
-		private	IUnityContainer		mContainer;
-		private IEventAggregator	mEvents;
-		private INoiseManager		mNoiseManager;
+		private	IUnityContainer			mContainer;
+		private IEventAggregator		mEvents;
+		private INoiseManager			mNoiseManager;
+
+		private	readonly ObservableCollectionEx<ExhaustedStrategyItem>	mExhaustedStrategies;
+
+		public PlayerViewModel() {
+			mExhaustedStrategies = new ObservableCollectionEx<ExhaustedStrategyItem>{
+												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Stop, "Stop" ),
+												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Replay, "Replay" ),
+												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayFavorites, "Play Favorites" ) };
+		}
 
 		[Dependency]
 		public IUnityContainer Container {
@@ -25,6 +45,13 @@ namespace Noise.UI.ViewModels {
 				mEvents.GetEvent<Events.PlaybackStatusChanged>().Subscribe( OnPlaybackStatusChanged );
 				mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnPlaybackTrackChanged );
 				mEvents.GetEvent<Events.PlaybackInfoChanged>().Subscribe( OnPlaybackInfoChanged );
+
+				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+
+				if( configuration != null ) {
+					mNoiseManager.PlayQueue.PlayExhaustedStrategy = configuration.PlayExhaustedStrategy;
+				}
 			}
 		}
 
@@ -127,9 +154,24 @@ namespace Noise.UI.ViewModels {
 			set{ mNoiseManager.PlayQueue.PlayStrategy = value ? ePlayStrategy.Random : ePlayStrategy.Next; }
 		}
 
-		public bool QueueReplay {
-			get{ return( mNoiseManager.PlayQueue.PlayExhaustedStrategy == ePlayExhaustedStrategy.Replay ); }
-			set{ mNoiseManager.PlayQueue.PlayExhaustedStrategy = value ? ePlayExhaustedStrategy.Replay : ePlayExhaustedStrategy.Stop; }
+		public ObservableCollectionEx<ExhaustedStrategyItem> ExhaustedStrategyList {
+			get{ return( mExhaustedStrategies ); }
+		}
+
+		public ePlayExhaustedStrategy ExhaustedStrategy {
+			get{ return( mNoiseManager.PlayQueue.PlayExhaustedStrategy ); }
+			set {
+				mNoiseManager.PlayQueue.PlayExhaustedStrategy = value;
+
+				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+
+				if( configuration != null ) {
+					configuration.PlayExhaustedStrategy = value;
+
+					systemConfig.Save( configuration );
+				}
+			}
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]

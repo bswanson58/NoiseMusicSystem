@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure.Configuration {
 	public class ExplorerConfiguration : ConfigurationSection {
@@ -8,6 +9,7 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cEnableBackgroundContentExplorerProperty	= "enableBackgroundContentExplorer";
 		private const string	cMinimizeToTrayProperty						= "minimizeToTray";
 		private const string	cDisplayPlayTimeElapsedProperty				= "displayPlayTimeElapsed";
+		private const string	cPlayExhaustedStrategyProperty				= "playExhaustedStrategy";
 
 		[ConfigurationPropertyAttribute( cEnableLibraryExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "true" )]
 		public bool EnableLibraryExplorer {
@@ -31,6 +33,12 @@ namespace Noise.Infrastructure.Configuration {
 		public bool DisplayPlayTimeElapsed {
 			get { return ((bool)( base[cDisplayPlayTimeElapsedProperty] ) ); }
 			set { base[cDisplayPlayTimeElapsedProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cPlayExhaustedStrategyProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = ePlayExhaustedStrategy.Stop )]
+		public ePlayExhaustedStrategy PlayExhaustedStrategy {
+			get { return ((ePlayExhaustedStrategy)( base[cPlayExhaustedStrategyProperty] ) ); }
+			set { base[cPlayExhaustedStrategyProperty] = value; }
 		}
 	}
 }
