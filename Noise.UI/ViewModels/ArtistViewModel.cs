@@ -7,6 +7,9 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
+using Noise.UI.Adapters.DynamicProxies;
+using Observal;
+using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistViewModel : ViewModelBase {
@@ -14,8 +17,11 @@ namespace Noise.UI.ViewModels {
 		private IEventAggregator		mEvents;
 		private INoiseManager			mNoiseManager;
 		private DbArtist				mCurrentArtist;
+		public	UpdatingProxy			UiDisplay { get; private set; }
+		public	UserSettingsNotifier	UiEdit { get; private set; }
 		private LinkNode				mArtistWebsite;
 		private BackgroundWorker		mBackgroundWorker;
+		private readonly Observer		mChangeObserver;
 		private readonly ObservableCollectionEx<LinkNode>				mSimilarArtists;
 		private readonly ObservableCollectionEx<LinkNode>				mTopAlbums;
 		private readonly ObservableCollectionEx<LinkNode>				mBandMembers;
@@ -26,6 +32,9 @@ namespace Noise.UI.ViewModels {
 			mTopAlbums = new ObservableCollectionEx<LinkNode>();
 			mBandMembers = new ObservableCollectionEx<LinkNode>();
 			mDiscography = new ObservableCollectionEx<DbDiscographyRelease>();
+
+			mChangeObserver = new Observer();
+			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnArtistChanged );
 		}
 
 		[Dependency]
@@ -44,6 +53,7 @@ namespace Noise.UI.ViewModels {
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
 				mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
 				mEvents.GetEvent<Events.ArtistContentUpdated>().Subscribe( OnArtistUpdate );
+				mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 			}
 		}
 
@@ -74,7 +84,7 @@ namespace Noise.UI.ViewModels {
 						mBandMembers.AddRange( from DbAssociatedItem member in value.BandMembers.Items select new LinkNode( member.Item ));
 					}
 
-					using( var discoList = mNoiseManager.DataProvider.GetDiscography( mCurrentArtist )) {
+					using( var discoList = mNoiseManager.DataProvider.GetDiscography( CurrentArtist )) {
 						mDiscography.SuspendNotification();
 						mDiscography.Clear();
 						mDiscography.AddRange( discoList.List );
@@ -87,6 +97,34 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		private DbArtist CurrentArtist {
+			get{ return( mCurrentArtist ); }
+			set {
+				mCurrentArtist = value;
+				if( mCurrentArtist != null ) {
+					if( UiDisplay != null ) {
+						UiDisplay.UpdateObject( CurrentArtist );
+					}
+					else {
+						UiDisplay = new UpdatingProxy( mCurrentArtist );
+
+						RaisePropertyChanged( () => UiDisplay );
+					}
+
+					if( UiEdit != null ) {
+						mChangeObserver.Release( UiEdit );
+					}
+					UiEdit = new UserSettingsNotifier( mCurrentArtist, UiDisplay );
+					mChangeObserver.Add( UiEdit );
+					RaisePropertyChanged( () => UiEdit );
+
+					mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
+
+					RaisePropertyChanged( () => ArtistWebsite );
+				}
+			}
+		}
+
 		private void OnSimilarArtistClicked( long artistId ) {
 			var artist = mNoiseManager.DataProvider.GetArtist( artistId  );
 
@@ -94,27 +132,23 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnArtistFocus( DbArtist artist ) {
-			mCurrentArtist = artist;
-			mArtistWebsite = new LinkNode( mCurrentArtist.Website, 0, OnWebsiteRequested );
+			CurrentArtist = artist;
 			mNoiseManager.DataProvider.UpdateArtistInfo( artist );
 
 			OnArtistUpdate( artist );
-
-			RaisePropertyChanged( () => Artist );
-			RaisePropertyChanged( () => ArtistWebsite );
 		}
 
 		private void OnWebsiteRequested( long id ) {
-			if(( mCurrentArtist != null ) &&
-			   (!string.IsNullOrWhiteSpace( mCurrentArtist.Website ))) {
-				mEvents.GetEvent<Events.WebsiteRequest>().Publish( mCurrentArtist.Website );
+			if(( CurrentArtist != null ) &&
+			   (!string.IsNullOrWhiteSpace( CurrentArtist.Website ))) {
+				mEvents.GetEvent<Events.WebsiteRequest>().Publish( CurrentArtist.Website );
 			}
 		}
 
 		private void OnArtistUpdate( DbArtist artist ) {
 			if(( artist != null ) &&
-			   ( mCurrentArtist != null ) &&
-			   ( string.Equals( mCurrentArtist.Name, artist.Name ))) {
+			   ( CurrentArtist != null ) &&
+			   ( string.Equals( CurrentArtist.Name, artist.Name ))) {
 				if(!mBackgroundWorker.IsBusy ) {
 					mBackgroundWorker.RunWorkerAsync( artist );
 				}
@@ -122,8 +156,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnAlbumFocus( DbAlbum album ) {
-			if( mCurrentArtist != null ) {
-				if( album.Artist != mNoiseManager.DataProvider.GetObjectIdentifier( mCurrentArtist )) {
+			if( CurrentArtist != null ) {
+				if( album.Artist != mNoiseManager.DataProvider.GetObjectIdentifier( CurrentArtist )) {
 					OnArtistFocus( mNoiseManager.DataProvider.GetArtistForAlbum( album ));
 				}
 			}
@@ -132,8 +166,27 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public DbArtist Artist {
-			get{ return( mCurrentArtist ); }
+		private void OnArtistChanged( PropertyChangeNotification changeNotification ) {
+			var notifier = changeNotification.Source as UserSettingsNotifier;
+
+			if( notifier != null ) {
+				if( changeNotification.PropertyName == "UiRating" ) {
+					mNoiseManager.DataProvider.SetRating( mCurrentArtist, notifier.UiRating );
+				}
+				if( changeNotification.PropertyName == "UiIsFavorite" ) {
+					mNoiseManager.DataProvider.SetFavorite( mCurrentArtist, notifier.UiIsFavorite );
+				}
+			}
+		}
+
+		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
+			if(( args.Item is DbArtist ) &&
+			   ( CurrentArtist != null ) &&
+			   ((args.Item as DbArtist).DbId == CurrentArtist.DbId )) {
+				BeginInvoke( () => {
+					CurrentArtist = args.Item as DbArtist;
+				} );
+			}
 		}
 
 		[DependsUpon( "SupportInfo" )]
