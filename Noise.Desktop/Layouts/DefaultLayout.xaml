@@ -24,14 +24,12 @@
 
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="4*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="2*"/>
                 </Grid.RowDefinitions>
 
                 <ContentControl Grid.Row="0" cal:RegionManager.RegionName="TopRight"/>
                 <ContentControl Grid.Row="1" cal:RegionManager.RegionName="TopRightLower"/>
-                <ContentControl Grid.Row="2" cal:RegionManager.RegionName="MiddleRight"/>
             </Grid>
         </Grid>
 

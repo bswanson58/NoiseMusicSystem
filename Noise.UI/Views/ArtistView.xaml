@@ -47,7 +47,7 @@
                         <TextBlock Text="{Binding Path=Artist.Name}" FontSize="20" Margin="0,0,0,9"  HorizontalAlignment="Right"/>
                         <StackPanel HorizontalAlignment="Right" Grid.Row="1" Orientation="Horizontal">
                             <CheckBox IsChecked="{Binding Path=Artist.IsFavorite, Mode=TwoWay}" Margin="0,0,5,0"  VerticalAlignment="Center"/>
-                            <Custom:RatingSelector RatingSelected="{Binding Path=UiEdit.Rating, Mode=TwoWay}" 
+                            <Custom:RatingSelector RatingSelected="{Binding Path=Artist.Rating, Mode=TwoWay}" 
                                            Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"/>
                         </StackPanel>
                         <TextBlock x:Name="Genre" Text="{Binding Path=Artist.Genre}"  HorizontalAlignment="Right" Grid.Row="2"/>
