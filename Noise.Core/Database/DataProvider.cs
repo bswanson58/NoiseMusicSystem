@@ -357,6 +357,27 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public DataProviderList<DbDiscographyRelease> GetDiscography( DbArtist forArtist ) {
+			Condition.Requires( forArtist ).IsNotNull();
+
+			DataProviderList<DbDiscographyRelease>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				var artistId = forArtist.DbId;
+
+				retValue = new DataProviderList<DbDiscographyRelease>( database.DatabaseId, FreeDatabase,
+															from DbDiscographyRelease release in database.Database where release.AssociatedItem == artistId select release );				
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetFavoriteTracks: ", ex );
+
+				mDatabaseManager.FreeDatabase( database );
+			}
+			return( retValue );
+		}
+
+
 		public void UpdateAlbumInfo( DbAlbum forAlbum ) {
 			Condition.Requires( forAlbum ).IsNotNull();
 

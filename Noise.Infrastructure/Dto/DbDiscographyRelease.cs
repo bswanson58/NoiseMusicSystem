@@ -19,6 +19,7 @@ namespace Noise.Infrastructure.Dto {
 
 		public DbDiscographyRelease( long associatedItem, string title, string format, string label, uint year, DiscographyReleaseType releaseType ) :
 			base( associatedItem, ContentType.Discography ) {
+			Artist = associatedItem;
 			Title = title;
 			Format = format;
 			Label = label;
