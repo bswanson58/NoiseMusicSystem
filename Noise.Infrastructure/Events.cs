@@ -32,5 +32,7 @@ namespace Noise.Infrastructure {
 		public class WindowLayoutRequest : CompositePresentationEvent<string> { }
 
 		public class DatabaseItemChanged : CompositePresentationEvent<DbItemChangedArgs> { }
+
+		public class WebsiteRequest : CompositePresentationEvent<string> { }
 	}
 }

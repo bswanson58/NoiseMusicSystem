@@ -51,7 +51,12 @@
                                            Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"/>
                         </StackPanel>
                         <TextBlock x:Name="Genre" Text="{Binding Path=Artist.Genre}"  HorizontalAlignment="Right" Grid.Row="2"/>
-                        <TextBlock x:Name="Website" Text="{Binding Path=Artist.Website}"  HorizontalAlignment="Right" Grid.Row="3"/>
+                        <Controls:LinkLabel Grid.Row="3" HorizontalAlignment="Right" Padding="0"   LinkLabelBehavior="HoverUnderline"
+                                            Content="{Binding Path=ArtistWebsite.DisplayText}" IsEnabled="{Binding Path=ArtistWebsite.IsLinked}">
+                            <EventCommandTriggers:CommandSource.Trigger>
+                                <EventCommandTriggers:EventCommandTrigger RoutedEvent="Controls:LinkLabel.Click" Command="{Binding Path=ArtistWebsite.LinkClicked}"/>
+                            </EventCommandTriggers:CommandSource.Trigger>
+                        </Controls:LinkLabel>
                     </Grid>
                 </Grid>
             </Border>

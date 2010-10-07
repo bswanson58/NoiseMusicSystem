@@ -9,6 +9,7 @@ namespace Noise.Desktop {
 		private INoiseManager		mNoiseManager;
 		private WindowManager		mWindowManager;
 		private Window				mShell;
+		private	ApplicationSupport	mAppSupport;
 
 		protected override DependencyObject CreateShell() {
 			Execute.InitializeWithDispatcher();
@@ -52,6 +53,8 @@ namespace Noise.Desktop {
 			mNoiseManager = Container.Resolve<INoiseManager>();
 			Container.RegisterInstance( mNoiseManager );
 			mNoiseManager.Initialize();
+
+			mAppSupport = new ApplicationSupport( Container );
 		}
 
 		public void StopNoise() {

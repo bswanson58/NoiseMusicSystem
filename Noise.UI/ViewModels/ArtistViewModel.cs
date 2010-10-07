@@ -14,6 +14,7 @@ namespace Noise.UI.ViewModels {
 		private IEventAggregator		mEvents;
 		private INoiseManager			mNoiseManager;
 		private DbArtist				mCurrentArtist;
+		private LinkNode				mArtistWebsite;
 		private BackgroundWorker		mBackgroundWorker;
 		private readonly ObservableCollectionEx<LinkNode>				mSimilarArtists;
 		private readonly ObservableCollectionEx<LinkNode>				mTopAlbums;
@@ -94,11 +95,20 @@ namespace Noise.UI.ViewModels {
 
 		private void OnArtistFocus( DbArtist artist ) {
 			mCurrentArtist = artist;
+			mArtistWebsite = new LinkNode( mCurrentArtist.Website, 0, OnWebsiteRequested );
 			mNoiseManager.DataProvider.UpdateArtistInfo( artist );
 
 			OnArtistUpdate( artist );
 
 			RaisePropertyChanged( () => Artist );
+			RaisePropertyChanged( () => ArtistWebsite );
+		}
+
+		private void OnWebsiteRequested( long id ) {
+			if(( mCurrentArtist != null ) &&
+			   (!string.IsNullOrWhiteSpace( mCurrentArtist.Website ))) {
+				mEvents.GetEvent<Events.WebsiteRequest>().Publish( mCurrentArtist.Website );
+			}
 		}
 
 		private void OnArtistUpdate( DbArtist artist ) {
@@ -152,6 +162,10 @@ namespace Noise.UI.ViewModels {
 
 				return( retValue );
 			}
+		}
+
+		public LinkNode ArtistWebsite {
+			get{ return( mArtistWebsite ); }
 		}
 
 		[DependsUpon( "SupportInfo" )]
