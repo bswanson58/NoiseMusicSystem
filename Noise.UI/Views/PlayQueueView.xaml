@@ -14,53 +14,55 @@
         <ValueConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
     </Control.Resources>
 
-    <ListView x:Name="PlayQueueList" ItemsSource="{Binding Path=QueueList}"
-              Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex, Mode=OneWay}"
-              Behaviours:ListViewColumns.Stretch="true">
-        <ListView.ItemContainerStyle>
-            <Style TargetType="{x:Type ListViewItem}">
-                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding Path=IsPlaying}" Value="true">
-                        <Setter Property="FontWeight" Value="Bold"/>
-                    </DataTrigger>
-                    <DataTrigger Binding="{Binding Path=IsStrategyQueued, Mode=OneTime}" Value="true">
-                        <Setter Property="FontStyle" Value="Italic"/>
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
-        </ListView.ItemContainerStyle>
-        <ListView.View>
-            <GridView>
-                <GridViewColumn Header="|>" Width="40">
-                    <GridViewColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Path=IsPlaying}" Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}"/>
-                        </DataTemplate>
-                    </GridViewColumn.CellTemplate>
-                </GridViewColumn>
-                <GridViewColumn Header="Track Name">
-                    <GridViewColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Path=Track.Name}"/>
-                                <TextBlock Text=" - ("/>
-                                <TextBlock Text="{Binding Path=Artist.Name}"/>
-                                <TextBlock Text="/"/>
-                                <TextBlock Text="{Binding Path=Album.Name}"/>
-                                <TextBlock Text=")"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </GridViewColumn.CellTemplate>
-                </GridViewColumn>
-                <GridViewColumn Header="Duration" Width="75">
-                    <GridViewColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Path=Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" />
-                        </DataTemplate>
-                    </GridViewColumn.CellTemplate>
-                </GridViewColumn>
-            </GridView>
-        </ListView.View>
-    </ListView>
+    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Play Queue " Margin="3,0,0,0">
+        <ListView ItemsSource="{Binding Path=QueueList}" BorderThickness="0"
+                  Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex, Mode=OneWay}"
+                  Behaviours:ListViewColumns.Stretch="true">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsPlaying}" Value="true">
+                            <Setter Property="FontWeight" Value="Bold"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=IsStrategyQueued, Mode=OneTime}" Value="true">
+                            <Setter Property="FontStyle" Value="Italic"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="|>" Width="40">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=IsPlaying}" Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Track Name">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Path=Track.Name}"/>
+                                    <TextBlock Text=" - ("/>
+                                    <TextBlock Text="{Binding Path=Artist.Name}"/>
+                                    <TextBlock Text="/"/>
+                                    <TextBlock Text="{Binding Path=Album.Name}"/>
+                                    <TextBlock Text=")"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Duration" Width="75">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </GroupBox>
 </UserControl>

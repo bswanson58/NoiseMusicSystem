@@ -6,7 +6,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="130"/>
         </Grid.RowDefinitions>
         
         <DockPanel Grid.Row="0">
@@ -35,13 +35,13 @@
 
         <Grid x:Name="Player" Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
             </Grid.ColumnDefinitions>
 
-            <ContentControl Grid.Column="0" Margin="0,0,0,7" cal:RegionManager.RegionName="BottomLeft"/>
+            <ContentControl Grid.Column="0" Margin="0,0,7,7" cal:RegionManager.RegionName="BottomLeft"/>
             <GridSplitter Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"/>
-            <ContentControl Grid.Column="1" cal:RegionManager.RegionName="BottomRight"/>
+            <ContentControl Grid.Column="1" Margin="0,0,0,7" cal:RegionManager.RegionName="BottomRight"/>
         </Grid>
     </Grid>
 </UserControl>

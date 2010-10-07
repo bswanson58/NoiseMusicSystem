@@ -29,7 +29,7 @@
 		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}"/>
 	</UserControl.DataContext>
 
-	<Grid x:Name="PlayerViewRoot">
+    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Player " Margin="0,0,3,0">
 		<Grid x:Name="Layout" Background="White">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
@@ -48,10 +48,10 @@
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 				<StackPanel Grid.Column="0" Orientation="Horizontal" Margin="10">
-					<TextBlock Text="Current Track: " FontSize="16" FontWeight="Bold" Foreground="{DynamicResource ControlTextColor}" />
+					<TextBlock Text="Playing Track: " FontSize="16" FontWeight="Bold" Foreground="{DynamicResource ControlTextColor}" />
 					<TextBlock Text="{Binding TrackName}" FontWeight="Bold" FontSize="16"/>
 				</StackPanel>
-                <Button Grid.Column="1" Margin="3" Content="Replay" VerticalAlignment="Center" Command="{Binding ReplayTrack}"/>
+                <Button Grid.Column="1" Margin="3" Content="Replay" Command="{Binding ReplayTrack}" VerticalAlignment="Center"/>
                 <CheckBox Grid.Column="2" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
 				<Controls:RatingSelector Grid.Column="3"
 										 Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
@@ -64,7 +64,7 @@
 				<Button Margin="3" Command="{Binding PreviousTrack}" Content="Prev" Width="43"/>
 				<Button Margin="3" Command="{Binding NextTrack}" Content="Next" Width="43"/>
 				<Button Margin="3" Command="{Binding ClearQueue}" Content="Clear" Width="43"/>
-				<StackPanel Orientation="Horizontal" Margin="11,0">
+				<StackPanel Orientation="Horizontal" Margin="5,0">
 					<TextBlock Text="Position: " Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center">
                         <EventCommandTriggers:CommandSource.Trigger>
@@ -73,7 +73,7 @@
                     </TextBlock>
                 </StackPanel>
 
-				<Grid x:Name="VU_Meter" Width="120" Margin="10,5,0,0">
+				<Grid x:Name="VU_Meter" Width="106" Margin="10,5,0,0">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="11"/>
 						<RowDefinition Height="11"/>
@@ -82,14 +82,14 @@
 					<Rectangle Grid.Row="0" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding LeftLevel, Converter={StaticResource VolumeLevelConverter}}"/>
 					<Rectangle Grid.Row="1" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding RightLevel, Converter={StaticResource VolumeLevelConverter}}"/>
 				</Grid>
-				<Slider x:Name="PositionSlider" Orientation="Horizontal" Width="100" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}"/>
+				<Slider x:Name="PositionSlider" Orientation="Horizontal" Width="80" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}"/>
 				<Slider x:Name="SpeedSlider" Orientation="Horizontal" Width="50" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}">
 					<i:Interaction.Behaviors>
 						<Behaviours:SliderAnimateAfterDrag Storyboard="{StaticResource SliderValueAnimate}" />
 					</i:Interaction.Behaviors>
 				</Slider>
 				<Slider x:Name="Balance" Orientation="Horizontal" Width="50" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}"/>
-				<StackPanel Orientation="Vertical" Margin="10,5,0,0" VerticalAlignment="Top">
+				<StackPanel Orientation="Vertical" Margin="7,5,0,0" VerticalAlignment="Top">
 					<CheckBox Content="Random" IsChecked="{Binding Path=RandomPlay, Mode=TwoWay}"/>
 				</StackPanel>
 				<StackPanel Orientation="Horizontal" Margin="7,0,0,0"  VerticalAlignment="Top">
@@ -102,5 +102,5 @@
 			</StackPanel>
 			<Slider x:Name="Volume" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Height="50" Margin="0,0,10,0" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
 		</Grid>
-	</Grid>
+	</GroupBox>
 </UserControl>

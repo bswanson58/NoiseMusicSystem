@@ -135,7 +135,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TreeView x:Name="TreeView" Grid.Row="0" BorderThickness="0"
+            <TreeView Grid.Row="0" BorderThickness="0"
                   ItemsSource="{Binding Path=TreeData}"
                   ItemTemplate="{Binding Path=TreeViewItemTemplate}"
                   ItemContainerStyle="{DynamicResource TreeViewItemStyle}"
