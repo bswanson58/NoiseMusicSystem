@@ -128,35 +128,39 @@
 
     </Control.Resources>
 
-    <Grid x:Name="LayoutRoot">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        
-        <TreeView x:Name="TreeView" Grid.Row="0"
+    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Library "  Margin="3,0,0,0">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TreeView x:Name="TreeView" Grid.Row="0" BorderThickness="0"
                   ItemsSource="{Binding Path=TreeData}"
                   ItemTemplate="{Binding Path=TreeViewItemTemplate}"
                   ItemContainerStyle="{DynamicResource TreeViewItemStyle}"
                   />
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="15"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            
-            <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="Search for: "/>
-            <Controls:SearchTextBox Grid.Column="2" Margin="3" VerticalAlignment="Center" LabelText="Search Library" 
-                                    Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
-                                    ShowSectionsList="{Binding Path=HaveSearchOptions}" SectionsStyle="CheckBoxStyle" SectionsList="{Binding Path=SearchOptions}">
-                <EventCommandTriggers:CommandSource.Trigger>
-                    <EventCommandTriggers:EventCommandTrigger RoutedEvent="Controls:SearchTextBox.Search" Command="{Binding Path=Search}"/>
-                </EventCommandTriggers:CommandSource.Trigger>
-            </Controls:SearchTextBox>
-            <Button Grid.Column="4" Margin="3" Command="{Binding Path=Filter}" Content="Filter"/>
+            <Border Grid.Row="1" BorderThickness="0" Margin="0,5,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="Search for: "/>
+                    <Controls:SearchTextBox Grid.Column="2" Margin="3" VerticalAlignment="Center" LabelText="Search Library" 
+                                Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                ShowSectionsList="{Binding Path=HaveSearchOptions}" SectionsStyle="CheckBoxStyle" SectionsList="{Binding Path=SearchOptions}">
+                        <EventCommandTriggers:CommandSource.Trigger>
+                            <EventCommandTriggers:EventCommandTrigger RoutedEvent="Controls:SearchTextBox.Search" Command="{Binding Path=Search}"/>
+                        </EventCommandTriggers:CommandSource.Trigger>
+                    </Controls:SearchTextBox>
+                    <Button Grid.Column="4" Margin="3" Command="{Binding Path=Filter}" Content="Filter"/>
+                </Grid>
+            </Border>
         </Grid>
-    </Grid>
+    </GroupBox>
 </UserControl>
