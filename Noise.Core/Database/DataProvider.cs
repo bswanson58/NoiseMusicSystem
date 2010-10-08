@@ -236,6 +236,25 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public DbTrack GetTrack( StorageFile forFile ) {
+			Condition.Requires( forFile ).IsNotNull();
+
+			DbTrack	retValue = null;
+			var database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				retValue = ( from DbTrack track in database.Database where forFile.MetaDataPointer == track.DbId select track ).FirstOrDefault();
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetTrack( StorageFile ): ", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
 		public DataProviderList<DbTrack> GetTrackList( DbAlbum forAlbum ) {
 			Condition.Requires( forAlbum ).IsNotNull();
 

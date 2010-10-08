@@ -18,6 +18,8 @@
                 <Layout:View RegionName="TopRightLower"
                              Type="{x:Type Views:AlbumView}"/>
                 <Layout:View RegionName="BottomLeft"
+                             Type="{x:Type Views:PlayHistoryView}" />
+                <Layout:View RegionName="BottomMiddle"
                              Type="{x:Type Views:PlayQueueView}" />
                 <Layout:View RegionName="BottomRight"
                              Type="{x:Type Views:PlayerView}" />
