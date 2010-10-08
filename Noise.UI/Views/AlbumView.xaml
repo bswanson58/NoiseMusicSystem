@@ -32,7 +32,8 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Image Grid.Column="0" Margin="7" Source="{Binding AlbumCover, Converter={StaticResource imageConverter}}"/>
+                    <Image Grid.Column="0" Margin="7" MaxHeight="200" MaxWidth="300" Stretch="Uniform"
+                           Source="{Binding AlbumCover, Converter={StaticResource imageConverter}}"/>
                     <Grid Grid.Column="2" Margin="3,0,25,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
