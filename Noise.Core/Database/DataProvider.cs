@@ -367,7 +367,7 @@ namespace Noise.Core.Database {
 				var artistId = forArtist.DbId;
 
 				retValue = new DataProviderList<DbDiscographyRelease>( database.DatabaseId, FreeDatabase,
-															from DbDiscographyRelease release in database.Database where release.AssociatedItem == artistId select release );				
+															from DbDiscographyRelease release in database.Database where release.Artist == artistId select release );				
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetFavoriteTracks: ", ex );

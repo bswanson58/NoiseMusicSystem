@@ -40,14 +40,14 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="{Binding Path=Album.Name}" FontSize="20" Margin="0,0,0,9"  HorizontalAlignment="Right"/>
+                        <TextBlock Text="{Binding Path=UiDisplay.Name}" FontSize="20" Margin="0,0,0,9"  HorizontalAlignment="Right"/>
                         <StackPanel HorizontalAlignment="Right" Grid.Row="1" Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding Path=Album.IsFavorite, Mode=TwoWay}" Margin="0,0,5,0"  VerticalAlignment="Center"/>
-                            <Custom:RatingSelector RatingSelected="{Binding Path=Album.Rating, Mode=TwoWay}" 
+                            <CheckBox IsChecked="{Binding Path=UiEdit.IsFavorite, Mode=TwoWay}" Margin="0,0,5,0"  VerticalAlignment="Center"/>
+                            <Custom:RatingSelector RatingSelected="{Binding Path=UiEdit.Rating, Mode=TwoWay}" 
                                            Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"/>
                         </StackPanel>
-                        <TextBlock Text="{Binding Path=Album.Genre}"  HorizontalAlignment="Right" Grid.Row="2"/>
-                        <TextBlock Text="{Binding Path=Album.PublishedYear, Converter={StaticResource PublishedYearConverter}}"  HorizontalAlignment="Right" Grid.Row="3"/>
+                        <TextBlock Text="{Binding Path=UiDisplay.Genre}"  HorizontalAlignment="Right" Grid.Row="2"/>
+                        <TextBlock Text="{Binding Path=UiDisplay.PublishedYear, Converter={StaticResource PublishedYearConverter}}"  HorizontalAlignment="Right" Grid.Row="3"/>
                     </Grid>
                 </Grid>
             </Border>

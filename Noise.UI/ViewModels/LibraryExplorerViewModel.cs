@@ -5,6 +5,7 @@ using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Behaviours.EventCommandTriggers;
@@ -15,6 +16,7 @@ using Noise.UI.Support;
 namespace Noise.UI.ViewModels {
 	public class LibraryExplorerViewModel : ViewModelBase {
 		private IUnityContainer					mContainer;
+		private INoiseManager					mNoiseManager;
 		private IEventAggregator				mEvents;
 		private IExplorerViewStrategy			mViewStrategy;
 		private ObservableCollectionEx<ExplorerTreeNode>	mTreeItems;
@@ -41,6 +43,8 @@ namespace Noise.UI.ViewModels {
 				mViewStrategy = mContainer.Resolve<IExplorerViewStrategy>( "ArtistAlbum" );
 				mViewStrategy.Initialize( this );
 
+				mNoiseManager = mContainer.Resolve<INoiseManager>();
+
 				mEvents = mContainer.Resolve<IEventAggregator>();
 				mEvents.GetEvent<Events.ExplorerItemSelected>().Subscribe( OnExplorerItemSelected );
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistRequested );
@@ -56,7 +60,10 @@ namespace Noise.UI.ViewModels {
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( item as DbArtist );
 			}
 			else if( item is DbAlbum ) {
-				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( item as DbAlbum );
+				var album = item as DbAlbum;
+
+				mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( mNoiseManager.DataProvider.GetArtistForAlbum( album ));
+				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( album );
 			}
 		}
 

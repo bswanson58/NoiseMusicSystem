@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
@@ -13,12 +12,12 @@ using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
 	internal class AlbumViewModel : ViewModelBase {
-		private IUnityContainer		mContainer;
-		private IEventAggregator	mEvents;
-		private INoiseManager		mNoiseManager;
-		private DbAlbum				mCurrentAlbum;
-		private BackgroundWorker	mBackgroundWorker;
-		private readonly Observer	mChangeObserver;
+		private IUnityContainer			mContainer;
+		private IEventAggregator		mEvents;
+		private INoiseManager			mNoiseManager;
+		private DbAlbum					mCurrentAlbum;
+		public	UserSettingsNotifier	UiEdit { get; private set; }
+		private readonly Observer		mChangeObserver;
 		private readonly ObservableCollectionEx<TrackViewNode>	mTracks;
 
 		public AlbumViewModel() {
@@ -37,21 +36,66 @@ namespace Noise.UI.ViewModels {
 				mEvents = mContainer.Resolve<IEventAggregator>();
 				mNoiseManager = mContainer.Resolve<INoiseManager>();
 
-				mBackgroundWorker = new BackgroundWorker();
-				mBackgroundWorker.DoWork += ( o, args ) => args.Result = mNoiseManager.DataProvider.GetAlbumSupportInfo( args.Argument as DbAlbum );
-				mBackgroundWorker.RunWorkerCompleted += ( o, result ) => SupportInfo = result.Result as AlbumSupportInfo;
-
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
 				mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
 				mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 			}
 		}
 
+		public DbAlbum UiDisplay {
+			get{ return( mCurrentAlbum ); }
+		}
+
+		private DbAlbum CurrentAlbum {
+			get{ return( mCurrentAlbum ); }
+			set {
+				Invoke( () => {
+		        	mCurrentAlbum = value != null ? mNoiseManager.DataProvider.GetAlbum( value.DbId ) : null;
+
+		        	if( mCurrentAlbum != null ) {
+						if( UiEdit != null ) {
+							mChangeObserver.Release( UiEdit );
+						}
+						UiEdit = new UserSettingsNotifier( mCurrentAlbum, null );
+						mChangeObserver.Add( UiEdit );
+
+						RaisePropertyChanged( () => UiDisplay );
+						RaisePropertyChanged( () => UiEdit );
+					}
+		        } );
+			}
+		}
+
+		private AlbumSupportInfo SupportInfo {
+			get{ return( Get( () => SupportInfo )); }
+			set {
+				Invoke( () => {
+					Set( () => SupportInfo, value );
+					mTracks.Clear();
+					mTracks.Each( node => mChangeObserver.Release( node ));
+
+					using( var tracks = mNoiseManager.DataProvider.GetTrackList( CurrentAlbum )) {
+						mTracks.AddRange( from track in tracks.List select new TrackViewNode( mEvents, track ));
+					}
+
+					mTracks.Each( track => mChangeObserver.Add( track.UiEdit ));
+				});
+			}
+		}
+
 		private void OnArtistFocus( DbArtist artist ) {
-			if( mCurrentAlbum != null ) {
-				if( mCurrentAlbum.Artist != mNoiseManager.DataProvider.GetObjectIdentifier( artist )) {
+			if( CurrentAlbum != null ) {
+				if( CurrentAlbum.Artist != artist.DbId ) {
 					SupportInfo = null;
 				}
+			}
+		}
+
+		private void OnAlbumFocus( DbAlbum album ) {
+			CurrentAlbum = album;
+
+			if( CurrentAlbum != null ) {
+				SupportInfo = mNoiseManager.DataProvider.GetAlbumSupportInfo( CurrentAlbum );
 			}
 		}
 
@@ -59,9 +103,9 @@ namespace Noise.UI.ViewModels {
 			var notifier = propertyNotification.Source as UserSettingsNotifier;
 
 			if( notifier != null ) {
-				var track = notifier.TargetItem as DbTrack;
+				if( notifier.TargetItem is DbTrack ) {
+					var track = notifier.TargetItem as DbTrack;
 
-				if( track != null ) {
 					if( propertyNotification.PropertyName == "UiRating" ) {
 						mNoiseManager.DataProvider.SetRating( track, notifier.UiRating );
 					}
@@ -69,11 +113,24 @@ namespace Noise.UI.ViewModels {
 						mNoiseManager.DataProvider.SetFavorite( track, notifier.UiIsFavorite );
 					}
 				}
+
+				if( notifier.TargetItem is DbAlbum ) {
+					var album = notifier.TargetItem as DbAlbum;
+
+					if( propertyNotification.PropertyName == "UiRating" ) {
+						mNoiseManager.DataProvider.SetRating( album, notifier.UiRating );
+					}
+					if( propertyNotification.PropertyName == "UiIsFavorite" ) {
+						mNoiseManager.DataProvider.SetFavorite( album, notifier.UiIsFavorite );
+					}
+				}
 			}
 		}
 
 		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			if( args.Item is DbTrack ) {
+			if(( args.Item is DbTrack ) &&
+			   ( CurrentAlbum != null ) &&
+			   ((args.Item as DbTrack).Album == CurrentAlbum.DbId )) {
 				BeginInvoke( () => {
 					var track = ( from TrackViewNode node in mTracks where node.Track.DbId == args.Item.DbId select node ).FirstOrDefault();
 
@@ -90,39 +147,14 @@ namespace Noise.UI.ViewModels {
 					}
 				});
 			}
-		}
 
-		private AlbumSupportInfo SupportInfo {
-			get{ return( Get( () => SupportInfo )); }
-			set {
-				Invoke( () => {
-					Set( () => SupportInfo, value );
-					mTracks.Clear();
-					mTracks.Each( node => mChangeObserver.Release( node ));
-
-					using( var tracks = mNoiseManager.DataProvider.GetTrackList( mCurrentAlbum )) {
-						mTracks.AddRange( from track in tracks.List select new TrackViewNode( mEvents, track ));
-					}
-
-					mTracks.Each( track => mChangeObserver.Add( track.UiEdit ));
-				});
+			if(( args.Item is DbAlbum ) &&
+			   ( CurrentAlbum != null ) &&
+			   ((args.Item as DbAlbum).DbId == CurrentAlbum.DbId )) {
+				BeginInvoke( () => {
+					CurrentAlbum = args.Item as DbAlbum;
+				} );
 			}
-		}
-
-		private void OnAlbumFocus( DbAlbum album ) {
-			mCurrentAlbum = album;
-
-			if( mCurrentAlbum != null ) {
-				if(!mBackgroundWorker.IsBusy ) {
-					mBackgroundWorker.RunWorkerAsync( mCurrentAlbum );
-				}
-			}
-
-			RaisePropertyChanged( "Album" );
-		}
-
-		public DbAlbum Album {
-			get{ return( mCurrentAlbum ); }
 		}
 
 		[DependsUpon( "SupportInfo" )]

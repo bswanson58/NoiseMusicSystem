@@ -124,6 +124,7 @@ namespace Noise.Core.Database {
 
 			try {
 				Database.OpenDatabase( mDatabaseName );
+				Database.RefreshMode = ObjectRefreshMode.AlwaysReturnUpdatedValues;
 
 				retValue = true;
 			}

@@ -13,7 +13,9 @@ namespace Noise.UI.Adapters {
 		public UserSettingsNotifier( IUserSettings targetObject, INotifyPropertyChanged changer ) {
 			mTargetObject = targetObject;
 
-			changer.PropertyChanged += OnPropertyChanged;
+			if( changer != null ) {
+				changer.PropertyChanged += OnPropertyChanged;
+			}
 		}
 
 		private void OnPropertyChanged( object sender, PropertyChangedEventArgs args ) {
