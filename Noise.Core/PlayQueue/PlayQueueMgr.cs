@@ -60,7 +60,21 @@ namespace Noise.Core.PlayQueue {
 				artist = mDataProvider.GetArtistForAlbum( album );
 			}
 
-			mPlayQueue.Add( new PlayQueueTrack( artist, album, track, mDataProvider.GetPhysicalFile( track ), strategyRequest ));
+			var newTrack = new PlayQueueTrack( artist, album, track, mDataProvider.GetPhysicalFile( track ), strategyRequest );
+
+			// Place any user selected tracks before any unplayed strategy queued tracks.
+			if(!strategyRequest ) {
+				var	ptrack = mPlayQueue.Find( t => t.HasPlayed == false && t.IsPlaying == false && t.IsStrategyQueued );
+				if( ptrack != null ) {
+					mPlayQueue.Insert( mPlayQueue.IndexOf( ptrack ), newTrack );
+				}
+				else {
+					mPlayQueue.Add( newTrack );
+				}
+			}
+			else {
+				mPlayQueue.Add( newTrack );
+			}
 		}
 
 		public void OnAlbumPlayRequest( DbAlbum album ) {
