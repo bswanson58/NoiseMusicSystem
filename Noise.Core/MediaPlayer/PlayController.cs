@@ -177,11 +177,31 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		public void PlayPreviousTrack() {
-			StartTrack( mNoiseManager.PlayQueue.PlayPreviousTrack());
+			if(( CurrentTrack != null ) &&
+			   ( mCurrentStatus != ePlaybackStatus.Stopped ) &&
+			   ( mCurrentPosition > new TimeSpan( 0, 0, 5 ))) {
+				PlayPosition = 0;
+			}
+			else {
+				StartTrack( mNoiseManager.PlayQueue.PlayPreviousTrack());
+			}
 		}
 
 		public bool CanPlayPreviousTrack {
-			get { return( mNoiseManager != null ? mNoiseManager.PlayQueue.PreviousTrack != null : false ); }
+			get {
+				var retValue = false;
+
+				if( mNoiseManager != null ) {
+					if(( mNoiseManager.PlayQueue.PreviousTrack != null ) ||
+					  (( CurrentTrack != null ) &&
+					   ( mCurrentStatus != ePlaybackStatus.Stopped ) &&
+					   ( mCurrentPosition > new TimeSpan( 0,0,5 )))) {
+						retValue = true;
+					}
+				}
+
+				return( retValue );
+			}
 		}
 
 		private void StartTrack( PlayQueueTrack track ) {

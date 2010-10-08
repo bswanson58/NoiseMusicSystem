@@ -89,7 +89,7 @@ namespace Noise.UI.ViewModels {
 
 		private int InfoUpdateFlag {
 			get{ return( Get( () => InfoUpdateFlag, 0 ));  }
-			set{ Set( () => InfoUpdateFlag, value ); }
+			set{ Invoke( () => Set( () => InfoUpdateFlag, value )); }
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
@@ -236,6 +236,7 @@ namespace Noise.UI.ViewModels {
 		}
 		[DependsUpon( "PlayQueueChangedFlag" )]
 		[DependsUpon( "StartTrackFlag" )]
+		[DependsUpon( "InfoUpdateFlag" )]
 		public bool CanExecute_PreviousTrack( object sender ) {
 			return( mNoiseManager.PlayController.CanPlayPreviousTrack );
 		}
