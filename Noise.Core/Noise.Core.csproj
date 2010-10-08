@@ -73,11 +73,13 @@
     <Reference Include="CuttingEdge.Conditions">
       <HintPath>..\lib\CuttingEdge.Conditions\CuttingEdge.Conditions.dll</HintPath>
     </Reference>
-    <Reference Include="Eloquera.Client">
-      <HintPath>..\lib\Eloquera\Eloquera.Client.dll</HintPath>
+    <Reference Include="Eloquera.Client, Version=3.0.0.12, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Eloquera\v3.0.B3\Eloquera.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Eloquera.Server">
-      <HintPath>..\lib\Eloquera\Eloquera.Server.dll</HintPath>
+    <Reference Include="Eloquera.Common, Version=3.0.0.12, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Eloquera\v3.0.B3\Eloquera.Common.dll</HintPath>
     </Reference>
     <Reference Include="Hammock.ClientProfile">
       <HintPath>..\lib\Hammock\v1.0.4.0\Hammock.ClientProfile.dll</HintPath>

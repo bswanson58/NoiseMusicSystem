@@ -62,8 +62,9 @@
     <Reference Include="Accessibility">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Eloquera.Client">
-      <HintPath>..\lib\Eloquera\Eloquera.Client.dll</HintPath>
+    <Reference Include="Eloquera.Client, Version=3.0.0.12, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Eloquera\v3.0.B3\Eloquera.Client.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Composite">
       <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.Composite.dll</HintPath>

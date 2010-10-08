@@ -206,8 +206,8 @@
 copy $(SolutionDir)lib\BASS.Net\v2.4.6.4\bass_aac.dll $(TargetDir)
 copy $(SolutionDir)lib\BASS.Net\v2.4.6.4\bassflac.dll $(TargetDir)
 copy $(SolutionDir)lib\BASS.Net\v2.4.6.4\basswma.dll $(TargetDir)
-copy $(SolutionDir)lib\Eloquera\v2.8.0.0\Eloquera.Client.dll $(TargetDir)
-copy $(SolutionDir)lib\Eloquera\v2.8.0.0\Eloquera.Common.dll $(TargetDir)</PostBuildEvent>
+copy $(SolutionDir)lib\Eloquera\v3.0.B3\Eloquera.Client.dll $(TargetDir)
+copy $(SolutionDir)lib\Eloquera\v3.0.B3\Eloquera.Common.dll $(TargetDir)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
