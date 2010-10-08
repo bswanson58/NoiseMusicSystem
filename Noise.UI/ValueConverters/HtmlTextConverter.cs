@@ -13,7 +13,10 @@ namespace Noise.UI.ValueConverters {
 				var regEx = new Regex( @"<(.|\n)*?>", RegexOptions.IgnoreCase );
 
 				retValue = regEx.Replace( input, String.Empty );
-
+				retValue = retValue.Replace( "&quot;", "'" );
+				retValue = retValue.Replace( "&amp;", "&" );
+				retValue = retValue.Replace( "&lt;", "<" );
+				retValue = retValue.Replace( "&gt;", ">" );
 			}
 			return( retValue );
 		}
