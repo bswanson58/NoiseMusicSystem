@@ -52,6 +52,9 @@ namespace Noise.UI.ViewModels {
 				Invoke( () => {
 		        	mCurrentAlbum = value != null ? mNoiseManager.DataProvider.GetAlbum( value.DbId ) : null;
 
+					mTracks.Each( node => mChangeObserver.Release( node ));
+					mTracks.Clear();
+
 		        	if( mCurrentAlbum != null ) {
 						if( UiEdit != null ) {
 							mChangeObserver.Release( UiEdit );
@@ -59,9 +62,14 @@ namespace Noise.UI.ViewModels {
 						UiEdit = new UserSettingsNotifier( mCurrentAlbum, null );
 						mChangeObserver.Add( UiEdit );
 
-						RaisePropertyChanged( () => UiDisplay );
-						RaisePropertyChanged( () => UiEdit );
+						using( var tracks = mNoiseManager.DataProvider.GetTrackList( CurrentAlbum )) {
+							mTracks.AddRange( from track in tracks.List select new TrackViewNode( mEvents, track ));
+						}
+						mTracks.Each( track => mChangeObserver.Add( track.UiEdit ));
 					}
+
+					RaisePropertyChanged( () => UiDisplay );
+					RaisePropertyChanged( () => UiEdit );
 		        } );
 			}
 		}
@@ -69,23 +77,14 @@ namespace Noise.UI.ViewModels {
 		private AlbumSupportInfo SupportInfo {
 			get{ return( Get( () => SupportInfo )); }
 			set {
-				Invoke( () => {
-					Set( () => SupportInfo, value );
-					mTracks.Clear();
-					mTracks.Each( node => mChangeObserver.Release( node ));
-
-					using( var tracks = mNoiseManager.DataProvider.GetTrackList( CurrentAlbum )) {
-						mTracks.AddRange( from track in tracks.List select new TrackViewNode( mEvents, track ));
-					}
-
-					mTracks.Each( track => mChangeObserver.Add( track.UiEdit ));
-				});
+				Invoke( () => Set( () => SupportInfo, value ));
 			}
 		}
 
 		private void OnArtistFocus( DbArtist artist ) {
 			if( CurrentAlbum != null ) {
 				if( CurrentAlbum.Artist != artist.DbId ) {
+					CurrentAlbum = null;
 					SupportInfo = null;
 				}
 			}
