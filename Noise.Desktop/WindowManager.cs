@@ -51,12 +51,7 @@ namespace Noise.Desktop {
 		}
 
 		public void Shutdown() {
-			if( mPlayerView != null ) {
-				Settings.Default.SmallPlayerTop = mPlayerView.Top;
-				Settings.Default.SmallPlayerLeft = mPlayerView.Left;
-
-				mPlayerView.Close();
-			}
+			CloseSmallPlayer();
 		}
 
 		public void OnWindowLayoutRequested( string forLayout ) {
@@ -89,6 +84,9 @@ namespace Noise.Desktop {
 
 		private void CloseSmallPlayer() {
 			if( mPlayerView != null ) {
+				Settings.Default.SmallPlayerTop = mPlayerView.Top;
+				Settings.Default.SmallPlayerLeft = mPlayerView.Left;
+
 				mPlayerView.Close();
 				mPlayerView = null;
 			}
