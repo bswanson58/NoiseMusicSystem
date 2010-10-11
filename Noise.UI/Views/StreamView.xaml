@@ -4,46 +4,49 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
-              DataContext="{Binding StreamViewModel, Source={StaticResource ViewModelLocator}}"
+             Tag="Radio"
+             DataContext="{Binding StreamViewModel, Source={StaticResource ViewModelLocator}}"
              >
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        
-        <ListView Grid.Row="0" ItemsSource="{Binding Path=StreamList}" SelectedItem="{Binding Path=CurrentStream}"
+    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Radio " Margin="3,0,0,0">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <ListView Grid.Row="0" ItemsSource="{Binding Path=StreamList}" SelectedItem="{Binding Path=CurrentStream}"
               Behaviours:ListViewColumns.Stretch="true"
               Behaviours:GridViewSort.AutoSort="True">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="{x:Type ListViewItem}">
-                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="|>" Width="27">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Width="12" Height="12" Command="{Binding Path=PlayStream}">
-                                    <Button.CommandParameter>
-                                        <Binding Path="Stream"/>
-                                    </Button.CommandParameter>
-                                </Button>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Stream Name" Width="90" DisplayMemberBinding="{Binding Path=Stream.Name}" Behaviours:GridViewSort.PropertyName="Stream.Name"/>
-                    <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Path=Stream.Description}" Behaviours:GridViewSort.PropertyName="Stream.Description"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Margin="3" Command="{Binding Path=AddStream}">Add Stream</Button>
-            <Button Margin="3" Command="{Binding Path=EditStream}">Edit Stream</Button>
-            <Button Margin="3" Command="{Binding Path=DeleteStream}">Remove Stream</Button>
-        </StackPanel>
-    </Grid>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="|>" Width="27">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Width="12" Height="12" Command="{Binding Path=PlayStream}">
+                                        <Button.CommandParameter>
+                                            <Binding Path="Stream"/>
+                                        </Button.CommandParameter>
+                                    </Button>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Stream Name" Width="90" DisplayMemberBinding="{Binding Path=Stream.Name}" Behaviours:GridViewSort.PropertyName="Stream.Name"/>
+                        <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Path=Stream.Description}" Behaviours:GridViewSort.PropertyName="Stream.Description"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <Button Margin="3" Command="{Binding Path=AddStream}">Add Stream</Button>
+                <Button Margin="3" Command="{Binding Path=EditStream}">Edit Stream</Button>
+                <Button Margin="3" Command="{Binding Path=DeleteStream}">Remove Stream</Button>
+            </StackPanel>
+        </Grid>
+    </GroupBox>
 </UserControl>

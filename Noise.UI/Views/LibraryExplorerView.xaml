@@ -8,6 +8,7 @@
              xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
+             Tag="Library"
              DataContext="{Binding LibraryExplorerViewModel, Source={StaticResource ViewModelLocator}}"
              >
     <Control.Resources>
@@ -128,7 +129,7 @@
 
     </Control.Resources>
 
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Library "  Margin="3,0,0,0">
+    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Library "  Margin="0">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>

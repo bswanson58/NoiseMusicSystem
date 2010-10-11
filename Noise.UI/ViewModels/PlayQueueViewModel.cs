@@ -8,6 +8,7 @@ using Noise.Infrastructure.Support;
 namespace Noise.UI.ViewModels {
 	public class PlayQueueViewModel : ViewModelBase {
 		private IUnityContainer		mContainer;
+		private INoiseManager		mNoiseManager;
 		private IEventAggregator	mEventAggregator;
 		private int					mPlayingIndex;
 		private readonly ObservableCollectionEx<PlayQueueTrack>	mPlayQueue;
@@ -24,8 +25,11 @@ namespace Noise.UI.ViewModels {
 				mContainer = value;
 
 				mEventAggregator = mContainer.Resolve<IEventAggregator>();
+				mNoiseManager = mContainer.Resolve<INoiseManager>();
 				mEventAggregator.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
 				mEventAggregator.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnTrackStarted );
+
+				LoadPlayQueue();
 			}
 		}
 
@@ -34,10 +38,12 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnPlayQueueChanged( IPlayQueue playQueue ) {
-			Invoke( () => {
-				mPlayQueue.Clear();
-				mPlayQueue.AddRange( playQueue.PlayList );
-			});
+			Invoke( LoadPlayQueue );
+		}
+
+		private void LoadPlayQueue() {
+			mPlayQueue.Clear();
+			mPlayQueue.AddRange( mNoiseManager.PlayQueue.PlayList );
 		}
 
 		private void OnTrackStarted( PlayQueueTrack track ) {

@@ -6,6 +6,7 @@
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" 
              mc:Ignorable="d"
              DataContext="{Binding PlayHistoryViewModel, Source={StaticResource ViewModelLocator}}"
+             Tag="History"
              d:DesignHeight="300" d:DesignWidth="300">
     
     <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Play History " Margin="3,0,0,0">

@@ -12,13 +12,12 @@
 
     <ToolBarTray DockPanel.Dock="Top">
         <ToolBar Band="1" BandIndex="1">
+            <Button Margin="3" Command="{Binding Path=ExploreLayout}">Explore</Button>
+            <Button Margin="3" Command="{Binding Path=ListenLayout}">Listen</Button>
             <Button Margin="3" Command="{Binding Path=DatabaseConfiguration}">Configuration</Button>
             <Button Margin="3" Command="{Binding Path=LibraryConfiguration}">Library</Button>
             <Button Margin="3" Command="{Binding Path=NoiseOptions}">Options</Button>
             <Button Margin="3" Command="{Binding Path=SmallPlayerView}">Player</Button>
-            <Button Margin="3" Command="{Binding Path=LibraryLayout}">Library Layout</Button>
-            <Button Margin="3" Command="{Binding Path=StreamLayout}">Stream Layout</Button>
-            <Button Margin="3" Command="{Binding Path=Search}">Search</Button>
             <Button Margin="3" Command="{Binding Path=DisplayLog}">Log</Button>
         </ToolBar>
     </ToolBarTray>

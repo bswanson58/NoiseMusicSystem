@@ -70,32 +70,21 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Execute_Search() {
-			if( mContainer != null ) {
-				var	dialogService = mContainer.Resolve<IDialogService>();
-				var viewModel = new	SearchViewModel();
-
-				mContainer.BuildUp( viewModel );
-
-				dialogService.ShowDialog( DialogNames.Search, viewModel );
-			}
-		}
-
 		public void Execute_SmallPlayerView() {
 			if( mEvents != null ) {
 				mEvents.GetEvent<Events.WindowLayoutRequest>().Publish( Constants.SmallPlayerViewToggle );
 			}
 		}
 
-		public void Execute_LibraryLayout() {
+		public void Execute_ExploreLayout() {
 			if( mEvents != null ) {
-				mEvents.GetEvent<Events.WindowLayoutRequest>().Publish( Constants.LibraryLayout );
+				mEvents.GetEvent<Events.WindowLayoutRequest>().Publish( Constants.ExploreLayout );
 			}
 		}
 
-		public void Execute_StreamLayout() {
+		public void Execute_ListenLayout() {
 			if( mEvents != null ) {
-				mEvents.GetEvent<Events.WindowLayoutRequest>().Publish( Constants.StreamLayout );
+				mEvents.GetEvent<Events.WindowLayoutRequest>().Publish( Constants.ListenLayout );
 			}
 		}
 

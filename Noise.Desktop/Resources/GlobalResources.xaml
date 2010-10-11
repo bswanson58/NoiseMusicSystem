@@ -8,4 +8,7 @@
 		<GradientStop Color="White" Offset="1"/>
 	</LinearGradientBrush>
 
+    <Style TargetType="{x:Type TabItem}" x:Key="TabItemRegionStyle">
+        <Setter Property="Header" Value="{Binding RelativeSource={RelativeSource Self}, Path=Content.Tag}" />
+    </Style>
 </ResourceDictionary>

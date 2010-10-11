@@ -19,7 +19,7 @@
         <local:TimeSpanConverter x:Key="TimeSpanConverter"/>
     </UserControl.Resources>
 
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Album "  Margin="0,0,3,0">
+    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Album "  Margin="0">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

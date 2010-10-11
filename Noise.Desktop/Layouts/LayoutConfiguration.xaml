@@ -3,47 +3,43 @@
                       xmlns:Layout="clr-namespace:Composite.Layout;assembly=Composite.Layout"
                       xmlns:Views="clr-namespace:Noise.UI.Views;assembly=Noise.UI" ShellName="Shell">
     <Layout:LayoutManager.Layouts>
-        <Layout:Layout x:Name="DefaultLayout"
+        <Layout:Layout x:Name="ExploreLayout"
                        Fullname="Default Layout"
-                       Filename="Layouts\DefaultLayout.xaml"
-                       Description="This is the default layout"
+                       Filename="Layouts\ExploreLayout.xaml"
+                       Description="This layout allow you to explore your music."
                        IsDefault="True">
             <Layout:Layout.Views>
                 <Layout:View RegionName="Toolbar"
                              Type="{x:Type Views:ToolbarView}"/>
-                <Layout:View RegionName="TopLeft"
+                <Layout:View RegionName="Explorer"
                              Type="{x:Type Views:LibraryExplorerView}" />
-                <Layout:View RegionName="TopRight"
-                             Type="{x:Type Views:ArtistView}" />
-                <Layout:View RegionName="TopRightLower"
-                             Type="{x:Type Views:AlbumView}"/>
-                <Layout:View RegionName="BottomLeft"
+                <Layout:View RegionName="Explorer"
+                             Type="{x:Type Views:StreamView}" />
+                <Layout:View RegionName="Explorer"
                              Type="{x:Type Views:PlayHistoryView}" />
-                <Layout:View RegionName="BottomMiddle"
+                <Layout:View RegionName="Explorer"
+                             Type="{x:Type Views:SearchView}" />
+                <Layout:View RegionName="ArtistInfo"
+                             Type="{x:Type Views:ArtistView}" />
+                <Layout:View RegionName="AlbumInfo"
+                             Type="{x:Type Views:AlbumView}"/>
+                <Layout:View RegionName="PlayQueue"
                              Type="{x:Type Views:PlayQueueView}" />
-                <Layout:View RegionName="BottomRight"
+                <Layout:View RegionName="Player"
                              Type="{x:Type Views:PlayerView}" />
             </Layout:Layout.Views>
         </Layout:Layout>
-        <Layout:Layout x:Name="StreamLayout"
+        <Layout:Layout x:Name="ListenLayout"
                        Fullname="Internet Stream Layout"
-                       Filename="Layouts\StreamLayout.xaml"
-                       Description="This is the layout for internet streams"
+                       Filename="Layouts\ListenLayout.xaml"
+                       Description="This layout presents information to you as you listen."
                        IsDefault="True">
             <Layout:Layout.Views>
                 <Layout:View RegionName="Toolbar"
                              Type="{x:Type Views:ToolbarView}"/>
-                <Layout:View RegionName="TopLeft"
-                             Type="{x:Type Views:StreamView}" />
-                <Layout:View RegionName="TopRight"
-                             Type="{x:Type Views:ArtistView}" />
-                <Layout:View RegionName="TopRightLower"
-                             Type="{x:Type Views:AlbumView}"/>
-                <Layout:View RegionName="MiddleRight"
-                             Type="{x:Type Views:TrackListView}" />
-                <Layout:View RegionName="BottomLeft"
+                <Layout:View RegionName="PlayQueue"
                              Type="{x:Type Views:PlayQueueView}" />
-                <Layout:View RegionName="BottomRight"
+                <Layout:View RegionName="Player"
                              Type="{x:Type Views:PlayerView}" />
             </Layout:Layout.Views>
         </Layout:Layout>

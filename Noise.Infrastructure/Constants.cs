@@ -13,8 +13,8 @@ namespace Noise.Infrastructure {
 
 		public	const string			SmallPlayerViewToggle = "SmallPlayerView";
 
-		public	const string			LibraryLayout = "DefaultLayout";
-		public	const string			StreamLayout = "StreamLayout";
+		public	const string			ExploreLayout = "ExploreLayout";
+		public	const string			ListenLayout = "ListenLayout";
 
 		public const string				ApplicationLogName = "noise.log";
 

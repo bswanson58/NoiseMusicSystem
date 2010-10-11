@@ -54,7 +54,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Duration" Width="75">
+                    <GridViewColumn Header="Length" Width="45">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" />

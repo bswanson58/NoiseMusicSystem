@@ -42,7 +42,7 @@ namespace Noise.Desktop {
 
 		public void Initialize( Window shell ) {
 			mLayoutManager.Initialize( mContainer );
-			mLayoutManager.LoadLayout( Constants.LibraryLayout );
+			mLayoutManager.LoadLayout( Constants.ExploreLayout );
 
 			mShell = shell;
 			mShell.StateChanged += OnShellStateChanged;

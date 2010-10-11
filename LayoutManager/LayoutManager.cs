@@ -322,6 +322,8 @@ namespace Composite.Layout
 		private void RemoveViews(IRegionManager regionManager, ILayout layout)
 		{
 			if( CurrentLayout != null && CurrentLayout.Views != null && CurrentLayout.Views.Count > 0 ) {
+				var regionNames = new List<string>();
+
 				foreach( var view in CurrentLayout.Views ) {
 					if( view is IViewModel ) {
 						var viewModel = _Container.Resolve(view.Type);
@@ -341,7 +343,14 @@ namespace Composite.Layout
 						}
 					}
 
-					regionManager.Regions.Remove(view.RegionName);
+					if(!regionNames.Contains( view.RegionName )) {
+						regionNames.Add( view.RegionName );
+					}
+
+				}
+
+				foreach( var regionName in regionNames ) {
+					regionManager.Regions.Remove( regionName );
 				}
 
 				ClearRegions(layout.ContentControl);
