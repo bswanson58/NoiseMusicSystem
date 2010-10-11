@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
-             mc:Ignorable="d" 
+             xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers" 
+             mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
               DataContext="{Binding PlayQueueViewModel, Source={StaticResource ViewModelLocator}}"
              >
@@ -15,9 +16,12 @@
     </Control.Resources>
 
     <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Play Queue " Margin="3,0,0,0">
-        <ListView ItemsSource="{Binding Path=QueueList}" BorderThickness="0"
+        <ListView x:Name="PlayQueueListView" ItemsSource="{Binding Path=QueueList}" BorderThickness="0"
                   Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex, Mode=OneWay}"
                   Behaviours:ListViewColumns.Stretch="true">
+            <EventCommandTriggers:CommandSource.Trigger>
+                <EventCommandTriggers:EventCommandTrigger RoutedEvent="ListView.Loaded" Command="{Binding Path=OnLoaded}"/>
+            </EventCommandTriggers:CommandSource.Trigger>
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -25,9 +29,15 @@
                         <DataTrigger Binding="{Binding Path=IsPlaying}" Value="true">
                             <Setter Property="FontWeight" Value="Bold"/>
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=HasPlayed}" Value="true">
+                            <Setter Property="Foreground" Value="LightGray"/>
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding Path=IsStrategyQueued, Mode=OneTime}" Value="true">
                             <Setter Property="FontStyle" Value="Italic"/>
                         </DataTrigger>
+                        <Trigger Property="Behaviours:ListViewItemDragState.IsBeingDragged" Value="True">
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </Trigger>
                     </Style.Triggers>
                 </Style>
             </ListView.ItemContainerStyle>

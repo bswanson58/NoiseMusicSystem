@@ -36,6 +36,8 @@ namespace Noise.Infrastructure.Interfaces {
 		int				UnplayedTrackCount { get; }
 		bool			StrategyRequestsQueued { get; }
 
+		void			ReorderQueueItem( int fromIndex, int toIndex );
+
 		ePlayStrategy				PlayStrategy { get; set; }
 		ePlayExhaustedStrategy		PlayExhaustedStrategy { get; set; }
 

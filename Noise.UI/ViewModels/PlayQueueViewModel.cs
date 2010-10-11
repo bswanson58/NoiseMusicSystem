@@ -1,9 +1,13 @@
-﻿using Microsoft.Practices.Composite.Events;
+﻿using System.Windows;
+using System.Windows.Controls;
+using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using Noise.UI.Behaviours;
+using Noise.UI.Behaviours.EventCommandTriggers;
 
 namespace Noise.UI.ViewModels {
 	public class PlayQueueViewModel : ViewModelBase {
@@ -11,6 +15,7 @@ namespace Noise.UI.ViewModels {
 		private INoiseManager		mNoiseManager;
 		private IEventAggregator	mEventAggregator;
 		private int					mPlayingIndex;
+		private	ListViewDragDropManager<PlayQueueTrack>			mDragManager;
 		private readonly ObservableCollectionEx<PlayQueueTrack>	mPlayQueue;
 
 		public PlayQueueViewModel() {
@@ -31,6 +36,15 @@ namespace Noise.UI.ViewModels {
 
 				LoadPlayQueue();
 			}
+		}
+
+		public void Execute_OnLoaded( EventCommandParameter<object, RoutedEventArgs> args ) {
+			mDragManager = new ListViewDragDropManager<PlayQueueTrack>( args.EventArgs.Source as ListView );
+			mDragManager.ProcessDrop += OnDragManagerProcessDrop;
+		}
+
+		private void OnDragManagerProcessDrop( object sender, ProcessDropEventArgs<PlayQueueTrack> args ) {
+			mNoiseManager.PlayQueue.ReorderQueueItem( args.OldIndex, args.NewIndex );
 		}
 
 		public ObservableCollectionEx<PlayQueueTrack> QueueList {

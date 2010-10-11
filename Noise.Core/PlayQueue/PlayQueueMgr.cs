@@ -133,6 +133,18 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
+		public void	ReorderQueueItem( int fromIndex, int toIndex ) {
+			if(( fromIndex < mPlayQueue.Count ) &&
+			   ( toIndex < mPlayQueue.Count )) {
+				var track = mPlayQueue[fromIndex];
+
+				mPlayQueue.Remove( track );
+				mPlayQueue.Insert( toIndex, track );
+
+				FirePlayQueueChanged();
+			}
+		}
+
 		public int UnplayedTrackCount {
 			get { return(( from PlayQueueTrack track in mPlayQueue where !track.HasPlayed select track ).Count()); }
 		}
