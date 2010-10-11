@@ -16,6 +16,8 @@
                 <Layout:View RegionName="Explorer"
                              Type="{x:Type Views:StreamView}" />
                 <Layout:View RegionName="Explorer"
+                             Type="{x:Type Views:FavoritesView}" />
+                <Layout:View RegionName="Explorer"
                              Type="{x:Type Views:PlayHistoryView}" />
                 <Layout:View RegionName="Explorer"
                              Type="{x:Type Views:SearchView}" />

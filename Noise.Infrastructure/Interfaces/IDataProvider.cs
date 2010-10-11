@@ -10,10 +10,12 @@ namespace Noise.Infrastructure.Interfaces {
 		DataProviderList<DbArtist>	GetArtistList();
 		DataProviderList<DbArtist>	GetArtistList( IDatabaseFilter filter );
 		DbArtist					GetArtistForAlbum( DbAlbum album );
+		DataProviderList<DbArtist>	GetFavoriteArtists();
 
 		DbAlbum						GetAlbum( long dbid );
 		DataProviderList<DbAlbum>	GetAlbumList( DbArtist forArtist );
 		DbAlbum						GetAlbumForTrack( DbTrack track );
+		DataProviderList<DbAlbum>	GetFavoriteAlbums();
 
 		DbTrack						GetTrack( StorageFile forFile );
 		DataProviderList<DbTrack>	GetTrackList( DbAlbum forAlbum );

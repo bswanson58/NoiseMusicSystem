@@ -178,6 +178,22 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public DataProviderList<DbArtist> GetFavoriteArtists() {
+			DataProviderList<DbArtist>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				retValue = new DataProviderList<DbArtist>( database.DatabaseId, FreeDatabase,
+															from DbArtist artist in database.Database where artist.IsFavorite select artist );				
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetFavoriteArtists: ", ex );
+
+				mDatabaseManager.FreeDatabase( database );
+			}
+			return( retValue );
+		}
+
 		public DbAlbum GetAlbum( long dbid ) {
 			var			database = mDatabaseManager.ReserveDatabase();
 			DbAlbum		retValue = null;
@@ -233,6 +249,22 @@ namespace Noise.Core.Database {
 				mDatabaseManager.FreeDatabase( database );
 			}
 
+			return( retValue );
+		}
+
+		public DataProviderList<DbAlbum> GetFavoriteAlbums() {
+			DataProviderList<DbAlbum>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				retValue = new DataProviderList<DbAlbum>( database.DatabaseId, FreeDatabase,
+															from DbAlbum album in database.Database where album.IsFavorite select album );				
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetFavoriteAlbums: ", ex );
+
+				mDatabaseManager.FreeDatabase( database );
+			}
 			return( retValue );
 		}
 

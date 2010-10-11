@@ -122,6 +122,7 @@
     <Compile Include="Adapters\DynamicProxies\UpdatingProxy.cs" />
     <Compile Include="Adapters\DynamicProxies\ValidatingProxy.cs" />
     <Compile Include="Adapters\ExplorerTreeNode.cs" />
+    <Compile Include="Adapters\FavoriteViewNode.cs" />
     <Compile Include="Adapters\LinkNode.cs" />
     <Compile Include="Adapters\StreamViewNode.cs" />
     <Compile Include="Adapters\TrackViewNode.cs" />
@@ -170,6 +171,7 @@
     <Compile Include="ViewModels\ArtistViewModel.cs" />
     <Compile Include="ViewModels\DatabaseConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\ExplorerStrategyArtistAlbum.cs" />
+    <Compile Include="ViewModels\FavoritesViewModel.cs" />
     <Compile Include="ViewModels\IExplorerViewStrategy.cs" />
     <Compile Include="ViewModels\LibraryConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\LibraryExplorerViewModel.cs" />
@@ -191,6 +193,9 @@
     </Compile>
     <Compile Include="Views\DatabaseConfigurationDialog.xaml.cs">
       <DependentUpon>DatabaseConfigurationDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FavoritesView.xaml.cs">
+      <DependentUpon>FavoritesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\InternetStreamDialog.xaml.cs">
       <DependentUpon>InternetStreamDialog.xaml</DependentUpon>
@@ -268,6 +273,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DatabaseConfigurationDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FavoritesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
