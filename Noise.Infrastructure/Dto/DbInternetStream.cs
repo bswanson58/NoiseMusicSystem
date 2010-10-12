@@ -19,10 +19,14 @@ namespace Noise.Infrastructure.Dto {
 		public string			UserGenre { get; set; }
 		public bool				IsPlaylistWrapped { get; set; }
 		public bool				IsFavorite { get; set; }
+		public string			Website { get; set; }
 
 		public DbInternetStream() {
 			DateAdded = DateTime.Now;
 			Encoding = eAudioEncoding.Unknown;
+
+			Description = "";
+			Website = "";
 		}
 
 		[Ignore]
