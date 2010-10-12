@@ -43,6 +43,12 @@ namespace Noise.UI.ViewModels {
 			mDragManager.ProcessDrop += OnDragManagerProcessDrop;
 		}
 
+		public void Execute_PlayRequested( EventCommandParameter<object, RoutedEventArgs> args ) {
+			if( args.CustomParameter != null ) {
+				mEventAggregator.GetEvent<Events.PlayRequested>().Publish( args.CustomParameter as PlayQueueTrack );
+			}
+		}
+
 		private void OnDragManagerProcessDrop( object sender, ProcessDropEventArgs<PlayQueueTrack> args ) {
 			mNoiseManager.PlayQueue.ReorderQueueItem( args.OldIndex, args.NewIndex );
 		}

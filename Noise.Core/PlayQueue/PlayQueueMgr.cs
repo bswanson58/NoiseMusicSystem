@@ -141,6 +141,23 @@ namespace Noise.Core.PlayQueue {
 				mPlayQueue.Remove( track );
 				mPlayQueue.Insert( toIndex, track );
 
+				var playingTrack = PlayingTrack;
+				if( playingTrack != null ) {
+					var playingIndex = mPlayQueue.IndexOf( playingTrack );
+
+					if( playingIndex > toIndex ) {
+						track.HasPlayed = true;
+					}
+					if( playingIndex < toIndex ) {
+						track.HasPlayed = false;
+					}
+					if( playingIndex == toIndex ) {
+						foreach( var queuedTrack in mPlayQueue ) {
+							queuedTrack.HasPlayed = mPlayQueue.IndexOf( queuedTrack ) < playingIndex;
+						}
+					}
+				}
+
 				FirePlayQueueChanged();
 			}
 		}
@@ -258,6 +275,21 @@ namespace Noise.Core.PlayQueue {
 
 		public PlayQueueTrack PlayingTrack {
 			get { return( mPlayQueue.FirstOrDefault( track => ( track.IsPlaying ))); }
+			set {
+				var currentTrack = mPlayQueue.FirstOrDefault( track => track.IsPlaying );
+
+				if(( currentTrack != value ) &&
+				   ( value != null ) &&
+				   ( mPlayQueue.IndexOf( value ) != -1 )) {
+					if( currentTrack != null ) {
+						currentTrack.IsPlaying = false;
+						currentTrack.HasPlayed = true;
+					}
+
+					value.IsPlaying = true;
+					value.HasPlayed = false;
+				}
+			}
 		}
 
 		public ePlayStrategy PlayStrategy {

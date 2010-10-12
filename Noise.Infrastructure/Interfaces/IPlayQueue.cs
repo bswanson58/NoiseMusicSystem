@@ -30,7 +30,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 		PlayQueueTrack	NextTrack { get; }
 		PlayQueueTrack	PreviousTrack { get; }
-		PlayQueueTrack	PlayingTrack { get; }
+		PlayQueueTrack	PlayingTrack { get; set; }
 		int				PlayingTrackReplayCount { get; set; }
 		bool			IsQueueEmpty { get; }
 		int				UnplayedTrackCount { get; }

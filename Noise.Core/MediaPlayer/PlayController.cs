@@ -39,6 +39,7 @@ namespace Noise.Core.MediaPlayer {
 			mEvents.GetEvent<Events.AudioPlayStatusChanged>().Subscribe( OnPlayStatusChanged );
 			mEvents.GetEvent<Events.AudioPlayStreamInfo>().Subscribe( OnStreamInfo );
 			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
+			mEvents.GetEvent<Events.PlayRequested>().Subscribe( OnPlayRequested );
 
 			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
@@ -82,6 +83,12 @@ namespace Noise.Core.MediaPlayer {
 					Play();
 				}
 			}
+		}
+
+		private void OnPlayRequested( PlayQueueTrack track ) {
+			StartTrack( track );
+
+			mNoiseManager.PlayQueue.PlayingTrack = track;
 		}
 
 		public void OnPlayStatusChanged( int channel ) {
