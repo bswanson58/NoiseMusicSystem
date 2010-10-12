@@ -115,6 +115,7 @@
     <Compile Include="Dto\DbDiscographyRelease.cs" />
     <Compile Include="Dto\DbInternetStream.cs" />
     <Compile Include="Dto\DbItemChangedArgs.cs" />
+    <Compile Include="Dto\DbPlayList.cs" />
     <Compile Include="Dto\DbTextInfo.cs" />
     <Compile Include="Dto\DbVersion.cs" />
     <Compile Include="Dto\FolderStrategy.cs" />
