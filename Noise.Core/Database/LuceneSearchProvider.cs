@@ -114,10 +114,13 @@ namespace Noise.Core.Database {
 			mIsInitialized = false;
 
 			var configMgr = mContainer.Resolve<ISystemConfiguration>();
-			var config = configMgr.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
+			var databaseManager = mContainer.Resolve<IDatabaseManager>();
+			var	database = databaseManager.ReserveDatabase();
 
-			if( config != null ) {
-				try {
+			try {
+				var config = configMgr.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
+
+				if( config != null ) {
 					mIndexLocation = config.SearchIndexLocation;
 
 					var index = mIndexLocation.ToUpper().IndexOf( "%APPDATA%", StringComparison.OrdinalIgnoreCase );
@@ -128,18 +131,26 @@ namespace Noise.Core.Database {
 						if(!Directory.Exists( mIndexLocation )) {
 							Directory.CreateDirectory( mIndexLocation );
 						}
+
+						mIndexLocation = Path.Combine( mIndexLocation, database.DatabaseVersion.DatabaseId.ToString());
+						if(!Directory.Exists( mIndexLocation )) {
+							Directory.CreateDirectory( mIndexLocation );
+						}
 					}
 
 					if( Directory.Exists( mIndexLocation )) {
 						mIsInitialized = true;
 					}
 				}
-				catch( Exception ex ) {
-					mLog.LogException( "Exception - Initializing the Lucene Search Provider", ex );
+				else {
+					mLog.LogMessage( "Database configuration could not be loaded." );
 				}
 			}
-			else {
-				mLog.LogMessage( "Database configuration could not be loaded." );
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - Initializing the Lucene Search Provider", ex );
+			}
+			finally {
+				databaseManager.FreeDatabase( database );
 			}
 
 			return( mIsInitialized );
