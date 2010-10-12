@@ -113,6 +113,7 @@
     <Compile Include="Dto\DbArtwork.cs" />
     <Compile Include="Dto\DbBase.cs" />
     <Compile Include="Dto\DbDiscographyRelease.cs" />
+    <Compile Include="Dto\DbGenre.cs" />
     <Compile Include="Dto\DbInternetStream.cs" />
     <Compile Include="Dto\DbItemChangedArgs.cs" />
     <Compile Include="Dto\DbPlayList.cs" />
