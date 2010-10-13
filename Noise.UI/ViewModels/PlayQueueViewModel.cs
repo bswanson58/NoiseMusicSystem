@@ -8,6 +8,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Behaviours;
 using Noise.UI.Behaviours.EventCommandTriggers;
+using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class PlayQueueViewModel : ViewModelBase {
@@ -49,6 +50,20 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public void Execute_SavePlayList() {
+			var	dialogService = mContainer.Resolve<IDialogService>();
+			var playList = new DbPlayList();
+
+			if( dialogService.ShowDialog( DialogNames.PlayListEdit, playList ) == true ) {
+				mNoiseManager.PlayListMgr.Create( mNoiseManager.PlayQueue.PlayList, playList.Name, playList.Description );
+			}
+		}
+
+		public bool CanExecute_SavePlayList() {
+			return(!mNoiseManager.PlayQueue.IsQueueEmpty );
+		}
+
+
 		private void OnDragManagerProcessDrop( object sender, ProcessDropEventArgs<PlayQueueTrack> args ) {
 			mNoiseManager.PlayQueue.ReorderQueueItem( args.OldIndex, args.NewIndex );
 		}
@@ -64,6 +79,8 @@ namespace Noise.UI.ViewModels {
 		private void LoadPlayQueue() {
 			mPlayQueue.Clear();
 			mPlayQueue.AddRange( mNoiseManager.PlayQueue.PlayList );
+
+			RaiseCanExecuteChangedEvent( "CanExecute_SavePlayList" );
 		}
 
 		private void OnTrackStarted( PlayQueueTrack track ) {

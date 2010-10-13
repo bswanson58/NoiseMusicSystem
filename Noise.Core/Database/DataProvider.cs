@@ -291,6 +291,23 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public DbTrack GetTrack( long trackId ) {
+			DbTrack	retValue = null;
+			var database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				retValue = ( from DbTrack track in database.Database where track.DbId == trackId select track ).FirstOrDefault();
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetTrack( trackId ): ", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
 		public DataProviderList<DbTrack> GetTrackList( DbAlbum forAlbum ) {
 			Condition.Requires( forAlbum ).IsNotNull();
 
@@ -477,6 +494,23 @@ namespace Noise.Core.Database {
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetStreamList:", ex );
+
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
+		public DataProviderList<DbPlayList> GetPlayLists() {
+			DataProviderList<DbPlayList>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+			retValue = new DataProviderList<DbPlayList>( database.DatabaseId, FreeDatabase,
+																from DbPlayList list in database.Database select list );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetPlayLists:", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}

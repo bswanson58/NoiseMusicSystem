@@ -9,6 +9,7 @@
 		ISearchProvider	SearchProvider { get; }
 		IPlayQueue		PlayQueue { get; }
 		IPlayHistory	PlayHistory { get; }
+		IPlayListMgr	PlayListMgr { get; }
 		IPlayController	PlayController { get; }
 	}
 }

@@ -124,6 +124,7 @@
     <Compile Include="Adapters\ExplorerTreeNode.cs" />
     <Compile Include="Adapters\FavoriteViewNode.cs" />
     <Compile Include="Adapters\LinkNode.cs" />
+    <Compile Include="Adapters\PlayListNode.cs" />
     <Compile Include="Adapters\StreamViewNode.cs" />
     <Compile Include="Adapters\TrackViewNode.cs" />
     <Compile Include="Adapters\UserSettingsNotifier.cs" />
@@ -180,6 +181,7 @@
     <Compile Include="ViewModels\LibraryExplorerViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\PlayHistoryViewModel.cs" />
+    <Compile Include="ViewModels\PlayListViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
     <Compile Include="ViewModels\StreamViewModel.cs" />
@@ -217,6 +219,12 @@
     </Compile>
     <Compile Include="Views\PlayHistoryView.xaml.cs">
       <DependentUpon>PlayHistoryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlayListDialog.xaml.cs">
+      <DependentUpon>PlayListDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlayListView.xaml.cs">
+      <DependentUpon>PlayListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlayQueueView.xaml.cs">
       <DependentUpon>PlayQueueView.xaml</DependentUpon>
@@ -304,6 +312,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlayHistoryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlayListDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlayListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

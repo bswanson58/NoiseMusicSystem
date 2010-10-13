@@ -33,6 +33,7 @@ namespace Noise.Core {
 		public	ISearchProvider				SearchProvider { get; private set; }
 		public	IPlayQueue					PlayQueue { get; private set; }
 		public	IPlayHistory				PlayHistory { get; private set; }
+		public	IPlayListMgr				PlayListMgr { get; private set; }
 		public	IPlayController				PlayController { get; private set; }
 
 		public bool							IsInitialized { get; set; }
@@ -60,6 +61,7 @@ namespace Noise.Core {
 				PlayQueue = mContainer.Resolve<IPlayQueue>();
 				PlayHistory = mContainer.Resolve<IPlayHistory>();
 				PlayController = mContainer.Resolve<IPlayController>();
+				PlayListMgr = mContainer.Resolve<IPlayListMgr>();
 
 				mLog.LogMessage( "Initialized NoiseManager." );
 

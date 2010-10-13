@@ -130,6 +130,7 @@
     <Compile Include="Interfaces\IDbBase.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
     <Compile Include="Interfaces\IPlayHistory.cs" />
+    <Compile Include="Interfaces\IPlayListMgr.cs" />
     <Compile Include="Interfaces\IPlayQueue.cs" />
     <Compile Include="Interfaces\ISearchProvider.cs" />
     <Compile Include="Interfaces\IViewModelResolver.cs" />
