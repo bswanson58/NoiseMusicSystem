@@ -45,7 +45,7 @@ namespace Noise.UI.ViewModels {
 
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
 				mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
-				mEvents.GetEvent<Events.ArtistContentUpdated>().Subscribe( OnArtistUpdate );
+				mEvents.GetEvent<Events.ArtistContentUpdated>().Subscribe( OnArtistInfoUpdate );
 				mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 			}
 		}
@@ -57,7 +57,7 @@ namespace Noise.UI.ViewModels {
 		private ArtistSupportInfo SupportInfo {
 			get{ return( Get( () => SupportInfo )); }
 			set {
-				Invoke( () => {
+				BeginInvoke( () => {
 					mSimilarArtists.Clear();
 					mTopAlbums.Clear();
 					mBandMembers.Clear();
@@ -106,7 +106,9 @@ namespace Noise.UI.ViewModels {
 					SupportInfo = null;
 				}
 
-				Invoke( () => {
+				mNoiseManager.DataProvider.UpdateArtistInfo( value );
+
+				BeginInvoke( () => {
 					mCurrentArtist = value != null ? mNoiseManager.DataProvider.GetArtist( value.DbId ) : null;
 
 					if( mCurrentArtist != null ) {
@@ -120,42 +122,51 @@ namespace Noise.UI.ViewModels {
 						RaisePropertyChanged( () => UiEdit );
 
 						mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
-
 						RaisePropertyChanged( () => ArtistWebsite );
+
+						SupportInfo = mNoiseManager.DataProvider.GetArtistSupportInfo( CurrentArtist );
 					}
 				});
+			}
+		}
+
+		private void OnArtistInfoUpdate( DbArtist artist ) {
+			if(( artist != null ) &&
+			   ( CurrentArtist != null ) &&
+			   ( CurrentArtist.DbId == artist.DbId )) {
+				SupportInfo = mNoiseManager.DataProvider.GetArtistSupportInfo( CurrentArtist );
 			}
 		}
 
 		private void OnSimilarArtistClicked( long artistId ) {
 			var artist = mNoiseManager.DataProvider.GetArtist( artistId  );
 
-			mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( artist );
+			if( artist != null ) {
+				mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( artist );
+			}
 		}
 
 		private void OnArtistFocus( DbArtist artist ) {
-			CurrentArtist = artist;
-			mNoiseManager.DataProvider.UpdateArtistInfo( CurrentArtist );
-
-			OnArtistUpdate( CurrentArtist );
-		}
-
-		private void OnArtistUpdate( DbArtist artist ) {
-			if(( artist != null ) &&
-			   ( CurrentArtist != null ) &&
-			   ( artist.DbId == CurrentArtist.DbId )) {
-				SupportInfo = mNoiseManager.DataProvider.GetArtistSupportInfo( CurrentArtist );
+			if( artist != null ) {
+				if( CurrentArtist != null ) {
+					if( artist.DbId != CurrentArtist.DbId ) {
+						CurrentArtist = artist;
+					}
+				}
+				else {
+					CurrentArtist = artist;
+				}
 			}
 		}
 
 		private void OnAlbumFocus( DbAlbum album ) {
 			if( CurrentArtist != null ) {
 				if( album.Artist != CurrentArtist.DbId ) {
-					OnArtistFocus( mNoiseManager.DataProvider.GetArtistForAlbum( album ));
+					CurrentArtist = mNoiseManager.DataProvider.GetArtistForAlbum( album );
 				}
 			}
 			else {
-				OnArtistFocus( mNoiseManager.DataProvider.GetArtistForAlbum( album ));
+				CurrentArtist = mNoiseManager.DataProvider.GetArtistForAlbum( album );
 			}
 		}
 
@@ -176,9 +187,7 @@ namespace Noise.UI.ViewModels {
 			if(( args.Item is DbArtist ) &&
 			   ( CurrentArtist != null ) &&
 			   ((args.Item as DbArtist).DbId == CurrentArtist.DbId )) {
-				BeginInvoke( () => {
-					CurrentArtist = args.Item as DbArtist;
-				} );
+				CurrentArtist = args.Item as DbArtist;
 			}
 		}
 
