@@ -44,7 +44,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Last Played" Width="75">
+                    <GridViewColumn Header="Last Played" Width="140">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=PlayedOn}" TextAlignment="Right" />
