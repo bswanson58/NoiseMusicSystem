@@ -154,7 +154,6 @@ namespace Noise.Core.DataBuilders {
 				var	info = new DbTextInfo( file.DbId, ContentType.TextInfo )
 											{ Source = InfoSource.File, FolderLocation = file.ParentFolder, IsContentAvailable = true };
 				var dataProviders = new List<IMetaDataProvider> { mStrategyProvider.GetProvider( file ),
-																  mFileNameProvider.GetProvider( file ),
 																  mDefaultProvider.GetProvider( file ) };
 
 				var artist = DetermineArtist( database, dataProviders );
@@ -179,7 +178,7 @@ namespace Noise.Core.DataBuilders {
 				database.Store( file );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Building Music Metadata for: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
+				mLog.LogException( String.Format( "Building Info Metadata for: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
 			}
 		}
 
@@ -190,7 +189,6 @@ namespace Noise.Core.DataBuilders {
 				var	artwork = new DbArtwork( file.DbId, StorageHelpers.IsCoverFile( file.Name ) ? ContentType.AlbumCover : ContentType.AlbumArtwork )
 											{ Source = InfoSource.File, FolderLocation = file.ParentFolder, IsContentAvailable = true };
 				var dataProviders = new List<IMetaDataProvider> { mStrategyProvider.GetProvider( file ),
-																  mFileNameProvider.GetProvider( file ),
 																  mDefaultProvider.GetProvider( file ) };
 
 				var artist = DetermineArtist( database, dataProviders );
@@ -215,7 +213,7 @@ namespace Noise.Core.DataBuilders {
 				database.Store( file );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Building Music Metadata for: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
+				mLog.LogException( String.Format( "Building Artwork Metadata for: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
 			}
 		}
 
