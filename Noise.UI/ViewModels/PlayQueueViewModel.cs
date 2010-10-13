@@ -58,7 +58,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnPlayQueueChanged( IPlayQueue playQueue ) {
-			Invoke( LoadPlayQueue );
+			BeginInvoke( LoadPlayQueue );
 		}
 
 		private void LoadPlayQueue() {
@@ -67,21 +67,23 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackStarted( PlayQueueTrack track ) {
-			var index = 0;
+			BeginInvoke( () => {
+				var index = 0;
 
-			mPlayingIndex = -1;
+				mPlayingIndex = -1;
 
-			foreach( var item in mPlayQueue ) {
-				if( item.IsPlaying ) {
-					mPlayingIndex = index;
+				foreach( var item in mPlayQueue ) {
+					if( item.IsPlaying ) {
+						mPlayingIndex = index;
 
-					break;
+						break;
+					}
+
+					index++;
 				}
 
-				index++;
-			}
-
-			RaisePropertyChanged( () => PlayingIndex );
+				RaisePropertyChanged( () => PlayingIndex );
+			});
 		}
 
 		public int PlayingIndex {

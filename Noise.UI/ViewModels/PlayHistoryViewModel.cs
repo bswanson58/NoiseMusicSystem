@@ -66,7 +66,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void PopulatePlayHistory() {
-			Invoke( () => {
+			BeginInvoke( () => {
 				mHistoryList.SuspendNotification();
 				mHistoryList.Clear();
 

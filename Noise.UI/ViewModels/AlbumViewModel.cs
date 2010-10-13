@@ -77,7 +77,7 @@ namespace Noise.UI.ViewModels {
 		private AlbumSupportInfo SupportInfo {
 			get{ return( Get( () => SupportInfo )); }
 			set {
-				Invoke( () => Set( () => SupportInfo, value ));
+				BeginInvoke( () => Set( () => SupportInfo, value ));
 			}
 		}
 
