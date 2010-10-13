@@ -37,10 +37,12 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnDatabaseChanged( DbItemChangedArgs args ) {
-			if(( args.Item is DbArtist ) ||
-			   ( args.Item is DbAlbum ) ||
-			   ( args.Item is DbTrack )) {
-				Invoke ( LoadFavorites );
+			if( args.Change == DbItemChanged.Favorite ) {
+				if(( args.Item is DbArtist ) ||
+				   ( args.Item is DbAlbum ) ||
+				   ( args.Item is DbTrack )) {
+					BeginInvoke( LoadFavorites );
+				}
 			}
 		}
 

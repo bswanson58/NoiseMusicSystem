@@ -2,7 +2,9 @@
 	public enum DbItemChanged {
 		Insert,
 		Update,
-		Delete
+		Delete,
+		Favorite,
+		Rating
 	}
 
 	public class DbItemChangedArgs {

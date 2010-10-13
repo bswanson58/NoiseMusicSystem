@@ -2,20 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
+using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Core.DataBuilders;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	public class DataProvider : IDataProvider {
 		private readonly IUnityContainer	mContainer;
+		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly IContentManager	mContentManager;
 		private readonly ILog				mLog;
 
 		public DataProvider( IUnityContainer container ) {
 			mContainer = container;
+			mEvents = mContainer.Resolve<IEventAggregator>();
 			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
 			mContentManager = mContainer.Resolve<IContentManager>();
 			mLog = mContainer.Resolve<ILog>();
@@ -487,9 +491,12 @@ namespace Noise.Core.Database {
 			try {
 				forArtist = database.ValidateOnThread( forArtist ) as DbArtist;
 				if( forArtist != null ) {
-					forArtist.IsFavorite = isFavorite;
+					if( forArtist.IsFavorite != isFavorite ) {
+						forArtist.IsFavorite = isFavorite;
+						database.Store( forArtist );
 
-					database.Store( forArtist );
+						mEvents.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( forArtist, DbItemChanged.Favorite ));
+					}
 				}
 			}
 			catch( Exception ex ) {
@@ -507,8 +514,12 @@ namespace Noise.Core.Database {
 			try {
 				forAlbum = database.ValidateOnThread( forAlbum ) as DbAlbum;
 				if( forAlbum != null ) {
-					forAlbum.IsFavorite = isFavorite;
-					database.Store( forAlbum );
+					if( forAlbum.IsFavorite != isFavorite ) {
+						forAlbum.IsFavorite = isFavorite;
+						database.Store( forAlbum );
+
+						mEvents.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( forAlbum, DbItemChanged.Favorite ));
+					}
 
 					var artist = ( from DbArtist dbArtist in database.Database where dbArtist.DbId == forAlbum.Artist select dbArtist ).FirstOrDefault();
 					if( artist != null ) {
@@ -539,8 +550,12 @@ namespace Noise.Core.Database {
 			try {
 				forTrack = database.ValidateOnThread( forTrack ) as DbTrack;
 				if( forTrack != null ) {
-					forTrack.IsFavorite = isFavorite;
-					database.Store( forTrack );
+					if( forTrack.IsFavorite != isFavorite ) {
+						forTrack.IsFavorite = isFavorite;
+						database.Store( forTrack );
+
+						mEvents.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( forTrack, DbItemChanged.Favorite ));
+					}
 
 					var album = ( from DbAlbum dbAlbum in database.Database where dbAlbum.DbId == forTrack.Album select dbAlbum ).FirstOrDefault();
 					if( album != null ) {
