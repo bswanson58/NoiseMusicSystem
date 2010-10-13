@@ -18,6 +18,7 @@ namespace Noise.Core.DataBuilders {
 		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly ILog				mLog;
+		private readonly List<long>			mCurrentRequests;
 
 		[ImportMany( typeof( IContentProvider ))]
 		public IEnumerable<IContentProvider>	ContentProviders;
@@ -27,6 +28,7 @@ namespace Noise.Core.DataBuilders {
 			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
 			mEvents =mContainer.Resolve<IEventAggregator>();
 			mLog = mContainer.Resolve<ILog>();
+			mCurrentRequests = new List<long>();
 
 			var catalog = new DirectoryCatalog(  @".\" );
 			var container = new CompositionContainer( catalog );
@@ -37,18 +39,24 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		public void RequestContent( DbArtist forArtist ) {
-			ThreadPool.QueueUserWorkItem( f => RequestArtistContent( forArtist ));
+			lock( mCurrentRequests ) {
+				if(!mCurrentRequests.Contains( forArtist.DbId )) {
+					mCurrentRequests.Add( forArtist.DbId );
+
+					ThreadPool.QueueUserWorkItem( f => RequestArtistContent( forArtist ));
+				}
+			}
 		}
 
 		private void RequestArtistContent( DbArtist forArtist ) {
 			Condition.Requires( forArtist ).IsNotNull();
 
+			var artistId = forArtist.DbId;
 			var artistName = forArtist.Name;
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				forArtist = database.ValidateOnThread( forArtist ) as DbArtist;
 				if( forArtist != null ) {
-					var	artistId = forArtist.DbId;
 					var selectedProviders = from IContentProvider provider in ContentProviders where provider.CanUpdateArtist select provider;
 					var contentUpdated = false;
 
@@ -86,6 +94,12 @@ namespace Noise.Core.DataBuilders {
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
+			}
+
+			lock( mCurrentRequests ) {
+				if( mCurrentRequests.Contains( artistId )) {
+					mCurrentRequests.Remove( artistId );
+				}
 			}
 		}
 
