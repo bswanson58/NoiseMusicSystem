@@ -36,6 +36,23 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
+		public DbPlayList GetPlayList( long playListId ) {
+			DbPlayList	retValue = null;
+			var			database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				retValue = ( from DbPlayList playList in database.Database where playList.DbId == playListId select playList ).FirstOrDefault();
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - PlayListMgr:GetPlayList ", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
 		public DbPlayList Create( IEnumerable<PlayQueueTrack> fromList, string name, string description ) {
 			var retValue = new DbPlayList { Name = name, Description = description,
 											TrackIds = fromList.Select( track => track.Track.DbId ).ToArray() };

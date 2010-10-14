@@ -5,6 +5,7 @@ namespace Noise.Infrastructure.Interfaces {
 	public interface IPlayListMgr {
 		List<DbPlayList>		PlayLists { get; }
 
+		DbPlayList				GetPlayList( long playListId );
 		DbPlayList				Create( IEnumerable<PlayQueueTrack> fromList, string name, string description );
 		void					Delete( DbPlayList playList );
 

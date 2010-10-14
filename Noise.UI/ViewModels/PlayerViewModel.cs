@@ -6,6 +6,7 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class ExhaustedStrategyItem {
@@ -30,7 +31,8 @@ namespace Noise.UI.ViewModels {
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Stop, "Stop" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Replay, "Replay" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayFavorites, "Play Favorites" ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlaySimilar, "Play Similar" )};
+												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlaySimilar, "Play Similar" ),
+												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayList, "Playlist..." )};
 		}
 
 		[Dependency]
@@ -162,17 +164,46 @@ namespace Noise.UI.ViewModels {
 		public ePlayExhaustedStrategy ExhaustedStrategy {
 			get{ return( mNoiseManager.PlayQueue.PlayExhaustedStrategy ); }
 			set {
-				mNoiseManager.PlayQueue.SetPlayExhaustedStrategy( value, Constants.cDatabaseNullOid );
+				long itemId = Constants.cDatabaseNullOid;
 
-				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+				if( PromptForStrategyItem( value, ref itemId )) {
+					mNoiseManager.PlayQueue.SetPlayExhaustedStrategy( value, itemId );
 
-				if( configuration != null ) {
-					configuration.PlayExhaustedStrategy = value;
+					var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+					var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
-					systemConfig.Save( configuration );
+					if( configuration != null ) {
+						configuration.PlayExhaustedStrategy = value;
+						configuration.PlayExhaustedItem = itemId;
+
+						systemConfig.Save( configuration );
+					}
 				}
 			}
+		}
+
+		private bool PromptForStrategyItem( ePlayExhaustedStrategy strategy, ref long selectedItem ) {
+			var retValue = false;
+			selectedItem = Constants.cDatabaseNullOid;
+
+			if(( strategy == ePlayExhaustedStrategy.PlayStream ) ||
+			   ( strategy == ePlayExhaustedStrategy.PlayList )) {
+				var	dialogService = mContainer.Resolve<IDialogService>();
+
+				if( strategy == ePlayExhaustedStrategy.PlayList ) {
+					var dialogModel = new SelectPlayListDialogModel( mContainer );
+
+					if( dialogService.ShowDialog( DialogNames.SelectPlayList, dialogModel ) == true ) {
+						selectedItem = dialogModel.SelectedItem.DbId;
+						retValue = true;
+					}
+				}
+			}
+			else {
+				retValue = true;
+			}
+
+			return( retValue );
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]

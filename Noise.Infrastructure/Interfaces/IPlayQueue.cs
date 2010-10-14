@@ -10,6 +10,7 @@ namespace Noise.Infrastructure.Interfaces {
 	public enum ePlayExhaustedStrategy {
 		Stop,
 		Replay,
+		PlayList,
 		PlaySimilar,
 		PlayFavorites,
 		PlayStream
@@ -33,6 +34,7 @@ namespace Noise.Infrastructure.Interfaces {
 		PlayQueueTrack	PlayingTrack { get; set; }
 		int				PlayingTrackReplayCount { get; set; }
 		bool			IsQueueEmpty { get; }
+		bool			IsTrackQueued( DbTrack track );
 		int				UnplayedTrackCount { get; }
 		bool			StrategyRequestsQueued { get; }
 

@@ -126,6 +126,10 @@ namespace Noise.Core.PlayQueue {
 			get{ return( mPlayQueue.Count == 0 ); }
 		}
 
+		public bool IsTrackQueued( DbTrack track ) {
+			return( mPlayQueue.Exists( item => item.Track.DbId == track.DbId ));
+		}
+
 		public void ReplayQueue() {
 			foreach( var track in mPlayQueue ) {
 				if(!track.IsPlaying ) {
@@ -325,6 +329,10 @@ namespace Noise.Core.PlayQueue {
 
 				case ePlayExhaustedStrategy.Replay:
 					mExhaustedStrategy = new PlayQueueExhaustedStrategyReplay();
+					break;
+
+				case ePlayExhaustedStrategy.PlayList:
+					mExhaustedStrategy = new PlayExhaustedStrategyPlayList( mContainer );
 					break;
 
 				case ePlayExhaustedStrategy.PlayFavorites:
