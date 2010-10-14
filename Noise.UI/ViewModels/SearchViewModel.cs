@@ -50,7 +50,7 @@ namespace Noise.UI.ViewModels {
 			var retValue = new List<SearchViewNode>();
 
 			retValue.AddRange( from SearchResultItem item in mNoiseManager.SearchProvider.Search( SearchText ) 
-							   select new SearchViewNode( item.Artist, item.Album, item.ItemDescription, OnNodeSelected, OnAlbumPlay ));
+							   select new SearchViewNode( item, OnNodeSelected, OnPlay ));
 			return( retValue );
 		}
 
@@ -63,8 +63,11 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnAlbumPlay( SearchViewNode node ) {
-			if( node.Album != null ) {
+		private void OnPlay( SearchViewNode node ) {
+			if( node.Track != null ) {
+				mEventAggregator.GetEvent<Events.TrackPlayRequested>().Publish( node.Track );
+			}
+			else if( node.Album != null ) {
 				mEventAggregator.GetEvent<Events.AlbumPlayRequested>().Publish( node.Album );
 			}
 		}

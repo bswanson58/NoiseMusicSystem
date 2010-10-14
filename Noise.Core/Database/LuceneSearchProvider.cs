@@ -16,6 +16,7 @@ namespace Noise.Core.Database {
 	internal class SearchItemFieldName {
 		public	const string	cArtistId = "artistId";
 		public	const string	cAlbumId = "albumId";
+		public	const string	cTrackId = "trackId";
 		public	const string	cItemType = "itemType";
 		public	const string	cContent = "content";
 	}
@@ -24,7 +25,16 @@ namespace Noise.Core.Database {
 		private	IndexWriter		mWriter;
 		private Document		mDocument;
 
-		internal SearchItemDetails( IndexWriter writer, eSearchItemType itemType, DbArtist artist, DbAlbum album ) {
+		internal SearchItemDetails( IndexWriter writer, eSearchItemType itemType, DbArtist artist ) :
+			this( writer, itemType, artist, null, null ) {
+		}
+
+		internal SearchItemDetails( IndexWriter writer, eSearchItemType itemType, DbArtist artist, DbAlbum album ) :
+			this( writer, itemType, artist, album, null ) {
+		}
+
+
+		internal SearchItemDetails( IndexWriter writer, eSearchItemType itemType, DbArtist artist, DbAlbum album, DbTrack track ) {
 			Condition.Requires( artist ).IsNotNull();
 
 			mWriter = writer;
@@ -34,6 +44,9 @@ namespace Noise.Core.Database {
 			mDocument.Add( new Field( SearchItemFieldName.cArtistId, artist.DbId.ToString(), Field.Store.YES, Field.Index.NO ));
 			if( album != null ) {
 				mDocument.Add( new Field( SearchItemFieldName.cAlbumId, album.DbId.ToString(), Field.Store.YES, Field.Index.NO ));
+			}
+			if( track != null ) {
+				mDocument.Add( new Field( SearchItemFieldName.cTrackId, track.DbId.ToString(), Field.Store.YES, Field.Index.NO ));
 			}
 
 			var	boost = 1.0f;
@@ -63,10 +76,6 @@ namespace Noise.Core.Database {
 			}
 
 			mDocument.SetBoost( boost );
-		}
-
-		internal SearchItemDetails( IndexWriter writer, eSearchItemType itemType, DbArtist artist ) :
-			this( writer, itemType, artist, null ) {
 		}
 
 		public void AddSearchText( string searchText ) {
@@ -182,9 +191,11 @@ namespace Noise.Core.Database {
 							var typeField = document.GetField( SearchItemFieldName.cItemType );
 							var artistField = document.GetField( SearchItemFieldName.cArtistId );
 							var albumField = document.GetField( SearchItemFieldName.cAlbumId );
+							var trackField = document.GetField( SearchItemFieldName.cTrackId );
 
 							DbArtist		artist = null;
 							DbAlbum			album = null;
+							DbTrack			track = null;
 							eSearchItemType	itemType = eSearchItemType.Unknown;
 
 							if( artistField != null ) {
@@ -197,11 +208,16 @@ namespace Noise.Core.Database {
 
 								album = noiseManager.DataProvider.GetAlbum( id );
 							}
+							if( trackField != null ) {
+								long	id = long.Parse( trackField.StringValue());
+
+								track = noiseManager.DataProvider.GetTrack( id );
+							}
 							if( typeField != null ) {
 								itemType = (eSearchItemType)Enum.Parse( typeof( eSearchItemType ), typeField.StringValue());
 							}
 
-							retValue.Add( new SearchResultItem( artist, album, itemType ));
+							retValue.Add( new SearchResultItem( artist, album, track, itemType ));
 						}
 					}
 
@@ -280,6 +296,26 @@ namespace Noise.Core.Database {
 			Condition.Requires( album ).IsNotNull();
 
 			using( var searchItem = AddSearchItem( artist, album, itemType )) {
+				searchItem.AddSearchText( searchText );
+			}
+		}
+
+		private SearchItemDetails AddSearchItem( DbArtist artist, DbAlbum album, DbTrack track, eSearchItemType itemType ) {
+			Condition.Requires( mIndexWriter ).IsNotNull();
+			Condition.Requires( artist ).IsNotNull();
+			Condition.Requires( album ).IsNotNull();
+			Condition.Requires( track ).IsNotNull();
+
+			return( new SearchItemDetails( mIndexWriter, itemType, artist, album, track ));
+		}
+
+		public void AddSearchItem( DbArtist artist, DbAlbum album, DbTrack track, eSearchItemType itemType, string searchText ) {
+			Condition.Requires( mIndexWriter ).IsNotNull();
+			Condition.Requires( artist ).IsNotNull();
+			Condition.Requires( album ).IsNotNull();
+			Condition.Requires( track ).IsNotNull();
+
+			using( var searchItem = AddSearchItem( artist, album, track, itemType )) {
 				searchItem.AddSearchText( searchText );
 			}
 		}

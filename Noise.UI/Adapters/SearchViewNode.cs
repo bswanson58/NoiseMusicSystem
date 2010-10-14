@@ -1,5 +1,6 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Adapters {
@@ -8,20 +9,25 @@ namespace Noise.UI.Adapters {
 		public DbAlbum		Album { get; private set; }
 		public DbTrack		Track { get; private set; }
 		public string		Title { get; private set; }
+		public bool			CanPlay { get; private set; }
 
 		private readonly Action<SearchViewNode>	mOnPlay;
 		private readonly Action<SearchViewNode>	mOnSelected;
 		private bool							mIsSelected;
 
-		public SearchViewNode( DbArtist artist, DbAlbum album, string title, Action<SearchViewNode> onselected, Action<SearchViewNode> onPlay ) {
-			Artist = artist;
-			Album = album;
-			Title = title;
+		public SearchViewNode( SearchResultItem searchResult, Action<SearchViewNode> onselected, Action<SearchViewNode> onPlay ) {
+			Artist = searchResult.Artist;
+			Album = searchResult.Album;
+			Track = searchResult.Track;
+			Title = searchResult.ItemDescription;
+
+			if(( Album != null ) ||
+			   ( Track != null )) {
+				CanPlay = searchResult.ItemType == eSearchItemType.Album || searchResult.ItemType == eSearchItemType.Track;
+			}
 
 			mOnSelected = onselected;
 			mOnPlay = onPlay;
-
-			Track = null;
 		}
 
 		public bool IsSelected {
@@ -32,10 +38,6 @@ namespace Noise.UI.Adapters {
 					mOnSelected( this );
 				}
 			}
-		}
-
-		public bool CanPlay {
-			get{ return( Artist != null && Album != null ); }
 		}
 
 		public void Execute_Play() {

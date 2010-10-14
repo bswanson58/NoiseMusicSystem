@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
@@ -22,7 +21,8 @@ namespace Noise.Infrastructure.Interfaces {
 		bool		StartIndexUpdate( bool createIndex );
 		void		AddSearchItem( DbArtist artist, eSearchItemType itemType, string searchText );
 		void		AddSearchItem( DbArtist artist, eSearchItemType itemType, IEnumerable<string> searchList );
-		void		AddSearchItem( DbArtist artist, DbAlbum album, eSearchItemType itemTtpe, string searchText );
+		void		AddSearchItem( DbArtist artist, DbAlbum album, eSearchItemType itemType, string searchText );
+		void		AddSearchItem( DbArtist artist, DbAlbum album, DbTrack track, eSearchItemType itemType, string searchText );
 		bool		EndIndexUpdate();
 
 		IEnumerable<SearchResultItem>	Search( string queryText );

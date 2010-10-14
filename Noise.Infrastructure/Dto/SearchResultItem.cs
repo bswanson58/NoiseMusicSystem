@@ -4,11 +4,13 @@ namespace Noise.Infrastructure.Dto {
 	public class SearchResultItem {
 		public DbArtist			Artist { get; private set; }
 		public DbAlbum			Album { get; private set; }
+		public DbTrack			Track { get; private set; }
 		public eSearchItemType	ItemType { get; private set; }
 
-		public SearchResultItem( DbArtist artist, DbAlbum album, eSearchItemType itemType ) {
+		public SearchResultItem( DbArtist artist, DbAlbum album, DbTrack track, eSearchItemType itemType ) {
 			Artist = artist;
 			Album = album;
+			Track = track;
 			ItemType = itemType;
 		}
 
@@ -50,7 +52,7 @@ namespace Noise.Infrastructure.Dto {
 						break;
 
 					case eSearchItemType.Track:
-						retValue = string.Format( "Track of album {0} - {1}", Artist.Name, Album.Name );
+						retValue = string.Format( "Track {0} of album {1} - {2}", Track.Name, Artist.Name, Album.Name );
 						break;
 				}
 

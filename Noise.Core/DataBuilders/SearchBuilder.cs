@@ -82,7 +82,7 @@ namespace Noise.Core.DataBuilders {
 								var trackList = from DbTrack track in database.Database where track.Album == albumId select track;
 
 								foreach( var track in trackList ) {
-									mNoiseManager.SearchProvider.AddSearchItem( artist, album, eSearchItemType.Track, track.Name );
+									mNoiseManager.SearchProvider.AddSearchItem( artist, album, track, eSearchItemType.Track, track.Name );
 								}
 							}
 
