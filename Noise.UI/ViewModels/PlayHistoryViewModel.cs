@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
@@ -7,43 +6,17 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using Noise.UI.Adapters;
 
 namespace Noise.UI.ViewModels {
-	public class UiPlayHistory : ViewModelBase {
-		private readonly Action<DbTrack>	mPlayTrackAction;
-
-		public DbArtist		Artist { get; private set; }
-		public DbAlbum		Album { get; private set; }
-		public DbTrack		Track { get; private set; }
-		public DateTime		PlayedOn { get; private set; }
-
-		public UiPlayHistory( DbArtist artist, DbAlbum album, DbTrack track, DateTime playedOn, Action<DbTrack> playTrackAction ) {
-			Artist = artist;
-			Album = album;
-			Track = track;
-			PlayedOn = playedOn;
-
-			mPlayTrackAction = playTrackAction;
-		}
-
-		public void Execute_PlayTrack( object sender ) {
-			var track = sender as DbTrack;
-
-			if(( track != null ) &&
-			   ( mPlayTrackAction != null )) {
-				mPlayTrackAction( Track );
-			}
-		}
-	}
-
 	public class PlayHistoryViewModel : ViewModelBase {
 		private IUnityContainer			mContainer;
 		private IEventAggregator		mEvents;
 		private INoiseManager			mNoiseManager;
-		private readonly ObservableCollectionEx<UiPlayHistory>	mHistoryList;
+		private readonly ObservableCollectionEx<PlayHistoryNode>	mHistoryList;
 
 		public PlayHistoryViewModel() {
-			mHistoryList = new ObservableCollectionEx<UiPlayHistory>();
+			mHistoryList = new ObservableCollectionEx<PlayHistoryNode>();
 		}
 
 		[Dependency]
@@ -81,7 +54,7 @@ namespace Noise.UI.ViewModels {
 							var artist = mNoiseManager.DataProvider.GetArtistForAlbum( album );
 
 							if( artist != null ) {
-								mHistoryList.Add( new UiPlayHistory( artist, album, track, history.PlayedOn, OnPlayTrack ));
+								mHistoryList.Add( new PlayHistoryNode( artist, album, track, history.PlayedOn, OnNodeSelected, OnPlayTrack ));
 							}
 						}
 					}
@@ -92,11 +65,22 @@ namespace Noise.UI.ViewModels {
 			});
 		}
 
-		private void OnPlayTrack( DbTrack track ) {
-			mEvents.GetEvent<Events.TrackPlayRequested>().Publish( track );
+		private void OnNodeSelected( PlayHistoryNode node ) {
+			if( node.Artist != null ) {
+				mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( node.Artist );
+			}
+			if( node.Album != null ) {
+				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( node.Album );
+			}
 		}
 
-		public ObservableCollection<UiPlayHistory> HistoryList {
+		private void OnPlayTrack( PlayHistoryNode node ) {
+			if( node.Track != null ) {
+				mEvents.GetEvent<Events.TrackPlayRequested>().Publish( node.Track );
+			}
+		}
+
+		public ObservableCollection<PlayHistoryNode> HistoryList {
 			get{ return( mHistoryList ); }
 		}
 	}

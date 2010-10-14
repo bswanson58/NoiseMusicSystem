@@ -124,6 +124,7 @@
     <Compile Include="Adapters\ExplorerTreeNode.cs" />
     <Compile Include="Adapters\FavoriteViewNode.cs" />
     <Compile Include="Adapters\LinkNode.cs" />
+    <Compile Include="Adapters\PlayHistoryNode.cs" />
     <Compile Include="Adapters\PlayListNode.cs" />
     <Compile Include="Adapters\SearchViewNode.cs" />
     <Compile Include="Adapters\StreamViewNode.cs" />
