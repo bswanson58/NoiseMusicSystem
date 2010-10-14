@@ -125,6 +125,7 @@
     <Compile Include="Adapters\FavoriteViewNode.cs" />
     <Compile Include="Adapters\LinkNode.cs" />
     <Compile Include="Adapters\PlayListNode.cs" />
+    <Compile Include="Adapters\SearchViewNode.cs" />
     <Compile Include="Adapters\StreamViewNode.cs" />
     <Compile Include="Adapters\TrackViewNode.cs" />
     <Compile Include="Adapters\UserSettingsNotifier.cs" />

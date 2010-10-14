@@ -1,9 +1,12 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using Noise.UI.Adapters;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
@@ -11,10 +14,10 @@ namespace Noise.UI.ViewModels {
 		private IUnityContainer		mContainer;
 		private IEventAggregator	mEventAggregator;
 		private INoiseManager		mNoiseManager;
-		private readonly ObservableCollectionEx<string>	mSearchResults;
+		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
 
 		public SearchViewModel() {
-			mSearchResults = new ObservableCollectionEx<string>();
+			mSearchResults = new ObservableCollectionEx<SearchViewNode>();
 		}
 
 		[Dependency]
@@ -35,16 +38,38 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_Search() {
 			if( mNoiseManager != null ) {
+				mSearchResults.SuspendNotification();
 				mSearchResults.Clear();
+				mSearchResults.AddRange( BuildSearchList());
 
-				var	searchHits = mNoiseManager.SearchProvider.Search( SearchText );
-				mSearchResults.AddRange( from SearchResultItem item in searchHits select item.ItemDescription );
-
-				RaisePropertyChanged( () => SearchResults );
+				mSearchResults.ResumeNotification();
 			}
 		}
 
-		public ObservableCollectionEx<string> SearchResults {
+		private IEnumerable<SearchViewNode> BuildSearchList() {
+			var retValue = new List<SearchViewNode>();
+
+			retValue.AddRange( from SearchResultItem item in mNoiseManager.SearchProvider.Search( SearchText ) 
+							   select new SearchViewNode( item.Artist, item.Album, item.ItemDescription, OnNodeSelected, OnAlbumPlay ));
+			return( retValue );
+		}
+
+		private void OnNodeSelected( SearchViewNode node ) {
+			if( node.Artist != null ) {
+				mEventAggregator.GetEvent<Events.ArtistFocusRequested>().Publish( node.Artist );
+			}
+			if( node.Album != null ) {
+				mEventAggregator.GetEvent<Events.AlbumFocusRequested>().Publish( node.Album );
+			}
+		}
+
+		private void OnAlbumPlay( SearchViewNode node ) {
+			if( node.Album != null ) {
+				mEventAggregator.GetEvent<Events.AlbumPlayRequested>().Publish( node.Album );
+			}
+		}
+
+		public ObservableCollectionEx<SearchViewNode> SearchResults {
 			get{ return( mSearchResults ); }
 		}
 	}
