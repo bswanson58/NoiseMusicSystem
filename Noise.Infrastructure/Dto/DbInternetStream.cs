@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
-	public class DbInternetStream : IUserSettings {
+	public class DbInternetStream : DbBase, IUserSettings {
 		[Required( AllowEmptyStrings=false, ErrorMessage = "Emty stream name is not allowed.")]
 		public string			Name { get; set; }
 		public string			Description { get; set; }

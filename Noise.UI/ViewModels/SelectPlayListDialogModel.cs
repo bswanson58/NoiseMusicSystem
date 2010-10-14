@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;

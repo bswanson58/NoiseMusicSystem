@@ -484,6 +484,23 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public DbInternetStream GetStream( long streamId ) {
+			DbInternetStream	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				retValue = ( from DbInternetStream stream in database.Database where stream.DbId == streamId select stream ).FirstOrDefault();
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetStream:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
 		public DataProviderList<DbInternetStream> GetStreamList() {
 			DataProviderList<DbInternetStream>	retValue = null;
 

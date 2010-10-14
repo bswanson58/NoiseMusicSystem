@@ -86,8 +86,12 @@ namespace Noise.UI.ViewModels {
 			if( mLastExplorerRequest + mPlayTrackDelay < DateTime.Now ) {
 				var savedTime = mLastExplorerRequest;
 
-				mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( track.Artist );
-				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( track.Album );
+				if( track.Artist != null ) {
+					mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( track.Artist );
+				}
+				if( track.Album != null ) {
+					mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( track.Album );
+				}
 
 				mLastExplorerRequest = savedTime;
 			}

@@ -49,5 +49,6 @@ namespace Noise.Infrastructure.Interfaces {
 		void						DeleteItem( object dbItem );
 
 		DataProviderList<DbInternetStream>	GetStreamList();
+		DbInternetStream			GetStream( long streamId );
 	}
 }

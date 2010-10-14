@@ -94,7 +94,7 @@
 				</StackPanel>
 				<StackPanel Orientation="Horizontal" Margin="7,0,0,0"  VerticalAlignment="Top">
 					<Label Content="Exhausted:"/>
-					<ComboBox x:Name="ExhaustedStrategy" Width="100"
+					<ComboBox x:Name="ExhaustedStrategy" Width="110"
                               ItemsSource="{Binding Path=ExhaustedStrategyList}"
                               DisplayMemberPath="Title" SelectedValuePath="Strategy"
                               SelectedValue="{Binding Path=ExhaustedStrategy}"/>
