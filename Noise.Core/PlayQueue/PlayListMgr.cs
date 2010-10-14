@@ -55,6 +55,22 @@ namespace Noise.Core.PlayQueue {
 			return( retValue );
 		}
 
+		public void Delete( DbPlayList playList ) {
+			var database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				database.Delete( playList );
+
+				FireListChanged();
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - PlayListMgr:Delete ", ex );
+			}
+			finally{
+				mDatabaseManager.FreeDatabase( database );
+			}
+		}
+
 		public IEnumerable<DbTrack> GetTracks( DbPlayList forList ) {
 			return( forList.TrackIds.Select( trackId => mNoiseManager.DataProvider.GetTrack( trackId )).ToList());
 		}

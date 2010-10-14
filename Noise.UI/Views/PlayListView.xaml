@@ -96,8 +96,8 @@
                                 <Setter Property="Visibility" TargetName="Expander" Value="Hidden"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="true">
-                                <Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+<!--                                <Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/> -->
                             </Trigger>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
@@ -169,10 +169,10 @@
 
                     <Button Grid.Row="0" Grid.Column="0" Width="12" Height="12" Margin="0,0,3,0" Command="{Binding Path=Play}"/>
                     <TextBlock Grid.Row="0" Grid.Column="1" FontSize="16" Text="{Binding Path=PlayList.Name}"/>
-                    <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
+                    <StackPanel Grid.Row="0" Grid.Column="3" Margin="0,0,0,5" Orientation="Horizontal">
                         <CheckBox Margin="0,9,9,0" IsChecked="{Binding Path=UiEdit.IsFavorite, Mode=TwoWay}"/>
                         <Controls:RatingSelector Margin="0,1,0,0" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Style="{DynamicResource RatingStyle}"
-											        Template="{DynamicResource RatingTemplate}" RatingSelected="{Binding Path=UiEdit.Rating, Mode=TwoWay}"/>
+                                                 Template="{DynamicResource RatingTemplate}" RatingSelected="{Binding Path=UiEdit.Rating, Mode=TwoWay}"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -180,10 +180,19 @@
     </Control.Resources>
 
     <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Play Lists " Margin="3,0,0,0">
-        <TreeView Grid.Row="0" BorderThickness="0"
-                  ItemsSource="{Binding Path=PlayList}"
-                  ItemTemplate="{StaticResource PlayListTemplate}"
-                  ItemContainerStyle="{DynamicResource TreeViewItemStyle}"
-                  />
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TreeView Grid.Row="0" BorderThickness="0"
+                      ItemsSource="{Binding Path=PlayList}"
+                      ItemTemplate="{StaticResource PlayListTemplate}"
+                      ItemContainerStyle="{DynamicResource TreeViewItemStyle}" />
+            
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <Button Margin="3" Content="Delete Playlist" Command="{Binding DeletePlayList}"/>
+            </StackPanel>
+        </Grid>
     </GroupBox>
 </UserControl>

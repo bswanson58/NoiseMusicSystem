@@ -11,10 +11,11 @@ using Observal;
 using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
-	public class PlayListViewModel {
+	public class PlayListViewModel : ViewModelBase {
 		private IUnityContainer			mContainer;
 		private IEventAggregator		mEvents;
 		private INoiseManager			mNoiseManager;
+		private PlayListNode			mSelectedNode;
 		private readonly Observer		mChangeObserver;
 		private readonly ObservableCollectionEx<PlayListNode>	mTreeItems;
 
@@ -54,6 +55,7 @@ namespace Noise.UI.ViewModels {
 				mChangeObserver.Release( item.UiEdit );
 			}
 			mTreeItems.Clear();
+			mSelectedNode = null;
 
 			foreach( var list in mNoiseManager.PlayListMgr.PlayLists ) {
 				var trackList = from DbTrack track in mNoiseManager.PlayListMgr.GetTracks( list ) select track;
@@ -90,12 +92,21 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnNodeSelected( PlayListNode node ) {
-			if( node.Artist != null ) {
-				mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( node.Artist );
+			if( node.IsSelected ) {
+				if( node.Artist != null ) {
+					mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( node.Artist );
+				}
+				if( node.Album != null ) {
+					mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( node.Album );
+				}
+
+				mSelectedNode = node;
 			}
-			if( node.Album != null ) {
-				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( node.Album );
+			else {
+				mSelectedNode = null;
 			}
+
+			RaiseCanExecuteChangedEvent( "CanExecute_DeletePlayList" );
 		}
 
 		private void OnNodePlay( PlayListNode node ) {
@@ -108,6 +119,16 @@ namespace Noise.UI.ViewModels {
 			foreach( var track in node.TrackList ) {
 				mEvents.GetEvent<Events.TrackPlayRequested>().Publish( track.Track );
 			}
+		}
+
+		public void Execute_DeletePlayList() {
+			if( mSelectedNode != null ) {
+				mNoiseManager.PlayListMgr.Delete( mSelectedNode.PlayList );
+			}
+		}
+
+		public bool CanExecute_DeletePlayList() {
+			return( mSelectedNode != null );
 		}
 	}
 }

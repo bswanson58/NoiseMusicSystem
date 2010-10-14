@@ -6,6 +6,8 @@ namespace Noise.Infrastructure.Interfaces {
 		List<DbPlayList>		PlayLists { get; }
 
 		DbPlayList				Create( IEnumerable<PlayQueueTrack> fromList, string name, string description );
+		void					Delete( DbPlayList playList );
+
 		IEnumerable<DbTrack>	GetTracks( DbPlayList forList );
 	}
 }
