@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -100,18 +99,22 @@ namespace Noise.UI.ViewModels {
 			mViewModel.SearchOptions.Add( cSearchOptionDefault + cSearchIgnoreCase );
 		}
 
-		public void PopulateTree( ObservableCollection<ExplorerTreeNode> tree, IDatabaseFilter filter ) {
+		public IEnumerable<ExplorerTreeNode> BuildTree( IDatabaseFilter filter ) {
 			Condition.Requires( mViewModel ).IsNotNull();
+
+			var retValue = new List<ExplorerTreeNode>();
 
 			if( mNoiseManager.IsInitialized ) {
 				using( var list = mNoiseManager.DataProvider.GetArtistList( filter )) {
 					var artistList = from artist in list.List orderby artist.Name select artist;
 
 					foreach( DbArtist artist in artistList ) {
-						AddArtist( tree, artist );
+						AddArtist( retValue, artist );
 					}
 				}
 			}
+
+			return( retValue );
 		}
 
 		private void AddArtist( ICollection<ExplorerTreeNode> tree, DbArtist artist ) {

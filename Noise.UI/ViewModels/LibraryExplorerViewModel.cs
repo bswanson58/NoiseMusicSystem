@@ -94,9 +94,17 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void UpdateTree() {
+		 	PopulateTree( BuildTree());
+		}
+
+		private IEnumerable<ExplorerTreeNode> BuildTree() {
+			return( mViewStrategy.BuildTree( mExplorerFilter ));
+		}
+
+		private void PopulateTree( IEnumerable<ExplorerTreeNode> newNodes ) {
 			mTreeItems.SuspendNotification();
 			mTreeItems.Clear();
-			mViewStrategy.PopulateTree( mTreeItems, mExplorerFilter );
+		 	mTreeItems.AddRange( newNodes );
 			mTreeItems.ResumeNotification();
 		}
 

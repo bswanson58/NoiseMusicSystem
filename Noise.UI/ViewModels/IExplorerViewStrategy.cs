@@ -6,7 +6,7 @@ using Noise.UI.Adapters;
 namespace Noise.UI.ViewModels {
 	internal interface IExplorerViewStrategy {
 		void	Initialize( LibraryExplorerViewModel viewModel );
-		void	PopulateTree( ObservableCollection<ExplorerTreeNode> tree, IDatabaseFilter filter );
+		IEnumerable<ExplorerTreeNode>	BuildTree( IDatabaseFilter filter );
 
 		bool	Search( string searchText, IEnumerable<string> searchOptions );
 		void	ClearCurrentSearch();
