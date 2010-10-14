@@ -7,7 +7,7 @@
              xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary"
              xmlns:Adapters="clr-namespace:Noise.UI.Adapters" 
              mc:Ignorable="d"
-             Tag="Play Lists"
+             Tag="Playlists"
              d:DesignHeight="300" d:DesignWidth="300">
     
     <UserControl.DataContext>
@@ -140,7 +140,14 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Width="12" Height="12" Margin="0,0,3,0" Command="{Binding Path=Play}"/>
-                <TextBlock Grid.Column="1" Text="{Binding Path=Track.Name}"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="{Binding Path=Track.Name}"/>
+                    <TextBlock Text=" ("/>
+                    <TextBlock Text="{Binding Path=Artist.Name}"/>
+                    <TextBlock Text="/"/>
+                    <TextBlock Text="{Binding Path=Album.Name}"/>
+                    <TextBlock Text=")"/>
+                </StackPanel>
             </Grid>
         </HierarchicalDataTemplate>
 
@@ -148,22 +155,24 @@
                                     DataType="{x:Type Adapters:PlayListNode}"
                                     ItemTemplate="{StaticResource PlayItemTemplate}"
                                     ItemsSource="{Binding Path=TrackList}">
-            <Border Margin="0,1,0,2" CornerRadius="3" Background="{DynamicResource TreeItemBackground}" BorderBrush="{DynamicResource ControlTextColor}">
+            <Border Margin="0,1,0,2" CornerRadius="3" BorderBrush="{DynamicResource ControlTextColor}">
                 <Grid Margin="3,0,3,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" Text="{Binding Path=PlayList.Name}"/>
-                    <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
-                        <CheckBox Margin="0,9,9,0" IsChecked="{Binding Path=PlayList.IsFavorite, Mode=TwoWay}"/>
+                    <Button Grid.Row="0" Grid.Column="0" Width="12" Height="12" Margin="0,0,3,0" Command="{Binding Path=Play}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" FontSize="16" Text="{Binding Path=PlayList.Name}"/>
+                    <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
+                        <CheckBox Margin="0,9,9,0" IsChecked="{Binding Path=UiEdit.IsFavorite, Mode=TwoWay}"/>
                         <Controls:RatingSelector Margin="0,1,0,0" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Style="{DynamicResource RatingStyle}"
-											        Template="{DynamicResource RatingTemplate}" RatingSelected="{Binding Path=PlayList.Rating, Mode=TwoWay}"/>
+											        Template="{DynamicResource RatingTemplate}" RatingSelected="{Binding Path=UiEdit.Rating, Mode=TwoWay}"/>
                     </StackPanel>
                 </Grid>
             </Border>

@@ -626,6 +626,29 @@ namespace Noise.Core.Database {
 			}
 		}
 
+		public void SetFavorite( DbPlayList forList, bool isFavorite ) {
+			Condition.Requires( forList ).IsNotNull();
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				forList = database.ValidateOnThread( forList ) as DbPlayList;
+				if( forList != null ) {
+					if( forList.IsFavorite != isFavorite ) {
+						forList.IsFavorite = isFavorite;
+						database.Store( forList );
+
+						mEvents.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( forList, DbItemChanged.Favorite ));
+					}
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - SetFavorite(DbList):", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+		}
+
 		public void SetRating( DbArtist forArtist, Int16 rating ) {
 			Condition.Requires( forArtist ).IsNotNull();
 
@@ -733,5 +756,26 @@ namespace Noise.Core.Database {
 				mDatabaseManager.FreeDatabase( database );
 			}
 		}
+
+		public void SetRating( DbPlayList forList, Int16 rating ) {
+			Condition.Requires( forList ).IsNotNull();
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				forList = database.ValidateOnThread( forList ) as DbPlayList;
+				if( forList != null ) {
+					forList.Rating = rating;
+
+					database.Store( forList );
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - SetRating(DbPlayList):", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+		}
+
 	}
 }
