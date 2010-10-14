@@ -51,7 +51,7 @@ namespace Noise.UI.ViewModels {
 				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 				if( configuration != null ) {
-					mNoiseManager.PlayQueue.PlayExhaustedStrategy = configuration.PlayExhaustedStrategy;
+					mNoiseManager.PlayQueue.SetPlayExhaustedStrategy( configuration.PlayExhaustedStrategy, configuration.PlayExhaustedItem );
 				}
 			}
 		}
@@ -162,7 +162,7 @@ namespace Noise.UI.ViewModels {
 		public ePlayExhaustedStrategy ExhaustedStrategy {
 			get{ return( mNoiseManager.PlayQueue.PlayExhaustedStrategy ); }
 			set {
-				mNoiseManager.PlayQueue.PlayExhaustedStrategy = value;
+				mNoiseManager.PlayQueue.SetPlayExhaustedStrategy( value, Constants.cDatabaseNullOid );
 
 				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );

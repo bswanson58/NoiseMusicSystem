@@ -38,8 +38,9 @@ namespace Noise.Infrastructure.Interfaces {
 
 		void			ReorderQueueItem( int fromIndex, int toIndex );
 
-		ePlayStrategy				PlayStrategy { get; set; }
-		ePlayExhaustedStrategy		PlayExhaustedStrategy { get; set; }
+		ePlayStrategy			PlayStrategy { get; set; }
+		ePlayExhaustedStrategy	PlayExhaustedStrategy { get; }
+		void					SetPlayExhaustedStrategy( ePlayExhaustedStrategy strategy, long itemId );
 
 		IEnumerable<PlayQueueTrack>	PlayList { get; }
 	}

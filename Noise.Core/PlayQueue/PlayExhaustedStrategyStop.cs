@@ -2,7 +2,7 @@
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayExhaustedStrategyStop : IPlayExhaustedStrategy {
-		public bool QueueExhausted( IPlayQueue queueMgr ) {
+		public bool QueueExhausted( IPlayQueue queueMgr, long itemId ) {
 			return( false );
 		}
 

@@ -20,7 +20,7 @@ namespace Noise.Core.PlayQueue {
 
 		protected abstract void FillTrackList();
 
-		public bool QueueExhausted( IPlayQueue queueMgr ) {
+		public bool QueueExhausted( IPlayQueue queueMgr, long itemId ) {
 			mQueueMgr = queueMgr;
 
 			if( !mQueueMgr.StrategyRequestsQueued ) {

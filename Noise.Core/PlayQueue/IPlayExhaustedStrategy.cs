@@ -2,7 +2,7 @@
 
 namespace Noise.Core.PlayQueue {
 	interface IPlayExhaustedStrategy {
-		bool	QueueExhausted( IPlayQueue queueMgr );
+		bool	QueueExhausted( IPlayQueue queueMgr, long itemId );
 		void	NextTrackPlayed();
 	}
 }

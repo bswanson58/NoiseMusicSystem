@@ -10,6 +10,7 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cMinimizeToTrayProperty						= "minimizeToTray";
 		private const string	cDisplayPlayTimeElapsedProperty				= "displayPlayTimeElapsed";
 		private const string	cPlayExhaustedStrategyProperty				= "playExhaustedStrategy";
+		private const string	cPlayExhaustedItemProperty					= "playExhaustedItem";
 
 		[ConfigurationPropertyAttribute( cEnableLibraryExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "true" )]
 		public bool EnableLibraryExplorer {
@@ -39,6 +40,12 @@ namespace Noise.Infrastructure.Configuration {
 		public ePlayExhaustedStrategy PlayExhaustedStrategy {
 			get { return ((ePlayExhaustedStrategy)( base[cPlayExhaustedStrategyProperty] ) ); }
 			set { base[cPlayExhaustedStrategyProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cPlayExhaustedItemProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = Constants.cDatabaseNullOid )]
+		public long PlayExhaustedItem {
+			get { return ((long)( base[cPlayExhaustedItemProperty] ) ); }
+			set { base[cPlayExhaustedItemProperty] = value; }
 		}
 	}
 }

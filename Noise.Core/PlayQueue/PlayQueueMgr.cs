@@ -16,6 +16,7 @@ namespace Noise.Core.PlayQueue {
 		private	ePlayStrategy					mPlayStrategy;
 		private IPlayStrategy					mStrategy;
 		private ePlayExhaustedStrategy			mPlayExhaustedStrategy;
+		private long							mPlayExhaustedItem;
 		private IPlayExhaustedStrategy			mExhaustedStrategy;
 		private	int								mReplayTrackCount;
 		private PlayQueueTrack					mReplayTrack;
@@ -29,7 +30,7 @@ namespace Noise.Core.PlayQueue {
 			mPlayHistory = new List<PlayQueueTrack>();
 
 			PlayStrategy = ePlayStrategy.Next;
-			PlayExhaustedStrategy = ePlayExhaustedStrategy.Stop;
+			SetPlayExhaustedStrategy( ePlayExhaustedStrategy.Stop, Constants.cDatabaseNullOid );
 
 			mEventAggregator.GetEvent<Events.AlbumPlayRequested>().Subscribe( OnAlbumPlayRequest );
 			mEventAggregator.GetEvent<Events.TrackPlayRequested>().Subscribe( OnTrackPlayRequest );
@@ -233,7 +234,7 @@ namespace Noise.Core.PlayQueue {
 
 					if(( retValue == null ) &&
 					   ( mPlayQueue.Count > 0 )) {
-						if( mExhaustedStrategy.QueueExhausted( this )) {
+						if( mExhaustedStrategy.QueueExhausted( this, mPlayExhaustedItem )) {
 							retValue = mStrategy.NextTrack( mPlayQueue );
 						}
 					}
@@ -311,26 +312,28 @@ namespace Noise.Core.PlayQueue {
 
 		public ePlayExhaustedStrategy PlayExhaustedStrategy {
 			get { return( mPlayExhaustedStrategy ); }
-			set {
-				mPlayExhaustedStrategy = value;
+		}
 
-				switch( mPlayExhaustedStrategy ) {
-					case ePlayExhaustedStrategy.Stop:
-						mExhaustedStrategy = new PlayExhaustedStrategyStop();
-						break;
+		public void SetPlayExhaustedStrategy( ePlayExhaustedStrategy strategy, long itemId ) {
+			mPlayExhaustedStrategy = strategy;
+			mPlayExhaustedItem = itemId;
 
-					case ePlayExhaustedStrategy.Replay:
-						mExhaustedStrategy = new PlayQueueExhaustedStrategyReplay();
-						break;
+			switch( mPlayExhaustedStrategy ) {
+				case ePlayExhaustedStrategy.Stop:
+					mExhaustedStrategy = new PlayExhaustedStrategyStop();
+					break;
 
-					case ePlayExhaustedStrategy.PlayFavorites:
-						mExhaustedStrategy = new PlayExhaustedStrategyFavorites( mContainer );
-						break;
+				case ePlayExhaustedStrategy.Replay:
+					mExhaustedStrategy = new PlayQueueExhaustedStrategyReplay();
+					break;
 
-					case ePlayExhaustedStrategy.PlaySimilar:
-						mExhaustedStrategy = new PlayExhaustedStrategySimilar( mContainer );
-						break;
-				}
+				case ePlayExhaustedStrategy.PlayFavorites:
+					mExhaustedStrategy = new PlayExhaustedStrategyFavorites( mContainer );
+					break;
+
+				case ePlayExhaustedStrategy.PlaySimilar:
+					mExhaustedStrategy = new PlayExhaustedStrategySimilar( mContainer );
+					break;
 			}
 		}
 
