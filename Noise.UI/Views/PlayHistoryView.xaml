@@ -3,12 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" 
-             mc:Ignorable="d"
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters" mc:Ignorable="d"
              DataContext="{Binding PlayHistoryViewModel, Source={StaticResource ViewModelLocator}}"
              Tag="History"
              d:DesignHeight="300" d:DesignWidth="300">
-    
+
+    <Control.Resources>
+        <ValueConverters:RelativeTimeConverter x:Key="RelativeTimeConverter"/>
+    </Control.Resources>
+
     <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Play History " Margin="3,0,0,0">
         <ListView ItemsSource="{Binding Path=HistoryList}" BorderThickness="0"
                   Behaviours:ListViewColumns.Stretch="true">
@@ -48,7 +51,7 @@
                     <GridViewColumn Header="Last Played" Width="140">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=PlayedOn}" TextAlignment="Right" />
+                                <TextBlock Text="{Binding Path=PlayedOn, Converter={StaticResource RelativeTimeConverter}}" TextAlignment="Right" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

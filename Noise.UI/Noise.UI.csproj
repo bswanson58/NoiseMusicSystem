@@ -169,7 +169,9 @@
     <Compile Include="ValueConverters\ByteImageConverter.cs" />
     <Compile Include="ValueConverters\DateOnlyConverter.cs" />
     <Compile Include="ValueConverters\HtmlTextConverter.cs" />
+    <Compile Include="ValueConverters\NumberToWordsConverter.cs" />
     <Compile Include="ValueConverters\PublishedYearConverter.cs" />
+    <Compile Include="ValueConverters\RelativeTimeConverter.cs" />
     <Compile Include="ValueConverters\TimeSpanConverter.cs" />
     <Compile Include="ValueConverters\VolumeLevelConverter.cs" />
     <Compile Include="ViewModels\AlbumViewModel.cs" />
