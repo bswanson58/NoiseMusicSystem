@@ -12,13 +12,13 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cPlayExhaustedStrategyProperty				= "playExhaustedStrategy";
 		private const string	cPlayExhaustedItemProperty					= "playExhaustedItem";
 
-		[ConfigurationPropertyAttribute( cEnableLibraryExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "true" )]
+		[ConfigurationPropertyAttribute( cEnableLibraryExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
 		public bool EnableLibraryExplorer {
 			get { return ((bool)( base[cEnableLibraryExplorerProperty] ) ); }
 			set { base[cEnableLibraryExplorerProperty] = value; }
 		}
 
-		[ConfigurationPropertyAttribute( cEnableBackgroundContentExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "true" )]
+		[ConfigurationPropertyAttribute( cEnableBackgroundContentExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
 		public bool EnableBackgroundContentExplorer {
 			get { return ((bool)( base[cEnableBackgroundContentExplorerProperty] ) ); }
 			set { base[cEnableBackgroundContentExplorerProperty] = value; }
