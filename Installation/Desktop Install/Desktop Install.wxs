@@ -6,7 +6,7 @@
   <Product Id="0ef02795-7dc0-4cd4-8a50-c5346be3e026"
 					 Name="Noise Desktop Install"
 					 Language="1033"
-					 Version="0.2.0.0"
+					 Version="0.3.0.0"
 					 Manufacturer="Secret Squirrel Software"
 					 UpgradeCode="479ef42d-6d35-4dc5-8531-beb5883f54f2">
 		<Package InstallerVersion="200" 
