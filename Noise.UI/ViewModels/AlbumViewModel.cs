@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
@@ -17,6 +18,7 @@ namespace Noise.UI.ViewModels {
 		private INoiseManager			mNoiseManager;
 		private DbAlbum					mCurrentAlbum;
 		public	UserSettingsNotifier	UiEdit { get; private set; }
+		public	TimeSpan				AlbumPlayTime { get; private set; }
 		private readonly Observer		mChangeObserver;
 		private readonly ObservableCollectionEx<TrackViewNode>	mTracks;
 
@@ -65,9 +67,14 @@ namespace Noise.UI.ViewModels {
 						using( var tracks = mNoiseManager.DataProvider.GetTrackList( CurrentAlbum )) {
 							mTracks.AddRange( from track in tracks.List select new TrackViewNode( mEvents, track ));
 						}
+
+						AlbumPlayTime = new TimeSpan();
+						mTracks.Each( track => AlbumPlayTime += track.Track.Duration );
+
 						mTracks.Each( track => mChangeObserver.Add( track.UiEdit ));
 					}
 
+					RaisePropertyChanged( () => AlbumPlayTime );
 					RaisePropertyChanged( () => UiDisplay );
 					RaisePropertyChanged( () => UiEdit );
 		        } );

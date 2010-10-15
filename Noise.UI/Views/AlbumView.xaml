@@ -40,6 +40,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <TextBlock Text="{Binding Path=UiDisplay.Name}" FontSize="20" Margin="0,0,0,9"  HorizontalAlignment="Right"/>
                         <StackPanel HorizontalAlignment="Right" Grid.Row="1" Orientation="Horizontal">
@@ -49,6 +50,10 @@
                         </StackPanel>
                         <TextBlock Text="{Binding Path=UiDisplay.Genre}"  HorizontalAlignment="Right" Grid.Row="2"/>
                         <TextBlock Text="{Binding Path=UiDisplay.PublishedYear, Converter={StaticResource PublishedYearConverter}}"  HorizontalAlignment="Right" Grid.Row="3"/>
+                        <StackPanel HorizontalAlignment="Right" Grid.Row="4" Orientation="Horizontal">
+                            <TextBlock Text="Playing time: "/>
+                            <TextBlock Text="{Binding Path=AlbumPlayTime, Converter={StaticResource TimeSpanConverter}}"/>
+                        </StackPanel>
                     </Grid>
                 </Grid>
             </Border>

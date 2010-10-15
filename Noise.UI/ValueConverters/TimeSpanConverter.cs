@@ -10,19 +10,21 @@ namespace Noise.UI.ValueConverters {
 			if( value is TimeSpan ) {
 				var timeSpan = (TimeSpan)value;
 
-				if( Math.Abs( timeSpan.Hours ) > 0 ) {
-					retValue = string.Format( "{0:D2}:{1:D2}:{2:D2}", timeSpan.Hours, Math.Abs( timeSpan.Minutes ), Math.Abs( timeSpan.Seconds ));
-				}
-				else {
-					if( Math.Abs( timeSpan.Minutes ) > 0 ) {
-						retValue = string.Format( "{0}:{1:D2}", timeSpan.Minutes, Math.Abs( timeSpan.Seconds ));
+				if( timeSpan.TotalSeconds > 1 ) {
+					if( Math.Abs( timeSpan.Hours ) > 0 ) {
+						retValue = string.Format( "{0}:{1:D2}:{2:D2}", timeSpan.Hours, Math.Abs( timeSpan.Minutes ), Math.Abs( timeSpan.Seconds ));
 					}
 					else {
-						if( timeSpan.Seconds > 0 ) {
-							retValue = string.Format(  "0:{0:D2}", Math.Abs( timeSpan.Seconds ));
+						if( Math.Abs( timeSpan.Minutes ) > 0 ) {
+							retValue = string.Format( "{0}:{1:D2}", timeSpan.Minutes, Math.Abs( timeSpan.Seconds ));
 						}
 						else {
-							retValue = string.Format(  "-0:{0:D2}", Math.Abs( timeSpan.Seconds ));
+							if( timeSpan.Seconds > 0 ) {
+								retValue = string.Format(  "0:{0:D2}", Math.Abs( timeSpan.Seconds ));
+							}
+							else {
+								retValue = string.Format(  "-0:{0:D2}", Math.Abs( timeSpan.Seconds ));
+							}
 						}
 					}
 				}
