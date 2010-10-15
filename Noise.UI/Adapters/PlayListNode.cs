@@ -10,6 +10,7 @@ namespace Noise.UI.Adapters {
 		public	DbArtist						Artist { get; private set; }
 		public	DbAlbum							Album { get; private set; }
 		public	DbTrack							Track { get; private set; }
+		public	TimeSpan						PlayTime { get; private set; }
 		public	IEnumerable<PlayListNode>		TrackList { get; private set; }
 		public	bool							IsExpanded { get; set; }
 		private bool							mIsSelected;
@@ -19,6 +20,9 @@ namespace Noise.UI.Adapters {
 		public PlayListNode( DbPlayList playList, IEnumerable<PlayListNode> trackList, Action<PlayListNode> onSelected, Action<PlayListNode> onPlay ) {
 			PlayList = playList;
 			TrackList = trackList;
+
+			PlayTime = new TimeSpan();
+			TrackList.Each( node => { if( node.Track != null ) { PlayTime += node.Track.Duration; }});
 
 			UiEdit = new UserSettingsNotifier( PlayList, null );
 
