@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
@@ -10,13 +12,18 @@ using Noise.UI.Adapters;
 
 namespace Noise.UI.ViewModels {
 	public class PlayHistoryViewModel : ViewModelBase {
-		private IUnityContainer			mContainer;
-		private IEventAggregator		mEvents;
-		private INoiseManager			mNoiseManager;
+		private IUnityContainer				mContainer;
+		private IEventAggregator			mEvents;
+		private INoiseManager				mNoiseManager;
+		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<PlayHistoryNode>	mHistoryList;
 
 		public PlayHistoryViewModel() {
 			mHistoryList = new ObservableCollectionEx<PlayHistoryNode>();
+
+			mBackgroundWorker = new BackgroundWorker();
+			mBackgroundWorker.DoWork += ( o, args ) => args.Result = BuildHistoryList();
+			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => UpdateHistoryList( result.Result as IEnumerable<PlayHistoryNode>);
 		}
 
 		[Dependency]
@@ -30,39 +37,53 @@ namespace Noise.UI.ViewModels {
 
 				mEvents.GetEvent<Events.PlayHistoryChanged>().Subscribe( OnPlayHistoryChanged );
 
-				PopulatePlayHistory();
+				BackgroundPopulateHistoryList();
 			}
 		}
 
 		private void OnPlayHistoryChanged( IPlayHistory playHistory ) {
-			PopulatePlayHistory();
+			BackgroundPopulateHistoryList();
 		}
 
-		private void PopulatePlayHistory() {
+		private void BackgroundPopulateHistoryList() {
+			if(!mBackgroundWorker.IsBusy ) {
+				mBackgroundWorker.RunWorkerAsync();
+			}
+		}
+
+		private void UpdateHistoryList( IEnumerable<PlayHistoryNode> newList ) {
 			BeginInvoke( () => {
 				mHistoryList.SuspendNotification();
+
 				mHistoryList.Clear();
-
-				var historyList = from DbPlayHistory history in mNoiseManager.PlayHistory.PlayHistory orderby history.PlayedOn descending select history;
-				foreach( var history in historyList ) {
-					var track = mNoiseManager.DataProvider.GetTrack( history.Track );
-
-					if( track != null ) {
-						var album = mNoiseManager.DataProvider.GetAlbumForTrack( track );
-
-						if( album != null ) {
-							var artist = mNoiseManager.DataProvider.GetArtistForAlbum( album );
-
-							if( artist != null ) {
-								mHistoryList.Add( new PlayHistoryNode( artist, album, track, history.PlayedOn, OnNodeSelected, OnPlayTrack ));
-							}
-						}
-					}
-				}
+				mHistoryList.AddRange( newList );
 
 				mHistoryList.ResumeNotification();
 				RaisePropertyChanged( () => HistoryList );
 			});
+		}
+
+		private IEnumerable<PlayHistoryNode> BuildHistoryList() {
+			var retValue = new List<PlayHistoryNode>();
+			var historyList = from DbPlayHistory history in mNoiseManager.PlayHistory.PlayHistory orderby history.PlayedOn descending select history;
+
+			foreach( var history in historyList ) {
+				var track = mNoiseManager.DataProvider.GetTrack( history.Track );
+
+				if( track != null ) {
+					var album = mNoiseManager.DataProvider.GetAlbumForTrack( track );
+
+					if( album != null ) {
+						var artist = mNoiseManager.DataProvider.GetArtistForAlbum( album );
+
+						if( artist != null ) {
+							retValue.Add( new PlayHistoryNode( artist, album, track, history.PlayedOn, OnNodeSelected, OnPlayTrack ));
+						}
+					}
+				}
+			}
+
+			return( retValue );
 		}
 
 		private void OnNodeSelected( PlayHistoryNode node ) {
