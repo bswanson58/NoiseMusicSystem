@@ -3,6 +3,7 @@ using Microsoft.Practices.Composite.Modularity;
 using Microsoft.Practices.Composite.UnityExtensions;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using Noise.UI.Support;
 
 namespace Noise.Desktop {
 	public class Bootstrapper : UnityBootstrapper {
@@ -17,6 +18,10 @@ namespace Noise.Desktop {
 			mShell = Container.Resolve<Shell>();
 			mShell.Show();
 			mShell.Closing += OnShellClosing;
+
+#if( DEBUG )
+			BindingErrorListener.Listen( message => MessageBox.Show( message ));
+#endif
 
 			return ( mShell );
 		}
