@@ -12,13 +12,14 @@ using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistViewModel : ViewModelBase {
-		private IUnityContainer			mContainer;
-		private IEventAggregator		mEvents;
-		private INoiseManager			mNoiseManager;
-		private DbArtist				mCurrentArtist;
-		public	UserSettingsNotifier	UiEdit { get; private set; }
-		private LinkNode				mArtistWebsite;
-		private readonly Observer		mChangeObserver;
+		private IUnityContainer				mContainer;
+		private IEventAggregator			mEvents;
+		private INoiseManager				mNoiseManager;
+		private DbArtist					mCurrentArtist;
+		public	UserSettingsNotifier		UiEdit { get; private set; }
+		private LinkNode					mArtistWebsite;
+		private readonly Observer			mChangeObserver;
+		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<LinkNode>				mSimilarArtists;
 		private readonly ObservableCollectionEx<LinkNode>				mTopAlbums;
 		private readonly ObservableCollectionEx<LinkNode>				mBandMembers;
@@ -32,6 +33,10 @@ namespace Noise.UI.ViewModels {
 
 			mChangeObserver = new Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnArtistChanged );
+
+			mBackgroundWorker = new BackgroundWorker();
+			mBackgroundWorker.DoWork += ( o, args ) => args.Result = RetrieveSupportInfo( args.Argument as DbArtist );
+			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => SupportInfo = result.Result as ArtistSupportInfo;
 		}
 
 		[Dependency]
@@ -124,7 +129,7 @@ namespace Noise.UI.ViewModels {
 						mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
 						RaisePropertyChanged( () => ArtistWebsite );
 
-						SupportInfo = mNoiseManager.DataProvider.GetArtistSupportInfo( CurrentArtist );
+						mBackgroundWorker.RunWorkerAsync( CurrentArtist );
 					}
 				});
 			}
@@ -134,8 +139,12 @@ namespace Noise.UI.ViewModels {
 			if(( artist != null ) &&
 			   ( CurrentArtist != null ) &&
 			   ( CurrentArtist.DbId == artist.DbId )) {
-				SupportInfo = mNoiseManager.DataProvider.GetArtistSupportInfo( CurrentArtist );
+				mBackgroundWorker.RunWorkerAsync( CurrentArtist );
 			}
+		}
+
+		private ArtistSupportInfo RetrieveSupportInfo( DbArtist forArtist ) {
+			return( mNoiseManager.DataProvider.GetArtistSupportInfo( forArtist ));
 		}
 
 		private void OnSimilarArtistClicked( long artistId ) {

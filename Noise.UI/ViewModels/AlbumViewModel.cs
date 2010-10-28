@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
@@ -13,13 +14,14 @@ using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
 	internal class AlbumViewModel : ViewModelBase {
-		private IUnityContainer			mContainer;
-		private IEventAggregator		mEvents;
-		private INoiseManager			mNoiseManager;
-		private DbAlbum					mCurrentAlbum;
-		public	UserSettingsNotifier	UiEdit { get; private set; }
-		public	TimeSpan				AlbumPlayTime { get; private set; }
-		private readonly Observer		mChangeObserver;
+		private IUnityContainer				mContainer;
+		private IEventAggregator			mEvents;
+		private INoiseManager				mNoiseManager;
+		private DbAlbum						mCurrentAlbum;
+		public	UserSettingsNotifier		UiEdit { get; private set; }
+		public	TimeSpan					AlbumPlayTime { get; private set; }
+		private readonly Observer			mChangeObserver;
+		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<TrackViewNode>	mTracks;
 
 		public AlbumViewModel() {
@@ -27,6 +29,10 @@ namespace Noise.UI.ViewModels {
 
 			mChangeObserver = new Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
+
+			mBackgroundWorker = new BackgroundWorker();
+			mBackgroundWorker.DoWork += ( o, args ) => args.Result = RetrieveAlbumInfo( args.Argument as DbAlbum );
+			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => SupportInfo = result.Result as AlbumSupportInfo;
 		}
 
 		[Dependency]
@@ -101,8 +107,12 @@ namespace Noise.UI.ViewModels {
 			CurrentAlbum = album;
 
 			if( CurrentAlbum != null ) {
-				SupportInfo = mNoiseManager.DataProvider.GetAlbumSupportInfo( CurrentAlbum );
+				mBackgroundWorker.RunWorkerAsync( CurrentAlbum );
 			}
+		}
+
+		private AlbumSupportInfo RetrieveAlbumInfo( DbAlbum album ) {
+			return( mNoiseManager.DataProvider.GetAlbumSupportInfo( album ));
 		}
 
 		private void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
