@@ -23,16 +23,23 @@ namespace Noise.UI.ValueConverters {
 		}
 
 		private static string GetRelativeTime( DateTime time ) {
-			TimeSpan difference = DateTime.UtcNow - time.ToUniversalTime();
-			TimeSpan positive = TimeSpan.FromSeconds( (int)Math.Abs( difference.TotalSeconds ) );
+			var retValue = "Just Now";
+			var difference = DateTime.UtcNow - time.ToUniversalTime();
+			var positive = TimeSpan.FromSeconds((int)Math.Abs( difference.TotalSeconds ) );
 
-			if( positive.TotalSeconds == 0 )
-				return "Just Now";
+			if( positive.TotalMinutes > 0 ) {
+				if( positive.TotalDays < 4 ) {
+					string relativeTime = GetOffset( positive );
+					string suffix = GetSuffix( difference );
 
-			string relativeTime = GetOffset( positive );
-			string suffix = GetSuffix( difference );
+					retValue = string.Format( "{0} {1}", relativeTime, suffix );
+				}
+				else {
+					retValue = time.ToShortDateString();
+				}
+			}
 
-			return string.Format( "{0} {1}", relativeTime, suffix );
+			return( retValue );
 		}
 
 		private static string GetOffset( TimeSpan positive ) {
