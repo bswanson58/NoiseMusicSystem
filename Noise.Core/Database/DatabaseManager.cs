@@ -9,6 +9,7 @@ namespace Noise.Core.Database {
 		private readonly ILog				mLog;
 		private readonly List<IDatabase>	mAvailableDatabases;
 		private readonly Dictionary<string, IDatabase>	mReservedDatabases;
+		private	bool						mHasShutdown;
 
 		public DatabaseManager( IUnityContainer container ) {
 			mLockObject = new object();
@@ -51,26 +52,29 @@ namespace Noise.Core.Database {
 				}
 
 				mAvailableDatabases.Clear();
+				mHasShutdown = true;
 			}
 		}
 
 		public IDatabase ReserveDatabase() {
-			IDatabase	retValue;
+			IDatabase	retValue = null;
 
-			lock( mLockObject ) {
-				if( mAvailableDatabases.Count > 0 ) {
-					retValue = mAvailableDatabases[0];
+			if(!mHasShutdown ) {
+				lock( mLockObject ) {
+					if( mAvailableDatabases.Count > 0 ) {
+						retValue = mAvailableDatabases[0];
 
-					mAvailableDatabases.RemoveAt( 0 );
-					mReservedDatabases.Add( retValue.DatabaseId, retValue );
-				}
-				else {
-					retValue = mContainer.Resolve<IDatabase>();
-
-					if( retValue.InitializeAndOpenDatabase()) {
+						mAvailableDatabases.RemoveAt( 0 );
 						mReservedDatabases.Add( retValue.DatabaseId, retValue );
+					}
+					else {
+						retValue = mContainer.Resolve<IDatabase>();
 
-						mLog.LogInfo( string.Format( "Database Created. (Count: {0})", mReservedDatabases.Count + mAvailableDatabases.Count ));
+						if( retValue.InitializeAndOpenDatabase()) {
+							mReservedDatabases.Add( retValue.DatabaseId, retValue );
+
+							mLog.LogInfo( string.Format( "Database Created. (Count: {0})", mReservedDatabases.Count + mAvailableDatabases.Count ));
+						}
 					}
 				}
 			}
@@ -84,14 +88,16 @@ namespace Noise.Core.Database {
 
 		public void FreeDatabase( string databaseId ) {
 			lock( mLockObject ) {
-				if( mReservedDatabases.ContainsKey( databaseId )) {
-					var database = mReservedDatabases[databaseId];
+				if(!mHasShutdown ) {
+					if( mReservedDatabases.ContainsKey( databaseId )) {
+						var database = mReservedDatabases[databaseId];
 
-					mReservedDatabases.Remove( databaseId );
-					mAvailableDatabases.Add( database );
-				}
-				else {
-					mLog.LogMessage( string.Format( "Database ID not reserved:{0}", databaseId ));
+						mReservedDatabases.Remove( databaseId );
+						mAvailableDatabases.Add( database );
+					}
+					else {
+						mLog.LogMessage( string.Format( "Database ID not reserved:{0}", databaseId ));
+					}
 				}
 			}
 		}
