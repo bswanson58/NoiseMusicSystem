@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <?define AutomapperLibraryFolder="$(var.SolutionDir)\lib\Automapper\v1.1.0.188\"?>
+
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="Automapper.dll" Guid="3f703b9d-4ee7-4032-8e4a-b41d202f4f91">
+      <File Id="Automapper.dll" DiskId="10" Source="$(var.AutomapperLibraryFolder)Automapper.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="AutomapperFiles">
+    <ComponentRef Id="Automapper.dll" />
+  </ComponentGroup>
+</Include>

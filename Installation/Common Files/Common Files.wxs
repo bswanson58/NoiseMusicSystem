@@ -4,6 +4,7 @@
     <Media Id="10" Cabinet="CommonFiles.cab" EmbedCab="yes" />
 
     <?include Noise.Core.wxi ?>
+    <?include Automapper.wxi ?>
     <?include AvalonControls.wxi ?>
     <?include BASS Audio.wxi ?>
     <?include CuttingEdge.wxi ?>

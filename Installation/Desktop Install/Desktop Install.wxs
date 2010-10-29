@@ -106,7 +106,8 @@
     <Feature Id="Complete" Title="Noise Desktop Install" Level="1" ConfigurableDirectory="INSTALLDIRECTORY">
       <Feature Id="Application" Title="Noise Desktop Application" Level="1">
         <ComponentGroupRef Id="ApplicationFiles" />
-        <ComponentGroupRef Id="CoreFiles" />
+        <ComponentGroupRef Id="CoreFiles"/>
+        <ComponentGroupRef Id="AutomapperFiles"/>
         <ComponentGroupRef Id="AvalonControlsFiles"/>
         <ComponentGroupRef Id="BassAudioFiles"/>
         <ComponentGroupRef Id="CuttingEdgeFiles"/>
