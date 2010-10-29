@@ -182,6 +182,7 @@
     <Compile Include="ViewModels\ExplorerStrategyArtistAlbum.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
     <Compile Include="ViewModels\IExplorerViewStrategy.cs" />
+    <Compile Include="ViewModels\LibraryAdditionsViewModel.cs" />
     <Compile Include="ViewModels\LibraryConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\LibraryExplorerViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
@@ -211,6 +212,9 @@
     </Compile>
     <Compile Include="Views\InternetStreamDialog.xaml.cs">
       <DependentUpon>InternetStreamDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LibraryAdditionsView.xaml.cs">
+      <DependentUpon>LibraryAdditionsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LibraryConfigurationDialog.xaml.cs">
       <DependentUpon>LibraryConfigurationDialog.xaml</DependentUpon>
@@ -305,6 +309,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\InternetStreamDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LibraryAdditionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
