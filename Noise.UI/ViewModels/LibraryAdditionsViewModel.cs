@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
@@ -109,7 +110,7 @@ namespace Noise.UI.ViewModels {
 				}
 			}
 
-			return( retValue );
+			return( from LibraryAdditionNode node in retValue orderby node.Artist.Name + node.Album.Name ascending select node );
 		}
 
 		public ObservableCollectionEx<LibraryAdditionNode> NodeList {
