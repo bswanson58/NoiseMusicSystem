@@ -369,6 +369,24 @@ namespace Noise.Core.Database {
 
 				mDatabaseManager.FreeDatabase( database );
 			}
+
+			return( retValue );
+		}
+
+		public DataProviderList<DbTrack> GetNewlyAddedTracks() {
+			DataProviderList<DbTrack>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				retValue = new DataProviderList<DbTrack>( database.DatabaseId, FreeDatabase,
+															from DbTrack track in database.Database orderby track.DateAdded descending select track );				
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetNewlyAddedTracks: ", ex );
+
+				mDatabaseManager.FreeDatabase( database );
+			}
+
 			return( retValue );
 		}
 

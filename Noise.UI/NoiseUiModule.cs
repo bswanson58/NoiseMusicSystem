@@ -16,6 +16,8 @@ namespace Noise.UI {
 		public void Initialize() {
 			mContainer.RegisterType<IExplorerViewStrategy, ExplorerStrategyArtistAlbum>( "ArtistAlbum" );
 			mContainer.RegisterType<IDialogService, DialogService>();
+
+			MappingConfiguration.Configure();
 		}
 	}
 }

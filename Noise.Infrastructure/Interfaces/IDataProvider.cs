@@ -22,6 +22,7 @@ namespace Noise.Infrastructure.Interfaces {
 		DataProviderList<DbTrack>	GetTrackList( DbAlbum forAlbum );
 		List<DbTrack>				GetTrackList( DbArtist forArtist );
 		DataProviderList<DbTrack>	GetFavoriteTracks();
+		DataProviderList<DbTrack>	GetNewlyAddedTracks();
 
 		DataProviderList<DbDiscographyRelease>	GetDiscography( DbArtist forArtist );
 		DataProviderList<DbPlayList>			GetPlayLists();
