@@ -36,5 +36,8 @@ namespace Noise.Infrastructure {
 		public class DatabaseItemChanged : CompositePresentationEvent<DbItemChangedArgs> { }
 
 		public class WebsiteRequest : CompositePresentationEvent<string> { }
+
+		public class LibraryUpdateStarted : CompositePresentationEvent<object> { }
+		public class LibraryUpdateCompleted : CompositePresentationEvent<object> { }
 	}
 }

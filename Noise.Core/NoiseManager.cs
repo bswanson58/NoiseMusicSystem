@@ -141,6 +141,8 @@ namespace Noise.Core {
 			mExploring = true;
 
 			try {
+				mEvents.GetEvent<Events.LibraryUpdateStarted>().Publish( this );
+
 				if( mContinueExploring ) {
 					mFolderExplorer = mContainer.Resolve<IFolderExplorer>();
 					mFolderExplorer.SynchronizeDatabaseFolders();
@@ -184,6 +186,8 @@ namespace Noise.Core {
 				mSummaryBuilder = null;
 				mExploring = false;
 			}
+
+			mEvents.GetEvent<Events.LibraryUpdateCompleted>().Publish( this );
 		}
 
 		private void StartLogStatistics() {

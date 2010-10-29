@@ -10,7 +10,7 @@ using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 
 namespace Noise.UI.ViewModels {
-	public class LibraryAdditionsViewModel {
+	public class LibraryAdditionsViewModel : ViewModelBase {
 		private IUnityContainer				mContainer;
 		private IEventAggregator			mEvents;
 		private INoiseManager				mNoiseManager;
@@ -40,14 +40,22 @@ namespace Noise.UI.ViewModels {
 				mNoiseManager = mContainer.Resolve<INoiseManager>();
 
 				mBackgroundWorker.RunWorkerAsync();
+
+				mEvents.GetEvent<Events.LibraryUpdateCompleted>().Subscribe( OnLibraryUpdated );
 			}
 		}
 
+		private void OnLibraryUpdated( object sender ) {
+			mBackgroundWorker.RunWorkerAsync();
+		}
+
 		private void UpdateList( IEnumerable<LibraryAdditionNode> list ) {
-			mNodeList.SuspendNotification();
-			mNodeList.Clear();
-			mNodeList.AddRange( list );
-			mNodeList.ResumeNotification();
+			BeginInvoke( () => {
+				mNodeList.SuspendNotification();
+				mNodeList.Clear();
+				mNodeList.AddRange( list );
+				mNodeList.ResumeNotification();
+			});
 		}
 
 		private IEnumerable<LibraryAdditionNode> RetrieveAdditions() {
