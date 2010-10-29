@@ -25,6 +25,8 @@ namespace Noise.Infrastructure.Interfaces {
 		Int16			Rating { get; set; }
 
 		PlayQueueTrack	CurrentTrack { get; }
+		PlayQueueTrack	NextTrack { get; }
+		PlayQueueTrack	PreviousTrack { get; }
 		TimeSpan		TrackTime { get; }
 		void			ToggleTimeDisplay();
 		long			PlayPosition { get; set; }

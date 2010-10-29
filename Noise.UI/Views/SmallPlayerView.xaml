@@ -21,6 +21,7 @@
         <Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True"/>
         <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
         <ValueConverters:VolumeLevelConverter x:Key="VolumeLevelConverter"/>
+        <ValueConverters:PlayQueueTrackNameConverter x:Key="PlayQueueTrackNameConverter"/>
     </Window.Resources>
     
     <Window.DataContext>
@@ -60,8 +61,20 @@
                     <Button Margin="0,0,3,0" Command="{Binding Play}" Content="Play" Width="39" FontSize="10.667"/>
                     <Button Margin="3,0" Command="{Binding Pause}" Content="Pause" Width="39" FontSize="10.667"/>
                     <Button Margin="3,0" Command="{Binding Stop}" Content="Stop" Width="39" FontSize="10.667"/>
-                    <Button Margin="3,0" Command="{Binding PreviousTrack}" Content="Prev" Width="39" FontSize="10.667"/>
-                    <Button Margin="3,0" Command="{Binding NextTrack}" Content="Next" Width="39" FontSize="10.667"/>
+                    <Button Margin="3,0" Command="{Binding PreviousTrack}" Content="Prev" Width="39" FontSize="10.667">
+                        <Button.ToolTip>
+                            <ToolTip>
+                                <TextBlock Text="{Binding Path=PreviousTrack, Converter={StaticResource PlayQueueTrackNameConverter}}"/>
+                            </ToolTip>
+                        </Button.ToolTip>
+                    </Button>
+                    <Button Margin="3,0" Command="{Binding NextTrack}" Content="Next" Width="39" FontSize="10.667">
+                        <Button.ToolTip>
+                            <ToolTip>
+                                <TextBlock Text="{Binding Path=NextTrack, Converter={StaticResource PlayQueueTrackNameConverter}}"/>
+                            </ToolTip>
+                        </Button.ToolTip>
+                    </Button>
                     <StackPanel Orientation="Horizontal" Margin="5,0,11,0">
                         <TextBlock Text="Position: " Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center"/>
                         <TextBlock Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center" Width="35">

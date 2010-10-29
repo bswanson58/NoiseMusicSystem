@@ -177,6 +177,7 @@
     <Compile Include="ValueConverters\DateOnlyConverter.cs" />
     <Compile Include="ValueConverters\HtmlTextConverter.cs" />
     <Compile Include="ValueConverters\NumberToWordsConverter.cs" />
+    <Compile Include="ValueConverters\PlayQueueTrackNameConverter.cs" />
     <Compile Include="ValueConverters\PublishedYearConverter.cs" />
     <Compile Include="ValueConverters\RelativeTimeConverter.cs" />
     <Compile Include="ValueConverters\TimeSpanConverter.cs" />

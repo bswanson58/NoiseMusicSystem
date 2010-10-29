@@ -53,6 +53,14 @@ namespace Noise.Core.MediaPlayer {
 			get { return( GetTrack( CurrentChannel )); }
 		}
 
+		public PlayQueueTrack NextTrack {
+			get{ return( mNoiseManager.PlayQueue.NextTrack ); }
+		}
+
+		public PlayQueueTrack PreviousTrack {
+			get{ return( mNoiseManager.PlayQueue.PreviousTrack ); }
+		}
+
 		public ePlaybackStatus CurrentStatus {
 			get { return( mCurrentStatus ); }
 			set {

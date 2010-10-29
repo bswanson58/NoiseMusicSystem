@@ -115,6 +115,16 @@ namespace Noise.UI.ViewModels {
 			} 
 		}
 
+		[DependsUpon( "StartTrackFlag" )]
+		public PlayQueueTrack NextTrack {
+			get { return( mNoiseManager.PlayController.NextTrack ); }
+		}
+
+		[DependsUpon( "StartTrackFlag" )]
+		public PlayQueueTrack PreviousTrack {
+			get { return( mNoiseManager.PlayController.PreviousTrack ); }
+		}
+
 		[DependsUpon( "InfoUpdateFlag" )]
 		public TimeSpan TrackTime {
 			get { return( mNoiseManager.PlayController.TrackTime ); }
