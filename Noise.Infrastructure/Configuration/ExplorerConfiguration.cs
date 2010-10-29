@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure.Configuration {
@@ -11,6 +12,8 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cDisplayPlayTimeElapsedProperty				= "displayPlayTimeElapsed";
 		private const string	cPlayExhaustedStrategyProperty				= "playExhaustedStrategy";
 		private const string	cPlayExhaustedItemProperty					= "playExhaustedItem";
+		private const string	cNewAdditionsHorizonDaysProperty			= "newAdditionsHorizonDays";
+		private const string	cNewAdditionsHorizonCountProperty			= "newAdditionsHorizonCount";
 
 		[ConfigurationPropertyAttribute( cEnableLibraryExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
 		public bool EnableLibraryExplorer {
@@ -46,6 +49,18 @@ namespace Noise.Infrastructure.Configuration {
 		public long PlayExhaustedItem {
 			get { return ((long)( base[cPlayExhaustedItemProperty] ) ); }
 			set { base[cPlayExhaustedItemProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cNewAdditionsHorizonDaysProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = (UInt16)7 )]
+		public UInt16 NewAdditionsHorizonDays {
+			get { return ((UInt16)( base[cNewAdditionsHorizonDaysProperty] ) ); }
+			set { base[cNewAdditionsHorizonDaysProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cNewAdditionsHorizonCountProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = (UInt32)250 )]
+		public UInt32 NewAdditionsHorizonCount {
+			get { return ((UInt32)( base[cNewAdditionsHorizonCountProperty] ) ); }
+			set { base[cNewAdditionsHorizonCountProperty] = value; }
 		}
 	}
 }

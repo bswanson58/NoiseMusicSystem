@@ -4,6 +4,7 @@ using System.ComponentModel;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
@@ -14,16 +15,16 @@ namespace Noise.UI.ViewModels {
 		private IUnityContainer				mContainer;
 		private IEventAggregator			mEvents;
 		private INoiseManager				mNoiseManager;
-		private readonly DateTime			mHorizonTime;
-		private readonly UInt32				mHorizonCount;
+		private DateTime					mHorizonTime;
+		private UInt32						mHorizonCount;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<LibraryAdditionNode>	mNodeList;
 
 		public LibraryAdditionsViewModel() {
 			mNodeList = new ObservableCollectionEx<LibraryAdditionNode>();
 
-			mHorizonTime = DateTime.Now - new TimeSpan( 3, 0, 0, 0 );
 			mHorizonCount = 100;
+			mHorizonTime = DateTime.Now - new TimeSpan( 3, 0, 0, 0 );
 
 			mBackgroundWorker = new BackgroundWorker();
 			mBackgroundWorker.DoWork += ( o, args ) => args.Result = RetrieveAdditions();
@@ -38,6 +39,14 @@ namespace Noise.UI.ViewModels {
 
 				mEvents = mContainer.Resolve<IEventAggregator>();
 				mNoiseManager = mContainer.Resolve<INoiseManager>();
+
+				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+
+				if( configuration != null ) {
+					mHorizonCount = configuration.NewAdditionsHorizonCount;
+					mHorizonTime = DateTime.Now - new TimeSpan( configuration.NewAdditionsHorizonDays, 0, 0, 0 );
+				}
 
 				mBackgroundWorker.RunWorkerAsync();
 
