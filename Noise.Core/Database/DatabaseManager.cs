@@ -83,7 +83,9 @@ namespace Noise.Core.Database {
 		}
 
 		public void FreeDatabase( IDatabase database ) {
-			FreeDatabase( database.DatabaseId );
+			if( database != null ) {
+				FreeDatabase( database.DatabaseId );
+			}
 		}
 
 		public void FreeDatabase( string databaseId ) {
