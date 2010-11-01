@@ -138,6 +138,24 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
+		public void RemoveTrack( PlayQueueTrack track ) {
+			if( track.Track !=null ) {
+				var	queuedTrack= mPlayQueue.Find( item => item.Track != null ? item.Track.DbId == track.Track.DbId : false );
+
+				if( queuedTrack != null ) {
+					mPlayQueue.Remove(  queuedTrack );
+				}
+
+				queuedTrack= mPlayHistory.Find( item => item.Track != null ? item.Track.DbId == track.Track.DbId : false );
+
+				if( queuedTrack != null ) {
+					mPlayHistory.Remove(  queuedTrack );
+				}
+			}
+
+			FirePlayQueueChanged();
+		}
+
 		public void	ReorderQueueItem( int fromIndex, int toIndex ) {
 			if(( fromIndex < mPlayQueue.Count ) &&
 			   ( toIndex < mPlayQueue.Count )) {

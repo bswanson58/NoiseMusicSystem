@@ -63,6 +63,15 @@ namespace Noise.UI.ViewModels {
 			return(!mNoiseManager.PlayQueue.IsQueueEmpty );
 		}
 
+		public void Execute_DeleteCommand() {
+			if( SelectedItem != null ) {
+				mNoiseManager.PlayQueue.RemoveTrack( SelectedItem );
+			}
+		}
+
+		public bool CanExecute_DeleteCommand() {
+			return( SelectedItem != null );
+		}
 
 		private void OnDragManagerProcessDrop( object sender, ProcessDropEventArgs<PlayQueueTrack> args ) {
 			mNoiseManager.PlayQueue.ReorderQueueItem( args.OldIndex, args.NewIndex );
@@ -70,6 +79,11 @@ namespace Noise.UI.ViewModels {
 
 		public ObservableCollectionEx<PlayQueueTrack> QueueList {
 			get{ return( mPlayQueue ); }
+		}
+
+		public PlayQueueTrack SelectedItem {
+			get{ return( Get( () => SelectedItem )); }
+			set{ Set( () => SelectedItem, value ); }
 		}
 
 		private void OnPlayQueueChanged( IPlayQueue playQueue ) {

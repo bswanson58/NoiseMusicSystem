@@ -13,7 +13,12 @@
     <Control.Resources>
         <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
         <ValueConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
+        <Behaviours:CommandReference x:Key="DeleteCommandReference" Command="{Binding DeleteCommand}" />
     </Control.Resources>
+
+    <Control.InputBindings>
+        <KeyBinding Key="Delete" Command="{StaticResource DeleteCommandReference}" />
+    </Control.InputBindings>
 
     <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Play Queue " Margin="3,0,0,0">
         <Grid>
@@ -21,8 +26,10 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            
-            <ListView Grid.Row="0" x:Name="PlayQueueListView" ItemsSource="{Binding Path=QueueList}" BorderThickness="0"
+
+            <ListView Grid.Row="0" x:Name="PlayQueueListView" BorderThickness="0"
+                      ItemsSource="{Binding Path=QueueList}"
+                      SelectedItem="{Binding Path=SelectedItem}"
                       Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex, Mode=OneWay}"
                       Behaviours:ListViewColumns.Stretch="true">
                 <EventCommandTriggers:CommandSource.Trigger>
