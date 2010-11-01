@@ -55,8 +55,12 @@ namespace Noise.Core.PlayHistory {
 						mPlayHistory.Add( newHistory );
 					}
 
-					track.Track.PlayCount++;
-					database.Store( database.ValidateOnThread( track.Track ));
+					var dbTrack = database.ValidateOnThread( track.Track ) as DbTrack;
+					if( dbTrack != null ) {
+						dbTrack.PlayCount++;
+
+						database.Store( dbTrack );
+					}
 
 					TrimHistoryList( database );
 
