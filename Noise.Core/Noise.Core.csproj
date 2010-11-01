@@ -144,6 +144,7 @@
     <Compile Include="DataBuilders\IContentManager.cs" />
     <Compile Include="DataBuilders\IMetaDataExplorer.cs" />
     <Compile Include="DataBuilders\ISearchBuilder.cs" />
+    <Compile Include="DataBuilders\LibraryBuilder.cs" />
     <Compile Include="DataBuilders\SearchBuilder.cs" />
     <Compile Include="DataProviders\DiscogsProvider.cs" />
     <Compile Include="DataProviders\IMetaDataProvider.cs" />

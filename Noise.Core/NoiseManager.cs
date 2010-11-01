@@ -17,17 +17,10 @@ namespace Noise.Core {
 		internal const string				cBackgroundContentExplorer = "BackgroundContentExplorer";
 
 		private	readonly IUnityContainer	mContainer;
-		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly ILog				mLog;
 		private	readonly ISchedulerFactory	mSchedulerFactory;
 		private	readonly IScheduler			mJobScheduler;
-		private bool						mExploring;
-		private bool						mContinueExploring;
-		private IFolderExplorer				mFolderExplorer;
-		private IMetaDataExplorer			mMetaDataExplorer;
-		private ISearchBuilder				mSearchBuilder;
-		private	ISummaryBuilder				mSummaryBuilder;
 
 		public	IDataProvider				DataProvider { get; private set; }
 		public	ISearchProvider				SearchProvider { get; private set; }
@@ -35,6 +28,7 @@ namespace Noise.Core {
 		public	IPlayHistory				PlayHistory { get; private set; }
 		public	IPlayListMgr				PlayListMgr { get; private set; }
 		public	IPlayController				PlayController { get; private set; }
+		public	ILibraryBuilder				LibraryBuilder { get; private set; }
 
 		public bool							IsInitialized { get; set; }
 
@@ -44,7 +38,6 @@ namespace Noise.Core {
 			mLog = mContainer.Resolve<ILog>();
 			mDatabaseManager = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
 			mContainer.RegisterInstance( mDatabaseManager );
-			mEvents = mContainer.Resolve<IEventAggregator>();
 
 			mSchedulerFactory = new StdSchedulerFactory();
 			mJobScheduler = mSchedulerFactory.GetScheduler();
@@ -56,6 +49,7 @@ namespace Noise.Core {
 
 			if( mDatabaseManager.Initialize()) {
 				DataProvider = mContainer.Resolve<IDataProvider>();
+				LibraryBuilder = mContainer.Resolve<ILibraryBuilder>();
 				SearchProvider = mContainer.Resolve<ISearchProvider>();
 
 				PlayQueue = mContainer.Resolve<IPlayQueue>();
@@ -79,20 +73,9 @@ namespace Noise.Core {
 		public void Shutdown() {
 			mJobScheduler.Shutdown( true );
 
-			StopExploring();
-			WaitForExplorer();
+			LibraryBuilder.StopLibraryUpdate();
 
 			mDatabaseManager.Shutdown();
-		}
-
-		private void WaitForExplorer() {
-			int    timeOutSeconds = 10 * 2;
-
-			while(( mExploring ) &&
-				  ( timeOutSeconds > 0 )) {
-				Thread.Sleep( TimeSpan.FromMilliseconds( 500 ));
-				timeOutSeconds--;
-			}
 		}
 
 		private void StartExplorerJobs() {
@@ -101,22 +84,16 @@ namespace Noise.Core {
 
 			if( configuration != null ) {
 				if( configuration.EnableLibraryExplorer ) {
-					StartLibraryExplorer();
+					LibraryBuilder.StartLibraryUpdate();
 				}
 				else {
-					StartLogStatistics();
+					LibraryBuilder.LogLibraryStatistics();
 				}
 
 				if( configuration.EnableBackgroundContentExplorer ) {
 					StartBackgroundContentExplorer();
 				}
 			}
-		}
-
-		private void StartLibraryExplorer() {
-			mLog.LogMessage( "Starting Library Explorer." );
-
-			ThreadPool.QueueUserWorkItem( UpdateLibrary );
 		}
 
 		private void StartBackgroundContentExplorer() {
@@ -135,116 +112,5 @@ namespace Noise.Core {
 				mLog.LogInfo( "BackgroundContentExplorer could not be initialized." );
 			}
 		}
-
-		private void UpdateLibrary( object state ) {
-			mContinueExploring = true;
-			mExploring = true;
-
-			try {
-				mEvents.GetEvent<Events.LibraryUpdateStarted>().Publish( this );
-
-				if( mContinueExploring ) {
-					mFolderExplorer = mContainer.Resolve<IFolderExplorer>();
-					mFolderExplorer.SynchronizeDatabaseFolders();
-				}
-
-				var results = new DatabaseChangeSummary();
-				if( mContinueExploring ) {
-					mMetaDataExplorer = mContainer.Resolve<IMetaDataExplorer>();
-					mMetaDataExplorer.BuildMetaData( results );
-				}
-
-				if(( mContinueExploring ) &&
-				   ( results.HaveChanges )) {
-					mSummaryBuilder = mContainer.Resolve<ISummaryBuilder>();
-					mSummaryBuilder.BuildSummaryData( results.ChangedArtists );
-				}
-
-				if(( mContinueExploring ) &&
-				   ( results.HaveChanges )) {
-					mSearchBuilder = mContainer.Resolve<ISearchBuilder>();
-					mSearchBuilder.BuildSearchIndex( results.ChangedArtists );
-				}
-
-				mLog.LogMessage( "Explorer Finished." );
-
-				if( results.HaveChanges ) {
-					mEvents.GetEvent<Events.DatabaseChanged>().Publish( results );
-					mLog.LogInfo( string.Format( "Database changes: {0}", results ) );
-				}
-
-				if( mContinueExploring ) {
-					LogStatistics();
-				}
-			}
-			catch( Exception ex ) {
-				mLog.LogException( "Folder Explorer error: ", ex );
-			}
-			finally {
-				mFolderExplorer = null;
-				mMetaDataExplorer = null;
-				mSummaryBuilder = null;
-				mExploring = false;
-			}
-
-			mEvents.GetEvent<Events.LibraryUpdateCompleted>().Publish( this );
-		}
-
-		private void StartLogStatistics() {
-			ThreadPool.QueueUserWorkItem( LogStatistics );
-		}
-
-		private void LogStatistics( object state ) {
-			LogStatistics();
-		}
-
-		private void LogStatistics() {
-			var	statistics = mContainer.Resolve<DatabaseStatistics>();
-
-			statistics.GatherStatistics();
-			mLog.LogInfo( statistics.ToString());
-		}
-
-		private void StopExploring() {
-			mContinueExploring = false;
-
-			if( mFolderExplorer != null ) {
-				mFolderExplorer.Stop();
-			}
-
-			if( mMetaDataExplorer != null ) {
-				mMetaDataExplorer.Stop();
-			}
-
-			if( mSummaryBuilder != null ) {
-				mSummaryBuilder.Stop();
-			}
-
-			if( mSearchBuilder != null ) {
-				mSearchBuilder.Stop();
-			}
-		}
-
-/*		private void InitializeStorageConfiguration() {
-			var configMgr = mContainer.Resolve<ISystemConfiguration>();
-			var storageConfig = configMgr.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName );
-
-			if( storageConfig.RootFolders.Count == 0 ) {
-				var rootFolder = new RootFolderConfiguration { Path = @"D:\Music", Description = "Music Folder", PreferFolderStrategy = true };
-
-				rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 0, eFolderStrategy.Artist ));
-				rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 1, eFolderStrategy.Album ));
-				rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 2, eFolderStrategy.Volume ));
-
-				storageConfig.RootFolders.Add( rootFolder );
-				configMgr.Save( storageConfig );
-
-				var explorerConfig = configMgr.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
-				explorerConfig.EnableLibraryExplorer = true;
-				explorerConfig.EnableBackgroundContentExplorer = true;
-				configMgr.Save( explorerConfig );
-			}
-		}
-*/	}
+	}
 }
