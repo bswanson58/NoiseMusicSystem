@@ -116,12 +116,12 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
-		public PlayQueueTrack NextTrack {
+		public PlayQueueTrack PeekNextTrack {
 			get { return( mNoiseManager.PlayController.NextTrack ); }
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
-		public PlayQueueTrack PreviousTrack {
+		public PlayQueueTrack PeekPreviousTrack {
 			get { return( mNoiseManager.PlayController.PreviousTrack ); }
 		}
 

@@ -64,14 +64,14 @@
                     <Button Margin="3,0" Command="{Binding PreviousTrack}" Content="Prev" Width="39" FontSize="10.667">
                         <Button.ToolTip>
                             <ToolTip>
-                                <TextBlock Text="{Binding Path=PreviousTrack, Converter={StaticResource PlayQueueTrackNameConverter}}"/>
+                                <TextBlock Text="{Binding Path=PeekPreviousTrack, Converter={StaticResource PlayQueueTrackNameConverter}}"/>
                             </ToolTip>
                         </Button.ToolTip>
                     </Button>
                     <Button Margin="3,0" Command="{Binding NextTrack}" Content="Next" Width="39" FontSize="10.667">
                         <Button.ToolTip>
                             <ToolTip>
-                                <TextBlock Text="{Binding Path=NextTrack, Converter={StaticResource PlayQueueTrackNameConverter}}"/>
+                                <TextBlock Text="{Binding Path=PeekNextTrack, Converter={StaticResource PlayQueueTrackNameConverter}}"/>
                             </ToolTip>
                         </Button.ToolTip>
                     </Button>
