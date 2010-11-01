@@ -7,6 +7,7 @@
 
 		IDataProvider	DataProvider { get; }
 		ISearchProvider	SearchProvider { get; }
+		ILibraryBuilder	LibraryBuilder { get; }
 		IPlayQueue		PlayQueue { get; }
 		IPlayHistory	PlayHistory { get; }
 		IPlayListMgr	PlayListMgr { get; }

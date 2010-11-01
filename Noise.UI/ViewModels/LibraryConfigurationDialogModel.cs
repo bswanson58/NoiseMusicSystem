@@ -1,11 +1,14 @@
-﻿using Noise.UI.Support;
+﻿using Noise.Infrastructure.Interfaces;
+using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	internal class LibraryConfigurationDialogModel : DialogModelBase {
-		private readonly IDialogService	mDialogService;
+		private readonly IDialogService		mDialogService;
+		private readonly ILibraryBuilder	mLibraryBuilder;
 
-		public LibraryConfigurationDialogModel( IDialogService dialogService ) {
+		public LibraryConfigurationDialogModel( IDialogService dialogService, ILibraryBuilder libraryBuilder ) {
 			mDialogService = dialogService;
+			mLibraryBuilder = libraryBuilder;
 		}
 
 		public void Execute_Browse( object sender ) {
@@ -16,6 +19,18 @@ namespace Noise.UI.ViewModels {
 					EditObject.Path = path;
 				}
 			}
+		}
+
+		public void Execute_UpdateLibrary() {
+			if(!mLibraryBuilder.LibraryUpdateInProgress ) {
+				mLibraryBuilder.StartLibraryUpdate();
+
+				RaiseCanExecuteChangedEvent( "CanExecute_UpdateLibrary" );
+			}
+		}
+
+		public bool CanExecute_UpdateLibrary() {
+			return(!mLibraryBuilder.LibraryUpdateInProgress );
 		}
 	}
 }

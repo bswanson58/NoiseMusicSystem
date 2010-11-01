@@ -3,6 +3,7 @@ using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Support;
 
@@ -52,13 +53,15 @@ namespace Noise.UI.ViewModels {
 				var	dialogService = mContainer.Resolve<IDialogService>();
 				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 				var configuration = systemConfig.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName );
+				var noiseManager = mContainer.Resolve<INoiseManager>();
 
 				if( configuration.RootFolders.Count == 0 ) {
 					configuration.RootFolders.Add( new RootFolderConfiguration());
 				}
 				var rootFolder = configuration.RootFolders[0];
 
-				if( dialogService.ShowDialog( DialogNames.LibraryConfiguration, rootFolder, new LibraryConfigurationDialogModel( dialogService )) == true ) {
+				if( dialogService.ShowDialog( DialogNames.LibraryConfiguration, rootFolder,
+											  new LibraryConfigurationDialogModel( dialogService, noiseManager.LibraryBuilder )) == true ) {
 					if( rootFolder.PreferFolderStrategy ) {
 						rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 0, eFolderStrategy.Artist ));
 						rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 1, eFolderStrategy.Album ));
