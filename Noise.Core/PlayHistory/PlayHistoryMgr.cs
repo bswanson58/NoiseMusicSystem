@@ -55,6 +55,9 @@ namespace Noise.Core.PlayHistory {
 						mPlayHistory.Add( newHistory );
 					}
 
+					track.Track.PlayCount++;
+					database.Store( database.ValidateOnThread( track.Track ));
+
 					TrimHistoryList( database );
 
 					mEvents.GetEvent<Events.PlayHistoryChanged>().Publish( this );

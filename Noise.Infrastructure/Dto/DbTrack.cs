@@ -21,6 +21,7 @@ namespace Noise.Infrastructure.Dto {
 		public string			ExternalGenre { get; set; }
 		public string			UserGenre { get; set; }
 		public bool				IsFavorite { get; set; }
+		public UInt32			PlayCount { get; set; }
 
 		public DbTrack() {
 			Album = Constants.cDatabaseNullOid;
