@@ -15,7 +15,9 @@ namespace Noise.Core.PlayQueue {
 
 				using( var list = manager.DataProvider.GetFavoriteTracks()) {
 					foreach( var track in list.List ) {
-						mTrackList.Add( track );
+						if(!mQueueMgr.IsTrackQueued( track )) {
+							mTrackList.Add( track );
+						}
 					}
 				}
 			}

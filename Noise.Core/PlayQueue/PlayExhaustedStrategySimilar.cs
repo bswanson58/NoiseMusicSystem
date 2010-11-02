@@ -39,10 +39,14 @@ namespace Noise.Core.PlayQueue {
 							var associatedArtist = manager.DataProvider.GetArtist( item.AssociatedId );
 
 							if( associatedArtist != null ) {
-								using( var albumList = manager.DataProvider.GetAlbumList( associatedArtist ) ) {
+								using( var albumList = manager.DataProvider.GetAlbumList( associatedArtist )) {
 									foreach( var album in albumList.List ) {
-										using( var trackList = manager.DataProvider.GetTrackList( album ) ) {
-											mTrackList.AddRange( trackList.List );
+										using( var trackList = manager.DataProvider.GetTrackList( album )) {
+											foreach( var track in trackList.List ) {
+												if(!mQueueMgr.IsTrackQueued( track )) {
+													mTrackList.Add( track );
+												}
+											}
 										}
 
 										if( mTrackList.Count > 250 ) {
