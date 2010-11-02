@@ -318,7 +318,8 @@ namespace Noise.Core.Database {
 				var albumId = GetObjectIdentifier( forAlbum );
 
 				retValue = new DataProviderList<DbTrack>( database.DatabaseId, FreeDatabase,
-															from DbTrack track in database.Database where track.Album == albumId select track );
+																from DbTrack track in database.Database where track.Album == albumId 
+																orderby track.VolumeName, track.TrackNumber ascending select track );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetTrackList(forAlbum):", ex );
