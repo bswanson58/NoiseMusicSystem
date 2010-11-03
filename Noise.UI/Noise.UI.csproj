@@ -132,7 +132,6 @@
     <Compile Include="Adapters\PlayListNode.cs" />
     <Compile Include="Adapters\SearchViewNode.cs" />
     <Compile Include="Adapters\StreamViewNode.cs" />
-    <Compile Include="Adapters\TrackViewNode.cs" />
     <Compile Include="Adapters\UserSettingsNotifier.cs" />
     <Compile Include="Behaviours\BindablePasswordBox.cs" />
     <Compile Include="Behaviours\CommandReference.cs" />
@@ -204,7 +203,6 @@
     <Compile Include="ViewModels\SelectStreamDialogModel.cs" />
     <Compile Include="ViewModels\StreamViewModel.cs" />
     <Compile Include="ViewModels\ToolbarViewModel.cs" />
-    <Compile Include="ViewModels\TrackListViewModel.cs" />
     <Compile Include="Views\AlbumView.xaml.cs">
       <DependentUpon>AlbumView.xaml</DependentUpon>
     </Compile>
@@ -267,9 +265,6 @@
     </Compile>
     <Compile Include="Views\ToolbarView.xaml.cs">
       <DependentUpon>ToolbarView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\TrackListView.xaml.cs">
-      <DependentUpon>TrackListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ConfigurationDialog.xaml.cs">
       <DependentUpon>ConfigurationDialog.xaml</DependentUpon>
@@ -379,10 +374,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ToolbarView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\TrackListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
