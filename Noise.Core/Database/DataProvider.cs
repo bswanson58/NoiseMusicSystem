@@ -579,14 +579,13 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
-				var artist = GetArtist( artistId );
-				if( artist != null ) {
-					if( artist.IsFavorite != isFavorite ) {
-						artist.IsFavorite = isFavorite;
-						database.Store( artist );
+				var artist = ( from DbArtist dbArtist in database.Database where dbArtist.DbId == artistId select dbArtist ).FirstOrDefault();
+				if(( artist != null ) &&
+				   ( artist.IsFavorite != isFavorite )) {
+					artist.IsFavorite = isFavorite;
+					database.Store( artist );
 
-						mEvents.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( artist, DbItemChanged.Favorite ));
-					}
+					mEvents.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( artist, DbItemChanged.Favorite ));
 				}
 			}
 			catch( Exception ex ) {
@@ -603,13 +602,12 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				forArtist = database.ValidateOnThread( forArtist ) as DbArtist;
-				if( forArtist != null ) {
-					if( forArtist.IsFavorite != isFavorite ) {
-						forArtist.IsFavorite = isFavorite;
-						database.Store( forArtist );
+				if(( forArtist != null ) &&
+				   ( forArtist.IsFavorite != isFavorite )) {
+					forArtist.IsFavorite = isFavorite;
+					database.Store( forArtist );
 
-						mEvents.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( forArtist, DbItemChanged.Favorite ));
-					}
+					mEvents.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( forArtist, DbItemChanged.Favorite ));
 				}
 			}
 			catch( Exception ex ) {
@@ -732,9 +730,10 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
-				var	artist = GetArtist( artistId );
+				var artist = ( from DbArtist dbArtist in database.Database where dbArtist.DbId == artistId select dbArtist ).FirstOrDefault();
 
-				if( artist != null ) {
+				if(( artist != null ) &&
+				   ( artist.UserRating != rating )) {
 					artist.UserRating = rating;
 
 					database.Store( artist );
@@ -754,7 +753,8 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				forArtist = database.ValidateOnThread( forArtist ) as DbArtist;
-				if( forArtist != null ) {
+				if(( forArtist != null ) &&
+				   ( forArtist.UserRating != rating )) {
 					forArtist.UserRating = rating;
 
 					database.Store( forArtist );

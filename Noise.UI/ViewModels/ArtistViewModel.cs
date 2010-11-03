@@ -129,7 +129,9 @@ namespace Noise.UI.ViewModels {
 						mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
 						RaisePropertyChanged( () => ArtistWebsite );
 
-						mBackgroundWorker.RunWorkerAsync( CurrentArtist );
+						if(!mBackgroundWorker.IsBusy ) {
+							mBackgroundWorker.RunWorkerAsync( CurrentArtist );
+						}
 					}
 				});
 			}
@@ -139,7 +141,9 @@ namespace Noise.UI.ViewModels {
 			if(( artist != null ) &&
 			   ( CurrentArtist != null ) &&
 			   ( CurrentArtist.DbId == artist.DbId )) {
-				mBackgroundWorker.RunWorkerAsync( CurrentArtist );
+				if(!mBackgroundWorker.IsBusy ) {
+					mBackgroundWorker.RunWorkerAsync( CurrentArtist );
+				}
 			}
 		}
 

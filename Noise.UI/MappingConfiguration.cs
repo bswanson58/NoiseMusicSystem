@@ -14,8 +14,8 @@ namespace Noise.UI {
 				.ForMember( dest => dest.Genre, opt => opt.Ignore())
 				.ForMember( dest => dest.DisplayGenre, opt => opt.Ignore())
 				.ForMember( dest => dest.IsSelected, opt => opt.Ignore())
-				.ForMember( dest => dest.UiIsFavorite, opt => opt.Ignore())
-				.ForMember( dest => dest.UiRating, opt => opt.Ignore());
+				.ForMember( dest => dest.UiIsFavorite, opt => opt.MapFrom( src => src.IsFavorite ))
+				.ForMember( dest => dest.UiRating, opt => opt.MapFrom( src => src.Rating ));
 
 			CreateMap<DbAlbum, UiAlbum>()
 				.ForMember( dest => dest.Genre, opt => opt.Ignore())

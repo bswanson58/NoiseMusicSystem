@@ -44,14 +44,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnNodeChanged( PropertyChangeNotification changeNotification ) {
-			var notifier = changeNotification.Source as ArtistTreeNode;
+			var notifier = changeNotification.Source as UiArtist;
 
 			if( notifier != null ) {
 				if( changeNotification.PropertyName == "UiRating" ) {
-					mNoiseManager.DataProvider.SetArtistRating( notifier.Artist.DbId, notifier.Artist.UiRating );
+					mNoiseManager.DataProvider.SetArtistRating( notifier.DbId, notifier.UiRating );
 				}
 				if( changeNotification.PropertyName == "UiIsFavorite" ) {
-					mNoiseManager.DataProvider.SetArtistFavorite( notifier.Artist.DbId, notifier.Artist.UiIsFavorite );
+					mNoiseManager.DataProvider.SetArtistFavorite( notifier.DbId, notifier.UiIsFavorite );
 				}
 			}
 		}
@@ -68,7 +68,7 @@ namespace Noise.UI.ViewModels {
 						switch( args.Change ) {
 							case DbItemChanged.Update:
 								if( treeNode != null ) {
-//									treeNode.UiDisplay.UpdateObject( artist );
+									Mapper.DynamicMap( artist, treeNode.Artist );
 								}
 								break;
 
