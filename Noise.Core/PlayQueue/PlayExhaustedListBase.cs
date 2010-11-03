@@ -18,13 +18,13 @@ namespace Noise.Core.PlayQueue {
 			mTrackList = new List<DbTrack>();
 		}
 
-		protected abstract void FillTrackList();
+		protected abstract void FillTrackList( long itemId );
 
 		public bool QueueExhausted( IPlayQueue queueMgr, long itemId ) {
 			mQueueMgr = queueMgr;
 
 			if( !mQueueMgr.StrategyRequestsQueued ) {
-				FillTrackList();
+				FillTrackList( itemId );
 			}
 
 			return ( QueueTracks( 3 ) );

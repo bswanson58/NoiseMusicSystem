@@ -33,7 +33,8 @@ namespace Noise.UI.ViewModels {
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayFavorites, "Play Favorites" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlaySimilar, "Play Similar" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayList, "Playlist..." ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayStream, "Radio Station..." )};
+												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayStream, "Radio Station..." ),
+												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayGenre, "Play Genre..." )};
 		}
 
 		[Dependency]
@@ -198,15 +199,18 @@ namespace Noise.UI.ViewModels {
 			selectedItem = Constants.cDatabaseNullOid;
 
 			if(( strategy == ePlayExhaustedStrategy.PlayStream ) ||
-			   ( strategy == ePlayExhaustedStrategy.PlayList )) {
+			   ( strategy == ePlayExhaustedStrategy.PlayList ) ||
+			   ( strategy == ePlayExhaustedStrategy.PlayGenre )) {
 				var	dialogService = mContainer.Resolve<IDialogService>();
 
 				if( strategy == ePlayExhaustedStrategy.PlayList ) {
 					var dialogModel = new SelectPlayListDialogModel( mContainer );
 
 					if( dialogService.ShowDialog( DialogNames.SelectPlayList, dialogModel ) == true ) {
-						selectedItem = dialogModel.SelectedItem.DbId;
-						retValue = true;
+						if( dialogModel.SelectedItem != null ) {
+							selectedItem = dialogModel.SelectedItem.DbId;
+							retValue = true;
+						}
 					}
 				}
 
@@ -214,8 +218,21 @@ namespace Noise.UI.ViewModels {
 					var	dialogModel = new SelectStreamDialogModel( mContainer );
 
 					if( dialogService.ShowDialog( DialogNames.SelectStream, dialogModel ) == true ) {
-						selectedItem = dialogModel.SelectedItem.DbId;
-						retValue = true;
+						if( dialogModel.SelectedItem != null ) {
+							selectedItem = dialogModel.SelectedItem.DbId;
+							retValue = true;
+						}
+					}
+				}
+
+				if( strategy == ePlayExhaustedStrategy.PlayGenre ) {
+					var dialogModel = new SelectGenreDialogModel( mContainer );
+
+					if( dialogService.ShowDialog( DialogNames.SelectGenre, dialogModel ) == true ) {
+						if( dialogModel.SelectedItem != null ) {
+							selectedItem = dialogModel.SelectedItem.DbId;
+							retValue = true;
+						}
 					}
 				}
 			}

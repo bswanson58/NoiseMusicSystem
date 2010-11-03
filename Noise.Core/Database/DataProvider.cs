@@ -584,11 +584,28 @@ namespace Noise.Core.Database {
 
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
-			retValue = new DataProviderList<DbGenre>( database.DatabaseId, FreeDatabase,
+				retValue = new DataProviderList<DbGenre>( database.DatabaseId, FreeDatabase,
 																from DbGenre genre in database.Database select genre );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetGenreList:", ex );
+
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
+		public DataProviderList<DbTrack> GetGenreTracks( long genreId ) {
+			DataProviderList<DbTrack>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				retValue = new DataProviderList<DbTrack>( database.DatabaseId, FreeDatabase,
+															from DbTrack track in database.Database where track.Genre == genreId select track );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetGenreTracks:", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}

@@ -7,7 +7,7 @@ namespace Noise.Core.PlayQueue {
 		public PlayExhaustedStrategyFavorites( IUnityContainer container ) :
 			base( container ) { }
 
-		protected override void FillTrackList() {
+		protected override void FillTrackList( long itemId ) {
 			mTrackList.Clear();
 
 			try {

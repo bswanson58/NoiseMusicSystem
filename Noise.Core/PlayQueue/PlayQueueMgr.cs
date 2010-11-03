@@ -364,6 +364,10 @@ namespace Noise.Core.PlayQueue {
 				case ePlayExhaustedStrategy.PlayStream:
 					mExhaustedStrategy = new PlayExhaustedStrategyStream( mContainer );
 					break;
+
+				case ePlayExhaustedStrategy.PlayGenre:
+					mExhaustedStrategy = new PlayExhaustedStrategyGenre( mContainer );
+					break;
 			}
 		}
 
