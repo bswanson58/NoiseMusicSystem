@@ -9,7 +9,6 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
-using Noise.UI.Adapters;
 using Noise.UI.Dto;
 using Observal;
 using Observal.Extensions;
@@ -23,10 +22,10 @@ namespace Noise.UI.ViewModels {
 		public	TimeSpan					AlbumPlayTime { get; private set; }
 		private readonly Observer			mChangeObserver;
 		private readonly BackgroundWorker	mBackgroundWorker;
-		private readonly ObservableCollectionEx<TrackViewNode>	mTracks;
+		private readonly ObservableCollectionEx<UiTrack>	mTracks;
 
 		public AlbumViewModel() {
-			mTracks = new ObservableCollectionEx<TrackViewNode>();
+			mTracks = new ObservableCollectionEx<UiTrack>();
 
 			mChangeObserver = new Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
@@ -60,6 +59,14 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
+		private UiTrack TransformTrack( DbTrack dbTrack ) {
+			var retValue = new UiTrack( OnTrackPlay, null  );
+
+			Mapper.DynamicMap( dbTrack, retValue );
+
+			return( retValue );
+		}
+
 		private UiAlbum CurrentAlbum {
 			get{ return( mCurrentAlbum ); }
 			set {
@@ -76,14 +83,17 @@ namespace Noise.UI.ViewModels {
 		        	if( mCurrentAlbum != null ) {
 						mChangeObserver.Add( mCurrentAlbum );
 
+						AlbumPlayTime = new TimeSpan();
+
 						using( var tracks = mNoiseManager.DataProvider.GetTrackList( mCurrentAlbum.DbId )) {
-							mTracks.AddRange( from track in tracks.List select new TrackViewNode( mEvents, track ));
+							foreach( var dbTrack in tracks.List ) {
+								mTracks.Add( TransformTrack( dbTrack ));
+
+								AlbumPlayTime += dbTrack.Duration;
+							}
 						}
 
-						AlbumPlayTime = new TimeSpan();
-						mTracks.Each( track => AlbumPlayTime += track.Track.Duration );
-
-						mTracks.Each( track => mChangeObserver.Add( track.UiEdit ));
+						mTracks.Each( track => mChangeObserver.Add( track ));
 					}
 
 					RaisePropertyChanged( () => AlbumPlayTime );
@@ -117,24 +127,24 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		private void OnTrackPlay( long trackId ) {
+			mEvents.GetEvent<Events.TrackPlayRequested>().Publish( mNoiseManager.DataProvider.GetTrack( trackId ));
+		}
+
 		private AlbumSupportInfo RetrieveAlbumInfo( UiAlbum album ) {
 			return( mNoiseManager.DataProvider.GetAlbumSupportInfo( album.DbId ));
 		}
 
 		private void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
 
-			if( propertyNotification.Source is UserSettingsNotifier ) {
-				var notifier = propertyNotification.Source as UserSettingsNotifier;
+			if( propertyNotification.Source is UiTrack ) {
+				var track = propertyNotification.Source as UiTrack;
 
-				if( notifier.TargetItem is DbTrack ) {
-					var track = notifier.TargetItem as DbTrack;
-
-					if( propertyNotification.PropertyName == "UiRating" ) {
-						mNoiseManager.DataProvider.SetRating( track, notifier.UiRating );
-					}
-					if( propertyNotification.PropertyName == "UiIsFavorite" ) {
-						mNoiseManager.DataProvider.SetFavorite( track, notifier.UiIsFavorite );
-					}
+				if( propertyNotification.PropertyName == "UiRating" ) {
+					mNoiseManager.DataProvider.SetTrackRating( track.DbId, track.UiRating );
+				}
+				if( propertyNotification.PropertyName == "UiIsFavorite" ) {
+					mNoiseManager.DataProvider.SetTrackFavorite( track.DbId, track.UiIsFavorite );
 				}
 			}
 
@@ -155,12 +165,12 @@ namespace Noise.UI.ViewModels {
 			   ( CurrentAlbum != null ) &&
 			   ((args.Item as DbTrack).Album == CurrentAlbum.DbId )) {
 				BeginInvoke( () => {
-					var track = ( from TrackViewNode node in mTracks where node.Track.DbId == args.Item.DbId select node ).FirstOrDefault();
+					var track = ( from UiTrack node in mTracks where node.DbId == args.Item.DbId select node ).FirstOrDefault();
 
 					if( track != null ) {
 						switch( args.Change ) {
 							case DbItemChanged.Update:
-								track.UiDisplay.UpdateObject( args.Item );
+								mTracks[mTracks.IndexOf( track )] = TransformTrack( args.Item as DbTrack );
 								break;
 							case DbItemChanged.Delete:
 								mTracks.Remove( track );
@@ -223,7 +233,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "SupportInfo" )]
-		public ObservableCollectionEx<TrackViewNode> TrackList {
+		public ObservableCollectionEx<UiTrack> TrackList {
 			get{ return( mTracks ); }
 		}
 	}

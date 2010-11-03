@@ -679,6 +679,10 @@ namespace Noise.Core.Database {
 			}
 		}
 
+		public void SetTrackFavorite( long trackId, bool isFavorite ) {
+			SetFavorite( GetTrack( trackId ), isFavorite );
+		}
+
 		public void SetFavorite( DbTrack forTrack, bool isFavorite ) {
 			Condition.Requires( forTrack ).IsNotNull();
 
@@ -832,6 +836,10 @@ namespace Noise.Core.Database {
 			finally {
 				mDatabaseManager.FreeDatabase( database );
 			}
+		}
+
+		public void SetTrackRating( long trackId, Int16 rating ) {
+			SetRating( GetTrack( trackId ), rating );
 		}
 
 		public void SetRating( DbTrack forTrack, Int16 rating ) {

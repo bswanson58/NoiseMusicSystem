@@ -22,16 +22,28 @@ namespace Noise.UI.Dto {
 		public string			ExternalGenre { get; set; }
 		public string			UserGenre { get; set; }
 		public bool				IsFavorite { get; set; }
+		public DbGenre			DisplayGenre { get; set; }
 
 		private readonly Action<long>	mPlayAction;
 		private readonly Action<long>	mSelectAction;
 
-		public UiTrack() {
-		}
-
 		public UiTrack( Action<long> playAction, Action<long> selectAction ) {
 			mPlayAction = playAction;
 			mSelectAction = selectAction;
+		}
+
+		public string Genre {
+			get{ return( DisplayGenre != null ? DisplayGenre.Name : "" ); }
+		}
+
+		public Int16 UiRating {
+			get{ return( Get( () => UiRating )); }
+			set{ Set( () => UiRating, value ); }
+		}
+
+		public bool UiIsFavorite {
+			get{ return( Get( () => UiIsFavorite )); }
+			set{ Set( () => UiIsFavorite, value ); }
 		}
 
 		public bool IsSelected {
