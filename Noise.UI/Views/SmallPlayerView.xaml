@@ -8,7 +8,7 @@
         xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary" 
         xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
         mc:Ignorable="d" 
-        Height="57" Width="553"
+        Height="57" Width="575"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="LightGray"
@@ -37,6 +37,7 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
@@ -96,6 +97,7 @@
                     <Slider Orientation="Horizontal" Width="80" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}"/>
                 </StackPanel>
                 <Slider Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Height="50" Margin="3,0" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
+                <Button Grid.Row="0" Grid.Column="3" Margin="3,0,5,0" Content="-" Command="{Binding Path=PlayerSwitch}" Height="15" Width="15" FontWeight="Bold" FontSize="9.333" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
         </Grid>
     </Border>

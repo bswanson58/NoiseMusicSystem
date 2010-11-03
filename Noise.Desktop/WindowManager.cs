@@ -27,6 +27,7 @@ namespace Noise.Desktop {
 
 			mEvents = mContainer.Resolve<IEventAggregator>();
 			mEvents.GetEvent<Events.WindowLayoutRequest>().Subscribe( OnWindowLayoutRequested );
+			mEvents.GetEvent<Events.ExternalPlayerSwitch>().Subscribe( OnExternalPlayerSwitch );
 
 			mStoredWindowState = WindowState.Normal;
 			mNotifyIcon = new NotifyIcon { //BalloonTipText = "Click the tray icon to show.", 
@@ -136,6 +137,14 @@ namespace Noise.Desktop {
 		}
 
 		private void OnNotifyIconClick( object sender, EventArgs e ) {
+			ActivateShell();
+		}
+
+		private void OnExternalPlayerSwitch( object sender ) {
+			ActivateShell();
+		}
+
+		private void ActivateShell() {
 			if( mShell != null) {
 				mShell.Show();
 				mShell.WindowState = mStoredWindowState;

@@ -344,5 +344,9 @@ namespace Noise.UI.ViewModels {
 			}
 			return( retValue );
 		}
+
+		public void Execute_PlayerSwitch() {
+			mEvents.GetEvent<Events.ExternalPlayerSwitch>().Publish( this );
+		}
 	}
 }

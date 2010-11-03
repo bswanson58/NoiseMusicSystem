@@ -32,6 +32,7 @@ namespace Noise.Infrastructure {
 		public class PlaybackTrackStarted : CompositePresentationEvent<PlayQueueTrack> { }
 
 		public class WindowLayoutRequest : CompositePresentationEvent<string> { }
+		public class ExternalPlayerSwitch : CompositePresentationEvent<object> { }
 
 		public class DatabaseItemChanged : CompositePresentationEvent<DbItemChangedArgs> { }
 
