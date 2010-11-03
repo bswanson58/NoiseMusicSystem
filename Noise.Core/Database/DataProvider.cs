@@ -418,10 +418,22 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public void UpdateArtistInfo( long artistId ) {
+			var artist = GetArtist( artistId );
+
+			if( artist != null ) {
+				UpdateArtistInfo( artist );
+			}
+		}
+
 		public void UpdateArtistInfo( DbArtist forArtist ) {
 			Condition.Requires( forArtist ).IsNotNull();
 
 			mContentManager.RequestContent( forArtist );
+		}
+
+		public ArtistSupportInfo GetArtistSupportInfo( long artistId ) {
+			return( GetArtistSupportInfo( GetArtist( artistId )));
 		}
 
 		public ArtistSupportInfo GetArtistSupportInfo( DbArtist forArtist ) {
@@ -450,6 +462,10 @@ namespace Noise.Core.Database {
 			}
 
 			return( retValue );
+		}
+
+		public DataProviderList<DbDiscographyRelease> GetDiscography( long artistId ) {
+			return( GetDiscography( GetArtist( artistId )));
 		}
 
 		public DataProviderList<DbDiscographyRelease> GetDiscography( DbArtist forArtist ) {

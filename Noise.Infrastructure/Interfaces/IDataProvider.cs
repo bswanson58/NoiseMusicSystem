@@ -25,6 +25,7 @@ namespace Noise.Infrastructure.Interfaces {
 		DataProviderList<DbTrack>	GetFavoriteTracks();
 		DataProviderList<DbTrack>	GetNewlyAddedTracks();
 
+		DataProviderList<DbDiscographyRelease>	GetDiscography( long artistId );
 		DataProviderList<DbDiscographyRelease>	GetDiscography( DbArtist forArtist );
 		DataProviderList<DbPlayList>			GetPlayLists();
 
@@ -32,10 +33,12 @@ namespace Noise.Infrastructure.Interfaces {
 
 		StorageFile					GetPhysicalFile( DbTrack forTrack );
 
+		ArtistSupportInfo			GetArtistSupportInfo( long artistId );
 		ArtistSupportInfo			GetArtistSupportInfo( DbArtist forArtist );
 		AlbumSupportInfo			GetAlbumSupportInfo( DbAlbum forAlbum );
 
 		void						UpdateArtistInfo( DbArtist forArtist );
+		void						UpdateArtistInfo( long artistId );
 		void						UpdateAlbumInfo( DbAlbum forAlbum );
 
 		void						SetFavorite( DbArtist forArtist, bool isFavorite );
