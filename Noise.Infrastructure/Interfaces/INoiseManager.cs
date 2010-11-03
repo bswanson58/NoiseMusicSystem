@@ -12,5 +12,6 @@
 		IPlayHistory	PlayHistory { get; }
 		IPlayListMgr	PlayListMgr { get; }
 		IPlayController	PlayController { get; }
+		ITagManager		TagManager { get; }
 	}
 }

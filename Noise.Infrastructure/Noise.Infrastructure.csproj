@@ -134,6 +134,7 @@
     <Compile Include="Interfaces\IPlayListMgr.cs" />
     <Compile Include="Interfaces\IPlayQueue.cs" />
     <Compile Include="Interfaces\ISearchProvider.cs" />
+    <Compile Include="Interfaces\ITagManager.cs" />
     <Compile Include="Interfaces\IViewModelResolver.cs" />
     <Compile Include="Support\ApplicationLogReader.cs" />
     <Compile Include="Support\BaseValueConverter.cs" />

@@ -2,12 +2,13 @@
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	internal class FolderStrategyProvider {
-		private	 readonly IUnityContainer	mContainer;
+		private	readonly IUnityContainer	mContainer;
 
 		public FolderStrategyProvider( IUnityContainer container ) {
 			mContainer = container;
@@ -20,12 +21,17 @@ namespace Noise.Core.DataProviders {
 
 	internal class FileStrategyProvider : IMetaDataProvider {
 		private readonly IDatabaseManager					mDatabaseManager;
+		private	readonly ITagManager						mTagManager;
 		private readonly ILog								mLog;
 		private readonly StorageFile						mFile;
 		private	readonly Lazy<FolderStrategyInformation>	mStrategyInformation;
 
 		public FileStrategyProvider( IUnityContainer container, StorageFile file ) {
 			mDatabaseManager = container.Resolve<IDatabaseManager>();
+
+			var noiseManager = container.Resolve<INoiseManager>();
+			mTagManager = noiseManager.TagManager;
+
 			mLog = container.Resolve<ILog>();
 			mFile = file;
 
@@ -69,8 +75,8 @@ namespace Noise.Core.DataProviders {
 		}
 
 		public void AddAvailableMetaData( DbArtist artist, DbAlbum album, DbTrack track ) {
-			if( String.IsNullOrWhiteSpace( track.CalculatedGenre )) {
-				track.CalculatedGenre = StrategyInformation.GetStrategyDefinition( eFolderStrategy.Genre );
+			if( track.CalculatedGenre == Constants.cDatabaseNullOid ) {
+				track.CalculatedGenre = mTagManager.ResolveGenre( StrategyInformation.GetStrategyDefinition( eFolderStrategy.Genre ));
 			}
 		}
 	}

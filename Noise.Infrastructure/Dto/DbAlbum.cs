@@ -11,22 +11,22 @@ namespace Noise.Infrastructure.Dto {
 		public Int16			MaxChildRating { get; set; }
 		public Int16			TrackCount { get; set; }
 		public UInt32			PublishedYear { get; set; }
-		public string			CalculatedGenre { get; set; }
-		public string			ExternalGenre { get; set; }
-		public string			UserGenre { get; set; }
+		public long				CalculatedGenre { get; set; }
+		public long				ExternalGenre { get; set; }
+		public long				UserGenre { get; set; }
 		public bool				IsFavorite { get; set; }
 		public bool				HasFavorites { get; set; }
 
 		public DbAlbum() {
 			Name = "";
-			CalculatedGenre = "";
-			ExternalGenre = "";
-			UserGenre = "";
+			CalculatedGenre = Constants.cDatabaseNullOid;
+			ExternalGenre = Constants.cDatabaseNullOid;
+			UserGenre = Constants.cDatabaseNullOid;
 		}
 
 		[Ignore]
-		public string Genre {
-			get{ return( String.IsNullOrWhiteSpace( UserGenre ) ? ( String.IsNullOrWhiteSpace( ExternalGenre ) ? CalculatedGenre : ExternalGenre ) : UserGenre ); }
+		public long Genre {
+			get{ return( UserGenre == Constants.cDatabaseNullOid ? ExternalGenre == Constants.cDatabaseNullOid ? CalculatedGenre : ExternalGenre : UserGenre ); }
 			set{ UserGenre = value; }
 		}
 

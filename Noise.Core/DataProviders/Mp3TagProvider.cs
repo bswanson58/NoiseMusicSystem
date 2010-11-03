@@ -11,6 +11,7 @@ using TagLib;
 namespace Noise.Core.DataProviders {
 	public class Mp3TagProvider : IMetaDataProvider {
 		private readonly IDatabaseManager	mDatabaseManager;
+		private readonly ITagManager		mGenreManager;
 		private readonly StorageFile		mFile;
 		private readonly ILog				mLog;
 		private	readonly Lazy<File>			mTags;
@@ -18,6 +19,9 @@ namespace Noise.Core.DataProviders {
 		public Mp3TagProvider( IUnityContainer container, StorageFile file ) {
 			mDatabaseManager = container.Resolve<IDatabaseManager>();
 			mFile = file;
+
+			var manager = container.Resolve<INoiseManager>();
+			mGenreManager = manager.TagManager;
 
 			Condition.Requires( mDatabaseManager ).IsNotNull();
 			Condition.Requires( mFile ).IsNotNull();
@@ -38,7 +42,7 @@ namespace Noise.Core.DataProviders {
 
 				return( retValue );	});
 
-			mLog = new Log();
+			mLog = container.Resolve<ILog>();
 		}
 
 		private File OpenTagFile( string path ) {
@@ -150,10 +154,10 @@ namespace Noise.Core.DataProviders {
 						}
 					}
 
-					if(( String.IsNullOrWhiteSpace( track.CalculatedGenre )) &&
+					if(( track.ExternalGenre == Constants.cDatabaseNullOid ) &&
 					   ( Tags.Tag.Genres != null ) &&
 					   ( Tags.Tag.Genres.GetLength( 0 ) > 0 )) {
-						track.CalculatedGenre = Tags.Tag.Genres[0];
+						track.ExternalGenre = mGenreManager.ResolveGenre( Tags.Tag.Genres[0]);
 					}
 				}
 				catch( Exception ex ) {

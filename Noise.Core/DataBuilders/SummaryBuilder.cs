@@ -45,7 +45,7 @@ namespace Noise.Core.DataBuilders {
 
 							var artistId = artist.DbId;
 							var	albums = albumCache.FindList( album => album.Artist == artistId );
-							var albumGenre = new Dictionary<string, int>();
+							var albumGenre = new Dictionary<long, int>();
 							var albumCount = 0;
 							var albumRating = 0;
 							var maxAlbumRating = 0;
@@ -54,7 +54,7 @@ namespace Noise.Core.DataBuilders {
 								var albumId = album.DbId;
 								var tracks = from DbTrack track in database.Database where track.Album == albumId select track;
 								var years = new List<UInt32>();
-								var trackGenre = new Dictionary<string, int>();
+								var trackGenre = new Dictionary<long, int>();
 								var trackRating = 0;
 								var maxTrackRating = 0;
 
@@ -145,8 +145,8 @@ namespace Noise.Core.DataBuilders {
 			}
 		}
 
-		private static void AddGenre( Dictionary<string, int> genres, string genre ) {
-			if(!String.IsNullOrWhiteSpace( genre )) {
+		private static void AddGenre( Dictionary<long, int> genres, long genre ) {
+			if( genre != Constants.cDatabaseNullOid ) {
 				if( genres.ContainsKey( genre )) {
 					genres[genre]++;
 				}
@@ -156,8 +156,8 @@ namespace Noise.Core.DataBuilders {
 			}
 		}
 
-		private static string DetermineTopGenre( Dictionary<string, int> genres ) {
-			var retValue = "";
+		private static long DetermineTopGenre( Dictionary<long, int> genres ) {
+			var retValue = Constants.cDatabaseNullOid;
 
 			if( genres.Count > 0 ) {
 				var genreCount = 0;

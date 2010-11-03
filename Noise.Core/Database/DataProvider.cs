@@ -16,7 +16,7 @@ namespace Noise.Core.Database {
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly IContentManager	mContentManager;
 		private readonly ILog				mLog;
-
+		
 		public DataProvider( IUnityContainer container ) {
 			mContainer = container;
 			mEvents = mContainer.Resolve<IEventAggregator>();
@@ -49,6 +49,7 @@ namespace Noise.Core.Database {
 			if(( item is DbArtist ) ||
 			   ( item is DbAlbum ) ||
 			   ( item is DbTrack ) ||
+			   ( item is DbGenre ) ||
 			   ( item is DbInternetStream )) {
 				var database = mDatabaseManager.ReserveDatabase();
 
@@ -70,6 +71,7 @@ namespace Noise.Core.Database {
 			if(( item is DbArtist ) ||
 			   ( item is DbAlbum ) ||
 			   ( item is DbTrack ) ||
+			   ( item is DbGenre ) ||
 			   ( item is DbInternetStream )) {
 				var database = mDatabaseManager.ReserveDatabase();
 
@@ -218,13 +220,15 @@ namespace Noise.Core.Database {
 		public DataProviderList<DbAlbum> GetAlbumList( DbArtist forArtist ) {
 			Condition.Requires( forArtist ).IsNotNull();
 
+			return( GetAlbumList( forArtist.DbId ));
+		}
+
+		public DataProviderList<DbAlbum> GetAlbumList( long artistId ) {
 			DataProviderList<DbAlbum>	retValue = null;
 
 			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
-				var artistId = GetObjectIdentifier( forArtist );
-
 				retValue = new DataProviderList<DbAlbum>( database.DatabaseId, FreeDatabase,
 															from DbAlbum album in database.Database where album.Artist == artistId select album );
 			}
@@ -554,6 +558,45 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public DataProviderList<DbGenre> GetGenreList() {
+			DataProviderList<DbGenre>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+			retValue = new DataProviderList<DbGenre>( database.DatabaseId, FreeDatabase,
+																from DbGenre genre in database.Database select genre );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetGenreList:", ex );
+
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
+		public void	SetArtistFavorite( long artistId, bool isFavorite ) {
+			var database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				var artist = GetArtist( artistId );
+				if( artist != null ) {
+					if( artist.IsFavorite != isFavorite ) {
+						artist.IsFavorite = isFavorite;
+						database.Store( artist );
+
+						mEvents.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( artist, DbItemChanged.Favorite ));
+					}
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - SetArtistFavorite:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+		}
+
 		public void SetFavorite( DbArtist forArtist, bool isFavorite ) {
 			Condition.Requires( forArtist ).IsNotNull();
 
@@ -679,6 +722,26 @@ namespace Noise.Core.Database {
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - SetFavorite(DbList):", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+		}
+
+		public void	SetArtistRating( long artistId, Int16 rating ) {
+			var database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				var	artist = GetArtist( artistId );
+
+				if( artist != null ) {
+					artist.UserRating = rating;
+
+					database.Store( artist );
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - SetArtistRating:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );

@@ -6,9 +6,9 @@ namespace Noise.Infrastructure.Dto {
 	public class DbArtist : DbBase, IUserSettings {
 		public string			Name { get; set; }
 		public string			Website { get; set; }
-		public string			CalculatedGenre { get; set; }
-		public string			ExternalGenre { get; set; }
-		public string			UserGenre { get; set; }
+		public long				CalculatedGenre { get; set; }
+		public long				ExternalGenre { get; set; }
+		public long				UserGenre { get; set; }
 		public Int16			UserRating { get; set; }
 		public Int16			CalculatedRating { get; set; }
 		public Int16			MaxChildRating { get; set; }
@@ -18,15 +18,15 @@ namespace Noise.Infrastructure.Dto {
 
 		public DbArtist() {
 			Name = "";
-			CalculatedGenre = "";
-			ExternalGenre = "";
-			UserGenre = "";
+			CalculatedGenre = Constants.cDatabaseNullOid;
+			ExternalGenre = Constants.cDatabaseNullOid;
+			UserGenre = Constants.cDatabaseNullOid;
 			Website = "";
 		}
 
 		[Ignore]
-		public string Genre {
-			get{ return( String.IsNullOrWhiteSpace( UserGenre ) ? ( String.IsNullOrWhiteSpace( ExternalGenre ) ? CalculatedGenre : ExternalGenre ) : UserGenre ); }
+		public long Genre {
+			get{ return( UserGenre == Constants.cDatabaseNullOid ? ( ExternalGenre == Constants.cDatabaseNullOid ? CalculatedGenre : ExternalGenre ) : UserGenre ); }
 			set{ UserGenre = value; }
 		}
 

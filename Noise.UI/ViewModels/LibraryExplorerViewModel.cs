@@ -19,7 +19,7 @@ namespace Noise.UI.ViewModels {
 		private INoiseManager					mNoiseManager;
 		private IEventAggregator				mEvents;
 		private IExplorerViewStrategy			mViewStrategy;
-		private ObservableCollectionEx<ExplorerTreeNode>	mTreeItems;
+		private ObservableCollectionEx<ArtistTreeNode>	mTreeItems;
 		private List<string>					mSearchOptions;
 		private readonly LibraryExplorerFilter	mExplorerFilter;
 		private DbArtist						mCurrentArtist;
@@ -101,22 +101,22 @@ namespace Noise.UI.ViewModels {
 		 	PopulateTree( BuildTree());
 		}
 
-		private IEnumerable<ExplorerTreeNode> BuildTree() {
+		private IEnumerable<ArtistTreeNode> BuildTree() {
 			return( mViewStrategy.BuildTree( mExplorerFilter ));
 		}
 
-		private void PopulateTree( IEnumerable<ExplorerTreeNode> newNodes ) {
+		private void PopulateTree( IEnumerable<ArtistTreeNode> newNodes ) {
 			mTreeItems.SuspendNotification();
 			mTreeItems.Clear();
 		 	mTreeItems.AddRange( newNodes );
 			mTreeItems.ResumeNotification();
 		}
 
-		public ObservableCollectionEx<ExplorerTreeNode> TreeData {
+		public ObservableCollectionEx<ArtistTreeNode> TreeData {
 			get {
 				if(( mTreeItems == null ) &&
 				   ( mViewStrategy != null )) {
-					mTreeItems = new ObservableCollectionEx<ExplorerTreeNode>();
+					mTreeItems = new ObservableCollectionEx<ArtistTreeNode>();
 
 					UpdateTree();
 				}

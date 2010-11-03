@@ -8,5 +8,9 @@ namespace Noise.Infrastructure.Dto {
 		protected DbBase() {
 			DbId = BitConverter.ToInt64( Guid.NewGuid().ToByteArray(), 0 );
 		}
+
+		protected DbBase( long id ) {
+			DbId = id;
+		}
 	}
 }

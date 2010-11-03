@@ -7,7 +7,7 @@ namespace Noise.Infrastructure.Dto {
 		public string			Description { get; set; }
 		public long[]			TrackIds { get; set; }
 		public Int16			Rating { get; set; }
-		public string			Genre { get; set; }
+		public long				Genre { get; set; }
 		public bool				IsFavorite { get; set; }
 
 		public DbPlayList() {

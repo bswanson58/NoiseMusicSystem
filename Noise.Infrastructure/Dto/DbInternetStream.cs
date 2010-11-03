@@ -15,8 +15,8 @@ namespace Noise.Infrastructure.Dto {
 		public Int16			Rating { get; set; }
 		public DateTime			DateAdded { get; private set; }
 		public eAudioEncoding	Encoding { get; set; }
-		public string			ExternalGenre { get; set; }
-		public string			UserGenre { get; set; }
+		public long				ExternalGenre { get; set; }
+		public long				UserGenre { get; set; }
 		public bool				IsPlaylistWrapped { get; set; }
 		public bool				IsFavorite { get; set; }
 		public string			Website { get; set; }
@@ -27,11 +27,14 @@ namespace Noise.Infrastructure.Dto {
 
 			Description = "";
 			Website = "";
+
+			ExternalGenre = Constants.cDatabaseNullOid;
+			UserGenre = Constants.cDatabaseNullOid;
 		}
 
 		[Ignore]
-		public string Genre {
-			get{ return( String.IsNullOrWhiteSpace( UserGenre ) ?  ExternalGenre : UserGenre ); }
+		public long Genre {
+			get{ return( UserGenre == Constants.cDatabaseNullOid ?  ExternalGenre : UserGenre ); }
 			set{ UserGenre = value; }
 		}
 

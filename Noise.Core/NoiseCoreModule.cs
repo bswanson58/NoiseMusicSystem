@@ -37,6 +37,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<ILog, Log>();
 			mContainer.RegisterType<ISearchProvider, LuceneSearchProvider>();
 			mContainer.RegisterType<ISystemConfiguration, SystemConfiguration>();
+			mContainer.RegisterType<ITagManager, TagManager>();
 			mContainer.RegisterType<DatabaseStatistics, DatabaseStatistics>();
 		}
 	}

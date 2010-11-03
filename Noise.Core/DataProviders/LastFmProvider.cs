@@ -74,12 +74,16 @@ namespace Noise.Core.DataProviders {
 		private const string		cApiSecret	= "e01705ce5fa579cc070811ebfe5206f0";
 
 		private readonly IUnityContainer	mContainer;
+		private readonly ITagManager		mTagManager;
 		private readonly ILog				mLog;
 		private readonly Session			mSession;
 
 		public LastFmProvider( IUnityContainer container ) {
 			mContainer = container;
 			mLog = container.Resolve<ILog>();
+
+			var noiseManager = mContainer.Resolve<INoiseManager>();
+			mTagManager = noiseManager.TagManager;
 
 			try {
 				mSession = new Session( cApiKey, cApiSecret );
@@ -136,7 +140,7 @@ namespace Noise.Core.DataProviders {
 				if( artistMatch != null ) {
 					var	tags = artistMatch.GetTopTags( 3 );
 					if( tags.GetLength( 0 ) > 0 ) {
-						artist.Genre = tags[0].Item.Name;
+						artist.ExternalGenre = mTagManager.ResolveGenre( tags[0].Item.Name );
 						database.Store( artist );
 					}
 

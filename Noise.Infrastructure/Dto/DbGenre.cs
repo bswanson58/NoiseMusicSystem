@@ -13,8 +13,14 @@ namespace Noise.Infrastructure.Dto {
 			Description = "";
 		}
 
-		public string Genre {
-			get{ return( Name ); }
+		public DbGenre( long id ) :
+			base( id ) {
+			Name = "";
+			Description = "";
+		}
+
+		public long Genre {
+			get{ return( DbId ); }
 			set{ }
 		}
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using AutoMapper;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
@@ -11,6 +12,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using CuttingEdge.Conditions;
+using Noise.UI.Dto;
 using Observal;
 using Observal.Extensions;
 using Condition = CuttingEdge.Conditions.Condition;
@@ -27,7 +29,7 @@ namespace Noise.UI.ViewModels {
 		private readonly INoiseManager			mNoiseManager;
 		private readonly Observer				mChangeObserver;
 		private	LibraryExplorerViewModel		mViewModel;
-		private IEnumerator<ExplorerTreeNode>	mTreeEnumerator;
+		private IEnumerator<ArtistTreeNode>		mTreeEnumerator;
 		private string							mLastSearchOptions;
 
 		public ExplorerStrategyArtistAlbum( IUnityContainer container ) {
@@ -42,14 +44,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnNodeChanged( PropertyChangeNotification changeNotification ) {
-			var notifier = changeNotification.Source as UserSettingsNotifier;
+			var notifier = changeNotification.Source as ArtistTreeNode;
 
 			if( notifier != null ) {
 				if( changeNotification.PropertyName == "UiRating" ) {
-					mNoiseManager.DataProvider.SetRating( notifier.TargetItem as DbArtist, notifier.UiRating );
+					mNoiseManager.DataProvider.SetArtistRating( notifier.Artist.DbId, notifier.Artist.UiRating );
 				}
 				if( changeNotification.PropertyName == "UiIsFavorite" ) {
-					mNoiseManager.DataProvider.SetFavorite( notifier.TargetItem as DbArtist, notifier.UiIsFavorite );
+					mNoiseManager.DataProvider.SetArtistFavorite( notifier.Artist.DbId, notifier.Artist.UiIsFavorite );
 				}
 			}
 		}
@@ -60,21 +62,20 @@ namespace Noise.UI.ViewModels {
 					var artist = args.Item as DbArtist;
 
 					if( artist != null ) {
-						var treeNode = ( from ExplorerTreeNode node in mViewModel.TreeData
-										 where artist.DbId == ( node.Item is DbArtist ? ( node.Item as DbArtist ).DbId : 0 )
-										 select node ).FirstOrDefault();
+						var treeNode = ( from ArtistTreeNode node in mViewModel.TreeData
+										 where artist.DbId == node.Artist.DbId select node ).FirstOrDefault();
 
 						switch( args.Change ) {
 							case DbItemChanged.Update:
 								if( treeNode != null ) {
-									treeNode.UiDisplay.UpdateObject( artist );
+//									treeNode.UiDisplay.UpdateObject( artist );
 								}
 								break;
 
 							case DbItemChanged.Insert:
 								mViewModel.TreeData.SuspendNotification();
 								AddArtist( mViewModel.TreeData, artist );
-								mViewModel.TreeData.Sort( node => node.Item is DbArtist ? ( node.Item as DbArtist ).Name : "", ListSortDirection.Ascending );
+								mViewModel.TreeData.Sort( node => node.Artist.Name, ListSortDirection.Ascending );
 								mViewModel.TreeData.ResumeNotification();
 								break;
 
@@ -99,10 +100,10 @@ namespace Noise.UI.ViewModels {
 			mViewModel.SearchOptions.Add( cSearchOptionDefault + cSearchIgnoreCase );
 		}
 
-		public IEnumerable<ExplorerTreeNode> BuildTree( IDatabaseFilter filter ) {
+		public IEnumerable<ArtistTreeNode> BuildTree( IDatabaseFilter filter ) {
 			Condition.Requires( mViewModel ).IsNotNull();
 
-			var retValue = new List<ExplorerTreeNode>();
+			var retValue = new List<ArtistTreeNode>();
 
 			if( mNoiseManager.IsInitialized ) {
 				using( var list = mNoiseManager.DataProvider.GetArtistList( filter )) {
@@ -117,24 +118,55 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
-		private void AddArtist( ICollection<ExplorerTreeNode> tree, DbArtist artist ) {
-			var parent = new ExplorerTreeNode( mEventAggregator, artist, FillChildren );
+		private void AddArtist( ICollection<ArtistTreeNode> tree, DbArtist artist ) {
+			var uiArtist = new UiArtist( OnArtistSelect ) { DisplayGenre = mNoiseManager.TagManager.GetGenre( artist.Genre ) };
+			Mapper.DynamicMap( artist, uiArtist );
+			var parent = new ArtistTreeNode( uiArtist, FillChildren );
 
 			tree.Add( parent );
-			mChangeObserver.Add( parent.UiEdit );
+			mChangeObserver.Add( parent.Artist );
 		}
 
-		private List<ExplorerTreeNode> FillChildren( ExplorerTreeNode parent ) {
-			List<ExplorerTreeNode>	retValue = null;
-			var artist = parent.Item as DbArtist;
+		private List<UiAlbum> FillChildren( ArtistTreeNode parent ) {
+			var	retValue = new List<UiAlbum>();
+			var artist = parent.Artist;
 
 			if( artist != null ) {
-				using( var albumList = mNoiseManager.DataProvider.GetAlbumList( artist )) {
-					retValue = new List<ExplorerTreeNode>( from album in albumList.List orderby album.Name select new ExplorerTreeNode( mEventAggregator, parent, album ));
+				using( var albumList = mNoiseManager.DataProvider.GetAlbumList( artist.DbId )) {
+					foreach( var dbAlbum in albumList.List ) {
+						var uiAlbum = new UiAlbum( OnAlbumSelect, OnAlbumPlay ) { DisplayGenre = mNoiseManager.TagManager.GetGenre( dbAlbum.Genre ) };
+						Mapper.DynamicMap( dbAlbum, uiAlbum );
+
+						retValue.Add( uiAlbum );
+					}
 				}
 			}
 
 			return( retValue );
+		}
+
+		private void OnArtistSelect( long artistId ) {
+			var artist = mNoiseManager.DataProvider.GetArtist( artistId );
+
+			if( artist != null ) {
+				mEventAggregator.GetEvent<Events.ArtistFocusRequested>().Publish( artist );
+			}
+		}
+
+		private void OnAlbumSelect( long albumId ) {
+			var album = mNoiseManager.DataProvider.GetAlbum( albumId );
+
+			if( album != null ) {
+				mEventAggregator.GetEvent<Events.AlbumFocusRequested>().Publish( album );
+			}
+		}
+
+		private void OnAlbumPlay( long albumId ) {
+			var album = mNoiseManager.DataProvider.GetAlbum( albumId );
+
+			if( album != null ) {
+				mEventAggregator.GetEvent<Events.AlbumPlayRequested>().Publish( album );
+			}
 		}
 
 		public bool Search( string searchText, IEnumerable<string> searchOptions ) {
@@ -164,11 +196,11 @@ namespace Noise.UI.ViewModels {
 				node.IsSelected = true;
 
 				// Ensure that this person is in view.
-				while( node.Parent != null ) {
-					node = node.Parent;
+//				while( node.Parent != null ) {
+//					node = node.Parent;
 
 					node.IsExpanded = true;
-				}
+//				}
 
 				retValue = true;
 			}
@@ -176,21 +208,19 @@ namespace Noise.UI.ViewModels {
 			return ( retValue );
 		}
 
-		static IEnumerable<ExplorerTreeNode> FindMatches( string searchText, IEnumerable<ExplorerTreeNode> list, IEnumerable<string> options ) {
-			IEnumerable<ExplorerTreeNode>	retValue;
+		static IEnumerable<ArtistTreeNode> FindMatches( string searchText, IEnumerable<ArtistTreeNode> list, IEnumerable<string> options ) {
+			IEnumerable<ArtistTreeNode>	retValue;
 
 			if( options.Contains( cSearchIgnoreCase )) {
 				var matchText = searchText.ToUpper();
 
 				retValue = from node in list
-						   let artist = node.Item as DbArtist
-						   where artist != null where artist.Name.ToUpper().Contains( matchText )
+						   where node.Artist.Name.ToUpper().Contains( matchText )
 						   select node;
 			}
 			else {
 				retValue = from node in list
-						   let artist = node.Item as DbArtist
-						   where artist != null where artist.Name.Contains( searchText )
+						   where node.Artist.Name.Contains( searchText )
 						   select node;
 			}
 

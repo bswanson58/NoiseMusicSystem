@@ -6,7 +6,7 @@ using Noise.Infrastructure.Support;
 namespace Noise.UI.Adapters {
 	public class UserSettingsNotifier : BindableObject {
 		private readonly IUserSettings	mTargetObject;
-		public	string					UiGenre { get; private set; }
+		public	long					UiGenre { get; private set; }
 		public	bool					UiIsFavorite { get; private set; }
 		public	Int16					UiRating { get; private set; }
 
@@ -27,7 +27,7 @@ namespace Noise.UI.Adapters {
 			get{ return( mTargetObject ); }
 		}
 
-		public string Genre {
+		public long Genre {
 			get{ return( mTargetObject.Genre ); }
 			set {
 				UiGenre = value;

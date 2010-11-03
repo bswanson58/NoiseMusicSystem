@@ -25,6 +25,7 @@ namespace Noise.Core {
 		public	IPlayListMgr				PlayListMgr { get; private set; }
 		public	IPlayController				PlayController { get; private set; }
 		public	ILibraryBuilder				LibraryBuilder { get; private set; }
+		public	ITagManager					TagManager { get; private set; }
 
 		public bool							IsInitialized { get; set; }
 
@@ -47,6 +48,7 @@ namespace Noise.Core {
 				DataProvider = mContainer.Resolve<IDataProvider>();
 				LibraryBuilder = mContainer.Resolve<ILibraryBuilder>();
 				SearchProvider = mContainer.Resolve<ISearchProvider>();
+				TagManager = mContainer.Resolve<ITagManager>();
 
 				PlayQueue = mContainer.Resolve<IPlayQueue>();
 				PlayHistory = mContainer.Resolve<IPlayHistory>();

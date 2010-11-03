@@ -6,8 +6,9 @@
 					xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
 					xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters" 
 					xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary"
-					xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
-					mc:Ignorable="d"
+					xmlns:NoiseControls="clr-namespace:Noise.UI.Controls" 
+                    xmlns:Dto="clr-namespace:Noise.UI.Dto" 
+                    mc:Ignorable="d"
 					>
 
 	<vml:ViewModelLocator x:Key="ViewModelLocator">
@@ -34,7 +35,7 @@
 		<MenuItem Header="Rename Artist" Command="{Binding Path=Rename}"/>
 	</ContextMenu>
 
-	<HierarchicalDataTemplate x:Key="AlbumTemplate" DataType="{x:Type Adapters:ExplorerTreeNode}" ItemsSource="{Binding Path=Children}">
+	<HierarchicalDataTemplate x:Key="AlbumTemplate" DataType="{x:Type Dto:UiAlbum}">
 		<Grid Margin="0,0,3,0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
@@ -44,18 +45,19 @@
 			</Grid.ColumnDefinitions>
 
 			<Button Grid.Column="0" Width="12" Height="12" Margin="0,0,3,0" Command="{Binding Path=PlayAlbum}"/>
-			<TextBlock Grid.Column="1" Text="{Binding Path=UiDisplay.Name}"/>
+			<TextBlock Grid.Column="1" Text="{Binding Path=Name}"/>
 			<StackPanel Grid.Column="3" Orientation="Horizontal">
 				<TextBlock Text="("/>
-				<TextBlock Text="{Binding Path=UiDisplay.PublishedYear, Converter={StaticResource PublishedYearConverter}}"/>
+				<TextBlock Text="{Binding Path=PublishedYear, Converter={StaticResource PublishedYearConverter}}"/>
 				<TextBlock Margin="0,0,3,0" Text=")"/>
 				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="Tracks: "/>
-				<TextBlock Text="{Binding Path=UiDisplay.TrackCount}"/>
+				<TextBlock Text="{Binding Path=TrackCount}"/>
 			</StackPanel>
 		</Grid>
 	</HierarchicalDataTemplate>
 
-	<HierarchicalDataTemplate x:Key="ArtistAlbumTemplate" DataType="{x:Type Adapters:ExplorerTreeNode}" ItemTemplate="{StaticResource AlbumTemplate}" ItemsSource="{Binding Path=Children}">
+	<HierarchicalDataTemplate x:Key="ArtistAlbumTemplate" DataType="{x:Type Adapters:ArtistTreeNode}" 
+                              ItemTemplate="{StaticResource AlbumTemplate}" ItemsSource="{Binding Path=Children}">
 		<Border Margin="0,1,0,2" CornerRadius="3" ContextMenu="{DynamicResource ArtistMenu}" Background="{DynamicResource TreeItemBackground}" BorderBrush="{DynamicResource ControlTextColor}">
 			<Grid Margin="3,0,3,0">
 				<Grid.RowDefinitions>
@@ -68,17 +70,17 @@
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 
-				<TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" Text="{Binding Path=UiDisplay.Name}"/>
+				<TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" Text="{Binding Path=Artist.Name}"/>
 				<StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
-					<CheckBox Margin="0,9,9,0" IsChecked="{Binding Path=UiEdit.IsFavorite, Mode=TwoWay}"/>
+					<CheckBox Margin="0,9,9,0" IsChecked="{Binding Path=Artist.UiIsFavorite, Mode=TwoWay}"/>
 					<Controls:RatingSelector Margin="0,1,0,0" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Style="{StaticResource RatingStyle}"
-											 Template="{StaticResource RatingTemplate}" RatingSelected="{Binding Path=UiEdit.Rating, Mode=TwoWay}"/>
+											 Template="{StaticResource RatingTemplate}" RatingSelected="{Binding Path=Artist.UiRating, Mode=TwoWay}"/>
 				</StackPanel>
 				<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="11,0,0,0">
 					<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="Albums: "/>
-					<TextBlock Text="{Binding Path=UiDisplay.AlbumCount}"/>
+					<TextBlock Text="{Binding Path=Artist.AlbumCount}"/>
 				</StackPanel>
-				<TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" Text="{Binding Path=UiDisplay.Genre}"/>
+				<TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" Text="{Binding Path=Artist.Genre}"/>
 			</Grid>
 		</Border>
 	</HierarchicalDataTemplate>

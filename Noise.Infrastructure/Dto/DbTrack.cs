@@ -17,9 +17,9 @@ namespace Noise.Infrastructure.Dto {
 		public UInt32			PublishedYear { get; set; }
 		public DateTime			DateAdded { get; private set; }
 		public eAudioEncoding	Encoding { get; set; }
-		public string			CalculatedGenre { get; set; }
-		public string			ExternalGenre { get; set; }
-		public string			UserGenre { get; set; }
+		public long				CalculatedGenre { get; set; }
+		public long				ExternalGenre { get; set; }
+		public long				UserGenre { get; set; }
 		public bool				IsFavorite { get; set; }
 		public UInt32			PlayCount { get; set; }
 
@@ -28,9 +28,9 @@ namespace Noise.Infrastructure.Dto {
 			DateAdded = DateTime.Now.Date;
 			Encoding = eAudioEncoding.Unknown;
 
-			CalculatedGenre = "";
-			ExternalGenre = "";
-			UserGenre = "";
+			CalculatedGenre = Constants.cDatabaseNullOid;
+			ExternalGenre = Constants.cDatabaseNullOid;
+			UserGenre = Constants.cDatabaseNullOid;
 			Performer = "";
 			VolumeName = "";
 		}
@@ -41,8 +41,8 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		[Ignore]
-		public string Genre {
-			get{ return( String.IsNullOrWhiteSpace( UserGenre ) ? ( String.IsNullOrWhiteSpace( ExternalGenre ) ? CalculatedGenre : ExternalGenre ) : UserGenre ); }
+		public long Genre {
+			get{ return( UserGenre == Constants.cDatabaseNullOid ? ( ExternalGenre == Constants.cDatabaseNullOid ? CalculatedGenre : ExternalGenre ) : UserGenre ); }
 			set{ UserGenre = value; }
 		}
 
