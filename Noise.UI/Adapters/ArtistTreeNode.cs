@@ -30,7 +30,10 @@ namespace Noise.UI.Adapters {
 
 		public bool IsSelected {
 			get { return( Artist.IsSelected ); }
-			set { Artist.IsSelected = value; }
+			set {
+				Artist.IsSelected = value;
+				RaisePropertyChanged( () => IsSelected );
+			}
 		}
 
 		public bool IsExpanded {

@@ -4,9 +4,6 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure {
 	public class Events {
-		public class ExplorerItemSelected : CompositePresentationEvent<object> { }
-		public class TrackSelected : CompositePresentationEvent<DbTrack> { }
-
 		public class ArtistFocusRequested : CompositePresentationEvent<DbArtist> { }
 		public class AlbumFocusRequested : CompositePresentationEvent<DbAlbum> { }
 

@@ -194,13 +194,7 @@ namespace Noise.UI.ViewModels {
 
 			if( node != null ) {
 				node.IsSelected = true;
-
-				// Ensure that this person is in view.
-//				while( node.Parent != null ) {
-//					node = node.Parent;
-
-					node.IsExpanded = true;
-//				}
+				node.IsExpanded = true;
 
 				retValue = true;
 			}
