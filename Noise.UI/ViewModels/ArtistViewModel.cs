@@ -103,10 +103,11 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private static UiArtist TransformArtist( DbArtist dbArtist ) {
+		private UiArtist TransformArtist( DbArtist dbArtist ) {
 			var retValue = new UiArtist( null );
 
 			Mapper.DynamicMap( dbArtist, retValue );
+			retValue.DisplayGenre = mNoiseManager.TagManager.GetGenre( dbArtist.Genre );
 
 			return( retValue );
 		}

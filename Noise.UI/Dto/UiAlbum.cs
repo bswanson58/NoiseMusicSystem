@@ -35,6 +35,16 @@ namespace Noise.UI.Dto {
 			get{ return( DisplayGenre != null ? DisplayGenre.Name : "" ); }
 		}
 
+		public Int16 UiRating {
+			get{ return( Get( () => UiRating )); }
+			set{ Set( () => UiRating, value ); }
+		}
+
+		public bool UiIsFavorite {
+			get{ return( Get( () => UiIsFavorite )); }
+			set{ Set( () => UiIsFavorite, value ); }
+		}
+
 		public bool IsSelected {
 			get { return( Get( () => IsSelected )); }
 			set {

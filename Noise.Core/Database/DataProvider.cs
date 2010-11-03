@@ -312,26 +312,28 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
-		public DataProviderList<DbTrack> GetTrackList( DbAlbum forAlbum ) {
-			Condition.Requires( forAlbum ).IsNotNull();
-
+		public DataProviderList<DbTrack> GetTrackList( long albumId ) {
 			DataProviderList<DbTrack>	retValue = null;
 
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
-				var albumId = GetObjectIdentifier( forAlbum );
-
 				retValue = new DataProviderList<DbTrack>( database.DatabaseId, FreeDatabase,
 																from DbTrack track in database.Database where track.Album == albumId 
 																orderby track.VolumeName, track.TrackNumber ascending select track );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetTrackList(forAlbum):", ex );
+				mLog.LogException( "Exception - GetTrackList(albumId):", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
 
 			return( retValue );
+		}
+
+		public DataProviderList<DbTrack> GetTrackList( DbAlbum forAlbum ) {
+			Condition.Requires( forAlbum ).IsNotNull();
+
+			return( GetTrackList( forAlbum.DbId ));
 		}
 
 		public List<DbTrack> GetTrackList( DbArtist forArtist ) {
@@ -495,17 +497,14 @@ namespace Noise.Core.Database {
 			mContentManager.RequestContent( forAlbum );
 		}
 
-		public AlbumSupportInfo GetAlbumSupportInfo( DbAlbum forAlbum ) {
-			Condition.Requires( forAlbum ).IsNotNull();
-
+		public AlbumSupportInfo GetAlbumSupportInfo( long albumId ) {
 			AlbumSupportInfo	retValue = null;
 
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				var parms = database.Database.CreateParameters();
-				var albumId = forAlbum.DbId;
 
-				parms["albumId"] = forAlbum.DbId;
+				parms["albumId"] = albumId;
 				parms["coverType"] = ContentType.AlbumCover;
 				parms["otherType"] = ContentType.AlbumArtwork;
 
@@ -521,6 +520,12 @@ namespace Noise.Core.Database {
 			}
 
 			return( retValue );
+		}
+
+		public AlbumSupportInfo GetAlbumSupportInfo( DbAlbum forAlbum ) {
+			Condition.Requires( forAlbum ).IsNotNull();
+
+			return( GetAlbumSupportInfo( forAlbum.DbId ));
 		}
 
 		public DbInternetStream GetStream( long streamId ) {
@@ -632,6 +637,10 @@ namespace Noise.Core.Database {
 			finally {
 				mDatabaseManager.FreeDatabase( database );
 			}
+		}
+
+		public void SetAlbumFavorite( long albumId, bool isFavorite ) {
+			SetFavorite( GetAlbum( albumId ), isFavorite );
 		}
 
 		public void SetFavorite( DbAlbum forAlbum, bool isFavorite ) {
@@ -782,6 +791,10 @@ namespace Noise.Core.Database {
 			finally {
 				mDatabaseManager.FreeDatabase( database );
 			}
+		}
+
+		public void SetAlbumRating( long albumId, Int16 rating ) {
+			SetRating( GetAlbum( albumId ), rating  );
 		}
 
 		public void SetRating( DbAlbum forAlbum, Int16 rating ) {

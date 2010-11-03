@@ -20,6 +20,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 		DbTrack						GetTrack( StorageFile forFile );
 		DbTrack						GetTrack( long trackId );
+		DataProviderList<DbTrack>	GetTrackList( long albumId );
 		DataProviderList<DbTrack>	GetTrackList( DbAlbum forAlbum );
 		List<DbTrack>				GetTrackList( DbArtist forArtist );
 		DataProviderList<DbTrack>	GetFavoriteTracks();
@@ -35,6 +36,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 		ArtistSupportInfo			GetArtistSupportInfo( long artistId );
 		ArtistSupportInfo			GetArtistSupportInfo( DbArtist forArtist );
+		AlbumSupportInfo			GetAlbumSupportInfo( long albumId );
 		AlbumSupportInfo			GetAlbumSupportInfo( DbAlbum forAlbum );
 
 		void						UpdateArtistInfo( DbArtist forArtist );
@@ -44,12 +46,14 @@ namespace Noise.Infrastructure.Interfaces {
 		void						SetFavorite( DbArtist forArtist, bool isFavorite );
 		void						SetArtistFavorite( long artistId, bool isFavorite );
 		void						SetFavorite( DbAlbum forAlbum, bool isFavorite );
+		void						SetAlbumFavorite( long albumId, bool isFavorite );
 		void						SetFavorite( DbTrack forTrack, bool isFavorite );
 		void						SetFavorite( DbPlayList forList, bool isFavorite );
 
 		void						SetRating( DbArtist forArtist, Int16 rating );
 		void						SetArtistRating( long artistId, Int16 rating );
 		void						SetRating( DbAlbum forAlbum, Int16 rating );
+		void						SetAlbumRating( long albumId, Int16 rating );
 		void						SetRating( DbTrack forTrack, Int16 rating );
 		void						SetRating( DbPlayList forList, Int16 rating );
 
