@@ -17,13 +17,13 @@ namespace Noise.Core {
 		private readonly ILog				mLog;
 		private	readonly ISchedulerFactory	mSchedulerFactory;
 		private	readonly IScheduler			mJobScheduler;
+		private	IPlayController				mPlayController;
 
 		public	IDataProvider				DataProvider { get; private set; }
 		public	ISearchProvider				SearchProvider { get; private set; }
 		public	IPlayQueue					PlayQueue { get; private set; }
 		public	IPlayHistory				PlayHistory { get; private set; }
 		public	IPlayListMgr				PlayListMgr { get; private set; }
-		public	IPlayController				PlayController { get; private set; }
 		public	ILibraryBuilder				LibraryBuilder { get; private set; }
 		public	ITagManager					TagManager { get; private set; }
 
@@ -52,7 +52,6 @@ namespace Noise.Core {
 
 				PlayQueue = mContainer.Resolve<IPlayQueue>();
 				PlayHistory = mContainer.Resolve<IPlayHistory>();
-				PlayController = mContainer.Resolve<IPlayController>();
 				PlayListMgr = mContainer.Resolve<IPlayListMgr>();
 
 				mLog.LogMessage( "Initialized NoiseManager." );
@@ -74,6 +73,16 @@ namespace Noise.Core {
 			LibraryBuilder.StopLibraryUpdate();
 
 			mDatabaseManager.Shutdown();
+		}
+
+		public IPlayController PlayController {
+			get {
+				if( mPlayController == null ) {
+					mPlayController = mContainer.Resolve<IPlayController>();
+				}
+
+				return( mPlayController );
+			}
 		}
 
 		private void StartExplorerJobs() {
