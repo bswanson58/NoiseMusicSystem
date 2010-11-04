@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
@@ -26,6 +27,29 @@ namespace Noise.Core.DataBuilders {
 			mContainer = container;
 			mEvents = mContainer.Resolve<IEventAggregator>();
 			mLog = mContainer.Resolve<ILog>();
+		}
+
+		public IEnumerable<string> RootFolderList() {
+			var retValue = new List<string>();
+			var folderExplorer = mContainer.Resolve<IFolderExplorer>();
+			var databaseManager = mContainer.Resolve<IDatabaseManager>();
+			var database = databaseManager.ReserveDatabase();
+
+			if( database != null ) {
+				try {
+					foreach( var rootFolder in folderExplorer.RootFolderList()) {
+						retValue.Add( StorageHelpers.GetPath( database.Database, rootFolder ));
+					}
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - RootFolderList:", ex );
+				}
+				finally {
+					databaseManager.FreeDatabase( database );
+				}
+			}
+
+			return( retValue );
 		}
 
 		public void StartLibraryUpdate() {

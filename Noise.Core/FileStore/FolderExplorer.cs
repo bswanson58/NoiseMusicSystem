@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Practices.Unity;
@@ -21,23 +22,44 @@ namespace Noise.Core.FileStore {
 			mLog = mContainer.Resolve<ILog>();
 		}
 
-		public void SynchronizeDatabaseFolders() {
-			mStopExploring = false;
+		public IEnumerable<RootFolder> RootFolderList() {
+			IEnumerable<RootFolder>		retValue = null;
 
 			var databaseMgr = mContainer.Resolve<IDatabaseManager>();
 			var database = databaseMgr.ReserveDatabase();
 
 			if( database != null ) {
 				try {
-					var rootFolders = from RootFolder root in database.Database where true select root;
+					retValue = from RootFolder root in database.Database where true select root;
 
-					if( rootFolders.Count() == 0 ) {
+					if( retValue.Count() == 0 ) {
 						LoadConfiguration( database );
 
-						rootFolders = from RootFolder root in database.Database where true select root;
+						retValue = from RootFolder root in database.Database where true select root;
 					}
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - RootFolderList: ", ex );
+				}
+				finally {
+					databaseMgr.FreeDatabase( database );
+				}
+			}
 
-					if( rootFolders.Count() > 0 ) {
+			return( retValue );
+		}
+
+		public void SynchronizeDatabaseFolders() {
+			mStopExploring = false;
+
+			var rootFolders = RootFolderList();
+
+			if( rootFolders.Count() > 0 ) {
+				var databaseMgr = mContainer.Resolve<IDatabaseManager>();
+				var database = databaseMgr.ReserveDatabase();
+
+				if( database != null ) {
+					try {
 						mFileCache = new DatabaseCache<StorageFile>( from StorageFile file in database.Database select file );
 						mFolderCache = new DatabaseCache<StorageFolder>( from StorageFolder folder in database.Database select folder );
 
@@ -58,12 +80,12 @@ namespace Noise.Core.FileStore {
 						mFileCache.Clear();
 						mFolderCache.Clear();
 					}
-				}
-				catch( Exception ex ) {
-					mLog.LogException( "Exception - FolderExplorer:", ex );
-				}
-				finally {
-					databaseMgr.FreeDatabase( database );
+					catch( Exception ex ) {
+						mLog.LogException( "Exception - FolderExplorer:", ex );
+					}
+					finally {
+						databaseMgr.FreeDatabase( database );
+					}
 				}
 			}
 		}

@@ -56,8 +56,6 @@ namespace Noise.Core {
 
 				mLog.LogMessage( "Initialized NoiseManager." );
 
-				StartExplorerJobs();
-
 				IsInitialized = true;
 			}
 			else {
@@ -85,7 +83,7 @@ namespace Noise.Core {
 			}
 		}
 
-		private void StartExplorerJobs() {
+		public void StartExplorerJobs() {
 			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 

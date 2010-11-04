@@ -3,6 +3,7 @@
 		bool			Initialize();
 		bool			IsInitialized { get; }
 
+		void			StartExplorerJobs();
 		void			Shutdown();
 
 		IDataProvider	DataProvider { get; }

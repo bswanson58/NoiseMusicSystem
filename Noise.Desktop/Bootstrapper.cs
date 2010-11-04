@@ -58,6 +58,7 @@ namespace Noise.Desktop {
 			mNoiseManager = Container.Resolve<INoiseManager>();
 			Container.RegisterInstance( mNoiseManager );
 			mNoiseManager.Initialize();
+			mNoiseManager.StartExplorerJobs();
 
 			mAppSupport = new ApplicationSupport( Container );
 		}

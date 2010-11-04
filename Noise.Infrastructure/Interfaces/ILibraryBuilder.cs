@@ -1,4 +1,6 @@
-﻿namespace Noise.Infrastructure.Interfaces {
+﻿using System.Collections.Generic;
+
+namespace Noise.Infrastructure.Interfaces {
 	public interface ILibraryBuilder {
 		void	StartLibraryUpdate();
 //		void	PauseLibraryUpdate();
@@ -9,5 +11,7 @@
 		bool	LibraryUpdatePaused { get; }
 
 		void	LogLibraryStatistics();
+
+		IEnumerable<string>	RootFolderList();
 	}
 }
