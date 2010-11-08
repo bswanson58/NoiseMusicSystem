@@ -18,6 +18,7 @@ namespace Noise.Core {
 		private	readonly ISchedulerFactory	mSchedulerFactory;
 		private	readonly IScheduler			mJobScheduler;
 		private	IPlayController				mPlayController;
+		private IDataUpdates				mDataUpdates;
 
 		public	IDataProvider				DataProvider { get; private set; }
 		public	ISearchProvider				SearchProvider { get; private set; }
@@ -53,6 +54,11 @@ namespace Noise.Core {
 				PlayQueue = mContainer.Resolve<IPlayQueue>();
 				PlayHistory = mContainer.Resolve<IPlayHistory>();
 				PlayListMgr = mContainer.Resolve<IPlayListMgr>();
+
+				mDataUpdates = mContainer.Resolve<IDataUpdates>();
+				if(!mDataUpdates.Initialize()) {
+					mLog.LogMessage( "Noise Manager: DataUpdates could not be initialized" );
+				}
 
 				mLog.LogMessage( "Initialized NoiseManager." );
 

@@ -125,7 +125,10 @@
     <Compile Include="Dto\PlaybackStatus.cs" />
     <Compile Include="Dto\PlayQueueTrack.cs" />
     <Compile Include="Dto\SearchResultItem.cs" />
+    <Compile Include="Dto\SetFavoriteCommandArgs.cs" />
+    <Compile Include="Dto\SetRatingCommandArgs.cs" />
     <Compile Include="Dto\StreamInfo.cs" />
+    <Compile Include="GlobalCommands.cs" />
     <Compile Include="Interfaces\ILibraryBuilder.cs" />
     <Compile Include="Interfaces\IDatabaseFilter.cs" />
     <Compile Include="Interfaces\IDbBase.cs" />
@@ -137,6 +140,7 @@
     <Compile Include="Interfaces\ITagManager.cs" />
     <Compile Include="Interfaces\IViewModelResolver.cs" />
     <Compile Include="Support\ApplicationLogReader.cs" />
+    <Compile Include="Support\AsyncCommand.cs" />
     <Compile Include="Support\BaseValueConverter.cs" />
     <Compile Include="Support\BindableObject.cs" />
     <Compile Include="Constants.cs" />
@@ -160,6 +164,7 @@
     <Compile Include="Support\Execute.cs" />
     <Compile Include="Support\Extensions.cs" />
     <Compile Include="Support\ObservableCollectionEx.cs" />
+    <Compile Include="Support\TypeSwitch.cs" />
     <Compile Include="Support\ViewModelBase.cs" />
   </ItemGroup>
   <ItemGroup>

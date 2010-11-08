@@ -23,6 +23,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IContentManager, ContentManager>();
 			mContainer.RegisterType<IDatabase, EloqueraDatabase>();
 			mContainer.RegisterType<IDataProvider, DataProvider>();
+			mContainer.RegisterType<IDataUpdates, DataUpdates>();
 			mContainer.RegisterType<IDatabaseManager, DatabaseManager>( Constants.NewInstance );
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>();
 			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();

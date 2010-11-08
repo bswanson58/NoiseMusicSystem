@@ -135,27 +135,16 @@ namespace Noise.UI.ViewModels {
 			return( mNoiseManager.DataProvider.GetAlbumSupportInfo( album.DbId ));
 		}
 
-		private void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
+		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
 
-			if( propertyNotification.Source is UiTrack ) {
-				var track = propertyNotification.Source as UiTrack;
-
-				if( propertyNotification.PropertyName == "UiRating" ) {
-					mNoiseManager.DataProvider.SetTrackRating( track.DbId, track.UiRating );
-				}
-				if( propertyNotification.PropertyName == "UiIsFavorite" ) {
-					mNoiseManager.DataProvider.SetTrackFavorite( track.DbId, track.UiIsFavorite );
-				}
-			}
-
-			if( propertyNotification.Source is UiAlbum ) {
-				var album = propertyNotification.Source as UiAlbum;
+			if( propertyNotification.Source is UiBase ) {
+				var item = propertyNotification.Source as UiBase;
 
 				if( propertyNotification.PropertyName == "UiRating" ) {
-					mNoiseManager.DataProvider.SetAlbumRating( album.DbId, album.UiRating );
+					GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( item.DbId, item.UiRating ));
 				}
 				if( propertyNotification.PropertyName == "UiIsFavorite" ) {
-					mNoiseManager.DataProvider.SetAlbumFavorite( album.DbId, album.UiIsFavorite );
+					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( item.DbId, item.UiIsFavorite ));
 				}
 			}
 		}

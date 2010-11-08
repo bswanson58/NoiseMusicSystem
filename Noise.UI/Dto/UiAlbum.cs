@@ -1,10 +1,8 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Dto {
-	public class UiAlbum : ViewModelBase {
-		public long				DbId { get; set; }
+	public class UiAlbum : UiBase {
 		public string			Name { get; set; }
 		public long				Artist { get; set; }
 		public Int16			UserRating { get; set; }
@@ -33,16 +31,6 @@ namespace Noise.UI.Dto {
 
 		public string Genre {
 			get{ return( DisplayGenre != null ? DisplayGenre.Name : "" ); }
-		}
-
-		public Int16 UiRating {
-			get{ return( Get( () => UiRating )); }
-			set{ Set( () => UiRating, value ); }
-		}
-
-		public bool UiIsFavorite {
-			get{ return( Get( () => UiIsFavorite )); }
-			set{ Set( () => UiIsFavorite, value ); }
 		}
 
 		public bool IsSelected {

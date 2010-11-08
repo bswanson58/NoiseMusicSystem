@@ -8,6 +8,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
+using Noise.UI.Dto;
 using Observal;
 using Observal.Extensions;
 
@@ -99,15 +100,15 @@ namespace Noise.UI.ViewModels {
 			mTreeItems.ResumeNotification();
 		}
 
-		private void OnNodeChanged( PropertyChangeNotification changeNotification ) {
-			var notifier = changeNotification.Source as UserSettingsNotifier;
+		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
+			var notifier = propertyNotification.Source as UiBase;
 
 			if( notifier != null ) {
-				if( changeNotification.PropertyName == "UiRating" ) {
-					mNoiseManager.DataProvider.SetRating( notifier.TargetItem as DbPlayList, notifier.UiRating );
+				if( propertyNotification.PropertyName == "UiRating" ) {
+					GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( notifier.DbId, notifier.UiRating ));
 				}
-				if( changeNotification.PropertyName == "UiIsFavorite" ) {
-					mNoiseManager.DataProvider.SetFavorite( notifier.TargetItem as DbPlayList, notifier.UiIsFavorite );
+				if( propertyNotification.PropertyName == "UiIsFavorite" ) {
+					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( notifier.DbId, notifier.UiIsFavorite ));
 				}
 			}
 		}

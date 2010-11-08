@@ -192,15 +192,15 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnArtistChanged( PropertyChangeNotification changeNotification ) {
+		private static void OnArtistChanged( PropertyChangeNotification changeNotification ) {
 			var notifier = changeNotification.Source as UiArtist;
 
 			if( notifier != null ) {
 				if( changeNotification.PropertyName == "UiRating" ) {
-					mNoiseManager.DataProvider.SetArtistRating( notifier.DbId, notifier.UiRating );
+					GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( notifier.DbId, notifier.UiRating ));
 				}
 				if( changeNotification.PropertyName == "UiIsFavorite" ) {
-					mNoiseManager.DataProvider.SetArtistFavorite( notifier.DbId, notifier.UiIsFavorite );
+					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( notifier.DbId, notifier.UiIsFavorite ));
 				}
 			}
 		}

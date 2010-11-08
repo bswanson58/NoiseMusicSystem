@@ -43,15 +43,15 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 		}
 
-		private void OnNodeChanged( PropertyChangeNotification changeNotification ) {
-			var notifier = changeNotification.Source as UiArtist;
+		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
+			var notifier = propertyNotification.Source as UiBase;
 
 			if( notifier != null ) {
-				if( changeNotification.PropertyName == "UiRating" ) {
-					mNoiseManager.DataProvider.SetArtistRating( notifier.DbId, notifier.UiRating );
+				if( propertyNotification.PropertyName == "UiRating" ) {
+					GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( notifier.DbId, notifier.UiRating ));
 				}
-				if( changeNotification.PropertyName == "UiIsFavorite" ) {
-					mNoiseManager.DataProvider.SetArtistFavorite( notifier.DbId, notifier.UiIsFavorite );
+				if( propertyNotification.PropertyName == "UiIsFavorite" ) {
+					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( notifier.DbId, notifier.UiIsFavorite ));
 				}
 			}
 		}

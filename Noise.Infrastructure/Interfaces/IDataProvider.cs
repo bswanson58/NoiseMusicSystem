@@ -44,22 +44,6 @@ namespace Noise.Infrastructure.Interfaces {
 		void						UpdateArtistInfo( long artistId );
 		void						UpdateAlbumInfo( DbAlbum forAlbum );
 
-		void						SetFavorite( DbArtist forArtist, bool isFavorite );
-		void						SetArtistFavorite( long artistId, bool isFavorite );
-		void						SetFavorite( DbAlbum forAlbum, bool isFavorite );
-		void						SetAlbumFavorite( long albumId, bool isFavorite );
-		void						SetFavorite( DbTrack forTrack, bool isFavorite );
-		void						SetTrackFavorite( long trackId, bool isFavorite );
-		void						SetFavorite( DbPlayList forList, bool isFavorite );
-
-		void						SetRating( DbArtist forArtist, Int16 rating );
-		void						SetArtistRating( long artistId, Int16 rating );
-		void						SetRating( DbAlbum forAlbum, Int16 rating );
-		void						SetAlbumRating( long albumId, Int16 rating );
-		void						SetRating( DbTrack forTrack, Int16 rating );
-		void						SetTrackRating( long trackId, Int16 rating );
-		void						SetRating( DbPlayList forList, Int16 rating );
-
 		void						InsertItem( object dbItem );
 		void						UpdateItem( object dbItem );
 		void						DeleteItem( object dbItem );

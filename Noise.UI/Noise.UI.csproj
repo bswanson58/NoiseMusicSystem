@@ -156,6 +156,7 @@
     <Compile Include="Dto\LibraryExplorerFilter.cs" />
     <Compile Include="Dto\UiAlbum.cs" />
     <Compile Include="Dto\UiArtist.cs" />
+    <Compile Include="Dto\UiBase.cs" />
     <Compile Include="Dto\UiTrack.cs" />
     <Compile Include="MappingConfiguration.cs" />
     <Compile Include="NoiseUiModule.cs" />

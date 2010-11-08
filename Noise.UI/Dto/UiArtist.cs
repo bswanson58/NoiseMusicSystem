@@ -3,8 +3,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Dto {
-	public class UiArtist : ViewModelBase {
-		public long				DbId { get; set; }
+	public class UiArtist : UiBase {
 		public string			Name { get; set; }
 		public string			Website { get; set; }
 		public long				CalculatedGenre { get; set; }
@@ -35,16 +34,6 @@ namespace Noise.UI.Dto {
 		public Int16 Rating {
 			get{ return( IsUserRating ? UserRating : CalculatedRating ); }
 			set{ UserRating = value; }
-		}
-
-		public Int16 UiRating {
-			get{ return( Get( () => UiRating )); }
-			set{ Set( () => UiRating, value ); }
-		}
-
-		public bool UiIsFavorite {
-			get{ return( Get( () => UiIsFavorite )); }
-			set{ Set( () => UiIsFavorite, value ); }
 		}
 
 		public bool IsSelected {

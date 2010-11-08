@@ -395,7 +395,7 @@ namespace Noise.Core.MediaPlayer {
 					settings.IsFavorite = value;
 
 					if( track != null ) {
-						mNoiseManager.DataProvider.SetFavorite( track.Track, value );
+						GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( track.Track.DbId, value ));
 					}
 					else {
 						mNoiseManager.DataProvider.UpdateItem( settings );
@@ -424,7 +424,7 @@ namespace Noise.Core.MediaPlayer {
 					settings.Rating = value;
 
 					if( track.Track != null ) {
-						mNoiseManager.DataProvider.SetRating( track.Track, value );
+						GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( track.Track.DbId, value ));
 					}
 					else {
 						mNoiseManager.DataProvider.UpdateItem( settings );
