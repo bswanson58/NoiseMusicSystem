@@ -1,17 +1,22 @@
 ﻿using System;
+using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
+using Noise.Service.ServiceBus;
+using Noise.Service.Support;
 using Quartz;
 using Quartz.Impl;
 
 namespace Noise.Service.LibraryService {
-	public class LibraryServiceImpl : IWindowsService {
+	public class LibraryServiceImpl : BaseService {
 		internal const string				cNoiseLibraryUpdate = "NoiseLibraryUpdate";
 
 		private readonly IUnityContainer	mContainer;
 		private INoiseManager				mNoiseManager;
 		private	ISchedulerFactory			mSchedulerFactory;
 		private	IScheduler					mJobScheduler;
+		private MessagePublisher			mMessagePublisher;
 		private readonly ILog				mLog;
 
 		public LibraryServiceImpl( IUnityContainer container ) {
@@ -19,40 +24,33 @@ namespace Noise.Service.LibraryService {
 			mLog = mContainer.Resolve<ILog>();
 		}
 
-		public void OnStart( string[] args ) {
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
-			mContainer.RegisterInstance( mNoiseManager );
+		public override void OnStart( string[] args ) {
+//			mNoiseManager = mContainer.Resolve<INoiseManager>();
+//			mContainer.RegisterInstance( mNoiseManager );
 
-			if( mNoiseManager.Initialize()) {
+//			if( mNoiseManager.Initialize()) {
 				mSchedulerFactory = new StdSchedulerFactory();
 				mJobScheduler = mSchedulerFactory.GetScheduler();
 				mJobScheduler.Start();
 
 				ScheduleLibraryUpdate();
-				InitializeLibraryWatchers();
-			}
+//				InitializeLibraryWatchers();
+
+				mMessagePublisher = new MessagePublisher( mContainer );
+				if( mMessagePublisher.InitializePublisher()) {
+					mMessagePublisher.StartPublisher();
+				}
+//			}
 		}
 
-		public void OnStop() {
-		}
-
-		public void OnPause() {
-		}
-
-		public void OnContinue() {
-		}
-
-		public void OnShutdown() {
-			mNoiseManager.Shutdown();
-		}
-
-		public void Dispose() {
+		public override void OnShutdown() {
+//			mNoiseManager.Shutdown();
 		}
 
 		private void ScheduleLibraryUpdate() {
 			var jobDetail = new JobDetail( cNoiseLibraryUpdate, "LibraryUpdater", typeof( LibraryUpdateJob ));
 			var trigger = new SimpleTrigger( cNoiseLibraryUpdate, "LibraryUpdater",
-											 DateTime.UtcNow + TimeSpan.FromSeconds( 10 ), null, SimpleTrigger.RepeatIndefinitely, TimeSpan.FromMinutes( 30 )); 
+											 DateTime.UtcNow + TimeSpan.FromSeconds( 10 ), null, SimpleTrigger.RepeatIndefinitely, TimeSpan.FromSeconds( 15 )); 
 
 			trigger.JobDataMap[cNoiseLibraryUpdate] = this;
 
@@ -66,9 +64,12 @@ namespace Noise.Service.LibraryService {
 		}
 
 		public void UpdateLibrary() {
-			if(!mNoiseManager.LibraryBuilder.LibraryUpdateInProgress ) {
-				mNoiseManager.LibraryBuilder.StartLibraryUpdate();
-			}
+//			if(!mNoiseManager.LibraryBuilder.LibraryUpdateInProgress ) {
+//				mNoiseManager.LibraryBuilder.StartLibraryUpdate();
+//			}
+			var events = mContainer.Resolve<IEventAggregator>();
+
+			events.GetEvent<Events.LibraryUpdateStarted>().Publish( this );
 		}
 	}
 }

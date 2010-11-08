@@ -8,6 +8,7 @@ using Microsoft.Practices.Composite.UnityExtensions;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Noise.Service.LibraryService;
+using Noise.Service.Support;
 
 namespace Noise.Service {
 	static class ServiceMain {

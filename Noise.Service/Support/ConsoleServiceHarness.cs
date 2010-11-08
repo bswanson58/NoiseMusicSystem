@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Noise.Service {
+namespace Noise.Service.Support {
 	public static class ConsoleServiceHarness {
 
 		// Run a service from the console given a service implementation
 		public static void Run( string[] args, IWindowsService service ) {
-			string serviceName = service.GetType().Name;
+//			string serviceName = service.GetType().Name;
 			bool isRunning = true;
 
 			// simulate starting the windows service

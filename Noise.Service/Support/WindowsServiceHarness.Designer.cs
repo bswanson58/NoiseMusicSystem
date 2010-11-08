@@ -1,4 +1,4 @@
-﻿namespace Noise.Service {
+﻿namespace Noise.Service.Support {
 	partial class WindowsServiceHarness {
 		/// <summary> 
 		/// Required designer variable.
