@@ -41,6 +41,7 @@ namespace Noise.Service {
 				var catalog = new ModuleCatalog();
 
 				catalog.AddModule( typeof( Core.NoiseCoreModule ));
+				catalog.AddModule( typeof( Infrastructure.ServiceInfrastructureModule ));
 				mContainer.RegisterInstance<IModuleCatalog>( catalog );
 
 				mContainer.RegisterType<IServiceLocator, UnityServiceLocatorAdapter>( new ContainerControlledLifetimeManager());

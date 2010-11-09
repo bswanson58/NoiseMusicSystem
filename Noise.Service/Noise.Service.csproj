@@ -88,9 +88,6 @@
     <Reference Include="Common.Logging, Version=1.2.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e">
       <HintPath>..\lib\Quartz\v1.0.2.3\Common.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\lib\NServiceBus\v2.0.0.1219\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.Composite">
       <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.Composite.dll</HintPath>
     </Reference>
@@ -109,14 +106,8 @@
     <Reference Include="Microsoft.Practices.Unity">
       <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="NServiceBus">
+    <Reference Include="NServiceBus, Version=2.0.0.1219, Culture=neutral, PublicKeyToken=9fc386479f8a226c, processorArchitecture=MSIL">
       <HintPath>..\lib\NServiceBus\v2.0.0.1219\NServiceBus.dll</HintPath>
-    </Reference>
-    <Reference Include="NServiceBus.Core">
-      <HintPath>..\lib\NServiceBus\v2.0.0.1219\NServiceBus.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="NServiceBus.ObjectBuilder.Unity">
-      <HintPath>..\lib\NServiceBus\v2.0.0.1219\NServiceBus.ObjectBuilder.Unity.dll</HintPath>
     </Reference>
     <Reference Include="Quartz, Version=1.0.2.3, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\lib\Quartz\v1.0.2.3\Quartz.dll</HintPath>
@@ -137,12 +128,9 @@
     </Compile>
     <Compile Include="Support\BaseService.cs" />
     <Compile Include="Support\ConsoleServiceHarness.cs" />
-    <Compile Include="Support\CustomNServiceConfiguration.cs" />
     <Compile Include="Support\IWindowsService.cs" />
     <Compile Include="LibraryService\LibraryServiceImpl.cs" />
     <Compile Include="LibraryService\LibraryUpdateJob.cs" />
-    <Compile Include="ServiceBus\MessagePublisher.cs" />
-    <Compile Include="ServiceBus\ServiceStatusMessage.cs" />
     <Compile Include="ServiceMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\WindowsServiceHarness.cs">
@@ -182,6 +170,10 @@
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Noise.Service.Infrastructure\Noise.Service.Infrastructure.csproj">
+      <Project>{BC70F5ED-672C-4690-BEF7-7950907E95C5}</Project>
+      <Name>Noise.Service.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -55,7 +55,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnLibraryUpdated( object sender ) {
+		private void OnLibraryUpdated( long libraryId ) {
 			mBackgroundWorker.RunWorkerAsync();
 		}
 

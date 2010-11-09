@@ -84,6 +84,9 @@
     <Reference Include="Hammock.ClientProfile">
       <HintPath>..\lib\Hammock\v1.0.4.0\Hammock.ClientProfile.dll</HintPath>
     </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\lib\NServiceBus\v2.0.0.1219\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Lucene.Net">
       <HintPath>..\lib\Lucene.NET\v2.9.2\Lucene.Net.dll</HintPath>
     </Reference>
@@ -106,6 +109,12 @@
     </Reference>
     <Reference Include="Microsoft.Practices.Unity">
       <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceBus">
+      <HintPath>..\lib\NServiceBus\v2.0.0.1219\NServiceBus.dll</HintPath>
+    </Reference>
+    <Reference Include="NServiceBus.Core">
+      <HintPath>..\lib\NServiceBus\v2.0.0.1219\NServiceBus.Core.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="Quartz, Version=1.0.2.3, Culture=neutral, processorArchitecture=MSIL">

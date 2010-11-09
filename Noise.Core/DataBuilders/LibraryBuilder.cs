@@ -111,7 +111,7 @@ namespace Noise.Core.DataBuilders {
 			LibraryUpdateInProgress = true;
 
 			try {
-				mEvents.GetEvent<Events.LibraryUpdateStarted>().Publish( this );
+				mEvents.GetEvent<Events.LibraryUpdateStarted>().Publish( 0L );
 
 				if( mContinueExploring ) {
 					mFolderExplorer = mContainer.Resolve<IFolderExplorer>();
@@ -139,7 +139,6 @@ namespace Noise.Core.DataBuilders {
 				mLog.LogMessage( "LibraryBuilder: Update Finished." );
 
 				if( results.HaveChanges ) {
-					mEvents.GetEvent<Events.DatabaseChanged>().Publish( results );
 					mLog.LogInfo( string.Format( "Database changes: {0}", results ) );
 				}
 
@@ -158,7 +157,7 @@ namespace Noise.Core.DataBuilders {
 				LibraryUpdateInProgress = false;
 			}
 
-			mEvents.GetEvent<Events.LibraryUpdateCompleted>().Publish( this );
+			mEvents.GetEvent<Events.LibraryUpdateCompleted>().Publish( 0L );
 		}
 
 		public void LogLibraryStatistics() {

@@ -33,7 +33,8 @@ namespace Noise.Desktop {
 		protected override IModuleCatalog GetModuleCatalog() {
 			var catalog = new ModuleCatalog();
 
-			catalog.AddModule( typeof( Core.NoiseCoreModule ) )
+			catalog.AddModule( typeof( Core.NoiseCoreModule ))
+				.AddModule( typeof( Service.Infrastructure.ServiceInfrastructureModule ))
 				.AddModule( typeof( UI.NoiseUiModule ), "NoiseCoreModule" );
 
 			return ( catalog );

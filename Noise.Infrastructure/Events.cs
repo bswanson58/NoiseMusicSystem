@@ -21,8 +21,6 @@ namespace Noise.Infrastructure {
 		public class TrackPlayRequested : CompositePresentationEvent<DbTrack> { }
 		public class StreamPlayRequested : CompositePresentationEvent<DbInternetStream> { }
 
-		public class DatabaseChanged : CompositePresentationEvent<DatabaseChangeSummary> { }
-
 		public class PlaybackStatusChanged : CompositePresentationEvent<ePlaybackStatus> { }
 		public class PlaybackTrackChanged : CompositePresentationEvent<object> { }
 		public class PlaybackInfoChanged : CompositePresentationEvent<object> { }
@@ -35,7 +33,7 @@ namespace Noise.Infrastructure {
 
 		public class WebsiteRequest : CompositePresentationEvent<string> { }
 
-		public class LibraryUpdateStarted : CompositePresentationEvent<object> { }
-		public class LibraryUpdateCompleted : CompositePresentationEvent<object> { }
+		public class LibraryUpdateStarted : CompositePresentationEvent<long> { }
+		public class LibraryUpdateCompleted : CompositePresentationEvent<long> { }
 	}
 }
