@@ -48,6 +48,18 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public void Execute_ServerConfiguration() {
+			if( mContainer != null ) {
+				var	dialogService = mContainer.Resolve<IDialogService>();
+				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+				var configuration = systemConfig.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
+
+				if( dialogService.ShowDialog( DialogNames.ServerConfiguration, configuration ) == true ) {
+					systemConfig.Save( configuration );
+				}
+			}
+		}
+
 		public void Execute_LibraryConfiguration() {
 			if( mContainer != null ) {
 				var	dialogService = mContainer.Resolve<IDialogService>();

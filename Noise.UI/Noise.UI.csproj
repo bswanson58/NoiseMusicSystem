@@ -262,6 +262,9 @@
     <Compile Include="Views\SelectStreamDialog.xaml.cs">
       <DependentUpon>SelectStreamDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ServerConfigurationDialog.xaml.cs">
+      <DependentUpon>ServerConfigurationDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SmallPlayerView.xaml.cs">
       <DependentUpon>SmallPlayerView.xaml</DependentUpon>
     </Compile>
@@ -371,6 +374,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SelectStreamDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ServerConfigurationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
