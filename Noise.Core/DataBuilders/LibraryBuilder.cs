@@ -10,7 +10,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
-	internal class LibraryBuilder : ILibraryBuilder {
+	public class LibraryBuilder : ILibraryBuilder {
 		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
 		private IFolderExplorer				mFolderExplorer;

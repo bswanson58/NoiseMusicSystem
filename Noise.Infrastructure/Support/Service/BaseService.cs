@@ -1,4 +1,4 @@
-﻿namespace Noise.Service.Support {
+﻿namespace Noise.Infrastructure.Support.Service {
 	public abstract class BaseService : IWindowsService {
 		public virtual void Dispose() {
 		}

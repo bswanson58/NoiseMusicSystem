@@ -56,7 +56,9 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnLibraryUpdated( long libraryId ) {
-			mBackgroundWorker.RunWorkerAsync();
+			if(!mBackgroundWorker.IsBusy ) {
+				mBackgroundWorker.RunWorkerAsync();
+			}
 		}
 
 		private void UpdateList( IEnumerable<LibraryAdditionNode> list ) {

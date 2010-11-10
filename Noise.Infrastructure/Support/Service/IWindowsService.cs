@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Noise.Service.Support {
+namespace Noise.Infrastructure.Support.Service {
 	public interface IWindowsService : IDisposable {
 		void	OnStart( string[] args );
 		void	OnStop();

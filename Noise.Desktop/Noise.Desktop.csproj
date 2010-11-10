@@ -116,7 +116,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ApplicationSupport.cs" />
     <Compile Include="WindowManager.cs" />
     <Content Include="Layouts\LayoutConfiguration.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -186,6 +185,10 @@
     <ProjectReference Include="..\LayoutManager\Layout Manager.csproj">
       <Project>{28833337-BDB1-412F-B378-575901285100}</Project>
       <Name>Layout Manager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Noise.AppSupport\Noise.AppSupport.csproj">
+      <Project>{7ED4F983-3946-48EB-AAB7-587CEFAC4D03}</Project>
+      <Name>Noise.AppSupport</Name>
     </ProjectReference>
     <ProjectReference Include="..\Noise.Core\Noise.Core.csproj">
       <Project>{33A45442-71E5-4BFE-B37F-129EDB4F18E8}</Project>

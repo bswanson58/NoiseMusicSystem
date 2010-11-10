@@ -1,7 +1,7 @@
 ﻿using System.ServiceProcess;
 
-namespace Noise.Service.Support {
-	partial class WindowsServiceHarness : ServiceBase {
+namespace Noise.Infrastructure.Support.Service {
+	public partial class WindowsServiceHarness : ServiceBase {
 		private readonly IWindowsService	mImplementer;
 
 		public WindowsServiceHarness() {

@@ -1,15 +1,16 @@
 ﻿using System;
+using System.ServiceModel;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support.Service;
 using Noise.Service.Infrastructure.Interfaces;
 using Noise.Service.Infrastructure.ServiceBus;
-using Noise.Service.Support;
 using Quartz;
 using Quartz.Impl;
 
-namespace Noise.Service.LibraryService {
+namespace Noise.ServiceImpl.LibraryUpdate {
 	public class LibraryServiceImpl : BaseService {
 		internal const string				cNoiseLibraryUpdate = "NoiseLibraryUpdate";
 
@@ -19,6 +20,7 @@ namespace Noise.Service.LibraryService {
 		private	ISchedulerFactory			mSchedulerFactory;
 		private	IScheduler					mJobScheduler;
 		private IServiceBusManager			mServiceBus;
+		private ServiceHost					mLibraryUpdateServiceHost;
 		private readonly ILog				mLog;
 
 		public LibraryServiceImpl( IUnityContainer container ) {
@@ -36,7 +38,7 @@ namespace Noise.Service.LibraryService {
 				mJobScheduler = mSchedulerFactory.GetScheduler();
 				mJobScheduler.Start();
 
-				ScheduleLibraryUpdate();
+//				ScheduleLibraryUpdate();
 				InitializeLibraryWatchers();
 
 				mServiceBus = mContainer.Resolve<IServiceBusManager>();
@@ -44,10 +46,29 @@ namespace Noise.Service.LibraryService {
 					mEvents.GetEvent<Events.LibraryUpdateStarted>().Subscribe( OnLibraryUpdateStarted );
 					mEvents.GetEvent<Events.LibraryUpdateCompleted>().Subscribe( OnLibraryUpdateCompleted );
 				}
+
+				try {
+//					const string queueName = @".\private$\Noise.LibraryUpdate.Control";
+//					if(!MessageQueue.Exists( queueName )) {
+//						MessageQueue.Create( queueName, true );
+//					}
+
+					mLibraryUpdateServiceHost = new ServiceHost( new LibraryUpdateService( mContainer ));
+					mLibraryUpdateServiceHost.Open();
+
+ 				}
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - LibraryUpdateService host start:", ex );
+				}
 			}
 		}
 
 		public override void OnShutdown() {
+			if(( mLibraryUpdateServiceHost != null ) &&
+			   ( mLibraryUpdateServiceHost.State == CommunicationState.Opened )) {
+				mLibraryUpdateServiceHost.Close();
+			}
+
 			mNoiseManager.Shutdown();
 		}
 

@@ -1,6 +1,6 @@
 ﻿using Quartz;
 
-namespace Noise.Service.LibraryService {
+namespace Noise.ServiceImpl.LibraryUpdate {
 	internal class LibraryUpdateJob : IJob {
 		public void Execute( JobExecutionContext context ) {
 			if( context != null ) {

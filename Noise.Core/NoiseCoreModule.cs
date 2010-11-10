@@ -7,7 +7,6 @@ using Noise.Core.MediaPlayer;
 using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core {
@@ -26,7 +25,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IDataUpdates, DataUpdates>();
 			mContainer.RegisterType<IDatabaseManager, DatabaseManager>( Constants.NewInstance );
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>();
-			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
+//			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
 			mContainer.RegisterType<IMetaDataExplorer, MetaDataExplorer>();
 			mContainer.RegisterType<ISearchBuilder, SearchBuilder>();
 			mContainer.RegisterType<ISummaryBuilder, SummaryBuilder>();
@@ -35,9 +34,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IPlayHistory, PlayHistoryMgr>();
 			mContainer.RegisterType<IPlayListMgr, PlayListMgr>();
 			mContainer.RegisterType<IPlayController, PlayController>();
-			mContainer.RegisterType<ILog, Log>();
 			mContainer.RegisterType<ISearchProvider, LuceneSearchProvider>();
-			mContainer.RegisterType<ISystemConfiguration, SystemConfiguration>();
 			mContainer.RegisterType<ITagManager, TagManager>();
 			mContainer.RegisterType<DatabaseStatistics, DatabaseStatistics>();
 		}

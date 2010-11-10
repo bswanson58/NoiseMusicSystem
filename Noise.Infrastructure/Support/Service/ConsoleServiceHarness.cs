@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Noise.Service.Support {
+namespace Noise.Infrastructure.Support.Service {
 	public static class ConsoleServiceHarness {
 
 		// Run a service from the console given a service implementation

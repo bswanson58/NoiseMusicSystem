@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using Microsoft.Practices.Composite.Modularity;
 using Microsoft.Practices.Composite.UnityExtensions;
+using Noise.AppSupport;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Support;
@@ -37,6 +38,9 @@ namespace Noise.Desktop {
 				.AddModule( typeof( Service.Infrastructure.ServiceInfrastructureModule ))
 				.AddModule( typeof( UI.NoiseUiModule ), "NoiseCoreModule" );
 
+			var iocConfig = new IocConfiguration( Container );
+			iocConfig.InitializeIoc( ApplicationUsage.Desktop );
+
 			return ( catalog );
 		}
 
@@ -56,12 +60,12 @@ namespace Noise.Desktop {
 		}
 
 		private void StartNoise() {
+			mAppSupport = new ApplicationSupport( Container );
+
 			mNoiseManager = Container.Resolve<INoiseManager>();
 			Container.RegisterInstance( mNoiseManager );
 			mNoiseManager.Initialize();
 			mNoiseManager.StartExplorerJobs();
-
-			mAppSupport = new ApplicationSupport( Container );
 		}
 
 		public void StopNoise() {

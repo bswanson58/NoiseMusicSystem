@@ -86,6 +86,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -165,6 +166,15 @@
     <Compile Include="Support\Execute.cs" />
     <Compile Include="Support\Extensions.cs" />
     <Compile Include="Support\ObservableCollectionEx.cs" />
+    <Compile Include="Support\Service\BaseService.cs" />
+    <Compile Include="Support\Service\ConsoleServiceHarness.cs" />
+    <Compile Include="Support\Service\IWindowsService.cs" />
+    <Compile Include="Support\Service\WindowsServiceHarness.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Support\Service\WindowsServiceHarness.designer.cs">
+      <DependentUpon>WindowsServiceHarness.cs</DependentUpon>
+    </Compile>
     <Compile Include="Support\TypeSwitch.cs" />
     <Compile Include="Support\ViewModelBase.cs" />
   </ItemGroup>

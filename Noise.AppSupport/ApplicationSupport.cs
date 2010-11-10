@@ -5,8 +5,8 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.Service.Infrastructure.Interfaces;
 
-namespace Noise.Desktop {
-	internal class ApplicationSupport {
+namespace Noise.AppSupport {
+	public class ApplicationSupport {
 		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
 		private readonly IServiceBusManager	mServiceBus;
@@ -25,7 +25,7 @@ namespace Noise.Desktop {
 			if(( configuration != null ) &&
 			   ( configuration.UseServer )) {
 				if(!mServiceBus.Initialize( configuration.ServerName )) {
-					mLog.LogMessage( "ServiceBusMaanger was not initialized." );
+					mLog.LogMessage( "ServiceBusManager was not initialized." );
 				}
 			}
 
