@@ -7,6 +7,8 @@ namespace Noise.Infrastructure.Interfaces {
 //		void	ResumeLibraryUpdate();
 		void	StopLibraryUpdate();
 
+		bool	EnableUpdateOnLibraryChange { get; set; }
+
 		bool	LibraryUpdateInProgress { get; }
 		bool	LibraryUpdatePaused { get; }
 

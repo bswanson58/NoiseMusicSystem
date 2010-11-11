@@ -28,23 +28,42 @@ namespace Noise.Service.Infrastructure.Clients {
 
 		public void StartLibraryUpdate() {
 			if( mLibraryService != null ) {
-				mLibraryService.StartLibraryUpdate();
+				try {
+					mLibraryService.StartLibraryUpdate();
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - LibraryServiceUpdateClient:StartLibraryUpdate ", ex );
+				}
 			}
 		}
 
 		public void StopLibraryUpdate() {
 			if(( mLibraryService != null ) &&
 			   ( mServiceProxy.State == CommunicationState.Opened )) {
-				mLibraryService.StopLibraryUpdate();
+				try {
+					mLibraryService.StopLibraryUpdate();
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - LibraryServiceUpdateClient:StopLibraryUpdate ", ex );
+				}
 			}
 		}
 
+		public bool EnableUpdateOnLibraryChange {
+			get { return( true ); }
+			set { }
+		}
 		public bool LibraryUpdateInProgress {
 			get {
 				var retValue = false;
 
 				if( mLibraryService != null ) {
-					retValue = mLibraryService.IsLibraryUpdateInProgress();
+					try {
+						retValue = mLibraryService.IsLibraryUpdateInProgress();
+					}
+					catch( Exception ex ) {
+						mLog.LogException( "Exception - LibraryServiceUpdateClient:LibraryUpdateInProgress ", ex );
+					}
 				}
 
 				return( retValue );

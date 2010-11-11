@@ -172,6 +172,7 @@
     <Compile Include="DataProviders\LastFmProvider.cs" />
     <Compile Include="DataProviders\Mp3TagProvider.cs" />
     <Compile Include="Exceptions\StorageConfigurationException.cs" />
+    <Compile Include="FileStore\FileSystemWatcherEx.cs" />
     <Compile Include="FileStore\FolderExplorer.cs" />
     <Compile Include="FileStore\FolderStrategyInformation.cs" />
     <Compile Include="FileStore\IFolderExplorer.cs" />
@@ -183,6 +184,7 @@
     <Compile Include="MediaPlayer\PlayController.cs" />
     <Compile Include="NoiseCoreModule.cs" />
     <Compile Include="NoiseManager.cs" />
+    <Compile Include="Platform\SleepPreventer.cs" />
     <Compile Include="PlayHistory\PlayHistoryMgr.cs" />
     <Compile Include="PlayQueue\IPlayExhaustedStrategy.cs" />
     <Compile Include="PlayQueue\IPlayStrategy.cs" />

@@ -101,6 +101,8 @@ namespace Noise.Core {
 					LibraryBuilder.LogLibraryStatistics();
 				}
 
+				LibraryBuilder.EnableUpdateOnLibraryChange = configuration.EnableLibraryChangeUpdates;
+
 				if( configuration.EnableBackgroundContentExplorer ) {
 					StartBackgroundContentExplorer();
 				}

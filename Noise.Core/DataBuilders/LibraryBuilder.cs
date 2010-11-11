@@ -1,32 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
+using Noise.Core.Platform;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	public class LibraryBuilder : ILibraryBuilder {
-		private readonly IUnityContainer	mContainer;
-		private readonly IEventAggregator	mEvents;
-		private IFolderExplorer				mFolderExplorer;
-		private IMetaDataExplorer			mMetaDataExplorer;
-		private ISearchBuilder				mSearchBuilder;
-		private	ISummaryBuilder				mSummaryBuilder;
-		private bool						mContinueExploring;
-		private readonly ILog				mLog;
+		private readonly IUnityContainer		mContainer;
+		private readonly IEventAggregator		mEvents;
+		private readonly FileSystemWatcherEx	mFolderWatcher;
+		private IFolderExplorer					mFolderExplorer;
+		private IMetaDataExplorer				mMetaDataExplorer;
+		private ISearchBuilder					mSearchBuilder;
+		private	ISummaryBuilder					mSummaryBuilder;
+		private bool							mContinueExploring;
+		private readonly ILog					mLog;
 
-		public	bool						LibraryUpdateInProgress { get; private set; }
-		public	bool						LibraryUpdatePaused { get; private set; }
+		public	bool							LibraryUpdateInProgress { get; private set; }
+		public	bool							LibraryUpdatePaused { get; private set; }
 
 		public LibraryBuilder( IUnityContainer container ) {
 			mContainer = container;
 			mEvents = mContainer.Resolve<IEventAggregator>();
 			mLog = mContainer.Resolve<ILog>();
+			mFolderWatcher = new FileSystemWatcherEx();
+		}
+
+		public bool EnableUpdateOnLibraryChange {
+			get{ return( mFolderWatcher.IsWatching ); }
+			set {
+				if( value ) {
+					var folder = RootFolderList().FirstOrDefault();
+
+					if( folder != null ) {
+						mFolderWatcher.Initialize( folder, OnLibraryChanged );
+					}
+				}
+				else {
+					mFolderWatcher.Shutdown();
+				}
+			}
+		}
+
+		private void OnLibraryChanged( string rootFolder ) {
+			if(!LibraryUpdateInProgress ) {
+				StartLibraryUpdate();
+			}
 		}
 
 		public IEnumerable<string> RootFolderList() {
@@ -37,9 +63,7 @@ namespace Noise.Core.DataBuilders {
 
 			if( database != null ) {
 				try {
-					foreach( var rootFolder in folderExplorer.RootFolderList()) {
-						retValue.Add( StorageHelpers.GetPath( database.Database, rootFolder ));
-					}
+					retValue.AddRange( folderExplorer.RootFolderList().Select( rootFolder => StorageHelpers.GetPath( database.Database, rootFolder )));
 				}
 				catch( Exception ex ) {
 					mLog.LogException( "Exception - RootFolderList:", ex );
@@ -113,37 +137,39 @@ namespace Noise.Core.DataBuilders {
 			try {
 				mEvents.GetEvent<Events.LibraryUpdateStarted>().Publish( 0L );
 
-				if( mContinueExploring ) {
-					mFolderExplorer = mContainer.Resolve<IFolderExplorer>();
-					mFolderExplorer.SynchronizeDatabaseFolders();
-				}
+				using( new SleepPreventer()) {
+					if( mContinueExploring ) {
+						mFolderExplorer = mContainer.Resolve<IFolderExplorer>();
+						mFolderExplorer.SynchronizeDatabaseFolders();
+					}
 
-				var results = new DatabaseChangeSummary();
-				if( mContinueExploring ) {
-					mMetaDataExplorer = mContainer.Resolve<IMetaDataExplorer>();
-					mMetaDataExplorer.BuildMetaData( results );
-				}
+					var results = new DatabaseChangeSummary();
+					if( mContinueExploring ) {
+						mMetaDataExplorer = mContainer.Resolve<IMetaDataExplorer>();
+						mMetaDataExplorer.BuildMetaData( results );
+					}
 
-				if(( mContinueExploring ) &&
-				   ( results.HaveChanges )) {
-					mSummaryBuilder = mContainer.Resolve<ISummaryBuilder>();
-					mSummaryBuilder.BuildSummaryData( results.ChangedArtists );
-				}
+					if(( mContinueExploring ) &&
+					   ( results.HaveChanges )) {
+						mSummaryBuilder = mContainer.Resolve<ISummaryBuilder>();
+						mSummaryBuilder.BuildSummaryData( results.ChangedArtists );
+					}
 
-				if(( mContinueExploring ) &&
-				   ( results.HaveChanges )) {
-					mSearchBuilder = mContainer.Resolve<ISearchBuilder>();
-					mSearchBuilder.BuildSearchIndex( results.ChangedArtists );
-				}
+					if(( mContinueExploring ) &&
+					   ( results.HaveChanges )) {
+						mSearchBuilder = mContainer.Resolve<ISearchBuilder>();
+						mSearchBuilder.BuildSearchIndex( results.ChangedArtists );
+					}
 
-				mLog.LogMessage( "LibraryBuilder: Update Finished." );
+					mLog.LogMessage( "LibraryBuilder: Update Finished." );
 
-				if( results.HaveChanges ) {
-					mLog.LogInfo( string.Format( "Database changes: {0}", results ) );
-				}
+					if( results.HaveChanges ) {
+						mLog.LogInfo( string.Format( "Database changes: {0}", results ) );
+					}
 
-				if( mContinueExploring ) {
-					LogStatistics();
+					if( mContinueExploring ) {
+						LogStatistics();
+					}
 				}
 			}
 			catch( Exception ex ) {
