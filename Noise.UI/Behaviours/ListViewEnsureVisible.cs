@@ -24,9 +24,11 @@ namespace Noise.UI.Behaviours {
 			if(( list != null ) &&
 			   ( args.NewValue is int )) {
 				var index = (int)args.NewValue;
-				var item = list.Items[index];
+				if( index > -1 ) {
+					var item = list.Items[index];
 
-				list.ScrollIntoView( item );
+					list.ScrollIntoView( item );
+				}
 			}
 		}
 	}
