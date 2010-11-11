@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ServiceModel;
+using System.ServiceProcess;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
@@ -11,6 +12,11 @@ using Quartz;
 using Quartz.Impl;
 
 namespace Noise.ServiceImpl.LibraryUpdate {
+	[WindowsService("Noise Library Update Service",
+		DisplayName = "Noise Library Update Service",
+		Description = "This service maintains the Noise Music System library.",
+		EventLogSource = "Noise Update Service",
+		StartMode = ServiceStartMode.Automatic)]
 	public class LibraryServiceImpl : BaseService {
 		internal const string				cNoiseLibraryUpdate = "NoiseLibraryUpdate";
 

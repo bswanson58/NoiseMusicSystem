@@ -85,6 +85,7 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xaml" />
@@ -169,11 +170,16 @@
     <Compile Include="Support\Service\BaseService.cs" />
     <Compile Include="Support\Service\ConsoleServiceHarness.cs" />
     <Compile Include="Support\Service\IWindowsService.cs" />
+    <Compile Include="Support\Service\TypeExtensions.cs" />
+    <Compile Include="Support\Service\WindowsServiceAttribute.cs" />
     <Compile Include="Support\Service\WindowsServiceHarness.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Support\Service\WindowsServiceHarness.designer.cs">
       <DependentUpon>WindowsServiceHarness.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Support\Service\WindowsServiceInstaller.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Support\TypeSwitch.cs" />
     <Compile Include="Support\ViewModelBase.cs" />

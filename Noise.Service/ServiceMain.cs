@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.ServiceProcess;
 using Noise.AppSupport;
 using Noise.Infrastructure.Support.Service;
@@ -13,15 +14,24 @@ namespace Noise.Service {
 
 			iocConfig.InitializeIoc( ApplicationUsage.Server );
 
-			using( var serviceImpl = iocConfig.Container.Resolve<IWindowsService>()) {
-				// if started from console, file explorer, etc, run as console app.
-				if( Environment.UserInteractive ) {
-					ConsoleServiceHarness.Run( args, serviceImpl );
+			using( var serviceImpl = iocConfig.Container.Resolve<IWindowsService>() ) {
+				// if install was a command line flag, then run the installer at runtime.
+				if( args.Contains( "-install", StringComparer.InvariantCultureIgnoreCase ) ) {
+					WindowsServiceInstaller.InstallService( serviceImpl );
 				}
-
-				// otherwise run as a windows service
+				else if( args.Contains( "-uninstall", StringComparer.InvariantCultureIgnoreCase ) ) {
+					WindowsServiceInstaller.UnInstallService( serviceImpl );
+				}
 				else {
-					ServiceBase.Run( new WindowsServiceHarness( serviceImpl ));
+					// if started from console, file explorer, etc, run as console app.
+					if( Environment.UserInteractive ) {
+						ConsoleServiceHarness.Run( args, serviceImpl );
+					}
+
+					// otherwise run as a windows service
+					else {
+						ServiceBase.Run( new WindowsServiceHarness( serviceImpl ) );
+					}
 				}
 			}
 		}
