@@ -227,5 +227,21 @@ namespace Noise.UI.ViewModels {
 		public ObservableCollectionEx<UiTrack> TrackList {
 			get{ return( mTracks ); }
 		}
+
+		public void Execute_PlayAlbum() {
+			if( CurrentAlbum != null ) {
+				mEvents.GetEvent<Events.AlbumPlayRequested>().Publish( mNoiseManager.DataProvider.GetAlbum( CurrentAlbum.DbId ));
+			}
+		}
+
+		[DependsUpon( "Album" )]
+		public bool CanExecute_PlayAlbum() {
+			return( CurrentAlbum != null ); 
+		}
+
+		[DependsUpon( "Album" )]
+		public bool AlbumValid {
+			get{ return( CurrentAlbum != null ); } 
+		}
 	}
 }

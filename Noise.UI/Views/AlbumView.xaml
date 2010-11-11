@@ -17,6 +17,7 @@
         <local:ByteImageConverter x:Key="imageConverter" />
         <local:PublishedYearConverter x:Key="PublishedYearConverter"/>
         <local:TimeSpanConverter x:Key="TimeSpanConverter"/>
+        <local:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
     </UserControl.Resources>
 
     <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Album "  Margin="0">
@@ -42,15 +43,25 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="{Binding Path=Album.Name}" FontSize="20" Margin="0,0,0,9"  HorizontalAlignment="Right"/>
-                        <StackPanel HorizontalAlignment="Right" Grid.Row="1" Orientation="Horizontal">
+                        <Grid Grid.Row="0" Margin="0,0,0,9" HorizontalAlignment="Right">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Width="12" Height="12" Margin="0,0,5,0"  VerticalAlignment="Center"
+                                    Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}" Command="{Binding Path=PlayAlbum}"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Path=Album.Name}" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                        </Grid>
+                        <StackPanel HorizontalAlignment="Right" Grid.Row="1" Orientation="Horizontal"
+                                    Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}">
                             <CheckBox IsChecked="{Binding Path=Album.UiIsFavorite, Mode=TwoWay}" Margin="0,0,5,0"  VerticalAlignment="Center"/>
                             <Custom:RatingSelector RatingSelected="{Binding Path=Album.UiRating, Mode=TwoWay}" 
                                            Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"/>
                         </StackPanel>
                         <TextBlock Text="{Binding Path=Album.Genre}"  HorizontalAlignment="Right" Grid.Row="2"/>
                         <TextBlock Text="{Binding Path=Album.PublishedYear, Converter={StaticResource PublishedYearConverter}}"  HorizontalAlignment="Right" Grid.Row="3"/>
-                        <StackPanel HorizontalAlignment="Right" Grid.Row="4" Orientation="Horizontal">
+                        <StackPanel HorizontalAlignment="Right" Grid.Row="4" Orientation="Horizontal"
+                                    Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}">
                             <TextBlock Text="Playing time: "/>
                             <TextBlock Text="{Binding Path=AlbumPlayTime, Converter={StaticResource TimeSpanConverter}}"/>
                         </StackPanel>
