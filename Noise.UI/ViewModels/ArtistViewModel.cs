@@ -206,10 +206,12 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			if(( args.Item is DbArtist ) &&
+			var item = args.GetItem( mNoiseManager.DataProvider );
+
+			if(( item is DbArtist ) &&
 			   ( CurrentArtist != null ) &&
-			   ((args.Item as DbArtist).DbId == CurrentArtist.DbId )) {
-				CurrentArtist = TransformArtist( args.Item as DbArtist );
+			   ( args.ItemId == CurrentArtist.DbId )) {
+				CurrentArtist = TransformArtist( item as DbArtist );
 			}
 		}
 

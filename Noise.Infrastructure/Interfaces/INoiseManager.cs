@@ -6,6 +6,8 @@
 		void			StartExplorerJobs();
 		void			Shutdown();
 
+		void			ConfigurationChanged();
+
 		IDataProvider	DataProvider { get; }
 		ISearchProvider	SearchProvider { get; }
 		ILibraryBuilder	LibraryBuilder { get; }

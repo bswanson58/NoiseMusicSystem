@@ -6,8 +6,6 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.FileStore {
 	public class RootFolder : StorageFolder {
-		private const int					cMaxStrategyLevel = 5;
-
 		public string			DisplayName { get; set; }
 		public FolderStrategy	FolderStrategy { get; set; }
 

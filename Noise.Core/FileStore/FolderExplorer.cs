@@ -94,7 +94,7 @@ namespace Noise.Core.FileStore {
 			mStopExploring = true;
 		}
 
-		private void LoadConfiguration( IDatabase database ) {
+		public void LoadConfiguration( IDatabase database ) {
 			var configMgr = mContainer.Resolve<ISystemConfiguration>();
 			var storageConfig = configMgr.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName  );
 

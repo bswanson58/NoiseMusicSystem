@@ -150,16 +150,18 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			if(( args.Item is DbTrack ) &&
+			var item = args.GetItem( mNoiseManager.DataProvider );
+
+			if(( item is DbTrack ) &&
 			   ( CurrentAlbum != null ) &&
-			   ((args.Item as DbTrack).Album == CurrentAlbum.DbId )) {
+			   ((item as DbTrack).Album == CurrentAlbum.DbId )) {
 				BeginInvoke( () => {
-					var track = ( from UiTrack node in mTracks where node.DbId == args.Item.DbId select node ).FirstOrDefault();
+					var track = ( from UiTrack node in mTracks where node.DbId == args.ItemId select node ).FirstOrDefault();
 
 					if( track != null ) {
 						switch( args.Change ) {
 							case DbItemChanged.Update:
-								mTracks[mTracks.IndexOf( track )] = TransformTrack( args.Item as DbTrack );
+								mTracks[mTracks.IndexOf( track )] = TransformTrack( item as DbTrack );
 								break;
 							case DbItemChanged.Delete:
 								mTracks.Remove( track );
@@ -170,11 +172,11 @@ namespace Noise.UI.ViewModels {
 				});
 			}
 
-			if(( args.Item is DbAlbum ) &&
+			if(( item is DbAlbum ) &&
 			   ( CurrentAlbum != null ) &&
-			   ((args.Item as DbAlbum).DbId == CurrentAlbum.DbId )) {
+			   ((item as DbAlbum).DbId == CurrentAlbum.DbId )) {
 				BeginInvoke( () => {
-					CurrentAlbum = TransformAlbum( args.Item as DbAlbum );
+					CurrentAlbum = TransformAlbum( item as DbAlbum );
 				} );
 			}
 		}

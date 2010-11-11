@@ -2,6 +2,7 @@
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
+using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
@@ -69,6 +70,21 @@ namespace Noise.Core {
 			}
 
 			return ( IsInitialized );
+		}
+
+		public void ConfigurationChanged() {
+			var folderExplorer = mContainer.Resolve<IFolderExplorer>();
+			var database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				folderExplorer.LoadConfiguration( database );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - NoiseManager:ConfigurationChanged", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
 		}
 
 		public void Shutdown() {

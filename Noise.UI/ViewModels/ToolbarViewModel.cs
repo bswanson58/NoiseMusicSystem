@@ -81,6 +81,7 @@ namespace Noise.UI.ViewModels {
 					}
 
 					systemConfig.Save( configuration );
+					noiseManager.ConfigurationChanged();
 				}
 			}
 		}

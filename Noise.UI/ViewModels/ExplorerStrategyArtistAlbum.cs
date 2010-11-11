@@ -57,9 +57,11 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			if( args.Item is DbArtist ) {
+			var item = args.GetItem( mNoiseManager.DataProvider );
+
+			if( item is DbArtist ) {
 				BeginInvoke( () => {
-					var artist = args.Item as DbArtist;
+					var artist = item as DbArtist;
 
 					if( artist != null ) {
 						var treeNode = ( from ArtistTreeNode node in mViewModel.TreeData

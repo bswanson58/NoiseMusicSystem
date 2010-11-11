@@ -4,6 +4,7 @@ using System.ServiceProcess;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support.Service;
 using Noise.Service.Infrastructure.Interfaces;
@@ -50,6 +51,7 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 
 				mServiceBus = mContainer.Resolve<IServiceBusManager>();
 				if( mServiceBus.InitializeServer()) {
+					mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 					mEvents.GetEvent<Events.LibraryUpdateStarted>().Subscribe( OnLibraryUpdateStarted );
 					mEvents.GetEvent<Events.LibraryUpdateCompleted>().Subscribe( OnLibraryUpdateCompleted );
 				}
@@ -93,6 +95,15 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 		public void UpdateLibrary() {
 			if(!mNoiseManager.LibraryBuilder.LibraryUpdateInProgress ) {
 				mNoiseManager.LibraryBuilder.StartLibraryUpdate();
+			}
+		}
+
+		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
+			var item = args.GetItem( mNoiseManager.DataProvider );
+
+			if(( item is DbArtist ) ||
+			   ( item is DbAlbum )) {
+				mServiceBus.Publish( new DatabaseItemChangedMessage { ItemId = args.ItemId, Change = args.Change });
 			}
 		}
 

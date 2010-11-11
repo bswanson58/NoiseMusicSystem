@@ -39,6 +39,23 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public DbBase GetItem( long itemId ) {
+			DbBase	retValue = null;
+			var database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				retValue = ( from DbBase item in database.Database where item.DbId == itemId select item ).FirstOrDefault();
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetItem:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
 		public void InsertItem( object item ) {
 			Condition.Requires( item ).IsNotNull();
 

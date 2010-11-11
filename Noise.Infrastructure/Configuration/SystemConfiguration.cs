@@ -6,8 +6,8 @@ namespace Noise.Infrastructure.Configuration {
 
 		public SystemConfiguration() {
 			mConfiguration = ConfigurationManager.OpenExeConfiguration( ConfigurationUserLevel.PerUserRoamingAndLocal );
-
 		}
+
 		public T RetrieveConfiguration<T>( string sectionName ) {
 			object section = mConfiguration.GetSection( sectionName );
 

@@ -132,8 +132,10 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		public void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			if( args.Item is DbTrack ) {
-				var track = args.Item as DbTrack;
+			var item = args.GetItem( mNoiseManager.DataProvider );
+
+			if( item is DbTrack ) {
+				var track = item as DbTrack;
 
 				foreach( var queueItem in mOpenTracks.Values ) {
 					if(( !queueItem.IsStream ) &&
