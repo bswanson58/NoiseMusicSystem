@@ -133,7 +133,7 @@ namespace Noise.UI.ViewModels {
 
 			if( artist != null ) {
 				using( var albumList = mNoiseManager.DataProvider.GetAlbumList( artist.DbId )) {
-					foreach( var dbAlbum in albumList.List ) {
+					foreach( var dbAlbum in from DbAlbum album in albumList.List orderby album.Name select album ) {
 						var uiAlbum = new UiAlbum( OnAlbumSelect, OnAlbumPlay ) { DisplayGenre = mNoiseManager.TagManager.GetGenre( dbAlbum.Genre ) };
 						Mapper.DynamicMap( dbAlbum, uiAlbum );
 
