@@ -17,7 +17,7 @@ namespace Noise.Core.FileStore {
 
 		public FileSystemWatcherEx() {
 			mChangeEntries = new Dictionary<string, DateTime>();
-			NotifyDelay = new TimeSpan( 0, 0, 0, 10 );
+			NotifyDelay = new TimeSpan( 0, 0, 1, 0 );
 		}
 
 		public bool IsWatching {

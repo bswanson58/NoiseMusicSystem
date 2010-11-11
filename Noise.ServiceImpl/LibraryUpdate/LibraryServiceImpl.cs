@@ -39,7 +39,8 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 				mJobScheduler.Start();
 
 //				ScheduleLibraryUpdate();
-				InitializeLibraryWatchers();
+				// Always update the library on file system changes in the service.
+				mNoiseManager.LibraryBuilder.EnableUpdateOnLibraryChange = true;
 
 				mServiceBus = mContainer.Resolve<IServiceBusManager>();
 				if( mServiceBus.InitializeServer()) {
@@ -81,11 +82,6 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 
 			mJobScheduler.ScheduleJob( jobDetail, trigger );
 			mLog.LogMessage( "Started Library Update schedule." );
-		}
-
-		private void InitializeLibraryWatchers() {
-			var	rootFolderList = mNoiseManager.LibraryBuilder.RootFolderList();
-			
 		}
 
 		public void UpdateLibrary() {
