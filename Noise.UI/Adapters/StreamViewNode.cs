@@ -1,4 +1,4 @@
-﻿using Microsoft.Practices.Composite.Events;
+﻿using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;

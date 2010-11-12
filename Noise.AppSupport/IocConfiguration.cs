@@ -1,9 +1,9 @@
 ﻿using System;
-using Microsoft.Practices.Composite;
-using Microsoft.Practices.Composite.Events;
-using Microsoft.Practices.Composite.Logging;
-using Microsoft.Practices.Composite.Modularity;
-using Microsoft.Practices.Composite.UnityExtensions;
+using Microsoft.Practices.Prism;
+using Microsoft.Practices.Prism.Events;
+using Microsoft.Practices.Prism.Logging;
+using Microsoft.Practices.Prism.Modularity;
+using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Noise.Core.DataBuilders;
@@ -85,9 +85,9 @@ namespace Noise.AppSupport {
 
 				ExceptionExtensions.RegisterFrameworkExceptionType( typeof( ActivationException));
 				ExceptionExtensions.RegisterFrameworkExceptionType( typeof( ResolutionFailedException));
-				ExceptionExtensions.RegisterFrameworkExceptionType( typeof(Microsoft.Practices.ObjectBuilder2.BuildFailedException));
+				ExceptionExtensions.RegisterFrameworkExceptionType( typeof(Microsoft.Practices.ObjectBuilder2.ILifetimeContainer));
 
-				ServiceLocator.SetLocatorProvider( mContainer.Resolve<IServiceLocator>);
+				ServiceLocator.SetLocatorProvider( () => mContainer.Resolve<IServiceLocator>());
 
 				mContainer.Resolve<IModuleManager>().Run();
 			}

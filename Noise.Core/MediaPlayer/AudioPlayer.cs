@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Timers;
-using Microsoft.Practices.Composite.Events;
+using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.FileStore;

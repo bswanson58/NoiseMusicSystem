@@ -66,14 +66,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Eloquera\v3.0.B3\Eloquera.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Composite">
-      <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.Composite.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Prism">
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Composite.Presentation">
-      <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.Composite.Presentation.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Prism.UnityExtensions">
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.UnityExtensions.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity">
-      <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.Unity.dll</HintPath>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=1.0.0.505, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

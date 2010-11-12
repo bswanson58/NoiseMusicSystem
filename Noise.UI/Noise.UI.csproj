@@ -72,23 +72,21 @@
       <HintPath>..\lib\AvalonControls\v2.0\AvalonControlsLibrary.dll</HintPath>
     </Reference>
     <Reference Include="CuttingEdge.Conditions, Version=1.1.0.10041, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.Practices.Composite">
-      <HintPath>..\lib\CAL\Microsoft.Practices.Composite.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Prism">
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Composite.Presentation">
-      <HintPath>..\lib\CAL\Microsoft.Practices.Composite.Presentation.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Prism.Interactivity">
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.Interactivity.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Composite.UnityExtensions">
-      <HintPath>..\lib\CAL\Microsoft.Practices.Composite.UnityExtensions.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Prism.UnityExtensions">
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.UnityExtensions.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ObjectBuilder2">
-      <HintPath>..\lib\CAL\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation">
-      <HintPath>..\lib\CAL\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity">
-      <HintPath>..\lib\CAL\Microsoft.Practices.Unity.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Unity, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
     <Reference Include="Observal, Version=1.0.0.0, Culture=neutral, PublicKeyToken=55d77739a7b12116, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

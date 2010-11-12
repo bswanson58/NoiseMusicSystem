@@ -1,6 +1,6 @@
 ﻿#region Using Directives
 
-using Microsoft.Practices.Composite.Presentation.Events;
+using Microsoft.Practices.Prism.Events;
 
 #endregion
 

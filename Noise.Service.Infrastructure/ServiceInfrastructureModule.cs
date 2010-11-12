@@ -1,4 +1,4 @@
-﻿using Microsoft.Practices.Composite.Modularity;
+﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
 using Noise.Service.Infrastructure.Interfaces;
 using Noise.Service.Infrastructure.ServiceBus;

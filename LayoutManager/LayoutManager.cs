@@ -12,10 +12,9 @@ using System.Windows.Media;
 using Composite.Layout.Events;
 using Composite.Layout.Exceptions;
 using Composite.Layout.Properties;
-using Microsoft.Practices.Composite.Events;
-using Microsoft.Practices.Composite.Presentation.Regions;
-using Microsoft.Practices.Composite.Presentation.Regions.Behaviors;
-using Microsoft.Practices.Composite.Regions;
+using Microsoft.Practices.Prism.Events;
+using Microsoft.Practices.Prism.Regions;
+using Microsoft.Practices.Prism.Regions.Behaviors;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Windows;
+using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Desktop {
 	/// <summary>
 	/// Interaction logic for App.xaml
 	/// </summary>
-	public partial class App : Application {
+	public partial class App {
 		private Bootstrapper	mBootstrapper;
 
 		protected override void OnStartup( StartupEventArgs e ) {

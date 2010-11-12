@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using CuttingEdge.Conditions;
-using Microsoft.Practices.Composite.Events;
+using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;

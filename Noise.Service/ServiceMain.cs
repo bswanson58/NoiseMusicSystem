@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.ServiceProcess;
+using Microsoft.Practices.Unity;
 using Noise.AppSupport;
 using Noise.Infrastructure.Support.Service;
 

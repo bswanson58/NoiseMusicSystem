@@ -1,8 +1,4 @@
-﻿#region Using Directives
-
-using Microsoft.Practices.Composite.Presentation.Events;
-
-#endregion
+﻿using Microsoft.Practices.Prism.Events;
 
 namespace Composite.Layout.Events
 {

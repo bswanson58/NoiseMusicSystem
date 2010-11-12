@@ -88,23 +88,18 @@
     <ApplicationIcon>..\Common\Noise.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.Composite">
-      <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.Composite.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Prism">
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Composite.Presentation">
-      <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.Composite.Presentation.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Prism.UnityExtensions">
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.UnityExtensions.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Composite.UnityExtensions">
-      <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.Composite.UnityExtensions.dll</HintPath>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ObjectBuilder2">
-      <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation">
-      <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity">
-      <HintPath>..\lib\CAL\v2.0.1\Microsoft.Practices.Unity.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Unity, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

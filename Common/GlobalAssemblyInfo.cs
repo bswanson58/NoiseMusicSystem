@@ -29,12 +29,12 @@ using System.Reflection;
 //
 // Assembly Version is only used by .Net Framework to indentify the assembly
 // for locating, linking and loading the assemblies.
-[assembly: AssemblyVersion( "0.5.0.0" )]
+[assembly: AssemblyVersion( "0.6.0.0" )]
 
 // The AssemblyFileVersionAttribute is incremented with every build in order
 // to distinguish one build from another. It is displayed as File version in
 // the Explorer property dialog.
-[assembly: AssemblyFileVersion( "0.5.0.0" )]
+[assembly: AssemblyFileVersion( "0.6.0.0" )]
 
 // Displayed as Product version in the Explorer property dialog.
 // By default, the "Product version" shown in the file properties window is
@@ -42,4 +42,4 @@ using System.Reflection;
 // Set AssemblyInformationalVersionAttribute to be the same as
 // AssemblyVersionAttribute so that the "Product version" in the file
 // properties window matches the version displayed in the GAC shell extension.
-[assembly: AssemblyInformationalVersion("0.5.0.0")]
+[assembly: AssemblyInformationalVersion("0.6.0.0")]

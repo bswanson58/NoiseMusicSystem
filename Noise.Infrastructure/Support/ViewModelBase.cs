@@ -7,7 +7,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Microsoft.Practices.Composite.Presentation.Commands;
+using Microsoft.Practices.Prism.Commands;
 
 namespace Noise.Infrastructure.Support {
 	public class ViewModelBase : DynamicObject, INotifyPropertyChanged {

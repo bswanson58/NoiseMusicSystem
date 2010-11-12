@@ -1,4 +1,4 @@
-﻿using Microsoft.Practices.Composite.Modularity;
+﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;

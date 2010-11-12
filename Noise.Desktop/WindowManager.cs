@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Forms;
 using Composite.Layout;
 using Composite.Layout.Configuration;
-using Microsoft.Practices.Composite.Events;
+using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Desktop.Properties;
 using Noise.Infrastructure;
