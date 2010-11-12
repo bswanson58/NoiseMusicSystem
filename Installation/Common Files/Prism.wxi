@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-  <?define PrismLibraryFolder="$(var.SolutionDir)\lib\CAL\v2.0.1\"?>
+  <?define PrismLibraryFolder="$(var.SolutionDir)\lib\CAL\v4.0.0.0\"?>
   
   <DirectoryRef Id="INSTALLDIRECTORY">
-    <Component Id="Microsoft.Practices.Composite.dll" Guid="15a2adc5-df9f-448c-a8d5-72e76184d0b0">
-      <File Id="Microsoft.Practices.Composite.dll" DiskId="10" Source="$(var.PrismLibraryFolder)Microsoft.Practices.Composite.dll" KeyPath="yes" Checksum="yes" />
+    <Component Id="Microsoft.Practices.Prism.dll" Guid="b8afc7d4-ae8a-47fb-be12-ce7b1c198f59">
+      <File Id="Microsoft.Practices.Prism.dll" DiskId="10" Source="$(var.PrismLibraryFolder)Microsoft.Practices.Prism.dll" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="Microsoft.Practices.Composite.Presentation.dll" Guid="d43f7886-c48d-4be8-bd9f-3c409111332a">
-      <File Id="Microsoft.Practices.Composite.Presentation.dll" DiskId="10" Source="$(var.PrismLibraryFolder)Microsoft.Practices.Composite.Presentation.dll" KeyPath="yes" Checksum="yes" />
+    <Component Id="Microsoft.Practices.Prism.Interactivity.dll" Guid="039e8b84-ee77-480f-821d-fec09e6b5c4d">
+      <File Id="Microsoft.Practices.Prism.Interactivity.dll" DiskId="10" Source="$(var.PrismLibraryFolder)Microsoft.Practices.Prism.Interactivity.dll" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="Microsoft.Practices.Composite.UnityExtensions.dll" Guid="d89ebe56-34c8-45bd-89b9-c8b1373a8c3f">
-      <File Id="Microsoft.Practices.Composite.UnityExtensions.dll" DiskId="10" Source="$(var.PrismLibraryFolder)Microsoft.Practices.Composite.UnityExtensions.dll" KeyPath="yes" Checksum="yes" />
+    <Component Id="Microsoft.Practices.Prism.UnityExtensions.dll" Guid="bac1241f-5d0e-45ad-a0a3-f54e1a0b6bbc">
+      <File Id="Microsoft.Practices.Prism.UnityExtensions.dll" DiskId="10" Source="$(var.PrismLibraryFolder)Microsoft.Practices.Prism.UnityExtensions.dll" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="Microsoft.Practices.ObjectBuilder2.dll" Guid="03686a13-e31c-4417-99c2-c4d928155afb">
-      <File Id="Microsoft.Practices.ObjectBuilder2.dll" DiskId="10" Source="$(var.PrismLibraryFolder)Microsoft.Practices.ObjectBuilder2.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Microsoft.Practices.ServiceLocation.dll" Guid="efd60e71-bf7d-4078-8c36-1c5652d0a5b9">
+    <Component Id="Microsoft.Practices.ServiceLocation.dll" Guid="36c9907f-a323-4de0-b836-ff03b77cd76d">
       <File Id="Microsoft.Practices.ServiceLocation.dll" DiskId="10" Source="$(var.PrismLibraryFolder)Microsoft.Practices.ServiceLocation.dll" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="Microsoft.Practices.Unity.dll" Guid="5170f074-d772-40d9-b30b-a4164f0163a4">
+    <Component Id="Microsoft.Practices.Unity.dll" Guid="4d93f2ac-955d-4acb-b672-c4849f560b2f">
       <File Id="Microsoft.Practices.Unity.dll" DiskId="10" Source="$(var.PrismLibraryFolder)Microsoft.Practices.Unity.dll" KeyPath="yes" Checksum="yes" />
     </Component>
   </DirectoryRef>
 
   <ComponentGroup Id="PrismFiles">
-    <ComponentRef Id="Microsoft.Practices.Composite.dll" />
-    <ComponentRef Id="Microsoft.Practices.Composite.Presentation.dll" />
-    <ComponentRef Id="Microsoft.Practices.Composite.UnityExtensions.dll" />
-    <ComponentRef Id="Microsoft.Practices.ObjectBuilder2.dll" />
+    <ComponentRef Id="Microsoft.Practices.Prism.dll" />
+    <ComponentRef Id="Microsoft.Practices.Prism.Interactivity.dll" />
+    <ComponentRef Id="Microsoft.Practices.Prism.UnityExtensions.dll" />
     <ComponentRef Id="Microsoft.Practices.ServiceLocation.dll" />
     <ComponentRef Id="Microsoft.Practices.Unity.dll" />
   </ComponentGroup>
