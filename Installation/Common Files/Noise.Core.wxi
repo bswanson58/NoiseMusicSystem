@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
   <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="Noise.AppSupport" Guid="b8941cb2-e1f1-42ef-be6d-b9ec5b1537d7">
+      <File Id="Noise.AppSupport.dll" DiskId="10" Source="$(var.Noise.AppSupport.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
     <Component Id="Noise.Core" Guid="9c54113f-f515-407b-beaa-db95c082c165">
       <File Id="Noise.Core.dll" DiskId="10" Source="$(var.Noise.Core.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
     <Component Id="Noise.Infrastructure" Guid="89d9bf19-146a-427e-a102-f45e3c71f02b">
       <File Id="Noise.Infrastructure.dll" DiskId="10" Source="$(var.Noise.Infrastructure.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Noise.Service" Guid="d29434cc-3eb8-4705-ac5b-40793908ff49">
+      <File Id="Noise.Service.dll" DiskId="10" Source="$(var.Noise.Service.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Noise.Service.Infrastructure" Guid="d30c5ab4-54eb-4fcb-92b0-6aab7554c54d">
+      <File Id="Noise.Service.Infrastructure.dll" DiskId="10" Source="$(var.Noise.Service.Infrastructure.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
     <Component Id="Noise.UI" Guid="382bd861-7acc-4da5-b170-67d12ad72ad3">
       <File Id="Noise.UI.dll" DiskId="10" Source="$(var.Noise.UI.TargetPath)" KeyPath="yes" Checksum="yes" />
@@ -19,8 +28,11 @@
   </DirectoryRef>
 
   <ComponentGroup Id="CoreFiles">
+    <ComponentRef Id="Noise.AppSupport" />
     <ComponentRef Id="Noise.Core" />
     <ComponentRef Id="Noise.Infrastructure" />
+    <ComponentRef Id="Noise.Service"/>
+    <ComponentRef Id="Noise.Service.Infrastructure"/>
     <ComponentRef Id="Noise.UI" />
     <ComponentRef Id="LastFmSharp.dll" />
     <ComponentRef Id="Composite.Layout.dll"/>

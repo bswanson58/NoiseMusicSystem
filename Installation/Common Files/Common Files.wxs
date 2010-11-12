@@ -13,6 +13,7 @@
     <?include Lucene.wxi ?>
     <?include Microsoft.wxi ?>
     <?include NLog.wxi ?>
+    <?include NServiceBus.wxi ?>
     <?include Observal.wxi ?>
     <?include Prism.wxi ?>
     <?include Quartz.wxi ?>

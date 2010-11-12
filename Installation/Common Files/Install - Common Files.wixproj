@@ -44,6 +44,7 @@
     <Content Include="Microsoft.wxi" />
     <Content Include="NLog.wxi" />
     <Content Include="Noise.Core.wxi" />
+    <Content Include="NServiceBus.wxi" />
     <Content Include="Observal.wxi" />
     <Content Include="Prism.wxi" />
     <Content Include="Quartz.wxi" />
@@ -67,6 +68,14 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
+    <ProjectReference Include="..\..\Noise.AppSupport\Noise.AppSupport.csproj">
+      <Name>Noise.AppSupport</Name>
+      <Project>{7ed4f983-3946-48eb-aab7-587cefac4d03}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\..\Noise.Core\Noise.Core.csproj">
       <Name>Noise.Core</Name>
       <Project>{33a45442-71e5-4bfe-b37f-129edb4f18e8}</Project>
@@ -78,6 +87,30 @@
     <ProjectReference Include="..\..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Name>Noise.Infrastructure</Name>
       <Project>{2c697760-1b66-4ded-b57a-b3438d5a75fc}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Noise.Service.Infrastructure\Noise.Service.Infrastructure.csproj">
+      <Name>Noise.Service.Infrastructure</Name>
+      <Project>{bc70f5ed-672c-4690-bef7-7950907e95c5}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Noise.ServiceImpl\Noise.ServiceImpl.csproj">
+      <Name>Noise.ServiceImpl</Name>
+      <Project>{bb5ecd63-efba-439d-a669-73095840fd2e}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Noise.Service\Noise.Service.csproj">
+      <Name>Noise.Service</Name>
+      <Project>{ba542e58-159a-4764-9068-8b8579d234db}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
