@@ -41,12 +41,15 @@
     <DirectoryRef Id="INSTALLDIRECTORY">
       <Component Id="Noise.Service.exe" Guid="68b09635-9f5d-4c09-b848-44d7da36cdc5">
         <File Id="Noise.Service.exe" DiskId="1" Source="$(var.Noise.Service.TargetPath)" KeyPath="yes" Checksum="yes" />
+        <ServiceInstall Id="ServiceInstall" Type="ownProcess" Vital="yes" Name="LibraryUpdateService"
+                        DisplayName="Noise Library Update Service"
+                        Description="This service maintains the Noise Music System library."
+                        Start="auto" Account="LocalSystem" ErrorControl="normal" Interactive="no" />
+        <!-- <util:User Id="UpdateUserLogonAsService" UpdateIfExists="yes" CreateUser="no" Name="" LogonAsService="yes" /> -->
+        <ServiceControl Id="StartService" Start="install" Stop="both" Remove="uninstall" Name="LibraryUpdateService" Wait="yes" />
       </Component>
       <Component Id="Noise.Service.config" Guid="3082da87-30db-46c5-8ded-a381326d71b8">
         <File Id="Noise.Service.config" DiskId="1" Source="$(var.Noise.Service.TargetDir)Noise.Service.exe.config" KeyPath="yes" Checksum="yes" />
-      </Component>
-      <Component Id="Noise.ServiceImpl.dll" Guid="3240d15a-f33d-4dd3-93e2-085fef545908">
-        <File Id="Noise.ServiceImpl.dll" DiskId="1" Source="$(var.Noise.ServiceImpl.TargetDir)Noise.ServiceImpl.dll" KeyPath="yes" Checksum="yes" />
       </Component>
     </DirectoryRef>
 
@@ -56,7 +59,6 @@
     <ComponentGroup Id="ApplicationFiles">
       <ComponentRef Id="Noise.Service.exe" />
       <ComponentRef Id="Noise.Service.config" />
-      <ComponentRef Id="Noise.ServiceImpl.dll"/>
     </ComponentGroup>
 
     <Feature Id="Complete" Title="Noise Library Service Install" Level="1" ConfigurableDirectory="INSTALLDIRECTORY">

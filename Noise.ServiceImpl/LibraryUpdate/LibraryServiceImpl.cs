@@ -7,6 +7,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support.Service;
+using Noise.Service.Infrastructure.Clients;
 using Noise.Service.Infrastructure.Interfaces;
 using Noise.Service.Infrastructure.ServiceBus;
 using Quartz;

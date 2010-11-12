@@ -102,6 +102,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Clients\LibraryServiceUpdateClient.cs" />
+    <Compile Include="Clients\LibraryUpdateService.cs" />
     <Compile Include="Configuration\CustomNServiceConfiguration.cs" />
     <Compile Include="Interfaces\IServiceBusManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

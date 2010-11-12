@@ -3,7 +3,7 @@ using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
 using Noise.Service.Infrastructure.ServiceContracts;
 
-namespace Noise.ServiceImpl.LibraryUpdate {
+namespace Noise.Service.Infrastructure.Clients {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class LibraryUpdateService : ILibraryUpdateService {
 		private readonly IUnityContainer	mContainer;

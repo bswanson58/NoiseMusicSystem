@@ -96,7 +96,6 @@
     </Compile>
     <Compile Include="LibraryUpdate\LibraryServiceImpl.cs" />
     <Compile Include="LibraryUpdate\LibraryUpdateJob.cs" />
-    <Compile Include="LibraryUpdate\LibraryUpdateService.cs" />
     <Compile Include="NoiseServiceImplModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

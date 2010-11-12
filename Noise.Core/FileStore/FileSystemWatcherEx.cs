@@ -49,8 +49,14 @@ namespace Noise.Core.FileStore {
 		}
 
 		public void Shutdown() {
-			mFileEvents.EnableRaisingEvents = false;
-			mNotifyTimer.Change( long.MaxValue, long.MaxValue );
+			if( mFileEvents != null ) {
+				mFileEvents.EnableRaisingEvents = false;
+			}
+
+			if( mNotifyTimer != null ) {
+				mNotifyTimer.Change( long.MaxValue, long.MaxValue );
+			}
+
 			mChangeEntries.Clear();
 		}
 
