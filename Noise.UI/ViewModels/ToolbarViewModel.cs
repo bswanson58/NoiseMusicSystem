@@ -106,16 +106,12 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_DisplayLog() {
 			if( mContainer != null ) {
-				var applicationLog = new ApplicationLogReader();
+				var dialogModel = new	ApplicationLogDialogModel();
 
-				if( applicationLog.ReadLog( Constants.ApplicationLogName )) {
-					var dialogModel = new	ApplicationLogDialogModel();
-
-					if( dialogModel.Initialize()) {
-						var	dialogService = mContainer.Resolve<IDialogService>();
+				if( dialogModel.Initialize()) {
+					var	dialogService = mContainer.Resolve<IDialogService>();
 					
-						dialogService.ShowDialog( DialogNames.ApplicationLogView, dialogModel );
-					}
+					dialogService.ShowDialog( DialogNames.ApplicationLogView, dialogModel );
 				}
 			}
 		}
