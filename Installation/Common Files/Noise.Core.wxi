@@ -10,9 +10,6 @@
     <Component Id="Noise.Infrastructure" Guid="89d9bf19-146a-427e-a102-f45e3c71f02b">
       <File Id="Noise.Infrastructure.dll" DiskId="10" Source="$(var.Noise.Infrastructure.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="Noise.Service" Guid="d29434cc-3eb8-4705-ac5b-40793908ff49">
-      <File Id="Noise.Service.dll" DiskId="10" Source="$(var.Noise.Service.TargetPath)" KeyPath="yes" Checksum="yes" />
-    </Component>
     <Component Id="Noise.Service.Infrastructure" Guid="d30c5ab4-54eb-4fcb-92b0-6aab7554c54d">
       <File Id="Noise.Service.Infrastructure.dll" DiskId="10" Source="$(var.Noise.Service.Infrastructure.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
@@ -31,7 +28,6 @@
     <ComponentRef Id="Noise.AppSupport" />
     <ComponentRef Id="Noise.Core" />
     <ComponentRef Id="Noise.Infrastructure" />
-    <ComponentRef Id="Noise.Service"/>
     <ComponentRef Id="Noise.Service.Infrastructure"/>
     <ComponentRef Id="Noise.UI" />
     <ComponentRef Id="LastFmSharp.dll" />

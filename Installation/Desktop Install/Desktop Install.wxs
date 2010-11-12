@@ -6,7 +6,7 @@
   <Product Id="0ef02795-7dc0-4cd4-8a50-c5346be3e026"
 					 Name="Noise Desktop Install"
 					 Language="1033"
-					 Version="0.3.0.0"
+					 Version="0.5.0.0"
 					 Manufacturer="Secret Squirrel Software"
 					 UpgradeCode="479ef42d-6d35-4dc5-8531-beb5883f54f2">
 		<Package InstallerVersion="200" 
@@ -31,13 +31,15 @@
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="$(var.ProgramFolder)">
 				<Directory Id="CompanyDirectory" Name="Secret Squirrel Software">
-					<Directory Id="INSTALLDIRECTORY" Name="Noise" />
+          <Directory Id="CommonDirectory" Name="Noise Music System">
+            <Directory Id="INSTALLDIRECTORY" Name="Noise Desktop" />
+          </Directory>
 				</Directory>
 			</Directory>
 
 			<Directory Id="ProgramMenuFolder">
 				<Directory Id="CompanyMenuFolder" Name="Secret Squirrel Software">
-					<Directory Id="ProductMenuFolder" Name="Noise Desktop" />
+					<Directory Id="ProductMenuFolder" Name="Noise Music System" />
 					<Component Id='NoiseMenuFolder' Guid="9be688f6-1b67-4208-b379-68c1cb611e32">
 						<RemoveFolder Id='NoiseMenuFolder' On='uninstall'/>
 						<RegistryValue Root="HKCU" Key="$(var.ShortcutRegistryKey)\NoiseMenuFolder" Name="installed" Type="integer" Value="1" KeyPath="yes" />
@@ -89,7 +91,7 @@
       </Component>
     </DirectoryRef>
 
-    <Icon Id="AddRemoveProgramsIcon" SourceFile="$(var.Noise.Desktop.ProjectDir)Noise.ico" />
+    <Icon Id="AddRemoveProgramsIcon" SourceFile="$(var.Noise.Desktop.ProjectDir)..\Common\Noise.ico" />
     <Property Id="ARPPRODUCTICON" Value="AddRemoveProgramsIcon" />
     
     <ComponentGroup Id="ApplicationFiles">

@@ -71,7 +71,7 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Noise.ico</ApplicationIcon>
+    <ApplicationIcon>..\Common\Noise.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AvalonControlsLibrary">
@@ -119,12 +119,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="WindowManager.cs" />
+    <Resource Include="..\Common\Noise.ico">
+      <Link>Noise.ico</Link>
+    </Resource>
     <Content Include="Layouts\LayoutConfiguration.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Noise.ico" />
     <Content Include="Layouts\ExploreLayout.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -174,9 +176,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -203,10 +203,6 @@
     <ProjectReference Include="..\Noise.Service.Infrastructure\Noise.Service.Infrastructure.csproj">
       <Project>{BC70F5ED-672C-4690-BEF7-7950907E95C5}</Project>
       <Name>Noise.Service.Infrastructure</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Noise.Service\Noise.Service.csproj">
-      <Project>{BA542E58-159A-4764-9068-8B8579D234DB}</Project>
-      <Name>Noise.Service</Name>
     </ProjectReference>
     <ProjectReference Include="..\Noise.UI\Noise.UI.csproj">
       <Project>{D9F288A7-A0EF-4237-A9D6-BA9CCE9C9C09}</Project>
