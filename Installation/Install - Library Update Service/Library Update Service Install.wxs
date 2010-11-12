@@ -64,8 +64,9 @@
     <Feature Id="Complete" Title="Noise Library Service Install" Level="1" ConfigurableDirectory="INSTALLDIRECTORY">
       <Feature Id="Application" Title="Noise Library Update Service" Level="1">
         <ComponentGroupRef Id="ApplicationFiles" />
-        <ComponentGroupRef Id="CoreFiles"/>
         <ComponentGroupRef Id="AutomapperFiles"/>
+        <ComponentGroupRef Id="BassAudioFiles"/>
+        <ComponentGroupRef Id="CoreFiles"/>
         <ComponentGroupRef Id="CuttingEdgeFiles"/>
         <ComponentGroupRef Id="EloqueraFiles"/>
         <ComponentGroupRef Id="HammockFiles"/>
@@ -82,7 +83,6 @@
       
       <Feature Id="UnnecessaryFiles" Title="Unnecessary Files" Level="0">
         <ComponentGroupRef Id="AvalonControlsFiles"/>
-        <ComponentGroupRef Id="BassAudioFiles"/>
       </Feature>
     </Feature>
 
