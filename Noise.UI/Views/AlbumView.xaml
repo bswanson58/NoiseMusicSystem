@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Noise.UI.ValueConverters"
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
              xmlns:Custom="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary"
              mc:Ignorable="d" 
@@ -12,13 +11,6 @@
     <UserControl.DataContext>
         <Binding Path="AlbumViewModel" Source="{StaticResource ViewModelLocator}"/>
     </UserControl.DataContext>
-
-    <UserControl.Resources>
-        <local:ByteImageConverter x:Key="imageConverter" />
-        <local:PublishedYearConverter x:Key="PublishedYearConverter"/>
-        <local:TimeSpanConverter x:Key="TimeSpanConverter"/>
-        <local:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
-    </UserControl.Resources>
 
     <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Album "  Margin="0">
         <Grid>
@@ -34,7 +26,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Image Grid.Column="0" Margin="7" MaxHeight="200" MaxWidth="300" Stretch="Uniform"
-                           Source="{Binding AlbumCover, Converter={StaticResource imageConverter}}"/>
+                           Source="{Binding AlbumCover, Converter={StaticResource ByteImageConverter}}"/>
                     <Grid Grid.Column="2" Margin="3,0,25,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -48,9 +40,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0" Width="15" Height="15" Margin="0,0,3,0"  VerticalAlignment="Center"
-                                    BorderThickness="0" FontFamily="Webdings" Content="4" FontSize="13.333" HorizontalAlignment="Center"
-                                    Style="{DynamicResource PlayButtonStyle}" Foreground="#FF1F53B8"
+                            <Button Style="{StaticResource PlayButtonStyle}" Content="4" Grid.Column="0" Margin="0,0,3,0"
                                     Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}" Command="{Binding Path=PlayAlbum}"/>
                             <TextBlock Grid.Column="1" Text="{Binding Path=Album.Name}" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                         </Grid>
@@ -85,9 +75,7 @@
                             <GridViewColumn Header="|>" Width="27">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Width="12" Height="12" Command="{Binding Path=Play}"
-                                                BorderThickness="0" FontFamily="Webdings" Content="4" FontSize="8" HorizontalAlignment="Center"
-                                                Style="{DynamicResource PlayButtonStyle}" Foreground="Gray"/>
+                                        <Button Content="4" FontSize="8" Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>

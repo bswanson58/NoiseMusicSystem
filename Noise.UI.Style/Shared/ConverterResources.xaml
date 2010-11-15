@@ -1,0 +1,9 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+                    xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters;assembly=Noise.UI">
+
+    <ValueConverters:ByteImageConverter x:Key="ByteImageConverter" />
+    <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter"/>
+    <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
+    <ValueConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
+</ResourceDictionary>
