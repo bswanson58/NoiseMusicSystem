@@ -2,8 +2,9 @@
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
                     xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters;assembly=Noise.UI">
 
+    <ValueConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
     <ValueConverters:ByteImageConverter x:Key="ByteImageConverter" />
     <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter"/>
+    <ValueConverters:RelativeTimeConverter x:Key="RelativeTimeConverter"/>
     <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
-    <ValueConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
 </ResourceDictionary>

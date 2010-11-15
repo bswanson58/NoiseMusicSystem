@@ -2,15 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters" mc:Ignorable="d" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+             mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              Tag="Search"
              DataContext="{Binding SearchViewModel, Source={StaticResource ViewModelLocator}}"
              >
-    <Control.Resources>
-        <ValueConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
-    </Control.Resources>
-    
     <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Search " Margin="3,0,0,0">
         <Grid>
             <Grid.RowDefinitions>
@@ -44,7 +42,7 @@
                         <GridViewColumn Header="|>" Width="27">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Width="12" Height="12" Command="{Binding Path=Play}" Visibility="{Binding CanPlay, Converter={StaticResource BooleanVisibilityConverter}}" />
+                                    <Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=Play}" Visibility="{Binding CanPlay, Converter={StaticResource BooleanVisibilityConverter}}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

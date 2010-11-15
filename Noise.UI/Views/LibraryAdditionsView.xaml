@@ -10,8 +10,6 @@
              d:DesignHeight="300" d:DesignWidth="300">
     
     <Control.Resources>
-        <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
-        
         <Style x:Key="TreeViewItemFocusVisual">
             <Setter Property="Control.Template">
                 <Setter.Value>
@@ -136,9 +134,9 @@
                     <ColumnDefinition Width="7"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Width="12" Height="12" Margin="0,0,3,0" Command="{Binding Path=Play}"/>
-                <TextBlock Grid.Column="1" Text="{Binding Path=Name}"/>
-                <TextBlock Grid.Column="3" Text="{Binding Path=Duration, Converter={StaticResource TimeSpanConverter}}"/>
+                <Button Grid.Column="0" Style="{StaticResource PlayButtonStyle}" Margin="3,3,5,3" Command="{Binding Path=Play}"/>
+                <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=Name}"/>
+                <TextBlock Grid.Column="3" VerticalAlignment="Center" Text="{Binding Path=Duration, Converter={StaticResource TimeSpanConverter}}"/>
             </Grid>
         </HierarchicalDataTemplate>
 
@@ -157,7 +155,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button Grid.Row="0" Grid.Column="0" Width="12" Height="12" Margin="0,0,3,0" Command="{Binding Path=Play}"/>
+                    <Button Grid.Row="0" Grid.Column="0" Style="{StaticResource PlayButtonStyle}" Margin="0,0,3,0" Command="{Binding Path=Play}"/>
                     <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
                         <TextBlock FontSize="16" Text="{Binding Path=Artist.Name}"/>
                         <TextBlock FontSize="16" Text="/"/>

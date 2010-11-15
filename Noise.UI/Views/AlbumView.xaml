@@ -40,7 +40,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Button Style="{StaticResource PlayButtonStyle}" Content="4" Grid.Column="0" Margin="0,0,3,0"
+                            <Button Style="{StaticResource PlayButtonStyle}" Grid.Column="0" Margin="0,0,3,0"
                                     Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}" Command="{Binding Path=PlayAlbum}"/>
                             <TextBlock Grid.Column="1" Text="{Binding Path=Album.Name}" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                         </Grid>
@@ -75,7 +75,7 @@
                             <GridViewColumn Header="|>" Width="27">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="4" FontSize="8" Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}"/>
+                                        <Button Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
@@ -104,7 +104,7 @@
                             <GridViewColumn Header="Rating" Width="70" Behaviours:GridViewSort.PropertyName="UiRating">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Custom:RatingSelector Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}" HorizontalAlignment="Center"
+                                        <Custom:RatingSelector Style="{StaticResource RatingStyle}" Template="{StaticResource RatingTemplate}" HorizontalAlignment="Center"
                                                                RatingSelected="{Binding Path=UiRating, Mode=TwoWay}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
