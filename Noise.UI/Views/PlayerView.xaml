@@ -52,7 +52,7 @@
 					<TextBlock Text="{Binding TrackName}" FontWeight="Bold" FontSize="16"/>
 				</StackPanel>
                 <Button Grid.Column="1" Margin="3" Content="Replay" Command="{Binding ReplayTrack}" VerticalAlignment="Center"/>
-                <CheckBox Grid.Column="2" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
+                <CheckBox Grid.Column="2" Margin="3" Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center"/>
 				<Controls:RatingSelector Grid.Column="3"
 										 Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
 										 RatingSelected="{Binding Path=Rating, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>

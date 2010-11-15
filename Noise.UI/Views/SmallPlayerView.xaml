@@ -53,7 +53,7 @@
                         <TextBlock Text="{Binding TrackName}" FontWeight="Bold" FontSize="13.333"/>
                     </StackPanel>
                     <Button Content="Replay" HorizontalAlignment="Left" d:LayoutOverrides="Height" Grid.Column="1" Command="{Binding Path=ReplayTrack}" Margin="3"/>
-                    <CheckBox Grid.Column="2" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
+                    <CheckBox Grid.Column="2" Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
                     <Controls:RatingSelector Grid.Column="3" Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
                                              RatingSelected="{Binding Path=Rating, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
                 </Grid>
