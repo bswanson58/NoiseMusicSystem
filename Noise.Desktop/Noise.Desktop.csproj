@@ -202,6 +202,10 @@
       <Project>{BC70F5ED-672C-4690-BEF7-7950907E95C5}</Project>
       <Name>Noise.Service.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Noise.UI.Style\Noise.UI.Style.csproj">
+      <Project>{DA31563C-5B51-4072-AF18-57E4FC5DE957}</Project>
+      <Name>Noise.UI.Style</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Noise.UI\Noise.UI.csproj">
       <Project>{D9F288A7-A0EF-4237-A9D6-BA9CCE9C9C09}</Project>
       <Name>Noise.UI</Name>

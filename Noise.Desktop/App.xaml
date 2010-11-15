@@ -7,6 +7,7 @@
     		<ResourceDictionary.MergedDictionaries>
     			<ResourceDictionary Source="Resources/GlobalResources.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/UiResources.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/BrushResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -23,7 +23,9 @@
                     <GridViewColumn Header="|>" Width="27">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Width="12" Height="12" Command="{Binding Path=PlayFavorite}"/>
+                                <Button Width="12" Height="12" Command="{Binding Path=PlayFavorite}"
+                                        BorderThickness="0" FontFamily="Webdings" Content="4" FontSize="8" HorizontalAlignment="Center"
+                                        Style="{DynamicResource PlayButtonStyle}" Foreground="Gray"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

@@ -42,6 +42,14 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
+    <ProjectReference Include="..\..\Noise.UI.Style\Noise.UI.Style.csproj">
+      <Name>Noise.UI.Style</Name>
+      <Project>{da31563c-5b51-4072-af18-57e4fc5de957}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\Common Files\Install - Common Files.wixproj">
       <Name>Install - Common Files</Name>
       <Project>{00bd8e1b-b1f1-43d7-bd03-bf74819e2883}</Project>

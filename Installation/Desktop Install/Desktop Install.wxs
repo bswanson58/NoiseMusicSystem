@@ -60,6 +60,10 @@
         <File Id="Noise.Desktop.config" DiskId="1" Source="$(var.Noise.Desktop.TargetDir)Noise.Desktop.exe.config" KeyPath="yes" Checksum="yes" />
       </Component>
 
+      <Component Id="Noise.UI.Style.dll" Guid="3c616b69-2034-4242-af37-71de5b4bd13b">
+        <File Id="Noise.UI.Style.dll" DiskId="1" Source="$(var.Noise.UI.Style.TargetDir)Noise.UI.Style.dll" KeyPath="yes" Checksum="yes" />
+      </Component>
+      
       <!-- Screen Layouts -->
       <Directory Id="UiLayoutConfig" Name="Layouts">
         <Component Id="LayoutConfiguration.xaml" Guid="a75c8e62-b6da-4115-b3b7-c5c4c157f0d8">
@@ -97,6 +101,7 @@
     <ComponentGroup Id="ApplicationFiles">
       <ComponentRef Id="Noise.Desktop.exe" />
       <ComponentRef Id="Noise.Desktop.config" />
+      <ComponentRef Id="Noise.UI.Style.dll"/>
       <ComponentRef Id="LayoutConfiguration.xaml"/>
       <ComponentRef Id="ExploreLayout.xaml"/>
       <ComponentRef Id="ListenLayout.xaml"/>

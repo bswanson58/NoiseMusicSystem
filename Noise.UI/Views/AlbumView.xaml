@@ -48,7 +48,9 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0" Width="12" Height="12" Margin="0,0,5,0"  VerticalAlignment="Center"
+                            <Button Grid.Column="0" Width="15" Height="15" Margin="0,0,3,0"  VerticalAlignment="Center"
+                                    BorderThickness="0" FontFamily="Webdings" Content="4" FontSize="13.333" HorizontalAlignment="Center"
+                                    Style="{DynamicResource PlayButtonStyle}" Foreground="#FF1F53B8"
                                     Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}" Command="{Binding Path=PlayAlbum}"/>
                             <TextBlock Grid.Column="1" Text="{Binding Path=Album.Name}" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                         </Grid>
@@ -83,7 +85,9 @@
                             <GridViewColumn Header="|>" Width="27">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Width="12" Height="12" Command="{Binding Path=Play}"/>
+                                        <Button Width="12" Height="12" Command="{Binding Path=Play}"
+                                                BorderThickness="0" FontFamily="Webdings" Content="4" FontSize="8" HorizontalAlignment="Center"
+                                                Style="{DynamicResource PlayButtonStyle}" Foreground="Gray"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
