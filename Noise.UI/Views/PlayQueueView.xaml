@@ -93,6 +93,7 @@
             </ListView>
 
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Margin="3" Content="Clear Queue" Command="{Binding Path=ClearQueue}"/>
                 <Button Margin="3" Content="Save as Play List" Command="{Binding Path=SavePlayList}"/>
             </StackPanel>
         </Grid>

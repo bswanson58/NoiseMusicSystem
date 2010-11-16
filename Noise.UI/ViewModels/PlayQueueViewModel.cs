@@ -88,6 +88,13 @@ namespace Noise.UI.ViewModels {
 
 		private void OnPlayQueueChanged( IPlayQueue playQueue ) {
 			BeginInvoke( LoadPlayQueue );
+
+			PlayQueueChangedFlag++;
+		}
+
+		private int PlayQueueChangedFlag {
+			get{ return( Get( () => PlayQueueChangedFlag, 0 )); }
+			set{ Set( () => PlayQueueChangedFlag, value  ); }
 		}
 
 		private void LoadPlayQueue() {
@@ -95,6 +102,23 @@ namespace Noise.UI.ViewModels {
 			mPlayQueue.AddRange( mNoiseManager.PlayQueue.PlayList );
 
 			RaiseCanExecuteChangedEvent( "CanExecute_SavePlayList" );
+		}
+
+		public void Execute_ClearQueue( object sender ) {
+			if( mNoiseManager != null ) {
+				mNoiseManager.PlayQueue.ClearQueue();
+			}
+		}
+
+		[DependsUpon( "PlayQueueChangedFlag" )]
+		public bool CanExecute_ClearQueue( object sender ) {
+			var retValue = true;
+
+			if( mNoiseManager != null ) {
+				retValue = !mNoiseManager.PlayQueue.IsQueueEmpty;
+			}
+
+			return( retValue );
 		}
 
 		private void OnTrackStarted( PlayQueueTrack track ) {

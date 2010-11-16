@@ -63,7 +63,6 @@
 				<Button Margin="3" Command="{Binding Stop}" Content="Stop" Width="43"/>
 				<Button Margin="3" Command="{Binding PreviousTrack}" Content="Prev" Width="43"/>
 				<Button Margin="3" Command="{Binding NextTrack}" Content="Next" Width="43"/>
-				<Button Margin="3" Command="{Binding ClearQueue}" Content="Clear" Width="43"/>
 				<StackPanel Orientation="Horizontal" Margin="5,0">
 					<TextBlock Text="Position: " Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center">
