@@ -85,7 +85,7 @@
                         </TextBlock>
                     </StackPanel>
 
-                    <Grid Width="125" Margin="5,5,0,0">
+                    <Grid x:Name="VuMeter" Width="125" Margin="5,5,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="11"/>
                             <RowDefinition Height="11"/>
@@ -94,9 +94,10 @@
                         <Rectangle Grid.Row="0" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding LeftLevel, Converter={StaticResource VolumeLevelConverter}}"/>
                         <Rectangle Grid.Row="1" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding RightLevel, Converter={StaticResource VolumeLevelConverter}}"/>
                     </Grid>
-                    <Slider Orientation="Horizontal" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}" Width="100"/>
+                    <Slider x:Name="Position" Orientation="Horizontal" Width="100" SnapsToDevicePixels="True" Minimum="0" Style="{StaticResource PlayerPositionSliderStyle}"
+                            Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}" VerticalAlignment="Center"/>
                 </StackPanel>
-                <Slider Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Height="50" Margin="3,0" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
+                <Slider x:Name="Volume" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Height="50" Margin="3,0" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
                 <Button Grid.Row="0" Grid.Column="3" Margin="3,0,5,0" Content="1" Command="{Binding Path=PlayerSwitch}" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Webdings"/>
             </Grid>
         </Grid>

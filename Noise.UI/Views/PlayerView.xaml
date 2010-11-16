@@ -11,12 +11,10 @@
         xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
         x:Class="Noise.UI.Views.PlayerView"
         mc:Ignorable="d" 
-        d:DesignHeight="100" d:DesignWidth="1000"             
+        d:DesignHeight="100" d:DesignWidth="1200"             
 		>
 	<UserControl.Resources>
 		<Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True"/>
-		<ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
-		<ValueConverters:VolumeLevelConverter x:Key="VolumeLevelConverter"/>
 		
 		<Storyboard x:Key="SliderValueAnimate">
 			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(RangeBase.Value)" Storyboard.TargetName="SpeedSlider">
@@ -57,7 +55,7 @@
 										 Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
 										 RatingSelected="{Binding Path=Rating, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
 			</Grid>
-			<StackPanel Grid.Row="1" Orientation="Horizontal" Height="35">
+			<StackPanel Grid.Row="1" Orientation="Horizontal" Height="35" Margin="7,0,0,0">
 				<Button Margin="3" Command="{Binding Play}" Content="4" Width="33" FontFamily="Webdings" FontSize="16"/>
 				<Button Margin="3" Command="{Binding Pause}" Content=";" Width="33" FontFamily="Webdings" FontSize="16"/>
 				<Button Margin="3" Command="{Binding Stop}" Content="&lt;" Width="33" FontFamily="Webdings" FontSize="16"/>
@@ -81,17 +79,17 @@
 					<Rectangle Grid.Row="0" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding LeftLevel, Converter={StaticResource VolumeLevelConverter}}"/>
 					<Rectangle Grid.Row="1" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding RightLevel, Converter={StaticResource VolumeLevelConverter}}"/>
 				</Grid>
-				<Slider x:Name="PositionSlider" Orientation="Horizontal" Width="80" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}"/>
-				<Slider x:Name="SpeedSlider" Orientation="Horizontal" Width="50" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}">
+				<Slider x:Name="PositionSlider" Orientation="Horizontal" Width="250" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}" Style="{StaticResource PlayerPositionSliderStyle}" VerticalAlignment="Center"/>
+				<Slider x:Name="SpeedSlider" Orientation="Horizontal" Width="76" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}" VerticalAlignment="Center">
 					<i:Interaction.Behaviors>
 						<Behaviours:SliderAnimateAfterDrag Storyboard="{StaticResource SliderValueAnimate}" />
 					</i:Interaction.Behaviors>
 				</Slider>
-				<Slider x:Name="Balance" Orientation="Horizontal" Width="50" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}"/>
-				<StackPanel Orientation="Vertical" Margin="7,5,0,0" VerticalAlignment="Top">
+				<Slider x:Name="Balance" Orientation="Horizontal" Width="76" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}" VerticalAlignment="Center"/>
+				<StackPanel Orientation="Vertical" Margin="15,9,0,0" VerticalAlignment="Top">
 					<CheckBox Content="Random" IsChecked="{Binding Path=RandomPlay, Mode=TwoWay}"/>
 				</StackPanel>
-				<StackPanel Orientation="Horizontal" Margin="7,0,0,0"  VerticalAlignment="Top">
+				<StackPanel Orientation="Horizontal" Margin="7,3,0,0"  VerticalAlignment="Top">
 					<Label Content="Exhausted:"/>
 					<ComboBox x:Name="ExhaustedStrategy" Width="110"
                               ItemsSource="{Binding Path=ExhaustedStrategyList}"

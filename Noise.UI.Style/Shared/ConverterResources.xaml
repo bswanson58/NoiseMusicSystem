@@ -7,4 +7,5 @@
     <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter"/>
     <ValueConverters:RelativeTimeConverter x:Key="RelativeTimeConverter"/>
     <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
+    <ValueConverters:VolumeLevelConverter x:Key="VolumeLevelConverter"/>
 </ResourceDictionary>
