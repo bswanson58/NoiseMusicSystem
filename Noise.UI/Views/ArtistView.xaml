@@ -24,7 +24,7 @@
     </UserControl.DataContext>
 
     <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Artist "  Margin="0">
-        <Grid>
+        <Grid Visibility="{Binding Path=ArtistValid, Converter={StaticResource BooleanVisibilityConverter}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>

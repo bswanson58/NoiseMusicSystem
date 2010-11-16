@@ -60,6 +60,11 @@ namespace Noise.UI.ViewModels {
 			get{ return( mCurrentArtist ); }
 		}
 
+		[DependsUpon( "Artist" )]
+		public bool ArtistValid {
+			get{ return( Artist != null ); }
+		}
+
 		private ArtistSupportInfo SupportInfo {
 			get{ return( Get( () => SupportInfo )); }
 			set {
