@@ -3,6 +3,7 @@
                     xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters;assembly=Noise.UI">
 
     <ValueConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
+    <ValueConverters:EmptyStringVisibilityConverter x:Key="EmptyStringVisibilityConverter"/>
     <ValueConverters:ByteImageConverter x:Key="ByteImageConverter" />
     <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter"/>
     <ValueConverters:RelativeTimeConverter x:Key="RelativeTimeConverter"/>
