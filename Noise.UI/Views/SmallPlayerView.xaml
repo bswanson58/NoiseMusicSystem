@@ -52,24 +52,24 @@
                         <TextBlock Text="Current Track: " FontSize="13.333" FontWeight="Bold" Foreground="{DynamicResource ControlTextColor}" />
                         <TextBlock Text="{Binding TrackName}" FontWeight="Bold" FontSize="13.333"/>
                     </StackPanel>
-                    <Button Content="Replay" HorizontalAlignment="Left" d:LayoutOverrides="Height" Grid.Column="1" Command="{Binding Path=ReplayTrack}" Margin="3"/>
+                    <Button Content="q" HorizontalAlignment="Left" d:LayoutOverrides="Height" Grid.Column="1" Command="{Binding Path=ReplayTrack}" Margin="3" FontFamily="Webdings" FontSize="16"/>
                     <CheckBox Grid.Column="2" Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
                     <Controls:RatingSelector Grid.Column="3" Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
                                              RatingSelected="{Binding Path=Rating, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
                 </Grid>
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Height="23" Margin="5,0,0,0">
-                    <Button Margin="0,0,3,0" Command="{Binding Play}" Content="Play" Width="39" FontSize="10.667"/>
-                    <Button Margin="3,0" Command="{Binding Pause}" Content="Pause" Width="39" FontSize="10.667"/>
-                    <Button Margin="3,0" Command="{Binding Stop}" Content="Stop" Width="39" FontSize="10.667"/>
-                    <Button Margin="3,0" Command="{Binding PreviousTrack}" Content="Prev" Width="39" FontSize="10.667">
+                    <Button Margin="0,0,3,0" Command="{Binding Play}" Content="4" FontSize="16" FontFamily="Webdings" Width="29"/>
+                    <Button Margin="3,0" Command="{Binding Pause}" Content=";" Width="29" FontSize="16" FontFamily="Webdings"/>
+                    <Button Margin="3,0" Command="{Binding Stop}" Content="&lt;" Width="29" FontSize="16" FontFamily="Webdings"/>
+                    <Button Margin="3,0" Command="{Binding PreviousTrack}" Content="9" Width="29" FontSize="16" FontFamily="Webdings">
                         <Button.ToolTip>
                             <ToolTip>
                                 <TextBlock Text="{Binding Path=PeekPreviousTrack, Converter={StaticResource PlayQueueTrackNameConverter}}"/>
                             </ToolTip>
                         </Button.ToolTip>
                     </Button>
-                    <Button Margin="3,0" Command="{Binding NextTrack}" Content="Next" Width="39" FontSize="10.667">
+                    <Button Margin="3,0" Command="{Binding NextTrack}" Content=":" Width="29" FontSize="16" FontFamily="Webdings">
                         <Button.ToolTip>
                             <ToolTip>
                                 <TextBlock Text="{Binding Path=PeekNextTrack, Converter={StaticResource PlayQueueTrackNameConverter}}"/>
@@ -85,7 +85,7 @@
                         </TextBlock>
                     </StackPanel>
 
-                    <Grid Width="110" Margin="5,5,0,0">
+                    <Grid Width="125" Margin="5,5,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="11"/>
                             <RowDefinition Height="11"/>
@@ -94,10 +94,10 @@
                         <Rectangle Grid.Row="0" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding LeftLevel, Converter={StaticResource VolumeLevelConverter}}"/>
                         <Rectangle Grid.Row="1" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding RightLevel, Converter={StaticResource VolumeLevelConverter}}"/>
                     </Grid>
-                    <Slider Orientation="Horizontal" Width="80" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}"/>
+                    <Slider Orientation="Horizontal" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}" Width="100"/>
                 </StackPanel>
                 <Slider Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Height="50" Margin="3,0" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
-                <Button Grid.Row="0" Grid.Column="3" Margin="3,0,5,0" Content="-" Command="{Binding Path=PlayerSwitch}" Height="15" Width="15" FontWeight="Bold" FontSize="9.333" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Button Grid.Row="0" Grid.Column="3" Margin="3,0,5,0" Content="1" Command="{Binding Path=PlayerSwitch}" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Webdings"/>
             </Grid>
         </Grid>
     </Border>

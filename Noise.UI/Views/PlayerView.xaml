@@ -11,7 +11,7 @@
         xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
         x:Class="Noise.UI.Views.PlayerView"
         mc:Ignorable="d" 
-        d:DesignHeight="92" d:DesignWidth="1000"             
+        d:DesignHeight="100" d:DesignWidth="1000"             
 		>
 	<UserControl.Resources>
 		<Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True"/>
@@ -51,18 +51,18 @@
 					<TextBlock Text="Playing Track: " FontSize="16" FontWeight="Bold" Foreground="{DynamicResource ControlTextColor}" />
 					<TextBlock Text="{Binding TrackName}" FontWeight="Bold" FontSize="16"/>
 				</StackPanel>
-                <Button Grid.Column="1" Margin="3" Content="Replay" Command="{Binding ReplayTrack}" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Margin="3" Content="q" Command="{Binding ReplayTrack}" VerticalAlignment="Center" FontFamily="Webdings" FontSize="16"/>
                 <CheckBox Grid.Column="2" Margin="3" Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center"/>
 				<Controls:RatingSelector Grid.Column="3"
 										 Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
 										 RatingSelected="{Binding Path=Rating, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
 			</Grid>
 			<StackPanel Grid.Row="1" Orientation="Horizontal" Height="35">
-				<Button Margin="3" Command="{Binding Play}" Content="Play" Width="43"/>
-				<Button Margin="3" Command="{Binding Pause}" Content="Pause" Width="43"/>
-				<Button Margin="3" Command="{Binding Stop}" Content="Stop" Width="43"/>
-				<Button Margin="3" Command="{Binding PreviousTrack}" Content="Prev" Width="43"/>
-				<Button Margin="3" Command="{Binding NextTrack}" Content="Next" Width="43"/>
+				<Button Margin="3" Command="{Binding Play}" Content="4" Width="33" FontFamily="Webdings" FontSize="16"/>
+				<Button Margin="3" Command="{Binding Pause}" Content=";" Width="33" FontFamily="Webdings" FontSize="16"/>
+				<Button Margin="3" Command="{Binding Stop}" Content="&lt;" Width="33" FontFamily="Webdings" FontSize="16"/>
+				<Button Margin="3" Command="{Binding PreviousTrack}" Content="9" Width="33" FontFamily="Webdings" FontSize="16"/>
+				<Button Margin="3" Command="{Binding NextTrack}" Content=":" Width="33" FontFamily="Webdings" FontSize="16"/>
 				<StackPanel Orientation="Horizontal" Margin="5,0">
 					<TextBlock Text="Position: " Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center">
