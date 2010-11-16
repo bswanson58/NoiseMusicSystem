@@ -11,8 +11,6 @@
               DataContext="{Binding PlayQueueViewModel, Source={StaticResource ViewModelLocator}}"
              >
     <Control.Resources>
-        <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
-        <ValueConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
         <Behaviours:CommandReference x:Key="DeleteCommandReference" Command="{Binding DeleteCommand}" />
     </Control.Resources>
 
@@ -60,10 +58,10 @@
                 </ListView.ItemContainerStyle>
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="|>" Width="40">
+                        <GridViewColumn Header="|>" Width="25">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Path=IsPlaying}" Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                                    <TextBlock Text="4" FontFamily="WebDings" Foreground="LightGreen" Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
