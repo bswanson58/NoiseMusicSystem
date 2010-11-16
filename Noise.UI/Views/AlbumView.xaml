@@ -69,7 +69,7 @@
                     </ListView.ItemContainerStyle>
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="|>" Width="27">
+                            <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}"/>
@@ -91,7 +91,7 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="Fav" Width="30" Behaviours:GridViewSort.PropertyName="UiIsFavorite">
+                            <GridViewColumn HeaderTemplate="{StaticResource FavoriteColumnHeaderTemplate}" Width="27" Behaviours:GridViewSort.PropertyName="UiIsFavorite">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <CheckBox HorizontalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=UiIsFavorite, Mode=TwoWay}"/>

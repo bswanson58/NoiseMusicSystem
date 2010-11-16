@@ -182,7 +182,7 @@
         </HierarchicalDataTemplate>
     </Control.Resources>
 
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Play Lists " Margin="3,0,0,0">
+    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Play Lists " Margin="0">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>

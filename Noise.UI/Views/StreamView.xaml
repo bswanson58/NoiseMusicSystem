@@ -9,7 +9,7 @@
              Tag="Radio"
              DataContext="{Binding StreamViewModel, Source={StaticResource ViewModelLocator}}"
              >
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Radio " Margin="3,0,0,0">
+    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Radio " Margin="0">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -27,7 +27,7 @@
                 </ListView.ItemContainerStyle>
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="|>" Width="27">
+                        <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayStream}">

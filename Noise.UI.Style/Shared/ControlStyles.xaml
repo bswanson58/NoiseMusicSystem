@@ -6,6 +6,11 @@
 		<Setter Property="Header" Value="{Binding Content.Tag, RelativeSource={RelativeSource Self}}" />
 	</Style>
 
+    <!-- Play column header style -->
+    <DataTemplate x:Key="PlayColumnHeaderTemplate">
+        <TextBlock FontFamily="WebDings" Text="4"/>
+    </DataTemplate>
+
     <!-- Play button style -->
 	<Style x:Key="PlayButtonStyle" TargetType="{x:Type Button}">
 		<Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
@@ -147,6 +152,11 @@
 		<Setter Property="RateItemHoverColor" Value="LightBlue"/>
 	</Style>
 
+    <!-- Favorite column header style -->
+    <DataTemplate x:Key="FavoriteColumnHeaderTemplate">
+        <TextBlock FontFamily="WebDings" Text="Y"/>
+    </DataTemplate>
+    
     <!-- Favorite Checkbox Style-->
     <SolidColorBrush x:Key="CheckBoxFillNormal" Color="#F4F4F4"/>
 	<SolidColorBrush x:Key="CheckBoxStroke" Color="#8E8F8F"/>

@@ -27,7 +27,7 @@
 		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}"/>
 	</UserControl.DataContext>
 
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Player " Margin="0,0,3,0">
+    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Player " Margin="3,0,3,0">
 		<Grid x:Name="Layout" Background="White">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>

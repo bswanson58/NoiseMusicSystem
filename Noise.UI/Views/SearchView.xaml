@@ -9,7 +9,7 @@
              Tag="Search"
              DataContext="{Binding SearchViewModel, Source={StaticResource ViewModelLocator}}"
              >
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Search " Margin="3,0,0,0">
+    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Search " Margin="0">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -39,7 +39,7 @@
                 </ListView.ItemContainerStyle>
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="|>" Width="27">
+                        <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=Play}" Visibility="{Binding CanPlay, Converter={StaticResource BooleanVisibilityConverter}}" />

@@ -167,7 +167,7 @@
     </Control.Resources>
 
     <Grid>
-        <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" What's New " Margin="3,0,0,0">
+        <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" What's New " Margin="0">
             <TreeView Grid.Row="0" BorderThickness="0"
                       ItemsSource="{Binding Path=NodeList}"
                       ItemTemplate="{StaticResource NewAdditionsTemplate}"

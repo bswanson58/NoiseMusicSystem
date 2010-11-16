@@ -18,7 +18,7 @@
         <KeyBinding Key="Delete" Command="{StaticResource DeleteCommandReference}" />
     </Control.InputBindings>
 
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Play Queue " Margin="3,0,0,0">
+    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Play Queue " Margin="3,0,3,0">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -58,7 +58,7 @@
                 </ListView.ItemContainerStyle>
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="|>" Width="25">
+                        <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="25">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="4" FontFamily="WebDings" Foreground="LightGreen" Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}"/>
