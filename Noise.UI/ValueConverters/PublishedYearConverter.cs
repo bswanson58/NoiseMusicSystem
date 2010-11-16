@@ -12,7 +12,7 @@ namespace Noise.UI.ValueConverters {
 				var year = (UInt32)value;
 
 				if( year == Constants.cUnknownYear ) {
-					retValue = "Unknown";
+					retValue = "n/a";
 				}
 				else if( year == Constants.cVariousYears ) {
 					retValue = "Various";
