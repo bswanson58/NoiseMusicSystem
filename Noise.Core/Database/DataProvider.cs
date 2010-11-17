@@ -44,7 +44,11 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
-				retValue = ( from DbBase item in database.Database where item.DbId == itemId select item ).FirstOrDefault();
+				var parms = database.Database.CreateParameters();
+
+				parms["itemId"] = itemId;
+
+				retValue = database.Database.ExecuteScalar( "SELECT DbBase Where DbId = @itemId", parms ) as DbBase;
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetItem:", ex );
@@ -123,7 +127,11 @@ namespace Noise.Core.Database {
 			DbArtist	retValue = null;
 
 			try {
-				retValue = ( from DbArtist artist in database.Database where artist.DbId == dbid select artist ).FirstOrDefault();
+				var parms = database.Database.CreateParameters();
+
+				parms["itemId"] = dbid;
+
+				retValue = database.Database.ExecuteScalar( "SELECT DbArtist Where DbId = @itemId", parms ) as DbArtist;
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetArtist:", ex );
@@ -183,9 +191,11 @@ namespace Noise.Core.Database {
 			DbArtist	retValue = null;
 
 			var database = mDatabaseManager.ReserveDatabase();
+			var parms = database.Database.CreateParameters();
+			parms["artistId"] = album.Artist;
 
 			try {
-				retValue = ( from DbArtist artist in database.Database where artist.DbId == album.Artist select artist ).FirstOrDefault();
+				retValue = database.Database.ExecuteScalar( "SELECT DbArtist Where DbId = @artistId", parms ) as DbArtist;
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetArtistForAlbum:", ex );
@@ -218,7 +228,11 @@ namespace Noise.Core.Database {
 			DbAlbum		retValue = null;
 
 			try {
-				retValue = ( from DbAlbum album in database.Database where album.DbId == dbid select album ).FirstOrDefault();
+				var parms = database.Database.CreateParameters();
+
+				parms["itemId"] = dbid;
+
+				retValue = database.Database.ExecuteScalar( "SELECT DbAlbum Where DbId = @itemId", parms ) as DbAlbum;
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetAlbum:", ex );
@@ -258,10 +272,12 @@ namespace Noise.Core.Database {
 			Condition.Requires( track ).IsNotNull();
 
 			DbAlbum	retValue = null;
-			var		database = mDatabaseManager.ReserveDatabase();
+			var	database = mDatabaseManager.ReserveDatabase();
+			var parms = database.Database.CreateParameters();
+			parms["albumId"] = track.Album;
 
 			try {
-				retValue = ( from DbAlbum album in database.Database where album.DbId == track.Album select album ).FirstOrDefault();
+				retValue = database.Database.ExecuteScalar( "SELECT DbAlbum Where DbId = @albumId", parms ) as DbAlbum;
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetAlbumForTrack:", ex );
@@ -296,7 +312,11 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
-				retValue = ( from DbTrack track in database.Database where forFile.MetaDataPointer == track.DbId select track ).FirstOrDefault();
+				var parms = database.Database.CreateParameters();
+
+				parms["itemId"] = forFile.MetaDataPointer;
+
+				retValue = database.Database.ExecuteScalar( "SELECT DbTrack Where DbId = @itemId", parms ) as DbTrack;
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetTrack( StorageFile ): ", ex );
@@ -313,7 +333,11 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
-				retValue = ( from DbTrack track in database.Database where track.DbId == trackId select track ).FirstOrDefault();
+				var parms = database.Database.CreateParameters();
+
+				parms["itemId"] = trackId;
+
+				retValue = database.Database.ExecuteScalar( "SELECT DbTrack Where DbId = @itemId", parms ) as DbTrack;
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetTrack( trackId ): ", ex );
@@ -418,10 +442,12 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				var trackId = GetObjectIdentifier( forTrack );
+				var parms = database.Database.CreateParameters();
+				parms["trackId"] = trackId;
 
 				Condition.Requires( trackId ).IsNotLessOrEqual( 0 );
 
-				retValue = ( from StorageFile file in database.Database where file.MetaDataPointer == trackId select file ).FirstOrDefault();
+				retValue = database.Database.ExecuteScalar( "SELECT StorageFile Where MetaDataPointer = @trackId", parms ) as StorageFile;
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetPhysicalFile:", ex );
@@ -462,12 +488,17 @@ namespace Noise.Core.Database {
 
 				parms["artistId"] = artistId;
 				parms["artistImage"] = ContentType.ArtistPrimaryImage;
+				parms["bandMembers"] = ContentType.BandMembers;
+				parms["biography"] = ContentType.Biography;
+				parms["similarArtists"] = ContentType.SimilarArtists;
+				parms["topAlbums"] = ContentType.TopAlbums;
 
-				retValue = new ArtistSupportInfo(( from DbTextInfo bio in database.Database where bio.Artist == artistId && bio.ContentType == ContentType.Biography select bio ).FirstOrDefault(),
-												   database.Database.ExecuteScalar( "SELECT DbArtwork Where Artist = @artistId AND ContentType = @artistImage", parms ) as DbArtwork,
-												 ( from DbAssociatedItemList item in database.Database where item.Artist == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault(),
-												 ( from DbAssociatedItemList item in database.Database where item.Artist == artistId && item.ContentType == ContentType.TopAlbums select item ).FirstOrDefault(),
-												 ( from DbAssociatedItemList item in database.Database where item.Artist == artistId && item.ContentType == ContentType.BandMembers select item ).FirstOrDefault());
+				retValue = new ArtistSupportInfo( database.Database.ExecuteScalar( "SELECT DbTextInfo Where Artist = @artistId AND ContentType = @biography", parms ) as DbTextInfo,
+												  database.Database.ExecuteScalar( "SELECT DbArtwork Where Artist = @artistId AND ContentType = @artistImage", parms ) as DbArtwork,
+												  database.Database.ExecuteScalar( "SELECT DbAssociatedItemList Where Artist = @artistId AND ContentType = @similarArtists", parms ) as DbAssociatedItemList,
+												  database.Database.ExecuteScalar( "SELECT DbAssociatedItemList Where Artist = @artistId AND ContentType = @topAlbums", parms ) as DbAssociatedItemList,
+												  database.Database.ExecuteScalar( "SELECT DbAssociatedItemList Where Artist = @artistId AND ContentType = @bandMembers", parms ) as DbAssociatedItemList );
+				
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetArtistSupportInfo:", ex );
@@ -523,7 +554,7 @@ namespace Noise.Core.Database {
 
 				retValue = new AlbumSupportInfo( database.Database.ExecuteQuery( "SELECT DbArtwork WHERE Album = @albumId AND ContentType = @coverType", parms ).OfType<DbArtwork>().ToArray(),
 												 database.Database.ExecuteQuery( "SELECT DbArtwork WHERE Album = @albumId AND ContentType = @otherType", parms ).OfType<DbArtwork>().ToArray(),
-												( from DbTextInfo info in database.Database where info.Album == albumId select info ).ToArray());
+												 database.Database.ExecuteQuery( "SELECT DbTextInfo WHERE Album = @albumId" ,parms ).OfType<DbTextInfo>().ToArray());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetAlbumSupportInfo:", ex );
@@ -546,7 +577,12 @@ namespace Noise.Core.Database {
 
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
-				retValue = ( from DbInternetStream stream in database.Database where stream.DbId == streamId select stream ).FirstOrDefault();
+				var parms = database.Database.CreateParameters();
+
+				parms["itemId"] = streamId;
+
+				retValue = database.Database.ExecuteScalar( "SELECT DbInternetStream Where DbId = @itemId", parms ) as DbInternetStream;
+//				retValue = ( from DbInternetStream stream in database.Database where stream.DbId == streamId select stream ).FirstOrDefault();
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetStream:", ex );

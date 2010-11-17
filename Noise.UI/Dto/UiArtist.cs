@@ -1,6 +1,5 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Dto {
 	public class UiArtist : UiBase {
