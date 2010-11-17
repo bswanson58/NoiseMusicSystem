@@ -1,4 +1,6 @@
-﻿using Microsoft.Practices.Prism.Events;
+﻿using System.ComponentModel;
+using CuttingEdge.Conditions;
+using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -73,7 +75,15 @@ namespace Noise.UI.ViewModels {
 				}
 			}
 
+			mFavoritesList.Sort( SelectSortProperty, ListSortDirection.Ascending );
+
 			mFavoritesList.ResumeNotification();
+		}
+
+		private static string SelectSortProperty( FavoriteViewNode node ) {
+			Condition.Requires( node ).IsNotNull();
+
+			return( node.Track != null ? node.Track.Name : node.Album != null ? node.Album.Name : node.Artist != null ? node.Artist.Name : string.Empty );
 		}
 
 		private void SelectArtist( FavoriteViewNode node ) {
@@ -88,7 +98,7 @@ namespace Noise.UI.ViewModels {
 			SelectAlbum( node );
 		}
 
-		private void PlayArtist( FavoriteViewNode node ) {
+		private static void PlayArtist( FavoriteViewNode node ) {
 		}
 
 		private void PlayAlbum( FavoriteViewNode node ) {
