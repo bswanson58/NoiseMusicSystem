@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
@@ -213,7 +212,7 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				retValue = new DataProviderList<DbArtist>( database.DatabaseId, FreeDatabase,
-															from DbArtist artist in database.Database where artist.IsFavorite select artist );				
+														   database.Database.ExecuteQuery( "SELECT DbArtist WHERE IsFavorite = true" ).OfType<DbArtist>());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetFavoriteArtists: ", ex );
@@ -254,10 +253,13 @@ namespace Noise.Core.Database {
 			DataProviderList<DbAlbum>	retValue = null;
 
 			var database = mDatabaseManager.ReserveDatabase();
+			var parms = database.Database.CreateParameters();
+
+			parms["artistId"] = artistId;
 
 			try {
 				retValue = new DataProviderList<DbAlbum>( database.DatabaseId, FreeDatabase,
-															from DbAlbum album in database.Database where album.Artist == artistId select album );
+														  database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetAlbumList:", ex );
@@ -295,7 +297,7 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				retValue = new DataProviderList<DbAlbum>( database.DatabaseId, FreeDatabase,
-															from DbAlbum album in database.Database where album.IsFavorite select album );				
+														  database.Database.ExecuteQuery( "SELECT DbAlbum WHERE IsFavorite = true" ).OfType<DbAlbum>());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetFavoriteAlbums: ", ex );
@@ -373,40 +375,13 @@ namespace Noise.Core.Database {
 			return( GetTrackList( forAlbum.DbId ));
 		}
 
-		public List<DbTrack> GetTrackList( DbArtist forArtist ) {
-			Condition.Requires( forArtist ).IsNotNull();
-
-			var	retValue = new List<DbTrack>();
-			var database =mDatabaseManager.ReserveDatabase();
-
-			try {
-				var artistId = GetObjectIdentifier( forArtist );
-				var albumList = from DbAlbum album in database.Database where album.Artist == artistId select album;
-
-				foreach( DbAlbum album in albumList ) {
-					var albumId = GetObjectIdentifier( album );
-					var trackList = from DbTrack track in database.Database where track.Album == albumId select track;
-
-					retValue.AddRange( trackList );
-				}
-			}
-			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetTrackList(forArtist):", ex );
-			}
-			finally {
-				mDatabaseManager.FreeDatabase( database );
-			}
-
-			return( retValue );
-		}
-
 		public DataProviderList<DbTrack> GetFavoriteTracks() {
 			DataProviderList<DbTrack>	retValue = null;
 
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				retValue = new DataProviderList<DbTrack>( database.DatabaseId, FreeDatabase,
-															from DbTrack track in database.Database where track.IsFavorite select track );				
+														  database.Database.ExecuteQuery( "SELECT DbTrack WHERE IsFavorite = true" ).OfType<DbTrack>());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetFavoriteTracks: ", ex );
@@ -521,10 +496,11 @@ namespace Noise.Core.Database {
 
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
-				var artistId = forArtist.DbId;
+				var parms = database.Database.CreateParameters();
+				parms["artistId"] = forArtist.DbId;
 
 				retValue = new DataProviderList<DbDiscographyRelease>( database.DatabaseId, FreeDatabase,
-															from DbDiscographyRelease release in database.Database where release.Artist == artistId select release );				
+																	   database.Database.ExecuteQuery( "SELECT DbDiscographyRelease WHERE Artist = @artistId", parms ).OfType<DbDiscographyRelease>());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetFavoriteTracks: ", ex );
@@ -582,7 +558,6 @@ namespace Noise.Core.Database {
 				parms["itemId"] = streamId;
 
 				retValue = database.Database.ExecuteScalar( "SELECT DbInternetStream Where DbId = @itemId", parms ) as DbInternetStream;
-//				retValue = ( from DbInternetStream stream in database.Database where stream.DbId == streamId select stream ).FirstOrDefault();
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetStream:", ex );
@@ -599,7 +574,7 @@ namespace Noise.Core.Database {
 
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
-			retValue = new DataProviderList<DbInternetStream>( database.DatabaseId, FreeDatabase,
+				retValue = new DataProviderList<DbInternetStream>( database.DatabaseId, FreeDatabase,
 																from DbInternetStream stream in database.Database select stream );
 			}
 			catch( Exception ex ) {
@@ -616,7 +591,7 @@ namespace Noise.Core.Database {
 
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
-			retValue = new DataProviderList<DbPlayList>( database.DatabaseId, FreeDatabase,
+				retValue = new DataProviderList<DbPlayList>( database.DatabaseId, FreeDatabase,
 																from DbPlayList list in database.Database select list );
 			}
 			catch( Exception ex ) {

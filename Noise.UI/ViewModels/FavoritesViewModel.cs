@@ -76,7 +76,6 @@ namespace Noise.UI.ViewModels {
 			}
 
 			mFavoritesList.Sort( SelectSortProperty, ListSortDirection.Ascending );
-
 			mFavoritesList.ResumeNotification();
 		}
 
