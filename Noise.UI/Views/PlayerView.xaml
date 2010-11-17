@@ -46,7 +46,8 @@
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 				<StackPanel Grid.Column="0" Orientation="Horizontal" Margin="10">
-					<TextBlock Text="Playing Track: " FontSize="16" FontWeight="Bold" Foreground="{DynamicResource ControlTextColor}" />
+					<TextBlock Text="Now Playing: " FontSize="16" FontWeight="Bold" Foreground="{DynamicResource ControlTextColor}"
+                               Visibility="{Binding TrackName, Converter={StaticResource EmptyStringVisibilityConverter}}"/>
 					<TextBlock Text="{Binding TrackName}" FontWeight="Bold" FontSize="16"/>
 				</StackPanel>
                 <Button Grid.Column="1" Margin="3" Content="q" Command="{Binding ReplayTrack}" VerticalAlignment="Center" FontFamily="Webdings" FontSize="16"/>

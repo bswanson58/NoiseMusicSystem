@@ -99,7 +99,7 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "StartTrackFlag" )]
 		public string TrackName {
 			get { 
-				var retValue = "None";
+				var retValue = string.Empty;
 
 				if( mNoiseManager.PlayController.CurrentTrack != null ) {
 					var track = mNoiseManager.PlayController.CurrentTrack;
