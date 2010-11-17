@@ -97,12 +97,13 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
+		[DependsUpon( "PlayQueueChangedFlag" )]
 		public string TrackName {
 			get { 
 				var retValue = string.Empty;
 
-				if( mNoiseManager.PlayController.CurrentTrack != null ) {
-					var track = mNoiseManager.PlayController.CurrentTrack;
+				if( mNoiseManager.PlayQueue.PlayingTrack != null ) {
+					var track = mNoiseManager.PlayQueue.PlayingTrack;
 
 					retValue = track.IsStream ? track.StreamInfo != null ? String.Format( "{0} ({1}/{2})", track.StreamInfo.Title, track.StreamInfo.Artist, track.StreamInfo.Album ) :
 													String.Format( "{0} - {1}", track.Stream.Name, track.Stream.Description ) :
