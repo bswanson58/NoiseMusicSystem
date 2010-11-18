@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Timers;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
@@ -23,8 +24,6 @@ namespace Noise.Core.MediaPlayer {
 		private int							CurrentChannel { get; set; }
 		private ePlaybackStatus				mCurrentStatus;
 		private readonly Dictionary<int, PlayQueueTrack>	mOpenTracks;
-
-		private readonly ParametricEqualizer	mEq;
 
 		public PlayController( IUnityContainer container ) {
 			mContainer = container;
@@ -50,13 +49,35 @@ namespace Noise.Core.MediaPlayer {
 				mDisplayTimeElapsed = configuration.DisplayPlayTimeElapsed;
 			}
 
-			mEq = new ParametricEqualizer { Bandwidth = 18f, Name = "Unnamed" };
-			mEq.AddBands( new [] { new ParametricBand( 25.0f ), new ParametricBand( 60.0f ),
-								   new ParametricBand( 120.0f ), new ParametricBand( 250.0f ),
-								   new ParametricBand( 500.0f ), new ParametricBand( 1000.0f ),
-								   new ParametricBand( 2000.0f ), new ParametricBand( 4000.0f ),
-								   new ParametricBand( 8000.0f ), new ParametricBand( 16000.0f ) });
-			mAudioPlayer.ParametricEq = mEq;
+			var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+			if( audioCongfiguration != null ) {
+				var equalizerList = ( from ParametricEqConfiguration eqConfig in audioCongfiguration.ParametricEqualizers
+				                      select eqConfig.AsParametericEqualizer()).ToList();
+
+				if( equalizerList.Count == 0 ) {
+					var eq = new ParametricEqualizer { Bandwidth = 18f, Name = "default" };
+					eq.AddBands( new [] { new ParametricBand( 25.0f ), new ParametricBand( 60.0f ),
+											new ParametricBand( 120.0f ), new ParametricBand( 250.0f ),
+											new ParametricBand( 500.0f ), new ParametricBand( 1000.0f ),
+											new ParametricBand( 2000.0f ), new ParametricBand( 4000.0f ),
+											new ParametricBand( 8000.0f ), new ParametricBand( 16000.0f ) });
+					equalizerList.Add( eq );
+
+					audioCongfiguration.UpdateEq( eq );
+					audioCongfiguration.DefaultEqualizer = eq.EqualizerId;
+					systemConfig.Save( audioCongfiguration );
+
+					mAudioPlayer.ParametricEq = eq;
+				}
+				else {
+					var eq = ( from ParametricEqualizer item in equalizerList where item.EqualizerId == audioCongfiguration.DefaultEqualizer select item ).FirstOrDefault();
+
+					if( eq != null ) {
+						mAudioPlayer.ParametricEq = eq;
+						mAudioPlayer.EqEnabled = audioCongfiguration.EqEnabled;
+					}
+				}
+			}
 		}
 
 		public ParametricEqualizer ParametricEq {

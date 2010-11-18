@@ -108,6 +108,7 @@
     <Compile Include="Configuration\DatabaseConfiguration.cs" />
     <Compile Include="Configuration\ExplorerConfiguration.cs" />
     <Compile Include="Configuration\ISystemConfiguration.cs" />
+    <Compile Include="Configuration\AudioConfiguration.cs" />
     <Compile Include="Configuration\ServerConfiguration.cs" />
     <Compile Include="Configuration\StorageConfiguration.cs" />
     <Compile Include="Configuration\SystemConfiguration.cs" />

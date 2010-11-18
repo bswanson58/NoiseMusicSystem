@@ -19,9 +19,15 @@ namespace Noise.Infrastructure.Dto {
 			this( centerFrequency ) {
 			Gain = gain;
 		}
+
+		public ParametricBand( long bandId, float centerFrequency, float gain ) :
+			this( centerFrequency, gain ) {
+			BandId = bandId;
+		}
 	}
 
 	public class ParametricEqualizer {
+		public long				EqualizerId { get; private set; }
 		public string			Name { get; set; }
 		public string			Description { get; set; }
 		public float			Bandwidth { get; set; }
@@ -30,14 +36,15 @@ namespace Noise.Infrastructure.Dto {
 		private	readonly List<ParametricBand>	mBands;
 
 		public ParametricEqualizer() {
+			EqualizerId = BitConverter.ToInt64( Guid.NewGuid().ToByteArray(), 0 );
+
 			mBands = new List<ParametricBand>();
 		}
 			
-		public ParametricEqualizer( bool isPreset, string name, string description ) :
+		public ParametricEqualizer( long equalizerId, bool isPreset ) :
 			this() {
+			EqualizerId = equalizerId;
 			IsPreset = isPreset;
-			Name = name;
-			Description = description;
 		}
 
 		public IEnumerable<ParametricBand> Bands {

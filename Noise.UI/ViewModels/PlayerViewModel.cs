@@ -357,6 +357,16 @@ namespace Noise.UI.ViewModels {
 				var	dialogService = mContainer.Resolve<IDialogService>();
 					
 				dialogService.ShowDialog( DialogNames.EqDialog, dialogModel );
+
+				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+				var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+
+				if( audioCongfiguration != null ) {
+					audioCongfiguration.UpdateEq( mNoiseManager.PlayController.ParametricEq );
+					audioCongfiguration.DefaultEqualizer = mNoiseManager.PlayController.ParametricEq.EqualizerId;
+					audioCongfiguration.EqEnabled = mNoiseManager.PlayController.EqEnabled;
+					systemConfig.Save( audioCongfiguration );
+				}
 			}
 		}
 	}
