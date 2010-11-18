@@ -16,21 +16,24 @@ using Timer = System.Timers.Timer;
 
 namespace Noise.Core.MediaPlayer {
 	internal class AudioStream {
-		public	int				Channel { get; private set; }
-		public	StorageFile		PhysicalFile { get; private set; }
-		public	string			Url { get; private set; }
-		public	bool			IsActive { get; set; }
-		public	bool			InSlide { get; set; }
-		public	bool			PauseOnSlide { get; set; }
-		public	bool			StopOnSlide { get; set; }
-		public	bool			Faded { get; set; }
-		public	BASSActive		Mode { get; set; }
-		public	float			SampleRate { get; private set; }
-		public	int				MetaDataSync { get; set; }
+		public	int						Channel { get; private set; }
+		public	StorageFile				PhysicalFile { get; private set; }
+		public	string					Url { get; private set; }
+		public	bool					IsActive { get; set; }
+		public	bool					InSlide { get; set; }
+		public	bool					PauseOnSlide { get; set; }
+		public	bool					StopOnSlide { get; set; }
+		public	bool					Faded { get; set; }
+		public	BASSActive				Mode { get; set; }
+		public	float					SampleRate { get; private set; }
+		public	int						MetaDataSync { get; set; }
+		public	int						CompressorFx { get; set; }
+		public	Dictionary<long, int>	EqChannels { get; private set; }
 
 		private AudioStream( int channel, float sampleRate ) {
 			Channel = channel;
 			SampleRate = sampleRate;
+			EqChannels = new Dictionary<long, int>();
 
 			Mode = BASSActive.BASS_ACTIVE_STOPPED;
 		}
@@ -59,6 +62,8 @@ namespace Noise.Core.MediaPlayer {
 		private readonly SYNCPROC						mStreamMetadataSync;
 		private readonly Timer							mUpdateTimer;
 		private readonly Dictionary<int, AudioStream>	mCurrentStreams;
+		private ParametricEqualizer						mEq;
+		private	bool									mEqEnabled;
 
 		private readonly DOWNLOADPROC					mDownloadProc;
 		private FileStream								mRecordStream;
@@ -77,6 +82,7 @@ namespace Noise.Core.MediaPlayer {
 
 			try {
 				Bass.BASS_Init( -1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero );
+				Bass.BASS_SetConfig( BASSConfig.BASS_CONFIG_FLOATDSP, true );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Bass Audio could not be initialized. ", ex);
@@ -168,7 +174,7 @@ namespace Noise.Core.MediaPlayer {
 
 			if( File.Exists( path )) {
 				try {
-					var channel = Bass.BASS_StreamCreateFile( path, 0, 0, BASSFlag.BASS_DEFAULT );
+					var channel = Bass.BASS_StreamCreateFile( path, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT );
 					
 					Single	sampleRate = 0;
 					Bass.BASS_ChannelGetAttribute( channel, BASSAttribute.BASS_ATTRIB_FREQ, ref sampleRate );
@@ -176,7 +182,9 @@ namespace Noise.Core.MediaPlayer {
 					var stream = new AudioStream( file, channel, sampleRate );
 					mCurrentStreams.Add( channel, stream );
 
-					InitializeEq( channel );
+					stream.CompressorFx = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_COMPRESSOR2, -1 );
+
+					InitializeEq( stream );
 					SetPan( stream );
 					SetPlaySpeed( stream );
 					retValue = channel;
@@ -203,7 +211,7 @@ namespace Noise.Core.MediaPlayer {
 						mLog.LogMessage( String.Format( "AudioPlayer - OpenStream cannot set _CONFIG_NET_PLAYLIST for: {0}", stream.Url ));
 					}
 
-					var channel = Bass.BASS_StreamCreateURL( stream.Url, 0, BASSFlag.BASS_DEFAULT, mDownloadProc, IntPtr.Zero );
+					var channel = Bass.BASS_StreamCreateURL( stream.Url, 0, BASSFlag.BASS_SAMPLE_FLOAT, mDownloadProc, IntPtr.Zero );
 					if( channel != 0 ) {
 						Single	sampleRate = 0;
 						Bass.BASS_ChannelGetAttribute( channel, BASSAttribute.BASS_ATTRIB_FREQ, ref sampleRate );
@@ -212,7 +220,9 @@ namespace Noise.Core.MediaPlayer {
 													MetaDataSync = Bass.BASS_ChannelSetSync( channel, BASSSync.BASS_SYNC_META, 0, mStreamMetadataSync, IntPtr.Zero ) };
 						mCurrentStreams.Add( channel, audioStream );
 
-						InitializeEq( channel );
+						audioStream.CompressorFx = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_COMPRESSOR2, -1 );
+
+						InitializeEq( audioStream );
 						SetPan( audioStream );
 						SetPlaySpeed( audioStream );
 						retValue = channel;
@@ -280,28 +290,121 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
-		private static void InitializeEq( int channel ) {
-/*			int[] fxChannels = {0, 0, 0};
+		public ParametricEqualizer ParametricEq {
+			get{ return( mEq ); }
+			set{
+				mEq = value;
 
-			// 3-band EQ
-			var eq = new BASS_DX8_PARAMEQ();
+				if( mEq != null ) {
+					if( mEqEnabled ) {
+						RemoveEq();
+						InitializeEq();
+					}
+				}
+				else {
+					RemoveEq();
+				}
+			}
+		}
 
-			fxChannels[0] = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_DX8_PARAMEQ, 0 );
-			fxChannels[1] = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_DX8_PARAMEQ, 0 );
-			fxChannels[2] = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_DX8_PARAMEQ, 0 );
+		public bool EqEnabled {
+			get{ return( mEqEnabled ); }
+			set {
+				if( mEq != null ) {
+					mEqEnabled = value;
 
-			eq.fBandwidth = 18f;
-			eq.fCenter = 100f;
-			eq.fGain = -10f;
+					if( mEqEnabled ) {
+						InitializeEq();
+					}
+					else {
+						RemoveEq();
+					}
+				}
+				else {
+					mEqEnabled = false;
+				}
+			}
+		}
 
-			Bass.BASS_FXSetParameters( fxChannels[0], eq );
-			eq.fCenter = 1000f;
-			Bass.BASS_FXSetParameters( fxChannels[1], eq );
+		private void InitializeEq() {
+			foreach( var stream in mCurrentStreams.Values ) {
+				InitializeEq( stream );
+			}
+		}
 
-			eq.fCenter = 8000f;
-			eq.fGain = 10F;
-			Bass.BASS_FXSetParameters( fxChannels[2], eq );
-*/		}
+		private void InitializeEq( AudioStream stream ) {
+			if(( mEq != null ) &&
+			   ( mEqEnabled )) {
+				try {
+					Bass.BASS_ChannelSetAttribute( stream.Channel, BASSAttribute.BASS_ATTRIB_FREQ, 44100f );
+
+					foreach( var band in mEq.Bands ) {
+						stream.EqChannels.Add( band.BandId, Bass.BASS_ChannelSetFX( stream.Channel, BASSFXType.BASS_FX_DX8_PARAMEQ, 0 ));
+					}
+
+					var eq = new BASS_DX8_PARAMEQ { fBandwidth = mEq.Bandwidth };
+
+					foreach( var band in mEq.Bands ) {
+						eq.fCenter = band.CenterFrequency;
+						eq.fGain = band.Gain;
+
+						Bass.BASS_FXSetParameters( stream.EqChannels[band.BandId], eq );
+					}
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - AudioPlayer:InitializeEq", ex );
+				}
+			}
+		}
+
+		private void RemoveEq() {
+			foreach( var stream in mCurrentStreams.Values ) {
+				RemoveEq( stream );
+			}
+		}
+
+		private void RemoveEq( AudioStream stream ) {
+			try {
+				foreach( int handle in stream.EqChannels.Values ) {
+					Bass.BASS_ChannelRemoveFX( stream.Channel, handle );
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - AudioPlayer:RemoveEq", ex );
+			}
+
+			stream.EqChannels.Clear();
+		}
+
+		public void AdjustEq( long bandId, float gain ) {
+			if( mEq != null ) {
+				mEq.AdjustEq( bandId, gain );
+
+				if( mEqEnabled ) {
+					foreach( var stream in mCurrentStreams.Values ) {
+						AdjustEq( stream, bandId, gain );
+					}
+				}
+			}
+		}
+
+		private void AdjustEq( AudioStream stream, long bandId, float gain ) {
+			try {
+				if( stream.EqChannels.ContainsKey( bandId )) {
+					var eq = new BASS_DX8_PARAMEQ();
+					var index = stream.EqChannels[bandId];
+
+					if( Bass.BASS_FXGetParameters( index, eq )) {
+						eq.fGain = gain;
+
+						Bass.BASS_FXSetParameters( index, eq );
+					}
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - AudioPlayer:AdjustEq", ex );
+			}
+		}
 
 		private void SetPan() {
 			foreach( var stream in mCurrentStreams.Values ) {

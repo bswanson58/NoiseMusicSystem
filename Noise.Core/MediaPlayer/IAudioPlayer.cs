@@ -23,5 +23,9 @@ namespace Noise.Core.MediaPlayer {
 		float				Volume { get; set; }
 		float				Pan { get; set; }
 		float				PlaySpeed { get; set; }
+
+		ParametricEqualizer ParametricEq { get; set; }
+		bool				EqEnabled { get; set; }
+		void				AdjustEq( long bandId, float gain );
 	}
 }

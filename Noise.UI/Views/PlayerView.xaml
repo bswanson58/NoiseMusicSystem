@@ -97,6 +97,7 @@
                               DisplayMemberPath="Title" SelectedValuePath="Strategy"
                               SelectedValue="{Binding Path=ExhaustedStrategy}"/>
 				</StackPanel>
+                <Button Margin="9,0,0,5" Height="25" Width="33" Content="Eq" Command="{Binding Eq}"/>
 			</StackPanel>
 			<Slider x:Name="Volume" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Height="50" Margin="0,0,10,0" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
 		</Grid>

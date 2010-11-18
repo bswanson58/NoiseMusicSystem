@@ -349,5 +349,15 @@ namespace Noise.UI.ViewModels {
 		public void Execute_PlayerSwitch() {
 			mEvents.GetEvent<Events.ExternalPlayerSwitch>().Publish( this );
 		}
+
+		public void Execute_Eq() {
+			var dialogModel = new	EqViewModel();
+
+			if( dialogModel.Initialize( mNoiseManager.PlayController )) {
+				var	dialogService = mContainer.Resolve<IDialogService>();
+					
+				dialogService.ShowDialog( DialogNames.EqDialog, dialogModel );
+			}
+		}
 	}
 }

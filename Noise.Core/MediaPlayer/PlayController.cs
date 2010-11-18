@@ -24,6 +24,8 @@ namespace Noise.Core.MediaPlayer {
 		private ePlaybackStatus				mCurrentStatus;
 		private readonly Dictionary<int, PlayQueueTrack>	mOpenTracks;
 
+		private readonly ParametricEqualizer	mEq;
+
 		public PlayController( IUnityContainer container ) {
 			mContainer = container;
 			mEvents = mContainer.Resolve<IEventAggregator>();
@@ -47,6 +49,28 @@ namespace Noise.Core.MediaPlayer {
 			if( configuration != null ) {
 				mDisplayTimeElapsed = configuration.DisplayPlayTimeElapsed;
 			}
+
+			mEq = new ParametricEqualizer { Bandwidth = 18f, Name = "Unnamed" };
+			mEq.AddBands( new [] { new ParametricBand( 25.0f ), new ParametricBand( 60.0f ),
+								   new ParametricBand( 120.0f ), new ParametricBand( 250.0f ),
+								   new ParametricBand( 500.0f ), new ParametricBand( 1000.0f ),
+								   new ParametricBand( 2000.0f ), new ParametricBand( 4000.0f ),
+								   new ParametricBand( 8000.0f ), new ParametricBand( 16000.0f ) });
+			mAudioPlayer.ParametricEq = mEq;
+		}
+
+		public ParametricEqualizer ParametricEq {
+			get{ return( mAudioPlayer.ParametricEq ); }
+			set{ mAudioPlayer.ParametricEq = value; }
+		}
+
+		public bool EqEnabled {
+			get{ return( mAudioPlayer.EqEnabled ); }
+			set{ mAudioPlayer.EqEnabled = value; }
+		}
+
+		public void SetEqValue( long bandId, float gain ) {
+			mAudioPlayer.AdjustEq( bandId, gain );
 		}
 
 		public PlayQueueTrack CurrentTrack {

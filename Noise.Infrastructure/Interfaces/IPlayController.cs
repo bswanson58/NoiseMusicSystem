@@ -18,6 +18,10 @@ namespace Noise.Infrastructure.Interfaces {
 		double			PanPosition {get; set; }
 		double			PlaySpeed { get; set; }
 
+		ParametricEqualizer	ParametricEq { get; set; }
+		bool				EqEnabled { get; set; }
+		void				SetEqValue( long bandId, float gain );
+
 		double			LeftLevel { get; }
 		double			RightLevel { get; }
 

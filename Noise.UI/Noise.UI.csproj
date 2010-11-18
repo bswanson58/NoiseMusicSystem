@@ -179,6 +179,7 @@
     <Compile Include="ValueConverters\EmptyStringVisibilityConverter.cs" />
     <Compile Include="ValueConverters\HtmlTextConverter.cs" />
     <Compile Include="ValueConverters\NumberToWordsConverter.cs" />
+    <Compile Include="ValueConverters\NumericTextMultitudeConverter.cs" />
     <Compile Include="ValueConverters\PlayQueueTrackNameConverter.cs" />
     <Compile Include="ValueConverters\PublishedYearConverter.cs" />
     <Compile Include="ValueConverters\RelativeTimeConverter.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="ViewModels\ApplicationLogDialogModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
     <Compile Include="ViewModels\DatabaseConfigurationDialogModel.cs" />
+    <Compile Include="ViewModels\EqViewModel.cs" />
     <Compile Include="ViewModels\ExplorerStrategyArtistAlbum.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
     <Compile Include="ViewModels\IExplorerViewStrategy.cs" />
@@ -215,6 +217,9 @@
     </Compile>
     <Compile Include="Views\DatabaseConfigurationDialog.xaml.cs">
       <DependentUpon>DatabaseConfigurationDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EqDialog.xaml.cs">
+      <DependentUpon>EqDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FavoritesView.xaml.cs">
       <DependentUpon>FavoritesView.xaml</DependentUpon>
@@ -313,6 +318,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DatabaseConfigurationDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EqDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
