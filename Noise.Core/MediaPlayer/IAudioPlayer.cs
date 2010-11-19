@@ -4,6 +4,7 @@ using Noise.Infrastructure.Dto;
 namespace Noise.Core.MediaPlayer {
 	public interface IAudioPlayer {
 		int					OpenFile( StorageFile file );
+		int					OpenFile( StorageFile file, float gainAdjustment );
 		int					OpenStream( DbInternetStream stream );
 		void				CloseChannel( int channel );
 

@@ -11,6 +11,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Un4seen.Bass;
+using Un4seen.Bass.AddOn.Fx;
 using Un4seen.Bass.AddOn.Tags;
 using Timer = System.Timers.Timer;
 
@@ -28,6 +29,7 @@ namespace Noise.Core.MediaPlayer {
 		public	float					SampleRate { get; private set; }
 		public	int						MetaDataSync { get; set; }
 		public	int						CompressorFx { get; set; }
+		public	int						PreampFx { get; set; }
 		public	Dictionary<long, int>	EqChannels { get; private set; }
 
 		private AudioStream( int channel, float sampleRate ) {
@@ -83,6 +85,8 @@ namespace Noise.Core.MediaPlayer {
 			try {
 				Bass.BASS_Init( -1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero );
 				Bass.BASS_SetConfig( BASSConfig.BASS_CONFIG_FLOATDSP, true );
+				// Load the fx library.
+				BassFx.BASS_FX_GetVersion();
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Bass Audio could not be initialized. ", ex);
@@ -156,7 +160,7 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
-		public int OpenFile( StorageFile file ) {
+		public int OpenFile( StorageFile file, float gainAdjustment ) {
 			var retValue = 0;
 			var dbManager = mContainer.Resolve<IDatabaseManager>();
 			var database = dbManager.ReserveDatabase();
@@ -183,10 +187,26 @@ namespace Noise.Core.MediaPlayer {
 					mCurrentStreams.Add( channel, stream );
 
 					stream.CompressorFx = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_COMPRESSOR2, -1 );
+					if( stream.CompressorFx == 0 ) {
+						mLog.LogInfo( "AudioPlayer - Could not set compressor FX." );
+					}
+
+					if( gainAdjustment != 0.0f ) {
+						stream.PreampFx = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_VOLUME, 2 );
+						if( stream.PreampFx == 0 ) {
+							mLog.LogInfo( "AudioPlayer - Could not set preamp." );
+						}
+
+						 // convert the replaygain dB gain to a linear value
+						var volparam = new BASS_BFX_VOLUME { lChannel = 0 /*BASSFXChan.BASS_BFX_CHANALL*/, fVolume = (float)Math.Pow( 10, gainAdjustment / 20 )};
+						if(!Bass.BASS_FXSetParameters( stream.PreampFx, volparam )) {
+							mLog.LogInfo( "AudioPlayer - Could not set preamp volume." );
+						}
+					}
 
 					InitializeEq( stream );
 					SetPan( stream );
-					SetPlaySpeed( stream );
+//					SetPlaySpeed( stream );
 					retValue = channel;
 				}
 				catch( Exception ex ) {
@@ -200,6 +220,10 @@ namespace Noise.Core.MediaPlayer {
 			}
 
 			return ( retValue );
+		}
+
+		public int OpenFile( StorageFile file ) {
+			return( OpenFile( file, 0.0f ));
 		}
 
 		public int OpenStream( DbInternetStream stream ) {
@@ -339,7 +363,7 @@ namespace Noise.Core.MediaPlayer {
 					Bass.BASS_ChannelSetAttribute( stream.Channel, BASSAttribute.BASS_ATTRIB_FREQ, 44100f );
 
 					foreach( var band in mEq.Bands ) {
-						stream.EqChannels.Add( band.BandId, Bass.BASS_ChannelSetFX( stream.Channel, BASSFXType.BASS_FX_DX8_PARAMEQ, 0 ));
+						stream.EqChannels.Add( band.BandId, Bass.BASS_ChannelSetFX( stream.Channel, BASSFXType.BASS_FX_DX8_PARAMEQ, 1 ));
 					}
 
 					var eq = new BASS_DX8_PARAMEQ { fBandwidth = mEq.Bandwidth };
@@ -348,7 +372,9 @@ namespace Noise.Core.MediaPlayer {
 						eq.fCenter = band.CenterFrequency;
 						eq.fGain = band.Gain;
 
-						Bass.BASS_FXSetParameters( stream.EqChannels[band.BandId], eq );
+						if(!Bass.BASS_FXSetParameters( stream.EqChannels[band.BandId], eq )) {
+							mLog.LogInfo( string.Format( "AudioPlayer - Could not set eq channel: {0}", Bass.BASS_ErrorGetCode()));
+						}
 					}
 				}
 				catch( Exception ex ) {

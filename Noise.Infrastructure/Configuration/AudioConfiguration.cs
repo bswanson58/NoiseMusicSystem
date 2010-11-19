@@ -10,6 +10,7 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cParametricEqualizersProperty	= "parametricEqualizers";
 		private const string	cDefaultEqualizerProperty		= "defaultEq";
 		private const string	cEqualizationEnabledProperty	= "eqEnabled";
+		private	const string	cEnableReplayGainProperty		= "replayGainEnabled";
 
 		public override bool IsReadOnly() {
 			return( false );
@@ -19,6 +20,12 @@ namespace Noise.Infrastructure.Configuration {
 		public long DefaultEqualizer {
 			get { return ((long)( base[cDefaultEqualizerProperty] ) ); }
 			set { base[cDefaultEqualizerProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cEnableReplayGainProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "true" )]
+		public bool ReplayGainEnabled {
+			get { return ((bool)( base[cEnableReplayGainProperty] ) ); }
+			set { base[cEnableReplayGainProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cEqualizationEnabledProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]

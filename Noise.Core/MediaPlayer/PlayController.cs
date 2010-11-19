@@ -23,6 +23,7 @@ namespace Noise.Core.MediaPlayer {
 		private readonly Timer				mInfoUpdateTimer;
 		private int							CurrentChannel { get; set; }
 		private ePlaybackStatus				mCurrentStatus;
+		private bool						mEnableReplayGain;
 		private readonly Dictionary<int, PlayQueueTrack>	mOpenTracks;
 
 		public PlayController( IUnityContainer container ) {
@@ -51,16 +52,17 @@ namespace Noise.Core.MediaPlayer {
 
 			var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
 			if( audioCongfiguration != null ) {
+				mEnableReplayGain = audioCongfiguration.ReplayGainEnabled;
+
 				var equalizerList = ( from ParametricEqConfiguration eqConfig in audioCongfiguration.ParametricEqualizers
 				                      select eqConfig.AsParametericEqualizer()).ToList();
 
 				if( equalizerList.Count == 0 ) {
 					var eq = new ParametricEqualizer { Bandwidth = 18f, Name = "default" };
-					eq.AddBands( new [] { new ParametricBand( 25.0f ), new ParametricBand( 60.0f ),
-											new ParametricBand( 120.0f ), new ParametricBand( 250.0f ),
-											new ParametricBand( 500.0f ), new ParametricBand( 1000.0f ),
-											new ParametricBand( 2000.0f ), new ParametricBand( 4000.0f ),
-											new ParametricBand( 8000.0f ), new ParametricBand( 16000.0f ) });
+					eq.AddBands( new [] { new ParametricBand( 120.0f ), new ParametricBand( 250.0f ),
+										  new ParametricBand( 500.0f ), new ParametricBand( 1000.0f ),
+										  new ParametricBand( 2000.0f ), new ParametricBand( 4000.0f ),
+										  new ParametricBand( 8000.0f ), new ParametricBand( 12000.0f ) });
 					equalizerList.Add( eq );
 
 					audioCongfiguration.UpdateEq( eq );
@@ -272,7 +274,14 @@ namespace Noise.Core.MediaPlayer {
 			}
 
 			if( track != null ) {
-				var	channel = track.IsStream ? mAudioPlayer.OpenStream( track.Stream ) : mAudioPlayer.OpenFile( track.File );
+				var gain = 0.0f;
+				
+				if(( mEnableReplayGain ) &&
+				   (!track.IsStream ) &&
+				   ( track.Track != null )) {
+					gain = track.Track.ReplayGainAlbumGain != 0.0f ? track.Track.ReplayGainAlbumGain : track.Track.ReplayGainTrackGain;
+				}
+				var	channel = track.IsStream ? mAudioPlayer.OpenStream( track.Stream ) : mAudioPlayer.OpenFile( track.File, gain );
 
 				mOpenTracks.Add( channel, track );
 				CurrentChannel = channel;
