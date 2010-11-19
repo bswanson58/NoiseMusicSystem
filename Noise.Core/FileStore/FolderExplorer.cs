@@ -30,12 +30,12 @@ namespace Noise.Core.FileStore {
 
 			if( database != null ) {
 				try {
-					retValue = from RootFolder root in database.Database where true select root;
+					retValue = from RootFolder root in database.Database select root;
 
 					if( retValue.Count() == 0 ) {
 						LoadConfiguration( database );
 
-						retValue = from RootFolder root in database.Database where true select root;
+						retValue = from RootFolder root in database.Database select root;
 					}
 				}
 				catch( Exception ex ) {
@@ -97,8 +97,10 @@ namespace Noise.Core.FileStore {
 		public void LoadConfiguration( IDatabase database ) {
 			var configMgr = mContainer.Resolve<ISystemConfiguration>();
 			var storageConfig = configMgr.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName  );
+			var rootCount = ( from RootFolder root in database.Database select root ).Count();
 
 			if(( storageConfig != null ) &&
+			   ( rootCount == 0 ) &&
 			   ( storageConfig.RootFolders != null )) {
 				foreach( RootFolderConfiguration folderConfig in storageConfig.RootFolders ) {
 					var root = new RootFolder( folderConfig.Path, folderConfig.Description );
