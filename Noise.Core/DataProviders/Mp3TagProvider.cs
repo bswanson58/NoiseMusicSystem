@@ -139,8 +139,8 @@ namespace Noise.Core.DataProviders {
 						if( frames != null ) {
 							foreach( var fr in frames ) {
 								if( fr.Description.IndexOf( "replaygain", StringComparison.InvariantCultureIgnoreCase ) != -1 ) {
-									var desc = fr.Description.ToUpper();
-									var gain = 0.0f;
+									var		desc = fr.Description.ToUpper();
+									float	gain;
 
 									if( desc.Contains( "REPLAYGAIN_ALBUM_GAIN" )) {
 										if( float.TryParse( FormatReplayGainString( fr.Text[0]), out gain )) {
@@ -188,7 +188,7 @@ namespace Noise.Core.DataProviders {
 								var	ratingFrame = UserTextInformationFrame.Get( id3Tags, "RATING", false );
 
 								if( ratingFrame != null ) {
-									var	rating = System.Convert.ToUInt16( ratingFrame.Text );
+									var	rating = Convert.ToUInt16( ratingFrame.Text );
 
 									if(( rating > 0 ) &&
 									   ( rating <= 5 )) {

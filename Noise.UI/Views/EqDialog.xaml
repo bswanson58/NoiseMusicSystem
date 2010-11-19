@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              Height="125" Width="350"
              Tag="Parametric Equalization"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="330">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -19,10 +19,12 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             
             <TextBlock Grid.Row="1" Text="{Binding Path=Eq.Name, Mode=OneWay}"/>
-            <CheckBox Grid.Row="3" Content="Enable Eq" IsChecked="{Binding Path=EqEnabled, Mode=TwoWay}"/>
+            <Button Grid.Row="3" Margin="0,0,0,7" Content="Reset Eq" Command="{Binding Path=ResetBands}"/>
+            <CheckBox Grid.Row="4" Content="Enable Eq" IsChecked="{Binding Path=EqEnabled, Mode=TwoWay}"/>
         </Grid>
         <ItemsControl Grid.Column="1" HorizontalAlignment="Right" Margin="0,5,5,5" ItemsSource="{Binding Path=Bands, Mode=OneWay}">
             <ItemsControl.ItemsPanel>

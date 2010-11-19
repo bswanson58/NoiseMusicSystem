@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
-	public class UiEqBand {
+	public class UiEqBand : ViewModelBase {
 		public	long						BandId { get; private set; }
 		public	float						CenterFrequency { get; private set; }
 		private float						mGain;
@@ -22,6 +23,8 @@ namespace Noise.UI.ViewModels {
 			get{ return( mGain ); }
 			set {
 				mGain = value;
+
+				RaisePropertyChanged( () => Gain );
 
 				if( mOnChange != null ) {
 					mOnChange( this );
@@ -71,6 +74,14 @@ namespace Noise.UI.ViewModels {
 
 		public List<UiEqBand> Bands {
 			get{ return( mBands ); }
+		}
+
+		public void Execute_ResetBands() {
+			foreach( var band in mBands ) {
+				band.Gain = 0.0f;
+
+				AdjustEq( band );
+			}
 		}
 	}
 }
