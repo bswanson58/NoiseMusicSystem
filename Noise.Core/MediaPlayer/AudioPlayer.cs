@@ -206,7 +206,7 @@ namespace Noise.Core.MediaPlayer {
 
 					InitializeEq( stream );
 					SetPan( stream );
-//					SetPlaySpeed( stream );
+					SetPlaySpeed( stream );
 					retValue = channel;
 				}
 				catch( Exception ex ) {
@@ -452,7 +452,9 @@ namespace Noise.Core.MediaPlayer {
 			if( stream.SampleRate > 0 ) {
 				float	multiplier = 1.0f + ( mPlaySpeed * 0.5f );
 
-				Bass.BASS_ChannelSetAttribute( stream.Channel, BASSAttribute.BASS_ATTRIB_FREQ, stream.SampleRate * multiplier );
+				if(!Bass.BASS_ChannelSetAttribute( stream.Channel, BASSAttribute.BASS_ATTRIB_FREQ, stream.SampleRate * multiplier )) {
+					mLog.LogInfo( string.Format( "AudioPlayer - COuld not set play speed: {0}", Bass.BASS_ErrorGetCode()));
+				}
 			}
 		}
 
