@@ -22,6 +22,10 @@ namespace Noise.Infrastructure.Dto {
 		public long				UserGenre { get; set; }
 		public bool				IsFavorite { get; set; }
 		public UInt32			PlayCount { get; set; }
+		public float			ReplayGainAlbumGain { get; set; }
+		public float			ReplayGainAlbumPeak { get; set; }
+		public float			ReplayGainTrackGain { get; set; }
+		public float			ReplayGainTrackPeak { get; set; }
 
 		public DbTrack() {
 			Album = Constants.cDatabaseNullOid;

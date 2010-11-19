@@ -135,13 +135,37 @@ namespace Noise.Core.DataProviders {
 
 					var id3Tags = Tags.GetTag( TagTypes.Id3v2 ) as TagLib.Id3v2.Tag;
 					if( id3Tags != null ) {
-/*						var frames = id3Tags.GetFrames<UserTextInformationFrame>();
+						var frames = id3Tags.GetFrames<UserTextInformationFrame>();
 						if( frames != null ) {
 							foreach( var fr in frames ) {
-								var text = fr.Text;
+								if( fr.Description.IndexOf( "replaygain", StringComparison.InvariantCultureIgnoreCase ) != -1 ) {
+									var desc = fr.Description.ToUpper();
+									var gain = 0.0f;
+
+									if( desc.Contains( "REPLAYGAIN_ALBUM_GAIN" )) {
+										if( float.TryParse( FormatReplayGainString( fr.Text[0]), out gain )) {
+											track.ReplayGainAlbumGain = gain;
+										}
+									}
+									else if( desc.Contains( "REPLAYGAIN_ALBUM_PEAK" )) {
+										if( float.TryParse( fr.Text[0], out gain )) {
+											track.ReplayGainAlbumPeak = gain;
+										}
+									}
+									else if( desc.Contains( "REPLAYGAIN_TRACK_GAIN" )) {
+										if( float.TryParse( FormatReplayGainString( fr.Text[0]), out gain )) {
+											track.ReplayGainTrackGain = gain;
+										}
+									}
+									else if( desc.Contains( "REPLAYGAIN_TRACK_PEAK" )) {
+										if( float.TryParse( fr.Text[0], out gain )) {
+											track.ReplayGainTrackPeak = gain;
+										}
+									}
+								}
 							}
 						}
-*/
+
 						var popFrames = id3Tags.GetFrames<PopularimeterFrame>();
 						if( popFrames != null ) {
 							uint	playCount = 0;
@@ -239,6 +263,17 @@ namespace Noise.Core.DataProviders {
 			}
 
 			return( retValue );
+		}
+
+		private static string FormatReplayGainString( string input ) {
+			var retValue = input;
+
+			var index = input.IndexOf( "db", StringComparison.InvariantCultureIgnoreCase );
+			if( index != -1 ) {
+				retValue = input.Remove( index );
+			}
+
+			return( retValue.Trim());
 		}
 	}
 }
