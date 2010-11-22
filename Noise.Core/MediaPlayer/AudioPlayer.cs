@@ -453,7 +453,7 @@ namespace Noise.Core.MediaPlayer {
 				float	multiplier = 1.0f + ( mPlaySpeed * 0.5f );
 
 				if(!Bass.BASS_ChannelSetAttribute( stream.Channel, BASSAttribute.BASS_ATTRIB_FREQ, stream.SampleRate * multiplier )) {
-					mLog.LogInfo( string.Format( "AudioPlayer - COuld not set play speed: {0}", Bass.BASS_ErrorGetCode()));
+					mLog.LogInfo( string.Format( "AudioPlayer - Could not set play speed: {0}", Bass.BASS_ErrorGetCode()));
 				}
 			}
 		}
