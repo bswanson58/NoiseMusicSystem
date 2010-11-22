@@ -60,6 +60,7 @@ namespace Noise.Core.PlayHistory {
 						dbTrack.PlayCount++;
 
 						database.Store( dbTrack );
+						GlobalCommands.UpdatePlayCount.Execute( new UpdatePlayCountCommandArgs( track.Track.DbId ));
 					}
 
 					TrimHistoryList( database );

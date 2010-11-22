@@ -137,6 +137,7 @@
     <Compile Include="Dto\SetFavoriteCommandArgs.cs" />
     <Compile Include="Dto\SetRatingCommandArgs.cs" />
     <Compile Include="Dto\StreamInfo.cs" />
+    <Compile Include="Dto\UpdatePlayCountCommandArgs.cs" />
     <Compile Include="GlobalCommands.cs" />
     <Compile Include="Interfaces\ILibraryBuilder.cs" />
     <Compile Include="Interfaces\IDatabaseFilter.cs" />

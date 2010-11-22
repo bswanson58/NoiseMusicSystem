@@ -13,8 +13,9 @@ namespace Noise.Core.FileStore {
 		private readonly INoiseManager		mNoiseManager;
 		private readonly ILog				mLog;
 
-		private AsyncCommand<SetFavoriteCommandArgs>	mSetFavoriteCommand;
-		private AsyncCommand<SetRatingCommandArgs>		mSetRatingCommand;
+		private AsyncCommand<SetFavoriteCommandArgs>		mSetFavoriteCommand;
+		private AsyncCommand<SetRatingCommandArgs>			mSetRatingCommand;
+		private AsyncCommand<UpdatePlayCountCommandArgs>	mUpdatePlayCountCommand;
 
 		public FileUpdates( IUnityContainer container ) {
 			mContainer = container;
@@ -30,6 +31,10 @@ namespace Noise.Core.FileStore {
 			mSetRatingCommand = new AsyncCommand<SetRatingCommandArgs>( OnSetRating );
 			mSetRatingCommand.ExecutionComplete += OnExecutionComplete;
 			GlobalCommands.SetRating.RegisterCommand( mSetRatingCommand );
+
+			mUpdatePlayCountCommand = new AsyncCommand<UpdatePlayCountCommandArgs>( OnUpdatePlayCount );
+			mUpdatePlayCountCommand.ExecutionComplete += OnExecutionComplete;
+			GlobalCommands.UpdatePlayCount.RegisterCommand( mUpdatePlayCountCommand );
 			return( true );
 		}
 
@@ -79,6 +84,33 @@ namespace Noise.Core.FileStore {
 
 						if( popFrame != null ) {
 							popFrame.Rating = StorageHelpers.ConvertToId3Rating( args.Value );
+
+							tags.Save();
+						}
+					}
+				}
+			}
+		}
+
+		private void OnUpdatePlayCount( UpdatePlayCountCommandArgs args ) {
+			Condition.Requires( args ).IsNotNull();
+			
+			var item = mNoiseManager.DataProvider.GetItem( args.ItemId );
+
+			if(( item != null ) &&
+			   ( item is DbTrack )) {
+				var track = item as DbTrack;
+				var file = mNoiseManager.DataProvider.GetPhysicalFile( track );
+
+				if( file != null ) {
+					var tags = File.Create( mNoiseManager.DataProvider.GetPhysicalFilePath( file ));
+					var id3Tags = tags.GetTag( TagTypes.Id3v2 ) as TagLib.Id3v2.Tag;
+
+					if( id3Tags != null ) {
+						var popFrame = PopularimeterFrame.Get( id3Tags, Constants.Id3FrameUserName, true );
+
+						if( popFrame != null ) {
+							popFrame.PlayCount++;
 
 							tags.Save();
 						}
