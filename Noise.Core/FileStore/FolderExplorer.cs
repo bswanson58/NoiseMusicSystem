@@ -75,6 +75,12 @@ namespace Noise.Core.FileStore {
 							if( mStopExploring ) {
 								break;
 							}
+
+							var localRoot = database.ValidateOnThread( rootFolder ) as RootFolder;
+							if( localRoot != null ) {
+								localRoot.LastScan = DateTime.Now.Ticks;
+								database.Store( localRoot );
+							}
 						}
 
 						mFileCache.Clear();
@@ -103,7 +109,7 @@ namespace Noise.Core.FileStore {
 			   ( rootCount == 0 ) &&
 			   ( storageConfig.RootFolders != null )) {
 				foreach( RootFolderConfiguration folderConfig in storageConfig.RootFolders ) {
-					var root = new RootFolder( folderConfig.Path, folderConfig.Description );
+					var root = new RootFolder( folderConfig.Key, folderConfig.Path, folderConfig.Description );
 
 					foreach( FolderStrategyConfiguration strategy in folderConfig.StorageStrategy ) {
 						root.FolderStrategy.SetStrategyForLevel( strategy.Level, (eFolderStrategy)strategy.Strategy );

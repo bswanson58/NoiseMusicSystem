@@ -11,6 +11,12 @@ namespace Noise.Infrastructure.Dto {
 			ParentFolder = parentFolder;
 		}
 
+		protected StorageFolder( long dbId, string path ) :
+			base( dbId ) {
+			Name = path;
+			ParentFolder = Constants.cDatabaseNullOid;
+		}
+
 		[Export("PersistenceType")]
 		public static Type PersistenceType {
 			get{ return( typeof( StorageFolder )); }

@@ -27,7 +27,7 @@ namespace Noise.Infrastructure.Configuration {
 		internal const string cFolderStrategyProperty = "folderStrategy";
 
 		public RootFolderConfiguration() {
-			Key = Guid.NewGuid().ToString();
+			Key = BitConverter.ToInt64( Guid.NewGuid().ToByteArray(), 0 );
 		}
 
 		public override bool IsReadOnly() {
@@ -35,8 +35,8 @@ namespace Noise.Infrastructure.Configuration {
 		}
 
 		[ConfigurationProperty( cKeyPropertyName, IsRequired = true, IsKey = true, IsDefaultCollection = false )]
-		public string Key {
-			get { return((string)( base[cKeyPropertyName])); }
+		public long Key {
+			get { return((long)( base[cKeyPropertyName])); }
 			set { base[cKeyPropertyName] = value; }
 		}
 
@@ -65,7 +65,7 @@ namespace Noise.Infrastructure.Configuration {
 		}
 
 		public override string ToString() {
-			return( Key );
+			return( Key.ToString());
 		}
 	}
 

@@ -1,16 +1,16 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using CuttingEdge.Conditions;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.FileStore {
 	public class RootFolder : StorageFolder {
-		public string			DisplayName { get; set; }
-		public FolderStrategy	FolderStrategy { get; set; }
+		public	string			DisplayName { get; set; }
+		public	FolderStrategy	FolderStrategy { get; set; }
+		public	long			LastScan { get; set; }
 
-		public RootFolder( string path, string displayName ) :
-			base( path, Constants.cDatabaseNullOid ) {
+		public RootFolder( long dbId, string path, string displayName ) :
+			base( dbId, path ) {
 			Condition.Requires( path ).IsNotNullOrEmpty();
 
 			DisplayName = displayName;
