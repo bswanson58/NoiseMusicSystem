@@ -171,5 +171,57 @@ namespace Noise.Core.FileStore {
 
 			return( retValue );
 		}
+
+		public static short ConvertFromId3Rating( short rating ) {
+			short	retValue = 0;
+
+			if( rating > 218 ) {
+				retValue = 5;
+			}
+			else if( rating > 167 ) {
+				retValue = 4;
+			}
+			else if( rating > 113 ) {
+				retValue = 3;
+			}
+			else if( rating > 49 ) {
+				retValue = 2;
+			}
+			else if( rating > 8 ) {
+				retValue = 1;
+			}
+			else if( rating == 1 ) {
+				retValue = 1;
+			}
+			else if(( rating > 0 ) &&
+			        ( rating <= 5 )) {
+				retValue = rating;
+			}
+
+			return( retValue );
+		}
+
+		public static byte ConvertToId3Rating( short rating ) {
+			byte	retValue = 0;
+
+			switch( rating ) {
+				case 1:
+					retValue = 32;
+					break;
+				case 2:
+					retValue = 64;
+					break;
+				case 3:
+					retValue = 128;
+					break;
+				case 4:
+					retValue = 196;
+					break;
+				case 5:
+					retValue = 255;
+					break;
+			}
+			return( retValue );
+		}
 	}
 }

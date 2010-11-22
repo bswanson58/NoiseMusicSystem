@@ -21,6 +21,10 @@ namespace Noise.Infrastructure {
 		public const string				ApplicationName = "Noise";
 		public const string				CompanyName = "Secret_Squirrel_Products";
 
+		public const string				Id3FrameUserName = "Noise Music System";
+		public const string				FavoriteFrameDescription = "Noise Music System - Favorite Track Flag";
+		public const string				FavoriteFrame = "FAVORITE";
+
 		static Constants() {
 			cNoExpirationDate = DateTime.MaxValue;
 		}

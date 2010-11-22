@@ -169,8 +169,10 @@
     <Compile Include="DataProviders\Mp3TagProvider.cs" />
     <Compile Include="Exceptions\StorageConfigurationException.cs" />
     <Compile Include="FileStore\FileSystemWatcherEx.cs" />
+    <Compile Include="FileStore\FileUpdates.cs" />
     <Compile Include="FileStore\FolderExplorer.cs" />
     <Compile Include="FileStore\FolderStrategyInformation.cs" />
+    <Compile Include="FileStore\IFileUpdates.cs" />
     <Compile Include="FileStore\IFolderExplorer.cs" />
     <Compile Include="FileStore\RootFolder.cs" />
     <Compile Include="FileStore\StorageHelpers.cs" />

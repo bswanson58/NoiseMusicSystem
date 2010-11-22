@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
@@ -134,7 +135,19 @@ namespace Noise.Core.DataProviders {
 					track.Channels = (Int16)Tags.Properties.AudioChannels;
 
 					var id3Tags = Tags.GetTag( TagTypes.Id3v2 ) as TagLib.Id3v2.Tag;
+
 					if( id3Tags != null ) {
+						var replayGainFrame = id3Tags.GetFrames( new ByteVector( "RVA2" ));
+						if(( replayGainFrame != null ) &&
+						   ( replayGainFrame.Count() > 0 )) {
+							mLog.LogMessage( "Found Replay Gain frame" );
+						}
+						var playCountFrame = id3Tags.GetFrames( new ByteVector( "PCNT" ));
+						if(( playCountFrame != null ) &&
+						   ( playCountFrame.Count() > 0 )) {
+							mLog.LogMessage( "Found PlayCount frame" );
+						}
+
 						var frames = id3Tags.GetFrames<UserTextInformationFrame>();
 						if( frames != null ) {
 							foreach( var fr in frames ) {
@@ -166,35 +179,50 @@ namespace Noise.Core.DataProviders {
 							}
 						}
 
-						var popFrames = id3Tags.GetFrames<PopularimeterFrame>();
-						if( popFrames != null ) {
-							uint	playCount = 0;
-							var		ratings = 0;
-							var		ratingsCount = 0;
+						var popFrame = PopularimeterFrame.Get( id3Tags, Constants.Id3FrameUserName, false );
+						if( popFrame != null ) {
+							track.Rating = StorageHelpers.ConvertFromId3Rating( popFrame.Rating );
+							track.PlayCount = (uint)popFrame.PlayCount;
+						}
+						else {
+							var popFrames = id3Tags.GetFrames<PopularimeterFrame>();
+							if( popFrames != null ) {
+								uint	playCount = 0;
+								var		ratings = 0;
+								var		ratingsCount = 0;
 
-							foreach( var fr in popFrames ) {
-								playCount += (uint)fr.PlayCount;
-								if( fr.Rating > 0 ) {
-									ratings += ConvertRating( fr.Rating );
-									ratingsCount++;
-								}
-							}
-
-							track.PlayCount = playCount;
-							if( ratingsCount > 0 ) {
-								track.Rating = (short)( ratings / ratingsCount );
-							}
-							else {
-								var	ratingFrame = UserTextInformationFrame.Get( id3Tags, "RATING", false );
-
-								if( ratingFrame != null ) {
-									var	rating = Convert.ToUInt16( ratingFrame.Text );
-
-									if(( rating > 0 ) &&
-									   ( rating <= 5 )) {
-										track.Rating = (short)rating;
+								foreach( var fr in popFrames ) {
+									playCount += (uint)fr.PlayCount;
+									if( fr.Rating > 0 ) {
+										ratings += StorageHelpers.ConvertFromId3Rating( fr.Rating );
+										ratingsCount++;
 									}
 								}
+
+								track.PlayCount = playCount;
+								if( ratingsCount > 0 ) {
+									track.Rating = (short)( ratings / ratingsCount );
+								}
+								else {
+									var	ratingFrame = UserTextInformationFrame.Get( id3Tags, "RATING", false );
+									if( ratingFrame != null ) {
+										var	rating = Convert.ToUInt16( ratingFrame.Text[0]);
+
+										if(( rating > 0 ) &&
+										   ( rating <= 5 )) {
+											track.Rating = (short)rating;
+										}
+									}
+								}
+							}
+						}
+
+						var favoritesFrame = UserTextInformationFrame.Get( id3Tags, Constants.FavoriteFrame, false );
+						if( favoritesFrame != null ) {
+							bool isFavorite;
+
+							if( Boolean.TryParse( favoritesFrame.Text[0], out isFavorite )) {
+								track.IsFavorite = isFavorite;
 							}
 						}
 					}
@@ -234,35 +262,6 @@ namespace Noise.Core.DataProviders {
 					mDatabaseManager.FreeDatabase( database );
 				}
 			}
-		}
-
-		private static short ConvertRating( short rating ) {
-			short	retValue = 0;
-
-			if( rating > 218 ) {
-				retValue = 5;
-			}
-			else if( rating > 167 ) {
-				retValue = 4;
-			}
-			else if( rating > 113 ) {
-				retValue = 3;
-			}
-			else if( rating > 49 ) {
-				retValue = 2;
-			}
-			else if( rating > 8 ) {
-				retValue = 1;
-			}
-			else if( rating == 1 ) {
-				retValue = 1;
-			}
-			else if(( rating > 0 ) &&
-			        ( rating <= 5 )) {
-				retValue = rating;
-			}
-
-			return( retValue );
 		}
 
 		private static string FormatReplayGainString( string input ) {

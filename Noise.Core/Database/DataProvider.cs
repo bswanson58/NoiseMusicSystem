@@ -3,6 +3,7 @@ using System.Linq;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
 using Noise.Core.DataBuilders;
+using Noise.Core.FileStore;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -426,6 +427,22 @@ namespace Noise.Core.Database {
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetPhysicalFile:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
+		public string GetPhysicalFilePath( StorageFile forFile ) {
+			var retValue = "";
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				retValue = StorageHelpers.GetPath( database.Database, forFile );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetPhysicalFilePath:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );

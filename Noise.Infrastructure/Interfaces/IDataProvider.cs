@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Noise.Infrastructure.Dto;
+﻿using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface IDataProvider {
@@ -33,6 +31,7 @@ namespace Noise.Infrastructure.Interfaces {
 		DataProviderList<DbTrack>	GetGenreTracks( long genreId );
 
 		StorageFile					GetPhysicalFile( DbTrack forTrack );
+		string						GetPhysicalFilePath( StorageFile forFile );
 
 		ArtistSupportInfo			GetArtistSupportInfo( long artistId );
 		ArtistSupportInfo			GetArtistSupportInfo( DbArtist forArtist );
