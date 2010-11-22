@@ -82,6 +82,23 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
+		public bool ReplayGainEnable {
+			get{ return( mEnableReplayGain ); }
+			set {
+				if( mEnableReplayGain != value ) {
+					mEnableReplayGain = value;
+
+					var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+					var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+					if( audioCongfiguration != null ) {
+						audioCongfiguration.ReplayGainEnabled = mEnableReplayGain;
+
+						systemConfig.Save( audioCongfiguration );
+					}
+				}
+			}
+		}
+
 		public ParametricEqualizer ParametricEq {
 			get{ return( mAudioPlayer.ParametricEq ); }
 			set{ mAudioPlayer.ParametricEq = value; }
@@ -401,6 +418,11 @@ namespace Noise.Core.MediaPlayer {
 
 				FireInfoUpdate();
 			}
+		}
+
+		public double PreampVolume {
+			get{ return( mAudioPlayer.PreampVolume ); }
+			set{ mAudioPlayer.PreampVolume = (float)value; }
 		}
 
 		public double PlaySpeed {

@@ -67,6 +67,16 @@ namespace Noise.UI.ViewModels {
 			get{ return( mPlayController.ParametricEq ); }
 		}
 
+		public double PreampVolume {
+			get{ return( mPlayController.PreampVolume ); }
+			set{ mPlayController.PreampVolume = value; }
+		}
+
+		public bool ReplayGainEnabled {
+			get{ return( mPlayController.ReplayGainEnable ); }
+			set{ mPlayController.ReplayGainEnable = value; }
+		}
+
 		public bool EqEnabled {
 			get{ return( mPlayController.EqEnabled ); }
 			set{ mPlayController.EqEnabled = value; }
@@ -82,6 +92,10 @@ namespace Noise.UI.ViewModels {
 
 				AdjustEq( band );
 			}
+
+			mPlayController.PreampVolume = 1.0f;
+
+			RaisePropertyChanged( () => PreampVolume );
 		}
 	}
 }

@@ -22,6 +22,7 @@ namespace Noise.Core.MediaPlayer {
 		AudioLevels			GetSampleLevels( int channel );
 
 		float				Volume { get; set; }
+		float				PreampVolume { get; set; }
 		float				Pan { get; set; }
 		float				PlaySpeed { get; set; }
 

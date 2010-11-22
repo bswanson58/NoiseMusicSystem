@@ -29,6 +29,7 @@ namespace Noise.Core.MediaPlayer {
 		public	float					SampleRate { get; private set; }
 		public	int						MetaDataSync { get; set; }
 		public	int						CompressorFx { get; set; }
+		public	int						ReplayGainFx { get; set; }
 		public	int						PreampFx { get; set; }
 		public	Dictionary<long, int>	EqChannels { get; private set; }
 
@@ -61,6 +62,7 @@ namespace Noise.Core.MediaPlayer {
 		private readonly ILog							mLog;
 		private float									mPlaySpeed;
 		private float									mPan;
+		private float									mPreampVolume;
 		private readonly SYNCPROC						mStreamMetadataSync;
 		private readonly Timer							mUpdateTimer;
 		private readonly Dictionary<int, AudioStream>	mCurrentStreams;
@@ -96,6 +98,7 @@ namespace Noise.Core.MediaPlayer {
 			LoadPlugin( "basswma.dll" );
 			LoadPlugin( "bass_aac.dll" );
 
+			mPreampVolume = 1.0f;
 			mRecord = false;
 		}
 
@@ -186,24 +189,26 @@ namespace Noise.Core.MediaPlayer {
 					var stream = new AudioStream( file, channel, sampleRate );
 					mCurrentStreams.Add( channel, stream );
 
+					//Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_DAMP, -2 );
 					stream.CompressorFx = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_COMPRESSOR2, -1 );
 					if( stream.CompressorFx == 0 ) {
 						mLog.LogInfo( "AudioPlayer - Could not set compressor FX." );
 					}
 
 					if( gainAdjustment != 0.0f ) {
-						stream.PreampFx = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_VOLUME, 2 );
-						if( stream.PreampFx == 0 ) {
+						stream.ReplayGainFx = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_VOLUME, 2 );
+						if( stream.ReplayGainFx == 0 ) {
 							mLog.LogInfo( "AudioPlayer - Could not set preamp." );
 						}
 
 						 // convert the replaygain dB gain to a linear value
 						var volparam = new BASS_BFX_VOLUME { lChannel = 0 /*BASSFXChan.BASS_BFX_CHANALL*/, fVolume = (float)Math.Pow( 10, gainAdjustment / 20 )};
-						if(!Bass.BASS_FXSetParameters( stream.PreampFx, volparam )) {
+						if(!Bass.BASS_FXSetParameters( stream.ReplayGainFx, volparam )) {
 							mLog.LogInfo( "AudioPlayer - Could not set preamp volume." );
 						}
 					}
 
+					InitializePreamp( stream );
 					InitializeEq( stream );
 					SetPan( stream );
 					SetPlaySpeed( stream );
@@ -432,6 +437,38 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
+		public float PreampVolume {
+			get{ return( mPreampVolume ); }
+			set {
+				if(( value > 0.0 ) &&
+				   ( value < 2.0 )) {
+					mPreampVolume = value;
+
+					foreach( var stream in mCurrentStreams.Values ) {
+						AdjustPreamp( stream, mPreampVolume );
+					}
+				}
+			}
+		}
+
+		private void InitializePreamp( AudioStream stream ) {
+			stream.PreampFx = Bass.BASS_ChannelSetFX( stream.Channel, BASSFXType.BASS_FX_BFX_VOLUME, 0 );
+			if( stream.ReplayGainFx == 0 ) {
+				mLog.LogInfo( "AudioPlayer - Could not set preamp." );
+			}
+			else {
+				AdjustPreamp( stream, mPreampVolume );
+			}
+		}
+
+		private void AdjustPreamp( AudioStream stream, float value ) {
+			var volparam = new BASS_BFX_VOLUME { lChannel = BASSFXChan.BASS_BFX_CHANALL, fVolume = value };
+
+			if(!Bass.BASS_FXSetParameters( stream.PreampFx, volparam )) {
+				mLog.LogInfo( "AudioPlayer - Could not set preamp volume." );
+			}
+		}
+
 		private void SetPan() {
 			foreach( var stream in mCurrentStreams.Values ) {
 				SetPan( stream );
@@ -483,6 +520,16 @@ namespace Noise.Core.MediaPlayer {
 				if( stream.MetaDataSync != 0 ) {
 					Bass.BASS_ChannelRemoveSync( channel, stream.MetaDataSync );
 				}
+				if( stream.CompressorFx != 0 ) {
+					Bass.BASS_ChannelRemoveFX( stream.Channel, stream.CompressorFx );
+				}
+				if( stream.ReplayGainFx != 0 ) {
+					Bass.BASS_ChannelRemoveFX( stream.Channel, stream.ReplayGainFx );
+				}
+				if( stream.PreampFx != 0 ) {
+					Bass.BASS_ChannelRemoveFX( stream.Channel, stream.PreampFx );
+				}
+
 				Bass.BASS_StreamFree( stream.Channel );
 
 				mCurrentStreams.Remove( channel );
