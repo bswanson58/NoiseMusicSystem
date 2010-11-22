@@ -1,26 +1,53 @@
-﻿using CuttingEdge.Conditions;
+﻿using System;
+using System.Collections.Generic;
+using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using Quartz;
+using Quartz.Impl;
 using TagLib;
 using TagLib.Id3v2;
 
 namespace Noise.Core.FileStore {
+	internal class BackgroundFileUpdateJob : IJob {
+		public void Execute( JobExecutionContext context ) {
+			if( context != null ) {
+				var	fileUpdater = context.Trigger.JobDataMap[FileUpdates.cBackgroundFileUpdater] as FileUpdates;
+
+				if( fileUpdater != null ) {
+					fileUpdater.ProcessUnfinishedCommands();
+				}
+			}
+		}
+	}
+
 	internal class FileUpdates : IFileUpdates {
-		private readonly IUnityContainer	mContainer;
-		private readonly INoiseManager		mNoiseManager;
-		private readonly ILog				mLog;
+		internal const string					cBackgroundFileUpdater = "BackgroundFileUpdater";
+
+		private readonly IUnityContainer		mContainer;
+		private readonly INoiseManager			mNoiseManager;
+		private	readonly ISchedulerFactory		mSchedulerFactory;
+		private	readonly IScheduler				mJobScheduler;
+		private readonly ILog					mLog;
+		private readonly List<BaseCommandArgs>	mUnfinishedCommands;
 
 		private AsyncCommand<SetFavoriteCommandArgs>		mSetFavoriteCommand;
 		private AsyncCommand<SetRatingCommandArgs>			mSetRatingCommand;
 		private AsyncCommand<UpdatePlayCountCommandArgs>	mUpdatePlayCountCommand;
 
 		public FileUpdates( IUnityContainer container ) {
+			mUnfinishedCommands = new List<BaseCommandArgs>();
+
 			mContainer = container;
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
 			mLog = mContainer.Resolve<ILog>();
+
+			mSchedulerFactory = new StdSchedulerFactory();
+			mJobScheduler = mSchedulerFactory.GetScheduler();
+			mJobScheduler.Start();
 		}
 
 		public bool Initialize() {
@@ -35,7 +62,45 @@ namespace Noise.Core.FileStore {
 			mUpdatePlayCountCommand = new AsyncCommand<UpdatePlayCountCommandArgs>( OnUpdatePlayCount );
 			mUpdatePlayCountCommand.ExecutionComplete += OnExecutionComplete;
 			GlobalCommands.UpdatePlayCount.RegisterCommand( mUpdatePlayCountCommand );
+
+			var jobDetail = new JobDetail( cBackgroundFileUpdater, "FileUpdates", typeof( BackgroundFileUpdateJob ));
+			var trigger = new SimpleTrigger( cBackgroundFileUpdater, "FileUpdates",
+											 DateTime.UtcNow + TimeSpan.FromMinutes( 1 ), null, SimpleTrigger.RepeatIndefinitely, TimeSpan.FromMinutes( 1 )); 
+			trigger.JobDataMap[cBackgroundFileUpdater] = this;
+
+			mJobScheduler.ScheduleJob( jobDetail, trigger );
+			mLog.LogMessage( "Started Background FileUpdater." );
+
 			return( true );
+		}
+
+		public void Shutdown() {
+			if( mJobScheduler != null ) {
+				mJobScheduler.Shutdown( false );
+			}
+
+			ProcessUnfinishedCommands();
+
+			if( mUnfinishedCommands.Count > 0 ) {
+				mLog.LogMessage( "FileUpdater: There were unfinished commands at shutdown." );
+			}
+		}
+
+		internal void ProcessUnfinishedCommands() {
+			if( mUnfinishedCommands.Count > 0 ) {
+				var unfinishedCommands = new List<BaseCommandArgs>();
+
+				lock( mUnfinishedCommands ) {
+					unfinishedCommands.AddRange( mUnfinishedCommands );
+					mUnfinishedCommands.Clear();
+				}
+
+				foreach( var command in unfinishedCommands ) {
+					TypeSwitch.Do( command, TypeSwitch.Case<SetFavoriteCommandArgs>( OnSetFavorite ),
+											TypeSwitch.Case<SetRatingCommandArgs>( OnSetRating ),
+											TypeSwitch.Case<UpdatePlayCountCommandArgs>( OnUpdatePlayCount ));
+				}
+			}
 		}
 
 		private void OnSetFavorite( SetFavoriteCommandArgs args ) {
@@ -58,7 +123,16 @@ namespace Noise.Core.FileStore {
 							favoriteFrame.Description = Constants.FavoriteFrameDescription;
 							favoriteFrame.Text = new [] { args.Value.ToString()};
 
-							tags.Save();
+							try {
+								tags.Save();
+							}
+							catch( Exception ) {
+								mLog.LogMessage( string.Format( "FileUpdates:SetFavorite - Queueing for later: {0}", track.Name ));
+
+								lock( mUnfinishedCommands ) {
+									mUnfinishedCommands.Add( args );
+								}
+							}
 						}
 					}
 				}
@@ -85,7 +159,16 @@ namespace Noise.Core.FileStore {
 						if( popFrame != null ) {
 							popFrame.Rating = StorageHelpers.ConvertToId3Rating( args.Value );
 
-							tags.Save();
+							try {
+								tags.Save();
+							}
+							catch( Exception ) {
+								mLog.LogMessage( string.Format( "FileUpdates:SetRating - Queueing for later: {0}", track.Name ));
+
+								lock( mUnfinishedCommands ) {
+									mUnfinishedCommands.Add( args );
+								}
+							}
 						}
 					}
 				}
@@ -112,7 +195,16 @@ namespace Noise.Core.FileStore {
 						if( popFrame != null ) {
 							popFrame.PlayCount++;
 
-							tags.Save();
+							try {
+								tags.Save();
+							}
+							catch( Exception ) {
+								mLog.LogMessage( string.Format( "FileUpdates:UpdatePlayCount - Queueing for later: {0}", track.Name ));
+
+								lock( mUnfinishedCommands ) {
+									mUnfinishedCommands.Add( args );
+								}
+							}
 						}
 					}
 				}

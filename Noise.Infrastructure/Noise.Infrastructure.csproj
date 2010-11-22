@@ -115,6 +115,7 @@
     <Compile Include="Dto\AlbumSupportInfo.cs" />
     <Compile Include="Dto\ArtistSupportInfo.cs" />
     <Compile Include="Dto\AudioLevels.cs" />
+    <Compile Include="Dto\BaseCommandArgs.cs" />
     <Compile Include="Dto\ContentType.cs" />
     <Compile Include="Dto\DatabaseChangeSummary.cs" />
     <Compile Include="Dto\DataProviderList.cs" />

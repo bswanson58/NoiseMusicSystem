@@ -1,10 +1,9 @@
 ﻿namespace Noise.Infrastructure.Dto {
-	public class SetFavoriteCommandArgs {
-		public	long	ItemId { get; private set; }
+	public class SetFavoriteCommandArgs : BaseCommandArgs {
 		public	bool	Value { get; private set; }
 
-		public SetFavoriteCommandArgs( long itemId, bool newValue ) {
-			ItemId = itemId;
+		public SetFavoriteCommandArgs( long itemId, bool newValue ) :
+			base( itemId ) {
 			Value = newValue;
 		}
 	}

@@ -95,6 +95,7 @@ namespace Noise.Core {
 
 		public void Shutdown() {
 			mJobScheduler.Shutdown( true );
+			mFileUpdates.Shutdown();
 
 			LibraryBuilder.StopLibraryUpdate();
 
