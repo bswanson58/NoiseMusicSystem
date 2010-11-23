@@ -460,7 +460,7 @@ namespace Noise.Core.MediaPlayer {
 
 		private void InitializePreamp( AudioStream stream ) {
 			stream.PreampFx = Bass.BASS_ChannelSetFX( stream.Channel, BASSFXType.BASS_FX_BFX_VOLUME, 0 );
-			if( stream.ReplayGainFx == 0 ) {
+			if( stream.PreampFx == 0 ) {
 				mLog.LogInfo( "AudioPlayer - Could not set preamp." );
 			}
 			else {
