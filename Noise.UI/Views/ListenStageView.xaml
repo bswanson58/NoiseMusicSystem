@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="Noise.UI.Views.ListenStageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="600">
+    
+    <UserControl.DataContext>
+        <Binding Path="ListenStageViewModel" Source="{StaticResource ViewModelLocator}"/>
+    </UserControl.DataContext>
+
+    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Listen Stage "  Margin="0">
+        <Grid>
+        </Grid>
+    </GroupBox>
+</UserControl>
