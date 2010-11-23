@@ -26,14 +26,9 @@ namespace Noise.Core.MediaPlayer {
 
 			retValue &= LoadUserEq();
 
-			if( mEqPresets.Count == 0 ) {
-				var eq = new ParametricEqualizer { Bandwidth = 18f, Name = "default" };
-				eq.AddBands( new [] { new ParametricBand( 120.0f ), new ParametricBand( 250.0f ),
-										new ParametricBand( 500.0f ), new ParametricBand( 1000.0f ),
-										new ParametricBand( 2000.0f ), new ParametricBand( 4000.0f ),
-										new ParametricBand( 8000.0f ), new ParametricBand( 12000.0f ) });
-				mEqPresets.Add( eq );
-				mCurrentEq = eq;
+			if(( mCurrentEq == null ) &&
+			   ( mEqPresets.Count > 0 )) {
+				mCurrentEq = mEqPresets[0];
 			}
 
 			return( retValue );
@@ -74,10 +69,22 @@ namespace Noise.Core.MediaPlayer {
 			if( audioCongfiguration != null ) {
 				var equalizerList = ( from ParametricEqConfiguration eqConfig in audioCongfiguration.ParametricEqualizers
 				                      select eqConfig.AsParametericEqualizer()).ToList();
+				if( equalizerList.Count > 0 ) {
+					mEqPresets.AddRange( equalizerList );
+				}
+				else {
+					var eq = new ParametricEqualizer { Bandwidth = 18f, Name = "User 1" };
+					eq.AddBands( new [] { new ParametricBand( 120.0f ), new ParametricBand( 250.0f ),
+											new ParametricBand( 500.0f ), new ParametricBand( 1000.0f ),
+											new ParametricBand( 2000.0f ), new ParametricBand( 4000.0f ),
+											new ParametricBand( 8000.0f ), new ParametricBand( 12000.0f ) });
+					mEqPresets.Add( eq );
+					mCurrentEq = eq;
+				}
 
-				mEqPresets.AddRange( equalizerList );
-
-				mCurrentEq = ( from ParametricEqualizer eq in mEqPresets where eq.EqualizerId == audioCongfiguration.DefaultEqualizer select eq ).FirstOrDefault();
+				if( mCurrentEq == null ) {
+					mCurrentEq = ( from ParametricEqualizer eq in mEqPresets where eq.EqualizerId == audioCongfiguration.DefaultEqualizer select eq ).FirstOrDefault();
+				}
 
 				retValue = true;
 			}
@@ -85,7 +92,7 @@ namespace Noise.Core.MediaPlayer {
 			return( retValue );
 		}
 
-		public bool SaveEq( ParametricEqualizer eq ) {
+		public bool SaveEq( ParametricEqualizer eq, bool eqEnabled ) {
 			var retValue = false;
 
 			if(( eq != null ) &&
@@ -93,6 +100,8 @@ namespace Noise.Core.MediaPlayer {
 				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 				var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
 				if( audioCongfiguration != null ) {
+					audioCongfiguration.UpdateEq( eq );
+					audioCongfiguration.EqEnabled = eqEnabled;
 
 					systemConfig.Save( audioCongfiguration );
 

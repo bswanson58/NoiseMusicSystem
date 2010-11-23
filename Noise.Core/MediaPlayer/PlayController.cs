@@ -90,7 +90,10 @@ namespace Noise.Core.MediaPlayer {
 
 		public ParametricEqualizer CurrentEq {
 			get{ return( mAudioPlayer.ParametricEq ); }
-			set{ mAudioPlayer.ParametricEq = value; }
+			set {
+				mAudioPlayer.ParametricEq = value;
+				mEqManager.CurrentEq = value;
+			}
 		}
 
 		public bool EqEnabled {

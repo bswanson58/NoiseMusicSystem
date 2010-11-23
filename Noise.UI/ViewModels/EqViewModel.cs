@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
@@ -12,9 +13,12 @@ namespace Noise.UI.ViewModels {
 		private float						mGain;
 		private readonly Action<UiEqBand>	mOnChange;
 
-		public UiEqBand( ParametricBand band, Action<UiEqBand> onChange ) {
+		public	bool						IsEditable { get; private set; }
+
+		public UiEqBand( ParametricBand band, Action<UiEqBand> onChange, bool isPreset ) {
 			BandId = band.BandId;
 			CenterFrequency = band.CenterFrequency;
+			IsEditable = !isPreset;
 			mGain = band.Gain;
 			mOnChange = onChange;
 		}
@@ -34,15 +38,17 @@ namespace Noise.UI.ViewModels {
 	}
 
 	public class EqViewModel : DialogModelBase {
-		private IPlayController				mPlayController;
-		private	readonly List<UiEqBand>		mBands;
+		private IPlayController								mPlayController;
+		private List<ParametricEqualizer>					mEqs;
+		private	readonly ObservableCollectionEx<UiEqBand>	mBands;
 
 		public EqViewModel() {
-			mBands = new List<UiEqBand>();
+			mBands = new ObservableCollectionEx<UiEqBand>();
 		}
 
 		public bool Initialize( IPlayController playController ) {
 			mPlayController = playController;
+			mEqs = new List<ParametricEqualizer>( from ParametricEqualizer eq in mPlayController.EqManager.EqPresets orderby eq.Name ascending select eq );
 
 			LoadBands();
 
@@ -53,8 +59,8 @@ namespace Noise.UI.ViewModels {
 			mBands.Clear();
 
 			if( mPlayController.CurrentEq != null ) {
-				foreach( var band in mPlayController.CurrentEq.Bands ) {
-					mBands.Add( new UiEqBand( band, AdjustEq ));
+				foreach( var band in mPlayController.EqManager.CurrentEq.Bands ) {
+					mBands.Add( new UiEqBand( band, AdjustEq, mPlayController.EqManager.CurrentEq.IsPreset ));
 				}
 			}
 		}
@@ -63,8 +69,13 @@ namespace Noise.UI.ViewModels {
 			mPlayController.SetEqValue( band.BandId, band.Gain );
 		}
 
-		public ParametricEqualizer Eq {
+		public ParametricEqualizer CurrentEq {
 			get{ return( mPlayController.CurrentEq ); }
+			set {
+				mPlayController.CurrentEq = value;
+
+				LoadBands();
+			}
 		}
 
 		public double PreampVolume {
@@ -82,8 +93,18 @@ namespace Noise.UI.ViewModels {
 			set{ mPlayController.EqEnabled = value; }
 		}
 
-		public List<UiEqBand> Bands {
+		public List<ParametricEqualizer> EqList {
+			get{ return( mEqs ); }
+		}
+
+		[DependsUpon( "CurrentEq" )]
+		public ObservableCollectionEx<UiEqBand> Bands {
 			get{ return( mBands ); }
+		}
+
+		[DependsUpon( "CurrentEq" )]
+		public bool IsEditable {
+			get{ return(!mPlayController.EqManager.CurrentEq.IsPreset ); }
 		}
 
 		public void Execute_ResetBands() {
@@ -96,6 +117,11 @@ namespace Noise.UI.ViewModels {
 			mPlayController.PreampVolume = 1.0f;
 
 			RaisePropertyChanged( () => PreampVolume );
+		}
+
+		[DependsUpon( "CurrentEq" )]
+		public bool CanExecute_ResetBands() {
+			return( IsEditable );
 		}
 	}
 }

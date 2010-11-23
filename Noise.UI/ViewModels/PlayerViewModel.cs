@@ -358,15 +358,8 @@ namespace Noise.UI.ViewModels {
 					
 				dialogService.ShowDialog( DialogNames.EqDialog, dialogModel );
 
-				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-				var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
-
-				if( audioCongfiguration != null ) {
-					audioCongfiguration.UpdateEq( mNoiseManager.PlayController.CurrentEq );
-					audioCongfiguration.DefaultEqualizer = mNoiseManager.PlayController.CurrentEq.EqualizerId;
-					audioCongfiguration.EqEnabled = mNoiseManager.PlayController.EqEnabled;
-					systemConfig.Save( audioCongfiguration );
-				}
+				mNoiseManager.PlayController.EqManager.SaveEq( mNoiseManager.PlayController.CurrentEq,
+															   mNoiseManager.PlayController.EqEnabled );
 			}
 		}
 	}
