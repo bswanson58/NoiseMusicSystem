@@ -74,10 +74,11 @@ namespace Noise.Core.MediaPlayer {
 				}
 				else {
 					var eq = new ParametricEqualizer { Bandwidth = 18f, Name = "User 1" };
-					eq.AddBands( new [] { new ParametricBand( 120.0f ), new ParametricBand( 250.0f ),
-											new ParametricBand( 500.0f ), new ParametricBand( 1000.0f ),
-											new ParametricBand( 2000.0f ), new ParametricBand( 4000.0f ),
-											new ParametricBand( 8000.0f ), new ParametricBand( 12000.0f ) });
+					eq.AddBands( new [] { new ParametricBand( 30.0f ), new ParametricBand( 60.0f ),
+										  new ParametricBand( 120.0f ), new ParametricBand( 250.0f ),
+										  new ParametricBand( 500.0f ), new ParametricBand( 1000.0f ),
+										  new ParametricBand( 2000.0f ), new ParametricBand( 4000.0f ),
+										  new ParametricBand( 8000.0f ), new ParametricBand( 16000.0f ) });
 					mEqPresets.Add( eq );
 					mCurrentEq = eq;
 				}

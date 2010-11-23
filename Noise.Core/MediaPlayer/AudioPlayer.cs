@@ -191,10 +191,10 @@ namespace Noise.Core.MediaPlayer {
 					mCurrentStreams.Add( channel, stream );
 
 					//Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_DAMP, -2 );
-					stream.CompressorFx = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_COMPRESSOR2, -1 );
-					if( stream.CompressorFx == 0 ) {
-						mLog.LogInfo( "AudioPlayer - Could not set compressor FX." );
-					}
+//					stream.CompressorFx = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_COMPRESSOR2, -1 );
+//					if( stream.CompressorFx == 0 ) {
+//						mLog.LogInfo( "AudioPlayer - Could not set compressor FX." );
+//					}
 
 					if( gainAdjustment != 0.0f ) {
 						stream.ReplayGainFx = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_VOLUME, 2 );

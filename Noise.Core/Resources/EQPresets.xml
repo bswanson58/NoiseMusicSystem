@@ -3,14 +3,196 @@
 	<eq name="Rock" id="1" bandwidth="18">
 		<description>Rock Music</description>
 		<bands>
-			<band centerFrequency="120" gain="1.1"/>
-			<band centerFrequency="250" gain="1.2"/>
+			<band centerFrequency="30" gain="4.8"/>
+			<band centerFrequency="60" gain="2.9"/>
+			<band centerFrequency="120" gain="-3.6"/>
+			<band centerFrequency="250" gain="-5.1"/>
+			<band centerFrequency="500" gain="-2.5"/>
+			<band centerFrequency="1000" gain="2.5"/>
+			<band centerFrequency="2000" gain="5.5"/>
+			<band centerFrequency="4000" gain="6.7"/>
+			<band centerFrequency="8000" gain="6.7"/>
+			<band centerFrequency="16000" gain="6.7"/>
+		</bands>
+	</eq>
+	<eq name="Pop" id="2" bandwidth="18">
+		<description>Pop Music</description>
+		<bands>
+			<band centerFrequency="30" gain="-1.3"/>
+			<band centerFrequency="60" gain="2.9"/>
+			<band centerFrequency="120" gain="4.4"/>
+			<band centerFrequency="250" gain="4.8"/>
+			<band centerFrequency="500" gain="3.2"/>
+			<band centerFrequency="1000" gain="-1.0"/>
+			<band centerFrequency="2000" gain="-1.7"/>
+			<band centerFrequency="4000" gain="-1.7"/>
+			<band centerFrequency="8000" gain="-1.3"/>
+			<band centerFrequency="16000" gain="-1.3"/>
+		</bands>
+	</eq>
+	<eq name="Disco" id="3" bandwidth="18">
+		<description>Disco Music</description>
+		<bands>
+			<band centerFrequency="30" gain="8.0"/>
+			<band centerFrequency="60" gain="4.7"/>
+			<band centerFrequency="120" gain="1.2"/>
+			<band centerFrequency="250" gain="-3.1"/>
+			<band centerFrequency="500" gain="-5.5"/>
+			<band centerFrequency="1000" gain="-5.5"/>
+			<band centerFrequency="2000" gain="-3.1"/>
+			<band centerFrequency="4000" gain="1.2"/>
+			<band centerFrequency="8000" gain="4.7"/>
+			<band centerFrequency="16000" gain="8.0"/>
+		</bands>
+	</eq>
+	<eq name="Jazz" id="4" bandwidth="18">
+		<description>Jazz Music</description>
+		<bands>
+			<band centerFrequency="30" gain="1.2"/>
+			<band centerFrequency="60" gain="6.5"/>
+			<band centerFrequency="120" gain="3.6"/>
+			<band centerFrequency="250" gain="0.1"/>
+			<band centerFrequency="500" gain="-6.5"/>
+			<band centerFrequency="1000" gain="-6.5"/>
+			<band centerFrequency="2000" gain="-3.5"/>
+			<band centerFrequency="4000" gain="4.7"/>
+			<band centerFrequency="8000" gain="6.5"/>
+			<band centerFrequency="16000" gain="8.2"/>
+		</bands>
+	</eq>
+	<eq name="Heavy" id="5" bandwidth="18">
+		<description></description>
+		<bands>
+			<band centerFrequency="30" gain="6.8"/>
+			<band centerFrequency="60" gain="6.4"/>
+			<band centerFrequency="120" gain="4.6"/>
+			<band centerFrequency="250" gain="3.2"/>
+			<band centerFrequency="500" gain="-4.2"/>
+			<band centerFrequency="1000" gain="-4.3"/>
+			<band centerFrequency="2000" gain="2.6"/>
+			<band centerFrequency="4000" gain="5.7"/>
+			<band centerFrequency="8000" gain="5.2"/>
+			<band centerFrequency="16000" gain="2.9"/>
+		</bands>
+	</eq>
+	<eq name="Soft" id="6" bandwidth="18">
+		<description></description>
+		<bands>
+			<band centerFrequency="30" gain="-6.8"/>
+			<band centerFrequency="60" gain="-4.9"/>
+			<band centerFrequency="120" gain="-1.2"/>
+			<band centerFrequency="250" gain="-2.3"/>
+			<band centerFrequency="500" gain="3.5"/>
+			<band centerFrequency="1000" gain="4.0"/>
+			<band centerFrequency="2000" gain="0.3"/>
+			<band centerFrequency="4000" gain="-0.7"/>
+			<band centerFrequency="8000" gain="-3.1"/>
+			<band centerFrequency="16000" gain="-3.9"/>
+		</bands>
+	</eq>
+	<eq name="Clear" id="7" bandwidth="18">
+		<description></description>
+		<bands>
+			<band centerFrequency="30" gain="-2.8"/>
+			<band centerFrequency="60" gain="-3.9"/>
+			<band centerFrequency="120" gain="-1.6"/>
+			<band centerFrequency="250" gain="-5.1"/>
 			<band centerFrequency="500" gain="1.1"/>
+			<band centerFrequency="1000" gain="2.0"/>
+			<band centerFrequency="2000" gain="-1.3"/>
+			<band centerFrequency="4000" gain="0.7"/>
+			<band centerFrequency="8000" gain="6.7"/>
+			<band centerFrequency="16000" gain="8.7"/>
+		</bands>
+	</eq>
+	<eq name="Live" id="8" bandwidth="18">
+		<description>Live Music</description>
+		<bands>
+			<band centerFrequency="30" gain="2.7"/>
+			<band centerFrequency="60" gain="0.1"/>
+			<band centerFrequency="120" gain="4.6"/>
+			<band centerFrequency="250" gain="2.3"/>
+			<band centerFrequency="500" gain="-0.3"/>
+			<band centerFrequency="1000" gain="0.6"/>
+			<band centerFrequency="2000" gain="5.5"/>
+			<band centerFrequency="4000" gain="3.6"/>
+			<band centerFrequency="8000" gain="6.1"/>
+			<band centerFrequency="16000" gain="5.5"/>
+		</bands>
+	</eq>
+	<eq name="Hall" id="9" bandwidth="18">
+		<description></description>
+		<bands>
+			<band centerFrequency="30" gain="2.3"/>
+			<band centerFrequency="60" gain="3.4"/>
+			<band centerFrequency="120" gain="5.5"/>
+			<band centerFrequency="250" gain="4.1"/>
+			<band centerFrequency="500" gain="0.5"/>
+			<band centerFrequency="1000" gain="0.5"/>
+			<band centerFrequency="2000" gain="-1.2"/>
+			<band centerFrequency="4000" gain="-2.8"/>
+			<band centerFrequency="8000" gain="-4.6"/>
+			<band centerFrequency="16000" gain="-6.7"/>
+		</bands>
+	</eq>
+	<eq name="Big Bass" id="10" bandwidth="18">
+		<description></description>
+		<bands>
+			<band centerFrequency="30" gain="5.9"/>
+			<band centerFrequency="60" gain="5.9"/>
+			<band centerFrequency="120" gain="5.9"/>
+			<band centerFrequency="250" gain="3.6"/>
+			<band centerFrequency="500" gain="1.0"/>
+			<band centerFrequency="1000" gain="-2.9"/>
+			<band centerFrequency="2000" gain="-5.5"/>
+			<band centerFrequency="4000" gain="-6.7"/>
+			<band centerFrequency="8000" gain="-7.0"/>
+			<band centerFrequency="16000" gain="-7.0"/>
+		</bands>
+	</eq>
+	<eq name="Full" id="11" bandwidth="18">
+		<description></description>
+		<bands>
+			<band centerFrequency="30" gain="4.4"/>
+			<band centerFrequency="60" gain="3.6"/>
+			<band centerFrequency="120" gain="0"/>
+			<band centerFrequency="250" gain="-4.8"/>
+			<band centerFrequency="500" gain="-3.2"/>
+			<band centerFrequency="1000" gain="1.0"/>
+			<band centerFrequency="2000" gain="5.1"/>
+			<band centerFrequency="4000" gain="6.7"/>
+			<band centerFrequency="8000" gain="7.4"/>
+			<band centerFrequency="16000" gain="7.4"/>
+		</bands>
+	</eq>
+	<eq name="Big Treble" id="12" bandwidth="18">
+		<description></description>
+		<bands>
+			<band centerFrequency="30" gain="-6.3"/>
+			<band centerFrequency="60" gain="-6.3"/>
+			<band centerFrequency="120" gain="-6.3"/>
+			<band centerFrequency="250" gain="-2.9"/>
+			<band centerFrequency="500" gain="1.7"/>
+			<band centerFrequency="1000" gain="6.7"/>
+			<band centerFrequency="2000" gain="9.7"/>
+			<band centerFrequency="4000" gain="9.7"/>
+			<band centerFrequency="8000" gain="9.7"/>
+			<band centerFrequency="16000" gain="10.5"/>
+		</bands>
+	</eq>
+	<eq name="Flat" id="13" bandwidth="18">
+		<description></description>
+		<bands>
+			<band centerFrequency="30" gain="0"/>
+			<band centerFrequency="60" gain="0"/>
+			<band centerFrequency="120" gain="0"/>
+			<band centerFrequency="250" gain="0"/>
+			<band centerFrequency="500" gain="0"/>
 			<band centerFrequency="1000" gain="0"/>
 			<band centerFrequency="2000" gain="0"/>
-			<band centerFrequency="4000" gain="1.1"/>
-			<band centerFrequency="8000" gain="1.2"/>
-			<band centerFrequency="12000" gain="1.3"/>
+			<band centerFrequency="4000" gain="0"/>
+			<band centerFrequency="8000" gain="0"/>
+			<band centerFrequency="16000" gain="0"/>
 		</bands>
 	</eq>
 </eqPresets>
