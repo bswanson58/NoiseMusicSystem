@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Timers;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
@@ -15,6 +14,8 @@ namespace Noise.Core.MediaPlayer {
 		private readonly IEventAggregator	mEvents;
 		private readonly INoiseManager		mNoiseManager;
 		private readonly IAudioPlayer		mAudioPlayer;
+		private readonly IEqManager			mEqManager;
+		private readonly ILog				mLog;
 		private TimeSpan					mCurrentPosition;
 		private TimeSpan					mCurrentLength;
 		private bool						mDisplayTimeElapsed;
@@ -31,6 +32,7 @@ namespace Noise.Core.MediaPlayer {
 			mEvents = mContainer.Resolve<IEventAggregator>();
 			mAudioPlayer = mContainer.Resolve<IAudioPlayer>();
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
+			mLog = mContainer.Resolve<ILog>();
 
 			mOpenTracks = new Dictionary<int, PlayQueueTrack>();
 
@@ -50,35 +52,18 @@ namespace Noise.Core.MediaPlayer {
 				mDisplayTimeElapsed = configuration.DisplayPlayTimeElapsed;
 			}
 
+			mEqManager = mContainer.Resolve<IEqManager>();
+			if( mEqManager.Initialize( "EqPresets.xml" )) {
+				mAudioPlayer.ParametricEq = mEqManager.CurrentEq;
+			}
+			else {
+				mLog.LogMessage( "EqManager could not be initialized." );
+			}
+
 			var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
 			if( audioCongfiguration != null ) {
 				mEnableReplayGain = audioCongfiguration.ReplayGainEnabled;
-
-				var equalizerList = ( from ParametricEqConfiguration eqConfig in audioCongfiguration.ParametricEqualizers
-				                      select eqConfig.AsParametericEqualizer()).ToList();
-
-				if( equalizerList.Count == 0 ) {
-					var eq = new ParametricEqualizer { Bandwidth = 18f, Name = "default" };
-					eq.AddBands( new [] { new ParametricBand( 120.0f ), new ParametricBand( 250.0f ),
-										  new ParametricBand( 500.0f ), new ParametricBand( 1000.0f ),
-										  new ParametricBand( 2000.0f ), new ParametricBand( 4000.0f ),
-										  new ParametricBand( 8000.0f ), new ParametricBand( 12000.0f ) });
-					equalizerList.Add( eq );
-
-					audioCongfiguration.UpdateEq( eq );
-					audioCongfiguration.DefaultEqualizer = eq.EqualizerId;
-					systemConfig.Save( audioCongfiguration );
-
-					mAudioPlayer.ParametricEq = eq;
-				}
-				else {
-					var eq = ( from ParametricEqualizer item in equalizerList where item.EqualizerId == audioCongfiguration.DefaultEqualizer select item ).FirstOrDefault();
-
-					if( eq != null ) {
-						mAudioPlayer.ParametricEq = eq;
-						mAudioPlayer.EqEnabled = audioCongfiguration.EqEnabled;
-					}
-				}
+				mAudioPlayer.EqEnabled = audioCongfiguration.EqEnabled;
 			}
 		}
 
@@ -99,7 +84,11 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
-		public ParametricEqualizer ParametricEq {
+		public IEqManager EqManager {
+			get{ return( mEqManager ); }
+		}
+
+		public ParametricEqualizer CurrentEq {
 			get{ return( mAudioPlayer.ParametricEq ); }
 			set{ mAudioPlayer.ParametricEq = value; }
 		}

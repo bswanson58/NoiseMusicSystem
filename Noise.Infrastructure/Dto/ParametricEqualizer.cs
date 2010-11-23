@@ -41,10 +41,13 @@ namespace Noise.Infrastructure.Dto {
 			mBands = new List<ParametricBand>();
 		}
 			
-		public ParametricEqualizer( long equalizerId, bool isPreset ) :
+		public ParametricEqualizer( long equalizerId, bool isPreset, string name, string description, float bandwidth ) :
 			this() {
 			EqualizerId = equalizerId;
 			IsPreset = isPreset;
+			Name = name;
+			Description = description;
+			Bandwidth = bandwidth;
 		}
 
 		public IEnumerable<ParametricBand> Bands {

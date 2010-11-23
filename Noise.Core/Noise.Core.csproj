@@ -178,6 +178,7 @@
     <Compile Include="FileStore\StorageHelpers.cs" />
     <Compile Include="Database\IDatabase.cs" />
     <Compile Include="MediaPlayer\AudioPlayer.cs" />
+    <Compile Include="MediaPlayer\EqManager.cs" />
     <Compile Include="MediaPlayer\IAudioPlayer.cs" />
     <Compile Include="MediaPlayer\PlayController.cs" />
     <Compile Include="NoiseCoreModule.cs" />
@@ -217,6 +218,9 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

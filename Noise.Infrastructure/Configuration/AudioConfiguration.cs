@@ -112,7 +112,7 @@ namespace Noise.Infrastructure.Configuration {
 		}
 
 		public ParametricEqualizer AsParametericEqualizer() {
-			var retValue = new ParametricEqualizer( EqId, IsPreset ) { Bandwidth = Bandwidth, Description = EqDescription, Name = EqName };
+			var retValue = new ParametricEqualizer( EqId, IsPreset, EqName, EqDescription, Bandwidth );
 
 			foreach( ParametricBandConfiguration bandConfig in Bands ) {
 				retValue.AddBand( new ParametricBand( bandConfig.BandId, bandConfig.CenterFrequency, bandConfig.Gain ));

@@ -362,8 +362,8 @@ namespace Noise.UI.ViewModels {
 				var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
 
 				if( audioCongfiguration != null ) {
-					audioCongfiguration.UpdateEq( mNoiseManager.PlayController.ParametricEq );
-					audioCongfiguration.DefaultEqualizer = mNoiseManager.PlayController.ParametricEq.EqualizerId;
+					audioCongfiguration.UpdateEq( mNoiseManager.PlayController.CurrentEq );
+					audioCongfiguration.DefaultEqualizer = mNoiseManager.PlayController.CurrentEq.EqualizerId;
 					audioCongfiguration.EqEnabled = mNoiseManager.PlayController.EqEnabled;
 					systemConfig.Save( audioCongfiguration );
 				}

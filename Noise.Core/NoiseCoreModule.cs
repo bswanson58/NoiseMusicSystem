@@ -24,6 +24,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IDataProvider, DataProvider>();
 			mContainer.RegisterType<IDataUpdates, DataUpdates>();
 			mContainer.RegisterType<IDatabaseManager, DatabaseManager>( Constants.NewInstance );
+			mContainer.RegisterType<IEqManager, EqManager>();
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>();
 			mContainer.RegisterType<IFileUpdates, FileUpdates>();
 //			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();

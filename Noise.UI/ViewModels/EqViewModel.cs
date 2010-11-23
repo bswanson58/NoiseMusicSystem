@@ -52,8 +52,8 @@ namespace Noise.UI.ViewModels {
 		private void LoadBands() {
 			mBands.Clear();
 
-			if( mPlayController.ParametricEq != null ) {
-				foreach( var band in mPlayController.ParametricEq.Bands ) {
+			if( mPlayController.CurrentEq != null ) {
+				foreach( var band in mPlayController.CurrentEq.Bands ) {
 					mBands.Add( new UiEqBand( band, AdjustEq ));
 				}
 			}
@@ -64,7 +64,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public ParametricEqualizer Eq {
-			get{ return( mPlayController.ParametricEq ); }
+			get{ return( mPlayController.CurrentEq ); }
 		}
 
 		public double PreampVolume {
