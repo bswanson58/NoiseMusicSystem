@@ -127,6 +127,8 @@ namespace Noise.Core.MediaPlayer {
 					var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
 					if( audioCongfiguration != null ) {
 						audioCongfiguration.DefaultEqualizer = mCurrentEq.EqualizerId;
+
+						systemConfig.Save( audioCongfiguration );
 					}
 				}
 			}
