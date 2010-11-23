@@ -25,6 +25,9 @@
     <Component Id="Composite.Layout.dll" Guid="7920fa7c-527b-4ed0-9844-25b4f4680c5b">
       <File Id="Composite.Layout.dll" DiskId="10" Source="$(var.Layout Manager.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
+    <Component Id="EqPresets.xml" Guid="999a7fff-eed4-42da-ab6f-9a62ccd8df77">
+      <File Id="EqPresets.xml" DiskId="10" Source="$(var.Noise.Core.ProjectDir)Resources\EqPresets.xml" KeyPath="yes" Checksum="yes" />
+    </Component>
   </DirectoryRef>
 
   <ComponentGroup Id="CoreFiles">
@@ -36,5 +39,6 @@
     <ComponentRef Id="Noise.UI" />
     <ComponentRef Id="LastFmSharp.dll" />
     <ComponentRef Id="Composite.Layout.dll"/>
+    <ComponentRef Id="EqPresets.xml"/>
   </ComponentGroup>
 </Include>
