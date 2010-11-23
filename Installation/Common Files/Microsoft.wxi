@@ -6,9 +6,17 @@
     <Component Id="System.Windows.Interactivity.dll" Guid="05e0e0dc-082d-44b0-94c4-0aacfb56280d">
       <File Id="System.Windows.Interactivity.dll" DiskId="10" Source="$(var.MicrosoftLibraryFolder)System.Windows.Interactivity.dll" KeyPath="yes" Checksum="yes" />
     </Component>
+    <Component Id="Microsoft.Expression.Controls.dll" Guid="fd8b294a-145a-4803-a581-85483857576c">
+      <File Id="Microsoft.Expression.Controls.dll" DiskId="10" Source="$(var.MicrosoftLibraryFolder)Microsoft.Expression.Controls.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Microsoft.Expression.Drawing.dll" Guid="354b1998-1d0a-4688-a8dc-bf2c110b856b">
+      <File Id="Microsoft.Expression.Drawing.dll" DiskId="10" Source="$(var.MicrosoftLibraryFolder)Microsoft.Expression.Drawing.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
   </DirectoryRef>
 
   <ComponentGroup Id="MicrosoftFiles">
     <ComponentRef Id="System.Windows.Interactivity.dll" />
+    <ComponentRef Id="Microsoft.Expression.Controls.dll"/>
+    <ComponentRef Id="Microsoft.Expression.Drawing.dll"/>
   </ComponentGroup>
 </Include>

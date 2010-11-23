@@ -1,5 +1,7 @@
 ﻿using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
@@ -15,10 +17,14 @@ namespace Noise.UI.ViewModels {
 			set {
 				mContainer = value;
 
-				mEvents = mContainer.Resolve<IEventAggregator>();
 				mNoiseManager = mContainer.Resolve<INoiseManager>();
+				mEvents = mContainer.Resolve<IEventAggregator>();
+				mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnTrackStarted );
 			}
 		}
 
+		private void OnTrackStarted( PlayQueueTrack track ) {
+			
+		}
 	}
 }

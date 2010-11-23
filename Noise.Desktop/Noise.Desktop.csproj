@@ -77,6 +77,8 @@
     <Reference Include="AvalonControlsLibrary">
       <HintPath>..\lib\AvalonControls\v2.0\AvalonControlsLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Expression.Controls" />
+    <Reference Include="Microsoft.Expression.Drawing" />
     <Reference Include="Microsoft.Practices.Prism">
       <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.dll</HintPath>
     </Reference>
