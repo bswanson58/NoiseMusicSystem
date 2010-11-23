@@ -365,8 +365,6 @@ namespace Noise.Core.MediaPlayer {
 			if(( mEq != null ) &&
 			   ( mEqEnabled )) {
 				try {
-					Bass.BASS_ChannelSetAttribute( stream.Channel, BASSAttribute.BASS_ATTRIB_FREQ, 44100f );
-
 					foreach( var band in mEq.Bands ) {
 						stream.EqChannels.Add( band.BandId, Bass.BASS_ChannelSetFX( stream.Channel, BASSFXType.BASS_FX_DX8_PARAMEQ, 1 ));
 					}
