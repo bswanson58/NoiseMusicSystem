@@ -31,6 +31,7 @@ namespace Noise.Core.MediaPlayer {
 		public	int						CompressorFx { get; set; }
 		public	int						ReplayGainFx { get; set; }
 		public	int						PreampFx { get; set; }
+		public	int						ParamEqFx { get; set; }
 		public	Dictionary<long, int>	EqChannels { get; private set; }
 
 		private AudioStream( int channel, float sampleRate ) {
@@ -365,19 +366,25 @@ namespace Noise.Core.MediaPlayer {
 			if(( mEq != null ) &&
 			   ( mEqEnabled )) {
 				try {
-					foreach( var band in mEq.Bands ) {
-						stream.EqChannels.Add( band.BandId, Bass.BASS_ChannelSetFX( stream.Channel, BASSFXType.BASS_FX_DX8_PARAMEQ, 1 ));
+					stream.ParamEqFx = Bass.BASS_ChannelSetFX( stream.Channel, BASSFXType.BASS_FX_BFX_PEAKEQ, 1 );
+					if( stream.ParamEqFx == 0 ) {
+						mLog.LogInfo( string.Format( "AudioPlayer - Could not set eq channel: {0}", Bass.BASS_ErrorGetCode()));
 					}
 
-					var eq = new BASS_DX8_PARAMEQ { fBandwidth = mEq.Bandwidth };
+					var eq = new BASS_BFX_PEAKEQ { fQ = 0f, fBandwidth = mEq.Bandwidth / 12, lChannel = BASSFXChan.BASS_BFX_CHANALL };
 
+					int bandId = 0;
 					foreach( var band in mEq.Bands ) {
+						eq.lBand = bandId;
 						eq.fCenter = band.CenterFrequency;
 						eq.fGain = band.Gain;
-
-						if(!Bass.BASS_FXSetParameters( stream.EqChannels[band.BandId], eq )) {
-							mLog.LogInfo( string.Format( "AudioPlayer - Could not set eq channel: {0}", Bass.BASS_ErrorGetCode()));
+						if(!Bass.BASS_FXSetParameters( stream.ParamEqFx, eq )) {
+							mLog.LogMessage( string.Format( "AudioPlayer - could not set eq band setting: {0}", Bass.BASS_ErrorGetCode()));
 						}
+
+						stream.EqChannels.Add( band.BandId, bandId );
+
+						bandId++;
 					}
 				}
 				catch( Exception ex ) {
@@ -394,8 +401,8 @@ namespace Noise.Core.MediaPlayer {
 
 		private void RemoveEq( AudioStream stream ) {
 			try {
-				foreach( int handle in stream.EqChannels.Values ) {
-					Bass.BASS_ChannelRemoveFX( stream.Channel, handle );
+				if(!Bass.BASS_ChannelRemoveFX( stream.Channel, stream.ParamEqFx )) {
+					mLog.LogMessage( string.Format( "AudioPlayer - could not remove eq fx: {0}", Bass.BASS_ErrorGetCode()));
 				}
 			}
 			catch( Exception ex ) {
@@ -420,13 +427,15 @@ namespace Noise.Core.MediaPlayer {
 		private void AdjustEq( AudioStream stream, long bandId, float gain ) {
 			try {
 				if( stream.EqChannels.ContainsKey( bandId )) {
-					var eq = new BASS_DX8_PARAMEQ();
-					var index = stream.EqChannels[bandId];
+					var eq = new BASS_BFX_PEAKEQ { lBand = stream.EqChannels[bandId] };
 
-					if( Bass.BASS_FXGetParameters( index, eq )) {
+					if( Bass.BASS_FXGetParameters( stream.ParamEqFx, eq )) {
 						eq.fGain = gain;
 
-						Bass.BASS_FXSetParameters( index, eq );
+						Bass.BASS_FXSetParameters( stream.ParamEqFx, eq );
+					}
+					else {
+						mLog.LogInfo( "AudioPlayer - Could not retrieve parametricEq band." );
 					}
 				}
 			}
@@ -517,15 +526,23 @@ namespace Noise.Core.MediaPlayer {
 			if( stream != null ) {
 				if( stream.MetaDataSync != 0 ) {
 					Bass.BASS_ChannelRemoveSync( channel, stream.MetaDataSync );
+					stream.MetaDataSync = 0;
 				}
 				if( stream.CompressorFx != 0 ) {
 					Bass.BASS_ChannelRemoveFX( stream.Channel, stream.CompressorFx );
+					stream.CompressorFx = 0;
 				}
 				if( stream.ReplayGainFx != 0 ) {
 					Bass.BASS_ChannelRemoveFX( stream.Channel, stream.ReplayGainFx );
+					stream.ReplayGainFx = 0;
 				}
 				if( stream.PreampFx != 0 ) {
 					Bass.BASS_ChannelRemoveFX( stream.Channel, stream.PreampFx );
+					stream.PreampFx = 0;
+				}
+				if( stream.ParamEqFx != 0 ) {
+					Bass.BASS_ChannelRemoveFX( stream.Channel, stream.ParamEqFx );
+					stream.ParamEqFx = 0;
 				}
 
 				Bass.BASS_StreamFree( stream.Channel );
