@@ -65,13 +65,13 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Bass.Net">
-      <HintPath>..\lib\BASS.Net\Bass.Net.dll</HintPath>
+      <HintPath>..\lib\BASS.Net\v2.4.6.4\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="Common.Logging">
       <HintPath>..\lib\Quartz\v1.02\Common.Logging.dll</HintPath>
     </Reference>
     <Reference Include="CuttingEdge.Conditions">
-      <HintPath>..\lib\CuttingEdge.Conditions\CuttingEdge.Conditions.dll</HintPath>
+      <HintPath>..\lib\CuttingEdge.Conditions\v1.1.0.10041\CuttingEdge.Conditions.dll</HintPath>
     </Reference>
     <Reference Include="Eloquera.Client, Version=3.0.0.12, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
