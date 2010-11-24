@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-  <?define MicrosoftLibraryFolder="$(var.SolutionDir)\lib\Microsoft\Expression Blend v4\"?>
+  <?define MicrosoftExpressionLibraryFolder="$(var.SolutionDir)lib\Microsoft\Expression Blend v4\"?>
+  <?define MicrosoftRxLibraryFolder="$(var.SolutionDir)lib\Microsoft\Reactive Extensions\v1.0.2787.0\"?>
 
   <DirectoryRef Id="INSTALLDIRECTORY">
     <Component Id="System.Windows.Interactivity.dll" Guid="05e0e0dc-082d-44b0-94c4-0aacfb56280d">
-      <File Id="System.Windows.Interactivity.dll" DiskId="10" Source="$(var.MicrosoftLibraryFolder)System.Windows.Interactivity.dll" KeyPath="yes" Checksum="yes" />
+      <File Id="System.Windows.Interactivity.dll" DiskId="10" Source="$(var.MicrosoftExpressionLibraryFolder)System.Windows.Interactivity.dll" KeyPath="yes" Checksum="yes" />
     </Component>
     <Component Id="Microsoft.Expression.Controls.dll" Guid="fd8b294a-145a-4803-a581-85483857576c">
-      <File Id="Microsoft.Expression.Controls.dll" DiskId="10" Source="$(var.MicrosoftLibraryFolder)Microsoft.Expression.Controls.dll" KeyPath="yes" Checksum="yes" />
+      <File Id="Microsoft.Expression.Controls.dll" DiskId="10" Source="$(var.MicrosoftExpressionLibraryFolder)Microsoft.Expression.Controls.dll" KeyPath="yes" Checksum="yes" />
     </Component>
     <Component Id="Microsoft.Expression.Drawing.dll" Guid="354b1998-1d0a-4688-a8dc-bf2c110b856b">
-      <File Id="Microsoft.Expression.Drawing.dll" DiskId="10" Source="$(var.MicrosoftLibraryFolder)Microsoft.Expression.Drawing.dll" KeyPath="yes" Checksum="yes" />
+      <File Id="Microsoft.Expression.Drawing.dll" DiskId="10" Source="$(var.MicrosoftExpressionLibraryFolder)Microsoft.Expression.Drawing.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="System.Reactive.dll" Guid="d8eb9e8c-c2a7-41cc-8a65-85c094a36cfa">
+      <File Id="System.Reactive.dll" DiskId="10" Source="$(var.MicrosoftRxLibraryFolder)System.Reactive.dll" KeyPath="yes" Checksum="yes" />
     </Component>
   </DirectoryRef>
 
@@ -18,5 +22,6 @@
     <ComponentRef Id="System.Windows.Interactivity.dll" />
     <ComponentRef Id="Microsoft.Expression.Controls.dll"/>
     <ComponentRef Id="Microsoft.Expression.Drawing.dll"/>
+    <ComponentRef Id="System.Reactive.dll"/>
   </ComponentGroup>
 </Include>
