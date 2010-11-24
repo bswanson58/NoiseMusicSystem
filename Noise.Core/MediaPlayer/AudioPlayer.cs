@@ -213,6 +213,7 @@ namespace Noise.Core.MediaPlayer {
 					InitializeEq( stream );
 					SetPan( stream );
 					SetPlaySpeed( stream );
+
 					retValue = channel;
 				}
 				catch( Exception ex ) {
@@ -671,6 +672,7 @@ namespace Noise.Core.MediaPlayer {
 			return( retValue );
 		}
 
+		// this method should be converted to use the DSP_PeakLevelMeter
 		public AudioLevels GetSampleLevels( int channel ) {
 			AudioLevels	retValue = null;
 
@@ -681,7 +683,6 @@ namespace Noise.Core.MediaPlayer {
 					var levels = Bass.BASS_ChannelGetLevel( channel );
 					var leftLevel = Utils.LowWord32( levels ) > 0.0 ? (double)Utils.LowWord32( levels ) / 32768 : Utils.LowWord32( levels );
 					var rightLevel = Utils.HighWord32( levels ) > 0.0 ? (double)Utils.HighWord32( levels ) / 32768 : Utils.HighWord32( levels );
-
 
 					retValue = new AudioLevels( leftLevel, rightLevel );
 				}
