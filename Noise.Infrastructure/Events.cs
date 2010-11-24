@@ -14,9 +14,6 @@ namespace Noise.Infrastructure {
 		public class PlayListChanged : CompositePresentationEvent<IPlayListMgr> { }
 		public class PlayRequested : CompositePresentationEvent<PlayQueueTrack> { }
 
-		public class AudioPlayStatusChanged : CompositePresentationEvent<int> { }
-		public class AudioPlayStreamInfo : CompositePresentationEvent<StreamInfo> { }
-
 		public class AlbumPlayRequested : CompositePresentationEvent<DbAlbum> { }
 		public class TrackPlayRequested : CompositePresentationEvent<DbTrack> { }
 		public class StreamPlayRequested : CompositePresentationEvent<DbInternetStream> { }

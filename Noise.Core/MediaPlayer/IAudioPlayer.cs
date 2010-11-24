@@ -29,5 +29,8 @@ namespace Noise.Core.MediaPlayer {
 		ParametricEqualizer ParametricEq { get; set; }
 		bool				EqEnabled { get; set; }
 		void				AdjustEq( long bandId, float gain );
+
+		IObservable<int>		ChannelStatusChange { get; }
+		IObservable<StreamInfo>	AudioStreamInfoChange { get; }
 	}
 }

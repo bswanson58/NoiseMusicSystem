@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Timers;
-using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Un4seen.Bass;
@@ -59,7 +58,6 @@ namespace Noise.Core.MediaPlayer {
 
 	public class AudioPlayer : IAudioPlayer {
 		private readonly IUnityContainer				mContainer;
-		private readonly IEventAggregator				mEventAggregator;
 		private readonly ILog							mLog;
 		private float									mPlaySpeed;
 		private float									mPan;
@@ -69,15 +67,20 @@ namespace Noise.Core.MediaPlayer {
 		private readonly Dictionary<int, AudioStream>	mCurrentStreams;
 		private ParametricEqualizer						mEq;
 		private	bool									mEqEnabled;
-
 		private readonly DOWNLOADPROC					mDownloadProc;
 		private FileStream								mRecordStream;
 		private byte[]									mRecordBuffer;
 		private bool									mRecord;
 
+		private readonly Subject<int>					mChannelStatusSubject;
+		public	IObservable<int>						ChannelStatusChange { get { return( mChannelStatusSubject.AsObservable()); } }
+
+		private readonly Subject<StreamInfo>			mAudioStreamInfoSubject;
+		public	IObservable<StreamInfo>					AudioStreamInfoChange { get { return( mAudioStreamInfoSubject.AsObservable()); }}
+
+
 		public AudioPlayer( IUnityContainer container ) {
 			mContainer = container;
-			mEventAggregator = mContainer.Resolve<IEventAggregator>();
 			mLog = mContainer.Resolve<ILog>();
 			mCurrentStreams = new Dictionary<int, AudioStream>();
 			mStreamMetadataSync = new SYNCPROC( SyncProc );
@@ -101,6 +104,9 @@ namespace Noise.Core.MediaPlayer {
 
 			mPreampVolume = 1.0f;
 			mRecord = false;
+
+			mChannelStatusSubject = new Subject<int>();
+			mAudioStreamInfoSubject = new Subject<StreamInfo>();
 		}
 
 		private void LoadPlugin( string plugin ) {
@@ -140,7 +146,7 @@ namespace Noise.Core.MediaPlayer {
 				if( stream.Mode != mode ) {
 					stream.Mode = mode;
 
-					mEventAggregator.GetEvent<Events.AudioPlayStatusChanged>().Publish( stream.Channel );
+					mChannelStatusSubject.OnNext( stream.Channel );
 				}
 
 				if( stream.InSlide ) {
@@ -288,8 +294,7 @@ namespace Noise.Core.MediaPlayer {
 				if( audioStream != null ) {
 					var tagInfo = new TAG_INFO( audioStream.Url );
 					if( BassTags.BASS_TAG_GetFromURL( channel, tagInfo )) {
-						mEventAggregator.GetEvent<Events.AudioPlayStreamInfo>().Publish( new StreamInfo( channel, tagInfo.artist, tagInfo.album, 
-																										 tagInfo.title, tagInfo.genre ) );
+						mAudioStreamInfoSubject.OnNext( new StreamInfo( channel, tagInfo.artist, tagInfo.album, tagInfo.title, tagInfo.genre ));
 					}
 				}
 			}

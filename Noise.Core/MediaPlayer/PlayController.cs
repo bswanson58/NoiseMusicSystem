@@ -40,10 +40,11 @@ namespace Noise.Core.MediaPlayer {
 			mInfoUpdateTimer.Elapsed += OnInfoUpdateTimer;
 
 			mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
-			mEvents.GetEvent<Events.AudioPlayStatusChanged>().Subscribe( OnPlayStatusChanged );
-			mEvents.GetEvent<Events.AudioPlayStreamInfo>().Subscribe( OnStreamInfo );
 			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 			mEvents.GetEvent<Events.PlayRequested>().Subscribe( OnPlayRequested );
+
+			mAudioPlayer.ChannelStatusChange.Subscribe( OnPlayStatusChanged );
+			mAudioPlayer.AudioStreamInfoChange.Subscribe( OnStreamInfo );
 
 			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
