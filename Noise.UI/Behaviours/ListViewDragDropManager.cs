@@ -407,13 +407,19 @@ namespace Noise.UI.Behaviours {
 		}
 
 		private static bool IsMouseOver( Visual target ) {
+			bool	retValue = false;
+
 			// We need to use MouseUtilities to figure out the cursor
 			// coordinates because, during a drag-drop operation, the WPF
 			// mechanisms for getting the coordinates behave strangely.
+			if( target != null ) {
+				var	bounds = VisualTreeHelper.GetDescendantBounds( target );
+				var	mousePos = MouseUtilities.GetMousePosition( target );
 
-			Rect bounds = VisualTreeHelper.GetDescendantBounds( target );
-			Point mousePos = MouseUtilities.GetMousePosition( target );
-			return bounds.Contains( mousePos );
+				retValue = bounds.Contains( mousePos );
+			}
+			
+			return( retValue );
 		}
 
 		/// <summary>
