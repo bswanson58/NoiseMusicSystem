@@ -17,7 +17,14 @@ namespace Noise.UI.ValueConverters {
 				retValue = retValue.Replace( "&amp;", "&" );
 				retValue = retValue.Replace( "&lt;", "<" );
 				retValue = retValue.Replace( "&gt;", ">" );
+
+				var len = 9600;
+
+				if( retValue.Length > len ) {
+					retValue = retValue.Substring( 0, len ) + " (truncated!)";
+				}
 			}
+
 			return( retValue );
 		}
 
