@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Timers;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
@@ -104,6 +106,10 @@ namespace Noise.Core.MediaPlayer {
 
 		public void SetEqValue( long bandId, float gain ) {
 			mAudioPlayer.AdjustEq( bandId, gain );
+		}
+
+		public BitmapSource GetSpectrumImage( int height, int width, Color baseColor, Color peakColor, Color peakHoldColor ) {
+			return( mAudioPlayer.GetSpectrumImage( CurrentChannel, height, width, baseColor, peakColor, peakHoldColor ));
 		}
 
 		public PlayQueueTrack CurrentTrack {

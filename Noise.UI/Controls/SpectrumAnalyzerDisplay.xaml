@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="Noise.UI.Controls.SpectrumAnalyzerDisplay"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+             xmlns:Controls="clr-namespace:Noise.UI.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <Grid>
+        <Image Source="{Binding SpectrumImage, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:SpectrumAnalyzerDisplay}}}"/>
+        <Rectangle Fill="Transparent"
+                       Behaviours:SizeObserver.Observe="True"
+                       Behaviours:SizeObserver.ObservedWidth="{Binding ImageWidth, Mode=OneWayToSource, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:SpectrumAnalyzerDisplay}}}"
+                       Behaviours:SizeObserver.ObservedHeight="{Binding ImageHeight, Mode=OneWayToSOurce, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:SpectrumAnalyzerDisplay}}}"/>
+    </Grid>
+</UserControl>

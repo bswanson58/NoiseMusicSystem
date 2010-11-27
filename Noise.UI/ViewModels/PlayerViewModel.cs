@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows.Forms;
+using System.Windows.Media;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
@@ -23,6 +25,14 @@ namespace Noise.UI.ViewModels {
 		private	IUnityContainer			mContainer;
 		private IEventAggregator		mEvents;
 		private INoiseManager			mNoiseManager;
+		private double					mSpectrumImageWidth;
+		private double					mSpectrumImageHeight;
+		private readonly Color			mBaseColor;
+		private readonly Color			mPeakColor;
+		private readonly Color			mPeakHoldColor;
+		private readonly Timer			mSpectrumUpdateTimer;
+		private ImageSource				mSpectrumBitmap;
+
 
 		private	readonly ObservableCollectionEx<ExhaustedStrategyItem>	mExhaustedStrategies;
 
@@ -35,6 +45,15 @@ namespace Noise.UI.ViewModels {
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayList, "Playlist..." ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayStream, "Radio Station..." ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayGenre, "Play Genre..." )};
+			mSpectrumImageWidth = 200;
+			mSpectrumImageHeight = 100;
+
+			mBaseColor = Colors.LightBlue;
+			mPeakColor = Colors.Blue;
+			mPeakHoldColor = Colors.Blue;
+
+			mSpectrumUpdateTimer = new Timer { Enabled = false, Interval = 100 };
+			mSpectrumUpdateTimer.Tick += OnSpectrumUpdateTimer;
 		}
 
 		[Dependency]
@@ -360,6 +379,47 @@ namespace Noise.UI.ViewModels {
 
 				mNoiseManager.PlayController.EqManager.SaveEq( mNoiseManager.PlayController.CurrentEq,
 															   mNoiseManager.PlayController.EqEnabled );
+			}
+		}
+
+		private void OnSpectrumUpdateTimer( object sender, EventArgs args ) {
+			UpdateImage();
+
+			RaisePropertyChanged( () => SpectrumImage );
+		}
+
+		public ImageSource SpectrumImage {
+			get {
+				if(!mSpectrumUpdateTimer.Enabled ) {
+					UpdateImage();
+					mSpectrumUpdateTimer.Enabled = true;
+				}
+
+				return( mSpectrumBitmap );
+			}
+		}
+
+		private void UpdateImage() {
+			mSpectrumBitmap = mNoiseManager.PlayController.GetSpectrumImage((int)mSpectrumImageHeight, (int)mSpectrumImageWidth, mBaseColor, mPeakColor, mPeakHoldColor );
+		}
+
+		public double ImageHeight {
+			get{ return( mSpectrumImageHeight ); }
+			set {
+				if((!double.IsNaN( value )) &&
+				   ( value >  0 )) {
+					mSpectrumImageHeight = value;
+				}
+			}
+		}
+
+		public double ImageWidth {
+			get{ return( mSpectrumImageWidth ); }
+			set{
+				if((!double.IsNaN( value )) &&
+				   ( value > 0 )) {
+					mSpectrumImageWidth = value; 
+				}
 			}
 		}
 	}

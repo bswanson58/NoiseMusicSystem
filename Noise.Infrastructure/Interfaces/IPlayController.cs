@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
@@ -39,5 +41,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void			ToggleTimeDisplay();
 		long			PlayPosition { get; set; }
 		long			TrackEndPosition { get; }
+
+		BitmapSource	GetSpectrumImage( int height, int width, Color baseColor, Color peakColor, Color peakHoldColor );
 	}
 }

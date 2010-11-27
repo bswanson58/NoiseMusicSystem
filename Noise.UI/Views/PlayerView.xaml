@@ -4,11 +4,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
-        xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
         xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary" 
-        xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
+        xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers" 
+        xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
         x:Class="Noise.UI.Views.PlayerView"
         mc:Ignorable="d" 
         d:DesignHeight="100" d:DesignWidth="1200"             
@@ -152,7 +152,10 @@
                               SelectedValue="{Binding Path=ExhaustedStrategy}"/>
 				</StackPanel>
                 <Button Margin="9,0,0,5" Height="25" Width="33" Content="Eq" Command="{Binding Eq}"/>
-			</StackPanel>
+                <NoiseControls:SpectrumAnalyzerDisplay Margin="9,0,0,0"  Width="100" SpectrumImage="{Binding Path=SpectrumImage, Mode=OneWay}"
+                                                       ImageHeight="{Binding Path=ImageHeight, Mode=OneWayToSource}" ImageWidth="{Binding Path=ImageWidth, Mode=OneWayToSource}"/>
+<!--                <Button Margin="9,0,0,5" Height="25" Content="Spectrum" Command="{Binding SpectrumAnalyzer}"/> -->
+            </StackPanel>
 			<Slider x:Name="Volume" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Height="50" Margin="0,0,10,0" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
 		</Grid>
 	</GroupBox>

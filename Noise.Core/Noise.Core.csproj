@@ -124,6 +124,7 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Reactive, Version=1.0.2787.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\lib\Microsoft\Reactive Extensions\v1.0.2787.0\System.Reactive.dll</HintPath>
     </Reference>
@@ -136,6 +137,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\TagLibSharp\v2.0.3.7\taglib-sharp.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Common\GlobalAssemblyInfo.cs">

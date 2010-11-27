@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Timers;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
@@ -12,6 +15,7 @@ using Noise.Infrastructure.Interfaces;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Fx;
 using Un4seen.Bass.AddOn.Tags;
+using Un4seen.Bass.Misc;
 using Timer = System.Timers.Timer;
 
 namespace Noise.Core.MediaPlayer {
@@ -71,6 +75,7 @@ namespace Noise.Core.MediaPlayer {
 		private FileStream								mRecordStream;
 		private byte[]									mRecordBuffer;
 		private bool									mRecord;
+		private Visuals									mSpectumVisual;
 
 		private readonly Subject<int>					mChannelStatusSubject;
 		public	IObservable<int>						ChannelStatusChange { get { return( mChannelStatusSubject.AsObservable()); } }
@@ -87,6 +92,7 @@ namespace Noise.Core.MediaPlayer {
 			mUpdateTimer = new Timer { Enabled = false, Interval = 50, AutoReset = true };
 			mUpdateTimer.Elapsed += OnUpdateTimer;
 			mDownloadProc = new DOWNLOADPROC( RecordProc );
+			mSpectumVisual = new Visuals();
 
 			try {
 				Bass.BASS_Init( -1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero );
@@ -135,6 +141,28 @@ namespace Noise.Core.MediaPlayer {
 				mPlaySpeed = value; 
 				SetPlaySpeed();
 			}
+		}
+
+		public BitmapSource GetSpectrumImage( int channel, int height, int width, Color baseColor, Color peakColor, Color peakHoldColor ) {
+			BitmapSource	retValue = null;
+
+			System.Drawing.Color	c1 = System.Drawing.Color.FromArgb( baseColor.A, baseColor.R, baseColor.G, baseColor.B );
+			System.Drawing.Color	c2 = System.Drawing.Color.FromArgb( peakColor.A, peakColor.R, peakColor.G, peakColor.B );
+			System.Drawing.Color	c3 = System.Drawing.Color.FromArgb( peakHoldColor.A, peakHoldColor.R, peakHoldColor.G, peakHoldColor.B );
+			System.Drawing.Color	c4 = System.Drawing.Color.FromArgb( 0, 0, 0, 0 );
+
+			const int	lineGap = 1;
+			const int	peakHoldHeight = 1;
+			const int	peakHoldTime = 5;
+			var bars = width > 300 ? 48 : width > 200 ? 32 : 24;
+			var barWidth = ( width - ( bars * lineGap )) / bars;
+			var bitmap = mSpectumVisual.CreateSpectrumLinePeak( channel, width, height, c1, c2, c3, c4, barWidth, peakHoldHeight, lineGap, peakHoldTime, false, true, false );
+
+			if( bitmap != null ) {
+				retValue = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap( bitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+			}
+
+			return( retValue );
 		}
 
 		private void OnUpdateTimer( object sender, ElapsedEventArgs args ) {

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.MediaPlayer {
@@ -32,5 +34,7 @@ namespace Noise.Core.MediaPlayer {
 
 		IObservable<int>		ChannelStatusChange { get; }
 		IObservable<StreamInfo>	AudioStreamInfoChange { get; }
+
+		BitmapSource		GetSpectrumImage( int channel, int height, int width, Color baseColor, Color peakColor, Color peakHoldColor );
 	}
 }
