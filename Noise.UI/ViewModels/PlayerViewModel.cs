@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Media;
 using Microsoft.Practices.Prism.Events;
@@ -8,6 +11,7 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using Noise.UI.Dto;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
@@ -32,6 +36,7 @@ namespace Noise.UI.ViewModels {
 		private readonly Color			mPeakHoldColor;
 		private readonly Timer			mSpectrumUpdateTimer;
 		private ImageSource				mSpectrumBitmap;
+		private	readonly ObservableCollectionEx<UiEqBand>	mBands;
 
 
 		private	readonly ObservableCollectionEx<ExhaustedStrategyItem>	mExhaustedStrategies;
@@ -54,6 +59,8 @@ namespace Noise.UI.ViewModels {
 
 			mSpectrumUpdateTimer = new Timer { Enabled = false, Interval = 100 };
 			mSpectrumUpdateTimer.Tick += OnSpectrumUpdateTimer;
+
+			mBands = new ObservableCollectionEx<UiEqBand>();
 		}
 
 		[Dependency]
@@ -76,6 +83,8 @@ namespace Noise.UI.ViewModels {
 				if( configuration != null ) {
 					mNoiseManager.PlayQueue.SetPlayExhaustedStrategy( configuration.PlayExhaustedStrategy, configuration.PlayExhaustedItem );
 				}
+
+				LoadBands();
 			}
 		}
 
@@ -369,19 +378,6 @@ namespace Noise.UI.ViewModels {
 			mEvents.GetEvent<Events.ExternalPlayerSwitch>().Publish( this );
 		}
 
-		public void Execute_Eq() {
-			var dialogModel = new	EqViewModel();
-
-			if( dialogModel.Initialize( mNoiseManager.PlayController )) {
-				var	dialogService = mContainer.Resolve<IDialogService>();
-					
-				dialogService.ShowDialog( DialogNames.EqDialog, dialogModel );
-
-				mNoiseManager.PlayController.EqManager.SaveEq( mNoiseManager.PlayController.CurrentEq,
-															   mNoiseManager.PlayController.EqEnabled );
-			}
-		}
-
 		private void OnSpectrumUpdateTimer( object sender, EventArgs args ) {
 			UpdateImage();
 
@@ -421,6 +417,84 @@ namespace Noise.UI.ViewModels {
 					mSpectrumImageWidth = value; 
 				}
 			}
+		}
+
+		public double PreampVolume {
+			get{ return( mNoiseManager.PlayController.PreampVolume ); }
+			set{ mNoiseManager.PlayController.PreampVolume = value; }
+		}
+
+		public bool ReplayGainEnabled {
+			get{ return( mNoiseManager.PlayController.ReplayGainEnable ); }
+			set{ mNoiseManager.PlayController.ReplayGainEnable = value; }
+		}
+
+		public List<ParametricEqualizer> EqualizerList {
+			get{ return( new List<ParametricEqualizer>( from ParametricEqualizer eq in mNoiseManager.PlayController.EqManager.EqPresets orderby eq.Name ascending select eq )); }
+		}
+
+		public ParametricEqualizer CurrentEq {
+			get{ return( mNoiseManager.PlayController.CurrentEq ); }
+			set {
+				mNoiseManager.PlayController.CurrentEq = value;
+				Set( () => CurrentEq, value );
+
+				LoadBands();
+			}
+		}
+
+		[DependsUpon( "CurrentEq" )]
+		public bool EqEnabled {
+			get{ return( mNoiseManager.PlayController.EqEnabled ); }
+			set {
+				mNoiseManager.PlayController.EqEnabled = value;
+				mNoiseManager.PlayController.EqManager.SaveEq( CurrentEq, value );
+			}
+		}
+
+		[DependsUpon( "CurrentEq" )]
+		public ObservableCollection<UiEqBand> EqualizerBands {
+			get{ return( mBands ); }
+		}
+
+		private void LoadBands() {
+			mBands.Clear();
+
+			if( mNoiseManager.PlayController.CurrentEq != null ) {
+				foreach( var band in mNoiseManager.PlayController.EqManager.CurrentEq.Bands ) {
+					mBands.Add( new UiEqBand( band, AdjustEq, mNoiseManager.PlayController.EqManager.CurrentEq.IsPreset ));
+				}
+			}
+		}
+
+		private void AdjustEq( UiEqBand band ) {
+			mNoiseManager.PlayController.SetEqValue( band.BandId, band.Gain );
+
+			if(!CurrentEq.IsPreset ) {
+				mNoiseManager.PlayController.EqManager.SaveEq( CurrentEq, EqEnabled );
+			}
+		}
+
+		public void Execute_ResetBands() {
+			foreach( var band in mBands ) {
+				band.Gain = 0.0f;
+
+				AdjustEq( band );
+			}
+
+			mNoiseManager.PlayController.PreampVolume = 1.0f;
+
+			RaisePropertyChanged( () => PreampVolume );
+		}
+
+		[DependsUpon( "CurrentEq" )]
+		public bool IsEqEditable {
+			get{ return(!CurrentEq.IsPreset ); }
+		}
+
+		[DependsUpon( "CurrentEq" )]
+		public bool CanExecute_ResetBands() {
+			return( IsEqEditable );
 		}
 	}
 }

@@ -12,6 +12,5 @@
 		public const string		SelectPlayList			= "SelectPlayList";
 		public const string		SelectStream			= "SelectStream";
 		public const string		Search					= "Search";
-		public const string		EqDialog				= "EqDialog";
 	}
 }

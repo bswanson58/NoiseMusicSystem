@@ -153,6 +153,9 @@
     <Compile Include="Behaviours\TreeViewItemBehaviour.cs" />
     <Compile Include="Controls\LinkLabel.cs" />
     <Compile Include="Controls\ListBoxEx.cs" />
+    <Compile Include="Controls\ParametricEqualizerControl.xaml.cs">
+      <DependentUpon>ParametricEqualizerControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SearchTextBox.cs" />
     <Compile Include="Controls\SpectrumAnalyzerDisplay.xaml.cs">
       <DependentUpon>SpectrumAnalyzerDisplay.xaml</DependentUpon>
@@ -161,6 +164,7 @@
     <Compile Include="Dto\UiAlbum.cs" />
     <Compile Include="Dto\UiArtist.cs" />
     <Compile Include="Dto\UiBase.cs" />
+    <Compile Include="Dto\UiEqBand.cs" />
     <Compile Include="Dto\UiTrack.cs" />
     <Compile Include="MappingConfiguration.cs" />
     <Compile Include="NoiseUiModule.cs" />
@@ -195,7 +199,6 @@
     <Compile Include="ViewModels\ApplicationLogDialogModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
     <Compile Include="ViewModels\DatabaseConfigurationDialogModel.cs" />
-    <Compile Include="ViewModels\EqViewModel.cs" />
     <Compile Include="ViewModels\ExplorerStrategyArtistAlbum.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
     <Compile Include="ViewModels\IExplorerViewStrategy.cs" />
@@ -225,9 +228,6 @@
     <Compile Include="Views\DatabaseConfigurationDialog.xaml.cs">
       <DependentUpon>DatabaseConfigurationDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EqDialog.xaml.cs">
-      <DependentUpon>EqDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\FavoritesView.xaml.cs">
       <DependentUpon>FavoritesView.xaml</DependentUpon>
     </Compile>
@@ -248,6 +248,9 @@
     </Compile>
     <Compile Include="Views\ListenStageView.xaml.cs">
       <DependentUpon>ListenStageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlayerExtendedView.xaml.cs">
+      <DependentUpon>PlayerExtendedView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlayerView.xaml.cs">
       <DependentUpon>PlayerView.xaml</DependentUpon>
@@ -303,6 +306,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\ParametricEqualizerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\SpectrumAnalyzerDisplay.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -335,10 +342,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EqDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\FavoritesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -364,6 +367,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ListenStageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlayerExtendedView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

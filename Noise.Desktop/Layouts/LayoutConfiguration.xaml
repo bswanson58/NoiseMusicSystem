@@ -32,7 +32,7 @@
                 <Layout:View RegionName="PlayQueue"
                              Type="{x:Type Views:PlayQueueView}" />
                 <Layout:View RegionName="Player"
-                             Type="{x:Type Views:PlayerView}" />
+                             Type="{x:Type Views:PlayerExtendedView}" />
             </Layout:Layout.Views>
         </Layout:Layout>
         <Layout:Layout x:Name="ListenLayout"
