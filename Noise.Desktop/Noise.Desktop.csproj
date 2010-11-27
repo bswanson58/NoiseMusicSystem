@@ -77,6 +77,10 @@
     <Reference Include="AvalonControlsLibrary">
       <HintPath>..\lib\AvalonControls\v2.0\AvalonControlsLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="Common.Logging">
+      <HintPath>..\lib\Quartz\v1.0.2.3\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Expression.Samples.PathListBoxUtils" />
     <Reference Include="Microsoft.Expression.Controls" />
     <Reference Include="Microsoft.Expression.Drawing" />
     <Reference Include="Microsoft.Practices.Prism">
