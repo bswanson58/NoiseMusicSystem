@@ -3,160 +3,117 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
         xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
-        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary" 
         xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers" 
-        xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
         x:Class="Noise.UI.Views.PlayerView"
         mc:Ignorable="d" 
         d:DesignHeight="100" d:DesignWidth="1200"             
 		>
 	<UserControl.Resources>
 		<Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True"/>
-		
-		<Storyboard x:Key="SliderValueAnimate">
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(RangeBase.Value)" Storyboard.TargetName="SpeedSlider">
-				<EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
-			</DoubleAnimationUsingKeyFrames>
-		</Storyboard>
-</UserControl.Resources>
+    </UserControl.Resources>
 
 	<UserControl.DataContext>
 		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}"/>
 	</UserControl.DataContext>
 
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Player " Margin="3,0,3,0">
-		<Grid x:Name="Layout" Background="White">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="*"/>
-			</Grid.RowDefinitions>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="Auto"/>
-			</Grid.ColumnDefinitions>
+    <GroupBox Height="75" BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Player " Margin="3,0,3,0">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
 
-			<Grid Grid.Row="0" Grid.Column="0">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
-				<StackPanel Grid.Column="0" Orientation="Horizontal" Margin="10">
-					<TextBlock Text="Now Playing: " FontSize="16" FontWeight="Bold" Foreground="{DynamicResource ControlTextColor}"
+            <!-- Track information -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0">
+                    <TextBlock Text="Now Playing: " FontSize="16" FontWeight="Bold" Foreground="{DynamicResource ControlTextColor}"
                                Visibility="{Binding TrackName, Converter={StaticResource EmptyStringVisibilityConverter}}"/>
-					<TextBlock Text="{Binding TrackName}" FontWeight="Bold" FontSize="16"/>
-				</StackPanel>
-                <Button Grid.Column="1" Margin="3" Content="q" Command="{Binding ReplayTrack}" VerticalAlignment="Center" FontFamily="Webdings" FontSize="16"/>
-                <CheckBox Grid.Column="2" Margin="3" Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center"/>
-				<Controls:RatingSelector Grid.Column="3"
-										 Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
-										 RatingSelected="{Binding Path=Rating, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
-			</Grid>
-			<StackPanel Grid.Row="1" Orientation="Horizontal" Height="35" Margin="7,0,0,0">
-				<Button Margin="3" Command="{Binding Play}" Content="4" Width="33" FontFamily="Webdings" FontSize="16"/>
-				<Button Margin="3" Command="{Binding Pause}" Content=";" Width="33" FontFamily="Webdings" FontSize="16"/>
-				<Button Margin="3" Command="{Binding Stop}" Content="&lt;" Width="33" FontFamily="Webdings" FontSize="16"/>
-				<Button Margin="3" Command="{Binding PreviousTrack}" Content="9" Width="33" FontFamily="Webdings" FontSize="16"/>
-				<Button Margin="3" Command="{Binding NextTrack}" Content=":" Width="33" FontFamily="Webdings" FontSize="16"/>
-				<StackPanel Orientation="Horizontal" Margin="5,0">
-					<TextBlock Text="Position: " Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center">
-                        <EventCommandTriggers:CommandSource.Trigger>
-                            <EventCommandTriggers:EventCommandTrigger RoutedEvent="TextBlock.MouseLeftButtonDown" Command="{Binding Path=ToggleTimeDisplay}"/>
-                        </EventCommandTriggers:CommandSource.Trigger>
-                    </TextBlock>
+                    <TextBlock Text="{Binding TrackName}" FontWeight="Bold" FontSize="16"/>
                 </StackPanel>
 
-				<Grid x:Name="VU_Meter" Width="100" Margin="10,5,10,0">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="11"/>
-                        <RowDefinition Height="2"/>
-						<RowDefinition Height="11"/>
-					</Grid.RowDefinitions>
-                    <Rectangle Grid.Row="0" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding LeftLevel, Converter={StaticResource VolumeLevelConverter}}"/>
-                    <Rectangle Grid.Row="2" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding RightLevel, Converter={StaticResource VolumeLevelConverter}}"/>
+                <Grid Grid.Row="1" Margin="0,0,0,3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                    <!-- VU Meter experiment - also requires reversal of VolumeLevelConverter output.
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                        </Grid.ColumnDefinitions>
-                        <Rectangle Grid.Column="0" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="1" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="2" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="3" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="4" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="5" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="6" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="7" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="8" Margin="0,1,2,1" Fill="Red"/>
-                        <Rectangle Grid.Column="9" Margin="0,1,2,1" Fill="Red"/>
-                    </Grid>
-					<Rectangle Grid.Row="0" HorizontalAlignment="Right" Fill="White" Width="{Binding LeftLevel, Converter={StaticResource VolumeLevelConverter}}" Panel.ZIndex="1"/>
+                    <CheckBox x:Name="Favorite" Grid.Column="0" Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" Margin="0,0,5,0"/>
+                    <Controls:RatingSelector Grid.Column="1"
+										 Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
+										 RatingSelected="{Binding Path=Rating, Mode=TwoWay}"/>
+                    <TextBlock Grid.Column="3" Text="Position: " Foreground="{DynamicResource ControlTextColor}"/>
+                    <TextBlock Grid.Column="4" Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" Margin="0,0,7,0">
+                            <EventCommandTriggers:CommandSource.Trigger>
+                                <EventCommandTriggers:EventCommandTrigger RoutedEvent="TextBlock.MouseLeftButtonDown" Command="{Binding Path=ToggleTimeDisplay}"/>
+                            </EventCommandTriggers:CommandSource.Trigger>
+                    </TextBlock>
+                </Grid>
+            </Grid>
 
-                    <Grid Grid.Row="2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                        </Grid.ColumnDefinitions>
-                        <Rectangle Grid.Column="0" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="1" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="2" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="3" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="4" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="5" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="6" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="7" Margin="0,1,2,1" Fill="LightGreen"/>
-                        <Rectangle Grid.Column="8" Margin="0,1,2,1" Fill="Red"/>
-                        <Rectangle Grid.Column="9" Margin="0,1,2,1" Fill="Red"/>
-                    </Grid>
-                    <Rectangle Grid.Row="2" HorizontalAlignment="Right" Fill="White" Width="{Binding RightLevel, Converter={StaticResource VolumeLevelConverter}}" Panel.ZIndex="1"/>
-                    -->
-				</Grid>
-				<Slider x:Name="PositionSlider" Orientation="Horizontal" Width="250" SnapsToDevicePixels="True" Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}" Style="{StaticResource PlayerPositionSliderStyle}" VerticalAlignment="Center"/>
-				<Slider x:Name="SpeedSlider" Orientation="Horizontal" Width="76" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}" VerticalAlignment="Center">
-					<i:Interaction.Behaviors>
-						<Behaviours:SliderAnimateAfterDrag Storyboard="{StaticResource SliderValueAnimate}" />
-					</i:Interaction.Behaviors>
-				</Slider>
-				<Slider x:Name="Balance" Orientation="Horizontal" Width="76" Margin="10,0,0,0" SnapsToDevicePixels="True" Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}" VerticalAlignment="Center"/>
-				<StackPanel Orientation="Vertical" Margin="15,9,0,0" VerticalAlignment="Top">
-					<CheckBox Content="Random" IsChecked="{Binding Path=RandomPlay, Mode=TwoWay}"/>
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Margin="7,3,0,0"  VerticalAlignment="Top">
-					<Label Content="Exhausted:"/>
-					<ComboBox x:Name="ExhaustedStrategy" Width="110"
-                              ItemsSource="{Binding Path=ExhaustedStrategyList}"
-                              DisplayMemberPath="Title" SelectedValuePath="Strategy"
-                              SelectedValue="{Binding Path=ExhaustedStrategy}"/>
-				</StackPanel>
-                <Button Margin="9,0,0,5" Height="25" Width="33" Content="Eq" Command="{Binding Eq}"/>
-                <NoiseControls:SpectrumAnalyzerDisplay Margin="9,0,0,0"  Width="100" SpectrumImage="{Binding Path=SpectrumImage, Mode=OneWay}"
-                                                       ImageHeight="{Binding Path=ImageHeight, Mode=OneWayToSource}" ImageWidth="{Binding Path=ImageWidth, Mode=OneWayToSource}"/>
-<!--                <Button Margin="9,0,0,5" Height="25" Content="Spectrum" Command="{Binding SpectrumAnalyzer}"/> -->
-            </StackPanel>
-			<Slider x:Name="Volume" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Height="50" Margin="0,0,10,0" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
-		</Grid>
-	</GroupBox>
+            <!-- Transport Controls -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Margin="3" Command="{Binding Play}" Content="4" FontFamily="Webdings" FontSize="16" Width="27"/>
+                    <Button Margin="3" Command="{Binding Pause}" Content=";" Width="27" FontFamily="Webdings" FontSize="16"/>
+                    <Button Margin="3" Command="{Binding Stop}" Content="&lt;" Width="27" FontFamily="Webdings" FontSize="16"/>
+                    <Button Margin="3" Command="{Binding PreviousTrack}" Content="9" Width="27" FontFamily="Webdings" FontSize="16"/>
+                    <Button Margin="3" Command="{Binding NextTrack}" Content=":" Width="27" FontFamily="Webdings" FontSize="16"/>
+                    <Button Margin="3" Command="{Binding ReplayTrack}" Content="q" Width="27" FontFamily="Webdings" FontSize="16"/>
+                </StackPanel>
+                <Slider x:Name="PositionSlider" Grid.Row="1" Margin="5,0,5,0" Orientation="Horizontal" SnapsToDevicePixels="True"  VerticalAlignment="Center"
+                            Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}"
+                            Value="{Binding Path=TrackPosition, Mode=TwoWay}" 
+                            Style="{StaticResource PlayerPositionSliderStyle}" BorderThickness="0,3"/>
+
+            </Grid>
+
+            <!-- Volume Controls -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Margin="3" Grid.Column="1" Content="X" Width="27" FontFamily="Webdings" FontSize="16"/>
+                    <Button Margin="3" Grid.Column="2" Content="5" Width="27" FontFamily="Webdings" FontSize="16" Command="{Binding Path=ExtendedPlayer}"/>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Volume:" Margin="0,0,5,0" HorizontalAlignment="Right" Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Text="-" Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center" Margin="0,0,3,0"/>
+                    <Slider x:Name="Volume" Grid.Column="2" Orientation="Horizontal" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0"
+                                Value="{Binding Path=Volume, Mode=TwoWay}" Style="{StaticResource PlayerPositionSliderStyle}" Margin="0,5,0,0"/>
+                    <TextBlock Grid.Column="3" Text="+" Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center" Margin="3,0,0,0"/>
+                </Grid>
+            </Grid>
+
+        </Grid>
+    </GroupBox>
 </UserControl>

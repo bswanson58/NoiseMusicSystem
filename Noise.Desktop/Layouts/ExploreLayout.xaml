@@ -6,7 +6,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="190"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
         <DockPanel x:Name="Toolbar" Grid.Row="0">

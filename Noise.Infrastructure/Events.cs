@@ -25,6 +25,8 @@ namespace Noise.Infrastructure {
 
 		public class WindowLayoutRequest : CompositePresentationEvent<string> { }
 		public class ExternalPlayerSwitch : CompositePresentationEvent<object> { }
+		public class ExtendedPlayerRequest : CompositePresentationEvent<object> { }
+		public class StandardPlayerRequest : CompositePresentationEvent<object> { }
 
 		public class DatabaseItemChanged : CompositePresentationEvent<DbItemChangedArgs> { }
 

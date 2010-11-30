@@ -389,5 +389,13 @@ namespace Noise.UI.ViewModels {
 		public bool CanExecute_ResetBands() {
 			return( IsEqEditable );
 		}
+
+		public void Execute_StandardPlayer() {
+			mEvents.GetEvent<Events.StandardPlayerRequest>().Publish( this );
+		}
+
+		public void Execute_ExtendedPlayer() {
+			mEvents.GetEvent<Events.ExtendedPlayerRequest>().Publish( this );
+		}
 	}
 }

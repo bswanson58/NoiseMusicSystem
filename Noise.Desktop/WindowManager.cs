@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using Composite.Layout;
 using Composite.Layout.Configuration;
 using Microsoft.Practices.Prism.Events;
+using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.Unity;
 using Noise.Desktop.Properties;
 using Noise.Infrastructure;
@@ -16,6 +18,7 @@ namespace Noise.Desktop {
 		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
 		private readonly ILayoutManager		mLayoutManager;
+		private readonly IRegionManager		mRegionManager;
 		private SmallPlayerView				mPlayerView;
 		private Window						mShell;
 		private NotifyIcon					mNotifyIcon;
@@ -24,10 +27,13 @@ namespace Noise.Desktop {
 		public WindowManager( IUnityContainer container ) {
 			mContainer = container;
 			mLayoutManager = LayoutConfigurationManager.LayoutManager;
+			mRegionManager = mContainer.Resolve<IRegionManager>();
 
 			mEvents = mContainer.Resolve<IEventAggregator>();
 			mEvents.GetEvent<Events.WindowLayoutRequest>().Subscribe( OnWindowLayoutRequested );
 			mEvents.GetEvent<Events.ExternalPlayerSwitch>().Subscribe( OnExternalPlayerSwitch );
+			mEvents.GetEvent<Events.StandardPlayerRequest>().Subscribe( OnStandardPlayerRequest );
+			mEvents.GetEvent<Events.ExtendedPlayerRequest>().Subscribe( OnExtendedPlayerRequest );
 
 			mStoredWindowState = WindowState.Normal;
 			mNotifyIcon = new NotifyIcon { //BalloonTipText = "Click the tray icon to show.", 
@@ -149,6 +155,38 @@ namespace Noise.Desktop {
 				mShell.Show();
 				mShell.WindowState = mStoredWindowState;
 				mShell.Activate();
+			}
+		}
+
+		private void OnStandardPlayerRequest( object sender ) {
+			var	region = mRegionManager.Regions["Player"];
+
+			if( region != null ) {
+				System.Windows.Controls.UserControl playerView = region.Views.OfType<PlayerView>().Select( view => view as System.Windows.Controls.UserControl ).FirstOrDefault();
+
+				if( playerView == null ) {
+					playerView = new PlayerView();
+
+					mRegionManager.AddToRegion( "Player", playerView );
+				}
+
+				region.Activate( playerView );
+			}
+		}
+
+		private void OnExtendedPlayerRequest( object sender ) {
+			var	region = mRegionManager.Regions["Player"];
+
+			if( region != null ) {
+				System.Windows.Controls.UserControl extendedView = region.Views.OfType<PlayerExtendedView>().Select( view => view as System.Windows.Controls.UserControl ).FirstOrDefault();
+
+				if( extendedView == null ) {
+					extendedView = new PlayerExtendedView();
+
+					mRegionManager.AddToRegion( "Player", extendedView );
+				}
+
+				region.Activate( extendedView );
 			}
 		}
 	}
