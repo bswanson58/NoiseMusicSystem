@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
@@ -10,6 +12,7 @@ using Quartz;
 using Quartz.Impl;
 using TagLib;
 using TagLib.Id3v2;
+using File = TagLib.File;
 
 namespace Noise.Core.FileStore {
 	internal class BackgroundFileUpdateJob : IJob {
@@ -33,6 +36,7 @@ namespace Noise.Core.FileStore {
 		private	readonly IScheduler				mJobScheduler;
 		private readonly ILog					mLog;
 		private readonly List<BaseCommandArgs>	mUnfinishedCommands;
+		private bool							mClearReadOnly;
 
 		private AsyncCommand<SetFavoriteCommandArgs>		mSetFavoriteCommand;
 		private AsyncCommand<SetRatingCommandArgs>			mSetRatingCommand;
@@ -62,6 +66,12 @@ namespace Noise.Core.FileStore {
 			mUpdatePlayCountCommand = new AsyncCommand<UpdatePlayCountCommandArgs>( OnUpdatePlayCount );
 			mUpdatePlayCountCommand.ExecutionComplete += OnExecutionComplete;
 			GlobalCommands.UpdatePlayCount.RegisterCommand( mUpdatePlayCountCommand );
+
+			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			if( configuration != null ) {
+				mClearReadOnly = configuration.EnableReadOnlyUpdates;
+			}
 
 			var jobDetail = new JobDetail( cBackgroundFileUpdater, "FileUpdates", typeof( BackgroundFileUpdateJob ));
 			var trigger = new SimpleTrigger( cBackgroundFileUpdater, "FileUpdates",
@@ -114,7 +124,11 @@ namespace Noise.Core.FileStore {
 				var file = mNoiseManager.DataProvider.GetPhysicalFile( track );
 
 				if( file != null ) {
-					var tags = File.Create( mNoiseManager.DataProvider.GetPhysicalFilePath( file ));
+					var filePath = mNoiseManager.DataProvider.GetPhysicalFilePath( file );
+
+					ClearReadOnlyFlag( filePath );
+
+					var tags = File.Create( filePath );
 					var id3Tags = tags.GetTag( TagTypes.Id3v2 ) as TagLib.Id3v2.Tag;
 
 					if( id3Tags != null ) {
@@ -150,7 +164,11 @@ namespace Noise.Core.FileStore {
 				var file = mNoiseManager.DataProvider.GetPhysicalFile( track );
 
 				if( file != null ) {
-					var tags = File.Create( mNoiseManager.DataProvider.GetPhysicalFilePath( file ));
+					var filePath = mNoiseManager.DataProvider.GetPhysicalFilePath( file );
+
+					ClearReadOnlyFlag( filePath );
+
+					var tags = File.Create( filePath );
 					var id3Tags = tags.GetTag( TagTypes.Id3v2 ) as TagLib.Id3v2.Tag;
 
 					if( id3Tags != null ) {
@@ -186,7 +204,11 @@ namespace Noise.Core.FileStore {
 				var file = mNoiseManager.DataProvider.GetPhysicalFile( track );
 
 				if( file != null ) {
-					var tags = File.Create( mNoiseManager.DataProvider.GetPhysicalFilePath( file ));
+					var filePath = mNoiseManager.DataProvider.GetPhysicalFilePath( file );
+
+					ClearReadOnlyFlag( filePath );
+
+					var tags = File.Create( filePath );
 					var id3Tags = tags.GetTag( TagTypes.Id3v2 ) as TagLib.Id3v2.Tag;
 
 					if( id3Tags != null ) {
@@ -215,6 +237,25 @@ namespace Noise.Core.FileStore {
 			if(( args != null ) &&
 			   ( args.Exception != null )) {
 				mLog.LogException( "Exception - FileUpdates:OnExecutionComplete:", args.Exception );
+			}
+		}
+
+		private void ClearReadOnlyFlag( string file ) {
+			if( mClearReadOnly ) {
+				try {
+					if( System.IO.File.Exists( file )) {
+					   var fileAttributes = System.IO.File.GetAttributes( file );
+					
+						if( fileAttributes.HasFlag( FileAttributes.ReadOnly )) {
+							fileAttributes &= ~FileAttributes.ReadOnly;
+
+							System.IO.File.SetAttributes( file, fileAttributes );
+						}
+					}
+				}
+				catch( Exception ex ) {
+					mLog.LogException( string.Format( "Exception FileUpdates:ClearReadOnlyFlag for file: ({0}) -", file ), ex );
+				}
 			}
 		}
 	}

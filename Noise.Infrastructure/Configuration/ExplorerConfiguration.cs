@@ -9,6 +9,7 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cEnableLibraryExplorerProperty				= "enableLibraryExplorer";
 		private const string	cEnableBackgroundContentExplorerProperty	= "enableBackgroundContentExplorer";
 		private const string	cEnableLibraryChangeUpdateProperty			= "enableLibraryChangeUpdates";
+		private const string	cEnableUpdateReadOnlyProperty				= "enableUpdateReadOnly";
 		private const string	cMinimizeToTrayProperty						= "minimizeToTray";
 		private const string	cDisplayPlayTimeElapsedProperty				= "displayPlayTimeElapsed";
 		private const string	cPlayExhaustedStrategyProperty				= "playExhaustedStrategy";
@@ -33,6 +34,12 @@ namespace Noise.Infrastructure.Configuration {
 		public bool EnableLibraryChangeUpdates {
 			get { return ((bool)( base[cEnableLibraryChangeUpdateProperty] ) ); }
 			set { base[cEnableLibraryChangeUpdateProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cEnableUpdateReadOnlyProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "true" )]
+		public bool EnableReadOnlyUpdates {
+			get { return ((bool)( base[cEnableUpdateReadOnlyProperty] ) ); }
+			set { base[cEnableUpdateReadOnlyProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cMinimizeToTrayProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
