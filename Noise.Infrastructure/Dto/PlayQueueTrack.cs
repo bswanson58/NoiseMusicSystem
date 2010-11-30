@@ -8,21 +8,23 @@ namespace Noise.Infrastructure.Dto {
 		public	DbInternetStream	Stream { get; private set; }
 		public	StreamInfo			StreamInfo { get; set; }
 		public	StorageFile			File { get; private set; }
+		public	string				FilePath { get; private set; }
 		public	double				PercentPlayed { get; set; }
 		public	bool				IsStrategyQueued { get; private set; }
 		private	bool				mIsPlaying;
 		private	bool				mHasPlayed;
 
-		public PlayQueueTrack( DbArtist artist, DbAlbum album, DbTrack track, StorageFile file, bool strategyRequest ) :
-			this( artist, album, track, file ) {
+		public PlayQueueTrack( DbArtist artist, DbAlbum album, DbTrack track, StorageFile file, string filePath, bool strategyRequest ) :
+			this( artist, album, track, file, filePath ) {
 			IsStrategyQueued = strategyRequest;
 		}
 
-		public PlayQueueTrack( DbArtist artist, DbAlbum album, DbTrack track, StorageFile file ) {
+		public PlayQueueTrack( DbArtist artist, DbAlbum album, DbTrack track, StorageFile file, string filePath ) {
 			Artist = artist;
 			Album = album;
 			Track = track;
 			File = file;
+			FilePath = filePath;
 		}
 
 		public void UpdateTrack( DbTrack track ) {

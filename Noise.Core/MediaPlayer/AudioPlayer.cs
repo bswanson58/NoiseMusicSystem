@@ -8,8 +8,6 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Practices.Unity;
-using Noise.Core.Database;
-using Noise.Core.FileStore;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Un4seen.Bass;
@@ -75,7 +73,7 @@ namespace Noise.Core.MediaPlayer {
 		private FileStream								mRecordStream;
 		private byte[]									mRecordBuffer;
 		private bool									mRecord;
-		private Visuals									mSpectumVisual;
+		private readonly Visuals						mSpectumVisual;
 
 		private readonly Subject<int>					mChannelStatusSubject;
 		public	IObservable<int>						ChannelStatusChange { get { return( mChannelStatusSubject.AsObservable()); } }
@@ -146,20 +144,27 @@ namespace Noise.Core.MediaPlayer {
 		public BitmapSource GetSpectrumImage( int channel, int height, int width, Color baseColor, Color peakColor, Color peakHoldColor ) {
 			BitmapSource	retValue = null;
 
-			System.Drawing.Color	c1 = System.Drawing.Color.FromArgb( baseColor.A, baseColor.R, baseColor.G, baseColor.B );
-			System.Drawing.Color	c2 = System.Drawing.Color.FromArgb( peakColor.A, peakColor.R, peakColor.G, peakColor.B );
-			System.Drawing.Color	c3 = System.Drawing.Color.FromArgb( peakHoldColor.A, peakHoldColor.R, peakHoldColor.G, peakHoldColor.B );
-			System.Drawing.Color	c4 = System.Drawing.Color.FromArgb( 0, 0, 0, 0 );
+			try {
+				const int	lineGap = 1;
+				const int	peakHoldHeight = 1;
+				const int	peakHoldTime = 5;
 
-			const int	lineGap = 1;
-			const int	peakHoldHeight = 1;
-			const int	peakHoldTime = 5;
-			var bars = width > 300 ? 48 : width > 200 ? 32 : 24;
-			var barWidth = ( width - ( bars * lineGap )) / bars;
-			var bitmap = mSpectumVisual.CreateSpectrumLinePeak( channel, width, height, c1, c2, c3, c4, barWidth, peakHoldHeight, lineGap, peakHoldTime, false, true, false );
+				var bars = width > 300 ? 48 : width > 200 ? 32 : 24;
+				var barWidth = ( width - ( bars * lineGap )) / bars;
+				var bitmap = mSpectumVisual.CreateSpectrumLinePeak( channel, width, height, 
+																	System.Drawing.Color.FromArgb( baseColor.A, baseColor.R, baseColor.G, baseColor.B ),
+																	System.Drawing.Color.FromArgb( peakColor.A, peakColor.R, peakColor.G, peakColor.B ), 
+																	System.Drawing.Color.FromArgb( peakHoldColor.A, peakHoldColor.R, peakHoldColor.G, peakHoldColor.B ), 
+																	System.Drawing.Color.FromArgb( 0, 0, 0, 0 ),
+																	barWidth, peakHoldHeight, lineGap, peakHoldTime, false, true, false );
 
-			if( bitmap != null ) {
-				retValue = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap( bitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+				if( bitmap != null ) {
+					retValue = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap( bitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty,
+																							 BitmapSizeOptions.FromEmptyOptions());
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - AudioPlayer:GetSpectrumImage: ", ex );
 			}
 
 			return( retValue );
@@ -198,30 +203,17 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
-		public int OpenFile( StorageFile file, float gainAdjustment ) {
+		public int OpenFile( string  filePath, float gainAdjustment ) {
 			var retValue = 0;
-			var dbManager = mContainer.Resolve<IDatabaseManager>();
-			var database = dbManager.ReserveDatabase();
-			var path = "";
 
-			try {
-				path = StorageHelpers.GetPath( database.Database, file );
-			}
-			catch( Exception ex ) {
-				mLog.LogException( "Exception - AudioPlayer:OpenFile", ex );
-			}
-			finally {
-				dbManager.FreeDatabase( database );
-			}
-
-			if( File.Exists( path )) {
+			if( File.Exists( filePath )) {
 				try {
-					var channel = Bass.BASS_StreamCreateFile( path, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT );
+					var channel = Bass.BASS_StreamCreateFile( filePath, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT );
 					
 					Single	sampleRate = 0;
 					Bass.BASS_ChannelGetAttribute( channel, BASSAttribute.BASS_ATTRIB_FREQ, ref sampleRate );
 
-					var stream = new AudioStream( file, channel, sampleRate );
+					var stream = new AudioStream( filePath, channel, sampleRate );
 					mCurrentStreams.Add( channel, stream );
 
 					//Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_DAMP, -2 );
@@ -251,7 +243,7 @@ namespace Noise.Core.MediaPlayer {
 					retValue = channel;
 				}
 				catch( Exception ex ) {
-					mLog.LogException( String.Format( "AudioPlayer opening {0}", path ), ex );
+					mLog.LogException( String.Format( "AudioPlayer opening {0}", filePath ), ex );
 				}
 			}
 
@@ -263,8 +255,8 @@ namespace Noise.Core.MediaPlayer {
 			return ( retValue );
 		}
 
-		public int OpenFile( StorageFile file ) {
-			return( OpenFile( file, 0.0f ));
+		public int OpenFile( string filePath ) {
+			return( OpenFile( filePath, 0.0f ));
 		}
 
 		public int OpenStream( DbInternetStream stream ) {

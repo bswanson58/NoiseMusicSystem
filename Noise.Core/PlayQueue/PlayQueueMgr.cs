@@ -54,27 +54,33 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		private void AddTrack( DbTrack track, bool strategyRequest ) {
-			DbArtist	artist = null;
-
 			var album = mDataProvider.GetAlbumForTrack( track );
+
 			if( album != null ) {
-				artist = mDataProvider.GetArtistForAlbum( album );
-			}
+				var artist = mDataProvider.GetArtistForAlbum( album );
 
-			var newTrack = new PlayQueueTrack( artist, album, track, mDataProvider.GetPhysicalFile( track ), strategyRequest );
+				if( artist != null ) {
+					var file = mDataProvider.GetPhysicalFile( track );
 
-			// Place any user selected tracks before any unplayed strategy queued tracks.
-			if(!strategyRequest ) {
-				var	ptrack = mPlayQueue.Find( t => t.HasPlayed == false && t.IsPlaying == false && t.IsStrategyQueued );
-				if( ptrack != null ) {
-					mPlayQueue.Insert( mPlayQueue.IndexOf( ptrack ), newTrack );
+					if( file != null ) {
+						var path = mDataProvider.GetPhysicalFilePath( file );
+						var newTrack = new PlayQueueTrack( artist, album, track, file, path, strategyRequest );
+
+						// Place any user selected tracks before any unplayed strategy queued tracks.
+						if(!strategyRequest ) {
+							var	ptrack = mPlayQueue.Find( t => t.HasPlayed == false && t.IsPlaying == false && t.IsStrategyQueued );
+							if( ptrack != null ) {
+								mPlayQueue.Insert( mPlayQueue.IndexOf( ptrack ), newTrack );
+							}
+							else {
+								mPlayQueue.Add( newTrack );
+							}
+						}
+						else {
+							mPlayQueue.Add( newTrack );
+						}
+					}
 				}
-				else {
-					mPlayQueue.Add( newTrack );
-				}
-			}
-			else {
-				mPlayQueue.Add( newTrack );
 			}
 		}
 

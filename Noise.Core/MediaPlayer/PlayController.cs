@@ -297,7 +297,7 @@ namespace Noise.Core.MediaPlayer {
 				   ( track.Track != null )) {
 					gain = track.Track.ReplayGainAlbumGain != 0.0f ? track.Track.ReplayGainAlbumGain : track.Track.ReplayGainTrackGain;
 				}
-				var	channel = track.IsStream ? mAudioPlayer.OpenStream( track.Stream ) : mAudioPlayer.OpenFile( track.File, gain );
+				var	channel = track.IsStream ? mAudioPlayer.OpenStream( track.Stream ) : mAudioPlayer.OpenFile( track.FilePath, gain );
 
 				mOpenTracks.Add( channel, track );
 				CurrentChannel = channel;
