@@ -5,7 +5,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
         xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary" 
-        xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers" 
+        xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
+        xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
         x:Class="Noise.UI.Views.PlayerView"
         mc:Ignorable="d" 
         d:DesignHeight="100" d:DesignWidth="1200"             
@@ -96,6 +97,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
+                    <NoiseControls:VuMeter Grid.Column="0" Margin="60,11,7,0" LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}"/>
                     <Button Margin="3" Grid.Column="1" Content="X" Width="27" FontFamily="Webdings" FontSize="16"/>
                     <Button Margin="3" Grid.Column="2" Content="5" Width="27" FontFamily="Webdings" FontSize="16" Command="{Binding Path=ExtendedPlayer}"/>
                 </Grid>

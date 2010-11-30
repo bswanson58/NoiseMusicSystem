@@ -170,13 +170,19 @@ namespace Noise.Core.MediaPlayer {
 																		barWidth, peakHoldHeight, lineGap, peakHoldTime, false, true, false );
 
 					if( bitmap != null ) {
-						retValue = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap( bitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty,
-																								 BitmapSizeOptions.FromEmptyOptions());
+						try {
+							retValue = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap( bitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty,
+																									 BitmapSizeOptions.FromEmptyOptions());
+						}
+						catch( Exception ex ) {
+							mLog.LogException( "Exception - AudioPlayer:CreatingSpectrumBitmap: ", ex );
+						}
+
 						bitmap.Dispose();
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - AudioPlayer:GetSpectrumImage: ", ex );
+					mLog.LogException( "Exception - AudioPlayer:CreatingSpectrumImage: ", ex );
 				}
 			}
 
