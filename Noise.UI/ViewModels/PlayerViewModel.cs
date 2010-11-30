@@ -174,12 +174,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
+		[DependsUpon( "PlayQueueChangedFlag" )]
 		public bool IsFavorite {
 			get { return( mNoiseManager.PlayController.IsFavorite ); }
 			set { mNoiseManager.PlayController.IsFavorite = value; }
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
+		[DependsUpon( "PlayQueueChangedFlag" )]
 		public Int16 Rating {
 			get{ return( mNoiseManager.PlayController.Rating ); }
 			set { mNoiseManager.PlayController.Rating = value; }
