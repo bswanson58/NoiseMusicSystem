@@ -25,6 +25,9 @@ namespace Noise.Infrastructure {
 		public const string				FavoriteFrameDescription = "Noise Music System - Favorite Track Flag";
 		public const string				FavoriteFrame = "FAVORITE";
 
+		public const string				EqPresetsFile = "EqPresets.xml";
+		public const string				LicenseKeyFile = "LicenseKeys.xml";
+
 		static Constants() {
 			cNoExpirationDate = DateTime.MaxValue;
 		}

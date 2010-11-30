@@ -7,6 +7,7 @@ using Lastfm.Services;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -70,9 +71,6 @@ namespace Noise.Core.DataProviders {
 	}
 
 	public class LastFmProvider {
-		private const string		cApiKey		= "2cc6cebb071ba39a2d6fa71fc60255e8";
-		private const string		cApiSecret	= "e01705ce5fa579cc070811ebfe5206f0";
-
 		private readonly IUnityContainer	mContainer;
 		private readonly ITagManager		mTagManager;
 		private readonly ILog				mLog;
@@ -86,7 +84,14 @@ namespace Noise.Core.DataProviders {
 			mTagManager = noiseManager.TagManager;
 
 			try {
-				mSession = new Session( cApiKey, cApiSecret );
+				var licenseManager = mContainer.Resolve<ILicenseManager>();
+				if( licenseManager.Initialize( Constants.LicenseKeyFile )) {
+					var key = licenseManager.RetrieveKey( LicenseKeys.LastFm );
+
+					if( key != null ) {
+						mSession = new Session( key.Name, key.Key );
+					}
+				}
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "LastFmProvider creating Session:", ex );

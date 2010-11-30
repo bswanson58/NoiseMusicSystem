@@ -222,7 +222,8 @@ copy $(SolutionDir)lib\BASS.Net\v2.4.6.4\bassflac.dll $(TargetDir)
 copy $(SolutionDir)lib\BASS.Net\v2.4.6.4\basswma.dll $(TargetDir)
 copy $(SolutionDir)lib\Eloquera\v3.0.B3\Eloquera.Client.dll $(TargetDir)
 copy $(SolutionDir)lib\Eloquera\v3.0.B3\Eloquera.Common.dll $(TargetDir)
-copy $(SolutionDir)Noise.Core\Resources\EqPresets.xml $(TargetDir)</PostBuildEvent>
+copy $(SolutionDir)Noise.Core\Resources\EqPresets.xml $(TargetDir)
+copy $(SolutionDir)Noise.Core\Resources\LicenseKeys.xml $(TargetDir)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

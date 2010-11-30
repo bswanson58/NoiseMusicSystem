@@ -8,6 +8,7 @@ using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
 
 namespace Noise.Core {
 	public class NoiseCoreModule : IModule {
@@ -28,6 +29,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>();
 			mContainer.RegisterType<IFileUpdates, FileUpdates>();
 //			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
+			mContainer.RegisterType<ILicenseManager, LicenseManager>();
 			mContainer.RegisterType<IMetaDataExplorer, MetaDataExplorer>();
 			mContainer.RegisterType<ISearchBuilder, SearchBuilder>();
 			mContainer.RegisterType<ISummaryBuilder, SummaryBuilder>();

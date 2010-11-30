@@ -57,7 +57,7 @@ namespace Noise.Core.MediaPlayer {
 			}
 
 			mEqManager = mContainer.Resolve<IEqManager>();
-			if( mEqManager.Initialize( "EqPresets.xml" )) {
+			if( mEqManager.Initialize( Constants.EqPresetsFile )) {
 				mAudioPlayer.ParametricEq = mEqManager.CurrentEq;
 			}
 			else {

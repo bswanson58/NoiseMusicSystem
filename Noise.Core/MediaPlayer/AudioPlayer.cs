@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Un4seen.Bass;
@@ -93,6 +94,15 @@ namespace Noise.Core.MediaPlayer {
 			mSpectumVisual = new Visuals();
 
 			try {
+				var licenseManager = mContainer.Resolve<ILicenseManager>();
+				if( licenseManager.Initialize( Constants.LicenseKeyFile )) {
+					var key = licenseManager.RetrieveKey( LicenseKeys.BassAudio );
+
+					if( key != null ) {
+						BassNet.Registration( key.Name, key.Key );
+					}
+				}
+
 				Bass.BASS_Init( -1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero );
 				Bass.BASS_SetConfig( BASSConfig.BASS_CONFIG_FLOATDSP, true );
 				// Load the fx library.
