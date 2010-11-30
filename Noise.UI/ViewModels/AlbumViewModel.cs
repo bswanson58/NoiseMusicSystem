@@ -188,7 +188,12 @@ namespace Noise.UI.ViewModels {
 					if( track != null ) {
 						switch( args.Change ) {
 							case DbItemChanged.Update:
-								mTracks[mTracks.IndexOf( track )] = TransformTrack( item as DbTrack );
+								var newTrack = TransformTrack( item as DbTrack );
+
+								mChangeObserver.Release( track );
+								mTracks[mTracks.IndexOf( track )] = newTrack;
+								mChangeObserver.Add( newTrack );
+
 								break;
 							case DbItemChanged.Delete:
 								mTracks.Remove( track );
