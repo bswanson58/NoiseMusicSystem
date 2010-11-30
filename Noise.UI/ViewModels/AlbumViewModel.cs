@@ -14,6 +14,21 @@ using Observal;
 using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
+	internal class NewAlbumInfo {
+		public DbAlbum				Album { get; private set; }
+		public AlbumSupportInfo		SupportInfo { get; private set; }
+		public IEnumerable<DbTrack>	TrackList { get; private set; }
+
+		public NewAlbumInfo() {
+		}
+
+		public NewAlbumInfo( DbAlbum album, AlbumSupportInfo supportInfo, IEnumerable<DbTrack> trackList ) {
+			Album = album;
+			SupportInfo = supportInfo;
+			TrackList = trackList;
+		}
+	}
+
 	internal class AlbumViewModel : ViewModelBase {
 		private IUnityContainer				mContainer;
 		private IEventAggregator			mEvents;
@@ -31,8 +46,8 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
 			mBackgroundWorker = new BackgroundWorker();
-			mBackgroundWorker.DoWork += ( o, args ) => args.Result = RetrieveAlbumInfo( args.Argument as UiAlbum );
-			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => SupportInfo = result.Result as AlbumSupportInfo;
+			mBackgroundWorker.DoWork += ( o, args ) => args.Result = RetrieveAlbumInfo( args.Argument as DbAlbum );
+			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => SetCurrentAlbum( result.Result as NewAlbumInfo );
 		}
 
 		[Dependency]
@@ -67,72 +82,84 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
-		private UiAlbum CurrentAlbum {
-			get{ return( mCurrentAlbum ); }
-			set {
-				Invoke( () => {
-					if( mCurrentAlbum != null ) {
-						mChangeObserver.Release( mCurrentAlbum );
+		private void SetCurrentAlbum( NewAlbumInfo albumInfo ) {
+			Invoke( () => {
+				if( mCurrentAlbum != null ) {
+					mChangeObserver.Release( mCurrentAlbum );
+				}
+
+		        mCurrentAlbum = albumInfo.Album != null ? TransformAlbum( albumInfo.Album ) : null;
+
+				mTracks.Each( node => mChangeObserver.Release( node ));
+				mTracks.Clear();
+
+		        if( mCurrentAlbum != null ) {
+					mChangeObserver.Add( mCurrentAlbum );
+
+					AlbumPlayTime = new TimeSpan();
+
+					foreach( var dbTrack in albumInfo.TrackList ) {
+						mTracks.Add( TransformTrack( dbTrack ));
+
+						AlbumPlayTime += dbTrack.Duration;
 					}
 
-		        	mCurrentAlbum = value != null ? TransformAlbum( mNoiseManager.DataProvider.GetAlbum( value.DbId )) : null;
+					mTracks.Each( track => mChangeObserver.Add( track ));
+				}
 
-					mTracks.Each( node => mChangeObserver.Release( node ));
-					mTracks.Clear();
+				SupportInfo = albumInfo.SupportInfo;
 
-		        	if( mCurrentAlbum != null ) {
-						mChangeObserver.Add( mCurrentAlbum );
-
-						AlbumPlayTime = new TimeSpan();
-
-						using( var tracks = mNoiseManager.DataProvider.GetTrackList( mCurrentAlbum.DbId )) {
-							foreach( var dbTrack in tracks.List ) {
-								mTracks.Add( TransformTrack( dbTrack ));
-
-								AlbumPlayTime += dbTrack.Duration;
-							}
-						}
-
-						mTracks.Each( track => mChangeObserver.Add( track ));
-					}
-
-					RaisePropertyChanged( () => AlbumPlayTime );
-					RaisePropertyChanged( () => Album );
-		        } );
-			}
+				RaisePropertyChanged( () => AlbumPlayTime );
+				RaisePropertyChanged( () => Album );
+		    } );
 		}
 
 		private AlbumSupportInfo SupportInfo {
 			get{ return( Get( () => SupportInfo )); }
-			set {
+			set{
 				BeginInvoke( () => Set( () => SupportInfo, value ));
 			}
 		}
 
 		private void OnArtistFocus( DbArtist artist ) {
-			if( CurrentAlbum != null ) {
-				if( CurrentAlbum.Artist != artist.DbId ) {
-					CurrentAlbum = null;
-					SupportInfo = null;
+			if( mCurrentAlbum != null ) {
+				if( mCurrentAlbum.Artist != artist.DbId ) {
+					SetCurrentAlbum( new NewAlbumInfo());
 				}
 			}
 		}
 
 		private void OnAlbumFocus( DbAlbum album ) {
-			CurrentAlbum = TransformAlbum( album );
-
-			if(( CurrentAlbum != null ) &&
-			   (!mBackgroundWorker.IsBusy )) {
-				mBackgroundWorker.RunWorkerAsync( CurrentAlbum );
+			if( album == null ) {
+				SetCurrentAlbum( new NewAlbumInfo());
 			}
+			else {
+				if(( mCurrentAlbum == null ) ||
+				   ( mCurrentAlbum.DbId != album.DbId )) {
+					if(!mBackgroundWorker.IsBusy ) {
+						mBackgroundWorker.RunWorkerAsync( album );
+					}
+				}
+			}
+		}
+
+		private NewAlbumInfo RetrieveAlbumInfo( DbAlbum album ) {
+			var retValue = new NewAlbumInfo( null, null, null );
+
+			if( album != null ) {
+				using( var tracks = mNoiseManager.DataProvider.GetTrackList( album.DbId )) {
+					var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
+														orderby track.VolumeName, track.TrackNumber ascending select track );
+
+					retValue = new NewAlbumInfo( album, mNoiseManager.DataProvider.GetAlbumSupportInfo( album ), sortedList );
+				}
+			}
+
+			return( retValue );
 		}
 
 		private void OnTrackPlay( long trackId ) {
 			mEvents.GetEvent<Events.TrackPlayRequested>().Publish( mNoiseManager.DataProvider.GetTrack( trackId ));
-		}
-
-		private AlbumSupportInfo RetrieveAlbumInfo( UiAlbum album ) {
-			return( mNoiseManager.DataProvider.GetAlbumSupportInfo( album.DbId ));
 		}
 
 		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
@@ -153,8 +180,8 @@ namespace Noise.UI.ViewModels {
 			var item = args.GetItem( mNoiseManager.DataProvider );
 
 			if(( item is DbTrack ) &&
-			   ( CurrentAlbum != null ) &&
-			   ((item as DbTrack).Album == CurrentAlbum.DbId )) {
+			   ( mCurrentAlbum != null ) &&
+			   ((item as DbTrack).Album == mCurrentAlbum.DbId )) {
 				BeginInvoke( () => {
 					var track = ( from UiTrack node in mTracks where node.DbId == args.ItemId select node ).FirstOrDefault();
 
@@ -173,16 +200,16 @@ namespace Noise.UI.ViewModels {
 			}
 
 			if(( item is DbAlbum ) &&
-			   ( CurrentAlbum != null ) &&
-			   ((item as DbAlbum).DbId == CurrentAlbum.DbId )) {
+			   ( mCurrentAlbum != null ) &&
+			   ((item as DbAlbum).DbId == mCurrentAlbum.DbId )) {
 				BeginInvoke( () => {
-					CurrentAlbum = TransformAlbum( item as DbAlbum );
+					mCurrentAlbum = TransformAlbum( item as DbAlbum );
 				} );
 			}
 		}
 
 		public UiAlbum Album {
-			get{ return( CurrentAlbum ); }
+			get{ return( mCurrentAlbum ); }
 		}
 
 		[DependsUpon( "SupportInfo" )]
@@ -229,19 +256,19 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_PlayAlbum() {
-			if( CurrentAlbum != null ) {
-				mEvents.GetEvent<Events.AlbumPlayRequested>().Publish( mNoiseManager.DataProvider.GetAlbum( CurrentAlbum.DbId ));
+			if( mCurrentAlbum != null ) {
+				mEvents.GetEvent<Events.AlbumPlayRequested>().Publish( mNoiseManager.DataProvider.GetAlbum( mCurrentAlbum.DbId ));
 			}
 		}
 
 		[DependsUpon( "Album" )]
 		public bool CanExecute_PlayAlbum() {
-			return( CurrentAlbum != null ); 
+			return( mCurrentAlbum != null ); 
 		}
 
 		[DependsUpon( "Album" )]
 		public bool AlbumValid {
-			get{ return( CurrentAlbum != null ); } 
+			get{ return( mCurrentAlbum != null ); } 
 		}
 	}
 }

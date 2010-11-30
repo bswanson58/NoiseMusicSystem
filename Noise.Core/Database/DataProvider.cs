@@ -149,7 +149,8 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
-				retValue = new DataProviderList<DbArtist>( database.DatabaseId, FreeDatabase, from DbArtist artist in database.Database select artist );
+				retValue = new DataProviderList<DbArtist>( database.DatabaseId, FreeDatabase,
+														   database.Database.ExecuteQuery( "SELECT DbArtist" ).OfType<DbArtist>());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( ex );
@@ -356,10 +357,13 @@ namespace Noise.Core.Database {
 			DataProviderList<DbTrack>	retValue = null;
 
 			var database = mDatabaseManager.ReserveDatabase();
+			var parms = database.Database.CreateParameters();
+
+			parms["albumId"] = albumId;
+
 			try {
 				retValue = new DataProviderList<DbTrack>( database.DatabaseId, FreeDatabase,
-																from DbTrack track in database.Database where track.Album == albumId 
-																orderby track.VolumeName, track.TrackNumber ascending select track );
+														  database.Database.ExecuteQuery( "SELECT DbTrack WHERE Album = @albumId", parms ).OfType<DbTrack>());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetTrackList(albumId):", ex );
