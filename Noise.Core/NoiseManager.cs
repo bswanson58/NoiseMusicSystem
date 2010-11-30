@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
@@ -15,6 +16,7 @@ namespace Noise.Core {
 
 		private	readonly IUnityContainer	mContainer;
 		private readonly IDatabaseManager	mDatabaseManager;
+		private	readonly IEventAggregator	mEvents;
 		private readonly ILog				mLog;
 		private	readonly ISchedulerFactory	mSchedulerFactory;
 		private	readonly IScheduler			mJobScheduler;
@@ -36,6 +38,7 @@ namespace Noise.Core {
 			mContainer = container;
 
 			mLog = mContainer.Resolve<ILog>();
+			mEvents = mContainer.Resolve<IEventAggregator>();
 			mDatabaseManager = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
 			mContainer.RegisterInstance( mDatabaseManager );
 
@@ -94,6 +97,8 @@ namespace Noise.Core {
 		}
 
 		public void Shutdown() {
+			mEvents.GetEvent<Events.SystemShutdown>().Publish( this );
+
 			mJobScheduler.Shutdown( true );
 			mFileUpdates.Shutdown();
 

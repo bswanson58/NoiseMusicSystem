@@ -44,6 +44,7 @@ namespace Noise.Core.MediaPlayer {
 			mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
 			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 			mEvents.GetEvent<Events.PlayRequested>().Subscribe( OnPlayRequested );
+			mEvents.GetEvent<Events.SystemShutdown>().Subscribe( OnShutdown );
 
 			mAudioPlayer.ChannelStatusChange.Subscribe( OnPlayStatusChanged );
 			mAudioPlayer.AudioStreamInfoChange.Subscribe( OnStreamInfo );
@@ -67,24 +68,32 @@ namespace Noise.Core.MediaPlayer {
 			if( audioCongfiguration != null ) {
 				mEnableReplayGain = audioCongfiguration.ReplayGainEnabled;
 				mAudioPlayer.EqEnabled = audioCongfiguration.EqEnabled;
+				mAudioPlayer.PreampVolume = audioCongfiguration.PreampGain;
+			}
+		}
+
+		private void OnShutdown( object sender ) {
+			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+			var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+			if( audioCongfiguration != null ) {
+				audioCongfiguration.PreampGain = mAudioPlayer.PreampVolume;
+				audioCongfiguration.ReplayGainEnabled = mEnableReplayGain;
+
+				systemConfig.Save( audioCongfiguration );
+			}			
+
+			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+
+			if( configuration != null ) {
+				configuration.DisplayPlayTimeElapsed = mDisplayTimeElapsed;
+
+				systemConfig.Save( configuration );
 			}
 		}
 
 		public bool ReplayGainEnable {
 			get{ return( mEnableReplayGain ); }
-			set {
-				if( mEnableReplayGain != value ) {
-					mEnableReplayGain = value;
-
-					var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-					var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
-					if( audioCongfiguration != null ) {
-						audioCongfiguration.ReplayGainEnabled = mEnableReplayGain;
-
-						systemConfig.Save( audioCongfiguration );
-					}
-				}
-			}
+			set { mEnableReplayGain = value; }
 		}
 
 		public IEqManager EqManager {
@@ -362,15 +371,7 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		public void ToggleTimeDisplay() {
-			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
-			if( configuration != null ) {
-				configuration.DisplayPlayTimeElapsed = !configuration.DisplayPlayTimeElapsed;
-				mDisplayTimeElapsed = configuration.DisplayPlayTimeElapsed;
-
-				systemConfig.Save( configuration );
-			}
+			mDisplayTimeElapsed = !mDisplayTimeElapsed;
 
 			FireInfoUpdate();
 		}
