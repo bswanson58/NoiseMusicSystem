@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Media;
+using Microsoft.Practices.Prism;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
@@ -13,7 +14,7 @@ using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
 
 namespace Noise.UI.ViewModels {
-	public class PlayerViewModel : ViewModelBase {
+	public class PlayerViewModel : ViewModelBase, IActiveAware {
 		private	IUnityContainer			mContainer;
 		private IEventAggregator		mEvents;
 		private INoiseManager			mNoiseManager;
@@ -25,6 +26,9 @@ namespace Noise.UI.ViewModels {
 		private readonly Timer			mSpectrumUpdateTimer;
 		private ImageSource				mSpectrumBitmap;
 		private	readonly ObservableCollectionEx<UiEqBand>	mBands;
+
+		public bool						IsActive { get; set; }
+		public event EventHandler		IsActiveChanged = delegate { };
 
 		public PlayerViewModel() {
 			mSpectrumImageWidth = 200;
@@ -272,9 +276,11 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnSpectrumUpdateTimer( object sender, EventArgs args ) {
-			UpdateImage();
+			if( IsActive ) {
+				UpdateImage();
 
-			RaisePropertyChanged( () => SpectrumImage );
+				RaisePropertyChanged( () => SpectrumImage );
+			}
 		}
 
 		public ImageSource SpectrumImage {
