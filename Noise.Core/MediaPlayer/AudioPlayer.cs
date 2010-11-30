@@ -172,6 +172,7 @@ namespace Noise.Core.MediaPlayer {
 					if( bitmap != null ) {
 						retValue = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap( bitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty,
 																								 BitmapSizeOptions.FromEmptyOptions());
+						bitmap.Dispose();
 					}
 				}
 				catch( Exception ex ) {
