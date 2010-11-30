@@ -144,27 +144,29 @@ namespace Noise.Core.MediaPlayer {
 		public BitmapSource GetSpectrumImage( int channel, int height, int width, Color baseColor, Color peakColor, Color peakHoldColor ) {
 			BitmapSource	retValue = null;
 
-			try {
-				const int	lineGap = 1;
-				const int	peakHoldHeight = 1;
-				const int	peakHoldTime = 5;
+			if( Bass.BASS_ChannelIsActive( channel ) == BASSActive.BASS_ACTIVE_PLAYING ) {
+				try {
+					const int	lineGap = 1;
+					const int	peakHoldHeight = 1;
+					const int	peakHoldTime = 5;
 
-				var bars = width > 300 ? 48 : width > 200 ? 32 : 24;
-				var barWidth = ( width - ( bars * lineGap )) / bars;
-				var bitmap = mSpectumVisual.CreateSpectrumLinePeak( channel, width, height, 
-																	System.Drawing.Color.FromArgb( baseColor.A, baseColor.R, baseColor.G, baseColor.B ),
-																	System.Drawing.Color.FromArgb( peakColor.A, peakColor.R, peakColor.G, peakColor.B ), 
-																	System.Drawing.Color.FromArgb( peakHoldColor.A, peakHoldColor.R, peakHoldColor.G, peakHoldColor.B ), 
-																	System.Drawing.Color.FromArgb( 0, 0, 0, 0 ),
-																	barWidth, peakHoldHeight, lineGap, peakHoldTime, false, true, false );
+					var bars = width > 300 ? 48 : width > 200 ? 32 : 24;
+					var barWidth = ( width - ( bars * lineGap )) / bars;
+					var bitmap = mSpectumVisual.CreateSpectrumLinePeak( channel, width, height, 
+																		System.Drawing.Color.FromArgb( baseColor.A, baseColor.R, baseColor.G, baseColor.B ),
+																		System.Drawing.Color.FromArgb( peakColor.A, peakColor.R, peakColor.G, peakColor.B ), 
+																		System.Drawing.Color.FromArgb( peakHoldColor.A, peakHoldColor.R, peakHoldColor.G, peakHoldColor.B ), 
+																		System.Drawing.Color.FromArgb( 0, 0, 0, 0 ),
+																		barWidth, peakHoldHeight, lineGap, peakHoldTime, false, true, false );
 
-				if( bitmap != null ) {
-					retValue = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap( bitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty,
-																							 BitmapSizeOptions.FromEmptyOptions());
+					if( bitmap != null ) {
+						retValue = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap( bitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty,
+																								 BitmapSizeOptions.FromEmptyOptions());
+					}
 				}
-			}
-			catch( Exception ex ) {
-				mLog.LogException( "Exception - AudioPlayer:GetSpectrumImage: ", ex );
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - AudioPlayer:GetSpectrumImage: ", ex );
+				}
 			}
 
 			return( retValue );
