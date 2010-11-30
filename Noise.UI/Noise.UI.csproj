@@ -160,7 +160,9 @@
     <Compile Include="Controls\SpectrumAnalyzerDisplay.xaml.cs">
       <DependentUpon>SpectrumAnalyzerDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dto\ExhaustedStrategyItem.cs" />
     <Compile Include="Dto\LibraryExplorerFilter.cs" />
+    <Compile Include="Dto\PlayStrategyItem.cs" />
     <Compile Include="Dto\UiAlbum.cs" />
     <Compile Include="Dto\UiArtist.cs" />
     <Compile Include="Dto\UiBase.cs" />

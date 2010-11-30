@@ -7,24 +7,12 @@ using System.Windows.Media;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
-using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
-	public class ExhaustedStrategyItem {
-		public string		Title { get; private set; }
-		public ePlayExhaustedStrategy	Strategy { get; private set; }
-
-		public ExhaustedStrategyItem( ePlayExhaustedStrategy strategy, string title ) {
-			Strategy = strategy;
-			Title = title;
-		}
-	}
-
 	public class PlayerViewModel : ViewModelBase {
 		private	IUnityContainer			mContainer;
 		private IEventAggregator		mEvents;
@@ -38,18 +26,7 @@ namespace Noise.UI.ViewModels {
 		private ImageSource				mSpectrumBitmap;
 		private	readonly ObservableCollectionEx<UiEqBand>	mBands;
 
-
-		private	readonly ObservableCollectionEx<ExhaustedStrategyItem>	mExhaustedStrategies;
-
 		public PlayerViewModel() {
-			mExhaustedStrategies = new ObservableCollectionEx<ExhaustedStrategyItem>{
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Stop, "Stop" ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Replay, "Replay" ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayFavorites, "Play Favorites" ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlaySimilar, "Play Similar" ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayList, "Playlist..." ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayStream, "Radio Station..." ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayGenre, "Play Genre..." )};
 			mSpectrumImageWidth = 200;
 			mSpectrumImageHeight = 100;
 
@@ -76,13 +53,6 @@ namespace Noise.UI.ViewModels {
 				mEvents.GetEvent<Events.PlaybackStatusChanged>().Subscribe( OnPlaybackStatusChanged );
 				mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnPlaybackTrackChanged );
 				mEvents.GetEvent<Events.PlaybackInfoChanged>().Subscribe( OnPlaybackInfoChanged );
-
-				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
-				if( configuration != null ) {
-					mNoiseManager.PlayQueue.SetPlayExhaustedStrategy( configuration.PlayExhaustedStrategy, configuration.PlayExhaustedItem );
-				}
 
 				LoadBands();
 			}
@@ -191,85 +161,6 @@ namespace Noise.UI.ViewModels {
 		public double PanPosition {
 			get{ return( mNoiseManager.PlayController.PanPosition ); }
 			set{ mNoiseManager.PlayController.PanPosition = (float)value; }
-		}
-
-		public bool RandomPlay {
-			get{ return( mNoiseManager.PlayQueue.PlayStrategy == ePlayStrategy.Random ); }
-			set{ mNoiseManager.PlayQueue.PlayStrategy = value ? ePlayStrategy.Random : ePlayStrategy.Next; }
-		}
-
-		public ObservableCollectionEx<ExhaustedStrategyItem> ExhaustedStrategyList {
-			get{ return( mExhaustedStrategies ); }
-		}
-
-		public ePlayExhaustedStrategy ExhaustedStrategy {
-			get{ return( mNoiseManager.PlayQueue.PlayExhaustedStrategy ); }
-			set {
-				long itemId = Constants.cDatabaseNullOid;
-
-				if( PromptForStrategyItem( value, ref itemId )) {
-					mNoiseManager.PlayQueue.SetPlayExhaustedStrategy( value, itemId );
-
-					var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-					var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
-					if( configuration != null ) {
-						configuration.PlayExhaustedStrategy = value;
-						configuration.PlayExhaustedItem = itemId;
-
-						systemConfig.Save( configuration );
-					}
-				}
-			}
-		}
-
-		private bool PromptForStrategyItem( ePlayExhaustedStrategy strategy, ref long selectedItem ) {
-			var retValue = false;
-			selectedItem = Constants.cDatabaseNullOid;
-
-			if(( strategy == ePlayExhaustedStrategy.PlayStream ) ||
-			   ( strategy == ePlayExhaustedStrategy.PlayList ) ||
-			   ( strategy == ePlayExhaustedStrategy.PlayGenre )) {
-				var	dialogService = mContainer.Resolve<IDialogService>();
-
-				if( strategy == ePlayExhaustedStrategy.PlayList ) {
-					var dialogModel = new SelectPlayListDialogModel( mContainer );
-
-					if( dialogService.ShowDialog( DialogNames.SelectPlayList, dialogModel ) == true ) {
-						if( dialogModel.SelectedItem != null ) {
-							selectedItem = dialogModel.SelectedItem.DbId;
-							retValue = true;
-						}
-					}
-				}
-
-				if( strategy == ePlayExhaustedStrategy.PlayStream ) {
-					var	dialogModel = new SelectStreamDialogModel( mContainer );
-
-					if( dialogService.ShowDialog( DialogNames.SelectStream, dialogModel ) == true ) {
-						if( dialogModel.SelectedItem != null ) {
-							selectedItem = dialogModel.SelectedItem.DbId;
-							retValue = true;
-						}
-					}
-				}
-
-				if( strategy == ePlayExhaustedStrategy.PlayGenre ) {
-					var dialogModel = new SelectGenreDialogModel( mContainer );
-
-					if( dialogService.ShowDialog( DialogNames.SelectGenre, dialogModel ) == true ) {
-						if( dialogModel.SelectedItem != null ) {
-							selectedItem = dialogModel.SelectedItem.DbId;
-							retValue = true;
-						}
-					}
-				}
-			}
-			else {
-				retValue = true;
-			}
-
-			return( retValue );
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]

@@ -28,6 +28,7 @@
             <ListView Grid.Row="0" x:Name="PlayQueueListView" BorderThickness="0"
                       ItemsSource="{Binding Path=QueueList}"
                       SelectedItem="{Binding Path=SelectedItem}"
+                      SelectedIndex="{Binding Path=SelectedIndex}"
                       Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex, Mode=OneWay}"
                       Behaviours:ListViewColumns.Stretch="true">
                 <EventCommandTriggers:CommandSource.Trigger>
@@ -90,10 +91,52 @@
                 </ListView.View>
             </ListView>
 
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Margin="3" Content="Clear Queue" Command="{Binding Path=ClearQueue}"/>
-                <Button Margin="3" Content="Save as Play List" Command="{Binding Path=SavePlayList}"/>
-            </StackPanel>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Vertical" Margin="5,0,5,3">
+                    <Rectangle StrokeThickness="0" Fill="{DynamicResource TrimColor}" Height="1"/>
+                    <Rectangle StrokeThickness="0" Fill="LightGray" Height="1"/>
+                </StackPanel>
+
+                <Grid Grid.Row="1" Margin="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="1"  Content="Play Selection:"/>
+                    <ComboBox Grid.Column="2"  x:Name="PlayStrategy" Width="110"
+                              ItemsSource="{Binding Path=PlayStrategyList}"
+                              DisplayMemberPath="Title" SelectedValuePath="Strategy"
+                              SelectedValue="{Binding Path=PlayStrategy}"/>
+                </Grid>
+                <Grid Grid.Row="2" Margin="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="1" Content="When Exhausted:"/>
+                    <ComboBox Grid.Column="2"  x:Name="ExhaustedStrategy" Width="110"
+                              ItemsSource="{Binding Path=ExhaustedStrategyList}"
+                              DisplayMemberPath="Title" SelectedValuePath="Strategy"
+                              SelectedValue="{Binding Path=ExhaustedStrategy}"/>
+                </Grid>
+                
+                <StackPanel Grid.Row="3" Margin="3"  Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Margin="3" Width="25" Content="5" FontFamily="Webdings" Command="{Binding Path=MoveItemUp}"/>
+                    <Button Margin="3" Width="25" Content="6" FontFamily="Webdings" Command="{Binding Path=MoveItemDown}"/>
+                    <Button Margin="3" Width="25" Content="r" FontFamily="WebDings" Command="{Binding Path=RemoveItem}"/>
+                    <Button Margin="3" Content="Clear" Command="{Binding Path=ClearQueue}" Width="37"/>
+                    <Button Margin="3,3,0,3" Content="Save" Command="{Binding Path=SavePlayList}" Width="37"/>
+                </StackPanel>
+            </Grid>
         </Grid>
     </GroupBox>
 </UserControl>

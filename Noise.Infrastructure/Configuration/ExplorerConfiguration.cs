@@ -13,6 +13,7 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cDisplayPlayTimeElapsedProperty				= "displayPlayTimeElapsed";
 		private const string	cPlayExhaustedStrategyProperty				= "playExhaustedStrategy";
 		private const string	cPlayExhaustedItemProperty					= "playExhaustedItem";
+		private const string	cPlayStrategyProperty						= "playStrategy";
 		private const string	cNewAdditionsHorizonDaysProperty			= "newAdditionsHorizonDays";
 		private const string	cNewAdditionsHorizonCountProperty			= "newAdditionsHorizonCount";
 
@@ -56,6 +57,12 @@ namespace Noise.Infrastructure.Configuration {
 		public long PlayExhaustedItem {
 			get { return ((long)( base[cPlayExhaustedItemProperty] ) ); }
 			set { base[cPlayExhaustedItemProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cPlayStrategyProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = ePlayStrategy.Next )]
+		public ePlayStrategy PlayStrategy {
+			get { return ((ePlayStrategy)( base[cPlayStrategyProperty] ) ); }
+			set { base[cPlayStrategyProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cNewAdditionsHorizonDaysProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = (UInt16)7 )]
