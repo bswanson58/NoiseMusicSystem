@@ -163,6 +163,7 @@
     <Compile Include="Controls\VuMeter.xaml.cs">
       <DependentUpon>VuMeter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\VuMeterBar.cs" />
     <Compile Include="Dto\ExhaustedStrategyItem.cs" />
     <Compile Include="Dto\LibraryExplorerFilter.cs" />
     <Compile Include="Dto\PlayStrategyItem.cs" />
