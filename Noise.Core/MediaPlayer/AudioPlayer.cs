@@ -64,6 +64,7 @@ namespace Noise.Core.MediaPlayer {
 		private readonly SYNCPROC						mStreamMetadataSync;
 		private readonly Timer							mUpdateTimer;
 		private readonly Dictionary<int, AudioStream>	mCurrentStreams;
+		private readonly DSP_PeakLevelMeter				mLevelMeter;
 		private ParametricEqualizer						mEq;
 		private	int										mPreampFx;
 		private	int										mParamEqFx;
@@ -78,9 +79,11 @@ namespace Noise.Core.MediaPlayer {
 		private readonly Subject<int>					mChannelStatusSubject;
 		public	IObservable<int>						ChannelStatusChange { get { return( mChannelStatusSubject.AsObservable()); } }
 
+		private readonly Subject<AudioLevels>			mAudioLevelsSubject;
+		public	IObservable<AudioLevels>				AudioLevelsChange { get { return( mAudioLevelsSubject.AsObservable()); }}
+
 		private readonly Subject<StreamInfo>			mAudioStreamInfoSubject;
 		public	IObservable<StreamInfo>					AudioStreamInfoChange { get { return( mAudioStreamInfoSubject.AsObservable()); }}
-
 
 		public AudioPlayer( IUnityContainer container ) {
 			mContainer = container;
@@ -113,6 +116,9 @@ namespace Noise.Core.MediaPlayer {
 					Bass.BASS_ChannelPlay( mMixerChannel, false );
 					Bass.BASS_ChannelGetAttribute( mMixerChannel, BASSAttribute.BASS_ATTRIB_FREQ, ref mMixerSampleRate );
 
+					mLevelMeter = new DSP_PeakLevelMeter( mMixerChannel, -20 );
+					mLevelMeter.Notification += OnLevelMeter;
+
 					InitializePreamp();
 				}
 				else {
@@ -131,6 +137,7 @@ namespace Noise.Core.MediaPlayer {
 			mRecord = false;
 
 			mChannelStatusSubject = new Subject<int>();
+			mAudioLevelsSubject = new Subject<AudioLevels>();
 			mAudioStreamInfoSubject = new Subject<StreamInfo>();
 		}
 
@@ -163,6 +170,10 @@ namespace Noise.Core.MediaPlayer {
 					stream.Mode = mode;
 
 					mChannelStatusSubject.OnNext( stream.Channel );
+
+					if( stream.Mode != BASSActive.BASS_ACTIVE_PLAYING ) {
+						mAudioLevelsSubject.OnNext( new AudioLevels());
+					}
 				}
 
 				if( stream.InSlide ) {
@@ -689,26 +700,8 @@ namespace Noise.Core.MediaPlayer {
 			return( retValue );
 		}
 
-		// this method should be converted to use the DSP_PeakLevelMeter
-		public AudioLevels GetSampleLevels( int channel ) {
-			AudioLevels	retValue = null;
-
-			var stream = GetStream( channel );
-
-			if( stream != null ) {
-				if( stream.Mode == BASSActive.BASS_ACTIVE_PLAYING ) {
-					var levels = Bass.BASS_ChannelGetLevel( mMixerChannel );
-					var leftLevel = Utils.LowWord32( levels ) > 0.0 ? (double)Utils.LowWord32( levels ) / 32768 : Utils.LowWord32( levels );
-					var rightLevel = Utils.HighWord32( levels ) > 0.0 ? (double)Utils.HighWord32( levels ) / 32768 : Utils.HighWord32( levels );
-
-					retValue = new AudioLevels( leftLevel, rightLevel );
-				}
-				else {
-					retValue = new AudioLevels( 0.0, 0.0 );
-				}
-			}
-
-			return( retValue );
+		private void OnLevelMeter( object sender, EventArgs args ) {
+			mAudioLevelsSubject.OnNext( new AudioLevels((double)mLevelMeter.LevelL / 65535, (double)mLevelMeter.LevelR / 65535 ));
 		}
 
 		public float Volume {

@@ -21,8 +21,6 @@ namespace Noise.Core.MediaPlayer {
 		ePlaybackStatus		GetChannelStatus( int channel );
 		double				GetPercentPlayed( int channel );
 
-		AudioLevels			GetSampleLevels( int channel );
-
 		float				Volume { get; set; }
 		float				PreampVolume { get; set; }
 		float				Pan { get; set; }
@@ -32,8 +30,9 @@ namespace Noise.Core.MediaPlayer {
 		bool				EqEnabled { get; set; }
 		void				AdjustEq( long bandId, float gain );
 
-		IObservable<int>		ChannelStatusChange { get; }
-		IObservable<StreamInfo>	AudioStreamInfoChange { get; }
+		IObservable<int>			ChannelStatusChange { get; }
+		IObservable<AudioLevels>	AudioLevelsChange { get; }
+		IObservable<StreamInfo>		AudioStreamInfoChange { get; }
 
 		BitmapSource		GetSpectrumImage( int channel, int height, int width, Color baseColor, Color peakColor, Color peakHoldColor );
 	}

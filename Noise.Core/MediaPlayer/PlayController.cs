@@ -27,6 +27,9 @@ namespace Noise.Core.MediaPlayer {
 		private int							CurrentChannel { get; set; }
 		private ePlaybackStatus				mCurrentStatus;
 		private bool						mEnableReplayGain;
+		private readonly IDisposable		mPlayStatusDispose;
+		private readonly IDisposable		mAudioLevelsDispose;
+		private readonly IDisposable		mStreamInfoDispose;
 		private readonly Dictionary<int, PlayQueueTrack>	mOpenTracks;
 
 		public PlayController( IUnityContainer container ) {
@@ -35,6 +38,7 @@ namespace Noise.Core.MediaPlayer {
 			mAudioPlayer = mContainer.Resolve<IAudioPlayer>();
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
 			mLog = mContainer.Resolve<ILog>();
+			mSampleLevels = new AudioLevels();
 
 			mOpenTracks = new Dictionary<int, PlayQueueTrack>();
 
@@ -46,8 +50,9 @@ namespace Noise.Core.MediaPlayer {
 			mEvents.GetEvent<Events.PlayRequested>().Subscribe( OnPlayRequested );
 			mEvents.GetEvent<Events.SystemShutdown>().Subscribe( OnShutdown );
 
-			mAudioPlayer.ChannelStatusChange.Subscribe( OnPlayStatusChanged );
-			mAudioPlayer.AudioStreamInfoChange.Subscribe( OnStreamInfo );
+			mPlayStatusDispose = mAudioPlayer.ChannelStatusChange.Subscribe( OnPlayStatusChanged );
+			mAudioLevelsDispose = mAudioPlayer.AudioLevelsChange.Subscribe( OnAudioLevelsChanged );
+			mStreamInfoDispose = mAudioPlayer.AudioStreamInfoChange.Subscribe( OnStreamInfo );
 
 			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
@@ -73,6 +78,16 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		private void OnShutdown( object sender ) {
+			mContinuePlaying = false;
+
+			foreach( int channel in mOpenTracks.Keys ) {
+				mAudioPlayer.Stop( channel );
+			}
+
+			mAudioLevelsDispose.Dispose();
+			mPlayStatusDispose.Dispose();
+			mStreamInfoDispose.Dispose();
+
 			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 			var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
 			if( audioCongfiguration != null ) {
@@ -345,9 +360,12 @@ namespace Noise.Core.MediaPlayer {
 			get{ return( CurrentStatus == ePlaybackStatus.Paused || CurrentStatus == ePlaybackStatus.Playing ); }
 		}
 
+		private void OnAudioLevelsChanged( AudioLevels levels ) {
+			mSampleLevels = levels;
+		}
+
 		private void OnInfoUpdateTimer( object sender, ElapsedEventArgs arg ) {
 			if( CurrentChannel != 0 ) {
-				mSampleLevels = mAudioPlayer.GetSampleLevels( CurrentChannel );
 				mCurrentPosition = mAudioPlayer.GetPlayPosition( CurrentChannel );
 			}
 			else {
