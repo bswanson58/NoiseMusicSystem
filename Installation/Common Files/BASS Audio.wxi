@@ -18,6 +18,9 @@
     <Component Id="bassflac.dll" Guid="c68c7f87-2bf0-40c5-bba7-af145d8e882f">
       <File Id="bassflac.dll" DiskId="10" Source="$(var.BassLibraryFolder)bassflac.dll" KeyPath="yes" Checksum="yes" />
     </Component>
+    <Component Id="bassmix.dll" Guid="eb374eeb-d540-4f1e-850a-81c3888ac17f">
+      <File Id="bassmix.dll" DiskId="10" Source="$(var.BassLibraryFolder)bassmix.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
     <Component Id="basswma.dll" Guid="c07e9cdb-a6b0-400b-b470-2a6d145cbd34">
       <File Id="basswma" DiskId="10" Source="$(var.BassLibraryFolder)basswma.dll" KeyPath="yes" Checksum="yes" />
     </Component>
@@ -29,6 +32,7 @@
     <ComponentRef Id="bass_aac.dll" />
     <ComponentRef Id="bass_fx.dll" />
     <ComponentRef Id="bassflac.dll" />
+    <ComponentRef Id="bassmix.dll" />
     <ComponentRef Id="basswma.dll" />
   </ComponentGroup>
 </Include>
