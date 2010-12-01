@@ -7,6 +7,7 @@
         xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
         xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary" 
         xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
+        xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
         mc:Ignorable="d" 
         Height="63" Width="575"
         WindowStyle="None"
@@ -82,15 +83,8 @@
                         </TextBlock>
                     </StackPanel>
 
-                    <Grid x:Name="VuMeter" Width="125" Margin="5,5,0,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="11"/>
-                            <RowDefinition Height="11"/>
-                        </Grid.RowDefinitions>
-
-                        <Rectangle Grid.Row="0" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding LeftLevel, Converter={StaticResource VolumeLevelConverter}}"/>
-                        <Rectangle Grid.Row="1" HorizontalAlignment="Left" Fill="LightGreen" Margin="3" Height="7" Width="{Binding RightLevel, Converter={StaticResource VolumeLevelConverter}}"/>
-                    </Grid>
+                    <NoiseControls:VuMeter Width="125" Margin="5,0,0,0" Foreground="LightGreen" Background="#FFAAC6E5"
+                                           LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}"/>
                     <Slider x:Name="Position" Orientation="Horizontal" Width="100" SnapsToDevicePixels="True" Minimum="0" Style="{StaticResource PlayerPositionSliderStyle}"
                             Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}" VerticalAlignment="Center"/>
                 </StackPanel>

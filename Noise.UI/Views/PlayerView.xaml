@@ -97,7 +97,8 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <NoiseControls:VuMeter Grid.Column="0" Margin="50,7,7,0" LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}"/>
+                    <NoiseControls:VuMeter Grid.Column="0" Margin="50,7,7,0" Foreground="LightBlue" Background="White"
+                                           LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}"/>
                     <Button Margin="3" Grid.Column="1" Content="X" Width="27" FontFamily="Webdings" FontSize="16"/>
                     <Button Margin="3" Grid.Column="2" Content="5" Width="27" FontFamily="Webdings" FontSize="16" Command="{Binding Path=ExtendedPlayer}"/>
                 </Grid>
