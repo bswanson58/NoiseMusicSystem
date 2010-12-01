@@ -167,7 +167,7 @@ namespace Noise.UI.ViewModels {
 			var album = mNoiseManager.DataProvider.GetAlbum( albumId );
 
 			if( album != null ) {
-				mEventAggregator.GetEvent<Events.AlbumPlayRequested>().Publish( album );
+				GlobalCommands.PlayAlbum.Execute( album );
 			}
 		}
 

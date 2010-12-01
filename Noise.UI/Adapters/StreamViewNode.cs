@@ -1,16 +1,13 @@
-﻿using Microsoft.Practices.Prism.Events;
-using Noise.Infrastructure;
+﻿using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Adapters {
 	class StreamViewNode : ViewModelBase {
-		private readonly IEventAggregator	mEventAggregator;
 		private bool						mIsSelected;
 		public	DbInternetStream			Stream { get; private set; }
 
-		public StreamViewNode( IEventAggregator eventAggregator, DbInternetStream stream ) {
-			mEventAggregator = eventAggregator;
+		public StreamViewNode( DbInternetStream stream ) {
 			Stream = stream;
 		}
 
@@ -33,7 +30,7 @@ namespace Noise.UI.Adapters {
 			var stream = sender as DbInternetStream;
 
 			if( stream != null ) {
-				mEventAggregator.GetEvent<Events.StreamPlayRequested>().Publish( stream );
+				GlobalCommands.PlayStream.Execute( stream );
 			}
 		}
 	}

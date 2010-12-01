@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -11,7 +10,6 @@ using Noise.UI.Support;
 namespace Noise.UI.ViewModels {
 	class StreamViewModel : ViewModelBase {
 		private IUnityContainer		mContainer;
-		private IEventAggregator	mEventAggregator;
 		private INoiseManager		mNoiseManager;
 		private readonly ObservableCollectionEx<StreamViewNode>	mStreams;
 
@@ -24,8 +22,6 @@ namespace Noise.UI.ViewModels {
 			get { return( mContainer ); }
 			set {
 				mContainer = value;
-
-				mEventAggregator = mContainer.Resolve<IEventAggregator>();
 				mNoiseManager = mContainer.Resolve<INoiseManager>();
 
 				UpdateStreams();
@@ -46,7 +42,7 @@ namespace Noise.UI.ViewModels {
 			mStreams.Clear();
 
 			using( var streams = mNoiseManager.DataProvider.GetStreamList()) {
-				mStreams.AddRange( from stream in streams.List select new StreamViewNode( mEventAggregator, stream ));
+				mStreams.AddRange( from stream in streams.List select new StreamViewNode( stream ));
 			}
 
 			mStreams.ResumeNotification();

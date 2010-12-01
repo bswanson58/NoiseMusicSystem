@@ -130,12 +130,12 @@ namespace Noise.UI.ViewModels {
 
 		private void OnAlbumPlayRequested( LibraryAdditionNode node ) {
 			foreach( var track in node.TrackList ) {
-				mEvents.GetEvent<Events.TrackPlayRequested>().Publish( mNoiseManager.DataProvider.GetTrack( track.DbId ));
+				GlobalCommands.PlayTrack.Execute( mNoiseManager.DataProvider.GetTrack( track.DbId ));
 			}
 		}
 
 		private void OnTrackPlayRequested( long trackId ) {
-			mEvents.GetEvent<Events.TrackPlayRequested>().Publish( mNoiseManager.DataProvider.GetTrack( trackId ));
+			GlobalCommands.PlayTrack.Execute( mNoiseManager.DataProvider.GetTrack( trackId ));
 		}
 	}
 }

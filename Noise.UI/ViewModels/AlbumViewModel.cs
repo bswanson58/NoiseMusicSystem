@@ -159,7 +159,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackPlay( long trackId ) {
-			mEvents.GetEvent<Events.TrackPlayRequested>().Publish( mNoiseManager.DataProvider.GetTrack( trackId ));
+			GlobalCommands.PlayTrack.Execute( mNoiseManager.DataProvider.GetTrack( trackId ));
 		}
 
 		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
@@ -262,7 +262,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_PlayAlbum() {
 			if( mCurrentAlbum != null ) {
-				mEvents.GetEvent<Events.AlbumPlayRequested>().Publish( mNoiseManager.DataProvider.GetAlbum( mCurrentAlbum.DbId ));
+				GlobalCommands.PlayAlbum.Execute( mNoiseManager.DataProvider.GetAlbum( mCurrentAlbum.DbId ));
 			}
 		}
 

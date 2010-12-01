@@ -100,12 +100,12 @@ namespace Noise.UI.ViewModels {
 		private static void PlayArtist( FavoriteViewNode node ) {
 		}
 
-		private void PlayAlbum( FavoriteViewNode node ) {
-			mEvents.GetEvent<Events.AlbumPlayRequested>().Publish( node.Album );
+		private static void PlayAlbum( FavoriteViewNode node ) {
+			GlobalCommands.PlayAlbum.Execute( node.Album );
 		}
 
-		private void PlayTrack( FavoriteViewNode node ) {
-			mEvents.GetEvent<Events.TrackPlayRequested>().Publish( node.Track );
+		private static void PlayTrack( FavoriteViewNode node ) {
+			GlobalCommands.PlayTrack.Execute( node.Track );
 		}
 	}
 }

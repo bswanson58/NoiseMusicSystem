@@ -5,21 +5,25 @@ using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayQueueMgr : IPlayQueue {
-		private readonly IUnityContainer		mContainer;
-		private readonly IDataProvider			mDataProvider;
-		private readonly IEventAggregator		mEventAggregator;
-		private readonly List<PlayQueueTrack>	mPlayQueue;
-		private readonly List<PlayQueueTrack>	mPlayHistory;
-		private	ePlayStrategy					mPlayStrategy;
-		private IPlayStrategy					mStrategy;
-		private ePlayExhaustedStrategy			mPlayExhaustedStrategy;
-		private long							mPlayExhaustedItem;
-		private IPlayExhaustedStrategy			mExhaustedStrategy;
-		private	int								mReplayTrackCount;
-		private PlayQueueTrack					mReplayTrack;
+		private readonly IUnityContainer				mContainer;
+		private readonly IDataProvider					mDataProvider;
+		private readonly IEventAggregator				mEventAggregator;
+		private readonly List<PlayQueueTrack>			mPlayQueue;
+		private readonly List<PlayQueueTrack>			mPlayHistory;
+		private	ePlayStrategy							mPlayStrategy;
+		private IPlayStrategy							mStrategy;
+		private ePlayExhaustedStrategy					mPlayExhaustedStrategy;
+		private long									mPlayExhaustedItem;
+		private IPlayExhaustedStrategy					mExhaustedStrategy;
+		private	int										mReplayTrackCount;
+		private PlayQueueTrack							mReplayTrack;
+		private readonly AsyncCommand<DbTrack>			mTrackPlayCommand;
+		private readonly AsyncCommand<DbAlbum>			mAlbumPlayCommand;
+		private readonly AsyncCommand<DbInternetStream>	mStreamPlayCommand;
 
 		public PlayQueueMgr( IUnityContainer container ) {
 			mContainer = container;
@@ -32,12 +36,17 @@ namespace Noise.Core.PlayQueue {
 			PlayStrategy = ePlayStrategy.Next;
 			SetPlayExhaustedStrategy( ePlayExhaustedStrategy.Stop, Constants.cDatabaseNullOid );
 
-			mEventAggregator.GetEvent<Events.AlbumPlayRequested>().Subscribe( OnAlbumPlayRequest );
-			mEventAggregator.GetEvent<Events.TrackPlayRequested>().Subscribe( OnTrackPlayRequest );
-			mEventAggregator.GetEvent<Events.StreamPlayRequested>().Subscribe( OnStreamPlayRequest );
+			mTrackPlayCommand = new AsyncCommand<DbTrack>( OnTrackPlayCommand );
+			GlobalCommands.PlayTrack.RegisterCommand( mTrackPlayCommand );
+
+			mAlbumPlayCommand = new AsyncCommand<DbAlbum>( OnAlbumPlayCommand );
+			GlobalCommands.PlayAlbum.RegisterCommand( mAlbumPlayCommand );
+
+			mStreamPlayCommand = new AsyncCommand<DbInternetStream>( OnStreamPlayCommand );
+			GlobalCommands.PlayStream.RegisterCommand( mStreamPlayCommand );
 		}
 
-		public void OnTrackPlayRequest( DbTrack track ) {
+		public void OnTrackPlayCommand( DbTrack track ) {
 			Add( track );
 		}
 
@@ -84,7 +93,7 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
-		public void OnAlbumPlayRequest( DbAlbum album ) {
+		private void OnAlbumPlayCommand( DbAlbum album ) {
 			Add( album );
 		}
 
@@ -96,8 +105,16 @@ namespace Noise.Core.PlayQueue {
 
 		private void AddAlbum( DbAlbum album ) {
 			using( var tracks = mDataProvider.GetTrackList( album )) {
+				var firstTrack = true;
+
 				foreach( DbTrack track in tracks.List ) {
 					AddTrack( track, false );
+
+					if( firstTrack ) {
+						FirePlayQueueChanged();
+
+						firstTrack = false;
+					}
 				}
 			}
 		}
@@ -110,7 +127,7 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
-		public void OnStreamPlayRequest( DbInternetStream stream ) {
+		private void OnStreamPlayCommand( DbInternetStream stream ) {
 			Add( stream  );
 		}
 

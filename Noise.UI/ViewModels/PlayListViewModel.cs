@@ -131,15 +131,15 @@ namespace Noise.UI.ViewModels {
 			RaiseCanExecuteChangedEvent( "CanExecute_DeletePlayList" );
 		}
 
-		private void OnNodePlay( PlayListNode node ) {
+		private static void OnNodePlay( PlayListNode node ) {
 			if( node.Track != null ) {
-				mEvents.GetEvent<Events.TrackPlayRequested>().Publish( node.Track );
+				GlobalCommands.PlayTrack.Execute( node.Track );
 			}
 		}
 
-		private void OnListPlay( PlayListNode node ) {
+		private static void OnListPlay( PlayListNode node ) {
 			foreach( var track in node.TrackList ) {
-				mEvents.GetEvent<Events.TrackPlayRequested>().Publish( track.Track );
+				GlobalCommands.PlayTrack.Execute( track.Track );
 			}
 		}
 

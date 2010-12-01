@@ -63,12 +63,12 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnPlay( SearchViewNode node ) {
+		private static void OnPlay( SearchViewNode node ) {
 			if( node.Track != null ) {
-				mEventAggregator.GetEvent<Events.TrackPlayRequested>().Publish( node.Track );
+				GlobalCommands.PlayTrack.Execute( node.Track );
 			}
 			else if( node.Album != null ) {
-				mEventAggregator.GetEvent<Events.AlbumPlayRequested>().Publish( node.Album );
+				GlobalCommands.PlayAlbum.Execute( node.Album );
 			}
 		}
 

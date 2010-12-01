@@ -95,9 +95,9 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnPlayTrack( PlayHistoryNode node ) {
+		private static void OnPlayTrack( PlayHistoryNode node ) {
 			if( node.Track != null ) {
-				mEvents.GetEvent<Events.TrackPlayRequested>().Publish( node.Track );
+				GlobalCommands.PlayTrack.Execute( node.Track );
 			}
 		}
 
