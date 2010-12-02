@@ -83,7 +83,7 @@
                         </TextBlock>
                     </StackPanel>
 
-                    <NoiseControls:VuMeter Width="125" Margin="5,0,0,0" Foreground="Blue" Background="#FFAAC6E5"
+                    <NoiseControls:VuMeter Width="125" Margin="5,0,0,0" Foreground="Gray" Background="#FFAAC6E5" PeakColor="Black"
                                            LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}"/>
                     <Slider x:Name="Position" Orientation="Horizontal" Width="100" SnapsToDevicePixels="True" Minimum="0" Style="{StaticResource PlayerPositionSliderStyle}"
                             Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}" VerticalAlignment="Center"/>
