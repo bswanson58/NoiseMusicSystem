@@ -80,6 +80,9 @@ namespace Noise.Core.MediaPlayer {
 				mAudioPlayer.SoftSaturationEnable = audioCongfiguration.SoftSaturationEnabled;
 				mAudioPlayer.SoftSaturationFactor = audioCongfiguration.SoftSaturationFactor;
 				mAudioPlayer.SoftSaturationDepth = audioCongfiguration.SoftSaturationDepth;
+				mAudioPlayer.ReverbEnable = audioCongfiguration.ReverbEnabled;
+				mAudioPlayer.ReverbDelay = audioCongfiguration.ReverbDelay;
+				mAudioPlayer.ReverbLevel = audioCongfiguration.ReverbLevel;
 			}
 		}
 
@@ -106,6 +109,9 @@ namespace Noise.Core.MediaPlayer {
 				audioCongfiguration.SoftSaturationEnabled = mAudioPlayer.SoftSaturationEnable;
 				audioCongfiguration.SoftSaturationFactor = mAudioPlayer.SoftSaturationFactor;
 				audioCongfiguration.SoftSaturationDepth = mAudioPlayer.SoftSaturationDepth;
+				audioCongfiguration.ReverbEnabled = mAudioPlayer.ReverbEnable;
+				audioCongfiguration.ReverbDelay = mAudioPlayer.ReverbDelay;
+				audioCongfiguration.ReverbLevel = mAudioPlayer.ReverbLevel;
 
 				systemConfig.Save( audioCongfiguration );
 			}			
@@ -177,6 +183,21 @@ namespace Noise.Core.MediaPlayer {
 		public double SoftSaturationFactor {
 			get{ return( mAudioPlayer.SoftSaturationFactor ); }
 			set{ mAudioPlayer.SoftSaturationFactor = value; }
+		}
+
+		public bool ReverbEnable {
+			get{ return( mAudioPlayer.ReverbEnable ); }
+			set{ mAudioPlayer.ReverbEnable = value; }
+		}
+
+		public float ReverbLevel {
+			get{ return( mAudioPlayer.ReverbLevel ); }
+			set{ mAudioPlayer.ReverbLevel = value; }
+		}
+
+		public int ReverbDelay {
+			get{ return( mAudioPlayer.ReverbDelay ); }
+			set{ mAudioPlayer.ReverbDelay = value; }
 		}
 
 		public PlayQueueTrack CurrentTrack {

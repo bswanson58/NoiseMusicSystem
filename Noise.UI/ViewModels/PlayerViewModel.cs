@@ -407,7 +407,11 @@ namespace Noise.UI.ViewModels {
 
 		public bool StereoEnhancerEnable {
 			get{ return( mNoiseManager.PlayController.StereoEnhancerEnable ); }
-			set{ mNoiseManager.PlayController.StereoEnhancerEnable = value; }
+			set {
+				mNoiseManager.PlayController.StereoEnhancerEnable = value;
+
+				RaisePropertyChanged( () => StereoEnhancerEnable );
+			}
 		}
 
 		public double StereoEnhancerWidth {
@@ -422,7 +426,11 @@ namespace Noise.UI.ViewModels {
 
 		public bool SoftSaturationEnable {
 			get{ return( mNoiseManager.PlayController.SoftSaturationEnable ); }
-			set{ mNoiseManager.PlayController.SoftSaturationEnable = value; }
+			set {
+				mNoiseManager.PlayController.SoftSaturationEnable = value;
+
+				RaisePropertyChanged( () => SoftSaturationEnable );
+			}
 		}
 
 		public double SoftSaturationDepth {
@@ -433,6 +441,25 @@ namespace Noise.UI.ViewModels {
 		public double SoftSaturationFactor {
 			get{ return( mNoiseManager.PlayController.SoftSaturationFactor ); }
 			set{ mNoiseManager.PlayController.SoftSaturationFactor = value; }
+		}
+
+		public bool ReverbEnable {
+			get{ return( mNoiseManager.PlayController.ReverbEnable ); }
+			set {
+				mNoiseManager.PlayController.ReverbEnable = value;
+
+				RaisePropertyChanged( () => ReverbEnable );
+			}
+		}
+
+		public float ReverbLevel {
+			get{ return( mNoiseManager.PlayController.ReverbLevel ); }
+			set{ mNoiseManager.PlayController.ReverbLevel = value; }
+		}
+
+		public int ReverbDelay {
+			get{ return( mNoiseManager.PlayController.ReverbDelay ); }
+			set{ mNoiseManager.PlayController.ReverbDelay = value; }
 		}
 
 		public void Execute_StandardPlayer() {

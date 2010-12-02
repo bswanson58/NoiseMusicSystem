@@ -72,6 +72,9 @@ namespace Noise.Core.MediaPlayer {
 		private bool									mMuted;
 		private	int										mPreampFx;
 		private	int										mParamEqFx;
+		private int										mReverbFx;
+		private float									mReverbLevel;
+		private int										mReverbDelay;
 		private	readonly Dictionary<long, int>			mEqChannels;
 		private	bool									mEqEnabled;
 		private readonly DOWNLOADPROC					mDownloadProc;
@@ -100,6 +103,8 @@ namespace Noise.Core.MediaPlayer {
 			mDownloadProc = new DOWNLOADPROC( RecordProc );
 			mSpectumVisual = new Visuals();
 
+			mReverbDelay = 1200;
+
 			try {
 				var licenseManager = mContainer.Resolve<ILicenseManager>();
 				if( licenseManager.Initialize( Constants.LicenseKeyFile )) {
@@ -122,7 +127,6 @@ namespace Noise.Core.MediaPlayer {
 
 					mMuteFx = Bass.BASS_ChannelSetFX( mMixerChannel, BASSFXType.BASS_FX_BFX_VOLUME, 3 );
 					mStereoEnhancer = new DSP_StereoEnhancer( mMixerChannel, 4 );
-
 					mSoftSaturation = new DSP_SoftSaturation( mMixerChannel, 5 );
 
 					mLevelMeter = new DSP_PeakLevelMeter( mMixerChannel, -20 );
@@ -778,6 +782,108 @@ namespace Noise.Core.MediaPlayer {
 				if(( value >= 0.0 ) &&
 				   ( value <= 0.999 )) {
 					mSoftSaturation.Factor = value;
+				}
+			}
+		}
+
+		public bool ReverbEnable {
+			get{ return( mReverbFx != 0 ); }
+			set {
+				if( value ) {
+					if( mReverbFx == 0 ) {
+						mReverbFx = Bass.BASS_ChannelSetFX( mMixerChannel, BASSFXType.BASS_FX_BFX_REVERB, 6 );
+
+						if( mReverbFx != 0 ) {
+							var reverbParam = new BASS_BFX_REVERB { fLevel = mReverbLevel, lDelay = mReverbDelay };
+
+							if(!Bass.BASS_FXGetParameters( mReverbFx, reverbParam )) {
+								mLog.LogMessage( string.Format( "AudioPlayer - Could not set initial reverb levels: {0}", Bass.BASS_ErrorGetCode()));
+							}
+						}
+						else {
+							mLog.LogMessage( string.Format( "AudioPlayer - Could not set reverb fx: {0}", Bass.BASS_ErrorGetCode()));
+						}
+					}
+				}
+				else {
+					if( mReverbFx != 0 ) {
+						if( Bass.BASS_ChannelRemoveFX( mMixerChannel, mReverbFx )) {
+							mReverbFx = 0;
+						}
+						else {
+							mLog.LogMessage( string.Format( "AudioPlayer - Could not remove reverb FX: {0}", Bass.BASS_ErrorGetCode()));
+						}
+					}
+				}
+			}
+		}
+
+		public float ReverbLevel {
+			get {
+				var retValue = mReverbLevel;
+
+				if( mReverbFx != 0 ) {
+					var reverbParam = new BASS_BFX_REVERB();
+
+					if( Bass.BASS_FXGetParameters( mReverbFx, reverbParam )) {
+						retValue = reverbParam.fLevel;
+					}
+				}
+
+				return( retValue );
+			}
+			set {
+				if(( mReverbFx != 0 ) &&
+				   ( value >= 0.0f ) &&
+				   ( value <= 1.0f )) {
+					var reverbParam = new BASS_BFX_REVERB();
+
+					if( Bass.BASS_FXGetParameters( mReverbFx, reverbParam )) {
+						reverbParam.fLevel = value;
+						reverbParam.lDelay = mReverbDelay;
+
+						if( Bass.BASS_FXSetParameters( mReverbFx, reverbParam )) {
+							mReverbLevel = value;
+						}
+						else {
+							mLog.LogMessage( string.Format( "AudioPlayer - Could not set reverb level: {0}", Bass.BASS_ErrorGetCode()));
+						}
+					}
+				}
+			}
+		}
+
+		public int ReverbDelay {
+			get {
+				var	retValue = mReverbDelay;
+
+				if( mReverbFx != 0 ) {
+					var reverbParam = new BASS_BFX_REVERB();
+
+					if( Bass.BASS_FXGetParameters( mReverbFx, reverbParam )) {
+						retValue = reverbParam.lDelay;
+					}
+				}
+
+				return( retValue );
+			}
+			set {
+				if(( mReverbFx != 0 ) &&
+				   ( value >= 1200 ) &&
+				   ( value <= 5000 )) {
+					var reverbParam = new BASS_BFX_REVERB();
+
+					if( Bass.BASS_FXGetParameters( mReverbFx, reverbParam )) {
+						reverbParam.lDelay = value;
+						reverbParam.fLevel = mReverbLevel;
+
+						if( Bass.BASS_FXSetParameters( mReverbFx, reverbParam )) {
+							mReverbDelay = value;
+						}
+						else {
+							mLog.LogMessage( string.Format( "AudioPlayer - Could not set reverb delay: {0}", Bass.BASS_ErrorGetCode()));
+						}
+					}
 				}
 			}
 		}

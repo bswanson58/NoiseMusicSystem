@@ -39,6 +39,10 @@ namespace Noise.Core.MediaPlayer {
 		double				SoftSaturationFactor { get; set; }
 		double				SoftSaturationDepth { get; set; }
 
+		bool				ReverbEnable { get; set; }
+		float				ReverbLevel { get; set; }
+		int					ReverbDelay { get; set; }
+
 		IObservable<int>			ChannelStatusChange { get; }
 		IObservable<AudioLevels>	AudioLevelsChange { get; }
 		IObservable<StreamInfo>		AudioStreamInfoChange { get; }

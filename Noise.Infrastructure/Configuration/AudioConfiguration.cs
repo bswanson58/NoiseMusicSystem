@@ -18,6 +18,9 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cEnableSoftSaturationPropery	= "enableSoftSaturation";
 		private const string	cSoftSaturationDepthProperty	= "softSaturationDepth";
 		private const string	cSoftSaturationFactorProperty	= "softSaturationFactor";
+		private const string	cEnableReverbProperty			= "enableReverb";
+		private const string	cReverbLevelProperty			= "reverbLevel";
+		private const string	cReverbDelayProperty			= "reverbDelay";
 
 		public override bool IsReadOnly() {
 			return( false );
@@ -25,62 +28,80 @@ namespace Noise.Infrastructure.Configuration {
 
 		[ConfigurationPropertyAttribute( cDefaultEqualizerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "0" )]
 		public long DefaultEqualizer {
-			get { return ((long)( base[cDefaultEqualizerProperty] ) ); }
+			get { return ((long)( base[cDefaultEqualizerProperty])); }
 			set { base[cDefaultEqualizerProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cPreampGainProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "1.0" )]
 		public float PreampGain {
-			get { return ((float)( base[cPreampGainProperty] ) ); }
+			get { return ((float)( base[cPreampGainProperty])); }
 			set { base[cPreampGainProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cEnableReplayGainProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "true" )]
 		public bool ReplayGainEnabled {
-			get { return ((bool)( base[cEnableReplayGainProperty] ) ); }
+			get { return ((bool)( base[cEnableReplayGainProperty])); }
 			set { base[cEnableReplayGainProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cEqualizationEnabledProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
 		public bool EqEnabled {
-			get { return ((bool)( base[cEqualizationEnabledProperty] ) ); }
+			get { return ((bool)( base[cEqualizationEnabledProperty])); }
 			set { base[cEqualizationEnabledProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cEnableStereoEnhancerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
 		public bool StereoEnhancerEnabled {
-			get { return ((bool)( base[cEnableStereoEnhancerProperty] ) ); }
+			get { return ((bool)( base[cEnableStereoEnhancerProperty])); }
 			set { base[cEnableStereoEnhancerProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cStereoEnhancerWidthProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "0.2" )]
 		public double StereoEnhancerWidth {
-			get { return ((double)( base[cStereoEnhancerWidthProperty] ) ); }
+			get { return ((double)( base[cStereoEnhancerWidthProperty])); }
 			set { base[cStereoEnhancerWidthProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cStereoEnhancerWetDryProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "0.5" )]
 		public double StereoEnhancerWetDry {
-			get { return ((double)( base[cStereoEnhancerWetDryProperty] ) ); }
+			get { return ((double)( base[cStereoEnhancerWetDryProperty])); }
 			set { base[cStereoEnhancerWetDryProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cEnableSoftSaturationPropery, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
 		public bool SoftSaturationEnabled {
-			get { return ((bool)( base[cEnableSoftSaturationPropery] ) ); }
+			get { return ((bool)( base[cEnableSoftSaturationPropery])); }
 			set { base[cEnableSoftSaturationPropery] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cSoftSaturationDepthProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "0.5" )]
 		public double SoftSaturationDepth {
-			get { return ((double)( base[cSoftSaturationDepthProperty] ) ); }
+			get { return ((double)( base[cSoftSaturationDepthProperty])); }
 			set { base[cSoftSaturationDepthProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cSoftSaturationFactorProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "0.5" )]
 		public double SoftSaturationFactor {
-			get { return ((double)( base[cSoftSaturationFactorProperty] ) ); }
+			get { return ((double)( base[cSoftSaturationFactorProperty])); }
 			set { base[cSoftSaturationFactorProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cEnableReverbProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
+		public bool ReverbEnabled {
+			get { return ((bool)( base[cEnableReverbProperty])); }
+			set { base[cEnableReverbProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cReverbLevelProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "0.0" )]
+		public float ReverbLevel {
+			get { return ((float)( base[cReverbLevelProperty])); }
+			set { base[cReverbLevelProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cReverbDelayProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "1200" )]
+		public int ReverbDelay {
+			get { return ((int)( base[cReverbDelayProperty])); }
+			set { base[cReverbDelayProperty] = value; }
 		}
 
 		[ConfigurationProperty( cParametricEqualizersProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false )]
