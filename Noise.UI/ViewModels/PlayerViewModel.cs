@@ -396,6 +396,21 @@ namespace Noise.UI.ViewModels {
 			return( IsEqEditable );
 		}
 
+		public bool StereoEnhancerEnable {
+			get{ return( mNoiseManager.PlayController.StereoEnhancerEnable ); }
+			set{ mNoiseManager.PlayController.StereoEnhancerEnable = value; }
+		}
+
+		public double StereoEnhancerWidth {
+			get{ return( mNoiseManager.PlayController.StereoEnhancerWidth ); }
+			set{ mNoiseManager.PlayController.StereoEnhancerWidth = value; }
+		}
+
+		public double StereoEnhancerWetDry {
+			get{ return( mNoiseManager.PlayController.StereoEnhancerWetDry ); }
+			set{ mNoiseManager.PlayController.StereoEnhancerWetDry = value; }
+		}
+
 		public void Execute_StandardPlayer() {
 			mEvents.GetEvent<Events.StandardPlayerRequest>().Publish( this );
 		}

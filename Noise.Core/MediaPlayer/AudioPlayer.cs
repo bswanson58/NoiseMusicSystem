@@ -65,6 +65,7 @@ namespace Noise.Core.MediaPlayer {
 		private readonly Timer							mUpdateTimer;
 		private readonly Dictionary<int, AudioStream>	mCurrentStreams;
 		private readonly DSP_PeakLevelMeter				mLevelMeter;
+		private readonly DSP_StereoEnhancer				mStereoEnhancer;
 		private ParametricEqualizer						mEq;
 		private	int										mPreampFx;
 		private	int										mParamEqFx;
@@ -115,6 +116,8 @@ namespace Noise.Core.MediaPlayer {
 				if( mMixerChannel != 0 ) {
 					Bass.BASS_ChannelPlay( mMixerChannel, false );
 					Bass.BASS_ChannelGetAttribute( mMixerChannel, BASSAttribute.BASS_ATTRIB_FREQ, ref mMixerSampleRate );
+
+					mStereoEnhancer = new DSP_StereoEnhancer( mMixerChannel, 0 );
 
 					mLevelMeter = new DSP_PeakLevelMeter( mMixerChannel, -20 );
 					mLevelMeter.Notification += OnLevelMeter;
@@ -477,6 +480,31 @@ namespace Noise.Core.MediaPlayer {
 			}
 
 			return( retValue );
+		}
+
+		public bool StereoEnhancerEnable {
+			get{ return(!mStereoEnhancer.IsBypassed ); }
+			set{ mStereoEnhancer.SetBypass(!value ); }
+		}
+
+		public double StereoEnhancerWidth {
+			get{ return( mStereoEnhancer.WideCoeff / 10.0 ); }
+			set {
+				if(( value >= 0.0 ) &&
+				   ( value <= 1.0 )) {
+					mStereoEnhancer.WideCoeff = value * 10.0;
+				}
+			}
+		}
+
+		public double StereoEnhancerWetDry {
+			get{ return( mStereoEnhancer.WetDry ); }
+			set {
+				if(( value >= 0.0 ) &&
+				   ( value <= 1.0 )) {
+					mStereoEnhancer.WetDry = value;
+				}
+			}
 		}
 
 		public float PreampVolume {

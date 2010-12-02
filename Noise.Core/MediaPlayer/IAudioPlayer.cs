@@ -30,6 +30,10 @@ namespace Noise.Core.MediaPlayer {
 		bool				EqEnabled { get; set; }
 		void				AdjustEq( long bandId, float gain );
 
+		bool				StereoEnhancerEnable { get; set; }
+		double				StereoEnhancerWidth { get; set; }
+		double				StereoEnhancerWetDry { get; set; }
+
 		IObservable<int>			ChannelStatusChange { get; }
 		IObservable<AudioLevels>	AudioLevelsChange { get; }
 		IObservable<StreamInfo>		AudioStreamInfoChange { get; }

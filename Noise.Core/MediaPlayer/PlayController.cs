@@ -74,6 +74,9 @@ namespace Noise.Core.MediaPlayer {
 				mEnableReplayGain = audioCongfiguration.ReplayGainEnabled;
 				mAudioPlayer.EqEnabled = audioCongfiguration.EqEnabled;
 				mAudioPlayer.PreampVolume = audioCongfiguration.PreampGain;
+				mAudioPlayer.StereoEnhancerEnable = audioCongfiguration.StereoEnhancerEnabled;
+				mAudioPlayer.StereoEnhancerWidth = audioCongfiguration.StereoEnhancerWidth;
+				mAudioPlayer.StereoEnhancerWetDry = audioCongfiguration.StereoEnhancerWetDry;
 			}
 		}
 
@@ -93,6 +96,10 @@ namespace Noise.Core.MediaPlayer {
 			if( audioCongfiguration != null ) {
 				audioCongfiguration.PreampGain = mAudioPlayer.PreampVolume;
 				audioCongfiguration.ReplayGainEnabled = mEnableReplayGain;
+
+				audioCongfiguration.StereoEnhancerEnabled = mAudioPlayer.StereoEnhancerEnable;
+				audioCongfiguration.StereoEnhancerWidth = mAudioPlayer.StereoEnhancerWidth;
+				audioCongfiguration.StereoEnhancerWetDry = mAudioPlayer.StereoEnhancerWetDry;
 
 				systemConfig.Save( audioCongfiguration );
 			}			
@@ -134,6 +141,21 @@ namespace Noise.Core.MediaPlayer {
 
 		public BitmapSource GetSpectrumImage( int height, int width, Color baseColor, Color peakColor, Color peakHoldColor ) {
 			return( mAudioPlayer.GetSpectrumImage( CurrentChannel, height, width, baseColor, peakColor, peakHoldColor ));
+		}
+
+		public bool StereoEnhancerEnable {
+			get{ return( mAudioPlayer.StereoEnhancerEnable ); }
+			set{ mAudioPlayer.StereoEnhancerEnable = value; }
+		}
+
+		public double StereoEnhancerWidth {
+			get{ return( mAudioPlayer.StereoEnhancerWidth ); }
+			set{ mAudioPlayer.StereoEnhancerWidth = value; }
+		}
+
+		public double StereoEnhancerWetDry {
+			get{ return( mAudioPlayer.StereoEnhancerWetDry ); }
+			set{ mAudioPlayer.StereoEnhancerWetDry = value; }
 		}
 
 		public PlayQueueTrack CurrentTrack {

@@ -28,6 +28,10 @@ namespace Noise.Infrastructure.Interfaces {
 		bool				EqEnabled { get; set; }
 		void				SetEqValue( long bandId, float gain );
 
+		bool			StereoEnhancerEnable { get; set; }
+		double			StereoEnhancerWidth { get; set; }
+		double			StereoEnhancerWetDry { get; set; }
+
 		double			LeftLevel { get; }
 		double			RightLevel { get; }
 

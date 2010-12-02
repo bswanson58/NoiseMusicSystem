@@ -42,6 +42,19 @@
                 </Grid.ColumnDefinitions>
                 
                 <!-- Audio Controls: Stereo Enhancement / Track Overlap -->
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <CheckBox Grid.Row="0" Content="Stereo Enhance" IsChecked="{Binding Path=StereoEnhancerEnable}"/>
+                    <Slider Grid.Row="1" Orientation="Horizontal" SnapsToDevicePixels="True" BorderThickness="0,0,0,5" Margin="0,7,0,0"
+                                Minimum="0.0" Maximum="1.0" Value="{Binding Path=StereoEnhancerWidth, Mode=TwoWay}"  Style="{StaticResource PlayerPositionSliderStyle}"/>
+                    <Slider Grid.Row="2" Orientation="Horizontal" SnapsToDevicePixels="True" BorderThickness="0,0,0,5" Margin="0,7,0,0"
+                                Minimum="0.0" Maximum="1.0" Value="{Binding Path=StereoEnhancerWetDry, Mode=TwoWay}"  Style="{StaticResource PlayerPositionSliderStyle}"/>
+                </Grid>
                 
                 <!-- Eq Controls-->
                 <GroupBox Grid.Column="1" BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Parametric Equalization ">

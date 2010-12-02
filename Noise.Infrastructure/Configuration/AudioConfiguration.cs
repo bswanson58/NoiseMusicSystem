@@ -12,6 +12,9 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cEqualizationEnabledProperty	= "eqEnabled";
 		private const string	cPreampGainProperty				= "preampGain";
 		private	const string	cEnableReplayGainProperty		= "replayGainEnabled";
+		private const string	cEnableStereoEnhancerProperty	= "enableStereoEnhancer";
+		private	const string	cStereoEnhancerWidthProperty	= "stereoEnhancerWidth";
+		private const string	cStereoEnhancerWetDryProperty	= "stereoEnhancerWetDry";
 
 		public override bool IsReadOnly() {
 			return( false );
@@ -39,6 +42,24 @@ namespace Noise.Infrastructure.Configuration {
 		public bool EqEnabled {
 			get { return ((bool)( base[cEqualizationEnabledProperty] ) ); }
 			set { base[cEqualizationEnabledProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cEnableStereoEnhancerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
+		public bool StereoEnhancerEnabled {
+			get { return ((bool)( base[cEnableStereoEnhancerProperty] ) ); }
+			set { base[cEnableStereoEnhancerProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cStereoEnhancerWidthProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "0.2" )]
+		public double StereoEnhancerWidth {
+			get { return ((double)( base[cStereoEnhancerWidthProperty] ) ); }
+			set { base[cStereoEnhancerWidthProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cStereoEnhancerWetDryProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "0.5" )]
+		public double StereoEnhancerWetDry {
+			get { return ((double)( base[cStereoEnhancerWetDryProperty] ) ); }
+			set { base[cStereoEnhancerWetDryProperty] = value; }
 		}
 
 		[ConfigurationProperty( cParametricEqualizersProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false )]
