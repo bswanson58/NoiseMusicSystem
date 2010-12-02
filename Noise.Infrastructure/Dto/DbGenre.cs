@@ -1,7 +1,9 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 
 namespace Noise.Infrastructure.Dto {
+	[DebuggerDisplay("Genre = {Name}")]
 	public class DbGenre : DbBase, IUserSettings {
 		public string			Name { get; set; }
 		public string			Description { get; set; }

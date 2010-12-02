@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
+	[DebuggerDisplay("Artist = {Name}")]
 	public class DbArtist : DbBase, IUserSettings {
 		public string			Name { get; set; }
 		public string			Website { get; set; }

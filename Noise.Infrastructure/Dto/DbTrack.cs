@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
+	[DebuggerDisplay("Track = {Name}")]
 	public class DbTrack : DbBase, IUserSettings {
 		public string			Name { get; set; }
 		public string			Performer { get; set; }
