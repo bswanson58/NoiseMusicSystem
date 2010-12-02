@@ -9,6 +9,7 @@ namespace Noise.Core.Database {
 	public class DatabaseStatistics {
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly ILog				mLog;
+		private bool						mAllCounts;
 
 		public	int		ArtistCount { get; protected set; }
 		public	int		AlbumCount { get; protected set; }
@@ -24,25 +25,21 @@ namespace Noise.Core.Database {
 			mLog = container.Resolve<ILog>();
 		}
 
-		public void GatherStatistics() {
+		public void GatherStatistics( bool allCounts ) {
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
-				var folders = from StorageFolder folder in database.Database select folder;
-				FolderCount = folders.Count();
+				ArtistCount = database.Database.ExecuteQuery( "SELECT DbArtist" ).OfType<DbArtist>().Count();
+				AlbumCount = database.Database.ExecuteQuery( "SELECT DbAlbum" ).OfType<DbAlbum>().Count();
 
-				var files = from StorageFile file in database.Database select file;
-				FileCount = files.Count();
+				if( allCounts ) {
+					mAllCounts = true;
 
-				var artists = from DbArtist artist in database.Database select artist;
-				ArtistCount = artists.Count();
+					FolderCount = database.Database.ExecuteQuery( "SELECT StorageFolder" ).OfType<StorageFolder>().Count();
+					FileCount = database.Database.ExecuteQuery( "SELECT StorageFile" ).OfType<StorageFile>().Count();
+					TrackCount = database.Database.ExecuteQuery( "SELECT DbTrack" ).OfType<DbTrack>().Count();
+				}
 
-				var albums = from DbAlbum album in database.Database select album;
-				AlbumCount = albums.Count();
-
-				var tracks = from DbTrack track in database.Database select track;
-				TrackCount = tracks.Count();
-
-				var rootFolder = ( from RootFolder root in database.Database select root ).FirstOrDefault();
+				var rootFolder = database.Database.ExecuteQuery( "SELECT RootFolder" ).OfType<RootFolder>().FirstOrDefault();
 				if( rootFolder != null ) {
 					LastScan = new DateTime( rootFolder.LastScan );
 				}
@@ -56,8 +53,18 @@ namespace Noise.Core.Database {
 		}
 
 		public override string ToString() {
-			return( String.Format( "Database Status: Last Scan - {0} {1} - Artists: {2}, Albums: {3}, Tracks: {4}, Folders: {5}, Files: {6}",
-									LastScan.ToShortDateString(), LastScan.ToShortTimeString(), ArtistCount, AlbumCount, TrackCount, FolderCount, FileCount ));
+			string	retValue;
+
+			if( mAllCounts ) {
+				retValue = String.Format( "Database Status: Last Scan - {0} {1} - Artists: {2}, Albums: {3}, Tracks: {4}, Folders: {5}, Files: {6}",
+										   LastScan.ToShortDateString(), LastScan.ToShortTimeString(), ArtistCount, AlbumCount, TrackCount, FolderCount, FileCount );
+			}
+			else {
+				retValue = String.Format( "Database Status: Last Scan - {0} {1} - Artists: {2}, Albums: {3}",
+										   LastScan.ToShortDateString(), LastScan.ToShortTimeString(), ArtistCount, AlbumCount );			
+			}
+
+			return( retValue );
 		}
 	}
 }

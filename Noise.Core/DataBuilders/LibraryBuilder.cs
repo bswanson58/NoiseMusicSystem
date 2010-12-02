@@ -168,7 +168,7 @@ namespace Noise.Core.DataBuilders {
 					}
 
 					if( mContinueExploring ) {
-						LogStatistics();
+						LogStatistics( true );
 					}
 				}
 			}
@@ -191,13 +191,13 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		private void LogStatistics( object state ) {
-			LogStatistics();
+			LogStatistics( false );
 		}
 
-		private void LogStatistics() {
+		private void LogStatistics( bool allCounts ) {
 			var	statistics = mContainer.Resolve<DatabaseStatistics>();
 
-			statistics.GatherStatistics();
+			statistics.GatherStatistics( allCounts );
 			mLog.LogInfo( statistics.ToString());
 		}
 	}
