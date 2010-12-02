@@ -83,13 +83,13 @@
                         </TextBlock>
                     </StackPanel>
 
-                    <NoiseControls:VuMeter Width="125" Margin="5,0,0,0" Foreground="LightGreen" Background="#FFAAC6E5"
+                    <NoiseControls:VuMeter Width="125" Margin="5,0,0,0" Foreground="Blue" Background="#FFAAC6E5"
                                            LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}"/>
                     <Slider x:Name="Position" Orientation="Horizontal" Width="100" SnapsToDevicePixels="True" Minimum="0" Style="{StaticResource PlayerPositionSliderStyle}"
                             Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}" VerticalAlignment="Center"/>
                 </StackPanel>
                 <Slider x:Name="Volume" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Height="50" Margin="3,0" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
-                <Button Grid.Row="0" Grid.Column="3" Margin="3,0,5,0" Content="1" Command="{Binding Path=PlayerSwitch}" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Webdings"/>
+                <Button Grid.Row="0" Grid.Column="3" Margin="3,0,5,0" Content="5" Command="{Binding Path=PlayerSwitch}" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Webdings"/>
             </Grid>
         </Grid>
     </Border>
