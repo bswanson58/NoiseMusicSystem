@@ -4,7 +4,8 @@ using Noise.Infrastructure.Dto;
 namespace Noise.Infrastructure.Interfaces {
 	public enum ePlayStrategy {
 		Next,
-		Random
+		Random,
+		TwoFers
 	}
 
 	public enum ePlayExhaustedStrategy {
@@ -23,6 +24,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void			Add( DbArtist artist );
 		void			Add( DbInternetStream stream );
 		void			StrategyAdd( DbTrack track );
+		void			StrategyAdd( DbTrack track, PlayQueueTrack afterTrack );
 		void			RemoveTrack( PlayQueueTrack track );
 		void			ClearQueue();
 

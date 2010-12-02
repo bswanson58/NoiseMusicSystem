@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.UI.Dto {
+	[DebuggerDisplay("Album = {Name}")]
 	public class UiAlbum : UiBase {
 		public string			Name { get; set; }
 		public long				Artist { get; set; }

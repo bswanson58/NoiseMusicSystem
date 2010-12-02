@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
+	[DebuggerDisplay("Album = {Name}")]
 	public class DbAlbum : DbBase, IUserSettings {
 		public string			Name { get; set; }
 		public long				Artist { get; set; }

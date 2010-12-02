@@ -93,6 +93,29 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
+		public void StrategyAdd( DbTrack track, PlayQueueTrack afterTrack ) {
+			if(( track != null ) &&
+			   ( afterTrack != null )) { 
+				var album = mDataProvider.GetAlbumForTrack( track );
+
+				if( album != null ) {
+					var artist = mDataProvider.GetArtistForAlbum( album );
+
+					if( artist != null ) {
+						var file = mDataProvider.GetPhysicalFile( track );
+
+						if( file != null ) {
+							var path = mDataProvider.GetPhysicalFilePath( file );
+							var newTrack = new PlayQueueTrack( artist, album, track, file, path, true );
+							var trackIndex = mPlayQueue.IndexOf( afterTrack );
+
+							mPlayQueue.Insert( trackIndex + 1, newTrack );
+						}
+					}
+				}
+			}
+		}
+
 		private void OnAlbumPlayCommand( DbAlbum album ) {
 			Add( album );
 		}
@@ -275,12 +298,12 @@ namespace Noise.Core.PlayQueue {
 				}
 
 				if( retValue == null ) {
-					retValue = mStrategy.NextTrack( mPlayQueue );
+					retValue = mStrategy.NextTrack( this, mPlayQueue );
 
 					if(( retValue == null ) &&
 					   ( mPlayQueue.Count > 0 )) {
 						if( mExhaustedStrategy.QueueExhausted( this, mPlayExhaustedItem )) {
-							retValue = mStrategy.NextTrack( mPlayQueue );
+							retValue = mStrategy.NextTrack( this, mPlayQueue );
 						}
 					}
 				}
@@ -350,6 +373,10 @@ namespace Noise.Core.PlayQueue {
 
 					case ePlayStrategy.Random:
 						mStrategy = new	PlayStrategyRandom();
+						break;
+
+					case ePlayStrategy.TwoFers:
+						mStrategy = new PlayStrategyTwoFers( mContainer );
 						break;
 				}
 			}

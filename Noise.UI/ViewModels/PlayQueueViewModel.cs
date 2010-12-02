@@ -29,7 +29,8 @@ namespace Noise.UI.ViewModels {
 
 			mPlayStrategies = new ObservableCollectionEx<PlayStrategyItem>{
 			                                    new PlayStrategyItem( ePlayStrategy.Next, "Normal" ),
-												new PlayStrategyItem( ePlayStrategy.Random, "Random" )};
+												new PlayStrategyItem( ePlayStrategy.Random, "Random" ),
+												new PlayStrategyItem( ePlayStrategy.TwoFers, "2 Fers" )};
 
 			mExhaustedStrategies = new ObservableCollectionEx<ExhaustedStrategyItem>{
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Stop, "Stop" ),

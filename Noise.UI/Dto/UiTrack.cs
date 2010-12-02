@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Dto {
+	[DebuggerDisplay("Track = {Name}")]
 	public class UiTrack : UiBase {
 		public string			Name { get; set; }
 		public string			Performer { get; set; }
