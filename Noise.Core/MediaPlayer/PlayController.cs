@@ -192,12 +192,14 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		public void OnPlayQueueChanged( IPlayQueue playQueue ) {
-			if( playQueue.IsQueueEmpty ) {
-				Stop();
-			}
-			else {
-				if( mOpenTracks.Count == 0 ) {
-					Play();
+			lock( mOpenTracks ) {
+				if( playQueue.IsQueueEmpty ) {
+					Stop();
+				}
+				else {
+					if( mOpenTracks.Count == 0 ) {
+						Play();
+					}
 				}
 			}
 		}
@@ -209,31 +211,33 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		public void OnPlayStatusChanged( int channel ) {
-			var status = mAudioPlayer.GetChannelStatus( channel );
-			if( channel == CurrentChannel ) {
-				CurrentStatus = status;
-			}
-			else {
-				if( CurrentChannel != 0 ) {
-					CurrentStatus = mAudioPlayer.GetChannelStatus( CurrentChannel );
+			lock( mOpenTracks ) {
+				var status = mAudioPlayer.GetChannelStatus( channel );
+				if( channel == CurrentChannel ) {
+					CurrentStatus = status;
 				}
-			}
+				else {
+					if( CurrentChannel != 0 ) {
+						CurrentStatus = mAudioPlayer.GetChannelStatus( CurrentChannel );
+					}
+				}
 
-			var track = GetTrack( channel );
-			if( track != null ) {
-				if( status == ePlaybackStatus.Stopped ) {
-					track.PercentPlayed = mAudioPlayer.GetPercentPlayed( channel );
-					mNoiseManager.PlayHistory.TrackPlayCompleted( track );
-					mAudioPlayer.CloseChannel( channel );
-					mOpenTracks.Remove( channel );
+				var track = GetTrack( channel );
+				if( track != null ) {
+					if( status == ePlaybackStatus.Stopped ) {
+						track.PercentPlayed = mAudioPlayer.GetPercentPlayed( channel );
+						mNoiseManager.PlayHistory.TrackPlayCompleted( track );
+						mAudioPlayer.CloseChannel( channel );
+						mOpenTracks.Remove( channel );
 
-					if( channel == CurrentChannel ) {
-						CurrentChannel = 0;
+						if( channel == CurrentChannel ) {
+							CurrentChannel = 0;
 
-						StopInfoUpdate();
+							StopInfoUpdate();
 
-						if( mContinuePlaying ) {
-							PlayNextTrack();
+							if( mContinuePlaying ) {
+								PlayNextTrack();
+							}
 						}
 					}
 				}
@@ -331,33 +335,35 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		private void StartTrack( PlayQueueTrack track ) {
-			if( CurrentTrack != null ) {
-				mAudioPlayer.FadeAndStop( CurrentChannel );
-			}
-
-			if( track != null ) {
-				var gain = 0.0f;
-				
-				if(( mEnableReplayGain ) &&
-				   (!track.IsStream ) &&
-				   ( track.Track != null )) {
-					gain = track.Track.ReplayGainAlbumGain != 0.0f ? track.Track.ReplayGainAlbumGain : track.Track.ReplayGainTrackGain;
+			lock( mOpenTracks ) {
+				if( CurrentTrack != null ) {
+					mAudioPlayer.FadeAndStop( CurrentChannel );
 				}
-				var	channel = track.IsStream ? mAudioPlayer.OpenStream( track.Stream ) : mAudioPlayer.OpenFile( track.FilePath, gain );
 
-				mOpenTracks.Add( channel, track );
-				CurrentChannel = channel;
-				mAudioPlayer.Play( CurrentChannel );
+				if( track != null ) {
+					var gain = 0.0f;
+				
+					if(( mEnableReplayGain ) &&
+					   (!track.IsStream ) &&
+					   ( track.Track != null )) {
+						gain = track.Track.ReplayGainAlbumGain != 0.0f ? track.Track.ReplayGainAlbumGain : track.Track.ReplayGainTrackGain;
+					}
+					var	channel = track.IsStream ? mAudioPlayer.OpenStream( track.Stream ) : mAudioPlayer.OpenFile( track.FilePath, gain );
 
-				mCurrentLength = mAudioPlayer.GetLength( CurrentChannel );
+					mOpenTracks.Add( channel, track );
+					CurrentChannel = channel;
+					mAudioPlayer.Play( CurrentChannel );
 
-				StartInfoUpdate();
-				mContinuePlaying = true;
+					mCurrentLength = mAudioPlayer.GetLength( CurrentChannel );
 
-				FirePlaybackTrackStarted( track );
+					StartInfoUpdate();
+					mContinuePlaying = true;
+
+					FirePlaybackTrackStarted( track );
+				}
+
+				FirePlaybackTrackUpdate();
 			}
-
-			FirePlaybackTrackUpdate();
 		}
 
 		public void Pause() {
