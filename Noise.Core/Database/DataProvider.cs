@@ -403,7 +403,7 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				retValue = new DataProviderList<DbTrack>( database.DatabaseId, FreeDatabase,
-															from DbTrack track in database.Database orderby track.DateAdded descending select track );				
+														  database.Database.ExecuteQuery( "SELECT DbTrack ORDER BY DateAdded DESC" ).OfType<DbTrack>());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetNewlyAddedTracks: ", ex );
