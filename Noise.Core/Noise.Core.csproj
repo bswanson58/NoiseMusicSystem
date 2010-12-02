@@ -204,6 +204,7 @@
     <Compile Include="PlayQueue\PlayQueueMgr.cs" />
     <Compile Include="PlayQueue\PlayStrategyRandom.cs" />
     <Compile Include="PlayQueue\PlayStrategySingle.cs" />
+    <Compile Include="PlayQueue\PlayStrategyTwoFers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
