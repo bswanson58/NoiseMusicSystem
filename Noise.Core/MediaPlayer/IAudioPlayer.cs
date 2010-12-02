@@ -23,6 +23,7 @@ namespace Noise.Core.MediaPlayer {
 
 		float				Volume { get; set; }
 		float				PreampVolume { get; set; }
+		bool				Mute { get; set; }
 		float				Pan { get; set; }
 		float				PlaySpeed { get; set; }
 

@@ -17,6 +17,7 @@ namespace Noise.Infrastructure.Interfaces {
 		bool			CanPlayPreviousTrack { get; }
 
 		double			Volume { get; set; }
+		bool			Mute { get; set; }
 		double			PreampVolume { get; set; }
 		bool			ReplayGainEnable { get; set; }
 

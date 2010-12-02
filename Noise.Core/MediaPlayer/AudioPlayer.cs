@@ -67,6 +67,8 @@ namespace Noise.Core.MediaPlayer {
 		private readonly DSP_PeakLevelMeter				mLevelMeter;
 		private readonly DSP_StereoEnhancer				mStereoEnhancer;
 		private ParametricEqualizer						mEq;
+		private readonly int							mMuteFx;
+		private bool									mMuted;
 		private	int										mPreampFx;
 		private	int										mParamEqFx;
 		private	readonly Dictionary<long, int>			mEqChannels;
@@ -117,6 +119,7 @@ namespace Noise.Core.MediaPlayer {
 					Bass.BASS_ChannelPlay( mMixerChannel, false );
 					Bass.BASS_ChannelGetAttribute( mMixerChannel, BASSAttribute.BASS_ATTRIB_FREQ, ref mMixerSampleRate );
 
+					mMuteFx = Bass.BASS_ChannelSetFX( mMixerChannel, BASSFXType.BASS_FX_BFX_VOLUME, 3 );
 					mStereoEnhancer = new DSP_StereoEnhancer( mMixerChannel, 0 );
 
 					mLevelMeter = new DSP_PeakLevelMeter( mMixerChannel, -20 );
@@ -225,7 +228,7 @@ namespace Noise.Core.MediaPlayer {
 							stream.ReplayGainFx = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_VOLUME, 2 );
 							if( stream.ReplayGainFx != 0 ) {
 								 // convert the replaygain dB gain to a linear value
-								var volparam = new BASS_BFX_VOLUME { lChannel = 0 /*BASSFXChan.BASS_BFX_CHANALL*/,
+								var volparam = new BASS_BFX_VOLUME { lChannel = BASSFXChan.BASS_BFX_CHANALL,
 																	 fVolume = (float)Math.Pow( 10, gainAdjustment / 20 )};
 								if(!Bass.BASS_FXSetParameters( stream.ReplayGainFx, volparam )) {
 									mLog.LogMessage( string.Format( "AudioPlayer - Could not set replay gain volume ({0}).", Bass.BASS_ErrorGetCode()));
@@ -735,6 +738,20 @@ namespace Noise.Core.MediaPlayer {
 		public float Volume {
 			get { return( Bass.BASS_GetVolume()); }
 			set{ Bass.BASS_SetVolume( value ); }
+		}
+
+		public bool Mute {
+			get { return( mMuted ); }
+			set {
+				var volparam = new BASS_BFX_VOLUME { lChannel = BASSFXChan.BASS_BFX_CHANALL, fVolume = value ? 0.0f : 1.0f };
+
+				if( Bass.BASS_FXSetParameters( mMuteFx, volparam )) {
+					mMuted = value;
+				}
+				else {
+					mLog.LogMessage( string.Format( "AudioPlayer - Could not mute volume ({0}).", Bass.BASS_ErrorGetCode()));
+				}
+			}
 		}
 	}
 }

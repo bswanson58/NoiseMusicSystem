@@ -466,6 +466,15 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
+		public bool Mute {
+			get{ return( mAudioPlayer.Mute ); }
+			set{ 
+				mAudioPlayer.Mute = value; 
+
+				FireInfoUpdate();
+			}
+		}
+
 		public double PreampVolume {
 			get{ return( mAudioPlayer.PreampVolume ); }
 			set{ mAudioPlayer.PreampVolume = (float)value; }

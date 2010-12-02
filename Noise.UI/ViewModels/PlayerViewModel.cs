@@ -156,6 +156,15 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
+		public bool IsMuted {
+			get{ return( mNoiseManager.PlayController.Mute ); }
+		}
+
+		public void Execute_Mute() {
+			mNoiseManager.PlayController.Mute = !mNoiseManager.PlayController.Mute;
+		}
+
+		[DependsUpon( "InfoUpdateFlag" )]
 		public double PlaySpeed {
 			get{ return( mNoiseManager.PlayController.PlaySpeed ); }
 			set{ mNoiseManager.PlayController.PlaySpeed = (float)value; }

@@ -93,13 +93,16 @@
 
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <NoiseControls:VuMeter Grid.Column="0" Margin="50,7,7,0" Foreground="LightBlue" Background="White"
+                    <TextBlock Grid.Column="0" Text="x" FontFamily="Webdings" FontSize="21.333" Foreground="Red"
+                               IsHitTestVisible="False" Panel.ZIndex="1"  VerticalAlignment="Center" HorizontalAlignment="Center"
+                               Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                    <Button Margin="3" Grid.Column="0" Content="X" Width="27" FontFamily="Webdings" FontSize="16" Command="{Binding Path=Mute}"/>
+                    <NoiseControls:VuMeter Grid.Column="1" Margin="0,7,7,0" Foreground="LightBlue" Background="White"
                                            LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}"/>
-                    <Button Margin="3" Grid.Column="1" Content="X" Width="27" FontFamily="Webdings" FontSize="16"/>
                     <Button Margin="3" Grid.Column="2" Content="5" Width="27" FontFamily="Webdings" FontSize="16" Command="{Binding Path=ExtendedPlayer}"/>
                 </Grid>
                 <Grid Grid.Row="1">
