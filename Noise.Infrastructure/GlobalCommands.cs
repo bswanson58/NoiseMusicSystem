@@ -6,6 +6,7 @@ namespace Noise.Infrastructure {
 		public	static CompositeCommand	SetRating = new CompositeCommand();
 
 		public	static CompositeCommand PlayTrack = new CompositeCommand();
+		public	static CompositeCommand PlayTrackList = new CompositeCommand();
 		public	static CompositeCommand	PlayAlbum = new CompositeCommand();
 		public	static CompositeCommand	PlayStream = new CompositeCommand();
 

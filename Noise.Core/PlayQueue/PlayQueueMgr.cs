@@ -9,21 +9,22 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayQueueMgr : IPlayQueue {
-		private readonly IUnityContainer				mContainer;
-		private readonly IDataProvider					mDataProvider;
-		private readonly IEventAggregator				mEventAggregator;
-		private readonly List<PlayQueueTrack>			mPlayQueue;
-		private readonly List<PlayQueueTrack>			mPlayHistory;
-		private	ePlayStrategy							mPlayStrategy;
-		private IPlayStrategy							mStrategy;
-		private ePlayExhaustedStrategy					mPlayExhaustedStrategy;
-		private long									mPlayExhaustedItem;
-		private IPlayExhaustedStrategy					mExhaustedStrategy;
-		private	int										mReplayTrackCount;
-		private PlayQueueTrack							mReplayTrack;
-		private readonly AsyncCommand<DbTrack>			mTrackPlayCommand;
-		private readonly AsyncCommand<DbAlbum>			mAlbumPlayCommand;
-		private readonly AsyncCommand<DbInternetStream>	mStreamPlayCommand;
+		private readonly IUnityContainer					mContainer;
+		private readonly IDataProvider						mDataProvider;
+		private readonly IEventAggregator					mEventAggregator;
+		private readonly List<PlayQueueTrack>				mPlayQueue;
+		private readonly List<PlayQueueTrack>				mPlayHistory;
+		private	ePlayStrategy								mPlayStrategy;
+		private IPlayStrategy								mStrategy;
+		private ePlayExhaustedStrategy						mPlayExhaustedStrategy;
+		private long										mPlayExhaustedItem;
+		private IPlayExhaustedStrategy						mExhaustedStrategy;
+		private	int											mReplayTrackCount;
+		private PlayQueueTrack								mReplayTrack;
+		private readonly AsyncCommand<DbTrack>				mTrackPlayCommand;
+		private readonly AsyncCommand<IEnumerable<DbTrack>>	mTrackListPlayCommand;
+		private readonly AsyncCommand<DbAlbum>				mAlbumPlayCommand;
+		private readonly AsyncCommand<DbInternetStream>		mStreamPlayCommand;
 
 		public PlayQueueMgr( IUnityContainer container ) {
 			mContainer = container;
@@ -39,6 +40,9 @@ namespace Noise.Core.PlayQueue {
 			mTrackPlayCommand = new AsyncCommand<DbTrack>( OnTrackPlayCommand );
 			GlobalCommands.PlayTrack.RegisterCommand( mTrackPlayCommand );
 
+			mTrackListPlayCommand = new AsyncCommand<IEnumerable<DbTrack>>( OnTrackListPlayCommand );
+			GlobalCommands.PlayTrackList.RegisterCommand( mTrackListPlayCommand );
+
 			mAlbumPlayCommand = new AsyncCommand<DbAlbum>( OnAlbumPlayCommand );
 			GlobalCommands.PlayAlbum.RegisterCommand( mAlbumPlayCommand );
 
@@ -46,23 +50,29 @@ namespace Noise.Core.PlayQueue {
 			GlobalCommands.PlayStream.RegisterCommand( mStreamPlayCommand );
 		}
 
-		public void OnTrackPlayCommand( DbTrack track ) {
+		private void OnTrackListPlayCommand( IEnumerable<DbTrack> trackList ) {
+			foreach( var track in trackList ) {
+				Add( track );
+			}	
+		}
+
+		private void OnTrackPlayCommand( DbTrack track ) {
 			Add( track );
 		}
 
 		public void Add( DbTrack track ) {
-			AddTrack( track, false );
+			AddTrack( track, eStrategySource.User );
 
 			FirePlayQueueChanged();
 		}
 
 		public void StrategyAdd( DbTrack track ) {
-			AddTrack( track, true );
+			AddTrack( track, eStrategySource.ExhaustedStrategy );
 
 			FirePlayQueueChanged();
 		}
 
-		private void AddTrack( DbTrack track, bool strategyRequest ) {
+		private void AddTrack( DbTrack track, eStrategySource strategySource ) {
 			var album = mDataProvider.GetAlbumForTrack( track );
 
 			if( album != null ) {
@@ -73,11 +83,11 @@ namespace Noise.Core.PlayQueue {
 
 					if( file != null ) {
 						var path = mDataProvider.GetPhysicalFilePath( file );
-						var newTrack = new PlayQueueTrack( artist, album, track, file, path, strategyRequest );
+						var newTrack = new PlayQueueTrack( artist, album, track, file, path, strategySource );
 
 						// Place any user selected tracks before any unplayed strategy queued tracks.
-						if(!strategyRequest ) {
-							var	ptrack = mPlayQueue.Find( t => t.HasPlayed == false && t.IsPlaying == false && t.IsStrategyQueued );
+						if( strategySource == eStrategySource.User ) {
+							var	ptrack = mPlayQueue.Find( t => t.HasPlayed == false && t.IsPlaying == false && t.StrategySource == eStrategySource.ExhaustedStrategy );
 							if( ptrack != null ) {
 								mPlayQueue.Insert( mPlayQueue.IndexOf( ptrack ), newTrack );
 							}
@@ -106,10 +116,12 @@ namespace Noise.Core.PlayQueue {
 
 						if( file != null ) {
 							var path = mDataProvider.GetPhysicalFilePath( file );
-							var newTrack = new PlayQueueTrack( artist, album, track, file, path, true );
+							var newTrack = new PlayQueueTrack( artist, album, track, file, path, eStrategySource.PlayStrategy );
 							var trackIndex = mPlayQueue.IndexOf( afterTrack );
 
 							mPlayQueue.Insert( trackIndex + 1, newTrack );
+
+							FirePlayQueueChanged();
 						}
 					}
 				}
@@ -131,7 +143,7 @@ namespace Noise.Core.PlayQueue {
 				var firstTrack = true;
 
 				foreach( DbTrack track in tracks.List ) {
-					AddTrack( track, false );
+					AddTrack( track, eStrategySource.User );
 
 					if( firstTrack ) {
 						FirePlayQueueChanged();

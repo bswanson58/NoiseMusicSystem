@@ -138,9 +138,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private static void OnListPlay( PlayListNode node ) {
-			foreach( var track in node.TrackList ) {
-				GlobalCommands.PlayTrack.Execute( track.Track );
-			}
+			GlobalCommands.PlayTrackList.Execute( from PlayListNode children in node.TrackList select children.Track );
 		}
 
 		public void Execute_DeletePlayList() {
