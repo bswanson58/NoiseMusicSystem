@@ -77,6 +77,9 @@ namespace Noise.Core.MediaPlayer {
 				mAudioPlayer.StereoEnhancerEnable = audioCongfiguration.StereoEnhancerEnabled;
 				mAudioPlayer.StereoEnhancerWidth = audioCongfiguration.StereoEnhancerWidth;
 				mAudioPlayer.StereoEnhancerWetDry = audioCongfiguration.StereoEnhancerWetDry;
+				mAudioPlayer.SoftSaturationEnable = audioCongfiguration.SoftSaturationEnabled;
+				mAudioPlayer.SoftSaturationFactor = audioCongfiguration.SoftSaturationFactor;
+				mAudioPlayer.SoftSaturationDepth = audioCongfiguration.SoftSaturationDepth;
 			}
 		}
 
@@ -100,6 +103,9 @@ namespace Noise.Core.MediaPlayer {
 				audioCongfiguration.StereoEnhancerEnabled = mAudioPlayer.StereoEnhancerEnable;
 				audioCongfiguration.StereoEnhancerWidth = mAudioPlayer.StereoEnhancerWidth;
 				audioCongfiguration.StereoEnhancerWetDry = mAudioPlayer.StereoEnhancerWetDry;
+				audioCongfiguration.SoftSaturationEnabled = mAudioPlayer.SoftSaturationEnable;
+				audioCongfiguration.SoftSaturationFactor = mAudioPlayer.SoftSaturationFactor;
+				audioCongfiguration.SoftSaturationDepth = mAudioPlayer.SoftSaturationDepth;
 
 				systemConfig.Save( audioCongfiguration );
 			}			
@@ -156,6 +162,21 @@ namespace Noise.Core.MediaPlayer {
 		public double StereoEnhancerWetDry {
 			get{ return( mAudioPlayer.StereoEnhancerWetDry ); }
 			set{ mAudioPlayer.StereoEnhancerWetDry = value; }
+		}
+
+		public bool SoftSaturationEnable {
+			get{ return( mAudioPlayer.SoftSaturationEnable ); }
+			set{ mAudioPlayer.SoftSaturationEnable = value; }
+		}
+
+		public double SoftSaturationDepth {
+			get{ return( mAudioPlayer.SoftSaturationDepth ); }
+			set{ mAudioPlayer.SoftSaturationDepth = value; }
+		}
+
+		public double SoftSaturationFactor {
+			get{ return( mAudioPlayer.SoftSaturationFactor ); }
+			set{ mAudioPlayer.SoftSaturationFactor = value; }
 		}
 
 		public PlayQueueTrack CurrentTrack {

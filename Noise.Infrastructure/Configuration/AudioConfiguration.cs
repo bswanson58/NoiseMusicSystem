@@ -15,6 +15,9 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cEnableStereoEnhancerProperty	= "enableStereoEnhancer";
 		private	const string	cStereoEnhancerWidthProperty	= "stereoEnhancerWidth";
 		private const string	cStereoEnhancerWetDryProperty	= "stereoEnhancerWetDry";
+		private const string	cEnableSoftSaturationPropery	= "enableSoftSaturation";
+		private const string	cSoftSaturationDepthProperty	= "softSaturationDepth";
+		private const string	cSoftSaturationFactorProperty	= "softSaturationFactor";
 
 		public override bool IsReadOnly() {
 			return( false );
@@ -60,6 +63,24 @@ namespace Noise.Infrastructure.Configuration {
 		public double StereoEnhancerWetDry {
 			get { return ((double)( base[cStereoEnhancerWetDryProperty] ) ); }
 			set { base[cStereoEnhancerWetDryProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cEnableSoftSaturationPropery, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
+		public bool SoftSaturationEnabled {
+			get { return ((bool)( base[cEnableSoftSaturationPropery] ) ); }
+			set { base[cEnableSoftSaturationPropery] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cSoftSaturationDepthProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "0.5" )]
+		public double SoftSaturationDepth {
+			get { return ((double)( base[cSoftSaturationDepthProperty] ) ); }
+			set { base[cSoftSaturationDepthProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cSoftSaturationFactorProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "0.5" )]
+		public double SoftSaturationFactor {
+			get { return ((double)( base[cSoftSaturationFactorProperty] ) ); }
+			set { base[cSoftSaturationFactorProperty] = value; }
 		}
 
 		[ConfigurationProperty( cParametricEqualizersProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false )]

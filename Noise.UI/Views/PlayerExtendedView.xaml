@@ -47,13 +47,22 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     
-                    <CheckBox Grid.Row="0" Content="Stereo Enhance" IsChecked="{Binding Path=StereoEnhancerEnable}"/>
-                    <Slider Grid.Row="1" Orientation="Horizontal" SnapsToDevicePixels="True" BorderThickness="0,0,0,5" Margin="0,7,0,0"
+                    <CheckBox Grid.Row="0" Margin="5,0,0,0" Content="Stereo Enhance" IsChecked="{Binding Path=StereoEnhancerEnable}"/>
+                    <Slider Grid.Row="1" Orientation="Horizontal" SnapsToDevicePixels="True" BorderThickness="0,0,0,5" Margin="0,3,0,0"
                                 Minimum="0.0" Maximum="1.0" Value="{Binding Path=StereoEnhancerWidth, Mode=TwoWay}"  Style="{StaticResource PlayerPositionSliderStyle}"/>
-                    <Slider Grid.Row="2" Orientation="Horizontal" SnapsToDevicePixels="True" BorderThickness="0,0,0,5" Margin="0,7,0,0"
+                    <Slider Grid.Row="2" Orientation="Horizontal" SnapsToDevicePixels="True" BorderThickness="0,0,0,5" Margin="0,3,0,0"
                                 Minimum="0.0" Maximum="1.0" Value="{Binding Path=StereoEnhancerWetDry, Mode=TwoWay}"  Style="{StaticResource PlayerPositionSliderStyle}"/>
+                    
+                    <CheckBox Grid.Row="3" Margin="5,5,0,0" Content="Soft Saturation" IsChecked="{Binding Path=SoftSaturationEnable}"/>
+                    <Slider Grid.Row="4" Orientation="Horizontal" SnapsToDevicePixels="True" BorderThickness="0,0,0,5" Margin="0,3,0,0"
+                                Minimum="0.0" Maximum="1.0" Value="{Binding Path=SoftSaturationFactor, Mode=TwoWay}"  Style="{StaticResource PlayerPositionSliderStyle}"/>
+                    <Slider Grid.Row="5" Orientation="Horizontal" SnapsToDevicePixels="True" BorderThickness="0,0,0,5" Margin="0,3,0,0"
+                                Minimum="0.0" Maximum="1.0" Value="{Binding Path=SoftSaturationDepth, Mode=TwoWay}"  Style="{StaticResource PlayerPositionSliderStyle}"/>
                 </Grid>
                 
                 <!-- Eq Controls-->

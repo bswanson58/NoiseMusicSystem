@@ -33,6 +33,10 @@ namespace Noise.Infrastructure.Interfaces {
 		double			StereoEnhancerWidth { get; set; }
 		double			StereoEnhancerWetDry { get; set; }
 
+		bool			SoftSaturationEnable { get; set; }
+		double			SoftSaturationFactor { get; set; }
+		double			SoftSaturationDepth { get; set; }
+
 		double			LeftLevel { get; }
 		double			RightLevel { get; }
 

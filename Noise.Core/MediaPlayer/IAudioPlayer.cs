@@ -35,6 +35,10 @@ namespace Noise.Core.MediaPlayer {
 		double				StereoEnhancerWidth { get; set; }
 		double				StereoEnhancerWetDry { get; set; }
 
+		bool				SoftSaturationEnable { get; set; }
+		double				SoftSaturationFactor { get; set; }
+		double				SoftSaturationDepth { get; set; }
+
 		IObservable<int>			ChannelStatusChange { get; }
 		IObservable<AudioLevels>	AudioLevelsChange { get; }
 		IObservable<StreamInfo>		AudioStreamInfoChange { get; }

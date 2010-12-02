@@ -420,6 +420,21 @@ namespace Noise.UI.ViewModels {
 			set{ mNoiseManager.PlayController.StereoEnhancerWetDry = value; }
 		}
 
+		public bool SoftSaturationEnable {
+			get{ return( mNoiseManager.PlayController.SoftSaturationEnable ); }
+			set{ mNoiseManager.PlayController.SoftSaturationEnable = value; }
+		}
+
+		public double SoftSaturationDepth {
+			get{ return( mNoiseManager.PlayController.SoftSaturationDepth ); }
+			set{ mNoiseManager.PlayController.SoftSaturationDepth = value; }
+		}
+
+		public double SoftSaturationFactor {
+			get{ return( mNoiseManager.PlayController.SoftSaturationFactor ); }
+			set{ mNoiseManager.PlayController.SoftSaturationFactor = value; }
+		}
+
 		public void Execute_StandardPlayer() {
 			mEvents.GetEvent<Events.StandardPlayerRequest>().Publish( this );
 		}
