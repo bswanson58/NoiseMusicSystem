@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-  <?define EloqueraLibraryFolder="$(var.SolutionDir)\lib\Eloquera\v3.0.B3\"?>
+  <?define EloqueraLibraryFolder="$(var.SolutionDir)\lib\Eloquera\v3.0\"?>
   <?define EloqueraConfigFolder=$(var.Noise.Core.ProjectDir)\Database\?>
 
   <DirectoryRef Id="INSTALLDIRECTORY">
