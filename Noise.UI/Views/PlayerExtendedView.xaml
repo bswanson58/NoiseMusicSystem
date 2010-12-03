@@ -135,10 +135,12 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="1" Margin="3" Width="27" Height="27" Content="6" FontFamily="Webdings" FontSize="16" Command="{Binding Path=StandardPlayer}"/>
+                        <Button Grid.Column="1" Margin="0,0,3,0" Width="27" Height="27" Content="6" FontFamily="Webdings" FontSize="16" Command="{Binding Path=StandardPlayer}"/>
                     </Grid>
+                    <!-- Replay Gain -->
+                    <CheckBox Grid.Row="2" Margin="3,0,0,5" Content="Replay Gain" IsChecked="{Binding Path=ReplayGainEnabled}"/>
                     <!-- Playback Speed -->
-                    <Grid Grid.Row="2" Margin="0,0,0,3">
+                    <Grid Grid.Row="3" Margin="0,0,0,3">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50"/>
                             <ColumnDefinition Width="Auto"/>
@@ -155,7 +157,8 @@
                         </Slider>
                         <TextBlock Grid.Column="3" Text="+" Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center" Margin="3,0,0,0"/>
                     </Grid>
-                    <Grid Grid.Row="3" Margin="0,0,0,5">
+                    <!-- Balance -->
+                    <Grid Grid.Row="4" Margin="0,0,0,5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50"/>
                             <ColumnDefinition Width="Auto"/>
@@ -168,7 +171,6 @@
                                 Minimum="-1.0" Maximum="1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}"  Style="{StaticResource PlayerPositionSliderStyle}"/>
                         <TextBlock Grid.Column="3" Text="R" Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center" Margin="3,0,0,0"/>
                     </Grid>
-                    <CheckBox Grid.Row="4" Content="Replay Gain" IsChecked="{Binding Path=ReplayGainEnabled}"/>
                 </Grid>
                 
             </Grid>
