@@ -30,66 +30,84 @@
     </Window.DataContext>
     
     <Border BorderBrush="Blue" BorderThickness="1" CornerRadius="3">
-        <Grid x:Name="PlayerViewRoot">
-            <Grid x:Name="Layout" Background="#FFAAC6E5">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+        <Grid x:Name="Layout" Background="#FFAAC6E5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-
-                <Grid Grid.Row="0" Grid.Column="0" Margin="0,3,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Margin="5,3,3,0" Text="{Binding TrackName}" FontWeight="Bold" FontSize="13.333"/>
-                    <Button Content="q" HorizontalAlignment="Left" d:LayoutOverrides="Height" Grid.Column="1" Command="{Binding Path=ReplayTrack}" Margin="3" FontFamily="Webdings" FontSize="16"/>
-                    <CheckBox Grid.Column="2" Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
-                    <Controls:RatingSelector Grid.Column="3" Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
+                <TextBlock Grid.Column="0" Margin="5,0,3,0" Text="{Binding TrackName}" FontWeight="Bold" FontSize="13.333" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="q" HorizontalAlignment="Center" Command="{Binding Path=ReplayTrack}" Margin="3" FontFamily="Webdings" FontSize="16" Width="25" Height="23" VerticalAlignment="Center"/>
+                <CheckBox Grid.Column="2" Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center" Margin="3" HorizontalAlignment="Center"/>
+                <Controls:RatingSelector Grid.Column="3" Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
                                              RatingSelected="{Binding Path=Rating, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
-                </Grid>
+                <!-- Mute Button -->
+                <TextBlock Grid.Column="4" Text="x" FontFamily="Webdings" FontSize="21.333" Foreground="Red"
+                               IsHitTestVisible="False" Panel.ZIndex="1"  VerticalAlignment="Center" HorizontalAlignment="Center"
+                               Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                <Button Margin="3" Grid.Column="4" Content="X" Width="25" FontFamily="Webdings" FontSize="16" Command="{Binding Path=Mute}" Height="23" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <!-- Switch to Application -->
+                <Button Grid.Column="5" Margin="3,0,5,0" Content="5" Command="{Binding Path=PlayerSwitch}" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Webdings" Width="25" Height="23"/>
+            </Grid>
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Height="23" Margin="5,0,0,5">
-                    <Button Margin="0,0,3,0" Command="{Binding Play}" Content="4" FontSize="16" FontFamily="Webdings" Width="29"/>
-                    <Button Margin="3,0" Command="{Binding Pause}" Content=";" Width="29" FontSize="16" FontFamily="Webdings"/>
-                    <Button Margin="3,0" Command="{Binding Stop}" Content="&lt;" Width="29" FontSize="16" FontFamily="Webdings"/>
-                    <Button Margin="3,0" Command="{Binding PreviousTrack}" Content="9" Width="29" FontSize="16" FontFamily="Webdings">
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- Transport Controls -->
+                <StackPanel Grid.Column="0" Margin="3,0,3,3" Orientation="Horizontal">
+                    <Button Margin="0,0" Command="{Binding Play}" Content="4" FontSize="16" FontFamily="Webdings" Width="25" Height="23"/>
+                    <Button Margin="3,0,0,0" Command="{Binding Pause}" Content=";" Width="25" FontSize="16" FontFamily="Webdings" Height="23"/>
+                    <Button Margin="3,0,0,0" Command="{Binding Stop}" Content="&lt;" Width="25" FontSize="16" FontFamily="Webdings" Height="23"/>
+                    <Button Margin="3,0,0,0" Command="{Binding PreviousTrack}" Content="9" Width="25" FontSize="16" FontFamily="Webdings" Height="23">
                         <Button.ToolTip>
                             <ToolTip>
                                 <TextBlock Text="{Binding Path=PeekPreviousTrack, Converter={StaticResource PlayQueueTrackNameConverter}}"/>
                             </ToolTip>
                         </Button.ToolTip>
                     </Button>
-                    <Button Margin="3,0" Command="{Binding NextTrack}" Content=":" Width="29" FontSize="16" FontFamily="Webdings">
+                    <Button Margin="3,0,0,0" Command="{Binding NextTrack}" Content=":" Width="25" FontSize="16" FontFamily="Webdings" Height="23">
                         <Button.ToolTip>
                             <ToolTip>
                                 <TextBlock Text="{Binding Path=PeekNextTrack, Converter={StaticResource PlayQueueTrackNameConverter}}"/>
                             </ToolTip>
                         </Button.ToolTip>
                     </Button>
-                    <StackPanel Orientation="Horizontal" Margin="5,0,11,0">
-                        <TextBlock Text="Position: " Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center"/>
-                        <TextBlock Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center" Width="35">
-                        <EventCommandTriggers:CommandSource.Trigger>
-                            <EventCommandTriggers:EventCommandTrigger RoutedEvent="TextBlock.MouseLeftButtonDown" Command="{Binding Path=ToggleTimeDisplay}"/>
-                        </EventCommandTriggers:CommandSource.Trigger>
-                        </TextBlock>
-                    </StackPanel>
-
-                    <NoiseControls:VuMeter Width="125" Margin="5,0,0,0" Foreground="Gray" Background="#FFAAC6E5" PeakColor="Black"
-                                           LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}"/>
-                    <Slider x:Name="Position" Orientation="Horizontal" Width="100" SnapsToDevicePixels="True" Minimum="0" Style="{StaticResource PlayerPositionSliderStyle}"
-                            Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}" VerticalAlignment="Center"/>
                 </StackPanel>
-                <Slider x:Name="Volume" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Height="50" Margin="3,0" SnapsToDevicePixels="True" Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}"/>
-                <Button Grid.Row="0" Grid.Column="3" Margin="3,0,5,0" Content="5" Command="{Binding Path=PlayerSwitch}" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Webdings"/>
+
+                <!-- Play Position -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="5,0,11,0">
+                    <TextBlock Text="Position: " Foreground="{DynamicResource ControlTextColor}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" VerticalAlignment="Center" Width="35">
+                            <EventCommandTriggers:CommandSource.Trigger>
+                                <EventCommandTriggers:EventCommandTrigger RoutedEvent="TextBlock.MouseLeftButtonDown" Command="{Binding Path=ToggleTimeDisplay}"/>
+                            </EventCommandTriggers:CommandSource.Trigger>
+                    </TextBlock>
+                </StackPanel>
+
+                <NoiseControls:VuMeter Grid.Column="2" Margin="5,0,0,0" Foreground="Gray" Background="#FFAAC6E5" PeakColor="Black"
+                                       LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" VerticalAlignment="Center"/>
+
+                <Slider x:Name="Position" Grid.Column="3" Orientation="Horizontal" SnapsToDevicePixels="True" VerticalAlignment="Center"
+                        Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Value="{Binding Path=TrackPosition, Mode=TwoWay}"
+                        Style="{StaticResource PlayerPositionSliderStyle}" Margin="3,0"/>
+
+                <Slider x:Name="Volume" Grid.Column="4" Width="60" Orientation="Horizontal" SnapsToDevicePixels="True" VerticalAlignment="Center"
+                        Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}" Style="{StaticResource PlayerPositionSliderStyle}" Margin="3,0,0,0"/>
             </Grid>
         </Grid>
     </Border>
