@@ -99,101 +99,103 @@ namespace Noise.Core.DataProviders {
 		}
 
 		public void UpdateArtist( IDatabase database, DbArtist artist ) {
-			try {
-				var artistId = artist.DbId;
-				var parms = database.Database.CreateParameters();
+			if( mSession != null ) {
+				try {
+					var artistId = artist.DbId;
+					var parms = database.Database.CreateParameters();
 
-				parms["artistId"] = artistId;
-				parms["artistImage"] = ContentType.ArtistPrimaryImage;
+					parms["artistId"] = artistId;
+					parms["artistImage"] = ContentType.ArtistPrimaryImage;
 
-				var	artwork = database.Database.ExecuteScalar( "SELECT DbArtwork WHERE AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork;
-				var bio = ( from DbTextInfo info in database.Database where info.AssociatedItem == artistId && info.ContentType == ContentType.Biography select info ).FirstOrDefault();
-				var similarArtists = ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault();
-				var topAlbums = ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select  item ).FirstOrDefault();
-				if( artwork == null ) {
-					artwork = new DbArtwork( artistId, ContentType.ArtistPrimaryImage ) { Artist = artist.DbId };
+					var	artwork = database.Database.ExecuteScalar( "SELECT DbArtwork WHERE AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork;
+					var bio = ( from DbTextInfo info in database.Database where info.AssociatedItem == artistId && info.ContentType == ContentType.Biography select info ).FirstOrDefault();
+					var similarArtists = ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault();
+					var topAlbums = ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select  item ).FirstOrDefault();
+					if( artwork == null ) {
+						artwork = new DbArtwork( artistId, ContentType.ArtistPrimaryImage ) { Artist = artist.DbId };
 
-					database.Insert( artwork );
-				}
-				artwork.UpdateExpiration();
-				database.Store( artwork );
-
-				if( bio == null ) {
-					bio = new DbTextInfo( artistId, ContentType.Biography ) { Artist = artist.DbId };
-
-					database.Insert( bio );
-				}
-				bio.UpdateExpiration();
-
-				if( similarArtists == null ) {
-					similarArtists = new DbAssociatedItemList( artistId, ContentType.SimilarArtists ) { Artist = artist.DbId };
-
-					database.Insert( similarArtists );
-				}
-				similarArtists.UpdateExpiration();
-
-				if( topAlbums == null ) {
-					topAlbums = new DbAssociatedItemList( artistId, ContentType.TopAlbums ) { Artist = artist.DbId };
-
-					database.Insert( topAlbums );
-				}
-				topAlbums.UpdateExpiration();
-
-				var	artistSearch = Artist.Search( artist.Name, mSession );
-				var	artistMatch = artistSearch.GetFirstMatch();
-
-				if( artistMatch != null ) {
-					var	tags = artistMatch.GetTopTags( 3 );
-					if( tags.GetLength( 0 ) > 0 ) {
-						artist.ExternalGenre = mTagManager.ResolveGenre( tags[0].Item.Name );
-						database.Store( artist );
+						database.Insert( artwork );
 					}
+					artwork.UpdateExpiration();
+					database.Store( artwork );
 
-					bio.Text = artistMatch.Bio.getContent();
-					bio.Source = InfoSource.External;
-					bio.IsContentAvailable = true;
+					if( bio == null ) {
+						bio = new DbTextInfo( artistId, ContentType.Biography ) { Artist = artist.DbId };
 
-					var imageUrl = artistMatch.GetImageURL();
-					if(!string.IsNullOrWhiteSpace( imageUrl )) {
-						new ImageDownloader( imageUrl, artistId, ArtistImageDownloadComplete );
+						database.Insert( bio );
 					}
+					bio.UpdateExpiration();
 
-					var	sim = artistMatch.GetSimilar( 5 );
-					var artistList = new List<string>();
-					for( int index = 0; index < sim.GetLength( 0 ); index++ ) {
-						artistList.Add( sim[index].Name );
+					if( similarArtists == null ) {
+						similarArtists = new DbAssociatedItemList( artistId, ContentType.SimilarArtists ) { Artist = artist.DbId };
+
+						database.Insert( similarArtists );
 					}
-					similarArtists.SetItems( artistList );
+					similarArtists.UpdateExpiration();
 
-					var artistCache = new DatabaseCache<DbArtist>( from DbArtist dbArtist in database.Database select dbArtist );
-					foreach( var similarArtist in similarArtists.Items ) {
-						var artistName = similarArtist.Item;
-						var art = artistCache.Find( a => String.Compare( a.Name, artistName, true ) == 0 );
-						if( art != null ) {
-							similarArtist.SetAssociatedId( art.DbId );
+					if( topAlbums == null ) {
+						topAlbums = new DbAssociatedItemList( artistId, ContentType.TopAlbums ) { Artist = artist.DbId };
+
+						database.Insert( topAlbums );
+					}
+					topAlbums.UpdateExpiration();
+
+					var	artistSearch = Artist.Search( artist.Name, mSession );
+					var	artistMatch = artistSearch.GetFirstMatch();
+
+					if( artistMatch != null ) {
+						var	tags = artistMatch.GetTopTags( 3 );
+						if( tags.GetLength( 0 ) > 0 ) {
+							artist.ExternalGenre = mTagManager.ResolveGenre( tags[0].Item.Name );
+							database.Store( artist );
 						}
+
+						bio.Text = artistMatch.Bio.getContent();
+						bio.Source = InfoSource.External;
+						bio.IsContentAvailable = true;
+
+						var imageUrl = artistMatch.GetImageURL();
+						if(!string.IsNullOrWhiteSpace( imageUrl )) {
+							new ImageDownloader( imageUrl, artistId, ArtistImageDownloadComplete );
+						}
+
+						var	sim = artistMatch.GetSimilar( 5 );
+						var artistList = new List<string>();
+						for( int index = 0; index < sim.GetLength( 0 ); index++ ) {
+							artistList.Add( sim[index].Name );
+						}
+						similarArtists.SetItems( artistList );
+
+						var artistCache = new DatabaseCache<DbArtist>( from DbArtist dbArtist in database.Database select dbArtist );
+						foreach( var similarArtist in similarArtists.Items ) {
+							var artistName = similarArtist.Item;
+							var art = artistCache.Find( a => String.Compare( a.Name, artistName, true ) == 0 );
+							if( art != null ) {
+								similarArtist.SetAssociatedId( art.DbId );
+							}
+						}
+
+						similarArtists.IsContentAvailable = true;
+
+						var top = artistMatch.GetTopAlbums();
+						var albumList = new List<string>();
+
+						for( int index = 0; index < ( top.GetLength( 0 ) > 5 ? 5 : top.GetLength( 0 )); index++ ) {
+							albumList.Add( top[index].Item.Name );
+						}
+						topAlbums.SetItems( albumList );
+						topAlbums.IsContentAvailable = true;
+
+						mLog.LogInfo( "LastFm updated artist: {0}", artist.Name );
 					}
 
-					similarArtists.IsContentAvailable = true;
-
-					var top = artistMatch.GetTopAlbums();
-					var albumList = new List<string>();
-
-					for( int index = 0; index < ( top.GetLength( 0 ) > 5 ? 5 : top.GetLength( 0 )); index++ ) {
-						albumList.Add( top[index].Item.Name );
-					}
-					topAlbums.SetItems( albumList );
-					topAlbums.IsContentAvailable = true;
-
-					mLog.LogInfo( "LastFm updated artist: {0}", artist.Name );
+					database.Store( bio );
+					database.Store( similarArtists );
+					database.Store( topAlbums );
 				}
-
-				database.Store( bio );
-				database.Store( similarArtists );
-				database.Store( topAlbums );
-			}
-			catch( Exception ex ) {
-				mLog.LogException( "Exception - LastFmProvider:UpdateArtistInfo:", ex );
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - LastFmProvider:UpdateArtistInfo:", ex );
+				}
 			}
 		}
 

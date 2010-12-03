@@ -214,21 +214,38 @@ namespace Noise.Core.DataProviders {
 	}
 
 	internal abstract class DiscogsProvider : IContentProvider {
-		private const string	cApiKey = "406ed9a21c";
 		private const string	cAuthority = "http://www.discogs.com";
 
-		private	readonly RestClient	mClient;
-		private ILog				mLog;
+		private RestClient		mClient;
+		private ILog			mLog;
 
 		[Import]
 		private IUnityContainer		Container { get; set; }
 
 		public	abstract ContentType	ContentType { get; }
 
-		protected DiscogsProvider() {
-			mClient = new RestClient { Authority = cAuthority, UserAgent = "Noise", DecompressionMethods = DecompressionMethods.GZip };
-			mClient.AddParameter( "f", "xml" );
-			mClient.AddParameter( "api_key", cApiKey );
+		private RestClient Client {
+			get {
+				if( mClient == null ) {
+					try {
+						var licenseManager = Container.Resolve<ILicenseManager>();
+						if( licenseManager.Initialize( Constants.LicenseKeyFile )) {
+							var key = licenseManager.RetrieveKey( LicenseKeys.Discogs );
+
+							if( key != null ) {
+								mClient = new RestClient { Authority = cAuthority, UserAgent = "Noise", DecompressionMethods = DecompressionMethods.GZip };
+								mClient.AddParameter( "f", "xml" );
+								mClient.AddParameter( "api_key", key.Key );
+							}
+						}
+					}
+					catch( Exception ex ) {
+						Log.LogException( "Exception - Configuring DiscogsProvider: ", ex );
+					}
+				}
+
+				return( mClient );
+			}
 		}
 
 		private ILog Log {
@@ -264,7 +281,7 @@ namespace Noise.Core.DataProviders {
 			request.AddParameter( "type", "all" );
 			request.AddParameter( "q", forArtist.Name );
 
-			var response = mClient.Request<DiscogsSearch>( request );
+			var response = Client.Request<DiscogsSearch>( request );
 			if(( response.StatusCode == HttpStatusCode.OK ) &&
 			   ( response.ContentEntity != null ) &&
 			   ( response.ContentEntity.Uri != null )) {
@@ -275,91 +292,93 @@ namespace Noise.Core.DataProviders {
 		}
 
 		public void UpdateContent( IDatabase database, DbArtist forArtist ) {
-			try {
-				var request = new RestRequest {  Deserializer = new ArtistDeserializer() };
-				var requestUri = SearchForArtist( forArtist );
-				if( requestUri != null ) {
-					request.Path = requestUri.AbsolutePath;
+			if( Client != null ) {
+				try {
+					var request = new RestRequest {  Deserializer = new ArtistDeserializer() };
+					var requestUri = SearchForArtist( forArtist );
+					if( requestUri != null ) {
+						request.Path = requestUri.AbsolutePath;
 
-					var	response = mClient.Request<DiscogsArtist>( request );
-					if(( response.StatusCode == HttpStatusCode.OK ) &&
-					   ( response.ContentEntity != null )) {
-						var artistId = forArtist.DbId;
-						var	bandMembers = ( from DbAssociatedItemList item in database.Database 
-											where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select  item ).FirstOrDefault();
+						var	response = Client.Request<DiscogsArtist>( request );
+						if(( response.StatusCode == HttpStatusCode.OK ) &&
+						   ( response.ContentEntity != null )) {
+							var artistId = forArtist.DbId;
+							var	bandMembers = ( from DbAssociatedItemList item in database.Database 
+												where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select  item ).FirstOrDefault();
 
-						if( bandMembers == null ) {
-							bandMembers = new DbAssociatedItemList( artistId, ContentType.BandMembers ) { Artist = forArtist.DbId };
+							if( bandMembers == null ) {
+								bandMembers = new DbAssociatedItemList( artistId, ContentType.BandMembers ) { Artist = forArtist.DbId };
 
-							database.Insert( bandMembers );
-						}
-						bandMembers.UpdateExpiration();
-
-						if(( response.ContentEntity.Members != null ) &&
-						   ( response.ContentEntity.Members.Count > 0 )) {
-
-							bandMembers.IsContentAvailable = true;
-							bandMembers.SetItems( response.ContentEntity.Members );
-
-						}
-						else {
-							bandMembers.IsContentAvailable = false;
-						}
-
-						database.Store( bandMembers );
-
-						var releases = from DbDiscographyRelease release in database.Database where release.AssociatedItem == artistId select release;
-						foreach( var release in releases ) {
-							database.Delete( release );
-						}
-
-						if( response.ContentEntity.ReleaseList.Count > 0 ) {
-							foreach( DiscogRelease release in response.ContentEntity.ReleaseList ) {
-								var releaseType = DiscographyReleaseType.Unknown;
-
-								if( release.Type.Length > 0 ) {
-									releaseType = DiscographyReleaseType.Other;
-
-									if( String.Compare( release.Type, "Main", true ) == 0 ) {
-										releaseType = DiscographyReleaseType.Release;
-									}
-									else if( String.Compare( release.Type, "Appearance", true ) == 0 ) {
-										releaseType = DiscographyReleaseType.Appearance;
-									}
-									else if( String.Compare( release.Type, "TrackAppearance", true ) == 0 ) {
-										releaseType = DiscographyReleaseType.TrackAppearance;
-									}
-								}
-								database.Insert( new DbDiscographyRelease( artistId, release.Title, release.Format, release.Label, release.Year, releaseType )
-																	{ IsContentAvailable = true });
+								database.Insert( bandMembers );
 							}
+							bandMembers.UpdateExpiration();
+
+							if(( response.ContentEntity.Members != null ) &&
+							   ( response.ContentEntity.Members.Count > 0 )) {
+
+								bandMembers.IsContentAvailable = true;
+								bandMembers.SetItems( response.ContentEntity.Members );
+
+							}
+							else {
+								bandMembers.IsContentAvailable = false;
+							}
+
+							database.Store( bandMembers );
+
+							var releases = from DbDiscographyRelease release in database.Database where release.AssociatedItem == artistId select release;
+							foreach( var release in releases ) {
+								database.Delete( release );
+							}
+
+							if( response.ContentEntity.ReleaseList.Count > 0 ) {
+								foreach( DiscogRelease release in response.ContentEntity.ReleaseList ) {
+									var releaseType = DiscographyReleaseType.Unknown;
+
+									if( release.Type.Length > 0 ) {
+										releaseType = DiscographyReleaseType.Other;
+
+										if( String.Compare( release.Type, "Main", true ) == 0 ) {
+											releaseType = DiscographyReleaseType.Release;
+										}
+										else if( String.Compare( release.Type, "Appearance", true ) == 0 ) {
+											releaseType = DiscographyReleaseType.Appearance;
+										}
+										else if( String.Compare( release.Type, "TrackAppearance", true ) == 0 ) {
+											releaseType = DiscographyReleaseType.TrackAppearance;
+										}
+									}
+									database.Insert( new DbDiscographyRelease( artistId, release.Title, release.Format, release.Label, release.Year, releaseType )
+																		{ IsContentAvailable = true });
+								}
+							}
+							else {
+								database.Insert( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear, DiscographyReleaseType.Unknown ));
+							}
+
+							forArtist.Website = response.ContentEntity.WebsiteUrl;
+							database.Store( forArtist );
+
+		//					var releaseAdded = false;
+		//					foreach( var release in response.ContentEntity.ReleaseList ) {
+		//						AddRelease( forArtist.Name, artistId, release.Id );
+		//
+		//						releaseAdded = true;
+		//					}
+		//					if(!releaseAdded ) {
+		//						Database.Database.Store( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear ));
+		//					}
+
+							Log.LogInfo( String.Format( "Discogs updated artist: {0}", forArtist.Name ));
 						}
 						else {
-							database.Insert( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear, DiscographyReleaseType.Unknown ));
+							Log.LogMessage( String.Format( "Discogs: {0}", response.StatusCode ));
 						}
-
-						forArtist.Website = response.ContentEntity.WebsiteUrl;
-						database.Store( forArtist );
-
-	//					var releaseAdded = false;
-	//					foreach( var release in response.ContentEntity.ReleaseList ) {
-	//						AddRelease( forArtist.Name, artistId, release.Id );
-	//
-	//						releaseAdded = true;
-	//					}
-	//					if(!releaseAdded ) {
-	//						Database.Database.Store( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear ));
-	//					}
-
-						Log.LogInfo( String.Format( "Discogs updated artist: {0}", forArtist.Name ));
-					}
-					else {
-						Log.LogMessage( String.Format( "Discogs: {0}", response.StatusCode ));
 					}
 				}
-			}
-			catch( Exception ex ) {
-				Log.LogException( "Discogs Provider: ", ex );
+				catch( Exception ex ) {
+					Log.LogException( "Discogs Provider: ", ex );
+				}
 			}
 		}
 

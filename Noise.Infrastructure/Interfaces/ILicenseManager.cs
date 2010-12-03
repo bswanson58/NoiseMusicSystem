@@ -3,6 +3,7 @@
 namespace Noise.Infrastructure.Interfaces {
 	public static class LicenseKeys {
 		public static string	BassAudio		= "BassAudio";
+		public static string	Discogs			= "Discogs";
 		public static string	LastFm			= "LastFm";
 	}
 
