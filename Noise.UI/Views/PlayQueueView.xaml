@@ -134,7 +134,9 @@
                     <Button Margin="3" Width="25" Content="6" FontFamily="Webdings" Command="{Binding Path=MoveItemDown}"/>
                     <Button Margin="3" Width="25" Content="r" FontFamily="WebDings" Command="{Binding Path=RemoveItem}"/>
                     <Button Margin="3" Content="Clear" Command="{Binding Path=ClearQueue}" Width="37"/>
-                    <Button Margin="3,3,0,3" Content="Save" Command="{Binding Path=SavePlayList}" Width="37"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3" Margin="3" Orientation="Horizontal" HorizontalAlignment="Left">
+                    <Button Margin="3" Content="Save" Command="{Binding Path=SavePlayList}" Width="37"/>
                 </StackPanel>
             </Grid>
         </Grid>
