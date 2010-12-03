@@ -11,7 +11,7 @@ namespace Noise.Core.Database {
 		bool		OpenDatabase();
 		bool		InitializeAndOpenDatabase();
 
-		object		ValidateOnThread( object dbObject );
+		DbBase		ValidateOnThread( DbBase dbObject );
 
 		void		Insert( object dbObject );
 		void		Store( object dbObject );

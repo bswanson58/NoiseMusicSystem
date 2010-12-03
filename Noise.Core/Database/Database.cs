@@ -180,15 +180,13 @@ namespace Noise.Core.Database {
 			}
 		}
 
-		public object ValidateOnThread( object dbObject ) {
+		public DbBase ValidateOnThread( DbBase dbObject ) {
 			Condition.Requires( dbObject ).IsNotNull();
-			Condition.Requires( dbObject ).IsOfType( typeof( DbBase ));
 
 			var retValue = dbObject;
 
-			if(( Database.GetUid( dbObject ) == -1 ) &&
-			   ( dbObject is DbBase )) {
-				var dbId = ( dbObject as DbBase ).DbId;
+			if( Database.GetUid( dbObject ) == -1 ) {
+				var dbId = dbObject.DbId;
 
 				retValue = ( from DbBase o in Database where o.DbId == dbId select o ).FirstOrDefault();
 			}
@@ -231,15 +229,23 @@ namespace Noise.Core.Database {
 		public void Delete( object dbObject ) {
 			Condition.Requires( dbObject ).IsNotNull();
 
-			if( Database.GetUid( dbObject ) != -1 ) {
+			if( Database.GetUid( dbObject ) == -1 ) {
+				if( dbObject is DbBase ) {
+					dbObject = ValidateOnThread( dbObject as DbBase );
+				}
+				else {
+					mLog.LogMessage( String.Format( "Database:Delete - Unknown dbObject: {0}", dbObject.GetType()));
+
+					return;
+				}
+			}
+
+			if( dbObject != null ) {
 				Database.Delete( dbObject );
 
 				if( dbObject is DbBase ) {
 					mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Delete ));
 				}
-			}
-			else {
-				mLog.LogMessage( String.Format( "Database:Delete - Unknown dbObject: {0}", dbObject.GetType()));
 			}
 		}
 	}
