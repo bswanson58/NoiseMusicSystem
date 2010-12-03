@@ -82,6 +82,16 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public IDatabase GetDatabase( string databaseId ) {
+			IDatabase	retValue = null;
+
+			if( mReservedDatabases.ContainsKey( databaseId )) {
+				retValue = mReservedDatabases[databaseId];
+			}
+
+			return( retValue );
+		}
+
 		public void FreeDatabase( IDatabase database ) {
 			if( database != null ) {
 				FreeDatabase( database.DatabaseId );

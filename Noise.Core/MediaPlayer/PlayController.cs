@@ -570,10 +570,8 @@ namespace Noise.Core.MediaPlayer {
 					settings.IsFavorite = value;
 
 					if( track != null ) {
-						GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( track.Track.DbId, value ));
-					}
-					else {
-						mNoiseManager.DataProvider.UpdateItem( settings );
+						GlobalCommands.SetFavorite.Execute( track.IsStream ? new SetFavoriteCommandArgs( track.Stream.DbId, value ) :
+																			 new SetFavoriteCommandArgs( track.Track.DbId, value ));
 					}
 				}
 			}
@@ -599,10 +597,8 @@ namespace Noise.Core.MediaPlayer {
 					settings.Rating = value;
 
 					if( track.Track != null ) {
-						GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( track.Track.DbId, value ));
-					}
-					else {
-						mNoiseManager.DataProvider.UpdateItem( settings );
+						GlobalCommands.SetRating.Execute( track.IsStream ? new SetRatingCommandArgs( track.Stream.DbId, value ) :
+																		   new SetRatingCommandArgs( track.Track.DbId, value ));
 					}
 				}
 			}

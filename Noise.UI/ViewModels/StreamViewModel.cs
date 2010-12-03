@@ -1,20 +1,24 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using AutoMapper;
+using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
-using Noise.UI.Adapters;
+using Noise.UI.Dto;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	class StreamViewModel : ViewModelBase {
 		private IUnityContainer		mContainer;
+		private IEventAggregator	mEvents;
 		private INoiseManager		mNoiseManager;
-		private readonly ObservableCollectionEx<StreamViewNode>	mStreams;
+		private readonly ObservableCollectionEx<UiInternetStream>	mStreams;
 
 		public StreamViewModel() {
-			mStreams = new ObservableCollectionEx<StreamViewNode>();
+			mStreams = new ObservableCollectionEx<UiInternetStream>();
 		}
 
 		[Dependency]
@@ -22,19 +26,28 @@ namespace Noise.UI.ViewModels {
 			get { return( mContainer ); }
 			set {
 				mContainer = value;
+				mEvents = mContainer.Resolve<IEventAggregator>();
 				mNoiseManager = mContainer.Resolve<INoiseManager>();
 
 				UpdateStreams();
 			}
 		}
 
-		public ObservableCollection<StreamViewNode> StreamList {
+		public ObservableCollection<UiInternetStream> StreamList {
 			get{ return( mStreams ); }
 		}
 
-		public StreamViewNode CurrentStream {
+		public UiInternetStream CurrentStream {
 			get{ return( Get( () => CurrentStream  )); }
 			set{ Set( () => CurrentStream, value ); }
+		}
+
+		private UiInternetStream MapStream( DbInternetStream dbStream ) {
+			var retValue = new UiInternetStream( OnWebsiteClick, OnStreamPlay );
+
+			Mapper.DynamicMap( dbStream, retValue );
+
+			return( retValue );
 		}
 
 		private void UpdateStreams() {
@@ -42,10 +55,21 @@ namespace Noise.UI.ViewModels {
 			mStreams.Clear();
 
 			using( var streams = mNoiseManager.DataProvider.GetStreamList()) {
-				mStreams.AddRange( from stream in streams.List select new StreamViewNode( stream ));
+				mStreams.AddRange( from stream in streams.List select MapStream( stream ));
 			}
 
 			mStreams.ResumeNotification();
+		}
+
+		private void OnWebsiteClick( UiInternetStream stream ) {
+			if(( stream != null ) &&
+			   (!string.IsNullOrWhiteSpace( stream.Website ))) {
+				mEvents.GetEvent<Events.WebsiteRequest>().Publish( stream.Website );
+			}
+		}
+
+		private void OnStreamPlay( long streamId ) {
+			GlobalCommands.PlayStream.Execute( mNoiseManager.DataProvider.GetStream( streamId ));
 		}
 
 		public void Execute_AddStream( object sender ) {
@@ -61,16 +85,23 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_EditStream( object sender ) {
 			if( CurrentStream != null ) {
-				EditStream( CurrentStream.Stream );
+				EditStream( CurrentStream );
 			}			
 		}
 
-		private void EditStream( DbInternetStream stream ) {
-			var	dialogService = mContainer.Resolve<IDialogService>();
-			if( dialogService.ShowDialog( DialogNames.InternetStreamEdit, stream ) == true ) {
-				mNoiseManager.DataProvider.UpdateItem( stream );
+		private void EditStream( UiInternetStream stream ) {
+			if( stream != null ) {
+				var	dialogService = mContainer.Resolve<IDialogService>();
+				using( var dbStream = mNoiseManager.DataProvider.GetStreamForUpdate( stream.DbId )) {
+					if(( dbStream != null ) &&
+					   ( dbStream.Item != null )) {
+						if( dialogService.ShowDialog( DialogNames.InternetStreamEdit, dbStream.Item ) == true ) {
+							dbStream.Update();
 
-				UpdateStreams();
+							UpdateStreams();
+						}
+					}
+				}
 			}
 		}
 
@@ -81,7 +112,11 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_DeleteStream( object sender ) {
 			if( CurrentStream != null ) {
-				mNoiseManager.DataProvider.DeleteItem( CurrentStream.Stream );
+				var dbStream = mNoiseManager.DataProvider.GetStream( CurrentStream.DbId );
+
+				if( dbStream != null ) {
+					mNoiseManager.DataProvider.DeleteItem( dbStream );
+				}
 
 				UpdateStreams();
 			}

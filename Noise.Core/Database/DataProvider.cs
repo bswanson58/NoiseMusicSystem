@@ -82,28 +82,6 @@ namespace Noise.Core.Database {
 			}
 		}
 
-		public void UpdateItem( object item ) {
-			Condition.Requires( item ).IsNotNull();
-
-			if(( item is DbArtist ) ||
-			   ( item is DbAlbum ) ||
-			   ( item is DbTrack ) ||
-			   ( item is DbGenre ) ||
-			   ( item is DbInternetStream )) {
-				var database = mDatabaseManager.ReserveDatabase();
-
-				try {
-					database.Store( item );
-				}
-				catch( Exception ex ) {
-					mLog.LogException( "Exception - UpdateItem:", ex );
-				}
-				finally {
-					mDatabaseManager.FreeDatabase( database );
-				}
-			}
-		}
-
 		public void DeleteItem( object dbItem ) {
 			Condition.Requires( dbItem ).IsNotNull();
 
@@ -605,6 +583,30 @@ namespace Noise.Core.Database {
 			}
 
 			return( retValue );
+		}
+
+		public DataUpdateShell<DbInternetStream> GetStreamForUpdate( long streamId ) {
+			DataUpdateShell<DbInternetStream>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			if( database != null ) {
+				var parms = database.Database.CreateParameters();
+
+				parms["streamId"] = streamId;
+
+				retValue = new DataUpdateShell<DbInternetStream>( database.DatabaseId, FreeDatabase, UpdateInternetStream,
+																  database.Database.ExecuteScalar( "SELECT DbInternetStream Where DbId = @streamId", parms ) as DbInternetStream );
+			}
+
+			return( retValue );
+		}
+
+		private void UpdateInternetStream( string databaseId, DbInternetStream stream ) {
+			var database = mDatabaseManager.GetDatabase( databaseId );
+
+			if( database != null ) {
+				database.Database.Store( stream );
+			}
 		}
 
 		public DataProviderList<DbPlayList> GetPlayLists() {

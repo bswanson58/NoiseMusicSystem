@@ -32,6 +32,11 @@ namespace Noise.UI {
 				.ForMember( dest => dest.Duration, opt => opt.MapFrom( src => new TimeSpan( 0, 0, 0, 0, src.DurationMilliseconds )))
 				.ForMember( dest => dest.UiIsFavorite, opt => opt.MapFrom( src => src.IsFavorite ))
 				.ForMember( dest => dest.UiRating, opt => opt.MapFrom( src => src.Rating ));
+
+			CreateMap<DbInternetStream, UiInternetStream>()
+				.ForMember( dest => dest.IsLinked, opt => opt.Ignore())
+				.ForMember( dest => dest.UiIsFavorite, opt => opt.MapFrom( src => src.IsFavorite ))
+				.ForMember( dest => dest.UiRating, opt => opt.MapFrom( src => src.Rating ));
 		}
 	}
 

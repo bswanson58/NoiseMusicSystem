@@ -131,7 +131,6 @@
     <Compile Include="Adapters\PlayHistoryNode.cs" />
     <Compile Include="Adapters\PlayListNode.cs" />
     <Compile Include="Adapters\SearchViewNode.cs" />
-    <Compile Include="Adapters\StreamViewNode.cs" />
     <Compile Include="Adapters\UserSettingsNotifier.cs" />
     <Compile Include="Behaviours\BindablePasswordBox.cs" />
     <Compile Include="Behaviours\CommandReference.cs" />
@@ -171,6 +170,7 @@
     <Compile Include="Dto\UiArtist.cs" />
     <Compile Include="Dto\UiBase.cs" />
     <Compile Include="Dto\UiEqBand.cs" />
+    <Compile Include="Dto\UiInternetStream.cs" />
     <Compile Include="Dto\UiTrack.cs" />
     <Compile Include="MappingConfiguration.cs" />
     <Compile Include="NoiseUiModule.cs" />

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
+	[DebuggerDisplay("Stream = {Name}")]
 	public class DbInternetStream : DbBase, IUserSettings {
 		[Required( AllowEmptyStrings=false, ErrorMessage = "Emty stream name is not allowed.")]
 		public string			Name { get; set; }

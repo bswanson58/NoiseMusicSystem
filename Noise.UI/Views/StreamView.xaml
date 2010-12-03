@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" 
-             mc:Ignorable="d" 
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" xmlns:Controls="clr-namespace:Noise.UI.Controls" xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              Tag="Radio"
              DataContext="{Binding StreamViewModel, Source={StaticResource ViewModelLocator}}"
@@ -21,7 +20,6 @@
               Behaviours:GridViewSort.AutoSort="True">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="{x:Type ListViewItem}">
-                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     </Style>
                 </ListView.ItemContainerStyle>
@@ -30,16 +28,23 @@
                         <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayStream}">
-                                        <Button.CommandParameter>
-                                            <Binding Path="Stream"/>
-                                        </Button.CommandParameter>
-                                    </Button>
+                                    <Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayStream}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Stream Name" Width="90" DisplayMemberBinding="{Binding Path=Stream.Name}" Behaviours:GridViewSort.PropertyName="Stream.Name"/>
-                        <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Path=Stream.Description}" Behaviours:GridViewSort.PropertyName="Stream.Description"/>
+                        <GridViewColumn Header="Stream Name" Width="90" Behaviours:GridViewSort.PropertyName="Name">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Controls:LinkLabel Padding="0" Content="{Binding Path=Name}" IsEnabled="{Binding Path=IsLinked}"  LinkLabelBehavior="HoverUnderline">
+                                        <EventCommandTriggers:CommandSource.Trigger>
+                                            <EventCommandTriggers:EventCommandTrigger RoutedEvent="Controls:LinkLabel.Click" Command="{Binding Path=LinkClicked}"/>
+                                        </EventCommandTriggers:CommandSource.Trigger>
+                                    </Controls:LinkLabel>
+                                </DataTemplate>
+
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Path=Description}" Behaviours:GridViewSort.PropertyName="Description"/>
                     </GridView>
                 </ListView.View>
             </ListView>
