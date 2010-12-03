@@ -85,7 +85,7 @@
                 <GroupBox Grid.Column="1" BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Parametric Equalization ">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="95"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
