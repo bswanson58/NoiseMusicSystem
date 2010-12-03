@@ -377,35 +377,33 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		private void StartTrack( PlayQueueTrack track ) {
-			lock( mOpenTracks ) {
-				if( CurrentTrack != null ) {
-					mAudioPlayer.FadeAndStop( CurrentChannel );
-				}
-
-				if( track != null ) {
-					var gain = 0.0f;
-				
-					if(( mEnableReplayGain ) &&
-					   (!track.IsStream ) &&
-					   ( track.Track != null )) {
-						gain = track.Track.ReplayGainAlbumGain != 0.0f ? track.Track.ReplayGainAlbumGain : track.Track.ReplayGainTrackGain;
-					}
-					var	channel = track.IsStream ? mAudioPlayer.OpenStream( track.Stream ) : mAudioPlayer.OpenFile( track.FilePath, gain );
-
-					mOpenTracks.Add( channel, track );
-					CurrentChannel = channel;
-					mAudioPlayer.Play( CurrentChannel );
-
-					mCurrentLength = mAudioPlayer.GetLength( CurrentChannel );
-
-					StartInfoUpdate();
-					mContinuePlaying = true;
-
-					FirePlaybackTrackStarted( track );
-				}
-
-				FirePlaybackTrackUpdate();
+			if( CurrentTrack != null ) {
+				mAudioPlayer.FadeAndStop( CurrentChannel );
 			}
+
+			if( track != null ) {
+				var gain = 0.0f;
+				
+				if(( mEnableReplayGain ) &&
+					(!track.IsStream ) &&
+					( track.Track != null )) {
+					gain = track.Track.ReplayGainAlbumGain != 0.0f ? track.Track.ReplayGainAlbumGain : track.Track.ReplayGainTrackGain;
+				}
+				var	channel = track.IsStream ? mAudioPlayer.OpenStream( track.Stream ) : mAudioPlayer.OpenFile( track.FilePath, gain );
+
+				mOpenTracks.Add( channel, track );
+				CurrentChannel = channel;
+				mAudioPlayer.Play( CurrentChannel );
+
+				mCurrentLength = mAudioPlayer.GetLength( CurrentChannel );
+
+				StartInfoUpdate();
+				mContinuePlaying = true;
+
+				FirePlaybackTrackStarted( track );
+			}
+
+			FirePlaybackTrackUpdate();
 		}
 
 		public void Pause() {

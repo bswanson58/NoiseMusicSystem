@@ -63,7 +63,13 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void OnPlayQueueChanged( IPlayQueue playQueue ) {
-			PlayQueueChangedFlag++;
+			if(( CurrentStatus == ePlaybackStatus.Playing ) &&
+			   ( mNoiseManager.PlayQueue.PlayingTrack == null )) {
+				mNoiseManager.PlayController.PlayNextTrack();
+			}
+			else {
+				PlayQueueChangedFlag++;
+			}
 		}
 
 		public void OnPlaybackStatusChanged( ePlaybackStatus status ) {
