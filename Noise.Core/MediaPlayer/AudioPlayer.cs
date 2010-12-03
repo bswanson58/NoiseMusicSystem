@@ -274,10 +274,13 @@ namespace Noise.Core.MediaPlayer {
 						mLog.LogMessage( String.Format( "AudioPlayer - OpenStream cannot set _CONFIG_NET_PLAYLIST for: {0}", stream.Url ));
 					}
 
-					var channel = Bass.BASS_StreamCreateURL( stream.Url, 0, BASSFlag.BASS_SAMPLE_FLOAT, mDownloadProc, IntPtr.Zero );
+					var channel = Bass.BASS_StreamCreateURL( stream.Url, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_PRESCAN,
+															 mDownloadProc, IntPtr.Zero );
 					if( channel != 0 ) {
-						Single	sampleRate = 0;
-						Bass.BASS_ChannelGetAttribute( channel, BASSAttribute.BASS_ATTRIB_FREQ, ref sampleRate );
+						if(!BassMix.BASS_Mixer_StreamAddChannel( mMixerChannel, channel,
+																 BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_PAUSE | BASSFlag.BASS_MIXER_DOWNMIX | BASSFlag.BASS_STREAM_AUTOFREE )) {
+							mLog.LogMessage( string.Format( "AudioPlayer - Radio stream could not be added to mixer: {0}", Bass.BASS_ErrorGetCode()));
+						}
 
 						var audioStream = new AudioStream( stream.Url, channel ) {
 													MetaDataSync = Bass.BASS_ChannelSetSync( channel, BASSSync.BASS_SYNC_META, 0, mStreamMetadataSync, IntPtr.Zero ) };
