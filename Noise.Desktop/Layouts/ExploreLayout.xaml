@@ -15,9 +15,9 @@
 
         <Grid x:Name="Content" Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="4*"/>
-                <ColumnDefinition Width="5*"/>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="4*" MinWidth="100"/>
+                <ColumnDefinition Width="5*" MinWidth="100"/>
+                <ColumnDefinition Width="2*" MinWidth="100"/>
             </Grid.ColumnDefinitions>
 
             <TabControl Grid.Column="0" Margin="3,0,7,0" TabStripPlacement="Bottom" Background="Transparent" BorderThickness="0"
@@ -28,11 +28,12 @@
 
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*" MinHeight="50"/>
+                    <RowDefinition Height="1*" MinHeight="50"/>
                 </Grid.RowDefinitions>
 
-                <ContentControl Grid.Row="0" Margin="0,3,3,0" Regions:RegionManager.RegionName="ArtistInfo"/>
+                <ContentControl Grid.Row="0" Margin="0,3,3,3" Regions:RegionManager.RegionName="ArtistInfo"/>
+                <GridSplitter Grid.Row="0" Width="Auto" Height="7" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Background="Transparent" ResizeDirection="Rows"/>
                 <ContentControl Grid.Row="1" Margin="0,0,3,0" Regions:RegionManager.RegionName="AlbumInfo"/>
             </Grid>
 
