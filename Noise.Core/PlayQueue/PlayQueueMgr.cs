@@ -210,6 +210,19 @@ namespace Noise.Core.PlayQueue {
 					mPlayHistory.Remove(  queuedTrack );
 				}
 			}
+			else if( track.Stream != null ) {
+				var	queuedTrack= mPlayQueue.Find( item => item.Stream != null ? item.Stream.DbId == track.Stream.DbId : false );
+
+				if( queuedTrack != null ) {
+					mPlayQueue.Remove(  queuedTrack );
+				}
+
+				queuedTrack= mPlayHistory.Find( item => item.Stream != null ? item.Stream.DbId == track.Stream.DbId : false );
+
+				if( queuedTrack != null ) {
+					mPlayHistory.Remove(  queuedTrack );
+				}
+			}
 
 			FirePlayQueueChanged();
 		}

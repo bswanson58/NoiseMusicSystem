@@ -43,6 +43,8 @@ namespace Noise.Infrastructure.Dto {
 
 		public PlayQueueTrack( DbInternetStream stream ) {
 			Stream = stream;
+
+			StrategySource = eStrategySource.User;
 		}
 
 		public bool IsStream {
@@ -73,6 +75,31 @@ namespace Noise.Infrastructure.Dto {
 
 		public string Name {
 			get{ return( Track != null ? Track.Name : Stream != null ? Stream.Name : "" ); }
+		}
+
+		public string FullName {
+			get {
+				var retValue = "";
+
+				if( IsStream ) {
+					if( Stream != null ) {
+						retValue = string.IsNullOrWhiteSpace( Stream.Description ) ? Stream.Name : string.Format( "{0} ({1})", Stream.Name, Stream.Description );
+					}
+				}
+				else {
+					if( Track != null ) {
+						if(( Album != null ) &&
+						   ( Artist != null )) {
+							retValue = string.Format( "{0} ({1}/{2})", Track.Name, Artist.Name, Album.Name );
+						}
+						else {
+							retValue = Track.Name;
+						}
+					}
+				}
+
+				return( retValue );
+			}
 		}
 	}
 }

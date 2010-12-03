@@ -69,14 +69,7 @@
                         <GridViewColumn Header="Track Name">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Path=Track.Name}"/>
-                                        <TextBlock Text=" - ("/>
-                                        <TextBlock Text="{Binding Path=Artist.Name}"/>
-                                        <TextBlock Text="/"/>
-                                        <TextBlock Text="{Binding Path=Album.Name}"/>
-                                        <TextBlock Text=")"/>
-                                    </StackPanel>
+                                    <TextBlock Text="{Binding Path=FullName}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
