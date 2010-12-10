@@ -9,7 +9,6 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Dto;
-using Observal;
 using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
@@ -19,7 +18,7 @@ namespace Noise.UI.ViewModels {
 		private INoiseManager				mNoiseManager;
 		private UiArtist					mCurrentArtist;
 		private LinkNode					mArtistWebsite;
-		private readonly Observer			mChangeObserver;
+		private readonly Observal.Observer	mChangeObserver;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<LinkNode>				mSimilarArtists;
 		private readonly ObservableCollectionEx<LinkNode>				mTopAlbums;
@@ -32,7 +31,7 @@ namespace Noise.UI.ViewModels {
 			mBandMembers = new ObservableCollectionEx<LinkNode>();
 			mDiscography = new ObservableCollectionEx<DbDiscographyRelease>();
 
-			mChangeObserver = new Observer();
+			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnArtistChanged );
 
 			mBackgroundWorker = new BackgroundWorker();

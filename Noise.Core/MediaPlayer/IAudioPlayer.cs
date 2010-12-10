@@ -15,6 +15,8 @@ namespace Noise.Core.MediaPlayer {
 		void				FadeAndStop( int channel );
 		void				Pause( int channel );
 		void				Stop( int channel );
+		void				QueueNextChannel( int channel );
+
 		TimeSpan			GetLength( int channel );
 		TimeSpan			GetPlayPosition( int channel );
 		void				SetPlayPosition( int channel, TimeSpan position );
@@ -43,9 +45,9 @@ namespace Noise.Core.MediaPlayer {
 		float				ReverbLevel { get; set; }
 		int					ReverbDelay { get; set; }
 
-		IObservable<int>			ChannelStatusChange { get; }
-		IObservable<AudioLevels>	AudioLevelsChange { get; }
-		IObservable<StreamInfo>		AudioStreamInfoChange { get; }
+		IObservable<ChannelStatusArgs>	ChannelStatusChange { get; }
+		IObservable<AudioLevels>		AudioLevelsChange { get; }
+		IObservable<StreamInfo>			AudioStreamInfoChange { get; }
 
 		BitmapSource		GetSpectrumImage( int channel, int height, int width, Color baseColor, Color peakColor, Color peakHoldColor );
 	}

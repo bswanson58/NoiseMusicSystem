@@ -10,7 +10,6 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
-using Observal;
 using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
@@ -35,14 +34,14 @@ namespace Noise.UI.ViewModels {
 		private INoiseManager				mNoiseManager;
 		private UiAlbum						mCurrentAlbum;
 		public	TimeSpan					AlbumPlayTime { get; private set; }
-		private readonly Observer			mChangeObserver;
+		private readonly Observal.Observer	mChangeObserver;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<UiTrack>	mTracks;
 
 		public AlbumViewModel() {
 			mTracks = new ObservableCollectionEx<UiTrack>();
 
-			mChangeObserver = new Observer();
+			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
 			mBackgroundWorker = new BackgroundWorker();

@@ -53,24 +53,34 @@ namespace Noise.UI.ViewModels {
 				mEvents = mContainer.Resolve<IEventAggregator>();
 				mNoiseManager = mContainer.Resolve<INoiseManager>();
 
-				mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
 				mEvents.GetEvent<Events.PlaybackStatusChanged>().Subscribe( OnPlaybackStatusChanged );
 				mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnPlaybackTrackChanged );
 				mEvents.GetEvent<Events.PlaybackInfoChanged>().Subscribe( OnPlaybackInfoChanged );
 
 				LoadBands();
+
+				PlayState = ePlayState.StoppedEmptyQueue.ToString();
+				mNoiseManager.PlayController.PlayStateChange.Subscribe( OnPlayStateChange );
 			}
 		}
 
-		public void OnPlayQueueChanged( IPlayQueue playQueue ) {
-			if(( CurrentStatus == ePlaybackStatus.Playing ) &&
-			   ( mNoiseManager.PlayQueue.PlayingTrack == null )) {
-				mNoiseManager.PlayController.PlayNextTrack();
-			}
-			else {
-				PlayQueueChangedFlag++;
-			}
+		private void OnPlayStateChange( ePlayState state ) {
+			PlayState = state.ToString();
+
+			RaisePropertyChanged( () => PlayState );
 		}
+
+		public string PlayState {
+			get {
+#if DEBUG
+				return( Get( () => PlayState ));
+#else
+				return( "" );
+#endif
+			} 
+			private set { Set( () => PlayState, value ); }
+		}
+
 
 		public void OnPlaybackStatusChanged( ePlaybackStatus status ) {
 			CurrentStatus = status;
@@ -89,11 +99,6 @@ namespace Noise.UI.ViewModels {
 			set { Set(() => CurrentStatus, value ); }
 		}
 
-		private int PlayQueueChangedFlag {
-			get{ return( Get( () => PlayQueueChangedFlag, 0 )); }
-			set{ Set( () => PlayQueueChangedFlag, value  ); }
-		}
-
 		private int StartTrackFlag {
 			get{ return( Get( () => StartTrackFlag, 0 )); }
 			set{ Set( () => StartTrackFlag, value  ); }
@@ -105,7 +110,6 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
-		[DependsUpon( "PlayQueueChangedFlag" )]
 		public string TrackName {
 			get { 
 				var retValue = string.Empty;
@@ -193,14 +197,12 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
-		[DependsUpon( "PlayQueueChangedFlag" )]
 		public bool IsFavorite {
 			get { return( mNoiseManager.PlayController.IsFavorite ); }
 			set { mNoiseManager.PlayController.IsFavorite = value; }
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
-		[DependsUpon( "PlayQueueChangedFlag" )]
 		public Int16 Rating {
 			get{ return( mNoiseManager.PlayController.Rating ); }
 			set { mNoiseManager.PlayController.Rating = value; }
@@ -210,7 +212,6 @@ namespace Noise.UI.ViewModels {
 			mNoiseManager.PlayController.Play();
 		}
 		[DependsUpon( "CurrentStatus" )]
-		[DependsUpon( "PlayQueueChangedFlag" )]
 		public bool CanExecute_Play( object sender ) {
 			return( mNoiseManager.PlayController.CanPlay );
 		}
@@ -234,8 +235,7 @@ namespace Noise.UI.ViewModels {
 		public void Execute_NextTrack( object sender ) {
 			mNoiseManager.PlayController.PlayNextTrack();
 		}
-		[DependsUpon( "PlayQueueChangedFlag" )]
-		[DependsUpon( "StartTrackFlag" )]
+		[DependsUpon( "CurrentStatus" )]
 		public bool CanExecute_NextTrack( object sender ) {
 			return( mNoiseManager.PlayController.CanPlayNextTrack );
 		}
@@ -243,27 +243,10 @@ namespace Noise.UI.ViewModels {
 		public void Execute_PreviousTrack( object sender ) {
 			mNoiseManager.PlayController.PlayPreviousTrack();
 		}
-		[DependsUpon( "PlayQueueChangedFlag" )]
-		[DependsUpon( "StartTrackFlag" )]
+		[DependsUpon( "CurrentStatus" )]
 		[DependsUpon( "InfoUpdateFlag" )]
 		public bool CanExecute_PreviousTrack( object sender ) {
 			return( mNoiseManager.PlayController.CanPlayPreviousTrack );
-		}
-
-		public void Execute_ClearQueue( object sender ) {
-			if( mNoiseManager != null ) {
-				mNoiseManager.PlayQueue.ClearQueue();
-			}
-		}
-		[DependsUpon( "PlayQueueChangedFlag" )]
-		public bool CanExecute_ClearQueue( object sender ) {
-			var retValue = true;
-
-			if( mNoiseManager != null ) {
-				retValue = !mNoiseManager.PlayQueue.IsQueueEmpty;
-			}
-
-			return( retValue );
 		}
 
 		public void Execute_ReplayTrack() {
@@ -273,13 +256,12 @@ namespace Noise.UI.ViewModels {
 			RaiseCanExecuteChangedEvent( "CanExecute_ReplayTrack" );
 		}
 		[DependsUpon( "CurrentStatus" )]
-		[DependsUpon( "PlayQueueChangedFlag" )]
 		[DependsUpon( "StartTrackFlag" )]
 		public bool CanExecute_ReplayTrack() {
 			var retValue = false;
 
 			if(( mNoiseManager != null ) &&
-			   ( mNoiseManager.PlayController.CanStop ) &&
+			   ( mNoiseManager.PlayController.CurrentTrack != null ) &&
 			   ( mNoiseManager.PlayQueue.PlayingTrackReplayCount == 0 )) {
 				retValue = true;
 			}

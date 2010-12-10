@@ -9,7 +9,6 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Dto;
-using Observal;
 using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
@@ -19,7 +18,7 @@ namespace Noise.UI.ViewModels {
 		private INoiseManager				mNoiseManager;
 		private PlayListNode				mSelectedNode;
 		private readonly BackgroundWorker	mBackgroundWorker;
-		private readonly Observer			mChangeObserver;
+		private readonly Observal.Observer	mChangeObserver;
 		private readonly ObservableCollectionEx<PlayListNode>	mTreeItems;
 
 		public PlayListViewModel() {
@@ -29,7 +28,7 @@ namespace Noise.UI.ViewModels {
 			mBackgroundWorker.DoWork += ( o, args ) => args.Result = BuildPlayList();
 			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => UpdatePlayList( result.Result as IEnumerable<PlayListNode>);
 
-			mChangeObserver = new Observer();
+			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 		}
 

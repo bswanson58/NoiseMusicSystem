@@ -18,7 +18,7 @@ namespace Noise.UI.ValueConverters {
 						retValue = string.Format( "{0}:{1:D2}", timeSpan.Minutes, Math.Abs( timeSpan.Seconds ));
 					}
 					else {
-						if( timeSpan.Seconds > 0 ) {
+						if( timeSpan.Seconds >= 0 ) {
 							retValue = string.Format(  "0:{0:D2}", Math.Abs( timeSpan.Seconds ));
 						}
 						else {

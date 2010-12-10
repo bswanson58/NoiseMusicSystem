@@ -1,8 +1,10 @@
 ﻿namespace Noise.Infrastructure.Dto {
 	public enum ePlaybackStatus {
+		TrackStart,
+		TrackEnd,
 		Stopped,
-		Playing,
 		Paused,
+		RequestNext,
 		Unknown
 	}
 }

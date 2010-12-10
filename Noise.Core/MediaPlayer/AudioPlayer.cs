@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Timers;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -16,7 +15,6 @@ using Un4seen.Bass.AddOn.Fx;
 using Un4seen.Bass.AddOn.Mix;
 using Un4seen.Bass.AddOn.Tags;
 using Un4seen.Bass.Misc;
-using Timer = System.Timers.Timer;
 
 namespace Noise.Core.MediaPlayer {
 	internal class AudioStream {
@@ -28,14 +26,15 @@ namespace Noise.Core.MediaPlayer {
 		public	bool					PauseOnSlide { get; set; }
 		public	bool					StopOnSlide { get; set; }
 		public	bool					Faded { get; set; }
-		public	BASSActive				Mode { get; set; }
 		public	int						MetaDataSync { get; set; }
 		public	int						ReplayGainFx { get; set; }
+		public	int						SyncEnd { get; set; }
+		public	int						SyncNext { get; set; }
+		public	int						SyncQueued { get; set; }
+		public	int						SyncStalled { get; set; }
 
 		private AudioStream( int channel ) {
 			Channel = channel;
-
-			Mode = BASSActive.BASS_ACTIVE_STOPPED;
 		}
 
 		public AudioStream( StorageFile file, int channel ) :
@@ -53,6 +52,16 @@ namespace Noise.Core.MediaPlayer {
 		}
 	}
 
+	public class ChannelStatusArgs {
+		public	int				Channel { get; private set; }
+		public	ePlaybackStatus	Status { get; private set; }
+
+		public ChannelStatusArgs( int channel, ePlaybackStatus status ) {
+			Channel = channel;
+			Status = status;
+		}
+	}
+
 	public class AudioPlayer : IAudioPlayer {
 		private readonly IUnityContainer				mContainer;
 		private readonly ILog							mLog;
@@ -62,7 +71,11 @@ namespace Noise.Core.MediaPlayer {
 		private float									mPan;
 		private float									mPreampVolume;
 		private readonly SYNCPROC						mStreamMetadataSync;
-		private readonly Timer							mUpdateTimer;
+		private readonly SYNCPROC						mPlayEndSyncProc;
+		private readonly SYNCPROC						mPlayRequestSyncProc;
+		private	readonly SYNCPROC						mPlayStalledSyncProc;
+		private readonly SYNCPROC						mSlideSyncProc;
+		private readonly SYNCPROC						mQueuedTrackPlaySync;
 		private readonly Dictionary<int, AudioStream>	mCurrentStreams;
 		private readonly DSP_PeakLevelMeter				mLevelMeter;
 		private readonly DSP_StereoEnhancer				mStereoEnhancer;
@@ -81,10 +94,13 @@ namespace Noise.Core.MediaPlayer {
 		private FileStream								mRecordStream;
 		private byte[]									mRecordBuffer;
 		private bool									mRecord;
+		private bool									mTrackOverlap;
+		private int										mTrackOverlapMs;
+		private int										mQueuedChannel;
 		private readonly Visuals						mSpectumVisual;
 
-		private readonly Subject<int>					mChannelStatusSubject;
-		public	IObservable<int>						ChannelStatusChange { get { return( mChannelStatusSubject.AsObservable()); } }
+		private readonly Subject<ChannelStatusArgs>		mChannelStatusSubject;
+		public	IObservable<ChannelStatusArgs>			ChannelStatusChange { get { return( mChannelStatusSubject.AsObservable()); } }
 
 		private readonly Subject<AudioLevels>			mAudioLevelsSubject;
 		public	IObservable<AudioLevels>				AudioLevelsChange { get { return( mAudioLevelsSubject.AsObservable()); }}
@@ -97,13 +113,17 @@ namespace Noise.Core.MediaPlayer {
 			mLog = mContainer.Resolve<ILog>();
 			mCurrentStreams = new Dictionary<int, AudioStream>();
 			mEqChannels = new Dictionary<long, int>();
-			mStreamMetadataSync = new SYNCPROC( SyncProc );
-			mUpdateTimer = new Timer { Enabled = false, Interval = 50, AutoReset = true };
-			mUpdateTimer.Elapsed += OnUpdateTimer;
+			mStreamMetadataSync = new SYNCPROC( StreamSyncProc );
+			mPlayEndSyncProc = new SYNCPROC( PlayEndSyncProc );
+			mPlayRequestSyncProc = new SYNCPROC( PlayRequestSyncProc );
+			mPlayStalledSyncProc = new SYNCPROC( PlayStallSyncProc );
+			mQueuedTrackPlaySync = new SYNCPROC( PlayQueuedTrackSyncProc );
+			mSlideSyncProc = new SYNCPROC( SlideSyncProc );
 			mDownloadProc = new DOWNLOADPROC( RecordProc );
 			mSpectumVisual = new Visuals();
 
 			mReverbDelay = 1200;
+			mTrackOverlapMs = 100;
 
 			try {
 				var licenseManager = mContainer.Resolve<ILicenseManager>();
@@ -149,7 +169,7 @@ namespace Noise.Core.MediaPlayer {
 			mPreampVolume = 1.0f;
 			mRecord = false;
 
-			mChannelStatusSubject = new Subject<int>();
+			mChannelStatusSubject = new Subject<ChannelStatusArgs>();
 			mAudioLevelsSubject = new Subject<AudioLevels>();
 			mAudioStreamInfoSubject = new Subject<StreamInfo>();
 		}
@@ -162,52 +182,6 @@ namespace Noise.Core.MediaPlayer {
 			}
 			catch( Exception ex ) {
 				mLog.LogException( String.Format( "Could not load Bass plugin: {0}", plugin ), ex );
-			}
-		}
-
-		private void OnUpdateTimer( object sender, ElapsedEventArgs args ) {
-			var streams = new List<AudioStream>( mCurrentStreams.Values );
-
-			foreach( var stream in streams ) {
-				var mode = Bass.BASS_ChannelIsActive( mMixerChannel );
-				var channelMode = Bass.BASS_ChannelIsActive( stream.Channel );
-
-				if( mode == BASSActive.BASS_ACTIVE_STALLED ) {
-					mode = channelMode == BASSActive.BASS_ACTIVE_STOPPED ? channelMode : BASSActive.BASS_ACTIVE_PAUSED;
-				}
-				else if( mode != BASSActive.BASS_ACTIVE_PAUSED ) {
-					mode = Bass.BASS_ChannelIsActive( stream.Channel );
-				}
-
-				if( stream.Mode != mode ) {
-					stream.Mode = mode;
-
-					mChannelStatusSubject.OnNext( stream.Channel );
-
-					if( stream.Mode != BASSActive.BASS_ACTIVE_PLAYING ) {
-						mAudioLevelsSubject.OnNext( new AudioLevels());
-					}
-				}
-
-				if( stream.InSlide ) {
-					var sliding = Bass.BASS_ChannelIsSliding( stream.Channel, BASSAttribute.BASS_ATTRIB_VOL );
-					
-					if(!sliding ) {
-						stream.InSlide = false;
-
-						if( stream.PauseOnSlide ) {
-							BassMix.BASS_Mixer_ChannelPause( stream.Channel );
-						}
-						if( stream.StopOnSlide ) {
-							BassMix.BASS_Mixer_ChannelRemove( stream.Channel );
-							Bass.BASS_ChannelStop( stream.Channel );
-						}
-					}
-				}
-			}
-
-			if( mCurrentStreams.Count == 0 ) {
-				mUpdateTimer.Stop();
 			}
 		}
 
@@ -246,6 +220,36 @@ namespace Noise.Core.MediaPlayer {
 							}
 						}
 
+						stream.SyncEnd = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_END, 0L, mPlayEndSyncProc, IntPtr.Zero );
+						if( stream.SyncEnd == 0 ) {
+							mLog.LogMessage( string.Format( "AudioPlayer - Could not set end sync ({0})", Bass.BASS_ErrorGetCode()));
+						}
+
+						stream.SyncStalled = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_STALL, 0L, mPlayStalledSyncProc, IntPtr.Zero );
+						if( stream.SyncStalled == 0 ) {
+							mLog.LogMessage( string.Format( "AudioPlayer - Could not set stall sync ({0})", Bass.BASS_ErrorGetCode()));
+						}
+
+						if( mTrackOverlap ) {
+							var trackLength = Bass.BASS_ChannelGetLength( stream.Channel );
+							var position = trackLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, 3 );
+
+							if( position > 0 ) {
+								stream.SyncNext = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
+																					 position, mPlayRequestSyncProc, IntPtr.Zero );
+								if( stream.SyncNext == 0 ) {
+									mLog.LogMessage( string.Format( "AudioPlayer - Could not set request sync ({0})", Bass.BASS_ErrorGetCode()));
+								}
+
+								position = trackLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, mTrackOverlapMs / 100.0 );
+								stream.SyncQueued = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
+																					   position, mQueuedTrackPlaySync, IntPtr.Zero );
+								if( stream.SyncQueued == 0 ) {
+									mLog.LogMessage( string.Format( "AudioPlayer - Could not set queued track sync ({0})", Bass.BASS_ErrorGetCode()));
+								}
+							}
+						}
+
 						retValue = channel;
 					}
 					else {
@@ -255,11 +259,6 @@ namespace Noise.Core.MediaPlayer {
 				catch( Exception ex ) {
 					mLog.LogException( String.Format( "AudioPlayer opening {0}", filePath ), ex );
 				}
-			}
-
-			if(( mCurrentStreams.Count > 0 ) &&
-			   (!mUpdateTimer.Enabled )) {
-				mUpdateTimer.Start();
 			}
 
 			return ( retValue );
@@ -287,11 +286,6 @@ namespace Noise.Core.MediaPlayer {
 						mCurrentStreams.Add( channel, audioStream );
 
 						retValue = channel;
-
-						if(( mCurrentStreams.Count > 0 ) &&
-						   (!mUpdateTimer.Enabled )) {
-							mUpdateTimer.Start();
-						}
 					}
 					else {
 						var errorCode = Bass.BASS_ErrorGetCode();
@@ -307,7 +301,53 @@ namespace Noise.Core.MediaPlayer {
 			return( retValue );
 		}
 
-		private void SyncProc( int handle, int channel, int data, IntPtr user ) {
+		public void QueueNextChannel( int channel ) {
+			if( mCurrentStreams.ContainsKey( channel )) {
+				mQueuedChannel = channel;
+			}
+		}
+
+		private void PlayEndSyncProc( int handle, int channel, int data, IntPtr user ) {
+			mChannelStatusSubject.OnNext( new ChannelStatusArgs( channel, ePlaybackStatus.TrackEnd ));
+
+			StartQueuedTrack();
+		}
+
+		private void PlayQueuedTrackSyncProc( int handle, int channel, int data, IntPtr user ) {
+			StartQueuedTrack();
+		}
+
+		private void StartQueuedTrack() {
+			if( mQueuedChannel != 0 ) {
+				var nextChannel = mQueuedChannel;
+				mQueuedChannel = 0;
+
+				Play( nextChannel );
+			}
+		}
+
+		private void PlayRequestSyncProc( int handle, int channel, int data, IntPtr user ) {
+			mChannelStatusSubject.OnNext( new ChannelStatusArgs( channel, ePlaybackStatus.RequestNext ));
+		}
+
+		private void PlayStallSyncProc( int handle, int channel, int data, IntPtr user ) {
+			mChannelStatusSubject.OnNext( new ChannelStatusArgs( channel, ePlaybackStatus.TrackEnd ));
+		}
+
+		private void SlideSyncProc( int handle, int channel, int data, IntPtr user ) {
+			var stream = GetStream( channel );
+
+			if( stream != null ) {
+				if( stream.PauseOnSlide ) {
+					Pause( stream.Channel  );
+				}
+				if( stream.StopOnSlide ) {
+					Stop( stream.Channel );
+				}
+			}
+		}
+
+		private void StreamSyncProc( int handle, int channel, int data, IntPtr user ) {
 			PublishStreamInfo( channel );
 		}
 
@@ -348,6 +388,139 @@ namespace Noise.Core.MediaPlayer {
 					mRecordStream.Write( mRecordBuffer, 0, length );
 				}
 			}
+		}
+
+		private AudioStream GetStream( int channel ) {
+			AudioStream	retValue = null;
+
+			if( mCurrentStreams.ContainsKey( channel )) {
+				retValue = mCurrentStreams[channel];
+			}
+
+			return( retValue );
+		}
+
+		public void Play( int channel ) {
+			var stream = GetStream( channel );
+
+			if( stream != null ) {
+				if( stream.Faded ) {
+					stream.Faded = false;
+
+					Bass.BASS_ChannelSlideAttribute( stream.Channel, BASSAttribute.BASS_ATTRIB_VOL, 1.0f, 1000 );
+				}
+
+				BassMix.BASS_Mixer_ChannelPlay( stream.Channel );
+				mChannelStatusSubject.OnNext( new ChannelStatusArgs( channel, ePlaybackStatus.TrackStart ));
+
+				if( stream.IsStream ) {
+					PublishStreamInfo( stream.Channel );
+				}
+			}
+		}
+
+		public void Pause( int channel ) {
+			var stream = GetStream( channel );
+
+			if( stream != null ) {
+				BassMix.BASS_Mixer_ChannelPause( stream.Channel );
+
+				mChannelStatusSubject.OnNext( new ChannelStatusArgs( stream.Channel, ePlaybackStatus.Paused ));
+			}
+		}
+
+		public void FadeAndPause( int channel ) {
+			var stream = GetStream( channel );
+
+			if( stream != null ) {
+				if( GetChannelStatus( channel ) == ePlaybackStatus.TrackStart ) {
+					BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_SLIDE | BASSSync.BASS_SYNC_ONETIME, 0L, mSlideSyncProc, IntPtr.Zero );
+					Bass.BASS_ChannelSlideAttribute( stream.Channel, BASSAttribute.BASS_ATTRIB_VOL, 0.0f, 500 );
+
+					stream.Faded = true;
+					stream.PauseOnSlide = true;
+
+					stream.InSlide = true;
+				}
+				else {
+					Pause( channel );
+				}
+			}
+		}
+
+		public void Stop( int channel ) {
+			var stream = GetStream( channel );
+
+			if( stream != null ) {
+				Bass.BASS_ChannelStop( stream.Channel );
+
+				mChannelStatusSubject.OnNext( new ChannelStatusArgs( channel, ePlaybackStatus.TrackEnd ));
+			}
+		}
+
+		public void FadeAndStop( int channel ) {
+			var	stream = GetStream( channel );
+
+			if( stream != null ) {
+				if( GetChannelStatus( channel ) == ePlaybackStatus.TrackStart ) {
+					BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_SLIDE | BASSSync.BASS_SYNC_ONETIME, 0L, mSlideSyncProc, IntPtr.Zero );
+					Bass.BASS_ChannelSlideAttribute( stream.Channel, BASSAttribute.BASS_ATTRIB_VOL, 0.0f, 500 );
+
+					stream.Faded = true;
+					stream.StopOnSlide = true;
+					stream.InSlide = true;
+				}
+				else {
+					Stop( channel );
+				}
+			}
+		}
+
+		public void CloseChannel( int channel ) {
+			var stream = GetStream( channel );
+
+			if( stream != null ) {
+				BassMix.BASS_Mixer_ChannelRemove( channel );
+
+				if( stream.MetaDataSync != 0 ) {
+					Bass.BASS_ChannelRemoveSync( channel, stream.MetaDataSync );
+					stream.MetaDataSync = 0;
+				}
+				if( stream.ReplayGainFx != 0 ) {
+					Bass.BASS_ChannelRemoveFX( stream.Channel, stream.ReplayGainFx );
+					stream.ReplayGainFx = 0;
+				}
+
+				Bass.BASS_StreamFree( stream.Channel );
+
+				mCurrentStreams.Remove( channel );
+			}
+		}
+
+		public ePlaybackStatus GetChannelStatus( int channel ) {
+			var retValue = ePlaybackStatus.Unknown;
+			var stream = GetStream( channel );
+
+			if(stream != null ) {
+				var mode = BassMix.BASS_Mixer_ChannelIsActive( channel );
+
+				switch( mode ) {
+					case BASSActive.BASS_ACTIVE_STOPPED:
+						retValue = ePlaybackStatus.Stopped;
+						break;
+
+					case BASSActive.BASS_ACTIVE_PAUSED:
+					case BASSActive.BASS_ACTIVE_STALLED:
+						retValue = ePlaybackStatus.Paused;
+						break;
+
+					case BASSActive.BASS_ACTIVE_PLAYING:
+						retValue = ePlaybackStatus.TrackStart;
+						break;
+				}
+			}
+
+			return( retValue );
 		}
 
 		public ParametricEqualizer ParametricEq {
@@ -556,119 +729,6 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
-		private AudioStream GetStream( int channel ) {
-			AudioStream	retValue = null;
-
-			if( mCurrentStreams.ContainsKey( channel )) {
-				retValue = mCurrentStreams[channel];
-			}
-
-			return( retValue );
-		}
-
-		public void Stop( int channel ) {
-			var stream = GetStream( channel );
-
-			if( stream != null ) {
-				Bass.BASS_ChannelStop( stream.Channel );
-			}
-		}
-
-		public void CloseChannel( int channel ) {
-			var stream = GetStream( channel );
-
-			if( stream != null ) {
-				BassMix.BASS_Mixer_ChannelRemove( channel );
-
-				if( stream.MetaDataSync != 0 ) {
-					Bass.BASS_ChannelRemoveSync( channel, stream.MetaDataSync );
-					stream.MetaDataSync = 0;
-				}
-				if( stream.ReplayGainFx != 0 ) {
-					Bass.BASS_ChannelRemoveFX( stream.Channel, stream.ReplayGainFx );
-					stream.ReplayGainFx = 0;
-				}
-
-				Bass.BASS_StreamFree( stream.Channel );
-
-				mCurrentStreams.Remove( channel );
-			}
-		}
-
-		public void Play( int channel ) {
-			var stream = GetStream( channel );
-
-			if( stream != null ) {
-				if( stream.Faded ) {
-					stream.Faded = false;
-
-					Bass.BASS_ChannelSlideAttribute( stream.Channel, BASSAttribute.BASS_ATTRIB_VOL, 1.0f, 1000 );
-				}
-
-				BassMix.BASS_Mixer_ChannelPlay( stream.Channel );
-
-				if( stream.IsStream ) {
-					PublishStreamInfo( stream.Channel );
-				}
-			}
-		}
-
-		public void Pause( int channel ) {
-			var stream = GetStream( channel );
-
-			if( stream != null ) {
-				BassMix.BASS_Mixer_ChannelPause( mMixerChannel );
-			}
-		}
-
-		public void FadeAndPause( int channel ) {
-			var stream = GetStream( channel );
-
-			if( stream != null ) {
-				Bass.BASS_ChannelSlideAttribute( stream.Channel, BASSAttribute.BASS_ATTRIB_VOL, 0.0f, 500 );
-
-				stream.Faded = true;
-				stream.PauseOnSlide = true;
-				stream.InSlide = true;
-			}
-		}
-
-		public void FadeAndStop( int channel ) {
-			var	stream = GetStream( channel );
-
-			if( stream != null ) {
-				Bass.BASS_ChannelSlideAttribute( stream.Channel, BASSAttribute.BASS_ATTRIB_VOL, 0.0f, 500 );
-
-				stream.Faded = true;
-				stream.StopOnSlide = true;
-				stream.InSlide = true;
-			}
-		}
-
-		public ePlaybackStatus GetChannelStatus( int channel ) {
-			var retValue = ePlaybackStatus.Unknown;
-			var stream = GetStream( channel );
-
-			if(stream != null ) {
-				switch( stream.Mode ) {
-					case BASSActive.BASS_ACTIVE_STOPPED:
-						retValue = ePlaybackStatus.Stopped;
-						break;
-
-					case BASSActive.BASS_ACTIVE_PAUSED:
-					case BASSActive.BASS_ACTIVE_STALLED:
-						retValue = ePlaybackStatus.Paused;
-						break;
-
-					case BASSActive.BASS_ACTIVE_PLAYING:
-						retValue = ePlaybackStatus.Playing;
-						break;
-				}
-			}
-
-			return( retValue );
-		}
-
 		public TimeSpan GetLength( int channel ) {
 			var length = Bass.BASS_ChannelGetLength( channel );
 			var seconds = Bass.BASS_ChannelBytes2Seconds( channel, length );
@@ -680,8 +740,11 @@ namespace Noise.Core.MediaPlayer {
 		public TimeSpan GetPlayPosition( int channel ) {
 			var retValue = new TimeSpan();
 			var stream = GetStream( channel );
+			var mode = GetChannelStatus( channel );
 
-			if( stream != null ) {
+			if(( stream != null ) &&
+			  (( mode == ePlaybackStatus.Paused ) ||
+			   ( mode == ePlaybackStatus.TrackStart ))) {
 				var pos = Bass.BASS_ChannelGetPosition( stream.Channel );
 				var secs = Bass.BASS_ChannelBytes2Seconds( stream.Channel, pos );
 

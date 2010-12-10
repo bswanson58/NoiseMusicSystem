@@ -4,6 +4,20 @@ using System.Windows.Media.Imaging;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
+	public enum ePlayState {
+		StoppedEmptyQueue,
+		Stopped,
+		Stopping,
+		StartPlaying,
+		Playing,
+		PlayNext,
+		PlayPrevious,
+		Paused,
+		Pausing,
+		Resuming,
+		ExternalPlay
+	}
+
 	public interface IPlayController {
 		void			Play();
 		bool			CanPlay { get; }
@@ -56,5 +70,7 @@ namespace Noise.Infrastructure.Interfaces {
 		long			TrackEndPosition { get; }
 
 		BitmapSource	GetSpectrumImage( int height, int width, Color baseColor, Color peakColor, Color peakHoldColor );
+
+		IObservable<ePlayState>	PlayStateChange { get; }
 	}
 }

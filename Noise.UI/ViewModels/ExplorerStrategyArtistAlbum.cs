@@ -13,7 +13,6 @@ using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using CuttingEdge.Conditions;
 using Noise.UI.Dto;
-using Observal;
 using Observal.Extensions;
 using Condition = CuttingEdge.Conditions.Condition;
 
@@ -27,7 +26,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IUnityContainer		mContainer;
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly INoiseManager			mNoiseManager;
-		private readonly Observer				mChangeObserver;
+		private readonly Observal.Observer		mChangeObserver;
 		private	LibraryExplorerViewModel		mViewModel;
 		private IEnumerator<ArtistTreeNode>		mTreeEnumerator;
 		private string							mLastSearchOptions;
@@ -37,7 +36,7 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator = mContainer.Resolve<IEventAggregator>();
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
 
-			mChangeObserver = new Observer();
+			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
 			mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
