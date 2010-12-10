@@ -141,8 +141,10 @@ namespace Noise.Core.PlayQueue {
 		private void AddAlbum( DbAlbum album ) {
 			using( var tracks = mDataProvider.GetTrackList( album )) {
 				var firstTrack = true;
+				var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
+													orderby track.VolumeName, track.TrackNumber ascending select track );
 
-				foreach( DbTrack track in tracks.List ) {
+				foreach( DbTrack track in sortedList ) {
 					AddTrack( track, eStrategySource.User );
 
 					if( firstTrack ) {
