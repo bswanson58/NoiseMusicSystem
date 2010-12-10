@@ -94,7 +94,6 @@ namespace Noise.Core.MediaPlayer {
 		private FileStream								mRecordStream;
 		private byte[]									mRecordBuffer;
 		private bool									mRecord;
-		private bool									mTrackOverlap;
 		private int										mTrackOverlapMs;
 		private int										mQueuedChannel;
 		private readonly Visuals						mSpectumVisual;
@@ -107,6 +106,8 @@ namespace Noise.Core.MediaPlayer {
 
 		private readonly Subject<StreamInfo>			mAudioStreamInfoSubject;
 		public	IObservable<StreamInfo>					AudioStreamInfoChange { get { return( mAudioStreamInfoSubject.AsObservable()); }}
+
+		public	bool									TrackOverlapEnable { get; set; }
 
 		public AudioPlayer( IUnityContainer container ) {
 			mContainer = container;
@@ -230,7 +231,7 @@ namespace Noise.Core.MediaPlayer {
 							mLog.LogMessage( string.Format( "AudioPlayer - Could not set stall sync ({0})", Bass.BASS_ErrorGetCode()));
 						}
 
-						if( mTrackOverlap ) {
+						if( TrackOverlapEnable ) {
 							var trackLength = Bass.BASS_ChannelGetLength( stream.Channel );
 							var position = trackLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, 3 );
 
@@ -241,7 +242,7 @@ namespace Noise.Core.MediaPlayer {
 									mLog.LogMessage( string.Format( "AudioPlayer - Could not set request sync ({0})", Bass.BASS_ErrorGetCode()));
 								}
 
-								position = trackLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, mTrackOverlapMs / 100.0 );
+								position = trackLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, mTrackOverlapMs / 1000.0 );
 								stream.SyncQueued = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
 																					   position, mQueuedTrackPlaySync, IntPtr.Zero );
 								if( stream.SyncQueued == 0 ) {
@@ -521,6 +522,16 @@ namespace Noise.Core.MediaPlayer {
 			}
 
 			return( retValue );
+		}
+
+		public int TrackOverlapMilliseconds {
+			get{ return( mTrackOverlapMs ); }
+			set {
+				if(( value >= 50 ) &&
+				   ( value <= 2000 )) {
+					mTrackOverlapMs = value;
+				}
+			}
 		}
 
 		public ParametricEqualizer ParametricEq {

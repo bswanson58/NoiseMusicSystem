@@ -106,6 +106,8 @@ namespace Noise.Core.MediaPlayer {
 				mAudioPlayer.ReverbEnable = audioCongfiguration.ReverbEnabled;
 				mAudioPlayer.ReverbDelay = audioCongfiguration.ReverbDelay;
 				mAudioPlayer.ReverbLevel = audioCongfiguration.ReverbLevel;
+				mAudioPlayer.TrackOverlapEnable = audioCongfiguration.TrackOverlapEnabled;
+				mAudioPlayer.TrackOverlapMilliseconds = audioCongfiguration.TrackOverlapMilliseconds;
 			}
 
 			mPlayStateSubject = new Subject<ePlayState>();
@@ -116,6 +118,7 @@ namespace Noise.Core.MediaPlayer {
 			mPlayStateController.Configure( ePlayState.StoppedEmptyQueue )
 				.OnEntry( StopPlay )
 				.Permit( eStateTriggers.QueueTrackAdded, ePlayState.StartPlaying )
+				.Ignore( eStateTriggers.QueueCleared )
 				.Ignore( eStateTriggers.PlayerStopped );
 
 			mPlayStateController.Configure( ePlayState.Stopping )
@@ -327,6 +330,8 @@ namespace Noise.Core.MediaPlayer {
 				audioCongfiguration.ReverbEnabled = mAudioPlayer.ReverbEnable;
 				audioCongfiguration.ReverbDelay = mAudioPlayer.ReverbDelay;
 				audioCongfiguration.ReverbLevel = mAudioPlayer.ReverbLevel;
+				audioCongfiguration.TrackOverlapEnabled = mAudioPlayer.TrackOverlapEnable;
+				audioCongfiguration.TrackOverlapMilliseconds = mAudioPlayer.TrackOverlapMilliseconds;
 
 				systemConfig.Save( audioCongfiguration );
 			}			
@@ -700,6 +705,16 @@ namespace Noise.Core.MediaPlayer {
 			}
 
 			return( retValue );
+		}
+
+		public bool TrackOverlapEnable {
+			get{ return( mAudioPlayer.TrackOverlapEnable ); }
+			set{ mAudioPlayer.TrackOverlapEnable = value; }
+		}
+
+		public int TrackOverlapMilliseconds {
+			get{ return( mAudioPlayer.TrackOverlapMilliseconds ); }
+			set{ mAudioPlayer.TrackOverlapMilliseconds = value; }
 		}
 
 		public bool IsFavorite {

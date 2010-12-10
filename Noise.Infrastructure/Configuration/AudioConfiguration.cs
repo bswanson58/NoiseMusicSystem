@@ -21,6 +21,8 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cEnableReverbProperty			= "enableReverb";
 		private const string	cReverbLevelProperty			= "reverbLevel";
 		private const string	cReverbDelayProperty			= "reverbDelay";
+		private const string	cEnableTrackOverlapProperty		= "enableTrackOverlap";
+		private const string	cTrackOverlapProperty			= "trackOverlapMilliseconds";
 
 		public override bool IsReadOnly() {
 			return( false );
@@ -102,6 +104,18 @@ namespace Noise.Infrastructure.Configuration {
 		public int ReverbDelay {
 			get { return ((int)( base[cReverbDelayProperty])); }
 			set { base[cReverbDelayProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cEnableTrackOverlapProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
+		public bool TrackOverlapEnabled {
+			get { return ((bool)( base[cEnableTrackOverlapProperty])); }
+			set { base[cEnableTrackOverlapProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cTrackOverlapProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "50" )]
+		public int TrackOverlapMilliseconds {
+			get { return ((int)( base[cTrackOverlapProperty])); }
+			set { base[cTrackOverlapProperty] = value; }
 		}
 
 		[ConfigurationProperty( cParametricEqualizersProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false )]

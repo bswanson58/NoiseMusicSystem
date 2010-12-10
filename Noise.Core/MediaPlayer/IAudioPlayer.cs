@@ -23,6 +23,9 @@ namespace Noise.Core.MediaPlayer {
 		ePlaybackStatus		GetChannelStatus( int channel );
 		double				GetPercentPlayed( int channel );
 
+		bool				TrackOverlapEnable { get; set; }
+		int					TrackOverlapMilliseconds { get; set; }
+
 		float				Volume { get; set; }
 		float				PreampVolume { get; set; }
 		bool				Mute { get; set; }

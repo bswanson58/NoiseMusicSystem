@@ -268,6 +268,16 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
+		public bool TrackOverlapEnable {
+			get{ return( mNoiseManager.PlayController.TrackOverlapEnable ); }
+			set{ mNoiseManager.PlayController.TrackOverlapEnable = value; }
+		}
+
+		public int TrackOverlapMilliseconds {
+			get{ return( mNoiseManager.PlayController.TrackOverlapMilliseconds ); }
+			set{ mNoiseManager.PlayController.TrackOverlapMilliseconds = value; }
+		}
+
 		public void Execute_PlayerSwitch() {
 			mEvents.GetEvent<Events.ExternalPlayerSwitch>().Publish( this );
 		}
