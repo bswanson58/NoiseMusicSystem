@@ -78,6 +78,7 @@
         <ComponentGroupRef Id="PrismFiles"/>
         <ComponentGroupRef Id="QuartzFiles"/>
         <ComponentGroupRef Id="ReclsFiles"/>
+        <ComponentGroupRef Id="StatelessFiles"/>
         <ComponentGroupRef Id="TagLibSharpFiles"/>
       </Feature>
       

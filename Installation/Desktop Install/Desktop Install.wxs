@@ -124,10 +124,11 @@
         <ComponentGroupRef Id="MicrosoftFiles"/>
         <ComponentGroupRef Id="NLogFiles"/>
         <ComponentGroupRef Id="NServiceBusFiles"/>
-        <ComponentGroupRef Id ="ObservalFiles"/>
+        <ComponentGroupRef Id="ObservalFiles"/>
         <ComponentGroupRef Id="PrismFiles"/>
         <ComponentGroupRef Id="QuartzFiles"/>
         <ComponentGroupRef Id="ReclsFiles"/>
+        <ComponentGroupRef Id="StatelessFiles"/>
         <ComponentGroupRef Id="TagLibSharpFiles"/>
       </Feature>
     </Feature>

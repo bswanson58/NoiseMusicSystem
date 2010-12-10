@@ -18,6 +18,7 @@
     <?include Prism.wxi ?>
     <?include Quartz.wxi ?>
     <?include recls.wxi ?>
+    <?include Stateless.wxi ?>
     <?include TagLibSharp.wxi ?>
   </Fragment>
 </Wix>

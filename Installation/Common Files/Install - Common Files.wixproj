@@ -49,6 +49,7 @@
     <Content Include="Prism.wxi" />
     <Content Include="Quartz.wxi" />
     <Content Include="recls.wxi" />
+    <Content Include="Stateless.wxi" />
     <Content Include="TagLibSharp.wxi" />
   </ItemGroup>
   <ItemGroup>
