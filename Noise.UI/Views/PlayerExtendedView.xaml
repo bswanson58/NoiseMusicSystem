@@ -136,7 +136,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="1" Margin="0,0,3,-3" Width="27" Height="27" Content="6" FontFamily="Webdings" FontSize="16" Command="{Binding Path=StandardPlayer}"/>
+                        <Button Grid.Column="1" Margin="0,0,3,-7" Width="27" Height="27" Content="6" FontFamily="Webdings" FontSize="16" Command="{Binding Path=StandardPlayer}"/>
                     </Grid>
                     <!-- Replay Gain -->
                     <CheckBox Grid.Row="2" Margin="3,0,0,3" Content="Replay Gain" IsChecked="{Binding Path=ReplayGainEnabled}" VerticalAlignment="Center"/>
