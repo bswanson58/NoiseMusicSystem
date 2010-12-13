@@ -62,7 +62,10 @@
                         <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="25">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="4" FontFamily="WebDings" Foreground="LightGreen" Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                                    <Grid>
+                                        <TextBlock Text="4" FontFamily="WebDings" Foreground="LightGreen" Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                                        <TextBlock Text="!" Foreground="Red" Margin="5,0,0,0" Visibility="{Binding Path=IsFaulted, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                                    </Grid>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

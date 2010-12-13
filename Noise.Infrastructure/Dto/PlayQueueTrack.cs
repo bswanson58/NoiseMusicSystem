@@ -19,6 +19,7 @@ namespace Noise.Infrastructure.Dto {
 		public	string				FilePath { get; private set; }
 		public	double				PercentPlayed { get; set; }
 		public	eStrategySource		StrategySource { get; private set; }
+		private	bool				mIsFaulted;
 		private	bool				mIsPlaying;
 		private	bool				mHasPlayed;
 
@@ -66,6 +67,15 @@ namespace Noise.Infrastructure.Dto {
 				mHasPlayed = value;
 
 				RaisePropertyChanged( () => HasPlayed );
+			}
+		}
+
+		public bool IsFaulted {
+			get{ return( mIsFaulted ); }
+			set {
+				mIsFaulted = value;
+
+				RaisePropertyChanged( () => IsFaulted );
 			}
 		}
 

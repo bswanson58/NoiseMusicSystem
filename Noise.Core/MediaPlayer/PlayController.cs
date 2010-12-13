@@ -145,6 +145,7 @@ namespace Noise.Core.MediaPlayer {
 				.OnEntry( StartPlaying )
 				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
 				.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
+				.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped )
 				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay )
 				.Ignore( eStateTriggers.PlayerPaused );
 
@@ -211,6 +212,7 @@ namespace Noise.Core.MediaPlayer {
 
 			mPlayStateController.Configure( ePlayState.ExternalPlay )
 				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
+				.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped )
 				.Ignore( eStateTriggers.PlayerStopped );
 		}
 
@@ -246,14 +248,7 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		private void PlayNext() {
-			var track = mNoiseManager.PlayQueue.PlayNextTrack();
-
-			if( track != null ) {
-				StartTrack( track );
-			}
-			else {
-				FireStateChange( eStateTriggers.QueueExhausted );
-			}
+			PlayTrack( mNoiseManager.PlayQueue.PlayNextTrack );
 		}
 
 		private void PlayPrevious() {
@@ -265,7 +260,24 @@ namespace Noise.Core.MediaPlayer {
 				FireStateChange( eStateTriggers.PlayerPlaying );
 			}
 			else {
-				StartTrack( mNoiseManager.PlayQueue.PlayPreviousTrack());
+				PlayTrack( mNoiseManager.PlayQueue.PlayPreviousTrack );
+			}
+		}
+
+		private void PlayTrack( Func<PlayQueueTrack> nextTrack ) {
+			var track = nextTrack();
+
+			while(( track != null ) &&
+				  (!StartTrack( track ))) {
+				CurrentStatus = ePlaybackStatus.Unknown;
+
+				track = nextTrack();
+			}
+
+			if( track == null ) {
+				FireStateChange( eStateTriggers.QueueExhausted );
+
+				CurrentStatus = ePlaybackStatus.Stopped;
 			}
 		}
 
@@ -434,17 +446,32 @@ namespace Noise.Core.MediaPlayer {
 			var track =  mNoiseManager.PlayQueue.PlayNextTrack();
 			var channel = OpenTrack( track );
 
-			mAudioPlayer.QueueNextChannel( channel );
+			while( channel == 0 ) {
+				track = mNoiseManager.PlayQueue.PlayNextTrack();
+
+				channel = OpenTrack( track );
+			}
+
+			if( channel != 0 ) {
+				mAudioPlayer.QueueNextChannel( channel );
+			}
 		}
 
-		private void StartTrack( PlayQueueTrack track ) {
+		private bool StartTrack( PlayQueueTrack track ) {
+			var retValue = false;
+
 			if( CurrentTrack != null ) {
 				mAudioPlayer.FadeAndStop( mCurrentChannel );
 			}
 
 			var	channel = OpenTrack( track );
+			if( channel != 0 ) {
+				mAudioPlayer.Play( channel );
 
-			mAudioPlayer.Play( channel );
+				retValue = true;
+			}
+
+			return( retValue );
 		}
 
 		private void StopAllTracks( bool stopImmediate ) {
@@ -485,8 +512,14 @@ namespace Noise.Core.MediaPlayer {
 				}
 
 				retValue = track.IsStream ? mAudioPlayer.OpenStream( track.Stream ) : mAudioPlayer.OpenFile( track.FilePath, gain );
+				if( retValue != 0 ) {
+					mOpenTracks.Add( retValue, track );
 
-				mOpenTracks.Add( retValue, track );
+					track.IsFaulted = false;
+				}
+				else {
+					track.IsFaulted = true;
+				}
 			}
 
 			return( retValue );

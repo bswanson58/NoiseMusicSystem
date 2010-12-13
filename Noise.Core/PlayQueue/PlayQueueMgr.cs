@@ -195,6 +195,8 @@ namespace Noise.Core.PlayQueue {
 				if(!track.IsPlaying ) {
 					track.HasPlayed = false;
 				}
+
+				track.IsFaulted = false;
 			}
 		}
 
