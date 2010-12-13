@@ -444,16 +444,13 @@ namespace Noise.Core.MediaPlayer {
 
 		private void QueueNextTrack() {
 			var track =  mNoiseManager.PlayQueue.PlayNextTrack();
-			var channel = OpenTrack( track );
 
-			while( channel == 0 ) {
-				track = mNoiseManager.PlayQueue.PlayNextTrack();
+			if( track != null ) {
+				var channel = OpenTrack( track );
 
-				channel = OpenTrack( track );
-			}
-
-			if( channel != 0 ) {
-				mAudioPlayer.QueueNextChannel( channel );
+				if( channel != 0 ) {
+					mAudioPlayer.QueueNextChannel( channel );
+				}
 			}
 		}
 
