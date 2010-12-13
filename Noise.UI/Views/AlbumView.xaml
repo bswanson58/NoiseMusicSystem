@@ -57,8 +57,9 @@
                     </Grid>
                 </Grid>
             </Border>
-            <GroupBox Grid.Row="1"  BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Tracks "  Margin="0,0,3,0">
+            <GroupBox Grid.Row="1" BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Tracks " Margin="0,0,3,0">
                 <ListView ItemsSource="{Binding Path=TrackList}" BorderThickness="0"
+                          Behaviours:ListViewFirstItemVisible.ChangeTrigger="{Binding Path=Album, Mode=OneWay}"
                           Behaviours:ListViewColumns.Stretch="true"
                           Behaviours:GridViewSort.AutoSort="True">
                     <ListView.ItemContainerStyle>
