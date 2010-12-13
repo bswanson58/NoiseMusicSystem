@@ -15,14 +15,20 @@ namespace Noise.Core.DataProviders {
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly ILog				mLog;
 		private long						mFolderId;
-		private readonly Regex				mDatePattern;
+		private readonly List<Regex>		mDatePatterns;
 		private List<StorageFile>			mFolderFiles;
 
 		public FileNameProvider( IUnityContainer container ) {
 			mDatabaseManager = container.Resolve<IDatabaseManager>();
+			mDatePatterns = new List<Regex>();
 			mLog = container.Resolve<ILog>();
 
-			mDatePattern = new Regex( "(?<month>0?[1-9]|1[012]) [- .] (?<day>0?[1-9]|[12][0-9]|3[01]) [- .] (?<year>[0-9]{2,})", RegexOptions.IgnorePatternWhitespace );
+			mDatePatterns.Add( new Regex( "(?<month>0?[1-9]|1[012]) [- .] (?<day>0?[1-9]|[12][0-9]|3[01]) [- .] (?<year>[0-9]{2,})", RegexOptions.IgnorePatternWhitespace ));
+			mDatePatterns.Add( new Regex( "(?<year1>[0-9]{4})-(?<year>[0-9]{4})" ));
+			mDatePatterns.Add( new Regex( "(?<year1>[0-9]{2})-(?<year>[0-9]{2})" ));
+			mDatePatterns.Add( new Regex( "'(?<year1>[0-9]{2})-'(?<year>[0-9]{2})" ));
+			mDatePatterns.Add( new Regex( "(?<year>[0-9]{4})" ));
+			mDatePatterns.Add( new Regex( "'(?<year>[0-9]{2})" ));
 		}
 
 		public IMetaDataProvider GetProvider( StorageFile forFile ) {
@@ -30,7 +36,7 @@ namespace Noise.Core.DataProviders {
 				BuildFolderFiles( forFile.ParentFolder );
 			}
 
-			return( new NameProvider( forFile, mFolderFiles, mDatePattern ));
+			return( new NameProvider( forFile, mFolderFiles, mDatePatterns ));
 		}
 
 		private void BuildFolderFiles( long parentId ) {
@@ -56,12 +62,12 @@ namespace Noise.Core.DataProviders {
 	internal class NameProvider : IMetaDataProvider {
 		private readonly StorageFile		mFile;
 		private readonly IList<StorageFile>	mFolderFiles;
-		private readonly Regex				mDatePattern;
+		private readonly IEnumerable<Regex>	mDatePatterns;
 
-		public NameProvider( StorageFile file, IList<StorageFile> folderFiles, Regex datePattern ) {
+		public NameProvider( StorageFile file, IList<StorageFile> folderFiles, IEnumerable<Regex> datePatterns ) {
 			mFolderFiles = folderFiles;
 			mFile = file;
-			mDatePattern = datePattern;
+			mDatePatterns = datePatterns;
 		}
 
 		public string Artist {
@@ -95,19 +101,26 @@ namespace Noise.Core.DataProviders {
 			}
 
 			if( track.PublishedYear == Constants.cUnknownYear ) {
-				var	match = mDatePattern.Match( album.Name );
+				foreach( var regex in mDatePatterns ) {
+					var	match = regex.Match( album.Name );
 
-				if( match.Success ) {
-					var year = Convert.ToUInt16( match.Groups["year"].Captures[0].Value );
+					if( match.Success ) {
+						var year = Convert.ToUInt16( match.Groups["year"].Captures[0].Value );
 
-					if( year < 30 ) {
-						year += 2000;
+						if( year < 30 ) {
+							year += 2000;
+						}
+						else if( year < 100 ) {
+							year += 1900;
+						}
+
+						if(( year >= 1930 ) &&
+						   ( year <= DateTime.Now.Year )) {
+							track.PublishedYear = year;
+						}
+
+						break;
 					}
-					else if( year < 100 ) {
-						year += 1900;
-					}
-
-					track.PublishedYear = year;
 				}
 			}
 		}
