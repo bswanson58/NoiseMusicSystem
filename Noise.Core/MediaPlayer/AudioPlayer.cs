@@ -641,6 +641,9 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
+		[DllImport("gdi32.dll")]
+		public static extern bool DeleteObject(IntPtr hObject);
+      
 		public BitmapSource GetSpectrumImage( int channel, int height, int width, Color baseColor, Color peakColor, Color peakHoldColor ) {
 			BitmapSource	retValue = null;
 
@@ -660,12 +663,20 @@ namespace Noise.Core.MediaPlayer {
 																		barWidth, peakHoldHeight, lineGap, peakHoldTime, false, true, false );
 
 					if( bitmap != null ) {
+						IntPtr	hBitmap = IntPtr.Zero;
+
 						try {
-							retValue = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap( bitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty,
-																									 BitmapSizeOptions.FromEmptyOptions());
+							hBitmap = bitmap.GetHbitmap();
+
+							retValue = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap( hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions() );
 						}
 						catch( Exception ex ) {
 							mLog.LogException( "Exception - AudioPlayer:CreatingSpectrumBitmap: ", ex );
+						}
+						finally {
+							if( hBitmap != IntPtr.Zero ) {
+								DeleteObject( hBitmap );
+							}
 						}
 
 						bitmap.Dispose();
