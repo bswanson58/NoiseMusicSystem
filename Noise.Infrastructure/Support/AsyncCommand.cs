@@ -13,11 +13,11 @@ namespace Noise.Infrastructure.Support {
 	}
 
 	public class AsyncCommand<T> : ICommand where T : class {
-		private readonly	Action<T>	mExecuteAction;
+		private readonly Action<T>		mExecuteAction;
 		private bool					mIsExecuting;
 
-		public event EventHandler CanExecuteChanged;
-		public event EventHandler ExecutionStarting;
+		public event EventHandler		CanExecuteChanged;
+		public event EventHandler		ExecutionStarting;
 		public event EventHandler<AsyncCommandCompleteEventArgs> ExecutionComplete;
 
 		public AsyncCommand( Action<T> executeAction ) {
@@ -54,16 +54,14 @@ namespace Noise.Infrastructure.Support {
 							obj => {
 								try {
 									OnExecute( typedParameter );
-									if( ExecutionComplete != null )
-										dispatcher.Invoke( DispatcherPriority.Normal,
-												ExecutionComplete, this,
-												new AsyncCommandCompleteEventArgs( null ));
+									if( ExecutionComplete != null ) {
+										dispatcher.Invoke( DispatcherPriority.Normal, ExecutionComplete, this, new AsyncCommandCompleteEventArgs( null ));
+									}
 								}
 								catch( Exception ex ) {
-									if( ExecutionComplete != null )
-										dispatcher.Invoke( DispatcherPriority.Normal,
-												ExecutionComplete, this,
-												new AsyncCommandCompleteEventArgs( ex ));
+									if( ExecutionComplete != null ) {
+										dispatcher.Invoke( DispatcherPriority.Normal, ExecutionComplete, this, new AsyncCommandCompleteEventArgs( ex ));
+									}
 								}
 								finally {
 									dispatcher.Invoke( DispatcherPriority.Normal, new Action( () => IsExecuting = false ));
@@ -81,7 +79,7 @@ namespace Noise.Infrastructure.Support {
 		}
 
 		public virtual bool CanExecute( object parameter ) {
-			return !IsExecuting;
+			return(!IsExecuting );
 		}
 	}
 }
