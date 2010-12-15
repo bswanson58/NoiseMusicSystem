@@ -49,7 +49,10 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
-				var item = ( from DbBase o in database.Database where o.DbId == args.ItemId select o ).FirstOrDefault();
+				var	parms = database.Database.CreateParameters();
+				parms["dbid"] = args.ItemId;
+
+				var item = database.Database.ExecuteScalar( "SELECT DbBase WHERE DbId = @dbid", parms );
 
 				if( item != null ) {
 					TypeSwitch.Do( item, TypeSwitch.Case<DbArtist>( artist => SetFavorite( database, artist, args.Value )),
@@ -101,7 +104,6 @@ namespace Noise.Core.Database {
 			Condition.Requires( forArtist ).IsNotNull();
 
 			try {
-				forArtist = database.ValidateOnThread( forArtist ) as DbArtist;
 				if(( forArtist != null ) &&
 				   ( forArtist.IsFavorite != isFavorite )) {
 					forArtist.IsFavorite = isFavorite;
@@ -119,7 +121,6 @@ namespace Noise.Core.Database {
 			Condition.Requires( forAlbum ).IsNotNull();
 
 			try {
-				forAlbum = database.ValidateOnThread( forAlbum ) as DbAlbum;
 				if( forAlbum != null ) {
 					if( forAlbum.IsFavorite != isFavorite ) {
 						forAlbum.IsFavorite = isFavorite;
@@ -128,9 +129,13 @@ namespace Noise.Core.Database {
 						mEvents.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( forAlbum, DbItemChanged.Favorite ));
 					}
 
-					var artist = ( from DbArtist dbArtist in database.Database where dbArtist.DbId == forAlbum.Artist select dbArtist ).FirstOrDefault();
+					var parms = database.Database.CreateParameters();
+					parms["artistId"] = forAlbum.Artist;
+
+					var artist = database.Database.ExecuteScalar( "SELECT DbArtist WHERE DbId = @artistId", parms ) as DbArtist;
+
 					if( artist != null ) {
-						var albumList = from DbAlbum dbAlbum in database.Database where dbAlbum.Artist == artist.DbId select dbAlbum;
+						var albumList = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>().ToList();
 
 						artist.HasFavorites = false;
 
@@ -151,7 +156,6 @@ namespace Noise.Core.Database {
 			Condition.Requires( forTrack ).IsNotNull();
 
 			try {
-				forTrack = database.ValidateOnThread( forTrack ) as DbTrack;
 				if( forTrack != null ) {
 					if( forTrack.IsFavorite != isFavorite ) {
 						forTrack.IsFavorite = isFavorite;
@@ -160,9 +164,12 @@ namespace Noise.Core.Database {
 						mEvents.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( forTrack, DbItemChanged.Favorite ));
 					}
 
-					var album = ( from DbAlbum dbAlbum in database.Database where dbAlbum.DbId == forTrack.Album select dbAlbum ).FirstOrDefault();
+					var parms = database.Database.CreateParameters();
+					parms["albumId"] = forTrack.Album;
+
+					var album = database.Database.ExecuteScalar( "SELECT DbAlbum WHERE DbId = @albumId", parms ) as DbAlbum;
 					if( album != null ) {
-						var trackList = from DbTrack dbTrack in database.Database where dbTrack.Album == forTrack.Album select dbTrack;
+						var trackList = database.Database.ExecuteQuery( "SELECT DbTrack WHERE Album = @albumId", parms ).OfType<DbTrack>().ToList();
 
 						album.HasFavorites = false;
 
@@ -172,9 +179,11 @@ namespace Noise.Core.Database {
 
 						database.Store( album );
 
-						var artist = ( from DbArtist dbArtist in database.Database where dbArtist.DbId == album.Artist select dbArtist ).FirstOrDefault();
+						parms["artistId"] = album.Artist;
+
+						var artist = database.Database.ExecuteScalar( "SELECT DbArtist WHERE DbId = @artistId", parms ) as DbArtist;
 						if( artist != null ) {
-							var albumList = from DbAlbum dbAlbum in database.Database where dbAlbum.Artist == album.Artist select dbAlbum;
+							var albumList = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>().ToList();
 
 							artist.HasFavorites = false;
 

@@ -214,6 +214,7 @@ namespace Noise.UI.ViewModels {
 
 			if(( item is DbArtist ) &&
 			   ( CurrentArtist != null ) &&
+			   ( args.Change == DbItemChanged.Update ) &&
 			   ( args.ItemId == CurrentArtist.DbId )) {
 				CurrentArtist = TransformArtist( item as DbArtist );
 			}

@@ -180,6 +180,7 @@ namespace Noise.UI.ViewModels {
 
 			if(( item is DbTrack ) &&
 			   ( mCurrentAlbum != null ) &&
+			   ( args.Change == DbItemChanged.Update ) &&
 			   ((item as DbTrack).Album == mCurrentAlbum.DbId )) {
 				BeginInvoke( () => {
 					var track = ( from UiTrack node in mTracks where node.DbId == args.ItemId select node ).FirstOrDefault();
@@ -205,10 +206,9 @@ namespace Noise.UI.ViewModels {
 
 			if(( item is DbAlbum ) &&
 			   ( mCurrentAlbum != null ) &&
+			   ( args.Change == DbItemChanged.Update ) &&
 			   ((item as DbAlbum).DbId == mCurrentAlbum.DbId )) {
-				BeginInvoke( () => {
-					mCurrentAlbum = TransformAlbum( item as DbAlbum );
-				} );
+				BeginInvoke( () => Mapper.DynamicMap( item as DbAlbum, mCurrentAlbum ));
 			}
 		}
 
