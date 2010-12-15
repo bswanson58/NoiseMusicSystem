@@ -186,9 +186,10 @@ namespace Noise.Core.Database {
 			var retValue = dbObject;
 
 			if( Database.GetUid( dbObject ) == -1 ) {
-				var dbId = dbObject.DbId;
+				var parms = Database.CreateParameters();
+				parms["dbid"] = dbObject.DbId;
 
-				retValue = ( from DbBase o in Database where o.DbId == dbId select o ).FirstOrDefault();
+				retValue = Database.ExecuteScalar( "SELECT DbBase WHERE DbId = @dbid", parms ) as DbBase;
 			}
 
 			Condition.Ensures( retValue ).IsNotNull();
