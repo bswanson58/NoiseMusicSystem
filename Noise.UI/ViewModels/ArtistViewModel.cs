@@ -216,7 +216,8 @@ namespace Noise.UI.ViewModels {
 			   ( CurrentArtist != null ) &&
 			   ( args.Change == DbItemChanged.Update ) &&
 			   ( args.ItemId == CurrentArtist.DbId )) {
-				CurrentArtist = TransformArtist( item as DbArtist );
+				BeginInvoke( () => Mapper.DynamicMap( item as DbArtist, mCurrentArtist ));
+//				CurrentArtist = TransformArtist( item as DbArtist );
 			}
 		}
 
