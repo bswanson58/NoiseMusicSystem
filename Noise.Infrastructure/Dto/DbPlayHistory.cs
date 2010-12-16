@@ -1,14 +1,22 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbPlayHistory : DbBase {
-		public	DateTime	PlayedOn { get; set; }
-		public	StorageFile	Track { get; private set; }
+		public	long		PlayedOnTicks { get; set; }
+		public	long		StorageFileId { get; private set; }
+		public	long		TrackId { get; private set; }
 
 		public DbPlayHistory( StorageFile track ) {
-			Track = track;
-			PlayedOn = DateTime.Now;
+			StorageFileId = track.DbId;
+			TrackId = track.MetaDataPointer;
+			PlayedOnTicks = DateTime.Now.Ticks;
+		}
+
+		[Ignore]
+		public DateTime PlayedOn {
+			get{ return( new DateTime( PlayedOnTicks )); }
 		}
 
 		[Export("PersistenceType")]

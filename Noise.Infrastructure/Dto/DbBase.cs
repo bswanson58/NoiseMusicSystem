@@ -1,8 +1,10 @@
 ﻿using System;
+using Eloquera.Client;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbBase : IDbBase {
+		[Index]
 		public long	DbId { get; private set; }
 
 		protected DbBase() {

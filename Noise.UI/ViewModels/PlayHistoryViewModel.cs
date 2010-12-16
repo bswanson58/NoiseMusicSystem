@@ -68,7 +68,7 @@ namespace Noise.UI.ViewModels {
 			var historyList = from DbPlayHistory history in mNoiseManager.PlayHistory.PlayHistory orderby history.PlayedOn descending select history;
 
 			foreach( var history in historyList ) {
-				var track = mNoiseManager.DataProvider.GetTrack( history.Track );
+				var track = mNoiseManager.DataProvider.GetTrack( history.TrackId );
 
 				if( track != null ) {
 					var album = mNoiseManager.DataProvider.GetAlbumForTrack( track );

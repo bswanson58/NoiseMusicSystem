@@ -17,7 +17,7 @@ namespace Noise.Infrastructure.Dto {
 		public UInt16			TrackNumber { get; set; }
 		public string			VolumeName { get; set; }
 		public UInt32			PublishedYear { get; set; }
-		public DateTime			DateAdded { get; private set; }
+		public long				DateAddedTicks { get; private set; }
 		public eAudioEncoding	Encoding { get; set; }
 		public long				CalculatedGenre { get; set; }
 		public long				ExternalGenre { get; set; }
@@ -31,7 +31,7 @@ namespace Noise.Infrastructure.Dto {
 
 		public DbTrack() {
 			Album = Constants.cDatabaseNullOid;
-			DateAdded = DateTime.Now.Date;
+			DateAddedTicks = DateTime.Now.Date.Ticks;
 			Encoding = eAudioEncoding.Unknown;
 
 			CalculatedGenre = Constants.cDatabaseNullOid;
@@ -55,6 +55,11 @@ namespace Noise.Infrastructure.Dto {
 		[Ignore]
 		public bool IsUserRating {
 			get{ return( true ); }
+		}
+
+		[Ignore]
+		public DateTime DateAdded {
+			get{ return( new DateTime( DateAddedTicks )); }
 		}
 
 		[Export("PersistenceType")]

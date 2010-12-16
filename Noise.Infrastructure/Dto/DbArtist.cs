@@ -15,11 +15,13 @@ namespace Noise.Infrastructure.Dto {
 		public Int16			CalculatedRating { get; set; }
 		public Int16			MaxChildRating { get; set; }
 		public Int16			AlbumCount { get; set; }
+		public long				DateAddedTicks { get; private set; }
 		public bool				IsFavorite { get; set; }
 		public bool				HasFavorites { get; set; }
 
 		public DbArtist() {
 			Name = "";
+			DateAddedTicks = DateTime.Now.Date.Ticks;
 			CalculatedGenre = Constants.cDatabaseNullOid;
 			ExternalGenre = Constants.cDatabaseNullOid;
 			UserGenre = Constants.cDatabaseNullOid;
@@ -41,6 +43,11 @@ namespace Noise.Infrastructure.Dto {
 		[Ignore]
 		public bool IsUserRating {
 			get{ return( UserRating != 0 ); }
+		}
+
+		[Ignore]
+		public DateTime DateAdded {
+			get{ return( new DateTime( DateAddedTicks )); }
 		}
 
 		[Export("PersistenceType")]

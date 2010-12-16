@@ -15,7 +15,7 @@ namespace Noise.Infrastructure.Dto {
 		public Int32			Bitrate { get; set; }
 		public Int16			Channels { get; set; }
 		public Int16			Rating { get; set; }
-		public DateTime			DateAdded { get; private set; }
+		public long				DateAddedTicks { get; private set; }
 		public eAudioEncoding	Encoding { get; set; }
 		public long				ExternalGenre { get; set; }
 		public long				UserGenre { get; set; }
@@ -24,7 +24,7 @@ namespace Noise.Infrastructure.Dto {
 		public string			Website { get; set; }
 
 		public DbInternetStream() {
-			DateAdded = DateTime.Now;
+			DateAddedTicks = DateTime.Now.Date.Ticks;
 			Encoding = eAudioEncoding.Unknown;
 
 			Description = "";
@@ -43,6 +43,11 @@ namespace Noise.Infrastructure.Dto {
 		[Ignore]
 		public bool IsUserRating {
 			get{ return( true ); }
+		}
+
+		[Ignore]
+		public DateTime DateAdded {
+			get{ return( new DateTime( DateAddedTicks )); }
 		}
 
 		[Export("PersistenceType")]

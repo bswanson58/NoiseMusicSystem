@@ -287,29 +287,6 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
-		public DbTrack GetTrack( StorageFile forFile ) {
-			Condition.Requires( forFile ).IsNotNull();
-
-			DbTrack	retValue = null;
-			var database = mDatabaseManager.ReserveDatabase();
-
-			try {
-				var parms = database.Database.CreateParameters();
-
-				parms["itemId"] = forFile.MetaDataPointer;
-
-				retValue = database.Database.ExecuteScalar( "SELECT DbTrack Where DbId = @itemId", parms ) as DbTrack;
-			}
-			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetTrack( StorageFile ): ", ex );
-			}
-			finally {
-				mDatabaseManager.FreeDatabase( database );
-			}
-
-			return( retValue );
-		}
-
 		public DbTrack GetTrack( long trackId ) {
 			DbTrack	retValue = null;
 			var database = mDatabaseManager.ReserveDatabase();
@@ -381,7 +358,7 @@ namespace Noise.Core.Database {
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				retValue = new DataProviderList<DbTrack>( database.DatabaseId, FreeDatabase,
-														  database.Database.ExecuteQuery( "SELECT DbTrack ORDER BY DateAdded DESC" ).OfType<DbTrack>());
+														  database.Database.ExecuteQuery( "SELECT DbTrack ORDER BY DateAddedTicks DESC" ).OfType<DbTrack>());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetNewlyAddedTracks: ", ex );

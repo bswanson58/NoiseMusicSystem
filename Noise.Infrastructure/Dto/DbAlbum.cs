@@ -18,12 +18,14 @@ namespace Noise.Infrastructure.Dto {
 		public long				UserGenre { get; set; }
 		public bool				IsFavorite { get; set; }
 		public bool				HasFavorites { get; set; }
+		public long				DateAddedTicks { get; private set; }
 
 		public DbAlbum() {
 			Name = "";
 			CalculatedGenre = Constants.cDatabaseNullOid;
 			ExternalGenre = Constants.cDatabaseNullOid;
 			UserGenre = Constants.cDatabaseNullOid;
+			DateAddedTicks = DateTime.Now.Date.Ticks;
 		}
 
 		[Ignore]
@@ -41,6 +43,11 @@ namespace Noise.Infrastructure.Dto {
 		[Ignore]
 		public bool IsUserRating {
 			get{ return( UserRating != 0 ); }
+		}
+
+		[Ignore]
+		public DateTime DateAdded {
+			get{ return( new DateTime( DateAddedTicks )); }
 		}
 
 		[Export("PersistenceType")]

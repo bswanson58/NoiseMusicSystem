@@ -41,10 +41,10 @@ namespace Noise.Core.PlayHistory {
 				var database = mDatabaseManager.ReserveDatabase();
 
 				try {
-					var lastPlayed = mPlayHistory.FindList( history => history.Track.MetaDataPointer == track.File.MetaDataPointer ).FirstOrDefault();
+					var lastPlayed = mPlayHistory.FindList( history => history.StorageFileId == track.File.DbId ).FirstOrDefault();
 
 					if( lastPlayed != null ) {
-						lastPlayed.PlayedOn = DateTime.Now;
+						lastPlayed.PlayedOnTicks = DateTime.Now.Ticks;
 
 						database.Store( database.ValidateOnThread( lastPlayed ));
 					}
@@ -77,7 +77,7 @@ namespace Noise.Core.PlayHistory {
 		}
 
 		private void TrimHistoryList( IDatabase database ) {
-			var historyList = PlayHistory;
+			var historyList = from DbPlayHistory history in PlayHistory orderby history.PlayedOn descending select history;
 			var historyCount = historyList.Count();
 			var historyEnum = historyList.GetEnumerator();
 			var deleteList = new List<DbPlayHistory>();
@@ -95,7 +95,7 @@ namespace Noise.Core.PlayHistory {
 		}
 
 		public IEnumerable<DbPlayHistory> PlayHistory {
-			get{ return( from history in mPlayHistory.List orderby history.PlayedOn select history ); }
+			get{ return( mPlayHistory.List ); }
 		}
 	}
 }
