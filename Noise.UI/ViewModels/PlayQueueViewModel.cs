@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
@@ -18,6 +19,8 @@ namespace Noise.UI.ViewModels {
 		private INoiseManager		mNoiseManager;
 		private IEventAggregator	mEventAggregator;
 		private int					mPlayingIndex;
+		private TimeSpan			mTotalTime;
+		private TimeSpan			mRemainingTime;
 		private	ListViewDragDropManager<PlayQueueTrack>					mDragManager;
 		private readonly ObservableCollectionEx<PlayQueueTrack>			mPlayQueue;
 		private	readonly ObservableCollectionEx<ExhaustedStrategyItem>	mExhaustedStrategies;
@@ -151,6 +154,16 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => SelectedIndex, value ); }
 		}
 
+		[DependsUpon( "PlayQueueChangedFlag" )]
+		public TimeSpan TotalTime {
+			get{ return( mTotalTime ); }
+		}
+
+		[DependsUpon( "PlayQueueChangedFlag" )]
+		public TimeSpan RemainingTime {
+			get{ return( mRemainingTime ); }
+		}
+
 		private void OnPlayQueueChanged( IPlayQueue playQueue ) {
 			BeginInvoke( LoadPlayQueue );
 
@@ -166,6 +179,20 @@ namespace Noise.UI.ViewModels {
 			mPlayQueue.Clear();
 			mPlayQueue.AddRange( mNoiseManager.PlayQueue.PlayList );
 
+			mTotalTime = new TimeSpan();
+			mRemainingTime = new TimeSpan();
+
+			foreach( var track in mPlayQueue ) {
+				mTotalTime = mTotalTime.Add( track.Track.Duration );
+
+				if((!track.HasPlayed ) ||
+				   ( track.IsPlaying )) {
+					mRemainingTime = mRemainingTime.Add( track.Track.Duration );
+				}
+			}
+
+			RaisePropertyChanged( () => TotalTime );
+			RaisePropertyChanged( () => RemainingTime );
 			RaiseCanExecuteChangedEvent( "CanExecute_SavePlayList" );
 		}
 
@@ -191,18 +218,23 @@ namespace Noise.UI.ViewModels {
 				var index = 0;
 
 				mPlayingIndex = -1;
+				mRemainingTime = new TimeSpan();
 
 				foreach( var item in mPlayQueue ) {
 					if( item.IsPlaying ) {
 						mPlayingIndex = index;
+					}
 
-						break;
+					if((!item.HasPlayed ) ||
+					   ( item.IsPlaying )) {
+						mRemainingTime = mRemainingTime.Add( item.Track.Duration );
 					}
 
 					index++;
 				}
 
 				RaisePropertyChanged( () => PlayingIndex );
+				RaisePropertyChanged( () => RemainingTime );
 			});
 		}
 
