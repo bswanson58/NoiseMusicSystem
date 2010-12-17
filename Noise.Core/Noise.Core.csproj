@@ -164,6 +164,13 @@
     <Compile Include="DataBuilders\ISearchBuilder.cs" />
     <Compile Include="DataBuilders\LibraryBuilder.cs" />
     <Compile Include="DataBuilders\SearchBuilder.cs" />
+    <Compile Include="DataExchange\BaseExporter.cs" />
+    <Compile Include="DataExchange\DataExchangeManager.cs" />
+    <Compile Include="DataExchange\Dto\ExportBase.cs" />
+    <Compile Include="DataExchange\Dto\ExportFavorite.cs" />
+    <Compile Include="DataExchange\ExchangeConstants.cs" />
+    <Compile Include="DataExchange\ExportFavorites.cs" />
+    <Compile Include="DataExchange\IDataExport.cs" />
     <Compile Include="DataProviders\DiscogsProvider.cs" />
     <Compile Include="DataProviders\IMetaDataProvider.cs" />
     <Compile Include="DataBuilders\ISummaryBuilder.cs" />

@@ -77,6 +77,8 @@ namespace Noise.UI.ViewModels {
 
 			mFavoritesList.Sort( SelectSortProperty, ListSortDirection.Ascending );
 			mFavoritesList.ResumeNotification();
+
+			RaiseCanExecuteChangedEvent( "CanExecute_ExportFavorites" );
 		}
 
 		private static string SelectSortProperty( FavoriteViewNode node ) {
@@ -106,6 +108,14 @@ namespace Noise.UI.ViewModels {
 
 		private static void PlayTrack( FavoriteViewNode node ) {
 			GlobalCommands.PlayTrack.Execute( node.Track );
+		}
+
+		public void Execute_ExportFavorites() {
+			mNoiseManager.DataExchangeMgr.ExportFavorites( @"D:\Favorites.noise" );
+		}
+
+		public bool CanExecute_ExportFavorites() {
+			return( mFavoritesList.Count > 0 );
 		}
 	}
 }

@@ -8,28 +8,39 @@
              DataContext="{Binding FavoritesViewModel, Source={StaticResource ViewModelLocator}}"
              d:DesignHeight="300" d:DesignWidth="300">
 
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Favorites "  Margin="0">
-        <ListView Grid.Row="0" BorderThickness="0" ItemsSource="{Binding Path=FavoritesList}"
+    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Favorites " Margin="0">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <ListView Grid.Row="0" BorderThickness="0" ItemsSource="{Binding Path=FavoritesList}"
             Behaviours:ListViewColumns.Stretch="true"
             Behaviours:GridViewSort.AutoSort="True">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="{x:Type ListViewItem}">
-                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayFavorite}"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Title}" Behaviours:GridViewSort.PropertyName="Title"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayFavorite}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Title}" Behaviours:GridViewSort.PropertyName="Title"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            
+            <StackPanel Grid.Row="1" Margin="3" Orientation="Horizontal">
+                <Button Content="Export" Command="{Binding Path=ExportFavorites}"/>
+            </StackPanel>
+        </Grid>
     </GroupBox>
 </UserControl>

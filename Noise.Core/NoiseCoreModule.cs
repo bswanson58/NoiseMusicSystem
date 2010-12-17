@@ -2,6 +2,7 @@
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
+using Noise.Core.DataExchange;
 using Noise.Core.FileStore;
 using Noise.Core.MediaPlayer;
 using Noise.Core.PlayHistory;
@@ -22,6 +23,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IAudioPlayer, AudioPlayer>();
 			mContainer.RegisterType<IContentManager, ContentManager>();
 			mContainer.RegisterType<IDatabase, EloqueraDatabase>();
+			mContainer.RegisterType<IDataExchangeManager, DataExchangeManager>();
 			mContainer.RegisterType<IDataProvider, DataProvider>();
 			mContainer.RegisterType<IDataUpdates, DataUpdates>();
 			mContainer.RegisterType<IDatabaseManager, DatabaseManager>( Constants.NewInstance );
