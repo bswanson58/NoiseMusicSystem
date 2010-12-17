@@ -4,11 +4,11 @@ using System.Windows.Controls;
 namespace Noise.UI.Behaviours {
 
 	public class ListViewFirstItemVisible {
-		public static int GetChangeTrigger( ListView listView ) {
-			return (int)listView.GetValue( ChangeTriggerProperty );
+		public static object GetChangeTrigger( ListView listView ) {
+			return( listView.GetValue( ChangeTriggerProperty ));
 		}
 
-		public static void SetChangeTrigger( ListView listView, int value ) {
+		public static void SetChangeTrigger( ListView listView, object value ) {
 			listView.SetValue( ChangeTriggerProperty, value );
 		}
 

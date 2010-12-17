@@ -61,7 +61,7 @@
                     </Grid>
                 </Grid>
             </Border>
-            <ScrollViewer Grid.Row="1">
+            <ScrollViewer Grid.Row="1" Behaviours:ScrollViewerPosition.ChangeTrigger="{Binding Path=Artist, Mode=OneWay}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
