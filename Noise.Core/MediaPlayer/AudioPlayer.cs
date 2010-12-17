@@ -603,8 +603,11 @@ namespace Noise.Core.MediaPlayer {
 
 		private void RemoveEq() {
 			try {
-				if(!Bass.BASS_ChannelRemoveFX( mMixerChannel, mParamEqFx )) {
-					mLog.LogMessage( string.Format( "AudioPlayer - could not remove eq fx: {0}", Bass.BASS_ErrorGetCode()));
+				if(( mMixerChannel != 0 ) &&
+				   ( mParamEqFx != 0 )) {
+					if(!Bass.BASS_ChannelRemoveFX( mMixerChannel, mParamEqFx )) {
+						mLog.LogMessage( string.Format( "AudioPlayer - could not remove eq fx: {0}", Bass.BASS_ErrorGetCode()));
+					}
 				}
 			}
 			catch( Exception ex ) {
