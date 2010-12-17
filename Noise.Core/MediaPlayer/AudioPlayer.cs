@@ -156,7 +156,7 @@ namespace Noise.Core.MediaPlayer {
 					InitializePreamp();
 				}
 				else {
-					mLog.LogMessage( "AudioPlayer: Mixer channel could not be created." );
+					mLog.LogMessage( string.Format( "AudioPlayer: Mixer channel could not be created: {0}", Bass.BASS_ErrorGetCode()));
 				}
 			}
 			catch( Exception ex ) {
