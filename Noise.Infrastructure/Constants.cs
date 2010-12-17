@@ -28,6 +28,9 @@ namespace Noise.Infrastructure {
 		public const string				EqPresetsFile = "EqPresets.xml";
 		public const string				LicenseKeyFile = "LicenseKeys.xml";
 
+		public const string				CloudDatabaseName = @"Noise Music System Database";
+		public const string				CloudSyncTable = "Sync Entries";
+
 		static Constants() {
 			cNoExpirationDate = DateTime.MaxValue;
 		}

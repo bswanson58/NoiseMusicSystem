@@ -79,6 +79,9 @@
     <Reference Include="Eloquera.Common, Version=3.0.0.28, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
       <HintPath>..\lib\Eloquera\v3.0\Eloquera.Common.dll</HintPath>
     </Reference>
+    <Reference Include="GDataDB">
+      <HintPath>..\lib\GDataDB\v0.2.0.0\GDataDB.dll</HintPath>
+    </Reference>
     <Reference Include="Hammock.ClientProfile">
       <HintPath>..\lib\Hammock\v1.0.4.0\Hammock.ClientProfile.dll</HintPath>
     </Reference>
@@ -165,11 +168,14 @@
     <Compile Include="DataBuilders\LibraryBuilder.cs" />
     <Compile Include="DataBuilders\SearchBuilder.cs" />
     <Compile Include="DataExchange\BaseExporter.cs" />
+    <Compile Include="DataExchange\CloudSyncManager.cs" />
     <Compile Include="DataExchange\DataExchangeManager.cs" />
+    <Compile Include="DataExchange\Dto\CloudSyncEntry.cs" />
     <Compile Include="DataExchange\Dto\ExportBase.cs" />
     <Compile Include="DataExchange\Dto\ExportFavorite.cs" />
     <Compile Include="DataExchange\ExchangeConstants.cs" />
     <Compile Include="DataExchange\ExportFavorites.cs" />
+    <Compile Include="DataExchange\ICloudSyncManager.cs" />
     <Compile Include="DataExchange\IDataExport.cs" />
     <Compile Include="DataProviders\DiscogsProvider.cs" />
     <Compile Include="DataProviders\IMetaDataProvider.cs" />

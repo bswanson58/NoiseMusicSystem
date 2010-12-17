@@ -3,6 +3,7 @@ using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
+using Noise.Core.DataExchange;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -23,6 +24,7 @@ namespace Noise.Core {
 		private	IPlayController				mPlayController;
 		private IDataUpdates				mDataUpdates;
 		private IFileUpdates				mFileUpdates;
+		private ICloudSyncManager			mCloudSyncManager;
 
 		public	IDataProvider				DataProvider { get; private set; }
 		public	ISearchProvider				SearchProvider { get; private set; }
@@ -70,6 +72,11 @@ namespace Noise.Core {
 				mFileUpdates = mContainer.Resolve<IFileUpdates>();
 				if(!mFileUpdates.Initialize()) {
 					mLog.LogMessage( "Noise Manager: FileUpdates could not be initialized" );
+				}
+
+				mCloudSyncManager = mContainer.Resolve<ICloudSyncManager>();
+				if(!mCloudSyncManager.InitializeCloudSync()) {
+					mLog.LogMessage( "Noise Manager: Could not initialize cloud sync." );
 				}
 
 				mLog.LogMessage( "Initialized NoiseManager." );

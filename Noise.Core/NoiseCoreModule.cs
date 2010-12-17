@@ -21,6 +21,7 @@ namespace Noise.Core {
 
 		public void Initialize() {
 			mContainer.RegisterType<IAudioPlayer, AudioPlayer>();
+			mContainer.RegisterType<ICloudSyncManager, CloudSyncManager>();
 			mContainer.RegisterType<IContentManager, ContentManager>();
 			mContainer.RegisterType<IDatabase, EloqueraDatabase>();
 			mContainer.RegisterType<IDataExchangeManager, DataExchangeManager>();
