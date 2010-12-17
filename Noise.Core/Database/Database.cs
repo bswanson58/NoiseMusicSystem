@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.Linq;
 using CuttingEdge.Conditions;
 using Eloquera.Client;
 using Microsoft.Practices.Prism.Events;

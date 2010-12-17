@@ -13,12 +13,31 @@ namespace Noise.Core.Database {
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly IContentManager	mContentManager;
 		private readonly ILog				mLog;
+
+		public	long	DatabaseId { get; private set; }
 		
 		public DataProvider( IUnityContainer container ) {
 			mContainer = container;
 			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
 			mContentManager = mContainer.Resolve<IContentManager>();
 			mLog = mContainer.Resolve<ILog>();
+
+			IDatabase database = null;
+			try {
+				database = mDatabaseManager.ReserveDatabase();
+
+				if( database != null ) {
+					DatabaseId = database.DatabaseVersion.DatabaseId;
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - Could not access database id.", ex );
+			}
+			finally {
+				if( database != null ) {
+					mDatabaseManager.FreeDatabase( database );
+				}
+			}
 		}
 
 		private void FreeDatabase( string databaseId ) {

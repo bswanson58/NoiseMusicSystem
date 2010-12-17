@@ -2,6 +2,8 @@
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface IDataProvider {
+		long						DatabaseId { get; }
+
 		long						GetObjectIdentifier( object dbObject );
 
 		DbArtist					GetArtist( long dbid );
