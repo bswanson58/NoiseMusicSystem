@@ -132,9 +132,9 @@ namespace Noise.Core.FileStore {
 					var id3Tags = tags.GetTag( TagTypes.Id3v2 ) as TagLib.Id3v2.Tag;
 
 					if( id3Tags != null ) {
-						var	favoriteFrame = UserTextInformationFrame.Get( id3Tags, Constants.FavoriteFrame, true );
+						var	favoriteFrame = UserTextInformationFrame.Get( id3Tags, Constants.FavoriteFrameDescription, true );
+
 						if( favoriteFrame != null ) {
-							favoriteFrame.Description = Constants.FavoriteFrameDescription;
 							favoriteFrame.Text = new [] { args.Value.ToString()};
 
 							try {

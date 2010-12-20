@@ -217,7 +217,7 @@ namespace Noise.Core.DataProviders {
 							}
 						}
 
-						var favoritesFrame = UserTextInformationFrame.Get( id3Tags, Constants.FavoriteFrame, false );
+						var favoritesFrame = UserTextInformationFrame.Get( id3Tags, Constants.FavoriteFrameDescription, false );
 						if( favoritesFrame != null ) {
 							bool isFavorite;
 

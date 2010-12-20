@@ -23,7 +23,6 @@ namespace Noise.Infrastructure {
 
 		public const string				Id3FrameUserName = "Noise Music System";
 		public const string				FavoriteFrameDescription = "Noise Music System - Favorite Track Flag";
-		public const string				FavoriteFrame = "FAVORITE";
 
 		public const string				EqPresetsFile = "EqPresets.xml";
 		public const string				LicenseKeyFile = "LicenseKeys.xml";
