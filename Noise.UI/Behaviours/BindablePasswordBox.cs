@@ -2,73 +2,94 @@
 using System.Windows.Controls;
 
 namespace Noise.UI.Behaviours {
-	public class BindablePasswordBox : Decorator {
-		/// <summary>
-		/// The password dependency property.
-		/// </summary>
-		public	static readonly DependencyProperty	PasswordProperty;
-		private	bool								mIsPreventCallback;
-		private	readonly RoutedEventHandler			mSavedCallback;
+	// from: http://blog.functionalfun.net/2008/06/wpf-passwordbox-and-data-binding.html
+	public static class PasswordBoxAssistant {
+		public static readonly DependencyProperty BoundPassword =
+          DependencyProperty.RegisterAttached( "BoundPassword", typeof( string ), typeof( PasswordBoxAssistant ), new PropertyMetadata( string.Empty, OnBoundPasswordChanged ) );
 
-		/// <summary>
-		/// Static constructor to initialize the dependency properties.
-		/// </summary>
-		static BindablePasswordBox() {
-			PasswordProperty = DependencyProperty.Register(
-				"BindablePassword",
-				typeof( string ),
-				typeof( BindablePasswordBox ),
-				new FrameworkPropertyMetadata( "", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnPasswordPropertyChanged ));
-		}
+		public static readonly DependencyProperty BindPassword = DependencyProperty.RegisterAttached(
+			"BindPassword", typeof( bool ), typeof( PasswordBoxAssistant ), new PropertyMetadata( false, OnBindPasswordChanged ) );
 
-		/// <summary>
-		/// Saves the password changed callback and sets the child element to the password box.
-		/// </summary>
-		public BindablePasswordBox() {
-			mSavedCallback = HandlePasswordChanged;
+		private static readonly DependencyProperty UpdatingPassword =
+          DependencyProperty.RegisterAttached( "UpdatingPassword", typeof( bool ), typeof( PasswordBoxAssistant ), new PropertyMetadata( false ) );
 
-			var passwordBox = new PasswordBox();
-			passwordBox.PasswordChanged += mSavedCallback;
-			Child = passwordBox;
-		}
+		private static void OnBoundPasswordChanged( DependencyObject d, DependencyPropertyChangedEventArgs e ) {
+			var box = d as PasswordBox;
 
-		/// <summary>
-		/// The password dependency property.
-		/// </summary>
-		public string BindablePassword {
-			get { return GetValue( PasswordProperty ) as string; }
-			set { SetValue( PasswordProperty, value ); }
-		}
-
-		/// <summary>
-		/// Handles changes to the password dependency property.
-		/// </summary>
-		/// <param name="d">the dependency object</param>
-		/// <param name="eventArgs">the event args</param>
-		private static void OnPasswordPropertyChanged( DependencyObject d, DependencyPropertyChangedEventArgs eventArgs ) {
-			var bindablePasswordBox = (BindablePasswordBox)d;
-			var	passwordBox = (PasswordBox)bindablePasswordBox.Child;
-
-			if( bindablePasswordBox.mIsPreventCallback ) {
+			// only handle this event when the property is attached to a PasswordBox
+			// and when the BindPassword attached property has been set to true
+			if( box == null || !GetBindPassword( d )) {
 				return;
 			}
 
-			passwordBox.PasswordChanged -= bindablePasswordBox.mSavedCallback;
-			passwordBox.Password = ( eventArgs.NewValue != null ) ? eventArgs.NewValue.ToString() : "";
-			passwordBox.PasswordChanged += bindablePasswordBox.mSavedCallback;
+			// avoid recursive updating by ignoring the box's changed event
+			box.PasswordChanged -= HandlePasswordChanged;
+
+			var newPassword = (string)e.NewValue;
+
+			if( !GetUpdatingPassword( box ) ) {
+				box.Password = newPassword;
+			}
+
+			box.PasswordChanged += HandlePasswordChanged;
 		}
 
-		/// <summary>
-		/// Handles the password changed event.
-		/// </summary>
-		/// <param name="sender">the sender</param>
-		/// <param name="eventArgs">the event args</param>
-		private void HandlePasswordChanged( object sender, RoutedEventArgs eventArgs ) {
-			var passwordBox = (PasswordBox)sender;
+		private static void OnBindPasswordChanged( DependencyObject dp, DependencyPropertyChangedEventArgs e ) {
+			// when the BindPassword attached property is set on a PasswordBox,
+			// start listening to its PasswordChanged event
 
-			mIsPreventCallback = true;
-			BindablePassword = passwordBox.Password;
-			mIsPreventCallback = false;
+			var box = dp as PasswordBox;
+
+			if( box == null ) {
+				return;
+			}
+
+			var wasBound = (bool)( e.OldValue );
+			var needToBind = (bool)( e.NewValue );
+
+			if( wasBound ) {
+				box.PasswordChanged -= HandlePasswordChanged;
+			}
+
+			if( needToBind ) {
+				box.PasswordChanged += HandlePasswordChanged;
+			}
+		}
+
+		private static void HandlePasswordChanged( object sender, RoutedEventArgs e ) {
+			var box = sender as PasswordBox;
+
+			if( box != null ) {
+				// set a flag to indicate that we're updating the password
+				SetUpdatingPassword( box, true );
+				// push the new password into the BoundPassword property
+				SetBoundPassword( box, box.Password );
+				SetUpdatingPassword( box, false );
+			}
+		}
+
+		public static void SetBindPassword( DependencyObject dp, bool value ) {
+			dp.SetValue( BindPassword, value );
+		}
+
+		public static bool GetBindPassword( DependencyObject dp ) {
+			return (bool)dp.GetValue( BindPassword );
+		}
+
+		public static string GetBoundPassword( DependencyObject dp ) {
+			return (string)dp.GetValue( BoundPassword );
+		}
+
+		public static void SetBoundPassword( DependencyObject dp, string value ) {
+			dp.SetValue( BoundPassword, value );
+		}
+
+		private static bool GetUpdatingPassword( DependencyObject dp ) {
+			return (bool)dp.GetValue( UpdatingPassword );
+		}
+
+		private static void SetUpdatingPassword( DependencyObject dp, bool value ) {
+			dp.SetValue( UpdatingPassword, value );
 		}
 	}
 }
