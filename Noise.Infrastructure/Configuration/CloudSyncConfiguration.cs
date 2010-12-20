@@ -6,7 +6,14 @@ namespace Noise.Infrastructure.Configuration {
 
 		private const string	cLoginNameProperty			= "loginName";
 		private const string	cLoginPasswordProperty		= "password";
+		private const string	cUseCloudProperty			= "useCloud";
 		private const string	cLastSequenceProperty		= "lastSequence";
+
+		[ConfigurationPropertyAttribute( cUseCloudProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = false )]
+		public bool UseCloud {
+			get { return ((bool)( base[cUseCloudProperty] )); }
+			set { base[cUseCloudProperty] = value; }
+		}
 
 		[ConfigurationPropertyAttribute( cLoginNameProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "" )]
 		public string LoginName {

@@ -36,6 +36,18 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public void Execute_CloudConfiguration() {
+			if( mContainer != null ) {
+				var	dialogService = mContainer.Resolve<IDialogService>();
+				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+				var configuration = systemConfig.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
+
+				if( dialogService.ShowDialog( DialogNames.CloudConfiguration, configuration ) == true ) {
+					systemConfig.Save( configuration );
+				}
+			}
+		}
+
 		public void Execute_DatabaseConfiguration() {
 			if( mContainer != null ) {
 				var	dialogService = mContainer.Resolve<IDialogService>();

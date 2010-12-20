@@ -239,6 +239,9 @@
     <Compile Include="Views\ArtistView.xaml.cs">
       <DependentUpon>ArtistView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CloudConfigurationDialog.xaml.cs">
+      <DependentUpon>CloudConfigurationDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DatabaseConfigurationDialog.xaml.cs">
       <DependentUpon>DatabaseConfigurationDialog.xaml</DependentUpon>
     </Compile>
@@ -353,6 +356,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ArtistView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CloudConfigurationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

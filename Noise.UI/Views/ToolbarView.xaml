@@ -17,6 +17,7 @@
             <Button Margin="3" Command="{Binding Path=DatabaseConfiguration}">Configuration</Button>
             <Button Margin="3" Command="{Binding Path=LibraryConfiguration}">Library</Button>
             <Button Margin="3" Command="{Binding Path=ServerConfiguration}">Server</Button>
+            <Button Margin="3" Command="{Binding Path=CloudConfiguration}">Cloud</Button>
             <Button Margin="3" Command="{Binding Path=NoiseOptions}">Options</Button>
             <Button Margin="3" Command="{Binding Path=SmallPlayerView}">Player</Button>
             <Button Margin="3" Command="{Binding Path=DisplayLog}">Log</Button>

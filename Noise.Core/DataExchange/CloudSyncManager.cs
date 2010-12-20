@@ -26,23 +26,30 @@ namespace Noise.Core.DataExchange {
 			var configuration = systemConfig.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
 
 			if( configuration != null ) {
-				mLoginName = configuration.LoginName;
-				mLoginPassword = configuration.LoginPassword;
+				if( configuration.UseCloud ) {
+					mLoginName = configuration.LoginName;
+					mLoginPassword = configuration.LoginPassword;
 
-				try {
-					mCloudClient = new DatabaseClient( mLoginName, mLoginPassword );
-					mCloudDb = mCloudClient.GetDatabase( Constants.CloudDatabaseName );
-					if( mCloudDb == null ) {
-						mCloudClient.CreateDatabase( Constants.CloudDatabaseName );
-					}
-					else {
-						UpdateFromCloud( configuration.LastSequence );
-					}
+					if(!string.IsNullOrWhiteSpace( mLoginName )) {
+						try {
+							mCloudClient = new DatabaseClient( mLoginName, mLoginPassword );
+							mCloudDb = mCloudClient.GetDatabase( Constants.CloudDatabaseName );
+							if( mCloudDb == null ) {
+								mCloudClient.CreateDatabase( Constants.CloudDatabaseName );
+							}
+							else {
+								UpdateFromCloud( configuration.LastSequence );
+							}
 
-					retValue = true;
+							retValue = true;
+						}
+						catch( Exception ex ) {
+							mLog.LogException( "Exception - CloudSyncManager.InitializeCloudSync: ", ex );
+						}
+					}
 				}
-				catch( Exception ex ) {
-					mLog.LogException( "Exception - CloudSyncManager.InitializeCloudSync: ", ex );
+				else {
+					retValue = true;
 				}
 			}
 
