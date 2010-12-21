@@ -50,6 +50,7 @@
             </ListView>
 
             <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <Button Margin="3" Command="{Binding Path=ExportStreams}">Export</Button>
                 <Button Margin="3" Command="{Binding Path=AddStream}">Add Stream</Button>
                 <Button Margin="3" Command="{Binding Path=EditStream}">Edit Stream</Button>
                 <Button Margin="3" Command="{Binding Path=DeleteStream}">Remove Stream</Button>

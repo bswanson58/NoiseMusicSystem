@@ -59,6 +59,8 @@ namespace Noise.UI.ViewModels {
 			}
 
 			mStreams.ResumeNotification();
+
+			RaiseCanExecuteChangedEvent( "CanExecute_ExportStreams" );
 		}
 
 		private void OnWebsiteClick( UiInternetStream stream ) {
@@ -125,6 +127,14 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "CurrentStream" )]
 		public bool CanExecute_DeleteStream( object sender ) {
 			return( CurrentStream != null );
+		}
+
+		public void Execute_ExportStreams() {
+			mNoiseManager.DataExchangeMgr.ExportStreams( @"D:\Streams.noise" );
+		}
+
+		public bool CanExecute_ExportStreams() {
+			return( mStreams.Count > 0 );
 		}
 	}
 }

@@ -3,7 +3,8 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataExchange {
 	internal enum eExchangeType {
-		Favorites
+		Favorites,
+		Streams
 	}
 
 	internal class DataExchangeManager : IDataExchangeManager {
@@ -14,8 +15,16 @@ namespace Noise.Core.DataExchange {
 		}
 
 		public bool ExportFavorites( string fileName ) {
+			return( Export( eExchangeType.Favorites, fileName ));
+		}
+
+		public bool ExportStreams( string fileName ) {
+			return( Export( eExchangeType.Streams, fileName ));
+		}
+
+		private bool Export( eExchangeType exportType, string fileName ) {
 			var retValue = false;
-			var	exporter = CreateExporter( eExchangeType.Favorites );
+			var	exporter = CreateExporter( exportType );
 
 			if( exporter != null ) {
 				retValue = exporter.Export( fileName );
@@ -30,6 +39,10 @@ namespace Noise.Core.DataExchange {
 			switch( exportType ) {
 				case eExchangeType.Favorites:
 					retValue = new ExportFavorites( mContainer );
+					break;
+
+				case eExchangeType.Streams:
+					retValue = new ExportStreams( mContainer );
 					break;
 			}
 

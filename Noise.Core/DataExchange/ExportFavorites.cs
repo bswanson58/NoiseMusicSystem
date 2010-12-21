@@ -26,7 +26,7 @@ namespace Noise.Core.DataExchange {
 				
 					using( var artistList = mNoiseManager.DataProvider.GetFavoriteArtists()) {
 						foreach( var artist in artistList.List ) {
-							rootElement.Add( new XElement( ExchangeConstants.cFavorite, new XElement( ExchangeConstants.cArtist, artist.Name )));
+							rootElement.Add( new XElement( ExchangeConstants.cFavoriteItem, new XElement( ExchangeConstants.cArtist, artist.Name )));
 						}
 					}
 
@@ -35,7 +35,7 @@ namespace Noise.Core.DataExchange {
 							var artist = mNoiseManager.DataProvider.GetArtist( album.Artist );
 
 							if( artist != null ) {
-								rootElement.Add( new XElement( ExchangeConstants.cFavorite,
+								rootElement.Add( new XElement( ExchangeConstants.cFavoriteItem,
 																new XElement( ExchangeConstants.cArtist, artist.Name ),
 																new XElement( ExchangeConstants.cAlbum, album.Name )));
 							}
@@ -50,7 +50,7 @@ namespace Noise.Core.DataExchange {
 								var artist = mNoiseManager.DataProvider.GetArtist( album.Artist );
 
 								if( artist != null ) {
-								rootElement.Add( new XElement( ExchangeConstants.cFavorite,
+								rootElement.Add( new XElement( ExchangeConstants.cFavoriteItem,
 																new XElement( ExchangeConstants.cArtist, artist.Name ),
 																new XElement( ExchangeConstants.cAlbum, album.Name ),
 																new XElement( ExchangeConstants.cTrack, track.Name )));

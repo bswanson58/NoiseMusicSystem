@@ -4,9 +4,19 @@
 		public const string		cAlbum				= "album";
 		public const string		cTrack				= "track";
 		public const string		cStream				= "stream";
+		public const string		cName				= "name";
+		public const string		cDescription		= "description";
+		public const string		cStreamUrl			= "streamUrl";
+		public const string		cStreamPlaylist		= "streamPlayList";
+		public const string		cWebsite			= "website";
+		public const string		cIsFavorite			= "isFavorite";
+		public const string		cRating				= "rating";
+		public const string		cGenre				= "genre";
 
 		public const string		cFavoriteList		= "favorites";
-		public const string		cFavorite			= "favorite";
+		public const string		cFavoriteItem		= "favorite";
+		public const string		cStreamList			= "streams";
+		public const string		cStreamItem			= "stream";
 		public const string		cValue				= "value";
 
 		public const string		cXmlDeclVersion		= "1.0";
