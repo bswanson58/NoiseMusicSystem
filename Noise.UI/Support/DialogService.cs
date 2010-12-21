@@ -126,6 +126,19 @@ namespace Noise.UI.Support {
 			return ( retValue );
 		}
 
+		public bool? SaveFileDialog( string title, string extensions, string filter, out string fileName ) {
+			fileName = "";
+
+			var dlg = new Microsoft.Win32.SaveFileDialog { Title = title, DefaultExt = extensions, Filter = filter, AddExtension = true };
+			var	retValue = dlg.ShowDialog();
+
+			if( retValue.GetValueOrDefault( false ) ) {
+				fileName = dlg.FileName;
+			}
+
+			return ( retValue );
+		}
+
 		public bool? SelectFolderDialog( string title, ref string path ) {
 			bool?	retValue = false;
 

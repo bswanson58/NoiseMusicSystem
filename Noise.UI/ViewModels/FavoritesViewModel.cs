@@ -7,6 +7,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
+using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class FavoritesViewModel : ViewModelBase {
@@ -111,7 +112,12 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_ExportFavorites() {
-			mNoiseManager.DataExchangeMgr.ExportFavorites( @"D:\Favorites.noise" );
+			var dialogService = mContainer.Resolve<IDialogService>();
+			var fileName = "";
+
+			if( dialogService.SaveFileDialog( "Export Favorites", ".noise", "Export Files|*.noise", out fileName ) == true ) {
+				mNoiseManager.DataExchangeMgr.ExportFavorites( fileName );
+			}
 		}
 
 		public bool CanExecute_ExportFavorites() {

@@ -130,7 +130,12 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_ExportStreams() {
-			mNoiseManager.DataExchangeMgr.ExportStreams( @"D:\Streams.noise" );
+			var dialogService = mContainer.Resolve<IDialogService>();
+			var fileName = "";
+
+			if( dialogService.SaveFileDialog( "Export Radio Streams", ".noise", "Export Files|*.noise", out fileName ) == true ) {
+				mNoiseManager.DataExchangeMgr.ExportStreams( fileName );
+			}
 		}
 
 		public bool CanExecute_ExportStreams() {
