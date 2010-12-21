@@ -98,6 +98,20 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public void Execute_Import() {
+			var	dialogService = mContainer.Resolve<IDialogService>();
+			var fileName = "";
+
+			if( dialogService.OpenFileDialog( "Import", Constants.ExportFileExtension, "Export Files|*" + Constants.ExportFileExtension, out fileName ) == true ) {
+				var noiseManager = mContainer.Resolve<INoiseManager>();
+
+				var	importCount = noiseManager.DataExchangeMgr.Import( fileName, true );
+				var	importMessage = importCount > 0 ? string.Format( "{0} item(s) were imported.", importCount ) : "No items were imported.";
+
+				dialogService.MessageDialog( "Import Results", importMessage );
+			}
+		}
+
 		public void Execute_SmallPlayerView() {
 			if( mEvents != null ) {
 				mEvents.GetEvent<Events.WindowLayoutRequest>().Publish( Constants.SmallPlayerViewToggle );

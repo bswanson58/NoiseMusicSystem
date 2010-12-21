@@ -1,4 +1,6 @@
-﻿using Microsoft.Practices.Unity;
+﻿using System.IO;
+using System.Xml.Linq;
+using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataExchange {
@@ -33,6 +35,34 @@ namespace Noise.Core.DataExchange {
 			return( retValue );
 		}
 
+		public int Import( string fileName, bool eliminateDuplicates ) {
+			var retValue = 0;
+
+			if((!string.IsNullOrWhiteSpace( fileName )) &&
+			   ( File.Exists( fileName ))) {
+				var importDoc = XDocument.Load( fileName );
+
+				foreach( var listNode in importDoc.Elements()) {
+					if( listNode.Name.LocalName.Equals( ExchangeConstants.cStreamList )) {
+						retValue += Import( eExchangeType.Streams, listNode, eliminateDuplicates  );
+					}
+				}
+			}
+
+			return( retValue );
+		}
+
+		private int Import( eExchangeType importType, XElement rootNode, bool eliminateDuplicates ) {
+			var retValue = 0;
+			var importer = CreateImporter( importType );
+
+			if( importer != null ) {
+				retValue = importer.Import( rootNode, eliminateDuplicates );
+			}
+
+			return( retValue );
+		}
+
 		private IDataExport CreateExporter( eExchangeType exportType ) {
 			IDataExport	retValue = null;
 
@@ -43,6 +73,18 @@ namespace Noise.Core.DataExchange {
 
 				case eExchangeType.Streams:
 					retValue = new ExportStreams( mContainer );
+					break;
+			}
+
+			return( retValue );
+		}
+
+		private IDataImport CreateImporter( eExchangeType importType ) {
+			IDataImport	retValue = null;
+
+			switch( importType ) {
+				case eExchangeType.Streams:
+					retValue = new ImportStreams( mContainer );
 					break;
 			}
 

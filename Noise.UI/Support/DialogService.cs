@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Forms;
 using Noise.UI.Adapters.DynamicProxies;
 using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
 
 namespace Noise.UI.Support {
 	public class DialogService : IDialogService {
@@ -158,6 +159,10 @@ namespace Noise.UI.Support {
 			}
 
 			return( retValue );
+		}
+
+		public void MessageDialog( string title, string message ) {
+			MessageBox.Show( message, title, MessageBoxButton.OK, MessageBoxImage.Information );
 		}
 	}
 }

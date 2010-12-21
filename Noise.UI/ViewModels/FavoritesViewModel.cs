@@ -115,7 +115,7 @@ namespace Noise.UI.ViewModels {
 			var dialogService = mContainer.Resolve<IDialogService>();
 			var fileName = "";
 
-			if( dialogService.SaveFileDialog( "Export Favorites", ".noise", "Export Files|*.noise", out fileName ) == true ) {
+			if( dialogService.SaveFileDialog( "Export Favorites", Constants.ExportFileExtension, "Export Files|*" + Constants.ExportFileExtension, out fileName ) == true ) {
 				mNoiseManager.DataExchangeMgr.ExportFavorites( fileName );
 			}
 		}

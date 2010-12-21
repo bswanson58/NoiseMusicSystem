@@ -30,6 +30,8 @@ namespace Noise.Infrastructure {
 		public const string				CloudDatabaseName = @"Noise Music System Database";
 		public const string				CloudSyncTable = "Sync Entries";
 
+		public const string				ExportFileExtension = ".noise";
+
 		static Constants() {
 			cNoExpirationDate = DateTime.MaxValue;
 		}

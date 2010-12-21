@@ -133,7 +133,7 @@ namespace Noise.UI.ViewModels {
 			var dialogService = mContainer.Resolve<IDialogService>();
 			var fileName = "";
 
-			if( dialogService.SaveFileDialog( "Export Radio Streams", ".noise", "Export Files|*.noise", out fileName ) == true ) {
+			if( dialogService.SaveFileDialog( "Export Radio Streams", Constants.ExportFileExtension, "Export Files|*" + Constants.ExportFileExtension, out fileName ) == true ) {
 				mNoiseManager.DataExchangeMgr.ExportStreams( fileName );
 			}
 		}

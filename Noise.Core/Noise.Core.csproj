@@ -178,6 +178,8 @@
     <Compile Include="DataExchange\ExportStreams.cs" />
     <Compile Include="DataExchange\ICloudSyncManager.cs" />
     <Compile Include="DataExchange\IDataExport.cs" />
+    <Compile Include="DataExchange\IDataImport.cs" />
+    <Compile Include="DataExchange\ImportStreams.cs" />
     <Compile Include="DataProviders\DiscogsProvider.cs" />
     <Compile Include="DataProviders\IMetaDataProvider.cs" />
     <Compile Include="DataBuilders\ISummaryBuilder.cs" />
