@@ -46,6 +46,9 @@ namespace Noise.Core.DataExchange {
 					if( listNode.Name.LocalName.Equals( ExchangeConstants.cStreamList )) {
 						retValue += Import( eExchangeType.Streams, listNode, eliminateDuplicates  );
 					}
+					else if( listNode.Name.LocalName.Equals( ExchangeConstants.cFavoriteList )) {
+						retValue += Import( eExchangeType.Favorites, listNode, eliminateDuplicates  );
+					}
 				}
 			}
 
@@ -83,6 +86,10 @@ namespace Noise.Core.DataExchange {
 			IDataImport	retValue = null;
 
 			switch( importType ) {
+				case eExchangeType.Favorites:
+					retValue = new ImportFavorites( mContainer );
+					break;
+
 				case eExchangeType.Streams:
 					retValue = new ImportStreams( mContainer );
 					break;
