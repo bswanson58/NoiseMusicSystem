@@ -150,7 +150,7 @@ namespace Noise.UI.ViewModels {
 					var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
 														orderby track.VolumeName, track.TrackNumber ascending select track );
 
-					retValue = new NewAlbumInfo( album, mNoiseManager.DataProvider.GetAlbumSupportInfo( album ), sortedList );
+					retValue = new NewAlbumInfo( album, mNoiseManager.DataProvider.GetAlbumSupportInfo( album.DbId ), sortedList );
 				}
 			}
 

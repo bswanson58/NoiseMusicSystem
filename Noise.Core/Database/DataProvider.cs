@@ -44,20 +44,6 @@ namespace Noise.Core.Database {
 			mDatabaseManager.FreeDatabase( databaseId );
 		}
 
-		public long GetObjectIdentifier( object dbObject ) {
-			Condition.Requires( dbObject ).IsNotNull();
-
-			long	retValue = 0L;
-
-			if( dbObject is DbBase ) {
-				retValue = ( dbObject as DbBase ).DbId;
-			}
-			else {
-				mLog.LogMessage( "DbId requested for non DbBase object {0}", dbObject.GetType());
-			}
-			return( retValue );
-		}
-
 		public DbBase GetItem( long itemId ) {
 			DbBase	retValue = null;
 			var database = mDatabaseManager.ReserveDatabase();
@@ -395,11 +381,9 @@ namespace Noise.Core.Database {
 
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
-				var trackId = GetObjectIdentifier( forTrack );
 				var parms = database.Database.CreateParameters();
-				parms["trackId"] = trackId;
 
-				Condition.Requires( trackId ).IsNotLessOrEqual( 0 );
+				parms["trackId"] = forTrack.DbId;
 
 				retValue = database.Database.ExecuteScalar( "SELECT StorageFile Where MetaDataPointer = @trackId", parms ) as StorageFile;
 			}
@@ -433,27 +417,14 @@ namespace Noise.Core.Database {
 			var artist = GetArtist( artistId );
 
 			if( artist != null ) {
-				UpdateArtistInfo( artist );
+				mContentManager.RequestContent( artist );
 			}
 		}
 
-		public void UpdateArtistInfo( DbArtist forArtist ) {
-			Condition.Requires( forArtist ).IsNotNull();
-
-			mContentManager.RequestContent( forArtist );
-		}
-
 		public ArtistSupportInfo GetArtistSupportInfo( long artistId ) {
-			return( GetArtistSupportInfo( GetArtist( artistId )));
-		}
-
-		public ArtistSupportInfo GetArtistSupportInfo( DbArtist forArtist ) {
-			Condition.Requires( forArtist ).IsNotNull();
-
 			ArtistSupportInfo	retValue = null;
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
-				var artistId = GetObjectIdentifier( forArtist );
 				var parms = database.Database.CreateParameters();
 
 				parms["artistId"] = artistId;
@@ -481,36 +452,24 @@ namespace Noise.Core.Database {
 		}
 
 		public DataProviderList<DbDiscographyRelease> GetDiscography( long artistId ) {
-			return( GetDiscography( GetArtist( artistId )));
-		}
-
-		public DataProviderList<DbDiscographyRelease> GetDiscography( DbArtist forArtist ) {
-			Condition.Requires( forArtist ).IsNotNull();
-
 			DataProviderList<DbDiscographyRelease>	retValue = null;
 
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				var parms = database.Database.CreateParameters();
-				parms["artistId"] = forArtist.DbId;
+				parms["artistId"] = artistId;
 
 				retValue = new DataProviderList<DbDiscographyRelease>( database.DatabaseId, FreeDatabase,
 																	   database.Database.ExecuteQuery( "SELECT DbDiscographyRelease WHERE Artist = @artistId", parms ).OfType<DbDiscographyRelease>());
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetFavoriteTracks: ", ex );
+				mLog.LogException( "Exception - GetDiscography: ", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
 			return( retValue );
 		}
 
-
-		public void UpdateAlbumInfo( DbAlbum forAlbum ) {
-			Condition.Requires( forAlbum ).IsNotNull();
-
-			mContentManager.RequestContent( forAlbum );
-		}
 
 		public AlbumSupportInfo GetAlbumSupportInfo( long albumId ) {
 			AlbumSupportInfo	retValue = null;
@@ -535,12 +494,6 @@ namespace Noise.Core.Database {
 			}
 
 			return( retValue );
-		}
-
-		public AlbumSupportInfo GetAlbumSupportInfo( DbAlbum forAlbum ) {
-			Condition.Requires( forAlbum ).IsNotNull();
-
-			return( GetAlbumSupportInfo( forAlbum.DbId ));
 		}
 
 		public DbInternetStream GetStream( long streamId ) {

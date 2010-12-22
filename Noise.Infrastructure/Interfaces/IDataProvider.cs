@@ -4,8 +4,6 @@ namespace Noise.Infrastructure.Interfaces {
 	public interface IDataProvider {
 		long						DatabaseId { get; }
 
-		long						GetObjectIdentifier( object dbObject );
-
 		DbArtist					GetArtist( long dbid );
 		DataProviderList<DbArtist>	GetArtistList();
 		DataProviderList<DbArtist>	GetArtistList( IDatabaseFilter filter );
@@ -25,7 +23,6 @@ namespace Noise.Infrastructure.Interfaces {
 		DataProviderList<DbTrack>	GetNewlyAddedTracks();
 
 		DataProviderList<DbDiscographyRelease>	GetDiscography( long artistId );
-		DataProviderList<DbDiscographyRelease>	GetDiscography( DbArtist forArtist );
 		DataProviderList<DbPlayList>			GetPlayLists();
 
 		DataProviderList<DbGenre>	GetGenreList();
@@ -35,13 +32,9 @@ namespace Noise.Infrastructure.Interfaces {
 		string						GetPhysicalFilePath( StorageFile forFile );
 
 		ArtistSupportInfo			GetArtistSupportInfo( long artistId );
-		ArtistSupportInfo			GetArtistSupportInfo( DbArtist forArtist );
 		AlbumSupportInfo			GetAlbumSupportInfo( long albumId );
-		AlbumSupportInfo			GetAlbumSupportInfo( DbAlbum forAlbum );
 
-		void						UpdateArtistInfo( DbArtist forArtist );
 		void						UpdateArtistInfo( long artistId );
-		void						UpdateAlbumInfo( DbAlbum forAlbum );
 
 		void						InsertItem( object dbItem );
 		void						DeleteItem( object dbItem );

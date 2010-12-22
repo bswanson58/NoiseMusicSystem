@@ -32,7 +32,7 @@ namespace Noise.Core.PlayQueue {
 				var artistList = mQueueMgr.PlayList.Select( item => item.Artist ).Distinct( new ArtistComparer());
 
 				foreach( var artist in artistList ) {
-					var supportInfo = manager.DataProvider.GetArtistSupportInfo( artist );
+					var supportInfo = manager.DataProvider.GetArtistSupportInfo( artist.DbId );
 
 					foreach( var item in supportInfo.SimilarArtist.Items ) {
 						if( item.IsLinked ) {

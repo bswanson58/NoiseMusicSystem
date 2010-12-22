@@ -53,7 +53,7 @@ namespace Noise.Core.DataBuilders {
 
 			if(( mArtistEnum != null ) &&
 			   ( mArtistEnum.MoveNext())) {
-				mDataProvider.UpdateArtistInfo( mArtistEnum.Current );
+				mDataProvider.UpdateArtistInfo( mArtistEnum.Current.DbId );
 
 				retValue = true;
 			}
