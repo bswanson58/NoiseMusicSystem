@@ -39,7 +39,9 @@ namespace Noise.UI.Adapters {
 		public bool IsExpanded {
 			get { return( Get( () => IsExpanded )); }
 			set {
- 				IsSelected = true;
+				if( value ) {
+ 					IsSelected = true;
+				}
 
 				Set( () => IsExpanded, value  );
 
