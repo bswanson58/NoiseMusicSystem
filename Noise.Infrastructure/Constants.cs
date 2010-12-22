@@ -28,7 +28,8 @@ namespace Noise.Infrastructure {
 		public const string				LicenseKeyFile = "LicenseKeys.xml";
 
 		public const string				CloudDatabaseName = @"Noise Music System Database";
-		public const string				CloudSyncTable = "Sync Entries";
+		public const string				CloudSyncTable = "Noise Music Sync Entries";
+		public const string				CloudSyncFavoritesTable = "Noise Music Favorites";
 
 		public const string				ExportFileExtension = ".noise";
 

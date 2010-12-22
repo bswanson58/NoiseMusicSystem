@@ -67,7 +67,6 @@ namespace Noise.Core.DataExchange {
 									retValue++;
 								}
 							}
-							
 						}
 					}
 				}

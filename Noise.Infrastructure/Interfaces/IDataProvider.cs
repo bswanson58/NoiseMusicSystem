@@ -43,5 +43,8 @@ namespace Noise.Infrastructure.Interfaces {
 		DataProviderList<DbInternetStream>	GetStreamList();
 		DbInternetStream			GetStream( long streamId );
 		DataUpdateShell<DbInternetStream>	GetStreamForUpdate( long streamId );
+
+		DataFindResults				Find( string artist, string album, string track );
+		DataFindResults				Find( long itemId );
 	}
 }

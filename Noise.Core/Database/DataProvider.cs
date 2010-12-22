@@ -608,5 +608,56 @@ namespace Noise.Core.Database {
 
 			return( retValue );
 		}
+
+		public DataFindResults Find( string artist, string album, string track ) {
+			DataFindResults	retValue = null;
+
+			try {
+				if(!string.IsNullOrWhiteSpace( artist )) {
+					using( var artistList = GetArtistList()) {
+						var dbArtist = ( from DbArtist a in artistList.List 
+											where a.Name.Equals( artist, StringComparison.CurrentCultureIgnoreCase ) select a ).FirstOrDefault();
+						if( dbArtist != null ) {
+							if(!string.IsNullOrEmpty( album )) {
+								using( var albumList = GetAlbumList( dbArtist )) {
+									var dbAlbum = ( from DbAlbum a in albumList.List
+													where a.Name.Equals( album, StringComparison.CurrentCultureIgnoreCase ) select a ).FirstOrDefault();
+									if( dbAlbum != null ) {
+										if(!string.IsNullOrWhiteSpace( track )) {
+											using( var trackList = GetTrackList( dbAlbum )) {
+												var dbTrack = ( from DbTrack t in trackList.List
+																where t.Name.Equals( track, StringComparison.CurrentCultureIgnoreCase ) select t ).FirstOrDefault();
+												retValue = dbTrack != null ? new DataFindResults( dbArtist, dbAlbum, dbTrack, true ) :
+																			 new DataFindResults( dbArtist, dbAlbum, false );
+											}
+										}
+										else {
+											retValue = new DataFindResults( dbArtist, dbAlbum, true );
+										}
+									}
+									else {
+										retValue = new DataFindResults( dbArtist, false );
+									}
+								}
+							}
+							else {
+								retValue = new DataFindResults( dbArtist, true );
+							}
+						}
+					}
+				}		
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - DataProvider:Find: ", ex );
+			}
+
+			return( retValue );
+		}
+
+		public DataFindResults Find( long itemId ) {
+			DataFindResults	retValue = null;
+
+			return( retValue );
+		}
 	}
 }
