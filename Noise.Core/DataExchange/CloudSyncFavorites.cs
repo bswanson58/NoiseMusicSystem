@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.Composition;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
+using GDataDB;
 using GDataDB.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.DataExchange.Dto;
@@ -11,9 +13,9 @@ namespace Noise.Core.DataExchange {
 	[Export( typeof( ICloudSyncProvider ))]
 	internal class CloudSyncFavorites : ICloudSyncProvider {
 		private IUnityContainer		mContainer;
-		private GDataDB.IDatabase	mCloudDatabase;
+		private IDatabase			mCloudDatabase;
 
-		public bool Initialize( IUnityContainer container, GDataDB.IDatabase cloudDatabase ) {
+		public bool Initialize( IUnityContainer container, IDatabase cloudDatabase ) {
 			mContainer = container;
 			mCloudDatabase = cloudDatabase;
 
@@ -49,6 +51,31 @@ namespace Noise.Core.DataExchange {
 						if( dbEntry.Artist.IsFavorite != favorite.IsFavorite ) {
 							GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( dbEntry.Artist.DbId, favorite.IsFavorite ));
 						}
+					}
+				}
+			}
+		}
+
+		public void UpdateToCloud( ExportBase item ) {
+			if( item is ExportFavorite ) {
+				var favoriteExport = item as ExportFavorite;
+				var favoriteDb = mCloudDatabase.GetTable<ExportFavorite>( Constants.CloudSyncFavoritesTable ) ??
+								 mCloudDatabase.CreateTable<ExportFavorite>( Constants.CloudSyncFavoritesTable );
+				if( favoriteDb != null ) {
+					IList<IRow<ExportFavorite>> rows = favoriteDb.FindStructured( item.ConstructQuery());
+
+					if(( rows != null ) &&
+					   ( rows.Count > 0 )) {
+						IRow<ExportFavorite>	row = rows[0];
+
+						row.Element.IsFavorite = favoriteExport.IsFavorite;
+						row.Element.SequenceId = favoriteExport.SequenceId;
+						row.Element.OriginDb = favoriteExport.OriginDb;
+
+						row.Update();
+					}
+					else {
+						favoriteDb.Add( favoriteExport );
 					}
 				}
 			}

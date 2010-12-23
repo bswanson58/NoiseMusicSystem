@@ -8,6 +8,7 @@
 
 		void					ConfigurationChanged();
 
+		ICloudSyncManager		CloudSyncMgr { get; }
 		IDataProvider			DataProvider { get; }
 		ISearchProvider			SearchProvider { get; }
 		ILibraryBuilder			LibraryBuilder { get; }

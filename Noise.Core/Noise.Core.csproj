@@ -177,7 +177,6 @@
     <Compile Include="DataExchange\ExchangeConstants.cs" />
     <Compile Include="DataExchange\ExportFavorites.cs" />
     <Compile Include="DataExchange\ExportStreams.cs" />
-    <Compile Include="DataExchange\ICloudSyncManager.cs" />
     <Compile Include="DataExchange\ICloudSyncProvider.cs" />
     <Compile Include="DataExchange\IDataExport.cs" />
     <Compile Include="DataExchange\IDataImport.cs" />

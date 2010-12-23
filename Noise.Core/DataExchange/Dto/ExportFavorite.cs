@@ -1,6 +1,11 @@
-﻿namespace Noise.Core.DataExchange.Dto {
+﻿using Noise.Infrastructure.Dto;
+
+namespace Noise.Core.DataExchange.Dto {
 	public class ExportFavorite : ExportBase {
-		public	bool		IsFavorite { get; private set; }
+		public	bool		IsFavorite { get; set; }
+
+		public ExportFavorite() {
+		}
 
 		public ExportFavorite( long originDb, string artist, bool isFavorite ) :
 			base( originDb, artist ) {
@@ -20,6 +25,15 @@
 		public ExportFavorite( string stream, long originDb, bool isFavorite ) :
 			base( stream, originDb ) {
 			IsFavorite = isFavorite;
+		}
+
+		public ExportFavorite( DataFindResults results, long seqnId ) :
+			base( results ) {
+			SequenceId = seqnId;
+
+			IsFavorite = results.Track != null ? results.Track.IsFavorite : 
+						 results.Album != null ? results.Album.IsFavorite : 
+						 results.Artist != null ? results.Artist.IsFavorite : false;
 		}
 	}
 }

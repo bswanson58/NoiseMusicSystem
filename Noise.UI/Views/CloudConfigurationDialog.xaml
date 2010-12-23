@@ -23,12 +23,13 @@
             </Grid.RowDefinitions>
 
             <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Content="Cloud Synchronization Settings:" Margin="5,0,0,0"/>
-            <CheckBox Grid.Column="0" Grid.Row="1" Content="Use cloud synchronization." IsChecked="{Binding Path=UseCloud}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
+            <CheckBox Grid.Column="0" Grid.Row="1" Content="Use cloud synchronization." IsChecked="{Binding Path=EditObject.UseCloud}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
             <Label Grid.Column="0" Grid.Row="2" Content="Login Name:" HorizontalAlignment="Right"/>
-            <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Path=LoginName}" Margin="3"/>
+            <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Path=EditObject.LoginName}" Margin="3"/>
             <Label Grid.Column="0" Grid.Row="3" Content="Password:" HorizontalAlignment="Right"/>
             <PasswordBox Grid.Column="1" Grid.Row="3" Margin="3" Behaviours:PasswordBoxAssistant.BindPassword="true" 
-                         Behaviours:PasswordBoxAssistant.BoundPassword="{Binding Path=LoginPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                         Behaviours:PasswordBoxAssistant.BoundPassword="{Binding Path=EditObject.LoginPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Grid.Column="1" Grid.Row="4" Margin="3" Width="100" HorizontalAlignment="Right" Command="{Binding Path=Synchronize}">Synchronize</Button>
         </Grid>
     </Grid>
 </UserControl>

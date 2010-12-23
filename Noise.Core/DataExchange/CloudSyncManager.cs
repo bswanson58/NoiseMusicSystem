@@ -114,43 +114,149 @@ namespace Noise.Core.DataExchange {
 		}
 
 		public void CreateSynchronization() {
-			
+			UpdateFromCloud();
+
+			try {
+				var seqnId = ReserveSeqnId();
+
+				SyncFavorites( seqnId );
+
+				UpdateCloudSeqn( seqnId );
+				UpdateSeqnId( seqnId );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - CloudSyncManager:CreateSynchronization: ", ex );
+			}
 		}
 
-		private void UpdateFromCloud() {
-			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-			var configuration = systemConfig.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
+		private void SyncFavorites( long seqnId ) {
+			var noiseManager = mContainer.Resolve<INoiseManager>();
 
-			if( configuration != null ) {
-				var seqnTable = CloudDatabase.GetTable<CloudSyncEntry>( Constants.CloudSyncTable ) ??
-								CloudDatabase.CreateTable<CloudSyncEntry>( Constants.CloudSyncTable );
+			using( var favoriteList = noiseManager.DataProvider.GetFavoriteArtists()) {
+				foreach( var artist in favoriteList.List ) {
+					var item = new ExportFavorite( noiseManager.DataProvider.DatabaseId, artist.Name, artist.IsFavorite ) { SequenceId = seqnId };
 
-				if( seqnTable != null ) {
-					var lastEntry = ( from CloudSyncEntry e in seqnTable.AsQueryable()
-									  where e.SequenceNumber > configuration.LastSequence
-									  orderby e.SequenceNumber descending select e ).FirstOrDefault();
-					if( lastEntry != null ) {
-						foreach( var provider in SyncProviders ) {
-							provider.UpdateFromCloud( configuration.LastSequence, lastEntry.SequenceNumber );
+					foreach( var provider in SyncProviders ) {
+						if( provider.SyncTypes.HasFlag( ObjectTypes.Favorites )) {
+							provider.UpdateToCloud( item );
 						}
+					}
+				}
+			}
 
-						seqnTable.Add( new CloudSyncEntry { SequenceNumber = lastEntry.SequenceNumber + 1 });
+			using( var favoriteList = noiseManager.DataProvider.GetFavoriteAlbums()) {
+				foreach( var album in favoriteList.List ) {
+					var result = noiseManager.DataProvider.Find( album.DbId );
+					var item = new ExportFavorite( result, seqnId );
+
+					foreach( var provider in SyncProviders ) {
+						if( provider.SyncTypes.HasFlag( ObjectTypes.Favorites )) {
+							provider.UpdateToCloud( item );
+						}
+					}
+				}
+			}
+
+			using( var favoriteList = noiseManager.DataProvider.GetFavoriteTracks()) {
+				foreach( var track in favoriteList.List ) {
+					var result = noiseManager.DataProvider.Find( track.DbId );
+					var item = new ExportFavorite( result, seqnId );
+
+					foreach( var provider in SyncProviders ) {
+						if( provider.SyncTypes.HasFlag( ObjectTypes.Favorites )) {
+							provider.UpdateToCloud( item );
+						}
 					}
 				}
 			}
 		}
 
-		private void OnSetFavorite( SetFavoriteCommandArgs args ) {
-			UpdateFromCloud();
+		private void UpdateFromCloud() {
+			try {
+				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+				var configuration = systemConfig.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
+				var cloud = CloudDatabase;
 
-			var noiseManager = mContainer.Resolve<INoiseManager>();
+				if(( configuration != null ) &&
+				   ( cloud != null ) &&
+				   ( SyncProviders != null )) {
+					var seqnTable = CloudDatabase.GetTable<CloudSyncEntry>( Constants.CloudSyncTable ) ??
+									CloudDatabase.CreateTable<CloudSyncEntry>( Constants.CloudSyncTable );
 
-			foreach( var provider in SyncProviders ) {
-				if( provider.SyncTypes.HasFlag( ObjectTypes.Favorites )) {
-					var item = noiseManager.DataProvider.Find( args.ItemId );
+					if( seqnTable != null ) {
+						CloudSyncEntry	lastEntry = null;
+						var entryList = ( from CloudSyncEntry e in seqnTable.AsQueryable()
+										  where e.SequenceNumber > configuration.LastSequence
+										  orderby e.SequenceNumber descending
+										  select e ).ToList();
+						if( entryList.Count > 0 ) {
+							lastEntry = entryList[0];
+						}
 
-//					provider.UpdateToCloud( new ExportBase( noiseManager.DataProvider.DatabaseId ));
+						if( lastEntry != null ) {
+							foreach( var provider in SyncProviders ) {
+								provider.UpdateFromCloud( configuration.LastSequence, lastEntry.SequenceNumber );
+							}
+
+							UpdateSeqnId( lastEntry.SequenceNumber );
+						}
+					}
 				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - UpdateFromCloud:", ex );
+			}
+		}
+
+		private void OnSetFavorite( SetFavoriteCommandArgs args ) {
+			try {
+				UpdateFromCloud();
+
+				var noiseManager = mContainer.Resolve<INoiseManager>();
+				var seqnId = ReserveSeqnId();
+
+				foreach( var provider in SyncProviders ) {
+					if( provider.SyncTypes.HasFlag( ObjectTypes.Favorites ) ) {
+						provider.UpdateToCloud( new ExportFavorite( noiseManager.DataProvider.Find( args.ItemId ), seqnId ));
+					}
+				}
+
+				UpdateSeqnId( seqnId );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - CloudSyncManager:SetFavorite: ", ex );
+			}
+		}
+
+		private long ReserveSeqnId() {
+			var retValue = 0L;
+			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+			var configuration = systemConfig.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
+
+			if( configuration != null ) {
+				retValue = configuration.LastSequence + 1;
+			}
+
+			return( retValue );
+		}
+
+		private void UpdateSeqnId( long seqnId ) {
+			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+			var configuration = systemConfig.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
+
+			if( configuration != null ) {
+				configuration.LastSequence = seqnId;
+
+				systemConfig.Save( configuration );
+			}
+		}
+
+		private void UpdateCloudSeqn( long seqnId ) {
+			var seqnTable = CloudDatabase.GetTable<CloudSyncEntry>( Constants.CloudSyncTable ) ??
+							CloudDatabase.CreateTable<CloudSyncEntry>( Constants.CloudSyncTable );
+
+			if( seqnTable != null ) {
+				seqnTable.Add( new CloudSyncEntry { SequenceNumber = seqnId });
 			}
 		}
 	}

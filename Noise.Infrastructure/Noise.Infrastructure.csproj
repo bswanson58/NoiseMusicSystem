@@ -142,6 +142,7 @@
     <Compile Include="Dto\StreamInfo.cs" />
     <Compile Include="Dto\UpdatePlayCountCommandArgs.cs" />
     <Compile Include="GlobalCommands.cs" />
+    <Compile Include="Interfaces\ICloudSyncManager.cs" />
     <Compile Include="Interfaces\IDataExchangeManager.cs" />
     <Compile Include="Interfaces\IEqManager.cs" />
     <Compile Include="Interfaces\ILibraryBuilder.cs" />

@@ -41,9 +41,12 @@ namespace Noise.UI.ViewModels {
 				var	dialogService = mContainer.Resolve<IDialogService>();
 				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 				var configuration = systemConfig.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
+				var noiseManager = mContainer.Resolve<INoiseManager>();
 
-				if( dialogService.ShowDialog( DialogNames.CloudConfiguration, configuration ) == true ) {
+				if( dialogService.ShowDialog( DialogNames.CloudConfiguration, configuration, new CloudConfigurationDialogModel( noiseManager )) == true ) {
 					systemConfig.Save( configuration );
+
+					noiseManager.CloudSyncMgr.MaintainSynchronization = configuration.UseCloud;
 				}
 			}
 		}

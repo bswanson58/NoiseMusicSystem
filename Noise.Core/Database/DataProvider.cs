@@ -6,6 +6,7 @@ using Noise.Core.DataBuilders;
 using Noise.Core.FileStore;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
 
 namespace Noise.Core.Database {
 	public class DataProvider : IDataProvider {
@@ -627,21 +628,21 @@ namespace Noise.Core.Database {
 											using( var trackList = GetTrackList( dbAlbum )) {
 												var dbTrack = ( from DbTrack t in trackList.List
 																where t.Name.Equals( track, StringComparison.CurrentCultureIgnoreCase ) select t ).FirstOrDefault();
-												retValue = dbTrack != null ? new DataFindResults( dbArtist, dbAlbum, dbTrack, true ) :
-																			 new DataFindResults( dbArtist, dbAlbum, false );
+												retValue = dbTrack != null ? new DataFindResults( DatabaseId, dbArtist, dbAlbum, dbTrack, true ) :
+																			 new DataFindResults( DatabaseId, dbArtist, dbAlbum, false );
 											}
 										}
 										else {
-											retValue = new DataFindResults( dbArtist, dbAlbum, true );
+											retValue = new DataFindResults( DatabaseId, dbArtist, dbAlbum, true );
 										}
 									}
 									else {
-										retValue = new DataFindResults( dbArtist, false );
+										retValue = new DataFindResults( DatabaseId, dbArtist, false );
 									}
 								}
 							}
 							else {
-								retValue = new DataFindResults( dbArtist, true );
+								retValue = new DataFindResults( DatabaseId, dbArtist, true );
 							}
 						}
 					}
@@ -656,6 +657,26 @@ namespace Noise.Core.Database {
 
 		public DataFindResults Find( long itemId ) {
 			DataFindResults	retValue = null;
+			var item = GetItem( itemId );
+
+			if( item != null ) {
+				TypeSwitch.Do( item, TypeSwitch.Case<DbArtist>( artist => retValue = new DataFindResults( DatabaseId, artist, true )),
+									 TypeSwitch.Case<DbAlbum>( album => {
+									                           		var artist = GetArtistForAlbum( album );
+																	if( artist != null ) {
+																		retValue = new DataFindResults( DatabaseId, GetArtistForAlbum( album ), album, true );
+																	}
+																}),
+									 TypeSwitch.Case<DbTrack>( track => {
+									                           		var album = GetAlbumForTrack( track );
+																	if( album != null ) {
+																		var artist = GetArtistForAlbum( album );
+																		if( artist != null ) {
+																			retValue = new DataFindResults( DatabaseId, artist, album, track, true );
+																		}
+																	}
+									                           }));
+			}
 
 			return( retValue );
 		}
