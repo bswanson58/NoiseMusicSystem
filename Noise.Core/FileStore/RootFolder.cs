@@ -8,6 +8,7 @@ namespace Noise.Core.FileStore {
 		public	string			DisplayName { get; set; }
 		public	FolderStrategy	FolderStrategy { get; set; }
 		public	long			LastScan { get; set; }
+		public	long			LastCloudSequenceId { get; set; }
 
 		public RootFolder( long dbId, string path, string displayName ) :
 			base( dbId, path ) {
