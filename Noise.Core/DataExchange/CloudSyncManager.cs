@@ -15,18 +15,18 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataExchange {
 	internal class CloudSyncManager : ICloudSyncManager {
-		private readonly IUnityContainer	mContainer;
-		private readonly ILog				mLog;
-		private bool						mUseCloud;
-		private string						mLoginName;
-		private string						mLoginPassword;
-		private IDatabaseClient				mCloudClient;
-		private IDatabase					mCloudDb;
-		private bool						mMaintainSynchronization;
+		private readonly IUnityContainer		mContainer;
+		private readonly ILog					mLog;
+		private string							mLoginName;
+		private string							mLoginPassword;
+		private IDatabaseClient					mCloudClient;
+		private IDatabase						mCloudDb;
+		private bool							mMaintainSynchronization;
 
+		public	ObjectTypes						SynchronizeTypes { get; set; }
+
+		private readonly AsyncCommand<object>						mSyncWithCloud;
 		private readonly AsyncCommand<SetFavoriteCommandArgs>		mSetFavoriteCommand;
-
-		public	ObjectTypes					SynchronizeTypes { get; set; }
 
 		[ImportMany( typeof( ICloudSyncProvider ))]
 		public IEnumerable<ICloudSyncProvider>	SyncProviders;
@@ -35,7 +35,11 @@ namespace Noise.Core.DataExchange {
 			mContainer = container;
 			mLog = mContainer.Resolve<ILog>();
 
+			mSyncWithCloud = new AsyncCommand<object>( OnCloudSync );
+			GlobalCommands.SynchronizeFromCloud.RegisterCommand( mSyncWithCloud );
+
 			mSetFavoriteCommand = new AsyncCommand<SetFavoriteCommandArgs>( OnSetFavorite );
+			GlobalCommands.SetFavorite.RegisterCommand( mSetFavoriteCommand );
 		}
 
 		public bool MaintainSynchronization {
@@ -45,66 +49,48 @@ namespace Noise.Core.DataExchange {
 					mMaintainSynchronization = value;
 
 					if( mMaintainSynchronization ) {
-						GlobalCommands.SetFavorite.RegisterCommand( mSetFavoriteCommand );
 
 						UpdateFromCloud();
-					}
-					else {
-						GlobalCommands.SetFavorite.UnregisterCommand( mSetFavoriteCommand );
 					}
 				}
 			}
 		}
 
-		public bool InitializeCloudSync() {
-			var retValue = false;
-			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-			var configuration = systemConfig.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
+		public bool InitializeCloudSync( string loginName, string password ) {
+			mLoginName = loginName;
+			mLoginPassword = password;
 
-			if( configuration != null ) {
-				if( configuration.UseCloud ) {
-					mUseCloud = true;
-					mLoginName = configuration.LoginName;
-					mLoginPassword = configuration.LoginPassword;
-				}
-				else {
-					retValue = true;
-				}
-			}
-
-			return( retValue );
+			return( true );
 		}
 
 		private IDatabase CloudDatabase {
 			get {
 				var retValue = mCloudDb;
 
-				if( mUseCloud ) {
-					if( mCloudDb == null ) {
-						try {
-							if( mCloudClient == null ) {
-								mCloudClient = new DatabaseClient( mLoginName, mLoginPassword );
-							}
-
-							mCloudDb = mCloudClient.GetDatabase( Constants.CloudDatabaseName ) ??
-									   mCloudClient.CreateDatabase( Constants.CloudDatabaseName );
-
-							retValue = mCloudDb;
+				if( mCloudDb == null ) {
+					try {
+						if( mCloudClient == null ) {
+							mCloudClient = new DatabaseClient( mLoginName, mLoginPassword );
 						}
-						catch( Exception ex ) {
-							mLog.LogException( "Exception - CloudSymcManager:Opening cloud database: ", ex );
-						}
+
+						mCloudDb = mCloudClient.GetDatabase( Constants.CloudDatabaseName ) ??
+									mCloudClient.CreateDatabase( Constants.CloudDatabaseName );
+
+						retValue = mCloudDb;
 					}
+					catch( Exception ex ) {
+						mLog.LogException( "Exception - CloudSymcManager:Opening cloud database: ", ex );
+					}
+				}
 
-					if( SyncProviders == null ) {
-						var catalog = new DirectoryCatalog(  @".\" );
-						var container = new CompositionContainer( catalog );
-						container.ComposeParts( this );
+				if( SyncProviders == null ) {
+					var catalog = new DirectoryCatalog(  @".\" );
+					var container = new CompositionContainer( catalog );
+					container.ComposeParts( this );
 
-						if( SyncProviders != null ) {
-							foreach( var provider in SyncProviders ) {
-								provider.Initialize( mContainer, mCloudDb );
-							}
+					if( SyncProviders != null ) {
+						foreach( var provider in SyncProviders ) {
+							provider.Initialize( mContainer, mCloudDb );
 						}
 					}
 				}
@@ -113,7 +99,7 @@ namespace Noise.Core.DataExchange {
 			}
 		}
 
-		public void CreateSynchronization() {
+		private void OnCloudSync( object unused ) {
 			UpdateFromCloud();
 
 			try {
@@ -209,22 +195,25 @@ namespace Noise.Core.DataExchange {
 		}
 
 		private void OnSetFavorite( SetFavoriteCommandArgs args ) {
-			try {
-				UpdateFromCloud();
+			if( mMaintainSynchronization ) { 
+				try {
+					UpdateFromCloud();
 
-				var noiseManager = mContainer.Resolve<INoiseManager>();
-				var seqnId = ReserveSeqnId();
+					var noiseManager = mContainer.Resolve<INoiseManager>();
+					var seqnId = ReserveSeqnId();
 
-				foreach( var provider in SyncProviders ) {
-					if( provider.SyncTypes.HasFlag( ObjectTypes.Favorites ) ) {
-						provider.UpdateToCloud( new ExportFavorite( noiseManager.DataProvider.Find( args.ItemId ), seqnId ));
+					foreach( var provider in SyncProviders ) {
+						if( provider.SyncTypes.HasFlag( ObjectTypes.Favorites ) ) {
+							provider.UpdateToCloud( new ExportFavorite( noiseManager.DataProvider.Find( args.ItemId ), seqnId ));
+						}
 					}
-				}
 
-				UpdateSeqnId( seqnId );
-			}
-			catch( Exception ex ) {
-				mLog.LogException( "Exception - CloudSyncManager:SetFavorite: ", ex );
+					UpdateCloudSeqn( seqnId );
+					UpdateSeqnId( seqnId );
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - CloudSyncManager:SetFavorite: ", ex );
+				}
 			}
 		}
 

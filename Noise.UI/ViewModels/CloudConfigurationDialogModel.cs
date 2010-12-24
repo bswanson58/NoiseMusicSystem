@@ -1,4 +1,5 @@
-﻿using Noise.Infrastructure.Interfaces;
+﻿using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
@@ -10,7 +11,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_Synchronize() {
-			mNoiseManager.CloudSyncMgr.CreateSynchronization();
+			GlobalCommands.SynchronizeFromCloud.Execute( null );
 		}
 	}
 }

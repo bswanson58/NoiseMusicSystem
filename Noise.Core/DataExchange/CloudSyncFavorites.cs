@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using System.Linq;
 using GDataDB;
 using GDataDB.Linq;
@@ -14,10 +13,12 @@ namespace Noise.Core.DataExchange {
 	internal class CloudSyncFavorites : ICloudSyncProvider {
 		private IUnityContainer		mContainer;
 		private IDatabase			mCloudDatabase;
+		private ILog				mLog;
 
 		public bool Initialize( IUnityContainer container, IDatabase cloudDatabase ) {
 			mContainer = container;
 			mCloudDatabase = cloudDatabase;
+			mLog = mContainer.Resolve<ILog>();
 
 			return( true );
 		}
@@ -31,7 +32,8 @@ namespace Noise.Core.DataExchange {
 			var favoritesTable = mCloudDatabase.GetTable<ExportFavorite>( Constants.CloudSyncFavoritesTable ) ??
 								 mCloudDatabase.CreateTable<ExportFavorite>( Constants.CloudSyncFavoritesTable );
 			var cloudFavorites = from ExportFavorite e in favoritesTable.AsQueryable()
-									  where e.SequenceId > startSeqn && e.SequenceId <= toSeqn select e;
+								 where e.SequenceId > startSeqn && e.SequenceId <= toSeqn select e;
+			var updateCount = 0;
 			foreach( var favorite in cloudFavorites ) {
 				var dbEntry = noiseManager.DataProvider.Find( favorite.Artist, favorite.Album, favorite.Track );
 
@@ -40,19 +42,29 @@ namespace Noise.Core.DataExchange {
 					if( dbEntry.Track != null ) {
 						if( dbEntry.Track.IsFavorite != favorite.IsFavorite ) {
 							GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( dbEntry.Track.DbId, favorite.IsFavorite ));
+
+							updateCount++;
 						}
 					}
 					else if( dbEntry.Album != null ) {
 						if( dbEntry.Album.IsFavorite != favorite.IsFavorite ) {
 							GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( dbEntry.Album.DbId, favorite.IsFavorite ));
+
+							updateCount++;
 						}
 					}
 					else if( dbEntry.Artist != null ) {
 						if( dbEntry.Artist.IsFavorite != favorite.IsFavorite ) {
 							GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( dbEntry.Artist.DbId, favorite.IsFavorite ));
+
+							updateCount++;
 						}
 					}
 				}
+			}
+
+			if( updateCount > 0 ) {
+				mLog.LogInfo( string.Format( "Favorites - UpdateFromCloud: {0} item(s).", updateCount ));
 			}
 		}
 
@@ -62,12 +74,9 @@ namespace Noise.Core.DataExchange {
 				var favoriteDb = mCloudDatabase.GetTable<ExportFavorite>( Constants.CloudSyncFavoritesTable ) ??
 								 mCloudDatabase.CreateTable<ExportFavorite>( Constants.CloudSyncFavoritesTable );
 				if( favoriteDb != null ) {
-					IList<IRow<ExportFavorite>> rows = favoriteDb.FindStructured( item.ConstructQuery());
+					var row = favoriteDb.FindAll().Where( e => e.Element.Compare( item )).FirstOrDefault();
 
-					if(( rows != null ) &&
-					   ( rows.Count > 0 )) {
-						IRow<ExportFavorite>	row = rows[0];
-
+					if( row != null ) {
 						row.Element.IsFavorite = favoriteExport.IsFavorite;
 						row.Element.SequenceId = favoriteExport.SequenceId;
 						row.Element.OriginDb = favoriteExport.OriginDb;
@@ -78,6 +87,8 @@ namespace Noise.Core.DataExchange {
 						favoriteDb.Add( favoriteExport );
 					}
 				}
+
+				mLog.LogInfo( string.Format( "Updated favorite to cloud: {0}({1}/{2})", item.Track, item.Artist, item.Album ));
 			}
 		}
 	}

@@ -74,8 +74,16 @@ namespace Noise.Core {
 				}
 
 				CloudSyncMgr = mContainer.Resolve<ICloudSyncManager>();
-				if(!CloudSyncMgr.InitializeCloudSync()) {
-					mLog.LogMessage( "Noise Manager: Could not initialize cloud sync." );
+				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+				var configuration = systemConfig.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
+
+				if( configuration != null ) {
+					if( CloudSyncMgr.InitializeCloudSync( configuration.LoginName, configuration.LoginPassword )) {
+						CloudSyncMgr.MaintainSynchronization = configuration.UseCloud;
+					}
+					else {
+						mLog.LogMessage( "Noise Manager: Could not initialize cloud sync." );
+					}
 				}
 
 				mLog.LogMessage( "Initialized NoiseManager." );

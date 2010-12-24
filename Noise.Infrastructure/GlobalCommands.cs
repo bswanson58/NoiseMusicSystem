@@ -11,5 +11,7 @@ namespace Noise.Infrastructure {
 		public	static CompositeCommand	PlayStream = new CompositeCommand();
 
 		public	static CompositeCommand	UpdatePlayCount = new CompositeCommand();
+
+		public	static CompositeCommand	SynchronizeFromCloud = new CompositeCommand();
 	}
 }

@@ -11,12 +11,18 @@ namespace Noise.Core.DataExchange.Dto {
 		public	string			Track { get; set; }
 		public	string			Stream { get; set; }
 
-		private ExportBase( long originDb ) {
+		private ExportBase( long originDb ) :
+			this() {
 			OriginDb = originDb;
-			CreationDateTicks = DateTime.Now.Ticks;
 		}
 
 		protected ExportBase() {
+			CreationDateTicks = DateTime.Now.Ticks;
+
+			Artist = "";
+			Album = "";
+			Track = "";
+			Stream = "";
 		}
 
 		protected ExportBase( long originDb, string artist ) :
@@ -42,19 +48,31 @@ namespace Noise.Core.DataExchange.Dto {
 			Stream = stream;
 		}
 
-		protected ExportBase( DataFindResults results ) {
-			CreationDateTicks = DateTime.Now.Ticks;
-			OriginDb = results.DatabaseId;
-
+		protected ExportBase( DataFindResults results ) :
+				this( results.DatabaseId ) {
 			Track = results.Track != null ? results.Track.Name : "";
 			Album = results.Album != null ? results.Album.Name : "";
 			Artist = results.Artist != null ? results.Artist.Name : "";
 		}
 
-		public string ConstructQuery() {
-			return(!string.IsNullOrWhiteSpace( Track ) ? string.Format( "Artist=\"{0}\" and Album=\"{1}\" and Track=\"{2}\"", Artist, Album, Track ) :
-				   !string.IsNullOrWhiteSpace( Album ) ? string.Format( "Artist=\"{0}\" and Album=\"{1}\"", Artist, Album ) :
-														 string.Format( "Artist=\"{0}\"", Artist ));
+		public bool Compare( ExportBase two ) {
+			var retValue = true;
+
+			if( two != null ) {
+				retValue &= ( string.IsNullOrWhiteSpace( Artist ) && string.IsNullOrWhiteSpace( two.Artist ) ) ||
+							( Artist.Equals( two.Artist, StringComparison.CurrentCultureIgnoreCase ) );
+				retValue &= ( string.IsNullOrWhiteSpace( Album ) && string.IsNullOrWhiteSpace( two.Album ) ) ||
+							( Album.Equals( two.Album, StringComparison.CurrentCultureIgnoreCase ) );
+				retValue &= ( string.IsNullOrWhiteSpace( Track ) && string.IsNullOrWhiteSpace( two.Track ) ) ||
+							( Track.Equals( two.Track, StringComparison.CurrentCultureIgnoreCase ) );
+				retValue &= ( string.IsNullOrWhiteSpace( Stream ) && string.IsNullOrWhiteSpace( two.Stream ) ) ||
+							( Stream.Equals( two.Stream, StringComparison.CurrentCultureIgnoreCase ) );
+			}
+			else {
+				retValue = false;
+			}
+
+			return( retValue );
 		}
 	}
 }
