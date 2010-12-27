@@ -52,7 +52,10 @@ namespace Noise.Core.DataBuilders {
 
 							foreach( var album in albums ) {
 								var albumId = album.DbId;
-								var tracks = from DbTrack track in database.Database where track.Album == albumId select track;
+								var parms = database.Database.CreateParameters();
+
+								parms["albumId"] = albumId;
+								var tracks = database.Database.ExecuteQuery( "SELECT DbTrack WHERE Album = @albumId", parms ).OfType<DbTrack>();
 								var years = new List<UInt32>();
 								var trackGenre = new Dictionary<long, int>();
 								var trackRating = 0;
