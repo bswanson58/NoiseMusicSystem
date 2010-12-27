@@ -14,20 +14,27 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class LibraryExplorerViewModel : ViewModelBase {
+		private const string					cVisualStateNormal	= "Normal";
+		private const string					cVisualStateIndex	= "DisplayIndex";
+
 		private IUnityContainer					mContainer;
 		private IEventAggregator				mEvents;
 		private IExplorerViewStrategy			mViewStrategy;
-		private ObservableCollectionEx<ArtistTreeNode>	mTreeItems;
 		private List<string>					mSearchOptions;
 		private readonly LibraryExplorerFilter	mExplorerFilter;
 		private DateTime						mLastExplorerRequest;
 		private	readonly TimeSpan				mPlayTrackDelay;
+		private string							mVisualState;
+		private ObservableCollectionEx<ArtistTreeNode>	mTreeItems;
+		private ObservableCollectionEx<IndexNode>		mIndexItems;
 
 		public LibraryExplorerViewModel() {
 			mExplorerFilter = new LibraryExplorerFilter { IsEnabled = false };
 
 			mPlayTrackDelay = new TimeSpan( 0, 0, 30 );
 			mLastExplorerRequest = DateTime.Now - mPlayTrackDelay;
+
+			mVisualState = cVisualStateNormal;
 		}
 
 		[Dependency]
@@ -83,6 +90,16 @@ namespace Noise.UI.ViewModels {
 			mTreeItems.Clear();
 		 	mTreeItems.AddRange( newNodes );
 			mTreeItems.ResumeNotification();
+		}
+
+		private void UpdateIndex() {
+			if(( mViewStrategy != null ) &&
+			   ( mTreeItems != null )) {
+				mIndexItems.SuspendNotification();
+				mIndexItems.Clear();
+				mIndexItems.AddRange( mViewStrategy.BuildIndex( mTreeItems ));
+				mIndexItems.ResumeNotification();
+			}
 		}
 
 		public ObservableCollectionEx<ArtistTreeNode> TreeData {
@@ -141,6 +158,40 @@ namespace Noise.UI.ViewModels {
 
 		public bool HaveSearchOptions {
 			get{ return(( mSearchOptions != null ) && ( mSearchOptions.Count > 0 )); }
+		}
+
+		public string VisualStateName {
+			get{ return( mVisualState ); }
+		}
+
+		public void Execute_ToggleIndexDisplay() {
+			mVisualState = mVisualState == cVisualStateNormal ? cVisualStateIndex : cVisualStateNormal;
+
+			RaisePropertyChanged( () => VisualStateName );
+		}
+
+		public IEnumerable<IndexNode> IndexData {
+			get {
+				if( mIndexItems == null ) {
+					mIndexItems = new ObservableCollectionEx<IndexNode>();
+					UpdateIndex();
+				}
+
+				return( mIndexItems );
+			}
+		}
+
+		public IndexNode SelectedIndex {
+			get{ return( null ); }
+			set {
+				mVisualState = cVisualStateNormal;
+
+				if( value != null ) {
+					value.DisplayNode();
+				}
+
+				RaisePropertyChanged( () => VisualStateName );
+			}
 		}
 	}
 }

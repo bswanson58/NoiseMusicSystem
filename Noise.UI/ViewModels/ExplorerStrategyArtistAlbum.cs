@@ -119,6 +119,24 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
+		public IEnumerable<IndexNode> BuildIndex( IEnumerable<ArtistTreeNode> artistList ) {
+			var retValue = new List<IndexNode>();
+
+			const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			var obs = alphabet.ToObservable();
+
+			obs.Subscribe( ch =>
+			{
+				var artist = artistList.FirstOrDefault( node => node.Artist.Name.StartsWith( ch.ToString()));
+
+				if( artist != null ) {
+					retValue.Add( new IndexNode( ch.ToString(), artist ));
+				}
+			});
+
+			return( retValue );
+		}
+
 		private void AddArtist( ICollection<ArtistTreeNode> tree, DbArtist artist ) {
 			var uiArtist = new UiArtist( OnArtistSelect ) { DisplayGenre = mNoiseManager.TagManager.GetGenre( artist.Genre ) };
 			Mapper.DynamicMap( artist, uiArtist );

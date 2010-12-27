@@ -10,6 +10,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              Tag="Library"
+             Behaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
              >
     <UserControl.Resources>
     	<Style x:Key="TreeViewItemFocusVisual">
@@ -131,8 +132,26 @@
 	<UserControl.DataContext>
 		<Binding Path="LibraryExplorerViewModel" Source="{StaticResource ViewModelLocator}"/>
 	</UserControl.DataContext>
-
+    
     <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Library "  Margin="0">
+    	<VisualStateManager.VisualStateGroups>
+    		<VisualStateGroup x:Name="IndexVisibility">
+    			<VisualStateGroup.Transitions>
+    				<VisualTransition GeneratedDuration="0:0:0.3"/>
+    			</VisualStateGroup.Transitions>
+    			<VisualState x:Name="Normal"/>
+    			<VisualState x:Name="DisplayIndex">
+    				<Storyboard>
+    					<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="TreeIndex">
+    						<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+    					</DoubleAnimationUsingKeyFrames>
+    					<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="TreeIndex">
+    						<EasingDoubleKeyFrame KeyTime="0" Value="75"/>
+    					</DoubleAnimationUsingKeyFrames>
+    				</Storyboard>
+    			</VisualState>
+    		</VisualStateGroup>
+    	</VisualStateManager.VisualStateGroups>
         <Grid Behaviours:GridUtils.RowDefinitions="*,Auto">
             <TreeView Grid.Row="0" BorderThickness="0"
                   ItemsSource="{Binding TreeData}"
@@ -140,8 +159,16 @@
                   ItemContainerStyle="{DynamicResource TreeViewItemStyle}"
                   />
             
+            <Controls:ListIndex x:Name="TreeIndex" Grid.Row="0" HorizontalAlignment="Left" Width="0" Margin="3,15,0,0" Opacity="0"/>
+            
             <Border Grid.Row="1" BorderThickness="0" Margin="0,5,0,0">
                 <Grid Behaviours:GridUtils.ColumnDefinitions="Auto,*,Auto">
+                    <Button Grid.Column="0" Margin="3" Command="{Binding Path=ToggleIndexDisplay}">
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Margin="3,0,0,0" Text="Index"/>
+                            <TextBlock Margin="0,0,3,0" FontFamily="Webdings" Text="5" FontSize="16"/>
+                        </StackPanel>
+                    </Button>
                     <Grid Grid.Column="1" Margin="3" Behaviours:GridUtils.ColumnDefinitions="15,Auto,*,15">
                         <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="Search for: "/>
                         <Controls:SearchTextBox Grid.Column="2" VerticalAlignment="Center" LabelText="Search Library" 
