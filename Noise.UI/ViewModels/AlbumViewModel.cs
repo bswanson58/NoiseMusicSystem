@@ -11,6 +11,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using Noise.UI.Behaviours;
 using Noise.UI.Dto;
 using Observal.Extensions;
 
@@ -37,6 +38,7 @@ namespace Noise.UI.ViewModels {
 		private UiAlbum						mCurrentAlbum;
 		private readonly BitmapImage		mUnknownImage;
 		private readonly BitmapImage		mSelectImage;
+		private ImageScrubberItem			mCurrentAlbumCover;
 		public	TimeSpan					AlbumPlayTime { get; private set; }
 		private readonly Observal.Observer	mChangeObserver;
 		private readonly BackgroundWorker	mBackgroundWorker;
@@ -113,6 +115,7 @@ namespace Noise.UI.ViewModels {
 					mTracks.Each( track => mChangeObserver.Add( track ));
 				}
 
+				mCurrentAlbumCover = SelectAlbumCover( albumInfo.SupportInfo );
 				SupportInfo = albumInfo.SupportInfo;
 
 				RaisePropertyChanged( () => AlbumPlayTime );
@@ -158,6 +161,32 @@ namespace Noise.UI.ViewModels {
 														orderby track.VolumeName, track.TrackNumber ascending select track );
 
 					retValue = new NewAlbumInfo( album, mNoiseManager.DataProvider.GetAlbumSupportInfo( album.DbId ), sortedList );
+				}
+			}
+
+			return( retValue );
+		}
+
+		private ImageScrubberItem SelectAlbumCover( AlbumSupportInfo info ) {
+			var	retValue = new ImageScrubberItem( 0, mUnknownImage );
+
+			if( info != null ) {
+				if(( info.AlbumCovers != null ) &&
+					( info.AlbumCovers.GetLength( 0 ) > 0 )) {
+					var cover = (( from DbArtwork artwork in info.AlbumCovers where artwork.IsUserSelection select artwork ).FirstOrDefault() ??
+								 ( from DbArtwork artwork in info.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
+								 ( from DbArtwork artwork in info.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault()) ??
+								SupportInfo.AlbumCovers[0];
+
+					if( cover != null ) {
+						retValue = new ImageScrubberItem( cover.DbId, CreateBitmap( cover.Image ));
+					}
+				}
+				else {
+					if(( info.Artwork != null ) &&
+						( info.Artwork.GetLength( 0 ) > 0 )) {
+						retValue = new ImageScrubberItem( 1, mSelectImage );
+					}
 				}
 			}
 
@@ -224,54 +253,41 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "SupportInfo" )]
-		public BitmapImage AlbumCover {
+		public ImageScrubberItem AlbumCover {
+			get { return( mCurrentAlbumCover ); }
+			set {
+				if( value.Id != mCurrentAlbumCover.Id ) {
+					mCurrentAlbumCover = value;
+
+					GlobalCommands.SetAlbumCover.Execute( new SetAlbumCoverCommandArgs( mCurrentAlbum.DbId, value.Id ));
+				}
+			}
+		}
+
+		[DependsUpon( "SupportInfo" )]
+		public IEnumerable<ImageScrubberItem> AlbumArtwork {
 			get {
-				BitmapImage	retValue = mUnknownImage;
+				var	retValue = new List<ImageScrubberItem>();
 
-				if( SupportInfo != null ) {
-					if(( SupportInfo.AlbumCovers != null ) &&
-					   ( SupportInfo.AlbumCovers.GetLength( 0 ) > 0 )) {
-						var cover = (( from DbArtwork artwork in SupportInfo.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
-									 ( from DbArtwork artwork in SupportInfo.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault()) ??
-									SupportInfo.AlbumCovers[0];
-
-						if( cover != null ) {
-							var stream = new MemoryStream( cover.Image );
-
-							retValue = new BitmapImage();
-
-							retValue.BeginInit();
-							retValue.StreamSource = stream;
-							retValue.EndInit();
-						}
-					}
-					else {
-						if(( SupportInfo.Artwork != null ) &&
-						   ( SupportInfo.Artwork.GetLength( 0 ) > 0 )) {
-							retValue = mSelectImage;
-						}
-					}
+				if(( SupportInfo != null ) &&
+				   ( SupportInfo.Artwork != null )) {
+					retValue.AddRange( SupportInfo.Artwork.Select( artwork => new ImageScrubberItem( artwork.DbId, CreateBitmap( artwork.Image ))));
+					retValue.AddRange( SupportInfo.AlbumCovers.Select( cover => new ImageScrubberItem( cover.DbId, CreateBitmap( cover.Image ))));
 				}
 
 				return( retValue );
 			}
 		}
 
-		[DependsUpon( "SupportInfo" )]
-		public IList<byte[]> AlbumArtwork {
-			get {
-				List<byte[]>	retValue;
+		private static BitmapImage CreateBitmap( byte[] bytes ) {
+			var stream = new MemoryStream( bytes );
+			var bitmap = new BitmapImage();
 
-				if(( SupportInfo != null ) &&
-				   ( SupportInfo.Artwork != null )) {
-					retValue = ( from DbArtwork artwork in SupportInfo.Artwork select artwork.Image ).ToList();
-				}
-				else {
-					retValue = new List<byte[]>();
-				}
+			bitmap.BeginInit();
+			bitmap.StreamSource = stream;
+			bitmap.EndInit();
 
-				return( retValue );
-			}
+			return( bitmap );
 		}
 
 		[DependsUpon( "SupportInfo" )]

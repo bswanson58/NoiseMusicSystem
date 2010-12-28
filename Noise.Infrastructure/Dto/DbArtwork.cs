@@ -6,6 +6,7 @@ namespace Noise.Infrastructure.Dto {
 		public	long			FolderLocation { get; set; }
 		public	InfoSource		Source { get; set; }
 		public	byte[]			Image { get; set; }
+		public	bool			IsUserSelection { get; set; }
 
 		public DbArtwork( long associatedItem, ContentType contentType ) :
 			base( associatedItem, contentType ) {

@@ -151,6 +151,7 @@
     <Compile Include="Behaviours\EventCommandTriggers\ICommandTrigger.cs" />
     <Compile Include="Behaviours\EventCommandTriggers\PropertyCommandTrigger.cs" />
     <Compile Include="Behaviours\GridUtils.cs" />
+    <Compile Include="Behaviours\ImageScrubber.cs" />
     <Compile Include="Behaviours\ListViewDragDropManager.cs" />
     <Compile Include="Behaviours\ListViewEnsureVisible.cs" />
     <Compile Include="Behaviours\ListViewFirstItemVisible.cs" />

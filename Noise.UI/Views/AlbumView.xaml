@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
              xmlns:Custom="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
@@ -25,7 +26,11 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Image Grid.Column="0" Margin="7" MaxHeight="200" MaxWidth="300" Stretch="Uniform" Source="{Binding AlbumCover}"/>
+                    <Image Grid.Column="0" Margin="7" MaxHeight="200" MaxWidth="300" Stretch="Uniform">
+                        <i:Interaction.Behaviors>
+                            <Behaviours:ImageScrubber ImageList="{Binding Path=AlbumArtwork}" Image="{Binding Path=AlbumCover, Mode=TwoWay}" />
+                        </i:Interaction.Behaviors>
+                    </Image>
                     <Grid Grid.Column="2" Margin="3,0,25,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>

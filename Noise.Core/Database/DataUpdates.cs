@@ -17,6 +17,7 @@ namespace Noise.Core.Database {
 
 		private AsyncCommand<SetFavoriteCommandArgs>	mSetFavoriteCommand;
 		private AsyncCommand<SetRatingCommandArgs>		mSetRatingCommand;
+		private AsyncCommand<SetAlbumCoverCommandArgs>	mSetAlbumCoverCommand;
 
 		public DataUpdates( IUnityContainer container ) {
 			mContainer = container;
@@ -31,7 +32,12 @@ namespace Noise.Core.Database {
 			GlobalCommands.SetFavorite.RegisterCommand( mSetFavoriteCommand );
 
 			mSetRatingCommand = new AsyncCommand<SetRatingCommandArgs>( OnSetRating );
+			mSetRatingCommand.ExecutionComplete += OnExecutionComplete;
 			GlobalCommands.SetRating.RegisterCommand( mSetRatingCommand );
+
+			mSetAlbumCoverCommand = new AsyncCommand<SetAlbumCoverCommandArgs>( OnSetAlbumCover );
+			mSetAlbumCoverCommand.ExecutionComplete += OnExecutionComplete;
+			GlobalCommands.SetAlbumCover.RegisterCommand( mSetAlbumCoverCommand );
 
 			return( true );
 		}
@@ -338,6 +344,40 @@ namespace Noise.Core.Database {
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - SetRating(DbPlayList):", ex );
+			}
+		}
+
+		private void OnSetAlbumCover( SetAlbumCoverCommandArgs args ) {
+			var database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				var parms = database.Database.CreateParameters();
+
+				parms["albumId"] = args.AlbumId;
+
+				var	artworkList = database.Database.ExecuteQuery( "SELECT DbArtwork WHERE Album = @albumId", parms ).OfType<DbArtwork>();
+
+				foreach( var artwork in artworkList ) {
+					if(( artwork.IsUserSelection ) &&
+					   ( artwork.DbId != args.ArtworkId )) {
+						artwork.IsUserSelection = false;
+
+						database.Store( artwork );
+					}
+
+					if(( artwork.DbId == args.ArtworkId ) &&
+					   (!artwork.IsUserSelection )) {
+						artwork.IsUserSelection = true;
+
+						database.Store( artwork );
+					}
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - DataUpdates:OnSetAlbumCover", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
 			}
 		}
 	}

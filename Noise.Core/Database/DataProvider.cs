@@ -483,7 +483,7 @@ namespace Noise.Core.Database {
 				parms["coverType"] = ContentType.AlbumCover;
 				parms["otherType"] = ContentType.AlbumArtwork;
 
-				retValue = new AlbumSupportInfo( database.Database.ExecuteQuery( "SELECT DbArtwork WHERE Album = @albumId AND ContentType = @coverType", parms ).OfType<DbArtwork>().ToArray(),
+				retValue = new AlbumSupportInfo( database.Database.ExecuteQuery( "SELECT DbArtwork WHERE Album = @albumId AND ( ContentType = @coverType OR IsUserSelection )", parms ).OfType<DbArtwork>().ToArray(),
 												 database.Database.ExecuteQuery( "SELECT DbArtwork WHERE Album = @albumId AND ContentType = @otherType", parms ).OfType<DbArtwork>().ToArray(),
 												 database.Database.ExecuteQuery( "SELECT DbTextInfo WHERE Album = @albumId" ,parms ).OfType<DbTextInfo>().ToArray());
 			}
