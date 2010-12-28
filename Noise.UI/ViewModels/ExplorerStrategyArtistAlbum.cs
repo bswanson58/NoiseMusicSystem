@@ -122,7 +122,7 @@ namespace Noise.UI.ViewModels {
 		public IEnumerable<IndexNode> BuildIndex( IEnumerable<ArtistTreeNode> artistList ) {
 			var retValue = new List<IndexNode>();
 
-			const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			const string alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 			var obs = alphabet.ToObservable();
 
 			obs.Subscribe( ch =>
