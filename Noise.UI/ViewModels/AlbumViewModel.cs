@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Windows.Media.Imaging;
 using AutoMapper;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
@@ -33,6 +35,8 @@ namespace Noise.UI.ViewModels {
 		private IEventAggregator			mEvents;
 		private INoiseManager				mNoiseManager;
 		private UiAlbum						mCurrentAlbum;
+		private readonly BitmapImage		mUnknownImage;
+		private readonly BitmapImage		mSelectImage;
 		public	TimeSpan					AlbumPlayTime { get; private set; }
 		private readonly Observal.Observer	mChangeObserver;
 		private readonly BackgroundWorker	mBackgroundWorker;
@@ -47,6 +51,9 @@ namespace Noise.UI.ViewModels {
 			mBackgroundWorker = new BackgroundWorker();
 			mBackgroundWorker.DoWork += ( o, args ) => args.Result = RetrieveAlbumInfo( args.Argument as DbAlbum );
 			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => SetCurrentAlbum( result.Result as NewAlbumInfo );
+
+			mUnknownImage = new BitmapImage( new Uri( "pack://application:,,,/Noise.UI;component/Resources/Unknown Album Image.png" ));
+			mSelectImage = new BitmapImage( new Uri( "pack://application:,,,/Noise.UI;component/Resources/Select Album Image.png" ));
 		}
 
 		[Dependency]
@@ -217,19 +224,32 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "SupportInfo" )]
-		public byte[] AlbumCover {
+		public BitmapImage AlbumCover {
 			get {
-				byte[]	retValue = null;
+				BitmapImage	retValue = mUnknownImage;
 
-				if(( SupportInfo != null ) &&
-				   ( SupportInfo.AlbumCovers != null ) &&
-				   ( SupportInfo.AlbumCovers.GetLength( 0 ) > 0 )) {
-					var cover = (( from DbArtwork artwork in SupportInfo.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
-					             ( from DbArtwork artwork in SupportInfo.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault()) ??
-					            SupportInfo.AlbumCovers[0];
+				if( SupportInfo != null ) {
+					if(( SupportInfo.AlbumCovers != null ) &&
+					   ( SupportInfo.AlbumCovers.GetLength( 0 ) > 0 )) {
+						var cover = (( from DbArtwork artwork in SupportInfo.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
+									 ( from DbArtwork artwork in SupportInfo.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault()) ??
+									SupportInfo.AlbumCovers[0];
 
-					if( cover != null ) {
-						retValue = cover.Image;
+						if( cover != null ) {
+							var stream = new MemoryStream( cover.Image );
+
+							retValue = new BitmapImage();
+
+							retValue.BeginInit();
+							retValue.StreamSource = stream;
+							retValue.EndInit();
+						}
+					}
+					else {
+						if(( SupportInfo.Artwork != null ) &&
+						   ( SupportInfo.Artwork.GetLength( 0 ) > 0 )) {
+							retValue = mSelectImage;
+						}
 					}
 				}
 
