@@ -28,16 +28,19 @@ namespace Noise.Core.DataBuilders {
 			if( database != null ) {
 				try {
 					if( mNoiseManager.SearchProvider.StartIndexUpdate( true )) {
-						var artistList = from DbArtist artist in database.Database select artist;
+						var artistList = database.Database.ExecuteQuery( "SELECT DbArtist" ).OfType<DbArtist>();
+						var parms = database.Database.CreateParameters();
+
+						parms["discography"] = ContentType.Discography;
+						parms["textInfo"] = ContentType.TextInfo;
 
 						foreach( var artist in artistList ) {
 							mLog.LogMessage( String.Format( "Building search info for {0}", artist.Name ));
 
 							mNoiseManager.SearchProvider.AddSearchItem( artist, eSearchItemType.Artist, artist.Name );
 
-							var artistId = artist.DbId;
-							var associatedItems = from DbAssociatedItemList itemList in database.Database 
-												  where itemList.Artist == artistId && itemList.IsContentAvailable select itemList;
+							parms["artistId"] = artist.DbId;
+							var associatedItems = database.Database.ExecuteQuery( "SELECT DbAssociatedItemList WHERE Artist = @artistId AND IsContentAvailable", parms ).OfType<DbAssociatedItemList>();
 							foreach( var item in associatedItems ) {
 								var itemType = eSearchItemType.Unknown;
 
@@ -60,26 +63,24 @@ namespace Noise.Core.DataBuilders {
 								}
 							}
 
-							var biography = ( from DbTextInfo text in database.Database 
-											  where text.Artist == artistId & text.ContentType == ContentType.Discography && text.IsContentAvailable 
-											  select text ).FirstOrDefault();
+							var bioList = database.Database.ExecuteQuery( "SELECT DbTextInfo WHERE Artist = @artistId AND ContentType = @discography AND IsContentAvailable", parms ).OfType<DbTextInfo>();
+							var biography = bioList.FirstOrDefault();
 							if( biography != null ) {
 								mNoiseManager.SearchProvider.AddSearchItem( artist, eSearchItemType.Biography, biography.Text );
 							}
 
-							var albumList = from DbAlbum album in database.Database where album.Artist == artistId select album;
+							var	albumList = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>();
 							foreach( var album in albumList ) {
 								mNoiseManager.SearchProvider.AddSearchItem( artist, album, eSearchItemType.Album, album.Name );
 
-								var albumId = album.DbId;
-								var infoList = from DbTextInfo text in database.Database
-											   where text.Album == albumId && text.ContentType == ContentType.TextInfo select text;
+								parms["albumId"] = album.DbId;
+								var infoList = database.Database.ExecuteQuery( "SELECT DbTextInfo WHERE Album = @albumId AND ContentType = @textInfo", parms ).OfType<DbTextInfo>();
 
 								foreach( var info in infoList ) {
 									mNoiseManager.SearchProvider.AddSearchItem( artist, album, eSearchItemType.TextInfo, info.Text );
 								}
 
-								var trackList = from DbTrack track in database.Database where track.Album == albumId select track;
+								var trackList = database.Database.ExecuteQuery( "SELECT DbTrack WHERE Album = @albumId", parms ).OfType<DbTrack>();
 
 								foreach( var track in trackList ) {
 									mNoiseManager.SearchProvider.AddSearchItem( artist, album, track, eSearchItemType.Track, track.Name );
