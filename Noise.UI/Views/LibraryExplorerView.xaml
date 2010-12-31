@@ -153,7 +153,7 @@
     		</VisualStateGroup>
     	</VisualStateManager.VisualStateGroups>
         <Grid Behaviours:GridUtils.RowDefinitions="*,Auto">
-            <TreeView Grid.Row="0" BorderThickness="0"
+            <TreeView Grid.Row="0" BorderThickness="0" VirtualizingStackPanel.IsVirtualizing="True"
                   ItemsSource="{Binding TreeData}"
                   ItemTemplate="{Binding TreeViewItemTemplate}"
                   ItemContainerStyle="{DynamicResource TreeViewItemStyle}"
