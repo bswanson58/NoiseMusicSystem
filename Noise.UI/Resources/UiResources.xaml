@@ -64,7 +64,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" Text="{Binding Artist.Name}"/>
+                <TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" Text="{Binding Artist.DisplayName}"/>
                 <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
                     <CheckBox Style="{DynamicResource FavoriteCheckBoxStyle}" Margin="0,9,3,0" IsChecked="{Binding Artist.UiIsFavorite, Mode=TwoWay}"/>
                     <Controls:RatingSelector Margin="0,1,0,0" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Style="{DynamicResource RatingStyle}"

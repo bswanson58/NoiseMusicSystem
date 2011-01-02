@@ -17,6 +17,8 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cPlayStrategyProperty						= "playStrategy";
 		private const string	cNewAdditionsHorizonDaysProperty			= "newAdditionsHorizonDays";
 		private const string	cNewAdditionsHorizonCountProperty			= "newAdditionsHorizonCount";
+		private const string	cEnableSortPrefixesProperty					= "enableSortPrefixes";
+		private const string	cSortPrefixesProperty						= "sortPrefixes";
 
 		[ConfigurationPropertyAttribute( cEnableLibraryExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
 		public bool EnableLibraryExplorer {
@@ -82,6 +84,18 @@ namespace Noise.Infrastructure.Configuration {
 		public UInt32 NewAdditionsHorizonCount {
 			get { return ((UInt32)( base[cNewAdditionsHorizonCountProperty] ) ); }
 			set { base[cNewAdditionsHorizonCountProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cEnableSortPrefixesProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
+		public bool EnableSortPrefixes {
+			get { return ((bool)( base[cEnableSortPrefixesProperty] ) ); }
+			set { base[cEnableSortPrefixesProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cSortPrefixesProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "" )]
+		public string SortPrefixes {
+			get { return ((string)( base[cSortPrefixesProperty] ) ); }
+			set { base[cSortPrefixesProperty] = value; }
 		}
 	}
 }

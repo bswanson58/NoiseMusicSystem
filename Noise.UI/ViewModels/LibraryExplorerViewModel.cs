@@ -4,6 +4,7 @@ using System.Windows;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
@@ -25,6 +26,8 @@ namespace Noise.UI.ViewModels {
 		private DateTime						mLastExplorerRequest;
 		private	readonly TimeSpan				mPlayTrackDelay;
 		private string							mVisualState;
+		private bool							mEnableSortPrefixes;
+		private readonly List<string>			mSortPrefixes;
 		private ObservableCollectionEx<ArtistTreeNode>	mTreeItems;
 		private ObservableCollectionEx<IndexNode>		mIndexItems;
 
@@ -33,6 +36,8 @@ namespace Noise.UI.ViewModels {
 
 			mPlayTrackDelay = new TimeSpan( 0, 0, 30 );
 			mLastExplorerRequest = DateTime.Now - mPlayTrackDelay;
+
+			mSortPrefixes = new List<string>();
 
 			mVisualState = cVisualStateNormal;
 		}
@@ -44,8 +49,19 @@ namespace Noise.UI.ViewModels {
 				mContainer = value; 
 				mSearchOptions = new List<string>();
 
+				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+				if( configuration != null ) {
+					mEnableSortPrefixes = configuration.EnableSortPrefixes;
+
+					if( mEnableSortPrefixes ) {
+						mSortPrefixes.AddRange( configuration.SortPrefixes.Split( '|' ));
+					}
+				}
+
 				mViewStrategy = mContainer.Resolve<IExplorerViewStrategy>( "ArtistAlbum" );
 				mViewStrategy.Initialize( this );
+				mViewStrategy.UseSortPrefixes( mEnableSortPrefixes, mSortPrefixes );
 
 				mEvents = mContainer.Resolve<IEventAggregator>();
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistRequested );

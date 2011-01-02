@@ -28,6 +28,8 @@ namespace Noise.UI.ViewModels {
 		private readonly INoiseManager			mNoiseManager;
 		private readonly Observal.Observer		mChangeObserver;
 		private	LibraryExplorerViewModel		mViewModel;
+		private	bool							mUseSortPrefixes;
+		private IEnumerable<string>				mSortPrefixes;
 		private IEnumerator<ArtistTreeNode>		mTreeEnumerator;
 		private string							mLastSearchOptions;
 
@@ -40,6 +42,11 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
 			mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
+		}
+
+		public void UseSortPrefixes( bool enable, IEnumerable<string> sortPrefixes ) {
+			mUseSortPrefixes =enable;
+			mSortPrefixes = sortPrefixes;
 		}
 
 		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
@@ -76,7 +83,7 @@ namespace Noise.UI.ViewModels {
 							case DbItemChanged.Insert:
 								mViewModel.TreeData.SuspendNotification();
 								AddArtist( mViewModel.TreeData, artist );
-								mViewModel.TreeData.Sort( node => node.Artist.Name, ListSortDirection.Ascending );
+								mViewModel.TreeData.Sort( node => node.Artist.SortName, ListSortDirection.Ascending );
 								mViewModel.TreeData.ResumeNotification();
 								break;
 
@@ -108,12 +115,12 @@ namespace Noise.UI.ViewModels {
 
 			if( mNoiseManager.IsInitialized ) {
 				using( var list = mNoiseManager.DataProvider.GetArtistList( filter )) {
-					var artistList = from artist in list.List orderby artist.Name select artist;
-
-					foreach( DbArtist artist in artistList ) {
+					foreach( var artist in list.List ) {
 						AddArtist( retValue, artist );
 					}
 				}
+
+				retValue.Sort( ( node1, node2 ) => string.Compare( node1.Artist.SortName, node2.Artist.SortName ));
 			}
 
 			return( retValue );
@@ -142,8 +149,25 @@ namespace Noise.UI.ViewModels {
 			Mapper.DynamicMap( artist, uiArtist );
 			var parent = new ArtistTreeNode( uiArtist, FillChildren );
 
+			if( mUseSortPrefixes ) {
+				FormatSortPrefix( uiArtist );
+			}
+
 			tree.Add( parent );
 			mChangeObserver.Add( parent.Artist );
+		}
+
+		private void FormatSortPrefix( UiArtist artist ) {
+			if( mSortPrefixes != null ) {
+				foreach( string prefix in mSortPrefixes ) {
+					if( artist.Name.StartsWith( prefix, StringComparison.CurrentCultureIgnoreCase )) {
+						artist.SortName = artist.Name.Remove( 0, prefix.Length ).Trim();
+						artist.DisplayName = "(" + artist.Name.Insert( prefix.Length, ")" );
+
+						break;
+					}
+				}
+			}
 		}
 
 		private List<UiAlbum> FillChildren( ArtistTreeNode parent ) {

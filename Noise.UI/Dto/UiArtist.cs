@@ -6,6 +6,8 @@ namespace Noise.UI.Dto {
 	[DebuggerDisplay("Artist = {Name}")]
 	public class UiArtist : UiBase {
 		public string			Name { get; set; }
+		public string			SortName { get; set; }
+		public string			DisplayName { get; set; }
 		public string			Website { get; set; }
 		public long				CalculatedGenre { get; set; }
 		public long				ExternalGenre { get; set; }
