@@ -106,6 +106,7 @@ namespace Noise.Core.DataExchange {
 				var seqnId = ReserveSeqnId();
 
 				SyncFavorites( seqnId );
+				SyncStreams( seqnId );
 
 				UpdateCloudSeqn( seqnId );
 				UpdateSeqnId( seqnId );
@@ -150,6 +151,22 @@ namespace Noise.Core.DataExchange {
 
 					foreach( var provider in SyncProviders ) {
 						if( provider.SyncTypes.HasFlag( ObjectTypes.Favorites )) {
+							provider.UpdateToCloud( item );
+						}
+					}
+				}
+			}
+		}
+
+		private void SyncStreams( long seqnId ) {
+			var noiseManager = mContainer.Resolve<INoiseManager>();
+
+			using( var streamList = noiseManager.DataProvider.GetStreamList()) {
+				foreach( var stream in streamList.List ) {
+					var item = new ExportStream( noiseManager.DataProvider.DatabaseId, stream.Name, stream.Description, stream.Url, stream.IsPlaylistWrapped, stream.Website ) { SequenceId = seqnId };
+
+					foreach( var provider in SyncProviders ) {
+						if( provider.SyncTypes.HasFlag( ObjectTypes.Streams )) {
 							provider.UpdateToCloud( item );
 						}
 					}

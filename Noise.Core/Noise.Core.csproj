@@ -170,10 +170,12 @@
     <Compile Include="DataExchange\BaseExporter.cs" />
     <Compile Include="DataExchange\CloudSyncFavorites.cs" />
     <Compile Include="DataExchange\CloudSyncManager.cs" />
+    <Compile Include="DataExchange\CloudSyncStreams.cs" />
     <Compile Include="DataExchange\DataExchangeManager.cs" />
     <Compile Include="DataExchange\Dto\CloudSyncEntry.cs" />
     <Compile Include="DataExchange\Dto\ExportBase.cs" />
     <Compile Include="DataExchange\Dto\ExportFavorite.cs" />
+    <Compile Include="DataExchange\Dto\ExportStream.cs" />
     <Compile Include="DataExchange\ExchangeConstants.cs" />
     <Compile Include="DataExchange\ExportFavorites.cs" />
     <Compile Include="DataExchange\ExportStreams.cs" />
