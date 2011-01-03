@@ -119,6 +119,7 @@
         <ComponentGroupRef Id="BassAudioFiles"/>
         <ComponentGroupRef Id="CuttingEdgeFiles"/>
         <ComponentGroupRef Id="EloqueraFiles"/>
+        <ComponentGroupRef Id="GDataDBFiles"/>
         <ComponentGroupRef Id="HammockFiles"/>
         <ComponentGroupRef Id="LuceneFiles"/>
         <ComponentGroupRef Id="MicrosoftFiles"/>

@@ -39,6 +39,7 @@
     <Content Include="BASS Audio.wxi" />
     <Content Include="CuttingEdge.wxi" />
     <Content Include="Eloquera.wxi" />
+    <Content Include="GDataDB.wxi" />
     <Content Include="Hammock.wxi" />
     <Content Include="Lucene.wxi" />
     <Content Include="Microsoft.wxi" />

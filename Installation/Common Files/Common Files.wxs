@@ -9,6 +9,7 @@
     <?include BASS Audio.wxi ?>
     <?include CuttingEdge.wxi ?>
     <?include Eloquera.wxi ?>
+    <?include GDataDB.wxi ?>
     <?include Hammock.wxi ?>
     <?include Lucene.wxi ?>
     <?include Microsoft.wxi ?>
