@@ -134,7 +134,7 @@ namespace Noise.UI.ViewModels {
 
 			obs.Subscribe( ch =>
 			{
-				var artist = artistList.FirstOrDefault( node => node.Artist.Name.StartsWith( ch.ToString()));
+				var artist = artistList.FirstOrDefault( node => node.Artist.SortName.StartsWith( ch.ToString()));
 
 				if( artist != null ) {
 					retValue.Add( new IndexNode( ch.ToString(), artist ));

@@ -145,8 +145,8 @@
     					<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="TreeIndex">
     						<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
     					</DoubleAnimationUsingKeyFrames>
-    					<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="TreeIndex">
-    						<EasingDoubleKeyFrame KeyTime="0" Value="500"/>
+    					<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="TreeIndex">
+    						<EasingDoubleKeyFrame KeyTime="0" Value="75"/>
     					</DoubleAnimationUsingKeyFrames>
     				</Storyboard>
     			</VisualState>
@@ -159,7 +159,7 @@
                   ItemContainerStyle="{DynamicResource TreeViewItemStyle}"
                   />
             
-            <Controls:ListIndex x:Name="TreeIndex" Grid.Row="0" HorizontalAlignment="Left" Width="75" Margin="3,0,0,0" Opacity="0" Height="0" VerticalAlignment="Bottom"/>
+            <Controls:ListIndex x:Name="TreeIndex" Grid.Row="0" HorizontalAlignment="Left" Width="0" Margin="3,0,0,0" Opacity="0" Height="500" VerticalAlignment="Bottom"/>
             
             <Border Grid.Row="1" BorderThickness="0" Margin="0,5,0,0">
                 <Grid Behaviours:GridUtils.ColumnDefinitions="Auto,*,Auto">
