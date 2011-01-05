@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 
 // from: http://www.scottlogic.co.uk/blog/colin/2010/12/a-simplified-grid-markup-for-silverlight-and-wpf/
+// and: http://www.pitorque.de/MisterGoodcat/post/A-Simplified-Grid-Markup-Reloaded.aspx
 
 namespace Noise.UI.Behaviours {
 	public class GridUtils {
@@ -113,13 +114,74 @@ namespace Noise.UI.Behaviours {
 				length = length.Replace( "*", "" );
 
 				if( string.IsNullOrWhiteSpace( length )) {
-					return( new GridLength( 1.0, GridUnitType.Star ));
+					return ( new GridLength( 1.0, GridUnitType.Star ));
 				}
 
 				return new GridLength( double.Parse( length ), GridUnitType.Star );
 			}
 
 			return new GridLength( double.Parse( length ), GridUnitType.Pixel );
+		}
+
+		/// <summary>
+		/// Identifies the Cell attached property
+		/// </summary>
+		public static readonly DependencyProperty CellProperty =
+			DependencyProperty.RegisterAttached( "Cell", typeof( string ), typeof( GridUtils ),
+				new PropertyMetadata( "", OnCellPropertyChanged ));
+
+		/// <summary>
+		/// Gets the value of the Cell property
+		/// </summary>
+		public static string GetCell( DependencyObject d ) {
+			return (string)d.GetValue( CellProperty );
+		}
+
+		/// <summary>
+		/// Sets the value of the GridLocation property
+		/// </summary>
+		public static void SetCell( DependencyObject d, string value ) {
+			d.SetValue( CellProperty, value );
+		}
+
+		/// <summary>
+		/// Handles the property changed event for the Cell property, setting the
+		/// Row, Column, RowSpan and ColumnSpan values on the element which this property is attached to.
+		/// </summary>
+		private static void OnCellPropertyChanged( DependencyObject d, DependencyPropertyChangedEventArgs e ) {
+			// parse the location
+			if( e.NewValue is string ) {
+				var locationDefs = e.NewValue as string;
+				var locationDefArray = locationDefs.Split( ',' );
+
+				for( int i = 0; i < locationDefArray.Length; i++ ) {
+					string locationDef = locationDefArray[i].Trim();
+
+					// if a value is missing, use zero
+					if( string.IsNullOrEmpty( locationDef )) {
+						locationDef = "0";
+					}
+
+					int locationValue;
+					if( int.TryParse( locationDef, out locationValue )) {
+						// the order is: row, column, rowspan, columnspan
+						switch( i ) {
+							case 0:
+								d.SetValue( Grid.RowProperty, locationValue );
+								break;
+							case 1:
+								d.SetValue( Grid.ColumnProperty, locationValue );
+								break;
+							case 2:
+								d.SetValue( Grid.RowSpanProperty, locationValue > 0 ? locationValue : 1 );
+								break;
+							case 3:
+								d.SetValue( Grid.ColumnSpanProperty, locationValue > 0 ? locationValue : 1 );
+								break;
+						}
+					}
+				}
+			}
 		}
 	}
 }
