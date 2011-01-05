@@ -124,10 +124,12 @@ namespace Noise.Core.FileStore {
 
 		private void BuildFolder( IDatabase database, StorageFolder parent ) {
 			var directories = FileSearcher.Search( StorageHelpers.GetPath( database.Database, parent ), null, SearchOptions.Directories, 0 );
+			var folderList = mFolderCache.FindList( dbFolder => dbFolder.ParentFolder == parent.DbId );
 
 			foreach( var directory in directories ) {
 				var folderName = directory.File;
-				var folder = mFolderCache.Find( dbFolder => dbFolder.ParentFolder == parent.DbId && dbFolder.Name == folderName );
+
+				var folder = folderList.Find( dbFolder => dbFolder.Name == folderName );
 				if( folder == null ) {
 					folder = new StorageFolder( directory.File, parent.DbId );
 
@@ -137,6 +139,9 @@ namespace Noise.Core.FileStore {
 						mLog.LogInfo( string.Format( "Adding folder: {0}", StorageHelpers.GetPath( database.Database, folder )));
 					}
 				}
+				else {
+					folderList.Remove( folder );
+				}
 
 				BuildFolderFiles( database, folder );
 				BuildFolder( database, folder );
@@ -145,23 +150,40 @@ namespace Noise.Core.FileStore {
 					break;
 				}
 			}
+
+			// Any folders remaining in the list must not have located on disk.
+			foreach( var dbFolder in folderList ) {
+				dbFolder.IsDeleted = true;
+
+				database.Store( dbFolder );
+			}
 		}
 
 		private void BuildFolderFiles( IDatabase database, StorageFolder storageFolder ) {
-//			var dbList = ( from StorageFile file in database.Database where file.ParentFolder == storageFolder.DbId select file ).ToList();
 			var dbList = mFileCache.FindList( file => file.ParentFolder == storageFolder.DbId );
 			var files = FileSearcher.BreadthFirst.Search( StorageHelpers.GetPath( database.Database, storageFolder ), null,
 														  SearchOptions.Files | SearchOptions.IncludeSystem | SearchOptions.IncludeHidden, 0 );
 			foreach( var file in files ) {
 				var fileName = file.File;
 
-				if(!dbList.Exists( dbFile => dbFile.Name == fileName )) {
+				var	dbFile = dbList.Find( f => f.Name == fileName );
+				if( dbFile != null ) {
+					dbList.Remove( dbFile );
+				}
+				else {
 					database.Insert( new StorageFile( file.File, storageFolder.DbId, file.Size, file.ModificationTime ));
 				}
 
 				if( mStopExploring ) {
 					break;
 				}
+			}
+
+			// Any files that we have remaining must not exist on disk.
+			foreach( var dbFile in dbList ) {
+				dbFile.IsDeleted = true;
+
+				database.Store( dbFile );
 			}
 		}
 	}

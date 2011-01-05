@@ -163,9 +163,11 @@
     <Compile Include="DataBuilders\BackgroundContentExplorer.cs" />
     <Compile Include="DataBuilders\ContentManager.cs" />
     <Compile Include="DataBuilders\IContentManager.cs" />
+    <Compile Include="DataBuilders\IMetaDataCleaner.cs" />
     <Compile Include="DataBuilders\IMetaDataExplorer.cs" />
     <Compile Include="DataBuilders\ISearchBuilder.cs" />
     <Compile Include="DataBuilders\LibraryBuilder.cs" />
+    <Compile Include="DataBuilders\MetaDataCleaner.cs" />
     <Compile Include="DataBuilders\SearchBuilder.cs" />
     <Compile Include="DataExchange\BaseExporter.cs" />
     <Compile Include="DataExchange\CloudSyncFavorites.cs" />

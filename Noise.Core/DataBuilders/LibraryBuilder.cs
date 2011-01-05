@@ -17,6 +17,7 @@ namespace Noise.Core.DataBuilders {
 		private readonly IEventAggregator		mEvents;
 		private readonly FileSystemWatcherEx	mFolderWatcher;
 		private IFolderExplorer					mFolderExplorer;
+		private IMetaDataCleaner				mMetaDataCleaner;
 		private IMetaDataExplorer				mMetaDataExplorer;
 		private ISearchBuilder					mSearchBuilder;
 		private	ISummaryBuilder					mSummaryBuilder;
@@ -104,6 +105,10 @@ namespace Noise.Core.DataBuilders {
 				mFolderExplorer.Stop();
 			}
 
+			if( mMetaDataCleaner != null ) {
+				mMetaDataCleaner.Stop();
+			}
+
 			if( mMetaDataExplorer != null ) {
 				mMetaDataExplorer.Stop();
 			}
@@ -141,6 +146,11 @@ namespace Noise.Core.DataBuilders {
 					if( mContinueExploring ) {
 						mFolderExplorer = mContainer.Resolve<IFolderExplorer>();
 						mFolderExplorer.SynchronizeDatabaseFolders();
+					}
+
+					if( mContinueExploring ) {
+						mMetaDataCleaner = mContainer.Resolve<IMetaDataCleaner>();
+						mMetaDataCleaner.CleanDatabase();
 					}
 
 					var results = new DatabaseChangeSummary();

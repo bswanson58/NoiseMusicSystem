@@ -34,6 +34,7 @@ namespace Noise.Core {
 //			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
 			mContainer.RegisterType<ILicenseManager, LicenseManager>();
 			mContainer.RegisterType<IMetaDataExplorer, MetaDataExplorer>();
+			mContainer.RegisterType<IMetaDataCleaner, MetaDataCleaner>();
 			mContainer.RegisterType<ISearchBuilder, SearchBuilder>();
 			mContainer.RegisterType<ISummaryBuilder, SummaryBuilder>();
 			mContainer.RegisterType<INoiseManager, NoiseManager>();

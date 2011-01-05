@@ -5,10 +5,12 @@ namespace Noise.Infrastructure.Dto {
 	public class StorageFolder : DbBase {
 		public string	Name { get; set; }
 		public long		ParentFolder { get; set; }
+		public bool		IsDeleted { get; set; }
 
 		public StorageFolder( string name, long parentFolder ) {
 			Name = name;
 			ParentFolder = parentFolder;
+			IsDeleted = false;
 		}
 
 		protected StorageFolder( long dbId, string path ) :

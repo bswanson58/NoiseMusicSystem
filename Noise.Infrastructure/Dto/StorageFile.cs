@@ -9,6 +9,7 @@ namespace Noise.Infrastructure.Dto {
 		public DateTime		FileModifiedDate { get; private set; }
 		public eFileType	FileType { get; set; }
 		public long			MetaDataPointer { get; set; }
+		public bool			IsDeleted { get; set; }
 
 		public StorageFile( string name, long parentFolder, long fileSize, DateTime modifiedDate ) {
 			Name = name;
@@ -18,6 +19,7 @@ namespace Noise.Infrastructure.Dto {
 
 			FileType = eFileType.Undetermined;
 			MetaDataPointer = Constants.cDatabaseNullOid;
+			IsDeleted = false;
 		}
 
 		[Export("PersistenceType")]
