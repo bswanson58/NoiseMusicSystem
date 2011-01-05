@@ -148,12 +148,12 @@ namespace Noise.Core.DataBuilders {
 						mFolderExplorer.SynchronizeDatabaseFolders();
 					}
 
+					var results = new DatabaseChangeSummary();
 					if( mContinueExploring ) {
 						mMetaDataCleaner = mContainer.Resolve<IMetaDataCleaner>();
-						mMetaDataCleaner.CleanDatabase();
+						mMetaDataCleaner.CleanDatabase( results );
 					}
 
-					var results = new DatabaseChangeSummary();
 					if( mContinueExploring ) {
 						mMetaDataExplorer = mContainer.Resolve<IMetaDataExplorer>();
 						mMetaDataExplorer.BuildMetaData( results );

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
@@ -14,6 +15,7 @@ namespace Noise.Core.DataBuilders {
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly ILog				mLog;
 		private bool						mStopCleaning;
+		private DatabaseChangeSummary		mSummary;
 		private readonly List<long>			mAlbumList;
 
 		public MetaDataCleaner( IUnityContainer container ) {
@@ -27,7 +29,10 @@ namespace Noise.Core.DataBuilders {
 			mStopCleaning = true;
 		}
 
-		public void CleanDatabase() {
+		public void CleanDatabase( DatabaseChangeSummary summary ) {
+			Condition.Requires( summary ).IsNotNull();
+
+			mSummary = summary;
 			mStopCleaning = false;
 			mAlbumList.Clear();
 
@@ -115,6 +120,8 @@ namespace Noise.Core.DataBuilders {
 			if(!mAlbumList.Contains( track.Album )) {
 				mAlbumList.Add( track.Album );
 			}
+
+			mSummary.TracksRemoved++;
 		}
 
 		private void CleanContent( ExpiringContent content ) {
@@ -129,13 +136,16 @@ namespace Noise.Core.DataBuilders {
 			foreach( var artistId in artists ) {
 				parms["artistId"] = artistId;
 
-				var albums = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>();
+				var artist = database.Database.ExecuteScalar( "SELECT DbArtist WHERE DbId = @artistId", parms ) as DbArtist;
 
-				if( albums.Count() == 0 ) {
-					var artist = database.Database.ExecuteScalar( "SELECT DbArtist WHERE DbId = @artistId", parms ) as DbArtist;
+				if( artist != null ) {
+					var albums = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>();
 
-					if( artist != null ) {
+					mSummary.AddChangedArtist( artist );
+
+					if( albums.Count() == 0 ) {
 						mLog.LogInfo( string.Format( "Deleting Artist: {0}", artist.Name ));
+						mSummary.ArtistsRemoved++;
 
 						database.Database.Delete( artist );
 					}
@@ -164,6 +174,7 @@ namespace Noise.Core.DataBuilders {
 							}
 
 							mLog.LogInfo( string.Format( "Deleting Album: {0}", album.Name ));
+							mSummary.AlbumsRemoved++;
 
 							database.Database.Delete( album );
 						}
