@@ -1,7 +1,9 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 
 namespace Noise.Infrastructure.Dto {
+	[DebuggerDisplay("Folder = {Name}")]
 	public class StorageFolder : DbBase {
 		public string	Name { get; set; }
 		public long		ParentFolder { get; set; }
