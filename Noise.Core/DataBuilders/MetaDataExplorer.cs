@@ -133,7 +133,8 @@ namespace Noise.Core.DataBuilders {
 							database.Store( file );
 
 							mSummary.TracksAdded++;
-							mSummary.AddChangedArtist( artist );
+							artist.UpdateLastChange();
+							database.Store( artist );
 						}
 						else {
 							mLog.LogMessage( "Track name cannot be determined for file: {0}", StorageHelpers.GetPath( database.Database, file ));
@@ -171,7 +172,8 @@ namespace Noise.Core.DataBuilders {
 						info.Album = album.DbId;
 					}
 
-					mSummary.AddChangedArtist( artist );
+					artist.UpdateLastChange();
+					database.Store( artist );
 				}
 
 				var	fileName = StorageHelpers.GetPath( database.Database, file );
@@ -206,7 +208,8 @@ namespace Noise.Core.DataBuilders {
 						artwork.Album = album.DbId;
 					}
 
-					mSummary.AddChangedArtist( artist );
+					artist.UpdateLastChange();
+					database.Store( artist );
 				}
 
 				var	fileName = StorageHelpers.GetPath( database.Database, file );

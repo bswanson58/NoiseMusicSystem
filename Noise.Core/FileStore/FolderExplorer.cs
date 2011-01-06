@@ -78,7 +78,7 @@ namespace Noise.Core.FileStore {
 
 							var localRoot = database.ValidateOnThread( rootFolder ) as RootFolder;
 							if( localRoot != null ) {
-								localRoot.LastScan = DateTime.Now.Ticks;
+								localRoot.UpdateLibraryScan();
 								database.Store( localRoot );
 							}
 						}

@@ -18,6 +18,7 @@ namespace Noise.Infrastructure.Dto {
 		public long				DateAddedTicks { get; private set; }
 		public bool				IsFavorite { get; set; }
 		public bool				HasFavorites { get; set; }
+		public long				LastChangeTicks { get; private set; }
 
 		public DbArtist() {
 			Name = "";
@@ -26,6 +27,8 @@ namespace Noise.Infrastructure.Dto {
 			ExternalGenre = Constants.cDatabaseNullOid;
 			UserGenre = Constants.cDatabaseNullOid;
 			Website = "";
+
+			UpdateLastChange();
 		}
 
 		[Ignore]
@@ -48,6 +51,10 @@ namespace Noise.Infrastructure.Dto {
 		[Ignore]
 		public DateTime DateAdded {
 			get{ return( new DateTime( DateAddedTicks )); }
+		}
+
+		public void UpdateLastChange() {
+			LastChangeTicks = DateTime.Now.Ticks;
 		}
 
 		[Export("PersistenceType")]

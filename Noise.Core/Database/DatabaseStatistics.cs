@@ -41,7 +41,7 @@ namespace Noise.Core.Database {
 
 				var rootFolder = database.Database.ExecuteQuery( "SELECT RootFolder" ).OfType<RootFolder>().FirstOrDefault();
 				if( rootFolder != null ) {
-					LastScan = new DateTime( rootFolder.LastScan );
+					LastScan = new DateTime( rootFolder.LastLibraryScan );
 				}
 			}
 			catch( Exception ex ) {

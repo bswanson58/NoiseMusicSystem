@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-
+﻿
 namespace Noise.Infrastructure.Dto {
 	public class DatabaseChangeSummary {
 		public	int		ArtistsAdded { get; set; }
@@ -8,22 +7,6 @@ namespace Noise.Infrastructure.Dto {
 		public	int		AlbumsRemoved { get; set; }
 		public	int		TracksAdded { get; set; }
 		public	int		TracksRemoved { get; set; }
-
-		private readonly List<DbArtist>	mChangedArtistList;
-
-		public DatabaseChangeSummary() {
-			mChangedArtistList = new List<DbArtist>();
-		}
-
-		public IEnumerable<DbArtist> ChangedArtists {
-			get{ return( mChangedArtistList ); }
-		}
-
-		public void AddChangedArtist( DbArtist artist ) {
-			if(!mChangedArtistList.Contains( artist )) {
-				mChangedArtistList.Add( artist );
-			}
-		}
 
 		public bool HaveChanges {
 			get { return( ArtistChanges || AlbumChanges || TrackChanges ); }

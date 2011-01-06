@@ -4,7 +4,6 @@ using System.Linq;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
-using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -187,7 +186,9 @@ namespace Noise.Core.DataBuilders {
 
 					var artist = database.Database.ExecuteScalar( "SELECT DbArtist WHERE DbId = @artistId", parms ) as DbArtist;
 					if( artist != null ) {
-						mSummary.AddChangedArtist( artist );
+						artist.UpdateLastChange();
+
+						database.Store( artist );
 					}
 				}
 			}

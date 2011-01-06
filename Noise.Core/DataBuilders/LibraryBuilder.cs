@@ -19,7 +19,6 @@ namespace Noise.Core.DataBuilders {
 		private IFolderExplorer					mFolderExplorer;
 		private IMetaDataCleaner				mMetaDataCleaner;
 		private IMetaDataExplorer				mMetaDataExplorer;
-		private ISearchBuilder					mSearchBuilder;
 		private	ISummaryBuilder					mSummaryBuilder;
 		private bool							mContinueExploring;
 		private readonly ILog					mLog;
@@ -117,10 +116,6 @@ namespace Noise.Core.DataBuilders {
 				mSummaryBuilder.Stop();
 			}
 
-			if( mSearchBuilder != null ) {
-				mSearchBuilder.Stop();
-			}
-
 			WaitForExplorer();
 		}
 
@@ -159,16 +154,9 @@ namespace Noise.Core.DataBuilders {
 						mMetaDataExplorer.BuildMetaData( results );
 					}
 
-					if(( mContinueExploring ) &&
-					   ( results.HaveChanges )) {
+					if( mContinueExploring ) {
 						mSummaryBuilder = mContainer.Resolve<ISummaryBuilder>();
-						mSummaryBuilder.BuildSummaryData( results.ChangedArtists );
-					}
-
-					if(( mContinueExploring ) &&
-					   ( results.HaveChanges )) {
-						mSearchBuilder = mContainer.Resolve<ISearchBuilder>();
-						mSearchBuilder.BuildSearchIndex( results.ChangedArtists );
+						mSummaryBuilder.BuildSummaryData( results );
 					}
 
 					mLog.LogMessage( "LibraryBuilder: Update Finished." );
