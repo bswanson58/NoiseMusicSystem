@@ -62,6 +62,11 @@ namespace Noise.Core.DataBuilders {
 						case eFileType.Text:
 							BuildInfoMetaData( database, file );
 							break;
+
+						case eFileType.Unknown:
+							// Nothing that we are interested in.
+							database.Database.Store( file );
+							break;
 					}
 
 					if( mStopExploring ) {
