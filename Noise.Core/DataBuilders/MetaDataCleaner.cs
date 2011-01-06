@@ -5,6 +5,7 @@ using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
@@ -36,7 +37,7 @@ namespace Noise.Core.DataBuilders {
 			mStopCleaning = false;
 			mAlbumList.Clear();
 
-			mLog.LogInfo( "Starting MetaDataCleaning." );
+			mLog.LogMessage( "Starting MetaDataCleaning." );
 
 			var database = mDatabaseManager.ReserveDatabase();
 
@@ -73,11 +74,12 @@ namespace Noise.Core.DataBuilders {
 			var childFolders = database.Database.ExecuteQuery( "SELECT StorageFolder WHERE ParentFolder = @parentId", parms ).OfType<StorageFolder>();
 			foreach( var childFolder in childFolders ) {
 				CleanFolder( database, childFolder );
-				CleanFolderFiles( database, folder );
-
-				mLog.LogInfo( string.Format( "Deleting Folder: {0}", StorageHelpers.GetPath( database.Database, folder )));
-				database.Database.Delete( folder );
 			}
+
+			CleanFolderFiles( database, folder );
+
+			mLog.LogMessage( string.Format( "Deleting Folder: {0}", folder.Name ));
+			database.Delete( folder );
 		}
 
 		private void CleanFolderFiles( IDatabase database, StorageFolder folder ) {
@@ -103,17 +105,20 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		private void CleanFile( IDatabase database, StorageFile file ) {
-			var parms = database.Database.CreateParameters();
-			parms["id"] = file.MetaDataPointer;
+			if( file.MetaDataPointer != Constants.cDatabaseNullOid ) {
+				var parms = database.Database.CreateParameters();
+				parms["id"] = file.MetaDataPointer;
 
-			var associatedItem = database.Database.ExecuteScalar( "SELECT DbBase WHERE DbId = @id", parms ) as DbBase;
-			if( associatedItem != null ) {
-				TypeSwitch.Do( associatedItem, TypeSwitch.Case<DbTrack>( CleanTrack),
-											   TypeSwitch.Case<ExpiringContent>( CleanContent ));
-				database.Database.Delete( associatedItem );
+				var associatedItem = database.Database.ExecuteScalar( "SELECT DbBase WHERE DbId = @id", parms ) as DbBase;
+				if( associatedItem != null ) {
+					TypeSwitch.Do( associatedItem, TypeSwitch.Case<DbTrack>( CleanTrack),
+												   TypeSwitch.Case<DbArtwork>( CleanContent ),
+												   TypeSwitch.Case<DbTextInfo>( CleanContent ));
+					database.Delete( associatedItem );
+				}
 			}
 
-			database.Database.Delete( file );
+			database.Delete( file );
 		}
 
 		private void CleanTrack( DbTrack track ) {
@@ -122,6 +127,7 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			mSummary.TracksRemoved++;
+			mLog.LogMessage( "Deleting Track: {0}", track.Name );
 		}
 
 		private void CleanContent( ExpiringContent content ) {
@@ -141,13 +147,11 @@ namespace Noise.Core.DataBuilders {
 				if( artist != null ) {
 					var albums = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>();
 
-					mSummary.AddChangedArtist( artist );
-
 					if( albums.Count() == 0 ) {
-						mLog.LogInfo( string.Format( "Deleting Artist: {0}", artist.Name ));
+						mLog.LogMessage( string.Format( "Deleting Artist: {0}", artist.Name ));
 						mSummary.ArtistsRemoved++;
 
-						database.Database.Delete( artist );
+						database.Delete( artist );
 					}
 				}
 			}
@@ -160,24 +164,30 @@ namespace Noise.Core.DataBuilders {
 			foreach( var albumId in albums ) {
 				parms["albumId"] = albumId;
 
-				var tracks = database.Database.ExecuteQuery( "SELECT DbTrack WHERE Album = @albumId", parms ).OfType<DbTrack>();
+				var album = database.Database.ExecuteScalar( "SELECT DbAlbum WHERE DbId = @albumId", parms ) as DbAlbum;
+				if( album != null ) {
+					parms["artistId"] = album.Artist;
 
-				if( tracks.Count() == 0 ) {
-					var content = database.Database.ExecuteQuery( "SELECT ExpiringContent WHERE Album = @albumId", parms ).OfType<ExpiringContent>();
+					var tracks = database.Database.ExecuteQuery( "SELECT DbTrack WHERE Album = @albumId", parms ).OfType<DbTrack>();
 
-					if( content.Count() == 0 ) {
-						var album = database.Database.ExecuteScalar( "SELECT DbAlbum WHERE DbId = @albumId", parms ) as DbAlbum;
+					if( tracks.Count() == 0 ) {
+						var content = database.Database.ExecuteQuery( "SELECT ExpiringContent WHERE Album = @albumId", parms ).OfType<ExpiringContent>();
 
-						if( album != null ) {
+						if( content.Count() == 0 ) {
 							if(!retValue.Contains( album.Artist )) {
 								retValue.Add( album.Artist );
 							}
 
-							mLog.LogInfo( string.Format( "Deleting Album: {0}", album.Name ));
+							mLog.LogMessage( string.Format( "Deleting Album: {0}", album.Name ));
 							mSummary.AlbumsRemoved++;
 
-							database.Database.Delete( album );
+							database.Delete( album );
 						}
+					}
+
+					var artist = database.Database.ExecuteScalar( "SELECT DbArtist WHERE DbId = @artistId", parms ) as DbArtist;
+					if( artist != null ) {
+						mSummary.AddChangedArtist( artist );
 					}
 				}
 			}
