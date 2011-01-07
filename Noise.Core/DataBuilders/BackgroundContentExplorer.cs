@@ -10,11 +10,11 @@ namespace Noise.Core.DataBuilders {
 	internal class BackgroundContentExplorerJob : IJob {
 		public void Execute( JobExecutionContext context ) {
 			if( context != null ) {
-				var	explorer = context.Trigger.JobDataMap[NoiseManager.cBackgroundContentExplorer] as BackgroundContentExplorer;
+//				var	explorer = context.Trigger.JobDataMap[NoiseManager.cBackgroundContentExplorer] as BackgroundContentExplorer;
 
-				if( explorer != null ) {
-					explorer.BuildContent();
-				}
+//				if( explorer != null ) {
+//					explorer.BuildContent();
+//				}
 			}
 		}
 	}

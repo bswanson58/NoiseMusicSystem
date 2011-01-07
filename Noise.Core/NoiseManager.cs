@@ -1,28 +1,23 @@
 ﻿using System;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
+using Noise.Core.BackgroundTasks;
 using Noise.Core.Database;
-using Noise.Core.DataBuilders;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
-using Quartz;
-using Quartz.Impl;
 
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager {
-		internal const string				cBackgroundContentExplorer = "BackgroundContentExplorer";
-
 		private	readonly IUnityContainer	mContainer;
 		private readonly IDatabaseManager	mDatabaseManager;
 		private	readonly IEventAggregator	mEvents;
 		private readonly ILog				mLog;
-		private	readonly ISchedulerFactory	mSchedulerFactory;
-		private	readonly IScheduler			mJobScheduler;
 		private	IPlayController				mPlayController;
 		private IDataUpdates				mDataUpdates;
 		private IFileUpdates				mFileUpdates;
+		private IBackgroundTaskManager		mBackgroundTaskMgr;
 
 		public	ICloudSyncManager			CloudSyncMgr { get; private set; }
 		public	IDataProvider				DataProvider { get; private set; }
@@ -43,10 +38,6 @@ namespace Noise.Core {
 			mEvents = mContainer.Resolve<IEventAggregator>();
 			mDatabaseManager = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
 			mContainer.RegisterInstance( mDatabaseManager );
-
-			mSchedulerFactory = new StdSchedulerFactory();
-			mJobScheduler = mSchedulerFactory.GetScheduler();
-			mJobScheduler.Start();
 		}
 
 		public bool Initialize() {
@@ -71,6 +62,11 @@ namespace Noise.Core {
 				mFileUpdates = mContainer.Resolve<IFileUpdates>();
 				if(!mFileUpdates.Initialize()) {
 					mLog.LogMessage( "Noise Manager: FileUpdates could not be initialized" );
+				}
+
+				mBackgroundTaskMgr = mContainer.Resolve<IBackgroundTaskManager>();
+				if(!mBackgroundTaskMgr.Initialize()) {
+					mLog.LogMessage( "Noise Manager: BackgroundTaskManager cound not be initialized." );
 				}
 
 				CloudSyncMgr = mContainer.Resolve<ICloudSyncManager>();
@@ -115,8 +111,8 @@ namespace Noise.Core {
 		public void Shutdown() {
 			mEvents.GetEvent<Events.SystemShutdown>().Publish( this );
 
-			mJobScheduler.Shutdown( true );
 			mFileUpdates.Shutdown();
+			mBackgroundTaskMgr.Stop();
 
 			LibraryBuilder.StopLibraryUpdate();
 
@@ -146,27 +142,6 @@ namespace Noise.Core {
 				}
 
 				LibraryBuilder.EnableUpdateOnLibraryChange = configuration.EnableLibraryChangeUpdates;
-
-				if( configuration.EnableBackgroundContentExplorer ) {
-					StartBackgroundContentExplorer();
-				}
-			}
-		}
-
-		private void StartBackgroundContentExplorer() {
-			var jobDetail = new JobDetail( cBackgroundContentExplorer, "Explorer", typeof( BackgroundContentExplorerJob ));
-			var trigger = new SimpleTrigger( cBackgroundContentExplorer, "Explorer",
-											 DateTime.UtcNow + TimeSpan.FromMinutes( 1 ), null, SimpleTrigger.RepeatIndefinitely, TimeSpan.FromMinutes( 1 )); 
-			var explorer = new BackgroundContentExplorer( mContainer );
-
-			if( explorer.Initialize()) {
-				trigger.JobDataMap[cBackgroundContentExplorer] = explorer;
-
-				mJobScheduler.ScheduleJob( jobDetail, trigger );
-				mLog.LogMessage( "Starting Background Content Explorer." );
-			}
-			else {
-				mLog.LogInfo( "BackgroundContentExplorer could not be initialized." );
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
+using Noise.Core.BackgroundTasks;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
 using Noise.Core.DataExchange;
@@ -21,6 +22,7 @@ namespace Noise.Core {
 
 		public void Initialize() {
 			mContainer.RegisterType<IAudioPlayer, AudioPlayer>();
+			mContainer.RegisterType<IBackgroundTaskManager, BackgroundTaskManager>();
 			mContainer.RegisterType<ICloudSyncManager, CloudSyncManager>();
 			mContainer.RegisterType<IContentManager, ContentManager>();
 			mContainer.RegisterType<IDatabase, EloqueraDatabase>();
@@ -35,7 +37,6 @@ namespace Noise.Core {
 			mContainer.RegisterType<ILicenseManager, LicenseManager>();
 			mContainer.RegisterType<IMetaDataExplorer, MetaDataExplorer>();
 			mContainer.RegisterType<IMetaDataCleaner, MetaDataCleaner>();
-			mContainer.RegisterType<ISearchBuilder, SearchBuilder>();
 			mContainer.RegisterType<ISummaryBuilder, SummaryBuilder>();
 			mContainer.RegisterType<INoiseManager, NoiseManager>();
 			mContainer.RegisterType<IPlayQueue, PlayQueueMgr>();
