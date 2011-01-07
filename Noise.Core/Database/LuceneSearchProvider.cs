@@ -145,6 +145,14 @@ namespace Noise.Core.Database {
 						if(!Directory.Exists( mIndexLocation )) {
 							Directory.CreateDirectory( mIndexLocation );
 						}
+
+						var directory = new Lucene.Net.Store.SimpleFSDirectory( new DirectoryInfo( mIndexLocation ));
+						if(!IndexReader.IndexExists( directory )) {
+							var analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer( Lucene.Net.Util.Version.LUCENE_29 );
+							var indexWriter = new IndexWriter( directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED );
+
+							indexWriter.Close();
+						}
 					}
 
 					if( Directory.Exists( mIndexLocation )) {
