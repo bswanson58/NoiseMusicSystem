@@ -8,7 +8,7 @@ using Quartz;
 using Quartz.Impl;
 
 namespace Noise.Core.BackgroundTasks {
-	internal class BackgroundTaskJob : IJob {
+	internal class BackgroundTaskJob : IStatefulJob {
 		public void Execute( JobExecutionContext context ) {
 			if( context != null ) {
 				var	manager = context.Trigger.JobDataMap[BackgroundTaskManager.cBackgroundTaskName] as BackgroundTaskManager;
@@ -28,7 +28,10 @@ namespace Noise.Core.BackgroundTasks {
 		private readonly ILog					mLog;
 		private	readonly ISchedulerFactory		mSchedulerFactory;
 		private	readonly IScheduler				mJobScheduler;
+		private readonly JobDetail				mTaskJobDetail;
+		private	readonly Trigger				mTaskExecuteTrigger;
 		private IEnumerator<IBackgroundTask>	mTaskEnum;
+		private bool							mRunningTaskFlag;
 
 		[ImportMany( typeof( IBackgroundTask ))]
 		public IEnumerable<IBackgroundTask>	BackgroundTasks;
@@ -41,6 +44,13 @@ namespace Noise.Core.BackgroundTasks {
 			mSchedulerFactory = new StdSchedulerFactory();
 			mJobScheduler = mSchedulerFactory.GetScheduler();
 			mJobScheduler.Start();
+
+			mTaskJobDetail = new JobDetail( cBackgroundTaskName, cBackgroundTaskGroup, typeof( BackgroundTaskJob ));
+
+			mTaskExecuteTrigger = new SimpleTrigger( cBackgroundTaskName, cBackgroundTaskGroup,
+														DateTime.UtcNow + TimeSpan.FromSeconds( 10 ), null,
+														SimpleTrigger.RepeatIndefinitely, TimeSpan.FromSeconds( 5 )); 
+			mTaskExecuteTrigger.JobDataMap[cBackgroundTaskName] = this;
 		}
 
 		public bool Initialize() {
@@ -56,39 +66,36 @@ namespace Noise.Core.BackgroundTasks {
 
 			mTaskEnum = BackgroundTasks.GetEnumerator();
 
-			ScheduleTaskJob();
+			mJobScheduler.ScheduleJob( mTaskJobDetail, mTaskExecuteTrigger );
 
 			return( true );
-		}
-
-		private void ScheduleTaskJob() {
-			var jobDetail = new JobDetail( cBackgroundTaskName, cBackgroundTaskGroup, typeof( BackgroundTaskJob ));
-			var trigger = new SimpleTrigger( cBackgroundTaskName, cBackgroundTaskGroup,
-											 DateTime.UtcNow + TimeSpan.FromSeconds( 10 ), null, SimpleTrigger.RepeatIndefinitely, TimeSpan.FromSeconds( 5 )); 
-
-			trigger.JobDataMap[cBackgroundTaskName] = this;
-
-			mJobScheduler.ScheduleJob( jobDetail, trigger );
 		}
 
 		public void Execute() {
 			IBackgroundTask	task = null;
 
-			try {
-				task = NextTask();
+			if(!mRunningTaskFlag ) {
+				try {
+					mRunningTaskFlag = true;
 
-				if( task != null ) {
-					task.ExecuteTask();
+					task = NextTask();
+
+					if( task != null ) {
+						task.ExecuteTask();
+					}
 				}
-			}
-			catch( Exception ex ) {
-				var taskId = "null";
+				catch( Exception ex ) {
+					var taskId = "null";
 
-				if( task != null ) {
-					taskId = task.TaskId;
+					if( task != null ) {
+						taskId = task.TaskId;
+					}
+
+					mLog.LogException( string.Format( "Exception - BackgroundTaskMgr '{0}'", taskId ), ex );
 				}
-
-				mLog.LogException( string.Format( "Exception - BackgroundTaskMgr '{0}'", taskId ), ex );
+				finally {
+					mRunningTaskFlag = false;
+				}
 			}
 		}
 
