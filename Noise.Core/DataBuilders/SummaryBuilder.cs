@@ -23,7 +23,6 @@ namespace Noise.Core.DataBuilders {
 			mStop = false;
 
 			SummarizeArtists();
-			UpdateSimilarArtists();
 		}
 
 		public void Stop() {
@@ -127,43 +126,6 @@ namespace Noise.Core.DataBuilders {
 				}
 				catch( Exception ex ) {
 					mLog.LogException( "Exception - Building summary data: ", ex );
-				}
-				finally {
-					databaseMgr.FreeDatabase( database );
-				}
-			}
-		}
-
-		private void UpdateSimilarArtists() {
-			var databaseMgr = mContainer.Resolve<IDatabaseManager>();
-			var database = databaseMgr.ReserveDatabase();
-
-			if( database != null ) {
-				try {
-					mLog.LogInfo( "Building similar artist associations." );
-					var artistCache = new DatabaseCache<DbArtist>( from DbArtist artist in database.Database select artist );
-					var similarArtistLists = from DbAssociatedItemList list in database.Database where list.ContentType == ContentType.SimilarArtists select list;
-					foreach( var similarArtistList in similarArtistLists ) {
-						bool	needUpdate = false;
-
-						foreach( var similarArtist in similarArtistList.Items ) {
-							var artistName = similarArtist.Item;
-							var dbArtist = artistCache.Find( artist => String.Compare( artist.Name, artistName, true ) == 0 );
-
-							if( dbArtist != null ) {
-								similarArtist.SetAssociatedId( dbArtist.DbId );
-
-								needUpdate = true;
-							}
-						}
-
-						if( needUpdate ) {
-							database.Store( similarArtistList );
-						}
-					}
-				}
-				catch( Exception ex ) {
-					mLog.LogException( "Exception - UpdateSimiliarArtists: ", ex );
 				}
 				finally {
 					databaseMgr.FreeDatabase( database );
