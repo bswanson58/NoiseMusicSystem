@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Quartz;
 using Quartz.Impl;
@@ -25,6 +27,7 @@ namespace Noise.Core.BackgroundTasks {
 		internal const string					cBackgroundTaskGroup	= "BackgroundTaskManager";
 
 		private	readonly IUnityContainer		mContainer;
+		private readonly IEventAggregator		mEvents;
 		private readonly ILog					mLog;
 		private	readonly ISchedulerFactory		mSchedulerFactory;
 		private	readonly IScheduler				mJobScheduler;
@@ -32,14 +35,18 @@ namespace Noise.Core.BackgroundTasks {
 		private	readonly Trigger				mTaskExecuteTrigger;
 		private IEnumerator<IBackgroundTask>	mTaskEnum;
 		private bool							mRunningTaskFlag;
+		private bool							mUpdateInProgress;
 
 		[ImportMany( typeof( IBackgroundTask ))]
 		public IEnumerable<IBackgroundTask>	BackgroundTasks;
 
 		public BackgroundTaskManager( IUnityContainer container ) {
 			mContainer = container;
-
+			mEvents = mContainer.Resolve<IEventAggregator>();
 			mLog = mContainer.Resolve<ILog>();
+
+			mEvents.GetEvent<Events.LibraryUpdateStarted>().Subscribe( OnLibraryUpdateStarted );
+			mEvents.GetEvent<Events.LibraryUpdateCompleted>().Subscribe( OnLibraryUpdateCompleted );
 						
 			mSchedulerFactory = new StdSchedulerFactory();
 			mJobScheduler = mSchedulerFactory.GetScheduler();
@@ -74,7 +81,8 @@ namespace Noise.Core.BackgroundTasks {
 		public void Execute() {
 			IBackgroundTask	task = null;
 
-			if(!mRunningTaskFlag ) {
+			if((!mUpdateInProgress ) &&
+			   (!mRunningTaskFlag )) {
 				try {
 					mRunningTaskFlag = true;
 
@@ -115,6 +123,14 @@ namespace Noise.Core.BackgroundTasks {
 			foreach( var task in BackgroundTasks ) {
 				task.Shutdown();
 			}
+		}
+
+		private void OnLibraryUpdateStarted( long libraryId ) {
+			mUpdateInProgress = true;
+		}
+
+		private void OnLibraryUpdateCompleted( long libraryId ) {
+			mUpdateInProgress = false;
 		}
 	}
 }
