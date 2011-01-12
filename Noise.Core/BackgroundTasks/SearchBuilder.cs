@@ -96,6 +96,7 @@ namespace Noise.Core.BackgroundTasks {
 
 						var parms = database.Database.CreateParameters();
 
+						parms["biography"] = ContentType.Biography;
 						parms["discography"] = ContentType.Discography;
 						parms["textInfo"] = ContentType.TextInfo;
 
@@ -125,8 +126,7 @@ namespace Noise.Core.BackgroundTasks {
 							}
 						}
 
-						var bioList = database.Database.ExecuteQuery( "SELECT DbTextInfo WHERE Artist = @artistId AND ContentType = @discography AND IsContentAvailable", parms ).OfType<DbTextInfo>();
-						var biography = bioList.FirstOrDefault();
+						var biography = database.Database.ExecuteScalar( "SELECT DbTextInfo Where Artist = @artistId AND ContentType = @biography", parms ) as DbTextInfo;
 						if( biography != null ) {
 							indexBuilder.AddSearchItem( eSearchItemType.Biography, biography.Text );
 						}
