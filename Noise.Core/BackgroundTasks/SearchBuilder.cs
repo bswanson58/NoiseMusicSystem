@@ -41,7 +41,7 @@ namespace Noise.Core.BackgroundTasks {
 			var artist = NextArtist();
 
 			if( artist != null ) {
-				BuildSearchIndex( artist );
+				CheckSearchIndex( artist );
 			}
 		}
 
@@ -61,19 +61,30 @@ namespace Noise.Core.BackgroundTasks {
 			return( retValue );
 		}
 
-		public void BuildSearchIndex( DbArtist artist ) {
+		private void CheckSearchIndex( DbArtist artist ) {
+			var lastUpdate = mNoiseManager.SearchProvider.DetermineTimeStamp( artist );
+
+			if( lastUpdate.Ticks < artist.LastChangeTicks ) {
+				BuildSearchIndex( artist );
+			}
+		}
+
+		private void BuildSearchIndex( DbArtist artist ) {
+			mLog.LogMessage( String.Format( "Building search info for {0}", artist.Name ));
+
 			var databaseMgr = mContainer.Resolve<IDatabaseManager>();
 			var database = databaseMgr.ReserveDatabase();
 
 			if( database != null ) {
 				try {
 					if( mNoiseManager.SearchProvider.StartIndexUpdate( false )) {
+						mNoiseManager.SearchProvider.DeleteArtistSearchItems( artist );
+						mNoiseManager.SearchProvider.WriteTimeStamp( artist );
+
 						var parms = database.Database.CreateParameters();
 
 						parms["discography"] = ContentType.Discography;
 						parms["textInfo"] = ContentType.TextInfo;
-
-						mLog.LogMessage( String.Format( "Building search info for {0}", artist.Name ));
 
 						mNoiseManager.SearchProvider.AddSearchItem( artist, eSearchItemType.Artist, artist.Name );
 

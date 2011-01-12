@@ -32,8 +32,8 @@ namespace Noise.Core.Database {
 			mWriter = writer;
 			mDocument = new Document();
 
-			mDocument.Add( new Field( SearchItemFieldName.cItemType, eSearchItemType.TimeStamp.ToString(), Field.Store.YES, Field.Index.NO ));
-			mDocument.Add( new Field( SearchItemFieldName.cArtistId, artist.DbId.ToString(), Field.Store.YES, Field.Index.NO ));
+			mDocument.Add( new Field( SearchItemFieldName.cItemType, eSearchItemType.TimeStamp.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED ));
+			mDocument.Add( new Field( SearchItemFieldName.cArtistId, artist.DbId.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED ));
 			mDocument.Add( new Field( SearchItemFieldName.cTimeStamp, timeStamp.Ticks.ToString(), Field.Store.YES, Field.Index.NO ));
 		}
 
@@ -51,8 +51,8 @@ namespace Noise.Core.Database {
 			mWriter = writer;
 			mDocument = new Document();
 
-			mDocument.Add( new Field( SearchItemFieldName.cItemType, itemType.ToString(), Field.Store.YES, Field.Index.NO ));
-			mDocument.Add( new Field( SearchItemFieldName.cArtistId, artist.DbId.ToString(), Field.Store.YES, Field.Index.NO ));
+			mDocument.Add( new Field( SearchItemFieldName.cItemType, itemType.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED ));
+			mDocument.Add( new Field( SearchItemFieldName.cArtistId, artist.DbId.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED ));
 			if( album != null ) {
 				mDocument.Add( new Field( SearchItemFieldName.cAlbumId, album.DbId.ToString(), Field.Store.YES, Field.Index.NO ));
 			}
@@ -201,7 +201,7 @@ namespace Noise.Core.Database {
 														new Lucene.Net.Analysis.Standard.StandardAnalyzer( Lucene.Net.Util.Version.LUCENE_29 ));
 					var query = queryParser.Parse( queryText );
 
-					var	topDocs = searcher.Search( query, 10 );
+					var	topDocs = searcher.Search( query, 50 );
 					var hits = topDocs.totalHits;
 
 					if( hits > 0 ) {
@@ -209,35 +209,39 @@ namespace Noise.Core.Database {
 							var document = searcher.Doc( hit.doc );
 
 							var typeField = document.GetField( SearchItemFieldName.cItemType );
-							var artistField = document.GetField( SearchItemFieldName.cArtistId );
-							var albumField = document.GetField( SearchItemFieldName.cAlbumId );
-							var trackField = document.GetField( SearchItemFieldName.cTrackId );
-
-							DbArtist		artist = null;
-							DbAlbum			album = null;
-							DbTrack			track = null;
-							eSearchItemType	itemType = eSearchItemType.Unknown;
-
-							if( artistField != null ) {
-								long	id = long.Parse( artistField.StringValue());
-
-								artist = noiseManager.DataProvider.GetArtist( id );
-							}
-							if( albumField != null ) {
-								long	id = long.Parse( albumField.StringValue());
-
-								album = noiseManager.DataProvider.GetAlbum( id );
-							}
-							if( trackField != null ) {
-								long	id = long.Parse( trackField.StringValue());
-
-								track = noiseManager.DataProvider.GetTrack( id );
-							}
+							var	itemType = eSearchItemType.Unknown;
 							if( typeField != null ) {
 								itemType = (eSearchItemType)Enum.Parse( typeof( eSearchItemType ), typeField.StringValue());
 							}
 
-							retValue.Add( new SearchResultItem( artist, album, track, itemType ));
+							if(( itemType != eSearchItemType.TimeStamp ) &&
+							   ( itemType != eSearchItemType.Unknown )) {
+								var artistField = document.GetField( SearchItemFieldName.cArtistId );
+								var albumField = document.GetField( SearchItemFieldName.cAlbumId );
+								var trackField = document.GetField( SearchItemFieldName.cTrackId );
+
+								DbArtist		artist = null;
+								DbAlbum			album = null;
+								DbTrack			track = null;
+
+								if( artistField != null ) {
+									long	id = long.Parse( artistField.StringValue());
+
+									artist = noiseManager.DataProvider.GetArtist( id );
+								}
+								if( albumField != null ) {
+									long	id = long.Parse( albumField.StringValue());
+
+									album = noiseManager.DataProvider.GetAlbum( id );
+								}
+								if( trackField != null ) {
+									long	id = long.Parse( trackField.StringValue());
+
+									track = noiseManager.DataProvider.GetTrack( id );
+								}
+
+								retValue.Add( new SearchResultItem( artist, album, track, itemType ));
+							}
 						}
 					}
 
@@ -262,11 +266,14 @@ namespace Noise.Core.Database {
 				try {
 					var directory = new Lucene.Net.Store.SimpleFSDirectory( new DirectoryInfo( mIndexLocation ));
 					var	searcher = new IndexSearcher( directory, true );
-					var queryParser = new QueryParser( Lucene.Net.Util.Version.LUCENE_29, SearchItemFieldName.cArtistId, 
-														new Lucene.Net.Analysis.Standard.StandardAnalyzer( Lucene.Net.Util.Version.LUCENE_29 ));
-					var query = queryParser.Parse( forArtist.DbId.ToString());
+					var artistTerm = new TermQuery( new Term( SearchItemFieldName.cArtistId, forArtist.DbId.ToString()));
+					var typeTerm = new TermQuery( new Term( SearchItemFieldName.cItemType, eSearchItemType.TimeStamp.ToString()));
+					var query = new BooleanQuery();
 
-					var	topDocs = searcher.Search( query, 10 );
+					query.Add( artistTerm, BooleanClause.Occur.MUST );
+					query.Add( typeTerm, BooleanClause.Occur.MUST );
+
+					var	topDocs = searcher.Search( query, 1 );
 					var hits = topDocs.totalHits;
 
 					if( hits > 0 ) {
