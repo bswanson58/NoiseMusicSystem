@@ -32,6 +32,6 @@ namespace Noise.Infrastructure.Interfaces {
 
 		DateTime	DetermineTimeStamp( DbArtist artist );
 
-		IEnumerable<SearchResultItem>	Search( string queryText );
+		IEnumerable<SearchResultItem>	Search( string queryText, int maxResults );
 	}
 }

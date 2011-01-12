@@ -11,6 +11,8 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class SearchViewModel : DialogModelBase {
+		private const int			cMaxSearchResults = 100;
+
 		private IUnityContainer		mContainer;
 		private IEventAggregator	mEventAggregator;
 		private INoiseManager		mNoiseManager;
@@ -49,7 +51,7 @@ namespace Noise.UI.ViewModels {
 		private IEnumerable<SearchViewNode> BuildSearchList() {
 			var retValue = new List<SearchViewNode>();
 
-			retValue.AddRange( from SearchResultItem item in mNoiseManager.SearchProvider.Search( SearchText ) 
+			retValue.AddRange( from SearchResultItem item in mNoiseManager.SearchProvider.Search( SearchText, cMaxSearchResults ) 
 							   select new SearchViewNode( item, OnNodeSelected, OnPlay ));
 			return( retValue );
 		}

@@ -185,7 +185,7 @@ namespace Noise.Core.Database {
 			return( mIsInitialized );
 		}
 
-		public IEnumerable<SearchResultItem> Search( string queryText ) {
+		public IEnumerable<SearchResultItem> Search( string queryText, int maxResults ) {
 			var	retValue = new List<SearchResultItem>();
 
 			if(!mIsInitialized ) {
@@ -201,7 +201,7 @@ namespace Noise.Core.Database {
 														new Lucene.Net.Analysis.Standard.StandardAnalyzer( Lucene.Net.Util.Version.LUCENE_29 ));
 					var query = queryParser.Parse( queryText );
 
-					var	topDocs = searcher.Search( query, 50 );
+					var	topDocs = searcher.Search( query, maxResults );
 					var hits = topDocs.totalHits;
 
 					if( hits > 0 ) {
