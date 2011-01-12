@@ -156,6 +156,7 @@
     <Compile Include="BackgroundTasks\IBackgroundTask.cs" />
     <Compile Include="BackgroundTasks\IBackgroundTaskManager.cs" />
     <Compile Include="BackgroundTasks\LinkSimilarArtists.cs" />
+    <Compile Include="BackgroundTasks\LinkTopAlbums.cs" />
     <Compile Include="BackgroundTasks\SearchBuilder.cs" />
     <Compile Include="Database\Database.cs" />
     <Compile Include="Database\DatabaseCache.cs" />

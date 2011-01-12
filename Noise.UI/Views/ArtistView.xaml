@@ -94,7 +94,11 @@
                             <ListBox BorderThickness="0"  ItemsSource="{Binding Path=TopAlbums}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Path=DisplayText}" />
+                                        <Controls:LinkLabel Padding="0" Content="{Binding Path=DisplayText}" IsEnabled="{Binding Path=IsLinked}"  LinkLabelBehavior="HoverUnderline">
+                                            <EventCommandTriggers:CommandSource.Trigger>
+                                                <EventCommandTriggers:EventCommandTrigger RoutedEvent="Controls:LinkLabel.Click" Command="{Binding Path=LinkClicked}"/>
+                                            </EventCommandTriggers:CommandSource.Trigger>
+                                        </Controls:LinkLabel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>

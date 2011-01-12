@@ -85,7 +85,7 @@ namespace Noise.UI.ViewModels {
 						if(( value.TopAlbums != null ) &&
 						   ( value.TopAlbums.Items.GetLength( 0 ) > 0 )) {
 							mTopAlbums.AddRange( from DbAssociatedItem album in value.TopAlbums.Items 
-												 select album.IsLinked ? new LinkNode( album.Item, album.AssociatedId, OnSimilarArtistClicked ) :
+												 select album.IsLinked ? new LinkNode( album.Item, album.AssociatedId, OnTopAlbumClicked ) :
 																		 new LinkNode( album.Item ));
 						}
 
@@ -169,6 +169,14 @@ namespace Noise.UI.ViewModels {
 
 			if( artist != null ) {
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( artist );
+			}
+		}
+
+		private void OnTopAlbumClicked( long albumId ) {
+			var album = mNoiseManager.DataProvider.GetAlbum( albumId );
+
+			if( album != null ) {
+				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( album );
 			}
 		}
 
