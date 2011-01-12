@@ -41,7 +41,7 @@ namespace Noise.Core.BackgroundTasks {
 				mListEnum = mSimilarArtistLists.GetEnumerator();
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "", ex );
+				mLog.LogException( "Exception - LinkSimilarArtists:InitializeLists ", ex );
 			}
 			finally {
 				mDatabaseMgr.FreeDatabase( database );
