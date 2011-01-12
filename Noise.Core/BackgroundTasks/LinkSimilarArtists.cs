@@ -14,9 +14,9 @@ namespace Noise.Core.BackgroundTasks {
 		private IDatabaseManager	mDatabaseMgr;
 		private ILog				mLog;
 
-		private DatabaseCache<DbArtist>				mArtistCache;
-		private List<DbAssociatedItemList>			mSimilarArtistLists;
-		private IEnumerator<DbAssociatedItemList>	mListEnum;
+		private DatabaseCache<DbArtist>	mArtistCache;
+		private List<long>				mSimilarArtistLists;
+		private IEnumerator<long>		mListEnum;
 
 		public string TaskId {
 			get { return( "Task_LinkSimilarArtists" ); }
@@ -37,7 +37,7 @@ namespace Noise.Core.BackgroundTasks {
 
 			try {
 				mArtistCache = new DatabaseCache<DbArtist>( from DbArtist artist in database.Database select artist );
-				mSimilarArtistLists = new List<DbAssociatedItemList>( from DbAssociatedItemList list in database.Database where list.ContentType == ContentType.SimilarArtists select list );
+				mSimilarArtistLists = new List<long>( from DbAssociatedItemList list in database.Database where list.ContentType == ContentType.SimilarArtists select list.DbId );
 				mListEnum = mSimilarArtistLists.GetEnumerator();
 			}
 			catch( Exception ex ) {
@@ -49,39 +49,48 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public void ExecuteTask() {
-			var similarArtistList = NextList();
+			var listId = NextList();
 
-			if( similarArtistList != null ) {
-				var	needUpdate = false;
+			if( listId != 0 ) {
+				var	database = mDatabaseMgr.ReserveDatabase();
 
-				foreach( var similarArtist in similarArtistList.Items ) {
-					var artistName = similarArtist.Item;
-					var dbArtist = mArtistCache.Find( artist => String.Compare( artist.Name, artistName, true ) == 0 );
+				try {
+					var parms = database.Database.CreateParameters();
+					parms["listId"] = listId;
 
-					if( dbArtist != null ) {
-						similarArtist.SetAssociatedId( dbArtist.DbId );
+					var similarArtistList = database.Database.ExecuteScalar( "SELECT DbAssociatedItemList WHERE DbId = @listId", parms ) as DbAssociatedItemList;
 
-						needUpdate = true;
+					if( similarArtistList != null ) {
+						var	needUpdate = false;
+
+						foreach( var similarArtist in similarArtistList.Items ) {
+							var artistName = similarArtist.Item;
+							var dbArtist = mArtistCache.Find( artist => String.Compare( artist.Name, artistName, true ) == 0 );
+
+							if( dbArtist != null ) {
+								similarArtist.SetAssociatedId( dbArtist.DbId );
+
+								needUpdate = true;
+							}
+						}
+
+						if( needUpdate ) {
+							database.Store( similarArtistList );
+
+							mLog.LogMessage( "Updated links to similar artists." );
+						}
 					}
 				}
-
-				if( needUpdate ) {
-					var database = mDatabaseMgr.ReserveDatabase();
-
-					try {
-						database.Store( similarArtistList );
-					}
-					catch( Exception ex ) {
-						mLog.LogException( "", ex );
-					}
-					finally {
-						mDatabaseMgr.FreeDatabase( database );
-					}
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - LinkSimilarArtist Task:", ex );
+				}
+				finally {
+					mDatabaseMgr.FreeDatabase( database );
 				}
 			}
 		}
 
-		private DbAssociatedItemList NextList() {
+		private long NextList() {
 			if(!mListEnum.MoveNext()) {
 				InitializeLists();
 
