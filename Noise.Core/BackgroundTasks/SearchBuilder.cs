@@ -77,16 +77,16 @@ namespace Noise.Core.BackgroundTasks {
 
 			if( database != null ) {
 				try {
-					if( mNoiseManager.SearchProvider.StartIndexUpdate( false )) {
-						mNoiseManager.SearchProvider.DeleteArtistSearchItems( artist );
-						mNoiseManager.SearchProvider.WriteTimeStamp( artist );
+					using( var indexBuilder = mNoiseManager.SearchProvider.CreateIndexBuilder( artist, false )) {
+						indexBuilder.DeleteArtistSearchItems();
+						indexBuilder.WriteTimeStamp();
 
 						var parms = database.Database.CreateParameters();
 
 						parms["discography"] = ContentType.Discography;
 						parms["textInfo"] = ContentType.TextInfo;
 
-						mNoiseManager.SearchProvider.AddSearchItem( artist, eSearchItemType.Artist, artist.Name );
+						indexBuilder.AddSearchItem( eSearchItemType.Artist, artist.Name );
 
 						parms["artistId"] = artist.DbId;
 						var associatedItems = database.Database.ExecuteQuery( "SELECT DbAssociatedItemList WHERE Artist = @artistId AND IsContentAvailable", parms ).OfType<DbAssociatedItemList>();
@@ -108,36 +108,33 @@ namespace Noise.Core.BackgroundTasks {
 							}
 
 							if( itemType != eSearchItemType.Unknown ) {
-								mNoiseManager.SearchProvider.AddSearchItem( artist, itemType, item.GetItems());
+								indexBuilder.AddSearchItem( itemType, item.GetItems());
 							}
 						}
 
 						var bioList = database.Database.ExecuteQuery( "SELECT DbTextInfo WHERE Artist = @artistId AND ContentType = @discography AND IsContentAvailable", parms ).OfType<DbTextInfo>();
 						var biography = bioList.FirstOrDefault();
 						if( biography != null ) {
-							mNoiseManager.SearchProvider.AddSearchItem( artist, eSearchItemType.Biography, biography.Text );
+							indexBuilder.AddSearchItem( eSearchItemType.Biography, biography.Text );
 						}
 
 						var	albumList = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>();
 						foreach( var album in albumList ) {
-							mNoiseManager.SearchProvider.AddSearchItem( artist, album, eSearchItemType.Album, album.Name );
+							indexBuilder.AddSearchItem( album, eSearchItemType.Album, album.Name );
 
 							parms["albumId"] = album.DbId;
 							var infoList = database.Database.ExecuteQuery( "SELECT DbTextInfo WHERE Album = @albumId AND ContentType = @textInfo", parms ).OfType<DbTextInfo>();
 
 							foreach( var info in infoList ) {
-								mNoiseManager.SearchProvider.AddSearchItem( artist, album, eSearchItemType.TextInfo, info.Text );
+								indexBuilder.AddSearchItem( album, eSearchItemType.TextInfo, info.Text );
 							}
 
 							var trackList = database.Database.ExecuteQuery( "SELECT DbTrack WHERE Album = @albumId", parms ).OfType<DbTrack>();
 
 							foreach( var track in trackList ) {
-								mNoiseManager.SearchProvider.AddSearchItem( artist, album, track, eSearchItemType.Track, track.Name );
+								indexBuilder.AddSearchItem( album, track, eSearchItemType.Track, track.Name );
 							}
 						}
-					}
-					else {
-						mLog.LogMessage( "SearchProvider Could not start index update." );
 					}
 				}
 				catch( Exception ex ) {
@@ -145,7 +142,6 @@ namespace Noise.Core.BackgroundTasks {
 				}
 				finally {
 					databaseMgr.FreeDatabase( database );
-					mNoiseManager.SearchProvider.EndIndexUpdate();
 				}
 			}
 		}

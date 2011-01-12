@@ -26,33 +26,29 @@ namespace Noise.Core.Database {
 		private	IndexWriter		mWriter;
 		private Document		mDocument;
 
-		internal SearchItemDetails( IndexWriter writer, DbArtist artist, DateTime timeStamp ) {
-			Condition.Requires( artist ).IsNotNull();
-
+		internal SearchItemDetails( IndexWriter writer, long artistId, DateTime timeStamp ) {
 			mWriter = writer;
 			mDocument = new Document();
 
 			mDocument.Add( new Field( SearchItemFieldName.cItemType, eSearchItemType.TimeStamp.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED ));
-			mDocument.Add( new Field( SearchItemFieldName.cArtistId, artist.DbId.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED ));
+			mDocument.Add( new Field( SearchItemFieldName.cArtistId, artistId.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED ));
 			mDocument.Add( new Field( SearchItemFieldName.cTimeStamp, timeStamp.Ticks.ToString(), Field.Store.YES, Field.Index.NO ));
 		}
 
-		internal SearchItemDetails( IndexWriter writer, eSearchItemType itemType, DbArtist artist ) :
-			this( writer, itemType, artist, null, null ) {
+		internal SearchItemDetails( IndexWriter writer, eSearchItemType itemType, long artistId ) :
+			this( writer, itemType, artistId, null, null ) {
 		}
 
-		internal SearchItemDetails( IndexWriter writer, eSearchItemType itemType, DbArtist artist, DbAlbum album ) :
-			this( writer, itemType, artist, album, null ) {
+		internal SearchItemDetails( IndexWriter writer, eSearchItemType itemType, long artistId, DbAlbum album ) :
+			this( writer, itemType, artistId, album, null ) {
 		}
 
-		internal SearchItemDetails( IndexWriter writer, eSearchItemType itemType, DbArtist artist, DbAlbum album, DbTrack track ) {
-			Condition.Requires( artist ).IsNotNull();
-
+		internal SearchItemDetails( IndexWriter writer, eSearchItemType itemType, long artistId, DbAlbum album, DbTrack track ) {
 			mWriter = writer;
 			mDocument = new Document();
 
 			mDocument.Add( new Field( SearchItemFieldName.cItemType, itemType.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED ));
-			mDocument.Add( new Field( SearchItemFieldName.cArtistId, artist.DbId.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED ));
+			mDocument.Add( new Field( SearchItemFieldName.cArtistId, artistId.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED ));
 			if( album != null ) {
 				mDocument.Add( new Field( SearchItemFieldName.cAlbumId, album.DbId.ToString(), Field.Store.YES, Field.Index.NO ));
 			}
@@ -119,12 +115,102 @@ namespace Noise.Core.Database {
 		}
 	}
 
+	public class LuceneIndexBuilder : ISearchBuilder {
+		private readonly long	mArtistId;
+		private readonly ILog	mLog;
+		private IndexWriter		mIndexWriter;
+
+		public LuceneIndexBuilder( DbArtist artist, string indexLocation, bool createIndex, ILog log ) {
+			mArtistId = artist.DbId;
+			mLog = log;
+
+			var directory = new Lucene.Net.Store.SimpleFSDirectory( new DirectoryInfo( indexLocation ));
+			var analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer( Lucene.Net.Util.Version.LUCENE_29 );
+
+			mIndexWriter = new IndexWriter( directory, analyzer, createIndex, IndexWriter.MaxFieldLength.UNLIMITED );
+		}
+
+		public void WriteTimeStamp() {
+			using( new SearchItemDetails( mIndexWriter, mArtistId, DateTime.Now )) { }
+		}
+
+		private SearchItemDetails AddSearchItem( eSearchItemType itemType ) {
+			return( new SearchItemDetails( mIndexWriter, itemType, mArtistId ));
+		}
+
+		public void AddSearchItem( eSearchItemType itemType, string searchText ) {
+			using( var searchItem = AddSearchItem( itemType )) {
+				searchItem.AddSearchText( searchText );
+			}
+		}
+
+		public void AddSearchItem( eSearchItemType itemType, IEnumerable<string> searchList ) {
+			foreach( var searchText in searchList ) {
+				using( var searchItem = AddSearchItem( itemType )) {
+					searchItem.AddSearchText( searchText );
+				}
+			}
+		}
+
+		private SearchItemDetails AddSearchItem( DbAlbum album, eSearchItemType itemType ) {
+			Condition.Requires( album ).IsNotNull();
+
+			return( new SearchItemDetails( mIndexWriter, itemType, mArtistId, album ));
+		}
+
+		public void AddSearchItem( DbAlbum album, eSearchItemType itemType, string searchText ) {
+			Condition.Requires( album ).IsNotNull();
+
+			using( var searchItem = AddSearchItem( album, itemType )) {
+				searchItem.AddSearchText( searchText );
+			}
+		}
+
+		private SearchItemDetails AddSearchItem( DbAlbum album, DbTrack track, eSearchItemType itemType ) {
+			Condition.Requires( album ).IsNotNull();
+			Condition.Requires( track ).IsNotNull();
+
+			return( new SearchItemDetails( mIndexWriter, itemType, mArtistId, album, track ));
+		}
+
+		public void AddSearchItem( DbAlbum album, DbTrack track, eSearchItemType itemType, string searchText ) {
+			Condition.Requires( album ).IsNotNull();
+			Condition.Requires( track ).IsNotNull();
+
+			using( var searchItem = AddSearchItem( album, track, itemType )) {
+				searchItem.AddSearchText( searchText );
+			}
+		}
+
+		public void DeleteArtistSearchItems() {
+			mIndexWriter.DeleteDocuments( new Term( SearchItemFieldName.cArtistId, mArtistId.ToString()));
+		}
+
+		public void Dispose() {
+			if( mIndexWriter != null ) {
+				EndIndexUpdate();
+			}
+		}
+
+		private void EndIndexUpdate() {
+			if( mIndexWriter != null ) {
+				try {
+					mIndexWriter.Optimize();
+					mIndexWriter.Close();
+					mIndexWriter = null;
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - Search provider cannot close IndexWriter: ", ex );
+				}
+			}
+		}
+	}
+
 	public class LuceneSearchProvider : ISearchProvider {
 		private readonly IUnityContainer	mContainer;
 		private readonly ILog				mLog;
 		private bool						mIsInitialized;
 		private	string						mIndexLocation;
-		private IndexWriter					mIndexWriter;
 
 		public LuceneSearchProvider( IUnityContainer container ) {
 			mContainer = container;
@@ -305,8 +391,8 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
-		public bool StartIndexUpdate( bool createIndex ) {
-			var retValue = false;
+		public ISearchBuilder CreateIndexBuilder( DbArtist artist, bool createIndex ) {
+			ISearchBuilder	retValue = null;
 
 			if(!mIsInitialized ) {
 				Initialize();
@@ -314,106 +400,10 @@ namespace Noise.Core.Database {
 
 			if( mIsInitialized ) {
 				try {
-					var directory = new Lucene.Net.Store.SimpleFSDirectory( new DirectoryInfo( mIndexLocation ));
-					var analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer( Lucene.Net.Util.Version.LUCENE_29 );
-
-					mIndexWriter = new IndexWriter( directory, analyzer, createIndex, IndexWriter.MaxFieldLength.UNLIMITED );
-
-					retValue = true;
+					retValue = new LuceneIndexBuilder( artist, mIndexLocation, createIndex, mLog );
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - Search provider cannot open IndexWriter: ", ex );
-				}
-			}
-
-			return( retValue );
-		}
-
-		public void WriteTimeStamp( DbArtist artist ) {
-			using( new SearchItemDetails( mIndexWriter, artist, DateTime.Now )) { }
-		}
-
-		private SearchItemDetails AddSearchItem( DbArtist artist, eSearchItemType itemType ) {
-			Condition.Requires( mIndexWriter ).IsNotNull();
-			Condition.Requires( artist ).IsNotNull();
-
-			return( new SearchItemDetails( mIndexWriter, itemType, artist ));
-		}
-
-		public void AddSearchItem( DbArtist artist, eSearchItemType itemType, string searchText ) {
-			Condition.Requires( mIndexWriter ).IsNotNull();
-			Condition.Requires( artist ).IsNotNull();
-
-			using( var searchItem = AddSearchItem( artist, itemType )) {
-				searchItem.AddSearchText( searchText );
-			}
-		}
-
-		public void AddSearchItem( DbArtist artist, eSearchItemType itemType, IEnumerable<string> searchList ) {
-			Condition.Requires( mIndexWriter ).IsNotNull();
-			Condition.Requires( artist ).IsNotNull();
-
-			foreach( var searchText in searchList ) {
-				using( var searchItem = AddSearchItem( artist, itemType )) {
-					searchItem.AddSearchText( searchText );
-				}
-			}
-		}
-
-		private SearchItemDetails AddSearchItem( DbArtist artist, DbAlbum album, eSearchItemType itemType ) {
-			Condition.Requires( mIndexWriter ).IsNotNull();
-			Condition.Requires( artist ).IsNotNull();
-			Condition.Requires( album ).IsNotNull();
-
-			return( new SearchItemDetails( mIndexWriter, itemType, artist, album ));
-		}
-
-		public void AddSearchItem( DbArtist artist, DbAlbum album, eSearchItemType itemType, string searchText ) {
-			Condition.Requires( mIndexWriter ).IsNotNull();
-			Condition.Requires( artist ).IsNotNull();
-			Condition.Requires( album ).IsNotNull();
-
-			using( var searchItem = AddSearchItem( artist, album, itemType )) {
-				searchItem.AddSearchText( searchText );
-			}
-		}
-
-		private SearchItemDetails AddSearchItem( DbArtist artist, DbAlbum album, DbTrack track, eSearchItemType itemType ) {
-			Condition.Requires( mIndexWriter ).IsNotNull();
-			Condition.Requires( artist ).IsNotNull();
-			Condition.Requires( album ).IsNotNull();
-			Condition.Requires( track ).IsNotNull();
-
-			return( new SearchItemDetails( mIndexWriter, itemType, artist, album, track ));
-		}
-
-		public void AddSearchItem( DbArtist artist, DbAlbum album, DbTrack track, eSearchItemType itemType, string searchText ) {
-			Condition.Requires( mIndexWriter ).IsNotNull();
-			Condition.Requires( artist ).IsNotNull();
-			Condition.Requires( album ).IsNotNull();
-			Condition.Requires( track ).IsNotNull();
-
-			using( var searchItem = AddSearchItem( artist, album, track, itemType )) {
-				searchItem.AddSearchText( searchText );
-			}
-		}
-
-		public void DeleteArtistSearchItems( DbArtist forArtist ) {
-			mIndexWriter.DeleteDocuments( new Term( SearchItemFieldName.cArtistId, forArtist.DbId.ToString()));
-		}
-
-		public bool EndIndexUpdate() {
-			var retValue = false;
-
-			if( mIndexWriter != null ) {
-				try {
-					mIndexWriter.Optimize();
-					mIndexWriter.Close();
-
-					retValue = true;
-				}
-				catch( Exception ex ) {
-					mLog.LogException( "Exception - Search provider cannot close IndexWriter: ", ex );
+					mLog.LogException( "Exception - Search provider cannot create IndexWriter: ", ex );
 				}
 			}
 
