@@ -318,7 +318,6 @@ namespace Noise.Core.DataProviders {
 
 								bandMembers.IsContentAvailable = true;
 								bandMembers.SetItems( response.ContentEntity.Members );
-
 							}
 							else {
 								bandMembers.IsContentAvailable = false;
@@ -357,6 +356,7 @@ namespace Noise.Core.DataProviders {
 							}
 
 							forArtist.Website = response.ContentEntity.WebsiteUrl;
+							forArtist.UpdateLastChange();
 							database.Store( forArtist );
 
 		//					var releaseAdded = false;

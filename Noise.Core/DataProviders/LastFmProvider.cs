@@ -143,7 +143,10 @@ namespace Noise.Core.DataProviders {
 					var	artistSearch = Artist.Search( artist.Name, mSession );
 					var	artistMatch = artistSearch.GetFirstMatch();
 
-					if( artistMatch != null ) {
+					artist = database.ValidateOnThread( artist ) as DbArtist;
+					if(( artist != null ) &&
+					   ( artistMatch != null )) {
+
 						var	tags = artistMatch.GetTopTags( 3 );
 						if( tags.GetLength( 0 ) > 0 ) {
 							artist.ExternalGenre = mTagManager.ResolveGenre( tags[0].Item.Name );
@@ -185,6 +188,9 @@ namespace Noise.Core.DataProviders {
 						}
 						topAlbums.SetItems( albumList );
 						topAlbums.IsContentAvailable = true;
+
+						artist.UpdateLastChange();
+						database.Store( artist );
 
 						mLog.LogInfo( "LastFm updated artist: {0}", artist.Name );
 					}
