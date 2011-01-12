@@ -38,10 +38,18 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public void ExecuteTask() {
-			var artist = NextArtist();
+			var attempts = 10;
 
-			if( artist != null ) {
-				CheckSearchIndex( artist );
+			while( attempts > 0 ) {
+				var artist = NextArtist();
+
+				if( artist != null ) {
+					if( CheckSearchIndex( artist )) {
+						break;
+					}
+
+					attempts--;
+				}
 			}
 		}
 
@@ -61,12 +69,17 @@ namespace Noise.Core.BackgroundTasks {
 			return( retValue );
 		}
 
-		private void CheckSearchIndex( DbArtist artist ) {
+		private bool CheckSearchIndex( DbArtist artist ) {
+			var retValue = false;
 			var lastUpdate = mNoiseManager.SearchProvider.DetermineTimeStamp( artist );
 
 			if( lastUpdate.Ticks < artist.LastChangeTicks ) {
 				BuildSearchIndex( artist );
+
+				retValue = true;
 			}
+
+			return( retValue );
 		}
 
 		private void BuildSearchIndex( DbArtist artist ) {
