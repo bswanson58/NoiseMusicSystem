@@ -9,7 +9,6 @@ namespace Noise.Core.FileStore {
 		public	FolderStrategy	FolderStrategy { get; set; }
 		public	long			LastLibraryScan { get; private set; }
 		public	long			LastSummaryScan { get; private set; }
-		public	long			LastSearchScan { get; private set; }
 		public	long			LastCloudSequenceId { get; set; }
 
 		public RootFolder( long dbId, string path, string displayName ) :
@@ -26,10 +25,6 @@ namespace Noise.Core.FileStore {
 
 		public void UpdateSummaryScan() {
 			LastSummaryScan = DateTime.Now.Ticks;
-		}
-
-		public void UpdateSearchScan() {
-			LastSearchScan = DateTime.Now.Ticks;
 		}
 
 		[Export("PersistenceType")]
