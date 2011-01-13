@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-  <?define BassLibraryFolder="$(var.SolutionDir)\lib\BASS.Net\v2.4.6.4\"?>
+  <?define BassLibraryFolder="$(var.SolutionDir)\lib\BASS.Net\v2.4.7.1\"?>
 
   <DirectoryRef Id="INSTALLDIRECTORY">
     <Component Id="bass.dll" Guid="26b315d5-464a-4146-92fa-3e44bedbb1b9">

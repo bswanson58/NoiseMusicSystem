@@ -215,12 +215,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(SolutionDir)lib\BASS.Net\v2.4.6.4\bass.dll $(TargetDir)
-copy $(SolutionDir)lib\BASS.Net\v2.4.6.4\bass_aac.dll $(TargetDir)
-copy $(SolutionDir)lib\BASS.Net\v2.4.6.4\bass_fx.dll $(TargetDir)
-copy $(SolutionDir)lib\BASS.Net\v2.4.6.4\bassflac.dll $(TargetDir)
-copy $(SolutionDir)lib\BASS.Net\v2.4.6.4\bassmix.dll $(TargetDir)
-copy $(SolutionDir)lib\BASS.Net\v2.4.6.4\basswma.dll $(TargetDir)
+    <PostBuildEvent>copy $(SolutionDir)lib\BASS.Net\v2.4.7.1\bass.dll $(TargetDir)
+copy $(SolutionDir)lib\BASS.Net\v2.4.7.1\bass_aac.dll $(TargetDir)
+copy $(SolutionDir)lib\BASS.Net\v2.4.7.1\bass_fx.dll $(TargetDir)
+copy $(SolutionDir)lib\BASS.Net\v2.4.7.1\bassflac.dll $(TargetDir)
+copy $(SolutionDir)lib\BASS.Net\v2.4.7.1\bassmix.dll $(TargetDir)
+copy $(SolutionDir)lib\BASS.Net\v2.4.7.1\basswma.dll $(TargetDir)
 copy $(SolutionDir)lib\Eloquera\v3.0\Eloquera.Client.dll $(TargetDir)
 copy $(SolutionDir)lib\Eloquera\v3.0\Eloquera.Common.dll $(TargetDir)
 copy $(SolutionDir)Noise.Core\Resources\EqPresets.xml $(TargetDir)

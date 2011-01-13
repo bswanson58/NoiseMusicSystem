@@ -64,8 +64,9 @@
     <Reference Include="Accessibility">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Bass.Net">
-      <HintPath>..\lib\BASS.Net\v2.4.6.4\Bass.Net.dll</HintPath>
+    <Reference Include="Bass.Net, Version=2.4.7.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\BASS.Net\v2.4.7.1\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="Common.Logging">
       <HintPath>..\lib\Quartz\v1.02\Common.Logging.dll</HintPath>
