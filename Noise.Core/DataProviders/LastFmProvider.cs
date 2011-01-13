@@ -143,14 +143,10 @@ namespace Noise.Core.DataProviders {
 					var	artistSearch = Artist.Search( artist.Name, mSession );
 					var	artistMatch = artistSearch.GetFirstMatch();
 
-					artist = database.ValidateOnThread( artist ) as DbArtist;
-					if(( artist != null ) &&
-					   ( artistMatch != null )) {
-
+					if( artistMatch != null ) {
 						var	tags = artistMatch.GetTopTags( 3 );
 						if( tags.GetLength( 0 ) > 0 ) {
 							artist.ExternalGenre = mTagManager.ResolveGenre( tags[0].Item.Name );
-							database.Store( artist );
 						}
 
 						bio.Text = artistMatch.Bio.getContent();
@@ -168,21 +164,10 @@ namespace Noise.Core.DataProviders {
 							artistList.Add( sim[index].Name );
 						}
 						similarArtists.SetItems( artistList );
-
-						var artistCache = new DatabaseCache<DbArtist>( from DbArtist dbArtist in database.Database select dbArtist );
-						foreach( var similarArtist in similarArtists.Items ) {
-							var artistName = similarArtist.Item;
-							var art = artistCache.Find( a => String.Compare( a.Name, artistName, true ) == 0 );
-							if( art != null ) {
-								similarArtist.SetAssociatedId( art.DbId );
-							}
-						}
-
 						similarArtists.IsContentAvailable = true;
 
 						var top = artistMatch.GetTopAlbums();
 						var albumList = new List<string>();
-
 						for( int index = 0; index < ( top.GetLength( 0 ) > 5 ? 5 : top.GetLength( 0 )); index++ ) {
 							albumList.Add( top[index].Item.Name );
 						}
