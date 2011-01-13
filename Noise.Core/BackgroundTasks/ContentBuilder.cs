@@ -44,7 +44,7 @@ namespace Noise.Core.BackgroundTasks {
 			var artist = NextArtist();
 
 			if( artist != null ) {
-				mDataProvider.UpdateArtistInfo( mArtistEnum.Current.DbId );
+				mDataProvider.UpdateArtistInfo( artist.DbId );
 			}
 		}
 
