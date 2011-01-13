@@ -271,7 +271,7 @@ namespace Noise.Core.Database {
 			return( mIsInitialized );
 		}
 
-		public IEnumerable<SearchResultItem> Search( string queryText, int maxResults ) {
+		public IEnumerable<SearchResultItem> Search( eSearchItemType searchType, string queryText, int maxResults ) {
 			var	retValue = new List<SearchResultItem>();
 
 			if(!mIsInitialized ) {
@@ -285,7 +285,21 @@ namespace Noise.Core.Database {
 					var	searcher = new IndexSearcher( directory, true );
 					var queryParser = new QueryParser( Lucene.Net.Util.Version.LUCENE_29, SearchItemFieldName.cContent, 
 														new Lucene.Net.Analysis.Standard.StandardAnalyzer( Lucene.Net.Util.Version.LUCENE_29 ));
-					var query = queryParser.Parse( queryText );
+					var textQuery = queryParser.Parse( queryText );
+					Query	query;
+
+					if( searchType == eSearchItemType.Everything ) {
+						query = textQuery;
+					}
+					else {
+						var typeTerm = new TermQuery( new Term( SearchItemFieldName.cItemType, searchType.ToString()));
+						var	boolQuery = new BooleanQuery();
+
+						boolQuery.Add( textQuery, BooleanClause.Occur.MUST );
+						boolQuery.Add( typeTerm, BooleanClause.Occur.MUST );
+
+						query = boolQuery;
+					}
 
 					var	topDocs = searcher.Search( query, maxResults );
 					var hits = topDocs.totalHits;

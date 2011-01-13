@@ -14,7 +14,8 @@ namespace Noise.Infrastructure.Interfaces {
 		TopAlbum,
 		TextInfo,
 		TimeStamp,
-		Unknown
+		Unknown,
+		Everything
 	}
 
 	public interface ISearchProvider {
@@ -23,7 +24,7 @@ namespace Noise.Infrastructure.Interfaces {
 		ISearchBuilder	CreateIndexBuilder( DbArtist forArtist, bool createIndex );
 		DateTime		DetermineTimeStamp( DbArtist artist );
 
-		IEnumerable<SearchResultItem>	Search( string queryText, int maxResults );
+		IEnumerable<SearchResultItem>	Search( eSearchItemType searchType, string queryText, int maxResults );
 	}
 
 	public interface ISearchBuilder : IDisposable {
