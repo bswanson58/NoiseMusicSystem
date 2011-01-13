@@ -1,6 +1,5 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Adapters {
@@ -21,10 +20,7 @@ namespace Noise.UI.Adapters {
 			Track = searchResult.Track;
 			Title = searchResult.ItemDescription;
 
-			if(( Album != null ) ||
-			   ( Track != null )) {
-				CanPlay = searchResult.ItemType == eSearchItemType.Album || searchResult.ItemType == eSearchItemType.Track;
-			}
+			CanPlay = ( Album != null ) || ( Track != null );
 
 			mOnSelected = onselected;
 			mOnPlay = onPlay;
