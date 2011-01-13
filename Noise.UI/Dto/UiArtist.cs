@@ -17,7 +17,6 @@ namespace Noise.UI.Dto {
 		public Int16			MaxChildRating { get; set; }
 		public bool				IsFavorite { get; set; }
 		public bool				HasFavorites { get; set; }
-		public DbGenre			DisplayGenre { get ; set; }
 
 		private readonly Action<long>	mSelectArtistAction;
 
@@ -30,6 +29,12 @@ namespace Noise.UI.Dto {
 			set{ Set( () => AlbumCount, value ); }
 		}
 
+		public DbGenre DisplayGenre {
+			get{ return( Get( () => DisplayGenre )); }
+			set{ Set( () => DisplayGenre, value ); }
+		}
+
+		[DependsUpon("DisplayGenre")]
 		public string Genre {
 			get{ return( DisplayGenre != null ? DisplayGenre.Name : "" ); }
 		}

@@ -76,7 +76,7 @@ namespace Noise.UI.ViewModels {
 						switch( args.Change ) {
 							case DbItemChanged.Update:
 								if( treeNode != null ) {
-									Mapper.DynamicMap( artist, treeNode.Artist );
+									UpdateUiArtist( treeNode.Artist, artist );
 								}
 								break;
 
@@ -144,9 +144,15 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
-		private void AddArtist( ICollection<ArtistTreeNode> tree, DbArtist artist ) {
-			var uiArtist = new UiArtist( OnArtistSelect ) { DisplayGenre = mNoiseManager.TagManager.GetGenre( artist.Genre ) };
+		private void UpdateUiArtist( UiArtist uiArtist, DbArtist artist ) {
 			Mapper.DynamicMap( artist, uiArtist );
+			uiArtist.DisplayGenre = mNoiseManager.TagManager.GetGenre( artist.Genre );
+		}
+
+		private void AddArtist( ICollection<ArtistTreeNode> tree, DbArtist artist ) {
+			var uiArtist = new UiArtist( OnArtistSelect );
+			UpdateUiArtist( uiArtist, artist );
+
 			var parent = new ArtistTreeNode( uiArtist, FillChildren );
 
 			if( mUseSortPrefixes ) {
