@@ -7,7 +7,6 @@ namespace Noise.Infrastructure.Configuration {
 		public	const string		SectionName = "explorerConfiguration";
 
 		private const string	cEnableLibraryExplorerProperty				= "enableLibraryExplorer";
-		private const string	cEnableBackgroundContentExplorerProperty	= "enableBackgroundContentExplorer";
 		private const string	cEnableLibraryChangeUpdateProperty			= "enableLibraryChangeUpdates";
 		private const string	cEnableUpdateReadOnlyProperty				= "enableUpdateReadOnly";
 		private const string	cMinimizeToTrayProperty						= "minimizeToTray";
@@ -24,12 +23,6 @@ namespace Noise.Infrastructure.Configuration {
 		public bool EnableLibraryExplorer {
 			get { return ((bool)( base[cEnableLibraryExplorerProperty] ) ); }
 			set { base[cEnableLibraryExplorerProperty] = value; }
-		}
-
-		[ConfigurationPropertyAttribute( cEnableBackgroundContentExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
-		public bool EnableBackgroundContentExplorer {
-			get { return ((bool)( base[cEnableBackgroundContentExplorerProperty] ) ); }
-			set { base[cEnableBackgroundContentExplorerProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cEnableLibraryChangeUpdateProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
