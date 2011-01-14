@@ -55,8 +55,8 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <Border BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Background="White" CornerRadius="3" Margin="0">
-            <Grid Margin="3" Behaviours:GridUtils.ColumnDefinitions="*,Auto">
+        <Border BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Background="#FFDDEDFF" CornerRadius="3" Margin="0">
+            <Grid Margin="5" Behaviours:GridUtils.ColumnDefinitions="*,Auto">
                 <TextBlock x:Name="SearchingText" Grid.Column="0" Text="Searching for similar tracks..." HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,15,0,0" Opacity="0"/>
                 
                 <TextBlock x:Name="NoResultsText" Grid.Column="0" Text="Only the current track was found." VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,15,0,0" Opacity="0"/>
@@ -83,8 +83,9 @@
                         </GridView>
                     </ListView.View>
                 </ListView>
-                
-                <Button Grid.Column="1" Command="{Binding Close}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="15" Height="15" Margin="3,3,3,0"/>
+
+                <Button Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Width="17" Height="17" Margin="5,1,1,0"
+                        Content="{StaticResource Path_BalloonClose}" Command="{Binding Close}" />
 
             </Grid>
         </Border>

@@ -319,7 +319,7 @@
     <SolidColorBrush x:Key="ButtonNormalBorder" Color="#FF707070"/>
 
     <!-- Button Images -->
-    <Viewbox x:Key="Path_Lyrics">
+    <Viewbox x:Key="Path_Lyrics" x:Shared="False">
         <Canvas Width="61.002" Height="100" ClipToBounds="True">
             <Path Fill="#FF000000">
                 <Path.Data>
@@ -339,7 +339,7 @@
         </Canvas>
     </Viewbox>
 
-    <Viewbox x:Key="Path_SimilarTracks">
+    <Viewbox x:Key="Path_SimilarTracks" x:Shared="False">
         <Canvas Width="100" Height="99.988" ClipToBounds="True" Background="Transparent" Margin="3">
             <Path Fill="#FF000000">
                 <Path.Data>
@@ -354,4 +354,33 @@
         </Canvas>
     </Viewbox>
 
+    <Viewbox x:Key="Path_BalloonClose" x:Shared="False">
+        <Canvas Width="83.64" Height="100" ClipToBounds="True">
+            <Path Fill="#FF000000">
+                <Path.Data>
+                    <PathGeometry FillRule="Nonzero" Figures="M83.584,58.208L41.792,100 0,58.208 0,30.666 31.777,62.437 31.777,0 52.03,0 52.03,62.213 83.64,30.606 83.584,58.208z" />
+                </Path.Data>
+            </Path>
+        </Canvas>
+    </Viewbox>
+
+    <Viewbox x:Key="Path_SwitchWindow" x:Shared="False">
+        <Canvas Width="100" Height="99.931" ClipToBounds="True">
+            <Path Fill="#FF000000">
+                <Path.Data>
+                    <PathGeometry FillRule="Nonzero" Figures="M24.84,0L100,0 100,75.16 75.229,99.931 75.229,42.817 19.037,98.938 0.849,80.75 56.83,24.771 0,24.771 24.84,0z" />
+                </Path.Data>
+            </Path>
+        </Canvas>
+    </Viewbox>
+    
+    <Viewbox x:Key="Path_ReplayTrack" x:Shared="False">
+        <Canvas Width="98.372" Height="100" ClipToBounds="True">
+            <Path Fill="#FF000000">
+                <Path.Data>
+                    <PathGeometry FillRule="Nonzero" Figures="M58.988,38.462L58.988,39.383 98.372,39.383 98.372,0 83.185,15.185C74.344,6.745 62.385,1.545 49.227,1.545 22.083,1.545 0,23.628 0,50.771 0,77.917 22.083,100 49.227,100 62.801,100 75.106,94.479 84.019,85.565L74.556,76.1C68.067,82.59 59.107,86.608 49.226,86.608 29.466,86.608 13.39,70.533 13.39,50.771 13.39,31.012 29.466,14.935 49.226,14.935 58.693,14.935 67.309,18.633 73.723,24.65L59.449,38.923 58.988,38.462z" />
+                </Path.Data>
+            </Path>
+        </Canvas>
+    </Viewbox>
 </ResourceDictionary>
