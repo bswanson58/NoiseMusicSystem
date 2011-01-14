@@ -2,46 +2,51 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:Infrastructure="clr-namespace:Noise.Infrastructure;assembly=Noise.Infrastructure"
              xmlns:Regions="clr-namespace:Microsoft.Practices.Prism.Regions;assembly=Microsoft.Practices.Prism">
-    <Grid x:Name="LayoutRoot">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        
-        <DockPanel x:Name="Toolbar" Grid.Row="0">
-            <ContentControl Regions:RegionManager.RegionName="Toolbar"/>
-        </DockPanel>
+    <Grid>
+        <Grid x:Name="LayoutRoot">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <Grid x:Name="Content" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="4*" MinWidth="100"/>
-                <ColumnDefinition Width="5*" MinWidth="100"/>
-                <ColumnDefinition Width="2*" MinWidth="100"/>
-            </Grid.ColumnDefinitions>
+            <DockPanel x:Name="Toolbar" Grid.Row="0">
+                <ContentControl Regions:RegionManager.RegionName="Toolbar"/>
+            </DockPanel>
 
-            <TabControl Grid.Column="0" Margin="3,0,7,0" TabStripPlacement="Bottom" Background="Transparent" BorderThickness="0"
+            <Grid x:Name="Content" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4*" MinWidth="100"/>
+                    <ColumnDefinition Width="5*" MinWidth="100"/>
+                    <ColumnDefinition Width="2*" MinWidth="100"/>
+                </Grid.ColumnDefinitions>
+
+                <TabControl Grid.Column="0" Margin="3,0,7,0" TabStripPlacement="Bottom" Background="Transparent" BorderThickness="0"
                         Regions:RegionManager.RegionName="Explorer" 
                         ItemContainerStyle="{StaticResource TabItemRegionStyle}"/>
-            
-            <GridSplitter Grid.Column="0" Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"/>
 
-            <Grid Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*" MinHeight="50"/>
-                    <RowDefinition Height="1*" MinHeight="50"/>
-                </Grid.RowDefinitions>
+                <GridSplitter Grid.Column="0" Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"/>
 
-                <ContentControl Grid.Row="0" Margin="0,3,3,3" Regions:RegionManager.RegionName="ArtistInfo"/>
-                <GridSplitter Grid.Row="0" Width="Auto" Height="7" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Background="Transparent" ResizeDirection="Rows"/>
-                <ContentControl Grid.Row="1" Margin="0,0,3,0" Regions:RegionManager.RegionName="AlbumInfo"/>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*" MinHeight="50"/>
+                        <RowDefinition Height="1*" MinHeight="50"/>
+                    </Grid.RowDefinitions>
+
+                    <ContentControl Grid.Row="0" Margin="0,3,3,3" Regions:RegionManager.RegionName="ArtistInfo"/>
+                    <GridSplitter Grid.Row="0" Width="Auto" Height="7" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Background="Transparent" ResizeDirection="Rows"/>
+                    <ContentControl Grid.Row="1" Margin="0,0,3,0" Regions:RegionManager.RegionName="AlbumInfo"/>
+                </Grid>
+
+                <GridSplitter Grid.Column="1" Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"/>
+
+                <ContentControl Grid.Column="2" Margin="0" Regions:RegionManager.RegionName="PlayQueue"/>
             </Grid>
 
-            <GridSplitter Grid.Column="1" Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"/>
-            
-            <ContentControl Grid.Column="2" Margin="0" Regions:RegionManager.RegionName="PlayQueue"/>
+            <ContentControl Grid.Row="2" Margin="3,0,0,3" Regions:RegionManager.RegionName="Player"/>
         </Grid>
-
-        <ContentControl Grid.Row="2" Margin="3,0,0,3" Regions:RegionManager.RegionName="Player"/>
+        <ContentControl Margin="110,0,0,35" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+            <Grid Height="150" Width="650" Background="LightBlue" Visibility="Hidden"/>
+        </ContentControl>
     </Grid>
 </UserControl>
