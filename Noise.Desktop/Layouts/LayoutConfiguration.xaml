@@ -33,6 +33,8 @@
                              Type="{x:Type Views:PlayQueueView}" />
                 <Layout:View RegionName="Player"
                              Type="{x:Type Views:PlayerView}" />
+                <Layout:View RegionName="SimilarSongs"
+                             Type="{x:Type Views:SimilarSongView}" />
             </Layout:Layout.Views>
         </Layout:Layout>
         <Layout:Layout x:Name="ListenLayout"

@@ -45,8 +45,8 @@
 
             <ContentControl Grid.Row="2" Margin="3,0,0,3" Regions:RegionManager.RegionName="Player"/>
         </Grid>
-        <ContentControl Margin="110,0,0,35" HorizontalAlignment="Left" VerticalAlignment="Bottom">
-            <Grid Height="150" Width="650" Background="LightBlue" Visibility="Hidden"/>
-        </ContentControl>
+        
+        <ContentControl Margin="90,0,0,60" Height="100" Width="600" HorizontalAlignment="Left" VerticalAlignment="Bottom" 
+                        Regions:RegionManager.RegionName="SimilarSongs"/>
     </Grid>
 </UserControl>
