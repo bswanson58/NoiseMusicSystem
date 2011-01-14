@@ -467,5 +467,44 @@ namespace Noise.UI.ViewModels {
 		public void Execute_ExtendedPlayer() {
 			mEvents.GetEvent<Events.ExtendedPlayerRequest>().Publish( this );
 		}
+
+		public void Execute_RequestSimilarSongSearch() {
+			if(( mNoiseManager.PlayController.CurrentTrack != null ) &&
+			   ( mNoiseManager.PlayController.CurrentTrack.Track != null )) {
+				mEvents.GetEvent<Events.SimilarSongSearchRequest>().Publish( mNoiseManager.PlayController.CurrentTrack.Track.DbId );
+			}
+		}
+
+		[DependsUpon("StartTrackFlag")]
+		public bool CanExecute_RequestSimilarSongSearch() {
+			var retValue = false;
+
+			if(( mNoiseManager.PlayController.CurrentTrack != null ) &&
+			   ( mNoiseManager.PlayController.CurrentTrack.Track != null )) {
+				retValue = true;
+			}
+
+			return( retValue );
+		}
+
+		public void Execute_RequestLyrics() {
+			if(( mNoiseManager.PlayController.CurrentTrack != null ) &&
+			   ( mNoiseManager.PlayController.CurrentTrack.Track != null )) {
+				mEvents.GetEvent<Events.SongLyricsRequest>().Publish( mNoiseManager.PlayController.CurrentTrack.Track.DbId );
+			}
+		}
+
+		[DependsUpon("StartTrackFlag")]
+		public bool CanExecute_RequestLyrics() {
+/*			var retValue = false;
+
+			if(( mNoiseManager.PlayController.CurrentTrack != null ) &&
+			   ( mNoiseManager.PlayController.CurrentTrack.Track != null )) {
+				retValue = true;
+			}
+
+			return( retValue ); */
+			return( false );
+		}
 	}
 }

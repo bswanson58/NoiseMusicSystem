@@ -31,6 +31,9 @@ namespace Noise.Infrastructure {
 		public class LibraryUpdateStarted : CompositePresentationEvent<long> { }
 		public class LibraryUpdateCompleted : CompositePresentationEvent<long> { }
 
+		public class SimilarSongSearchRequest : CompositePresentationEvent<long> { }
+		public class SongLyricsRequest : CompositePresentationEvent<long> { }
+
 		public class SystemShutdown : CompositePresentationEvent<object> { }
 	}
 }

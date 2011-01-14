@@ -56,8 +56,8 @@
                     <Controls:RatingSelector Grid.Column="1"
 										 Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
 										 RatingSelected="{Binding Path=Rating, Mode=TwoWay}" VerticalAlignment="Center"/>
-                    <Button Grid.Column="2" Margin="9,0,0,0" Height="17" Width="17" Content="{StaticResource Path_SimilarTracks}"/>
-                    <Button Grid.Column="3" Margin="5,0,0,0" Height="17" Width="17" Content="{StaticResource Path_Lyrics}"/>
+                    <Button Grid.Column="2" Margin="9,0,0,0" Height="17" Width="17" Content="{StaticResource Path_SimilarTracks}" Command="{Binding RequestSimilarSongSearch}"/>
+                    <Button Grid.Column="3" Margin="5,0,0,0" Height="17" Width="17" Content="{StaticResource Path_Lyrics}" Command="{Binding RequestLyrics}"/>
                     <TextBlock Grid.Column="4" Margin="9,0,0,0" Text="{Binding Path=PlayState}"/>
                     <TextBlock Grid.Column="6" Text="Position: " Foreground="{DynamicResource ControlTextColor}"/>
                     <TextBlock Grid.Column="7" Text="{Binding Path=TrackTime, Converter={StaticResource TimeSpanConverter}}" Margin="0,0,7,0">
