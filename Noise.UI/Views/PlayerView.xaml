@@ -6,7 +6,7 @@
         xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
         xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary" 
         xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
-        xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
+        xmlns:NoiseControls="clr-namespace:Noise.UI.Controls" 
         x:Class="Noise.UI.Views.PlayerView"
         mc:Ignorable="d" 
         d:DesignHeight="100" d:DesignWidth="1200"             
@@ -45,18 +45,22 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <CheckBox x:Name="Favorite" Grid.Column="0" Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" Margin="0,0,5,0"/>
+                    <CheckBox x:Name="Favorite" Grid.Column="0" Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" Margin="3,0,5,0" VerticalAlignment="Center"/>
                     <Controls:RatingSelector Grid.Column="1"
 										 Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
-										 RatingSelected="{Binding Path=Rating, Mode=TwoWay}"/>
-                    <TextBlock Grid.Column="2" Margin="9,0,0,0" Text="{Binding Path=PlayState}"/>
-                    <TextBlock Grid.Column="4" Text="Position: " Foreground="{DynamicResource ControlTextColor}"/>
-                    <TextBlock Grid.Column="5" Text="{Binding Path=TrackTime, Converter={StaticResource TimeSpanConverter}}" Margin="0,0,7,0">
+										 RatingSelected="{Binding Path=Rating, Mode=TwoWay}" VerticalAlignment="Center"/>
+                    <Button Grid.Column="2" Margin="9,0,0,0" Height="17" Width="17" Content="{StaticResource Path_SimilarTracks}"/>
+                    <Button Grid.Column="3" Margin="5,0,0,0" Height="17" Width="17" Content="{StaticResource Path_Lyrics}"/>
+                    <TextBlock Grid.Column="4" Margin="9,0,0,0" Text="{Binding Path=PlayState}"/>
+                    <TextBlock Grid.Column="6" Text="Position: " Foreground="{DynamicResource ControlTextColor}"/>
+                    <TextBlock Grid.Column="7" Text="{Binding Path=TrackTime, Converter={StaticResource TimeSpanConverter}}" Margin="0,0,7,0">
                             <EventCommandTriggers:CommandSource.Trigger>
                                 <EventCommandTriggers:EventCommandTrigger RoutedEvent="TextBlock.MouseLeftButtonDown" Command="{Binding Path=ToggleTimeDisplay}"/>
                             </EventCommandTriggers:CommandSource.Trigger>
