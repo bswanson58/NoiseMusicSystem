@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using CuttingEdge.Conditions;
 using Eloquera.Client;
 using Microsoft.Practices.Prism.Events;
@@ -170,9 +169,9 @@ namespace Noise.Core.Database {
 		}
 
 		private void RegisterDatabaseTypes() {
-			var catalog = new DirectoryCatalog(  @".\" );
-			var container = new CompositionContainer( catalog );
-			container.ComposeParts( this );
+			var ioc = mContainer.Resolve<IIoc>();
+
+			ioc.ComposeParts( this );
 
 			foreach( Type type in PersistenceTypes ) {
 				Database.RegisterType( type );

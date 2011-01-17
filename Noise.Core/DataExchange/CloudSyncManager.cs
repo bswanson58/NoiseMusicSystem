@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using GDataDB;
 using GDataDB.Linq;
@@ -84,9 +83,9 @@ namespace Noise.Core.DataExchange {
 				}
 
 				if( SyncProviders == null ) {
-					var catalog = new DirectoryCatalog(  @".\" );
-					var container = new CompositionContainer( catalog );
-					container.ComposeParts( this );
+					var ioc = mContainer.Resolve<IIoc>();
+
+					ioc.ComposeParts( this );
 
 					if( SyncProviders != null ) {
 						foreach( var provider in SyncProviders ) {

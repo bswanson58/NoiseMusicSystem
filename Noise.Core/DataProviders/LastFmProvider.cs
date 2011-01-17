@@ -13,10 +13,14 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	internal abstract class BaseLastFmProvider : IContentProvider {
-		public	abstract ContentType	ContentType { get; }
+		public		abstract ContentType	ContentType { get; }
+		protected	IUnityContainer			mContainer;
 
-		[Import]
-		protected IUnityContainer	Container { get; set; }
+		public bool Initialize( IUnityContainer container ) {
+			mContainer = container;
+
+			return( true );
+		}
 
 		public TimeSpan ExpirationPeriod {
 			get { return( new TimeSpan( 30, 0, 0, 0 )); }
@@ -35,7 +39,7 @@ namespace Noise.Core.DataProviders {
 		}
 
 		public void UpdateContent( IDatabase database, DbArtist forArtist ) {
-			var provider = new LastFmProvider( Container );
+			var provider = new LastFmProvider( mContainer );
 
 			provider.UpdateArtist( database, forArtist );
 		}

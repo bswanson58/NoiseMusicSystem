@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Threading;
 using CuttingEdge.Conditions;
@@ -30,12 +29,14 @@ namespace Noise.Core.DataBuilders {
 			mLog = mContainer.Resolve<ILog>();
 			mCurrentRequests = new List<long>();
 
-			var catalog = new DirectoryCatalog(  @".\" );
-			var container = new CompositionContainer( catalog );
+			var ioc = mContainer.Resolve<IIoc>();
 
-			container.ComposeExportedValue( mContainer );
-			container.ComposeExportedValue( mDatabaseManager );
-			container.ComposeParts( this );
+			ioc.ComposeParts( this );
+			foreach( var provider in ContentProviders ) {
+				if(!provider.Initialize( mContainer )) {
+					mLog.LogMessage( string.Format( "ContentManager - Could not initialize provider for content type: {0}", provider.ContentType ));
+				}
+			}
 		}
 
 		public void RequestContent( DbArtist forArtist ) {

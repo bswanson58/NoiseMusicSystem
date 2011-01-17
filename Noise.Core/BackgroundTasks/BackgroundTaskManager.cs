@@ -61,9 +61,9 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public bool Initialize() {
-			var catalog = new DirectoryCatalog(  @".\" );
-			var container = new CompositionContainer( catalog );
-			container.ComposeParts( this );
+			var ioc = mContainer.Resolve<IIoc>();
+
+			ioc.ComposeParts( this );
 
 			foreach( var task in BackgroundTasks ) {
 				if(!task.Initialize( mContainer )) {

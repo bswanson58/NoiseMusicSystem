@@ -146,6 +146,7 @@
     <Compile Include="Interfaces\ICloudSyncManager.cs" />
     <Compile Include="Interfaces\IDataExchangeManager.cs" />
     <Compile Include="Interfaces\IEqManager.cs" />
+    <Compile Include="Interfaces\IIoc.cs" />
     <Compile Include="Interfaces\ILibraryBuilder.cs" />
     <Compile Include="Interfaces\IDatabaseFilter.cs" />
     <Compile Include="Interfaces\IDbBase.cs" />

@@ -216,19 +216,24 @@ namespace Noise.Core.DataProviders {
 	internal abstract class DiscogsProvider : IContentProvider {
 		private const string	cAuthority = "http://www.discogs.com";
 
+		private IUnityContainer	mContainer;
 		private RestClient		mClient;
 		private ILog			mLog;
 
-		[Import]
-		private IUnityContainer		Container { get; set; }
-
 		public	abstract ContentType	ContentType { get; }
+
+		public bool Initialize( IUnityContainer container ) {
+			mContainer = container;
+			mLog = mContainer.Resolve<ILog>();
+
+			return( true );
+		}
 
 		private RestClient Client {
 			get {
 				if( mClient == null ) {
 					try {
-						var licenseManager = Container.Resolve<ILicenseManager>();
+						var licenseManager = mContainer.Resolve<ILicenseManager>();
 						if( licenseManager.Initialize( Constants.LicenseKeyFile )) {
 							var key = licenseManager.RetrieveKey( LicenseKeys.Discogs );
 
@@ -240,21 +245,11 @@ namespace Noise.Core.DataProviders {
 						}
 					}
 					catch( Exception ex ) {
-						Log.LogException( "Exception - Configuring DiscogsProvider: ", ex );
+						mLog.LogException( "Exception - Configuring DiscogsProvider: ", ex );
 					}
 				}
 
 				return( mClient );
-			}
-		}
-
-		private ILog Log {
-			get {
-				if( mLog == null ) {
-					mLog = Container.Resolve<ILog>();
-				}
-
-				return( mLog );
 			}
 		}
 
@@ -369,15 +364,15 @@ namespace Noise.Core.DataProviders {
 		//						Database.Database.Store( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear ));
 		//					}
 
-							Log.LogInfo( String.Format( "Discogs updated artist: {0}", forArtist.Name ));
+							mLog.LogInfo( String.Format( "Discogs updated artist: {0}", forArtist.Name ));
 						}
 						else {
-							Log.LogMessage( String.Format( "Discogs: {0}", response.StatusCode ));
+							mLog.LogMessage( String.Format( "Discogs: {0}", response.StatusCode ));
 						}
 					}
 				}
 				catch( Exception ex ) {
-					Log.LogException( "Discogs Provider: ", ex );
+					mLog.LogException( "Discogs Provider: ", ex );
 				}
 			}
 		}

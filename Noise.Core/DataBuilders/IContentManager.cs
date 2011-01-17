@@ -1,9 +1,12 @@
 ﻿using System;
+using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.DataBuilders {
 	internal interface IContentProvider {
+		bool			Initialize( IUnityContainer container );
+
 		ContentType		ContentType { get; }
 		TimeSpan		ExpirationPeriod { get; }
 

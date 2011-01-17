@@ -38,6 +38,7 @@ namespace Noise.AppSupport {
 		public bool InitializeIoc( ApplicationUsage appUsage ) {
 			mContainer.RegisterType<ILog, Log>();
 			mContainer.RegisterType<ISystemConfiguration, SystemConfiguration>();
+			mContainer.RegisterType<IIoc, IocProvider>();
 
 			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 			var configuration = systemConfig.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
