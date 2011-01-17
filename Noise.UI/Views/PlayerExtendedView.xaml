@@ -246,7 +246,7 @@
                         <Button Margin="3" Command="{Binding Stop}" Content="&lt;" Width="27" FontFamily="Webdings" FontSize="16"/>
                         <Button Margin="3" Command="{Binding PreviousTrack}" Content="9" Width="27" FontFamily="Webdings" FontSize="16"/>
                         <Button Margin="3" Command="{Binding NextTrack}" Content=":" Width="27" FontFamily="Webdings" FontSize="16"/>
-                        <Button Margin="3" Command="{Binding ReplayTrack}" Content="q" Width="27" FontFamily="Webdings" FontSize="16"/>
+                        <Button Margin="3" Command="{Binding ReplayTrack}" Content="{StaticResource Path_ReplayTrack}" Padding="5" Width="27"/>
                     </StackPanel>
                     <Slider x:Name="PositionSlider" Grid.Row="1" Margin="5,0,5,0" Orientation="Horizontal" SnapsToDevicePixels="True"  VerticalAlignment="Center"
                             Minimum="0" Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}"
