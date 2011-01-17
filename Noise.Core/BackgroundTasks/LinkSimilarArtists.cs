@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -68,9 +69,18 @@ namespace Noise.Core.BackgroundTasks {
 							var dbArtist = mArtistCache.Find( artist => String.Compare( artist.Name, artistName, true ) == 0 );
 
 							if( dbArtist != null ) {
-								similarArtist.SetAssociatedId( dbArtist.DbId );
+								if( similarArtist.AssociatedId != dbArtist.DbId ) {
+									similarArtist.SetAssociatedId( dbArtist.DbId );
 
-								needUpdate = true;
+									needUpdate = true;
+								}
+							}
+							else {
+								if( similarArtist.IsLinked ) {
+									similarArtist.SetAssociatedId( Constants.cDatabaseNullOid );
+
+									needUpdate = true;
+								}
 							}
 						}
 
