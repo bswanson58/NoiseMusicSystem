@@ -4,6 +4,7 @@ using Noise.Core.BackgroundTasks;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
 using Noise.Core.DataExchange;
+using Noise.Core.DataProviders;
 using Noise.Core.FileStore;
 using Noise.Core.MediaPlayer;
 using Noise.Core.PlayHistory;
@@ -35,6 +36,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IFileUpdates, FileUpdates>();
 //			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
 			mContainer.RegisterType<ILicenseManager, LicenseManager>();
+			mContainer.RegisterType<ILyricsProvider, LyricsProvider>();
 			mContainer.RegisterType<IMetaDataExplorer, MetaDataExplorer>();
 			mContainer.RegisterType<IMetaDataCleaner, MetaDataCleaner>();
 			mContainer.RegisterType<ISummaryBuilder, SummaryBuilder>();

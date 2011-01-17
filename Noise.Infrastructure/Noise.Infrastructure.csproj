@@ -132,6 +132,7 @@
     <Compile Include="Dto\FolderStrategy.cs" />
     <Compile Include="Dto\InfoSource.cs" />
     <Compile Include="Dto\IUserSettings.cs" />
+    <Compile Include="Dto\LyricsRequestArgs.cs" />
     <Compile Include="Dto\ObjectTypes.cs" />
     <Compile Include="Dto\ParametricEqualizer.cs" />
     <Compile Include="Dto\PlaybackStatus.cs" />

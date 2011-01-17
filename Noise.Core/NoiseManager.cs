@@ -3,6 +3,7 @@ using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Core.BackgroundTasks;
 using Noise.Core.Database;
+using Noise.Core.DataProviders;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -18,6 +19,7 @@ namespace Noise.Core {
 		private IDataUpdates				mDataUpdates;
 		private IFileUpdates				mFileUpdates;
 		private IBackgroundTaskManager		mBackgroundTaskMgr;
+		private ILyricsProvider				mLyricsProvider;
 
 		public	ICloudSyncManager			CloudSyncMgr { get; private set; }
 		public	IDataProvider				DataProvider { get; private set; }
@@ -80,6 +82,11 @@ namespace Noise.Core {
 					else {
 						mLog.LogMessage( "Noise Manager: Could not initialize cloud sync." );
 					}
+				}
+
+				mLyricsProvider = mContainer.Resolve<ILyricsProvider>();
+				if(!mLyricsProvider.Initialize()) {
+					mLog.LogMessage( "Noise Manager: Could not initialize lyrics provider." );
 				}
 
 				mLog.LogMessage( "Initialized NoiseManager." );

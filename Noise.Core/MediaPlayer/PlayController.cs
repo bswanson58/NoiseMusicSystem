@@ -280,6 +280,9 @@ namespace Noise.Core.MediaPlayer {
 
 				CurrentStatus = ePlaybackStatus.Stopped;
 			}
+			else {
+				GlobalCommands.RequestLyrics.Execute( new LyricsRequestArgs( track.Artist, track.Track ));
+			}
 		}
 
 		private void FireStateChange( eStateTriggers trigger ) {
