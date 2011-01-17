@@ -142,11 +142,6 @@ namespace Noise.Core.DataProviders {
 						   ( replayGainFrame.Count() > 0 )) {
 							mLog.LogMessage( "Found Replay Gain frame" );
 						}
-						var playCountFrame = id3Tags.GetFrames( new ByteVector( "PCNT" ));
-						if(( playCountFrame != null ) &&
-						   ( playCountFrame.Count() > 0 )) {
-							mLog.LogMessage( "Found PlayCount frame" );
-						}
 
 						var frames = id3Tags.GetFrames<UserTextInformationFrame>();
 						if( frames != null ) {
@@ -236,7 +231,6 @@ namespace Noise.Core.DataProviders {
 						parms["folderId"] = mFile.ParentFolder;
 
 						if( database.Database.ExecuteScalar( "SELECT DbArtwork WHERE FolderLocation = @folderId", parms ) == null ) {
-	//					if(( from DbArtwork artwork in mDatabase.Database where artwork.FolderLocation == storageFile.ParentFolder select artwork ).Count() == 0 ) {
 							foreach( var picture in pictures ) {
 								var dbPicture = new DbArtwork( track.Album, picture.Type == PictureType.FrontCover ? ContentType.AlbumCover : ContentType.AlbumArtwork )
 										{ Source = InfoSource.Tag,
