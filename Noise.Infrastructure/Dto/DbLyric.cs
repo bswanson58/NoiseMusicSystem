@@ -15,6 +15,9 @@ namespace Noise.Infrastructure.Dto {
 			ArtistId = artistId;
 			TrackId = trackId;
 			SongName = trackName;
+
+			SourceUrl = "";
+			Lyrics = "";
 		}
 
 		[Export("PersistenceType")]

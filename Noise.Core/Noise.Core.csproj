@@ -243,6 +243,8 @@
     <Compile Include="PlayQueue\PlayStrategySingle.cs" />
     <Compile Include="PlayQueue\PlayStrategyTwoFers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Support\AsyncTask\AsyncTaskEnumerator.cs" />
+    <Compile Include="Support\AsyncTask\IAsyncTaskResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Database\Eloquera.config">

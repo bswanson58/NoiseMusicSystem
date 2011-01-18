@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
@@ -491,6 +492,61 @@ namespace Noise.Core.Database {
 				mLog.LogException( "Exception - GetAlbumSupportInfo:", ex );
 			}
 			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
+		public void	StoreLyric( DbLyric lyric ) {
+			var database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				var parms = database.Database.CreateParameters();
+
+				parms["artistId"] = lyric.ArtistId;
+				parms["trackId"] = lyric.TrackId;
+
+				var match = database.Database.ExecuteScalar( "SELECT DbLyric WHERE ArtistId = @artistId AND TrackId = @trackId", parms ) as DbLyric;
+				if( match != null ) {
+					database.Delete( match );
+				}
+
+				database.Insert( lyric );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - StoreLyric:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+		}
+
+		public DataProviderList<DbLyric> GetPossibleLyrics( DbArtist artist, DbTrack track ) {
+			DataProviderList<DbLyric>	retValue = null;
+			var	list = new List<DbLyric>();
+			var	database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				var parms = database.Database.CreateParameters();
+
+				parms["artistId"] = artist.DbId;
+				parms["trackId"] = track.DbId;
+				parms["songName"] = track.Name;
+
+				var match = database.Database.ExecuteScalar( "SELECT DbLyric WHERE ArtistId = @artistId AND TrackId = @trackId", parms ) as DbLyric;
+				if( match != null ) {
+					list.Add( match );
+				}
+
+				var lyricsList = database.Database.ExecuteQuery( "SELECT DbLyric WHERE SongName = @songName", parms ).OfType<DbLyric>();
+				list.AddRange( lyricsList );
+
+				retValue = new DataProviderList<DbLyric>( database.DatabaseId, FreeDatabase, lyricsList );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetPossibleLyrics:", ex );
+
 				mDatabaseManager.FreeDatabase( database );
 			}
 

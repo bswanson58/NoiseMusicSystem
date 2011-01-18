@@ -36,6 +36,9 @@ namespace Noise.Infrastructure.Interfaces {
 
 		void						UpdateArtistInfo( long artistId );
 
+		void						StoreLyric( DbLyric lyric );
+		DataProviderList<DbLyric>	GetPossibleLyrics( DbArtist artist, DbTrack track );
+
 		void						InsertItem( object dbItem );
 		void						DeleteItem( object dbItem );
 		DbBase						GetItem( long itemId );
