@@ -14,7 +14,7 @@ namespace Noise.Core.Support.AsyncTask {
 		}
     
 		public static void Begin( IEnumerable<IAsyncTaskResult> workflow ) {
-			new AsyncTaskEnumerator( workflow as IEnumerable<IAsyncTaskResult>).Enumerate();
+			new AsyncTaskEnumerator( workflow ).Enumerate();
 		}
 
 		public void Enumerate() {

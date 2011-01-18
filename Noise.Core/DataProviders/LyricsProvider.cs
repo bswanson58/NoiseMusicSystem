@@ -43,7 +43,12 @@ namespace Noise.Core.DataProviders {
 				var lyricsInfo = LocateLyrics( args );
 
 				if(!lyricsInfo.HasMatchedLyric ) {
-					AsyncTaskEnumerator.Begin( LyricsDownloadTask( args, lyricsInfo ));
+					try {
+						AsyncTaskEnumerator.Begin( LyricsDownloadTask( args, lyricsInfo ));
+					}
+					catch( Exception ex ) {
+						mLog.LogException( "Exception - OnLyricsRequested:", ex );
+					}
 				}
 				else {
 					mEvents.GetEvent<Events.SongLyricsInfo>().Publish( lyricsInfo );
@@ -74,21 +79,26 @@ namespace Noise.Core.DataProviders {
 
 				yield return downloader;
 
-				if(!string.IsNullOrWhiteSpace( downloader.PageText )) {
-					var parser = new LyricsPageParser( downloader.PageText );
+				if( downloader.Exception == null ) {
+					if(!string.IsNullOrWhiteSpace( downloader.PageText )) {
+						var parser = new LyricsPageParser( downloader.PageText );
 
-					yield return parser;
+						yield return parser;
 
-					if( parser.Success ) {
-						var dbLyric = new DbLyric( args.Artist.DbId, args.Track.DbId, args.Track.Name ) { Lyrics = parser.Lyrics, SourceUrl = result.Url };
+						if( parser.Success ) {
+							var dbLyric = new DbLyric( args.Artist.DbId, args.Track.DbId, args.Track.Name ) { Lyrics = parser.Lyrics, SourceUrl = result.Url };
 
-						mNoiseManager.DataProvider.StoreLyric( dbLyric );
-						lyricsInfo.SetMatchingLyric( dbLyric );
+							mNoiseManager.DataProvider.StoreLyric( dbLyric );
+							lyricsInfo.SetMatchingLyric( dbLyric );
 
-						mEvents.GetEvent<Events.SongLyricsInfo>().Publish( lyricsInfo );
+							mEvents.GetEvent<Events.SongLyricsInfo>().Publish( lyricsInfo );
 
-						break;
+							break;
+						}
 					}
+				}
+				else {
+					mLog.LogException( string.Format( "Exception - Downloading lyrics page: {0}", result.Url ), downloader.Exception );
 				}
 			}
 		}
@@ -120,7 +130,8 @@ namespace Noise.Core.DataProviders {
 	internal class WebPageDownloader : IAsyncTaskResult {
 		private	readonly WebRequest		mWebRequest;
 
-		public string					PageText { get; private set; }
+		public	string					PageText { get; private set; }
+		public	Exception				Exception { get; private set; }
 		public	event EventHandler		Completed = delegate { };
 
 		public WebPageDownloader( string url ) {
@@ -132,17 +143,22 @@ namespace Noise.Core.DataProviders {
 		}
 
 		private void OnRequestCompleted( IAsyncResult result ) {
-			var	response = mWebRequest.EndGetResponse( result );
-			var reader = new StreamReader( response.GetResponseStream());
+			try {
+				var	response = mWebRequest.EndGetResponse( result );
+				var reader = new StreamReader( response.GetResponseStream());
 
-			PageText = reader.ReadToEnd();
+				PageText = reader.ReadToEnd();
+			}
+			catch( Exception ex ) {
+				Exception = ex;
+			}
 
 			Completed( this, EventArgs.Empty );
 		}
 	}
 
 	internal class LyricsPageParser : IAsyncTaskResult {
-		private const string		cLyricsSearchPattern = @">(?:(?<lyric>[0-9a-z\s\]\[?',.()!`"";-]*)<br\s*/*>\s*){5,}(?:(?<lyric>[0-9a-z\s\]\[?',.()!`"";-]*))<";
+		private const string		cLyricsSearchPattern = @">(?:(?<lyric>[0-9a-z\s\]\[?',.()!:*`"";-]*)<br\s*/*>\s*){5,}(?:(?<lyric>[0-9a-z\s\]\[?',.()!:*`"";-]*))<";
 		private readonly string		mPageText;
 		private readonly Regex		mLyricsPattern;
 
