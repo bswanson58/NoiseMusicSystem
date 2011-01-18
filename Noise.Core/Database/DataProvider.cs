@@ -539,7 +539,10 @@ namespace Noise.Core.Database {
 					list.Add( match );
 				}
 
-				var lyricsList = database.Database.ExecuteQuery( "SELECT DbLyric WHERE SongName = @songName", parms ).OfType<DbLyric>();
+				var lyricsList = database.Database.ExecuteQuery( "SELECT DbLyric WHERE ArtistId = @artistId AND SongName = @songName", parms ).OfType<DbLyric>();
+				list.AddRange( lyricsList );
+
+				lyricsList = database.Database.ExecuteQuery( "SELECT DbLyric WHERE SongName = @songName", parms ).OfType<DbLyric>();
 				list.AddRange( lyricsList );
 
 				retValue = new DataProviderList<DbLyric>( database.DatabaseId, FreeDatabase, lyricsList );
