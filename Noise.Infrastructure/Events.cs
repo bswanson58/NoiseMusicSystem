@@ -35,6 +35,8 @@ namespace Noise.Infrastructure {
 		public class SongLyricsRequest : CompositePresentationEvent<LyricsInfo> { }
 		public class SongLyricsInfo : CompositePresentationEvent<LyricsInfo> { }
 
+		public class BalloonPopupOpened : CompositePresentationEvent<object> { }
+
 		public class SystemShutdown : CompositePresentationEvent<object> { }
 	}
 }

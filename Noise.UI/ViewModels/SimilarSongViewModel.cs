@@ -46,12 +46,19 @@ namespace Noise.UI.ViewModels {
 
 				mEvents.GetEvent<Events.SimilarSongSearchRequest>().Subscribe( OnSearchRequest );
 				mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnTrackChanged );
+				mEvents.GetEvent<Events.BalloonPopupOpened>().Subscribe( OnPopupOpened );
 			}
 		}
 
 		public string VisualStateName {
 			get{ return( Get( () => VisualStateName )); }
-			set{ Set( () => VisualStateName, value ); }
+			set {
+				Set( () => VisualStateName, value );
+
+				if( value != cViewStateClosed ) {
+					mEvents.GetEvent<Events.BalloonPopupOpened>().Publish( this );
+				}
+			}
 		}
 
 		private void OnSearchRequest( long trackId ) {
@@ -91,6 +98,12 @@ namespace Noise.UI.ViewModels {
 
 		private void OnTrackChanged( object sender ) {
 			Close();
+		}
+
+		private void OnPopupOpened( object sender ) {
+			if( sender != this ) {
+				Close();
+			}
 		}
 
 		private void Close() {

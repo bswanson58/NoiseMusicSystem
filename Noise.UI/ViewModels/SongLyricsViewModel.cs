@@ -30,12 +30,19 @@ namespace Noise.UI.ViewModels {
 
 				mEvents.GetEvent<Events.SongLyricsRequest>().Subscribe( OnLyricsRequest );
 				mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnTrackChanged );
+				mEvents.GetEvent<Events.BalloonPopupOpened>().Subscribe( OnPopupOpened );
 			}
 		}
 
 		public string VisualStateName {
 			get{ return( Get( () => VisualStateName )); }
-			set{ Set( () => VisualStateName, value ); }
+			set {
+				Set( () => VisualStateName, value );
+
+				if( value == cViewStateNormal ) {
+					mEvents.GetEvent<Events.BalloonPopupOpened>().Publish( this );
+				}
+			}
 		}
 
 		public string SongName {
@@ -58,9 +65,9 @@ namespace Noise.UI.ViewModels {
 
 			if(( mLyricsInfo != null ) &&
 			   ( mLyricsInfo.MatchedLyric != null )) {
-				VisualStateName = cViewStateNormal;
-
 				SetCurrentLyric( mLyricsInfo.MatchedLyric );
+
+				VisualStateName = cViewStateNormal;
 			}
 			else {
 				VisualStateName = cViewStateClosed;
@@ -83,6 +90,12 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_Close() {
 			Close();
+		}
+
+		private void OnPopupOpened( object sender ) {
+			if( sender != this ) {
+				Close();
+			}
 		}
 
 		private void Close() {
