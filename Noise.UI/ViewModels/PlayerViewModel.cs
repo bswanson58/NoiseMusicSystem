@@ -20,6 +20,7 @@ namespace Noise.UI.ViewModels {
 		private INoiseManager			mNoiseManager;
 		private double					mSpectrumImageWidth;
 		private double					mSpectrumImageHeight;
+		private LyricsInfo				mLyricsInfo;
 		private readonly Color			mBaseColor;
 		private readonly Color			mPeakColor;
 		private readonly Color			mPeakHoldColor;
@@ -56,6 +57,7 @@ namespace Noise.UI.ViewModels {
 				mEvents.GetEvent<Events.PlaybackStatusChanged>().Subscribe( OnPlaybackStatusChanged );
 				mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnPlaybackTrackChanged );
 				mEvents.GetEvent<Events.PlaybackInfoChanged>().Subscribe( OnPlaybackInfoChanged );
+				mEvents.GetEvent<Events.SongLyricsInfo>().Subscribe( OnSongLyricsInfo );
 
 				LoadBands();
 
@@ -87,6 +89,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void OnPlaybackTrackChanged( object sender ) {
+			mLyricsInfo = null;
+
 			StartTrackFlag++;
 		}
 
@@ -487,24 +491,23 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
+		private void OnSongLyricsInfo( LyricsInfo info ) {
+			mLyricsInfo = info;
+
+			RaiseCanExecuteChangedEvent( "CanExecute_RequestLyrics" );
+		}
+
 		public void Execute_RequestLyrics() {
-			if(( mNoiseManager.PlayController.CurrentTrack != null ) &&
-			   ( mNoiseManager.PlayController.CurrentTrack.Track != null )) {
-				mEvents.GetEvent<Events.SongLyricsRequest>().Publish( mNoiseManager.PlayController.CurrentTrack.Track.DbId );
+			if( mLyricsInfo != null ) {
+				mEvents.GetEvent<Events.SongLyricsRequest>().Publish( mLyricsInfo );
 			}
 		}
 
 		[DependsUpon("StartTrackFlag")]
 		public bool CanExecute_RequestLyrics() {
-/*			var retValue = false;
+			var retValue = mLyricsInfo != null;
 
-			if(( mNoiseManager.PlayController.CurrentTrack != null ) &&
-			   ( mNoiseManager.PlayController.CurrentTrack.Track != null )) {
-				retValue = true;
-			}
-
-			return( retValue ); */
-			return( false );
+			return( retValue );
 		}
 	}
 }

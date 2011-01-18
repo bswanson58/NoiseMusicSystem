@@ -1,0 +1,65 @@
+﻿<UserControl x:Class="Noise.UI.Views.SongLyricsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" xmlns:Controls="clr-namespace:Noise.UI.Controls" xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers" Behaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="450">
+    
+    <UserControl.DataContext>
+        <Binding Path="SongLyricsViewModel" Source="{StaticResource ViewModelLocator}"/>
+    </UserControl.DataContext>
+
+    <Grid x:Name="LayoutRoot">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisualStateGroup">
+                <VisualState x:Name="Closed">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="LayoutRoot">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Hidden}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Normal">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="LayoutRoot">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Border BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Background="#FFDDEDFF" CornerRadius="3" Margin="0">
+            <Grid Behaviours:GridUtils.ColumnDefinitions="*,Auto" Margin="5"
+                  Behaviours:GridUtils.RowDefinitions="Auto,*,Auto">
+                
+                <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Margin="7,0,0,0">
+                    <TextBlock Text="Song lyrics for '"/>
+                    <TextBlock Text="{Binding Path=SongName}"/>
+                    <TextBlock Text="'"/>
+                </StackPanel>
+
+                <Button Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="17" Height="17" Margin="0,1,1,5"
+                        Content="{StaticResource Path_BalloonClose}" Command="{Binding Close}" />
+
+                <Border Grid.Row="1" Grid.Column="0" BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" CornerRadius="5" Background="White" Grid.ColumnSpan="2">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                        <TextBlock Text="{Binding Path=SongLyrics}" Margin="3" Background="White"/>
+                    </ScrollViewer>
+                </Border>
+                <Grid Grid.Row="2" Grid.Column="0"
+                      Behaviours:GridUtils.ColumnDefinitions="5,Auto,*,9,Auto,Auto" Margin="0,5,0,0" Grid.ColumnSpan="2">
+                    <TextBlock Grid.Column="1" Text="Other versions:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <ComboBox Grid.Column="2"/>
+                    <Button Grid.Column="4" Content="Select This Version"/>
+                    <Controls:LinkLabel Grid.Column="5" HorizontalAlignment="Right" Padding="0" LinkLabelBehavior="HoverUnderline" Content="source" Margin="9,0,0,0" VerticalAlignment="Bottom">
+                        <EventCommandTriggers:CommandSource.Trigger>
+                            <EventCommandTriggers:EventCommandTrigger RoutedEvent="Controls:LinkLabel.Click" Command="{Binding Path=LyricsSourceClicked}"/>
+                        </EventCommandTriggers:CommandSource.Trigger>
+                    </Controls:LinkLabel>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

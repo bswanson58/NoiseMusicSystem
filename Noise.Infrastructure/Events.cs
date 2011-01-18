@@ -32,7 +32,7 @@ namespace Noise.Infrastructure {
 		public class LibraryUpdateCompleted : CompositePresentationEvent<long> { }
 
 		public class SimilarSongSearchRequest : CompositePresentationEvent<long> { }
-		public class SongLyricsRequest : CompositePresentationEvent<long> { }
+		public class SongLyricsRequest : CompositePresentationEvent<LyricsInfo> { }
 		public class SongLyricsInfo : CompositePresentationEvent<LyricsInfo> { }
 
 		public class SystemShutdown : CompositePresentationEvent<object> { }

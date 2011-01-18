@@ -237,6 +237,7 @@
     <Compile Include="ViewModels\SelectPlayListDialogModel.cs" />
     <Compile Include="ViewModels\SelectStreamDialogModel.cs" />
     <Compile Include="ViewModels\SimilarSongViewModel.cs" />
+    <Compile Include="ViewModels\SongLyricsViewModel.cs" />
     <Compile Include="ViewModels\StreamViewModel.cs" />
     <Compile Include="ViewModels\ToolbarViewModel.cs" />
     <Compile Include="Views\AlbumView.xaml.cs">
@@ -313,6 +314,9 @@
     </Compile>
     <Compile Include="Views\SmallPlayerView.xaml.cs">
       <DependentUpon>SmallPlayerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SongLyricsView.xaml.cs">
+      <DependentUpon>SongLyricsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\StreamView.xaml.cs">
       <DependentUpon>StreamView.xaml</DependentUpon>
@@ -460,6 +464,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SmallPlayerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SongLyricsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

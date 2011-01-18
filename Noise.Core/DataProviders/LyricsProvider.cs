@@ -142,7 +142,7 @@ namespace Noise.Core.DataProviders {
 	}
 
 	internal class LyricsPageParser : IAsyncTaskResult {
-		private const string		cLyricsSearchPattern = @">(?:(?<lyric>[0-9a-z\s?',.()!`"";-]*)<br\s*/*>\s*){5,}(?:(?<lyric>[0-9a-z\s?',.()!`"";-]*))<";
+		private const string		cLyricsSearchPattern = @">(?:(?<lyric>[0-9a-z\s\]\[?',.()!`"";-]*)<br\s*/*>\s*){5,}(?:(?<lyric>[0-9a-z\s\]\[?',.()!`"";-]*))<";
 		private readonly string		mPageText;
 		private readonly Regex		mLyricsPattern;
 
@@ -162,12 +162,14 @@ namespace Noise.Core.DataProviders {
 				var sb = new StringBuilder();
 
 				foreach( var capture in match.Groups["lyric"].Captures ) {
-					if( sb.Length > 0 ) {
+					if(( sb.Length > 0 ) &&
+						(!capture.ToString().StartsWith( Environment.NewLine )) &&
+						(!sb.ToString().EndsWith( Environment.NewLine ))) {
 						sb.AppendLine();
 					}
 
 					if(( sb.Length > 0 ) ||
-					   (!string.IsNullOrWhiteSpace( capture.ToString()))) {
+						(!string.IsNullOrWhiteSpace( capture.ToString()))) {
 						sb.Append( capture.ToString());
 					}
 				}
