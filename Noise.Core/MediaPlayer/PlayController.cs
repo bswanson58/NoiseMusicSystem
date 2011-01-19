@@ -280,9 +280,6 @@ namespace Noise.Core.MediaPlayer {
 
 				CurrentStatus = ePlaybackStatus.Stopped;
 			}
-			else {
-				GlobalCommands.RequestLyrics.Execute( new LyricsRequestArgs( track.Artist, track.Track ));
-			}
 		}
 
 		private void FireStateChange( eStateTriggers trigger ) {
@@ -401,12 +398,12 @@ namespace Noise.Core.MediaPlayer {
 
 		private void OnTrackStarted( int channel ) {
 			mCurrentChannel = channel;
-
 			mCurrentLength = mAudioPlayer.GetLength( channel );
 
 			StartInfoUpdate();
 
 			FirePlaybackTrackChanged();
+
 			mEvents.GetEvent<Events.PlaybackTrackStarted>().Publish( GetTrack( channel ));
 		}
 

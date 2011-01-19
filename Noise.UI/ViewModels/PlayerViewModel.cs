@@ -58,6 +58,7 @@ namespace Noise.UI.ViewModels {
 				mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnPlaybackTrackChanged );
 				mEvents.GetEvent<Events.PlaybackInfoChanged>().Subscribe( OnPlaybackInfoChanged );
 				mEvents.GetEvent<Events.SongLyricsInfo>().Subscribe( OnSongLyricsInfo );
+				mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnPlaybackTrackStarted );
 
 				LoadBands();
 
@@ -89,8 +90,6 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void OnPlaybackTrackChanged( object sender ) {
-			mLyricsInfo = null;
-
 			StartTrackFlag++;
 		}
 
@@ -491,6 +490,13 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
+		private void OnPlaybackTrackStarted( PlayQueueTrack track ) {
+			mLyricsInfo = null;
+			RaiseCanExecuteChangedEvent( "CanExecute_RequestLyrics" );
+
+			GlobalCommands.RequestLyrics.Execute( new LyricsRequestArgs( track.Artist, track.Track ));
+		}
+
 		private void OnSongLyricsInfo( LyricsInfo info ) {
 			mLyricsInfo = info;
 
@@ -503,11 +509,8 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		[DependsUpon("StartTrackFlag")]
 		public bool CanExecute_RequestLyrics() {
-			var retValue = mLyricsInfo != null;
-
-			return( retValue );
+			return( mLyricsInfo != null );
 		}
 	}
 }

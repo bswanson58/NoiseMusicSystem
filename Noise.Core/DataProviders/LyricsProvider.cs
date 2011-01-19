@@ -96,7 +96,7 @@ namespace Noise.Core.DataProviders {
 							lyricsInfo.SetMatchingLyric( dbLyric );
 
 							mEvents.GetEvent<Events.SongLyricsInfo>().Publish( lyricsInfo );
-
+							mLog.LogMessage( string.Format( "Downloaded lyrics for '{0}' from: {1}", dbLyric.SongName, dbLyric.SourceUrl ));
 							break;
 						}
 					}
