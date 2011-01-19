@@ -61,8 +61,12 @@ namespace Noise.Core.DataProviders {
 
 			using( var lyricsList = mNoiseManager.DataProvider.GetPossibleLyrics( args.Artist, args.Track )) {
 				var match = lyricsList.List.FirstOrDefault( lyric => lyric.ArtistId == args.Artist.DbId && lyric.TrackId == args.Track.DbId );
+				if( match == null ) {
+					match = lyricsList.List.FirstOrDefault( lyric => lyric.ArtistId == args.Artist.DbId && 
+															lyric.SongName.Equals( args.Track.Name,StringComparison.CurrentCultureIgnoreCase ));
+				}
 
-				retValue = new LyricsInfo( match, lyricsList.List );
+				retValue = new LyricsInfo( args.Artist.DbId, args.Track.DbId, match, lyricsList.List );
 			}
 
 			return( retValue );

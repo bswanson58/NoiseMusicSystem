@@ -7,6 +7,18 @@ using Noise.Infrastructure.Support;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
+	public class UiLyricSelector {
+		public	DbLyric		Lyric { get; private set; }
+		public	string		ArtistName { get; private set; }
+		public	string		SongName { get; private set; }
+
+		public UiLyricSelector( DbLyric lyric, string artistName, string songName ) {
+			Lyric = lyric;
+			ArtistName = artistName;
+			SongName = songName;
+		}
+	}
+
 	public class SongLyricsViewModel : ViewModelBase {
 		private const string		cViewStateClosed	= "Closed";
 		private const string		cViewStateNormal	= "Normal";
@@ -15,9 +27,12 @@ namespace Noise.UI.ViewModels {
 		private IEventAggregator	mEvents;
 		private	INoiseManager		mNoiseManager;
 		private LyricsInfo			mLyricsInfo;
+		private readonly ObservableCollectionEx<UiLyricSelector>	mLyricsList;
 
 		public SongLyricsViewModel() {
 			VisualStateName = cViewStateClosed;
+
+			mLyricsList = new ObservableCollectionEx<UiLyricSelector>();
 		}
 
 		[Dependency]
@@ -61,12 +76,29 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => LyricsSource, value ); }
 		}
 
+		public ObservableCollectionEx<UiLyricSelector> PossibleLyrics {
+			get{ return( mLyricsList ); }
+		}
+
+		public UiLyricSelector SelectedLyric {
+			get{ return( Get( () => SelectedLyric )); }
+			set {
+				Set( () => SelectedLyric, value );
+
+				if( value != null ) {
+					SetCurrentLyric( value.Lyric );
+				}
+				RaiseCanExecuteChangedEvent( "CanExecute_SelectLyric" );
+			}
+		}
+
 		private void OnLyricsRequest( LyricsInfo info ) {
 			mLyricsInfo = info;
 
 			if(( mLyricsInfo != null ) &&
 			   ( mLyricsInfo.MatchedLyric != null )) {
 				SetCurrentLyric( mLyricsInfo.MatchedLyric );
+				BuildLyricsList();
 
 				VisualStateName = cViewStateNormal;
 			}
@@ -81,20 +113,67 @@ namespace Noise.UI.ViewModels {
 			LyricsSource = lyric.SourceUrl;
 		}
 
+		private void BuildLyricsList() {
+			mLyricsList.SuspendNotification();
+			mLyricsList.Clear();
+
+			foreach( var lyric in mLyricsInfo.PossibleLyrics ) {
+				var artist = mNoiseManager.DataProvider.GetArtist( lyric.ArtistId );
+
+				if( artist != null ) {
+					mLyricsList.Add( new UiLyricSelector( lyric, artist.Name, lyric.SongName ));
+				}
+			}
+
+			mLyricsList.ResumeNotification();
+			mLyricsList.Each( item => { if( item.Lyric.DbId == mLyricsInfo.MatchedLyric.DbId ) SelectedLyric = item; } );
+		}
+
 		private void OnTrackChanged( object sender ) {
 			Close();
 		}
 
 		public void Execute_Edit() {
-			var	dialogService = mContainer.Resolve<IDialogService>();
-			var updateLyric = mNoiseManager.DataProvider.GetLyricForUpdate( mLyricsInfo.MatchedLyric.DbId );
+			if( SelectedLyric != null ) {
+				var	dialogService = mContainer.Resolve<IDialogService>();
+				var updateLyric = mNoiseManager.DataProvider.GetLyricForUpdate( SelectedLyric.Lyric.DbId );
 
-			if( dialogService.ShowDialog( DialogNames.LyricsEdit, updateLyric.Item ) == true ) {
-				updateLyric.Update();
+				if( dialogService.ShowDialog( DialogNames.LyricsEdit, updateLyric.Item ) == true ) {
+					updateLyric.Update();
 
-				mLyricsInfo.SetMatchingLyric( updateLyric.Item );
-				SetCurrentLyric( mLyricsInfo.MatchedLyric );
+					mLyricsInfo.SetMatchingLyric( updateLyric.Item );
+					SetCurrentLyric( mLyricsInfo.MatchedLyric );
+				}
 			}
+		}
+
+		[DependsUpon("SelectedLyric")]
+		public bool CanExecute_Edit() {
+			return( SelectedLyric != null );
+		}
+
+		public void Execute_SelectLyric() {
+			if(( SelectedLyric != null ) &&
+			   ( SelectedLyric.Lyric.TrackId != mLyricsInfo.TrackId )) {
+				var newLyric = new DbLyric( mLyricsInfo.ArtistId, mLyricsInfo.TrackId, mLyricsInfo.MatchedLyric.SongName )
+												{ Lyrics = SelectedLyric.Lyric.Lyrics, SourceUrl = SelectedLyric.Lyric.SourceUrl };
+
+				mLyricsInfo.SetMatchingLyric( newLyric );
+				mNoiseManager.DataProvider.StoreLyric( newLyric );
+
+				RaiseCanExecuteChangedEvent( "CanExecute_SelectLyric" );
+			}
+		}
+
+		public bool CanExecute_SelectLyric() {
+			var retValue = false;
+
+			if(( SelectedLyric != null ) &&
+			   ( SelectedLyric.Lyric.TrackId != mLyricsInfo.TrackId )) {
+				retValue = true;
+			}
+
+			return( retValue );
 		}
 
 		public void Execute_LyricsSourceClicked() {

@@ -2,11 +2,15 @@
 
 namespace Noise.Infrastructure.Dto {
 	public class LyricsInfo {
+		public long						ArtistId { get; private set; }
+		public long						TrackId { get; private set; }
 		public DbLyric					MatchedLyric { get; private set; }
 
 		private readonly List<DbLyric>	mPossibleLyrics;
 
-		public LyricsInfo( DbLyric match, IEnumerable<DbLyric> otherLyrics ) {
+		public LyricsInfo( long artistId, long trackId, DbLyric match, IEnumerable<DbLyric> otherLyrics ) {
+			ArtistId = artistId;
+			TrackId = trackId;
 			MatchedLyric = match;
 			mPossibleLyrics = new List<DbLyric>( otherLyrics );
 		}
