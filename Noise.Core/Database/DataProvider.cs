@@ -209,6 +209,41 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public DataUpdateShell<DbArtist> GetArtistForUpdate( long artistId ) {
+			DataUpdateShell<DbArtist>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			if( database != null ) {
+				var parms = database.Database.CreateParameters();
+
+				parms["artistId"] = artistId;
+
+				retValue = new DataUpdateShell<DbArtist>( database.DatabaseId, FreeDatabase, UpdateArtist,
+														  database.Database.ExecuteScalar( "SELECT DbArtist Where DbId = @artistId", parms ) as DbArtist );
+			}
+
+			return( retValue );
+		}
+
+
+		private void UpdateArtist( string databaseId, DbArtist artist ) {
+			var database = mDatabaseManager.GetDatabase( databaseId );
+
+			if( database != null ) {
+				artist.UpdateLastChange();
+
+				database.Database.Store( artist );
+			}
+		}
+
+		public void	UpdateArtistLastChanged( long artistId ) {
+			var update = GetArtistForUpdate( artistId );
+
+			if( update != null ) {
+				update.Update();
+			}
+		}
+
 		public DbAlbum GetAlbum( long dbid ) {
 			var			database = mDatabaseManager.ReserveDatabase();
 			DbAlbum		retValue = null;
@@ -513,6 +548,8 @@ namespace Noise.Core.Database {
 				}
 
 				database.Insert( lyric );
+
+				UpdateArtistLastChanged( lyric.ArtistId );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - StoreLyric:", ex );
@@ -578,6 +615,8 @@ namespace Noise.Core.Database {
 
 			if( database != null ) {
 				database.Database.Store( lyric );
+
+				UpdateArtistLastChanged( lyric.ArtistId );
 			}
 		}
 

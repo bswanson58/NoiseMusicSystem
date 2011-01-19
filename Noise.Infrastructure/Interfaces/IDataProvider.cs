@@ -9,6 +9,8 @@ namespace Noise.Infrastructure.Interfaces {
 		DataProviderList<DbArtist>	GetArtistList( IDatabaseFilter filter );
 		DbArtist					GetArtistForAlbum( DbAlbum album );
 		DataProviderList<DbArtist>	GetFavoriteArtists();
+		DataUpdateShell<DbArtist>	GetArtistForUpdate( long artistId );
+		void						UpdateArtistLastChanged( long artistId );
 
 		DbAlbum						GetAlbum( long dbid );
 		DataProviderList<DbAlbum>	GetAlbumList( DbArtist forArtist );

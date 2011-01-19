@@ -10,6 +10,7 @@ namespace Noise.Infrastructure.Interfaces {
 		BandMember,
 		Biography,
 		Discography,
+		Lyrics,
 		SimilarArtist,
 		TopAlbum,
 		TextInfo,

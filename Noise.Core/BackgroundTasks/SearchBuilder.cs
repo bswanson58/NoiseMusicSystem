@@ -148,6 +148,19 @@ namespace Noise.Core.BackgroundTasks {
 								indexBuilder.AddSearchItem( album, track, eSearchItemType.Track, track.Name );
 							}
 						}
+
+						var lyricsList = database.Database.ExecuteQuery( "SELECT DbLyric WHERE ArtistId = @artistId", parms ).OfType<DbLyric>();
+						foreach( var lyric in lyricsList ) {
+							var track = mNoiseManager.DataProvider.GetTrack( lyric.TrackId );
+
+							if( track != null ) {
+								var album = mNoiseManager.DataProvider.GetAlbumForTrack( track );
+
+								if( album != null ) {
+									indexBuilder.AddSearchItem( album, track, eSearchItemType.Lyrics, lyric.Lyrics  );
+								}
+							}
+						}
 					}
 				}
 				catch( Exception ex ) {

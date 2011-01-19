@@ -39,6 +39,10 @@ namespace Noise.Infrastructure.Dto {
 						retValue = string.Format( "Discography of {0}", Artist.Name );
 						break;
 
+					case eSearchItemType.Lyrics:
+						retValue = string.Format( "Lyrics for {0} - {1}", Artist.Name, Track.Name );
+						break;
+
 					case eSearchItemType.SimilarArtist:
 						retValue = string.Format( "Artist similar to {0}", Artist.Name );
 						break;

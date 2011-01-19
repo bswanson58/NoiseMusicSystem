@@ -72,6 +72,7 @@ namespace Noise.Core.Database {
 
 				case eSearchItemType.BandMember:
 				case eSearchItemType.Biography:
+				case eSearchItemType.Lyrics:
 				case eSearchItemType.TextInfo:
 				case eSearchItemType.TopAlbum:
 				case eSearchItemType.TimeStamp:
