@@ -556,6 +556,31 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public DataUpdateShell<DbLyric> GetLyricForUpdate( long lyricId ) {
+			DataUpdateShell<DbLyric>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			if( database != null ) {
+				var parms = database.Database.CreateParameters();
+
+				parms["lyricId"] = lyricId;
+
+				retValue = new DataUpdateShell<DbLyric>( database.DatabaseId, FreeDatabase, UpdateLyric,
+														 database.Database.ExecuteScalar( "SELECT DbLyric Where DbId = @lyricId", parms ) as DbLyric );
+			}
+
+			return( retValue );
+		}
+
+
+		private void UpdateLyric( string databaseId, DbLyric lyric ) {
+			var database = mDatabaseManager.GetDatabase( databaseId );
+
+			if( database != null ) {
+				database.Database.Store( lyric );
+			}
+		}
+
 		public DbInternetStream GetStream( long streamId ) {
 			DbInternetStream	retValue = null;
 

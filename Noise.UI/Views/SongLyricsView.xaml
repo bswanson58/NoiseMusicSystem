@@ -48,16 +48,17 @@
                         <TextBlock Text="{Binding Path=SongLyrics}" Margin="3" Background="White"/>
                     </ScrollViewer>
                 </Border>
-                <Grid Grid.Row="2" Grid.Column="0"
-                      Behaviours:GridUtils.ColumnDefinitions="5,Auto,*,9,Auto,Auto" Margin="0,5,0,0" Grid.ColumnSpan="2">
+                <Grid Grid.Row="2" Grid.Column="0"  Margin="0,5,0,0" Grid.ColumnSpan="2"
+                      Behaviours:GridUtils.ColumnDefinitions="5,Auto,*,9,Auto,Auto,Auto">
                     <TextBlock Grid.Column="1" Text="Other versions:" VerticalAlignment="Center" Margin="0,0,5,0"/>
                     <ComboBox Grid.Column="2"/>
-                    <Button Grid.Column="4" Content="Select This Version"/>
-                    <Controls:LinkLabel Grid.Column="5" HorizontalAlignment="Right" Padding="0" LinkLabelBehavior="HoverUnderline" Content="source" Margin="9,0,0,0" VerticalAlignment="Bottom">
+                    <Button Grid.Column="4" Content="Select This Version" Padding="5,1"/>
+                    <Controls:LinkLabel Grid.Column="5" HorizontalAlignment="Right" Padding="0" LinkLabelBehavior="HoverUnderline" Content="source" Margin="7,0,0,0" VerticalAlignment="Bottom">
                         <EventCommandTriggers:CommandSource.Trigger>
                             <EventCommandTriggers:EventCommandTrigger RoutedEvent="Controls:LinkLabel.Click" Command="{Binding Path=LyricsSourceClicked}"/>
                         </EventCommandTriggers:CommandSource.Trigger>
                     </Controls:LinkLabel>
+                    <Button Grid.Column="6" Content="{StaticResource Path_Edit}" Command="{Binding Path=Edit}" Height="22" Margin="7,0,0,0"/>
                 </Grid>
             </Grid>
         </Border>

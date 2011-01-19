@@ -4,6 +4,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class SongLyricsViewModel : ViewModelBase {
@@ -82,6 +83,18 @@ namespace Noise.UI.ViewModels {
 
 		private void OnTrackChanged( object sender ) {
 			Close();
+		}
+
+		public void Execute_Edit() {
+			var	dialogService = mContainer.Resolve<IDialogService>();
+			var updateLyric = mNoiseManager.DataProvider.GetLyricForUpdate( mLyricsInfo.MatchedLyric.DbId );
+
+			if( dialogService.ShowDialog( DialogNames.LyricsEdit, updateLyric.Item ) == true ) {
+				updateLyric.Update();
+
+				mLyricsInfo.SetMatchingLyric( updateLyric.Item );
+				SetCurrentLyric( mLyricsInfo.MatchedLyric );
+			}
 		}
 
 		public void Execute_LyricsSourceClicked() {

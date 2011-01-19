@@ -383,4 +383,19 @@
             </Path>
         </Canvas>
     </Viewbox>
+
+    <Viewbox x:Key="Path_Edit" x:Shared="False">
+        <Canvas Width="100" Height="100" ClipToBounds="True">
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
+                <Path.Data>
+                    <PathGeometry FillRule="Nonzero" Figures="M4.744,4.743C-1.581,11.068,-1.581,21.321,4.744,27.646L27.646,4.743C21.322,-1.582,11.068,-1.582,4.744,4.743z" />
+                </Path.Data>
+            </Path>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
+                <Path.Data>
+                    <PathGeometry FillRule="Nonzero" Figures="M60.893,83.794L100,100 83.795,60.893 33.914,11.013 11.012,33.914 60.893,83.794z M66.105,73.646C68.187,71.562 72.128,72.129 72.998,72.999 72.13,72.131 71.562,68.187 73.644,66.105 75.726,64.023 79.886,63.283 79.886,63.283L89.198,85.753 85.752,89.199 63.282,79.888C63.282,79.889,64.023,75.729,66.105,73.646z" />
+                </Path.Data>
+            </Path>
+        </Canvas>
+    </Viewbox>
 </ResourceDictionary>
