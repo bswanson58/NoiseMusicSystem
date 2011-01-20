@@ -404,7 +404,12 @@ namespace Noise.Core.MediaPlayer {
 
 			FirePlaybackTrackChanged();
 
-			mEvents.GetEvent<Events.PlaybackTrackStarted>().Publish( GetTrack( channel ));
+			var track = GetTrack( channel );
+
+			if( track != null ) {
+				mEvents.GetEvent<Events.PlaybackTrackStarted>().Publish( track );
+				GlobalCommands.RequestLyrics.Execute( new LyricsRequestArgs( track.Artist, track.Track ));
+			}
 		}
 
 		private void OnTrackEnded( int channel ) {

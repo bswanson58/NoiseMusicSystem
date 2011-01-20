@@ -493,8 +493,6 @@ namespace Noise.UI.ViewModels {
 		private void OnPlaybackTrackStarted( PlayQueueTrack track ) {
 			mLyricsInfo = null;
 			RaiseCanExecuteChangedEvent( "CanExecute_RequestLyrics" );
-
-			GlobalCommands.RequestLyrics.Execute( new LyricsRequestArgs( track.Artist, track.Track ));
 		}
 
 		private void OnSongLyricsInfo( LyricsInfo info ) {
