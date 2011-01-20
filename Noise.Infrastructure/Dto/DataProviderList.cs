@@ -3,17 +3,19 @@ using System.Collections.Generic;
 
 namespace Noise.Infrastructure.Dto {
 	public class DataProviderBase : IDisposable {
-		protected	readonly string			mClientName;
-		private		readonly Action<string>	mDisposeAcion;
+		protected	readonly string		mClientName;
+		private		Action<string>		mDisposeAction;
 
 		protected DataProviderBase( string clientName, Action<string> disposeAction ) {
 			mClientName = clientName;
-			mDisposeAcion = disposeAction;
+			mDisposeAction = disposeAction;
 		}
 
 		public void Dispose() {
-			if( mDisposeAcion != null ) {
-				mDisposeAcion( mClientName );
+			if( mDisposeAction != null ) {
+				mDisposeAction( mClientName );
+
+				mDisposeAction = null;
 			}
 		}
 	}

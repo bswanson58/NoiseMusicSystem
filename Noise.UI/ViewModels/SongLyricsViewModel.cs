@@ -136,13 +136,14 @@ namespace Noise.UI.ViewModels {
 		public void Execute_Edit() {
 			if( SelectedLyric != null ) {
 				var	dialogService = mContainer.Resolve<IDialogService>();
-				var updateLyric = mNoiseManager.DataProvider.GetLyricForUpdate( SelectedLyric.Lyric.DbId );
 
-				if( dialogService.ShowDialog( DialogNames.LyricsEdit, updateLyric.Item ) == true ) {
-					updateLyric.Update();
+				using( var updateLyric = mNoiseManager.DataProvider.GetLyricForUpdate( SelectedLyric.Lyric.DbId )) {
+					if( dialogService.ShowDialog( DialogNames.LyricsEdit, updateLyric.Item ) == true ) {
+						updateLyric.Update();
 
-					mLyricsInfo.SetMatchingLyric( updateLyric.Item );
-					SetCurrentLyric( mLyricsInfo.MatchedLyric );
+						mLyricsInfo.SetMatchingLyric( updateLyric.Item );
+						SetCurrentLyric( mLyricsInfo.MatchedLyric );
+					}
 				}
 			}
 		}

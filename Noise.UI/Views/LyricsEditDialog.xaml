@@ -6,6 +6,7 @@
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" 
              Height="450" Width="550"
              Tag="Edit Lyrics"
+             FocusManager.FocusedElement="{Binding ElementName=FirstFocus}"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     
@@ -17,7 +18,7 @@
         </Border>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Lyrics:" HorizontalAlignment="Right" Margin="0,5,5,1"/>
-        <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Lyrics}" AcceptsReturn="True"
+        <TextBox x:Name="FirstFocus" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Lyrics}" AcceptsReturn="True"
                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Source:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,5,5,5"/>
