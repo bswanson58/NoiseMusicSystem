@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.Prism.Events;
+﻿using System;
+using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -32,8 +33,20 @@ namespace Noise.AppSupport {
 			mEvents.GetEvent<Events.WebsiteRequest>().Subscribe( OnWebsiteRequested );
 		}
 
-		private static void OnWebsiteRequested( string url ) {
-			System.Diagnostics.Process.Start( url );
+		private void OnWebsiteRequested( string url ) {
+			try {
+				System.Diagnostics.Process.Start( url );
+			}
+			catch( Exception ex1 ) {
+				try {
+					var startInfo = new System.Diagnostics.ProcessStartInfo( "IExplore.exe", url );
+
+					System.Diagnostics.Process.Start( startInfo );
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "Exception - OnWebsiteRequested:", ex );
+				}
+			}
 		}
 	}
 }
