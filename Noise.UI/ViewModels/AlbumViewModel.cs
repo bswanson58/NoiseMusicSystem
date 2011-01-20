@@ -315,11 +315,12 @@ namespace Noise.UI.ViewModels {
 		public void Execute_EditAlbum() {
 			if( mCurrentAlbum != null ) {
 				var	dialogService = mContainer.Resolve<IDialogService>();
-				var albumUpdate = mNoiseManager.DataProvider.GetAlbumForUpdate( mCurrentAlbum.DbId );
 
-				if( albumUpdate != null ) {
-					if( dialogService.ShowDialog( DialogNames.AlbumEdit, albumUpdate.Item ) == true ) {
-						albumUpdate.Update();
+				using( var albumUpdate = mNoiseManager.DataProvider.GetAlbumForUpdate( mCurrentAlbum.DbId )) {
+					if( albumUpdate != null ) {
+						if( dialogService.ShowDialog( DialogNames.AlbumEdit, albumUpdate.Item ) == true ) {
+							albumUpdate.Update();
+						}
 					}
 				}
 			}

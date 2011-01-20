@@ -237,10 +237,10 @@ namespace Noise.Core.Database {
 		}
 
 		public void	UpdateArtistLastChanged( long artistId ) {
-			var update = GetArtistForUpdate( artistId );
-
-			if( update != null ) {
-				update.Update();
+			using( var update = GetArtistForUpdate( artistId )) {
+				if( update != null ) {
+					update.Update();
+				}
 			}
 		}
 

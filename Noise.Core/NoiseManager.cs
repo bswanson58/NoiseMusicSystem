@@ -43,7 +43,8 @@ namespace Noise.Core {
 		}
 
 		public bool Initialize() {
-			mLog.LogMessage( "-------------------------" );
+			mLog.LogMessage( "---------------------------" );
+			mLog.LogMessage( "Starting Noise Music System" );
 
 			if( mDatabaseManager.Initialize()) {
 				DataProvider = mContainer.Resolve<IDataProvider>();
