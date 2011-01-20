@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Eloquera.Client;
 
@@ -12,6 +13,9 @@ namespace Noise.Infrastructure.Dto {
 		public Int16			CalculatedRating { get; set; }
 		public Int16			MaxChildRating { get; set; }
 		public Int16			TrackCount { get; set; }
+		[Required]
+		[RegularExpression( "^(?:0|\\d{4})$", ErrorMessage = "Only 0 (zero) or 1900-2100 are allowed.")]
+		[Range( 0, 2100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		public UInt32			PublishedYear { get; set; }
 		public long				CalculatedGenre { get; set; }
 		public long				ExternalGenre { get; set; }

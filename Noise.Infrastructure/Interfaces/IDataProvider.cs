@@ -17,6 +17,7 @@ namespace Noise.Infrastructure.Interfaces {
 		DataProviderList<DbAlbum>	GetAlbumList( long artistId );
 		DbAlbum						GetAlbumForTrack( DbTrack track );
 		DataProviderList<DbAlbum>	GetFavoriteAlbums();
+		DataUpdateShell<DbAlbum>	GetAlbumForUpdate( long albumId );
 
 		DbTrack						GetTrack( long trackId );
 		DataProviderList<DbTrack>	GetTrackList( long albumId );

@@ -240,6 +240,9 @@
     <Compile Include="ViewModels\SongLyricsViewModel.cs" />
     <Compile Include="ViewModels\StreamViewModel.cs" />
     <Compile Include="ViewModels\ToolbarViewModel.cs" />
+    <Compile Include="Views\AlbumEditDialog.xaml.cs">
+      <DependentUpon>AlbumEditDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\AlbumView.xaml.cs">
       <DependentUpon>AlbumView.xaml</DependentUpon>
     </Compile>
@@ -367,6 +370,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Support\DialogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AlbumEditDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

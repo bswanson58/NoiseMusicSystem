@@ -13,6 +13,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Behaviours;
 using Noise.UI.Dto;
+using Noise.UI.Support;
 using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
@@ -309,6 +310,19 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "Album" )]
 		public bool AlbumValid {
 			get{ return( mCurrentAlbum != null ); } 
+		}
+
+		public void Execute_EditAlbum() {
+			if( mCurrentAlbum != null ) {
+				var	dialogService = mContainer.Resolve<IDialogService>();
+				var albumUpdate = mNoiseManager.DataProvider.GetAlbumForUpdate( mCurrentAlbum.DbId );
+
+				if( albumUpdate != null ) {
+					if( dialogService.ShowDialog( DialogNames.AlbumEdit, albumUpdate.Item ) == true ) {
+						albumUpdate.Update();
+					}
+				}
+			}
 		}
 	}
 }

@@ -14,5 +14,6 @@
 		public const string		SelectStream			= "SelectStream";
 		public const string		Search					= "Search";
 		public const string		LyricsEdit				= "LyricsEdit";
+		public const string		AlbumEdit				= "AlbumEdit";
 	}
 }

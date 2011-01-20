@@ -14,50 +14,41 @@
     </UserControl.DataContext>
 
     <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Album "  Margin="0">
-        <Grid Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <Grid Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}"
+              Behaviours:GridUtils.RowDefinitions="Auto,*">
             <Border Grid.Row="0" BorderThickness="0" CornerRadius="5" Background="{DynamicResource TreeItemBackground}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                <Grid Behaviours:GridUtils.ColumnDefinitions="Auto,*,Auto">
+                    <!-- Album cover image -->
                     <Image Grid.Column="0" Margin="7" MaxHeight="200" MaxWidth="300" Stretch="Uniform">
                         <i:Interaction.Behaviors>
                             <Behaviours:ImageScrubber ImageList="{Binding Path=AlbumArtwork}" Image="{Binding Path=AlbumCover, Mode=TwoWay}" />
                         </i:Interaction.Behaviors>
                     </Image>
-                    <Grid Grid.Column="2" Margin="3,0,25,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid Grid.Row="0" Margin="0,0,0,9" HorizontalAlignment="Right">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+                    
+                    <Grid Grid.Column="2" Margin="3,0,25,0" Behaviours:GridUtils.RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto">
+                        <!-- Album name and Play button -->
+                        <Grid Grid.Row="0" Margin="0,0,0,9" HorizontalAlignment="Right" Behaviours:GridUtils.ColumnDefinitions="Auto,Auto">
                             <Button Style="{StaticResource PlayButtonStyle}" Grid.Column="0" Margin="0,0,3,0" Command="{Binding Path=PlayAlbum}"/>
                             <TextBlock Grid.Column="1" Text="{Binding Path=Album.Name}" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                         </Grid>
+                        
+                        <!-- Favorite and rating -->
                         <StackPanel HorizontalAlignment="Right" Grid.Row="1" Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding Path=Album.UiIsFavorite, Mode=TwoWay}" Margin="0,0,3,0"  VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}" Width="15" Height="15"/>
+                            <CheckBox IsChecked="{Binding Path=Album.UiIsFavorite, Mode=TwoWay}" Margin="0,0,9,0"  VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}" Width="15" Height="15"/>
                             <Custom:RatingSelector RatingSelected="{Binding Path=Album.UiRating, Mode=TwoWay}" 
                                            Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"/>
                         </StackPanel>
+                        
                         <TextBlock Text="{Binding Path=Album.Genre}"  HorizontalAlignment="Right" Grid.Row="2"/>
                         <TextBlock Text="{Binding Path=Album.PublishedYear, Converter={StaticResource PublishedYearConverter}}"  HorizontalAlignment="Right" Grid.Row="3"/>
+                        
+                        <!-- Playing time -->
                         <StackPanel HorizontalAlignment="Right" Grid.Row="4" Orientation="Horizontal">
                             <TextBlock Text="Playing time: "/>
                             <TextBlock Text="{Binding Path=AlbumPlayTime, Converter={StaticResource TimeSpanConverter}}"/>
                         </StackPanel>
+                        
+                        <Button Grid.Row="6" Height="19" Width="19" Margin="0,5" Content="{StaticResource Path_Edit}" Command="{Binding Path=EditAlbum}" HorizontalAlignment="Right" Padding="2"/>
                     </Grid>
                 </Grid>
             </Border>

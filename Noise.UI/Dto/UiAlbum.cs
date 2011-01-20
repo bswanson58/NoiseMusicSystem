@@ -5,13 +5,11 @@ using Noise.Infrastructure.Dto;
 namespace Noise.UI.Dto {
 	[DebuggerDisplay("Album = {Name}")]
 	public class UiAlbum : UiBase {
-		public string			Name { get; set; }
 		public long				Artist { get; set; }
 		public Int16			UserRating { get; set; }
 		public Int16			CalculatedRating { get; set; }
 		public Int16			MaxChildRating { get; set; }
 		public Int16			TrackCount { get; set; }
-		public UInt32			PublishedYear { get; set; }
 		public long				CalculatedGenre { get; set; }
 		public long				ExternalGenre { get; set; }
 		public long				UserGenre { get; set; }
@@ -31,6 +29,11 @@ namespace Noise.UI.Dto {
 			Name = name;
 		}
 
+		public string Name {
+			get{ return( Get( () => Name )); }
+			set{ Set( () => Name, value ); }
+		}
+
 		public string Genre {
 			get{ return( DisplayGenre != null ? DisplayGenre.Name : "" ); }
 		}
@@ -45,6 +48,11 @@ namespace Noise.UI.Dto {
 					mSelectAlbumAction( DbId );
 				}
 			}
+		}
+
+		public UInt32 PublishedYear {
+			get{ return( Get( () => PublishedYear )); }
+			set{ Set( () => PublishedYear, value ); }
 		}
 
 		public bool IsExpanded {
