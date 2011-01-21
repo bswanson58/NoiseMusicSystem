@@ -325,5 +325,21 @@ namespace Noise.UI.ViewModels {
 				}
 			}
 		}
+
+		public void Execute_DisplayPictures() {
+			
+		}
+
+		public bool CanExecute_DisplayPictures() {
+			return( false );
+		}
+
+		public void Execute_DisplayDocuments() {
+			
+		}
+
+		public bool CanExecute_DisplayDocuments() {
+			return( false );
+		}
 	}
 }

@@ -413,4 +413,29 @@
             </Path>
         </Canvas>
     </Viewbox>
+    
+    <Viewbox x:Key="Path_Pictures" x:Shared="False">
+        <Canvas Width="100" Height="69.413" ClipToBounds="True">
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
+                <Path.Data>
+                    <EllipseGeometry RadiusX="12.725" RadiusY="12.725" Center="50.045,38.771" />
+                </Path.Data>
+            </Path>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
+                <Path.Data>
+                    <PathGeometry FillRule="Nonzero" Figures="M93.502,8.401L28.701,8.401 28.701,0 11.733,0 11.733,8.401 6.499,8.401C2.91,8.401,0,11.381,0,15.057L0,62.756C0,66.433,2.91,69.412,6.499,69.412L93.502,69.412C97.091,69.412,100,66.433,100,62.756L100,15.057C100,11.381,97.091,8.401,93.502,8.401z M50.045,63.546C36.362,63.546 25.271,52.453 25.271,38.771 25.271,25.089 36.363,13.997 50.045,13.997 63.727,13.997 74.819,25.089 74.819,38.771 74.819,52.454 63.728,63.546 50.045,63.546z" />
+                </Path.Data>
+            </Path>
+        </Canvas>
+    </Viewbox>
+
+    <Viewbox x:Key="Path_Documents" x:Shared="False">
+        <Canvas Width="78.067" Height="100" ClipToBounds="True">
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
+                <Path.Data>
+                    <PathGeometry FillRule="Nonzero" Figures="M56.003,0L0,0 0,100 78.067,100 78.067,22.064 56.003,0z M57.027,5.967L72.723,21.663 57.027,21.663 57.027,5.967z M3.495,96.505L3.495,3.495 53.531,3.495 53.531,21.662 53.531,23.41 53.531,25.158 74.572,25.158 74.572,96.505 3.495,96.505z" />
+                </Path.Data>
+            </Path>
+        </Canvas>
+    </Viewbox>
 </ResourceDictionary>
