@@ -10,6 +10,7 @@
     <?include CuttingEdge.wxi ?>
     <?include Eloquera.wxi ?>
     <?include GDataDB.wxi ?>
+    <?include GoogleApiForDotNet.wxi ?>
     <?include Hammock.wxi ?>
     <?include Lucene.wxi ?>
     <?include Microsoft.wxi ?>

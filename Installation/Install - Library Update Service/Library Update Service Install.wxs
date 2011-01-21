@@ -70,6 +70,7 @@
         <ComponentGroupRef Id="CuttingEdgeFiles"/>
         <ComponentGroupRef Id="EloqueraFiles"/>
         <ComponentGroupRef Id="GDataDBFiles"/>
+        <ComponentGroupRef Id="GoogleSearchFiles"/>
         <ComponentGroupRef Id="HammockFiles"/>
         <ComponentGroupRef Id="LuceneFiles"/>
         <ComponentGroupRef Id="MicrosoftFiles"/>
