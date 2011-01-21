@@ -216,6 +216,7 @@
     <Compile Include="ValueConverters\RelativeTimeConverter.cs" />
     <Compile Include="ValueConverters\TimeSpanConverter.cs" />
     <Compile Include="ValueConverters\VolumeLevelConverter.cs" />
+    <Compile Include="ViewModels\AlbumArtworkViewModel.cs" />
     <Compile Include="ViewModels\AlbumViewModel.cs" />
     <Compile Include="ViewModels\ApplicationLogDialogModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
@@ -240,6 +241,9 @@
     <Compile Include="ViewModels\SongLyricsViewModel.cs" />
     <Compile Include="ViewModels\StreamViewModel.cs" />
     <Compile Include="ViewModels\ToolbarViewModel.cs" />
+    <Compile Include="Views\AlbumArtworkView.xaml.cs">
+      <DependentUpon>AlbumArtworkView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\AlbumEditDialog.xaml.cs">
       <DependentUpon>AlbumEditDialog.xaml</DependentUpon>
     </Compile>
@@ -370,6 +374,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Support\DialogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AlbumArtworkView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

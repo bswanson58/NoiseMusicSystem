@@ -327,17 +327,33 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_DisplayPictures() {
-			
+			if(( SupportInfo != null ) &&
+			   ( SupportInfo.Artwork != null ) &&
+			   ( SupportInfo.Artwork.GetLength( 0 ) > 0 )) {
+				var	dialogService = mContainer.Resolve<IDialogService>();
+
+				dialogService.ShowDialog( DialogNames.AlbumArtworkDisplay, new AlbumArtworkViewModel( mContainer, mCurrentAlbum.DbId ));
+			}
 		}
 
+		[DependsUpon( "SupportInfo" )]
 		public bool CanExecute_DisplayPictures() {
-			return( false );
+			var retValue = false;
+
+			if(( SupportInfo != null ) &&
+			   ( SupportInfo.Artwork != null ) &&
+			   ( SupportInfo.Artwork.GetLength( 0 ) > 0 )) {
+				retValue = true;
+			}
+
+			return( retValue );
 		}
 
 		public void Execute_DisplayDocuments() {
 			
 		}
 
+		[DependsUpon( "SupportInfo" )]
 		public bool CanExecute_DisplayDocuments() {
 			return( false );
 		}
