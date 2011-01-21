@@ -510,5 +510,23 @@ namespace Noise.UI.ViewModels {
 		public bool CanExecute_RequestLyrics() {
 			return( mLyricsInfo != null );
 		}
+
+		public void Execute_TrackInformation() {
+			if( mNoiseManager.PlayController.CurrentTrack.Album != null ) {
+				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( mNoiseManager.PlayController.CurrentTrack.Album );
+			}
+		}
+
+		[DependsUpon("StartTrackFlag")]
+		public bool CanExecute_TrackInformation() {
+			var retValue = false;
+
+			if(( mNoiseManager.PlayController.CurrentTrack != null ) &&
+			   ( mNoiseManager.PlayController.CurrentTrack.Album != null )) {
+				retValue = true;
+			}
+
+			return( retValue );
+		}
 	}
 }
