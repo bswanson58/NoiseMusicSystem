@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Windows.Media.Imaging;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using Noise.UI.Dto;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
@@ -15,14 +14,14 @@ namespace Noise.UI.ViewModels {
 		private readonly long				mAlbumId;
 		private AlbumSupportInfo			mAlbumInfo;
 		private	readonly BackgroundWorker	mBackgroundWorker;
-		private readonly ObservableCollectionEx<BitmapImage>	mAlbumImages;
+		private readonly ObservableCollectionEx<UiAlbumExtra>	mAlbumImages;
 
 
 		public AlbumArtworkViewModel( IUnityContainer container, long albumId ) {
 			mContainer = container;
 			mAlbumId = albumId;
 
-			mAlbumImages = new ObservableCollectionEx<BitmapImage>();
+			mAlbumImages = new ObservableCollectionEx<UiAlbumExtra>();
 
 			mBackgroundWorker = new BackgroundWorker();
 			mBackgroundWorker.DoWork += ( o, args ) => args.Result = RetrieveAlbumInfo((long)args.Argument );
@@ -44,11 +43,15 @@ namespace Noise.UI.ViewModels {
 
 			if( mAlbumInfo != null ) {
 				if( mAlbumInfo.AlbumCovers != null ) {
-					mAlbumImages.AddRange( from DbArtwork artwork in mAlbumInfo.AlbumCovers select CreateBitmap( artwork.Image ));
+					mAlbumImages.AddRange( from DbArtwork artwork in mAlbumInfo.AlbumCovers select new UiAlbumExtra( artwork ));
 				}
 
 				if( mAlbumInfo.Artwork != null ) {
-					mAlbumImages.AddRange( from DbArtwork artwork in mAlbumInfo.Artwork select CreateBitmap( artwork.Image ));
+					mAlbumImages.AddRange( from DbArtwork artwork in mAlbumInfo.Artwork select new UiAlbumExtra( artwork ));
+				}
+
+				if( mAlbumInfo.Info != null ) {
+					mAlbumImages.AddRange( from DbTextInfo info in mAlbumInfo.Info select new UiAlbumExtra( info ));
 				}
 
 				if( mAlbumImages.Count > 0 ) {
@@ -59,24 +62,13 @@ namespace Noise.UI.ViewModels {
 			mAlbumImages.ResumeNotification();
 		}
 
-		public BitmapImage CurrentImage {
+		public UiAlbumExtra CurrentImage {
 			get{ return( Get( () => CurrentImage )); }
 			set{ Set( () => CurrentImage, value ); }
 		}
 
-		public IEnumerable<BitmapImage> AlbumImages {
+		public IEnumerable<UiAlbumExtra> AlbumImages {
 			get{ return( mAlbumImages ); }
-		}
-
-		private static BitmapImage CreateBitmap( byte[] bytes ) {
-			var stream = new MemoryStream( bytes );
-			var bitmap = new BitmapImage();
-
-			bitmap.BeginInit();
-			bitmap.StreamSource = stream;
-			bitmap.EndInit();
-
-			return( bitmap );
 		}
 	}
 }

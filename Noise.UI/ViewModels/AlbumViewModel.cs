@@ -327,9 +327,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_DisplayPictures() {
-			if(( SupportInfo != null ) &&
-			   ( SupportInfo.Artwork != null ) &&
-			   ( SupportInfo.Artwork.GetLength( 0 ) > 0 )) {
+			if( CanExecute_DisplayPictures()) {
 				var	dialogService = mContainer.Resolve<IDialogService>();
 
 				dialogService.ShowDialog( DialogNames.AlbumArtworkDisplay, new AlbumArtworkViewModel( mContainer, mCurrentAlbum.DbId ));
@@ -340,22 +338,19 @@ namespace Noise.UI.ViewModels {
 		public bool CanExecute_DisplayPictures() {
 			var retValue = false;
 
-			if(( SupportInfo != null ) &&
-			   ( SupportInfo.Artwork != null ) &&
-			   ( SupportInfo.Artwork.GetLength( 0 ) > 0 )) {
-				retValue = true;
+			if( SupportInfo != null ) {
+				if(( SupportInfo.Artwork != null ) &&
+				   ( SupportInfo.Artwork.GetLength( 0 ) > 0 )) {
+					retValue = true;
+				}
+
+				if(( SupportInfo.Info != null ) &&
+				   ( SupportInfo.Info.GetLength( 0 ) > 0 )) {
+					retValue = true;
+				}
 			}
 
 			return( retValue );
-		}
-
-		public void Execute_DisplayDocuments() {
-			
-		}
-
-		[DependsUpon( "SupportInfo" )]
-		public bool CanExecute_DisplayDocuments() {
-			return( false );
 		}
 	}
 }

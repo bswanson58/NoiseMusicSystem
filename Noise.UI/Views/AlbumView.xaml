@@ -50,9 +50,7 @@
                         
                         <!-- Album commands -->
                         <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Height="19" Width="19" Margin="0,0,5,5" Padding="1" ToolTip="Display Album Documents"
-                                    Content="{StaticResource Path_Documents}" Command="{Binding DisplayDocuments}"/>
-                            <Button Height="19" Width="19" Margin="0,0,9,5" Padding="1" ToolTip="Display Album Artwork"
+                            <Button Height="19" Width="19" Margin="0,0,5,5" Padding="1" ToolTip="Display Album Extras"
                                     Content="{StaticResource Path_Pictures}" Command="{Binding DisplayPictures}"/>
                             <Button Height="19" Width="19" Margin="0,0,0,5" Padding="2" ToolTip="Edit Album Properties"
                                     Content="{StaticResource Path_Edit}" Command="{Binding Path=EditAlbum}"/>

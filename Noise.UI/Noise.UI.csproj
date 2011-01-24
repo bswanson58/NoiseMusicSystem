@@ -182,6 +182,7 @@
     <Compile Include="Dto\LibraryExplorerFilter.cs" />
     <Compile Include="Dto\PlayStrategyItem.cs" />
     <Compile Include="Dto\UiAlbum.cs" />
+    <Compile Include="Dto\UiAlbumExtra.cs" />
     <Compile Include="Dto\UiArtist.cs" />
     <Compile Include="Dto\UiBase.cs" />
     <Compile Include="Dto\UiEqBand.cs" />
@@ -191,6 +192,7 @@
     <Compile Include="NoiseUiModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\BindingErrorListener.cs" />
+    <Compile Include="Support\BitmapUtils.cs" />
     <Compile Include="Support\DialogModelBase.cs" />
     <Compile Include="Support\DialogNames.cs" />
     <Compile Include="Support\DialogService.cs" />
@@ -523,6 +525,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Select Album Image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Text Document.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -20,10 +20,19 @@
                                 <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
                                 <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
                             </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=CurrentImage.IsText}" Value="True">
+                                <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+                                <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </ScrollViewer.Style>
-                <Image VerticalAlignment="Center" HorizontalAlignment="Center" Source="{Binding CurrentImage}"/>
+                <Grid>
+                    <Image VerticalAlignment="Center" HorizontalAlignment="Center" Source="{Binding CurrentImage.Image}" 
+                       Visibility="{Binding Path=CurrentImage.IsImage, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                    <TextBlock Text="{Binding Path=CurrentImage.Text}"
+                               Visibility="{Binding Path=CurrentImage.IsText, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                </Grid>
             </ScrollViewer>
 
             <ListBox x:Name="FirstFocus" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4"
@@ -38,7 +47,7 @@
                     <DataTemplate>
                         <Viewbox>
                             <Border BorderThickness="4" BorderBrush="White" Margin="5">
-                                <Image Width="120" Height="120" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Source="{Binding}"/>
+                                <Image Width="120" Height="120" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Source="{Binding Path=Image}"/>
                             </Border>
                         </Viewbox>
                     </DataTemplate>
