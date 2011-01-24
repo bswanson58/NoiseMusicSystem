@@ -49,12 +49,12 @@
 										 RatingSelected="{Binding Path=Rating, Mode=TwoWay}" VerticalAlignment="Center"/>
                     
                     <!-- Track related commands -->
-                    <Button Grid.Column="2" Margin="9,0,0,0" Height="17" Width="17" ToolTip="Find Similar Tracks"
-                            Content="{StaticResource Path_SimilarTracks}" Command="{Binding RequestSimilarSongSearch}"/>
-                    <Button Grid.Column="3" Margin="5,0,0,0" Height="17" Width="17" ToolTip="Display Song Lyrics"
-                            Content="{StaticResource Path_Lyrics}" Command="{Binding RequestLyrics}"/>
-                    <Button Grid.Column="4" Margin="5,0,0,0" Height="17" Width="17" ToolTip="Sync Artist and Album display"
+                    <Button Grid.Column="2" Margin="9,0,0,0" Height="17" Width="17" ToolTip="Sync Artist and Album display"
                             Content="{StaticResource Path_Information}" Command="{Binding TrackInformation}"/>
+                    <Button Grid.Column="3" Margin="5,0,0,0" Height="17" Width="17" ToolTip="Find Similar Tracks"
+                            Content="{StaticResource Path_SimilarTracks}" Command="{Binding RequestSimilarSongSearch}"/>
+                    <Button Grid.Column="4" Margin="5,0,0,0" Height="17" Width="17" ToolTip="Display Song Lyrics"
+                            Content="{StaticResource Path_Lyrics}" Command="{Binding RequestLyrics}"/>
                     
                     <TextBlock Grid.Column="5" Margin="9,0,0,0" Text="{Binding Path=PlayState}"/>
                     
