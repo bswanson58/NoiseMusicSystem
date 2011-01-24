@@ -9,6 +9,7 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cEnableLibraryExplorerProperty				= "enableLibraryExplorer";
 		private const string	cEnableLibraryChangeUpdateProperty			= "enableLibraryChangeUpdates";
 		private const string	cEnableUpdateReadOnlyProperty				= "enableUpdateReadOnly";
+		private const string	cEnableGlobalHotkeysProperty				= "enableGlobalHotkeys";
 		private const string	cMinimizeToTrayProperty						= "minimizeToTray";
 		private const string	cDisplayPlayTimeElapsedProperty				= "displayPlayTimeElapsed";
 		private const string	cPlayExhaustedStrategyProperty				= "playExhaustedStrategy";
@@ -37,6 +38,11 @@ namespace Noise.Infrastructure.Configuration {
 			set { base[cEnableUpdateReadOnlyProperty] = value; }
 		}
 
+		[ConfigurationPropertyAttribute( cEnableGlobalHotkeysProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
+		public bool EnableGlobalHotkeys {
+			get { return ((bool)( base[cEnableGlobalHotkeysProperty] ) ); }
+			set { base[cEnableGlobalHotkeysProperty] = value; }
+		}
 		[ConfigurationPropertyAttribute( cMinimizeToTrayProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
 		public bool MinimizeToTray {
 			get { return ((bool)( base[cMinimizeToTrayProperty] ) ); }

@@ -131,6 +131,7 @@
     <Compile Include="Dto\DbTextInfo.cs" />
     <Compile Include="Dto\DbVersion.cs" />
     <Compile Include="Dto\FolderStrategy.cs" />
+    <Compile Include="Dto\GlobalUserEventArgs.cs" />
     <Compile Include="Dto\InfoSource.cs" />
     <Compile Include="Dto\IUserSettings.cs" />
     <Compile Include="Dto\LyricsInfo.cs" />

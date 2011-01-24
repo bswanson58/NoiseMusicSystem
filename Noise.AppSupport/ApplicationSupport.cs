@@ -12,6 +12,7 @@ namespace Noise.AppSupport {
 		private readonly IEventAggregator	mEvents;
 		private readonly IServiceBusManager	mServiceBus;
 		private readonly ILog				mLog;
+		private readonly HotkeyManager		mHotkeyManager;
 
 		public ApplicationSupport( IUnityContainer container ) {
 			mContainer = container;
@@ -29,6 +30,9 @@ namespace Noise.AppSupport {
 					mLog.LogMessage( "ServiceBusManager was not initialized." );
 				}
 			}
+
+			mHotkeyManager = new HotkeyManager( mContainer );
+			mHotkeyManager.Initialize();
 
 			mEvents.GetEvent<Events.WebsiteRequest>().Subscribe( OnWebsiteRequested );
 		}

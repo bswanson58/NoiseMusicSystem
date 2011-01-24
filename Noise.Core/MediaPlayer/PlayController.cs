@@ -71,6 +71,7 @@ namespace Noise.Core.MediaPlayer {
 			mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
 			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 			mEvents.GetEvent<Events.PlayRequested>().Subscribe( OnPlayRequested );
+			mEvents.GetEvent<Events.GlobalUserEvent>().Subscribe( OnGlobalRequest );
 			mEvents.GetEvent<Events.SystemShutdown>().Subscribe( OnShutdown );
 
 			mPlayStatusDispose = mAudioPlayer.ChannelStatusChange.Subscribe( OnPlayStatusChanged );
@@ -554,6 +555,40 @@ namespace Noise.Core.MediaPlayer {
 				track.StreamInfo = info;
 
 				FirePlaybackTrackChanged();
+			}
+		}
+
+		private void OnGlobalRequest( GlobalUserEventArgs args ) {
+			switch( args.EventAction ) {
+				case UserEventAction.PausePlay:
+					if( CanPause ) {
+						Pause();
+					}
+					break;
+
+				case UserEventAction.PlayNextTrack:
+					if( CanPlayNextTrack ) {
+						PlayNextTrack();
+					}
+					break;
+
+				case UserEventAction.PlayPreviousTrack:
+					if( CanPlayPreviousTrack ) {
+						PlayPreviousTrack();
+					}
+					break;
+
+				case UserEventAction.StartPlay:
+					if( CanPlay ) {
+						Play();
+					}
+					break;
+
+				case UserEventAction.StopPlay:
+					if( CanStop ) {
+						Stop();
+					}
+					break;
 			}
 		}
 
