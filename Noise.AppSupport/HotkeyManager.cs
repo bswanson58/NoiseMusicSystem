@@ -4,19 +4,19 @@ using Noise.AppSupport.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport {
 	public class HotkeyManager {
 		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
-		private readonly ILog				mLog;
 		private	KeyboardHook				mKeyboardHook;
+		private bool						mInstalled;
 
 		public HotkeyManager( IUnityContainer container ) {
 			mContainer = container;
 			mEvents = mContainer.Resolve<IEventAggregator>();
-			mLog = mContainer.Resolve<ILog>();
+
+			mEvents.GetEvent<Events.SystemShutdown>().Subscribe( OnShutdown );
 		}
 
 		public void Initialize() {
@@ -27,6 +27,7 @@ namespace Noise.AppSupport {
 				mKeyboardHook = new KeyboardHook();
 				mKeyboardHook.KeyDown += OnKeyDown;
 				mKeyboardHook.Install();
+				mInstalled = true;
 			}
 		}
 
@@ -53,6 +54,15 @@ namespace Noise.AppSupport {
 
 			if( action != UserEventAction.None ) {
 				mEvents.GetEvent<Events.GlobalUserEvent>().Publish( new GlobalUserEventArgs( action ));
+			}
+		}
+
+		private void OnShutdown( object unused ) {
+			if(( mKeyboardHook != null ) &&
+			   ( mInstalled )) {
+				mKeyboardHook.Uninstall();
+
+				mInstalled = false;
 			}
 		}
 	}
