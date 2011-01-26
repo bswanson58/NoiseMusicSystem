@@ -170,6 +170,9 @@
     <Compile Include="Controls\ParametricEqualizerControl.xaml.cs">
       <DependentUpon>ParametricEqualizerControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\RatingControl.xaml.cs">
+      <DependentUpon>RatingControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SearchTextBox.cs" />
     <Compile Include="Controls\SpectrumAnalyzerDisplay.xaml.cs">
       <DependentUpon>SpectrumAnalyzerDisplay.xaml</DependentUpon>
@@ -356,6 +359,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ParametricEqualizerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\RatingControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

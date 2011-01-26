@@ -46,12 +46,16 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <TextBlock Text="{Binding Path=Artist.Name}" FontSize="20" Margin="0,0,0,9"  HorizontalAlignment="Right"/>
-                        <StackPanel HorizontalAlignment="Right" Grid.Row="1" Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=Artist.UiIsFavorite, Mode=TwoWay}" Margin="0,0,3,0"  VerticalAlignment="Center"/>
-                            <Custom:RatingSelector RatingSelected="{Binding Path=Artist.UiRating, Mode=TwoWay}" 
-                                           Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"/>
+                        
+                        <!-- Rating controls -->
+                        <StackPanel Grid.Row="1" Margin="0,1" HorizontalAlignment="Right" Orientation="Horizontal">
+                            <CheckBox Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=Artist.UiIsFavorite, Mode=TwoWay}" Margin="0,0,7,0"  VerticalAlignment="Center"/>
+                            <Controls:RatingControl Style="{StaticResource NoiseRatingStyle}" Rating="{Binding Path=Artist.UiRating, Mode=TwoWay}"/>
                         </StackPanel>
+                        
                         <TextBlock x:Name="Genre" Text="{Binding Path=Artist.Genre}"  HorizontalAlignment="Right" Grid.Row="2"/>
+                        
+                        <!-- Artist website link -->
                         <Controls:LinkLabel Grid.Row="3" HorizontalAlignment="Right" Padding="0"   LinkLabelBehavior="HoverUnderline"
                                             Content="{Binding Path=ArtistWebsite.DisplayText}" IsEnabled="{Binding Path=ArtistWebsite.IsLinked}">
                             <EventCommandTriggers:CommandSource.Trigger>

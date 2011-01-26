@@ -1,0 +1,111 @@
+﻿<UserControl x:Class="Noise.UI.Controls.RatingControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:RatingControlParts="clr-namespace:Noise.UI.Controls" 
+             mc:Ignorable="d" 
+             d:DesignHeight="30" d:DesignWidth="200">
+    <UserControl.Resources>
+        <RatingControlParts:BooleanToVisibleConverter x:Key="BooleanToVisibleConverter"/>
+        <RatingControlParts:BooleanToHiddenConverter x:Key="BooleanToHiddenConverter"/>
+
+        <Grid x:Key="PART_RatingItem" x:Shared="False" Background="Transparent"
+              RatingControlParts:RatingItemObserver.Observe="True"
+              RatingControlParts:RatingItemObserver.Hover="{Binding IsHovering, Mode=OneWayToSource}"
+              RatingControlParts:RatingItemObserver.Click="{Binding Clicked, Mode=OneWayToSource}"
+              >
+            <Viewbox IsHitTestVisible="False" Visibility="{Binding Path=IsActive, Converter={StaticResource BooleanToHiddenConverter}}">
+                <Canvas Width="100" Height="95.106" ClipToBounds="True">
+                    <Path Fill="{Binding PartColor}">
+                        <Path.Data>
+                            <PathGeometry FillRule="Nonzero" Figures="M80.901,95.106L50,72.654 19.099,95.106 30.902,58.779 0,36.327 38.196,36.327 50,0 61.804,36.327 100,36.327 69.099,58.779 80.901,95.106 80.901,95.106z M50,67.706L73.286,84.624 64.392,57.25 87.678,40.331 58.895,40.331 50,12.956 41.105,40.331 12.322,40.331 35.608,57.25 26.713,84.624 50,67.706 50,67.706z" />
+                        </Path.Data>
+                    </Path>
+                </Canvas>
+            </Viewbox>
+
+            <Viewbox IsHitTestVisible="False" Visibility="{Binding Path=IsActive, Converter={StaticResource BooleanToVisibleConverter}}">
+                <Canvas Width="100" Height="95.105" ClipToBounds="True">
+                    <Path Fill="{Binding PartColor}">
+                        <Path.Data>
+                            <PathGeometry FillRule="Nonzero" Figures="M50,0L61.803,36.327 100,36.327 69.098,58.778 80.902,95.105 50,72.654 19.098,95.105 30.902,58.778 0,36.327 38.197,36.327z" />
+                        </Path.Data>
+                    </Path>
+                </Canvas>
+            </Viewbox>
+        </Grid>
+
+        <Viewbox x:Key="Path_Clear" x:Shared="False">
+            <Canvas Width="100" Height="100">
+                <Path Fill="{Binding ClearPartColor}">
+                    <Path.Data>
+                        <PathGeometry FillRule="Nonzero" Figures="M50,100C22.43,100 0,77.57 0,50 0,22.43 22.43,0 50,0 77.57,0 100,22.43 100,50 100,77.57 77.57,100 50,100L50,100z M50,17.54C32.101,17.54 17.54,32.101 17.54,50 17.54,67.898 32.102,82.46 50,82.46 67.898,82.46 82.46,67.899 82.46,50 82.46,32.101 67.899,17.54 50,17.54L50,17.54z" />
+                    </Path.Data>
+                </Path>
+                <Path Fill="{Binding ClearPartColor}">
+                    <Path.Data>
+                        <EllipseGeometry RadiusX="11.664" RadiusY="11.664" Center="50,50" />
+                    </Path.Data>
+                </Path>
+            </Canvas>
+        </Viewbox>
+
+        <Viewbox x:Key="Path_Dislike" x:Shared="False">
+            <Canvas Width="95.45" Height="100" ClipToBounds="True">
+                <Path Fill="{Binding DislikePartColor}">
+                    <Path.Data>
+                        <PathGeometry FillRule="Nonzero" Figures="M3.337,43.461C3.122,45.099 0.101,47.522 0.00500000000000034,49.173 -0.169,52.173 3.884,58.043 6.669,59.17 11.091,60.958 33.564,60.121 33.564,60.121 35.761,63.959 29.65,73.444 27.97,77.535 25.506,83.536 25.922,91.494 29.042,95.585 32.852,100.581 39.847,100.914 39.99,98.679 41.032,82.465 44.136,77.967 48.294,74.759 50.789,72.835 52.973,71.15 54.125,68.214 61.206,50.175 66.922,46.469 69.657,45.841L71.407,45.841 71.409,45.841 71.926,45.841 71.926,4.904 50.463,1.096C50.463,1.096 24.396,-1.369 16.19,1.096 13.606,1.873 9.148,5.75 8.098,8.236 7.494,9.664 8.33,13.045 7.622,14.424 6.572,16.467 2.142,19.024 2.148,21.802 2.151,23.782 4.457,27.207 4.29,29.18 4.123,31.155 0.00199999999999712,33.864 0.00599999999999756,35.845 0.009,37.924 3.607,41.401 3.337,43.461z" />
+                    </Path.Data>
+                </Path>
+                <Path Fill="{Binding DislikePartColor}">
+                    <Path.Data>
+                        <PathGeometry FillRule="Nonzero" Figures="M75.259,6.518C75.259,4.164,77.264,2.254,79.737,2.254L90.973,2.254C93.447,2.254,95.451,4.164,95.451,6.518L95.451,43.83C95.451,46.186,93.447,48.096,90.973,48.096L79.736,48.096C77.263,48.096,75.258,46.186,75.258,43.83L75.258,6.518z" />
+                    </Path.Data>
+                </Path>
+            </Canvas>
+        </Viewbox>
+
+    </UserControl.Resources>
+
+    <Viewbox>
+        <Grid x:Name="PART_LayoutRoot" HorizontalAlignment="Left">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid x:Name="PART_Dislike" Grid.Row="0" Grid.Column="0" Background="Transparent">
+                <ContentControl Content="{StaticResource Path_Dislike}"/>
+            </Grid>
+
+            <Grid x:Name="PART_Clear" Grid.Row="0" Grid.Column="2" Background="Transparent" RenderTransformOrigin="0.5,0.5">
+                <Grid.RenderTransform>
+                    <ScaleTransform ScaleX="0.75" ScaleY="0.75"/>
+                </Grid.RenderTransform>
+                <ContentControl Content="{StaticResource Path_Clear}" Margin="7,0"/>
+            </Grid>
+
+            <Grid x:Name="PART_RatingPanel" Grid.Row="0" Grid.Column="1" Background="Transparent">
+                <ContentControl Margin="5,1">
+                    <ItemsControl ItemsSource="{Binding RatingItems, Mode=OneWay}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl Margin="5,0" Content="{StaticResource PART_RatingItem}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ContentControl>
+            </Grid>
+        </Grid>
+    </Viewbox>
+</UserControl>
