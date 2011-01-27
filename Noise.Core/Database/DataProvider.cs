@@ -232,15 +232,31 @@ namespace Noise.Core.Database {
 			if( database != null ) {
 				artist.UpdateLastChange();
 
-				database.Database.Store( artist );
+				database.Store( artist );
 			}
 		}
 
 		public void	UpdateArtistLastChanged( long artistId ) {
-			using( var update = GetArtistForUpdate( artistId )) {
-				if( update != null ) {
-					update.Update();
+			var	database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				var parms = database.Database.CreateParameters();
+
+				parms["artistId"] = artistId;
+
+				var artist = database.Database.ExecuteScalar( "SELECT DbArtist Where DbId = @artistId", parms ) as DbArtist;
+
+				if( artist != null ) {
+					artist.UpdateLastChange();
+
+					database.Database.Store( artist );
 				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - UpdateArtistLastChanged:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
 			}
 		}
 
