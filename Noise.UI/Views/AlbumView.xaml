@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
-             xmlns:Custom="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:Controls="clr-namespace:Noise.UI.Controls" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
@@ -35,8 +35,7 @@
                         <!-- Favorite and rating -->
                         <StackPanel HorizontalAlignment="Right" Grid.Row="1" Orientation="Horizontal">
                             <CheckBox IsChecked="{Binding Path=Album.UiIsFavorite, Mode=TwoWay}" Margin="0,0,9,0"  VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}" Width="15" Height="15"/>
-                            <Custom:RatingSelector RatingSelected="{Binding Path=Album.UiRating, Mode=TwoWay}" 
-                                           Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"/>
+                            <Controls:RatingControl Style="{StaticResource NoiseRatingStyle}" Rating="{Binding Path=Album.UiRating, Mode=TwoWay}"/>
                         </StackPanel>
                         
                         <TextBlock Text="{Binding Path=Album.Genre}"  HorizontalAlignment="Right" Grid.Row="2"/>
@@ -100,11 +99,10 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="Rating" Width="70" Behaviours:GridViewSort.PropertyName="UiRating">
+                            <GridViewColumn Header="Rating" Width="115" Behaviours:GridViewSort.PropertyName="UiRating">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Custom:RatingSelector Style="{StaticResource RatingStyle}" Template="{StaticResource RatingTemplate}" HorizontalAlignment="Center"
-                                                               RatingSelected="{Binding Path=UiRating, Mode=TwoWay}"/>
+                                        <Controls:RatingControl HorizontalAlignment="Center" Style="{StaticResource NoiseRatingStyle}" Rating="{Binding Path=UiRating, Mode=TwoWay}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>

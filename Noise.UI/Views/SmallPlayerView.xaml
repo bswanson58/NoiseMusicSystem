@@ -5,7 +5,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
         xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
-        xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary" 
         xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
         xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
         mc:Ignorable="d" 
@@ -21,7 +20,6 @@
     <Window.Resources>
         <Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True"/>
         <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
-        <ValueConverters:VolumeLevelConverter x:Key="VolumeLevelConverter"/>
         <ValueConverters:PlayQueueTrackNameConverter x:Key="PlayQueueTrackNameConverter"/>
     </Window.Resources>
     
@@ -46,10 +44,14 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Margin="5,0,3,0" Text="{Binding TrackName}" FontWeight="Bold" FontSize="13.333" VerticalAlignment="Center"/>
+                
                 <Button Grid.Column="1" Content="{StaticResource Path_ReplayTrack}" Padding="5,4" HorizontalAlignment="Center" Command="{Binding Path=ReplayTrack}" Margin="3" Width="25" Height="23" VerticalAlignment="Center"/>
+                
+                <!-- Favorite and rating -->
                 <CheckBox Grid.Column="2" Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" VerticalAlignment="Center" Margin="3" HorizontalAlignment="Center"/>
-                <Controls:RatingSelector Grid.Column="3" Style="{DynamicResource RatingStyle}" Template="{DynamicResource RatingTemplate}"
-                                             RatingSelected="{Binding Path=Rating, Mode=TwoWay}" VerticalAlignment="Center" Margin="3"/>
+                <NoiseControls:RatingControl Grid.Column="3" Margin="3" VerticalAlignment="Center"
+                                             Style="{StaticResource NoiseRatingStyle}" Rating="{Binding Path=Rating, Mode=TwoWay}"/>
+
                 <!-- Mute Button -->
                 <TextBlock Grid.Column="4" Text="x" FontFamily="Webdings" FontSize="21.333" Foreground="Red"
                                IsHitTestVisible="False" Panel.ZIndex="1"  VerticalAlignment="Center" HorizontalAlignment="Center"

@@ -1,12 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:vml="clr-namespace:Noise.UI.Support" 
-                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                     xmlns:Adapters="clr-namespace:Noise.UI.Adapters" 
                     xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters" 
-                    xmlns:Controls="clr-namespace:AC.AvalonControlsLibrary.Controls;assembly=AvalonControlsLibrary"
-                    xmlns:NoiseControls="clr-namespace:Noise.UI.Controls" xmlns:Dto="clr-namespace:Noise.UI.Dto" xmlns:system="clr-namespace:System;assembly=mscorlib" mc:Ignorable="d"
+                    xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
+                    xmlns:Dto="clr-namespace:Noise.UI.Dto"
 					>
 
     <vml:ViewModelLocator x:Key="ViewModelLocator">
@@ -65,15 +63,18 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" Text="{Binding Artist.DisplayName}"/>
-                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+                
+                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
                     <CheckBox Style="{DynamicResource FavoriteCheckBoxStyle}" Margin="0,9,3,0" IsChecked="{Binding Artist.UiIsFavorite, Mode=TwoWay}"/>
-                    <Controls:RatingSelector Margin="0,1,0,0" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Style="{DynamicResource RatingStyle}"
-											 Template="{DynamicResource RatingTemplate}" RatingSelected="{Binding Artist.UiRating, Mode=TwoWay}"/>
+                    <NoiseControls:RatingControl VerticalAlignment="Bottom" 
+                                                 Style="{DynamicResource NoiseRatingStyle}" Rating="{Binding Path=Artist.UiRating, Mode=TwoWay}"/>
                 </StackPanel>
+                
                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="11,0,0,0">
                     <TextBlock Foreground="{DynamicResource ControlTextColor}" Text="Albums: "/>
                     <TextBlock Text="{Binding Artist.AlbumCount}"/>
                 </StackPanel>
+                
                 <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" Text="{Binding Artist.Genre}"/>
             </Grid>
         </Border>
