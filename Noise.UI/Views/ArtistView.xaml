@@ -44,6 +44,8 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <TextBlock Text="{Binding Path=Artist.Name}" FontSize="20" Margin="0,0,0,9"  HorizontalAlignment="Right"/>
                         
@@ -62,6 +64,10 @@
                                 <EventCommandTriggers:EventCommandTrigger RoutedEvent="Controls:LinkLabel.Click" Command="{Binding Path=ArtistWebsite.LinkClicked}"/>
                             </EventCommandTriggers:CommandSource.Trigger>
                         </Controls:LinkLabel>
+
+                        <Button Grid.Row="5" Height="19" Width="19" Margin="0,0,0,5" Padding="2" HorizontalAlignment="Right" ToolTip="Edit Artist Properties"
+                                Content="{StaticResource Path_Edit}" Command="{Binding Path=EditArtist}"/>
+
                     </Grid>
                 </Grid>
             </Border>

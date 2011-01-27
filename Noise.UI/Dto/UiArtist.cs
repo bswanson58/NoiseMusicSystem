@@ -5,10 +5,7 @@ using Noise.Infrastructure.Dto;
 namespace Noise.UI.Dto {
 	[DebuggerDisplay("Artist = {Name}")]
 	public class UiArtist : UiBase {
-		public string			Name { get; set; }
 		public string			SortName { get; set; }
-		public string			DisplayName { get; set; }
-		public string			Website { get; set; }
 		public long				CalculatedGenre { get; set; }
 		public long				ExternalGenre { get; set; }
 		public long				UserGenre { get; set; }
@@ -43,6 +40,16 @@ namespace Noise.UI.Dto {
 			get{ return( UserRating != 0 ); }
 		}
 
+		public string Name {
+			get{ return( Get( () => Name )); }
+			set{ Set( () => Name, value ); }
+		}
+
+		public string DisplayName {
+			get{ return( Get( () => DisplayName )); }
+			set{ Set( () => DisplayName, value ); }
+		}
+
 		public Int16 Rating {
 			get{ return( IsUserRating ? UserRating : CalculatedRating ); }
 			set{ UserRating = value; }
@@ -58,6 +65,11 @@ namespace Noise.UI.Dto {
 					mSelectArtistAction( DbId );
 				}
 			}
+		}
+
+		public string Website {
+			get{ return( Get( () => Website )); }
+			set{ Set( () => Website, value ); }
 		}
 	}
 }

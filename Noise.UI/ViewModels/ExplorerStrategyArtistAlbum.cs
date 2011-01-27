@@ -166,6 +166,10 @@ namespace Noise.UI.ViewModels {
 		private void UpdateUiArtist( UiArtist uiArtist, DbArtist artist ) {
 			Mapper.DynamicMap( artist, uiArtist );
 			uiArtist.DisplayGenre = mNoiseManager.TagManager.GetGenre( artist.Genre );
+
+			if( mUseSortPrefixes ) {
+				FormatSortPrefix( uiArtist );
+			}
 		}
 
 		private void AddArtist( ICollection<ArtistTreeNode> tree, DbArtist artist ) {

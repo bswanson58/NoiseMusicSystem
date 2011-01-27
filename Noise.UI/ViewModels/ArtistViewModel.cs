@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using AutoMapper;
 using Microsoft.Practices.Prism.Events;
@@ -9,6 +10,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Dto;
+using Noise.UI.Support;
 using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
@@ -285,6 +287,27 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "SupportInfo" )]
 		public ObservableCollectionEx<DbDiscographyRelease> Discography {
 			get{ return( mDiscography ); }
+		}
+
+		public void Execute_EditArtist() {
+			if( mCurrentArtist != null ) {
+				var	dialogService = mContainer.Resolve<IDialogService>();
+
+				using( var artistUpdate = mNoiseManager.DataProvider.GetArtistForUpdate( mCurrentArtist.DbId )) {
+					if( artistUpdate != null ) {
+						artistUpdate.Item.Website = artistUpdate.Item.Website.Replace( Environment.NewLine, "" ).Replace( "\n", "" ).Replace( "\r", "" );
+
+						if( dialogService.ShowDialog( DialogNames.ArtistEdit, artistUpdate.Item ) == true ) {
+							artistUpdate.Update();
+
+							Mapper.DynamicMap( artistUpdate.Item, mCurrentArtist );
+
+							mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
+							RaisePropertyChanged( () => ArtistWebsite );
+						}
+					}
+				}
+			}
 		}
 	}
 }
