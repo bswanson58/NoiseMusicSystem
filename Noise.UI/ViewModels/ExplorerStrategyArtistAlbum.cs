@@ -96,6 +96,25 @@ namespace Noise.UI.ViewModels {
 					}
 				} );
 			}
+			else if(( item is DbAlbum ) &&
+			        ( args.Change == DbItemChanged.Update )) {
+				BeginInvoke( () => {
+					var dbAlbum = item as DbAlbum;
+
+					if( dbAlbum != null ) {
+						var treeNode = ( from ArtistTreeNode node in mViewModel.TreeData
+										 where dbAlbum.Artist == node.Artist.DbId select node ).FirstOrDefault();
+						if( treeNode != null ) {
+							var uiAlbum = ( from UiAlbum a in treeNode.Children
+											where a.DbId == dbAlbum.DbId select a ).FirstOrDefault();
+
+							if( uiAlbum != null ) {
+								Mapper.DynamicMap( dbAlbum, uiAlbum );
+							}
+						}
+					}
+				});
+			}
 		}
 
 		public void Initialize( LibraryExplorerViewModel viewModel ) {
