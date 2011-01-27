@@ -124,35 +124,78 @@ namespace Noise.Core.FileStore {
 				var file = mNoiseManager.DataProvider.GetPhysicalFile( track );
 
 				if( file != null ) {
-					var filePath = mNoiseManager.DataProvider.GetPhysicalFilePath( file );
+					switch( StorageHelpers.DetermineAudioEncoding( file )) {
+						case eAudioEncoding.MP3:
+							SetMp3Favorite( args, track, file );
+							break;
 
-					ClearReadOnlyFlag( filePath );
+//						case eAudioEncoding.FLAC:
+//						case eAudioEncoding.OGG:
+//							SetVorbisFavorite( args, track, file );
+//							break;
 
-					var tags = File.Create( filePath );
-					var id3Tags = tags.GetTag( TagTypes.Id3v2 ) as TagLib.Id3v2.Tag;
+//						case eAudioEncoding.WMA:
+//							SetWmaFavorite( args, track, file );
+//							break;
+					}
+				}
+			}
+		}
 
-					if( id3Tags != null ) {
-						var	favoriteFrame = UserTextInformationFrame.Get( id3Tags, Constants.FavoriteFrameDescription, true );
+		private void SetMp3Favorite( SetFavoriteCommandArgs args, DbTrack track, StorageFile file ) {
+			var filePath = mNoiseManager.DataProvider.GetPhysicalFilePath( file );
 
-						if( favoriteFrame != null ) {
-							favoriteFrame.Text = new [] { args.Value.ToString()};
+			ClearReadOnlyFlag( filePath );
 
-							try {
-								tags.Save();
-							}
-							catch( Exception ) {
-								mLog.LogMessage( string.Format( "FileUpdates:SetFavorite - Queueing for later: {0}", track.Name ));
+			var tags = File.Create( filePath );
+			var id3Tags = tags.GetTag( TagTypes.Id3v2 ) as TagLib.Id3v2.Tag;
 
-								lock( mUnfinishedCommands ) {
-									mUnfinishedCommands.Add( args );
-								}
-							}
+			if( id3Tags != null ) {
+				var	favoriteFrame = UserTextInformationFrame.Get( id3Tags, Constants.FavoriteFrameDescription, true );
+
+				if( favoriteFrame != null ) {
+					favoriteFrame.Text = new [] { args.Value.ToString()};
+
+					try {
+						tags.Save();
+					}
+					catch( Exception ) {
+						mLog.LogMessage( string.Format( "FileUpdates:SetFavorite - Queueing for later: {0}", track.Name ));
+
+						lock( mUnfinishedCommands ) {
+							mUnfinishedCommands.Add( args );
 						}
 					}
 				}
 			}
 		}
 
+/*		private void SetVorbisFavorite( SetFavoriteCommandArgs args, DbTrack track, StorageFile file ) {
+			var filePath = mNoiseManager.DataProvider.GetPhysicalFilePath( file );
+
+			ClearReadOnlyFlag( filePath );
+
+			var tags = File.Create( filePath );
+			var flacTags = tags.GetTag( TagTypes.Xiph ) as TagLib.Ogg.XiphComment;
+
+			if( flacTags != null ) {
+				var	f = flacTags.GetFirstField( "" );
+			}
+		}
+*/
+/*		private void SetWmaFavorite( SetFavoriteCommandArgs args, DbTrack track, StorageFile file ) {
+			var filePath = mNoiseManager.DataProvider.GetPhysicalFilePath( file );
+
+			ClearReadOnlyFlag( filePath );
+
+			var tags = File.Create( filePath );
+			var wmaTags = tags.GetTag( TagTypes.Asf ) as TagLib.Asf.Tag;
+
+			if( wmaTags != null ) {
+				var d = wmaTags.GetDescriptorString( "" );
+			}
+		}
+*/
 		private void OnSetRating( SetRatingCommandArgs args ) {
 			Condition.Requires( args ).IsNotNull();
 			
