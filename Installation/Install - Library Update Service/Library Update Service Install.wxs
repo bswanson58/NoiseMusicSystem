@@ -85,7 +85,6 @@
       </Feature>
       
       <Feature Id="UnnecessaryFiles" Title="Unnecessary Files" Level="0">
-        <ComponentGroupRef Id="AvalonControlsFiles"/>
       </Feature>
     </Feature>
 

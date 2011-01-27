@@ -35,7 +35,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Automapper.wxi" />
-    <Content Include="AvalonControls.wxi" />
     <Content Include="BASS Audio.wxi" />
     <Content Include="CuttingEdge.wxi" />
     <Content Include="Eloquera.wxi" />

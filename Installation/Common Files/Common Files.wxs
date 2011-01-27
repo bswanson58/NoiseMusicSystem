@@ -5,7 +5,6 @@
 
     <?include Noise.Core.wxi ?>
     <?include Automapper.wxi ?>
-    <?include AvalonControls.wxi ?>
     <?include BASS Audio.wxi ?>
     <?include CuttingEdge.wxi ?>
     <?include Eloquera.wxi ?>

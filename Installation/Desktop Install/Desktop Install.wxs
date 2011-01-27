@@ -115,7 +115,6 @@
         <ComponentGroupRef Id="ApplicationFiles" />
         <ComponentGroupRef Id="CoreFiles"/>
         <ComponentGroupRef Id="AutomapperFiles"/>
-        <ComponentGroupRef Id="AvalonControlsFiles"/>
         <ComponentGroupRef Id="BassAudioFiles"/>
         <ComponentGroupRef Id="CuttingEdgeFiles"/>
         <ComponentGroupRef Id="EloqueraFiles"/>
