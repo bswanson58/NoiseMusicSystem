@@ -190,6 +190,9 @@ namespace Noise.Core.FileStore {
 			else if( rating > 8 ) {
 				retValue = 1;
 			}
+			else if( rating == 2 ) {
+				retValue = -1;
+			}
 			else if( rating == 1 ) {
 				retValue = 1;
 			}
@@ -205,6 +208,9 @@ namespace Noise.Core.FileStore {
 			byte	retValue = 0;
 
 			switch( rating ) {
+				case -1:
+					retValue = 2;
+					break;
 				case 1:
 					retValue = 32;
 					break;
