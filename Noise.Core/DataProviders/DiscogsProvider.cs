@@ -350,7 +350,9 @@ namespace Noise.Core.DataProviders {
 								database.Insert( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear, DiscographyReleaseType.Unknown ));
 							}
 
-							forArtist.Website = response.ContentEntity.WebsiteUrl;
+							if(!string.IsNullOrWhiteSpace( response.ContentEntity.WebsiteUrl )) {
+								forArtist.Website = response.ContentEntity.WebsiteUrl.Replace( Environment.NewLine, "" ).Replace( "\n", "" ).Replace( "\r", "" );
+							}
 							forArtist.UpdateLastChange();
 							database.Store( forArtist );
 
