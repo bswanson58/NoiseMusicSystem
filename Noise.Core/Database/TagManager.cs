@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
@@ -9,17 +10,40 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.Database {
 	public class TagManager : ITagManager {
 		private readonly IUnityContainer			mContainer;
+		private readonly INoiseManager				mNoiseManager;
 		private readonly IDataProvider				mDataProvider;
 		private readonly Dictionary<long, DbGenre>	mGenreList;
+		private readonly List<DbDecadeTag>			mDecadeList;
+		private readonly ILog						mLog;
 
 		public TagManager( IUnityContainer container ) {
 			mContainer = container;
 			mGenreList = new Dictionary<long, DbGenre>();
+			mDecadeList = new List<DbDecadeTag>();
 
-			var manager = mContainer.Resolve<INoiseManager>();
-			mDataProvider = manager.DataProvider;
+			mNoiseManager = mContainer.Resolve<INoiseManager>();
+			mDataProvider = mNoiseManager.DataProvider;
 
-			LoadGenreList();
+			mLog = mContainer.Resolve<ILog>();
+		}
+
+		public bool Initialize() {
+			var retValue = false;
+
+			try {
+				LoadGenreList();
+				LoadDecadeList();
+				if( mDecadeList.Count == 0 ) {
+					InitializeDecadeList();
+				}
+
+				retValue = true;
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - TagManager.Initialize", ex );
+			}
+
+			return( retValue );
 		}
 
 		public long ResolveGenre( string genreName ) {
@@ -65,6 +89,20 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public IEnumerable<DbDecadeTag> DecadeTagList {
+			get{ return( mDecadeList ); }
+		}
+
+		public IEnumerable<long> ArtistList( DbDecadeTag forDecade ) {
+			var	retValue = new List<long>();
+
+			using( var tags = mDataProvider.GetTagAssociations( forDecade.DbId )) {
+				retValue.AddRange( tags.List.Select( tag => tag.ArtistId ));
+			}
+
+			return( retValue );
+		}
+
 		private void LoadGenreList() {
 			mGenreList.Clear();
 
@@ -77,6 +115,53 @@ namespace Noise.Core.Database {
 			if(!mGenreList.ContainsKey( Constants.cDatabaseNullOid )) {
 				mGenreList.Add( Constants.cDatabaseNullOid, new DbGenre( Constants.cDatabaseNullOid ) { Description = "Unknown genre" });
 			}
+		}
+
+		private void LoadDecadeList() {
+			mDecadeList.Clear();
+
+			using( var tagList = mDataProvider.GetTagList( eTagGroup.Decade )) {
+				mDecadeList.AddRange( tagList.List.Where( tag => tag is DbDecadeTag ).Select( tag => tag as DbDecadeTag ));
+			}
+		}
+
+		private void InitializeDecadeList() {
+			var decadeTag = new DbDecadeTag( "Unknown" ) { Description = "Albums without a published year",
+														   StartYear = Constants.cUnknownYear, EndYear = Constants.cUnknownYear };
+			mDataProvider.InsertItem( decadeTag );
+
+			decadeTag = new DbDecadeTag( "Oldies" ) { Description = "The Oldies",
+													StartYear = 1900, EndYear = 1959 };
+			mDataProvider.InsertItem( decadeTag );
+
+			decadeTag = new DbDecadeTag( "60's" ) { Description = "The Roaring 60's",
+													StartYear = 1960, EndYear = 1969 };
+			mDataProvider.InsertItem( decadeTag );
+
+			decadeTag = new DbDecadeTag( "70's" ) { Description = "The Psychedelic 70's",
+													StartYear = 1970, EndYear = 1979,
+													Website = "http://www.inthe70s.com/" };
+			mDataProvider.InsertItem( decadeTag );
+
+			decadeTag = new DbDecadeTag( "80's" ) { Description = "Like Totally",
+													StartYear = 1980, EndYear = 1989,
+													Website = "http://www.inthe80s.com/" };
+			mDataProvider.InsertItem( decadeTag );
+
+			decadeTag = new DbDecadeTag( "90's" ) { Description = "The Roaring 60's",
+													StartYear = 1990, EndYear = 1999,
+													Website = "http://www.inthe90s.com/" };
+			mDataProvider.InsertItem( decadeTag );
+
+			decadeTag = new DbDecadeTag( "Uh Oh's" ) { Description = "The Turn of the Century",
+													StartYear = 2000, EndYear = 2009 };
+			mDataProvider.InsertItem( decadeTag );
+
+			decadeTag = new DbDecadeTag( "10's" ) { Description = "Releases of this decade",
+													StartYear = 2010, EndYear = 2019 };
+			mDataProvider.InsertItem( decadeTag );
+
+			LoadDecadeList();
 		}
 	}
 }

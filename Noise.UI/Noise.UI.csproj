@@ -225,6 +225,7 @@
     <Compile Include="ViewModels\CloudConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\DatabaseConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\ExplorerStrategyArtistAlbum.cs" />
+    <Compile Include="ViewModels\ExplorerStrategyDecade.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
     <Compile Include="ViewModels\IExplorerViewStrategy.cs" />
     <Compile Include="ViewModels\LibraryAdditionsViewModel.cs" />

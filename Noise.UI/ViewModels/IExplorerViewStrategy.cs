@@ -7,8 +7,8 @@ namespace Noise.UI.ViewModels {
 		void	Initialize( LibraryExplorerViewModel viewModel );
 		void	UseSortPrefixes( bool enable, IEnumerable<string> sortPrefixes );
 
-		IEnumerable<ArtistTreeNode>	BuildTree( IDatabaseFilter filter );
-		IEnumerable<IndexNode> BuildIndex( IEnumerable<ArtistTreeNode> artistList );
+		IEnumerable<object>		BuildTree( IDatabaseFilter filter );
+		IEnumerable<IndexNode>	BuildIndex( IEnumerable<object> artistList );
 
 		bool	Search( string searchText, IEnumerable<string> searchOptions );
 		void	ClearCurrentSearch();

@@ -74,6 +74,7 @@ namespace Noise.Core.Database {
 			   ( item is DbAlbum ) ||
 			   ( item is DbTrack ) ||
 			   ( item is DbGenre ) ||
+			   ( item is DbTag ) ||
 			   ( item is DbInternetStream )) {
 				var database = mDatabaseManager.ReserveDatabase();
 
@@ -86,6 +87,9 @@ namespace Noise.Core.Database {
 				finally {
 					mDatabaseManager.FreeDatabase( database );
 				}
+			}
+			else {
+				mLog.LogMessage( string.Format( "InsertItem: unknown item type: {0}", item.GetType()));
 			}
 		}
 
@@ -773,6 +777,46 @@ namespace Noise.Core.Database {
 				mDatabaseManager.FreeDatabase( database );
 			}
 
+			return( retValue );
+		}
+
+		public DataProviderList<DbTag> GetTagList( eTagGroup group ) {
+			DataProviderList<DbTag>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				var parms = database.Database.CreateParameters();
+
+				parms["group"] = group;
+
+				retValue = new DataProviderList<DbTag>( database.DatabaseId, FreeDatabase,
+														database.Database.ExecuteQuery( "SELECT DbTag Where TagGroup = @group", parms ).OfType<DbTag>());
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetTagList:", ex );
+
+				mDatabaseManager.FreeDatabase( database );
+			}
+			return( retValue );
+		}
+
+		public DataProviderList<DbTagAssociation> GetTagAssociations( long tagId ) {
+			DataProviderList<DbTagAssociation>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				var parms = database.Database.CreateParameters();
+
+				parms["tagId"] = tagId;
+
+				retValue = new DataProviderList<DbTagAssociation>( database.DatabaseId, FreeDatabase,
+																   database.Database.ExecuteQuery( "SELECT DbTagAssociation Where TagId = @tagId", parms ).OfType<DbTagAssociation>());
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetTagList:", ex );
+
+				mDatabaseManager.FreeDatabase( database );
+			}
 			return( retValue );
 		}
 

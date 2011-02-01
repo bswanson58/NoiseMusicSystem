@@ -50,12 +50,16 @@ namespace Noise.Core {
 				DataProvider = mContainer.Resolve<IDataProvider>();
 				LibraryBuilder = mContainer.Resolve<ILibraryBuilder>();
 				SearchProvider = mContainer.Resolve<ISearchProvider>();
-				TagManager = mContainer.Resolve<ITagManager>();
 				DataExchangeMgr = mContainer.Resolve<IDataExchangeManager>();
 
 				PlayQueue = mContainer.Resolve<IPlayQueue>();
 				PlayHistory = mContainer.Resolve<IPlayHistory>();
 				PlayListMgr = mContainer.Resolve<IPlayListMgr>();
+
+				TagManager = mContainer.Resolve<ITagManager>();
+				if(!TagManager.Initialize()) {
+					mLog.LogMessage( "Noise Manager: TagManager could not be initialized" );
+				}
 
 				mDataUpdates = mContainer.Resolve<IDataUpdates>();
 				if(!mDataUpdates.Initialize()) {

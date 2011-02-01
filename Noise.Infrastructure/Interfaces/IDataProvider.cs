@@ -31,6 +31,9 @@ namespace Noise.Infrastructure.Interfaces {
 		DataProviderList<DbGenre>	GetGenreList();
 		DataProviderList<DbTrack>	GetGenreTracks( long genreId );
 
+		DataProviderList<DbTag>		GetTagList( eTagGroup forGroup );
+		DataProviderList<DbTagAssociation>	GetTagAssociations( long forTagId );
+
 		StorageFile					GetPhysicalFile( DbTrack forTrack );
 		string						GetPhysicalFilePath( StorageFile forFile );
 

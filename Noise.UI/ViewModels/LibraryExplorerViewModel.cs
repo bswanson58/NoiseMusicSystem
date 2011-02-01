@@ -28,7 +28,7 @@ namespace Noise.UI.ViewModels {
 		private string							mVisualState;
 		private bool							mEnableSortPrefixes;
 		private readonly List<string>			mSortPrefixes;
-		private ObservableCollectionEx<ArtistTreeNode>	mTreeItems;
+		private ObservableCollectionEx<object>	mTreeItems;
 		private ObservableCollectionEx<IndexNode>		mIndexItems;
 
 		public LibraryExplorerViewModel() {
@@ -97,11 +97,11 @@ namespace Noise.UI.ViewModels {
 		 	PopulateTree( BuildTree());
 		}
 
-		private IEnumerable<ArtistTreeNode> BuildTree() {
+		private IEnumerable<object> BuildTree() {
 			return( mViewStrategy.BuildTree( mExplorerFilter ));
 		}
 
-		private void PopulateTree( IEnumerable<ArtistTreeNode> newNodes ) {
+		private void PopulateTree( IEnumerable<object> newNodes ) {
 			mTreeItems.SuspendNotification();
 			mTreeItems.Clear();
 		 	mTreeItems.AddRange( newNodes );
@@ -118,11 +118,11 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public ObservableCollectionEx<ArtistTreeNode> TreeData {
+		public ObservableCollectionEx<object> TreeData {
 			get {
 				if(( mTreeItems == null ) &&
 				   ( mViewStrategy != null )) {
-					mTreeItems = new ObservableCollectionEx<ArtistTreeNode>();
+					mTreeItems = new ObservableCollectionEx<object>();
 
 					UpdateTree();
 				}

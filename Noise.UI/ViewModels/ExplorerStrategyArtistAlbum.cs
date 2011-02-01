@@ -83,7 +83,7 @@ namespace Noise.UI.ViewModels {
 							case DbItemChanged.Insert:
 								mViewModel.TreeData.SuspendNotification();
 								AddArtist( mViewModel.TreeData, artist );
-								mViewModel.TreeData.Sort( node => node.Artist.SortName, ListSortDirection.Ascending );
+								mViewModel.TreeData.Sort( node => node is ArtistTreeNode ? ( node as ArtistTreeNode ).Artist.SortName : "", ListSortDirection.Ascending );
 								mViewModel.TreeData.ResumeNotification();
 								break;
 
@@ -127,10 +127,10 @@ namespace Noise.UI.ViewModels {
 			mViewModel.SearchOptions.Add( cSearchOptionDefault + cSearchIgnoreCase );
 		}
 
-		public IEnumerable<ArtistTreeNode> BuildTree( IDatabaseFilter filter ) {
+		public IEnumerable<object> BuildTree( IDatabaseFilter filter ) {
 			Condition.Requires( mViewModel ).IsNotNull();
 
-			var retValue = new List<ArtistTreeNode>();
+			var retValue = new List<object>();
 
 			if( mNoiseManager.IsInitialized ) {
 				using( var list = mNoiseManager.DataProvider.GetArtistList( filter )) {
@@ -139,13 +139,14 @@ namespace Noise.UI.ViewModels {
 					}
 				}
 
-				retValue.Sort( ( node1, node2 ) => string.Compare( node1.Artist.SortName, node2.Artist.SortName ));
+				retValue.Sort( ( node1, node2 ) => string.Compare( node1 is ArtistTreeNode ? ( node1 as ArtistTreeNode ).Artist.SortName : "",
+																   node2 is ArtistTreeNode ? ( node2 as ArtistTreeNode ).Artist.SortName : "" ));
 			}
 
 			return( retValue );
 		}
 
-		public IEnumerable<IndexNode> BuildIndex( IEnumerable<ArtistTreeNode> artistList ) {
+		public IEnumerable<IndexNode> BuildIndex( IEnumerable<object> artistList ) {
 			var retValue = new List<IndexNode>();
 
 			const string alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -153,10 +154,11 @@ namespace Noise.UI.ViewModels {
 
 			obs.Subscribe( ch =>
 			{
-				var artist = artistList.FirstOrDefault( node => node.Artist.SortName.StartsWith( ch.ToString()));
+				var artist = artistList.FirstOrDefault( node => node is ArtistTreeNode ? ( node as ArtistTreeNode ).Artist.SortName.StartsWith( ch.ToString()) : false );
 
-				if( artist != null ) {
-					retValue.Add( new IndexNode( ch.ToString(), artist ));
+				if(( artist != null ) &&
+				   ( artist is ArtistTreeNode )) {
+					retValue.Add( new IndexNode( ch.ToString(), artist as ArtistTreeNode ));
 				}
 			});
 
@@ -172,7 +174,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void AddArtist( ICollection<ArtistTreeNode> tree, DbArtist artist ) {
+		private void AddArtist( ICollection<object> tree, DbArtist artist ) {
 			var uiArtist = new UiArtist( OnArtistSelect );
 			UpdateUiArtist( uiArtist, artist );
 
@@ -258,7 +260,7 @@ namespace Noise.UI.ViewModels {
 
 			if(( mTreeEnumerator == null ) ||
 			   ( !mTreeEnumerator.MoveNext())) {
-				mTreeEnumerator = FindMatches( searchText, mViewModel.TreeData, searchOptions ).GetEnumerator();
+				mTreeEnumerator = FindMatches( searchText, mViewModel.TreeData.OfType<ArtistTreeNode>(), searchOptions ).GetEnumerator();
 				mTreeEnumerator.MoveNext();
 			}
 

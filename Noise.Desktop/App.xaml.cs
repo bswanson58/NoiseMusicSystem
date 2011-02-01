@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
@@ -29,6 +30,10 @@ namespace Noise.Desktop {
 		}
 
 		private void App_DispatcherUnhandledException( object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e ) {
+			if( Debugger.IsAttached ) {
+				Clipboard.SetText( e.Exception.ToString());
+			}
+	
 			var	log = mBootstrapper.Container.Resolve<ILog>();
 
 			log.LogException( "Application unhandled exception:", e.Exception );
