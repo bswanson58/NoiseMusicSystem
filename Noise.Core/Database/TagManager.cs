@@ -93,11 +93,21 @@ namespace Noise.Core.Database {
 			get{ return( mDecadeList ); }
 		}
 
-		public IEnumerable<long> ArtistList( DbDecadeTag forDecade ) {
+		public IEnumerable<long> ArtistList( long tagId ) {
 			var	retValue = new List<long>();
 
-			using( var tags = mDataProvider.GetTagAssociations( forDecade.DbId )) {
-				retValue.AddRange( tags.List.Select( tag => tag.ArtistId ));
+			using( var tags = mDataProvider.GetTagAssociations( tagId )) {
+				retValue.AddRange( tags.List.Select( tag => tag.ArtistId ).Distinct());
+			}
+
+			return( retValue );
+		}
+
+		public IEnumerable<long> AlbumList( long artistId, long tagId ) {
+			var	retValue = new List<long>();
+
+			using( var tags = mDataProvider.GetTagAssociations( tagId )) {
+				retValue.AddRange( tags.List.Where( tag => tag.ArtistId == artistId ).Select( tag => tag.AlbumId ).Distinct());
 			}
 
 			return( retValue );

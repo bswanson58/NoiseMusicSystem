@@ -20,6 +20,7 @@
         <MenuItem Header="Rename Artist" Command="{Binding Rename}"/>
     </ContextMenu>
 
+    <!-- Library Explorer: Artist/Albums -->
     <HierarchicalDataTemplate x:Key="AlbumTemplate" DataType="{x:Type Dto:UiAlbum}">
         <Grid Margin="0,0,3,0">
             <Grid.ColumnDefinitions>
@@ -76,6 +77,75 @@
                 </StackPanel>
                 
                 <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" Text="{Binding Artist.Genre}"/>
+            </Grid>
+        </Border>
+    </HierarchicalDataTemplate>
+    
+    <!-- Library Explorer: Decade/Artist/Albums -->
+    <HierarchicalDataTemplate x:Key="DecadeAlbumTemplate" DataType="{x:Type Dto:UiAlbumTreeNode}">
+        <Grid Margin="0,0,3,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Margin="3,3,5,3" Content="4" HorizontalAlignment="Center" Command="{Binding PlayAlbum}" Style="{DynamicResource PlayButtonStyle}"/>
+            <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=Album.Name}"/>
+            <StackPanel Grid.Column="3" VerticalAlignment="Center"  Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel.Visibility>
+                        <MultiBinding Converter="{StaticResource EmptyStringVisibilityConverter}">
+                            <Binding Path="Album.PublishedYear" Converter="{StaticResource PublishedYearConverter}"/>
+                        </MultiBinding>
+                    </StackPanel.Visibility>
+                    <TextBlock Text="("/>
+                    <TextBlock Text="{Binding Path=Album.PublishedYear, Converter={StaticResource PublishedYearConverter}}"/>
+                    <TextBlock Margin="0,0,3,0" Text=")"/>
+                </StackPanel>
+                <TextBlock Foreground="{DynamicResource ControlTextColor}" Text="Tracks: "/>
+                <TextBlock Text="{Binding Path=Album.TrackCount}"/>
+            </StackPanel>
+        </Grid>
+    </HierarchicalDataTemplate>
+
+    <HierarchicalDataTemplate x:Key="DecadeArtistTemplate" DataType="{x:Type Dto:UiArtistTreeNode}"
+                              ItemTemplate="{StaticResource DecadeAlbumTemplate}" ItemsSource="{Binding Children}">
+        <Grid Margin="0,0,3,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Artist.DisplayName}"/>
+        </Grid>
+    </HierarchicalDataTemplate>
+
+    <HierarchicalDataTemplate x:Key="DecadeExplorerTemplate" DataType="{x:Type Dto:UiDecadeTreeNode}" 
+                              ItemTemplate="{StaticResource DecadeArtistTemplate}" ItemsSource="{Binding Children}">
+        <Border Margin="0,1,0,2" CornerRadius="3" Background="{DynamicResource TreeItemBackground}" BorderBrush="{DynamicResource ControlTextColor}">
+            <Grid Margin="3,0,3,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" Text="{Binding Path=Tag.Name}"/>
+
+                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <CheckBox Style="{DynamicResource FavoriteCheckBoxStyle}" Margin="0,9,3,0" IsChecked="{Binding Path=Tag.IsFavorite, Mode=TwoWay}"/>
+                    <NoiseControls:RatingControl VerticalAlignment="Bottom" 
+                                                 Style="{DynamicResource NoiseRatingStyle}" Rating="{Binding Path=Tag.Rating, Mode=TwoWay}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="11,0,0,0">
+                    <TextBlock Text="{Binding Path=Tag.Description}"/>
+                </StackPanel>
             </Grid>
         </Border>
     </HierarchicalDataTemplate>

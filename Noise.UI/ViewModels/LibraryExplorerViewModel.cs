@@ -59,7 +59,7 @@ namespace Noise.UI.ViewModels {
 					}
 				}
 
-				mViewStrategy = mContainer.Resolve<IExplorerViewStrategy>( "ArtistAlbum" );
+				mViewStrategy = mContainer.Resolve<IExplorerViewStrategy>( "DecadeArtist" );
 				mViewStrategy.Initialize( this );
 				mViewStrategy.UseSortPrefixes( mEnableSortPrefixes, mSortPrefixes );
 

@@ -183,11 +183,15 @@
     <Compile Include="Dto\PlayStrategyItem.cs" />
     <Compile Include="Dto\UiAlbum.cs" />
     <Compile Include="Dto\UiAlbumExtra.cs" />
+    <Compile Include="Dto\UiAlbumTreeNode.cs" />
     <Compile Include="Dto\UiArtist.cs" />
+    <Compile Include="Dto\UiArtistTreeNode.cs" />
     <Compile Include="Dto\UiBase.cs" />
+    <Compile Include="Dto\UiDecadeTreeNode.cs" />
     <Compile Include="Dto\UiEqBand.cs" />
     <Compile Include="Dto\UiInternetStream.cs" />
     <Compile Include="Dto\UiTrack.cs" />
+    <Compile Include="Dto\UiTreeNode.cs" />
     <Compile Include="MappingConfiguration.cs" />
     <Compile Include="NoiseUiModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
