@@ -124,7 +124,7 @@ namespace Noise.UI.ViewModels {
 
 			if( mNoiseManager.IsInitialized ) {
 				retValue.AddRange( from tag in mNoiseManager.TagManager.DecadeTagList select new UiDecadeTreeNode( tag, null, null, FillDecadeArtists ));
-				retValue.Sort( ( node1, node2 ) => string.Compare( node1.Tag.Name, node2.Tag.Name ));
+				retValue.Sort( ( node1, node2 ) => node2.Tag.StartYear.CompareTo( node1.Tag.StartYear )); // descending
 			}
 
 			return( retValue );
@@ -169,8 +169,7 @@ namespace Noise.UI.ViewModels {
 				}
 			}
 
-			retValue.Sort( ( node1, node2 ) => node1.Album.PublishedYear > node2.Album.PublishedYear ?
-											   node1.Album.PublishedYear == node2.Album.PublishedYear ? 0 : 1 : 2 );
+			retValue.Sort( ( node1, node2 ) => node1.Album.PublishedYear.CompareTo( node2.Album.PublishedYear ));
 			artistNode.SetChildren( retValue );
 		}
 

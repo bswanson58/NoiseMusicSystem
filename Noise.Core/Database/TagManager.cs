@@ -140,6 +140,10 @@ namespace Noise.Core.Database {
 														   StartYear = Constants.cUnknownYear, EndYear = Constants.cUnknownYear };
 			mDataProvider.InsertItem( decadeTag );
 
+			decadeTag = new DbDecadeTag( "Various" ) { Description = "Various release years",
+													StartYear = Constants.cVariousYears, EndYear = Constants.cVariousYears };
+			mDataProvider.InsertItem( decadeTag );
+
 			decadeTag = new DbDecadeTag( "Oldies" ) { Description = "The Oldies",
 													StartYear = 1900, EndYear = 1959 };
 			mDataProvider.InsertItem( decadeTag );
@@ -158,7 +162,7 @@ namespace Noise.Core.Database {
 													Website = "http://www.inthe80s.com/" };
 			mDataProvider.InsertItem( decadeTag );
 
-			decadeTag = new DbDecadeTag( "90's" ) { Description = "The Roaring 60's",
+			decadeTag = new DbDecadeTag( "90's" ) { Description = "Grunge goes mainstream",
 													StartYear = 1990, EndYear = 1999,
 													Website = "http://www.inthe90s.com/" };
 			mDataProvider.InsertItem( decadeTag );
