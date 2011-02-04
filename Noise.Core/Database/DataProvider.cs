@@ -890,5 +890,59 @@ namespace Noise.Core.Database {
 
 			return( retValue );
 		}
+
+		public long	GetTimestamp( string componentId ) {
+			var retValue = 0L;
+			var database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				var parms = database.Database.CreateParameters();
+				parms["id"] = componentId;
+
+				var timestamp = database.Database.ExecuteScalar( "SELECT DbTimestamp WHERE ComponentId = @id", parms ) as DbTimestamp;
+
+				if( timestamp != null ) {
+					retValue = timestamp.Timestamp;
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( string.Format( "Exception - GetTimestamp: {0}", componentId ), ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
+		public void	UpdateTimestamp( string componentId ) {
+			var database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				var	parms = database.Database.CreateParameters();
+				parms["id"] = componentId;
+
+				var	timestamp = database.Database.ExecuteScalar( "SELECT DbTimestamp WHERE ComponentId = @id", parms ) as DbTimestamp;
+
+				if( timestamp != null ) {
+					timestamp.UpdateTimestamp();
+
+					database.Store( timestamp );
+				}
+				else {
+					timestamp = new DbTimestamp( componentId );
+					timestamp.UpdateTimestamp();
+
+					database.Insert( timestamp );
+				}
+				
+			}
+			catch( Exception ex ) {
+				mLog.LogException( string.Format( "Exception - UpdateTimestamp: {0}", componentId ), ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+		}
 	}
 }

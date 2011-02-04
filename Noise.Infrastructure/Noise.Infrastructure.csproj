@@ -132,6 +132,7 @@
     <Compile Include="Dto\DbTag.cs" />
     <Compile Include="Dto\DbTagAssociation.cs" />
     <Compile Include="Dto\DbTextInfo.cs" />
+    <Compile Include="Dto\DbTimestamp.cs" />
     <Compile Include="Dto\DbVersion.cs" />
     <Compile Include="Dto\FolderStrategy.cs" />
     <Compile Include="Dto\GlobalUserEventArgs.cs" />

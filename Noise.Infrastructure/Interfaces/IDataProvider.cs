@@ -56,5 +56,8 @@ namespace Noise.Infrastructure.Interfaces {
 
 		DataFindResults				Find( string artist, string album, string track );
 		DataFindResults				Find( long itemId );
+
+		long						GetTimestamp( string componentId );
+		void						UpdateTimestamp( string componentId );
 	}
 }

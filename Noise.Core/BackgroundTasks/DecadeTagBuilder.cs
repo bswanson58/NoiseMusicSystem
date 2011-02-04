@@ -10,12 +10,15 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	internal class DecadeTagBuilder : IBackgroundTask {
+		private const string		cDecadeTagBuilderId		= "ComponentId_TagBuilder";
+
 		private IUnityContainer		mContainer;
 		private IDatabaseManager	mDatabaseMgr;
 		private	INoiseManager		mNoiseManager;
 		private ILog				mLog;
 		private List<long>			mArtistList;
 		private IEnumerator<long>	mArtistEnum;
+		private long				mLastScan;
 		public string TaskId {
 			get { return( "Task_DiscographyExplorer" ); }
 		}
@@ -37,6 +40,8 @@ namespace Noise.Core.BackgroundTasks {
 			try {
 				mArtistList = new List<long>( from DbArtist artist in database.Database.ExecuteQuery( "SELECT DbArtist" ).OfType<DbArtist>() select artist.DbId );
 				mArtistEnum = mArtistList.GetEnumerator();
+
+				mLastScan = mNoiseManager.DataProvider.GetTimestamp( cDecadeTagBuilderId );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "", ex );
@@ -48,6 +53,8 @@ namespace Noise.Core.BackgroundTasks {
 
 		private long NextArtist() {
 			if(!mArtistEnum.MoveNext()) {
+				mNoiseManager.DataProvider.UpdateTimestamp( cDecadeTagBuilderId );
+
 				InitializeLists();
 
 				mArtistEnum.MoveNext();
@@ -63,29 +70,34 @@ namespace Noise.Core.BackgroundTasks {
 				var artistId = NextArtist();
 
 				if( artistId != 0 ) {
-					var parms = database.Database.CreateParameters();
-					parms["artistId"] = artistId;
+					var artist = mNoiseManager.DataProvider.GetArtist( artistId );
 
-					var currentTagList = database.Database.ExecuteQuery( "SELECT DbTagAssociation WHERE ArtistId = @artistId", parms ).OfType<DbTagAssociation>();
-					foreach( var tag in currentTagList ) {
-						database.Delete( tag );
-					}
+					if(( artist != null ) &&
+					   ( artist.LastChangeTicks > mLastScan )) {
+						var parms = database.Database.CreateParameters();
+						parms["artistId"] = artistId;
 
-					var albumList = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>();
-					var decadeTagList = mNoiseManager.TagManager.DecadeTagList;
-
-					foreach( var album in albumList ) {
-						var publishedYear = album.PublishedYear;
-						var decadeTag = decadeTagList.Where( decade => publishedYear >= decade.StartYear && publishedYear <= decade.EndYear ).FirstOrDefault();
-
-						if( decadeTag != null ) {
-							var associationTag = new DbTagAssociation( eTagGroup.Decade, decadeTag.DbId, artistId, album.DbId );
-
-							database.Insert( associationTag );
+						var currentTagList = database.Database.ExecuteQuery( "SELECT DbTagAssociation WHERE ArtistId = @artistId", parms ).OfType<DbTagAssociation>();
+						foreach( var tag in currentTagList ) {
+							database.Delete( tag );
 						}
-					}
 
-					mLog.LogMessage( string.Format( "Built decade tag associations for: {0}", artistId ));
+						var albumList = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>();
+						var decadeTagList = mNoiseManager.TagManager.DecadeTagList;
+
+						foreach( var album in albumList ) {
+							var publishedYear = album.PublishedYear;
+							var decadeTag = decadeTagList.Where( decade => publishedYear >= decade.StartYear && publishedYear <= decade.EndYear ).FirstOrDefault();
+
+							if( decadeTag != null ) {
+								var associationTag = new DbTagAssociation( eTagGroup.Decade, decadeTag.DbId, artistId, album.DbId );
+
+								database.Insert( associationTag );
+							}
+						}
+
+						mLog.LogMessage( string.Format( "Built decade tag associations for: {0}", artist.Name ));
+					}
 				}
 			}
 			catch( Exception ex ) {
