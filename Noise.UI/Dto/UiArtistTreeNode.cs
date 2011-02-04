@@ -11,16 +11,16 @@ namespace Noise.UI.Dto {
 		private	bool								mRequiresChildren;
 		private readonly ObservableCollectionEx<UiAlbumTreeNode>	mChildren;
 
-		public	UiArtist		Artist { get; private set; }
-		public	DbDecadeTag		DecadeTag { get; private set; }
+		public	UiArtist			Artist { get; private set; }
+		public	UiDecadeTreeNode	Parent { get; private set; }
 
 		public UiArtistTreeNode( UiArtist artist,
 								 Action<UiArtistTreeNode> onSelect, Action<UiArtistTreeNode> onExpand, Action<UiArtistTreeNode> childFill ) :
 			this( null, artist, onSelect, onExpand, childFill ) { }
 
-		public UiArtistTreeNode( DbDecadeTag tag, UiArtist artist,
+		public UiArtistTreeNode( UiDecadeTreeNode decadeNode, UiArtist artist,
 								 Action<UiArtistTreeNode> onSelect, Action<UiArtistTreeNode> onExpand, Action<UiArtistTreeNode> childFill ) {
-			DecadeTag = tag;
+			Parent = decadeNode;
 			Artist = artist;
 
 			mOnExpand = onExpand;
@@ -46,6 +46,10 @@ namespace Noise.UI.Dto {
 		}
 
 		protected override void OnExpand() {
+			if( Parent != null ) {
+				Parent.IsExpanded = true;
+			}
+
 			if( mOnExpand != null ) {
 				mOnExpand( this );
 			}

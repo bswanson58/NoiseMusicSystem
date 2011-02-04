@@ -32,8 +32,8 @@ namespace Noise.UI.ViewModels {
 		private	LibraryExplorerViewModel		mViewModel;
 		private	bool							mUseSortPrefixes;
 		private IEnumerable<string>				mSortPrefixes;
-//		private IEnumerator<UiDecadeTreeNode>	mTreeEnumerator;
-//		private string							mLastSearchOptions;
+		private IEnumerator<UiArtistTreeNode>	mTreeEnumerator;
+		private string							mLastSearchOptions;
 
 		public ExplorerStrategyDecade() {
 			mChangeObserver = new Observal.Observer();
@@ -111,7 +111,7 @@ namespace Noise.UI.ViewModels {
 									break;
 
 								case DbItemChanged.Insert:
-									decadeNode.Children.Add( CreateArtistNode( artist, decadeNode.Tag ));
+									decadeNode.Children.Add( CreateArtistNode( artist, decadeNode ));
 									decadeNode.Children.Sort( node => node.Artist.SortName, ListSortDirection.Ascending );
 									break;
 
@@ -166,7 +166,7 @@ namespace Noise.UI.ViewModels {
 			var	artistIdList = mNoiseManager.TagManager.ArtistList( decadeNode.Tag.DbId );
 			var childNodes = ( from artistId in artistIdList
 			                   select mNoiseManager.DataProvider.GetArtist( artistId )
-			                   into dbArtist where dbArtist != null select CreateArtistNode( dbArtist, decadeNode.Tag )).ToList();
+			                   into dbArtist where dbArtist != null select CreateArtistNode( dbArtist, decadeNode )).ToList();
 
 			childNodes.Sort( ( node1, node2 ) => string.Compare( node1.Artist.SortName, node2.Artist.SortName ));
 			decadeNode.SetChildren( childNodes );
@@ -177,7 +177,7 @@ namespace Noise.UI.ViewModels {
 			var artist = artistNode.Artist;
 
 			if( artist != null ) {
-				var albumIdList = mNoiseManager.TagManager.AlbumList( artistNode.Artist.DbId, artistNode.DecadeTag.DbId );
+				var albumIdList = mNoiseManager.TagManager.AlbumList( artistNode.Artist.DbId, artistNode.Parent.Tag.DbId );
 
 				foreach( var albumId in albumIdList ) {
 					var dbAlbum = mNoiseManager.DataProvider.GetAlbum( albumId );
@@ -196,13 +196,13 @@ namespace Noise.UI.ViewModels {
 			artistNode.SetChildren( retValue );
 		}
 
-		private UiArtistTreeNode CreateArtistNode( DbArtist dbArtist, DbDecadeTag tag ) {
+		private UiArtistTreeNode CreateArtistNode( DbArtist dbArtist, UiDecadeTreeNode parent ) {
 			var	uiArtist = new UiArtist();
 
 			UpdateUiArtist( uiArtist, dbArtist );
 			mChangeObserver.Add( uiArtist );
 
-			return( new UiArtistTreeNode( tag, uiArtist, OnArtistSelect, null, FillArtistAlbums ));
+			return( new UiArtistTreeNode( parent, uiArtist, OnArtistSelect, null, FillArtistAlbums ));
 		}
 
 		private void UpdateUiArtist( UiArtist uiArtist, DbArtist artist ) {
@@ -262,10 +262,61 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public bool Search( string searchText, IEnumerable<string> searchOptions ) {
-			return( false );
+			var retValue = false;
+
+			var theseOptions = String.Concat( searchOptions );
+			if(!theseOptions.Equals( mLastSearchOptions )) {
+				mLastSearchOptions = theseOptions;
+
+				ClearCurrentSearch();
+			}
+
+			if(( mTreeEnumerator != null ) &&
+			   ( mTreeEnumerator.Current != null )) {
+				mTreeEnumerator.Current.IsSelected = false;
+			}
+
+			if(( mTreeEnumerator == null ) ||
+			   ( !mTreeEnumerator.MoveNext())) {
+				mTreeEnumerator = FindMatches( searchText, searchOptions ).GetEnumerator();
+				mTreeEnumerator.MoveNext();
+			}
+
+			var node = mTreeEnumerator.Current;
+
+			if( node != null ) {
+				node.IsSelected = true;
+				node.IsExpanded = true;
+
+				retValue = true;
+			}
+
+			return ( retValue );
+		}
+
+		private IEnumerable<UiArtistTreeNode> FindMatches( string searchText, IEnumerable<string> options ) {
+			var	retValue = new List<UiArtistTreeNode>();
+
+			foreach( var decadeNode in mViewModel.TreeData.OfType<UiDecadeTreeNode>() ) {
+				if( decadeNode.RequiresChildren ) {
+					FillDecadeArtists( decadeNode );
+				}
+
+				if( options.Contains( cSearchIgnoreCase )) {
+					var matchText = searchText.ToUpper();
+
+					retValue.AddRange( from node in decadeNode.Children where node.Artist.Name.ToUpper().Contains( matchText ) select node );
+				}
+				else {
+					retValue.AddRange( from node in decadeNode.Children where node.Artist.Name.Contains( searchText ) select node );
+				}
+			}
+
+			return( retValue );
 		}
 
 		public void ClearCurrentSearch() {
+			mTreeEnumerator = null;
 		}
 	}
 }

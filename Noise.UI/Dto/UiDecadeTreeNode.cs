@@ -37,6 +37,10 @@ namespace Noise.UI.Dto {
 			}
 		}
 
+		public bool RequiresChildren {
+			get{ return( mRequiresChildren ); }
+		}
+
 		public void SetChildren( IEnumerable<UiArtistTreeNode> children ) {
 			mChildren.SuspendNotification();
 			mChildren.Clear();
