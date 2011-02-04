@@ -4,8 +4,8 @@
                     xmlns:Adapters="clr-namespace:Noise.UI.Adapters" 
                     xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters" 
                     xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
-                    xmlns:Dto="clr-namespace:Noise.UI.Dto"
-					>
+                    xmlns:Dto="clr-namespace:Noise.UI.Dto" 
+                    xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers">
 
     <vml:ViewModelLocator x:Key="ViewModelLocator">
         <vml:ViewModelLocator.Resolver>
@@ -63,7 +63,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" Text="{Binding Artist.DisplayName}"/>
+                <TextBlock Grid.Row="0" Grid.Column="0" FontSize="18" Text="{Binding Artist.DisplayName}"/>
                 
                 <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
                     <CheckBox Style="{DynamicResource FavoriteCheckBoxStyle}" Margin="0,9,3,0" IsChecked="{Binding Artist.UiIsFavorite, Mode=TwoWay}"/>
@@ -117,7 +117,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Artist.DisplayName}"/>
+            <TextBlock Grid.Column="0" VerticalAlignment="Center" FontSize="14"  Text="{Binding Artist.DisplayName}"/>
         </Grid>
     </HierarchicalDataTemplate>
 
@@ -135,7 +135,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" Text="{Binding Path=Tag.Name}"/>
+                <TextBlock Grid.Row="0" Grid.Column="0" FontSize="18" Text="{Binding Path=Tag.Name}"/>
 
                 <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
                     <CheckBox Style="{DynamicResource FavoriteCheckBoxStyle}" Margin="0,9,3,0" IsChecked="{Binding Path=Tag.IsFavorite, Mode=TwoWay}"/>
@@ -146,6 +146,15 @@
                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="11,0,0,0">
                     <TextBlock Text="{Binding Path=Tag.Description}"/>
                 </StackPanel>
+                
+                <!-- Website link -->
+                <NoiseControls:LinkLabel Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" Padding="0"
+                                         LinkLabelBehavior="HoverUnderline" Foreground="{DynamicResource ControlTextColor}"
+                                         Content="{Binding Path=DecadeWebsite.DisplayText}" IsEnabled="{Binding Path=DecadeWebsite.IsLinked}">
+                    <EventCommandTriggers:CommandSource.Trigger>
+                        <EventCommandTriggers:EventCommandTrigger RoutedEvent="NoiseControls:LinkLabel.Click" Command="{Binding Path=DecadeWebsite.LinkClicked}"/>
+                    </EventCommandTriggers:CommandSource.Trigger>
+                </NoiseControls:LinkLabel>
             </Grid>
         </Border>
     </HierarchicalDataTemplate>

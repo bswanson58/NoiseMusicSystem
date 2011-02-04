@@ -155,11 +155,18 @@ namespace Noise.UI.ViewModels {
 			var retValue = new List<UiDecadeTreeNode>();
 
 			if( mNoiseManager.IsInitialized ) {
-				retValue.AddRange( from tag in mNoiseManager.TagManager.DecadeTagList select new UiDecadeTreeNode( tag, null, null, FillDecadeArtists ));
+				retValue.AddRange( from tag in mNoiseManager.TagManager.DecadeTagList
+								   select new UiDecadeTreeNode( tag, null, null, FillDecadeArtists, WebsiteRequest ));
 				retValue.Sort( ( node1, node2 ) => node2.Tag.StartYear.CompareTo( node1.Tag.StartYear )); // descending
 			}
 
 			return( retValue );
+		}
+
+		private void WebsiteRequest( UiDecadeTreeNode decadeNode ) {
+			if(!string.IsNullOrWhiteSpace( decadeNode.Tag.Website )) {
+				mEventAggregator.GetEvent<Events.WebsiteRequest>().Publish( decadeNode.Tag.Website );
+			}
 		}
 
 		private void FillDecadeArtists( UiDecadeTreeNode decadeNode ) {
