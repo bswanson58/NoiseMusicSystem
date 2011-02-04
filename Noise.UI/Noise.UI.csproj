@@ -158,6 +158,9 @@
     <Compile Include="Behaviours\ListViewColumnStretch.cs" />
     <Compile Include="Behaviours\TreeViewItemBehaviour.cs" />
     <Compile Include="Behaviours\VisualStateAdapter.cs" />
+    <Compile Include="Controls\ExplorerStrategyList.xaml.cs">
+      <DependentUpon>ExplorerStrategyList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\LinkLabel.cs" />
     <Compile Include="Controls\ListBoxEx.cs" />
     <Compile Include="Controls\ListIndex.xaml.cs">
@@ -358,6 +361,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\ExplorerStrategyList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\ListIndex.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -18,8 +18,9 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class LibraryExplorerViewModel : ViewModelBase {
-		private const string					cVisualStateNormal	= "Normal";
-		private const string					cVisualStateIndex	= "DisplayIndex";
+		private const string					cVisualStateNormal		= "Normal";
+		private const string					cVisualStateIndex		= "DisplayIndex";
+		private const string					cVisualStateStrategy	= "DisplayStrategy";
 
 		private IUnityContainer					mContainer;
 		private IEventAggregator				mEvents;
@@ -28,15 +29,13 @@ namespace Noise.UI.ViewModels {
 		private readonly LibraryExplorerFilter	mExplorerFilter;
 		private DateTime						mLastExplorerRequest;
 		private	readonly TimeSpan				mPlayTrackDelay;
-		private string							mVisualState;
 		private bool							mEnableSortPrefixes;
 		private readonly List<string>			mSortPrefixes;
-		private bool							mRequireTreeBuild;
 		private readonly ObservableCollectionEx<UiTreeNode>		mTreeItems;
 		private readonly ObservableCollectionEx<IndexNode>		mIndexItems;
 
 		[ImportMany( typeof( IExplorerViewStrategy ))]
-		public IEnumerable<IExplorerViewStrategy>	ViewStrategies;
+		public IEnumerable<IExplorerViewStrategy>	ViewStrategies {get; set; }
 
 		public LibraryExplorerViewModel() {
 			mExplorerFilter = new LibraryExplorerFilter { IsEnabled = false };
@@ -48,7 +47,7 @@ namespace Noise.UI.ViewModels {
 
 			mSortPrefixes = new List<string>();
 
-			mVisualState = cVisualStateNormal;
+			VisualStateName = cVisualStateNormal;
 		}
 
 		[Dependency]
@@ -77,7 +76,7 @@ namespace Noise.UI.ViewModels {
 					strategy.UseSortPrefixes( mEnableSortPrefixes, mSortPrefixes );
 				}
 
-				ActivateStrategy(( from strategy in ViewStrategies where strategy.IsDefaultStrategy select strategy ).FirstOrDefault());
+				SelectedStrategy = ( from strategy in ViewStrategies where strategy.IsDefaultStrategy select strategy ).FirstOrDefault();
 
 				mEvents = mContainer.Resolve<IEventAggregator>();
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistRequested );
@@ -90,7 +89,6 @@ namespace Noise.UI.ViewModels {
 			mTreeItems.Clear();
 			mIndexItems.Clear();
 			mSearchOptions.Clear();
-			mRequireTreeBuild = true;
 
 			if( mViewStrategy != null ) {
 				mViewStrategy.Deactivate();
@@ -99,6 +97,8 @@ namespace Noise.UI.ViewModels {
 			mViewStrategy = strategy;
 			if( mViewStrategy != null ) {
 				mViewStrategy.Activate();
+
+				UpdateTree();
 			}
 		}
 
@@ -126,8 +126,6 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void UpdateTree() {
-			mRequireTreeBuild = false;
-
 		 	PopulateTree( BuildTree());
 			UpdateIndex();
 		}
@@ -154,13 +152,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public ObservableCollectionEx<UiTreeNode> TreeData {
-			get {
-				if( mRequireTreeBuild ) {
-					UpdateTree();
-				}
-
-				return( mTreeItems );
-			}
+			get { return( mTreeItems ); }
 		}
 
 		public DataTemplate TreeViewItemTemplate {
@@ -209,13 +201,35 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public string VisualStateName {
-			get{ return( mVisualState ); }
+			get{ return( Get( () => VisualStateName )); }
+			set{ Set( () => VisualStateName, value ); }
+		}
+
+		public void Execute_ToggleStrategyDisplay() {
+			if(( VisualStateName != cVisualStateNormal ) &&
+			   ( VisualStateName != cVisualStateStrategy )) {
+				VisualStateName = cVisualStateNormal;
+			}
+
+			VisualStateName = VisualStateName == cVisualStateNormal ? cVisualStateStrategy : cVisualStateNormal;
+		}
+
+		public IExplorerViewStrategy SelectedStrategy {
+			get{ return( mViewStrategy ); }
+			set{ 
+				VisualStateName = cVisualStateNormal;
+
+				ActivateStrategy( value );
+			}
 		}
 
 		public void Execute_ToggleIndexDisplay() {
-			mVisualState = mVisualState == cVisualStateNormal ? cVisualStateIndex : cVisualStateNormal;
+			if(( VisualStateName != cVisualStateNormal ) &&
+			   ( VisualStateName != cVisualStateIndex )) {
+				VisualStateName = cVisualStateNormal;
+			}
 
-			RaisePropertyChanged( () => VisualStateName );
+			VisualStateName = VisualStateName == cVisualStateNormal ? cVisualStateIndex : cVisualStateNormal;
 		}
 
 		public IEnumerable<IndexNode> IndexData {
@@ -225,13 +239,11 @@ namespace Noise.UI.ViewModels {
 		public IndexNode SelectedIndex {
 			get{ return( null ); }
 			set {
-				mVisualState = cVisualStateNormal;
+				VisualStateName = cVisualStateNormal;
 
 				if( value != null ) {
 					value.DisplayNode();
 				}
-
-				RaisePropertyChanged( () => VisualStateName );
 			}
 		}
 	}

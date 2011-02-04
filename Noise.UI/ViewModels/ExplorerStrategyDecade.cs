@@ -52,7 +52,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public string StrategyName {
-			get{ return( "Decades" ); }
+			get{ return( "Decades / Artists / Albums" ); }
 		}
 
 		public bool IsDefaultStrategy {
