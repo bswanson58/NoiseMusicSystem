@@ -135,8 +135,8 @@ namespace Noise.UI.ViewModels {
 							var treeNode = ( from UiArtistTreeNode node in decadeNode.Children
 											 where dbAlbum.Artist == node.Artist.DbId select node ).FirstOrDefault();
 							if( treeNode != null ) {
-								var uiAlbum = ( from UiAlbum a in treeNode.Children
-												where a.DbId == dbAlbum.DbId select a ).FirstOrDefault();
+								var uiAlbum = ( from UiAlbumTreeNode a in treeNode.Children
+												where a.Album.DbId == dbAlbum.DbId select a.Album ).FirstOrDefault();
 
 								if( uiAlbum != null ) {
 									UpdateUiAlbum( uiAlbum, dbAlbum );
