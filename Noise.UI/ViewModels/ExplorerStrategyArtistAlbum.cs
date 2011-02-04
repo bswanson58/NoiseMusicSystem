@@ -30,7 +30,7 @@ namespace Noise.UI.ViewModels {
 		private	LibraryExplorerViewModel		mViewModel;
 		private	bool							mUseSortPrefixes;
 		private IEnumerable<string>				mSortPrefixes;
-		private IEnumerator<ArtistTreeNode>		mTreeEnumerator;
+		private IEnumerator<UiArtistTreeNode>	mTreeEnumerator;
 		private string							mLastSearchOptions;
 
 		public ExplorerStrategyArtistAlbum( IUnityContainer container ) {
@@ -70,7 +70,7 @@ namespace Noise.UI.ViewModels {
 					var artist = item as DbArtist;
 
 					if( artist != null ) {
-						var treeNode = ( from ArtistTreeNode node in mViewModel.TreeData
+						var treeNode = ( from UiArtistTreeNode node in mViewModel.TreeData
 										 where artist.DbId == node.Artist.DbId select node ).FirstOrDefault();
 
 						switch( args.Change ) {
@@ -83,13 +83,14 @@ namespace Noise.UI.ViewModels {
 							case DbItemChanged.Insert:
 								mViewModel.TreeData.SuspendNotification();
 								AddArtist( mViewModel.TreeData, artist );
-								mViewModel.TreeData.Sort( node => node is ArtistTreeNode ? ( node as ArtistTreeNode ).Artist.SortName : "", ListSortDirection.Ascending );
+								mViewModel.TreeData.Sort( node => node is UiArtistTreeNode ? ( node as UiArtistTreeNode ).Artist.SortName : "", ListSortDirection.Ascending );
 								mViewModel.TreeData.ResumeNotification();
 								break;
 
 							case DbItemChanged.Delete:
 								if( treeNode != null ) {
 									mViewModel.TreeData.Remove( treeNode );
+									mChangeObserver.Release( treeNode.Artist );
 								}
 								break;
 						}
@@ -102,11 +103,11 @@ namespace Noise.UI.ViewModels {
 					var dbAlbum = item as DbAlbum;
 
 					if( dbAlbum != null ) {
-						var treeNode = ( from ArtistTreeNode node in mViewModel.TreeData
+						var treeNode = ( from UiArtistTreeNode node in mViewModel.TreeData
 										 where dbAlbum.Artist == node.Artist.DbId select node ).FirstOrDefault();
 						if( treeNode != null ) {
-							var uiAlbum = ( from UiAlbum a in treeNode.Children
-											where a.DbId == dbAlbum.DbId select a ).FirstOrDefault();
+							var uiAlbum = ( from UiAlbumTreeNode a in treeNode.Children
+											where a.Album.DbId == dbAlbum.DbId select a.Album ).FirstOrDefault();
 
 							if( uiAlbum != null ) {
 								Mapper.DynamicMap( dbAlbum, uiAlbum );
@@ -127,10 +128,10 @@ namespace Noise.UI.ViewModels {
 			mViewModel.SearchOptions.Add( cSearchOptionDefault + cSearchIgnoreCase );
 		}
 
-		public IEnumerable<object> BuildTree( IDatabaseFilter filter ) {
+		public IEnumerable<UiTreeNode> BuildTree( IDatabaseFilter filter ) {
 			Condition.Requires( mViewModel ).IsNotNull();
 
-			var retValue = new List<object>();
+			var retValue = new List<UiTreeNode>();
 
 			if( mNoiseManager.IsInitialized ) {
 				using( var list = mNoiseManager.DataProvider.GetArtistList( filter )) {
@@ -139,14 +140,14 @@ namespace Noise.UI.ViewModels {
 					}
 				}
 
-				retValue.Sort( ( node1, node2 ) => string.Compare( node1 is ArtistTreeNode ? ( node1 as ArtistTreeNode ).Artist.SortName : "",
-																   node2 is ArtistTreeNode ? ( node2 as ArtistTreeNode ).Artist.SortName : "" ));
+				retValue.Sort( ( node1, node2 ) => string.Compare( node1 is UiArtistTreeNode ? ( node1 as UiArtistTreeNode ).Artist.SortName : "",
+																   node2 is UiArtistTreeNode ? ( node2 as UiArtistTreeNode ).Artist.SortName : "" ));
 			}
 
 			return( retValue );
 		}
 
-		public IEnumerable<IndexNode> BuildIndex( IEnumerable<object> artistList ) {
+		public IEnumerable<IndexNode> BuildIndex( IEnumerable<UiTreeNode> artistList ) {
 			var retValue = new List<IndexNode>();
 
 			const string alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -154,11 +155,11 @@ namespace Noise.UI.ViewModels {
 
 			obs.Subscribe( ch =>
 			{
-				var artist = artistList.FirstOrDefault( node => node is ArtistTreeNode ? ( node as ArtistTreeNode ).Artist.SortName.StartsWith( ch.ToString()) : false );
+				var artist = artistList.FirstOrDefault( node => node is UiArtistTreeNode ? ( node as UiArtistTreeNode ).Artist.SortName.StartsWith( ch.ToString()) : false );
 
 				if(( artist != null ) &&
-				   ( artist is ArtistTreeNode )) {
-					retValue.Add( new IndexNode( ch.ToString(), artist as ArtistTreeNode ));
+				   ( artist is UiArtistTreeNode )) {
+					retValue.Add( new IndexNode( ch.ToString(), artist as UiArtistTreeNode ));
 				}
 			});
 
@@ -174,11 +175,11 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void AddArtist( ICollection<object> tree, DbArtist artist ) {
-			var uiArtist = new UiArtist( OnArtistSelect );
+		private void AddArtist( ICollection<UiTreeNode> tree, DbArtist artist ) {
+			var uiArtist = new UiArtist();
 			UpdateUiArtist( uiArtist, artist );
 
-			var parent = new ArtistTreeNode( uiArtist, FillChildren );
+			var parent = new UiArtistTreeNode( uiArtist, OnArtistSelect, null, FillChildren );
 
 			if( mUseSortPrefixes ) {
 				FormatSortPrefix( uiArtist );
@@ -201,42 +202,42 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private List<UiAlbum> FillChildren( ArtistTreeNode parent ) {
-			var	retValue = new List<UiAlbum>();
+		private void FillChildren( UiArtistTreeNode parent ) {
+			var	retValue = new List<UiAlbumTreeNode>();
 			var artist = parent.Artist;
 
 			if( artist != null ) {
 				using( var albumList = mNoiseManager.DataProvider.GetAlbumList( artist.DbId )) {
 					foreach( var dbAlbum in from DbAlbum album in albumList.List orderby album.Name select album ) {
-						var uiAlbum = new UiAlbum( OnAlbumSelect, OnAlbumPlay ) { DisplayGenre = mNoiseManager.TagManager.GetGenre( dbAlbum.Genre ) };
+						var uiAlbum = new UiAlbum { DisplayGenre = mNoiseManager.TagManager.GetGenre( dbAlbum.Genre ) };
 						Mapper.DynamicMap( dbAlbum, uiAlbum );
 
-						retValue.Add( uiAlbum );
+						retValue.Add( new UiAlbumTreeNode( uiAlbum, OnAlbumSelect, OnAlbumPlay ));
 					}
 				}
 			}
 
-			return( retValue );
+			parent.SetChildren( retValue );
 		}
 
-		private void OnArtistSelect( long artistId ) {
-			var artist = mNoiseManager.DataProvider.GetArtist( artistId );
+		private void OnArtistSelect( UiArtistTreeNode artistNode ) {
+			var artist = mNoiseManager.DataProvider.GetArtist( artistNode.Artist.DbId );
 
 			if( artist != null ) {
 				mEventAggregator.GetEvent<Events.ArtistFocusRequested>().Publish( artist );
 			}
 		}
 
-		private void OnAlbumSelect( long albumId ) {
-			var album = mNoiseManager.DataProvider.GetAlbum( albumId );
+		private void OnAlbumSelect( UiAlbumTreeNode albumNode ) {
+			var album = mNoiseManager.DataProvider.GetAlbum( albumNode.Album.DbId );
 
 			if( album != null ) {
 				mEventAggregator.GetEvent<Events.AlbumFocusRequested>().Publish( album );
 			}
 		}
 
-		private void OnAlbumPlay( long albumId ) {
-			var album = mNoiseManager.DataProvider.GetAlbum( albumId );
+		private void OnAlbumPlay( UiAlbumTreeNode albumNode ) {
+			var album = mNoiseManager.DataProvider.GetAlbum( albumNode.Album.DbId );
 
 			if( album != null ) {
 				GlobalCommands.PlayAlbum.Execute( album );
@@ -260,7 +261,7 @@ namespace Noise.UI.ViewModels {
 
 			if(( mTreeEnumerator == null ) ||
 			   ( !mTreeEnumerator.MoveNext())) {
-				mTreeEnumerator = FindMatches( searchText, mViewModel.TreeData.OfType<ArtistTreeNode>(), searchOptions ).GetEnumerator();
+				mTreeEnumerator = FindMatches( searchText, mViewModel.TreeData.OfType<UiArtistTreeNode>(), searchOptions ).GetEnumerator();
 				mTreeEnumerator.MoveNext();
 			}
 
@@ -276,8 +277,8 @@ namespace Noise.UI.ViewModels {
 			return ( retValue );
 		}
 
-		static IEnumerable<ArtistTreeNode> FindMatches( string searchText, IEnumerable<ArtistTreeNode> list, IEnumerable<string> options ) {
-			IEnumerable<ArtistTreeNode>	retValue;
+		static IEnumerable<UiArtistTreeNode> FindMatches( string searchText, IEnumerable<UiArtistTreeNode> list, IEnumerable<string> options ) {
+			IEnumerable<UiArtistTreeNode>	retValue;
 
 			if( options.Contains( cSearchIgnoreCase )) {
 				var matchText = searchText.ToUpper();

@@ -120,7 +120,6 @@
     <Compile Include="..\Common\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Adapters\ArtistTreeNode.cs" />
     <Compile Include="Adapters\BindableRun.cs" />
     <Compile Include="Adapters\DynamicProxies\CustomValidatingProxy.cs" />
     <Compile Include="Adapters\DynamicProxies\DataErrorInfoProxy.cs" />

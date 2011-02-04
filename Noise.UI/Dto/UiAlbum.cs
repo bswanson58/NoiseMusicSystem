@@ -17,18 +17,6 @@ namespace Noise.UI.Dto {
 		public bool				HasFavorites { get; set; }
 		public DbGenre			DisplayGenre { get ; set; }
 
-		private readonly Action<long>	mSelectAlbumAction;
-		private readonly Action<long>	mPlayAlbumAction;
-
-		public UiAlbum( Action<long> onAlbumSelected, Action<long> onPlayAlbum ) {
-			mSelectAlbumAction = onAlbumSelected;
-			mPlayAlbumAction = onPlayAlbum;
-		}
-
-		public UiAlbum( string name ) {
-			Name = name;
-		}
-
 		public string Name {
 			get{ return( Get( () => Name )); }
 			set{ Set( () => Name, value ); }
@@ -38,36 +26,9 @@ namespace Noise.UI.Dto {
 			get{ return( DisplayGenre != null ? DisplayGenre.Name : "" ); }
 		}
 
-		public bool IsSelected {
-			get { return( Get( () => IsSelected )); }
-			set {
-				Set( () => IsSelected, value  );
-
-				if(( value ) &&
-				   ( mSelectAlbumAction != null )) {
-					mSelectAlbumAction( DbId );
-				}
-			}
-		}
-
 		public UInt32 PublishedYear {
 			get{ return( Get( () => PublishedYear )); }
 			set{ Set( () => PublishedYear, value ); }
-		}
-
-		public bool IsExpanded {
-			get{ return( Get( () => IsExpanded )); }
-			set{ Set( () => IsExpanded, value ); }
-		}
-
-		public void Execute_PlayAlbum() {
-			if( mPlayAlbumAction != null ) {
-				mPlayAlbumAction( DbId );
-			}
-		}
-
-		public bool CanExecute_PlayAlbum() {
-			return( mPlayAlbumAction != null );
 		}
 	}
 }

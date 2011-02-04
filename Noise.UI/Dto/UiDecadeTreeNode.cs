@@ -20,7 +20,7 @@ namespace Noise.UI.Dto {
 			mChildFillAction = childFill;
 
 			mChildren = new ObservableCollectionEx<UiArtistTreeNode>();
-			mChildren.Add( new UiArtistTreeNode( null, new UiArtist( null ) { DisplayName = "Loading artist list..." }, null, null, null ));
+			mChildren.Add( new UiArtistTreeNode( null, new UiArtist { DisplayName = "Loading artist list..." }, null, null, null ));
 			mRequiresChildren = true;
 		}
 

@@ -14,6 +14,10 @@ namespace Noise.UI.Dto {
 		public	UiArtist		Artist { get; private set; }
 		public	DbDecadeTag		DecadeTag { get; private set; }
 
+		public UiArtistTreeNode( UiArtist artist,
+								 Action<UiArtistTreeNode> onSelect, Action<UiArtistTreeNode> onExpand, Action<UiArtistTreeNode> childFill ) :
+			this( null, artist, onSelect, onExpand, childFill ) { }
+
 		public UiArtistTreeNode( DbDecadeTag tag, UiArtist artist,
 								 Action<UiArtistTreeNode> onSelect, Action<UiArtistTreeNode> onExpand, Action<UiArtistTreeNode> childFill ) {
 			DecadeTag = tag;
@@ -25,7 +29,7 @@ namespace Noise.UI.Dto {
 			mRequiresChildren = true;
 
 			mChildren = new ObservableCollectionEx<UiAlbumTreeNode>();
-			mChildren.Add( new UiAlbumTreeNode( new UiAlbum( null, null ) { Name = "Loading album list..." }, null, null ));
+			mChildren.Add( new UiAlbumTreeNode( new UiAlbum { Name = "Loading album list..." }, null, null ));
 		}
 
 		public ObservableCollectionEx<UiAlbumTreeNode> Children {

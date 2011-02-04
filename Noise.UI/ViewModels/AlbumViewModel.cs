@@ -75,7 +75,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {
-			var retValue = new UiAlbum( null, null );
+			var retValue = new UiAlbum();
 
 			Mapper.DynamicMap( dbAlbum, retValue );
 			retValue.DisplayGenre = mNoiseManager.TagManager.GetGenre( dbAlbum.Genre );

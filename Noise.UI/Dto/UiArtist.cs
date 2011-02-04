@@ -15,12 +15,6 @@ namespace Noise.UI.Dto {
 		public bool				IsFavorite { get; set; }
 		public bool				HasFavorites { get; set; }
 
-		private readonly Action<long>	mSelectArtistAction;
-
-		public UiArtist( Action<long> onSelectAction ) {
-			mSelectArtistAction = onSelectAction;
-		}
-
 		public Int16 AlbumCount {
 			get{ return( Get( () => AlbumCount )); }
 			set{ Set( () => AlbumCount, value ); }
@@ -53,18 +47,6 @@ namespace Noise.UI.Dto {
 		public Int16 Rating {
 			get{ return( IsUserRating ? UserRating : CalculatedRating ); }
 			set{ UserRating = value; }
-		}
-
-		public bool IsSelected {
-			get { return( Get( () => IsSelected )); }
-			set {
-				Set( () => IsSelected, value  );
-
-				if(( value ) &&
-				   ( mSelectArtistAction != null )) {
-					mSelectArtistAction( DbId );
-				}
-			}
 		}
 
 		public string Website {

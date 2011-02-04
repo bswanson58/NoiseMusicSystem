@@ -1,9 +1,11 @@
-﻿namespace Noise.UI.Adapters {
+﻿using Noise.UI.Dto;
+
+namespace Noise.UI.Adapters {
 	public class IndexNode {
 		public	string		DisplayText { get; set; }
-		private	readonly	ArtistTreeNode	mNode;
+		private	readonly	UiArtistTreeNode	mNode;
 
-		public IndexNode( string text, ArtistTreeNode node ) {
+		public IndexNode( string text, UiArtistTreeNode node ) {
 			DisplayText = text;
 			mNode = node;
 		}

@@ -21,7 +21,7 @@
     </ContextMenu>
 
     <!-- Library Explorer: Artist/Albums -->
-    <HierarchicalDataTemplate x:Key="AlbumTemplate" DataType="{x:Type Dto:UiAlbum}">
+    <HierarchicalDataTemplate x:Key="AlbumTemplate" DataType="{x:Type Dto:UiAlbumTreeNode}">
         <Grid Margin="0,0,3,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -31,25 +31,25 @@
             </Grid.ColumnDefinitions>
 
             <Button Grid.Column="0" Margin="3,3,5,3" Content="4" HorizontalAlignment="Center" Command="{Binding PlayAlbum}" Style="{DynamicResource PlayButtonStyle}"/>
-            <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Name}"/>
+            <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Album.Name}"/>
             <StackPanel Grid.Column="3" VerticalAlignment="Center"  Orientation="Horizontal">
                 <StackPanel Orientation="Horizontal">
                     <StackPanel.Visibility>
                         <MultiBinding Converter="{StaticResource EmptyStringVisibilityConverter}">
-                            <Binding Path="PublishedYear" Converter="{StaticResource PublishedYearConverter}"/>
+                            <Binding Path="Album.PublishedYear" Converter="{StaticResource PublishedYearConverter}"/>
                         </MultiBinding>
                     </StackPanel.Visibility>
                     <TextBlock Text="("/>
-                    <TextBlock Text="{Binding PublishedYear, Converter={StaticResource PublishedYearConverter}}"/>
+                    <TextBlock Text="{Binding Album.PublishedYear, Converter={StaticResource PublishedYearConverter}}"/>
                     <TextBlock Margin="0,0,3,0" Text=")"/>
                 </StackPanel>
                 <TextBlock Foreground="{DynamicResource ControlTextColor}" Text="Tracks: "/>
-                <TextBlock Text="{Binding TrackCount}"/>
+                <TextBlock Text="{Binding Album.TrackCount}"/>
             </StackPanel>
         </Grid>
     </HierarchicalDataTemplate>
 
-    <HierarchicalDataTemplate x:Key="ArtistAlbumTemplate" DataType="{x:Type Adapters:ArtistTreeNode}" 
+    <HierarchicalDataTemplate x:Key="ArtistAlbumTemplate" DataType="{x:Type Dto:UiArtistTreeNode}" 
                               ItemTemplate="{StaticResource AlbumTemplate}" ItemsSource="{Binding Children}">
         <Border Margin="0,1,0,2" CornerRadius="3" ContextMenu="{DynamicResource ArtistMenu}" Background="{DynamicResource TreeItemBackground}" BorderBrush="{DynamicResource ControlTextColor}">
             <Grid Margin="3,0,3,0">
