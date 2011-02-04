@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Linq;
 using System.Windows;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Behaviours.EventCommandTriggers;
@@ -28,11 +31,17 @@ namespace Noise.UI.ViewModels {
 		private string							mVisualState;
 		private bool							mEnableSortPrefixes;
 		private readonly List<string>			mSortPrefixes;
-		private ObservableCollectionEx<UiTreeNode>		mTreeItems;
-		private ObservableCollectionEx<IndexNode>		mIndexItems;
+		private bool							mRequireTreeBuild;
+		private readonly ObservableCollectionEx<UiTreeNode>		mTreeItems;
+		private readonly ObservableCollectionEx<IndexNode>		mIndexItems;
+
+		[ImportMany( typeof( IExplorerViewStrategy ))]
+		public IEnumerable<IExplorerViewStrategy>	ViewStrategies;
 
 		public LibraryExplorerViewModel() {
 			mExplorerFilter = new LibraryExplorerFilter { IsEnabled = false };
+			mTreeItems = new ObservableCollectionEx<UiTreeNode>();
+			mIndexItems = new ObservableCollectionEx<IndexNode>();
 
 			mPlayTrackDelay = new TimeSpan( 0, 0, 30 );
 			mLastExplorerRequest = DateTime.Now - mPlayTrackDelay;
@@ -59,15 +68,37 @@ namespace Noise.UI.ViewModels {
 					}
 				}
 
-				mViewStrategy = mContainer.Resolve<IExplorerViewStrategy>( "ArtistAlbum" );
-//				mViewStrategy = mContainer.Resolve<IExplorerViewStrategy>( "DecadeArtist" );
-				mViewStrategy.Initialize( this );
-				mViewStrategy.UseSortPrefixes( mEnableSortPrefixes, mSortPrefixes );
+				var ioc = mContainer.Resolve<IIoc>();
+
+				ioc.ComposeParts( this );
+
+				foreach( var strategy in ViewStrategies ) {
+					strategy.Initialize( mContainer, this );
+					strategy.UseSortPrefixes( mEnableSortPrefixes, mSortPrefixes );
+				}
+
+				ActivateStrategy(( from strategy in ViewStrategies where strategy.IsDefaultStrategy select strategy ).FirstOrDefault());
 
 				mEvents = mContainer.Resolve<IEventAggregator>();
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistRequested );
 				mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumRequested );
 				mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnPlaybackStarted );
+			}
+		}
+
+		private void ActivateStrategy( IExplorerViewStrategy strategy ) {
+			mTreeItems.Clear();
+			mIndexItems.Clear();
+			mSearchOptions.Clear();
+			mRequireTreeBuild = true;
+
+			if( mViewStrategy != null ) {
+				mViewStrategy.Deactivate();
+			}
+
+			mViewStrategy = strategy;
+			if( mViewStrategy != null ) {
+				mViewStrategy.Activate();
 			}
 		}
 
@@ -95,7 +126,10 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void UpdateTree() {
+			mRequireTreeBuild = false;
+
 		 	PopulateTree( BuildTree());
+			UpdateIndex();
 		}
 
 		private IEnumerable<UiTreeNode> BuildTree() {
@@ -121,10 +155,7 @@ namespace Noise.UI.ViewModels {
 
 		public ObservableCollectionEx<UiTreeNode> TreeData {
 			get {
-				if(( mTreeItems == null ) &&
-				   ( mViewStrategy != null )) {
-					mTreeItems = new ObservableCollectionEx<UiTreeNode>();
-
+				if( mRequireTreeBuild ) {
 					UpdateTree();
 				}
 
@@ -188,14 +219,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public IEnumerable<IndexNode> IndexData {
-			get {
-				if( mIndexItems == null ) {
-					mIndexItems = new ObservableCollectionEx<IndexNode>();
-					UpdateIndex();
-				}
-
-				return( mIndexItems );
-			}
+			get { return( mIndexItems ); }
 		}
 
 		public IndexNode SelectedIndex {

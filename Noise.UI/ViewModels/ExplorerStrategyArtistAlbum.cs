@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using AutoMapper;
@@ -17,15 +18,16 @@ using Observal.Extensions;
 using Condition = CuttingEdge.Conditions.Condition;
 
 namespace Noise.UI.ViewModels {
+	[Export( typeof( IExplorerViewStrategy ))]
 	public class ExplorerStrategyArtistAlbum : ViewModelBase, IExplorerViewStrategy {
 		private const string					cSearchOptionDefault = "!";
 		private const string					cSearchArtists = "Artists";
 		private const string					cSearchAlbums = "Albums";
 		private const string					cSearchIgnoreCase = "Ignore Case";
 
-		private readonly IUnityContainer		mContainer;
-		private readonly IEventAggregator		mEventAggregator;
-		private readonly INoiseManager			mNoiseManager;
+		private IUnityContainer		mContainer;
+		private IEventAggregator		mEventAggregator;
+		private INoiseManager			mNoiseManager;
 		private readonly Observal.Observer		mChangeObserver;
 		private	LibraryExplorerViewModel		mViewModel;
 		private	bool							mUseSortPrefixes;
@@ -33,20 +35,47 @@ namespace Noise.UI.ViewModels {
 		private IEnumerator<UiArtistTreeNode>	mTreeEnumerator;
 		private string							mLastSearchOptions;
 
-		public ExplorerStrategyArtistAlbum( IUnityContainer container ) {
+		public ExplorerStrategyArtistAlbum() {
+			mChangeObserver = new Observal.Observer();
+			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
+		}
+
+		public void Initialize( IUnityContainer container, LibraryExplorerViewModel viewModel ) {
+			mViewModel = viewModel;
 			mContainer = container;
 			mEventAggregator = mContainer.Resolve<IEventAggregator>();
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
+		}
 
-			mChangeObserver = new Observal.Observer();
-			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
+		public string StrategyId {
+			get{ return( "ViewStrategy_ArtistAlbum" ); }
+		}
 
-			mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
+		public string StrategyName {
+			get{ return( "Artists / Albums" ); }
+		}
+
+		public bool IsDefaultStrategy {
+			get{ return( true ); }
 		}
 
 		public void UseSortPrefixes( bool enable, IEnumerable<string> sortPrefixes ) {
 			mUseSortPrefixes =enable;
 			mSortPrefixes = sortPrefixes;
+		}
+
+		public void Activate() {
+			mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
+
+			mViewModel.TreeViewItemTemplate = Application.Current.TryFindResource( "ArtistAlbumTemplate" ) as HierarchicalDataTemplate;
+
+			mViewModel.SearchOptions.Add( cSearchOptionDefault + cSearchArtists );
+			mViewModel.SearchOptions.Add( cSearchAlbums );
+			mViewModel.SearchOptions.Add( cSearchOptionDefault + cSearchIgnoreCase );
+		}
+
+		public void Deactivate() {
+			mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Unsubscribe( OnDatabaseItemChanged );
 		}
 
 		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
@@ -116,16 +145,6 @@ namespace Noise.UI.ViewModels {
 					}
 				});
 			}
-		}
-
-		public void Initialize( LibraryExplorerViewModel viewModel ) {
-			mViewModel = viewModel;
-
-			mViewModel.TreeViewItemTemplate = Application.Current.TryFindResource( "ArtistAlbumTemplate" ) as HierarchicalDataTemplate;
-
-			mViewModel.SearchOptions.Add( cSearchOptionDefault + cSearchArtists );
-			mViewModel.SearchOptions.Add( cSearchAlbums );
-			mViewModel.SearchOptions.Add( cSearchOptionDefault + cSearchIgnoreCase );
 		}
 
 		public IEnumerable<UiTreeNode> BuildTree( IDatabaseFilter filter ) {
