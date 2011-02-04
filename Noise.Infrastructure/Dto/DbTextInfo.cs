@@ -5,6 +5,7 @@ namespace Noise.Infrastructure.Dto {
 	public class DbTextInfo : ExpiringContent {
 		public	long			FolderLocation { get; set; }
 		public	InfoSource		Source { get; set; }
+		public	string			Name { get; set; }
 		public	string			Text { get; set; }
 
 		public DbTextInfo( long associatedItem, ContentType contentType ) :

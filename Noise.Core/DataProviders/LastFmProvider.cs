@@ -116,7 +116,7 @@ namespace Noise.Core.DataProviders {
 					var similarArtists = ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault();
 					var topAlbums = ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select  item ).FirstOrDefault();
 					if( artwork == null ) {
-						artwork = new DbArtwork( artistId, ContentType.ArtistPrimaryImage ) { Artist = artist.DbId };
+						artwork = new DbArtwork( artistId, ContentType.ArtistPrimaryImage ) { Artist = artist.DbId, Name = "Last.fm download" };
 
 						database.Insert( artwork );
 					}
@@ -124,7 +124,7 @@ namespace Noise.Core.DataProviders {
 					database.Store( artwork );
 
 					if( bio == null ) {
-						bio = new DbTextInfo( artistId, ContentType.Biography ) { Artist = artist.DbId };
+						bio = new DbTextInfo( artistId, ContentType.Biography ) { Artist = artist.DbId, Name = "Last.fm download" };
 
 						database.Insert( bio );
 					}
@@ -209,7 +209,7 @@ namespace Noise.Core.DataProviders {
 				var	artwork = database.Database.ExecuteScalar( "SELECT DbArtwork WHERE AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork;
 				if( artwork == null ) {
 					artwork = new DbArtwork( parentId, ContentType.ArtistPrimaryImage )
-											{ Artist = parentId, Source = InfoSource.External, IsContentAvailable = true };
+											{ Artist = parentId, Source = InfoSource.External, IsContentAvailable = true, Name = "Last.fm download" };
 
 					database.Insert( artwork );
 				}

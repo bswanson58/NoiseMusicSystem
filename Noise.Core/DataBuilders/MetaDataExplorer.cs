@@ -158,7 +158,8 @@ namespace Noise.Core.DataBuilders {
 
 			try {
 				var	info = new DbTextInfo( file.DbId, ContentType.TextInfo )
-											{ Source = InfoSource.File, FolderLocation = file.ParentFolder, IsContentAvailable = true };
+											{ Source = InfoSource.File, FolderLocation = file.ParentFolder, IsContentAvailable = true,
+											  Name = Path.GetFileNameWithoutExtension( file.Name ) };
 				var dataProviders = new List<IMetaDataProvider> { mStrategyProvider.GetProvider( file ),
 																  mDefaultProvider.GetProvider( file ) };
 
@@ -194,7 +195,8 @@ namespace Noise.Core.DataBuilders {
 
 			try {
 				var	artwork = new DbArtwork( file.DbId, StorageHelpers.IsCoverFile( file.Name ) ? ContentType.AlbumCover : ContentType.AlbumArtwork )
-											{ Source = InfoSource.File, FolderLocation = file.ParentFolder, IsContentAvailable = true };
+											{ Source = InfoSource.File, FolderLocation = file.ParentFolder, IsContentAvailable = true,
+											  Name = Path.GetFileNameWithoutExtension( file.Name )};
 				var dataProviders = new List<IMetaDataProvider> { mStrategyProvider.GetProvider( file ),
 																  mDefaultProvider.GetProvider( file ) };
 
