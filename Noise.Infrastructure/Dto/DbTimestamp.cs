@@ -13,8 +13,8 @@ namespace Noise.Infrastructure.Dto {
 			Timestamp = 0;
 		}
 
-		public void UpdateTimestamp() {
-			Timestamp = DateTime.Now.Ticks;
+		public void SetTimestamp( long ticks ) {
+			Timestamp = ticks;
 		}
 
 		[Export("PersistenceType")]

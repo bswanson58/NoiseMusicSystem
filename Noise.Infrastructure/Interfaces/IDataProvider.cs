@@ -58,6 +58,6 @@ namespace Noise.Infrastructure.Interfaces {
 		DataFindResults				Find( long itemId );
 
 		long						GetTimestamp( string componentId );
-		void						UpdateTimestamp( string componentId );
+		void						SetTimestamp( string componentId, long ticks );
 	}
 }

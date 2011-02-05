@@ -915,7 +915,7 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
-		public void	UpdateTimestamp( string componentId ) {
+		public void SetTimestamp( string componentId, long ticks ) {
 			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
@@ -925,13 +925,13 @@ namespace Noise.Core.Database {
 				var	timestamp = database.Database.ExecuteScalar( "SELECT DbTimestamp WHERE ComponentId = @id", parms ) as DbTimestamp;
 
 				if( timestamp != null ) {
-					timestamp.UpdateTimestamp();
+					timestamp.SetTimestamp( ticks );
 
 					database.Store( timestamp );
 				}
 				else {
 					timestamp = new DbTimestamp( componentId );
-					timestamp.UpdateTimestamp();
+					timestamp.SetTimestamp( ticks );
 
 					database.Insert( timestamp );
 				}

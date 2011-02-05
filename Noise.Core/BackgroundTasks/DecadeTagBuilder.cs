@@ -18,7 +18,8 @@ namespace Noise.Core.BackgroundTasks {
 		private ILog				mLog;
 		private List<long>			mArtistList;
 		private IEnumerator<long>	mArtistEnum;
-		private long				mLastScan;
+		private long				mLastScanTicks;
+		private	long				mStartScanTicks;
 		public string TaskId {
 			get { return( "Task_DiscographyExplorer" ); }
 		}
@@ -38,10 +39,11 @@ namespace Noise.Core.BackgroundTasks {
 			var database = mDatabaseMgr.ReserveDatabase();
 
 			try {
+				mLastScanTicks = mNoiseManager.DataProvider.GetTimestamp( cDecadeTagBuilderId );
+				mStartScanTicks = DateTime.Now.Ticks;
+
 				mArtistList = new List<long>( from DbArtist artist in database.Database.ExecuteQuery( "SELECT DbArtist" ).OfType<DbArtist>() select artist.DbId );
 				mArtistEnum = mArtistList.GetEnumerator();
-
-				mLastScan = mNoiseManager.DataProvider.GetTimestamp( cDecadeTagBuilderId );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "", ex );
@@ -53,10 +55,9 @@ namespace Noise.Core.BackgroundTasks {
 
 		private long NextArtist() {
 			if(!mArtistEnum.MoveNext()) {
-				mNoiseManager.DataProvider.UpdateTimestamp( cDecadeTagBuilderId );
+				mNoiseManager.DataProvider.SetTimestamp( cDecadeTagBuilderId, mStartScanTicks );
 
 				InitializeLists();
-
 				mArtistEnum.MoveNext();
 			}
 
@@ -73,7 +74,7 @@ namespace Noise.Core.BackgroundTasks {
 					var artist = mNoiseManager.DataProvider.GetArtist( artistId );
 
 					if(( artist != null ) &&
-					   ( artist.LastChangeTicks > mLastScan )) {
+					   ( artist.LastChangeTicks > mLastScanTicks )) {
 						var parms = database.Database.CreateParameters();
 						parms["artistId"] = artistId;
 
