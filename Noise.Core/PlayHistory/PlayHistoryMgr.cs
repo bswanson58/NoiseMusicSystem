@@ -77,7 +77,7 @@ namespace Noise.Core.PlayHistory {
 		}
 
 		private void TrimHistoryList( IDatabase database ) {
-			var historyList = from DbPlayHistory history in PlayHistory orderby history.PlayedOn descending select history;
+			var historyList = from DbPlayHistory history in PlayHistory orderby history.PlayedOn ascending select history;
 			var historyCount = historyList.Count();
 			var historyEnum = historyList.GetEnumerator();
 			var deleteList = new List<DbPlayHistory>();
