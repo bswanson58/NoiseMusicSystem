@@ -42,6 +42,10 @@ namespace Noise.UI.Dto {
 			}
 		}
 
+		public string Name {
+			get{ return( IsImage ? Artwork.Name : IsText ? TextInfo.Name : "" ); }
+		}
+
 		public void SetPreferredImage() {
 			if( !Artwork.IsUserSelection ) {
 				Artwork.IsUserSelection = true;

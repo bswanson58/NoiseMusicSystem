@@ -30,9 +30,9 @@
                 <Grid>
                     <Image VerticalAlignment="Center" HorizontalAlignment="Center" Source="{Binding CurrentImage.Image}"
                            Visibility="{Binding Path=CurrentImage.IsImage, Converter={StaticResource BooleanVisibilityConverter}}" RenderTransformOrigin="0.5,0.5">
-                    	<Image.RenderTransform>
-                   			<RotateTransform Angle="{Binding Path=CurrentImage.ImageRotation}"/>
-                    	</Image.RenderTransform>
+                        <Image.RenderTransform>
+                            <RotateTransform Angle="{Binding Path=CurrentImage.ImageRotation}"/>
+                        </Image.RenderTransform>
                     </Image>
                     <TextBlock Text="{Binding Path=CurrentImage.Text}"
                                Visibility="{Binding Path=CurrentImage.IsText, Converter={StaticResource BooleanVisibilityConverter}}"/>
@@ -51,7 +51,10 @@
                     <DataTemplate>
                         <Viewbox>
                             <Border BorderThickness="4" BorderBrush="White" Margin="5">
-                                <Image Width="120" Height="120" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Source="{Binding Path=Image}"/>
+                                <StackPanel Orientation="Vertical">
+                                    <Image Width="120" Height="120" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Source="{Binding Path=Image}"/>
+                                    <TextBlock HorizontalAlignment="Center" Margin="3,0,3,3" Text="{Binding Path=Name}"/>
+                                </StackPanel>
                             </Border>
                         </Viewbox>
                     </DataTemplate>
@@ -65,7 +68,7 @@
                     <Button Content="RL" Margin="0,3" Command="{Binding Path=CurrentImage.RotateLeft}"/>
                     <Button Content="RR" Margin="5,3" Command="{Binding Path=CurrentImage.RotateRight}"/>
                 </StackPanel>
-            
+
                 <CheckBox x:Name="chkActualSize" Grid.Row="0" Grid.Column="4" HorizontalAlignment="Right" Margin="5" Content="Display Actual Size"/>
             </Grid>
         </Grid>
