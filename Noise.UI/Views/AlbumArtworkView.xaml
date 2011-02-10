@@ -65,11 +65,14 @@
                 <CheckBox Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="5" Content="Preferred Cover" 
                           IsChecked="{Binding Path=PreferredCover}" IsEnabled="{Binding Path=CurrentImage.IsImage}"/>
                 <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
-                    <Button Content="RL" Margin="0,3" Command="{Binding Path=CurrentImage.RotateLeft}"/>
-                    <Button Content="RR" Margin="5,3" Command="{Binding Path=CurrentImage.RotateRight}"/>
+                    <Button Content="{StaticResource Path_RotateCCW}" Height="17" Padding="1" Margin="0,3" ToolTip="Rotate Image CCW"
+                            Command="{Binding Path=CurrentImage.RotateLeft}"/>
+                    <Button Content="{StaticResource Path_RotateCW}" Height="17" Padding="1" Margin="5,3" ToolTip="Rotate Image CW"
+                            Command="{Binding Path=CurrentImage.RotateRight}"/>
                 </StackPanel>
 
-                <CheckBox x:Name="chkActualSize" Grid.Row="0" Grid.Column="4" HorizontalAlignment="Right" Margin="5" Content="Display Actual Size"/>
+                <CheckBox x:Name="chkActualSize" Grid.Row="0" Grid.Column="4" HorizontalAlignment="Right" Margin="5"
+                          Content="Display Actual Size" IsEnabled="{Binding Path=CurrentImage.IsImage}"/>
             </Grid>
         </Grid>
     </Grid>
