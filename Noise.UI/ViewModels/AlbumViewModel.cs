@@ -368,5 +368,20 @@ namespace Noise.UI.ViewModels {
 
 			return( retValue );
 		}
+
+		public void Execute_OpenAlbumFolder() {
+			if( mCurrentAlbum != null ) {
+				var path = mNoiseManager.DataProvider.GetAlbumPath( mCurrentAlbum.DbId );
+
+				if(!string.IsNullOrWhiteSpace( path )) {
+					mEvents.GetEvent<Events.LaunchRequest>().Publish( path );
+				}
+			}
+		}
+
+		[DependsUpon( "Album" )]
+		public bool CanExecute_OpenAlbumFolder() {
+			return( mCurrentAlbum != null );
+		}
 	}
 }

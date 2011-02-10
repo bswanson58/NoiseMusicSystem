@@ -35,6 +35,7 @@ namespace Noise.AppSupport {
 			mHotkeyManager.Initialize();
 
 			mEvents.GetEvent<Events.WebsiteRequest>().Subscribe( OnWebsiteRequested );
+			mEvents.GetEvent<Events.LaunchRequest>().Subscribe( OnLaunchRequest );
 		}
 
 		private void OnWebsiteRequested( string url ) {
@@ -50,6 +51,15 @@ namespace Noise.AppSupport {
 				catch( Exception ex ) {
 					mLog.LogException( "Exception - OnWebsiteRequested:", ex );
 				}
+			}
+		}
+
+		private void OnLaunchRequest( string path ) {
+			try {
+				System.Diagnostics.Process.Start( path );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - OnLaunchRequest:", ex );
 			}
 		}
 	}

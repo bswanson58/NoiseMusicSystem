@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
@@ -514,6 +515,95 @@ namespace Noise.Core.Database {
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetPhysicalFilePath:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
+		public string GetAlbumPath( long albumId ) {
+			var retValue = "";
+			var database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				var album = GetAlbum( albumId );
+
+				if( album != null ) {
+					using( var albumTracks = GetTrackList( album )) {
+						var trackList = albumTracks.List.Select( GetPhysicalFile );
+						var parentList = trackList.Select( track => track.ParentFolder ).Distinct();
+						var folderList = parentList.Select( GetStorageFolder );
+						var pathList = folderList.Select( folder => StorageHelpers.GetPath( database.Database, folder ));
+
+						retValue = FindCommonParent( pathList );
+					}
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetAlbumPath:", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
+		private static string FindCommonParent( IEnumerable<string> paths ) {
+			var retValue = "";
+			var pathList = paths.Where( path => !string.IsNullOrWhiteSpace( path )).ToList();
+
+			if( pathList.Count() > 0 ) {
+				if( pathList.Count() == 1 ) {
+					retValue = pathList.First();
+				}
+				else {
+					var match = true;
+					var index = 0;
+
+					retValue = pathList.First().Substring( 0, index + 1 );
+
+					while(( match ) &&
+						  ( index < pathList.First().Length )) {
+						var matchString = retValue;
+
+						match = pathList.All( path => path.StartsWith( matchString ));
+						index++;
+
+						if(( match ) &&
+						   ( index < pathList.First().Length )) {
+							retValue = pathList.First().Substring( 0, index + 1 );
+						}
+					}
+
+					if(!match ) {
+						var lastSlash = retValue.LastIndexOfAny( new [] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar, Path.VolumeSeparatorChar } );
+
+						if( lastSlash > 0 ) {
+							retValue = retValue.Substring( 0, lastSlash + 1 );
+						}
+					}
+				}
+			}
+
+			return( retValue );
+		}
+
+		private StorageFolder GetStorageFolder( long folderId ) {
+			StorageFolder	retValue = null;
+			var database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				var parms = database.Database.CreateParameters();
+
+				parms["folderId"] = folderId;
+
+				retValue = database.Database.ExecuteScalar( "SELECT StorageFolder WHERE DbId = @folderId", parms ) as StorageFolder;
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Exception - GetStorageFolder:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
