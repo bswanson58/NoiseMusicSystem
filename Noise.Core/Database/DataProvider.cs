@@ -376,6 +376,31 @@ namespace Noise.Core.Database {
 			}
 		}
 
+		public DataUpdateShell<DbArtwork> GetArtworkForUpdate( long artworkId ) {
+			DataUpdateShell<DbArtwork>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			if( database != null ) {
+				var parms = database.Database.CreateParameters();
+
+				parms["artworkId"] = artworkId;
+
+				retValue = new DataUpdateShell<DbArtwork>( database.DatabaseId, FreeDatabase, UpdateArtwork,
+														   database.Database.ExecuteScalar( "SELECT DbArtwork Where DbId = @artworkId", parms ) as DbArtwork );
+			}
+
+			return( retValue );
+		}
+
+
+		private void UpdateArtwork( string databaseId, DbArtwork artwork ) {
+			var database = mDatabaseManager.GetDatabase( databaseId );
+
+			if( database != null ) {
+				database.Store( artwork );
+			}
+		}
+
 		public DbTrack GetTrack( long trackId ) {
 			DbTrack	retValue = null;
 			var database = mDatabaseManager.ReserveDatabase();

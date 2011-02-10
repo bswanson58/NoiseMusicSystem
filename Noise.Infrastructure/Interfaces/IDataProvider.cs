@@ -40,6 +40,8 @@ namespace Noise.Infrastructure.Interfaces {
 		ArtistSupportInfo			GetArtistSupportInfo( long artistId );
 		AlbumSupportInfo			GetAlbumSupportInfo( long albumId );
 
+		DataUpdateShell<DbArtwork>	GetArtworkForUpdate( long artworkId );
+
 		void						UpdateArtistInfo( long artistId );
 
 		void						StoreLyric( DbLyric lyric );

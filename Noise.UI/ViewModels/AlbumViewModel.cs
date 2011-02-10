@@ -169,7 +169,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private ImageScrubberItem SelectAlbumCover( AlbumSupportInfo info ) {
-			var	retValue = new ImageScrubberItem( 0, mUnknownImage );
+			var	retValue = new ImageScrubberItem( 0, mUnknownImage, 0 );
 
 			if( info != null ) {
 				if(( info.AlbumCovers != null ) &&
@@ -180,13 +180,13 @@ namespace Noise.UI.ViewModels {
 								SupportInfo.AlbumCovers[0];
 
 					if( cover != null ) {
-						retValue = new ImageScrubberItem( cover.DbId, CreateBitmap( cover.Image ));
+						retValue = new ImageScrubberItem( cover.DbId, CreateBitmap( cover.Image ), 0 );
 					}
 				}
 				else {
 					if(( info.Artwork != null ) &&
-						( info.Artwork.GetLength( 0 ) > 0 )) {
-						retValue = new ImageScrubberItem( 1, mSelectImage );
+					   ( info.Artwork.GetLength( 0 ) > 0 )) {
+						retValue = new ImageScrubberItem( 1, mSelectImage, 0 );
 					}
 				}
 			}
@@ -272,8 +272,8 @@ namespace Noise.UI.ViewModels {
 
 				if(( SupportInfo != null ) &&
 				   ( SupportInfo.Artwork != null )) {
-					retValue.AddRange( SupportInfo.Artwork.Select( artwork => new ImageScrubberItem( artwork.DbId, CreateBitmap( artwork.Image ))));
-					retValue.AddRange( SupportInfo.AlbumCovers.Select( cover => new ImageScrubberItem( cover.DbId, CreateBitmap( cover.Image ))));
+					retValue.AddRange( SupportInfo.Artwork.Select( artwork => new ImageScrubberItem( artwork.DbId, CreateBitmap( artwork.Image ), 0 )));
+					retValue.AddRange( SupportInfo.AlbumCovers.Select( cover => new ImageScrubberItem( cover.DbId, CreateBitmap( cover.Image ), 0 )));
 				}
 
 				return( retValue );
@@ -329,8 +329,24 @@ namespace Noise.UI.ViewModels {
 		public void Execute_DisplayPictures() {
 			if( CanExecute_DisplayPictures()) {
 				var	dialogService = mContainer.Resolve<IDialogService>();
+				var vm = new AlbumArtworkViewModel( mContainer, mCurrentAlbum.DbId );
 
-				dialogService.ShowDialog( DialogNames.AlbumArtworkDisplay, new AlbumArtworkViewModel( mContainer, mCurrentAlbum.DbId ));
+				if( dialogService.ShowDialog( DialogNames.AlbumArtworkDisplay, vm ) == true ) {
+					foreach( var artwork in vm.AlbumImages ) {
+						if( artwork.IsDirty ) {
+							using( var update = mNoiseManager.DataProvider.GetArtworkForUpdate( artwork.Artwork.DbId )) {
+								if( artwork.Artwork.IsUserSelection ) {
+									AlbumCover = new ImageScrubberItem( artwork.Artwork.DbId, CreateBitmap( artwork.Artwork.Image ), 0 );
+
+									RaisePropertyChanged( () => AlbumCover );
+								}
+
+								// TODO: Update DbArtwork rotation field.
+								update.Update();
+							}
+						}
+					}
+				}
 			}
 		}
 

@@ -1,12 +1,14 @@
 ﻿using System.Windows.Media.Imaging;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Support;
 using Noise.UI.Support;
 
 namespace Noise.UI.Dto {
-	public class UiAlbumExtra {
+	public class UiAlbumExtra : ViewModelBase {
 		public	DbArtwork	Artwork { get; private set; }
 		public	DbTextInfo	TextInfo { get; private set; }
 		public	BitmapImage	Image { get; private set; }
+		public	bool		IsDirty { get; private set; }
 
 		public UiAlbumExtra( DbArtwork artwork ) {
 			Artwork = artwork;
@@ -38,6 +40,43 @@ namespace Noise.UI.Dto {
 
 				return( retValue );
 			}
+		}
+
+		public void SetPreferredImage() {
+			if( !Artwork.IsUserSelection ) {
+				Artwork.IsUserSelection = true;
+
+				IsDirty = true;
+			}
+		}
+
+		public int ImageRotation {
+			get{ return( Get( () => ImageRotation )); }
+			set {
+				Set( () => ImageRotation, value );
+
+				IsDirty = true;
+			}
+		}
+
+		public void Execute_RotateRight() {
+			var rotation = ImageRotation + 90;
+
+			ImageRotation = rotation < 360 ? rotation : rotation - 360;
+		}
+
+		public bool CanExecute_RotateRight() {
+			return( IsImage );
+		}
+
+		public void Execute_RotateLeft() {
+			var rotation = ImageRotation - 90;
+
+			ImageRotation = rotation > 0 ? rotation : rotation + 360;
+		}
+
+		public bool CanExecute_RotateLeft() {
+			return( IsImage );
 		}
 	}
 }

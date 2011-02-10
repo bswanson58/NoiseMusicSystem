@@ -43,7 +43,7 @@ namespace Noise.UI.ViewModels {
 
 			if( mAlbumInfo != null ) {
 				if( mAlbumInfo.AlbumCovers != null ) {
-					mAlbumImages.AddRange( from DbArtwork artwork in mAlbumInfo.AlbumCovers select new UiAlbumExtra( artwork ));
+					mAlbumImages.AddRange( from DbArtwork artwork in mAlbumInfo.AlbumCovers where !artwork.IsUserSelection select new UiAlbumExtra( artwork ));
 				}
 
 				if( mAlbumInfo.Artwork != null ) {
@@ -60,6 +60,20 @@ namespace Noise.UI.ViewModels {
 			}
 
 			mAlbumImages.ResumeNotification();
+		}
+
+		[DependsUpon("CurrentImage")]
+		public bool PreferredCover {
+			get{ return( CurrentImage != null && CurrentImage.Artwork != null ? CurrentImage.Artwork.IsUserSelection : false ); }
+			set {
+				if(( CurrentImage != null ) &&
+				   ( CurrentImage.Artwork != null ) &&
+				   ( value ) &&
+				   (!CurrentImage.Artwork.IsUserSelection )) {
+					AlbumImages.Where( image => image.Artwork.IsUserSelection = false );
+					CurrentImage.SetPreferredImage();
+				}
+			}
 		}
 
 		public UiAlbumExtra CurrentImage {

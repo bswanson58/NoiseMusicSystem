@@ -10,10 +10,12 @@ namespace Noise.UI.Behaviours {
 	public class ImageScrubberItem {
 		public long			Id { get; private set; }
 		public BitmapImage	Image { get; private set; }
+		public int			Rotation { get; private set; }
 
-		public ImageScrubberItem( long id, BitmapImage image ) {
+		public ImageScrubberItem( long id, BitmapImage image, int rotation ) {
 			Id = id;
 			Image = image;
+			Rotation = rotation;
 		}
 	}
 

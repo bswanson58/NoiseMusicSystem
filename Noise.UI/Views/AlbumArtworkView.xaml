@@ -28,8 +28,12 @@
                     </Style>
                 </ScrollViewer.Style>
                 <Grid>
-                    <Image VerticalAlignment="Center" HorizontalAlignment="Center" Source="{Binding CurrentImage.Image}" 
-                       Visibility="{Binding Path=CurrentImage.IsImage, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                    <Image VerticalAlignment="Center" HorizontalAlignment="Center" Source="{Binding CurrentImage.Image}"
+                           Visibility="{Binding Path=CurrentImage.IsImage, Converter={StaticResource BooleanVisibilityConverter}}" RenderTransformOrigin="0.5,0.5">
+                    	<Image.RenderTransform>
+                   			<RotateTransform Angle="{Binding Path=CurrentImage.ImageRotation}"/>
+                    	</Image.RenderTransform>
+                    </Image>
                     <TextBlock Text="{Binding Path=CurrentImage.Text}"
                                Visibility="{Binding Path=CurrentImage.IsText, Converter={StaticResource BooleanVisibilityConverter}}"/>
                 </Grid>
@@ -54,7 +58,16 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <CheckBox x:Name="chkActualSize" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right" Margin="5" Content="Display Actual Size"/>
+            <Grid Grid.Row="4" Grid.Column="1" Behaviours:GridUtils.ColumnDefinitions="Auto,1*,Auto,1*,Auto">
+                <CheckBox Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="5" Content="Preferred Cover" 
+                          IsChecked="{Binding Path=PreferredCover}" IsEnabled="{Binding Path=CurrentImage.IsImage}"/>
+                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+                    <Button Content="RL" Margin="0,3" Command="{Binding Path=CurrentImage.RotateLeft}"/>
+                    <Button Content="RR" Margin="5,3" Command="{Binding Path=CurrentImage.RotateRight}"/>
+                </StackPanel>
+            
+                <CheckBox x:Name="chkActualSize" Grid.Row="0" Grid.Column="4" HorizontalAlignment="Right" Margin="5" Content="Display Actual Size"/>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>
