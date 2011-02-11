@@ -11,6 +11,7 @@
 
     <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Play History " Margin="0">
         <ListView ItemsSource="{Binding Path=HistoryList}" BorderThickness="0"
+                  Behaviours:GridViewSort.AutoSort="True"
                   Behaviours:ListViewColumns.Stretch="true">
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
@@ -31,7 +32,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Track Name">
+                    <GridViewColumn Header="Track Name"  Behaviours:GridViewSort.PropertyName="Track.Name">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -45,14 +46,14 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Last Played" Width="140">
+                    <GridViewColumn Header="Last Played" Width="140"  Behaviours:GridViewSort.PropertyName="PlayedOn">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=PlayedOn, Converter={StaticResource RelativeTimeConverter}}" TextAlignment="Right" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Play Count" Width="80">
+                    <GridViewColumn Header="Play Count" Width="90"  Behaviours:GridViewSort.PropertyName="Track.PlayCount">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=Track.PlayCount}" TextAlignment="Right" />
