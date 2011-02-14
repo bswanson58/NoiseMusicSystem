@@ -5,6 +5,7 @@
     <ValueConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
     <ValueConverters:EmptyStringVisibilityConverter x:Key="EmptyStringVisibilityConverter"/>
     <ValueConverters:ByteImageConverter x:Key="ByteImageConverter" />
+    <ValueConverters:LevelConverter x:Key="LevelConverter"/>
     <ValueConverters:NumericTextMultitudeConverter x:Key="NumericTextMultitudeConverter"/>
     <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter"/>
     <ValueConverters:RelativeTimeConverter x:Key="RelativeTimeConverter"/>

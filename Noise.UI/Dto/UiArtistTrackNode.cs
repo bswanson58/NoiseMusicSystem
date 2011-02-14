@@ -4,6 +4,7 @@ namespace Noise.UI.Dto {
 	public class UiArtistTrackNode : ViewModelBase {
 		public	UiAlbum		Album { get; private set; }
 		public	UiTrack		Track { get; private set; }
+		public	int			Level { get; set; }
 
 		public	ObservableCollectionEx<UiArtistTrackNode>	Children { get; private set; }
 
@@ -15,7 +16,7 @@ namespace Noise.UI.Dto {
 		}
 
 		public string AlbumName {
-			get { return( Children.Count > 0 ? "(Multiple)" : Album.Name ); }
+			get { return( Children.Count > 0 ? " (multiple albums)" : Album.Name ); }
 		}
 	}
 }

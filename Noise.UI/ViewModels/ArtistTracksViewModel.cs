@@ -92,9 +92,13 @@ namespace Noise.UI.ViewModels {
 							if( trackSet.ContainsKey( item.Track.Name )) {
 								var parent = trackSet[item.Track.Name];
 
+								if( parent.Children.Count == 0 ) {
+									parent.Children.Add( new UiArtistTrackNode( parent.Track, parent.Album ));
+								}
 								parent.Children.Add( item );
 							}
 							else {
+								item.Level = 1;
 								trackSet.Add( item.Track.Name, item );
 							}
 						}
