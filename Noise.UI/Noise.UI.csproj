@@ -187,6 +187,7 @@
     <Compile Include="Dto\UiAlbumExtra.cs" />
     <Compile Include="Dto\UiAlbumTreeNode.cs" />
     <Compile Include="Dto\UiArtist.cs" />
+    <Compile Include="Dto\UiArtistTrackNode.cs" />
     <Compile Include="Dto\UiArtistTreeNode.cs" />
     <Compile Include="Dto\UiBase.cs" />
     <Compile Include="Dto\UiDecadeTreeNode.cs" />
