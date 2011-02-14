@@ -240,18 +240,22 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnArtistSelect( UiArtistTreeNode artistNode ) {
-			var artist = mNoiseManager.DataProvider.GetArtist( artistNode.Artist.DbId );
+			if( artistNode.IsSelected ) {
+				var artist = mNoiseManager.DataProvider.GetArtist( artistNode.Artist.DbId );
 
-			if( artist != null ) {
-				mEventAggregator.GetEvent<Events.ArtistFocusRequested>().Publish( artist );
+				if( artist != null ) {
+					mEventAggregator.GetEvent<Events.ArtistFocusRequested>().Publish( artist );
+				}
 			}
 		}
 
 		private void OnAlbumSelect( UiAlbumTreeNode albumNode ) {
-			var album = mNoiseManager.DataProvider.GetAlbum( albumNode.Album.DbId );
+			if( albumNode.IsSelected ) {
+				var album = mNoiseManager.DataProvider.GetAlbum( albumNode.Album.DbId );
 
-			if( album != null ) {
-				mEventAggregator.GetEvent<Events.AlbumFocusRequested>().Publish( album );
+				if( album != null ) {
+					mEventAggregator.GetEvent<Events.AlbumFocusRequested>().Publish( album );
+				}
 			}
 		}
 
