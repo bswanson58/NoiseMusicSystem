@@ -207,7 +207,7 @@ namespace Noise.UI.ViewModels {
 								SupportInfo.AlbumCovers[0];
 
 					if( cover != null ) {
-						retValue = new ImageScrubberItem( cover.DbId, CreateBitmap( cover.Image ), 0 );
+						retValue = new ImageScrubberItem( cover.DbId, CreateBitmap( cover.Image ), cover.Rotation );
 					}
 				}
 				else {
@@ -299,8 +299,8 @@ namespace Noise.UI.ViewModels {
 
 				if(( SupportInfo != null ) &&
 				   ( SupportInfo.Artwork != null )) {
-					retValue.AddRange( SupportInfo.Artwork.Select( artwork => new ImageScrubberItem( artwork.DbId, CreateBitmap( artwork.Image ), 0 )));
-					retValue.AddRange( SupportInfo.AlbumCovers.Select( cover => new ImageScrubberItem( cover.DbId, CreateBitmap( cover.Image ), 0 )));
+					retValue.AddRange( SupportInfo.Artwork.Select( artwork => new ImageScrubberItem( artwork.DbId, CreateBitmap( artwork.Image ), artwork.Rotation )));
+					retValue.AddRange( SupportInfo.AlbumCovers.Select( cover => new ImageScrubberItem( cover.DbId, CreateBitmap( cover.Image ), cover.Rotation )));
 				}
 
 				return( retValue );
@@ -363,7 +363,7 @@ namespace Noise.UI.ViewModels {
 						if( artwork.IsDirty ) {
 							using( var update = mNoiseManager.DataProvider.GetArtworkForUpdate( artwork.Artwork.DbId )) {
 								if( artwork.Artwork.IsUserSelection ) {
-									AlbumCover = new ImageScrubberItem( artwork.Artwork.DbId, CreateBitmap( artwork.Artwork.Image ), 0 );
+									AlbumCover = new ImageScrubberItem( artwork.Artwork.DbId, CreateBitmap( artwork.Artwork.Image ), artwork.Artwork.Rotation );
 
 									RaisePropertyChanged( () => AlbumCover );
 								}

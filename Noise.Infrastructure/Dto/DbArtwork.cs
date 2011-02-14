@@ -8,11 +8,13 @@ namespace Noise.Infrastructure.Dto {
 		public	byte[]			Image { get; set; }
 		public	bool			IsUserSelection { get; set; }
 		public	string			Name { get; set; }
+		public	Int16			Rotation { get; set; }
 
 		public DbArtwork( long associatedItem, ContentType contentType ) :
 			base( associatedItem, contentType ) {
 			Source = InfoSource.Unknown;
 			FolderLocation = Constants.cDatabaseNullOid;
+			Rotation = 0;
 		}
 
 		[Export("PersistenceType")]

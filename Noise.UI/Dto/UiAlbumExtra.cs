@@ -1,4 +1,5 @@
-﻿using System.Windows.Media.Imaging;
+﻿using System;
+using System.Windows.Media.Imaging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 using Noise.UI.Support;
@@ -55,9 +56,10 @@ namespace Noise.UI.Dto {
 		}
 
 		public int ImageRotation {
-			get{ return( Get( () => ImageRotation )); }
+			get{ return( Artwork.Rotation ); }
 			set {
 				Set( () => ImageRotation, value );
+				Artwork.Rotation = (Int16)value;
 
 				IsDirty = true;
 			}

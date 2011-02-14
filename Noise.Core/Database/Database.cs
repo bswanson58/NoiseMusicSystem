@@ -13,7 +13,7 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.Database {
 	public class EloqueraDatabase : IDatabase {
 		private const UInt16				cDatabaseVersionMajor = 0;
-		private const UInt16				cDatabaseVersionMinor = 4;
+		private const UInt16				cDatabaseVersionMinor = 5;
 
 		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEventAggregator;
