@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using AutoMapper;
+using Microsoft.Practices.Prism;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
@@ -32,18 +33,22 @@ namespace Noise.UI.ViewModels {
 		}
 	}
 
-	internal class AlbumViewModel : ViewModelBase {
+	internal class AlbumViewModel : ViewModelBase, IActiveAware {
 		private IUnityContainer				mContainer;
 		private IEventAggregator			mEvents;
 		private INoiseManager				mNoiseManager;
 		private UiAlbum						mCurrentAlbum;
+		private DbAlbum						mRequestedAlbum;
 		private readonly BitmapImage		mUnknownImage;
 		private readonly BitmapImage		mSelectImage;
 		private ImageScrubberItem			mCurrentAlbumCover;
 		public	TimeSpan					AlbumPlayTime { get; private set; }
+		private bool						mIsActive;
 		private readonly Observal.Observer	mChangeObserver;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<UiTrack>	mTracks;
+
+		public	event EventHandler			IsActiveChanged;
 
 		public AlbumViewModel() {
 			mTracks = new ObservableCollectionEx<UiTrack>();
@@ -71,6 +76,20 @@ namespace Noise.UI.ViewModels {
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
 				mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
 				mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
+			}
+		}
+
+		public bool IsActive {
+			get { return( mIsActive ); }
+			set {
+				mIsActive = value;
+
+				if( mIsActive ) {
+					UpdateAlbum( mRequestedAlbum );
+				}
+				else {
+					SetCurrentAlbum( new NewAlbumInfo());
+				}
 			}
 		}
 
@@ -140,16 +159,24 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnAlbumFocus( DbAlbum album ) {
+			mRequestedAlbum = album;
+
 			if( album == null ) {
 				SetCurrentAlbum( new NewAlbumInfo());
 			}
 			else {
 				if(( mCurrentAlbum == null ) ||
 				   ( mCurrentAlbum.DbId != album.DbId )) {
-					if(!mBackgroundWorker.IsBusy ) {
-						mBackgroundWorker.RunWorkerAsync( album );
-					}
+					UpdateAlbum( album );
 				}
+			}
+		}
+
+		private void UpdateAlbum( DbAlbum album ) {
+			if(( album != null ) &&
+			   ( mIsActive ) &&
+			   (!mBackgroundWorker.IsBusy )) {
+				mBackgroundWorker.RunWorkerAsync( album );
 			}
 		}
 
@@ -382,6 +409,10 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "Album" )]
 		public bool CanExecute_OpenAlbumFolder() {
 			return( mCurrentAlbum != null );
+		}
+
+		public void Execute_SwitchView() {
+			mEvents.GetEvent<Events.NavigationRequest>().Publish( new NavigationRequestArgs( ViewNames.AlbumView ));
 		}
 	}
 }

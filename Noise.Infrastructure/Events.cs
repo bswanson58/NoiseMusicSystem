@@ -28,6 +28,7 @@ namespace Noise.Infrastructure {
 
 		public class LaunchRequest : CompositePresentationEvent<string > { }
 		public class WebsiteRequest : CompositePresentationEvent<string> { }
+		public class NavigationRequest : CompositePresentationEvent<NavigationRequestArgs> { }
 
 		public class LibraryUpdateStarted : CompositePresentationEvent<long> { }
 		public class LibraryUpdateCompleted : CompositePresentationEvent<long> { }

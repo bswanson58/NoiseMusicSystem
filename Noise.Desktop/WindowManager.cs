@@ -10,6 +10,7 @@ using Microsoft.Practices.Unity;
 using Noise.Desktop.Properties;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Dto;
 using Noise.UI.Views;
 using Application = System.Windows.Application;
 
@@ -34,6 +35,7 @@ namespace Noise.Desktop {
 			mEvents.GetEvent<Events.ExternalPlayerSwitch>().Subscribe( OnExternalPlayerSwitch );
 			mEvents.GetEvent<Events.StandardPlayerRequest>().Subscribe( OnStandardPlayerRequest );
 			mEvents.GetEvent<Events.ExtendedPlayerRequest>().Subscribe( OnExtendedPlayerRequest );
+			mEvents.GetEvent<Events.NavigationRequest>().Subscribe( OnNavigationRequest );
 
 			mStoredWindowState = WindowState.Normal;
 			mNotifyIcon = new NotifyIcon { //BalloonTipText = "Click the tray icon to show.", 
@@ -79,6 +81,22 @@ namespace Noise.Desktop {
 						mLayoutManager.LoadLayout( forLayout );
 					}
 					break;
+			}
+		}
+
+		private void OnNavigationRequest( NavigationRequestArgs args ) {
+			var region = mRegionManager.Regions.FirstOrDefault( r => r.Name == "AlbumInfo" );
+
+			if( region != null ) {
+				switch( args.RequestingViewName ) {
+					case ViewNames.AlbumView:
+						region.RequestNavigate( ViewNames.ArtistTracksView );
+						break;
+
+					case ViewNames.ArtistTracksView:
+						region.RequestNavigate( ViewNames.AlbumView );
+						break;
+				}
 			}
 		}
 
