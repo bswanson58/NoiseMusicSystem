@@ -25,15 +25,21 @@
             <Border Grid.Row="0" BorderThickness="0" CornerRadius="5" Background="{DynamicResource TreeItemBackground}">
                 <Grid Behaviours:GridUtils.ColumnDefinitions="Auto,*,Auto">
                     <!-- Album cover image -->
-                    <Image Grid.Column="0" Margin="7" MaxHeight="200" MaxWidth="300" Stretch="Uniform" RenderTransformOrigin="0.5,0.5">
+                    <Viewbox Grid.Column="0" Margin="7" MaxHeight="200" MaxWidth="300" Stretch="Uniform">
+                    <Image RenderTransformOrigin="0.5,0.5">
                         <Image.RenderTransform>
-                            <RotateTransform Angle="{Binding Path=AlbumCover.Rotation}"/>
+                        	<TransformGroup>
+                        		<ScaleTransform/>
+                        		<SkewTransform/>
+                                <RotateTransform Angle="{Binding Path=AlbumCover.Rotation}"/>
+                        		<TranslateTransform X="{Binding Path=AlbumCover.ImageLeft}" Y="{Binding Path=AlbumCover.ImageTop}"/>
+                        	</TransformGroup>
                         </Image.RenderTransform>
                         <i:Interaction.Behaviors>
                             <Behaviours:ImageScrubber ImageList="{Binding Path=AlbumArtwork}" Image="{Binding Path=AlbumCover, Mode=TwoWay}" />
                         </i:Interaction.Behaviors>
                     </Image>
-                    
+                    </Viewbox>
                     <Grid Grid.Column="2" Margin="3,0,25,0" Behaviours:GridUtils.RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto">
                         <!-- Album name and Play button -->
                         <Grid Grid.Row="0" Margin="0,0,0,9" HorizontalAlignment="Right" Behaviours:GridUtils.ColumnDefinitions="Auto,Auto">

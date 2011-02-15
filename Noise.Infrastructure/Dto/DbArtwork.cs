@@ -14,6 +14,7 @@ namespace Noise.Infrastructure.Dto {
 			base( associatedItem, contentType ) {
 			Source = InfoSource.Unknown;
 			FolderLocation = Constants.cDatabaseNullOid;
+			IsUserSelection = false;
 			Rotation = 0;
 		}
 

@@ -368,7 +368,7 @@ namespace Noise.UI.ViewModels {
 									RaisePropertyChanged( () => AlbumCover );
 								}
 
-								// TODO: Update DbArtwork rotation field.
+								update.Item.Rotation = artwork.Artwork.Rotation;
 								update.Update();
 							}
 						}

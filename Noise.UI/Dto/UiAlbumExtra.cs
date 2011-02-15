@@ -48,7 +48,8 @@ namespace Noise.UI.Dto {
 		}
 
 		public void SetPreferredImage() {
-			if( !Artwork.IsUserSelection ) {
+			if(( Artwork != null ) &&
+			   (!Artwork.IsUserSelection )) {
 				Artwork.IsUserSelection = true;
 
 				IsDirty = true;
@@ -56,12 +57,14 @@ namespace Noise.UI.Dto {
 		}
 
 		public int ImageRotation {
-			get{ return( Artwork.Rotation ); }
+			get{ return( Artwork != null ? Artwork.Rotation : 0 ); }
 			set {
-				Set( () => ImageRotation, value );
-				Artwork.Rotation = (Int16)value;
+				if( Artwork != null ) {
+					Artwork.Rotation = (Int16)value;
 
-				IsDirty = true;
+					IsDirty = true;
+					Set( () => ImageRotation, value );
+				}
 			}
 		}
 

@@ -11,11 +11,23 @@ namespace Noise.UI.Behaviours {
 		public long			Id { get; private set; }
 		public BitmapImage	Image { get; private set; }
 		public int			Rotation { get; private set; }
+		public double		ImageLeft { get; private set; }
+		public double		ImageTop { get; private set; }
 
 		public ImageScrubberItem( long id, BitmapImage image, int rotation ) {
 			Id = id;
 			Image = image;
 			Rotation = rotation;
+
+			if(( Rotation == 90 ) ||
+			   ( Rotation == 270 )) {
+				ImageTop = ( Image.Width - Image.Height ) / 2;
+				ImageLeft = ( Image.Height - Image.Width ) / 2;
+			}
+			else {
+				ImageTop = 0.0;
+				ImageLeft = 0.0;
+			}
 		}
 	}
 
