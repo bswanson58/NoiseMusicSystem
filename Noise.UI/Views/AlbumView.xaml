@@ -17,7 +17,7 @@
         <GroupBox.Header>
             <StackPanel Orientation="Horizontal">
                 <Button Content="{StaticResource Path_SwitchView}" Height="19" Width="23" Margin="3,0,0,2" Command="{Binding Path=SwitchView}"/>
-                <TextBlock Margin="5,0" Text="Album"/>
+                <TextBlock Margin="5,0,3,2" Text="Album" VerticalAlignment="Center"/>
             </StackPanel>
         </GroupBox.Header>
         <Grid Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}"

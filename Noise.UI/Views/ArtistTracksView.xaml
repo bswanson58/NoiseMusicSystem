@@ -18,7 +18,7 @@
         <GroupBox.Header>
             <StackPanel Orientation="Horizontal">
                 <Button Content="{StaticResource Path_SwitchView}" Height="19" Width="23" Margin="3,0,0,2" Command="{Binding Path=SwitchView}"/>
-                <TextBlock Margin="5,0" Text="Tracks"/>
+                <TextBlock Margin="5,0,3,2" Text="Tracks" VerticalAlignment="Center"/>
             </StackPanel>
         </GroupBox.Header>
 
