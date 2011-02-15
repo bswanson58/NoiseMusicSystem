@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Dto="clr-namespace:Noise.UI.Dto" xmlns:sys="clr-namespace:System;assembly=mscorlib" mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="600">
 
     <UserControl.DataContext>
         <Binding Path="ArtistTracksViewModel" Source="{StaticResource ViewModelLocator}"/>
@@ -17,14 +17,15 @@
     <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Margin="0">
         <GroupBox.Header>
             <StackPanel Orientation="Horizontal">
-                <Button Content="{StaticResource Path_SwitchView}" Height="19" Width="21" Margin="0,0,0,2" Command="{Binding Path=SwitchView}"/>
+                <Button Content="{StaticResource Path_SwitchView}" Height="19" Width="23" Margin="3,0,0,2" Command="{Binding Path=SwitchView}"/>
                 <TextBlock Margin="5,0" Text="Tracks"/>
             </StackPanel>
         </GroupBox.Header>
 
-        <Grid>
+        <Grid Visibility="{Binding Path=TracksValid, Converter={StaticResource BooleanVisibilityConverter}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             
@@ -77,12 +78,17 @@
                                     <ColumnDefinition SharedSizeGroup="playColumn" Width="27"/>
                                     <ColumnDefinition SharedSizeGroup="trackNameColumn" MinWidth="300"/>
                                     <ColumnDefinition/>
-                                    <ColumnDefinition SharedSizeGroup="albumNameColumn"/>
+                                    <ColumnDefinition SharedSizeGroup="albumNameColumn" MinWidth="300"/>
                                 </Grid.ColumnDefinitions>
                                 
-                                <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="WebDings" Text="4"/>
-                                <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="Track Name"/>
-                                
+                                <Border Grid.Column="0" BorderThickness="1" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}">
+                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="WebDings" Text="4"/>
+                                </Border>
+
+                                <Border Grid.Column="1" Grid.ColumnSpan="2" BorderThickness="1" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" Margin="-1,0,0,0">
+                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="Track Name"/>
+                                </Border>
+
                                 <TreeViewItem Grid.Column="2">
                                     <TreeViewItem.Header>
                                         <TreeViewItem Name="treeViewItemToMeasure" Padding="0"/>
@@ -96,8 +102,10 @@
                                         </MultiBinding>
                                     </TreeViewItem.Width>
                                 </TreeViewItem>
-                                
-                                <TextBlock Grid.Column="3" VerticalAlignment="Center" Text="Album Name"/>
+
+                                <Border Grid.Column="3" BorderThickness="1" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" Margin="-1,0,0,0">
+                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="Album Name"/>
+                                </Border>
                             </Grid>
                         </TreeViewItem.Header>
                     </TreeViewItem>
@@ -106,12 +114,17 @@
                 <!-- Tree view that will display hierarchical data rows -->
                 <TreeView Grid.Row="1" BorderThickness="0" ItemsSource="{Binding Path=TrackList}"/>
             </Grid>
+
+            <StackPanel Grid.Row="1" Orientation="Vertical" Margin="5,5,5,3">
+                <Rectangle StrokeThickness="0" Fill="{DynamicResource TrimColor}" Height="1"/>
+                <Rectangle StrokeThickness="0" Fill="LightGray" Height="1"/>
+            </StackPanel>
             
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,23,0">
-                <TextBlock Text="{Binding Path=UniqueTrackCount}"/>
-                <TextBlock Text=" unique tracks from "/>
-                <TextBlock Text="{Binding Path=AlbumCount}"/>
-                <TextBlock Text=" albums."/>
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,23,0">
+                <TextBlock Foreground="{DynamicResource ControlTextColor}" Text="{Binding Path=UniqueTrackCount}"/>
+                <TextBlock Foreground="{DynamicResource ControlTextColor}" Text=" unique tracks from "/>
+                <TextBlock Foreground="{DynamicResource ControlTextColor}" Text="{Binding Path=AlbumCount}"/>
+                <TextBlock Foreground="{DynamicResource ControlTextColor}" Text=" albums."/>
             </StackPanel>
         </Grid>
     </GroupBox>

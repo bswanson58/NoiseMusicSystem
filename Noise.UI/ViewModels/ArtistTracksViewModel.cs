@@ -30,6 +30,8 @@ namespace Noise.UI.ViewModels {
 			mBackgroundWorker = new BackgroundWorker();
 			mBackgroundWorker.DoWork += ( o, args ) => args.Result = BuildTrackList( args.Argument as DbArtist );
 			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => SetTrackList( result.Result as IEnumerable<UiArtistTrackNode>);
+
+			TracksValid = false;
 		}
 
 		[Dependency]
@@ -59,6 +61,11 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public bool TracksValid {
+			get{ return( Get( () => TracksValid )); }
+			set{ Set( () => TracksValid, value ); }
+		}
+
 		private void OnArtistFocus( DbArtist artist ) {
 			if(( mCurrentArtist != null ) &&
 			   ( artist != null )) {
@@ -73,6 +80,8 @@ namespace Noise.UI.ViewModels {
 
 		private void UpdateTrackList( DbArtist artist ) {
 			mCurrentArtist = artist;
+
+			TracksValid = false;
 
 			if(( mCurrentArtist != null ) &&
 			  (!mBackgroundWorker.IsBusy ) &&
@@ -131,6 +140,7 @@ namespace Noise.UI.ViewModels {
 			TrackList.ResumeNotification();
 
 			RaisePropertyChanged( () => UniqueTrackCount );
+			TracksValid = true;
 		}
 
 		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {
@@ -151,7 +161,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackPlay( long trackId ) {
-			
+			GlobalCommands.PlayTrack.Execute( mNoiseManager.DataProvider.GetTrack( trackId ));
 		}
 
 		public void Execute_SwitchView() {
