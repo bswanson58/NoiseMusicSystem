@@ -16,7 +16,19 @@ namespace Noise.UI.Dto {
 		}
 
 		public string AlbumName {
-			get { return( Children.Count > 0 ? " (multiple albums)" : Album.Name ); }
+			get { return( Children.Count > 0 ? " (multiple albums - expand to select)" : Album.Name ); }
+		}
+
+		public void Execute_Play() {
+			Track.Execute_Play();
+		}
+
+		public bool CanExecute_Play() {
+			return( IsPlayable );
+		}
+
+		public bool IsPlayable {
+			get{ return( Children.Count == 0 ); }
 		}
 	}
 }

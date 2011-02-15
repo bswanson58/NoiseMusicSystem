@@ -81,8 +81,19 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public int UniqueTrackCount {
+			get{ return( TrackList.Count ); }
+		}
+
+		public int AlbumCount {
+			get{ return( Get( () => AlbumCount )); }
+			set{ Set( () => AlbumCount, value ); }
+		}
+
 		private IEnumerable<UiArtistTrackNode> BuildTrackList( DbArtist forArtist ) {
 			var trackSet = new Dictionary<string, UiArtistTrackNode>();
+			int	albumCount = 0;
+
 			using( var albumList = mNoiseManager.DataProvider.GetAlbumList( forArtist.DbId )) {
 				foreach( var album in albumList.List ) {
 					using( var trackList = mNoiseManager.DataProvider.GetTrackList( album.DbId )) {
@@ -103,8 +114,12 @@ namespace Noise.UI.ViewModels {
 							}
 						}
 					}
+
+					albumCount++;
 				}
 			}
+
+			AlbumCount = albumCount;
 
 			return( trackSet.Values );
 		}
@@ -114,6 +129,8 @@ namespace Noise.UI.ViewModels {
 			TrackList.Clear();
 			TrackList.AddRange( from node in list orderby node.Track.Name ascending select node );
 			TrackList.ResumeNotification();
+
+			RaisePropertyChanged( () => UniqueTrackCount );
 		}
 
 		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {

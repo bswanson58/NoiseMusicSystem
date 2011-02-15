@@ -48,7 +48,7 @@ namespace Noise.UI.Dto {
 			}
 		}
 
-		public void Execute_Play( object sender ) {
+		public void Execute_Play() {
 			if( mPlayAction != null ) {
 				mPlayAction( DbId );
 			}

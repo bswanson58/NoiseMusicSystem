@@ -6,10 +6,14 @@ using System.Windows.Data;
 namespace Noise.UI.ValueConverters {
 	public class LevelConverter : DependencyObject, IMultiValueConverter {
 		public object Convert( object[] values, Type targetType, object parameter, CultureInfo culture ) {
-			var retValue = 1.0;
+			var retValue = 0.0;
+			var level = 0;
 
 			if( values[0] is int ) {
-				var	level = (int)values[0];
+				level = (int)values[0];
+			}
+
+			if( values[1] is double ) {
 				var	indent = (double)values[1];
 
 				retValue = indent * level;

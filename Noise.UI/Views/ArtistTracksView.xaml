@@ -3,13 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Dto="clr-namespace:Noise.UI.Dto" 
-             mc:Ignorable="d"
+             xmlns:Dto="clr-namespace:Noise.UI.Dto" xmlns:sys="clr-namespace:System;assembly=mscorlib" mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 
     <UserControl.DataContext>
         <Binding Path="ArtistTracksViewModel" Source="{StaticResource ViewModelLocator}"/>
     </UserControl.DataContext>
+    
+    <UserControl.Resources>
+        <sys:Int32 x:Key="valueOfOne">1</sys:Int32>
+    </UserControl.Resources>
 
     <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Margin="0">
         <GroupBox.Header>
@@ -20,7 +23,12 @@
         </GroupBox.Header>
 
         <Grid>
-            <Grid Grid.IsSharedSizeScope="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <Grid Grid.Row="0" Grid.IsSharedSizeScope="True">
                 <Grid.RowDefinitions>
                     <!-- Header row -->
                     <RowDefinition Height="Auto" />
@@ -34,13 +42,19 @@
                         <Grid>
                             <!-- All column widths are shared except for column 1 which is sized to compensate for different indentation at each level -->
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition SharedSizeGroup="rowHeaderColumn"/>
+                                <ColumnDefinition SharedSizeGroup="playColumn"/>
+                                <ColumnDefinition SharedSizeGroup="trackNameColumn"/>
                                 <ColumnDefinition/>
-                                <ColumnDefinition SharedSizeGroup="column1"/>
+                                <ColumnDefinition SharedSizeGroup="albumNameColumn"/>
                             </Grid.ColumnDefinitions>
+
+                            <Button Grid.Column="0" Command="{Binding Path=Play}" Margin="0,2"
+                                    Visibility="{Binding Path=IsPlayable, Converter={StaticResource BooleanVisibilityConverter}}"
+                                    Style="{StaticResource PlayButtonStyle}"/>
                             
-                            <TextBlock Grid.Column="0" Text="{Binding Path=Track.Name}"/>
-                            <Rectangle Grid.Column="1">
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=Track.Name}"/>
+                            
+                            <Rectangle Grid.Column="2">
                                 <Rectangle.Width>
                                     <MultiBinding Converter="{StaticResource LevelConverter}">
                                         <Binding Path="Level"/>
@@ -48,24 +62,28 @@
                                     </MultiBinding>
                                 </Rectangle.Width>
                             </Rectangle>
-                            <TextBlock Grid.Column="2" Text="{Binding Path=AlbumName}"/>
-                            <TextBlock Grid.Column="3" Text=""/>
+                            
+                            <TextBlock Grid.Column="3" VerticalAlignment="Center" Text="{Binding Path=AlbumName}"/>
                         </Grid>
                     </HierarchicalDataTemplate>
                 </Grid.Resources>
 
                 <!-- Tree view with one item for the header row -->
-                <TreeView BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <TreeView Grid.Row="0" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <TreeViewItem>
                         <TreeViewItem.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition SharedSizeGroup="rowHeaderColumn"/>
+                                    <ColumnDefinition SharedSizeGroup="playColumn" Width="27"/>
+                                    <ColumnDefinition SharedSizeGroup="trackNameColumn" MinWidth="300"/>
                                     <ColumnDefinition/>
-                                    <ColumnDefinition SharedSizeGroup="column1"/>
+                                    <ColumnDefinition SharedSizeGroup="albumNameColumn"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="Track Name"/>
-                                <TreeViewItem Grid.Column="1">
+                                
+                                <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="WebDings" Text="4"/>
+                                <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="Track Name"/>
+                                
+                                <TreeViewItem Grid.Column="2">
                                     <TreeViewItem.Header>
                                         <TreeViewItem Name="treeViewItemToMeasure" Padding="0"/>
                                     </TreeViewItem.Header>
@@ -73,12 +91,13 @@
                                     <!-- Set the width of Column 1 to the same width as the top level in the data -->
                                     <TreeViewItem.Width>
                                         <MultiBinding Converter="{StaticResource LevelConverter}">
-                                            <Binding Path="Level"/>
+                                            <Binding Source="{StaticResource valueOfOne}" />
                                             <Binding ElementName="treeViewItemToMeasure" Path="ActualWidth"/>
                                         </MultiBinding>
                                     </TreeViewItem.Width>
                                 </TreeViewItem>
-                                <TextBlock Grid.Column="2" Text="Album Name"/>
+                                
+                                <TextBlock Grid.Column="3" VerticalAlignment="Center" Text="Album Name"/>
                             </Grid>
                         </TreeViewItem.Header>
                     </TreeViewItem>
@@ -87,6 +106,13 @@
                 <!-- Tree view that will display hierarchical data rows -->
                 <TreeView Grid.Row="1" BorderThickness="0" ItemsSource="{Binding Path=TrackList}"/>
             </Grid>
+            
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,23,0">
+                <TextBlock Text="{Binding Path=UniqueTrackCount}"/>
+                <TextBlock Text=" unique tracks from "/>
+                <TextBlock Text="{Binding Path=AlbumCount}"/>
+                <TextBlock Text=" albums."/>
+            </StackPanel>
         </Grid>
     </GroupBox>
 </UserControl>
