@@ -84,8 +84,14 @@
     						<Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.Column="1" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
     							<ContentPresenter x:Name="PART_Header" ContentSource="Header" HorizontalAlignment="Stretch" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
     						</Border>
-    						<ItemsPresenter x:Name="ItemsHost" Grid.Column="1" Grid.Row="1"/>
-    					</Grid>
+
+                            <Grid Grid.Row="1" Grid.Column="1">
+                                <Behaviours:Reveal HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                   VerticalReveal="FromTopToBottom" IsExpanded="{TemplateBinding IsExpanded}">
+                                    <ItemsPresenter x:Name="ItemsHost" Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}"/>
+                                </Behaviours:Reveal>
+                            </Grid>
+                        </Grid>
     					<ControlTemplate.Triggers>
     						<Trigger Property="IsExpanded" Value="false">
     							<Setter Property="Visibility" TargetName="ItemsHost" Value="Collapsed"/>
