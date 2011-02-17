@@ -199,16 +199,30 @@ namespace Noise.UI.ViewModels {
 			var	retValue = new ImageScrubberItem( 0, mUnknownImage, 0 );
 
 			if( info != null ) {
-				if(( info.AlbumCovers != null ) &&
-					( info.AlbumCovers.GetLength( 0 ) > 0 )) {
-					var cover = (( from DbArtwork artwork in info.AlbumCovers where artwork.IsUserSelection select artwork ).FirstOrDefault() ??
-								 ( from DbArtwork artwork in info.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
-								 ( from DbArtwork artwork in info.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault()) ??
-								SupportInfo.AlbumCovers[0];
+				DbArtwork	cover = null;
 
-					if( cover != null ) {
-						retValue = new ImageScrubberItem( cover.DbId, CreateBitmap( cover.Image ), cover.Rotation );
+				if(( info.AlbumCovers != null ) &&
+				   ( info.AlbumCovers.GetLength( 0 ) > 0 )) {
+					cover = (( from DbArtwork artwork in info.AlbumCovers where artwork.IsUserSelection select artwork ).FirstOrDefault() ??
+							 ( from DbArtwork artwork in info.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
+							 ( from DbArtwork artwork in info.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault()) ??
+								SupportInfo.AlbumCovers[0];
+				}
+
+				if(( cover == null ) &&
+				   ( info.Artwork != null ) &&
+				   ( info.Artwork.GetLength( 0 ) > 0 )) {
+					cover = ( from DbArtwork artwork in info.Artwork
+							  where artwork.Name.IndexOf( "front", StringComparison.InvariantCultureIgnoreCase ) >= 0 select artwork ).FirstOrDefault();
+
+					if(( cover == null ) &&
+					   ( info.Artwork.GetLength( 0 ) == 1 )) {
+						cover = info.Artwork[0];
 					}
+				}
+
+				if( cover != null ) {
+					retValue = new ImageScrubberItem( cover.DbId, CreateBitmap( cover.Image ), cover.Rotation );
 				}
 				else {
 					if(( info.Artwork != null ) &&
