@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Data;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 
@@ -10,6 +12,8 @@ namespace Noise.UI.Dto {
 		private readonly Action<UiArtistTreeNode>	mChildFillAction;
 		private	bool								mRequiresChildren;
 		private readonly ObservableCollectionEx<UiAlbumTreeNode>	mChildren;
+
+		public	CollectionViewSource				ChildrenView { get; private set; }
 
 		public	UiArtist			Artist { get; private set; }
 		public	UiDecadeTreeNode	Parent { get; private set; }
@@ -30,6 +34,9 @@ namespace Noise.UI.Dto {
 
 			mChildren = new ObservableCollectionEx<UiAlbumTreeNode>();
 			mChildren.Add( new UiAlbumTreeNode( new UiAlbum { Name = "Loading album list..." }, null, null ));
+
+			ChildrenView = new CollectionViewSource { Source = mChildren };
+			ChildrenView.SortDescriptions.Add( new SortDescription( "Album.Name", ListSortDirection.Ascending ));
 		}
 
 		public ObservableCollectionEx<UiAlbumTreeNode> Children {

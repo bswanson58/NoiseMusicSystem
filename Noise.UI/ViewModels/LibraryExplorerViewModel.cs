@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
@@ -34,6 +36,8 @@ namespace Noise.UI.ViewModels {
 		private readonly ObservableCollectionEx<UiTreeNode>		mTreeItems;
 		private readonly ObservableCollectionEx<IndexNode>		mIndexItems;
 
+		public	CollectionViewSource			TreeViewSource { get; private set; }
+
 		[ImportMany( typeof( IExplorerViewStrategy ))]
 		public IEnumerable<IExplorerViewStrategy>	ViewStrategies {get; set; }
 
@@ -41,6 +45,9 @@ namespace Noise.UI.ViewModels {
 			mExplorerFilter = new LibraryExplorerFilter { IsEnabled = false };
 			mTreeItems = new ObservableCollectionEx<UiTreeNode>();
 			mIndexItems = new ObservableCollectionEx<IndexNode>();
+
+			TreeViewSource = new CollectionViewSource { Source = mTreeItems };
+			TreeViewSource.SortDescriptions.Add( new SortDescription( "Artist.SortName", ListSortDirection.Ascending ));
 
 			mPlayTrackDelay = new TimeSpan( 0, 0, 30 );
 			mLastExplorerRequest = DateTime.Now - mPlayTrackDelay;

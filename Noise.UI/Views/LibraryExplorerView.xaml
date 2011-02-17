@@ -170,7 +170,7 @@
     	</VisualStateManager.VisualStateGroups>
         <Grid Behaviours:GridUtils.RowDefinitions="*,Auto">
             <TreeView Grid.Row="0" BorderThickness="0" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"
-                  ItemsSource="{Binding TreeData}"
+                  ItemsSource="{Binding TreeViewSource.View}"
                   ItemTemplate="{Binding TreeViewItemTemplate}"
                   ItemContainerStyle="{DynamicResource TreeViewItemStyle}"
                   />

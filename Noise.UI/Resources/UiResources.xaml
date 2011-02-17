@@ -50,7 +50,7 @@
     </HierarchicalDataTemplate>
 
     <HierarchicalDataTemplate x:Key="ArtistAlbumTemplate" DataType="{x:Type Dto:UiArtistTreeNode}" 
-                              ItemTemplate="{StaticResource AlbumTemplate}" ItemsSource="{Binding Children}">
+                              ItemTemplate="{StaticResource AlbumTemplate}" ItemsSource="{Binding ChildrenView.View}">
         <Border Margin="0,1,0,2" CornerRadius="3" ContextMenu="{DynamicResource ArtistMenu}" Background="{DynamicResource TreeItemBackground}" BorderBrush="{DynamicResource ControlTextColor}">
             <Grid Margin="3,0,3,0">
                 <Grid.RowDefinitions>
