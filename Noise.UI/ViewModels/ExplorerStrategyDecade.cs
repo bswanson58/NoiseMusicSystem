@@ -14,6 +14,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Dto;
+using Noise.UI.Support;
 using Observal.Extensions;
 using Condition = CuttingEdge.Conditions.Condition;
 
@@ -35,9 +36,33 @@ namespace Noise.UI.ViewModels {
 		private IEnumerator<UiArtistTreeNode>	mTreeEnumerator;
 		private string							mLastSearchOptions;
 
+		private readonly IEnumerable<ViewSortStrategy>	mArtistSorts;
+		private ViewSortStrategy				mCurrentArtistSort;
+		private readonly Subject<ViewSortStrategy>		mArtistSortSubject;
+		private	IObservable<ViewSortStrategy>	ArtistSortChange { get { return( mArtistSortSubject.AsObservable()); }}
+		private readonly IEnumerable<ViewSortStrategy>	mAlbumSorts;
+		private ViewSortStrategy				mCurrentAlbumSort;
+		private readonly Subject<ViewSortStrategy>		mAlbumSortSubject;
+		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
+
 		public ExplorerStrategyDecade() {
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
+
+			var	strategies = new List<ViewSortStrategy> { new ViewSortStrategy( "Artist Name", new List<SortDescription> { new SortDescription( "Artist.Name", ListSortDirection.Ascending ) }),
+														  new ViewSortStrategy( "Unprefixed Artist Name", new List<SortDescription> { new SortDescription( "Artist.SortName", ListSortDirection.Ascending ) }),
+														  new ViewSortStrategy( "Genre", new List<SortDescription> { new SortDescription( "Artist.Genre", ListSortDirection.Ascending ),
+																												     new SortDescription( "Artist.SortName", ListSortDirection.Ascending )}) };
+			mArtistSorts = strategies;
+			mCurrentArtistSort = strategies[1];
+			mArtistSortSubject = new Subject<ViewSortStrategy>();
+
+			strategies = new List<ViewSortStrategy> { new ViewSortStrategy( "Album Name", new List<SortDescription> { new SortDescription( "Album.Name", ListSortDirection.Ascending ) } ),
+													  new ViewSortStrategy( "Published Year", new List<SortDescription> { new SortDescription( "Album.PublishedYear", ListSortDirection.Ascending ),
+																														  new SortDescription( "Album.Name", ListSortDirection.Ascending ) })};
+			mAlbumSorts = strategies;
+			mCurrentAlbumSort = strategies[1];
+			mAlbumSortSubject = new Subject<ViewSortStrategy>();
 		}
 
 		public void Initialize( IUnityContainer container, LibraryExplorerViewModel viewModel ) {
@@ -62,10 +87,6 @@ namespace Noise.UI.ViewModels {
 		public void UseSortPrefixes( bool enable, IEnumerable<string> sortPrefixes ) {
 			mUseSortPrefixes =enable;
 			mSortPrefixes = sortPrefixes;
-		}
-
-		public void ConfigureView() {
-			
 		}
 
 		public void Activate() {
@@ -116,7 +137,6 @@ namespace Noise.UI.ViewModels {
 
 								case DbItemChanged.Insert:
 									decadeNode.Children.Add( CreateArtistNode( artist, decadeNode ));
-									decadeNode.Children.Sort( node => node.Artist.SortName, ListSortDirection.Ascending );
 									break;
 
 								case DbItemChanged.Delete:
@@ -144,7 +164,6 @@ namespace Noise.UI.ViewModels {
 
 								if( uiAlbum != null ) {
 									UpdateUiAlbum( uiAlbum, dbAlbum );
-									treeNode.Children.Sort( node => node.Album.PublishedYear, ListSortDirection.Ascending );
 								}
 							}
 						}
@@ -160,8 +179,10 @@ namespace Noise.UI.ViewModels {
 
 			if( mNoiseManager.IsInitialized ) {
 				retValue.AddRange( from tag in mNoiseManager.TagManager.DecadeTagList
-								   select new UiDecadeTreeNode( tag, null, null, FillDecadeArtists, WebsiteRequest ));
-				retValue.Sort( ( node1, node2 ) => node2.Tag.StartYear.CompareTo( node1.Tag.StartYear )); // descending
+								   select new UiDecadeTreeNode( tag, null, null, FillDecadeArtists, WebsiteRequest, mCurrentArtistSort, ArtistSortChange ));
+
+				mViewModel.TreeViewSource.SortDescriptions.Clear();
+				mViewModel.TreeViewSource.SortDescriptions.Add( new SortDescription( "Tag.StartYear", ListSortDirection.Descending ));
 			}
 
 			return( retValue );
@@ -179,7 +200,7 @@ namespace Noise.UI.ViewModels {
 			                   select mNoiseManager.DataProvider.GetArtist( artistId )
 			                   into dbArtist where dbArtist != null select CreateArtistNode( dbArtist, decadeNode )).ToList();
 
-			childNodes.Sort( ( node1, node2 ) => string.Compare( node1.Artist.SortName, node2.Artist.SortName ));
+//			childNodes.Sort( ( node1, node2 ) => string.Compare( node1.Artist.SortName, node2.Artist.SortName ));
 			decadeNode.SetChildren( childNodes );
 		}
 
@@ -213,7 +234,29 @@ namespace Noise.UI.ViewModels {
 			UpdateUiArtist( uiArtist, dbArtist );
 			mChangeObserver.Add( uiArtist );
 
-			return( new UiArtistTreeNode( parent, uiArtist, OnArtistSelect, null, FillArtistAlbums, null, null ));
+			return( new UiArtistTreeNode( parent, uiArtist, OnArtistSelect, null, FillArtistAlbums, mCurrentAlbumSort, AlbumSortChange ));
+		}
+
+		public void ConfigureView() {
+			var dialogModel = new ArtistAlbumConfigViewModel( mArtistSorts, mCurrentArtistSort, mAlbumSorts, mCurrentAlbumSort );
+			var	dialogService = mContainer.Resolve<IDialogService>();
+
+			if( dialogService.ShowDialog( DialogNames.ArtistAlbumConfiguration, dialogModel ) == true ) {
+				SetArtistSorting( dialogModel.SelectedArtistSort );
+				SetAlbumSorting( dialogModel.SelectedAlbumSort );
+			}
+		}
+
+		private void SetArtistSorting( ViewSortStrategy strategy ) {
+			mCurrentArtistSort = strategy;
+
+			mArtistSortSubject.OnNext( mCurrentArtistSort );
+		}
+
+		private void SetAlbumSorting( ViewSortStrategy strategy ) {
+			mCurrentAlbumSort = strategy;
+
+			mAlbumSortSubject.OnNext( mCurrentAlbumSort );
 		}
 
 		private void UpdateUiArtist( UiArtist uiArtist, DbArtist artist ) {

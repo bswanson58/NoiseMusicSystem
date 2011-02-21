@@ -39,7 +39,9 @@ namespace Noise.UI.Dto {
 			ChildrenView.SortDescriptions.Add( new SortDescription( "Album.Name", ListSortDirection.Ascending ));
 
 			OnSortChanged( sortStrategy );
-			sortChanged.Subscribe( OnSortChanged );
+			if( sortChanged != null ) {
+				sortChanged.Subscribe( OnSortChanged );
+			}
 		}
 
 		public ObservableCollectionEx<UiAlbumTreeNode> Children {
@@ -58,8 +60,10 @@ namespace Noise.UI.Dto {
 		private void OnSortChanged( ViewSortStrategy strategy ) {
 			ChildrenView.SortDescriptions.Clear();
 
-			foreach( var sort in strategy.SortDescriptions ) {
-				ChildrenView.SortDescriptions.Add( sort );
+			if( strategy != null ) {
+				foreach( var sort in strategy.SortDescriptions ) {
+					ChildrenView.SortDescriptions.Add( sort );
+				}
 			}
 		}
 

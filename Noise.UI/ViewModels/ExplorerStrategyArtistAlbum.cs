@@ -55,7 +55,7 @@ namespace Noise.UI.ViewModels {
 			mCurrentArtistSort = strategies[1];
 
 			strategies = new List<ViewSortStrategy> { new ViewSortStrategy( "Album Name", new List<SortDescription> { new SortDescription( "Album.Name", ListSortDirection.Ascending ) } ),
-													  new ViewSortStrategy( "Published Year", new List<SortDescription> { new SortDescription( "Album.PublishedYear", ListSortDirection.Descending ),
+													  new ViewSortStrategy( "Published Year", new List<SortDescription> { new SortDescription( "Album.PublishedYear", ListSortDirection.Ascending ),
 																														  new SortDescription( "Album.Name", ListSortDirection.Ascending ) })};
 			mAlbumSorts = strategies;
 			mCurrentAlbumSort = strategies[0];

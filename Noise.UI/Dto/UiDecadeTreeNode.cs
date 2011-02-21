@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Data;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
@@ -12,13 +13,14 @@ namespace Noise.UI.Dto {
 		private readonly Action<UiDecadeTreeNode>		mChildFillAction;
 		private readonly Action<UiDecadeTreeNode>		mLinkAction;
 		private bool									mRequiresChildren;
-
 		private readonly ObservableCollectionEx<UiArtistTreeNode>	mChildren;
 
+		public	CollectionViewSource					ChildrenView { get; private set; }
 		public	LinkNode								DecadeWebsite { get; private set; }
 
 		public UiDecadeTreeNode( DbDecadeTag tag, Action<UiDecadeTreeNode> onSelect, Action<UiDecadeTreeNode> onExpand,
-												  Action<UiDecadeTreeNode> childFill, Action<UiDecadeTreeNode> linkAction ) {
+												  Action<UiDecadeTreeNode> childFill, Action<UiDecadeTreeNode> linkAction,
+												  ViewSortStrategy sortStrategy, IObservable<ViewSortStrategy> sortChanged ) {
 			mDecadeTag = tag;
 			mSelectAction = onSelect;
 			mExpandAction = onExpand;
@@ -26,11 +28,26 @@ namespace Noise.UI.Dto {
 			mChildFillAction = childFill;
 
 			mChildren = new ObservableCollectionEx<UiArtistTreeNode>();
+			ChildrenView = new CollectionViewSource { Source = mChildren };
+			OnSortChanged( sortStrategy );
+			if( sortChanged != null ) {
+				sortChanged.Subscribe( OnSortChanged );
+			}
 			mChildren.Add( new UiArtistTreeNode( null, new UiArtist { DisplayName = "Loading artist list..." }, null, null, null, null, null ));
 			mRequiresChildren = true;
 
 			if(!string.IsNullOrWhiteSpace( tag.Website )) {
 				DecadeWebsite = new LinkNode( "Decade Info", 0, OnLinkClick );
+			}
+		}
+
+		private void OnSortChanged( ViewSortStrategy strategy ) {
+			ChildrenView.SortDescriptions.Clear();
+
+			if( strategy != null ) {
+				foreach( var sort in strategy.SortDescriptions ) {
+					ChildrenView.SortDescriptions.Add( sort );
+				}
 			}
 		}
 
