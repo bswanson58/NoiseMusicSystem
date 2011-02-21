@@ -17,11 +17,13 @@ namespace Noise.UI.Dto {
 		public	CollectionViewSource	ChildrenView { get; private set; }
 
 		public UiArtistTreeNode( UiArtist artist,
-								 Action<UiArtistTreeNode> onSelect, Action<UiArtistTreeNode> onExpand, Action<UiArtistTreeNode> childFill ) :
-			this( null, artist, onSelect, onExpand, childFill ) { }
+								 Action<UiArtistTreeNode> onSelect, Action<UiArtistTreeNode> onExpand, Action<UiArtistTreeNode> childFill,
+								 ViewSortStrategy sortStrategy, IObservable<ViewSortStrategy> sortChanged ) :
+			this( null, artist, onSelect, onExpand, childFill, sortStrategy, sortChanged ) { }
 
 		public UiArtistTreeNode( UiDecadeTreeNode decadeNode, UiArtist artist,
-								 Action<UiArtistTreeNode> onSelect, Action<UiArtistTreeNode> onExpand, Action<UiArtistTreeNode> childFill ) {
+								 Action<UiArtistTreeNode> onSelect, Action<UiArtistTreeNode> onExpand, Action<UiArtistTreeNode> childFill,
+								 ViewSortStrategy sortStrategy, IObservable<ViewSortStrategy> sortChanged ) {
 			Parent = decadeNode;
 			Artist = artist;
 
@@ -35,6 +37,9 @@ namespace Noise.UI.Dto {
 
 			ChildrenView = new CollectionViewSource { Source = mChildren };
 			ChildrenView.SortDescriptions.Add( new SortDescription( "Album.Name", ListSortDirection.Ascending ));
+
+			OnSortChanged( sortStrategy );
+			sortChanged.Subscribe( OnSortChanged );
 		}
 
 		public ObservableCollectionEx<UiAlbumTreeNode> Children {
@@ -48,6 +53,14 @@ namespace Noise.UI.Dto {
 			mChildren.ResumeNotification();
 
 			mRequiresChildren = false;
+		}
+
+		private void OnSortChanged( ViewSortStrategy strategy ) {
+			ChildrenView.SortDescriptions.Clear();
+
+			foreach( var sort in strategy.SortDescriptions ) {
+				ChildrenView.SortDescriptions.Add( sort );
+			}
 		}
 
 		protected override void OnExpand() {

@@ -213,7 +213,7 @@ namespace Noise.UI.ViewModels {
 			UpdateUiArtist( uiArtist, dbArtist );
 			mChangeObserver.Add( uiArtist );
 
-			return( new UiArtistTreeNode( parent, uiArtist, OnArtistSelect, null, FillArtistAlbums ));
+			return( new UiArtistTreeNode( parent, uiArtist, OnArtistSelect, null, FillArtistAlbums, null, null ));
 		}
 
 		private void UpdateUiArtist( UiArtist uiArtist, DbArtist artist ) {

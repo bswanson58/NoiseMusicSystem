@@ -40,6 +40,8 @@ namespace Noise.UI.ViewModels {
 		private ViewSortStrategy				mCurrentArtistSort;
 		private readonly IEnumerable<ViewSortStrategy>	mAlbumSorts;
 		private ViewSortStrategy				mCurrentAlbumSort;
+		private readonly Subject<ViewSortStrategy>		mAlbumSortSubject;
+		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
 
 		public ExplorerStrategyArtistAlbum() {
 			mChangeObserver = new Observal.Observer();
@@ -57,6 +59,8 @@ namespace Noise.UI.ViewModels {
 																														  new SortDescription( "Album.Name", ListSortDirection.Ascending ) })};
 			mAlbumSorts = strategies;
 			mCurrentAlbumSort = strategies[0];
+
+			mAlbumSortSubject = new Subject<ViewSortStrategy>();
 		}
 
 		public void Initialize( IUnityContainer container, LibraryExplorerViewModel viewModel ) {
@@ -213,7 +217,7 @@ namespace Noise.UI.ViewModels {
 			var uiArtist = new UiArtist();
 			UpdateUiArtist( uiArtist, artist );
 
-			var parent = new UiArtistTreeNode( uiArtist, OnArtistSelect, null, FillChildren );
+			var parent = new UiArtistTreeNode( uiArtist, OnArtistSelect, null, FillChildren, mCurrentAlbumSort, AlbumSortChange );
 
 			if( mUseSortPrefixes ) {
 				FormatSortPrefix( uiArtist );
@@ -303,6 +307,8 @@ namespace Noise.UI.ViewModels {
 
 		private void SetAlbumSorting( ViewSortStrategy strategy ) {
 			mCurrentAlbumSort = strategy;
+
+			mAlbumSortSubject.OnNext( mCurrentAlbumSort );
 		}
 
 		public bool Search( string searchText, IEnumerable<string> searchOptions ) {
