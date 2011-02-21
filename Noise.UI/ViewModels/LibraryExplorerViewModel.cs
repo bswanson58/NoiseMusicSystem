@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
@@ -47,7 +46,6 @@ namespace Noise.UI.ViewModels {
 			mIndexItems = new ObservableCollectionEx<IndexNode>();
 
 			TreeViewSource = new CollectionViewSource { Source = mTreeItems };
-			TreeViewSource.SortDescriptions.Add( new SortDescription( "Artist.SortName", ListSortDirection.Ascending ));
 
 			mPlayTrackDelay = new TimeSpan( 0, 0, 30 );
 			mLastExplorerRequest = DateTime.Now - mPlayTrackDelay;
@@ -165,6 +163,16 @@ namespace Noise.UI.ViewModels {
 		public DataTemplate TreeViewItemTemplate {
 			get{ return( Get( () => TreeViewItemTemplate )); }
 			set{ Set( () => TreeViewItemTemplate, value ); }
+		}
+
+		public void Execute_ConfigureView() {
+			if( mViewStrategy != null ) {
+				mViewStrategy.ConfigureView();
+			}
+		}
+
+		public bool CanExecute_ConfigureView() {
+			return( true ); 
 		}
 
 		public string SearchText {

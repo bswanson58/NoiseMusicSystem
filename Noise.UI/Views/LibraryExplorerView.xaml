@@ -179,20 +179,23 @@
             <Controls:ExplorerStrategyList x:Name="StrategyList" Grid.Row="0" HorizontalAlignment="Left" Margin="60,0,0,0" Height="0" Opacity="0" VerticalAlignment="Bottom"/>
 
             <Border Grid.Row="1" BorderThickness="0" Margin="0,5,0,0">
-                <Grid Behaviours:GridUtils.ColumnDefinitions="Auto,Auto,*,Auto">
+                <Grid Behaviours:GridUtils.ColumnDefinitions="Auto,Auto,Auto,*,Auto">
                     <Button Grid.Column="0" Margin="3" Command="{Binding Path=ToggleIndexDisplay}">
                         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Margin="3,0,0,0" Text="Index"/>
-                            <TextBlock Margin="0,0,3,0" FontFamily="Webdings" Text="5" FontSize="16"/>
+                            <TextBlock Margin="3,0,0,0" Text="Index" Foreground="{DynamicResource ControlTextColor}"/>
+                            <TextBlock Margin="0,0,3,0" FontFamily="Webdings" Text="5" FontSize="16" Foreground="{DynamicResource ControlTextColor}"/>
                         </StackPanel>
                     </Button>
                     <Button Grid.Column="1" Margin="3" Command="{Binding Path=ToggleStrategyDisplay}">
                         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Margin="3,0,0,0" Text="View"/>
-                            <TextBlock Margin="0,0,3,0" FontFamily="Webdings" Text="5" FontSize="16"/>
+                            <TextBlock Margin="3,0,0,0" Text="View" Foreground="{DynamicResource ControlTextColor}"/>
+                            <TextBlock Margin="0,0,3,0" FontFamily="Webdings" Text="5" FontSize="16" Foreground="{DynamicResource ControlTextColor}"/>
                         </StackPanel>
                     </Button>
-                    <Grid Grid.Column="2" Margin="3" Behaviours:GridUtils.ColumnDefinitions="15,Auto,*,15">
+                    <Button Grid.Column="2" Margin="3" Height="23" Width="23" ToolTip="Configure View" Foreground="{DynamicResource ControlTextColor}"
+                            Content="{StaticResource Path_Configure}" Command="{Binding Path=ConfigureView}"/>
+                    
+                    <Grid Grid.Column="3" Margin="3" Behaviours:GridUtils.ColumnDefinitions="15,Auto,*,15">
                         <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="Search for: "/>
                         <Controls:SearchTextBox Grid.Column="2" VerticalAlignment="Center" LabelText="Search Library" 
                                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
@@ -203,7 +206,7 @@
                         </Controls:SearchTextBox>
                     </Grid>
 
-                    <Button Grid.Column="3" Margin="3" Command="{Binding Filter}" Content="Filter"/>
+                    <Button Grid.Column="4" Margin="3" Command="{Binding Filter}" Content="Filter" Foreground="{DynamicResource ControlTextColor}"/>
                 </Grid>
             </Border>
         </Grid>

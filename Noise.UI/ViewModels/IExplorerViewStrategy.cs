@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Input;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
@@ -21,5 +22,7 @@ namespace Noise.UI.ViewModels {
 
 		bool					Search( string searchText, IEnumerable<string> searchOptions );
 		void					ClearCurrentSearch();
+
+		void					ConfigureView();
 	}
 }

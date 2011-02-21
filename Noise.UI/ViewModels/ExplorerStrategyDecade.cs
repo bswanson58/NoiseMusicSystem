@@ -64,6 +64,10 @@ namespace Noise.UI.ViewModels {
 			mSortPrefixes = sortPrefixes;
 		}
 
+		public void ConfigureView() {
+			
+		}
+
 		public void Activate() {
 			mViewModel.TreeViewItemTemplate = Application.Current.TryFindResource( "DecadeExplorerTemplate" ) as HierarchicalDataTemplate;
 

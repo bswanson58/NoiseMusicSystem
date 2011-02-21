@@ -197,6 +197,7 @@
     <Compile Include="Dto\UiInternetStream.cs" />
     <Compile Include="Dto\UiTrack.cs" />
     <Compile Include="Dto\UiTreeNode.cs" />
+    <Compile Include="Dto\ViewSortStrategy.cs" />
     <Compile Include="MappingConfiguration.cs" />
     <Compile Include="NoiseUiModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -228,6 +229,7 @@
     <Compile Include="ValueConverters\RelativeTimeConverter.cs" />
     <Compile Include="ValueConverters\TimeSpanConverter.cs" />
     <Compile Include="ValueConverters\VolumeLevelConverter.cs" />
+    <Compile Include="ViewModels\ArtistAlbumConfigViewModel.cs" />
     <Compile Include="ViewModels\AlbumArtworkViewModel.cs" />
     <Compile Include="ViewModels\AlbumViewModel.cs" />
     <Compile Include="ViewModels\ApplicationLogDialogModel.cs" />
@@ -266,6 +268,9 @@
     </Compile>
     <Compile Include="Views\ApplicationLogView.xaml.cs">
       <DependentUpon>ApplicationLogView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ArtistAlbumConfigurationDialog.xaml.cs">
+      <DependentUpon>ArtistAlbumConfigurationDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ArtistEditDialog.xaml.cs">
       <DependentUpon>ArtistEditDialog.xaml</DependentUpon>
@@ -418,6 +423,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ApplicationLogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ArtistAlbumConfigurationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
