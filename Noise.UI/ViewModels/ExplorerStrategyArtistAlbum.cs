@@ -129,6 +129,7 @@ namespace Noise.UI.ViewModels {
 							case DbItemChanged.Update:
 								if( treeNode != null ) {
 									UpdateUiArtist( treeNode.Artist, artist );
+									mViewModel.TreeViewSource.View.Refresh();
 								}
 								break;
 
@@ -160,6 +161,8 @@ namespace Noise.UI.ViewModels {
 
 							if( uiAlbum != null ) {
 								Mapper.DynamicMap( dbAlbum, uiAlbum );
+
+								treeNode.UpdateSort();
 							}
 						}
 					}

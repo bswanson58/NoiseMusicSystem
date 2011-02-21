@@ -41,6 +41,10 @@ namespace Noise.UI.Dto {
 			}
 		}
 
+		public void UpdateSort() {
+			ChildrenView.View.Refresh();
+		}
+
 		private void OnSortChanged( ViewSortStrategy strategy ) {
 			ChildrenView.SortDescriptions.Clear();
 

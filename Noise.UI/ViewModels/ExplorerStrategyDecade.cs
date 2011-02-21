@@ -132,6 +132,8 @@ namespace Noise.UI.ViewModels {
 								case DbItemChanged.Update:
 									if( treeNode != null ) {
 										UpdateUiArtist( treeNode.Artist, artist );
+
+										decadeNode.UpdateSort();
 									}
 									break;
 
@@ -164,6 +166,8 @@ namespace Noise.UI.ViewModels {
 
 								if( uiAlbum != null ) {
 									UpdateUiAlbum( uiAlbum, dbAlbum );
+
+									treeNode.UpdateSort();
 								}
 							}
 						}

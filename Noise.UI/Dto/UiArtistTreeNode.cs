@@ -67,6 +67,10 @@ namespace Noise.UI.Dto {
 			}
 		}
 
+		public void UpdateSort() {
+			ChildrenView.View.Refresh();
+		}
+
 		protected override void OnExpand() {
 			if( Parent != null ) {
 				Parent.IsExpanded = true;
