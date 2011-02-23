@@ -146,13 +146,15 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void SetTrackList( IEnumerable<UiArtistTrackNode> list ) {
-			TrackList.SuspendNotification();
-			TrackList.Clear();
-			TrackList.AddRange( from node in list orderby node.Track.Name ascending select node );
-			TrackList.ResumeNotification();
+			BeginInvoke( () => { 
+				TrackList.SuspendNotification();
+				TrackList.Clear();
+				TrackList.AddRange( from node in list orderby node.Track.Name ascending select node );
+				TrackList.ResumeNotification();
 
-			RaisePropertyChanged( () => UniqueTrackCount );
-			TracksValid = true;
+				RaisePropertyChanged( () => UniqueTrackCount );
+				TracksValid = true;
+			});
 		}
 
 		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {
