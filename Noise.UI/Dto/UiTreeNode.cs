@@ -26,5 +26,9 @@ namespace Noise.UI.Dto {
 
 		protected virtual void Onselect() { }
 		protected virtual void OnExpand() { }
+
+		public virtual string IndexString {
+			get{ return( "" ); }
+		}
 	}
 }

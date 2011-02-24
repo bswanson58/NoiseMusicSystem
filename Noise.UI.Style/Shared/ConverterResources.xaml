@@ -9,6 +9,7 @@
     <ValueConverters:NumericTextMultitudeConverter x:Key="NumericTextMultitudeConverter"/>
     <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter"/>
     <ValueConverters:RelativeTimeConverter x:Key="RelativeTimeConverter"/>
+    <ValueConverters:StringTruncateConverter x:Key="StringTruncateConverter"/>
     <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
     <ValueConverters:VolumeLevelConverter x:Key="VolumeLevelConverter"/>
 </ResourceDictionary>

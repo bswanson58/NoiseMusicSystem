@@ -153,6 +153,7 @@
     <Compile Include="Behaviours\ListViewFirstItemVisible.cs" />
     <Compile Include="Behaviours\ListViewSort.cs" />
     <Compile Include="Behaviours\Reveal.cs" />
+    <Compile Include="Behaviours\ScrollingPreview.cs" />
     <Compile Include="Behaviours\ScrollViewerFirstItemVisible.cs" />
     <Compile Include="Behaviours\ScrollViewerPosition.cs" />
     <Compile Include="Behaviours\SizeObserver.cs" />
@@ -227,6 +228,7 @@
     <Compile Include="ValueConverters\PlayQueueTrackNameConverter.cs" />
     <Compile Include="ValueConverters\PublishedYearConverter.cs" />
     <Compile Include="ValueConverters\RelativeTimeConverter.cs" />
+    <Compile Include="ValueConverters\StringTruncateConverter.cs" />
     <Compile Include="ValueConverters\TimeSpanConverter.cs" />
     <Compile Include="ValueConverters\VolumeLevelConverter.cs" />
     <Compile Include="ViewModels\ArtistAlbumConfigViewModel.cs" />

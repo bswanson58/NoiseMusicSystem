@@ -93,5 +93,9 @@ namespace Noise.UI.Dto {
 				mOnSelect( this );
 			}
 		}
+
+		public override string IndexString {
+			get{ return( Artist != null ? Artist.SortName : "" ); }
+		}
 	}
 }

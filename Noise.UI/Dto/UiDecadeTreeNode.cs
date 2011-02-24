@@ -100,5 +100,9 @@ namespace Noise.UI.Dto {
 		public ObservableCollectionEx<UiArtistTreeNode> Children {
 			get{ return( mChildren ); }
 		}
+
+		public override string IndexString {
+			get{ return( Tag != null ? Tag.Name : "" ); }
+		}
 	}
 }

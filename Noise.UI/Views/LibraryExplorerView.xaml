@@ -134,7 +134,15 @@
     		</Style.Triggers>
     	</Style>
 
-</UserControl.Resources>
+        <DataTemplate x:Key="ScrollingPreviewTemplate">
+            <StackPanel Width="65" HorizontalAlignment="Right" Orientation="Horizontal">
+                <TextBlock FontSize="16" FontWeight="Bold" Text="{Binding Path=FirstItem.IndexString, Converter={StaticResource StringTruncateConverter}}"/>
+                <TextBlock FontSize="16" Text=" - "/>
+                <TextBlock FontSize="16" FontWeight="Bold" Text="{Binding Path=LastItem.IndexString, Converter={StaticResource StringTruncateConverter}}"/>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+    
 	<UserControl.DataContext>
 		<Binding Path="LibraryExplorerViewModel" Source="{StaticResource ViewModelLocator}"/>
 	</UserControl.DataContext>
@@ -169,10 +177,12 @@
             </VisualStateGroup>
     	</VisualStateManager.VisualStateGroups>
         <Grid Behaviours:GridUtils.RowDefinitions="*,Auto">
-            <TreeView Grid.Row="0" BorderThickness="0" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"
-                  ItemsSource="{Binding TreeViewSource.View}"
-                  ItemTemplate="{Binding TreeViewItemTemplate}"
-                  ItemContainerStyle="{DynamicResource TreeViewItemStyle}"
+            <TreeView Grid.Row="0" BorderThickness="0"
+                      VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                      Behaviours:ScrollingPreview.VerticalScrollingPreviewTemplate="{DynamicResource ScrollingPreviewTemplate}"
+                      ItemsSource="{Binding TreeViewSource.View}"
+                      ItemTemplate="{Binding TreeViewItemTemplate}"
+                      ItemContainerStyle="{DynamicResource TreeViewItemStyle}"
                   />
             
             <Controls:ListIndex x:Name="TreeIndex" Grid.Row="0" HorizontalAlignment="Left" Width="0" Margin="3,0,0,0" Opacity="0" Height="500" VerticalAlignment="Bottom"/>
