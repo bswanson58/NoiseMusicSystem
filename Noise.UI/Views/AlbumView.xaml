@@ -64,11 +64,11 @@
                         
                         <!-- Album commands -->
                         <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Height="19" Width="19" Margin="0,0,5,5" Padding="1" ToolTip="Open Album Folder"
+                            <Button Height="19" Width="19" Margin="0,0,5,5" Padding="1" ToolTip="Open Album Folder" Foreground="{StaticResource ControlTextColor}"
                                     Content="{StaticResource Path_Folder}" Command="{Binding Path=OpenAlbumFolder}"/>
-                            <Button Height="19" Width="19" Margin="0,0,5,5" Padding="1" ToolTip="Display Album Extras"
+                            <Button Height="19" Width="19" Margin="0,0,5,5" Padding="1" ToolTip="Display Album Extras" Foreground="{StaticResource ControlTextColor}"
                                     Content="{StaticResource Path_Pictures}" Command="{Binding DisplayPictures}"/>
-                            <Button Height="19" Width="19" Margin="0,0,0,5" Padding="2" ToolTip="Edit Album Properties"
+                            <Button Height="19" Width="19" Margin="0,0,0,5" Padding="2" ToolTip="Edit Album Properties" Foreground="{StaticResource ControlTextColor}"
                                     Content="{StaticResource Path_Edit}" Command="{Binding Path=EditAlbum}"/>
                         </StackPanel>
                     </Grid>

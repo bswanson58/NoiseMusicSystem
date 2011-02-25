@@ -135,7 +135,8 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="1" Margin="0,0,3,-7" Width="27" Height="27" Content="6" FontFamily="Webdings" FontSize="16" Command="{Binding Path=StandardPlayer}"/>
+                        <Button Grid.Column="1" Margin="0,0,3,-7" Width="27" Height="27" Content="6" FontFamily="Webdings" FontSize="16"
+                                Foreground="{StaticResource ControlTextColor}" Command="{Binding Path=StandardPlayer}"/>
                     </Grid>
                     <!-- Replay Gain -->
                     <CheckBox Grid.Row="2" Margin="3,0,0,3" Content="Replay Gain" IsChecked="{Binding Path=ReplayGainEnabled}" VerticalAlignment="Center"/>
@@ -273,7 +274,8 @@
                         <TextBlock Grid.Column="0" Text="x" FontFamily="Webdings" FontSize="21.333" Foreground="Red"
                                IsHitTestVisible="False" Panel.ZIndex="1"  VerticalAlignment="Center" HorizontalAlignment="Center"
                                Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}"/>
-                        <Button Margin="3" Grid.Column="0" Content="X" Width="27" FontFamily="Webdings" FontSize="16" Command="{Binding Path=Mute}"/>
+                        <Button Margin="3" Grid.Column="0" Content="X" Width="27" FontFamily="Webdings" FontSize="16"
+                                Foreground="{StaticResource ControlTextColor}" Command="{Binding Path=Mute}"/>
                     </Grid>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>

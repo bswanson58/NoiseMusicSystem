@@ -56,10 +56,12 @@
                 <TextBlock Grid.Column="4" Text="x" FontFamily="Webdings" FontSize="21.333" Foreground="Red"
                                IsHitTestVisible="False" Panel.ZIndex="1"  VerticalAlignment="Center" HorizontalAlignment="Center"
                                Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}"/>
-                <Button Margin="3" Grid.Column="4" Content="X" Width="23" FontFamily="Webdings" FontSize="16" Command="{Binding Path=Mute}" Height="23" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Button Margin="3" Grid.Column="4" Content="X" Width="23" FontFamily="Webdings" FontSize="16"
+                        Foreground="{StaticResource ControlTextColor}" Command="{Binding Path=Mute}" Height="23"
+                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <!-- Switch to Application -->
                 <Button Grid.Column="5" Margin="1,0,3,0" Content="{StaticResource Path_SwitchWindow}" Command="{Binding Path=PlayerSwitch}"
-                        VerticalAlignment="Center" HorizontalAlignment="Center" Width="23" Height="23" Padding="5"/>
+                        VerticalAlignment="Center" HorizontalAlignment="Center" Width="23" Height="23" Foreground="{StaticResource ControlTextColor}" Padding="5"/>
             </Grid>
 
             <Grid Grid.Row="1">

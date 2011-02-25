@@ -66,7 +66,7 @@
                         </Controls:LinkLabel>
 
                         <Button Grid.Row="5" Height="19" Width="19" Margin="0,0,0,5" Padding="2" HorizontalAlignment="Right" ToolTip="Edit Artist Properties"
-                                Content="{StaticResource Path_Edit}" Command="{Binding Path=EditArtist}"/>
+                                Foreground="{StaticResource ControlTextColor}" Content="{StaticResource Path_Edit}" Command="{Binding Path=EditArtist}"/>
 
                     </Grid>
                 </Grid>
