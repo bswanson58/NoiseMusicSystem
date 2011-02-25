@@ -359,8 +359,15 @@ namespace Noise.UI.ViewModels {
 
 				using( var albumUpdate = mNoiseManager.DataProvider.GetAlbumForUpdate( mCurrentAlbum.DbId )) {
 					if( albumUpdate != null ) {
-						if( dialogService.ShowDialog( DialogNames.AlbumEdit, albumUpdate.Item ) == true ) {
+						var dialogModel = new AlbumEditDialogModel( albumUpdate.Item );
+
+						if( dialogService.ShowDialog( DialogNames.AlbumEdit, dialogModel ) == true ) {
 							albumUpdate.Update();
+
+							if( dialogModel.UpdateFileTags ) {
+								GlobalCommands.SetMp3Tags.Execute( new SetMp3TagCommandArgs( albumUpdate.Item.DbId, true )
+																						   { PublishedYear = albumUpdate.Item.PublishedYear });
+							}
 						}
 					}
 				}

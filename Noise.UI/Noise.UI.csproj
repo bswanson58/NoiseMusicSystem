@@ -231,6 +231,7 @@
     <Compile Include="ValueConverters\StringTruncateConverter.cs" />
     <Compile Include="ValueConverters\TimeSpanConverter.cs" />
     <Compile Include="ValueConverters\VolumeLevelConverter.cs" />
+    <Compile Include="ViewModels\AlbumEditDialogModel.cs" />
     <Compile Include="ViewModels\ArtistAlbumConfigViewModel.cs" />
     <Compile Include="ViewModels\AlbumArtworkViewModel.cs" />
     <Compile Include="ViewModels\AlbumViewModel.cs" />

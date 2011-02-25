@@ -148,6 +148,7 @@
     <Compile Include="Dto\SearchResultItem.cs" />
     <Compile Include="Dto\SetAlbumCoverCommandArgs.cs" />
     <Compile Include="Dto\SetFavoriteCommandArgs.cs" />
+    <Compile Include="Dto\SetMp3TagCommandArgs.cs" />
     <Compile Include="Dto\SetRatingCommandArgs.cs" />
     <Compile Include="Dto\StreamInfo.cs" />
     <Compile Include="Dto\UpdatePlayCountCommandArgs.cs" />
