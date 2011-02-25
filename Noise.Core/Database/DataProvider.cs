@@ -484,6 +484,37 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public DataUpdateShell<DbTrack> GetTrackForUpdate( long trackId ) {
+			DataUpdateShell<DbTrack>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			if( database != null ) {
+				var parms = database.Database.CreateParameters();
+
+				parms["trackId"] = trackId;
+
+				retValue = new DataUpdateShell<DbTrack>( database.DatabaseId, FreeDatabase, UpdateTrack,
+														 database.Database.ExecuteScalar( "SELECT DbTrack Where DbId = @trackId", parms ) as DbTrack );
+			}
+
+			return( retValue );
+		}
+
+
+		private void UpdateTrack( string databaseId, DbTrack track ) {
+			var database = mDatabaseManager.GetDatabase( databaseId );
+
+			if( database != null ) {
+				database.Store( track );
+
+				var album = GetAlbum( track.Album );
+
+				if( album != null ) {
+					UpdateArtistLastChanged( album.Artist );
+				}
+			}
+		}
+
 		public StorageFile GetPhysicalFile( DbTrack forTrack ) {
 			Condition.Requires( forTrack ).IsNotNull();
 

@@ -25,11 +25,11 @@ namespace Noise.UI.Dto {
 		public DbGenre			DisplayGenre { get; set; }
 
 		private readonly Action<long>	mPlayAction;
-		private readonly Action<long>	mSelectAction;
+		private readonly Action<long>	mEditAction;
 
-		public UiTrack( Action<long> playAction, Action<long> selectAction ) {
+		public UiTrack( Action<long> playAction, Action<long> editAction ) {
 			mPlayAction = playAction;
-			mSelectAction = selectAction;
+			mEditAction = editAction;
 		}
 
 		public string Genre {
@@ -38,14 +38,7 @@ namespace Noise.UI.Dto {
 
 		public bool IsSelected {
 			get{ return( Get( () => IsSelected )); }
-			set{ 
-				Set( () => IsSelected, value ); 
-
-				if(( value ) &&
-				   ( mSelectAction != null )) {
-					mSelectAction( DbId );
-				}
-			}
+			set{ Set( () => IsSelected, value ); }
 		}
 
 		public void Execute_Play() {
@@ -56,6 +49,16 @@ namespace Noise.UI.Dto {
 
 		public bool CanExecute_Play() {
 			return( mPlayAction != null );
+		}
+
+		public void Execute_Edit() {
+			if( mEditAction != null ) {
+				mEditAction( DbId );
+			}
+		}
+
+		public bool CanExecute_Edit() {
+			return( mEditAction != null );
 		}
 	}
 }

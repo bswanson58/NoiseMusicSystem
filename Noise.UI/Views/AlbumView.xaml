@@ -123,6 +123,14 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
+                            <GridViewColumn HeaderTemplate="{StaticResource EditColumnHeaderTemplate}" Width="29">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Height="17" Width="17" Padding="1" ToolTip="Edit Track Properties" Foreground="{StaticResource ControlTextColor}"
+                                                Content="{StaticResource Path_Edit}" Command="{Binding Path=Edit}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
                         </GridView>
                     </ListView.View>
                 </ListView>

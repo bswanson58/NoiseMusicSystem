@@ -103,7 +103,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiTrack TransformTrack( DbTrack dbTrack ) {
-			var retValue = new UiTrack( OnTrackPlay, null  );
+			var retValue = new UiTrack( OnTrackPlay, OnTrackEdit  );
 
 			Mapper.DynamicMap( dbTrack, retValue );
 
@@ -365,9 +365,29 @@ namespace Noise.UI.ViewModels {
 							albumUpdate.Update();
 
 							if( dialogModel.UpdateFileTags ) {
-								GlobalCommands.SetMp3Tags.Execute( new SetMp3TagCommandArgs( albumUpdate.Item.DbId, true )
+								GlobalCommands.SetMp3Tags.Execute( new SetMp3TagCommandArgs( albumUpdate.Item )
 																						   { PublishedYear = albumUpdate.Item.PublishedYear });
 							}
+						}
+					}
+				}
+			}
+		}
+
+		private void OnTrackEdit( long trackId ) {
+			var	dialogService = mContainer.Resolve<IDialogService>();
+
+			using( var trackUpdate = mNoiseManager.DataProvider.GetTrackForUpdate( trackId )) {
+				if( trackUpdate != null ) {
+					var dialogModel = new TrackEditDialogModel();
+
+					if( dialogService.ShowDialog( DialogNames.TrackEdit, trackUpdate.Item, dialogModel ) == true ) {
+						trackUpdate.Update();
+
+						if( dialogModel.UpdateFileTags ) {
+							GlobalCommands.SetMp3Tags.Execute( new SetMp3TagCommandArgs( trackUpdate.Item )
+																						{ PublishedYear = trackUpdate.Item.PublishedYear,
+																						  Name = trackUpdate.Item.Name });
 						}
 					}
 				}

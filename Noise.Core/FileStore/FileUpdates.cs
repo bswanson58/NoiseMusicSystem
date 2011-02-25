@@ -288,7 +288,7 @@ namespace Noise.Core.FileStore {
 
 				using( var trackList = mNoiseManager.DataProvider.GetTrackList( args.ItemId )) {
 					foreach( var track in trackList.List ) {
-						SetMp3FileTags( new SetMp3TagCommandArgs( track.DbId, args ));
+						SetMp3FileTags( new SetMp3TagCommandArgs( track, args ));
 					}
 				}
 			}
@@ -321,6 +321,9 @@ namespace Noise.Core.FileStore {
 
 					if( args.SetPublishedYear ) {
 						tags.Tag.Year = args.PublishedYear;
+					}
+					if( args.SetName ) {
+						tags.Tag.Title = args.Name;
 					}
 
 					try {

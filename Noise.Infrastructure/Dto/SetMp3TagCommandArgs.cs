@@ -7,16 +7,35 @@ namespace Noise.Infrastructure.Dto {
 		private	UInt32	mPublishedYear;
 		public	bool	SetPublishedYear { get; private set; }
 
-		public SetMp3TagCommandArgs( long itemId, bool isAlbum ) :
-			base( itemId ) {
-			IsAlbum = isAlbum;
+		private string	mName;
+		public	bool	SetName { get; private set; }
+
+		public SetMp3TagCommandArgs( DbTrack track ) :
+			base( track.DbId ) {
 		}
 
-		public SetMp3TagCommandArgs( long itemId, SetMp3TagCommandArgs copyInstance ) :
-			base( itemId ) {
+		public SetMp3TagCommandArgs( DbAlbum album ) :
+			base( album.DbId ) {
+			IsAlbum = true;
+		}
+
+		public SetMp3TagCommandArgs( DbTrack track, SetMp3TagCommandArgs copyInstance ) :
+			base( track.DbId ) {
 
 			if( copyInstance.SetPublishedYear ) {
 				PublishedYear = copyInstance.PublishedYear;
+			}
+
+			if( copyInstance.SetName ) {
+				Name = copyInstance.Name;
+			}
+		}
+
+		public string Name {
+			get{ return( mName ); }
+			set {
+				mName = value;
+				SetName = true;
 			}
 		}
 
