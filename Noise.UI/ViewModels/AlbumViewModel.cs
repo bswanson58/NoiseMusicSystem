@@ -359,9 +359,9 @@ namespace Noise.UI.ViewModels {
 
 				using( var albumUpdate = mNoiseManager.DataProvider.GetAlbumForUpdate( mCurrentAlbum.DbId )) {
 					if( albumUpdate != null ) {
-						var dialogModel = new AlbumEditDialogModel( albumUpdate.Item );
+						var dialogModel = new AlbumEditDialogModel();
 
-						if( dialogService.ShowDialog( DialogNames.AlbumEdit, dialogModel ) == true ) {
+						if( dialogService.ShowDialog( DialogNames.AlbumEdit, albumUpdate.Item, dialogModel ) == true ) {
 							albumUpdate.Update();
 
 							if( dialogModel.UpdateFileTags ) {
