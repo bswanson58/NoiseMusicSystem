@@ -18,6 +18,7 @@ namespace Noise.Desktop {
 			Execute.InitializeWithDispatcher();
 
 			mShell = Container.Resolve<Shell>();
+			mShell.DataContext = Container.Resolve<ShellViewModel>();
 			mShell.Show();
 			mShell.Closing += OnShellClosing;
 

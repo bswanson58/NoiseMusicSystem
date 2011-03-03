@@ -127,6 +127,7 @@ namespace Noise.Core.MediaPlayer {
 				.Permit( eStateTriggers.PlayerStopped, ePlayState.Stopped )
 				.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
 				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay )
+				.Ignore( eStateTriggers.PlayerPaused )
 				.Ignore( eStateTriggers.UiStop )
 				.Ignore( eStateTriggers.UiPause )
 				.Ignore( eStateTriggers.UiPlay )

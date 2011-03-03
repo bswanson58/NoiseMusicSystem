@@ -119,7 +119,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ShellViewModel.cs" />
     <Compile Include="WindowManager.cs" />
+    <Resource Include="Resources\Replay.png" />
+    <Resource Include="Resources\Next.png" />
+    <Resource Include="Resources\Pause.png" />
+    <Resource Include="Resources\Previous.png" />
+    <Resource Include="Resources\Stop.png" />
+    <Resource Include="Resources\Play.png" />
     <Resource Include="..\Common\Noise.ico">
       <Link>Noise.ico</Link>
     </Resource>
@@ -210,6 +217,7 @@
       <Name>Noise.UI</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(SolutionDir)lib\BASS.Net\v2.4.7.1\bass.dll $(TargetDir)
