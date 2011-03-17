@@ -70,12 +70,12 @@ namespace Noise.Core.DataBuilders {
 						var providerContent = database.Database.ExecuteQuery( "SELECT ExpiringContent WHERE AssociatedItem = @artistId AND ContentType = @contentType", parms ).OfType<ExpiringContent>().ToList();
 
 						if( providerContent.Count() > 0 ) {
-							foreach( var content in providerContent ) {
-								if( IsContentExpired( content, provider )) {
-									provider.UpdateContent( database, forArtist );
+							var localProvider = provider;
 
-									contentUpdated = true;
-								}
+							if( providerContent.Any( content => IsContentExpired( content, localProvider ))) {
+								localProvider.UpdateContent( database, forArtist );
+
+								contentUpdated = true;
 							}
 						}
 						else {
