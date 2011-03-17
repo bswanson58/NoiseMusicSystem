@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
 using CuttingEdge.Conditions;
 using Lastfm.Services;
 using Microsoft.Practices.Unity;
@@ -110,11 +109,14 @@ namespace Noise.Core.DataProviders {
 
 					parms["artistId"] = artistId;
 					parms["artistImage"] = ContentType.ArtistPrimaryImage;
+					parms["biography"] = ContentType.Biography;
+					parms["similarArtist"] = ContentType.SimilarArtists;
+					parms["topAlbums"] = ContentType.TopAlbums;
 
 					var	artwork = database.Database.ExecuteScalar( "SELECT DbArtwork WHERE AssociatedItem = @artistId AND ContentType = @artistImage", parms ) as DbArtwork;
-					var bio = ( from DbTextInfo info in database.Database where info.AssociatedItem == artistId && info.ContentType == ContentType.Biography select info ).FirstOrDefault();
-					var similarArtists = ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.SimilarArtists select item ).FirstOrDefault();
-					var topAlbums = ( from DbAssociatedItemList item in database.Database where item.AssociatedItem == artistId && item.ContentType == ContentType.TopAlbums select  item ).FirstOrDefault();
+					var bio = database.Database.ExecuteScalar( "SELECT DbTextInfo WHERE AssociatedItem = @artistId AND ContentType = @biography", parms ) as DbTextInfo;
+					var similarArtists = database.Database.ExecuteScalar( "SELECT DbAssociatedItemList WHERE AssociatedItem = @artistId AND ContentType = @similarArtist", parms ) as DbAssociatedItemList;
+					var topAlbums = database.Database.ExecuteScalar( "SELECT DbAssociatedItemList WHERE AssociatedItem = @artistId AND ContentType = @topAlbums", parms ) as DbAssociatedItemList;
 					if( artwork == null ) {
 						artwork = new DbArtwork( artistId, ContentType.ArtistPrimaryImage ) { Artist = artist.DbId, Name = "Last.fm download" };
 

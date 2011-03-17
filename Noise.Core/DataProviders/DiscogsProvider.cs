@@ -298,8 +298,12 @@ namespace Noise.Core.DataProviders {
 						if(( response.StatusCode == HttpStatusCode.OK ) &&
 						   ( response.ContentEntity != null )) {
 							var artistId = forArtist.DbId;
-							var	bandMembers = ( from DbAssociatedItemList item in database.Database 
-												where item.AssociatedItem == artistId && item.ContentType == ContentType.BandMembers select  item ).FirstOrDefault();
+							var parms = database.Database.CreateParameters();
+
+							parms["artistId"] = artistId;
+							parms["bandMembers"] = ContentType.BandMembers;
+
+							var bandMembers = database.Database.ExecuteScalar( "SELECT DbAssociatedItemList WHERE AssociatedItem = @artistId AND ContentType = @bandMembers", parms ) as DbAssociatedItemList;
 
 							if( bandMembers == null ) {
 								bandMembers = new DbAssociatedItemList( artistId, ContentType.BandMembers ) { Artist = forArtist.DbId };
