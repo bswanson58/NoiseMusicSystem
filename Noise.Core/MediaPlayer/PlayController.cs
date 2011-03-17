@@ -31,10 +31,10 @@ namespace Noise.Core.MediaPlayer {
 	internal class PlayController : IPlayController {
 		private	readonly IUnityContainer		mContainer;
 		private readonly IEventAggregator		mEvents;
-		private readonly INoiseManager			mNoiseManager;
-		private readonly IAudioPlayer			mAudioPlayer;
-		private readonly IEqManager				mEqManager;
 		private readonly ILog					mLog;
+		private IAudioPlayer					mAudioPlayer;
+		private	IEqManager						mEqManager;
+		private INoiseManager					mNoiseManager;
 		private TimeSpan						mCurrentPosition;
 		private TimeSpan						mCurrentLength;
 		private bool							mDisplayTimeElapsed;
@@ -43,40 +43,43 @@ namespace Noise.Core.MediaPlayer {
 		private int								mCurrentChannel;
 		private ePlaybackStatus					mCurrentStatus;
 		private bool							mEnableReplayGain;
-		private readonly IDisposable			mPlayStatusDispose;
-		private readonly IDisposable			mAudioLevelsDispose;
-		private readonly IDisposable			mStreamInfoDispose;
-		private readonly Dictionary<int, PlayQueueTrack>			mOpenTracks;
-		private readonly StateMachine<ePlayState, eStateTriggers>	mPlayStateController;
-		private ePlayState											mCurrentPlayState;
+		private IDisposable						mPlayStatusDispose;
+		private IDisposable						mAudioLevelsDispose;
+		private IDisposable						mStreamInfoDispose;
+		private readonly Dictionary<int, PlayQueueTrack>	mOpenTracks;
+		private StateMachine<ePlayState, eStateTriggers>	mPlayStateController;
+		private ePlayState									mCurrentPlayState;
 
-		private	readonly Subject<ePlayState>	mPlayStateSubject;
+		private Subject<ePlayState>				mPlayStateSubject;
 		public	IObservable<ePlayState>			PlayStateChange { get { return( mPlayStateSubject.AsObservable()); } }
 
 		public PlayController( IUnityContainer container ) {
 			mContainer = container;
-			mEvents = mContainer.Resolve<IEventAggregator>();
-			mAudioPlayer = mContainer.Resolve<IAudioPlayer>();
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
 			mLog = mContainer.Resolve<ILog>();
-			mSampleLevels = new AudioLevels();
-			mCurrentPosition = new TimeSpan();
-			mCurrentLength = new TimeSpan( 1 );
+			mEvents = mContainer.Resolve<IEventAggregator>();
 
 			mOpenTracks = new Dictionary<int, PlayQueueTrack>();
 
 			mInfoUpdateTimer = new Timer { AutoReset = true, Enabled = false, Interval = 250 };
 			mInfoUpdateTimer.Elapsed += OnInfoUpdateTimer;
+		}
+
+		public bool Initialize() {
+			mNoiseManager = mContainer.Resolve<INoiseManager>();
+			mAudioPlayer = mContainer.Resolve<IAudioPlayer>();
+			mSampleLevels = new AudioLevels();
+			mCurrentPosition = new TimeSpan();
+			mCurrentLength = new TimeSpan( 1 );
+
+			mPlayStatusDispose = mAudioPlayer.ChannelStatusChange.Subscribe( OnPlayStatusChanged );
+			mAudioLevelsDispose = mAudioPlayer.AudioLevelsChange.Subscribe( OnAudioLevelsChanged );
+			mStreamInfoDispose = mAudioPlayer.AudioStreamInfoChange.Subscribe( OnStreamInfo );
 
 			mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
 			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 			mEvents.GetEvent<Events.PlayRequested>().Subscribe( OnPlayRequested );
 			mEvents.GetEvent<Events.GlobalUserEvent>().Subscribe( OnGlobalRequest );
 			mEvents.GetEvent<Events.SystemShutdown>().Subscribe( OnShutdown );
-
-			mPlayStatusDispose = mAudioPlayer.ChannelStatusChange.Subscribe( OnPlayStatusChanged );
-			mAudioLevelsDispose = mAudioPlayer.AudioLevelsChange.Subscribe( OnAudioLevelsChanged );
-			mStreamInfoDispose = mAudioPlayer.AudioStreamInfoChange.Subscribe( OnStreamInfo );
 
 			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
@@ -218,6 +221,8 @@ namespace Noise.Core.MediaPlayer {
 				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
 				.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped )
 				.Ignore( eStateTriggers.PlayerStopped );
+
+			return( true );
 		}
 
 		private ePlayState PlayState {

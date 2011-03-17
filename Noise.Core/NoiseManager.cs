@@ -135,6 +135,12 @@ namespace Noise.Core {
 			get {
 				if( mPlayController == null ) {
 					mPlayController = mContainer.Resolve<IPlayController>();
+
+					if( mPlayController != null ) {
+						if(!mPlayController.Initialize()) {
+							mLog.LogMessage( "NoiseManager: PlayController could not be initialized." );
+						}
+					}
 				}
 
 				return( mPlayController );

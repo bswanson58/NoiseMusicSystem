@@ -160,7 +160,7 @@ namespace Noise.Core.MediaPlayer {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Bass Audio could not be initialized. ", ex);
+				mLog.LogException( "Exception - AudioPlayer:Bass Audio could not be initialized. ", ex);
 			}
 
 			LoadPlugin( "bassflac.dll" );
@@ -176,13 +176,15 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		private void LoadPlugin( string plugin ) {
+			mLog.LogInfo( string.Format( "AudioPlayer: Loading plugin: '{0}'", plugin ));
+
 			try {
 				if( Bass.BASS_PluginLoad( plugin ) == 0 ) {
 					mLog.LogMessage( String.Format( "Cannot load Bass Plugin: {0}", plugin ));
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Could not load Bass plugin: {0}", plugin ), ex );
+				mLog.LogException( String.Format( "Exception - AudioPlayer:Could not load Bass plugin: {0}", plugin ), ex );
 			}
 		}
 
