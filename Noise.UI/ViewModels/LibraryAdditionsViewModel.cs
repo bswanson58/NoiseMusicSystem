@@ -128,10 +128,8 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnAlbumPlayRequested( LibraryAdditionNode node ) {
-			foreach( var track in node.TrackList ) {
-				GlobalCommands.PlayTrack.Execute( mNoiseManager.DataProvider.GetTrack( track.DbId ));
-			}
+		private static void OnAlbumPlayRequested( LibraryAdditionNode node ) {
+			GlobalCommands.PlayAlbum.Execute( node.Album );
 		}
 
 		private void OnTrackPlayRequested( long trackId ) {
