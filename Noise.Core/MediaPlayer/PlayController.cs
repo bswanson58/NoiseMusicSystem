@@ -164,6 +164,7 @@ namespace Noise.Core.MediaPlayer {
 				.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
 				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay )
 				.Ignore( eStateTriggers.QueueTrackAdded )
+				.Ignore( eStateTriggers.PlayerPaused )
 				.Ignore( eStateTriggers.PlayerPlaying );
 
 			mPlayStateController.Configure( ePlayState.PlayNext )
