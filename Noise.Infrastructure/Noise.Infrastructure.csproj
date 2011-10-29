@@ -62,8 +62,8 @@
     <Reference Include="Accessibility">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Eloquera.Client, Version=3.0.0.28, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
-      <HintPath>..\lib\Eloquera\v3.0\Eloquera.Client.dll</HintPath>
+    <Reference Include="Eloquera.Client, Version=4.13.0.0, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
+      <HintPath>..\lib\Eloquera\v4.13\Eloquera.Client.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Prism">
       <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.dll</HintPath>

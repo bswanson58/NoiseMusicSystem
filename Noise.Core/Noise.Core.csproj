@@ -64,9 +64,9 @@
     <Reference Include="Accessibility">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Bass.Net, Version=2.4.7.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+    <Reference Include="Bass.Net, Version=2.4.8.0, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\BASS.Net\v2.4.7.1\Bass.Net.dll</HintPath>
+      <HintPath>..\lib\BASS.Net\v2.4.8.0\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="Common.Logging">
       <HintPath>..\lib\Quartz\v1.02\Common.Logging.dll</HintPath>
@@ -74,11 +74,11 @@
     <Reference Include="CuttingEdge.Conditions">
       <HintPath>..\lib\CuttingEdge.Conditions\v1.1.0.10041\CuttingEdge.Conditions.dll</HintPath>
     </Reference>
-    <Reference Include="Eloquera.Client, Version=3.0.0.28, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
-      <HintPath>..\lib\Eloquera\v3.0\Eloquera.Client.dll</HintPath>
+    <Reference Include="Eloquera.Client, Version=4.13.0.0, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
+      <HintPath>..\lib\Eloquera\v4.13\Eloquera.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Eloquera.Common, Version=3.0.0.28, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
-      <HintPath>..\lib\Eloquera\v3.0\Eloquera.Common.dll</HintPath>
+    <Reference Include="Eloquera.Common, Version=4.13.0.0, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
+      <HintPath>..\lib\Eloquera\v4.13\Eloquera.Common.dll</HintPath>
     </Reference>
     <Reference Include="GDataDB">
       <HintPath>..\lib\GDataDB\v0.2.0.0\GDataDB.dll</HintPath>
