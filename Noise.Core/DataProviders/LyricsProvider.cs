@@ -10,6 +10,7 @@ using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Core.Support.AsyncTask;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
@@ -20,6 +21,7 @@ namespace Noise.Core.DataProviders {
 		private readonly IEventAggregator	mEvents;
 		private readonly INoiseManager		mNoiseManager;
 		private readonly ILog				mLog;
+		private readonly bool				mHasNetworkAccess;
 
 		private readonly AsyncCommand<LyricsRequestArgs>	mLyricsRequestCommand;
 
@@ -28,6 +30,13 @@ namespace Noise.Core.DataProviders {
 			mEvents = mContainer.Resolve<IEventAggregator>();
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
 			mLog = mContainer.Resolve<ILog>();
+
+			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+
+			if( configuration != null ) {
+				mHasNetworkAccess = configuration.HasNetworkAccess;
+			}
 
 			mLyricsRequestCommand = new AsyncCommand<LyricsRequestArgs>( OnLyricsRequested );
 			GlobalCommands.RequestLyrics.RegisterCommand( mLyricsRequestCommand );
@@ -43,11 +52,13 @@ namespace Noise.Core.DataProviders {
 				var lyricsInfo = LocateLyrics( args );
 
 				if(!lyricsInfo.HasMatchedLyric ) {
-					try {
-						AsyncTaskEnumerator.Begin( LyricsDownloadTask( args, lyricsInfo ));
-					}
-					catch( Exception ex ) {
-						mLog.LogException( "Exception - OnLyricsRequested:", ex );
+					if( mHasNetworkAccess ) {
+						try {
+							AsyncTaskEnumerator.Begin( LyricsDownloadTask( args, lyricsInfo ));
+						}
+						catch( Exception ex ) {
+							mLog.LogException( "Exception - OnLyricsRequested:", ex );
+						}
 					}
 				}
 				else {
