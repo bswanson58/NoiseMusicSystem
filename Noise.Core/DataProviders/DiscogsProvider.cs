@@ -10,6 +10,7 @@ using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -218,6 +219,7 @@ namespace Noise.Core.DataProviders {
 
 		private IUnityContainer	mContainer;
 		private RestClient		mClient;
+		private bool			mHasNetworkAccess;
 		private ILog			mLog;
 
 		public	abstract ContentType	ContentType { get; }
@@ -225,6 +227,13 @@ namespace Noise.Core.DataProviders {
 		public bool Initialize( IUnityContainer container ) {
 			mContainer = container;
 			mLog = mContainer.Resolve<ILog>();
+
+			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+
+			if( configuration != null ) {
+				mHasNetworkAccess = configuration.HasNetworkAccess;
+			}
 
 			return( true );
 		}
@@ -258,7 +267,7 @@ namespace Noise.Core.DataProviders {
 		}
 
 		public bool CanUpdateArtist {
-			get{ return( true ); }
+			get{ return( mHasNetworkAccess ); }
 		}
 
 		public bool CanUpdateAlbum {
@@ -287,7 +296,8 @@ namespace Noise.Core.DataProviders {
 		}
 
 		public void UpdateContent( IDatabase database, DbArtist forArtist ) {
-			if( Client != null ) {
+			if(( mHasNetworkAccess ) &&
+			   ( Client != null )) {
 				try {
 					var request = new RestRequest {  Deserializer = new ArtistDeserializer() };
 					var requestUri = SearchForArtist( forArtist );

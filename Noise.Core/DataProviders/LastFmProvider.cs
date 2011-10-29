@@ -7,6 +7,7 @@ using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -14,9 +15,17 @@ namespace Noise.Core.DataProviders {
 	internal abstract class BaseLastFmProvider : IContentProvider {
 		public		abstract ContentType	ContentType { get; }
 		protected	IUnityContainer			mContainer;
+		private		bool					mHasNetworkAccess;
 
 		public bool Initialize( IUnityContainer container ) {
 			mContainer = container;
+
+			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
+			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+
+			if( configuration != null ) {
+				mHasNetworkAccess = configuration.HasNetworkAccess;
+			}
 
 			return( true );
 		}
@@ -26,7 +35,7 @@ namespace Noise.Core.DataProviders {
 		}
 
 		public bool CanUpdateArtist {
-			get{ return( true ); }
+			get{ return( mHasNetworkAccess ); }
 		}
 
 		public bool CanUpdateAlbum {
@@ -38,9 +47,11 @@ namespace Noise.Core.DataProviders {
 		}
 
 		public void UpdateContent( IDatabase database, DbArtist forArtist ) {
-			var provider = new LastFmProvider( mContainer );
+			if( mHasNetworkAccess ) {
+				var provider = new LastFmProvider( mContainer );
 
-			provider.UpdateArtist( database, forArtist );
+				provider.UpdateArtist( database, forArtist );
+			}
 		}
 
 		public void UpdateContent( IDatabase database, DbAlbum forAlbum ) {

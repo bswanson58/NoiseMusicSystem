@@ -19,6 +19,7 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cNewAdditionsHorizonCountProperty			= "newAdditionsHorizonCount";
 		private const string	cEnableSortPrefixesProperty					= "enableSortPrefixes";
 		private const string	cSortPrefixesProperty						= "sortPrefixes";
+		private const string	cHasNetworkAccess							= "hasNetworkAccess";
 
 		[ConfigurationPropertyAttribute( cEnableLibraryExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
 		public bool EnableLibraryExplorer {
@@ -95,6 +96,12 @@ namespace Noise.Infrastructure.Configuration {
 		public string SortPrefixes {
 			get { return ((string)( base[cSortPrefixesProperty] ) ); }
 			set { base[cSortPrefixesProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cHasNetworkAccess, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "true" )]
+		public bool HasNetworkAccess {
+			get { return ((bool)( base[cHasNetworkAccess] ) ); }
+			set { base[cHasNetworkAccess] = value; }
 		}
 	}
 }
