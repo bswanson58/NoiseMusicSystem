@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
@@ -37,6 +38,14 @@ namespace Noise.Desktop {
 			var	log = mBootstrapper.Container.Resolve<ILog>();
 
 			log.LogException( "Application unhandled exception:", e.Exception );
+
+			if( e.Exception is ReflectionTypeLoadException ) {
+				var tle = e.Exception as ReflectionTypeLoadException;
+
+				foreach( var ex in tle.LoaderExceptions ) {
+					log.LogException( "LoaderException:", ex );
+				}
+			}
 			e.Handled = true;
 
 			Shutdown( -1 );
