@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-  <?define BassLibraryFolder="$(var.SolutionDir)\lib\BASS.Net\v2.4.7.1\"?>
+  <?define BassLibraryFolder="$(var.SolutionDir)\lib\BASS.Net\v2.4.8.0\"?>
+  
+  <?if $(var.Noise.Core.Platform) = "x64" ?>
+  <?define BassPlatformLibraryFolder="$(var.SolutionDir)\lib\BASS.Net\v2.4.8.0\x64\"?>
+  <?else ?>
+  <?define BassPlatformLibraryFolder="$(var.SolutionDir)\lib\BASS.Net\v2.4.8.0\x86\"?>
+  <?endif ?>
 
   <DirectoryRef Id="INSTALLDIRECTORY">
-    <Component Id="bass.dll" Guid="26b315d5-464a-4146-92fa-3e44bedbb1b9">
-      <File Id="bass.dll" DiskId="10" Source="$(var.BassLibraryFolder)bass.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Bass.Net.dll" Guid="dda17f44-df7b-4bfd-bc07-f54a42bbc1a6">
+    <Component Id="Bass.Net.dll" Guid="CCB82D3F-5B0B-4D9E-A868-7FCD176C14F8">
       <File Id="Bass.Net.dll" DiskId="10" Source="$(var.BassLibraryFolder)Bass.Net.dll" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="bass_aac.dll" Guid="10c3e000-8d88-48e7-814f-19553c7e6888">
-      <File Id="bass_aac.dll" DiskId="10" Source="$(var.BassLibraryFolder)bass_aac.dll" KeyPath="yes" Checksum="yes" />
+    
+    <Component Id="bass.dll" Guid="528B2B2F-9CE5-42B6-84B8-AB4D225E657B">
+      <File Id="bass.dll" DiskId="10" Source="$(var.BassPlatformLibraryFolder)bass.dll" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="bass_fx.dll" Guid="fb0e2cd5-e884-4482-a2fb-097841b71ea7">
-      <File Id="bass_fx.dll" DiskId="10" Source="$(var.BassLibraryFolder)bass_fx.dll" KeyPath="yes" Checksum="yes" />
+    <Component Id="bass_aac.dll" Guid="803F0F44-FD4F-4FAC-A59A-3D877F79BA66">
+      <File Id="bass_aac.dll" DiskId="10" Source="$(var.BassPlatformLibraryFolder)bass_aac.dll" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="bassflac.dll" Guid="c68c7f87-2bf0-40c5-bba7-af145d8e882f">
-      <File Id="bassflac.dll" DiskId="10" Source="$(var.BassLibraryFolder)bassflac.dll" KeyPath="yes" Checksum="yes" />
+    <Component Id="bass_fx.dll" Guid="E81DB4EC-BF60-4772-AF7E-37EC918B3755">
+      <File Id="bass_fx.dll" DiskId="10" Source="$(var.BassPlatformLibraryFolder)bass_fx.dll" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="bassmix.dll" Guid="eb374eeb-d540-4f1e-850a-81c3888ac17f">
-      <File Id="bassmix.dll" DiskId="10" Source="$(var.BassLibraryFolder)bassmix.dll" KeyPath="yes" Checksum="yes" />
+    <Component Id="bassflac.dll" Guid="33A992CE-62EF-4254-ABF7-CAEE8EEE43A4">
+      <File Id="bassflac.dll" DiskId="10" Source="$(var.BassPlatformLibraryFolder)bassflac.dll" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="basswma.dll" Guid="c07e9cdb-a6b0-400b-b470-2a6d145cbd34">
-      <File Id="basswma" DiskId="10" Source="$(var.BassLibraryFolder)basswma.dll" KeyPath="yes" Checksum="yes" />
+    <Component Id="bassmix.dll" Guid="4CABE9E9-D1D0-4AA9-8E45-F9AB4D5CF919">
+      <File Id="bassmix.dll" DiskId="10" Source="$(var.BassPlatformLibraryFolder)bassmix.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="basswma.dll" Guid="A738ABEC-48FB-4245-9EF1-80BD12433D73">
+      <File Id="basswma" DiskId="10" Source="$(var.BassPlatformLibraryFolder)basswma.dll" KeyPath="yes" Checksum="yes" />
     </Component>
   </DirectoryRef>
 
