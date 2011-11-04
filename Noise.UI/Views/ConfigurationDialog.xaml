@@ -24,7 +24,7 @@
         <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Content="Noise Option Settings:" Margin="5,0,0,0"/>
         <CheckBox Grid.Column="0" Grid.Row="1" Content="Update library on application startup." IsChecked="{Binding Path=EnableLibraryExplorer}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
         <CheckBox Grid.Column="0" Grid.Row="2" Content="Update library on folder changes." IsChecked="{Binding Path=EnableLibraryChangeUpdates}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
-        <CheckBox Grid.Column="0" Grid.Row="3" Content="Allow Interent access" IsChecked="{Binding Path=HasNetworkAccess}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
+        <CheckBox Grid.Column="0" Grid.Row="3" Content="Allow Internet access" IsChecked="{Binding Path=HasNetworkAccess}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
         <CheckBox Grid.Column="0" Grid.Row="4" Content="Minimize To Tray." IsChecked="{Binding Path=MinimizeToTray}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
         <CheckBox Grid.Column="0" Grid.Row="5" Content="Enable global hotkeys." IsChecked="{Binding Path=EnableGlobalHotkeys}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
         <CheckBox Grid.Column="0" Grid.Row="6" Content="Enable Explorer Sort Prefixes." IsChecked="{Binding Path=EnableSortPrefixes}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
