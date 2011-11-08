@@ -194,7 +194,7 @@ namespace Noise.Core.DataProviders {
 						artist.UpdateLastChange();
 						database.Store( artist );
 
-						mLog.LogInfo( "LastFm updated artist: {0}", artist.Name );
+						mLog.LogMessage( "LastFm updated artist: {0}", artist.Name );
 					}
 
 					database.Store( bio );

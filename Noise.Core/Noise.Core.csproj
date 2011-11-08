@@ -281,6 +281,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DiscogsConnect\DiscogsConnect.csproj">
+      <Project>{6F475AD9-E1B4-4AB1-8E82-B9F5A7608568}</Project>
+      <Name>DiscogsConnect</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LastFmSharp\LastFmSharp.csproj">
       <Project>{B57A7572-5F5C-4166-AE0B-9814B550E9B2}</Project>
       <Name>LastFmSharp</Name>
