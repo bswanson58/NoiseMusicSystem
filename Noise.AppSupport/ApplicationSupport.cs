@@ -4,6 +4,7 @@ using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.RemoteHost;
 using Noise.Service.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport {
@@ -11,6 +12,7 @@ namespace Noise.AppSupport {
 		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
 		private readonly IServiceBusManager	mServiceBus;
+		private readonly IRemoteServer		mRemoteServer;
 		private readonly ILog				mLog;
 		private readonly HotkeyManager		mHotkeyManager;
 
@@ -18,9 +20,12 @@ namespace Noise.AppSupport {
 			mContainer = container;
 			mEvents = mContainer.Resolve<IEventAggregator>();
 			mLog = mContainer.Resolve<ILog>();
-
 			mServiceBus = mContainer.Resolve<IServiceBusManager>();
+			mRemoteServer = mContainer.Resolve<IRemoteServer>();
+			mHotkeyManager = new HotkeyManager( mContainer );
+		}
 
+		public bool Initialize() {
 			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 			var configuration = systemConfig.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
 
@@ -31,11 +36,18 @@ namespace Noise.AppSupport {
 				}
 			}
 
-			mHotkeyManager = new HotkeyManager( mContainer );
 			mHotkeyManager.Initialize();
 
 			mEvents.GetEvent<Events.WebsiteRequest>().Subscribe( OnWebsiteRequested );
 			mEvents.GetEvent<Events.LaunchRequest>().Subscribe( OnLaunchRequest );
+
+			mRemoteServer.OpenRemoteServer();
+
+			return( true );
+		}
+
+		public void Shutdown() {
+			mRemoteServer.CloseRemoteServer();
 		}
 
 		private void OnWebsiteRequested( string url ) {

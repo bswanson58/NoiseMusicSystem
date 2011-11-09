@@ -38,7 +38,8 @@ namespace Noise.Desktop {
 
 			catalog.AddModule( typeof( Core.NoiseCoreModule ))
 				.AddModule( typeof( Service.Infrastructure.ServiceInfrastructureModule ))
-				.AddModule( typeof( UI.NoiseUiModule ), "NoiseCoreModule" );
+				.AddModule( typeof( UI.NoiseUiModule ), "NoiseCoreModule" )
+				.AddModule( typeof( RemoteHost.RemoteHostModule ));
 
 			return ( catalog );
 		}
@@ -68,9 +69,12 @@ namespace Noise.Desktop {
 			Container.RegisterInstance<INoiseManager>( mNoiseManager );
 			mNoiseManager.Initialize();
 			mNoiseManager.StartExplorerJobs();
+			mAppSupport.Initialize();
 		}
 
 		public void StopNoise() {
+			mAppSupport.Shutdown();
+
 			if( mNoiseManager != null ) {
 				mNoiseManager.Shutdown();
 

@@ -121,6 +121,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
@@ -199,6 +201,8 @@
     <Compile Include="Interfaces\ISearchProvider.cs" />
     <Compile Include="Interfaces\ITagManager.cs" />
     <Compile Include="Interfaces\IViewModelResolver.cs" />
+    <Compile Include="RemoteHost\IRemoteServer.cs" />
+    <Compile Include="RemoteHost\ServerVersion.cs" />
     <Compile Include="Support\ApplicationLogReader.cs" />
     <Compile Include="Support\AsyncCommand.cs" />
     <Compile Include="Support\BaseValueConverter.cs" />
@@ -248,6 +252,7 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Compile Include="RemoteHost\INoiseRemoteData.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
