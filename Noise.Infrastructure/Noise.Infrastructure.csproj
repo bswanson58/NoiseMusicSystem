@@ -201,8 +201,16 @@
     <Compile Include="Interfaces\ISearchProvider.cs" />
     <Compile Include="Interfaces\ITagManager.cs" />
     <Compile Include="Interfaces\IViewModelResolver.cs" />
+    <Compile Include="RemoteDto\RoAlbum.cs" />
+    <Compile Include="RemoteDto\RoArtist.cs" />
+    <Compile Include="RemoteDto\RoBase.cs" />
+    <Compile Include="RemoteDto\RoTrack.cs" />
+    <Compile Include="RemoteDto\AlbumListResult.cs" />
+    <Compile Include="RemoteDto\ArtistListResult.cs" />
+    <Compile Include="RemoteDto\BaseResult.cs" />
     <Compile Include="RemoteHost\IRemoteServer.cs" />
     <Compile Include="RemoteHost\ServerVersion.cs" />
+    <Compile Include="RemoteDto\TrackListResult.cs" />
     <Compile Include="Support\ApplicationLogReader.cs" />
     <Compile Include="Support\AsyncCommand.cs" />
     <Compile Include="Support\BaseValueConverter.cs" />

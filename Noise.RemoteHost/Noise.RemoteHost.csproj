@@ -95,6 +95,9 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\lib\AutoMapper\v1.1.0.188\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Prism">
       <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.dll</HintPath>
     </Reference>

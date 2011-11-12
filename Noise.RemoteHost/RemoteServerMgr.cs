@@ -9,6 +9,7 @@ namespace Noise.RemoteHost {
 	public class RemoteServerMgr : IRemoteServer {
 		private readonly IUnityContainer	mContainer;
 		private readonly ILog				mLog;
+		private INoiseRemoteData			mRemoteDataServer;
 		private ServiceHost					mDataServerHost;
 
 		public RemoteServerMgr( IUnityContainer container ) {
@@ -17,7 +18,8 @@ namespace Noise.RemoteHost {
 		}
 
 		public void OpenRemoteServer() {
-			mDataServerHost = new WebServiceHost( typeof( RemoteDataServer ));
+			mRemoteDataServer = mContainer.Resolve<INoiseRemoteData>();
+			mDataServerHost = new WebServiceHost( mRemoteDataServer );
 			mDataServerHost.AddServiceEndpoint( typeof( INoiseRemoteData ), new WebHttpBinding(), new Uri( "http://localhost:88/Data" ));
 
 			bool	openSucceeded = false;
