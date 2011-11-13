@@ -1,0 +1,263 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A95AF36114705F380074A070 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95AF36014705F380074A070 /* UIKit.framework */; };
+		A95AF36314705F380074A070 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95AF36214705F380074A070 /* Foundation.framework */; };
+		A95AF36514705F380074A070 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95AF36414705F380074A070 /* CoreGraphics.framework */; };
+		A95AF36B14705F380074A070 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A95AF36914705F380074A070 /* InfoPlist.strings */; };
+		A95AF36D14705F380074A070 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A95AF36C14705F380074A070 /* main.m */; };
+		A95AF37114705F390074A070 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A95AF37014705F390074A070 /* AppDelegate.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A95AF35C14705F380074A070 /* Noisie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Noisie.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A95AF36014705F380074A070 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		A95AF36214705F380074A070 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		A95AF36414705F380074A070 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		A95AF36814705F380074A070 /* Noisie-Info.plist */ = {isa = PBXFileReference; path = "Noisie-Info.plist"; sourceTree = "<group>"; };
+		A95AF36A14705F380074A070 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A95AF36C14705F380074A070 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A95AF36E14705F380074A070 /* Noisie-Prefix.pch */ = {isa = PBXFileReference; path = "Noisie-Prefix.pch"; sourceTree = "<group>"; };
+		A95AF36F14705F380074A070 /* AppDelegate.h */ = {isa = PBXFileReference; path = AppDelegate.h; sourceTree = "<group>"; };
+		A95AF37014705F390074A070 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A95AF35914705F380074A070 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A95AF36114705F380074A070 /* UIKit.framework in Frameworks */,
+				A95AF36314705F380074A070 /* Foundation.framework in Frameworks */,
+				A95AF36514705F380074A070 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A95AF35114705F380074A070 = {
+			isa = PBXGroup;
+			children = (
+				A95AF36614705F380074A070 /* Noisie */,
+				A95AF35F14705F380074A070 /* Frameworks */,
+				A95AF35D14705F380074A070 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A95AF35D14705F380074A070 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A95AF35C14705F380074A070 /* Noisie.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A95AF35F14705F380074A070 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A95AF36014705F380074A070 /* UIKit.framework */,
+				A95AF36214705F380074A070 /* Foundation.framework */,
+				A95AF36414705F380074A070 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A95AF36614705F380074A070 /* Noisie */ = {
+			isa = PBXGroup;
+			children = (
+				A95AF36F14705F380074A070 /* AppDelegate.h */,
+				A95AF37014705F390074A070 /* AppDelegate.m */,
+				A95AF36714705F380074A070 /* Supporting Files */,
+			);
+			path = Noisie;
+			sourceTree = "<group>";
+		};
+		A95AF36714705F380074A070 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				A95AF36814705F380074A070 /* Noisie-Info.plist */,
+				A95AF36914705F380074A070 /* InfoPlist.strings */,
+				A95AF36C14705F380074A070 /* main.m */,
+				A95AF36E14705F380074A070 /* Noisie-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A95AF35B14705F380074A070 /* Noisie */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A95AF37414705F390074A070 /* Build configuration list for PBXNativeTarget "Noisie" */;
+			buildPhases = (
+				A95AF35814705F380074A070 /* Sources */,
+				A95AF35914705F380074A070 /* Frameworks */,
+				A95AF35A14705F380074A070 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Noisie;
+			productName = Noisie;
+			productReference = A95AF35C14705F380074A070 /* Noisie.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A95AF35314705F380074A070 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = A95AF35614705F380074A070 /* Build configuration list for PBXProject "Noisie" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = A95AF35114705F380074A070;
+			productRefGroup = A95AF35D14705F380074A070 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A95AF35B14705F380074A070 /* Noisie */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A95AF35A14705F380074A070 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A95AF36B14705F380074A070 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A95AF35814705F380074A070 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A95AF36D14705F380074A070 /* main.m in Sources */,
+				A95AF37114705F390074A070 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		A95AF36914705F380074A070 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A95AF36A14705F380074A070 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		A95AF37214705F390074A070 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		A95AF37314705F390074A070 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A95AF37514705F390074A070 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Noisie/Noisie-Prefix.pch";
+				INFOPLIST_FILE = "Noisie/Noisie-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		A95AF37614705F390074A070 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Noisie/Noisie-Prefix.pch";
+				INFOPLIST_FILE = "Noisie/Noisie-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A95AF35614705F380074A070 /* Build configuration list for PBXProject "Noisie" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A95AF37214705F390074A070 /* Debug */,
+				A95AF37314705F390074A070 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A95AF37414705F390074A070 /* Build configuration list for PBXNativeTarget "Noisie" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A95AF37514705F390074A070 /* Debug */,
+				A95AF37614705F390074A070 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A95AF35314705F380074A070 /* Project object */;
+}
