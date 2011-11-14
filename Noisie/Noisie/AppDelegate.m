@@ -34,7 +34,8 @@
     [self.window makeKeyAndVisible];
     
     self.mManager = [[[RemoteMgr alloc] init] autorelease];
-    [self.mManager initialize:@"http://192.168.1.100:88"];
+//    [self.mManager initialize:@"http://192.168.1.100:88"];
+    [self.mManager initialize:@"http://10.1.1.107:88"];
     
     return YES;
 }

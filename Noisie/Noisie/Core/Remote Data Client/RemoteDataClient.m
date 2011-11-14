@@ -46,22 +46,25 @@
     
     if([result.Success isEqualToString:@"true"]) {
         NSArray *artistList = result.Artists;
+        
+        for (RoArtist *artist in artistList) {
+            NSString    *name = artist.Name;
+        }
     }
 }  
    
-- (void)objectLoader:(RKObjectLoader*)objectLoader didFailWithError:(NSError*)error {
+- (void)objectLoader:(RKObjectLoader*)objectLoader didFailWithError:(NSError *)error {
     NSLog( @"RemoteDataClient:didFailWithError - %@", error );
 }
 
 - (void) initObjectMappings {
-    RKObjectMapping *artistMapping = [RKObjectMapping mappingForClass:[RoArtist class]];
-    [artistMapping mapAttributes:@"DbId", @"Name", @"Website", @"AlbumCount", @"Rating", @"Genre", @"IsFavorite", nil];
-//    [self.mClient.mappingProvider addObjectMapping:mapping];
+    RKObjectMapping *mapping = [RKObjectMapping mappingForClass:[RoArtist class]];
+    [mapping mapAttributes:@"DbId", @"Name", @"Website", @"AlbumCount", @"Rating", @"Genre", @"IsFavorite", nil];
+    [self.mClient.mappingProvider addObjectMapping:mapping];
     
-    RKObjectMapping *mapping = [RKObjectMapping mappingForClass:[ArtistListResult class]];
+    mapping = [RKObjectMapping mappingForClass:[ArtistListResult class]];
     [mapping mapAttributes:@"Success", @"ErrorMessage", nil];
-    [mapping mapKeyPath:@"Artists" toRelationship:@"Artists" withMapping:artistMapping];
-//    [mapping mapRelationship:@"Artists" withMapping:[self.mClient.mappingProvider objectMappingForClass:[RoArtist class]]];
+    [mapping mapRelationship:@"Artists" withMapping:[self.mClient.mappingProvider objectMappingForClass:[RoArtist class]]];
     [self.mClient.mappingProvider addObjectMapping:mapping];
 }
 

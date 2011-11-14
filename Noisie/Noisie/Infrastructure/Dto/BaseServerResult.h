@@ -8,7 +8,10 @@
 
 #import "RoBase.h"
 
-@interface BaseServerResult : NSObject
+@interface BaseServerResult : NSObject {
+    NSString    *Success;
+    NSString    *ErrorMessage;
+}
 
 @property (nonatomic, copy) NSString    *Success;
 @property (nonatomic, copy) NSString    *ErrorMessage;

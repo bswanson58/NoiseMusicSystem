@@ -8,7 +8,9 @@
 
 #import "RoBase.h"
 
-@interface RoArtist : RoBase
+@interface RoArtist : RoBase {
+    NSString    *Name;
+}
 
 @property (copy, nonatomic)     NSString    *Name;
 @property (copy, nonatomic)     NSString    *Website;
