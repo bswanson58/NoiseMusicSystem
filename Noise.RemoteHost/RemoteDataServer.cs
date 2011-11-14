@@ -62,6 +62,8 @@ namespace Noise.RemoteHost {
 		public AlbumListResult GetAlbumList( long artistId ) {
 			var retValue = new AlbumListResult();
 
+			retValue.ArtistId = artistId;
+
 			try {
 				using( var albumList = mNoiseManager.DataProvider.GetAlbumList( artistId )) {
 					retValue.Albums = albumList.List.Select( TransformAlbum ).ToArray();
@@ -89,6 +91,11 @@ namespace Noise.RemoteHost {
 			var retValue = new TrackListResult();
 
 			try {
+				var album = mNoiseManager.DataProvider.GetAlbum( albumId );
+
+				retValue.ArtistId = album.Artist;
+				retValue.AlbumId = album.DbId;
+
 				using( var trackList = mNoiseManager.DataProvider.GetTrackList( albumId )) {
 					retValue.Tracks = trackList.List.Select( TransformTrack ).ToArray();
 					retValue.Success = true;
