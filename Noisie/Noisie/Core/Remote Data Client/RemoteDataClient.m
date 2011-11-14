@@ -9,6 +9,7 @@
 #import "RemoteDataClient.h"
 #import "RoArtist.h"
 #import "ArtistListResult.h"
+#import "Events.h"
 
 @interface RemoteDataClient ()
 
@@ -23,6 +24,8 @@
 @synthesize mClient;
 
 - (void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
     self.mClient = nil;
     
     [super dealloc];
@@ -45,11 +48,7 @@
     ArtistListResult    *result = [objects objectAtIndex:0];
     
     if([result.Success isEqualToString:@"true"]) {
-        NSArray *artistList = result.Artists;
-        
-        for (RoArtist *artist in artistList) {
-            NSString    *name = artist.Name;
-        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:EventArtistListUpdate object:result];
     }
 }  
    

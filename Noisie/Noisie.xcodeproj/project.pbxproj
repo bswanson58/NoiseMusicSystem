@@ -26,6 +26,9 @@
 		A95AF3C21470725B0074A070 /* ArtistListResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A95AF3C11470725B0074A070 /* ArtistListResult.m */; };
 		A95AF3C6147073890074A070 /* RemoteDataClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A95AF3C5147073890074A070 /* RemoteDataClient.m */; };
 		A95AF3C914709C510074A070 /* RemoteMgr.m in Sources */ = {isa = PBXBuildFile; fileRef = A95AF3C814709C510074A070 /* RemoteMgr.m */; };
+		A9C904671471853100F98E2B /* Events.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C904661471853100F98E2B /* Events.m */; };
+		A9C9046B1471900F00F98E2B /* ArtistListController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C904691471900F00F98E2B /* ArtistListController.m */; };
+		A9C9046C1471900F00F98E2B /* ArtistListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9C9046A1471900F00F98E2B /* ArtistListController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -142,6 +145,11 @@
 		A95AF3C5147073890074A070 /* RemoteDataClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteDataClient.m; path = "Core/Remote Data Client/RemoteDataClient.m"; sourceTree = "<group>"; };
 		A95AF3C714709C510074A070 /* RemoteMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteMgr.h; path = Core/RemoteMgr.h; sourceTree = "<group>"; };
 		A95AF3C814709C510074A070 /* RemoteMgr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteMgr.m; path = Core/RemoteMgr.m; sourceTree = "<group>"; };
+		A9C904651471853100F98E2B /* Events.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Events.h; path = Infrastructure/Events.h; sourceTree = "<group>"; };
+		A9C904661471853100F98E2B /* Events.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Events.m; path = Infrastructure/Events.m; sourceTree = "<group>"; };
+		A9C904681471900F00F98E2B /* ArtistListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArtistListController.h; path = UI/ArtistListController.h; sourceTree = "<group>"; };
+		A9C904691471900F00F98E2B /* ArtistListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ArtistListController.m; path = UI/ArtistListController.m; sourceTree = "<group>"; };
+		A9C9046A1471900F00F98E2B /* ArtistListController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ArtistListController.xib; path = UI/ArtistListController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,6 +207,7 @@
 		A95AF36614705F380074A070 /* Noisie */ = {
 			isa = PBXGroup;
 			children = (
+				A9C9044A14717F3E00F98E2B /* UI */,
 				A95AF3B514706F0F0074A070 /* Infrastructure */,
 				A95AF3B414706C220074A070 /* Core */,
 				A95AF3B314706B420074A070 /* Application */,
@@ -259,6 +268,8 @@
 			isa = PBXGroup;
 			children = (
 				A95AF3B614706F220074A070 /* Dto */,
+				A9C904651471853100F98E2B /* Events.h */,
+				A9C904661471853100F98E2B /* Events.m */,
 			);
 			name = Infrastructure;
 			sourceTree = "<group>";
@@ -285,6 +296,16 @@
 				A95AF3C5147073890074A070 /* RemoteDataClient.m */,
 			);
 			name = "Remote Data Client";
+			sourceTree = "<group>";
+		};
+		A9C9044A14717F3E00F98E2B /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				A9C904681471900F00F98E2B /* ArtistListController.h */,
+				A9C904691471900F00F98E2B /* ArtistListController.m */,
+				A9C9046A1471900F00F98E2B /* ArtistListController.xib */,
+			);
+			name = UI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -427,6 +448,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A95AF36B14705F380074A070 /* InfoPlist.strings in Resources */,
+				A9C9046C1471900F00F98E2B /* ArtistListController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,6 +467,8 @@
 				A95AF3C21470725B0074A070 /* ArtistListResult.m in Sources */,
 				A95AF3C6147073890074A070 /* RemoteDataClient.m in Sources */,
 				A95AF3C914709C510074A070 /* RemoteMgr.m in Sources */,
+				A9C904671471853100F98E2B /* Events.m in Sources */,
+				A9C9046B1471900F00F98E2B /* ArtistListController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -562,6 +586,7 @@
 				A95AF37614705F390074A070 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

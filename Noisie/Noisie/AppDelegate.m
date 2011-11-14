@@ -7,11 +7,13 @@
 //
 
 #import "AppDelegate.h"
+#import "ArtistListController.h"
 #import "RemoteMgr.h"
 
 @interface AppDelegate ()
 
-@property (nonatomic, retain)   RemoteMgr   *mManager;
+@property (nonatomic, retain)   RemoteMgr               *mManager;
+@property (nonatomic, retain)   ArtistListController    *mArtistListController;
 
 @end
 
@@ -19,10 +21,12 @@
 
 @synthesize window = _window;
 @synthesize mManager;
+@synthesize mArtistListController;
 
 - (void)dealloc {
     [_window release];
     self.mManager = nil;
+    self.mArtistListController = nil;
     
     [super dealloc];
 }
@@ -32,6 +36,10 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
+    
+    self.mArtistListController = [[[ArtistListController alloc] initWithNibName:nil bundle:nil] autorelease];
+    
+    [self.window setRootViewController:self.mArtistListController];
     
     self.mManager = [[[RemoteMgr alloc] init] autorelease];
 //    [self.mManager initialize:@"http://192.168.1.100:88"];
