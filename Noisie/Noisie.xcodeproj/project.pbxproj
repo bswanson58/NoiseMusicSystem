@@ -20,6 +20,12 @@
 		A95AF3A9147064CB0074A070 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95AF3A8147064CB0074A070 /* CFNetwork.framework */; };
 		A95AF3AB147064E50074A070 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95AF3AA147064E50074A070 /* MobileCoreServices.framework */; };
 		A95AF3AD147064F40074A070 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95AF3AC147064F40074A070 /* SystemConfiguration.framework */; };
+		A95AF3B914706F800074A070 /* RoBase.m in Sources */ = {isa = PBXBuildFile; fileRef = A95AF3B814706F7F0074A070 /* RoBase.m */; };
+		A95AF3BC147070070074A070 /* RoArtist.m in Sources */ = {isa = PBXBuildFile; fileRef = A95AF3BB147070070074A070 /* RoArtist.m */; };
+		A95AF3BF1470723B0074A070 /* BaseServerResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A95AF3BE1470723B0074A070 /* BaseServerResult.m */; };
+		A95AF3C21470725B0074A070 /* ArtistListResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A95AF3C11470725B0074A070 /* ArtistListResult.m */; };
+		A95AF3C6147073890074A070 /* RemoteDataClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A95AF3C5147073890074A070 /* RemoteDataClient.m */; };
+		A95AF3C914709C510074A070 /* RemoteMgr.m in Sources */ = {isa = PBXBuildFile; fileRef = A95AF3C814709C510074A070 /* RemoteMgr.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -124,6 +130,18 @@
 		A95AF3A8147064CB0074A070 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		A95AF3AA147064E50074A070 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		A95AF3AC147064F40074A070 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		A95AF3B714706F7F0074A070 /* RoBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoBase.h; path = Infrastructure/Dto/RoBase.h; sourceTree = "<group>"; };
+		A95AF3B814706F7F0074A070 /* RoBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RoBase.m; path = Infrastructure/Dto/RoBase.m; sourceTree = "<group>"; };
+		A95AF3BA147070070074A070 /* RoArtist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoArtist.h; path = Infrastructure/Dto/RoArtist.h; sourceTree = "<group>"; };
+		A95AF3BB147070070074A070 /* RoArtist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RoArtist.m; path = Infrastructure/Dto/RoArtist.m; sourceTree = "<group>"; };
+		A95AF3BD1470723B0074A070 /* BaseServerResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseServerResult.h; path = Infrastructure/Dto/BaseServerResult.h; sourceTree = "<group>"; };
+		A95AF3BE1470723B0074A070 /* BaseServerResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BaseServerResult.m; path = Infrastructure/Dto/BaseServerResult.m; sourceTree = "<group>"; };
+		A95AF3C01470725B0074A070 /* ArtistListResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArtistListResult.h; path = Infrastructure/Dto/ArtistListResult.h; sourceTree = "<group>"; };
+		A95AF3C11470725B0074A070 /* ArtistListResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ArtistListResult.m; path = Infrastructure/Dto/ArtistListResult.m; sourceTree = "<group>"; };
+		A95AF3C4147073890074A070 /* RemoteDataClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteDataClient.h; path = "Core/Remote Data Client/RemoteDataClient.h"; sourceTree = "<group>"; };
+		A95AF3C5147073890074A070 /* RemoteDataClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteDataClient.m; path = "Core/Remote Data Client/RemoteDataClient.m"; sourceTree = "<group>"; };
+		A95AF3C714709C510074A070 /* RemoteMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteMgr.h; path = Core/RemoteMgr.h; sourceTree = "<group>"; };
+		A95AF3C814709C510074A070 /* RemoteMgr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteMgr.m; path = Core/RemoteMgr.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,6 +199,7 @@
 		A95AF36614705F380074A070 /* Noisie */ = {
 			isa = PBXGroup;
 			children = (
+				A95AF3B514706F0F0074A070 /* Infrastructure */,
 				A95AF3B414706C220074A070 /* Core */,
 				A95AF3B314706B420074A070 /* Application */,
 				A95AF36714705F380074A070 /* Supporting Files */,
@@ -229,8 +248,43 @@
 		A95AF3B414706C220074A070 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				A95AF3C3147073370074A070 /* Remote Data Client */,
+				A95AF3C714709C510074A070 /* RemoteMgr.h */,
+				A95AF3C814709C510074A070 /* RemoteMgr.m */,
 			);
 			name = Core;
+			sourceTree = "<group>";
+		};
+		A95AF3B514706F0F0074A070 /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				A95AF3B614706F220074A070 /* Dto */,
+			);
+			name = Infrastructure;
+			sourceTree = "<group>";
+		};
+		A95AF3B614706F220074A070 /* Dto */ = {
+			isa = PBXGroup;
+			children = (
+				A95AF3B714706F7F0074A070 /* RoBase.h */,
+				A95AF3B814706F7F0074A070 /* RoBase.m */,
+				A95AF3BA147070070074A070 /* RoArtist.h */,
+				A95AF3BB147070070074A070 /* RoArtist.m */,
+				A95AF3BD1470723B0074A070 /* BaseServerResult.h */,
+				A95AF3BE1470723B0074A070 /* BaseServerResult.m */,
+				A95AF3C01470725B0074A070 /* ArtistListResult.h */,
+				A95AF3C11470725B0074A070 /* ArtistListResult.m */,
+			);
+			name = Dto;
+			sourceTree = "<group>";
+		};
+		A95AF3C3147073370074A070 /* Remote Data Client */ = {
+			isa = PBXGroup;
+			children = (
+				A95AF3C4147073890074A070 /* RemoteDataClient.h */,
+				A95AF3C5147073890074A070 /* RemoteDataClient.m */,
+			);
+			name = "Remote Data Client";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -385,6 +439,12 @@
 			files = (
 				A95AF36D14705F380074A070 /* main.m in Sources */,
 				A95AF37114705F390074A070 /* AppDelegate.m in Sources */,
+				A95AF3B914706F800074A070 /* RoBase.m in Sources */,
+				A95AF3BC147070070074A070 /* RoArtist.m in Sources */,
+				A95AF3BF1470723B0074A070 /* BaseServerResult.m in Sources */,
+				A95AF3C21470725B0074A070 /* ArtistListResult.m in Sources */,
+				A95AF3C6147073890074A070 /* RemoteDataClient.m in Sources */,
+				A95AF3C914709C510074A070 /* RemoteMgr.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

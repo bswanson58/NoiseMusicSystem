@@ -7,13 +7,23 @@
 //
 
 #import "AppDelegate.h"
+#import "RemoteMgr.h"
+
+@interface AppDelegate ()
+
+@property (nonatomic, retain)   RemoteMgr   *mManager;
+
+@end
 
 @implementation AppDelegate
 
 @synthesize window = _window;
+@synthesize mManager;
 
 - (void)dealloc {
     [_window release];
+    self.mManager = nil;
+    
     [super dealloc];
 }
 
@@ -22,6 +32,10 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
+    
+    self.mManager = [[[RemoteMgr alloc] init] autorelease];
+    [self.mManager initialize:@"http://192.168.1.100:88"];
+    
     return YES;
 }
 
