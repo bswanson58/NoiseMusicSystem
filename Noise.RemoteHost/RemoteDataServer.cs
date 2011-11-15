@@ -60,14 +60,16 @@ namespace Noise.RemoteHost {
 		}
 
 		public AlbumListResult GetAlbumList( long artistId ) {
-			var retValue = new AlbumListResult();
-
-			retValue.ArtistId = artistId;
+			var retValue = new AlbumListResult { ArtistId = artistId };
 
 			try {
-				using( var albumList = mNoiseManager.DataProvider.GetAlbumList( artistId )) {
-					retValue.Albums = albumList.List.Select( TransformAlbum ).ToArray();
-					retValue.Success = true;
+				var	artist = mNoiseManager.DataProvider.GetArtist( artistId );
+
+				if( artist != null ) {
+					using( var albumList = mNoiseManager.DataProvider.GetAlbumList( artistId )) {
+						retValue.Albums = albumList.List.Select( TransformAlbum ).ToArray();
+						retValue.Success = true;
+					}
 				}
 			}
 			catch( Exception ex ) {
