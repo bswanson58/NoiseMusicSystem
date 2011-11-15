@@ -29,6 +29,10 @@
 		A9C904671471853100F98E2B /* Events.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C904661471853100F98E2B /* Events.m */; };
 		A9C9046B1471900F00F98E2B /* ArtistListController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C904691471900F00F98E2B /* ArtistListController.m */; };
 		A9C9046C1471900F00F98E2B /* ArtistListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9C9046A1471900F00F98E2B /* ArtistListController.xib */; };
+		A9F839231471F12D0067217A /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9F839211471F12D0067217A /* MainViewController.m */; };
+		A9F839241471F12D0067217A /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9F839221471F12D0067217A /* MainViewController.xib */; };
+		A9F839281471F4670067217A /* ArtistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9F839261471F4670067217A /* ArtistViewController.m */; };
+		A9F839291471F4670067217A /* ArtistViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9F839271471F4670067217A /* ArtistViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -150,6 +154,12 @@
 		A9C904681471900F00F98E2B /* ArtistListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArtistListController.h; path = UI/ArtistListController.h; sourceTree = "<group>"; };
 		A9C904691471900F00F98E2B /* ArtistListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ArtistListController.m; path = UI/ArtistListController.m; sourceTree = "<group>"; };
 		A9C9046A1471900F00F98E2B /* ArtistListController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ArtistListController.xib; path = UI/ArtistListController.xib; sourceTree = "<group>"; };
+		A9F839201471F12D0067217A /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainViewController.h; path = UI/MainViewController.h; sourceTree = "<group>"; };
+		A9F839211471F12D0067217A /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainViewController.m; path = UI/MainViewController.m; sourceTree = "<group>"; };
+		A9F839221471F12D0067217A /* MainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainViewController.xib; path = UI/MainViewController.xib; sourceTree = "<group>"; };
+		A9F839251471F4670067217A /* ArtistViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArtistViewController.h; path = UI/ArtistViewController.h; sourceTree = "<group>"; };
+		A9F839261471F4670067217A /* ArtistViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ArtistViewController.m; path = UI/ArtistViewController.m; sourceTree = "<group>"; };
+		A9F839271471F4670067217A /* ArtistViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ArtistViewController.xib; path = UI/ArtistViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -301,9 +311,15 @@
 		A9C9044A14717F3E00F98E2B /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				A9F839201471F12D0067217A /* MainViewController.h */,
+				A9F839211471F12D0067217A /* MainViewController.m */,
+				A9F839221471F12D0067217A /* MainViewController.xib */,
 				A9C904681471900F00F98E2B /* ArtistListController.h */,
 				A9C904691471900F00F98E2B /* ArtistListController.m */,
 				A9C9046A1471900F00F98E2B /* ArtistListController.xib */,
+				A9F839251471F4670067217A /* ArtistViewController.h */,
+				A9F839261471F4670067217A /* ArtistViewController.m */,
+				A9F839271471F4670067217A /* ArtistViewController.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -449,6 +465,8 @@
 			files = (
 				A95AF36B14705F380074A070 /* InfoPlist.strings in Resources */,
 				A9C9046C1471900F00F98E2B /* ArtistListController.xib in Resources */,
+				A9F839241471F12D0067217A /* MainViewController.xib in Resources */,
+				A9F839291471F4670067217A /* ArtistViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -469,6 +487,8 @@
 				A95AF3C914709C510074A070 /* RemoteMgr.m in Sources */,
 				A9C904671471853100F98E2B /* Events.m in Sources */,
 				A9C9046B1471900F00F98E2B /* ArtistListController.m in Sources */,
+				A9F839231471F12D0067217A /* MainViewController.m in Sources */,
+				A9F839281471F4670067217A /* ArtistViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

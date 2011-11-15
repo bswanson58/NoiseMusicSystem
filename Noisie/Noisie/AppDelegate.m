@@ -7,13 +7,15 @@
 //
 
 #import "AppDelegate.h"
+#import "MainViewController.h"
 #import "ArtistListController.h"
+#import "ArtistViewController.h"
 #import "RemoteMgr.h"
 
 @interface AppDelegate ()
 
 @property (nonatomic, retain)   RemoteMgr               *mManager;
-@property (nonatomic, retain)   ArtistListController    *mArtistListController;
+@property (nonatomic, retain)   MainViewController      *mMainViewController;
 
 @end
 
@@ -21,12 +23,12 @@
 
 @synthesize window = _window;
 @synthesize mManager;
-@synthesize mArtistListController;
+@synthesize mMainViewController;
 
 - (void)dealloc {
     [_window release];
     self.mManager = nil;
-    self.mArtistListController = nil;
+    self.mMainViewController = nil;
     
     [super dealloc];
 }
@@ -37,13 +39,12 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     
-    self.mArtistListController = [[[ArtistListController alloc] initWithNibName:nil bundle:nil] autorelease];
-    
-    [self.window setRootViewController:self.mArtistListController];
+    self.mMainViewController = [[[MainViewController alloc] initWithNibName:nil bundle:nil] autorelease];
+    [self.window setRootViewController:self.mMainViewController];
     
     self.mManager = [[[RemoteMgr alloc] init] autorelease];
-//    [self.mManager initialize:@"http://192.168.1.100:88"];
-    [self.mManager initialize:@"http://10.1.1.107:88"];
+    [self.mManager initialize:@"http://192.168.1.100:88"];
+//    [self.mManager initialize:@"http://10.1.1.107:88"];
     
     return YES;
 }

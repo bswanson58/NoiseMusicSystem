@@ -58,12 +58,11 @@
     self.mArtistList = [[[NSMutableArray alloc] init] autorelease];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistListUpdate:) name:EventArtistListUpdate object:nil];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventArtistListRequest object:nil];
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)viewDidUnload {
@@ -130,6 +129,12 @@
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    RoArtist    *artist = [self.mArtistList objectAtIndex:[indexPath row]];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventArtistSelected object:artist];
+}
+
 /*
  // Override to support conditional editing of the table view.
  - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -168,18 +173,5 @@
  return YES;
  }
  */
-
-#pragma mark - Table view delegate
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     [detailViewController release];
-     */
-}
 
 @end

@@ -8,4 +8,6 @@
 
 #import "Events.h"
 
+NSString * const    EventArtistListRequest          = @"event:ArtistListRequest";
 NSString * const    EventArtistListUpdate           = @"event:ArtistListUpdate";
+NSString * const    EventArtistSelected             = @"event:ArtistSelected";
