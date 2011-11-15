@@ -8,7 +8,9 @@
 
 #import "RemoteDataClient.h"
 #import "RoArtist.h"
+#import "RoAlbum.h"
 #import "ArtistListResult.h"
+#import "AlbumListResult.h"
 #import "Events.h"
 
 @interface RemoteDataClient ()
@@ -44,6 +46,10 @@
                                    delegate:self];
 }
 
+- (void) requestAlbumList:(long)forArtist {
+    
+}
+
 - (void)objectLoader:(RKObjectLoader*)objectLoader didLoadObjects:(NSArray*)objects {  
     ArtistListResult    *result = [objects objectAtIndex:0];
     
@@ -64,6 +70,15 @@
     mapping = [RKObjectMapping mappingForClass:[ArtistListResult class]];
     [mapping mapAttributes:@"Success", @"ErrorMessage", nil];
     [mapping mapRelationship:@"Artists" withMapping:[self.mClient.mappingProvider objectMappingForClass:[RoArtist class]]];
+    [self.mClient.mappingProvider addObjectMapping:mapping];
+    
+    mapping = [RKObjectMapping mappingForClass:[RoAlbum class]];
+    [mapping mapAttributes:@"Name", @"TrackCount", @"Rating", @"PublishedYear", @"Genre", @"IsFavorite", nil];
+    [self.mClient.mappingProvider addObjectMapping:mapping];
+    
+    mapping = [RKObjectMapping mappingForClass:[AlbumListResult class]];
+    [mapping mapAttributes:@"Success", @"ErrorMessage", @"ArtistId", nil];
+    [mapping mapRelationship:@"Albums" withMapping:[self.mClient.mappingProvider objectMappingForClass:[RoAlbum class]]];
     [self.mClient.mappingProvider addObjectMapping:mapping];
 }
 

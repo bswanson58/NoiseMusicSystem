@@ -14,5 +14,6 @@
 - (void) initializeClient:(NSString *) serverAddress;
 
 - (void) requestArtistList;
+- (void) requestAlbumList:(long) forArtist;
 
 @end

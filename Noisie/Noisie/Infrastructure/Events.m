@@ -11,3 +11,6 @@
 NSString * const    EventArtistListRequest          = @"event:ArtistListRequest";
 NSString * const    EventArtistListUpdate           = @"event:ArtistListUpdate";
 NSString * const    EventArtistSelected             = @"event:ArtistSelected";
+
+NSString * const    EventAlbumListRequest           = @"event:AlbumListRequest";
+NSString * const    EventAlbumListUpdate            = @"event:AlbumListUpdate";

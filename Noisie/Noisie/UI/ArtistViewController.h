@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+@class RoArtist;
+
 @interface ArtistViewController : UIViewController
+
+@property (retain, nonatomic) IBOutlet UITableView *uiAlbumList;
+
+- (void) displayArtist:(RoArtist *) artist;
 
 @end

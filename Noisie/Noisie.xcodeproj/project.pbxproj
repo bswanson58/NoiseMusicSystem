@@ -33,6 +33,8 @@
 		A9F839241471F12D0067217A /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9F839221471F12D0067217A /* MainViewController.xib */; };
 		A9F839281471F4670067217A /* ArtistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9F839261471F4670067217A /* ArtistViewController.m */; };
 		A9F839291471F4670067217A /* ArtistViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9F839271471F4670067217A /* ArtistViewController.xib */; };
+		A9F83931147203980067217A /* AlbumListResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A9F83930147203980067217A /* AlbumListResult.m */; };
+		A9F83934147203B20067217A /* RoAlbum.m in Sources */ = {isa = PBXBuildFile; fileRef = A9F83933147203B20067217A /* RoAlbum.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -160,6 +162,10 @@
 		A9F839251471F4670067217A /* ArtistViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArtistViewController.h; path = UI/ArtistViewController.h; sourceTree = "<group>"; };
 		A9F839261471F4670067217A /* ArtistViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ArtistViewController.m; path = UI/ArtistViewController.m; sourceTree = "<group>"; };
 		A9F839271471F4670067217A /* ArtistViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ArtistViewController.xib; path = UI/ArtistViewController.xib; sourceTree = "<group>"; };
+		A9F8392F147203980067217A /* AlbumListResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlbumListResult.h; path = Infrastructure/Dto/AlbumListResult.h; sourceTree = "<group>"; };
+		A9F83930147203980067217A /* AlbumListResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AlbumListResult.m; path = Infrastructure/Dto/AlbumListResult.m; sourceTree = "<group>"; };
+		A9F83932147203B20067217A /* RoAlbum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoAlbum.h; path = Infrastructure/Dto/RoAlbum.h; sourceTree = "<group>"; };
+		A9F83933147203B20067217A /* RoAlbum.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RoAlbum.m; path = Infrastructure/Dto/RoAlbum.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -291,10 +297,14 @@
 				A95AF3B814706F7F0074A070 /* RoBase.m */,
 				A95AF3BA147070070074A070 /* RoArtist.h */,
 				A95AF3BB147070070074A070 /* RoArtist.m */,
+				A9F83932147203B20067217A /* RoAlbum.h */,
+				A9F83933147203B20067217A /* RoAlbum.m */,
 				A95AF3BD1470723B0074A070 /* BaseServerResult.h */,
 				A95AF3BE1470723B0074A070 /* BaseServerResult.m */,
 				A95AF3C01470725B0074A070 /* ArtistListResult.h */,
 				A95AF3C11470725B0074A070 /* ArtistListResult.m */,
+				A9F8392F147203980067217A /* AlbumListResult.h */,
+				A9F83930147203980067217A /* AlbumListResult.m */,
 			);
 			name = Dto;
 			sourceTree = "<group>";
@@ -489,6 +499,8 @@
 				A9C9046B1471900F00F98E2B /* ArtistListController.m in Sources */,
 				A9F839231471F12D0067217A /* MainViewController.m in Sources */,
 				A9F839281471F4670067217A /* ArtistViewController.m in Sources */,
+				A9F83931147203980067217A /* AlbumListResult.m in Sources */,
+				A9F83934147203B20067217A /* RoAlbum.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
