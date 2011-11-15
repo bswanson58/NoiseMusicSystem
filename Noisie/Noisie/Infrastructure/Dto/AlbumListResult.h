@@ -7,10 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "RoAlbum.h"
+#import "BaseServerResult.h"
 
-@interface AlbumListResult : NSObject
+@interface AlbumListResult : BaseServerResult
 
-@property (nonatomic, assign)   long    ArtistId;
-@property (nonatomic, retain)   NSArray *Albums;
+@property (nonatomic, assign)   NSNumber    *ArtistId;
+@property (nonatomic, retain)   NSArray     *Albums;
+
 @end

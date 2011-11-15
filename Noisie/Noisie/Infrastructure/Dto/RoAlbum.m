@@ -19,6 +19,7 @@
 
 - (void) dealloc {
     self.Name = nil;
+    self.Genre = nil;
     self.IsFavorite = nil;
     
     [super dealloc];

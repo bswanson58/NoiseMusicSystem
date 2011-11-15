@@ -8,8 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-@interface RoBase : NSObject
+@interface RoBase : NSObject {
+    NSNumber    *DbId;
+}
 
-@property (assign, nonatomic) long  DbId;
+@property (retain, nonatomic) NSNumber  *DbId;
 
 @end

@@ -26,6 +26,9 @@
 		A95AF3C21470725B0074A070 /* ArtistListResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A95AF3C11470725B0074A070 /* ArtistListResult.m */; };
 		A95AF3C6147073890074A070 /* RemoteDataClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A95AF3C5147073890074A070 /* RemoteDataClient.m */; };
 		A95AF3C914709C510074A070 /* RemoteMgr.m in Sources */ = {isa = PBXBuildFile; fileRef = A95AF3C814709C510074A070 /* RemoteMgr.m */; };
+		A96D6C6D1472B51500521583 /* BaseResultDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A96D6C6C1472B51500521583 /* BaseResultDelegate.m */; };
+		A96D6C701472B60400521583 /* ArtistListDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A96D6C6F1472B60400521583 /* ArtistListDelegate.m */; };
+		A96D6C731472B87400521583 /* AlbumListDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A96D6C721472B87400521583 /* AlbumListDelegate.m */; };
 		A9C904671471853100F98E2B /* Events.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C904661471853100F98E2B /* Events.m */; };
 		A9C9046B1471900F00F98E2B /* ArtistListController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C904691471900F00F98E2B /* ArtistListController.m */; };
 		A9C9046C1471900F00F98E2B /* ArtistListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9C9046A1471900F00F98E2B /* ArtistListController.xib */; };
@@ -151,6 +154,12 @@
 		A95AF3C5147073890074A070 /* RemoteDataClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteDataClient.m; path = "Core/Remote Data Client/RemoteDataClient.m"; sourceTree = "<group>"; };
 		A95AF3C714709C510074A070 /* RemoteMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteMgr.h; path = Core/RemoteMgr.h; sourceTree = "<group>"; };
 		A95AF3C814709C510074A070 /* RemoteMgr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteMgr.m; path = Core/RemoteMgr.m; sourceTree = "<group>"; };
+		A96D6C6B1472B51500521583 /* BaseResultDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseResultDelegate.h; path = Core/BaseResultDelegate.h; sourceTree = "<group>"; };
+		A96D6C6C1472B51500521583 /* BaseResultDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BaseResultDelegate.m; path = Core/BaseResultDelegate.m; sourceTree = "<group>"; };
+		A96D6C6E1472B60400521583 /* ArtistListDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArtistListDelegate.h; path = "Core/Remote Data Client/ArtistListDelegate.h"; sourceTree = "<group>"; };
+		A96D6C6F1472B60400521583 /* ArtistListDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ArtistListDelegate.m; path = "Core/Remote Data Client/ArtistListDelegate.m"; sourceTree = "<group>"; };
+		A96D6C711472B87400521583 /* AlbumListDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlbumListDelegate.h; path = "Core/Remote Data Client/AlbumListDelegate.h"; sourceTree = "<group>"; };
+		A96D6C721472B87400521583 /* AlbumListDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AlbumListDelegate.m; path = "Core/Remote Data Client/AlbumListDelegate.m"; sourceTree = "<group>"; };
 		A9C904651471853100F98E2B /* Events.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Events.h; path = Infrastructure/Events.h; sourceTree = "<group>"; };
 		A9C904661471853100F98E2B /* Events.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Events.m; path = Infrastructure/Events.m; sourceTree = "<group>"; };
 		A9C904681471900F00F98E2B /* ArtistListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArtistListController.h; path = UI/ArtistListController.h; sourceTree = "<group>"; };
@@ -276,6 +285,8 @@
 				A95AF3C3147073370074A070 /* Remote Data Client */,
 				A95AF3C714709C510074A070 /* RemoteMgr.h */,
 				A95AF3C814709C510074A070 /* RemoteMgr.m */,
+				A96D6C6B1472B51500521583 /* BaseResultDelegate.h */,
+				A96D6C6C1472B51500521583 /* BaseResultDelegate.m */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -314,6 +325,10 @@
 			children = (
 				A95AF3C4147073890074A070 /* RemoteDataClient.h */,
 				A95AF3C5147073890074A070 /* RemoteDataClient.m */,
+				A96D6C6E1472B60400521583 /* ArtistListDelegate.h */,
+				A96D6C6F1472B60400521583 /* ArtistListDelegate.m */,
+				A96D6C711472B87400521583 /* AlbumListDelegate.h */,
+				A96D6C721472B87400521583 /* AlbumListDelegate.m */,
 			);
 			name = "Remote Data Client";
 			sourceTree = "<group>";
@@ -501,6 +516,9 @@
 				A9F839281471F4670067217A /* ArtistViewController.m in Sources */,
 				A9F83931147203980067217A /* AlbumListResult.m in Sources */,
 				A9F83934147203B20067217A /* RoAlbum.m in Sources */,
+				A96D6C6D1472B51500521583 /* BaseResultDelegate.m in Sources */,
+				A96D6C701472B60400521583 /* ArtistListDelegate.m in Sources */,
+				A96D6C731472B87400521583 /* AlbumListDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

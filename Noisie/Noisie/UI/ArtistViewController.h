@@ -10,7 +10,7 @@
 
 @class RoArtist;
 
-@interface ArtistViewController : UIViewController
+@interface ArtistViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
 @property (retain, nonatomic) IBOutlet UITableView *uiAlbumList;
 

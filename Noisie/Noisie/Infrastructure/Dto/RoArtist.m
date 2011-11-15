@@ -19,10 +19,8 @@
 
 - (void) dealloc {
     self.Name = nil;
-    self.Website = nil;
-    self.AlbumCount = nil;
-    self.Rating = nil;
     self.Genre = nil;
+    self.Website = nil;
     self.IsFavorite = nil;
     
     [super dealloc];

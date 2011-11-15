@@ -78,7 +78,7 @@
 - (void) onArtistSelected:(NSNotification *)notification {
     RoArtist    *artist = [notification object];
     
-    [self.mArtistViewController setTitle:[NSString stringWithFormat:@"Artist - %@", artist.Name]];
+    [self.mArtistViewController displayArtist:artist];
     [self.mLibraryNavigationController pushViewController:self.mArtistViewController animated:YES];
 }
 

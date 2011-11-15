@@ -14,6 +14,7 @@
 @synthesize Albums;
 
 - (void) dealloc {
+    self.ArtistId = nil;
     self.Albums = nil;
     
     [super dealloc];

@@ -12,4 +12,10 @@
 
 @synthesize DbId;
 
+- (void) dealloc {
+    self.DbId = nil;
+    
+    [super dealloc];
+}
+
 @end

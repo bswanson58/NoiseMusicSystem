@@ -12,11 +12,11 @@
     NSString    *Name;
 }
 
-@property (copy, nonatomic)     NSString    *Name;
-@property (copy, nonatomic)     NSString    *Website;
-@property (retain, nonatomic)   NSNumber    *AlbumCount;
-@property (retain, nonatomic)   NSNumber    *Rating;
-@property (retain, nonatomic)   NSNumber    *Genre;
-@property (retain, nonatomic)   NSString    *IsFavorite;
+@property (nonatomic, copy)     NSString        *Name;
+@property (nonatomic, copy)     NSString        *Website;
+@property (nonatomic, assign)   int              AlbumCount;
+@property (nonatomic, assign)   int              Rating;
+@property (nonatomic, retain)   NSNumber        *Genre;
+@property (nonatomic, copy)     NSString        *IsFavorite;
 
 @end

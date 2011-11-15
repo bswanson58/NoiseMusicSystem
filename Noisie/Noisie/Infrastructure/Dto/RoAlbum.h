@@ -13,11 +13,11 @@
     NSString    *Name;
 }
 
-@property (nonatomic, copy)     NSString    *Name;
-@property (nonatomic, assign)   int         TrackCount;
-@property (nonatomic, assign)   int         Rating;
-@property (nonatomic, assign)   int         PublishedYear;
-@property (nonatomic, assign)   long        Genre;
-@property (nonatomic, assign)   NSString    *IsFavorite;
+@property (nonatomic, copy)     NSString        *Name;
+@property (nonatomic, assign)   int              TrackCount;
+@property (nonatomic, assign)   int              Rating;
+@property (nonatomic, assign)   unsigned int     PublishedYear;
+@property (nonatomic, retain)   NSNumber        *Genre;
+@property (nonatomic, copy)     NSString        *IsFavorite;
 
 @end

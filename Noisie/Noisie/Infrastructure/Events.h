@@ -14,3 +14,4 @@ extern NSString * const EventArtistSelected;
 
 extern NSString * const EventAlbumListRequest;
 extern NSString * const EventAlbumListUpdate;
+extern NSString * const EventAlbumSelected;
