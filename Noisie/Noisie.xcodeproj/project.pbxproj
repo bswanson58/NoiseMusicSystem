@@ -29,9 +29,11 @@
 		A96D6C6D1472B51500521583 /* BaseResultDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A96D6C6C1472B51500521583 /* BaseResultDelegate.m */; };
 		A96D6C701472B60400521583 /* ArtistListDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A96D6C6F1472B60400521583 /* ArtistListDelegate.m */; };
 		A96D6C731472B87400521583 /* AlbumListDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A96D6C721472B87400521583 /* AlbumListDelegate.m */; };
+		A96D6C771472CAB700521583 /* ArtistListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A96D6C761472CAB700521583 /* ArtistListCell.m */; };
 		A9C904671471853100F98E2B /* Events.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C904661471853100F98E2B /* Events.m */; };
 		A9C9046B1471900F00F98E2B /* ArtistListController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C904691471900F00F98E2B /* ArtistListController.m */; };
 		A9C9046C1471900F00F98E2B /* ArtistListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9C9046A1471900F00F98E2B /* ArtistListController.xib */; };
+		A9F8047D1472CCBC00255255 /* ArtistListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9F8047C1472CCBC00255255 /* ArtistListCell.xib */; };
 		A9F839231471F12D0067217A /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9F839211471F12D0067217A /* MainViewController.m */; };
 		A9F839241471F12D0067217A /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9F839221471F12D0067217A /* MainViewController.xib */; };
 		A9F839281471F4670067217A /* ArtistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9F839261471F4670067217A /* ArtistViewController.m */; };
@@ -160,11 +162,14 @@
 		A96D6C6F1472B60400521583 /* ArtistListDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ArtistListDelegate.m; path = "Core/Remote Data Client/ArtistListDelegate.m"; sourceTree = "<group>"; };
 		A96D6C711472B87400521583 /* AlbumListDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlbumListDelegate.h; path = "Core/Remote Data Client/AlbumListDelegate.h"; sourceTree = "<group>"; };
 		A96D6C721472B87400521583 /* AlbumListDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AlbumListDelegate.m; path = "Core/Remote Data Client/AlbumListDelegate.m"; sourceTree = "<group>"; };
+		A96D6C751472CAB700521583 /* ArtistListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArtistListCell.h; path = UI/Views/ArtistListCell.h; sourceTree = "<group>"; };
+		A96D6C761472CAB700521583 /* ArtistListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ArtistListCell.m; path = UI/Views/ArtistListCell.m; sourceTree = "<group>"; };
 		A9C904651471853100F98E2B /* Events.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Events.h; path = Infrastructure/Events.h; sourceTree = "<group>"; };
 		A9C904661471853100F98E2B /* Events.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Events.m; path = Infrastructure/Events.m; sourceTree = "<group>"; };
 		A9C904681471900F00F98E2B /* ArtistListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArtistListController.h; path = UI/ArtistListController.h; sourceTree = "<group>"; };
 		A9C904691471900F00F98E2B /* ArtistListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ArtistListController.m; path = UI/ArtistListController.m; sourceTree = "<group>"; };
 		A9C9046A1471900F00F98E2B /* ArtistListController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ArtistListController.xib; path = UI/ArtistListController.xib; sourceTree = "<group>"; };
+		A9F8047C1472CCBC00255255 /* ArtistListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ArtistListCell.xib; path = UI/Views/ArtistListCell.xib; sourceTree = "<group>"; };
 		A9F839201471F12D0067217A /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainViewController.h; path = UI/MainViewController.h; sourceTree = "<group>"; };
 		A9F839211471F12D0067217A /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainViewController.m; path = UI/MainViewController.m; sourceTree = "<group>"; };
 		A9F839221471F12D0067217A /* MainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainViewController.xib; path = UI/MainViewController.xib; sourceTree = "<group>"; };
@@ -333,9 +338,20 @@
 			name = "Remote Data Client";
 			sourceTree = "<group>";
 		};
+		A96D6C741472C9DE00521583 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A9F8047C1472CCBC00255255 /* ArtistListCell.xib */,
+				A96D6C751472CAB700521583 /* ArtistListCell.h */,
+				A96D6C761472CAB700521583 /* ArtistListCell.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
 		A9C9044A14717F3E00F98E2B /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				A96D6C741472C9DE00521583 /* Views */,
 				A9F839201471F12D0067217A /* MainViewController.h */,
 				A9F839211471F12D0067217A /* MainViewController.m */,
 				A9F839221471F12D0067217A /* MainViewController.xib */,
@@ -492,6 +508,7 @@
 				A9C9046C1471900F00F98E2B /* ArtistListController.xib in Resources */,
 				A9F839241471F12D0067217A /* MainViewController.xib in Resources */,
 				A9F839291471F4670067217A /* ArtistViewController.xib in Resources */,
+				A9F8047D1472CCBC00255255 /* ArtistListCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -519,6 +536,7 @@
 				A96D6C6D1472B51500521583 /* BaseResultDelegate.m in Sources */,
 				A96D6C701472B60400521583 /* ArtistListDelegate.m in Sources */,
 				A96D6C731472B87400521583 /* AlbumListDelegate.m in Sources */,
+				A96D6C771472CAB700521583 /* ArtistListCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

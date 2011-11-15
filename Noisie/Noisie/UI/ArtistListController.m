@@ -23,6 +23,7 @@
 
 @synthesize uiArtistList;
 @synthesize mArtistList;
+@synthesize artistListCell;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -37,6 +38,7 @@
     
     self.mArtistList = nil;
     self.uiArtistList = nil;
+    self.artistListCell = nil;
 
     [super dealloc];
 }
@@ -114,17 +116,21 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *CellIdentifier = @"Cell";
+    static NSString *cellIdentifier = @"ArtistListCell";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    ArtistListCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        [[NSBundle mainBundle] loadNibNamed:cellIdentifier owner:self options:nil];
+        
+        cell = self.artistListCell;
+        self.artistListCell = nil;
     }
     
     // Configure the cell...
     RoArtist    *artist = [self.mArtistList objectAtIndex:[indexPath row]];
-    
-    [cell setText:artist.Name];
+  
+    [cell.uiArtistName setText:artist.Name];
+    [cell.uiAlbumCount setText:[NSString stringWithFormat:@"%d", artist.AlbumCount]];
     
     return cell;
 }
@@ -134,29 +140,6 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:EventArtistSelected object:artist];
 }
-
-/*
- // Override to support conditional editing of the table view.
- - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
- {
- // Return NO if you do not want the specified item to be editable.
- return YES;
- }
- */
-
-/*
- // Override to support editing the table view.
- - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
- {
- if (editingStyle == UITableViewCellEditingStyleDelete) {
- // Delete the row from the data source
- [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
- }   
- else if (editingStyle == UITableViewCellEditingStyleInsert) {
- // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
- }   
- }
- */
 
 /*
  // Override to support rearranging the table view.
