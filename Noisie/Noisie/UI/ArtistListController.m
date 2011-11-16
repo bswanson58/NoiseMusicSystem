@@ -48,7 +48,10 @@
     
     [self.mArtistList removeAllObjects];
     [self.mArtistList addObjectsFromArray:result.Artists];
-    
+
+    NSSortDescriptor *orderDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"Name" ascending:YES] autorelease];
+    [self.mArtistList sortUsingDescriptors:[NSArray arrayWithObject:orderDescriptor]];
+
     [self.uiArtistList reloadData];
 }
 

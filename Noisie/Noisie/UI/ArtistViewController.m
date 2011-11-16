@@ -58,6 +58,9 @@
     [self.mAlbumList removeAllObjects];
     [self.mAlbumList addObjectsFromArray:result.Albums];
     
+    NSSortDescriptor *orderDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"Name" ascending:YES] autorelease];
+    [self.mAlbumList sortUsingDescriptors:[NSArray arrayWithObject:orderDescriptor]];
+    
     [self.uiAlbumList reloadData];
 }
 
