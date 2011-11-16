@@ -58,6 +58,10 @@
     [self.mTrackList removeAllObjects];
     [self.mTrackList addObjectsFromArray:result.Tracks];
     
+    NSSortDescriptor *trackDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"TrackNumber" ascending:YES] autorelease];
+    NSSortDescriptor *volumeDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"VolumeName" ascending:YES] autorelease];
+    [self.mTrackList sortUsingDescriptors:[NSArray arrayWithObjects:volumeDescriptor, trackDescriptor, nil]];
+    
     [self.uiTrackList reloadData];
 }
 
