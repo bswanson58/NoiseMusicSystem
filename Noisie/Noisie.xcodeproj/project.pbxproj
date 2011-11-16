@@ -36,6 +36,7 @@
 		A96D6C731472B87400521583 /* AlbumListDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A96D6C721472B87400521583 /* AlbumListDelegate.m */; };
 		A96D6C771472CAB700521583 /* ArtistListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A96D6C761472CAB700521583 /* ArtistListCell.m */; };
 		A98D41A314740BF30044CB93 /* RemoteQueueClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A98D41A214740BF30044CB93 /* RemoteQueueClient.m */; };
+		A98D41AA147418D10044CB93 /* Noise.png in Resources */ = {isa = PBXBuildFile; fileRef = A98D41A9147418D10044CB93 /* Noise.png */; };
 		A9C904671471853100F98E2B /* Events.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C904661471853100F98E2B /* Events.m */; };
 		A9C9046B1471900F00F98E2B /* ArtistListController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C904691471900F00F98E2B /* ArtistListController.m */; };
 		A9C9046C1471900F00F98E2B /* ArtistListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9C9046A1471900F00F98E2B /* ArtistListController.xib */; };
@@ -181,6 +182,7 @@
 		A96D6C761472CAB700521583 /* ArtistListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ArtistListCell.m; path = UI/Views/ArtistListCell.m; sourceTree = "<group>"; };
 		A98D41A114740BF30044CB93 /* RemoteQueueClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteQueueClient.h; path = "Core/Remote Queue Client/RemoteQueueClient.h"; sourceTree = "<group>"; };
 		A98D41A214740BF30044CB93 /* RemoteQueueClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteQueueClient.m; path = "Core/Remote Queue Client/RemoteQueueClient.m"; sourceTree = "<group>"; };
+		A98D41A9147418D10044CB93 /* Noise.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Noise.png; path = ../Noise.png; sourceTree = "<group>"; };
 		A9C904651471853100F98E2B /* Events.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Events.h; path = Infrastructure/Events.h; sourceTree = "<group>"; };
 		A9C904661471853100F98E2B /* Events.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Events.m; path = Infrastructure/Events.m; sourceTree = "<group>"; };
 		A9C904681471900F00F98E2B /* ArtistListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArtistListController.h; path = UI/ArtistListController.h; sourceTree = "<group>"; };
@@ -258,6 +260,7 @@
 				A95AF3B514706F0F0074A070 /* Infrastructure */,
 				A95AF3B414706C220074A070 /* Core */,
 				A95AF3B314706B420074A070 /* Application */,
+				A98D41A4147416210044CB93 /* Resources */,
 				A95AF36714705F380074A070 /* Supporting Files */,
 			);
 			path = Noisie;
@@ -379,6 +382,14 @@
 				A98D41A214740BF30044CB93 /* RemoteQueueClient.m */,
 			);
 			name = "Remote Queue Client";
+			sourceTree = "<group>";
+		};
+		A98D41A4147416210044CB93 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A98D41A9147418D10044CB93 /* Noise.png */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		A9C9044A14717F3E00F98E2B /* UI */ = {
@@ -546,6 +557,7 @@
 				A9F839291471F4670067217A /* ArtistViewController.xib in Resources */,
 				A9F8047D1472CCBC00255255 /* ArtistListCell.xib in Resources */,
 				A96B8E271473542D000CD104 /* AlbumViewController.xib in Resources */,
+				A98D41AA147418D10044CB93 /* Noise.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
