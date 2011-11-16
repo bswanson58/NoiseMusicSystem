@@ -9,7 +9,9 @@
 #import "MainViewController.h"
 #import "ArtistListController.h"
 #import "ArtistViewController.h"
+#import "AlbumViewController.h"
 #import "RoArtist.h"
+#import "RoAlbum.h"
 #import "Events.h"
 
 @interface MainViewController ()
@@ -17,8 +19,10 @@
 @property (nonatomic, retain)   UINavigationController  *mLibraryNavigationController;
 @property (nonatomic, retain)   ArtistListController    *mArtistListController;
 @property (nonatomic, retain)   ArtistViewController    *mArtistViewController;
+@property (nonatomic, retain)   AlbumViewController     *mAlbumViewController;
 
 - (void) onArtistSelected:(NSNotification *) notification;
+- (void) onAlbumSelected:(NSNotification *) notification;
 
 @end
 
@@ -27,6 +31,7 @@
 @synthesize mLibraryNavigationController;
 @synthesize mArtistListController;
 @synthesize mArtistViewController;
+@synthesize mAlbumViewController;
 
 - (void) dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -34,6 +39,7 @@
     self.mLibraryNavigationController = nil;
     self.mArtistViewController = nil;
     self.mArtistListController = nil;
+    self.mAlbumViewController = nil;
     
     [super dealloc];
 }
@@ -71,8 +77,10 @@
     [self.mLibraryNavigationController didMoveToParentViewController:self];
     
     self.mArtistViewController = [[[ArtistViewController alloc] initWithNibName:nil bundle:nil] autorelease];
+    self.mAlbumViewController = [[[AlbumViewController alloc] initWithNibName:nil bundle:nil] autorelease];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistSelected:) name:EventArtistSelected object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAlbumSelected:) name:EventAlbumSelected object:nil];
 }
 
 - (void) onArtistSelected:(NSNotification *)notification {
@@ -80,6 +88,13 @@
     
     [self.mArtistViewController displayArtist:artist];
     [self.mLibraryNavigationController pushViewController:self.mArtistViewController animated:YES];
+}
+
+- (void) onAlbumSelected:(NSNotification *)notification {
+    RoAlbum     *album = [notification object];
+    
+    [self.mAlbumViewController displayAlbum:album];
+    [self.mLibraryNavigationController pushViewController:self.mAlbumViewController animated:YES];
 }
 
 - (void)viewDidUnload {

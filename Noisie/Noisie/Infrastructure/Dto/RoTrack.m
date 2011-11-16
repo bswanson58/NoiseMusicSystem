@@ -1,27 +1,29 @@
 //
-//  RoAlbum.m
+//  RoTrack.m
 //  Noisie
 //
-//  Created by William Swanson on 11/14/11.
+//  Created by William Swanson on 11/15/11.
 //  Copyright (c) 2011 Secret Squirrel Products. All rights reserved.
 //
 
-#import "RoAlbum.h"
+#import "RoTrack.h"
 
-@implementation RoAlbum
+@implementation RoTrack
 
 @synthesize Name;
 @synthesize ArtistId;
-@synthesize Genre;
-@synthesize PublishedYear;
+@synthesize AlbumId;
+@synthesize DurationMilliseconds;
 @synthesize Rating;
-@synthesize TrackCount;
+@synthesize TrackNumber;
+@synthesize VolumeName;
 @synthesize IsFavorite;
 
 - (void) dealloc {
     self.Name = nil;
     self.ArtistId = nil;
-    self.Genre = nil;
+    self.AlbumId = nil;
+    self.VolumeName = nil;
     self.IsFavorite = nil;
     
     [super dealloc];

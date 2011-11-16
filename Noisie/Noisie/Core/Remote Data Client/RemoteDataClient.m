@@ -13,6 +13,9 @@
 #import "ArtistListDelegate.h"
 #import "AlbumListResult.h"
 #import "AlbumListDelegate.h"
+#import "TrackListResult.h"
+#import "TrackListDelegate.h"
+#import "RoTrack.h"
 #import "Events.h"
 
 @interface RemoteDataClient ()
@@ -20,10 +23,12 @@
 @property (nonatomic, retain)   RKObjectManager     *mClient;
 @property (nonatomic, retain)   ArtistListDelegate  *mArtistListDelegate;
 @property (nonatomic, retain)   AlbumListDelegate   *mAlbumListDelegate;
+@property (nonatomic, retain)   TrackListDelegate   *mTrackListDelegate;
 
 - (void) initObjectMappings;
 - (void) onArtistList:(ArtistListResult *) result;
 - (void) onAlbumList:(AlbumListResult *) result;
+- (void) onTrackList:(TrackListResult *) result;
 
 @end
 
@@ -32,6 +37,7 @@
 @synthesize mClient;
 @synthesize mArtistListDelegate;
 @synthesize mAlbumListDelegate;
+@synthesize mTrackListDelegate;
 
 - (void) dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -39,6 +45,7 @@
     self.mClient = nil;
     self.mArtistListDelegate = nil;
     self.mAlbumListDelegate = nil;
+    self.mTrackListDelegate = nil;
     
     [super dealloc];
 }
@@ -78,8 +85,24 @@
     }
 }
 
-- (void)objectLoader:(RKObjectLoader*)objectLoader didLoadObjects:(NSArray*)objects {
+- (void) requestTrackList:(NSNumber *)forAlbum {
+    NSMutableString *path = [NSMutableString stringWithString:@"tracks"];
+    NSDictionary    *params = [[[NSDictionary alloc] initWithObjectsAndKeys:forAlbum, @"album", nil] autorelease];
+    NSString        *url = [path appendQueryParams:params];
     
+    [self.mClient loadObjectsAtResourcePath:url
+                              objectMapping:[self.mClient.mappingProvider objectMappingForClass:[TrackListResult class]]
+                                   delegate:self.mTrackListDelegate];
+}
+
+- (void) onTrackList:(TrackListResult *)result {
+    if([result.Success isEqualToString:@"true"]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:EventTrackListUpdate object:result];
+    }
+}
+
+- (void)objectLoader:(RKObjectLoader*)objectLoader didLoadObjects:(NSArray*)objects {
+    NSLog( @"%@", @"RemoteDataClient:didLoadObjects called!" );
 }  
    
 - (void)objectLoader:(RKObjectLoader*)objectLoader didFailWithError:(NSError *)error {
@@ -97,7 +120,7 @@
     [self.mClient.mappingProvider addObjectMapping:mapping];
     
     mapping = [RKObjectMapping mappingForClass:[RoAlbum class]];
-    [mapping mapAttributes:@"Name", @"TrackCount", @"Rating", @"PublishedYear", @"Genre", @"IsFavorite", nil];
+    [mapping mapAttributes:@"DbId", @"Name", @"ArtistId", @"TrackCount", @"Rating", @"PublishedYear", @"Genre", @"IsFavorite", nil];
     [self.mClient.mappingProvider addObjectMapping:mapping];
     
     mapping = [RKObjectMapping mappingForClass:[AlbumListResult class]];
@@ -105,8 +128,18 @@
     [mapping mapRelationship:@"Albums" withMapping:[self.mClient.mappingProvider objectMappingForClass:[RoAlbum class]]];
     [self.mClient.mappingProvider addObjectMapping:mapping];
     
+    mapping = [RKObjectMapping mappingForClass:[RoTrack class]];
+    [mapping mapAttributes:@"DbId", @"Name", @"ArtistId", @"AlbumId", @"DurationMilliseconds", @"Rating", @"TrackNumber", @"VolumeName", @"IsFavorite", nil];
+    [self.mClient.mappingProvider addObjectMapping:mapping];
+    
+    mapping = [RKObjectMapping mappingForClass:[TrackListResult class]];
+    [mapping mapAttributes:@"Success", @"ErrorMessage", @"ArtistId", @"AlbumId", nil];
+    [mapping mapRelationship:@"Tracks" withMapping:[self.mClient.mappingProvider objectMappingForClass:[RoTrack class]]];
+    [self.mClient.mappingProvider addObjectMapping:mapping];
+    
     self.mArtistListDelegate = [[[ArtistListDelegate alloc] initWithArtistListBlock:^(ArtistListResult *result) { [self onArtistList:result]; } ] autorelease];
     self.mAlbumListDelegate = [[[AlbumListDelegate alloc] initWithAlbumListBlock:^(AlbumListResult *result) { [self onAlbumList:result]; } ] autorelease];
+    self.mTrackListDelegate = [[[TrackListDelegate alloc] initWithTrackListBlock:^(TrackListResult *result) { [self onTrackList:result]; } ] autorelease];
 }
 
 @end

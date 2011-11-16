@@ -9,6 +9,7 @@
 #import "RemoteMgr.h"
 #import "RemoteDataClient.h"
 #import "RoArtist.h"
+#import "RoAlbum.h"
 #import "Events.h"
 
 @interface RemoteMgr ()
@@ -17,6 +18,7 @@
 
 - (void) onArtistListRequest:(NSNotification *) notification;
 - (void) onAlbumListRequest:(NSNotification *) notification;
+- (void) onTrackListRequest:(NSNotification *) notification;
 
 @end
 
@@ -31,6 +33,7 @@
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistListRequest:) name:EventArtistListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAlbumListRequest:) name:EventAlbumListRequest object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTrackListRequest:) name:EventTrackListRequest object:nil];
     }
     
     return( self );
@@ -56,6 +59,12 @@
     RoArtist    *forArtist = [notification object];
     
     [self.mDataClient requestAlbumList:forArtist.DbId];
+}
+
+- (void) onTrackListRequest:(NSNotification *)notification {
+    RoAlbum     *forAlbum = [notification object];
+    
+    [self.mDataClient requestTrackList:forAlbum.DbId];
 }
 
 @end
