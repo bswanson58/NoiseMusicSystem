@@ -18,3 +18,6 @@ NSString * const    EventAlbumSelected              = @"event:AlbumSelected";
 
 NSString * const    EventTrackListRequest           = @"event:TrackListRequest";
 NSString * const    EventTrackListUpdate            = @"event:TrackListUpdate";
+
+NSString * const    EventQueueAlbumRequest          = @"event:QueueAlbumRequest";
+NSString * const    EventQueueTrackRequest          = @"event:QueueTrackRequest";

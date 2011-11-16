@@ -89,9 +89,9 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-//    RoTrack    *album = [self.mTrackList objectAtIndex:[indexPath row]];
+    RoTrack    *track = [self.mTrackList objectAtIndex:[indexPath row]];
     
-//    [[NSNotificationCenter defaultCenter] postNotificationName:EventAlbumSelected object:album];
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventQueueTrackRequest object:track];
 }
 
 
