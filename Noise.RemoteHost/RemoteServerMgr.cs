@@ -11,6 +11,8 @@ namespace Noise.RemoteHost {
 		private readonly ILog				mLog;
 		private INoiseRemoteData			mRemoteDataServer;
 		private ServiceHost					mDataServerHost;
+		private INoiseRemoteQueue			mRemoteQueueServer;
+		private ServiceHost					mQueueServerHost;
 
 		public RemoteServerMgr( IUnityContainer container ) {
 			mContainer = container;
@@ -21,11 +23,23 @@ namespace Noise.RemoteHost {
 			mRemoteDataServer = mContainer.Resolve<INoiseRemoteData>();
 			mDataServerHost = new WebServiceHost( mRemoteDataServer );
 			mDataServerHost.AddServiceEndpoint( typeof( INoiseRemoteData ), new WebHttpBinding(), new Uri( "http://localhost:88/Data" ));
+			if(!OpenRemoteServer( mDataServerHost )) {
+				mDataServerHost = null;
+			}
 
+			mRemoteQueueServer = mContainer.Resolve<INoiseRemoteQueue>();
+			mQueueServerHost = new WebServiceHost( mRemoteQueueServer );
+			mQueueServerHost.AddServiceEndpoint( typeof( INoiseRemoteQueue ) ,new WebHttpBinding(), new Uri( "http://localhost:88/Queue" ));
+			if(!OpenRemoteServer( mQueueServerHost )) {
+				mQueueServerHost = null;
+			}
+		}
+
+		private bool OpenRemoteServer( ServiceHost host ) {
 			bool	openSucceeded = false;
 
 			try {
-				mDataServerHost.Open();
+				host.Open();
 
 				openSucceeded = true;
 			}
@@ -34,19 +48,24 @@ namespace Noise.RemoteHost {
 			}
 			finally {
 				if(!openSucceeded ) {
-					mDataServerHost.Abort();
-
-					mDataServerHost = null;
+					host.Abort();
 				}
 			}
+
+			return( openSucceeded );
 		}
 
 		public void CloseRemoteServer() {
-			if( mDataServerHost != null ) {
+			CloseRemoteServer( mDataServerHost );
+			CloseRemoteServer( mQueueServerHost );
+		}
+
+		private void CloseRemoteServer( ServiceHost host ) {
+			if( host != null ) {
 				bool	closeSucceeded = false;
 
 				try {
-					mDataServerHost.Close();
+					host.Close();
 
 					closeSucceeded = true;
 				}
@@ -55,10 +74,8 @@ namespace Noise.RemoteHost {
 				}
 				finally {
 					if(!closeSucceeded ) {
-						mDataServerHost.Abort();
+						host.Abort();
 					}
-
-					mDataServerHost = null;
 				}
 			}
 		}
