@@ -100,6 +100,9 @@ namespace Noise.RemoteHost {
 
 				using( var trackList = mNoiseManager.DataProvider.GetTrackList( albumId )) {
 					retValue.Tracks = trackList.List.Select( TransformTrack ).ToArray();
+					foreach( var track in retValue.Tracks ) {
+						track.ArtistId = retValue.ArtistId;
+					}
 					retValue.Success = true;
 				}
 			}
