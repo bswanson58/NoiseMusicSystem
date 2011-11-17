@@ -7,12 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "AlbumListCell.h"
 
 @class RoArtist;
 
 @interface ArtistViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
-@property (retain, nonatomic) IBOutlet UITableView *uiAlbumList;
+@property (retain, nonatomic) IBOutlet UITableView      *uiAlbumList;
+@property (retain, nonatomic) IBOutlet  AlbumListCell   *uiAlbumCell;
 
 - (void) displayArtist:(RoArtist *) artist;
 

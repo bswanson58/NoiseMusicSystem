@@ -26,6 +26,7 @@
 
 @synthesize mArtist;
 @synthesize mAlbumList;
+@synthesize uiAlbumCell;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -41,6 +42,7 @@
     self.mArtist = nil;
     self.mAlbumList = nil;
     self.uiAlbumList = nil;
+    self.uiAlbumCell = nil;
     
     [super dealloc];
 }
@@ -76,17 +78,22 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *CellIdentifier = @"Cell";
+    static NSString *cellIdentifier = @"AlbumListCell";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    AlbumListCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        [[NSBundle mainBundle] loadNibNamed:cellIdentifier owner:self options:nil];
+        
+        cell = self.uiAlbumCell;
+        self.uiAlbumCell = nil;
     }
     
     // Configure the cell...
     RoAlbum    *album = [self.mAlbumList objectAtIndex:[indexPath row]];
     
-    [cell setText:album.Name];
+    cell.Album = album;
+    [cell.uiAlbumName setText:album.Name];
+    [cell.uiTrackCount setText:[NSString stringWithFormat:@"%d", album.TrackCount]];
     
     return cell;
 }
