@@ -37,6 +37,7 @@
 		A96D6C771472CAB700521583 /* ArtistListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A96D6C761472CAB700521583 /* ArtistListCell.m */; };
 		A98D41A314740BF30044CB93 /* RemoteQueueClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A98D41A214740BF30044CB93 /* RemoteQueueClient.m */; };
 		A98D41AA147418D10044CB93 /* Noise.png in Resources */ = {isa = PBXBuildFile; fileRef = A98D41A9147418D10044CB93 /* Noise.png */; };
+		A9C12697147563D100A803F3 /* iPad Library Tab.png in Resources */ = {isa = PBXBuildFile; fileRef = A9C12696147563D000A803F3 /* iPad Library Tab.png */; };
 		A9C904671471853100F98E2B /* Events.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C904661471853100F98E2B /* Events.m */; };
 		A9C9046B1471900F00F98E2B /* ArtistListController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C904691471900F00F98E2B /* ArtistListController.m */; };
 		A9C9046C1471900F00F98E2B /* ArtistListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9C9046A1471900F00F98E2B /* ArtistListController.xib */; };
@@ -183,6 +184,7 @@
 		A98D41A114740BF30044CB93 /* RemoteQueueClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteQueueClient.h; path = "Core/Remote Queue Client/RemoteQueueClient.h"; sourceTree = "<group>"; };
 		A98D41A214740BF30044CB93 /* RemoteQueueClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteQueueClient.m; path = "Core/Remote Queue Client/RemoteQueueClient.m"; sourceTree = "<group>"; };
 		A98D41A9147418D10044CB93 /* Noise.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Noise.png; path = ../Noise.png; sourceTree = "<group>"; };
+		A9C12696147563D000A803F3 /* iPad Library Tab.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iPad Library Tab.png"; path = "Resources/iPad Library Tab.png"; sourceTree = "<group>"; };
 		A9C904651471853100F98E2B /* Events.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Events.h; path = Infrastructure/Events.h; sourceTree = "<group>"; };
 		A9C904661471853100F98E2B /* Events.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Events.m; path = Infrastructure/Events.m; sourceTree = "<group>"; };
 		A9C904681471900F00F98E2B /* ArtistListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArtistListController.h; path = UI/ArtistListController.h; sourceTree = "<group>"; };
@@ -387,6 +389,7 @@
 		A98D41A4147416210044CB93 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A9C12696147563D000A803F3 /* iPad Library Tab.png */,
 				A98D41A9147418D10044CB93 /* Noise.png */,
 			);
 			name = Resources;
@@ -558,6 +561,7 @@
 				A9F8047D1472CCBC00255255 /* ArtistListCell.xib in Resources */,
 				A96B8E271473542D000CD104 /* AlbumViewController.xib in Resources */,
 				A98D41AA147418D10044CB93 /* Noise.png in Resources */,
+				A9C12697147563D100A803F3 /* iPad Library Tab.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

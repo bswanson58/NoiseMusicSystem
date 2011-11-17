@@ -65,16 +65,12 @@
     [super viewDidLoad];
 
     self.mArtistListController = [[[ArtistListController alloc] initWithNibName:nil bundle:nil] autorelease];
+    
     self.mLibraryNavigationController = [[[UINavigationController alloc] initWithRootViewController:self.mArtistListController] autorelease];
-    
-    CGRect  rect = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - 100);
-    [self.mLibraryNavigationController.view setFrame:rect];
-    
-    [self.mArtistListController setTitle:@"Library - Artists"];
-    
-    [self.view addSubview:self.mLibraryNavigationController.view];
+    UITabBarItem    *tabInfo = [[[UITabBarItem alloc] initWithTitle:@"Library" image:[UIImage imageNamed:@"iPad Library Tab.png"] tag:1] autorelease];
+    self.mLibraryNavigationController.tabBarItem = tabInfo;
     [self addChildViewController:self.mLibraryNavigationController];
-    [self.mLibraryNavigationController didMoveToParentViewController:self];
+    
     
     self.mArtistViewController = [[[ArtistViewController alloc] initWithNibName:nil bundle:nil] autorelease];
     self.mAlbumViewController = [[[AlbumViewController alloc] initWithNibName:nil bundle:nil] autorelease];

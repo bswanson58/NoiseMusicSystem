@@ -60,6 +60,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.navigationItem.title = @"Library - Artists";
     self.mArtistList = [[[NSMutableArray alloc] init] autorelease];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistListUpdate:) name:EventArtistListUpdate object:nil];
