@@ -16,5 +16,6 @@
 - (void) requestArtistList;
 - (void) requestAlbumList:(NSNumber *) forArtist;
 - (void) requestTrackList:(NSNumber *) forAlbum;
+- (void) requestFavoriteList;
 
 @end

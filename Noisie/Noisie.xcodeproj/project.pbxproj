@@ -42,6 +42,11 @@
 		A9B5864B147575DC0047C781 /* Play.png in Resources */ = {isa = PBXBuildFile; fileRef = A9B5864A147575DC0047C781 /* Play.png */; };
 		A9B5864E147579FB0047C781 /* TrackListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B5864D147579FB0047C781 /* TrackListCell.m */; };
 		A9B5865214757A670047C781 /* TrackListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9B5865114757A670047C781 /* TrackListCell.xib */; };
+		A9B5866C147590E60047C781 /* RoFavorite.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B5866B147590E60047C781 /* RoFavorite.m */; };
+		A9B5866F147592DE0047C781 /* FavoriteListResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B5866E147592DE0047C781 /* FavoriteListResult.m */; };
+		A9B58672147593B90047C781 /* FavoritesListDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B58671147593B90047C781 /* FavoritesListDelegate.m */; };
+		A9B58675147599680047C781 /* FavoriteListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B58674147599680047C781 /* FavoriteListCell.m */; };
+		A9B58679147599B90047C781 /* FavoriteListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9B58678147599B90047C781 /* FavoriteListCell.xib */; };
 		A9C12697147563D100A803F3 /* iPad Library Tab.png in Resources */ = {isa = PBXBuildFile; fileRef = A9C12696147563D000A803F3 /* iPad Library Tab.png */; };
 		A9C1269B147564D400A803F3 /* QueueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C12699147564D400A803F3 /* QueueViewController.m */; };
 		A9C1269C147564D400A803F3 /* QueueViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9C1269A147564D400A803F3 /* QueueViewController.xib */; };
@@ -202,6 +207,15 @@
 		A9B5864C147579FA0047C781 /* TrackListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TrackListCell.h; path = UI/Views/TrackListCell.h; sourceTree = "<group>"; };
 		A9B5864D147579FB0047C781 /* TrackListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TrackListCell.m; path = UI/Views/TrackListCell.m; sourceTree = "<group>"; };
 		A9B5865114757A670047C781 /* TrackListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = TrackListCell.xib; path = UI/Views/TrackListCell.xib; sourceTree = "<group>"; };
+		A9B5866A147590E60047C781 /* RoFavorite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoFavorite.h; path = Infrastructure/Dto/RoFavorite.h; sourceTree = "<group>"; };
+		A9B5866B147590E60047C781 /* RoFavorite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RoFavorite.m; path = Infrastructure/Dto/RoFavorite.m; sourceTree = "<group>"; };
+		A9B5866D147592DE0047C781 /* FavoriteListResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FavoriteListResult.h; path = Infrastructure/Dto/FavoriteListResult.h; sourceTree = "<group>"; };
+		A9B5866E147592DE0047C781 /* FavoriteListResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FavoriteListResult.m; path = Infrastructure/Dto/FavoriteListResult.m; sourceTree = "<group>"; };
+		A9B58670147593B90047C781 /* FavoritesListDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FavoritesListDelegate.h; path = "Core/Remote Data Client/FavoritesListDelegate.h"; sourceTree = "<group>"; };
+		A9B58671147593B90047C781 /* FavoritesListDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FavoritesListDelegate.m; path = "Core/Remote Data Client/FavoritesListDelegate.m"; sourceTree = "<group>"; };
+		A9B58673147599670047C781 /* FavoriteListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FavoriteListCell.h; path = UI/Views/FavoriteListCell.h; sourceTree = "<group>"; };
+		A9B58674147599680047C781 /* FavoriteListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FavoriteListCell.m; path = UI/Views/FavoriteListCell.m; sourceTree = "<group>"; };
+		A9B58678147599B90047C781 /* FavoriteListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FavoriteListCell.xib; path = UI/Views/FavoriteListCell.xib; sourceTree = "<group>"; };
 		A9C12696147563D000A803F3 /* iPad Library Tab.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iPad Library Tab.png"; path = "Resources/iPad Library Tab.png"; sourceTree = "<group>"; };
 		A9C12698147564D400A803F3 /* QueueViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QueueViewController.h; path = UI/QueueViewController.h; sourceTree = "<group>"; };
 		A9C12699147564D400A803F3 /* QueueViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QueueViewController.m; path = UI/QueueViewController.m; sourceTree = "<group>"; };
@@ -367,6 +381,8 @@
 				A9F83933147203B20067217A /* RoAlbum.m */,
 				A96B8E1014734A27000CD104 /* RoTrack.h */,
 				A96B8E1114734A27000CD104 /* RoTrack.m */,
+				A9B5866A147590E60047C781 /* RoFavorite.h */,
+				A9B5866B147590E60047C781 /* RoFavorite.m */,
 				A95AF3BD1470723B0074A070 /* BaseServerResult.h */,
 				A95AF3BE1470723B0074A070 /* BaseServerResult.m */,
 				A95AF3C01470725B0074A070 /* ArtistListResult.h */,
@@ -375,6 +391,8 @@
 				A9F83930147203980067217A /* AlbumListResult.m */,
 				A96B8E1314734B65000CD104 /* TrackListResult.h */,
 				A96B8E1414734B65000CD104 /* TrackListResult.m */,
+				A9B5866D147592DE0047C781 /* FavoriteListResult.h */,
+				A9B5866E147592DE0047C781 /* FavoriteListResult.m */,
 			);
 			name = Dto;
 			sourceTree = "<group>";
@@ -390,6 +408,8 @@
 				A96D6C721472B87400521583 /* AlbumListDelegate.m */,
 				A96B8E1614734C26000CD104 /* TrackListDelegate.h */,
 				A96B8E1714734C26000CD104 /* TrackListDelegate.m */,
+				A9B58670147593B90047C781 /* FavoritesListDelegate.h */,
+				A9B58671147593B90047C781 /* FavoritesListDelegate.m */,
 			);
 			name = "Remote Data Client";
 			sourceTree = "<group>";
@@ -406,6 +426,9 @@
 				A9B5865114757A670047C781 /* TrackListCell.xib */,
 				A9B5864C147579FA0047C781 /* TrackListCell.h */,
 				A9B5864D147579FB0047C781 /* TrackListCell.m */,
+				A9B58678147599B90047C781 /* FavoriteListCell.xib */,
+				A9B58673147599670047C781 /* FavoriteListCell.h */,
+				A9B58674147599680047C781 /* FavoriteListCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -611,6 +634,7 @@
 				A9B5864914756F5E0047C781 /* AlbumListCell.xib in Resources */,
 				A9B5864B147575DC0047C781 /* Play.png in Resources */,
 				A9B5865214757A670047C781 /* TrackListCell.xib in Resources */,
+				A9B58679147599B90047C781 /* FavoriteListCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -649,6 +673,10 @@
 				A9C126A5147567EF00A803F3 /* SearchViewController.m in Sources */,
 				A9B5864714756F120047C781 /* AlbumListCell.m in Sources */,
 				A9B5864E147579FB0047C781 /* TrackListCell.m in Sources */,
+				A9B5866C147590E60047C781 /* RoFavorite.m in Sources */,
+				A9B5866F147592DE0047C781 /* FavoriteListResult.m in Sources */,
+				A9B58672147593B90047C781 /* FavoritesListDelegate.m in Sources */,
+				A9B58675147599680047C781 /* FavoriteListCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

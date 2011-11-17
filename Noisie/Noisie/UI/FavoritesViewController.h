@@ -7,8 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FavoriteListCell.h"
 
-@interface FavoritesViewController : UIViewController
+@interface FavoritesViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+
+@property (retain, nonatomic) IBOutlet UITableView      *uiFavoritesList;
+@property (retain, nonatomic) IBOutlet FavoriteListCell *uiFavoriteCell;
 
 - (id) initForTabController;
 

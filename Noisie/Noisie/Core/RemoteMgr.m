@@ -24,6 +24,7 @@
 - (void) onTrackListRequest:(NSNotification *) notification;
 - (void) onAlbumQueueRequest:(NSNotification *)notification;
 - (void) onTrackQueueRequest:(NSNotification *)notification;
+- (void) onFavoriteListRequest:(NSNotification *)notification;
 
 @end
 
@@ -43,6 +44,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTrackListRequest:) name:EventTrackListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAlbumQueueRequest:) name:EventQueueAlbumRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTrackQueueRequest:) name:EventQueueTrackRequest object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onFavoriteListRequest:) name:EventFavoritesListRequest object:nil];
     }
     
     return( self );
@@ -78,16 +80,34 @@
     [self.mDataClient requestTrackList:forAlbum.DbId];
 }
 
+- (void) onFavoriteListRequest:(NSNotification *)notification {
+    [self.mDataClient requestFavoriteList];
+}
+
 - (void) onAlbumQueueRequest:(NSNotification *)notification {
-    RoAlbum     *album = [notification object];
+    if([[notification object] isKindOfClass:[RoAlbum class]]) {
+        RoAlbum     *album = [notification object];
     
-    [self.mQueueClient enqueueAlbum:album.DbId];
+        [self.mQueueClient enqueueAlbum:album.DbId];
+    }
+    else if([[notification object] isKindOfClass:[NSNumber class]]) {
+        NSNumber    *albumId = [notification object];
+        
+        [self.mQueueClient enqueueAlbum:albumId];
+    }
 }
 
 - (void) onTrackQueueRequest:(NSNotification *)notification {
-    RoTrack     *track = [notification object];
+    if([[notification object] isKindOfClass:[RoTrack class]]) {
+        RoTrack     *track = [notification object];
     
-    [self.mQueueClient enqueueTrack:track.DbId];
+        [self.mQueueClient enqueueTrack:track.DbId];
+    }
+    else if([[notification object]isKindOfClass:[NSNumber class]]) {
+        NSNumber    *trackId = [notification object];
+        
+        [self.mQueueClient enqueueTrack:trackId];
+    }
 }
 
 @end

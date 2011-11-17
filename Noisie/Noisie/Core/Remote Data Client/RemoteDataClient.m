@@ -9,26 +9,31 @@
 #import "RemoteDataClient.h"
 #import "RoArtist.h"
 #import "RoAlbum.h"
+#import "RoTrack.h"
+#import "RoFavorite.h"
 #import "ArtistListResult.h"
 #import "ArtistListDelegate.h"
 #import "AlbumListResult.h"
 #import "AlbumListDelegate.h"
 #import "TrackListResult.h"
 #import "TrackListDelegate.h"
-#import "RoTrack.h"
+#import "FavoriteListResult.h"
+#import "FavoritesListDelegate.h"
 #import "Events.h"
 
 @interface RemoteDataClient ()
 
-@property (nonatomic, retain)   RKObjectManager     *mClient;
-@property (nonatomic, retain)   ArtistListDelegate  *mArtistListDelegate;
-@property (nonatomic, retain)   AlbumListDelegate   *mAlbumListDelegate;
-@property (nonatomic, retain)   TrackListDelegate   *mTrackListDelegate;
+@property (nonatomic, retain)   RKObjectManager         *mClient;
+@property (nonatomic, retain)   ArtistListDelegate      *mArtistListDelegate;
+@property (nonatomic, retain)   AlbumListDelegate       *mAlbumListDelegate;
+@property (nonatomic, retain)   TrackListDelegate       *mTrackListDelegate;
+@property (nonatomic, retain)   FavoriteListDelegate    *mFavoriteListDelegate;
 
 - (void) initObjectMappings;
 - (void) onArtistList:(ArtistListResult *) result;
 - (void) onAlbumList:(AlbumListResult *) result;
 - (void) onTrackList:(TrackListResult *) result;
+- (void) onFavoriteList:(FavoriteListResult *) result;
 
 @end
 
@@ -38,6 +43,7 @@
 @synthesize mArtistListDelegate;
 @synthesize mAlbumListDelegate;
 @synthesize mTrackListDelegate;
+@synthesize mFavoriteListDelegate;
 
 - (void) dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -46,6 +52,7 @@
     self.mArtistListDelegate = nil;
     self.mAlbumListDelegate = nil;
     self.mTrackListDelegate = nil;
+    self.mFavoriteListDelegate = nil;
     
     [super dealloc];
 }
@@ -101,6 +108,18 @@
     }
 }
 
+- (void) requestFavoriteList {
+    [self.mClient loadObjectsAtResourcePath:@"favorites" 
+                              objectMapping:[self.mClient.mappingProvider objectMappingForClass:[FavoriteListResult class]]
+                                   delegate:self.mFavoriteListDelegate];
+}
+
+- (void) onFavoriteList:(FavoriteListResult *)result {
+    if([result.Success isEqualToString:@"true"]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:EventFavoritesListUpdate object:result];
+    }
+}
+
 - (void)objectLoader:(RKObjectLoader*)objectLoader didLoadObjects:(NSArray*)objects {
     NSLog( @"%@", @"RemoteDataClient:didLoadObjects called!" );
 }  
@@ -137,9 +156,19 @@
     [mapping mapRelationship:@"Tracks" withMapping:[self.mClient.mappingProvider objectMappingForClass:[RoTrack class]]];
     [self.mClient.mappingProvider addObjectMapping:mapping];
     
+    mapping = [RKObjectMapping mappingForClass:[RoFavorite class]];
+    [mapping mapAttributes:@"ArtistId", @"AlbumId", @"TrackId", @"Artist", @"Album", @"Track", nil];
+    [self.mClient.mappingProvider addObjectMapping:mapping];
+    
+    mapping = [RKObjectMapping mappingForClass:[FavoriteListResult class]];
+    [mapping mapAttributes:@"Success", @"ErrorMessage", nil];
+    [mapping mapRelationship:@"Favorites" withMapping:[self.mClient.mappingProvider objectMappingForClass:[RoFavorite class]]];
+    [self.mClient.mappingProvider addObjectMapping:mapping];
+
     self.mArtistListDelegate = [[[ArtistListDelegate alloc] initWithArtistListBlock:^(ArtistListResult *result) { [self onArtistList:result]; } ] autorelease];
     self.mAlbumListDelegate = [[[AlbumListDelegate alloc] initWithAlbumListBlock:^(AlbumListResult *result) { [self onAlbumList:result]; } ] autorelease];
     self.mTrackListDelegate = [[[TrackListDelegate alloc] initWithTrackListBlock:^(TrackListResult *result) { [self onTrackList:result]; } ] autorelease];
+    self.mFavoriteListDelegate = [[[FavoriteListDelegate alloc] initWithFavoriteListBlock:^(FavoriteListResult *result) { [self onFavoriteList:result]; } ] autorelease];
 }
 
 @end
