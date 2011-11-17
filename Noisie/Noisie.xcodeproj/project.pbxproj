@@ -40,6 +40,8 @@
 		A9B5864714756F120047C781 /* AlbumListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B5864614756F120047C781 /* AlbumListCell.m */; };
 		A9B5864914756F5E0047C781 /* AlbumListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9B5864814756F5E0047C781 /* AlbumListCell.xib */; };
 		A9B5864B147575DC0047C781 /* Play.png in Resources */ = {isa = PBXBuildFile; fileRef = A9B5864A147575DC0047C781 /* Play.png */; };
+		A9B5864E147579FB0047C781 /* TrackListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B5864D147579FB0047C781 /* TrackListCell.m */; };
+		A9B5865214757A670047C781 /* TrackListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9B5865114757A670047C781 /* TrackListCell.xib */; };
 		A9C12697147563D100A803F3 /* iPad Library Tab.png in Resources */ = {isa = PBXBuildFile; fileRef = A9C12696147563D000A803F3 /* iPad Library Tab.png */; };
 		A9C1269B147564D400A803F3 /* QueueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C12699147564D400A803F3 /* QueueViewController.m */; };
 		A9C1269C147564D400A803F3 /* QueueViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9C1269A147564D400A803F3 /* QueueViewController.xib */; };
@@ -197,6 +199,9 @@
 		A9B5864614756F120047C781 /* AlbumListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AlbumListCell.m; path = UI/Views/AlbumListCell.m; sourceTree = "<group>"; };
 		A9B5864814756F5E0047C781 /* AlbumListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AlbumListCell.xib; path = UI/Views/AlbumListCell.xib; sourceTree = "<group>"; };
 		A9B5864A147575DC0047C781 /* Play.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Play.png; path = Resources/Play.png; sourceTree = "<group>"; };
+		A9B5864C147579FA0047C781 /* TrackListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TrackListCell.h; path = UI/Views/TrackListCell.h; sourceTree = "<group>"; };
+		A9B5864D147579FB0047C781 /* TrackListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TrackListCell.m; path = UI/Views/TrackListCell.m; sourceTree = "<group>"; };
+		A9B5865114757A670047C781 /* TrackListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = TrackListCell.xib; path = UI/Views/TrackListCell.xib; sourceTree = "<group>"; };
 		A9C12696147563D000A803F3 /* iPad Library Tab.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iPad Library Tab.png"; path = "Resources/iPad Library Tab.png"; sourceTree = "<group>"; };
 		A9C12698147564D400A803F3 /* QueueViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QueueViewController.h; path = UI/QueueViewController.h; sourceTree = "<group>"; };
 		A9C12699147564D400A803F3 /* QueueViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QueueViewController.m; path = UI/QueueViewController.m; sourceTree = "<group>"; };
@@ -398,6 +403,9 @@
 				A9B5864814756F5E0047C781 /* AlbumListCell.xib */,
 				A9B5864514756F120047C781 /* AlbumListCell.h */,
 				A9B5864614756F120047C781 /* AlbumListCell.m */,
+				A9B5865114757A670047C781 /* TrackListCell.xib */,
+				A9B5864C147579FA0047C781 /* TrackListCell.h */,
+				A9B5864D147579FB0047C781 /* TrackListCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -602,6 +610,7 @@
 				A9C126A6147567EF00A803F3 /* SearchViewController.xib in Resources */,
 				A9B5864914756F5E0047C781 /* AlbumListCell.xib in Resources */,
 				A9B5864B147575DC0047C781 /* Play.png in Resources */,
+				A9B5865214757A670047C781 /* TrackListCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -639,6 +648,7 @@
 				A9C126A01475664B00A803F3 /* FavoritesViewController.m in Sources */,
 				A9C126A5147567EF00A803F3 /* SearchViewController.m in Sources */,
 				A9B5864714756F120047C781 /* AlbumListCell.m in Sources */,
+				A9B5864E147579FB0047C781 /* TrackListCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

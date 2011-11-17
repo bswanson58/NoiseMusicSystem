@@ -7,12 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TrackListCell.h"
 
 @class RoAlbum;
 
 @interface AlbumViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
-@property (retain, nonatomic) IBOutlet UITableView *uiTrackList;
+@property (retain, nonatomic) IBOutlet UITableView   *uiTrackList;
+@property (retain, nonatomic) IBOutlet TrackListCell *uiTrackCell;
 
 - (void) displayAlbum:(RoAlbum *) album;
 

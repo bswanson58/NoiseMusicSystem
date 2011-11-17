@@ -24,6 +24,7 @@
 @implementation AlbumViewController
 
 @synthesize uiTrackList;
+@synthesize uiTrackCell;
 @synthesize mAlbum;
 @synthesize mTrackList;
 
@@ -42,6 +43,7 @@
     self.mTrackList = nil;
     self.uiTrackList = nil;
     
+    [uiTrackCell release];
     [super dealloc];
 }
 
@@ -77,27 +79,27 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *CellIdentifier = @"Cell";
+    static NSString *cellIdentifier = @"TrackListCell";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    TrackListCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        [[NSBundle mainBundle] loadNibNamed:cellIdentifier owner:self options:nil];
+        
+        cell = self.uiTrackCell;
+        self.uiTrackCell = nil;
     }
     
     // Configure the cell...
     RoTrack    *track = [self.mTrackList objectAtIndex:[indexPath row]];
     
-    [cell setText:track.Name];
+    cell.Track = track;
+    [cell.uiTrackName setText:track.Name];
     
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    RoTrack    *track = [self.mTrackList objectAtIndex:[indexPath row]];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:EventQueueTrackRequest object:track];
 }
-
 
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
@@ -116,6 +118,7 @@
 
 - (void)viewDidUnload {
     [self setUiTrackList:nil];
+    [self setUiTrackCell:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
