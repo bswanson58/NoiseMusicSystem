@@ -38,6 +38,12 @@
 		A98D41A314740BF30044CB93 /* RemoteQueueClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A98D41A214740BF30044CB93 /* RemoteQueueClient.m */; };
 		A98D41AA147418D10044CB93 /* Noise.png in Resources */ = {isa = PBXBuildFile; fileRef = A98D41A9147418D10044CB93 /* Noise.png */; };
 		A9C12697147563D100A803F3 /* iPad Library Tab.png in Resources */ = {isa = PBXBuildFile; fileRef = A9C12696147563D000A803F3 /* iPad Library Tab.png */; };
+		A9C1269B147564D400A803F3 /* QueueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C12699147564D400A803F3 /* QueueViewController.m */; };
+		A9C1269C147564D400A803F3 /* QueueViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9C1269A147564D400A803F3 /* QueueViewController.xib */; };
+		A9C126A01475664B00A803F3 /* FavoritesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C1269E1475664B00A803F3 /* FavoritesViewController.m */; };
+		A9C126A11475664B00A803F3 /* FavoritesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9C1269F1475664B00A803F3 /* FavoritesViewController.xib */; };
+		A9C126A5147567EF00A803F3 /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C126A3147567EE00A803F3 /* SearchViewController.m */; };
+		A9C126A6147567EF00A803F3 /* SearchViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9C126A4147567EE00A803F3 /* SearchViewController.xib */; };
 		A9C904671471853100F98E2B /* Events.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C904661471853100F98E2B /* Events.m */; };
 		A9C9046B1471900F00F98E2B /* ArtistListController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C904691471900F00F98E2B /* ArtistListController.m */; };
 		A9C9046C1471900F00F98E2B /* ArtistListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9C9046A1471900F00F98E2B /* ArtistListController.xib */; };
@@ -185,6 +191,15 @@
 		A98D41A214740BF30044CB93 /* RemoteQueueClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteQueueClient.m; path = "Core/Remote Queue Client/RemoteQueueClient.m"; sourceTree = "<group>"; };
 		A98D41A9147418D10044CB93 /* Noise.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Noise.png; path = ../Noise.png; sourceTree = "<group>"; };
 		A9C12696147563D000A803F3 /* iPad Library Tab.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iPad Library Tab.png"; path = "Resources/iPad Library Tab.png"; sourceTree = "<group>"; };
+		A9C12698147564D400A803F3 /* QueueViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QueueViewController.h; path = UI/QueueViewController.h; sourceTree = "<group>"; };
+		A9C12699147564D400A803F3 /* QueueViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QueueViewController.m; path = UI/QueueViewController.m; sourceTree = "<group>"; };
+		A9C1269A147564D400A803F3 /* QueueViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = QueueViewController.xib; path = UI/QueueViewController.xib; sourceTree = "<group>"; };
+		A9C1269D1475664B00A803F3 /* FavoritesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FavoritesViewController.h; path = UI/FavoritesViewController.h; sourceTree = "<group>"; };
+		A9C1269E1475664B00A803F3 /* FavoritesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FavoritesViewController.m; path = UI/FavoritesViewController.m; sourceTree = "<group>"; };
+		A9C1269F1475664B00A803F3 /* FavoritesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FavoritesViewController.xib; path = UI/FavoritesViewController.xib; sourceTree = "<group>"; };
+		A9C126A2147567EE00A803F3 /* SearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchViewController.h; path = UI/SearchViewController.h; sourceTree = "<group>"; };
+		A9C126A3147567EE00A803F3 /* SearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SearchViewController.m; path = UI/SearchViewController.m; sourceTree = "<group>"; };
+		A9C126A4147567EE00A803F3 /* SearchViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SearchViewController.xib; path = UI/SearchViewController.xib; sourceTree = "<group>"; };
 		A9C904651471853100F98E2B /* Events.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Events.h; path = Infrastructure/Events.h; sourceTree = "<group>"; };
 		A9C904661471853100F98E2B /* Events.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Events.m; path = Infrastructure/Events.m; sourceTree = "<group>"; };
 		A9C904681471900F00F98E2B /* ArtistListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArtistListController.h; path = UI/ArtistListController.h; sourceTree = "<group>"; };
@@ -411,6 +426,15 @@
 				A96B8E231473542D000CD104 /* AlbumViewController.h */,
 				A96B8E241473542D000CD104 /* AlbumViewController.m */,
 				A96B8E251473542D000CD104 /* AlbumViewController.xib */,
+				A9C1269D1475664B00A803F3 /* FavoritesViewController.h */,
+				A9C1269E1475664B00A803F3 /* FavoritesViewController.m */,
+				A9C1269F1475664B00A803F3 /* FavoritesViewController.xib */,
+				A9C12698147564D400A803F3 /* QueueViewController.h */,
+				A9C12699147564D400A803F3 /* QueueViewController.m */,
+				A9C1269A147564D400A803F3 /* QueueViewController.xib */,
+				A9C126A2147567EE00A803F3 /* SearchViewController.h */,
+				A9C126A3147567EE00A803F3 /* SearchViewController.m */,
+				A9C126A4147567EE00A803F3 /* SearchViewController.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -562,6 +586,9 @@
 				A96B8E271473542D000CD104 /* AlbumViewController.xib in Resources */,
 				A98D41AA147418D10044CB93 /* Noise.png in Resources */,
 				A9C12697147563D100A803F3 /* iPad Library Tab.png in Resources */,
+				A9C1269C147564D400A803F3 /* QueueViewController.xib in Resources */,
+				A9C126A11475664B00A803F3 /* FavoritesViewController.xib in Resources */,
+				A9C126A6147567EF00A803F3 /* SearchViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -595,6 +622,9 @@
 				A96B8E1814734C26000CD104 /* TrackListDelegate.m in Sources */,
 				A96B8E261473542D000CD104 /* AlbumViewController.m in Sources */,
 				A98D41A314740BF30044CB93 /* RemoteQueueClient.m in Sources */,
+				A9C1269B147564D400A803F3 /* QueueViewController.m in Sources */,
+				A9C126A01475664B00A803F3 /* FavoritesViewController.m in Sources */,
+				A9C126A5147567EF00A803F3 /* SearchViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

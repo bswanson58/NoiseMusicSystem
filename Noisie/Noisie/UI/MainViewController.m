@@ -10,6 +10,9 @@
 #import "ArtistListController.h"
 #import "ArtistViewController.h"
 #import "AlbumViewController.h"
+#import "FavoritesViewController.h"
+#import "QueueViewController.h"
+#import "SearchViewController.h"
 #import "RoArtist.h"
 #import "RoAlbum.h"
 #import "Events.h"
@@ -20,6 +23,9 @@
 @property (nonatomic, retain)   ArtistListController    *mArtistListController;
 @property (nonatomic, retain)   ArtistViewController    *mArtistViewController;
 @property (nonatomic, retain)   AlbumViewController     *mAlbumViewController;
+@property (nonatomic, retain)   FavoritesViewController *mFavoritesViewController;
+@property (nonatomic, retain)   QueueViewController     *mQueueViewController;
+@property (nonatomic, retain)   SearchViewController    *mSearchViewController;
 
 - (void) onArtistSelected:(NSNotification *) notification;
 - (void) onAlbumSelected:(NSNotification *) notification;
@@ -32,6 +38,9 @@
 @synthesize mArtistListController;
 @synthesize mArtistViewController;
 @synthesize mAlbumViewController;
+@synthesize mFavoritesViewController;
+@synthesize mQueueViewController;
+@synthesize mSearchViewController;
 
 - (void) dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -40,6 +49,9 @@
     self.mArtistViewController = nil;
     self.mArtistListController = nil;
     self.mAlbumViewController = nil;
+    self.mFavoritesViewController = nil;
+    self.mQueueViewController = nil;
+    self.mSearchViewController = nil;
     
     [super dealloc];
 }
@@ -71,9 +83,17 @@
     self.mLibraryNavigationController.tabBarItem = tabInfo;
     [self addChildViewController:self.mLibraryNavigationController];
     
-    
     self.mArtistViewController = [[[ArtistViewController alloc] initWithNibName:nil bundle:nil] autorelease];
     self.mAlbumViewController = [[[AlbumViewController alloc] initWithNibName:nil bundle:nil] autorelease];
+    
+    self.mFavoritesViewController = [[[FavoritesViewController alloc] initForTabController] autorelease];
+    [self addChildViewController:self.mFavoritesViewController];
+    
+    self.mSearchViewController = [[[SearchViewController alloc] initForTabController] autorelease];
+    [self addChildViewController:self.mSearchViewController];
+    
+    self.mQueueViewController = [[[QueueViewController alloc] initForTabController] autorelease];
+    [self addChildViewController:self.mQueueViewController];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistSelected:) name:EventArtistSelected object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAlbumSelected:) name:EventAlbumSelected object:nil];
