@@ -58,7 +58,7 @@
 }
 
 - (void) initializeClient:(NSString *)serverAddress {
-    self.mClient = [[RKObjectManager alloc] initWithBaseURL:serverAddress];
+    self.mClient = [[[RKObjectManager alloc] initWithBaseURL:serverAddress] autorelease];
     [self.mClient setSerializationMIMEType:RKMIMETypeJSON];
     
     [self initObjectMappings];

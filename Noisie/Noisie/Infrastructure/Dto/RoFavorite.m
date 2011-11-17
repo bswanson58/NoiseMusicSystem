@@ -29,7 +29,7 @@
 }
 
 - (NSString *) formattedName {
-    NSString    *retValue;
+    NSString    *retValue = nil;
     
     if([self.Track length] > 0 ) {
         retValue = [NSString stringWithFormat:@"%@ (%@/%@)", self.Track, self.Artist, self.Album];

@@ -96,7 +96,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.mFavorites = [[NSMutableArray alloc] init];
+    self.mFavorites = [[[NSMutableArray alloc] init] autorelease];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:EventFavoritesListRequest object:nil];
     
