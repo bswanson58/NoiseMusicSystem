@@ -12,5 +12,9 @@ namespace Noise.Infrastructure.RemoteHost {
 		[OperationContract]
 		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "enqueueAlbum?album={albumId}")]
 		BaseResult EnqueueAlbum( long albumId );
+
+		[OperationContract]
+		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "queueList")]
+		PlayQueueListResult GetQueuedTrackList();
 	}
 }

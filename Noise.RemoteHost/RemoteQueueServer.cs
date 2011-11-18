@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
+using AutoMapper;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteDto;
 using Noise.Infrastructure.RemoteHost;
@@ -32,6 +36,8 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
+				mLog.LogException( "RemoteQueueServer:EnqueueTrack", ex );
+
 				retValue.ErrorMessage = ex.Message;
 			}
 
@@ -51,6 +57,33 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
+				mLog.LogException( "RemoteQueueServer:EnqueueAlbum", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+
+			return( retValue );
+		}
+
+		private static RoPlayQueueTrack TransformQueueTrack( PlayQueueTrack queueTrac ) {
+			var retValue = new RoPlayQueueTrack();
+
+			Mapper.DynamicMap( queueTrac, retValue );
+
+			return( retValue );
+		}
+
+		public PlayQueueListResult GetQueuedTrackList() {
+			var retValue = new PlayQueueListResult();
+
+			try {
+				retValue.Tracks = mNoiseManager.PlayQueue.PlayList.Select( TransformQueueTrack).ToArray();
+
+				retValue.Success = true;
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "RemoteQueueServer:GetQueuedTrackList", ex );
+
 				retValue.ErrorMessage = ex.Message;
 			}
 
