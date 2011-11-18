@@ -11,7 +11,6 @@
 @implementation RoArtist
 
 @synthesize Name;
-@synthesize Website;
 @synthesize AlbumCount;
 @synthesize Rating;
 @synthesize Genre;
@@ -20,7 +19,6 @@
 - (void) dealloc {
     self.Name = nil;
     self.Genre = nil;
-    self.Website = nil;
     self.IsFavorite = nil;
     
     [super dealloc];

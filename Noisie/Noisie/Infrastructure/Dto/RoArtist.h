@@ -13,7 +13,6 @@
 }
 
 @property (nonatomic, copy)     NSString        *Name;
-@property (nonatomic, copy)     NSString        *Website;
 @property (nonatomic, assign)   int              AlbumCount;
 @property (nonatomic, assign)   int              Rating;
 @property (nonatomic, retain)   NSNumber        *Genre;

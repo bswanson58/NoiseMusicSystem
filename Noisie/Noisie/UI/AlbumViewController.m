@@ -9,23 +9,29 @@
 #import "AlbumViewController.h"
 #import "TrackListResult.h"
 #import "RoAlbum.h"
+#import "RoAlbumInfo.h"
 #import "RoTrack.h"
 #import "Events.h"
+#import "Base64.h"
 
 @interface AlbumViewController ()
 
 @property (nonatomic, retain)   RoAlbum         *mAlbum;
+@property (nonatomic, retain)   RoAlbumInfo     *mAlbumInfo;
 @property (nonatomic, retain)   NSMutableArray  *mTrackList;
 
+- (void) onAlbumInfo:(NSNotification *) notification;
 - (void) onTrackList:(NSNotification *) notification;
 
 @end
 
 @implementation AlbumViewController
 
+@synthesize uiAlbumImage;
 @synthesize uiTrackList;
 @synthesize uiTrackCell;
 @synthesize mAlbum;
+@synthesize mAlbumInfo;
 @synthesize mTrackList;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -40,10 +46,12 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     self.mAlbum = nil;
+    self.mAlbumInfo = nil;
     self.mTrackList = nil;
     self.uiTrackList = nil;
     
     [uiTrackCell release];
+    [uiAlbumImage release];
     [super dealloc];
 }
 
@@ -51,7 +59,25 @@
     self.mAlbum = album;
     [self setTitle:[NSString stringWithFormat:@"Album - %@", self.mAlbum.Name]];
     
+    [self.mTrackList removeAllObjects];
+    [self.uiTrackList reloadData];
+    
+    self.uiAlbumImage.image = nil;
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:EventTrackListRequest object:self.mAlbum];
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventAlbumInfoRequest object:self.mAlbum.DbId];
+}
+
+- (void) onAlbumInfo:(NSNotification *)notification {
+    RoAlbumInfo    *info = [notification object];
+    
+    if([info.AlbumId isEqualToNumber:self.mAlbum.DbId]) {
+        self.mAlbumInfo = info;
+        
+        if( self.mAlbumInfo.AlbumCover != nil ) {
+            self.uiAlbumImage.image = [UIImage imageWithData:[Base64 decodeBase64WithString:self.mAlbumInfo.AlbumCover]];
+        }
+    }
 }
 
 - (void) onTrackList:(NSNotification *)notification {
@@ -114,11 +140,13 @@
     self.mTrackList = [[[NSMutableArray alloc] init] autorelease];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTrackList:) name:EventTrackListUpdate object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAlbumInfo:) name:EventAlbumInfoUpdate object:nil];
 }
 
 - (void)viewDidUnload {
     [self setUiTrackList:nil];
     [self setUiTrackCell:nil];
+    [self setUiAlbumImage:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;

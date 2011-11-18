@@ -8,13 +8,19 @@
 
 #import "RemoteDataClient.h"
 #import "RoArtist.h"
+#import "RoArtistInfo.h"
 #import "RoAlbum.h"
+#import "RoAlbumInfo.h"
 #import "RoTrack.h"
 #import "RoFavorite.h"
 #import "ArtistListResult.h"
 #import "ArtistListDelegate.h"
+#import "ArtistInfoResult.h"
+#import "ArtistInfoDelegate.h"
 #import "AlbumListResult.h"
 #import "AlbumListDelegate.h"
+#import "AlbumInfoResult.h"
+#import "AlbumInfoDelegate.h"
 #import "TrackListResult.h"
 #import "TrackListDelegate.h"
 #import "FavoriteListResult.h"
@@ -25,13 +31,17 @@
 
 @property (nonatomic, retain)   RKObjectManager         *mClient;
 @property (nonatomic, retain)   ArtistListDelegate      *mArtistListDelegate;
+@property (nonatomic, retain)   ArtistInfoDelegate      *mArtistInfoDelegate;
 @property (nonatomic, retain)   AlbumListDelegate       *mAlbumListDelegate;
+@property (nonatomic, retain)   AlbumInfoDelegate       *mAlbumInfoDelegate;
 @property (nonatomic, retain)   TrackListDelegate       *mTrackListDelegate;
 @property (nonatomic, retain)   FavoriteListDelegate    *mFavoriteListDelegate;
 
 - (void) initObjectMappings;
 - (void) onArtistList:(ArtistListResult *) result;
+- (void) onArtistInfo:(ArtistInfoResult *) result;
 - (void) onAlbumList:(AlbumListResult *) result;
+- (void) onAlbumInfo:(AlbumInfoResult *) result;
 - (void) onTrackList:(TrackListResult *) result;
 - (void) onFavoriteList:(FavoriteListResult *) result;
 
@@ -41,7 +51,9 @@
 
 @synthesize mClient;
 @synthesize mArtistListDelegate;
+@synthesize mArtistInfoDelegate;
 @synthesize mAlbumListDelegate;
+@synthesize mAlbumInfoDelegate;
 @synthesize mTrackListDelegate;
 @synthesize mFavoriteListDelegate;
 
@@ -50,7 +62,9 @@
     
     self.mClient = nil;
     self.mArtistListDelegate = nil;
+    self.mArtistInfoDelegate = nil;
     self.mAlbumListDelegate = nil;
+    self.mAlbumInfoDelegate = nil;
     self.mTrackListDelegate = nil;
     self.mFavoriteListDelegate = nil;
     
@@ -76,6 +90,22 @@
     }
 }
 
+- (void) requestArtistInfo:(NSNumber *)artistId {
+    NSMutableString *path = [NSMutableString stringWithString:@"artist"];
+    NSDictionary    *params = [[[NSDictionary alloc] initWithObjectsAndKeys:artistId, @"artist", nil] autorelease];
+    NSString        *url = [path appendQueryParams:params];
+    
+    [self.mClient loadObjectsAtResourcePath:url
+                              objectMapping:[self.mClient.mappingProvider objectMappingForClass:[ArtistInfoResult class]]
+                                   delegate:self.mArtistInfoDelegate];
+}
+
+- (void) onArtistInfo:(ArtistInfoResult *)result {
+    if([result.Success isEqualToString:@"true"]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:EventArtistInfoUpdate object:result.ArtistInfo];
+    }
+}
+
 - (void) requestAlbumList:(NSNumber *)forArtist {
     NSMutableString *path = [NSMutableString stringWithString:@"albums"];
     NSDictionary    *params = [[[NSDictionary alloc] initWithObjectsAndKeys:forArtist, @"artist", nil] autorelease];
@@ -89,6 +119,22 @@
 - (void) onAlbumList:(AlbumListResult *)result {
     if([result.Success isEqualToString:@"true"]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:EventAlbumListUpdate object:result];
+    }
+}
+
+- (void) requestAlbumInfo:(NSNumber *)albumId {
+    NSMutableString *path = [NSMutableString stringWithString:@"album"];
+    NSDictionary    *params = [[[NSDictionary alloc] initWithObjectsAndKeys:albumId, @"album", nil] autorelease];
+    NSString        *url = [path appendQueryParams:params];
+    
+    [self.mClient loadObjectsAtResourcePath:url
+                              objectMapping:[self.mClient.mappingProvider objectMappingForClass:[AlbumInfoResult class]]
+                                   delegate:self.mAlbumInfoDelegate];
+}
+
+- (void) onAlbumInfo:(AlbumInfoResult *)result {
+    if([result.Success isEqualToString:@"true"]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:EventAlbumInfoUpdate object:result.AlbumInfo];
     }
 }
 
@@ -130,7 +176,7 @@
 
 - (void) initObjectMappings {
     RKObjectMapping *mapping = [RKObjectMapping mappingForClass:[RoArtist class]];
-    [mapping mapAttributes:@"DbId", @"Name", @"Website", @"AlbumCount", @"Rating", @"Genre", @"IsFavorite", nil];
+    [mapping mapAttributes:@"DbId", @"Name", @"AlbumCount", @"Rating", @"Genre", @"IsFavorite", nil];
     [self.mClient.mappingProvider addObjectMapping:mapping];
     
     mapping = [RKObjectMapping mappingForClass:[ArtistListResult class]];
@@ -165,8 +211,28 @@
     [mapping mapRelationship:@"Favorites" withMapping:[self.mClient.mappingProvider objectMappingForClass:[RoFavorite class]]];
     [self.mClient.mappingProvider addObjectMapping:mapping];
 
+    mapping = [RKObjectMapping mappingForClass:[RoArtistInfo class]];
+    [mapping mapAttributes:@"ArtistId", @"Website", @"Biography", @"ArtistImage", @"BandMembers", @"TopAlbums", @"SimilarArtists", nil];
+    [self.mClient.mappingProvider addObjectMapping:mapping];
+    
+    mapping = [RKObjectMapping mappingForClass:[ArtistInfoResult class]];
+    [mapping mapAttributes:@"Success", @"ErrorMessage", nil];
+    [mapping mapRelationship:@"ArtistInfo" withMapping:[self.mClient.mappingProvider objectMappingForClass:[RoArtistInfo class]]];
+    [self.mClient.mappingProvider addObjectMapping:mapping];
+    
+    mapping = [RKObjectMapping mappingForClass:[RoAlbumInfo class]];
+    [mapping mapAttributes:@"AlbumId", @"AlbumCover", nil];
+    [self.mClient.mappingProvider addObjectMapping:mapping];
+    
+    mapping = [RKObjectMapping mappingForClass:[AlbumInfoResult class]];
+    [mapping mapAttributes:@"Success", @"ErrorMessage", nil];
+    [mapping mapRelationship:@"AlbumInfo" withMapping:[self.mClient.mappingProvider objectMappingForClass:[RoAlbumInfo class]]];
+    [self.mClient.mappingProvider addObjectMapping:mapping];
+
     self.mArtistListDelegate = [[[ArtistListDelegate alloc] initWithArtistListBlock:^(ArtistListResult *result) { [self onArtistList:result]; } ] autorelease];
+    self.mArtistInfoDelegate = [[[ArtistInfoDelegate alloc] initWithArtistInfoBlock:^(ArtistInfoResult *result) { [self onArtistInfo:result]; } ] autorelease];
     self.mAlbumListDelegate = [[[AlbumListDelegate alloc] initWithAlbumListBlock:^(AlbumListResult *result) { [self onAlbumList:result]; } ] autorelease];
+    self.mAlbumInfoDelegate = [[[AlbumInfoDelegate alloc] initWithAlbumInfoBlock:^(AlbumInfoResult *result) { [self onAlbumInfo:result]; } ] autorelease];
     self.mTrackListDelegate = [[[TrackListDelegate alloc] initWithTrackListBlock:^(TrackListResult *result) { [self onTrackList:result]; } ] autorelease];
     self.mFavoriteListDelegate = [[[FavoriteListDelegate alloc] initWithFavoriteListBlock:^(FavoriteListResult *result) { [self onFavoriteList:result]; } ] autorelease];
 }
