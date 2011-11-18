@@ -14,7 +14,9 @@
 - (void) initializeClient:(NSString *) serverAddress;
 
 - (void) requestArtistList;
+- (void) requestArtistInfo:(NSNumber *) artistId;
 - (void) requestAlbumList:(NSNumber *) forArtist;
+- (void) requestAlbumInfo:(NSNumber *) albumId;
 - (void) requestTrackList:(NSNumber *) forAlbum;
 - (void) requestFavoriteList;
 

@@ -20,7 +20,9 @@
 @property (nonatomic, retain)   RemoteQueueClient   *mQueueClient;
 
 - (void) onArtistListRequest:(NSNotification *) notification;
+- (void) onArtistInfoRequest:(NSNotification *) notification;
 - (void) onAlbumListRequest:(NSNotification *) notification;
+- (void) onAlbumInfoRequest:(NSNotification *) notification;
 - (void) onTrackListRequest:(NSNotification *) notification;
 - (void) onAlbumQueueRequest:(NSNotification *)notification;
 - (void) onTrackQueueRequest:(NSNotification *)notification;
@@ -40,7 +42,9 @@
         self.mQueueClient = [[[RemoteQueueClient alloc] init] autorelease];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistListRequest:) name:EventArtistListRequest object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistInfoRequest:) name:EventArtistInfoRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAlbumListRequest:) name:EventAlbumListRequest object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAlbumInfoRequest:) name:EventAlbumInfoRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTrackListRequest:) name:EventTrackListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAlbumQueueRequest:) name:EventQueueAlbumRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTrackQueueRequest:) name:EventQueueTrackRequest object:nil];
@@ -68,10 +72,22 @@
     [self.mDataClient requestArtistList];
 }
 
+- (void) onArtistInfoRequest:(NSNotification *)notification {
+    NSNumber    *artistId = [notification object];
+    
+    [self.mDataClient requestArtistInfo:artistId];
+}
+
 - (void) onAlbumListRequest:(NSNotification *)notification {
     RoArtist    *forArtist = [notification object];
     
     [self.mDataClient requestAlbumList:forArtist.DbId];
+}
+
+- (void) onAlbumInfoRequest:(NSNotification *)notification {
+    NSNumber    *albumId = [notification object];
+    
+    [self.mDataClient requestAlbumInfo:albumId];
 }
 
 - (void) onTrackListRequest:(NSNotification *)notification {

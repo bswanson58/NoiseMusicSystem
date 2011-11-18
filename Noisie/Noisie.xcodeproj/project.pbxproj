@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A91271011476A0B70048A6C6 /* RoArtistInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A91271001476A0B70048A6C6 /* RoArtistInfo.m */; };
+		A91271041476A1F80048A6C6 /* ArtistInfoResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A91271031476A1F80048A6C6 /* ArtistInfoResult.m */; };
+		A91271071476A25B0048A6C6 /* RoAlbumInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A91271061476A25B0048A6C6 /* RoAlbumInfo.m */; };
+		A912710A1476A2E00048A6C6 /* AlbumInfoResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A91271091476A2E00048A6C6 /* AlbumInfoResult.m */; };
+		A912710D1476A3C90048A6C6 /* ArtistInfoDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A912710C1476A3C90048A6C6 /* ArtistInfoDelegate.m */; };
+		A91271101476A4570048A6C6 /* AlbumInfoDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A912710F1476A4570048A6C6 /* AlbumInfoDelegate.m */; };
+		A912712B1476BB530048A6C6 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = A912712A1476BB530048A6C6 /* Base64.m */; };
 		A95AF36114705F380074A070 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95AF36014705F380074A070 /* UIKit.framework */; };
 		A95AF36314705F380074A070 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95AF36214705F380074A070 /* Foundation.framework */; };
 		A95AF36514705F380074A070 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95AF36414705F380074A070 /* CoreGraphics.framework */; };
@@ -154,6 +161,20 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A91270FF1476A0B70048A6C6 /* RoArtistInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoArtistInfo.h; path = Infrastructure/Dto/RoArtistInfo.h; sourceTree = "<group>"; };
+		A91271001476A0B70048A6C6 /* RoArtistInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RoArtistInfo.m; path = Infrastructure/Dto/RoArtistInfo.m; sourceTree = "<group>"; };
+		A91271021476A1F80048A6C6 /* ArtistInfoResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArtistInfoResult.h; path = Infrastructure/Dto/ArtistInfoResult.h; sourceTree = "<group>"; };
+		A91271031476A1F80048A6C6 /* ArtistInfoResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ArtistInfoResult.m; path = Infrastructure/Dto/ArtistInfoResult.m; sourceTree = "<group>"; };
+		A91271051476A25B0048A6C6 /* RoAlbumInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoAlbumInfo.h; path = Infrastructure/Dto/RoAlbumInfo.h; sourceTree = "<group>"; };
+		A91271061476A25B0048A6C6 /* RoAlbumInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RoAlbumInfo.m; path = Infrastructure/Dto/RoAlbumInfo.m; sourceTree = "<group>"; };
+		A91271081476A2E00048A6C6 /* AlbumInfoResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlbumInfoResult.h; path = Infrastructure/Dto/AlbumInfoResult.h; sourceTree = "<group>"; };
+		A91271091476A2E00048A6C6 /* AlbumInfoResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AlbumInfoResult.m; path = Infrastructure/Dto/AlbumInfoResult.m; sourceTree = "<group>"; };
+		A912710B1476A3C90048A6C6 /* ArtistInfoDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArtistInfoDelegate.h; path = "Core/Remote Data Client/ArtistInfoDelegate.h"; sourceTree = "<group>"; };
+		A912710C1476A3C90048A6C6 /* ArtistInfoDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ArtistInfoDelegate.m; path = "Core/Remote Data Client/ArtistInfoDelegate.m"; sourceTree = "<group>"; };
+		A912710E1476A4570048A6C6 /* AlbumInfoDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlbumInfoDelegate.h; path = "Core/Remote Data Client/AlbumInfoDelegate.h"; sourceTree = "<group>"; };
+		A912710F1476A4570048A6C6 /* AlbumInfoDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AlbumInfoDelegate.m; path = "Core/Remote Data Client/AlbumInfoDelegate.m"; sourceTree = "<group>"; };
+		A91271291476BB530048A6C6 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Base64.h; path = Utility/Base64.h; sourceTree = "<group>"; };
+		A912712A1476BB530048A6C6 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Base64.m; path = Utility/Base64.m; sourceTree = "<group>"; };
 		A95AF35C14705F380074A070 /* Noisie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Noisie.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A95AF36014705F380074A070 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		A95AF36214705F380074A070 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -265,6 +286,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A91271281476BB210048A6C6 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				A91271291476BB530048A6C6 /* Base64.h */,
+				A912712A1476BB530048A6C6 /* Base64.m */,
+			);
+			name = Utility;
+			sourceTree = "<group>";
+		};
 		A95AF35114705F380074A070 = {
 			isa = PBXGroup;
 			children = (
@@ -299,6 +329,7 @@
 		A95AF36614705F380074A070 /* Noisie */ = {
 			isa = PBXGroup;
 			children = (
+				A91271281476BB210048A6C6 /* Utility */,
 				A9C9044A14717F3E00F98E2B /* UI */,
 				A95AF3B514706F0F0074A070 /* Infrastructure */,
 				A95AF3B414706C220074A070 /* Core */,
@@ -377,8 +408,12 @@
 				A95AF3B814706F7F0074A070 /* RoBase.m */,
 				A95AF3BA147070070074A070 /* RoArtist.h */,
 				A95AF3BB147070070074A070 /* RoArtist.m */,
+				A91270FF1476A0B70048A6C6 /* RoArtistInfo.h */,
+				A91271001476A0B70048A6C6 /* RoArtistInfo.m */,
 				A9F83932147203B20067217A /* RoAlbum.h */,
 				A9F83933147203B20067217A /* RoAlbum.m */,
+				A91271051476A25B0048A6C6 /* RoAlbumInfo.h */,
+				A91271061476A25B0048A6C6 /* RoAlbumInfo.m */,
 				A96B8E1014734A27000CD104 /* RoTrack.h */,
 				A96B8E1114734A27000CD104 /* RoTrack.m */,
 				A9B5866A147590E60047C781 /* RoFavorite.h */,
@@ -387,8 +422,12 @@
 				A95AF3BE1470723B0074A070 /* BaseServerResult.m */,
 				A95AF3C01470725B0074A070 /* ArtistListResult.h */,
 				A95AF3C11470725B0074A070 /* ArtistListResult.m */,
+				A91271021476A1F80048A6C6 /* ArtistInfoResult.h */,
+				A91271031476A1F80048A6C6 /* ArtistInfoResult.m */,
 				A9F8392F147203980067217A /* AlbumListResult.h */,
 				A9F83930147203980067217A /* AlbumListResult.m */,
+				A91271081476A2E00048A6C6 /* AlbumInfoResult.h */,
+				A91271091476A2E00048A6C6 /* AlbumInfoResult.m */,
 				A96B8E1314734B65000CD104 /* TrackListResult.h */,
 				A96B8E1414734B65000CD104 /* TrackListResult.m */,
 				A9B5866D147592DE0047C781 /* FavoriteListResult.h */,
@@ -404,8 +443,12 @@
 				A95AF3C5147073890074A070 /* RemoteDataClient.m */,
 				A96D6C6E1472B60400521583 /* ArtistListDelegate.h */,
 				A96D6C6F1472B60400521583 /* ArtistListDelegate.m */,
+				A912710B1476A3C90048A6C6 /* ArtistInfoDelegate.h */,
+				A912710C1476A3C90048A6C6 /* ArtistInfoDelegate.m */,
 				A96D6C711472B87400521583 /* AlbumListDelegate.h */,
 				A96D6C721472B87400521583 /* AlbumListDelegate.m */,
+				A912710E1476A4570048A6C6 /* AlbumInfoDelegate.h */,
+				A912710F1476A4570048A6C6 /* AlbumInfoDelegate.m */,
 				A96B8E1614734C26000CD104 /* TrackListDelegate.h */,
 				A96B8E1714734C26000CD104 /* TrackListDelegate.m */,
 				A9B58670147593B90047C781 /* FavoritesListDelegate.h */,
@@ -677,6 +720,13 @@
 				A9B5866F147592DE0047C781 /* FavoriteListResult.m in Sources */,
 				A9B58672147593B90047C781 /* FavoritesListDelegate.m in Sources */,
 				A9B58675147599680047C781 /* FavoriteListCell.m in Sources */,
+				A91271011476A0B70048A6C6 /* RoArtistInfo.m in Sources */,
+				A91271041476A1F80048A6C6 /* ArtistInfoResult.m in Sources */,
+				A91271071476A25B0048A6C6 /* RoAlbumInfo.m in Sources */,
+				A912710A1476A2E00048A6C6 /* AlbumInfoResult.m in Sources */,
+				A912710D1476A3C90048A6C6 /* ArtistInfoDelegate.m in Sources */,
+				A91271101476A4570048A6C6 /* AlbumInfoDelegate.m in Sources */,
+				A912712B1476BB530048A6C6 /* Base64.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

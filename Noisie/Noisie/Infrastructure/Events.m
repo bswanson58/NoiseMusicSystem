@@ -11,10 +11,14 @@
 NSString * const    EventArtistListRequest          = @"event:ArtistListRequest";
 NSString * const    EventArtistListUpdate           = @"event:ArtistListUpdate";
 NSString * const    EventArtistSelected             = @"event:ArtistSelected";
+NSString * const    EventArtistInfoRequest          = @"event:ArtistInfoRequest";
+NSString * const    EventArtistInfoUpdate           = @"event:ArtistInfoUpdate";
 
 NSString * const    EventAlbumListRequest           = @"event:AlbumListRequest";
 NSString * const    EventAlbumListUpdate            = @"event:AlbumListUpdate";
 NSString * const    EventAlbumSelected              = @"event:AlbumSelected";
+NSString * const    EventAlbumInfoRequest           = @"event:AlbumInfoRequest";
+NSString * const    EventAlbumInfoUpdate            = @"event:AlbumInfoUpdate";
 
 NSString * const    EventTrackListRequest           = @"event:TrackListRequest";
 NSString * const    EventTrackListUpdate            = @"event:TrackListUpdate";

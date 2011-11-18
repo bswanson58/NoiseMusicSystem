@@ -9,22 +9,28 @@
 #import "ArtistViewController.h"
 #import "AlbumListResult.h"
 #import "RoArtist.h"
+#import "RoArtistInfo.h"
 #import "RoAlbum.h"
 #import "Events.h"
+#import "Base64.h"
 
 @interface ArtistViewController ()
 
 @property (nonatomic, retain)   RoArtist        *mArtist;
+@property (nonatomic, retain)   RoArtistInfo    *mArtistInfo;
 @property (nonatomic, retain)   NSMutableArray  *mAlbumList;
 
+- (void) onArtistInfo:(NSNotification *) notification;
 - (void) onAlbumList:(NSNotification *) notification;
 
 @end
 
 @implementation ArtistViewController
-@synthesize uiAlbumList;
 
+@synthesize uiAlbumList;
+@synthesize uiArtistImage;
 @synthesize mArtist;
+@synthesize mArtistInfo;
 @synthesize mAlbumList;
 @synthesize uiAlbumCell;
 
@@ -40,18 +46,38 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     self.mArtist = nil;
+    self.mArtistInfo = nil;
     self.mAlbumList = nil;
     self.uiAlbumList = nil;
     self.uiAlbumCell = nil;
     
+    [uiArtistImage release];
     [super dealloc];
 }
 
 - (void) displayArtist:(RoArtist *)artist {
     self.mArtist = artist;
     [self setTitle:[NSString stringWithFormat:@"Artist - %@", artist.Name]];
+    
+    [self.mAlbumList removeAllObjects];
+    [self.uiAlbumList reloadData];
+    
+    self.uiArtistImage.image = nil;
 
     [[NSNotificationCenter defaultCenter] postNotificationName:EventAlbumListRequest object:self.mArtist];
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventArtistInfoRequest object:self.mArtist.DbId];
+}
+
+- (void) onArtistInfo:(NSNotification *)notification {
+    RoArtistInfo    *info = [notification object];
+    
+    if([info.ArtistId isEqualToNumber:self.mArtist.DbId]) {
+        self.mArtistInfo = info;
+    
+        if( self.mArtistInfo.ArtistImage != nil ) {
+            self.uiArtistImage.image = [UIImage imageWithData:[Base64 decodeBase64WithString:self.mArtistInfo.ArtistImage]];
+        }
+    }
 }
 
 - (void) onAlbumList:(NSNotification *)notification {
@@ -118,10 +144,12 @@
     self.mAlbumList = [[[NSMutableArray alloc] init] autorelease];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAlbumList:) name:EventAlbumListUpdate object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistInfo:) name:EventArtistInfoUpdate object:nil];
 }
 
 - (void)viewDidUnload {
     [self setUiAlbumList:nil];
+    [self setUiArtistImage:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
