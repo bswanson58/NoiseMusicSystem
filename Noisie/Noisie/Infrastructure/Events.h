@@ -31,3 +31,6 @@ extern NSString * const EventQueueAlbumRequest;
 
 extern NSString * const EventPlayQueueListRequest;
 extern NSString * const EventPlayQueueListUpdate;
+
+extern NSString * const EventSearchRequest;
+extern NSString * const EventSearchUpdate;

@@ -31,3 +31,6 @@ NSString * const    EventQueueTrackRequest          = @"event:QueueTrackRequest"
 
 NSString * const    EventPlayQueueListRequest       = @"eventPlayQueueListRequest";
 NSString * const    EventPlayQueueListUpdate        = @"eventPlayQueueListUpdate";
+
+NSString * const    EventSearchRequest              = @"event:SearchRequest";
+NSString * const    EventSearchUpdate               = @"event:SearchUpdate";

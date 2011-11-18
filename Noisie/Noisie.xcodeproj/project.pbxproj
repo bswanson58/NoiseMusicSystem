@@ -19,6 +19,12 @@
 		A91271341476CBBB0048A6C6 /* PlayQueueListDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A91271331476CBBB0048A6C6 /* PlayQueueListDelegate.m */; };
 		A91271371476D02D0048A6C6 /* PlayQueueListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A91271361476D02D0048A6C6 /* PlayQueueListCell.m */; };
 		A912713B1476D22B0048A6C6 /* PlayQueueListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A912713A1476D22B0048A6C6 /* PlayQueueListCell.xib */; };
+		A912713E1476E7150048A6C6 /* RoSearchResultItem.m in Sources */ = {isa = PBXBuildFile; fileRef = A912713D1476E7130048A6C6 /* RoSearchResultItem.m */; };
+		A91271411476E8560048A6C6 /* SearchResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A91271401476E8540048A6C6 /* SearchResult.m */; };
+		A91271451476E9140048A6C6 /* RemoteSearchClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A91271441476E9140048A6C6 /* RemoteSearchClient.m */; };
+		A91271481476E9D60048A6C6 /* SearchResultDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A91271471476E9D60048A6C6 /* SearchResultDelegate.m */; };
+		A912714B1476EEDA0048A6C6 /* SearchListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A912714A1476EEDA0048A6C6 /* SearchListCell.m */; };
+		A912714F1476EF220048A6C6 /* SearchListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A912714E1476EF220048A6C6 /* SearchListCell.xib */; };
 		A95AF36114705F380074A070 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95AF36014705F380074A070 /* UIKit.framework */; };
 		A95AF36314705F380074A070 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95AF36214705F380074A070 /* Foundation.framework */; };
 		A95AF36514705F380074A070 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95AF36414705F380074A070 /* CoreGraphics.framework */; };
@@ -189,6 +195,17 @@
 		A91271351476D02D0048A6C6 /* PlayQueueListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayQueueListCell.h; path = UI/Views/PlayQueueListCell.h; sourceTree = "<group>"; };
 		A91271361476D02D0048A6C6 /* PlayQueueListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayQueueListCell.m; path = UI/Views/PlayQueueListCell.m; sourceTree = "<group>"; };
 		A912713A1476D22B0048A6C6 /* PlayQueueListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PlayQueueListCell.xib; path = UI/Views/PlayQueueListCell.xib; sourceTree = "<group>"; };
+		A912713C1476E7120048A6C6 /* RoSearchResultItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoSearchResultItem.h; path = Infrastructure/Dto/RoSearchResultItem.h; sourceTree = "<group>"; };
+		A912713D1476E7130048A6C6 /* RoSearchResultItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RoSearchResultItem.m; path = Infrastructure/Dto/RoSearchResultItem.m; sourceTree = "<group>"; };
+		A912713F1476E8530048A6C6 /* SearchResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchResult.h; path = Infrastructure/Dto/SearchResult.h; sourceTree = "<group>"; };
+		A91271401476E8540048A6C6 /* SearchResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SearchResult.m; path = Infrastructure/Dto/SearchResult.m; sourceTree = "<group>"; };
+		A91271431476E9140048A6C6 /* RemoteSearchClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteSearchClient.h; path = "Core/Remote Search Client/RemoteSearchClient.h"; sourceTree = "<group>"; };
+		A91271441476E9140048A6C6 /* RemoteSearchClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteSearchClient.m; path = "Core/Remote Search Client/RemoteSearchClient.m"; sourceTree = "<group>"; };
+		A91271461476E9D60048A6C6 /* SearchResultDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchResultDelegate.h; path = "Core/Remote Search Client/SearchResultDelegate.h"; sourceTree = "<group>"; };
+		A91271471476E9D60048A6C6 /* SearchResultDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SearchResultDelegate.m; path = "Core/Remote Search Client/SearchResultDelegate.m"; sourceTree = "<group>"; };
+		A91271491476EEDA0048A6C6 /* SearchListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchListCell.h; path = UI/Views/SearchListCell.h; sourceTree = "<group>"; };
+		A912714A1476EEDA0048A6C6 /* SearchListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SearchListCell.m; path = UI/Views/SearchListCell.m; sourceTree = "<group>"; };
+		A912714E1476EF220048A6C6 /* SearchListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SearchListCell.xib; path = UI/Views/SearchListCell.xib; sourceTree = "<group>"; };
 		A95AF35C14705F380074A070 /* Noisie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Noisie.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A95AF36014705F380074A070 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		A95AF36214705F380074A070 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -309,6 +326,17 @@
 			name = Utility;
 			sourceTree = "<group>";
 		};
+		A91271421476E8E00048A6C6 /* Remote Search Client */ = {
+			isa = PBXGroup;
+			children = (
+				A91271431476E9140048A6C6 /* RemoteSearchClient.h */,
+				A91271441476E9140048A6C6 /* RemoteSearchClient.m */,
+				A91271461476E9D60048A6C6 /* SearchResultDelegate.h */,
+				A91271471476E9D60048A6C6 /* SearchResultDelegate.m */,
+			);
+			name = "Remote Search Client";
+			sourceTree = "<group>";
+		};
 		A95AF35114705F380074A070 = {
 			isa = PBXGroup;
 			children = (
@@ -395,6 +423,7 @@
 		A95AF3B414706C220074A070 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				A91271421476E8E00048A6C6 /* Remote Search Client */,
 				A95AF3C3147073370074A070 /* Remote Data Client */,
 				A98D41A014740B9F0044CB93 /* Remote Queue Client */,
 				A95AF3C714709C510074A070 /* RemoteMgr.h */,
@@ -434,6 +463,8 @@
 				A9B5866B147590E60047C781 /* RoFavorite.m */,
 				A912712C1476C9DD0048A6C6 /* RoPlayQueueTrack.h */,
 				A912712D1476C9DD0048A6C6 /* RoPlayQueueTrack.m */,
+				A912713C1476E7120048A6C6 /* RoSearchResultItem.h */,
+				A912713D1476E7130048A6C6 /* RoSearchResultItem.m */,
 				A95AF3BD1470723B0074A070 /* BaseServerResult.h */,
 				A95AF3BE1470723B0074A070 /* BaseServerResult.m */,
 				A95AF3C01470725B0074A070 /* ArtistListResult.h */,
@@ -450,6 +481,8 @@
 				A9B5866E147592DE0047C781 /* FavoriteListResult.m */,
 				A912712F1476CAF90048A6C6 /* PlayQueueListResult.h */,
 				A91271301476CAF90048A6C6 /* PlayQueueListResult.m */,
+				A912713F1476E8530048A6C6 /* SearchResult.h */,
+				A91271401476E8540048A6C6 /* SearchResult.m */,
 			);
 			name = Dto;
 			sourceTree = "<group>";
@@ -493,6 +526,9 @@
 				A912713A1476D22B0048A6C6 /* PlayQueueListCell.xib */,
 				A91271351476D02D0048A6C6 /* PlayQueueListCell.h */,
 				A91271361476D02D0048A6C6 /* PlayQueueListCell.m */,
+				A912714E1476EF220048A6C6 /* SearchListCell.xib */,
+				A91271491476EEDA0048A6C6 /* SearchListCell.h */,
+				A912714A1476EEDA0048A6C6 /* SearchListCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -702,6 +738,7 @@
 				A9B5865214757A670047C781 /* TrackListCell.xib in Resources */,
 				A9B58679147599B90047C781 /* FavoriteListCell.xib in Resources */,
 				A912713B1476D22B0048A6C6 /* PlayQueueListCell.xib in Resources */,
+				A912714F1476EF220048A6C6 /* SearchListCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -755,6 +792,11 @@
 				A91271311476CAF90048A6C6 /* PlayQueueListResult.m in Sources */,
 				A91271341476CBBB0048A6C6 /* PlayQueueListDelegate.m in Sources */,
 				A91271371476D02D0048A6C6 /* PlayQueueListCell.m in Sources */,
+				A912713E1476E7150048A6C6 /* RoSearchResultItem.m in Sources */,
+				A91271411476E8560048A6C6 /* SearchResult.m in Sources */,
+				A91271451476E9140048A6C6 /* RemoteSearchClient.m in Sources */,
+				A91271481476E9D60048A6C6 /* SearchResultDelegate.m in Sources */,
+				A912714B1476EEDA0048A6C6 /* SearchListCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

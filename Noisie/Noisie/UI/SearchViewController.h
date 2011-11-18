@@ -7,9 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SearchListCell.h"
 
 @interface SearchViewController : UIViewController
 
+@property (retain, nonatomic) IBOutlet UITextField      *uiSearchText;
+@property (retain, nonatomic) IBOutlet UITableView      *uiResultsList;
+@property (retain, nonatomic) IBOutlet SearchListCell   *uiSearchCell;
+
 - (id) initForTabController;
+
+- (IBAction)cmdSearch:(id)sender;
 
 @end
