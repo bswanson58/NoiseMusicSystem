@@ -7,8 +7,6 @@ namespace Noise.Infrastructure.RemoteDto {
 		[DataMember]
 		public string			Name { get; set; }
 		[DataMember]
-		public string			Website { get; set; }
-		[DataMember]
 		public Int16			AlbumCount { get; set; }
 		[DataMember]
 		public Int16			Rating { get; set; }

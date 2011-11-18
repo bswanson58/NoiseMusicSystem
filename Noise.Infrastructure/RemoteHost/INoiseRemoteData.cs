@@ -14,8 +14,16 @@ namespace Noise.Infrastructure.RemoteHost {
 		ArtistListResult GetArtistList();
 
 		[OperationContract]
+		[WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "artist?artist={artistId}")]
+		ArtistInfoResult GetArtistInfo( long artistId );
+
+		[OperationContract]
 		[WebGet( ResponseFormat = WebMessageFormat.Json, UriTemplate = "albums?artist={artistId}" )]
 		AlbumListResult GetAlbumList( long artistId );
+
+		[OperationContract]
+		[WebGet( ResponseFormat = WebMessageFormat.Json, UriTemplate = "album?album={albumId}" )]
+		AlbumInfoResult GetAlbumInfo( long albumId );
 
 		[OperationContract]
 		[WebGet( ResponseFormat = WebMessageFormat.Json, UriTemplate = "tracks?album={albumId}" )]

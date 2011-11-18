@@ -52,6 +52,44 @@ namespace Noise.RemoteHost {
 			return( retValue );
 		}
 
+		private static RoArtistInfo TransformArtistInfo( DbArtist artist, ArtistSupportInfo supportInfo ) {
+			var retValue = new RoArtistInfo();
+			var list = new List<string>();
+
+			Mapper.DynamicMap( artist, retValue );
+			Mapper.DynamicMap( supportInfo, retValue );
+
+			if(( supportInfo.ArtistImage != null ) &&
+			   ( supportInfo.ArtistImage.Image != null )) {
+				retValue.ArtistImage = Convert.ToBase64String( supportInfo.ArtistImage.Image );
+			}
+
+			return( retValue );
+		}
+
+		public ArtistInfoResult GetArtistInfo( long artistId ) {
+			var retValue = new ArtistInfoResult();
+
+			try {
+				var artist = mNoiseManager.DataProvider.GetArtist( artistId );
+				var artistInfo = mNoiseManager.DataProvider.GetArtistSupportInfo( artistId );
+
+				if(( artist != null ) &&
+				   ( artistInfo != null )) {
+
+					retValue.ArtistInfo = TransformArtistInfo( artist, artistInfo );
+					retValue.Success = true;
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "RemoteDataServer:GetArtistInfo", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+
+			return( retValue );
+		}
+
 		private static RoAlbum TransformAlbum( DbAlbum dbAlbum ) {
 			var retValue = new RoAlbum();
 
@@ -75,6 +113,71 @@ namespace Noise.RemoteHost {
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "RemoteDataServer:GetAlbumList", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+
+			return( retValue );
+		}
+
+		private static DbArtwork SelectAlbumCover( AlbumSupportInfo info ) {
+			DbArtwork	retValue = null;
+
+			if( info != null ) {
+				if(( info.AlbumCovers != null ) &&
+				   ( info.AlbumCovers.GetLength( 0 ) > 0 )) {
+					retValue = (( from DbArtwork artwork in info.AlbumCovers where artwork.IsUserSelection select artwork ).FirstOrDefault() ??
+							    ( from DbArtwork artwork in info.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
+							    ( from DbArtwork artwork in info.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault()) ??
+								info.AlbumCovers[0];
+				}
+
+				if(( retValue == null ) &&
+				   ( info.Artwork != null ) &&
+				   ( info.Artwork.GetLength( 0 ) > 0 )) {
+					retValue = ( from DbArtwork artwork in info.Artwork
+								 where artwork.Name.IndexOf( "front", StringComparison.InvariantCultureIgnoreCase ) >= 0 select artwork ).FirstOrDefault();
+
+					if(( retValue == null ) &&
+					   ( info.Artwork.GetLength( 0 ) == 1 )) {
+						retValue = info.Artwork[0];
+					}
+				}
+			}
+
+			return( retValue );
+		}
+
+		private static RoAlbumInfo TransformAlbumInfo( DbAlbum album, AlbumSupportInfo supportInfo ) {
+			var retValue = new RoAlbumInfo();
+
+			Mapper.DynamicMap( album, retValue );
+			Mapper.DynamicMap( supportInfo, retValue );
+
+			var	artwork = SelectAlbumCover( supportInfo );
+			if( artwork != null ) {
+				retValue.AlbumCover = Convert.ToBase64String( artwork.Image );
+			}
+
+			return( retValue );
+		}
+
+		public AlbumInfoResult GetAlbumInfo( long albumId ) {
+			var retValue = new AlbumInfoResult();
+
+			try {
+				var album = mNoiseManager.DataProvider.GetAlbum( albumId );
+				var supportInfo = mNoiseManager.DataProvider.GetAlbumSupportInfo( albumId );
+
+				if(( album != null ) &&
+				   ( supportInfo != null )) {
+					retValue.AlbumInfo = TransformAlbumInfo( album, supportInfo );
+
+					retValue.Success = true;
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "RemoteDataServer:GetAlbumInfo", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
