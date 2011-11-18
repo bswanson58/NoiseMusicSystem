@@ -38,12 +38,13 @@
 				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">292</int>
 				<array class="NSMutableArray" key="NSSubviews">
-					<object class="IBUILabel" id="583415956">
+					<object class="IBUILabel" id="62509944">
 						<reference key="NSNextResponder" ref="766721923"/>
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{20, 16}, {100, 21}}</string>
 						<reference key="NSSuperview" ref="766721923"/>
-						<reference key="NSNextKeyView" ref="354928246"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="761800760"/>
 						<string key="NSReuseIdentifierKey">_NS:345</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -68,12 +69,13 @@
 							<int key="NSfFlags">16</int>
 						</object>
 					</object>
-					<object class="IBUITextField" id="354928246">
+					<object class="IBUITextField" id="761800760">
 						<reference key="NSNextResponder" ref="766721923"/>
 						<int key="NSvFlags">290</int>
 						<string key="NSFrame">{{110, 11}, {545, 31}}</string>
 						<reference key="NSSuperview" ref="766721923"/>
-						<reference key="NSNextKeyView" ref="485746304"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="1060105458"/>
 						<string key="NSReuseIdentifierKey">_NS:320</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -84,7 +86,7 @@
 						<object class="NSColor" key="IBUITextColor">
 							<int key="NSColorSpace">3</int>
 							<bytes key="NSWhite">MAA</bytes>
-							<object class="NSColorSpace" key="NSCustomColorSpace" id="953765624">
+							<object class="NSColorSpace" key="NSCustomColorSpace" id="83205695">
 								<int key="NSID">2</int>
 							</object>
 						</object>
@@ -103,14 +105,15 @@
 							<int key="NSfFlags">16</int>
 						</object>
 					</object>
-					<object class="IBUITableView" id="908608262">
+					<object class="IBUITableView" id="37805309">
 						<reference key="NSNextResponder" ref="766721923"/>
 						<int key="NSvFlags">274</int>
 						<string key="NSFrame">{{0, 55}, {768, 945}}</string>
 						<reference key="NSSuperview" ref="766721923"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:408</string>
-						<object class="NSColor" key="IBUIBackgroundColor" id="413697842">
+						<object class="NSColor" key="IBUIBackgroundColor" id="293881277">
 							<int key="NSColorSpace">3</int>
 							<bytes key="NSWhite">MQA</bytes>
 						</object>
@@ -124,12 +127,13 @@
 						<float key="IBUISectionHeaderHeight">22</float>
 						<float key="IBUISectionFooterHeight">22</float>
 					</object>
-					<object class="IBUIButton" id="485746304">
+					<object class="IBUIButton" id="1060105458">
 						<reference key="NSNextResponder" ref="766721923"/>
-						<int key="NSvFlags">292</int>
+						<int key="NSvFlags">289</int>
 						<string key="NSFrame">{{676, 8}, {72, 37}}</string>
 						<reference key="NSSuperview" ref="766721923"/>
-						<reference key="NSNextKeyView" ref="908608262"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="37805309"/>
 						<string key="NSReuseIdentifierKey">_NS:241</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
@@ -137,7 +141,7 @@
 						<int key="IBUIContentVerticalAlignment">0</int>
 						<int key="IBUIButtonType">1</int>
 						<string key="IBUINormalTitle">Search</string>
-						<reference key="IBUIHighlightedTitleColor" ref="413697842"/>
+						<reference key="IBUIHighlightedTitleColor" ref="293881277"/>
 						<object class="NSColor" key="IBUINormalTitleColor">
 							<int key="NSColorSpace">1</int>
 							<bytes key="NSRGB">MC4xOTYwNzg0MzQ2IDAuMzA5ODAzOTMyOSAwLjUyMTU2ODY1NgA</bytes>
@@ -159,11 +163,12 @@
 				</array>
 				<string key="NSFrame">{{0, 20}, {768, 1004}}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSNextKeyView" ref="583415956"/>
+				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView" ref="62509944"/>
 				<object class="NSColor" key="IBUIBackgroundColor">
 					<int key="NSColorSpace">3</int>
 					<bytes key="NSWhite">MQA</bytes>
-					<reference key="NSCustomColorSpace" ref="953765624"/>
+					<reference key="NSCustomColorSpace" ref="83205695"/>
 				</object>
 				<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
 				<object class="IBUISimulatedStatusBarMetrics" key="IBUISimulatedStatusBarMetrics">
@@ -186,7 +191,7 @@
 					<object class="IBCocoaTouchOutletConnection" key="connection">
 						<string key="label">uiSearchText</string>
 						<reference key="source" ref="841351856"/>
-						<reference key="destination" ref="354928246"/>
+						<reference key="destination" ref="761800760"/>
 					</object>
 					<int key="connectionID">8</int>
 				</object>
@@ -194,14 +199,14 @@
 					<object class="IBCocoaTouchOutletConnection" key="connection">
 						<string key="label">uiResultsList</string>
 						<reference key="source" ref="841351856"/>
-						<reference key="destination" ref="908608262"/>
+						<reference key="destination" ref="37805309"/>
 					</object>
 					<int key="connectionID">9</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
 						<string key="label">dataSource</string>
-						<reference key="source" ref="908608262"/>
+						<reference key="source" ref="37805309"/>
 						<reference key="destination" ref="841351856"/>
 					</object>
 					<int key="connectionID">11</int>
@@ -209,7 +214,7 @@
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
 						<string key="label">delegate</string>
-						<reference key="source" ref="908608262"/>
+						<reference key="source" ref="37805309"/>
 						<reference key="destination" ref="841351856"/>
 					</object>
 					<int key="connectionID">13</int>
@@ -217,7 +222,7 @@
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
 						<string key="label">cmdSearch:</string>
-						<reference key="source" ref="485746304"/>
+						<reference key="source" ref="1060105458"/>
 						<reference key="destination" ref="841351856"/>
 						<int key="IBEventType">7</int>
 					</object>
@@ -247,33 +252,33 @@
 						<int key="objectID">2</int>
 						<reference key="object" ref="766721923"/>
 						<array class="NSMutableArray" key="children">
-							<reference ref="485746304"/>
-							<reference ref="583415956"/>
-							<reference ref="354928246"/>
-							<reference ref="908608262"/>
+							<reference ref="1060105458"/>
+							<reference ref="62509944"/>
+							<reference ref="761800760"/>
+							<reference ref="37805309"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">4</int>
-						<reference key="object" ref="583415956"/>
+						<reference key="object" ref="62509944"/>
 						<reference key="parent" ref="766721923"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">5</int>
-						<reference key="object" ref="354928246"/>
+						<reference key="object" ref="761800760"/>
 						<reference key="parent" ref="766721923"/>
 						<string key="objectName">Search Text</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">6</int>
-						<reference key="object" ref="908608262"/>
+						<reference key="object" ref="37805309"/>
 						<reference key="parent" ref="766721923"/>
 						<string key="objectName">Search Results List</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">7</int>
-						<reference key="object" ref="485746304"/>
+						<reference key="object" ref="1060105458"/>
 						<reference key="parent" ref="766721923"/>
 					</object>
 				</array>
@@ -295,7 +300,78 @@
 			<nil key="sourceID"/>
 			<int key="maxID">13</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes"/>
+		<object class="IBClassDescriber" key="IBDocument.Classes">
+			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<object class="IBPartialClassDescription">
+					<string key="className">SearchListCell</string>
+					<string key="superclassName">UITableViewCell</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">cmdPlay:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">cmdPlay:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">cmdPlay:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">uiItemTitle</string>
+						<string key="NS.object.0">UILabel</string>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<string key="NS.key.0">uiItemTitle</string>
+						<object class="IBToOneOutletInfo" key="NS.object.0">
+							<string key="name">uiItemTitle</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/SearchListCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">SearchViewController</string>
+					<string key="superclassName">UIViewController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">cmdSearch:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">cmdSearch:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">cmdSearch:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="uiResultsList">UITableView</string>
+						<string key="uiSearchCell">SearchListCell</string>
+						<string key="uiSearchText">UITextField</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="uiResultsList">
+							<string key="name">uiResultsList</string>
+							<string key="candidateClassName">UITableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="uiSearchCell">
+							<string key="name">uiSearchCell</string>
+							<string key="candidateClassName">SearchListCell</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="uiSearchText">
+							<string key="name">uiSearchText</string>
+							<string key="candidateClassName">UITextField</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/SearchViewController.h</string>
+					</object>
+				</object>
+			</array>
+		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBIPadFramework</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
