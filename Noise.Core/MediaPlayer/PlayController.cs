@@ -197,7 +197,8 @@ namespace Noise.Core.MediaPlayer {
 				.Permit( eStateTriggers.UiPlay, ePlayState.Resuming )
 				.Permit( eStateTriggers.UiPlayNext, ePlayState.PlayNext )
 				.Permit( eStateTriggers.UiPlayPrevious, ePlayState.PlayPrevious )
-				.Permit( eStateTriggers.UiStop, ePlayState.Stopped );
+				.Permit( eStateTriggers.UiStop, ePlayState.Stopped )
+				.Ignore( eStateTriggers.QueueTrackAdded );
 
 			mPlayStateController.Configure( ePlayState.Resuming )
 				.OnEntry( ResumePlay )
