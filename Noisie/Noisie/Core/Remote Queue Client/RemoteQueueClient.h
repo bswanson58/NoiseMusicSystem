@@ -16,4 +16,6 @@
 - (void) enqueueTrack:(NSNumber *) trackId;
 - (void) enqueueAlbum:(NSNumber *) albumId;
 
+- (void) requestPlayQueueList;
+
 @end

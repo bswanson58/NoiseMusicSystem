@@ -14,6 +14,11 @@
 		A912710D1476A3C90048A6C6 /* ArtistInfoDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A912710C1476A3C90048A6C6 /* ArtistInfoDelegate.m */; };
 		A91271101476A4570048A6C6 /* AlbumInfoDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A912710F1476A4570048A6C6 /* AlbumInfoDelegate.m */; };
 		A912712B1476BB530048A6C6 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = A912712A1476BB530048A6C6 /* Base64.m */; };
+		A912712E1476C9DD0048A6C6 /* RoPlayQueueTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = A912712D1476C9DD0048A6C6 /* RoPlayQueueTrack.m */; };
+		A91271311476CAF90048A6C6 /* PlayQueueListResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A91271301476CAF90048A6C6 /* PlayQueueListResult.m */; };
+		A91271341476CBBB0048A6C6 /* PlayQueueListDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A91271331476CBBB0048A6C6 /* PlayQueueListDelegate.m */; };
+		A91271371476D02D0048A6C6 /* PlayQueueListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A91271361476D02D0048A6C6 /* PlayQueueListCell.m */; };
+		A912713B1476D22B0048A6C6 /* PlayQueueListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A912713A1476D22B0048A6C6 /* PlayQueueListCell.xib */; };
 		A95AF36114705F380074A070 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95AF36014705F380074A070 /* UIKit.framework */; };
 		A95AF36314705F380074A070 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95AF36214705F380074A070 /* Foundation.framework */; };
 		A95AF36514705F380074A070 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95AF36414705F380074A070 /* CoreGraphics.framework */; };
@@ -175,6 +180,15 @@
 		A912710F1476A4570048A6C6 /* AlbumInfoDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AlbumInfoDelegate.m; path = "Core/Remote Data Client/AlbumInfoDelegate.m"; sourceTree = "<group>"; };
 		A91271291476BB530048A6C6 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Base64.h; path = Utility/Base64.h; sourceTree = "<group>"; };
 		A912712A1476BB530048A6C6 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Base64.m; path = Utility/Base64.m; sourceTree = "<group>"; };
+		A912712C1476C9DD0048A6C6 /* RoPlayQueueTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoPlayQueueTrack.h; path = Infrastructure/Dto/RoPlayQueueTrack.h; sourceTree = "<group>"; };
+		A912712D1476C9DD0048A6C6 /* RoPlayQueueTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RoPlayQueueTrack.m; path = Infrastructure/Dto/RoPlayQueueTrack.m; sourceTree = "<group>"; };
+		A912712F1476CAF90048A6C6 /* PlayQueueListResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayQueueListResult.h; path = Infrastructure/Dto/PlayQueueListResult.h; sourceTree = "<group>"; };
+		A91271301476CAF90048A6C6 /* PlayQueueListResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayQueueListResult.m; path = Infrastructure/Dto/PlayQueueListResult.m; sourceTree = "<group>"; };
+		A91271321476CBBB0048A6C6 /* PlayQueueListDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayQueueListDelegate.h; path = "Core/Remote Queue Client/PlayQueueListDelegate.h"; sourceTree = "<group>"; };
+		A91271331476CBBB0048A6C6 /* PlayQueueListDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayQueueListDelegate.m; path = "Core/Remote Queue Client/PlayQueueListDelegate.m"; sourceTree = "<group>"; };
+		A91271351476D02D0048A6C6 /* PlayQueueListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayQueueListCell.h; path = UI/Views/PlayQueueListCell.h; sourceTree = "<group>"; };
+		A91271361476D02D0048A6C6 /* PlayQueueListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayQueueListCell.m; path = UI/Views/PlayQueueListCell.m; sourceTree = "<group>"; };
+		A912713A1476D22B0048A6C6 /* PlayQueueListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PlayQueueListCell.xib; path = UI/Views/PlayQueueListCell.xib; sourceTree = "<group>"; };
 		A95AF35C14705F380074A070 /* Noisie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Noisie.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A95AF36014705F380074A070 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		A95AF36214705F380074A070 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -418,6 +432,8 @@
 				A96B8E1114734A27000CD104 /* RoTrack.m */,
 				A9B5866A147590E60047C781 /* RoFavorite.h */,
 				A9B5866B147590E60047C781 /* RoFavorite.m */,
+				A912712C1476C9DD0048A6C6 /* RoPlayQueueTrack.h */,
+				A912712D1476C9DD0048A6C6 /* RoPlayQueueTrack.m */,
 				A95AF3BD1470723B0074A070 /* BaseServerResult.h */,
 				A95AF3BE1470723B0074A070 /* BaseServerResult.m */,
 				A95AF3C01470725B0074A070 /* ArtistListResult.h */,
@@ -432,6 +448,8 @@
 				A96B8E1414734B65000CD104 /* TrackListResult.m */,
 				A9B5866D147592DE0047C781 /* FavoriteListResult.h */,
 				A9B5866E147592DE0047C781 /* FavoriteListResult.m */,
+				A912712F1476CAF90048A6C6 /* PlayQueueListResult.h */,
+				A91271301476CAF90048A6C6 /* PlayQueueListResult.m */,
 			);
 			name = Dto;
 			sourceTree = "<group>";
@@ -472,6 +490,9 @@
 				A9B58678147599B90047C781 /* FavoriteListCell.xib */,
 				A9B58673147599670047C781 /* FavoriteListCell.h */,
 				A9B58674147599680047C781 /* FavoriteListCell.m */,
+				A912713A1476D22B0048A6C6 /* PlayQueueListCell.xib */,
+				A91271351476D02D0048A6C6 /* PlayQueueListCell.h */,
+				A91271361476D02D0048A6C6 /* PlayQueueListCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -481,6 +502,8 @@
 			children = (
 				A98D41A114740BF30044CB93 /* RemoteQueueClient.h */,
 				A98D41A214740BF30044CB93 /* RemoteQueueClient.m */,
+				A91271321476CBBB0048A6C6 /* PlayQueueListDelegate.h */,
+				A91271331476CBBB0048A6C6 /* PlayQueueListDelegate.m */,
 			);
 			name = "Remote Queue Client";
 			sourceTree = "<group>";
@@ -678,6 +701,7 @@
 				A9B5864B147575DC0047C781 /* Play.png in Resources */,
 				A9B5865214757A670047C781 /* TrackListCell.xib in Resources */,
 				A9B58679147599B90047C781 /* FavoriteListCell.xib in Resources */,
+				A912713B1476D22B0048A6C6 /* PlayQueueListCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -727,6 +751,10 @@
 				A912710D1476A3C90048A6C6 /* ArtistInfoDelegate.m in Sources */,
 				A91271101476A4570048A6C6 /* AlbumInfoDelegate.m in Sources */,
 				A912712B1476BB530048A6C6 /* Base64.m in Sources */,
+				A912712E1476C9DD0048A6C6 /* RoPlayQueueTrack.m in Sources */,
+				A91271311476CAF90048A6C6 /* PlayQueueListResult.m in Sources */,
+				A91271341476CBBB0048A6C6 /* PlayQueueListDelegate.m in Sources */,
+				A91271371476D02D0048A6C6 /* PlayQueueListCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -28,3 +28,6 @@ extern NSString * const EventFavoritesListUpdate;
 
 extern NSString * const EventQueueTrackRequest;
 extern NSString * const EventQueueAlbumRequest;
+
+extern NSString * const EventPlayQueueListRequest;
+extern NSString * const EventPlayQueueListUpdate;

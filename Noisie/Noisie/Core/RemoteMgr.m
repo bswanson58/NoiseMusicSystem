@@ -27,6 +27,7 @@
 - (void) onAlbumQueueRequest:(NSNotification *)notification;
 - (void) onTrackQueueRequest:(NSNotification *)notification;
 - (void) onFavoriteListRequest:(NSNotification *)notification;
+- (void) onPlayQueueListRequest:(NSNotification *)notification;
 
 @end
 
@@ -49,6 +50,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAlbumQueueRequest:) name:EventQueueAlbumRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTrackQueueRequest:) name:EventQueueTrackRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onFavoriteListRequest:) name:EventFavoritesListRequest object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPlayQueueListRequest:) name:EventPlayQueueListRequest object:nil];
     }
     
     return( self );
@@ -124,6 +126,10 @@
         
         [self.mQueueClient enqueueTrack:trackId];
     }
+}
+
+- (void) onPlayQueueListRequest:(NSNotification *)notification {
+    [self.mQueueClient requestPlayQueueList];
 }
 
 @end

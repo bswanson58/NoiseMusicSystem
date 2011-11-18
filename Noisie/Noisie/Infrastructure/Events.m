@@ -28,3 +28,6 @@ NSString * const    EventFavoritesListUpdate        = @"event:FavoritesListUpdat
 
 NSString * const    EventQueueAlbumRequest          = @"event:QueueAlbumRequest";
 NSString * const    EventQueueTrackRequest          = @"event:QueueTrackRequest";
+
+NSString * const    EventPlayQueueListRequest       = @"eventPlayQueueListRequest";
+NSString * const    EventPlayQueueListUpdate        = @"eventPlayQueueListUpdate";
