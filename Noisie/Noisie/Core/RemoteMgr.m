@@ -9,6 +9,7 @@
 #import "RemoteMgr.h"
 #import "RemoteDataClient.h"
 #import "RemoteQueueClient.h"
+#import "RemoteSearchClient.h"
 #import "RoArtist.h"
 #import "RoAlbum.h"
 #import "RoTrack.h"
@@ -18,6 +19,7 @@
 
 @property (nonatomic, retain)   RemoteDataClient    *mDataClient;
 @property (nonatomic, retain)   RemoteQueueClient   *mQueueClient;
+@property (nonatomic, retain)   RemoteSearchClient  *mSearchClient;
 
 - (void) onArtistListRequest:(NSNotification *) notification;
 - (void) onArtistInfoRequest:(NSNotification *) notification;
@@ -28,6 +30,7 @@
 - (void) onTrackQueueRequest:(NSNotification *)notification;
 - (void) onFavoriteListRequest:(NSNotification *)notification;
 - (void) onPlayQueueListRequest:(NSNotification *)notification;
+- (void) onSearchRequest:(NSNotification *)notification;
 
 @end
 
@@ -35,12 +38,14 @@
 
 @synthesize mDataClient;
 @synthesize mQueueClient;
+@synthesize mSearchClient;
 
 - (id) init {
     self = [super init];
     if( self ) {
         self.mDataClient = [[[RemoteDataClient alloc] init] autorelease];
         self.mQueueClient = [[[RemoteQueueClient alloc] init] autorelease];
+        self.mSearchClient = [[[RemoteSearchClient alloc] init] autorelease];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistListRequest:) name:EventArtistListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistInfoRequest:) name:EventArtistInfoRequest object:nil];
@@ -51,6 +56,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTrackQueueRequest:) name:EventQueueTrackRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onFavoriteListRequest:) name:EventFavoritesListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPlayQueueListRequest:) name:EventPlayQueueListRequest object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onSearchRequest:) name:EventSearchRequest object:nil];
     }
     
     return( self );
@@ -61,6 +67,7 @@
     
     self.mDataClient = nil;
     self.mQueueClient = nil;
+    self.mSearchClient = nil;
     
     [super dealloc];
 }
@@ -68,6 +75,7 @@
 - (void) initialize:(NSString *)serverAddress {
     [self.mDataClient initializeClient:[NSString stringWithFormat:@"%@/Data", serverAddress]];
     [self.mQueueClient initializeClient:[NSString stringWithFormat:@"%@/Queue", serverAddress]];
+    [self.mSearchClient initializeClient:[NSString stringWithFormat:@"%@/Search", serverAddress]];
 }
 
 - (void) onArtistListRequest:(NSNotification *)notification {
@@ -130,6 +138,12 @@
 
 - (void) onPlayQueueListRequest:(NSNotification *)notification {
     [self.mQueueClient requestPlayQueueList];
+}
+
+- (void) onSearchRequest:(NSNotification *)notification {
+    NSString    *searchText = [notification object];
+    
+    [self.mSearchClient requestSearch:searchText];
 }
 
 @end
