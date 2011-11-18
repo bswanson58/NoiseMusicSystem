@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using AutoMapper;
@@ -108,6 +109,39 @@ namespace Noise.RemoteHost {
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "RemoteDataServer:GetTrackList", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+
+			return( retValue );
+		}
+
+		public FavoriteListResult GetFavoriteList() {
+			var retValue = new FavoriteListResult();
+			var favoritesList = new List<RoFavorite>();
+
+			try {
+			using( var list = mNoiseManager.DataProvider.GetFavoriteArtists()) {
+				favoritesList.AddRange( list.List.Select( artist => new RoFavorite( artist ) ) );
+			}
+			using( var list = mNoiseManager.DataProvider.GetFavoriteAlbums()) {
+				favoritesList.AddRange( from album in list.List
+				                        let artist = mNoiseManager.DataProvider.GetArtistForAlbum( album )
+				                        select new RoFavorite( artist, album ));
+			}
+			using( var list = mNoiseManager.DataProvider.GetFavoriteTracks()) {
+				favoritesList.AddRange( from track in list.List
+				                        let album = mNoiseManager.DataProvider.GetAlbumForTrack( track )
+				                        let artist = mNoiseManager.DataProvider.GetArtistForAlbum( album )
+				                        select new RoFavorite( artist, album, track ));
+			}
+
+			retValue.Favorites = favoritesList.ToArray();
+			retValue.Success = true;
+				
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "RemoteDataServer:GetFavoriteList", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}

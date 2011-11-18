@@ -202,9 +202,11 @@
     <Compile Include="Interfaces\ISearchProvider.cs" />
     <Compile Include="Interfaces\ITagManager.cs" />
     <Compile Include="Interfaces\IViewModelResolver.cs" />
+    <Compile Include="RemoteDto\FavoriteListResult.cs" />
     <Compile Include="RemoteDto\RoAlbum.cs" />
     <Compile Include="RemoteDto\RoArtist.cs" />
     <Compile Include="RemoteDto\RoBase.cs" />
+    <Compile Include="RemoteDto\RoFavorite.cs" />
     <Compile Include="RemoteDto\RoTrack.cs" />
     <Compile Include="RemoteDto\AlbumListResult.cs" />
     <Compile Include="RemoteDto\ArtistListResult.cs" />

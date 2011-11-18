@@ -20,5 +20,9 @@ namespace Noise.Infrastructure.RemoteHost {
 		[OperationContract]
 		[WebGet( ResponseFormat = WebMessageFormat.Json, UriTemplate = "tracks?album={albumId}" )]
 		TrackListResult GetTrackList( long albumId );
+
+		[OperationContract]
+		[WebGet( ResponseFormat = WebMessageFormat.Json, UriTemplate = "favorites" )]
+		FavoriteListResult GetFavoriteList();
 	}
 }
