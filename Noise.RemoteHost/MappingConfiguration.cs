@@ -1,5 +1,6 @@
 using System.Linq;
 using AutoMapper;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.RemoteDto;
 
@@ -47,6 +48,14 @@ namespace Noise.RemoteHost {
 				.ForMember( dest => dest.AlbumName, opt => opt.MapFrom( src => src.Album.Name ))
 				.ForMember( dest => dest.TrackId, opt => opt.MapFrom( src => src.Track.DbId ))
 				.ForMember( dest => dest.TrackName, opt => opt.MapFrom( src => src.Track.Name ));
+
+			CreateMap<SearchResultItem, RoSearchResultItem>()
+				.ForMember( dest => dest.ArtistName, opt => opt.MapFrom( src => src.Artist != null ? src.Artist.Name : "" ))
+				.ForMember( dest => dest.AlbumId, opt => opt.MapFrom( src => src.Album != null ? src.Album.DbId : Constants.cDatabaseNullOid ))
+				.ForMember( dest => dest.AlbumName, opt => opt.MapFrom( src => src.Album != null ? src.Album.Name : "" ))
+				.ForMember( dest => dest.TrackId, opt => opt.MapFrom( src => src.Track != null ? src.Track.DbId : Constants.cDatabaseNullOid ))
+				.ForMember( dest => dest.TrackName, opt => opt.MapFrom( src => src.Track != null ? src.Track.Name : "" ))
+				.ForMember( dest => dest.CanPlay, opt => opt.Ignore());
 		}
 	}
 

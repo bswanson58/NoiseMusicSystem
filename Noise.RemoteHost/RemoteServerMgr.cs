@@ -13,6 +13,8 @@ namespace Noise.RemoteHost {
 		private ServiceHost					mDataServerHost;
 		private INoiseRemoteQueue			mRemoteQueueServer;
 		private ServiceHost					mQueueServerHost;
+		private INoiseRemoteSearch			mRemoteSearchServer;
+		private ServiceHost					mSearchServerHost;
 
 		public RemoteServerMgr( IUnityContainer container ) {
 			mContainer = container;
@@ -32,6 +34,13 @@ namespace Noise.RemoteHost {
 			mQueueServerHost.AddServiceEndpoint( typeof( INoiseRemoteQueue ) ,new WebHttpBinding(), new Uri( "http://localhost:88/Queue" ));
 			if(!OpenRemoteServer( mQueueServerHost )) {
 				mQueueServerHost = null;
+			}
+
+			mRemoteSearchServer = mContainer.Resolve<INoiseRemoteSearch>();
+			mSearchServerHost = new WebServiceHost( mRemoteSearchServer );
+			mSearchServerHost.AddServiceEndpoint( typeof( INoiseRemoteSearch ), new WebHttpBinding(), new Uri( "http://localhost:88/Search" ));
+			if(!OpenRemoteServer( mSearchServerHost )) {
+				mSearchServerHost = null;
 			}
 		}
 
@@ -58,6 +67,7 @@ namespace Noise.RemoteHost {
 		public void CloseRemoteServer() {
 			CloseRemoteServer( mDataServerHost );
 			CloseRemoteServer( mQueueServerHost );
+			CloseRemoteServer( mSearchServerHost );
 		}
 
 		private void CloseRemoteServer( ServiceHost host ) {

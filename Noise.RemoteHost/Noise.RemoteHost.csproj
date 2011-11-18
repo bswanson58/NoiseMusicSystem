@@ -130,6 +130,7 @@
     <Compile Include="RemoteDataServer.cs" />
     <Compile Include="RemoteHostModule.cs" />
     <Compile Include="RemoteQueueServer.cs" />
+    <Compile Include="RemoteSearchServer.cs" />
     <Compile Include="RemoteServerMgr.cs" />
   </ItemGroup>
   <ItemGroup>
