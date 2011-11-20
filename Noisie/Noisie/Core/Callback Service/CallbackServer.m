@@ -29,6 +29,7 @@
     self.mServer = [[[HTTPServer alloc] init] autorelease];
 
     [self.mServer setName:@"Noisie"];
+    [self.mServer setPort:6502];
     [self.mServer setType:@"_http._tcp."];
 
 	NSError *error;
