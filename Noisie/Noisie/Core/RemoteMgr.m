@@ -10,6 +10,7 @@
 #import "RemoteDataClient.h"
 #import "RemoteQueueClient.h"
 #import "RemoteSearchClient.h"
+#import "CallbackServer.h"
 #import "RoArtist.h"
 #import "RoAlbum.h"
 #import "RoTrack.h"
@@ -20,6 +21,7 @@
 @property (nonatomic, retain)   RemoteDataClient    *mDataClient;
 @property (nonatomic, retain)   RemoteQueueClient   *mQueueClient;
 @property (nonatomic, retain)   RemoteSearchClient  *mSearchClient;
+@property (nonatomic, retain)   CallbackServer      *mCallbackServer;
 
 - (void) onArtistListRequest:(NSNotification *) notification;
 - (void) onArtistInfoRequest:(NSNotification *) notification;
@@ -39,6 +41,7 @@
 @synthesize mDataClient;
 @synthesize mQueueClient;
 @synthesize mSearchClient;
+@synthesize mCallbackServer;
 
 - (id) init {
     self = [super init];
@@ -46,6 +49,7 @@
         self.mDataClient = [[[RemoteDataClient alloc] init] autorelease];
         self.mQueueClient = [[[RemoteQueueClient alloc] init] autorelease];
         self.mSearchClient = [[[RemoteSearchClient alloc] init] autorelease];
+        self.mCallbackServer = [[[CallbackServer alloc] init] autorelease];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistListRequest:) name:EventArtistListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistInfoRequest:) name:EventArtistInfoRequest object:nil];
@@ -68,6 +72,7 @@
     self.mDataClient = nil;
     self.mQueueClient = nil;
     self.mSearchClient = nil;
+    self.mCallbackServer = nil;
     
     [super dealloc];
 }
@@ -76,6 +81,7 @@
     [self.mDataClient initializeClient:[NSString stringWithFormat:@"%@/Data", serverAddress]];
     [self.mQueueClient initializeClient:[NSString stringWithFormat:@"%@/Queue", serverAddress]];
     [self.mSearchClient initializeClient:[NSString stringWithFormat:@"%@/Search", serverAddress]];
+    [self.mCallbackServer initializeServer];
 }
 
 - (void) onArtistListRequest:(NSNotification *)notification {
