@@ -1,5 +1,6 @@
 ﻿using System.ServiceModel;
 using System.ServiceModel.Web;
+using Noise.Infrastructure.RemoteDto;
 
 namespace Noise.Infrastructure.RemoteHost {
 	[ServiceContract]
@@ -8,5 +9,12 @@ namespace Noise.Infrastructure.RemoteHost {
 		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "serverVersion")]
 		ServerVersion GetServerVersion();
 
+		[OperationContract]
+		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "requestEvents?address={address}")]
+		BaseResult RequestEvents( string address );
+
+		[OperationContract]
+		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "revokeEvents?address={address}")]
+		BaseResult RevokeEvents( string address );
 	}
 }
