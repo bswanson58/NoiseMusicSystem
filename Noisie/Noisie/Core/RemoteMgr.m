@@ -7,6 +7,7 @@
 //
 
 #import "RemoteMgr.h"
+#import "RemoteNoiseClient.h"
 #import "RemoteDataClient.h"
 #import "RemoteQueueClient.h"
 #import "RemoteSearchClient.h"
@@ -19,6 +20,7 @@
 
 @interface RemoteMgr ()
 
+@property (nonatomic, retain)   RemoteNoiseClient   *mNoiseClient;
 @property (nonatomic, retain)   RemoteDataClient    *mDataClient;
 @property (nonatomic, retain)   RemoteQueueClient   *mQueueClient;
 @property (nonatomic, retain)   RemoteSearchClient  *mSearchClient;
@@ -40,6 +42,7 @@
 
 @implementation RemoteMgr
 
+@synthesize mNoiseClient;
 @synthesize mDataClient;
 @synthesize mQueueClient;
 @synthesize mSearchClient;
@@ -49,6 +52,7 @@
 - (id) init {
     self = [super init];
     if( self ) {
+        self.mNoiseClient = [[[RemoteNoiseClient alloc] init] autorelease];
         self.mDataClient = [[[RemoteDataClient alloc] init] autorelease];
         self.mQueueClient = [[[RemoteQueueClient alloc] init] autorelease];
         self.mSearchClient = [[[RemoteSearchClient alloc] init] autorelease];
@@ -75,6 +79,7 @@
 - (void) dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
+    self.mNoiseClient = nil;
     self.mDataClient = nil;
     self.mQueueClient = nil;
     self.mSearchClient = nil;
@@ -85,10 +90,13 @@
 }
 
 - (void) initialize:(NSString *)serverAddress {
+    [self.mNoiseClient initializeClient:[NSString stringWithFormat:@"%@/Noise", serverAddress]];
     [self.mDataClient initializeClient:[NSString stringWithFormat:@"%@/Noise/Data", serverAddress]];
     [self.mQueueClient initializeClient:[NSString stringWithFormat:@"%@/Noise/Queue", serverAddress]];
     [self.mSearchClient initializeClient:[NSString stringWithFormat:@"%@/Noise/Search", serverAddress]];
     [self.mCallbackServer initializeServer];
+    
+    [self.mNoiseClient requestServerVersion];
 }
 
 - (void) onArtistListRequest:(NSNotification *)notification {
