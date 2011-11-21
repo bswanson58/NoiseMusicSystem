@@ -15,6 +15,7 @@ namespace Noise.RemoteHost {
 		private ServiceHost					mQueueServerHost;
 		private INoiseRemoteSearch			mRemoteSearchServer;
 		private ServiceHost					mSearchServerHost;
+		private ServiceDiscovery			mServiceDiscovery;
 
 		public RemoteServerMgr( IUnityContainer container ) {
 			mContainer = container;
@@ -42,6 +43,9 @@ namespace Noise.RemoteHost {
 			if(!OpenRemoteServer( mSearchServerHost )) {
 				mSearchServerHost = null;
 			}
+
+			mServiceDiscovery = new ServiceDiscovery();
+			mServiceDiscovery.Initialize();
 		}
 
 		private bool OpenRemoteServer( ServiceHost host ) {
