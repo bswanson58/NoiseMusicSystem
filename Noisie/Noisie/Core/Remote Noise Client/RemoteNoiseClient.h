@@ -15,4 +15,7 @@
 
 - (void) requestServerVersion;
 
+- (void) requestEvents;
+- (void) revokeEvents;
+
 @end
