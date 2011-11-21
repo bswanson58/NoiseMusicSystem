@@ -219,6 +219,7 @@
     <Compile Include="RemoteDto\ArtistListResult.cs" />
     <Compile Include="RemoteDto\BaseResult.cs" />
     <Compile Include="RemoteDto\SearchResult.cs" />
+    <Compile Include="RemoteHost\INoiseRemote.cs" />
     <Compile Include="RemoteHost\INoiseRemoteQueue.cs" />
     <Compile Include="RemoteHost\INoiseRemoteSearch.cs" />
     <Compile Include="RemoteHost\IRemoteServer.cs" />

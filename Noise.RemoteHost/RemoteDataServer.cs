@@ -22,10 +22,6 @@ namespace Noise.RemoteHost {
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
 		}
 
-		public ServerVersion GetServerVersion() {
-			return( new ServerVersion { Major = 1, Minor = 0, Build = 0, Revision = 1 });
-		}
-
 		private static RoArtist TransformArtist( DbArtist dbArtist ) {
 			var retValue = new RoArtist();
 
@@ -54,7 +50,6 @@ namespace Noise.RemoteHost {
 
 		private static RoArtistInfo TransformArtistInfo( DbArtist artist, ArtistSupportInfo supportInfo ) {
 			var retValue = new RoArtistInfo();
-			var list = new List<string>();
 
 			Mapper.DynamicMap( artist, retValue );
 			Mapper.DynamicMap( supportInfo, retValue );

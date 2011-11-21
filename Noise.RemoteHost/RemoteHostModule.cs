@@ -12,6 +12,7 @@ namespace Noise.RemoteHost {
 
 		public void Initialize() {
 			mContainer.RegisterType<IRemoteServer, RemoteServerMgr>();
+			mContainer.RegisterType<INoiseRemote, RemoteServer>();
 			mContainer.RegisterType<INoiseRemoteData, RemoteDataServer>();
 			mContainer.RegisterType<INoiseRemoteQueue, RemoteQueueServer>();
 			mContainer.RegisterType<INoiseRemoteSearch, RemoteSearchServer>();
