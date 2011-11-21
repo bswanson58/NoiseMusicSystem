@@ -85,9 +85,9 @@
 }
 
 - (void) initialize:(NSString *)serverAddress {
-    [self.mDataClient initializeClient:[NSString stringWithFormat:@"%@/Data", serverAddress]];
-    [self.mQueueClient initializeClient:[NSString stringWithFormat:@"%@/Queue", serverAddress]];
-    [self.mSearchClient initializeClient:[NSString stringWithFormat:@"%@/Search", serverAddress]];
+    [self.mDataClient initializeClient:[NSString stringWithFormat:@"%@/Noise/Data", serverAddress]];
+    [self.mQueueClient initializeClient:[NSString stringWithFormat:@"%@/Noise/Queue", serverAddress]];
+    [self.mSearchClient initializeClient:[NSString stringWithFormat:@"%@/Noise/Search", serverAddress]];
     [self.mCallbackServer initializeServer];
 }
 
