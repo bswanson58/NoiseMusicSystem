@@ -7,6 +7,7 @@
 //
 
 #import "RemoteMgr.h"
+#import "RemoteNoiseClient.h"
 #import "RemoteDataClient.h"
 #import "RemoteQueueClient.h"
 #import "RemoteSearchClient.h"
@@ -15,16 +16,19 @@
 #import "RoArtist.h"
 #import "RoAlbum.h"
 #import "RoTrack.h"
+#import "ServerVersion.h"
 #import "Events.h"
 
 @interface RemoteMgr ()
 
+@property (nonatomic, retain)   RemoteNoiseClient   *mNoiseClient;
 @property (nonatomic, retain)   RemoteDataClient    *mDataClient;
 @property (nonatomic, retain)   RemoteQueueClient   *mQueueClient;
 @property (nonatomic, retain)   RemoteSearchClient  *mSearchClient;
 @property (nonatomic, retain)   CallbackServer      *mCallbackServer;
 @property (nonatomic, retain)   HostLocator         *mHostLocator;
 
+- (void) onServerConnected:(NSNotification *) notification;
 - (void) onArtistListRequest:(NSNotification *) notification;
 - (void) onArtistInfoRequest:(NSNotification *) notification;
 - (void) onAlbumListRequest:(NSNotification *) notification;
@@ -40,6 +44,7 @@
 
 @implementation RemoteMgr
 
+@synthesize mNoiseClient;
 @synthesize mDataClient;
 @synthesize mQueueClient;
 @synthesize mSearchClient;
@@ -49,12 +54,14 @@
 - (id) init {
     self = [super init];
     if( self ) {
+        self.mNoiseClient = [[[RemoteNoiseClient alloc] init] autorelease];
         self.mDataClient = [[[RemoteDataClient alloc] init] autorelease];
         self.mQueueClient = [[[RemoteQueueClient alloc] init] autorelease];
         self.mSearchClient = [[[RemoteSearchClient alloc] init] autorelease];
         self.mCallbackServer = [[[CallbackServer alloc] init] autorelease];
         self.mHostLocator = [[[HostLocator alloc] init] autorelease];
         
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onServerConnected:) name:EventServerConnected object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistListRequest:) name:EventArtistListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistInfoRequest:) name:EventArtistInfoRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAlbumListRequest:) name:EventAlbumListRequest object:nil];
@@ -75,6 +82,7 @@
 - (void) dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
+    self.mNoiseClient = nil;
     self.mDataClient = nil;
     self.mQueueClient = nil;
     self.mSearchClient = nil;
@@ -85,10 +93,21 @@
 }
 
 - (void) initialize:(NSString *)serverAddress {
-    [self.mDataClient initializeClient:[NSString stringWithFormat:@"%@/Data", serverAddress]];
-    [self.mQueueClient initializeClient:[NSString stringWithFormat:@"%@/Queue", serverAddress]];
-    [self.mSearchClient initializeClient:[NSString stringWithFormat:@"%@/Search", serverAddress]];
+    [self.mNoiseClient initializeClient:[NSString stringWithFormat:@"%@/Noise", serverAddress]];
+    [self.mDataClient initializeClient:[NSString stringWithFormat:@"%@/Noise/Data", serverAddress]];
+    [self.mQueueClient initializeClient:[NSString stringWithFormat:@"%@/Noise/Queue", serverAddress]];
+    [self.mSearchClient initializeClient:[NSString stringWithFormat:@"%@/Noise/Search", serverAddress]];
     [self.mCallbackServer initializeServer];
+    
+    [self.mNoiseClient requestServerVersion];
+}
+
+- (void) onServerConnected:(NSNotification *)notification {
+    ServerVersion   *version = [notification object];
+    
+    NSLog( @"Connected to server version: %@.%@.%@", version.Major, version.Minor, version.Build );
+    
+    [self.mNoiseClient requestEvents];
 }
 
 - (void) onArtistListRequest:(NSNotification *)notification {

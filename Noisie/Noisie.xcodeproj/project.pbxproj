@@ -25,6 +25,14 @@
 		A91271481476E9D60048A6C6 /* SearchResultDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A91271471476E9D60048A6C6 /* SearchResultDelegate.m */; };
 		A912714B1476EEDA0048A6C6 /* SearchListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A912714A1476EEDA0048A6C6 /* SearchListCell.m */; };
 		A912714F1476EF220048A6C6 /* SearchListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A912714E1476EF220048A6C6 /* SearchListCell.xib */; };
+		A956FA61147A9BAB00DF659D /* RemoteNoiseClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A956FA60147A9BAB00DF659D /* RemoteNoiseClient.m */; };
+		A956FA64147A9E2400DF659D /* ServerVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = A956FA63147A9E2400DF659D /* ServerVersion.m */; };
+		A956FA67147A9F1F00DF659D /* ServerVersionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A956FA66147A9F1F00DF659D /* ServerVersionDelegate.m */; };
+		A956FA6E147AB64600DF659D /* UriDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = A956FA6D147AB64600DF659D /* UriDispatcher.m */; };
+		A956FA71147AB93F00DF659D /* CallbackHttpConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = A956FA70147AB93F00DF659D /* CallbackHttpConnection.m */; };
+		A956FA77147ABB5800DF659D /* CallbackHttpServer.m in Sources */ = {isa = PBXBuildFile; fileRef = A956FA76147ABB5800DF659D /* CallbackHttpServer.m */; };
+		A956FA7A147ABBD000DF659D /* UriHandlers.m in Sources */ = {isa = PBXBuildFile; fileRef = A956FA79147ABBD000DF659D /* UriHandlers.m */; };
+		A956FA86147AE5A800DF659D /* ServerResultDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A956FA85147AE5A200DF659D /* ServerResultDelegate.m */; };
 		A957C4B41479A6B300ADF44B /* DDData.m in Sources */ = {isa = PBXBuildFile; fileRef = A957C47C1479A6B300ADF44B /* DDData.m */; };
 		A957C4B51479A6B300ADF44B /* DDNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = A957C47E1479A6B300ADF44B /* DDNumber.m */; };
 		A957C4B61479A6B300ADF44B /* DDRange.m in Sources */ = {isa = PBXBuildFile; fileRef = A957C4801479A6B300ADF44B /* DDRange.m */; };
@@ -38,7 +46,6 @@
 		A957C4BE1479A6B300ADF44B /* HTTPFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = A957C4931479A6B300ADF44B /* HTTPFileResponse.m */; };
 		A957C4BF1479A6B300ADF44B /* HTTPRedirectResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = A957C4951479A6B300ADF44B /* HTTPRedirectResponse.m */; };
 		A957C4C01479A6B300ADF44B /* WebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A957C4971479A6B300ADF44B /* WebSocket.m */; };
-		A957C4C51479A6B300ADF44B /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = A957C4A21479A6B300ADF44B /* LICENSE.txt */; };
 		A957C4C61479A6B300ADF44B /* About.txt in Resources */ = {isa = PBXBuildFile; fileRef = A957C4A51479A6B300ADF44B /* About.txt */; };
 		A957C4C71479A6B300ADF44B /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A957C4A71479A6B300ADF44B /* GCDAsyncSocket.m */; };
 		A957C4C81479A6B300ADF44B /* About.txt in Resources */ = {isa = PBXBuildFile; fileRef = A957C4A91479A6B300ADF44B /* About.txt */; };
@@ -230,6 +237,22 @@
 		A91271491476EEDA0048A6C6 /* SearchListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchListCell.h; path = UI/Views/SearchListCell.h; sourceTree = "<group>"; };
 		A912714A1476EEDA0048A6C6 /* SearchListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SearchListCell.m; path = UI/Views/SearchListCell.m; sourceTree = "<group>"; };
 		A912714E1476EF220048A6C6 /* SearchListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SearchListCell.xib; path = UI/Views/SearchListCell.xib; sourceTree = "<group>"; };
+		A956FA5F147A9BAB00DF659D /* RemoteNoiseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteNoiseClient.h; path = "Core/Remote Noise Client/RemoteNoiseClient.h"; sourceTree = "<group>"; };
+		A956FA60147A9BAB00DF659D /* RemoteNoiseClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteNoiseClient.m; path = "Core/Remote Noise Client/RemoteNoiseClient.m"; sourceTree = "<group>"; };
+		A956FA62147A9E2400DF659D /* ServerVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServerVersion.h; path = Infrastructure/Dto/ServerVersion.h; sourceTree = "<group>"; };
+		A956FA63147A9E2400DF659D /* ServerVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ServerVersion.m; path = Infrastructure/Dto/ServerVersion.m; sourceTree = "<group>"; };
+		A956FA65147A9F1F00DF659D /* ServerVersionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServerVersionDelegate.h; path = "Core/Remote Noise Client/ServerVersionDelegate.h"; sourceTree = "<group>"; };
+		A956FA66147A9F1F00DF659D /* ServerVersionDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ServerVersionDelegate.m; path = "Core/Remote Noise Client/ServerVersionDelegate.m"; sourceTree = "<group>"; };
+		A956FA6C147AB64500DF659D /* UriDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UriDispatcher.h; path = "Core/Callback Service/UriDispatcher.h"; sourceTree = "<group>"; };
+		A956FA6D147AB64600DF659D /* UriDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UriDispatcher.m; path = "Core/Callback Service/UriDispatcher.m"; sourceTree = "<group>"; };
+		A956FA6F147AB93F00DF659D /* CallbackHttpConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CallbackHttpConnection.h; path = "Core/Callback Service/CallbackHttpConnection.h"; sourceTree = "<group>"; };
+		A956FA70147AB93F00DF659D /* CallbackHttpConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CallbackHttpConnection.m; path = "Core/Callback Service/CallbackHttpConnection.m"; sourceTree = "<group>"; };
+		A956FA75147ABB5800DF659D /* CallbackHttpServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CallbackHttpServer.h; path = "Core/Callback Service/CallbackHttpServer.h"; sourceTree = "<group>"; };
+		A956FA76147ABB5800DF659D /* CallbackHttpServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CallbackHttpServer.m; path = "Core/Callback Service/CallbackHttpServer.m"; sourceTree = "<group>"; };
+		A956FA78147ABBD000DF659D /* UriHandlers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UriHandlers.h; path = "Core/Callback Service/UriHandlers.h"; sourceTree = "<group>"; };
+		A956FA79147ABBD000DF659D /* UriHandlers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UriHandlers.m; path = "Core/Callback Service/UriHandlers.m"; sourceTree = "<group>"; };
+		A956FA84147AE59900DF659D /* ServerResultDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServerResultDelegate.h; path = Core/ServerResultDelegate.h; sourceTree = "<group>"; };
+		A956FA85147AE5A200DF659D /* ServerResultDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ServerResultDelegate.m; path = Core/ServerResultDelegate.m; sourceTree = "<group>"; };
 		A957C47B1479A6B300ADF44B /* DDData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDData.h; sourceTree = "<group>"; };
 		A957C47C1479A6B300ADF44B /* DDData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDData.m; sourceTree = "<group>"; };
 		A957C47D1479A6B300ADF44B /* DDNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDNumber.h; sourceTree = "<group>"; };
@@ -258,7 +281,6 @@
 		A957C4951479A6B300ADF44B /* HTTPRedirectResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPRedirectResponse.m; sourceTree = "<group>"; };
 		A957C4961479A6B300ADF44B /* WebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocket.h; sourceTree = "<group>"; };
 		A957C4971479A6B300ADF44B /* WebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSocket.m; sourceTree = "<group>"; };
-		A957C4A21479A6B300ADF44B /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.txt; path = cocoaHttpServer/LICENSE.txt; sourceTree = "<group>"; };
 		A957C4A51479A6B300ADF44B /* About.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = About.txt; sourceTree = "<group>"; };
 		A957C4A61479A6B300ADF44B /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncSocket.h; sourceTree = "<group>"; };
 		A957C4A71479A6B300ADF44B /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncSocket.m; sourceTree = "<group>"; };
@@ -408,11 +430,21 @@
 			name = "Remote Search Client";
 			sourceTree = "<group>";
 		};
+		A956FA5E147A9B7C00DF659D /* Remote Noise Client */ = {
+			isa = PBXGroup;
+			children = (
+				A956FA5F147A9BAB00DF659D /* RemoteNoiseClient.h */,
+				A956FA60147A9BAB00DF659D /* RemoteNoiseClient.m */,
+				A956FA65147A9F1F00DF659D /* ServerVersionDelegate.h */,
+				A956FA66147A9F1F00DF659D /* ServerVersionDelegate.m */,
+			);
+			name = "Remote Noise Client";
+			sourceTree = "<group>";
+		};
 		A957C4781479A69B00ADF44B /* cocoaHttpServer */ = {
 			isa = PBXGroup;
 			children = (
 				A957C4791479A6B300ADF44B /* Core */,
-				A957C4A21479A6B300ADF44B /* LICENSE.txt */,
 				A957C4A31479A6B300ADF44B /* Vendor */,
 			);
 			name = cocoaHttpServer;
@@ -513,6 +545,14 @@
 			children = (
 				A957C4CF1479A75600ADF44B /* CallbackServer.h */,
 				A957C4D01479A75600ADF44B /* CallbackServer.m */,
+				A956FA6C147AB64500DF659D /* UriDispatcher.h */,
+				A956FA6D147AB64600DF659D /* UriDispatcher.m */,
+				A956FA6F147AB93F00DF659D /* CallbackHttpConnection.h */,
+				A956FA70147AB93F00DF659D /* CallbackHttpConnection.m */,
+				A956FA75147ABB5800DF659D /* CallbackHttpServer.h */,
+				A956FA76147ABB5800DF659D /* CallbackHttpServer.m */,
+				A956FA78147ABBD000DF659D /* UriHandlers.h */,
+				A956FA79147ABBD000DF659D /* UriHandlers.m */,
 			);
 			name = "Callback Service";
 			sourceTree = "<group>";
@@ -604,6 +644,7 @@
 		A95AF3B414706C220074A070 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				A956FA5E147A9B7C00DF659D /* Remote Noise Client */,
 				A957C4CE1479A6F100ADF44B /* Callback Service */,
 				A91271421476E8E00048A6C6 /* Remote Search Client */,
 				A95AF3C3147073370074A070 /* Remote Data Client */,
@@ -612,6 +653,8 @@
 				A95AF3C814709C510074A070 /* RemoteMgr.m */,
 				A96D6C6B1472B51500521583 /* BaseResultDelegate.h */,
 				A96D6C6C1472B51500521583 /* BaseResultDelegate.m */,
+				A956FA84147AE59900DF659D /* ServerResultDelegate.h */,
+				A956FA85147AE5A200DF659D /* ServerResultDelegate.m */,
 				A9B309111479CDD000EA38B0 /* HostLocator.h */,
 				A9B309121479CDD000EA38B0 /* HostLocator.m */,
 			);
@@ -667,6 +710,8 @@
 				A91271301476CAF90048A6C6 /* PlayQueueListResult.m */,
 				A912713F1476E8530048A6C6 /* SearchResult.h */,
 				A91271401476E8540048A6C6 /* SearchResult.m */,
+				A956FA62147A9E2400DF659D /* ServerVersion.h */,
+				A956FA63147A9E2400DF659D /* ServerVersion.m */,
 			);
 			name = Dto;
 			sourceTree = "<group>";
@@ -923,7 +968,6 @@
 				A9B58679147599B90047C781 /* FavoriteListCell.xib in Resources */,
 				A912713B1476D22B0048A6C6 /* PlayQueueListCell.xib in Resources */,
 				A912714F1476EF220048A6C6 /* SearchListCell.xib in Resources */,
-				A957C4C51479A6B300ADF44B /* LICENSE.txt in Resources */,
 				A957C4C61479A6B300ADF44B /* About.txt in Resources */,
 				A957C4C81479A6B300ADF44B /* About.txt in Resources */,
 			);
@@ -1005,6 +1049,14 @@
 				A957C4CD1479A6B300ADF44B /* DDTTYLogger.m in Sources */,
 				A957C4D11479A75600ADF44B /* CallbackServer.m in Sources */,
 				A9B309131479CDD000EA38B0 /* HostLocator.m in Sources */,
+				A956FA61147A9BAB00DF659D /* RemoteNoiseClient.m in Sources */,
+				A956FA64147A9E2400DF659D /* ServerVersion.m in Sources */,
+				A956FA67147A9F1F00DF659D /* ServerVersionDelegate.m in Sources */,
+				A956FA6E147AB64600DF659D /* UriDispatcher.m in Sources */,
+				A956FA71147AB93F00DF659D /* CallbackHttpConnection.m in Sources */,
+				A956FA77147ABB5800DF659D /* CallbackHttpServer.m in Sources */,
+				A956FA7A147ABBD000DF659D /* UriHandlers.m in Sources */,
+				A956FA86147AE5A800DF659D /* ServerResultDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,6 +8,8 @@
 
 #import "Events.h"
 
+NSString * const    EventServerConnected            = @"event:ServerConnected";
+
 NSString * const    EventArtistListRequest          = @"event:ArtistListRequest";
 NSString * const    EventArtistListUpdate           = @"event:ArtistListUpdate";
 NSString * const    EventArtistSelected             = @"event:ArtistSelected";
@@ -34,3 +36,5 @@ NSString * const    EventPlayQueueListUpdate        = @"eventPlayQueueListUpdate
 
 NSString * const    EventSearchRequest              = @"event:SearchRequest";
 NSString * const    EventSearchUpdate               = @"event:SearchUpdate";
+
+NSString * const    EventPlayQueueChanged           = @"event:PlayQueueChanged";

@@ -76,11 +76,11 @@
 }
 
 - (void)objectLoader:(RKObjectLoader*)objectLoader didLoadObjects:(NSArray*)objects {
-    NSLog( @"%@", @"RemoteDataClient:didLoadObjects called!" );
+    NSLog( @"%@", @"RemoteQueueClient:didLoadObjects called!" );
 }  
 
 - (void)objectLoader:(RKObjectLoader*)objectLoader didFailWithError:(NSError *)error {
-    NSLog( @"RemoteDataClient:didFailWithError - %@", error );
+    NSLog( @"RemoteQueueClient:didFailWithError - %@", error );
 }
 
 - (void) initObjectMappings {
