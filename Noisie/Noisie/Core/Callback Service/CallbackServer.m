@@ -30,7 +30,7 @@
 
     [self.mServer setName:@"Noisie"];
     [self.mServer setPort:6502];
-    [self.mServer setType:@"_http._tcp."];
+    [self.mServer setType:@"_Noisie._tcp."];
 
 	NSError *error;
 	if(![self.mServer start:&error]) {

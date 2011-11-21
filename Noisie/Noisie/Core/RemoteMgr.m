@@ -11,6 +11,7 @@
 #import "RemoteQueueClient.h"
 #import "RemoteSearchClient.h"
 #import "CallbackServer.h"
+#import "HostLocator.h"
 #import "RoArtist.h"
 #import "RoAlbum.h"
 #import "RoTrack.h"
@@ -22,6 +23,7 @@
 @property (nonatomic, retain)   RemoteQueueClient   *mQueueClient;
 @property (nonatomic, retain)   RemoteSearchClient  *mSearchClient;
 @property (nonatomic, retain)   CallbackServer      *mCallbackServer;
+@property (nonatomic, retain)   HostLocator         *mHostLocator;
 
 - (void) onArtistListRequest:(NSNotification *) notification;
 - (void) onArtistInfoRequest:(NSNotification *) notification;
@@ -42,6 +44,7 @@
 @synthesize mQueueClient;
 @synthesize mSearchClient;
 @synthesize mCallbackServer;
+@synthesize mHostLocator;
 
 - (id) init {
     self = [super init];
@@ -50,6 +53,7 @@
         self.mQueueClient = [[[RemoteQueueClient alloc] init] autorelease];
         self.mSearchClient = [[[RemoteSearchClient alloc] init] autorelease];
         self.mCallbackServer = [[[CallbackServer alloc] init] autorelease];
+        self.mHostLocator = [[[HostLocator alloc] init] autorelease];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistListRequest:) name:EventArtistListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistInfoRequest:) name:EventArtistInfoRequest object:nil];
@@ -61,6 +65,8 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onFavoriteListRequest:) name:EventFavoritesListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPlayQueueListRequest:) name:EventPlayQueueListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onSearchRequest:) name:EventSearchRequest object:nil];
+        
+        [self.mHostLocator searchForServicesOfType:@"_Noise._tcp." inDomain:@"local."];
     }
     
     return( self );
@@ -73,6 +79,7 @@
     self.mQueueClient = nil;
     self.mSearchClient = nil;
     self.mCallbackServer = nil;
+    self.mHostLocator = nil;
     
     [super dealloc];
 }

@@ -78,6 +78,7 @@
 		A96D6C771472CAB700521583 /* ArtistListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A96D6C761472CAB700521583 /* ArtistListCell.m */; };
 		A98D41A314740BF30044CB93 /* RemoteQueueClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A98D41A214740BF30044CB93 /* RemoteQueueClient.m */; };
 		A98D41AA147418D10044CB93 /* Noise.png in Resources */ = {isa = PBXBuildFile; fileRef = A98D41A9147418D10044CB93 /* Noise.png */; };
+		A9B309131479CDD000EA38B0 /* HostLocator.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B309121479CDD000EA38B0 /* HostLocator.m */; };
 		A9B5864714756F120047C781 /* AlbumListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B5864614756F120047C781 /* AlbumListCell.m */; };
 		A9B5864914756F5E0047C781 /* AlbumListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9B5864814756F5E0047C781 /* AlbumListCell.xib */; };
 		A9B5864B147575DC0047C781 /* Play.png in Resources */ = {isa = PBXBuildFile; fileRef = A9B5864A147575DC0047C781 /* Play.png */; };
@@ -320,6 +321,8 @@
 		A98D41A114740BF30044CB93 /* RemoteQueueClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteQueueClient.h; path = "Core/Remote Queue Client/RemoteQueueClient.h"; sourceTree = "<group>"; };
 		A98D41A214740BF30044CB93 /* RemoteQueueClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteQueueClient.m; path = "Core/Remote Queue Client/RemoteQueueClient.m"; sourceTree = "<group>"; };
 		A98D41A9147418D10044CB93 /* Noise.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Noise.png; path = ../Noise.png; sourceTree = "<group>"; };
+		A9B309111479CDD000EA38B0 /* HostLocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HostLocator.h; path = Core/HostLocator.h; sourceTree = "<group>"; };
+		A9B309121479CDD000EA38B0 /* HostLocator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HostLocator.m; path = Core/HostLocator.m; sourceTree = "<group>"; };
 		A9B5864514756F120047C781 /* AlbumListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlbumListCell.h; path = UI/Views/AlbumListCell.h; sourceTree = "<group>"; };
 		A9B5864614756F120047C781 /* AlbumListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AlbumListCell.m; path = UI/Views/AlbumListCell.m; sourceTree = "<group>"; };
 		A9B5864814756F5E0047C781 /* AlbumListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AlbumListCell.xib; path = UI/Views/AlbumListCell.xib; sourceTree = "<group>"; };
@@ -609,6 +612,8 @@
 				A95AF3C814709C510074A070 /* RemoteMgr.m */,
 				A96D6C6B1472B51500521583 /* BaseResultDelegate.h */,
 				A96D6C6C1472B51500521583 /* BaseResultDelegate.m */,
+				A9B309111479CDD000EA38B0 /* HostLocator.h */,
+				A9B309121479CDD000EA38B0 /* HostLocator.m */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -999,6 +1004,7 @@
 				A957C4CC1479A6B300ADF44B /* DDLog.m in Sources */,
 				A957C4CD1479A6B300ADF44B /* DDTTYLogger.m in Sources */,
 				A957C4D11479A75600ADF44B /* CallbackServer.m in Sources */,
+				A9B309131479CDD000EA38B0 /* HostLocator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
