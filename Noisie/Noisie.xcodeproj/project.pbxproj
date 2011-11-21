@@ -46,7 +46,6 @@
 		A957C4BE1479A6B300ADF44B /* HTTPFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = A957C4931479A6B300ADF44B /* HTTPFileResponse.m */; };
 		A957C4BF1479A6B300ADF44B /* HTTPRedirectResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = A957C4951479A6B300ADF44B /* HTTPRedirectResponse.m */; };
 		A957C4C01479A6B300ADF44B /* WebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A957C4971479A6B300ADF44B /* WebSocket.m */; };
-		A957C4C51479A6B300ADF44B /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = A957C4A21479A6B300ADF44B /* LICENSE.txt */; };
 		A957C4C61479A6B300ADF44B /* About.txt in Resources */ = {isa = PBXBuildFile; fileRef = A957C4A51479A6B300ADF44B /* About.txt */; };
 		A957C4C71479A6B300ADF44B /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A957C4A71479A6B300ADF44B /* GCDAsyncSocket.m */; };
 		A957C4C81479A6B300ADF44B /* About.txt in Resources */ = {isa = PBXBuildFile; fileRef = A957C4A91479A6B300ADF44B /* About.txt */; };
@@ -282,7 +281,6 @@
 		A957C4951479A6B300ADF44B /* HTTPRedirectResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPRedirectResponse.m; sourceTree = "<group>"; };
 		A957C4961479A6B300ADF44B /* WebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocket.h; sourceTree = "<group>"; };
 		A957C4971479A6B300ADF44B /* WebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSocket.m; sourceTree = "<group>"; };
-		A957C4A21479A6B300ADF44B /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.txt; path = cocoaHttpServer/LICENSE.txt; sourceTree = "<group>"; };
 		A957C4A51479A6B300ADF44B /* About.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = About.txt; sourceTree = "<group>"; };
 		A957C4A61479A6B300ADF44B /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncSocket.h; sourceTree = "<group>"; };
 		A957C4A71479A6B300ADF44B /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncSocket.m; sourceTree = "<group>"; };
@@ -447,7 +445,6 @@
 			isa = PBXGroup;
 			children = (
 				A957C4791479A6B300ADF44B /* Core */,
-				A957C4A21479A6B300ADF44B /* LICENSE.txt */,
 				A957C4A31479A6B300ADF44B /* Vendor */,
 			);
 			name = cocoaHttpServer;
@@ -971,7 +968,6 @@
 				A9B58679147599B90047C781 /* FavoriteListCell.xib in Resources */,
 				A912713B1476D22B0048A6C6 /* PlayQueueListCell.xib in Resources */,
 				A912714F1476EF220048A6C6 /* SearchListCell.xib in Resources */,
-				A957C4C51479A6B300ADF44B /* LICENSE.txt in Resources */,
 				A957C4C61479A6B300ADF44B /* About.txt in Resources */,
 				A957C4C81479A6B300ADF44B /* About.txt in Resources */,
 			);

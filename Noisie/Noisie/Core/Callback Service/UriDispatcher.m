@@ -18,7 +18,8 @@
 @synthesize mSchemeMap;
 
 -(id)init {
-	if ([super init]!=nil) {
+    self = [super init];
+	if( self != nil ) {
         self.mSchemeMap = [[[NSMutableArray alloc] init] autorelease];
 	}
     
