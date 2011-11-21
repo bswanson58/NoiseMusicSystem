@@ -16,6 +16,7 @@
 #import "RoArtist.h"
 #import "RoAlbum.h"
 #import "RoTrack.h"
+#import "ServerVersion.h"
 #import "Events.h"
 
 @interface RemoteMgr ()
@@ -27,6 +28,7 @@
 @property (nonatomic, retain)   CallbackServer      *mCallbackServer;
 @property (nonatomic, retain)   HostLocator         *mHostLocator;
 
+- (void) onServerConnected:(NSNotification *) notification;
 - (void) onArtistListRequest:(NSNotification *) notification;
 - (void) onArtistInfoRequest:(NSNotification *) notification;
 - (void) onAlbumListRequest:(NSNotification *) notification;
@@ -59,6 +61,7 @@
         self.mCallbackServer = [[[CallbackServer alloc] init] autorelease];
         self.mHostLocator = [[[HostLocator alloc] init] autorelease];
         
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onServerConnected:) name:EventServerConnected object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistListRequest:) name:EventArtistListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistInfoRequest:) name:EventArtistInfoRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAlbumListRequest:) name:EventAlbumListRequest object:nil];
@@ -97,6 +100,14 @@
     [self.mCallbackServer initializeServer];
     
     [self.mNoiseClient requestServerVersion];
+}
+
+- (void) onServerConnected:(NSNotification *)notification {
+    ServerVersion   *version = [notification object];
+    
+    NSLog( @"Connected to server version: %@.%@.%@", version.Major, version.Minor, version.Build );
+    
+    [self.mNoiseClient requestEvents];
 }
 
 - (void) onArtistListRequest:(NSNotification *)notification {

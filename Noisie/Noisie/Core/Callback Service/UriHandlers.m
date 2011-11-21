@@ -7,19 +7,22 @@
 //
 
 #import "UriHandlers.h"
+#import "Events.h"
 
 @implementation UriHandlers
 
 - (NSString *) onQueueEvent:(NSData *)data {
     NSLog( @"%@", @"Queue event occurred." );
     
-    return( @"Queue event occurred." );
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventPlayQueueChanged object:nil];
+    
+    return( @"" );
 }
 
 - (NSString *) onTransportEvent:(NSData *)data {
     NSLog( @"%@", @"Transport event occurred." );
     
-    return( @"Transport event occurred." );
+    return( @"" );
 }
 
 @end

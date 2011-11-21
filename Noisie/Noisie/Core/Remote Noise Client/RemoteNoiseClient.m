@@ -9,6 +9,8 @@
 #import "RemoteNoiseClient.h"
 #import "ServerVersion.h"
 #import "ServerVersionDelegate.h"
+#import "ServerResultDelegate.h"
+#import "Events.h"
 #include <arpa/inet.h>
 #include <ifaddrs.h>
 
@@ -17,12 +19,15 @@
 @property (nonatomic, retain)   RKObjectManager         *mClient;
 @property (nonatomic, copy)     NSString                *mClientIpAddress;
 @property (nonatomic, assign)   NSNumber                *mClientPort;
+@property (nonatomic, retain)   NSString                *mCallbackAddress;
 @property (nonatomic, retain)   ServerVersionDelegate   *mServerVersionDelegate;
+@property (nonatomic, retain)   ServerResultDelegate    *mServerResultDelegate;
 
 - (void) initObjectMappings;
 - (NSString *)getIPAddress;
 
 - (void) onServerVersion:(ServerVersion *) version;
+- (void) onServerResult:(BaseServerResult *) result;
 
 @end
 
@@ -31,7 +36,9 @@
 @synthesize mClient;
 @synthesize mClientIpAddress;
 @synthesize mClientPort;
+@synthesize mCallbackAddress;
 @synthesize mServerVersionDelegate;
+@synthesize mServerResultDelegate;
 
 - (void) initializeClient:(NSString *)serverAddress {
     self.mClient = [[[RKObjectManager alloc] initWithBaseURL:serverAddress] autorelease];
@@ -41,10 +48,16 @@
 
     self.mClientIpAddress = [self getIPAddress];
     self.mClientPort = [NSNumber numberWithInt:6502];
+    self.mCallbackAddress = [NSString stringWithFormat:@"http://%@:%@/", self.mClientIpAddress, self.mClientPort];
 }
 
 - (void) dealloc {
     self.mClient = nil;
+    self.mClientIpAddress = nil;
+    self.mClientPort = nil;
+    self.mCallbackAddress = nil;
+    self.mServerVersionDelegate = nil;
+    self.mServerResultDelegate = nil;
     
     [super dealloc];
 }
@@ -56,15 +69,33 @@
 }
 
 - (void) onServerVersion:(ServerVersion *)version {
-    NSLog( @"Connected to server version: %@.%@.%@", version.Major, version.Minor, version.Build );
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventServerConnected object:version];
 }
 
 - (void) requestEvents {
+    NSMutableString *path = [NSMutableString stringWithString:@"requestEvents"];
+    NSDictionary    *params = [[[NSDictionary alloc] initWithObjectsAndKeys:self.mCallbackAddress, @"address", nil] autorelease];
+    NSString        *url = [path appendQueryParams:params];
     
+    [self.mClient loadObjectsAtResourcePath:url
+                              objectMapping:[self.mClient.mappingProvider objectMappingForClass:[BaseServerResult class]]
+                                   delegate:self.mServerResultDelegate];
 }
 
 - (void) revokeEvents {
+    NSMutableString *path = [NSMutableString stringWithString:@"revokeEvents"];
+    NSDictionary    *params = [[[NSDictionary alloc] initWithObjectsAndKeys:self.mCallbackAddress, @"address", nil] autorelease];
+    NSString        *url = [path appendQueryParams:params];
     
+    [self.mClient loadObjectsAtResourcePath:url
+                              objectMapping:[self.mClient.mappingProvider objectMappingForClass:[BaseServerResult class]]
+                                   delegate:self.mServerResultDelegate];
+}
+
+- (void) onServerResult:(BaseServerResult *)result {
+    if(![result.Success isEqualToString:@"true"]) {
+        NSLog( @"Error from server in RemoteNoiseClient: %@", result.ErrorMessage );
+    }
 }
 
 - (void)objectLoader:(RKObjectLoader*)objectLoader didLoadObjects:(NSArray*)objects {
@@ -80,7 +111,12 @@
     [mapping mapAttributes:@"Major", @"Minor", @"Build", @"Revision", nil];
     [self.mClient.mappingProvider addObjectMapping:mapping];
     
+    mapping = [RKObjectMapping mappingForClass:[BaseServerResult class]];
+    [mapping mapAttributes:@"Success", @"ErrorMessage", nil];
+    [self.mClient.mappingProvider addObjectMapping:mapping];
+    
     self.mServerVersionDelegate = [[[ServerVersionDelegate alloc] initWithServerVersionBlock:^(ServerVersion *version) { [self onServerVersion:version]; } ] autorelease];
+    self.mServerResultDelegate = [[[ServerResultDelegate alloc] initWithServerResultBlock:^(BaseServerResult *result) { [self onServerResult:result]; } ] autorelease];
 }
 
 - (NSString *)getIPAddress {

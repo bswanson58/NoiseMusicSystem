@@ -16,6 +16,7 @@
 @property (retain, nonatomic)   NSMutableArray *mPlayQueueList;
 
 - (void) onPlayQueueList:(NSNotification *)notification;
+- (void) onPlayQueueChanged:(NSNotification *) notification;
 
 @end
 
@@ -49,6 +50,10 @@
     [self.mPlayQueueList addObjectsFromArray:trackList];
     
     [self.uiQueueList reloadData];
+}
+
+- (void) onPlayQueueChanged:(NSNotification *)notification {
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventPlayQueueListRequest object:nil];
 }
 
 #pragma mark - Table view data source
@@ -98,6 +103,7 @@
     self.mPlayQueueList = [[[NSMutableArray alloc] init] autorelease];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPlayQueueList:) name:EventPlayQueueListUpdate object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPlayQueueChanged:) name:EventPlayQueueChanged object:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:EventPlayQueueListRequest object:nil];
 }
 

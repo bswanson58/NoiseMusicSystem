@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString * const EventServerConnected;
+
 extern NSString * const EventArtistListRequest;
 extern NSString * const EventArtistListUpdate;
 extern NSString * const EventArtistSelected;
@@ -34,3 +36,5 @@ extern NSString * const EventPlayQueueListUpdate;
 
 extern NSString * const EventSearchRequest;
 extern NSString * const EventSearchUpdate;
+
+extern NSString * const EventPlayQueueChanged;
