@@ -7,7 +7,7 @@ using Noise.Infrastructure.RemoteHost;
 
 namespace Noise.RemoteHost {
 	public class ClientEvents : ClientBase<INoiseEvents> {
-		private readonly INoiseEvents	mService;
+		private INoiseEvents	mService;
 
 		public ClientEvents( Binding binding, EndpointAddress address ) :
 			base( binding, address ) {
@@ -18,6 +18,26 @@ namespace Noise.RemoteHost {
 
 			// Set the server response to messages to extend up to five minutes.
 			((IContextChannel)mService).OperationTimeout = new TimeSpan( 0, 5, 0 );
+		}
+
+		public bool CloseClient() {
+			var retValue =true;
+
+			if( mService != null ) {
+				if(((IContextChannel)mService).State == CommunicationState.Opened ) {
+					try {
+						((IContextChannel)mService).Close();
+					}
+					catch {
+						retValue = false;
+					}
+					finally {
+						mService = null;
+					}
+				}
+			}
+
+			return( retValue );
 		}
 
 		// EventInQueue

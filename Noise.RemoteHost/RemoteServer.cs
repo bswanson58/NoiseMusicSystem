@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
@@ -30,6 +31,19 @@ namespace Noise.RemoteHost {
 
 		public BaseResult RequestEvents( string address ) {
 			var		retValue = new BaseResult();
+
+			if( mClientList.ContainsKey( address )) {
+				var client = mClientList[address];
+
+				try {
+					client.Close();
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "RemoteServer:client.Close:", ex );
+				}
+
+				mClientList.Remove( address );
+			}
 
 			if(!mClientList.ContainsKey( address )) {
 				var client = new ClientEvents( new WebHttpBinding(), new EndpointAddress( address ));
