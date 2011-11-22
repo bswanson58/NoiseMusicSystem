@@ -20,6 +20,7 @@
 @property (nonatomic, retain)   StartupViewController   *mStartupViewController;
 @property (nonatomic, retain)   MainViewController      *mMainViewController;
 
+- (void) startup;
 - (void) onServerConnected:(NSNotification *) notification;
 
 @end
@@ -47,16 +48,18 @@
     [self.window makeKeyAndVisible];
     
     self.mStartupViewController = [[[StartupViewController alloc] initWithNibName:nil bundle:nil] autorelease];
-    [self.window setRootViewController:self.mStartupViewController];
-    
     self.mMainViewController = [[[MainViewController alloc] initWithNibName:nil bundle:nil] autorelease];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onServerConnected:) name:EventServerConnected object:nil];
     
     self.mManager = [[[RemoteMgr alloc] init] autorelease];
-    [self.mManager startDiscovery];
     
     return YES;
+}
+
+- (void) startup {
+    [self.window setRootViewController:self.mStartupViewController];
+    [self.mManager startDiscovery];
 }
 
 - (void) onServerConnected:(NSNotification *)notification {
@@ -87,6 +90,7 @@
     /*
      Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
      */
+    [self startup];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
