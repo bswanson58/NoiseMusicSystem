@@ -69,7 +69,7 @@
 }
 
 - (void) onServerVersion:(ServerVersion *)version {
-    [[NSNotificationCenter defaultCenter] postNotificationName:EventServerConnected object:version];
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventServerVersion object:version];
 }
 
 - (void) requestEvents {

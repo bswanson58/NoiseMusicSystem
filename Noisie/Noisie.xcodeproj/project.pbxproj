@@ -25,6 +25,8 @@
 		A91271481476E9D60048A6C6 /* SearchResultDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A91271471476E9D60048A6C6 /* SearchResultDelegate.m */; };
 		A912714B1476EEDA0048A6C6 /* SearchListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A912714A1476EEDA0048A6C6 /* SearchListCell.m */; };
 		A912714F1476EF220048A6C6 /* SearchListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A912714E1476EF220048A6C6 /* SearchListCell.xib */; };
+		A94C2CDF147B2DC100DA0F89 /* StartupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A94C2CDD147B2DC100DA0F89 /* StartupViewController.m */; };
+		A94C2CE0147B2DC100DA0F89 /* StartupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A94C2CDE147B2DC100DA0F89 /* StartupViewController.xib */; };
 		A956FA61147A9BAB00DF659D /* RemoteNoiseClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A956FA60147A9BAB00DF659D /* RemoteNoiseClient.m */; };
 		A956FA64147A9E2400DF659D /* ServerVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = A956FA63147A9E2400DF659D /* ServerVersion.m */; };
 		A956FA67147A9F1F00DF659D /* ServerVersionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A956FA66147A9F1F00DF659D /* ServerVersionDelegate.m */; };
@@ -237,6 +239,10 @@
 		A91271491476EEDA0048A6C6 /* SearchListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchListCell.h; path = UI/Views/SearchListCell.h; sourceTree = "<group>"; };
 		A912714A1476EEDA0048A6C6 /* SearchListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SearchListCell.m; path = UI/Views/SearchListCell.m; sourceTree = "<group>"; };
 		A912714E1476EF220048A6C6 /* SearchListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SearchListCell.xib; path = UI/Views/SearchListCell.xib; sourceTree = "<group>"; };
+		A94C2CDB147B242800DA0F89 /* HostLocatorDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HostLocatorDelegate.h; path = Core/HostLocatorDelegate.h; sourceTree = "<group>"; };
+		A94C2CDC147B2DC100DA0F89 /* StartupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StartupViewController.h; path = UI/StartupViewController.h; sourceTree = "<group>"; };
+		A94C2CDD147B2DC100DA0F89 /* StartupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StartupViewController.m; path = UI/StartupViewController.m; sourceTree = "<group>"; };
+		A94C2CDE147B2DC100DA0F89 /* StartupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = StartupViewController.xib; path = UI/StartupViewController.xib; sourceTree = "<group>"; };
 		A956FA5F147A9BAB00DF659D /* RemoteNoiseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteNoiseClient.h; path = "Core/Remote Noise Client/RemoteNoiseClient.h"; sourceTree = "<group>"; };
 		A956FA60147A9BAB00DF659D /* RemoteNoiseClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteNoiseClient.m; path = "Core/Remote Noise Client/RemoteNoiseClient.m"; sourceTree = "<group>"; };
 		A956FA62147A9E2400DF659D /* ServerVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServerVersion.h; path = Infrastructure/Dto/ServerVersion.h; sourceTree = "<group>"; };
@@ -635,8 +641,8 @@
 		A95AF3B314706B420074A070 /* Application */ = {
 			isa = PBXGroup;
 			children = (
-				A95AF37014705F390074A070 /* AppDelegate.m */,
 				A95AF36F14705F380074A070 /* AppDelegate.h */,
+				A95AF37014705F390074A070 /* AppDelegate.m */,
 			);
 			name = Application;
 			sourceTree = "<group>";
@@ -657,6 +663,7 @@
 				A956FA85147AE5A200DF659D /* ServerResultDelegate.m */,
 				A9B309111479CDD000EA38B0 /* HostLocator.h */,
 				A9B309121479CDD000EA38B0 /* HostLocator.m */,
+				A94C2CDB147B242800DA0F89 /* HostLocatorDelegate.h */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -808,6 +815,9 @@
 				A9C126A2147567EE00A803F3 /* SearchViewController.h */,
 				A9C126A3147567EE00A803F3 /* SearchViewController.m */,
 				A9C126A4147567EE00A803F3 /* SearchViewController.xib */,
+				A94C2CDC147B2DC100DA0F89 /* StartupViewController.h */,
+				A94C2CDD147B2DC100DA0F89 /* StartupViewController.m */,
+				A94C2CDE147B2DC100DA0F89 /* StartupViewController.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -970,6 +980,7 @@
 				A912714F1476EF220048A6C6 /* SearchListCell.xib in Resources */,
 				A957C4C61479A6B300ADF44B /* About.txt in Resources */,
 				A957C4C81479A6B300ADF44B /* About.txt in Resources */,
+				A94C2CE0147B2DC100DA0F89 /* StartupViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1057,6 +1068,7 @@
 				A956FA77147ABB5800DF659D /* CallbackHttpServer.m in Sources */,
 				A956FA7A147ABBD000DF659D /* UriHandlers.m in Sources */,
 				A956FA86147AE5A800DF659D /* ServerResultDelegate.m in Sources */,
+				A94C2CDF147B2DC100DA0F89 /* StartupViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

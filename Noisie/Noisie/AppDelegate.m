@@ -7,15 +7,20 @@
 //
 
 #import "AppDelegate.h"
+#import "StartupViewController.h"
 #import "MainViewController.h"
 #import "ArtistListController.h"
 #import "ArtistViewController.h"
 #import "RemoteMgr.h"
+#import "Events.h"
 
 @interface AppDelegate ()
 
 @property (nonatomic, retain)   RemoteMgr               *mManager;
+@property (nonatomic, retain)   StartupViewController   *mStartupViewController;
 @property (nonatomic, retain)   MainViewController      *mMainViewController;
+
+- (void) onServerConnected:(NSNotification *) notification;
 
 @end
 
@@ -23,11 +28,13 @@
 
 @synthesize window = _window;
 @synthesize mManager;
+@synthesize mStartupViewController;
 @synthesize mMainViewController;
 
 - (void)dealloc {
     [_window release];
     self.mManager = nil;
+    self.mStartupViewController = nil;
     self.mMainViewController = nil;
     
     [super dealloc];
@@ -39,14 +46,21 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     
+    self.mStartupViewController = [[[StartupViewController alloc] initWithNibName:nil bundle:nil] autorelease];
+    [self.window setRootViewController:self.mStartupViewController];
+    
     self.mMainViewController = [[[MainViewController alloc] initWithNibName:nil bundle:nil] autorelease];
-    [self.window setRootViewController:self.mMainViewController];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onServerConnected:) name:EventServerConnected object:nil];
     
     self.mManager = [[[RemoteMgr alloc] init] autorelease];
-//    [self.mManager initialize:@"http://192.168.1.100:88"];
-    [self.mManager initialize:@"http://10.1.1.107:88"];
+    [self.mManager startDiscovery];
     
     return YES;
+}
+
+- (void) onServerConnected:(NSNotification *)notification {
+    [self.window setRootViewController:self.mMainViewController];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

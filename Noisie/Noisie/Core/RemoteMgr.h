@@ -10,6 +10,7 @@
 
 @interface RemoteMgr : NSObject
 
+- (void) startDiscovery;
 - (void) initialize:(NSString *) severAddress;
 
 @end

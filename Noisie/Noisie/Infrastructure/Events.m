@@ -8,6 +8,7 @@
 
 #import "Events.h"
 
+NSString * const    EventServerVersion              = @"event:ServerVersion";
 NSString * const    EventServerConnected            = @"event:ServerConnected";
 
 NSString * const    EventArtistListRequest          = @"event:ArtistListRequest";

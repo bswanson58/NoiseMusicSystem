@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString * const EventServerVersion;
 extern NSString * const EventServerConnected;
 
 extern NSString * const EventArtistListRequest;

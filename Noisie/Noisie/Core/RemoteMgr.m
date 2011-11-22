@@ -13,13 +13,14 @@
 #import "RemoteSearchClient.h"
 #import "CallbackServer.h"
 #import "HostLocator.h"
+#import "HostLocatorDelegate.h"
 #import "RoArtist.h"
 #import "RoAlbum.h"
 #import "RoTrack.h"
 #import "ServerVersion.h"
 #import "Events.h"
 
-@interface RemoteMgr ()
+@interface RemoteMgr () <HostLocatorDelegate>
 
 @property (nonatomic, retain)   RemoteNoiseClient   *mNoiseClient;
 @property (nonatomic, retain)   RemoteDataClient    *mDataClient;
@@ -28,7 +29,7 @@
 @property (nonatomic, retain)   CallbackServer      *mCallbackServer;
 @property (nonatomic, retain)   HostLocator         *mHostLocator;
 
-- (void) onServerConnected:(NSNotification *) notification;
+- (void) onServerVersion:(NSNotification *) notification;
 - (void) onArtistListRequest:(NSNotification *) notification;
 - (void) onArtistInfoRequest:(NSNotification *) notification;
 - (void) onAlbumListRequest:(NSNotification *) notification;
@@ -61,7 +62,9 @@
         self.mCallbackServer = [[[CallbackServer alloc] init] autorelease];
         self.mHostLocator = [[[HostLocator alloc] init] autorelease];
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onServerConnected:) name:EventServerConnected object:nil];
+        self.mHostLocator.delegate = self;
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onServerVersion:) name:EventServerVersion object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistListRequest:) name:EventArtistListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistInfoRequest:) name:EventArtistInfoRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAlbumListRequest:) name:EventAlbumListRequest object:nil];
@@ -72,8 +75,6 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onFavoriteListRequest:) name:EventFavoritesListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPlayQueueListRequest:) name:EventPlayQueueListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onSearchRequest:) name:EventSearchRequest object:nil];
-        
-        [self.mHostLocator searchForServicesOfType:@"_Noise._tcp." inDomain:@"local."];
     }
     
     return( self );
@@ -92,6 +93,16 @@
     [super dealloc];
 }
 
+- (void) startDiscovery {
+    [self.mHostLocator searchForServicesOfType:@"_Noise._tcp." inDomain:@"local."];
+}
+
+- (void) onHostLocated:(NSString *)address port:(NSInteger)port serverName:(NSString *)servername {
+    NSString    *serverAddress = [NSString stringWithFormat:@"http://%@:%d", address, port];
+
+    [self initialize:serverAddress];
+}
+
 - (void) initialize:(NSString *)serverAddress {
     [self.mNoiseClient initializeClient:[NSString stringWithFormat:@"%@/Noise", serverAddress]];
     [self.mDataClient initializeClient:[NSString stringWithFormat:@"%@/Noise/Data", serverAddress]];
@@ -102,8 +113,10 @@
     [self.mNoiseClient requestServerVersion];
 }
 
-- (void) onServerConnected:(NSNotification *)notification {
+- (void) onServerVersion:(NSNotification *)notification {
     ServerVersion   *version = [notification object];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventServerConnected object:nil];
     
     NSLog( @"Connected to server version: %@.%@.%@", version.Major, version.Minor, version.Build );
     

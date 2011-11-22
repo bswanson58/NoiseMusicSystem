@@ -7,8 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "HostLocatorDelegate.h"
 
 @interface HostLocator : NSObject
+
+@property (nonatomic, retain)   id <HostLocatorDelegate> delegate;
 
 - (BOOL)searchForServicesOfType:(NSString *)type inDomain:(NSString *)domain;
 

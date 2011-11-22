@@ -41,6 +41,7 @@
 @synthesize services;
 @synthesize netServiceBrowser;
 @synthesize currentResolve;
+@synthesize delegate;
 
 - (void)dealloc {
     // Cleanup any running resolve and free memory
@@ -52,6 +53,8 @@
 
     self.ownEntry = nil;
     self.ownName = nil;
+    
+    self.delegate = nil;
     
     [super dealloc];
 }
@@ -130,6 +133,14 @@
     
     NSString    *hostname = service.hostName;
     NSInteger   port = service.port;
+    NSRange     rangeOfDomain = [hostname rangeOfString:@".local."];
+    if( rangeOfDomain.location != NSNotFound ) {
+        hostname = [hostname substringToIndex:rangeOfDomain.location];
+    }
+    
+    if( delegate != nil ) {
+        [delegate onHostLocated:hostname port:port serverName:service.name];
+    }
     
     for (NSData* data in [service addresses]) {
         char addressBuffer[100];
@@ -142,8 +153,9 @@
                                                sizeof(addressBuffer));
             
             int port = ntohs(socketAddress->sin_port);
-            if (addressStr && port)
+            if (addressStr && port) {
                 NSLog(@"Found service at %s:%d", addressStr, port);
+            }
         }
     }
     
