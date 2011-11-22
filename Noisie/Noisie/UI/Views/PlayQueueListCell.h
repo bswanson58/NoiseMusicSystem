@@ -7,9 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "RoPlayQueueTrack.h"
 
 @interface PlayQueueListCell : UITableViewCell
 
 @property (retain, nonatomic) IBOutlet UILabel *uiTrackName;
+@property (retain, nonatomic) IBOutlet UILabel *uiTrackDuration;
+
+- (void) setTrack:(RoPlayQueueTrack *) track;
 
 @end

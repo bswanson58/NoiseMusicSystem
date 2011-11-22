@@ -9,24 +9,41 @@
 #import "TrackListCell.h"
 #import "Events.h"
 
+@interface TrackListCell ()
+
+@property (retain, nonatomic)   RoTrack     *mTrack;
+@property (retain, nonatomic)   NSDateFormatter *mDateFormatter;
+
+@end
+
 @implementation TrackListCell
 
-@synthesize Track;
+@synthesize mTrack;
+@synthesize mDateFormatter;
 @synthesize uiTrackName;
+@synthesize uiTrackDuration;
 
 - (void)dealloc {
-    self.Track = nil;
+    self.mTrack = nil;
+    self.mDateFormatter = nil;
     self.uiTrackName = nil;
-
+    self.uiTrackDuration = nil;
+    
     [super dealloc];
 }
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    if (self) {
-        // Initialization code
+- (void) setTrack:(RoTrack *)track {
+    self.mTrack = track;
+    
+    if( self.mDateFormatter == nil ) {
+        self.mDateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+        [self.mDateFormatter setDateFormat:@"mm:ss"];
     }
-    return self;
+
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:self.mTrack.DurationMilliseconds / 1000];
+    [self.uiTrackDuration setText:[self.mDateFormatter stringFromDate:date]];
+    
+    [self.uiTrackName setText:self.mTrack.Name];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -36,6 +53,6 @@
 }
 
 - (IBAction)cmdPlay:(id)sender {
-    [[NSNotificationCenter defaultCenter] postNotificationName:EventQueueTrackRequest object:self.Track];
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventQueueTrackRequest object:self.mTrack];
 }
 @end

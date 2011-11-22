@@ -26,9 +26,9 @@
 
 @property (nonatomic, retain, readwrite) NSNetService           *ownEntry;
 @property (nonatomic, copy, readwrite)   NSString               *ownName;
-@property (nonatomic, retain, readwrite) NSMutableArray         *services;
-@property (nonatomic, retain, readwrite) NSNetServiceBrowser    *netServiceBrowser;
-@property (nonatomic, retain, readwrite) NSNetService           *currentResolve;
+@property (nonatomic, retain, readwrite) NSMutableArray         *mServices;
+@property (nonatomic, retain, readwrite) NSNetServiceBrowser    *mServiceBrowser;
+@property (nonatomic, retain, readwrite) NSNetService           *mCurrentResolve;
 
 - (void) stopCurrentResolve;
 
@@ -38,19 +38,33 @@
 
 @synthesize ownEntry;
 @synthesize ownName;
-@synthesize services;
-@synthesize netServiceBrowser;
-@synthesize currentResolve;
+@synthesize mServices;
+@synthesize mServiceBrowser;
+@synthesize mCurrentResolve;
 @synthesize delegate;
+
+- (id) init {
+    self = [super init];
+    if( self ) {
+        self.mServices = [[[NSMutableArray alloc] init] autorelease];
+        
+        NSNetServiceBrowser *aNetServiceBrowser = [[NSNetServiceBrowser alloc] init];
+        if( aNetServiceBrowser ) {
+            aNetServiceBrowser.delegate = self;
+            self.mServiceBrowser = aNetServiceBrowser;
+            [aNetServiceBrowser release];
+        }
+    }
+    
+    return( self );
+}
 
 - (void)dealloc {
     // Cleanup any running resolve and free memory
     [self stopCurrentResolve];
-    self.services = nil;
-    
-    [self.netServiceBrowser stop];
-    self.netServiceBrowser = nil;
+    self.mServices = nil;
 
+    self.mServiceBrowser = nil;
     self.ownEntry = nil;
     self.ownName = nil;
     
@@ -63,42 +77,39 @@
 // If a service is currently being resolved, stop resolving it and stop the service browser from
 // discovering other services.
 - (BOOL)searchForServicesOfType:(NSString *)type inDomain:(NSString *)domain {
-    self.services = [[[NSMutableArray alloc] init] autorelease];
+    BOOL    retValue = NO;
     
-    [self.netServiceBrowser stop];
-    [self.services removeAllObjects];
+    if( self.mServiceBrowser != nil ) {
+        [self.mServiceBrowser stop];
+        [self.mServices removeAllObjects];
     
-    NSNetServiceBrowser *aNetServiceBrowser = [[NSNetServiceBrowser alloc] init];
+        [self.mServiceBrowser searchForServicesOfType:type inDomain:domain];
     
-    if(!aNetServiceBrowser) {
-        // The NSNetServiceBrowser couldn't be allocated and initialized.
-        return NO;
+        self.ownName = @"Noisie";
+    
+        retValue = YES;
     }
     
-    aNetServiceBrowser.delegate = self;
-    self.netServiceBrowser = aNetServiceBrowser;
-    [aNetServiceBrowser release];
-    [self.netServiceBrowser searchForServicesOfType:type inDomain:domain];
-    
-    self.ownName = @"Noisie";
-    
-    return YES;
+    return( retValue );
 }
 
 - (void)stopCurrentResolve {
-    [self.currentResolve stop];
-    self.currentResolve = nil;
+    if( self.mCurrentResolve != nil ) {
+        [self.mCurrentResolve stop];
+        self.mCurrentResolve = nil;
+    }
 }
 
 - (void)netServiceBrowser:(NSNetServiceBrowser *)netServiceBrowser didRemoveService:(NSNetService *)service moreComing:(BOOL)moreComing {
     // If a service went away, stop resolving it if it's currently being resolved and remove it from the list.
-    if (self.currentResolve && [service isEqual:self.currentResolve]) {
+    if( self.mCurrentResolve && [service isEqual:self.mCurrentResolve]) {
         [self stopCurrentResolve];
     }
     
-    [self.services removeObject:service];
-    if (self.ownEntry == service)
+    [self.mServices removeObject:service];
+    if (self.ownEntry == service) {
         self.ownEntry = nil;
+    }
 }   
 
 - (void)netServiceBrowser:(NSNetServiceBrowser *)netServiceBrowser didFindService:(NSNetService *)service moreComing:(BOOL)moreComing {
@@ -107,16 +118,14 @@
         self.ownEntry = service;
     }
     else {
-        NSString    *serviceName = service.name;
-        
-        [self.services addObject:service];
+        [self.mServices addObject:service];
     
-        self.currentResolve = service;
-        [self.currentResolve setDelegate:self];
+        self.mCurrentResolve = service;
+        [self.mCurrentResolve setDelegate:self];
     
         // Attempt to resolve the service. A value of 0.0 sets an unlimited time to resolve it. The user can
         // choose to cancel the resolve by selecting another service in the table view.
-        [self.currentResolve resolveWithTimeout:0.0];
+        [self.mCurrentResolve resolveWithTimeout:0.0];
     }
 }   
 
@@ -126,22 +135,21 @@
 }
 
 - (void)netServiceDidResolveAddress:(NSNetService *)service {
-    assert(service == self.currentResolve);
+    assert(service == self.mCurrentResolve);
     
     [service retain];
     [self stopCurrentResolve];
     
     NSString    *hostname = service.hostName;
-    NSInteger   port = service.port;
     NSRange     rangeOfDomain = [hostname rangeOfString:@".local."];
     if( rangeOfDomain.location != NSNotFound ) {
         hostname = [hostname substringToIndex:rangeOfDomain.location];
     }
     
     if( delegate != nil ) {
-        [delegate onHostLocated:hostname port:port serverName:service.name];
+        [delegate onHostLocated:hostname port:service.port serverName:service.name];
     }
-    
+/*    
     for (NSData* data in [service addresses]) {
         char addressBuffer[100];
         struct sockaddr_in* socketAddress = (struct sockaddr_in*) [data bytes];
@@ -158,7 +166,7 @@
             }
         }
     }
-    
+*/    
     [service release];
 }
 

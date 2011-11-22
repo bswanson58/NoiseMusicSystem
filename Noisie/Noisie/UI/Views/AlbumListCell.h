@@ -11,11 +11,12 @@
 
 @interface AlbumListCell : UITableViewCell
 
-@property (retain, nonatomic) RoAlbum  *Album;
-
 @property (retain, nonatomic) IBOutlet UILabel *uiAlbumName;
 @property (retain, nonatomic) IBOutlet UILabel *uiTrackCount;
+@property (retain, nonatomic) IBOutlet UILabel *uiPublishedYear;
 
 - (IBAction)cmdPlay:(id)sender;
+
+- (void) setAlbum:(RoAlbum *) album;
 
 @end

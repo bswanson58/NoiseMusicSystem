@@ -9,26 +9,34 @@
 #import "AlbumListCell.h"
 #import "Events.h"
 
+@interface AlbumListCell ()
+
+@property (retain, nonatomic) RoAlbum  *mAlbum;
+
+@end
+
 @implementation AlbumListCell
 
 @synthesize uiAlbumName;
 @synthesize uiTrackCount;
-@synthesize Album;
+@synthesize uiPublishedYear;
+@synthesize mAlbum;
 
 - (void)dealloc {
-    self.Album = nil;
+    self.mAlbum = nil;
     self.uiAlbumName = nil;
     self.uiTrackCount = nil;
+    self.uiPublishedYear = nil;
 
     [super dealloc];
 }
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    if (self) {
-        // Initialization code
-    }
-    return self;
+- (void) setAlbum:(RoAlbum *)album {
+    self.mAlbum = album;
+    
+    [self.uiAlbumName setText:self.mAlbum.Name];
+    [self.uiTrackCount setText:[NSString stringWithFormat:@"%d", self.mAlbum.TrackCount]];
+    [self.uiPublishedYear setText:[NSString stringWithFormat:@"%d", self.mAlbum.PublishedYear]];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -38,6 +46,6 @@
 }
 
 - (IBAction)cmdPlay:(id)sender {
-    [[NSNotificationCenter defaultCenter] postNotificationName:EventQueueAlbumRequest object:self.Album];
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventQueueAlbumRequest object:self.mAlbum];
 }
 @end

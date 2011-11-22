@@ -28,6 +28,7 @@
 @implementation AlbumViewController
 
 @synthesize uiAlbumImage;
+@synthesize uiReleaseYear;
 @synthesize uiTrackList;
 @synthesize uiTrackCell;
 @synthesize mAlbum;
@@ -52,17 +53,19 @@
     
     [uiTrackCell release];
     [uiAlbumImage release];
+    [uiReleaseYear release];
     [super dealloc];
 }
 
 - (void) displayAlbum:(RoAlbum *) album {
     self.mAlbum = album;
     [self setTitle:[NSString stringWithFormat:@"Album - %@", self.mAlbum.Name]];
-    
+
     [self.mTrackList removeAllObjects];
     [self.uiTrackList reloadData];
     
     self.uiAlbumImage.image = nil;
+    [self.uiReleaseYear setText:@""];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:EventTrackListRequest object:self.mAlbum];
     [[NSNotificationCenter defaultCenter] postNotificationName:EventAlbumInfoRequest object:self.mAlbum.DbId];
@@ -74,6 +77,7 @@
     if([info.AlbumId isEqualToNumber:self.mAlbum.DbId]) {
         self.mAlbumInfo = info;
         
+        [self.uiReleaseYear setText:[NSString stringWithFormat:@"%d", self.mAlbum.PublishedYear]];
         if( self.mAlbumInfo.AlbumCover != nil ) {
             self.uiAlbumImage.image = [UIImage imageWithData:[Base64 decodeBase64WithString:self.mAlbumInfo.AlbumCover]];
         }
@@ -116,10 +120,7 @@
     }
     
     // Configure the cell...
-    RoTrack    *track = [self.mTrackList objectAtIndex:[indexPath row]];
-    
-    cell.Track = track;
-    [cell.uiTrackName setText:track.Name];
+    [cell setTrack:[self.mTrackList objectAtIndex:[indexPath row]]];
     
     return cell;
 }
@@ -147,6 +148,7 @@
     [self setUiTrackList:nil];
     [self setUiTrackCell:nil];
     [self setUiAlbumImage:nil];
+    [self setUiReleaseYear:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;

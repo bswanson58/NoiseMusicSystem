@@ -17,6 +17,7 @@
 @synthesize IsPlaying;
 @synthesize HasPlayed;
 @synthesize IsFaulted;
+@synthesize DurationMilliseconds;
 
 - (void) dealloc {
     self.TrackId = nil;

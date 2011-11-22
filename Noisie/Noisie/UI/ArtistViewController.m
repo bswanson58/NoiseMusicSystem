@@ -29,6 +29,7 @@
 
 @synthesize uiAlbumList;
 @synthesize uiArtistImage;
+@synthesize uiArtistBiography;
 @synthesize mArtist;
 @synthesize mArtistInfo;
 @synthesize mAlbumList;
@@ -52,6 +53,7 @@
     self.uiAlbumCell = nil;
     
     [uiArtistImage release];
+    [uiArtistBiography release];
     [super dealloc];
 }
 
@@ -63,6 +65,7 @@
     [self.uiAlbumList reloadData];
     
     self.uiArtistImage.image = nil;
+    [self.uiArtistBiography loadHTMLString:@"" baseURL:[NSURL URLWithString:@"/"]];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:EventAlbumListRequest object:self.mArtist];
     [[NSNotificationCenter defaultCenter] postNotificationName:EventArtistInfoRequest object:self.mArtist.DbId];
@@ -74,6 +77,8 @@
     if([info.ArtistId isEqualToNumber:self.mArtist.DbId]) {
         self.mArtistInfo = info;
     
+        [self.uiArtistBiography loadHTMLString:info.Biography baseURL:[NSURL URLWithString:@"/"]];
+        
         if( self.mArtistInfo.ArtistImage != nil ) {
             self.uiArtistImage.image = [UIImage imageWithData:[Base64 decodeBase64WithString:self.mArtistInfo.ArtistImage]];
         }
@@ -115,11 +120,7 @@
     }
     
     // Configure the cell...
-    RoAlbum    *album = [self.mAlbumList objectAtIndex:[indexPath row]];
-    
-    cell.Album = album;
-    [cell.uiAlbumName setText:album.Name];
-    [cell.uiTrackCount setText:[NSString stringWithFormat:@"%d", album.TrackCount]];
+    [cell setAlbum:[self.mAlbumList objectAtIndex:[indexPath row]]];
     
     return cell;
 }
@@ -150,6 +151,7 @@
 - (void)viewDidUnload {
     [self setUiAlbumList:nil];
     [self setUiArtistImage:nil];
+    [self setUiArtistBiography:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
