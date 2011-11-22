@@ -54,7 +54,9 @@ namespace Noise.RemoteHost {
 			}
 
 			mServiceDiscovery = new ServiceDiscovery();
-			mServiceDiscovery.Initialize();
+			if( mServiceDiscovery.Initialize()) {
+				mServiceDiscovery.RegisterService( "_Noise._Tcp.", "Noise.Desktop", 88 );
+			}
 		}
 
 		private bool OpenRemoteServer( ServiceHost host ) {

@@ -1,65 +1,51 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Bonjour;
 
 namespace Noise.RemoteHost {
 	//
-	// PeerData
+	// ServiceData
 	//
-	// Holds onto the information associated with a peer on the network
+	// Holds onto the information associated with a located service on the network
 	//
-	public class PeerData {
-		public uint InterfaceIndex;
-		public String Name;
-		public String Type;
-		public String Domain;
-		public IPAddress Address;
-		public int Port;
+	public class ServiceData {
+		public uint			InterfaceIndex { get; set; }
+		public string		Name { get; set; }
+		public string		HostName { get; set; }
+		public string		Type { get; set; }
+		public string		Domain { get; set; }
+		public IPAddress	Address { get; set; }
+		public ushort		Port { get; set; }
 
-		public override String
-		ToString() {
+		public string FullName {
+			get { return( Name + "." + Type + Domain ); }
+		}
+
+		public override string ToString() {
 			return Name;
-		}
-
-		public override bool
-		Equals( object other ) {
-			bool result = false;
-
-			if( other != null ) {
-				if( this == other ) {
-					result = true;
-				}
-				else if( other is PeerData ) {
-					PeerData otherPeerData = (PeerData)other;
-
-					result = ( Name == otherPeerData.Name );
-				}
-			}
-
-			return result;
-		}
-
-
-		public override int
-		GetHashCode() {
-			return Name.GetHashCode();
 		}
 	};
 
 	public class ServiceDiscovery {
-		private DNSSDService            m_service;
-		private DNSSDService            m_registrar;
-		private DNSSDService            m_browser;
-		private DNSSDService            m_resolver;
+		private DNSSDService            mService;
+		private DNSSDService            mRegistrar;
+		private DNSSDService            mServiceBrowser;
 		private DNSSDEventManager		mEventManager;
-		private string					m_name;
-		//        private Socket                  m_socket;
+		private string					mRegisteredName;
+		private List<ServiceData>			mLocatedServices;
+
+		public	delegate void			ServiceLocated( string registrationName, string address, ushort port );
+		public	event ServiceLocated	OnServiceLocated;
 
 		public bool Initialize() {
 			var retValue = true;
 
 			try {
-				m_service = new DNSSDService();
+				mLocatedServices = new List<ServiceData>();
+
+				mService = new DNSSDService();
 				mEventManager = new DNSSDEventManager();
 
 				mEventManager.ServiceRegistered += ServiceRegistered;
@@ -68,34 +54,44 @@ namespace Noise.RemoteHost {
 				mEventManager.ServiceResolved += ServiceResolved;
 				mEventManager.QueryRecordAnswered += QueryAnswered;
 				mEventManager.OperationFailed += OperationFailed;
-
-				//
-				// start the register and browse operations
-				//
-				m_registrar = m_service.Register( 0, 0, "Noise.Desktop", "_Noise._tcp.", null, null, 88, null, mEventManager );
 			}
-			catch( Exception ex ) {
+			catch {
 				retValue = false;
 			}
 
 			return ( retValue );
 		}
 
+		public void RegisterService( string registrationType, string registrationName, ushort port ) {
+			mRegistrar = mService.Register( 0, 0, registrationName, registrationType, null, null, port, null, mEventManager );
+		}
+
 		// ServiceRegistered
 		//
-		// Called by DNSServices core as a result of Register()
-		// call
+		// Called by DNSServices core as a result of Register() call
 		//
-		public void ServiceRegistered( DNSSDService service, DNSSDFlags flags, String name, String regType, String domain ) {
-			m_name = name;
+		private void ServiceRegistered( DNSSDService service, DNSSDFlags flags, String name, String regType, String domain ) {
+			mRegisteredName = name;
+		}
 
-			//
-			// Try to start browsing for other instances of this service
-			//
+		public void UnregisterService() {
+			if( mRegistrar != null ) {
+				mRegistrar.Stop();
+			}
+		}
+
+		public void LocateServices( string registrationType ) {
+			if( mServiceBrowser != null ) {
+				mServiceBrowser.Stop();
+
+				mServiceBrowser = null;
+			}
+
 			try {
-				m_browser = m_service.Browse( 0, 0, "_Noisie._tcp.", null, mEventManager );
+				mServiceBrowser = mService.Browse( 0, 0, registrationType, null, mEventManager );
 			}
 			catch {
+				mServiceBrowser = null;
 			}
 		}
 
@@ -104,17 +100,12 @@ namespace Noise.RemoteHost {
 		//
 		// Called by DNSServices core as a result of a Browse call
 		//
-		public void ServiceFound( DNSSDService sref, DNSSDFlags flags, uint ifIndex, String serviceName, String regType, String domain ) {
-			if( serviceName != m_name ) {
-				PeerData peer = new PeerData();
+		private void ServiceFound( DNSSDService sref, DNSSDFlags flags, uint ifIndex, String serviceName, String regType, String domain ) {
+			if( serviceName != mRegisteredName ) {
+				var service = new ServiceData { Name = serviceName, InterfaceIndex = ifIndex, Type = regType, Domain = domain };
 
-				peer.InterfaceIndex = ifIndex;
-				peer.Name = serviceName;
-				peer.Type = regType;
-				peer.Domain = domain;
-				peer.Address = null;
-
-				m_resolver = m_service.Resolve( 0, peer.InterfaceIndex, peer.Name, peer.Type, peer.Domain, mEventManager );
+				mLocatedServices.Add( service );
+				mService.Resolve( 0, ifIndex, serviceName, regType, domain, mEventManager );
 			}
 		}
 
@@ -123,41 +114,41 @@ namespace Noise.RemoteHost {
 		//
 		// Called by DNSServices core as a result of a Browse call
 		//
-		public void ServiceLost( DNSSDService sref, DNSSDFlags flags, uint ifIndex, String serviceName, String regType, String domain ) {
-			PeerData peer = new PeerData();
-
-			peer.InterfaceIndex = ifIndex;
-			peer.Name = serviceName;
-			peer.Type = regType;
-			peer.Domain = domain;
-			peer.Address = null;
-
-			//            comboBox1.Items.Remove(peer);
+		private void ServiceLost( DNSSDService sref, DNSSDFlags flags, uint ifIndex, String serviceName, String regType, String domain ) {
+			var service = ( from serv in mLocatedServices where serv.Name == serviceName select serv ).FirstOrDefault();
+			if( service != null ) {
+				mLocatedServices.Remove( service );
+			}
 		}
 
 		//
 		// ServiceResolved
 		//
 		// Called by DNSServices core as a result of DNSService.Resolve()
-		// call
 		//
-		public void ServiceResolved( DNSSDService sref, DNSSDFlags flags, uint ifIndex, String fullName, String hostName, ushort port, TXTRecord txtRecord ) {
-			m_resolver.Stop();
-			m_resolver = null;
+		private void ServiceResolved( DNSSDService resolver, DNSSDFlags flags, uint ifIndex, String fullName, String hostName, ushort port, TXTRecord txtRecord ) {
+			if( mServiceBrowser != null ) {
+				mServiceBrowser.Stop();
 
-			//            PeerData peer = (PeerData)comboBox1.SelectedItem;
+				mServiceBrowser = null;
+			}
 
-			//            peer.Port = port;
+			resolver.Stop();
 
-			//
+			var service = ( from serv in mLocatedServices 
+							where ( serv.FullName == fullName ) && ( serv.InterfaceIndex == ifIndex ) select serv ).FirstOrDefault();
+			if( service != null ) {
+				service.HostName = hostName;
+				service.InterfaceIndex = ifIndex;
+				service.Port = port;
+			}
+
 			// Query for the IP address associated with "hostName"
-			//
 			try {
-				m_resolver = m_service.QueryRecord( 0, ifIndex, hostName, DNSSDRRType.kDNSSDType_A, DNSSDRRClass.kDNSSDClass_IN, mEventManager );
+				mService.QueryRecord( 0, ifIndex, hostName, DNSSDRRType.kDNSSDType_A, DNSSDRRClass.kDNSSDClass_IN, mEventManager );
 			}
 			catch {
-				//                MessageBox.Show("QueryRecord Failed", "Error");
-				//                Application.Exit();
+				resolver.Stop();
 			}
 		}
 
@@ -165,20 +156,24 @@ namespace Noise.RemoteHost {
 		// QueryAnswered
 		//
 		// Called by DNSServices core as a result of DNSService.QueryRecord()
-		// call
 		//
-		public void QueryAnswered( DNSSDService service, DNSSDFlags flags, uint ifIndex, String fullName, DNSSDRRType rrtype, DNSSDRRClass rrclass, Object rdata, uint ttl ) {
+		private void QueryAnswered( DNSSDService resolver, DNSSDFlags flags, uint ifIndex, String hostName, DNSSDRRType rrtype, DNSSDRRClass rrclass, Object rdata, uint ttl ) {
 			//
 			// Stop the resolve to reduce the burden on the network
 			//
-			m_resolver.Stop();
-			m_resolver = null;
+			resolver.Stop();
 
-			//            PeerData peer = (PeerData) comboBox1.SelectedItem;
-			uint bits = BitConverter.ToUInt32( (Byte[])rdata, 0 );
-			IPAddress address = new IPAddress( bits );
+			uint	bits = BitConverter.ToUInt32( (Byte[])rdata, 0 );
+			var		address = new IPAddress( bits );
 
-			//            peer.Address = address;
+			var service = ( from serv in mLocatedServices where serv.HostName == hostName select serv ).FirstOrDefault();
+			if( service != null ) {
+				service.Address = address;
+
+				if( OnServiceLocated != null ) {
+					OnServiceLocated( service.Name, service.Address.ToString(), service.Port );
+				}
+			}
 		}
 
 		public void OperationFailed( DNSSDService service, DNSSDError error ) {
