@@ -14,6 +14,7 @@
 @interface AlbumViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
 @property (retain, nonatomic) IBOutlet UIImageView   *uiAlbumImage;
+@property (retain, nonatomic) IBOutlet UILabel       *uiReleaseYear;
 @property (retain, nonatomic) IBOutlet UITableView   *uiTrackList;
 @property (retain, nonatomic) IBOutlet TrackListCell *uiTrackCell;
 

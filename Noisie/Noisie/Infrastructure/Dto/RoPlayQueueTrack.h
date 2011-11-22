@@ -10,13 +10,14 @@
 
 @interface RoPlayQueueTrack : NSObject
 
-@property (retain, nonatomic)   NSNumber *TrackId;
-@property (copy, nonatomic)     NSString *TrackName;
-@property (copy, nonatomic)     NSString *AlbumName;
-@property (copy, nonatomic)     NSString *ArtistName;
-@property (copy, nonatomic)     NSString *IsPlaying;
-@property (copy, nonatomic)     NSString *HasPlayed;
-@property (copy, nonatomic)     NSString *IsFaulted;
+@property (retain, nonatomic)   NSNumber        *TrackId;
+@property (copy, nonatomic)     NSString        *TrackName;
+@property (copy, nonatomic)     NSString        *AlbumName;
+@property (copy, nonatomic)     NSString        *ArtistName;
+@property (copy, nonatomic)     NSString        *IsPlaying;
+@property (copy, nonatomic)     NSString        *HasPlayed;
+@property (copy, nonatomic)     NSString        *IsFaulted;
+@property (nonatomic, assign)   unsigned long    DurationMilliseconds;
 
 - (NSString *) formattedName;
 

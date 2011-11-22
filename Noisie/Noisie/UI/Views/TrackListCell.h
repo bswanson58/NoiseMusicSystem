@@ -11,10 +11,11 @@
 
 @interface TrackListCell : UITableViewCell
 
-@property (retain, nonatomic)   RoTrack     *Track;
-
 @property (retain, nonatomic) IBOutlet UILabel *uiTrackName;
+@property (retain, nonatomic) IBOutlet UILabel *uiTrackDuration;
 
 - (IBAction)cmdPlay:(id)sender;
+
+- (void) setTrack:(RoTrack *) track;
 
 @end

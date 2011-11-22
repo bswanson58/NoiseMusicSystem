@@ -80,9 +80,7 @@
     }
     
     // Configure the cell...
-    RoPlayQueueTrack  *track = [self.mPlayQueueList objectAtIndex:[indexPath row]];
-    
-    [cell.uiTrackName setText:[track formattedName]];
+    [cell setTrack:[self.mPlayQueueList objectAtIndex:[indexPath row]]];
     
     return cell;
 }

@@ -8,15 +8,47 @@
 
 #import "PlayQueueListCell.h"
 
-@implementation PlayQueueListCell
-@synthesize uiTrackName;
+@interface PlayQueueListCell ()
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    if (self) {
-        // Initialization code
+@property (nonatomic, retain)   NSDateFormatter *mDateFormatter;
+
+@end
+
+@implementation PlayQueueListCell
+
+@synthesize mDateFormatter;
+@synthesize uiTrackName;
+@synthesize uiTrackDuration;
+
+- (void)dealloc {
+    self.mDateFormatter = nil;
+    
+    [uiTrackName release];
+    [uiTrackDuration release];
+    [super dealloc];
+}
+
+- (void) setTrack:(RoPlayQueueTrack *)track {
+    [self.uiTrackName setText:[track formattedName]];
+    
+    if([track.HasPlayed isEqualToString:@"true"]) {
+        [self.uiTrackName setTextColor:[UIColor grayColor]];
     }
-    return self;
+    if([track.IsPlaying isEqualToString:@"true"]) {
+        [self.uiTrackName setTextColor:[UIColor blueColor]];
+    }
+    if([track.IsFaulted isEqualToString:@"true"]) {
+        [self.uiTrackName setTextColor:[UIColor redColor]];
+    }
+    
+    if( self.mDateFormatter == nil ) {
+        self.mDateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+        [self.mDateFormatter setDateFormat:@"mm:ss"];
+    }
+    
+//    NSDate *date = [NSDate dateWithTimeIntervalSince1970:self.mTrack.DurationMilliseconds / 1000];
+//    [self.uiTrackDuration setText:[self.mDateFormatter stringFromDate:date]];
+    [self.uiTrackDuration setText:@""];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -25,8 +57,4 @@
     // Configure the view for the selected state
 }
 
-- (void)dealloc {
-    [uiTrackName release];
-    [super dealloc];
-}
 @end
