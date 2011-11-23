@@ -56,6 +56,7 @@ namespace Noise.RemoteHost {
 				.ForMember( dest => dest.IsStrategySourced, opt => opt.MapFrom( src => src.StrategySource != eStrategySource.User ));
 
 			CreateMap<SearchResultItem, RoSearchResultItem>()
+				.ForMember( dest => dest.ArtistId, opt => opt.MapFrom( src => src.Artist != null ? src.Artist.DbId : Constants.cDatabaseNullOid ))
 				.ForMember( dest => dest.ArtistName, opt => opt.MapFrom( src => src.Artist != null ? src.Artist.Name : "" ))
 				.ForMember( dest => dest.AlbumId, opt => opt.MapFrom( src => src.Album != null ? src.Album.DbId : Constants.cDatabaseNullOid ))
 				.ForMember( dest => dest.AlbumName, opt => opt.MapFrom( src => src.Album != null ? src.Album.Name : "" ))

@@ -12,6 +12,8 @@ namespace Noise.Infrastructure.RemoteDto {
 		[DataMember]
 		public string	AlbumName { get; set; }
 		[DataMember]
+		public long		ArtistId { get; set; }
+		[DataMember]
 		public string	ArtistName { get; set; }
 		[DataMember]
 		public bool		CanPlay { get; set; }
