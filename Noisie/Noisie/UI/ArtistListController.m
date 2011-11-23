@@ -9,12 +9,14 @@
 #import "ArtistListController.h"
 #import "ArtistListResult.h"
 #import "RoArtist.h"
+#import "RoSearchResultItem.h"
 #import "Events.h"
 
 @interface ArtistListController ()
 
 @property (nonatomic, retain)   NSMutableArray  *mArtistList;
 
+- (void) onServerConnected:(NSNotification *) notification;
 - (void) onArtistListUpdate:(NSNotification *) notification;
 
 @end
@@ -43,6 +45,12 @@
     [super dealloc];
 }
 
+- (void) onServerConnected:(NSNotification *)notification {
+    if( [self.mArtistList count] > 0 ) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:EventArtistListRequest object:nil];
+    }
+}
+
 - (void) onArtistListUpdate:(NSNotification *)notification {
     ArtistListResult    *result = [notification object];
     
@@ -55,6 +63,16 @@
     [self.uiArtistList reloadData];
 }
 
+- (void) setSearchFocus:(RoSearchResultItem *)item {
+    for (RoArtist *artist in self.mArtistList) {
+        if([artist.DbId isEqualToNumber:item.ArtistId]) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:EventArtistSelected object:artist];
+            
+            break;
+        }
+    }
+}
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad {
@@ -63,6 +81,7 @@
     self.navigationItem.title = @"Library - Artists";
     self.mArtistList = [[[NSMutableArray alloc] init] autorelease];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onServerConnected:) name:EventServerConnected object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistListUpdate:) name:EventArtistListUpdate object:nil];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:EventArtistListRequest object:nil];

@@ -37,6 +37,7 @@ extern NSString * const EventPlayQueueListUpdate;
 
 extern NSString * const EventSearchRequest;
 extern NSString * const EventSearchUpdate;
+extern NSString * const EventSearchFocus;
 
 extern NSString * const EventPlayQueueChanged;
 

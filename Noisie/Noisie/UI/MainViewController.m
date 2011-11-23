@@ -15,6 +15,7 @@
 #import "SearchViewController.h"
 #import "RoArtist.h"
 #import "RoAlbum.h"
+#import "RoSearchResultItem.h"
 #import "Events.h"
 
 @interface MainViewController ()
@@ -29,6 +30,7 @@
 
 - (void) onArtistSelected:(NSNotification *) notification;
 - (void) onAlbumSelected:(NSNotification *) notification;
+- (void) onSearchFocus:(NSNotification *) notification;
 
 @end
 
@@ -103,6 +105,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistSelected:) name:EventArtistSelected object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAlbumSelected:) name:EventAlbumSelected object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onSearchFocus:) name:EventSearchFocus object:nil];
 }
 
 - (void) onArtistSelected:(NSNotification *)notification {
@@ -117,6 +120,14 @@
     
     [self.mAlbumViewController displayAlbum:album];
     [self.mLibraryNavigationController pushViewController:self.mAlbumViewController animated:YES];
+}
+
+- (void) onSearchFocus:(NSNotification *)notification {
+    RoSearchResultItem  *item = [notification object];
+
+    [self.mLibraryNavigationController popToViewController:self.mArtistListController animated:NO];
+    self.selectedViewController = self.mLibraryNavigationController;
+    [self.mArtistListController setSearchFocus:item];
 }
 
 - (void)viewDidUnload {

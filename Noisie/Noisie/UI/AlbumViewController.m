@@ -77,7 +77,18 @@
     if([info.AlbumId isEqualToNumber:self.mAlbum.DbId]) {
         self.mAlbumInfo = info;
         
-        [self.uiReleaseYear setText:[NSString stringWithFormat:@"%d", self.mAlbum.PublishedYear]];
+        if( self.mAlbum.PublishedYear > 0 ) {
+            if( self.mAlbum.PublishedYear == 1 ) {
+                [self.uiReleaseYear setText:@"Various"];
+            }
+            else {
+                [self.uiReleaseYear setText:[NSString stringWithFormat:@"%d", self.mAlbum.PublishedYear]];
+            }
+        }
+        else {
+            [self.uiReleaseYear setText:@"Unknown"];
+        }
+        
         if( self.mAlbumInfo.AlbumCover != nil ) {
             self.uiAlbumImage.image = [UIImage imageWithData:[Base64 decodeBase64WithString:self.mAlbumInfo.AlbumCover]];
         }

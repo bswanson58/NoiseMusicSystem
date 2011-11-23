@@ -14,6 +14,7 @@
 @property (copy, nonatomic)     NSString    *TrackName;
 @property (retain, nonatomic)   NSNumber    *AlbumId;
 @property (copy, nonatomic)     NSString    *AlbumName;
+@property (retain, nonatomic)   NSNumber    *ArtistId;
 @property (copy, nonatomic)     NSString    *ArtistName;
 @property (copy, nonatomic)     NSString    *CanPlay;
 

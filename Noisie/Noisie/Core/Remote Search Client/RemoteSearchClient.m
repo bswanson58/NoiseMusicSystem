@@ -69,7 +69,7 @@
 
 - (void) initObjectMappings {
     RKObjectMapping *mapping = [RKObjectMapping mappingForClass:[RoSearchResultItem class]];
-    [mapping mapAttributes:@"TrackId", @"TrackName", @"AlbumId", @"AlbumName", @"ArtistName", @"CanPlay", nil];
+    [mapping mapAttributes:@"TrackId", @"TrackName", @"AlbumId", @"AlbumName", @"ArtistId", @"ArtistName", @"CanPlay", nil];
     [self.mClient.mappingProvider addObjectMapping:mapping];
     
     mapping = [RKObjectMapping mappingForClass:[SearchResult class]];

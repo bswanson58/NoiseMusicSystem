@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1280</int>
-		<string key="IBDocument.SystemVersion">11B26</string>
+		<string key="IBDocument.SystemVersion">11A511</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
 		<string key="IBDocument.AppKitVersion">1138</string>
 		<string key="IBDocument.HIToolboxVersion">566.00</string>
@@ -72,7 +72,7 @@
 					<object class="IBUILabel" id="348395536">
 						<reference key="NSNextResponder" ref="766721923"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{619, 186}, {83, 21}}</string>
+						<string key="NSFrame">{{610, 186}, {83, 21}}</string>
 						<reference key="NSSuperview" ref="766721923"/>
 						<reference key="NSNextKeyView" ref="680199360"/>
 						<string key="NSReuseIdentifierKey">_NS:345</string>
@@ -103,7 +103,7 @@
 					<object class="IBUILabel" id="680199360">
 						<reference key="NSNextResponder" ref="766721923"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{706, 186}, {42, 21}}</string>
+						<string key="NSFrame">{{695, 186}, {65, 21}}</string>
 						<reference key="NSSuperview" ref="766721923"/>
 						<reference key="NSNextKeyView" ref="857001572"/>
 						<string key="NSReuseIdentifierKey">_NS:345</string>
@@ -112,7 +112,7 @@
 						<int key="IBUIContentMode">7</int>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
-						<string key="IBUIText">2009</string>
+						<string key="IBUIText">Unknown</string>
 						<reference key="IBUITextColor" ref="94715263"/>
 						<nil key="IBUIHighlightedColor"/>
 						<int key="IBUIBaselineAdjustment">1</int>

@@ -14,6 +14,7 @@
 @synthesize TrackName;
 @synthesize AlbumId;
 @synthesize AlbumName;
+@synthesize ArtistId;
 @synthesize ArtistName;
 @synthesize CanPlay;
 
@@ -22,6 +23,7 @@
     self.TrackName = nil;
     self.AlbumId = nil;
     self.AlbumName = nil;
+    self.ArtistId = nil;
     self.ArtistName = nil;
     self.CanPlay = nil;
     

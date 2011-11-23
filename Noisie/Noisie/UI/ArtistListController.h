@@ -9,9 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "ArtistListCell.h"
 
+@class RoSearchResultItem;
+
 @interface ArtistListController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
 @property (retain, nonatomic) IBOutlet UITableView      *uiArtistList;
 @property (retain, nonatomic) IBOutlet ArtistListCell   *artistListCell;
+
+- (void) setSearchFocus:(RoSearchResultItem *) item;
 
 @end
