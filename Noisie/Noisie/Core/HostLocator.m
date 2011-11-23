@@ -146,27 +146,31 @@
         hostname = [hostname substringToIndex:rangeOfDomain.location];
     }
     
-    if( delegate != nil ) {
-        [delegate onHostLocated:hostname port:service.port serverName:service.name];
-    }
-/*    
+//    if( delegate != nil ) {
+//        [delegate onHostLocated:hostname port:service.port serverName:service.name];
+//    }
+    
     for (NSData* data in [service addresses]) {
         char addressBuffer[100];
         struct sockaddr_in* socketAddress = (struct sockaddr_in*) [data bytes];
         int sockFamily = socketAddress->sin_family;
 
-        if (sockFamily == AF_INET || sockFamily == AF_INET6) {
+        if (sockFamily == AF_INET ) { //|| sockFamily == AF_INET6) {
             const char* addressStr = inet_ntop(sockFamily,
                                                &(socketAddress->sin_addr), addressBuffer,
                                                sizeof(addressBuffer));
             
             int port = ntohs(socketAddress->sin_port);
-            if (addressStr && port) {
+            if( addressStr && port ) {
                 NSLog(@"Found service at %s:%d", addressStr, port);
+                
+                if( delegate != nil ) {
+                    [delegate onHostLocated:[NSString stringWithFormat:@"%s", addressStr] port:port serverName:service.name];
+                }
             }
         }
     }
-*/    
+    
     [service release];
 }
 
