@@ -15,6 +15,7 @@
 
 @property (retain, nonatomic)   NSMutableArray     *mFavorites;
 
+- (void) onServerConnected:(NSNotification *)notification;
 - (void) onFavoritesList:(NSNotification *)notification;
 
 @end
@@ -41,6 +42,10 @@
 
     [uiFavoriteCell release];
     [super dealloc];
+}
+
+- (void) onServerConnected:(NSNotification *)notification {
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventFavoritesListRequest object:nil];
 }
 
 - (void) onFavoritesList:(NSNotification *)notification {
@@ -100,6 +105,7 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:EventFavoritesListRequest object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onServerConnected:) name:EventServerConnected object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onFavoritesList:) name:EventFavoritesListUpdate object:nil];
 }
 
