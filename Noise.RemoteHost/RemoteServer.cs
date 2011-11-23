@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using System.Threading.Tasks;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteDto;
 using Noise.Infrastructure.RemoteHost;
@@ -23,6 +25,7 @@ namespace Noise.RemoteHost {
 			mLog = mContainer.Resolve<ILog>();
 
 			mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnQueueChanged );
+			mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnTrackStarted );
 		}
 
 		public ServerVersion GetServerVersion() {
@@ -77,6 +80,16 @@ namespace Noise.RemoteHost {
 		}
 
 		private void OnQueueChanged( IPlayQueue queue ) {
+			// decouple from the event thread.
+			new Task( OnQueueChangedTask ).Start();
+		}
+
+		private void OnTrackStarted( PlayQueueTrack track ) {
+			// decouple from the event thread.
+			new Task( OnQueueChangedTask ).Start();
+		}
+
+		private void OnQueueChangedTask() {
 			foreach( var client in mClientList.Values ) {
 				client.EventInQueue();
 			}

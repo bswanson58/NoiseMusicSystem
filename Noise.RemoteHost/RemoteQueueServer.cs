@@ -88,5 +88,52 @@ namespace Noise.RemoteHost {
 
 			return( retValue );
 		}
+
+		public BaseResult ExecuteTransportCommand( TransportCommand command ) {
+			var retValue = new BaseResult();
+
+			try {
+				switch( command ) {
+					case TransportCommand.Play:
+						if( mNoiseManager.PlayController.CanPlay ) {
+							mNoiseManager.PlayController.Play();
+						}
+						break;
+
+					case TransportCommand.Pause:
+						if( mNoiseManager.PlayController.CanPause ) {
+							mNoiseManager.PlayController.Pause();
+						}
+						break;
+
+					case TransportCommand.PlayNext:
+						if( mNoiseManager.PlayController.CanPlayNextTrack ) {
+							mNoiseManager.PlayController.PlayNextTrack();
+						}
+						break;
+
+					case TransportCommand.PlayPrevious:
+						if( mNoiseManager.PlayController.CanPlayPreviousTrack ) {
+							mNoiseManager.PlayController.PlayPreviousTrack();
+						}
+						break;
+
+					case TransportCommand.Stop:
+						if( mNoiseManager.PlayController.CanStop ) {
+							mNoiseManager.PlayController.Stop();
+						}
+						break;
+				}
+
+				retValue.Success = true;
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "RemoteQueueServer:ExecuteTransportCommand", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+
+			return( retValue );
+		}
 	}
 }
