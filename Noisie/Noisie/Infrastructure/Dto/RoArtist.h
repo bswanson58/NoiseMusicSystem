@@ -15,7 +15,7 @@
 @property (nonatomic, copy)     NSString        *Name;
 @property (nonatomic, assign)   int              AlbumCount;
 @property (nonatomic, assign)   int              Rating;
-@property (nonatomic, retain)   NSNumber        *Genre;
+@property (nonatomic, retain)   NSString        *Genre;
 @property (nonatomic, copy)     NSString        *IsFavorite;
 
 @end

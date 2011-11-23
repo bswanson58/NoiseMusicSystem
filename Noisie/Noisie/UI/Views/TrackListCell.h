@@ -11,8 +11,10 @@
 
 @interface TrackListCell : UITableViewCell
 
-@property (retain, nonatomic) IBOutlet UILabel *uiTrackName;
-@property (retain, nonatomic) IBOutlet UILabel *uiTrackDuration;
+@property (retain, nonatomic) IBOutlet UILabel      *uiTrackNumber;
+@property (retain, nonatomic) IBOutlet UILabel      *uiTrackName;
+@property (retain, nonatomic) IBOutlet UILabel      *uiTrackDuration;
+@property (retain, nonatomic) IBOutlet UIImageView  *uiIsFavorite;
 
 - (IBAction)cmdPlay:(id)sender;
 

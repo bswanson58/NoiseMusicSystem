@@ -11,8 +11,9 @@
 
 @interface PlayQueueListCell : UITableViewCell
 
-@property (retain, nonatomic) IBOutlet UILabel *uiTrackName;
-@property (retain, nonatomic) IBOutlet UILabel *uiTrackDuration;
+@property (retain, nonatomic) IBOutlet UIImageView  *uiIsPlaying;
+@property (retain, nonatomic) IBOutlet UILabel      *uiTrackName;
+@property (retain, nonatomic) IBOutlet UILabel      *uiTrackDuration;
 
 - (void) setTrack:(RoPlayQueueTrack *) track;
 

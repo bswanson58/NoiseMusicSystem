@@ -99,6 +99,8 @@
 		A9B58675147599680047C781 /* FavoriteListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B58674147599680047C781 /* FavoriteListCell.m */; };
 		A9B58679147599B90047C781 /* FavoriteListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9B58678147599B90047C781 /* FavoriteListCell.xib */; };
 		A9B79F21147C121C00F12B3F /* Note.png in Resources */ = {isa = PBXBuildFile; fileRef = A9B79F20147C121C00F12B3F /* Note.png */; };
+		A9BC8F7C147D48C80098580A /* Favorite.png in Resources */ = {isa = PBXBuildFile; fileRef = A9BC8F7B147D48C80098580A /* Favorite.png */; };
+		A9BC8F7E147D51490098580A /* Now Playing.png in Resources */ = {isa = PBXBuildFile; fileRef = A9BC8F7D147D51490098580A /* Now Playing.png */; };
 		A9C12697147563D100A803F3 /* iPad Library Tab.png in Resources */ = {isa = PBXBuildFile; fileRef = A9C12696147563D000A803F3 /* iPad Library Tab.png */; };
 		A9C1269B147564D400A803F3 /* QueueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C12699147564D400A803F3 /* QueueViewController.m */; };
 		A9C1269C147564D400A803F3 /* QueueViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9C1269A147564D400A803F3 /* QueueViewController.xib */; };
@@ -369,6 +371,8 @@
 		A9B58674147599680047C781 /* FavoriteListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FavoriteListCell.m; path = UI/Views/FavoriteListCell.m; sourceTree = "<group>"; };
 		A9B58678147599B90047C781 /* FavoriteListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FavoriteListCell.xib; path = UI/Views/FavoriteListCell.xib; sourceTree = "<group>"; };
 		A9B79F20147C121C00F12B3F /* Note.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Note.png; path = Resources/Note.png; sourceTree = "<group>"; };
+		A9BC8F7B147D48C80098580A /* Favorite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Favorite.png; path = Resources/Favorite.png; sourceTree = "<group>"; };
+		A9BC8F7D147D51490098580A /* Now Playing.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Now Playing.png"; path = "Resources/Now Playing.png"; sourceTree = "<group>"; };
 		A9C12696147563D000A803F3 /* iPad Library Tab.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iPad Library Tab.png"; path = "Resources/iPad Library Tab.png"; sourceTree = "<group>"; };
 		A9C12698147564D400A803F3 /* QueueViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QueueViewController.h; path = UI/QueueViewController.h; sourceTree = "<group>"; };
 		A9C12699147564D400A803F3 /* QueueViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QueueViewController.m; path = UI/QueueViewController.m; sourceTree = "<group>"; };
@@ -785,6 +789,8 @@
 		A98D41A4147416210044CB93 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A9BC8F7D147D51490098580A /* Now Playing.png */,
+				A9BC8F7B147D48C80098580A /* Favorite.png */,
 				A9B79F20147C121C00F12B3F /* Note.png */,
 				A9B5864A147575DC0047C781 /* Play.png */,
 				A9C12696147563D000A803F3 /* iPad Library Tab.png */,
@@ -985,6 +991,8 @@
 				A957C4C81479A6B300ADF44B /* About.txt in Resources */,
 				A94C2CE0147B2DC100DA0F89 /* StartupViewController.xib in Resources */,
 				A9B79F21147C121C00F12B3F /* Note.png in Resources */,
+				A9BC8F7C147D48C80098580A /* Favorite.png in Resources */,
+				A9BC8F7E147D51490098580A /* Now Playing.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

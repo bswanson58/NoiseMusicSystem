@@ -17,6 +17,7 @@
 @property (copy, nonatomic)     NSString        *IsPlaying;
 @property (copy, nonatomic)     NSString        *HasPlayed;
 @property (copy, nonatomic)     NSString        *IsFaulted;
+@property (copy, nonatomic)     NSString        *IsStrategySourced;
 @property (nonatomic, assign)   unsigned long    DurationMilliseconds;
 
 - (NSString *) formattedName;

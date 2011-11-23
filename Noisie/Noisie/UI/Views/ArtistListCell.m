@@ -12,20 +12,29 @@
 
 @synthesize uiArtistName;
 @synthesize uiAlbumCount;
+@synthesize uiArtistGenre;
+@synthesize uiIsFavorite;
 
 - (void)dealloc {
     [uiArtistName release];
     [uiAlbumCount release];
+    [uiArtistGenre release];
     
+    [uiIsFavorite release];
     [super dealloc];
 }
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    if (self) {
-        // Initialization code
+- (void) setArtist:(RoArtist *)artist {
+    [self.uiArtistName setText:artist.Name];
+    [self.uiAlbumCount setText:[NSString stringWithFormat:@"%d", artist.AlbumCount]];
+    [self.uiArtistGenre setText:artist.Genre];
+
+    if([artist.IsFavorite isEqualToString:@"true"]) {
+        [self.uiIsFavorite setHidden:NO];
     }
-    return self;
+    else {
+        [self.uiIsFavorite setHidden:YES];
+    }
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

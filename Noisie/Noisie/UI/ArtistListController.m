@@ -131,11 +131,8 @@
     }
     
     // Configure the cell...
-    RoArtist    *artist = [self.mArtistList objectAtIndex:[indexPath row]];
+    [cell setArtist:[self.mArtistList objectAtIndex:[indexPath row]]];
   
-    [cell.uiArtistName setText:artist.Name];
-    [cell.uiAlbumCount setText:[NSString stringWithFormat:@"%d", artist.AlbumCount]];
-    
     return cell;
 }
 

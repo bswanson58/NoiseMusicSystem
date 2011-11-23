@@ -89,7 +89,7 @@
     [self.mClient.mappingProvider addObjectMapping:mapping];
     
     mapping = [RKObjectMapping mappingForClass:[RoPlayQueueTrack class]];
-    [mapping mapAttributes:@"TrackId", @"TrackName", @"AlbumName", @"ArtistName", @"IsPlaying", @"HasPlayed", @"IsFaulted", nil];
+    [mapping mapAttributes:@"TrackId", @"TrackName", @"AlbumName", @"ArtistName", @"DurationMilliseconds", @"IsPlaying", @"HasPlayed", @"IsFaulted", @"IsStrategySourced", nil];
     [self.mClient.mappingProvider addObjectMapping:mapping];
 
     mapping = [RKObjectMapping mappingForClass:[PlayQueueListResult class]];

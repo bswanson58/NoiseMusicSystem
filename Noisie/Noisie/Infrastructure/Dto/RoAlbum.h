@@ -18,7 +18,7 @@
 @property (nonatomic, assign)   int              TrackCount;
 @property (nonatomic, assign)   int              Rating;
 @property (nonatomic, assign)   unsigned int     PublishedYear;
-@property (nonatomic, retain)   NSNumber        *Genre;
+@property (nonatomic, retain)   NSString        *Genre;
 @property (nonatomic, copy)     NSString        *IsFavorite;
 
 @end

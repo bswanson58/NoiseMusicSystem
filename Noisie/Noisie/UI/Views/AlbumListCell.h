@@ -11,9 +11,10 @@
 
 @interface AlbumListCell : UITableViewCell
 
-@property (retain, nonatomic) IBOutlet UILabel *uiAlbumName;
-@property (retain, nonatomic) IBOutlet UILabel *uiTrackCount;
-@property (retain, nonatomic) IBOutlet UILabel *uiPublishedYear;
+@property (retain, nonatomic) IBOutlet UILabel      *uiAlbumName;
+@property (retain, nonatomic) IBOutlet UILabel      *uiTrackCount;
+@property (retain, nonatomic) IBOutlet UILabel      *uiPublishedYear;
+@property (retain, nonatomic) IBOutlet UIImageView  *uiIsFavorite;
 
 - (IBAction)cmdPlay:(id)sender;
 
