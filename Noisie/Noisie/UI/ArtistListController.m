@@ -9,6 +9,7 @@
 #import "ArtistListController.h"
 #import "ArtistListResult.h"
 #import "RoArtist.h"
+#import "RoSearchResultItem.h"
 #import "Events.h"
 
 @interface ArtistListController ()
@@ -60,6 +61,16 @@
     [self.mArtistList sortUsingDescriptors:[NSArray arrayWithObject:orderDescriptor]];
 
     [self.uiArtistList reloadData];
+}
+
+- (void) setSearchFocus:(RoSearchResultItem *)item {
+    for (RoArtist *artist in self.mArtistList) {
+        if([artist.DbId isEqualToNumber:item.ArtistId]) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:EventArtistSelected object:artist];
+            
+            break;
+        }
+    }
 }
 
 #pragma mark - View lifecycle

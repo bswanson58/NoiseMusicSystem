@@ -37,6 +37,7 @@ NSString * const    EventPlayQueueListUpdate        = @"eventPlayQueueListUpdate
 
 NSString * const    EventSearchRequest              = @"event:SearchRequest";
 NSString * const    EventSearchUpdate               = @"event:SearchUpdate";
+NSString * const    EventSearchFocus                = @"event:SearchFocus";
 
 NSString * const    EventPlayQueueChanged           = @"event:PlayQueueChanged";
 

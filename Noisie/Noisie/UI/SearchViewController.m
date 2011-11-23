@@ -94,6 +94,12 @@
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    RoSearchResultItem    *item = [self.mResultsList objectAtIndex:[indexPath row]];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventSearchFocus object:item];
+}
+
 #pragma mark - View lifecycle
 
 - (void)didReceiveMemoryWarning {
