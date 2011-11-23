@@ -18,6 +18,7 @@
 @synthesize HasPlayed;
 @synthesize IsFaulted;
 @synthesize DurationMilliseconds;
+@synthesize IsStrategySourced;
 
 - (void) dealloc {
     self.TrackId = nil;
@@ -27,6 +28,7 @@
     self.IsPlaying = nil;
     self.HasPlayed = nil;
     self.IsFaulted = nil;
+    self.IsStrategySourced = nil;
     
     [super dealloc];
 }

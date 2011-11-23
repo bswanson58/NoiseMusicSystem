@@ -87,12 +87,18 @@
     self.mAlbumViewController = [[[AlbumViewController alloc] initWithNibName:nil bundle:nil] autorelease];
     
     self.mFavoritesViewController = [[[FavoritesViewController alloc] initForTabController] autorelease];
+    tabInfo = [[[UITabBarItem alloc] initWithTitle:@"Favorites" image:[UIImage imageNamed:@"iPad Favorites Tab.png"] tag:1] autorelease];
+    self.mFavoritesViewController.tabBarItem = tabInfo;
     [self addChildViewController:self.mFavoritesViewController];
     
     self.mSearchViewController = [[[SearchViewController alloc] initForTabController] autorelease];
+    tabInfo = [[[UITabBarItem alloc] initWithTitle:@"Search" image:[UIImage imageNamed:@"iPad Search Tab.png"] tag:1] autorelease];
+    self.mSearchViewController.tabBarItem = tabInfo;
     [self addChildViewController:self.mSearchViewController];
     
     self.mQueueViewController = [[[QueueViewController alloc] initForTabController] autorelease];
+    tabInfo = [[[UITabBarItem alloc] initWithTitle:@"Now Playing" image:[UIImage imageNamed:@"iPad Queue Tab.png"] tag:1] autorelease];
+    self.mQueueViewController.tabBarItem = tabInfo;
     [self addChildViewController:self.mQueueViewController];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistSelected:) name:EventArtistSelected object:nil];

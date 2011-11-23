@@ -40,6 +40,7 @@
 - (void) onFavoriteListRequest:(NSNotification *)notification;
 - (void) onPlayQueueListRequest:(NSNotification *)notification;
 - (void) onSearchRequest:(NSNotification *)notification;
+- (void) onTransportCommand:(NSNotification *)notification;
 
 @end
 
@@ -75,6 +76,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onFavoriteListRequest:) name:EventFavoritesListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPlayQueueListRequest:) name:EventPlayQueueListRequest object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onSearchRequest:) name:EventSearchRequest object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTransportCommand:) name:EventTransportCommand object:nil];
     }
     
     return( self );
@@ -189,6 +191,12 @@
     NSString    *searchText = [notification object];
     
     [self.mSearchClient requestSearch:searchText];
+}
+
+- (void) onTransportCommand:(NSNotification *)notification {
+    NSNumber    *command = [notification object];
+    
+    [self.mQueueClient transportCommand:command];
 }
 
 @end

@@ -10,6 +10,7 @@
 #import "RoPlayQueueTrack.h"
 #import "PlayQueueListResult.h"
 #import "PlayQueueListDelegate.h"
+#import "ServerResultDelegate.h"
 #import "BaseServerResult.h"
 #import "Events.h"
 
@@ -17,10 +18,12 @@
 
 @property (nonatomic, retain)   RKObjectManager         *mClient;
 @property (nonatomic, retain)   PlayQueueListDelegate   *mPlayQueueListDelegate;
+@property (nonatomic, retain)   ServerResultDelegate    *mServerResultDelegate;
 
 - (void) initObjectMappings;
 
 - (void) onPlayQueueList:(PlayQueueListResult *) result;
+- (void) onServerResult:(BaseServerResult *) result;
 
 @end
 
@@ -28,10 +31,12 @@
 
 @synthesize mClient;
 @synthesize mPlayQueueListDelegate;
+@synthesize mServerResultDelegate;
 
 - (void) dealloc {
     self.mClient = nil;
     self.mPlayQueueListDelegate = nil;
+    self.mServerResultDelegate = nil;
     
     [super dealloc];
 }
@@ -50,7 +55,7 @@
     
     [self.mClient loadObjectsAtResourcePath:url
                               objectMapping:[self.mClient.mappingProvider objectMappingForClass:[BaseServerResult class]]
-                                   delegate:self];
+                                   delegate:self.mServerResultDelegate];
 }
 
 - (void) enqueueTrack:(NSNumber *)trackId {
@@ -60,7 +65,7 @@
     
     [self.mClient loadObjectsAtResourcePath:url
                               objectMapping:[self.mClient.mappingProvider objectMappingForClass:[BaseServerResult class]]
-                                   delegate:self];
+                                   delegate:self.mServerResultDelegate];
 }
 
 - (void) requestPlayQueueList {
@@ -72,6 +77,22 @@
 - (void) onPlayQueueList:(PlayQueueListResult *)result {
     if([result.Success isEqualToString:@"true"]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:EventPlayQueueListUpdate object:result.Tracks];
+    }
+}
+
+- (void) transportCommand:(NSNumber *)command {
+    NSMutableString *path = [NSMutableString stringWithString:@"transportCommand"];
+    NSDictionary    *params = [[[NSDictionary alloc] initWithObjectsAndKeys:command, @"command", nil] autorelease];
+    NSString        *url = [path appendQueryParams:params];
+    
+    [self.mClient loadObjectsAtResourcePath:url
+                              objectMapping:[self.mClient.mappingProvider objectMappingForClass:[BaseServerResult class]]
+                                   delegate:self.mServerResultDelegate];
+}
+
+- (void) onServerResult:(BaseServerResult *)result {
+    if(![result.Success isEqualToString:@"true"]) {
+        NSLog( @"Error from server in RemoteQueueClient: %@", result.ErrorMessage );
     }
 }
 
@@ -89,7 +110,7 @@
     [self.mClient.mappingProvider addObjectMapping:mapping];
     
     mapping = [RKObjectMapping mappingForClass:[RoPlayQueueTrack class]];
-    [mapping mapAttributes:@"TrackId", @"TrackName", @"AlbumName", @"ArtistName", @"IsPlaying", @"HasPlayed", @"IsFaulted", nil];
+    [mapping mapAttributes:@"TrackId", @"TrackName", @"AlbumName", @"ArtistName", @"DurationMilliseconds", @"IsPlaying", @"HasPlayed", @"IsFaulted", @"IsStrategySourced", nil];
     [self.mClient.mappingProvider addObjectMapping:mapping];
 
     mapping = [RKObjectMapping mappingForClass:[PlayQueueListResult class]];
@@ -98,6 +119,7 @@
     [self.mClient.mappingProvider addObjectMapping:mapping];
 
     self.mPlayQueueListDelegate = [[[PlayQueueListDelegate alloc] initWithPlayQueueListBlock:^(PlayQueueListResult *result) { [self onPlayQueueList:result]; } ] autorelease];
+    self.mServerResultDelegate = [[[ServerResultDelegate alloc] initWithServerResultBlock:^(BaseServerResult *result) { [self onServerResult:result]; } ] autorelease];
 }
 
 @end

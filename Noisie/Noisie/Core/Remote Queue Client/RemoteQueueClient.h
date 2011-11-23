@@ -18,4 +18,6 @@
 
 - (void) requestPlayQueueList;
 
+- (void) transportCommand:(NSNumber *) command;
+
 @end

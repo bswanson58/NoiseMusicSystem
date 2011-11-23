@@ -7,10 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "RoArtist.h"
 
 @interface ArtistListCell : UITableViewCell
 
-@property (retain, nonatomic) IBOutlet UILabel *uiArtistName;
-@property (retain, nonatomic) IBOutlet UILabel *uiAlbumCount;
+@property (retain, nonatomic) IBOutlet UILabel      *uiArtistName;
+@property (retain, nonatomic) IBOutlet UILabel      *uiAlbumCount;
+@property (retain, nonatomic) IBOutlet UILabel      *uiArtistGenre;
+@property (retain, nonatomic) IBOutlet UIImageView  *uiIsFavorite;
+
+- (void) setArtist:(RoArtist *) artist;
 
 @end

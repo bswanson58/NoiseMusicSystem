@@ -20,14 +20,18 @@
 
 @synthesize mTrack;
 @synthesize mDateFormatter;
+@synthesize uiTrackNumber;
 @synthesize uiTrackName;
 @synthesize uiTrackDuration;
+@synthesize uiIsFavorite;
 
 - (void)dealloc {
     self.mTrack = nil;
     self.mDateFormatter = nil;
+    self.uiTrackNumber = nil;
     self.uiTrackName = nil;
     self.uiTrackDuration = nil;
+    self.uiIsFavorite = nil;
     
     [super dealloc];
 }
@@ -37,13 +41,21 @@
     
     if( self.mDateFormatter == nil ) {
         self.mDateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-        [self.mDateFormatter setDateFormat:@"mm:ss"];
+        [self.mDateFormatter setDateFormat:@"m:ss"];
     }
 
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:self.mTrack.DurationMilliseconds / 1000];
     [self.uiTrackDuration setText:[self.mDateFormatter stringFromDate:date]];
     
+    [self.uiTrackNumber setText:[NSString stringWithFormat:@"%d", track.TrackNumber]];
     [self.uiTrackName setText:self.mTrack.Name];
+    
+    if([track.IsFavorite isEqualToString:@"true"]) {
+        [self.uiIsFavorite setHidden:NO];
+    }
+    else {
+        [self.uiIsFavorite setHidden:YES];
+    }
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

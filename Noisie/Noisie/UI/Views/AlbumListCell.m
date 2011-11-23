@@ -20,6 +20,7 @@
 @synthesize uiAlbumName;
 @synthesize uiTrackCount;
 @synthesize uiPublishedYear;
+@synthesize uiIsFavorite;
 @synthesize mAlbum;
 
 - (void)dealloc {
@@ -28,6 +29,7 @@
     self.uiTrackCount = nil;
     self.uiPublishedYear = nil;
 
+    [uiIsFavorite release];
     [super dealloc];
 }
 
@@ -37,6 +39,13 @@
     [self.uiAlbumName setText:self.mAlbum.Name];
     [self.uiTrackCount setText:[NSString stringWithFormat:@"%d", self.mAlbum.TrackCount]];
     [self.uiPublishedYear setText:[NSString stringWithFormat:@"%d", self.mAlbum.PublishedYear]];
+    
+    if([album.IsFavorite isEqualToString:@"true"]) {
+        [self.uiIsFavorite setHidden:NO];
+    }
+    else {
+        [self.uiIsFavorite setHidden:YES];
+    }
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
