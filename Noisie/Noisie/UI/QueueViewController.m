@@ -16,6 +16,7 @@
 
 @property (retain, nonatomic)   NSMutableArray *mPlayQueueList;
 
+- (void) onServerConnected:(NSNotification *)notification;
 - (void) onPlayQueueList:(NSNotification *)notification;
 - (void) onPlayQueueChanged:(NSNotification *) notification;
 - (void) requestCommand:(int) command;
@@ -55,6 +56,10 @@
     [uiPlayNextButton release];
     [uiRepeatButton release];
     [super dealloc];
+}
+
+- (void) onServerConnected:(NSNotification *)notification {
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventPlayQueueListRequest object:nil];
 }
 
 - (void) onPlayQueueList:(NSNotification *)notification {
@@ -145,6 +150,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPlayQueueList:) name:EventPlayQueueListUpdate object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPlayQueueChanged:) name:EventPlayQueueChanged object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onServerConnected:) name:EventServerConnected object:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:EventPlayQueueListRequest object:nil];
 }
 
