@@ -10,6 +10,7 @@
 #import "PlayQueueListCell.h"
 #import "RoPlayQueueTrack.h"
 #import "Events.h"
+#import "TransportCommands.h"
 
 @interface QueueViewController ()
 
@@ -17,6 +18,7 @@
 
 - (void) onPlayQueueList:(NSNotification *)notification;
 - (void) onPlayQueueChanged:(NSNotification *) notification;
+- (void) requestCommand:(int) command;
 
 @end
 
@@ -24,6 +26,12 @@
 
 @synthesize uiQueueList;
 @synthesize uiListCell;
+@synthesize uiPlayButton;
+@synthesize uiPauseButton;
+@synthesize uiStopButton;
+@synthesize uiPlayPreviousButton;
+@synthesize uiPlayNextButton;
+@synthesize uiRepeatButton;
 @synthesize mPlayQueueList;
 
 - (id)initForTabController {
@@ -40,6 +48,12 @@
     self.uiListCell = nil;
     self.uiQueueList = nil;
 
+    [uiPlayButton release];
+    [uiPauseButton release];
+    [uiStopButton release];
+    [uiPlayPreviousButton release];
+    [uiPlayNextButton release];
+    [uiRepeatButton release];
     [super dealloc];
 }
 
@@ -85,6 +99,35 @@
     return cell;
 }
 
+#pragma mark - Command handlers
+
+- (IBAction)cmdPlay:(id)sender {
+    [self requestCommand:eTransportCommand_Play];
+}
+
+- (IBAction)cmdPause:(id)sender {
+    [self requestCommand:eTransportCommand_Pause];
+}
+
+- (IBAction)cmdStop:(id)sender {
+    [self requestCommand:eTransportCommand_Stop];
+}
+
+- (IBAction)cmdPlayPrevious:(id)sender {
+    [self requestCommand:eTransportCommand_PlayPrevious];
+}
+
+- (IBAction)cmdPlayNext:(id)sender {
+    [self requestCommand:eTransportCommand_PlayNext];
+}
+
+- (IBAction)cmdRepeat:(id)sender {
+}
+
+- (void) requestCommand:(int)command {
+    [[NSNotificationCenter defaultCenter] postNotificationName:EventTransportCommand object:[NSNumber numberWithInt:command]];
+}
+
 #pragma mark - View lifecycle
 
 - (void)didReceiveMemoryWarning {
@@ -107,6 +150,12 @@
 
 - (void)viewDidUnload {
     [self setUiQueueList:nil];
+    [self setUiPlayButton:nil];
+    [self setUiPauseButton:nil];
+    [self setUiStopButton:nil];
+    [self setUiPlayPreviousButton:nil];
+    [self setUiPlayNextButton:nil];
+    [self setUiRepeatButton:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
