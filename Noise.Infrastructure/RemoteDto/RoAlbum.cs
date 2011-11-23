@@ -15,7 +15,7 @@ namespace Noise.Infrastructure.RemoteDto {
 		[DataMember]
 		public UInt32			PublishedYear { get; set; }
 		[DataMember]
-		public long				Genre { get; set; }
+		public string			Genre { get; set; }
 		[DataMember]
 		public bool				IsFavorite { get; set; }
 	}

@@ -4,6 +4,7 @@ using System.Linq;
 using System.ServiceModel;
 using AutoMapper;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteDto;
@@ -22,10 +23,25 @@ namespace Noise.RemoteHost {
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
 		}
 
-		private static RoArtist TransformArtist( DbArtist dbArtist ) {
+		private string RetrieveGenre( long genreId ) {
+			var retValue = "";
+
+			if( genreId != Constants.cDatabaseNullOid ) {
+				var genre = mNoiseManager.TagManager.GetGenre( genreId );
+
+				if( genre != null ){
+					retValue = genre.Name;
+				}
+			}
+
+			return( retValue );
+		}
+
+		private RoArtist TransformArtist( DbArtist dbArtist ) {
 			var retValue = new RoArtist();
 
 			Mapper.DynamicMap( dbArtist, retValue );
+			retValue.Genre = RetrieveGenre( dbArtist.Genre );
 
 			return( retValue );
 		}
@@ -85,10 +101,11 @@ namespace Noise.RemoteHost {
 			return( retValue );
 		}
 
-		private static RoAlbum TransformAlbum( DbAlbum dbAlbum ) {
+		private RoAlbum TransformAlbum( DbAlbum dbAlbum ) {
 			var retValue = new RoAlbum();
 
 			Mapper.DynamicMap( dbAlbum, retValue );
+			retValue.Genre = RetrieveGenre( dbAlbum.Genre );
 
 			return( retValue );
 		}

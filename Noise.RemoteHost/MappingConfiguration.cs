@@ -11,8 +11,12 @@ namespace Noise.RemoteHost {
 		}
 
 		protected override void Configure() {
+			CreateMap<DbArtist, RoArtist>()
+				.ForMember( dest => dest.Genre, opt => opt.Ignore());
+
 			CreateMap<DbAlbum, RoAlbum>()
-				.ForMember( dest => dest.ArtistId, opt => opt.MapFrom( src => src.Artist ));
+				.ForMember( dest => dest.ArtistId, opt => opt.MapFrom( src => src.Artist ))
+				.ForMember( dest => dest.Genre, opt => opt.Ignore());
 
 			CreateMap<DbTrack, RoTrack>()
 				.ForMember( dest => dest.ArtistId, opt => opt.Ignore())
@@ -47,7 +51,9 @@ namespace Noise.RemoteHost {
 				.ForMember( dest => dest.ArtistName, opt => opt.MapFrom( src => src.Artist.Name ))
 				.ForMember( dest => dest.AlbumName, opt => opt.MapFrom( src => src.Album.Name ))
 				.ForMember( dest => dest.TrackId, opt => opt.MapFrom( src => src.Track.DbId ))
-				.ForMember( dest => dest.TrackName, opt => opt.MapFrom( src => src.Track.Name ));
+				.ForMember( dest => dest.TrackName, opt => opt.MapFrom( src => src.Track.Name ))
+				.ForMember( dest => dest.DurationMilliseconds, opt => opt.MapFrom( src =>src.Track.DurationMilliseconds ))
+				.ForMember( dest => dest.IsStrategySourced, opt => opt.MapFrom( src => src.StrategySource != eStrategySource.User ));
 
 			CreateMap<SearchResultItem, RoSearchResultItem>()
 				.ForMember( dest => dest.ArtistName, opt => opt.MapFrom( src => src.Artist != null ? src.Artist.Name : "" ))

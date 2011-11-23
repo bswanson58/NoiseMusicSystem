@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace Noise.Infrastructure.RemoteDto {
 	[DataContract]
@@ -12,10 +13,14 @@ namespace Noise.Infrastructure.RemoteDto {
 		[DataMember]
 		public string	ArtistName { get; set; }
 		[DataMember]
+		public Int32	DurationMilliseconds { get; set; }
+		[DataMember]
 		public bool		IsPlaying { get; set; }
 		[DataMember]
 		public bool		HasPlayed { get; set; }
 		[DataMember]
 		public bool		IsFaulted { get; set; }
+		[DataMember]
+		public bool		IsStrategySourced { get; set; }
 	}
 }
