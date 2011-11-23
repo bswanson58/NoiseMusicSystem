@@ -15,6 +15,7 @@
 
 @property (nonatomic, retain)   NSMutableArray  *mArtistList;
 
+- (void) onServerConnected:(NSNotification *) notification;
 - (void) onArtistListUpdate:(NSNotification *) notification;
 
 @end
@@ -43,6 +44,12 @@
     [super dealloc];
 }
 
+- (void) onServerConnected:(NSNotification *)notification {
+    if( [self.mArtistList count] > 0 ) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:EventArtistListRequest object:nil];
+    }
+}
+
 - (void) onArtistListUpdate:(NSNotification *)notification {
     ArtistListResult    *result = [notification object];
     
@@ -63,6 +70,7 @@
     self.navigationItem.title = @"Library - Artists";
     self.mArtistList = [[[NSMutableArray alloc] init] autorelease];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onServerConnected:) name:EventServerConnected object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onArtistListUpdate:) name:EventArtistListUpdate object:nil];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:EventArtistListRequest object:nil];
