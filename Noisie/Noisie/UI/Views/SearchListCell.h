@@ -11,10 +11,11 @@
 
 @interface SearchListCell : UITableViewCell
 
-@property (retain, nonatomic) RoSearchResultItem    *SearchItem;
-
-@property (retain, nonatomic) IBOutlet UILabel *uiItemTitle;
+@property (retain, nonatomic) IBOutlet UILabel  *uiItemTitle;
+@property (retain, nonatomic) IBOutlet UIButton *uiPlayButton;
 
 - (IBAction)cmdPlay:(id)sender;
+
+- (void) setSearchItem:(RoSearchResultItem *) searchItem;
 
 @end

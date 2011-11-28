@@ -9,13 +9,19 @@
 #import "SearchListCell.h"
 #import "Events.h"
 
+@interface SearchListCell ()
+
+@property (retain, nonatomic)   RoSearchResultItem  *mSearchItem;
+
+@end
+
 @implementation SearchListCell
 
 @synthesize uiItemTitle;
-@synthesize SearchItem;
+@synthesize uiPlayButton;
+@synthesize mSearchItem;
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
-{
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
@@ -23,27 +29,49 @@
     return self;
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
-{
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
 }
 
 - (void)dealloc {
-    self.SearchItem = nil;
+    self.mSearchItem = nil;
     self.uiItemTitle = nil;
-    
+    self.uiPlayButton = nil;
+
     [super dealloc];
 }
 
+- (void) setSearchItem:(RoSearchResultItem *)searchItem {
+    self.mSearchItem = searchItem;
+    
+    NSNumber    *dbNull = [NSNumber numberWithInt:0];
+    
+    if((( self.mSearchItem.TrackId != nil ) &&
+        (![self.mSearchItem.TrackId isEqualToNumber:dbNull])) ||
+       (( self.mSearchItem.AlbumId != nil ) &&
+        (![self.mSearchItem.AlbumId isEqualToNumber:dbNull]))) {
+        [self.uiPlayButton setHidden:NO];
+    }
+    else {
+        [self.uiPlayButton setHidden:YES];
+    }
+    
+    [self.uiItemTitle setText:[self.mSearchItem formattedTitle]];
+}
+
 - (IBAction)cmdPlay:(id)sender {
-    if( self.SearchItem != nil ) {
-        if( self.SearchItem.TrackId != 0 ) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:EventQueueTrackRequest object:self.SearchItem.TrackId];
+    if( self.mSearchItem != nil ) {
+        NSNumber    *dbNull = [NSNumber numberWithInt:0];
+        
+        if(( self.mSearchItem.TrackId != nil ) &&
+           (![self.mSearchItem.TrackId isEqualToNumber:dbNull])) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:EventQueueTrackRequest object:self.mSearchItem.TrackId];
         }
-        else if( self.SearchItem.AlbumId != 0 ) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:EventQueueAlbumRequest object:self.SearchItem.AlbumId];
+        else if(( self.mSearchItem.AlbumId != nil ) &&
+                (![self.mSearchItem.AlbumId isEqualToNumber:dbNull])) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:EventQueueAlbumRequest object:self.mSearchItem.AlbumId];
         }
     }
 }

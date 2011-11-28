@@ -10,7 +10,7 @@
 #import "RoSearchResultItem.h"
 #import "Events.h"
 
-@interface SearchViewController ()
+@interface SearchViewController () <UITextFieldDelegate>
 
 @property (retain, nonatomic)   NSMutableArray  *mResultsList;
 
@@ -53,6 +53,12 @@
     [self.mResultsList removeAllObjects];
     [self.mResultsList addObjectsFromArray:resultList];
     
+    if([self.mResultsList count] == 0 ) {
+        RoSearchResultItem  *blank = [[[RoSearchResultItem alloc] init] autorelease];
+        
+        [self.mResultsList addObject:blank];
+    }
+    
     [self.uiResultsList reloadData];
 }
 
@@ -60,6 +66,23 @@
     if([self.uiSearchText.text length] > 0 ) {
         [[NSNotificationCenter defaultCenter] postNotificationName:EventSearchRequest object:self.uiSearchText.text];
     }
+}
+
+#pragma mark - Text field delegate
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    [self.mResultsList removeAllObjects];
+    [self.uiResultsList reloadData];
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if([self.uiSearchText.text length] > 0 ) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:EventSearchRequest object:self.uiSearchText.text];
+    }
+
+    [self.view endEditing:YES];
+    
+    return( YES );
 }
 
 #pragma mark - Table view data source
@@ -86,10 +109,7 @@
     }
     
     // Configure the cell...
-    RoSearchResultItem  *item = [self.mResultsList objectAtIndex:[indexPath row]];
-    
-    cell.SearchItem = item;
-    [cell.uiItemTitle setText:[item formattedTitle]];
+    [cell setSearchItem:[self.mResultsList objectAtIndex:[indexPath row]]];
     
     return cell;
 }
@@ -112,6 +132,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    self.uiSearchText.delegate = self;
 }
 
 - (void)viewDidUnload {

@@ -45,7 +45,6 @@
 								<int key="NSvFlags">292</int>
 								<string key="NSFrame">{{50, 9}, {715, 29}}</string>
 								<reference key="NSSuperview" ref="550266746"/>
-								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:345</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
@@ -150,6 +149,14 @@
 					<int key="connectionID">6</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">uiPlayButton</string>
+						<reference key="source" ref="86968738"/>
+						<reference key="destination" ref="423622489"/>
+					</object>
+					<int key="connectionID">9</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
 						<string key="label">cmdPlay:</string>
 						<reference key="source" ref="423622489"/>
@@ -216,7 +223,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">8</int>
+			<int key="maxID">9</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>

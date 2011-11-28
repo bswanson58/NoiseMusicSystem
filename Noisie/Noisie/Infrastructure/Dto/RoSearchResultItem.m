@@ -31,6 +31,21 @@
 }
 
 - (NSString *) formattedTitle {
-    return([NSString stringWithFormat:@"%@ (%@/%@)", self.TrackName, self.ArtistName, self.AlbumName]);
+    NSString    *retValue = @"";
+    
+    if([self.TrackName length] > 0 ) {
+        retValue = [NSString stringWithFormat:@"Track: %@ (%@/%@)", self.TrackName, self.ArtistName, self.AlbumName];
+    }
+    else if([self.AlbumName length] > 0 ) {
+        retValue = [NSString stringWithFormat:@"Album: %@ (%@)", self.AlbumName, self.ArtistName];
+    }
+    else if([self.ArtistName length] > 0 ) {
+        retValue = [NSString stringWithFormat:@"Artist: %@", self.ArtistName];
+    }
+    else {
+        retValue = [NSString stringWithFormat:@"%@", @"(Nothing was found.)"];
+    }
+    
+    return( retValue );
 }
 @end
