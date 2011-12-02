@@ -177,9 +177,7 @@ namespace Noise.Core.DataBuilders {
 					database.Store( artist );
 				}
 
-				var	fileName = StorageHelpers.GetPath( database.Database, file );
-				info.Text = File.ReadAllText( fileName );
-
+				database.BlobStorage.Store( info.DbId, StorageHelpers.GetPath( database.Database, file ));
 				database.Insert( info );
 
 				file.MetaDataPointer = info.DbId;
@@ -214,9 +212,7 @@ namespace Noise.Core.DataBuilders {
 					database.Store( artist );
 				}
 
-				var	fileName = StorageHelpers.GetPath( database.Database, file );
-				artwork.Image = File.ReadAllBytes( fileName );
-
+				database.BlobStorage.Insert( artwork.DbId, StorageHelpers.GetPath( database.Database, file ));
 				database.Insert( artwork );
 
 				file.MetaDataPointer = artwork.DbId;

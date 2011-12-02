@@ -92,6 +92,9 @@
     <Reference Include="Accessibility">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="AutoMapper">
+      <HintPath>..\lib\AutoMapper\v1.1.0.188\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="Bass.Net, Version=2.4.8.0, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\BASS.Net\v2.4.8.0\Bass.Net.dll</HintPath>
@@ -191,6 +194,10 @@
     <Compile Include="BackgroundTasks\LinkSimilarArtists.cs" />
     <Compile Include="BackgroundTasks\LinkTopAlbums.cs" />
     <Compile Include="BackgroundTasks\SearchBuilder.cs" />
+    <Compile Include="BlobStore\BlobStorageException.cs" />
+    <Compile Include="BlobStore\BlobStorageManager.cs" />
+    <Compile Include="BlobStore\IBlobStorageManager.cs" />
+    <Compile Include="Database\BlobStorageResolver.cs" />
     <Compile Include="Database\Database.cs" />
     <Compile Include="Database\DatabaseCache.cs" />
     <Compile Include="Database\DatabaseManager.cs" />

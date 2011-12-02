@@ -6,18 +6,18 @@ using Noise.UI.Support;
 
 namespace Noise.UI.Dto {
 	public class UiAlbumExtra : ViewModelBase {
-		public	DbArtwork	Artwork { get; private set; }
-		public	DbTextInfo	TextInfo { get; private set; }
+		public	Artwork		Artwork { get; private set; }
+		public	TextInfo	TextInfo { get; private set; }
 		public	BitmapImage	Image { get; private set; }
 		public	bool		IsDirty { get; private set; }
 
-		public UiAlbumExtra( DbArtwork artwork ) {
+		public UiAlbumExtra( Artwork artwork ) {
 			Artwork = artwork;
 
 			Image = BitmapUtils.CreateBitmap( artwork.Image );
 		}
 
-		public UiAlbumExtra( DbTextInfo textInfo ) {
+		public UiAlbumExtra( TextInfo textInfo ) {
 			TextInfo = textInfo;
 
 			Image = BitmapUtils.LoadBitmap( "Text Document.png" );

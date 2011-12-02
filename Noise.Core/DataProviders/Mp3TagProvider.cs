@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
@@ -9,6 +10,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using TagLib;
 using TagLib.Id3v2;
+using File = TagLib.File;
 
 namespace Noise.Core.DataProviders {
 	public class Mp3TagProvider : IMetaDataProvider {
@@ -236,8 +238,9 @@ namespace Noise.Core.DataProviders {
 										{ Source = InfoSource.Tag,
 										  Name = "Embedded Tag",
 										  FolderLocation = mFile.ParentFolder };
-								dbPicture.Image = new byte[picture.Data.Count];
-								picture.Data.CopyTo( dbPicture.Image, 0 );
+
+								var memoryStream = new MemoryStream( picture.Data.ToArray());
+								database.BlobStorage.Store( dbPicture.DbId, memoryStream );
 
 								database.Insert( dbPicture );
 							}

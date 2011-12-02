@@ -114,6 +114,11 @@ namespace Noise.Core.DataBuilders {
 												   TypeSwitch.Case<DbArtwork>( CleanContent ),
 												   TypeSwitch.Case<DbTextInfo>( CleanContent ));
 					database.Delete( associatedItem );
+
+					if(( associatedItem is DbArtwork ) ||
+					   ( associatedItem is DbTextInfo )) {
+						database.BlobStorage.Delete( associatedItem.DbId );
+					}
 				}
 			}
 

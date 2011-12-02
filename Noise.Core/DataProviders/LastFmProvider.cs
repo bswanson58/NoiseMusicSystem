@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 using CuttingEdge.Conditions;
 using Lastfm.Services;
 using Microsoft.Practices.Unity;
@@ -166,7 +167,7 @@ namespace Noise.Core.DataProviders {
 							artist.ExternalGenre = mTagManager.ResolveGenre( tags[0].Item.Name );
 						}
 
-						bio.Text = artistMatch.Bio.getContent();
+						database.BlobStorage.StoreText( bio.DbId, artistMatch.Bio.getContent());
 						bio.Source = InfoSource.External;
 						bio.IsContentAvailable = true;
 
@@ -227,9 +228,10 @@ namespace Noise.Core.DataProviders {
 					database.Insert( artwork );
 				}
 
-				artwork.Image = imageData;
-				artwork.UpdateExpiration();
+				var	memoryStream = new MemoryStream( imageData );
+				database.BlobStorage.Store( artwork.DbId, memoryStream );
 
+				artwork.UpdateExpiration();
 				database.Store( artwork );
 			}
 			catch( Exception ex ) {

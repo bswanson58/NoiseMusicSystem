@@ -5,7 +5,6 @@ namespace Noise.Infrastructure.Dto {
 	public class DbArtwork : ExpiringContent {
 		public	long			FolderLocation { get; set; }
 		public	InfoSource		Source { get; set; }
-		public	byte[]			Image { get; set; }
 		public	bool			IsUserSelection { get; set; }
 		public	string			Name { get; set; }
 		public	Int16			Rotation { get; set; }

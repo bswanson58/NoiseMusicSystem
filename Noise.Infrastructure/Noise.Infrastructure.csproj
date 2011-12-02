@@ -148,6 +148,7 @@
     <Compile Include="Configuration\SystemConfiguration.cs" />
     <Compile Include="Dto\AlbumSupportInfo.cs" />
     <Compile Include="Dto\ArtistSupportInfo.cs" />
+    <Compile Include="Dto\Artwork.cs" />
     <Compile Include="Dto\AudioLevels.cs" />
     <Compile Include="Dto\BaseCommandArgs.cs" />
     <Compile Include="Dto\ContentType.cs" />
@@ -185,8 +186,10 @@
     <Compile Include="Dto\SetMp3TagCommandArgs.cs" />
     <Compile Include="Dto\SetRatingCommandArgs.cs" />
     <Compile Include="Dto\StreamInfo.cs" />
+    <Compile Include="Dto\TextInfo.cs" />
     <Compile Include="Dto\UpdatePlayCountCommandArgs.cs" />
     <Compile Include="GlobalCommands.cs" />
+    <Compile Include="Interfaces\IBlobStorage.cs" />
     <Compile Include="Interfaces\ICloudSyncManager.cs" />
     <Compile Include="Interfaces\IDataExchangeManager.cs" />
     <Compile Include="Interfaces\IEqManager.cs" />

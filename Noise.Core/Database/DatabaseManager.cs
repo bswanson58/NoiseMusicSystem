@@ -1,15 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Microsoft.Practices.Unity;
+using Noise.Core.BlobStore;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	class DatabaseManager : IDatabaseManager {
-		private readonly object				mLockObject;
-		private readonly IUnityContainer	mContainer;
-		private readonly ILog				mLog;
-		private readonly List<IDatabase>	mAvailableDatabases;
+		private const string	cBlobStorageName	= "Noise Blobs";
+
+		private readonly object					mLockObject;
+		private readonly IUnityContainer		mContainer;
+		private readonly ILog					mLog;
+		private readonly List<IDatabase>		mAvailableDatabases;
 		private readonly Dictionary<string, IDatabase>	mReservedDatabases;
-		private	bool						mHasShutdown;
+		private readonly IBlobStorageManager	mBlobStorageMgr;
+		private	bool							mHasShutdown;
 
 		public DatabaseManager( IUnityContainer container ) {
 			mLockObject = new object();
@@ -17,6 +24,9 @@ namespace Noise.Core.Database {
 			mLog = mContainer.Resolve<ILog>();
 			mReservedDatabases = new Dictionary<string, IDatabase>();
 			mAvailableDatabases = new List<IDatabase>();
+
+			var blobStoragePath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName );
+			mBlobStorageMgr = new BlobStorageManager( new BlobStorageResolver(), blobStoragePath );
 		}
 
 		public bool Initialize() {
@@ -27,7 +37,13 @@ namespace Noise.Core.Database {
 				if( database.OpenWithCreateDatabase()) {
 					mAvailableDatabases.Add( database );
 
-					retValue = true;
+					var blobStorage = Path.Combine( cBlobStorageName, database.DatabaseVersion.DatabaseId.ToString());
+					retValue = mBlobStorageMgr.OpenStorage( blobStorage );
+					if(!retValue ) {
+						mBlobStorageMgr.CreateStorage( blobStorage );
+
+						retValue = mBlobStorageMgr.OpenStorage( blobStorage );
+					}
 				}
 			}
 
@@ -54,6 +70,8 @@ namespace Noise.Core.Database {
 				mAvailableDatabases.Clear();
 				mHasShutdown = true;
 			}
+
+			mBlobStorageMgr.CloseStorage();
 		}
 
 		public IDatabase ReserveDatabase() {
@@ -112,6 +130,10 @@ namespace Noise.Core.Database {
 					}
 				}
 			}
+		}
+
+		public IBlobStorage GetBlobDatabase() {
+			return( mBlobStorageMgr.GetStorage());
 		}
 	}
 }

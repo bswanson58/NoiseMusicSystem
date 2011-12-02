@@ -43,15 +43,15 @@ namespace Noise.UI.ViewModels {
 
 			if( mAlbumInfo != null ) {
 				if( mAlbumInfo.AlbumCovers != null ) {
-					mAlbumImages.AddRange( from DbArtwork artwork in mAlbumInfo.AlbumCovers where !artwork.IsUserSelection select new UiAlbumExtra( artwork ));
+					mAlbumImages.AddRange( from Artwork artwork in mAlbumInfo.AlbumCovers where !artwork.IsUserSelection select new UiAlbumExtra( artwork ));
 				}
 
 				if( mAlbumInfo.Artwork != null ) {
-					mAlbumImages.AddRange( from DbArtwork artwork in mAlbumInfo.Artwork select new UiAlbumExtra( artwork ));
+					mAlbumImages.AddRange( from Artwork artwork in mAlbumInfo.Artwork select new UiAlbumExtra( artwork ));
 				}
 
 				if( mAlbumInfo.Info != null ) {
-					mAlbumImages.AddRange( from DbTextInfo info in mAlbumInfo.Info select new UiAlbumExtra( info ));
+					mAlbumImages.AddRange( from TextInfo info in mAlbumInfo.Info select new UiAlbumExtra( info ));
 				}
 
 				if( mAlbumImages.Count > 0 ) {

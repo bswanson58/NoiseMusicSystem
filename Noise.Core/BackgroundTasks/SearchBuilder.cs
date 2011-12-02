@@ -128,7 +128,7 @@ namespace Noise.Core.BackgroundTasks {
 
 						var biography = database.Database.ExecuteScalar( "SELECT DbTextInfo Where Artist = @artistId AND ContentType = @biography", parms ) as DbTextInfo;
 						if( biography != null ) {
-							indexBuilder.AddSearchItem( eSearchItemType.Biography, biography.Text );
+							indexBuilder.AddSearchItem( eSearchItemType.Biography, database.BlobStorage.RetrieveText( biography.DbId ));
 						}
 
 						var	albumList = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>();
@@ -139,7 +139,7 @@ namespace Noise.Core.BackgroundTasks {
 							var infoList = database.Database.ExecuteQuery( "SELECT DbTextInfo WHERE Album = @albumId AND ContentType = @textInfo", parms ).OfType<DbTextInfo>();
 
 							foreach( var info in infoList ) {
-								indexBuilder.AddSearchItem( album, eSearchItemType.TextInfo, info.Text );
+								indexBuilder.AddSearchItem( album, eSearchItemType.TextInfo, database.BlobStorage.RetrieveText( info.DbId ));
 							}
 
 							var trackList = database.Database.ExecuteQuery( "SELECT DbTrack WHERE Album = @albumId", parms ).OfType<DbTrack>();

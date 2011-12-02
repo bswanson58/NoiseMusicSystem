@@ -20,6 +20,7 @@ namespace Noise.Core.Database {
 		private readonly ILog				mLog;
 		private readonly string				mDatabaseLocation;
 		private readonly string				mDatabaseName;
+		private IBlobStorage				mBlobStorage;
 
 		public	DB			Database { get; private set; }
 		public	string		DatabaseId { get; private set; }
@@ -245,6 +246,20 @@ namespace Noise.Core.Database {
 				if( dbObject is DbBase ) {
 					mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Delete ));
 				}
+			}
+		}
+
+		public IBlobStorage BlobStorage {
+			get {
+				var	retValue = mBlobStorage;
+
+				if( retValue == null ) {
+					var dbMgr = mContainer.Resolve<IDatabaseManager>();
+
+					retValue = mBlobStorage = dbMgr.GetBlobDatabase();
+				}
+
+				return( retValue );
 			}
 		}
 	}

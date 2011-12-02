@@ -132,22 +132,22 @@ namespace Noise.RemoteHost {
 			return( retValue );
 		}
 
-		private static DbArtwork SelectAlbumCover( AlbumSupportInfo info ) {
-			DbArtwork	retValue = null;
+		private static Artwork SelectAlbumCover( AlbumSupportInfo info ) {
+			Artwork	retValue = null;
 
 			if( info != null ) {
 				if(( info.AlbumCovers != null ) &&
 				   ( info.AlbumCovers.GetLength( 0 ) > 0 )) {
-					retValue = (( from DbArtwork artwork in info.AlbumCovers where artwork.IsUserSelection select artwork ).FirstOrDefault() ??
-							    ( from DbArtwork artwork in info.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
-							    ( from DbArtwork artwork in info.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault()) ??
+					retValue = (( from Artwork artwork in info.AlbumCovers where artwork.IsUserSelection select artwork ).FirstOrDefault() ??
+							    ( from Artwork artwork in info.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
+							    ( from Artwork artwork in info.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault()) ??
 								info.AlbumCovers[0];
 				}
 
 				if(( retValue == null ) &&
 				   ( info.Artwork != null ) &&
 				   ( info.Artwork.GetLength( 0 ) > 0 )) {
-					retValue = ( from DbArtwork artwork in info.Artwork
+					retValue = ( from Artwork artwork in info.Artwork
 								 where artwork.Name.IndexOf( "front", StringComparison.InvariantCultureIgnoreCase ) >= 0 select artwork ).FirstOrDefault();
 
 					if(( retValue == null ) &&

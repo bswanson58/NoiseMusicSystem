@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AutoMapper;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
 using Noise.Core.DataBuilders;
@@ -664,11 +665,24 @@ namespace Noise.Core.Database {
 				parms["similarArtists"] = ContentType.SimilarArtists;
 				parms["topAlbums"] = ContentType.TopAlbums;
 
-				retValue = new ArtistSupportInfo( database.Database.ExecuteScalar( "SELECT DbTextInfo Where Artist = @artistId AND ContentType = @biography", parms ) as DbTextInfo,
-												  database.Database.ExecuteScalar( "SELECT DbArtwork Where Artist = @artistId AND ContentType = @artistImage", parms ) as DbArtwork,
-												  database.Database.ExecuteScalar( "SELECT DbAssociatedItemList Where Artist = @artistId AND ContentType = @similarArtists", parms ) as DbAssociatedItemList,
-												  database.Database.ExecuteScalar( "SELECT DbAssociatedItemList Where Artist = @artistId AND ContentType = @topAlbums", parms ) as DbAssociatedItemList,
-												  database.Database.ExecuteScalar( "SELECT DbAssociatedItemList Where Artist = @artistId AND ContentType = @bandMembers", parms ) as DbAssociatedItemList );
+				var similarArtists = database.Database.ExecuteScalar( "SELECT DbAssociatedItemList Where Artist = @artistId AND ContentType = @similarArtists", parms ) as DbAssociatedItemList;
+				var topAlbums = database.Database.ExecuteScalar( "SELECT DbAssociatedItemList Where Artist = @artistId AND ContentType = @topAlbums", parms ) as DbAssociatedItemList;
+				var bandMembers = database.Database.ExecuteScalar( "SELECT DbAssociatedItemList Where Artist = @artistId AND ContentType = @bandMembers", parms ) as DbAssociatedItemList;
+
+				Artwork	artwork = null;
+				var artistImage = database.Database.ExecuteScalar( "SELECT DbArtwork Where Artist = @artistId AND ContentType = @artistImage", parms ) as DbArtwork;
+				if( artistImage != null ) {
+					artwork = TransformArtwork( artistImage, database );
+				}
+
+				TextInfo textInfo = null;
+				var	dbTextInfo =  database.Database.ExecuteScalar( "SELECT DbTextInfo Where Artist = @artistId AND ContentType = @biography", parms ) as DbTextInfo;
+				if( dbTextInfo != null ) {
+					textInfo = TransformTextInfo( dbTextInfo, database );
+				}
+
+				retValue = new ArtistSupportInfo( textInfo, artwork, similarArtists, topAlbums, bandMembers );
+												  
 				
 			}
 			catch( Exception ex ) {
@@ -700,6 +714,23 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		private static Artwork TransformArtwork( DbArtwork artwork, IDatabase database ) {
+			var retValue = new Artwork( artwork.AssociatedItem, artwork.ContentType );
+
+			Mapper.DynamicMap( artwork, retValue );
+			retValue.Image = database.BlobStorage.RetrieveBytes( artwork.DbId );
+
+			return( retValue );
+		}
+
+		private static TextInfo TransformTextInfo( DbTextInfo textInfo, IDatabase database ) {
+			var	retValue = new TextInfo( textInfo.AssociatedItem, textInfo.ContentType );
+
+			Mapper.DynamicMap( textInfo, retValue );
+			retValue.Text = database.BlobStorage.RetrieveText( textInfo.DbId );
+
+			return( retValue );
+		}
 
 		public AlbumSupportInfo GetAlbumSupportInfo( long albumId ) {
 			AlbumSupportInfo	retValue = null;
@@ -712,9 +743,13 @@ namespace Noise.Core.Database {
 				parms["coverType"] = ContentType.AlbumCover;
 				parms["otherType"] = ContentType.AlbumArtwork;
 
-				retValue = new AlbumSupportInfo( database.Database.ExecuteQuery( "SELECT DbArtwork WHERE Album = @albumId AND ( ContentType = @coverType OR IsUserSelection )", parms ).OfType<DbArtwork>().ToArray(),
-												 database.Database.ExecuteQuery( "SELECT DbArtwork WHERE Album = @albumId AND ContentType = @otherType", parms ).OfType<DbArtwork>().ToArray(),
-												 database.Database.ExecuteQuery( "SELECT DbTextInfo WHERE Album = @albumId" ,parms ).OfType<DbTextInfo>().ToArray());
+				var dbAlbumCovers = database.Database.ExecuteQuery( "SELECT DbArtwork WHERE Album = @albumId AND ( ContentType = @coverType OR IsUserSelection )", parms ).OfType<DbArtwork>().ToArray();
+				var dbAlbumArtwork =  database.Database.ExecuteQuery( "SELECT DbArtwork WHERE Album = @albumId AND ContentType = @otherType", parms ).OfType<DbArtwork>().ToArray();
+				var textInfo = database.Database.ExecuteQuery( "SELECT DbTextInfo WHERE Album = @albumId" ,parms ).OfType<DbTextInfo>().ToArray();
+
+				retValue = new AlbumSupportInfo( dbAlbumCovers.Select( dbAlbum => TransformArtwork( dbAlbum, database ) ).ToArray(),
+												 dbAlbumArtwork.Select( dbAlbum => TransformArtwork( dbAlbum, database ) ).ToArray(),
+												 textInfo.Select( info => TransformTextInfo( info, database )).ToArray());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Exception - GetAlbumSupportInfo:", ex );

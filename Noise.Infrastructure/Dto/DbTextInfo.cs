@@ -6,13 +6,11 @@ namespace Noise.Infrastructure.Dto {
 		public	long			FolderLocation { get; set; }
 		public	InfoSource		Source { get; set; }
 		public	string			Name { get; set; }
-		public	string			Text { get; set; }
 
 		public DbTextInfo( long associatedItem, ContentType contentType ) :
 		base( associatedItem, contentType ) {
 			FolderLocation = Constants.cDatabaseNullOid;
 			Source = InfoSource.Unknown;
-			Text = "";
 		}
 
 		[Export("PersistenceType")]

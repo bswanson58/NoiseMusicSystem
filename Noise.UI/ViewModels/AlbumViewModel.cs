@@ -199,20 +199,20 @@ namespace Noise.UI.ViewModels {
 			var	retValue = new ImageScrubberItem( 0, mUnknownImage, 0 );
 
 			if( info != null ) {
-				DbArtwork	cover = null;
+				Artwork	cover = null;
 
 				if(( info.AlbumCovers != null ) &&
 				   ( info.AlbumCovers.GetLength( 0 ) > 0 )) {
-					cover = (( from DbArtwork artwork in info.AlbumCovers where artwork.IsUserSelection select artwork ).FirstOrDefault() ??
-							 ( from DbArtwork artwork in info.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
-							 ( from DbArtwork artwork in info.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault()) ??
+					cover = (( from Artwork artwork in info.AlbumCovers where artwork.IsUserSelection select artwork ).FirstOrDefault() ??
+							 ( from Artwork artwork in info.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
+							 ( from Artwork artwork in info.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault()) ??
 								SupportInfo.AlbumCovers[0];
 				}
 
 				if(( cover == null ) &&
 				   ( info.Artwork != null ) &&
 				   ( info.Artwork.GetLength( 0 ) > 0 )) {
-					cover = ( from DbArtwork artwork in info.Artwork
+					cover = ( from Artwork artwork in info.Artwork
 							  where artwork.Name.IndexOf( "front", StringComparison.InvariantCultureIgnoreCase ) >= 0 select artwork ).FirstOrDefault();
 
 					if(( cover == null ) &&
