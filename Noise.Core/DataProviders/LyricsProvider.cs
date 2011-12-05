@@ -136,9 +136,15 @@ namespace Noise.Core.DataProviders {
 		} 
 
 		private void OnSearchCompleted( IAsyncResult result ) {
-			SearchResults = mSearchClient.EndSearch( result );
-
-			Completed( this, EventArgs.Empty );
+			try {
+				SearchResults = mSearchClient.EndSearch( result );
+			}
+			catch( Exception ) {
+				SearchResults = new List<IWebResult>();
+			}
+			finally {
+				Completed( this, EventArgs.Empty );
+			}
 		}
 	}
 
@@ -160,9 +166,13 @@ namespace Noise.Core.DataProviders {
 		private void OnRequestCompleted( IAsyncResult result ) {
 			try {
 				var	response = mWebRequest.EndGetResponse( result );
-				var reader = new StreamReader( response.GetResponseStream());
+				var stream = response.GetResponseStream();
 
-				PageText = reader.ReadToEnd();
+				if( stream != null ) {
+					var reader = new StreamReader( stream );
+
+					PageText = reader.ReadToEnd();
+				}
 			}
 			catch( Exception ex ) {
 				Exception = ex;
