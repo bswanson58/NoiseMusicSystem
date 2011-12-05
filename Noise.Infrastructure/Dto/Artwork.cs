@@ -2,8 +2,8 @@
 	public class Artwork : DbArtwork {
 		public	byte[]			Image { get; set; }
 
-		public Artwork( long associatedItem, ContentType contentType ) :
-			base( associatedItem, contentType ) {
+		public Artwork( DbArtwork artwork ) :
+			base( artwork ) {
 		}
 	}
 }

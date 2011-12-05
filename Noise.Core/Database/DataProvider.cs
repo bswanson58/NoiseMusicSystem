@@ -715,21 +715,11 @@ namespace Noise.Core.Database {
 		}
 
 		private static Artwork TransformArtwork( DbArtwork artwork, IDatabase database ) {
-			var retValue = new Artwork( artwork.AssociatedItem, artwork.ContentType );
-
-			Mapper.DynamicMap( artwork, retValue );
-			retValue.Image = database.BlobStorage.RetrieveBytes( artwork.DbId );
-
-			return( retValue );
+			return( new Artwork( artwork ) { Image = database.BlobStorage.RetrieveBytes( artwork.DbId ) });
 		}
 
 		private static TextInfo TransformTextInfo( DbTextInfo textInfo, IDatabase database ) {
-			var	retValue = new TextInfo( textInfo.AssociatedItem, textInfo.ContentType );
-
-			Mapper.DynamicMap( textInfo, retValue );
-			retValue.Text = database.BlobStorage.RetrieveText( textInfo.DbId );
-
-			return( retValue );
+			return( new TextInfo( textInfo ) { Text = database.BlobStorage.RetrieveText( textInfo.DbId )});
 		}
 
 		public AlbumSupportInfo GetAlbumSupportInfo( long albumId ) {

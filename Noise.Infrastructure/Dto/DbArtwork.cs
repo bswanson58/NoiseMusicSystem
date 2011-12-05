@@ -9,6 +9,15 @@ namespace Noise.Infrastructure.Dto {
 		public	string			Name { get; set; }
 		public	Int16			Rotation { get; set; }
 
+		protected DbArtwork( DbArtwork clone ) :
+			base( clone ) {
+			FolderLocation = clone.FolderLocation;
+			Source = clone.Source;
+			IsUserSelection = clone.IsUserSelection;
+			Name = clone.Name;
+			Rotation = clone.Rotation;
+		}
+
 		public DbArtwork( long associatedItem, ContentType contentType ) :
 			base( associatedItem, contentType ) {
 			Source = InfoSource.Unknown;

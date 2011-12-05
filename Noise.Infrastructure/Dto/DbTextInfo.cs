@@ -7,6 +7,13 @@ namespace Noise.Infrastructure.Dto {
 		public	InfoSource		Source { get; set; }
 		public	string			Name { get; set; }
 
+		protected DbTextInfo( DbTextInfo clone ) :
+			base( clone ) {
+			FolderLocation = clone.FolderLocation;
+			Source = clone.Source;
+			Name = clone.Name;
+		}
+
 		public DbTextInfo( long associatedItem, ContentType contentType ) :
 		base( associatedItem, contentType ) {
 			FolderLocation = Constants.cDatabaseNullOid;

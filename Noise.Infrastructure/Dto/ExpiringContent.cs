@@ -9,6 +9,16 @@ namespace Noise.Infrastructure.Dto {
 		public	DateTime	HarvestDate { get; private set; }
 		public	bool		IsContentAvailable { get; set; }
 
+		protected ExpiringContent( ExpiringContent clone ) :
+			base( clone.DbId ) {
+			AssociatedItem = clone.AssociatedItem;
+			Artist = clone.Artist;
+			Album = clone.Album;
+			ContentType = clone.ContentType;
+			HarvestDate = clone.HarvestDate;
+			IsContentAvailable = clone.IsContentAvailable;
+		}
+
 		public ExpiringContent( long associatedItem, ContentType contentType ) {
 			AssociatedItem = associatedItem;
 			ContentType = contentType;
