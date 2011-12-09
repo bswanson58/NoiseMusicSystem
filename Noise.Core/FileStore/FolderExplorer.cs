@@ -4,22 +4,20 @@ using System.IO;
 using System.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 using Recls;
 
 namespace Noise.Core.FileStore {
 	public class FolderExplorer : IFolderExplorer {
 		private readonly IUnityContainer	mContainer;
-		private readonly ILog				mLog;
 		private bool						mStopExploring;
 		private DatabaseCache<StorageFile>	mFileCache;
 		private DatabaseCache<StorageFolder>	mFolderCache;
 
 		public  FolderExplorer( IUnityContainer container ) {
 			mContainer = container;
-			mLog = mContainer.Resolve<ILog>();
 		}
 
 		public IEnumerable<RootFolder> RootFolderList() {
@@ -39,7 +37,7 @@ namespace Noise.Core.FileStore {
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - RootFolderList: ", ex );
+					NoiseLogger.Current.LogException( "Exception - RootFolderList: ", ex );
 				}
 				finally {
 					databaseMgr.FreeDatabase( database );
@@ -65,11 +63,11 @@ namespace Noise.Core.FileStore {
 
 						foreach( var rootFolder in rootFolders ) {
 							if( Directory.Exists( StorageHelpers.GetPath( database.Database, rootFolder ))) {
-								mLog.LogInfo( "Synchronizing folder: {0}", rootFolder.DisplayName );
+								NoiseLogger.Current.LogInfo( "Synchronizing folder: {0}", rootFolder.DisplayName );
 								BuildFolder( database, rootFolder );
 							}
 							else {
-								mLog.LogMessage( "Storage folder does not exists: {0}", rootFolder.DisplayName );
+								NoiseLogger.Current.LogMessage( "Storage folder does not exists: {0}", rootFolder.DisplayName );
 							}
 
 							if( mStopExploring ) {
@@ -87,7 +85,7 @@ namespace Noise.Core.FileStore {
 						mFolderCache.Clear();
 					}
 					catch( Exception ex ) {
-						mLog.LogException( "Exception - FolderExplorer:", ex );
+						NoiseLogger.Current.LogException( "Exception - FolderExplorer:", ex );
 					}
 					finally {
 						databaseMgr.FreeDatabase( database );
@@ -136,7 +134,7 @@ namespace Noise.Core.FileStore {
 					database.Insert( folder );
 
 					if( parent is RootFolder ) {
-						mLog.LogInfo( string.Format( "Adding folder: {0}", StorageHelpers.GetPath( database.Database, folder )));
+						NoiseLogger.Current.LogInfo( string.Format( "Adding folder: {0}", StorageHelpers.GetPath( database.Database, folder )));
 					}
 				}
 				else {

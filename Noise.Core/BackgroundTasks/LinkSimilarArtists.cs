@@ -6,14 +6,12 @@ using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	public class LinkSimilarArtists : IBackgroundTask {
 		private IUnityContainer		mContainer;
 		private IDatabaseManager	mDatabaseMgr;
-		private ILog				mLog;
 
 		private DatabaseCache<DbArtist>	mArtistCache;
 		private List<long>				mSimilarArtistLists;
@@ -26,7 +24,6 @@ namespace Noise.Core.BackgroundTasks {
 		public bool Initialize( IUnityContainer container ) {
 			mContainer = container;
 			mDatabaseMgr = mContainer.Resolve<IDatabaseManager>();
-			mLog = mContainer.Resolve<ILog>();
 
 			InitializeLists();
 
@@ -42,7 +39,7 @@ namespace Noise.Core.BackgroundTasks {
 				mListEnum = mSimilarArtistLists.GetEnumerator();
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - LinkSimilarArtists:InitializeLists ", ex );
+				NoiseLogger.Current.LogException( "Exception - LinkSimilarArtists:InitializeLists ", ex );
 			}
 			finally {
 				mDatabaseMgr.FreeDatabase( database );
@@ -87,12 +84,12 @@ namespace Noise.Core.BackgroundTasks {
 						if( needUpdate ) {
 							database.Store( similarArtistList );
 
-							mLog.LogMessage( "Updated links to similar artists." );
+							NoiseLogger.Current.LogMessage( "Updated links to similar artists." );
 						}
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - LinkSimilarArtist Task:", ex );
+					NoiseLogger.Current.LogException( "Exception - LinkSimilarArtist Task:", ex );
 				}
 				finally {
 					mDatabaseMgr.FreeDatabase( database );

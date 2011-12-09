@@ -6,17 +6,14 @@ using Noise.Core.Database;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	internal class SummaryBuilder : ISummaryBuilder {
 		private readonly IUnityContainer	mContainer;
-		private	readonly ILog				mLog;
 		private bool						mStop;
 
 		public SummaryBuilder( IUnityContainer container ) {
 			mContainer =container;
-			mLog = container.Resolve<ILog>();
 		}
 
 		public void BuildSummaryData( DatabaseChangeSummary summary ) {
@@ -43,7 +40,7 @@ namespace Noise.Core.DataBuilders {
 						var artistList = database.Database.ExecuteQuery( "SELECT DbArtist WHERE LastChangeTicks > @lastScan", parms ).OfType<DbArtist>();
 
 						foreach( var artist in artistList ) {
-							mLog.LogInfo( string.Format( "Building summary data for: {0}", artist.Name ));
+							NoiseLogger.Current.LogInfo( string.Format( "Building summary data for: {0}", artist.Name ));
 
 							parms["artistId"] = artist.DbId;
 							var	albums = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>();
@@ -125,7 +122,7 @@ namespace Noise.Core.DataBuilders {
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - Building summary data: ", ex );
+					NoiseLogger.Current.LogException( "Exception - Building summary data: ", ex );
 				}
 				finally {
 					databaseMgr.FreeDatabase( database );

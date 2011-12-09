@@ -5,7 +5,6 @@ using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.Core.Database {
@@ -13,7 +12,6 @@ namespace Noise.Core.Database {
 		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
-		private readonly ILog				mLog;
 
 		private AsyncCommand<SetFavoriteCommandArgs>	mSetFavoriteCommand;
 		private AsyncCommand<SetRatingCommandArgs>		mSetRatingCommand;
@@ -23,7 +21,6 @@ namespace Noise.Core.Database {
 			mContainer = container;
 			mEvents = mContainer.Resolve<IEventAggregator>();
 			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
-			mLog = mContainer.Resolve<ILog>();
 		}
 
 		public bool Initialize() {
@@ -45,7 +42,7 @@ namespace Noise.Core.Database {
 		private void OnExecutionComplete( object sender, AsyncCommandCompleteEventArgs args ) {
 			if(( args != null ) &&
 			   ( args.Exception != null )) {
-				mLog.LogException( "Exception - DataUpdates:OnExecutionComplete:", args.Exception );
+				NoiseLogger.Current.LogException( "Exception - DataUpdates:OnExecutionComplete:", args.Exception );
 			}
 		}
 
@@ -65,14 +62,14 @@ namespace Noise.Core.Database {
 										 TypeSwitch.Case<DbAlbum>( album => SetFavorite( database, album, args.Value  )),
 										 TypeSwitch.Case<DbTrack>( track => SetFavorite( database, track, args.Value )),
 										 TypeSwitch.Case<DbPlayList>( playList => SetFavorite( database, playList, args.Value )),
-										 TypeSwitch.Default( () => mLog.LogMessage( String.Format( "Unknown type passed to SetFavorite: {0}", item.GetType()))));
+										 TypeSwitch.Default( () => NoiseLogger.Current.LogMessage( String.Format( "Unknown type passed to SetFavorite: {0}", item.GetType()))));
 				}
 				else {
-					mLog.LogMessage( String.Format( "Cannot locate item for SetFavoriteCommand: {0}", args.ItemId ) );
+					NoiseLogger.Current.LogMessage( String.Format( "Cannot locate item for SetFavoriteCommand: {0}", args.ItemId ) );
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - SetFavorite:", ex );
+				NoiseLogger.Current.LogException( "Exception - SetFavorite:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -95,14 +92,14 @@ namespace Noise.Core.Database {
 										 TypeSwitch.Case<DbAlbum>( album => SetRating( database, album, args.Value  )),
 										 TypeSwitch.Case<DbTrack>( track => SetRating( database, track, args.Value )),
 										 TypeSwitch.Case<DbPlayList>( playList => SetRating( database, playList, args.Value )),
-										 TypeSwitch.Default( () => mLog.LogMessage( String.Format( "Unknown type passed to SetRating: {0}", item.GetType()))));
+										 TypeSwitch.Default( () => NoiseLogger.Current.LogMessage( String.Format( "Unknown type passed to SetRating: {0}", item.GetType()))));
 				}
 				else {
-					mLog.LogMessage( String.Format( "Cannot locate item for SetRatingCommand: {0}", args.ItemId ) );
+					NoiseLogger.Current.LogMessage( String.Format( "Cannot locate item for SetRatingCommand: {0}", args.ItemId ) );
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - SetRating:", ex );
+				NoiseLogger.Current.LogException( "Exception - SetRating:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -122,7 +119,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - SetFavorite(DbArtist):", ex );
+				NoiseLogger.Current.LogException( "Exception - SetFavorite(DbArtist):", ex );
 			}
 		}
 
@@ -157,7 +154,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - SetFavorite(DbAlbum):", ex );
+				NoiseLogger.Current.LogException( "Exception - SetFavorite(DbAlbum):", ex );
 			}
 		}
 
@@ -206,7 +203,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - SetFavorite(DbTrack):", ex );
+				NoiseLogger.Current.LogException( "Exception - SetFavorite(DbTrack):", ex );
 			}
 		}
 
@@ -225,7 +222,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - SetFavorite(DbList):", ex );
+				NoiseLogger.Current.LogException( "Exception - SetFavorite(DbList):", ex );
 			}
 		}
 
@@ -241,7 +238,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - SetRating(DbArtist):", ex );
+				NoiseLogger.Current.LogException( "Exception - SetRating(DbArtist):", ex );
 			}
 		}
 
@@ -277,7 +274,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - SetRating(DbAlbum):", ex );
+				NoiseLogger.Current.LogException( "Exception - SetRating(DbAlbum):", ex );
 			}
 		}
 
@@ -328,7 +325,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - SetRating(DbTrack):", ex );
+				NoiseLogger.Current.LogException( "Exception - SetRating(DbTrack):", ex );
 			}
 		}
 
@@ -343,7 +340,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - SetRating(DbPlayList):", ex );
+				NoiseLogger.Current.LogException( "Exception - SetRating(DbPlayList):", ex );
 			}
 		}
 
@@ -374,7 +371,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - DataUpdates:OnSetAlbumCover", ex );
+				NoiseLogger.Current.LogException( "Exception - DataUpdates:OnSetAlbumCover", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );

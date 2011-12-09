@@ -14,12 +14,10 @@ namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteDataServer : INoiseRemoteData {
 		private readonly IUnityContainer	mContainer;
-		private readonly ILog				mLog;
 		private	readonly INoiseManager		mNoiseManager;
 
 		public RemoteDataServer( IUnityContainer container ) {
 			mContainer = container;
-			mLog = mContainer.Resolve<ILog>();
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
 		}
 
@@ -56,7 +54,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "RemoteDataServer:GetArtistList", ex );
+				NoiseLogger.Current.LogException( "RemoteDataServer:GetArtistList", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -93,7 +91,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "RemoteDataServer:GetArtistInfo", ex );
+				NoiseLogger.Current.LogException( "RemoteDataServer:GetArtistInfo", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -124,7 +122,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "RemoteDataServer:GetAlbumList", ex );
+				NoiseLogger.Current.LogException( "RemoteDataServer:GetAlbumList", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -189,7 +187,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "RemoteDataServer:GetAlbumInfo", ex );
+				NoiseLogger.Current.LogException( "RemoteDataServer:GetAlbumInfo", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -223,7 +221,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "RemoteDataServer:GetTrackList", ex );
+				NoiseLogger.Current.LogException( "RemoteDataServer:GetTrackList", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -256,7 +254,7 @@ namespace Noise.RemoteHost {
 				
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "RemoteDataServer:GetFavoriteList", ex );
+				NoiseLogger.Current.LogException( "RemoteDataServer:GetFavoriteList", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}

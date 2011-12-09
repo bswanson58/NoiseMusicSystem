@@ -14,7 +14,6 @@ namespace Noise.Core.Database {
 		private readonly IDataProvider				mDataProvider;
 		private readonly Dictionary<long, DbGenre>	mGenreList;
 		private readonly List<DbDecadeTag>			mDecadeList;
-		private readonly ILog						mLog;
 
 		public TagManager( IUnityContainer container ) {
 			mContainer = container;
@@ -23,8 +22,6 @@ namespace Noise.Core.Database {
 
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
 			mDataProvider = mNoiseManager.DataProvider;
-
-			mLog = mContainer.Resolve<ILog>();
 		}
 
 		public bool Initialize() {
@@ -40,7 +37,7 @@ namespace Noise.Core.Database {
 				retValue = true;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - TagManager.Initialize", ex );
+				NoiseLogger.Current.LogException( "Exception - TagManager.Initialize", ex );
 			}
 
 			return( retValue );

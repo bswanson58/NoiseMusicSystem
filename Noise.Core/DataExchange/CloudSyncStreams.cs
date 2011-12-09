@@ -13,12 +13,10 @@ namespace Noise.Core.DataExchange {
 	public class CloudSyncStreams : ICloudSyncProvider {
 		private IUnityContainer		mContainer;
 		private IDatabase			mCloudDatabase;
-		private ILog				mLog;
 
 		public bool Initialize( IUnityContainer container, IDatabase cloudDatabase ) {
 			mContainer = container;
 			mCloudDatabase = cloudDatabase;
-			mLog = mContainer.Resolve<ILog>();
 
 			return( true );
 		}
@@ -61,7 +59,7 @@ namespace Noise.Core.DataExchange {
 			}
 
 			if( updateCount > 0 ) {
-				mLog.LogInfo( string.Format( "CloudSyncStreams - UpdateFromCloud: {0} item(s).", updateCount ));
+				NoiseLogger.Current.LogInfo( string.Format( "CloudSyncStreams - UpdateFromCloud: {0} item(s).", updateCount ));
 			}
 		}
 
@@ -88,7 +86,7 @@ namespace Noise.Core.DataExchange {
 					}
 				}
 
-				mLog.LogInfo( string.Format( "Updated stream to cloud: {0}", item.Stream ));
+				NoiseLogger.Current.LogInfo( string.Format( "Updated stream to cloud: {0}", item.Stream ));
 			}
 		}
 	}

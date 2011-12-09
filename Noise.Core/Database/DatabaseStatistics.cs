@@ -2,13 +2,12 @@
 using System.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.FileStore;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	public class DatabaseStatistics {
 		private readonly IDatabaseManager	mDatabaseManager;
-		private readonly ILog				mLog;
 		private bool						mAllCounts;
 
 		public	int		ArtistCount { get; protected set; }
@@ -22,7 +21,6 @@ namespace Noise.Core.Database {
 
 		public DatabaseStatistics( IUnityContainer container ) {
 			mDatabaseManager = container.Resolve<IDatabaseManager>();
-			mLog = container.Resolve<ILog>();
 		}
 
 		public void GatherStatistics( bool allCounts ) {
@@ -45,7 +43,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - Building Database Statistical Data.", ex );
+				NoiseLogger.Current.LogException( "Exception - Building Database Statistical Data.", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );

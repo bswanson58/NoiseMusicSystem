@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
@@ -22,7 +23,7 @@ namespace Noise.Core.PlayQueue {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - PlayExhaustedStrategyFavorites: ", ex );
+				NoiseLogger.Current.LogException( "Exception - PlayExhaustedStrategyFavorites: ", ex );
 			}
 		}
 	}

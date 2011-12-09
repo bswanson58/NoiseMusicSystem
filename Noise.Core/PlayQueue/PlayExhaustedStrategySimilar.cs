@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -60,7 +61,7 @@ namespace Noise.Core.PlayQueue {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - PlayExhaustedStrategySimilar: ", ex );
+				NoiseLogger.Current.LogException( "Exception - PlayExhaustedStrategySimilar: ", ex );
 			}
 		}
 	}

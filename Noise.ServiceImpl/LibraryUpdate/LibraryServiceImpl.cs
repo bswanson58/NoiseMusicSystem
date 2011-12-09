@@ -29,12 +29,10 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 		private	IScheduler					mJobScheduler;
 		private IServiceBusManager			mServiceBus;
 		private ServiceHost					mLibraryUpdateServiceHost;
-		private readonly ILog				mLog;
 
 		public LibraryServiceImpl( IUnityContainer container ) {
 			mContainer = container;
 			mEvents = mContainer.Resolve<IEventAggregator>();
-			mLog = mContainer.Resolve<ILog>();
 		}
 
 		public override void OnStart( string[] args ) {
@@ -68,7 +66,7 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 
  				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - LibraryUpdateService host start:", ex );
+					NoiseLogger.Current.LogException( "Exception - LibraryUpdateService host start:", ex );
 				}
 			}
 		}
@@ -82,7 +80,7 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 			mNoiseManager.Shutdown();
 		}
 
-		private void ScheduleLibraryUpdate() {
+/*		private void ScheduleLibraryUpdate() {
 			var jobDetail = new JobDetail( cNoiseLibraryUpdate, "LibraryUpdater", typeof( LibraryUpdateJob ));
 			var trigger = new SimpleTrigger( cNoiseLibraryUpdate, "LibraryUpdater",
 											 DateTime.UtcNow + TimeSpan.FromSeconds( 10 ), null, SimpleTrigger.RepeatIndefinitely, TimeSpan.FromSeconds( 15 )); 
@@ -90,9 +88,9 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 			trigger.JobDataMap[cNoiseLibraryUpdate] = this;
 
 			mJobScheduler.ScheduleJob( jobDetail, trigger );
-			mLog.LogMessage( "Started Library Update schedule." );
+			NoiseLogger.Current.LogMessage( "Started Library Update schedule." );
 		}
-
+*/
 		public void UpdateLibrary() {
 			if(!mNoiseManager.LibraryBuilder.LibraryUpdateInProgress ) {
 				mNoiseManager.LibraryBuilder.StartLibraryUpdate();

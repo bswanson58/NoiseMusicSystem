@@ -8,7 +8,6 @@ using Noise.Core.DataBuilders;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	[Export( typeof( IContentProvider ) )]
@@ -29,12 +28,10 @@ namespace Noise.Core.DataProviders {
 		private IUnityContainer	mContainer;
 		private bool			mHasNetworkAccess;
 		private DiscogsClient	mClient;
-		private ILog			mLog;
 		public abstract ContentType ContentType { get; }
 
 		public bool Initialize( IUnityContainer container ) {
 			mContainer = container;
-			mLog = mContainer.Resolve<ILog>();
 
 			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
@@ -148,11 +145,11 @@ namespace Noise.Core.DataProviders {
 						forArtist.UpdateLastChange();
 						database.Store( forArtist );
 
-						mLog.LogMessage( String.Format( "Discogs updated artist: {0}", forArtist.Name ));
+						NoiseLogger.Current.LogMessage( String.Format( "Discogs updated artist: {0}", forArtist.Name ));
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Discogs Provider: ", ex );
+					NoiseLogger.Current.LogException( "Discogs Provider: ", ex );
 				}
 			}
 		}

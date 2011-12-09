@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using AutoMapper;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Unity;
 using Noise.Core.DataBuilders;
 using Noise.Core.FileStore;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
@@ -16,7 +16,6 @@ namespace Noise.Core.Database {
 		private readonly IUnityContainer	mContainer;
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly IContentManager	mContentManager;
-		private readonly ILog				mLog;
 
 		public	long	DatabaseId { get; private set; }
 		
@@ -24,7 +23,6 @@ namespace Noise.Core.Database {
 			mContainer = container;
 			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
 			mContentManager = mContainer.Resolve<IContentManager>();
-			mLog = mContainer.Resolve<ILog>();
 
 			IDatabase database = null;
 			try {
@@ -35,7 +33,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - Could not access database id.", ex );
+				NoiseLogger.Current.LogException( "Exception - Could not access database id.", ex );
 			}
 			finally {
 				if( database != null ) {
@@ -60,7 +58,7 @@ namespace Noise.Core.Database {
 				retValue = database.Database.ExecuteScalar( "SELECT DbBase Where DbId = @itemId", parms ) as DbBase;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetItem:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetItem:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -84,14 +82,14 @@ namespace Noise.Core.Database {
 					database.Insert( item );
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - InsertItem:", ex );
+					NoiseLogger.Current.LogException( "Exception - InsertItem:", ex );
 				}
 				finally {
 					mDatabaseManager.FreeDatabase( database );
 				}
 			}
 			else {
-				mLog.LogMessage( string.Format( "InsertItem: unknown item type: {0}", item.GetType()));
+				NoiseLogger.Current.LogMessage( string.Format( "InsertItem: unknown item type: {0}", item.GetType()));
 			}
 		}
 
@@ -105,7 +103,7 @@ namespace Noise.Core.Database {
 					database.Delete( dbItem );
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - UpdateItem:", ex );
+					NoiseLogger.Current.LogException( "Exception - UpdateItem:", ex );
 				}
 				finally {
 					mDatabaseManager.FreeDatabase( database );
@@ -125,7 +123,7 @@ namespace Noise.Core.Database {
 				retValue = database.Database.ExecuteScalar( "SELECT DbArtist Where DbId = @itemId", parms ) as DbArtist;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetArtist:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetArtist:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -144,7 +142,7 @@ namespace Noise.Core.Database {
 														   database.Database.ExecuteQuery( "SELECT DbArtist" ).OfType<DbArtist>());
 			}
 			catch( Exception ex ) {
-				mLog.LogException( ex );
+				NoiseLogger.Current.LogException( ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
@@ -165,7 +163,7 @@ namespace Noise.Core.Database {
 																from DbArtist artist in database.Database where filter.ArtistMatch( artist ) select artist );
 				}
 				catch( Exception ex ) {
-					mLog.LogException( ex );
+					NoiseLogger.Current.LogException( ex );
 
 					mDatabaseManager.FreeDatabase( database );
 				}
@@ -190,7 +188,7 @@ namespace Noise.Core.Database {
 				retValue = database.Database.ExecuteScalar( "SELECT DbArtist Where DbId = @artistId", parms ) as DbArtist;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetArtistForAlbum:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetArtistForAlbum:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -208,7 +206,7 @@ namespace Noise.Core.Database {
 														   database.Database.ExecuteQuery( "SELECT DbArtist WHERE IsFavorite = true" ).OfType<DbArtist>());
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetFavoriteArtists: ", ex );
+				NoiseLogger.Current.LogException( "Exception - GetFavoriteArtists: ", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
@@ -259,7 +257,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - UpdateArtistLastChanged:", ex );
+				NoiseLogger.Current.LogException( "Exception - UpdateArtistLastChanged:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -278,7 +276,7 @@ namespace Noise.Core.Database {
 				retValue = database.Database.ExecuteScalar( "SELECT DbAlbum Where DbId = @itemId", parms ) as DbAlbum;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetAlbum:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetAlbum:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -306,7 +304,7 @@ namespace Noise.Core.Database {
 														  database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>());
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetAlbumList:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetAlbumList:", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
@@ -326,7 +324,7 @@ namespace Noise.Core.Database {
 				retValue = database.Database.ExecuteScalar( "SELECT DbAlbum Where DbId = @albumId", parms ) as DbAlbum;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetAlbumForTrack:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetAlbumForTrack:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -344,7 +342,7 @@ namespace Noise.Core.Database {
 														  database.Database.ExecuteQuery( "SELECT DbAlbum WHERE IsFavorite = true" ).OfType<DbAlbum>());
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetFavoriteAlbums: ", ex );
+				NoiseLogger.Current.LogException( "Exception - GetFavoriteAlbums: ", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
@@ -415,7 +413,7 @@ namespace Noise.Core.Database {
 				retValue = database.Database.ExecuteScalar( "SELECT DbTrack Where DbId = @itemId", parms ) as DbTrack;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetTrack( trackId ): ", ex );
+				NoiseLogger.Current.LogException( "Exception - GetTrack( trackId ): ", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -437,7 +435,7 @@ namespace Noise.Core.Database {
 														  database.Database.ExecuteQuery( "SELECT DbTrack WHERE Album = @albumId", parms ).OfType<DbTrack>());
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetTrackList(albumId):", ex );
+				NoiseLogger.Current.LogException( "Exception - GetTrackList(albumId):", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
@@ -460,7 +458,7 @@ namespace Noise.Core.Database {
 														  database.Database.ExecuteQuery( "SELECT DbTrack WHERE IsFavorite = true" ).OfType<DbTrack>());
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetFavoriteTracks: ", ex );
+				NoiseLogger.Current.LogException( "Exception - GetFavoriteTracks: ", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
@@ -477,7 +475,7 @@ namespace Noise.Core.Database {
 														  database.Database.ExecuteQuery( "SELECT DbTrack ORDER BY DateAddedTicks DESC" ).OfType<DbTrack>());
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetNewlyAddedTracks: ", ex );
+				NoiseLogger.Current.LogException( "Exception - GetNewlyAddedTracks: ", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
@@ -530,7 +528,7 @@ namespace Noise.Core.Database {
 				retValue = database.Database.ExecuteScalar( "SELECT StorageFile Where MetaDataPointer = @trackId", parms ) as StorageFile;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetPhysicalFile:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetPhysicalFile:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -546,7 +544,7 @@ namespace Noise.Core.Database {
 				retValue = StorageHelpers.GetPath( database.Database, forFile );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetPhysicalFilePath:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetPhysicalFilePath:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -574,7 +572,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetAlbumPath:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetAlbumPath:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -635,7 +633,7 @@ namespace Noise.Core.Database {
 				retValue = database.Database.ExecuteScalar( "SELECT StorageFolder WHERE DbId = @folderId", parms ) as StorageFolder;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetStorageFolder:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetStorageFolder:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -686,7 +684,7 @@ namespace Noise.Core.Database {
 				
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetArtistSupportInfo:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetArtistSupportInfo:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -707,7 +705,7 @@ namespace Noise.Core.Database {
 																	   database.Database.ExecuteQuery( "SELECT DbDiscographyRelease WHERE Artist = @artistId", parms ).OfType<DbDiscographyRelease>());
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetDiscography: ", ex );
+				NoiseLogger.Current.LogException( "Exception - GetDiscography: ", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
@@ -742,7 +740,7 @@ namespace Noise.Core.Database {
 												 textInfo.Select( info => TransformTextInfo( info, database )).ToArray());
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetAlbumSupportInfo:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetAlbumSupportInfo:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -770,7 +768,7 @@ namespace Noise.Core.Database {
 				UpdateArtistLastChanged( lyric.ArtistId );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - StoreLyric:", ex );
+				NoiseLogger.Current.LogException( "Exception - StoreLyric:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -803,7 +801,7 @@ namespace Noise.Core.Database {
 				retValue = new DataProviderList<DbLyric>( database.DatabaseId, FreeDatabase, lyricsList );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetPossibleLyrics:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetPossibleLyrics:", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
@@ -850,7 +848,7 @@ namespace Noise.Core.Database {
 				retValue = database.Database.ExecuteScalar( "SELECT DbInternetStream Where DbId = @itemId", parms ) as DbInternetStream;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetStream:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetStream:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -868,7 +866,7 @@ namespace Noise.Core.Database {
 																from DbInternetStream stream in database.Database select stream );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetStreamList:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetStreamList:", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
@@ -909,7 +907,7 @@ namespace Noise.Core.Database {
 																from DbPlayList list in database.Database select list );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetPlayLists:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetPlayLists:", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
@@ -926,7 +924,7 @@ namespace Noise.Core.Database {
 																from DbGenre genre in database.Database select genre );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetGenreList:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetGenreList:", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
@@ -943,7 +941,7 @@ namespace Noise.Core.Database {
 															from DbTrack track in database.Database where track.Genre == genreId select track );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetGenreTracks:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetGenreTracks:", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
@@ -964,7 +962,7 @@ namespace Noise.Core.Database {
 														database.Database.ExecuteQuery( "SELECT DbTag Where TagGroup = @group", parms ).OfType<DbTag>());
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetTagList:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetTagList:", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
@@ -984,7 +982,7 @@ namespace Noise.Core.Database {
 																   database.Database.ExecuteQuery( "SELECT DbTagAssociation Where TagId = @tagId", parms ).OfType<DbTagAssociation>());
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - GetTagList:", ex );
+				NoiseLogger.Current.LogException( "Exception - GetTagList:", ex );
 
 				mDatabaseManager.FreeDatabase( database );
 			}
@@ -1030,7 +1028,7 @@ namespace Noise.Core.Database {
 				}		
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - DataProvider:Find: ", ex );
+				NoiseLogger.Current.LogException( "Exception - DataProvider:Find: ", ex );
 			}
 
 			return( retValue );
@@ -1077,7 +1075,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Exception - GetTimestamp: {0}", componentId ), ex );
+				NoiseLogger.Current.LogException( string.Format( "Exception - GetTimestamp: {0}", componentId ), ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -1109,7 +1107,7 @@ namespace Noise.Core.Database {
 				
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Exception - UpdateTimestamp: {0}", componentId ), ex );
+				NoiseLogger.Current.LogException( string.Format( "Exception - UpdateTimestamp: {0}", componentId ), ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );

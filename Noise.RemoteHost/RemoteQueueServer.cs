@@ -13,12 +13,10 @@ namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteQueueServer : INoiseRemoteQueue {
 		private readonly IUnityContainer	mContainer;
-		private readonly ILog				mLog;
 		private	readonly INoiseManager		mNoiseManager;
 
 		public RemoteQueueServer( IUnityContainer container ) {
 			mContainer = container;
-			mLog = mContainer.Resolve<ILog>();
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
 		}
 
@@ -35,7 +33,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "RemoteQueueServer:EnqueueTrack", ex );
+				NoiseLogger.Current.LogException( "RemoteQueueServer:EnqueueTrack", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -56,7 +54,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "RemoteQueueServer:EnqueueAlbum", ex );
+				NoiseLogger.Current.LogException( "RemoteQueueServer:EnqueueAlbum", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -81,7 +79,7 @@ namespace Noise.RemoteHost {
 				retValue.Success = true;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "RemoteQueueServer:GetQueuedTrackList", ex );
+				NoiseLogger.Current.LogException( "RemoteQueueServer:GetQueuedTrackList", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -128,7 +126,7 @@ namespace Noise.RemoteHost {
 				retValue.Success = true;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "RemoteQueueServer:ExecuteTransportCommand", ex );
+				NoiseLogger.Current.LogException( "RemoteQueueServer:ExecuteTransportCommand", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}

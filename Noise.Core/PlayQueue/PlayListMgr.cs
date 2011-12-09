@@ -14,14 +14,12 @@ namespace Noise.Core.PlayQueue {
 		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly INoiseManager		mNoiseManager;
-		private readonly ILog				mLog;
 
 		public PlayListMgr( IUnityContainer container ) {
 			mContainer = container;
 			mEvents = mContainer.Resolve<IEventAggregator>();
 			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
-			mLog = mContainer.Resolve<ILog>();
 		}
 
 		public List<DbPlayList> PlayLists {
@@ -44,7 +42,7 @@ namespace Noise.Core.PlayQueue {
 				retValue = ( from DbPlayList playList in database.Database where playList.DbId == playListId select playList ).FirstOrDefault();
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - PlayListMgr:GetPlayList ", ex );
+				NoiseLogger.Current.LogException( "Exception - PlayListMgr:GetPlayList ", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -61,7 +59,7 @@ namespace Noise.Core.PlayQueue {
 				database.Insert( retValue );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - PlayListMgr:Create(PlayQueueTrack) ", ex );
+				NoiseLogger.Current.LogException( "Exception - PlayListMgr:Create(PlayQueueTrack) ", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -81,7 +79,7 @@ namespace Noise.Core.PlayQueue {
 				FireListChanged();
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - PlayListMgr:Delete ", ex );
+				NoiseLogger.Current.LogException( "Exception - PlayListMgr:Delete ", ex );
 			}
 			finally{
 				mDatabaseManager.FreeDatabase( database );

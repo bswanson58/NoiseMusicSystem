@@ -17,7 +17,6 @@ namespace Noise.Core.DataProviders {
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly ITagManager		mGenreManager;
 		private readonly StorageFile		mFile;
-		private readonly ILog				mLog;
 		private	readonly Lazy<File>			mTags;
 
 		public Mp3TagProvider( IUnityContainer container, StorageFile file ) {
@@ -38,25 +37,23 @@ namespace Noise.Core.DataProviders {
 					retValue = OpenTagFile( StorageHelpers.GetPath( database.Database, mFile ));
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - Mp3TagProvider:OpenTagFile:", ex );
+					NoiseLogger.Current.LogException( "Exception - Mp3TagProvider:OpenTagFile:", ex );
 				}
 				finally {
 					mDatabaseManager.FreeDatabase( database );
 				}
 
 				return( retValue );	});
-
-			mLog = container.Resolve<ILog>();
 		}
 
-		private File OpenTagFile( string path ) {
+		private static File OpenTagFile( string path ) {
 			File retValue = null;
 
 			try {
 				retValue = File.Create( path );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Exception - Mp3TagProvider opening file: {0}", path ), ex );
+				NoiseLogger.Current.LogException( String.Format( "Exception - Mp3TagProvider opening file: {0}", path ), ex );
 			}
 
 			return( retValue );			
@@ -142,7 +139,7 @@ namespace Noise.Core.DataProviders {
 						var replayGainFrame = id3Tags.GetFrames( new ByteVector( "RVA2" ));
 						if(( replayGainFrame != null ) &&
 						   ( replayGainFrame.Count() > 0 )) {
-							mLog.LogMessage( "Found Replay Gain frame" );
+							NoiseLogger.Current.LogMessage( "Found Replay Gain frame" );
 						}
 
 						var frames = id3Tags.GetFrames<UserTextInformationFrame>();
@@ -254,7 +251,7 @@ namespace Noise.Core.DataProviders {
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Mp3TagProvider", ex );
+					NoiseLogger.Current.LogException( "Mp3TagProvider", ex );
 				}
 				finally {
 					mDatabaseManager.FreeDatabase( database );

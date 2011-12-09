@@ -6,14 +6,12 @@ using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	public class DiscographyExplorer : IBackgroundTask {
 		private IUnityContainer		mContainer;
 		private IDatabaseManager	mDatabaseMgr;
-		private ILog				mLog;
 		private List<long>			mArtistList;
 		private IEnumerator<long>	mArtistEnum;
 
@@ -24,7 +22,6 @@ namespace Noise.Core.BackgroundTasks {
 		public bool Initialize( IUnityContainer container ) {
 			mContainer = container;
 			mDatabaseMgr = mContainer.Resolve<IDatabaseManager>();
-			mLog = mContainer.Resolve<ILog>();
 
 			InitializeLists();
 
@@ -39,7 +36,7 @@ namespace Noise.Core.BackgroundTasks {
 				mArtistEnum = mArtistList.GetEnumerator();
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "", ex );
+				NoiseLogger.Current.LogException( "", ex );
 			}
 			finally {
 				mDatabaseMgr.FreeDatabase( database );
@@ -79,13 +76,13 @@ namespace Noise.Core.BackgroundTasks {
 
 							database.Store( dbAlbum );
 
-							mLog.LogMessage( string.Format( "Updating Published year from discography: album '{0}', year: '{1}'", dbAlbum.Name, dbAlbum.PublishedYear ));
+							NoiseLogger.Current.LogMessage( string.Format( "Updating Published year from discography: album '{0}', year: '{1}'", dbAlbum.Name, dbAlbum.PublishedYear ));
 						}
 					}
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - DiscographyExplorer:Task ", ex );
+				NoiseLogger.Current.LogException( "Exception - DiscographyExplorer:Task ", ex );
 			}
 			finally {
 				mDatabaseMgr.FreeDatabase( database );

@@ -8,13 +8,11 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.PlayQueue {
 	internal abstract class PlayExhaustedListBase : IPlayExhaustedStrategy {
 		protected readonly IUnityContainer	mContainer;
-		protected readonly ILog				mLog;
 		protected readonly List<DbTrack>	mTrackList;
 		protected IPlayQueue				mQueueMgr;
 
 		protected PlayExhaustedListBase( IUnityContainer container ) {
 			mContainer = container;
-			mLog = mContainer.Resolve<ILog>();
 			mTrackList = new List<DbTrack>();
 		}
 

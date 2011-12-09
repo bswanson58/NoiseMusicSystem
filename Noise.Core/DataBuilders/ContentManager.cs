@@ -16,7 +16,6 @@ namespace Noise.Core.DataBuilders {
 		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
-		private readonly ILog				mLog;
 		private readonly List<long>			mCurrentRequests;
 
 		[ImportMany( typeof( IContentProvider ))]
@@ -26,7 +25,6 @@ namespace Noise.Core.DataBuilders {
 			mContainer = unityContainer;
 			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
 			mEvents =mContainer.Resolve<IEventAggregator>();
-			mLog = mContainer.Resolve<ILog>();
 			mCurrentRequests = new List<long>();
 
 			var ioc = mContainer.Resolve<IIoc>();
@@ -34,7 +32,7 @@ namespace Noise.Core.DataBuilders {
 			ioc.ComposeParts( this );
 			foreach( var provider in ContentProviders ) {
 				if(!provider.Initialize( mContainer )) {
-					mLog.LogMessage( string.Format( "ContentManager - Could not initialize provider for content type: {0}", provider.ContentType ));
+					NoiseLogger.Current.LogMessage( string.Format( "ContentManager - Could not initialize provider for content type: {0}", provider.ContentType ));
 				}
 			}
 		}
@@ -91,7 +89,7 @@ namespace Noise.Core.DataBuilders {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Exception - ContentManager updating Artist: {0}", artistName ), ex );
+				NoiseLogger.Current.LogException( String.Format( "Exception - ContentManager updating Artist: {0}", artistName ), ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );

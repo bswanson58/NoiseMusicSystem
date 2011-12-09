@@ -7,7 +7,6 @@ using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Noise.Core.DataBuilders;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support.Service;
@@ -36,7 +35,6 @@ namespace Noise.AppSupport {
 		}
 
 		public bool InitializeIoc( ApplicationUsage appUsage ) {
-			mContainer.RegisterType<ILog, Log>();
 			mContainer.RegisterType<ISystemConfiguration, SystemConfiguration>();
 			mContainer.RegisterType<IIoc, IocProvider>();
 

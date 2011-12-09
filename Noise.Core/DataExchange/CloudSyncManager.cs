@@ -15,7 +15,6 @@ using Noise.Infrastructure.Support;
 namespace Noise.Core.DataExchange {
 	internal class CloudSyncManager : ICloudSyncManager {
 		private readonly IUnityContainer		mContainer;
-		private readonly ILog					mLog;
 		private string							mLoginName;
 		private string							mLoginPassword;
 		private IDatabaseClient					mCloudClient;
@@ -32,7 +31,6 @@ namespace Noise.Core.DataExchange {
 
 		public CloudSyncManager( IUnityContainer container ) {
 			mContainer = container;
-			mLog = mContainer.Resolve<ILog>();
 
 			mSyncWithCloud = new AsyncCommand<object>( OnCloudSync );
 			GlobalCommands.SynchronizeFromCloud.RegisterCommand( mSyncWithCloud );
@@ -78,7 +76,7 @@ namespace Noise.Core.DataExchange {
 						retValue = mCloudDb;
 					}
 					catch( Exception ex ) {
-						mLog.LogException( "Exception - CloudSymcManager:Opening cloud database: ", ex );
+						NoiseLogger.Current.LogException( "Exception - CloudSymcManager:Opening cloud database: ", ex );
 					}
 				}
 
@@ -111,7 +109,7 @@ namespace Noise.Core.DataExchange {
 				UpdateSeqnId( seqnId );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - CloudSyncManager:CreateSynchronization: ", ex );
+				NoiseLogger.Current.LogException( "Exception - CloudSyncManager:CreateSynchronization: ", ex );
 			}
 		}
 
@@ -206,7 +204,7 @@ namespace Noise.Core.DataExchange {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - UpdateFromCloud:", ex );
+				NoiseLogger.Current.LogException( "Exception - UpdateFromCloud:", ex );
 			}
 		}
 
@@ -228,7 +226,7 @@ namespace Noise.Core.DataExchange {
 					UpdateSeqnId( seqnId );
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - CloudSyncManager:SetFavorite: ", ex );
+					NoiseLogger.Current.LogException( "Exception - CloudSyncManager:SetFavorite: ", ex );
 				}
 			}
 		}

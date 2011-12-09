@@ -88,12 +88,10 @@ namespace Noise.Core.DataProviders {
 	public class LastFmProvider {
 		private readonly IUnityContainer	mContainer;
 		private readonly ITagManager		mTagManager;
-		private readonly ILog				mLog;
 		private readonly Session			mSession;
 
 		public LastFmProvider( IUnityContainer container ) {
 			mContainer = container;
-			mLog = container.Resolve<ILog>();
 
 			var noiseManager = mContainer.Resolve<INoiseManager>();
 			mTagManager = noiseManager.TagManager;
@@ -109,7 +107,7 @@ namespace Noise.Core.DataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "LastFmProvider creating Session:", ex );
+				NoiseLogger.Current.LogException( "LastFmProvider creating Session:", ex );
 			}
 		}
 
@@ -195,7 +193,7 @@ namespace Noise.Core.DataProviders {
 						artist.UpdateLastChange();
 						database.Store( artist );
 
-						mLog.LogMessage( "LastFm updated artist: {0}", artist.Name );
+						NoiseLogger.Current.LogMessage( "LastFm updated artist: {0}", artist.Name );
 					}
 
 					database.Store( bio );
@@ -203,7 +201,7 @@ namespace Noise.Core.DataProviders {
 					database.Store( topAlbums );
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - LastFmProvider:UpdateArtistInfo:", ex );
+					NoiseLogger.Current.LogException( "Exception - LastFmProvider:UpdateArtistInfo:", ex );
 				}
 			}
 		}
@@ -235,7 +233,7 @@ namespace Noise.Core.DataProviders {
 				database.Store( artwork );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - LastFmProvider:ImageDownload: ", ex );
+				NoiseLogger.Current.LogException( "Exception - LastFmProvider:ImageDownload: ", ex );
 			}
 			finally {
 				dbManager.FreeDatabase( database );

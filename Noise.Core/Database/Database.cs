@@ -17,7 +17,6 @@ namespace Noise.Core.Database {
 
 		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEventAggregator;
-		private readonly ILog				mLog;
 		private readonly string				mDatabaseLocation;
 		private readonly string				mDatabaseName;
 		private IBlobStorage				mBlobStorage;
@@ -32,7 +31,6 @@ namespace Noise.Core.Database {
 		public EloqueraDatabase( IUnityContainer container ) {
 			mContainer = container;
 			mEventAggregator = mContainer.Resolve<IEventAggregator>();
-			mLog = mContainer.Resolve<ILog>();
 			DatabaseId = Guid.NewGuid().ToString();
 
 			var configMgr = mContainer.Resolve<ISystemConfiguration>();
@@ -43,7 +41,7 @@ namespace Noise.Core.Database {
 				mDatabaseLocation = config.ServerName;
 			}
 			else {
-				mLog.LogMessage( "Database configuration could not be loaded." );
+				NoiseLogger.Current.LogMessage( "Database configuration could not be loaded." );
 			}
 		}
 
@@ -56,7 +54,7 @@ namespace Noise.Core.Database {
 				retValue = true;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( ex );
+				NoiseLogger.Current.LogException( ex );
 			}
 
 			Condition.Ensures( Database ).IsNotNull();
@@ -108,7 +106,7 @@ namespace Noise.Core.Database {
 
 			if( InternalOpenDatabase()) {
 				if( ReadDatabaseVersion()) {
-					mLog.LogMessage( String.Format( "Initialize and open '{0}' database version {1}.{2} on server '{3}'.",
+					NoiseLogger.Current.LogMessage( String.Format( "Initialize and open '{0}' database version {1}.{2} on server '{3}'.",
 														mDatabaseName, DatabaseVersion.MajorVersion, DatabaseVersion.MinorVersion, mDatabaseLocation ));
 
 					retValue = true;
@@ -128,7 +126,7 @@ namespace Noise.Core.Database {
 				retValue = true;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Exception - Opening database '{0}' on server '{1}'", mDatabaseName, mDatabaseLocation ), ex );
+				NoiseLogger.Current.LogException( String.Format( "Exception - Opening database '{0}' on server '{1}'", mDatabaseName, mDatabaseLocation ), ex );
 			}
 
 			return( retValue );
@@ -158,12 +156,12 @@ namespace Noise.Core.Database {
 
 			try {
 				Database.CreateDatabase( databaseName );
-				mLog.LogMessage( "Created database: '{0}' on server '{1}'.", databaseName, mDatabaseLocation );
+				NoiseLogger.Current.LogMessage( "Created database: '{0}' on server '{1}'.", databaseName, mDatabaseLocation );
 
 				retValue = true;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Exception - Creating database '{0}' on server '{1}'", databaseName, mDatabaseLocation ), ex );
+				NoiseLogger.Current.LogException( String.Format( "Exception - Creating database '{0}' on server '{1}'", databaseName, mDatabaseLocation ), ex );
 			}
 
 			return( retValue );
@@ -207,7 +205,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			else {
-				mLog.LogMessage( String.Format( "Database:Insert - Inserting known item: {0}", dbObject.GetType()));
+				NoiseLogger.Current.LogMessage( String.Format( "Database:Insert - Inserting known item: {0}", dbObject.GetType()));
 			}
 		}
 
@@ -222,7 +220,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			else {
-				mLog.LogMessage( String.Format( "Database:Store - Unknown dbObject: {0}", dbObject.GetType()));
+				NoiseLogger.Current.LogMessage( String.Format( "Database:Store - Unknown dbObject: {0}", dbObject.GetType()));
 			}
 		}
 
@@ -234,7 +232,7 @@ namespace Noise.Core.Database {
 					dbObject = ValidateOnThread( dbObject as DbBase );
 				}
 				else {
-					mLog.LogMessage( String.Format( "Database:Delete - Unknown dbObject: {0}", dbObject.GetType()));
+					NoiseLogger.Current.LogMessage( String.Format( "Database:Delete - Unknown dbObject: {0}", dbObject.GetType()));
 
 					return;
 				}

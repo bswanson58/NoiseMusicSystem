@@ -1,29 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ServiceModel;
-using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.Service.Infrastructure.ServiceContracts;
 
 namespace Noise.Service.Infrastructure.Clients {
 	public class LibraryServiceUpdateClient : ILibraryBuilder {
-		private readonly IUnityContainer		mContainer;
 		private readonly ILibraryUpdateService	mLibraryService;
-		private	readonly ILog					mLog;
-		private bool							mLibraryUpdating;
 		private readonly ChannelFactory<ILibraryUpdateService>	mServiceProxy;
 
-		public LibraryServiceUpdateClient( IUnityContainer container ) {
-			mContainer = container;
-			mLog = mContainer.Resolve<ILog>();
-
+		public LibraryServiceUpdateClient() {
 			try {
 				mServiceProxy = new ChannelFactory<ILibraryUpdateService>( "Noise.ServiceImpl.LibraryUpdate.LibraryUpdateService" );
 				mServiceProxy.Open();
 				mLibraryService = mServiceProxy.CreateChannel();		
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - LibraryServiceUpdateClient:", ex );
+				NoiseLogger.Current.LogException( "Exception - LibraryServiceUpdateClient:", ex );
 			}
 		}
 
@@ -31,11 +25,9 @@ namespace Noise.Service.Infrastructure.Clients {
 			if( mLibraryService != null ) {
 				try {
 					mLibraryService.StartLibraryUpdate();
-
-					mLibraryUpdating = true;
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - LibraryServiceUpdateClient:StartLibraryUpdate ", ex );
+					NoiseLogger.Current.LogException( "Exception - LibraryServiceUpdateClient:StartLibraryUpdate ", ex );
 				}
 			}
 		}
@@ -51,7 +43,7 @@ namespace Noise.Service.Infrastructure.Clients {
 					mLibraryUpdating = false;
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - LibraryServiceUpdateClient:StopLibraryUpdate ", ex );
+					NoiseLogger.Current.LogException( "Exception - LibraryServiceUpdateClient:StopLibraryUpdate ", ex );
 				}
 			}
 */		}
@@ -69,7 +61,7 @@ namespace Noise.Service.Infrastructure.Clients {
 						retValue = mLibraryService.IsLibraryUpdateInProgress();
 					}
 					catch( Exception ex ) {
-						mLog.LogException( "Exception - LibraryServiceUpdateClient:LibraryUpdateInProgress ", ex );
+						NoiseLogger.Current.LogException( "Exception - LibraryServiceUpdateClient:LibraryUpdateInProgress ", ex );
 					}
 				}
 

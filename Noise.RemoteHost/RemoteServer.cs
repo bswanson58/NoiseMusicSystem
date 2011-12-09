@@ -16,13 +16,11 @@ namespace Noise.RemoteHost {
 		private readonly IUnityContainer					mContainer;
 		private	readonly IEventAggregator					mEvents;
 		private	readonly Dictionary<string, ClientEvents>	mClientList;
-		private readonly ILog								mLog;
 
 		public RemoteServer( IUnityContainer container ) {
 			mContainer = container;
 			mEvents = mContainer.Resolve<IEventAggregator>();
 			mClientList = new Dictionary<string, ClientEvents>();
-			mLog = mContainer.Resolve<ILog>();
 
 			mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnQueueChanged );
 			mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnTrackStarted );
@@ -42,7 +40,7 @@ namespace Noise.RemoteHost {
 					client.Close();
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "RemoteServer:client.Close:", ex );
+					NoiseLogger.Current.LogException( "RemoteServer:client.Close:", ex );
 				}
 
 				mClientList.Remove( address );
@@ -54,7 +52,7 @@ namespace Noise.RemoteHost {
 				mClientList.Add( address, client );
 
 				retValue.Success = true;
-				mLog.LogInfo( "Added remote client: %s", address );
+				NoiseLogger.Current.LogInfo( "Added remote client: %s", address );
 			}
 			else {
 				retValue.ErrorMessage = "Remote client address already registered.";
@@ -70,7 +68,7 @@ namespace Noise.RemoteHost {
 				mClientList.Remove( address );
 
 				retValue.Success = true;
-				mLog.LogInfo( "Removed remote client: %s", address );
+				NoiseLogger.Current.LogInfo( "Removed remote client: %s", address );
 			}
 			else {
 				retValue.ErrorMessage = "Client address not located in map.";
@@ -95,10 +93,10 @@ namespace Noise.RemoteHost {
 			}
 		}
 
-		private void OnTransportChanged() {
+/*		private void OnTransportChanged() {
 			foreach( var client in mClientList.Values ) {
 				client.EventInTransport();
 			}
-		}
+		} */
 	}
 }

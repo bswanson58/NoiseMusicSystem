@@ -15,12 +15,10 @@ namespace Noise.RemoteHost {
 		private const int cMaxSearchResults = 100;
 
 		private readonly IUnityContainer	mContainer;
-		private readonly ILog				mLog;
 		private	readonly INoiseManager		mNoiseManager;
 
 		public RemoteSearchServer( IUnityContainer container ) {
 			mContainer = container;
-			mLog = mContainer.Resolve<ILog>();
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
 		}
 
@@ -45,7 +43,7 @@ namespace Noise.RemoteHost {
 				retValue.Success = true;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "RemoteSearchServer:Search", ex );
+				NoiseLogger.Current.LogException( "RemoteSearchServer:Search", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}

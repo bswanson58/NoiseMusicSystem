@@ -22,7 +22,6 @@ namespace Noise.Core.DataProviders {
 	internal class FileStrategyProvider : IMetaDataProvider {
 		private readonly IDatabaseManager					mDatabaseManager;
 		private	readonly ITagManager						mTagManager;
-		private readonly ILog								mLog;
 		private readonly StorageFile						mFile;
 		private	readonly Lazy<FolderStrategyInformation>	mStrategyInformation;
 
@@ -32,7 +31,6 @@ namespace Noise.Core.DataProviders {
 			var noiseManager = container.Resolve<INoiseManager>();
 			mTagManager = noiseManager.TagManager;
 
-			mLog = container.Resolve<ILog>();
 			mFile = file;
 
 			mStrategyInformation = new Lazy<FolderStrategyInformation>(() => {
@@ -44,7 +42,7 @@ namespace Noise.Core.DataProviders {
 					retValue = StorageHelpers.GetFolderStrategy( database.Database, mFile );
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - FileStrategyProvider:", ex );
+					NoiseLogger.Current.LogException( "Exception - FileStrategyProvider:", ex );
 				}
 				finally {
 					mDatabaseManager.FreeDatabase( database );

@@ -2,13 +2,12 @@
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using Microsoft.Practices.Unity;
-using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure;
 using Noise.Infrastructure.RemoteHost;
 
 namespace Noise.RemoteHost {
 	public class RemoteServerMgr : IRemoteServer {
 		private readonly IUnityContainer	mContainer;
-		private readonly ILog				mLog;
 		private INoiseRemote				mRemoteServer;
 		private ServiceHost					mServerHost;
 		private INoiseRemoteData			mRemoteDataServer;
@@ -21,7 +20,6 @@ namespace Noise.RemoteHost {
 
 		public RemoteServerMgr( IUnityContainer container ) {
 			mContainer = container;
-			mLog = mContainer.Resolve<ILog>();
 		}
 
 		public void OpenRemoteServer() {
@@ -68,7 +66,7 @@ namespace Noise.RemoteHost {
 				openSucceeded = true;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "RemoteServerMgr:OpenRemoteServer", ex );
+				NoiseLogger.Current.LogException( "RemoteServerMgr:OpenRemoteServer", ex );
 			}
 			finally {
 				if(!openSucceeded ) {
@@ -95,7 +93,7 @@ namespace Noise.RemoteHost {
 					closeSucceeded = true;
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "RemoteServerMgr:CloseRemoteServer", ex );
+					NoiseLogger.Current.LogException( "RemoteServerMgr:CloseRemoteServer", ex );
 				}
 				finally {
 					if(!closeSucceeded ) {

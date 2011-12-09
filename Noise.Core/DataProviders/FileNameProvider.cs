@@ -8,12 +8,10 @@ using Noise.Core.Database;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	internal class FileNameProvider {
 		private readonly IDatabaseManager	mDatabaseManager;
-		private readonly ILog				mLog;
 		private long						mFolderId;
 		private readonly List<Regex>		mDatePatterns;
 		private List<StorageFile>			mFolderFiles;
@@ -21,7 +19,6 @@ namespace Noise.Core.DataProviders {
 		public FileNameProvider( IUnityContainer container ) {
 			mDatabaseManager = container.Resolve<IDatabaseManager>();
 			mDatePatterns = new List<Regex>();
-			mLog = container.Resolve<ILog>();
 
 			mDatePatterns.Add( new Regex( "(?<month>0?[1-9]|1[012]) [- .] (?<day>0?[1-9]|[12][0-9]|3[01]) [- .] (?<year>[0-9]{2,})", RegexOptions.IgnorePatternWhitespace ));
 			mDatePatterns.Add( new Regex( "(?<year1>[0-9]{4})-(?<year>[0-9]{4})" ));
@@ -51,7 +48,7 @@ namespace Noise.Core.DataProviders {
 				mFolderId = parentId;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - FileNameProvider", ex );
+				NoiseLogger.Current.LogException( "Exception - FileNameProvider", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -81,7 +78,7 @@ namespace Noise.Core.DataProviders {
 		public string TrackName {
 			get {
 				var	trackName = Path.GetFileNameWithoutExtension( mFile.Name );
-				var nameParts = trackName.Split( new []{ '-' });
+				var nameParts = trackName != null ? trackName.Split( new []{ '-' }) : new string[0];
 
 				return( nameParts.Count() > 1 ? nameParts[1].Trim() : trackName );
 			}

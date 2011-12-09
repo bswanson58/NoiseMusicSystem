@@ -2,8 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
-using Microsoft.Practices.Unity;
-using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure;
 
 namespace Noise.Desktop {
 	/// <summary>
@@ -23,9 +22,7 @@ namespace Noise.Desktop {
 		}
 
 		private void CurrentDomain_UnhandledException( object sender, UnhandledExceptionEventArgs e ) {
-			var	log = mBootstrapper.Container.Resolve<ILog>();
-
-			log.LogException( "Application domain unhandled exception:", e.ExceptionObject as Exception );
+			NoiseLogger.Current.LogException( "Application domain unhandled exception:", e.ExceptionObject as Exception );
 
 			Shutdown( -1 );
 		}
@@ -35,15 +32,13 @@ namespace Noise.Desktop {
 				Clipboard.SetText( e.Exception.ToString());
 			}
 	
-			var	log = mBootstrapper.Container.Resolve<ILog>();
-
-			log.LogException( "Application unhandled exception:", e.Exception );
+			NoiseLogger.Current.LogException( "Application unhandled exception:", e.Exception );
 
 			if( e.Exception is ReflectionTypeLoadException ) {
 				var tle = e.Exception as ReflectionTypeLoadException;
 
 				foreach( var ex in tle.LoaderExceptions ) {
-					log.LogException( "LoaderException:", ex );
+					NoiseLogger.Current.LogException( "LoaderException:", ex );
 				}
 			}
 			e.Handled = true;

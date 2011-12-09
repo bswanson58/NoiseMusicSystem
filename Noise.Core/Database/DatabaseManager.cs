@@ -12,7 +12,6 @@ namespace Noise.Core.Database {
 
 		private readonly object					mLockObject;
 		private readonly IUnityContainer		mContainer;
-		private readonly ILog					mLog;
 		private readonly List<IDatabase>		mAvailableDatabases;
 		private readonly Dictionary<string, IDatabase>	mReservedDatabases;
 		private readonly IBlobStorageManager	mBlobStorageMgr;
@@ -21,7 +20,6 @@ namespace Noise.Core.Database {
 		public DatabaseManager( IUnityContainer container ) {
 			mLockObject = new object();
 			mContainer = container;
-			mLog = mContainer.Resolve<ILog>();
 			mReservedDatabases = new Dictionary<string, IDatabase>();
 			mAvailableDatabases = new List<IDatabase>();
 
@@ -52,9 +50,9 @@ namespace Noise.Core.Database {
 
 		public void Shutdown() {
 			if( mReservedDatabases.Count > 0 ) {
-				mLog.LogMessage( string.Format( "DatabaseManager has {0} reserved databases on shutdown!", mReservedDatabases.Count ));
+				NoiseLogger.Current.LogMessage( string.Format( "DatabaseManager has {0} reserved databases on shutdown!", mReservedDatabases.Count ));
 			}
-			mLog.LogMessage( string.Format( "DatabaseManager closing {0} databases.", mReservedDatabases.Count + mAvailableDatabases.Count ));
+			NoiseLogger.Current.LogMessage( string.Format( "DatabaseManager closing {0} databases.", mReservedDatabases.Count + mAvailableDatabases.Count ));
 
 			lock( mLockObject ) {
 				foreach( var database in mReservedDatabases.Values ) {
@@ -91,7 +89,7 @@ namespace Noise.Core.Database {
 						if( retValue.InitializeAndOpenDatabase()) {
 							mReservedDatabases.Add( retValue.DatabaseId, retValue );
 
-							mLog.LogInfo( string.Format( "Database Created. (Count: {0})", mReservedDatabases.Count + mAvailableDatabases.Count ));
+							NoiseLogger.Current.LogInfo( string.Format( "Database Created. (Count: {0})", mReservedDatabases.Count + mAvailableDatabases.Count ));
 						}
 					}
 				}
@@ -126,7 +124,7 @@ namespace Noise.Core.Database {
 						mAvailableDatabases.Add( database );
 					}
 					else {
-						mLog.LogMessage( string.Format( "Database ID not reserved:{0}", databaseId ));
+						NoiseLogger.Current.LogMessage( string.Format( "Database ID not reserved:{0}", databaseId ));
 					}
 				}
 			}

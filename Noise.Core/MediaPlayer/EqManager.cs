@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -10,13 +11,11 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.MediaPlayer {
 	public class EqManager : IEqManager {
 		private readonly IUnityContainer			mContainer;
-		private readonly ILog						mLog;
 		private readonly List<ParametricEqualizer>	mEqPresets;
 		private ParametricEqualizer					mCurrentEq;
 
 		public EqManager( IUnityContainer container ) {
 			mContainer = container;
-			mLog = mContainer.Resolve<ILog>();
 
 			mEqPresets = new List<ParametricEqualizer>();
 		}
@@ -56,7 +55,7 @@ namespace Noise.Core.MediaPlayer {
 				retValue = true;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - EqPresets:LoadPresets ", ex );
+				NoiseLogger.Current.LogException( "Exception - EqPresets:LoadPresets ", ex );
 			}
 
 			return( retValue );

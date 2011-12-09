@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure.Support {
@@ -18,12 +17,9 @@ namespace Noise.Infrastructure.Support {
 	}
 
 	public class LicenseManager : ILicenseManager {
-		private readonly ILog							mLog;
 		private readonly Dictionary<string, LicenseKey>	mKeys;
 
-		public LicenseManager( IUnityContainer container ) {
-			mLog = container.Resolve<ILog>();
-
+		public LicenseManager() {
 			mKeys = new Dictionary<string, LicenseKey>();
 		}
 
@@ -48,7 +44,7 @@ namespace Noise.Infrastructure.Support {
 				retValue = true;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - LicenseManager:Initialize ", ex );
+				NoiseLogger.Current.LogException( "Exception - LicenseManager:Initialize ", ex );
 			}
 
 			return( retValue );

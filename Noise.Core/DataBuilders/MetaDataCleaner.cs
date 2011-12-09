@@ -6,14 +6,12 @@ using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataBuilders {
 	public class MetaDataCleaner : IMetaDataCleaner {
 		private readonly IUnityContainer	mContainer;
 		private readonly IDatabaseManager	mDatabaseManager;
-		private readonly ILog				mLog;
 		private bool						mStopCleaning;
 		private DatabaseChangeSummary		mSummary;
 		private readonly List<long>			mAlbumList;
@@ -21,7 +19,6 @@ namespace Noise.Core.DataBuilders {
 		public MetaDataCleaner( IUnityContainer container ) {
 			mContainer =  container;
 			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
-			mLog = mContainer.Resolve<ILog>();
 
 			mAlbumList = new List<long>();
 		}
@@ -36,7 +33,7 @@ namespace Noise.Core.DataBuilders {
 			mStopCleaning = false;
 			mAlbumList.Clear();
 
-			mLog.LogMessage( "Starting MetaDataCleaning." );
+			NoiseLogger.Current.LogMessage( "Starting MetaDataCleaning." );
 
 			var database = mDatabaseManager.ReserveDatabase();
 
@@ -47,7 +44,7 @@ namespace Noise.Core.DataBuilders {
 				CleanArtists( database, CleanAlbums( database, mAlbumList ));
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - MetaDataCleaner:", ex );
+				NoiseLogger.Current.LogException( "Exception - MetaDataCleaner:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -77,7 +74,7 @@ namespace Noise.Core.DataBuilders {
 
 			CleanFolderFiles( database, folder );
 
-			mLog.LogMessage( string.Format( "Deleting Folder: {0}", folder.Name ));
+			NoiseLogger.Current.LogMessage( string.Format( "Deleting Folder: {0}", folder.Name ));
 			database.Delete( folder );
 		}
 
@@ -131,7 +128,7 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			mSummary.TracksRemoved++;
-			mLog.LogMessage( "Deleting Track: {0}", track.Name );
+			NoiseLogger.Current.LogMessage( "Deleting Track: {0}", track.Name );
 		}
 
 		private void CleanContent( ExpiringContent content ) {
@@ -152,7 +149,7 @@ namespace Noise.Core.DataBuilders {
 					var albums = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>();
 
 					if( albums.Count() == 0 ) {
-						mLog.LogMessage( string.Format( "Deleting Artist: {0}", artist.Name ));
+						NoiseLogger.Current.LogMessage( string.Format( "Deleting Artist: {0}", artist.Name ));
 						mSummary.ArtistsRemoved++;
 
 						database.Delete( artist );
@@ -182,7 +179,7 @@ namespace Noise.Core.DataBuilders {
 								retValue.Add( album.Artist );
 							}
 
-							mLog.LogMessage( string.Format( "Deleting Album: {0}", album.Name ));
+							NoiseLogger.Current.LogMessage( string.Format( "Deleting Album: {0}", album.Name ));
 							mSummary.AlbumsRemoved++;
 
 							database.Delete( album );

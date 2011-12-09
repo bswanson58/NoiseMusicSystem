@@ -64,7 +64,6 @@ namespace Noise.Core.MediaPlayer {
 
 	public class AudioPlayer : IAudioPlayer {
 		private readonly IUnityContainer				mContainer;
-		private readonly ILog							mLog;
 		private readonly int							mMixerChannel;
 		private	readonly float							mMixerSampleRate;
 		private float									mPlaySpeed;
@@ -111,7 +110,6 @@ namespace Noise.Core.MediaPlayer {
 
 		public AudioPlayer( IUnityContainer container ) {
 			mContainer = container;
-			mLog = mContainer.Resolve<ILog>();
 			mCurrentStreams = new Dictionary<int, AudioStream>();
 			mEqChannels = new Dictionary<long, int>();
 			mStreamMetadataSync = new SYNCPROC( StreamSyncProc );
@@ -156,11 +154,11 @@ namespace Noise.Core.MediaPlayer {
 					InitializePreamp();
 				}
 				else {
-					mLog.LogMessage( string.Format( "AudioPlayer: Mixer channel could not be created: {0}", Bass.BASS_ErrorGetCode()));
+					NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer: Mixer channel could not be created: {0}", Bass.BASS_ErrorGetCode()));
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - AudioPlayer:Bass Audio could not be initialized. ", ex);
+				NoiseLogger.Current.LogException( "Exception - AudioPlayer:Bass Audio could not be initialized. ", ex);
 			}
 
 			LoadPlugin( "bassflac.dll" );
@@ -175,16 +173,16 @@ namespace Noise.Core.MediaPlayer {
 			mAudioStreamInfoSubject = new Subject<StreamInfo>();
 		}
 
-		private void LoadPlugin( string plugin ) {
-			mLog.LogInfo( string.Format( "AudioPlayer: Loading plugin: '{0}'", plugin ));
+		private static void LoadPlugin( string plugin ) {
+			NoiseLogger.Current.LogInfo( string.Format( "AudioPlayer: Loading plugin: '{0}'", plugin ));
 
 			try {
 				if( Bass.BASS_PluginLoad( plugin ) == 0 ) {
-					mLog.LogMessage( String.Format( "Cannot load Bass Plugin: {0}", plugin ));
+					NoiseLogger.Current.LogMessage( String.Format( "Cannot load Bass Plugin: {0}", plugin ));
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Exception - AudioPlayer:Could not load Bass plugin: {0}", plugin ), ex );
+				NoiseLogger.Current.LogException( String.Format( "Exception - AudioPlayer:Could not load Bass plugin: {0}", plugin ), ex );
 			}
 		}
 
@@ -202,7 +200,7 @@ namespace Noise.Core.MediaPlayer {
 					if( channel != 0 ) {
 						if(!BassMix.BASS_Mixer_StreamAddChannel( mMixerChannel, channel,
 																 BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_PAUSE | BASSFlag.BASS_MIXER_DOWNMIX | BASSFlag.BASS_STREAM_AUTOFREE )) {
-							mLog.LogMessage( string.Format( "AudioPlayer - Stream could not be added to mixer: {0}", Bass.BASS_ErrorGetCode()));
+							NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Stream could not be added to mixer: {0}", Bass.BASS_ErrorGetCode()));
 						}
 					
 						var stream = new AudioStream( filePath, channel );
@@ -215,22 +213,22 @@ namespace Noise.Core.MediaPlayer {
 								var volparam = new BASS_BFX_VOLUME { lChannel = BASSFXChan.BASS_BFX_CHANALL,
 																	 fVolume = (float)Math.Pow( 10, gainAdjustment / 20 )};
 								if(!Bass.BASS_FXSetParameters( stream.ReplayGainFx, volparam )) {
-									mLog.LogMessage( string.Format( "AudioPlayer - Could not set replay gain volume ({0}).", Bass.BASS_ErrorGetCode()));
+									NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not set replay gain volume ({0}).", Bass.BASS_ErrorGetCode()));
 								}
 							}
 							else {
-								mLog.LogMessage( string.Format( "AudioPlayer - Could not set replay gain preamp ({0}).", Bass.BASS_ErrorGetCode()));
+								NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not set replay gain preamp ({0}).", Bass.BASS_ErrorGetCode()));
 							}
 						}
 
 						stream.SyncEnd = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_END, 0L, mPlayEndSyncProc, IntPtr.Zero );
 						if( stream.SyncEnd == 0 ) {
-							mLog.LogMessage( string.Format( "AudioPlayer - Could not set end sync ({0})", Bass.BASS_ErrorGetCode()));
+							NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not set end sync ({0})", Bass.BASS_ErrorGetCode()));
 						}
 
 						stream.SyncStalled = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_STALL, 0L, mPlayStalledSyncProc, IntPtr.Zero );
 						if( stream.SyncStalled == 0 ) {
-							mLog.LogMessage( string.Format( "AudioPlayer - Could not set stall sync ({0})", Bass.BASS_ErrorGetCode()));
+							NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not set stall sync ({0})", Bass.BASS_ErrorGetCode()));
 						}
 
 						if( TrackOverlapEnable ) {
@@ -241,14 +239,14 @@ namespace Noise.Core.MediaPlayer {
 								stream.SyncNext = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
 																					 position, mPlayRequestSyncProc, IntPtr.Zero );
 								if( stream.SyncNext == 0 ) {
-									mLog.LogMessage( string.Format( "AudioPlayer - Could not set request sync ({0})", Bass.BASS_ErrorGetCode()));
+									NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not set request sync ({0})", Bass.BASS_ErrorGetCode()));
 								}
 
 								position = trackLength - Bass.BASS_ChannelSeconds2Bytes( stream.Channel, mTrackOverlapMs / 1000.0 );
 								stream.SyncQueued = BassMix.BASS_Mixer_ChannelSetSync( stream.Channel, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_ONETIME,
 																					   position, mQueuedTrackPlaySync, IntPtr.Zero );
 								if( stream.SyncQueued == 0 ) {
-									mLog.LogMessage( string.Format( "AudioPlayer - Could not set queued track sync ({0})", Bass.BASS_ErrorGetCode()));
+									NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not set queued track sync ({0})", Bass.BASS_ErrorGetCode()));
 								}
 							}
 						}
@@ -256,11 +254,11 @@ namespace Noise.Core.MediaPlayer {
 						retValue = channel;
 					}
 					else {
-						mLog.LogMessage( String.Format( "AudioPlayer - Channel could not be created for {0} ({1})", filePath, Bass.BASS_ErrorGetCode()));
+						NoiseLogger.Current.LogMessage( String.Format( "AudioPlayer - Channel could not be created for {0} ({1})", filePath, Bass.BASS_ErrorGetCode()));
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( String.Format( "AudioPlayer opening {0}", filePath ), ex );
+					NoiseLogger.Current.LogException( String.Format( "AudioPlayer opening {0}", filePath ), ex );
 				}
 			}
 
@@ -273,7 +271,7 @@ namespace Noise.Core.MediaPlayer {
 			if(!String.IsNullOrWhiteSpace( stream.Url )) {
 				try {
 					if(!Bass.BASS_SetConfig( BASSConfig.BASS_CONFIG_NET_PLAYLIST, stream.IsPlaylistWrapped ? 1 : 0 )) {
-						mLog.LogMessage( String.Format( "AudioPlayer - OpenStream cannot set _CONFIG_NET_PLAYLIST for: {0}", stream.Url ));
+						NoiseLogger.Current.LogMessage( String.Format( "AudioPlayer - OpenStream cannot set _CONFIG_NET_PLAYLIST for: {0}", stream.Url ));
 					}
 
 					var channel = Bass.BASS_StreamCreateURL( stream.Url, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_PRESCAN,
@@ -281,7 +279,7 @@ namespace Noise.Core.MediaPlayer {
 					if( channel != 0 ) {
 						if(!BassMix.BASS_Mixer_StreamAddChannel( mMixerChannel, channel,
 																 BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_PAUSE | BASSFlag.BASS_MIXER_DOWNMIX | BASSFlag.BASS_STREAM_AUTOFREE )) {
-							mLog.LogMessage( string.Format( "AudioPlayer - Radio stream could not be added to mixer: {0}", Bass.BASS_ErrorGetCode()));
+							NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Radio stream could not be added to mixer: {0}", Bass.BASS_ErrorGetCode()));
 						}
 
 						var audioStream = new AudioStream( stream.Url, channel ) {
@@ -293,11 +291,11 @@ namespace Noise.Core.MediaPlayer {
 					else {
 						var errorCode = Bass.BASS_ErrorGetCode();
 
-						mLog.LogMessage( String.Format( "AudioPlayer OpenUrl failed: {0}", errorCode ));
+						NoiseLogger.Current.LogMessage( String.Format( "AudioPlayer OpenUrl failed: {0}", errorCode ));
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( String.Format( "AudioPlayer opening url: {0}", stream.Url ), ex );
+					NoiseLogger.Current.LogException( String.Format( "AudioPlayer opening url: {0}", stream.Url ), ex );
 				}
 			}
 
@@ -578,7 +576,7 @@ namespace Noise.Core.MediaPlayer {
 				try {
 					mParamEqFx = Bass.BASS_ChannelSetFX( mMixerChannel, BASSFXType.BASS_FX_BFX_PEAKEQ, 1 );
 					if( mParamEqFx == 0 ) {
-						mLog.LogInfo( string.Format( "AudioPlayer - Could not set eq channel: {0}", Bass.BASS_ErrorGetCode()));
+						NoiseLogger.Current.LogInfo( string.Format( "AudioPlayer - Could not set eq channel: {0}", Bass.BASS_ErrorGetCode()));
 					}
 
 					var eq = new BASS_BFX_PEAKEQ { fQ = 0f, fBandwidth = mEq.Bandwidth / 12, lChannel = BASSFXChan.BASS_BFX_CHANALL };
@@ -589,7 +587,7 @@ namespace Noise.Core.MediaPlayer {
 						eq.fCenter = band.CenterFrequency;
 						eq.fGain = band.Gain;
 						if(!Bass.BASS_FXSetParameters( mParamEqFx, eq )) {
-							mLog.LogMessage( string.Format( "AudioPlayer - could not set eq band setting: {0}", Bass.BASS_ErrorGetCode()));
+							NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - could not set eq band setting: {0}", Bass.BASS_ErrorGetCode()));
 						}
 
 						mEqChannels.Add( band.BandId, bandId );
@@ -598,7 +596,7 @@ namespace Noise.Core.MediaPlayer {
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - AudioPlayer:InitializeEq", ex );
+					NoiseLogger.Current.LogException( "Exception - AudioPlayer:InitializeEq", ex );
 				}
 			}
 		}
@@ -608,12 +606,12 @@ namespace Noise.Core.MediaPlayer {
 				if(( mMixerChannel != 0 ) &&
 				   ( mParamEqFx != 0 )) {
 					if(!Bass.BASS_ChannelRemoveFX( mMixerChannel, mParamEqFx )) {
-						mLog.LogMessage( string.Format( "AudioPlayer - could not remove eq fx: {0}", Bass.BASS_ErrorGetCode()));
+						NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - could not remove eq fx: {0}", Bass.BASS_ErrorGetCode()));
 					}
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - AudioPlayer:RemoveEq", ex );
+				NoiseLogger.Current.LogException( "Exception - AudioPlayer:RemoveEq", ex );
 			}
 
 			mParamEqFx = 0;
@@ -635,12 +633,12 @@ namespace Noise.Core.MediaPlayer {
 								Bass.BASS_FXSetParameters( mParamEqFx, eq );
 							}
 							else {
-								mLog.LogInfo( "AudioPlayer - Could not retrieve parametricEq band." );
+								NoiseLogger.Current.LogInfo( "AudioPlayer - Could not retrieve parametricEq band." );
 							}
 						}
 					}
 					catch( Exception ex ) {
-						mLog.LogException( "Exception - AudioPlayer:AdjustEq", ex );
+						NoiseLogger.Current.LogException( "Exception - AudioPlayer:AdjustEq", ex );
 					}
 				}
 			}
@@ -676,7 +674,7 @@ namespace Noise.Core.MediaPlayer {
 							retValue = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap( hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions() );
 						}
 						catch( Exception ex ) {
-							mLog.LogException( "Exception - AudioPlayer:CreatingSpectrumBitmap: ", ex );
+							NoiseLogger.Current.LogException( "Exception - AudioPlayer:CreatingSpectrumBitmap: ", ex );
 						}
 						finally {
 							if( hBitmap != IntPtr.Zero ) {
@@ -688,7 +686,7 @@ namespace Noise.Core.MediaPlayer {
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - AudioPlayer:CreatingSpectrumImage: ", ex );
+					NoiseLogger.Current.LogException( "Exception - AudioPlayer:CreatingSpectrumImage: ", ex );
 				}
 			}
 
@@ -710,7 +708,7 @@ namespace Noise.Core.MediaPlayer {
 		private void InitializePreamp() {
 			mPreampFx = Bass.BASS_ChannelSetFX( mMixerChannel, BASSFXType.BASS_FX_BFX_VOLUME, 0 );
 			if( mPreampFx == 0 ) {
-				mLog.LogInfo( "AudioPlayer - Could not set preamp." );
+				NoiseLogger.Current.LogInfo( "AudioPlayer - Could not set preamp." );
 			}
 			else {
 				AdjustPreamp( mPreampVolume );
@@ -721,7 +719,7 @@ namespace Noise.Core.MediaPlayer {
 			var volparam = new BASS_BFX_VOLUME { lChannel = BASSFXChan.BASS_BFX_CHANALL, fVolume = value };
 
 			if(!Bass.BASS_FXSetParameters( mPreampFx, volparam )) {
-				mLog.LogInfo( "AudioPlayer - Could not set preamp volume." );
+				NoiseLogger.Current.LogInfo( "AudioPlayer - Could not set preamp volume." );
 			}
 		}
 
@@ -751,7 +749,7 @@ namespace Noise.Core.MediaPlayer {
 				float	multiplier = 1.0f + ( mPlaySpeed * 0.5f );
 
 				if(!Bass.BASS_ChannelSetAttribute( mMixerChannel, BASSAttribute.BASS_ATTRIB_FREQ, mMixerSampleRate * multiplier )) {
-					mLog.LogInfo( string.Format( "AudioPlayer - Could not set play speed: {0}", Bass.BASS_ErrorGetCode()));
+					NoiseLogger.Current.LogInfo( string.Format( "AudioPlayer - Could not set play speed: {0}", Bass.BASS_ErrorGetCode()));
 				}
 			}
 		}
@@ -824,7 +822,7 @@ namespace Noise.Core.MediaPlayer {
 					mMuted = value;
 				}
 				else {
-					mLog.LogMessage( string.Format( "AudioPlayer - Could not mute volume ({0}).", Bass.BASS_ErrorGetCode()));
+					NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not mute volume ({0}).", Bass.BASS_ErrorGetCode()));
 				}
 			}
 		}
@@ -890,11 +888,11 @@ namespace Noise.Core.MediaPlayer {
 							var reverbParam = new BASS_BFX_REVERB { fLevel = mReverbLevel, lDelay = mReverbDelay };
 
 							if(!Bass.BASS_FXGetParameters( mReverbFx, reverbParam )) {
-								mLog.LogMessage( string.Format( "AudioPlayer - Could not set initial reverb levels: {0}", Bass.BASS_ErrorGetCode()));
+								NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not set initial reverb levels: {0}", Bass.BASS_ErrorGetCode()));
 							}
 						}
 						else {
-							mLog.LogMessage( string.Format( "AudioPlayer - Could not set reverb fx: {0}", Bass.BASS_ErrorGetCode()));
+							NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not set reverb fx: {0}", Bass.BASS_ErrorGetCode()));
 						}
 					}
 				}
@@ -904,7 +902,7 @@ namespace Noise.Core.MediaPlayer {
 							mReverbFx = 0;
 						}
 						else {
-							mLog.LogMessage( string.Format( "AudioPlayer - Could not remove reverb FX: {0}", Bass.BASS_ErrorGetCode()));
+							NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not remove reverb FX: {0}", Bass.BASS_ErrorGetCode()));
 						}
 					}
 				}
@@ -939,7 +937,7 @@ namespace Noise.Core.MediaPlayer {
 							mReverbLevel = value;
 						}
 						else {
-							mLog.LogMessage( string.Format( "AudioPlayer - Could not set reverb level: {0}", Bass.BASS_ErrorGetCode()));
+							NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not set reverb level: {0}", Bass.BASS_ErrorGetCode()));
 						}
 					}
 				}
@@ -974,7 +972,7 @@ namespace Noise.Core.MediaPlayer {
 							mReverbDelay = value;
 						}
 						else {
-							mLog.LogMessage( string.Format( "AudioPlayer - Could not set reverb delay: {0}", Bass.BASS_ErrorGetCode()));
+							NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not set reverb delay: {0}", Bass.BASS_ErrorGetCode()));
 						}
 					}
 				}

@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataExchange {
 	public class ExportStreams : BaseExporter {
 		private readonly IUnityContainer	mContainer;
 		private readonly INoiseManager		mNoiseManager;
-		private readonly ILog				mLog;
 
 		public ExportStreams( IUnityContainer container ) {
 			mContainer = container;
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
-			mLog = mContainer.Resolve<ILog>();
 		}
 
 		public override bool Export( string fileName ) {
@@ -45,7 +41,7 @@ namespace Noise.Core.DataExchange {
 					doc.Save( fileName );
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - ExportStreams.Export: ", ex );
+					NoiseLogger.Current.LogException( "Exception - ExportStreams.Export: ", ex );
 
 					retValue = false;
 				}

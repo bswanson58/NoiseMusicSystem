@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
@@ -28,7 +27,6 @@ namespace Noise.Core.BackgroundTasks {
 
 		private	readonly IUnityContainer		mContainer;
 		private readonly IEventAggregator		mEvents;
-		private readonly ILog					mLog;
 		private	readonly ISchedulerFactory		mSchedulerFactory;
 		private	readonly IScheduler				mJobScheduler;
 		private readonly JobDetail				mTaskJobDetail;
@@ -43,7 +41,6 @@ namespace Noise.Core.BackgroundTasks {
 		public BackgroundTaskManager( IUnityContainer container ) {
 			mContainer = container;
 			mEvents = mContainer.Resolve<IEventAggregator>();
-			mLog = mContainer.Resolve<ILog>();
 
 			mEvents.GetEvent<Events.LibraryUpdateStarted>().Subscribe( OnLibraryUpdateStarted );
 			mEvents.GetEvent<Events.LibraryUpdateCompleted>().Subscribe( OnLibraryUpdateCompleted );
@@ -67,7 +64,7 @@ namespace Noise.Core.BackgroundTasks {
 
 			foreach( var task in BackgroundTasks ) {
 				if(!task.Initialize( mContainer )) {
-					mLog.LogMessage( "BackgroundTaskManager could not initialize task '{0}'", task.TaskId );
+					NoiseLogger.Current.LogMessage( "BackgroundTaskManager could not initialize task '{0}'", task.TaskId );
 				}
 			}
 
@@ -99,7 +96,7 @@ namespace Noise.Core.BackgroundTasks {
 						taskId = task.TaskId;
 					}
 
-					mLog.LogException( string.Format( "Exception - BackgroundTaskMgr '{0}'", taskId ), ex );
+					NoiseLogger.Current.LogException( string.Format( "Exception - BackgroundTaskMgr '{0}'", taskId ), ex );
 				}
 				finally {
 					mRunningTaskFlag = false;

@@ -21,7 +21,6 @@ namespace Noise.Core.DataBuilders {
 		private IMetaDataExplorer				mMetaDataExplorer;
 		private	ISummaryBuilder					mSummaryBuilder;
 		private bool							mContinueExploring;
-		private readonly ILog					mLog;
 
 		public	bool							LibraryUpdateInProgress { get; private set; }
 		public	bool							LibraryUpdatePaused { get; private set; }
@@ -29,7 +28,6 @@ namespace Noise.Core.DataBuilders {
 		public LibraryBuilder( IUnityContainer container ) {
 			mContainer = container;
 			mEvents = mContainer.Resolve<IEventAggregator>();
-			mLog = mContainer.Resolve<ILog>();
 			mFolderWatcher = new FileSystemWatcherEx();
 		}
 
@@ -66,7 +64,7 @@ namespace Noise.Core.DataBuilders {
 					retValue.AddRange( folderExplorer.RootFolderList().Select( rootFolder => StorageHelpers.GetPath( database.Database, rootFolder )));
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - RootFolderList:", ex );
+					NoiseLogger.Current.LogException( "Exception - RootFolderList:", ex );
 				}
 				finally {
 					databaseManager.FreeDatabase( database );
@@ -77,7 +75,7 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		public void StartLibraryUpdate() {
-			mLog.LogMessage( "LibraryBuilder: Starting Library Update." );
+			NoiseLogger.Current.LogMessage( "LibraryBuilder: Starting Library Update." );
 
 			ThreadPool.QueueUserWorkItem( UpdateLibrary );
 		}
@@ -159,10 +157,10 @@ namespace Noise.Core.DataBuilders {
 						mSummaryBuilder.BuildSummaryData( results );
 					}
 
-					mLog.LogMessage( "LibraryBuilder: Update Finished." );
+					NoiseLogger.Current.LogMessage( "LibraryBuilder: Update Finished." );
 
 					if( results.HaveChanges ) {
-						mLog.LogInfo( string.Format( "Database changes: {0}", results ) );
+						NoiseLogger.Current.LogInfo( string.Format( "Database changes: {0}", results ) );
 					}
 
 					if( mContinueExploring ) {
@@ -171,7 +169,7 @@ namespace Noise.Core.DataBuilders {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - LibraryBuilderUpdate: ", ex );
+				NoiseLogger.Current.LogException( "Exception - LibraryBuilderUpdate: ", ex );
 			}
 			finally {
 				mFolderExplorer = null;
@@ -196,7 +194,7 @@ namespace Noise.Core.DataBuilders {
 			var	statistics = mContainer.Resolve<DatabaseStatistics>();
 
 			statistics.GatherStatistics( allCounts );
-			mLog.LogInfo( statistics.ToString());
+			NoiseLogger.Current.LogInfo( statistics.ToString());
 		}
 	}
 }

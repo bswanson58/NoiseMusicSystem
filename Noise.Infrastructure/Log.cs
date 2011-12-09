@@ -1,12 +1,20 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using NLog;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure {
-	[Export( typeof(ILog))]
-	public class Log : ILog {
+	public class NoiseLogger : ILog {
+		private static readonly ILog	mDefaultContext = new NoiseLogger();
 		private static readonly Logger	mLogger = LogManager.GetLogger( "NoiseLogger" );
+		private static ILog				mCurrent;
+
+		public static ILog Current {
+			get { return( mCurrent ?? ( mCurrent = mDefaultContext )); }
+
+			set {
+				mCurrent = value;
+			}
+		}
 
 		public void LogException( Exception ex ) {
 			LogException( "", ex );

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
-using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure;
 using Noise.Service.Infrastructure.Configuration;
 using Noise.Service.Infrastructure.Interfaces;
 using NServiceBus;
@@ -11,12 +11,10 @@ using NServiceBus;
 namespace Noise.Service.Infrastructure.ServiceBus {
 	public class ServiceBusManager : IServiceBusManager {
 		private readonly IUnityContainer	mContainer;
-		private readonly ILog				mLog;
 		private	IBus						mMessageBus;
 
 		public ServiceBusManager( IUnityContainer container ) {
 			mContainer = container;
-			mLog = mContainer.Resolve<ILog>();
 
 			MessageHandlerBase.EventAggregator = mContainer.Resolve<IEventAggregator>();
 		}
@@ -49,7 +47,7 @@ namespace Noise.Service.Infrastructure.ServiceBus {
 				retValue = true;
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - MessagePublisher InitializeSubscriber:", ex );
+				NoiseLogger.Current.LogException( "Exception - MessagePublisher InitializeSubscriber:", ex );
 			}
 
 			return( retValue );

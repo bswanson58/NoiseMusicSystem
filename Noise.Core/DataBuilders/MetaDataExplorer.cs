@@ -7,8 +7,8 @@ using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataProviders;
 using Noise.Core.FileStore;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	public class MetaDataExplorer : IMetaDataExplorer {
@@ -18,7 +18,6 @@ namespace Noise.Core.DataBuilders {
 		private readonly FileNameProvider		mFileNameProvider;
 		private readonly FolderStrategyProvider	mStrategyProvider;
 		private readonly DefaultProvider		mDefaultProvider;
-		private readonly ILog					mLog;
 		private DatabaseCache<DbArtist>			mArtistCache;
 		private DatabaseCache<DbAlbum>			mAlbumCache;
 		private bool							mStopExploring;
@@ -27,7 +26,6 @@ namespace Noise.Core.DataBuilders {
 		public  MetaDataExplorer( IUnityContainer container ) {
 			mContainer = container;
 			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
-			mLog = mContainer.Resolve<ILog>();
 
 			mTagProvider = new FileTagProvider( mContainer );
 			mFileNameProvider = new FileNameProvider( mContainer );
@@ -78,7 +76,7 @@ namespace Noise.Core.DataBuilders {
 				mAlbumCache.Clear();
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Building Metadata:", ex );
+				NoiseLogger.Current.LogException( "Building Metadata:", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -137,19 +135,19 @@ namespace Noise.Core.DataBuilders {
 							database.Store( artist );
 						}
 						else {
-							mLog.LogMessage( "Track name cannot be determined for file: {0}", StorageHelpers.GetPath( database.Database, file ));
+							NoiseLogger.Current.LogMessage( "Track name cannot be determined for file: {0}", StorageHelpers.GetPath( database.Database, file ));
 						}
 					}
 					else {
-						mLog.LogMessage( "Album cannot be determined for file: {0}", StorageHelpers.GetPath( database.Database, file ));
+						NoiseLogger.Current.LogMessage( "Album cannot be determined for file: {0}", StorageHelpers.GetPath( database.Database, file ));
 					}
 				}
 				else {
-					mLog.LogMessage( "Artist cannot determined for file: {0}", StorageHelpers.GetPath( database.Database, file ));
+					NoiseLogger.Current.LogMessage( "Artist cannot determined for file: {0}", StorageHelpers.GetPath( database.Database, file ));
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Building Music Metadata for: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
+				NoiseLogger.Current.LogException( String.Format( "Building Music Metadata for: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
 			}
 		}
 
@@ -184,7 +182,7 @@ namespace Noise.Core.DataBuilders {
 				database.Store( file );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Building Info Metadata for: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
+				NoiseLogger.Current.LogException( String.Format( "Building Info Metadata for: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
 			}
 		}
 
@@ -219,7 +217,7 @@ namespace Noise.Core.DataBuilders {
 				database.Store( file );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( String.Format( "Building Artwork Metadata for: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
+				NoiseLogger.Current.LogException( String.Format( "Building Artwork Metadata for: {0}", StorageHelpers.GetPath( database.Database, file )), ex );
 			}
 		}
 
@@ -244,7 +242,7 @@ namespace Noise.Core.DataBuilders {
 					mArtistCache.Add( retValue );
 
 					mSummary.ArtistsAdded++;
-					mLog.LogInfo( "Added artist: {0}", retValue.Name );
+					NoiseLogger.Current.LogInfo( "Added artist: {0}", retValue.Name );
 				}
 			}
 
@@ -275,7 +273,7 @@ namespace Noise.Core.DataBuilders {
 					database.Store( artist );
 
 					mSummary.AlbumsAdded++;
-					mLog.LogInfo( "Added album: {0}", retValue.Name );
+					NoiseLogger.Current.LogInfo( "Added album: {0}", retValue.Name );
 				}
 			}
 

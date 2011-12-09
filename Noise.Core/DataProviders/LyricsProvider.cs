@@ -20,7 +20,6 @@ namespace Noise.Core.DataProviders {
 		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
 		private readonly INoiseManager		mNoiseManager;
-		private readonly ILog				mLog;
 		private readonly bool				mHasNetworkAccess;
 
 		private readonly AsyncCommand<LyricsRequestArgs>	mLyricsRequestCommand;
@@ -29,7 +28,6 @@ namespace Noise.Core.DataProviders {
 			mContainer = container;
 			mEvents = mContainer.Resolve<IEventAggregator>();
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
-			mLog = mContainer.Resolve<ILog>();
 
 			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
 			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
@@ -57,7 +55,7 @@ namespace Noise.Core.DataProviders {
 							AsyncTaskEnumerator.Begin( LyricsDownloadTask( args, lyricsInfo ));
 						}
 						catch( Exception ex ) {
-							mLog.LogException( "Exception - OnLyricsRequested:", ex );
+							NoiseLogger.Current.LogException( "Exception - OnLyricsRequested:", ex );
 						}
 					}
 				}
@@ -107,13 +105,13 @@ namespace Noise.Core.DataProviders {
 							lyricsInfo.SetMatchingLyric( dbLyric );
 
 							mEvents.GetEvent<Events.SongLyricsInfo>().Publish( lyricsInfo );
-							mLog.LogMessage( string.Format( "Downloaded lyrics for '{0}' from: {1}", dbLyric.SongName, dbLyric.SourceUrl ));
+							NoiseLogger.Current.LogMessage( string.Format( "Downloaded lyrics for '{0}' from: {1}", dbLyric.SongName, dbLyric.SourceUrl ));
 							break;
 						}
 					}
 				}
 				else {
-					mLog.LogException( string.Format( "Exception - Downloading lyrics page: {0}", result.Url ), downloader.Exception );
+					NoiseLogger.Current.LogException( string.Format( "Exception - Downloading lyrics page: {0}", result.Url ), downloader.Exception );
 				}
 			}
 		}

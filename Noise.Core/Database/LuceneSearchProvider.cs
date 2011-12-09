@@ -118,12 +118,10 @@ namespace Noise.Core.Database {
 
 	public class LuceneIndexBuilder : ISearchBuilder {
 		private readonly long	mArtistId;
-		private readonly ILog	mLog;
 		private IndexWriter		mIndexWriter;
 
-		public LuceneIndexBuilder( DbArtist artist, string indexLocation, bool createIndex, ILog log ) {
+		public LuceneIndexBuilder( DbArtist artist, string indexLocation, bool createIndex ) {
 			mArtistId = artist.DbId;
-			mLog = log;
 
 			var directory = new Lucene.Net.Store.SimpleFSDirectory( new DirectoryInfo( indexLocation ));
 			var analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer( Lucene.Net.Util.Version.LUCENE_29 );
@@ -201,7 +199,7 @@ namespace Noise.Core.Database {
 					mIndexWriter = null;
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - Search provider cannot close IndexWriter: ", ex );
+					NoiseLogger.Current.LogException( "Exception - Search provider cannot close IndexWriter: ", ex );
 				}
 			}
 		}
@@ -209,13 +207,11 @@ namespace Noise.Core.Database {
 
 	public class LuceneSearchProvider : ISearchProvider {
 		private readonly IUnityContainer	mContainer;
-		private readonly ILog				mLog;
 		private bool						mIsInitialized;
 		private	string						mIndexLocation;
 
 		public LuceneSearchProvider( IUnityContainer container ) {
 			mContainer = container;
-			mLog = mContainer.Resolve<ILog>();
 		}
 
 		public bool Initialize() {
@@ -259,11 +255,11 @@ namespace Noise.Core.Database {
 					}
 				}
 				else {
-					mLog.LogMessage( "Database configuration could not be loaded." );
+					NoiseLogger.Current.LogMessage( "Database configuration could not be loaded." );
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - Initializing the Lucene Search Provider", ex );
+				NoiseLogger.Current.LogException( "Exception - Initializing the Lucene Search Provider", ex );
 			}
 			finally {
 				databaseManager.FreeDatabase( database );
@@ -349,7 +345,7 @@ namespace Noise.Core.Database {
 					searcher.Close();
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - Search failed: ", ex );
+					NoiseLogger.Current.LogException( "Exception - Search failed: ", ex );
 				}
 			}
 
@@ -400,7 +396,7 @@ namespace Noise.Core.Database {
 					searcher.Close();
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - DetermineTimeStamp: ", ex );
+					NoiseLogger.Current.LogException( "Exception - DetermineTimeStamp: ", ex );
 				}
 			}
 			return( retValue );
@@ -415,10 +411,10 @@ namespace Noise.Core.Database {
 
 			if( mIsInitialized ) {
 				try {
-					retValue = new LuceneIndexBuilder( artist, mIndexLocation, createIndex, mLog );
+					retValue = new LuceneIndexBuilder( artist, mIndexLocation, createIndex );
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - Search provider cannot create IndexWriter: ", ex );
+					NoiseLogger.Current.LogException( "Exception - Search provider cannot create IndexWriter: ", ex );
 				}
 			}
 

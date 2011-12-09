@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -15,7 +16,6 @@ namespace Noise.Core.BackgroundTasks {
 		private IUnityContainer		mContainer;
 		private IDatabaseManager	mDatabaseMgr;
 		private	INoiseManager		mNoiseManager;
-		private ILog				mLog;
 		private List<long>			mArtistList;
 		private IEnumerator<long>	mArtistEnum;
 		private long				mLastScanTicks;
@@ -28,7 +28,6 @@ namespace Noise.Core.BackgroundTasks {
 			mContainer = container;
 			mDatabaseMgr = mContainer.Resolve<IDatabaseManager>();
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
-			mLog = mContainer.Resolve<ILog>();
 
 			InitializeLists();
 
@@ -46,7 +45,7 @@ namespace Noise.Core.BackgroundTasks {
 				mArtistEnum = mArtistList.GetEnumerator();
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "", ex );
+				NoiseLogger.Current.LogException( "", ex );
 			}
 			finally {
 				mDatabaseMgr.FreeDatabase( database );
@@ -97,12 +96,12 @@ namespace Noise.Core.BackgroundTasks {
 							}
 						}
 
-						mLog.LogMessage( string.Format( "Built decade tag associations for: {0}", artist.Name ));
+						NoiseLogger.Current.LogMessage( string.Format( "Built decade tag associations for: {0}", artist.Name ));
 					}
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - DecadeTagBuilder:Task ", ex );
+				NoiseLogger.Current.LogException( "Exception - DecadeTagBuilder:Task ", ex );
 			}
 			finally {
 				mDatabaseMgr.FreeDatabase( database );

@@ -31,7 +31,6 @@ namespace Noise.Core.MediaPlayer {
 	internal class PlayController : IPlayController {
 		private	readonly IUnityContainer		mContainer;
 		private readonly IEventAggregator		mEvents;
-		private readonly ILog					mLog;
 		private IAudioPlayer					mAudioPlayer;
 		private	IEqManager						mEqManager;
 		private INoiseManager					mNoiseManager;
@@ -55,7 +54,6 @@ namespace Noise.Core.MediaPlayer {
 
 		public PlayController( IUnityContainer container ) {
 			mContainer = container;
-			mLog = mContainer.Resolve<ILog>();
 			mEvents = mContainer.Resolve<IEventAggregator>();
 
 			mOpenTracks = new Dictionary<int, PlayQueueTrack>();
@@ -93,7 +91,7 @@ namespace Noise.Core.MediaPlayer {
 				mAudioPlayer.ParametricEq = mEqManager.CurrentEq;
 			}
 			else {
-				mLog.LogMessage( "EqManager could not be initialized." );
+				NoiseLogger.Current.LogMessage( "EqManager could not be initialized." );
 			}
 
 			var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
@@ -297,7 +295,7 @@ namespace Noise.Core.MediaPlayer {
 				mPlayStateController.Fire( trigger );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - PlayController:StateChange: ", ex );
+				NoiseLogger.Current.LogException( "Exception - PlayController:StateChange: ", ex );
 			}
 		}
 

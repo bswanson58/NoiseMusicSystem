@@ -16,20 +16,18 @@ namespace Noise.Core.PlayHistory {
 		private readonly IDatabaseManager				mDatabaseManager;
 		private readonly IEventAggregator				mEvents;
 		private readonly DatabaseCache<DbPlayHistory>	mPlayHistory;
-		private readonly ILog							mLog;
 
 		public PlayHistoryMgr( IUnityContainer container ) {
 			mContainer = container;
 			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
 			mEvents = mContainer.Resolve<IEventAggregator>();
-			mLog = mContainer.Resolve<ILog>();
 
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
 				mPlayHistory = new DatabaseCache<DbPlayHistory>( from DbPlayHistory history in database.Database select history );
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Exception - PlayHistoryMgr:ctor ", ex );
+				NoiseLogger.Current.LogException( "Exception - PlayHistoryMgr:ctor ", ex );
 			}
 			finally {
 				mDatabaseManager.FreeDatabase( database );
@@ -68,7 +66,7 @@ namespace Noise.Core.PlayHistory {
 					mEvents.GetEvent<Events.PlayHistoryChanged>().Publish( this );
 				}
 				catch( Exception ex) {
-					mLog.LogException( "Exception - TrackPlayCompleted:", ex );
+					NoiseLogger.Current.LogException( "Exception - TrackPlayCompleted:", ex );
 				}
 				finally {
 					mDatabaseManager.FreeDatabase( database );

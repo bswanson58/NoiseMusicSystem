@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.Database;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -12,7 +13,6 @@ namespace Noise.Core.BackgroundTasks {
 	public class SearchBuilder : IBackgroundTask {
 		private IUnityContainer		mContainer;
 		private INoiseManager		mNoiseManager;
-		private ILog				mLog;
 		private List<long>			mArtistList;
 		private IEnumerator<long>	mArtistEnum;
 
@@ -23,7 +23,6 @@ namespace Noise.Core.BackgroundTasks {
 		public bool Initialize( IUnityContainer container ) {
 			mContainer = container;
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
-			mLog = mContainer.Resolve<ILog>();
 
 			InitializeLists();
 
@@ -83,7 +82,7 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		private void BuildSearchIndex( DbArtist artist ) {
-			mLog.LogMessage( String.Format( "Building search info for {0}", artist.Name ));
+			NoiseLogger.Current.LogMessage( String.Format( "Building search info for {0}", artist.Name ));
 
 			var databaseMgr = mContainer.Resolve<IDatabaseManager>();
 			var database = databaseMgr.ReserveDatabase();
@@ -164,7 +163,7 @@ namespace Noise.Core.BackgroundTasks {
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( "Exception - Building search data: ", ex );
+					NoiseLogger.Current.LogException( "Exception - Building search data: ", ex );
 				}
 				finally {
 					databaseMgr.FreeDatabase( database );

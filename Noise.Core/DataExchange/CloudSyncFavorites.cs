@@ -13,12 +13,10 @@ namespace Noise.Core.DataExchange {
 	internal class CloudSyncFavorites : ICloudSyncProvider {
 		private IUnityContainer		mContainer;
 		private IDatabase			mCloudDatabase;
-		private ILog				mLog;
 
 		public bool Initialize( IUnityContainer container, IDatabase cloudDatabase ) {
 			mContainer = container;
 			mCloudDatabase = cloudDatabase;
-			mLog = mContainer.Resolve<ILog>();
 
 			return( true );
 		}
@@ -64,7 +62,7 @@ namespace Noise.Core.DataExchange {
 			}
 
 			if( updateCount > 0 ) {
-				mLog.LogInfo( string.Format( "Favorites - UpdateFromCloud: {0} item(s).", updateCount ));
+				NoiseLogger.Current.LogInfo( string.Format( "Favorites - UpdateFromCloud: {0} item(s).", updateCount ));
 			}
 		}
 
@@ -88,7 +86,7 @@ namespace Noise.Core.DataExchange {
 					}
 				}
 
-				mLog.LogInfo( string.Format( "Updated favorite to cloud: {0}({1}/{2})", item.Track, item.Artist, item.Album ));
+				NoiseLogger.Current.LogInfo( string.Format( "Updated favorite to cloud: {0}({1}/{2})", item.Track, item.Artist, item.Album ));
 			}
 		}
 	}

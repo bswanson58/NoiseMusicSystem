@@ -34,7 +34,6 @@ namespace Noise.Core.FileStore {
 		private readonly INoiseManager			mNoiseManager;
 		private	readonly ISchedulerFactory		mSchedulerFactory;
 		private	readonly IScheduler				mJobScheduler;
-		private readonly ILog					mLog;
 		private readonly List<BaseCommandArgs>	mUnfinishedCommands;
 		private bool							mClearReadOnly;
 
@@ -48,7 +47,6 @@ namespace Noise.Core.FileStore {
 
 			mContainer = container;
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
-			mLog = mContainer.Resolve<ILog>();
 
 			mSchedulerFactory = new StdSchedulerFactory();
 			mJobScheduler = mSchedulerFactory.GetScheduler();
@@ -84,7 +82,7 @@ namespace Noise.Core.FileStore {
 			trigger.JobDataMap[cBackgroundFileUpdater] = this;
 
 			mJobScheduler.ScheduleJob( jobDetail, trigger );
-			mLog.LogMessage( "Started Background FileUpdater." );
+			NoiseLogger.Current.LogMessage( "Started Background FileUpdater." );
 
 			return( true );
 		}
@@ -97,7 +95,7 @@ namespace Noise.Core.FileStore {
 			ProcessUnfinishedCommands();
 
 			if( mUnfinishedCommands.Count > 0 ) {
-				mLog.LogMessage( "FileUpdater: There were unfinished commands at shutdown." );
+				NoiseLogger.Current.LogMessage( "FileUpdater: There were unfinished commands at shutdown." );
 			}
 		}
 
@@ -166,7 +164,7 @@ namespace Noise.Core.FileStore {
 						tags.Save();
 					}
 					catch( Exception ) {
-						mLog.LogMessage( string.Format( "FileUpdates:SetFavorite - Queueing for later: {0}", track.Name ));
+						NoiseLogger.Current.LogMessage( string.Format( "FileUpdates:SetFavorite - Queueing for later: {0}", track.Name ));
 
 						lock( mUnfinishedCommands ) {
 							mUnfinishedCommands.Add( args );
@@ -230,7 +228,7 @@ namespace Noise.Core.FileStore {
 								tags.Save();
 							}
 							catch( Exception ) {
-								mLog.LogMessage( string.Format( "FileUpdates:SetRating - Queueing for later: {0}", track.Name ));
+								NoiseLogger.Current.LogMessage( string.Format( "FileUpdates:SetRating - Queueing for later: {0}", track.Name ));
 
 								lock( mUnfinishedCommands ) {
 									mUnfinishedCommands.Add( args );
@@ -270,7 +268,7 @@ namespace Noise.Core.FileStore {
 								tags.Save();
 							}
 							catch( Exception ) {
-								mLog.LogMessage( string.Format( "FileUpdates:UpdatePlayCount - Queueing for later: {0}", track.Name ));
+								NoiseLogger.Current.LogMessage( string.Format( "FileUpdates:UpdatePlayCount - Queueing for later: {0}", track.Name ));
 
 								lock( mUnfinishedCommands ) {
 									mUnfinishedCommands.Add( args );
@@ -284,7 +282,7 @@ namespace Noise.Core.FileStore {
 
 		private void OnSetMp3Tags( SetMp3TagCommandArgs args ) {
 			if( args.IsAlbum ) {
-				mLog.LogInfo( "Updating Mp3 file tags for album." );
+				NoiseLogger.Current.LogInfo( "Updating Mp3 file tags for album." );
 
 				using( var trackList = mNoiseManager.DataProvider.GetTrackList( args.ItemId )) {
 					foreach( var track in trackList.List ) {
@@ -293,7 +291,7 @@ namespace Noise.Core.FileStore {
 				}
 			}
 			else {
-				mLog.LogInfo( "Updating Mp3 file tags for file." );
+				NoiseLogger.Current.LogInfo( "Updating Mp3 file tags for file." );
 
 				SetMp3FileTags( args );
 			}
@@ -330,7 +328,7 @@ namespace Noise.Core.FileStore {
 						tags.Save();
 					}
 					catch( Exception ) {
-						mLog.LogMessage( string.Format( "FileUpdates:SetMp3FileTags - Queueing for later: {0}", track.Name ));
+						NoiseLogger.Current.LogMessage( string.Format( "FileUpdates:SetMp3FileTags - Queueing for later: {0}", track.Name ));
 
 						lock( mUnfinishedCommands ) {
 							mUnfinishedCommands.Add( args );
@@ -343,7 +341,7 @@ namespace Noise.Core.FileStore {
 		private void OnExecutionComplete( object sender, AsyncCommandCompleteEventArgs args ) {
 			if(( args != null ) &&
 			   ( args.Exception != null )) {
-				mLog.LogException( "Exception - FileUpdates:OnExecutionComplete:", args.Exception );
+				NoiseLogger.Current.LogException( "Exception - FileUpdates:OnExecutionComplete:", args.Exception );
 			}
 		}
 
@@ -361,7 +359,7 @@ namespace Noise.Core.FileStore {
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( string.Format( "Exception FileUpdates:ClearReadOnlyFlag for file: ({0}) -", file ), ex );
+					NoiseLogger.Current.LogException( string.Format( "Exception FileUpdates:ClearReadOnlyFlag for file: ({0}) -", file ), ex );
 				}
 			}
 		}
