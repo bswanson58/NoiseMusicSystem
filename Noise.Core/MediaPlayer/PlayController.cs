@@ -79,8 +79,7 @@ namespace Noise.Core.MediaPlayer {
 			mEvents.GetEvent<Events.GlobalUserEvent>().Subscribe( OnGlobalRequest );
 			mEvents.GetEvent<Events.SystemShutdown>().Subscribe( OnShutdown );
 
-			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 			if( configuration != null ) {
 				mDisplayTimeElapsed = configuration.DisplayPlayTimeElapsed;
@@ -94,7 +93,7 @@ namespace Noise.Core.MediaPlayer {
 				NoiseLogger.Current.LogMessage( "EqManager could not be initialized." );
 			}
 
-			var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+			var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
 			if( audioCongfiguration != null ) {
 				mEnableReplayGain = audioCongfiguration.ReplayGainEnabled;
 				mAudioPlayer.EqEnabled = audioCongfiguration.EqEnabled;
@@ -336,8 +335,7 @@ namespace Noise.Core.MediaPlayer {
 			mPlayStatusDispose.Dispose();
 			mStreamInfoDispose.Dispose();
 
-			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-			var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+			var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
 			if( audioCongfiguration != null ) {
 				audioCongfiguration.PreampGain = mAudioPlayer.PreampVolume;
 				audioCongfiguration.ReplayGainEnabled = mEnableReplayGain;
@@ -354,15 +352,15 @@ namespace Noise.Core.MediaPlayer {
 				audioCongfiguration.TrackOverlapEnabled = mAudioPlayer.TrackOverlapEnable;
 				audioCongfiguration.TrackOverlapMilliseconds = mAudioPlayer.TrackOverlapMilliseconds;
 
-				systemConfig.Save( audioCongfiguration );
+				NoiseSystemConfiguration.Current.Save( audioCongfiguration );
 			}			
 
-			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 			if( configuration != null ) {
 				configuration.DisplayPlayTimeElapsed = mDisplayTimeElapsed;
 
-				systemConfig.Save( configuration );
+				NoiseSystemConfiguration.Current.Save( configuration );
 			}
 		}
 

@@ -74,8 +74,7 @@ namespace Noise.Core {
 				}
 
 				CloudSyncMgr = mContainer.Resolve<ICloudSyncManager>();
-				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-				var configuration = systemConfig.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
+				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
 
 				if( configuration != null ) {
 					if( CloudSyncMgr.InitializeCloudSync( configuration.LoginName, configuration.LoginPassword )) {
@@ -145,8 +144,7 @@ namespace Noise.Core {
 		}
 
 		public void StartExplorerJobs() {
-			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 			if( configuration != null ) {
 				if( configuration.EnableLibraryExplorer ) {

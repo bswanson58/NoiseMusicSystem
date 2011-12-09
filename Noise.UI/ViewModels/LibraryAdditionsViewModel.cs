@@ -41,8 +41,7 @@ namespace Noise.UI.ViewModels {
 				mEvents = mContainer.Resolve<IEventAggregator>();
 				mNoiseManager = mContainer.Resolve<INoiseManager>();
 
-				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 				if( configuration != null ) {
 					mHorizonCount = configuration.NewAdditionsHorizonCount;

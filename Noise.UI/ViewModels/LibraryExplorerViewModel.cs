@@ -62,8 +62,7 @@ namespace Noise.UI.ViewModels {
 				mContainer = value; 
 				mSearchOptions = new List<string>();
 
-				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 				if( configuration != null ) {
 					mEnableSortPrefixes = configuration.EnableSortPrefixes;
 

@@ -33,8 +33,7 @@ namespace Noise.Core.Database {
 			mEventAggregator = mContainer.Resolve<IEventAggregator>();
 			DatabaseId = Guid.NewGuid().ToString();
 
-			var configMgr = mContainer.Resolve<ISystemConfiguration>();
-			var config = configMgr.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
+			var config = NoiseSystemConfiguration.Current.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
 
 			if( config != null ) {
 				mDatabaseName = config.DatabaseName;

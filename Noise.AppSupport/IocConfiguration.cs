@@ -35,11 +35,9 @@ namespace Noise.AppSupport {
 		}
 
 		public bool InitializeIoc( ApplicationUsage appUsage ) {
-			mContainer.RegisterType<ISystemConfiguration, SystemConfiguration>();
 			mContainer.RegisterType<IIoc, IocProvider>();
 
-			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-			var configuration = systemConfig.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
 
 			switch( appUsage ) {
 				case ApplicationUsage.Desktop:

@@ -70,8 +70,7 @@ namespace Noise.Core.FileStore {
 			mSetMp3TagsCommand.ExecutionComplete += OnExecutionComplete;
 			GlobalCommands.SetMp3Tags.RegisterCommand( mSetMp3TagsCommand );
 
-			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 			if( configuration != null ) {
 				mClearReadOnly = configuration.EnableReadOnlyUpdates;
 			}

@@ -20,8 +20,7 @@ namespace Noise.AppSupport {
 		}
 
 		public void Initialize() {
-			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 			if( configuration.EnableGlobalHotkeys ) {
 				mKeyboardHook = new KeyboardHook();

@@ -217,12 +217,11 @@ namespace Noise.Core.Database {
 		public bool Initialize() {
 			mIsInitialized = false;
 
-			var configMgr = mContainer.Resolve<ISystemConfiguration>();
 			var databaseManager = mContainer.Resolve<IDatabaseManager>();
 			var	database = databaseManager.ReserveDatabase();
 
 			try {
-				var config = configMgr.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
+				var config = NoiseSystemConfiguration.Current.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
 
 				if( config != null ) {
 					mIndexLocation = config.SearchIndexLocation;

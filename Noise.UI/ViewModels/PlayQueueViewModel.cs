@@ -56,8 +56,7 @@ namespace Noise.UI.ViewModels {
 				mEventAggregator.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
 				mEventAggregator.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnTrackStarted );
 
-				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 				if( configuration != null ) {
 					mNoiseManager.PlayQueue.SetPlayExhaustedStrategy( configuration.PlayExhaustedStrategy, configuration.PlayExhaustedItem );
@@ -254,14 +253,13 @@ namespace Noise.UI.ViewModels {
 				if( PromptForStrategyItem( value, ref itemId )) {
 					mNoiseManager.PlayQueue.SetPlayExhaustedStrategy( value, itemId );
 
-					var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-					var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+					var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 					if( configuration != null ) {
 						configuration.PlayExhaustedStrategy = value;
 						configuration.PlayExhaustedItem = itemId;
 
-						systemConfig.Save( configuration );
+						NoiseSystemConfiguration.Current.Save( configuration );
 					}
 				}
 			}
@@ -325,13 +323,12 @@ namespace Noise.UI.ViewModels {
 			set {
 				mNoiseManager.PlayQueue.PlayStrategy = value;
 
-				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 				if( configuration != null ) {
 					configuration.PlayStrategy = value;
 
-					systemConfig.Save( configuration );
+					NoiseSystemConfiguration.Current.Save( configuration );
 				}
 			}
 		}

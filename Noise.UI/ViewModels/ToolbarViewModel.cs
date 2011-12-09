@@ -27,11 +27,10 @@ namespace Noise.UI.ViewModels {
 		public void Execute_NoiseOptions() {
 			if( mContainer != null ) {
 				var	dialogService = mContainer.Resolve<IDialogService>();
-				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-				var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 				if( dialogService.ShowDialog( DialogNames.NoiseOptions, configuration ) == true ) {
-					systemConfig.Save( configuration );
+					NoiseSystemConfiguration.Current.Save( configuration );
 				}
 			}
 		}
@@ -39,12 +38,11 @@ namespace Noise.UI.ViewModels {
 		public void Execute_CloudConfiguration() {
 			if( mContainer != null ) {
 				var	dialogService = mContainer.Resolve<IDialogService>();
-				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-				var configuration = systemConfig.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
+				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
 				var noiseManager = mContainer.Resolve<INoiseManager>();
 
 				if( dialogService.ShowDialog( DialogNames.CloudConfiguration, configuration, new CloudConfigurationDialogModel()) == true ) {
-					systemConfig.Save( configuration );
+					NoiseSystemConfiguration.Current.Save( configuration );
 
 					noiseManager.CloudSyncMgr.MaintainSynchronization = configuration.UseCloud;
 				}
@@ -54,11 +52,10 @@ namespace Noise.UI.ViewModels {
 		public void Execute_DatabaseConfiguration() {
 			if( mContainer != null ) {
 				var	dialogService = mContainer.Resolve<IDialogService>();
-				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-				var configuration = systemConfig.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
+				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
 
 				if( dialogService.ShowDialog( DialogNames.DatabaseConfiguration, configuration, new DatabaseConfigurationDialogModel( dialogService )) == true ) {
-					systemConfig.Save( configuration );
+					NoiseSystemConfiguration.Current.Save( configuration );
 				}
 			}
 		}
@@ -66,11 +63,10 @@ namespace Noise.UI.ViewModels {
 		public void Execute_ServerConfiguration() {
 			if( mContainer != null ) {
 				var	dialogService = mContainer.Resolve<IDialogService>();
-				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-				var configuration = systemConfig.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
+				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
 
 				if( dialogService.ShowDialog( DialogNames.ServerConfiguration, configuration ) == true ) {
-					systemConfig.Save( configuration );
+					NoiseSystemConfiguration.Current.Save( configuration );
 				}
 			}
 		}
@@ -78,8 +74,7 @@ namespace Noise.UI.ViewModels {
 		public void Execute_LibraryConfiguration() {
 			if( mContainer != null ) {
 				var	dialogService = mContainer.Resolve<IDialogService>();
-				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-				var configuration = systemConfig.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName );
+				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName );
 				var noiseManager = mContainer.Resolve<INoiseManager>();
 
 				if( configuration.RootFolders.Count == 0 ) {
@@ -95,15 +90,15 @@ namespace Noise.UI.ViewModels {
 						rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 2, eFolderStrategy.Volume ));
 					}
 
-					systemConfig.Save( configuration );
+					NoiseSystemConfiguration.Current.Save( configuration );
 					noiseManager.ConfigurationChanged();
 				}
 			}
 		}
 
 		public void Execute_Import() {
-			var	dialogService = mContainer.Resolve<IDialogService>();
-			var fileName = "";
+			var		dialogService = mContainer.Resolve<IDialogService>();
+			string	fileName;
 
 			if( dialogService.OpenFileDialog( "Import", Constants.ExportFileExtension, "Export Files|*" + Constants.ExportFileExtension, out fileName ) == true ) {
 				var noiseManager = mContainer.Resolve<INoiseManager>();

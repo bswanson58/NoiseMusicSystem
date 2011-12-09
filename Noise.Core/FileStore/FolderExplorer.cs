@@ -99,8 +99,7 @@ namespace Noise.Core.FileStore {
 		}
 
 		public void LoadConfiguration( IDatabase database ) {
-			var configMgr = mContainer.Resolve<ISystemConfiguration>();
-			var storageConfig = configMgr.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName  );
+			var storageConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName  );
 			var rootCount = ( from RootFolder root in database.Database select root ).Count();
 
 			if(( storageConfig != null ) &&

@@ -117,11 +117,15 @@ namespace Noise.Desktop {
 			}
 		}
 
-		private bool ShouldMinimizeToTray() {
-			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+		private static bool ShouldMinimizeToTray() {
+			var retValue = false;
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 			
-			return( configuration.MinimizeToTray );
+			if( configuration != null ) {
+				retValue = configuration.MinimizeToTray;
+			}
+
+			return( retValue );
 		}
 
 		private void OnShellStateChanged( object sender, EventArgs e ) {

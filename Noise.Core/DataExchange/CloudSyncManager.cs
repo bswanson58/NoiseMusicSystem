@@ -173,8 +173,7 @@ namespace Noise.Core.DataExchange {
 
 		private void UpdateFromCloud() {
 			try {
-				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-				var configuration = systemConfig.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
+				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
 				var cloud = CloudDatabase;
 
 				if(( configuration != null ) &&
@@ -231,10 +230,9 @@ namespace Noise.Core.DataExchange {
 			}
 		}
 
-		private long ReserveSeqnId() {
+		private static long ReserveSeqnId() {
 			var retValue = 0L;
-			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-			var configuration = systemConfig.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
 
 			if( configuration != null ) {
 				retValue = configuration.LastSequence + 1;
@@ -243,14 +241,13 @@ namespace Noise.Core.DataExchange {
 			return( retValue );
 		}
 
-		private void UpdateSeqnId( long seqnId ) {
-			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-			var configuration = systemConfig.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
+		private static void UpdateSeqnId( long seqnId ) {
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
 
 			if( configuration != null ) {
 				configuration.LastSequence = seqnId;
 
-				systemConfig.Save( configuration );
+				NoiseSystemConfiguration.Current.Save( configuration );
 			}
 		}
 

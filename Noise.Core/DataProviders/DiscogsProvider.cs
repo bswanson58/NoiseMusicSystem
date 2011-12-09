@@ -25,17 +25,12 @@ namespace Noise.Core.DataProviders {
 	}
 
 	internal abstract class DiscogsProvider : IContentProvider {
-		private IUnityContainer	mContainer;
 		private bool			mHasNetworkAccess;
 		private DiscogsClient	mClient;
 		public abstract ContentType ContentType { get; }
 
 		public bool Initialize( IUnityContainer container ) {
-			mContainer = container;
-
-			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-			var configuration = systemConfig.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 			if( configuration != null ) {
 				mHasNetworkAccess = configuration.HasNetworkAccess;
 			}

@@ -63,8 +63,7 @@ namespace Noise.Core.MediaPlayer {
 
 		private bool LoadUserEq() {
 			var retValue = false;
-			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-			var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+			var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
 			if( audioCongfiguration != null ) {
 				var equalizerList = ( from ParametricEqConfiguration eqConfig in audioCongfiguration.ParametricEqualizers
 				                      select eqConfig.AsParametericEqualizer()).ToList();
@@ -97,13 +96,12 @@ namespace Noise.Core.MediaPlayer {
 
 			if(( eq != null ) &&
 			   (!eq.IsPreset )) {
-				var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-				var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+				var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
 				if( audioCongfiguration != null ) {
 					audioCongfiguration.UpdateEq( eq );
 					audioCongfiguration.EqEnabled = eqEnabled;
 
-					systemConfig.Save( audioCongfiguration );
+					NoiseSystemConfiguration.Current.Save( audioCongfiguration );
 
 					retValue = true;
 				}
@@ -123,12 +121,11 @@ namespace Noise.Core.MediaPlayer {
 				   ( mCurrentEq.EqualizerId != value.EqualizerId )) {
 					mCurrentEq = value;
 
-					var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-					var audioCongfiguration = systemConfig.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+					var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
 					if( audioCongfiguration != null ) {
 						audioCongfiguration.DefaultEqualizer = mCurrentEq.EqualizerId;
 
-						systemConfig.Save( audioCongfiguration );
+						NoiseSystemConfiguration.Current.Save( audioCongfiguration );
 					}
 				}
 			}

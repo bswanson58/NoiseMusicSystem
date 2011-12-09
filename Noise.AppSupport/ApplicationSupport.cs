@@ -23,8 +23,7 @@ namespace Noise.AppSupport {
 		}
 
 		public bool Initialize() {
-			var	systemConfig = mContainer.Resolve<ISystemConfiguration>();
-			var configuration = systemConfig.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
 
 			if(( configuration != null ) &&
 			   ( configuration.UseServer )) {
