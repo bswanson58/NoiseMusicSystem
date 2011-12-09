@@ -10,7 +10,5 @@ namespace Noise.Core.Database {
 
 		void			FreeDatabase( string databaseId );
 		void			FreeDatabase( IDatabase database );
-
-		IBlobStorage	GetBlobDatabase();
 	}
 }

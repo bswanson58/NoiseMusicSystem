@@ -194,11 +194,6 @@
     <Compile Include="BackgroundTasks\LinkSimilarArtists.cs" />
     <Compile Include="BackgroundTasks\LinkTopAlbums.cs" />
     <Compile Include="BackgroundTasks\SearchBuilder.cs" />
-    <Compile Include="BlobStore\BlobStorageException.cs" />
-    <Compile Include="BlobStore\BlobStorageManager.cs" />
-    <Compile Include="BlobStore\IBlobStorageManager.cs" />
-    <Compile Include="Database\BlobStorageResolver.cs" />
-    <Compile Include="Database\Database.cs" />
     <Compile Include="Database\DatabaseCache.cs" />
     <Compile Include="Database\DatabaseManager.cs" />
     <Compile Include="Database\DatabaseStatistics.cs" />
@@ -254,7 +249,6 @@
     <Compile Include="FileStore\IFolderExplorer.cs" />
     <Compile Include="FileStore\RootFolder.cs" />
     <Compile Include="FileStore\StorageHelpers.cs" />
-    <Compile Include="Database\IDatabase.cs" />
     <Compile Include="MediaPlayer\AudioPlayer.cs" />
     <Compile Include="MediaPlayer\EqManager.cs" />
     <Compile Include="MediaPlayer\IAudioPlayer.cs" />

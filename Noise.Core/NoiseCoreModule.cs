@@ -26,7 +26,6 @@ namespace Noise.Core {
 			mContainer.RegisterType<IBackgroundTaskManager, BackgroundTaskManager>();
 			mContainer.RegisterType<ICloudSyncManager, CloudSyncManager>();
 			mContainer.RegisterType<IContentManager, ContentManager>();
-			mContainer.RegisterType<IDatabase, EloqueraDatabase>();
 			mContainer.RegisterType<IDataExchangeManager, DataExchangeManager>();
 			mContainer.RegisterType<IDataProvider, DataProvider>();
 			mContainer.RegisterType<IDataUpdates, DataUpdates>();

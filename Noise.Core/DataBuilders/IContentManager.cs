@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Practices.Unity;
-using Noise.Core.Database;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	internal interface IContentProvider {

@@ -10,8 +10,8 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.Database {
-	public class EloqueraDatabase : IDatabase {
+namespace Noise.EloqueraDatabase.Database {
+	internal class EloqueraDb : IDatabase {
 		private const UInt16				cDatabaseVersionMajor = 0;
 		private const UInt16				cDatabaseVersionMinor = 5;
 
@@ -19,16 +19,16 @@ namespace Noise.Core.Database {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly string				mDatabaseLocation;
 		private readonly string				mDatabaseName;
-		private IBlobStorage				mBlobStorage;
 
-		public	DB			Database { get; private set; }
-		public	string		DatabaseId { get; private set; }
-		public	DbVersion	DatabaseVersion { get; private set; }
+		public	DB							Database { get; private set; }
+		public	string						DatabaseId { get; private set; }
+		public	DbVersion					DatabaseVersion { get; private set; }
+		public	IBlobStorage				BlobStorage { get; set; }
 
 		[ImportMany("PersistenceType")]
 		public IEnumerable<Type>	PersistenceTypes;
 
-		public EloqueraDatabase( IUnityContainer container ) {
+		public EloqueraDb( IUnityContainer container ) {
 			mContainer = container;
 			mEventAggregator = mContainer.Resolve<IEventAggregator>();
 			DatabaseId = Guid.NewGuid().ToString();
@@ -243,20 +243,6 @@ namespace Noise.Core.Database {
 				if( dbObject is DbBase ) {
 					mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Delete ));
 				}
-			}
-		}
-
-		public IBlobStorage BlobStorage {
-			get {
-				var	retValue = mBlobStorage;
-
-				if( retValue == null ) {
-					var dbMgr = mContainer.Resolve<IDatabaseManager>();
-
-					retValue = mBlobStorage = dbMgr.GetBlobDatabase();
-				}
-
-				return( retValue );
 			}
 		}
 	}

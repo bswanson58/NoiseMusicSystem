@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.BlobStore {
+namespace Noise.EloqueraDatabase.BlobStore {
 	public class BlobStorageManager : IBlobStorageManager, IBlobStorage {
 		private readonly IBlobStorageResolver	mBlobResolver;
 		private readonly string					mRootStoragePath;

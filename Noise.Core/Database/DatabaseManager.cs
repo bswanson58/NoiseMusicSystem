@@ -1,47 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Microsoft.Practices.Unity;
-using Noise.Core.BlobStore;
+﻿using System.Collections.Generic;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	class DatabaseManager : IDatabaseManager {
-		private const string	cBlobStorageName	= "Noise Blobs";
-
 		private readonly object					mLockObject;
-		private readonly IUnityContainer		mContainer;
 		private readonly List<IDatabase>		mAvailableDatabases;
 		private readonly Dictionary<string, IDatabase>	mReservedDatabases;
-		private readonly IBlobStorageManager	mBlobStorageMgr;
+		private readonly IDatabaseFactory		mDatabaseFactory;
 		private	bool							mHasShutdown;
 
-		public DatabaseManager( IUnityContainer container ) {
+		public DatabaseManager( IDatabaseFactory databaseFactory ) {
 			mLockObject = new object();
-			mContainer = container;
+			mDatabaseFactory = databaseFactory;
 			mReservedDatabases = new Dictionary<string, IDatabase>();
 			mAvailableDatabases = new List<IDatabase>();
-
-			var blobStoragePath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName );
-			mBlobStorageMgr = new BlobStorageManager( new BlobStorageResolver(), blobStoragePath );
 		}
 
 		public bool Initialize() {
 			var retValue = false;
 
-			var database = mContainer.Resolve<IDatabase>();
+			var database = mDatabaseFactory.GetDatabaseInstance();
 			if( database.InitializeDatabase()) {
 				if( database.OpenWithCreateDatabase()) {
+					mDatabaseFactory.SetBlobStorageInstance( database );
 					mAvailableDatabases.Add( database );
 
-					var blobStorage = Path.Combine( cBlobStorageName, database.DatabaseVersion.DatabaseId.ToString());
-					retValue = mBlobStorageMgr.OpenStorage( blobStorage );
-					if(!retValue ) {
-						mBlobStorageMgr.CreateStorage( blobStorage );
-
-						retValue = mBlobStorageMgr.OpenStorage( blobStorage );
-					}
+					retValue = true;
 				}
 			}
 
@@ -69,7 +54,7 @@ namespace Noise.Core.Database {
 				mHasShutdown = true;
 			}
 
-			mBlobStorageMgr.CloseStorage();
+			mDatabaseFactory.CloseFactory();
 		}
 
 		public IDatabase ReserveDatabase() {
@@ -84,9 +69,10 @@ namespace Noise.Core.Database {
 						mReservedDatabases.Add( retValue.DatabaseId, retValue );
 					}
 					else {
-						retValue = mContainer.Resolve<IDatabase>();
+						retValue = mDatabaseFactory.GetDatabaseInstance();
 
 						if( retValue.InitializeAndOpenDatabase()) {
+							mDatabaseFactory.SetBlobStorageInstance( retValue );
 							mReservedDatabases.Add( retValue.DatabaseId, retValue );
 
 							NoiseLogger.Current.LogInfo( string.Format( "Database Created. (Count: {0})", mReservedDatabases.Count + mAvailableDatabases.Count ));
@@ -128,10 +114,6 @@ namespace Noise.Core.Database {
 					}
 				}
 			}
-		}
-
-		public IBlobStorage GetBlobDatabase() {
-			return( mBlobStorageMgr.GetStorage());
 		}
 	}
 }

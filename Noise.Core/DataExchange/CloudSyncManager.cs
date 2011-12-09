@@ -11,6 +11,7 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using IDatabase = GDataDB.IDatabase;
 
 namespace Noise.Core.DataExchange {
 	internal class CloudSyncManager : ICloudSyncManager {

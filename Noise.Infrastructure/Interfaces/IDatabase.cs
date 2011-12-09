@@ -1,12 +1,11 @@
 ﻿using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.Database {
+namespace Noise.Infrastructure.Interfaces {
 	public interface IDatabase {
 		string				DatabaseId { get; }
 		Eloquera.Client.DB	Database { get; }
 		DbVersion			DatabaseVersion { get; }
-		IBlobStorage		BlobStorage { get; }
+		IBlobStorage		BlobStorage { get; set; }
 
 		bool		InitializeDatabase();
 		bool		OpenWithCreateDatabase();

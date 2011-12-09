@@ -1,18 +1,18 @@
 ﻿using System.ComponentModel.Composition;
 using System.Linq;
-using GDataDB;
 using GDataDB.Linq;
 using Microsoft.Practices.Unity;
 using Noise.Core.DataExchange.Dto;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using IDatabase = GDataDB.IDatabase;
 
 namespace Noise.Core.DataExchange {
 	[Export( typeof( ICloudSyncProvider ))]
 	public class CloudSyncStreams : ICloudSyncProvider {
 		private IUnityContainer		mContainer;
-		private IDatabase			mCloudDatabase;
+		private IDatabase		mCloudDatabase;
 
 		public bool Initialize( IUnityContainer container, IDatabase cloudDatabase ) {
 			mContainer = container;

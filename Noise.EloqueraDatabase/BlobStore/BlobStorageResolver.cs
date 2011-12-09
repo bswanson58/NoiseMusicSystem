@@ -1,7 +1,7 @@
-﻿using Noise.Core.BlobStore;
+﻿using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.Database {
-	internal class BlobStorageResolver :IBlobStorageResolver {
+namespace Noise.EloqueraDatabase.BlobStore {
+	internal class BlobStorageResolver : IBlobStorageResolver {
 		private const string	cDefaultLevelName	= "_";
 
 		public uint StorageLevels {

@@ -3,11 +3,11 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using DiscogsConnect;
 using Microsoft.Practices.Unity;
-using Noise.Core.Database;
 using Noise.Core.DataBuilders;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	[Export( typeof( IContentProvider ) )]

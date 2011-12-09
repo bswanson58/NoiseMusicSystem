@@ -73,6 +73,7 @@ namespace Noise.AppSupport {
 				catalog.AddModule( typeof( Core.NoiseCoreModule ));
 				catalog.AddModule( typeof( Service.Infrastructure.ServiceInfrastructureModule ));
 				catalog.AddModule( typeof( ServiceImpl.NoiseServiceImplModule ));
+				catalog.AddModule( typeof( EloqueraDatabase.EloqueraDatabaseModule ));
 				mContainer.RegisterInstance<IModuleCatalog>( catalog );
 
 				mContainer.RegisterType<IServiceLocator, UnityServiceLocatorAdapter>( new ContainerControlledLifetimeManager());

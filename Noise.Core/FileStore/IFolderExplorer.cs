@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Noise.Core.Database;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.FileStore {
 	public interface IFolderExplorer {
