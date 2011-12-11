@@ -2,8 +2,6 @@
 using System.IO;
 using System.Linq;
 using CuttingEdge.Conditions;
-using Microsoft.Practices.Unity;
-using Noise.Core.Database;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -19,12 +17,10 @@ namespace Noise.Core.DataProviders {
 		private readonly StorageFile		mFile;
 		private	readonly Lazy<File>			mTags;
 
-		public Mp3TagProvider( IUnityContainer container, StorageFile file ) {
-			mDatabaseManager = container.Resolve<IDatabaseManager>();
+		public Mp3TagProvider( IDatabaseManager databaseManager, ITagManager tagManager, StorageFile file ) {
+			mDatabaseManager = databaseManager;
+			mGenreManager = tagManager;
 			mFile = file;
-
-			var manager = container.Resolve<INoiseManager>();
-			mGenreManager = manager.TagManager;
 
 			Condition.Requires( mDatabaseManager ).IsNotNull();
 			Condition.Requires( mFile ).IsNotNull();

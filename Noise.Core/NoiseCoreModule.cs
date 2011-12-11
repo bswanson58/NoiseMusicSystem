@@ -9,7 +9,6 @@ using Noise.Core.FileStore;
 using Noise.Core.MediaPlayer;
 using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
@@ -27,9 +26,9 @@ namespace Noise.Core {
 			mContainer.RegisterType<ICloudSyncManager, CloudSyncManager>();
 			mContainer.RegisterType<IContentManager, ContentManager>();
 			mContainer.RegisterType<IDataExchangeManager, DataExchangeManager>();
-			mContainer.RegisterType<IDataProvider, DataProvider>();
+			mContainer.RegisterType<IDataProvider, DataProvider>( new PerResolveLifetimeManager());
 			mContainer.RegisterType<IDataUpdates, DataUpdates>();
-			mContainer.RegisterType<IDatabaseManager, DatabaseManager>( Constants.NewInstance );
+			mContainer.RegisterType<IDatabaseManager, DatabaseManager>( new PerResolveLifetimeManager());
 			mContainer.RegisterType<IEqManager, EqManager>();
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>();
 			mContainer.RegisterType<IFileUpdates, FileUpdates>();

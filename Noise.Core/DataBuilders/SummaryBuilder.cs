@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.Unity;
-using Noise.Core.Database;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	internal class SummaryBuilder : ISummaryBuilder {
-		private readonly IUnityContainer	mContainer;
+		private readonly IDatabaseManager	mDatabaseManager;
 		private bool						mStop;
 
-		public SummaryBuilder( IUnityContainer container ) {
-			mContainer =container;
+		public SummaryBuilder( IDatabaseManager databaseManager ) {
+			mDatabaseManager = databaseManager;
 		}
 
 		public void BuildSummaryData( DatabaseChangeSummary summary ) {
@@ -27,8 +26,7 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		private void SummarizeArtists() {
-			var databaseMgr = mContainer.Resolve<IDatabaseManager>();
-			var database = databaseMgr.ReserveDatabase();
+			var database = mDatabaseManager.ReserveDatabase();
 
 			if( database != null ) {
 				try {
@@ -125,7 +123,7 @@ namespace Noise.Core.DataBuilders {
 					NoiseLogger.Current.LogException( "Exception - Building summary data: ", ex );
 				}
 				finally {
-					databaseMgr.FreeDatabase( database );
+					mDatabaseManager.FreeDatabase( database );
 				}
 			}
 		}

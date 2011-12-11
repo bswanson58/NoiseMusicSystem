@@ -6,7 +6,6 @@ using System.Threading;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Unity;
-using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -21,10 +20,10 @@ namespace Noise.Core.DataBuilders {
 		[ImportMany( typeof( IContentProvider ))]
 		public IEnumerable<IContentProvider>	ContentProviders;
 
-		public ContentManager( IUnityContainer unityContainer ) {
+		public ContentManager( IUnityContainer unityContainer, IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
 			mContainer = unityContainer;
-			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
-			mEvents =mContainer.Resolve<IEventAggregator>();
+			mDatabaseManager = databaseManager;
+			mEvents = eventAggregator;
 			mCurrentRequests = new List<long>();
 
 			var ioc = mContainer.Resolve<IIoc>();

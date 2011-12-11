@@ -6,11 +6,11 @@ using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	public class LinkSimilarArtists : IBackgroundTask {
-		private IUnityContainer		mContainer;
 		private IDatabaseManager	mDatabaseMgr;
 
 		private DatabaseCache<DbArtist>	mArtistCache;
@@ -21,9 +21,8 @@ namespace Noise.Core.BackgroundTasks {
 			get { return( "Task_LinkSimilarArtists" ); }
 		}
 
-		public bool Initialize( IUnityContainer container ) {
-			mContainer = container;
-			mDatabaseMgr = mContainer.Resolve<IDatabaseManager>();
+		public bool Initialize( IUnityContainer container, IDatabaseManager databaseManager ) {
+			mDatabaseMgr = databaseManager;
 
 			InitializeLists();
 

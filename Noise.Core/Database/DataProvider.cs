@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CuttingEdge.Conditions;
-using Microsoft.Practices.Unity;
 using Noise.Core.DataBuilders;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
@@ -13,16 +12,14 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.Database {
 	public class DataProvider : IDataProvider {
-		private readonly IUnityContainer	mContainer;
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly IContentManager	mContentManager;
 
 		public	long	DatabaseId { get; private set; }
 		
-		public DataProvider( IUnityContainer container ) {
-			mContainer = container;
-			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
-			mContentManager = mContainer.Resolve<IContentManager>();
+		public DataProvider( IDatabaseManager databaseManager, IContentManager contentManager ) {
+			mDatabaseManager = databaseManager;
+			mContentManager = contentManager;
 
 			IDatabase database = null;
 			try {

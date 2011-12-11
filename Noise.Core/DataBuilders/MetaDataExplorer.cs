@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CuttingEdge.Conditions;
-using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.DataProviders;
 using Noise.Core.FileStore;
@@ -13,8 +12,8 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	public class MetaDataExplorer : IMetaDataExplorer {
-		private readonly IUnityContainer		mContainer;
 		private readonly IDatabaseManager		mDatabaseManager;
+		private readonly ITagManager			mTagManager;
 		private readonly FileTagProvider		mTagProvider;
 		private readonly FileNameProvider		mFileNameProvider;
 		private readonly FolderStrategyProvider	mStrategyProvider;
@@ -24,13 +23,13 @@ namespace Noise.Core.DataBuilders {
 		private bool							mStopExploring;
 		private DatabaseChangeSummary			mSummary;
 
-		public  MetaDataExplorer( IUnityContainer container ) {
-			mContainer = container;
-			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
+		public  MetaDataExplorer( IDatabaseManager databaseManager, ITagManager tagManager ) {
+			mDatabaseManager = databaseManager;
+			mTagManager = tagManager;
 
-			mTagProvider = new FileTagProvider( mContainer );
-			mFileNameProvider = new FileNameProvider( mContainer );
-			mStrategyProvider = new FolderStrategyProvider( mContainer );
+			mTagProvider = new FileTagProvider( mDatabaseManager, mTagManager );
+			mFileNameProvider = new FileNameProvider( mDatabaseManager );
+			mStrategyProvider = new FolderStrategyProvider( mDatabaseManager, mTagManager );
 			mDefaultProvider = new DefaultProvider();
 		}
 

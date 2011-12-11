@@ -2,31 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
-using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
 	public class PlayListMgr : IPlayListMgr {
-		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
-		private readonly INoiseManager		mNoiseManager;
+		private readonly IDataProvider		mDataProvider;
 
-		public PlayListMgr( IUnityContainer container ) {
-			mContainer = container;
-			mEvents = mContainer.Resolve<IEventAggregator>();
-			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
+		public PlayListMgr( IDatabaseManager databaseManager, IDataProvider dataProvider, IEventAggregator eventAggregator ) {
+			mDatabaseManager = databaseManager;
+			mDataProvider = dataProvider;
+			mEvents = eventAggregator;
 		}
 
 		public List<DbPlayList> PlayLists {
 			get {
 				var retValue = new List<DbPlayList>();
 
-				using( var list = mNoiseManager.DataProvider.GetPlayLists()) {
+				using( var list = mDataProvider.GetPlayLists()) {
 					retValue.AddRange( list.List );
 				}
 
@@ -87,7 +83,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public IEnumerable<DbTrack> GetTracks( DbPlayList forList ) {
-			return( forList.TrackIds.Select( trackId => mNoiseManager.DataProvider.GetTrack( trackId )).ToList());
+			return( forList.TrackIds.Select( trackId => mDataProvider.GetTrack( trackId )).ToList());
 		}
 
 		private void FireListChanged() {

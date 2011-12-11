@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.Practices.Unity;
-using Noise.Core.Database;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	internal class FileNameProvider {
@@ -16,8 +15,8 @@ namespace Noise.Core.DataProviders {
 		private readonly List<Regex>		mDatePatterns;
 		private List<StorageFile>			mFolderFiles;
 
-		public FileNameProvider( IUnityContainer container ) {
-			mDatabaseManager = container.Resolve<IDatabaseManager>();
+		public FileNameProvider( IDatabaseManager databaseManager ) {
+			mDatabaseManager = databaseManager;
 			mDatePatterns = new List<Regex>();
 
 			mDatePatterns.Add( new Regex( "(?<month>0?[1-9]|1[012]) [- .] (?<day>0?[1-9]|[12][0-9]|3[01]) [- .] (?<year>[0-9]{2,})", RegexOptions.IgnorePatternWhitespace ));

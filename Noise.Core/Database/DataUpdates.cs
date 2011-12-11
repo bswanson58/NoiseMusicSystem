@@ -2,7 +2,6 @@
 using System.Linq;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -10,7 +9,6 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.Database {
 	internal class DataUpdates : IDataUpdates {
-		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
 
@@ -18,10 +16,9 @@ namespace Noise.Core.Database {
 		private AsyncCommand<SetRatingCommandArgs>		mSetRatingCommand;
 		private AsyncCommand<SetAlbumCoverCommandArgs>	mSetAlbumCoverCommand;
 
-		public DataUpdates( IUnityContainer container ) {
-			mContainer = container;
-			mEvents = mContainer.Resolve<IEventAggregator>();
-			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
+		public DataUpdates( IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
+			mEvents = eventAggregator;
+			mDatabaseManager = databaseManager;
 		}
 
 		public bool Initialize() {

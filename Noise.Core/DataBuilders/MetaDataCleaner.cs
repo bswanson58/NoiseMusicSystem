@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
-using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -11,18 +10,17 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataBuilders {
 	public class MetaDataCleaner : IMetaDataCleaner {
-		private readonly IUnityContainer	mContainer;
 		private readonly IDatabaseManager	mDatabaseManager;
 		private bool						mStopCleaning;
 		private DatabaseChangeSummary		mSummary;
 		private readonly List<long>			mAlbumList;
 
-		public MetaDataCleaner( IUnityContainer container ) {
-			mContainer =  container;
-			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
+		public MetaDataCleaner( IDatabaseManager databaseManager ) {
+			mDatabaseManager = databaseManager;
 
 			mAlbumList = new List<long>();
 		}
+
 		public void Stop() {
 			mStopCleaning = true;
 		}

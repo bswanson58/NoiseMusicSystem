@@ -13,6 +13,7 @@ namespace Noise.Core.BackgroundTasks {
 	public class SearchBuilder : IBackgroundTask {
 		private IUnityContainer		mContainer;
 		private INoiseManager		mNoiseManager;
+		private IDatabaseManager	mDatabaseManager;
 		private List<long>			mArtistList;
 		private IEnumerator<long>	mArtistEnum;
 
@@ -20,8 +21,9 @@ namespace Noise.Core.BackgroundTasks {
 			get { return( "Task_SearchBuilder" ); }
 		}
 
-		public bool Initialize( IUnityContainer container ) {
+		public bool Initialize( IUnityContainer container, IDatabaseManager databaseManager ) {
 			mContainer = container;
+			mDatabaseManager = databaseManager;
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
 
 			InitializeLists();
@@ -73,7 +75,7 @@ namespace Noise.Core.BackgroundTasks {
 			var lastUpdate = mNoiseManager.SearchProvider.DetermineTimeStamp( artist );
 
 			if( lastUpdate.Ticks < artist.LastChangeTicks ) {
-				BuildSearchIndex( artist );
+				BuildSearchIndex( mDatabaseManager, artist );
 
 				retValue = true;
 			}
@@ -81,10 +83,9 @@ namespace Noise.Core.BackgroundTasks {
 			return( retValue );
 		}
 
-		private void BuildSearchIndex( DbArtist artist ) {
+		private void BuildSearchIndex( IDatabaseManager databaseMgr, DbArtist artist ) {
 			NoiseLogger.Current.LogMessage( String.Format( "Building search info for {0}", artist.Name ));
 
-			var databaseMgr = mContainer.Resolve<IDatabaseManager>();
 			var database = databaseMgr.ReserveDatabase();
 
 			if( database != null ) {

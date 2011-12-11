@@ -18,7 +18,7 @@ namespace Noise.Core.BackgroundTasks {
 			get { return( "Task_ContentBuilder" ); }
 		}
 
-		public bool Initialize( IUnityContainer container ) {
+		public bool Initialize( IUnityContainer container, IDatabaseManager databaseManager ) {
 			var retValue = false;
 
 			mContainer = container;

@@ -7,7 +7,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Google.API.Search;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Core.Support.AsyncTask;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -17,18 +16,16 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataProviders {
 	internal class LyricsProvider : ILyricsProvider {
-		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
-		private readonly INoiseManager		mNoiseManager;
+		private readonly IDataProvider		mDataProvider;
 		private readonly bool				mHasNetworkAccess;
 
 		private readonly AsyncCommand<LyricsRequestArgs>	mLyricsRequestCommand;
 
-		public LyricsProvider( IUnityContainer container ) {
-			mContainer = container;
-			mEvents = mContainer.Resolve<IEventAggregator>();
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
-
+		public LyricsProvider( IEventAggregator eventAggregator, IDataProvider dataProvider ) {
+			mEvents = eventAggregator;
+			mDataProvider = dataProvider;
+			
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 			if( configuration != null ) {
@@ -67,7 +64,7 @@ namespace Noise.Core.DataProviders {
 		private LyricsInfo LocateLyrics( LyricsRequestArgs args ) {
 			LyricsInfo	retValue;
 
-			using( var lyricsList = mNoiseManager.DataProvider.GetPossibleLyrics( args.Artist, args.Track )) {
+			using( var lyricsList = mDataProvider.GetPossibleLyrics( args.Artist, args.Track )) {
 				var match = lyricsList.List.FirstOrDefault( lyric => lyric.ArtistId == args.Artist.DbId && lyric.TrackId == args.Track.DbId );
 				if( match == null ) {
 					match = lyricsList.List.FirstOrDefault( lyric => lyric.ArtistId == args.Artist.DbId && 
@@ -100,7 +97,7 @@ namespace Noise.Core.DataProviders {
 						if( parser.Success ) {
 							var dbLyric = new DbLyric( args.Artist.DbId, args.Track.DbId, args.Track.Name ) { Lyrics = parser.Lyrics, SourceUrl = result.Url };
 
-							mNoiseManager.DataProvider.StoreLyric( dbLyric );
+							mDataProvider.StoreLyric( dbLyric );
 							lyricsInfo.SetMatchingLyric( dbLyric );
 
 							mEvents.GetEvent<Events.SongLyricsInfo>().Publish( lyricsInfo );

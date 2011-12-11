@@ -1,6 +1,4 @@
 ﻿using System;
-using Microsoft.Practices.Unity;
-using Noise.Core.Database;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -8,14 +6,16 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	internal class FolderStrategyProvider {
-		private	readonly IUnityContainer	mContainer;
+		private readonly IDatabaseManager	mDatabaseManager;
+		private readonly ITagManager		mTagManager;
 
-		public FolderStrategyProvider( IUnityContainer container ) {
-			mContainer = container;
+		public FolderStrategyProvider( IDatabaseManager databaseManager, ITagManager tagManager ) {
+			mDatabaseManager = databaseManager;
+			mTagManager = tagManager;
 		}
 
 		public IMetaDataProvider GetProvider( StorageFile forFile ) {
-			return( new FileStrategyProvider( mContainer, forFile ));
+			return( new FileStrategyProvider( mDatabaseManager, mTagManager, forFile ));
 		}
 	}
 
@@ -25,11 +25,9 @@ namespace Noise.Core.DataProviders {
 		private readonly StorageFile						mFile;
 		private	readonly Lazy<FolderStrategyInformation>	mStrategyInformation;
 
-		public FileStrategyProvider( IUnityContainer container, StorageFile file ) {
-			mDatabaseManager = container.Resolve<IDatabaseManager>();
-
-			var noiseManager = container.Resolve<INoiseManager>();
-			mTagManager = noiseManager.TagManager;
+		public FileStrategyProvider( IDatabaseManager databaseManager, ITagManager tagManager, StorageFile file ) {
+			mDatabaseManager = databaseManager;
+			mTagManager = tagManager;
 
 			mFile = file;
 

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	public class DatabaseStatistics {
@@ -19,8 +19,8 @@ namespace Noise.Core.Database {
 
 		public	DateTime	LastScan { get; private set; }
 
-		public DatabaseStatistics( IUnityContainer container ) {
-			mDatabaseManager = container.Resolve<IDatabaseManager>();
+		public DatabaseStatistics( IDatabaseManager databaseManager ) {
+			mDatabaseManager = databaseManager;
 		}
 
 		public void GatherStatistics( bool allCounts ) {

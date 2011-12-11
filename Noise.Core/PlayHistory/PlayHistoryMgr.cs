@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -12,15 +11,13 @@ namespace Noise.Core.PlayHistory {
 	public class PlayHistoryMgr : IPlayHistory {
 		private const int						cMaximumHistory = 100;
 
-		private readonly IUnityContainer				mContainer;
 		private readonly IDatabaseManager				mDatabaseManager;
 		private readonly IEventAggregator				mEvents;
 		private readonly DatabaseCache<DbPlayHistory>	mPlayHistory;
 
-		public PlayHistoryMgr( IUnityContainer container ) {
-			mContainer = container;
-			mDatabaseManager = mContainer.Resolve<IDatabaseManager>();
-			mEvents = mContainer.Resolve<IEventAggregator>();
+		public PlayHistoryMgr( IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
+			mDatabaseManager = databaseManager;
+			mEvents = eventAggregator;
 
 			var database = mDatabaseManager.ReserveDatabase();
 			try {

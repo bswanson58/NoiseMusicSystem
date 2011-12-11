@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using CuttingEdge.Conditions;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -30,8 +29,7 @@ namespace Noise.Core.FileStore {
 	internal class FileUpdates : IFileUpdates {
 		internal const string					cBackgroundFileUpdater = "BackgroundFileUpdater";
 
-		private readonly IUnityContainer		mContainer;
-		private readonly INoiseManager			mNoiseManager;
+		private readonly IDataProvider			mDataProvider;
 		private	readonly ISchedulerFactory		mSchedulerFactory;
 		private	readonly IScheduler				mJobScheduler;
 		private readonly List<BaseCommandArgs>	mUnfinishedCommands;
@@ -42,12 +40,10 @@ namespace Noise.Core.FileStore {
 		private AsyncCommand<UpdatePlayCountCommandArgs>	mUpdatePlayCountCommand;
 		private AsyncCommand<SetMp3TagCommandArgs>			mSetMp3TagsCommand;
 
-		public FileUpdates( IUnityContainer container ) {
+		public FileUpdates( IDataProvider dataProvider ) {
+			mDataProvider = dataProvider;
+
 			mUnfinishedCommands = new List<BaseCommandArgs>();
-
-			mContainer = container;
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
-
 			mSchedulerFactory = new StdSchedulerFactory();
 			mJobScheduler = mSchedulerFactory.GetScheduler();
 			mJobScheduler.Start();
@@ -119,12 +115,12 @@ namespace Noise.Core.FileStore {
 		private void OnSetFavorite( SetFavoriteCommandArgs args ) {
 			Condition.Requires( args ).IsNotNull();
 
-			var item = mNoiseManager.DataProvider.GetItem( args.ItemId );
+			var item = mDataProvider.GetItem( args.ItemId );
 
 			if(( item != null ) &&
 			   ( item is DbTrack )) {
 				var track = item as DbTrack;
-				var file = mNoiseManager.DataProvider.GetPhysicalFile( track );
+				var file = mDataProvider.GetPhysicalFile( track );
 
 				if( file != null ) {
 					switch( StorageHelpers.DetermineAudioEncoding( file )) {
@@ -146,7 +142,7 @@ namespace Noise.Core.FileStore {
 		}
 
 		private void SetMp3Favorite( SetFavoriteCommandArgs args, DbTrack track, StorageFile file ) {
-			var filePath = mNoiseManager.DataProvider.GetPhysicalFilePath( file );
+			var filePath = mDataProvider.GetPhysicalFilePath( file );
 
 			ClearReadOnlyFlag( filePath );
 
@@ -202,15 +198,15 @@ namespace Noise.Core.FileStore {
 		private void OnSetRating( SetRatingCommandArgs args ) {
 			Condition.Requires( args ).IsNotNull();
 			
-			var item = mNoiseManager.DataProvider.GetItem( args.ItemId );
+			var item = mDataProvider.GetItem( args.ItemId );
 
 			if(( item != null ) &&
 			   ( item is DbTrack )) {
 				var track = item as DbTrack;
-				var file = mNoiseManager.DataProvider.GetPhysicalFile( track );
+				var file = mDataProvider.GetPhysicalFile( track );
 
 				if( file != null ) {
-					var filePath = mNoiseManager.DataProvider.GetPhysicalFilePath( file );
+					var filePath = mDataProvider.GetPhysicalFilePath( file );
 
 					ClearReadOnlyFlag( filePath );
 
@@ -242,15 +238,15 @@ namespace Noise.Core.FileStore {
 		private void OnUpdatePlayCount( UpdatePlayCountCommandArgs args ) {
 			Condition.Requires( args ).IsNotNull();
 			
-			var item = mNoiseManager.DataProvider.GetItem( args.ItemId );
+			var item = mDataProvider.GetItem( args.ItemId );
 
 			if(( item != null ) &&
 			   ( item is DbTrack )) {
 				var track = item as DbTrack;
-				var file = mNoiseManager.DataProvider.GetPhysicalFile( track );
+				var file = mDataProvider.GetPhysicalFile( track );
 
 				if( file != null ) {
-					var filePath = mNoiseManager.DataProvider.GetPhysicalFilePath( file );
+					var filePath = mDataProvider.GetPhysicalFilePath( file );
 
 					ClearReadOnlyFlag( filePath );
 
@@ -283,7 +279,7 @@ namespace Noise.Core.FileStore {
 			if( args.IsAlbum ) {
 				NoiseLogger.Current.LogInfo( "Updating Mp3 file tags for album." );
 
-				using( var trackList = mNoiseManager.DataProvider.GetTrackList( args.ItemId )) {
+				using( var trackList = mDataProvider.GetTrackList( args.ItemId )) {
 					foreach( var track in trackList.List ) {
 						SetMp3FileTags( new SetMp3TagCommandArgs( track, args ));
 					}
@@ -299,7 +295,7 @@ namespace Noise.Core.FileStore {
 		private void SetMp3FileTags( SetMp3TagCommandArgs args ) {
 			Condition.Requires( args ).IsNotNull();
 			
-			var item = mNoiseManager.DataProvider.GetItem( args.ItemId );
+			var item = mDataProvider.GetItem( args.ItemId );
 
 			Condition.Requires( item ).IsNotNull();
 			Condition.Requires( item ).IsOfType( typeof( DbTrack ));
@@ -307,10 +303,10 @@ namespace Noise.Core.FileStore {
 			if(( item != null ) &&
 			   ( item is DbTrack )) {
 				var track = item as DbTrack;
-				var file = mNoiseManager.DataProvider.GetPhysicalFile( track );
+				var file = mDataProvider.GetPhysicalFile( track );
 
 				if( file != null ) {
-					var filePath = mNoiseManager.DataProvider.GetPhysicalFilePath( file );
+					var filePath = mDataProvider.GetPhysicalFilePath( file );
 
 					ClearReadOnlyFlag( filePath );
 
@@ -337,7 +333,7 @@ namespace Noise.Core.FileStore {
 			}
 		}
 
-		private void OnExecutionComplete( object sender, AsyncCommandCompleteEventArgs args ) {
+		private static void OnExecutionComplete( object sender, AsyncCommandCompleteEventArgs args ) {
 			if(( args != null ) &&
 			   ( args.Exception != null )) {
 				NoiseLogger.Current.LogException( "Exception - FileUpdates:OnExecutionComplete:", args.Exception );

@@ -2,26 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	public class TagManager : ITagManager {
-		private readonly IUnityContainer			mContainer;
-		private readonly INoiseManager				mNoiseManager;
 		private readonly IDataProvider				mDataProvider;
 		private readonly Dictionary<long, DbGenre>	mGenreList;
 		private readonly List<DbDecadeTag>			mDecadeList;
 
-		public TagManager( IUnityContainer container ) {
-			mContainer = container;
+		public TagManager( IDataProvider dataProvider ) {
+			mDataProvider = dataProvider;
 			mGenreList = new Dictionary<long, DbGenre>();
 			mDecadeList = new List<DbDecadeTag>();
-
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
-			mDataProvider = mNoiseManager.DataProvider;
 		}
 
 		public bool Initialize() {

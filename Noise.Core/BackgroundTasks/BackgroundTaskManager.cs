@@ -26,6 +26,7 @@ namespace Noise.Core.BackgroundTasks {
 		internal const string					cBackgroundTaskGroup	= "BackgroundTaskManager";
 
 		private	readonly IUnityContainer		mContainer;
+		private readonly IDatabaseManager		mDatabaseManager;
 		private readonly IEventAggregator		mEvents;
 		private	readonly ISchedulerFactory		mSchedulerFactory;
 		private	readonly IScheduler				mJobScheduler;
@@ -38,9 +39,10 @@ namespace Noise.Core.BackgroundTasks {
 		[ImportMany( typeof( IBackgroundTask ))]
 		public IEnumerable<IBackgroundTask>	BackgroundTasks;
 
-		public BackgroundTaskManager( IUnityContainer container ) {
+		public BackgroundTaskManager( IUnityContainer container, IEventAggregator eventAggregator, IDatabaseManager databaseManager  ) {
 			mContainer = container;
-			mEvents = mContainer.Resolve<IEventAggregator>();
+			mDatabaseManager = databaseManager;
+			mEvents = eventAggregator;
 
 			mEvents.GetEvent<Events.LibraryUpdateStarted>().Subscribe( OnLibraryUpdateStarted );
 			mEvents.GetEvent<Events.LibraryUpdateCompleted>().Subscribe( OnLibraryUpdateCompleted );
@@ -63,7 +65,7 @@ namespace Noise.Core.BackgroundTasks {
 			ioc.ComposeParts( this );
 
 			foreach( var task in BackgroundTasks ) {
-				if(!task.Initialize( mContainer )) {
+				if(!task.Initialize( mContainer, mDatabaseManager )) {
 					NoiseLogger.Current.LogMessage( "BackgroundTaskManager could not initialize task '{0}'", task.TaskId );
 				}
 			}

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -12,20 +11,19 @@ using Recls;
 
 namespace Noise.Core.FileStore {
 	public class FolderExplorer : IFolderExplorer {
-		private readonly IUnityContainer	mContainer;
+		private readonly IDatabaseManager	mDatabaseManager;
 		private bool						mStopExploring;
 		private DatabaseCache<StorageFile>	mFileCache;
 		private DatabaseCache<StorageFolder>	mFolderCache;
 
-		public  FolderExplorer( IUnityContainer container ) {
-			mContainer = container;
+		public  FolderExplorer( IDatabaseManager databaseManager ) {
+			mDatabaseManager = databaseManager;
 		}
 
 		public IEnumerable<RootFolder> RootFolderList() {
 			IEnumerable<RootFolder>		retValue = null;
 
-			var databaseMgr = mContainer.Resolve<IDatabaseManager>();
-			var database = databaseMgr.ReserveDatabase();
+			var database = mDatabaseManager.ReserveDatabase();
 
 			if( database != null ) {
 				try {
@@ -41,7 +39,7 @@ namespace Noise.Core.FileStore {
 					NoiseLogger.Current.LogException( "Exception - RootFolderList: ", ex );
 				}
 				finally {
-					databaseMgr.FreeDatabase( database );
+					mDatabaseManager.FreeDatabase( database );
 				}
 			}
 
@@ -54,8 +52,7 @@ namespace Noise.Core.FileStore {
 			var rootFolders = RootFolderList();
 
 			if( rootFolders.Count() > 0 ) {
-				var databaseMgr = mContainer.Resolve<IDatabaseManager>();
-				var database = databaseMgr.ReserveDatabase();
+				var database = mDatabaseManager.ReserveDatabase();
 
 				if( database != null ) {
 					try {
@@ -89,7 +86,7 @@ namespace Noise.Core.FileStore {
 						NoiseLogger.Current.LogException( "Exception - FolderExplorer:", ex );
 					}
 					finally {
-						databaseMgr.FreeDatabase( database );
+						mDatabaseManager.FreeDatabase( database );
 					}
 				}
 			}

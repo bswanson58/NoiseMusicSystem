@@ -16,6 +16,7 @@ namespace Noise.Core.DataBuilders {
 		private readonly IUnityContainer		mContainer;
 		private readonly IEventAggregator		mEvents;
 		private readonly FileSystemWatcherEx	mFolderWatcher;
+		private readonly IDatabaseManager		mDatabaseManager;
 		private IFolderExplorer					mFolderExplorer;
 		private IMetaDataCleaner				mMetaDataCleaner;
 		private IMetaDataExplorer				mMetaDataExplorer;
@@ -25,9 +26,10 @@ namespace Noise.Core.DataBuilders {
 		public	bool							LibraryUpdateInProgress { get; private set; }
 		public	bool							LibraryUpdatePaused { get; private set; }
 
-		public LibraryBuilder( IUnityContainer container ) {
+		public LibraryBuilder( IUnityContainer container, IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
 			mContainer = container;
-			mEvents = mContainer.Resolve<IEventAggregator>();
+			mDatabaseManager = databaseManager;
+			mEvents = eventAggregator;
 			mFolderWatcher = new FileSystemWatcherEx();
 		}
 
@@ -56,8 +58,7 @@ namespace Noise.Core.DataBuilders {
 		public IEnumerable<string> RootFolderList() {
 			var retValue = new List<string>();
 			var folderExplorer = mContainer.Resolve<IFolderExplorer>();
-			var databaseManager = mContainer.Resolve<IDatabaseManager>();
-			var database = databaseManager.ReserveDatabase();
+			var database = mDatabaseManager.ReserveDatabase();
 
 			if( database != null ) {
 				try {
@@ -67,7 +68,7 @@ namespace Noise.Core.DataBuilders {
 					NoiseLogger.Current.LogException( "Exception - RootFolderList:", ex );
 				}
 				finally {
-					databaseManager.FreeDatabase( database );
+					mDatabaseManager.FreeDatabase( database );
 				}
 			}
 

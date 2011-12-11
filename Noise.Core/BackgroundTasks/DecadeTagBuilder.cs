@@ -20,13 +20,14 @@ namespace Noise.Core.BackgroundTasks {
 		private IEnumerator<long>	mArtistEnum;
 		private long				mLastScanTicks;
 		private	long				mStartScanTicks;
+
 		public string TaskId {
 			get { return( "Task_DiscographyExplorer" ); }
 		}
 
-		public bool Initialize( IUnityContainer container ) {
+		public bool Initialize( IUnityContainer container, IDatabaseManager databaseManager ) {
+			mDatabaseMgr = databaseManager;
 			mContainer = container;
-			mDatabaseMgr = mContainer.Resolve<IDatabaseManager>();
 			mNoiseManager = mContainer.Resolve<INoiseManager>();
 
 			InitializeLists();

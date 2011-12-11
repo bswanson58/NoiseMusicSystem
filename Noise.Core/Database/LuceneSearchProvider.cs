@@ -6,7 +6,6 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -206,19 +205,20 @@ namespace Noise.Core.Database {
 	}
 
 	public class LuceneSearchProvider : ISearchProvider {
-		private readonly IUnityContainer	mContainer;
+		private	readonly IDatabaseManager	mDatabaseMgr;
+		private readonly IDataProvider		mDataProvider;
 		private bool						mIsInitialized;
 		private	string						mIndexLocation;
 
-		public LuceneSearchProvider( IUnityContainer container ) {
-			mContainer = container;
+		public LuceneSearchProvider( IDatabaseManager databaseManager, IDataProvider dataProvider ) {
+			mDatabaseMgr = databaseManager;
+			mDataProvider = dataProvider;
 		}
 
 		public bool Initialize() {
 			mIsInitialized = false;
 
-			var databaseManager = mContainer.Resolve<IDatabaseManager>();
-			var	database = databaseManager.ReserveDatabase();
+			var	database = mDatabaseMgr.ReserveDatabase();
 
 			try {
 				var config = NoiseSystemConfiguration.Current.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
@@ -261,7 +261,7 @@ namespace Noise.Core.Database {
 				NoiseLogger.Current.LogException( "Exception - Initializing the Lucene Search Provider", ex );
 			}
 			finally {
-				databaseManager.FreeDatabase( database );
+				mDatabaseMgr.FreeDatabase( database );
 			}
 
 			return( mIsInitialized );
@@ -276,7 +276,7 @@ namespace Noise.Core.Database {
 
 			if( mIsInitialized ) {
 				try {
-					var noiseManager = mContainer.Resolve<INoiseManager>();
+//					var noiseManager = mContainer.Resolve<INoiseManager>();
 					var directory = new Lucene.Net.Store.SimpleFSDirectory( new DirectoryInfo( mIndexLocation ));
 					var	searcher = new IndexSearcher( directory, true );
 					var queryParser = new QueryParser( Lucene.Net.Util.Version.LUCENE_29, SearchItemFieldName.cContent, 
@@ -323,17 +323,17 @@ namespace Noise.Core.Database {
 								if( artistField != null ) {
 									long	id = long.Parse( artistField.StringValue());
 
-									artist = noiseManager.DataProvider.GetArtist( id );
+									artist = mDataProvider.GetArtist( id );
 								}
 								if( albumField != null ) {
 									long	id = long.Parse( albumField.StringValue());
 
-									album = noiseManager.DataProvider.GetAlbum( id );
+									album = mDataProvider.GetAlbum( id );
 								}
 								if( trackField != null ) {
 									long	id = long.Parse( trackField.StringValue());
 
-									track = noiseManager.DataProvider.GetTrack( id );
+									track = mDataProvider.GetTrack( id );
 								}
 
 								retValue.Add( new SearchResultItem( artist, album, track, itemType ));

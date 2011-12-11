@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Core.BackgroundTasks;
 using Noise.Core.Database;
 using Noise.Core.DataProviders;
@@ -11,71 +10,85 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager {
-		private	readonly IUnityContainer	mContainer;
-		private readonly IDatabaseManager	mDatabaseManager;
-		private	readonly IEventAggregator	mEvents;
-		private	IPlayController				mPlayController;
-		private IDataUpdates				mDataUpdates;
-		private IFileUpdates				mFileUpdates;
-		private IBackgroundTaskManager		mBackgroundTaskMgr;
-		private ILyricsProvider				mLyricsProvider;
+		private	readonly IEventAggregator			mEvents;
+		private readonly IDataUpdates				mDataUpdates;
+		private readonly IFolderExplorer			mFolderExplorer;
+		private readonly IFileUpdates				mFileUpdates;
+		private readonly IBackgroundTaskManager		mBackgroundTaskMgr;
+		private readonly ILyricsProvider			mLyricsProvider;
 
+		public	IDatabaseManager			DatabaseManager { get; private set; }
 		public	ICloudSyncManager			CloudSyncMgr { get; private set; }
 		public	IDataProvider				DataProvider { get; private set; }
 		public	ISearchProvider				SearchProvider { get; private set; }
 		public	IPlayQueue					PlayQueue { get; private set; }
 		public	IPlayHistory				PlayHistory { get; private set; }
 		public	IPlayListMgr				PlayListMgr { get; private set; }
+		public	IPlayController				PlayController { get; private set; }
 		public	ILibraryBuilder				LibraryBuilder { get; private set; }
 		public	ITagManager					TagManager { get; private set; }
 		public	IDataExchangeManager		DataExchangeMgr { get; private set; }
 
 		public bool							IsInitialized { get; set; }
 
-		public NoiseManager( IUnityContainer container ) {
-			mContainer = container;
-			mEvents = mContainer.Resolve<IEventAggregator>();
-			mDatabaseManager = mContainer.Resolve<IDatabaseManager>( Constants.NewInstance );
-			mContainer.RegisterInstance( mDatabaseManager );
+		public NoiseManager( IEventAggregator eventAggregator,
+							 IBackgroundTaskManager backgroundTaskManager,
+							 IDatabaseManager databaseManager,
+							 IDataProvider dataProvider,
+							 ICloudSyncManager cloudSyncManager,
+							 IDataExchangeManager dataExchangeManager,
+							 IDataUpdates dataUpdates,
+							 IFileUpdates fileUpdates,
+							 IFolderExplorer folderExplorer,
+							 ILibraryBuilder libraryBuilder,
+							 ILyricsProvider lyricsProvider,
+							 ISearchProvider searchProvider,
+							 IPlayQueue playQueue, 
+							 IPlayHistory playHistory,
+							 IPlayListMgr playListMgr,
+							 IPlayController playController,
+							 ITagManager tagManager ) {
+			mEvents = eventAggregator;
+			mBackgroundTaskMgr = backgroundTaskManager;
+			mDataUpdates = dataUpdates;
+			mFileUpdates = fileUpdates;
+			mFolderExplorer = folderExplorer;
+			mLyricsProvider = lyricsProvider;
+			DatabaseManager = databaseManager;
+			DataExchangeMgr = dataExchangeManager;
+			DataProvider = dataProvider;
+			CloudSyncMgr = cloudSyncManager;
+			LibraryBuilder = libraryBuilder;
+			SearchProvider = searchProvider;
+			PlayQueue = playQueue;
+			PlayHistory = playHistory;
+			PlayListMgr = playListMgr;
+			PlayController = playController;
+			TagManager = tagManager;
 		}
 
 		public bool Initialize() {
 			NoiseLogger.Current.LogMessage( "---------------------------" );
 			NoiseLogger.Current.LogMessage( "Starting Noise Music System" );
 
-			if( mDatabaseManager.Initialize()) {
-				DataProvider = mContainer.Resolve<IDataProvider>();
-				LibraryBuilder = mContainer.Resolve<ILibraryBuilder>();
-				SearchProvider = mContainer.Resolve<ISearchProvider>();
-				DataExchangeMgr = mContainer.Resolve<IDataExchangeManager>();
-
-				PlayQueue = mContainer.Resolve<IPlayQueue>();
-				PlayHistory = mContainer.Resolve<IPlayHistory>();
-				PlayListMgr = mContainer.Resolve<IPlayListMgr>();
-
-				TagManager = mContainer.Resolve<ITagManager>();
+			if( DatabaseManager.Initialize()) {
 				if(!TagManager.Initialize()) {
 					NoiseLogger.Current.LogMessage( "Noise Manager: TagManager could not be initialized" );
 				}
 
-				mDataUpdates = mContainer.Resolve<IDataUpdates>();
 				if(!mDataUpdates.Initialize()) {
 					NoiseLogger.Current.LogMessage( "Noise Manager: DataUpdates could not be initialized" );
 				}
 
-				mFileUpdates = mContainer.Resolve<IFileUpdates>();
 				if(!mFileUpdates.Initialize()) {
 					NoiseLogger.Current.LogMessage( "Noise Manager: FileUpdates could not be initialized" );
 				}
 
-				mBackgroundTaskMgr = mContainer.Resolve<IBackgroundTaskManager>();
 				if(!mBackgroundTaskMgr.Initialize()) {
 					NoiseLogger.Current.LogMessage( "Noise Manager: BackgroundTaskManager cound not be initialized." );
 				}
 
-				CloudSyncMgr = mContainer.Resolve<ICloudSyncManager>();
 				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
-
 				if( configuration != null ) {
 					if( CloudSyncMgr.InitializeCloudSync( configuration.LoginName, configuration.LoginPassword )) {
 						CloudSyncMgr.MaintainSynchronization = configuration.UseCloud;
@@ -85,9 +98,12 @@ namespace Noise.Core {
 					}
 				}
 
-				mLyricsProvider = mContainer.Resolve<ILyricsProvider>();
 				if(!mLyricsProvider.Initialize()) {
 					NoiseLogger.Current.LogMessage( "Noise Manager: Could not initialize lyrics provider." );
+				}
+
+				if(!PlayController.Initialize()) {
+					NoiseLogger.Current.LogMessage( "NoiseManager: PlayController could not be initialized." );
 				}
 
 				NoiseLogger.Current.LogMessage( "Initialized NoiseManager." );
@@ -102,17 +118,16 @@ namespace Noise.Core {
 		}
 
 		public void ConfigurationChanged() {
-			var folderExplorer = mContainer.Resolve<IFolderExplorer>();
-			var database = mDatabaseManager.ReserveDatabase();
+			var database = DatabaseManager.ReserveDatabase();
 
 			try {
-				folderExplorer.LoadConfiguration( database );
+				mFolderExplorer.LoadConfiguration( database );
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - NoiseManager:ConfigurationChanged", ex );
 			}
 			finally {
-				mDatabaseManager.FreeDatabase( database );
+				DatabaseManager.FreeDatabase( database );
 			}
 		}
 
@@ -124,23 +139,7 @@ namespace Noise.Core {
 
 			LibraryBuilder.StopLibraryUpdate();
 
-			mDatabaseManager.Shutdown();
-		}
-
-		public IPlayController PlayController {
-			get {
-				if( mPlayController == null ) {
-					mPlayController = mContainer.Resolve<IPlayController>();
-
-					if( mPlayController != null ) {
-						if(!mPlayController.Initialize()) {
-							NoiseLogger.Current.LogMessage( "NoiseManager: PlayController could not be initialized." );
-						}
-					}
-				}
-
-				return( mPlayController );
-			}
+			DatabaseManager.Shutdown();
 		}
 
 		public void StartExplorerJobs() {

@@ -5,7 +5,6 @@ using System.IO;
 using CuttingEdge.Conditions;
 using Lastfm.Services;
 using Microsoft.Practices.Unity;
-using Noise.Core.Database;
 using Noise.Core.DataBuilders;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -208,7 +207,8 @@ namespace Noise.Core.DataProviders {
 		private void ArtistImageDownloadComplete( long parentId, byte[] imageData ) {
 			Condition.Requires( imageData ).IsNotNull();
 
-			var dbManager = mContainer.Resolve<IDatabaseManager>();
+			var noiseMgr = mContainer.Resolve<INoiseManager>();
+			var dbManager = noiseMgr.DatabaseManager;
 			var database = dbManager.ReserveDatabase();
 
 			try {

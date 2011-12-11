@@ -1,12 +1,14 @@
-﻿using Microsoft.Practices.Unity;
-using Noise.Infrastructure.Dto;
+﻿using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	public class FileTagProvider {
-		private readonly IUnityContainer	mContainer;
+		private readonly IDatabaseManager	mDatabaseManager;
+		private readonly ITagManager		mTagManager;
 
-		public FileTagProvider( IUnityContainer container ) {
-			mContainer = container;
+		public FileTagProvider( IDatabaseManager databaseManager, ITagManager tagManager ) {
+			mDatabaseManager = databaseManager;
+			mTagManager = tagManager;
 		}
 
 		public IMetaDataProvider GetProvider( StorageFile storageFile, eAudioEncoding encoding ) {
@@ -17,7 +19,7 @@ namespace Noise.Core.DataProviders {
 				case eAudioEncoding.MP3:
 				case eAudioEncoding.OGG:
 				case eAudioEncoding.WMA:
-					retValue = new Mp3TagProvider( mContainer, storageFile );
+					retValue = new Mp3TagProvider( mDatabaseManager, mTagManager, storageFile );
 					break;
 			}
 
