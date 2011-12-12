@@ -15,6 +15,7 @@ namespace Noise.Core.PlayQueue {
 		private readonly List<PlayQueueTrack>				mPlayQueue;
 		private readonly List<PlayQueueTrack>				mPlayHistory;
 		private	ePlayStrategy								mPlayStrategy;
+		private readonly IPlayStrategyFactory				mPlayStrategyFactory;
 		private IPlayStrategy								mStrategy;
 		private ePlayExhaustedStrategy						mPlayExhaustedStrategy;
 		private long										mPlayExhaustedItem;
@@ -26,10 +27,11 @@ namespace Noise.Core.PlayQueue {
 		private readonly AsyncCommand<DbAlbum>				mAlbumPlayCommand;
 		private readonly AsyncCommand<DbInternetStream>		mStreamPlayCommand;
 
-		public PlayQueueMgr( IUnityContainer container ) {
+		public PlayQueueMgr( IUnityContainer container, IEventAggregator eventAggregator, IDataProvider dataProvider, IPlayStrategyFactory strategyFactory ) {
 			mContainer = container;
-			mDataProvider = mContainer.Resolve<IDataProvider>();
-			mEventAggregator = mContainer.Resolve<IEventAggregator>();
+			mDataProvider = dataProvider;
+			mEventAggregator = eventAggregator;
+			mPlayStrategyFactory = strategyFactory;
 
 			mPlayQueue = new List<PlayQueueTrack>();
 			mPlayHistory = new List<PlayQueueTrack>();
@@ -394,20 +396,7 @@ namespace Noise.Core.PlayQueue {
 			get { return( mPlayStrategy ); }
 			set {
 				mPlayStrategy = value;
-
-				switch( mPlayStrategy ) {
-					case ePlayStrategy.Next:
-						mStrategy = new PlayStrategySingle();
-						break;
-
-					case ePlayStrategy.Random:
-						mStrategy = new	PlayStrategyRandom();
-						break;
-
-					case ePlayStrategy.TwoFers:
-						mStrategy = new PlayStrategyTwoFers( mContainer );
-						break;
-				}
+				mStrategy = mPlayStrategyFactory.ProvidePlayStrategy( mPlayStrategy );
 			}
 		}
 

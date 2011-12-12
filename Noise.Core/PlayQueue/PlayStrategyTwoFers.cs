@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayStrategyTwoFers : IPlayStrategy {
-		private readonly IUnityContainer	mContainer;
+		private readonly IDataProvider	mDataProvider;
 
-		public PlayStrategyTwoFers( IUnityContainer container ) {
-			mContainer = container;
+		public PlayStrategyTwoFers( IDataProvider dataProvider ) {
+			mDataProvider = dataProvider;
 		}
 
 		public PlayQueueTrack NextTrack( IPlayQueue queueMgr, IList<PlayQueueTrack> queue ) {
@@ -43,14 +42,13 @@ namespace Noise.Core.PlayQueue {
 				}
 
 				if( needA2Fer ) {
-					var noiseManager = mContainer.Resolve<INoiseManager>();
-					var albumList = noiseManager.DataProvider.GetAlbumList( retValue.Artist );
+					var albumList = mDataProvider.GetAlbumList( retValue.Artist );
 					var r = new Random( DateTime.Now.Millisecond );
 					var next = r.Next( albumList.List.Count() - 1 );
 					var album = albumList.List.Skip( next ).FirstOrDefault();
 
 					if( album != null ) {
-						using( var trackList = noiseManager.DataProvider.GetTrackList( album )) {
+						using( var trackList = mDataProvider.GetTrackList( album )) {
 							next = r.Next( trackList.List.Count() - 1 );
 							var track = trackList.List.Skip( next ).FirstOrDefault();
 
