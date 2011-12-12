@@ -1,13 +1,13 @@
-﻿using Microsoft.Practices.Unity;
-using Noise.Infrastructure.Interfaces;
+﻿using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayExhaustedStrategyStream : IPlayExhaustedStrategy {
-		private readonly IUnityContainer	mContainer;
+		private readonly	IDataProvider	mDataProvider;
 
-		public PlayExhaustedStrategyStream( IUnityContainer container ) {
-			mContainer = container;
+		public PlayExhaustedStrategyStream( IDataProvider dataProvider ) {
+			mDataProvider = dataProvider;
 		}
+
 		public bool QueueExhausted( IPlayQueue queueMgr, long itemId ) {
 			var retValue = false;
 
@@ -22,8 +22,7 @@ namespace Noise.Core.PlayQueue {
 			}
 
 			if( !retValue ) {
-				var noiseManager = mContainer.Resolve<INoiseManager>();
-				var stream = noiseManager.DataProvider.GetStream( itemId );
+				var stream = mDataProvider.GetStream( itemId );
 				if( stream != null ) {
 					queueMgr.Add( stream );
 

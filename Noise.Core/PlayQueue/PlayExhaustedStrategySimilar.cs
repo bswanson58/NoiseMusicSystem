@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -22,27 +21,29 @@ namespace Noise.Core.PlayQueue {
 	}
 
 	internal class PlayExhaustedStrategySimilar : PlayExhaustedListBase {
-		public PlayExhaustedStrategySimilar( IUnityContainer container ) :
-			base( container ) { }
+		private readonly IDataProvider	mDataProvider;
+
+		public PlayExhaustedStrategySimilar( IDataProvider dataProvider ) {
+			mDataProvider = dataProvider;
+		}
 
 		protected override void FillTrackList( long itemId ) {
 			mTrackList.Clear();
 
 			try {
-				var manager = mContainer.Resolve<INoiseManager>();
 				var artistList = mQueueMgr.PlayList.Select( item => item.Artist ).Distinct( new ArtistComparer());
 
 				foreach( var artist in artistList ) {
-					var supportInfo = manager.DataProvider.GetArtistSupportInfo( artist.DbId );
+					var supportInfo = mDataProvider.GetArtistSupportInfo( artist.DbId );
 
 					foreach( var item in supportInfo.SimilarArtist.Items ) {
 						if( item.IsLinked ) {
-							var associatedArtist = manager.DataProvider.GetArtist( item.AssociatedId );
+							var associatedArtist = mDataProvider.GetArtist( item.AssociatedId );
 
 							if( associatedArtist != null ) {
-								using( var albumList = manager.DataProvider.GetAlbumList( associatedArtist )) {
+								using( var albumList = mDataProvider.GetAlbumList( associatedArtist )) {
 									foreach( var album in albumList.List ) {
-										using( var trackList = manager.DataProvider.GetTrackList( album )) {
+										using( var trackList = mDataProvider.GetTrackList( album )) {
 											foreach( var track in trackList.List ) {
 												if(!mQueueMgr.IsTrackQueued( track )) {
 													mTrackList.Add( track );

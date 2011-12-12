@@ -256,9 +256,11 @@
     <Compile Include="NoiseManager.cs" />
     <Compile Include="Platform\SleepPreventer.cs" />
     <Compile Include="PlayHistory\PlayHistoryMgr.cs" />
+    <Compile Include="PlayQueue\IPlayExhaustedFactory.cs" />
     <Compile Include="PlayQueue\IPlayExhaustedStrategy.cs" />
     <Compile Include="PlayQueue\IPlayStrategy.cs" />
     <Compile Include="PlayQueue\IPlayStrategyFactory.cs" />
+    <Compile Include="PlayQueue\PlayExhaustedFactory.cs" />
     <Compile Include="PlayQueue\PlayExhaustedListBase.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyFavorites.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyPlayList.cs" />

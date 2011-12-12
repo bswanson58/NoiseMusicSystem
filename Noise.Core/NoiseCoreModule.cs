@@ -46,6 +46,20 @@ namespace Noise.Core {
 			mContainer.RegisterType<ISearchProvider, LuceneSearchProvider>();
 			mContainer.RegisterType<ITagManager, TagManager>();
 			mContainer.RegisterType<DatabaseStatistics, DatabaseStatistics>();
+
+			mContainer.RegisterType<IPlayStrategyFactory, PlayStrategyFactory>();
+			mContainer.RegisterType<PlayStrategySingle>();
+			mContainer.RegisterType<PlayStrategyRandom>();
+			mContainer.RegisterType<PlayStrategyTwoFers>();
+
+			mContainer.RegisterType<IPlayExhaustedFactory, PlayExhaustedFactory>();
+			mContainer.RegisterType<PlayExhaustedStrategyFavorites>();
+			mContainer.RegisterType<PlayExhaustedStrategyGenre>();
+			mContainer.RegisterType<PlayExhaustedStrategyPlayList>();
+			mContainer.RegisterType<PlayExhaustedStrategyReplay>();
+			mContainer.RegisterType<PlayExhaustedStrategySimilar>();
+			mContainer.RegisterType<PlayExhaustedStrategyStop>();
+			mContainer.RegisterType<PlayExhaustedStrategyStream>();
 		}
 	}
 }

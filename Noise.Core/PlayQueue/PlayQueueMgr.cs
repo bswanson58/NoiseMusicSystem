@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -9,7 +8,6 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayQueueMgr : IPlayQueue {
-		private readonly IUnityContainer					mContainer;
 		private readonly IDataProvider						mDataProvider;
 		private readonly IEventAggregator					mEventAggregator;
 		private readonly List<PlayQueueTrack>				mPlayQueue;
@@ -18,6 +16,7 @@ namespace Noise.Core.PlayQueue {
 		private readonly IPlayStrategyFactory				mPlayStrategyFactory;
 		private IPlayStrategy								mStrategy;
 		private ePlayExhaustedStrategy						mPlayExhaustedStrategy;
+		private readonly IPlayExhaustedFactory				mPlayExhaustedFactory;
 		private long										mPlayExhaustedItem;
 		private IPlayExhaustedStrategy						mExhaustedStrategy;
 		private	int											mReplayTrackCount;
@@ -27,11 +26,12 @@ namespace Noise.Core.PlayQueue {
 		private readonly AsyncCommand<DbAlbum>				mAlbumPlayCommand;
 		private readonly AsyncCommand<DbInternetStream>		mStreamPlayCommand;
 
-		public PlayQueueMgr( IUnityContainer container, IEventAggregator eventAggregator, IDataProvider dataProvider, IPlayStrategyFactory strategyFactory ) {
-			mContainer = container;
+		public PlayQueueMgr( IEventAggregator eventAggregator, IDataProvider dataProvider,
+							 IPlayStrategyFactory strategyFactory, IPlayExhaustedFactory exhaustedFactory ) {
 			mDataProvider = dataProvider;
 			mEventAggregator = eventAggregator;
 			mPlayStrategyFactory = strategyFactory;
+			mPlayExhaustedFactory = exhaustedFactory;
 
 			mPlayQueue = new List<PlayQueueTrack>();
 			mPlayHistory = new List<PlayQueueTrack>();
@@ -407,36 +407,7 @@ namespace Noise.Core.PlayQueue {
 		public void SetPlayExhaustedStrategy( ePlayExhaustedStrategy strategy, long itemId ) {
 			mPlayExhaustedStrategy = strategy;
 			mPlayExhaustedItem = itemId;
-
-			switch( mPlayExhaustedStrategy ) {
-				case ePlayExhaustedStrategy.Stop:
-					mExhaustedStrategy = new PlayExhaustedStrategyStop();
-					break;
-
-				case ePlayExhaustedStrategy.Replay:
-					mExhaustedStrategy = new PlayQueueExhaustedStrategyReplay();
-					break;
-
-				case ePlayExhaustedStrategy.PlayList:
-					mExhaustedStrategy = new PlayExhaustedStrategyPlayList( mContainer );
-					break;
-
-				case ePlayExhaustedStrategy.PlayFavorites:
-					mExhaustedStrategy = new PlayExhaustedStrategyFavorites( mContainer );
-					break;
-
-				case ePlayExhaustedStrategy.PlaySimilar:
-					mExhaustedStrategy = new PlayExhaustedStrategySimilar( mContainer );
-					break;
-
-				case ePlayExhaustedStrategy.PlayStream:
-					mExhaustedStrategy = new PlayExhaustedStrategyStream( mContainer );
-					break;
-
-				case ePlayExhaustedStrategy.PlayGenre:
-					mExhaustedStrategy = new PlayExhaustedStrategyGenre( mContainer );
-					break;
-			}
+			mExhaustedStrategy = mPlayExhaustedFactory.ProvideExhaustedStrategy( mPlayExhaustedStrategy );
 		}
 
 		public IEnumerable<PlayQueueTrack> PlayList {

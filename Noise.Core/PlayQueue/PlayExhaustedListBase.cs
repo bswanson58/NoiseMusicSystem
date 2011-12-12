@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
 	internal abstract class PlayExhaustedListBase : IPlayExhaustedStrategy {
-		protected readonly IUnityContainer	mContainer;
 		protected readonly List<DbTrack>	mTrackList;
 		protected IPlayQueue				mQueueMgr;
 
-		protected PlayExhaustedListBase( IUnityContainer container ) {
-			mContainer = container;
+		protected PlayExhaustedListBase() {
 			mTrackList = new List<DbTrack>();
 		}
 

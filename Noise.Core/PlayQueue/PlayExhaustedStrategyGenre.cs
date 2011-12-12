@@ -1,16 +1,15 @@
-﻿using Microsoft.Practices.Unity;
-using Noise.Infrastructure.Interfaces;
+﻿using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayExhaustedStrategyGenre : PlayExhaustedListBase {
-		public PlayExhaustedStrategyGenre( IUnityContainer container ) :
-			base( container ) {
+		private readonly	IDataProvider	mDataProvider;
+
+		public PlayExhaustedStrategyGenre( IDataProvider dataProvider ) {
+			mDataProvider = dataProvider;
 		}
 
 		protected override void FillTrackList( long itemId ) {
-			var	noiseManager = mContainer.Resolve<INoiseManager>();
-
-			using( var trackList = noiseManager.DataProvider.GetGenreTracks( itemId )) {
+			using( var trackList = mDataProvider.GetGenreTracks( itemId )) {
 				var	maxTracks = 250;
 
 				foreach( var track in trackList.List ) {

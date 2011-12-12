@@ -1,7 +1,7 @@
 ﻿using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
-	internal class PlayQueueExhaustedStrategyReplay : IPlayExhaustedStrategy {
+	internal class PlayExhaustedStrategyReplay : IPlayExhaustedStrategy {
 		public bool QueueExhausted( IPlayQueue queueMgr, long itemId ) {
 			var retValue = false;
 
