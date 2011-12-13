@@ -1,5 +1,4 @@
 ﻿using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.AppSupport.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -7,14 +6,12 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.AppSupport {
 	public class HotkeyManager {
-		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
 		private	KeyboardHook				mKeyboardHook;
 		private bool						mInstalled;
 
-		public HotkeyManager( IUnityContainer container ) {
-			mContainer = container;
-			mEvents = mContainer.Resolve<IEventAggregator>();
+		public HotkeyManager( IEventAggregator eventAggregator ) {
+			mEvents = eventAggregator;
 
 			mEvents.GetEvent<Events.SystemShutdown>().Subscribe( OnShutdown );
 		}

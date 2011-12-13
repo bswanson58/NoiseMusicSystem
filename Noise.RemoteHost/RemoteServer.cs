@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -13,13 +12,11 @@ using Noise.Infrastructure.RemoteHost;
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteServer : INoiseRemote {
-		private readonly IUnityContainer					mContainer;
 		private	readonly IEventAggregator					mEvents;
 		private	readonly Dictionary<string, ClientEvents>	mClientList;
 
-		public RemoteServer( IUnityContainer container ) {
-			mContainer = container;
-			mEvents = mContainer.Resolve<IEventAggregator>();
+		public RemoteServer( IEventAggregator eventAggregator ) {
+			mEvents = eventAggregator;
 			mClientList = new Dictionary<string, ClientEvents>();
 
 			mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnQueueChanged );

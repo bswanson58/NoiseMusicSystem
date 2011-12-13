@@ -5,7 +5,6 @@ using System.Timers;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -29,11 +28,12 @@ namespace Noise.Core.MediaPlayer {
 	}
 
 	internal class PlayController : IPlayController {
-		private	readonly IUnityContainer		mContainer;
 		private readonly IEventAggregator		mEvents;
-		private IAudioPlayer					mAudioPlayer;
-		private	IEqManager						mEqManager;
-		private INoiseManager					mNoiseManager;
+		private readonly IDataProvider			mDataProvider;
+		private readonly IAudioPlayer			mAudioPlayer;
+		private	readonly IEqManager				mEqManager;
+		private readonly IPlayQueue				mPlayQueue;
+		private readonly IPlayHistory			mPlayHistory;
 		private TimeSpan						mCurrentPosition;
 		private TimeSpan						mCurrentLength;
 		private bool							mDisplayTimeElapsed;
@@ -52,9 +52,13 @@ namespace Noise.Core.MediaPlayer {
 		private Subject<ePlayState>				mPlayStateSubject;
 		public	IObservable<ePlayState>			PlayStateChange { get { return( mPlayStateSubject.AsObservable()); } }
 
-		public PlayController( IUnityContainer container ) {
-			mContainer = container;
-			mEvents = mContainer.Resolve<IEventAggregator>();
+		public PlayController( IEventAggregator eventAggregator, IDataProvider dataProvider, IPlayQueue playQueue, IPlayHistory playHistory, IAudioPlayer audioPlayer, IEqManager eqManager ) {
+			mEvents = eventAggregator;
+			mDataProvider = dataProvider;
+			mPlayQueue = playQueue;
+			mPlayHistory = playHistory;
+			mAudioPlayer = audioPlayer;
+			mEqManager = eqManager;
 
 			mOpenTracks = new Dictionary<int, PlayQueueTrack>();
 
@@ -63,8 +67,6 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		public bool Initialize() {
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
-			mAudioPlayer = mContainer.Resolve<IAudioPlayer>();
 			mSampleLevels = new AudioLevels();
 			mCurrentPosition = new TimeSpan();
 			mCurrentLength = new TimeSpan( 1 );
@@ -85,7 +87,6 @@ namespace Noise.Core.MediaPlayer {
 				mDisplayTimeElapsed = configuration.DisplayPlayTimeElapsed;
 			}
 
-			mEqManager = mContainer.Resolve<IEqManager>();
 			if( mEqManager.Initialize( Constants.EqPresetsFile )) {
 				mAudioPlayer.ParametricEq = mEqManager.CurrentEq;
 			}
@@ -247,16 +248,16 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		private void StartPlaying() {
-			if(( mNoiseManager.PlayQueue.PlayingTrack == null ) &&
-			   ( mNoiseManager.PlayQueue.NextTrack == null )) {
-				mNoiseManager.PlayQueue.ReplayQueue();
+			if(( mPlayQueue.PlayingTrack == null ) &&
+			   ( mPlayQueue.NextTrack == null )) {
+				mPlayQueue.ReplayQueue();
 			}
 
 			PlayNext();
 		}
 
 		private void PlayNext() {
-			PlayTrack( mNoiseManager.PlayQueue.PlayNextTrack );
+			PlayTrack( mPlayQueue.PlayNextTrack );
 		}
 
 		private void PlayPrevious() {
@@ -268,7 +269,7 @@ namespace Noise.Core.MediaPlayer {
 				FireStateChange( eStateTriggers.PlayerPlaying );
 			}
 			else {
-				PlayTrack( mNoiseManager.PlayQueue.PlayPreviousTrack );
+				PlayTrack( mPlayQueue.PlayPreviousTrack );
 			}
 		}
 
@@ -393,7 +394,7 @@ namespace Noise.Core.MediaPlayer {
 			}
 			else {
 				if(( CurrentTrack != null ) &&
-				   (!mNoiseManager.PlayQueue.IsTrackQueued( CurrentTrack.Track ))) {
+				   (!mPlayQueue.IsTrackQueued( CurrentTrack.Track ))) {
 					FireStateChange( eStateTriggers.UiStop );
 				}
 				else {
@@ -423,7 +424,7 @@ namespace Noise.Core.MediaPlayer {
 
 			if( track != null ) {
 				track.PercentPlayed = mAudioPlayer.GetPercentPlayed( channel );
-				mNoiseManager.PlayHistory.TrackPlayCompleted( track );
+				mPlayHistory.TrackPlayCompleted( track );
 			}
 
 			mOpenTracks.Remove( channel );
@@ -449,13 +450,13 @@ namespace Noise.Core.MediaPlayer {
 
 			StartTrack( track );
 
-			mNoiseManager.PlayQueue.PlayingTrack = track;
+			mPlayQueue.PlayingTrack = track;
 
 			FirePlaybackTrackChanged();
 		}
 
 		private void QueueNextTrack() {
-			var track =  mNoiseManager.PlayQueue.PlayNextTrack();
+			var track =  mPlayQueue.PlayNextTrack();
 
 			if( track != null ) {
 				var channel = OpenTrack( track );
@@ -497,9 +498,7 @@ namespace Noise.Core.MediaPlayer {
 
 			StopInfoUpdate();
 
-			if( mNoiseManager != null ) {
-				mNoiseManager.PlayQueue.StopPlay();
-			}
+			mPlayQueue.StopPlay();
 
 			mCurrentPosition = new TimeSpan();
 			mCurrentLength = new TimeSpan( 1 );
@@ -535,7 +534,7 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		public void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			var item = args.GetItem( mNoiseManager.DataProvider );
+			var item = args.GetItem( mDataProvider );
 
 			if( item is DbTrack ) {
 				var track = item as DbTrack;
@@ -636,13 +635,11 @@ namespace Noise.Core.MediaPlayer {
 			get {
 				var retValue = false;
 
-				if( mNoiseManager != null ) {
-					if(( mNoiseManager.PlayQueue.PreviousTrack != null ) ||
-					  (( CurrentTrack != null ) &&
-					   ( mCurrentStatus != ePlaybackStatus.Stopped ) &&
-					   ( mCurrentPosition > new TimeSpan( 0,0,5 )))) {
-						retValue = true;
-					}
+				if(( mPlayQueue.PreviousTrack != null ) ||
+					(( CurrentTrack != null ) &&
+					( mCurrentStatus != ePlaybackStatus.Stopped ) &&
+					( mCurrentPosition > new TimeSpan( 0,0,5 )))) {
+					retValue = true;
 				}
 
 				return( retValue );
@@ -654,11 +651,11 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		public PlayQueueTrack NextTrack {
-			get{ return( mNoiseManager.PlayQueue.NextTrack ); }
+			get{ return( mPlayQueue.NextTrack ); }
 		}
 
 		public PlayQueueTrack PreviousTrack {
-			get{ return( mNoiseManager.PlayQueue.PreviousTrack ); }
+			get{ return( mPlayQueue.PreviousTrack ); }
 		}
 
 		private void OnAudioLevelsChanged( AudioLevels levels ) {

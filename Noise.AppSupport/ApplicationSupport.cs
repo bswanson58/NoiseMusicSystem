@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.RemoteHost;
@@ -8,18 +7,16 @@ using Noise.Service.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport {
 	public class ApplicationSupport {
-		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
 		private readonly IServiceBusManager	mServiceBus;
 		private readonly IRemoteServer		mRemoteServer;
 		private readonly HotkeyManager		mHotkeyManager;
 
-		public ApplicationSupport( IUnityContainer container ) {
-			mContainer = container;
-			mEvents = mContainer.Resolve<IEventAggregator>();
-			mServiceBus = mContainer.Resolve<IServiceBusManager>();
-			mRemoteServer = mContainer.Resolve<IRemoteServer>();
-			mHotkeyManager = new HotkeyManager( mContainer );
+		public ApplicationSupport( IEventAggregator eventAggregator, IServiceBusManager serviceBusManager, IRemoteServer remoteServer ) {
+			mEvents = eventAggregator;
+			mServiceBus = serviceBusManager;
+			mRemoteServer = remoteServer;
+			mHotkeyManager = new HotkeyManager( mEvents );
 		}
 
 		public bool Initialize() {

@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -63,7 +62,6 @@ namespace Noise.Core.MediaPlayer {
 	}
 
 	public class AudioPlayer : IAudioPlayer {
-		private readonly IUnityContainer				mContainer;
 		private readonly int							mMixerChannel;
 		private	readonly float							mMixerSampleRate;
 		private float									mPlaySpeed;
@@ -108,8 +106,7 @@ namespace Noise.Core.MediaPlayer {
 
 		public	bool									TrackOverlapEnable { get; set; }
 
-		public AudioPlayer( IUnityContainer container ) {
-			mContainer = container;
+		public AudioPlayer( ILicenseManager licenseManager ) {
 			mCurrentStreams = new Dictionary<int, AudioStream>();
 			mEqChannels = new Dictionary<long, int>();
 			mStreamMetadataSync = new SYNCPROC( StreamSyncProc );
@@ -125,7 +122,6 @@ namespace Noise.Core.MediaPlayer {
 			mTrackOverlapMs = 100;
 
 			try {
-				var licenseManager = mContainer.Resolve<ILicenseManager>();
 				if( licenseManager.Initialize( Constants.LicenseKeyFile )) {
 					var key = licenseManager.RetrieveKey( LicenseKeys.BassAudio );
 

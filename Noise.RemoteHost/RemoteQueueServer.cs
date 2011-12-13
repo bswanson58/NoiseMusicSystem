@@ -2,7 +2,6 @@
 using System.Linq;
 using System.ServiceModel;
 using AutoMapper;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -12,19 +11,21 @@ using Noise.Infrastructure.RemoteHost;
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteQueueServer : INoiseRemoteQueue {
-		private readonly IUnityContainer	mContainer;
-		private	readonly INoiseManager		mNoiseManager;
+		private readonly IDataProvider		mDataProvider;
+		private readonly IPlayController	mPlayController;
+		private readonly IPlayQueue			mPlayQueue;
 
-		public RemoteQueueServer( IUnityContainer container ) {
-			mContainer = container;
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
+		public RemoteQueueServer( IDataProvider dataProvider, IPlayController playController, IPlayQueue playQueue ) {
+			mDataProvider = dataProvider;
+			mPlayController = playController;
+			mPlayQueue = playQueue;
 		}
 
 		public BaseResult EnqueueTrack( long trackId ) {
 			var retValue = new BaseResult();
 
 			try {
-				var track = mNoiseManager.DataProvider.GetTrack( trackId );
+				var track = mDataProvider.GetTrack( trackId );
 
 				if( track != null ) {
 					GlobalCommands.PlayTrack.Execute( track );
@@ -45,7 +46,7 @@ namespace Noise.RemoteHost {
 			var retValue = new BaseResult();
 
 			try {
-				var album = mNoiseManager.DataProvider.GetAlbum( albumId );
+				var album = mDataProvider.GetAlbum( albumId );
 
 				if( album != null ) {
 					GlobalCommands.PlayAlbum.Execute( album );
@@ -74,7 +75,7 @@ namespace Noise.RemoteHost {
 			var retValue = new PlayQueueListResult();
 
 			try {
-				retValue.Tracks = mNoiseManager.PlayQueue.PlayList.Select( TransformQueueTrack).ToArray();
+				retValue.Tracks = mPlayQueue.PlayList.Select( TransformQueueTrack).ToArray();
 
 				retValue.Success = true;
 			}
@@ -93,32 +94,32 @@ namespace Noise.RemoteHost {
 			try {
 				switch( command ) {
 					case TransportCommand.Play:
-						if( mNoiseManager.PlayController.CanPlay ) {
-							mNoiseManager.PlayController.Play();
+						if( mPlayController.CanPlay ) {
+							mPlayController.Play();
 						}
 						break;
 
 					case TransportCommand.Pause:
-						if( mNoiseManager.PlayController.CanPause ) {
-							mNoiseManager.PlayController.Pause();
+						if( mPlayController.CanPause ) {
+							mPlayController.Pause();
 						}
 						break;
 
 					case TransportCommand.PlayNext:
-						if( mNoiseManager.PlayController.CanPlayNextTrack ) {
-							mNoiseManager.PlayController.PlayNextTrack();
+						if( mPlayController.CanPlayNextTrack ) {
+							mPlayController.PlayNextTrack();
 						}
 						break;
 
 					case TransportCommand.PlayPrevious:
-						if( mNoiseManager.PlayController.CanPlayPreviousTrack ) {
-							mNoiseManager.PlayController.PlayPreviousTrack();
+						if( mPlayController.CanPlayPreviousTrack ) {
+							mPlayController.PlayPreviousTrack();
 						}
 						break;
 
 					case TransportCommand.Stop:
-						if( mNoiseManager.PlayController.CanStop ) {
-							mNoiseManager.PlayController.Stop();
+						if( mPlayController.CanStop ) {
+							mPlayController.Stop();
 						}
 						break;
 				}

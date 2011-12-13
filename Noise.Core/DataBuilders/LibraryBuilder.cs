@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
 using Noise.Core.Platform;
@@ -13,22 +12,28 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	public class LibraryBuilder : ILibraryBuilder {
-		private readonly IUnityContainer		mContainer;
 		private readonly IEventAggregator		mEvents;
 		private readonly FileSystemWatcherEx	mFolderWatcher;
 		private readonly IDatabaseManager		mDatabaseManager;
-		private IFolderExplorer					mFolderExplorer;
-		private IMetaDataCleaner				mMetaDataCleaner;
-		private IMetaDataExplorer				mMetaDataExplorer;
-		private	ISummaryBuilder					mSummaryBuilder;
+		private readonly IFolderExplorer		mFolderExplorer;
+		private readonly IMetaDataCleaner		mMetaDataCleaner;
+		private readonly IMetaDataExplorer		mMetaDataExplorer;
+		private	readonly ISummaryBuilder		mSummaryBuilder;
+		private readonly DatabaseStatistics		mDatabaseStatistics;
 		private bool							mContinueExploring;
 
 		public	bool							LibraryUpdateInProgress { get; private set; }
 		public	bool							LibraryUpdatePaused { get; private set; }
 
-		public LibraryBuilder( IUnityContainer container, IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
-			mContainer = container;
+		public LibraryBuilder( IEventAggregator eventAggregator, IDatabaseManager databaseManager,
+							   IFolderExplorer folderExplorer, IMetaDataCleaner metaDataCleaner, IMetaDataExplorer metaDataExplorer,
+							   ISummaryBuilder summaryBuilder, DatabaseStatistics databaseStatistics ) {
 			mDatabaseManager = databaseManager;
+			mFolderExplorer = folderExplorer;
+			mMetaDataCleaner = metaDataCleaner;
+			mMetaDataExplorer = metaDataExplorer;
+			mSummaryBuilder = summaryBuilder;
+			mDatabaseStatistics = databaseStatistics;
 			mEvents = eventAggregator;
 			mFolderWatcher = new FileSystemWatcherEx();
 		}
@@ -57,12 +62,11 @@ namespace Noise.Core.DataBuilders {
 
 		public IEnumerable<string> RootFolderList() {
 			var retValue = new List<string>();
-			var folderExplorer = mContainer.Resolve<IFolderExplorer>();
 			var database = mDatabaseManager.ReserveDatabase();
 
 			if( database != null ) {
 				try {
-					retValue.AddRange( folderExplorer.RootFolderList().Select( rootFolder => StorageHelpers.GetPath( database.Database, rootFolder )));
+					retValue.AddRange( mFolderExplorer.RootFolderList().Select( rootFolder => StorageHelpers.GetPath( database.Database, rootFolder )));
 				}
 				catch( Exception ex ) {
 					NoiseLogger.Current.LogException( "Exception - RootFolderList:", ex );
@@ -138,23 +142,19 @@ namespace Noise.Core.DataBuilders {
 
 				using( new SleepPreventer()) {
 					if( mContinueExploring ) {
-						mFolderExplorer = mContainer.Resolve<IFolderExplorer>();
 						mFolderExplorer.SynchronizeDatabaseFolders();
 					}
 
 					var results = new DatabaseChangeSummary();
 					if( mContinueExploring ) {
-						mMetaDataCleaner = mContainer.Resolve<IMetaDataCleaner>();
 						mMetaDataCleaner.CleanDatabase( results );
 					}
 
 					if( mContinueExploring ) {
-						mMetaDataExplorer = mContainer.Resolve<IMetaDataExplorer>();
 						mMetaDataExplorer.BuildMetaData( results );
 					}
 
 					if( mContinueExploring ) {
-						mSummaryBuilder = mContainer.Resolve<ISummaryBuilder>();
 						mSummaryBuilder.BuildSummaryData( results );
 					}
 
@@ -173,10 +173,6 @@ namespace Noise.Core.DataBuilders {
 				NoiseLogger.Current.LogException( "Exception - LibraryBuilderUpdate: ", ex );
 			}
 			finally {
-				mFolderExplorer = null;
-				mMetaDataExplorer = null;
-				mSummaryBuilder = null;
-
 				LibraryUpdateInProgress = false;
 			}
 
@@ -192,10 +188,8 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		private void LogStatistics( bool allCounts ) {
-			var	statistics = mContainer.Resolve<DatabaseStatistics>();
-
-			statistics.GatherStatistics( allCounts );
-			NoiseLogger.Current.LogInfo( statistics.ToString());
+			mDatabaseStatistics.GatherStatistics( allCounts );
+			NoiseLogger.Current.LogInfo( mDatabaseStatistics.ToString());
 		}
 	}
 }

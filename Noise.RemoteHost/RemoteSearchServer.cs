@@ -2,7 +2,6 @@
 using System.Linq;
 using System.ServiceModel;
 using AutoMapper;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -14,12 +13,10 @@ namespace Noise.RemoteHost {
 	public class RemoteSearchServer : INoiseRemoteSearch {
 		private const int cMaxSearchResults = 100;
 
-		private readonly IUnityContainer	mContainer;
-		private	readonly INoiseManager		mNoiseManager;
+		private	readonly ISearchProvider	mSearchProvider;
 
-		public RemoteSearchServer( IUnityContainer container ) {
-			mContainer = container;
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
+		public RemoteSearchServer( ISearchProvider searchProvider ) {
+			mSearchProvider = searchProvider;
 		}
 
 		private static RoSearchResultItem TransformSearchItem( SearchResultItem searchItem ) {
@@ -34,7 +31,7 @@ namespace Noise.RemoteHost {
 			var retValue = new SearchResult();
 
 			try {
-				var searchList = mNoiseManager.SearchProvider.Search( eSearchItemType.Everything, searchText, cMaxSearchResults );
+				var searchList = mSearchProvider.Search( eSearchItemType.Everything, searchText, cMaxSearchResults );
 
 				retValue.Items = searchList.Select( TransformSearchItem ).ToArray();
 				foreach( var searchItem in retValue.Items ) {

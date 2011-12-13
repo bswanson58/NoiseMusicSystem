@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -10,13 +9,10 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.MediaPlayer {
 	public class EqManager : IEqManager {
-		private readonly IUnityContainer			mContainer;
 		private readonly List<ParametricEqualizer>	mEqPresets;
 		private ParametricEqualizer					mCurrentEq;
 
-		public EqManager( IUnityContainer container ) {
-			mContainer = container;
-
+		public EqManager() {
 			mEqPresets = new List<ParametricEqualizer>();
 		}
 

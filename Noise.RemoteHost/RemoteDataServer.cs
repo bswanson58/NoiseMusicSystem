@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using AutoMapper;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -13,19 +12,19 @@ using Noise.Infrastructure.RemoteHost;
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteDataServer : INoiseRemoteData {
-		private readonly IUnityContainer	mContainer;
-		private	readonly INoiseManager		mNoiseManager;
+		private	readonly IDataProvider	mDataProvider;
+		private readonly ITagManager	mTagManager;
 
-		public RemoteDataServer( IUnityContainer container ) {
-			mContainer = container;
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
+		public RemoteDataServer( IDataProvider dataProvider, ITagManager tagManager ) {
+			mDataProvider = dataProvider;
+			mTagManager = tagManager;
 		}
 
 		private string RetrieveGenre( long genreId ) {
 			var retValue = "";
 
 			if( genreId != Constants.cDatabaseNullOid ) {
-				var genre = mNoiseManager.TagManager.GetGenre( genreId );
+				var genre = mTagManager.GetGenre( genreId );
 
 				if( genre != null ){
 					retValue = genre.Name;
@@ -48,7 +47,7 @@ namespace Noise.RemoteHost {
 			var retValue = new ArtistListResult();
 
 			try {
-				using( var artistList = mNoiseManager.DataProvider.GetArtistList()) {
+				using( var artistList = mDataProvider.GetArtistList()) {
 					retValue.Artists = artistList.List.Select( TransformArtist ).ToArray();
 					retValue.Success = true;
 				}
@@ -80,8 +79,8 @@ namespace Noise.RemoteHost {
 			var retValue = new ArtistInfoResult();
 
 			try {
-				var artist = mNoiseManager.DataProvider.GetArtist( artistId );
-				var artistInfo = mNoiseManager.DataProvider.GetArtistSupportInfo( artistId );
+				var artist = mDataProvider.GetArtist( artistId );
+				var artistInfo = mDataProvider.GetArtistSupportInfo( artistId );
 
 				if(( artist != null ) &&
 				   ( artistInfo != null )) {
@@ -112,10 +111,10 @@ namespace Noise.RemoteHost {
 			var retValue = new AlbumListResult { ArtistId = artistId };
 
 			try {
-				var	artist = mNoiseManager.DataProvider.GetArtist( artistId );
+				var	artist = mDataProvider.GetArtist( artistId );
 
 				if( artist != null ) {
-					using( var albumList = mNoiseManager.DataProvider.GetAlbumList( artistId )) {
+					using( var albumList = mDataProvider.GetAlbumList( artistId )) {
 						retValue.Albums = albumList.List.Select( TransformAlbum ).ToArray();
 						retValue.Success = true;
 					}
@@ -176,8 +175,8 @@ namespace Noise.RemoteHost {
 			var retValue = new AlbumInfoResult();
 
 			try {
-				var album = mNoiseManager.DataProvider.GetAlbum( albumId );
-				var supportInfo = mNoiseManager.DataProvider.GetAlbumSupportInfo( albumId );
+				var album = mDataProvider.GetAlbum( albumId );
+				var supportInfo = mDataProvider.GetAlbumSupportInfo( albumId );
 
 				if(( album != null ) &&
 				   ( supportInfo != null )) {
@@ -207,12 +206,12 @@ namespace Noise.RemoteHost {
 			var retValue = new TrackListResult();
 
 			try {
-				var album = mNoiseManager.DataProvider.GetAlbum( albumId );
+				var album = mDataProvider.GetAlbum( albumId );
 
 				retValue.ArtistId = album.Artist;
 				retValue.AlbumId = album.DbId;
 
-				using( var trackList = mNoiseManager.DataProvider.GetTrackList( albumId )) {
+				using( var trackList = mDataProvider.GetTrackList( albumId )) {
 					retValue.Tracks = trackList.List.Select( TransformTrack ).ToArray();
 					foreach( var track in retValue.Tracks ) {
 						track.ArtistId = retValue.ArtistId;
@@ -234,18 +233,18 @@ namespace Noise.RemoteHost {
 			var favoritesList = new List<RoFavorite>();
 
 			try {
-			using( var list = mNoiseManager.DataProvider.GetFavoriteArtists()) {
+			using( var list = mDataProvider.GetFavoriteArtists()) {
 				favoritesList.AddRange( list.List.Select( artist => new RoFavorite( artist ) ) );
 			}
-			using( var list = mNoiseManager.DataProvider.GetFavoriteAlbums()) {
+			using( var list = mDataProvider.GetFavoriteAlbums()) {
 				favoritesList.AddRange( from album in list.List
-				                        let artist = mNoiseManager.DataProvider.GetArtistForAlbum( album )
+				                        let artist = mDataProvider.GetArtistForAlbum( album )
 				                        select new RoFavorite( artist, album ));
 			}
-			using( var list = mNoiseManager.DataProvider.GetFavoriteTracks()) {
+			using( var list = mDataProvider.GetFavoriteTracks()) {
 				favoritesList.AddRange( from track in list.List
-				                        let album = mNoiseManager.DataProvider.GetAlbumForTrack( track )
-				                        let artist = mNoiseManager.DataProvider.GetArtistForAlbum( album )
+				                        let album = mDataProvider.GetAlbumForTrack( track )
+				                        let artist = mDataProvider.GetArtistForAlbum( album )
 				                        select new RoFavorite( artist, album, track ));
 			}
 

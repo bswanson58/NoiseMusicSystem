@@ -1,50 +1,47 @@
 ﻿using System;
 using System.ServiceModel;
 using System.ServiceModel.Web;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.RemoteHost;
 
 namespace Noise.RemoteHost {
 	public class RemoteServerMgr : IRemoteServer {
-		private readonly IUnityContainer	mContainer;
-		private INoiseRemote				mRemoteServer;
+		private readonly INoiseRemote		mRemoteServer;
 		private ServiceHost					mServerHost;
-		private INoiseRemoteData			mRemoteDataServer;
+		private readonly INoiseRemoteData	mRemoteDataServer;
 		private ServiceHost					mDataServerHost;
-		private INoiseRemoteQueue			mRemoteQueueServer;
+		private readonly INoiseRemoteQueue	mRemoteQueueServer;
 		private ServiceHost					mQueueServerHost;
-		private INoiseRemoteSearch			mRemoteSearchServer;
+		private readonly INoiseRemoteSearch	mRemoteSearchServer;
 		private ServiceHost					mSearchServerHost;
 		private ServiceDiscovery			mServiceDiscovery;
 
-		public RemoteServerMgr( IUnityContainer container ) {
-			mContainer = container;
+		public RemoteServerMgr( INoiseRemote noiseRemote, INoiseRemoteData noiseRemoteData, INoiseRemoteQueue noiseRemoteQueue, INoiseRemoteSearch noiseRemoteSearch ) {
+			mRemoteServer = noiseRemote;
+			mRemoteDataServer = noiseRemoteData;
+			mRemoteQueueServer = noiseRemoteQueue;
+			mRemoteSearchServer = noiseRemoteSearch;
 		}
 
 		public void OpenRemoteServer() {
-			mRemoteServer = mContainer.Resolve<INoiseRemote>();
 			mServerHost = new WebServiceHost( mRemoteServer );
 			mServerHost.AddServiceEndpoint( typeof( INoiseRemote ), new WebHttpBinding(), new Uri( "http://localhost:88/Noise" ));
 			if(!OpenRemoteServer( mServerHost )) {
 				mServerHost = null;
 			}
 
-			mRemoteDataServer = mContainer.Resolve<INoiseRemoteData>();
 			mDataServerHost = new WebServiceHost( mRemoteDataServer );
 			mDataServerHost.AddServiceEndpoint( typeof( INoiseRemoteData ), new WebHttpBinding(), new Uri( "http://localhost:88/Noise/Data" ));
 			if(!OpenRemoteServer( mDataServerHost )) {
 				mDataServerHost = null;
 			}
 
-			mRemoteQueueServer = mContainer.Resolve<INoiseRemoteQueue>();
 			mQueueServerHost = new WebServiceHost( mRemoteQueueServer );
 			mQueueServerHost.AddServiceEndpoint( typeof( INoiseRemoteQueue ) ,new WebHttpBinding(), new Uri( "http://localhost:88/Noise/Queue" ));
 			if(!OpenRemoteServer( mQueueServerHost )) {
 				mQueueServerHost = null;
 			}
 
-			mRemoteSearchServer = mContainer.Resolve<INoiseRemoteSearch>();
 			mSearchServerHost = new WebServiceHost( mRemoteSearchServer );
 			mSearchServerHost.AddServiceEndpoint( typeof( INoiseRemoteSearch ), new WebHttpBinding(), new Uri( "http://localhost:88/Noise/Search" ));
 			if(!OpenRemoteServer( mSearchServerHost )) {
