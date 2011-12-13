@@ -4,7 +4,6 @@ using System.ComponentModel.Composition;
 using System.IO;
 using CuttingEdge.Conditions;
 using Lastfm.Services;
-using Microsoft.Practices.Unity;
 using Noise.Core.DataBuilders;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -15,11 +14,11 @@ using Noise.Infrastructure.Support;
 namespace Noise.Core.DataProviders {
 	internal abstract class BaseLastFmProvider : IContentProvider {
 		public		abstract ContentType	ContentType { get; }
-		protected	IUnityContainer			mContainer;
+		protected	INoiseManager			mNoiseManager;
 		private		bool					mHasNetworkAccess;
 
-		public bool Initialize( IUnityContainer container ) {
-			mContainer = container;
+		public bool Initialize( INoiseManager noiseManager ) {
+			mNoiseManager = noiseManager;
 
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
@@ -48,7 +47,7 @@ namespace Noise.Core.DataProviders {
 
 		public void UpdateContent( IDatabase database, DbArtist forArtist ) {
 			if( mHasNetworkAccess ) {
-				var provider = new LastFmProvider( mContainer );
+				var provider = new LastFmProvider( mNoiseManager );
 
 				provider.UpdateArtist( database, forArtist );
 			}
@@ -85,14 +84,12 @@ namespace Noise.Core.DataProviders {
 	}
 
 	public class LastFmProvider {
-		private readonly IUnityContainer	mContainer;
+		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly ITagManager		mTagManager;
 		private readonly Session			mSession;
 
-		public LastFmProvider( IUnityContainer container ) {
-			mContainer = container;
-
-			var noiseManager = mContainer.Resolve<INoiseManager>();
+		public LastFmProvider( INoiseManager noiseManager ) {
+			mDatabaseManager = noiseManager.DatabaseManager;
 			mTagManager = noiseManager.TagManager;
 
 			try {
@@ -205,9 +202,7 @@ namespace Noise.Core.DataProviders {
 		private void ArtistImageDownloadComplete( long parentId, byte[] imageData ) {
 			Condition.Requires( imageData ).IsNotNull();
 
-			var noiseMgr = mContainer.Resolve<INoiseManager>();
-			var dbManager = noiseMgr.DatabaseManager;
-			var database = dbManager.ReserveDatabase();
+			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
 				var parms = database.Database.CreateParameters();
@@ -233,7 +228,7 @@ namespace Noise.Core.DataProviders {
 				NoiseLogger.Current.LogException( "Exception - LastFmProvider:ImageDownload: ", ex );
 			}
 			finally {
-				dbManager.FreeDatabase( database );
+				mDatabaseManager.FreeDatabase( database );
 			}
 		}
 	}

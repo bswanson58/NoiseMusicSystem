@@ -2,7 +2,6 @@
 using System.ComponentModel.Composition;
 using System.Linq;
 using DiscogsConnect;
-using Microsoft.Practices.Unity;
 using Noise.Core.DataBuilders;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -29,7 +28,7 @@ namespace Noise.Core.DataProviders {
 		private DiscogsClient	mClient;
 		public abstract ContentType ContentType { get; }
 
-		public bool Initialize( IUnityContainer container ) {
+		public bool Initialize( INoiseManager noiseManager ) {
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 			if( configuration != null ) {
 				mHasNetworkAccess = configuration.HasNetworkAccess;

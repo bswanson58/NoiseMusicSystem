@@ -1,11 +1,10 @@
 ﻿using System;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	internal interface IContentProvider {
-		bool			Initialize( IUnityContainer container );
+		bool			Initialize( INoiseManager noiseManager );
 
 		ContentType		ContentType { get; }
 		TimeSpan		ExpirationPeriod { get; }
@@ -20,8 +19,6 @@ namespace Noise.Core.DataBuilders {
 	}
 
 	public interface IContentManager {
-		void			RequestContent( DbArtist forArtist );
-		void			RequestContent( DbAlbum forAlbum );
-		void			RequestContent( DbTrack forTrack );
+		bool			Initialize( INoiseManager noiseManager );
 	}
 }

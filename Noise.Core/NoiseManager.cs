@@ -2,6 +2,7 @@
 using Microsoft.Practices.Prism.Events;
 using Noise.Core.BackgroundTasks;
 using Noise.Core.Database;
+using Noise.Core.DataBuilders;
 using Noise.Core.DataProviders;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
@@ -13,6 +14,7 @@ namespace Noise.Core {
 	public class NoiseManager : INoiseManager {
 		private	readonly IEventAggregator			mEvents;
 		private readonly IDataUpdates				mDataUpdates;
+		private readonly IContentManager			mContentManager;
 		private readonly IFolderExplorer			mFolderExplorer;
 		private readonly IFileUpdates				mFileUpdates;
 		private readonly IBackgroundTaskManager		mBackgroundTaskMgr;
@@ -39,6 +41,7 @@ namespace Noise.Core {
 							 IDataProvider dataProvider,
 							 ICloudSyncManager cloudSyncManager,
 							 IDataExchangeManager dataExchangeManager,
+							 IContentManager contentManager,
 							 IDataUpdates dataUpdates,
 							 IFileUpdates fileUpdates,
 							 IFolderExplorer folderExplorer,
@@ -53,6 +56,7 @@ namespace Noise.Core {
 							 ITagManager tagManager ) {
 			mEvents = eventAggregator;
 			mBackgroundTaskMgr = backgroundTaskManager;
+			mContentManager = contentManager;
 			mDataUpdates = dataUpdates;
 			mFileUpdates = fileUpdates;
 			mFolderExplorer = folderExplorer;
@@ -111,6 +115,10 @@ namespace Noise.Core {
 
 				if(!PlayHistory.Initialize()) {
 					NoiseLogger.Current.LogMessage( "NoiseManager: PlayHistory could not be initialized." );
+				}
+
+				if(!mContentManager.Initialize( this )) {
+					NoiseLogger.Current.LogMessage( "Noise Manager: ContentManager could not be initialized" );
 				}
 
 				var sysConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );

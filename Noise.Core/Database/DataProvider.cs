@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CuttingEdge.Conditions;
-using Noise.Core.DataBuilders;
+using Microsoft.Practices.Prism.Events;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -12,13 +12,13 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.Database {
 	public class DataProvider : IDataProvider {
+		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
-		private readonly IContentManager	mContentManager;
 		private long						mDatabaseId;
 
-		public DataProvider( IDatabaseManager databaseManager, IContentManager contentManager ) {
+		public DataProvider( IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
+			mEvents = eventAggregator;
 			mDatabaseManager = databaseManager;
-			mContentManager = contentManager;
 			mDatabaseId = Constants.cDatabaseNullOid;
 
 			NoiseLogger.Current.LogInfo( "DataProvider created" );
@@ -653,7 +653,7 @@ namespace Noise.Core.Database {
 			var artist = GetArtist( artistId );
 
 			if( artist != null ) {
-				mContentManager.RequestContent( artist );
+				mEvents.GetEvent<Events.ArtistContentRequested>().Publish( artist );
 			}
 		}
 

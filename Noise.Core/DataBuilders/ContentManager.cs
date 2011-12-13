@@ -5,38 +5,45 @@ using System.Linq;
 using System.Threading;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	internal class ContentManager : IContentManager {
-		private readonly IUnityContainer	mContainer;
+		private readonly IIoc				mComponentCreator;
 		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
+		private INoiseManager				mNoiseManager;
 		private readonly List<long>			mCurrentRequests;
 
 		[ImportMany( typeof( IContentProvider ))]
 		public IEnumerable<IContentProvider>	ContentProviders;
 
-		public ContentManager( IUnityContainer unityContainer, IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
-			mContainer = unityContainer;
+		public ContentManager( IIoc componentCreator, IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
+			mComponentCreator = componentCreator;
 			mDatabaseManager = databaseManager;
 			mEvents = eventAggregator;
 			mCurrentRequests = new List<long>();
 
-			var ioc = mContainer.Resolve<IIoc>();
+		}
 
-			ioc.ComposeParts( this );
+		public bool Initialize( INoiseManager noiseManager ) {
+			mNoiseManager = noiseManager;
+			
+			mComponentCreator.ComposeParts( this );
 			foreach( var provider in ContentProviders ) {
-				if(!provider.Initialize( mContainer )) {
+				if(!provider.Initialize( mNoiseManager )) {
 					NoiseLogger.Current.LogMessage( string.Format( "ContentManager - Could not initialize provider for content type: {0}", provider.ContentType ));
 				}
 			}
+
+			mEvents.GetEvent<Events.ArtistContentRequested>().Subscribe( OnArtistContentRequested );
+
+			return( true );
 		}
 
-		public void RequestContent( DbArtist forArtist ) {
+		private void OnArtistContentRequested( DbArtist forArtist ) {
 			lock( mCurrentRequests ) {
 				if(!mCurrentRequests.Contains( forArtist.DbId )) {
 					mCurrentRequests.Add( forArtist.DbId );
