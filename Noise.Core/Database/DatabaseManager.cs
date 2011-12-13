@@ -15,6 +15,8 @@ namespace Noise.Core.Database {
 			mDatabaseFactory = databaseFactory;
 			mReservedDatabases = new Dictionary<string, IDatabase>();
 			mAvailableDatabases = new List<IDatabase>();
+
+			NoiseLogger.Current.LogInfo( "DatabaseManager created" );
 		}
 
 		public bool Initialize() {

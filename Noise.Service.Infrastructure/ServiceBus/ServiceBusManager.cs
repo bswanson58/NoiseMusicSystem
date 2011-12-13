@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Service.Infrastructure.Configuration;
 using Noise.Service.Infrastructure.Interfaces;
@@ -10,13 +9,10 @@ using NServiceBus;
 
 namespace Noise.Service.Infrastructure.ServiceBus {
 	public class ServiceBusManager : IServiceBusManager {
-		private readonly IUnityContainer	mContainer;
-		private	IBus						mMessageBus;
+		private	IBus	mMessageBus;
 
-		public ServiceBusManager( IUnityContainer container ) {
-			mContainer = container;
-
-			MessageHandlerBase.EventAggregator = mContainer.Resolve<IEventAggregator>();
+		public ServiceBusManager( IEventAggregator eventAggregator ) {
+			MessageHandlerBase.EventAggregator = eventAggregator;
 		}
 
 		public bool InitializeServer() {

@@ -64,6 +64,8 @@ namespace Noise.Core.MediaPlayer {
 
 			mInfoUpdateTimer = new Timer { AutoReset = true, Enabled = false, Interval = 250 };
 			mInfoUpdateTimer.Elapsed += OnInfoUpdateTimer;
+
+			NoiseLogger.Current.LogInfo( "PlayController created" );
 		}
 
 		public bool Initialize() {

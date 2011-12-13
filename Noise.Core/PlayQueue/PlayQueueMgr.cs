@@ -50,6 +50,8 @@ namespace Noise.Core.PlayQueue {
 
 			mStreamPlayCommand = new AsyncCommand<DbInternetStream>( OnStreamPlayCommand );
 			GlobalCommands.PlayStream.RegisterCommand( mStreamPlayCommand );
+
+			NoiseLogger.Current.LogInfo( "PlayQueue created" );
 		}
 
 		private void OnTrackListPlayCommand( IEnumerable<DbTrack> trackList ) {

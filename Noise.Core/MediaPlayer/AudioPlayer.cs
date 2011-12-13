@@ -167,6 +167,8 @@ namespace Noise.Core.MediaPlayer {
 			mChannelStatusSubject = new Subject<ChannelStatusArgs>();
 			mAudioLevelsSubject = new Subject<AudioLevels>();
 			mAudioStreamInfoSubject = new Subject<StreamInfo>();
+
+			NoiseLogger.Current.LogInfo( "AudioPlayer created." );
 		}
 
 		private static void LoadPlugin( string plugin ) {

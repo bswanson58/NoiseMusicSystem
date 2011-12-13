@@ -11,17 +11,25 @@ namespace Noise.Core.PlayHistory {
 	public class PlayHistoryMgr : IPlayHistory {
 		private const int						cMaximumHistory = 100;
 
-		private readonly IDatabaseManager				mDatabaseManager;
-		private readonly IEventAggregator				mEvents;
-		private readonly DatabaseCache<DbPlayHistory>	mPlayHistory;
+		private readonly IDatabaseManager		mDatabaseManager;
+		private readonly IEventAggregator		mEvents;
+		private DatabaseCache<DbPlayHistory>	mPlayHistory;
 
 		public PlayHistoryMgr( IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
 			mDatabaseManager = databaseManager;
 			mEvents = eventAggregator;
 
+			NoiseLogger.Current.LogInfo( "PlayHistory created" );
+		}
+
+		public bool Initialize() {
+			var retValue = false;
 			var database = mDatabaseManager.ReserveDatabase();
+
 			try {
 				mPlayHistory = new DatabaseCache<DbPlayHistory>( from DbPlayHistory history in database.Database select history );
+
+				retValue = true;
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - PlayHistoryMgr:ctor ", ex );
@@ -29,6 +37,8 @@ namespace Noise.Core.PlayHistory {
 			finally {
 				mDatabaseManager.FreeDatabase( database );
 			}
+
+			return( retValue );
 		}
 
 		public void TrackPlayCompleted( PlayQueueTrack track ) {

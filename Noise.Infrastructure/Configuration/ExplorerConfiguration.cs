@@ -20,6 +20,7 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cEnableSortPrefixesProperty					= "enableSortPrefixes";
 		private const string	cSortPrefixesProperty						= "sortPrefixes";
 		private const string	cHasNetworkAccess							= "hasNetworkAccess";
+		private const string	cEnableRemoteAccess							= "enableRemoteAccess";
 
 		[ConfigurationPropertyAttribute( cEnableLibraryExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
 		public bool EnableLibraryExplorer {
@@ -102,6 +103,12 @@ namespace Noise.Infrastructure.Configuration {
 		public bool HasNetworkAccess {
 			get { return ((bool)( base[cHasNetworkAccess] ) ); }
 			set { base[cHasNetworkAccess] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cEnableRemoteAccess, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
+		public bool EnableRemoteAccess {
+			get { return ((bool)( base[cEnableRemoteAccess] ) ); }
+			set { base[cEnableRemoteAccess] = value; }
 		}
 	}
 }

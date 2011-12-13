@@ -4,7 +4,6 @@ using System.ComponentModel.Composition;
 using CuttingEdge.Conditions;
 using Eloquera.Client;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -15,8 +14,8 @@ namespace Noise.EloqueraDatabase.Database {
 		private const UInt16				cDatabaseVersionMajor = 0;
 		private const UInt16				cDatabaseVersionMinor = 5;
 
-		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly IIoc				mComponentCreator;
 		private readonly string				mDatabaseLocation;
 		private readonly string				mDatabaseName;
 
@@ -28,9 +27,10 @@ namespace Noise.EloqueraDatabase.Database {
 		[ImportMany("PersistenceType")]
 		public IEnumerable<Type>	PersistenceTypes;
 
-		public EloqueraDb( IUnityContainer container ) {
-			mContainer = container;
-			mEventAggregator = mContainer.Resolve<IEventAggregator>();
+		public EloqueraDb( IEventAggregator eventAggregator, IIoc componentCreator ) {
+			mEventAggregator = eventAggregator;
+			mComponentCreator = componentCreator;
+
 			DatabaseId = Guid.NewGuid().ToString();
 
 			var config = NoiseSystemConfiguration.Current.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
@@ -167,9 +167,7 @@ namespace Noise.EloqueraDatabase.Database {
 		}
 
 		private void RegisterDatabaseTypes() {
-			var ioc = mContainer.Resolve<IIoc>();
-
-			ioc.ComposeParts( this );
+			mComponentCreator.ComposeParts( this );
 
 			foreach( Type type in PersistenceTypes ) {
 				Database.RegisterType( type );

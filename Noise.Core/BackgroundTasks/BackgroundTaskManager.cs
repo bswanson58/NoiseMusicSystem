@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Quartz;
@@ -25,8 +24,7 @@ namespace Noise.Core.BackgroundTasks {
 		internal const string					cBackgroundTaskName		= "BackgroundTask";
 		internal const string					cBackgroundTaskGroup	= "BackgroundTaskManager";
 
-		private	readonly IUnityContainer		mContainer;
-		private readonly IDatabaseManager		mDatabaseManager;
+		private readonly IIoc					mComponentLocator;
 		private readonly IEventAggregator		mEvents;
 		private	readonly ISchedulerFactory		mSchedulerFactory;
 		private	readonly IScheduler				mJobScheduler;
@@ -39,17 +37,12 @@ namespace Noise.Core.BackgroundTasks {
 		[ImportMany( typeof( IBackgroundTask ))]
 		public IEnumerable<IBackgroundTask>	BackgroundTasks;
 
-		public BackgroundTaskManager( IUnityContainer container, IEventAggregator eventAggregator, IDatabaseManager databaseManager  ) {
-			mContainer = container;
-			mDatabaseManager = databaseManager;
+		public BackgroundTaskManager( IIoc componentLocator, IEventAggregator eventAggregator  ) {
+			mComponentLocator = componentLocator;
 			mEvents = eventAggregator;
 
-			mEvents.GetEvent<Events.LibraryUpdateStarted>().Subscribe( OnLibraryUpdateStarted );
-			mEvents.GetEvent<Events.LibraryUpdateCompleted>().Subscribe( OnLibraryUpdateCompleted );
-						
 			mSchedulerFactory = new StdSchedulerFactory();
 			mJobScheduler = mSchedulerFactory.GetScheduler();
-			mJobScheduler.Start();
 
 			mTaskJobDetail = new JobDetail( cBackgroundTaskName, cBackgroundTaskGroup, typeof( BackgroundTaskJob ));
 
@@ -57,23 +50,27 @@ namespace Noise.Core.BackgroundTasks {
 														DateTime.UtcNow + TimeSpan.FromSeconds( 10 ), null,
 														SimpleTrigger.RepeatIndefinitely, TimeSpan.FromSeconds( 5 )); 
 			mTaskExecuteTrigger.JobDataMap[cBackgroundTaskName] = this;
+
+			NoiseLogger.Current.LogInfo( "BackgroundTaskManager created" );
 		}
 
-		public bool Initialize() {
-			var ioc = mContainer.Resolve<IIoc>();
-
-			ioc.ComposeParts( this );
+		public bool Initialize( INoiseManager noiseManager ) {
+			mComponentLocator.ComposeParts( this );
 
 			foreach( var task in BackgroundTasks ) {
-				if(!task.Initialize( mContainer, mDatabaseManager )) {
+				if(!task.Initialize( noiseManager )) {
 					NoiseLogger.Current.LogMessage( "BackgroundTaskManager could not initialize task '{0}'", task.TaskId );
 				}
 			}
 
+			mJobScheduler.Start();
 			mTaskEnum = BackgroundTasks.GetEnumerator();
 
 			mJobScheduler.ScheduleJob( mTaskJobDetail, mTaskExecuteTrigger );
 
+			mEvents.GetEvent<Events.LibraryUpdateStarted>().Subscribe( OnLibraryUpdateStarted );
+			mEvents.GetEvent<Events.LibraryUpdateCompleted>().Subscribe( OnLibraryUpdateCompleted );
+						
 			return( true );
 		}
 

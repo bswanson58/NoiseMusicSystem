@@ -2,20 +2,17 @@
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
-using Noise.Infrastructure.RemoteHost;
 using Noise.Service.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport {
 	public class ApplicationSupport {
 		private readonly IEventAggregator	mEvents;
 		private readonly IServiceBusManager	mServiceBus;
-		private readonly IRemoteServer		mRemoteServer;
 		private readonly HotkeyManager		mHotkeyManager;
 
-		public ApplicationSupport( IEventAggregator eventAggregator, IServiceBusManager serviceBusManager, IRemoteServer remoteServer ) {
+		public ApplicationSupport( IEventAggregator eventAggregator, IServiceBusManager serviceBusManager ) {
 			mEvents = eventAggregator;
 			mServiceBus = serviceBusManager;
-			mRemoteServer = remoteServer;
 			mHotkeyManager = new HotkeyManager( mEvents );
 		}
 
@@ -34,13 +31,10 @@ namespace Noise.AppSupport {
 			mEvents.GetEvent<Events.WebsiteRequest>().Subscribe( OnWebsiteRequested );
 			mEvents.GetEvent<Events.LaunchRequest>().Subscribe( OnLaunchRequest );
 
-			mRemoteServer.OpenRemoteServer();
-
 			return( true );
 		}
 
 		public void Shutdown() {
-			mRemoteServer.CloseRemoteServer();
 		}
 
 		private static void OnWebsiteRequested( string url ) {

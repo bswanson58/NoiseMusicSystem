@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	public class ContentBuilder : IBackgroundTask {
-		private IUnityContainer			mContainer;
 		private IDataProvider			mDataProvider;
 		private	List<DbArtist>			mArtistList;
 		private IEnumerator<DbArtist>	mArtistEnum;
@@ -18,11 +16,10 @@ namespace Noise.Core.BackgroundTasks {
 			get { return( "Task_ContentBuilder" ); }
 		}
 
-		public bool Initialize( IUnityContainer container, IDatabaseManager databaseManager ) {
+		public bool Initialize( INoiseManager noiseMgr ) {
 			var retValue = false;
 
-			mContainer = container;
-			mDataProvider = mContainer.Resolve<IDataProvider>();
+			mDataProvider = noiseMgr.DataProvider;
 
 			BuildArtistList();
 			if( mArtistList.Count() > 0 ) {

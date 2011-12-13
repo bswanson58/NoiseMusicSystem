@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using Microsoft.Practices.Unity;
-using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -11,9 +9,9 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	public class SearchBuilder : IBackgroundTask {
-		private IUnityContainer		mContainer;
-		private INoiseManager		mNoiseManager;
 		private IDatabaseManager	mDatabaseManager;
+		private IDataProvider		mDataProvider;
+		private ISearchProvider		mSearchProvider;
 		private List<long>			mArtistList;
 		private IEnumerator<long>	mArtistEnum;
 
@@ -21,10 +19,10 @@ namespace Noise.Core.BackgroundTasks {
 			get { return( "Task_SearchBuilder" ); }
 		}
 
-		public bool Initialize( IUnityContainer container, IDatabaseManager databaseManager ) {
-			mContainer = container;
-			mDatabaseManager = databaseManager;
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
+		public bool Initialize( INoiseManager noiseManager ) {
+			mDatabaseManager = noiseManager.DatabaseManager;
+			mDataProvider = noiseManager.DataProvider;
+			mSearchProvider = noiseManager.SearchProvider;
 
 			InitializeLists();
 
@@ -32,7 +30,7 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		private void InitializeLists() {
-			using( var artistList = mNoiseManager.DataProvider.GetArtistList()) {
+			using( var artistList = mDataProvider.GetArtistList()) {
 				mArtistList = new List<long>( from DbArtist artist in artistList.List select artist.DbId );
 				mArtistEnum = mArtistList.GetEnumerator();
 			}
@@ -64,7 +62,7 @@ namespace Noise.Core.BackgroundTasks {
 			}
 
 			if( mArtistEnum.Current != 0 ) {
-				retValue = mNoiseManager.DataProvider.GetArtist( mArtistEnum.Current );
+				retValue = mDataProvider.GetArtist( mArtistEnum.Current );
 			}
 
 			return( retValue );
@@ -72,7 +70,7 @@ namespace Noise.Core.BackgroundTasks {
 
 		private bool CheckSearchIndex( DbArtist artist ) {
 			var retValue = false;
-			var lastUpdate = mNoiseManager.SearchProvider.DetermineTimeStamp( artist );
+			var lastUpdate = mSearchProvider.DetermineTimeStamp( artist );
 
 			if( lastUpdate.Ticks < artist.LastChangeTicks ) {
 				BuildSearchIndex( mDatabaseManager, artist );
@@ -90,7 +88,7 @@ namespace Noise.Core.BackgroundTasks {
 
 			if( database != null ) {
 				try {
-					using( var indexBuilder = mNoiseManager.SearchProvider.CreateIndexBuilder( artist, false )) {
+					using( var indexBuilder = mSearchProvider.CreateIndexBuilder( artist, false )) {
 						indexBuilder.DeleteArtistSearchItems();
 						indexBuilder.WriteTimeStamp();
 
@@ -151,10 +149,10 @@ namespace Noise.Core.BackgroundTasks {
 
 						var lyricsList = database.Database.ExecuteQuery( "SELECT DbLyric WHERE ArtistId = @artistId", parms ).OfType<DbLyric>();
 						foreach( var lyric in lyricsList ) {
-							var track = mNoiseManager.DataProvider.GetTrack( lyric.TrackId );
+							var track = mDataProvider.GetTrack( lyric.TrackId );
 
 							if( track != null ) {
-								var album = mNoiseManager.DataProvider.GetAlbumForTrack( track );
+								var album = mDataProvider.GetAlbumForTrack( track );
 
 								if( album != null ) {
 									indexBuilder.AddSearchItem( album, track, eSearchItemType.Lyrics, lyric.Lyrics  );

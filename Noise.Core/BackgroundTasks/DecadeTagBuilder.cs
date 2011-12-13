@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using Microsoft.Practices.Unity;
-using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -13,9 +11,9 @@ namespace Noise.Core.BackgroundTasks {
 	internal class DecadeTagBuilder : IBackgroundTask {
 		private const string		cDecadeTagBuilderId		= "ComponentId_TagBuilder";
 
-		private IUnityContainer		mContainer;
 		private IDatabaseManager	mDatabaseMgr;
-		private	INoiseManager		mNoiseManager;
+		private IDataProvider		mDataProvider;
+		private ITagManager			mTagManager;
 		private List<long>			mArtistList;
 		private IEnumerator<long>	mArtistEnum;
 		private long				mLastScanTicks;
@@ -25,10 +23,10 @@ namespace Noise.Core.BackgroundTasks {
 			get { return( "Task_DiscographyExplorer" ); }
 		}
 
-		public bool Initialize( IUnityContainer container, IDatabaseManager databaseManager ) {
-			mDatabaseMgr = databaseManager;
-			mContainer = container;
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
+		public bool Initialize( INoiseManager noiseManager ) {
+			mDatabaseMgr = noiseManager.DatabaseManager;
+			mDataProvider = noiseManager.DataProvider;
+			mTagManager = noiseManager.TagManager;
 
 			InitializeLists();
 
@@ -39,7 +37,7 @@ namespace Noise.Core.BackgroundTasks {
 			var database = mDatabaseMgr.ReserveDatabase();
 
 			try {
-				mLastScanTicks = mNoiseManager.DataProvider.GetTimestamp( cDecadeTagBuilderId );
+				mLastScanTicks = mDataProvider.GetTimestamp( cDecadeTagBuilderId );
 				mStartScanTicks = DateTime.Now.Ticks;
 
 				mArtistList = new List<long>( from DbArtist artist in database.Database.ExecuteQuery( "SELECT DbArtist" ).OfType<DbArtist>() select artist.DbId );
@@ -55,7 +53,7 @@ namespace Noise.Core.BackgroundTasks {
 
 		private long NextArtist() {
 			if(!mArtistEnum.MoveNext()) {
-				mNoiseManager.DataProvider.SetTimestamp( cDecadeTagBuilderId, mStartScanTicks );
+				mDataProvider.SetTimestamp( cDecadeTagBuilderId, mStartScanTicks );
 
 				InitializeLists();
 				mArtistEnum.MoveNext();
@@ -71,7 +69,7 @@ namespace Noise.Core.BackgroundTasks {
 				var artistId = NextArtist();
 
 				if( artistId != 0 ) {
-					var artist = mNoiseManager.DataProvider.GetArtist( artistId );
+					var artist = mDataProvider.GetArtist( artistId );
 
 					if(( artist != null ) &&
 					   ( artist.LastChangeTicks > mLastScanTicks )) {
@@ -84,7 +82,7 @@ namespace Noise.Core.BackgroundTasks {
 						}
 
 						var albumList = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>();
-						var decadeTagList = mNoiseManager.TagManager.DecadeTagList;
+						var decadeTagList = mTagManager.DecadeTagList;
 
 						foreach( var album in albumList ) {
 							var publishedYear = album.PublishedYear;

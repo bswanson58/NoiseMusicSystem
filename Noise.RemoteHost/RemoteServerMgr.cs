@@ -52,9 +52,11 @@ namespace Noise.RemoteHost {
 			if( mServiceDiscovery.Initialize()) {
 				mServiceDiscovery.RegisterService( "_Noise._Tcp.", "Noise.Desktop", 88 );
 			}
+
+			NoiseLogger.Current.LogMessage( "Remote services started." );
 		}
 
-		private bool OpenRemoteServer( ServiceHost host ) {
+		private static bool OpenRemoteServer( ServiceHost host ) {
 			bool	openSucceeded = false;
 
 			try {
@@ -80,7 +82,7 @@ namespace Noise.RemoteHost {
 			CloseRemoteServer( mSearchServerHost );
 		}
 
-		private void CloseRemoteServer( ServiceHost host ) {
+		private static void CloseRemoteServer( ServiceHost host ) {
 			if( host != null ) {
 				bool	closeSucceeded = false;
 

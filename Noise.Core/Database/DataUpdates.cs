@@ -19,6 +19,8 @@ namespace Noise.Core.Database {
 		public DataUpdates( IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
 			mEvents = eventAggregator;
 			mDatabaseManager = databaseManager;
+
+			NoiseLogger.Current.LogInfo( "DataUpdates created." );
 		}
 
 		public bool Initialize() {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -21,8 +20,8 @@ namespace Noise.Core.BackgroundTasks {
 			get { return( "Task_LinkSimilarArtists" ); }
 		}
 
-		public bool Initialize( IUnityContainer container, IDatabaseManager databaseManager ) {
-			mDatabaseMgr = databaseManager;
+		public bool Initialize( INoiseManager noiseManager ) {
+			mDatabaseMgr = noiseManager.DatabaseManager;
 
 			InitializeLists();
 

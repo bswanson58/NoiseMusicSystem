@@ -14,28 +14,38 @@ namespace Noise.Core.Database {
 	public class DataProvider : IDataProvider {
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly IContentManager	mContentManager;
+		private long						mDatabaseId;
 
-		public	long	DatabaseId { get; private set; }
-		
 		public DataProvider( IDatabaseManager databaseManager, IContentManager contentManager ) {
 			mDatabaseManager = databaseManager;
 			mContentManager = contentManager;
+			mDatabaseId = Constants.cDatabaseNullOid;
 
-			IDatabase database = null;
-			try {
-				database = mDatabaseManager.ReserveDatabase();
+			NoiseLogger.Current.LogInfo( "DataProvider created" );
+		}
 
-				if( database != null ) {
-					DatabaseId = database.DatabaseVersion.DatabaseId;
+		public long DatabaseId {
+			get {
+				if( mDatabaseId == Constants.cDatabaseNullOid ) {
+					IDatabase database = null;
+
+					try {
+						database = mDatabaseManager.ReserveDatabase();
+
+						if( database != null ) {
+							mDatabaseId = database.DatabaseVersion.DatabaseId;
+						}
+					}
+					catch( Exception ex ) {
+						NoiseLogger.Current.LogException( "Exception - Could not access database id.", ex );
+					}
+					finally {
+						if( database != null ) {
+							mDatabaseManager.FreeDatabase( database );
+						}
+					}
 				}
-			}
-			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - Could not access database id.", ex );
-			}
-			finally {
-				if( database != null ) {
-					mDatabaseManager.FreeDatabase( database );
-				}
+				return( mDatabaseId );
 			}
 		}
 

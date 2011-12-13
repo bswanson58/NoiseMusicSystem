@@ -7,6 +7,7 @@ using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.RemoteHost;
 
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager {
@@ -16,6 +17,7 @@ namespace Noise.Core {
 		private readonly IFileUpdates				mFileUpdates;
 		private readonly IBackgroundTaskManager		mBackgroundTaskMgr;
 		private readonly ILyricsProvider			mLyricsProvider;
+		private readonly IRemoteServer				mRemoteServer;
 
 		public	IDatabaseManager			DatabaseManager { get; private set; }
 		public	ICloudSyncManager			CloudSyncMgr { get; private set; }
@@ -47,6 +49,7 @@ namespace Noise.Core {
 							 IPlayHistory playHistory,
 							 IPlayListMgr playListMgr,
 							 IPlayController playController,
+							 IRemoteServer remoteServer,
 							 ITagManager tagManager ) {
 			mEvents = eventAggregator;
 			mBackgroundTaskMgr = backgroundTaskManager;
@@ -54,6 +57,7 @@ namespace Noise.Core {
 			mFileUpdates = fileUpdates;
 			mFolderExplorer = folderExplorer;
 			mLyricsProvider = lyricsProvider;
+			mRemoteServer = remoteServer;
 			DatabaseManager = databaseManager;
 			DataExchangeMgr = dataExchangeManager;
 			DataProvider = dataProvider;
@@ -68,8 +72,7 @@ namespace Noise.Core {
 		}
 
 		public bool Initialize() {
-			NoiseLogger.Current.LogMessage( "---------------------------" );
-			NoiseLogger.Current.LogMessage( "Starting Noise Music System" );
+			NoiseLogger.Current.LogMessage( "Initializing Noise Music System" );
 
 			if( DatabaseManager.Initialize()) {
 				if(!TagManager.Initialize()) {
@@ -84,7 +87,7 @@ namespace Noise.Core {
 					NoiseLogger.Current.LogMessage( "Noise Manager: FileUpdates could not be initialized" );
 				}
 
-				if(!mBackgroundTaskMgr.Initialize()) {
+				if(!mBackgroundTaskMgr.Initialize( this )) {
 					NoiseLogger.Current.LogMessage( "Noise Manager: BackgroundTaskManager cound not be initialized." );
 				}
 
@@ -104,6 +107,16 @@ namespace Noise.Core {
 
 				if(!PlayController.Initialize()) {
 					NoiseLogger.Current.LogMessage( "NoiseManager: PlayController could not be initialized." );
+				}
+
+				if(!PlayHistory.Initialize()) {
+					NoiseLogger.Current.LogMessage( "NoiseManager: PlayHistory could not be initialized." );
+				}
+
+				var sysConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+				if(( sysConfig != null ) &&
+				   ( sysConfig.EnableRemoteAccess )) {
+					mRemoteServer.OpenRemoteServer();
 				}
 
 				NoiseLogger.Current.LogMessage( "Initialized NoiseManager." );
@@ -136,6 +149,7 @@ namespace Noise.Core {
 
 			mFileUpdates.Shutdown();
 			mBackgroundTaskMgr.Stop();
+			mRemoteServer.CloseRemoteServer();
 
 			LibraryBuilder.StopLibraryUpdate();
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Microsoft.Practices.Unity;
+using Microsoft.Practices.Prism.Events;
 using Noise.EloqueraDatabase.BlobStore;
 using Noise.EloqueraDatabase.Database;
 using Noise.Infrastructure;
@@ -11,16 +11,18 @@ namespace Noise.EloqueraDatabase {
 		private const string	cBlobStorageName	= "Noise Blobs";
 
 		private readonly IBlobStorageResolver	mBlobResolver;
-		private readonly IUnityContainer		mContainer;
+		private readonly IEventAggregator		mEventAggregator;
+		private readonly IIoc					mComponentCreator;
 		private IBlobStorageManager				mBlobStorageManager;
 
-		public EloqueraDatabaseFactory( IBlobStorageResolver blobResolver, IUnityContainer container ) {
+		public EloqueraDatabaseFactory( IBlobStorageResolver blobResolver, IEventAggregator eventAggregator, IIoc componentCreator ) {
 			mBlobResolver = blobResolver;
-			mContainer = container;
+			mEventAggregator = eventAggregator;
+			mComponentCreator = componentCreator;
 		}
 
 		public IDatabase GetDatabaseInstance() {
-			return( new EloqueraDb( mContainer ));
+			return( new EloqueraDb( mEventAggregator, mComponentCreator ));
 		}
 
 		public void SetBlobStorageInstance( IDatabase  database ) {
