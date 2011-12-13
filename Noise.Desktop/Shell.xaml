@@ -12,20 +12,5 @@
         WindowState="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationWindowState, Mode=TwoWay}"
         >
 
-    <Window.TaskbarItemInfo>
-        <TaskbarItemInfo Description="Playback Controls">
-            <TaskbarItemInfo.ThumbButtonInfos>
-                <ThumbButtonInfoCollection>
-                    <ThumbButtonInfo Description="Play" DismissWhenClicked="False" ImageSource="Resources/Play.png" Command="{Binding Path=PlayCommand}"/>
-                    <ThumbButtonInfo Description="Pause" DismissWhenClicked="False" ImageSource="Resources/Pause.png" Command="{Binding Path=PauseCommand}"/>
-                    <ThumbButtonInfo Description="Stop" DismissWhenClicked="False" ImageSource="Resources/Stop.png" Command="{Binding Path=StopCommand}"/>
-                    <ThumbButtonInfo Description="Previous" DismissWhenClicked="False" ImageSource="Resources/Previous.png" Command="{Binding Path=PreviousCommand}"/>
-                    <ThumbButtonInfo Description="Next" DismissWhenClicked="False" ImageSource="Resources/Next.png" Command="{Binding Path=NextCommand}"/>
-                    <ThumbButtonInfo Description="Repeat" DismissWhenClicked="False" ImageSource="Resources/Replay.png" Command="{Binding Path=ReplayCommand}"/>
-                </ThumbButtonInfoCollection>
-            </TaskbarItemInfo.ThumbButtonInfos>
-        </TaskbarItemInfo>
-    </Window.TaskbarItemInfo>
-
     <ContentControl Regions:RegionManager.RegionName="Shell"/>
 </Window>
