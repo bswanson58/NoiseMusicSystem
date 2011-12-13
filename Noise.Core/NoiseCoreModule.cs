@@ -37,7 +37,6 @@ namespace Noise.Core {
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>( new PerResolveLifetimeManager());
 			mContainer.RegisterType<IFileUpdates, FileUpdates>( new PerResolveLifetimeManager());
 //			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
-			mContainer.RegisterType<ILicenseManager, LicenseManager>();
 			mContainer.RegisterType<ILyricsProvider, LyricsProvider>( new PerResolveLifetimeManager());
 			mContainer.RegisterType<IMetaDataExplorer, MetaDataExplorer>( new PerResolveLifetimeManager());
 			mContainer.RegisterType<IMetaDataCleaner, MetaDataCleaner>( new PerResolveLifetimeManager());

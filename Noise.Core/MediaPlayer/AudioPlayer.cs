@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Fx;
 using Un4seen.Bass.AddOn.Mix;
@@ -106,7 +107,7 @@ namespace Noise.Core.MediaPlayer {
 
 		public	bool									TrackOverlapEnable { get; set; }
 
-		public AudioPlayer( ILicenseManager licenseManager ) {
+		public AudioPlayer() {
 			mCurrentStreams = new Dictionary<int, AudioStream>();
 			mEqChannels = new Dictionary<long, int>();
 			mStreamMetadataSync = new SYNCPROC( StreamSyncProc );
@@ -122,12 +123,10 @@ namespace Noise.Core.MediaPlayer {
 			mTrackOverlapMs = 100;
 
 			try {
-				if( licenseManager.Initialize( Constants.LicenseKeyFile )) {
-					var key = licenseManager.RetrieveKey( LicenseKeys.BassAudio );
+				var key = NoiseLicenseManager.Current.RetrieveKey( LicenseKeys.BassAudio );
 
-					if( key != null ) {
-						BassNet.Registration( key.Name, key.Key );
-					}
+				if( key != null ) {
+					BassNet.Registration( key.Name, key.Key );
 				}
 
 				Bass.BASS_Init( -1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero );

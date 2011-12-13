@@ -10,6 +10,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataProviders {
 	internal abstract class BaseLastFmProvider : IContentProvider {
@@ -95,13 +96,10 @@ namespace Noise.Core.DataProviders {
 			mTagManager = noiseManager.TagManager;
 
 			try {
-				var licenseManager = mContainer.Resolve<ILicenseManager>();
-				if( licenseManager.Initialize( Constants.LicenseKeyFile )) {
-					var key = licenseManager.RetrieveKey( LicenseKeys.LastFm );
+				var key = NoiseLicenseManager.Current.RetrieveKey( LicenseKeys.LastFm );
 
-					if( key != null ) {
-						mSession = new Session( key.Name, key.Key );
-					}
+				if( key != null ) {
+					mSession = new Session( key.Name, key.Key );
 				}
 			}
 			catch( Exception ex ) {

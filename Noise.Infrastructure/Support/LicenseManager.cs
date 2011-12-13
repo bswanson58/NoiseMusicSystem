@@ -16,10 +16,29 @@ namespace Noise.Infrastructure.Support {
 		}
 	}
 
-	public class LicenseManager : ILicenseManager {
+	public class NoiseLicenseManager : ILicenseManager {
+		private static ILicenseManager			mCurrent;
+
 		private readonly Dictionary<string, LicenseKey>	mKeys;
 
-		public LicenseManager() {
+		public static ILicenseManager Current {
+			get {
+				if( mCurrent == null ) {
+					mCurrent = new NoiseLicenseManager();
+					if(!mCurrent.Initialize( Constants.LicenseKeyFile )) {
+						NoiseLogger.Current.LogMessage( "LicenseManager could not be initialized." );
+					}
+				}
+
+				return( mCurrent );
+			}
+
+			set {
+				mCurrent = value;
+			}
+		}
+
+		public NoiseLicenseManager() {
 			mKeys = new Dictionary<string, LicenseKey>();
 		}
 
