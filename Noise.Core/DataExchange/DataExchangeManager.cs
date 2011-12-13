@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Xml.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataExchange {
@@ -10,10 +9,10 @@ namespace Noise.Core.DataExchange {
 	}
 
 	internal class DataExchangeManager : IDataExchangeManager {
-		private readonly IUnityContainer	mContainer;
+		private readonly	IDataProvider	mDataProvider;
 
-		public DataExchangeManager( IUnityContainer container ) {
-			mContainer = container;
+		public DataExchangeManager( IDataProvider dataProvider ) {
+			mDataProvider = dataProvider;
 		}
 
 		public bool ExportFavorites( string fileName ) {
@@ -71,11 +70,11 @@ namespace Noise.Core.DataExchange {
 
 			switch( exportType ) {
 				case eExchangeType.Favorites:
-					retValue = new ExportFavorites( mContainer );
+					retValue = new ExportFavorites( mDataProvider );
 					break;
 
 				case eExchangeType.Streams:
-					retValue = new ExportStreams( mContainer );
+					retValue = new ExportStreams( mDataProvider );
 					break;
 			}
 
@@ -87,11 +86,11 @@ namespace Noise.Core.DataExchange {
 
 			switch( importType ) {
 				case eExchangeType.Favorites:
-					retValue = new ImportFavorites( mContainer );
+					retValue = new ImportFavorites( mDataProvider );
 					break;
 
 				case eExchangeType.Streams:
-					retValue = new ImportStreams( mContainer );
+					retValue = new ImportStreams( mDataProvider );
 					break;
 			}
 

@@ -4,7 +4,6 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using GDataDB;
 using GDataDB.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Core.DataExchange.Dto;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -15,14 +14,15 @@ using IDatabase = GDataDB.IDatabase;
 
 namespace Noise.Core.DataExchange {
 	internal class CloudSyncManager : ICloudSyncManager {
-		private readonly IUnityContainer		mContainer;
-		private string							mLoginName;
-		private string							mLoginPassword;
-		private IDatabaseClient					mCloudClient;
-		private IDatabase						mCloudDb;
-		private bool							mMaintainSynchronization;
+		private readonly IIoc				mComponentCreator;
+		private readonly IDataProvider		mDataProvider;
+		private string						mLoginName;
+		private string						mLoginPassword;
+		private IDatabaseClient				mCloudClient;
+		private IDatabase					mCloudDb;
+		private bool						mMaintainSynchronization;
 
-		public	ObjectTypes						SynchronizeTypes { get; set; }
+		public	ObjectTypes					SynchronizeTypes { get; set; }
 
 		private readonly AsyncCommand<object>						mSyncWithCloud;
 		private readonly AsyncCommand<SetFavoriteCommandArgs>		mSetFavoriteCommand;
@@ -30,9 +30,9 @@ namespace Noise.Core.DataExchange {
 		[ImportMany( typeof( ICloudSyncProvider ))]
 		public IEnumerable<ICloudSyncProvider>	SyncProviders;
 
-		public CloudSyncManager( IUnityContainer container ) {
-			mContainer = container;
-
+		public CloudSyncManager( IIoc componentCreator, IDataProvider dataProvider ) {
+			mComponentCreator = componentCreator;
+			mDataProvider = dataProvider;
 			mSyncWithCloud = new AsyncCommand<object>( OnCloudSync );
 			GlobalCommands.SynchronizeFromCloud.RegisterCommand( mSyncWithCloud );
 
@@ -82,13 +82,11 @@ namespace Noise.Core.DataExchange {
 				}
 
 				if( SyncProviders == null ) {
-					var ioc = mContainer.Resolve<IIoc>();
-
-					ioc.ComposeParts( this );
+					mComponentCreator.ComposeParts( this );
 
 					if( SyncProviders != null ) {
 						foreach( var provider in SyncProviders ) {
-							provider.Initialize( mContainer, mCloudDb );
+							provider.Initialize( mDataProvider, mCloudDb );
 						}
 					}
 				}
@@ -115,11 +113,9 @@ namespace Noise.Core.DataExchange {
 		}
 
 		private void SyncFavorites( long seqnId ) {
-			var noiseManager = mContainer.Resolve<INoiseManager>();
-
-			using( var favoriteList = noiseManager.DataProvider.GetFavoriteArtists()) {
+			using( var favoriteList = mDataProvider.GetFavoriteArtists()) {
 				foreach( var artist in favoriteList.List ) {
-					var item = new ExportFavorite( noiseManager.DataProvider.DatabaseId, artist.Name, artist.IsFavorite ) { SequenceId = seqnId };
+					var item = new ExportFavorite( mDataProvider.DatabaseId, artist.Name, artist.IsFavorite ) { SequenceId = seqnId };
 
 					foreach( var provider in SyncProviders ) {
 						if( provider.SyncTypes.HasFlag( ObjectTypes.Favorites )) {
@@ -129,9 +125,9 @@ namespace Noise.Core.DataExchange {
 				}
 			}
 
-			using( var favoriteList = noiseManager.DataProvider.GetFavoriteAlbums()) {
+			using( var favoriteList = mDataProvider.GetFavoriteAlbums()) {
 				foreach( var album in favoriteList.List ) {
-					var result = noiseManager.DataProvider.Find( album.DbId );
+					var result = mDataProvider.Find( album.DbId );
 					var item = new ExportFavorite( result, seqnId );
 
 					foreach( var provider in SyncProviders ) {
@@ -142,9 +138,9 @@ namespace Noise.Core.DataExchange {
 				}
 			}
 
-			using( var favoriteList = noiseManager.DataProvider.GetFavoriteTracks()) {
+			using( var favoriteList = mDataProvider.GetFavoriteTracks()) {
 				foreach( var track in favoriteList.List ) {
-					var result = noiseManager.DataProvider.Find( track.DbId );
+					var result = mDataProvider.Find( track.DbId );
 					var item = new ExportFavorite( result, seqnId );
 
 					foreach( var provider in SyncProviders ) {
@@ -157,11 +153,9 @@ namespace Noise.Core.DataExchange {
 		}
 
 		private void SyncStreams( long seqnId ) {
-			var noiseManager = mContainer.Resolve<INoiseManager>();
-
-			using( var streamList = noiseManager.DataProvider.GetStreamList()) {
+			using( var streamList = mDataProvider.GetStreamList()) {
 				foreach( var stream in streamList.List ) {
-					var item = new ExportStream( noiseManager.DataProvider.DatabaseId, stream.Name, stream.Description, stream.Url, stream.IsPlaylistWrapped, stream.Website ) { SequenceId = seqnId };
+					var item = new ExportStream( mDataProvider.DatabaseId, stream.Name, stream.Description, stream.Url, stream.IsPlaylistWrapped, stream.Website ) { SequenceId = seqnId };
 
 					foreach( var provider in SyncProviders ) {
 						if( provider.SyncTypes.HasFlag( ObjectTypes.Streams )) {
@@ -213,12 +207,11 @@ namespace Noise.Core.DataExchange {
 				try {
 					UpdateFromCloud();
 
-					var noiseManager = mContainer.Resolve<INoiseManager>();
 					var seqnId = ReserveSeqnId();
 
 					foreach( var provider in SyncProviders ) {
 						if( provider.SyncTypes.HasFlag( ObjectTypes.Favorites ) ) {
-							provider.UpdateToCloud( new ExportFavorite( noiseManager.DataProvider.Find( args.ItemId ), seqnId ));
+							provider.UpdateToCloud( new ExportFavorite( mDataProvider.Find( args.ItemId ), seqnId ));
 						}
 					}
 

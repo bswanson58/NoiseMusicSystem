@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Xml.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataExchange {
 	public class ExportFavorites : BaseExporter {
-		private readonly IUnityContainer	mContainer;
-		private readonly INoiseManager		mNoiseManager;
+		private readonly IDataProvider	mDataProvider;
 
-		public ExportFavorites( IUnityContainer container ) {
-			mContainer = container;
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
+		public ExportFavorites( IDataProvider dataProvider ) {
+			mDataProvider = dataProvider;
 		}
 
 		public override bool Export( string fileName ) {
@@ -23,15 +20,15 @@ namespace Noise.Core.DataExchange {
 											 new XComment( string.Format( "Noise Music System - Favorites Export - {0}", DateTime.Now.ToShortDateString())));
 					var rootElement = new XElement( ExchangeConstants.cFavoriteList );
 				
-					using( var artistList = mNoiseManager.DataProvider.GetFavoriteArtists()) {
+					using( var artistList = mDataProvider.GetFavoriteArtists()) {
 						foreach( var artist in artistList.List ) {
 							rootElement.Add( new XElement( ExchangeConstants.cFavoriteItem, new XElement( ExchangeConstants.cArtist, artist.Name )));
 						}
 					}
 
-					using( var albumList = mNoiseManager.DataProvider.GetFavoriteAlbums()) {
+					using( var albumList = mDataProvider.GetFavoriteAlbums()) {
 						foreach( var album in albumList.List ) {
-							var artist = mNoiseManager.DataProvider.GetArtist( album.Artist );
+							var artist = mDataProvider.GetArtist( album.Artist );
 
 							if( artist != null ) {
 								rootElement.Add( new XElement( ExchangeConstants.cFavoriteItem,
@@ -41,12 +38,12 @@ namespace Noise.Core.DataExchange {
 						}
 					}
 
-					using( var trackList = mNoiseManager.DataProvider.GetFavoriteTracks()) {
+					using( var trackList = mDataProvider.GetFavoriteTracks()) {
 						foreach( var track in trackList.List ) {
-							var album = mNoiseManager.DataProvider.GetAlbum( track.Album );
+							var album = mDataProvider.GetAlbum( track.Album );
 
 							if( album != null ) {
-								var artist = mNoiseManager.DataProvider.GetArtist( album.Artist );
+								var artist = mDataProvider.GetArtist( album.Artist );
 
 								if( artist != null ) {
 								rootElement.Add( new XElement( ExchangeConstants.cFavoriteItem,

@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Xml.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataExchange {
 	public class ExportStreams : BaseExporter {
-		private readonly IUnityContainer	mContainer;
-		private readonly INoiseManager		mNoiseManager;
+		private readonly IDataProvider	mDataProvider;
 
-		public ExportStreams( IUnityContainer container ) {
-			mContainer = container;
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
+		public ExportStreams( IDataProvider dataProvider ) {
+			mDataProvider = dataProvider;
 		}
 
 		public override bool Export( string fileName ) {
@@ -23,7 +20,7 @@ namespace Noise.Core.DataExchange {
 											 new XComment( string.Format( "Noise Music System - Stream Export - {0}", DateTime.Now.ToShortDateString())));
 					var rootElement = new XElement( ExchangeConstants.cStreamList );
 				
-					using( var streamList = mNoiseManager.DataProvider.GetStreamList()) {
+					using( var streamList = mDataProvider.GetStreamList()) {
 						foreach( var stream in streamList.List ) {
 							rootElement.Add( new XElement( ExchangeConstants.cStreamItem, 
 													new XElement( ExchangeConstants.cName, stream.Name ),

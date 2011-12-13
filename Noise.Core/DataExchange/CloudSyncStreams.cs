@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.Composition;
 using System.Linq;
 using GDataDB.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Core.DataExchange.Dto;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -11,11 +10,11 @@ using IDatabase = GDataDB.IDatabase;
 namespace Noise.Core.DataExchange {
 	[Export( typeof( ICloudSyncProvider ))]
 	public class CloudSyncStreams : ICloudSyncProvider {
-		private IUnityContainer		mContainer;
+		private IDataProvider	mDataProvider;
 		private IDatabase		mCloudDatabase;
 
-		public bool Initialize( IUnityContainer container, IDatabase cloudDatabase ) {
-			mContainer = container;
+		public bool Initialize( IDataProvider dataProvider, IDatabase cloudDatabase ) {
+			mDataProvider = dataProvider;
 			mCloudDatabase = cloudDatabase;
 
 			return( true );
@@ -26,7 +25,6 @@ namespace Noise.Core.DataExchange {
 		}
 
 		public void UpdateFromCloud( long fromSeqn, long toSeqn ) {
-			var noiseManager = mContainer.Resolve<INoiseManager>();
 			var streamTable = mCloudDatabase.GetTable<ExportStream>( Constants.CloudSyncStreamsTable ) ??
 							  mCloudDatabase.CreateTable<ExportStream>( Constants.CloudSyncStreamsTable );
 			var cloudStreams = from ExportStream e in streamTable.AsQueryable() 
@@ -34,12 +32,12 @@ namespace Noise.Core.DataExchange {
 			var updateCount = 0;
 
 			foreach( var stream in cloudStreams ) {
-				using( var streamList = noiseManager.DataProvider.GetStreamList()) {
+				using( var streamList = mDataProvider.GetStreamList()) {
 					var streamName = stream.Stream;
 					var dbStream = ( from DbInternetStream str in streamList.List where str.Name == streamName select str ).FirstOrDefault();
 
 					if( dbStream != null ) {
-						var updateStream = noiseManager.DataProvider.GetStreamForUpdate( dbStream.DbId );
+						var updateStream = mDataProvider.GetStreamForUpdate( dbStream.DbId );
 
 						updateStream.Item.Description = stream.Description;
 						updateStream.Item.IsPlaylistWrapped = stream.IsPlaylistWrapped;
@@ -52,7 +50,7 @@ namespace Noise.Core.DataExchange {
 						dbStream = new DbInternetStream{ Description = stream.Description, IsPlaylistWrapped = stream.IsPlaylistWrapped,
 														 Url = stream.Url, Website = stream.Website };
 
-						noiseManager.DataProvider.InsertItem( dbStream );
+						mDataProvider.InsertItem( dbStream );
 						updateCount++;
 					}
 				}

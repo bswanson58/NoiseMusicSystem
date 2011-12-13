@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.Composition;
 using System.Linq;
 using GDataDB.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Core.DataExchange.Dto;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -11,11 +10,11 @@ using IDatabase = GDataDB.IDatabase;
 namespace Noise.Core.DataExchange {
 	[Export( typeof( ICloudSyncProvider ))]
 	internal class CloudSyncFavorites : ICloudSyncProvider {
-		private IUnityContainer		mContainer;
+		private IDataProvider		mDataProvider;
 		private IDatabase			mCloudDatabase;
 
-		public bool Initialize( IUnityContainer container, IDatabase cloudDatabase ) {
-			mContainer = container;
+		public bool Initialize( IDataProvider dataProvider, IDatabase cloudDatabase ) {
+			mDataProvider = dataProvider;
 			mCloudDatabase = cloudDatabase;
 
 			return( true );
@@ -26,14 +25,13 @@ namespace Noise.Core.DataExchange {
 		}
 
 		public void UpdateFromCloud( long startSeqn, long toSeqn ) {
-			var noiseManager = mContainer.Resolve<INoiseManager>();
 			var favoritesTable = mCloudDatabase.GetTable<ExportFavorite>( Constants.CloudSyncFavoritesTable ) ??
 								 mCloudDatabase.CreateTable<ExportFavorite>( Constants.CloudSyncFavoritesTable );
 			var cloudFavorites = from ExportFavorite e in favoritesTable.AsQueryable()
 								 where e.SequenceId > startSeqn && e.SequenceId <= toSeqn select e;
 			var updateCount = 0;
 			foreach( var favorite in cloudFavorites ) {
-				var dbEntry = noiseManager.DataProvider.Find( favorite.Artist, favorite.Album, favorite.Track );
+				var dbEntry = mDataProvider.Find( favorite.Artist, favorite.Album, favorite.Track );
 
 				if(( dbEntry != null ) &&
 				   ( dbEntry.WasSuccessful )) {
