@@ -63,13 +63,16 @@ namespace Noise.Desktop {
 		}
 
 		private void StartNoise() {
-			mNoiseManager = Container.Resolve<INoiseManager>();
-			mAppSupport = Container.Resolve<ApplicationSupport>();
+			var instanceContainer = Container.CreateChildContainer();
 
-			Container.RegisterInstance<INoiseManager>( mNoiseManager );
+			mNoiseManager = instanceContainer.Resolve<INoiseManager>();
+			mAppSupport = instanceContainer.Resolve<ApplicationSupport>();
+
 			mNoiseManager.Initialize();
 			mNoiseManager.StartExplorerJobs();
 			mAppSupport.Initialize();
+
+			ViewModelResolver.Container = instanceContainer;
 		}
 
 		public void StopNoise() {

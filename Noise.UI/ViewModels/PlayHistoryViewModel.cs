@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -12,33 +11,26 @@ using Noise.UI.Adapters;
 
 namespace Noise.UI.ViewModels {
 	public class PlayHistoryViewModel : ViewModelBase {
-		private IUnityContainer				mContainer;
-		private IEventAggregator			mEvents;
-		private INoiseManager				mNoiseManager;
+		private readonly IEventAggregator	mEvents;
+		private readonly IPlayHistory		mPlayHistory;
+		private readonly IDataProvider		mDataProvider;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<PlayHistoryNode>	mHistoryList;
 
-		public PlayHistoryViewModel() {
+		public PlayHistoryViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IPlayHistory playHistory ) {
+			mEvents = eventAggregator;
+			mDataProvider = dataProvider;
+			mPlayHistory = playHistory;
+
 			mHistoryList = new ObservableCollectionEx<PlayHistoryNode>();
+
+			mEvents.GetEvent<Events.PlayHistoryChanged>().Subscribe( OnPlayHistoryChanged );
 
 			mBackgroundWorker = new BackgroundWorker();
 			mBackgroundWorker.DoWork += ( o, args ) => args.Result = BuildHistoryList();
 			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => UpdateHistoryList( result.Result as IEnumerable<PlayHistoryNode>);
-		}
 
-		[Dependency]
-		public IUnityContainer Container {
-			get { return( mContainer ); }
-			set {
-				mContainer = value;
-
-				mEvents = mContainer.Resolve<IEventAggregator>();
-				mNoiseManager = mContainer.Resolve<INoiseManager>();
-
-				mEvents.GetEvent<Events.PlayHistoryChanged>().Subscribe( OnPlayHistoryChanged );
-
-				BackgroundPopulateHistoryList();
-			}
+			BackgroundPopulateHistoryList();
 		}
 
 		private void OnPlayHistoryChanged( IPlayHistory playHistory ) {
@@ -65,16 +57,16 @@ namespace Noise.UI.ViewModels {
 
 		private IEnumerable<PlayHistoryNode> BuildHistoryList() {
 			var retValue = new List<PlayHistoryNode>();
-			var historyList = from DbPlayHistory history in mNoiseManager.PlayHistory.PlayHistory orderby history.PlayedOn descending select history;
+			var historyList = from DbPlayHistory history in mPlayHistory.PlayHistory orderby history.PlayedOn descending select history;
 
 			foreach( var history in historyList ) {
-				var track = mNoiseManager.DataProvider.GetTrack( history.TrackId );
+				var track = mDataProvider.GetTrack( history.TrackId );
 
 				if( track != null ) {
-					var album = mNoiseManager.DataProvider.GetAlbumForTrack( track );
+					var album = mDataProvider.GetAlbumForTrack( track );
 
 					if( album != null ) {
-						var artist = mNoiseManager.DataProvider.GetArtistForAlbum( album );
+						var artist = mDataProvider.GetArtistForAlbum( album );
 
 						if( artist != null ) {
 							retValue.Add( new PlayHistoryNode( artist, album, track, history.PlayedOn, OnNodeSelected, OnPlayTrack ));

@@ -9,8 +9,6 @@ namespace Noise.UI {
 
 		public NoiseUiModule( IUnityContainer container ) {
 			mContainer = container;
-
-			ViewModelResolver.Container = mContainer;
 		}
 
 		public void Initialize() {
