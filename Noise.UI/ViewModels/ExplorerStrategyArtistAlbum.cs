@@ -6,7 +6,6 @@ using System.Linq;
 using System.Windows;
 using AutoMapper;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -26,9 +25,10 @@ namespace Noise.UI.ViewModels {
 		private const string					cSearchAlbums = "Albums";
 		private const string					cSearchIgnoreCase = "Ignore Case";
 
-		private IUnityContainer					mContainer;
-		private IEventAggregator				mEventAggregator;
-		private INoiseManager					mNoiseManager;
+		private readonly IEventAggregator		mEventAggregator;
+		private readonly IDataProvider			mDataProvider;
+		private readonly ITagManager			mTagManager;
+		private readonly IDialogService			mDialogService;
 		private readonly Observal.Observer		mChangeObserver;
 		private	LibraryExplorerViewModel		mViewModel;
 		private	bool							mUseSortPrefixes;
@@ -43,7 +43,12 @@ namespace Noise.UI.ViewModels {
 		private readonly Subject<ViewSortStrategy>		mAlbumSortSubject;
 		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
 
-		public ExplorerStrategyArtistAlbum() {
+		public ExplorerStrategyArtistAlbum( IEventAggregator eventAggregator, IDataProvider dataProvider, ITagManager tagManager, IDialogService dialogService ) {
+			mEventAggregator = eventAggregator;
+			mDataProvider = dataProvider;
+			mTagManager = tagManager;
+			mDialogService = dialogService;
+
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
@@ -63,11 +68,8 @@ namespace Noise.UI.ViewModels {
 			mAlbumSortSubject = new Subject<ViewSortStrategy>();
 		}
 
-		public void Initialize( IUnityContainer container, LibraryExplorerViewModel viewModel ) {
+		public void Initialize( LibraryExplorerViewModel viewModel ) {
 			mViewModel = viewModel;
-			mContainer = container;
-			mEventAggregator = mContainer.Resolve<IEventAggregator>();
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
 		}
 
 		public string StrategyId {
@@ -115,7 +117,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			var item = args.GetItem( mNoiseManager.DataProvider );
+			var item = args.GetItem( mDataProvider );
 
 			if( item is DbArtist ) {
 				BeginInvoke( () => {
@@ -175,15 +177,13 @@ namespace Noise.UI.ViewModels {
 
 			var retValue = new List<UiTreeNode>();
 
-			if( mNoiseManager.IsInitialized ) {
-				using( var list = mNoiseManager.DataProvider.GetArtistList( filter )) {
-					foreach( var artist in list.List ) {
-						AddArtist( retValue, artist );
-					}
+			using( var list = mDataProvider.GetArtistList( filter )) {
+				foreach( var artist in list.List ) {
+					AddArtist( retValue, artist );
 				}
-
-				SetArtistSorting( mCurrentArtistSort );
 			}
+
+			SetArtistSorting( mCurrentArtistSort );
 
 			return( retValue );
 		}
@@ -209,7 +209,7 @@ namespace Noise.UI.ViewModels {
 
 		private void UpdateUiArtist( UiArtist uiArtist, DbArtist artist ) {
 			Mapper.DynamicMap( artist, uiArtist );
-			uiArtist.DisplayGenre = mNoiseManager.TagManager.GetGenre( artist.Genre );
+			uiArtist.DisplayGenre = mTagManager.GetGenre( artist.Genre );
 
 			if( mUseSortPrefixes ) {
 				FormatSortPrefix( uiArtist );
@@ -248,9 +248,9 @@ namespace Noise.UI.ViewModels {
 			var artist = parent.Artist;
 
 			if( artist != null ) {
-				using( var albumList = mNoiseManager.DataProvider.GetAlbumList( artist.DbId )) {
+				using( var albumList = mDataProvider.GetAlbumList( artist.DbId )) {
 					foreach( var dbAlbum in from DbAlbum album in albumList.List orderby album.Name select album ) {
-						var uiAlbum = new UiAlbum { DisplayGenre = mNoiseManager.TagManager.GetGenre( dbAlbum.Genre ) };
+						var uiAlbum = new UiAlbum { DisplayGenre = mTagManager.GetGenre( dbAlbum.Genre ) };
 						Mapper.DynamicMap( dbAlbum, uiAlbum );
 
 						retValue.Add( new UiAlbumTreeNode( uiAlbum, OnAlbumSelect, OnAlbumPlay ));
@@ -263,7 +263,7 @@ namespace Noise.UI.ViewModels {
 
 		private void OnArtistSelect( UiArtistTreeNode artistNode ) {
 			if( artistNode.IsSelected ) {
-				var artist = mNoiseManager.DataProvider.GetArtist( artistNode.Artist.DbId );
+				var artist = mDataProvider.GetArtist( artistNode.Artist.DbId );
 
 				if( artist != null ) {
 					mEventAggregator.GetEvent<Events.ArtistFocusRequested>().Publish( artist );
@@ -273,7 +273,7 @@ namespace Noise.UI.ViewModels {
 
 		private void OnAlbumSelect( UiAlbumTreeNode albumNode ) {
 			if( albumNode.IsSelected ) {
-				var album = mNoiseManager.DataProvider.GetAlbum( albumNode.Album.DbId );
+				var album = mDataProvider.GetAlbum( albumNode.Album.DbId );
 
 				if( album != null ) {
 					mEventAggregator.GetEvent<Events.AlbumFocusRequested>().Publish( album );
@@ -282,7 +282,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnAlbumPlay( UiAlbumTreeNode albumNode ) {
-			var album = mNoiseManager.DataProvider.GetAlbum( albumNode.Album.DbId );
+			var album = mDataProvider.GetAlbum( albumNode.Album.DbId );
 
 			if( album != null ) {
 				GlobalCommands.PlayAlbum.Execute( album );
@@ -291,9 +291,8 @@ namespace Noise.UI.ViewModels {
 
 		public void ConfigureView() {
 			var dialogModel = new ArtistAlbumConfigViewModel( mArtistSorts, mCurrentArtistSort, mAlbumSorts, mCurrentAlbumSort );
-			var	dialogService = mContainer.Resolve<IDialogService>();
 
-			if( dialogService.ShowDialog( DialogNames.ArtistAlbumConfiguration, dialogModel ) == true ) {
+			if( mDialogService.ShowDialog( DialogNames.ArtistAlbumConfiguration, dialogModel ) == true ) {
 				SetArtistSorting( dialogModel.SelectedArtistSort );
 				SetAlbumSorting( dialogModel.SelectedAlbumSort );
 			}

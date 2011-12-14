@@ -7,7 +7,6 @@ using System.Windows.Media.Imaging;
 using AutoMapper;
 using Microsoft.Practices.Prism;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -34,9 +33,10 @@ namespace Noise.UI.ViewModels {
 	}
 
 	internal class AlbumViewModel : ViewModelBase, IActiveAware {
-		private IUnityContainer				mContainer;
-		private IEventAggregator			mEvents;
-		private INoiseManager				mNoiseManager;
+		private readonly IEventAggregator	mEvents;
+		private readonly IDataProvider		mDataProvider;
+		private readonly ITagManager		mTagManager;
+		private readonly IDialogService		mDialogService;
 		private UiAlbum						mCurrentAlbum;
 		private DbAlbum						mRequestedAlbum;
 		private readonly BitmapImage		mUnknownImage;
@@ -50,7 +50,16 @@ namespace Noise.UI.ViewModels {
 
 		public	event EventHandler			IsActiveChanged;
 
-		public AlbumViewModel() {
+		public AlbumViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, ITagManager tagManager, IDialogService dialogService ) {
+			mEvents = eventAggregator;
+			mDataProvider = dataProvider;
+			mTagManager = tagManager;
+			mDialogService = dialogService;
+
+			mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
+			mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
+			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
+
 			mTracks = new ObservableCollectionEx<UiTrack>();
 
 			mChangeObserver = new Observal.Observer();
@@ -62,21 +71,6 @@ namespace Noise.UI.ViewModels {
 
 			mUnknownImage = new BitmapImage( new Uri( "pack://application:,,,/Noise.UI;component/Resources/Unknown Album Image.png" ));
 			mSelectImage = new BitmapImage( new Uri( "pack://application:,,,/Noise.UI;component/Resources/Select Album Image.png" ));
-		}
-
-		[Dependency]
-		public IUnityContainer Container {
-			get { return( mContainer ); }
-			set {
-				mContainer = value;
-
-				mEvents = mContainer.Resolve<IEventAggregator>();
-				mNoiseManager = mContainer.Resolve<INoiseManager>();
-
-				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
-				mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
-				mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
-			}
 		}
 
 		public bool IsActive {
@@ -97,7 +91,7 @@ namespace Noise.UI.ViewModels {
 			var retValue = new UiAlbum();
 
 			Mapper.DynamicMap( dbAlbum, retValue );
-			retValue.DisplayGenre = mNoiseManager.TagManager.GetGenre( dbAlbum.Genre );
+			retValue.DisplayGenre = mTagManager.GetGenre( dbAlbum.Genre );
 
 			return( retValue );
 		}
@@ -184,11 +178,11 @@ namespace Noise.UI.ViewModels {
 			var retValue = new NewAlbumInfo( null, null, null );
 
 			if( album != null ) {
-				using( var tracks = mNoiseManager.DataProvider.GetTrackList( album.DbId )) {
+				using( var tracks = mDataProvider.GetTrackList( album.DbId )) {
 					var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
 														orderby track.VolumeName, track.TrackNumber ascending select track );
 
-					retValue = new NewAlbumInfo( album, mNoiseManager.DataProvider.GetAlbumSupportInfo( album.DbId ), sortedList );
+					retValue = new NewAlbumInfo( album, mDataProvider.GetAlbumSupportInfo( album.DbId ), sortedList );
 				}
 			}
 
@@ -236,7 +230,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackPlay( long trackId ) {
-			GlobalCommands.PlayTrack.Execute( mNoiseManager.DataProvider.GetTrack( trackId ));
+			GlobalCommands.PlayTrack.Execute( mDataProvider.GetTrack( trackId ));
 		}
 
 		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
@@ -254,7 +248,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			var item = args.GetItem( mNoiseManager.DataProvider );
+			var item = args.GetItem( mDataProvider );
 
 			if(( item is DbTrack ) &&
 			   ( mCurrentAlbum != null ) &&
@@ -339,7 +333,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_PlayAlbum() {
 			if( mCurrentAlbum != null ) {
-				GlobalCommands.PlayAlbum.Execute( mNoiseManager.DataProvider.GetAlbum( mCurrentAlbum.DbId ));
+				GlobalCommands.PlayAlbum.Execute( mDataProvider.GetAlbum( mCurrentAlbum.DbId ));
 			}
 		}
 
@@ -355,13 +349,11 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_EditAlbum() {
 			if( mCurrentAlbum != null ) {
-				var	dialogService = mContainer.Resolve<IDialogService>();
-
-				using( var albumUpdate = mNoiseManager.DataProvider.GetAlbumForUpdate( mCurrentAlbum.DbId )) {
+				using( var albumUpdate = mDataProvider.GetAlbumForUpdate( mCurrentAlbum.DbId )) {
 					if( albumUpdate != null ) {
 						var dialogModel = new AlbumEditDialogModel();
 
-						if( dialogService.ShowDialog( DialogNames.AlbumEdit, albumUpdate.Item, dialogModel ) == true ) {
+						if( mDialogService.ShowDialog( DialogNames.AlbumEdit, albumUpdate.Item, dialogModel ) == true ) {
 							albumUpdate.Update();
 
 							if( dialogModel.UpdateFileTags ) {
@@ -375,13 +367,11 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackEdit( long trackId ) {
-			var	dialogService = mContainer.Resolve<IDialogService>();
-
-			using( var trackUpdate = mNoiseManager.DataProvider.GetTrackForUpdate( trackId )) {
+			using( var trackUpdate = mDataProvider.GetTrackForUpdate( trackId )) {
 				if( trackUpdate != null ) {
 					var dialogModel = new TrackEditDialogModel();
 
-					if( dialogService.ShowDialog( DialogNames.TrackEdit, trackUpdate.Item, dialogModel ) == true ) {
+					if( mDialogService.ShowDialog( DialogNames.TrackEdit, trackUpdate.Item, dialogModel ) == true ) {
 						trackUpdate.Update();
 
 						if( dialogModel.UpdateFileTags ) {
@@ -396,13 +386,12 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_DisplayPictures() {
 			if( CanExecute_DisplayPictures()) {
-				var	dialogService = mContainer.Resolve<IDialogService>();
-				var vm = new AlbumArtworkViewModel( mContainer, mCurrentAlbum.DbId );
+				var vm = new AlbumArtworkViewModel( mDataProvider, mCurrentAlbum.DbId );
 
-				if( dialogService.ShowDialog( DialogNames.AlbumArtworkDisplay, vm ) == true ) {
+				if( mDialogService.ShowDialog( DialogNames.AlbumArtworkDisplay, vm ) == true ) {
 					foreach( var artwork in vm.AlbumImages ) {
 						if( artwork.IsDirty ) {
-							using( var update = mNoiseManager.DataProvider.GetArtworkForUpdate( artwork.Artwork.DbId )) {
+							using( var update = mDataProvider.GetArtworkForUpdate( artwork.Artwork.DbId )) {
 								if( artwork.Artwork.IsUserSelection ) {
 									AlbumCover = new ImageScrubberItem( artwork.Artwork.DbId, CreateBitmap( artwork.Artwork.Image ), artwork.Artwork.Rotation );
 
@@ -439,7 +428,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_OpenAlbumFolder() {
 			if( mCurrentAlbum != null ) {
-				var path = mNoiseManager.DataProvider.GetAlbumPath( mCurrentAlbum.DbId );
+				var path = mDataProvider.GetAlbumPath( mCurrentAlbum.DbId );
 
 				if(!string.IsNullOrWhiteSpace( path )) {
 					mEvents.GetEvent<Events.LaunchRequest>().Publish( path );

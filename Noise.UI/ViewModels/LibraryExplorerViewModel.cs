@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Behaviours.EventCommandTriggers;
@@ -23,24 +20,26 @@ namespace Noise.UI.ViewModels {
 		private const string					cVisualStateIndex		= "DisplayIndex";
 		private const string					cVisualStateStrategy	= "DisplayStrategy";
 
-		private IUnityContainer					mContainer;
-		private IEventAggregator				mEvents;
+		private readonly IEventAggregator		mEvents;
+		private readonly IDialogService			mDialogService;
 		private IExplorerViewStrategy			mViewStrategy;
-		private List<string>					mSearchOptions;
+		private readonly List<string>			mSearchOptions;
 		private readonly LibraryExplorerFilter	mExplorerFilter;
 		private DateTime						mLastExplorerRequest;
 		private	readonly TimeSpan				mPlayTrackDelay;
-		private bool							mEnableSortPrefixes;
+		private readonly bool					mEnableSortPrefixes;
 		private readonly List<string>			mSortPrefixes;
 		private readonly ObservableCollectionEx<UiTreeNode>		mTreeItems;
 		private readonly ObservableCollectionEx<IndexNode>		mIndexItems;
 
-		public	CollectionViewSource			TreeViewSource { get; private set; }
+		public	CollectionViewSource				TreeViewSource { get; private set; }
+		public	IEnumerable<IExplorerViewStrategy>	ViewStrategies { get; private set; }
 
-		[ImportMany( typeof( IExplorerViewStrategy ))]
-		public IEnumerable<IExplorerViewStrategy>	ViewStrategies {get; set; }
+		public LibraryExplorerViewModel( IEventAggregator eventAggregator, IEnumerable<IExplorerViewStrategy> viewStrategies, IDialogService dialogService ) {
+			mEvents = eventAggregator;
+			mDialogService = dialogService;
+			ViewStrategies = viewStrategies;
 
-		public LibraryExplorerViewModel() {
 			mExplorerFilter = new LibraryExplorerFilter { IsEnabled = false };
 			mTreeItems = new ObservableCollectionEx<UiTreeNode>();
 			mIndexItems = new ObservableCollectionEx<IndexNode>();
@@ -51,42 +50,29 @@ namespace Noise.UI.ViewModels {
 			mLastExplorerRequest = DateTime.Now - mPlayTrackDelay;
 
 			mSortPrefixes = new List<string>();
+			mSearchOptions = new List<string>();
 
 			VisualStateName = cVisualStateNormal;
-		}
 
-		[Dependency]
-		public IUnityContainer Container {
-			get { return( mContainer ); }
-			set {
-				mContainer = value; 
-				mSearchOptions = new List<string>();
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			if( configuration != null ) {
+				mEnableSortPrefixes = configuration.EnableSortPrefixes;
 
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-				if( configuration != null ) {
-					mEnableSortPrefixes = configuration.EnableSortPrefixes;
-
-					if( mEnableSortPrefixes ) {
-						mSortPrefixes.AddRange( configuration.SortPrefixes.Split( '|' ));
-					}
+				if( mEnableSortPrefixes ) {
+					mSortPrefixes.AddRange( configuration.SortPrefixes.Split( '|' ));
 				}
-
-				var ioc = mContainer.Resolve<IIoc>();
-
-				ioc.ComposeParts( this );
-
-				foreach( var strategy in ViewStrategies ) {
-					strategy.Initialize( mContainer, this );
-					strategy.UseSortPrefixes( mEnableSortPrefixes, mSortPrefixes );
-				}
-
-				SelectedStrategy = ( from strategy in ViewStrategies where strategy.IsDefaultStrategy select strategy ).FirstOrDefault();
-
-				mEvents = mContainer.Resolve<IEventAggregator>();
-				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistRequested );
-				mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumRequested );
-				mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnPlaybackStarted );
 			}
+
+			mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistRequested );
+			mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumRequested );
+			mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnPlaybackStarted );
+
+			foreach( var strategy in ViewStrategies ) {
+				strategy.Initialize( this );
+				strategy.UseSortPrefixes( mEnableSortPrefixes, mSortPrefixes );
+			}
+
+			SelectedStrategy = ( from strategy in ViewStrategies where strategy.IsDefaultStrategy select strategy ).FirstOrDefault();
 		}
 
 		private void ActivateStrategy( IExplorerViewStrategy strategy ) {
@@ -184,12 +170,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_Filter() {
-			if( mContainer != null ) {
-				var	dialogService = mContainer.Resolve<IDialogService>();
-
-				if( dialogService.ShowDialog( DialogNames.LibraryExplorerFilter, mExplorerFilter ) == true ) {
-					UpdateTree();
-				}
+			if( mDialogService.ShowDialog( DialogNames.LibraryExplorerFilter, mExplorerFilter ) == true ) {
+				UpdateTree();
 			}
 		}
 

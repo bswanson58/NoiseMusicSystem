@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Linq;
 using AutoMapper;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -15,9 +14,10 @@ using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistViewModel : ViewModelBase {
-		private IUnityContainer				mContainer;
-		private IEventAggregator			mEvents;
-		private INoiseManager				mNoiseManager;
+		private readonly IEventAggregator	mEvents;
+		private readonly IDataProvider		mDataProvider;
+		private readonly ITagManager		mTagManager;
+		private readonly IDialogService		mDialogService;
 		private UiArtist					mCurrentArtist;
 		private LinkNode					mArtistWebsite;
 		private readonly Observal.Observer	mChangeObserver;
@@ -27,7 +27,17 @@ namespace Noise.UI.ViewModels {
 		private readonly ObservableCollectionEx<LinkNode>				mBandMembers;
 		private readonly ObservableCollectionEx<DbDiscographyRelease>	mDiscography;
 
-		public ArtistViewModel() {
+		public ArtistViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, ITagManager tagManager, IDialogService dialogService ) {
+			mEvents = eventAggregator;
+			mDataProvider = dataProvider;
+			mTagManager = tagManager;
+			mDialogService = dialogService;
+
+			mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
+			mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
+			mEvents.GetEvent<Events.ArtistContentUpdated>().Subscribe( OnArtistInfoUpdate );
+			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
+
 			mSimilarArtists = new ObservableCollectionEx<LinkNode>();
 			mTopAlbums = new ObservableCollectionEx<LinkNode>();
 			mBandMembers = new ObservableCollectionEx<LinkNode>();
@@ -39,22 +49,6 @@ namespace Noise.UI.ViewModels {
 			mBackgroundWorker = new BackgroundWorker();
 			mBackgroundWorker.DoWork += ( o, args ) => args.Result = RetrieveSupportInfo( args.Argument as UiArtist );
 			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => SupportInfo = result.Result as ArtistSupportInfo;
-		}
-
-		[Dependency]
-		public IUnityContainer Container {
-			get { return( mContainer ); }
-			set {
-				mContainer = value;
-
-				mEvents = mContainer.Resolve<IEventAggregator>();
-				mNoiseManager = mContainer.Resolve<INoiseManager>();
-
-				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
-				mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
-				mEvents.GetEvent<Events.ArtistContentUpdated>().Subscribe( OnArtistInfoUpdate );
-				mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
-			}
 		}
 
 		public UiArtist Artist {
@@ -96,7 +90,7 @@ namespace Noise.UI.ViewModels {
 							mBandMembers.AddRange( from DbAssociatedItem member in value.BandMembers.Items select new LinkNode( member.Item ));
 						}
 
-						using( var discoList = mNoiseManager.DataProvider.GetDiscography( CurrentArtist.DbId )) {
+						using( var discoList = mDataProvider.GetDiscography( CurrentArtist.DbId )) {
 							mDiscography.SuspendNotification();
 							mDiscography.AddRange( discoList.List );
 							mDiscography.Sort( release => release.Year, ListSortDirection.Descending );
@@ -113,7 +107,7 @@ namespace Noise.UI.ViewModels {
 			var retValue = new UiArtist();
 
 			Mapper.DynamicMap( dbArtist, retValue );
-			retValue.DisplayGenre = mNoiseManager.TagManager.GetGenre( dbArtist.Genre );
+			retValue.DisplayGenre = mTagManager.GetGenre( dbArtist.Genre );
 
 			return( retValue );
 		}
@@ -131,9 +125,9 @@ namespace Noise.UI.ViewModels {
 				}
 
 				if( value != null ) {
-					mNoiseManager.DataProvider.UpdateArtistInfo( value.DbId );
+					mDataProvider.UpdateArtistInfo( value.DbId );
 
-					mCurrentArtist = TransformArtist( mNoiseManager.DataProvider.GetArtist( value.DbId ));
+					mCurrentArtist = TransformArtist( mDataProvider.GetArtist( value.DbId ));
 					mChangeObserver.Add( mCurrentArtist );
 
 					if(!mBackgroundWorker.IsBusy ) {
@@ -163,11 +157,11 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private ArtistSupportInfo RetrieveSupportInfo( UiArtist forArtist ) {
-			return( mNoiseManager.DataProvider.GetArtistSupportInfo( forArtist.DbId ));
+			return( mDataProvider.GetArtistSupportInfo( forArtist.DbId ));
 		}
 
 		private void OnSimilarArtistClicked( long artistId ) {
-			var artist = mNoiseManager.DataProvider.GetArtist( artistId  );
+			var artist = mDataProvider.GetArtist( artistId  );
 
 			if( artist != null ) {
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( artist );
@@ -175,7 +169,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTopAlbumClicked( long albumId ) {
-			var album = mNoiseManager.DataProvider.GetAlbum( albumId );
+			var album = mDataProvider.GetAlbum( albumId );
 
 			if( album != null ) {
 				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( album );
@@ -198,11 +192,11 @@ namespace Noise.UI.ViewModels {
 		private void OnAlbumFocus( DbAlbum album ) {
 			if( CurrentArtist != null ) {
 				if( album.Artist != CurrentArtist.DbId ) {
-					CurrentArtist = TransformArtist( mNoiseManager.DataProvider.GetArtistForAlbum( album ));
+					CurrentArtist = TransformArtist( mDataProvider.GetArtistForAlbum( album ));
 				}
 			}
 			else {
-				CurrentArtist = TransformArtist( mNoiseManager.DataProvider.GetArtistForAlbum( album ));
+				CurrentArtist = TransformArtist( mDataProvider.GetArtistForAlbum( album ));
 			}
 		}
 
@@ -220,7 +214,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			var item = args.GetItem( mNoiseManager.DataProvider );
+			var item = args.GetItem( mDataProvider );
 
 			if(( item is DbArtist ) &&
 			   ( CurrentArtist != null ) &&
@@ -291,13 +285,11 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_EditArtist() {
 			if( mCurrentArtist != null ) {
-				var	dialogService = mContainer.Resolve<IDialogService>();
-
-				using( var artistUpdate = mNoiseManager.DataProvider.GetArtistForUpdate( mCurrentArtist.DbId )) {
+				using( var artistUpdate = mDataProvider.GetArtistForUpdate( mCurrentArtist.DbId )) {
 					if( artistUpdate != null ) {
 						artistUpdate.Item.Website = artistUpdate.Item.Website.Replace( Environment.NewLine, "" ).Replace( "\n", "" ).Replace( "\r", "" );
 
-						if( dialogService.ShowDialog( DialogNames.ArtistEdit, artistUpdate.Item ) == true ) {
+						if( mDialogService.ShowDialog( DialogNames.ArtistEdit, artistUpdate.Item ) == true ) {
 							artistUpdate.Update();
 
 							Mapper.DynamicMap( artistUpdate.Item, mCurrentArtist );

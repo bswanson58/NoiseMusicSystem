@@ -5,7 +5,6 @@ using System.Linq;
 using AutoMapper;
 using Microsoft.Practices.Prism;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -14,9 +13,9 @@ using Noise.UI.Dto;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistTracksViewModel : ViewModelBase, IActiveAware {
-		private IUnityContainer				mContainer;
-		private IEventAggregator			mEvents;
-		private INoiseManager				mNoiseManager;
+		private readonly IEventAggregator	mEvents;
+		private readonly IDataProvider		mDataProvider;
+		private readonly ITagManager		mTagManager;
 		private DbArtist					mCurrentArtist;
 		private	bool						mIsActive;
 		private readonly BackgroundWorker	mBackgroundWorker;
@@ -24,7 +23,14 @@ namespace Noise.UI.ViewModels {
 		public	event EventHandler			IsActiveChanged;
 		public	ObservableCollectionEx<UiArtistTrackNode>	TrackList { get; private set; }
 
-		public ArtistTracksViewModel() {
+		public ArtistTracksViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, ITagManager tagManager ) {
+			mEvents = eventAggregator;
+			mDataProvider = dataProvider;
+			mTagManager = tagManager;
+
+			mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
+			mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
+
 			TrackList = new ObservableCollectionEx<UiArtistTrackNode>();
 
 			mBackgroundWorker = new BackgroundWorker();
@@ -32,20 +38,6 @@ namespace Noise.UI.ViewModels {
 			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => SetTrackList( result.Result as IEnumerable<UiArtistTrackNode>);
 
 			TracksValid = false;
-		}
-
-		[Dependency]
-		public IUnityContainer Container {
-			get { return( mContainer ); }
-			set {
-				mContainer = value;
-
-				mEvents = mContainer.Resolve<IEventAggregator>();
-				mNoiseManager = mContainer.Resolve<INoiseManager>();
-
-				mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
-				mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
-			}
 		}
 
 		public bool IsActive {
@@ -82,11 +74,11 @@ namespace Noise.UI.ViewModels {
 		private void OnAlbumFocus( DbAlbum album ) {
 			if( mCurrentArtist != null ) {
 				if( mCurrentArtist.DbId != album.Artist ) {
-					UpdateTrackList( mNoiseManager.DataProvider.GetArtist( album.Artist ));
+					UpdateTrackList( mDataProvider.GetArtist( album.Artist ));
 				}
 			}
 			else {
-				UpdateTrackList( mNoiseManager.DataProvider.GetArtist( album.Artist ));
+				UpdateTrackList( mDataProvider.GetArtist( album.Artist ));
 			}
 		}
 
@@ -115,9 +107,9 @@ namespace Noise.UI.ViewModels {
 			var trackSet = new Dictionary<string, UiArtistTrackNode>();
 			int	albumCount = 0;
 
-			using( var albumList = mNoiseManager.DataProvider.GetAlbumList( forArtist.DbId )) {
+			using( var albumList = mDataProvider.GetAlbumList( forArtist.DbId )) {
 				foreach( var album in albumList.List ) {
-					using( var trackList = mNoiseManager.DataProvider.GetTrackList( album.DbId )) {
+					using( var trackList = mDataProvider.GetTrackList( album.DbId )) {
 						foreach( var track in trackList.List ) {
 							var item = new UiArtistTrackNode( TransformTrack( track ), TransformAlbum( album ));
 
@@ -161,7 +153,7 @@ namespace Noise.UI.ViewModels {
 			var retValue = new UiAlbum();
 
 			Mapper.DynamicMap( dbAlbum, retValue );
-			retValue.DisplayGenre = mNoiseManager.TagManager.GetGenre( dbAlbum.Genre );
+			retValue.DisplayGenre = mTagManager.GetGenre( dbAlbum.Genre );
 
 			return( retValue );
 		}
@@ -175,7 +167,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackPlay( long trackId ) {
-			GlobalCommands.PlayTrack.Execute( mNoiseManager.DataProvider.GetTrack( trackId ));
+			GlobalCommands.PlayTrack.Execute( mDataProvider.GetTrack( trackId ));
 		}
 
 		public void Execute_SwitchView() {
