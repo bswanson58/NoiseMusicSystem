@@ -23,14 +23,19 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 
 		private readonly IEventAggregator	mEvents;
 		private readonly INoiseManager		mNoiseManager;
+		private readonly IDataProvider		mDataProvider;
+		private readonly ILibraryBuilder	mLibraryBuilder;
 		private readonly IServiceBusManager	mServiceBus;
 		private	ISchedulerFactory			mSchedulerFactory;
 		private	IScheduler					mJobScheduler;
 		private ServiceHost					mLibraryUpdateServiceHost;
 
-		public LibraryServiceImpl( IEventAggregator eventAggregator, INoiseManager noiseManager, IServiceBusManager serviceBusManager ) {
+		public LibraryServiceImpl( IEventAggregator eventAggregator, INoiseManager noiseManager, IDataProvider dataProvider,
+								   ILibraryBuilder libraryBuilder, IServiceBusManager serviceBusManager ) {
 			mEvents = eventAggregator;
 			mNoiseManager = noiseManager;
+			mDataProvider = dataProvider;
+			mLibraryBuilder = libraryBuilder;
 			mServiceBus = serviceBusManager;
 		}
 
@@ -43,7 +48,7 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 
 //				ScheduleLibraryUpdate();
 				// Always update the library on file system changes in the service.
-				mNoiseManager.LibraryBuilder.EnableUpdateOnLibraryChange = true;
+				mLibraryBuilder.EnableUpdateOnLibraryChange = true;
 
 				if( mServiceBus.InitializeServer()) {
 					mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
@@ -57,7 +62,7 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 //						MessageQueue.Create( queueName, true );
 //					}
 
-					mLibraryUpdateServiceHost = new ServiceHost( new LibraryUpdateService( mNoiseManager.LibraryBuilder ));
+					mLibraryUpdateServiceHost = new ServiceHost( new LibraryUpdateService( mLibraryBuilder ));
 					mLibraryUpdateServiceHost.Open();
 
  				}
@@ -88,13 +93,13 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 		}
 */
 		public void UpdateLibrary() {
-			if(!mNoiseManager.LibraryBuilder.LibraryUpdateInProgress ) {
-				mNoiseManager.LibraryBuilder.StartLibraryUpdate();
+			if(!mLibraryBuilder.LibraryUpdateInProgress ) {
+				mLibraryBuilder.StartLibraryUpdate();
 			}
 		}
 
 		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			var item = args.GetItem( mNoiseManager.DataProvider );
+			var item = args.GetItem( mDataProvider );
 
 			if(( item is DbArtist ) ||
 			   ( item is DbAlbum )) {

@@ -18,36 +18,28 @@ namespace Noise.Core {
 		private readonly IBackgroundTaskManager		mBackgroundTaskMgr;
 		private readonly ILyricsProvider			mLyricsProvider;
 		private readonly IRemoteServer				mRemoteServer;
+		private readonly ICloudSyncManager			mCloudSyncMgr;
+		private readonly ILibraryBuilder			mLibraryBuilder;
+		private readonly IPlayHistory				mPlayHistory;
+		private readonly IPlayController			mPlayController;
 
 		public	IDatabaseManager			DatabaseManager { get; private set; }
-		public	ICloudSyncManager			CloudSyncMgr { get; private set; }
 		public	IDataProvider				DataProvider { get; private set; }
 		public	ISearchProvider				SearchProvider { get; private set; }
-		public	IPlayQueue					PlayQueue { get; private set; }
-		public	IPlayHistory				PlayHistory { get; private set; }
-		public	IPlayListMgr				PlayListMgr { get; private set; }
-		public	IPlayController				PlayController { get; private set; }
-		public	ILibraryBuilder				LibraryBuilder { get; private set; }
 		public	ITagManager					TagManager { get; private set; }
-		public	IDataExchangeManager		DataExchangeMgr { get; private set; }
-
-		public bool							IsInitialized { get; set; }
 
 		public NoiseManager( IEventAggregator eventAggregator,
 							 IBackgroundTaskManager backgroundTaskManager,
 							 IDatabaseManager databaseManager,
 							 IDataProvider dataProvider,
 							 ICloudSyncManager cloudSyncManager,
-							 IDataExchangeManager dataExchangeManager,
 							 IContentManager contentManager,
 							 IDataUpdates dataUpdates,
 							 IFileUpdates fileUpdates,
 							 ILibraryBuilder libraryBuilder,
 							 ILyricsProvider lyricsProvider,
 							 ISearchProvider searchProvider,
-							 IPlayQueue playQueue, 
 							 IPlayHistory playHistory,
-							 IPlayListMgr playListMgr,
 							 IPlayController playController,
 							 IRemoteServer remoteServer,
 							 ITagManager tagManager ) {
@@ -59,19 +51,18 @@ namespace Noise.Core {
 			mLyricsProvider = lyricsProvider;
 			mRemoteServer = remoteServer;
 			DatabaseManager = databaseManager;
-			DataExchangeMgr = dataExchangeManager;
 			DataProvider = dataProvider;
-			CloudSyncMgr = cloudSyncManager;
-			LibraryBuilder = libraryBuilder;
+			mCloudSyncMgr = cloudSyncManager;
+			mLibraryBuilder = libraryBuilder;
 			SearchProvider = searchProvider;
-			PlayQueue = playQueue;
-			PlayHistory = playHistory;
-			PlayListMgr = playListMgr;
-			PlayController = playController;
+			mPlayHistory = playHistory;
+			mPlayController = playController;
 			TagManager = tagManager;
 		}
 
 		public bool Initialize() {
+			var isInitialized = false;
+
 			NoiseLogger.Current.LogMessage( "Initializing Noise Music System" );
 
 			if( DatabaseManager.Initialize()) {
@@ -93,8 +84,8 @@ namespace Noise.Core {
 
 				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
 				if( configuration != null ) {
-					if( CloudSyncMgr.InitializeCloudSync( configuration.LoginName, configuration.LoginPassword )) {
-						CloudSyncMgr.MaintainSynchronization = configuration.UseCloud;
+					if( mCloudSyncMgr.InitializeCloudSync( configuration.LoginName, configuration.LoginPassword )) {
+						mCloudSyncMgr.MaintainSynchronization = configuration.UseCloud;
 					}
 					else {
 						NoiseLogger.Current.LogMessage( "Noise Manager: Could not initialize cloud sync." );
@@ -105,11 +96,11 @@ namespace Noise.Core {
 					NoiseLogger.Current.LogMessage( "Noise Manager: Could not initialize lyrics provider." );
 				}
 
-				if(!PlayController.Initialize()) {
+				if(!mPlayController.Initialize()) {
 					NoiseLogger.Current.LogMessage( "NoiseManager: PlayController could not be initialized." );
 				}
 
-				if(!PlayHistory.Initialize()) {
+				if(!mPlayHistory.Initialize()) {
 					NoiseLogger.Current.LogMessage( "NoiseManager: PlayHistory could not be initialized." );
 				}
 
@@ -123,15 +114,15 @@ namespace Noise.Core {
 					mRemoteServer.OpenRemoteServer();
 				}
 
-				NoiseLogger.Current.LogMessage( "Initialized NoiseManager." );
+				isInitialized = true;
 
-				IsInitialized = true;
+				NoiseLogger.Current.LogMessage( "Initialized NoiseManager." );
 			}
 			else {
 				NoiseLogger.Current.LogMessage( "Noise Manager: DatabaseManager could not be initialized" );
 			}
 
-			return ( IsInitialized );
+			return ( isInitialized );
 		}
 
 		public void Shutdown() {
@@ -141,7 +132,7 @@ namespace Noise.Core {
 			mBackgroundTaskMgr.Stop();
 			mRemoteServer.CloseRemoteServer();
 
-			LibraryBuilder.StopLibraryUpdate();
+			mLibraryBuilder.StopLibraryUpdate();
 
 			DatabaseManager.Shutdown();
 		}
@@ -151,13 +142,13 @@ namespace Noise.Core {
 
 			if( configuration != null ) {
 				if( configuration.EnableLibraryExplorer ) {
-					LibraryBuilder.StartLibraryUpdate();
+					mLibraryBuilder.StartLibraryUpdate();
 				}
 				else {
-					LibraryBuilder.LogLibraryStatistics();
+					mLibraryBuilder.LogLibraryStatistics();
 				}
 
-				LibraryBuilder.EnableUpdateOnLibraryChange = configuration.EnableLibraryChangeUpdates;
+				mLibraryBuilder.EnableUpdateOnLibraryChange = configuration.EnableLibraryChangeUpdates;
 			}
 		}
 	}
