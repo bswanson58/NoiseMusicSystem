@@ -3,7 +3,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
-	class DatabaseManager : IDatabaseManager {
+	public class DatabaseManager : IDatabaseManager {
 		private readonly object					mLockObject;
 		private readonly List<IDatabase>		mAvailableDatabases;
 		private readonly Dictionary<string, IDatabase>	mReservedDatabases;

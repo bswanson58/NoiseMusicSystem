@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Noise.Core.Database {
-	internal class DatabaseCache<T> where T : class {
+	public class DatabaseCache<T> where T : class {
 		private readonly List<T>	mCacheList;
 
 		public DatabaseCache( IEnumerable<T> cacheSource ) {
