@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -13,15 +12,17 @@ using Noise.UI.Adapters;
 
 namespace Noise.UI.ViewModels {
 	public class LibraryAdditionsViewModel : ViewModelBase {
-		private IUnityContainer				mContainer;
-		private IEventAggregator			mEvents;
-		private INoiseManager				mNoiseManager;
-		private DateTime					mHorizonTime;
-		private UInt32						mHorizonCount;
+		private readonly IEventAggregator	mEvents;
+		private readonly IDataProvider		mDataProvider;
+		private readonly DateTime			mHorizonTime;
+		private readonly UInt32				mHorizonCount;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<LibraryAdditionNode>	mNodeList;
 
-		public LibraryAdditionsViewModel() {
+		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider ) {
+			mEvents = eventAggregator;
+			mDataProvider = dataProvider;
+
 			mNodeList = new ObservableCollectionEx<LibraryAdditionNode>();
 
 			mHorizonCount = 100;
@@ -30,28 +31,16 @@ namespace Noise.UI.ViewModels {
 			mBackgroundWorker = new BackgroundWorker();
 			mBackgroundWorker.DoWork += ( o, args ) => args.Result = RetrieveAdditions();
 			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => UpdateList( result.Result as IEnumerable<LibraryAdditionNode>);
-		}
 
-		[Dependency]
-		public IUnityContainer Container {
-			get { return( mContainer ); }
-			set {
-				mContainer = value;
-
-				mEvents = mContainer.Resolve<IEventAggregator>();
-				mNoiseManager = mContainer.Resolve<INoiseManager>();
-
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
-				if( configuration != null ) {
-					mHorizonCount = configuration.NewAdditionsHorizonCount;
-					mHorizonTime = DateTime.Now - new TimeSpan( configuration.NewAdditionsHorizonDays, 0, 0, 0 );
-				}
-
-				mBackgroundWorker.RunWorkerAsync();
-
-				mEvents.GetEvent<Events.LibraryUpdateCompleted>().Subscribe( OnLibraryUpdated );
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			if( configuration != null ) {
+				mHorizonCount = configuration.NewAdditionsHorizonCount;
+				mHorizonTime = DateTime.Now - new TimeSpan( configuration.NewAdditionsHorizonDays, 0, 0, 0 );
 			}
+
+			mBackgroundWorker.RunWorkerAsync();
+
+			mEvents.GetEvent<Events.LibraryUpdateCompleted>().Subscribe( OnLibraryUpdated );
 		}
 
 		private void OnLibraryUpdated( long libraryId ) {
@@ -73,7 +62,7 @@ namespace Noise.UI.ViewModels {
 			var	retValue = new List<LibraryAdditionNode>();
 			var	trackList = new List<DbTrack>();
 
-			using( var additions = mNoiseManager.DataProvider.GetNewlyAddedTracks()) {
+			using( var additions = mDataProvider.GetNewlyAddedTracks()) {
 				UInt32	count = 0;
 
 				foreach( var track in additions.List ) {
@@ -92,9 +81,9 @@ namespace Noise.UI.ViewModels {
 			if( trackList.Count > 0 ) {
 				
 				foreach( var track in trackList ) {
-					var album = mNoiseManager.DataProvider.GetAlbumForTrack( track );
+					var album = mDataProvider.GetAlbumForTrack( track );
 					if( album != null ) {
-						var artist = mNoiseManager.DataProvider.GetArtistForAlbum( album );
+						var artist = mDataProvider.GetArtistForAlbum( album );
 
 						if( artist != null ) {
 							var treeNode = retValue.Find( node => node.Artist.DbId == artist.DbId && node.Album.DbId == album.DbId );
@@ -132,7 +121,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackPlayRequested( long trackId ) {
-			GlobalCommands.PlayTrack.Execute( mNoiseManager.DataProvider.GetTrack( trackId ));
+			GlobalCommands.PlayTrack.Execute( mDataProvider.GetTrack( trackId ));
 		}
 	}
 }

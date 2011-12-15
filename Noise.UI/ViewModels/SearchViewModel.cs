@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -23,14 +22,16 @@ namespace Noise.UI.ViewModels {
 	public class SearchViewModel : DialogModelBase {
 		private const int			cMaxSearchResults = 100;
 
-		private IUnityContainer		mContainer;
-		private IEventAggregator	mEventAggregator;
-		private INoiseManager		mNoiseManager;
-		private SearchType			mCurrentSearchType;
+		private readonly IEventAggregator	mEventAggregator;
+		private readonly ISearchProvider	mSearchProvider;
+		private SearchType					mCurrentSearchType;
 		private readonly List<SearchType>						mSearchTypes;
 		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
 
-		public SearchViewModel() {
+		public SearchViewModel( IEventAggregator eventAggregator, ISearchProvider searchProvider ) {
+			mEventAggregator = eventAggregator;
+			mSearchProvider = searchProvider;
+
 			mSearchResults = new ObservableCollectionEx<SearchViewNode>();
 
 			mCurrentSearchType = new SearchType( eSearchItemType.Everything, "Everything" );
@@ -44,17 +45,6 @@ namespace Noise.UI.ViewModels {
 												  new SearchType( eSearchItemType.Lyrics, "Lyrics" ),
 												  new SearchType( eSearchItemType.SimilarArtist, "Similar Artists" ),
 												  new SearchType( eSearchItemType.TopAlbum, "Top Albums" ) };
-		}
-
-		[Dependency]
-		public IUnityContainer Container {
-			get { return( mContainer ); }
-			set {
-				mContainer = value;
-
-				mEventAggregator = mContainer.Resolve<IEventAggregator>();
-				mNoiseManager = mContainer.Resolve<INoiseManager>();
-			}
 		}
 
 		public SearchType CurrentSearchType {
@@ -75,19 +65,17 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_Search() {
-			if( mNoiseManager != null ) {
-				mSearchResults.SuspendNotification();
-				mSearchResults.Clear();
-				mSearchResults.AddRange( BuildSearchList());
+			mSearchResults.SuspendNotification();
+			mSearchResults.Clear();
+			mSearchResults.AddRange( BuildSearchList());
 
-				mSearchResults.ResumeNotification();
-			}
+			mSearchResults.ResumeNotification();
 		}
 
 		private IEnumerable<SearchViewNode> BuildSearchList() {
 			var retValue = new List<SearchViewNode>();
 
-			retValue.AddRange( from SearchResultItem item in mNoiseManager.SearchProvider.Search( CurrentSearchType.ItemType, SearchText, cMaxSearchResults ) 
+			retValue.AddRange( from SearchResultItem item in mSearchProvider.Search( CurrentSearchType.ItemType, SearchText, cMaxSearchResults ) 
 							   select new SearchViewNode( item, OnNodeSelected, OnPlay ));
 			return( retValue );
 		}

@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -15,19 +14,27 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class PlayQueueViewModel : ViewModelBase {
-		private IUnityContainer		mContainer;
-		private INoiseManager		mNoiseManager;
-		private IEventAggregator	mEventAggregator;
-		private int					mPlayingIndex;
-		private TimeSpan			mTotalTime;
-		private TimeSpan			mRemainingTime;
+		private readonly IEventAggregator	mEventAggregator;
+		private readonly IDataProvider		mDataProvider;
+		private readonly IPlayQueue			mPlayQueue;
+		private readonly IPlayListMgr		mPlayListMgr;
+		private readonly IDialogService		mDialogService;
+		private int							mPlayingIndex;
+		private TimeSpan					mTotalTime;
+		private TimeSpan					mRemainingTime;
 		private	ListViewDragDropManager<PlayQueueTrack>					mDragManager;
-		private readonly ObservableCollectionEx<PlayQueueTrack>			mPlayQueue;
+		private readonly ObservableCollectionEx<PlayQueueTrack>			mQueue;
 		private	readonly ObservableCollectionEx<ExhaustedStrategyItem>	mExhaustedStrategies;
 		private readonly ObservableCollectionEx<PlayStrategyItem>		mPlayStrategies;
 
-		public PlayQueueViewModel() {
-			mPlayQueue = new ObservableCollectionEx<PlayQueueTrack>();
+		public PlayQueueViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IPlayQueue playQueue, IPlayListMgr playListMgr, IDialogService dialogService ) {
+			mEventAggregator = eventAggregator;
+			mDataProvider = dataProvider;
+			mPlayQueue = playQueue;
+			mPlayListMgr = playListMgr;
+			mDialogService = dialogService;
+
+			mQueue = new ObservableCollectionEx<PlayQueueTrack>();
 			mPlayingIndex = -1;
 
 			mPlayStrategies = new ObservableCollectionEx<PlayStrategyItem>{
@@ -43,28 +50,18 @@ namespace Noise.UI.ViewModels {
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayList, "Playlist..." ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayStream, "Radio Station..." ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayGenre, "Play Genre..." )};
-		}
 
-		[Dependency]
-		public IUnityContainer Container {
-			get { return( mContainer ); }
-			set {
-				mContainer = value;
+			mEventAggregator.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
+			mEventAggregator.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnTrackStarted );
 
-				mEventAggregator = mContainer.Resolve<IEventAggregator>();
-				mNoiseManager = mContainer.Resolve<INoiseManager>();
-				mEventAggregator.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
-				mEventAggregator.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnTrackStarted );
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
-				if( configuration != null ) {
-					mNoiseManager.PlayQueue.SetPlayExhaustedStrategy( configuration.PlayExhaustedStrategy, configuration.PlayExhaustedItem );
-					mNoiseManager.PlayQueue.PlayStrategy = configuration.PlayStrategy;
-				}
-
-				LoadPlayQueue();
+			if( configuration != null ) {
+				mPlayQueue.SetPlayExhaustedStrategy( configuration.PlayExhaustedStrategy, configuration.PlayExhaustedItem );
+				mPlayQueue.PlayStrategy = configuration.PlayStrategy;
 			}
+
+			LoadPlayQueue();
 		}
 
 		public void Execute_OnLoaded( EventCommandParameter<object, RoutedEventArgs> args ) {
@@ -79,21 +76,20 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_SavePlayList() {
-			var	dialogService = mContainer.Resolve<IDialogService>();
 			var playList = new DbPlayList();
 
-			if( dialogService.ShowDialog( DialogNames.PlayListEdit, playList ) == true ) {
-				mNoiseManager.PlayListMgr.Create( mNoiseManager.PlayQueue.PlayList, playList.Name, playList.Description );
+			if( mDialogService.ShowDialog( DialogNames.PlayListEdit, playList ) == true ) {
+				mPlayListMgr.Create( mPlayQueue.PlayList, playList.Name, playList.Description );
 			}
 		}
 
 		public bool CanExecute_SavePlayList() {
-			return(!mNoiseManager.PlayQueue.IsQueueEmpty );
+			return(!mPlayQueue.IsQueueEmpty );
 		}
 
 		public void Execute_DeleteCommand() {
 			if( SelectedItem != null ) {
-				mNoiseManager.PlayQueue.RemoveTrack( SelectedItem );
+				mPlayQueue.RemoveTrack( SelectedItem );
 			}
 		}
 
@@ -102,13 +98,13 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnDragManagerProcessDrop( object sender, ProcessDropEventArgs<PlayQueueTrack> args ) {
-			mNoiseManager.PlayQueue.ReorderQueueItem( args.OldIndex, args.NewIndex );
+			mPlayQueue.ReorderQueueItem( args.OldIndex, args.NewIndex );
 		}
 
 		public void Execute_MoveItemUp() {
 			if(( SelectedItem != null ) &&
 			   ( SelectedIndex > 0 )) {
-				mNoiseManager.PlayQueue.ReorderQueueItem( SelectedIndex, SelectedIndex - 1 );
+				mPlayQueue.ReorderQueueItem( SelectedIndex, SelectedIndex - 1 );
 			}
 		}
 
@@ -119,18 +115,18 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_MoveItemDown() {
 			if( SelectedItem != null ) {
-				mNoiseManager.PlayQueue.ReorderQueueItem( SelectedIndex, SelectedIndex + 1 );
+				mPlayQueue.ReorderQueueItem( SelectedIndex, SelectedIndex + 1 );
 			}
 		}
 
 		[DependsUpon( "SelectedItem" )]
 		public bool CanExecute_MoveItemDown() {
-			return(( SelectedItem != null ) && (( SelectedIndex + 1 ) < mPlayQueue.Count ));
+			return(( SelectedItem != null ) && (( SelectedIndex + 1 ) < mQueue.Count ));
 		}
 
 		public void Execute_RemoveItem() {
 			if( SelectedItem != null ) {
-				mNoiseManager.PlayQueue.RemoveTrack( SelectedItem );
+				mPlayQueue.RemoveTrack( SelectedItem );
 			}
 		}
 
@@ -140,7 +136,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public ObservableCollectionEx<PlayQueueTrack> QueueList {
-			get{ return( mPlayQueue ); }
+			get{ return( mQueue ); }
 		}
 
 		public PlayQueueTrack SelectedItem {
@@ -175,13 +171,13 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void LoadPlayQueue() {
-			mPlayQueue.Clear();
-			mPlayQueue.AddRange( mNoiseManager.PlayQueue.PlayList );
+			mQueue.Clear();
+			mQueue.AddRange( mPlayQueue.PlayList );
 
 			mTotalTime = new TimeSpan();
 			mRemainingTime = new TimeSpan();
 
-			foreach( var track in mPlayQueue ) {
+			foreach( var track in mQueue ) {
 				mTotalTime = mTotalTime.Add( track.Track.Duration );
 
 				if((!track.HasPlayed ) ||
@@ -196,20 +192,12 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_ClearQueue( object sender ) {
-			if( mNoiseManager != null ) {
-				mNoiseManager.PlayQueue.ClearQueue();
-			}
+			mPlayQueue.ClearQueue();
 		}
 
 		[DependsUpon( "PlayQueueChangedFlag" )]
 		public bool CanExecute_ClearQueue( object sender ) {
-			var retValue = true;
-
-			if( mNoiseManager != null ) {
-				retValue = !mNoiseManager.PlayQueue.IsQueueEmpty;
-			}
-
-			return( retValue );
+			return(!mPlayQueue.IsQueueEmpty );
 		}
 
 		private void OnTrackStarted( PlayQueueTrack track ) {
@@ -219,7 +207,7 @@ namespace Noise.UI.ViewModels {
 				mPlayingIndex = -1;
 				mRemainingTime = new TimeSpan();
 
-				foreach( var item in mPlayQueue ) {
+				foreach( var item in mQueue ) {
 					if( item.IsPlaying ) {
 						mPlayingIndex = index;
 					}
@@ -246,12 +234,12 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public ePlayExhaustedStrategy ExhaustedStrategy {
-			get{ return( mNoiseManager.PlayQueue.PlayExhaustedStrategy ); }
+			get{ return( mPlayQueue.PlayExhaustedStrategy ); }
 			set {
 				long itemId = Constants.cDatabaseNullOid;
 
 				if( PromptForStrategyItem( value, ref itemId )) {
-					mNoiseManager.PlayQueue.SetPlayExhaustedStrategy( value, itemId );
+					mPlayQueue.SetPlayExhaustedStrategy( value, itemId );
 
 					var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
@@ -272,12 +260,10 @@ namespace Noise.UI.ViewModels {
 			if(( strategy == ePlayExhaustedStrategy.PlayStream ) ||
 			   ( strategy == ePlayExhaustedStrategy.PlayList ) ||
 			   ( strategy == ePlayExhaustedStrategy.PlayGenre )) {
-				var	dialogService = mContainer.Resolve<IDialogService>();
-
 				if( strategy == ePlayExhaustedStrategy.PlayList ) {
-					var dialogModel = new SelectPlayListDialogModel( mContainer );
+					var dialogModel = new SelectPlayListDialogModel( mPlayListMgr );
 
-					if( dialogService.ShowDialog( DialogNames.SelectPlayList, dialogModel ) == true ) {
+					if( mDialogService.ShowDialog( DialogNames.SelectPlayList, dialogModel ) == true ) {
 						if( dialogModel.SelectedItem != null ) {
 							selectedItem = dialogModel.SelectedItem.DbId;
 							retValue = true;
@@ -286,9 +272,9 @@ namespace Noise.UI.ViewModels {
 				}
 
 				if( strategy == ePlayExhaustedStrategy.PlayStream ) {
-					var	dialogModel = new SelectStreamDialogModel( mContainer );
+					var	dialogModel = new SelectStreamDialogModel( mDataProvider );
 
-					if( dialogService.ShowDialog( DialogNames.SelectStream, dialogModel ) == true ) {
+					if( mDialogService.ShowDialog( DialogNames.SelectStream, dialogModel ) == true ) {
 						if( dialogModel.SelectedItem != null ) {
 							selectedItem = dialogModel.SelectedItem.DbId;
 							retValue = true;
@@ -297,9 +283,9 @@ namespace Noise.UI.ViewModels {
 				}
 
 				if( strategy == ePlayExhaustedStrategy.PlayGenre ) {
-					var dialogModel = new SelectGenreDialogModel( mContainer );
+					var dialogModel = new SelectGenreDialogModel( mDataProvider );
 
-					if( dialogService.ShowDialog( DialogNames.SelectGenre, dialogModel ) == true ) {
+					if( mDialogService.ShowDialog( DialogNames.SelectGenre, dialogModel ) == true ) {
 						if( dialogModel.SelectedItem != null ) {
 							selectedItem = dialogModel.SelectedItem.DbId;
 							retValue = true;
@@ -319,9 +305,9 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public ePlayStrategy PlayStrategy {
-			get{ return( mNoiseManager.PlayQueue.PlayStrategy ); }
+			get{ return( mPlayQueue.PlayStrategy ); }
 			set {
-				mNoiseManager.PlayQueue.PlayStrategy = value;
+				mPlayQueue.PlayStrategy = value;
 
 				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 

@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -11,28 +10,22 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class FavoritesViewModel : ViewModelBase {
-		private IUnityContainer			mContainer;
-		private IEventAggregator		mEvents;
-		private INoiseManager			mNoiseManager;
+		private readonly IEventAggregator		mEvents;
+		private readonly IDataProvider			mDataProvider;
+		private readonly IDataExchangeManager	mDataExchangeMgr;
+		private readonly IDialogService			mDialogService;
 		private readonly ObservableCollectionEx<FavoriteViewNode>	mFavoritesList;
 
-		public FavoritesViewModel() {
+		public FavoritesViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IDataExchangeManager dataExchangeManager, IDialogService dialogService ) {
+			mEvents = eventAggregator;
+			mDataProvider = dataProvider;
+			mDataExchangeMgr = dataExchangeManager;
+			mDialogService = dialogService;
+
+			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseChanged );
+
 			mFavoritesList = new ObservableCollectionEx<FavoriteViewNode>();
-		}
-
-		[Dependency]
-		public IUnityContainer Container {
-			get { return( mContainer ); }
-			set {
-				mContainer = value;
-
-				mEvents = mContainer.Resolve<IEventAggregator>();
-				mNoiseManager = mContainer.Resolve<INoiseManager>();
-
-				mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseChanged );
-
-				LoadFavorites();
-			}
+			LoadFavorites();
 		}
 
 		public ObservableCollectionEx<FavoriteViewNode> FavoritesList {
@@ -41,7 +34,7 @@ namespace Noise.UI.ViewModels {
 
 		private void OnDatabaseChanged( DbItemChangedArgs args ) {
 			if( args.Change == DbItemChanged.Favorite ) {
-				var item = args.GetItem( mNoiseManager.DataProvider );
+				var item = args.GetItem( mDataProvider );
 
 				if(( item is DbArtist ) ||
 				   ( item is DbAlbum ) ||
@@ -55,22 +48,22 @@ namespace Noise.UI.ViewModels {
 			mFavoritesList.SuspendNotification();
 			mFavoritesList.Clear();
 
-			using( var list = mNoiseManager.DataProvider.GetFavoriteArtists()) {
+			using( var list = mDataProvider.GetFavoriteArtists()) {
 				foreach( var artist in list.List ) {
 					mFavoritesList.Add( new FavoriteViewNode( artist, PlayArtist, SelectArtist ) );
 				}
 			}
-			using( var list = mNoiseManager.DataProvider.GetFavoriteAlbums()) {
+			using( var list = mDataProvider.GetFavoriteAlbums()) {
 				foreach( var album in list.List ) {
-					var artist = mNoiseManager.DataProvider.GetArtistForAlbum( album );
+					var artist = mDataProvider.GetArtistForAlbum( album );
 
 					mFavoritesList.Add( new FavoriteViewNode( artist, album, PlayAlbum, SelectAlbum ));
 				}
 			}
-			using( var list = mNoiseManager.DataProvider.GetFavoriteTracks()) {
+			using( var list = mDataProvider.GetFavoriteTracks()) {
 				foreach( var track in list.List ) {
-					var album = mNoiseManager.DataProvider.GetAlbumForTrack( track );
-					var artist = mNoiseManager.DataProvider.GetArtistForAlbum( album );
+					var album = mDataProvider.GetAlbumForTrack( track );
+					var artist = mDataProvider.GetArtistForAlbum( album );
 
 					mFavoritesList.Add( new FavoriteViewNode( artist, album, track, PlayTrack, SelectTrack ));
 				}
@@ -112,11 +105,10 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_ExportFavorites() {
-			var dialogService = mContainer.Resolve<IDialogService>();
-			var fileName = "";
+			string fileName;
 
-			if( dialogService.SaveFileDialog( "Export Favorites", Constants.ExportFileExtension, "Export Files|*" + Constants.ExportFileExtension, out fileName ) == true ) {
-				mNoiseManager.DataExchangeMgr.ExportFavorites( fileName );
+			if( mDialogService.SaveFileDialog( "Export Favorites", Constants.ExportFileExtension, "Export Files|*" + Constants.ExportFileExtension, out fileName ) == true ) {
+				mDataExchangeMgr.ExportFavorites( fileName );
 			}
 		}
 

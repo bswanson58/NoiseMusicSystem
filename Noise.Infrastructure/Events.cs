@@ -40,6 +40,7 @@ namespace Noise.Infrastructure {
 
 		public class BalloonPopupOpened : CompositePresentationEvent<object> { }
 
+		public class SystemConfigurationChanged : CompositePresentationEvent<object> { }
 		public class SystemShutdown : CompositePresentationEvent<object> { }
 
 		public class GlobalUserEvent : CompositePresentationEvent<GlobalUserEventArgs> { }

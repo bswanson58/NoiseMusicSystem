@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using Microsoft.Practices.Prism;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -15,23 +14,27 @@ using Noise.UI.Dto;
 
 namespace Noise.UI.ViewModels {
 	public class PlayerViewModel : ViewModelBase, IActiveAware {
-		private	IUnityContainer			mContainer;
-		private IEventAggregator		mEvents;
-		private INoiseManager			mNoiseManager;
-		private double					mSpectrumImageWidth;
-		private double					mSpectrumImageHeight;
-		private LyricsInfo				mLyricsInfo;
-		private readonly Color			mBaseColor;
-		private readonly Color			mPeakColor;
-		private readonly Color			mPeakHoldColor;
-		private readonly Timer			mSpectrumUpdateTimer;
-		private ImageSource				mSpectrumBitmap;
+		private readonly IEventAggregator	mEvents;
+		private readonly IPlayQueue			mPlayQueue;
+		private readonly IPlayController	mPlayController;
+		private double						mSpectrumImageWidth;
+		private double						mSpectrumImageHeight;
+		private LyricsInfo					mLyricsInfo;
+		private readonly Color				mBaseColor;
+		private readonly Color				mPeakColor;
+		private readonly Color				mPeakHoldColor;
+		private readonly Timer				mSpectrumUpdateTimer;
+		private ImageSource					mSpectrumBitmap;
 		private	readonly ObservableCollectionEx<UiEqBand>	mBands;
 
 		public bool						IsActive { get; set; }
 		public event EventHandler		IsActiveChanged = delegate { };
 
-		public PlayerViewModel() {
+		public PlayerViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController ) {
+			mEvents = eventAggregator;
+			mPlayQueue = playQueue;
+			mPlayController = playController;
+
 			mSpectrumImageWidth = 200;
 			mSpectrumImageHeight = 100;
 
@@ -43,28 +46,17 @@ namespace Noise.UI.ViewModels {
 			mSpectrumUpdateTimer.Tick += OnSpectrumUpdateTimer;
 
 			mBands = new ObservableCollectionEx<UiEqBand>();
-		}
 
-		[Dependency]
-		public IUnityContainer Container {
-			get { return( mContainer ); }
-			set {
-				mContainer = value;
+			mEvents.GetEvent<Events.PlaybackStatusChanged>().Subscribe( OnPlaybackStatusChanged );
+			mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnPlaybackTrackChanged );
+			mEvents.GetEvent<Events.PlaybackInfoChanged>().Subscribe( OnPlaybackInfoChanged );
+			mEvents.GetEvent<Events.SongLyricsInfo>().Subscribe( OnSongLyricsInfo );
+			mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnPlaybackTrackStarted );
 
-				mEvents = mContainer.Resolve<IEventAggregator>();
-				mNoiseManager = mContainer.Resolve<INoiseManager>();
+			LoadBands();
 
-				mEvents.GetEvent<Events.PlaybackStatusChanged>().Subscribe( OnPlaybackStatusChanged );
-				mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnPlaybackTrackChanged );
-				mEvents.GetEvent<Events.PlaybackInfoChanged>().Subscribe( OnPlaybackInfoChanged );
-				mEvents.GetEvent<Events.SongLyricsInfo>().Subscribe( OnSongLyricsInfo );
-				mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnPlaybackTrackStarted );
-
-				LoadBands();
-
-				PlayState = ePlayState.StoppedEmptyQueue.ToString();
-				mNoiseManager.PlayController.PlayStateChange.Subscribe( OnPlayStateChange );
-			}
+			PlayState = ePlayState.StoppedEmptyQueue.ToString();
+			mPlayController.PlayStateChange.Subscribe( OnPlayStateChange );
 		}
 
 		private void OnPlayStateChange( ePlayState state ) {
@@ -117,8 +109,8 @@ namespace Noise.UI.ViewModels {
 			get { 
 				var retValue = string.Empty;
 
-				if( mNoiseManager.PlayQueue.PlayingTrack != null ) {
-					var track = mNoiseManager.PlayQueue.PlayingTrack;
+				if( mPlayQueue.PlayingTrack != null ) {
+					var track = mPlayQueue.PlayingTrack;
 
 					retValue = track.IsStream ? track.StreamInfo != null ? String.Format( "{0} ({1}/{2})", track.StreamInfo.Title, track.StreamInfo.Artist, track.StreamInfo.Album ) :
 													String.Format( "{0} - {1}", track.Stream.Name, track.Stream.Description ) :
@@ -134,128 +126,127 @@ namespace Noise.UI.ViewModels {
 
 		[DependsUpon( "StartTrackFlag" )]
 		public PlayQueueTrack PeekNextTrack {
-			get { return( mNoiseManager.PlayController.NextTrack ); }
+			get { return( mPlayController.NextTrack ); }
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
 		public PlayQueueTrack PeekPreviousTrack {
-			get { return( mNoiseManager.PlayController.PreviousTrack ); }
+			get { return( mPlayController.PreviousTrack ); }
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public TimeSpan TrackTime {
-			get { return( mNoiseManager.PlayController.TrackTime ); }
+			get { return( mPlayController.TrackTime ); }
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public long TrackPosition {
-			get { return( mNoiseManager.PlayController.PlayPosition ); }
-			set { mNoiseManager.PlayController.PlayPosition = value; }
+			get { return( mPlayController.PlayPosition ); }
+			set { mPlayController.PlayPosition = value; }
 		}
 
 		public void Execute_ToggleTimeDisplay() {
-			mNoiseManager.PlayController.ToggleTimeDisplay();
+			mPlayController.ToggleTimeDisplay();
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public long TrackEndPosition {
-			get { return( mNoiseManager.PlayController.TrackEndPosition ); }
+			get { return( mPlayController.TrackEndPosition ); }
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public double Volume {
-			get{ return( mNoiseManager.PlayController.Volume ); }
-			set{ mNoiseManager.PlayController.Volume = (float)value; }
+			get{ return( mPlayController.Volume ); }
+			set{ mPlayController.Volume = (float)value; }
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public bool IsMuted {
-			get{ return( mNoiseManager.PlayController.Mute ); }
+			get{ return( mPlayController.Mute ); }
 		}
 
 		public void Execute_Mute() {
-			mNoiseManager.PlayController.Mute = !mNoiseManager.PlayController.Mute;
+			mPlayController.Mute = !mPlayController.Mute;
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public double PlaySpeed {
-			get{ return( mNoiseManager.PlayController.PlaySpeed ); }
-			set{ mNoiseManager.PlayController.PlaySpeed = (float)value; }
+			get{ return( mPlayController.PlaySpeed ); }
+			set{ mPlayController.PlaySpeed = (float)value; }
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public double PanPosition {
-			get{ return( mNoiseManager.PlayController.PanPosition ); }
-			set{ mNoiseManager.PlayController.PanPosition = (float)value; }
+			get{ return( mPlayController.PanPosition ); }
+			set{ mPlayController.PanPosition = (float)value; }
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public double LeftLevel {
-			get { return( mNoiseManager.PlayController.LeftLevel ); }
+			get { return( mPlayController.LeftLevel ); }
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public double RightLevel {
-			get { return( mNoiseManager.PlayController.RightLevel ); }
+			get { return( mPlayController.RightLevel ); }
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
 		public bool IsFavorite {
-			get { return( mNoiseManager.PlayController.IsFavorite ); }
-			set { mNoiseManager.PlayController.IsFavorite = value; }
+			get { return( mPlayController.IsFavorite ); }
+			set { mPlayController.IsFavorite = value; }
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
 		public Int16 Rating {
-			get{ return( mNoiseManager.PlayController.Rating ); }
-			set { mNoiseManager.PlayController.Rating = value; }
+			get{ return( mPlayController.Rating ); }
+			set { mPlayController.Rating = value; }
 		}
 
 		public void Execute_Play( object sender ) {
-			mNoiseManager.PlayController.Play();
+			mPlayController.Play();
 		}
 		[DependsUpon( "CurrentStatus" )]
 		public bool CanExecute_Play( object sender ) {
-			return( mNoiseManager.PlayController.CanPlay );
+			return( mPlayController.CanPlay );
 		}
 
 		public void Execute_Pause( object sender ) {
-			mNoiseManager.PlayController.Pause();
+			mPlayController.Pause();
 		}
 		[DependsUpon( "CurrentStatus" )]
 		public bool CanExecute_Pause( object sender ) {
-			return( mNoiseManager.PlayController.CanPause );
+			return( mPlayController.CanPause );
 		}
 
 		public void Execute_Stop( object sender ) {
-			mNoiseManager.PlayController.Stop();
+			mPlayController.Stop();
 		}
 		[DependsUpon( "CurrentStatus" )]
 		public bool CanExecute_Stop( object sender ) {
-			return( mNoiseManager.PlayController.CanStop );
+			return( mPlayController.CanStop );
 		}
 
 		public void Execute_NextTrack( object sender ) {
-			mNoiseManager.PlayController.PlayNextTrack();
+			mPlayController.PlayNextTrack();
 		}
 		[DependsUpon( "CurrentStatus" )]
 		public bool CanExecute_NextTrack( object sender ) {
-			return( mNoiseManager.PlayController.CanPlayNextTrack );
+			return( mPlayController.CanPlayNextTrack );
 		}
 
 		public void Execute_PreviousTrack( object sender ) {
-			mNoiseManager.PlayController.PlayPreviousTrack();
+			mPlayController.PlayPreviousTrack();
 		}
 		[DependsUpon( "CurrentStatus" )]
 		[DependsUpon( "InfoUpdateFlag" )]
 		public bool CanExecute_PreviousTrack( object sender ) {
-			return( mNoiseManager.PlayController.CanPlayPreviousTrack );
+			return( mPlayController.CanPlayPreviousTrack );
 		}
 
 		public void Execute_ReplayTrack() {
-			if( mNoiseManager != null ) {
-				mNoiseManager.PlayQueue.PlayingTrackReplayCount++;
-			}
+			mPlayQueue.PlayingTrackReplayCount++;
+
 			RaiseCanExecuteChangedEvent( "CanExecute_ReplayTrack" );
 		}
 		[DependsUpon( "CurrentStatus" )]
@@ -263,22 +254,21 @@ namespace Noise.UI.ViewModels {
 		public bool CanExecute_ReplayTrack() {
 			var retValue = false;
 
-			if(( mNoiseManager != null ) &&
-			   ( mNoiseManager.PlayController.CurrentTrack != null ) &&
-			   ( mNoiseManager.PlayQueue.PlayingTrackReplayCount == 0 )) {
+			if(( mPlayController.CurrentTrack != null ) &&
+			   ( mPlayQueue.PlayingTrackReplayCount == 0 )) {
 				retValue = true;
 			}
 			return( retValue );
 		}
 
 		public bool TrackOverlapEnable {
-			get{ return( mNoiseManager.PlayController.TrackOverlapEnable ); }
-			set{ mNoiseManager.PlayController.TrackOverlapEnable = value; }
+			get{ return( mPlayController.TrackOverlapEnable ); }
+			set{ mPlayController.TrackOverlapEnable = value; }
 		}
 
 		public int TrackOverlapMilliseconds {
-			get{ return( mNoiseManager.PlayController.TrackOverlapMilliseconds ); }
-			set{ mNoiseManager.PlayController.TrackOverlapMilliseconds = value; }
+			get{ return( mPlayController.TrackOverlapMilliseconds ); }
+			set{ mPlayController.TrackOverlapMilliseconds = value; }
 		}
 
 		public void Execute_PlayerSwitch() {
@@ -305,7 +295,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void UpdateImage() {
-			mSpectrumBitmap = mNoiseManager.PlayController.GetSpectrumImage((int)mSpectrumImageHeight, (int)mSpectrumImageWidth, mBaseColor, mPeakColor, mPeakHoldColor );
+			mSpectrumBitmap = mPlayController.GetSpectrumImage((int)mSpectrumImageHeight, (int)mSpectrumImageWidth, mBaseColor, mPeakColor, mPeakHoldColor );
 		}
 
 		public double ImageHeight {
@@ -329,23 +319,23 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public double PreampVolume {
-			get{ return( mNoiseManager.PlayController.PreampVolume ); }
-			set{ mNoiseManager.PlayController.PreampVolume = value; }
+			get{ return( mPlayController.PreampVolume ); }
+			set{ mPlayController.PreampVolume = value; }
 		}
 
 		public bool ReplayGainEnabled {
-			get{ return( mNoiseManager.PlayController.ReplayGainEnable ); }
-			set{ mNoiseManager.PlayController.ReplayGainEnable = value; }
+			get{ return( mPlayController.ReplayGainEnable ); }
+			set{ mPlayController.ReplayGainEnable = value; }
 		}
 
 		public List<ParametricEqualizer> EqualizerList {
-			get{ return( new List<ParametricEqualizer>( from ParametricEqualizer eq in mNoiseManager.PlayController.EqManager.EqPresets orderby eq.Name ascending select eq )); }
+			get{ return( new List<ParametricEqualizer>( from ParametricEqualizer eq in mPlayController.EqManager.EqPresets orderby eq.Name ascending select eq )); }
 		}
 
 		public ParametricEqualizer CurrentEq {
-			get{ return( mNoiseManager.PlayController.CurrentEq ); }
+			get{ return( mPlayController.CurrentEq ); }
 			set {
-				mNoiseManager.PlayController.CurrentEq = value;
+				mPlayController.CurrentEq = value;
 				Set( () => CurrentEq, value );
 
 				LoadBands();
@@ -354,10 +344,10 @@ namespace Noise.UI.ViewModels {
 
 		[DependsUpon( "CurrentEq" )]
 		public bool EqEnabled {
-			get{ return( mNoiseManager.PlayController.EqEnabled ); }
+			get{ return( mPlayController.EqEnabled ); }
 			set {
-				mNoiseManager.PlayController.EqEnabled = value;
-				mNoiseManager.PlayController.EqManager.SaveEq( CurrentEq, value );
+				mPlayController.EqEnabled = value;
+				mPlayController.EqManager.SaveEq( CurrentEq, value );
 			}
 		}
 
@@ -369,18 +359,18 @@ namespace Noise.UI.ViewModels {
 		private void LoadBands() {
 			mBands.Clear();
 
-			if( mNoiseManager.PlayController.CurrentEq != null ) {
-				foreach( var band in mNoiseManager.PlayController.EqManager.CurrentEq.Bands ) {
-					mBands.Add( new UiEqBand( band, AdjustEq, mNoiseManager.PlayController.EqManager.CurrentEq.IsPreset ));
+			if( mPlayController.CurrentEq != null ) {
+				foreach( var band in mPlayController.EqManager.CurrentEq.Bands ) {
+					mBands.Add( new UiEqBand( band, AdjustEq, mPlayController.EqManager.CurrentEq.IsPreset ));
 				}
 			}
 		}
 
 		private void AdjustEq( UiEqBand band ) {
-			mNoiseManager.PlayController.SetEqValue( band.BandId, band.Gain );
+			mPlayController.SetEqValue( band.BandId, band.Gain );
 
 			if(!CurrentEq.IsPreset ) {
-				mNoiseManager.PlayController.EqManager.SaveEq( CurrentEq, EqEnabled );
+				mPlayController.EqManager.SaveEq( CurrentEq, EqEnabled );
 			}
 		}
 
@@ -391,7 +381,7 @@ namespace Noise.UI.ViewModels {
 				AdjustEq( band );
 			}
 
-			mNoiseManager.PlayController.PreampVolume = 1.0f;
+			mPlayController.PreampVolume = 1.0f;
 
 			RaisePropertyChanged( () => PreampVolume );
 		}
@@ -407,60 +397,60 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public bool StereoEnhancerEnable {
-			get{ return( mNoiseManager.PlayController.StereoEnhancerEnable ); }
+			get{ return( mPlayController.StereoEnhancerEnable ); }
 			set {
-				mNoiseManager.PlayController.StereoEnhancerEnable = value;
+				mPlayController.StereoEnhancerEnable = value;
 
 				RaisePropertyChanged( () => StereoEnhancerEnable );
 			}
 		}
 
 		public double StereoEnhancerWidth {
-			get{ return( mNoiseManager.PlayController.StereoEnhancerWidth ); }
-			set{ mNoiseManager.PlayController.StereoEnhancerWidth = value; }
+			get{ return( mPlayController.StereoEnhancerWidth ); }
+			set{ mPlayController.StereoEnhancerWidth = value; }
 		}
 
 		public double StereoEnhancerWetDry {
-			get{ return( mNoiseManager.PlayController.StereoEnhancerWetDry ); }
-			set{ mNoiseManager.PlayController.StereoEnhancerWetDry = value; }
+			get{ return( mPlayController.StereoEnhancerWetDry ); }
+			set{ mPlayController.StereoEnhancerWetDry = value; }
 		}
 
 		public bool SoftSaturationEnable {
-			get{ return( mNoiseManager.PlayController.SoftSaturationEnable ); }
+			get{ return( mPlayController.SoftSaturationEnable ); }
 			set {
-				mNoiseManager.PlayController.SoftSaturationEnable = value;
+				mPlayController.SoftSaturationEnable = value;
 
 				RaisePropertyChanged( () => SoftSaturationEnable );
 			}
 		}
 
 		public double SoftSaturationDepth {
-			get{ return( mNoiseManager.PlayController.SoftSaturationDepth ); }
-			set{ mNoiseManager.PlayController.SoftSaturationDepth = value; }
+			get{ return( mPlayController.SoftSaturationDepth ); }
+			set{ mPlayController.SoftSaturationDepth = value; }
 		}
 
 		public double SoftSaturationFactor {
-			get{ return( mNoiseManager.PlayController.SoftSaturationFactor ); }
-			set{ mNoiseManager.PlayController.SoftSaturationFactor = value; }
+			get{ return( mPlayController.SoftSaturationFactor ); }
+			set{ mPlayController.SoftSaturationFactor = value; }
 		}
 
 		public bool ReverbEnable {
-			get{ return( mNoiseManager.PlayController.ReverbEnable ); }
+			get{ return( mPlayController.ReverbEnable ); }
 			set {
-				mNoiseManager.PlayController.ReverbEnable = value;
+				mPlayController.ReverbEnable = value;
 
 				RaisePropertyChanged( () => ReverbEnable );
 			}
 		}
 
 		public float ReverbLevel {
-			get{ return( mNoiseManager.PlayController.ReverbLevel ); }
-			set{ mNoiseManager.PlayController.ReverbLevel = value; }
+			get{ return( mPlayController.ReverbLevel ); }
+			set{ mPlayController.ReverbLevel = value; }
 		}
 
 		public int ReverbDelay {
-			get{ return( mNoiseManager.PlayController.ReverbDelay ); }
-			set{ mNoiseManager.PlayController.ReverbDelay = value; }
+			get{ return( mPlayController.ReverbDelay ); }
+			set{ mPlayController.ReverbDelay = value; }
 		}
 
 		public void Execute_StandardPlayer() {
@@ -472,9 +462,9 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_RequestSimilarSongSearch() {
-			if(( mNoiseManager.PlayController.CurrentTrack != null ) &&
-			   ( mNoiseManager.PlayController.CurrentTrack.Track != null )) {
-				mEvents.GetEvent<Events.SimilarSongSearchRequest>().Publish( mNoiseManager.PlayController.CurrentTrack.Track.DbId );
+			if(( mPlayController.CurrentTrack != null ) &&
+			   ( mPlayController.CurrentTrack.Track != null )) {
+				mEvents.GetEvent<Events.SimilarSongSearchRequest>().Publish( mPlayController.CurrentTrack.Track.DbId );
 			}
 		}
 
@@ -482,8 +472,8 @@ namespace Noise.UI.ViewModels {
 		public bool CanExecute_RequestSimilarSongSearch() {
 			var retValue = false;
 
-			if(( mNoiseManager.PlayController.CurrentTrack != null ) &&
-			   ( mNoiseManager.PlayController.CurrentTrack.Track != null )) {
+			if(( mPlayController.CurrentTrack != null ) &&
+			   ( mPlayController.CurrentTrack.Track != null )) {
 				retValue = true;
 			}
 
@@ -512,8 +502,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_TrackInformation() {
-			if( mNoiseManager.PlayController.CurrentTrack.Album != null ) {
-				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( mNoiseManager.PlayController.CurrentTrack.Album );
+			if( mPlayController.CurrentTrack.Album != null ) {
+				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( mPlayController.CurrentTrack.Album );
 			}
 		}
 
@@ -521,8 +511,8 @@ namespace Noise.UI.ViewModels {
 		public bool CanExecute_TrackInformation() {
 			var retValue = false;
 
-			if(( mNoiseManager.PlayController.CurrentTrack != null ) &&
-			   ( mNoiseManager.PlayController.CurrentTrack.Album != null )) {
+			if(( mPlayController.CurrentTrack != null ) &&
+			   ( mPlayController.CurrentTrack.Album != null )) {
 				retValue = true;
 			}
 

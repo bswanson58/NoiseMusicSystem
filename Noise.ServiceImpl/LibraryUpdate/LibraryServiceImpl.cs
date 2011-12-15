@@ -2,7 +2,6 @@
 using System.ServiceModel;
 using System.ServiceProcess;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -22,22 +21,20 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 	public class LibraryServiceImpl : BaseService {
 		internal const string				cNoiseLibraryUpdate = "NoiseLibraryUpdate";
 
-		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEvents;
-		private INoiseManager				mNoiseManager;
+		private readonly INoiseManager		mNoiseManager;
+		private readonly IServiceBusManager	mServiceBus;
 		private	ISchedulerFactory			mSchedulerFactory;
 		private	IScheduler					mJobScheduler;
-		private IServiceBusManager			mServiceBus;
 		private ServiceHost					mLibraryUpdateServiceHost;
 
-		public LibraryServiceImpl( IUnityContainer container ) {
-			mContainer = container;
-			mEvents = mContainer.Resolve<IEventAggregator>();
+		public LibraryServiceImpl( IEventAggregator eventAggregator, INoiseManager noiseManager, IServiceBusManager serviceBusManager ) {
+			mEvents = eventAggregator;
+			mNoiseManager = noiseManager;
+			mServiceBus = serviceBusManager;
 		}
 
 		public override void OnStart( string[] args ) {
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
-			mContainer.RegisterInstance( mNoiseManager );
 
 			if( mNoiseManager.Initialize()) {
 				mSchedulerFactory = new StdSchedulerFactory();
@@ -48,7 +45,6 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 				// Always update the library on file system changes in the service.
 				mNoiseManager.LibraryBuilder.EnableUpdateOnLibraryChange = true;
 
-				mServiceBus = mContainer.Resolve<IServiceBusManager>();
 				if( mServiceBus.InitializeServer()) {
 					mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 					mEvents.GetEvent<Events.LibraryUpdateStarted>().Subscribe( OnLibraryUpdateStarted );
@@ -61,7 +57,7 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 //						MessageQueue.Create( queueName, true );
 //					}
 
-					mLibraryUpdateServiceHost = new ServiceHost( new LibraryUpdateService( mContainer ));
+					mLibraryUpdateServiceHost = new ServiceHost( new LibraryUpdateService( mNoiseManager.LibraryBuilder ));
 					mLibraryUpdateServiceHost.Open();
 
  				}

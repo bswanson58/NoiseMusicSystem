@@ -1,5 +1,4 @@
 ﻿using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -9,104 +8,85 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class ToolbarViewModel : ViewModelBase {
-		private IUnityContainer		mContainer;
-		private IEventAggregator	mEvents;
+		private readonly IEventAggregator		mEvents;
+		private readonly ICloudSyncManager		mCloudSyncMgr;
+		private readonly IDataExchangeManager	mDataExchangeMgr;
+		private readonly ILibraryBuilder		mLibraryBuilder;
+		private readonly IDialogService			mDialogService;
 
-		[Dependency]
-		public IUnityContainer Container {
-			get { return( mContainer ); }
-			set {
-				mContainer = value;
-
-				if( mContainer != null ) {
-					mEvents = mContainer.Resolve<IEventAggregator>();
-				}
-			}
+		public ToolbarViewModel( IEventAggregator eventAggregator, IDialogService dialogService, 
+								 ICloudSyncManager cloudSyncManager, IDataExchangeManager dataExchangeManager, ILibraryBuilder libraryBuilder ) {
+			mEvents = eventAggregator;
+			mCloudSyncMgr = cloudSyncManager;
+			mDataExchangeMgr = dataExchangeManager;
+			mLibraryBuilder = libraryBuilder;
+			mDialogService = dialogService;
 		}
 
 		public void Execute_NoiseOptions() {
-			if( mContainer != null ) {
-				var	dialogService = mContainer.Resolve<IDialogService>();
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
-				if( dialogService.ShowDialog( DialogNames.NoiseOptions, configuration ) == true ) {
-					NoiseSystemConfiguration.Current.Save( configuration );
-				}
+			if( mDialogService.ShowDialog( DialogNames.NoiseOptions, configuration ) == true ) {
+				NoiseSystemConfiguration.Current.Save( configuration );
 			}
 		}
 
 		public void Execute_CloudConfiguration() {
-			if( mContainer != null ) {
-				var	dialogService = mContainer.Resolve<IDialogService>();
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
-				var noiseManager = mContainer.Resolve<INoiseManager>();
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
 
-				if( dialogService.ShowDialog( DialogNames.CloudConfiguration, configuration, new CloudConfigurationDialogModel()) == true ) {
-					NoiseSystemConfiguration.Current.Save( configuration );
+			if( mDialogService.ShowDialog( DialogNames.CloudConfiguration, configuration, new CloudConfigurationDialogModel()) == true ) {
+				NoiseSystemConfiguration.Current.Save( configuration );
 
-					noiseManager.CloudSyncMgr.MaintainSynchronization = configuration.UseCloud;
-				}
+				mCloudSyncMgr.MaintainSynchronization = configuration.UseCloud;
 			}
 		}
 
 		public void Execute_DatabaseConfiguration() {
-			if( mContainer != null ) {
-				var	dialogService = mContainer.Resolve<IDialogService>();
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
 
-				if( dialogService.ShowDialog( DialogNames.DatabaseConfiguration, configuration, new DatabaseConfigurationDialogModel( dialogService )) == true ) {
-					NoiseSystemConfiguration.Current.Save( configuration );
-				}
+			if( mDialogService.ShowDialog( DialogNames.DatabaseConfiguration, configuration, new DatabaseConfigurationDialogModel( mDialogService )) == true ) {
+				NoiseSystemConfiguration.Current.Save( configuration );
 			}
 		}
 
 		public void Execute_ServerConfiguration() {
-			if( mContainer != null ) {
-				var	dialogService = mContainer.Resolve<IDialogService>();
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
 
-				if( dialogService.ShowDialog( DialogNames.ServerConfiguration, configuration ) == true ) {
-					NoiseSystemConfiguration.Current.Save( configuration );
-				}
+			if( mDialogService.ShowDialog( DialogNames.ServerConfiguration, configuration ) == true ) {
+				NoiseSystemConfiguration.Current.Save( configuration );
 			}
 		}
 
 		public void Execute_LibraryConfiguration() {
-			if( mContainer != null ) {
-				var	dialogService = mContainer.Resolve<IDialogService>();
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName );
-				var noiseManager = mContainer.Resolve<INoiseManager>();
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName );
 
-				if( configuration.RootFolders.Count == 0 ) {
-					configuration.RootFolders.Add( new RootFolderConfiguration());
+			if( configuration.RootFolders.Count == 0 ) {
+				configuration.RootFolders.Add( new RootFolderConfiguration());
+			}
+			var rootFolder = configuration.RootFolders[0];
+
+			if( mDialogService.ShowDialog( DialogNames.LibraryConfiguration, rootFolder,
+											new LibraryConfigurationDialogModel( mDialogService, mLibraryBuilder )) == true ) {
+				if( rootFolder.PreferFolderStrategy ) {
+					rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 0, eFolderStrategy.Artist ));
+					rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 1, eFolderStrategy.Album ));
+					rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 2, eFolderStrategy.Volume ));
 				}
-				var rootFolder = configuration.RootFolders[0];
 
-				if( dialogService.ShowDialog( DialogNames.LibraryConfiguration, rootFolder,
-											  new LibraryConfigurationDialogModel( dialogService, noiseManager.LibraryBuilder )) == true ) {
-					if( rootFolder.PreferFolderStrategy ) {
-						rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 0, eFolderStrategy.Artist ));
-						rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 1, eFolderStrategy.Album ));
-						rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 2, eFolderStrategy.Volume ));
-					}
-
-					NoiseSystemConfiguration.Current.Save( configuration );
-					noiseManager.ConfigurationChanged();
-				}
+				NoiseSystemConfiguration.Current.Save( configuration );
+				mEvents.GetEvent<Events.SystemConfigurationChanged>().Publish( configuration );
 			}
 		}
 
 		public void Execute_Import() {
-			var		dialogService = mContainer.Resolve<IDialogService>();
 			string	fileName;
 
-			if( dialogService.OpenFileDialog( "Import", Constants.ExportFileExtension, "Export Files|*" + Constants.ExportFileExtension, out fileName ) == true ) {
-				var noiseManager = mContainer.Resolve<INoiseManager>();
+			if( mDialogService.OpenFileDialog( "Import", Constants.ExportFileExtension, "Export Files|*" + Constants.ExportFileExtension, out fileName ) == true ) {
 
-				var	importCount = noiseManager.DataExchangeMgr.Import( fileName, true );
+				var	importCount = mDataExchangeMgr.Import( fileName, true );
 				var	importMessage = importCount > 0 ? string.Format( "{0} item(s) were imported.", importCount ) : "No items were imported.";
 
-				dialogService.MessageDialog( "Import Results", importMessage );
+				mDialogService.MessageDialog( "Import Results", importMessage );
 			}
 		}
 
@@ -129,14 +109,10 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_DisplayLog() {
-			if( mContainer != null ) {
-				var dialogModel = new	ApplicationLogDialogModel();
+			var dialogModel = new	ApplicationLogDialogModel();
 
-				if( dialogModel.Initialize()) {
-					var	dialogService = mContainer.Resolve<IDialogService>();
-					
-					dialogService.ShowDialog( DialogNames.ApplicationLogView, dialogModel );
-				}
+			if( dialogModel.Initialize()) {
+				mDialogService.ShowDialog( DialogNames.ApplicationLogView, dialogModel );
 			}
 		}
 	}

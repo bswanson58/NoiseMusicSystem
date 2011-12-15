@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Practices.Prism.Events;
 using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -11,13 +12,17 @@ using Recls;
 
 namespace Noise.Core.FileStore {
 	public class FolderExplorer : IFolderExplorer {
+		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
 		private bool						mStopExploring;
 		private DatabaseCache<StorageFile>	mFileCache;
 		private DatabaseCache<StorageFolder>	mFolderCache;
 
-		public  FolderExplorer( IDatabaseManager databaseManager ) {
+		public  FolderExplorer( IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
+			mEvents = eventAggregator;
 			mDatabaseManager = databaseManager;
+
+			mEvents.GetEvent<Events.SystemConfigurationChanged>().Subscribe( OnSystemConfigurationChanged );
 		}
 
 		public IEnumerable<RootFolder> RootFolderList() {
@@ -94,6 +99,20 @@ namespace Noise.Core.FileStore {
 
 		public void Stop() {
 			mStopExploring = true;
+		}
+
+		private void OnSystemConfigurationChanged( object sender ) {
+			var database = mDatabaseManager.ReserveDatabase();
+
+			try {
+				LoadConfiguration( database );
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "Exception - FolderExplorer:OnSystemConfigurationChanged", ex );
+			}
+			finally {
+				mDatabaseManager.FreeDatabase( database );
+			}
 		}
 
 		public void LoadConfiguration( IDatabase database ) {

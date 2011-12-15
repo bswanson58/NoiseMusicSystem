@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Practices.Prism.Events;
+﻿using Microsoft.Practices.Prism.Events;
 using Noise.Core.BackgroundTasks;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
@@ -15,7 +14,6 @@ namespace Noise.Core {
 		private	readonly IEventAggregator			mEvents;
 		private readonly IDataUpdates				mDataUpdates;
 		private readonly IContentManager			mContentManager;
-		private readonly IFolderExplorer			mFolderExplorer;
 		private readonly IFileUpdates				mFileUpdates;
 		private readonly IBackgroundTaskManager		mBackgroundTaskMgr;
 		private readonly ILyricsProvider			mLyricsProvider;
@@ -44,7 +42,6 @@ namespace Noise.Core {
 							 IContentManager contentManager,
 							 IDataUpdates dataUpdates,
 							 IFileUpdates fileUpdates,
-							 IFolderExplorer folderExplorer,
 							 ILibraryBuilder libraryBuilder,
 							 ILyricsProvider lyricsProvider,
 							 ISearchProvider searchProvider,
@@ -59,7 +56,6 @@ namespace Noise.Core {
 			mContentManager = contentManager;
 			mDataUpdates = dataUpdates;
 			mFileUpdates = fileUpdates;
-			mFolderExplorer = folderExplorer;
 			mLyricsProvider = lyricsProvider;
 			mRemoteServer = remoteServer;
 			DatabaseManager = databaseManager;
@@ -136,20 +132,6 @@ namespace Noise.Core {
 			}
 
 			return ( IsInitialized );
-		}
-
-		public void ConfigurationChanged() {
-			var database = DatabaseManager.ReserveDatabase();
-
-			try {
-				mFolderExplorer.LoadConfiguration( database );
-			}
-			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - NoiseManager:ConfigurationChanged", ex );
-			}
-			finally {
-				DatabaseManager.FreeDatabase( database );
-			}
 		}
 
 		public void Shutdown() {

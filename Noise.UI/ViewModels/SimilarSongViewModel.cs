@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Linq;
 using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -18,14 +17,21 @@ namespace Noise.UI.ViewModels {
 
 		private const int			cMaxSearchResults = 25;
 
-		private IUnityContainer		mContainer;
-		private IEventAggregator	mEvents;
-		private	INoiseManager		mNoiseManager;
-
-		private readonly BackgroundWorker						mBackgroundWorker;
+		private readonly IEventAggregator	mEvents;
+		private readonly IDataProvider		mDataProvider;
+		private readonly ISearchProvider	mSearchProvider;
+		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
 
-		public SimilarSongViewModel() {
+		public SimilarSongViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, ISearchProvider searchProvider ) {
+			mEvents = eventAggregator;
+			mDataProvider = dataProvider;
+			mSearchProvider = searchProvider;
+
+			mEvents.GetEvent<Events.SimilarSongSearchRequest>().Subscribe( OnSearchRequest );
+			mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnTrackChanged );
+			mEvents.GetEvent<Events.BalloonPopupOpened>().Subscribe( OnPopupOpened );
+
 			mSearchResults = new ObservableCollectionEx<SearchViewNode>();
 
 			mBackgroundWorker = new BackgroundWorker();
@@ -33,21 +39,6 @@ namespace Noise.UI.ViewModels {
 			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => SetSearchList( result.Result as IEnumerable<SearchViewNode> );
 
 			VisualStateName = cViewStateClosed;
-		}
-
-		[Dependency]
-		public IUnityContainer Container {
-			get { return( mContainer ); }
-			set {
-				mContainer = value;
-
-				mEvents = mContainer.Resolve<IEventAggregator>();
-				mNoiseManager = mContainer.Resolve<INoiseManager>();
-
-				mEvents.GetEvent<Events.SimilarSongSearchRequest>().Subscribe( OnSearchRequest );
-				mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnTrackChanged );
-				mEvents.GetEvent<Events.BalloonPopupOpened>().Subscribe( OnPopupOpened );
-			}
 		}
 
 		public string VisualStateName {
@@ -71,11 +62,11 @@ namespace Noise.UI.ViewModels {
 
 		private IEnumerable<SearchViewNode> BuildSearchList( long trackId ) {
 			var retValue = new List<SearchViewNode>();
-			var	track = mNoiseManager.DataProvider.GetTrack( trackId );
+			var	track = mDataProvider.GetTrack( trackId );
 
 			if( track != null ) {
 				retValue.AddRange( from SearchResultItem item
-								   in mNoiseManager.SearchProvider.Search( eSearchItemType.Track, string.Format( "\"{0}\"", track.Name ), cMaxSearchResults ) 
+								   in mSearchProvider.Search( eSearchItemType.Track, string.Format( "\"{0}\"", track.Name ), cMaxSearchResults ) 
 								   select new SearchViewNode( item, OnNodeSelected, OnPlay ));
 
 				var ourTrack = retValue.Find( node => node.Track.DbId == trackId );

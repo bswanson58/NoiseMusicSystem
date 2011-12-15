@@ -1,29 +1,26 @@
 ﻿using System.ServiceModel;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
 using Noise.Service.Infrastructure.ServiceContracts;
 
 namespace Noise.Service.Infrastructure.Clients {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class LibraryUpdateService : ILibraryUpdateService {
-		private readonly IUnityContainer	mContainer;
-		private readonly INoiseManager		mNoiseManager;
+		private readonly ILibraryBuilder	mLibraryBuilder;
 
-		public LibraryUpdateService( IUnityContainer container ) {
-			mContainer = container;
-			mNoiseManager = mContainer.Resolve<INoiseManager>();
+		public LibraryUpdateService( ILibraryBuilder libraryBuilder ) {
+			mLibraryBuilder = libraryBuilder;
 		}
 
 		public void StartLibraryUpdate() {
-			mNoiseManager.LibraryBuilder.StartLibraryUpdate();
+			mLibraryBuilder.StartLibraryUpdate();
 		}
 
 		public void StopLibraryUpdate() {
-			mNoiseManager.LibraryBuilder.StopLibraryUpdate();
+			mLibraryBuilder.StopLibraryUpdate();
 		}
 
 		public bool IsLibraryUpdateInProgress() {
-			return( mNoiseManager.LibraryBuilder.LibraryUpdateInProgress );
+			return( mLibraryBuilder.LibraryUpdateInProgress );
 		}
 	}
 }

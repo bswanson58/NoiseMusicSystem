@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Support;
@@ -9,10 +8,8 @@ namespace Noise.UI.ViewModels {
 		private readonly List<DbPlayList>	mPlayLists;
 		public	DbPlayList					SelectedItem { get; set; }
 
-		public SelectPlayListDialogModel( IUnityContainer container ) {
-			var noiseManager = container.Resolve<INoiseManager>();
-
-			mPlayLists = noiseManager.PlayListMgr.PlayLists;
+		public SelectPlayListDialogModel( IPlayListMgr playListMgr ) {
+			mPlayLists = playListMgr.PlayLists;
 		}
 
 		public IEnumerable<DbPlayList> PlayLists {

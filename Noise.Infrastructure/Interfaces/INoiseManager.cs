@@ -6,8 +6,6 @@
 		void					StartExplorerJobs();
 		void					Shutdown();
 
-		void					ConfigurationChanged();
-
 		IDatabaseManager		DatabaseManager { get; }
 		ICloudSyncManager		CloudSyncMgr { get; }
 		IDataProvider			DataProvider { get; }

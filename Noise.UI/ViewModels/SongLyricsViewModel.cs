@@ -1,5 +1,4 @@
 ﻿using Microsoft.Practices.Prism.Events;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -23,31 +22,24 @@ namespace Noise.UI.ViewModels {
 		private const string		cViewStateClosed	= "Closed";
 		private const string		cViewStateNormal	= "Normal";
 
-		private IUnityContainer		mContainer;
-		private IEventAggregator	mEvents;
-		private	INoiseManager		mNoiseManager;
-		private LyricsInfo			mLyricsInfo;
+		private readonly IEventAggregator	mEvents;
+		private readonly IDataProvider		mDataProvider;
+		private readonly IDialogService		mDialogService;
+		private LyricsInfo					mLyricsInfo;
 		private readonly ObservableCollectionEx<UiLyricSelector>	mLyricsList;
 
-		public SongLyricsViewModel() {
+		public SongLyricsViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IDialogService dialogService  ) {
+			mEvents = eventAggregator;
+			mDataProvider = dataProvider;
+			mDialogService = dialogService;
+
+			mEvents.GetEvent<Events.SongLyricsRequest>().Subscribe( OnLyricsRequest );
+			mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnTrackChanged );
+			mEvents.GetEvent<Events.BalloonPopupOpened>().Subscribe( OnPopupOpened );
+
 			VisualStateName = cViewStateClosed;
 
 			mLyricsList = new ObservableCollectionEx<UiLyricSelector>();
-		}
-
-		[Dependency]
-		public IUnityContainer Container {
-			get { return( mContainer ); }
-			set {
-				mContainer = value;
-
-				mEvents = mContainer.Resolve<IEventAggregator>();
-				mNoiseManager = mContainer.Resolve<INoiseManager>();
-
-				mEvents.GetEvent<Events.SongLyricsRequest>().Subscribe( OnLyricsRequest );
-				mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnTrackChanged );
-				mEvents.GetEvent<Events.BalloonPopupOpened>().Subscribe( OnPopupOpened );
-			}
 		}
 
 		public string VisualStateName {
@@ -118,7 +110,7 @@ namespace Noise.UI.ViewModels {
 			mLyricsList.Clear();
 
 			foreach( var lyric in mLyricsInfo.PossibleLyrics ) {
-				var artist = mNoiseManager.DataProvider.GetArtist( lyric.ArtistId );
+				var artist = mDataProvider.GetArtist( lyric.ArtistId );
 
 				if( artist != null ) {
 					mLyricsList.Add( new UiLyricSelector( lyric, artist.Name, lyric.SongName ));
@@ -135,10 +127,8 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_Edit() {
 			if( SelectedLyric != null ) {
-				var	dialogService = mContainer.Resolve<IDialogService>();
-
-				using( var updateLyric = mNoiseManager.DataProvider.GetLyricForUpdate( SelectedLyric.Lyric.DbId )) {
-					if( dialogService.ShowDialog( DialogNames.LyricsEdit, updateLyric.Item ) == true ) {
+				using( var updateLyric = mDataProvider.GetLyricForUpdate( SelectedLyric.Lyric.DbId )) {
+					if( mDialogService.ShowDialog( DialogNames.LyricsEdit, updateLyric.Item ) == true ) {
 						updateLyric.Update();
 
 						mLyricsInfo.SetMatchingLyric( updateLyric.Item );
@@ -160,7 +150,7 @@ namespace Noise.UI.ViewModels {
 												{ Lyrics = SelectedLyric.Lyric.Lyrics, SourceUrl = SelectedLyric.Lyric.SourceUrl };
 
 				mLyricsInfo.SetMatchingLyric( newLyric );
-				mNoiseManager.DataProvider.StoreLyric( newLyric );
+				mDataProvider.StoreLyric( newLyric );
 
 				RaiseCanExecuteChangedEvent( "CanExecute_SelectLyric" );
 			}
