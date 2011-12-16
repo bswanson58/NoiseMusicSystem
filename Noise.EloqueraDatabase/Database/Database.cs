@@ -23,6 +23,7 @@ namespace Noise.EloqueraDatabase.Database {
 		public	string						DatabaseId { get; private set; }
 		public	DbVersion					DatabaseVersion { get; private set; }
 		public	IBlobStorage				BlobStorage { get; set; }
+		public	bool						IsOpen { get; private set; }
 
 		[ImportMany("PersistenceType")]
 		public IEnumerable<Type>	PersistenceTypes;
@@ -98,7 +99,7 @@ namespace Noise.EloqueraDatabase.Database {
 			return( retValue );
 		}
 
-		public bool OpenDatabase() {
+		private bool OpenDatabase() {
 			Condition.Requires( Database ).IsNotNull();
 
 			var retValue = false;
@@ -107,7 +108,7 @@ namespace Noise.EloqueraDatabase.Database {
 				if( ReadDatabaseVersion()) {
 					NoiseLogger.Current.LogMessage( String.Format( "Initialize and open '{0}' database version {1}.{2} on server '{3}'.",
 														mDatabaseName, DatabaseVersion.MajorVersion, DatabaseVersion.MinorVersion, mDatabaseLocation ));
-
+					IsOpen = true;
 					retValue = true;
 				}
 			}
@@ -145,6 +146,8 @@ namespace Noise.EloqueraDatabase.Database {
 		public void CloseDatabase() {
 			if( Database.IsOpen ) {
 				Database.Close();
+
+				IsOpen = false;
 			}
 		}
 

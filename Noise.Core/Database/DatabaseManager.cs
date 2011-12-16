@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
@@ -11,6 +12,10 @@ namespace Noise.Core.Database {
 		private	bool							mHasShutdown;
 
 		public DatabaseManager( IDatabaseFactory databaseFactory ) {
+			if( databaseFactory == null ) {
+				throw new ArgumentNullException( "databaseFactory", "Initializing DatabaseManager" );
+			}
+
 			mLockObject = new object();
 			mDatabaseFactory = databaseFactory;
 			mReservedDatabases = new Dictionary<string, IDatabase>();

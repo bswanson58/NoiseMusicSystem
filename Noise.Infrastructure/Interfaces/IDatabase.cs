@@ -6,10 +6,10 @@ namespace Noise.Infrastructure.Interfaces {
 		Eloquera.Client.DB	Database { get; }
 		DbVersion			DatabaseVersion { get; }
 		IBlobStorage		BlobStorage { get; set; }
+		bool				IsOpen { get; }
 
 		bool		InitializeDatabase();
 		bool		OpenWithCreateDatabase();
-		bool		OpenDatabase();
 		bool		InitializeAndOpenDatabase();
 
 		DbBase		ValidateOnThread( DbBase dbObject );
