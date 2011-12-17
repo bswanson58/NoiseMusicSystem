@@ -5,6 +5,7 @@ using System.Timers;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Practices.Prism.Events;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -27,7 +28,7 @@ namespace Noise.Core.MediaPlayer {
 		ExternalPlay
 	}
 
-	internal class PlayController : IPlayController {
+	internal class PlayController : IPlayController, IRequireInitialization {
 		private readonly IEventAggregator		mEvents;
 		private readonly IDataProvider			mDataProvider;
 		private readonly IAudioPlayer			mAudioPlayer;
@@ -52,13 +53,16 @@ namespace Noise.Core.MediaPlayer {
 		private Subject<ePlayState>				mPlayStateSubject;
 		public	IObservable<ePlayState>			PlayStateChange { get { return( mPlayStateSubject.AsObservable()); } }
 
-		public PlayController( IEventAggregator eventAggregator, IDataProvider dataProvider, IPlayQueue playQueue, IPlayHistory playHistory, IAudioPlayer audioPlayer, IEqManager eqManager ) {
+		public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
+							   IDataProvider dataProvider, IPlayQueue playQueue, IPlayHistory playHistory, IAudioPlayer audioPlayer, IEqManager eqManager ) {
 			mEvents = eventAggregator;
 			mDataProvider = dataProvider;
 			mPlayQueue = playQueue;
 			mPlayHistory = playHistory;
 			mAudioPlayer = audioPlayer;
 			mEqManager = eqManager;
+
+			lifecycleManager.RegisterForInitialize( this );
 
 			mOpenTracks = new Dictionary<int, PlayQueueTrack>();
 
@@ -68,7 +72,7 @@ namespace Noise.Core.MediaPlayer {
 			NoiseLogger.Current.LogInfo( "PlayController created" );
 		}
 
-		public bool Initialize() {
+		public void Initialize() {
 			mSampleLevels = new AudioLevels();
 			mCurrentPosition = new TimeSpan();
 			mCurrentLength = new TimeSpan( 1 );
@@ -223,9 +227,9 @@ namespace Noise.Core.MediaPlayer {
 				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
 				.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped )
 				.Ignore( eStateTriggers.PlayerStopped );
-
-			return( true );
 		}
+
+		public void Shutdown() { }
 
 		private ePlayState PlayState {
 			get{ return( mCurrentPlayState ); }

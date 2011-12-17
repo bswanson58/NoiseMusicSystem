@@ -2,13 +2,14 @@
 using System.Linq;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Prism.Events;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.Core.Database {
-	internal class DataUpdates : IDataUpdates {
+	internal class DataUpdates : IDataUpdates, IRequireInitialization {
 		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
 
@@ -16,14 +17,16 @@ namespace Noise.Core.Database {
 		private AsyncCommand<SetRatingCommandArgs>		mSetRatingCommand;
 		private AsyncCommand<SetAlbumCoverCommandArgs>	mSetAlbumCoverCommand;
 
-		public DataUpdates( IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
+		public DataUpdates( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager, IDatabaseManager databaseManager ) {
 			mEvents = eventAggregator;
 			mDatabaseManager = databaseManager;
+
+			lifecycleManager.RegisterForInitialize( this );
 
 			NoiseLogger.Current.LogInfo( "DataUpdates created." );
 		}
 
-		public bool Initialize() {
+		public void Initialize() {
 			mSetFavoriteCommand = new AsyncCommand<SetFavoriteCommandArgs>( OnSetFavorite );
 			mSetFavoriteCommand.ExecutionComplete += OnExecutionComplete;
 			GlobalCommands.SetFavorite.RegisterCommand( mSetFavoriteCommand );
@@ -35,8 +38,9 @@ namespace Noise.Core.Database {
 			mSetAlbumCoverCommand = new AsyncCommand<SetAlbumCoverCommandArgs>( OnSetAlbumCover );
 			mSetAlbumCoverCommand.ExecutionComplete += OnExecutionComplete;
 			GlobalCommands.SetAlbumCover.RegisterCommand( mSetAlbumCoverCommand );
+		}
 
-			return( true );
+		public void Shutdown() {
 		}
 
 		private void OnExecutionComplete( object sender, AsyncCommandCompleteEventArgs args ) {

@@ -3,33 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.Prism.Events;
 using Noise.Core.Database;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayHistory {
-	public class PlayHistoryMgr : IPlayHistory {
+	public class PlayHistoryMgr : IPlayHistory, IRequireInitialization {
 		private const int						cMaximumHistory = 100;
 
 		private readonly IDatabaseManager		mDatabaseManager;
 		private readonly IEventAggregator		mEvents;
 		private DatabaseCache<DbPlayHistory>	mPlayHistory;
 
-		public PlayHistoryMgr( IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
+		public PlayHistoryMgr( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
 			mDatabaseManager = databaseManager;
 			mEvents = eventAggregator;
+			mPlayHistory = new DatabaseCache<DbPlayHistory>( null );
+
+			lifecycleManager.RegisterForInitialize( this );
 
 			NoiseLogger.Current.LogInfo( "PlayHistory created" );
 		}
 
-		public bool Initialize() {
-			var retValue = false;
+		public void Initialize() {
 			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
 				mPlayHistory = new DatabaseCache<DbPlayHistory>( from DbPlayHistory history in database.Database select history );
-
-				retValue = true;
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - PlayHistoryMgr:ctor ", ex );
@@ -37,9 +38,9 @@ namespace Noise.Core.PlayHistory {
 			finally {
 				mDatabaseManager.FreeDatabase( database );
 			}
-
-			return( retValue );
 		}
+
+		public void Shutdown() { }
 
 		public void TrackPlayCompleted( PlayQueueTrack track ) {
 			if( track.PercentPlayed > 0.8 ) {

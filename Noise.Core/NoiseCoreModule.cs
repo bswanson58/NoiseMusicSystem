@@ -9,6 +9,7 @@ using Noise.Core.FileStore;
 using Noise.Core.MediaPlayer;
 using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
@@ -35,6 +36,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IEqManager, EqManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IFileUpdates, FileUpdates>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ILifecycleManager, LifecycleManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILyricsProvider, LyricsProvider>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IMetaDataExplorer, MetaDataExplorer>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IMetaDataCleaner, MetaDataCleaner>( new HierarchicalLifetimeManager());

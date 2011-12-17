@@ -2,40 +2,39 @@
 using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
-	public class TagManager : ITagManager {
+	public class TagManager : ITagManager, IRequireInitialization {
 		private readonly IDataProvider				mDataProvider;
 		private readonly Dictionary<long, DbGenre>	mGenreList;
 		private readonly List<DbDecadeTag>			mDecadeList;
 
-		public TagManager( IDataProvider dataProvider ) {
+		public TagManager( ILifecycleManager lifecycleManager, IDataProvider dataProvider ) {
 			mDataProvider = dataProvider;
 			mGenreList = new Dictionary<long, DbGenre>();
 			mDecadeList = new List<DbDecadeTag>();
+
+			lifecycleManager.RegisterForInitialize( this );
 		}
 
-		public bool Initialize() {
-			var retValue = false;
-
+		public void Initialize() {
 			try {
 				LoadGenreList();
 				LoadDecadeList();
 				if( mDecadeList.Count == 0 ) {
 					InitializeDecadeList();
 				}
-
-				retValue = true;
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - TagManager.Initialize", ex );
 			}
-
-			return( retValue );
 		}
+
+		public void Shutdown() { }
 
 		public long ResolveGenre( string genreName ) {
 			var retValue = Constants.cDatabaseNullOid;

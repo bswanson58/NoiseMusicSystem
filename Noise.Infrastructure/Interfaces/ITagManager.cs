@@ -3,8 +3,6 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface ITagManager {
-		bool		Initialize();
-
 		long		ResolveGenre( string genreName );
 		DbGenre		GetGenre( long genreId );
 

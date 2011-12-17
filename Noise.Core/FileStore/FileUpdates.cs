@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using CuttingEdge.Conditions;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -26,7 +27,7 @@ namespace Noise.Core.FileStore {
 		}
 	}
 
-	internal class FileUpdates : IFileUpdates {
+	internal class FileUpdates : IFileUpdates, IRequireInitialization {
 		internal const string					cBackgroundFileUpdater = "BackgroundFileUpdater";
 
 		private readonly IDataProvider			mDataProvider;
@@ -40,8 +41,11 @@ namespace Noise.Core.FileStore {
 		private AsyncCommand<UpdatePlayCountCommandArgs>	mUpdatePlayCountCommand;
 		private AsyncCommand<SetMp3TagCommandArgs>			mSetMp3TagsCommand;
 
-		public FileUpdates( IDataProvider dataProvider ) {
+		public FileUpdates( ILifecycleManager lifecycleManager, IDataProvider dataProvider ) {
 			mDataProvider = dataProvider;
+
+			lifecycleManager.RegisterForInitialize( this );
+			lifecycleManager.RegisterForShutdown( this );
 
 			mUnfinishedCommands = new List<BaseCommandArgs>();
 			mSchedulerFactory = new StdSchedulerFactory();
@@ -49,7 +53,7 @@ namespace Noise.Core.FileStore {
 			mJobScheduler.Start();
 		}
 
-		public bool Initialize() {
+		public void Initialize() {
 			mSetFavoriteCommand = new AsyncCommand<SetFavoriteCommandArgs>( OnSetFavorite );
 			mSetFavoriteCommand.ExecutionComplete += OnExecutionComplete;
 			GlobalCommands.SetFavorite.RegisterCommand( mSetFavoriteCommand );
@@ -78,8 +82,6 @@ namespace Noise.Core.FileStore {
 
 			mJobScheduler.ScheduleJob( jobDetail, trigger );
 			NoiseLogger.Current.LogMessage( "Started Background FileUpdater." );
-
-			return( true );
 		}
 
 		public void Shutdown() {

@@ -7,7 +7,7 @@ namespace Noise.Core.Database {
 		private readonly List<T>	mCacheList;
 
 		public DatabaseCache( IEnumerable<T> cacheSource ) {
-			mCacheList = new List<T>( cacheSource );
+			mCacheList = cacheSource != null ? new List<T>( cacheSource ) : new List<T>();
 		}
 
 		public List<T> List {

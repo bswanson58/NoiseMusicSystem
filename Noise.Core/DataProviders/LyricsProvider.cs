@@ -25,7 +25,7 @@ namespace Noise.Core.DataProviders {
 		public LyricsProvider( IEventAggregator eventAggregator, IDataProvider dataProvider ) {
 			mEvents = eventAggregator;
 			mDataProvider = dataProvider;
-			
+
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 			if( configuration != null ) {
@@ -34,10 +34,6 @@ namespace Noise.Core.DataProviders {
 
 			mLyricsRequestCommand = new AsyncCommand<LyricsRequestArgs>( OnLyricsRequested );
 			GlobalCommands.RequestLyrics.RegisterCommand( mLyricsRequestCommand );
-		}
-
-		public bool Initialize() {
-			return( true );
 		}
 
 		private void OnLyricsRequested( LyricsRequestArgs args ) {
