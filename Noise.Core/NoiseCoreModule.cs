@@ -59,6 +59,14 @@ namespace Noise.Core {
 			mContainer.RegisterType<IBackgroundTask, SearchBuilder>( "SearchBuilder" );
 			mContainer.RegisterType<IEnumerable<IBackgroundTask>, IBackgroundTask[]>();
 
+			mContainer.RegisterType<IContentProvider, BandMembersProvider>( "BandMembersProvider" );
+			mContainer.RegisterType<IContentProvider, BiographyProvider>( "BiographyProvider" );
+			mContainer.RegisterType<IContentProvider, DiscographyProvider>( "DiscographyProvider" );
+			mContainer.RegisterType<IContentProvider, SimilarArtistsProvider>( "SimilarArtists" );
+			mContainer.RegisterType<IContentProvider, TopAlbumsProvider>( "TopAlbumsProvider" );
+			mContainer.RegisterType<LastFmProvider, LastFmProvider>( new  HierarchicalLifetimeManager());
+			mContainer.RegisterType<IEnumerable<IContentProvider>, IContentProvider[]>();
+
 			mContainer.RegisterType<IPlayStrategyFactory, PlayStrategyFactory>();
 			mContainer.RegisterType<PlayStrategySingle>();
 			mContainer.RegisterType<PlayStrategyRandom>();

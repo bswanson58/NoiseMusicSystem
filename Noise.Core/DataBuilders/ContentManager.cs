@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading;
 using CuttingEdge.Conditions;
@@ -11,36 +10,19 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	internal class ContentManager : IContentManager {
-		private readonly IIoc				mComponentCreator;
 		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
-		private INoiseManager				mNoiseManager;
 		private readonly List<long>			mCurrentRequests;
 
-		[ImportMany( typeof( IContentProvider ))]
-		public IEnumerable<IContentProvider>	ContentProviders;
+		private readonly IEnumerable<IContentProvider>	mContentProviders;
 
-		public ContentManager( IIoc componentCreator, IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
-			mComponentCreator = componentCreator;
+		public ContentManager( IEventAggregator eventAggregator, IDatabaseManager databaseManager, IEnumerable<IContentProvider> contentProviders ) {
 			mDatabaseManager = databaseManager;
 			mEvents = eventAggregator;
+			mContentProviders = contentProviders;
+
 			mCurrentRequests = new List<long>();
-
-		}
-
-		public bool Initialize( INoiseManager noiseManager ) {
-			mNoiseManager = noiseManager;
-			
-			mComponentCreator.ComposeParts( this );
-			foreach( var provider in ContentProviders ) {
-				if(!provider.Initialize( mNoiseManager )) {
-					NoiseLogger.Current.LogMessage( string.Format( "ContentManager - Could not initialize provider for content type: {0}", provider.ContentType ));
-				}
-			}
-
 			mEvents.GetEvent<Events.ArtistContentRequested>().Subscribe( OnArtistContentRequested );
-
-			return( true );
 		}
 
 		private void OnArtistContentRequested( DbArtist forArtist ) {
@@ -62,7 +44,7 @@ namespace Noise.Core.DataBuilders {
 			try {
 				forArtist = database.ValidateOnThread( forArtist ) as DbArtist;
 				if( forArtist != null ) {
-					var selectedProviders = from IContentProvider provider in ContentProviders where provider.CanUpdateArtist select provider;
+					var selectedProviders = from IContentProvider provider in mContentProviders where provider.CanUpdateArtist select provider;
 					var contentUpdated = false;
 
 					foreach( var provider in selectedProviders ) {

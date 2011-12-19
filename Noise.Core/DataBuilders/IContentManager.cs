@@ -4,8 +4,6 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	internal interface IContentProvider {
-		bool			Initialize( INoiseManager noiseManager );
-
 		ContentType		ContentType { get; }
 		TimeSpan		ExpirationPeriod { get; }
 
@@ -19,6 +17,5 @@ namespace Noise.Core.DataBuilders {
 	}
 
 	public interface IContentManager {
-		bool			Initialize( INoiseManager noiseManager );
 	}
 }

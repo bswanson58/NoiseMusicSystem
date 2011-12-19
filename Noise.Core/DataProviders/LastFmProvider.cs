@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.IO;
 using CuttingEdge.Conditions;
 using Lastfm.Services;
 using Noise.Core.DataBuilders;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -12,22 +12,59 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataProviders {
-	internal abstract class BaseLastFmProvider : IContentProvider {
-		public		abstract ContentType	ContentType { get; }
-		protected	INoiseManager			mNoiseManager;
-		private		bool					mHasNetworkAccess;
+	internal class BiographyProvider : BaseLastFmProvider {
+		public BiographyProvider( ILifecycleManager lifecycleManager, LastFmProvider lastFmProvider ) :
+			base( lastFmProvider ) {
+			lifecycleManager.RegisterForInitialize( this );
+		}
 
-		public bool Initialize( INoiseManager noiseManager ) {
-			mNoiseManager = noiseManager;
+		public override ContentType ContentType {
+			get { return( ContentType.Biography ); }
+		}
+	}
 
+	internal class SimilarArtistsProvider : BaseLastFmProvider {
+		public SimilarArtistsProvider( ILifecycleManager lifecycleManager, LastFmProvider lastFmProvider ) :
+			base( lastFmProvider ) {
+			lifecycleManager.RegisterForInitialize( this );
+		}
+
+		public override ContentType ContentType {
+			get { return( ContentType.SimilarArtists ); }
+		}
+	}
+
+	internal class TopAlbumsProvider : BaseLastFmProvider {
+		public TopAlbumsProvider( ILifecycleManager lifecycleManager, LastFmProvider lastFmProvider ) :
+			base( lastFmProvider ) {
+			lifecycleManager.RegisterForInitialize( this );
+		}
+
+		public override ContentType ContentType {
+			get { return( ContentType.TopAlbums ); }
+		}
+	}
+
+	public abstract class BaseLastFmProvider : IContentProvider, IRequireInitialization {
+		public	abstract ContentType	ContentType { get; }
+		private	readonly LastFmProvider	mLastFmProvider;
+		private	bool					mHasNetworkAccess;
+
+		internal BaseLastFmProvider( LastFmProvider lastFmProvider ) {
+			mLastFmProvider = lastFmProvider;
+		}
+
+		public void Initialize() {
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 			if( configuration != null ) {
 				mHasNetworkAccess = configuration.HasNetworkAccess;
 			}
 
-			return( true );
+			mLastFmProvider.Initialize();
 		}
+
+		public void Shutdown() { }
 
 		public TimeSpan ExpirationPeriod {
 			get { return( new TimeSpan( 30, 0, 0, 0 )); }
@@ -47,9 +84,7 @@ namespace Noise.Core.DataProviders {
 
 		public void UpdateContent( IDatabase database, DbArtist forArtist ) {
 			if( mHasNetworkAccess ) {
-				var provider = new LastFmProvider( mNoiseManager );
-
-				provider.UpdateArtist( database, forArtist );
+				mLastFmProvider.UpdateArtist( database, forArtist );
 			}
 		}
 
@@ -62,36 +97,17 @@ namespace Noise.Core.DataProviders {
 		}
 	}
 
-	[Export( typeof( IContentProvider ))]
-	internal class BiographyProvider : BaseLastFmProvider {
-		public override ContentType ContentType {
-			get { return( ContentType.Biography ); }
-		}
-	}
-
-	[Export( typeof( IContentProvider ))]
-	internal class SimilarArtistsProvider : BaseLastFmProvider {
-		public override ContentType ContentType {
-			get { return( ContentType.SimilarArtists ); }
-		}
-	}
-
-	[Export( typeof( IContentProvider ))]
-	internal class TopAlbumsProvider : BaseLastFmProvider {
-		public override ContentType ContentType {
-			get { return( ContentType.TopAlbums ); }
-		}
-	}
-
-	public class LastFmProvider {
+	internal class LastFmProvider {
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly ITagManager		mTagManager;
-		private readonly Session			mSession;
+		private Session						mSession;
 
-		public LastFmProvider( INoiseManager noiseManager ) {
-			mDatabaseManager = noiseManager.DatabaseManager;
-			mTagManager = noiseManager.TagManager;
+		public LastFmProvider( IDatabaseManager databaseManager, ITagManager tagManager ) {
+			mDatabaseManager = databaseManager;
+			mTagManager = tagManager;
+		}
 
+		public void Initialize() {
 			try {
 				var key = NoiseLicenseManager.Current.RetrieveKey( LicenseKeys.LastFm );
 

@@ -1,41 +1,47 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Linq;
 using DiscogsConnect;
 using Noise.Core.DataBuilders;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
-	[Export( typeof( IContentProvider ) )]
 	internal class DiscographyProvider : DiscogsProvider {
+		public DiscographyProvider( ILifecycleManager lifecycleManager ) {
+			lifecycleManager.RegisterForInitialize( this );
+		}
+
 		public override ContentType ContentType {
 			get { return ( ContentType.Discography ); }
 		}
 	}
 
-	[Export( typeof( IContentProvider ) )]
 	internal class BandMembersProvider : DiscogsProvider {
+		public BandMembersProvider( ILifecycleManager lifecycleManager ) {
+			lifecycleManager.RegisterForInitialize( this );
+		}
+
 		public override ContentType ContentType {
 			get { return ( ContentType.BandMembers ); }
 		}
 	}
 
-	internal abstract class DiscogsProvider : IContentProvider {
+	internal abstract class DiscogsProvider : IContentProvider, IRequireInitialization {
 		private bool			mHasNetworkAccess;
 		private DiscogsClient	mClient;
 		public abstract ContentType ContentType { get; }
 
-		public bool Initialize( INoiseManager noiseManager ) {
+		public void Initialize() {
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 			if( configuration != null ) {
 				mHasNetworkAccess = configuration.HasNetworkAccess;
 			}
-
-			return ( true );
 		}
+
+		public void Shutdown() { }
 
 		public TimeSpan ExpirationPeriod {
 			get { return ( new TimeSpan( 30, 0, 0, 0 ) ); }

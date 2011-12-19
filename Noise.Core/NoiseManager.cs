@@ -79,10 +79,6 @@ namespace Noise.Core {
 					}
 				}
 
-				if(!mContentManager.Initialize( this )) {
-					NoiseLogger.Current.LogMessage( "Noise Manager: ContentManager could not be initialized" );
-				}
-
 				var sysConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 				if(( sysConfig != null ) &&
 				   ( sysConfig.EnableRemoteAccess )) {
