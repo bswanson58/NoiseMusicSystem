@@ -994,6 +994,53 @@ namespace Noise.Core.Database {
 
 				mDatabaseManager.FreeDatabase( database );
 			}
+
+			return( retValue );
+		}
+
+		public DataProviderList<long> GetArtistCategories( long artistId ) {
+			DataProviderList<long>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				var parms = database.Database.CreateParameters();
+
+				parms["artistId"] = artistId;
+				parms["group"] = eTagGroup.User;
+
+				var tagList = database.Database.ExecuteQuery( "SELECT DbTagAssociation Where TagGroup = @group AND ArtistId = @artistId", parms ).OfType<DbTagAssociation>();
+				retValue = new DataProviderList<long>( database.DatabaseId, FreeDatabase, from assoc in tagList select assoc.TagId );
+				
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "Exception - GetArtistCategories:", ex );
+
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
+		public DataProviderList<long> GetAlbumCategories( long albumId ) {
+			DataProviderList<long>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				var parms = database.Database.CreateParameters();
+
+				parms["albumId"] = albumId;
+				parms["group"] = eTagGroup.User;
+
+				var tagList = database.Database.ExecuteQuery( "SELECT DbTagAssociation Where TagGroup = @group AND AlbumId = @albumId", parms ).OfType<DbTagAssociation>();
+				retValue = new DataProviderList<long>( database.DatabaseId, FreeDatabase, from assoc in tagList select assoc.TagId );
+				
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "Exception - GetAlbumCategories:", ex );
+
+				mDatabaseManager.FreeDatabase( database );
+			}
+
 			return( retValue );
 		}
 
