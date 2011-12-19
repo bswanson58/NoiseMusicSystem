@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Google.API.Search;
 using Microsoft.Practices.Prism.Events;
+using Noise.Core.Support;
 using Noise.Core.Support.AsyncTask;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -15,7 +16,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataProviders {
-	internal class LyricsProvider : ILyricsProvider {
+	internal class LyricsProvider : ILyricsProvider, IRequireConstruction {
 		private readonly IEventAggregator	mEvents;
 		private readonly IDataProvider		mDataProvider;
 		private readonly bool				mHasNetworkAccess;

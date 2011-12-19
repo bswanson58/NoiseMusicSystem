@@ -4,12 +4,13 @@ using System.Linq;
 using System.Threading;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Prism.Events;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
-	internal class ContentManager : IContentManager {
+	internal class ContentManager : IContentManager, IRequireConstruction {
 		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly List<long>			mCurrentRequests;

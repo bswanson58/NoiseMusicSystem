@@ -1,5 +1,8 @@
 ﻿namespace Noise.Core.Support {
-	public interface IRequireInitialization {
+	public interface IRequireConstruction {
+	}
+
+	public interface IRequireInitialization : IRequireConstruction {
 		void	Initialize();
 		void	Shutdown();
 	}

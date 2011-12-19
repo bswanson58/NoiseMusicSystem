@@ -5,13 +5,14 @@ using System.Linq;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Prism.Events;
 using Noise.Core.FileStore;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.Core.Database {
-	public class DataProvider : IDataProvider {
+	public class DataProvider : IDataProvider, IRequireConstruction {
 		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
 		private long						mDatabaseId;

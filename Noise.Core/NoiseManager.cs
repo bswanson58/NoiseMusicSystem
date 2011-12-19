@@ -1,9 +1,5 @@
-﻿using Microsoft.Practices.Prism.Events;
-using Noise.Core.BackgroundTasks;
-using Noise.Core.Database;
-using Noise.Core.DataBuilders;
-using Noise.Core.DataProviders;
-using Noise.Core.FileStore;
+﻿using System.Collections.Generic;
+using Microsoft.Practices.Prism.Events;
 using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -14,51 +10,29 @@ namespace Noise.Core {
 	public class NoiseManager : INoiseManager {
 		private	readonly IEventAggregator			mEvents;
 		private readonly ILifecycleManager			mLifecycleManager;
-		private readonly IContentManager			mContentManager;
-		private readonly IBackgroundTaskManager		mBackgroundTaskMgr;
-		private readonly IDataUpdates				mDataUpdates;
-		private readonly IFileUpdates				mFileUpdates;
-		private readonly ILyricsProvider			mLyricsProvider;
 		private readonly IRemoteServer				mRemoteServer;
 		private readonly ICloudSyncManager			mCloudSyncMgr;
 		private readonly ILibraryBuilder			mLibraryBuilder;
-		private readonly IPlayController			mPlayController;
-
-		public	IDatabaseManager			DatabaseManager { get; private set; }
-		public	IDataProvider				DataProvider { get; private set; }
-		public	ISearchProvider				SearchProvider { get; private set; }
-		public	ITagManager					TagManager { get; private set; }
+		private readonly IDatabaseManager			mDatabaseManager;
 
 		public NoiseManager( IEventAggregator eventAggregator,
 							 ILifecycleManager lifecycleManager,
-							 IBackgroundTaskManager backgroundTaskManager,
 							 IDatabaseManager databaseManager,
-							 IDataProvider dataProvider,
-							 IDataUpdates dataUpdates,
-							 IFileUpdates fileUpdates,
 							 ICloudSyncManager cloudSyncManager,
-							 IContentManager contentManager,
 							 ILibraryBuilder libraryBuilder,
-							 ILyricsProvider lyricsProvider,
-							 ISearchProvider searchProvider,
-							 IPlayController playController,
 							 IRemoteServer remoteServer,
-							 ITagManager tagManager ) {
+							 // component that just need to be referrenced.
+							 IDataProvider dataProvider,
+							 IPlayController playController,
+							 ISearchProvider searchProvider,
+							 ITagManager tagManager,
+							 IEnumerable<IRequireConstruction> backgroundComponents ) {
 			mEvents = eventAggregator;
 			mLifecycleManager = lifecycleManager;
-			mBackgroundTaskMgr = backgroundTaskManager;
-			mContentManager = contentManager;
-			mDataUpdates = dataUpdates;
-			mFileUpdates = fileUpdates;
-			mLyricsProvider = lyricsProvider;
 			mRemoteServer = remoteServer;
-			DatabaseManager = databaseManager;
-			DataProvider = dataProvider;
+			mDatabaseManager = databaseManager;
 			mCloudSyncMgr = cloudSyncManager;
 			mLibraryBuilder = libraryBuilder;
-			SearchProvider = searchProvider;
-			mPlayController = playController;
-			TagManager = tagManager;
 		}
 
 		public bool Initialize() {
@@ -66,7 +40,7 @@ namespace Noise.Core {
 
 			NoiseLogger.Current.LogMessage( "Initializing Noise Music System" );
 
-			if( DatabaseManager.Initialize()) {
+			if( mDatabaseManager.Initialize()) {
 				mLifecycleManager.Initialize();
 
 				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
@@ -104,7 +78,7 @@ namespace Noise.Core {
 
 			mLifecycleManager.Shutdown();
 
-			DatabaseManager.Shutdown();
+			mDatabaseManager.Shutdown();
 		}
 
 		public void StartExplorerJobs() {
