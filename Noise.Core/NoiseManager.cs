@@ -22,7 +22,6 @@ namespace Noise.Core {
 		private readonly IRemoteServer				mRemoteServer;
 		private readonly ICloudSyncManager			mCloudSyncMgr;
 		private readonly ILibraryBuilder			mLibraryBuilder;
-		private readonly IPlayHistory				mPlayHistory;
 		private readonly IPlayController			mPlayController;
 
 		public	IDatabaseManager			DatabaseManager { get; private set; }
@@ -42,7 +41,6 @@ namespace Noise.Core {
 							 ILibraryBuilder libraryBuilder,
 							 ILyricsProvider lyricsProvider,
 							 ISearchProvider searchProvider,
-							 IPlayHistory playHistory,
 							 IPlayController playController,
 							 IRemoteServer remoteServer,
 							 ITagManager tagManager ) {
@@ -59,7 +57,6 @@ namespace Noise.Core {
 			mCloudSyncMgr = cloudSyncManager;
 			mLibraryBuilder = libraryBuilder;
 			SearchProvider = searchProvider;
-			mPlayHistory = playHistory;
 			mPlayController = playController;
 			TagManager = tagManager;
 		}
@@ -71,10 +68,6 @@ namespace Noise.Core {
 
 			if( DatabaseManager.Initialize()) {
 				mLifecycleManager.Initialize();
-
-				if(!mBackgroundTaskMgr.Initialize( this )) {
-					NoiseLogger.Current.LogMessage( "Noise Manager: BackgroundTaskManager cound not be initialized." );
-				}
 
 				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
 				if( configuration != null ) {
@@ -110,7 +103,6 @@ namespace Noise.Core {
 		public void Shutdown() {
 			mEvents.GetEvent<Events.SystemShutdown>().Publish( this );
 
-			mBackgroundTaskMgr.Stop();
 			mRemoteServer.CloseRemoteServer();
 			mLibraryBuilder.StopLibraryUpdate();
 

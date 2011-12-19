@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.Prism.Modularity;
+﻿using System.Collections.Generic;
+using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
 using Noise.Core.BackgroundTasks;
 using Noise.Core.Database;
@@ -49,6 +50,14 @@ namespace Noise.Core {
 			mContainer.RegisterType<ITagManager, TagManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<DatabaseStatistics, DatabaseStatistics>();
 			mContainer.RegisterType<ISummaryBuilder, SummaryBuilder>();
+
+			mContainer.RegisterType<IBackgroundTask, ContentBuilder>( "ContentBuilder" );
+			mContainer.RegisterType<IBackgroundTask, DecadeTagBuilder>( "DecadeTagBuilder" );
+			mContainer.RegisterType<IBackgroundTask, DiscographyExplorer>( "DiscographyExplorer" );
+			mContainer.RegisterType<IBackgroundTask, LinkSimilarArtists>( "LinkSimilarArtists" );
+			mContainer.RegisterType<IBackgroundTask, LinkTopAlbums>( "LinkTopAlbums" );
+			mContainer.RegisterType<IBackgroundTask, SearchBuilder>( "SearchBuilder" );
+			mContainer.RegisterType<IEnumerable<IBackgroundTask>, IBackgroundTask[]>();
 
 			mContainer.RegisterType<IPlayStrategyFactory, PlayStrategyFactory>();
 			mContainer.RegisterType<PlayStrategySingle>();

@@ -3,30 +3,34 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Noise.Core.Database;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
-	public class LinkSimilarArtists : IBackgroundTask {
-		private IDatabaseManager	mDatabaseMgr;
+	public class LinkSimilarArtists : IBackgroundTask, IRequireInitialization {
+		private readonly IDatabaseManager	mDatabaseMgr;
+		private DatabaseCache<DbArtist>		mArtistCache;
+		private List<long>					mSimilarArtistLists;
+		private IEnumerator<long>			mListEnum;
 
-		private DatabaseCache<DbArtist>	mArtistCache;
-		private List<long>				mSimilarArtistLists;
-		private IEnumerator<long>		mListEnum;
+		public LinkSimilarArtists( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager ) {
+			mDatabaseMgr = databaseManager;
+
+			lifecycleManager.RegisterForInitialize( this );
+		}
 
 		public string TaskId {
 			get { return( "Task_LinkSimilarArtists" ); }
 		}
 
-		public bool Initialize( INoiseManager noiseManager ) {
-			mDatabaseMgr = noiseManager.DatabaseManager;
-
+		public void Initialize() {
 			InitializeLists();
-
-			return( true );
 		}
+
+		public void Shutdown() { }
 
 		private void InitializeLists() {
 			var database = mDatabaseMgr.ReserveDatabase();
@@ -103,9 +107,6 @@ namespace Noise.Core.BackgroundTasks {
 			}
 
 			return( mListEnum.Current );
-		}
-
-		public void Shutdown() {
 		}
 	}
 }

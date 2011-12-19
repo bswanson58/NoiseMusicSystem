@@ -2,32 +2,37 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
-	public class SearchBuilder : IBackgroundTask {
-		private IDatabaseManager	mDatabaseManager;
-		private IDataProvider		mDataProvider;
-		private ISearchProvider		mSearchProvider;
-		private List<long>			mArtistList;
-		private IEnumerator<long>	mArtistEnum;
+	public class SearchBuilder : IBackgroundTask, IRequireInitialization {
+		private readonly IDatabaseManager	mDatabaseManager;
+		private readonly IDataProvider		mDataProvider;
+		private readonly ISearchProvider	mSearchProvider;
+		private List<long>					mArtistList;
+		private IEnumerator<long>			mArtistEnum;
+
+		public SearchBuilder( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager, IDataProvider dataProvider, ISearchProvider searchProvider ) {
+			mDatabaseManager = databaseManager;
+			mDataProvider = dataProvider;
+			mSearchProvider = searchProvider;
+
+			lifecycleManager.RegisterForInitialize( this );
+		}
 
 		public string TaskId {
 			get { return( "Task_SearchBuilder" ); }
 		}
 
-		public bool Initialize( INoiseManager noiseManager ) {
-			mDatabaseManager = noiseManager.DatabaseManager;
-			mDataProvider = noiseManager.DataProvider;
-			mSearchProvider = noiseManager.SearchProvider;
-
+		public void Initialize() {
 			InitializeLists();
-
-			return( true );
 		}
+
+		public void Shutdown() { }
 
 		private void InitializeLists() {
 			using( var artistList = mDataProvider.GetArtistList()) {
@@ -168,9 +173,6 @@ namespace Noise.Core.BackgroundTasks {
 					databaseMgr.FreeDatabase( database );
 				}
 			}
-		}
-
-		public void Shutdown() {
 		}
 	}
 }

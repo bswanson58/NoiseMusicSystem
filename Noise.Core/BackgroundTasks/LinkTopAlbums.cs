@@ -2,28 +2,32 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
-	internal class LinkTopAlbums : IBackgroundTask {
-		private IDatabaseManager	mDatabaseMgr;
+	internal class LinkTopAlbums : IBackgroundTask, IRequireInitialization {
+		private readonly IDatabaseManager	mDatabaseMgr;
+		private List<long>					mArtistList;
+		private IEnumerator<long>			mArtistEnum;
 
-		private List<long>				mArtistList;
-		private IEnumerator<long>		mArtistEnum;
+		public LinkTopAlbums( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager ) {
+			mDatabaseMgr = databaseManager;
+
+			lifecycleManager.RegisterForInitialize( this );
+		}
 
 		public string TaskId {
 			get { return( "Task_LinkTopAlbums" ); }
 		}
 
-		public bool Initialize( INoiseManager noiseManager ) {
-			mDatabaseMgr = noiseManager.DatabaseManager;
+		public void Shutdown() { }
 
+		public void Initialize() {
 			InitializeLists();
-
-			return( true );
 		}
 
 		private void InitializeLists() {
@@ -102,9 +106,6 @@ namespace Noise.Core.BackgroundTasks {
 					mDatabaseMgr.FreeDatabase( database );
 				}
 			}
-		}
-
-		public void Shutdown() {
 		}
 	}
 }

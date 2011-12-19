@@ -3,28 +3,33 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Noise.Core.Database;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
-	public class DiscographyExplorer : IBackgroundTask {
-		private IDatabaseManager	mDatabaseMgr;
-		private List<long>			mArtistList;
-		private IEnumerator<long>	mArtistEnum;
+	public class DiscographyExplorer : IBackgroundTask, IRequireInitialization {
+		private readonly IDatabaseManager	mDatabaseMgr;
+		private List<long>					mArtistList;
+		private IEnumerator<long>			mArtistEnum;
+
+		public DiscographyExplorer( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager ) {
+			mDatabaseMgr = databaseManager;
+	
+			lifecycleManager.RegisterForInitialize( this );
+		}
 
 		public string TaskId {
 			get { return( "Task_DiscographyExplorer" ); }
 		}
 
-		public bool Initialize( INoiseManager noiseManager ) {
-			mDatabaseMgr = noiseManager.DatabaseManager;
-
+		public void Initialize() {
 			InitializeLists();
-
-			return( true );
 		}
+
+		public void Shutdown() { }
 
 		private void InitializeLists() {
 			var database = mDatabaseMgr.ReserveDatabase();
@@ -107,9 +112,6 @@ namespace Noise.Core.BackgroundTasks {
 			}
 
 			return( uniqueList.Values.ToList());
-		}
-
-		public void Shutdown() {
 		}
 	}
 }

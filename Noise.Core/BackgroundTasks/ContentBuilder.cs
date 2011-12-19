@@ -2,25 +2,28 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using Noise.Core.Support;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
-	public class ContentBuilder : IBackgroundTask {
-		private IDataProvider			mDataProvider;
+	public class ContentBuilder : IBackgroundTask, IRequireInitialization {
+		private readonly IDataProvider	mDataProvider;
 		private	List<DbArtist>			mArtistList;
 		private IEnumerator<DbArtist>	mArtistEnum;
+
+		public ContentBuilder( ILifecycleManager lifecycleManager, IDataProvider dataProvider ) {
+			mDataProvider = dataProvider;
+
+			lifecycleManager.RegisterForInitialize( this );
+		}
 
 		public string TaskId {
 			get { return( "Task_ContentBuilder" ); }
 		}
 
-		public bool Initialize( INoiseManager noiseMgr ) {
-			var retValue = false;
-
-			mDataProvider = noiseMgr.DataProvider;
-
+		public void Initialize() {
 			BuildArtistList();
 			if( mArtistList.Count() > 0 ) {
 				var seed = new Random( DateTime.Now.Millisecond );
@@ -30,12 +33,10 @@ namespace Noise.Core.BackgroundTasks {
 						( random > 0 )) {
 					random--;
 				}
-
-				retValue = true;
 			}
-
-			return( retValue );
 		}
+
+		public void Shutdown() { }
 
 		public void ExecuteTask() {
 			var artist = NextArtist();
@@ -60,9 +61,6 @@ namespace Noise.Core.BackgroundTasks {
 				mArtistList = new List<DbArtist>( list.List );
 				mArtistEnum = mArtistList.GetEnumerator();
 			}
-		}
-
-		public void Shutdown() {
 		}
 	}
 }

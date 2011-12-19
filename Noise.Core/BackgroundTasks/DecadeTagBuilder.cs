@@ -2,36 +2,41 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
-	internal class DecadeTagBuilder : IBackgroundTask {
+	internal class DecadeTagBuilder : IBackgroundTask, IRequireInitialization {
 		private const string		cDecadeTagBuilderId		= "ComponentId_TagBuilder";
 
-		private IDatabaseManager	mDatabaseMgr;
-		private IDataProvider		mDataProvider;
-		private ITagManager			mTagManager;
-		private List<long>			mArtistList;
-		private IEnumerator<long>	mArtistEnum;
-		private long				mLastScanTicks;
-		private	long				mStartScanTicks;
+		private readonly IDatabaseManager	mDatabaseMgr;
+		private readonly IDataProvider		mDataProvider;
+		private readonly ITagManager		mTagManager;
+		private List<long>					mArtistList;
+		private IEnumerator<long>			mArtistEnum;
+		private long						mLastScanTicks;
+		private	long						mStartScanTicks;
+
+		public DecadeTagBuilder( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager, IDataProvider dataProvider, ITagManager tagManager ) {
+			mDatabaseMgr = databaseManager;
+			mDataProvider = dataProvider;
+			mTagManager = tagManager;
+
+			lifecycleManager.RegisterForInitialize( this );
+		}
 
 		public string TaskId {
 			get { return( "Task_DiscographyExplorer" ); }
 		}
 
-		public bool Initialize( INoiseManager noiseManager ) {
-			mDatabaseMgr = noiseManager.DatabaseManager;
-			mDataProvider = noiseManager.DataProvider;
-			mTagManager = noiseManager.TagManager;
-
+		public void Initialize() {
 			InitializeLists();
-
-			return( true );
 		}
+
+		public void Shutdown() { }
 
 		private void InitializeLists() {
 			var database = mDatabaseMgr.ReserveDatabase();
@@ -105,9 +110,6 @@ namespace Noise.Core.BackgroundTasks {
 			finally {
 				mDatabaseMgr.FreeDatabase( database );
 			}
-		}
-
-		public void Shutdown() {
 		}
 	}
 }
