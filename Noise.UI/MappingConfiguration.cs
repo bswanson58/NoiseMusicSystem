@@ -36,6 +36,11 @@ namespace Noise.UI {
 				.ForMember( dest => dest.IsLinked, opt => opt.Ignore())
 				.ForMember( dest => dest.UiIsFavorite, opt => opt.MapFrom( src => src.IsFavorite ))
 				.ForMember( dest => dest.UiRating, opt => opt.MapFrom( src => src.Rating ));
+
+			CreateMap<DbTag, UiCategory>()
+				.ForMember( dest => dest.UiIsFavorite, opt => opt.MapFrom( src => src.IsFavorite ))
+				.ForMember( dest => dest.UiRating, opt => opt.MapFrom( src => src.Rating ))
+				.ForMember( dest => dest.IsSelected, opt => opt.Ignore());
 		}
 	}
 

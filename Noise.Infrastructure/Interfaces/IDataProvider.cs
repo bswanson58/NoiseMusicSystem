@@ -1,4 +1,5 @@
-﻿using Noise.Infrastructure.Dto;
+﻿using System.Collections.Generic;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface IDataProvider {
@@ -37,6 +38,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 		DataProviderList<long>		GetArtistCategories( long artistId );
 		DataProviderList<long>		GetAlbumCategories( long albumId );
+		void						SetAlbumCategories( long artistId, long albumId, IEnumerable<long> categories );
 
 		StorageFile					GetPhysicalFile( DbTrack forTrack );
 		string						GetPhysicalFilePath( StorageFile forFile );

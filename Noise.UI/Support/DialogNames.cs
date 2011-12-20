@@ -19,5 +19,7 @@
 		public const string		TrackEdit					= "TrackEdit";
 		public const string		AlbumArtworkDisplay			= "AlbumArtworkDisplay";
 		public const string		ArtistAlbumConfiguration	= "ArtistAlbumConfiguration";
+		public const string		CategorySelection			= "CategorySelection";
+		public const string		CategoryEdit				= "CategoryEdit";
 	}
 }

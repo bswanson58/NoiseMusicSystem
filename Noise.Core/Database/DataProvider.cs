@@ -83,6 +83,7 @@ namespace Noise.Core.Database {
 			   ( item is DbTrack ) ||
 			   ( item is DbGenre ) ||
 			   ( item is DbTag ) ||
+			   ( item is DbTagAssociation ) ||
 			   ( item is DbInternetStream )) {
 				var database = mDatabaseManager.ReserveDatabase();
 
@@ -1042,6 +1043,42 @@ namespace Noise.Core.Database {
 			}
 
 			return( retValue );
+		}
+
+		public void SetAlbumCategories( long artistId, long albumId, IEnumerable<long> categories ) {
+			var currentCategories = GetAlbumCategories( albumId );
+			var removeList = currentCategories.List.Where( tagId => !categories.Contains( tagId )).ToList();
+			var addList = categories.Where( tagId => !currentCategories.List.Contains( tagId )).ToList();
+
+			if(( removeList.Count > 0 ) ||
+			   ( addList.Count > 0 )) {
+				var database = mDatabaseManager.ReserveDatabase();
+				var parms = database.Database.CreateParameters();
+
+				parms["group"] = eTagGroup.User;
+				parms["albumId"] = albumId;
+
+				try {
+					foreach( var tagId in removeList ) {
+						parms["tagId"] = tagId;
+
+						var tagAssoc = database.Database.ExecuteScalar( "SELECT DbTagAssociation Where TagGroup = @group AND AlbumId = @albumId AND TagId = @tagId", parms ) as DbTagAssociation;
+						if( tagAssoc != null ) {
+							database.Database.Delete( tagAssoc );
+						}
+					}
+
+					foreach( var tagId in addList ) {
+						InsertItem( new DbTagAssociation( eTagGroup.User, tagId, artistId, albumId ));
+					}
+				}
+				catch( Exception ex ) {
+					NoiseLogger.Current.LogException( "Exception - SetAlbumCategories", ex );
+				}
+				finally {
+					mDatabaseManager.FreeDatabase( database );
+				}
+			}
 		}
 
 		public DataFindResults Find( string artist, string album, string track ) {

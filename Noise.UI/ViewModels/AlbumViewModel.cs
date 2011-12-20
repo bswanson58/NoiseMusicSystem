@@ -21,14 +21,16 @@ namespace Noise.UI.ViewModels {
 		public DbAlbum				Album { get; private set; }
 		public AlbumSupportInfo		SupportInfo { get; private set; }
 		public IEnumerable<DbTrack>	TrackList { get; private set; }
+		public IEnumerable<long>	Categories { get; private set; }
 
 		public NewAlbumInfo() {
 		}
 
-		public NewAlbumInfo( DbAlbum album, AlbumSupportInfo supportInfo, IEnumerable<DbTrack> trackList ) {
+		public NewAlbumInfo( DbAlbum album, AlbumSupportInfo supportInfo, IEnumerable<DbTrack> trackList, IEnumerable<long> categoryList ) {
 			Album = album;
 			SupportInfo = supportInfo;
 			TrackList = trackList;
+			Categories = categoryList;
 		}
 	}
 
@@ -44,9 +46,12 @@ namespace Noise.UI.ViewModels {
 		private ImageScrubberItem			mCurrentAlbumCover;
 		public	TimeSpan					AlbumPlayTime { get; private set; }
 		private bool						mIsActive;
+		private string						mCategoryDisplay;
+		private IEnumerable<DbTag>			mCategoryList;
 		private readonly Observal.Observer	mChangeObserver;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<UiTrack>	mTracks;
+		private readonly List<long>			mAlbumCategories;
 
 		public	event EventHandler			IsActiveChanged;
 
@@ -61,6 +66,7 @@ namespace Noise.UI.ViewModels {
 			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 
 			mTracks = new ObservableCollectionEx<UiTrack>();
+			mAlbumCategories = new List<long>();
 
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
@@ -71,6 +77,10 @@ namespace Noise.UI.ViewModels {
 
 			mUnknownImage = new BitmapImage( new Uri( "pack://application:,,,/Noise.UI;component/Resources/Unknown Album Image.png" ));
 			mSelectImage = new BitmapImage( new Uri( "pack://application:,,,/Noise.UI;component/Resources/Select Album Image.png" ));
+
+			using( var tagList = mDataProvider.GetTagList( eTagGroup.User )) {
+				mCategoryList = new List<DbTag>( tagList.List );
+			}
 		}
 
 		public bool IsActive {
@@ -127,6 +137,8 @@ namespace Noise.UI.ViewModels {
 					}
 
 					mTracks.Each( track => mChangeObserver.Add( track ));
+
+					SetAlbumCategories( albumInfo.Categories );
 				}
 
 				mCurrentAlbumCover = SelectAlbumCover( albumInfo.SupportInfo );
@@ -135,6 +147,26 @@ namespace Noise.UI.ViewModels {
 				RaisePropertyChanged( () => AlbumPlayTime );
 				RaisePropertyChanged( () => Album );
 		    } );
+		}
+
+		private void SetAlbumCategories( IEnumerable<long> categories ) {
+			mAlbumCategories.Clear();
+			mAlbumCategories.AddRange( categories );
+			mCategoryDisplay = "";
+			foreach( var category in mAlbumCategories ) {
+				foreach( var tag in mCategoryList ) {
+					if( tag.DbId == category ) {
+						if(!string.IsNullOrWhiteSpace( mCategoryDisplay )) {
+							mCategoryDisplay += ", " + tag.Name;
+						}
+						else {
+							mCategoryDisplay = tag.Name;
+						}
+					}
+				}
+			}
+
+			RaisePropertyChanged( () => AlbumCategories );
 		}
 
 		private AlbumSupportInfo SupportInfo {
@@ -175,14 +207,16 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private NewAlbumInfo RetrieveAlbumInfo( DbAlbum album ) {
-			var retValue = new NewAlbumInfo( null, null, null );
+			var retValue = new NewAlbumInfo( null, null, null, null );
 
 			if( album != null ) {
 				using( var tracks = mDataProvider.GetTrackList( album.DbId )) {
 					var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
 														orderby track.VolumeName, track.TrackNumber ascending select track );
 
-					retValue = new NewAlbumInfo( album, mDataProvider.GetAlbumSupportInfo( album.DbId ), sortedList );
+					using( var categoryList = mDataProvider.GetAlbumCategories( album.DbId )) {
+						retValue = new NewAlbumInfo( album, mDataProvider.GetAlbumSupportInfo( album.DbId ), sortedList, new List<long>( categoryList.List ));
+					}
 				}
 			}
 
@@ -364,6 +398,45 @@ namespace Noise.UI.ViewModels {
 					}
 				}
 			}
+		}
+
+		public void Execute_EditCategories() {
+			if( mCurrentAlbum != null ) {
+				var dialogModel = new CategorySelectionDialogModel( mCategoryList, mAlbumCategories, OnNewCategoryRequest );
+				if( mDialogService.ShowDialog( DialogNames.CategorySelection, dialogModel ) == true ) {
+					SetAlbumCategories( dialogModel.SelectedCategories );
+					mDataProvider.SetAlbumCategories( mCurrentAlbum.Artist, mCurrentAlbum.DbId, dialogModel.SelectedCategories );
+				}
+			}
+		}
+
+		private IEnumerable<DbTag> OnNewCategoryRequest( object sender ) {
+			IEnumerable<DbTag>	retValue = null;
+			var					newCategory = new UiCategory();
+
+			if( mDialogService.ShowDialog( DialogNames.CategoryEdit, newCategory ) == true ) {
+				var tag = new DbTag( eTagGroup.User, newCategory.Name ) { Description = newCategory.Description };
+
+				mDataProvider.InsertItem( tag );
+
+				using( var tagList = mDataProvider.GetTagList( eTagGroup.User )) {
+					mCategoryList = new List<DbTag>( tagList.List );
+
+					retValue = mCategoryList;
+				}
+			}
+
+			return( retValue );
+		}
+
+		[DependsUpon( "Album" )]
+		public bool CanExecute_EditCategories() {
+			return( mCurrentAlbum != null ); 
+		}
+
+		[DependsUpon( "SupportInfo" )]
+		public string AlbumCategories {
+			get{ return( mCategoryDisplay ); }
 		}
 
 		private void OnTrackEdit( long trackId ) {

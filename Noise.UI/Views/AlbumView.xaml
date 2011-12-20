@@ -40,7 +40,7 @@
                         </i:Interaction.Behaviors>
                     </Image>
                     </Viewbox>
-                    <Grid Grid.Column="2" Margin="3,0,25,0" Behaviours:GridUtils.RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto">
+                    <Grid Grid.Column="2" Margin="3,0,25,0" Behaviours:GridUtils.RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto">
                         <!-- Album name and Play button -->
                         <Grid Grid.Row="0" Margin="0,0,0,9" HorizontalAlignment="Right" Behaviours:GridUtils.ColumnDefinitions="Auto,Auto">
                             <Button Style="{StaticResource PlayButtonStyle}" Grid.Column="0" Margin="0,0,3,0" Command="{Binding Path=PlayAlbum}"/>
@@ -62,12 +62,20 @@
                             <TextBlock Text="{Binding Path=AlbumPlayTime, Converter={StaticResource TimeSpanConverter}}"/>
                         </StackPanel>
                         
+                        <!-- Categories -->
+                        <StackPanel HorizontalAlignment="Right" Grid.Row="5" Orientation="Horizontal">
+                            <TextBlock Text="Categories: "/>
+                            <TextBlock Text="{Binding Path=AlbumCategories}"/>
+                        </StackPanel>
+
                         <!-- Album commands -->
-                        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button Height="19" Width="19" Margin="0,0,5,5" Padding="1" ToolTip="Open Album Folder" Foreground="{StaticResource ControlTextColor}"
                                     Content="{StaticResource Path_Folder}" Command="{Binding Path=OpenAlbumFolder}"/>
                             <Button Height="19" Width="19" Margin="0,0,5,5" Padding="1" ToolTip="Display Album Extras" Foreground="{StaticResource ControlTextColor}"
                                     Content="{StaticResource Path_Pictures}" Command="{Binding DisplayPictures}"/>
+                            <Button Height="19" Width="19" Margin="0,0,5,5" Padding="1" ToolTip="Edit Album Categories" Foreground="{StaticResource ControlTextColor}"
+                                    Content="{StaticResource Path_Categories}" Command="{Binding EditCategories}"/>
                             <Button Height="19" Width="19" Margin="0,0,0,5" Padding="2" ToolTip="Edit Album Properties" Foreground="{StaticResource ControlTextColor}"
                                     Content="{StaticResource Path_Edit}" Command="{Binding Path=EditAlbum}"/>
                         </StackPanel>

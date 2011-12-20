@@ -221,6 +221,7 @@
     <Compile Include="Dto\UiArtistTrackNode.cs" />
     <Compile Include="Dto\UiArtistTreeNode.cs" />
     <Compile Include="Dto\UiBase.cs" />
+    <Compile Include="Dto\UiCategory.cs" />
     <Compile Include="Dto\UiDecadeTreeNode.cs" />
     <Compile Include="Dto\UiEqBand.cs" />
     <Compile Include="Dto\UiInternetStream.cs" />
@@ -266,6 +267,7 @@
     <Compile Include="ViewModels\ApplicationLogDialogModel.cs" />
     <Compile Include="ViewModels\ArtistTracksViewModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
+    <Compile Include="ViewModels\CategorySelectionDialogModel.cs" />
     <Compile Include="ViewModels\CloudConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\DatabaseConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\ExplorerStrategyArtistAlbum.cs" />
@@ -312,6 +314,12 @@
     </Compile>
     <Compile Include="Views\ArtistView.xaml.cs">
       <DependentUpon>ArtistView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CategoryEditDialog.xaml.cs">
+      <DependentUpon>CategoryEditDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CategorySelectionDialog.xaml.cs">
+      <DependentUpon>CategorySelectionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CloudConfigurationDialog.xaml.cs">
       <DependentUpon>CloudConfigurationDialog.xaml</DependentUpon>
@@ -474,6 +482,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ArtistView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CategoryEditDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CategorySelectionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
