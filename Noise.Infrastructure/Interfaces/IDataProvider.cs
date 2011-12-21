@@ -38,6 +38,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 		DataProviderList<long>		GetArtistCategories( long artistId );
 		DataProviderList<long>		GetAlbumCategories( long albumId );
+		DataProviderList<long>		GetAlbumsInCategory( long categoryId );
 		void						SetAlbumCategories( long artistId, long albumId, IEnumerable<long> categories );
 
 		StorageFile					GetPhysicalFile( DbTrack forTrack );

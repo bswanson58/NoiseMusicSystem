@@ -262,6 +262,7 @@
     <Compile Include="PlayQueue\IPlayStrategyFactory.cs" />
     <Compile Include="PlayQueue\PlayExhaustedFactory.cs" />
     <Compile Include="PlayQueue\PlayExhaustedListBase.cs" />
+    <Compile Include="PlayQueue\PlayExhaustedStrategyCategory.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyFavorites.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyPlayList.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategySimilar.cs" />

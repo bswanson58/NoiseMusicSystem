@@ -1081,6 +1081,31 @@ namespace Noise.Core.Database {
 			}
 		}
 
+		public DataProviderList<long> GetAlbumsInCategory( long categoryId ) {
+			DataProviderList<long>	retValue = null;
+
+			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				var parms = database.Database.CreateParameters();
+
+				parms["tagId"] = categoryId;
+				parms["group"] = eTagGroup.User;
+
+				var tagList = database.Database.ExecuteQuery( "SELECT DbTagAssociation Where TagGroup = @group AND TagId = @tagId", parms ).OfType<DbTagAssociation>();
+
+				retValue = new DataProviderList<long>( database.DatabaseId, FreeDatabase, from assoc in tagList select assoc.AlbumId );
+				
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "Exception - GetAlbumCategories:", ex );
+
+				mDatabaseManager.FreeDatabase( database );
+			}
+
+			return( retValue );
+		}
+
+
 		public DataFindResults Find( string artist, string album, string track ) {
 			DataFindResults	retValue = null;
 

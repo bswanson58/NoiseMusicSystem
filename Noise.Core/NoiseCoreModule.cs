@@ -75,6 +75,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<PlayStrategyTwoFers>();
 
 			mContainer.RegisterType<IPlayExhaustedFactory, PlayExhaustedFactory>();
+			mContainer.RegisterType<PlayExhaustedStrategyCategory>();
 			mContainer.RegisterType<PlayExhaustedStrategyFavorites>();
 			mContainer.RegisterType<PlayExhaustedStrategyGenre>();
 			mContainer.RegisterType<PlayExhaustedStrategyPlayList>();

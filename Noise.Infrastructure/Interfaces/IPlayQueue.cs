@@ -15,7 +15,8 @@ namespace Noise.Infrastructure.Interfaces {
 		PlaySimilar,
 		PlayFavorites,
 		PlayStream,
-		PlayGenre
+		PlayGenre,
+		PlayCategory
 	}
 
 	public interface IPlayQueue {

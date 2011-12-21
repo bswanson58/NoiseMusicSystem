@@ -45,6 +45,7 @@ namespace Noise.UI.ViewModels {
 			mExhaustedStrategies = new ObservableCollectionEx<ExhaustedStrategyItem>{
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Stop, "Stop" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Replay, "Replay" ),
+												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayCategory, "Play Category..." ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayFavorites, "Play Favorites" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlaySimilar, "Play Similar" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayList, "Playlist..." ),
@@ -258,6 +259,7 @@ namespace Noise.UI.ViewModels {
 			selectedItem = Constants.cDatabaseNullOid;
 
 			if(( strategy == ePlayExhaustedStrategy.PlayStream ) ||
+			   ( strategy == ePlayExhaustedStrategy.PlayCategory ) ||
 			   ( strategy == ePlayExhaustedStrategy.PlayList ) ||
 			   ( strategy == ePlayExhaustedStrategy.PlayGenre )) {
 				if( strategy == ePlayExhaustedStrategy.PlayList ) {
@@ -275,6 +277,17 @@ namespace Noise.UI.ViewModels {
 					var	dialogModel = new SelectStreamDialogModel( mDataProvider );
 
 					if( mDialogService.ShowDialog( DialogNames.SelectStream, dialogModel ) == true ) {
+						if( dialogModel.SelectedItem != null ) {
+							selectedItem = dialogModel.SelectedItem.DbId;
+							retValue = true;
+						}
+					}
+				}
+
+				if( strategy == ePlayExhaustedStrategy.PlayCategory ) {
+					var dialogModel = new SelectCategoryDialogModel( mDataProvider );
+
+					if( mDialogService.ShowDialog( DialogNames.SelectCategory, dialogModel ) == true ) {
 						if( dialogModel.SelectedItem != null ) {
 							selectedItem = dialogModel.SelectedItem.DbId;
 							retValue = true;

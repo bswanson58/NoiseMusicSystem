@@ -283,6 +283,7 @@
     <Compile Include="ViewModels\PlayListViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
+    <Compile Include="ViewModels\SelectCategoryDialogModel.cs" />
     <Compile Include="ViewModels\SelectGenreDialogModel.cs" />
     <Compile Include="ViewModels\SelectPlayListDialogModel.cs" />
     <Compile Include="ViewModels\SelectStreamDialogModel.cs" />
@@ -371,6 +372,9 @@
     </Compile>
     <Compile Include="Views\SearchView.xaml.cs">
       <DependentUpon>SearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SelectCategoryDialog.xaml.cs">
+      <DependentUpon>SelectCategoryDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SelectGenreDialog.xaml.cs">
       <DependentUpon>SelectGenreDialog.xaml</DependentUpon>
@@ -558,6 +562,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SelectCategoryDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
