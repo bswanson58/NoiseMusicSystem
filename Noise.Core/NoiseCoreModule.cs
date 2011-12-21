@@ -46,6 +46,11 @@ namespace Noise.Core {
 			mContainer.RegisterType<DatabaseStatistics, DatabaseStatistics>();
 			mContainer.RegisterType<ISummaryBuilder, SummaryBuilder>();
 
+			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
+			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
+			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
+			mContainer.RegisterType<IAssociatedItemListProvider, AssociatedItemListProvider>();
+
 			mContainer.RegisterType<IRequireConstruction, BackgroundTaskManager>( "BackgroundTaskManager", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRequireConstruction, ContentManager>( "ContentManager", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRequireConstruction, DataUpdates>( "DataUpdates", new HierarchicalLifetimeManager());

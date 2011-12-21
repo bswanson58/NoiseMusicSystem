@@ -689,8 +689,6 @@ namespace Noise.Core.Database {
 				}
 
 				retValue = new ArtistSupportInfo( textInfo, artwork, similarArtists, topAlbums, bandMembers );
-												  
-				
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - GetArtistSupportInfo:", ex );
