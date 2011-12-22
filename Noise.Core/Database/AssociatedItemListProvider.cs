@@ -3,7 +3,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
-	public class AssociatedItemListProvider : BaseDataProvider<DbAssociatedItemList>, IAssociatedItemListProvider {
+	internal class AssociatedItemListProvider : BaseDataProvider<DbAssociatedItemList>, IAssociatedItemListProvider {
 		public AssociatedItemListProvider( IDatabaseManager databaseManager ) :
 			base( databaseManager ) { }
 

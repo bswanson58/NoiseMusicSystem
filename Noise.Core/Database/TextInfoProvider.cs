@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
-	public class TextInfoProvider : BaseDataProvider<DbTextInfo>, ITextInfoProvider {
+	internal class TextInfoProvider : BaseDataProvider<DbTextInfo>, ITextInfoProvider {
 		public TextInfoProvider( IDatabaseManager databaseManager ) :
 			base( databaseManager ) { }
 
@@ -30,14 +31,14 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
-		public TextInfo GetAlbumTextInfo( long albumId ) {
-			TextInfo	retValue = null;
+		public TextInfo[] GetAlbumTextInfo( long albumId ) {
+			TextInfo[]	retValue = null;
 
-			var dbTextInfo = TryGetItem( "SELECT DbTextInfo Where Album = @albumId",
+			var dbTextInfo = TryGetList( "SELECT DbTextInfo Where Album = @albumId",
 											new Dictionary<string, object> {{ "albumId", albumId }}, "Exception - GetAlbumArtwork" );
 
 			if( dbTextInfo != null ) {
-				retValue = TransformTextInfo( dbTextInfo );
+				retValue = dbTextInfo.List.Select( TransformTextInfo ).ToArray();
 			}
 
 			return( retValue );

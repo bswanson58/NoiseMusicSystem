@@ -7,7 +7,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
-	public class AlbumProvider : BaseDataProvider<DbAlbum>, IAlbumProvider {
+	internal class AlbumProvider : BaseDataProvider<DbAlbum>, IAlbumProvider {
 		private readonly IArtworkProvider			mArtworkProvider;
 		private readonly ITextInfoProvider			mTextInfoProvider;
 		private readonly ITagAssociationProvider	mTagAssociationProvider;
@@ -86,10 +86,9 @@ namespace Noise.Core.Database {
 		}
 
 		public AlbumSupportInfo GetAlbumSupportInfo( long albumId ) {
-//			return( new AlbumSupportInfo( mArtworkProvider.GetAlbumArtwork( albumId, ContentType.AlbumCover ),
-//										  mArtworkProvider.GetAlbumArtwork( albumId, ContentType.AlbumArtwork ),
-//										  mTextInfoProvider.GetAlbumTextInfo( albumId, ContentType.TextInfo )));
-			return( null );
+			return( new AlbumSupportInfo( mArtworkProvider.GetAlbumArtwork( albumId, ContentType.AlbumCover ),
+										  mArtworkProvider.GetAlbumArtwork( albumId, ContentType.AlbumArtwork ),
+										  mTextInfoProvider.GetAlbumTextInfo( albumId )));
 		}
 	}
 }

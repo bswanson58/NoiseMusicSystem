@@ -7,7 +7,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
-	public class ArtistProvider : BaseDataProvider<DbArtist>, IArtistProvider {
+	internal class ArtistProvider : BaseDataProvider<DbArtist>, IArtistProvider {
 		private readonly IArtworkProvider				mArtworkProvider;
 		private readonly ITextInfoProvider				mTextInfoProvider;
 		private readonly ITagAssociationProvider		mTagAssociationProvider;

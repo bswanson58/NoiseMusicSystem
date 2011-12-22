@@ -17,6 +17,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator	mEvents;
 		private readonly IDataProvider		mDataProvider;
 		private readonly IArtistProvider	mArtistProvider;
+		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITagManager		mTagManager;
 		private readonly IDialogService		mDialogService;
 		private UiArtist					mCurrentArtist;
@@ -28,10 +29,11 @@ namespace Noise.UI.ViewModels {
 		private readonly ObservableCollectionEx<LinkNode>				mBandMembers;
 		private readonly ObservableCollectionEx<DbDiscographyRelease>	mDiscography;
 
-		public ArtistViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IArtistProvider artistProvider, ITagManager tagManager, IDialogService dialogService ) {
+		public ArtistViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager, IDialogService dialogService ) {
 			mEvents = eventAggregator;
 			mDataProvider = dataProvider;
 			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
 			mTagManager = tagManager;
 			mDialogService = dialogService;
 
@@ -171,7 +173,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTopAlbumClicked( long albumId ) {
-			var album = mDataProvider.GetAlbum( albumId );
+			var album = mAlbumProvider.GetAlbum( albumId );
 
 			if( album != null ) {
 				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( album );

@@ -37,6 +37,7 @@ namespace Noise.UI.ViewModels {
 	internal class AlbumViewModel : ViewModelBase, IActiveAware {
 		private readonly IEventAggregator	mEvents;
 		private readonly IDataProvider		mDataProvider;
+		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITagManager		mTagManager;
 		private readonly IDialogService		mDialogService;
 		private UiAlbum						mCurrentAlbum;
@@ -55,9 +56,10 @@ namespace Noise.UI.ViewModels {
 
 		public	event EventHandler			IsActiveChanged;
 
-		public AlbumViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, ITagManager tagManager, IDialogService dialogService ) {
+		public AlbumViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IAlbumProvider albumProvider, ITagManager tagManager, IDialogService dialogService ) {
 			mEvents = eventAggregator;
 			mDataProvider = dataProvider;
+			mAlbumProvider = albumProvider;
 			mTagManager = tagManager;
 			mDialogService = dialogService;
 
@@ -214,8 +216,8 @@ namespace Noise.UI.ViewModels {
 					var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
 														orderby track.VolumeName, track.TrackNumber ascending select track );
 
-					using( var categoryList = mDataProvider.GetAlbumCategories( album.DbId )) {
-						retValue = new NewAlbumInfo( album, mDataProvider.GetAlbumSupportInfo( album.DbId ), sortedList, new List<long>( categoryList.List ));
+					using( var categoryList = mAlbumProvider.GetAlbumCategories( album.DbId )) {
+						retValue = new NewAlbumInfo( album, mAlbumProvider.GetAlbumSupportInfo( album.DbId ), sortedList, new List<long>( categoryList.List ));
 					}
 				}
 			}
@@ -367,7 +369,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_PlayAlbum() {
 			if( mCurrentAlbum != null ) {
-				GlobalCommands.PlayAlbum.Execute( mDataProvider.GetAlbum( mCurrentAlbum.DbId ));
+				GlobalCommands.PlayAlbum.Execute( mAlbumProvider.GetAlbum( mCurrentAlbum.DbId ));
 			}
 		}
 
@@ -383,7 +385,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_EditAlbum() {
 			if( mCurrentAlbum != null ) {
-				using( var albumUpdate = mDataProvider.GetAlbumForUpdate( mCurrentAlbum.DbId )) {
+				using( var albumUpdate = mAlbumProvider.GetAlbumForUpdate( mCurrentAlbum.DbId )) {
 					if( albumUpdate != null ) {
 						var dialogModel = new AlbumEditDialogModel();
 
@@ -405,7 +407,7 @@ namespace Noise.UI.ViewModels {
 				var dialogModel = new CategorySelectionDialogModel( mCategoryList, mAlbumCategories, OnNewCategoryRequest );
 				if( mDialogService.ShowDialog( DialogNames.CategorySelection, dialogModel ) == true ) {
 					SetAlbumCategories( dialogModel.SelectedCategories );
-					mDataProvider.SetAlbumCategories( mCurrentAlbum.Artist, mCurrentAlbum.DbId, dialogModel.SelectedCategories );
+					mAlbumProvider.SetAlbumCategories( mCurrentAlbum.Artist, mCurrentAlbum.DbId, dialogModel.SelectedCategories );
 				}
 			}
 		}

@@ -47,7 +47,9 @@ namespace Noise.Core {
 			mContainer.RegisterType<ISummaryBuilder, SummaryBuilder>();
 
 			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
+			mContainer.RegisterType<IAlbumProvider, AlbumProvider>();
 			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
+			mContainer.RegisterType<ITagAssociationProvider, TagAssociationProvider>();
 			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
 			mContainer.RegisterType<IAssociatedItemListProvider, AssociatedItemListProvider>();
 

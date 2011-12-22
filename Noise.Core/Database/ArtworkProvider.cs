@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
-	public class ArtworkProvider : BaseDataProvider<DbArtwork>, IArtworkProvider {
+	internal class ArtworkProvider : BaseDataProvider<DbArtwork>, IArtworkProvider {
 		public ArtworkProvider( IDatabaseManager databaseManager )
 			: base( databaseManager ) {
 		}
@@ -32,14 +33,14 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
-		public Artwork GetAlbumArtwork( long albumId, ContentType ofType ) {
-			Artwork	retValue = null;
+		public Artwork[] GetAlbumArtwork( long albumId, ContentType ofType ) {
+			Artwork[]	retValue = null;
 
-			var dbArtwork = TryGetItem( "SELECT DbArtwork Where Album = @albumId AND ContentType = @contentType",
-				new Dictionary<string, object> {{ "albumId", albumId }, { "contentType", ofType }}, "Exception - GetAlbumArtwork" );
+			var dbArtworkList = TryGetList( "SELECT DbArtwork Where Album = @albumId AND ContentType = @contentType",
+											new Dictionary<string, object> {{ "albumId", albumId }, { "contentType", ofType }}, "Exception - GetAlbumArtwork" );
 
-			if( dbArtwork != null ) {
-				retValue = TransformArtwork( dbArtwork );
+			if( dbArtworkList != null ) {
+				retValue = dbArtworkList.List.Select( TransformArtwork ).ToArray();
 			}
 
 			return( retValue );

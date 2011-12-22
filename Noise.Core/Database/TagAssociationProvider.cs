@@ -3,7 +3,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
-	public class TagAssociationProvider : BaseDataProvider<DbTagAssociation>, ITagAssociationProvider {
+	internal class TagAssociationProvider : BaseDataProvider<DbTagAssociation>, ITagAssociationProvider {
 		public TagAssociationProvider( IDatabaseManager databaseManager ) :
 			base( databaseManager ) { }
 

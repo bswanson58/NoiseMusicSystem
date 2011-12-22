@@ -8,56 +8,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
-	public class DatabaseShell : IDisposable, IDatabaseShell {
-		private readonly IDatabaseManager	mDatabaseMgr;
-		private IDatabase					mDatabase;
-		private Parameters					mParameters;
-
-		public DatabaseShell( IDatabaseManager databaseManager ) {
-			mDatabaseMgr = databaseManager;
-		}
-
-		public IDatabase Database {
-			get {
-				if( mDatabase == null ) {
-					mDatabase = mDatabaseMgr.ReserveDatabase();
-				}
-
-				return( mDatabase );
-			}
-		}
-
-		public void SetParameter( string parameter, object value ) {
-			Condition.Requires( parameter ).IsNotNullOrEmpty();
-			Condition.Requires( value ).IsNotNull();
-
-			QueryParameters[parameter] = value;
-		}
-
-		public Parameters QueryParameters {
-			get {
-				if( mParameters == null ) {
-					mParameters = Database.Database.CreateParameters();
-				}
-
-				return( mParameters );
-			}
-		}
-
-		public void FreeDatabase() {
-			Dispose();
-		}
-
-		public void Dispose() {
-			if( mDatabase != null ) {
-				mDatabaseMgr.FreeDatabase( mDatabase );
-
-				mDatabase = null;
-			}
-		}
-	}
-
-	public abstract class BaseDataProvider<T> where T : class {
+	internal abstract class BaseDataProvider<T> where T : class {
 		private readonly IDatabaseManager	mDatabaseMgr;
 
 		protected  BaseDataProvider( IDatabaseManager databaseManager ) {
