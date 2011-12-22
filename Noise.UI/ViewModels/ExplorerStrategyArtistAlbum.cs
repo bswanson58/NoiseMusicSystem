@@ -27,6 +27,7 @@ namespace Noise.UI.ViewModels {
 
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IDataProvider			mDataProvider;
+		private readonly IArtistProvider		mArtistProvider;
 		private readonly ITagManager			mTagManager;
 		private readonly IDialogService			mDialogService;
 		private readonly Observal.Observer		mChangeObserver;
@@ -43,9 +44,10 @@ namespace Noise.UI.ViewModels {
 		private readonly Subject<ViewSortStrategy>		mAlbumSortSubject;
 		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
 
-		public ExplorerStrategyArtistAlbum( IEventAggregator eventAggregator, IDataProvider dataProvider, ITagManager tagManager, IDialogService dialogService ) {
+		public ExplorerStrategyArtistAlbum( IEventAggregator eventAggregator, IDataProvider dataProvider, IArtistProvider artistProvider, ITagManager tagManager, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
 			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
 			mTagManager = tagManager;
 			mDialogService = dialogService;
 
@@ -177,7 +179,7 @@ namespace Noise.UI.ViewModels {
 
 			var retValue = new List<UiTreeNode>();
 
-			using( var list = mDataProvider.GetArtistList( filter )) {
+			using( var list = mArtistProvider.GetArtistList( filter )) {
 				foreach( var artist in list.List ) {
 					AddArtist( retValue, artist );
 				}
@@ -263,7 +265,7 @@ namespace Noise.UI.ViewModels {
 
 		private void OnArtistSelect( UiArtistTreeNode artistNode ) {
 			if( artistNode.IsSelected ) {
-				var artist = mDataProvider.GetArtist( artistNode.Artist.DbId );
+				var artist = mArtistProvider.GetArtist( artistNode.Artist.DbId );
 
 				if( artist != null ) {
 					mEventAggregator.GetEvent<Events.ArtistFocusRequested>().Publish( artist );

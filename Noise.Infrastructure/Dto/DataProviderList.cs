@@ -1,17 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure.Dto {
 	public class DataProviderBase : IDisposable {
-		protected	readonly string		mClientName;
-		private		Action<string>		mDisposeAction;
+		private		readonly IDatabaseShell	mDatabaseShell;
+		protected	readonly string			mClientName;
+		private		Action<string>			mDisposeAction;
 
 		protected DataProviderBase( string clientName, Action<string> disposeAction ) {
 			mClientName = clientName;
 			mDisposeAction = disposeAction;
 		}
 
+		protected DataProviderBase( IDatabaseShell databaseShell ) {
+			
+		}
+
 		public void Dispose() {
+			if( mDatabaseShell != null ) {
+				mDatabaseShell.FreeDatabase();
+			}
+
 			if( mDisposeAction != null ) {
 				mDisposeAction( mClientName );
 
@@ -27,6 +37,11 @@ namespace Noise.Infrastructure.Dto {
 			base( clientName, disposeAction ) {
 			List = list;
 		}
+
+		public DataProviderList( IDatabaseShell database, IEnumerable<T> list ) :
+			base( database ) {
+			List = list;
+		}
 	}
 
 	public class DataUpdateShell<T> : DataProviderBase {
@@ -35,6 +50,13 @@ namespace Noise.Infrastructure.Dto {
 
 		public DataUpdateShell( string clientName, Action<string> disposeAction, Action<string, T> onUpdate, T item ) :
 			base( clientName, disposeAction ) {
+			Item = item;
+
+			mOnUpdate = onUpdate;
+		}
+
+		public DataUpdateShell( IDatabaseShell databaseShell, Action<string, T> onUpdate, T item ) :
+			base( databaseShell ) {
 			Item = item;
 
 			mOnUpdate = onUpdate;

@@ -16,6 +16,7 @@ namespace Noise.UI.ViewModels {
 	public class ArtistViewModel : ViewModelBase {
 		private readonly IEventAggregator	mEvents;
 		private readonly IDataProvider		mDataProvider;
+		private readonly IArtistProvider	mArtistProvider;
 		private readonly ITagManager		mTagManager;
 		private readonly IDialogService		mDialogService;
 		private UiArtist					mCurrentArtist;
@@ -27,9 +28,10 @@ namespace Noise.UI.ViewModels {
 		private readonly ObservableCollectionEx<LinkNode>				mBandMembers;
 		private readonly ObservableCollectionEx<DbDiscographyRelease>	mDiscography;
 
-		public ArtistViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, ITagManager tagManager, IDialogService dialogService ) {
+		public ArtistViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IArtistProvider artistProvider, ITagManager tagManager, IDialogService dialogService ) {
 			mEvents = eventAggregator;
 			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
 			mTagManager = tagManager;
 			mDialogService = dialogService;
 
@@ -127,7 +129,7 @@ namespace Noise.UI.ViewModels {
 				if( value != null ) {
 					mDataProvider.UpdateArtistInfo( value.DbId );
 
-					mCurrentArtist = TransformArtist( mDataProvider.GetArtist( value.DbId ));
+					mCurrentArtist = TransformArtist( mArtistProvider.GetArtist( value.DbId ));
 					mChangeObserver.Add( mCurrentArtist );
 
 					if(!mBackgroundWorker.IsBusy ) {
@@ -157,11 +159,11 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private ArtistSupportInfo RetrieveSupportInfo( UiArtist forArtist ) {
-			return( mDataProvider.GetArtistSupportInfo( forArtist.DbId ));
+			return( mArtistProvider.GetArtistSupportInfo( forArtist.DbId ));
 		}
 
 		private void OnSimilarArtistClicked( long artistId ) {
-			var artist = mDataProvider.GetArtist( artistId  );
+			var artist = mArtistProvider.GetArtist( artistId  );
 
 			if( artist != null ) {
 				mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( artist );
@@ -192,11 +194,11 @@ namespace Noise.UI.ViewModels {
 		private void OnAlbumFocus( DbAlbum album ) {
 			if( CurrentArtist != null ) {
 				if( album.Artist != CurrentArtist.DbId ) {
-					CurrentArtist = TransformArtist( mDataProvider.GetArtistForAlbum( album ));
+					CurrentArtist = TransformArtist( mArtistProvider.GetArtistForAlbum( album ));
 				}
 			}
 			else {
-				CurrentArtist = TransformArtist( mDataProvider.GetArtistForAlbum( album ));
+				CurrentArtist = TransformArtist( mArtistProvider.GetArtistForAlbum( album ));
 			}
 		}
 
@@ -285,7 +287,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_EditArtist() {
 			if( mCurrentArtist != null ) {
-				using( var artistUpdate = mDataProvider.GetArtistForUpdate( mCurrentArtist.DbId )) {
+				using( var artistUpdate = mArtistProvider.GetArtistForUpdate( mCurrentArtist.DbId )) {
 					if( artistUpdate != null ) {
 						artistUpdate.Item.Website = artistUpdate.Item.Website.Replace( Environment.NewLine, "" ).Replace( "\n", "" ).Replace( "\r", "" );
 
