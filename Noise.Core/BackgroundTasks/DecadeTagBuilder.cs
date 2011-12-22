@@ -13,17 +13,17 @@ namespace Noise.Core.BackgroundTasks {
 		private const string		cDecadeTagBuilderId		= "ComponentId_TagBuilder";
 
 		private readonly IDatabaseManager	mDatabaseMgr;
-		private readonly IDataProvider		mDataProvider;
 		private readonly IArtistProvider	mArtistProvider;
+		private readonly ITimestampProvider	mTimestampProvider;
 		private readonly ITagManager		mTagManager;
 		private List<long>					mArtistList;
 		private IEnumerator<long>			mArtistEnum;
 		private long						mLastScanTicks;
 		private	long						mStartScanTicks;
 
-		public DecadeTagBuilder( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager, IDataProvider dataProvider, IArtistProvider artistProvider, ITagManager tagManager ) {
+		public DecadeTagBuilder( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager, ITimestampProvider timestampProvider, IArtistProvider artistProvider, ITagManager tagManager ) {
 			mDatabaseMgr = databaseManager;
-			mDataProvider = dataProvider;
+			mTimestampProvider = timestampProvider;
 			mArtistProvider = artistProvider;
 			mTagManager = tagManager;
 
@@ -44,7 +44,7 @@ namespace Noise.Core.BackgroundTasks {
 			var database = mDatabaseMgr.ReserveDatabase();
 
 			try {
-				mLastScanTicks = mDataProvider.GetTimestamp( cDecadeTagBuilderId );
+				mLastScanTicks = mTimestampProvider.GetTimestamp( cDecadeTagBuilderId );
 				mStartScanTicks = DateTime.Now.Ticks;
 
 				mArtistList = new List<long>( from DbArtist artist in database.Database.ExecuteQuery( "SELECT DbArtist" ).OfType<DbArtist>() select artist.DbId );
@@ -60,7 +60,7 @@ namespace Noise.Core.BackgroundTasks {
 
 		private long NextArtist() {
 			if(!mArtistEnum.MoveNext()) {
-				mDataProvider.SetTimestamp( cDecadeTagBuilderId, mStartScanTicks );
+				mTimestampProvider.SetTimestamp( cDecadeTagBuilderId, mStartScanTicks );
 
 				InitializeLists();
 				mArtistEnum.MoveNext();

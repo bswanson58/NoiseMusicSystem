@@ -58,6 +58,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<ITagProvider, TagProvider>();
 			mContainer.RegisterType<ITagAssociationProvider, TagAssociationProvider>();
 			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
+			mContainer.RegisterType<ITimestampProvider, TimestampProvider>();
 			mContainer.RegisterType<IAssociatedItemListProvider, AssociatedItemListProvider>();
 
 			mContainer.RegisterType<IRequireConstruction, BackgroundTaskManager>( "BackgroundTaskManager", new HierarchicalLifetimeManager());
