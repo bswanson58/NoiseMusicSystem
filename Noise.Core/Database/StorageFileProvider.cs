@@ -1,13 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.Core.FileStore;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	internal class StorageFileProvider : BaseDataProvider<StorageFile>, IStorageFileProvider {
-		public StorageFileProvider( IDatabaseManager databaseManager ) :
-			base( databaseManager ) { }
+		private readonly IAlbumProvider			mAlbumProvider;
+		private readonly ITrackProvider			mTrackProvider;
+		private readonly IStorageFolderProvider	mStorageFolderProvider;
+
+		public StorageFileProvider( IDatabaseManager databaseManager, IAlbumProvider albumProvider, ITrackProvider trackProvider, IStorageFolderProvider storageFolderProvider ) :
+			base( databaseManager ) {
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
+			mStorageFolderProvider = storageFolderProvider;
+		}
 
 		public StorageFile GetPhysicalFile( DbTrack forTrack ) {
 			Condition.Requires( forTrack ).IsNotNull();
@@ -24,5 +36,73 @@ namespace Noise.Core.Database {
 
 			return( retValue );
 		}
+
+		public string GetAlbumPath( long albumId ) {
+			var retValue = "";
+
+			try {
+				var album = mAlbumProvider.GetAlbum( albumId );
+
+				if( album != null ) {
+					using( var albumTracks = mTrackProvider.GetTrackList( album )) {
+						var trackList = albumTracks.List.Select( GetPhysicalFile );
+						var parentList = trackList.Select( track => track.ParentFolder ).Distinct();
+						var folderList = parentList.Select( mStorageFolderProvider.GetFolder );
+
+						using( var dbShell = GetDatabase ) {
+							var pathList = folderList.Select( folder => StorageHelpers.GetPath( dbShell.Database.Database, folder ));
+
+							retValue = FindCommonParent( pathList );
+						}
+					}
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "Exception - GetAlbumPath:", ex );
+			}
+
+			return( retValue );
+		}
+
+		private static string FindCommonParent( IEnumerable<string> paths ) {
+			var retValue = "";
+			var pathList = paths.Where( path => !string.IsNullOrWhiteSpace( path )).ToList();
+
+			if( pathList.Count() > 0 ) {
+				if( pathList.Count() == 1 ) {
+					retValue = pathList.First();
+				}
+				else {
+					var match = true;
+					var index = 0;
+
+					retValue = pathList.First().Substring( 0, index + 1 );
+
+					while(( match ) &&
+						  ( index < pathList.First().Length )) {
+						var matchString = retValue;
+
+						match = pathList.All( path => path.StartsWith( matchString ));
+						index++;
+
+						if(( match ) &&
+						   ( index < pathList.First().Length )) {
+							retValue = pathList.First().Substring( 0, index + 1 );
+						}
+					}
+
+					if(!match ) {
+						var lastSlash = retValue.LastIndexOfAny( new [] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar, Path.VolumeSeparatorChar } );
+
+						if( lastSlash > 0 ) {
+							retValue = retValue.Substring( 0, lastSlash + 1 );
+						}
+					}
+				}
+			}
+
+			return( retValue );
+		}
+
 	}
 }

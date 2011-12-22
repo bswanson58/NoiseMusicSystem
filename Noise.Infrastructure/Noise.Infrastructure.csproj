@@ -218,6 +218,7 @@
     <Compile Include="Interfaces\IPlayQueue.cs" />
     <Compile Include="Interfaces\ISearchProvider.cs" />
     <Compile Include="Interfaces\IStorageFileProvider.cs" />
+    <Compile Include="Interfaces\IStorageFolderProvider.cs" />
     <Compile Include="Interfaces\ITagAssociationProvider.cs" />
     <Compile Include="Interfaces\ITagManager.cs" />
     <Compile Include="Interfaces\ITagProvider.cs" />

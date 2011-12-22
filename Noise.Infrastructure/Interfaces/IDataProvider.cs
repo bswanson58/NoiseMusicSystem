@@ -43,7 +43,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 //		StorageFile					GetPhysicalFile( DbTrack forTrack );
 //		string						GetPhysicalFilePath( StorageFile forFile );
-		string						GetAlbumPath( long albumId );
+//		string						GetAlbumPath( long albumId );
 
 //		ArtistSupportInfo			GetArtistSupportInfo( long artistId );
 //		AlbumSupportInfo			GetAlbumSupportInfo( long albumId );

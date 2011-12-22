@@ -35,38 +35,40 @@ namespace Noise.UI.ViewModels {
 	}
 
 	internal class AlbumViewModel : ViewModelBase, IActiveAware {
-		private readonly IEventAggregator	mEvents;
-		private readonly IDataProvider		mDataProvider;
-		private readonly IAlbumProvider		mAlbumProvider;
-		private readonly ITrackProvider		mTrackProvider;
-		private readonly IArtworkProvider	mArtworkProvider;
-		private readonly ITagProvider		mTagProvider;
-		private readonly ITagManager		mTagManager;
-		private readonly IDialogService		mDialogService;
-		private UiAlbum						mCurrentAlbum;
-		private DbAlbum						mRequestedAlbum;
-		private readonly BitmapImage		mUnknownImage;
-		private readonly BitmapImage		mSelectImage;
-		private ImageScrubberItem			mCurrentAlbumCover;
-		public	TimeSpan					AlbumPlayTime { get; private set; }
-		private bool						mIsActive;
-		private string						mCategoryDisplay;
-		private IEnumerable<DbTag>			mCategoryList;
-		private readonly Observal.Observer	mChangeObserver;
-		private readonly BackgroundWorker	mBackgroundWorker;
+		private readonly IEventAggregator		mEvents;
+		private readonly IDataProvider			mDataProvider;
+		private readonly IAlbumProvider			mAlbumProvider;
+		private readonly ITrackProvider			mTrackProvider;
+		private readonly IArtworkProvider		mArtworkProvider;
+		private readonly ITagProvider			mTagProvider;
+		private readonly ITagManager			mTagManager;
+		private readonly IStorageFileProvider	mStorageFileProvider;
+		private readonly IDialogService			mDialogService;
+		private UiAlbum							mCurrentAlbum;
+		private DbAlbum							mRequestedAlbum;
+		private readonly BitmapImage			mUnknownImage;
+		private readonly BitmapImage			mSelectImage;
+		private ImageScrubberItem				mCurrentAlbumCover;
+		private bool							mIsActive;
+		private string							mCategoryDisplay;
+		private IEnumerable<DbTag>				mCategoryList;
+		private readonly Observal.Observer		mChangeObserver;
+		private readonly BackgroundWorker		mBackgroundWorker;
 		private readonly ObservableCollectionEx<UiTrack>	mTracks;
-		private readonly List<long>			mAlbumCategories;
+		private readonly List<long>				mAlbumCategories;
 
-		public	event EventHandler			IsActiveChanged;
+		public	TimeSpan						AlbumPlayTime { get; private set; }
+		public	event EventHandler				IsActiveChanged;
 
 		public AlbumViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, 
-							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider, ITagProvider tagProvider,
+							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider, ITagProvider tagProvider, IStorageFileProvider storageFileProvider,
 							   ITagManager tagManager, IDialogService dialogService ) {
 			mEvents = eventAggregator;
 			mDataProvider = dataProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mArtworkProvider = artworkProvider;
+			mStorageFileProvider = storageFileProvider;
 			mTagProvider = tagProvider;
 			mTagManager = tagManager;
 			mDialogService = dialogService;
@@ -511,7 +513,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_OpenAlbumFolder() {
 			if( mCurrentAlbum != null ) {
-				var path = mDataProvider.GetAlbumPath( mCurrentAlbum.DbId );
+				var path = mStorageFileProvider.GetAlbumPath( mCurrentAlbum.DbId );
 
 				if(!string.IsNullOrWhiteSpace( path )) {
 					mEvents.GetEvent<Events.LaunchRequest>().Publish( path );
