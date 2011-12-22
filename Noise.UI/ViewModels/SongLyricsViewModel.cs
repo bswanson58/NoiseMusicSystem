@@ -23,16 +23,16 @@ namespace Noise.UI.ViewModels {
 		private const string		cViewStateNormal	= "Normal";
 
 		private readonly IEventAggregator	mEvents;
-		private readonly IDataProvider		mDataProvider;
 		private readonly IArtistProvider	mArtistProvider;
+		private readonly ILyricProvider		mLyricProvider;
 		private readonly IDialogService		mDialogService;
 		private LyricsInfo					mLyricsInfo;
 		private readonly ObservableCollectionEx<UiLyricSelector>	mLyricsList;
 
-		public SongLyricsViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IArtistProvider artistProvider, IDialogService dialogService  ) {
+		public SongLyricsViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ILyricProvider lyricProvider, IDialogService dialogService  ) {
 			mEvents = eventAggregator;
-			mDataProvider = dataProvider;
 			mArtistProvider = artistProvider;
+			mLyricProvider = lyricProvider;
 			mDialogService = dialogService;
 
 			mEvents.GetEvent<Events.SongLyricsRequest>().Subscribe( OnLyricsRequest );
@@ -129,7 +129,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_Edit() {
 			if( SelectedLyric != null ) {
-				using( var updateLyric = mDataProvider.GetLyricForUpdate( SelectedLyric.Lyric.DbId )) {
+				using( var updateLyric = mLyricProvider.GetLyricForUpdate( SelectedLyric.Lyric.DbId )) {
 					if( mDialogService.ShowDialog( DialogNames.LyricsEdit, updateLyric.Item ) == true ) {
 						updateLyric.Update();
 
@@ -152,7 +152,7 @@ namespace Noise.UI.ViewModels {
 												{ Lyrics = SelectedLyric.Lyric.Lyrics, SourceUrl = SelectedLyric.Lyric.SourceUrl };
 
 				mLyricsInfo.SetMatchingLyric( newLyric );
-				mDataProvider.StoreLyric( newLyric );
+				mLyricProvider.StoreLyric( newLyric );
 
 				RaiseCanExecuteChangedEvent( "CanExecute_SelectLyric" );
 			}

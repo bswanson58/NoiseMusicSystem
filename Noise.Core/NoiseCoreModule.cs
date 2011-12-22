@@ -52,6 +52,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
 			mContainer.RegisterType<IDiscographyProvider, DbDiscographyProvider>();
 			mContainer.RegisterType<IGenreProvider, GenreProvider>();
+			mContainer.RegisterType<ILyricProvider, LyricProvider>();
 			mContainer.RegisterType<ITagProvider, TagProvider>();
 			mContainer.RegisterType<ITagAssociationProvider, TagAssociationProvider>();
 			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
@@ -61,7 +62,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IRequireConstruction, ContentManager>( "ContentManager", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRequireConstruction, DataUpdates>( "DataUpdates", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRequireConstruction, FileUpdates>( "FileUpdates", new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IRequireConstruction, LyricsProvider>( "LyricsProvider", new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IRequireConstruction, LyricsSearcher>( "LyricsSearcher", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IEnumerable<IRequireConstruction>, IRequireConstruction[]>();
 
 			mContainer.RegisterType<IBackgroundTask, ContentBuilder>( "ContentBuilder" );

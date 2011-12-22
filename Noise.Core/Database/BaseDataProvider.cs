@@ -159,13 +159,19 @@ namespace Noise.Core.Database {
 
 		protected void InsertItem( T item ) {
 			using( var dbShell = GetDatabase ) {
-				dbShell.Database.Database.Store( item );
+				dbShell.Database.Insert( item );
+			}
+		}
+
+		protected void UpdateItem( T item ) {
+			using( var dbShell = GetDatabase ) {
+				dbShell.Database.Store( item );
 			}
 		}
 
 		protected void DeleteItem( T item ) {
 			using( var dbShell = GetDatabase ) {
-				dbShell.Database.Database.Delete( item );
+				dbShell.Database.Delete( item );
 			}
 		}
 

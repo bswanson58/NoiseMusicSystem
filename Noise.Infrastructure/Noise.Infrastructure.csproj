@@ -209,6 +209,7 @@
     <Compile Include="Interfaces\IDatabaseFilter.cs" />
     <Compile Include="Interfaces\IDbBase.cs" />
     <Compile Include="Interfaces\ILicenseManager.cs" />
+    <Compile Include="Interfaces\ILyricProvider.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
     <Compile Include="Interfaces\IPlayHistory.cs" />
     <Compile Include="Interfaces\IPlayListMgr.cs" />

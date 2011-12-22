@@ -1,4 +1,4 @@
 ﻿namespace Noise.Core.DataProviders {
-	public interface ILyricsProvider {
+	public interface ILyricsSearcher {
 	}
 }

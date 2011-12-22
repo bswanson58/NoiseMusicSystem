@@ -16,16 +16,16 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataProviders {
-	internal class LyricsProvider : ILyricsProvider, IRequireConstruction {
+	internal class LyricsSearcher : ILyricsSearcher, IRequireConstruction {
 		private readonly IEventAggregator	mEvents;
-		private readonly IDataProvider		mDataProvider;
+		private readonly ILyricProvider		mLyricsProvider;
 		private readonly bool				mHasNetworkAccess;
 
 		private readonly AsyncCommand<LyricsRequestArgs>	mLyricsRequestCommand;
 
-		public LyricsProvider( IEventAggregator eventAggregator, IDataProvider dataProvider ) {
+		public LyricsSearcher( IEventAggregator eventAggregator, ILyricProvider lyricProvider ) {
 			mEvents = eventAggregator;
-			mDataProvider = dataProvider;
+			mLyricsProvider = lyricProvider;
 
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
@@ -61,7 +61,7 @@ namespace Noise.Core.DataProviders {
 		private LyricsInfo LocateLyrics( LyricsRequestArgs args ) {
 			LyricsInfo	retValue;
 
-			using( var lyricsList = mDataProvider.GetPossibleLyrics( args.Artist, args.Track )) {
+			using( var lyricsList = mLyricsProvider.GetPossibleLyrics( args.Artist, args.Track )) {
 				var match = lyricsList.List.FirstOrDefault( lyric => lyric.ArtistId == args.Artist.DbId && lyric.TrackId == args.Track.DbId );
 				if( match == null ) {
 					match = lyricsList.List.FirstOrDefault( lyric => lyric.ArtistId == args.Artist.DbId && 
@@ -94,7 +94,7 @@ namespace Noise.Core.DataProviders {
 						if( parser.Success ) {
 							var dbLyric = new DbLyric( args.Artist.DbId, args.Track.DbId, args.Track.Name ) { Lyrics = parser.Lyrics, SourceUrl = result.Url };
 
-							mDataProvider.StoreLyric( dbLyric );
+							mLyricsProvider.StoreLyric( dbLyric );
 							lyricsInfo.SetMatchingLyric( dbLyric );
 
 							mEvents.GetEvent<Events.SongLyricsInfo>().Publish( lyricsInfo );
