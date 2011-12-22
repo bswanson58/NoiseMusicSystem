@@ -9,14 +9,14 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	public class TagManager : ITagManager, IRequireInitialization {
-		private readonly IDataProvider				mDataProvider;
+		private readonly IGenreProvider				mGenreProvider;
 		private readonly ITagProvider				mTagProvider;
 		private readonly ITagAssociationProvider	mTagAssociationProvider;
 		private readonly Dictionary<long, DbGenre>	mGenreList;
 		private readonly List<DbDecadeTag>			mDecadeList;
 
-		public TagManager( ILifecycleManager lifecycleManager, IDataProvider dataProvider, ITagProvider tagProvider, ITagAssociationProvider tagAssociationProvider ) {
-			mDataProvider = dataProvider;
+		public TagManager( ILifecycleManager lifecycleManager, IGenreProvider genreProvider, ITagProvider tagProvider, ITagAssociationProvider tagAssociationProvider ) {
+			mGenreProvider = genreProvider;
 			mTagProvider = tagProvider;
 			mTagAssociationProvider = tagAssociationProvider;
 			mGenreList = new Dictionary<long, DbGenre>();
@@ -51,7 +51,7 @@ namespace Noise.Core.Database {
 					genre = new DbGenre { Name = conformedName };
 
 					mGenreList.Add( genre.DbId, genre );
-					mDataProvider.InsertItem( genre );
+					mGenreProvider.AddGenre( genre );
 				}
 
 				Condition.Ensures( genre ).IsNotNull();
@@ -110,7 +110,7 @@ namespace Noise.Core.Database {
 		private void LoadGenreList() {
 			mGenreList.Clear();
 
-			using( var genreList = mDataProvider.GetGenreList()) {
+			using( var genreList = mGenreProvider.GetGenreList()) {
 				foreach( var genre in genreList.List ) {
 					mGenreList.Add( genre.DbId, genre );
 				}

@@ -30,8 +30,8 @@ namespace Noise.Infrastructure.Interfaces {
 //		DataProviderList<DbDiscographyRelease>	GetDiscography( long artistId );
 		DataProviderList<DbPlayList>			GetPlayLists();
 
-		DataProviderList<DbGenre>	GetGenreList();
-		DataProviderList<DbTrack>	GetGenreTracks( long genreId );
+//		DataProviderList<DbGenre>	GetGenreList();
+//		DataProviderList<DbTrack>	GetGenreTracks( long genreId );
 
 //		DataProviderList<DbTag>		GetTagList( eTagGroup forGroup );
 //		DataProviderList<DbTagAssociation>	GetTagAssociations( long forTagId );

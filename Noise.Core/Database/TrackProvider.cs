@@ -35,8 +35,8 @@ namespace Noise.Core.Database {
 			return( GetUpdateShell( "SELECT DbTrack Where DbId = @trackId", new Dictionary<string, object> {{ "trackId", trackId }} ));
 		}
 
-		public DataProviderList<DbTrack> GetGenreTracks( long genreId ) {
-			throw new NotImplementedException();
+		public DataProviderList<DbTrack> GetTrackListForGenre( long genreId ) {
+			return( TryGetList( "SELECT DbTrack Where Genre = @genre", new Dictionary<string, object> {{ "genre", genreId }}, "Exception - GetTrackListForGenre" ));
 		}
 	}
 }

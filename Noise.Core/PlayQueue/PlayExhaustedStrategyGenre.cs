@@ -2,14 +2,14 @@
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayExhaustedStrategyGenre : PlayExhaustedListBase {
-		private readonly	IDataProvider	mDataProvider;
+		private readonly ITrackProvider	mTrackProvider;
 
-		public PlayExhaustedStrategyGenre( IDataProvider dataProvider ) {
-			mDataProvider = dataProvider;
+		public PlayExhaustedStrategyGenre( ITrackProvider trackProvider ) {
+			mTrackProvider = trackProvider;
 		}
 
 		protected override void FillTrackList( long itemId ) {
-			using( var trackList = mDataProvider.GetGenreTracks( itemId )) {
+			using( var trackList = mTrackProvider.GetTrackListForGenre( itemId )) {
 				var	maxTracks = 250;
 
 				foreach( var track in trackList.List ) {

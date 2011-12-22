@@ -16,6 +16,7 @@ namespace Noise.UI.ViewModels {
 	public class PlayQueueViewModel : ViewModelBase {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IDataProvider		mDataProvider;
+		private readonly IGenreProvider		mGenreProvider;
 		private readonly ITagProvider		mTagProvider;
 		private readonly IPlayQueue			mPlayQueue;
 		private readonly IPlayListMgr		mPlayListMgr;
@@ -28,9 +29,11 @@ namespace Noise.UI.ViewModels {
 		private	readonly ObservableCollectionEx<ExhaustedStrategyItem>	mExhaustedStrategies;
 		private readonly ObservableCollectionEx<PlayStrategyItem>		mPlayStrategies;
 
-		public PlayQueueViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, ITagProvider tagProvider, IPlayQueue playQueue, IPlayListMgr playListMgr, IDialogService dialogService ) {
+		public PlayQueueViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, ITagProvider tagProvider, IGenreProvider genreProvider,
+								   IPlayQueue playQueue, IPlayListMgr playListMgr, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
 			mDataProvider = dataProvider;
+			mGenreProvider = genreProvider;
 			mTagProvider = tagProvider;
 			mPlayQueue = playQueue;
 			mPlayListMgr = playListMgr;
@@ -298,7 +301,7 @@ namespace Noise.UI.ViewModels {
 				}
 
 				if( strategy == ePlayExhaustedStrategy.PlayGenre ) {
-					var dialogModel = new SelectGenreDialogModel( mDataProvider );
+					var dialogModel = new SelectGenreDialogModel( mGenreProvider );
 
 					if( mDialogService.ShowDialog( DialogNames.SelectGenre, dialogModel ) == true ) {
 						if( dialogModel.SelectedItem != null ) {
