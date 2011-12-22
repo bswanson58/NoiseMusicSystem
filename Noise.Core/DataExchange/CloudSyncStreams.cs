@@ -38,14 +38,14 @@ namespace Noise.Core.DataExchange {
 					var dbStream = ( from DbInternetStream str in streamList.List where str.Name == streamName select str ).FirstOrDefault();
 
 					if( dbStream != null ) {
-						var updateStream = mStreamProvider.GetStreamForUpdate( dbStream.DbId );
+						using( var updateStream = mStreamProvider.GetStreamForUpdate( dbStream.DbId )) {
+							updateStream.Item.Description = stream.Description;
+							updateStream.Item.IsPlaylistWrapped = stream.IsPlaylistWrapped;
+							updateStream.Item.Url = stream.Url;
+							updateStream.Item.Website = stream.Website;
 
-						updateStream.Item.Description = stream.Description;
-						updateStream.Item.IsPlaylistWrapped = stream.IsPlaylistWrapped;
-						updateStream.Item.Url = stream.Url;
-						updateStream.Item.Website = stream.Website;
-
-						updateStream.Update();
+							updateStream.Update();
+						}
 					}
 					else {
 						dbStream = new DbInternetStream{ Description = stream.Description, IsPlaylistWrapped = stream.IsPlaylistWrapped,

@@ -79,23 +79,24 @@ namespace Noise.Core.Database {
 		}
 
 		public void SetAlbumCategories( long artistId, long albumId, IEnumerable<long> categories ) {
-			var currentCategories = GetAlbumCategories( albumId );
-			var removeList = currentCategories.List.Where( tagId => !categories.Contains( tagId )).ToList();
-			var addList = categories.Where( tagId => !currentCategories.List.Contains( tagId )).ToList();
+			using( var currentCategories = GetAlbumCategories( albumId )) {
+				var removeList = currentCategories.List.Where( tagId => !categories.Contains( tagId )).ToList();
+				var addList = categories.Where( tagId => !currentCategories.List.Contains( tagId )).ToList();
 
-			if(( removeList.Count > 0 ) ||
-			   ( addList.Count > 0 )) {
-				try {
-					foreach( var tagId in removeList ) {
-						mTagAssociationProvider.RemoveAssociation( tagId );
-					}
+				if(( removeList.Count > 0 ) ||
+				   ( addList.Count > 0 )) {
+					try {
+						foreach( var tagId in removeList ) {
+							mTagAssociationProvider.RemoveAssociation( tagId );
+						}
 
-					foreach( var tagId in addList ) {
-						mTagAssociationProvider.AddAssociation( new DbTagAssociation( eTagGroup.User, tagId, artistId, albumId ));
+						foreach( var tagId in addList ) {
+							mTagAssociationProvider.AddAssociation( new DbTagAssociation( eTagGroup.User, tagId, artistId, albumId ));
+						}
 					}
-				}
-				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Exception - SetAlbumCategories", ex );
+					catch( Exception ex ) {
+						NoiseLogger.Current.LogException( "Exception - SetAlbumCategories", ex );
+					}
 				}
 			}
 		}

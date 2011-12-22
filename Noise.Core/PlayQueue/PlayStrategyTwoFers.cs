@@ -44,24 +44,25 @@ namespace Noise.Core.PlayQueue {
 				}
 
 				if( needA2Fer ) {
-					var albumList = mAlbumProvider.GetAlbumList( retValue.Artist );
 					var r = new Random( DateTime.Now.Millisecond );
-					var next = r.Next( albumList.List.Count() - 1 );
-					var album = albumList.List.Skip( next ).FirstOrDefault();
+					using( var albumList = mAlbumProvider.GetAlbumList( retValue.Artist )) {
+						var next = r.Next( albumList.List.Count() - 1 );
+						var album = albumList.List.Skip( next ).FirstOrDefault();
 
-					if( album != null ) {
-						using( var trackList = mTrackProvider.GetTrackList( album )) {
-							next = r.Next( trackList.List.Count() - 1 );
-							var track = trackList.List.Skip( next ).FirstOrDefault();
-
-							while(( track != null ) &&
-							      ( queueMgr.IsTrackQueued( track ))) {
+						if( album != null ) {
+							using( var trackList = mTrackProvider.GetTrackList( album )) {
 								next = r.Next( trackList.List.Count() - 1 );
-								track = trackList.List.Skip( next ).FirstOrDefault();
-							}
+								var track = trackList.List.Skip( next ).FirstOrDefault();
 
-							if( track != null ) {
-								queueMgr.StrategyAdd( track, retValue );
+								while(( track != null ) &&
+									  ( queueMgr.IsTrackQueued( track ))) {
+									next = r.Next( trackList.List.Count() - 1 );
+									track = trackList.List.Skip( next ).FirstOrDefault();
+								}
+
+								if( track != null ) {
+									queueMgr.StrategyAdd( track, retValue );
+								}
 							}
 						}
 					}
