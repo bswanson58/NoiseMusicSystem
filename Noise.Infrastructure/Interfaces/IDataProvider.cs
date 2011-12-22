@@ -28,7 +28,7 @@ namespace Noise.Infrastructure.Interfaces {
 		DataUpdateShell<DbTrack>	GetTrackForUpdate( long trackId );
 */
 //		DataProviderList<DbDiscographyRelease>	GetDiscography( long artistId );
-		DataProviderList<DbPlayList>			GetPlayLists();
+//		DataProviderList<DbPlayList>			GetPlayLists();
 
 //		DataProviderList<DbGenre>	GetGenreList();
 //		DataProviderList<DbTrack>	GetGenreTracks( long genreId );
@@ -56,8 +56,8 @@ namespace Noise.Infrastructure.Interfaces {
 //		DataProviderList<DbLyric>	GetPossibleLyrics( DbArtist artist, DbTrack track );
 //		DataUpdateShell<DbLyric>	GetLyricForUpdate( long lyricId );
 
-		void						InsertItem( object dbItem );
-		void						DeleteItem( object dbItem );
+//		void						InsertItem( object dbItem );
+//		void						DeleteItem( object dbItem );
 		DbBase						GetItem( long itemId );
 
 //		DataProviderList<DbInternetStream>	GetStreamList();

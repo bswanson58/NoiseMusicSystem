@@ -10,13 +10,13 @@ namespace Noise.Core.PlayQueue {
 	public class PlayListMgr : IPlayListMgr {
 		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
-		private readonly IDataProvider		mDataProvider;
+		private readonly IPlayListProvider	mPlayListProvider;
 		private readonly ITrackProvider		mTrackProvider;
 
-		public PlayListMgr( IDatabaseManager databaseManager, IDataProvider dataProvider, ITrackProvider trackProvider, IEventAggregator eventAggregator ) {
+		public PlayListMgr( IDatabaseManager databaseManager, IPlayListProvider playListProvider, ITrackProvider trackProvider, IEventAggregator eventAggregator ) {
 			mDatabaseManager = databaseManager;
 			mTrackProvider = trackProvider;
-			mDataProvider = dataProvider;
+			mPlayListProvider = playListProvider;
 			mEvents = eventAggregator;
 		}
 
@@ -24,7 +24,7 @@ namespace Noise.Core.PlayQueue {
 			get {
 				var retValue = new List<DbPlayList>();
 
-				using( var list = mDataProvider.GetPlayLists()) {
+				using( var list = mPlayListProvider.GetPlayLists()) {
 					retValue.AddRange( list.List );
 				}
 
