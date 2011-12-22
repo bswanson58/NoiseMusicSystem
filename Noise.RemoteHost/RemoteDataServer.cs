@@ -12,11 +12,15 @@ using Noise.Infrastructure.RemoteHost;
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteDataServer : INoiseRemoteData {
-		private	readonly IDataProvider	mDataProvider;
-		private readonly ITagManager	mTagManager;
+		private readonly IArtistProvider	mArtistProvider;
+		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly ITrackProvider		mTrackProvider;
+		private readonly ITagManager		mTagManager;
 
-		public RemoteDataServer( IDataProvider dataProvider, ITagManager tagManager ) {
-			mDataProvider = dataProvider;
+		public RemoteDataServer( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ITagManager tagManager ) {
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
 			mTagManager = tagManager;
 		}
 
@@ -47,7 +51,7 @@ namespace Noise.RemoteHost {
 			var retValue = new ArtistListResult();
 
 			try {
-				using( var artistList = mDataProvider.GetArtistList()) {
+				using( var artistList = mArtistProvider.GetArtistList()) {
 					retValue.Artists = artistList.List.Select( TransformArtist ).ToArray();
 					retValue.Success = true;
 				}
@@ -79,8 +83,8 @@ namespace Noise.RemoteHost {
 			var retValue = new ArtistInfoResult();
 
 			try {
-				var artist = mDataProvider.GetArtist( artistId );
-				var artistInfo = mDataProvider.GetArtistSupportInfo( artistId );
+				var artist = mArtistProvider.GetArtist( artistId );
+				var artistInfo = mArtistProvider.GetArtistSupportInfo( artistId );
 
 				if(( artist != null ) &&
 				   ( artistInfo != null )) {
@@ -111,10 +115,10 @@ namespace Noise.RemoteHost {
 			var retValue = new AlbumListResult { ArtistId = artistId };
 
 			try {
-				var	artist = mDataProvider.GetArtist( artistId );
+				var	artist = mArtistProvider.GetArtist( artistId );
 
 				if( artist != null ) {
-					using( var albumList = mDataProvider.GetAlbumList( artistId )) {
+					using( var albumList = mAlbumProvider.GetAlbumList( artistId )) {
 						retValue.Albums = albumList.List.Select( TransformAlbum ).ToArray();
 						retValue.Success = true;
 					}
@@ -175,8 +179,8 @@ namespace Noise.RemoteHost {
 			var retValue = new AlbumInfoResult();
 
 			try {
-				var album = mDataProvider.GetAlbum( albumId );
-				var supportInfo = mDataProvider.GetAlbumSupportInfo( albumId );
+				var album = mAlbumProvider.GetAlbum( albumId );
+				var supportInfo = mAlbumProvider.GetAlbumSupportInfo( albumId );
 
 				if(( album != null ) &&
 				   ( supportInfo != null )) {
@@ -206,12 +210,12 @@ namespace Noise.RemoteHost {
 			var retValue = new TrackListResult();
 
 			try {
-				var album = mDataProvider.GetAlbum( albumId );
+				var album = mAlbumProvider.GetAlbum( albumId );
 
 				retValue.ArtistId = album.Artist;
 				retValue.AlbumId = album.DbId;
 
-				using( var trackList = mDataProvider.GetTrackList( albumId )) {
+				using( var trackList = mTrackProvider.GetTrackList( albumId )) {
 					retValue.Tracks = trackList.List.Select( TransformTrack ).ToArray();
 					foreach( var track in retValue.Tracks ) {
 						track.ArtistId = retValue.ArtistId;
@@ -233,18 +237,18 @@ namespace Noise.RemoteHost {
 			var favoritesList = new List<RoFavorite>();
 
 			try {
-			using( var list = mDataProvider.GetFavoriteArtists()) {
+			using( var list = mArtistProvider.GetFavoriteArtists()) {
 				favoritesList.AddRange( list.List.Select( artist => new RoFavorite( artist ) ) );
 			}
-			using( var list = mDataProvider.GetFavoriteAlbums()) {
+			using( var list = mAlbumProvider.GetFavoriteAlbums()) {
 				favoritesList.AddRange( from album in list.List
-				                        let artist = mDataProvider.GetArtistForAlbum( album )
+				                        let artist = mArtistProvider.GetArtistForAlbum( album )
 				                        select new RoFavorite( artist, album ));
 			}
-			using( var list = mDataProvider.GetFavoriteTracks()) {
+			using( var list = mTrackProvider.GetFavoriteTracks()) {
 				favoritesList.AddRange( from track in list.List
-				                        let album = mDataProvider.GetAlbumForTrack( track )
-				                        let artist = mDataProvider.GetArtistForAlbum( album )
+				                        let album = mAlbumProvider.GetAlbumForTrack( track )
+				                        let artist = mArtistProvider.GetArtistForAlbum( album )
 				                        select new RoFavorite( artist, album, track ));
 			}
 

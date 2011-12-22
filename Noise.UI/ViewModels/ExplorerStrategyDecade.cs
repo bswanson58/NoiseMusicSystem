@@ -27,6 +27,8 @@ namespace Noise.UI.ViewModels {
 
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IDataProvider			mDataProvider;
+		private readonly IArtistProvider		mArtistProvider;
+		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITagManager			mTagManager;
 		private readonly IDialogService			mDialogService;
 		private readonly Observal.Observer		mChangeObserver;
@@ -45,9 +47,12 @@ namespace Noise.UI.ViewModels {
 		private readonly Subject<ViewSortStrategy>		mAlbumSortSubject;
 		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
 
-		public ExplorerStrategyDecade( IEventAggregator eventAggregator, IDataProvider dataProvider, ITagManager tagManager, IDialogService dialogService ) {
+		public ExplorerStrategyDecade( IEventAggregator eventAggregator, IDataProvider dataProvider, IArtistProvider artistProvider, IAlbumProvider albumProvider,
+									   ITagManager tagManager, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
 			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
 			mTagManager = tagManager;
 			mDialogService = dialogService;
 
@@ -199,9 +204,9 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void FillDecadeArtists( UiDecadeTreeNode decadeNode ) {
-			var	artistIdList = mTagManager.ArtistList( decadeNode.Tag.DbId );
+			var	artistIdList = mTagManager.ArtistListForDecade( decadeNode.Tag.DbId );
 			var childNodes = ( from artistId in artistIdList
-			                   select mDataProvider.GetArtist( artistId )
+			                   select mArtistProvider.GetArtist( artistId )
 			                   into dbArtist where dbArtist != null select CreateArtistNode( dbArtist, decadeNode )).ToList();
 
 //			childNodes.Sort( ( node1, node2 ) => string.Compare( node1.Artist.SortName, node2.Artist.SortName ));
@@ -213,10 +218,10 @@ namespace Noise.UI.ViewModels {
 			var artist = artistNode.Artist;
 
 			if( artist != null ) {
-				var albumIdList = mTagManager.AlbumList( artistNode.Artist.DbId, artistNode.Parent.Tag.DbId );
+				var albumIdList = mTagManager.AlbumListForDecade( artistNode.Artist.DbId, artistNode.Parent.Tag.DbId );
 
 				foreach( var albumId in albumIdList ) {
-					var dbAlbum = mDataProvider.GetAlbum( albumId );
+					var dbAlbum = mAlbumProvider.GetAlbum( albumId );
 
 					if( dbAlbum != null ) {
 						var uiAlbum = new UiAlbum();
@@ -289,7 +294,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnArtistSelect( UiArtistTreeNode artistNode ) {
-			var artist = mDataProvider.GetArtist( artistNode.Artist.DbId );
+			var artist = mArtistProvider.GetArtist( artistNode.Artist.DbId );
 
 			if( artist != null ) {
 				mEventAggregator.GetEvent<Events.ArtistFocusRequested>().Publish( artist );
@@ -297,7 +302,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnAlbumSelect( UiAlbumTreeNode albumNode ) {
-			var album = mDataProvider.GetAlbum( albumNode.Album.DbId );
+			var album = mAlbumProvider.GetAlbum( albumNode.Album.DbId );
 
 			if( album != null ) {
 				mEventAggregator.GetEvent<Events.AlbumFocusRequested>().Publish( album );
@@ -305,7 +310,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnAlbumPlay( UiAlbumTreeNode albumNode ) {
-			var album = mDataProvider.GetAlbum( albumNode.Album.DbId );
+			var album = mAlbumProvider.GetAlbum( albumNode.Album.DbId );
 
 			if( album != null ) {
 				GlobalCommands.PlayAlbum.Execute( album );

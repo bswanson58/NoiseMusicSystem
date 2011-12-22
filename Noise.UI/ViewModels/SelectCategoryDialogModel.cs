@@ -8,8 +8,8 @@ namespace Noise.UI.ViewModels {
 		private readonly List<DbTag>	mCategoryList;
 		public	DbTag					SelectedItem { get; set; }
 
-		public SelectCategoryDialogModel( IDataProvider dataProvider ) {
-			using( var genreList = dataProvider.GetTagList( eTagGroup.User )) {
+		public SelectCategoryDialogModel( ITagProvider tagProvider ) {
+			using( var genreList = tagProvider.GetTagList( eTagGroup.User )) {
 				mCategoryList = new List<DbTag>( from DbTag tag in genreList.List orderby tag.Name ascending  select tag );
 			}
 		}

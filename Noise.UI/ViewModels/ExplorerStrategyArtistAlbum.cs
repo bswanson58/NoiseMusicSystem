@@ -28,6 +28,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IDataProvider			mDataProvider;
 		private readonly IArtistProvider		mArtistProvider;
+		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITagManager			mTagManager;
 		private readonly IDialogService			mDialogService;
 		private readonly Observal.Observer		mChangeObserver;
@@ -44,10 +45,11 @@ namespace Noise.UI.ViewModels {
 		private readonly Subject<ViewSortStrategy>		mAlbumSortSubject;
 		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
 
-		public ExplorerStrategyArtistAlbum( IEventAggregator eventAggregator, IDataProvider dataProvider, IArtistProvider artistProvider, ITagManager tagManager, IDialogService dialogService ) {
+		public ExplorerStrategyArtistAlbum( IEventAggregator eventAggregator, IDataProvider dataProvider, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
 			mDataProvider = dataProvider;
 			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
 			mTagManager = tagManager;
 			mDialogService = dialogService;
 
@@ -250,7 +252,7 @@ namespace Noise.UI.ViewModels {
 			var artist = parent.Artist;
 
 			if( artist != null ) {
-				using( var albumList = mDataProvider.GetAlbumList( artist.DbId )) {
+				using( var albumList = mAlbumProvider.GetAlbumList( artist.DbId )) {
 					foreach( var dbAlbum in from DbAlbum album in albumList.List orderby album.Name select album ) {
 						var uiAlbum = new UiAlbum { DisplayGenre = mTagManager.GetGenre( dbAlbum.Genre ) };
 						Mapper.DynamicMap( dbAlbum, uiAlbum );
@@ -275,7 +277,7 @@ namespace Noise.UI.ViewModels {
 
 		private void OnAlbumSelect( UiAlbumTreeNode albumNode ) {
 			if( albumNode.IsSelected ) {
-				var album = mDataProvider.GetAlbum( albumNode.Album.DbId );
+				var album = mAlbumProvider.GetAlbum( albumNode.Album.DbId );
 
 				if( album != null ) {
 					mEventAggregator.GetEvent<Events.AlbumFocusRequested>().Publish( album );
@@ -284,7 +286,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnAlbumPlay( UiAlbumTreeNode albumNode ) {
-			var album = mDataProvider.GetAlbum( albumNode.Album.DbId );
+			var album = mAlbumProvider.GetAlbum( albumNode.Album.DbId );
 
 			if( album != null ) {
 				GlobalCommands.PlayAlbum.Execute( album );

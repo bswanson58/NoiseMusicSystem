@@ -5,13 +5,15 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayExhaustedStrategyCategory : IPlayExhaustedStrategy {
-		private readonly IDataProvider	mDataProvider;
+		private readonly IAlbumProvider	mAlbumProvider;
+		private readonly ITrackProvider	mTrackProvider;
 		private	readonly List<long>		mAlbums;
 		private IPlayQueue				mQueueMgr;
 		private long					mCategoryId;
 
-		public PlayExhaustedStrategyCategory( IDataProvider dataProvider ) {
-			mDataProvider = dataProvider;
+		public PlayExhaustedStrategyCategory( IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
 			mAlbums = new List<long>();
 		}
 
@@ -19,7 +21,7 @@ namespace Noise.Core.PlayQueue {
 			mQueueMgr = queueMgr;
 			mCategoryId = itemId;
 
-			using( var albumList = mDataProvider.GetAlbumsInCategory( mCategoryId )) {
+			using( var albumList = mAlbumProvider.GetAlbumsInCategory( mCategoryId )) {
 				mAlbums.Clear();
 				mAlbums.AddRange( albumList.List );
 			}
@@ -48,7 +50,7 @@ namespace Noise.Core.PlayQueue {
 				var next = r.Next( mAlbums.Count );
 				var albumId = mAlbums.Skip( next ).FirstOrDefault();
 			
-				using( var trackList = mDataProvider.GetTrackList( albumId )) {
+				using( var trackList = mTrackProvider.GetTrackList( albumId )) {
 					next = r.Next( trackList.List.Count());
 
 					var track = trackList.List.Skip( next ).FirstOrDefault();

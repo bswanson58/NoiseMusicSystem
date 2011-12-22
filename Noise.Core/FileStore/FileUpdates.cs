@@ -31,6 +31,7 @@ namespace Noise.Core.FileStore {
 		internal const string					cBackgroundFileUpdater = "BackgroundFileUpdater";
 
 		private readonly IDataProvider			mDataProvider;
+		private readonly ITrackProvider			mTrackProvider;
 		private	readonly ISchedulerFactory		mSchedulerFactory;
 		private	readonly IScheduler				mJobScheduler;
 		private readonly List<BaseCommandArgs>	mUnfinishedCommands;
@@ -41,8 +42,9 @@ namespace Noise.Core.FileStore {
 		private AsyncCommand<UpdatePlayCountCommandArgs>	mUpdatePlayCountCommand;
 		private AsyncCommand<SetMp3TagCommandArgs>			mSetMp3TagsCommand;
 
-		public FileUpdates( ILifecycleManager lifecycleManager, IDataProvider dataProvider ) {
+		public FileUpdates( ILifecycleManager lifecycleManager, IDataProvider dataProvider, ITrackProvider trackProvider ) {
 			mDataProvider = dataProvider;
+			mTrackProvider = trackProvider;
 
 			lifecycleManager.RegisterForInitialize( this );
 			lifecycleManager.RegisterForShutdown( this );
@@ -281,7 +283,7 @@ namespace Noise.Core.FileStore {
 			if( args.IsAlbum ) {
 				NoiseLogger.Current.LogInfo( "Updating Mp3 file tags for album." );
 
-				using( var trackList = mDataProvider.GetTrackList( args.ItemId )) {
+				using( var trackList = mTrackProvider.GetTrackList( args.ItemId )) {
 					foreach( var track in trackList.List ) {
 						SetMp3FileTags( new SetMp3TagCommandArgs( track, args ));
 					}

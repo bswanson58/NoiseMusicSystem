@@ -9,12 +9,14 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	public class ContentBuilder : IBackgroundTask, IRequireInitialization {
-		private readonly IDataProvider	mDataProvider;
-		private	List<DbArtist>			mArtistList;
-		private IEnumerator<DbArtist>	mArtistEnum;
+		private readonly IDataProvider		mDataProvider;
+		private readonly IArtistProvider	mArtistProvider;
+		private	List<DbArtist>				mArtistList;
+		private IEnumerator<DbArtist>		mArtistEnum;
 
-		public ContentBuilder( ILifecycleManager lifecycleManager, IDataProvider dataProvider ) {
+		public ContentBuilder( ILifecycleManager lifecycleManager, IDataProvider dataProvider, IArtistProvider artistProvider ) {
 			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
 
 			lifecycleManager.RegisterForInitialize( this );
 		}
@@ -57,7 +59,7 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		private void BuildArtistList() {
-			using( var list = mDataProvider.GetArtistList()) {
+			using( var list = mArtistProvider.GetArtistList()) {
 				mArtistList = new List<DbArtist>( list.List );
 				mArtistEnum = mArtistList.GetEnumerator();
 			}

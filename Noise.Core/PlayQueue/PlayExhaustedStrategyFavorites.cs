@@ -4,17 +4,17 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayExhaustedStrategyFavorites : PlayExhaustedListBase {
-		private readonly	IDataProvider	mDataProvider;
+		private readonly	ITrackProvider	mTrackProvider;
 
-		public PlayExhaustedStrategyFavorites( IDataProvider dataProvider ) {
-			mDataProvider = dataProvider;
+		public PlayExhaustedStrategyFavorites( ITrackProvider trackProvider ) {
+			mTrackProvider = trackProvider;
 		}
 
 		protected override void FillTrackList( long itemId ) {
 			mTrackList.Clear();
 
 			try {
-				using( var list = mDataProvider.GetFavoriteTracks()) {
+				using( var list = mTrackProvider.GetFavoriteTracks()) {
 					foreach( var track in list.List ) {
 						if(!mQueueMgr.IsTrackQueued( track )) {
 							mTrackList.Add( track );

@@ -13,16 +13,18 @@ using Observal.Extensions;
 namespace Noise.UI.ViewModels {
 	public class PlayListViewModel : ViewModelBase {
 		private readonly IEventAggregator	mEvents;
-		private readonly IDataProvider		mDataProvider;
+		private readonly IArtistProvider	mArtistProvider;
+		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly IPlayListMgr		mPlayListMgr;
 		private PlayListNode				mSelectedNode;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly Observal.Observer	mChangeObserver;
 		private readonly ObservableCollectionEx<PlayListNode>	mTreeItems;
 
-		public PlayListViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IPlayListMgr playListMgr ) {
+		public PlayListViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider, IPlayListMgr playListMgr ) {
 			mEvents = eventAggregator;
-			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
 			mPlayListMgr = playListMgr;
 
 			mTreeItems = new ObservableCollectionEx<PlayListNode>();
@@ -61,9 +63,9 @@ namespace Noise.UI.ViewModels {
 				var childNodes = new List<PlayListNode>();
 
 				foreach( var track in trackList ) {
-					var album = mDataProvider.GetAlbumForTrack( track );
+					var album = mAlbumProvider.GetAlbumForTrack( track );
 					if( album != null ) {
-						var artist = mDataProvider.GetArtistForAlbum( album );
+						var artist = mArtistProvider.GetArtistForAlbum( album );
 
 						childNodes.Add( new PlayListNode( artist, album, track, OnNodeSelected, OnNodePlay ));
 					}

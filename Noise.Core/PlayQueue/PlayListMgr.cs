@@ -11,9 +11,11 @@ namespace Noise.Core.PlayQueue {
 		private readonly IEventAggregator	mEvents;
 		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly IDataProvider		mDataProvider;
+		private readonly ITrackProvider		mTrackProvider;
 
-		public PlayListMgr( IDatabaseManager databaseManager, IDataProvider dataProvider, IEventAggregator eventAggregator ) {
+		public PlayListMgr( IDatabaseManager databaseManager, IDataProvider dataProvider, ITrackProvider trackProvider, IEventAggregator eventAggregator ) {
 			mDatabaseManager = databaseManager;
+			mTrackProvider = trackProvider;
 			mDataProvider = dataProvider;
 			mEvents = eventAggregator;
 		}
@@ -83,7 +85,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public IEnumerable<DbTrack> GetTracks( DbPlayList forList ) {
-			return( forList.TrackIds.Select( trackId => mDataProvider.GetTrack( trackId )).ToList());
+			return( forList.TrackIds.Select( trackId => mTrackProvider.GetTrack( trackId )).ToList());
 		}
 
 		private void FireListChanged() {

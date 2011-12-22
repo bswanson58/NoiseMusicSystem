@@ -201,6 +201,7 @@
     <Compile Include="Interfaces\IDatabaseManager.cs" />
     <Compile Include="Interfaces\IDatabaseShell.cs" />
     <Compile Include="Interfaces\IDataExchangeManager.cs" />
+    <Compile Include="Interfaces\IDiscographyProvider.cs" />
     <Compile Include="Interfaces\IEqManager.cs" />
     <Compile Include="Interfaces\IIoc.cs" />
     <Compile Include="Interfaces\ILibraryBuilder.cs" />
@@ -214,7 +215,9 @@
     <Compile Include="Interfaces\ISearchProvider.cs" />
     <Compile Include="Interfaces\ITagAssociationProvider.cs" />
     <Compile Include="Interfaces\ITagManager.cs" />
+    <Compile Include="Interfaces\ITagProvider.cs" />
     <Compile Include="Interfaces\ITextInfoProvider.cs" />
+    <Compile Include="Interfaces\ITrackProvider.cs" />
     <Compile Include="Interfaces\IViewModelResolver.cs" />
     <Compile Include="RemoteDto\AlbumInfoResult.cs" />
     <Compile Include="RemoteDto\ArtistInfoResult.cs" />

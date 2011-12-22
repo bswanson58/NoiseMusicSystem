@@ -14,26 +14,30 @@ using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistViewModel : ViewModelBase {
-		private readonly IEventAggregator	mEvents;
-		private readonly IDataProvider		mDataProvider;
-		private readonly IArtistProvider	mArtistProvider;
-		private readonly IAlbumProvider		mAlbumProvider;
-		private readonly ITagManager		mTagManager;
-		private readonly IDialogService		mDialogService;
-		private UiArtist					mCurrentArtist;
-		private LinkNode					mArtistWebsite;
-		private readonly Observal.Observer	mChangeObserver;
-		private readonly BackgroundWorker	mBackgroundWorker;
+		private readonly IEventAggregator		mEvents;
+		private readonly IDataProvider			mDataProvider;
+		private readonly IArtistProvider		mArtistProvider;
+		private readonly IAlbumProvider			mAlbumProvider;
+		private readonly IDiscographyProvider	mDiscographyProvider;
+		private readonly ITagManager			mTagManager;
+		private readonly IDialogService			mDialogService;
+		private UiArtist						mCurrentArtist;
+		private LinkNode						mArtistWebsite;
+		private readonly Observal.Observer		mChangeObserver;
+		private readonly BackgroundWorker		mBackgroundWorker;
 		private readonly ObservableCollectionEx<LinkNode>				mSimilarArtists;
 		private readonly ObservableCollectionEx<LinkNode>				mTopAlbums;
 		private readonly ObservableCollectionEx<LinkNode>				mBandMembers;
 		private readonly ObservableCollectionEx<DbDiscographyRelease>	mDiscography;
 
-		public ArtistViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager, IDialogService dialogService ) {
+		public ArtistViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider,
+								IArtistProvider artistProvider, IAlbumProvider albumProvider, IDiscographyProvider discographyProvider,
+								ITagManager tagManager, IDialogService dialogService ) {
 			mEvents = eventAggregator;
 			mDataProvider = dataProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
+			mDiscographyProvider = discographyProvider;
 			mTagManager = tagManager;
 			mDialogService = dialogService;
 
@@ -94,7 +98,7 @@ namespace Noise.UI.ViewModels {
 							mBandMembers.AddRange( from DbAssociatedItem member in value.BandMembers.Items select new LinkNode( member.Item ));
 						}
 
-						using( var discoList = mDataProvider.GetDiscography( CurrentArtist.DbId )) {
+						using( var discoList = mDiscographyProvider.GetDiscography( CurrentArtist.DbId )) {
 							mDiscography.SuspendNotification();
 							mDiscography.AddRange( discoList.List );
 							mDiscography.Sort( release => release.Year, ListSortDirection.Descending );

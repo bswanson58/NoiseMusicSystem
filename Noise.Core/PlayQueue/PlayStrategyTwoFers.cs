@@ -6,10 +6,12 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayStrategyTwoFers : IPlayStrategy {
-		private readonly IDataProvider	mDataProvider;
+		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly ITrackProvider		mTrackProvider;
 
-		public PlayStrategyTwoFers( IDataProvider dataProvider ) {
-			mDataProvider = dataProvider;
+		public PlayStrategyTwoFers( IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
 		}
 
 		public PlayQueueTrack NextTrack( IPlayQueue queueMgr, IList<PlayQueueTrack> queue ) {
@@ -42,13 +44,13 @@ namespace Noise.Core.PlayQueue {
 				}
 
 				if( needA2Fer ) {
-					var albumList = mDataProvider.GetAlbumList( retValue.Artist );
+					var albumList = mAlbumProvider.GetAlbumList( retValue.Artist );
 					var r = new Random( DateTime.Now.Millisecond );
 					var next = r.Next( albumList.List.Count() - 1 );
 					var album = albumList.List.Skip( next ).FirstOrDefault();
 
 					if( album != null ) {
-						using( var trackList = mDataProvider.GetTrackList( album )) {
+						using( var trackList = mTrackProvider.GetTrackList( album )) {
 							next = r.Next( trackList.List.Count() - 1 );
 							var track = trackList.List.Skip( next ).FirstOrDefault();
 

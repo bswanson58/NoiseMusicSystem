@@ -9,6 +9,9 @@ using Noise.Infrastructure.Support;
 namespace Noise.Core.PlayQueue {
 	internal class PlayQueueMgr : IPlayQueue {
 		private readonly IDataProvider						mDataProvider;
+		private readonly IArtistProvider					mArtistProvider;
+		private readonly IAlbumProvider						mAlbumProvider;
+		private readonly ITrackProvider						mTrackProvider;
 		private readonly IEventAggregator					mEventAggregator;
 		private readonly List<PlayQueueTrack>				mPlayQueue;
 		private readonly List<PlayQueueTrack>				mPlayHistory;
@@ -26,9 +29,12 @@ namespace Noise.Core.PlayQueue {
 		private readonly AsyncCommand<DbAlbum>				mAlbumPlayCommand;
 		private readonly AsyncCommand<DbInternetStream>		mStreamPlayCommand;
 
-		public PlayQueueMgr( IEventAggregator eventAggregator, IDataProvider dataProvider,
+		public PlayQueueMgr( IEventAggregator eventAggregator, IDataProvider dataProvider, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 							 IPlayStrategyFactory strategyFactory, IPlayExhaustedFactory exhaustedFactory ) {
 			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
 			mEventAggregator = eventAggregator;
 			mPlayStrategyFactory = strategyFactory;
 			mPlayExhaustedFactory = exhaustedFactory;
@@ -77,10 +83,10 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		private void AddTrack( DbTrack track, eStrategySource strategySource ) {
-			var album = mDataProvider.GetAlbumForTrack( track );
+			var album = mAlbumProvider.GetAlbumForTrack( track );
 
 			if( album != null ) {
-				var artist = mDataProvider.GetArtistForAlbum( album );
+				var artist = mArtistProvider.GetArtistForAlbum( album );
 
 				if( artist != null ) {
 					var file = mDataProvider.GetPhysicalFile( track );
@@ -110,10 +116,10 @@ namespace Noise.Core.PlayQueue {
 		public void StrategyAdd( DbTrack track, PlayQueueTrack afterTrack ) {
 			if(( track != null ) &&
 			   ( afterTrack != null )) { 
-				var album = mDataProvider.GetAlbumForTrack( track );
+				var album = mAlbumProvider.GetAlbumForTrack( track );
 
 				if( album != null ) {
-					var artist = mDataProvider.GetArtistForAlbum( album );
+					var artist = mArtistProvider.GetArtistForAlbum( album );
 
 					if( artist != null ) {
 						var file = mDataProvider.GetPhysicalFile( track );
@@ -143,7 +149,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		private void AddAlbum( DbAlbum album ) {
-			using( var tracks = mDataProvider.GetTrackList( album )) {
+			using( var tracks = mTrackProvider.GetTrackList( album )) {
 				var firstTrack = true;
 				var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
 													orderby track.VolumeName, track.TrackNumber ascending select track );
@@ -161,7 +167,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void Add( DbArtist artist ) {
-			using( var albums = mDataProvider.GetAlbumList( artist )) {
+			using( var albums = mAlbumProvider.GetAlbumList( artist )) {
 				foreach( DbAlbum album in albums.List ) {
 					Add( album );
 				}

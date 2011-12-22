@@ -14,7 +14,9 @@ using Noise.UI.Dto;
 namespace Noise.UI.ViewModels {
 	public class ArtistTracksViewModel : ViewModelBase, IActiveAware {
 		private readonly IEventAggregator	mEvents;
-		private readonly IDataProvider		mDataProvider;
+		private readonly IArtistProvider	mArtistProvider;
+		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly ITrackProvider		mTrackProvider;
 		private readonly ITagManager		mTagManager;
 		private DbArtist					mCurrentArtist;
 		private	bool						mIsActive;
@@ -23,9 +25,11 @@ namespace Noise.UI.ViewModels {
 		public	event EventHandler			IsActiveChanged;
 		public	ObservableCollectionEx<UiArtistTrackNode>	TrackList { get; private set; }
 
-		public ArtistTracksViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, ITagManager tagManager ) {
+		public ArtistTracksViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ITagManager tagManager ) {
 			mEvents = eventAggregator;
-			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
 			mTagManager = tagManager;
 
 			mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
@@ -74,11 +78,11 @@ namespace Noise.UI.ViewModels {
 		private void OnAlbumFocus( DbAlbum album ) {
 			if( mCurrentArtist != null ) {
 				if( mCurrentArtist.DbId != album.Artist ) {
-					UpdateTrackList( mDataProvider.GetArtist( album.Artist ));
+					UpdateTrackList( mArtistProvider.GetArtist( album.Artist ));
 				}
 			}
 			else {
-				UpdateTrackList( mDataProvider.GetArtist( album.Artist ));
+				UpdateTrackList( mArtistProvider.GetArtist( album.Artist ));
 			}
 		}
 
@@ -107,9 +111,9 @@ namespace Noise.UI.ViewModels {
 			var trackSet = new Dictionary<string, UiArtistTrackNode>();
 			int	albumCount = 0;
 
-			using( var albumList = mDataProvider.GetAlbumList( forArtist.DbId )) {
+			using( var albumList = mAlbumProvider.GetAlbumList( forArtist.DbId )) {
 				foreach( var album in albumList.List ) {
-					using( var trackList = mDataProvider.GetTrackList( album.DbId )) {
+					using( var trackList = mTrackProvider.GetTrackList( album.DbId )) {
 						foreach( var track in trackList.List ) {
 							var item = new UiArtistTrackNode( TransformTrack( track ), TransformAlbum( album ));
 
@@ -167,7 +171,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackPlay( long trackId ) {
-			GlobalCommands.PlayTrack.Execute( mDataProvider.GetTrack( trackId ));
+			GlobalCommands.PlayTrack.Execute( mTrackProvider.GetTrack( trackId ));
 		}
 
 		public void Execute_SwitchView() {

@@ -9,15 +9,15 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class AlbumArtworkViewModel : DialogModelBase {
-		private readonly IDataProvider		mDataProvider;
+		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly long				mAlbumId;
 		private AlbumSupportInfo			mAlbumInfo;
 		private	readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<UiAlbumExtra>	mAlbumImages;
 
 
-		public AlbumArtworkViewModel( IDataProvider dataProvider, long albumId ) {
-			mDataProvider = dataProvider;
+		public AlbumArtworkViewModel( IAlbumProvider albumProvider, long albumId ) {
+			mAlbumProvider = albumProvider;
 			mAlbumId = albumId;
 
 			mAlbumImages = new ObservableCollectionEx<UiAlbumExtra>();
@@ -30,7 +30,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private AlbumSupportInfo RetrieveAlbumInfo( long albumId ) {
-			return( mDataProvider.GetAlbumSupportInfo( albumId ));
+			return( mAlbumProvider.GetAlbumSupportInfo( albumId ));
 		}
 
 		private void SetAlbumInfo( AlbumSupportInfo albumInfo ) {

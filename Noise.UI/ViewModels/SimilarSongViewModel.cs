@@ -18,14 +18,14 @@ namespace Noise.UI.ViewModels {
 		private const int			cMaxSearchResults = 25;
 
 		private readonly IEventAggregator	mEvents;
-		private readonly IDataProvider		mDataProvider;
+		private readonly ITrackProvider		mTrackProvider;
 		private readonly ISearchProvider	mSearchProvider;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
 
-		public SimilarSongViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, ISearchProvider searchProvider ) {
+		public SimilarSongViewModel( IEventAggregator eventAggregator, ITrackProvider trackProvider, ISearchProvider searchProvider ) {
 			mEvents = eventAggregator;
-			mDataProvider = dataProvider;
+			mTrackProvider = trackProvider;
 			mSearchProvider = searchProvider;
 
 			mEvents.GetEvent<Events.SimilarSongSearchRequest>().Subscribe( OnSearchRequest );
@@ -62,7 +62,7 @@ namespace Noise.UI.ViewModels {
 
 		private IEnumerable<SearchViewNode> BuildSearchList( long trackId ) {
 			var retValue = new List<SearchViewNode>();
-			var	track = mDataProvider.GetTrack( trackId );
+			var	track = mTrackProvider.GetTrack( trackId );
 
 			if( track != null ) {
 				retValue.AddRange( from SearchResultItem item

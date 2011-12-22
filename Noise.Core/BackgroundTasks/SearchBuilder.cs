@@ -11,14 +11,19 @@ namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	public class SearchBuilder : IBackgroundTask, IRequireInitialization {
 		private readonly IDatabaseManager	mDatabaseManager;
-		private readonly IDataProvider		mDataProvider;
 		private readonly ISearchProvider	mSearchProvider;
+		private readonly IArtistProvider	mArtistProvider;
+		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly ITrackProvider		mTrackProvider;
 		private List<long>					mArtistList;
 		private IEnumerator<long>			mArtistEnum;
 
-		public SearchBuilder( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager, IDataProvider dataProvider, ISearchProvider searchProvider ) {
+		public SearchBuilder( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager,
+							  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ISearchProvider searchProvider ) {
 			mDatabaseManager = databaseManager;
-			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
 			mSearchProvider = searchProvider;
 
 			lifecycleManager.RegisterForInitialize( this );
@@ -35,7 +40,7 @@ namespace Noise.Core.BackgroundTasks {
 		public void Shutdown() { }
 
 		private void InitializeLists() {
-			using( var artistList = mDataProvider.GetArtistList()) {
+			using( var artistList = mArtistProvider.GetArtistList()) {
 				mArtistList = new List<long>( from DbArtist artist in artistList.List select artist.DbId );
 				mArtistEnum = mArtistList.GetEnumerator();
 			}
@@ -67,7 +72,7 @@ namespace Noise.Core.BackgroundTasks {
 			}
 
 			if( mArtistEnum.Current != 0 ) {
-				retValue = mDataProvider.GetArtist( mArtistEnum.Current );
+				retValue = mArtistProvider.GetArtist( mArtistEnum.Current );
 			}
 
 			return( retValue );
@@ -154,10 +159,10 @@ namespace Noise.Core.BackgroundTasks {
 
 						var lyricsList = database.Database.ExecuteQuery( "SELECT DbLyric WHERE ArtistId = @artistId", parms ).OfType<DbLyric>();
 						foreach( var lyric in lyricsList ) {
-							var track = mDataProvider.GetTrack( lyric.TrackId );
+							var track = mTrackProvider.GetTrack( lyric.TrackId );
 
 							if( track != null ) {
-								var album = mDataProvider.GetAlbumForTrack( track );
+								var album = mAlbumProvider.GetAlbumForTrack( track );
 
 								if( album != null ) {
 									indexBuilder.AddSearchItem( album, track, eSearchItemType.Lyrics, lyric.Lyrics  );

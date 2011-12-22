@@ -38,6 +38,9 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator	mEvents;
 		private readonly IDataProvider		mDataProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly ITrackProvider		mTrackProvider;
+		private readonly IArtworkProvider	mArtworkProvider;
+		private readonly ITagProvider		mTagProvider;
 		private readonly ITagManager		mTagManager;
 		private readonly IDialogService		mDialogService;
 		private UiAlbum						mCurrentAlbum;
@@ -56,10 +59,15 @@ namespace Noise.UI.ViewModels {
 
 		public	event EventHandler			IsActiveChanged;
 
-		public AlbumViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IAlbumProvider albumProvider, ITagManager tagManager, IDialogService dialogService ) {
+		public AlbumViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, 
+							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider, ITagProvider tagProvider,
+							   ITagManager tagManager, IDialogService dialogService ) {
 			mEvents = eventAggregator;
 			mDataProvider = dataProvider;
 			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
+			mArtworkProvider = artworkProvider;
+			mTagProvider = tagProvider;
 			mTagManager = tagManager;
 			mDialogService = dialogService;
 
@@ -80,7 +88,7 @@ namespace Noise.UI.ViewModels {
 			mUnknownImage = new BitmapImage( new Uri( "pack://application:,,,/Noise.UI;component/Resources/Unknown Album Image.png" ));
 			mSelectImage = new BitmapImage( new Uri( "pack://application:,,,/Noise.UI;component/Resources/Select Album Image.png" ));
 
-			using( var tagList = mDataProvider.GetTagList( eTagGroup.User )) {
+			using( var tagList = mTagProvider.GetTagList( eTagGroup.User )) {
 				mCategoryList = new List<DbTag>( tagList.List );
 			}
 		}
@@ -212,7 +220,7 @@ namespace Noise.UI.ViewModels {
 			var retValue = new NewAlbumInfo( null, null, null, null );
 
 			if( album != null ) {
-				using( var tracks = mDataProvider.GetTrackList( album.DbId )) {
+				using( var tracks = mTrackProvider.GetTrackList( album.DbId )) {
 					var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
 														orderby track.VolumeName, track.TrackNumber ascending select track );
 
@@ -266,7 +274,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackPlay( long trackId ) {
-			GlobalCommands.PlayTrack.Execute( mDataProvider.GetTrack( trackId ));
+			GlobalCommands.PlayTrack.Execute( mTrackProvider.GetTrack( trackId ));
 		}
 
 		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
@@ -419,9 +427,9 @@ namespace Noise.UI.ViewModels {
 			if( mDialogService.ShowDialog( DialogNames.CategoryEdit, newCategory ) == true ) {
 				var tag = new DbTag( eTagGroup.User, newCategory.Name ) { Description = newCategory.Description };
 
-				mDataProvider.InsertItem( tag );
+				mTagProvider.AddTag( tag );
 
-				using( var tagList = mDataProvider.GetTagList( eTagGroup.User )) {
+				using( var tagList = mTagProvider.GetTagList( eTagGroup.User )) {
 					mCategoryList = new List<DbTag>( tagList.List );
 
 					retValue = mCategoryList;
@@ -442,7 +450,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackEdit( long trackId ) {
-			using( var trackUpdate = mDataProvider.GetTrackForUpdate( trackId )) {
+			using( var trackUpdate = mTrackProvider.GetTrackForUpdate( trackId )) {
 				if( trackUpdate != null ) {
 					var dialogModel = new TrackEditDialogModel();
 
@@ -461,12 +469,12 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_DisplayPictures() {
 			if( CanExecute_DisplayPictures()) {
-				var vm = new AlbumArtworkViewModel( mDataProvider, mCurrentAlbum.DbId );
+				var vm = new AlbumArtworkViewModel( mAlbumProvider, mCurrentAlbum.DbId );
 
 				if( mDialogService.ShowDialog( DialogNames.AlbumArtworkDisplay, vm ) == true ) {
 					foreach( var artwork in vm.AlbumImages ) {
 						if( artwork.IsDirty ) {
-							using( var update = mDataProvider.GetArtworkForUpdate( artwork.Artwork.DbId )) {
+							using( var update = mArtworkProvider.GetArtworkForUpdate( artwork.Artwork.DbId )) {
 								if( artwork.Artwork.IsUserSelection ) {
 									AlbumCover = new ImageScrubberItem( artwork.Artwork.DbId, CreateBitmap( artwork.Artwork.Image ), artwork.Artwork.Rotation );
 

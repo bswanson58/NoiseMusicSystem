@@ -4,7 +4,7 @@ using Noise.Infrastructure.Dto;
 namespace Noise.Infrastructure.Interfaces {
 	public interface IDataProvider {
 		long						DatabaseId { get; }
-
+/*
 		DbArtist					GetArtist( long dbid );
 		DataProviderList<DbArtist>	GetArtistList();
 		DataProviderList<DbArtist>	GetArtistList( IDatabaseFilter filter );
@@ -26,29 +26,29 @@ namespace Noise.Infrastructure.Interfaces {
 		DataProviderList<DbTrack>	GetFavoriteTracks();
 		DataProviderList<DbTrack>	GetNewlyAddedTracks();
 		DataUpdateShell<DbTrack>	GetTrackForUpdate( long trackId );
-
-		DataProviderList<DbDiscographyRelease>	GetDiscography( long artistId );
+*/
+//		DataProviderList<DbDiscographyRelease>	GetDiscography( long artistId );
 		DataProviderList<DbPlayList>			GetPlayLists();
 
 		DataProviderList<DbGenre>	GetGenreList();
 		DataProviderList<DbTrack>	GetGenreTracks( long genreId );
 
-		DataProviderList<DbTag>		GetTagList( eTagGroup forGroup );
-		DataProviderList<DbTagAssociation>	GetTagAssociations( long forTagId );
+//		DataProviderList<DbTag>		GetTagList( eTagGroup forGroup );
+//		DataProviderList<DbTagAssociation>	GetTagAssociations( long forTagId );
 
-		DataProviderList<long>		GetArtistCategories( long artistId );
-		DataProviderList<long>		GetAlbumCategories( long albumId );
-		DataProviderList<long>		GetAlbumsInCategory( long categoryId );
-		void						SetAlbumCategories( long artistId, long albumId, IEnumerable<long> categories );
+//		DataProviderList<long>		GetArtistCategories( long artistId );
+//		DataProviderList<long>		GetAlbumCategories( long albumId );
+//		DataProviderList<long>		GetAlbumsInCategory( long categoryId );
+//		void						SetAlbumCategories( long artistId, long albumId, IEnumerable<long> categories );
 
 		StorageFile					GetPhysicalFile( DbTrack forTrack );
 		string						GetPhysicalFilePath( StorageFile forFile );
 		string						GetAlbumPath( long albumId );
 
-		ArtistSupportInfo			GetArtistSupportInfo( long artistId );
-		AlbumSupportInfo			GetAlbumSupportInfo( long albumId );
+//		ArtistSupportInfo			GetArtistSupportInfo( long artistId );
+//		AlbumSupportInfo			GetAlbumSupportInfo( long albumId );
 
-		DataUpdateShell<DbArtwork>	GetArtworkForUpdate( long artworkId );
+//		DataUpdateShell<DbArtwork>	GetArtworkForUpdate( long artworkId );
 
 		void						UpdateArtistInfo( long artistId );
 

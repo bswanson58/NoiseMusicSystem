@@ -9,10 +9,16 @@ namespace Noise.Core.DataExchange {
 	}
 
 	internal class DataExchangeManager : IDataExchangeManager {
-		private readonly	IDataProvider	mDataProvider;
+		private readonly IDataProvider		mDataProvider;
+		private readonly IArtistProvider	mArtistProvider;
+		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly ITrackProvider		mTrackProvider;
 
-		public DataExchangeManager( IDataProvider dataProvider ) {
+		public DataExchangeManager( IDataProvider dataProvider, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
 			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
 		}
 
 		public bool ExportFavorites( string fileName ) {
@@ -70,7 +76,7 @@ namespace Noise.Core.DataExchange {
 
 			switch( exportType ) {
 				case eExchangeType.Favorites:
-					retValue = new ExportFavorites( mDataProvider );
+					retValue = new ExportFavorites( mArtistProvider, mAlbumProvider, mTrackProvider );
 					break;
 
 				case eExchangeType.Streams:
@@ -86,7 +92,7 @@ namespace Noise.Core.DataExchange {
 
 			switch( importType ) {
 				case eExchangeType.Favorites:
-					retValue = new ImportFavorites( mDataProvider );
+					retValue = new ImportFavorites( mArtistProvider, mAlbumProvider, mTrackProvider );
 					break;
 
 				case eExchangeType.Streams:

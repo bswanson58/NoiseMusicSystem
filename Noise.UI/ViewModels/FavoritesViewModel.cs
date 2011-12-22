@@ -12,13 +12,20 @@ namespace Noise.UI.ViewModels {
 	public class FavoritesViewModel : ViewModelBase {
 		private readonly IEventAggregator		mEvents;
 		private readonly IDataProvider			mDataProvider;
+		private readonly IArtistProvider		mArtistProvider;
+		private readonly IAlbumProvider			mAlbumProvider;
+		private readonly ITrackProvider			mTrackProvider;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly IDialogService			mDialogService;
 		private readonly ObservableCollectionEx<FavoriteViewNode>	mFavoritesList;
 
-		public FavoritesViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IDataExchangeManager dataExchangeManager, IDialogService dialogService ) {
+		public FavoritesViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
+								   IDataExchangeManager dataExchangeManager, IDialogService dialogService ) {
 			mEvents = eventAggregator;
 			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
 			mDataExchangeMgr = dataExchangeManager;
 			mDialogService = dialogService;
 
@@ -48,22 +55,22 @@ namespace Noise.UI.ViewModels {
 			mFavoritesList.SuspendNotification();
 			mFavoritesList.Clear();
 
-			using( var list = mDataProvider.GetFavoriteArtists()) {
+			using( var list = mArtistProvider.GetFavoriteArtists()) {
 				foreach( var artist in list.List ) {
 					mFavoritesList.Add( new FavoriteViewNode( artist, PlayArtist, SelectArtist ) );
 				}
 			}
-			using( var list = mDataProvider.GetFavoriteAlbums()) {
+			using( var list = mAlbumProvider.GetFavoriteAlbums()) {
 				foreach( var album in list.List ) {
-					var artist = mDataProvider.GetArtistForAlbum( album );
+					var artist = mArtistProvider.GetArtistForAlbum( album );
 
 					mFavoritesList.Add( new FavoriteViewNode( artist, album, PlayAlbum, SelectAlbum ));
 				}
 			}
-			using( var list = mDataProvider.GetFavoriteTracks()) {
+			using( var list = mTrackProvider.GetFavoriteTracks()) {
 				foreach( var track in list.List ) {
-					var album = mDataProvider.GetAlbumForTrack( track );
-					var artist = mDataProvider.GetArtistForAlbum( album );
+					var album = mAlbumProvider.GetAlbumForTrack( track );
+					var artist = mArtistProvider.GetArtistForAlbum( album );
 
 					mFavoritesList.Add( new FavoriteViewNode( artist, album, track, PlayTrack, SelectTrack ));
 				}

@@ -24,13 +24,15 @@ namespace Noise.UI.ViewModels {
 
 		private readonly IEventAggregator	mEvents;
 		private readonly IDataProvider		mDataProvider;
+		private readonly IArtistProvider	mArtistProvider;
 		private readonly IDialogService		mDialogService;
 		private LyricsInfo					mLyricsInfo;
 		private readonly ObservableCollectionEx<UiLyricSelector>	mLyricsList;
 
-		public SongLyricsViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IDialogService dialogService  ) {
+		public SongLyricsViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IArtistProvider artistProvider, IDialogService dialogService  ) {
 			mEvents = eventAggregator;
 			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
 			mDialogService = dialogService;
 
 			mEvents.GetEvent<Events.SongLyricsRequest>().Subscribe( OnLyricsRequest );
@@ -110,7 +112,7 @@ namespace Noise.UI.ViewModels {
 			mLyricsList.Clear();
 
 			foreach( var lyric in mLyricsInfo.PossibleLyrics ) {
-				var artist = mDataProvider.GetArtist( lyric.ArtistId );
+				var artist = mArtistProvider.GetArtist( lyric.ArtistId );
 
 				if( artist != null ) {
 					mLyricsList.Add( new UiLyricSelector( lyric, artist.Name, lyric.SongName ));

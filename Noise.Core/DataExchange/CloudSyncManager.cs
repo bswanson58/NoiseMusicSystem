@@ -16,6 +16,9 @@ namespace Noise.Core.DataExchange {
 	internal class CloudSyncManager : ICloudSyncManager {
 		private readonly IIoc				mComponentCreator;
 		private readonly IDataProvider		mDataProvider;
+		private readonly IArtistProvider	mArtistProvider;
+		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly ITrackProvider		mTrackProvider;
 		private string						mLoginName;
 		private string						mLoginPassword;
 		private IDatabaseClient				mCloudClient;
@@ -30,9 +33,12 @@ namespace Noise.Core.DataExchange {
 		[ImportMany( typeof( ICloudSyncProvider ))]
 		public IEnumerable<ICloudSyncProvider>	SyncProviders;
 
-		public CloudSyncManager( IIoc componentCreator, IDataProvider dataProvider ) {
+		public CloudSyncManager( IIoc componentCreator, IDataProvider dataProvider, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
 			mComponentCreator = componentCreator;
 			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
 			mSyncWithCloud = new AsyncCommand<object>( OnCloudSync );
 			GlobalCommands.SynchronizeFromCloud.RegisterCommand( mSyncWithCloud );
 
@@ -77,7 +83,7 @@ namespace Noise.Core.DataExchange {
 						retValue = mCloudDb;
 					}
 					catch( Exception ex ) {
-						NoiseLogger.Current.LogException( "Exception - CloudSymcManager:Opening cloud database: ", ex );
+						NoiseLogger.Current.LogException( "Exception - CloudSyncManager:Opening cloud database: ", ex );
 					}
 				}
 
@@ -113,7 +119,7 @@ namespace Noise.Core.DataExchange {
 		}
 
 		private void SyncFavorites( long seqnId ) {
-			using( var favoriteList = mDataProvider.GetFavoriteArtists()) {
+			using( var favoriteList = mArtistProvider.GetFavoriteArtists()) {
 				foreach( var artist in favoriteList.List ) {
 					var item = new ExportFavorite( mDataProvider.DatabaseId, artist.Name, artist.IsFavorite ) { SequenceId = seqnId };
 
@@ -125,7 +131,7 @@ namespace Noise.Core.DataExchange {
 				}
 			}
 
-			using( var favoriteList = mDataProvider.GetFavoriteAlbums()) {
+			using( var favoriteList = mAlbumProvider.GetFavoriteAlbums()) {
 				foreach( var album in favoriteList.List ) {
 					var result = mDataProvider.Find( album.DbId );
 					var item = new ExportFavorite( result, seqnId );
@@ -138,7 +144,7 @@ namespace Noise.Core.DataExchange {
 				}
 			}
 
-			using( var favoriteList = mDataProvider.GetFavoriteTracks()) {
+			using( var favoriteList = mTrackProvider.GetFavoriteTracks()) {
 				foreach( var track in favoriteList.List ) {
 					var result = mDataProvider.Find( track.DbId );
 					var item = new ExportFavorite( result, seqnId );

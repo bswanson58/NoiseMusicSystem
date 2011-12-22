@@ -206,13 +206,17 @@ namespace Noise.Core.Database {
 
 	public class LuceneSearchProvider : ISearchProvider {
 		private	readonly IDatabaseManager	mDatabaseMgr;
-		private readonly IDataProvider		mDataProvider;
+		private readonly IArtistProvider	mArtistProvider;
+		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly ITrackProvider		mTrackProvider;
 		private bool						mIsInitialized;
 		private	string						mIndexLocation;
 
-		public LuceneSearchProvider( IDatabaseManager databaseManager, IDataProvider dataProvider ) {
+		public LuceneSearchProvider( IDatabaseManager databaseManager, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
 			mDatabaseMgr = databaseManager;
-			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
 		}
 
 		public bool Initialize() {
@@ -323,17 +327,17 @@ namespace Noise.Core.Database {
 								if( artistField != null ) {
 									long	id = long.Parse( artistField.StringValue());
 
-									artist = mDataProvider.GetArtist( id );
+									artist = mArtistProvider.GetArtist( id );
 								}
 								if( albumField != null ) {
 									long	id = long.Parse( albumField.StringValue());
 
-									album = mDataProvider.GetAlbum( id );
+									album = mAlbumProvider.GetAlbum( id );
 								}
 								if( trackField != null ) {
 									long	id = long.Parse( trackField.StringValue());
 
-									track = mDataProvider.GetTrack( id );
+									track = mTrackProvider.GetTrack( id );
 								}
 
 								retValue.Add( new SearchResultItem( artist, album, track, itemType ));

@@ -13,13 +13,17 @@ namespace Noise.UI.ViewModels {
 	public class PlayHistoryViewModel : ViewModelBase {
 		private readonly IEventAggregator	mEvents;
 		private readonly IPlayHistory		mPlayHistory;
-		private readonly IDataProvider		mDataProvider;
+		private readonly IArtistProvider	mArtistProvider;
+		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly ITrackProvider		mTrackProvider;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<PlayHistoryNode>	mHistoryList;
 
-		public PlayHistoryViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IPlayHistory playHistory ) {
+		public PlayHistoryViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayHistory playHistory ) {
 			mEvents = eventAggregator;
-			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
 			mPlayHistory = playHistory;
 
 			mHistoryList = new ObservableCollectionEx<PlayHistoryNode>();
@@ -60,13 +64,13 @@ namespace Noise.UI.ViewModels {
 			var historyList = from DbPlayHistory history in mPlayHistory.PlayHistory orderby history.PlayedOn descending select history;
 
 			foreach( var history in historyList ) {
-				var track = mDataProvider.GetTrack( history.TrackId );
+				var track = mTrackProvider.GetTrack( history.TrackId );
 
 				if( track != null ) {
-					var album = mDataProvider.GetAlbumForTrack( track );
+					var album = mAlbumProvider.GetAlbumForTrack( track );
 
 					if( album != null ) {
-						var artist = mDataProvider.GetArtistForAlbum( album );
+						var artist = mArtistProvider.GetArtistForAlbum( album );
 
 						if( artist != null ) {
 							retValue.Add( new PlayHistoryNode( artist, album, track, history.PlayedOn, OnNodeSelected, OnPlayTrack ));

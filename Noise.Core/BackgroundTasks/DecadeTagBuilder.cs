@@ -14,15 +14,17 @@ namespace Noise.Core.BackgroundTasks {
 
 		private readonly IDatabaseManager	mDatabaseMgr;
 		private readonly IDataProvider		mDataProvider;
+		private readonly IArtistProvider	mArtistProvider;
 		private readonly ITagManager		mTagManager;
 		private List<long>					mArtistList;
 		private IEnumerator<long>			mArtistEnum;
 		private long						mLastScanTicks;
 		private	long						mStartScanTicks;
 
-		public DecadeTagBuilder( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager, IDataProvider dataProvider, ITagManager tagManager ) {
+		public DecadeTagBuilder( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager, IDataProvider dataProvider, IArtistProvider artistProvider, ITagManager tagManager ) {
 			mDatabaseMgr = databaseManager;
 			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
 			mTagManager = tagManager;
 
 			lifecycleManager.RegisterForInitialize( this );
@@ -74,7 +76,7 @@ namespace Noise.Core.BackgroundTasks {
 				var artistId = NextArtist();
 
 				if( artistId != 0 ) {
-					var artist = mDataProvider.GetArtist( artistId );
+					var artist = mArtistProvider.GetArtist( artistId );
 
 					if(( artist != null ) &&
 					   ( artist.LastChangeTicks > mLastScanTicks )) {

@@ -48,12 +48,27 @@ namespace Noise.Core.Database {
 			return( GetUpdateShell( "SELECT DbAlbum Where DbId = @albumId", new Dictionary<string, object> {{ "albumId", albumId }} ));
 		}
 
+		public DataProviderList<long> GetAlbumsInCategory( long categoryId ) {
+			DataProviderList<long>	retValue = null;
+
+			try {
+				using( var tagList = mTagAssociationProvider.GetTagList( eTagGroup.User, categoryId )) {
+					retValue = new DataProviderList<long>( null, ( from DbTagAssociation tag in tagList.List select tag.AlbumId ).ToList());
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "Exception - GetTagList", ex );
+			}
+
+			return( retValue );
+		}
+
 		public DataProviderList<long> GetAlbumCategories( long albumId ) {
 			DataProviderList<long>	retValue = null;
 
 			try {
 				using( var tagList = mTagAssociationProvider.GetAlbumTagList( albumId, eTagGroup.User )) {
-					retValue = new DataProviderList<long>( "", null, ( from DbTagAssociation assoc in tagList.List select assoc.TagId ).ToList());
+					retValue = new DataProviderList<long>( null, ( from DbTagAssociation assoc in tagList.List select assoc.TagId ).ToList());
 				}
 			}
 			catch( Exception ex ) {

@@ -13,15 +13,19 @@ using Noise.UI.Adapters;
 namespace Noise.UI.ViewModels {
 	public class LibraryAdditionsViewModel : ViewModelBase {
 		private readonly IEventAggregator	mEvents;
-		private readonly IDataProvider		mDataProvider;
+		private readonly IArtistProvider	mArtistProvider;
+		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly ITrackProvider		mTrackProvider;
 		private readonly DateTime			mHorizonTime;
 		private readonly UInt32				mHorizonCount;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<LibraryAdditionNode>	mNodeList;
 
-		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider ) {
+		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
 			mEvents = eventAggregator;
-			mDataProvider = dataProvider;
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
 
 			mNodeList = new ObservableCollectionEx<LibraryAdditionNode>();
 
@@ -62,7 +66,7 @@ namespace Noise.UI.ViewModels {
 			var	retValue = new List<LibraryAdditionNode>();
 			var	trackList = new List<DbTrack>();
 
-			using( var additions = mDataProvider.GetNewlyAddedTracks()) {
+			using( var additions = mTrackProvider.GetNewlyAddedTracks()) {
 				UInt32	count = 0;
 
 				foreach( var track in additions.List ) {
@@ -81,9 +85,9 @@ namespace Noise.UI.ViewModels {
 			if( trackList.Count > 0 ) {
 				
 				foreach( var track in trackList ) {
-					var album = mDataProvider.GetAlbumForTrack( track );
+					var album = mAlbumProvider.GetAlbumForTrack( track );
 					if( album != null ) {
-						var artist = mDataProvider.GetArtistForAlbum( album );
+						var artist = mArtistProvider.GetArtistForAlbum( album );
 
 						if( artist != null ) {
 							var treeNode = retValue.Find( node => node.Artist.DbId == artist.DbId && node.Album.DbId == album.DbId );
@@ -121,7 +125,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackPlayRequested( long trackId ) {
-			GlobalCommands.PlayTrack.Execute( mDataProvider.GetTrack( trackId ));
+			GlobalCommands.PlayTrack.Execute( mTrackProvider.GetTrack( trackId ));
 		}
 	}
 }

@@ -10,11 +10,15 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.Database {
 	public class TagManager : ITagManager, IRequireInitialization {
 		private readonly IDataProvider				mDataProvider;
+		private readonly ITagProvider				mTagProvider;
+		private readonly ITagAssociationProvider	mTagAssociationProvider;
 		private readonly Dictionary<long, DbGenre>	mGenreList;
 		private readonly List<DbDecadeTag>			mDecadeList;
 
-		public TagManager( ILifecycleManager lifecycleManager, IDataProvider dataProvider ) {
+		public TagManager( ILifecycleManager lifecycleManager, IDataProvider dataProvider, ITagProvider tagProvider, ITagAssociationProvider tagAssociationProvider ) {
 			mDataProvider = dataProvider;
+			mTagProvider = tagProvider;
+			mTagAssociationProvider = tagAssociationProvider;
 			mGenreList = new Dictionary<long, DbGenre>();
 			mDecadeList = new List<DbDecadeTag>();
 
@@ -83,20 +87,20 @@ namespace Noise.Core.Database {
 			get{ return( mDecadeList ); }
 		}
 
-		public IEnumerable<long> ArtistList( long tagId ) {
+		public IEnumerable<long> ArtistListForDecade( long decadeId ) {
 			var	retValue = new List<long>();
 
-			using( var tags = mDataProvider.GetTagAssociations( tagId )) {
+			using( var tags = mTagAssociationProvider.GetTagList( eTagGroup.Decade, decadeId )) {
 				retValue.AddRange( tags.List.Select( tag => tag.ArtistId ).Distinct());
 			}
 
 			return( retValue );
 		}
 
-		public IEnumerable<long> AlbumList( long artistId, long tagId ) {
+		public IEnumerable<long> AlbumListForDecade( long artistId, long decadeId ) {
 			var	retValue = new List<long>();
 
-			using( var tags = mDataProvider.GetTagAssociations( tagId )) {
+			using( var tags = mTagAssociationProvider.GetTagList( eTagGroup.Decade, decadeId )) {
 				retValue.AddRange( tags.List.Where( tag => tag.ArtistId == artistId ).Select( tag => tag.AlbumId ).Distinct());
 			}
 
@@ -120,7 +124,7 @@ namespace Noise.Core.Database {
 		private void LoadDecadeList() {
 			mDecadeList.Clear();
 
-			using( var tagList = mDataProvider.GetTagList( eTagGroup.Decade )) {
+			using( var tagList = mTagProvider.GetTagList( eTagGroup.Decade )) {
 				mDecadeList.AddRange( tagList.List.Where( tag => tag is DbDecadeTag ).Select( tag => tag as DbDecadeTag ));
 			}
 		}
@@ -128,42 +132,42 @@ namespace Noise.Core.Database {
 		private void InitializeDecadeList() {
 			var decadeTag = new DbDecadeTag( "Unknown" ) { Description = "Albums without a published year",
 														   StartYear = Constants.cUnknownYear, EndYear = Constants.cUnknownYear };
-			mDataProvider.InsertItem( decadeTag );
+			mTagProvider.AddTag( decadeTag );
 
 			decadeTag = new DbDecadeTag( "Various" ) { Description = "Various release years",
 													StartYear = Constants.cVariousYears, EndYear = Constants.cVariousYears };
-			mDataProvider.InsertItem( decadeTag );
+			mTagProvider.AddTag( decadeTag );
 
 			decadeTag = new DbDecadeTag( "Oldies" ) { Description = "The Oldies",
 													StartYear = 1900, EndYear = 1959 };
-			mDataProvider.InsertItem( decadeTag );
+			mTagProvider.AddTag( decadeTag );
 
 			decadeTag = new DbDecadeTag( "60's" ) { Description = "The Roaring 60's",
 													StartYear = 1960, EndYear = 1969 };
-			mDataProvider.InsertItem( decadeTag );
+			mTagProvider.AddTag( decadeTag );
 
 			decadeTag = new DbDecadeTag( "70's" ) { Description = "The Psychedelic 70's",
 													StartYear = 1970, EndYear = 1979,
 													Website = "http://www.inthe70s.com/" };
-			mDataProvider.InsertItem( decadeTag );
+			mTagProvider.AddTag( decadeTag );
 
 			decadeTag = new DbDecadeTag( "80's" ) { Description = "Like Totally",
 													StartYear = 1980, EndYear = 1989,
 													Website = "http://www.inthe80s.com/" };
-			mDataProvider.InsertItem( decadeTag );
+			mTagProvider.AddTag( decadeTag );
 
 			decadeTag = new DbDecadeTag( "90's" ) { Description = "Grunge goes mainstream",
 													StartYear = 1990, EndYear = 1999,
 													Website = "http://www.inthe90s.com/" };
-			mDataProvider.InsertItem( decadeTag );
+			mTagProvider.AddTag( decadeTag );
 
 			decadeTag = new DbDecadeTag( "Uh Oh's" ) { Description = "The Turn of the Century",
 													StartYear = 2000, EndYear = 2009 };
-			mDataProvider.InsertItem( decadeTag );
+			mTagProvider.AddTag( decadeTag );
 
 			decadeTag = new DbDecadeTag( "10's" ) { Description = "Releases of this decade",
 													StartYear = 2010, EndYear = 2019 };
-			mDataProvider.InsertItem( decadeTag );
+			mTagProvider.AddTag( decadeTag );
 
 			LoadDecadeList();
 		}

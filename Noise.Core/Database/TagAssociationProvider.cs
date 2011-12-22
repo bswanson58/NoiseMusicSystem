@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -15,6 +16,10 @@ namespace Noise.Core.Database {
 		public DataProviderList<DbTagAssociation> GetAlbumTagList( long albumId, eTagGroup tagGroup ) {
 			return( TryGetList( "SELECT DbTagAssociation Where TagGroup = @group AND AlbumId = @albumId", 
 												new Dictionary<string, object> {{ "albumId", albumId }, { "group", eTagGroup.User }}, "Exception - GetAlbumTagList" ));
+		}
+
+		public DataProviderList<DbTagAssociation> GetTagList( eTagGroup tagGroup, long tagId ) {
+			return( TryGetList( "SELECT DbTagAssociation Where TagGroup = @group AND TagId = @tagId", new Dictionary<string, object> {{ "group", tagGroup }, { "tagId", tagId }}, "Exception - GetTagList" ));
 		}
 
 		public void AddAssociation( DbTagAssociation item ) {

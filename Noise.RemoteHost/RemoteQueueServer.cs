@@ -11,12 +11,14 @@ using Noise.Infrastructure.RemoteHost;
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteQueueServer : INoiseRemoteQueue {
-		private readonly IDataProvider		mDataProvider;
+		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly ITrackProvider		mTrackProvider;
 		private readonly IPlayController	mPlayController;
 		private readonly IPlayQueue			mPlayQueue;
 
-		public RemoteQueueServer( IDataProvider dataProvider, IPlayController playController, IPlayQueue playQueue ) {
-			mDataProvider = dataProvider;
+		public RemoteQueueServer( IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayController playController, IPlayQueue playQueue ) {
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
 			mPlayController = playController;
 			mPlayQueue = playQueue;
 		}
@@ -25,7 +27,7 @@ namespace Noise.RemoteHost {
 			var retValue = new BaseResult();
 
 			try {
-				var track = mDataProvider.GetTrack( trackId );
+				var track = mTrackProvider.GetTrack( trackId );
 
 				if( track != null ) {
 					GlobalCommands.PlayTrack.Execute( track );
@@ -46,7 +48,7 @@ namespace Noise.RemoteHost {
 			var retValue = new BaseResult();
 
 			try {
-				var album = mDataProvider.GetAlbum( albumId );
+				var album = mAlbumProvider.GetAlbum( albumId );
 
 				if( album != null ) {
 					GlobalCommands.PlayAlbum.Execute( album );

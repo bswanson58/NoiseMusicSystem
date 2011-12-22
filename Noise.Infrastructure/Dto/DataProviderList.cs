@@ -14,7 +14,7 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		protected DataProviderBase( IDatabaseShell databaseShell ) {
-			
+			mDatabaseShell = databaseShell;
 		}
 
 		public void Dispose() {
