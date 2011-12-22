@@ -2,20 +2,22 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using Microsoft.Practices.Prism.Events;
 using Noise.Core.Support;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	public class ContentBuilder : IBackgroundTask, IRequireInitialization {
-		private readonly IDataProvider		mDataProvider;
+		private readonly IEventAggregator	mEvents;
 		private readonly IArtistProvider	mArtistProvider;
 		private	List<DbArtist>				mArtistList;
 		private IEnumerator<DbArtist>		mArtistEnum;
 
-		public ContentBuilder( ILifecycleManager lifecycleManager, IDataProvider dataProvider, IArtistProvider artistProvider ) {
-			mDataProvider = dataProvider;
+		public ContentBuilder( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, IArtistProvider artistProvider ) {
+			mEvents = eventAggregator;
 			mArtistProvider = artistProvider;
 
 			lifecycleManager.RegisterForInitialize( this );
@@ -44,7 +46,7 @@ namespace Noise.Core.BackgroundTasks {
 			var artist = NextArtist();
 
 			if( artist != null ) {
-				mDataProvider.UpdateArtistInfo( artist.DbId );
+				mEvents.GetEvent<Events.ArtistContentRequested>().Publish( artist );
 			}
 		}
 

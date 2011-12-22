@@ -50,7 +50,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 //		DataUpdateShell<DbArtwork>	GetArtworkForUpdate( long artworkId );
 
-		void						UpdateArtistInfo( long artistId );
+//		void						UpdateArtistInfo( long artistId );
 
 //		void						StoreLyric( DbLyric lyric );
 //		DataProviderList<DbLyric>	GetPossibleLyrics( DbArtist artist, DbTrack track );

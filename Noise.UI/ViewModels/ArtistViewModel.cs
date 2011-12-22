@@ -133,7 +133,7 @@ namespace Noise.UI.ViewModels {
 				}
 
 				if( value != null ) {
-					mDataProvider.UpdateArtistInfo( value.DbId );
+					mEvents.GetEvent<Events.ArtistContentRequested>().Publish( mArtistProvider.GetArtist( value.DbId ));
 
 					mCurrentArtist = TransformArtist( mArtistProvider.GetArtist( value.DbId ));
 					mChangeObserver.Add( mCurrentArtist );
