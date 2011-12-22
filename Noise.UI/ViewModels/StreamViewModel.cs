@@ -11,15 +11,15 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	class StreamViewModel : ViewModelBase {
-		private readonly IEventAggregator		mEvents;
-		private readonly IDataProvider			mDataProvider;
-		private readonly IDataExchangeManager	mDataExchangeMgr;
-		private readonly IDialogService			mDialogService;
+		private readonly IEventAggregator			mEvents;
+		private readonly IInternetStreamProvider	mStreamProvider;
+		private readonly IDataExchangeManager		mDataExchangeMgr;
+		private readonly IDialogService				mDialogService;
 		private readonly ObservableCollectionEx<UiInternetStream>	mStreams;
 
-		public StreamViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IDataExchangeManager dataExchangeManager, IDialogService dialogService ) {
+		public StreamViewModel( IEventAggregator eventAggregator, IInternetStreamProvider streamProvider, IDataExchangeManager dataExchangeManager, IDialogService dialogService ) {
 			mEvents = eventAggregator;
-			mDataProvider = dataProvider;
+			mStreamProvider = streamProvider;
 			mDataExchangeMgr = dataExchangeManager;
 			mDialogService = dialogService;
 
@@ -49,7 +49,7 @@ namespace Noise.UI.ViewModels {
 			mStreams.SuspendNotification();
 			mStreams.Clear();
 
-			using( var streams = mDataProvider.GetStreamList()) {
+			using( var streams = mStreamProvider.GetStreamList()) {
 				mStreams.AddRange( from stream in streams.List select MapStream( stream ));
 			}
 
@@ -66,14 +66,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnStreamPlay( long streamId ) {
-			GlobalCommands.PlayStream.Execute( mDataProvider.GetStream( streamId ));
+			GlobalCommands.PlayStream.Execute( mStreamProvider.GetStream( streamId ));
 		}
 
 		public void Execute_AddStream( object sender ) {
 			var	stream = new DbInternetStream();
 
 			if( mDialogService.ShowDialog( DialogNames.InternetStreamEdit, stream ) == true ) {
-				mDataProvider.InsertItem( stream );
+				mStreamProvider.AddStream( stream );
 
 				UpdateStreams();
 			}
@@ -87,7 +87,7 @@ namespace Noise.UI.ViewModels {
 
 		private void EditStream( UiInternetStream stream ) {
 			if( stream != null ) {
-				using( var dbStream = mDataProvider.GetStreamForUpdate( stream.DbId )) {
+				using( var dbStream = mStreamProvider.GetStreamForUpdate( stream.DbId )) {
 					if(( dbStream != null ) &&
 					   ( dbStream.Item != null )) {
 						if( mDialogService.ShowDialog( DialogNames.InternetStreamEdit, dbStream.Item ) == true ) {
@@ -107,10 +107,10 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_DeleteStream( object sender ) {
 			if( CurrentStream != null ) {
-				var dbStream = mDataProvider.GetStream( CurrentStream.DbId );
+				var dbStream = mStreamProvider.GetStream( CurrentStream.DbId );
 
 				if( dbStream != null ) {
-					mDataProvider.DeleteItem( dbStream );
+					mStreamProvider.DeleteStream( dbStream );
 				}
 
 				UpdateStreams();

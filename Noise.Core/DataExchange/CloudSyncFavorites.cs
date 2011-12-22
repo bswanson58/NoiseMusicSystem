@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.Composition;
-using System.Linq;
+﻿using System.Linq;
 using GDataDB.Linq;
 using Noise.Core.DataExchange.Dto;
 using Noise.Infrastructure;
@@ -8,13 +7,15 @@ using Noise.Infrastructure.Interfaces;
 using IDatabase = GDataDB.IDatabase;
 
 namespace Noise.Core.DataExchange {
-	[Export( typeof( ICloudSyncProvider ))]
 	internal class CloudSyncFavorites : ICloudSyncProvider {
-		private IDataProvider		mDataProvider;
-		private IDatabase			mCloudDatabase;
+		private readonly IDataProvider	mDataProvider;
+		private IDatabase				mCloudDatabase;
 
-		public bool Initialize( IDataProvider dataProvider, IDatabase cloudDatabase ) {
+		public CloudSyncFavorites( IDataProvider dataProvider ) {
 			mDataProvider = dataProvider;
+		}
+
+		public bool Initialize( IDatabase cloudDatabase ) {
 			mCloudDatabase = cloudDatabase;
 
 			return( true );

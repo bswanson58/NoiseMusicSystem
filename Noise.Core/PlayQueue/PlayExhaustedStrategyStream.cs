@@ -2,10 +2,10 @@
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayExhaustedStrategyStream : IPlayExhaustedStrategy {
-		private readonly	IDataProvider	mDataProvider;
+		private readonly	IInternetStreamProvider	mStreamProvider;
 
-		public PlayExhaustedStrategyStream( IDataProvider dataProvider ) {
-			mDataProvider = dataProvider;
+		public PlayExhaustedStrategyStream( IInternetStreamProvider streamProvider ) {
+			mStreamProvider = streamProvider;
 		}
 
 		public bool QueueExhausted( IPlayQueue queueMgr, long itemId ) {
@@ -22,7 +22,7 @@ namespace Noise.Core.PlayQueue {
 			}
 
 			if( !retValue ) {
-				var stream = mDataProvider.GetStream( itemId );
+				var stream = mStreamProvider.GetStream( itemId );
 				if( stream != null ) {
 					queueMgr.Add( stream );
 

@@ -208,6 +208,7 @@
     <Compile Include="Database\DiscographyProvider.cs" />
     <Compile Include="Database\GenreProvider.cs" />
     <Compile Include="Database\IDataUpdates.cs" />
+    <Compile Include="Database\InternetStreamProvider.cs" />
     <Compile Include="Database\LuceneSearchProvider.cs" />
     <Compile Include="Database\LyricProvider.cs" />
     <Compile Include="Database\TagAssociationProvider.cs" />

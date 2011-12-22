@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.Composition;
-using System.Linq;
+﻿using System.Linq;
 using GDataDB.Linq;
 using Noise.Core.DataExchange.Dto;
 using Noise.Infrastructure;
@@ -8,13 +7,15 @@ using Noise.Infrastructure.Interfaces;
 using IDatabase = GDataDB.IDatabase;
 
 namespace Noise.Core.DataExchange {
-	[Export( typeof( ICloudSyncProvider ))]
 	public class CloudSyncStreams : ICloudSyncProvider {
-		private IDataProvider	mDataProvider;
-		private IDatabase		mCloudDatabase;
+		private readonly IInternetStreamProvider	mStreamProvider;
+		private IDatabase							mCloudDatabase;
 
-		public bool Initialize( IDataProvider dataProvider, IDatabase cloudDatabase ) {
-			mDataProvider = dataProvider;
+		public CloudSyncStreams( IInternetStreamProvider streamProvider ) {
+			mStreamProvider = streamProvider;
+		}
+
+		public bool Initialize( IDatabase cloudDatabase ) {
 			mCloudDatabase = cloudDatabase;
 
 			return( true );
@@ -32,12 +33,12 @@ namespace Noise.Core.DataExchange {
 			var updateCount = 0;
 
 			foreach( var stream in cloudStreams ) {
-				using( var streamList = mDataProvider.GetStreamList()) {
+				using( var streamList = mStreamProvider.GetStreamList()) {
 					var streamName = stream.Stream;
 					var dbStream = ( from DbInternetStream str in streamList.List where str.Name == streamName select str ).FirstOrDefault();
 
 					if( dbStream != null ) {
-						var updateStream = mDataProvider.GetStreamForUpdate( dbStream.DbId );
+						var updateStream = mStreamProvider.GetStreamForUpdate( dbStream.DbId );
 
 						updateStream.Item.Description = stream.Description;
 						updateStream.Item.IsPlaylistWrapped = stream.IsPlaylistWrapped;
@@ -50,7 +51,7 @@ namespace Noise.Core.DataExchange {
 						dbStream = new DbInternetStream{ Description = stream.Description, IsPlaylistWrapped = stream.IsPlaylistWrapped,
 														 Url = stream.Url, Website = stream.Website };
 
-						mDataProvider.InsertItem( dbStream );
+						mStreamProvider.AddStream( dbStream );
 						updateCount++;
 					}
 				}

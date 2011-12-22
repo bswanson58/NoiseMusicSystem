@@ -49,6 +49,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
 			mContainer.RegisterType<IAlbumProvider, AlbumProvider>();
 			mContainer.RegisterType<ITrackProvider, TrackProvider>();
+			mContainer.RegisterType<IInternetStreamProvider, InternetStreamProvider>();
 			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
 			mContainer.RegisterType<IDiscographyProvider, DbDiscographyProvider>();
 			mContainer.RegisterType<IGenreProvider, GenreProvider>();
@@ -72,6 +73,10 @@ namespace Noise.Core {
 			mContainer.RegisterType<IBackgroundTask, LinkTopAlbums>( "LinkTopAlbums" );
 			mContainer.RegisterType<IBackgroundTask, SearchBuilder>( "SearchBuilder" );
 			mContainer.RegisterType<IEnumerable<IBackgroundTask>, IBackgroundTask[]>();
+
+			mContainer.RegisterType<ICloudSyncProvider, CloudSyncFavorites>( "SyncFavorites" );
+			mContainer.RegisterType<ICloudSyncProvider, CloudSyncStreams>( "SyncStreams" );
+			mContainer.RegisterType<IEnumerable<ICloudSyncProvider>, ICloudSyncProvider[]>();
 
 			mContainer.RegisterType<IContentProvider, BandMembersProvider>( "BandMembersProvider" );
 			mContainer.RegisterType<IContentProvider, BiographyProvider>( "BiographyProvider" );

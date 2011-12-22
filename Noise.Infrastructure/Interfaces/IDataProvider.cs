@@ -60,9 +60,9 @@ namespace Noise.Infrastructure.Interfaces {
 		void						DeleteItem( object dbItem );
 		DbBase						GetItem( long itemId );
 
-		DataProviderList<DbInternetStream>	GetStreamList();
-		DbInternetStream			GetStream( long streamId );
-		DataUpdateShell<DbInternetStream>	GetStreamForUpdate( long streamId );
+//		DataProviderList<DbInternetStream>	GetStreamList();
+//		DbInternetStream			GetStream( long streamId );
+//		DataUpdateShell<DbInternetStream>	GetStreamForUpdate( long streamId );
 
 		DataFindResults				Find( string artist, string album, string track );
 		DataFindResults				Find( long itemId );

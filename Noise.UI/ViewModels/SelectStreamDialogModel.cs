@@ -8,8 +8,8 @@ namespace Noise.UI.ViewModels {
 		private readonly List<DbInternetStream>	mStreamList;
 		public	DbInternetStream				SelectedItem { get; set; }
 
-		public SelectStreamDialogModel( IDataProvider dataProvider ) {
-			using( var streamList = dataProvider.GetStreamList()) {
+		public SelectStreamDialogModel( IInternetStreamProvider streamProvider ) {
+			using( var streamList = streamProvider.GetStreamList()) {
 				mStreamList = new List<DbInternetStream>( streamList.List );
 			}
 		}

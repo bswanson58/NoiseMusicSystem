@@ -5,10 +5,10 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataExchange {
 	public class ExportStreams : BaseExporter {
-		private readonly IDataProvider	mDataProvider;
+		private readonly IInternetStreamProvider	mStreamProvider;
 
-		public ExportStreams( IDataProvider dataProvider ) {
-			mDataProvider = dataProvider;
+		public ExportStreams( IInternetStreamProvider streamProvider ) {
+			mStreamProvider = streamProvider;
 		}
 
 		public override bool Export( string fileName ) {
@@ -20,7 +20,7 @@ namespace Noise.Core.DataExchange {
 											 new XComment( string.Format( "Noise Music System - Stream Export - {0}", DateTime.Now.ToShortDateString())));
 					var rootElement = new XElement( ExchangeConstants.cStreamList );
 				
-					using( var streamList = mDataProvider.GetStreamList()) {
+					using( var streamList = mStreamProvider.GetStreamList()) {
 						foreach( var stream in streamList.List ) {
 							rootElement.Add( new XElement( ExchangeConstants.cStreamItem, 
 													new XElement( ExchangeConstants.cName, stream.Name ),

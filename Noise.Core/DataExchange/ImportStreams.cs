@@ -5,17 +5,17 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataExchange {
 	internal class ImportStreams : IDataImport {
-		private readonly IDataProvider	mDataProvider;
+		private readonly IInternetStreamProvider	mStreamProvider;
 
-		public ImportStreams( IDataProvider dataProvider ) {
-			mDataProvider = dataProvider;
+		public ImportStreams( IInternetStreamProvider internetStreamProvider ) {
+			mStreamProvider = internetStreamProvider;
 		}
 
 		public int Import( XElement rootElement, bool eliminateDuplicates ) {
 			var retValue = 0;
 			var streamList = from element in rootElement.Descendants( ExchangeConstants.cStreamItem ) select element;
 
-			using( var currentStreams = mDataProvider.GetStreamList()) {
+			using( var currentStreams = mStreamProvider.GetStreamList()) {
 				foreach( var stream in streamList ) {
 					var dbStream = new DbInternetStream { Name = (string)stream.Element( ExchangeConstants.cName ),
 														  Description = (string)stream.Element( ExchangeConstants.cDescription ),
@@ -25,7 +25,7 @@ namespace Noise.Core.DataExchange {
 										  where current.Name.Equals( dbStream.Name ) || current.Url.Equals( dbStream.Url ) 
 										  select current ).FirstOrDefault();
 					if( currentStream == null ) {
-						mDataProvider.InsertItem( dbStream );
+						mStreamProvider.AddStream( dbStream );
 
 						retValue++;
 					}

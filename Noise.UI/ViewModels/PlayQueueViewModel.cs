@@ -14,26 +14,26 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class PlayQueueViewModel : ViewModelBase {
-		private readonly IEventAggregator	mEventAggregator;
-		private readonly IDataProvider		mDataProvider;
-		private readonly IGenreProvider		mGenreProvider;
-		private readonly ITagProvider		mTagProvider;
-		private readonly IPlayQueue			mPlayQueue;
-		private readonly IPlayListMgr		mPlayListMgr;
-		private readonly IDialogService		mDialogService;
-		private int							mPlayingIndex;
-		private TimeSpan					mTotalTime;
-		private TimeSpan					mRemainingTime;
+		private readonly IEventAggregator			mEventAggregator;
+		private readonly IGenreProvider				mGenreProvider;
+		private readonly ITagProvider				mTagProvider;
+		private readonly IInternetStreamProvider	mStreamProvider;
+		private readonly IPlayQueue					mPlayQueue;
+		private readonly IPlayListMgr				mPlayListMgr;
+		private readonly IDialogService				mDialogService;
+		private int									mPlayingIndex;
+		private TimeSpan							mTotalTime;
+		private TimeSpan							mRemainingTime;
 		private	ListViewDragDropManager<PlayQueueTrack>					mDragManager;
 		private readonly ObservableCollectionEx<PlayQueueTrack>			mQueue;
 		private	readonly ObservableCollectionEx<ExhaustedStrategyItem>	mExhaustedStrategies;
 		private readonly ObservableCollectionEx<PlayStrategyItem>		mPlayStrategies;
 
-		public PlayQueueViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, ITagProvider tagProvider, IGenreProvider genreProvider,
+		public PlayQueueViewModel( IEventAggregator eventAggregator, ITagProvider tagProvider, IGenreProvider genreProvider, IInternetStreamProvider streamProvider,
 								   IPlayQueue playQueue, IPlayListMgr playListMgr, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
-			mDataProvider = dataProvider;
 			mGenreProvider = genreProvider;
+			mStreamProvider = streamProvider;
 			mTagProvider = tagProvider;
 			mPlayQueue = playQueue;
 			mPlayListMgr = playListMgr;
@@ -279,7 +279,7 @@ namespace Noise.UI.ViewModels {
 				}
 
 				if( strategy == ePlayExhaustedStrategy.PlayStream ) {
-					var	dialogModel = new SelectStreamDialogModel( mDataProvider );
+					var	dialogModel = new SelectStreamDialogModel( mStreamProvider );
 
 					if( mDialogService.ShowDialog( DialogNames.SelectStream, dialogModel ) == true ) {
 						if( dialogModel.SelectedItem != null ) {
