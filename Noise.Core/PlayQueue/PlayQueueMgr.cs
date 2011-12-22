@@ -8,10 +8,10 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayQueueMgr : IPlayQueue {
-		private readonly IDataProvider						mDataProvider;
 		private readonly IArtistProvider					mArtistProvider;
 		private readonly IAlbumProvider						mAlbumProvider;
 		private readonly ITrackProvider						mTrackProvider;
+		private readonly IStorageFileProvider				mStorageFileProvider;
 		private readonly IEventAggregator					mEventAggregator;
 		private readonly List<PlayQueueTrack>				mPlayQueue;
 		private readonly List<PlayQueueTrack>				mPlayHistory;
@@ -29,12 +29,12 @@ namespace Noise.Core.PlayQueue {
 		private readonly AsyncCommand<DbAlbum>				mAlbumPlayCommand;
 		private readonly AsyncCommand<DbInternetStream>		mStreamPlayCommand;
 
-		public PlayQueueMgr( IEventAggregator eventAggregator, IDataProvider dataProvider, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
+		public PlayQueueMgr( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IStorageFileProvider storageFileProvider,
 							 IPlayStrategyFactory strategyFactory, IPlayExhaustedFactory exhaustedFactory ) {
-			mDataProvider = dataProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
+			mStorageFileProvider = storageFileProvider;
 			mEventAggregator = eventAggregator;
 			mPlayStrategyFactory = strategyFactory;
 			mPlayExhaustedFactory = exhaustedFactory;
@@ -89,10 +89,10 @@ namespace Noise.Core.PlayQueue {
 				var artist = mArtistProvider.GetArtistForAlbum( album );
 
 				if( artist != null ) {
-					var file = mDataProvider.GetPhysicalFile( track );
+					var file = mStorageFileProvider.GetPhysicalFile( track );
 
 					if( file != null ) {
-						var path = mDataProvider.GetPhysicalFilePath( file );
+						var path = mStorageFileProvider.GetPhysicalFilePath( file );
 						var newTrack = new PlayQueueTrack( artist, album, track, file, path, strategySource );
 
 						// Place any user selected tracks before any unplayed strategy queued tracks.
@@ -122,10 +122,10 @@ namespace Noise.Core.PlayQueue {
 					var artist = mArtistProvider.GetArtistForAlbum( album );
 
 					if( artist != null ) {
-						var file = mDataProvider.GetPhysicalFile( track );
+						var file = mStorageFileProvider.GetPhysicalFile( track );
 
 						if( file != null ) {
-							var path = mDataProvider.GetPhysicalFilePath( file );
+							var path = mStorageFileProvider.GetPhysicalFilePath( file );
 							var newTrack = new PlayQueueTrack( artist, album, track, file, path, eStrategySource.PlayStrategy );
 							var trackIndex = mPlayQueue.IndexOf( afterTrack );
 

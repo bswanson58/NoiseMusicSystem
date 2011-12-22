@@ -55,6 +55,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IGenreProvider, GenreProvider>();
 			mContainer.RegisterType<ILyricProvider, LyricProvider>();
 			mContainer.RegisterType<IPlayListProvider, PlayListProvider>();
+			mContainer.RegisterType<IStorageFileProvider, StorageFileProvider>();
 			mContainer.RegisterType<ITagProvider, TagProvider>();
 			mContainer.RegisterType<ITagAssociationProvider, TagAssociationProvider>();
 			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();

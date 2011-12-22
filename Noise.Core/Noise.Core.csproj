@@ -212,6 +212,7 @@
     <Compile Include="Database\LuceneSearchProvider.cs" />
     <Compile Include="Database\LyricProvider.cs" />
     <Compile Include="Database\PlayListProvider.cs" />
+    <Compile Include="Database\StorageFileProvider.cs" />
     <Compile Include="Database\TagAssociationProvider.cs" />
     <Compile Include="Database\TagManager.cs" />
     <Compile Include="Database\TagProvider.cs" />
