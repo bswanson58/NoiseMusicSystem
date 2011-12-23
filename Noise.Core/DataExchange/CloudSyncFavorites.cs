@@ -8,11 +8,11 @@ using IDatabase = GDataDB.IDatabase;
 
 namespace Noise.Core.DataExchange {
 	internal class CloudSyncFavorites : ICloudSyncProvider {
-		private readonly IDataProvider	mDataProvider;
+		private readonly IDomainSearchProvider	mDomainSearchProvider;
 		private IDatabase				mCloudDatabase;
 
-		public CloudSyncFavorites( IDataProvider dataProvider ) {
-			mDataProvider = dataProvider;
+		public CloudSyncFavorites( IDomainSearchProvider domainSearchProvider ) {
+			mDomainSearchProvider = domainSearchProvider;
 		}
 
 		public bool Initialize( IDatabase cloudDatabase ) {
@@ -32,7 +32,7 @@ namespace Noise.Core.DataExchange {
 								 where e.SequenceId > startSeqn && e.SequenceId <= toSeqn select e;
 			var updateCount = 0;
 			foreach( var favorite in cloudFavorites ) {
-				var dbEntry = mDataProvider.Find( favorite.Artist, favorite.Album, favorite.Track );
+				var dbEntry = mDomainSearchProvider.Find( favorite.Artist, favorite.Album, favorite.Track );
 
 				if(( dbEntry != null ) &&
 				   ( dbEntry.WasSuccessful )) {

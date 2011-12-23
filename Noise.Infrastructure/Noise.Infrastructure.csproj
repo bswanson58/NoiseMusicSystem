@@ -203,6 +203,7 @@
     <Compile Include="Interfaces\IDataExchangeManager.cs" />
     <Compile Include="Interfaces\IDbBaseProvider.cs" />
     <Compile Include="Interfaces\IDiscographyProvider.cs" />
+    <Compile Include="Interfaces\IDomainSearchProvider.cs" />
     <Compile Include="Interfaces\IEqManager.cs" />
     <Compile Include="Interfaces\IGenreProvider.cs" />
     <Compile Include="Interfaces\IIoc.cs" />

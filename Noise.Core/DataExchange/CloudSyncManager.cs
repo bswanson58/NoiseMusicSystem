@@ -18,6 +18,7 @@ namespace Noise.Core.DataExchange {
 		private readonly IAlbumProvider				mAlbumProvider;
 		private readonly ITrackProvider				mTrackProvider;
 		private readonly IInternetStreamProvider	mStreamProvider;
+		private readonly IDomainSearchProvider		mDomainSearchProvider;
 		private string								mLoginName;
 		private string								mLoginPassword;
 		private IDatabaseClient						mCloudClient;
@@ -30,7 +31,7 @@ namespace Noise.Core.DataExchange {
 		private readonly AsyncCommand<object>						mSyncWithCloud;
 		private readonly AsyncCommand<SetFavoriteCommandArgs>		mSetFavoriteCommand;
 
-		public CloudSyncManager( IDataProvider dataProvider, IEnumerable<ICloudSyncProvider> syncProviders,
+		public CloudSyncManager( IDataProvider dataProvider, IEnumerable<ICloudSyncProvider> syncProviders, IDomainSearchProvider domainSearchProvider,
 								 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IInternetStreamProvider streamProvider ) {
 			mDataProvider = dataProvider;
 			mSyncProviders = syncProviders;
@@ -38,6 +39,7 @@ namespace Noise.Core.DataExchange {
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mStreamProvider = streamProvider;
+			mDomainSearchProvider = domainSearchProvider;
 			mSyncWithCloud = new AsyncCommand<object>( OnCloudSync );
 			GlobalCommands.SynchronizeFromCloud.RegisterCommand( mSyncWithCloud );
 
@@ -128,7 +130,7 @@ namespace Noise.Core.DataExchange {
 
 			using( var favoriteList = mAlbumProvider.GetFavoriteAlbums()) {
 				foreach( var album in favoriteList.List ) {
-					var result = mDataProvider.Find( album.DbId );
+					var result = mDomainSearchProvider.Find( album.DbId );
 					var item = new ExportFavorite( result, seqnId );
 
 					foreach( var provider in mSyncProviders ) {
@@ -141,7 +143,7 @@ namespace Noise.Core.DataExchange {
 
 			using( var favoriteList = mTrackProvider.GetFavoriteTracks()) {
 				foreach( var track in favoriteList.List ) {
-					var result = mDataProvider.Find( track.DbId );
+					var result = mDomainSearchProvider.Find( track.DbId );
 					var item = new ExportFavorite( result, seqnId );
 
 					foreach( var provider in mSyncProviders ) {
@@ -212,7 +214,7 @@ namespace Noise.Core.DataExchange {
 
 					foreach( var provider in mSyncProviders ) {
 						if( provider.SyncTypes.HasFlag( ObjectTypes.Favorites ) ) {
-							provider.UpdateToCloud( new ExportFavorite( mDataProvider.Find( args.ItemId ), seqnId ));
+							provider.UpdateToCloud( new ExportFavorite( mDomainSearchProvider.Find( args.ItemId ), seqnId ));
 						}
 					}
 
