@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
-using Eloquera.Client;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -15,7 +14,7 @@ namespace Noise.Core.Database {
 			mDatabaseMgr = databaseManager;
 		}
 
-		protected DatabaseShell	GetDatabase {
+		protected IDatabaseShell	GetDatabase {
 			get{ return( new DatabaseShell( mDatabaseMgr )); }
 		}
 
@@ -49,17 +48,10 @@ namespace Noise.Core.Database {
 			Condition.Requires( query ).IsNotNullOrEmpty();
 			Condition.Requires( parms ).IsNotEmpty();
 
-			T retValue = null;
+			T retValue;
 
 			using( var dbShell = GetDatabase ) {
-				if(( parms != null ) &&
-				   ( parms.Count > 0 )) {
-					foreach( var entry in parms ) {
-						dbShell.SetParameter( entry.Key, entry.Value );
-					}
-
-					retValue = dbShell.Database.Database.ExecuteScalar( query, dbShell.QueryParameters ) as T;
-				}
+				retValue = dbShell.QueryForItem( query, parms ) as T;
 			}
 
 			return( retValue );
@@ -85,7 +77,7 @@ namespace Noise.Core.Database {
 
 			var dbShell = GetDatabase;
 
-			return( new DataProviderList<T>( dbShell, dbShell.Database.Database.ExecuteQuery( query ).OfType<T>()));
+			return( new DataProviderList<T>( dbShell, dbShell.QueryForList( query ).OfType<T>()));
 		}
 
 		protected DataProviderList<T> TryGetList( string query, string exceptionMessage ) {
@@ -103,23 +95,13 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
-		protected DataProviderList<T> GetList( string query, IDictionary<string, object> parms ) {
+		protected DataProviderList<T> GetList( string query, IDictionary<string, object> parameters ) {
 			Condition.Requires( query ).IsNotNullOrEmpty();
-			Condition.Requires( parms ).IsNotEmpty();
+			Condition.Requires( parameters ).IsNotEmpty();
 
-			DataProviderList<T>	retValue = null;
 			var dbShell = GetDatabase;
 
-			if(( parms != null ) &&
-			   ( parms.Count > 0 )) {
-				foreach( var entry in parms ) {
-					dbShell.SetParameter( entry.Key, entry.Value );
-				}
-
-				retValue = new DataProviderList<T>( dbShell, dbShell.Database.Database.ExecuteQuery( query, dbShell.QueryParameters ).OfType<T>());
-			}
-
-			return( retValue );
+			return( new DataProviderList<T>( dbShell, dbShell.QueryForList( query, parameters ).OfType<T>()));
 		}
 
 		protected DataProviderList<T> TryGetList( string query, IDictionary<string, object> parms, string exceptionMessage ) {
@@ -137,41 +119,30 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
-		protected DataUpdateShell<T> GetUpdateShell( string query, IDictionary<string, object> parms ) {
+		protected DataUpdateShell<T> GetUpdateShell( string query, IDictionary<string, object> parameters ) {
 			Condition.Requires( query ).IsNotNullOrEmpty();
-			Condition.Requires( parms ).IsNotEmpty();
-
-			DataUpdateShell<T> retValue = null;
+			Condition.Requires( parameters ).IsNotEmpty();
 
 			var dbShell = GetDatabase;
-			if(( parms != null ) &&
-			   ( parms.Count > 0 )) {
-				foreach( var entry in parms ) {
-					dbShell.SetParameter( entry.Key, entry.Value );
-				}
 
-				retValue = new DataUpdateShell<T>( dbShell, Update,
-													dbShell.Database.Database.ExecuteScalar( query, dbShell.QueryParameters ) as T );
-			}
-
-			return( retValue );
+			return( new DataUpdateShell<T>( dbShell, Update, dbShell.QueryForList( query, parameters ) as T ));
 		}
 
 		protected void InsertItem( T item ) {
 			using( var dbShell = GetDatabase ) {
-				dbShell.Database.Insert( item );
+				dbShell.InsertItem( item );
 			}
 		}
 
 		protected void UpdateItem( T item ) {
 			using( var dbShell = GetDatabase ) {
-				dbShell.Database.Store( item );
+				dbShell.UpdateItem( item );
 			}
 		}
 
 		protected void DeleteItem( T item ) {
 			using( var dbShell = GetDatabase ) {
-				dbShell.Database.Delete( item );
+				dbShell.DeleteItem( item );
 			}
 		}
 
