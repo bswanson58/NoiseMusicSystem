@@ -30,8 +30,8 @@ namespace Noise.Core.FileStore {
 	internal class FileUpdates : IFileUpdates, IRequireInitialization {
 		internal const string					cBackgroundFileUpdater = "BackgroundFileUpdater";
 
-		private readonly IDataProvider			mDataProvider;
 		private readonly ITrackProvider			mTrackProvider;
+		private readonly IDbBaseProvider		mDbBaseProvider;
 		private readonly IStorageFileProvider	mStorageFileProvider;
 		private	readonly ISchedulerFactory		mSchedulerFactory;
 		private	readonly IScheduler				mJobScheduler;
@@ -43,9 +43,9 @@ namespace Noise.Core.FileStore {
 		private AsyncCommand<UpdatePlayCountCommandArgs>	mUpdatePlayCountCommand;
 		private AsyncCommand<SetMp3TagCommandArgs>			mSetMp3TagsCommand;
 
-		public FileUpdates( ILifecycleManager lifecycleManager, IDataProvider dataProvider, ITrackProvider trackProvider, IStorageFileProvider storageFileProvider ) {
-			mDataProvider = dataProvider;
+		public FileUpdates( ILifecycleManager lifecycleManager, ITrackProvider trackProvider, IDbBaseProvider dbBaseProvider, IStorageFileProvider storageFileProvider ) {
 			mTrackProvider = trackProvider;
+			mDbBaseProvider = dbBaseProvider;
 			mStorageFileProvider = storageFileProvider;
 
 			lifecycleManager.RegisterForInitialize( this );
@@ -121,7 +121,7 @@ namespace Noise.Core.FileStore {
 		private void OnSetFavorite( SetFavoriteCommandArgs args ) {
 			Condition.Requires( args ).IsNotNull();
 
-			var item = mDataProvider.GetItem( args.ItemId );
+			var item = mDbBaseProvider.GetItem( args.ItemId );
 
 			if(( item != null ) &&
 			   ( item is DbTrack )) {
@@ -204,7 +204,7 @@ namespace Noise.Core.FileStore {
 		private void OnSetRating( SetRatingCommandArgs args ) {
 			Condition.Requires( args ).IsNotNull();
 			
-			var item = mDataProvider.GetItem( args.ItemId );
+			var item = mDbBaseProvider.GetItem( args.ItemId );
 
 			if(( item != null ) &&
 			   ( item is DbTrack )) {
@@ -244,7 +244,7 @@ namespace Noise.Core.FileStore {
 		private void OnUpdatePlayCount( UpdatePlayCountCommandArgs args ) {
 			Condition.Requires( args ).IsNotNull();
 			
-			var item = mDataProvider.GetItem( args.ItemId );
+			var item = mDbBaseProvider.GetItem( args.ItemId );
 
 			if(( item != null ) &&
 			   ( item is DbTrack )) {
@@ -301,7 +301,7 @@ namespace Noise.Core.FileStore {
 		private void SetMp3FileTags( SetMp3TagCommandArgs args ) {
 			Condition.Requires( args ).IsNotNull();
 			
-			var item = mDataProvider.GetItem( args.ItemId );
+			var item = mDbBaseProvider.GetItem( args.ItemId );
 
 			Condition.Requires( item ).IsNotNull();
 			Condition.Requires( item ).IsOfType( typeof( DbTrack ));
