@@ -10,17 +10,9 @@ namespace Noise.Core.Database {
 		public LyricProvider( IDatabaseManager databaseManager ) :
 			base( databaseManager ) { }
 
-		public void StoreLyric( DbLyric lyric ) {
-			try {
-				if( GetItem( "SELECT DbLyric Where DbId = @dbId", new Dictionary<string, object>{{ "dbId", lyric.DbId }}) == null ) {
-					InsertItem( lyric );
-				}
-				else {
-					UpdateItem( lyric );
-				}
-			}
-			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "StoreLyric", ex );
+		public void AddLyric( DbLyric lyric ) {
+			using( var dbShell = CreateDatabase()) {
+				dbShell.InsertItem( lyric );
 			}
 		}
 

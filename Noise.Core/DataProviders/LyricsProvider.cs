@@ -94,7 +94,7 @@ namespace Noise.Core.DataProviders {
 						if( parser.Success ) {
 							var dbLyric = new DbLyric( args.Artist.DbId, args.Track.DbId, args.Track.Name ) { Lyrics = parser.Lyrics, SourceUrl = result.Url };
 
-							mLyricsProvider.StoreLyric( dbLyric );
+							mLyricsProvider.AddLyric( dbLyric );
 							lyricsInfo.SetMatchingLyric( dbLyric );
 
 							mEvents.GetEvent<Events.SongLyricsInfo>().Publish( lyricsInfo );

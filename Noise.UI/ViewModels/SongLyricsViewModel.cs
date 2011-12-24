@@ -152,7 +152,7 @@ namespace Noise.UI.ViewModels {
 												{ Lyrics = SelectedLyric.Lyric.Lyrics, SourceUrl = SelectedLyric.Lyric.SourceUrl };
 
 				mLyricsInfo.SetMatchingLyric( newLyric );
-				mLyricProvider.StoreLyric( newLyric );
+				mLyricProvider.AddLyric( newLyric );
 
 				RaiseCanExecuteChangedEvent( "CanExecute_SelectLyric" );
 			}

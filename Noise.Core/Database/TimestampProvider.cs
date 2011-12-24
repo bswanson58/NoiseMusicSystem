@@ -19,18 +19,18 @@ namespace Noise.Core.Database {
 		}
 
 		public void SetTimestamp( string componentId, long ticks ) {
-			var	timestamp = TryGetItem( "SELECT DbTimestamp WHERE ComponentId = @id", new Dictionary<string, object> {{ "id", componentId }}, "GetTimestamp" );
+			using( var updater = GetUpdateShell( "SELECT DbTimestamp WHERE ComponentId = @id", new Dictionary<string, object> {{ "id", componentId }} )) {
+				if( updater.Item != null ) {
+					updater.Item.SetTimestamp( ticks );
 
-			if( timestamp != null ) {
-				timestamp.SetTimestamp( ticks );
+					updater.Update();
+				}
+				else {
+					var timestamp = new DbTimestamp( componentId );
 
-				UpdateItem( timestamp );
-			}
-			else {
-				timestamp = new DbTimestamp( componentId );
-
-				timestamp.SetTimestamp( ticks );
-				InsertItem( timestamp );
+					timestamp.SetTimestamp( ticks );
+					InsertItem( timestamp );
+				}
 			}
 		}
 	}

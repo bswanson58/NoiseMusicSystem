@@ -134,12 +134,6 @@ namespace Noise.Core.Database {
 			}
 		}
 
-		protected void UpdateItem( T item ) {
-			using( var dbShell = CreateDatabase()) {
-				dbShell.UpdateItem( item );
-			}
-		}
-
 		protected void DeleteItem( T item ) {
 			using( var dbShell = CreateDatabase()) {
 				dbShell.DeleteItem( item );
