@@ -200,8 +200,6 @@
     <Compile Include="Database\AssociatedItemListProvider.cs" />
     <Compile Include="Database\BaseDataProvider.cs" />
     <Compile Include="Database\DatabaseCache.cs" />
-    <Compile Include="Database\DatabaseManager.cs" />
-    <Compile Include="Database\DatabaseShell.cs" />
     <Compile Include="Database\DatabaseStatistics.cs" />
     <Compile Include="Database\DataProvider.cs" />
     <Compile Include="Database\DataUpdates.cs" />

@@ -30,7 +30,7 @@ namespace Noise.Core.Database {
 		public string GetPhysicalFilePath( StorageFile forFile ) {
 			string	retValue;
 
-			using( var dbShell = GetDatabase ) {
+			using( var dbShell = CreateDatabase() ) {
 				retValue = StorageHelpers.GetPath( dbShell.Database.Database, forFile );
 			}
 
@@ -49,7 +49,7 @@ namespace Noise.Core.Database {
 						var parentList = trackList.Select( track => track.ParentFolder ).Distinct();
 						var folderList = parentList.Select( mStorageFolderProvider.GetFolder );
 
-						using( var dbShell = GetDatabase ) {
+						using( var dbShell = CreateDatabase() ) {
 							var pathList = folderList.Select( folder => StorageHelpers.GetPath( dbShell.Database.Database, folder ));
 
 							retValue = FindCommonParent( pathList );

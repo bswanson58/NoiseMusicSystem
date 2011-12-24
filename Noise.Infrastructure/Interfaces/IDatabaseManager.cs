@@ -3,6 +3,8 @@
 		bool			Initialize();
 		void			Shutdown();
 
+		IDatabaseShell	CreateDatabase();
+
 		IDatabase		ReserveDatabase();
 		IDatabase		GetDatabase( string databaseId );
 

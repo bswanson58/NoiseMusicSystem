@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.Database {
+namespace Noise.EloqueraDatabase.Database {
 	public class DatabaseManager : IDatabaseManager {
 		private readonly object					mLockObject;
 		private readonly List<IDatabase>		mAvailableDatabases;
@@ -62,6 +62,10 @@ namespace Noise.Core.Database {
 			}
 
 			mDatabaseFactory.CloseFactory();
+		}
+
+		public IDatabaseShell CreateDatabase() {
+			return( new DatabaseShell( this ));
 		}
 
 		public IDatabase ReserveDatabase() {

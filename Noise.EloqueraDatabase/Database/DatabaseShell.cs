@@ -4,7 +4,7 @@ using CuttingEdge.Conditions;
 using Eloquera.Client;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.Database {
+namespace Noise.EloqueraDatabase.Database {
 	internal class DatabaseShell : IDatabaseShell {
 		private readonly IDatabaseManager	mDatabaseMgr;
 		private IDatabase					mDatabase;

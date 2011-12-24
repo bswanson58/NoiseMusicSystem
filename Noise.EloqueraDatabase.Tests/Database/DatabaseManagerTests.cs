@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using MbUnit.Framework;
-using Noise.Core.Database;
+using Noise.EloqueraDatabase.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Rhino.Mocks;
 
-namespace Noise.Core.Tests.Database {
+namespace Noise.EloqueraDatabase.Tests.Database {
 	public class DatabaseManagerTests {
 		[Test]
 		[ExpectedArgumentNullException]

@@ -124,6 +124,8 @@
     <Compile Include="BlobStore\BlobStorageResolver.cs" />
     <Compile Include="BlobStore\IBlobStorageManager.cs" />
     <Compile Include="Database\Database.cs" />
+    <Compile Include="Database\DatabaseManager.cs" />
+    <Compile Include="Database\DatabaseShell.cs" />
     <Compile Include="EloqueraDatabaseFactory.cs" />
     <Compile Include="EloqueraDatabaseModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

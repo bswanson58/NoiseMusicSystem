@@ -14,8 +14,8 @@ namespace Noise.Core.Database {
 			mDatabaseMgr = databaseManager;
 		}
 
-		protected IDatabaseShell	GetDatabase {
-			get{ return( new DatabaseShell( mDatabaseMgr )); }
+		protected IDatabaseShell CreateDatabase() {
+			return ( mDatabaseMgr.CreateDatabase() );
 		}
 
 		protected T GetItem( string query ) {
@@ -23,7 +23,7 @@ namespace Noise.Core.Database {
 
 			T retValue;
 
-			using( var dbShell = GetDatabase ) {
+			using( var dbShell = CreateDatabase() ) {
 				retValue = dbShell.Database.Database.ExecuteScalar( query ) as T;
 			}
 
@@ -50,7 +50,7 @@ namespace Noise.Core.Database {
 
 			T retValue;
 
-			using( var dbShell = GetDatabase ) {
+			using( var dbShell = CreateDatabase() ) {
 				retValue = dbShell.QueryForItem( query, parms ) as T;
 			}
 
@@ -75,7 +75,7 @@ namespace Noise.Core.Database {
 		protected DataProviderList<T> GetList( string query ) {
 			Condition.Requires( query ).IsNotNullOrEmpty();
 
-			var dbShell = GetDatabase;
+			var dbShell = CreateDatabase();
 
 			return( new DataProviderList<T>( dbShell, dbShell.QueryForList( query ).OfType<T>()));
 		}
@@ -99,7 +99,7 @@ namespace Noise.Core.Database {
 			Condition.Requires( query ).IsNotNullOrEmpty();
 			Condition.Requires( parameters ).IsNotEmpty();
 
-			var dbShell = GetDatabase;
+			var dbShell = CreateDatabase();
 
 			return( new DataProviderList<T>( dbShell, dbShell.QueryForList( query, parameters ).OfType<T>()));
 		}
@@ -123,25 +123,25 @@ namespace Noise.Core.Database {
 			Condition.Requires( query ).IsNotNullOrEmpty();
 			Condition.Requires( parameters ).IsNotEmpty();
 
-			var dbShell = GetDatabase;
+			var dbShell = CreateDatabase();
 
 			return( new DataUpdateShell<T>( dbShell, Update, dbShell.QueryForList( query, parameters ) as T ));
 		}
 
 		protected void InsertItem( T item ) {
-			using( var dbShell = GetDatabase ) {
+			using( var dbShell = CreateDatabase() ) {
 				dbShell.InsertItem( item );
 			}
 		}
 
 		protected void UpdateItem( T item ) {
-			using( var dbShell = GetDatabase ) {
+			using( var dbShell = CreateDatabase() ) {
 				dbShell.UpdateItem( item );
 			}
 		}
 
 		protected void DeleteItem( T item ) {
-			using( var dbShell = GetDatabase ) {
+			using( var dbShell = CreateDatabase() ) {
 				dbShell.DeleteItem( item );
 			}
 		}

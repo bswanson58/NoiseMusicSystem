@@ -11,7 +11,7 @@ namespace Noise.Core.Database {
 		private TextInfo TransformTextInfo( DbTextInfo textInfo ) {
 			TextInfo	retValue;
 
-			using( var dbShell = GetDatabase ) {
+			using( var dbShell = CreateDatabase() ) {
 				retValue = new TextInfo( textInfo ) { Text = dbShell.Database.BlobStorage.RetrieveText( textInfo.DbId ) };
 			}
 

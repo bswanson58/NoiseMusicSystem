@@ -13,7 +13,7 @@ namespace Noise.Core.Database {
 		private Artwork TransformArtwork( DbArtwork artwork ) {
 			Artwork	retValue;
 
-			using( var dbShell = GetDatabase ) {
+			using( var dbShell = CreateDatabase() ) {
 				retValue = new Artwork( artwork ) { Image = dbShell.Database.BlobStorage.RetrieveBytes( artwork.DbId ) };
 			}
 
