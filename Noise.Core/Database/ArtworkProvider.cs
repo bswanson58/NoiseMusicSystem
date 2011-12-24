@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -35,9 +34,13 @@ namespace Noise.Core.Database {
 
 		public Artwork[] GetAlbumArtwork( long albumId, ContentType ofType ) {
 			Artwork[]	retValue = null;
+			var			query = "SELECT DbArtwork Where Album = @albumId AND ContentType = @contentType";
 
-			var dbArtworkList = TryGetList( "SELECT DbArtwork Where Album = @albumId AND ContentType = @contentType",
-											new Dictionary<string, object> {{ "albumId", albumId }, { "contentType", ofType }}, "Exception - GetAlbumArtwork" );
+			if( ofType == ContentType.AlbumCover ) {
+				query = "SELECT DbArtwork Where Album = @albumId AND ( ContentType = @contentType OR IsUserSelection )";
+			}
+
+			var dbArtworkList = TryGetList( query, new Dictionary<string, object> {{ "albumId", albumId }, { "contentType", ofType }}, "Exception - GetAlbumArtwork" );
 
 			if( dbArtworkList != null ) {
 				retValue = dbArtworkList.List.Select( TransformArtwork ).ToArray();
@@ -47,7 +50,7 @@ namespace Noise.Core.Database {
 		}
 
 		public DataUpdateShell<DbArtwork> GetArtworkForUpdate( long artworkId ) {
-			throw new NotImplementedException();
+			return( GetUpdateShell( "SELECT DbArtwork Where DbId = @artworkId", new Dictionary<string, object> {{ "artworkId", artworkId }} ));
 		}
 	}
 }
