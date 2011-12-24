@@ -8,8 +8,10 @@ namespace Noise.UI.ViewModels {
 		private readonly List<DbPlayList>	mPlayLists;
 		public	DbPlayList					SelectedItem { get; set; }
 
-		public SelectPlayListDialogModel( IPlayListMgr playListMgr ) {
-			mPlayLists = playListMgr.PlayLists;
+		public SelectPlayListDialogModel( IPlayListProvider playListProvider ) {
+			using( var playLists = playListProvider.GetPlayLists()) {
+				mPlayLists = new List<DbPlayList>( playLists.List );
+			}
 		}
 
 		public IEnumerable<DbPlayList> PlayLists {

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -20,6 +22,10 @@ namespace Noise.Core.Database {
 			Condition.Requires( forAlbum ).IsNotNull();
 
 			return( GetTrackList( forAlbum.DbId ));
+		}
+
+		public IEnumerable<DbTrack> GetTrackListForPlayList( DbPlayList playList ) {
+			return( playList.TrackIds.Select( GetTrack ).ToList());
 		}
 
 		public DataProviderList<DbTrack> GetFavoriteTracks() {

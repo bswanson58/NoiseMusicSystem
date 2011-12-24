@@ -15,7 +15,7 @@ namespace Noise.Core.Database {
 		}
 
 		protected IDatabaseShell CreateDatabase() {
-			return ( mDatabaseMgr.CreateDatabase() );
+			return ( mDatabaseMgr.CreateDatabase());
 		}
 
 		protected T GetItem( string query ) {
@@ -23,7 +23,7 @@ namespace Noise.Core.Database {
 
 			T retValue;
 
-			using( var dbShell = CreateDatabase() ) {
+			using( var dbShell = CreateDatabase()) {
 				retValue = dbShell.Database.Database.ExecuteScalar( query ) as T;
 			}
 
@@ -50,7 +50,7 @@ namespace Noise.Core.Database {
 
 			T retValue;
 
-			using( var dbShell = CreateDatabase() ) {
+			using( var dbShell = CreateDatabase()) {
 				retValue = dbShell.QueryForItem( query, parms ) as T;
 			}
 
@@ -129,19 +129,19 @@ namespace Noise.Core.Database {
 		}
 
 		protected void InsertItem( T item ) {
-			using( var dbShell = CreateDatabase() ) {
+			using( var dbShell = CreateDatabase()) {
 				dbShell.InsertItem( item );
 			}
 		}
 
 		protected void UpdateItem( T item ) {
-			using( var dbShell = CreateDatabase() ) {
+			using( var dbShell = CreateDatabase()) {
 				dbShell.UpdateItem( item );
 			}
 		}
 
 		protected void DeleteItem( T item ) {
-			using( var dbShell = CreateDatabase() ) {
+			using( var dbShell = CreateDatabase()) {
 				dbShell.DeleteItem( item );
 			}
 		}

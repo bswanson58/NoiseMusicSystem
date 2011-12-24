@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Practices.Prism.Events;
@@ -19,7 +20,7 @@ namespace Noise.UI.ViewModels {
 		private readonly ITagProvider				mTagProvider;
 		private readonly IInternetStreamProvider	mStreamProvider;
 		private readonly IPlayQueue					mPlayQueue;
-		private readonly IPlayListMgr				mPlayListMgr;
+		private readonly IPlayListProvider			mPlayListProvider;
 		private readonly IDialogService				mDialogService;
 		private int									mPlayingIndex;
 		private TimeSpan							mTotalTime;
@@ -30,13 +31,13 @@ namespace Noise.UI.ViewModels {
 		private readonly ObservableCollectionEx<PlayStrategyItem>		mPlayStrategies;
 
 		public PlayQueueViewModel( IEventAggregator eventAggregator, ITagProvider tagProvider, IGenreProvider genreProvider, IInternetStreamProvider streamProvider,
-								   IPlayQueue playQueue, IPlayListMgr playListMgr, IDialogService dialogService ) {
+								   IPlayQueue playQueue, IPlayListProvider playListProvider, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
 			mGenreProvider = genreProvider;
 			mStreamProvider = streamProvider;
 			mTagProvider = tagProvider;
 			mPlayQueue = playQueue;
-			mPlayListMgr = playListMgr;
+			mPlayListProvider = playListProvider;
 			mDialogService = dialogService;
 
 			mQueue = new ObservableCollectionEx<PlayQueueTrack>();
@@ -85,7 +86,7 @@ namespace Noise.UI.ViewModels {
 			var playList = new DbPlayList();
 
 			if( mDialogService.ShowDialog( DialogNames.PlayListEdit, playList ) == true ) {
-				mPlayListMgr.Create( mPlayQueue.PlayList, playList.Name, playList.Description );
+				mPlayListProvider.AddPlayList( new DbPlayList( playList.Name, playList.Description, mPlayQueue.PlayList.Select( track => track.Track.DbId )));
 			}
 		}
 
@@ -268,7 +269,7 @@ namespace Noise.UI.ViewModels {
 			   ( strategy == ePlayExhaustedStrategy.PlayList ) ||
 			   ( strategy == ePlayExhaustedStrategy.PlayGenre )) {
 				if( strategy == ePlayExhaustedStrategy.PlayList ) {
-					var dialogModel = new SelectPlayListDialogModel( mPlayListMgr );
+					var dialogModel = new SelectPlayListDialogModel( mPlayListProvider );
 
 					if( mDialogService.ShowDialog( DialogNames.SelectPlayList, dialogModel ) == true ) {
 						if( dialogModel.SelectedItem != null ) {

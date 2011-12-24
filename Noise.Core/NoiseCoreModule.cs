@@ -38,7 +38,6 @@ namespace Noise.Core {
 			mContainer.RegisterType<INoiseManager, NoiseManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IPlayQueue, PlayQueueMgr>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IPlayHistory, PlayHistoryMgr>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IPlayListMgr, PlayListMgr>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IPlayController, PlayController>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ISearchProvider, LuceneSearchProvider>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ITagManager, TagManager>( new HierarchicalLifetimeManager());

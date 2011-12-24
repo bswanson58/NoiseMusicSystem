@@ -15,17 +15,19 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator	mEvents;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
-		private readonly IPlayListMgr		mPlayListMgr;
+		private readonly ITrackProvider		mTrackProvider;
+		private readonly IPlayListProvider	mPlayListProvider;
 		private PlayListNode				mSelectedNode;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly Observal.Observer	mChangeObserver;
 		private readonly ObservableCollectionEx<PlayListNode>	mTreeItems;
 
-		public PlayListViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider, IPlayListMgr playListMgr ) {
+		public PlayListViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayListProvider playListProvider ) {
 			mEvents = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
-			mPlayListMgr = playListMgr;
+			mTrackProvider = trackProvider;
+			mPlayListProvider = playListProvider;
 
 			mTreeItems = new ObservableCollectionEx<PlayListNode>();
 
@@ -45,7 +47,7 @@ namespace Noise.UI.ViewModels {
 			get{ return( mTreeItems ); }
 		}
 
-		private void OnPlayListChanged( IPlayListMgr playListMgr ) {
+		private void OnPlayListChanged( DbPlayList playList ) {
 			BackgroundLoadPlayLists();
 		}
 
@@ -58,20 +60,22 @@ namespace Noise.UI.ViewModels {
 		private IEnumerable<PlayListNode> BuildPlayList() {
 			var retValue = new List<PlayListNode>();
 
-			foreach( var list in mPlayListMgr.PlayLists ) {
-				var trackList = from DbTrack track in mPlayListMgr.GetTracks( list ) select track;
-				var childNodes = new List<PlayListNode>();
+			using( var playLists = mPlayListProvider.GetPlayLists()) {
+				foreach( var list in playLists.List ) {
+					var trackList = from DbTrack track in mTrackProvider.GetTrackListForPlayList( list ) select track;
+					var childNodes = new List<PlayListNode>();
 
-				foreach( var track in trackList ) {
-					var album = mAlbumProvider.GetAlbumForTrack( track );
-					if( album != null ) {
-						var artist = mArtistProvider.GetArtistForAlbum( album );
+					foreach( var track in trackList ) {
+						var album = mAlbumProvider.GetAlbumForTrack( track );
+						if( album != null ) {
+							var artist = mArtistProvider.GetArtistForAlbum( album );
 
-						childNodes.Add( new PlayListNode( artist, album, track, OnNodeSelected, OnNodePlay ));
+							childNodes.Add( new PlayListNode( artist, album, track, OnNodeSelected, OnNodePlay ));
+						}
 					}
-				}
 
-				retValue.Add( new PlayListNode( list, childNodes, OnNodeSelected, OnListPlay ));
+					retValue.Add( new PlayListNode( list, childNodes, OnNodeSelected, OnListPlay ));
+				}
 			}
 
 			return( retValue );
@@ -136,7 +140,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_DeletePlayList() {
 			if( mSelectedNode != null ) {
-				mPlayListMgr.Delete( mSelectedNode.PlayList );
+				mPlayListProvider.DeletePlayList( mSelectedNode.PlayList );
 			}
 		}
 

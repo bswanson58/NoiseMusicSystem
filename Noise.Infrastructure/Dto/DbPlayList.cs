@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbPlayList : DbBase, IUserSettings {
@@ -15,6 +17,13 @@ namespace Noise.Infrastructure.Dto {
 			Description = "";
 
 			TrackIds = new long[0];
+		}
+
+		public DbPlayList( string name, string description, IEnumerable<long> trackIds ) {
+			Name = name;
+			Description = description;
+
+			TrackIds = trackIds.ToArray();
 		}
 
 		public bool IsUserRating {

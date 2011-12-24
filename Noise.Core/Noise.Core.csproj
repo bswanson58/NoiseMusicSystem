@@ -287,7 +287,6 @@
     <Compile Include="PlayQueue\PlayExhaustedStrategyStop.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyReplay.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyStream.cs" />
-    <Compile Include="PlayQueue\PlayListMgr.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyGenre.cs" />
     <Compile Include="PlayQueue\PlayQueueMgr.cs" />
     <Compile Include="PlayQueue\PlayStrategyFactory.cs" />

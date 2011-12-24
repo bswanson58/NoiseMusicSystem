@@ -1,4 +1,5 @@
-﻿using Noise.Infrastructure.Dto;
+﻿using System.Collections.Generic;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface ITrackProvider {
@@ -9,6 +10,7 @@ namespace Noise.Infrastructure.Interfaces {
 		DataProviderList<DbTrack>	GetTrackListForGenre( long genreId );
 		DataProviderList<DbTrack>	GetFavoriteTracks();
 		DataProviderList<DbTrack>	GetNewlyAddedTracks();
+		IEnumerable<DbTrack>		GetTrackListForPlayList( DbPlayList playList );
 
 		DataUpdateShell<DbTrack>	GetTrackForUpdate( long trackId );
 	}

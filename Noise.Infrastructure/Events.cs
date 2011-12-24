@@ -12,7 +12,7 @@ namespace Noise.Infrastructure {
 
 		public class PlayQueueChanged : CompositePresentationEvent<IPlayQueue> { }
 		public class PlayHistoryChanged : CompositePresentationEvent<IPlayHistory> { }
-		public class PlayListChanged : CompositePresentationEvent<IPlayListMgr> { }
+		public class PlayListChanged : CompositePresentationEvent<DbPlayList> { }
 		public class PlayRequested : CompositePresentationEvent<PlayQueueTrack> { }
 
 		public class PlaybackStatusChanged : CompositePresentationEvent<ePlaybackStatus> { }
