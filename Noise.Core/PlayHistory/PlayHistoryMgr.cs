@@ -54,13 +54,13 @@ namespace Noise.Core.PlayHistory {
 								historyUpdate.Item.PlayedOnTicks = DateTime.Now.Ticks;
 								historyUpdate.Update();
 							}
-							else {
-								var	newHistory = new DbPlayHistory( track.File );
-
-								mPlayHistory.Add( newHistory );
-								mPlayHistoryProvider.AddPlayHistory( newHistory );
-							}
 						}
+					}
+					else {
+						var	newHistory = new DbPlayHistory( track.File );
+
+						mPlayHistory.Add( newHistory );
+						mPlayHistoryProvider.AddPlayHistory( newHistory );
 					}
 
 					using( var trackUpdate = mTrackProvider.GetTrackForUpdate( track.Track.DbId )) {

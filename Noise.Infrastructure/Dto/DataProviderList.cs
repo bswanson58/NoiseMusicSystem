@@ -4,7 +4,7 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure.Dto {
 	public class DataProviderBase : IDisposable {
-		private		readonly IDatabaseShell	mDatabaseShell;
+		protected	readonly IDatabaseShell	mDatabaseShell;
 		protected	readonly string			mClientName;
 		private		Action<string>			mDisposeAction;
 
@@ -56,14 +56,16 @@ namespace Noise.Infrastructure.Dto {
 			mOnUpdate = onUpdate;
 		}
 
-		public DataUpdateShell( IDatabaseShell databaseShell, Action<string, T> onUpdate, T item ) :
+		public DataUpdateShell( IDatabaseShell databaseShell, T item ) :
 			base( databaseShell ) {
 			Item = item;
-
-			mOnUpdate = onUpdate;
 		}
 
 		public void Update() {
+			if( mDatabaseShell != null ) {
+				mDatabaseShell.UpdateItem( Item );
+			}
+
 			if( mOnUpdate != null ) {
 				mOnUpdate( mClientName, Item );
 			}

@@ -125,7 +125,7 @@ namespace Noise.Core.Database {
 
 			var dbShell = CreateDatabase();
 
-			return( new DataUpdateShell<T>( dbShell, Update, dbShell.QueryForItem( query, parameters ) as T ));
+			return( new DataUpdateShell<T>( dbShell, dbShell.QueryForItem( query, parameters ) as T ));
 		}
 
 		protected void InsertItem( T item ) {
@@ -143,14 +143,6 @@ namespace Noise.Core.Database {
 		protected void DeleteItem( T item ) {
 			using( var dbShell = CreateDatabase()) {
 				dbShell.DeleteItem( item );
-			}
-		}
-
-		private void Update( string databaseId, T item ) {
-			IDatabase	database = mDatabaseMgr.GetDatabase( databaseId );
-
-			if( database != null ) {
-				database.Store( item );
 			}
 		}
 	}
