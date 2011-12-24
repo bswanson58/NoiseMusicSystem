@@ -215,6 +215,7 @@
     <Compile Include="Interfaces\IInternetStreamProvider.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
     <Compile Include="Interfaces\IPlayHistory.cs" />
+    <Compile Include="Interfaces\IPlayHistoryProvider.cs" />
     <Compile Include="Interfaces\IPlayListProvider.cs" />
     <Compile Include="Interfaces\IPlayQueue.cs" />
     <Compile Include="Interfaces\ISearchProvider.cs" />

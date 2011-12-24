@@ -211,6 +211,7 @@
     <Compile Include="Database\InternetStreamProvider.cs" />
     <Compile Include="Database\LuceneSearchProvider.cs" />
     <Compile Include="Database\LyricProvider.cs" />
+    <Compile Include="Database\PlayHistoryProvider.cs" />
     <Compile Include="Database\PlayListProvider.cs" />
     <Compile Include="Database\StorageFileProvider.cs" />
     <Compile Include="Database\StorageFolderProvider.cs" />

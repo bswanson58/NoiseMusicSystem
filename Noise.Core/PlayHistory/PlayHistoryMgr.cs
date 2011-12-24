@@ -12,13 +12,15 @@ namespace Noise.Core.PlayHistory {
 	public class PlayHistoryMgr : IPlayHistory, IRequireInitialization {
 		private const int						cMaximumHistory = 100;
 
-		private readonly IDatabaseManager		mDatabaseManager;
 		private readonly IEventAggregator		mEvents;
+		private readonly IPlayHistoryProvider	mPlayHistoryProvider;
+		private readonly ITrackProvider			mTrackProvider;
 		private DatabaseCache<DbPlayHistory>	mPlayHistory;
 
-		public PlayHistoryMgr( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
-			mDatabaseManager = databaseManager;
+		public PlayHistoryMgr( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, IPlayHistoryProvider playHistoryProvider, ITrackProvider trackProvider ) {
 			mEvents = eventAggregator;
+			mPlayHistoryProvider = playHistoryProvider;
+			mTrackProvider = trackProvider;
 			mPlayHistory = new DatabaseCache<DbPlayHistory>( null );
 
 			lifecycleManager.RegisterForInitialize( this );
@@ -27,16 +29,13 @@ namespace Noise.Core.PlayHistory {
 		}
 
 		public void Initialize() {
-			var database = mDatabaseManager.ReserveDatabase();
-
 			try {
-				mPlayHistory = new DatabaseCache<DbPlayHistory>( from DbPlayHistory history in database.Database select history );
+				using( var historyList = mPlayHistoryProvider.GetPlayHistoryList()) {
+					mPlayHistory = new DatabaseCache<DbPlayHistory>( historyList.List );
+				}
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - PlayHistoryMgr:ctor ", ex );
-			}
-			finally {
-				mDatabaseManager.FreeDatabase( database );
 			}
 		}
 
@@ -44,45 +43,40 @@ namespace Noise.Core.PlayHistory {
 
 		public void TrackPlayCompleted( PlayQueueTrack track ) {
 			if( track.PercentPlayed > 0.8 ) {
-				var database = mDatabaseManager.ReserveDatabase();
-
 				try {
 					var lastPlayed = mPlayHistory.FindList( history => history.StorageFileId == track.File.DbId ).FirstOrDefault();
 
 					if( lastPlayed != null ) {
-						lastPlayed.PlayedOnTicks = DateTime.Now.Ticks;
-
-						database.Store( database.ValidateOnThread( lastPlayed ));
+						using( var historyUpdate = mPlayHistoryProvider.GetPlayHistoryForUpdate( lastPlayed.DbId )) {
+							historyUpdate.Item.PlayedOnTicks = DateTime.Now.Ticks;
+							historyUpdate.Update();
+						}
 					}
 					else {
 						var	newHistory = new DbPlayHistory( track.File );
 
-						database.Insert( newHistory );
 						mPlayHistory.Add( newHistory );
+						mPlayHistoryProvider.AddPlayHistory( newHistory );
 					}
 
-					var dbTrack = database.ValidateOnThread( track.Track ) as DbTrack;
-					if( dbTrack != null ) {
-						dbTrack.PlayCount++;
+					using( var trackUpdate = mTrackProvider.GetTrackForUpdate( track.Track.DbId )) {
+						trackUpdate.Item.PlayCount++;
+						trackUpdate.Update();
 
-						database.Store( dbTrack );
 						GlobalCommands.UpdatePlayCount.Execute( new UpdatePlayCountCommandArgs( track.Track.DbId ));
 					}
 
-					TrimHistoryList( database );
+					TrimHistoryList();
 
 					mEvents.GetEvent<Events.PlayHistoryChanged>().Publish( this );
 				}
 				catch( Exception ex) {
 					NoiseLogger.Current.LogException( "Exception - TrackPlayCompleted:", ex );
 				}
-				finally {
-					mDatabaseManager.FreeDatabase( database );
-				}
 			}
 		}
 
-		private void TrimHistoryList( IDatabase database ) {
+		private void TrimHistoryList() {
 			var historyList = from DbPlayHistory history in PlayHistory orderby history.PlayedOn ascending select history;
 			var historyCount = historyList.Count();
 			var historyEnum = historyList.GetEnumerator();
@@ -91,7 +85,7 @@ namespace Noise.Core.PlayHistory {
 			while(( historyCount > cMaximumHistory ) &&
 				  ( historyEnum.MoveNext())) {
 				deleteList.Add( historyEnum.Current );
-				database.Delete( historyEnum.Current );
+				mPlayHistoryProvider.DeletePlayHistory( historyEnum.Current );
 				historyCount--;
 			}
 
