@@ -15,6 +15,7 @@ namespace Noise.Infrastructure.Dto {
 
 		protected DataProviderBase( IDatabaseShell databaseShell ) {
 			mDatabaseShell = databaseShell;
+			mClientName = "";
 		}
 
 		public void Dispose() {

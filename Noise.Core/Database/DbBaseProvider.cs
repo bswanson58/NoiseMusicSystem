@@ -8,7 +8,7 @@ namespace Noise.Core.Database {
 			base( databaseManager ) { }
 
 		public DbBase GetItem( long itemId ) {
-			return( TryGetItem( "SELECT DbBase Where DbId = @itemId", new Dictionary<string, object> {{ "itemID", itemId }}, "GetItem" ));
+			return( TryGetItem( "SELECT DbBase Where DbId = @itemId", new Dictionary<string, object> {{ "itemId", itemId }}, "GetItem" ));
 		}
 	}
 }

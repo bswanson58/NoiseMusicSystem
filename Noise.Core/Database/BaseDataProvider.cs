@@ -125,7 +125,7 @@ namespace Noise.Core.Database {
 
 			var dbShell = CreateDatabase();
 
-			return( new DataUpdateShell<T>( dbShell, Update, dbShell.QueryForList( query, parameters ) as T ));
+			return( new DataUpdateShell<T>( dbShell, Update, dbShell.QueryForItem( query, parameters ) as T ));
 		}
 
 		protected void InsertItem( T item ) {

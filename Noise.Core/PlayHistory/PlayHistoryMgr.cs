@@ -47,24 +47,28 @@ namespace Noise.Core.PlayHistory {
 					var lastPlayed = mPlayHistory.FindList( history => history.StorageFileId == track.File.DbId ).FirstOrDefault();
 
 					if( lastPlayed != null ) {
-						using( var historyUpdate = mPlayHistoryProvider.GetPlayHistoryForUpdate( lastPlayed.DbId )) {
-							historyUpdate.Item.PlayedOnTicks = DateTime.Now.Ticks;
-							historyUpdate.Update();
-						}
-					}
-					else {
-						var	newHistory = new DbPlayHistory( track.File );
+						lastPlayed.PlayedOnTicks = DateTime.Now.Ticks;
 
-						mPlayHistory.Add( newHistory );
-						mPlayHistoryProvider.AddPlayHistory( newHistory );
+						using( var historyUpdate = mPlayHistoryProvider.GetPlayHistoryForUpdate( lastPlayed.DbId )) {
+							if( historyUpdate.Item != null ) {
+								historyUpdate.Item.PlayedOnTicks = DateTime.Now.Ticks;
+								historyUpdate.Update();
+							}
+							else {
+								var	newHistory = new DbPlayHistory( track.File );
+
+								mPlayHistory.Add( newHistory );
+								mPlayHistoryProvider.AddPlayHistory( newHistory );
+							}
+						}
 					}
 
 					using( var trackUpdate = mTrackProvider.GetTrackForUpdate( track.Track.DbId )) {
 						trackUpdate.Item.PlayCount++;
 						trackUpdate.Update();
-
-						GlobalCommands.UpdatePlayCount.Execute( new UpdatePlayCountCommandArgs( track.Track.DbId ));
 					}
+
+					GlobalCommands.UpdatePlayCount.Execute( new UpdatePlayCountCommandArgs( track.Track.DbId ));
 
 					TrimHistoryList();
 
