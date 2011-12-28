@@ -5,9 +5,11 @@ namespace Noise.Infrastructure.Interfaces {
 		void						AddArtist( DbArtist artist );
 
 		DbArtist					GetArtist( long dbid );
+		DbArtist					GetArtistForAlbum( DbAlbum album );
+
 		DataProviderList<DbArtist>	GetArtistList();
 		DataProviderList<DbArtist>	GetArtistList( IDatabaseFilter filter );
-		DbArtist					GetArtistForAlbum( DbAlbum album );
+		DataProviderList<DbArtist>	GetChangedArtists( long changedSince );
 		DataProviderList<DbArtist>	GetFavoriteArtists();
 		DataUpdateShell<DbArtist>	GetArtistForUpdate( long artistId );
 		void						UpdateArtistLastChanged( long artistId );

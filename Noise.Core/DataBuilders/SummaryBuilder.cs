@@ -8,11 +8,17 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	internal class SummaryBuilder : ISummaryBuilder {
-		private readonly IDatabaseManager	mDatabaseManager;
-		private bool						mStop;
+		private readonly IRootFolderProvider	mRootFolderProvider;
+		private readonly IArtistProvider		mArtistProvider;
+		private readonly IAlbumProvider			mAlbumProvider;
+		private readonly ITrackProvider			mTrackProvider;
+		private bool							mStop;
 
-		public SummaryBuilder( IDatabaseManager databaseManager ) {
-			mDatabaseManager = databaseManager;
+		public SummaryBuilder( IRootFolderProvider rootFolderProvider, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+			mRootFolderProvider =rootFolderProvider;
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
 		}
 
 		public void BuildSummaryData( DatabaseChangeSummary summary ) {
@@ -26,105 +32,106 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		private void SummarizeArtists() {
-			var database = mDatabaseManager.ReserveDatabase();
+			try {
+				RootFolder	rootFolder;
+				using( var rootFolderList = mRootFolderProvider.GetRootFolderList()) {
+					rootFolder = rootFolderList.List.FirstOrDefault();
+				}
 
-			if( database != null ) {
-				try {
-					var parms = database.Database.CreateParameters();
-					var rootFolder = ( from RootFolder root in database.Database select  root ).FirstOrDefault();
-
-					if( rootFolder != null ) {
-						parms["lastScan"] = rootFolder.LastSummaryScan;
-						var artistList = database.Database.ExecuteQuery( "SELECT DbArtist WHERE LastChangeTicks > @lastScan", parms ).OfType<DbArtist>();
-
-						foreach( var artist in artistList ) {
+				if( rootFolder != null ) {
+					using( var artistList = mArtistProvider.GetChangedArtists( rootFolder.LastSummaryScan )) {
+						foreach( var artist in artistList.List ) {
 							NoiseLogger.Current.LogInfo( string.Format( "Building summary data for: {0}", artist.Name ));
 
-							parms["artistId"] = artist.DbId;
-							var	albums = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>();
-							var albumGenre = new Dictionary<long, int>();
-							var albumCount = 0;
-							var albumRating = 0;
-							var maxAlbumRating = 0;
+							using( var albumList = mAlbumProvider.GetAlbumList( artist.DbId )) {
+								var albumGenre = new Dictionary<long, int>();
+								var albumCount = 0;
+								var albumRating = 0;
+								var maxAlbumRating = 0;
 
-							foreach( var album in albums ) {
-								var albumId = album.DbId;
+								foreach( var album in albumList.List ) {
+									using( var artistUpdater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
+										using( var trackList = mTrackProvider.GetTrackList( album.DbId )) {
+											using( var albumUpdater = mAlbumProvider.GetAlbumForUpdate( album.DbId )) {
+												var years = new List<UInt32>();
+												var trackGenre = new Dictionary<long, int>();
+												var trackRating = 0;
+												var maxTrackRating = 0;
 
-								parms["albumId"] = albumId;
-								var tracks = database.Database.ExecuteQuery( "SELECT DbTrack WHERE Album = @albumId", parms ).OfType<DbTrack>();
-								var years = new List<UInt32>();
-								var trackGenre = new Dictionary<long, int>();
-								var trackRating = 0;
-								var maxTrackRating = 0;
+												album.TrackCount = 0;
 
-								album.TrackCount = 0;
+												foreach( var track in trackList.List ) {
+													if(!years.Contains( track.PublishedYear )) {
+														years.Add( track.PublishedYear );
+													}
 
-								foreach( var track in tracks ) {
-									if(!years.Contains( track.PublishedYear )) {
-										years.Add( track.PublishedYear );
+													AddGenre( trackGenre, track.CalculatedGenre );
+													album.TrackCount++;
+													trackRating += track.Rating;
+
+													if( track.Rating > maxTrackRating ) {
+														maxTrackRating = track.Rating;
+													}
+												}
+
+												if( years.Count == 0 ) {
+													album.PublishedYear = Constants.cUnknownYear;
+												}
+												else if( years.Count == 1 ) {
+													album.PublishedYear = years.First();
+												}
+												else {
+													album.PublishedYear = Constants.cVariousYears;
+												}
+
+												album.CalculatedGenre = DetermineTopGenre( trackGenre );
+												AddGenre( albumGenre, album.CalculatedGenre );
+
+												album.CalculatedRating = trackRating > 0 ? (Int16)( trackRating / album.TrackCount ) : (Int16)0;
+												album.MaxChildRating = (Int16)maxTrackRating;
+												albumRating += album.CalculatedRating;
+												if( maxTrackRating > maxAlbumRating ) {
+													maxAlbumRating = maxTrackRating;
+												}
+
+												albumUpdater.Update();
+												albumCount++;
+
+												if( mStop ) {
+													break;
+												}
+											}
+										}
+
+										artist.AlbumCount = (Int16)albumCount;
+										artist.CalculatedGenre = DetermineTopGenre( albumGenre );
+										artist.CalculatedRating = albumRating > 0 ? (Int16)( albumRating / albumCount ) : (Int16)0;
+										artist.MaxChildRating = (Int16)maxAlbumRating;
+
+										artistUpdater.Update();
+
+										if( mStop ) {
+											break;
+										}
 									}
-
-									AddGenre( trackGenre, track.CalculatedGenre );
-									album.TrackCount++;
-									trackRating += track.Rating;
-
-									if( track.Rating > maxTrackRating ) {
-										maxTrackRating = track.Rating;
-									}
 								}
-
-								if( years.Count == 0 ) {
-									album.PublishedYear = Constants.cUnknownYear;
-								}
-								else if( years.Count == 1 ) {
-									album.PublishedYear = years.First();
-								}
-								else {
-									album.PublishedYear = Constants.cVariousYears;
-								}
-
-								album.CalculatedGenre = DetermineTopGenre( trackGenre );
-								AddGenre( albumGenre, album.CalculatedGenre );
-
-								album.CalculatedRating = trackRating > 0 ? (Int16)( trackRating / album.TrackCount ) : (Int16)0;
-								album.MaxChildRating = (Int16)maxTrackRating;
-								albumRating += album.CalculatedRating;
-								if( maxTrackRating > maxAlbumRating ) {
-									maxAlbumRating = maxTrackRating;
-								}
-
-								database.Store( album );
-								albumCount++;
-
-								if( mStop ) {
-									break;
-								}
-							}
-
-							artist.AlbumCount = (Int16)albumCount;
-							artist.CalculatedGenre = DetermineTopGenre( albumGenre );
-							artist.CalculatedRating = albumRating > 0 ? (Int16)( albumRating / albumCount ) : (Int16)0;
-							artist.MaxChildRating = (Int16)maxAlbumRating;
-
-							database.Store( artist );
-
-							if( mStop ) {
-								break;
 							}
 						}
+					}
 
-						if(!mStop ) {
-							rootFolder.UpdateSummaryScan();
-							database.Store( rootFolder );
+					if(!mStop ) {
+						using( var updater = mRootFolderProvider.GetFolderForUpdate( rootFolder.DbId )) {
+							if( updater.Item != null ) {
+								updater.Item.UpdateSummaryScan();
+
+								updater.Update();
+							}
 						}
 					}
 				}
-				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Exception - Building summary data: ", ex );
-				}
-				finally {
-					mDatabaseManager.FreeDatabase( database );
-				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "Exception - Building summary data: ", ex );
 			}
 		}
 

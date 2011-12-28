@@ -54,6 +54,10 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public DataProviderList<DbArtist> GetChangedArtists( long changedSince ) {
+			return( TryGetList( "SELECT DbArtist WHERE LastChangeTicks > @changedSince", new Dictionary<string, object> {{ "changedSince", changedSince }}, "GetChangedArtists" ));
+		}
+
 		public DbArtist GetArtistForAlbum( DbAlbum album ) {
 			Condition.Requires( album ).IsNotNull();
 
