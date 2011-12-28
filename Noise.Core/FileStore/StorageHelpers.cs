@@ -1,29 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using CuttingEdge.Conditions;
-using Eloquera.Client;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.FileStore {
 	public static class StorageHelpers {
-		public static string GetPath( DB database, StorageFolder forFolder ) {
+		public static string GetPath( IStorageFolderProvider storageFolderProvider, StorageFolder forFolder ) {
 			var retValue = "";
 			var pathParts = new Stack<string>();
 			var folder = forFolder;
 
-			Condition.Requires( database ).IsNotNull();
+			Condition.Requires( storageFolderProvider ).IsNotNull();
 			Condition.Requires( forFolder ).IsNotNull();
 
 			pathParts.Push( folder.Name );
 
 			while( folder.ParentFolder != Constants.cDatabaseNullOid ) {
-				var param = database.CreateParameters();
-
-				param["id"] = folder.ParentFolder;
-
-				folder = database.ExecuteScalar("Select StorageFolder Where DbId = @id", param ) as StorageFolder;
+				folder = storageFolderProvider.GetFolder( folder.ParentFolder );
 				if( folder != null ) {
 					pathParts.Push( folder.Name );
 				}
@@ -41,16 +36,12 @@ namespace Noise.Core.FileStore {
 			return( retValue );
 		}
 
-		public static string GetPath( DB database, StorageFile forFile ) {
-			Condition.Requires( database ).IsNotNull();
+		public static string GetPath( IStorageFolderProvider storageFolderProvider, StorageFile forFile ) {
+			Condition.Requires( storageFolderProvider ).IsNotNull();
 			Condition.Requires( forFile ).IsNotNull();
 
-			var param = database.CreateParameters();
-
-			param["id"] = forFile.ParentFolder;
-
-			var folder = database.ExecuteScalar( "SELECT StorageFolder WHERE DbId = @id", param) as StorageFolder;
-			var path = GetPath( database, folder );
+			var	folder = storageFolderProvider.GetFolder( forFile.ParentFolder );
+			var path = GetPath( storageFolderProvider, folder );
 
 			return( Path.Combine( path, forFile.Name ));
 		}
@@ -105,6 +96,8 @@ namespace Noise.Core.FileStore {
 		}
 
 		public static eFileType DetermineFileType( StorageFile file ) {
+			Condition.Requires( file ).IsNotNull();
+
 			var retValue = eFileType.Unknown;
 			var ext = Path.GetExtension( file.Name ).ToLower();
 
@@ -131,6 +124,8 @@ namespace Noise.Core.FileStore {
 		}
 
 		public static eAudioEncoding DetermineAudioEncoding( StorageFile file ) {
+			Condition.Requires( file ).IsNotNull();
+
 			var retValue = eAudioEncoding.Unknown;
 			var ext = Path.GetExtension( file.Name ).ToLower();
 
@@ -156,6 +151,8 @@ namespace Noise.Core.FileStore {
 		}
 
 		public static bool IsCoverFile( string fileName ) {
+			Condition.Requires( fileName ).IsNotNullOrEmpty();
+
 			var retValue = false;
 			var name = Path.GetFileNameWithoutExtension( fileName ).ToLower();
 

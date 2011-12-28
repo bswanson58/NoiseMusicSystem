@@ -34,13 +34,7 @@ namespace Noise.Core.Database {
 		}
 
 		public string GetPhysicalFilePath( StorageFile forFile ) {
-			string	retValue;
-
-			using( var dbShell = CreateDatabase() ) {
-				retValue = StorageHelpers.GetPath( dbShell.Database.Database, forFile );
-			}
-
-			return( retValue );
+			return( StorageHelpers.GetPath( mStorageFolderProvider, forFile ));
 		}
 
 		public string GetAlbumPath( long albumId ) {
@@ -54,12 +48,9 @@ namespace Noise.Core.Database {
 						var trackList = albumTracks.List.Select( GetPhysicalFile );
 						var parentList = trackList.Select( track => track.ParentFolder ).Distinct();
 						var folderList = parentList.Select( mStorageFolderProvider.GetFolder );
+						var pathList = folderList.Select( folder => StorageHelpers.GetPath( mStorageFolderProvider, folder ));
 
-						using( var dbShell = CreateDatabase() ) {
-							var pathList = folderList.Select( folder => StorageHelpers.GetPath( dbShell.Database.Database, folder ));
-
-							retValue = FindCommonParent( pathList );
-						}
+						retValue = FindCommonParent( pathList );
 					}
 				}
 			}

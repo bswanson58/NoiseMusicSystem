@@ -25,13 +25,7 @@ namespace Noise.Core.Database {
 		}
 
 		public string GetPhysicalFolderPath( StorageFolder forFolder ) {
-			string	retValue;
-
-			using( var dbShell = CreateDatabase() ) {
-				retValue = StorageHelpers.GetPath( dbShell.Database.Database, forFolder );
-			}
-
-			return( retValue );
+			return( StorageHelpers.GetPath( this, forFolder ));
 		}
 
 		public DataProviderList<StorageFolder> GetAllFolders() {

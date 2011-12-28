@@ -550,7 +550,7 @@ namespace Noise.Core.Database {
 			var retValue = "";
 			var database = mDatabaseManager.ReserveDatabase();
 			try {
-				retValue = StorageHelpers.GetPath( database.Database, forFile );
+//				retValue = StorageHelpers.GetPath( database.Database, forFile );
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - GetPhysicalFilePath:", ex );
@@ -574,9 +574,9 @@ namespace Noise.Core.Database {
 						var trackList = albumTracks.List.Select( GetPhysicalFile );
 						var parentList = trackList.Select( track => track.ParentFolder ).Distinct();
 						var folderList = parentList.Select( GetStorageFolder );
-						var pathList = folderList.Select( folder => StorageHelpers.GetPath( database.Database, folder ));
+//						var pathList = folderList.Select( folder => StorageHelpers.GetPath( database.Database, folder ));
 
-						retValue = FindCommonParent( pathList );
+//						retValue = FindCommonParent( pathList );
 					}
 				}
 			}

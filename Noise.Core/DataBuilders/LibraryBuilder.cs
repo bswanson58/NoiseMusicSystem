@@ -14,7 +14,7 @@ namespace Noise.Core.DataBuilders {
 	public class LibraryBuilder : ILibraryBuilder {
 		private readonly IEventAggregator		mEvents;
 		private readonly FileSystemWatcherEx	mFolderWatcher;
-		private readonly IDatabaseManager		mDatabaseManager;
+		private readonly IStorageFolderProvider	mStorageFolderProvider;
 		private readonly IFolderExplorer		mFolderExplorer;
 		private readonly IMetaDataCleaner		mMetaDataCleaner;
 		private readonly IMetaDataExplorer		mMetaDataExplorer;
@@ -25,10 +25,10 @@ namespace Noise.Core.DataBuilders {
 		public	bool							LibraryUpdateInProgress { get; private set; }
 		public	bool							LibraryUpdatePaused { get; private set; }
 
-		public LibraryBuilder( IEventAggregator eventAggregator, IDatabaseManager databaseManager,
+		public LibraryBuilder( IEventAggregator eventAggregator, IStorageFolderProvider storageFolderProvider,
 							   IFolderExplorer folderExplorer, IMetaDataCleaner metaDataCleaner, IMetaDataExplorer metaDataExplorer,
 							   ISummaryBuilder summaryBuilder, DatabaseStatistics databaseStatistics ) {
-			mDatabaseManager = databaseManager;
+			mStorageFolderProvider = storageFolderProvider;
 			mFolderExplorer = folderExplorer;
 			mMetaDataCleaner = metaDataCleaner;
 			mMetaDataExplorer = metaDataExplorer;
@@ -62,18 +62,12 @@ namespace Noise.Core.DataBuilders {
 
 		public IEnumerable<string> RootFolderList() {
 			var retValue = new List<string>();
-			var database = mDatabaseManager.ReserveDatabase();
 
-			if( database != null ) {
-				try {
-					retValue.AddRange( mFolderExplorer.RootFolderList().Select( rootFolder => StorageHelpers.GetPath( database.Database, rootFolder )));
-				}
-				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Exception - RootFolderList:", ex );
-				}
-				finally {
-					mDatabaseManager.FreeDatabase( database );
-				}
+			try {
+				retValue.AddRange( mFolderExplorer.RootFolderList().Select( rootFolder => mStorageFolderProvider.GetPhysicalFolderPath( rootFolder )));
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "Exception - RootFolderList:", ex );
 			}
 
 			return( retValue );
