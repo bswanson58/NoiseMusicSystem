@@ -9,6 +9,14 @@ namespace Noise.Core.Database {
 		public TrackProvider( IDatabaseManager databaseManager ) :
 			base( databaseManager ) { }
 
+		public void AddTrack( DbTrack track ) {
+			Condition.Requires( track ).IsNotNull();
+
+			using( var dbShell = CreateDatabase()) {
+				dbShell.InsertItem( track );
+			}
+		}
+
 		public DbTrack GetTrack( long trackId ) {
 			return( TryGetItem( "SELECT DbTrack Where DbId = @trackId", new Dictionary<string, object> {{ "trackId", trackId }}, "Exception - GetTrack" ));
 		}

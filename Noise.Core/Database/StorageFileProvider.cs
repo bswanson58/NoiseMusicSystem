@@ -21,6 +21,12 @@ namespace Noise.Core.Database {
 			mStorageFolderProvider = storageFolderProvider;
 		}
 
+		public void AddFile( StorageFile file ) {
+			using( var dbShell = CreateDatabase()) {
+				dbShell.InsertItem( file );
+			}
+		}
+
 		public StorageFile GetPhysicalFile( DbTrack forTrack ) {
 			Condition.Requires( forTrack ).IsNotNull();
 
@@ -62,6 +68,22 @@ namespace Noise.Core.Database {
 			}
 
 			return( retValue );
+		}
+
+		public DataProviderList<StorageFile> GetAllFiles() {
+			return( TryGetList( "SELECT StorageFile", "GetAllFiles" ));
+		}
+
+		public DataProviderList<StorageFile> GetFilesInFolder( long parentFolder ) {
+			return( TryGetList( "SELECT StorageFile Where ParentFolder = @parentId", new Dictionary<string, object> {{ "parentId", parentFolder }}, "GetFilesInFolder" ));
+		}
+
+		public DataProviderList<StorageFile> GetFilesOfType( eFileType fileType ) {
+			return( TryGetList( "SELECT StorageFile Where FileType = @fileType", new Dictionary<string, object> {{ "fileType", fileType }}, "GetFilesOfType" ));
+		}
+
+		public DataUpdateShell<StorageFile> GetFileForUpdate( long fileId ) {
+			return( GetUpdateShell( "SELECT StorageFile Where DbId = @fileId", new Dictionary<string, object> {{ "fileId", fileId }}));
 		}
 
 		private static string FindCommonParent( IEnumerable<string> paths ) {

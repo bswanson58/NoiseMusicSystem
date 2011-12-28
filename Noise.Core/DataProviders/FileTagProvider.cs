@@ -3,11 +3,13 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	public class FileTagProvider {
-		private readonly IDatabaseManager	mDatabaseManager;
 		private readonly ITagManager		mTagManager;
+		private readonly IArtworkProvider		mArtworkProvider;
+		private readonly IStorageFileProvider	mStorageFileProvider;
 
-		public FileTagProvider( IDatabaseManager databaseManager, ITagManager tagManager ) {
-			mDatabaseManager = databaseManager;
+		public FileTagProvider( ITagManager tagManager, IArtworkProvider artworkProvider, IStorageFileProvider storageFileProvider ) {
+			mArtworkProvider = artworkProvider;
+			mStorageFileProvider = storageFileProvider;
 			mTagManager = tagManager;
 		}
 
@@ -19,7 +21,7 @@ namespace Noise.Core.DataProviders {
 				case eAudioEncoding.MP3:
 				case eAudioEncoding.OGG:
 				case eAudioEncoding.WMA:
-					retValue = new Mp3TagProvider( mDatabaseManager, mTagManager, storageFile );
+					retValue = new Mp3TagProvider( mArtworkProvider, mTagManager, mStorageFileProvider, storageFile );
 					break;
 			}
 

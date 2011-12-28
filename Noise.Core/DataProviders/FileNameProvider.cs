@@ -10,13 +10,13 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	internal class FileNameProvider {
-		private readonly IDatabaseManager	mDatabaseManager;
-		private long						mFolderId;
-		private readonly List<Regex>		mDatePatterns;
-		private List<StorageFile>			mFolderFiles;
+		private readonly IStorageFileProvider	mFileProvider;
+		private long							mFolderId;
+		private readonly List<Regex>			mDatePatterns;
+		private List<StorageFile>				mFolderFiles;
 
-		public FileNameProvider( IDatabaseManager databaseManager ) {
-			mDatabaseManager = databaseManager;
+		public FileNameProvider( IStorageFileProvider fileProvider ) {
+			mFileProvider = fileProvider;
 			mDatePatterns = new List<Regex>();
 
 			mDatePatterns.Add( new Regex( "(?<month>0?[1-9]|1[012]) [- .] (?<day>0?[1-9]|[12][0-9]|3[01]) [- .] (?<year>[0-9]{2,})", RegexOptions.IgnorePatternWhitespace ));
@@ -36,21 +36,18 @@ namespace Noise.Core.DataProviders {
 		}
 
 		private void BuildFolderFiles( long parentId ) {
-			var database = mDatabaseManager.ReserveDatabase();
-
 			try {
-				var files = from StorageFile file in database.Database
-							where ( file.ParentFolder == parentId ) && ( StorageHelpers.DetermineFileType( file ) == eFileType.Music )
-							orderby file.Name select file;
+				using( var fileList = mFileProvider.GetFilesInFolder( parentId )) {
+					mFolderFiles = new List<StorageFile>( from file in fileList.List 
+														  where StorageHelpers.DetermineFileType( file ) == eFileType.Music 
+														  orderby file.Name 
+														  select file );
+				}
 
-				mFolderFiles = new List<StorageFile>( files.ToList());
 				mFolderId = parentId;
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - FileNameProvider", ex );
-			}
-			finally {
-				mDatabaseManager.FreeDatabase( database );
 			}
 		}
 	}

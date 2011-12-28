@@ -2,6 +2,8 @@
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface IArtistProvider {
+		void						AddArtist( DbArtist artist );
+
 		DbArtist					GetArtist( long dbid );
 		DataProviderList<DbArtist>	GetArtistList();
 		DataProviderList<DbArtist>	GetArtistList( IDatabaseFilter filter );

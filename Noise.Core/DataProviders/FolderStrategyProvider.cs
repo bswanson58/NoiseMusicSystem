@@ -6,44 +6,38 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	internal class FolderStrategyProvider {
-		private readonly IDatabaseManager	mDatabaseManager;
-		private readonly ITagManager		mTagManager;
+		private readonly IStorageFolderProvider	mFolderProvider;
+		private readonly ITagManager			mTagManager;
 
-		public FolderStrategyProvider( IDatabaseManager databaseManager, ITagManager tagManager ) {
-			mDatabaseManager = databaseManager;
+		public FolderStrategyProvider( IStorageFolderProvider folderProvider, ITagManager tagManager ) {
+			mFolderProvider = folderProvider;
 			mTagManager = tagManager;
 		}
 
 		public IMetaDataProvider GetProvider( StorageFile forFile ) {
-			return( new FileStrategyProvider( mDatabaseManager, mTagManager, forFile ));
+			return( new FileStrategyProvider( mTagManager, mFolderProvider, forFile ));
 		}
 	}
 
 	internal class FileStrategyProvider : IMetaDataProvider {
-		private readonly IDatabaseManager					mDatabaseManager;
 		private	readonly ITagManager						mTagManager;
+		private readonly IStorageFolderProvider				mStorageFolderProvider;
 		private readonly StorageFile						mFile;
 		private	readonly Lazy<FolderStrategyInformation>	mStrategyInformation;
 
-		public FileStrategyProvider( IDatabaseManager databaseManager, ITagManager tagManager, StorageFile file ) {
-			mDatabaseManager = databaseManager;
+		public FileStrategyProvider( ITagManager tagManager, IStorageFolderProvider folderProvider, StorageFile file ) {
 			mTagManager = tagManager;
-
+			mStorageFolderProvider = folderProvider;
 			mFile = file;
 
 			mStrategyInformation = new Lazy<FolderStrategyInformation>(() => {
 				FolderStrategyInformation	retValue = null;
 
-				var database = mDatabaseManager.ReserveDatabase();
-
 				try {
-					retValue = StorageHelpers.GetFolderStrategy( database.Database, mFile );
+					retValue = StorageHelpers.GetFolderStrategy( mStorageFolderProvider, mFile );
 				}
 				catch( Exception ex ) {
 					NoiseLogger.Current.LogException( "Exception - FileStrategyProvider:", ex );
-				}
-				finally {
-					mDatabaseManager.FreeDatabase( database );
 				}
 
 				return( retValue );

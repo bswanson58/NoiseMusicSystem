@@ -213,6 +213,7 @@
     <Compile Include="Database\LyricProvider.cs" />
     <Compile Include="Database\PlayHistoryProvider.cs" />
     <Compile Include="Database\PlayListProvider.cs" />
+    <Compile Include="Database\RootFolderProvider.cs" />
     <Compile Include="Database\StorageFileProvider.cs" />
     <Compile Include="Database\StorageFolderProvider.cs" />
     <Compile Include="Database\TagAssociationProvider.cs" />
@@ -265,6 +266,7 @@
     <Compile Include="FileStore\FolderStrategyInformation.cs" />
     <Compile Include="FileStore\IFileUpdates.cs" />
     <Compile Include="FileStore\IFolderExplorer.cs" />
+    <Compile Include="FileStore\IRootFolderProvider.cs" />
     <Compile Include="FileStore\RootFolder.cs" />
     <Compile Include="FileStore\StorageHelpers.cs" />
     <Compile Include="MediaPlayer\AudioPlayer.cs" />

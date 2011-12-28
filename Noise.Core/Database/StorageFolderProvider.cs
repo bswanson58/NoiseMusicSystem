@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Noise.Core.FileStore;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -7,8 +8,38 @@ namespace Noise.Core.Database {
 		public StorageFolderProvider( IDatabaseManager databaseManager ) :
 			base( databaseManager ) { }
 
+		public void AddFolder( StorageFolder folder ) {
+			using( var dbShell = CreateDatabase()) {
+				dbShell.InsertItem( folder );
+			}
+		}
+
+		public void RemoveFolder( StorageFolder folder ) {
+			using( var dbShell = CreateDatabase()) {
+				dbShell.DeleteItem( dbShell );
+			}
+		}
+
 		public StorageFolder GetFolder( long folderId ) {
 			return( TryGetItem( "SELECT StorageFolder WHERE DbId = @folderId", new Dictionary<string, object> {{ "folderId", folderId }}, "GetStorageFolder" ));
+		}
+
+		public string GetPhysicalFolderPath( StorageFolder forFolder ) {
+			string	retValue;
+
+			using( var dbShell = CreateDatabase() ) {
+				retValue = StorageHelpers.GetPath( dbShell.Database.Database, forFolder );
+			}
+
+			return( retValue );
+		}
+
+		public DataProviderList<StorageFolder> GetAllFolders() {
+			return( TryGetList( "SELECT StorageFolder", "GetAllFolders" ));
+		}
+
+		public DataUpdateShell<StorageFolder> GetFolderForUpdate( long folderId ) {
+			return( GetUpdateShell( "SELECT StorageFolder Where DbId = @folderId", new Dictionary<string, object> {{ "folderId", folderId }}));
 		}
 	}
 }

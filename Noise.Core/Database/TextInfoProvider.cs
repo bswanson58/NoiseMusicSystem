@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CuttingEdge.Conditions;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -17,7 +18,18 @@ namespace Noise.Core.Database {
 
 			return( retValue );
 		}
-	
+
+		public void AddTextInfo( DbTextInfo info, string filePath ) {
+			Condition.Requires( info ).IsNotNull();
+			Condition.Requires( filePath ).IsNotNullOrEmpty();
+
+			using( var dbShell = CreateDatabase()) {
+				dbShell.InsertItem( info );
+
+				dbShell.Database.BlobStorage.Store( info.DbId, filePath );
+			}
+		}
+
 		public TextInfo GetArtistTextInfo( long artistId, ContentType ofType ) {
 			TextInfo	retValue = null;
 

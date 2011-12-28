@@ -20,8 +20,20 @@ namespace Noise.Core.Database {
 			mTagAssociationProvider = tagAssociationProvider;
 		}
 
+		public void AddAlbum( DbAlbum album ) {
+			Condition.Requires( album ).IsNotNull();
+
+			using( var dbShell = CreateDatabase()) {
+				dbShell.InsertItem( album );
+			}
+		}
+
 		public DbAlbum GetAlbum( long dbid ) {
 			return( TryGetItem(  "SELECT DbAlbum Where DbId = @itemId", new Dictionary<string, object> {{ "itemId", dbid }}, "Exception - GetAlbum:" ));
+		}
+
+		public DataProviderList<DbAlbum> GetAllAlbums() {
+			return( TryGetList( "SELECT DbAlbum", "GetAllAlbums" ));
 		}
 
 		public DataProviderList<DbAlbum> GetAlbumList( DbArtist forArtist ) {

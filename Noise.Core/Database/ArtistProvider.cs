@@ -23,6 +23,14 @@ namespace Noise.Core.Database {
 		}
 
 		// IArtistProvider members
+		public void AddArtist( DbArtist artist ) {
+			Condition.Requires( artist ).IsNotNull();
+
+			using( var dbShell = CreateDatabase()) {
+				dbShell.InsertItem( artist );
+			}
+		}
+
 		public DbArtist GetArtist( long dbid ) {
 			return( TryGetItem(  "SELECT DbArtist Where DbId = @itemId", new Dictionary<string, object> {{ "itemId", dbid }}, "Exception - GetArtist:" ));
 		}

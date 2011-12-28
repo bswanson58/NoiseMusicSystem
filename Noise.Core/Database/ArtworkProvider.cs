@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using CuttingEdge.Conditions;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -17,6 +21,39 @@ namespace Noise.Core.Database {
 			}
 
 			return( retValue );
+		}
+
+		public void AddArtwork( DbArtwork artwork, byte[] pictureData ) {
+			Condition.Requires( artwork ).IsNotNull();
+			Condition.Requires( pictureData ).IsNotEmpty();
+
+			try {
+				using( var dbShell = CreateDatabase()) {
+					dbShell.InsertItem( artwork );
+
+					var byteStream = new MemoryStream( pictureData );
+					dbShell.Database.BlobStorage.Insert( artwork.DbId, byteStream );
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "AddArtwork", ex );
+			}
+		}
+
+		public void AddArtwork( DbArtwork artwork, string filePath ) {
+			Condition.Requires( artwork ).IsNotNull();
+			Condition.Requires( filePath ).IsNotNullOrEmpty();
+
+			try {
+				using( var dbShell = CreateDatabase()) {
+					dbShell.InsertItem( artwork );
+
+					dbShell.Database.BlobStorage.Insert( artwork.DbId, filePath );
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "AddArtwork", ex );
+			}
 		}
 
 		public Artwork GetArtistArtwork( long artistId, ContentType ofType ) {
@@ -47,6 +84,10 @@ namespace Noise.Core.Database {
 			}
 
 			return( retValue );
+		}
+
+		public DataProviderList<DbArtwork> GetArtworkForFolder( long folderId ) {
+			return( TryGetList( "SELECT DbArtwork Where FolderLocation = @folderId", new Dictionary<string, object> {{ "folderId", folderId }}, "GetArtworkForFolder" ));
 		}
 
 		public DataUpdateShell<DbArtwork> GetArtworkForUpdate( long artworkId ) {

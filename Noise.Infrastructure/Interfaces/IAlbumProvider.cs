@@ -3,9 +3,12 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface IAlbumProvider {
+		void						AddAlbum( DbAlbum album );
+
 		DbAlbum						GetAlbum( long dbid );
 		DbAlbum						GetAlbumForTrack( DbTrack track );
 
+		DataProviderList<DbAlbum>	GetAllAlbums();
 		DataProviderList<DbAlbum>	GetAlbumList( DbArtist forArtist );
 		DataProviderList<DbAlbum>	GetAlbumList( long artistId );
 		DataProviderList<DbAlbum>	GetFavoriteAlbums();

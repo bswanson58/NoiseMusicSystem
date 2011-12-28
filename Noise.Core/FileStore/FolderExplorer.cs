@@ -11,40 +11,36 @@ using Noise.Infrastructure.Interfaces;
 using Recls;
 
 namespace Noise.Core.FileStore {
-	public class FolderExplorer : IFolderExplorer {
+	internal class FolderExplorer : IFolderExplorer {
 		private readonly IEventAggregator	mEvents;
-		private readonly IDatabaseManager	mDatabaseManager;
-		private bool						mStopExploring;
+		private readonly IRootFolderProvider	mRootFolderProvider;
+		private readonly IStorageFolderProvider	mStorageFolderProvider;
+		private readonly IStorageFileProvider	mStorageFileProvider;
+		private bool							mStopExploring;
 		private DatabaseCache<StorageFile>	mFileCache;
 		private DatabaseCache<StorageFolder>	mFolderCache;
 
-		public  FolderExplorer( IEventAggregator eventAggregator, IDatabaseManager databaseManager ) {
+		public  FolderExplorer( IEventAggregator eventAggregator, IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider ) {
 			mEvents = eventAggregator;
-			mDatabaseManager = databaseManager;
+			mRootFolderProvider = rootFolderProvider;
+			mStorageFolderProvider = storageFolderProvider;
+			mStorageFileProvider = storageFileProvider;
 
 			mEvents.GetEvent<Events.SystemConfigurationChanged>().Subscribe( OnSystemConfigurationChanged );
 		}
 
 		public IEnumerable<RootFolder> RootFolderList() {
-			IEnumerable<RootFolder>		retValue = null;
+			var retValue = new List<RootFolder>();
 
-			var database = mDatabaseManager.ReserveDatabase();
+			using( var folderList = mRootFolderProvider.GetRootFolderList()) {
+				retValue.AddRange( folderList.List );
+			}
 
-			if( database != null ) {
-				try {
-					retValue = from RootFolder root in database.Database select root;
+			if( retValue.Count == 0 ) {
+				LoadConfiguration();
 
-					if( retValue.Count() == 0 ) {
-						LoadConfiguration( database );
-
-						retValue = from RootFolder root in database.Database select root;
-					}
-				}
-				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Exception - RootFolderList: ", ex );
-				}
-				finally {
-					mDatabaseManager.FreeDatabase( database );
+				using( var folderList = mRootFolderProvider.GetRootFolderList()) {
+					retValue.AddRange( folderList.List );
 				}
 			}
 
@@ -57,17 +53,19 @@ namespace Noise.Core.FileStore {
 			var rootFolders = RootFolderList();
 
 			if( rootFolders.Count() > 0 ) {
-				var database = mDatabaseManager.ReserveDatabase();
 
-				if( database != null ) {
 					try {
-						mFileCache = new DatabaseCache<StorageFile>( from StorageFile file in database.Database select file );
-						mFolderCache = new DatabaseCache<StorageFolder>( from StorageFolder folder in database.Database select folder );
+						using( var fileList = mStorageFileProvider.GetAllFiles()) {
+							mFileCache = new DatabaseCache<StorageFile>( fileList.List );
+						}
+						using( var folderList = mStorageFolderProvider.GetAllFolders()) {
+							mFolderCache = new DatabaseCache<StorageFolder>( folderList.List );
+						}
 
 						foreach( var rootFolder in rootFolders ) {
-							if( Directory.Exists( StorageHelpers.GetPath( database.Database, rootFolder ))) {
+							if( Directory.Exists( mStorageFolderProvider.GetPhysicalFolderPath( rootFolder ))) {
 								NoiseLogger.Current.LogInfo( "Synchronizing folder: {0}", rootFolder.DisplayName );
-								BuildFolder( database, rootFolder );
+								BuildFolder( rootFolder );
 							}
 							else {
 								NoiseLogger.Current.LogMessage( "Storage folder does not exists: {0}", rootFolder.DisplayName );
@@ -77,10 +75,12 @@ namespace Noise.Core.FileStore {
 								break;
 							}
 
-							var localRoot = database.ValidateOnThread( rootFolder ) as RootFolder;
-							if( localRoot != null ) {
-								localRoot.UpdateLibraryScan();
-								database.Store( localRoot );
+							using( var updater = mRootFolderProvider.GetFolderForUpdate( rootFolder.DbId )) {
+								if( updater.Item != null ) {
+									updater.Item.UpdateLibraryScan();
+
+									updater.Update();
+								}
 							}
 						}
 
@@ -90,10 +90,6 @@ namespace Noise.Core.FileStore {
 					catch( Exception ex ) {
 						NoiseLogger.Current.LogException( "Exception - FolderExplorer:", ex );
 					}
-					finally {
-						mDatabaseManager.FreeDatabase( database );
-					}
-				}
 			}
 		}
 
@@ -102,22 +98,16 @@ namespace Noise.Core.FileStore {
 		}
 
 		private void OnSystemConfigurationChanged( object sender ) {
-			var database = mDatabaseManager.ReserveDatabase();
-
-			try {
-				LoadConfiguration( database );
-			}
-			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - FolderExplorer:OnSystemConfigurationChanged", ex );
-			}
-			finally {
-				mDatabaseManager.FreeDatabase( database );
-			}
+			LoadConfiguration();
 		}
 
-		public void LoadConfiguration( IDatabase database ) {
+		public void LoadConfiguration() {
 			var storageConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName  );
-			var rootCount = ( from RootFolder root in database.Database select root ).Count();
+			int rootCount;
+
+			using( var rootList = mRootFolderProvider.GetRootFolderList()) {
+				rootCount = rootList.List.Count();
+			}
 
 			if(( storageConfig != null ) &&
 			   ( rootCount == 0 ) &&
@@ -131,13 +121,13 @@ namespace Noise.Core.FileStore {
 
 					root.FolderStrategy.PreferFolderStrategy = folderConfig.PreferFolderStrategy;
 
-					database.Insert( root );
+					mRootFolderProvider.AddRootFolder( root );
 				}
 			}
 		}
 
-		private void BuildFolder( IDatabase database, StorageFolder parent ) {
-			var directories = FileSearcher.Search( StorageHelpers.GetPath( database.Database, parent ), null, SearchOptions.Directories, 0 );
+		private void BuildFolder( StorageFolder parent ) {
+			var directories = FileSearcher.Search( mStorageFolderProvider.GetPhysicalFolderPath( parent ), null, SearchOptions.Directories, 0 );
 			var folderList = mFolderCache.FindList( dbFolder => dbFolder.ParentFolder == parent.DbId );
 
 			foreach( var directory in directories ) {
@@ -147,18 +137,18 @@ namespace Noise.Core.FileStore {
 				if( folder == null ) {
 					folder = new StorageFolder( directory.File, parent.DbId );
 
-					database.Insert( folder );
+					mStorageFolderProvider.AddFolder( folder );
 
 					if( parent is RootFolder ) {
-						NoiseLogger.Current.LogInfo( string.Format( "Adding folder: {0}", StorageHelpers.GetPath( database.Database, folder )));
+						NoiseLogger.Current.LogInfo( string.Format( "Adding folder: {0}", mStorageFolderProvider.GetPhysicalFolderPath( folder )));
 					}
 				}
 				else {
 					folderList.Remove( folder );
 				}
 
-				BuildFolderFiles( database, folder );
-				BuildFolder( database, folder );
+				BuildFolderFiles( folder );
+				BuildFolder( folder );
 
 				if( mStopExploring ) {
 					break;
@@ -167,15 +157,19 @@ namespace Noise.Core.FileStore {
 
 			// Any folders remaining in the list must not have located on disk.
 			foreach( var dbFolder in folderList ) {
-				dbFolder.IsDeleted = true;
+				using( var updater = mStorageFolderProvider.GetFolderForUpdate( dbFolder.DbId )) {
+					if( updater.Item != null ) {
+						dbFolder.IsDeleted = true;
 
-				database.Store( dbFolder );
+						updater.Update();
+					}
+				}
 			}
 		}
 
-		private void BuildFolderFiles( IDatabase database, StorageFolder storageFolder ) {
+		private void BuildFolderFiles( StorageFolder storageFolder ) {
 			var dbList = mFileCache.FindList( file => file.ParentFolder == storageFolder.DbId );
-			var files = FileSearcher.BreadthFirst.Search( StorageHelpers.GetPath( database.Database, storageFolder ), null,
+			var files = FileSearcher.BreadthFirst.Search( mStorageFolderProvider.GetPhysicalFolderPath( storageFolder ), null,
 														  SearchOptions.Files | SearchOptions.IncludeSystem | SearchOptions.IncludeHidden, 0 );
 			foreach( var file in files ) {
 				var fileName = file.File;
@@ -185,7 +179,7 @@ namespace Noise.Core.FileStore {
 					dbList.Remove( dbFile );
 				}
 				else {
-					database.Insert( new StorageFile( file.File, storageFolder.DbId, file.Size, file.ModificationTime ));
+					mStorageFileProvider.AddFile( new StorageFile( file.File, storageFolder.DbId, file.Size, file.ModificationTime ));
 				}
 
 				if( mStopExploring ) {
@@ -195,9 +189,13 @@ namespace Noise.Core.FileStore {
 
 			// Any files that we have remaining must not exist on disk.
 			foreach( var dbFile in dbList ) {
-				dbFile.IsDeleted = true;
+				using( var updater = mStorageFileProvider.GetFileForUpdate( dbFile.DbId )) {
+					if( updater.Item != null ) {
+						updater.Item.IsDeleted = true;
 
-				database.Store( dbFile );
+						updater.Update();
+					}
+				}
 			}
 		}
 	}

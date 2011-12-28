@@ -2,8 +2,16 @@
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface IStorageFileProvider {
-		StorageFile		GetPhysicalFile( DbTrack forTrack );
-		string			GetPhysicalFilePath( StorageFile forFile );
-		string			GetAlbumPath( long albumId );
+		void							AddFile( StorageFile file );
+
+		StorageFile						GetPhysicalFile( DbTrack forTrack );
+		string							GetPhysicalFilePath( StorageFile forFile );
+		string							GetAlbumPath( long albumId );
+
+		DataProviderList<StorageFile>	GetAllFiles();
+		DataProviderList<StorageFile>	GetFilesInFolder( long parentFolder );
+		DataProviderList<StorageFile>	GetFilesOfType( eFileType fileType );
+
+		DataUpdateShell<StorageFile>	GetFileForUpdate( long fileId );
 	}
 }

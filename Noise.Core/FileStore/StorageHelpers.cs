@@ -4,6 +4,7 @@ using CuttingEdge.Conditions;
 using Eloquera.Client;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.FileStore {
 	public static class StorageHelpers {
@@ -54,25 +55,21 @@ namespace Noise.Core.FileStore {
 			return( Path.Combine( path, forFile.Name ));
 		}
 
-		public static FolderStrategyInformation GetFolderStrategy( DB database, StorageFile forFile ) {
-			Condition.Requires( database ).IsNotNull();
+		public static FolderStrategyInformation GetFolderStrategy( IStorageFolderProvider storageFolderProvider, StorageFile forFile ) {
+			Condition.Requires( storageFolderProvider ).IsNotNull();
 			Condition.Requires( forFile ).IsNotNull();
 
 			var	retValue = new FolderStrategyInformation();
 			var pathParts = new Stack<string>();
-			var param = database.CreateParameters();
 			FolderStrategy	strategy = null;
 
-			param["id"] = forFile.ParentFolder;
-			var folder = database.ExecuteScalar( "SELECT StorageFolder WHERE DbId = @id", param ) as StorageFolder;
+			var folder = storageFolderProvider.GetFolder( forFile.ParentFolder );
 
 			if( folder != null ) {
 				pathParts.Push( folder.Name );
 
 				while( folder.ParentFolder != Constants.cDatabaseNullOid ) {
-					param["id"] = folder.ParentFolder;
-
-					folder = database.ExecuteScalar( "SELECT StorageFolder WHERE DbId = @id", param ) as StorageFolder;
+					folder = storageFolderProvider.GetFolder( folder.ParentFolder );
 					if( folder != null ) {
 						if( folder is RootFolder ) {
 							strategy = (folder as RootFolder).FolderStrategy;

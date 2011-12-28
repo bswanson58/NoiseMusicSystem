@@ -3,6 +3,7 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface ITrackProvider {
+		void						AddTrack( DbTrack track );
 		DbTrack						GetTrack( long trackId );
 
 		DataProviderList<DbTrack>	GetTrackList( long albumId );

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.Core.FileStore;
@@ -12,31 +11,28 @@ using File = TagLib.File;
 
 namespace Noise.Core.DataProviders {
 	public class Mp3TagProvider : IMetaDataProvider {
-		private readonly IDatabaseManager	mDatabaseManager;
-		private readonly ITagManager		mGenreManager;
-		private readonly StorageFile		mFile;
-		private	readonly Lazy<File>			mTags;
+		private readonly IArtworkProvider		mArtworkProvider;
+		private readonly ITagManager			mGenreManager;
+		private readonly IStorageFileProvider	mStorageFileProvider;
+		private readonly StorageFile			mFile;
+		private	readonly Lazy<File>				mTags;
 
-		public Mp3TagProvider( IDatabaseManager databaseManager, ITagManager tagManager, StorageFile file ) {
-			mDatabaseManager = databaseManager;
+		public Mp3TagProvider( IArtworkProvider artworkProvider, ITagManager tagManager, IStorageFileProvider storageFileProvider, StorageFile file ) {
+			mArtworkProvider = artworkProvider;
 			mGenreManager = tagManager;
+			mStorageFileProvider = storageFileProvider;
 			mFile = file;
 
-			Condition.Requires( mDatabaseManager ).IsNotNull();
 			Condition.Requires( mFile ).IsNotNull();
 
 			mTags =new Lazy<File>(() => {
 				File	retValue = null;
-				var		database = mDatabaseManager.ReserveDatabase();
 
 				try {
-					retValue = OpenTagFile( StorageHelpers.GetPath( database.Database, mFile ));
+					retValue = OpenTagFile( mStorageFileProvider.GetPhysicalFilePath( mFile ));
 				}
 				catch( Exception ex ) {
 					NoiseLogger.Current.LogException( "Exception - Mp3TagProvider:OpenTagFile:", ex );
-				}
-				finally {
-					mDatabaseManager.FreeDatabase( database );
 				}
 
 				return( retValue );	});
@@ -116,7 +112,6 @@ namespace Noise.Core.DataProviders {
 
 		public void AddAvailableMetaData( DbArtist artist, DbAlbum album, DbTrack track ) {
 			if( Tags != null ) {
-				var database = mDatabaseManager.ReserveDatabase();
 				try {
 					if( Tags.Tag.Year != 0 ) {
 						track.PublishedYear = Tags.Tag.Year;
@@ -220,22 +215,21 @@ namespace Noise.Core.DataProviders {
 					var pictures = Tags.Tag.Pictures;
 					if(( pictures != null ) &&
 					   ( pictures.GetLength( 0 ) > 0 )) {
+						int picsInFolder;
+
 						// Only pull the pictures from the first file in the folder.
-						var parms = database.Database.CreateParameters();
+						using( var artworkList = mArtworkProvider.GetArtworkForFolder( mFile.ParentFolder )) {
+							picsInFolder = artworkList.List.Count();
+						}
 
-						parms["folderId"] = mFile.ParentFolder;
-
-						if( database.Database.ExecuteScalar( "SELECT DbArtwork WHERE FolderLocation = @folderId", parms ) == null ) {
+						if( picsInFolder == 0 ) {
 							foreach( var picture in pictures ) {
 								var dbPicture = new DbArtwork( track.Album, picture.Type == PictureType.FrontCover ? ContentType.AlbumCover : ContentType.AlbumArtwork )
 										{ Source = InfoSource.Tag,
 										  Name = "Embedded Tag",
 										  FolderLocation = mFile.ParentFolder };
 
-								var memoryStream = new MemoryStream( picture.Data.ToArray());
-								database.BlobStorage.Store( dbPicture.DbId, memoryStream );
-
-								database.Insert( dbPicture );
+								mArtworkProvider.AddArtwork( dbPicture, picture.Data.ToArray());
 							}
 						}
 					}
@@ -248,9 +242,6 @@ namespace Noise.Core.DataProviders {
 				}
 				catch( Exception ex ) {
 					NoiseLogger.Current.LogException( "Mp3TagProvider", ex );
-				}
-				finally {
-					mDatabaseManager.FreeDatabase( database );
 				}
 			}
 		}
