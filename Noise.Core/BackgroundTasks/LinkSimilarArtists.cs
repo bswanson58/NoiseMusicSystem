@@ -11,13 +11,15 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	public class LinkSimilarArtists : IBackgroundTask, IRequireInitialization {
-		private readonly IDatabaseManager	mDatabaseMgr;
-		private DatabaseCache<DbArtist>		mArtistCache;
-		private List<long>					mSimilarArtistLists;
-		private IEnumerator<long>			mListEnum;
+		private readonly IArtistProvider				mArtistProvider;
+		private readonly IAssociatedItemListProvider	mAssociationProvider;
+		private DatabaseCache<DbArtist>					mArtistCache;
+		private List<long>								mSimilarArtistLists;
+		private IEnumerator<long>						mListEnum;
 
-		public LinkSimilarArtists( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager ) {
-			mDatabaseMgr = databaseManager;
+		public LinkSimilarArtists( ILifecycleManager lifecycleManager, IArtistProvider artistProvider, IAssociatedItemListProvider associatedItemListProvider ) {
+			mArtistProvider = artistProvider;
+			mAssociationProvider = associatedItemListProvider;
 
 			lifecycleManager.RegisterForInitialize( this );
 		}
@@ -33,18 +35,18 @@ namespace Noise.Core.BackgroundTasks {
 		public void Shutdown() { }
 
 		private void InitializeLists() {
-			var database = mDatabaseMgr.ReserveDatabase();
-
 			try {
-				mArtistCache = new DatabaseCache<DbArtist>( from DbArtist artist in database.Database select artist );
-				mSimilarArtistLists = new List<long>( from DbAssociatedItemList list in database.Database where list.ContentType == ContentType.SimilarArtists select list.DbId );
+				using( var artistList = mArtistProvider.GetArtistList()) {
+					mArtistCache = new DatabaseCache<DbArtist>( from DbArtist artist in artistList.List select artist );
+				}
+
+				using( var associationList = mAssociationProvider.GetAssociatedItemLists( ContentType.SimilarArtists )) {
+					mSimilarArtistLists = new List<long>( from DbAssociatedItemList list in associationList.List select list.DbId );
+				}
 				mListEnum = mSimilarArtistLists.GetEnumerator();
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - LinkSimilarArtists:InitializeLists ", ex );
-			}
-			finally {
-				mDatabaseMgr.FreeDatabase( database );
 			}
 		}
 
@@ -52,49 +54,41 @@ namespace Noise.Core.BackgroundTasks {
 			var listId = NextList();
 
 			if( listId != 0 ) {
-				var	database = mDatabaseMgr.ReserveDatabase();
-
 				try {
-					var parms = database.Database.CreateParameters();
-					parms["listId"] = listId;
+					using( var updater = mAssociationProvider.GetAssociationForUpdate( listId )) {
+						if( updater.Item != null ) {
+							var	needUpdate = false;
 
-					var similarArtistList = database.Database.ExecuteScalar( "SELECT DbAssociatedItemList WHERE DbId = @listId", parms ) as DbAssociatedItemList;
+							foreach( var similarArtist in updater.Item.Items ) {
+								var artistName = similarArtist.Item;
+								var dbArtist = mArtistCache.Find( artist => String.Compare( artist.Name, artistName, true ) == 0 );
 
-					if( similarArtistList != null ) {
-						var	needUpdate = false;
+								if( dbArtist != null ) {
+									if( similarArtist.AssociatedId != dbArtist.DbId ) {
+										similarArtist.SetAssociatedId( dbArtist.DbId );
 
-						foreach( var similarArtist in similarArtistList.Items ) {
-							var artistName = similarArtist.Item;
-							var dbArtist = mArtistCache.Find( artist => String.Compare( artist.Name, artistName, true ) == 0 );
+										needUpdate = true;
+									}
+								}
+								else {
+									if( similarArtist.IsLinked ) {
+										similarArtist.SetAssociatedId( Constants.cDatabaseNullOid );
 
-							if( dbArtist != null ) {
-								if( similarArtist.AssociatedId != dbArtist.DbId ) {
-									similarArtist.SetAssociatedId( dbArtist.DbId );
-
-									needUpdate = true;
+										needUpdate = true;
+									}
 								}
 							}
-							else {
-								if( similarArtist.IsLinked ) {
-									similarArtist.SetAssociatedId( Constants.cDatabaseNullOid );
 
-									needUpdate = true;
-								}
+							if( needUpdate ) {
+								updater.Update();
+
+								NoiseLogger.Current.LogMessage( "Updated links to similar artists." );
 							}
-						}
-
-						if( needUpdate ) {
-							database.Store( similarArtistList );
-
-							NoiseLogger.Current.LogMessage( "Updated links to similar artists." );
 						}
 					}
 				}
 				catch( Exception ex ) {
 					NoiseLogger.Current.LogException( "Exception - LinkSimilarArtist Task:", ex );
-				}
-				finally {
-					mDatabaseMgr.FreeDatabase( database );
 				}
 			}
 		}
