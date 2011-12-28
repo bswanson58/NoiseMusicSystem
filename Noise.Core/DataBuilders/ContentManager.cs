@@ -11,15 +11,18 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	internal class ContentManager : IContentManager, IRequireConstruction {
-		private readonly IEventAggregator	mEvents;
-		private readonly IDatabaseManager	mDatabaseManager;
-		private readonly List<long>			mCurrentRequests;
+		private readonly IEventAggregator			mEvents;
+		private readonly IDatabaseManager			mDatabaseManager;
+		private readonly IExpiringContentProvider	mExpiringContentProvider;
+		private readonly List<long>					mCurrentRequests;
 
 		private readonly IEnumerable<IContentProvider>	mContentProviders;
 
-		public ContentManager( IEventAggregator eventAggregator, IDatabaseManager databaseManager, IEnumerable<IContentProvider> contentProviders ) {
-			mDatabaseManager = databaseManager;
+		public ContentManager( IEventAggregator eventAggregator, IDatabaseManager databaseManager,
+							   IExpiringContentProvider expContentProvider, IEnumerable<IContentProvider> contentProviders ) {
 			mEvents = eventAggregator;
+			mDatabaseManager = databaseManager;
+			mExpiringContentProvider = expContentProvider;
 			mContentProviders = contentProviders;
 
 			mCurrentRequests = new List<long>();
@@ -42,24 +45,18 @@ namespace Noise.Core.DataBuilders {
 			var artistId = forArtist.DbId;
 			var artistName = forArtist.Name;
 			var database = mDatabaseManager.ReserveDatabase();
+
 			try {
-				forArtist = database.ValidateOnThread( forArtist ) as DbArtist;
-				if( forArtist != null ) {
-					var selectedProviders = from IContentProvider provider in mContentProviders where provider.CanUpdateArtist select provider;
-					var contentUpdated = false;
+				var selectedProviders = from IContentProvider provider in mContentProviders where provider.CanUpdateArtist select provider;
+				var contentUpdated = false;
 
-					foreach( var provider in selectedProviders ) {
-						var parms = database.Database.CreateParameters();
+				foreach( var provider in selectedProviders ) {
+					using( var contentList = mExpiringContentProvider.GetContentList( forArtist.DbId, provider.ContentType )) {
 
-						parms["contentType"] = provider.ContentType;
-						parms["artistId"] = artistId;
-
-						var providerContent = database.Database.ExecuteQuery( "SELECT ExpiringContent WHERE AssociatedItem = @artistId AND ContentType = @contentType", parms ).OfType<ExpiringContent>().ToList();
-
-						if( providerContent.Count() > 0 ) {
+						if( contentList.List.Count() > 0 ) {
 							var localProvider = provider;
 
-							if( providerContent.Any( content => IsContentExpired( content, localProvider ))) {
+							if( contentList.List.Any( content => IsContentExpired( content, localProvider ))) {
 								localProvider.UpdateContent( database, forArtist );
 
 								contentUpdated = true;
@@ -71,10 +68,10 @@ namespace Noise.Core.DataBuilders {
 							contentUpdated = true;
 						}
 					}
+				}
 
-					if( contentUpdated ) {
-						mEvents.GetEvent<Events.ArtistContentUpdated>().Publish( forArtist );
-					}
+				if( contentUpdated ) {
+					mEvents.GetEvent<Events.ArtistContentUpdated>().Publish( forArtist );
 				}
 			}
 			catch( Exception ex ) {

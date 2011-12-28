@@ -52,6 +52,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
 			mContainer.RegisterType<IDiscographyProvider, DbDiscographyProvider>();
 			mContainer.RegisterType<IDomainSearchProvider, DomainSearchProvider>();
+			mContainer.RegisterType<IExpiringContentProvider, ExpiringContentProvider>();
 			mContainer.RegisterType<IGenreProvider, GenreProvider>();
 			mContainer.RegisterType<ILyricProvider, LyricProvider>();
 			mContainer.RegisterType<IPlayHistoryProvider, PlayHistoryProvider>();

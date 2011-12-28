@@ -206,6 +206,7 @@
     <Compile Include="Database\DbBaseProvider.cs" />
     <Compile Include="Database\DiscographyProvider.cs" />
     <Compile Include="Database\DomainSearchProvider.cs" />
+    <Compile Include="Database\ExpiringContentProvider.cs" />
     <Compile Include="Database\GenreProvider.cs" />
     <Compile Include="Database\IDataUpdates.cs" />
     <Compile Include="Database\InternetStreamProvider.cs" />
