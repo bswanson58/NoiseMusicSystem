@@ -10,12 +10,16 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	internal class LinkTopAlbums : IBackgroundTask, IRequireInitialization {
-		private readonly IDatabaseManager	mDatabaseMgr;
-		private List<long>					mArtistList;
-		private IEnumerator<long>			mArtistEnum;
+		private readonly IArtistProvider				mArtistProvider;
+		private readonly IAlbumProvider					mAlbumProvider;
+		private readonly IAssociatedItemListProvider	mAssociationProvider;
+		private List<long>								mArtistList;
+		private IEnumerator<long>						mArtistEnum;
 
-		public LinkTopAlbums( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager ) {
-			mDatabaseMgr = databaseManager;
+		public LinkTopAlbums( ILifecycleManager lifecycleManager, IArtistProvider artistProvider, IAlbumProvider albumProvider, IAssociatedItemListProvider associatedItemListProvider ) {
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
+			mAssociationProvider = associatedItemListProvider;
 
 			lifecycleManager.RegisterForInitialize( this );
 		}
@@ -31,17 +35,14 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		private void InitializeLists() {
-			var database = mDatabaseMgr.ReserveDatabase();
-
 			try {
-				mArtistList = new List<long>( from DbArtist artist in database.Database.ExecuteQuery( "SELECT DbArtist" ).OfType<DbArtist>() select artist.DbId );
+				using( var artistList = mArtistProvider.GetArtistList()) {
+					mArtistList = new List<long>( from DbArtist artist in artistList.List select artist.DbId );
+				}
 				mArtistEnum = mArtistList.GetEnumerator();
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "", ex );
-			}
-			finally {
-				mDatabaseMgr.FreeDatabase( database );
 			}
 		}
 
@@ -57,53 +58,47 @@ namespace Noise.Core.BackgroundTasks {
 
 		public void ExecuteTask() {
 			var artistId = NextArtist();
-			var database = mDatabaseMgr.ReserveDatabase();
 
 			if( artistId != 0 ) {
 				try {
-					var parms = database.Database.CreateParameters();
-					parms["artistId"] = artistId;
-					parms["topAlbums"] = ContentType.TopAlbums;
-
-					var topAlbums = database.Database.ExecuteScalar( "SELECT DbAssociatedItemList Where Artist = @artistId AND ContentType = @topAlbums", parms ) as DbAssociatedItemList;
-
+					var topAlbums = mAssociationProvider.GetAssociatedItems( artistId, ContentType.TopAlbums );
 					if( topAlbums != null ) {
-						var	albums = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>();
-						var needUpdate = false;
+						using( var albumList = mAlbumProvider.GetAlbumList( artistId )) {
+							var needUpdate = false;
 
-						foreach( var topAlbum in topAlbums.Items ) {
-							var topAlbumName = topAlbum.Item;
-							var	dbAlbum = albums.FirstOrDefault( album => album.Name.Equals( topAlbumName, StringComparison.CurrentCultureIgnoreCase ));
+							using( var updater = mAssociationProvider.GetAssociationForUpdate( topAlbums.DbId )) {
+								foreach( var topAlbum in topAlbums.Items ) {
+									var topAlbumName = topAlbum.Item;
+									var	dbAlbum = albumList.List.FirstOrDefault( album => album.Name.Equals( topAlbumName, StringComparison.CurrentCultureIgnoreCase ));
 
-							if( dbAlbum != null ) {
-								if(( topAlbum.AssociatedId != dbAlbum.DbId ) ||
-								   ( topAlbum.IsLinked == false )) {
-									topAlbum.SetAssociatedId( dbAlbum.DbId );
+									if( dbAlbum != null ) {
+										if(( topAlbum.AssociatedId != dbAlbum.DbId ) ||
+										   ( topAlbum.IsLinked == false )) {
+											topAlbum.SetAssociatedId( dbAlbum.DbId );
 
-									needUpdate = true;
+											needUpdate = true;
+										}
+									}
+
+									if(( dbAlbum == null ) &&
+									   ( topAlbum.IsLinked )) {
+										topAlbum.SetAssociatedId( Constants.cDatabaseNullOid );
+
+										needUpdate = true;
+									}
+								}
+
+								if( needUpdate ) {
+									updater.Update();
+
+									NoiseLogger.Current.LogMessage( "Updated links to top albums" );
 								}
 							}
-
-							if(( dbAlbum == null ) &&
-							   ( topAlbum.IsLinked )) {
-								topAlbum.SetAssociatedId( Constants.cDatabaseNullOid );
-
-								needUpdate = true;
-							}
-						}
-
-						if( needUpdate ) {
-							database.Store( topAlbums );
-
-							NoiseLogger.Current.LogMessage( "Updated links to top albums" );
 						}
 					}
 				}
 				catch( Exception ex ) {
 					NoiseLogger.Current.LogException( "Exception - LinkTopAlbums:Task ", ex );
-				}
-				finally {
-					mDatabaseMgr.FreeDatabase( database );
 				}
 			}
 		}
