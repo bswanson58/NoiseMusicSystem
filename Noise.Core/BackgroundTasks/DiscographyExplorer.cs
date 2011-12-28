@@ -11,12 +11,16 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	public class DiscographyExplorer : IBackgroundTask, IRequireInitialization {
-		private readonly IDatabaseManager	mDatabaseMgr;
-		private List<long>					mArtistList;
-		private IEnumerator<long>			mArtistEnum;
+		private readonly IArtistProvider		mArtistProvider;
+		private readonly IAlbumProvider			mAlbumProvider;
+		private readonly IDiscographyProvider	mDiscographyProvider;
+		private List<long>						mArtistList;
+		private IEnumerator<long>				mArtistEnum;
 
-		public DiscographyExplorer( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager ) {
-			mDatabaseMgr = databaseManager;
+		public DiscographyExplorer( ILifecycleManager lifecycleManager, IArtistProvider artistProvider, IAlbumProvider albumProvider, IDiscographyProvider discographyProvider ) {
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
+			mDiscographyProvider = discographyProvider;
 	
 			lifecycleManager.RegisterForInitialize( this );
 		}
@@ -32,17 +36,14 @@ namespace Noise.Core.BackgroundTasks {
 		public void Shutdown() { }
 
 		private void InitializeLists() {
-			var database = mDatabaseMgr.ReserveDatabase();
-
 			try {
-				mArtistList = new List<long>( from DbArtist artist in database.Database.ExecuteQuery( "SELECT DbArtist" ).OfType<DbArtist>() select artist.DbId );
+				using( var artistList = mArtistProvider.GetArtistList()) {
+					mArtistList = new List<long>( from DbArtist artist in artistList.List select artist.DbId );
+				}
 				mArtistEnum = mArtistList.GetEnumerator();
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "", ex );
-			}
-			finally {
-				mDatabaseMgr.FreeDatabase( database );
 			}
 		}
 
@@ -57,27 +58,33 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public void ExecuteTask() {
-			var database = mDatabaseMgr.ReserveDatabase();
-
 			try {
 				var artistId = NextArtist();
 
 				if( artistId != 0 ) {
-					var parms = database.Database.CreateParameters();
-					parms["artistId"] = artistId;
-
-					var discography = database.Database.ExecuteQuery( "SELECT DbDiscographyRelease WHERE Artist = @artistId", parms ).OfType<DbDiscographyRelease>();
+					var	discography = new List<DbDiscographyRelease>();
+					using( var discographyList = mDiscographyProvider.GetDiscography( artistId )) {
+						discography.AddRange( discographyList.List );
+					}
 					var uniqueList = ReduceList( discography );
-					var albumCache = new DatabaseCache<DbAlbum>( from DbAlbum album in database.Database 
-																 where album.Artist == artistId && album.PublishedYear == Constants.cUnknownYear select album );
+
+					DatabaseCache<DbAlbum>	albumCache;
+					using( var albumList = mAlbumProvider.GetAlbumList( artistId )) {
+						albumCache = new DatabaseCache<DbAlbum>( from DbAlbum album in albumList.List where album.PublishedYear == Constants.cUnknownYear select album );
+					}
+
 					foreach( var release in uniqueList ) {
 						var releaseTitle = release.Title;
 						var	dbAlbum = albumCache.Find( album => album.Name.Equals( releaseTitle, StringComparison.CurrentCultureIgnoreCase ));
 
 						if( dbAlbum != null ) {
-							dbAlbum.PublishedYear = release.Year;
+							using( var updater = mAlbumProvider.GetAlbumForUpdate( dbAlbum.DbId )) {
+								if( updater.Item != null ) {
+									updater.Item.PublishedYear = release.Year;
 
-							database.Store( dbAlbum );
+									updater.Update();
+								}
+							}
 
 							NoiseLogger.Current.LogMessage( string.Format( "Updating Published year from discography: album '{0}', year: '{1}'", dbAlbum.Name, dbAlbum.PublishedYear ));
 						}
@@ -86,9 +93,6 @@ namespace Noise.Core.BackgroundTasks {
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - DiscographyExplorer:Task ", ex );
-			}
-			finally {
-				mDatabaseMgr.FreeDatabase( database );
 			}
 		}
 
