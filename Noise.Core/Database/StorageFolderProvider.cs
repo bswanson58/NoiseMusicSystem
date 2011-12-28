@@ -32,6 +32,14 @@ namespace Noise.Core.Database {
 			return( TryGetList( "SELECT StorageFolder", "GetAllFolders" ));
 		}
 
+		public DataProviderList<StorageFolder> GetChildFolders( long parentId ) {
+			return( TryGetList( "SELECT StorageFolder WHERE ParentFolder = @parentId", new Dictionary<string, object> {{ "parentId", parentId }}, "GetChildFolders" ));
+		}
+
+		public DataProviderList<StorageFolder> GetDeletedFolderList() {
+			return( TryGetList( "SELECT StorageFolder WHERE IsDeleted", "GetDeletedFolderList" ));
+		}
+
 		public DataUpdateShell<StorageFolder> GetFolderForUpdate( long folderId ) {
 			return( GetUpdateShell( "SELECT StorageFolder Where DbId = @folderId", new Dictionary<string, object> {{ "folderId", folderId }}));
 		}

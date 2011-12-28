@@ -3,6 +3,7 @@
 namespace Noise.Infrastructure.Interfaces {
 	public interface IArtistProvider {
 		void						AddArtist( DbArtist artist );
+		void						DeleteArtist( DbArtist artist );
 
 		DbArtist					GetArtist( long dbid );
 		DbArtist					GetArtistForAlbum( DbAlbum album );

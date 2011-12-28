@@ -11,5 +11,9 @@ namespace Noise.Core.Database {
 			return( TryGetList( "SELECT ExpiringContent WHERE AssociatedItem = @associatedItem AND ContentType = @contentType", 
 								new Dictionary<string, object> {{ "associatedItem", forAssociatedItem }, { "contentType", ofType }}, "GetContentList" ));
 		}
+
+		public DataProviderList<ExpiringContent> GetAlbumContentList( long albumId ) {
+			return( TryGetList( "SELECT ExpiringContent WHERE Album = @albumId", new Dictionary<string, object> {{ "albumId", albumId }}, "GetAlbumContentList" ));
+		}
 	}
 }

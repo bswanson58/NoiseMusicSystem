@@ -28,6 +28,14 @@ namespace Noise.Core.Database {
 			}
 		}
 
+		public void DeleteAlbum( DbAlbum album ) {
+			Condition.Requires( album ).IsNotNull();
+
+			using( var dbShell = CreateDatabase()) {
+				dbShell.DeleteItem( album );
+			}
+		}
+
 		public DbAlbum GetAlbum( long dbid ) {
 			return( TryGetItem(  "SELECT DbAlbum Where DbId = @itemId", new Dictionary<string, object> {{ "itemId", dbid }}, "Exception - GetAlbum:" ));
 		}

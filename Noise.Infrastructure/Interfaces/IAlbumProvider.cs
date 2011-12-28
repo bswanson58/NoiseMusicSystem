@@ -4,6 +4,7 @@ using Noise.Infrastructure.Dto;
 namespace Noise.Infrastructure.Interfaces {
 	public interface IAlbumProvider {
 		void						AddAlbum( DbAlbum album );
+		void						DeleteAlbum( DbAlbum album );
 
 		DbAlbum						GetAlbum( long dbid );
 		DbAlbum						GetAlbumForTrack( DbTrack track );

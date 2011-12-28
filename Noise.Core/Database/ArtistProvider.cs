@@ -31,6 +31,14 @@ namespace Noise.Core.Database {
 			}
 		}
 
+		public void DeleteArtist( DbArtist artist ) {
+			Condition.Requires( artist ).IsNotNull();
+
+			using( var dbShell = CreateDatabase()) {
+				dbShell.DeleteItem( artist );
+			}
+		}
+
 		public DbArtist GetArtist( long dbid ) {
 			return( TryGetItem(  "SELECT DbArtist Where DbId = @itemId", new Dictionary<string, object> {{ "itemId", dbid }}, "Exception - GetArtist:" ));
 		}

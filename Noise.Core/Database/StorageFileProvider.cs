@@ -22,8 +22,18 @@ namespace Noise.Core.Database {
 		}
 
 		public void AddFile( StorageFile file ) {
+			Condition.Requires( file ).IsNotNull();
+
 			using( var dbShell = CreateDatabase()) {
 				dbShell.InsertItem( file );
+			}
+		}
+
+		public void DeleteFile( StorageFile file ) {
+			Condition.Requires( file ).IsNotNull();
+
+			using( var dbShell = CreateDatabase()) {
+				dbShell.DeleteItem( file );
 			}
 		}
 
@@ -63,6 +73,10 @@ namespace Noise.Core.Database {
 
 		public DataProviderList<StorageFile> GetAllFiles() {
 			return( TryGetList( "SELECT StorageFile", "GetAllFiles" ));
+		}
+
+		public DataProviderList<StorageFile> GetDeletedFilesList() {
+			return( TryGetList( "SELECT StorageFile WHERE IsDeleted", "GetDeletedFilesList" ));
 		}
 
 		public DataProviderList<StorageFile> GetFilesInFolder( long parentFolder ) {

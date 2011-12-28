@@ -56,6 +56,21 @@ namespace Noise.Core.Database {
 			}
 		}
 
+		public void DeleteArtwork( DbArtwork artwork ) {
+			Condition.Requires( artwork ).IsNotNull();
+
+			try {
+				using( var dbShell = CreateDatabase()) {
+					dbShell.DeleteItem( artwork );
+
+					dbShell.Database.BlobStorage.Delete( artwork.DbId );
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "AddArtwork", ex );
+			}
+		}
+
 		public Artwork GetArtistArtwork( long artistId, ContentType ofType ) {
 			Artwork	retValue = null;
 

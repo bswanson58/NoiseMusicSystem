@@ -30,6 +30,16 @@ namespace Noise.Core.Database {
 			}
 		}
 
+		public void DeleteTextInfo( DbTextInfo info ) {
+			Condition.Requires( info ).IsNotNull();
+
+			using( var dbShell = CreateDatabase()) {
+				dbShell.DeleteItem( info );
+
+				dbShell.Database.BlobStorage.Delete( info.DbId );
+			}
+		}
+
 		public TextInfo GetArtistTextInfo( long artistId, ContentType ofType ) {
 			TextInfo	retValue = null;
 
