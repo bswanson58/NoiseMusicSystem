@@ -61,7 +61,7 @@ namespace Noise.Infrastructure.Dto {
 			Item = item;
 		}
 
-		public void Update() {
+		public virtual void Update() {
 			if( mDatabaseShell != null ) {
 				mDatabaseShell.UpdateItem( Item );
 			}

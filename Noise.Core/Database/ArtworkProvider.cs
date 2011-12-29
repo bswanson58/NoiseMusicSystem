@@ -23,6 +23,19 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public void AddArtwork( DbArtwork artwork ) {
+			Condition.Requires( artwork ).IsNotNull();
+
+			try {
+				using( var dbShell = CreateDatabase()) {
+					dbShell.InsertItem( artwork );
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "AddArtwork", ex );
+			}
+		}
+
 		public void AddArtwork( DbArtwork artwork, byte[] pictureData ) {
 			Condition.Requires( artwork ).IsNotNull();
 			Condition.Requires( pictureData ).IsNotEmpty();
@@ -105,8 +118,24 @@ namespace Noise.Core.Database {
 			return( TryGetList( "SELECT DbArtwork Where FolderLocation = @folderId", new Dictionary<string, object> {{ "folderId", folderId }}, "GetArtworkForFolder" ));
 		}
 
-		public DataUpdateShell<DbArtwork> GetArtworkForUpdate( long artworkId ) {
-			return( GetUpdateShell( "SELECT DbArtwork Where DbId = @artworkId", new Dictionary<string, object> {{ "artworkId", artworkId }} ));
+		public DataUpdateShell<Artwork> GetArtworkForUpdate( long artworkId ) {
+			var dbArtwork = TryGetItem( "SELECT DbArtwork Where DbId = @artworkId", new Dictionary<string, object> {{ "artworkId", artworkId }}, "GetArtworkForUpdate" );
+
+			return( new ArtworkUpdateShell( CreateDatabase(), new Artwork( dbArtwork )));
+		}
+	}
+
+	internal class ArtworkUpdateShell : DataUpdateShell<Artwork> {
+		public ArtworkUpdateShell( IDatabaseShell dbShell, Artwork item ) :
+			base( dbShell, item ) { }
+
+		public override void Update() {
+			base.Update();
+
+			if( Item != null ) {
+				var memoryStream = new MemoryStream( Item.Image );
+				mDatabaseShell.Database.BlobStorage.Store( Item.DbId, memoryStream );
+			}
 		}
 	}
 }

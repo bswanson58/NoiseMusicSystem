@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CuttingEdge.Conditions;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -6,6 +7,14 @@ namespace Noise.Core.Database {
 	internal class AssociatedItemListProvider : BaseDataProvider<DbAssociatedItemList>, IAssociatedItemListProvider {
 		public AssociatedItemListProvider( IDatabaseManager databaseManager ) :
 			base( databaseManager ) { }
+
+		public void AddAssociationList( DbAssociatedItemList associationList ) {
+			Condition.Requires( associationList ).IsNotNull();
+
+			using( var dbShell = CreateDatabase()) {
+				dbShell.InsertItem( associationList );
+			}
+		}
 
 		public DbAssociatedItemList GetAssociatedItems( long artistId, ContentType ofType ) {
 			return( TryGetItem( "SELECT DbAssociatedItemList Where Artist = @artistId AND ContentType = @contentType",

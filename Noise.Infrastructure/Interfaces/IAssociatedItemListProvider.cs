@@ -2,6 +2,8 @@
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface IAssociatedItemListProvider {
+		void									AddAssociationList( DbAssociatedItemList associationList );
+
 		DbAssociatedItemList					GetAssociatedItems( long artistId, ContentType ofType );
 
 		DataProviderList<DbAssociatedItemList>	GetAssociatedItemLists( ContentType forType );

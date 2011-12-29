@@ -19,6 +19,16 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public void AddTextInfo( DbTextInfo info ) {
+			Condition.Requires( info ).IsNotNull();
+
+			using( var dbShell = CreateDatabase()) {
+				dbShell.InsertItem( info );
+
+				dbShell.Database.BlobStorage.StoreText( info.DbId, string.Empty );
+			}
+		}
+
 		public void AddTextInfo( DbTextInfo info, string filePath ) {
 			Condition.Requires( info ).IsNotNull();
 			Condition.Requires( filePath ).IsNotNullOrEmpty();
@@ -64,6 +74,25 @@ namespace Noise.Core.Database {
 			}
 
 			return( retValue );
+		}
+
+		public DataUpdateShell<TextInfo> GetTextInfoForUpdate( long textInfoId ) {
+			var dbTextInfo = TryGetItem( "SELECT DbTextInfo Where DbId = @itemId", new Dictionary<string, object> {{ "itemId", textInfoId }}, "GetTextInfoForUpdate" );
+
+			return( new TextInfoUpdateShell( CreateDatabase(), new TextInfo( dbTextInfo )));
+		}
+	}
+
+	internal class TextInfoUpdateShell : DataUpdateShell<TextInfo> {
+		public TextInfoUpdateShell( IDatabaseShell dbShell, TextInfo info ) :
+			base( dbShell, info ) { }
+
+		public override void Update() {
+			base.Update();
+
+			if( Item != null ) {
+				mDatabaseShell.Database.BlobStorage.StoreText( Item.DbId, Item.Text );
+			}
 		}
 	}
 }
