@@ -130,7 +130,11 @@
     <Compile Include="EloqueraDatabaseModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Database\Eloquera.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>

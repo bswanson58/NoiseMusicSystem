@@ -11,17 +11,13 @@ namespace Noise.Core.Database {
 		public void AddDiscography( DbDiscographyRelease release ) {
 			Condition.Requires( release ).IsNotNull();
 
-			using( var dbShell = CreateDatabase()) {
-				dbShell.InsertItem( release );
-			}
+			InsertItem( release );
 		}
 
 		public void RemoveDiscography( DbDiscographyRelease release ) {
 			Condition.Requires( release ).IsNotNull();
 
-			using( var dbShell = CreateDatabase()) {
-				dbShell.DeleteItem( release );
-			}
+			DeleteItem( release );
 		}
 
 		public DataProviderList<DbDiscographyRelease> GetDiscography( long artistId ) {

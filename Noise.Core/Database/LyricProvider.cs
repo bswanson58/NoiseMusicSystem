@@ -11,9 +11,7 @@ namespace Noise.Core.Database {
 			base( databaseManager ) { }
 
 		public void AddLyric( DbLyric lyric ) {
-			using( var dbShell = CreateDatabase()) {
-				dbShell.InsertItem( lyric );
-			}
+			InsertItem( lyric );
 		}
 
 		public DataProviderList<DbLyric> GetPossibleLyrics( DbArtist artist, DbTrack track ) {

@@ -11,17 +11,13 @@ namespace Noise.Core.Database {
 		public void AddPlayHistory( DbPlayHistory playHistory ) {
 			Condition.Requires( playHistory ).IsNotNull();
 
-			using( var dbShell = CreateDatabase()) {
-				dbShell.InsertItem( playHistory );
-			}
+			InsertItem( playHistory );
 		}
 
 		public void DeletePlayHistory( DbPlayHistory playHistory ) {
 			Condition.Requires( playHistory ).IsNotNull();
 
-			using( var dbShell = CreateDatabase()) {
-				dbShell.DeleteItem( playHistory );
-			}
+			DeleteItem( playHistory );
 		}
 
 		public DataProviderList<DbPlayHistory> GetPlayHistoryList() {

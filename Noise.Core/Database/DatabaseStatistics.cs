@@ -2,51 +2,61 @@
 using System.Linq;
 using Noise.Core.FileStore;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	public class DatabaseStatistics {
-		private readonly IDatabaseManager	mDatabaseManager;
+		private readonly IArtistProvider		mArtistProvider;
+		private readonly IAlbumProvider			mAlbumProvider;
+		private readonly ITrackProvider			mTrackProvider;
+		private readonly IRootFolderProvider	mRootFolderProvider;
+		private readonly IStorageFolderProvider	mStorageFolderProvider;
+		private readonly IStorageFileProvider	mStorageFileProvider;
+
 		private bool						mAllCounts;
 
-		public	int		ArtistCount { get; protected set; }
-		public	int		AlbumCount { get; protected set; }
-		public	int		TrackCount { get; protected set; }
+		public	long	ArtistCount { get; protected set; }
+		public	long	AlbumCount { get; protected set; }
+		public	long	TrackCount { get; protected set; }
 
-		public	int		FolderCount { get; protected set; }
-		public	int		FileCount { get; protected set; }
+		public	long	FolderCount { get; protected set; }
+		public	long	FileCount { get; protected set; }
 
 		public	DateTime	LastScan { get; private set; }
 
-		public DatabaseStatistics( IDatabaseManager databaseManager ) {
-			mDatabaseManager = databaseManager;
+		public DatabaseStatistics( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
+								   IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider ) {
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
+			mRootFolderProvider = rootFolderProvider;
+			mStorageFolderProvider = storageFolderProvider;
+			mStorageFileProvider = storageFileProvider;
 		}
 
 		public void GatherStatistics( bool allCounts ) {
-			var database = mDatabaseManager.ReserveDatabase();
 			try {
-				ArtistCount = database.Database.ExecuteQuery( "SELECT DbArtist" ).OfType<DbArtist>().Count();
-				AlbumCount = database.Database.ExecuteQuery( "SELECT DbAlbum" ).OfType<DbAlbum>().Count();
+				ArtistCount = mArtistProvider.GetItemCount();
+				AlbumCount = mAlbumProvider.GetItemCount();
 
 				if( allCounts ) {
 					mAllCounts = true;
 
-					FolderCount = database.Database.ExecuteQuery( "SELECT StorageFolder" ).OfType<StorageFolder>().Count();
-					FileCount = database.Database.ExecuteQuery( "SELECT StorageFile" ).OfType<StorageFile>().Count();
-					TrackCount = database.Database.ExecuteQuery( "SELECT DbTrack" ).OfType<DbTrack>().Count();
+					FolderCount = mStorageFolderProvider.GetItemCount();
+					FileCount = mStorageFileProvider.GetItemCount();
+					TrackCount = mTrackProvider.GetItemCount();
 				}
 
-				var rootFolder = database.Database.ExecuteQuery( "SELECT RootFolder" ).OfType<RootFolder>().FirstOrDefault();
-				if( rootFolder != null ) {
-					LastScan = new DateTime( rootFolder.LastLibraryScan );
+				using( var rootFolderList = mRootFolderProvider.GetRootFolderList()) {
+					var rootFolder = rootFolderList.List.FirstOrDefault();
+
+					if( rootFolder != null ) {
+						LastScan = new DateTime( rootFolder.LastLibraryScan );
+					}
 				}
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - Building Database Statistical Data.", ex );
-			}
-			finally {
-				mDatabaseManager.FreeDatabase( database );
 			}
 		}
 

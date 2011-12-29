@@ -1,7 +1,7 @@
 ﻿using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.FileStore {
-	internal interface IRootFolderProvider {
+	public interface IRootFolderProvider {
 		void							AddRootFolder( RootFolder folder );
 
 		DataProviderList<RootFolder>	GetRootFolderList();

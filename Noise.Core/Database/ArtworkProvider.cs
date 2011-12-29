@@ -26,14 +26,7 @@ namespace Noise.Core.Database {
 		public void AddArtwork( DbArtwork artwork ) {
 			Condition.Requires( artwork ).IsNotNull();
 
-			try {
-				using( var dbShell = CreateDatabase()) {
-					dbShell.InsertItem( artwork );
-				}
-			}
-			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "AddArtwork", ex );
-			}
+			InsertItem( artwork );
 		}
 
 		public void AddArtwork( DbArtwork artwork, byte[] pictureData ) {
@@ -42,7 +35,7 @@ namespace Noise.Core.Database {
 
 			try {
 				using( var dbShell = CreateDatabase()) {
-					dbShell.InsertItem( artwork );
+					dbShell.Database.InsertItem( artwork );
 
 					var byteStream = new MemoryStream( pictureData );
 					dbShell.Database.BlobStorage.Insert( artwork.DbId, byteStream );
@@ -59,7 +52,7 @@ namespace Noise.Core.Database {
 
 			try {
 				using( var dbShell = CreateDatabase()) {
-					dbShell.InsertItem( artwork );
+					dbShell.Database.InsertItem( artwork );
 
 					dbShell.Database.BlobStorage.Insert( artwork.DbId, filePath );
 				}
@@ -74,7 +67,7 @@ namespace Noise.Core.Database {
 
 			try {
 				using( var dbShell = CreateDatabase()) {
-					dbShell.DeleteItem( artwork );
+					dbShell.Database.DeleteItem( artwork );
 
 					dbShell.Database.BlobStorage.Delete( artwork.DbId );
 				}
@@ -106,6 +99,18 @@ namespace Noise.Core.Database {
 			}
 
 			var dbArtworkList = TryGetList( query, new Dictionary<string, object> {{ "albumId", albumId }, { "contentType", ofType }}, "Exception - GetAlbumArtwork" );
+
+			if( dbArtworkList != null ) {
+				retValue = dbArtworkList.List.Select( TransformArtwork ).ToArray();
+			}
+
+			return( retValue );
+		}
+
+		public Artwork[] GetAlbumArtwork( long albumId ) {
+			Artwork[]	retValue = null;
+
+			var dbArtworkList = TryGetList( "SELECT DbArtwork Where Album = @albumId", new Dictionary<string, object> {{ "albumId", albumId }}, "Exception - GetAlbumArtwork" );
 
 			if( dbArtworkList != null ) {
 				retValue = dbArtworkList.List.Select( TransformArtwork ).ToArray();

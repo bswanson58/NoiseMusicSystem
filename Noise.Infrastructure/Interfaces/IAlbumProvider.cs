@@ -21,5 +21,7 @@ namespace Noise.Infrastructure.Interfaces {
 		DataProviderList<long>		GetAlbumsInCategory( long categoryId );
 		DataProviderList<long>		GetAlbumCategories( long albumId );
 		void						SetAlbumCategories( long artistId, long albumId, IEnumerable<long> categories );
+
+		long						GetItemCount();
 	}
 }

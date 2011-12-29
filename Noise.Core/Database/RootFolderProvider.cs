@@ -9,9 +9,7 @@ namespace Noise.Core.Database {
 			base( databaseManager ) { }
 
 		public void AddRootFolder( RootFolder folder ) {
-			using( var dbShell = CreateDatabase()) {
-				dbShell.InsertItem( folder );
-			}
+			InsertItem( folder );
 		}
 
 		public DataProviderList<RootFolder> GetRootFolderList() {

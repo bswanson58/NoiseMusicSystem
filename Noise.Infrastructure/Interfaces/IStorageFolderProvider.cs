@@ -12,5 +12,7 @@ namespace Noise.Infrastructure.Interfaces {
 		DataProviderList<StorageFolder>		GetChildFolders( long parentId );
 		DataProviderList<StorageFolder>		GetDeletedFolderList();
 		DataUpdateShell<StorageFolder>		GetFolderForUpdate( long folderId );
+
+		long								GetItemCount();
 	}
 }

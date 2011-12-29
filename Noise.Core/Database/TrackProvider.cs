@@ -12,9 +12,7 @@ namespace Noise.Core.Database {
 		public void AddTrack( DbTrack track ) {
 			Condition.Requires( track ).IsNotNull();
 
-			using( var dbShell = CreateDatabase()) {
-				dbShell.InsertItem( track );
-			}
+			InsertItem( track );
 		}
 
 		public DbTrack GetTrack( long trackId ) {
@@ -49,6 +47,10 @@ namespace Noise.Core.Database {
 
 		public DataProviderList<DbTrack> GetTrackListForGenre( long genreId ) {
 			return( TryGetList( "SELECT DbTrack Where Genre = @genre", new Dictionary<string, object> {{ "genre", genreId }}, "Exception - GetTrackListForGenre" ));
+		}
+
+		public long GetItemCount() {
+			return( GetItemCount( "SELECT DbTrack" ));
 		}
 	}
 }

@@ -9,6 +9,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 		Artwork						GetArtistArtwork( long artistId, ContentType ofType );
 		Artwork[]					GetAlbumArtwork( long albumId, ContentType ofType );
+		Artwork[]					GetAlbumArtwork( long albumId );
 
 		DataProviderList<DbArtwork>	GetArtworkForFolder( long folderId );
 

@@ -105,12 +105,6 @@
     <Reference Include="CuttingEdge.Conditions">
       <HintPath>..\lib\CuttingEdge.Conditions\v1.1.0.10041\CuttingEdge.Conditions.dll</HintPath>
     </Reference>
-    <Reference Include="Eloquera.Client, Version=4.13.0.0, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
-      <HintPath>..\lib\Eloquera\v4.13\Eloquera.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Eloquera.Common, Version=4.13.0.0, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
-      <HintPath>..\lib\Eloquera\v4.13\Eloquera.Common.dll</HintPath>
-    </Reference>
     <Reference Include="GDataDB">
       <HintPath>..\lib\GDataDB\v0.2.0.0\GDataDB.dll</HintPath>
     </Reference>
@@ -303,11 +297,6 @@
     <Compile Include="Support\ILifecycleManager.cs" />
     <Compile Include="Support\IRequireInitialization.cs" />
     <Compile Include="Support\LifecycleManager.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Database\Eloquera.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscogsConnect\DiscogsConnect.csproj">

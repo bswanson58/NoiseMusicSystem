@@ -18,13 +18,28 @@ namespace Noise.Core.Database {
 			return ( mDatabaseMgr.CreateDatabase());
 		}
 
+		protected long GetItemCount( string query ) {
+			var retValue = 0L;
+
+			try {
+				using( var itemList = TryGetList( query, "GetItemCount" )) {
+					retValue = itemList.List.Count();
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "GetItemCount", ex );
+			}
+
+			return( retValue );
+		}
+
 		protected T GetItem( string query ) {
 			Condition.Requires( query ).IsNotNullOrEmpty();
 
 			T retValue;
 
 			using( var dbShell = CreateDatabase()) {
-				retValue = dbShell.Database.Database.ExecuteScalar( query ) as T;
+				retValue = dbShell.Database.QueryForItem( query ) as T;
 			}
 
 			return( retValue );
@@ -51,7 +66,7 @@ namespace Noise.Core.Database {
 			T retValue;
 
 			using( var dbShell = CreateDatabase()) {
-				retValue = dbShell.QueryForItem( query, parms ) as T;
+				retValue = dbShell.Database.QueryForItem( query, parms ) as T;
 			}
 
 			return( retValue );
@@ -77,7 +92,7 @@ namespace Noise.Core.Database {
 
 			var dbShell = CreateDatabase();
 
-			return( new DataProviderList<T>( dbShell, dbShell.QueryForList( query ).OfType<T>()));
+			return( new DataProviderList<T>( dbShell, dbShell.Database.QueryForList( query ).OfType<T>()));
 		}
 
 		protected DataProviderList<T> TryGetList( string query, string exceptionMessage ) {
@@ -101,7 +116,7 @@ namespace Noise.Core.Database {
 
 			var dbShell = CreateDatabase();
 
-			return( new DataProviderList<T>( dbShell, dbShell.QueryForList( query, parameters ).OfType<T>()));
+			return( new DataProviderList<T>( dbShell, dbShell.Database.QueryForList( query, parameters ).OfType<T>()));
 		}
 
 		protected DataProviderList<T> TryGetList( string query, IDictionary<string, object> parms, string exceptionMessage ) {
@@ -125,18 +140,18 @@ namespace Noise.Core.Database {
 
 			var dbShell = CreateDatabase();
 
-			return( new DataUpdateShell<T>( dbShell, dbShell.QueryForItem( query, parameters ) as T ));
+			return( new DataUpdateShell<T>( dbShell, dbShell.Database.QueryForItem( query, parameters ) as T ));
 		}
 
 		protected void InsertItem( T item ) {
 			using( var dbShell = CreateDatabase()) {
-				dbShell.InsertItem( item );
+				dbShell.Database.InsertItem( item );
 			}
 		}
 
 		protected void DeleteItem( T item ) {
 			using( var dbShell = CreateDatabase()) {
-				dbShell.DeleteItem( item );
+				dbShell.Database.DeleteItem( item );
 			}
 		}
 	}

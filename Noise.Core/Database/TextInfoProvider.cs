@@ -23,8 +23,7 @@ namespace Noise.Core.Database {
 			Condition.Requires( info ).IsNotNull();
 
 			using( var dbShell = CreateDatabase()) {
-				dbShell.InsertItem( info );
-
+				dbShell.Database.InsertItem( info );
 				dbShell.Database.BlobStorage.StoreText( info.DbId, string.Empty );
 			}
 		}
@@ -34,8 +33,7 @@ namespace Noise.Core.Database {
 			Condition.Requires( filePath ).IsNotNullOrEmpty();
 
 			using( var dbShell = CreateDatabase()) {
-				dbShell.InsertItem( info );
-
+				dbShell.Database.InsertItem( info );
 				dbShell.Database.BlobStorage.Store( info.DbId, filePath );
 			}
 		}
@@ -44,8 +42,7 @@ namespace Noise.Core.Database {
 			Condition.Requires( info ).IsNotNull();
 
 			using( var dbShell = CreateDatabase()) {
-				dbShell.DeleteItem( info );
-
+				dbShell.Database.DeleteItem( info );
 				dbShell.Database.BlobStorage.Delete( info.DbId );
 			}
 		}

@@ -23,17 +23,13 @@ namespace Noise.Core.Database {
 		public void AddAlbum( DbAlbum album ) {
 			Condition.Requires( album ).IsNotNull();
 
-			using( var dbShell = CreateDatabase()) {
-				dbShell.InsertItem( album );
-			}
+			InsertItem( album );
 		}
 
 		public void DeleteAlbum( DbAlbum album ) {
 			Condition.Requires( album ).IsNotNull();
 
-			using( var dbShell = CreateDatabase()) {
-				dbShell.DeleteItem( album );
-			}
+			DeleteItem( album );
 		}
 
 		public DbAlbum GetAlbum( long dbid ) {
@@ -125,6 +121,10 @@ namespace Noise.Core.Database {
 			return( new AlbumSupportInfo( mArtworkProvider.GetAlbumArtwork( albumId, ContentType.AlbumCover ),
 										  mArtworkProvider.GetAlbumArtwork( albumId, ContentType.AlbumArtwork ),
 										  mTextInfoProvider.GetAlbumTextInfo( albumId )));
+		}
+
+		public long GetItemCount() {
+			return( GetItemCount( "SELECT DbAlbum" ));
 		}
 	}
 }

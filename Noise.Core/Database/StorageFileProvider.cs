@@ -24,17 +24,13 @@ namespace Noise.Core.Database {
 		public void AddFile( StorageFile file ) {
 			Condition.Requires( file ).IsNotNull();
 
-			using( var dbShell = CreateDatabase()) {
-				dbShell.InsertItem( file );
-			}
+			InsertItem( file );
 		}
 
 		public void DeleteFile( StorageFile file ) {
 			Condition.Requires( file ).IsNotNull();
 
-			using( var dbShell = CreateDatabase()) {
-				dbShell.DeleteItem( file );
-			}
+			DeleteItem( file );
 		}
 
 		public StorageFile GetPhysicalFile( DbTrack forTrack ) {
@@ -131,5 +127,8 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public long GetItemCount() {
+			return( GetItemCount( "SELECT StorageFile" ));
+		}
 	}
 }

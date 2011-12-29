@@ -16,5 +16,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void						UpdateArtistLastChanged( long artistId );
 		DataProviderList<long>		GetArtistCategories( long artistId );
 		ArtistSupportInfo			GetArtistSupportInfo( long artistId );
+
+		long						GetItemCount();
 	}
 }

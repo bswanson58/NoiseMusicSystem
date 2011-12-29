@@ -9,15 +9,11 @@ namespace Noise.Core.Database {
 			base( databaseManager ) { }
 
 		public void AddFolder( StorageFolder folder ) {
-			using( var dbShell = CreateDatabase()) {
-				dbShell.InsertItem( folder );
-			}
+			InsertItem( folder );
 		}
 
 		public void RemoveFolder( StorageFolder folder ) {
-			using( var dbShell = CreateDatabase()) {
-				dbShell.DeleteItem( dbShell );
-			}
+			DeleteItem( folder );
 		}
 
 		public StorageFolder GetFolder( long folderId ) {
@@ -42,6 +38,10 @@ namespace Noise.Core.Database {
 
 		public DataUpdateShell<StorageFolder> GetFolderForUpdate( long folderId ) {
 			return( GetUpdateShell( "SELECT StorageFolder Where DbId = @folderId", new Dictionary<string, object> {{ "folderId", folderId }}));
+		}
+
+		public long GetItemCount() {
+			return( GetItemCount( "SELECT StorageFolder" ));
 		}
 	}
 }

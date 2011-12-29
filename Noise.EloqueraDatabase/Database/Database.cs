@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using CuttingEdge.Conditions;
@@ -18,6 +19,7 @@ namespace Noise.EloqueraDatabase.Database {
 		private readonly IIoc				mComponentCreator;
 		private readonly string				mDatabaseLocation;
 		private readonly string				mDatabaseName;
+		private Parameters					mParameters;
 
 		public	DB							Database { get; private set; }
 		public	string						DatabaseId { get; private set; }
@@ -82,7 +84,7 @@ namespace Noise.EloqueraDatabase.Database {
 						RegisterDatabaseTypes();
 
 						var dbVersion = new DbVersion( cDatabaseVersionMajor, cDatabaseVersionMinor );
-						Insert( dbVersion );
+						InsertItem( dbVersion );
 
 						CloseDatabase();
 
@@ -194,7 +196,7 @@ namespace Noise.EloqueraDatabase.Database {
 			return( retValue );
 		}
 
-		public void Insert( object dbObject ) {
+		public void InsertItem( object dbObject ) {
 			Condition.Requires( dbObject ).IsNotNull();
 
 			if( Database.GetUid( dbObject ) == -1 ) {
@@ -209,7 +211,7 @@ namespace Noise.EloqueraDatabase.Database {
 			}
 		}
 
-		public void Store( object dbObject ) {
+		public void UpdateItem( object dbObject ) {
 			Condition.Requires( dbObject ).IsNotNull();
 
 			if( Database.GetUid( dbObject ) != -1 ) {
@@ -224,7 +226,7 @@ namespace Noise.EloqueraDatabase.Database {
 			}
 		}
 
-		public void Delete( object dbObject ) {
+		public void DeleteItem( object dbObject ) {
 			Condition.Requires( dbObject ).IsNotNull();
 
 			if( Database.GetUid( dbObject ) == -1 ) {
@@ -245,6 +247,60 @@ namespace Noise.EloqueraDatabase.Database {
 					mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Delete ));
 				}
 			}
+		}
+
+		private Parameters QueryParameters {
+			get {
+				if( mParameters == null ) {
+					mParameters = Database.CreateParameters();
+				}
+
+				return( mParameters );
+			}
+		}
+
+		private void SetParameter( string parameter, object value ) {
+			Condition.Requires( parameter ).IsNotNullOrEmpty();
+			Condition.Requires( value ).IsNotNull();
+
+			QueryParameters[parameter] = value;
+		}
+
+		private void SetParameters( IDictionary<string, object> parameters ) {
+			Condition.Requires( parameters ).IsNotNull();
+			Condition.Requires( parameters ).IsNotEmpty();
+
+			foreach( var value in parameters ) {
+				SetParameter( value.Key, value.Value );
+			}
+		}
+
+		public object QueryForItem( string query ) {
+			Condition.Requires( query ).IsNotNullOrEmpty();
+
+			return( Database.ExecuteScalar( query ));
+		}
+
+		public object QueryForItem( string query, IDictionary<string, object> parameters ) {
+			Condition.Requires( query ).IsNotNullOrEmpty();
+
+			SetParameters( parameters );
+
+			return( Database.ExecuteScalar( query, QueryParameters ));
+		}
+
+		public IEnumerable QueryForList( string query ) {
+			Condition.Requires( query ).IsNotNullOrEmpty();
+
+			return( Database.ExecuteQuery( query ));
+		}
+
+		public IEnumerable QueryForList( string query, IDictionary<string, object> parameters ) {
+			Condition.Requires( query ).IsNotNullOrEmpty();
+
+			SetParameters( parameters );
+
+			return( Database.ExecuteQuery( query, QueryParameters ));
 		}
 	}
 }

@@ -8,5 +8,7 @@ namespace Noise.Infrastructure.Interfaces {
 		DbPlayList						GetPlayList( long playListId );
 
 		DataProviderList<DbPlayList>	GetPlayLists();
+
+		DataUpdateShell<DbPlayList>		GetPlayListForUpdate( long playListId );
 	}
 }

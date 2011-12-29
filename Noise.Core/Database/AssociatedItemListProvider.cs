@@ -11,9 +11,7 @@ namespace Noise.Core.Database {
 		public void AddAssociationList( DbAssociatedItemList associationList ) {
 			Condition.Requires( associationList ).IsNotNull();
 
-			using( var dbShell = CreateDatabase()) {
-				dbShell.InsertItem( associationList );
-			}
+			InsertItem( associationList );
 		}
 
 		public DbAssociatedItemList GetAssociatedItems( long artistId, ContentType ofType ) {
@@ -22,7 +20,7 @@ namespace Noise.Core.Database {
 		}
 
 		public DataProviderList<DbAssociatedItemList> GetAssociatedItemLists( ContentType forType ) {
-			return( TryGetList( "SELECT DbAssociatedItemList ContentType = @contentType", new Dictionary<string, object> {{ "contentType", forType }}, "GetAssociatedItemList" ));
+			return( TryGetList( "SELECT DbAssociatedItemList Where ContentType = @contentType", new Dictionary<string, object> {{ "contentType", forType }}, "GetAssociatedItemList" ));
 		}
 
 		public DataProviderList<DbAssociatedItemList> GetAssociatedItemLists( long forArtist ) {

@@ -17,9 +17,7 @@ namespace Noise.Core.Database {
 		public void AddPlayList( DbPlayList playList ) {
 			Condition.Requires( playList ).IsNotNull();
 
-			using( var dbShell = CreateDatabase()) {
-				dbShell.InsertItem( playList );
-			}
+			InsertItem( playList );
 
 			FireListChanged( playList );
 		}
@@ -27,9 +25,7 @@ namespace Noise.Core.Database {
 		public void DeletePlayList( DbPlayList playList ) {
 			Condition.Requires( playList ).IsNotNull();
 
-			using( var dbShell = CreateDatabase()) {
-				dbShell.DeleteItem( playList );
-			}
+			DeleteItem( playList );
 
 			FireListChanged( playList );
 		}
@@ -40,6 +36,10 @@ namespace Noise.Core.Database {
 
 		public DataProviderList<DbPlayList> GetPlayLists() {
 			return( TryGetList( "SELECT DbPlayList", "GetPlayLists" ));
+		}
+
+		public DataUpdateShell<DbPlayList> GetPlayListForUpdate( long playListId ) {
+			return( GetUpdateShell( "SELECT DbPlayList Where DbId = @playListId", new Dictionary<string, object> {{ "playListId", playListId }} ));
 		}
 
 		private void FireListChanged( DbPlayList playList ) {

@@ -26,17 +26,13 @@ namespace Noise.Core.Database {
 		public void AddArtist( DbArtist artist ) {
 			Condition.Requires( artist ).IsNotNull();
 
-			using( var dbShell = CreateDatabase()) {
-				dbShell.InsertItem( artist );
-			}
+			InsertItem( artist );
 		}
 
 		public void DeleteArtist( DbArtist artist ) {
 			Condition.Requires( artist ).IsNotNull();
 
-			using( var dbShell = CreateDatabase()) {
-				dbShell.DeleteItem( artist );
-			}
+			DeleteItem( artist );
 		}
 
 		public DbArtist GetArtist( long dbid ) {
@@ -111,6 +107,10 @@ namespace Noise.Core.Database {
 										   mAssociationProvider.GetAssociatedItems( artistId, ContentType.SimilarArtists ),
 										   mAssociationProvider.GetAssociatedItems( artistId, ContentType.TopAlbums ),
 										   mAssociationProvider.GetAssociatedItems( artistId, ContentType.BandMembers ) ));
+		}
+
+		public long GetItemCount() {
+			return( GetItemCount( "SELECT DbArtist" ));
 		}
 	}
 }

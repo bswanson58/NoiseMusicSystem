@@ -15,5 +15,7 @@ namespace Noise.Infrastructure.Interfaces {
 		DataProviderList<StorageFile>	GetFilesOfType( eFileType fileType );
 
 		DataUpdateShell<StorageFile>	GetFileForUpdate( long fileId );
+
+		long							GetItemCount();
 	}
 }
