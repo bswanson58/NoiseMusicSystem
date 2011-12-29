@@ -40,7 +40,7 @@ namespace Noise.Service.Infrastructure.ServiceBus {
 	public class DatabaseItemChangedMessageHandler : MessageHandlerBase, IMessageHandler<DatabaseItemChangedMessage> {
 		public void Handle( DatabaseItemChangedMessage message ) {
 			if( EventAggregator != null ) {
-				EventAggregator.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( message.ItemId, message.Change ));
+//				EventAggregator.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( message.ItemId, message.Change ));
 			}
 		}
 	}

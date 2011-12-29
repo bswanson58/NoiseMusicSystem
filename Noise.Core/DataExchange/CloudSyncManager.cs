@@ -13,12 +13,13 @@ using IDatabase = GDataDB.IDatabase;
 
 namespace Noise.Core.DataExchange {
 	internal class CloudSyncManager : ICloudSyncManager {
-		private readonly IDataProvider				mDataProvider;
+		private readonly IDbBaseProvider			mDbBaseProvider;
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IAlbumProvider				mAlbumProvider;
 		private readonly ITrackProvider				mTrackProvider;
 		private readonly IInternetStreamProvider	mStreamProvider;
 		private readonly IDomainSearchProvider		mDomainSearchProvider;
+		private long								mDatabaseInstanceId;
 		private string								mLoginName;
 		private string								mLoginPassword;
 		private IDatabaseClient						mCloudClient;
@@ -31,9 +32,9 @@ namespace Noise.Core.DataExchange {
 		private readonly AsyncCommand<object>						mSyncWithCloud;
 		private readonly AsyncCommand<SetFavoriteCommandArgs>		mSetFavoriteCommand;
 
-		public CloudSyncManager( IDataProvider dataProvider, IEnumerable<ICloudSyncProvider> syncProviders, IDomainSearchProvider domainSearchProvider,
+		public CloudSyncManager( IDbBaseProvider dbBaseProvider, IEnumerable<ICloudSyncProvider> syncProviders, IDomainSearchProvider domainSearchProvider,
 								 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IInternetStreamProvider streamProvider ) {
-			mDataProvider = dataProvider;
+			mDbBaseProvider = dbBaseProvider;
 			mSyncProviders = syncProviders;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -64,6 +65,8 @@ namespace Noise.Core.DataExchange {
 		public bool InitializeCloudSync( string loginName, string password ) {
 			mLoginName = loginName;
 			mLoginPassword = password;
+
+			mDatabaseInstanceId = mDbBaseProvider.DatabaseInstanceId();
 
 			return( true );
 		}
@@ -118,7 +121,7 @@ namespace Noise.Core.DataExchange {
 		private void SyncFavorites( long seqnId ) {
 			using( var favoriteList = mArtistProvider.GetFavoriteArtists()) {
 				foreach( var artist in favoriteList.List ) {
-					var item = new ExportFavorite( mDataProvider.DatabaseId, artist.Name, artist.IsFavorite ) { SequenceId = seqnId };
+					var item = new ExportFavorite( mDatabaseInstanceId, artist.Name, artist.IsFavorite ) { SequenceId = seqnId };
 
 					foreach( var provider in mSyncProviders ) {
 						if( provider.SyncTypes.HasFlag( ObjectTypes.Favorites )) {
@@ -158,7 +161,7 @@ namespace Noise.Core.DataExchange {
 		private void SyncStreams( long seqnId ) {
 			using( var streamList = mStreamProvider.GetStreamList()) {
 				foreach( var stream in streamList.List ) {
-					var item = new ExportStream( mDataProvider.DatabaseId, stream.Name, stream.Description, stream.Url, stream.IsPlaylistWrapped, stream.Website ) { SequenceId = seqnId };
+					var item = new ExportStream( mDatabaseInstanceId, stream.Name, stream.Description, stream.Url, stream.IsPlaylistWrapped, stream.Website ) { SequenceId = seqnId };
 
 					foreach( var provider in mSyncProviders ) {
 						if( provider.SyncTypes.HasFlag( ObjectTypes.Streams )) {

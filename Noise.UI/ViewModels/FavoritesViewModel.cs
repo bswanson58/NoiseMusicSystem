@@ -11,7 +11,6 @@ using Noise.UI.Support;
 namespace Noise.UI.ViewModels {
 	public class FavoritesViewModel : ViewModelBase {
 		private readonly IEventAggregator		mEvents;
-		private readonly IDataProvider			mDataProvider;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
@@ -19,10 +18,9 @@ namespace Noise.UI.ViewModels {
 		private readonly IDialogService			mDialogService;
 		private readonly ObservableCollectionEx<FavoriteViewNode>	mFavoritesList;
 
-		public FavoritesViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
+		public FavoritesViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 								   IDataExchangeManager dataExchangeManager, IDialogService dialogService ) {
 			mEvents = eventAggregator;
-			mDataProvider = dataProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -41,7 +39,7 @@ namespace Noise.UI.ViewModels {
 
 		private void OnDatabaseChanged( DbItemChangedArgs args ) {
 			if( args.Change == DbItemChanged.Favorite ) {
-				var item = args.GetItem( mDataProvider );
+				var item = args.Item;
 
 				if(( item is DbArtist ) ||
 				   ( item is DbAlbum ) ||

@@ -15,7 +15,6 @@ using Observal.Extensions;
 namespace Noise.UI.ViewModels {
 	public class ArtistViewModel : ViewModelBase {
 		private readonly IEventAggregator		mEvents;
-		private readonly IDataProvider			mDataProvider;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly IDiscographyProvider	mDiscographyProvider;
@@ -30,11 +29,10 @@ namespace Noise.UI.ViewModels {
 		private readonly ObservableCollectionEx<LinkNode>				mBandMembers;
 		private readonly ObservableCollectionEx<DbDiscographyRelease>	mDiscography;
 
-		public ArtistViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider,
+		public ArtistViewModel( IEventAggregator eventAggregator,
 								IArtistProvider artistProvider, IAlbumProvider albumProvider, IDiscographyProvider discographyProvider,
 								ITagManager tagManager, IDialogService dialogService ) {
 			mEvents = eventAggregator;
-			mDataProvider = dataProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mDiscographyProvider = discographyProvider;
@@ -222,12 +220,12 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			var item = args.GetItem( mDataProvider );
+			var item = args.Item;
 
 			if(( item is DbArtist ) &&
 			   ( CurrentArtist != null ) &&
 			   ( args.Change == DbItemChanged.Update ) &&
-			   ( args.ItemId == CurrentArtist.DbId )) {
+			   ( item.DbId == CurrentArtist.DbId )) {
 				BeginInvoke( () => Mapper.DynamicMap( item as DbArtist, mCurrentArtist ));
 			}
 		}

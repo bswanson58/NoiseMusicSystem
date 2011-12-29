@@ -260,7 +260,6 @@
     <Compile Include="Support\BindableObject.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Events.cs" />
-    <Compile Include="Interfaces\IDataProvider.cs" />
     <Compile Include="Interfaces\ILog.cs" />
     <Compile Include="Interfaces\INoiseManager.cs" />
     <Compile Include="Log.cs" />

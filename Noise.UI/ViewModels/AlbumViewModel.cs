@@ -36,7 +36,6 @@ namespace Noise.UI.ViewModels {
 
 	internal class AlbumViewModel : ViewModelBase, IActiveAware {
 		private readonly IEventAggregator		mEvents;
-		private readonly IDataProvider			mDataProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
 		private readonly IArtworkProvider		mArtworkProvider;
@@ -60,11 +59,10 @@ namespace Noise.UI.ViewModels {
 		public	TimeSpan						AlbumPlayTime { get; private set; }
 		public	event EventHandler				IsActiveChanged;
 
-		public AlbumViewModel( IEventAggregator eventAggregator, IDataProvider dataProvider, 
+		public AlbumViewModel( IEventAggregator eventAggregator, 
 							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider, ITagProvider tagProvider, IStorageFileProvider storageFileProvider,
 							   ITagManager tagManager, IDialogService dialogService ) {
 			mEvents = eventAggregator;
-			mDataProvider = dataProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mArtworkProvider = artworkProvider;
@@ -294,14 +292,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			var item = args.GetItem( mDataProvider );
+			var item = args.Item;
 
 			if(( item is DbTrack ) &&
 			   ( mCurrentAlbum != null ) &&
 			   ( args.Change == DbItemChanged.Update ) &&
 			   ((item as DbTrack).Album == mCurrentAlbum.DbId )) {
 				BeginInvoke( () => {
-					var track = ( from UiTrack node in mTracks where node.DbId == args.ItemId select node ).FirstOrDefault();
+					var track = ( from UiTrack node in mTracks where node.DbId == item.DbId select node ).FirstOrDefault();
 
 					if( track != null ) {
 						switch( args.Change ) {

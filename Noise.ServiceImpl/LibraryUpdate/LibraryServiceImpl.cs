@@ -23,18 +23,16 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 
 		private readonly IEventAggregator	mEvents;
 		private readonly INoiseManager		mNoiseManager;
-		private readonly IDataProvider		mDataProvider;
 		private readonly ILibraryBuilder	mLibraryBuilder;
 		private readonly IServiceBusManager	mServiceBus;
 		private	ISchedulerFactory			mSchedulerFactory;
 		private	IScheduler					mJobScheduler;
 		private ServiceHost					mLibraryUpdateServiceHost;
 
-		public LibraryServiceImpl( IEventAggregator eventAggregator, INoiseManager noiseManager, IDataProvider dataProvider,
+		public LibraryServiceImpl( IEventAggregator eventAggregator, INoiseManager noiseManager,
 								   ILibraryBuilder libraryBuilder, IServiceBusManager serviceBusManager ) {
 			mEvents = eventAggregator;
 			mNoiseManager = noiseManager;
-			mDataProvider = dataProvider;
 			mLibraryBuilder = libraryBuilder;
 			mServiceBus = serviceBusManager;
 		}
@@ -99,11 +97,11 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 		}
 
 		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			var item = args.GetItem( mDataProvider );
+			var item = args.Item;
 
 			if(( item is DbArtist ) ||
 			   ( item is DbAlbum )) {
-				mServiceBus.Publish( new DatabaseItemChangedMessage { ItemId = args.ItemId, Change = args.Change });
+				mServiceBus.Publish( new DatabaseItemChangedMessage { ItemId = item.DbId, Change = args.Change });
 			}
 		}
 

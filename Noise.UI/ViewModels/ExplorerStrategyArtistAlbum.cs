@@ -26,7 +26,6 @@ namespace Noise.UI.ViewModels {
 		private const string					cSearchIgnoreCase = "Ignore Case";
 
 		private readonly IEventAggregator		mEventAggregator;
-		private readonly IDataProvider			mDataProvider;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITagManager			mTagManager;
@@ -45,9 +44,9 @@ namespace Noise.UI.ViewModels {
 		private readonly Subject<ViewSortStrategy>		mAlbumSortSubject;
 		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
 
-		public ExplorerStrategyArtistAlbum( IEventAggregator eventAggregator, IDataProvider dataProvider, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager, IDialogService dialogService ) {
+		public ExplorerStrategyArtistAlbum( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider,
+											ITagManager tagManager, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
-			mDataProvider = dataProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTagManager = tagManager;
@@ -121,7 +120,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			var item = args.GetItem( mDataProvider );
+			var item = args.Item;
 
 			if( item is DbArtist ) {
 				BeginInvoke( () => {
