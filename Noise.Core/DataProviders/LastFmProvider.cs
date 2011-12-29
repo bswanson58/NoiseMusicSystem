@@ -81,17 +81,17 @@ namespace Noise.Core.DataProviders {
 			get{ return( false ); }
 		}
 
-		public void UpdateContent( IDatabase database, DbArtist forArtist ) {
+		public void UpdateContent( DbArtist forArtist ) {
 			if( mHasNetworkAccess ) {
 				mLastFmProvider.UpdateArtist( forArtist );
 			}
 		}
 
-		public void UpdateContent( IDatabase database, DbAlbum forAlbum ) {
+		public void UpdateContent( DbAlbum forAlbum ) {
 			throw new NotImplementedException();
 		}
 
-		public void UpdateContent( IDatabase database, DbTrack forTrack ) {
+		public void UpdateContent( DbTrack forTrack ) {
 			throw new NotImplementedException();
 		}
 	}

@@ -12,16 +12,13 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.DataBuilders {
 	internal class ContentManager : IContentManager, IRequireConstruction {
 		private readonly IEventAggregator			mEvents;
-		private readonly IDatabaseManager			mDatabaseManager;
 		private readonly IExpiringContentProvider	mExpiringContentProvider;
 		private readonly List<long>					mCurrentRequests;
 
 		private readonly IEnumerable<IContentProvider>	mContentProviders;
 
-		public ContentManager( IEventAggregator eventAggregator, IDatabaseManager databaseManager,
-							   IExpiringContentProvider expContentProvider, IEnumerable<IContentProvider> contentProviders ) {
+		public ContentManager( IEventAggregator eventAggregator, IExpiringContentProvider expContentProvider, IEnumerable<IContentProvider> contentProviders ) {
 			mEvents = eventAggregator;
-			mDatabaseManager = databaseManager;
 			mExpiringContentProvider = expContentProvider;
 			mContentProviders = contentProviders;
 
@@ -44,7 +41,6 @@ namespace Noise.Core.DataBuilders {
 
 			var artistId = forArtist.DbId;
 			var artistName = forArtist.Name;
-			var database = mDatabaseManager.ReserveDatabase();
 
 			try {
 				var selectedProviders = from IContentProvider provider in mContentProviders where provider.CanUpdateArtist select provider;
@@ -57,13 +53,13 @@ namespace Noise.Core.DataBuilders {
 							var localProvider = provider;
 
 							if( contentList.List.Any( content => IsContentExpired( content, localProvider ))) {
-								localProvider.UpdateContent( database, forArtist );
+								localProvider.UpdateContent( forArtist );
 
 								contentUpdated = true;
 							}
 						}
 						else {
-							provider.UpdateContent( database, forArtist );
+							provider.UpdateContent( forArtist );
 
 							contentUpdated = true;
 						}
@@ -76,9 +72,6 @@ namespace Noise.Core.DataBuilders {
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( String.Format( "Exception - ContentManager updating Artist: {0}", artistName ), ex );
-			}
-			finally {
-				mDatabaseManager.FreeDatabase( database );
 			}
 
 			lock( mCurrentRequests ) {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using DiscogsConnect;
 using Noise.Core.DataBuilders;
 using Noise.Core.Support;
@@ -10,7 +9,9 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataProviders {
 	internal class DiscographyProvider : DiscogsProvider {
-		public DiscographyProvider( ILifecycleManager lifecycleManager ) {
+		public DiscographyProvider( ILifecycleManager lifecycleManager, 
+									IArtistProvider artistProvider, IDiscographyProvider discographyProvider, IAssociatedItemListProvider associatedItemListProvider ) :
+			base( artistProvider, discographyProvider, associatedItemListProvider ) {
 			lifecycleManager.RegisterForInitialize( this );
 		}
 
@@ -20,7 +21,9 @@ namespace Noise.Core.DataProviders {
 	}
 
 	internal class BandMembersProvider : DiscogsProvider {
-		public BandMembersProvider( ILifecycleManager lifecycleManager ) {
+		public BandMembersProvider( ILifecycleManager lifecycleManager,
+									IArtistProvider artistProvider, IDiscographyProvider discographyProvider, IAssociatedItemListProvider associatedItemListProvider ) :
+			base( artistProvider, discographyProvider, associatedItemListProvider ) {
 			lifecycleManager.RegisterForInitialize( this );
 		}
 
@@ -30,9 +33,18 @@ namespace Noise.Core.DataProviders {
 	}
 
 	internal abstract class DiscogsProvider : IContentProvider, IRequireInitialization {
+		private readonly IArtistProvider				mArtistProvider;
+		private readonly IDiscographyProvider			mDiscographyProvider;
+		private readonly IAssociatedItemListProvider	mAssociationProvider;
 		private bool			mHasNetworkAccess;
 		private DiscogsClient	mClient;
 		public abstract ContentType ContentType { get; }
+
+		protected DiscogsProvider( IArtistProvider artistProvider, IDiscographyProvider discographyProvider, IAssociatedItemListProvider associatedItemListProvider ) {
+			mArtistProvider = artistProvider;
+			mDiscographyProvider = discographyProvider;
+			mAssociationProvider = associatedItemListProvider;
+		}
 
 		public void Initialize() {
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
@@ -71,43 +83,42 @@ namespace Noise.Core.DataProviders {
 			}
 		}
 
-		public void UpdateContent( IDatabase database, DbArtist forArtist ) {
+		public void UpdateContent( DbArtist forArtist ) {
 			if( mHasNetworkAccess ) {
 				try {
 					var client = Client;
 					var discogsArtist = client.SearchArtist( forArtist.Name, true );
 
 					if( discogsArtist != null ) {
-						var artistId = forArtist.DbId;
-						var parms = database.Database.CreateParameters();
-
-						parms["artistId"] = artistId;
-						parms["bandMembers"] = ContentType.BandMembers;
-
-						var bandMembers = database.Database.ExecuteScalar( "SELECT DbAssociatedItemList WHERE AssociatedItem = @artistId AND ContentType = @bandMembers", parms ) as DbAssociatedItemList;
-
+						var bandMembers = mAssociationProvider.GetAssociatedItems( forArtist.DbId, ContentType.BandMembers );
 						if( bandMembers == null ) {
-							bandMembers = new DbAssociatedItemList( artistId, ContentType.BandMembers ) { Artist = forArtist.DbId };
+							bandMembers = new DbAssociatedItemList( forArtist.DbId, ContentType.BandMembers ) { Artist = forArtist.DbId };
 
-							database.Insert( bandMembers );
-						}
-						bandMembers.UpdateExpiration();
-
-						if(( discogsArtist.BandMembers != null ) &&
-							( discogsArtist.BandMembers.Count > 0 ) ) {
-
-							bandMembers.IsContentAvailable = true;
-							bandMembers.SetItems( discogsArtist.BandMembers );
-						}
-						else {
-							bandMembers.IsContentAvailable = false;
+							mAssociationProvider.AddAssociationList( bandMembers );
 						}
 
-						database.Store( bandMembers );
+						if( discogsArtist.BandMembers != null ) {
+							using( var updater = mAssociationProvider.GetAssociationForUpdate( bandMembers.DbId )) {
+								if( updater.Item != null ) {
+									if( discogsArtist.BandMembers.Count > 0 ) {
+										updater.Item.SetItems( discogsArtist.BandMembers );
+										updater.Item.IsContentAvailable = true;
+									}
+									else {
+										updater.Item.IsContentAvailable = false;
+									}
 
-						var releases = from DbDiscographyRelease release in database.Database where release.AssociatedItem == artistId select release;
-						foreach( var release in releases ) {
-							database.Delete( release );
+									updater.Item.UpdateExpiration();
+
+									updater.Update();
+								}
+							}
+						}
+
+						using( var releases = mDiscographyProvider.GetDiscography( forArtist.DbId )) {
+							foreach( var release in releases.List ) {
+								mDiscographyProvider.RemoveDiscography( release );
+							}
 						}
 
 						if(( discogsArtist.Releases != null ) &&
@@ -128,11 +139,12 @@ namespace Noise.Core.DataProviders {
 										releaseType = DiscographyReleaseType.TrackAppearance;
 									}
 								}
-								database.Insert( new DbDiscographyRelease( artistId, release.Title, "", "", (uint)release.Year, releaseType ) { IsContentAvailable = true } );
+								mDiscographyProvider.AddDiscography( new DbDiscographyRelease( forArtist.DbId, release.Title, "", "", (uint)release.Year, releaseType )
+																		{ IsContentAvailable = true } );
 							}
 						}
 						else {
-							database.Insert( new DbDiscographyRelease( artistId, "", "", "", Constants.cUnknownYear, DiscographyReleaseType.Unknown ) );
+							mDiscographyProvider.AddDiscography( new DbDiscographyRelease( forArtist.DbId, "", "", "", Constants.cUnknownYear, DiscographyReleaseType.Unknown ));
 						}
 
 						if(( discogsArtist.Urls != null ) &&
@@ -142,8 +154,8 @@ namespace Noise.Core.DataProviders {
 
 							forArtist.Website = url.Replace( Environment.NewLine, "" ).Replace( "\n", "" ).Replace( "\r", "" );
 						}
-						forArtist.UpdateLastChange();
-						database.Store( forArtist );
+
+						mArtistProvider.UpdateArtistLastChanged( forArtist.DbId );
 
 						NoiseLogger.Current.LogMessage( String.Format( "Discogs updated artist: {0}", forArtist.Name ));
 					}
@@ -154,11 +166,11 @@ namespace Noise.Core.DataProviders {
 			}
 		}
 
-		public void UpdateContent( IDatabase database, DbAlbum forAlbum ) {
+		public void UpdateContent( DbAlbum forAlbum ) {
 			throw new NotImplementedException();
 		}
 
-		public void UpdateContent( IDatabase database, DbTrack forTrack ) {
+		public void UpdateContent( DbTrack forTrack ) {
 			throw new NotImplementedException();
 		}
 	}

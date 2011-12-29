@@ -11,9 +11,9 @@ namespace Noise.Core.DataBuilders {
 		bool			CanUpdateAlbum { get; }
 		bool			CanUpdateTrack { get; }
 
-		void			UpdateContent( IDatabase database, DbArtist forArtist );
-		void			UpdateContent( IDatabase database, DbAlbum forAlbum );
-		void			UpdateContent( IDatabase database, DbTrack forTrack );
+		void			UpdateContent( DbArtist forArtist );
+		void			UpdateContent( DbAlbum forAlbum );
+		void			UpdateContent( DbTrack forTrack );
 	}
 
 	public interface IContentManager {
