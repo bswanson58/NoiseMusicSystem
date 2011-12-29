@@ -18,11 +18,15 @@ namespace Noise.Core.Database {
 
 		public DbAssociatedItemList GetAssociatedItems( long artistId, ContentType ofType ) {
 			return( TryGetItem( "SELECT DbAssociatedItemList Where Artist = @artistId AND ContentType = @contentType",
-								new Dictionary<string, object> {{ "artistId", artistId }, { "contentType", ofType }}, "Exception - GetAssociatedItems" ));
+								new Dictionary<string, object> {{ "artistId", artistId }, { "contentType", ofType }}, "GetAssociatedItems" ));
 		}
 
 		public DataProviderList<DbAssociatedItemList> GetAssociatedItemLists( ContentType forType ) {
 			return( TryGetList( "SELECT DbAssociatedItemList ContentType = @contentType", new Dictionary<string, object> {{ "contentType", forType }}, "GetAssociatedItemList" ));
+		}
+
+		public DataProviderList<DbAssociatedItemList> GetAssociatedItemLists( long forArtist ) {
+			return( TryGetList( "SELECT DbAssociatedItemList Where Artist = @artistId", new Dictionary<string, object> {{ "artistId", forArtist }}, "GetAssociatedItemLists" ));
 		}
 
 		public DataUpdateShell<DbAssociatedItemList> GetAssociationForUpdate( long listId ) {

@@ -51,6 +51,12 @@ namespace Noise.Core.Database {
 			return( retValue );
 		}
 
+		public DataProviderList<DbLyric> GetLyricsForArtist( DbArtist artist ) {
+			Condition.Requires( artist ).IsNotNull();
+
+			return( TryGetList( "SELECT DbLyric Where ArtistId = @artistId", new Dictionary<string, object> {{ "artistId", artist.DbId }}, "GetLyricsForArtist" ));
+		}
+
 		public DataUpdateShell<DbLyric> GetLyricForUpdate( long lyricId ) {
 			return( GetUpdateShell( "SELECT DbLyric Where DbId = @lyricId", new Dictionary<string, object> {{ "lyricId", lyricId }} ));
 		}

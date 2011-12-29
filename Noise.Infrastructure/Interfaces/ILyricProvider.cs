@@ -5,6 +5,8 @@ namespace Noise.Infrastructure.Interfaces {
 		void						AddLyric( DbLyric lyric );
 
 		DataProviderList<DbLyric>	GetPossibleLyrics( DbArtist artist, DbTrack track );
+		DataProviderList<DbLyric>	GetLyricsForArtist( DbArtist artist );
+
 		DataUpdateShell<DbLyric>	GetLyricForUpdate( long lyricId );
 	}
 }

@@ -10,20 +10,25 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	public class SearchBuilder : IBackgroundTask, IRequireInitialization {
-		private readonly IDatabaseManager	mDatabaseManager;
-		private readonly ISearchProvider	mSearchProvider;
-		private readonly IArtistProvider	mArtistProvider;
-		private readonly IAlbumProvider		mAlbumProvider;
-		private readonly ITrackProvider		mTrackProvider;
-		private List<long>					mArtistList;
-		private IEnumerator<long>			mArtistEnum;
+		private readonly ISearchProvider				mSearchProvider;
+		private readonly IArtistProvider				mArtistProvider;
+		private readonly IAlbumProvider					mAlbumProvider;
+		private readonly ITrackProvider					mTrackProvider;
+		private readonly IAssociatedItemListProvider	mAssociationProvider;
+		private readonly ILyricProvider					mLyricProvider;
+		private readonly ITextInfoProvider				mTextInfoProvider;
+		private List<long>								mArtistList;
+		private IEnumerator<long>						mArtistEnum;
 
-		public SearchBuilder( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager,
-							  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ISearchProvider searchProvider ) {
-			mDatabaseManager = databaseManager;
+		public SearchBuilder( ILifecycleManager lifecycleManager, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
+							  IAssociatedItemListProvider associatedItemListProvider, ILyricProvider lyricProvider, ITextInfoProvider textInfoProvider,
+							  ISearchProvider searchProvider ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
+			mAssociationProvider = associatedItemListProvider;
+			mLyricProvider = lyricProvider;
+			mTextInfoProvider = textInfoProvider;
 			mSearchProvider = searchProvider;
 
 			lifecycleManager.RegisterForInitialize( this );
@@ -83,7 +88,7 @@ namespace Noise.Core.BackgroundTasks {
 			var lastUpdate = mSearchProvider.DetermineTimeStamp( artist );
 
 			if( lastUpdate.Ticks < artist.LastChangeTicks ) {
-				BuildSearchIndex( mDatabaseManager, artist );
+				BuildSearchIndex( artist );
 
 				retValue = true;
 			}
@@ -91,74 +96,67 @@ namespace Noise.Core.BackgroundTasks {
 			return( retValue );
 		}
 
-		private void BuildSearchIndex( IDatabaseManager databaseMgr, DbArtist artist ) {
+		private void BuildSearchIndex( DbArtist artist ) {
 			NoiseLogger.Current.LogMessage( String.Format( "Building search info for {0}", artist.Name ));
 
-			var database = databaseMgr.ReserveDatabase();
+			try {
+				using( var indexBuilder = mSearchProvider.CreateIndexBuilder( artist, false )) {
+					indexBuilder.DeleteArtistSearchItems();
+					indexBuilder.WriteTimeStamp();
+					indexBuilder.AddSearchItem( eSearchItemType.Artist, artist.Name );
 
-			if( database != null ) {
-				try {
-					using( var indexBuilder = mSearchProvider.CreateIndexBuilder( artist, false )) {
-						indexBuilder.DeleteArtistSearchItems();
-						indexBuilder.WriteTimeStamp();
+					IEnumerable<DbAssociatedItemList>	associatedItems;
+					using( var associatedList = mAssociationProvider.GetAssociatedItemLists( artist.DbId )) {
+						associatedItems = new List<DbAssociatedItemList>( from item in associatedList.List where item.IsContentAvailable select item );
+					}
+					foreach( var item in associatedItems ) {
+						var itemType = eSearchItemType.Unknown;
 
-						var parms = database.Database.CreateParameters();
+						switch( item.ContentType ) {
+							case ContentType.SimilarArtists:
+								itemType = eSearchItemType.SimilarArtist;
+								break;
 
-						parms["biography"] = ContentType.Biography;
-						parms["discography"] = ContentType.Discography;
-						parms["textInfo"] = ContentType.TextInfo;
+							case ContentType.TopAlbums:
+								itemType = eSearchItemType.TopAlbum;
+								break;
 
-						indexBuilder.AddSearchItem( eSearchItemType.Artist, artist.Name );
-
-						parms["artistId"] = artist.DbId;
-						var associatedItems = database.Database.ExecuteQuery( "SELECT DbAssociatedItemList WHERE Artist = @artistId AND IsContentAvailable", parms ).OfType<DbAssociatedItemList>();
-						foreach( var item in associatedItems ) {
-							var itemType = eSearchItemType.Unknown;
-
-							switch( item.ContentType ) {
-								case ContentType.SimilarArtists:
-									itemType = eSearchItemType.SimilarArtist;
-									break;
-
-								case ContentType.TopAlbums:
-									itemType = eSearchItemType.TopAlbum;
-									break;
-
-								case ContentType.BandMembers:
-									itemType = eSearchItemType.BandMember;
-									break;
-							}
-
-							if( itemType != eSearchItemType.Unknown ) {
-								indexBuilder.AddSearchItem( itemType, item.GetItems());
-							}
+							case ContentType.BandMembers:
+								itemType = eSearchItemType.BandMember;
+								break;
 						}
 
-						var biography = database.Database.ExecuteScalar( "SELECT DbTextInfo Where Artist = @artistId AND ContentType = @biography", parms ) as DbTextInfo;
-						if( biography != null ) {
-							indexBuilder.AddSearchItem( eSearchItemType.Biography, database.BlobStorage.RetrieveText( biography.DbId ));
+						if( itemType != eSearchItemType.Unknown ) {
+							indexBuilder.AddSearchItem( itemType, item.GetItems());
 						}
+					}
 
-						var	albumList = database.Database.ExecuteQuery( "SELECT DbAlbum WHERE Artist = @artistId", parms ).OfType<DbAlbum>();
-						foreach( var album in albumList ) {
+					var biography = mTextInfoProvider.GetArtistTextInfo( artist.DbId, ContentType.Biography );
+					if( biography != null ) {
+						indexBuilder.AddSearchItem( eSearchItemType.Biography, biography.Text );
+					}
+
+					using( var albumList = mAlbumProvider.GetAlbumList( artist )) {
+						foreach( var album in albumList.List ) {
 							indexBuilder.AddSearchItem( album, eSearchItemType.Album, album.Name );
 
-							parms["albumId"] = album.DbId;
-							var infoList = database.Database.ExecuteQuery( "SELECT DbTextInfo WHERE Album = @albumId AND ContentType = @textInfo", parms ).OfType<DbTextInfo>();
-
-							foreach( var info in infoList ) {
-								indexBuilder.AddSearchItem( album, eSearchItemType.TextInfo, database.BlobStorage.RetrieveText( info.DbId ));
+							var infoList = mTextInfoProvider.GetAlbumTextInfo( album.DbId );
+							if( infoList != null ) {
+								foreach( var info in infoList ) {
+									indexBuilder.AddSearchItem( album, eSearchItemType.TextInfo, info.Text );
+								}
 							}
 
-							var trackList = database.Database.ExecuteQuery( "SELECT DbTrack WHERE Album = @albumId", parms ).OfType<DbTrack>();
-
-							foreach( var track in trackList ) {
-								indexBuilder.AddSearchItem( album, track, eSearchItemType.Track, track.Name );
+							using( var trackList = mTrackProvider.GetTrackList( album )) {
+								foreach( var track in trackList.List ) {
+									indexBuilder.AddSearchItem( album, track, eSearchItemType.Track, track.Name );
+								}
 							}
 						}
+					}
 
-						var lyricsList = database.Database.ExecuteQuery( "SELECT DbLyric WHERE ArtistId = @artistId", parms ).OfType<DbLyric>();
-						foreach( var lyric in lyricsList ) {
+					using( var lyricsList = mLyricProvider.GetLyricsForArtist( artist )) {
+						foreach( var lyric in lyricsList.List ) {
 							var track = mTrackProvider.GetTrack( lyric.TrackId );
 
 							if( track != null ) {
@@ -171,12 +169,9 @@ namespace Noise.Core.BackgroundTasks {
 						}
 					}
 				}
-				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Exception - Building search data: ", ex );
-				}
-				finally {
-					databaseMgr.FreeDatabase( database );
-				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "Exception - Building search data: ", ex );
 			}
 		}
 	}
