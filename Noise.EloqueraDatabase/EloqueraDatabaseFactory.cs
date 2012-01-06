@@ -4,6 +4,7 @@ using Microsoft.Practices.Prism.Events;
 using Noise.EloqueraDatabase.BlobStore;
 using Noise.EloqueraDatabase.Database;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase {
@@ -13,16 +14,19 @@ namespace Noise.EloqueraDatabase {
 		private readonly IBlobStorageResolver	mBlobResolver;
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IIoc					mComponentCreator;
+		private readonly DatabaseConfiguration	mDatabaseConfiguration;
 		private IBlobStorageManager				mBlobStorageManager;
 
-		public EloqueraDatabaseFactory( IBlobStorageResolver blobResolver, IEventAggregator eventAggregator, IIoc componentCreator ) {
+		public EloqueraDatabaseFactory( IBlobStorageResolver blobResolver, IEventAggregator eventAggregator, 
+										IIoc componentCreator, DatabaseConfiguration databaseConfiguration ) {
 			mBlobResolver = blobResolver;
 			mEventAggregator = eventAggregator;
 			mComponentCreator = componentCreator;
+			mDatabaseConfiguration = databaseConfiguration;
 		}
 
 		public IDatabase GetDatabaseInstance() {
-			return( new EloqueraDb( mEventAggregator, mComponentCreator ));
+			return( new EloqueraDb( mEventAggregator, mComponentCreator, mDatabaseConfiguration ));
 		}
 
 		public void SetBlobStorageInstance( IDatabase  database ) {

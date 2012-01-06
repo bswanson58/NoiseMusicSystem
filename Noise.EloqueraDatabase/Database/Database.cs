@@ -30,21 +30,18 @@ namespace Noise.EloqueraDatabase.Database {
 		[ImportMany("PersistenceType")]
 		public IEnumerable<Type>	PersistenceTypes;
 
-		public EloqueraDb( IEventAggregator eventAggregator, IIoc componentCreator ) {
+		public EloqueraDb( IEventAggregator eventAggregator, IIoc componentCreator, DatabaseConfiguration databaseConfiguration ) {
+			Condition.Requires( eventAggregator ).IsNotNull();
+			Condition.Requires( componentCreator ).IsNotNull();
+			Condition.Requires( databaseConfiguration ).IsNotNull();
+
 			mEventAggregator = eventAggregator;
 			mComponentCreator = componentCreator;
 
 			DatabaseId = Guid.NewGuid().ToString();
 
-			var config = NoiseSystemConfiguration.Current.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
-
-			if( config != null ) {
-				mDatabaseName = config.DatabaseName;
-				mDatabaseLocation = config.ServerName;
-			}
-			else {
-				NoiseLogger.Current.LogMessage( "Database configuration could not be loaded." );
-			}
+			mDatabaseName = databaseConfiguration.DatabaseName;
+			mDatabaseLocation = databaseConfiguration.ServerName;
 		}
 
 		public bool InitializeDatabase() {
@@ -151,6 +148,14 @@ namespace Noise.EloqueraDatabase.Database {
 
 				IsOpen = false;
 			}
+		}
+
+		public void DeleteDatabase() {
+			if( IsOpen ) {
+				CloseDatabase();
+			}
+
+			Database.DeleteDatabase( mDatabaseName, true );
 		}
 
 		private bool CreateDatabase( string databaseName ) {

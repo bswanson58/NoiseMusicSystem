@@ -13,8 +13,6 @@ namespace Noise.Infrastructure.Interfaces {
 		bool			OpenWithCreateDatabase();
 		bool			InitializeAndOpenDatabase();
 
-//		DbBase		ValidateOnThread( DbBase dbObject );
-
 		object			QueryForItem( string query );
 		object			QueryForItem( string query, IDictionary<string, object> parameters );
 
@@ -25,6 +23,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void			UpdateItem( object item );
 		void			DeleteItem( object item );
 
-		void		CloseDatabase();
+		void			CloseDatabase();
+		void			DeleteDatabase();
 	}
 }
