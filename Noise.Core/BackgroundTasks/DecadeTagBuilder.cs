@@ -84,11 +84,11 @@ namespace Noise.Core.BackgroundTasks {
 							}
 
 							using( var albumList = mAlbumProvider.GetAlbumList( artistId )) {
-								var decadeTagList = mTagManager.DecadeTagList;
+								var decadeTagList = mTagManager.DecadeTagList.OrderBy( tag => tag.StartYear );
 
 								foreach( var album in albumList.List ) {
 									var publishedYear = album.PublishedYear;
-									var decadeTag = decadeTagList.Where( decade => publishedYear >= decade.StartYear && publishedYear <= decade.EndYear ).FirstOrDefault();
+									var decadeTag = decadeTagList.FirstOrDefault(decade => publishedYear >= decade.StartYear && publishedYear <= decade.EndYear);
 
 									if( decadeTag != null ) {
 										var associationTag = new DbTagAssociation( eTagGroup.Decade, decadeTag.DbId, artistId, album.DbId );

@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
-using MbUnit.Framework;
+﻿using System;
+using System.Collections.Generic;
+using NUnit.Framework;
 using Noise.EloqueraDatabase.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Rhino.Mocks;
 
 namespace Noise.EloqueraDatabase.Tests.Database {
+	[TestFixture]
 	public class DatabaseManagerTests {
 		[Test]
-		[ExpectedArgumentNullException]
+		[ExpectedException( typeof( ArgumentNullException ))]
 		public void DatabaseManagerRequiresDatabaseFactory() {
 			new DatabaseManager( null );
 		}
@@ -123,7 +125,7 @@ namespace Noise.EloqueraDatabase.Tests.Database {
 
 		private	bool	mDatabaseOpenCalled;
 
-		[FixtureSetUp]
+		[TestFixtureSetUp]
 		public void FixtureSetup() {
 			NoiseLogger.Current = MockRepository.GenerateStub<ILog>();
 		}

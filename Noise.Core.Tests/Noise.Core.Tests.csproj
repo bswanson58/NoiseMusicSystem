@@ -95,11 +95,11 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gallio">
-      <HintPath>..\lib\MbUnit\v3.3.442.0\Gallio.dll</HintPath>
+    <Reference Include="Moq">
+      <HintPath>..\lib\Moq\v4.0.10827\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="MbUnit">
-      <HintPath>..\lib\MbUnit\v3.3.442.0\MbUnit.dll</HintPath>
+    <Reference Include="nunit.framework">
+      <HintPath>..\lib\NUnit\v2.5.10\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Rhino.Mocks">
       <HintPath>..\lib\Rhino.Mocks\v3.6.Build-21\Rhino.Mocks.dll</HintPath>
@@ -113,6 +113,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackgroundTasks\DecadeTagBuilderTests.cs" />
     <Compile Include="Database\DatabaseCacheTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

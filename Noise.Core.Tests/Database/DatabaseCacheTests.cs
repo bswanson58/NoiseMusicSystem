@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using MbUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using Noise.Core.Database;
 
 namespace Noise.Core.Tests.Database {
@@ -13,15 +11,9 @@ namespace Noise.Core.Tests.Database {
 		}
 	}
 
-	public class DatabaseCacheTest {
-		private static List<CacheObject>	mCacheList = new List<CacheObject> { new CacheObject( 1 ), new CacheObject( 2 ), new CacheObject( 3 ) };
+	public class DatabaseCacheTests {
+		private readonly static List<CacheObject>	mCacheList = new List<CacheObject> { new CacheObject( 1 ), new CacheObject( 2 ), new CacheObject( 3 ) };
 		
-		[Test]
-		[ExpectedException( typeof( Exception ))]
-		public void PreventNullSource() {
-			new DatabaseCache<CacheObject>( null );
-		}
-
 		[Test]
 		public void DoesRetainList() {
 			var cache = new DatabaseCache<CacheObject>( mCacheList );
