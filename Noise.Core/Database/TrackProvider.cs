@@ -16,11 +16,11 @@ namespace Noise.Core.Database {
 		}
 
 		public DbTrack GetTrack( long trackId ) {
-			return( TryGetItem( "SELECT DbTrack Where DbId = @trackId", new Dictionary<string, object> {{ "trackId", trackId }}, "Exception - GetTrack" ));
+			return( TryGetItem( "SELECT DbTrack Where DbId = @trackId", new Dictionary<string, object> {{ "trackId", trackId }}, "GetTrack" ));
 		}
 
 		public DataProviderList<DbTrack> GetTrackList( long albumId ) {
-			return( TryGetList( "SELECT DbTrack WHERE Album = @albumId", new Dictionary<string, object>{{ "albumId", albumId }}, "Exception - GetTrackList" ));
+			return( TryGetList( "SELECT DbTrack WHERE Album = @albumId", new Dictionary<string, object>{{ "albumId", albumId }}, "GetTrackList" ));
 		}
 
 		public DataProviderList<DbTrack> GetTrackList( DbAlbum forAlbum ) {
@@ -34,11 +34,11 @@ namespace Noise.Core.Database {
 		}
 
 		public DataProviderList<DbTrack> GetFavoriteTracks() {
-			return( TryGetList( "SELECT DbTrack WHERE IsFavorite = true", "Exception - GetFavoriteTracks" ));
+			return( TryGetList( "SELECT DbTrack WHERE IsFavorite = true", "GetFavoriteTracks" ));
 		}
 
 		public DataProviderList<DbTrack> GetNewlyAddedTracks() {
-			return( TryGetList( "SELECT DbTrack ORDER BY DateAddedTicks DESC", "Exception - GetNewlyAddedTracks" ));
+			return( TryGetList( "SELECT DbTrack ORDER BY DateAddedTicks DESC", "GetNewlyAddedTracks" ));
 		}
 
 		public DataUpdateShell<DbTrack> GetTrackForUpdate( long trackId ) {
@@ -46,7 +46,7 @@ namespace Noise.Core.Database {
 		}
 
 		public DataProviderList<DbTrack> GetTrackListForGenre( long genreId ) {
-			return( TryGetList( "SELECT DbTrack Where Genre = @genre", new Dictionary<string, object> {{ "genre", genreId }}, "Exception - GetTrackListForGenre" ));
+			return( TryGetList( "SELECT DbTrack Where UserGenre = @genre", new Dictionary<string, object> {{ "genre", genreId }}, "GetTrackListForGenre" ));
 		}
 
 		public long GetItemCount() {
