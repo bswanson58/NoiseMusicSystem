@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using Microsoft.Practices.Prism.Events;
 using Noise.EloqueraDatabase.BlobStore;
@@ -40,10 +41,13 @@ namespace Noise.EloqueraDatabase {
 
 			if( mBlobStorageManager == null ) {
 				var blobStoragePath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName );
-				var blobStorageName = Path.Combine( cBlobStorageName, database.DatabaseVersion.DatabaseId.ToString());
 
 				mBlobStorageManager = new BlobStorageManager( mBlobResolver, blobStoragePath );
-					
+			}
+
+			if(!mBlobStorageManager.IsOpen ) {
+				var blobStorageName = Path.Combine( cBlobStorageName, database.DatabaseVersion.DatabaseId.ToString( CultureInfo.InvariantCulture ));
+
 				if(!mBlobStorageManager.OpenStorage( blobStorageName )) {
 					mBlobStorageManager.CreateStorage( blobStorageName );
 

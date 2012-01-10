@@ -5,7 +5,9 @@ namespace Noise.EloqueraDatabase.BlobStore {
 		bool			OpenStorage( string storageName );
 		bool			CreateStorage( string storageName );
 		void			CloseStorage();
+		void			DeleteStorage( string storageName );
 
+		bool			IsOpen { get; }
 		IBlobStorage	GetStorage();
 	}
 }

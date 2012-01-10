@@ -83,12 +83,13 @@ namespace Noise.EloqueraDatabase.Database {
 						retValue = mDatabaseFactory.GetDatabaseInstance();
 
 						if( retValue.InitializeAndOpenDatabase()) {
-							mDatabaseFactory.SetBlobStorageInstance( retValue );
 							mReservedDatabases.Add( retValue.DatabaseId, retValue );
 
 							NoiseLogger.Current.LogInfo( string.Format( "Database Created. (Count: {0})", mReservedDatabases.Count + mAvailableDatabases.Count ));
 						}
 					}
+
+					mDatabaseFactory.SetBlobStorageInstance( retValue );
 				}
 			}
 

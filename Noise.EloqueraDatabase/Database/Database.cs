@@ -156,6 +156,10 @@ namespace Noise.EloqueraDatabase.Database {
 			}
 
 			Database.DeleteDatabase( mDatabaseName, true );
+
+			if( BlobStorage != null ) {
+				BlobStorage.DeleteStorage();
+			}
 		}
 
 		private bool CreateDatabase( string databaseName ) {

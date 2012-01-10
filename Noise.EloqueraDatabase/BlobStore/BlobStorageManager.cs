@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.Globalization;
+using System.IO;
+using CuttingEdge.Conditions;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.BlobStore {
@@ -31,7 +34,11 @@ namespace Noise.EloqueraDatabase.BlobStore {
 				}
 			}
 
-			return( mIsOpen );
+			return( IsOpen );
+		}
+
+		public bool IsOpen {
+			get{ return( mIsOpen ); }
 		}
 
 		public bool CreateStorage( string storageName ) {
@@ -45,9 +52,30 @@ namespace Noise.EloqueraDatabase.BlobStore {
 		}
 
 		public void CloseStorage() {
-			if( mIsOpen ) {
+			if( IsOpen ) {
 				mIsOpen = false;
 				mStoragePath = "";
+			}
+		}
+
+		public void DeleteStorage( string storageName ) {
+			string	storagePath = Path.Combine( mRootStoragePath, storageName );
+
+			if(( IsOpen ) &&
+			   ( string.Equals( storagePath, mStoragePath, StringComparison.InvariantCultureIgnoreCase ))) {
+				CloseStorage();
+			}
+
+			if( Directory.Exists( storagePath )) {
+				Directory.Delete( storagePath, true );
+			}
+		}
+
+		public void DeleteStorage() {
+			Condition.Requires( mIsOpen );
+
+			if( IsOpen ) {
+				DeleteStorage( mStoragePath );
 			}
 		}
 
@@ -182,7 +210,7 @@ namespace Noise.EloqueraDatabase.BlobStore {
 				retValue = Path.Combine( retValue, mBlobResolver.KeyForStorageLevel( blobId, level ));
 			}
 
-			retValue = Path.Combine( retValue, blobId.ToString());
+			retValue = Path.Combine( retValue, blobId.ToString( CultureInfo.InvariantCulture ));
 
 			return( retValue );
 		}

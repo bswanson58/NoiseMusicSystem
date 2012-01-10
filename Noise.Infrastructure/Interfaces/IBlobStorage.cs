@@ -16,6 +16,8 @@ namespace Noise.Infrastructure.Interfaces {
 		Stream	Retrieve( long blobId );
 		byte[]	RetrieveBytes( long blobId );
 		string	RetrieveText( long blobId );
+
+		void	DeleteStorage();
 	}
 
 }
