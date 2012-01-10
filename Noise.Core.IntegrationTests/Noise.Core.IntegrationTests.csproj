@@ -120,6 +120,7 @@
   <ItemGroup>
     <Compile Include="Database\AlbumProviderTests.cs" />
     <Compile Include="Database\ArtistProviderTests.cs" />
+    <Compile Include="Database\ArtworkProviderTests.cs" />
     <Compile Include="Database\TrackProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
