@@ -12,7 +12,7 @@ namespace Noise.Core.Database {
 		private TextInfo TransformTextInfo( DbTextInfo textInfo ) {
 			TextInfo	retValue;
 
-			using( var dbShell = CreateDatabase() ) {
+			using( var dbShell = CreateDatabase()) {
 				retValue = new TextInfo( textInfo ) { Text = dbShell.Database.BlobStorage.RetrieveText( textInfo.DbId ) };
 			}
 
@@ -74,9 +74,10 @@ namespace Noise.Core.Database {
 		}
 
 		public DataUpdateShell<TextInfo> GetTextInfoForUpdate( long textInfoId ) {
-			var dbTextInfo = TryGetItem( "SELECT DbTextInfo Where DbId = @itemId", new Dictionary<string, object> {{ "itemId", textInfoId }}, "GetTextInfoForUpdate" );
+			var dbShell = CreateDatabase();
+			var dbTextInfo = GetItem( "SELECT DbTextInfo Where DbId = @itemId", new Dictionary<string, object> {{ "itemId", textInfoId }}, dbShell );
 
-			return( new TextInfoUpdateShell( CreateDatabase(), dbTextInfo, new TextInfo( dbTextInfo )));
+			return( new TextInfoUpdateShell( dbShell, dbTextInfo, new TextInfo( dbTextInfo )));
 		}
 	}
 

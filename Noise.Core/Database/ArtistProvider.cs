@@ -48,7 +48,7 @@ namespace Noise.Core.Database {
 
 			try {
 				using( var artistList = GetList( "SELECT DbArtist" )) {
-					retValue = new DataProviderList<DbArtist>( "", null, ( from artist in artistList.List where filter.ArtistMatch( artist ) select artist ).ToList());
+					retValue = new DataProviderList<DbArtist>( null, ( from artist in artistList.List where filter.ArtistMatch( artist ) select artist ).ToList());
 				}			
 			}
 			catch( Exception ex ) {
@@ -91,7 +91,7 @@ namespace Noise.Core.Database {
 
 			try {
 				using( var tagList = mTagAssociationProvider.GetArtistTagList( artistId, eTagGroup.User )) {
-					retValue = new DataProviderList<long>( "", null, ( from DbTagAssociation assoc in tagList.List select assoc.TagId ).ToList());
+					retValue = new DataProviderList<long>( null, ( from DbTagAssociation assoc in tagList.List select assoc.TagId ).ToList());
 				}
 			}
 			catch( Exception ex ) {

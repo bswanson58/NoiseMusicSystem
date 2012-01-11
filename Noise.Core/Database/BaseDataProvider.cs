@@ -66,11 +66,19 @@ namespace Noise.Core.Database {
 			T retValue;
 
 			using( var dbShell = CreateDatabase()) {
-				retValue = dbShell.Database.QueryForItem( query, parms ) as T;
+				retValue = GetItem( query, parms, dbShell );
 			}
 
 			return( retValue );
 		}
+
+		protected T GetItem( string query, IDictionary<string, object> parms, IDatabaseShell database ) {
+			Condition.Requires( query ).IsNotNullOrEmpty();
+			Condition.Requires( parms ).IsNotEmpty();
+			Condition.Requires( database ).IsNotNull();
+
+			return( database.Database.QueryForItem( query, parms ) as T );
+		} 
 
 		protected T TryGetItem( string query, IDictionary<string, object> parms, string exceptionMessage ) {
 			Condition.Requires( exceptionMessage ).IsNotNullOrEmpty();

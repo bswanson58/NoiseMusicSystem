@@ -123,9 +123,10 @@ namespace Noise.Core.Database {
 		}
 
 		public DataUpdateShell<Artwork> GetArtworkForUpdate( long artworkId ) {
-			var dbArtwork = TryGetItem( "SELECT DbArtwork Where DbId = @artworkId", new Dictionary<string, object> {{ "artworkId", artworkId }}, "GetArtworkForUpdate" );
+			var database = CreateDatabase();
+			var dbArtwork = GetItem( "SELECT DbArtwork Where DbId = @artworkId", new Dictionary<string, object> {{ "artworkId", artworkId }}, database );
 
-			return( new ArtworkUpdateShell( CreateDatabase(), dbArtwork, TransformArtwork( dbArtwork )));
+			return( new ArtworkUpdateShell( database, dbArtwork, TransformArtwork( dbArtwork )));
 		}
 	}
 
