@@ -42,12 +42,15 @@ namespace Noise.Core.IntegrationTests.Database {
 
 			if( mDatabaseManager.Initialize()) {
 				using( var database = mDatabaseManager.CreateDatabase()) {
-					database.Database.DeleteDatabase();
-				}
-
-				using( var database = mDatabaseManager.CreateDatabase()) {
 					database.Database.OpenWithCreateDatabase();
 				}
+			}
+		}
+
+		[TearDown]
+		public void Teardown() {
+			using( var database = mDatabaseManager.CreateDatabase()) {
+				database.Database.DeleteDatabase();
 			}
 		}
 
