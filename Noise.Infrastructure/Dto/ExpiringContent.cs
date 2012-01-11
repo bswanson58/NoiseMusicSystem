@@ -30,6 +30,13 @@ namespace Noise.Infrastructure.Dto {
 			UpdateExpiration();
 		}
 
+		protected void Copy( ExpiringContent copy ) {
+			Artist = copy.Artist;
+			Album = copy.Album;
+			IsContentAvailable = copy.IsContentAvailable;
+			HarvestDate = copy.HarvestDate;
+		}
+
 		public void UpdateExpiration() {
 			HarvestDate = DateTime.Now.Date;
 		}

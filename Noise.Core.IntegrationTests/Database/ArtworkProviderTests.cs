@@ -181,6 +181,27 @@ namespace Noise.Core.IntegrationTests.Database {
 		}
 
 		[Test]
+		public void CanUpdateArtwork() {
+			var dbArtist = new DbArtist();
+			var dbArtwork = new DbArtwork( 1, ContentType.ArtistPrimaryImage ) { Artist = dbArtist.DbId, Name = "artwork name" };
+			var image = new byte[] { 1, 2, 3, 4 };
+			var artwork = new Artwork( dbArtwork ) { Image = image };
+
+			var sut = CreateSut();
+			sut.AddArtwork( dbArtwork, image );
+
+			using( var updater = sut.GetArtworkForUpdate( artwork.DbId )) {
+				updater.Item.Name = "new name";
+
+				updater.Update();
+			}
+
+			var retrievedArtwork = sut.GetArtistArtwork( dbArtist.DbId, ContentType.ArtistPrimaryImage );
+
+			retrievedArtwork.Name.Should().Be( "new name" );
+		}
+
+		[Test]
 		public void CanDeleteArtwork() {
 			var artist = new DbArtist();
 			var artwork = new DbArtwork( 1, ContentType.ArtistPrimaryImage ) { Artist = artist.DbId };

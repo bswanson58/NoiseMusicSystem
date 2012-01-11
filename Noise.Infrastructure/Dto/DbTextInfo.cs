@@ -20,6 +20,14 @@ namespace Noise.Infrastructure.Dto {
 			Source = InfoSource.Unknown;
 		}
 
+		public void Copy( DbTextInfo copy ) {
+			base.Copy( copy );
+
+			FolderLocation = copy.FolderLocation;
+			Source = copy.Source;
+			Name = copy.Name;
+		}
+
 		[Export("PersistenceType")]
 		public static Type PersistenceType {
 			get{ return( typeof( DbTextInfo )); }

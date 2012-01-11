@@ -76,19 +76,28 @@ namespace Noise.Core.Database {
 		public DataUpdateShell<TextInfo> GetTextInfoForUpdate( long textInfoId ) {
 			var dbTextInfo = TryGetItem( "SELECT DbTextInfo Where DbId = @itemId", new Dictionary<string, object> {{ "itemId", textInfoId }}, "GetTextInfoForUpdate" );
 
-			return( new TextInfoUpdateShell( CreateDatabase(), new TextInfo( dbTextInfo )));
+			return( new TextInfoUpdateShell( CreateDatabase(), dbTextInfo, new TextInfo( dbTextInfo )));
 		}
 	}
 
 	internal class TextInfoUpdateShell : DataUpdateShell<TextInfo> {
-		public TextInfoUpdateShell( IDatabaseShell dbShell, TextInfo info ) :
-			base( dbShell, info ) { }
+		private readonly DbTextInfo	mTextInfo;
+
+		public TextInfoUpdateShell( IDatabaseShell dbShell, DbTextInfo dbTextInfo, TextInfo info ) :
+			base( dbShell, info ) {
+			mTextInfo = dbTextInfo;
+		}
 
 		public override void Update() {
-			base.Update();
+			if(( mDatabaseShell != null ) &&
+			   ( Item != null )) {
+				mTextInfo.Copy( Item );
+				mDatabaseShell.Database.UpdateItem( mTextInfo );
 
-			if( Item != null ) {
-				mDatabaseShell.Database.BlobStorage.StoreText( Item.DbId, Item.Text );
+
+				if( Item.Text != null ) {
+					mDatabaseShell.Database.BlobStorage.StoreText( Item.DbId, Item.Text );
+				}
 			}
 		}
 	}

@@ -26,6 +26,16 @@ namespace Noise.Infrastructure.Dto {
 			Rotation = 0;
 		}
 
+		public void Copy( DbArtwork copy ) {
+			base.Copy( copy );
+
+			FolderLocation = copy.FolderLocation;
+			Source = copy.Source;
+			IsUserSelection = copy.IsUserSelection;
+			Name = copy.Name;
+			Rotation = copy.Rotation;
+		}
+
 		[Export("PersistenceType")]
 		public static Type PersistenceType {
 			get{ return( typeof( DbArtwork )); }

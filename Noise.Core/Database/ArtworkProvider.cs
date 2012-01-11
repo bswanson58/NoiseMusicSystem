@@ -125,20 +125,29 @@ namespace Noise.Core.Database {
 		public DataUpdateShell<Artwork> GetArtworkForUpdate( long artworkId ) {
 			var dbArtwork = TryGetItem( "SELECT DbArtwork Where DbId = @artworkId", new Dictionary<string, object> {{ "artworkId", artworkId }}, "GetArtworkForUpdate" );
 
-			return( new ArtworkUpdateShell( CreateDatabase(), TransformArtwork( dbArtwork )));
+			return( new ArtworkUpdateShell( CreateDatabase(), dbArtwork, TransformArtwork( dbArtwork )));
 		}
 	}
 
 	internal class ArtworkUpdateShell : DataUpdateShell<Artwork> {
-		public ArtworkUpdateShell( IDatabaseShell dbShell, Artwork item ) :
-			base( dbShell, item ) { }
+		private readonly DbArtwork	mArtwork;
+
+		public ArtworkUpdateShell( IDatabaseShell dbShell, DbArtwork dbArtwork, Artwork item ) :
+			base( dbShell, item ) {
+			mArtwork = dbArtwork;
+		}
 
 		public override void Update() {
-			base.Update();
+			if(( mDatabaseShell != null ) &&
+			   ( Item != null )) {
+				mArtwork.Copy( Item );
+				mDatabaseShell.Database.UpdateItem( mArtwork );
 
-			if( Item != null ) {
-				var memoryStream = new MemoryStream( Item.Image );
-				mDatabaseShell.Database.BlobStorage.Store( Item.DbId, memoryStream );
+				if( Item.Image != null ) {
+					var memoryStream = new MemoryStream( Item.Image );
+
+					mDatabaseShell.Database.BlobStorage.Store( Item.DbId, memoryStream );
+				}
 			}
 		}
 	}
