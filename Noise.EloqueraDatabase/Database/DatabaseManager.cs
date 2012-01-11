@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
@@ -8,6 +10,7 @@ namespace Noise.EloqueraDatabase.Database {
 		private readonly object					mLockObject;
 		private readonly List<IDatabase>		mAvailableDatabases;
 		private readonly Dictionary<string, IDatabase>	mReservedDatabases;
+		private readonly Dictionary<string, string>		mReservedStacks;
 		private readonly IDatabaseFactory		mDatabaseFactory;
 		private	bool							mHasShutdown;
 
@@ -19,6 +22,7 @@ namespace Noise.EloqueraDatabase.Database {
 			mLockObject = new object();
 			mDatabaseFactory = databaseFactory;
 			mReservedDatabases = new Dictionary<string, IDatabase>();
+			mReservedStacks = new Dictionary<string, string>();
 			mAvailableDatabases = new List<IDatabase>();
 
 			NoiseLogger.Current.LogInfo( "DatabaseManager created" );
@@ -43,7 +47,12 @@ namespace Noise.EloqueraDatabase.Database {
 		public void Shutdown() {
 			if( mReservedDatabases.Count > 0 ) {
 				NoiseLogger.Current.LogMessage( string.Format( "DatabaseManager has {0} reserved databases on shutdown!", mReservedDatabases.Count ));
+
+				foreach( var stackTrace in mReservedStacks.Values ) {
+					NoiseLogger.Current.LogInfo( stackTrace );
+				}
 			}
+
 			NoiseLogger.Current.LogMessage( string.Format( "DatabaseManager closing {0} databases.", mReservedDatabases.Count + mAvailableDatabases.Count ));
 
 			lock( mLockObject ) {
@@ -78,12 +87,14 @@ namespace Noise.EloqueraDatabase.Database {
 
 						mAvailableDatabases.RemoveAt( 0 );
 						mReservedDatabases.Add( retValue.DatabaseId, retValue );
+						mReservedStacks.Add( retValue.DatabaseId, StackTraceToString());
 					}
 					else {
 						retValue = mDatabaseFactory.GetDatabaseInstance();
 
 						if( retValue.InitializeAndOpenDatabase()) {
 							mReservedDatabases.Add( retValue.DatabaseId, retValue );
+							mReservedStacks.Add( retValue.DatabaseId, StackTraceToString());
 
 							NoiseLogger.Current.LogInfo( string.Format( "Database Created. (Count: {0})", mReservedDatabases.Count + mAvailableDatabases.Count ));
 						}
@@ -95,6 +106,23 @@ namespace Noise.EloqueraDatabase.Database {
 
 			return( retValue );
 		}
+
+		static public string StackTraceToString() {
+		    var sb = new StringBuilder( 256 );
+			var frames = new StackTrace().GetFrames();
+
+			if( frames != null ) {
+				for (int i = 1; i < frames.Length; i++) { /* Ignore current StackTraceToString method...*/
+					var currFrame = frames[i];
+					var method = currFrame.GetMethod();
+				
+					sb.Append(string.Format("{0}:{1} - ", method.ReflectedType != null ? method.ReflectedType.Name : string.Empty, method.Name));
+				}
+			}
+    
+			return sb.ToString();
+		}
+
 
 		public IDatabase GetDatabase( string databaseId ) {
 			IDatabase	retValue = null;
@@ -119,6 +147,7 @@ namespace Noise.EloqueraDatabase.Database {
 						var database = mReservedDatabases[databaseId];
 
 						mReservedDatabases.Remove( databaseId );
+						mReservedStacks.Remove( databaseId );
 						mAvailableDatabases.Add( database );
 					}
 					else {
