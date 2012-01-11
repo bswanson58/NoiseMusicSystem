@@ -63,11 +63,11 @@ namespace Noise.Core.Database {
 		public TextInfo[] GetAlbumTextInfo( long albumId ) {
 			TextInfo[]	retValue = null;
 
-			var dbTextInfo = TryGetList( "SELECT DbTextInfo Where Album = @albumId",
-											new Dictionary<string, object> {{ "albumId", albumId }}, "Exception - GetAlbumArtwork" );
-
-			if( dbTextInfo != null ) {
-				retValue = dbTextInfo.List.Select( TransformTextInfo ).ToArray();
+			using( var dbTextInfo = TryGetList( "SELECT DbTextInfo Where Album = @albumId",
+											new Dictionary<string, object> {{ "albumId", albumId }}, "Exception - GetAlbumArtwork" )) {
+				if( dbTextInfo != null ) {
+					retValue = dbTextInfo.List.Select( TransformTextInfo ).ToArray();
+				}
 			}
 
 			return( retValue );
