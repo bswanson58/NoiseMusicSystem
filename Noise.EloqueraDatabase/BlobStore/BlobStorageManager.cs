@@ -84,7 +84,9 @@ namespace Noise.EloqueraDatabase.BlobStore {
 		}
 
 		public void Insert( long blobId, string fromFile ) {
-			Insert( blobId, new FileStream( fromFile, FileMode.Open, FileAccess.Read ));
+			using( var fileStream = new FileStream( fromFile, FileMode.Open, FileAccess.Read )) {
+				Insert( blobId, fileStream );
+			}
 		}
 
 		public void Insert( long blobId, Stream blobData ) {
@@ -98,7 +100,9 @@ namespace Noise.EloqueraDatabase.BlobStore {
 		}
 
 		public void Update( long blobId, string fromFile ) {
-			Update( blobId, new FileStream( fromFile, FileMode.Open, FileAccess.Read ));
+			using( var fileStream = new FileStream( fromFile, FileMode.Open, FileAccess.Read )) {
+				Update( blobId, fileStream );
+			}
 		}
 
 		public void Update( long blobId, Stream blobData ) {
@@ -120,16 +124,21 @@ namespace Noise.EloqueraDatabase.BlobStore {
 					Directory.CreateDirectory( storagePath );
 				}
 
-				var	blobStream = new FileStream( blobPath, FileMode.Create, FileAccess.Write );
-				var writer = new StreamWriter( blobStream );
+				using( var blobStream = new FileStream( blobPath, FileMode.Create, FileAccess.Write )) {
+					using( var writer = new StreamWriter( blobStream )) {
+						writer.Write( text );
 
-				writer.Write( text );
-				blobStream.Close();
+						writer.Close();
+						blobStream.Close();
+					}
+				}
 			}
 		}
 
 		public void Store( long blobId, string fromFile ) {
-			StoreBlob( new FileStream( fromFile, FileMode.Open, FileAccess.Read ), ResolveBlobId( blobId ));
+			using( var fileStream = new FileStream( fromFile, FileMode.Open, FileAccess.Read )) {
+				StoreBlob( fileStream, ResolveBlobId( blobId ));
+			}
 		}
 
 		public void Store( long blobId, Stream blobData ) {
@@ -149,12 +158,17 @@ namespace Noise.EloqueraDatabase.BlobStore {
 
 		public string RetrieveText( long blobId ) {
 			var		retValue = "";
-			var		stream = Retrieve( blobId );
 
-			if( stream != null ) {
-				var reader = new StreamReader( stream );
+			using( var stream = Retrieve( blobId )) {
+				if( stream != null ) {
+					using( var reader = new StreamReader( stream )) {
+						retValue = reader.ReadToEnd();
 
-				retValue = reader.ReadToEnd();
+						reader.Close();
+					}
+
+					stream.Close();
+				}
 			}
 
 			return( retValue );
@@ -162,12 +176,14 @@ namespace Noise.EloqueraDatabase.BlobStore {
 
 		public byte[] RetrieveBytes( long blobId ) {
 			byte[]	retValue = null;
-			var		stream = Retrieve( blobId );
+			
+			using( var stream = Retrieve( blobId )) {
+				if( stream != null ) {
+					retValue = new byte[stream.Length];
 
-			if( stream != null ) {
-				retValue = new byte[stream.Length];
-
-				stream.Read( retValue, 0, retValue.Length );
+					stream.Read( retValue, 0, retValue.Length );
+					stream.Close();
+				}
 			}
 
 			return( retValue );
@@ -195,11 +211,11 @@ namespace Noise.EloqueraDatabase.BlobStore {
 					Directory.CreateDirectory( storagePath );
 				}
 
-				Stream	blobStream = new FileStream( blobPath, FileMode.Create, FileAccess.Write );
-
-				blobData.Position = 0;
-				blobData.CopyTo( blobStream );
-				blobStream.Close();
+				using( Stream blobStream = new FileStream( blobPath, FileMode.Create, FileAccess.Write )) {
+					blobData.Position = 0;
+					blobData.CopyTo( blobStream );
+					blobStream.Close();
+				}
 			}
 		}
 

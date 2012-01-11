@@ -98,10 +98,10 @@ namespace Noise.Core.Database {
 				query = "SELECT DbArtwork Where Album = @albumId AND ( ContentType = @contentType OR IsUserSelection )";
 			}
 
-			var dbArtworkList = TryGetList( query, new Dictionary<string, object> {{ "albumId", albumId }, { "contentType", ofType }}, "Exception - GetAlbumArtwork" );
-
-			if( dbArtworkList != null ) {
-				retValue = dbArtworkList.List.Select( TransformArtwork ).ToArray();
+			using( var dbArtworkList = TryGetList( query, new Dictionary<string, object> {{ "albumId", albumId }, { "contentType", ofType }}, "Exception - GetAlbumArtwork" )) {
+				if( dbArtworkList.List != null ) {
+					retValue = dbArtworkList.List.Select( TransformArtwork ).ToArray();
+				}
 			}
 
 			return( retValue );
@@ -110,12 +110,11 @@ namespace Noise.Core.Database {
 		public Artwork[] GetAlbumArtwork( long albumId ) {
 			Artwork[]	retValue = null;
 
-			var dbArtworkList = TryGetList( "SELECT DbArtwork Where Album = @albumId", new Dictionary<string, object> {{ "albumId", albumId }}, "Exception - GetAlbumArtwork" );
-
-			if( dbArtworkList != null ) {
-				retValue = dbArtworkList.List.Select( TransformArtwork ).ToArray();
+			using( var dbArtworkList = TryGetList( "SELECT DbArtwork Where Album = @albumId", new Dictionary<string, object> {{ "albumId", albumId }}, "Exception - GetAlbumArtwork" )) {
+				if( dbArtworkList.List != null ) {
+					retValue = dbArtworkList.List.Select( TransformArtwork ).ToArray();
+				}
 			}
-
 			return( retValue );
 		}
 
