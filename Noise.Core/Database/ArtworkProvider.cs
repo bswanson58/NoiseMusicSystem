@@ -26,12 +26,12 @@ namespace Noise.Core.Database {
 		public void AddArtwork( DbArtwork artwork ) {
 			Condition.Requires( artwork ).IsNotNull();
 
-			InsertItem( artwork );
+			AddArtwork( artwork, new byte[0]);
 		}
 
 		public void AddArtwork( DbArtwork artwork, byte[] pictureData ) {
 			Condition.Requires( artwork ).IsNotNull();
-			Condition.Requires( pictureData ).IsNotEmpty();
+			Condition.Requires( pictureData ).IsNotNull();
 
 			try {
 				using( var dbShell = CreateDatabase()) {
