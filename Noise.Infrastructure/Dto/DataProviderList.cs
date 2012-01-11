@@ -27,8 +27,7 @@ namespace Noise.Infrastructure.Dto {
 	}
 
 	public class DataUpdateShell<T> : DataProviderBase {
-		public	T					Item { get; private set; }
-		private readonly Action<string, T>	mOnUpdate;
+		public	T	Item { get; private set; }
 
 		public DataUpdateShell( IDatabaseShell databaseShell, T item ) :
 			base( databaseShell ) {
