@@ -176,7 +176,13 @@ namespace Noise.Core.DataProviders {
 					if( artistMatch != null ) {
 						var	tags = artistMatch.GetTopTags( 3 );
 						if( tags.GetLength( 0 ) > 0 ) {
-							artist.ExternalGenre = mTagManager.ResolveGenre( tags[0].Item.Name );
+							using( var updater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
+								if( updater.Item != null ) {
+									updater.Item.ExternalGenre = mTagManager.ResolveGenre( tags[0].Item.Name );
+
+									updater.Update();
+								}
+							}
 						}
 
 						using( var updater = mTextInfoProvider.GetTextInfoForUpdate( bio.DbId )) {

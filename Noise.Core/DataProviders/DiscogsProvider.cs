@@ -129,13 +129,13 @@ namespace Noise.Core.DataProviders {
 								if( release.Type.Length > 0 ) {
 									releaseType = DiscographyReleaseType.Other;
 
-									if( String.Compare( release.Role, "Main", true ) == 0 ) {
+									if( String.Compare(release.Role, "Main", StringComparison.OrdinalIgnoreCase) == 0 ) {
 										releaseType = DiscographyReleaseType.Release;
 									}
-									else if( String.Compare( release.Role, "Appearance", true ) == 0 ) {
+									else if( String.Compare(release.Role, "Appearance", StringComparison.OrdinalIgnoreCase) == 0 ) {
 										releaseType = DiscographyReleaseType.Appearance;
 									}
-									else if( String.Compare( release.Role, "TrackAppearance", true ) == 0 ) {
+									else if( String.Compare(release.Role, "TrackAppearance", StringComparison.OrdinalIgnoreCase) == 0 ) {
 										releaseType = DiscographyReleaseType.TrackAppearance;
 									}
 								}
