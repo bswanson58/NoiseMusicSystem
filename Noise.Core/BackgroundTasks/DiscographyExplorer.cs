@@ -86,7 +86,7 @@ namespace Noise.Core.BackgroundTasks {
 								}
 							}
 
-							NoiseLogger.Current.LogMessage( string.Format( "Updating Published year from discography: album '{0}', year: '{1}'", dbAlbum.Name, dbAlbum.PublishedYear ));
+							NoiseLogger.Current.LogMessage( string.Format( "Updating Published year from discography: album '{0}', year: '{1}'", dbAlbum.Name, release.Year ));
 						}
 					}
 				}
