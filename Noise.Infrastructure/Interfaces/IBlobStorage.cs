@@ -4,8 +4,6 @@ namespace Noise.Infrastructure.Interfaces {
 	public interface IBlobStorage {
 		void	Insert( long blobId, string fromFile );
 		void	Insert( long blobId, Stream blobData );
-		void	Update( long blobId, string fromFile );
-		void	Update( long blobId, Stream blobData );
 
 		void	Store( long blobId, string fromFile );
 		void	Store( long blobId, Stream blobData );

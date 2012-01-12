@@ -99,22 +99,6 @@ namespace Noise.EloqueraDatabase.BlobStore {
 			StoreBlob( blobData, blobPath );
 		}
 
-		public void Update( long blobId, string fromFile ) {
-			using( var fileStream = new FileStream( fromFile, FileMode.Open, FileAccess.Read )) {
-				Update( blobId, fileStream );
-			}
-		}
-
-		public void Update( long blobId, Stream blobData ) {
-			string	blobPath = ResolveBlobId( blobId );
-
-			if(!File.Exists( blobPath )) {
-				throw new BlobStorageException( blobId, blobPath, "Attempt to update nonexistent item." );
-			}
-
-			StoreBlob( blobData, blobPath );
-		}
-
 		public void StoreText( long blobId, string text ) {
 			var	blobPath = ResolveBlobId( blobId );
 			var storagePath = Path.GetDirectoryName( blobPath );
