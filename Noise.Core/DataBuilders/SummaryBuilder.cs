@@ -58,7 +58,7 @@ namespace Noise.Core.DataBuilders {
 												var trackRating = 0;
 												var maxTrackRating = 0;
 
-												album.TrackCount = 0;
+												albumUpdater.Item.TrackCount = 0;
 
 												foreach( var track in trackList.List ) {
 													if(!years.Contains( track.PublishedYear )) {
@@ -66,7 +66,7 @@ namespace Noise.Core.DataBuilders {
 													}
 
 													AddGenre( trackGenre, track.CalculatedGenre );
-													album.TrackCount++;
+													albumUpdater.Item.TrackCount++;
 													trackRating += track.Rating;
 
 													if( track.Rating > maxTrackRating ) {
@@ -75,21 +75,21 @@ namespace Noise.Core.DataBuilders {
 												}
 
 												if( years.Count == 0 ) {
-													album.PublishedYear = Constants.cUnknownYear;
+													albumUpdater.Item.PublishedYear = Constants.cUnknownYear;
 												}
 												else if( years.Count == 1 ) {
-													album.PublishedYear = years.First();
+													albumUpdater.Item.PublishedYear = years.First();
 												}
 												else {
-													album.PublishedYear = Constants.cVariousYears;
+													albumUpdater.Item.PublishedYear = Constants.cVariousYears;
 												}
 
-												album.CalculatedGenre = DetermineTopGenre( trackGenre );
-												AddGenre( albumGenre, album.CalculatedGenre );
+												albumUpdater.Item.CalculatedGenre = DetermineTopGenre( trackGenre );
+												AddGenre( albumGenre, albumUpdater.Item.CalculatedGenre );
 
-												album.CalculatedRating = trackRating > 0 ? (Int16)( trackRating / album.TrackCount ) : (Int16)0;
-												album.MaxChildRating = (Int16)maxTrackRating;
-												albumRating += album.CalculatedRating;
+												albumUpdater.Item.CalculatedRating = trackRating > 0 ? (Int16)( trackRating / albumUpdater.Item.TrackCount ) : (Int16)0;
+												albumUpdater.Item.MaxChildRating = (Int16)maxTrackRating;
+												albumRating += albumUpdater.Item.CalculatedRating;
 												if( maxTrackRating > maxAlbumRating ) {
 													maxAlbumRating = maxTrackRating;
 												}
@@ -103,10 +103,10 @@ namespace Noise.Core.DataBuilders {
 											}
 										}
 
-										artist.AlbumCount = (Int16)albumCount;
-										artist.CalculatedGenre = DetermineTopGenre( albumGenre );
-										artist.CalculatedRating = albumRating > 0 ? (Int16)( albumRating / albumCount ) : (Int16)0;
-										artist.MaxChildRating = (Int16)maxAlbumRating;
+										artistUpdater.Item.AlbumCount = (Int16)albumCount;
+										artistUpdater.Item.CalculatedGenre = DetermineTopGenre( albumGenre );
+										artistUpdater.Item.CalculatedRating = albumRating > 0 ? (Int16)( albumRating / albumCount ) : (Int16)0;
+										artistUpdater.Item.MaxChildRating = (Int16)maxAlbumRating;
 
 										artistUpdater.Update();
 
