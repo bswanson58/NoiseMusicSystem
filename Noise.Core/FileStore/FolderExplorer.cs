@@ -52,8 +52,7 @@ namespace Noise.Core.FileStore {
 
 			var rootFolders = RootFolderList();
 
-			if( rootFolders.Count() > 0 ) {
-
+			if( rootFolders.Any()) {
 					try {
 						using( var fileList = mStorageFileProvider.GetAllFiles()) {
 							mFileCache = new DatabaseCache<StorageFile>( fileList.List );

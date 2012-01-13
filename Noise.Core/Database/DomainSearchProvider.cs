@@ -1,33 +1,49 @@
 ﻿using System;
 using System.Linq;
+using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.Core.Database {
-	internal class DomainSearchProvider : IDomainSearchProvider {
+	internal class DomainSearchProvider : IDomainSearchProvider, IRequireInitialization {
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
 		private readonly IDbBaseProvider	mDbBaseProvider;
-		private readonly long				mDatabaseId;
+		private readonly IDatabaseManager	mDatabaseManager;
+		private long						mDatabaseId;
 
-		public DomainSearchProvider( IDatabaseManager databaseManager, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvide, IDbBaseProvider dbBaseProvider ) {
+		public DomainSearchProvider( ILifecycleManager lifecycleManager, IDatabaseManager databaseManager,
+									 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvide, IDbBaseProvider dbBaseProvider ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvide;
 			mDbBaseProvider = dbBaseProvider;
+			mDatabaseManager = databaseManager;
+
+			lifecycleManager.RegisterForInitialize( this );
+		}
+
+		public void Initialize() {
+			IDatabase	database = null;
 
 			try {
-				var database = databaseManager.ReserveDatabase();
+				database = mDatabaseManager.ReserveDatabase();
 				mDatabaseId = database.DatabaseVersion.DatabaseId;
-				databaseManager.FreeDatabase( database );
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "DomainSearchProvider:DatabaseId", ex );
 			}
+			finally {
+				if( database != null ) {
+					mDatabaseManager.FreeDatabase( database );
+				}
+			}
 		}
+
+		public void Shutdown() { }
 
 		public DataFindResults Find( string artist, string album, string track ) {
 			DataFindResults	retValue = null;
@@ -99,6 +115,5 @@ namespace Noise.Core.Database {
 
 			return( retValue );
 		}
-
 	}
 }
