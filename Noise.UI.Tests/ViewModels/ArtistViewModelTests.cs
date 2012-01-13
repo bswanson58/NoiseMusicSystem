@@ -1,5 +1,9 @@
-﻿using Moq;
+﻿using FluentAssertions;
+using FluentAssertions.EventMonitoring;
+using Moq;
 using NUnit.Framework;
+using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Support;
 using Noise.UI.Tests.MockingEventAggregator;
@@ -23,6 +27,9 @@ namespace Noise.UI.Tests.ViewModels {
 			mDiscographyProvider = new Mock<IDiscographyProvider>();
 			mTagManager = new Mock<ITagManager>();
 			mDialogService = new Mock<IDialogService>();
+
+			mTagManager.Setup( m => m.GetGenre( It.IsAny<long>())).Returns( new DbGenre( 1 ) { Name = "test genre" });
+			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>())).Returns( new DbArtist { Name = "test artist" });
 		}
 		private ArtistViewModel CreateSut() {
 			return( new ArtistViewModel( mEvents, mArtistProvider.Object, mAlbumProvider.Object, mDiscographyProvider.Object, mTagManager.Object, mDialogService.Object ));
@@ -33,6 +40,25 @@ namespace Noise.UI.Tests.ViewModels {
 			var vm = CreateSut();
 
 			Assert.IsNull( vm.Artist );
+		}
+
+		[Test]
+		public void ShouldRespondToArtistFocus() {
+			var artist = new DbArtist { Name = "artist name" };
+			var sut = CreateSut();
+			sut.MonitorEvents();
+			sut.PropertyChanged += OnPropertyChanged;
+
+
+			var artistFocusEvent = mEvents.GetEvent<Events.ArtistFocusRequested>();
+			artistFocusEvent.Publish( artist );
+
+//			artist.ShouldHave().AllProperties().EqualTo( sut.Artist );
+//			sut.ShouldRaisePropertyChangeFor( m => m.ArtistValid );
+		}
+
+		private void OnPropertyChanged( object sender, System.ComponentModel.PropertyChangedEventArgs e ) {
+			var propertyName = e.PropertyName;
 		}
 	}
 }
