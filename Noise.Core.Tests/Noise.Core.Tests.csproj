@@ -95,6 +95,9 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FluentAssertions">
+      <HintPath>..\lib\FluentAssertions\v1.6.0\FluentAssertions.dll</HintPath>
+    </Reference>
     <Reference Include="Moq">
       <HintPath>..\lib\Moq\v4.0.10827\Moq.dll</HintPath>
     </Reference>
@@ -115,6 +118,7 @@
   <ItemGroup>
     <Compile Include="BackgroundTasks\DecadeTagBuilderTests.cs" />
     <Compile Include="Database\DatabaseCacheTests.cs" />
+    <Compile Include="Database\DatabaseStatisticsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
