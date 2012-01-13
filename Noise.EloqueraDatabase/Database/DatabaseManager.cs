@@ -107,6 +107,10 @@ namespace Noise.EloqueraDatabase.Database {
 			return( retValue );
 		}
 
+		public int ReservedDatabaseCount {
+			get{ return( mReservedDatabases.Count ); }
+		}
+
 		static public string StackTraceToString() {
 		    var sb = new StringBuilder( 256 );
 			var frames = new StackTrace().GetFrames();

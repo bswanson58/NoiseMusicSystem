@@ -49,6 +49,8 @@ namespace Noise.Core.IntegrationTests.Database {
 
 		[TearDown]
 		public void Teardown() {
+			mDatabaseManager.ReservedDatabaseCount.Should().Be( 0 );
+
 			using( var database = mDatabaseManager.CreateDatabase()) {
 				database.Database.DeleteDatabase();
 			}

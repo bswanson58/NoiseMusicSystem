@@ -10,5 +10,7 @@
 
 		void			FreeDatabase( string databaseId );
 		void			FreeDatabase( IDatabase database );
+
+		int				ReservedDatabaseCount { get; }
 	}
 }
