@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.EloqueraDatabase.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Core.IntegrationTests", "Noise.Core.IntegrationTests\Noise.Core.IntegrationTests.csproj", "{CEEB834D-15F5-4430-89A5-7F1FCD4EA688}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.UI.Tests", "Noise.UI.Tests\Noise.UI.Tests.csproj", "{9301F3A9-AB4F-46D6-AA28-695F55002C6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -437,6 +439,26 @@ Global
 		{CEEB834D-15F5-4430-89A5-7F1FCD4EA688}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{CEEB834D-15F5-4430-89A5-7F1FCD4EA688}.Release|x64.ActiveCfg = Release|Any CPU
 		{CEEB834D-15F5-4430-89A5-7F1FCD4EA688}.Release|x86.ActiveCfg = Release|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Debug|x64.ActiveCfg = Debug|x64
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Debug|x64.Build.0 = Debug|x64
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Debug|x86.ActiveCfg = Debug|x86
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Debug|x86.Build.0 = Debug|x86
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Installers - Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Installers - Release|Any CPU.Build.0 = Release|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Installers - Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Installers - Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Installers - Release|x64.ActiveCfg = Release|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Installers - Release|x86.ActiveCfg = Release|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Release|x64.ActiveCfg = Release|Any CPU
+		{9301F3A9-AB4F-46D6-AA28-695F55002C6E}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
