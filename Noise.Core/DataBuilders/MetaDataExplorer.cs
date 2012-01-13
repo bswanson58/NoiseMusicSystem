@@ -152,6 +152,7 @@ namespace Noise.Core.DataBuilders {
 							using( var updater = mStorageFileProvider.GetFileForUpdate( file.DbId )) {
 								if( updater.Item != null ) {
 									updater.Item.MetaDataPointer = track.DbId;
+									updater.Item.FileType = eFileType.Music;
 
 									updater.Update();
 								}
@@ -218,6 +219,7 @@ namespace Noise.Core.DataBuilders {
 				using( var updater = mStorageFileProvider.GetFileForUpdate( file.DbId )) {
 					if( updater.Item != null ) {
 						updater.Item.MetaDataPointer = info.DbId;
+						updater.Item.FileType = eFileType.Text;
 
 						updater.Update();
 					}
@@ -262,6 +264,7 @@ namespace Noise.Core.DataBuilders {
 				using( var updater = mStorageFileProvider.GetFileForUpdate( file.DbId )) {
 					if( updater.Item != null ) {
 						updater.Item.MetaDataPointer = artwork.DbId;
+						updater.Item.FileType = eFileType.Picture;
 
 						updater.Update();
 					}
