@@ -2,60 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using Microsoft.Practices.Prism.Events;
-using Moq;
 using NUnit.Framework;
-using Noise.AppSupport;
 using Noise.Core.Database;
-using Noise.EloqueraDatabase;
-using Noise.EloqueraDatabase.BlobStore;
-using Noise.EloqueraDatabase.Database;
-using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.IntegrationTests.Database {
 	[TestFixture]
-	public class TrackProviderTests {
-		private Mock<ILog>				mDummyLog;
-		private Mock<IEventAggregator>	mEventAggregator;
-		private IDatabaseManager		mDatabaseManager;
-		private IIoc					mIocProvider;
-		private DatabaseConfiguration	mDatabaseConfiguration;
-		private IBlobStorageResolver	mBlobResolver;
-		private IDatabaseFactory		mDatabaseFactory;
-
-		[SetUp]
-		public void Setup() {
-			mDummyLog = new Mock<ILog>();
-			NoiseLogger.Current = mDummyLog.Object;
-				
-			mEventAggregator = new Mock<IEventAggregator> { DefaultValue = DefaultValue.Mock };
-
-			mDatabaseConfiguration = new DatabaseConfiguration { DatabaseName = "Integration Test Database" };
-
-			mIocProvider = new IocProvider();
-			mBlobResolver = new BlobStorageResolver();
-			mDatabaseFactory = new EloqueraDatabaseFactory( mBlobResolver, mEventAggregator.Object, mIocProvider, mDatabaseConfiguration );
-			mDatabaseManager = new DatabaseManager( mDatabaseFactory );
-
-			if( mDatabaseManager.Initialize()) {
-				using( var database = mDatabaseManager.CreateDatabase()) {
-					database.Database.OpenWithCreateDatabase();
-				}
-			}
-		}
-
-		[TearDown]
-		public void Teardown() {
-			mDatabaseManager.ReservedDatabaseCount.Should().Be( 0 );
-
-			using( var database = mDatabaseManager.CreateDatabase()) {
-				database.Database.DeleteDatabase();
-			}
-		}
-
+	public class TrackProviderTests : BaseDatabaseProviderTests {
 		private TrackProvider CreateSut() {
 			return( new TrackProvider( mDatabaseManager ));
 		}
