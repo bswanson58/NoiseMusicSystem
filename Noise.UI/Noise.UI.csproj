@@ -240,6 +240,7 @@
       <DependentUpon>DialogWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Support\DialogWindowModel.cs" />
+    <Compile Include="Support\Execute.cs" />
     <Compile Include="Support\FolderBrowserDialogEx.cs">
       <SubType>Component</SubType>
     </Compile>
