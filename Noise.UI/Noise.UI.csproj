@@ -245,6 +245,7 @@
     </Compile>
     <Compile Include="Support\IDialogService.cs" />
     <Compile Include="Support\MouseUtilities.cs" />
+    <Compile Include="Support\TaskHandler.cs" />
     <Compile Include="Support\ViewModelResolver.cs" />
     <Compile Include="ValueConverters\BooleanVisibilityConverter.cs" />
     <Compile Include="ValueConverters\ByteImageConverter.cs" />

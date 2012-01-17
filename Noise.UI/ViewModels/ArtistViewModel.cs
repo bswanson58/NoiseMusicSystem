@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
@@ -20,10 +21,10 @@ namespace Noise.UI.ViewModels {
 		private readonly IDiscographyProvider	mDiscographyProvider;
 		private readonly ITagManager			mTagManager;
 		private readonly IDialogService			mDialogService;
+		private readonly Observal.Observer		mChangeObserver;
 		private UiArtist						mCurrentArtist;
 		private LinkNode						mArtistWebsite;
-		private readonly Observal.Observer		mChangeObserver;
-		private readonly BackgroundWorker		mBackgroundWorker;
+		private TaskHandler<ArtistSupportInfo>	mTaskHandler; 
 		private readonly ObservableCollectionEx<LinkNode>				mSimilarArtists;
 		private readonly ObservableCollectionEx<LinkNode>				mTopAlbums;
 		private readonly ObservableCollectionEx<LinkNode>				mBandMembers;
@@ -51,10 +52,6 @@ namespace Noise.UI.ViewModels {
 
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnArtistChanged );
-
-			mBackgroundWorker = new BackgroundWorker();
-			mBackgroundWorker.DoWork += ( o, args ) => args.Result = RetrieveSupportInfo( args.Argument as UiArtist );
-			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => SupportInfo = result.Result as ArtistSupportInfo;
 		}
 
 		public UiArtist Artist {
@@ -69,43 +66,45 @@ namespace Noise.UI.ViewModels {
 		private ArtistSupportInfo SupportInfo {
 			get{ return( Get( () => SupportInfo )); }
 			set {
-				BeginInvoke( () => {
-					mSimilarArtists.Clear();
-					mTopAlbums.Clear();
-					mBandMembers.Clear();
-					mDiscography.Clear();
+				mSimilarArtists.Clear();
+				mTopAlbums.Clear();
+				mBandMembers.Clear();
+				mDiscography.Clear();
 
-					if(( CurrentArtist != null ) &&
-					   ( value != null )) {
-						if(( value.SimilarArtist != null ) &&
-						   ( value.SimilarArtist.Items.GetLength( 0 ) > 0 )) {
-							mSimilarArtists.AddRange( from DbAssociatedItem artist in value.SimilarArtist.Items
-														select artist.IsLinked ? new LinkNode( artist.Item, artist.AssociatedId, OnSimilarArtistClicked ) :
-																				 new LinkNode( artist.Item ));
-						}
-
-						if(( value.TopAlbums != null ) &&
-						   ( value.TopAlbums.Items.GetLength( 0 ) > 0 )) {
-							mTopAlbums.AddRange( from DbAssociatedItem album in value.TopAlbums.Items 
-												 select album.IsLinked ? new LinkNode( album.Item, album.AssociatedId, OnTopAlbumClicked ) :
-																		 new LinkNode( album.Item ));
-						}
-
-						if(( value.BandMembers != null ) &&
-						   ( value.BandMembers.Items.GetLength( 0 ) > 0 )) {
-							mBandMembers.AddRange( from DbAssociatedItem member in value.BandMembers.Items select new LinkNode( member.Item ));
-						}
-
-						using( var discoList = mDiscographyProvider.GetDiscography( CurrentArtist.DbId )) {
-							mDiscography.SuspendNotification();
-							mDiscography.AddRange( discoList.List );
-							mDiscography.Sort( release => release.Year, ListSortDirection.Descending );
-							mDiscography.ResumeNotification();
-						}
+				if(( CurrentArtist != null ) &&
+				   ( value != null )) {
+					if(( value.SimilarArtist != null ) &&
+						( value.SimilarArtist.Items.GetLength( 0 ) > 0 )) {
+						mSimilarArtists.AddRange( from DbAssociatedItem artist in value.SimilarArtist.Items
+													select artist.IsLinked ? new LinkNode( artist.Item, artist.AssociatedId, OnSimilarArtistClicked ) :
+																				new LinkNode( artist.Item ));
 					}
 
-					Set( () => SupportInfo, value );
-				});
+					if(( value.TopAlbums != null ) &&
+					   ( value.TopAlbums.Items.GetLength( 0 ) > 0 )) {
+						mTopAlbums.AddRange( from DbAssociatedItem album in value.TopAlbums.Items 
+												select album.IsLinked ? new LinkNode( album.Item, album.AssociatedId, OnTopAlbumClicked ) :
+																		new LinkNode( album.Item ));
+					}
+
+					if(( value.BandMembers != null ) &&
+					   ( value.BandMembers.Items.GetLength( 0 ) > 0 )) {
+						mBandMembers.AddRange( from DbAssociatedItem member in value.BandMembers.Items select new LinkNode( member.Item ));
+					}
+
+					using( var discoList = mDiscographyProvider.GetDiscography( CurrentArtist.DbId )) {
+						mDiscography.SuspendNotification();
+
+						if( discoList != null ) {
+							mDiscography.AddRange( discoList.List );
+							mDiscography.Sort( release => release.Year, ListSortDirection.Descending );
+						}
+
+						mDiscography.ResumeNotification();
+					}
+				}
+
+				Set( () => SupportInfo, value  );
 			}
 		}
 
@@ -133,18 +132,17 @@ namespace Noise.UI.ViewModels {
 				if( value != null ) {
 					mEvents.GetEvent<Events.ArtistContentRequested>().Publish( mArtistProvider.GetArtist( value.DbId ));
 
-					mCurrentArtist = TransformArtist( mArtistProvider.GetArtist( value.DbId ));
+					mCurrentArtist = value;
 					mChangeObserver.Add( mCurrentArtist );
 
-					if(!mBackgroundWorker.IsBusy ) {
-						mBackgroundWorker.RunWorkerAsync( mCurrentArtist );
-					}
-					BeginInvoke( () => {
+					RetrieveSupportInfo( mCurrentArtist );
+
+//					BeginInvoke( () => {
 						RaisePropertyChanged( () => Artist );
 
 						mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
 						RaisePropertyChanged( () => ArtistWebsite );
-					});
+//					});
 				}
 				else {
 					mCurrentArtist = null;
@@ -156,14 +154,34 @@ namespace Noise.UI.ViewModels {
 			if(( artist != null ) &&
 			   ( CurrentArtist != null ) &&
 			   ( CurrentArtist.DbId == artist.DbId )) {
-				if(!mBackgroundWorker.IsBusy ) {
-					mBackgroundWorker.RunWorkerAsync( CurrentArtist );
-				}
+				RetrieveSupportInfo( CurrentArtist );
 			}
 		}
 
-		private ArtistSupportInfo RetrieveSupportInfo( UiArtist forArtist ) {
-			return( mArtistProvider.GetArtistSupportInfo( forArtist.DbId ));
+		public TaskHandler<ArtistSupportInfo> TaskHandler {
+			get {
+				if( mTaskHandler == null ) {
+					mTaskHandler = new TaskHandler<ArtistSupportInfo>();
+				}
+
+				return( mTaskHandler );
+			}
+
+			set { mTaskHandler = value; }
+		} 
+
+		private void RetrieveSupportInfo( UiArtist forArtist ) {
+			TaskHandler.StartTask( () => mArtistProvider.GetArtistSupportInfo( forArtist.DbId ), 
+									result => { if( result != null ) SupportInfo = result; },
+									OnTaskFailure );
+		}
+
+		private void OnTaskFailure( Task task ) {
+			if( task.Exception != null ) {
+				foreach ( var ex in task.Exception.Flatten().InnerExceptions ) {
+					NoiseLogger.Current.LogException( "ArtistViewModel:RetrieveSupportInfo", ex );
+				}
+			}
 		}
 
 		private void OnSimilarArtistClicked( long artistId ) {
