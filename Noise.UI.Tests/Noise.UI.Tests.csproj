@@ -101,6 +101,9 @@
     <Reference Include="Microsoft.Practices.Prism">
       <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
     <Reference Include="Moq">
       <HintPath>..\lib\Moq\v4.0.10827\Moq.dll</HintPath>
     </Reference>
@@ -132,11 +135,20 @@
     <Compile Include="Support\DispatcherPump.cs" />
     <Compile Include="Support\XamlBindingValidator.cs" />
     <Compile Include="ViewModels\ArtistViewModelTests.cs" />
+    <Compile Include="Views\ArtistViewTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Noise.Desktop\Noise.Desktop.csproj">
+      <Project>{3ECB477E-5631-4E77-B66F-A64BC37C42EC}</Project>
+      <Name>Noise.Desktop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Noise.UI.Style\Noise.UI.Style.csproj">
+      <Project>{DA31563C-5B51-4072-AF18-57E4FC5DE957}</Project>
+      <Name>Noise.UI.Style</Name>
     </ProjectReference>
     <ProjectReference Include="..\Noise.UI\Noise.UI.csproj">
       <Project>{D9F288A7-A0EF-4237-A9D6-BA9CCE9C9C09}</Project>
