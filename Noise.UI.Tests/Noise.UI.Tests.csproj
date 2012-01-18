@@ -107,11 +107,14 @@
     <Reference Include="nunit.framework">
       <HintPath>..\lib\NUnit\v2.5.10\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="Rhino.Mocks">
       <HintPath>..\lib\Rhino.Mocks\v3.6.Build-21\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -124,8 +127,10 @@
     <Compile Include="MockingEventAggregator\AutoMockingEventAggregator.cs" />
     <Compile Include="MockingEventAggregator\PresentationEventTestExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Support\CrossThreadTestRunner.cs" />
     <Compile Include="Support\CurrentThreadTaskScheduler.cs" />
     <Compile Include="Support\DispatcherPump.cs" />
+    <Compile Include="Support\XamlBindingValidator.cs" />
     <Compile Include="ViewModels\ArtistViewModelTests.cs" />
   </ItemGroup>
   <ItemGroup>

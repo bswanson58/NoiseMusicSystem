@@ -23,7 +23,7 @@ namespace Noise.UI.Tests.ViewModels {
 		private Mock<ITagManager>				mTagManager;
 		private Mock<IDialogService>			mDialogService;
 		private TaskScheduler					mTaskScheduler;
-			
+
 		[SetUp]
 		public void Setup() {
 			mDummyLog = new Mock<ILog>();
@@ -38,15 +38,14 @@ namespace Noise.UI.Tests.ViewModels {
 
 			mTaskScheduler = new CurrentThreadTaskScheduler();
 
-			mTagManager.Setup( m => m.GetGenre( It.IsAny<long>())).Returns( new DbGenre( 1 ) { Name = "test genre" } );
+			mTagManager.Setup( m => m.GetGenre( It.IsAny<long>() ) ).Returns( new DbGenre( 1 ) { Name = "test genre" } );
 
-			SynchronizationContext.SetSynchronizationContext( new SynchronizationContext());
+			SynchronizationContext.SetSynchronizationContext( new SynchronizationContext() );
 		}
 
 		private ArtistViewModel CreateSut() {
-			return( new ArtistViewModel( mEvents, mArtistProvider.Object, mAlbumProvider.Object, mDiscographyProvider.Object,
-										 mTagManager.Object, mDialogService.Object ) 
-										 { TaskHandler = new TaskHandler<ArtistSupportInfo>( mTaskScheduler, mTaskScheduler )});
+			return ( new ArtistViewModel( mEvents, mArtistProvider.Object, mAlbumProvider.Object, mDiscographyProvider.Object,
+										 mTagManager.Object, mDialogService.Object ) { TaskHandler = new TaskHandler<ArtistSupportInfo>( mTaskScheduler, mTaskScheduler ) } );
 		}
 
 		[Test]
@@ -61,7 +60,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var artist = new DbArtist { Name = "artist name" };
 			var sut = CreateSut();
 
-			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist ).Verifiable( "GetArtist not called." );
+			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist ).Verifiable( "GetArtist not called." );
 
 			var artistFocusEvent = mEvents.GetEvent<Events.ArtistFocusRequested>();
 			artistFocusEvent.Publish( artist );
@@ -73,11 +72,11 @@ namespace Noise.UI.Tests.ViewModels {
 		[Test]
 		public void ArtistFocusShouldRequestArtistSupportInfo() {
 			var artist = new DbArtist { Name = "artist name" };
-			
+
 			CreateSut();
 
-			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
-			mArtistProvider.Setup( m => m.GetArtistSupportInfo( It.IsAny<long>())).Returns((ArtistSupportInfo)null ).Verifiable();
+			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
+			mArtistProvider.Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) ).Returns( (ArtistSupportInfo)null ).Verifiable();
 
 			var artistFocusEvent = mEvents.GetEvent<Events.ArtistFocusRequested>();
 			artistFocusEvent.Publish( artist );
@@ -88,7 +87,7 @@ namespace Noise.UI.Tests.ViewModels {
 		[Test]
 		public void ArtistFocusShouldRequestDiscography() {
 			var artist = new DbArtist { Name = "artist name" };
-			
+
 			CreateSut();
 
 			var dbTextInfo = new DbTextInfo( 1, ContentType.Biography );
@@ -99,10 +98,10 @@ namespace Noise.UI.Tests.ViewModels {
 			var topAlbums = new DbAssociatedItemList( 1, ContentType.TopAlbums );
 			var bandMembers = new DbAssociatedItemList( 1, ContentType.BandMembers );
 
-			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
-			mArtistProvider.Setup( m => m.GetArtistSupportInfo( It.IsAny<long>()))
-				.Returns( new ArtistSupportInfo( biography, artistImage, similarArtists, topAlbums, bandMembers ));
-			mDiscographyProvider.Setup( m => m.GetDiscography( It.IsAny<long>())).Returns((DataProviderList<DbDiscographyRelease>)null ).Verifiable();
+			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
+			mArtistProvider.Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) )
+				.Returns( new ArtistSupportInfo( biography, artistImage, similarArtists, topAlbums, bandMembers ) );
+			mDiscographyProvider.Setup( m => m.GetDiscography( It.IsAny<long>() ) ).Returns( (DataProviderList<DbDiscographyRelease>)null ).Verifiable();
 
 			var artistFocusEvent = mEvents.GetEvent<Events.ArtistFocusRequested>();
 			artistFocusEvent.Publish( artist );
@@ -118,7 +117,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = CreateSut();
 			sut.MonitorEvents();
 
-			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
+			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
 
 			var artistFocusEvent = mEvents.GetEvent<Events.ArtistFocusRequested>();
 			artistFocusEvent.Publish( artist );
@@ -144,14 +143,14 @@ namespace Noise.UI.Tests.ViewModels {
 			var topAlbums = new DbAssociatedItemList( 1, ContentType.TopAlbums );
 			var bandMembers = new DbAssociatedItemList( 1, ContentType.BandMembers );
 
-			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
-			mArtistProvider.Setup( m => m.GetArtistSupportInfo( It.IsAny<long>()))
-				.Returns( new ArtistSupportInfo( biography, artistImage, similarArtists, topAlbums, bandMembers ));
+			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
+			mArtistProvider.Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) )
+				.Returns( new ArtistSupportInfo( biography, artistImage, similarArtists, topAlbums, bandMembers ) );
 
 			var databaseShell = new Mock<IDatabaseShell>();
 			var discoList = new List<DbDiscographyRelease>();
 			var discography = new DataProviderList<DbDiscographyRelease>( databaseShell.Object, discoList );
-			mDiscographyProvider.Setup( m => m.GetDiscography( It.IsAny<long>())).Returns( discography );
+			mDiscographyProvider.Setup( m => m.GetDiscography( It.IsAny<long>() ) ).Returns( discography );
 
 			var artistFocusEvent = mEvents.GetEvent<Events.ArtistFocusRequested>();
 			artistFocusEvent.Publish( artist );
@@ -167,17 +166,17 @@ namespace Noise.UI.Tests.ViewModels {
 		[Test]
 		public void SameArtistFocusShouldNotRetrieveArtistAgain() {
 			var artist = new DbArtist { Name = "artist name" };
-	
+
 			CreateSut();
 
-			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
-			mArtistProvider.Setup( m => m.GetArtistSupportInfo( It.IsAny<long>())).Returns((ArtistSupportInfo)null );
+			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
+			mArtistProvider.Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) ).Returns( (ArtistSupportInfo)null );
 
 			var artistFocusEvent = mEvents.GetEvent<Events.ArtistFocusRequested>();
 			artistFocusEvent.Publish( artist );
 			artistFocusEvent.Publish( artist );
 
-			mArtistProvider.Verify( m => m.GetArtistSupportInfo( It.IsAny<long>()), Times.Once(), "GetArtistSupportInfo request" );
+			mArtistProvider.Verify( m => m.GetArtistSupportInfo( It.IsAny<long>() ), Times.Once(), "GetArtistSupportInfo request" );
 		}
 
 		[Test]
@@ -185,7 +184,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var artist = new DbArtist();
 			var album = new DbAlbum { Artist = artist.DbId };
 
-			mArtistProvider.Setup( m => m.GetArtistForAlbum( It.Is<DbAlbum>( p => p.Artist == artist.DbId ))).Returns( artist ).Verifiable();
+			mArtistProvider.Setup( m => m.GetArtistForAlbum( It.Is<DbAlbum>( p => p.Artist == artist.DbId ) ) ).Returns( artist ).Verifiable();
 
 			CreateSut();
 
@@ -201,7 +200,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var album1 = new DbAlbum { Artist = artist.DbId, Name = "first album" };
 			var album2 = new DbAlbum { Artist = artist.DbId, Name = "second album" };
 
-			mArtistProvider.Setup( m => m.GetArtistForAlbum( It.Is<DbAlbum>( p => p.Artist == artist.DbId ))).Returns( artist );
+			mArtistProvider.Setup( m => m.GetArtistForAlbum( It.Is<DbAlbum>( p => p.Artist == artist.DbId ) ) ).Returns( artist );
 
 			CreateSut();
 
@@ -209,15 +208,15 @@ namespace Noise.UI.Tests.ViewModels {
 			albumFocusEvent.Publish( album1 );
 			albumFocusEvent.Publish( album2 );
 
-			mArtistProvider.Verify( m => m.GetArtistForAlbum( It.IsAny<DbAlbum>()), Times.Exactly( 1 ));
+			mArtistProvider.Verify( m => m.GetArtistForAlbum( It.IsAny<DbAlbum>() ), Times.Exactly( 1 ) );
 		}
 
 		[Test]
 		public void ArtistInfoUpdateEventShouldRetrieveArtistInfo() {
 			var artist = new DbArtist();
 
-			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
-			mArtistProvider.Setup( m => m.GetArtistSupportInfo( It.IsAny<long>())).Returns((ArtistSupportInfo)null );
+			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
+			mArtistProvider.Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) ).Returns( (ArtistSupportInfo)null );
 
 			CreateSut();
 
@@ -227,7 +226,26 @@ namespace Noise.UI.Tests.ViewModels {
 			var infoUpdateEvent = mEvents.GetEvent<Events.ArtistContentUpdated>();
 			infoUpdateEvent.Publish( artist );
 
-			mArtistProvider.Verify( m => m.GetArtistSupportInfo( It.IsAny<long>()), Times.Exactly( 2 ), "GetArtistSupportInfo request" );
+			mArtistProvider.Verify( m => m.GetArtistSupportInfo( It.IsAny<long>() ), Times.Exactly( 2 ), "GetArtistSupportInfo request" );
 		}
+		/*
+		[Test]
+		public void CanBeBoundToViewModel() {
+			var testRunner = new CrossThreadTestRunner();
+			testRunner.RunInSTA( delegate {
+				 if (System.Windows.Application.Current == null) {
+					var application = new  App();
+					application.InitializeComponent();
+				}
+
+				var view = new ArtistView();
+
+				var tester = new XamlBindingValidator();
+
+				tester.CheckWpfBindingsAreValid( view, typeof( ArtistViewModel ));
+
+			});
+		}
+		*/
 	}
 }
