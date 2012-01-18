@@ -11,6 +11,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
+using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class PlayerViewModel : ViewModelBase, IActiveAware {
@@ -101,7 +102,7 @@ namespace Noise.UI.ViewModels {
 
 		private int InfoUpdateFlag {
 			get{ return( Get( () => InfoUpdateFlag, 0 ));  }
-			set{ Invoke( () => Set( () => InfoUpdateFlag, value )); }
+			set{ Execute.OnUIThread( () => Set( () => InfoUpdateFlag, value )); }
 		}
 
 		[DependsUpon( "StartTrackFlag" )]

@@ -167,7 +167,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnPlayQueueChanged( IPlayQueue playQueue ) {
-			BeginInvoke( LoadPlayQueue );
+			Execute.OnUIThread( LoadPlayQueue );
 
 			PlayQueueChangedFlag++;
 		}
@@ -208,7 +208,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackStarted( PlayQueueTrack track ) {
-			BeginInvoke( () => {
+			Execute.OnUIThread( () => {
 				var index = 0;
 
 				mPlayingIndex = -1;

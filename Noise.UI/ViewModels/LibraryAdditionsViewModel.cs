@@ -9,6 +9,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
+using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class LibraryAdditionsViewModel : ViewModelBase {
@@ -54,7 +55,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void UpdateList( IEnumerable<LibraryAdditionNode> list ) {
-			BeginInvoke( () => {
+			Execute.OnUIThread( () => {
 				mNodeList.SuspendNotification();
 				mNodeList.Clear();
 				mNodeList.AddRange( list );

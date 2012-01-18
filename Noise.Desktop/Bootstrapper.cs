@@ -4,7 +4,6 @@ using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.Unity;
 using Noise.AppSupport;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 using Noise.UI.Support;
 
 namespace Noise.Desktop {
@@ -15,8 +14,6 @@ namespace Noise.Desktop {
 		private	ApplicationSupport	mAppSupport;
 
 		protected override DependencyObject CreateShell() {
-			Execute.InitializeWithDispatcher();
-
 			mShell = Container.Resolve<Shell>();
 			mShell.Show();
 			mShell.Closing += OnShellClosing;

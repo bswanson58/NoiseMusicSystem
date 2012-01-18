@@ -36,11 +36,12 @@ namespace Noise.UI.Tests.ViewModels {
 			mTagManager = new Mock<ITagManager>();
 			mDialogService = new Mock<IDialogService>();
 
-			mTaskScheduler = new CurrentThreadTaskScheduler();
-
 			mTagManager.Setup( m => m.GetGenre( It.IsAny<long>() ) ).Returns( new DbGenre( 1 ) { Name = "test genre" } );
 
-			SynchronizationContext.SetSynchronizationContext( new SynchronizationContext() );
+			// Set tpl tasks to use the current thread only.
+			mTaskScheduler = new CurrentThreadTaskScheduler();
+			// Set the ui dispatcher to run on the current thread.
+			Execute.ResetWithoutDispatcher();
 		}
 
 		private ArtistViewModel CreateSut() {

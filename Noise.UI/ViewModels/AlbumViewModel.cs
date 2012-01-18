@@ -125,7 +125,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void SetCurrentAlbum( NewAlbumInfo albumInfo ) {
-			Invoke( () => {
+			Execute.OnUIThread( () => {
 				if( mCurrentAlbum != null ) {
 					mChangeObserver.Release( mCurrentAlbum );
 				}
@@ -182,7 +182,7 @@ namespace Noise.UI.ViewModels {
 		private AlbumSupportInfo SupportInfo {
 			get{ return( Get( () => SupportInfo )); }
 			set{
-				BeginInvoke( () => Set( () => SupportInfo, value ));
+				Execute.OnUIThread( () => Set( () => SupportInfo, value ));
 			}
 		}
 
@@ -298,7 +298,7 @@ namespace Noise.UI.ViewModels {
 			   ( mCurrentAlbum != null ) &&
 			   ( args.Change == DbItemChanged.Update ) &&
 			   ((item as DbTrack).Album == mCurrentAlbum.DbId )) {
-				BeginInvoke( () => {
+				Execute.OnUIThread( () => {
 					var track = ( from UiTrack node in mTracks where node.DbId == item.DbId select node ).FirstOrDefault();
 
 					if( track != null ) {
@@ -324,7 +324,7 @@ namespace Noise.UI.ViewModels {
 			   ( mCurrentAlbum != null ) &&
 			   ( args.Change == DbItemChanged.Update ) &&
 			   ((item as DbAlbum).DbId == mCurrentAlbum.DbId )) {
-				BeginInvoke( () => Mapper.DynamicMap( item as DbAlbum, mCurrentAlbum ));
+				Execute.OnUIThread( () => Mapper.DynamicMap( item as DbAlbum, mCurrentAlbum ));
 			}
 		}
 

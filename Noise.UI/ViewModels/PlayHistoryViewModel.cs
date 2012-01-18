@@ -8,6 +8,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
+using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class PlayHistoryViewModel : ViewModelBase {
@@ -48,7 +49,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void UpdateHistoryList( IEnumerable<PlayHistoryNode> newList ) {
-			BeginInvoke( () => {
+			Execute.OnUIThread( () => {
 				mHistoryList.SuspendNotification();
 
 				mHistoryList.Clear();

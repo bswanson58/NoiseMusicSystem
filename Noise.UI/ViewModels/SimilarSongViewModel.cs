@@ -7,6 +7,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
+using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class SimilarSongViewModel : ViewModelBase {
@@ -98,7 +99,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void Close() {
-			BeginInvoke( () => {
+			Execute.OnUIThread( () => {
 				VisualStateName = cViewStateClosed;
 
 				mSearchResults.Clear();

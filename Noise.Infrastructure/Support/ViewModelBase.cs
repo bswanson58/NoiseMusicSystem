@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Threading;
 using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -15,7 +14,6 @@ namespace Noise.Infrastructure.Support {
 		private readonly IDictionary<string, List<string>>	mPropertyMap;
 		private readonly IDictionary<string, List<string>>	mMethodMap;
 		private readonly IDictionary<string, List<string>>	mCommandMap;
-		private readonly Dispatcher							mDispatcher;
 
 		[AttributeUsage( AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = true )]
 		protected class DependsUponAttribute : Attribute {
@@ -50,12 +48,7 @@ namespace Noise.Infrastructure.Support {
 			}
 		}
 
-		public ViewModelBase() :
-			this( Dispatcher.CurrentDispatcher ) {
-		}
-
-		public ViewModelBase( Dispatcher dispatcher ) {
-			mDispatcher = dispatcher;
+		public ViewModelBase() {
 			mValues = new Dictionary<string, object>();
 
 			mPropertyMap = MapDependencies<DependsUponAttribute>( () => GetType().GetProperties());
@@ -271,18 +264,6 @@ namespace Noise.Infrastructure.Support {
 			var property = GetType().GetProperty( propertyName );
 			if( property == null )
 				throw new ArgumentException( "DependsUpon Property Does Not Exist: " + propertyName );
-		}
-
-		public bool CheckAccess() {
-			return( mDispatcher == Dispatcher.CurrentDispatcher );
-		}
-
-		public void Invoke( Action action ) {
-			mDispatcher.Invoke( action );
-		}
-
-		public void BeginInvoke( Action action ) {
-			mDispatcher.BeginInvoke( action );
 		}
 	}
 }

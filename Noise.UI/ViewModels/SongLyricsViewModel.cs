@@ -159,12 +159,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public bool CanExecute_SelectLyric() {
-			var retValue = false;
-
-			if(( SelectedLyric != null ) &&
-			   ( SelectedLyric.Lyric.TrackId != mLyricsInfo.TrackId )) {
-				retValue = true;
-			}
+			bool retValue = ( SelectedLyric != null ) &&
+			                ( SelectedLyric.Lyric.TrackId != mLyricsInfo.TrackId );
 
 			return( retValue );
 		}
@@ -184,7 +180,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void Close() {
-			BeginInvoke( () => {
+			Execute.OnUIThread( () => {
 				VisualStateName = cViewStateClosed;
 			});
 		}

@@ -10,6 +10,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
+using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistTracksViewModel : ViewModelBase, IActiveAware {
@@ -142,7 +143,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void SetTrackList( IEnumerable<UiArtistTrackNode> list ) {
-			BeginInvoke( () => { 
+			Execute.OnUIThread( () => { 
 				TrackList.SuspendNotification();
 				TrackList.Clear();
 				TrackList.AddRange( from node in list orderby node.Track.Name ascending select node );

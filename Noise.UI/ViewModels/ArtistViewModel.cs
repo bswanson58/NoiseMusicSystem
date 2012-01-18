@@ -134,15 +134,12 @@ namespace Noise.UI.ViewModels {
 
 					mCurrentArtist = value;
 					mChangeObserver.Add( mCurrentArtist );
+					RaisePropertyChanged( () => Artist );
+
+					mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
+					RaisePropertyChanged( () => ArtistWebsite );
 
 					RetrieveSupportInfo( mCurrentArtist );
-
-//					BeginInvoke( () => {
-						RaisePropertyChanged( () => Artist );
-
-						mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
-						RaisePropertyChanged( () => ArtistWebsite );
-//					});
 				}
 				else {
 					mCurrentArtist = null;
@@ -244,7 +241,7 @@ namespace Noise.UI.ViewModels {
 			   ( CurrentArtist != null ) &&
 			   ( args.Change == DbItemChanged.Update ) &&
 			   ( item.DbId == CurrentArtist.DbId )) {
-				BeginInvoke( () => Mapper.DynamicMap( item as DbArtist, mCurrentArtist ));
+				CurrentArtist = TransformArtist( item as DbArtist );
 			}
 		}
 

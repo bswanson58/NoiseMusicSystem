@@ -44,7 +44,7 @@ namespace Noise.UI.ViewModels {
 				if(( item is DbArtist ) ||
 				   ( item is DbAlbum ) ||
 				   ( item is DbTrack )) {
-					BeginInvoke( LoadFavorites );
+					Execute.OnUIThread( LoadFavorites );
 				}
 			}
 		}

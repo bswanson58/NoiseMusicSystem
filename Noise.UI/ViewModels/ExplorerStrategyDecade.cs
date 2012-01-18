@@ -125,7 +125,7 @@ namespace Noise.UI.ViewModels {
 			var item = args.Item;
 
 			if( item is DbArtist ) {
-				BeginInvoke( () => {
+				Execute.OnUIThread( () => {
 					var artist = item as DbArtist;
 
 					if( artist != null ) {
@@ -158,7 +158,7 @@ namespace Noise.UI.ViewModels {
 			}
 			else if(( item is DbAlbum ) &&
 			        ( args.Change == DbItemChanged.Update )) {
-				BeginInvoke( () => {
+				Execute.OnUIThread( () => {
 					var dbAlbum = item as DbAlbum;
 
 					if( dbAlbum != null ) {
