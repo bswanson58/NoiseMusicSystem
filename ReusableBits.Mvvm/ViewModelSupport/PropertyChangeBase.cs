@@ -7,11 +7,6 @@ using System.Reflection;
 
 namespace ReusableBits.Mvvm.ViewModelSupport {
 	internal static partial class Extensions {
-		public static void Each<T>( this IEnumerable<T> items, Action<T> action ) {
-			foreach( var item in items )
-				action( item );
-		}
-
 		public static void Raise( this PropertyChangedEventHandler eventHandler, object source, string propertyName ) {
 			var handlers = eventHandler;
 			if( handlers != null )
@@ -41,7 +36,7 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 			}
 		}
 
-		public PropertyChangeBase() {
+		protected PropertyChangeBase() {
 			mPropertyMap = MapDependencies<DependsUponAttribute>( () => GetType().GetProperties());
 
 			VerifyDependancies();
@@ -55,7 +50,7 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 			PropertyChanged.Raise( this, name );
 
 			if( mPropertyMap.ContainsKey( name )) {
-				mPropertyMap[name].Each( RaisePropertyChanged );
+				mPropertyMap[name].ToList().ForEach( RaisePropertyChanged );
 			}
 		}
 
@@ -95,21 +90,18 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 		}
 
 		private void VerifyDependancies() {
-			var methods = GetType().GetMethods().Cast<MemberInfo>();
-			var properties = GetType().GetProperties();
-
-			var propertyNames = methods.Union( properties )
+			var propertyNames = GetType().GetProperties()
 				.SelectMany( method => method.GetCustomAttributes( typeof( DependsUponAttribute ), true ).Cast<DependsUponAttribute>() )
-				.Where( attribute => attribute.VerifyStaticExistence )
-				.Select( attribute => attribute.DependencyName );
+				.Select( attribute => attribute.DependencyName ).AsEnumerable().ToList();
 
-			propertyNames.Each( VerifyDependancy );
+			propertyNames.ForEach( VerifyDependancy );
 		}
 
 		private void VerifyDependancy( string propertyName ) {
 			var property = GetType().GetProperty( propertyName );
-			if( property == null )
+			if( property == null ) {
 				throw new ArgumentException( "DependsUpon Property Does Not Exist: " + propertyName );
+			}
 		}
 	}
 }

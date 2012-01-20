@@ -29,7 +29,7 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 		}
 
 		private void CreateCommands() {
-			CommandNames.Each( name => Set( name, new DelegateCommand<object>( x => ExecuteCommand( name, x ), x => CanExecuteCommand( name, x ))));
+			CommandNames.ToList().ForEach( name => Set( name, new DelegateCommand<object>( x => ExecuteCommand( name, x ), x => CanExecuteCommand( name, x ))));
 		}
 
 		private IEnumerable<string> CommandNames {
@@ -72,7 +72,7 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 
 		private void ExecuteDependentMethods( string name ) {
 			if( mMethodMap.ContainsKey( name ) )
-				mMethodMap[name].Each( ExecuteMethod );
+				mMethodMap[name].ToList().ForEach( ExecuteMethod );
 		}
 
 		private void ExecuteMethod( string name ) {
@@ -84,7 +84,7 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 		}
 		private void FireChangesOnDependentCommands( string name ) {
 			if( mCommandMap.ContainsKey( name ) )
-				mCommandMap[name].Each( RaiseCanExecuteChangedEvent );
+				mCommandMap[name].ToList().ForEach( RaiseCanExecuteChangedEvent );
 		}
 
 		protected T Get<T>( string name ) {
