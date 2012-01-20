@@ -17,24 +17,27 @@ namespace Noise.UI.Tests.Views {
 			return( new ArtistViewModel( new AutoMockingEventAggregator(), null, null, null, null, null ));
 		}
 
+		private void AssertMessage( string message ) {
+			Assert.Fail( message );
+		}
+
 		[Test]
-		[Ignore( "Several bound properties are not located by this validator." )]
+		[Ignore( "This inly works in when running under the debugger." )]
 		public void AreBindingsValid() {
 			var container = new Mock<IUnityContainer>();
 			container.Setup( m => m.Resolve( It.Is<Type>( p => p == typeof( ArtistViewModel )), It.IsAny<string>(), 
 											 It.IsAny<ResolverOverride[]>())).Returns( CreateViewModel());
-
 			ViewModelResolver.Container = container.Object;
+			BindingErrorListener.Listen( AssertMessage );
 
 			var runner = new CrossThreadTestRunner();
-
 			runner.RunInSTA( delegate {
 				var app = new App();
 				app.InitializeComponent();
 
-				var validator = new XamlBindingValidator();
+				new ArtistView();
 
-				validator.CheckWpfBindingsAreValid( new ArtistView(), typeof( ArtistViewModel ));
+				app.Shutdown();
 			});
 		}
 	}

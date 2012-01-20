@@ -133,7 +133,6 @@
     <Compile Include="Support\CrossThreadTestRunner.cs" />
     <Compile Include="Support\CurrentThreadTaskScheduler.cs" />
     <Compile Include="Support\DispatcherPump.cs" />
-    <Compile Include="Support\XamlBindingValidator.cs" />
     <Compile Include="ViewModels\ArtistViewModelTests.cs" />
     <Compile Include="Views\ArtistViewTests.cs" />
   </ItemGroup>
