@@ -8,6 +8,10 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.Practices.Prism.Commands;
 
+// from:
+// http://houseofbilz.com/archives/2010/05/08/adventures-in-mvvm-my-viewmodel-base/
+// http://houseofbilz.com/archives/2009/11/14/adventures-in-mvvm-dependant-properties-with-inotifypropertychanged/
+
 namespace Noise.Infrastructure.Support {
 	public class ViewModelBase : DynamicObject, INotifyPropertyChanged {
 		private readonly Dictionary<string, object>			mValues;
@@ -37,7 +41,7 @@ namespace Noise.Infrastructure.Support {
 			var prop = DesignerProperties.IsInDesignModeProperty;
 			mIsInDesignMode
 					= (bool)DependencyPropertyDescriptor
-					.FromProperty( prop, typeof( FrameworkElement ) )
+					.FromProperty( prop, typeof( FrameworkElement ))
 					.Metadata.DefaultValue;
 #endif
 		}
