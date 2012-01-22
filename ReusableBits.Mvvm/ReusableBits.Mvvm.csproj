@@ -111,6 +111,8 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModelSupport\AutomaticCommandBase.cs" />
+    <Compile Include="ViewModelSupport\AutomaticPropertyBase.cs" />
+    <Compile Include="ViewModelSupport\DependantPropertyBase.cs" />
     <Compile Include="ViewModelSupport\PropertyChangeBase.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
