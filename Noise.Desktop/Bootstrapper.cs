@@ -69,7 +69,7 @@ namespace Noise.Desktop {
 			mNoiseManager.StartExplorerJobs();
 			mAppSupport.Initialize();
 
-			ViewModelResolver.Container = instanceContainer;
+			ViewModelResolver.TypeResolver = ( type => instanceContainer.Resolve( type));
 		}
 
 		public void StopNoise() {

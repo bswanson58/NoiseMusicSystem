@@ -24,10 +24,7 @@ namespace Noise.UI.Tests.Views {
 		[Test]
 		[Ignore( "This inly works in when running under the debugger." )]
 		public void AreBindingsValid() {
-			var container = new Mock<IUnityContainer>();
-			container.Setup( m => m.Resolve( It.Is<Type>( p => p == typeof( ArtistViewModel )), It.IsAny<string>(), 
-											 It.IsAny<ResolverOverride[]>())).Returns( CreateViewModel());
-			ViewModelResolver.Container = container.Object;
+			ViewModelResolver.TypeResolver = ( type => CreateViewModel());
 			BindingErrorListener.Listen( AssertMessage );
 
 			var runner = new CrossThreadTestRunner();

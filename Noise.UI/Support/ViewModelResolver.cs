@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Dynamic;
 using System.Linq;
-using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.UI.Support {
@@ -30,7 +29,7 @@ namespace Noise.UI.Support {
 	}
 
 	public class ViewModelResolver : IViewModelResolver {
-		public static IUnityContainer	Container { get; set; }
+		public static Func<Type,object>	TypeResolver { get; set; }	
 
 		public object Resolve( string viewModelName ) {
 			object	retValue = null;
@@ -38,7 +37,7 @@ namespace Noise.UI.Support {
 			var foundType = GetType().Assembly.GetTypes().FirstOrDefault(type => type.Name == viewModelName );
 
 			if( foundType != null ) {
-				retValue = Container != null ? Container.Resolve(foundType) : Activator.CreateInstance( foundType );
+				retValue = TypeResolver( foundType );
 			}
 
 			return( retValue );
