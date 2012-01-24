@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using AutoMapper;
@@ -6,7 +7,6 @@ using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Dto;
 using Noise.UI.Support;
@@ -25,10 +25,10 @@ namespace Noise.UI.ViewModels {
 		private UiArtist						mCurrentArtist;
 		private LinkNode						mArtistWebsite;
 		private TaskHandler<ArtistSupportInfo>	mTaskHandler; 
-		private readonly ObservableCollectionEx<LinkNode>				mSimilarArtists;
-		private readonly ObservableCollectionEx<LinkNode>				mTopAlbums;
-		private readonly ObservableCollectionEx<LinkNode>				mBandMembers;
-		private readonly ObservableCollectionEx<DbDiscographyRelease>	mDiscography;
+		private readonly BindableCollection<LinkNode>				mSimilarArtists;
+		private readonly BindableCollection<LinkNode>				mTopAlbums;
+		private readonly BindableCollection<LinkNode>				mBandMembers;
+		private readonly SortableCollection<DbDiscographyRelease>	mDiscography;
 
 		public ArtistViewModel( IEventAggregator eventAggregator,
 								IArtistProvider artistProvider, IAlbumProvider albumProvider, IDiscographyProvider discographyProvider,
@@ -45,10 +45,10 @@ namespace Noise.UI.ViewModels {
 			mEvents.GetEvent<Events.ArtistContentUpdated>().Subscribe( OnArtistInfoUpdate );
 			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 
-			mSimilarArtists = new ObservableCollectionEx<LinkNode>();
-			mTopAlbums = new ObservableCollectionEx<LinkNode>();
-			mBandMembers = new ObservableCollectionEx<LinkNode>();
-			mDiscography = new ObservableCollectionEx<DbDiscographyRelease>();
+			mSimilarArtists = new BindableCollection<LinkNode>();
+			mTopAlbums = new BindableCollection<LinkNode>();
+			mBandMembers = new BindableCollection<LinkNode>();
+			mDiscography = new SortableCollection<DbDiscographyRelease>();
 
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnArtistChanged );
@@ -93,14 +93,10 @@ namespace Noise.UI.ViewModels {
 					}
 
 					using( var discoList = mDiscographyProvider.GetDiscography( CurrentArtist.DbId )) {
-						mDiscography.SuspendNotification();
-
 						if( discoList != null ) {
 							mDiscography.AddRange( discoList.List );
 							mDiscography.Sort( release => release.Year, ListSortDirection.Descending );
 						}
-
-						mDiscography.ResumeNotification();
 					}
 				}
 
@@ -277,22 +273,22 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "SupportInfo" )]
-		public ObservableCollectionEx<LinkNode> TopAlbums {
+		public IEnumerable<LinkNode> TopAlbums {
 			get{ return( mTopAlbums ); }
 		}
 
 		[DependsUpon( "SupportInfo" )]
-		public ObservableCollectionEx<LinkNode> SimilarArtist {
+		public IEnumerable<LinkNode> SimilarArtist {
 			get { return( mSimilarArtists ); }
 		}
 
 		[DependsUpon( "SupportInfo" )]
-		public ObservableCollectionEx<LinkNode> BandMembers {
+		public IEnumerable<LinkNode> BandMembers {
 			get { return( mBandMembers ); }
 		}
 
 		[DependsUpon( "SupportInfo" )]
-		public ObservableCollectionEx<DbDiscographyRelease> Discography {
+		public IEnumerable<DbDiscographyRelease> Discography {
 			get{ return( mDiscography ); }
 		}
 
