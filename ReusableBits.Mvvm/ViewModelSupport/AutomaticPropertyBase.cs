@@ -47,7 +47,7 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 		public void Set<T>( string name, T value ) {
 			if( mValues.ContainsKey( name ) ) {
 				if(( mValues[name] == null ) &&
-				   ( value == null )) {
+				   ( Equals( value, default( T )))) {
 					return;
 				}
 
