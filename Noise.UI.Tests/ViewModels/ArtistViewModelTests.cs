@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions.EventMonitoring;
+using Microsoft.Practices.Prism.Events;
 using Moq;
 using NUnit.Framework;
 using Noise.Infrastructure;
@@ -11,86 +12,93 @@ using Noise.UI.Tests.MockingEventAggregator;
 using Noise.UI.Tests.Support;
 using Noise.UI.ViewModels;
 using ReusableBits.Mvvm.ViewModelSupport;
+using ReusableBits.TestSupport.Mocking;
 
 namespace Noise.UI.Tests.ViewModels {
+	internal class TestableArtistViewModel : Testable<ArtistViewModel> {
+		private readonly TaskScheduler			mTaskScheduler;
+		private TaskHandler<ArtistSupportInfo>	mTaskHandler;
+		public	AutoMockingEventAggregator		EventAggregator { get; private set; }
+
+		public TestableArtistViewModel() {
+			// Set tpl tasks to use the current thread only.
+			mTaskScheduler = new CurrentThreadTaskScheduler();
+
+			EventAggregator = new AutoMockingEventAggregator();
+			Inject<IEventAggregator>( EventAggregator );
+
+			Mock<ITagManager>().Setup(  m => m.GetGenre( It.IsAny<long>())).Returns( new DbGenre( 1 ) { Name = "test genre" });
+		}
+
+		public override ArtistViewModel ClassUnderTest {
+			get {
+				var		retValue = base.ClassUnderTest;
+
+				if(( retValue != null ) &&
+				   ( mTaskHandler == null )) {
+					mTaskHandler = new TaskHandler<ArtistSupportInfo>( mTaskScheduler, mTaskScheduler );
+				
+					retValue.TaskHandler = mTaskHandler;
+				}
+
+				return( retValue );
+			}
+		}
+	}
+
 	[TestFixture]
 	public class ArtistViewModelTests {
-		private AutoMockingEventAggregator		mEvents;
-		private Mock<ILog>						mDummyLog;
-		private Mock<IArtistProvider>			mArtistProvider;
-		private Mock<IAlbumProvider>			mAlbumProvider;
-		private Mock<IDiscographyProvider>		mDiscographyProvider;
-		private Mock<ITagManager>				mTagManager;
-		private Mock<IDialogService>			mDialogService;
-		private TaskScheduler					mTaskScheduler;
 
 		[SetUp]
 		public void Setup() {
-			mDummyLog = new Mock<ILog>();
-			NoiseLogger.Current = mDummyLog.Object;
+			NoiseLogger.Current = new Mock<ILog>().Object;
 
-			mEvents = new AutoMockingEventAggregator();
-			mArtistProvider = new Mock<IArtistProvider>();
-			mAlbumProvider = new Mock<IAlbumProvider>();
-			mDiscographyProvider = new Mock<IDiscographyProvider>();
-			mTagManager = new Mock<ITagManager>();
-			mDialogService = new Mock<IDialogService>();
-
-			mTagManager.Setup( m => m.GetGenre( It.IsAny<long>() ) ).Returns( new DbGenre( 1 ) { Name = "test genre" } );
-
-			// Set tpl tasks to use the current thread only.
-			mTaskScheduler = new CurrentThreadTaskScheduler();
 			// Set the ui dispatcher to run on the current thread.
 			Execute.ResetWithoutDispatcher();
 		}
 
-		private ArtistViewModel CreateSut() {
-			return ( new ArtistViewModel( mEvents, mArtistProvider.Object, mAlbumProvider.Object, mDiscographyProvider.Object,
-										 mTagManager.Object, mDialogService.Object ) { TaskHandler = new TaskHandler<ArtistSupportInfo>( mTaskScheduler, mTaskScheduler ) } );
-		}
-
 		[Test]
 		public void CanCreateArtistViewModel() {
-			var vm = CreateSut();
+			var sut = new TestableArtistViewModel().ClassUnderTest;
 
-			Assert.IsNull( vm.Artist );
+			Assert.IsNull( sut.Artist );
 		}
 
 		[Test]
 		public void ArtistFocusShouldRequestArtist() {
+			var testable = new TestableArtistViewModel();
 			var artist = new DbArtist { Name = "artist name" };
-			var sut = CreateSut();
 
-			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist ).Verifiable( "GetArtist not called." );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist ).Verifiable( "GetArtist not called." );
 
-			var artistFocusEvent = mEvents.GetEvent<Events.ArtistFocusRequested>();
+			var sut = testable.ClassUnderTest;
+			var artistFocusEvent = testable.EventAggregator.GetEvent<Events.ArtistFocusRequested>();
 			artistFocusEvent.Publish( artist );
 
-			mArtistProvider.Verify();
+			testable.Mock<IArtistProvider>().Verify();
 			Assert.IsNotNull( sut.Artist );
 		}
 
 		[Test]
 		public void ArtistFocusShouldRequestArtistSupportInfo() {
+			var testable = new TestableArtistViewModel();
 			var artist = new DbArtist { Name = "artist name" };
 
-			CreateSut();
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>())).Returns( (ArtistSupportInfo)null ).Verifiable();
 
-			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
-			mArtistProvider.Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) ).Returns( (ArtistSupportInfo)null ).Verifiable();
+			testable.CreateClassUnderTest();
 
-			var artistFocusEvent = mEvents.GetEvent<Events.ArtistFocusRequested>();
+			var artistFocusEvent = testable.EventAggregator.GetEvent<Events.ArtistFocusRequested>();
 			artistFocusEvent.Publish( artist );
 
-			mArtistProvider.Verify();
+			testable.Mock<IArtistProvider>().Verify();
 		}
 
 		[Test]
 		public void ArtistFocusShouldRequestDiscography() {
+			var testable = new TestableArtistViewModel();
 			var artist = new DbArtist { Name = "artist name" };
-
-			CreateSut();
-
 			var dbTextInfo = new DbTextInfo( 1, ContentType.Biography );
 			var biography = new TextInfo( dbTextInfo );
 			var dbArtwork = new DbArtwork( 1, ContentType.ArtistPrimaryImage );
@@ -99,28 +107,33 @@ namespace Noise.UI.Tests.ViewModels {
 			var topAlbums = new DbAssociatedItemList( 1, ContentType.TopAlbums );
 			var bandMembers = new DbAssociatedItemList( 1, ContentType.BandMembers );
 
-			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
-			mArtistProvider.Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) )
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) )
 				.Returns( new ArtistSupportInfo( biography, artistImage, similarArtists, topAlbums, bandMembers ) );
-			mDiscographyProvider.Setup( m => m.GetDiscography( It.IsAny<long>() ) ).Returns( (DataProviderList<DbDiscographyRelease>)null ).Verifiable();
+			testable.Mock<IDiscographyProvider>().Setup( m => m.GetDiscography( It.IsAny<long>() ) ).Returns( (DataProviderList<DbDiscographyRelease>)null ).Verifiable();
 
-			var artistFocusEvent = mEvents.GetEvent<Events.ArtistFocusRequested>();
+			testable.CreateClassUnderTest();
+
+			var artistFocusEvent = testable.EventAggregator.GetEvent<Events.ArtistFocusRequested>();
 			artistFocusEvent.Publish( artist );
 
 			DispatcherPump.DoEvents();
 
-			mDiscographyProvider.Verify();
+			testable.Mock<IDiscographyProvider>().Verify();
 		}
 
 		[Test]
 		public void ArtistFocusShouldTriggerPropertyChanges() {
+			var testable = new TestableArtistViewModel();
 			var artist = new DbArtist { Name = "artist name" };
-			var sut = CreateSut();
+
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
+
+			var sut = testable.ClassUnderTest;
 			sut.MonitorEvents();
 
-			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
 
-			var artistFocusEvent = mEvents.GetEvent<Events.ArtistFocusRequested>();
+			var artistFocusEvent = testable.EventAggregator.GetEvent<Events.ArtistFocusRequested>();
 			artistFocusEvent.Publish( artist );
 
 			DispatcherPump.DoEvents();
@@ -132,9 +145,8 @@ namespace Noise.UI.Tests.ViewModels {
 
 		[Test]
 		public void ArtistSupportInfoShouldTriggerPropertyChanges() {
+			var testable = new TestableArtistViewModel();
 			var artist = new DbArtist { Name = "artist name" };
-			var sut = CreateSut();
-			sut.MonitorEvents();
 
 			var dbTextInfo = new DbTextInfo( 1, ContentType.Biography );
 			var biography = new TextInfo( dbTextInfo );
@@ -144,16 +156,19 @@ namespace Noise.UI.Tests.ViewModels {
 			var topAlbums = new DbAssociatedItemList( 1, ContentType.TopAlbums );
 			var bandMembers = new DbAssociatedItemList( 1, ContentType.BandMembers );
 
-			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
-			mArtistProvider.Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) )
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) )
 				.Returns( new ArtistSupportInfo( biography, artistImage, similarArtists, topAlbums, bandMembers ) );
 
 			var databaseShell = new Mock<IDatabaseShell>();
 			var discoList = new List<DbDiscographyRelease>();
 			var discography = new DataProviderList<DbDiscographyRelease>( databaseShell.Object, discoList );
-			mDiscographyProvider.Setup( m => m.GetDiscography( It.IsAny<long>() ) ).Returns( discography );
+			testable.Mock<IDiscographyProvider>().Setup( m => m.GetDiscography( It.IsAny<long>() ) ).Returns( discography );
 
-			var artistFocusEvent = mEvents.GetEvent<Events.ArtistFocusRequested>();
+			var sut = testable.ClassUnderTest;
+			sut.MonitorEvents();
+
+			var artistFocusEvent = testable.EventAggregator.GetEvent<Events.ArtistFocusRequested>();
 			artistFocusEvent.Publish( artist );
 
 			sut.ShouldRaisePropertyChangeFor( m => m.ArtistImage, "ArtistImage" );
@@ -166,87 +181,72 @@ namespace Noise.UI.Tests.ViewModels {
 
 		[Test]
 		public void SameArtistFocusShouldNotRetrieveArtistAgain() {
+			var testable = new TestableArtistViewModel();
 			var artist = new DbArtist { Name = "artist name" };
 
-			CreateSut();
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) ).Returns( (ArtistSupportInfo)null );
 
-			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
-			mArtistProvider.Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) ).Returns( (ArtistSupportInfo)null );
+			testable.CreateClassUnderTest();
 
-			var artistFocusEvent = mEvents.GetEvent<Events.ArtistFocusRequested>();
+			var artistFocusEvent = testable.EventAggregator.GetEvent<Events.ArtistFocusRequested>();
 			artistFocusEvent.Publish( artist );
 			artistFocusEvent.Publish( artist );
 
-			mArtistProvider.Verify( m => m.GetArtistSupportInfo( It.IsAny<long>() ), Times.Once(), "GetArtistSupportInfo request" );
+			testable.Mock<IArtistProvider>().Verify( m => m.GetArtistSupportInfo( It.IsAny<long>() ), Times.Once(), "GetArtistSupportInfo request" );
 		}
 
 		[Test]
 		public void AlbumFocusShouldRequestArtist() {
+			var testable = new TestableArtistViewModel();
 			var artist = new DbArtist();
 			var album = new DbAlbum { Artist = artist.DbId };
 
-			mArtistProvider.Setup( m => m.GetArtistForAlbum( It.Is<DbAlbum>( p => p.Artist == artist.DbId ) ) ).Returns( artist ).Verifiable();
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistForAlbum( It.Is<DbAlbum>( p => p.Artist == artist.DbId ) ) ).Returns( artist ).Verifiable();
 
-			CreateSut();
+			testable.CreateClassUnderTest();
 
-			var albumFocusEvent = mEvents.GetEvent<Events.AlbumFocusRequested>();
+			var albumFocusEvent = testable.EventAggregator.GetEvent<Events.AlbumFocusRequested>();
 			albumFocusEvent.Publish( album );
 
-			mArtistProvider.Verify();
+			testable.Mock<IArtistProvider>().Verify();
 		}
 
 		[Test]
 		public void SecondAlbumFocusShouldNotRequestArtist() {
+			var testable = new TestableArtistViewModel();
 			var artist = new DbArtist();
 			var album1 = new DbAlbum { Artist = artist.DbId, Name = "first album" };
 			var album2 = new DbAlbum { Artist = artist.DbId, Name = "second album" };
 
-			mArtistProvider.Setup( m => m.GetArtistForAlbum( It.Is<DbAlbum>( p => p.Artist == artist.DbId ) ) ).Returns( artist );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistForAlbum( It.Is<DbAlbum>( p => p.Artist == artist.DbId ) ) ).Returns( artist );
 
-			CreateSut();
+			testable.CreateClassUnderTest();
 
-			var albumFocusEvent = mEvents.GetEvent<Events.AlbumFocusRequested>();
+			var albumFocusEvent = testable.EventAggregator.GetEvent<Events.AlbumFocusRequested>();
 			albumFocusEvent.Publish( album1 );
 			albumFocusEvent.Publish( album2 );
 
-			mArtistProvider.Verify( m => m.GetArtistForAlbum( It.IsAny<DbAlbum>() ), Times.Exactly( 1 ) );
+			testable.Mock<IArtistProvider>().Verify( m => m.GetArtistForAlbum( It.IsAny<DbAlbum>() ), Times.Exactly( 1 ) );
 		}
 
 		[Test]
 		public void ArtistInfoUpdateEventShouldRetrieveArtistInfo() {
+			var testable = new TestableArtistViewModel();
 			var artist = new DbArtist();
 
-			mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
-			mArtistProvider.Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) ).Returns( (ArtistSupportInfo)null );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) ).Returns( (ArtistSupportInfo)null );
 
-			CreateSut();
+			testable.CreateClassUnderTest();
 
-			var artistFocusEvent = mEvents.GetEvent<Events.ArtistFocusRequested>();
+			var artistFocusEvent = testable.EventAggregator.GetEvent<Events.ArtistFocusRequested>();
 			artistFocusEvent.Publish( artist );
 
-			var infoUpdateEvent = mEvents.GetEvent<Events.ArtistContentUpdated>();
+			var infoUpdateEvent = testable.EventAggregator.GetEvent<Events.ArtistContentUpdated>();
 			infoUpdateEvent.Publish( artist );
 
-			mArtistProvider.Verify( m => m.GetArtistSupportInfo( It.IsAny<long>() ), Times.Exactly( 2 ), "GetArtistSupportInfo request" );
+			testable.Mock<IArtistProvider>().Verify( m => m.GetArtistSupportInfo( It.IsAny<long>() ), Times.Exactly( 2 ), "GetArtistSupportInfo request" );
 		}
-		/*
-		[Test]
-		public void CanBeBoundToViewModel() {
-			var testRunner = new CrossThreadTestRunner();
-			testRunner.RunInSTA( delegate {
-				 if (System.Windows.Application.Current == null) {
-					var application = new  App();
-					application.InitializeComponent();
-				}
-
-				var view = new ArtistView();
-
-				var tester = new XamlBindingValidator();
-
-				tester.CheckWpfBindingsAreValid( view, typeof( ArtistViewModel ));
-
-			});
-		}
-		*/
 	}
 }
