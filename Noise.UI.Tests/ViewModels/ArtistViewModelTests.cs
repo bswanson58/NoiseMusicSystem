@@ -8,10 +8,10 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Support;
-using Noise.UI.Tests.MockingEventAggregator;
 using Noise.UI.ViewModels;
 using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.TestSupport.Mocking;
+using ReusableBits.TestSupport.MockingEventAggregator;
 using ReusableBits.TestSupport.Threading;
 
 namespace Noise.UI.Tests.ViewModels {

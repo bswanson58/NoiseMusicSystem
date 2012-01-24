@@ -4,7 +4,7 @@ using System.Windows.Threading;
 using Microsoft.Practices.Prism.Events;
 using Rhino.Mocks;
 
-namespace Noise.UI.Tests.MockingEventAggregator {
+namespace ReusableBits.TestSupport.MockingEventAggregator {
 	public class AutoMockingEventAggregator : IEventAggregator {
 		private readonly IDictionary<Type, EventBase> mEvents = new Dictionary<Type, EventBase>();
 

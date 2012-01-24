@@ -3,7 +3,7 @@ using System.Reflection;
 using Microsoft.Practices.Prism.Events;
 using Rhino.Mocks;
 
-namespace Noise.UI.Tests.MockingEventAggregator {
+namespace ReusableBits.TestSupport.MockingEventAggregator {
 	public static class PresentationEventTestExtensions {
 		public static void SetDispatcher<TEvent>( this TEvent me, IDispatcherFacade facade ) {
 			GetDispatcherField<TEvent>().SetValue( me, facade );

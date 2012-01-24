@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace Noise.UI.Tests.MockingEventAggregator {
+namespace ReusableBits.TestSupport.MockingEventAggregator {
 	public static class TypeExtensions {
 
 		public static FieldInfo GetPrivateField( this Type type, string fieldName ) {
