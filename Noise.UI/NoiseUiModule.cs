@@ -3,6 +3,7 @@ using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
 using Noise.UI.Support;
 using Noise.UI.ViewModels;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI {
 	public class NoiseUiModule : IModule {

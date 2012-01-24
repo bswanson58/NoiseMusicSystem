@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Threading;
 
 // From the Caliburn framework.
-namespace Noise.UI.Support {
+namespace ReusableBits.Mvvm.ViewModelSupport {
 	/// <summary>
 	///   Enables easy marshalling of code to the UI thread.
 	/// </summary>
@@ -23,7 +23,7 @@ namespace Noise.UI.Support {
                     inDesignMode = DesignerProperties.IsInDesignTool;
 #else
 					var prop = DesignerProperties.IsInDesignModeProperty;
-					mInDesignMode = (bool)DependencyPropertyDescriptor.FromProperty( prop, typeof( FrameworkElement ) ).Metadata.DefaultValue;
+					mInDesignMode = (bool)DependencyPropertyDescriptor.FromProperty( prop, typeof( FrameworkElement )).Metadata.DefaultValue;
 
 					if( !mInDesignMode.GetValueOrDefault( false ) && Process.GetCurrentProcess().ProcessName.StartsWith( "devenv", StringComparison.Ordinal ) )
 						mInDesignMode = true;
@@ -87,5 +87,4 @@ namespace Noise.UI.Support {
 			mExecutor( action );
 		}
 	}
-
 }

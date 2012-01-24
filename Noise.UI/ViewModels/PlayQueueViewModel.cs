@@ -12,6 +12,7 @@ using Noise.UI.Behaviours;
 using Noise.UI.Behaviours.EventCommandTriggers;
 using Noise.UI.Dto;
 using Noise.UI.Support;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class PlayQueueViewModel : ViewModelBase {

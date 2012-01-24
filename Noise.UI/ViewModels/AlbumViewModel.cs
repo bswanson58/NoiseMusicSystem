@@ -15,6 +15,7 @@ using Noise.UI.Behaviours;
 using Noise.UI.Dto;
 using Noise.UI.Support;
 using Observal.Extensions;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	internal class NewAlbumInfo {

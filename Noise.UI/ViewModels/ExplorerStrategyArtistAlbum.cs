@@ -6,16 +6,17 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using AutoMapper;
+using CuttingEdge.Conditions;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
-using CuttingEdge.Conditions;
 using Noise.UI.Dto;
 using Noise.UI.Support;
 using Observal.Extensions;
+using ReusableBits.Mvvm.ViewModelSupport;
 using Condition = CuttingEdge.Conditions.Condition;
 
 namespace Noise.UI.ViewModels {

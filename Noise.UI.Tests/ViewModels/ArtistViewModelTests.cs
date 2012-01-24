@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions.EventMonitoring;
 using Moq;
@@ -11,6 +10,7 @@ using Noise.UI.Support;
 using Noise.UI.Tests.MockingEventAggregator;
 using Noise.UI.Tests.Support;
 using Noise.UI.ViewModels;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Tests.ViewModels {
 	[TestFixture]

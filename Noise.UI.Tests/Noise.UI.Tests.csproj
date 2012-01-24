@@ -153,6 +153,10 @@
       <Project>{D9F288A7-A0EF-4237-A9D6-BA9CCE9C9C09}</Project>
       <Name>Noise.UI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
+      <Project>{8930138B-F96A-4A56-84CF-D660730989C9}</Project>
+      <Name>ReusableBits.Mvvm</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
