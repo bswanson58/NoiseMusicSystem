@@ -11,9 +11,10 @@ using Noise.UI.Adapters;
 using Noise.UI.Dto;
 using Noise.UI.Support;
 using Observal.Extensions;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class ArtistViewModel : ViewModelBase {
+	public class ArtistViewModel : AutomaticCommandBase {
 		private readonly IEventAggregator		mEvents;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
@@ -62,7 +63,7 @@ namespace Noise.UI.ViewModels {
 			get{ return( Artist != null ); }
 		}
 
-		private ArtistSupportInfo SupportInfo {
+		public ArtistSupportInfo SupportInfo {
 			get{ return( Get( () => SupportInfo )); }
 			set {
 				mSimilarArtists.Clear();
@@ -154,7 +155,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public TaskHandler<ArtistSupportInfo> TaskHandler {
+		internal TaskHandler<ArtistSupportInfo> TaskHandler {
 			get {
 				if( mTaskHandler == null ) {
 					mTaskHandler = new TaskHandler<ArtistSupportInfo>();
