@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
@@ -169,16 +168,8 @@ namespace Noise.UI.ViewModels {
 
 		private void RetrieveSupportInfo( UiArtist forArtist ) {
 			TaskHandler.StartTask( () => mArtistProvider.GetArtistSupportInfo( forArtist.DbId ), 
-									result => { if( result != null ) SupportInfo = result; },
-									OnTaskFailure );
-		}
-
-		private void OnTaskFailure( Task task ) {
-			if( task.Exception != null ) {
-				foreach ( var ex in task.Exception.Flatten().InnerExceptions ) {
-					NoiseLogger.Current.LogException( "ArtistViewModel:RetrieveSupportInfo", ex );
-				}
-			}
+									result => SupportInfo = result,
+									exception => NoiseLogger.Current.LogException( "ArtistViewModel:RetrieveSupportInfo", exception ));
 		}
 
 		private void OnSimilarArtistClicked( long artistId ) {
