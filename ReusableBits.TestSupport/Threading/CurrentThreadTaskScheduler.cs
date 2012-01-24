@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Noise.UI.Tests.Support {
+namespace ReusableBits.TestSupport.Threading {
 	//-------------------------------------------------------------------------- 
 	//  
 	//  Copyright (c) Microsoft Corporation.  All rights reserved.  

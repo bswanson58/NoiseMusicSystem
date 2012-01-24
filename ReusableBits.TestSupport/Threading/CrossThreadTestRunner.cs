@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Security.Permissions;
 using System.Threading;
 
-namespace Noise.UI.Tests.Support {
+namespace ReusableBits.TestSupport.Threading {
 	public class CrossThreadTestRunner {
 		private Exception mLastException;
 
@@ -51,5 +51,4 @@ namespace Noise.UI.Tests.Support {
 			throw exception;
 		}
 	}
-
 }

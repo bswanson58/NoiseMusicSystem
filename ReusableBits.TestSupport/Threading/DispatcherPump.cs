@@ -1,7 +1,7 @@
 ﻿using System.Security.Permissions;
 using System.Windows.Threading;
 
-namespace Noise.UI.Tests.Support {
+namespace ReusableBits.TestSupport.Threading {
 	public class DispatcherPump {
 		[SecurityPermission( SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode )]
 		public static void DoEvents() {

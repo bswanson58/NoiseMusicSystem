@@ -9,10 +9,10 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Support;
 using Noise.UI.Tests.MockingEventAggregator;
-using Noise.UI.Tests.Support;
 using Noise.UI.ViewModels;
 using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.TestSupport.Mocking;
+using ReusableBits.TestSupport.Threading;
 
 namespace Noise.UI.Tests.ViewModels {
 	internal class TestableArtistViewModel : Testable<ArtistViewModel> {

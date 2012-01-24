@@ -1,13 +1,10 @@
-﻿using System;
-using Microsoft.Practices.Unity;
-using Moq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Noise.Desktop;
 using Noise.UI.Support;
 using Noise.UI.Tests.MockingEventAggregator;
-using Noise.UI.Tests.Support;
 using Noise.UI.ViewModels;
 using Noise.UI.Views;
+using ReusableBits.TestSupport.Threading;
 
 namespace Noise.UI.Tests.Views {
 	[TestFixture]
