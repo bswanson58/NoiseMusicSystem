@@ -98,11 +98,14 @@ namespace Noise.Infrastructure.Support {
 
 		public void Set<T>( string name, T value ) {
 			if( mValues.ContainsKey( name ) ) {
-				if( mValues[name] == null && value == null )
+				if(( mValues[name] == null ) &&
+				   ( Equals( value, default( T )))) {
 					return;
+				}
 
-				if( mValues[name] != null && mValues[name].Equals( value ) )
+				if( mValues[name] != null && mValues[name].Equals( value )) {
 					return;
+				}
 
 				mValues[name] = value;
 			}
@@ -220,7 +223,8 @@ namespace Noise.Infrastructure.Support {
 #endif
 
 		private static IDictionary<string, List<string>> MapDependencies<T>( Func<IEnumerable<MemberInfo>> getInfo ) where T : DependsUponAttribute {
-			var dependencyMap = getInfo().ToDictionary(
+			var uniqueList = getInfo().GroupBy( p => p.Name ).Select( g => g.First());
+			var dependencyMap = uniqueList.ToDictionary(
 						p => p.Name,
 						p => p.GetCustomAttributes( typeof( T ), true )
 							  .Cast<T>()
