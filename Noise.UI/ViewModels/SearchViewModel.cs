@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Caliburn.Micro;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -22,14 +23,16 @@ namespace Noise.UI.ViewModels {
 	public class SearchViewModel : DialogModelBase {
 		private const int			cMaxSearchResults = 100;
 
-		private readonly IEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly ISearchProvider	mSearchProvider;
 		private SearchType					mCurrentSearchType;
 		private readonly List<SearchType>						mSearchTypes;
 		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
 
-		public SearchViewModel( IEventAggregator eventAggregator, ISearchProvider searchProvider ) {
-			mEventAggregator = eventAggregator;
+		public SearchViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator, ISearchProvider searchProvider ) {
+			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mSearchProvider = searchProvider;
 
 			mSearchResults = new ObservableCollectionEx<SearchViewNode>();
@@ -82,10 +85,10 @@ namespace Noise.UI.ViewModels {
 
 		private void OnNodeSelected( SearchViewNode node ) {
 			if( node.Artist != null ) {
-				mEventAggregator.GetEvent<Events.ArtistFocusRequested>().Publish( node.Artist );
+				mEventAggregator.Publish( new Events.ArtistFocusRequested( node.Artist.DbId ));
 			}
 			if( node.Album != null ) {
-				mEventAggregator.GetEvent<Events.AlbumFocusRequested>().Publish( node.Album );
+				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( node.Album );
 			}
 		}
 

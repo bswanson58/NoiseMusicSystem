@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using AutoMapper;
+using Caliburn.Micro;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -14,8 +15,10 @@ using Observal.Extensions;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class ArtistViewModel : AutomaticCommandBase {
+	public class ArtistViewModel : AutomaticCommandBase,
+								   IHandle<Events.ArtistFocusRequested> {
 		private readonly IEventAggregator		mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly IDiscographyProvider	mDiscographyProvider;
@@ -30,17 +33,18 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<LinkNode>				mBandMembers;
 		private readonly SortableCollection<DbDiscographyRelease>	mDiscography;
 
-		public ArtistViewModel( IEventAggregator eventAggregator,
+		public ArtistViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
 								IArtistProvider artistProvider, IAlbumProvider albumProvider, IDiscographyProvider discographyProvider,
 								ITagManager tagManager, IDialogService dialogService ) {
 			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mDiscographyProvider = discographyProvider;
 			mTagManager = tagManager;
 			mDialogService = dialogService;
 
-			mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
+			mEventAggregator.Subscribe( this );
 			mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
 			mEvents.GetEvent<Events.ArtistContentUpdated>().Subscribe( OnArtistInfoUpdate );
 			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
@@ -113,6 +117,14 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
+		private void SetCurrentArtist( long artistId ) {
+			var artist = mArtistProvider.GetArtist( artistId );
+
+			if( artist != null ) {
+				CurrentArtist = TransformArtist( artist );
+			}
+		}
+
 		private UiArtist CurrentArtist {
 			get{ return( mCurrentArtist ); }
 			set {
@@ -170,11 +182,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnSimilarArtistClicked( long artistId ) {
-			var artist = mArtistProvider.GetArtist( artistId  );
-
-			if( artist != null ) {
-				mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( artist );
-			}
+			mEventAggregator.Publish( new Events.ArtistFocusRequested( artistId ));
 		}
 
 		private void OnTopAlbumClicked( long albumId ) {
@@ -185,16 +193,14 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnArtistFocus( DbArtist artist ) {
-			if( artist != null ) {
-				if( CurrentArtist != null ) {
-					if( artist.DbId != CurrentArtist.DbId ) {
-						CurrentArtist = TransformArtist( artist );
-					}
+		public void Handle( Events.ArtistFocusRequested request ) {
+			if( CurrentArtist != null ) {
+				if( request.ArtistId != CurrentArtist.DbId ) {
+					SetCurrentArtist( request.ArtistId );
 				}
-				else {
-					CurrentArtist = TransformArtist( artist );
-				}
+			}
+			else {
+				SetCurrentArtist( request.ArtistId );
 			}
 		}
 

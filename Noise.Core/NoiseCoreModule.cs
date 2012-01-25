@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Caliburn.Micro;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
 using Noise.Core.BackgroundTasks;
@@ -26,6 +27,8 @@ namespace Noise.Core {
 		}
 
 		public void Initialize() {
+			mContainer.RegisterInstance<ICaliburnEventAggregator>( new EventAggregator(), new ContainerControlledLifetimeManager());
+
 			mContainer.RegisterType<IAudioPlayer, AudioPlayer>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ICloudSyncManager, CloudSyncManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IDataExchangeManager, DataExchangeManager>( new HierarchicalLifetimeManager());

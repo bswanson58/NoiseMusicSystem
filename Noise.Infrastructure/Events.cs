@@ -4,7 +4,14 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure {
 	public class Events {
-		public class ArtistFocusRequested : CompositePresentationEvent<DbArtist> { }
+		public class ArtistFocusRequested {
+			public long	ArtistId { get; private set; }
+
+			public ArtistFocusRequested( long artistId ) {
+				ArtistId = artistId;
+			}
+		}
+//		public class ArtistFocusRequested : CompositePresentationEvent<DbArtist> { }
 		public class AlbumFocusRequested : CompositePresentationEvent<DbAlbum> { }
 
 		public class ArtistContentRequested : CompositePresentationEvent<DbArtist> { }

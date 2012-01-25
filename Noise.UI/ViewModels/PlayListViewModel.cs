@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Caliburn.Micro;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -13,6 +14,7 @@ using Observal.Extensions;
 namespace Noise.UI.ViewModels {
 	public class PlayListViewModel : ViewModelBase {
 		private readonly IEventAggregator	mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
@@ -22,8 +24,10 @@ namespace Noise.UI.ViewModels {
 		private readonly Observal.Observer	mChangeObserver;
 		private readonly ObservableCollectionEx<PlayListNode>	mTreeItems;
 
-		public PlayListViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayListProvider playListProvider ) {
+		public PlayListViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+								  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayListProvider playListProvider ) {
 			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -113,7 +117,7 @@ namespace Noise.UI.ViewModels {
 		private void OnNodeSelected( PlayListNode node ) {
 			if( node.IsSelected ) {
 				if( node.Artist != null ) {
-					mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( node.Artist );
+					mEventAggregator.Publish( new Events.ArtistFocusRequested( node.Artist.DbId ));
 				}
 				if( node.Album != null ) {
 					mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( node.Album );

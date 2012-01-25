@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using AutoMapper;
+using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
@@ -27,7 +28,8 @@ namespace Noise.UI.ViewModels {
 		private const string					cSearchAlbums = "Albums";
 		private const string					cSearchIgnoreCase = "Ignore Case";
 
-		private readonly IEventAggregator		mEventAggregator;
+		private readonly IEventAggregator		mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITagManager			mTagManager;
@@ -46,9 +48,10 @@ namespace Noise.UI.ViewModels {
 		private readonly Subject<ViewSortStrategy>		mAlbumSortSubject;
 		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
 
-		public ExplorerStrategyArtistAlbum( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider,
-											ITagManager tagManager, IDialogService dialogService ) {
-			mEventAggregator = eventAggregator;
+		public ExplorerStrategyArtistAlbum( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+											IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager, IDialogService dialogService ) {
+			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTagManager = tagManager;
@@ -95,7 +98,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Activate() {
-			mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
+			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 
 			mViewModel.TreeViewItemTemplate = Application.Current.TryFindResource( "ArtistAlbumTemplate" ) as HierarchicalDataTemplate;
 
@@ -105,7 +108,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Deactivate() {
-			mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Unsubscribe( OnDatabaseItemChanged );
+			mEvents.GetEvent<Events.DatabaseItemChanged>().Unsubscribe( OnDatabaseItemChanged );
 		}
 
 		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
@@ -268,11 +271,7 @@ namespace Noise.UI.ViewModels {
 
 		private void OnArtistSelect( UiArtistTreeNode artistNode ) {
 			if( artistNode.IsSelected ) {
-				var artist = mArtistProvider.GetArtist( artistNode.Artist.DbId );
-
-				if( artist != null ) {
-					mEventAggregator.GetEvent<Events.ArtistFocusRequested>().Publish( artist );
-				}
+				mEventAggregator.Publish( new Events.ArtistFocusRequested( artistNode.Artist.DbId ));
 			}
 		}
 
@@ -281,7 +280,7 @@ namespace Noise.UI.ViewModels {
 				var album = mAlbumProvider.GetAlbum( albumNode.Album.DbId );
 
 				if( album != null ) {
-					mEventAggregator.GetEvent<Events.AlbumFocusRequested>().Publish( album );
+					mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( album );
 				}
 			}
 		}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using AutoMapper;
+using Caliburn.Micro;
 using Microsoft.Practices.Prism;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
@@ -13,8 +14,10 @@ using Noise.UI.Dto;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class ArtistTracksViewModel : ViewModelBase, IActiveAware {
+	public class ArtistTracksViewModel : ViewModelBase, IActiveAware,
+										 IHandle<Events.ArtistFocusRequested> {
 		private readonly IEventAggregator	mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
@@ -26,14 +29,16 @@ namespace Noise.UI.ViewModels {
 		public	event EventHandler			IsActiveChanged;
 		public	ObservableCollectionEx<UiArtistTrackNode>	TrackList { get; private set; }
 
-		public ArtistTracksViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ITagManager tagManager ) {
+		public ArtistTracksViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+									  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ITagManager tagManager ) {
 			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mTagManager = tagManager;
 
-			mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
+			mEventAggregator.Subscribe( this );
 			mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
 
 			TrackList = new ObservableCollectionEx<UiArtistTrackNode>();
@@ -64,26 +69,33 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => TracksValid, value ); }
 		}
 
-		private void OnArtistFocus( DbArtist artist ) {
-			if(( mCurrentArtist != null ) &&
-			   ( artist != null )) {
-				if( mCurrentArtist.DbId != artist.DbId ) {
-					UpdateTrackList( artist );
+		public void Handle( Events.ArtistFocusRequested request ) {
+			if( mCurrentArtist != null ) {
+				if( mCurrentArtist.DbId != request.ArtistId ) {
+					UpdateTrackList( request.ArtistId );
 				}
 			}
 			else {
-				UpdateTrackList( artist );
+				UpdateTrackList( request.ArtistId );
 			}
 		}
 
 		private void OnAlbumFocus( DbAlbum album ) {
 			if( mCurrentArtist != null ) {
 				if( mCurrentArtist.DbId != album.Artist ) {
-					UpdateTrackList( mArtistProvider.GetArtist( album.Artist ));
+					UpdateTrackList( album.Artist );
 				}
 			}
 			else {
-				UpdateTrackList( mArtistProvider.GetArtist( album.Artist ));
+				UpdateTrackList( album.Artist );
+			}
+		}
+
+		private void UpdateTrackList( long artistId ) {
+			var artist = mArtistProvider.GetArtist( artistId );
+
+			if( artist != null ) {
+				UpdateTrackList( artist );
 			}
 		}
 

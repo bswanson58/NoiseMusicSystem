@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using AutoMapper;
+using Caliburn.Micro;
 using Microsoft.Practices.Prism;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
@@ -35,8 +36,10 @@ namespace Noise.UI.ViewModels {
 		}
 	}
 
-	internal class AlbumViewModel : ViewModelBase, IActiveAware {
+	internal class AlbumViewModel : ViewModelBase, IActiveAware,
+									IHandle<Events.ArtistFocusRequested> {
 		private readonly IEventAggregator		mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
 		private readonly IArtworkProvider		mArtworkProvider;
@@ -60,10 +63,11 @@ namespace Noise.UI.ViewModels {
 		public	TimeSpan						AlbumPlayTime { get; private set; }
 		public	event EventHandler				IsActiveChanged;
 
-		public AlbumViewModel( IEventAggregator eventAggregator, 
+		public AlbumViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator, 
 							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider, ITagProvider tagProvider, IStorageFileProvider storageFileProvider,
 							   ITagManager tagManager, IDialogService dialogService ) {
 			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mArtworkProvider = artworkProvider;
@@ -72,7 +76,7 @@ namespace Noise.UI.ViewModels {
 			mTagManager = tagManager;
 			mDialogService = dialogService;
 
-			mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistFocus );
+			mEventAggregator.Subscribe( this );
 			mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
 			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 
@@ -187,9 +191,9 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnArtistFocus( DbArtist artist ) {
+		public void Handle( Events.ArtistFocusRequested request ) {
 			if( mCurrentAlbum != null ) {
-				if( mCurrentAlbum.Artist != artist.DbId ) {
+				if( mCurrentAlbum.Artist != request.ArtistId ) {
 					SetCurrentAlbum( new NewAlbumInfo());
 				}
 			}

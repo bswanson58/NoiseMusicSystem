@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
+using Caliburn.Micro;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -15,12 +16,14 @@ using Noise.UI.Dto;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
-	public class LibraryExplorerViewModel : ViewModelBase {
+	public class LibraryExplorerViewModel : ViewModelBase,
+											IHandle<Events.ArtistFocusRequested> {
 		private const string					cVisualStateNormal		= "Normal";
 		private const string					cVisualStateIndex		= "DisplayIndex";
 		private const string					cVisualStateStrategy	= "DisplayStrategy";
 
 		private readonly IEventAggregator		mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IDialogService			mDialogService;
 		private IExplorerViewStrategy			mViewStrategy;
 		private readonly List<string>			mSearchOptions;
@@ -35,8 +38,10 @@ namespace Noise.UI.ViewModels {
 		public	CollectionViewSource				TreeViewSource { get; private set; }
 		public	IEnumerable<IExplorerViewStrategy>	ViewStrategies { get; private set; }
 
-		public LibraryExplorerViewModel( IEventAggregator eventAggregator, IEnumerable<IExplorerViewStrategy> viewStrategies, IDialogService dialogService ) {
+		public LibraryExplorerViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+										 IEnumerable<IExplorerViewStrategy> viewStrategies, IDialogService dialogService ) {
 			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mDialogService = dialogService;
 			ViewStrategies = viewStrategies;
 
@@ -63,7 +68,8 @@ namespace Noise.UI.ViewModels {
 				}
 			}
 
-			mEvents.GetEvent<Events.ArtistFocusRequested>().Subscribe( OnArtistRequested );
+			mEventAggregator.Subscribe( this );
+
 			mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumRequested );
 			mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnPlaybackStarted );
 
@@ -92,7 +98,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnArtistRequested( DbArtist artist ) {
+		public void Handle( Events.ArtistFocusRequested request ) {
 			mLastExplorerRequest = DateTime.Now;
 		}
 
@@ -105,7 +111,7 @@ namespace Noise.UI.ViewModels {
 				var savedTime = mLastExplorerRequest;
 
 				if( track.Artist != null ) {
-					mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( track.Artist );
+					mEventAggregator.Publish( new Events.ArtistFocusRequested( track.Artist.DbId ));
 				}
 				if( track.Album != null ) {
 					mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( track.Album );

@@ -72,8 +72,7 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist ).Verifiable( "GetArtist not called." );
 
 			var sut = testable.ClassUnderTest;
-			var artistFocusEvent = testable.EventAggregator.GetEvent<Events.ArtistFocusRequested>();
-			artistFocusEvent.Publish( artist );
+			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
 
 			testable.Mock<IArtistProvider>().Verify();
 			Assert.IsNotNull( sut.Artist );
@@ -87,10 +86,9 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>())).Returns( (ArtistSupportInfo)null ).Verifiable();
 
-			testable.CreateClassUnderTest();
+			var sut = testable.ClassUnderTest;
 
-			var artistFocusEvent = testable.EventAggregator.GetEvent<Events.ArtistFocusRequested>();
-			artistFocusEvent.Publish( artist );
+			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
 
 			testable.Mock<IArtistProvider>().Verify();
 		}
@@ -112,10 +110,9 @@ namespace Noise.UI.Tests.ViewModels {
 				.Returns( new ArtistSupportInfo( biography, artistImage, similarArtists, topAlbums, bandMembers ) );
 			testable.Mock<IDiscographyProvider>().Setup( m => m.GetDiscography( It.IsAny<long>() ) ).Returns( (DataProviderList<DbDiscographyRelease>)null ).Verifiable();
 
-			testable.CreateClassUnderTest();
+			var sut = testable.ClassUnderTest;
 
-			var artistFocusEvent = testable.EventAggregator.GetEvent<Events.ArtistFocusRequested>();
-			artistFocusEvent.Publish( artist );
+			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
 
 			DispatcherPump.DoEvents();
 
@@ -132,9 +129,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 			sut.MonitorEvents();
 
-
-			var artistFocusEvent = testable.EventAggregator.GetEvent<Events.ArtistFocusRequested>();
-			artistFocusEvent.Publish( artist );
+			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
 
 			DispatcherPump.DoEvents();
 
@@ -168,8 +163,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 			sut.MonitorEvents();
 
-			var artistFocusEvent = testable.EventAggregator.GetEvent<Events.ArtistFocusRequested>();
-			artistFocusEvent.Publish( artist );
+			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
 
 			sut.ShouldRaisePropertyChangeFor( m => m.ArtistImage, "ArtistImage" );
 			sut.ShouldRaisePropertyChangeFor( m => m.ArtistBio, "ArtistBio" );
@@ -187,11 +181,10 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) ).Returns( (ArtistSupportInfo)null );
 
-			testable.CreateClassUnderTest();
+			var sut = testable.ClassUnderTest;
 
-			var artistFocusEvent = testable.EventAggregator.GetEvent<Events.ArtistFocusRequested>();
-			artistFocusEvent.Publish( artist );
-			artistFocusEvent.Publish( artist );
+			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
+			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
 
 			testable.Mock<IArtistProvider>().Verify( m => m.GetArtistSupportInfo( It.IsAny<long>() ), Times.Once(), "GetArtistSupportInfo request" );
 		}
@@ -238,10 +231,9 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) ).Returns( (ArtistSupportInfo)null );
 
-			testable.CreateClassUnderTest();
+			var sut = testable.ClassUnderTest;
 
-			var artistFocusEvent = testable.EventAggregator.GetEvent<Events.ArtistFocusRequested>();
-			artistFocusEvent.Publish( artist );
+			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
 
 			var infoUpdateEvent = testable.EventAggregator.GetEvent<Events.ArtistContentUpdated>();
 			infoUpdateEvent.Publish( artist );

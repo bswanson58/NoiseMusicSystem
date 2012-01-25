@@ -5,6 +5,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using AutoMapper;
+using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
@@ -26,7 +27,8 @@ namespace Noise.UI.ViewModels {
 		private const string					cSearchAlbums = "Albums";
 		private const string					cSearchIgnoreCase = "Ignore Case";
 
-		private readonly IEventAggregator		mEventAggregator;
+		private readonly IEventAggregator		mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITagManager			mTagManager;
@@ -47,9 +49,10 @@ namespace Noise.UI.ViewModels {
 		private readonly Subject<ViewSortStrategy>		mAlbumSortSubject;
 		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
 
-		public ExplorerStrategyDecade( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider,
-									   ITagManager tagManager, IDialogService dialogService ) {
-			mEventAggregator = eventAggregator;
+		public ExplorerStrategyDecade( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+									   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager, IDialogService dialogService ) {
+			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTagManager = tagManager;
@@ -98,7 +101,7 @@ namespace Noise.UI.ViewModels {
 		public void Activate() {
 			mViewModel.TreeViewItemTemplate = Application.Current.TryFindResource( "DecadeExplorerTemplate" ) as HierarchicalDataTemplate;
 
-			mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
+			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 
 			mViewModel.SearchOptions.Add( cSearchOptionDefault + cSearchArtists );
 			mViewModel.SearchOptions.Add( cSearchAlbums );
@@ -106,7 +109,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Deactivate() {
-			mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Unsubscribe( OnDatabaseItemChanged );
+			mEvents.GetEvent<Events.DatabaseItemChanged>().Unsubscribe( OnDatabaseItemChanged );
 		}
 
 		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
@@ -198,7 +201,7 @@ namespace Noise.UI.ViewModels {
 
 		private void WebsiteRequest( UiDecadeTreeNode decadeNode ) {
 			if(!string.IsNullOrWhiteSpace( decadeNode.Tag.Website )) {
-				mEventAggregator.GetEvent<Events.WebsiteRequest>().Publish( decadeNode.Tag.Website );
+				mEvents.GetEvent<Events.WebsiteRequest>().Publish( decadeNode.Tag.Website );
 			}
 		}
 
@@ -293,18 +296,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnArtistSelect( UiArtistTreeNode artistNode ) {
-			var artist = mArtistProvider.GetArtist( artistNode.Artist.DbId );
-
-			if( artist != null ) {
-				mEventAggregator.GetEvent<Events.ArtistFocusRequested>().Publish( artist );
-			}
+			mEventAggregator.Publish( new Events.ArtistFocusRequested( artistNode.Artist.DbId ));
 		}
 
 		private void OnAlbumSelect( UiAlbumTreeNode albumNode ) {
 			var album = mAlbumProvider.GetAlbum( albumNode.Album.DbId );
 
 			if( album != null ) {
-				mEventAggregator.GetEvent<Events.AlbumFocusRequested>().Publish( album );
+				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( album );
 			}
 		}
 

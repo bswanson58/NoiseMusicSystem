@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
@@ -12,6 +13,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace Noise.UI.ViewModels {
 	public class FavoritesViewModel : ViewModelBase {
 		private readonly IEventAggregator		mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
@@ -19,9 +21,11 @@ namespace Noise.UI.ViewModels {
 		private readonly IDialogService			mDialogService;
 		private readonly ObservableCollectionEx<FavoriteViewNode>	mFavoritesList;
 
-		public FavoritesViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
+		public FavoritesViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+								   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 								   IDataExchangeManager dataExchangeManager, IDialogService dialogService ) {
 			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -88,7 +92,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void SelectArtist( FavoriteViewNode node ) {
-			mEvents.GetEvent<Events.ArtistFocusRequested>().Publish( node.Artist );
+			mEventAggregator.Publish( new Events.ArtistFocusRequested( node.Artist.DbId ));
 		}
 
 		private void SelectAlbum( FavoriteViewNode node ) {
