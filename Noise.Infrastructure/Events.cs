@@ -25,8 +25,21 @@ namespace Noise.Infrastructure {
 				this( album.Artist, album.DbId ) { }
 		}
 
-		public class ArtistContentRequested : CompositePresentationEvent<DbArtist> { }
-		public class ArtistContentUpdated : CompositePresentationEvent<DbArtist> { }
+		public class ArtistContentRequest {
+			public long	ArtistId { get; private set; }
+
+			public ArtistContentRequest( long artistId ) {
+				ArtistId = artistId;
+			}
+		}
+
+		public class ArtistContentUpdated {
+			public long	ArtistId { get; private set; }
+
+			public ArtistContentUpdated( long artistId ) {
+				ArtistId = artistId;
+			}
+		}
 
 		public class PlayQueueChanged : CompositePresentationEvent<IPlayQueue> { }
 		public class PlayHistoryChanged : CompositePresentationEvent<IPlayHistory> { }

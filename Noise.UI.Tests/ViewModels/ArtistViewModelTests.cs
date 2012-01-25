@@ -233,9 +233,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 
 			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
-
-			var infoUpdateEvent = testable.EventAggregator.GetEvent<Events.ArtistContentUpdated>();
-			infoUpdateEvent.Publish( artist );
+			sut.Handle( new Events.ArtistContentUpdated( artist.DbId ));
 
 			testable.Mock<IArtistProvider>().Verify( m => m.GetArtistSupportInfo( It.IsAny<long>()), Times.Exactly( 2 ), "GetArtistSupportInfo request" );
 		}

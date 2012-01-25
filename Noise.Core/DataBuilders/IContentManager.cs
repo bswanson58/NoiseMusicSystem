@@ -1,6 +1,5 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	internal interface IContentProvider {

@@ -16,7 +16,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistViewModel : AutomaticCommandBase,
-								   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested> {
+								   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.ArtistContentUpdated> {
 		private readonly IEventAggregator		mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
@@ -45,7 +45,6 @@ namespace Noise.UI.ViewModels {
 			mDialogService = dialogService;
 
 			mEventAggregator.Subscribe( this );
-			mEvents.GetEvent<Events.ArtistContentUpdated>().Subscribe( OnArtistInfoUpdate );
 			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 
 			mSimilarArtists = new BindableCollection<LinkNode>();
@@ -137,7 +136,7 @@ namespace Noise.UI.ViewModels {
 				}
 
 				if( value != null ) {
-					mEvents.GetEvent<Events.ArtistContentRequested>().Publish( mArtistProvider.GetArtist( value.DbId ));
+					mEventAggregator.Publish( new Events.ArtistContentRequest( value.DbId ));
 
 					mCurrentArtist = value;
 					mChangeObserver.Add( mCurrentArtist );
@@ -154,10 +153,9 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnArtistInfoUpdate( DbArtist artist ) {
-			if(( artist != null ) &&
-			   ( CurrentArtist != null ) &&
-			   ( CurrentArtist.DbId == artist.DbId )) {
+		public void Handle( Events.ArtistContentUpdated eventArgs ) {
+			if(( CurrentArtist != null ) &&
+			   ( CurrentArtist.DbId == eventArgs.ArtistId )) {
 				RetrieveSupportInfo( CurrentArtist );
 			}
 		}

@@ -2,72 +2,78 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using CuttingEdge.Conditions;
-using Microsoft.Practices.Prism.Events;
+using Caliburn.Micro;
 using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
-	internal class ContentManager : IContentManager, IRequireConstruction {
-		private readonly IEventAggregator			mEvents;
+	internal class ContentManager : IContentManager, IRequireConstruction, IHandle<Events.ArtistContentRequest> {
+		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IArtistProvider			mArtistProvider;
 		private readonly IExpiringContentProvider	mExpiringContentProvider;
 		private readonly List<long>					mCurrentRequests;
 
 		private readonly IEnumerable<IContentProvider>	mContentProviders;
 
-		public ContentManager( IEventAggregator eventAggregator, IExpiringContentProvider expContentProvider, IEnumerable<IContentProvider> contentProviders ) {
-			mEvents = eventAggregator;
+		public ContentManager( ICaliburnEventAggregator caliburnEventAggregator,
+							   IArtistProvider artistProvider, IExpiringContentProvider expContentProvider, IEnumerable<IContentProvider> contentProviders ) {
+			mEventAggregator = caliburnEventAggregator;
+			mArtistProvider = artistProvider;
 			mExpiringContentProvider = expContentProvider;
 			mContentProviders = contentProviders;
 
 			mCurrentRequests = new List<long>();
-			mEvents.GetEvent<Events.ArtistContentRequested>().Subscribe( OnArtistContentRequested );
+
+			mEventAggregator.Subscribe( this );
 		}
 
-		private void OnArtistContentRequested( DbArtist forArtist ) {
+		public void Handle( Events.ArtistContentRequest request ) {
 			lock( mCurrentRequests ) {
-				if(!mCurrentRequests.Contains( forArtist.DbId )) {
-					mCurrentRequests.Add( forArtist.DbId );
+				if(!mCurrentRequests.Contains( request.ArtistId )) {
+					mCurrentRequests.Add( request.ArtistId );
 
-					ThreadPool.QueueUserWorkItem( f => RequestArtistContent( forArtist ));
+					ThreadPool.QueueUserWorkItem( f => RequestArtistContent( request.ArtistId ));
 				}
 			}
 		}
 
-		private void RequestArtistContent( DbArtist forArtist ) {
-			Condition.Requires( forArtist ).IsNotNull();
-
-			var artistId = forArtist.DbId;
-			var artistName = forArtist.Name;
+		private void RequestArtistContent( long artistId ) {
+			var artistName = "";
 
 			try {
-				var selectedProviders = from IContentProvider provider in mContentProviders where provider.CanUpdateArtist select provider;
-				var contentUpdated = false;
+				var artist = mArtistProvider.GetArtist( artistId );
 
-				foreach( var provider in selectedProviders ) {
-					using( var contentList = mExpiringContentProvider.GetContentList( forArtist.DbId, provider.ContentType )) {
+				if( artist != null ) {
+					var selectedProviders = from IContentProvider provider in mContentProviders where provider.CanUpdateArtist select provider;
+					var contentUpdated = false;
 
-						if( contentList.List.Count() > 0 ) {
-							var localProvider = provider;
+					artistName = artist.Name;
 
-							if( contentList.List.Any( content => IsContentExpired( content, localProvider ))) {
-								localProvider.UpdateContent( forArtist );
+					foreach( var provider in selectedProviders ) {
+						using( var contentList = mExpiringContentProvider.GetContentList( artistId, provider.ContentType )) {
+
+							if( contentList.List.Any()) {
+								var localProvider = provider;
+
+								if( contentList.List.Any( content => IsContentExpired( content, localProvider ))) {
+									localProvider.UpdateContent( artist );
+
+									contentUpdated = true;
+								}
+							}
+							else {
+								provider.UpdateContent( artist );
 
 								contentUpdated = true;
 							}
 						}
-						else {
-							provider.UpdateContent( forArtist );
-
-							contentUpdated = true;
-						}
 					}
-				}
 
-				if( contentUpdated ) {
-					mEvents.GetEvent<Events.ArtistContentUpdated>().Publish( forArtist );
+					if( contentUpdated ) {
+						mEventAggregator.Publish( new Events.ArtistContentUpdated( artist.DbId ));
+					}
 				}
 			}
 			catch( Exception ex ) {
