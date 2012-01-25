@@ -17,7 +17,7 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class LibraryExplorerViewModel : ViewModelBase,
-											IHandle<Events.ArtistFocusRequested> {
+											IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested> {
 		private const string					cVisualStateNormal		= "Normal";
 		private const string					cVisualStateIndex		= "DisplayIndex";
 		private const string					cVisualStateStrategy	= "DisplayStrategy";
@@ -70,15 +70,15 @@ namespace Noise.UI.ViewModels {
 
 			mEventAggregator.Subscribe( this );
 
-			mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumRequested );
 			mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnPlaybackStarted );
 
-			foreach( var strategy in ViewStrategies ) {
+			var strategyList = ViewStrategies.ToList();
+			foreach( var strategy in strategyList ) {
 				strategy.Initialize( this );
 				strategy.UseSortPrefixes( mEnableSortPrefixes, mSortPrefixes );
 			}
 
-			SelectedStrategy = ( from strategy in ViewStrategies where strategy.IsDefaultStrategy select strategy ).FirstOrDefault();
+			SelectedStrategy = ( from strategy in strategyList where strategy.IsDefaultStrategy select strategy ).FirstOrDefault();
 		}
 
 		private void ActivateStrategy( IExplorerViewStrategy strategy ) {
@@ -102,7 +102,7 @@ namespace Noise.UI.ViewModels {
 			mLastExplorerRequest = DateTime.Now;
 		}
 
-		private void OnAlbumRequested( DbAlbum album ) {
+		public void Handle( Events.AlbumFocusRequested request ) {
 			mLastExplorerRequest = DateTime.Now;
 		}
 
@@ -114,7 +114,7 @@ namespace Noise.UI.ViewModels {
 					mEventAggregator.Publish( new Events.ArtistFocusRequested( track.Artist.DbId ));
 				}
 				if( track.Album != null ) {
-					mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( track.Album );
+					mEventAggregator.Publish( new Events.AlbumFocusRequested( track.Album ));
 				}
 
 				mLastExplorerRequest = savedTime;

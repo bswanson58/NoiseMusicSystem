@@ -120,7 +120,7 @@ namespace Noise.UI.ViewModels {
 					mEventAggregator.Publish( new Events.ArtistFocusRequested( node.Artist.DbId ));
 				}
 				if( node.Album != null ) {
-					mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( node.Album );
+					mEventAggregator.Publish( new Events.AlbumFocusRequested( node.Album ));
 				}
 
 				mSelectedNode = node;

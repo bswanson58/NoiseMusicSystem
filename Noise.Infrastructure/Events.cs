@@ -11,8 +11,19 @@ namespace Noise.Infrastructure {
 				ArtistId = artistId;
 			}
 		}
-//		public class ArtistFocusRequested : CompositePresentationEvent<DbArtist> { }
-		public class AlbumFocusRequested : CompositePresentationEvent<DbAlbum> { }
+
+		public class AlbumFocusRequested {
+			public long	ArtistId { get; private set; }
+			public long	AlbumId { get; private set; }
+
+			private AlbumFocusRequested( long artistId, long albumId ) {
+				ArtistId = artistId;
+				AlbumId = albumId;
+			}
+
+			public AlbumFocusRequested( DbAlbum album ) :
+				this( album.Artist, album.DbId ) { }
+		}
 
 		public class ArtistContentRequested : CompositePresentationEvent<DbArtist> { }
 		public class ArtistContentUpdated : CompositePresentationEvent<DbArtist> { }

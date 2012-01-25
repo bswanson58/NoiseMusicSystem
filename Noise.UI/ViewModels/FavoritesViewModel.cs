@@ -96,7 +96,9 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void SelectAlbum( FavoriteViewNode node ) {
-			mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( node.Album );
+			if( node.Album != null ) {
+				mEventAggregator.Publish( new Events.AlbumFocusRequested( node.Album ));
+			}
 		}
 
 		private void SelectTrack( FavoriteViewNode node ) {

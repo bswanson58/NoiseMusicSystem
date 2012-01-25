@@ -15,7 +15,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistTracksViewModel : ViewModelBase, IActiveAware,
-										 IHandle<Events.ArtistFocusRequested> {
+										 IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested> {
 		private readonly IEventAggregator	mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
@@ -39,7 +39,6 @@ namespace Noise.UI.ViewModels {
 			mTagManager = tagManager;
 
 			mEventAggregator.Subscribe( this );
-			mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
 
 			TrackList = new ObservableCollectionEx<UiArtistTrackNode>();
 
@@ -80,14 +79,14 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnAlbumFocus( DbAlbum album ) {
+		public void Handle( Events.AlbumFocusRequested request ) {
 			if( mCurrentArtist != null ) {
-				if( mCurrentArtist.DbId != album.Artist ) {
-					UpdateTrackList( album.Artist );
+				if( mCurrentArtist.DbId != request.ArtistId ) {
+					UpdateTrackList( request.ArtistId );
 				}
 			}
 			else {
-				UpdateTrackList( album.Artist );
+				UpdateTrackList( request.ArtistId );
 			}
 		}
 

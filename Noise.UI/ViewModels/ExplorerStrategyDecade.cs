@@ -303,7 +303,7 @@ namespace Noise.UI.ViewModels {
 			var album = mAlbumProvider.GetAlbum( albumNode.Album.DbId );
 
 			if( album != null ) {
-				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( album );
+				mEventAggregator.Publish( new Events.AlbumFocusRequested( album ));
 			}
 		}
 

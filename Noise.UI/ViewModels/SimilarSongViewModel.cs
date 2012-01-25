@@ -89,7 +89,7 @@ namespace Noise.UI.ViewModels {
 			mSearchResults.AddRange( list );
 			mSearchResults.ResumeNotification();
 
-			VisualStateName = mSearchResults.Count() > 0 ? cViewStateDisplay : cViewStateNoResults;
+			VisualStateName = mSearchResults.Any() ? cViewStateDisplay : cViewStateNoResults;
 		}
 
 		private void OnTrackChanged( object sender ) {
@@ -115,7 +115,7 @@ namespace Noise.UI.ViewModels {
 				mEventAggregator.Publish( new Events.ArtistFocusRequested( node.Artist.DbId ));
 			}
 			if( node.Album != null ) {
-				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( node.Album );
+				mEventAggregator.Publish( new Events.AlbumFocusRequested( node.Album ));
 			}
 		}
 

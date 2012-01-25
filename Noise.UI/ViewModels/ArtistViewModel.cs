@@ -16,7 +16,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistViewModel : AutomaticCommandBase,
-								   IHandle<Events.ArtistFocusRequested> {
+								   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested> {
 		private readonly IEventAggregator		mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
@@ -45,7 +45,6 @@ namespace Noise.UI.ViewModels {
 			mDialogService = dialogService;
 
 			mEventAggregator.Subscribe( this );
-			mEvents.GetEvent<Events.AlbumFocusRequested>().Subscribe( OnAlbumFocus );
 			mEvents.GetEvent<Events.ArtistContentUpdated>().Subscribe( OnArtistInfoUpdate );
 			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 
@@ -189,7 +188,7 @@ namespace Noise.UI.ViewModels {
 			var album = mAlbumProvider.GetAlbum( albumId );
 
 			if( album != null ) {
-				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( album );
+				mEventAggregator.Publish( new Events.AlbumFocusRequested( album ));
 			}
 		}
 
@@ -204,14 +203,14 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnAlbumFocus( DbAlbum album ) {
+		public void Handle( Events.AlbumFocusRequested request ) {
 			if( CurrentArtist != null ) {
-				if( album.Artist != CurrentArtist.DbId ) {
-					CurrentArtist = TransformArtist( mArtistProvider.GetArtistForAlbum( album ));
+				if( request.ArtistId != CurrentArtist.DbId ) {
+					SetCurrentArtist( request.ArtistId );
 				}
 			}
 			else {
-				CurrentArtist = TransformArtist( mArtistProvider.GetArtistForAlbum( album ));
+				SetCurrentArtist( request.ArtistId );
 			}
 		}
 

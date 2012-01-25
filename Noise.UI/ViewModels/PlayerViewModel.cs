@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Media;
+using Caliburn.Micro;
 using Microsoft.Practices.Prism;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
@@ -16,6 +17,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace Noise.UI.ViewModels {
 	public class PlayerViewModel : ViewModelBase, IActiveAware {
 		private readonly IEventAggregator	mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IPlayQueue			mPlayQueue;
 		private readonly IPlayController	mPlayController;
 		private double						mSpectrumImageWidth;
@@ -31,8 +33,9 @@ namespace Noise.UI.ViewModels {
 		public bool						IsActive { get; set; }
 		public event EventHandler		IsActiveChanged = delegate { };
 
-		public PlayerViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController ) {
+		public PlayerViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator, IPlayQueue playQueue, IPlayController playController ) {
 			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mPlayQueue = playQueue;
 			mPlayController = playController;
 
@@ -253,13 +256,8 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "CurrentStatus" )]
 		[DependsUpon( "StartTrackFlag" )]
 		public bool CanExecute_ReplayTrack() {
-			var retValue = false;
-
-			if(( mPlayController.CurrentTrack != null ) &&
-			   ( mPlayQueue.PlayingTrackReplayCount == 0 )) {
-				retValue = true;
-			}
-			return( retValue );
+			return(( mPlayController.CurrentTrack != null ) &&
+			       ( mPlayQueue.PlayingTrackReplayCount == 0 ));
 		}
 
 		public bool TrackOverlapEnable {
@@ -471,14 +469,8 @@ namespace Noise.UI.ViewModels {
 
 		[DependsUpon("StartTrackFlag")]
 		public bool CanExecute_RequestSimilarSongSearch() {
-			var retValue = false;
-
-			if(( mPlayController.CurrentTrack != null ) &&
-			   ( mPlayController.CurrentTrack.Track != null )) {
-				retValue = true;
-			}
-
-			return( retValue );
+			return(( mPlayController.CurrentTrack != null ) &&
+			       ( mPlayController.CurrentTrack.Track != null ));
 		}
 
 		private void OnPlaybackTrackStarted( PlayQueueTrack track ) {
@@ -504,20 +496,14 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_TrackInformation() {
 			if( mPlayController.CurrentTrack.Album != null ) {
-				mEvents.GetEvent<Events.AlbumFocusRequested>().Publish( mPlayController.CurrentTrack.Album );
+				mEventAggregator.Publish( new Events.AlbumFocusRequested( mPlayController.CurrentTrack.Album ));
 			}
 		}
 
 		[DependsUpon("StartTrackFlag")]
 		public bool CanExecute_TrackInformation() {
-			var retValue = false;
-
-			if(( mPlayController.CurrentTrack != null ) &&
-			   ( mPlayController.CurrentTrack.Album != null )) {
-				retValue = true;
-			}
-
-			return( retValue );
+			return(( mPlayController.CurrentTrack != null ) &&
+			       ( mPlayController.CurrentTrack.Album != null ));
 		}
 	}
 }

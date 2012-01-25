@@ -179,14 +179,14 @@ namespace Noise.UI.Tests.ViewModels {
 			var artist = new DbArtist { Name = "artist name" };
 
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) ).Returns( (ArtistSupportInfo)null );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>())).Returns( (ArtistSupportInfo)null );
 
 			var sut = testable.ClassUnderTest;
 
 			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
 			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
 
-			testable.Mock<IArtistProvider>().Verify( m => m.GetArtistSupportInfo( It.IsAny<long>() ), Times.Once(), "GetArtistSupportInfo request" );
+			testable.Mock<IArtistProvider>().Verify( m => m.GetArtistSupportInfo( It.IsAny<long>()), Times.Once(), "GetArtistSupportInfo request" );
 		}
 
 		[Test]
@@ -195,12 +195,11 @@ namespace Noise.UI.Tests.ViewModels {
 			var artist = new DbArtist();
 			var album = new DbAlbum { Artist = artist.DbId };
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistForAlbum( It.Is<DbAlbum>( p => p.Artist == artist.DbId ) ) ).Returns( artist ).Verifiable();
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.Is<long>( p => p == artist.DbId ))).Returns( artist ).Verifiable();
 
-			testable.CreateClassUnderTest();
+			var sut = testable.ClassUnderTest;
 
-			var albumFocusEvent = testable.EventAggregator.GetEvent<Events.AlbumFocusRequested>();
-			albumFocusEvent.Publish( album );
+			sut.Handle( new Events.AlbumFocusRequested( album ));
 
 			testable.Mock<IArtistProvider>().Verify();
 		}
@@ -212,15 +211,15 @@ namespace Noise.UI.Tests.ViewModels {
 			var album1 = new DbAlbum { Artist = artist.DbId, Name = "first album" };
 			var album2 = new DbAlbum { Artist = artist.DbId, Name = "second album" };
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistForAlbum( It.Is<DbAlbum>( p => p.Artist == artist.DbId ) ) ).Returns( artist );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.Is<long>( p => p == artist.DbId ))).Returns( artist );
 
-			testable.CreateClassUnderTest();
+			var sut = testable.ClassUnderTest;
 
-			var albumFocusEvent = testable.EventAggregator.GetEvent<Events.AlbumFocusRequested>();
-			albumFocusEvent.Publish( album1 );
-			albumFocusEvent.Publish( album2 );
+			sut.Handle( new Events.AlbumFocusRequested( album1 ));
+			sut.Handle( new Events.AlbumFocusRequested( album2 ));
 
-			testable.Mock<IArtistProvider>().Verify( m => m.GetArtistForAlbum( It.IsAny<DbAlbum>() ), Times.Exactly( 1 ) );
+			// The artist is requested twice in the current code for each focus request.
+			testable.Mock<IArtistProvider>().Verify( m => m.GetArtist( It.IsAny<long>()), Times.Exactly( 2 ));
 		}
 
 		[Test]
@@ -229,7 +228,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var artist = new DbArtist();
 
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) ).Returns( (ArtistSupportInfo)null );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>())).Returns( (ArtistSupportInfo)null );
 
 			var sut = testable.ClassUnderTest;
 
@@ -238,7 +237,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var infoUpdateEvent = testable.EventAggregator.GetEvent<Events.ArtistContentUpdated>();
 			infoUpdateEvent.Publish( artist );
 
-			testable.Mock<IArtistProvider>().Verify( m => m.GetArtistSupportInfo( It.IsAny<long>() ), Times.Exactly( 2 ), "GetArtistSupportInfo request" );
+			testable.Mock<IArtistProvider>().Verify( m => m.GetArtistSupportInfo( It.IsAny<long>()), Times.Exactly( 2 ), "GetArtistSupportInfo request" );
 		}
 	}
 }
