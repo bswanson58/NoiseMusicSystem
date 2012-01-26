@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.Prism.Events;
+﻿using Caliburn.Micro;
+using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -24,14 +25,17 @@ namespace Noise.UI.ViewModels {
 		private const string		cViewStateNormal	= "Normal";
 
 		private readonly IEventAggregator	mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly ILyricProvider		mLyricProvider;
 		private readonly IDialogService		mDialogService;
 		private LyricsInfo					mLyricsInfo;
 		private readonly ObservableCollectionEx<UiLyricSelector>	mLyricsList;
 
-		public SongLyricsViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ILyricProvider lyricProvider, IDialogService dialogService  ) {
+		public SongLyricsViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+									IArtistProvider artistProvider, ILyricProvider lyricProvider, IDialogService dialogService  ) {
 			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mArtistProvider = artistProvider;
 			mLyricProvider = lyricProvider;
 			mDialogService = dialogService;
@@ -167,7 +171,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_LyricsSourceClicked() {
-			mEvents.GetEvent<Events.WebsiteRequest>().Publish( LyricsSource );
+			mEventAggregator.Publish( new Events.UrlLaunchRequest( LyricsSource ));
 		}
 
 		public void Execute_Close() {

@@ -7,7 +7,6 @@ using System.Windows;
 using AutoMapper;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -27,7 +26,6 @@ namespace Noise.UI.ViewModels {
 		private const string					cSearchAlbums = "Albums";
 		private const string					cSearchIgnoreCase = "Ignore Case";
 
-		private readonly IEventAggregator		mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
@@ -49,10 +47,9 @@ namespace Noise.UI.ViewModels {
 		private readonly Subject<ViewSortStrategy>		mAlbumSortSubject;
 		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
 
-		public ExplorerStrategyDecade( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+		public ExplorerStrategyDecade( ICaliburnEventAggregator eventAggregator,
 									   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager, IDialogService dialogService ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTagManager = tagManager;
@@ -201,7 +198,7 @@ namespace Noise.UI.ViewModels {
 
 		private void WebsiteRequest( UiDecadeTreeNode decadeNode ) {
 			if(!string.IsNullOrWhiteSpace( decadeNode.Tag.Website )) {
-				mEvents.GetEvent<Events.WebsiteRequest>().Publish( decadeNode.Tag.Website );
+				mEventAggregator.Publish( new Events.UrlLaunchRequest( decadeNode.Tag.Website ));
 			}
 		}
 

@@ -3,7 +3,6 @@ using Noise.Desktop;
 using Noise.UI.Support;
 using Noise.UI.ViewModels;
 using Noise.UI.Views;
-using ReusableBits.TestSupport.MockingEventAggregator;
 using ReusableBits.TestSupport.Threading;
 
 namespace Noise.UI.Tests.Views {
@@ -11,7 +10,7 @@ namespace Noise.UI.Tests.Views {
 	public class ArtistViewTests {
 
 		private ArtistViewModel CreateViewModel() {
-			return( new ArtistViewModel( new AutoMockingEventAggregator(), null, null, null, null, null, null ));
+			return( new ArtistViewModel( null, null, null, null, null, null ));
 		}
 
 		private void AssertMessage( string message ) {

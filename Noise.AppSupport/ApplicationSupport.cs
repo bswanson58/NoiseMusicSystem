@@ -1,17 +1,20 @@
 ﻿using System;
+using Caliburn.Micro;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Service.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport {
-	public class ApplicationSupport {
+	public class ApplicationSupport : IHandle<Events.UrlLaunchRequest> {
 		private readonly IEventAggregator	mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IServiceBusManager	mServiceBus;
 		private readonly HotkeyManager		mHotkeyManager;
 
-		public ApplicationSupport( IEventAggregator eventAggregator, IServiceBusManager serviceBusManager ) {
+		public ApplicationSupport( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator, IServiceBusManager serviceBusManager ) {
 			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mServiceBus = serviceBusManager;
 			mHotkeyManager = new HotkeyManager( mEvents );
 		}
@@ -28,7 +31,7 @@ namespace Noise.AppSupport {
 
 			mHotkeyManager.Initialize();
 
-			mEvents.GetEvent<Events.WebsiteRequest>().Subscribe( OnWebsiteRequested );
+			mEventAggregator.Subscribe( this );
 			mEvents.GetEvent<Events.LaunchRequest>().Subscribe( OnLaunchRequest );
 
 			return( true );
@@ -37,13 +40,13 @@ namespace Noise.AppSupport {
 		public void Shutdown() {
 		}
 
-		private static void OnWebsiteRequested( string url ) {
+		public void Handle( Events.UrlLaunchRequest eventArgs ) {
 			try {
-				System.Diagnostics.Process.Start( url );
+				System.Diagnostics.Process.Start( eventArgs.Url );
 			}
 			catch( Exception ) {
 				try {
-					var startInfo = new System.Diagnostics.ProcessStartInfo( "IExplore.exe", url );
+					var startInfo = new System.Diagnostics.ProcessStartInfo( "IExplore.exe", eventArgs.Url );
 
 					System.Diagnostics.Process.Start( startInfo );
 				}

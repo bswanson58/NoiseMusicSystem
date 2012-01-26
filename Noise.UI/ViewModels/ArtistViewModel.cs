@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using AutoMapper;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -18,7 +17,6 @@ namespace Noise.UI.ViewModels {
 	public class ArtistViewModel : AutomaticCommandBase,
 								   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, 
 								   IHandle<Events.ArtistContentUpdated>, IHandle<Events.DatabaseItemChanged> {
-		private readonly IEventAggregator		mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
@@ -34,11 +32,10 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<LinkNode>				mBandMembers;
 		private readonly SortableCollection<DbDiscographyRelease>	mDiscography;
 
-		public ArtistViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+		public ArtistViewModel( ICaliburnEventAggregator eventAggregator,
 								IArtistProvider artistProvider, IAlbumProvider albumProvider, IDiscographyProvider discographyProvider,
 								ITagManager tagManager, IDialogService dialogService ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mDiscographyProvider = discographyProvider;
@@ -239,7 +236,7 @@ namespace Noise.UI.ViewModels {
 		private void OnWebsiteRequested( long id ) {
 			if(( CurrentArtist != null ) &&
 			   (!string.IsNullOrWhiteSpace( CurrentArtist.Website ))) {
-				mEvents.GetEvent<Events.WebsiteRequest>().Publish( CurrentArtist.Website );
+				mEventAggregator.Publish( new Events.UrlLaunchRequest( CurrentArtist.Website ));
 			}
 		}
 

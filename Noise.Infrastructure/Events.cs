@@ -92,7 +92,15 @@ namespace Noise.Infrastructure {
 		public class StandardPlayerRequest : CompositePresentationEvent<object> { }
 
 		public class LaunchRequest : CompositePresentationEvent<string > { }
-		public class WebsiteRequest : CompositePresentationEvent<string> { }
+
+		public class UrlLaunchRequest {
+			public string	Url { get; private set; }
+
+			public UrlLaunchRequest( string url ) {
+				Url = url;
+			}
+		}
+
 		public class NavigationRequest : CompositePresentationEvent<NavigationRequestArgs> { }
 
 		public class LibraryUpdateStarted : CompositePresentationEvent<long> { }

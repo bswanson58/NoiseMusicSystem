@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using AutoMapper;
-using Microsoft.Practices.Prism.Events;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -11,14 +11,15 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	class StreamViewModel : ViewModelBase {
-		private readonly IEventAggregator			mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IInternetStreamProvider	mStreamProvider;
 		private readonly IDataExchangeManager		mDataExchangeMgr;
 		private readonly IDialogService				mDialogService;
 		private readonly ObservableCollectionEx<UiInternetStream>	mStreams;
 
-		public StreamViewModel( IEventAggregator eventAggregator, IInternetStreamProvider streamProvider, IDataExchangeManager dataExchangeManager, IDialogService dialogService ) {
-			mEvents = eventAggregator;
+		public StreamViewModel( ICaliburnEventAggregator eventAggregator, IDialogService dialogService,
+								IInternetStreamProvider streamProvider, IDataExchangeManager dataExchangeManager ) {
+			mEventAggregator = eventAggregator;
 			mStreamProvider = streamProvider;
 			mDataExchangeMgr = dataExchangeManager;
 			mDialogService = dialogService;
@@ -61,7 +62,7 @@ namespace Noise.UI.ViewModels {
 		private void OnWebsiteClick( UiInternetStream stream ) {
 			if(( stream != null ) &&
 			   (!string.IsNullOrWhiteSpace( stream.Website ))) {
-				mEvents.GetEvent<Events.WebsiteRequest>().Publish( stream.Website );
+				mEventAggregator.Publish( new Events.UrlLaunchRequest( stream.Website ));
 			}
 		}
 
