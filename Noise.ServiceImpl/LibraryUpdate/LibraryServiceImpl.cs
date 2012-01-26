@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ServiceModel;
 using System.ServiceProcess;
+using Caliburn.Micro;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -18,10 +19,11 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 		Description = "This service maintains the Noise Music System library.",
 		EventLogSource = "Noise Update Service",
 		StartMode = ServiceStartMode.Automatic)]
-	public class LibraryServiceImpl : BaseService {
+	public class LibraryServiceImpl : BaseService, IHandle<Events.DatabaseItemChanged> {
 		internal const string				cNoiseLibraryUpdate = "NoiseLibraryUpdate";
 
 		private readonly IEventAggregator	mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly INoiseManager		mNoiseManager;
 		private readonly ILibraryBuilder	mLibraryBuilder;
 		private readonly IServiceBusManager	mServiceBus;
@@ -29,9 +31,10 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 		private	IScheduler					mJobScheduler;
 		private ServiceHost					mLibraryUpdateServiceHost;
 
-		public LibraryServiceImpl( IEventAggregator eventAggregator, INoiseManager noiseManager,
+		public LibraryServiceImpl( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator, INoiseManager noiseManager,
 								   ILibraryBuilder libraryBuilder, IServiceBusManager serviceBusManager ) {
 			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mNoiseManager = noiseManager;
 			mLibraryBuilder = libraryBuilder;
 			mServiceBus = serviceBusManager;
@@ -49,7 +52,8 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 				mLibraryBuilder.EnableUpdateOnLibraryChange = true;
 
 				if( mServiceBus.InitializeServer()) {
-					mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
+					mEventAggregator.Subscribe( this );
+
 					mEvents.GetEvent<Events.LibraryUpdateStarted>().Subscribe( OnLibraryUpdateStarted );
 					mEvents.GetEvent<Events.LibraryUpdateCompleted>().Subscribe( OnLibraryUpdateCompleted );
 				}
@@ -96,12 +100,12 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 			}
 		}
 
-		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			var item = args.Item;
+		public void Handle( Events.DatabaseItemChanged eventArgs ) {
+			var item = eventArgs.ItemChangedArgs.Item;
 
 			if(( item is DbArtist ) ||
 			   ( item is DbAlbum )) {
-				mServiceBus.Publish( new DatabaseItemChangedMessage { ItemId = item.DbId, Change = args.Change });
+				mServiceBus.Publish( new DatabaseItemChangedMessage { ItemId = item.DbId, Change = eventArgs.ItemChangedArgs.Change });
 			}
 		}
 

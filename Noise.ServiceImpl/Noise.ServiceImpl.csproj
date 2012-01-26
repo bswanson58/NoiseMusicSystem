@@ -144,6 +144,10 @@
       <Project>{BC70F5ED-672C-4690-BEF7-7950907E95C5}</Project>
       <Name>Noise.Service.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
+      <Project>{8930138B-F96A-4A56-84CF-D660730989C9}</Project>
+      <Name>ReusableBits.Mvvm</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

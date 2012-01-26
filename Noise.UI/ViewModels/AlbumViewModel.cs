@@ -36,7 +36,7 @@ namespace Noise.UI.ViewModels {
 	}
 
 	internal class AlbumViewModel : ViewModelBase,
-									IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested> {
+									IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.DatabaseItemChanged> {
 		private readonly IEventAggregator		mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IAlbumProvider			mAlbumProvider;
@@ -73,7 +73,6 @@ namespace Noise.UI.ViewModels {
 			mDialogService = dialogService;
 
 			mEventAggregator.Subscribe( this );
-			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 
 			mTracks = new ObservableCollectionEx<UiTrack>();
 			mAlbumCategories = new List<long>();
@@ -276,18 +275,18 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			var item = args.Item;
+		public void Handle( Events.DatabaseItemChanged eventArgs ) {
+			var item = eventArgs.ItemChangedArgs.Item;
 
 			if(( item is DbTrack ) &&
 			   ( mCurrentAlbum != null ) &&
-			   ( args.Change == DbItemChanged.Update ) &&
+			   ( eventArgs.ItemChangedArgs.Change == DbItemChanged.Update ) &&
 			   ((item as DbTrack).Album == mCurrentAlbum.DbId )) {
 				Execute.OnUIThread( () => {
 					var track = ( from UiTrack node in mTracks where node.DbId == item.DbId select node ).FirstOrDefault();
 
 					if( track != null ) {
-						switch( args.Change ) {
+						switch( eventArgs.ItemChangedArgs.Change ) {
 							case DbItemChanged.Update:
 								var newTrack = TransformTrack( item as DbTrack );
 
@@ -307,7 +306,7 @@ namespace Noise.UI.ViewModels {
 
 			if(( item is DbAlbum ) &&
 			   ( mCurrentAlbum != null ) &&
-			   ( args.Change == DbItemChanged.Update ) &&
+			   ( eventArgs.ItemChangedArgs.Change == DbItemChanged.Update ) &&
 			   ((item as DbAlbum).DbId == mCurrentAlbum.DbId )) {
 				Execute.OnUIThread( () => Mapper.DynamicMap( item as DbAlbum, mCurrentAlbum ));
 			}

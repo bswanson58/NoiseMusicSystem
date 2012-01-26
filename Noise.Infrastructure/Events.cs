@@ -73,6 +73,14 @@ namespace Noise.Infrastructure {
 			}
 		}
 
+		public class DatabaseItemChanged {
+			public DbItemChangedArgs	ItemChangedArgs { get; private set; }
+
+			public DatabaseItemChanged( DbItemChangedArgs args ) {
+				ItemChangedArgs = args;
+			}
+		}
+
 		public class PlaybackStatusChanged : CompositePresentationEvent<ePlaybackStatus> { }
 		public class PlaybackTrackChanged : CompositePresentationEvent<object> { }
 		public class PlaybackInfoChanged : CompositePresentationEvent<object> { }
@@ -82,8 +90,6 @@ namespace Noise.Infrastructure {
 		public class ExternalPlayerSwitch : CompositePresentationEvent<object> { }
 		public class ExtendedPlayerRequest : CompositePresentationEvent<object> { }
 		public class StandardPlayerRequest : CompositePresentationEvent<object> { }
-
-		public class DatabaseItemChanged : CompositePresentationEvent<DbItemChangedArgs> { }
 
 		public class LaunchRequest : CompositePresentationEvent<string > { }
 		public class WebsiteRequest : CompositePresentationEvent<string> { }

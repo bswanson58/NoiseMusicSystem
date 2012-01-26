@@ -16,7 +16,8 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistViewModel : AutomaticCommandBase,
-								   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.ArtistContentUpdated> {
+								   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, 
+								   IHandle<Events.ArtistContentUpdated>, IHandle<Events.DatabaseItemChanged> {
 		private readonly IEventAggregator		mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
@@ -45,7 +46,6 @@ namespace Noise.UI.ViewModels {
 			mDialogService = dialogService;
 
 			mEventAggregator.Subscribe( this );
-			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 
 			mSimilarArtists = new BindableCollection<LinkNode>();
 			mTopAlbums = new BindableCollection<LinkNode>();
@@ -225,12 +225,12 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			var item = args.Item;
+		public void Handle( Events.DatabaseItemChanged eventArgs ) {
+			var item = eventArgs.ItemChangedArgs.Item;
 
 			if(( item is DbArtist ) &&
 			   ( CurrentArtist != null ) &&
-			   ( args.Change == DbItemChanged.Update ) &&
+			   ( eventArgs.ItemChangedArgs.Change == DbItemChanged.Update ) &&
 			   ( item.DbId == CurrentArtist.DbId )) {
 				CurrentArtist = TransformArtist( item as DbArtist );
 			}

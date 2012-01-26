@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
-using Microsoft.Practices.Prism.Events;
+using Caliburn.Micro;
 using Noise.EloqueraDatabase.BlobStore;
 using Noise.EloqueraDatabase.Database;
 using Noise.Infrastructure;
@@ -13,12 +13,12 @@ namespace Noise.EloqueraDatabase {
 		private const string	cBlobStorageName	= "Noise Blobs";
 
 		private readonly IBlobStorageResolver	mBlobResolver;
-		private readonly IEventAggregator		mEventAggregator;
+		private readonly ICaliburnEventAggregator		mEventAggregator;
 		private readonly IIoc					mComponentCreator;
 		private readonly DatabaseConfiguration	mDatabaseConfiguration;
 		private IBlobStorageManager				mBlobStorageManager;
 
-		public EloqueraDatabaseFactory( IBlobStorageResolver blobResolver, IEventAggregator eventAggregator, 
+		public EloqueraDatabaseFactory( IBlobStorageResolver blobResolver, ICaliburnEventAggregator eventAggregator, 
 										IIoc componentCreator, DatabaseConfiguration databaseConfiguration ) {
 			mBlobResolver = blobResolver;
 			mEventAggregator = eventAggregator;

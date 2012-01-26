@@ -21,7 +21,7 @@ using Condition = CuttingEdge.Conditions.Condition;
 
 namespace Noise.UI.ViewModels {
 	[Export( typeof( IExplorerViewStrategy ))]
-	internal class ExplorerStrategyDecade : ViewModelBase, IExplorerViewStrategy {
+	internal class ExplorerStrategyDecade : ViewModelBase, IExplorerViewStrategy, IHandle<Events.DatabaseItemChanged> {
 		private const string					cSearchOptionDefault = "!";
 		private const string					cSearchArtists = "Artists";
 		private const string					cSearchAlbums = "Albums";
@@ -101,7 +101,7 @@ namespace Noise.UI.ViewModels {
 		public void Activate() {
 			mViewModel.TreeViewItemTemplate = Application.Current.TryFindResource( "DecadeExplorerTemplate" ) as HierarchicalDataTemplate;
 
-			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
+			mEventAggregator.Subscribe( this );
 
 			mViewModel.SearchOptions.Add( cSearchOptionDefault + cSearchArtists );
 			mViewModel.SearchOptions.Add( cSearchAlbums );
@@ -109,7 +109,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Deactivate() {
-			mEvents.GetEvent<Events.DatabaseItemChanged>().Unsubscribe( OnDatabaseItemChanged );
+			mEventAggregator.Unsubscribe( this );
 		}
 
 		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
@@ -125,8 +125,8 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			var item = args.Item;
+		public void Handle( Events.DatabaseItemChanged eventArgs ) {
+			var item = eventArgs.ItemChangedArgs.Item;
 
 			if( item is DbArtist ) {
 				Execute.OnUIThread( () => {
@@ -137,7 +137,7 @@ namespace Noise.UI.ViewModels {
 							var treeNode = ( from UiArtistTreeNode node in decadeNode.Children
 											 where artist.DbId == node.Artist.DbId select node ).FirstOrDefault();
 
-							switch( args.Change ) {
+							switch( eventArgs.ItemChangedArgs.Change ) {
 								case DbItemChanged.Update:
 									if( treeNode != null ) {
 										UpdateUiArtist( treeNode.Artist, artist );
@@ -161,7 +161,7 @@ namespace Noise.UI.ViewModels {
 				} );
 			}
 			else if(( item is DbAlbum ) &&
-			        ( args.Change == DbItemChanged.Update )) {
+			        ( eventArgs.ItemChangedArgs.Change == DbItemChanged.Update )) {
 				Execute.OnUIThread( () => {
 					var dbAlbum = item as DbAlbum;
 

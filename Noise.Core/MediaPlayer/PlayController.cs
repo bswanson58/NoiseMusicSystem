@@ -30,7 +30,7 @@ namespace Noise.Core.MediaPlayer {
 	}
 
 	internal class PlayController : IPlayController, IRequireInitialization,
-									IHandle<Events.PlayQueueChanged>, IHandle<Events.PlayQueuedTrackRequest> {
+									IHandle<Events.PlayQueueChanged>, IHandle<Events.PlayQueuedTrackRequest>, IHandle<Events.DatabaseItemChanged> {
 		private readonly IEventAggregator		mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IAudioPlayer			mAudioPlayer;
@@ -84,7 +84,6 @@ namespace Noise.Core.MediaPlayer {
 			mStreamInfoDispose = mAudioPlayer.AudioStreamInfoChange.Subscribe( OnStreamInfo );
 
 			mEventAggregator.Subscribe( this );
-			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 			mEvents.GetEvent<Events.GlobalUserEvent>().Subscribe( OnGlobalRequest );
 			mEvents.GetEvent<Events.SystemShutdown>().Subscribe( OnShutdown );
 
@@ -540,8 +539,8 @@ namespace Noise.Core.MediaPlayer {
 			return( retValue );
 		}
 
-		public void OnDatabaseItemChanged( DbItemChangedArgs args ) {
-			var item = args.Item;
+		public void Handle( Events.DatabaseItemChanged eventArgs ) {
+			var item = eventArgs.ItemChangedArgs.Item;
 
 			if( item is DbTrack ) {
 				var track = item as DbTrack;

@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Eloquera.Client;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -15,7 +15,7 @@ namespace Noise.EloqueraDatabase.Database {
 		private const UInt16				cDatabaseVersionMajor = 0;
 		private const UInt16				cDatabaseVersionMinor = 5;
 
-		private readonly IEventAggregator	mEventAggregator;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IIoc				mComponentCreator;
 		private readonly string				mDatabaseLocation;
 		private readonly string				mDatabaseName;
@@ -30,7 +30,7 @@ namespace Noise.EloqueraDatabase.Database {
 		[ImportMany("PersistenceType")]
 		public IEnumerable<Type>	PersistenceTypes;
 
-		public EloqueraDb( IEventAggregator eventAggregator, IIoc componentCreator, DatabaseConfiguration databaseConfiguration ) {
+		public EloqueraDb( ICaliburnEventAggregator eventAggregator, IIoc componentCreator, DatabaseConfiguration databaseConfiguration ) {
 			Condition.Requires( eventAggregator ).IsNotNull();
 			Condition.Requires( componentCreator ).IsNotNull();
 			Condition.Requires( databaseConfiguration ).IsNotNull();
@@ -212,7 +212,7 @@ namespace Noise.EloqueraDatabase.Database {
 				Database.Store( dbObject );
 
 				if( dbObject is DbBase ) {
-					mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Insert ) );
+					mEventAggregator.Publish( new Events.DatabaseItemChanged( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Insert )));
 				}
 			}
 			else {
@@ -227,7 +227,7 @@ namespace Noise.EloqueraDatabase.Database {
 				Database.Store( dbObject );
 
 				if( dbObject is DbBase ) {
-					mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Update ));
+					mEventAggregator.Publish( new Events.DatabaseItemChanged( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Update )));
 				}
 			}
 			else {
@@ -253,7 +253,7 @@ namespace Noise.EloqueraDatabase.Database {
 				Database.Delete( dbObject );
 
 				if( dbObject is DbBase ) {
-					mEventAggregator.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Delete ));
+					mEventAggregator.Publish( new Events.DatabaseItemChanged( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Delete )));
 				}
 			}
 		}

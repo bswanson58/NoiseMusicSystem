@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -11,8 +10,7 @@ using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class FavoritesViewModel : ViewModelBase {
-		private readonly IEventAggregator		mEvents;
+	public class FavoritesViewModel : ViewModelBase, IHandle<Events.DatabaseItemChanged> {
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
@@ -21,18 +19,17 @@ namespace Noise.UI.ViewModels {
 		private readonly IDialogService			mDialogService;
 		private readonly ObservableCollectionEx<FavoriteViewNode>	mFavoritesList;
 
-		public FavoritesViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+		public FavoritesViewModel( ICaliburnEventAggregator eventAggregator,
 								   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 								   IDataExchangeManager dataExchangeManager, IDialogService dialogService ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mDataExchangeMgr = dataExchangeManager;
 			mDialogService = dialogService;
 
-			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseChanged );
+			mEventAggregator.Subscribe( this );
 
 			mFavoritesList = new ObservableCollectionEx<FavoriteViewNode>();
 			LoadFavorites();
@@ -42,9 +39,9 @@ namespace Noise.UI.ViewModels {
 			get{ return( mFavoritesList ); }
 		}
 
-		private void OnDatabaseChanged( DbItemChangedArgs args ) {
-			if( args.Change == DbItemChanged.Favorite ) {
-				var item = args.Item;
+		public void Handle( Events.DatabaseItemChanged eventArgs ) {
+			if( eventArgs.ItemChangedArgs.Change == DbItemChanged.Favorite ) {
+				var item = eventArgs.ItemChangedArgs.Item;
 
 				if(( item is DbArtist ) ||
 				   ( item is DbAlbum ) ||

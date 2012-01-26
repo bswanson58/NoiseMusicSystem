@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
+using Caliburn.Micro;
 using CuttingEdge.Conditions;
-using Microsoft.Practices.Prism.Events;
 using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -10,7 +10,7 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.Database {
 	internal class DataUpdates : IDataUpdates, IRequireInitialization {
-		private readonly IEventAggregator	mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IDbBaseProvider	mDbBaseProvider;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
@@ -22,9 +22,10 @@ namespace Noise.Core.Database {
 		private AsyncCommand<SetRatingCommandArgs>		mSetRatingCommand;
 		private AsyncCommand<SetAlbumCoverCommandArgs>	mSetAlbumCoverCommand;
 
-		public DataUpdates( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager, IDbBaseProvider dbBaseProvider, IPlayListProvider playListProvider,
+		public DataUpdates( ICaliburnEventAggregator eventAggregator, ILifecycleManager lifecycleManager,
+							IDbBaseProvider dbBaseProvider, IPlayListProvider playListProvider,
 							IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider ) {
-			mEvents = eventAggregator;
+			mEventAggregator = eventAggregator;
 			mDbBaseProvider = dbBaseProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -119,7 +120,7 @@ namespace Noise.Core.Database {
 						}
 					}
 
-					mEvents.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( forArtist, DbItemChanged.Favorite ));
+					mEventAggregator.Publish( new Events.DatabaseItemChanged( new DbItemChangedArgs( forArtist, DbItemChanged.Favorite )));
 				}
 			}
 			catch( Exception ex ) {
@@ -141,7 +142,7 @@ namespace Noise.Core.Database {
 							}
 						}
 
-						mEvents.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( forAlbum, DbItemChanged.Favorite ));
+						mEventAggregator.Publish( new Events.DatabaseItemChanged( new DbItemChangedArgs( forAlbum, DbItemChanged.Favorite )));
 					}
 
 					using( var updater = mArtistProvider.GetArtistForUpdate( forAlbum.Artist )) {
@@ -178,7 +179,7 @@ namespace Noise.Core.Database {
 							}
 						}
 
-						mEvents.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( forTrack, DbItemChanged.Favorite ));
+						mEventAggregator.Publish( new Events.DatabaseItemChanged( new DbItemChangedArgs( forTrack, DbItemChanged.Favorite )));
 					}
 
 					using( var albumUpdater = mAlbumProvider.GetAlbumForUpdate( forTrack.Album )) {
@@ -228,7 +229,7 @@ namespace Noise.Core.Database {
 							updater.Update();
 						}
 
-						mEvents.GetEvent<Events.DatabaseItemChanged>().Publish( new DbItemChangedArgs( forList, DbItemChanged.Favorite ));
+						mEventAggregator.Publish( new Events.DatabaseItemChanged( new DbItemChangedArgs( forList, DbItemChanged.Favorite )));
 					}
 				}
 			}
