@@ -30,7 +30,7 @@ namespace Noise.Core.MediaPlayer {
 	}
 
 	internal class PlayController : IPlayController, IRequireInitialization,
-									IHandle<Events.PlayQueueChanged> {
+									IHandle<Events.PlayQueueChanged>, IHandle<Events.PlayQueuedTrackRequest> {
 		private readonly IEventAggregator		mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IAudioPlayer			mAudioPlayer;
@@ -85,7 +85,6 @@ namespace Noise.Core.MediaPlayer {
 
 			mEventAggregator.Subscribe( this );
 			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
-			mEvents.GetEvent<Events.PlayRequested>().Subscribe( OnPlayRequested );
 			mEvents.GetEvent<Events.GlobalUserEvent>().Subscribe( OnGlobalRequest );
 			mEvents.GetEvent<Events.SystemShutdown>().Subscribe( OnShutdown );
 
@@ -453,12 +452,12 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
-		private void OnPlayRequested( PlayQueueTrack track ) {
+		public void Handle( Events.PlayQueuedTrackRequest eventArgs ) {
 			FireStateChange( eStateTriggers.ExternalPlay );
 
-			StartTrack( track );
+			StartTrack( eventArgs.QueuedTrack );
 
-			mPlayQueue.PlayingTrack = track;
+			mPlayQueue.PlayingTrack = eventArgs.QueuedTrack;
 
 			FirePlaybackTrackChanged();
 		}

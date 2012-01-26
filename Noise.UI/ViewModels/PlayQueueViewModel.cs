@@ -83,7 +83,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_PlayRequested( EventCommandParameter<object, RoutedEventArgs> args ) {
 			if( args.CustomParameter != null ) {
-				mEvents.GetEvent<Events.PlayRequested>().Publish( args.CustomParameter as PlayQueueTrack );
+				mEventAggregator.Publish( new Events.PlayQueuedTrackRequest( args.CustomParameter as PlayQueueTrack ));
 			}
 		}
 

@@ -65,7 +65,13 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class PlayRequested : CompositePresentationEvent<PlayQueueTrack> { }
+		public class PlayQueuedTrackRequest {
+			public PlayQueueTrack	QueuedTrack { get; private set; }
+
+			public PlayQueuedTrackRequest( PlayQueueTrack track ) {
+				QueuedTrack = track;
+			}
+		}
 
 		public class PlaybackStatusChanged : CompositePresentationEvent<ePlaybackStatus> { }
 		public class PlaybackTrackChanged : CompositePresentationEvent<object> { }
