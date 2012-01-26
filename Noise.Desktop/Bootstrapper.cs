@@ -70,6 +70,7 @@ namespace Noise.Desktop {
 			mAppSupport.Initialize();
 
 			ViewModelResolver.TypeResolver = ( type => instanceContainer.Resolve( type));
+			DialogServiceResolver.Current = instanceContainer.Resolve<IDialogService>();
 		}
 
 		public void StopNoise() {

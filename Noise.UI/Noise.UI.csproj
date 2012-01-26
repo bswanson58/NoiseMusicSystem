@@ -176,6 +176,7 @@
     <Compile Include="Behaviours\EventCommandTriggers\PropertyCommandTrigger.cs" />
     <Compile Include="Behaviours\GridUtils.cs" />
     <Compile Include="Behaviours\ImageScrubber.cs" />
+    <Compile Include="Behaviours\InteractionRequestDialogBehavior.cs" />
     <Compile Include="Behaviours\ListViewDragDropManager.cs" />
     <Compile Include="Behaviours\ListViewEnsureVisible.cs" />
     <Compile Include="Behaviours\ListViewFirstItemVisible.cs" />
@@ -236,6 +237,7 @@
     <Compile Include="Support\DialogModelBase.cs" />
     <Compile Include="Support\DialogNames.cs" />
     <Compile Include="Support\DialogService.cs" />
+    <Compile Include="Support\DialogServiceResolver.cs" />
     <Compile Include="Support\DialogWindow.xaml.cs">
       <DependentUpon>DialogWindow.xaml</DependentUpon>
     </Compile>

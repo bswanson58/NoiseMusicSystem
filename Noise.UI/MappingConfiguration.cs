@@ -41,6 +41,23 @@ namespace Noise.UI {
 				.ForMember( dest => dest.UiIsFavorite, opt => opt.MapFrom( src => src.IsFavorite ))
 				.ForMember( dest => dest.UiRating, opt => opt.MapFrom( src => src.Rating ))
 				.ForMember( dest => dest.IsSelected, opt => opt.Ignore());
+
+			CreateMap<UiArtist, DbArtist>()
+				.ForMember( dest => dest.DbId, opt => opt.Ignore())
+				.ForMember( dest => dest.AlbumCount, opt => opt.Ignore())
+				.ForMember( dest => dest.CalculatedGenre, opt => opt.Ignore())
+				.ForMember( dest => dest.CalculatedRating, opt => opt.Ignore())
+				.ForMember( dest => dest.DateAdded, opt => opt.Ignore())
+				.ForMember( dest => dest.DateAddedTicks, opt => opt.Ignore())
+				.ForMember( dest => dest.ExternalGenre, opt => opt.Ignore())
+				.ForMember( dest => dest.Genre, opt => opt.Ignore())
+				.ForMember( dest => dest.HasFavorites, opt => opt.Ignore())
+				.ForMember( dest => dest.IsUserRating, opt => opt.Ignore())
+				.ForMember( dest => dest.LastChangeTicks, opt => opt.Ignore())
+				.ForMember( dest => dest.MaxChildRating, opt => opt.Ignore())
+				.ForMember( dest => dest.Rating, opt => opt.Ignore())
+				.ForMember( dest => dest.UserGenre, opt => opt.Ignore())
+				.ForMember( dest => dest.UserRating, opt => opt.Ignore());
 		}
 	}
 

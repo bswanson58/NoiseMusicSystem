@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using FluentAssertions.EventMonitoring;
 using Microsoft.Practices.Prism.Events;
+using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Moq;
 using NUnit.Framework;
 using Noise.Infrastructure;
@@ -55,6 +57,9 @@ namespace Noise.UI.Tests.ViewModels {
 
 			// Set the ui dispatcher to run on the current thread.
 			Execute.ResetWithoutDispatcher();
+
+			// Set up the AutoMapper configurations.
+			MappingConfiguration.Configure();
 		}
 
 		[Test]
@@ -226,7 +231,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var testable = new TestableArtistViewModel();
 			var artist = new DbArtist();
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>() ) ).Returns( artist );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>())).Returns( (ArtistSupportInfo)null );
 
 			var sut = testable.ClassUnderTest;
@@ -235,6 +240,85 @@ namespace Noise.UI.Tests.ViewModels {
 			sut.Handle( new Events.ArtistContentUpdated( artist.DbId ));
 
 			testable.Mock<IArtistProvider>().Verify( m => m.GetArtistSupportInfo( It.IsAny<long>()), Times.Exactly( 2 ), "GetArtistSupportInfo request" );
+		}
+
+		[Test]
+		public void EditArtistRequestCanCancel() {
+			var testable = new TestableArtistViewModel();
+			var artist = new DbArtist();
+
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistForUpdate( artist.DbId )).Verifiable();
+
+			var sut = testable.ClassUnderTest;
+
+			sut.ArtistEditRequest.Raised += OnArtistEditRequestCancel;
+
+			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
+			var editCommand = ( testable.ClassUnderTest as dynamic ).EditArtist as ICommand;
+
+			Assert.IsNotNull( editCommand );
+			Assert.IsTrue( editCommand.CanExecute( null ));
+
+			editCommand.Execute( null );
+
+			testable.Mock<IArtistProvider>().Verify( m => m.GetArtistForUpdate( It.IsAny<long>()), Times.Never());
+		}
+
+		[Test]
+		public void EditArtistRequestCanUpdate() {
+			var testable = new TestableArtistViewModel();
+			var databaseShell = new Mock<IDatabaseShell> { DefaultValue = DefaultValue.Mock };
+
+			var artist = new DbArtist();
+
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistForUpdate( artist.DbId ))
+				.Returns( new DataUpdateShell<DbArtist>( databaseShell.Object, artist )).Verifiable();
+
+			var sut = testable.ClassUnderTest;
+
+			sut.ArtistEditRequest.Raised += OnArtistEditRequestConfirm;
+
+			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
+			var editCommand = ( testable.ClassUnderTest as dynamic ).EditArtist as ICommand;
+
+			Assert.IsNotNull( editCommand );
+
+			editCommand.Execute( null );
+
+			testable.Mock<IArtistProvider>().Verify( m => m.GetArtistForUpdate( It.IsAny<long>()), Times.Once());
+		}
+
+		[Test]
+		public void CannotEditArtistWithoutArtist() {
+			var testable = new TestableArtistViewModel();
+
+			var sut = testable.ClassUnderTest;
+			sut.ArtistEditRequest.Raised += OnArtistEditRequestCancel;
+
+			var editCommand = ( testable.ClassUnderTest as dynamic ).EditArtist as ICommand;
+
+			Assert.IsNotNull( editCommand );
+			Assert.IsFalse( editCommand.CanExecute( null ));
+		}
+
+		private void OnArtistEditRequestCancel( object sender, InteractionRequestedEventArgs e ) {
+			var confirmation = e.Context as Confirmation;
+
+			Assert.IsNotNull( confirmation );
+
+			confirmation.Confirmed = false;
+			e.Callback.Invoke();
+		}
+
+		private void OnArtistEditRequestConfirm( object sender, InteractionRequestedEventArgs e ) {
+			var confirmation = e.Context as Confirmation;
+
+			Assert.IsNotNull( confirmation );
+
+			confirmation.Confirmed = true;
+			e.Callback.Invoke();
 		}
 	}
 }

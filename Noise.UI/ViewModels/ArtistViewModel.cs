@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using AutoMapper;
 using Caliburn.Micro;
+using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -14,6 +14,19 @@ using Observal.Extensions;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
+	public class ArtistEditRequest : Confirmation {
+		private readonly UiArtist	mArtist;
+
+		public ArtistEditRequest(UiArtist artist ) {
+			mArtist = artist;
+			Content = artist;
+		} 
+
+		public UiArtist Artist {
+			get{ return( mArtist ); }
+		}
+	}
+
 	public class ArtistViewModel : AutomaticCommandBase,
 								   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, 
 								   IHandle<Events.ArtistContentUpdated>, IHandle<Events.DatabaseItemChanged> {
@@ -22,7 +35,6 @@ namespace Noise.UI.ViewModels {
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly IDiscographyProvider	mDiscographyProvider;
 		private readonly ITagManager			mTagManager;
-		private readonly IDialogService			mDialogService;
 		private readonly Observal.Observer		mChangeObserver;
 		private UiArtist						mCurrentArtist;
 		private LinkNode						mArtistWebsite;
@@ -31,16 +43,15 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<LinkNode>				mTopAlbums;
 		private readonly BindableCollection<LinkNode>				mBandMembers;
 		private readonly SortableCollection<DbDiscographyRelease>	mDiscography;
+		private readonly InteractionRequest<ArtistEditRequest>	mArtistEditRequest;
 
 		public ArtistViewModel( ICaliburnEventAggregator eventAggregator,
-								IArtistProvider artistProvider, IAlbumProvider albumProvider, IDiscographyProvider discographyProvider,
-								ITagManager tagManager, IDialogService dialogService ) {
+								IArtistProvider artistProvider, IAlbumProvider albumProvider, IDiscographyProvider discographyProvider, ITagManager tagManager ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mDiscographyProvider = discographyProvider;
 			mTagManager = tagManager;
-			mDialogService = dialogService;
 
 			mEventAggregator.Subscribe( this );
 
@@ -51,6 +62,8 @@ namespace Noise.UI.ViewModels {
 
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnArtistChanged );
+
+			mArtistEditRequest = new InteractionRequest<ArtistEditRequest>(); 
 		}
 
 		public UiArtist Artist {
@@ -292,20 +305,32 @@ namespace Noise.UI.ViewModels {
 			get{ return( mDiscography ); }
 		}
 
+		public IInteractionRequest ArtistEditRequest {
+			get{ return( mArtistEditRequest ); }
+		}
+
 		public void Execute_EditArtist() {
 			if( mCurrentArtist != null ) {
-				using( var artistUpdate = mArtistProvider.GetArtistForUpdate( mCurrentArtist.DbId )) {
-					if( artistUpdate != null ) {
-						artistUpdate.Item.Website = artistUpdate.Item.Website.Replace( Environment.NewLine, "" ).Replace( "\n", "" ).Replace( "\r", "" );
+				mArtistEditRequest.Raise( new ArtistEditRequest( mCurrentArtist ), OnArtistEdited );
+			}
+		}
 
-						if( mDialogService.ShowDialog( DialogNames.ArtistEdit, artistUpdate.Item ) == true ) {
-							artistUpdate.Update();
+		[DependsUpon( "Artist" )]
+		public bool CanExecute_EditArtist() {
+			return( CurrentArtist != null );
+		}
 
-							Mapper.DynamicMap( artistUpdate.Item, mCurrentArtist );
+		private void OnArtistEdited( ArtistEditRequest confirmation ) {
+			if( confirmation.Confirmed ) {
+				using( var updater = mArtistProvider.GetArtistForUpdate( confirmation.Artist.DbId )) {
+					if( updater.Item != null ) {
+						Mapper.DynamicMap( confirmation.Artist, updater.Item );
+						updater.Update();
 
-							mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
-							RaisePropertyChanged( () => ArtistWebsite );
-						}
+						Mapper.DynamicMap( confirmation.Artist, mCurrentArtist );
+
+						mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
+						RaisePropertyChanged( () => ArtistWebsite );
 					}
 				}
 			}
