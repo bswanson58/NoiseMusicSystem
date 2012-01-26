@@ -57,7 +57,14 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class PlayListChanged : CompositePresentationEvent<DbPlayList> { }
+		public class PlayListChanged {
+			public DbPlayList	PlayList { get; private set; }
+
+			public PlayListChanged( DbPlayList playList ) {
+				PlayList = playList;
+			}
+		}
+
 		public class PlayRequested : CompositePresentationEvent<PlayQueueTrack> { }
 
 		public class PlaybackStatusChanged : CompositePresentationEvent<ePlaybackStatus> { }

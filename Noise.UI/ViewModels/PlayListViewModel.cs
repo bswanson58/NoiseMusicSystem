@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -12,8 +11,7 @@ using Noise.UI.Dto;
 using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
-	public class PlayListViewModel : ViewModelBase {
-		private readonly IEventAggregator	mEvents;
+	public class PlayListViewModel : ViewModelBase, IHandle<Events.PlayListChanged> {
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
@@ -24,10 +22,9 @@ namespace Noise.UI.ViewModels {
 		private readonly Observal.Observer	mChangeObserver;
 		private readonly ObservableCollectionEx<PlayListNode>	mTreeItems;
 
-		public PlayListViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+		public PlayListViewModel( ICaliburnEventAggregator eventAggregator,
 								  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayListProvider playListProvider ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -42,7 +39,7 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
-			mEvents.GetEvent<Events.PlayListChanged>().Subscribe( OnPlayListChanged );
+			mEventAggregator.Subscribe( this );
 
 			BackgroundLoadPlayLists();
 		}
@@ -51,7 +48,7 @@ namespace Noise.UI.ViewModels {
 			get{ return( mTreeItems ); }
 		}
 
-		private void OnPlayListChanged( DbPlayList playList ) {
+		public void Handle( Events.PlayListChanged eventArgs ) {
 			BackgroundLoadPlayLists();
 		}
 

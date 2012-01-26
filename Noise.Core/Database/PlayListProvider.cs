@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
+using Caliburn.Micro;
 using CuttingEdge.Conditions;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	internal class PlayListProvider : BaseDataProvider<DbPlayList>, IPlayListProvider {
-		private readonly IEventAggregator	mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 
-		public PlayListProvider( IEventAggregator eventAggregator, IDatabaseManager databaseManager ) :
+		public PlayListProvider( ICaliburnEventAggregator eventAggregator, IDatabaseManager databaseManager ) :
 			base( databaseManager ) {
-			mEvents = eventAggregator;
+			mEventAggregator = eventAggregator;
 		}
 
 		public void AddPlayList( DbPlayList playList ) {
@@ -43,7 +43,7 @@ namespace Noise.Core.Database {
 		}
 
 		private void FireListChanged( DbPlayList playList ) {
-			mEvents.GetEvent<Events.PlayListChanged>().Publish( playList );
+			mEventAggregator.Publish( new Events.PlayListChanged( playList ));
 		}
 	}
 }
