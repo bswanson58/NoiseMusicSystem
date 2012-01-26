@@ -218,8 +218,7 @@ namespace Noise.UI.Tests.ViewModels {
 			sut.Handle( new Events.AlbumFocusRequested( album1 ));
 			sut.Handle( new Events.AlbumFocusRequested( album2 ));
 
-			// The artist is requested twice in the current code for each focus request.
-			testable.Mock<IArtistProvider>().Verify( m => m.GetArtist( It.IsAny<long>()), Times.Exactly( 2 ));
+			testable.Mock<IArtistProvider>().Verify( m => m.GetArtist( It.IsAny<long>()), Times.Exactly( 1 ));
 		}
 
 		[Test]
