@@ -49,7 +49,14 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class PlayHistoryChanged : CompositePresentationEvent<IPlayHistory> { }
+		public class PlayHistoryChanged {
+			public IPlayHistory	PlayHistory { get; private set; }
+
+			public PlayHistoryChanged( IPlayHistory playHistory ) {
+				PlayHistory = playHistory;
+			}
+		}
+
 		public class PlayListChanged : CompositePresentationEvent<DbPlayList> { }
 		public class PlayRequested : CompositePresentationEvent<PlayQueueTrack> { }
 

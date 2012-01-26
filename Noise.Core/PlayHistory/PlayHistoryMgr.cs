@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.Prism.Events;
+using Caliburn.Micro;
 using Noise.Core.Database;
 using Noise.Core.Support;
 using Noise.Infrastructure;
@@ -12,13 +12,14 @@ namespace Noise.Core.PlayHistory {
 	public class PlayHistoryMgr : IPlayHistory, IRequireInitialization {
 		private const int						cMaximumHistory = 100;
 
-		private readonly IEventAggregator		mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IPlayHistoryProvider	mPlayHistoryProvider;
 		private readonly ITrackProvider			mTrackProvider;
 		private DatabaseCache<DbPlayHistory>	mPlayHistory;
 
-		public PlayHistoryMgr( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, IPlayHistoryProvider playHistoryProvider, ITrackProvider trackProvider ) {
-			mEvents = eventAggregator;
+		public PlayHistoryMgr( ILifecycleManager lifecycleManager, ICaliburnEventAggregator eventAggregator,
+							   IPlayHistoryProvider playHistoryProvider, ITrackProvider trackProvider ) {
+			mEventAggregator = eventAggregator;
 			mPlayHistoryProvider = playHistoryProvider;
 			mTrackProvider = trackProvider;
 			mPlayHistory = new DatabaseCache<DbPlayHistory>( null );
@@ -72,7 +73,7 @@ namespace Noise.Core.PlayHistory {
 
 					TrimHistoryList();
 
-					mEvents.GetEvent<Events.PlayHistoryChanged>().Publish( this );
+					mEventAggregator.Publish( new Events.PlayHistoryChanged( this ));
 				}
 				catch( Exception ex) {
 					NoiseLogger.Current.LogException( "Exception - TrackPlayCompleted:", ex );

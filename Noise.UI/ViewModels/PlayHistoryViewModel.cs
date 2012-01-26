@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -12,8 +11,7 @@ using Noise.UI.Adapters;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class PlayHistoryViewModel : ViewModelBase {
-		private readonly IEventAggregator	mEvents;
+	public class PlayHistoryViewModel : ViewModelBase, IHandle<Events.PlayHistoryChanged> {
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IPlayHistory		mPlayHistory;
 		private readonly IArtistProvider	mArtistProvider;
@@ -22,9 +20,8 @@ namespace Noise.UI.ViewModels {
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<PlayHistoryNode>	mHistoryList;
 
-		public PlayHistoryViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+		public PlayHistoryViewModel( ICaliburnEventAggregator caliburnEventAggregator,
 									 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayHistory playHistory ) {
-			mEvents = eventAggregator;
 			mEventAggregator = caliburnEventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -33,7 +30,7 @@ namespace Noise.UI.ViewModels {
 
 			mHistoryList = new ObservableCollectionEx<PlayHistoryNode>();
 
-			mEvents.GetEvent<Events.PlayHistoryChanged>().Subscribe( OnPlayHistoryChanged );
+			mEventAggregator.Subscribe( this );
 
 			mBackgroundWorker = new BackgroundWorker();
 			mBackgroundWorker.DoWork += ( o, args ) => args.Result = BuildHistoryList();
@@ -42,7 +39,7 @@ namespace Noise.UI.ViewModels {
 			BackgroundPopulateHistoryList();
 		}
 
-		private void OnPlayHistoryChanged( IPlayHistory playHistory ) {
+		public void Handle( Events.PlayHistoryChanged eventArgs ) {
 			BackgroundPopulateHistoryList();
 		}
 
