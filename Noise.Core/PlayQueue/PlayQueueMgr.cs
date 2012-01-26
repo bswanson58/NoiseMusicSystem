@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.Prism.Events;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -8,11 +8,11 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayQueueMgr : IPlayQueue {
+		private readonly ICaliburnEventAggregator			mEventAggregator;
 		private readonly IArtistProvider					mArtistProvider;
 		private readonly IAlbumProvider						mAlbumProvider;
 		private readonly ITrackProvider						mTrackProvider;
 		private readonly IStorageFileProvider				mStorageFileProvider;
-		private readonly IEventAggregator					mEventAggregator;
 		private readonly List<PlayQueueTrack>				mPlayQueue;
 		private readonly List<PlayQueueTrack>				mPlayHistory;
 		private	ePlayStrategy								mPlayStrategy;
@@ -29,13 +29,14 @@ namespace Noise.Core.PlayQueue {
 		private readonly AsyncCommand<DbAlbum>				mAlbumPlayCommand;
 		private readonly AsyncCommand<DbInternetStream>		mStreamPlayCommand;
 
-		public PlayQueueMgr( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IStorageFileProvider storageFileProvider,
+		public PlayQueueMgr( ICaliburnEventAggregator caliburnEventAggregator,
+							 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IStorageFileProvider storageFileProvider,
 							 IPlayStrategyFactory strategyFactory, IPlayExhaustedFactory exhaustedFactory ) {
+			mEventAggregator = caliburnEventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mStorageFileProvider = storageFileProvider;
-			mEventAggregator = eventAggregator;
 			mPlayStrategyFactory = strategyFactory;
 			mPlayExhaustedFactory = exhaustedFactory;
 
@@ -275,7 +276,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public bool StrategyRequestsQueued {
-			get{ return(( from PlayQueueTrack track in mPlayQueue where track.IsStrategyQueued select track ).Count() > 0 ); }
+			get{ return(( from PlayQueueTrack track in mPlayQueue where track.IsStrategyQueued select track ).Any()); }
 		}
 
 		public int PlayingTrackReplayCount {
@@ -423,7 +424,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		private void FirePlayQueueChanged() {
-			mEventAggregator.GetEvent<Events.PlayQueueChanged>().Publish( this );
+			mEventAggregator.Publish( new Events.PlayQueueChanged( this ));
 		}
 	}
 }

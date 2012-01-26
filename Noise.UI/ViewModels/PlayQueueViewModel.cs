@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Caliburn.Micro;
 using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -15,8 +16,9 @@ using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class PlayQueueViewModel : ViewModelBase {
-		private readonly IEventAggregator			mEventAggregator;
+	public class PlayQueueViewModel : ViewModelBase, IHandle<Events.PlayQueueChanged> {
+		private readonly IEventAggregator			mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IGenreProvider				mGenreProvider;
 		private readonly ITagProvider				mTagProvider;
 		private readonly IInternetStreamProvider	mStreamProvider;
@@ -31,9 +33,11 @@ namespace Noise.UI.ViewModels {
 		private	readonly ObservableCollectionEx<ExhaustedStrategyItem>	mExhaustedStrategies;
 		private readonly ObservableCollectionEx<PlayStrategyItem>		mPlayStrategies;
 
-		public PlayQueueViewModel( IEventAggregator eventAggregator, ITagProvider tagProvider, IGenreProvider genreProvider, IInternetStreamProvider streamProvider,
+		public PlayQueueViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+								   ITagProvider tagProvider, IGenreProvider genreProvider, IInternetStreamProvider streamProvider,
 								   IPlayQueue playQueue, IPlayListProvider playListProvider, IDialogService dialogService ) {
-			mEventAggregator = eventAggregator;
+			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mGenreProvider = genreProvider;
 			mStreamProvider = streamProvider;
 			mTagProvider = tagProvider;
@@ -59,8 +63,8 @@ namespace Noise.UI.ViewModels {
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayStream, "Radio Station..." ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayGenre, "Play Genre..." )};
 
-			mEventAggregator.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
-			mEventAggregator.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnTrackStarted );
+			mEventAggregator.Subscribe( this );
+			mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnTrackStarted );
 
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
@@ -79,7 +83,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_PlayRequested( EventCommandParameter<object, RoutedEventArgs> args ) {
 			if( args.CustomParameter != null ) {
-				mEventAggregator.GetEvent<Events.PlayRequested>().Publish( args.CustomParameter as PlayQueueTrack );
+				mEvents.GetEvent<Events.PlayRequested>().Publish( args.CustomParameter as PlayQueueTrack );
 			}
 		}
 
@@ -167,7 +171,7 @@ namespace Noise.UI.ViewModels {
 			get{ return( mRemainingTime ); }
 		}
 
-		private void OnPlayQueueChanged( IPlayQueue playQueue ) {
+		public void Handle( Events.PlayQueueChanged eventArgs ) {
 			Execute.OnUIThread( LoadPlayQueue );
 
 			PlayQueueChangedFlag++;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Timers;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Caliburn.Micro;
 using Microsoft.Practices.Prism.Events;
 using Noise.Core.Support;
 using Noise.Infrastructure;
@@ -28,8 +29,10 @@ namespace Noise.Core.MediaPlayer {
 		ExternalPlay
 	}
 
-	internal class PlayController : IPlayController, IRequireInitialization {
+	internal class PlayController : IPlayController, IRequireInitialization,
+									IHandle<Events.PlayQueueChanged> {
 		private readonly IEventAggregator		mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IAudioPlayer			mAudioPlayer;
 		private	readonly IEqManager				mEqManager;
 		private readonly IPlayQueue				mPlayQueue;
@@ -52,9 +55,10 @@ namespace Noise.Core.MediaPlayer {
 		private Subject<ePlayState>				mPlayStateSubject;
 		public	IObservable<ePlayState>			PlayStateChange { get { return( mPlayStateSubject.AsObservable()); } }
 
-		public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
+		public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
 							   IPlayQueue playQueue, IPlayHistory playHistory, IAudioPlayer audioPlayer, IEqManager eqManager ) {
 			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mPlayQueue = playQueue;
 			mPlayHistory = playHistory;
 			mAudioPlayer = audioPlayer;
@@ -79,7 +83,7 @@ namespace Noise.Core.MediaPlayer {
 			mAudioLevelsDispose = mAudioPlayer.AudioLevelsChange.Subscribe( OnAudioLevelsChanged );
 			mStreamInfoDispose = mAudioPlayer.AudioStreamInfoChange.Subscribe( OnStreamInfo );
 
-			mEvents.GetEvent<Events.PlayQueueChanged>().Subscribe( OnPlayQueueChanged );
+			mEventAggregator.Subscribe( this );
 			mEvents.GetEvent<Events.DatabaseItemChanged>().Subscribe( OnDatabaseItemChanged );
 			mEvents.GetEvent<Events.PlayRequested>().Subscribe( OnPlayRequested );
 			mEvents.GetEvent<Events.GlobalUserEvent>().Subscribe( OnGlobalRequest );
@@ -390,8 +394,8 @@ namespace Noise.Core.MediaPlayer {
 			return( retValue );
 		}
 
-		public void OnPlayQueueChanged( IPlayQueue playQueue ) {
-			if( playQueue.IsQueueEmpty ) {
+		public void Handle( Events.PlayQueueChanged eventArgs ) {
+			if( eventArgs.PlayQueue.IsQueueEmpty ) {
 				FireStateChange( eStateTriggers.QueueCleared );
 
 				CurrentStatus = ePlaybackStatus.Stopped;
