@@ -2,7 +2,6 @@
 using System.ServiceModel;
 using System.ServiceProcess;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -19,10 +18,9 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 		Description = "This service maintains the Noise Music System library.",
 		EventLogSource = "Noise Update Service",
 		StartMode = ServiceStartMode.Automatic)]
-	public class LibraryServiceImpl : BaseService, IHandle<Events.DatabaseItemChanged> {
+	public class LibraryServiceImpl : BaseService, IHandle<Events.DatabaseItemChanged>, IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted> {
 		internal const string				cNoiseLibraryUpdate = "NoiseLibraryUpdate";
 
-		private readonly IEventAggregator	mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly INoiseManager		mNoiseManager;
 		private readonly ILibraryBuilder	mLibraryBuilder;
@@ -31,10 +29,9 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 		private	IScheduler					mJobScheduler;
 		private ServiceHost					mLibraryUpdateServiceHost;
 
-		public LibraryServiceImpl( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator, INoiseManager noiseManager,
+		public LibraryServiceImpl( ICaliburnEventAggregator eventAggregator, INoiseManager noiseManager,
 								   ILibraryBuilder libraryBuilder, IServiceBusManager serviceBusManager ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mNoiseManager = noiseManager;
 			mLibraryBuilder = libraryBuilder;
 			mServiceBus = serviceBusManager;
@@ -53,9 +50,6 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 
 				if( mServiceBus.InitializeServer()) {
 					mEventAggregator.Subscribe( this );
-
-					mEvents.GetEvent<Events.LibraryUpdateStarted>().Subscribe( OnLibraryUpdateStarted );
-					mEvents.GetEvent<Events.LibraryUpdateCompleted>().Subscribe( OnLibraryUpdateCompleted );
 				}
 
 				try {
@@ -109,12 +103,12 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 			}
 		}
 
-		private void OnLibraryUpdateStarted( long libraryId ) {
-			mServiceBus.Publish( new LibraryUpdateStartedMessage { LibraryId = libraryId });
+		public void Handle( Events.LibraryUpdateStarted eventArgs ) {
+			mServiceBus.Publish( new LibraryUpdateStartedMessage { LibraryId = eventArgs.LibraryId });
 		}
 
-		private void OnLibraryUpdateCompleted( long libraryId ) {
-			mServiceBus.Publish( new LibraryUpdateCompletedMessage { LibraryId = libraryId });
+		public void Handle( Events.LibraryUpdateCompleted eventArgs ) {
+			mServiceBus.Publish( new LibraryUpdateCompletedMessage { LibraryId = eventArgs.LibraryId });
 		}
 	}
 }

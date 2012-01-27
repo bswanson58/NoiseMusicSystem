@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Practices.Prism.Events;
+using Caliburn.Micro;
 using Noise.Core.Support;
 using Noise.Infrastructure;
 using Quartz;
@@ -19,11 +19,12 @@ namespace Noise.Core.BackgroundTasks {
 		}
 	}
 
-	public class BackgroundTaskManager : IBackgroundTaskManager, IRequireInitialization {
+	public class BackgroundTaskManager : IBackgroundTaskManager, IRequireInitialization,
+										 IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted> {
 		internal const string					cBackgroundTaskName		= "BackgroundTask";
 		internal const string					cBackgroundTaskGroup	= "BackgroundTaskManager";
 
-		private readonly IEventAggregator		mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private	readonly ISchedulerFactory		mSchedulerFactory;
 		private	readonly IScheduler				mJobScheduler;
 		private readonly JobDetail				mTaskJobDetail;
@@ -34,9 +35,10 @@ namespace Noise.Core.BackgroundTasks {
 
 		private readonly IEnumerable<IBackgroundTask>	mBackgroundTasks;
 
-		public BackgroundTaskManager( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager, IEnumerable<IBackgroundTask> backgroundTasks ) {
+		public BackgroundTaskManager( ICaliburnEventAggregator eventAggregator, ILifecycleManager lifecycleManager,
+									  IEnumerable<IBackgroundTask> backgroundTasks ) {
 			mBackgroundTasks = backgroundTasks;
-			mEvents = eventAggregator;
+			mEventAggregator = eventAggregator;
 
 			lifecycleManager.RegisterForInitialize( this );
 
@@ -59,8 +61,7 @@ namespace Noise.Core.BackgroundTasks {
 
 			mJobScheduler.ScheduleJob( mTaskJobDetail, mTaskExecuteTrigger );
 
-			mEvents.GetEvent<Events.LibraryUpdateStarted>().Subscribe( OnLibraryUpdateStarted );
-			mEvents.GetEvent<Events.LibraryUpdateCompleted>().Subscribe( OnLibraryUpdateCompleted );
+			mEventAggregator.Subscribe( this );
 		}
 
 		public void Execute() {
@@ -106,11 +107,11 @@ namespace Noise.Core.BackgroundTasks {
 			mJobScheduler.Shutdown( true );
 		}
 
-		private void OnLibraryUpdateStarted( long libraryId ) {
+		public void Handle( Events.LibraryUpdateStarted eventArgs ) {
 			mUpdateInProgress = true;
 		}
 
-		private void OnLibraryUpdateCompleted( long libraryId ) {
+		public void Handle( Events.LibraryUpdateCompleted eventArgs ) {
 			mUpdateInProgress = false;
 		}
 	}

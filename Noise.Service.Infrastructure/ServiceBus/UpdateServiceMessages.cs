@@ -1,11 +1,11 @@
-﻿using Microsoft.Practices.Prism.Events;
+﻿using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using NServiceBus;
 
 namespace Noise.Service.Infrastructure.ServiceBus {
 	public class MessageHandlerBase {
-		internal static IEventAggregator	EventAggregator;
+		internal static ICaliburnEventAggregator	EventAggregator;
 	}
 
 	public class LibraryUpdateStartedMessage : IMessage {
@@ -15,7 +15,7 @@ namespace Noise.Service.Infrastructure.ServiceBus {
 	public class LibraryUpdateStartedMessageHandler : MessageHandlerBase, IMessageHandler<LibraryUpdateStartedMessage> {
 		public void Handle( LibraryUpdateStartedMessage message ) {
 			if( EventAggregator != null ) {
-				EventAggregator.GetEvent<Events.LibraryUpdateStarted>().Publish( message.LibraryId );
+				EventAggregator.Publish( new Events.LibraryUpdateStarted( message.LibraryId ));
 			}
 		}
 	}
@@ -27,7 +27,7 @@ namespace Noise.Service.Infrastructure.ServiceBus {
 	public class LibraryUpdateCompletedMessageHandler : MessageHandlerBase, IMessageHandler<LibraryUpdateCompletedMessage> {
 		public void Handle( LibraryUpdateCompletedMessage message ) {
 			if( EventAggregator != null ) {
-				EventAggregator.GetEvent<Events.LibraryUpdateCompleted>().Publish( message.LibraryId );
+				EventAggregator.Publish( new Events.LibraryUpdateCompleted( message.LibraryId ));
 			}
 		}
 	}

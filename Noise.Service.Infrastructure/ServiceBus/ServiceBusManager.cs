@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Microsoft.Practices.Prism.Events;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Service.Infrastructure.Configuration;
 using Noise.Service.Infrastructure.Interfaces;
@@ -11,7 +11,7 @@ namespace Noise.Service.Infrastructure.ServiceBus {
 	public class ServiceBusManager : IServiceBusManager {
 		private	IBus	mMessageBus;
 
-		public ServiceBusManager( IEventAggregator eventAggregator ) {
+		public ServiceBusManager( ICaliburnEventAggregator eventAggregator ) {
 			MessageHandlerBase.EventAggregator = eventAggregator;
 		}
 

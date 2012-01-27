@@ -136,8 +136,21 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class LibraryUpdateStarted : CompositePresentationEvent<long> { }
-		public class LibraryUpdateCompleted : CompositePresentationEvent<long> { }
+		public class LibraryUpdateStarted {
+			public long	LibraryId { get; private set; }
+
+			public LibraryUpdateStarted( long libraryId ) {
+				LibraryId = libraryId;
+			}
+		}
+
+		public class LibraryUpdateCompleted {
+			public	long	LibraryId { get; private set; }
+
+			public LibraryUpdateCompleted( long libraryId ) {
+				LibraryId = libraryId;
+			}
+		}
 
 		public class SimilarSongSearchRequest : CompositePresentationEvent<long> { }
 		public class SongLyricsRequest : CompositePresentationEvent<LyricsInfo> { }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -13,8 +12,7 @@ using Noise.UI.Adapters;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class LibraryAdditionsViewModel : ViewModelBase {
-		private readonly IEventAggregator	mEvents;
+	public class LibraryAdditionsViewModel : ViewModelBase, IHandle<Events.LibraryUpdateCompleted> {
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
@@ -24,10 +22,9 @@ namespace Noise.UI.ViewModels {
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<LibraryAdditionNode>	mNodeList;
 
-		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+		public LibraryAdditionsViewModel( ICaliburnEventAggregator eventAggregator,
 										  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -49,10 +46,10 @@ namespace Noise.UI.ViewModels {
 
 			mBackgroundWorker.RunWorkerAsync();
 
-			mEvents.GetEvent<Events.LibraryUpdateCompleted>().Subscribe( OnLibraryUpdated );
+			mEventAggregator.Subscribe( this );
 		}
 
-		private void OnLibraryUpdated( long libraryId ) {
+		public void Handle( Events.LibraryUpdateCompleted eventArgs ) {
 			if(!mBackgroundWorker.IsBusy ) {
 				mBackgroundWorker.RunWorkerAsync();
 			}

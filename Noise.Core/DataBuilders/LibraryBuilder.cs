@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Microsoft.Practices.Prism.Events;
+using Caliburn.Micro;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
 using Noise.Core.Platform;
@@ -12,7 +12,7 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	public class LibraryBuilder : ILibraryBuilder {
-		private readonly IEventAggregator		mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly FileSystemWatcherEx	mFolderWatcher;
 		private readonly IStorageFolderProvider	mStorageFolderProvider;
 		private readonly IFolderExplorer		mFolderExplorer;
@@ -25,16 +25,16 @@ namespace Noise.Core.DataBuilders {
 		public	bool							LibraryUpdateInProgress { get; private set; }
 		public	bool							LibraryUpdatePaused { get; private set; }
 
-		public LibraryBuilder( IEventAggregator eventAggregator, IStorageFolderProvider storageFolderProvider,
+		public LibraryBuilder( ICaliburnEventAggregator eventAggregator, IStorageFolderProvider storageFolderProvider,
 							   IFolderExplorer folderExplorer, IMetaDataCleaner metaDataCleaner, IMetaDataExplorer metaDataExplorer,
 							   ISummaryBuilder summaryBuilder, DatabaseStatistics databaseStatistics ) {
+			mEventAggregator = eventAggregator;
 			mStorageFolderProvider = storageFolderProvider;
 			mFolderExplorer = folderExplorer;
 			mMetaDataCleaner = metaDataCleaner;
 			mMetaDataExplorer = metaDataExplorer;
 			mSummaryBuilder = summaryBuilder;
 			mDatabaseStatistics = databaseStatistics;
-			mEvents = eventAggregator;
 			mFolderWatcher = new FileSystemWatcherEx();
 		}
 
@@ -132,7 +132,7 @@ namespace Noise.Core.DataBuilders {
 			LibraryUpdateInProgress = true;
 
 			try {
-				mEvents.GetEvent<Events.LibraryUpdateStarted>().Publish( 0L );
+				mEventAggregator.Publish( new Events.LibraryUpdateStarted( 0L ));
 
 				using( new SleepPreventer()) {
 					if( mContinueExploring ) {
@@ -170,7 +170,7 @@ namespace Noise.Core.DataBuilders {
 				LibraryUpdateInProgress = false;
 			}
 
-			mEvents.GetEvent<Events.LibraryUpdateCompleted>().Publish( 0L );
+			mEventAggregator.Publish( new Events.LibraryUpdateCompleted( 0L ));
 		}
 
 		public void LogLibraryStatistics() {
