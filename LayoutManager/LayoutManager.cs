@@ -157,8 +157,8 @@ namespace Composite.Layout
 
 			_IsInitialized = true;
 
-			var eventAggregator = _Container.Resolve<IEventAggregator>();
-			eventAggregator.GetEvent<LayoutManagerInitializedEvent>().Publish(null);
+//			var eventAggregator = _Container.Resolve<IEventAggregator>();
+//			eventAggregator.GetEvent<LayoutManagerInitializedEvent>().Publish(null);
 		}
 
 		public bool IsInitialized
@@ -244,20 +244,20 @@ namespace Composite.Layout
 
 			LoadLayoutContentControl(layout);
 
-			var eventAggregator = _Container.Resolve<IEventAggregator>();
-			eventAggregator.GetEvent<LayoutLoadingEvent>().Publish(layout);
+//			var eventAggregator = _Container.Resolve<IEventAggregator>();
+//			eventAggregator.GetEvent<LayoutLoadingEvent>().Publish(layout);
 
 			var regionManager = _Container.Resolve<IRegionManager>();
 
 			//check to see if we have a current layout, if so, remove it
 			if (CurrentLayout != null)
 			{
-				eventAggregator.GetEvent<LayoutUnloadingEvent>().Publish(CurrentLayout);
+//				eventAggregator.GetEvent<LayoutUnloadingEvent>().Publish(CurrentLayout);
 				//remove all the views that have been placed in the layout's regions
 				RemoveViews(regionManager, CurrentLayout);
 				//remove the layout from the region
 				RemoveLayoutControl(regionManager.Regions[regionName], CurrentLayout);
-				eventAggregator.GetEvent<LayoutUnloadedEvent>().Publish(CurrentLayout);
+//				eventAggregator.GetEvent<LayoutUnloadedEvent>().Publish(CurrentLayout);
 			}
 
 			//add the new layout to the parent region
@@ -279,7 +279,7 @@ namespace Composite.Layout
 				throw new LayoutControlNotUserControlException();
 			}
 
-			eventAggregator.GetEvent<LayoutLoadedEvent>().Publish(layout);
+//			eventAggregator.GetEvent<LayoutLoadedEvent>().Publish(layout);
 		}
 
 		/// <summary>
