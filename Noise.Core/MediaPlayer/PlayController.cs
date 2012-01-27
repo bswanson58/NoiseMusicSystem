@@ -5,7 +5,6 @@ using System.Timers;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Events;
 using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -30,8 +29,8 @@ namespace Noise.Core.MediaPlayer {
 	}
 
 	internal class PlayController : IPlayController, IRequireInitialization,
-									IHandle<Events.PlayQueueChanged>, IHandle<Events.PlayQueuedTrackRequest>, IHandle<Events.DatabaseItemChanged> {
-		private readonly IEventAggregator		mEvents;
+									IHandle<Events.PlayQueueChanged>, IHandle<Events.PlayQueuedTrackRequest>, IHandle<Events.DatabaseItemChanged>,
+									IHandle<Events.SystemShutdown>, IHandle<Events.GlobalUserEvent> {
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IAudioPlayer			mAudioPlayer;
 		private	readonly IEqManager				mEqManager;
@@ -55,10 +54,9 @@ namespace Noise.Core.MediaPlayer {
 		private Subject<ePlayState>				mPlayStateSubject;
 		public	IObservable<ePlayState>			PlayStateChange { get { return( mPlayStateSubject.AsObservable()); } }
 
-		public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+		public PlayController( ILifecycleManager lifecycleManager, ICaliburnEventAggregator eventAggregator,
 							   IPlayQueue playQueue, IPlayHistory playHistory, IAudioPlayer audioPlayer, IEqManager eqManager ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
 			mPlayHistory = playHistory;
 			mAudioPlayer = audioPlayer;
@@ -84,8 +82,6 @@ namespace Noise.Core.MediaPlayer {
 			mStreamInfoDispose = mAudioPlayer.AudioStreamInfoChange.Subscribe( OnStreamInfo );
 
 			mEventAggregator.Subscribe( this );
-			mEvents.GetEvent<Events.GlobalUserEvent>().Subscribe( OnGlobalRequest );
-			mEvents.GetEvent<Events.SystemShutdown>().Subscribe( OnShutdown );
 
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
@@ -334,7 +330,7 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
-		private void OnShutdown( object sender ) {
+		public void Handle( Events.SystemShutdown eventArgs ) {
 			FireStateChange( eStateTriggers.QueueCleared );
 			StopAllTracks( true );
 
@@ -567,8 +563,8 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
-		private void OnGlobalRequest( GlobalUserEventArgs args ) {
-			switch( args.EventAction ) {
+		public void Handle( Events.GlobalUserEvent eventArgs ) {
+			switch( eventArgs.UserEvent.EventAction ) {
 				case UserEventAction.PausePlay:
 					if( CanPause ) {
 						Pause();

@@ -1,19 +1,19 @@
-﻿using Microsoft.Practices.Prism.Events;
+﻿using Caliburn.Micro;
 using Noise.AppSupport.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.AppSupport {
-	public class HotkeyManager {
-		private readonly IEventAggregator	mEvents;
+	public class HotkeyManager : IHandle<Events.SystemShutdown> {
+		private readonly ICaliburnEventAggregator	mEvents;
 		private	KeyboardHook				mKeyboardHook;
 		private bool						mInstalled;
 
-		public HotkeyManager( IEventAggregator eventAggregator ) {
+		public HotkeyManager( ICaliburnEventAggregator eventAggregator ) {
 			mEvents = eventAggregator;
 
-			mEvents.GetEvent<Events.SystemShutdown>().Subscribe( OnShutdown );
+			mEvents.Subscribe( this );
 		}
 
 		public void Initialize() {
@@ -49,11 +49,11 @@ namespace Noise.AppSupport {
 			}
 
 			if( action != UserEventAction.None ) {
-				mEvents.GetEvent<Events.GlobalUserEvent>().Publish( new GlobalUserEventArgs( action ));
+				mEvents.Publish( new Events.GlobalUserEvent( new GlobalUserEventArgs( action )));
 			}
 		}
 
-		private void OnShutdown( object unused ) {
+		public void Handle( Events.SystemShutdown eventArgs ) {
 			if(( mKeyboardHook != null ) &&
 			   ( mInstalled )) {
 				mKeyboardHook.Uninstall();

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Microsoft.Practices.Prism.Events;
+using Caliburn.Micro;
 using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -8,14 +8,14 @@ using Noise.Infrastructure.RemoteHost;
 
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager {
-		private	readonly IEventAggregator			mEvents;
+		private	readonly ICaliburnEventAggregator			mEvents;
 		private readonly ILifecycleManager			mLifecycleManager;
 		private readonly IRemoteServer				mRemoteServer;
 		private readonly ICloudSyncManager			mCloudSyncMgr;
 		private readonly ILibraryBuilder			mLibraryBuilder;
 		private readonly IDatabaseManager			mDatabaseManager;
 
-		public NoiseManager( IEventAggregator eventAggregator,
+		public NoiseManager( ICaliburnEventAggregator eventAggregator,
 							 ILifecycleManager lifecycleManager,
 							 IDatabaseManager databaseManager,
 							 ICloudSyncManager cloudSyncManager,
@@ -70,7 +70,7 @@ namespace Noise.Core {
 		}
 
 		public void Shutdown() {
-			mEvents.GetEvent<Events.SystemShutdown>().Publish( this );
+			mEvents.Publish( new Events.SystemShutdown());
 
 			mRemoteServer.CloseRemoteServer();
 			mLibraryBuilder.StopLibraryUpdate();

@@ -1,5 +1,4 @@
-﻿using Microsoft.Practices.Prism.Events;
-using Noise.Infrastructure.Dto;
+﻿using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure {
@@ -184,9 +183,15 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class SystemConfigurationChanged : CompositePresentationEvent<object> { }
-		public class SystemShutdown : CompositePresentationEvent<object> { }
+		public class SystemConfigurationChanged { }
+		public class SystemShutdown { }
 
-		public class GlobalUserEvent : CompositePresentationEvent<GlobalUserEventArgs> { }
+		public class GlobalUserEvent {
+			public GlobalUserEventArgs	UserEvent { get; private set; }
+
+			public GlobalUserEvent( GlobalUserEventArgs args ) {
+				UserEvent = args;
+			}
+		}
 	}
 }

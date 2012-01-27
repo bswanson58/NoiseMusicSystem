@@ -1,22 +1,19 @@
 ﻿using System;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Service.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport {
 	public class ApplicationSupport : IHandle<Events.UrlLaunchRequest>, IHandle<Events.LaunchRequest> {
-		private readonly IEventAggregator	mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IServiceBusManager	mServiceBus;
 		private readonly HotkeyManager		mHotkeyManager;
 
-		public ApplicationSupport( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator, IServiceBusManager serviceBusManager ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+		public ApplicationSupport( ICaliburnEventAggregator eventAggregator, IServiceBusManager serviceBusManager ) {
+			mEventAggregator = eventAggregator;
 			mServiceBus = serviceBusManager;
-			mHotkeyManager = new HotkeyManager( mEvents );
+			mHotkeyManager = new HotkeyManager( mEventAggregator );
 		}
 
 		public bool Initialize() {

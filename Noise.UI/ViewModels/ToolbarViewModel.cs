@@ -1,5 +1,4 @@
 ﻿using Caliburn.Micro;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -9,17 +8,15 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class ToolbarViewModel : ViewModelBase {
-		private readonly IEventAggregator		mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly ICloudSyncManager		mCloudSyncMgr;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly ILibraryBuilder		mLibraryBuilder;
 		private readonly IDialogService			mDialogService;
 
-		public ToolbarViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator, IDialogService dialogService, 
+		public ToolbarViewModel( ICaliburnEventAggregator eventAggregator, IDialogService dialogService, 
 								 ICloudSyncManager cloudSyncManager, IDataExchangeManager dataExchangeManager, ILibraryBuilder libraryBuilder ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mCloudSyncMgr = cloudSyncManager;
 			mDataExchangeMgr = dataExchangeManager;
 			mLibraryBuilder = libraryBuilder;
@@ -77,7 +74,7 @@ namespace Noise.UI.ViewModels {
 				}
 
 				NoiseSystemConfiguration.Current.Save( configuration );
-				mEvents.GetEvent<Events.SystemConfigurationChanged>().Publish( configuration );
+				mEventAggregator.Publish( new Events.SystemConfigurationChanged());
 			}
 		}
 
@@ -94,21 +91,15 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_SmallPlayerView() {
-			if( mEvents != null ) {
-				mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.SmallPlayerViewToggle ));
-			}
+			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.SmallPlayerViewToggle ));
 		}
 
 		public void Execute_ExploreLayout() {
-			if( mEvents != null ) {
-				mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
-			}
+			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
 		}
 
 		public void Execute_ListenLayout() {
-			if( mEvents != null ) {
-				mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ListenLayout ));
-			}
+			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ListenLayout ));
 		}
 
 		public void Execute_DisplayLog() {

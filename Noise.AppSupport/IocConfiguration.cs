@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Practices.Prism;
-using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Prism.Logging;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.UnityExtensions;
@@ -79,7 +78,6 @@ namespace Noise.AppSupport {
 				mContainer.RegisterType<IServiceLocator, UnityServiceLocatorAdapter>( new ContainerControlledLifetimeManager());
 				mContainer.RegisterType<IModuleInitializer, ModuleInitializer>( new ContainerControlledLifetimeManager());
 				mContainer.RegisterType<IModuleManager, ModuleManager>( new ContainerControlledLifetimeManager());
-				mContainer.RegisterType<IEventAggregator, EventAggregator>( new ContainerControlledLifetimeManager());
 
 				ExceptionExtensions.RegisterFrameworkExceptionType( typeof( ActivationException));
 				ExceptionExtensions.RegisterFrameworkExceptionType( typeof( ResolutionFailedException));

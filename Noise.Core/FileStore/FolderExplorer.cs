@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.Practices.Prism.Events;
+using Caliburn.Micro;
 using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -11,8 +11,8 @@ using Noise.Infrastructure.Interfaces;
 using Recls;
 
 namespace Noise.Core.FileStore {
-	internal class FolderExplorer : IFolderExplorer {
-		private readonly IEventAggregator	mEvents;
+	internal class FolderExplorer : IFolderExplorer, IHandle<Events.SystemConfigurationChanged> {
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IRootFolderProvider	mRootFolderProvider;
 		private readonly IStorageFolderProvider	mStorageFolderProvider;
 		private readonly IStorageFileProvider	mStorageFileProvider;
@@ -20,13 +20,13 @@ namespace Noise.Core.FileStore {
 		private DatabaseCache<StorageFile>	mFileCache;
 		private DatabaseCache<StorageFolder>	mFolderCache;
 
-		public  FolderExplorer( IEventAggregator eventAggregator, IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider ) {
-			mEvents = eventAggregator;
+		public  FolderExplorer( ICaliburnEventAggregator eventAggregator, IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider ) {
+			mEventAggregator = eventAggregator;
 			mRootFolderProvider = rootFolderProvider;
 			mStorageFolderProvider = storageFolderProvider;
 			mStorageFileProvider = storageFileProvider;
 
-			mEvents.GetEvent<Events.SystemConfigurationChanged>().Subscribe( OnSystemConfigurationChanged );
+			mEventAggregator.Subscribe( this );
 		}
 
 		public IEnumerable<RootFolder> RootFolderList() {
@@ -50,7 +50,7 @@ namespace Noise.Core.FileStore {
 		public void SynchronizeDatabaseFolders() {
 			mStopExploring = false;
 
-			var rootFolders = RootFolderList();
+			var rootFolders = RootFolderList().ToList();
 
 			if( rootFolders.Any()) {
 					try {
@@ -96,7 +96,7 @@ namespace Noise.Core.FileStore {
 			mStopExploring = true;
 		}
 
-		private void OnSystemConfigurationChanged( object sender ) {
+		public void Handle( Events.SystemConfigurationChanged eventArgs ) {
 			LoadConfiguration();
 		}
 

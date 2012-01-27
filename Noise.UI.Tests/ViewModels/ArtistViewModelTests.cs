@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using FluentAssertions.EventMonitoring;
-using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Moq;
 using NUnit.Framework;
@@ -25,9 +24,6 @@ namespace Noise.UI.Tests.ViewModels {
 		public TestableArtistViewModel() {
 			// Set tpl tasks to use the current thread only.
 			mTaskScheduler = new CurrentThreadTaskScheduler();
-
-			EventAggregator = new AutoMockingEventAggregator();
-			Inject<IEventAggregator>( EventAggregator );
 
 			Mock<ITagManager>().Setup(  m => m.GetGenre( It.IsAny<long>())).Returns( new DbGenre( 1 ) { Name = "test genre" });
 		}
