@@ -5,7 +5,6 @@ using System.Linq;
 using AutoMapper;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -16,7 +15,6 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace Noise.UI.ViewModels {
 	public class ArtistTracksViewModel : ViewModelBase, IActiveAware,
 										 IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested> {
-		private readonly IEventAggregator	mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
@@ -29,10 +27,9 @@ namespace Noise.UI.ViewModels {
 		public	event EventHandler			IsActiveChanged;
 		public	ObservableCollectionEx<UiArtistTrackNode>	TrackList { get; private set; }
 
-		public ArtistTracksViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+		public ArtistTracksViewModel( ICaliburnEventAggregator eventAggregator,
 									  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ITagManager tagManager ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -187,7 +184,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_SwitchView() {
-			mEvents.GetEvent<Events.NavigationRequest>().Publish( new NavigationRequestArgs( ViewNames.ArtistTracksView ));
+			mEventAggregator.Publish( new Events.NavigationRequest( ViewNames.ArtistTracksView ));
 		}
 	}
 }

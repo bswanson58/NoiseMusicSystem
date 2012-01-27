@@ -5,22 +5,19 @@ using System.Windows.Forms;
 using Caliburn.Micro;
 using Composite.Layout;
 using Composite.Layout.Configuration;
-using Microsoft.Practices.Prism.Events;
 using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.Unity;
 using Noise.Desktop.Properties;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
-using Noise.Infrastructure.Dto;
 using Noise.UI.Views;
 using Application = System.Windows.Application;
 
 namespace Noise.Desktop {
-	internal class WindowManager : IHandle<Events.WindowLayoutRequest>, IHandle<Events.ExternalPlayerSwitch>, IHandle<Events.ExtendedPlayerRequest>,
-								   IHandle<Events.StandardPlayerRequest> {
+	internal class WindowManager : IHandle<Events.WindowLayoutRequest>, IHandle<Events.NavigationRequest>,
+								   IHandle<Events.ExternalPlayerSwitch>, IHandle<Events.ExtendedPlayerRequest>, IHandle<Events.StandardPlayerRequest> {
 		private readonly IUnityContainer	mContainer;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
-		private readonly IEventAggregator	mEvents;
 		private readonly ILayoutManager		mLayoutManager;
 		private readonly IRegionManager		mRegionManager;
 		private SmallPlayerView				mPlayerView;
@@ -36,9 +33,6 @@ namespace Noise.Desktop {
 			mRegionManager = mContainer.Resolve<IRegionManager>();
 
 			mEventAggregator.Subscribe( this );
-
-			mEvents = mContainer.Resolve<IEventAggregator>();
-			mEvents.GetEvent<Events.NavigationRequest>().Subscribe( OnNavigationRequest );
 
 			mStoredWindowState = WindowState.Normal;
 			mNotifyIcon = new NotifyIcon { //BalloonTipText = "Click the tray icon to show.", 
@@ -87,11 +81,11 @@ namespace Noise.Desktop {
 			}
 		}
 
-		private void OnNavigationRequest( NavigationRequestArgs args ) {
+		public void Handle( Events.NavigationRequest eventArgs ) {
 			var region = mRegionManager.Regions.FirstOrDefault( r => r.Name == "AlbumInfo" );
 
 			if( region != null ) {
-				switch( args.RequestingViewName ) {
+				switch( eventArgs.TargetView ) {
 					case ViewNames.AlbumView:
 						region.RequestNavigate( ViewNames.ArtistTracksView );
 						break;

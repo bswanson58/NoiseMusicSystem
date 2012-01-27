@@ -6,7 +6,7 @@ using Noise.Infrastructure.Configuration;
 using Noise.Service.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport {
-	public class ApplicationSupport : IHandle<Events.UrlLaunchRequest> {
+	public class ApplicationSupport : IHandle<Events.UrlLaunchRequest>, IHandle<Events.LaunchRequest> {
 		private readonly IEventAggregator	mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IServiceBusManager	mServiceBus;
@@ -32,7 +32,6 @@ namespace Noise.AppSupport {
 			mHotkeyManager.Initialize();
 
 			mEventAggregator.Subscribe( this );
-			mEvents.GetEvent<Events.LaunchRequest>().Subscribe( OnLaunchRequest );
 
 			return( true );
 		}
@@ -56,9 +55,9 @@ namespace Noise.AppSupport {
 			}
 		}
 
-		private static void OnLaunchRequest( string path ) {
+		public void Handle( Events.LaunchRequest eventArgs ) {
 			try {
-				System.Diagnostics.Process.Start( path );
+				System.Diagnostics.Process.Start( eventArgs.Target );
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - OnLaunchRequest:", ex );

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Windows.Media.Imaging;
 using AutoMapper;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -37,7 +36,6 @@ namespace Noise.UI.ViewModels {
 
 	internal class AlbumViewModel : ViewModelBase,
 									IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.DatabaseItemChanged> {
-		private readonly IEventAggregator		mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
@@ -59,11 +57,10 @@ namespace Noise.UI.ViewModels {
 
 		public	TimeSpan						AlbumPlayTime { get; private set; }
 
-		public AlbumViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator, 
+		public AlbumViewModel( ICaliburnEventAggregator eventAggregator, 
 							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider, ITagProvider tagProvider, IStorageFileProvider storageFileProvider,
 							   ITagManager tagManager, IDialogService dialogService ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mArtworkProvider = artworkProvider;
@@ -498,7 +495,7 @@ namespace Noise.UI.ViewModels {
 				var path = mStorageFileProvider.GetAlbumPath( mCurrentAlbum.DbId );
 
 				if(!string.IsNullOrWhiteSpace( path )) {
-					mEvents.GetEvent<Events.LaunchRequest>().Publish( path );
+					mEventAggregator.Publish( new Events.LaunchRequest( path ));
 				}
 			}
 		}
@@ -509,7 +506,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_SwitchView() {
-			mEvents.GetEvent<Events.NavigationRequest>().Publish( new NavigationRequestArgs( ViewNames.AlbumView ));
+			mEventAggregator.Publish( new Events.NavigationRequest( ViewNames.AlbumView ));
 		}
 	}
 }

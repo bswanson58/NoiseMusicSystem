@@ -112,7 +112,13 @@ namespace Noise.Infrastructure {
 		public class ExtendedPlayerRequest { }
 		public class StandardPlayerRequest { }
 
-		public class LaunchRequest : CompositePresentationEvent<string > { }
+		public class LaunchRequest {
+			public string	Target { get; private set; }
+
+			public LaunchRequest( string target ) {
+				Target = target;
+			}
+		}
 
 		public class UrlLaunchRequest {
 			public string	Url { get; private set; }
@@ -122,7 +128,13 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class NavigationRequest : CompositePresentationEvent<NavigationRequestArgs> { }
+		public class NavigationRequest {
+			public	string	TargetView { get; private set; }
+
+			public NavigationRequest( string target ) {
+				TargetView = target;
+			}
+		}
 
 		public class LibraryUpdateStarted : CompositePresentationEvent<long> { }
 		public class LibraryUpdateCompleted : CompositePresentationEvent<long> { }
