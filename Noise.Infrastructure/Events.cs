@@ -81,10 +81,24 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class PlaybackStatusChanged : CompositePresentationEvent<ePlaybackStatus> { }
-		public class PlaybackTrackChanged : CompositePresentationEvent<object> { }
-		public class PlaybackInfoChanged : CompositePresentationEvent<object> { }
-		public class PlaybackTrackStarted : CompositePresentationEvent<PlayQueueTrack> { }
+		public class PlaybackStatusChanged {
+			public ePlaybackStatus	Status { get; private set; }
+
+			public PlaybackStatusChanged( ePlaybackStatus newStatus ) {
+				Status = newStatus;
+			}
+		}
+
+		public class PlaybackTrackStarted {
+			public PlayQueueTrack	Track { get; private set; }
+
+			public PlaybackTrackStarted( PlayQueueTrack track ) {
+				Track = track;
+			}
+		}
+
+		public class PlaybackTrackChanged { }
+		public class PlaybackInfoChanged { }
 
 		public class WindowLayoutRequest : CompositePresentationEvent<string> { }
 		public class ExternalPlayerSwitch : CompositePresentationEvent<object> { }

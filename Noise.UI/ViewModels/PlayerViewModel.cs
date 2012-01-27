@@ -15,7 +15,9 @@ using Noise.UI.Dto;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class PlayerViewModel : ViewModelBase, IActiveAware {
+	public class PlayerViewModel : ViewModelBase, IActiveAware,
+								   IHandle<Events.PlaybackStatusChanged>, IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackInfoChanged>,
+								   IHandle<Events.PlaybackTrackStarted> {
 		private readonly IEventAggregator	mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IPlayQueue			mPlayQueue;
@@ -51,11 +53,9 @@ namespace Noise.UI.ViewModels {
 
 			mBands = new ObservableCollectionEx<UiEqBand>();
 
-			mEvents.GetEvent<Events.PlaybackStatusChanged>().Subscribe( OnPlaybackStatusChanged );
-			mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnPlaybackTrackChanged );
-			mEvents.GetEvent<Events.PlaybackInfoChanged>().Subscribe( OnPlaybackInfoChanged );
+			mEventAggregator.Subscribe( this );
+
 			mEvents.GetEvent<Events.SongLyricsInfo>().Subscribe( OnSongLyricsInfo );
-			mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnPlaybackTrackStarted );
 
 			LoadBands();
 
@@ -81,15 +81,15 @@ namespace Noise.UI.ViewModels {
 		}
 
 
-		public void OnPlaybackStatusChanged( ePlaybackStatus status ) {
-			CurrentStatus = status;
+		public void Handle( Events.PlaybackStatusChanged eventArgs ) {
+			CurrentStatus = eventArgs.Status;
 		}
 
-		public void OnPlaybackTrackChanged( object sender ) {
+		public void Handle( Events.PlaybackTrackChanged eventArgs ) {
 			StartTrackFlag++;
 		}
 
-		public void OnPlaybackInfoChanged( object sender ) {
+		public void Handle( Events.PlaybackInfoChanged eventArgs ) {
 			InfoUpdateFlag++;
 		}
 
@@ -473,7 +473,7 @@ namespace Noise.UI.ViewModels {
 			       ( mPlayController.CurrentTrack.Track != null ));
 		}
 
-		private void OnPlaybackTrackStarted( PlayQueueTrack track ) {
+		public void Handle( Events.PlaybackTrackStarted eventArgs ) {
 			mLyricsInfo = null;
 			RaiseCanExecuteChangedEvent( "CanExecute_RequestLyrics" );
 		}

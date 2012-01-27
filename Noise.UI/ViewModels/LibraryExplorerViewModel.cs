@@ -4,10 +4,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
-using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Behaviours.EventCommandTriggers;
@@ -17,12 +15,11 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class LibraryExplorerViewModel : ViewModelBase,
-											IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested> {
+											IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.PlaybackTrackStarted> {
 		private const string					cVisualStateNormal		= "Normal";
 		private const string					cVisualStateIndex		= "DisplayIndex";
 		private const string					cVisualStateStrategy	= "DisplayStrategy";
 
-		private readonly IEventAggregator		mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IDialogService			mDialogService;
 		private IExplorerViewStrategy			mViewStrategy;
@@ -38,10 +35,9 @@ namespace Noise.UI.ViewModels {
 		public	CollectionViewSource				TreeViewSource { get; private set; }
 		public	IEnumerable<IExplorerViewStrategy>	ViewStrategies { get; private set; }
 
-		public LibraryExplorerViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+		public LibraryExplorerViewModel( ICaliburnEventAggregator eventAggregator,
 										 IEnumerable<IExplorerViewStrategy> viewStrategies, IDialogService dialogService ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mDialogService = dialogService;
 			ViewStrategies = viewStrategies;
 
@@ -69,8 +65,6 @@ namespace Noise.UI.ViewModels {
 			}
 
 			mEventAggregator.Subscribe( this );
-
-			mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnPlaybackStarted );
 
 			var strategyList = ViewStrategies.ToList();
 			foreach( var strategy in strategyList ) {
@@ -106,15 +100,15 @@ namespace Noise.UI.ViewModels {
 			mLastExplorerRequest = DateTime.Now;
 		}
 
-		private void OnPlaybackStarted( PlayQueueTrack track ) {
+		public void Handle( Events.PlaybackTrackStarted eventArgs ) {
 			if( mLastExplorerRequest + mPlayTrackDelay < DateTime.Now ) {
 				var savedTime = mLastExplorerRequest;
 
-				if( track.Artist != null ) {
-					mEventAggregator.Publish( new Events.ArtistFocusRequested( track.Artist.DbId ));
+				if( eventArgs.Track.Artist != null ) {
+					mEventAggregator.Publish( new Events.ArtistFocusRequested( eventArgs.Track.Artist.DbId ));
 				}
-				if( track.Album != null ) {
-					mEventAggregator.Publish( new Events.AlbumFocusRequested( track.Album ));
+				if( eventArgs.Track.Album != null ) {
+					mEventAggregator.Publish( new Events.AlbumFocusRequested( eventArgs.Track.Album ));
 				}
 
 				mLastExplorerRequest = savedTime;

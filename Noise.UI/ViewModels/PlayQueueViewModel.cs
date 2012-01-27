@@ -3,7 +3,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -16,8 +15,7 @@ using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class PlayQueueViewModel : ViewModelBase, IHandle<Events.PlayQueueChanged> {
-		private readonly IEventAggregator			mEvents;
+	public class PlayQueueViewModel : ViewModelBase, IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted> {
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IGenreProvider				mGenreProvider;
 		private readonly ITagProvider				mTagProvider;
@@ -33,11 +31,10 @@ namespace Noise.UI.ViewModels {
 		private	readonly ObservableCollectionEx<ExhaustedStrategyItem>	mExhaustedStrategies;
 		private readonly ObservableCollectionEx<PlayStrategyItem>		mPlayStrategies;
 
-		public PlayQueueViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+		public PlayQueueViewModel( ICaliburnEventAggregator eventAggregator,
 								   ITagProvider tagProvider, IGenreProvider genreProvider, IInternetStreamProvider streamProvider,
 								   IPlayQueue playQueue, IPlayListProvider playListProvider, IDialogService dialogService ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mGenreProvider = genreProvider;
 			mStreamProvider = streamProvider;
 			mTagProvider = tagProvider;
@@ -64,7 +61,6 @@ namespace Noise.UI.ViewModels {
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayGenre, "Play Genre..." )};
 
 			mEventAggregator.Subscribe( this );
-			mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnTrackStarted );
 
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
@@ -212,7 +208,7 @@ namespace Noise.UI.ViewModels {
 			return(!mPlayQueue.IsQueueEmpty );
 		}
 
-		private void OnTrackStarted( PlayQueueTrack track ) {
+		public void Handle( Events.PlaybackTrackStarted eventArgs ) {
 			Execute.OnUIThread( () => {
 				var index = 0;
 

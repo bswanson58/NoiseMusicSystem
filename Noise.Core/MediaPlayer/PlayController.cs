@@ -377,7 +377,7 @@ namespace Noise.Core.MediaPlayer {
 				if( mCurrentStatus != value ) {
 					mCurrentStatus = value;
 
-					mEvents.GetEvent<Events.PlaybackStatusChanged>().Publish( mCurrentStatus );
+					mEventAggregator.Publish( new Events.PlaybackStatusChanged( mCurrentStatus ));
 				}
 			}
 		}
@@ -420,7 +420,7 @@ namespace Noise.Core.MediaPlayer {
 			var track = GetTrack( channel );
 
 			if( track != null ) {
-				mEvents.GetEvent<Events.PlaybackTrackStarted>().Publish( track );
+				mEventAggregator.Publish( new Events.PlaybackTrackStarted( track ));
 				GlobalCommands.RequestLyrics.Execute( new LyricsRequestArgs( track.Artist, track.Track ));
 			}
 		}
@@ -933,11 +933,11 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		private void FirePlaybackInfoChange() {
-			mEvents.GetEvent<Events.PlaybackInfoChanged>().Publish( null );
+			mEventAggregator.Publish( new Events.PlaybackInfoChanged());
 		}
 
 		private void FirePlaybackTrackChanged() {
-			mEvents.GetEvent<Events.PlaybackTrackChanged>().Publish( null );
+			mEventAggregator.Publish( new Events.PlaybackTrackChanged());
 		}
 	}
 }

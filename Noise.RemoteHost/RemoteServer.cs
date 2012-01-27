@@ -3,27 +3,21 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.RemoteDto;
 using Noise.Infrastructure.RemoteHost;
 
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
-	public class RemoteServer : INoiseRemote, IHandle<Events.PlayQueueChanged> {
-		private	readonly IEventAggregator					mEvents;
+	public class RemoteServer : INoiseRemote, IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted> {
 		private readonly ICaliburnEventAggregator			mEventAggregator;
 		private	readonly Dictionary<string, ClientEvents>	mClientList;
 
-		public RemoteServer( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+		public RemoteServer( ICaliburnEventAggregator eventAggregator ) {
+			mEventAggregator = eventAggregator;
 			mClientList = new Dictionary<string, ClientEvents>();
 
 			mEventAggregator.Subscribe( this );
-
-			mEvents.GetEvent<Events.PlaybackTrackStarted>().Subscribe( OnTrackStarted );
 		}
 
 		public ServerVersion GetServerVersion() {
@@ -82,7 +76,7 @@ namespace Noise.RemoteHost {
 			new Task( OnQueueChangedTask ).Start();
 		}
 
-		private void OnTrackStarted( PlayQueueTrack track ) {
+		public void Handle( Events.PlaybackTrackStarted eventArgs ) {
 			// decouple from the event thread.
 			new Task( OnQueueChangedTask ).Start();
 		}

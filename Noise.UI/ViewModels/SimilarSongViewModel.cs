@@ -11,7 +11,8 @@ using Noise.UI.Adapters;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class SimilarSongViewModel : ViewModelBase {
+	public class SimilarSongViewModel : ViewModelBase,
+										IHandle<Events.PlaybackTrackChanged> {
 		private const string		cViewStateClosed	= "Closed";
 		private const string		cViewStateSearching	= "Searching";
 		private const string		cViewStateDisplay	= "Normal";
@@ -34,7 +35,6 @@ namespace Noise.UI.ViewModels {
 			mSearchProvider = searchProvider;
 
 			mEvents.GetEvent<Events.SimilarSongSearchRequest>().Subscribe( OnSearchRequest );
-			mEvents.GetEvent<Events.PlaybackTrackChanged>().Subscribe( OnTrackChanged );
 			mEvents.GetEvent<Events.BalloonPopupOpened>().Subscribe( OnPopupOpened );
 
 			mSearchResults = new ObservableCollectionEx<SearchViewNode>();
@@ -92,7 +92,7 @@ namespace Noise.UI.ViewModels {
 			VisualStateName = mSearchResults.Any() ? cViewStateDisplay : cViewStateNoResults;
 		}
 
-		private void OnTrackChanged( object sender ) {
+		public void Handle( Events.PlaybackTrackChanged eventArgs ) {
 			Close();
 		}
 
