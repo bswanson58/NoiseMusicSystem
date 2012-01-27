@@ -108,9 +108,9 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class ExternalPlayerSwitch : CompositePresentationEvent<object> { }
-		public class ExtendedPlayerRequest : CompositePresentationEvent<object> { }
-		public class StandardPlayerRequest : CompositePresentationEvent<object> { }
+		public class ExternalPlayerSwitch { }
+		public class ExtendedPlayerRequest { }
+		public class StandardPlayerRequest { }
 
 		public class LaunchRequest : CompositePresentationEvent<string > { }
 

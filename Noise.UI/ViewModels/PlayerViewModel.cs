@@ -271,7 +271,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_PlayerSwitch() {
-			mEvents.GetEvent<Events.ExternalPlayerSwitch>().Publish( this );
+			mEventAggregator.Publish( new Events.ExternalPlayerSwitch());
 		}
 
 		private void OnSpectrumUpdateTimer( object sender, EventArgs args ) {
@@ -453,11 +453,11 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_StandardPlayer() {
-			mEvents.GetEvent<Events.StandardPlayerRequest>().Publish( this );
+			mEventAggregator.Publish( new Events.StandardPlayerRequest());
 		}
 
 		public void Execute_ExtendedPlayer() {
-			mEvents.GetEvent<Events.ExtendedPlayerRequest>().Publish( this );
+			mEventAggregator.Publish( new Events.ExtendedPlayerRequest());
 		}
 
 		public void Execute_RequestSimilarSongSearch() {

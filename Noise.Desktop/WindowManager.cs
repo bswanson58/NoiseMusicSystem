@@ -16,7 +16,8 @@ using Noise.UI.Views;
 using Application = System.Windows.Application;
 
 namespace Noise.Desktop {
-	internal class WindowManager : IHandle<Events.WindowLayoutRequest> {
+	internal class WindowManager : IHandle<Events.WindowLayoutRequest>, IHandle<Events.ExternalPlayerSwitch>, IHandle<Events.ExtendedPlayerRequest>,
+								   IHandle<Events.StandardPlayerRequest> {
 		private readonly IUnityContainer	mContainer;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IEventAggregator	mEvents;
@@ -37,9 +38,6 @@ namespace Noise.Desktop {
 			mEventAggregator.Subscribe( this );
 
 			mEvents = mContainer.Resolve<IEventAggregator>();
-			mEvents.GetEvent<Events.ExternalPlayerSwitch>().Subscribe( OnExternalPlayerSwitch );
-			mEvents.GetEvent<Events.StandardPlayerRequest>().Subscribe( OnStandardPlayerRequest );
-			mEvents.GetEvent<Events.ExtendedPlayerRequest>().Subscribe( OnExtendedPlayerRequest );
 			mEvents.GetEvent<Events.NavigationRequest>().Subscribe( OnNavigationRequest );
 
 			mStoredWindowState = WindowState.Normal;
@@ -173,7 +171,7 @@ namespace Noise.Desktop {
 			ActivateShell();
 		}
 
-		private void OnExternalPlayerSwitch( object sender ) {
+		public void Handle( Events.ExternalPlayerSwitch eventArgs ) {
 			ActivateShell();
 		}
 
@@ -185,7 +183,7 @@ namespace Noise.Desktop {
 			}
 		}
 
-		private void OnStandardPlayerRequest( object sender ) {
+		public void Handle( Events.StandardPlayerRequest eventArgs ) {
 			var	region = mRegionManager.Regions["Player"];
 
 			if( region != null ) {
@@ -201,7 +199,7 @@ namespace Noise.Desktop {
 			}
 		}
 
-		private void OnExtendedPlayerRequest( object sender ) {
+		public void Handle( Events.ExtendedPlayerRequest eventArgs ) {
 			var	region = mRegionManager.Regions["Player"];
 
 			if( region != null ) {
