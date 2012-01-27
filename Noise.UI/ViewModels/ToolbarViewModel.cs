@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.Prism.Events;
+﻿using Caliburn.Micro;
+using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -9,14 +10,16 @@ using Noise.UI.Support;
 namespace Noise.UI.ViewModels {
 	public class ToolbarViewModel : ViewModelBase {
 		private readonly IEventAggregator		mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly ICloudSyncManager		mCloudSyncMgr;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly ILibraryBuilder		mLibraryBuilder;
 		private readonly IDialogService			mDialogService;
 
-		public ToolbarViewModel( IEventAggregator eventAggregator, IDialogService dialogService, 
+		public ToolbarViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator, IDialogService dialogService, 
 								 ICloudSyncManager cloudSyncManager, IDataExchangeManager dataExchangeManager, ILibraryBuilder libraryBuilder ) {
 			mEvents = eventAggregator;
+			mEventAggregator = caliburnEventAggregator;
 			mCloudSyncMgr = cloudSyncManager;
 			mDataExchangeMgr = dataExchangeManager;
 			mLibraryBuilder = libraryBuilder;
@@ -92,19 +95,19 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_SmallPlayerView() {
 			if( mEvents != null ) {
-				mEvents.GetEvent<Events.WindowLayoutRequest>().Publish( Constants.SmallPlayerViewToggle );
+				mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.SmallPlayerViewToggle ));
 			}
 		}
 
 		public void Execute_ExploreLayout() {
 			if( mEvents != null ) {
-				mEvents.GetEvent<Events.WindowLayoutRequest>().Publish( Constants.ExploreLayout );
+				mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
 			}
 		}
 
 		public void Execute_ListenLayout() {
 			if( mEvents != null ) {
-				mEvents.GetEvent<Events.WindowLayoutRequest>().Publish( Constants.ListenLayout );
+				mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ListenLayout ));
 			}
 		}
 

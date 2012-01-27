@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
+using Caliburn.Micro;
 using Composite.Layout;
 using Composite.Layout.Configuration;
 using Microsoft.Practices.Prism.Events;
@@ -15,8 +16,9 @@ using Noise.UI.Views;
 using Application = System.Windows.Application;
 
 namespace Noise.Desktop {
-	internal class WindowManager {
+	internal class WindowManager : IHandle<Events.WindowLayoutRequest> {
 		private readonly IUnityContainer	mContainer;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IEventAggregator	mEvents;
 		private readonly ILayoutManager		mLayoutManager;
 		private readonly IRegionManager		mRegionManager;
@@ -25,13 +27,16 @@ namespace Noise.Desktop {
 		private NotifyIcon					mNotifyIcon;
 		private WindowState					mStoredWindowState;
 
-		public WindowManager( IUnityContainer container ) {
+		public WindowManager( IUnityContainer container, ICaliburnEventAggregator eventAggregator ) {
 			mContainer = container;
+			mEventAggregator = eventAggregator;
+
 			mLayoutManager = LayoutConfigurationManager.LayoutManager;
 			mRegionManager = mContainer.Resolve<IRegionManager>();
 
+			mEventAggregator.Subscribe( this );
+
 			mEvents = mContainer.Resolve<IEventAggregator>();
-			mEvents.GetEvent<Events.WindowLayoutRequest>().Subscribe( OnWindowLayoutRequested );
 			mEvents.GetEvent<Events.ExternalPlayerSwitch>().Subscribe( OnExternalPlayerSwitch );
 			mEvents.GetEvent<Events.StandardPlayerRequest>().Subscribe( OnStandardPlayerRequest );
 			mEvents.GetEvent<Events.ExtendedPlayerRequest>().Subscribe( OnExtendedPlayerRequest );
@@ -63,8 +68,8 @@ namespace Noise.Desktop {
 			CloseSmallPlayer();
 		}
 
-		public void OnWindowLayoutRequested( string forLayout ) {
-			switch( forLayout ) {
+		public void Handle( Events.WindowLayoutRequest eventArgs ) {
+			switch( eventArgs.LayoutName ) {
 				case Constants.SmallPlayerViewToggle:
 					if( mPlayerView == null ) {
 						ShowSmallPlayer();
@@ -76,9 +81,9 @@ namespace Noise.Desktop {
 
 				default:
 					if(( mLayoutManager.CurrentLayout != null ) &&
-					   (!string.Equals( mLayoutManager.CurrentLayout.Name, forLayout )) &&
-					   ( mLayoutManager.Layouts.Exists( layout => string.Equals( layout.Name, forLayout )))) {
-						mLayoutManager.LoadLayout( forLayout );
+					   (!string.Equals( mLayoutManager.CurrentLayout.Name, eventArgs.LayoutName )) &&
+					   ( mLayoutManager.Layouts.Exists( layout => string.Equals( layout.Name, eventArgs.LayoutName )))) {
+						mLayoutManager.LoadLayout( eventArgs.LayoutName );
 					}
 					break;
 			}

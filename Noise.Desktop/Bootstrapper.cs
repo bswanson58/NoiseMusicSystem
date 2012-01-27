@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Caliburn.Micro;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.Unity;
@@ -55,7 +56,7 @@ namespace Noise.Desktop {
 
 			StartNoise();
 
-			mWindowManager = new WindowManager( Container );
+			mWindowManager = new WindowManager( Container, Container.Resolve<ICaliburnEventAggregator>());
 			mWindowManager.Initialize( mShell );
 		}
 

@@ -100,7 +100,14 @@ namespace Noise.Infrastructure {
 		public class PlaybackTrackChanged { }
 		public class PlaybackInfoChanged { }
 
-		public class WindowLayoutRequest : CompositePresentationEvent<string> { }
+		public class WindowLayoutRequest {
+			public string	LayoutName { get; private set; }
+
+			public WindowLayoutRequest( string layoutName ) {
+				LayoutName = layoutName;
+			}
+		}
+
 		public class ExternalPlayerSwitch : CompositePresentationEvent<object> { }
 		public class ExtendedPlayerRequest : CompositePresentationEvent<object> { }
 		public class StandardPlayerRequest : CompositePresentationEvent<object> { }
