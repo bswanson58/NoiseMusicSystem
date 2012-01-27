@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -12,7 +11,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class SimilarSongViewModel : ViewModelBase,
-										IHandle<Events.PlaybackTrackChanged>, IHandle<Events.SimilarSongSearchRequest> {
+										IHandle<Events.PlaybackTrackChanged>, IHandle<Events.SimilarSongSearchRequest>, IHandle<Events.BalloonPopupOpened> {
 		private const string		cViewStateClosed	= "Closed";
 		private const string		cViewStateSearching	= "Searching";
 		private const string		cViewStateDisplay	= "Normal";
@@ -20,22 +19,19 @@ namespace Noise.UI.ViewModels {
 
 		private const int			cMaxSearchResults = 25;
 
-		private readonly IEventAggregator	mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly ITrackProvider		mTrackProvider;
 		private readonly ISearchProvider	mSearchProvider;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
 
-		public SimilarSongViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+		public SimilarSongViewModel( ICaliburnEventAggregator eventAggregator,
 									 ITrackProvider trackProvider, ISearchProvider searchProvider ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mTrackProvider = trackProvider;
 			mSearchProvider = searchProvider;
 
 			mEventAggregator.Subscribe( this );
-			mEvents.GetEvent<Events.BalloonPopupOpened>().Subscribe( OnPopupOpened );
 
 			mSearchResults = new ObservableCollectionEx<SearchViewNode>();
 
@@ -52,7 +48,7 @@ namespace Noise.UI.ViewModels {
 				Set( () => VisualStateName, value );
 
 				if( value != cViewStateClosed ) {
-					mEvents.GetEvent<Events.BalloonPopupOpened>().Publish( this );
+					mEventAggregator.Publish( new Events.BalloonPopupOpened( ViewNames.SimilarSongView ));
 				}
 			}
 		}
@@ -96,8 +92,8 @@ namespace Noise.UI.ViewModels {
 			Close();
 		}
 
-		private void OnPopupOpened( object sender ) {
-			if( sender != this ) {
+		public void Handle( Events.BalloonPopupOpened eventArgs ) {
+			if(!eventArgs.ViewName.Equals( ViewNames.SimilarSongView )) {
 				Close();
 			}
 		}

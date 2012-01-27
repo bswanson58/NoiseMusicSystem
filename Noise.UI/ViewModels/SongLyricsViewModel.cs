@@ -1,5 +1,4 @@
 ﻿using Caliburn.Micro;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -21,11 +20,10 @@ namespace Noise.UI.ViewModels {
 	}
 
 	public class SongLyricsViewModel : ViewModelBase,
-									   IHandle<Events.PlaybackTrackChanged>, IHandle<Events.SongLyricsRequest> {
+									   IHandle<Events.PlaybackTrackChanged>, IHandle<Events.SongLyricsRequest>, IHandle<Events.BalloonPopupOpened> {
 		private const string		cViewStateClosed	= "Closed";
 		private const string		cViewStateNormal	= "Normal";
 
-		private readonly IEventAggregator	mEvents;
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly ILyricProvider		mLyricProvider;
@@ -33,17 +31,14 @@ namespace Noise.UI.ViewModels {
 		private LyricsInfo					mLyricsInfo;
 		private readonly ObservableCollectionEx<UiLyricSelector>	mLyricsList;
 
-		public SongLyricsViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator,
+		public SongLyricsViewModel( ICaliburnEventAggregator eventAggregator,
 									IArtistProvider artistProvider, ILyricProvider lyricProvider, IDialogService dialogService  ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mLyricProvider = lyricProvider;
 			mDialogService = dialogService;
 
 			mEventAggregator.Subscribe( this );
-
-			mEvents.GetEvent<Events.BalloonPopupOpened>().Subscribe( OnPopupOpened );
 
 			VisualStateName = cViewStateClosed;
 
@@ -56,7 +51,7 @@ namespace Noise.UI.ViewModels {
 				Set( () => VisualStateName, value );
 
 				if( value == cViewStateNormal ) {
-					mEvents.GetEvent<Events.BalloonPopupOpened>().Publish( this );
+					mEventAggregator.Publish( new Events.BalloonPopupOpened( ViewNames.SongLyricsView ));
 				}
 			}
 		}
@@ -179,8 +174,8 @@ namespace Noise.UI.ViewModels {
 			Close();
 		}
 
-		private void OnPopupOpened( object sender ) {
-			if( sender != this ) {
+		public void Handle( Events.BalloonPopupOpened eventArts ) {
+			if(!eventArts.ViewName.Equals( ViewNames.SongLyricsView )) {
 				Close();
 			}
 		}

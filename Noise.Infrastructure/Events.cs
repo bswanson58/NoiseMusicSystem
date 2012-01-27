@@ -176,7 +176,13 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class BalloonPopupOpened : CompositePresentationEvent<object> { }
+		public class BalloonPopupOpened {
+			public string	ViewName { get; private set; }
+
+			public BalloonPopupOpened( string viewName ) {
+				ViewName = viewName;
+			}
+		}
 
 		public class SystemConfigurationChanged : CompositePresentationEvent<object> { }
 		public class SystemShutdown : CompositePresentationEvent<object> { }
