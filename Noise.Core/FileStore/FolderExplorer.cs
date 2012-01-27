@@ -12,15 +12,16 @@ using Recls;
 
 namespace Noise.Core.FileStore {
 	internal class FolderExplorer : IFolderExplorer, IHandle<Events.SystemConfigurationChanged> {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator		mEventAggregator;
 		private readonly IRootFolderProvider	mRootFolderProvider;
 		private readonly IStorageFolderProvider	mStorageFolderProvider;
 		private readonly IStorageFileProvider	mStorageFileProvider;
 		private bool							mStopExploring;
-		private DatabaseCache<StorageFile>	mFileCache;
+		private DatabaseCache<StorageFile>		mFileCache;
 		private DatabaseCache<StorageFolder>	mFolderCache;
 
-		public  FolderExplorer( ICaliburnEventAggregator eventAggregator, IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider ) {
+		public  FolderExplorer( IEventAggregator eventAggregator, 
+								IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider ) {
 			mEventAggregator = eventAggregator;
 			mRootFolderProvider = rootFolderProvider;
 			mStorageFolderProvider = storageFolderProvider;

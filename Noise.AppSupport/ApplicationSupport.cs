@@ -6,11 +6,11 @@ using Noise.Service.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport {
 	public class ApplicationSupport : IHandle<Events.UrlLaunchRequest>, IHandle<Events.LaunchRequest> {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly IServiceBusManager	mServiceBus;
 		private readonly HotkeyManager		mHotkeyManager;
 
-		public ApplicationSupport( ICaliburnEventAggregator eventAggregator, IServiceBusManager serviceBusManager ) {
+		public ApplicationSupport( IEventAggregator eventAggregator, IServiceBusManager serviceBusManager ) {
 			mEventAggregator = eventAggregator;
 			mServiceBus = serviceBusManager;
 			mHotkeyManager = new HotkeyManager( mEventAggregator );

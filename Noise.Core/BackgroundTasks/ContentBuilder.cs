@@ -11,13 +11,13 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	public class ContentBuilder : IBackgroundTask, IRequireInitialization {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private	List<DbArtist>				mArtistList;
 		private IEnumerator<DbArtist>		mArtistEnum;
 
-		public ContentBuilder( ILifecycleManager lifecycleManager, ICaliburnEventAggregator caliburnEventAggregator, IArtistProvider artistProvider ) {
-			mEventAggregator = caliburnEventAggregator;
+		public ContentBuilder( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, IArtistProvider artistProvider ) {
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 
 			lifecycleManager.RegisterForInitialize( this );

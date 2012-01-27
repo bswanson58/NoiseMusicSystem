@@ -12,7 +12,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class PlayHistoryViewModel : ViewModelBase, IHandle<Events.PlayHistoryChanged> {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly IPlayHistory		mPlayHistory;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
@@ -20,9 +20,9 @@ namespace Noise.UI.ViewModels {
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<PlayHistoryNode>	mHistoryList;
 
-		public PlayHistoryViewModel( ICaliburnEventAggregator caliburnEventAggregator,
+		public PlayHistoryViewModel( IEventAggregator eventAggregator,
 									 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayHistory playHistory ) {
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;

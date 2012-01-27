@@ -24,7 +24,7 @@
     /// <summary>
     ///   Enables loosely-coupled publication of and subscription to events.
     /// </summary>
-    public interface ICaliburnEventAggregator {
+    public interface IEventAggregator {
         /// <summary>
         ///   Gets or sets the default publication thread marshaller.
         /// </summary>
@@ -65,7 +65,7 @@
     /// <summary>
     ///   Enables loosely-coupled publication of and subscription to events.
     /// </summary>
-    public class EventAggregator : ICaliburnEventAggregator {
+    public class EventAggregator : IEventAggregator {
         readonly List<Handler> handlers = new List<Handler>();
 
         /// <summary>

@@ -12,7 +12,7 @@ using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
 	public class PlayListViewModel : ViewModelBase, IHandle<Events.PlayListChanged> {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
@@ -22,7 +22,7 @@ namespace Noise.UI.ViewModels {
 		private readonly Observal.Observer	mChangeObserver;
 		private readonly ObservableCollectionEx<PlayListNode>	mTreeItems;
 
-		public PlayListViewModel( ICaliburnEventAggregator eventAggregator,
+		public PlayListViewModel( IEventAggregator eventAggregator,
 								  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayListProvider playListProvider ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;

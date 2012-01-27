@@ -10,6 +10,7 @@ using Noise.EloqueraDatabase.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
+using IEventAggregator = Caliburn.Micro.IEventAggregator;
 
 namespace Noise.Core.IntegrationTests.Database {
 	public class BaseDatabaseProviderTests {
@@ -19,14 +20,14 @@ namespace Noise.Core.IntegrationTests.Database {
 		protected IBlobStorageResolver				mBlobResolver;
 		protected IDatabaseFactory					mDatabaseFactory;
 		protected IDatabaseManager					mDatabaseManager;
-		protected Mock<ICaliburnEventAggregator>			mEventAggregator;
+		protected Mock<IEventAggregator>			mEventAggregator;
 
 		[SetUp]
 		public virtual void Setup() {
 			mDummyLog = new Mock<ILog>();
 			NoiseLogger.Current = mDummyLog.Object;
 				
-			mEventAggregator = new Mock<ICaliburnEventAggregator> { DefaultValue = DefaultValue.Mock };
+			mEventAggregator = new Mock<IEventAggregator> { DefaultValue = DefaultValue.Mock };
 
 			mDatabaseConfiguration = new DatabaseConfiguration { DatabaseName = "Integration Test Database" };
 

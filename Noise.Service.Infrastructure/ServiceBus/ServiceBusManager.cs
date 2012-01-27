@@ -11,7 +11,7 @@ namespace Noise.Service.Infrastructure.ServiceBus {
 	public class ServiceBusManager : IServiceBusManager {
 		private	IBus	mMessageBus;
 
-		public ServiceBusManager( ICaliburnEventAggregator eventAggregator ) {
+		public ServiceBusManager( IEventAggregator eventAggregator ) {
 			MessageHandlerBase.EventAggregator = eventAggregator;
 		}
 

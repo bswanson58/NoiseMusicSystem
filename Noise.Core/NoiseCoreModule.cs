@@ -27,7 +27,7 @@ namespace Noise.Core {
 		}
 
 		public void Initialize() {
-			mContainer.RegisterInstance<ICaliburnEventAggregator>( new EventAggregator(), new ContainerControlledLifetimeManager());
+			mContainer.RegisterInstance<IEventAggregator>( new EventAggregator(), new ContainerControlledLifetimeManager());
 
 			mContainer.RegisterType<IAudioPlayer, AudioPlayer>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ICloudSyncManager, CloudSyncManager>( new HierarchicalLifetimeManager());

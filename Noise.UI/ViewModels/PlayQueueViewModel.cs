@@ -16,7 +16,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class PlayQueueViewModel : ViewModelBase, IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted> {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator			mEventAggregator;
 		private readonly IGenreProvider				mGenreProvider;
 		private readonly ITagProvider				mTagProvider;
 		private readonly IInternetStreamProvider	mStreamProvider;
@@ -31,7 +31,7 @@ namespace Noise.UI.ViewModels {
 		private	readonly ObservableCollectionEx<ExhaustedStrategyItem>	mExhaustedStrategies;
 		private readonly ObservableCollectionEx<PlayStrategyItem>		mPlayStrategies;
 
-		public PlayQueueViewModel( ICaliburnEventAggregator eventAggregator,
+		public PlayQueueViewModel( IEventAggregator eventAggregator,
 								   ITagProvider tagProvider, IGenreProvider genreProvider, IInternetStreamProvider streamProvider,
 								   IPlayQueue playQueue, IPlayListProvider playListProvider, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;

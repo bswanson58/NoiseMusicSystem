@@ -31,7 +31,7 @@ namespace Noise.Core.MediaPlayer {
 	internal class PlayController : IPlayController, IRequireInitialization,
 									IHandle<Events.PlayQueueChanged>, IHandle<Events.PlayQueuedTrackRequest>, IHandle<Events.DatabaseItemChanged>,
 									IHandle<Events.SystemShutdown>, IHandle<Events.GlobalUserEvent> {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator		mEventAggregator;
 		private readonly IAudioPlayer			mAudioPlayer;
 		private	readonly IEqManager				mEqManager;
 		private readonly IPlayQueue				mPlayQueue;
@@ -54,7 +54,7 @@ namespace Noise.Core.MediaPlayer {
 		private Subject<ePlayState>				mPlayStateSubject;
 		public	IObservable<ePlayState>			PlayStateChange { get { return( mPlayStateSubject.AsObservable()); } }
 
-		public PlayController( ILifecycleManager lifecycleManager, ICaliburnEventAggregator eventAggregator,
+		public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
 							   IPlayQueue playQueue, IPlayHistory playHistory, IAudioPlayer audioPlayer, IEqManager eqManager ) {
 			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;

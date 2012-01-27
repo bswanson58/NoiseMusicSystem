@@ -12,7 +12,7 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	public class LibraryBuilder : ILibraryBuilder {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator		mEventAggregator;
 		private readonly FileSystemWatcherEx	mFolderWatcher;
 		private readonly IStorageFolderProvider	mStorageFolderProvider;
 		private readonly IFolderExplorer		mFolderExplorer;
@@ -25,7 +25,7 @@ namespace Noise.Core.DataBuilders {
 		public	bool							LibraryUpdateInProgress { get; private set; }
 		public	bool							LibraryUpdatePaused { get; private set; }
 
-		public LibraryBuilder( ICaliburnEventAggregator eventAggregator, IStorageFolderProvider storageFolderProvider,
+		public LibraryBuilder( IEventAggregator eventAggregator, IStorageFolderProvider storageFolderProvider,
 							   IFolderExplorer folderExplorer, IMetaDataCleaner metaDataCleaner, IMetaDataExplorer metaDataExplorer,
 							   ISummaryBuilder summaryBuilder, DatabaseStatistics databaseStatistics ) {
 			mEventAggregator = eventAggregator;

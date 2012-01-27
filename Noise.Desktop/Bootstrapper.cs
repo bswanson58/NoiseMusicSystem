@@ -56,7 +56,7 @@ namespace Noise.Desktop {
 
 			StartNoise();
 
-			mWindowManager = new WindowManager( Container, Container.Resolve<ICaliburnEventAggregator>());
+			mWindowManager = new WindowManager( Container, Container.Resolve<IEventAggregator>());
 			mWindowManager.Initialize( mShell );
 		}
 

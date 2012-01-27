@@ -6,11 +6,11 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.AppSupport {
 	public class HotkeyManager : IHandle<Events.SystemShutdown> {
-		private readonly ICaliburnEventAggregator	mEvents;
+		private readonly IEventAggregator	mEvents;
 		private	KeyboardHook				mKeyboardHook;
 		private bool						mInstalled;
 
-		public HotkeyManager( ICaliburnEventAggregator eventAggregator ) {
+		public HotkeyManager( IEventAggregator eventAggregator ) {
 			mEvents = eventAggregator;
 
 			mEvents.Subscribe( this );

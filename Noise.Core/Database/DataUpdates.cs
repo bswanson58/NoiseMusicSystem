@@ -10,7 +10,7 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.Database {
 	internal class DataUpdates : IDataUpdates, IRequireInitialization {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly IDbBaseProvider	mDbBaseProvider;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
@@ -22,7 +22,7 @@ namespace Noise.Core.Database {
 		private AsyncCommand<SetRatingCommandArgs>		mSetRatingCommand;
 		private AsyncCommand<SetAlbumCoverCommandArgs>	mSetAlbumCoverCommand;
 
-		public DataUpdates( ICaliburnEventAggregator eventAggregator, ILifecycleManager lifecycleManager,
+		public DataUpdates( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager,
 							IDbBaseProvider dbBaseProvider, IPlayListProvider playListProvider,
 							IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider ) {
 			mEventAggregator = eventAggregator;

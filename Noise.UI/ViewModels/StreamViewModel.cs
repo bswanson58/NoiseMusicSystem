@@ -11,13 +11,13 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	class StreamViewModel : ViewModelBase {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator			mEventAggregator;
 		private readonly IInternetStreamProvider	mStreamProvider;
 		private readonly IDataExchangeManager		mDataExchangeMgr;
 		private readonly IDialogService				mDialogService;
 		private readonly ObservableCollectionEx<UiInternetStream>	mStreams;
 
-		public StreamViewModel( ICaliburnEventAggregator eventAggregator, IDialogService dialogService,
+		public StreamViewModel( IEventAggregator eventAggregator, IDialogService dialogService,
 								IInternetStreamProvider streamProvider, IDataExchangeManager dataExchangeManager ) {
 			mEventAggregator = eventAggregator;
 			mStreamProvider = streamProvider;

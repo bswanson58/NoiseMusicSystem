@@ -24,14 +24,14 @@ namespace Noise.UI.ViewModels {
 		private const string		cViewStateClosed	= "Closed";
 		private const string		cViewStateNormal	= "Normal";
 
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly ILyricProvider		mLyricProvider;
 		private readonly IDialogService		mDialogService;
 		private LyricsInfo					mLyricsInfo;
 		private readonly ObservableCollectionEx<UiLyricSelector>	mLyricsList;
 
-		public SongLyricsViewModel( ICaliburnEventAggregator eventAggregator,
+		public SongLyricsViewModel( IEventAggregator eventAggregator,
 									IArtistProvider artistProvider, ILyricProvider lyricProvider, IDialogService dialogService  ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;

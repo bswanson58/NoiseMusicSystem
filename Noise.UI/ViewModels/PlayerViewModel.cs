@@ -17,7 +17,7 @@ namespace Noise.UI.ViewModels {
 	public class PlayerViewModel : ViewModelBase, IActiveAware,
 								   IHandle<Events.PlaybackStatusChanged>, IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackInfoChanged>,
 								   IHandle<Events.PlaybackTrackStarted>, IHandle<Events.SongLyricsInfo> {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly IPlayQueue			mPlayQueue;
 		private readonly IPlayController	mPlayController;
 		private double						mSpectrumImageWidth;
@@ -33,7 +33,7 @@ namespace Noise.UI.ViewModels {
 		public bool						IsActive { get; set; }
 		public event EventHandler		IsActiveChanged = delegate { };
 
-		public PlayerViewModel( ICaliburnEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController ) {
+		public PlayerViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController ) {
 			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
 			mPlayController = playController;

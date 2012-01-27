@@ -8,14 +8,14 @@ using Noise.Infrastructure.RemoteHost;
 
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager {
-		private	readonly ICaliburnEventAggregator			mEvents;
+		private	readonly IEventAggregator			mEvents;
 		private readonly ILifecycleManager			mLifecycleManager;
 		private readonly IRemoteServer				mRemoteServer;
 		private readonly ICloudSyncManager			mCloudSyncMgr;
 		private readonly ILibraryBuilder			mLibraryBuilder;
 		private readonly IDatabaseManager			mDatabaseManager;
 
-		public NoiseManager( ICaliburnEventAggregator eventAggregator,
+		public NoiseManager( IEventAggregator eventAggregator,
 							 ILifecycleManager lifecycleManager,
 							 IDatabaseManager databaseManager,
 							 ICloudSyncManager cloudSyncManager,

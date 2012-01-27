@@ -17,13 +17,13 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataProviders {
 	internal class LyricsSearcher : ILyricsSearcher, IRequireConstruction {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly ILyricProvider		mLyricsProvider;
 		private readonly bool				mHasNetworkAccess;
 
 		private readonly AsyncCommand<LyricsRequestArgs>	mLyricsRequestCommand;
 
-		public LyricsSearcher( ICaliburnEventAggregator eventAggregator, ILyricProvider lyricProvider ) {
+		public LyricsSearcher( IEventAggregator eventAggregator, ILyricProvider lyricProvider ) {
 			mEventAggregator = eventAggregator;
 			mLyricsProvider = lyricProvider;
 

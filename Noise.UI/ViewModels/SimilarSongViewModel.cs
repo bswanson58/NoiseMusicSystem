@@ -19,13 +19,13 @@ namespace Noise.UI.ViewModels {
 
 		private const int			cMaxSearchResults = 25;
 
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly ITrackProvider		mTrackProvider;
 		private readonly ISearchProvider	mSearchProvider;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
 
-		public SimilarSongViewModel( ICaliburnEventAggregator eventAggregator,
+		public SimilarSongViewModel( IEventAggregator eventAggregator,
 									 ITrackProvider trackProvider, ISearchProvider searchProvider ) {
 			mEventAggregator = eventAggregator;
 			mTrackProvider = trackProvider;

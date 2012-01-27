@@ -30,7 +30,7 @@ namespace Noise.UI.ViewModels {
 	public class ArtistViewModel : AutomaticCommandBase,
 								   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, 
 								   IHandle<Events.ArtistContentUpdated>, IHandle<Events.DatabaseItemChanged> {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly IDiscographyProvider	mDiscographyProvider;
@@ -43,9 +43,9 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<LinkNode>				mTopAlbums;
 		private readonly BindableCollection<LinkNode>				mBandMembers;
 		private readonly SortableCollection<DbDiscographyRelease>	mDiscography;
-		private readonly InteractionRequest<ArtistEditRequest>	mArtistEditRequest;
+		private readonly InteractionRequest<ArtistEditRequest>		mArtistEditRequest;
 
-		public ArtistViewModel( ICaliburnEventAggregator eventAggregator,
+		public ArtistViewModel( IEventAggregator eventAggregator,
 								IArtistProvider artistProvider, IAlbumProvider albumProvider, IDiscographyProvider discographyProvider, ITagManager tagManager ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;

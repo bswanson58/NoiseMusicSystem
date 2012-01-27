@@ -8,7 +8,7 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayQueueMgr : IPlayQueue {
-		private readonly ICaliburnEventAggregator			mEventAggregator;
+		private readonly IEventAggregator					mEventAggregator;
 		private readonly IArtistProvider					mArtistProvider;
 		private readonly IAlbumProvider						mAlbumProvider;
 		private readonly ITrackProvider						mTrackProvider;
@@ -29,10 +29,10 @@ namespace Noise.Core.PlayQueue {
 		private readonly AsyncCommand<DbAlbum>				mAlbumPlayCommand;
 		private readonly AsyncCommand<DbInternetStream>		mStreamPlayCommand;
 
-		public PlayQueueMgr( ICaliburnEventAggregator caliburnEventAggregator,
+		public PlayQueueMgr( IEventAggregator eventAggregator,
 							 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IStorageFileProvider storageFileProvider,
 							 IPlayStrategyFactory strategyFactory, IPlayExhaustedFactory exhaustedFactory ) {
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;

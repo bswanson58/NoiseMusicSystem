@@ -20,7 +20,7 @@ namespace Noise.UI.ViewModels {
 		private const string					cVisualStateIndex		= "DisplayIndex";
 		private const string					cVisualStateStrategy	= "DisplayStrategy";
 
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator		mEventAggregator;
 		private readonly IDialogService			mDialogService;
 		private IExplorerViewStrategy			mViewStrategy;
 		private readonly List<string>			mSearchOptions;
@@ -35,7 +35,7 @@ namespace Noise.UI.ViewModels {
 		public	CollectionViewSource				TreeViewSource { get; private set; }
 		public	IEnumerable<IExplorerViewStrategy>	ViewStrategies { get; private set; }
 
-		public LibraryExplorerViewModel( ICaliburnEventAggregator eventAggregator,
+		public LibraryExplorerViewModel( IEventAggregator eventAggregator,
 										 IEnumerable<IExplorerViewStrategy> viewStrategies, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
 			mDialogService = dialogService;

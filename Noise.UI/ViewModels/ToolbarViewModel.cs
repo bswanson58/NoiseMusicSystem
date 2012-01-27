@@ -8,13 +8,13 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class ToolbarViewModel : ViewModelBase {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator		mEventAggregator;
 		private readonly ICloudSyncManager		mCloudSyncMgr;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly ILibraryBuilder		mLibraryBuilder;
 		private readonly IDialogService			mDialogService;
 
-		public ToolbarViewModel( ICaliburnEventAggregator eventAggregator, IDialogService dialogService, 
+		public ToolbarViewModel( IEventAggregator eventAggregator, IDialogService dialogService, 
 								 ICloudSyncManager cloudSyncManager, IDataExchangeManager dataExchangeManager, ILibraryBuilder libraryBuilder ) {
 			mEventAggregator = eventAggregator;
 			mCloudSyncMgr = cloudSyncManager;

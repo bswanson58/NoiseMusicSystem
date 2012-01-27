@@ -24,7 +24,7 @@ namespace Noise.Core.BackgroundTasks {
 		internal const string					cBackgroundTaskName		= "BackgroundTask";
 		internal const string					cBackgroundTaskGroup	= "BackgroundTaskManager";
 
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator		mEventAggregator;
 		private	readonly ISchedulerFactory		mSchedulerFactory;
 		private	readonly IScheduler				mJobScheduler;
 		private readonly JobDetail				mTaskJobDetail;
@@ -35,7 +35,7 @@ namespace Noise.Core.BackgroundTasks {
 
 		private readonly IEnumerable<IBackgroundTask>	mBackgroundTasks;
 
-		public BackgroundTaskManager( ICaliburnEventAggregator eventAggregator, ILifecycleManager lifecycleManager,
+		public BackgroundTaskManager( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager,
 									  IEnumerable<IBackgroundTask> backgroundTasks ) {
 			mBackgroundTasks = backgroundTasks;
 			mEventAggregator = eventAggregator;

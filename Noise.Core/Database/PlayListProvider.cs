@@ -7,9 +7,9 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	internal class PlayListProvider : BaseDataProvider<DbPlayList>, IPlayListProvider {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEventAggregator;
 
-		public PlayListProvider( ICaliburnEventAggregator eventAggregator, IDatabaseManager databaseManager ) :
+		public PlayListProvider( IEventAggregator eventAggregator, IDatabaseManager databaseManager ) :
 			base( databaseManager ) {
 			mEventAggregator = eventAggregator;
 		}

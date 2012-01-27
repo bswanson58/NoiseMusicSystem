@@ -17,7 +17,7 @@ namespace Noise.Desktop {
 	internal class WindowManager : IHandle<Events.WindowLayoutRequest>, IHandle<Events.NavigationRequest>,
 								   IHandle<Events.ExternalPlayerSwitch>, IHandle<Events.ExtendedPlayerRequest>, IHandle<Events.StandardPlayerRequest> {
 		private readonly IUnityContainer	mContainer;
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly ILayoutManager		mLayoutManager;
 		private readonly IRegionManager		mRegionManager;
 		private SmallPlayerView				mPlayerView;
@@ -25,7 +25,7 @@ namespace Noise.Desktop {
 		private NotifyIcon					mNotifyIcon;
 		private WindowState					mStoredWindowState;
 
-		public WindowManager( IUnityContainer container, ICaliburnEventAggregator eventAggregator ) {
+		public WindowManager( IUnityContainer container, IEventAggregator eventAggregator ) {
 			mContainer = container;
 			mEventAggregator = eventAggregator;
 

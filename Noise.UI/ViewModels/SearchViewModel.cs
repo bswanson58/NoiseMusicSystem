@@ -22,14 +22,14 @@ namespace Noise.UI.ViewModels {
 	public class SearchViewModel : DialogModelBase {
 		private const int			cMaxSearchResults = 100;
 
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly ISearchProvider	mSearchProvider;
 		private SearchType					mCurrentSearchType;
 		private readonly List<SearchType>						mSearchTypes;
 		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
 
-		public SearchViewModel( ICaliburnEventAggregator caliburnEventAggregator, ISearchProvider searchProvider ) {
-			mEventAggregator = caliburnEventAggregator;
+		public SearchViewModel( IEventAggregator eventAggregator, ISearchProvider searchProvider ) {
+			mEventAggregator = eventAggregator;
 			mSearchProvider = searchProvider;
 
 			mSearchResults = new ObservableCollectionEx<SearchViewNode>();

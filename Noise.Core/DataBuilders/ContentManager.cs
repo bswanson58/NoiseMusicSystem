@@ -10,16 +10,16 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	internal class ContentManager : IContentManager, IRequireConstruction, IHandle<Events.ArtistContentRequest> {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator			mEventAggregator;
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IExpiringContentProvider	mExpiringContentProvider;
 		private readonly List<long>					mCurrentRequests;
 
 		private readonly IEnumerable<IContentProvider>	mContentProviders;
 
-		public ContentManager( ICaliburnEventAggregator caliburnEventAggregator,
+		public ContentManager( IEventAggregator eventAggregator,
 							   IArtistProvider artistProvider, IExpiringContentProvider expContentProvider, IEnumerable<IContentProvider> contentProviders ) {
-			mEventAggregator = caliburnEventAggregator;
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mExpiringContentProvider = expContentProvider;
 			mContentProviders = contentProviders;

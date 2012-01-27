@@ -15,7 +15,7 @@ namespace Noise.EloqueraDatabase.Database {
 		private const UInt16				cDatabaseVersionMajor = 0;
 		private const UInt16				cDatabaseVersionMinor = 5;
 
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly IIoc				mComponentCreator;
 		private readonly string				mDatabaseLocation;
 		private readonly string				mDatabaseName;
@@ -30,7 +30,7 @@ namespace Noise.EloqueraDatabase.Database {
 		[ImportMany("PersistenceType")]
 		public IEnumerable<Type>	PersistenceTypes;
 
-		public EloqueraDb( ICaliburnEventAggregator eventAggregator, IIoc componentCreator, DatabaseConfiguration databaseConfiguration ) {
+		public EloqueraDb( IEventAggregator eventAggregator, IIoc componentCreator, DatabaseConfiguration databaseConfiguration ) {
 			Condition.Requires( eventAggregator ).IsNotNull();
 			Condition.Requires( componentCreator ).IsNotNull();
 			Condition.Requires( databaseConfiguration ).IsNotNull();

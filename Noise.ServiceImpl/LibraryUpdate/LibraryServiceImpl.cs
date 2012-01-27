@@ -21,7 +21,7 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 	public class LibraryServiceImpl : BaseService, IHandle<Events.DatabaseItemChanged>, IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted> {
 		internal const string				cNoiseLibraryUpdate = "NoiseLibraryUpdate";
 
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly INoiseManager		mNoiseManager;
 		private readonly ILibraryBuilder	mLibraryBuilder;
 		private readonly IServiceBusManager	mServiceBus;
@@ -29,7 +29,7 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 		private	IScheduler					mJobScheduler;
 		private ServiceHost					mLibraryUpdateServiceHost;
 
-		public LibraryServiceImpl( ICaliburnEventAggregator eventAggregator, INoiseManager noiseManager,
+		public LibraryServiceImpl( IEventAggregator eventAggregator, INoiseManager noiseManager,
 								   ILibraryBuilder libraryBuilder, IServiceBusManager serviceBusManager ) {
 			mEventAggregator = eventAggregator;
 			mNoiseManager = noiseManager;

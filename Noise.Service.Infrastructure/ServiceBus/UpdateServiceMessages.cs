@@ -5,7 +5,7 @@ using NServiceBus;
 
 namespace Noise.Service.Infrastructure.ServiceBus {
 	public class MessageHandlerBase {
-		internal static ICaliburnEventAggregator	EventAggregator;
+		internal static IEventAggregator	EventAggregator;
 	}
 
 	public class LibraryUpdateStartedMessage : IMessage {

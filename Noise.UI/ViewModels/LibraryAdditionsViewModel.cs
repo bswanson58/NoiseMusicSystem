@@ -13,7 +13,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class LibraryAdditionsViewModel : ViewModelBase, IHandle<Events.LibraryUpdateCompleted> {
-		private readonly ICaliburnEventAggregator	mEventAggregator;
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
@@ -22,7 +22,7 @@ namespace Noise.UI.ViewModels {
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<LibraryAdditionNode>	mNodeList;
 
-		public LibraryAdditionsViewModel( ICaliburnEventAggregator eventAggregator,
+		public LibraryAdditionsViewModel( IEventAggregator eventAggregator,
 										  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;

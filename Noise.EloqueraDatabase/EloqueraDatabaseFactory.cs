@@ -13,12 +13,12 @@ namespace Noise.EloqueraDatabase {
 		private const string	cBlobStorageName	= "Noise Blobs";
 
 		private readonly IBlobStorageResolver	mBlobResolver;
-		private readonly ICaliburnEventAggregator		mEventAggregator;
+		private readonly IEventAggregator		mEventAggregator;
 		private readonly IIoc					mComponentCreator;
 		private readonly DatabaseConfiguration	mDatabaseConfiguration;
 		private IBlobStorageManager				mBlobStorageManager;
 
-		public EloqueraDatabaseFactory( IBlobStorageResolver blobResolver, ICaliburnEventAggregator eventAggregator, 
+		public EloqueraDatabaseFactory( IBlobStorageResolver blobResolver, IEventAggregator eventAggregator, 
 										IIoc componentCreator, DatabaseConfiguration databaseConfiguration ) {
 			mBlobResolver = blobResolver;
 			mEventAggregator = eventAggregator;

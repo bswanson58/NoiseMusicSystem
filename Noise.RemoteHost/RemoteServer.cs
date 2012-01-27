@@ -10,10 +10,10 @@ using Noise.Infrastructure.RemoteHost;
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteServer : INoiseRemote, IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted> {
-		private readonly ICaliburnEventAggregator			mEventAggregator;
+		private readonly IEventAggregator					mEventAggregator;
 		private	readonly Dictionary<string, ClientEvents>	mClientList;
 
-		public RemoteServer( ICaliburnEventAggregator eventAggregator ) {
+		public RemoteServer( IEventAggregator eventAggregator ) {
 			mEventAggregator = eventAggregator;
 			mClientList = new Dictionary<string, ClientEvents>();
 
