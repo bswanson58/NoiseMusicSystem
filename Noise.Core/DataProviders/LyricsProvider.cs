@@ -5,8 +5,8 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using Caliburn.Micro;
 using Google.API.Search;
-using Microsoft.Practices.Prism.Events;
 using Noise.Core.Support;
 using Noise.Core.Support.AsyncTask;
 using Noise.Infrastructure;
@@ -17,14 +17,14 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataProviders {
 	internal class LyricsSearcher : ILyricsSearcher, IRequireConstruction {
-		private readonly IEventAggregator	mEvents;
+		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly ILyricProvider		mLyricsProvider;
 		private readonly bool				mHasNetworkAccess;
 
 		private readonly AsyncCommand<LyricsRequestArgs>	mLyricsRequestCommand;
 
-		public LyricsSearcher( IEventAggregator eventAggregator, ILyricProvider lyricProvider ) {
-			mEvents = eventAggregator;
+		public LyricsSearcher( ICaliburnEventAggregator eventAggregator, ILyricProvider lyricProvider ) {
+			mEventAggregator = eventAggregator;
 			mLyricsProvider = lyricProvider;
 
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
@@ -53,7 +53,7 @@ namespace Noise.Core.DataProviders {
 					}
 				}
 				else {
-					mEvents.GetEvent<Events.SongLyricsInfo>().Publish( lyricsInfo );
+					mEventAggregator.Publish( new Events.SongLyricsInfo( lyricsInfo ));
 				}
 			}
 		}
@@ -97,7 +97,7 @@ namespace Noise.Core.DataProviders {
 							mLyricsProvider.AddLyric( dbLyric );
 							lyricsInfo.SetMatchingLyric( dbLyric );
 
-							mEvents.GetEvent<Events.SongLyricsInfo>().Publish( lyricsInfo );
+							mEventAggregator.Publish( new Events.SongLyricsInfo( lyricsInfo ));
 							NoiseLogger.Current.LogMessage( string.Format( "Downloaded lyrics for '{0}' from: {1}", dbLyric.SongName, dbLyric.SourceUrl ));
 							break;
 						}

@@ -152,9 +152,29 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class SimilarSongSearchRequest : CompositePresentationEvent<long> { }
-		public class SongLyricsRequest : CompositePresentationEvent<LyricsInfo> { }
-		public class SongLyricsInfo : CompositePresentationEvent<LyricsInfo> { }
+		public class SimilarSongSearchRequest {
+			public long		TrackId { get; private set; }
+
+			public SimilarSongSearchRequest( long trackId ) {
+				TrackId = trackId;
+			}
+		}
+
+		public class SongLyricsRequest {
+			public LyricsInfo	LyricsInfo { get; private set; }
+
+			public SongLyricsRequest( LyricsInfo info ) {
+				LyricsInfo = info;
+			}
+		}
+
+		public class SongLyricsInfo {
+			public LyricsInfo	LyricsInfo { get; private set; }
+
+			public SongLyricsInfo( LyricsInfo info ) {
+				LyricsInfo = info;
+			}
+		}
 
 		public class BalloonPopupOpened : CompositePresentationEvent<object> { }
 

@@ -12,7 +12,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class SimilarSongViewModel : ViewModelBase,
-										IHandle<Events.PlaybackTrackChanged> {
+										IHandle<Events.PlaybackTrackChanged>, IHandle<Events.SimilarSongSearchRequest> {
 		private const string		cViewStateClosed	= "Closed";
 		private const string		cViewStateSearching	= "Searching";
 		private const string		cViewStateDisplay	= "Normal";
@@ -34,7 +34,7 @@ namespace Noise.UI.ViewModels {
 			mTrackProvider = trackProvider;
 			mSearchProvider = searchProvider;
 
-			mEvents.GetEvent<Events.SimilarSongSearchRequest>().Subscribe( OnSearchRequest );
+			mEventAggregator.Subscribe( this );
 			mEvents.GetEvent<Events.BalloonPopupOpened>().Subscribe( OnPopupOpened );
 
 			mSearchResults = new ObservableCollectionEx<SearchViewNode>();
@@ -57,11 +57,11 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnSearchRequest( long trackId ) {
+		public void Handle( Events.SimilarSongSearchRequest eventArgs ) {
 			VisualStateName = cViewStateSearching;
 
 			if(!mBackgroundWorker.IsBusy ) {
-				mBackgroundWorker.RunWorkerAsync( trackId );
+				mBackgroundWorker.RunWorkerAsync( eventArgs.TrackId );
 			}
 		}
 

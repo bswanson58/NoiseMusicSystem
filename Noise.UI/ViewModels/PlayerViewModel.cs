@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism;
-using Microsoft.Practices.Prism.Events;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -17,8 +16,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace Noise.UI.ViewModels {
 	public class PlayerViewModel : ViewModelBase, IActiveAware,
 								   IHandle<Events.PlaybackStatusChanged>, IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackInfoChanged>,
-								   IHandle<Events.PlaybackTrackStarted> {
-		private readonly IEventAggregator	mEvents;
+								   IHandle<Events.PlaybackTrackStarted>, IHandle<Events.SongLyricsInfo> {
 		private readonly ICaliburnEventAggregator	mEventAggregator;
 		private readonly IPlayQueue			mPlayQueue;
 		private readonly IPlayController	mPlayController;
@@ -35,9 +33,8 @@ namespace Noise.UI.ViewModels {
 		public bool						IsActive { get; set; }
 		public event EventHandler		IsActiveChanged = delegate { };
 
-		public PlayerViewModel( IEventAggregator eventAggregator, ICaliburnEventAggregator caliburnEventAggregator, IPlayQueue playQueue, IPlayController playController ) {
-			mEvents = eventAggregator;
-			mEventAggregator = caliburnEventAggregator;
+		public PlayerViewModel( ICaliburnEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController ) {
+			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
 			mPlayController = playController;
 
@@ -54,8 +51,6 @@ namespace Noise.UI.ViewModels {
 			mBands = new ObservableCollectionEx<UiEqBand>();
 
 			mEventAggregator.Subscribe( this );
-
-			mEvents.GetEvent<Events.SongLyricsInfo>().Subscribe( OnSongLyricsInfo );
 
 			LoadBands();
 
@@ -463,7 +458,7 @@ namespace Noise.UI.ViewModels {
 		public void Execute_RequestSimilarSongSearch() {
 			if(( mPlayController.CurrentTrack != null ) &&
 			   ( mPlayController.CurrentTrack.Track != null )) {
-				mEvents.GetEvent<Events.SimilarSongSearchRequest>().Publish( mPlayController.CurrentTrack.Track.DbId );
+				mEventAggregator.Publish( new Events.SimilarSongSearchRequest( mPlayController.CurrentTrack.Track.DbId ));
 			}
 		}
 
@@ -478,15 +473,15 @@ namespace Noise.UI.ViewModels {
 			RaiseCanExecuteChangedEvent( "CanExecute_RequestLyrics" );
 		}
 
-		private void OnSongLyricsInfo( LyricsInfo info ) {
-			mLyricsInfo = info;
+		public void Handle( Events.SongLyricsInfo eventArgs ) {
+			mLyricsInfo = eventArgs.LyricsInfo;
 
 			RaiseCanExecuteChangedEvent( "CanExecute_RequestLyrics" );
 		}
 
 		public void Execute_RequestLyrics() {
 			if( mLyricsInfo != null ) {
-				mEvents.GetEvent<Events.SongLyricsRequest>().Publish( mLyricsInfo );
+				mEventAggregator.Publish( new Events.SongLyricsRequest( mLyricsInfo ));
 			}
 		}
 

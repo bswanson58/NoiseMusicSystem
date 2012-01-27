@@ -21,7 +21,7 @@ namespace Noise.UI.ViewModels {
 	}
 
 	public class SongLyricsViewModel : ViewModelBase,
-									   IHandle<Events.PlaybackTrackChanged> {
+									   IHandle<Events.PlaybackTrackChanged>, IHandle<Events.SongLyricsRequest> {
 		private const string		cViewStateClosed	= "Closed";
 		private const string		cViewStateNormal	= "Normal";
 
@@ -41,7 +41,8 @@ namespace Noise.UI.ViewModels {
 			mLyricProvider = lyricProvider;
 			mDialogService = dialogService;
 
-			mEvents.GetEvent<Events.SongLyricsRequest>().Subscribe( OnLyricsRequest );
+			mEventAggregator.Subscribe( this );
+
 			mEvents.GetEvent<Events.BalloonPopupOpened>().Subscribe( OnPopupOpened );
 
 			VisualStateName = cViewStateClosed;
@@ -91,8 +92,8 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void OnLyricsRequest( LyricsInfo info ) {
-			mLyricsInfo = info;
+		public void Handle( Events.SongLyricsRequest eventArgs ) {
+			mLyricsInfo = eventArgs.LyricsInfo;
 
 			if(( mLyricsInfo != null ) &&
 			   ( mLyricsInfo.MatchedLyric != null )) {
