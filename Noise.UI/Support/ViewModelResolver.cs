@@ -2,18 +2,15 @@
 using System.Dynamic;
 using System.Linq;
 using Noise.Infrastructure.Interfaces;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Support {
-	internal class DefaultViewModelResolver : IViewModelResolver {
-		public object Resolve( string viewModelName ) { return null; }
-	}
-
 	public class ViewModelLocator : DynamicObject {
-		public ViewModelLocator() {
-			Resolver = new DefaultViewModelResolver();
-		}
+		public static IViewModelResolver	Resolver { get; set; }
 
-		public IViewModelResolver Resolver { get; set; }
+		static ViewModelLocator() {
+			Resolver = new ViewModelResolver();
+		}
 
 		public object this[string viewModelName] {
 			get {
@@ -29,15 +26,29 @@ namespace Noise.UI.Support {
 	}
 
 	public class ViewModelResolver : IViewModelResolver {
-		public static Func<Type,object>	TypeResolver { get; set; }	
+		public static Func<Type,object>	TypeResolver { get; set; }
+	
+		static ViewModelResolver() {
+			TypeResolver = Activator.CreateInstance;
+		}
 
 		public object Resolve( string viewModelName ) {
 			object	retValue = null;
+			Type	viewModelType = null;
 
-			var foundType = GetType().Assembly.GetTypes().FirstOrDefault(type => type.Name == viewModelName );
+			if( Execute.InDesignMode ) {
+				var designModelName = "Blendable" + viewModelName;
 
-			if( foundType != null ) {
-				retValue = TypeResolver( foundType );
+				viewModelType = GetType().Assembly.GetTypes().FirstOrDefault( type => type.Name == designModelName );
+			}
+
+			if( viewModelType == null ) {
+				viewModelType = GetType().Assembly.GetTypes().FirstOrDefault( type => type.Name == viewModelName );
+			}
+
+			if(( viewModelType != null ) &&
+			   ( TypeResolver != null )) {
+				retValue = TypeResolver( viewModelType );
 			}
 
 			return( retValue );

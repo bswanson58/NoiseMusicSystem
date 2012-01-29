@@ -7,11 +7,7 @@
                     xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
                     xmlns:vml="clr-namespace:Noise.UI.Support">
 
-    <vml:ViewModelLocator x:Key="ViewModelLocator">
-        <vml:ViewModelLocator.Resolver>
-            <vml:ViewModelResolver />
-        </vml:ViewModelLocator.Resolver>
-    </vml:ViewModelLocator>
+    <vml:ViewModelLocator x:Key="ViewModelLocator" />
 
     <ObjectDataProvider x:Key="DialogService"
                         MethodName="DialogService"
