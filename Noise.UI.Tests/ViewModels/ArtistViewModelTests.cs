@@ -12,14 +12,12 @@ using Noise.UI.Support;
 using Noise.UI.ViewModels;
 using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.TestSupport.Mocking;
-using ReusableBits.TestSupport.MockingEventAggregator;
 using ReusableBits.TestSupport.Threading;
 
 namespace Noise.UI.Tests.ViewModels {
 	internal class TestableArtistViewModel : Testable<ArtistViewModel> {
 		private readonly TaskScheduler			mTaskScheduler;
 		private TaskHandler<ArtistSupportInfo>	mTaskHandler;
-		public	AutoMockingEventAggregator		EventAggregator { get; private set; }
 
 		public TestableArtistViewModel() {
 			// Set tpl tasks to use the current thread only.
