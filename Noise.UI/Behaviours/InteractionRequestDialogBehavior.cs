@@ -36,11 +36,13 @@ namespace Noise.UI.Behaviours {
 			AssociatedObject.Loaded += AssociatedObjectLoaded;
 		}
 
-		void AssociatedObjectLoaded( object sender, RoutedEventArgs e ) {
-			InteractionRequest.Raised += InteractionRequestRaised;
+		private void AssociatedObjectLoaded( object sender, RoutedEventArgs e ) {
+			if( InteractionRequest != null ) {
+				InteractionRequest.Raised += InteractionRequestRaised;
+			}
 		}
 
-		void InteractionRequestRaised( object sender, InteractionRequestedEventArgs e ) {
+		private void InteractionRequestRaised( object sender, InteractionRequestedEventArgs e ) {
 			if( e.Context is Confirmation ) {
 				var confirmation = e.Context as Confirmation;
 				var dialogService = DialogService;
