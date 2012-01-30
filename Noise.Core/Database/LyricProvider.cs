@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -23,14 +24,16 @@ namespace Noise.Core.Database {
 			var lyricsList = new List<DbLyric>();
 
 			try {
-				var match = GetItem( "SELECT DbLyric WHERE ArtistId = @artistId AND TrackId = @trackId", new Dictionary<string, object> {{ "artistId", artist.DbId }, { "trackId", track.DbId }});
+				var match = GetItem( "SELECT DbLyric WHERE ArtistId = @artistId AND TrackId = @trackId",
+										new Dictionary<string, object> {{ "artistId", artist.DbId }, { "trackId", track.DbId }});
 				if( match != null ) {
 					lyricsList.Add( match );
 				}
 
-				using( var matchList = GetList( "SELECT DbLyric WHERE ArtistId = @artistId AND SongName = @songName", new Dictionary<string, object> {{ "artistId", artist.DbId }, { "songName", track.Name }})) {
+				using( var matchList = GetList( "SELECT DbLyric WHERE ArtistId = @artistId AND SongName = @songName",
+												new Dictionary<string, object> {{ "artistId", artist.DbId }, { "songName", track.Name }})) {
 					if( matchList != null ) {
-						lyricsList.AddRange( matchList.List );
+						lyricsList.AddRange( matchList.List.Where( lyric => lyric.TrackId != track.DbId ));
 					}
 				}
 
@@ -40,7 +43,9 @@ namespace Noise.Core.Database {
 					}
 				}
 
-				retValue = new DataProviderList<DbLyric>( null, lyricsList );
+				var uniqueList = lyricsList.GroupBy( lyric => lyric.TrackId ).Select( g => g.First());
+
+				retValue = new DataProviderList<DbLyric>( null, uniqueList );
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - GetPossibleLyrics", ex );

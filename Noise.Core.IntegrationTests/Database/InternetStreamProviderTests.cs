@@ -6,6 +6,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.IntegrationTests.Database {
+	[TestFixture]
 	public class InternetStreamProviderTests : BaseDatabaseProviderTests {
 
 		private IInternetStreamProvider CreateSut() {
