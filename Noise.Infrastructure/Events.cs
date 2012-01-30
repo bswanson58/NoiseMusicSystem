@@ -15,7 +15,7 @@ namespace Noise.Infrastructure {
 			public long	ArtistId { get; private set; }
 			public long	AlbumId { get; private set; }
 
-			private AlbumFocusRequested( long artistId, long albumId ) {
+			public AlbumFocusRequested( long artistId, long albumId ) {
 				ArtistId = artistId;
 				AlbumId = albumId;
 			}

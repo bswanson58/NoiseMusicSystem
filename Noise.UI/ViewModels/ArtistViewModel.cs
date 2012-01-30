@@ -32,7 +32,6 @@ namespace Noise.UI.ViewModels {
 								   IHandle<Events.ArtistContentUpdated>, IHandle<Events.DatabaseItemChanged> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
-		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly IDiscographyProvider	mDiscographyProvider;
 		private readonly ITagManager			mTagManager;
 		private readonly Observal.Observer		mChangeObserver;
@@ -46,10 +45,9 @@ namespace Noise.UI.ViewModels {
 		private readonly InteractionRequest<ArtistEditRequest>		mArtistEditRequest;
 
 		public ArtistViewModel( IEventAggregator eventAggregator,
-								IArtistProvider artistProvider, IAlbumProvider albumProvider, IDiscographyProvider discographyProvider, ITagManager tagManager ) {
+								IArtistProvider artistProvider, IDiscographyProvider discographyProvider, ITagManager tagManager ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
-			mAlbumProvider = albumProvider;
 			mDiscographyProvider = discographyProvider;
 			mTagManager = tagManager;
 
@@ -193,10 +191,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTopAlbumClicked( long albumId ) {
-			var album = mAlbumProvider.GetAlbum( albumId );
-
-			if( album != null ) {
-				mEventAggregator.Publish( new Events.AlbumFocusRequested( album ));
+			if( CurrentArtist != null ) {
+				mEventAggregator.Publish( new Events.AlbumFocusRequested( CurrentArtist.DbId, albumId ));
 			}
 		}
 
@@ -326,11 +322,6 @@ namespace Noise.UI.ViewModels {
 					if( updater.Item != null ) {
 						Mapper.DynamicMap( confirmation.Artist, updater.Item );
 						updater.Update();
-
-						Mapper.DynamicMap( confirmation.Artist, mCurrentArtist );
-
-						mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
-						RaisePropertyChanged( () => ArtistWebsite );
 					}
 				}
 			}
