@@ -10,11 +10,13 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:local="clr-namespace:Noise.UI.ValueConverters"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:Support="clr-namespace:Noise.UI.Support"
              d:DesignHeight="500"
              d:DesignWidth="800"
              mc:Ignorable="d">
-
+    <!--
+        d:DataContext="{d:DesignInstance BlendableViewModels:BlendableArtistViewModel,
+        IsDesignTimeCreatable=True}"
+    -->
     <UserControl.Resources>
         <local:ByteImageConverter x:Key="imageConverter" />
         <local:HtmlTextConverter x:Key="htmlConverter" />

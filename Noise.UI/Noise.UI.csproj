@@ -115,6 +115,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\lib\Moq\v4.0.10827\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="Observal, Version=1.0.0.0, Culture=neutral, PublicKeyToken=55d77739a7b12116, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Observal\v1.0.0.0\Observal.dll</HintPath>

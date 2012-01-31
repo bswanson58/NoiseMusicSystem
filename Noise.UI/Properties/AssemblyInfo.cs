@@ -19,3 +19,4 @@ using System.Runtime.InteropServices;
 
 // Allow testing classes to access internal classes.
 [assembly:InternalsVisibleTo("Noise.UI.Tests")]
+[assembly:InternalsVisibleTo("Noise.UI.Blendable")]

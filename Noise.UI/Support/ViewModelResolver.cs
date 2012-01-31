@@ -33,13 +33,6 @@ namespace Noise.UI.Support {
 		public	List<IBlendableViewModelFactory>	ViewFactories;
 		public	static Func<Type,object>			TypeResolver { get; set; }
 
-		private void BuildCatalog() {
-			var catalog = new DirectoryCatalog(  @".\" );
-			var container = new CompositionContainer( catalog );
-
-			container.ComposeParts( this );
-		}
-	
 		static ViewModelResolver() {
 			TypeResolver = Activator.CreateInstance;
 		}
@@ -67,28 +60,31 @@ namespace Noise.UI.Support {
 			object	retValue = null;
 
 			if( ViewFactories == null ) {
-				BuildCatalog();
+				BuildFactoryCatalog();
 			}
 
 			if( ViewFactories != null ) {
-				var	designModelName = "Blendable" + viewModelName;
-				var	viewFactory = ViewFactories.Find( factory => factory.ViewModelType.Name == designModelName );
+				var	viewFactory = ViewFactories.Find( factory => factory.ViewModelType.Name == viewModelName );
 
 				if( viewFactory != null ) {
 					retValue = viewFactory.CreateViewModel();
 				}
-
-//				var		viewModelType = GetType().Assembly.GetTypes().FirstOrDefault( type => type.Name == designModelName );
-//				if( viewModelType != null ) {
-//					var creator = Activator.CreateInstance( viewModelType ) as IBlendableViewModelFactory;
-//
-//					if( creator != null ) {
-//						retValue = creator.CreateViewModel();
-//					}
-//				}
 			}
 
 			return( retValue );
+		}
+
+		private void BuildFactoryCatalog() {
+			var aggCatalog = new AggregateCatalog();
+			var container = new CompositionContainer( aggCatalog );
+			var assemblyList = AppDomain.CurrentDomain.GetAssemblies();
+			var blendAssemblyList = assemblyList.Where( assembly => (( assembly.FullName.Contains( "Blendable" )) &&
+																	 (!assembly.FullName.Contains( "Tests" )))).ToList();
+			var uniqueList = blendAssemblyList.GroupBy( p => p.FullName ).Select( g => g.First()).ToList();
+
+			uniqueList.ForEach( assembly => aggCatalog.Catalogs.Add( new AssemblyCatalog( assembly )));
+
+			container.ComposeParts( this );
 		}
 	}
 }
