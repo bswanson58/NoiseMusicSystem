@@ -46,7 +46,7 @@
                     Background="{DynamicResource TreeItemBackground}"
                     BorderThickness="0"
                     CornerRadius="5">
-                <Grid>
+                <Grid Background="{StaticResource NoiseBrush}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
