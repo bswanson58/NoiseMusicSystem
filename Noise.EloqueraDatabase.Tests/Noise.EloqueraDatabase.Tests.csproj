@@ -92,8 +92,9 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FluentAssertions">
-      <HintPath>..\lib\FluentAssertions\v1.6.0\FluentAssertions.dll</HintPath>
+    <Reference Include="FluentAssertions, Version=1.7.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\FluentAssertions\v1.7.0\FluentAssertions.dll</HintPath>
     </Reference>
     <Reference Include="Moq">
       <HintPath>..\lib\Moq\v4.0.10827\Moq.dll</HintPath>
