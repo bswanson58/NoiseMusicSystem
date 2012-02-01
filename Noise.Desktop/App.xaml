@@ -1,14 +1,13 @@
 ﻿<Application x:Class="Noise.Desktop.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" StartupUri="Layouts/ExploreLayout.xaml"
-             >
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Application.Resources>
-    	<ResourceDictionary>
-    		<ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/UiResources.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/BrushResources.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/ControlStyles.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/ConverterResources.xaml"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/UiResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/BrushResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/ControlStyles.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/ConverterResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
