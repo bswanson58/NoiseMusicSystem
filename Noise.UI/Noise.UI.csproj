@@ -272,6 +272,7 @@
     <Compile Include="ViewModels\AlbumArtworkViewModel.cs" />
     <Compile Include="ViewModels\AlbumViewModel.cs" />
     <Compile Include="ViewModels\ApplicationLogDialogModel.cs" />
+    <Compile Include="ViewModels\ArtistInfoViewModel.cs" />
     <Compile Include="ViewModels\ArtistTracksViewModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
     <Compile Include="ViewModels\CategorySelectionDialogModel.cs" />
