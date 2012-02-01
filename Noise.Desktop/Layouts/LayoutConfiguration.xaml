@@ -1,60 +1,43 @@
 ﻿<Layout:LayoutManager xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:Layout="clr-namespace:Composite.Layout;assembly=Composite.Layout"
-                      xmlns:Views="clr-namespace:Noise.UI.Views;assembly=Noise.UI" ShellName="Shell">
+                      xmlns:Views="clr-namespace:Noise.UI.Views;assembly=Noise.UI"
+                      ShellName="Shell">
     <Layout:LayoutManager.Layouts>
         <Layout:Layout x:Name="ExploreLayout"
-                       Fullname="Default Layout"
-                       Filename="Layouts\ExploreLayout.xaml"
                        Description="This layout allow you to explore your music."
+                       Filename="Layouts\ExploreLayout.xaml"
+                       Fullname="Default Layout"
                        IsDefault="True">
             <Layout:Layout.Views>
-                <Layout:View RegionName="Toolbar"
-                             Type="{x:Type Views:ToolbarView}"/>
-                <Layout:View RegionName="Explorer"
-                             Type="{x:Type Views:LibraryExplorerView}" />
-                <Layout:View RegionName="Explorer"
-                             Type="{x:Type Views:StreamView}" />
-                <Layout:View RegionName="Explorer"
-                             Type="{x:Type Views:FavoritesView}" />
-                <Layout:View RegionName="Explorer"
-                             Type="{x:Type Views:PlayHistoryView}" />
-                <Layout:View RegionName="Explorer"
-                             Type="{x:Type Views:SearchView}" />
-                <Layout:View RegionName="Explorer"
-                             Type="{x:Type Views:PlayListView}" />
-                <Layout:View RegionName="Explorer"
-                             Type="{x:Type Views:LibraryAdditionsView}" />
-                <Layout:View RegionName="ArtistInfo"
-                             Type="{x:Type Views:ArtistView}" />
-                <Layout:View RegionName="AlbumInfo"
-                             Type="{x:Type Views:AlbumView}"/>
-                <Layout:View RegionName="AlbumInfo"
-                             Type="{x:Type Views:ArtistTracksView}"/>
-                <Layout:View RegionName="PlayQueue"
-                             Type="{x:Type Views:PlayQueueView}" />
-                <Layout:View RegionName="Player"
-                             Type="{x:Type Views:PlayerView}" />
-                <Layout:View RegionName="SimilarSongs"
-                             Type="{x:Type Views:SimilarSongView}" />
-                <Layout:View RegionName="SongLyrics"
-                             Type="{x:Type Views:SongLyricsView}" />
+                <Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" />
+                <Layout:View RegionName="Explorer" Type="{x:Type Views:LibraryExplorerView}" />
+                <Layout:View RegionName="Explorer" Type="{x:Type Views:StreamView}" />
+                <Layout:View RegionName="Explorer" Type="{x:Type Views:FavoritesView}" />
+                <Layout:View RegionName="Explorer" Type="{x:Type Views:PlayHistoryView}" />
+                <Layout:View RegionName="Explorer" Type="{x:Type Views:SearchView}" />
+                <Layout:View RegionName="Explorer" Type="{x:Type Views:PlayListView}" />
+                <Layout:View RegionName="Explorer" Type="{x:Type Views:LibraryAdditionsView}" />
+                <Layout:View RegionName="ArtistInfo" Type="{x:Type Views:ArtistView}" />
+                <Layout:View RegionName="ArtistSupportInfo" Type="{x:Type Views:ArtistInfoView}" />
+                <Layout:View RegionName="AlbumInfo" Type="{x:Type Views:AlbumView}" />
+                <Layout:View RegionName="AlbumInfo" Type="{x:Type Views:ArtistTracksView}" />
+                <Layout:View RegionName="PlayQueue" Type="{x:Type Views:PlayQueueView}" />
+                <Layout:View RegionName="Player" Type="{x:Type Views:PlayerView}" />
+                <Layout:View RegionName="SimilarSongs" Type="{x:Type Views:SimilarSongView}" />
+                <Layout:View RegionName="SongLyrics" Type="{x:Type Views:SongLyricsView}" />
             </Layout:Layout.Views>
         </Layout:Layout>
         <Layout:Layout x:Name="ListenLayout"
-                       Fullname="Internet Stream Layout"
-                       Filename="Layouts\ListenLayout.xaml"
                        Description="This layout presents information to you as you listen."
+                       Filename="Layouts\ListenLayout.xaml"
+                       Fullname="Internet Stream Layout"
                        IsDefault="True">
             <Layout:Layout.Views>
-                <Layout:View RegionName="Toolbar"
-                             Type="{x:Type Views:ToolbarView}"/>
-                <Layout:View RegionName="ListenStage"
-                             Type="{x:Type Views:ListenStageView}"/>
-                <Layout:View RegionName="PlayQueue"
-                             Type="{x:Type Views:PlayQueueView}" />
-                <Layout:View RegionName="Player"
-                             Type="{x:Type Views:PlayerView}" />
+                <Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" />
+                <Layout:View RegionName="ListenStage" Type="{x:Type Views:ListenStageView}" />
+                <Layout:View RegionName="PlayQueue" Type="{x:Type Views:PlayQueueView}" />
+                <Layout:View RegionName="Player" Type="{x:Type Views:PlayerView}" />
             </Layout:Layout.Views>
         </Layout:Layout>
     </Layout:LayoutManager.Layouts>

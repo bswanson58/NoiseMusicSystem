@@ -318,6 +318,9 @@
     <Compile Include="Views\ArtistEditDialog.xaml.cs">
       <DependentUpon>ArtistEditDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ArtistInfoView.xaml.cs">
+      <DependentUpon>ArtistInfoView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ArtistTracksView.xaml.cs">
       <DependentUpon>ArtistTracksView.xaml</DependentUpon>
     </Compile>
@@ -490,6 +493,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ArtistEditDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ArtistInfoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

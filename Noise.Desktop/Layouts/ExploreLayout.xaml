@@ -5,51 +5,89 @@
     <Grid>
         <Grid x:Name="LayoutRoot">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <DockPanel x:Name="Toolbar" Grid.Row="0">
-                <ContentControl Regions:RegionManager.RegionName="Toolbar"/>
+                <ContentControl Regions:RegionManager.RegionName="Toolbar" />
             </DockPanel>
 
             <Grid x:Name="Content" Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="4*" MinWidth="100"/>
-                    <ColumnDefinition Width="5*" MinWidth="100"/>
-                    <ColumnDefinition Width="2*" MinWidth="100"/>
+                    <ColumnDefinition Width="4*" MinWidth="100" />
+                    <ColumnDefinition Width="5*" MinWidth="100" />
+                    <ColumnDefinition Width="2*" MinWidth="100" />
                 </Grid.ColumnDefinitions>
 
-                <TabControl Grid.Column="0" Margin="3,0,7,0" TabStripPlacement="Bottom" Background="Transparent" BorderThickness="0"
-                        Regions:RegionManager.RegionName="Explorer" 
-                        ItemContainerStyle="{StaticResource TabItemRegionStyle}"/>
+                <TabControl Grid.Column="0"
+                            Margin="3,0,7,0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            ItemContainerStyle="{StaticResource TabItemRegionStyle}"
+                            Regions:RegionManager.RegionName="Explorer"
+                            TabStripPlacement="Bottom" />
 
-                <GridSplitter Grid.Column="0" Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"/>
+                <GridSplitter Grid.Column="0"
+                              Width="7"
+                              Height="Auto"
+                              Background="Transparent"
+                              ResizeDirection="Columns" />
 
                 <Grid Grid.Column="1">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1*" MinHeight="50"/>
-                        <RowDefinition Height="1*" MinHeight="50"/>
+                        <RowDefinition Height="2*" MinHeight="50" />
+                        <RowDefinition Height="3*" MinHeight="50" />
+                        <RowDefinition Height="3*" MinHeight="50" />
                     </Grid.RowDefinitions>
 
-                    <ContentControl Grid.Row="0" Margin="0,3,3,3" Regions:RegionManager.RegionName="ArtistInfo"/>
-                    <GridSplitter Grid.Row="0" Width="Auto" Height="7" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Background="Transparent" ResizeDirection="Rows"/>
-                    <ContentControl Grid.Row="1" Margin="0,0,3,0" Regions:RegionManager.RegionName="AlbumInfo"/>
+                    <ContentControl Grid.Row="0"
+                                    Margin="0,3,3,3"
+                                    Regions:RegionManager.RegionName="ArtistInfo" />
+                    <ContentControl Grid.Row="1"
+                                    Margin="0,3,3,3"
+                                    Regions:RegionManager.RegionName="ArtistSupportInfo" />
+                    <GridSplitter Grid.Row="0"
+                                  Width="Auto"
+                                  Height="7"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Bottom"
+                                  Background="Transparent"
+                                  ResizeDirection="Rows" />
+                    <ContentControl Grid.Row="2"
+                                    Margin="0,0,3,0"
+                                    Regions:RegionManager.RegionName="AlbumInfo" />
                 </Grid>
 
-                <GridSplitter Grid.Column="1" Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"/>
+                <GridSplitter Grid.Column="1"
+                              Width="7"
+                              Height="Auto"
+                              Background="Transparent"
+                              ResizeDirection="Columns" />
 
-                <ContentControl Grid.Column="2" Margin="0" Regions:RegionManager.RegionName="PlayQueue"/>
+                <ContentControl Grid.Column="2"
+                                Margin="0"
+                                Regions:RegionManager.RegionName="PlayQueue" />
             </Grid>
 
-            <ContentControl Grid.Row="2" Margin="3,0,0,3" Regions:RegionManager.RegionName="Player"/>
+            <ContentControl Grid.Row="2"
+                            Margin="3,0,0,3"
+                            Regions:RegionManager.RegionName="Player" />
         </Grid>
-        
-        <ContentControl Margin="50,0,0,60" Height="160" Width="595" HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                        Regions:RegionManager.RegionName="SimilarSongs"/>
-        
-        <ContentControl Margin="120,0,0,60" Height="600" Width="470" HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                        Regions:RegionManager.RegionName="SongLyrics"/>
+
+        <ContentControl Width="595"
+                        Height="160"
+                        Margin="50,0,0,60"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Regions:RegionManager.RegionName="SimilarSongs" />
+
+        <ContentControl Width="470"
+                        Height="600"
+                        Margin="120,0,0,60"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Regions:RegionManager.RegionName="SongLyrics" />
     </Grid>
 </UserControl>
