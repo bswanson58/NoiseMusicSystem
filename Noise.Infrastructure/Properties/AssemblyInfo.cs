@@ -15,3 +15,6 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid( "ab2f153a-7771-4afc-a87d-f1afeae504f8" )]
+
+[assembly: AssemblyDelaySign(false)]
+[assembly: AssemblyKeyFile("NoisePrivateKey.snk")]

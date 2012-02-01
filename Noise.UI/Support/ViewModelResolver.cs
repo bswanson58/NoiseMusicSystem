@@ -30,8 +30,8 @@ namespace Noise.UI.Support {
 
 	public class ViewModelResolver : IViewModelResolver {
 		[ImportMany( typeof( IBlendableViewModelFactory ))]
-		public	List<IBlendableViewModelFactory>	ViewFactories;
-		public	static Func<Type,object>			TypeResolver { get; set; }
+		private	IEnumerable<IBlendableViewModelFactory>	mViewFactories;
+		public	static Func<Type,object>				TypeResolver { get; set; }
 
 		static ViewModelResolver() {
 			TypeResolver = Activator.CreateInstance;
@@ -59,12 +59,12 @@ namespace Noise.UI.Support {
 		private object ResolveForDesignMode( string viewModelName ) {
 			object	retValue = null;
 
-			if( ViewFactories == null ) {
+			if( mViewFactories == null ) {
 				BuildFactoryCatalog();
 			}
 
-			if( ViewFactories != null ) {
-				var	viewFactory = ViewFactories.Find( factory => factory.ViewModelType.Name == viewModelName );
+			if( mViewFactories != null ) {
+				var	viewFactory = mViewFactories.ToList().Find( factory => factory.ViewModelType.Name == viewModelName );
 
 				if( viewFactory != null ) {
 					retValue = viewFactory.CreateViewModel();
@@ -84,6 +84,7 @@ namespace Noise.UI.Support {
 
 			uniqueList.ForEach( assembly => aggCatalog.Catalogs.Add( new AssemblyCatalog( assembly )));
 
+			mViewFactories = null;
 			container.ComposeParts( this );
 		}
 	}

@@ -111,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\BlendableArtistInfoViewModelTests.cs" />
     <Compile Include="ViewModels\BlendableArtistViewModelTests.cs" />
   </ItemGroup>
   <ItemGroup>
