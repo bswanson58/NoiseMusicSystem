@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
@@ -32,31 +29,19 @@ namespace Noise.UI.ViewModels {
 								   IHandle<Events.ArtistContentUpdated>, IHandle<Events.DatabaseItemChanged> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
-		private readonly IDiscographyProvider	mDiscographyProvider;
 		private readonly ITagManager			mTagManager;
 		private readonly Observal.Observer		mChangeObserver;
 		private UiArtist						mCurrentArtist;
 		private LinkNode						mArtistWebsite;
-		private TaskHandler<ArtistSupportInfo>	mTaskHandler; 
-		private readonly BindableCollection<LinkNode>				mSimilarArtists;
-		private readonly BindableCollection<LinkNode>				mTopAlbums;
-		private readonly BindableCollection<LinkNode>				mBandMembers;
-		private readonly SortableCollection<DbDiscographyRelease>	mDiscography;
+		private TaskHandler<DbArtist>			mTaskHandler; 
 		private readonly InteractionRequest<ArtistEditRequest>		mArtistEditRequest;
 
-		public ArtistViewModel( IEventAggregator eventAggregator,
-								IArtistProvider artistProvider, IDiscographyProvider discographyProvider, ITagManager tagManager ) {
+		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ITagManager tagManager ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
-			mDiscographyProvider = discographyProvider;
 			mTagManager = tagManager;
 
 			mEventAggregator.Subscribe( this );
-
-			mSimilarArtists = new BindableCollection<LinkNode>();
-			mTopAlbums = new BindableCollection<LinkNode>();
-			mBandMembers = new BindableCollection<LinkNode>();
-			mDiscography = new SortableCollection<DbDiscographyRelease>();
 
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnArtistChanged );
@@ -73,47 +58,6 @@ namespace Noise.UI.ViewModels {
 			get{ return( Artist != null ); }
 		}
 
-		public ArtistSupportInfo SupportInfo {
-			get{ return( Get( () => SupportInfo )); }
-			set {
-				mSimilarArtists.Clear();
-				mTopAlbums.Clear();
-				mBandMembers.Clear();
-				mDiscography.Clear();
-
-				if(( CurrentArtist != null ) &&
-				   ( value != null )) {
-					if(( value.SimilarArtist != null ) &&
-						( value.SimilarArtist.Items.GetLength( 0 ) > 0 )) {
-						mSimilarArtists.AddRange( from DbAssociatedItem artist in value.SimilarArtist.Items
-													select artist.IsLinked ? new LinkNode( artist.Item, artist.AssociatedId, OnSimilarArtistClicked ) :
-																				new LinkNode( artist.Item ));
-					}
-
-					if(( value.TopAlbums != null ) &&
-					   ( value.TopAlbums.Items.GetLength( 0 ) > 0 )) {
-						mTopAlbums.AddRange( from DbAssociatedItem album in value.TopAlbums.Items 
-												select album.IsLinked ? new LinkNode( album.Item, album.AssociatedId, OnTopAlbumClicked ) :
-																		new LinkNode( album.Item ));
-					}
-
-					if(( value.BandMembers != null ) &&
-					   ( value.BandMembers.Items.GetLength( 0 ) > 0 )) {
-						mBandMembers.AddRange( from DbAssociatedItem member in value.BandMembers.Items select new LinkNode( member.Item ));
-					}
-
-					using( var discoList = mDiscographyProvider.GetDiscography( CurrentArtist.DbId )) {
-						if( discoList != null ) {
-							mDiscography.AddRange( discoList.List );
-							mDiscography.Sort( release => release.Year, ListSortDirection.Descending );
-						}
-					}
-				}
-
-				Set( () => SupportInfo, value  );
-			}
-		}
-
 		private UiArtist TransformArtist( DbArtist dbArtist ) {
 			var retValue = new UiArtist();
 
@@ -123,12 +67,8 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
-		private void SetCurrentArtist( long artistId ) {
-			var artist = mArtistProvider.GetArtist( artistId );
-
-			if( artist != null ) {
-				CurrentArtist = TransformArtist( artist );
-			}
+		private void SetCurrentArtist( DbArtist artist ) {
+			CurrentArtist = artist != null ? TransformArtist( artist ) : null;
 		}
 
 		private UiArtist CurrentArtist {
@@ -139,7 +79,6 @@ namespace Noise.UI.ViewModels {
 
 					if(( value != null ) &&
 					   ( mCurrentArtist.DbId != value.DbId )) {
-						SupportInfo = null;
 					}
 				}
 
@@ -152,8 +91,6 @@ namespace Noise.UI.ViewModels {
 
 					mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
 					RaisePropertyChanged( () => ArtistWebsite );
-
-					RetrieveSupportInfo( mCurrentArtist );
 				}
 				else {
 					mCurrentArtist = null;
@@ -164,14 +101,36 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.ArtistContentUpdated eventArgs ) {
 			if(( CurrentArtist != null ) &&
 			   ( CurrentArtist.DbId == eventArgs.ArtistId )) {
-				RetrieveSupportInfo( CurrentArtist );
+				CurrentArtist = TransformArtist( mArtistProvider.GetArtist( eventArgs.ArtistId ));
 			}
 		}
 
-		internal TaskHandler<ArtistSupportInfo> TaskHandler {
+		public void Handle( Events.ArtistFocusRequested request ) {
+			if( CurrentArtist != null ) {
+				if( request.ArtistId != CurrentArtist.DbId ) {
+					RequestArtist( request.ArtistId );
+				}
+			}
+			else {
+				RequestArtist( request.ArtistId );
+			}
+		}
+
+		public void Handle( Events.AlbumFocusRequested request ) {
+			if( CurrentArtist != null ) {
+				if( request.ArtistId != CurrentArtist.DbId ) {
+					RequestArtist( request.ArtistId );
+				}
+			}
+			else {
+				RequestArtist( request.ArtistId );
+			}
+		}
+
+		internal TaskHandler<DbArtist> TaskHandler {
 			get {
 				if( mTaskHandler == null ) {
-					mTaskHandler = new TaskHandler<ArtistSupportInfo>();
+					mTaskHandler = new TaskHandler<DbArtist>();
 				}
 
 				return( mTaskHandler );
@@ -180,42 +139,10 @@ namespace Noise.UI.ViewModels {
 			set { mTaskHandler = value; }
 		} 
 
-		private void RetrieveSupportInfo( UiArtist forArtist ) {
-			TaskHandler.StartTask( () => mArtistProvider.GetArtistSupportInfo( forArtist.DbId ), 
-									result => SupportInfo = result,
-									exception => NoiseLogger.Current.LogException( "ArtistViewModel:RetrieveSupportInfo", exception ));
-		}
-
-		private void OnSimilarArtistClicked( long artistId ) {
-			mEventAggregator.Publish( new Events.ArtistFocusRequested( artistId ));
-		}
-
-		private void OnTopAlbumClicked( long albumId ) {
-			if( CurrentArtist != null ) {
-				mEventAggregator.Publish( new Events.AlbumFocusRequested( CurrentArtist.DbId, albumId ));
-			}
-		}
-
-		public void Handle( Events.ArtistFocusRequested request ) {
-			if( CurrentArtist != null ) {
-				if( request.ArtistId != CurrentArtist.DbId ) {
-					SetCurrentArtist( request.ArtistId );
-				}
-			}
-			else {
-				SetCurrentArtist( request.ArtistId );
-			}
-		}
-
-		public void Handle( Events.AlbumFocusRequested request ) {
-			if( CurrentArtist != null ) {
-				if( request.ArtistId != CurrentArtist.DbId ) {
-					SetCurrentArtist( request.ArtistId );
-				}
-			}
-			else {
-				SetCurrentArtist( request.ArtistId );
-			}
+		private void RequestArtist( long artistId ) {
+			TaskHandler.StartTask( () => mArtistProvider.GetArtist( artistId ), 
+									SetCurrentArtist,
+									exception => NoiseLogger.Current.LogException( "ArtistViewModel:GetArtist", exception ));
 		}
 
 		private static void OnArtistChanged( PropertyChangeNotification changeNotification ) {
@@ -249,29 +176,10 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		[DependsUpon( "SupportInfo" )]
+		[DependsUpon( "Artist" )]
 		public byte[] ArtistImage {
 			get {
 				byte[]	retValue = null;
-
-				if(( SupportInfo != null ) &&
-				   ( SupportInfo.ArtistImage != null )) {
-					retValue = SupportInfo.ArtistImage.Image;
-				}
-
-				return( retValue );
-			}
-		}
-
-		[DependsUpon( "SupportInfo" )]
-		public string ArtistBio {
-			get {
-				var retValue = "";
-
-				if(( SupportInfo != null ) &&
-				   ( SupportInfo.Biography != null )) {
-					retValue = SupportInfo.Biography.Text;
-				}
 
 				return( retValue );
 			}
@@ -279,26 +187,6 @@ namespace Noise.UI.ViewModels {
 
 		public LinkNode ArtistWebsite {
 			get{ return( mArtistWebsite ); }
-		}
-
-		[DependsUpon( "SupportInfo" )]
-		public IEnumerable<LinkNode> TopAlbums {
-			get{ return( mTopAlbums ); }
-		}
-
-		[DependsUpon( "SupportInfo" )]
-		public IEnumerable<LinkNode> SimilarArtist {
-			get { return( mSimilarArtists ); }
-		}
-
-		[DependsUpon( "SupportInfo" )]
-		public IEnumerable<LinkNode> BandMembers {
-			get { return( mBandMembers ); }
-		}
-
-		[DependsUpon( "SupportInfo" )]
-		public IEnumerable<DbDiscographyRelease> Discography {
-			get{ return( mDiscography ); }
 		}
 
 		public IInteractionRequest ArtistEditRequest {

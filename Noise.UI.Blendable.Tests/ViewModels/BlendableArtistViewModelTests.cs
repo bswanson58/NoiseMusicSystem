@@ -49,33 +49,5 @@ namespace Noise.UI.Blendable.Tests.ViewModels {
 			Assert.IsNotNull( sut.ArtistImage );
 			sut.ArtistImage.Should().HaveCount( length => length > 10 );
 		}
-
-		[Test]
-		public void ViewModelHasBiography() {
-			var sut = CreateSut();
-
-			Assert.IsNotNullOrEmpty( sut.ArtistBio );
-		}
-
-		[Test]
-		public void ViewModelHasSimilarArtists() {
-			var sut = CreateSut();
-
-			sut.SimilarArtist.Should().HaveCount( length => length > 0 );
-		}
-
-		[Test]
-		public void ViewModelShouldHaveBandMembers() {
-			var sut = CreateSut();
-
-			sut.BandMembers.Should().HaveCount( length => length > 0 );
-		}
-
-		[Test]
-		public void ViewModelShouldHaveTopAlbums() {
-			var sut = CreateSut();
-
-			sut.TopAlbums.Should().HaveCount( length => length > 0 );
-		}
 	}
 }

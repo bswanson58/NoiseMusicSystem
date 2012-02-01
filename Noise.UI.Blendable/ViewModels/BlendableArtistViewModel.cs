@@ -25,13 +25,12 @@ namespace Noise.UI.Blendable.ViewModels {
 
 			var eventAggregator = new Mock<IEventAggregator>();
 			var artistProvider = new Mock<IArtistProvider>();
-			var discographyProvider = new Mock<IDiscographyProvider>();
 			var tagManager = new Mock<ITagManager>();
 
-			var vm = new ArtistViewModel( eventAggregator.Object, artistProvider.Object, discographyProvider.Object, tagManager.Object );
+			var vm = new ArtistViewModel( eventAggregator.Object, artistProvider.Object, tagManager.Object );
 			// Set tpl tasks to use the current thread only.
 			var taskScheduler = new CurrentThreadTaskScheduler();
-			vm.TaskHandler = new TaskHandler<ArtistSupportInfo>( taskScheduler, taskScheduler );
+			vm.TaskHandler = new TaskHandler<DbArtist>( taskScheduler, taskScheduler );
 
 			var artist = new DbArtist { Name = "The Rolling Stones", Website = "www.rollingstones.com", Rating = 50, IsFavorite = true };
 			artistProvider.Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
