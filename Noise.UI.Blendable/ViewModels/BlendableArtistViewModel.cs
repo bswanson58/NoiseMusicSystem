@@ -25,12 +25,14 @@ namespace Noise.UI.Blendable.ViewModels {
 
 			var eventAggregator = new Mock<IEventAggregator>();
 			var artistProvider = new Mock<IArtistProvider>();
+			var artworkProvider = new Mock<IArtworkProvider>();
 			var tagManager = new Mock<ITagManager>();
 
-			var vm = new ArtistViewModel( eventAggregator.Object, artistProvider.Object, tagManager.Object );
+			var vm = new ArtistViewModel( eventAggregator.Object, artistProvider.Object, artworkProvider.Object, tagManager.Object );
 			// Set tpl tasks to use the current thread only.
 			var taskScheduler = new CurrentThreadTaskScheduler();
-			vm.TaskHandler = new TaskHandler<DbArtist>( taskScheduler, taskScheduler );
+			vm.ArtistTaskHandler = new TaskHandler<DbArtist>( taskScheduler, taskScheduler );
+			vm.ArtworkTaskHandler = new TaskHandler<Artwork>( taskScheduler, taskScheduler );
 
 			var artist = new DbArtist { Name = "The Rolling Stones", Website = "www.rollingstones.com", Rating = 50, IsFavorite = true };
 			artistProvider.Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
@@ -44,6 +46,7 @@ namespace Noise.UI.Blendable.ViewModels {
 					}
 				}
 			}
+			artworkProvider.Setup( m => m.GetArtistArtwork( It.IsAny<long>(), It.IsAny<ContentType>())).Returns( artistImage );
 
 			tagManager.Setup(  m => m.GetGenre( It.IsAny<long>())).Returns( new DbGenre( 1 ) { Name = "classic rock" });
 

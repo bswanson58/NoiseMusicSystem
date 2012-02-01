@@ -16,7 +16,7 @@ using ReusableBits.TestSupport.Threading;
 namespace Noise.UI.Tests.ViewModels {
 	internal class TestableArtistViewModel : Testable<ArtistViewModel> {
 		private readonly TaskScheduler		mTaskScheduler;
-		private TaskHandler<DbArtist>		mTaskHandler; 
+ 
 
 		public TestableArtistViewModel() {
 			// Set tpl tasks to use the current thread only.
@@ -29,11 +29,9 @@ namespace Noise.UI.Tests.ViewModels {
 			get {
 				var		retValue = base.ClassUnderTest;
 
-				if(( retValue != null ) &&
-				   ( mTaskHandler == null )) {
-					mTaskHandler = new TaskHandler<DbArtist>( mTaskScheduler, mTaskScheduler );
-				
-					retValue.TaskHandler = mTaskHandler;
+				if( retValue != null ) {
+					retValue.ArtistTaskHandler = new TaskHandler<DbArtist>( mTaskScheduler, mTaskScheduler );
+					retValue.ArtworkTaskHandler = new TaskHandler<Artwork>( mTaskScheduler, mTaskScheduler );
 				}
 
 				return( retValue );
@@ -74,6 +72,25 @@ namespace Noise.UI.Tests.ViewModels {
 
 			testable.Mock<IArtistProvider>().Verify();
 			Assert.IsNotNull( sut.Artist );
+		}
+
+		[Test]
+		public void ArtistFocusShouldRequestArtistImage() {
+			var testable = new TestableArtistViewModel();
+			var artist = new DbArtist { Name = "artist name" };
+
+			var dbArtwork = new DbArtwork( artist.DbId, ContentType.ArtistPrimaryImage );
+			var artwork = new Artwork( dbArtwork ) { Image = new byte[] { 0, 1, 2, 3 }};
+
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
+			testable.Mock<IArtworkProvider>().Setup( m => m.GetArtistArtwork( It.Is<long>( p => p == artist.DbId ),
+																			  It.Is<ContentType>( p => p == ContentType.ArtistPrimaryImage ))).Returns( artwork ).Verifiable();
+
+			var sut = testable.ClassUnderTest;
+			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
+
+			testable.Mock<IArtworkProvider>().Verify();
+			Assert.IsNotNull( sut.ArtistImage );
 		}
 
 		[Test]

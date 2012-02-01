@@ -29,16 +29,20 @@ namespace Noise.UI.ViewModels {
 								   IHandle<Events.ArtistContentUpdated>, IHandle<Events.DatabaseItemChanged> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
+		private readonly IArtworkProvider		mArtworkProvider;
 		private readonly ITagManager			mTagManager;
 		private readonly Observal.Observer		mChangeObserver;
 		private UiArtist						mCurrentArtist;
+		private Artwork							mArtistImage;
 		private LinkNode						mArtistWebsite;
-		private TaskHandler<DbArtist>			mTaskHandler; 
+		private TaskHandler<DbArtist>			mArtistTaskHandler; 
+		private TaskHandler<Artwork>			mArtworkTaskHandler; 
 		private readonly InteractionRequest<ArtistEditRequest>		mArtistEditRequest;
 
-		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ITagManager tagManager ) {
+		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IArtworkProvider artworkProvider, ITagManager tagManager ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
+			mArtworkProvider = artworkProvider;
 			mTagManager = tagManager;
 
 			mEventAggregator.Subscribe( this );
@@ -127,24 +131,53 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		internal TaskHandler<DbArtist> TaskHandler {
+		internal TaskHandler<DbArtist> ArtistTaskHandler {
 			get {
-				if( mTaskHandler == null ) {
-					mTaskHandler = new TaskHandler<DbArtist>();
+				if( mArtistTaskHandler == null ) {
+					mArtistTaskHandler = new TaskHandler<DbArtist>();
 				}
 
-				return( mTaskHandler );
+				return( mArtistTaskHandler );
 			}
 
-			set { mTaskHandler = value; }
-		} 
-
+			set { mArtistTaskHandler = value; }
+		}
+ 
 		private void RequestArtist( long artistId ) {
-			TaskHandler.StartTask( () => mArtistProvider.GetArtist( artistId ), 
-									SetCurrentArtist,
-									exception => NoiseLogger.Current.LogException( "ArtistViewModel:GetArtist", exception ));
+			RetrieveArtist( artistId );
+			RetrieveArtwork( artistId );
 		}
 
+		private void RetrieveArtist( long artistId ) {
+			ArtistTaskHandler.StartTask( () => mArtistProvider.GetArtist( artistId ), 
+										SetCurrentArtist,
+										exception => NoiseLogger.Current.LogException( "ArtistViewModel:GetArtist", exception ));
+		}
+
+		internal TaskHandler<Artwork> ArtworkTaskHandler {
+			get {
+				if( mArtworkTaskHandler == null ) {
+					mArtworkTaskHandler = new TaskHandler<Artwork>();
+				}
+
+				return( mArtworkTaskHandler );
+			}
+
+			set { mArtworkTaskHandler = value; }
+		}
+
+		private void RetrieveArtwork( long artistId ) {
+			ArtworkTaskHandler.StartTask( () => mArtworkProvider.GetArtistArtwork( artistId, ContentType.ArtistPrimaryImage ),
+										   SetArtwork,
+										   exception => NoiseLogger.Current.LogException( "ArtistViewModel:GetArtistArtwork", exception ));
+		}
+
+		private void SetArtwork( Artwork artwork ) {
+			mArtistImage = artwork;
+
+			RaisePropertyChanged( () => ArtistImage );
+		}
+ 
 		private static void OnArtistChanged( PropertyChangeNotification changeNotification ) {
 			var notifier = changeNotification.Source as UiArtist;
 
@@ -180,6 +213,10 @@ namespace Noise.UI.ViewModels {
 		public byte[] ArtistImage {
 			get {
 				byte[]	retValue = null;
+
+				if( mArtistImage != null ) {
+					retValue = mArtistImage.Image;
+				}
 
 				return( retValue );
 			}
