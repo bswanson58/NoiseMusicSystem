@@ -8,9 +8,9 @@
              xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
              xmlns:local="clr-namespace:Noise.UI.ValueConverters"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             d:DesignHeight="300"
-             d:DesignWidth="300"
-             mc:Ignorable="d">
+             d:DesignHeight="600"
+             d:DesignWidth="800"
+             mc:Ignorable="d" Background="White">
 
     <UserControl.Resources>
         <local:HtmlTextConverter x:Key="htmlConverter" />
@@ -24,145 +24,148 @@
               BorderBrush="{DynamicResource TrimColor}"
               BorderThickness="1"
               Header=" Artist Information ">
-        <ScrollViewer Grid.Row="1" Behaviours:ScrollViewerPosition.ChangeTrigger="{Binding Path=SupportInfo, Mode=OneWay}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="115" />
-                    <RowDefinition Height="150" />
-                </Grid.RowDefinitions>
-                <FlowDocumentScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Hidden">
-                    <FlowDocument ColumnWidth="100"
-                                  IsHyphenationEnabled="True"
-                                  IsOptimalParagraphEnabled="True">
-                        <Paragraph>
-                            <adapters:BindableRun BoundText="{Binding Path=ArtistBio, Converter={StaticResource htmlConverter}}" />
-                        </Paragraph>
-                    </FlowDocument>
-                </FlowDocumentScrollViewer>
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
-                    <GroupBox Grid.Column="0"
-                              Margin="5,3,0,3"
-                              BorderBrush="{DynamicResource TrimColor}"
-                              BorderThickness="1"
-                              Header=" Band Members ">
-                        <ListBox BorderThickness="0" ItemsSource="{Binding Path=BandMembers}">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Path=DisplayText}" />
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </GroupBox>
-                    <GroupBox Grid.Column="1"
-                              Margin="5,3,0,3"
-                              BorderBrush="{DynamicResource TrimColor}"
-                              BorderThickness="1"
-                              Header=" TopAlbums ">
-                        <ListBox BorderThickness="0" ItemsSource="{Binding Path=TopAlbums}">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Controls:LinkLabel Content="{Binding Path=DisplayText}"
-                                                        IsEnabled="{Binding Path=IsLinked}"
-                                                        LinkLabelBehavior="HoverUnderline"
-                                                        Padding="0">
-                                        <EventCommandTriggers:CommandSource.Trigger>
-                                            <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=LinkClicked}" RoutedEvent="Controls:LinkLabel.Click" />
-                                        </EventCommandTriggers:CommandSource.Trigger>
-                                    </Controls:LinkLabel>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </GroupBox>
-                    <GroupBox Grid.Column="2"
-                              Margin="5,3,5,3"
-                              BorderBrush="{DynamicResource TrimColor}"
-                              BorderThickness="1"
-                              Header=" Similar Artists ">
-                        <ListBox BorderThickness="0" ItemsSource="{Binding Path=SimilarArtist}">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Controls:LinkLabel Content="{Binding Path=DisplayText}"
-                                                        IsEnabled="{Binding Path=IsLinked}"
-                                                        LinkLabelBehavior="HoverUnderline"
-                                                        Padding="0">
-                                        <EventCommandTriggers:CommandSource.Trigger>
-                                            <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=LinkClicked}" RoutedEvent="Controls:LinkLabel.Click" />
-                                        </EventCommandTriggers:CommandSource.Trigger>
-                                    </Controls:LinkLabel>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </GroupBox>
-                </Grid>
-                <GroupBox Grid.Row="2"
-                          Margin="5,0,5,5"
-                          BorderBrush="{DynamicResource TrimColor}"
-                          BorderThickness="1"
-                          Header=" Discography ">
-                    <ListView Behaviours:GridViewSort.AutoSort="True"
-                              Behaviours:ListViewColumns.Stretch="true"
-                              BorderThickness="0"
-                              ItemsSource="{Binding Path=Discography}">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListViewItem}">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                <Setter Property="Focusable" Value="false" />
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="{x:Null}" />
-                                        <Setter Property="BorderBrush" Value="{x:Null}" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Behaviours:GridViewSort.PropertyName="Title" Header="Title">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Path=Title}" TextAlignment="Left" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Width="210"
-                                                Behaviours:GridViewSort.PropertyName="Label"
-                                                Header="Label">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Path=Label}" TextAlignment="Left" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Width="190"
-                                                Behaviours:GridViewSort.PropertyName="Format"
-                                                Header="Format">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Path=Format}" TextAlignment="Left" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Width="75"
-                                                Behaviours:GridViewSort.PropertyName="Year"
-                                                Header="Released">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Path=Year, Converter={StaticResource PublishedYearConverter}}" TextAlignment="Right" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                            </GridView>
-                        </ListView.View>
+        <Grid>
+        	<Grid.RowDefinitions>
+        		<RowDefinition Height="0.437*"/>
+        		<RowDefinition Height="Auto"/>
+        	</Grid.RowDefinitions>
+    		<ScrollViewer Behaviours:ScrollViewerPosition.ChangeTrigger="{Binding SupportInfo, Mode=OneWay}">
+    			<FlowDocumentScrollViewer VerticalScrollBarVisibility="Hidden">
+    				<FlowDocument ColumnWidth="100"
+    					IsHyphenationEnabled="True"
+    					IsOptimalParagraphEnabled="True">
+    					<Paragraph><adapters:BindableRun BoundText="{Binding ArtistBio, Converter={StaticResource htmlConverter}}" /></Paragraph>
+    				</FlowDocument>
+    			</FlowDocumentScrollViewer>
+    		</ScrollViewer>
+    		<Grid Margin="0" d:LayoutOverrides="Width, Height" Grid.Row="1">
+    			<Grid.RowDefinitions>
+    				<RowDefinition Height="111" />
+    				<RowDefinition Height="111" />
+    			</Grid.RowDefinitions>
+    			<Grid>
+    				<Grid.ColumnDefinitions>
+    					<ColumnDefinition />
+    					<ColumnDefinition />
+    					<ColumnDefinition />
+    				</Grid.ColumnDefinitions>
+    				<GroupBox Grid.Column="0"
+    					Margin="5,3,0,3"
+    					BorderBrush="{DynamicResource TrimColor}"
+    					BorderThickness="1"
+    					Header=" Band Members ">
+    					<ListBox BorderThickness="0" ItemsSource="{Binding BandMembers}">
+    						<ListBox.ItemTemplate>
+    							<DataTemplate>
+    								<TextBlock Text="{Binding DisplayText}" />
+    							</DataTemplate>
+    						</ListBox.ItemTemplate>
+    					</ListBox>
+    				</GroupBox>
+    				<GroupBox Grid.Column="1"
+    					Margin="5,3,0,3"
+    					BorderBrush="{DynamicResource TrimColor}"
+    					BorderThickness="1"
+    					Header=" TopAlbums ">
+    					<ListBox BorderThickness="0" ItemsSource="{Binding TopAlbums}">
+    						<ListBox.ItemTemplate>
+    							<DataTemplate>
+    								<Controls:LinkLabel Content="{Binding DisplayText}"
+    									IsEnabled="{Binding IsLinked}"
+    									LinkLabelBehavior="HoverUnderline"
+    									Padding="0">
+    									<EventCommandTriggers:CommandSource.Trigger>
+    										<EventCommandTriggers:EventCommandTrigger Command="{Binding LinkClicked}" RoutedEvent="Controls:LinkLabel.Click" />
+    									</EventCommandTriggers:CommandSource.Trigger>
+    								</Controls:LinkLabel>
+    							</DataTemplate>
+    						</ListBox.ItemTemplate>
+    					</ListBox>
+    				</GroupBox>
+    				<GroupBox Grid.Column="2"
+    					Margin="5,3,5,3"
+    					BorderBrush="{DynamicResource TrimColor}"
+    					BorderThickness="1"
+    					Header=" Similar Artists ">
+    					<ListBox BorderThickness="0" ItemsSource="{Binding SimilarArtist}">
+    						<ListBox.ItemTemplate>
+    							<DataTemplate>
+    								<Controls:LinkLabel Content="{Binding DisplayText}"
+    									IsEnabled="{Binding IsLinked}"
+    									LinkLabelBehavior="HoverUnderline"
+    									Padding="0">
+    									<EventCommandTriggers:CommandSource.Trigger>
+    										<EventCommandTriggers:EventCommandTrigger Command="{Binding LinkClicked}" RoutedEvent="Controls:LinkLabel.Click" />
+    									</EventCommandTriggers:CommandSource.Trigger>
+    								</Controls:LinkLabel>
+    							</DataTemplate>
+    						</ListBox.ItemTemplate>
+    					</ListBox>
+    				</GroupBox>
+    			</Grid>
+    			<GroupBox
+    				Margin="5,0,5,5"
+    				BorderBrush="{DynamicResource TrimColor}"
+    				BorderThickness="1"
+    				Header=" Discography " Grid.Row="1">
+    				<ListView Behaviours:GridViewSort.AutoSort="True"
+    					Behaviours:ListViewColumns.Stretch="true"
+    					BorderThickness="0"
+    					ItemsSource="{Binding Discography}">
+    					<ListView.ItemContainerStyle>
+    						<Style TargetType="{x:Type ListViewItem}">
+    							<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    							<Setter Property="Focusable" Value="false" />
+    							<Style.Triggers>
+    								<Trigger Property="IsMouseOver" Value="True">
+    									<Setter Property="Background" Value="{x:Null}" />
+    									<Setter Property="BorderBrush" Value="{x:Null}" />
+    								</Trigger>
+    							</Style.Triggers>
+    						</Style>
+    					</ListView.ItemContainerStyle>
+    					<ListView.View>
+    						<GridView>
+    							<GridViewColumn Behaviours:GridViewSort.PropertyName="Title" Header="Title">
+    								<GridViewColumn.CellTemplate>
+    									<DataTemplate>
+    										<TextBlock Text="{Binding Title}" TextAlignment="Left" />
+    									</DataTemplate>
+    								</GridViewColumn.CellTemplate>
+    							</GridViewColumn>
+    							<GridViewColumn Width="210"
+    								Behaviours:GridViewSort.PropertyName="Label"
+    								Header="Label">
+    								<GridViewColumn.CellTemplate>
+    									<DataTemplate>
+    										<TextBlock Text="{Binding Label}" TextAlignment="Left" />
+    									</DataTemplate>
+    								</GridViewColumn.CellTemplate>
+    							</GridViewColumn>
+    							<GridViewColumn Width="190"
+    								Behaviours:GridViewSort.PropertyName="Format"
+    								Header="Format">
+    								<GridViewColumn.CellTemplate>
+    									<DataTemplate>
+    										<TextBlock Text="{Binding Format}" TextAlignment="Left" />
+    									</DataTemplate>
+    								</GridViewColumn.CellTemplate>
+    							</GridViewColumn>
+    							<GridViewColumn Width="75"
+    								Behaviours:GridViewSort.PropertyName="Year"
+    								Header="Released">
+    								<GridViewColumn.CellTemplate>
+    									<DataTemplate>
+    										<TextBlock Text="{Binding Year, Converter={StaticResource PublishedYearConverter}}" TextAlignment="Right" />
+    									</DataTemplate>
+    								</GridViewColumn.CellTemplate>
+    							</GridViewColumn>
+    						</GridView>
+    					</ListView.View>
 
-                    </ListView>
-                </GroupBox>
-            </Grid>
-        </ScrollViewer>
+    				</ListView>
+    			</GroupBox>
+    		</Grid>
+    	</Grid>
     </GroupBox>
 </UserControl>

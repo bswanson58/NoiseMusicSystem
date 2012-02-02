@@ -37,9 +37,9 @@
 
                 <Grid Grid.Column="1">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="2*" MinHeight="50" />
-                        <RowDefinition Height="3*" MinHeight="50" />
-                        <RowDefinition Height="3*" MinHeight="50" />
+                        <RowDefinition Height="Auto" MinHeight="50" />
+                        <RowDefinition Height="1*" MinHeight="50" />
+                        <RowDefinition Height="1*" MinHeight="50" />
                     </Grid.RowDefinitions>
 
                     <ContentControl Grid.Row="0"
@@ -48,7 +48,7 @@
                     <ContentControl Grid.Row="1"
                                     Margin="0,3,3,3"
                                     Regions:RegionManager.RegionName="ArtistSupportInfo" />
-                    <GridSplitter Grid.Row="0"
+                    <GridSplitter Grid.Row="1"
                                   Width="Auto"
                                   Height="7"
                                   HorizontalAlignment="Stretch"
