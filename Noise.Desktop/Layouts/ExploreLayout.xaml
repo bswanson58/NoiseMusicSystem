@@ -35,28 +35,34 @@
                               Background="Transparent"
                               ResizeDirection="Columns" />
 
-                <Grid Grid.Column="1">
+                <Grid Grid.Column="1" Margin="0,0,7,0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" MinHeight="50" />
-                        <RowDefinition Height="1*" MinHeight="50" />
-                        <RowDefinition Height="1*" MinHeight="50" />
+                        <RowDefinition Height="5*" MinHeight="100" />
+                        <RowDefinition Height="4*" MinHeight="100" />
                     </Grid.RowDefinitions>
 
-                    <ContentControl Grid.Row="0"
-                                    Margin="0,3,3,3"
-                                    Regions:RegionManager.RegionName="ArtistInfo" />
-                    <ContentControl Grid.Row="1"
-                                    Margin="0,3,3,3"
-                                    Regions:RegionManager.RegionName="ArtistSupportInfo" />
-                    <GridSplitter Grid.Row="1"
+                    <GroupBox BorderBrush="{DynamicResource TrimColor}"
+                              BorderThickness="1"
+                              Header=" Artist ">
+                        <Grid Grid.Row="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" MinHeight="50" />
+                                <RowDefinition Height="*" MinHeight="50" />
+                            </Grid.RowDefinitions>
+
+                            <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="ArtistInfo" />
+                            <ContentControl Grid.Row="1" Regions:RegionManager.RegionName="ArtistSupportInfo" />
+                        </Grid>
+                    </GroupBox>
+                    <GridSplitter Grid.Row="0"
                                   Width="Auto"
                                   Height="7"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Bottom"
                                   Background="Transparent"
                                   ResizeDirection="Rows" />
-                    <ContentControl Grid.Row="2"
-                                    Margin="0,0,3,0"
+                    <ContentControl Grid.Row="1"
+                                    Margin="0,5,0,0"
                                     Regions:RegionManager.RegionName="AlbumInfo" />
                 </Grid>
 
@@ -66,9 +72,7 @@
                               Background="Transparent"
                               ResizeDirection="Columns" />
 
-                <ContentControl Grid.Column="2"
-                                Margin="0"
-                                Regions:RegionManager.RegionName="PlayQueue" />
+                <ContentControl Grid.Column="2" Regions:RegionManager.RegionName="PlayQueue" />
             </Grid>
 
             <ContentControl Grid.Row="2"

@@ -8,9 +8,10 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:local="clr-namespace:Noise.UI.ValueConverters"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             Height="200"
              Background="White"
              d:DesignWidth="800"
-             mc:Ignorable="d" Height="200">
+             mc:Ignorable="d">
     <!--
         d:DataContext="{d:DesignInstance BlendableViewModels:BlendableArtistViewModel,
         IsDesignTimeCreatable=True}"
@@ -29,10 +30,7 @@
                                                      InteractionRequest="{Binding Path=ArtistEditRequest}" />
     </i:Interaction.Behaviors>
 
-    <GroupBox Margin="0"
-              BorderBrush="{DynamicResource TrimColor}"
-              BorderThickness="1"
-              Header=" Artist ">
+    <Grid Visibility="{Binding ArtistValid, Converter={StaticResource BooleanVisibilityConverter}}">
         <Border Background="{DynamicResource TreeItemBackground}"
                 BorderThickness="0"
                 CornerRadius="5">
@@ -107,5 +105,5 @@
                 </Grid>
             </Grid>
         </Border>
-    </GroupBox>
+    </Grid>
 </UserControl>
