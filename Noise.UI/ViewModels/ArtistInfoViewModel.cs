@@ -12,7 +12,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace Noise.UI.ViewModels {
 	public class ArtistInfoViewModel : AutomaticPropertyBase,
 									   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>,
-									   IHandle<Events.ArtistContentUpdated> {
+									   IHandle<Events.ArtistContentUpdated>, IHandle<Events.ViewDisplayRequest> {
 		private readonly IEventAggregator			mEventAggregator;
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IDiscographyProvider			mDiscographyProvider;
@@ -130,6 +130,19 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.Publish( new Events.AlbumFocusRequested( mCurrentArtistId, albumId ));
 		}
 
+		public void Handle( Events.ViewDisplayRequest eventArgs ) {
+			if( ViewNames.ArtistInfoView.Equals( eventArgs.ViewName )) {
+				IsDisplayed = !IsDisplayed;
+
+				eventArgs.ViewWasOpened = IsDisplayed;
+			}
+		}
+
+		public bool IsDisplayed {
+			get{ return( Get( () => IsDisplayed )); }
+			set{ Set( () => IsDisplayed, value ); }
+		}
+
 		[DependsUpon( "SupportInfo" )]
 		public string ArtistBio {
 			get {
@@ -163,6 +176,5 @@ namespace Noise.UI.ViewModels {
 		public IEnumerable<DbDiscographyRelease> Discography {
 			get{ return( mDiscography ); }
 		}
-
 	}
 }

@@ -251,5 +251,18 @@ namespace Noise.UI.ViewModels {
 				}
 			}
 		}
+
+		public bool ArtistInfoViewOpen {
+			get{ return( Get( () => ArtistInfoViewOpen )); }
+			set{ Set( () => ArtistInfoViewOpen, value ); }
+		}
+
+		public void Execute_ToggleArtistInfoPanel() {
+			var request = new Events.ViewDisplayRequest( ViewNames.ArtistInfoView );
+
+			mEventAggregator.Publish( request );
+
+			ArtistInfoViewOpen = request.ViewWasOpened;
+		}
 	}
 }

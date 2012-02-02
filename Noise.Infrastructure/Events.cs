@@ -183,6 +183,15 @@ namespace Noise.Infrastructure {
 			}
 		}
 
+		public class ViewDisplayRequest {
+			public string	ViewName { get; private set; }
+			public bool		ViewWasOpened { get; set; }
+			 
+			public ViewDisplayRequest( string viewName ) {
+				ViewName = viewName;
+			} 
+		}
+
 		public class SystemConfigurationChanged { }
 		public class SystemShutdown { }
 

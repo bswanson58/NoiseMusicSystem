@@ -37,17 +37,20 @@
             <Grid Background="{StaticResource NoiseBrush}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Image Grid.Column="0"
-                       Margin="7"
+                       MinWidth="50"
+                       MinHeight="50"
+                       Margin="7,7,3,0"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Top"
                        Source="{Binding ArtistImage,
                                         Converter={StaticResource imageConverter}}"
                        Stretch="Uniform" />
-                <Grid Grid.Column="2" Margin="3,0,25,0">
+                <Grid Grid.Column="3" Margin="3,0,11,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -56,7 +59,7 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock Margin="0,0,0,9"
+                    <TextBlock x:Name="ArtistName" Margin="0,0,0,9"
                                HorizontalAlignment="Right"
                                FontSize="20"
                                Text="{Binding Artist.Name}" />
@@ -90,17 +93,27 @@
                             <EventCommandTriggers:EventCommandTrigger Command="{Binding ArtistWebsite.LinkClicked}" RoutedEvent="Controls:LinkLabel.Click" />
                         </EventCommandTriggers:CommandSource.Trigger>
                     </Controls:LinkLabel>
+                    <StackPanel Height="19" Margin="52.014,0,0,5" Orientation="Horizontal" Grid.Row="4" VerticalAlignment="Bottom" d:LayoutOverrides="Width" HorizontalAlignment="Right">
+                    	<Button x:Name="ToggleArtistInfo"
+                    		Width="19"
+                    		HorizontalAlignment="Center"
+                    		VerticalAlignment="Top"
+                    		Command="{Binding ToggleArtistInfoPanel}"
+                    		Content="{StaticResource Path_ToggleView}"
+                    		Foreground="{StaticResource ControlTextColor}"
+                    		Padding="1"
+                    		ToolTip="Open/Close Artist Information View" Margin="0,0,9,0" />
 
-                    <Button Grid.Row="5"
-                            Width="19"
-                            Height="19"
-                            Margin="0,0,0,5"
-                            HorizontalAlignment="Right"
-                            Command="{Binding EditArtist}"
-                            Content="{StaticResource Path_Edit}"
-                            Foreground="{StaticResource ControlTextColor}"
-                            Padding="2"
-                            ToolTip="Edit Artist Properties" />
+                    	<Button x:Name="EditArtist"
+                    		Width="19"
+                    		Height="19"
+                    		Command="{Binding EditArtist}"
+                    		Content="{StaticResource Path_Edit}"
+                    		Foreground="{StaticResource ControlTextColor}"
+                    		Padding="2"
+                    		ToolTip="Edit Artist Properties" />
+
+                    </StackPanel>
 
                 </Grid>
             </Grid>
