@@ -37,31 +37,11 @@
 
                 <Grid Grid.Column="1" Margin="0,0,7,0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" MinHeight="100" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <GroupBox Grid.Row="0"
-                              BorderBrush="{DynamicResource TrimColor}"
-                              BorderThickness="1"
-                              Header=" Artist ">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" MinHeight="50" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="ArtistInfo" />
-                            <ContentControl Grid.Row="1" Regions:RegionManager.RegionName="ArtistSupportInfo" />
-                        </Grid>
-                    </GroupBox>
-                    <GridSplitter Grid.Row="0"
-                                  Width="Auto"
-                                  Height="7"
-                                  HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Bottom"
-                                  Background="Transparent"
-                                  ResizeDirection="Rows" />
+                    <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="ArtistInfo" />
                     <ContentControl Grid.Row="1"
                                     Margin="0,5,0,0"
                                     Regions:RegionManager.RegionName="AlbumInfo" />

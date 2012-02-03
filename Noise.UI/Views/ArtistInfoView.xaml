@@ -8,9 +8,8 @@
              xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
              xmlns:local="clr-namespace:Noise.UI.ValueConverters"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             MaxHeight="350"
              Background="White"
-             d:DesignHeight="350"
+             d:DesignHeight="400"
              d:DesignWidth="700"
              mc:Ignorable="d">
 
@@ -22,7 +21,9 @@
         <Binding Path="ArtistInfoViewModel" Source="{StaticResource ViewModelLocator}" />
     </UserControl.DataContext>
 
-    <Behaviours:Reveal IsExpanded="{Binding Path=IsDisplayed}" VerticalReveal="FromTopToBottom">
+    <GroupBox BorderBrush="{DynamicResource TrimColor}"
+              BorderThickness="1"
+              Header=" Artist Information ">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition />
@@ -47,8 +48,8 @@
                   Margin="3,3,3,0"
                   d:LayoutOverrides="Width, Height">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="73" />
-                    <RowDefinition Height="103" />
+                    <RowDefinition Height="107" />
+                    <RowDefinition Height="130" />
                 </Grid.RowDefinitions>
                 <Grid Margin="0">
                     <Grid.ColumnDefinitions>
@@ -171,5 +172,5 @@
                 </GroupBox>
             </Grid>
         </Grid>
-    </Behaviours:Reveal>
+    </GroupBox>
 </UserControl>

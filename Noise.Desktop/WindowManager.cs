@@ -14,7 +14,7 @@ using Noise.UI.Views;
 using Application = System.Windows.Application;
 
 namespace Noise.Desktop {
-	internal class WindowManager : IHandle<Events.WindowLayoutRequest>, IHandle<Events.NavigationRequest>,
+	internal class WindowManager : IHandle<Events.WindowLayoutRequest>, IHandle<Events.ViewDisplayRequest>,
 								   IHandle<Events.ExternalPlayerSwitch>, IHandle<Events.ExtendedPlayerRequest>, IHandle<Events.StandardPlayerRequest> {
 		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEventAggregator;
@@ -81,17 +81,15 @@ namespace Noise.Desktop {
 			}
 		}
 
-		public void Handle( Events.NavigationRequest eventArgs ) {
+		public void Handle( Events.ViewDisplayRequest eventArgs ) {
 			var region = mRegionManager.Regions.FirstOrDefault( r => r.Name == "AlbumInfo" );
 
 			if( region != null ) {
-				switch( eventArgs.TargetView ) {
+				switch( eventArgs.ViewName ) {
+					case ViewNames.ArtistInfoView:
 					case ViewNames.AlbumView:
-						region.RequestNavigate( ViewNames.ArtistTracksView );
-						break;
-
 					case ViewNames.ArtistTracksView:
-						region.RequestNavigate( ViewNames.AlbumView );
+						region.RequestNavigate( eventArgs.ViewName );
 						break;
 				}
 			}

@@ -93,6 +93,9 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Practices.Prism, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.dll</HintPath>
+    </Reference>
     <Reference Include="Moq">
       <HintPath>..\lib\Moq\v4.0.10827\Moq.dll</HintPath>
     </Reference>

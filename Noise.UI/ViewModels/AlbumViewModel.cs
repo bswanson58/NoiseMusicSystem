@@ -197,6 +197,10 @@ namespace Noise.UI.ViewModels {
 			mRequestedAlbum = request.AlbumId;
 
 			UpdateAlbum( request.AlbumId );
+
+			if(!mIsActive ) {
+				mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.AlbumView ));
+			}
 		}
 
 		private void UpdateAlbum( long albumId ) {
@@ -524,10 +528,6 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "Album" )]
 		public bool CanExecute_OpenAlbumFolder() {
 			return( mCurrentAlbum != null );
-		}
-
-		public void Execute_SwitchView() {
-			mEventAggregator.Publish( new Events.NavigationRequest( ViewNames.AlbumView ));
 		}
 	}
 }

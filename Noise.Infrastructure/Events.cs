@@ -127,14 +127,6 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class NavigationRequest {
-			public	string	TargetView { get; private set; }
-
-			public NavigationRequest( string target ) {
-				TargetView = target;
-			}
-		}
-
 		public class LibraryUpdateStarted {
 			public long	LibraryId { get; private set; }
 

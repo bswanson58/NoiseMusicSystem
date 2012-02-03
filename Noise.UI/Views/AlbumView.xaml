@@ -16,19 +16,8 @@
 
     <GroupBox Margin="0"
               BorderBrush="{DynamicResource TrimColor}"
-              BorderThickness="1">
-        <GroupBox.Header>
-            <StackPanel Orientation="Horizontal">
-                <Button Width="23"
-                        Height="19"
-                        Margin="3,0,0,2"
-                        Command="{Binding Path=SwitchView}"
-                        Content="{StaticResource Path_SwitchView}" />
-                <TextBlock Margin="5,0,3,2"
-                           VerticalAlignment="Center"
-                           Text="Album" />
-            </StackPanel>
-        </GroupBox.Header>
+              BorderThickness="1"
+              Header=" Album Information ">
         <Grid Behaviours:GridUtils.RowDefinitions="Auto,*" Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}">
             <Border Grid.Row="0"
                     Background="{DynamicResource TreeItemBackground}"

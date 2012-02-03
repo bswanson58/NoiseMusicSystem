@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
+using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -10,7 +12,7 @@ using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class ArtistInfoViewModel : AutomaticPropertyBase,
+	public class ArtistInfoViewModel : AutomaticCommandBase, IActiveAware,
 									   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>,
 									   IHandle<Events.ArtistContentUpdated>, IHandle<Events.ViewDisplayRequest> {
 		private readonly IEventAggregator			mEventAggregator;
@@ -22,6 +24,8 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<LinkNode>				mTopAlbums;
 		private readonly BindableCollection<LinkNode>				mBandMembers;
 		private readonly SortableCollection<DbDiscographyRelease>	mDiscography;
+
+		public	event	EventHandler								IsActiveChanged;
 
 		public ArtistInfoViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IDiscographyProvider discographyProvider ) {
 			mEventAggregator = eventAggregator;
@@ -35,6 +39,11 @@ namespace Noise.UI.ViewModels {
 			mTopAlbums = new BindableCollection<LinkNode>();
 			mBandMembers = new BindableCollection<LinkNode>();
 			mDiscography = new SortableCollection<DbDiscographyRelease>();
+		}
+
+		public bool IsActive {
+			get{ return( Get( () => IsActive )); }
+			set{ Set( () => IsActive, value ); }
 		}
 
 		public ArtistSupportInfo SupportInfo {
@@ -89,6 +98,10 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.ArtistFocusRequested request ) {
 			if( request.ArtistId != mCurrentArtistId ) {
 				SetCurrentArtist( request.ArtistId );
+			}
+
+			if(!IsActive ) {
+				mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.ArtistInfoView ));
 			}
 		}
 

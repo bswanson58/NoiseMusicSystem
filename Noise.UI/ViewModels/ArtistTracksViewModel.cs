@@ -182,9 +182,5 @@ namespace Noise.UI.ViewModels {
 		private void OnTrackPlay( long trackId ) {
 			GlobalCommands.PlayTrack.Execute( mTrackProvider.GetTrack( trackId ));
 		}
-
-		public void Execute_SwitchView() {
-			mEventAggregator.Publish( new Events.NavigationRequest( ViewNames.ArtistTracksView ));
-		}
 	}
 }

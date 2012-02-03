@@ -30,93 +30,121 @@
                                                      InteractionRequest="{Binding Path=ArtistEditRequest}" />
     </i:Interaction.Behaviors>
 
-    <Grid Visibility="{Binding ArtistValid, Converter={StaticResource BooleanVisibilityConverter}}">
-        <Border Background="{DynamicResource TreeItemBackground}"
-                BorderThickness="0"
-                CornerRadius="5">
-            <Grid Background="{StaticResource NoiseBrush}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Image Grid.Column="0"
-                       MinWidth="50"
-                       MinHeight="50"
-                       Margin="7,7,3,0"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Top"
-                       Source="{Binding ArtistImage,
-                                        Converter={StaticResource imageConverter}}"
-                       Stretch="Uniform" />
-                <Grid Grid.Column="3" Margin="3,0,11,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <TextBlock x:Name="ArtistName" Margin="0,0,0,9"
-                               HorizontalAlignment="Right"
-                               FontSize="20"
-                               Text="{Binding Artist.Name}" />
+    <GroupBox BorderBrush="{DynamicResource TrimColor}"
+              BorderThickness="1"
+              Header=" Artist ">
+        <Grid Visibility="{Binding ArtistValid, Converter={StaticResource BooleanVisibilityConverter}}">
+            <Border Background="{DynamicResource TreeItemBackground}"
+                    BorderThickness="0"
+                    CornerRadius="5">
+                <Grid Background="{StaticResource NoiseBrush}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0"
+                           MinWidth="50"
+                           MinHeight="50"
+                           Margin="7,7,3,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Source="{Binding ArtistImage,
+                                            Converter={StaticResource imageConverter}}"
+                           Stretch="Uniform" />
+                    <Grid Grid.Column="3" Margin="3,0,11,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="ArtistName"
+                                   Margin="0,0,0,9"
+                                   HorizontalAlignment="Right"
+                                   FontSize="20"
+                                   Text="{Binding Artist.Name}" />
 
-                    <!--  Rating controls  -->
-                    <StackPanel Grid.Row="1"
-                                Margin="0,1"
-                                HorizontalAlignment="Right"
-                                Orientation="Horizontal">
-                        <CheckBox Margin="0,0,7,0"
-                                  VerticalAlignment="Center"
-                                  IsChecked="{Binding Artist.UiIsFavorite,
-                                                      Mode=TwoWay}"
-                                  Style="{StaticResource FavoriteCheckBoxStyle}" />
-                        <Controls:RatingControl Rating="{Binding Artist.UiRating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
-                    </StackPanel>
+                        <!--  Rating controls  -->
+                        <StackPanel Grid.Row="1"
+                                    Margin="0,1"
+                                    HorizontalAlignment="Right"
+                                    Orientation="Horizontal">
+                            <CheckBox Margin="0,0,7,0"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding Artist.UiIsFavorite,
+                                                          Mode=TwoWay}"
+                                      Style="{StaticResource FavoriteCheckBoxStyle}" />
+                            <Controls:RatingControl Rating="{Binding Artist.UiRating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
+                        </StackPanel>
 
-                    <TextBlock x:Name="Genre"
-                               Grid.Row="2"
-                               HorizontalAlignment="Right"
-                               Text="{Binding Artist.Genre}" />
+                        <TextBlock x:Name="Genre"
+                                   Grid.Row="2"
+                                   HorizontalAlignment="Right"
+                                   Text="{Binding Artist.Genre}" />
 
-                    <!--  Artist website link  -->
-                    <Controls:LinkLabel Grid.Row="3"
-                                        HorizontalAlignment="Right"
-                                        Content="{Binding ArtistWebsite.DisplayText}"
-                                        IsEnabled="{Binding ArtistWebsite.IsLinked}"
-                                        LinkLabelBehavior="HoverUnderline"
-                                        Padding="0">
-                        <EventCommandTriggers:CommandSource.Trigger>
-                            <EventCommandTriggers:EventCommandTrigger Command="{Binding ArtistWebsite.LinkClicked}" RoutedEvent="Controls:LinkLabel.Click" />
-                        </EventCommandTriggers:CommandSource.Trigger>
-                    </Controls:LinkLabel>
-                    <StackPanel Height="19" Margin="52.014,0,0,5" Orientation="Horizontal" Grid.Row="4" VerticalAlignment="Bottom" d:LayoutOverrides="Width" HorizontalAlignment="Right">
-                    	<Button x:Name="ToggleArtistInfo"
-                    		Width="19"
-                    		HorizontalAlignment="Center"
-                    		VerticalAlignment="Top"
-                    		Command="{Binding ToggleArtistInfoPanel}"
-                    		Content="{StaticResource Path_ToggleView}"
-                    		Foreground="{StaticResource ControlTextColor}"
-                    		Padding="1"
-                    		ToolTip="Open/Close Artist Information View" Margin="0,0,9,0" />
+                        <!--  Artist website link  -->
+                        <Controls:LinkLabel Grid.Row="3"
+                                            HorizontalAlignment="Right"
+                                            Content="{Binding ArtistWebsite.DisplayText}"
+                                            IsEnabled="{Binding ArtistWebsite.IsLinked}"
+                                            LinkLabelBehavior="HoverUnderline"
+                                            Padding="0">
+                            <EventCommandTriggers:CommandSource.Trigger>
+                                <EventCommandTriggers:EventCommandTrigger Command="{Binding ArtistWebsite.LinkClicked}" RoutedEvent="Controls:LinkLabel.Click" />
+                            </EventCommandTriggers:CommandSource.Trigger>
+                        </Controls:LinkLabel>
+                        <StackPanel Grid.Row="4"
+                                    Height="19"
+                                    Margin="52.014,0,0,5"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Orientation="Horizontal"
+                                    d:LayoutOverrides="Width">
+                            <Button x:Name="DisplayArtistInfo"
+                                    Width="19"
+                                    Margin="0,0,5,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Top"
+                                    Command="{Binding DisplayArtistInfoPanel}"
+                                    Content="{StaticResource Path_Artist}"
+                                    Foreground="{StaticResource ControlTextColor}"
+                                    Padding="1"
+                                    ToolTip="Display Artist Information" />
+                            <Button x:Name="DisplayAlbumInfo"
+                                    Width="19"
+                                    Margin="0,0,5,0"
+                                    Command="{Binding DisplayAlbumInfoPanel}"
+                                    Content="{StaticResource Path_Album}"
+                                    Foreground="{StaticResource ControlTextColor}"
+                                    Padding="1"
+                                    ToolTip="Display Album Information" />
+                            <Button x:Name="DisplayAllTracks"
+                                    Width="19"
+                                    Margin="0,0,11,0"
+                                    Command="{Binding DisplayArtistTracksPanel}"
+                                    Content="{StaticResource Path_Music}"
+                                    Foreground="{StaticResource ControlTextColor}"
+                                    Padding="1"
+                                    ToolTip="Display All Artist Tracks" />
 
-                    	<Button x:Name="EditArtist"
-                    		Width="19"
-                    		Height="19"
-                    		Command="{Binding EditArtist}"
-                    		Content="{StaticResource Path_Edit}"
-                    		Foreground="{StaticResource ControlTextColor}"
-                    		Padding="2"
-                    		ToolTip="Edit Artist Properties" />
+                            <Button x:Name="EditArtist"
+                                    Width="19"
+                                    Height="19"
+                                    Command="{Binding EditArtist}"
+                                    Content="{StaticResource Path_Edit}"
+                                    Foreground="{StaticResource ControlTextColor}"
+                                    Padding="2"
+                                    ToolTip="Edit Artist Properties" />
 
-                    </StackPanel>
+                        </StackPanel>
 
+                    </Grid>
                 </Grid>
-            </Grid>
-        </Border>
-    </Grid>
+            </Border>
+        </Grid>
+    </GroupBox>
 </UserControl>

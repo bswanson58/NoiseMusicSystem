@@ -98,6 +98,9 @@
     <Reference Include="FluentAssertions">
       <HintPath>..\lib\FluentAssertions\v1.7.0\FluentAssertions.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.Prism, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\lib\NUnit\v2.5.10\nunit.framework.dll</HintPath>
     </Reference>
