@@ -86,8 +86,8 @@ namespace Noise.Desktop {
 
 			if( region != null ) {
 				switch( eventArgs.ViewName ) {
+					case ViewNames.AlbumInfoView:
 					case ViewNames.ArtistInfoView:
-					case ViewNames.AlbumView:
 					case ViewNames.ArtistTracksView:
 						region.RequestNavigate( eventArgs.ViewName );
 						break;

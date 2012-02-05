@@ -268,6 +268,7 @@
     <Compile Include="ValueConverters\TimeSpanConverter.cs" />
     <Compile Include="ValueConverters\VolumeLevelConverter.cs" />
     <Compile Include="ViewModels\AlbumEditDialogModel.cs" />
+    <Compile Include="ViewModels\AlbumTracksViewModel.cs" />
     <Compile Include="ViewModels\ArtistAlbumConfigViewModel.cs" />
     <Compile Include="ViewModels\AlbumArtworkViewModel.cs" />
     <Compile Include="ViewModels\AlbumViewModel.cs" />
@@ -303,8 +304,14 @@
     <Compile Include="Views\AlbumArtworkView.xaml.cs">
       <DependentUpon>AlbumArtworkView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\AlbumInfoView.xaml.cs">
+      <DependentUpon>AlbumInfoView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\AlbumEditDialog.xaml.cs">
       <DependentUpon>AlbumEditDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AlbumTracksView.xaml.cs">
+      <DependentUpon>AlbumTracksView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\AlbumView.xaml.cs">
       <DependentUpon>AlbumView.xaml</DependentUpon>
@@ -476,7 +483,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\AlbumInfoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\AlbumEditDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AlbumTracksView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

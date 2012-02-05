@@ -20,7 +20,7 @@
                 <Layout:View RegionName="Explorer" Type="{x:Type Views:LibraryAdditionsView}" />
                 <Layout:View RegionName="ArtistInfo" Type="{x:Type Views:ArtistView}" />
                 <Layout:View RegionName="AlbumInfo" Type="{x:Type Views:ArtistInfoView}" />
-                <Layout:View RegionName="AlbumInfo" Type="{x:Type Views:AlbumView}" />
+                <Layout:View RegionName="AlbumInfo" Type="{x:Type Views:AlbumInfoView}" />
                 <Layout:View RegionName="AlbumInfo" Type="{x:Type Views:ArtistTracksView}" />
                 <Layout:View RegionName="PlayQueue" Type="{x:Type Views:PlayQueueView}" />
                 <Layout:View RegionName="Player" Type="{x:Type Views:PlayerView}" />

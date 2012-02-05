@@ -18,24 +18,7 @@ using Observal.Extensions;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	internal class NewAlbumInfo {
-		public DbAlbum				Album { get; private set; }
-		public AlbumSupportInfo		SupportInfo { get; private set; }
-		public IEnumerable<DbTrack>	TrackList { get; private set; }
-		public IEnumerable<long>	Categories { get; private set; }
-
-		public NewAlbumInfo() {
-		}
-
-		public NewAlbumInfo( DbAlbum album, AlbumSupportInfo supportInfo, IEnumerable<DbTrack> trackList, IEnumerable<long> categoryList ) {
-			Album = album;
-			SupportInfo = supportInfo;
-			TrackList = trackList;
-			Categories = categoryList;
-		}
-	}
-
-	internal class AlbumViewModel : ViewModelBase, IActiveAware,
+	internal class AlbumTracksViewModel : ViewModelBase, IActiveAware,
 									IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.DatabaseItemChanged> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IAlbumProvider			mAlbumProvider;
@@ -61,7 +44,7 @@ namespace Noise.UI.ViewModels {
 		public	TimeSpan						AlbumPlayTime { get; private set; }
 		public	event EventHandler				IsActiveChanged;
 
-		public AlbumViewModel( IEventAggregator eventAggregator, 
+		public AlbumTracksViewModel( IEventAggregator eventAggregator, 
 							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider, ITagProvider tagProvider, IStorageFileProvider storageFileProvider,
 							   ITagManager tagManager, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;

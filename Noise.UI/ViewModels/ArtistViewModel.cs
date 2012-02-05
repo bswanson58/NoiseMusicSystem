@@ -271,7 +271,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_DisplayAlbumInfoPanel() {
-			var request = new Events.ViewDisplayRequest( ViewNames.AlbumView );
+			var request = new Events.ViewDisplayRequest( ViewNames.AlbumInfoView );
 
 			mEventAggregator.Publish( request );
 
