@@ -130,6 +130,7 @@
     <Compile Include="Database\GenreProviderTests.cs" />
     <Compile Include="Database\InternetStreamProviderTests.cs" />
     <Compile Include="Database\LyricProviderTests.cs" />
+    <Compile Include="Database\PlayHistoryProviderTests.cs" />
     <Compile Include="Database\TrackProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
