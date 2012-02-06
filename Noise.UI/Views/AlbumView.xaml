@@ -6,8 +6,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             d:DesignHeight="300"
-             d:DesignWidth="300"
+             Height="200"
+             d:DesignHeight="200"
+             d:DesignWidth="600"
              mc:Ignorable="d">
 
     <UserControl.DataContext>
@@ -18,129 +19,128 @@
               BorderBrush="{DynamicResource TrimColor}"
               BorderThickness="1"
               Header=" Album Information ">
-        <Grid Behaviours:GridUtils.RowDefinitions="Auto,*" Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}">
-            <Border Grid.Row="0"
-                    Background="{DynamicResource TreeItemBackground}"
-                    BorderThickness="0"
-                    CornerRadius="5">
-                <Grid Background="{StaticResource NoiseBrush}" Behaviours:GridUtils.ColumnDefinitions="Auto,*,Auto">
-                    <!--  Album cover image  -->
-                    <Viewbox Grid.Column="0"
-                             MaxWidth="300"
-                             MaxHeight="200"
-                             Margin="7"
-                             Stretch="Uniform">
-                        <Image RenderTransformOrigin="0.5,0.5">
-                            <Image.RenderTransform>
-                                <TransformGroup>
-                                    <ScaleTransform />
-                                    <SkewTransform />
-                                    <RotateTransform Angle="{Binding Path=AlbumCover.Rotation}" />
-                                    <TranslateTransform X="{Binding Path=AlbumCover.ImageLeft}" Y="{Binding Path=AlbumCover.ImageTop}" />
-                                </TransformGroup>
-                            </Image.RenderTransform>
-                            <i:Interaction.Behaviors>
-                                <Behaviours:ImageScrubber Image="{Binding Path=AlbumCover, Mode=TwoWay}" ImageList="{Binding Path=AlbumArtwork}" />
-                            </i:Interaction.Behaviors>
-                        </Image>
-                    </Viewbox>
-                    <Grid Grid.Column="2"
-                          Margin="3,0,25,0"
-                          Behaviours:GridUtils.RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto">
-                        <!--  Album name and Play button  -->
-                        <Grid Grid.Row="0"
-                              Margin="0,0,0,9"
-                              HorizontalAlignment="Right"
-                              Behaviours:GridUtils.ColumnDefinitions="Auto,Auto">
-                            <Button Grid.Column="0"
-                                    Margin="0,0,3,0"
-                                    Command="{Binding Path=PlayAlbum}"
-                                    Style="{StaticResource PlayButtonStyle}" />
-                            <TextBlock Grid.Column="1"
-                                       HorizontalAlignment="Right"
-                                       VerticalAlignment="Center"
-                                       FontSize="20"
-                                       Text="{Binding Path=Album.Name}" />
-                        </Grid>
-
-                        <!--  Favorite and rating  -->
-                        <StackPanel Grid.Row="1"
-                                    HorizontalAlignment="Right"
-                                    Orientation="Horizontal">
-                            <CheckBox Width="15"
-                                      Height="15"
-                                      Margin="0,0,9,0"
-                                      VerticalAlignment="Center"
-                                      IsChecked="{Binding Path=Album.UiIsFavorite,
-                                                          Mode=TwoWay}"
-                                      Style="{StaticResource FavoriteCheckBoxStyle}" />
-                            <Controls:RatingControl Rating="{Binding Path=Album.UiRating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
-                        </StackPanel>
-
-                        <TextBlock Grid.Row="2"
+        <Border Background="{DynamicResource TreeItemBackground}"
+                BorderThickness="0"
+                CornerRadius="5"
+                Visibility="{Binding Path=AlbumValid,
+                                     Converter={StaticResource BooleanVisibilityConverter}}">
+            <Grid Background="{StaticResource NoiseBrush}" Behaviours:GridUtils.ColumnDefinitions="Auto,*,Auto">
+                <!--  Album cover image  -->
+                <Viewbox Grid.Column="0"
+                         MaxWidth="300"
+                         MaxHeight="200"
+                         Margin="7"
+                         Stretch="Uniform">
+                    <Image RenderTransformOrigin="0.5,0.5">
+                        <Image.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <SkewTransform />
+                                <RotateTransform Angle="{Binding Path=AlbumCover.Rotation}" />
+                                <TranslateTransform X="{Binding Path=AlbumCover.ImageLeft}" Y="{Binding Path=AlbumCover.ImageTop}" />
+                            </TransformGroup>
+                        </Image.RenderTransform>
+                        <i:Interaction.Behaviors>
+                            <Behaviours:ImageScrubber Image="{Binding Path=AlbumCover, Mode=TwoWay}" ImageList="{Binding Path=AlbumArtwork}" />
+                        </i:Interaction.Behaviors>
+                    </Image>
+                </Viewbox>
+                <Grid Grid.Column="2"
+                      Margin="3,0,11,0"
+                      Behaviours:GridUtils.RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto">
+                    <!--  Album name and Play button  -->
+                    <Grid Grid.Row="0"
+                          Margin="0,0,0,9"
+                          HorizontalAlignment="Right"
+                          Behaviours:GridUtils.ColumnDefinitions="Auto,Auto">
+                        <Button Grid.Column="0"
+                                Margin="0,0,3,0"
+                                Command="{Binding Path=PlayAlbum}"
+                                Style="{StaticResource PlayButtonStyle}" />
+                        <TextBlock Grid.Column="1"
                                    HorizontalAlignment="Right"
-                                   Text="{Binding Path=Album.Genre}" />
-                        <TextBlock Grid.Row="3"
-                                   HorizontalAlignment="Right"
-                                   Text="{Binding Path=Album.PublishedYear,
-                                                  Converter={StaticResource PublishedYearConverter}}" />
-
-                        <!--  Playing time  -->
-                        <StackPanel Grid.Row="4"
-                                    HorizontalAlignment="Right"
-                                    Orientation="Horizontal">
-                            <TextBlock Text="Playing time: " />
-                            <TextBlock Text="{Binding Path=AlbumPlayTime, Converter={StaticResource TimeSpanConverter}}" />
-                        </StackPanel>
-
-                        <!--  Categories  -->
-                        <StackPanel Grid.Row="5"
-                                    HorizontalAlignment="Right"
-                                    Orientation="Horizontal">
-                            <TextBlock Text="Categories: " />
-                            <TextBlock Text="{Binding Path=AlbumCategories}" />
-                        </StackPanel>
-
-                        <!--  Album commands  -->
-                        <StackPanel Grid.Row="7"
-                                    HorizontalAlignment="Right"
-                                    Orientation="Horizontal">
-                            <Button Width="19"
-                                    Height="19"
-                                    Margin="0,0,5,5"
-                                    Command="{Binding Path=OpenAlbumFolder}"
-                                    Content="{StaticResource Path_Folder}"
-                                    Foreground="{StaticResource ControlTextColor}"
-                                    Padding="1"
-                                    ToolTip="Open Album Folder" />
-                            <Button Width="19"
-                                    Height="19"
-                                    Margin="0,0,5,5"
-                                    Command="{Binding DisplayPictures}"
-                                    Content="{StaticResource Path_Pictures}"
-                                    Foreground="{StaticResource ControlTextColor}"
-                                    Padding="1"
-                                    ToolTip="Display Album Extras" />
-                            <Button Width="19"
-                                    Height="19"
-                                    Margin="0,0,5,5"
-                                    Command="{Binding EditCategories}"
-                                    Content="{StaticResource Path_Categories}"
-                                    Foreground="{StaticResource ControlTextColor}"
-                                    Padding="1"
-                                    ToolTip="Edit Album Categories" />
-                            <Button Width="19"
-                                    Height="19"
-                                    Margin="0,0,0,5"
-                                    Command="{Binding Path=EditAlbum}"
-                                    Content="{StaticResource Path_Edit}"
-                                    Foreground="{StaticResource ControlTextColor}"
-                                    Padding="2"
-                                    ToolTip="Edit Album Properties" />
-                        </StackPanel>
+                                   VerticalAlignment="Center"
+                                   FontSize="20"
+                                   Text="{Binding Path=Album.Name}" />
                     </Grid>
+
+                    <!--  Favorite and rating  -->
+                    <StackPanel Grid.Row="1"
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal">
+                        <CheckBox Width="15"
+                                  Height="15"
+                                  Margin="0,0,9,0"
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding Path=Album.UiIsFavorite,
+                                                      Mode=TwoWay}"
+                                  Style="{StaticResource FavoriteCheckBoxStyle}" />
+                        <Controls:RatingControl Rating="{Binding Path=Album.UiRating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="2"
+                               HorizontalAlignment="Right"
+                               Text="{Binding Path=Album.Genre}" />
+                    <TextBlock Grid.Row="3"
+                               HorizontalAlignment="Right"
+                               Text="{Binding Path=Album.PublishedYear,
+                                              Converter={StaticResource PublishedYearConverter}}" />
+
+                    <!--  Playing time  -->
+                    <StackPanel Grid.Row="4"
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal">
+                        <TextBlock Text="Playing time: " />
+                        <TextBlock Text="{Binding Path=AlbumPlayTime, Converter={StaticResource TimeSpanConverter}}" />
+                    </StackPanel>
+
+                    <!--  Categories  -->
+                    <StackPanel Grid.Row="5"
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal">
+                        <TextBlock Text="Categories: " />
+                        <TextBlock Text="{Binding Path=AlbumCategories}" />
+                    </StackPanel>
+
+                    <!--  Album commands  -->
+                    <StackPanel Grid.Row="7"
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal">
+                        <Button Width="19"
+                                Height="19"
+                                Margin="0,0,5,5"
+                                Command="{Binding Path=OpenAlbumFolder}"
+                                Content="{StaticResource Path_Folder}"
+                                Foreground="{StaticResource ControlTextColor}"
+                                Padding="1"
+                                ToolTip="Open Album Folder" />
+                        <Button Width="19"
+                                Height="19"
+                                Margin="0,0,5,5"
+                                Command="{Binding DisplayPictures}"
+                                Content="{StaticResource Path_Pictures}"
+                                Foreground="{StaticResource ControlTextColor}"
+                                Padding="1"
+                                ToolTip="Display Album Extras" />
+                        <Button Width="19"
+                                Height="19"
+                                Margin="0,0,5,5"
+                                Command="{Binding EditCategories}"
+                                Content="{StaticResource Path_Categories}"
+                                Foreground="{StaticResource ControlTextColor}"
+                                Padding="1"
+                                ToolTip="Edit Album Categories" />
+                        <Button Width="19"
+                                Height="19"
+                                Margin="0,0,0,5"
+                                Command="{Binding Path=EditAlbum}"
+                                Content="{StaticResource Path_Edit}"
+                                Foreground="{StaticResource ControlTextColor}"
+                                Padding="2"
+                                ToolTip="Edit Album Properties" />
+                    </StackPanel>
                 </Grid>
-            </Border>
-        </Grid>
+            </Grid>
+        </Border>
     </GroupBox>
 </UserControl>
