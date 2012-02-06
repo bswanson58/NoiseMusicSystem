@@ -220,6 +220,7 @@
     <Compile Include="Interfaces\IPlayHistoryProvider.cs" />
     <Compile Include="Interfaces\IPlayListProvider.cs" />
     <Compile Include="Interfaces\IPlayQueue.cs" />
+    <Compile Include="Interfaces\IResourceProvider.cs" />
     <Compile Include="Interfaces\ISearchProvider.cs" />
     <Compile Include="Interfaces\IStorageFileProvider.cs" />
     <Compile Include="Interfaces\IStorageFolderProvider.cs" />

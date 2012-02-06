@@ -34,7 +34,7 @@ namespace Noise.UI.ViewModels {
 		private ImageScrubberItem					mCurrentAlbumCover;
 		private bool								mIsActive;
 		private string								mCategoryDisplay;
-		private IEnumerable<DbTag>					mCategoryList;
+		private readonly List<DbTag>				mCategoryList;
 		private readonly Observal.Observer			mChangeObserver;
 		private readonly List<long>					mAlbumCategories;
 		private TaskHandler<DbAlbum>				mAlbumTaskHandler;
@@ -45,7 +45,7 @@ namespace Noise.UI.ViewModels {
 		public	TimeSpan						AlbumPlayTime { get; private set; }
 		public	event EventHandler				IsActiveChanged;
 
-		public AlbumViewModel( IEventAggregator eventAggregator, 
+		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider,
 							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider,
 							   ITagProvider tagProvider, IStorageFileProvider storageFileProvider,
 							   ITagManager tagManager, IDialogService dialogService ) {
@@ -65,11 +65,15 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
-			mUnknownImage = new BitmapImage( new Uri( "pack://application:,,,/Noise.UI;component/Resources/Unknown Album Image.png" ));
-			mSelectImage = new BitmapImage( new Uri( "pack://application:,,,/Noise.UI;component/Resources/Select Album Image.png" ));
+			mUnknownImage = resourceProvider.RetrieveImage( "Unknown Album Image.png" );
+			mSelectImage = resourceProvider.RetrieveImage( "Select Album Image.png" );
 
+			mCategoryList = new List<DbTag>();
 			using( var tagList = mTagProvider.GetTagList( eTagGroup.User )) {
-				mCategoryList = new List<DbTag>( tagList.List );
+				if(( tagList != null ) &&
+				   ( tagList.List != null )) {
+					mCategoryList.AddRange( tagList.List );
+				}
 			}
 
 			mIsActive = true;
@@ -439,9 +443,13 @@ namespace Noise.UI.ViewModels {
 				mTagProvider.AddTag( tag );
 
 				using( var tagList = mTagProvider.GetTagList( eTagGroup.User )) {
-					mCategoryList = new List<DbTag>( tagList.List );
+					if(( tagList != null ) &&
+					   ( tagList.List != null )) {
+						mCategoryList.Clear();
+						mCategoryList.AddRange( tagList.List );
 
-					retValue = mCategoryList;
+						retValue = mCategoryList;
+					}
 				}
 			}
 
