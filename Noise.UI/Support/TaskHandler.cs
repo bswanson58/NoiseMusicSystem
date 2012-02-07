@@ -39,4 +39,39 @@ namespace Noise.UI.Support {
 			}
 		}
 	}
+
+	public class TaskHandler {
+		private readonly TaskScheduler			mUiTaskScheduler;
+		private readonly TaskScheduler			mTaskScheduler;
+
+		public TaskHandler() :
+			this( TaskScheduler.Default, TaskScheduler.FromCurrentSynchronizationContext()) {
+		}
+
+		public TaskHandler( TaskScheduler taskScheduler, TaskScheduler uiTaskScheduler ) {
+			mTaskScheduler = taskScheduler;
+			mUiTaskScheduler = uiTaskScheduler;
+		}
+
+		public void StartTask( Action taskAction, Action onCompletion, Action<Exception> onFault ) {
+			Task.Factory.StartNew( taskAction, CancellationToken.None, TaskCreationOptions.None, mTaskScheduler )
+				.ContinueWith( task => {
+						if( task.Exception != null ) {
+							HandleFault( task, onFault );
+						}
+						else {
+							onCompletion();
+						}
+				    }, mUiTaskScheduler );
+		}
+
+		private void HandleFault( Task task, Action<Exception> faultHandler ) {
+			if(( task.Exception != null ) &&
+			   ( faultHandler != null )) {
+				foreach( Exception ex in task.Exception.Flatten().InnerExceptions ) {
+					faultHandler( ex );
+				}
+			}
+		}
+	}
 }

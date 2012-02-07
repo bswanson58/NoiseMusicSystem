@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Support;
 using Noise.UI.ViewModels;
@@ -26,10 +24,7 @@ namespace Noise.UI.Tests.ViewModels {
 				var		retValue = base.ClassUnderTest;
 
 				if( retValue != null ) {
-					retValue.AlbumTaskHandler = new TaskHandler<DbAlbum>( mTaskScheduler, mTaskScheduler );
-					retValue.AlbumSupportTaskHandler = new TaskHandler<AlbumSupportInfo>( mTaskScheduler, mTaskScheduler );
-					retValue.AlbumTracksTaskHandler = new TaskHandler<IEnumerable<DbTrack>>( mTaskScheduler, mTaskScheduler );
-					retValue.AlbumCategoriesTaskHandler = new TaskHandler<IEnumerable<long>>( mTaskScheduler, mTaskScheduler );
+					retValue.AlbumRetrievalTaskHandler = new TaskHandler( mTaskScheduler, mTaskScheduler );
 				}
 
 				return( retValue );

@@ -19,28 +19,25 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace Noise.UI.ViewModels {
 	internal class AlbumViewModel : ViewModelBase, IActiveAware,
 									IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.DatabaseItemChanged> {
-		private readonly IEventAggregator			mEventAggregator;
-		private readonly IAlbumProvider				mAlbumProvider;
-		private readonly ITrackProvider				mTrackProvider;
-		private readonly IArtworkProvider			mArtworkProvider;
-		private readonly ITagProvider				mTagProvider;
-		private readonly ITagManager				mTagManager;
-		private readonly IStorageFileProvider		mStorageFileProvider;
-		private readonly IDialogService				mDialogService;
-		private UiAlbum								mCurrentAlbum;
-		private long								mRequestedAlbum;
-		private readonly BitmapImage				mUnknownImage;
-		private readonly BitmapImage				mSelectImage;
-		private ImageScrubberItem					mCurrentAlbumCover;
-		private bool								mIsActive;
-		private string								mCategoryDisplay;
-		private readonly List<DbTag>				mCategoryList;
-		private readonly Observal.Observer			mChangeObserver;
-		private readonly List<long>					mAlbumCategories;
-		private TaskHandler<DbAlbum>				mAlbumTaskHandler;
- 		private TaskHandler<AlbumSupportInfo>		mAlbumSupportTaskHandler;
-		private TaskHandler<IEnumerable<DbTrack>>	mAlbumTracksTaskHandler;
-		private TaskHandler<IEnumerable<long>>		mAlbumCategoriesTaskHandler; 
+		private readonly IEventAggregator		mEventAggregator;
+		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly ITrackProvider		mTrackProvider;
+		private readonly IArtworkProvider		mArtworkProvider;
+		private readonly ITagProvider			mTagProvider;
+		private readonly ITagManager			mTagManager;
+		private readonly IStorageFileProvider	mStorageFileProvider;
+		private readonly IDialogService			mDialogService;
+		private UiAlbum							mCurrentAlbum;
+		private long							mRequestedAlbum;
+		private readonly BitmapImage			mUnknownImage;
+		private readonly BitmapImage			mSelectImage;
+		private ImageScrubberItem				mCurrentAlbumCover;
+		private bool							mIsActive;
+		private string							mCategoryDisplay;
+		private readonly List<DbTag>		mCategoryList;
+		private readonly Observal.Observer		mChangeObserver;
+		private readonly List<long>				mAlbumCategories;
+		private TaskHandler						mAlbumRetrievalTaskHandler;
 
 		public	TimeSpan						AlbumPlayTime { get; private set; }
 		public	event EventHandler				IsActiveChanged;
@@ -93,15 +90,6 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {
-			var retValue = new UiAlbum();
-
-			Mapper.DynamicMap( dbAlbum, retValue );
-			retValue.DisplayGenre = mTagManager.GetGenre( dbAlbum.Genre );
-
-			return( retValue );
-		}
-
 		private void ClearCurrentAlbum() {
 			if( mCurrentAlbum != null ) {
 				mChangeObserver.Release( mCurrentAlbum );
@@ -113,11 +101,6 @@ namespace Noise.UI.ViewModels {
 			RaisePropertyChanged( () => Album );
 			RaisePropertyChanged( () => SupportInfo );
 			RaisePropertyChanged( () => AlbumPlayTime );
-		}
-
-		private AlbumSupportInfo SupportInfo {
-			get{ return( Get( () => SupportInfo )); }
-			set{ Set( () => SupportInfo, value ); }
 		}
 
 		public void Handle( Events.ArtistFocusRequested request ) {
@@ -144,30 +127,18 @@ namespace Noise.UI.ViewModels {
 			if( albumId != Constants.cDatabaseNullOid ) {
 				if(( mCurrentAlbum == null ) ||
 				   ( mCurrentAlbum.DbId != albumId )) {
-					RetrieveAlbumInfo( albumId );
-					RetrieveAlbumSupportInfo( albumId );
-					RetrieveTrackList( albumId );
-					RetrieveAlbumCategories( albumId );
+					RetrieveAlbum( albumId );
 				}
 			}
 		}
 
-		internal TaskHandler<DbAlbum> AlbumTaskHandler {
-			get {
-				if( mAlbumTaskHandler == null ) {
-					mAlbumTaskHandler = new TaskHandler<DbAlbum>();
-				}
+		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {
+			var retValue = new UiAlbum();
 
-				return( mAlbumTaskHandler );
-			}
+			Mapper.DynamicMap( dbAlbum, retValue );
+			retValue.DisplayGenre = mTagManager.GetGenre( dbAlbum.Genre );
 
-			set { mAlbumTaskHandler = value; }
-		}
- 
-		private void RetrieveAlbumInfo( long albumId ) {
-			AlbumTaskHandler.StartTask( () => mAlbumProvider.GetAlbum( albumId ),
-										SetAlbum,
-										ex => NoiseLogger.Current.LogException( "AlbumViewModel:RetrieveAlbumInfo", ex ));
+			return( retValue );
 		}
 
 		private void SetAlbum( DbAlbum album ) {
@@ -180,51 +151,11 @@ namespace Noise.UI.ViewModels {
 			RaisePropertyChanged( () => Album );
 		}
 
-		internal TaskHandler<AlbumSupportInfo> AlbumSupportTaskHandler {
-			get {
-				if( mAlbumSupportTaskHandler == null ) {
-					mAlbumSupportTaskHandler = new TaskHandler<AlbumSupportInfo>();
-				}
-
-				return( mAlbumSupportTaskHandler );
-			}
-
-			set { mAlbumSupportTaskHandler = value; }
-		}
-
-		private void RetrieveAlbumSupportInfo( long albumId ) {
-			AlbumSupportTaskHandler.StartTask( () => mAlbumProvider.GetAlbumSupportInfo( albumId ),
-												SetAlbumSupportInfo,
-												ex => NoiseLogger.Current.LogException( "AlbumViewModel:RetrieveAlbumSupportInfo", ex ));
-		}
-
 		private void SetAlbumSupportInfo( AlbumSupportInfo supportInfo ) {
-			mCurrentAlbumCover = SelectAlbumCover( supportInfo );
-			SupportInfo = supportInfo;
-		}
-
-		internal TaskHandler<IEnumerable<DbTrack>> AlbumTracksTaskHandler {
-			get {
-				if( mAlbumTracksTaskHandler == null ) {
-					mAlbumTracksTaskHandler = new TaskHandler<IEnumerable<DbTrack>>();
-				}
-
-				return( mAlbumTracksTaskHandler );
-			}
-
-			set { mAlbumTracksTaskHandler = value; }
-		}
-
-		private void RetrieveTrackList( long albumId ) {
-			AlbumTracksTaskHandler.StartTask( () => { var retValue = new List<DbTrack>();
-														using( var trackList = mTrackProvider.GetTrackList( albumId )) {
-															retValue.AddRange( trackList.List );
-														}
-
-														return( retValue );
-													},
-											  SetTrackList,
-											  ex => NoiseLogger.Current.LogException( "AlbumViewModel:RetrieveTrackList", ex ));
+			Execute.OnUIThread( () => {
+				mCurrentAlbumCover = SelectAlbumCover( supportInfo );
+				SupportInfo = supportInfo;
+			});
 		}
 
 		private void SetTrackList( IEnumerable<DbTrack> trackList ) {
@@ -235,30 +166,6 @@ namespace Noise.UI.ViewModels {
 			}
 
 			RaisePropertyChanged( () => AlbumPlayTime );
-		}
-
-		internal TaskHandler<IEnumerable<long>> AlbumCategoriesTaskHandler {
-			get {
-				if( mAlbumCategoriesTaskHandler == null ) {
-					mAlbumCategoriesTaskHandler = new TaskHandler<IEnumerable<long>>();
-				}
-
-				return( mAlbumCategoriesTaskHandler );
-			}
-
-			set { mAlbumCategoriesTaskHandler = value; }
-		}
-
-		private void RetrieveAlbumCategories( long albumId ) {
-			AlbumCategoriesTaskHandler.StartTask( () => { var retValue = new List<long>();
-															using( var categoryList = mAlbumProvider.GetAlbumCategories( albumId )) {
-																retValue.AddRange( categoryList.List );
-															}
-
-															return( retValue );
-					                                    },
-												  SetAlbumCategories,
-												  ex => NoiseLogger.Current.LogException( "AlbumViewModel:RetrieveAlbumCategories", ex ));
 		}
 
 		private void SetAlbumCategories( IEnumerable<long> categories ) {
@@ -279,6 +186,36 @@ namespace Noise.UI.ViewModels {
 			}
 
 			RaisePropertyChanged( () => AlbumCategories );
+		}
+
+		internal TaskHandler AlbumRetrievalTaskHandler {
+			get {
+				if( mAlbumRetrievalTaskHandler == null ) {
+					mAlbumRetrievalTaskHandler = new TaskHandler();
+				}
+
+				return( mAlbumRetrievalTaskHandler );
+			}
+
+			set{ mAlbumRetrievalTaskHandler = value; }
+		}
+
+		private void RetrieveAlbum( long albumId ) {
+			AlbumRetrievalTaskHandler.StartTask( () => {
+					SetAlbum( mAlbumProvider.GetAlbum( albumId ));
+					SetAlbumSupportInfo( mAlbumProvider.GetAlbumSupportInfo( albumId ));
+
+					using( var trackList = mTrackProvider.GetTrackList( albumId )) {
+						SetTrackList( trackList.List );
+					}
+
+					using( var categoryList = mAlbumProvider.GetAlbumCategories( albumId )) {
+						SetAlbumCategories( categoryList.List );
+					}
+				},
+				() => { },
+				ex => NoiseLogger.Current.LogException( "AlbumViewModel:RetrieveAlbum", ex )
+			); 
 		}
 
 		private ImageScrubberItem SelectAlbumCover( AlbumSupportInfo info ) {
@@ -350,6 +287,21 @@ namespace Noise.UI.ViewModels {
 			get{ return( mCurrentAlbum ); }
 		}
 
+		[DependsUpon( "Album" )]
+		public bool AlbumValid {
+			get{ return( mCurrentAlbum != null ); } 
+		}
+
+		[DependsUpon( "SupportInfo" )]
+		public string AlbumCategories {
+			get{ return( mCategoryDisplay ); }
+		}
+
+		private AlbumSupportInfo SupportInfo {
+			get{ return( Get( () => SupportInfo )); }
+			set{ Set( () => SupportInfo, value ); }
+		}
+
 		[DependsUpon( "SupportInfo" )]
 		public ImageScrubberItem AlbumCover {
 			get { return( mCurrentAlbumCover ); }
@@ -397,11 +349,6 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "Album" )]
 		public bool CanExecute_PlayAlbum() {
 			return( mCurrentAlbum != null ); 
-		}
-
-		[DependsUpon( "Album" )]
-		public bool AlbumValid {
-			get{ return( mCurrentAlbum != null ); } 
 		}
 
 		public void Execute_EditAlbum() {
@@ -459,11 +406,6 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "Album" )]
 		public bool CanExecute_EditCategories() {
 			return( mCurrentAlbum != null ); 
-		}
-
-		[DependsUpon( "SupportInfo" )]
-		public string AlbumCategories {
-			get{ return( mCategoryDisplay ); }
 		}
 
 		public void Execute_DisplayPictures() {
