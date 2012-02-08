@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows.Media.Imaging;
 using AutoMapper;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -17,7 +16,7 @@ using Observal.Extensions;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	internal class AlbumViewModel : ViewModelBase, IActiveAware,
+	internal class AlbumViewModel : ViewModelBase,
 									IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.DatabaseItemChanged> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IAlbumProvider		mAlbumProvider;
@@ -28,11 +27,9 @@ namespace Noise.UI.ViewModels {
 		private readonly IStorageFileProvider	mStorageFileProvider;
 		private readonly IDialogService			mDialogService;
 		private UiAlbum							mCurrentAlbum;
-		private long							mRequestedAlbum;
 		private readonly BitmapImage			mUnknownImage;
 		private readonly BitmapImage			mSelectImage;
 		private ImageScrubberItem				mCurrentAlbumCover;
-		private bool							mIsActive;
 		private string							mCategoryDisplay;
 		private readonly List<DbTag>		mCategoryList;
 		private readonly Observal.Observer		mChangeObserver;
@@ -40,7 +37,6 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler						mAlbumRetrievalTaskHandler;
 
 		public	TimeSpan						AlbumPlayTime { get; private set; }
-		public	event EventHandler				IsActiveChanged;
 
 		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider,
 							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider,
@@ -72,22 +68,6 @@ namespace Noise.UI.ViewModels {
 					mCategoryList.AddRange( tagList.List );
 				}
 			}
-
-			mIsActive = true;
-		}
-
-		public bool IsActive {
-			get { return( mIsActive ); }
-			set {
-				mIsActive = value;
-
-				if( mIsActive ) {
-					UpdateAlbum( mRequestedAlbum );
-				}
-				else {
-					ClearCurrentAlbum();
-				}
-			}
 		}
 
 		private void ClearCurrentAlbum() {
@@ -112,21 +92,20 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Handle( Events.AlbumFocusRequested request ) {
-			mRequestedAlbum = request.AlbumId;
-
 			UpdateAlbum( request.AlbumId );
 
-//			if(!mIsActive ) {
-				mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.AlbumInfoView ));
-//			}
+			mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.AlbumInfoView ));
 		}
 
 		private void UpdateAlbum( long albumId ) {
-			ClearCurrentAlbum();
-
-			if( albumId != Constants.cDatabaseNullOid ) {
+			if( albumId == Constants.cDatabaseNullOid ) {
+				ClearCurrentAlbum();
+			}
+			else {
 				if(( mCurrentAlbum == null ) ||
 				   ( mCurrentAlbum.DbId != albumId )) {
+					ClearCurrentAlbum();
+
 					RetrieveAlbum( albumId );
 				}
 			}
@@ -206,11 +185,17 @@ namespace Noise.UI.ViewModels {
 					SetAlbumSupportInfo( mAlbumProvider.GetAlbumSupportInfo( albumId ));
 
 					using( var trackList = mTrackProvider.GetTrackList( albumId )) {
-						SetTrackList( trackList.List );
+						if(( trackList != null ) &&
+						   ( trackList.List != null )) {
+							SetTrackList( trackList.List );
+						}
 					}
 
 					using( var categoryList = mAlbumProvider.GetAlbumCategories( albumId )) {
-						SetAlbumCategories( categoryList.List );
+						if(( categoryList != null ) &&
+						   ( categoryList.List != null )) {
+							SetAlbumCategories( categoryList.List );
+						}
 					}
 				},
 				() => { },

@@ -2,6 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Support;
 using Noise.UI.ViewModels;
@@ -52,6 +53,65 @@ namespace Noise.UI.Tests.ViewModels {
 
 			Assert.IsNull( sut.Album );
 			Assert.IsFalse( sut.AlbumValid );
+		}
+
+		[Test]
+		public void AlbumFocusShouldRequestAlbum() {
+			var testable = new TestableAlbumViewModel();
+			var album = new DbAlbum { Artist = 1, Name = "album name" };
+
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( It.IsAny<long>())).Returns( album ).Verifiable( "GetAlbum not called." );
+
+			var sut = testable.ClassUnderTest;
+			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+
+			testable.Mock<IAlbumProvider>().Verify();
+			Assert.IsNotNull( sut.Album );
+			Assert.IsTrue( sut.AlbumValid );
+		}
+
+		[Test]
+		public void DifferentAritsFocusShouldClearAlbum() {
+			var testable = new TestableAlbumViewModel();
+			var album = new DbAlbum { Artist = 1, Name = "album name" };
+
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( It.IsAny<long>())).Returns( album );
+
+			var sut = testable.ClassUnderTest;
+			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+			sut.Handle( new Events.ArtistFocusRequested( album.Artist + 1 ));
+
+			Assert.IsNull( sut.Album );
+			Assert.IsFalse( sut.AlbumValid );
+		}
+
+		[Test]
+		public void SecondAlbumRequestShouldNotRequestAlbum() {
+			var testable = new TestableAlbumViewModel();
+			var album = new DbAlbum { Artist = 1, Name = "album name" };
+
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( It.IsAny<long>())).Returns( album ).Verifiable();
+
+			var sut = testable.ClassUnderTest;
+			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+
+			testable.Mock<IAlbumProvider>().Verify( m => m.GetAlbum( It.IsAny<long>()), Times.Once());
+		}
+
+		[Test]
+		public void SameArtistRequestShouldNotClearAlbum() {
+			var testable = new TestableAlbumViewModel();
+			var album = new DbAlbum { Artist = 1, Name = "album name" };
+
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( It.IsAny<long>())).Returns( album ).Verifiable();
+
+			var sut = testable.ClassUnderTest;
+			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+			sut.Handle( new Events.ArtistFocusRequested( album.Artist ));
+
+			testable.Mock<IAlbumProvider>().Verify( m => m.GetAlbum( It.IsAny<long>()), Times.Once());
+			Assert.IsNotNull( sut.Album );
 		}
 	}
 }
