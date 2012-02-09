@@ -199,9 +199,7 @@ namespace Noise.UI.ViewModels {
 					var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
 														orderby track.VolumeName, track.TrackNumber ascending select track );
 
-					using( var categoryList = mAlbumProvider.GetAlbumCategories( album.DbId )) {
-						retValue = new NewAlbumInfo( album, mAlbumProvider.GetAlbumSupportInfo( album.DbId ), sortedList, new List<long>());
-					}
+					retValue = new NewAlbumInfo( album, mAlbumProvider.GetAlbumSupportInfo( album.DbId ), sortedList, new List<long>());
 				}
 			}
 

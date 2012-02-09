@@ -109,7 +109,9 @@
                     <!--  Categories  -->
                     <StackPanel Grid.Row="5"
                                 HorizontalAlignment="Right"
-                                Orientation="Horizontal">
+                                Orientation="Horizontal"
+                                Visibility="{Binding Path=HaveAlbumCategories,
+                                                     Converter={StaticResource BooleanVisibilityConverter}}">
                         <TextBlock Text="Categories: " />
                         <TextBlock Text="{Binding Path=AlbumCategories}" />
                     </StackPanel>

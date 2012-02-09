@@ -286,9 +286,13 @@ namespace Noise.UI.ViewModels {
 			get{ return( mCurrentAlbum != null ); } 
 		}
 
-		[DependsUpon( "SupportInfo" )]
 		public string AlbumCategories {
 			get{ return( mCategoryDisplay ); }
+		}
+
+		[DependsUpon( "AlbumCategories" )]
+		public bool HaveAlbumCategories {
+			get{ return( mAlbumCategories.Any()); }
 		}
 
 		private AlbumSupportInfo SupportInfo {
