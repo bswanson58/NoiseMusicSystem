@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows.Media.Imaging;
 using AutoMapper;
 using Caliburn.Micro;
-using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -17,45 +16,32 @@ using Observal.Extensions;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	internal class AlbumEditRequest : InteractionRequestData<AlbumEditDialogModel> {
-		public AlbumEditRequest( AlbumEditDialogModel viewModel ) : base( viewModel ) { }
-	}
-
-	internal class AlbumArtworkDisplayInfo : InteractionRequestData<AlbumArtworkViewModel> {
-		public AlbumArtworkDisplayInfo( AlbumArtworkViewModel viewModel ) : base( viewModel ) { }
-	}
-
-	internal class AlbumCategoryEditInfo : InteractionRequestData<CategorySelectionDialogModel> {
-		public AlbumCategoryEditInfo( CategorySelectionDialogModel viewModel ) : base( viewModel ) { }
-	}
-
 	internal class AlbumViewModel : ViewModelBase,
 									IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.DatabaseItemChanged> {
 		private readonly IEventAggregator		mEventAggregator;
-		private readonly IAlbumProvider			mAlbumProvider;
-		private readonly ITrackProvider			mTrackProvider;
+		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly ITrackProvider		mTrackProvider;
 		private readonly IArtworkProvider		mArtworkProvider;
 		private readonly ITagProvider			mTagProvider;
 		private readonly ITagManager			mTagManager;
 		private readonly IStorageFileProvider	mStorageFileProvider;
+		private readonly IDialogService			mDialogService;
 		private UiAlbum							mCurrentAlbum;
 		private readonly BitmapImage			mUnknownImage;
 		private readonly BitmapImage			mSelectImage;
 		private ImageScrubberItem				mCurrentAlbumCover;
 		private string							mCategoryDisplay;
+		private readonly List<DbTag>		mCategoryList;
 		private readonly Observal.Observer		mChangeObserver;
 		private readonly List<long>				mAlbumCategories;
 		private TaskHandler						mAlbumRetrievalTaskHandler;
-
-		private readonly InteractionRequest<AlbumEditRequest>			mAlbumEditRequest; 
-		private readonly InteractionRequest<AlbumArtworkDisplayInfo>	mAlbumArtworkDisplayRequest;
-		private readonly InteractionRequest<AlbumCategoryEditInfo>		mAlbumCategoryEditRequest; 
 
 		public	TimeSpan						AlbumPlayTime { get; private set; }
 
 		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider,
 							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider,
-							   ITagProvider tagProvider, IStorageFileProvider storageFileProvider, ITagManager tagManager ) {
+							   ITagProvider tagProvider, IStorageFileProvider storageFileProvider,
+							   ITagManager tagManager, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -63,6 +49,7 @@ namespace Noise.UI.ViewModels {
 			mStorageFileProvider = storageFileProvider;
 			mTagProvider = tagProvider;
 			mTagManager = tagManager;
+			mDialogService = dialogService;
 
 			mEventAggregator.Subscribe( this );
 
@@ -74,9 +61,13 @@ namespace Noise.UI.ViewModels {
 			mUnknownImage = resourceProvider.RetrieveImage( "Unknown Album Image.png" );
 			mSelectImage = resourceProvider.RetrieveImage( "Select Album Image.png" );
 
-			mAlbumEditRequest = new InteractionRequest<AlbumEditRequest>();
-			mAlbumArtworkDisplayRequest = new InteractionRequest<AlbumArtworkDisplayInfo>();
-			mAlbumCategoryEditRequest = new InteractionRequest<AlbumCategoryEditInfo>();
+			mCategoryList = new List<DbTag>();
+			using( var tagList = mTagProvider.GetTagList( eTagGroup.User )) {
+				if(( tagList != null ) &&
+				   ( tagList.List != null )) {
+					mCategoryList.AddRange( tagList.List );
+				}
+			}
 		}
 
 		private void ClearCurrentAlbum() {
@@ -107,11 +98,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void UpdateAlbum( long albumId ) {
-			ClearCurrentAlbum();
-
-			if( albumId != Constants.cDatabaseNullOid ) {
+			if( albumId == Constants.cDatabaseNullOid ) {
+				ClearCurrentAlbum();
+			}
+			else {
 				if(( mCurrentAlbum == null ) ||
 				   ( mCurrentAlbum.DbId != albumId )) {
+					ClearCurrentAlbum();
+
 					RetrieveAlbum( albumId );
 				}
 			}
@@ -157,17 +151,8 @@ namespace Noise.UI.ViewModels {
 			mAlbumCategories.Clear();
 			mAlbumCategories.AddRange( categories );
 			mCategoryDisplay = "";
-
-			var categoryList = new List<DbTag>();
-			using( var tagList = mTagProvider.GetTagList( eTagGroup.User )) {
-				if(( tagList != null ) &&
-				   ( tagList.List != null )) {
-					categoryList.AddRange( tagList.List );
-				}
-			}
-
 			foreach( var category in mAlbumCategories ) {
-				foreach( var tag in categoryList ) {
+				foreach( var tag in mCategoryList ) {
 					if( tag.DbId == category ) {
 						if(!string.IsNullOrWhiteSpace( mCategoryDisplay )) {
 							mCategoryDisplay += ", " + tag.Name;
@@ -200,11 +185,17 @@ namespace Noise.UI.ViewModels {
 					SetAlbumSupportInfo( mAlbumProvider.GetAlbumSupportInfo( albumId ));
 
 					using( var trackList = mTrackProvider.GetTrackList( albumId )) {
-						SetTrackList( trackList.List );
+						if(( trackList != null ) &&
+						   ( trackList.List != null )) {
+							SetTrackList( trackList.List );
+						}
 					}
 
 					using( var categoryList = mAlbumProvider.GetAlbumCategories( albumId )) {
-						SetAlbumCategories( categoryList.List );
+						if(( categoryList != null ) &&
+						   ( categoryList.List != null )) {
+							SetAlbumCategories( categoryList.List );
+						}
 					}
 				},
 				() => { },
@@ -286,13 +277,9 @@ namespace Noise.UI.ViewModels {
 			get{ return( mCurrentAlbum != null ); } 
 		}
 
+		[DependsUpon( "SupportInfo" )]
 		public string AlbumCategories {
 			get{ return( mCategoryDisplay ); }
-		}
-
-		[DependsUpon( "AlbumCategories" )]
-		public bool HaveAlbumCategories {
-			get{ return( mAlbumCategories.Any()); }
 		}
 
 		private AlbumSupportInfo SupportInfo {
@@ -349,65 +336,56 @@ namespace Noise.UI.ViewModels {
 			return( mCurrentAlbum != null ); 
 		}
 
-		public IInteractionRequest AlbumEditRequest {
-			get{ return( mAlbumEditRequest ); }
-		}
-
 		public void Execute_EditAlbum() {
-			if( CanExecute_EditAlbum()) {
-				var album = new UiAlbum { DbId = mCurrentAlbum.DbId,  Name = mCurrentAlbum.Name, PublishedYear = mCurrentAlbum.PublishedYear };
-				var dialogModel = new AlbumEditDialogModel( album );
+			if( mCurrentAlbum != null ) {
+				using( var albumUpdate = mAlbumProvider.GetAlbumForUpdate( mCurrentAlbum.DbId )) {
+					if( albumUpdate != null ) {
+						var dialogModel = new AlbumEditDialogModel();
 
-				mAlbumEditRequest.Raise( new AlbumEditRequest( dialogModel ), OnAlbumEdited );
-			}
-		}
+						if( mDialogService.ShowDialog( DialogNames.AlbumEdit, albumUpdate.Item, dialogModel ) == true ) {
+							albumUpdate.Update();
 
-		private void OnAlbumEdited( AlbumEditRequest confirmation ) {
-			if( confirmation.Confirmed ) {
-				using( var updater = mAlbumProvider.GetAlbumForUpdate( confirmation.ViewModel.Album.DbId )) {
-					if(( updater != null ) &&
-					   ( updater.Item != null )) {
-						updater.Item.Name = confirmation.ViewModel.Album.Name;
-						updater.Item.PublishedYear = confirmation.ViewModel.Album.PublishedYear;
-
-						updater.Update();
-
-						if( confirmation.ViewModel.UpdateFileTags ) {
-							GlobalCommands.SetMp3Tags.Execute( new SetMp3TagCommandArgs( updater.Item ) { PublishedYear = updater.Item.PublishedYear });
+							if( dialogModel.UpdateFileTags ) {
+								GlobalCommands.SetMp3Tags.Execute( new SetMp3TagCommandArgs( albumUpdate.Item )
+																						   { PublishedYear = albumUpdate.Item.PublishedYear });
+							}
 						}
 					}
 				}
-
-				if(( mCurrentAlbum != null ) &&
-				   ( mCurrentAlbum.DbId == confirmation.ViewModel.Album.DbId )) {
-					mCurrentAlbum.Name = confirmation.ViewModel.Album.Name;
-					mCurrentAlbum.PublishedYear = confirmation.ViewModel.Album.PublishedYear;
-				}
 			}
-		}
-
-		[DependsUpon( "Album" )]
-		public bool CanExecute_EditAlbum() {
-			return( mCurrentAlbum != null );
-		}
-
-		public IInteractionRequest AlbumCategoryEditRequest {
-			get{ return( mAlbumCategoryEditRequest ); }
 		}
 
 		public void Execute_EditCategories() {
 			if( mCurrentAlbum != null ) {
-				var dialogModel = new CategorySelectionDialogModel( mTagProvider, mAlbumCategories );
-
-				mAlbumCategoryEditRequest.Raise( new AlbumCategoryEditInfo( dialogModel ), OnCategoriesEdited );
+				var dialogModel = new CategorySelectionDialogModel( mCategoryList, mAlbumCategories, OnNewCategoryRequest );
+				if( mDialogService.ShowDialog( DialogNames.CategorySelection, dialogModel ) == true ) {
+					SetAlbumCategories( dialogModel.SelectedCategories );
+					mAlbumProvider.SetAlbumCategories( mCurrentAlbum.Artist, mCurrentAlbum.DbId, dialogModel.SelectedCategories );
+				}
 			}
 		}
 
-		private void OnCategoriesEdited( AlbumCategoryEditInfo confirmation ) {
-			if( confirmation.Confirmed ) {
-				SetAlbumCategories( confirmation.ViewModel.SelectedCategories );
-				mAlbumProvider.SetAlbumCategories( mCurrentAlbum.Artist, mCurrentAlbum.DbId, confirmation.ViewModel.SelectedCategories );
+		private IEnumerable<DbTag> OnNewCategoryRequest( object sender ) {
+			IEnumerable<DbTag>	retValue = null;
+			var					newCategory = new UiCategory();
+
+			if( mDialogService.ShowDialog( DialogNames.CategoryEdit, newCategory ) == true ) {
+				var tag = new DbTag( eTagGroup.User, newCategory.Name ) { Description = newCategory.Description };
+
+				mTagProvider.AddTag( tag );
+
+				using( var tagList = mTagProvider.GetTagList( eTagGroup.User )) {
+					if(( tagList != null ) &&
+					   ( tagList.List != null )) {
+						mCategoryList.Clear();
+						mCategoryList.AddRange( tagList.List );
+
+						retValue = mCategoryList;
+					}
+				}
 			}
+
+			return( retValue );
 		}
 
 		[DependsUpon( "Album" )]
@@ -415,30 +393,22 @@ namespace Noise.UI.ViewModels {
 			return( mCurrentAlbum != null ); 
 		}
 
-		public IInteractionRequest AlbumArtworkDisplayRequest {
-			get{ return( mAlbumArtworkDisplayRequest ); }
-		}
-
 		public void Execute_DisplayPictures() {
 			if( CanExecute_DisplayPictures()) {
 				var vm = new AlbumArtworkViewModel( mAlbumProvider, mCurrentAlbum.DbId );
 
-				mAlbumArtworkDisplayRequest.Raise( new AlbumArtworkDisplayInfo( vm ), AfterArtworkDisplayed );
-			}
-		}
+				if( mDialogService.ShowDialog( DialogNames.AlbumArtworkDisplay, vm ) == true ) {
+					foreach( var artwork in vm.AlbumImages ) {
+						if( artwork.IsDirty ) {
+							using( var update = mArtworkProvider.GetArtworkForUpdate( artwork.Artwork.DbId )) {
+								if( artwork.Artwork.IsUserSelection ) {
+									AlbumCover = new ImageScrubberItem( artwork.Artwork.DbId, CreateBitmap( artwork.Artwork.Image ), artwork.Artwork.Rotation );
 
-		private void AfterArtworkDisplayed( AlbumArtworkDisplayInfo confirmation ) {
-			if( confirmation.Confirmed ) {
-				foreach( var artwork in confirmation.ViewModel.AlbumImages ) {
-					if( artwork.IsDirty ) {
-						using( var update = mArtworkProvider.GetArtworkForUpdate( artwork.Artwork.DbId )) {
-							update.Item.Rotation = artwork.Artwork.Rotation;
-							update.Update();
+									RaisePropertyChanged( () => AlbumCover );
+								}
 
-							if( artwork.Artwork.IsUserSelection ) {
-								AlbumCover = new ImageScrubberItem( artwork.Artwork.DbId, CreateBitmap( artwork.Artwork.Image ), artwork.Artwork.Rotation );
-
-								RaisePropertyChanged( () => AlbumCover );
+								update.Item.Rotation = artwork.Artwork.Rotation;
+								update.Update();
 							}
 						}
 					}
