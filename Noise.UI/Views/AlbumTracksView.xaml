@@ -4,6 +4,7 @@
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
              xmlns:Controls="clr-namespace:Noise.UI.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              d:DesignHeight="300"
              d:DesignWidth="300"
@@ -12,6 +13,12 @@
     <UserControl.DataContext>
         <Binding Path="AlbumTracksViewModel" Source="{StaticResource ViewModelLocator}" />
     </UserControl.DataContext>
+
+    <i:Interaction.Behaviors>
+        <Behaviours:InteractionRequestDialogBehavior DialogClass="TrackEdit"
+                                                     DialogService="{Binding Source={StaticResource DialogService}}"
+                                                     InteractionRequest="{Binding Path=TrackEditRequest}" />
+    </i:Interaction.Behaviors>
 
     <GroupBox Margin="0"
               BorderBrush="{DynamicResource TrimColor}"
