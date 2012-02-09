@@ -10,6 +10,7 @@ namespace Noise.UI.Dto {
 		private readonly Action<UiArtistTreeNode>	mOnExpand;
 		private readonly Action<UiArtistTreeNode>	mChildFillAction;
 		private	bool								mRequiresChildren;
+		private bool								mImSorting;
 		private readonly ObservableCollectionEx<UiAlbumTreeNode>	mChildren;
 
 		public	UiArtist				Artist { get; private set; }
@@ -68,7 +69,9 @@ namespace Noise.UI.Dto {
 		}
 
 		public void UpdateSort() {
+			mImSorting = true;
 			ChildrenView.View.Refresh();
+			mImSorting = false;
 		}
 
 		protected override void OnExpand() {
@@ -89,7 +92,8 @@ namespace Noise.UI.Dto {
 		}
 
 		protected override void Onselect() {
-			if( mOnSelect != null ) {
+			if(( mOnSelect != null ) &&
+			   (!mImSorting )) {
 				mOnSelect( this );
 			}
 		}
