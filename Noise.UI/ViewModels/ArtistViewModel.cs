@@ -5,23 +5,15 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
+using Noise.UI.Behaviours;
 using Noise.UI.Dto;
 using Noise.UI.Support;
 using Observal.Extensions;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class ArtistEditRequest : Confirmation {
-		private readonly UiArtist	mArtist;
-
-		public ArtistEditRequest(UiArtist artist ) {
-			mArtist = artist;
-			Content = artist;
-		} 
-
-		public UiArtist Artist {
-			get{ return( mArtist ); }
-		}
+	public class ArtistEditRequest : InteractionRequestData<UiArtist> {
+		public ArtistEditRequest(UiArtist artist ) : base( artist ) { } 
 	}
 
 	public class ArtistViewModel : AutomaticCommandBase,
@@ -243,9 +235,9 @@ namespace Noise.UI.ViewModels {
 
 		private void OnArtistEdited( ArtistEditRequest confirmation ) {
 			if( confirmation.Confirmed ) {
-				using( var updater = mArtistProvider.GetArtistForUpdate( confirmation.Artist.DbId )) {
+				using( var updater = mArtistProvider.GetArtistForUpdate( confirmation.ViewModel.DbId )) {
 					if( updater.Item != null ) {
-						Mapper.DynamicMap( confirmation.Artist, updater.Item );
+						Mapper.DynamicMap( confirmation.ViewModel, updater.Item );
 						updater.Update();
 					}
 				}

@@ -179,6 +179,7 @@
     <Compile Include="Behaviours\EventCommandTriggers\PropertyCommandTrigger.cs" />
     <Compile Include="Behaviours\GridUtils.cs" />
     <Compile Include="Behaviours\ImageScrubber.cs" />
+    <Compile Include="Behaviours\InteractionRequestData.cs" />
     <Compile Include="Behaviours\InteractionRequestDialogBehavior.cs" />
     <Compile Include="Behaviours\ListViewDragDropManager.cs" />
     <Compile Include="Behaviours\ListViewEnsureVisible.cs" />

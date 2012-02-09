@@ -17,15 +17,6 @@ using Observal.Extensions;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class InteractionRequestData<T> : Confirmation where T : class {
-		public	T	ViewModel { get; private set; }
-
-		public InteractionRequestData( T viewModel ) {
-			ViewModel = viewModel;
-			Content = viewModel;
-		}  
-	}
-
 	internal class AlbumEditRequest : InteractionRequestData<AlbumEditDialogModel> {
 		public AlbumEditRequest( AlbumEditDialogModel viewModel ) : base( viewModel ) { }
 	}
