@@ -20,7 +20,7 @@
 
         <ListView Behaviours:GridViewSort.AutoSort="True"
                   Behaviours:ListViewColumns.Stretch="true"
-                  Behaviours:ListViewFirstItemVisible.ChangeTrigger="{Binding Path=Album,
+                  Behaviours:ListViewFirstItemVisible.ChangeTrigger="{Binding Path=AlbumPlayTime,
                                                                               Mode=OneWay}"
                   BorderThickness="0"
                   ItemsSource="{Binding Path=TrackList}">
