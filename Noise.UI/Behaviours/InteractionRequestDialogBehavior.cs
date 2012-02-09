@@ -13,7 +13,19 @@ namespace Noise.UI.Behaviours {
 		// Using a DependencyProperty as the backing store for InteractionRequest.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty InteractionRequestProperty =
             DependencyProperty.Register( "InteractionRequest", typeof( IInteractionRequest ),
-										typeof( InteractionRequestDialogBehavior ), new UIPropertyMetadata( null ));
+										typeof( InteractionRequestDialogBehavior ), new UIPropertyMetadata( null, OnInteractionRequestChanged ));
+
+		private static void OnInteractionRequestChanged( DependencyObject sender, DependencyPropertyChangedEventArgs args ) {
+			if( sender is InteractionRequestDialogBehavior ) {
+				(sender as InteractionRequestDialogBehavior).AttachInteractionRequest();
+			}
+		}
+
+		public void AttachInteractionRequest() {
+			if( InteractionRequest != null ) {
+				InteractionRequest.Raised += InteractionRequestRaised;
+			}
+		}
 
 		// The class name of the dialog view to be used.
 		public string DialogClass {
@@ -32,23 +44,18 @@ namespace Noise.UI.Behaviours {
 			set{ SetValue( DialogServiceProperty, value ); }
 		}
 
-		protected override void OnAttached() {
-			AssociatedObject.Loaded += AssociatedObjectLoaded;
-		}
-
-		private void AssociatedObjectLoaded( object sender, RoutedEventArgs e ) {
-			if( InteractionRequest != null ) {
-				InteractionRequest.Raised += InteractionRequestRaised;
-			}
-		}
-
 		private void InteractionRequestRaised( object sender, InteractionRequestedEventArgs e ) {
 			if( e.Context is Confirmation ) {
 				var confirmation = e.Context as Confirmation;
 				var dialogService = DialogService;
 
 				if( dialogService != null ) {
-					confirmation.Confirmed = dialogService.ShowDialog( DialogClass, e.Context.Content ) == true;
+					if( e.Context.Content is DialogModelBase ) {
+						confirmation.Confirmed = dialogService.ShowDialog( DialogClass, e.Context.Content as DialogModelBase ) == true;
+					}
+					else {
+						confirmation.Confirmed = dialogService.ShowDialog( DialogClass, e.Context.Content ) == true;
+					}
 				}
 
 				e.Callback.Invoke();
@@ -56,7 +63,6 @@ namespace Noise.UI.Behaviours {
 		}
 
 		protected override void OnDetaching() {
-			AssociatedObject.Loaded -= AssociatedObjectLoaded;
 			InteractionRequest.Raised -= InteractionRequestRaised;
 		}
 	}
