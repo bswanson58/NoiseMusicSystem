@@ -22,16 +22,21 @@ namespace Noise.Core.Database {
 			return( TryGetList( "SELECT DbTagAssociation Where TagGroup = @group AND TagId = @tagId", new Dictionary<string, object> {{ "group", tagGroup }, { "tagId", tagId }}, "Exception - GetTagList" ));
 		}
 
+		public DbTagAssociation GetAlbumTagAssociation( long albumId, long tagId ) {
+			return( TryGetItem( "SELECT DbTagAssociation Where AlbumId = @albumId AND TagId = @tagId",
+												new Dictionary<string, object> {{ "albumId", albumId }, { "tagId", tagId }}, "GetAlbumTagAssociation" ));
+		}
+
 		public void AddAssociation( DbTagAssociation item ) {
 			InsertItem( item );
 		}
 
-		private DbTagAssociation GetAssociation( long tagId ) {
-			return( TryGetItem( "SELECT DbTagAssociation Where DbId = @itemId", new Dictionary<string, object> {{ "tagId", tagId }}, "Exception - GetAssociation" ));
+		private DbTagAssociation GetAssociation( long itemId ) {
+			return( TryGetItem( "SELECT DbTagAssociation Where DbId = @itemId", new Dictionary<string, object> {{ "itemId", itemId }}, "Exception - GetAssociation" ));
 		}
 
-		public void RemoveAssociation( long tagId ) {
-			var item = GetAssociation( tagId );
+		public void RemoveAssociation( long itemId ) {
+			var item = GetAssociation( itemId );
 
 			if( item != null ) {
 				DeleteItem( item );

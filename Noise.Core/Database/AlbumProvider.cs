@@ -103,7 +103,10 @@ namespace Noise.Core.Database {
 				   ( addList.Count > 0 )) {
 					try {
 						foreach( var tagId in removeList ) {
-							mTagAssociationProvider.RemoveAssociation( tagId );
+							var association = mTagAssociationProvider.GetAlbumTagAssociation( albumId, tagId );
+							if( association != null ) {
+								mTagAssociationProvider.RemoveAssociation( association.DbId );
+							}
 						}
 
 						foreach( var tagId in addList ) {
