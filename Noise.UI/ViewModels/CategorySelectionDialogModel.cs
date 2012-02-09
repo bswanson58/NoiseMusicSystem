@@ -1,25 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
+	internal class NewTagRequest : Confirmation {
+		public UiCategory	Category { get; private set; }
+
+		public NewTagRequest( UiCategory category ) {
+			Category = category;
+			Content = category;
+		}
+	}
+
 	public class CategorySelectionDialogModel : DialogModelBase {
-		private readonly Func<object, IEnumerable<DbTag>>	mOnNewCategory;
+		private readonly ITagProvider						mTagProvider;
 		private readonly ObservableCollectionEx<UiCategory>	mCategoryList;
+		private readonly InteractionRequest<NewTagRequest>	mNewTagRequest; 
+
 
 		public	List<long>		SelectedCategories { get; private set; }
 
-		public CategorySelectionDialogModel( IEnumerable<DbTag> categoryList, IEnumerable<long> currentCategories, Func<object, IEnumerable<DbTag>> onAdd ) {
-			mOnNewCategory = onAdd;
+		public CategorySelectionDialogModel( ITagProvider tagProvider, IEnumerable<long> currentCategories ) {
+			mTagProvider = tagProvider;
 			mCategoryList = new ObservableCollectionEx<UiCategory>();
 			SelectedCategories = new List<long>();
 
-			mCategoryList.AddRange( from item in categoryList select TransformTag( item, currentCategories ));
+			using( var tagList = mTagProvider.GetTagList( eTagGroup.User )) {
+				if(( tagList != null ) &&
+				   ( tagList.List != null )) {
+					mCategoryList.AddRange( from item in tagList.List select TransformTag( item, currentCategories ));
+				}
+			}
+
+			mNewTagRequest = new InteractionRequest<NewTagRequest>();
 		}
 
 		private UiCategory TransformTag( DbTag tag, IEnumerable<long> selectedList ) {
@@ -44,16 +63,20 @@ namespace Noise.UI.ViewModels {
 			get{ return( mCategoryList ); }
 		}
 
-		public void Execute_AddCategory() {
-			if( mOnNewCategory != null ) {
-				var	categoryList = mOnNewCategory( this );
+		public IInteractionRequest NewTagRequest {
+			get{ return( mNewTagRequest ); }
+		}
 
-				if( categoryList != null ) {
-					mCategoryList.SuspendNotification();
-					mCategoryList.Clear();
-					mCategoryList.AddRange( from item in categoryList select TransformTag( item, SelectedCategories ));
-					mCategoryList.ResumeNotification();
-				}
+		public void Execute_AddCategory() {
+			mNewTagRequest.Raise( new NewTagRequest( new UiCategory()), OnTagAdded );
+		}
+
+		private void OnTagAdded( NewTagRequest confirmation ) {
+			if( confirmation.Confirmed ) {
+				var tag = new DbTag( eTagGroup.User, confirmation.Category.Name ) { Description = confirmation.Category.Description };
+
+				mTagProvider.AddTag( tag );
+				mCategoryList.Add( TransformTag( tag, SelectedCategories ));
 			}
 		}
 	}

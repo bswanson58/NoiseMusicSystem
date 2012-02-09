@@ -15,6 +15,18 @@
         <Binding Path="AlbumViewModel" Source="{StaticResource ViewModelLocator}" />
     </UserControl.DataContext>
 
+    <i:Interaction.Behaviors>
+        <Behaviours:InteractionRequestDialogBehavior DialogClass="AlbumEdit"
+                                                     DialogService="{Binding Source={StaticResource DialogService}}"
+                                                     InteractionRequest="{Binding Path=AlbumEditRequest}" />
+        <Behaviours:InteractionRequestDialogBehavior DialogClass="AlbumArtworkDisplay"
+                                                     DialogService="{Binding Source={StaticResource DialogService}}"
+                                                     InteractionRequest="{Binding Path=AlbumArtworkDisplayRequest}" />
+        <Behaviours:InteractionRequestDialogBehavior DialogClass="CategorySelection"
+                                                     DialogService="{Binding Source={StaticResource DialogService}}"
+                                                     InteractionRequest="{Binding Path=AlbumCategoryEditRequest}" />
+    </i:Interaction.Behaviors>
+
     <GroupBox Margin="0"
               BorderBrush="{DynamicResource TrimColor}"
               BorderThickness="1"
