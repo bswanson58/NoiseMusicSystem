@@ -14,13 +14,16 @@ namespace Noise.UI.Dto {
 		public UiAlbumExtra( Artwork artwork ) {
 			Artwork = artwork;
 
-			Image = BitmapUtils.CreateBitmap( artwork.Image );
+			if(( Artwork != null ) &&
+			   ( Artwork.Image != null )) {
+				Image = BitmapUtils.CreateBitmap( Artwork.Image );
+			}
 		}
 
-		public UiAlbumExtra( TextInfo textInfo ) {
+		public UiAlbumExtra( TextInfo textInfo, BitmapImage image ) {
 			TextInfo = textInfo;
 
-			Image = BitmapUtils.LoadBitmap( "Text Document.png" );
+			Image = image;
 		}
 
 		public bool IsImage {

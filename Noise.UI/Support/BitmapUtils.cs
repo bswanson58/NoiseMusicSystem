@@ -5,12 +5,16 @@ using System.Windows.Media.Imaging;
 namespace Noise.UI.Support {
 	public class BitmapUtils {
 		public static BitmapImage CreateBitmap( byte[] bytes ) {
-			var stream = new MemoryStream( bytes );
 			var bitmap = new BitmapImage();
 
-			bitmap.BeginInit();
-			bitmap.StreamSource = stream;
-			bitmap.EndInit();
+			if(( bytes != null ) &&
+			   ( bytes.GetLength( 0 ) > 0 )) {
+				var stream = new MemoryStream( bytes );
+
+				bitmap.BeginInit();
+				bitmap.StreamSource = stream;
+				bitmap.EndInit();
+			}
 
 			return( bitmap );
 		}
