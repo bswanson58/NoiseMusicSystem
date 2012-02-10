@@ -23,6 +23,7 @@ namespace Noise.Infrastructure.Dto {
 			Source = InfoSource.Unknown;
 			FolderLocation = Constants.cDatabaseNullOid;
 			IsUserSelection = false;
+			Name = string.Empty;
 			Rotation = 0;
 		}
 
