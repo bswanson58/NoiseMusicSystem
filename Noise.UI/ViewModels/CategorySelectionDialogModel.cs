@@ -50,7 +50,7 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
-		private void OnSelectionChanged( long tagId, bool selected ) {
+		internal void OnSelectionChanged( long tagId, bool selected ) {
 			if( selected ) {
 				SelectedCategories.Add( tagId );
 			}
