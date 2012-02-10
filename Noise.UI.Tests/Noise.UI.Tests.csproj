@@ -128,6 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\AlbumTracksViewModelTests.cs" />
     <Compile Include="ViewModels\AlbumViewModelTests.cs" />
     <Compile Include="ViewModels\ArtistInfoViewModelTests.cs" />
     <Compile Include="ViewModels\ArtistViewModelTests.cs" />
