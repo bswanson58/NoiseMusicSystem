@@ -10,14 +10,16 @@ using Noise.UI.Support;
 namespace Noise.UI.ViewModels {
 	public class AlbumArtworkViewModel : DialogModelBase {
 		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly IResourceProvider	mResourceProvider;
 		private readonly long				mAlbumId;
 		private AlbumSupportInfo			mAlbumInfo;
 		private	readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<UiAlbumExtra>	mAlbumImages;
 
 
-		public AlbumArtworkViewModel( IAlbumProvider albumProvider, long albumId ) {
+		public AlbumArtworkViewModel( IAlbumProvider albumProvider, IResourceProvider resourceProvider, long albumId ) {
 			mAlbumProvider = albumProvider;
+			mResourceProvider = resourceProvider;
 			mAlbumId = albumId;
 
 			mAlbumImages = new ObservableCollectionEx<UiAlbumExtra>();
@@ -48,7 +50,7 @@ namespace Noise.UI.ViewModels {
 				}
 
 				if( mAlbumInfo.Info != null ) {
-					mAlbumImages.AddRange( from TextInfo info in mAlbumInfo.Info select new UiAlbumExtra( info ));
+					mAlbumImages.AddRange( from TextInfo info in mAlbumInfo.Info select new UiAlbumExtra( info, mResourceProvider.RetrieveImage(  "Text Document.png" )));
 				}
 
 				if( mAlbumImages.Count > 0 ) {

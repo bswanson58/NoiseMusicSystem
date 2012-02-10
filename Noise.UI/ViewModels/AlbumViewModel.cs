@@ -35,6 +35,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
 		private readonly IArtworkProvider		mArtworkProvider;
+		private readonly IResourceProvider		mResourceProvider;
 		private readonly ITagProvider			mTagProvider;
 		private readonly ITagManager			mTagManager;
 		private readonly IStorageFileProvider	mStorageFileProvider;
@@ -60,6 +61,7 @@ namespace Noise.UI.ViewModels {
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mArtworkProvider = artworkProvider;
+			mResourceProvider = resourceProvider;
 			mStorageFileProvider = storageFileProvider;
 			mTagProvider = tagProvider;
 			mTagManager = tagManager;
@@ -71,8 +73,8 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
-			mUnknownImage = resourceProvider.RetrieveImage( "Unknown Album Image.png" );
-			mSelectImage = resourceProvider.RetrieveImage( "Select Album Image.png" );
+			mUnknownImage = mResourceProvider.RetrieveImage( "Unknown Album Image.png" );
+			mSelectImage = mResourceProvider.RetrieveImage( "Select Album Image.png" );
 
 			mAlbumEditRequest = new InteractionRequest<AlbumEditRequest>();
 			mAlbumArtworkDisplayRequest = new InteractionRequest<AlbumArtworkDisplayInfo>();
@@ -315,7 +317,7 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "SupportInfo" )]
 		public ImageScrubberItem AlbumCover {
 			get { return( mCurrentAlbumCover ); }
-			set {
+			private set {
 				if( value.Id != mCurrentAlbumCover.Id ) {
 					mCurrentAlbumCover = value;
 
@@ -437,7 +439,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_DisplayPictures() {
 			if( CanExecute_DisplayPictures()) {
-				var vm = new AlbumArtworkViewModel( mAlbumProvider, mCurrentAlbum.DbId );
+				var vm = new AlbumArtworkViewModel( mAlbumProvider, mResourceProvider, mCurrentAlbum.DbId );
 
 				mAlbumArtworkDisplayRequest.Raise( new AlbumArtworkDisplayInfo( vm ), AfterArtworkDisplayed );
 			}
@@ -448,8 +450,11 @@ namespace Noise.UI.ViewModels {
 				foreach( var artwork in confirmation.ViewModel.AlbumImages ) {
 					if( artwork.IsDirty ) {
 						using( var update = mArtworkProvider.GetArtworkForUpdate( artwork.Artwork.DbId )) {
-							update.Item.Rotation = artwork.Artwork.Rotation;
-							update.Update();
+							if(( update != null ) &&
+							   ( update.Item != null )) {
+								update.Item.Rotation = artwork.Artwork.Rotation;
+								update.Update();
+							}
 
 							if( artwork.Artwork.IsUserSelection ) {
 								AlbumCover = new ImageScrubberItem( artwork.Artwork.DbId, CreateBitmap( artwork.Artwork.Image ), artwork.Artwork.Rotation );
