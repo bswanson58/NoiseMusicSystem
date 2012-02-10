@@ -130,10 +130,13 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void SetAlbum( DbAlbum album ) {
-		    mCurrentAlbum = TransformAlbum( album );
+			if( album != null ) {
+			    mCurrentAlbum = TransformAlbum( album );
 
-		    if( mCurrentAlbum != null ) {
 				mChangeObserver.Add( mCurrentAlbum );
+			}
+			else {
+				ClearCurrentAlbum();
 			}
 
 			RaisePropertyChanged( () => Album );
@@ -232,7 +235,7 @@ namespace Noise.UI.ViewModels {
 					cover = (( from Artwork artwork in info.AlbumCovers where artwork.IsUserSelection select artwork ).FirstOrDefault() ??
 							 ( from Artwork artwork in info.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
 							 ( from Artwork artwork in info.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault()) ??
-								SupportInfo.AlbumCovers[0];
+								info.AlbumCovers[0];
 				}
 
 				if(( cover == null ) &&
@@ -337,12 +340,16 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private static BitmapImage CreateBitmap( byte[] bytes ) {
-			var stream = new MemoryStream( bytes );
 			var bitmap = new BitmapImage();
 
-			bitmap.BeginInit();
-			bitmap.StreamSource = stream;
-			bitmap.EndInit();
+			if(( bytes != null ) &&
+			   ( bytes.GetLength( 0 ) > 0 )) {
+				var stream = new MemoryStream( bytes );
+
+				bitmap.BeginInit();
+				bitmap.StreamSource = stream;
+				bitmap.EndInit();
+			}
 
 			return( bitmap );
 		}

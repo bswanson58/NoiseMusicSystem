@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using FluentAssertions;
+using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using Noise.Infrastructure;
@@ -6,7 +7,6 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Support;
 using Noise.UI.ViewModels;
-using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.TestSupport.Mocking;
 using ReusableBits.TestSupport.Threading;
 
@@ -41,7 +41,7 @@ namespace Noise.UI.Tests.ViewModels {
 			NoiseLogger.Current = new Mock<ILog>().Object;
 
 			// Set the ui dispatcher to run on the current thread.
-			Execute.ResetWithoutDispatcher();
+			ReusableBits.Mvvm.ViewModelSupport.Execute.ResetWithoutDispatcher();
 
 			// Set up the AutoMapper configurations.
 			MappingConfiguration.Configure();
@@ -71,7 +71,7 @@ namespace Noise.UI.Tests.ViewModels {
 		}
 
 		[Test]
-		public void DifferentAritsFocusShouldClearAlbum() {
+		public void DifferentArtistFocusShouldClearAlbum() {
 			var testable = new TestableAlbumViewModel();
 			var album = new DbAlbum { Artist = 1, Name = "album name" };
 
@@ -112,6 +112,80 @@ namespace Noise.UI.Tests.ViewModels {
 
 			testable.Mock<IAlbumProvider>().Verify( m => m.GetAlbum( It.IsAny<long>()), Times.Once());
 			Assert.IsNotNull( sut.Album );
+		}
+
+		[Test]
+		public void AlbumFocusShouldRequestAlbumSupportInfo() {
+			var testable = new TestableAlbumViewModel();
+			var album = new DbAlbum { Artist = 1, Name = "album name" };
+			var coverList = new [] { new Artwork( new DbArtwork( 1, ContentType.AlbumCover )) };
+			var artworkList = new [] { new Artwork( new DbArtwork( 2, ContentType.AlbumArtwork )) };
+			var infoList = new [] { new TextInfo( new DbTextInfo( 3, ContentType.TextInfo )) };
+			var supportInfo = new AlbumSupportInfo( coverList, artworkList, infoList );
+
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumSupportInfo( It.IsAny<long>())).Returns( supportInfo ).Verifiable( "GetAlbumSupportInfo not called." );
+
+			var sut = testable.ClassUnderTest;
+			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+
+			testable.Mock<IAlbumProvider>().Verify();
+		}
+
+		[Test]
+		public void ShouldSelectUserSelectedAlbumCover() {
+			var testable = new TestableAlbumViewModel();
+			var album = new DbAlbum { Artist = 1, Name = "album name" };
+			var artworkList =  new [] { new Artwork( new DbArtwork( 1, ContentType.AlbumCover )) };
+			var infoList = new [] { new TextInfo( new DbTextInfo( 3, ContentType.TextInfo )) };
+			var artwork1 = new Artwork( new DbArtwork( 2, ContentType.AlbumArtwork ));
+			var artwork2 =  new Artwork( new DbArtwork( 2, ContentType.AlbumArtwork ) { IsUserSelection = true });
+			var coverList = new [] { artwork1, artwork2 };
+			var supportInfo = new AlbumSupportInfo( coverList, artworkList, infoList );
+
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumSupportInfo( It.IsAny<long>())).Returns( supportInfo );
+
+			var sut = testable.ClassUnderTest;
+			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+
+			sut.AlbumCover.Id.Should().Be( artwork2.DbId );
+		}
+
+		[Test]
+		public void ShouldSelectAlbumArtworkNamedFront() {
+			var testable = new TestableAlbumViewModel();
+			var album = new DbAlbum { Artist = 1, Name = "album name" };
+			var coverList = new Artwork[0];
+			var infoList = new [] { new TextInfo( new DbTextInfo( 3, ContentType.TextInfo )) };
+			var artwork1 = new Artwork( new DbArtwork( 2, ContentType.AlbumArtwork ));
+			var artwork2 =  new Artwork( new DbArtwork( 2, ContentType.AlbumArtwork ) { Name = "this is the front" });
+			var artworkList =  new [] { artwork1, artwork2 };
+			var supportInfo = new AlbumSupportInfo( coverList, artworkList, infoList );
+
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumSupportInfo( It.IsAny<long>())).Returns( supportInfo );
+
+			var sut = testable.ClassUnderTest;
+			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+
+			sut.AlbumCover.Id.Should().Be( artwork2.DbId );
+		}
+
+		[Test]
+		public void ShouldSelectSomeArtwork() {
+			var testable = new TestableAlbumViewModel();
+			var album = new DbAlbum { Artist = 1, Name = "album name" };
+			var coverList = new [] { new Artwork( new DbArtwork( 1, ContentType.AlbumArtwork )) }; 
+			var infoList = new [] { new TextInfo( new DbTextInfo( 3, ContentType.TextInfo )) };
+			var artwork1 = new Artwork( new DbArtwork( 2, ContentType.AlbumArtwork ));
+			var artwork2 =  new Artwork( new DbArtwork( 2, ContentType.AlbumArtwork ));
+			var artworkList =  new [] { artwork1, artwork2 };
+			var supportInfo = new AlbumSupportInfo( coverList, artworkList, infoList );
+
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumSupportInfo( It.IsAny<long>())).Returns( supportInfo );
+
+			var sut = testable.ClassUnderTest;
+			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+
+			sut.AlbumCover.Id.Should().NotBe( Constants.cDatabaseNullOid );
 		}
 	}
 }
