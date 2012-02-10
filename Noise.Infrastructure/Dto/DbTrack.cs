@@ -37,8 +37,9 @@ namespace Noise.Infrastructure.Dto {
 			CalculatedGenre = Constants.cDatabaseNullOid;
 			ExternalGenre = Constants.cDatabaseNullOid;
 			UserGenre = Constants.cDatabaseNullOid;
-			Performer = "";
-			VolumeName = "";
+			Name = string.Empty;
+			Performer = string.Empty;
+			VolumeName = string.Empty;
 		}
 
 		[Ignore]
