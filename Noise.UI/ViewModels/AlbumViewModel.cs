@@ -317,7 +317,7 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "SupportInfo" )]
 		public ImageScrubberItem AlbumCover {
 			get { return( mCurrentAlbumCover ); }
-			private set {
+			set {
 				if( value.Id != mCurrentAlbumCover.Id ) {
 					mCurrentAlbumCover = value;
 
