@@ -21,6 +21,7 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cSortPrefixesProperty						= "sortPrefixes";
 		private const string	cHasNetworkAccess							= "hasNetworkAccess";
 		private const string	cEnableRemoteAccess							= "enableRemoteAccess";
+		private const string	cEnablePlaybackLibraryFocus					= "enablePlaybackLibraryFocus";
 
 		[ConfigurationPropertyAttribute( cEnableLibraryExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
 		public bool EnableLibraryExplorer {
@@ -109,6 +110,12 @@ namespace Noise.Infrastructure.Configuration {
 		public bool EnableRemoteAccess {
 			get { return ((bool)( base[cEnableRemoteAccess] ) ); }
 			set { base[cEnableRemoteAccess] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cEnablePlaybackLibraryFocus, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "true" )]
+		public bool EnablePlaybackLibraryFocus {
+			get { return ((bool)( base[cEnablePlaybackLibraryFocus] ) ); }
+			set { base[cEnablePlaybackLibraryFocus] = value; }
 		}
 	}
 }

@@ -1,54 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
-using Caliburn.Micro;
-using Noise.Infrastructure;
+using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure.Configuration;
-using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
+using Noise.UI.Behaviours;
 using Noise.UI.Behaviours.EventCommandTriggers;
 using Noise.UI.Controls;
 using Noise.UI.Dto;
-using Noise.UI.Support;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class LibraryExplorerViewModel : ViewModelBase,
-											IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.PlaybackTrackStarted> {
-		private const string					cVisualStateNormal		= "Normal";
-		private const string					cVisualStateIndex		= "DisplayIndex";
-		private const string					cVisualStateStrategy	= "DisplayStrategy";
+	public class ExplorerFilterInfo : InteractionRequestData<LibraryExplorerFilter> {
+		public ExplorerFilterInfo( LibraryExplorerFilter viewModel ) : base( viewModel ) { }
+	}
 
-		private readonly IEventAggregator		mEventAggregator;
-		private readonly IDialogService			mDialogService;
-		private IExplorerViewStrategy			mViewStrategy;
-		private readonly List<string>			mSearchOptions;
-		private readonly LibraryExplorerFilter	mExplorerFilter;
-		private DateTime						mLastExplorerRequest;
-		private	readonly TimeSpan				mPlayTrackDelay;
-		private readonly bool					mEnableSortPrefixes;
-		private readonly List<string>			mSortPrefixes;
-		private readonly ObservableCollectionEx<UiTreeNode>		mTreeItems;
-		private readonly ObservableCollectionEx<IndexNode>		mIndexItems;
+	public class LibraryExplorerViewModel : AutomaticCommandBase {
+		private const string	cVisualStateNormal		= "Normal";
+		private const string	cVisualStateIndex		= "DisplayIndex";
+		private const string	cVisualStateStrategy	= "DisplayStrategy";
 
-		public	CollectionViewSource				TreeViewSource { get; private set; }
-		public	IEnumerable<IExplorerViewStrategy>	ViewStrategies { get; private set; }
+		private IExplorerViewStrategy					mViewStrategy;
+		private readonly PlaybackFocusTracker			mFocusTracker;
+		private readonly List<string>					mSearchOptions;
+		private readonly LibraryExplorerFilter			mExplorerFilter;
+		private readonly bool							mEnableSortPrefixes;
+		private readonly List<string>					mSortPrefixes;
+		private readonly BindableCollection<UiTreeNode>	mTreeItems;
+		private readonly BindableCollection<IndexNode>	mIndexItems;
+		private	readonly InteractionRequest<ExplorerFilterInfo>	mExplorerFiltersEdit;
 
-		public LibraryExplorerViewModel( IEventAggregator eventAggregator,
-										 IEnumerable<IExplorerViewStrategy> viewStrategies, IDialogService dialogService ) {
-			mEventAggregator = eventAggregator;
-			mDialogService = dialogService;
+		public	CollectionViewSource					TreeViewSource { get; private set; }
+		public	IEnumerable<IExplorerViewStrategy>		ViewStrategies { get; private set; }
+
+		public LibraryExplorerViewModel( IEnumerable<IExplorerViewStrategy> viewStrategies, PlaybackFocusTracker focusTracker ) {
 			ViewStrategies = viewStrategies;
+			mFocusTracker = focusTracker;
 
 			mExplorerFilter = new LibraryExplorerFilter { IsEnabled = false };
-			mTreeItems = new ObservableCollectionEx<UiTreeNode>();
-			mIndexItems = new ObservableCollectionEx<IndexNode>();
+			mTreeItems = new BindableCollection<UiTreeNode>();
+			mIndexItems = new BindableCollection<IndexNode>();
+			mExplorerFiltersEdit = new InteractionRequest<ExplorerFilterInfo>();
 
 			TreeViewSource = new CollectionViewSource { Source = mTreeItems };
-
-			mPlayTrackDelay = new TimeSpan( 0, 0, 30 );
-			mLastExplorerRequest = DateTime.Now - mPlayTrackDelay;
 
 			mSortPrefixes = new List<string>();
 			mSearchOptions = new List<string>();
@@ -63,8 +58,6 @@ namespace Noise.UI.ViewModels {
 					mSortPrefixes.AddRange( configuration.SortPrefixes.Split( '|' ));
 				}
 			}
-
-			mEventAggregator.Subscribe( this );
 
 			var strategyList = ViewStrategies.ToList();
 			foreach( var strategy in strategyList ) {
@@ -92,29 +85,6 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Handle( Events.ArtistFocusRequested request ) {
-			mLastExplorerRequest = DateTime.Now;
-		}
-
-		public void Handle( Events.AlbumFocusRequested request ) {
-			mLastExplorerRequest = DateTime.Now;
-		}
-
-		public void Handle( Events.PlaybackTrackStarted eventArgs ) {
-			if( mLastExplorerRequest + mPlayTrackDelay < DateTime.Now ) {
-				var savedTime = mLastExplorerRequest;
-
-				if( eventArgs.Track.Artist != null ) {
-					mEventAggregator.Publish( new Events.ArtistFocusRequested( eventArgs.Track.Artist.DbId ));
-				}
-				if( eventArgs.Track.Album != null ) {
-					mEventAggregator.Publish( new Events.AlbumFocusRequested( eventArgs.Track.Album ));
-				}
-
-				mLastExplorerRequest = savedTime;
-			}
-		}
-
 		private void UpdateTree() {
 		 	PopulateTree( BuildTree());
 			UpdateIndex();
@@ -125,23 +95,19 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void PopulateTree( IEnumerable<UiTreeNode> newNodes ) {
-			mTreeItems.SuspendNotification();
 			mTreeItems.Clear();
 		 	mTreeItems.AddRange( newNodes );
-			mTreeItems.ResumeNotification();
 		}
 
 		private void UpdateIndex() {
 			if(( mViewStrategy != null ) &&
 			   ( mTreeItems != null )) {
-				mIndexItems.SuspendNotification();
 				mIndexItems.Clear();
 				mIndexItems.AddRange( mViewStrategy.BuildIndex( mTreeItems ));
-				mIndexItems.ResumeNotification();
 			}
 		}
 
-		public ObservableCollectionEx<UiTreeNode> TreeData {
+		public BindableCollection<UiTreeNode> TreeData {
 			get { return( mTreeItems ); }
 		}
 
@@ -157,7 +123,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public bool CanExecute_ConfigureView() {
-			return( true ); 
+			return(( mViewStrategy != null ) &&
+				   ( mViewStrategy.CanConfigureView()));
 		}
 
 		public string SearchText {
@@ -169,8 +136,16 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public IInteractionRequest EditExplorerFiltersRequest {
+			get{ return( mExplorerFiltersEdit ); }
+		}
+
 		public void Execute_Filter() {
-			if( mDialogService.ShowDialog( DialogNames.LibraryExplorerFilter, mExplorerFilter ) == true ) {
+			mExplorerFiltersEdit.Raise( new ExplorerFilterInfo( mExplorerFilter ), OnFiltersEdited );
+		}
+
+		private void OnFiltersEdited( ExplorerFilterInfo confirmation ) {
+			if( confirmation.Confirmed ) {
 				UpdateTree();
 			}
 		}

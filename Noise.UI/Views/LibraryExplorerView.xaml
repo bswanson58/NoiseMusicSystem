@@ -5,6 +5,7 @@
              xmlns:Controls="clr-namespace:Noise.UI.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              Behaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
              d:DesignHeight="300"
@@ -174,6 +175,12 @@
     <UserControl.DataContext>
         <Binding Path="LibraryExplorerViewModel" Source="{StaticResource ViewModelLocator}" />
     </UserControl.DataContext>
+
+    <i:Interaction.Behaviors>
+        <Behaviours:InteractionRequestDialogBehavior DialogClass="LibraryExplorerFilter"
+                                                     DialogService="{Binding Source={StaticResource DialogService}}"
+                                                     InteractionRequest="{Binding Path=EditExplorerFiltersRequest}" />
+    </i:Interaction.Behaviors>
 
     <GroupBox Margin="0,-3,0,0"
               BorderBrush="{DynamicResource TrimColor}"

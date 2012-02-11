@@ -254,6 +254,10 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public bool CanConfigureView() {
+			return( true );
+		}
+
 		private void SetArtistSorting( ViewSortStrategy strategy ) {
 			mCurrentArtistSort = strategy;
 

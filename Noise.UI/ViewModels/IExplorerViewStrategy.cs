@@ -22,5 +22,6 @@ namespace Noise.UI.ViewModels {
 		void					ClearCurrentSearch();
 
 		void					ConfigureView();
+		bool					CanConfigureView();
 	}
 }

@@ -24,6 +24,8 @@ namespace Noise.UI {
 			mContainer.RegisterType<IResourceProvider, ResourceProvider>();
 			mContainer.RegisterType<IDialogService, DialogService>();
 
+			mContainer.RegisterType<PlaybackFocusTracker, PlaybackFocusTracker>();
+
 			MappingConfiguration.Configure();
 		}
 	}

@@ -300,6 +300,10 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public bool CanConfigureView() {
+			return( true );
+		}
+
 		private void SetArtistSorting( ViewSortStrategy strategy ) {
 			mViewModel.TreeViewSource.SortDescriptions.Clear();
 			foreach( var sort in strategy.SortDescriptions ) {
