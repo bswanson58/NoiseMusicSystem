@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
@@ -74,6 +75,15 @@ namespace Noise.UI.ViewModels {
 			SelectedStrategy = ( from strategy in strategyList where strategy.IsDefaultStrategy select strategy ).FirstOrDefault();
 		}
 
+		public IExplorerViewStrategy SelectedStrategy {
+			get{ return( mViewStrategy ); }
+			set{ 
+				VisualStateName = cVisualStateNormal;
+
+				ActivateStrategy( value );
+			}
+		}
+
 		private void ActivateStrategy( IExplorerViewStrategy strategy ) {
 			mTreeItems.Clear();
 			mIndexItems.Clear();
@@ -92,7 +102,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void UpdateTree() {
-		 	PopulateTree( BuildTree());
+			PopulateTree( BuildTree());
 			UpdateIndex();
 		}
 
@@ -102,15 +112,12 @@ namespace Noise.UI.ViewModels {
 
 		private void PopulateTree( IEnumerable<UiTreeNode> newNodes ) {
 			mTreeItems.Clear();
-		 	mTreeItems.AddRange( newNodes );
+	 		mTreeItems.AddRange( newNodes );
 		}
 
 		private void UpdateIndex() {
-			if(( mViewStrategy != null ) &&
-			   ( mTreeItems != null )) {
-				mIndexItems.Clear();
-				mIndexItems.AddRange( mViewStrategy.BuildIndex( mTreeItems ));
-			}
+			mIndexItems.Clear();
+			mIndexItems.AddRange( mViewStrategy.BuildIndex( mTreeItems ));
 		}
 
 		public BindableCollection<UiTreeNode> TreeData {
@@ -121,6 +128,15 @@ namespace Noise.UI.ViewModels {
 			get{ return( Get( () => TreeViewItemTemplate )); }
 			set{ Set( () => TreeViewItemTemplate, value ); }
 		}
+
+		internal void SetExplorerSortDescriptions( IEnumerable<SortDescription> descriptions ) {
+			Execute.OnUIThread( () => {
+									TreeViewSource.SortDescriptions.Clear();
+									foreach( var sort in descriptions ) {
+										TreeViewSource.SortDescriptions.Add( sort );
+									}
+			                    });
+		} 
 
 		public IInteractionRequest ExplorerSortRequest {
 			get{ return( mExplorerSortRequest ); }
@@ -202,15 +218,6 @@ namespace Noise.UI.ViewModels {
 			}
 
 			VisualStateName = VisualStateName == cVisualStateNormal ? cVisualStateStrategy : cVisualStateNormal;
-		}
-
-		public IExplorerViewStrategy SelectedStrategy {
-			get{ return( mViewStrategy ); }
-			set{ 
-				VisualStateName = cVisualStateNormal;
-
-				ActivateStrategy( value );
-			}
 		}
 
 		public void Execute_ToggleIndexDisplay() {

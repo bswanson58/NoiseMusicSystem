@@ -298,10 +298,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void SetArtistSorting( ViewSortStrategy strategy ) {
-			mViewModel.TreeViewSource.SortDescriptions.Clear();
-			foreach( var sort in strategy.SortDescriptions ) {
-				mViewModel.TreeViewSource.SortDescriptions.Add( sort );
-			}
+			mViewModel.SetExplorerSortDescriptions( strategy.SortDescriptions );
 
 			mCurrentArtistSort = strategy;
 		}

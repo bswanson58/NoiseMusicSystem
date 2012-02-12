@@ -186,8 +186,7 @@ namespace Noise.UI.ViewModels {
 			retValue.AddRange( from tag in mTagManager.DecadeTagList
 								select new UiDecadeTreeNode( tag, null, null, FillDecadeArtists, WebsiteRequest, mCurrentArtistSort, ArtistSortChange ));
 
-			mViewModel.TreeViewSource.SortDescriptions.Clear();
-			mViewModel.TreeViewSource.SortDescriptions.Add( new SortDescription( "Tag.StartYear", ListSortDirection.Descending ));
+			mViewModel.SetExplorerSortDescriptions( new List<SortDescription> { new SortDescription( "Tag.StartYear", ListSortDirection.Descending )});
 
 			return( retValue );
 		}
