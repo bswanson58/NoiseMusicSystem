@@ -16,13 +16,13 @@
 
             <Grid x:Name="Content" Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="4*" MinWidth="100" />
-                    <ColumnDefinition Width="5*" MinWidth="100" />
-                    <ColumnDefinition Width="2*" MinWidth="100" />
+                    <ColumnDefinition Width="4*" MinWidth="200" />
+                    <ColumnDefinition Width="5*" MinWidth="200" />
+                    <ColumnDefinition Width="2*" MinWidth="200" />
                 </Grid.ColumnDefinitions>
 
                 <TabControl Grid.Column="0"
-                            Margin="3,0,7,0"
+                            Margin="3,0,4,0"
                             Background="Transparent"
                             BorderThickness="0"
                             ItemContainerStyle="{StaticResource TabItemRegionStyle}"
@@ -33,9 +33,10 @@
                               Width="7"
                               Height="Auto"
                               Background="Transparent"
-                              ResizeDirection="Columns" />
+                              ResizeDirection="Columns"
+                              Style="{DynamicResource GridSplitterStyle}" />
 
-                <Grid Grid.Column="1" Margin="0,0,7,0">
+                <Grid Grid.Column="1" Margin="1,0,9,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
@@ -51,7 +52,8 @@
                               Width="7"
                               Height="Auto"
                               Background="Transparent"
-                              ResizeDirection="Columns" />
+                              ResizeDirection="Columns"
+                              Style="{DynamicResource GridSplitterStyle}" />
 
                 <ContentControl Grid.Column="2" Regions:RegionManager.RegionName="PlayQueue" />
             </Grid>
