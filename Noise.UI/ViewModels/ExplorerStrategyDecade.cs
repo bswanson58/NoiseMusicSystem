@@ -10,17 +10,15 @@ using CuttingEdge.Conditions;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Dto;
-using Noise.UI.Support;
 using Observal.Extensions;
 using ReusableBits.Mvvm.ViewModelSupport;
 using Condition = CuttingEdge.Conditions.Condition;
 
 namespace Noise.UI.ViewModels {
 	[Export( typeof( IExplorerViewStrategy ))]
-	internal class ExplorerStrategyDecade : ViewModelBase, IExplorerViewStrategy, IHandle<Events.DatabaseItemChanged> {
+	internal class ExplorerStrategyDecade : IExplorerViewStrategy, IHandle<Events.DatabaseItemChanged> {
 		private const string					cSearchOptionDefault = "!";
 		private const string					cSearchArtists = "Artists";
 		private const string					cSearchAlbums = "Albums";
@@ -30,7 +28,6 @@ namespace Noise.UI.ViewModels {
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITagManager			mTagManager;
-		private readonly IDialogService			mDialogService;
 		private readonly Observal.Observer		mChangeObserver;
 		private	LibraryExplorerViewModel		mViewModel;
 		private	bool							mUseSortPrefixes;
@@ -39,21 +36,20 @@ namespace Noise.UI.ViewModels {
 		private string							mLastSearchOptions;
 
 		private readonly IEnumerable<ViewSortStrategy>	mArtistSorts;
-		private ViewSortStrategy				mCurrentArtistSort;
+		private ViewSortStrategy						mCurrentArtistSort;
 		private readonly Subject<ViewSortStrategy>		mArtistSortSubject;
-		private	IObservable<ViewSortStrategy>	ArtistSortChange { get { return( mArtistSortSubject.AsObservable()); }}
+		private	IObservable<ViewSortStrategy>			ArtistSortChange { get { return( mArtistSortSubject.AsObservable()); }}
 		private readonly IEnumerable<ViewSortStrategy>	mAlbumSorts;
-		private ViewSortStrategy				mCurrentAlbumSort;
+		private ViewSortStrategy						mCurrentAlbumSort;
 		private readonly Subject<ViewSortStrategy>		mAlbumSortSubject;
-		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
+		private	IObservable<ViewSortStrategy>			AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
 
 		public ExplorerStrategyDecade( IEventAggregator eventAggregator,
-									   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager, IDialogService dialogService ) {
+									   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTagManager = tagManager;
-			mDialogService = dialogService;
 
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
@@ -245,16 +241,16 @@ namespace Noise.UI.ViewModels {
 			return( new UiArtistTreeNode( parent, uiArtist, OnArtistSelect, null, FillArtistAlbums, mCurrentAlbumSort, AlbumSortChange ));
 		}
 
-		public void ConfigureView() {
-			var dialogModel = new ArtistAlbumConfigViewModel( mArtistSorts, mCurrentArtistSort, mAlbumSorts, mCurrentAlbumSort );
-
-			if( mDialogService.ShowDialog( DialogNames.ArtistAlbumConfiguration, dialogModel ) == true ) {
-				SetArtistSorting( dialogModel.SelectedArtistSort );
-				SetAlbumSorting( dialogModel.SelectedAlbumSort );
-			}
+		public ArtistAlbumConfigViewModel ConfigureSortRequest() {
+			return( new ArtistAlbumConfigViewModel( mArtistSorts, mCurrentArtistSort, mAlbumSorts, mCurrentAlbumSort ));
 		}
 
-		public bool CanConfigureView() {
+		public void SortRequest( ArtistAlbumConfigViewModel request ) {
+			SetArtistSorting( request.SelectedArtistSort );
+			SetAlbumSorting( request.SelectedAlbumSort );
+		}
+
+		public bool CanConfigureViewSort() {
 			return( true );
 		}
 

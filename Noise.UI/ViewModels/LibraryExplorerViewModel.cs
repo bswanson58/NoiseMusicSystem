@@ -16,6 +16,10 @@ namespace Noise.UI.ViewModels {
 		public ExplorerFilterInfo( LibraryExplorerFilter viewModel ) : base( viewModel ) { }
 	}
 
+	internal class ExplorerSortInfo : InteractionRequestData<ArtistAlbumConfigViewModel> {
+		public ExplorerSortInfo( ArtistAlbumConfigViewModel viewModel ) : base( viewModel ) { }
+	}
+
 	public class LibraryExplorerViewModel : AutomaticCommandBase {
 		private const string	cVisualStateNormal		= "Normal";
 		private const string	cVisualStateIndex		= "DisplayIndex";
@@ -30,6 +34,7 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<UiTreeNode>	mTreeItems;
 		private readonly BindableCollection<IndexNode>	mIndexItems;
 		private	readonly InteractionRequest<ExplorerFilterInfo>	mExplorerFiltersEdit;
+		private	readonly InteractionRequest<ExplorerSortInfo>	mExplorerSortRequest;
 
 		public	CollectionViewSource					TreeViewSource { get; private set; }
 		public	IEnumerable<IExplorerViewStrategy>		ViewStrategies { get; private set; }
@@ -42,6 +47,7 @@ namespace Noise.UI.ViewModels {
 			mTreeItems = new BindableCollection<UiTreeNode>();
 			mIndexItems = new BindableCollection<IndexNode>();
 			mExplorerFiltersEdit = new InteractionRequest<ExplorerFilterInfo>();
+			mExplorerSortRequest = new InteractionRequest<ExplorerSortInfo>();
 
 			TreeViewSource = new CollectionViewSource { Source = mTreeItems };
 
@@ -116,15 +122,28 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => TreeViewItemTemplate, value ); }
 		}
 
+		public IInteractionRequest ExplorerSortRequest {
+			get{ return( mExplorerSortRequest ); }
+		}
+
 		public void Execute_ConfigureView() {
 			if( mViewStrategy != null ) {
-				mViewStrategy.ConfigureView();
+				var dialogModel = mViewStrategy.ConfigureSortRequest();
+
+				mExplorerSortRequest.Raise( new ExplorerSortInfo( dialogModel ), OnSortRequest );
+			}
+		}
+
+		private void OnSortRequest( ExplorerSortInfo confirmation ) {
+			if(( confirmation.Confirmed ) &&
+			   ( mViewStrategy != null )) {
+				mViewStrategy.SortRequest( confirmation.ViewModel );
 			}
 		}
 
 		public bool CanExecute_ConfigureView() {
 			return(( mViewStrategy != null ) &&
-				   ( mViewStrategy.CanConfigureView()));
+				   ( mViewStrategy.CanConfigureViewSort()));
 		}
 
 		public string SearchText {
@@ -136,7 +155,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public IInteractionRequest EditExplorerFiltersRequest {
+		public IInteractionRequest ExplorerFilterRequest {
 			get{ return( mExplorerFiltersEdit ); }
 		}
 
