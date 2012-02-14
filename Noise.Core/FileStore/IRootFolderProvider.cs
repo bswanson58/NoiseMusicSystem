@@ -5,6 +5,6 @@ namespace Noise.Core.FileStore {
 		void							AddRootFolder( RootFolder folder );
 
 		DataProviderList<RootFolder>	GetRootFolderList();
-		DataUpdateShell<RootFolder>	GetFolderForUpdate( long folderId );
+		DataUpdateShell<RootFolder>		GetFolderForUpdate( long folderId );
 	}
 }
