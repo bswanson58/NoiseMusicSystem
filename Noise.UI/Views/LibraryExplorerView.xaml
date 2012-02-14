@@ -179,7 +179,10 @@
     <i:Interaction.Behaviors>
         <Behaviours:InteractionRequestDialogBehavior DialogClass="LibraryExplorerFilter"
                                                      DialogService="{Binding Source={StaticResource DialogService}}"
-                                                     InteractionRequest="{Binding Path=EditExplorerFiltersRequest}" />
+                                                     InteractionRequest="{Binding Path=ExplorerFilterRequest}" />
+        <Behaviours:InteractionRequestDialogBehavior DialogClass="ArtistAlbumConfiguration"
+                                                     DialogService="{Binding Source={StaticResource DialogService}}"
+                                                     InteractionRequest="{Binding Path=ExplorerSortRequest}" />
     </i:Interaction.Behaviors>
 
     <GroupBox Margin="0,-3,0,0"

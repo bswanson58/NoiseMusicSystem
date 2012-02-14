@@ -1,15 +1,16 @@
 ﻿<UserControl x:Class="Noise.UI.Views.PlayQueueView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
-             xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers" 
-             mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300"
-              DataContext="{Binding PlayQueueViewModel, Source={StaticResource ViewModelLocator}}"
-             >
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             DataContext="{Binding PlayQueueViewModel,
+                                   Source={StaticResource ViewModelLocator}}"
+             mc:Ignorable="d">
     <Control.Resources>
         <Behaviours:CommandReference x:Key="DeleteCommandReference" Command="{Binding DeleteCommand}" />
     </Control.Resources>
@@ -18,24 +19,32 @@
         <KeyBinding Key="Delete" Command="{StaticResource DeleteCommandReference}" />
     </Control.InputBindings>
 
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Play Queue " Margin="3,0,3,0">
+    <GroupBox Margin="0,0,3,0"
+              BorderBrush="{DynamicResource TrimColor}"
+              BorderThickness="1"
+              Header=" Play Queue ">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <ListView Grid.Row="0" x:Name="PlayQueueListView" BorderThickness="0"
+            <ListView x:Name="PlayQueueListView"
+                      Grid.Row="0"
+                      Behaviours:ListViewColumns.Stretch="true"
+                      Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex,
+                                                                              Mode=OneWay}"
+                      BorderThickness="0"
                       ItemsSource="{Binding Path=QueueList}"
-                      SelectedItem="{Binding Path=SelectedItem}"
                       SelectedIndex="{Binding Path=SelectedIndex}"
-                      Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex, Mode=OneWay}"
-                      Behaviours:ListViewColumns.Stretch="true">
+                      SelectedItem="{Binding Path=SelectedItem}">
                 <EventCommandTriggers:CommandSource.Trigger>
                     <EventCommandTriggers:CommandTriggerGroup>
-                        <EventCommandTriggers:EventCommandTrigger RoutedEvent="ListView.Loaded" Command="{Binding Path=OnLoaded}"/>
-                        <EventCommandTriggers:EventCommandTrigger RoutedEvent="ListViewItem.MouseDoubleClick" Command="{Binding Path=PlayRequested}"
-                                                                  CustomParameter="{Binding ElementName=PlayQueueListView, Path=SelectedValue}" />
+                        <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=OnLoaded}" RoutedEvent="ListView.Loaded" />
+                        <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=PlayRequested}"
+                                                                  CustomParameter="{Binding ElementName=PlayQueueListView,
+                                                                                            Path=SelectedValue}"
+                                                                  RoutedEvent="ListViewItem.MouseDoubleClick" />
                     </EventCommandTriggers:CommandTriggerGroup>
                 </EventCommandTriggers:CommandSource.Trigger>
                 <ListView.ItemContainerStyle>
@@ -43,13 +52,13 @@
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Path=IsPlaying}" Value="true">
-                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="FontWeight" Value="Bold" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Path=HasPlayed}" Value="true">
-                                <Setter Property="Foreground" Value="LightGray"/>
+                                <Setter Property="Foreground" Value="LightGray" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Path=IsStrategyQueued, Mode=OneTime}" Value="true">
-                                <Setter Property="FontStyle" Value="Italic"/>
+                                <Setter Property="FontStyle" Value="Italic" />
                             </DataTrigger>
                             <Trigger Property="Behaviours:ListViewItemDragState.IsBeingDragged" Value="True">
                                 <Setter Property="FontWeight" Value="Bold" />
@@ -59,12 +68,20 @@
                 </ListView.ItemContainerStyle>
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="25">
+                        <GridViewColumn Width="25" HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid>
-                                        <TextBlock Text="4" FontFamily="WebDings" Foreground="LightGreen" Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}"/>
-                                        <TextBlock Text="!" Foreground="Red" Margin="5,0,0,0" Visibility="{Binding Path=IsFaulted, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                                        <TextBlock FontFamily="WebDings"
+                                                   Foreground="LightGreen"
+                                                   Text="4"
+                                                   Visibility="{Binding Path=IsPlaying,
+                                                                        Converter={StaticResource BooleanVisibilityConverter}}" />
+                                        <TextBlock Margin="5,0,0,0"
+                                                   Foreground="Red"
+                                                   Text="!"
+                                                   Visibility="{Binding Path=IsFaulted,
+                                                                        Converter={StaticResource BooleanVisibilityConverter}}" />
                                     </Grid>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -72,11 +89,11 @@
                         <GridViewColumn Header="Track Name">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Path=FullName}"/>
+                                    <TextBlock Text="{Binding Path=FullName}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Length" Width="45">
+                        <GridViewColumn Width="45" Header="Length">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Path=Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" />
@@ -89,67 +106,129 @@
 
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0" Orientation="Vertical" Margin="5,5,5,3">
-                    <Rectangle StrokeThickness="0" Fill="{DynamicResource TrimColor}" Height="1"/>
-                    <Rectangle StrokeThickness="0" Fill="LightGray" Height="1"/>
+                <StackPanel Grid.Row="0"
+                            Margin="5,5,5,3"
+                            Orientation="Vertical">
+                    <Rectangle Height="1"
+                               Fill="{DynamicResource TrimColor}"
+                               StrokeThickness="0" />
+                    <Rectangle Height="1"
+                               Fill="LightGray"
+                               StrokeThickness="0" />
                 </StackPanel>
 
                 <Grid Grid.Row="1" Margin="3">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="50" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Total Time:" Foreground="{DynamicResource ControlTextColor}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Margin="3,0,3,0" Text="{Binding Path=TotalTime, Converter={StaticResource TimeSpanConverter}}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Remaining Time:" Foreground="{DynamicResource ControlTextColor}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="3,0,3,0" Text="{Binding Path=RemainingTime, Converter={StaticResource TimeSpanConverter}}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="0"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource ControlTextColor}"
+                               Text="Total Time:" />
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="1"
+                               Margin="3,0,3,0"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Text="{Binding Path=TotalTime,
+                                              Converter={StaticResource TimeSpanConverter}}" />
+                    <TextBlock Grid.Row="1"
+                               Grid.Column="0"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource ControlTextColor}"
+                               Text="Remaining Time:" />
+                    <TextBlock Grid.Row="1"
+                               Grid.Column="1"
+                               Margin="3,0,3,0"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Text="{Binding Path=RemainingTime,
+                                              Converter={StaticResource TimeSpanConverter}}" />
                 </Grid>
 
                 <Grid Grid.Row="2" Margin="3">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="1" Content="Play Selection:" Foreground="{DynamicResource ControlTextColor}"/>
-                    <ComboBox Grid.Column="2"  x:Name="PlayStrategy" Width="110"
+                    <Label Grid.Column="1"
+                           Content="Play Selection:"
+                           Foreground="{DynamicResource ControlTextColor}" />
+                    <ComboBox x:Name="PlayStrategy"
+                              Grid.Column="2"
+                              Width="110"
+                              DisplayMemberPath="Title"
                               ItemsSource="{Binding Path=PlayStrategyList}"
-                              DisplayMemberPath="Title" SelectedValuePath="Strategy"
-                              SelectedValue="{Binding Path=PlayStrategy}"/>
+                              SelectedValue="{Binding Path=PlayStrategy}"
+                              SelectedValuePath="Strategy" />
                 </Grid>
                 <Grid Grid.Row="3" Margin="3">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="1" Content="When Exhausted:" Foreground="{DynamicResource ControlTextColor}"/>
-                    <ComboBox Grid.Column="2"  x:Name="ExhaustedStrategy" Width="110"
+                    <Label Grid.Column="1"
+                           Content="When Exhausted:"
+                           Foreground="{DynamicResource ControlTextColor}" />
+                    <ComboBox x:Name="ExhaustedStrategy"
+                              Grid.Column="2"
+                              Width="110"
+                              DisplayMemberPath="Title"
                               ItemsSource="{Binding Path=ExhaustedStrategyList}"
-                              DisplayMemberPath="Title" SelectedValuePath="Strategy"
-                              SelectedValue="{Binding Path=ExhaustedStrategy}"/>
+                              SelectedValue="{Binding Path=ExhaustedStrategy}"
+                              SelectedValuePath="Strategy" />
                 </Grid>
-                
-                <StackPanel Grid.Row="4" Margin="3"  Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Margin="3" Width="25" Content="5" FontFamily="Webdings" Command="{Binding Path=MoveItemUp}"/>
-                    <Button Margin="3" Width="25" Content="6" FontFamily="Webdings" Command="{Binding Path=MoveItemDown}"/>
-                    <Button Margin="3" Width="25" Content="r" FontFamily="WebDings" Command="{Binding Path=RemoveItem}"/>
-                    <Button Margin="3" Content="Clear" Command="{Binding Path=ClearQueue}" Width="37"/>
+
+                <StackPanel Grid.Row="4"
+                            Margin="3"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal">
+                    <Button Width="25"
+                            Margin="3"
+                            Command="{Binding Path=MoveItemUp}"
+                            Content="5"
+                            FontFamily="Webdings" />
+                    <Button Width="25"
+                            Margin="3"
+                            Command="{Binding Path=MoveItemDown}"
+                            Content="6"
+                            FontFamily="Webdings" />
+                    <Button Width="25"
+                            Margin="3"
+                            Command="{Binding Path=RemoveItem}"
+                            Content="r"
+                            FontFamily="WebDings" />
+                    <Button Width="37"
+                            Margin="3"
+                            Command="{Binding Path=ClearQueue}"
+                            Content="Clear" />
                 </StackPanel>
-                <StackPanel Grid.Row="4" Margin="3" Orientation="Horizontal" HorizontalAlignment="Left">
-                    <Button Margin="3" Content="Save" Command="{Binding Path=SavePlayList}" Width="37"/>
+                <StackPanel Grid.Row="4"
+                            Margin="3"
+                            HorizontalAlignment="Left"
+                            Orientation="Horizontal">
+                    <Button Width="37"
+                            Margin="3"
+                            Command="{Binding Path=SavePlayList}"
+                            Content="Save" />
                 </StackPanel>
             </Grid>
         </Grid>

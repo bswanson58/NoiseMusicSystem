@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
@@ -16,6 +17,10 @@ namespace Noise.UI.ViewModels {
 		public ExplorerFilterInfo( LibraryExplorerFilter viewModel ) : base( viewModel ) { }
 	}
 
+	internal class ExplorerSortInfo : InteractionRequestData<ArtistAlbumConfigViewModel> {
+		public ExplorerSortInfo( ArtistAlbumConfigViewModel viewModel ) : base( viewModel ) { }
+	}
+
 	public class LibraryExplorerViewModel : AutomaticCommandBase {
 		private const string	cVisualStateNormal		= "Normal";
 		private const string	cVisualStateIndex		= "DisplayIndex";
@@ -30,6 +35,7 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<UiTreeNode>	mTreeItems;
 		private readonly BindableCollection<IndexNode>	mIndexItems;
 		private	readonly InteractionRequest<ExplorerFilterInfo>	mExplorerFiltersEdit;
+		private	readonly InteractionRequest<ExplorerSortInfo>	mExplorerSortRequest;
 
 		public	CollectionViewSource					TreeViewSource { get; private set; }
 		public	IEnumerable<IExplorerViewStrategy>		ViewStrategies { get; private set; }
@@ -42,6 +48,7 @@ namespace Noise.UI.ViewModels {
 			mTreeItems = new BindableCollection<UiTreeNode>();
 			mIndexItems = new BindableCollection<IndexNode>();
 			mExplorerFiltersEdit = new InteractionRequest<ExplorerFilterInfo>();
+			mExplorerSortRequest = new InteractionRequest<ExplorerSortInfo>();
 
 			TreeViewSource = new CollectionViewSource { Source = mTreeItems };
 
@@ -68,6 +75,15 @@ namespace Noise.UI.ViewModels {
 			SelectedStrategy = ( from strategy in strategyList where strategy.IsDefaultStrategy select strategy ).FirstOrDefault();
 		}
 
+		public IExplorerViewStrategy SelectedStrategy {
+			get{ return( mViewStrategy ); }
+			set{ 
+				VisualStateName = cVisualStateNormal;
+
+				ActivateStrategy( value );
+			}
+		}
+
 		private void ActivateStrategy( IExplorerViewStrategy strategy ) {
 			mTreeItems.Clear();
 			mIndexItems.Clear();
@@ -86,7 +102,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void UpdateTree() {
-		 	PopulateTree( BuildTree());
+			PopulateTree( BuildTree());
 			UpdateIndex();
 		}
 
@@ -96,15 +112,12 @@ namespace Noise.UI.ViewModels {
 
 		private void PopulateTree( IEnumerable<UiTreeNode> newNodes ) {
 			mTreeItems.Clear();
-		 	mTreeItems.AddRange( newNodes );
+	 		mTreeItems.AddRange( newNodes );
 		}
 
 		private void UpdateIndex() {
-			if(( mViewStrategy != null ) &&
-			   ( mTreeItems != null )) {
-				mIndexItems.Clear();
-				mIndexItems.AddRange( mViewStrategy.BuildIndex( mTreeItems ));
-			}
+			mIndexItems.Clear();
+			mIndexItems.AddRange( mViewStrategy.BuildIndex( mTreeItems ));
 		}
 
 		public BindableCollection<UiTreeNode> TreeData {
@@ -116,15 +129,37 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => TreeViewItemTemplate, value ); }
 		}
 
+		internal void SetExplorerSortDescriptions( IEnumerable<SortDescription> descriptions ) {
+			Execute.OnUIThread( () => {
+									TreeViewSource.SortDescriptions.Clear();
+									foreach( var sort in descriptions ) {
+										TreeViewSource.SortDescriptions.Add( sort );
+									}
+			                    });
+		} 
+
+		public IInteractionRequest ExplorerSortRequest {
+			get{ return( mExplorerSortRequest ); }
+		}
+
 		public void Execute_ConfigureView() {
 			if( mViewStrategy != null ) {
-				mViewStrategy.ConfigureView();
+				var dialogModel = mViewStrategy.ConfigureSortRequest();
+
+				mExplorerSortRequest.Raise( new ExplorerSortInfo( dialogModel ), OnSortRequest );
+			}
+		}
+
+		private void OnSortRequest( ExplorerSortInfo confirmation ) {
+			if(( confirmation.Confirmed ) &&
+			   ( mViewStrategy != null )) {
+				mViewStrategy.SortRequest( confirmation.ViewModel );
 			}
 		}
 
 		public bool CanExecute_ConfigureView() {
 			return(( mViewStrategy != null ) &&
-				   ( mViewStrategy.CanConfigureView()));
+				   ( mViewStrategy.CanConfigureViewSort()));
 		}
 
 		public string SearchText {
@@ -136,7 +171,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public IInteractionRequest EditExplorerFiltersRequest {
+		public IInteractionRequest ExplorerFilterRequest {
 			get{ return( mExplorerFiltersEdit ); }
 		}
 
@@ -183,15 +218,6 @@ namespace Noise.UI.ViewModels {
 			}
 
 			VisualStateName = VisualStateName == cVisualStateNormal ? cVisualStateStrategy : cVisualStateNormal;
-		}
-
-		public IExplorerViewStrategy SelectedStrategy {
-			get{ return( mViewStrategy ); }
-			set{ 
-				VisualStateName = cVisualStateNormal;
-
-				ActivateStrategy( value );
-			}
 		}
 
 		public void Execute_ToggleIndexDisplay() {

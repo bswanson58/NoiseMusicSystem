@@ -20,6 +20,63 @@
         <MenuItem Command="{Binding Rename}" Header="Rename Artist" />
     </ContextMenu>
 
+    <!--  Gridsplitter Grabber  -->
+    <Style x:Key="GridSplitterPreviewStyle">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle Fill="#80000000" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="GridSplitterStyle" TargetType="{x:Type GridSplitter}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+        <Setter Property="PreviewStyle" Value="{StaticResource GridSplitterPreviewStyle}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type GridSplitter}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                        <Canvas Width="6"
+                                Height="30"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RenderOptions.EdgeMode="Aliased"
+                                UseLayoutRounding="True">
+                            <Line Stroke="White"
+                                  StrokeThickness="1"
+                                  X1="0"
+                                  X2="0"
+                                  Y1="0"
+                                  Y2="30" />
+                            <Line Stroke="#A0A0A0"
+                                  StrokeThickness="1"
+                                  X1="1"
+                                  X2="1"
+                                  Y1="0"
+                                  Y2="30" />
+                            <Line Stroke="White"
+                                  StrokeThickness="1"
+                                  X1="4"
+                                  X2="4"
+                                  Y1="0"
+                                  Y2="30" />
+                            <Line Stroke="#A0A0A0"
+                                  StrokeThickness="1"
+                                  X1="5"
+                                  X2="5"
+                                  Y1="0"
+                                  Y2="30" />
+                        </Canvas>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!--  Library Explorer: Artist/Albums  -->
     <HierarchicalDataTemplate x:Key="AlbumTemplate" DataType="{x:Type Dto:UiAlbumTreeNode}">
         <Grid Margin="0,0,3,0">
