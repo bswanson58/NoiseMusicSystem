@@ -4,6 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Noise.Core.Database;
 using Noise.Core.FileStore;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.IntegrationTests.Database {
 	[TestFixture]
@@ -60,6 +61,24 @@ namespace Noise.Core.IntegrationTests.Database {
 		}
 
 		[Test]
+		public void RootFolderListDoesNotReturnStorageFolders() {
+			var rootFolder1 = new RootFolder( 1, "path 1", "folder 1" );
+			var rootFolder2 = new RootFolder( 2, "path 2", "folder 2" );
+
+			var sut = CreateSut();
+			sut.AddRootFolder( rootFolder1 );
+			sut.AddRootFolder( rootFolder2 );
+
+			var storageFolder = new StorageFolder( "storage folder", 1 );
+			var storageFolderProvider = new StorageFolderProvider( mDatabaseManager );
+			storageFolderProvider.AddFolder( storageFolder );
+
+			using( var folderList = sut.GetRootFolderList()) {
+				folderList.List.Should().HaveCount( 2 );
+			}
+		}
+
+		[Test]
 		public void CanGetFolderForUpdate() {
 			var folder = new RootFolder( 1, "path", "folder name" );
 			var sut = CreateSut();
@@ -70,7 +89,7 @@ namespace Noise.Core.IntegrationTests.Database {
 				Assert.IsNotNull( updater );
 				Assert.IsNotNull( updater.Item );
 
-				folder.ShouldHave().AllProperties().EqualTo( updater.Item );
+				folder.ShouldHave().AllPropertiesBut( p => p.FolderStrategy ).EqualTo( updater.Item );
 			}
 		}
 
