@@ -296,11 +296,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnAlbumSelect( UiAlbumTreeNode albumNode ) {
-			var album = mAlbumProvider.GetAlbum( albumNode.Album.DbId );
-
-			if( album != null ) {
-				mEventAggregator.Publish( new Events.AlbumFocusRequested( album ));
-			}
+			mEventAggregator.Publish( new Events.AlbumFocusRequested( albumNode.Album.Artist, albumNode.Album.DbId ));
 		}
 
 		private void OnAlbumPlay( UiAlbumTreeNode albumNode ) {
