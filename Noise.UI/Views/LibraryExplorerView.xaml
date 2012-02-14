@@ -170,6 +170,10 @@
                                           Converter={StaticResource StringTruncateConverter}}" />
             </StackPanel>
         </DataTemplate>
+
+        <Behaviours:BindableCollectionViewSource x:Key="TreeDataSource"
+                                                 BindableSortDescriptions="{Binding Path=SortDescriptions}"
+                                                 Source="{Binding Path=TreeData}" />
     </UserControl.Resources>
 
     <UserControl.DataContext>
@@ -212,7 +216,7 @@
                       Behaviours:ScrollingPreview.VerticalScrollingPreviewTemplate="{DynamicResource ScrollingPreviewTemplate}"
                       BorderThickness="0"
                       ItemContainerStyle="{DynamicResource TreeViewItemStyle}"
-                      ItemsSource="{Binding TreeViewSource.View}"
+                      ItemsSource="{Binding Source={StaticResource TreeDataSource}}"
                       ItemTemplate="{Binding TreeViewItemTemplate}"
                       VirtualizingStackPanel.IsVirtualizing="True"
                       VirtualizingStackPanel.VirtualizationMode="Recycling" />

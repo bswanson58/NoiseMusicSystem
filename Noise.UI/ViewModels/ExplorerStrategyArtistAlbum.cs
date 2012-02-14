@@ -133,7 +133,7 @@ namespace Noise.UI.ViewModels {
 							case DbItemChanged.Update:
 								if( treeNode != null ) {
 									UpdateUiArtist( treeNode.Artist, artist );
-									mViewModel.TreeViewSource.View.Refresh();
+									mViewModel.SetTreeSortDescription( mCurrentArtistSort.SortDescriptions );
 								}
 								break;
 
@@ -298,7 +298,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void SetArtistSorting( ViewSortStrategy strategy ) {
-			mViewModel.SetExplorerSortDescriptions( strategy.SortDescriptions );
+			mViewModel.SetTreeSortDescription( strategy.SortDescriptions );
 
 			mCurrentArtistSort = strategy;
 		}
