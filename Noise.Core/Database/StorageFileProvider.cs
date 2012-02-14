@@ -51,8 +51,8 @@ namespace Noise.Core.Database {
 
 				if( album != null ) {
 					using( var albumTracks = mTrackProvider.GetTrackList( album )) {
-						var trackList = albumTracks.List.Select( GetPhysicalFile );
-						var parentList = trackList.Select( track => track.ParentFolder ).Distinct();
+						var fileList = albumTracks.List.Select( GetPhysicalFile );
+						var parentList = fileList.Select( file => file.ParentFolder ).Distinct();
 						var folderList = parentList.Select( mStorageFolderProvider.GetFolder );
 						var pathList = folderList.Select( folder => StorageHelpers.GetPath( mStorageFolderProvider, folder ));
 

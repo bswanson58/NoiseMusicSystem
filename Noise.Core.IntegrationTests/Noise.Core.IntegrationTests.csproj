@@ -133,6 +133,7 @@
     <Compile Include="Database\PlayHistoryProviderTests.cs" />
     <Compile Include="Database\PlayListProviderTests.cs" />
     <Compile Include="Database\RootFolderProviderTests.cs" />
+    <Compile Include="Database\StorageFileProviderTests.cs" />
     <Compile Include="Database\StorageFolderProviderTests.cs" />
     <Compile Include="Database\TrackProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
