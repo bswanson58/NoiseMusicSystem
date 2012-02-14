@@ -90,6 +90,7 @@ namespace Noise.Core.IntegrationTests.Database {
 				Assert.IsNotNull( updater.Item );
 
 				folder.ShouldHave().AllPropertiesBut( p => p.FolderStrategy ).EqualTo( updater.Item );
+				folder.FolderStrategy.ShouldHave().AllProperties().EqualTo( updater.Item.FolderStrategy );
 			}
 		}
 
