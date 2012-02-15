@@ -132,6 +132,7 @@
     <Compile Include="ViewModels\AlbumViewModelTests.cs" />
     <Compile Include="ViewModels\ArtistInfoViewModelTests.cs" />
     <Compile Include="ViewModels\ArtistViewModelTests.cs" />
+    <Compile Include="ViewModels\ExplorerStrategyArtistAlbumTests.cs" />
     <Compile Include="Views\ArtistViewTests.cs" />
   </ItemGroup>
   <ItemGroup>

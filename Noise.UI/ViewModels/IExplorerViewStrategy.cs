@@ -9,7 +9,7 @@ namespace Noise.UI.ViewModels {
 		string						StrategyName { get; }
 		bool						IsDefaultStrategy{ get; }
 
-		void						Initialize( LibraryExplorerViewModel viewModel );
+		void						Initialize( ILibraryExplorerViewModel viewModel );
 		void						UseSortPrefixes( bool enable, IEnumerable<string> sortPrefixes );
 
 		void						Activate();

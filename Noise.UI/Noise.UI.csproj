@@ -286,6 +286,7 @@
     <Compile Include="ViewModels\ExplorerStrategyDecade.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
     <Compile Include="ViewModels\IExplorerViewStrategy.cs" />
+    <Compile Include="ViewModels\ILibraryExplorerViewModel.cs" />
     <Compile Include="ViewModels\LibraryAdditionsViewModel.cs" />
     <Compile Include="ViewModels\LibraryConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\LibraryExplorerViewModel.cs" />

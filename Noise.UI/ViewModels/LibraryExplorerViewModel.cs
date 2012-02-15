@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -20,7 +21,7 @@ namespace Noise.UI.ViewModels {
 		public ExplorerSortInfo( ArtistAlbumConfigViewModel viewModel ) : base( viewModel ) { }
 	}
 
-	public class LibraryExplorerViewModel : AutomaticCommandBase {
+	public class LibraryExplorerViewModel : AutomaticCommandBase, ILibraryExplorerViewModel {
 		private const string	cVisualStateNormal		= "Normal";
 		private const string	cVisualStateIndex		= "DisplayIndex";
 		private const string	cVisualStateStrategy	= "DisplayStrategy";
@@ -121,11 +122,11 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public BindableCollection<UiTreeNode> TreeData {
+		public Collection<UiTreeNode> TreeData {
 			get { return( mTreeItems ); }
 		}
 
-		internal void SetTreeSortDescription( IEnumerable<SortDescription> descriptions ) {
+		public void SetTreeSortDescription( IEnumerable<SortDescription> descriptions ) {
 			mTreeSortDescriptions.Clear();
 			mTreeSortDescriptions.AddRange( descriptions );
 		} 
@@ -136,7 +137,10 @@ namespace Noise.UI.ViewModels {
  
 		public DataTemplate TreeViewItemTemplate {
 			get{ return( Get( () => TreeViewItemTemplate )); }
-			set{ Set( () => TreeViewItemTemplate, value ); }
+		}
+
+		public void SetViewTemplate( DataTemplate template ) {
+			Set( () => TreeViewItemTemplate, template  );
 		}
 
 		public IInteractionRequest ExplorerSortRequest {
@@ -199,8 +203,9 @@ namespace Noise.UI.ViewModels {
 			return(!string.IsNullOrWhiteSpace( SearchText ));
 		}
 
-		public List<string> SearchOptions {
-			get{ return( mSearchOptions ); }
+		public void SetSearchOptions( IEnumerable<string> searchOptions ) {
+			mSearchOptions.Clear();
+			mSearchOptions.AddRange( searchOptions );
 		}
 
 		public bool HaveSearchOptions {

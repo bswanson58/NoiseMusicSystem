@@ -30,19 +30,19 @@ namespace Noise.UI.ViewModels {
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITagManager			mTagManager;
-		private readonly Observal.Observer		mChangeObserver;
-		private	LibraryExplorerViewModel		mViewModel;
+		private	Observal.Observer				mChangeObserver;
+		private	ILibraryExplorerViewModel		mViewModel;
 		private	bool							mUseSortPrefixes;
 		private IEnumerable<string>				mSortPrefixes;
 		private IEnumerator<UiArtistTreeNode>	mTreeEnumerator;
 		private string							mLastSearchOptions;
 
-		private readonly IEnumerable<ViewSortStrategy>	mArtistSorts;
-		private ViewSortStrategy						mCurrentArtistSort;
-		private readonly IEnumerable<ViewSortStrategy>	mAlbumSorts;
-		private ViewSortStrategy						mCurrentAlbumSort;
-		private readonly Subject<ViewSortStrategy>		mAlbumSortSubject;
-		private	IObservable<ViewSortStrategy>			AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
+		private IEnumerable<ViewSortStrategy>	mArtistSorts;
+		private ViewSortStrategy				mCurrentArtistSort;
+		private IEnumerable<ViewSortStrategy>	mAlbumSorts;
+		private ViewSortStrategy				mCurrentAlbumSort;
+		private Subject<ViewSortStrategy>		mAlbumSortSubject;
+		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
 
 		public ExplorerStrategyArtistAlbum( IEventAggregator eventAggregator,
 											IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager ) {
@@ -50,6 +50,10 @@ namespace Noise.UI.ViewModels {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTagManager = tagManager;
+		}
+
+		public void Initialize( ILibraryExplorerViewModel viewModel ) {
+			mViewModel = viewModel;
 
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
@@ -68,10 +72,6 @@ namespace Noise.UI.ViewModels {
 			mCurrentAlbumSort = strategies[0];
 
 			mAlbumSortSubject = new Subject<ViewSortStrategy>();
-		}
-
-		public void Initialize( LibraryExplorerViewModel viewModel ) {
-			mViewModel = viewModel;
 		}
 
 		public string StrategyId {
@@ -94,11 +94,10 @@ namespace Noise.UI.ViewModels {
 		public void Activate() {
 			mEventAggregator.Subscribe( this );
 
-			mViewModel.TreeViewItemTemplate = Application.Current.TryFindResource( "ArtistAlbumTemplate" ) as HierarchicalDataTemplate;
-
-			mViewModel.SearchOptions.Add( cSearchOptionDefault + cSearchArtists );
-			mViewModel.SearchOptions.Add( cSearchAlbums );
-			mViewModel.SearchOptions.Add( cSearchOptionDefault + cSearchIgnoreCase );
+			mViewModel.SetViewTemplate( Application.Current.TryFindResource( "ArtistAlbumTemplate" ) as HierarchicalDataTemplate );
+			mViewModel.SetSearchOptions( new List<string> { cSearchOptionDefault + cSearchArtists,
+															cSearchAlbums,
+															cSearchOptionDefault + cSearchIgnoreCase });
 		}
 
 		public void Deactivate() {
