@@ -91,7 +91,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var testable = new TestableStrategyArtistAlbum();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
 			var filter = new Mock<IDatabaseFilter>();
-			var artistList = new List<DbArtist> { new DbArtist() { Name = "The Rolling Stones" }};
+			var artistList = new List<DbArtist> { new DbArtist { Name = "The Rolling Stones" }};
 
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( new DataProviderList<DbArtist>( null, artistList ));
 
@@ -113,7 +113,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var testable = new TestableStrategyArtistAlbum();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
 			var filter = new Mock<IDatabaseFilter>();
-			var artistList = new List<DbArtist> { new DbArtist() { Name = "Joan Jett and The Blackhearts" }};
+			var artistList = new List<DbArtist> { new DbArtist { Name = "Joan Jett and The Blackhearts" }};
 
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( new DataProviderList<DbArtist>( null, artistList ));
 
@@ -136,9 +136,9 @@ namespace Noise.UI.Tests.ViewModels {
 			var testable = new TestableStrategyArtistAlbum();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
 			var filter = new Mock<IDatabaseFilter>();
-			var artistList = new List<DbArtist> { new DbArtist() { Name = "Joan Jett and The Blackhearts" },
-												  new DbArtist() { Name = "Jethro Tull" },
-												  new DbArtist() { Name = "The Rolling Stones" }};
+			var artistList = new List<DbArtist> { new DbArtist { Name = "Joan Jett and The Blackhearts" },
+												  new DbArtist { Name = "Jethro Tull" },
+												  new DbArtist { Name = "The Rolling Stones" }};
 
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( new DataProviderList<DbArtist>( null, artistList ));
 
@@ -157,7 +157,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var testable = new TestableStrategyArtistAlbum();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
 			var filter = new Mock<IDatabaseFilter>();
-			var artistList = new List<DbArtist> { new DbArtist() { Name = "The Rolling Stones" }};
+			var artistList = new List<DbArtist> { new DbArtist { Name = "The Rolling Stones" }};
 
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( new DataProviderList<DbArtist>( null, artistList ));
 
