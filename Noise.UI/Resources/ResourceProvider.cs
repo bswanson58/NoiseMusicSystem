@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using Noise.Infrastructure.Interfaces;
 
@@ -8,6 +9,10 @@ namespace Noise.UI.Resources {
 			var resourceName = string.Format( "{0}{1}", "pack://application:,,,/Noise.UI;component/Resources/", imageName );
 
 			return( new BitmapImage( new Uri( resourceName )));
+		}
+
+		public object RetrieveTemplate( string templateName ) {
+			return( Application.Current.TryFindResource( templateName ));
 		}
 	}
 }

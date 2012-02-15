@@ -25,9 +25,11 @@ namespace Noise.UI.ViewModels {
 		private const string					cSearchIgnoreCase = "Ignore Case";
 
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly IResourceProvider		mResourceProvider;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITagManager			mTagManager;
+		private DataTemplate					mViewTemplate;
 		private Observal.Observer				mChangeObserver;
 		private	ILibraryExplorerViewModel		mViewModel;
 		private	bool							mUseSortPrefixes;
@@ -44,9 +46,10 @@ namespace Noise.UI.ViewModels {
 		private Subject<ViewSortStrategy>		mAlbumSortSubject;
 		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
 
-		public ExplorerStrategyDecade( IEventAggregator eventAggregator,
+		public ExplorerStrategyDecade( IEventAggregator eventAggregator, IResourceProvider resourceProvider,
 									   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager ) {
 			mEventAggregator = eventAggregator;
+			mResourceProvider = resourceProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTagManager = tagManager;
@@ -94,7 +97,12 @@ namespace Noise.UI.ViewModels {
 		public void Activate() {
 			mEventAggregator.Subscribe( this );
 
-			mViewModel.SetViewTemplate( Application.Current.TryFindResource( "DecadeExplorerTemplate" ) as HierarchicalDataTemplate );
+			if( mViewTemplate == null ) {
+				mViewTemplate = mResourceProvider.RetrieveTemplate( "DecadeExplorerTemplate" ) as DataTemplate;
+ 			}
+			Condition.Requires( mViewTemplate ).IsNotNull();
+
+			mViewModel.SetViewTemplate( mViewTemplate );
 			mViewModel.SetSearchOptions( new [] { cSearchOptionDefault + cSearchArtists,
 												  cSearchAlbums,
 												  cSearchOptionDefault + cSearchIgnoreCase });
