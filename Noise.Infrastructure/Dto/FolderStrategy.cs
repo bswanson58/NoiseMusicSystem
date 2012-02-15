@@ -11,9 +11,9 @@ namespace Noise.Infrastructure.Dto {
 	}
 
 	public class FolderStrategy {
-		private const int			cMaxStrategyLevel = 5;
+		private	const int			cMaxStrategyLevel = 5;
 
-		private	eFolderStrategy[]	mFolderLevelStrategies;
+		private eFolderStrategy[]	mFolderLevelStrategies;
 		public	bool				PreferFolderStrategy { get; set; }
 
 		public FolderStrategy() {
@@ -22,6 +22,10 @@ namespace Noise.Infrastructure.Dto {
 			for( int level = 0; level < cMaxStrategyLevel; level++ ) {
 				mFolderLevelStrategies[level] = eFolderStrategy.Undefined;
 			}
+		}
+
+		public void EloqueraFixUp() {
+			mFolderLevelStrategies = Array.ConvertAll( mFolderLevelStrategies, value => (eFolderStrategy)value );
 		}
 
 		public eFolderStrategy StrategyForLevel( int folderLevel ) {
