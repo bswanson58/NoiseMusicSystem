@@ -56,6 +56,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Initialize( ILibraryExplorerViewModel viewModel ) {
+			Condition.Requires( viewModel ).IsNotNull();
 			mViewModel = viewModel;
 
 			mChangeObserver = new Observal.Observer();
