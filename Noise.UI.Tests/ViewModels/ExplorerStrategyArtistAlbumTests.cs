@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using Caliburn.Micro;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -85,6 +86,86 @@ namespace Noise.UI.Tests.ViewModels {
 
 			Assert.IsNotNull( uiArtistList );
 			uiArtistList.Should().HaveCount( 3 );
+		}
+
+		[Test]
+		public void ExpandingNodeShouldPopulateAlbums() {
+			var testable = new TestableStrategyArtistAlbum();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var filter = new Mock<IDatabaseFilter>();
+			var artistList = new List<DbArtist> { new DbArtist() };
+			var albumList = new List<DbAlbum> { new DbAlbum(), new DbAlbum() };
+
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( new DataProviderList<DbArtist>( null, artistList ));
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumList( It.IsAny<long>())).Returns( new DataProviderList<DbAlbum>( null, albumList ));
+
+			var sut = testable.ClassUnderTest;
+
+			sut.Initialize( viewModel.Object );
+
+			var uiArtistList = sut.BuildTree( filter.Object );
+			var treeNode = uiArtistList.First() as UiArtistTreeNode;
+
+			Assert.IsNotNull( treeNode );
+			treeNode.IsExpanded = true;
+
+			Assert.IsNotNull( treeNode.Children );
+			treeNode.Children.Should().HaveCount( 2 );
+		}
+
+		[Test]
+		public void SelectingArtistNodeShouldTriggerArtistEvent() {
+			var testable = new TestableStrategyArtistAlbum();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var filter = new Mock<IDatabaseFilter>();
+			var artistList = new List<DbArtist> { new DbArtist() };
+			var albumList = new List<DbAlbum> { new DbAlbum() };
+
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( new DataProviderList<DbArtist>( null, artistList ));
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumList( It.IsAny<long>())).Returns( new DataProviderList<DbAlbum>( null, albumList ));
+			testable.Mock<IEventAggregator>().Setup( m => m.Publish( It.IsAny<Events.ArtistFocusRequested>())).Verifiable();
+
+			var sut = testable.ClassUnderTest;
+
+			sut.Initialize( viewModel.Object );
+
+			var uiArtistList = sut.BuildTree( filter.Object );
+			var treeNode = uiArtistList.First() as UiArtistTreeNode;
+
+			Assert.IsNotNull( treeNode );
+			treeNode.IsSelected = true;
+
+			testable.Mock<IEventAggregator>().Verify();
+		}
+
+		[Test]
+		public void SelectingAlbumNodeShouldTriggerAlbumEvent() {
+			var testable = new TestableStrategyArtistAlbum();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var filter = new Mock<IDatabaseFilter>();
+			var artistList = new List<DbArtist> { new DbArtist() };
+			var albumList = new List<DbAlbum> { new DbAlbum() };
+
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( new DataProviderList<DbArtist>( null, artistList ));
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumList( It.IsAny<long>())).Returns( new DataProviderList<DbAlbum>( null, albumList ));
+			testable.Mock<IEventAggregator>().Setup( m => m.Publish( It.IsAny<Events.AlbumFocusRequested>())).Verifiable();
+
+			var sut = testable.ClassUnderTest;
+
+			sut.Initialize( viewModel.Object );
+
+			var uiArtistList = sut.BuildTree( filter.Object );
+			var treeNode = uiArtistList.First() as UiArtistTreeNode;
+
+			Assert.IsNotNull( treeNode );
+			treeNode.IsExpanded = true;
+
+			var albumNode = treeNode.Children.First();
+			Assert.IsNotNull( albumNode );
+
+			albumNode.IsSelected = true;
+
+			testable.Mock<IEventAggregator>().Verify();
 		}
 
 		[Test]
@@ -252,6 +333,27 @@ namespace Noise.UI.Tests.ViewModels {
 
 			Assert.IsTrue( found );
 			Assert.IsTrue( node2.IsSelected );
+		}
+
+		[Test]
+		public void CanClearSearch() {
+			var testable = new TestableStrategyArtistAlbum();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var node1 = new UiArtistTreeNode( new UiArtist { Name = "Stone Roses" }, null, null, null, null, null );
+			var node2 = new UiArtistTreeNode( new UiArtist { Name = "The Rolling Stones" }, null, null, null, null, null );
+			var artistList = new Collection<UiTreeNode> { node1, node2 };
+
+			viewModel.Setup( m => m.TreeData ).Returns( artistList );
+
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			sut.Search( "one", new [] { ExplorerStrategyArtistAlbum.cSearchOptionDefault } );
+			sut.ClearCurrentSearch();
+			var found = sut.Search( "one", new [] { ExplorerStrategyArtistAlbum.cSearchOptionDefault } );
+
+			Assert.IsTrue( found );
+			Assert.IsTrue( node1.IsSelected );
 		}
 	}
 }
