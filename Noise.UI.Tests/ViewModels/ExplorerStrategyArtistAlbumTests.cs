@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using FluentAssertions;
@@ -173,6 +174,84 @@ namespace Noise.UI.Tests.ViewModels {
 			Assert.IsNotNull( indexNode );
 
 			indexNode.DisplayText.Should().Be( "R" );
+		}
+
+		[Test]
+		public void CanSearchCaseSensitive() {
+			var testable = new TestableStrategyArtistAlbum();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var node1 = new UiArtistTreeNode( new UiArtist { Name = "Carpal Tunnel Syndrome" }, null, null, null, null, null );
+			var node2 = new UiArtistTreeNode( new UiArtist { Name = "The Rolling Stones" }, null, null, null, null, null );
+			var artistList = new Collection<UiTreeNode> { node1, node2 };
+
+			viewModel.Setup( m => m.TreeData ).Returns( artistList );
+
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			var found = sut.Search( "Rolling", new [] { ExplorerStrategyArtistAlbum.cSearchOptionDefault } );
+
+			Assert.IsTrue( found );
+			Assert.IsTrue( node2.IsSelected );
+		}
+
+		[Test]
+		public void CanSearchCaseInsensitive() {
+			var testable = new TestableStrategyArtistAlbum();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var node1 = new UiArtistTreeNode( new UiArtist { Name = "Carpal Tunnel Syndrome" }, null, null, null, null, null );
+			var node2 = new UiArtistTreeNode( new UiArtist { Name = "The Rolling Stones" }, null, null, null, null, null );
+			var artistList = new Collection<UiTreeNode> { node1, node2 };
+
+			viewModel.Setup( m => m.TreeData ).Returns( artistList );
+
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			var found = sut.Search( "roll", new [] { ExplorerStrategyArtistAlbum.cSearchIgnoreCase } );
+
+			Assert.IsTrue( found );
+			Assert.IsTrue( node2.IsSelected );
+		}
+
+		[Test]
+		public void SearchingWithSameOptionsContinuesSearch() {
+			var testable = new TestableStrategyArtistAlbum();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var node1 = new UiArtistTreeNode( new UiArtist { Name = "Stone Roses" }, null, null, null, null, null );
+			var node2 = new UiArtistTreeNode( new UiArtist { Name = "The Rolling Stones" }, null, null, null, null, null );
+			var artistList = new Collection<UiTreeNode> { node1, node2 };
+
+			viewModel.Setup( m => m.TreeData ).Returns( artistList );
+
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			sut.Search( "one", new [] { ExplorerStrategyArtistAlbum.cSearchOptionDefault } );
+			var found = sut.Search( "one", new [] { ExplorerStrategyArtistAlbum.cSearchOptionDefault } );
+
+			Assert.IsTrue( found );
+			Assert.IsTrue( node2.IsSelected );
+		}
+
+		[Test]
+		public void ChangingSearchOptionsResetsSearch() {
+			var testable = new TestableStrategyArtistAlbum();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var node1 = new UiArtistTreeNode( new UiArtist { Name = "Carpal Tunnel Syndrome" }, null, null, null, null, null );
+			var node2 = new UiArtistTreeNode( new UiArtist { Name = "The Rolling Stones" }, null, null, null, null, null );
+			var artistList = new Collection<UiTreeNode> { node1, node2 };
+
+			viewModel.Setup( m => m.TreeData ).Returns( artistList );
+
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			sut.Search( "roll", new [] { ExplorerStrategyArtistAlbum.cSearchIgnoreCase } );
+			var found = sut.Search( "ones", new [] { ExplorerStrategyArtistAlbum.cSearchOptionDefault } );
+
+			Assert.IsTrue( found );
+			Assert.IsTrue( node2.IsSelected );
 		}
 	}
 }
