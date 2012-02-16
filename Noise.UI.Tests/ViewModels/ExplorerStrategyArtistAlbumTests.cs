@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using Caliburn.Micro;
 using FluentAssertions;
+using FluentAssertions.EventMonitoring;
 using Moq;
 using NUnit.Framework;
 using Noise.Infrastructure;
@@ -11,6 +12,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
 using Noise.UI.ViewModels;
+using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.TestSupport.Mocking;
 
 namespace Noise.UI.Tests.ViewModels {
@@ -30,6 +32,9 @@ namespace Noise.UI.Tests.ViewModels {
 		[SetUp]
 		public void Setup() {
 			NoiseLogger.Current = new Mock<ILog>().Object;
+
+			// Set the ui dispatcher to run on the current thread.
+			ReusableBits.Mvvm.ViewModelSupport.Execute.ResetWithoutDispatcher();
 
 			// Set up the AutoMapper configurations.
 			MappingConfiguration.Configure();
@@ -354,6 +359,72 @@ namespace Noise.UI.Tests.ViewModels {
 
 			Assert.IsTrue( found );
 			Assert.IsTrue( node1.IsSelected );
+		}
+
+		[Test]
+		public void DatabaseChangedAddsArtistNode() {
+			var testable = new TestableStrategyArtistAlbum();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var artist = new DbArtist();
+
+			var treeData = new Collection<UiTreeNode>();
+			viewModel.Setup( m => m.TreeData ).Returns( treeData );
+			
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			sut.Handle( new Events.DatabaseItemChanged( new DbItemChangedArgs( artist, DbItemChanged.Insert )));
+
+			treeData.Should().HaveCount( 1 );			
+		}
+
+		[Test]
+		public void DatabaseChangedUpdatesArtistNode() {
+			var testable = new TestableStrategyArtistAlbum();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var artist = new DbArtist { Name = "artist name" };
+
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( It.IsAny<IDatabaseFilter>()))
+				.Returns( new DataProviderList<DbArtist>( null, new List<DbArtist> { artist }));
+
+			var treeData = new BindableCollection<UiTreeNode>();
+			viewModel.Setup( m => m.TreeData ).Returns( treeData );
+			
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+			treeData.AddRange( sut.BuildTree( null ));
+
+			var treeNode = treeData.First() as UiArtistTreeNode;
+			Assert.IsNotNull( treeNode );
+			Assert.IsNotNull( treeNode.Artist );
+			treeNode.Artist.MonitorEvents();
+
+			artist.Name = "updated name";
+			sut.Handle( new Events.DatabaseItemChanged( new DbItemChangedArgs( artist, DbItemChanged.Update )));
+
+			treeNode.Artist.ShouldRaisePropertyChangeFor( a => a.Name );
+		}
+
+		[Test]
+		public void DatabaseChangedRemovedArtistNode() {
+			var testable = new TestableStrategyArtistAlbum();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var artist = new DbArtist();
+
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( It.IsAny<IDatabaseFilter>()))
+				.Returns( new DataProviderList<DbArtist>( null, new List<DbArtist> { artist }));
+
+			var treeData = new BindableCollection<UiTreeNode>();
+			viewModel.Setup( m => m.TreeData ).Returns( treeData );
+			
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+			treeData.AddRange( sut.BuildTree( null ));
+			treeData.Should().HaveCount( 1 );
+
+			sut.Handle( new Events.DatabaseItemChanged( new DbItemChangedArgs( artist, DbItemChanged.Delete )));
+
+			treeData.Should().HaveCount( 0 );
 		}
 	}
 }
