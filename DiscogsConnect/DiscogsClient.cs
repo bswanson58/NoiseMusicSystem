@@ -22,7 +22,7 @@
             client = new HttpClient();
             client.BaseAddress = new Uri(baseAddress);
             client.MaxResponseContentBufferSize = int.MaxValue; 
-            client.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+//            client.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
         }
 
         public System.Drawing.Bitmap GetImage(string imageUri)

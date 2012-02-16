@@ -133,7 +133,7 @@ namespace Noise.UI.ViewModels {
 				if( item is DbArtist ) {
 					UpdateArtist( item as DbArtist, eventArgs.ItemChangedArgs.Change );
 				}
-				else {
+				if( item is DbAlbum ) {
 					UpdateAlbum( item as DbAlbum, eventArgs.ItemChangedArgs.Change );
 				}
 			}
