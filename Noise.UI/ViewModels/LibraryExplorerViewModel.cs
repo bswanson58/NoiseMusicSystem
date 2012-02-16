@@ -41,7 +41,7 @@ namespace Noise.UI.ViewModels {
 		public	IEnumerable<IExplorerViewStrategy>		ViewStrategies { get; private set; }
 
 		public LibraryExplorerViewModel( IEnumerable<IExplorerViewStrategy> viewStrategies, PlaybackFocusTracker focusTracker ) {
-			ViewStrategies = viewStrategies;
+			ViewStrategies = viewStrategies.ToList();
 			mFocusTracker = focusTracker;
 
 			mExplorerFilter = new LibraryExplorerFilter { IsEnabled = false };
@@ -65,7 +65,7 @@ namespace Noise.UI.ViewModels {
 				}
 			}
 
-			var strategyList = ViewStrategies.ToList();
+			var strategyList = ViewStrategies;
 			foreach( var strategy in strategyList ) {
 				strategy.Initialize( this );
 				strategy.UseSortPrefixes( mEnableSortPrefixes, mSortPrefixes );
