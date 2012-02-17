@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Data;
-using Noise.Infrastructure.Support;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
 	public class UiArtistTreeNode : UiTreeNode {
@@ -11,11 +10,11 @@ namespace Noise.UI.Dto {
 		private readonly Action<UiArtistTreeNode>	mChildFillAction;
 		private	bool								mRequiresChildren;
 		private bool								mImSorting;
-		private readonly ObservableCollectionEx<UiAlbumTreeNode>	mChildren;
+		private readonly BindableCollection<UiAlbumTreeNode>	mChildren;
+		private readonly BindableCollection<SortDescription>	mSortDescriptions; 
 
 		public	UiArtist				Artist { get; private set; }
 		public	UiDecadeTreeNode		Parent { get; private set; }
-		public	CollectionViewSource	ChildrenView { get; private set; }
 
 		public UiArtistTreeNode( UiArtist artist,
 								 Action<UiArtistTreeNode> onSelect, Action<UiArtistTreeNode> onExpand, Action<UiArtistTreeNode> childFill,
@@ -33,11 +32,8 @@ namespace Noise.UI.Dto {
 			mChildFillAction = childFill;
 			mRequiresChildren = true;
 
-			mChildren = new ObservableCollectionEx<UiAlbumTreeNode>();
-			mChildren.Add( new UiAlbumTreeNode( new UiAlbum { Name = "Loading album list..." }, null, null ));
-
-			ChildrenView = new CollectionViewSource { Source = mChildren };
-			ChildrenView.SortDescriptions.Add( new SortDescription( "Album.Name", ListSortDirection.Ascending ));
+			mChildren = new BindableCollection<UiAlbumTreeNode> { new UiAlbumTreeNode( new UiAlbum { Name = "Loading album list..." }, null, null )};
+			mSortDescriptions = new BindableCollection<SortDescription> { new SortDescription( "Album.Name", ListSortDirection.Ascending )};
 
 			OnSortChanged( sortStrategy );
 			if( sortChanged != null ) {
@@ -45,32 +41,29 @@ namespace Noise.UI.Dto {
 			}
 		}
 
-		public ObservableCollectionEx<UiAlbumTreeNode> Children {
+		public BindableCollection<UiAlbumTreeNode> Children {
 			get{ return( mChildren ); }
 		}
 
+		public BindableCollection<SortDescription> SortDescriptions {
+			get{ return( mSortDescriptions ); }
+		} 
+
 		public void SetChildren( IEnumerable<UiAlbumTreeNode> children ) {
-			mChildren.SuspendNotification();
 			mChildren.Clear();
 			mChildren.AddRange( children );
-			mChildren.ResumeNotification();
 
 			mRequiresChildren = false;
 		}
 
 		private void OnSortChanged( ViewSortStrategy strategy ) {
-			ChildrenView.SortDescriptions.Clear();
-
-			if( strategy != null ) {
-				foreach( var sort in strategy.SortDescriptions ) {
-					ChildrenView.SortDescriptions.Add( sort );
-				}
-			}
+			mSortDescriptions.Clear();
+			mSortDescriptions.AddRange( strategy.SortDescriptions );
 		}
 
 		public void UpdateSort() {
 			mImSorting = true;
-			ChildrenView.View.Refresh();
+			mSortDescriptions.Refresh();
 			mImSorting = false;
 		}
 

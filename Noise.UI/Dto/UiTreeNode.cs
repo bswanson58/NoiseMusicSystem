@@ -1,7 +1,7 @@
 ﻿using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
-	public class UiTreeNode : AutomaticPropertyBase {
+	public class UiTreeNode : AutomaticCommandBase {
 		public bool IsSelected {
 			get { return( Get( () => IsSelected )); }
 			set {

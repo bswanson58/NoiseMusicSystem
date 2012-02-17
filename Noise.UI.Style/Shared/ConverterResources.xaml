@@ -1,15 +1,16 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters;assembly=Noise.UI">
 
-    <ValueConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
-    <ValueConverters:EmptyStringVisibilityConverter x:Key="EmptyStringVisibilityConverter"/>
+    <ValueConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
+    <ValueConverters:EmptyStringVisibilityConverter x:Key="EmptyStringVisibilityConverter" />
     <ValueConverters:ByteImageConverter x:Key="ByteImageConverter" />
-    <ValueConverters:LevelConverter x:Key="LevelConverter"/>
-    <ValueConverters:NumericTextMultitudeConverter x:Key="NumericTextMultitudeConverter"/>
-    <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter"/>
-    <ValueConverters:RelativeTimeConverter x:Key="RelativeTimeConverter"/>
-    <ValueConverters:StringTruncateConverter x:Key="StringTruncateConverter"/>
-    <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter"/>
-    <ValueConverters:VolumeLevelConverter x:Key="VolumeLevelConverter"/>
+    <ValueConverters:LevelConverter x:Key="LevelConverter" />
+    <ValueConverters:NumericTextMultitudeConverter x:Key="NumericTextMultitudeConverter" />
+    <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter" />
+    <ValueConverters:RelativeTimeConverter x:Key="RelativeTimeConverter" />
+    <ValueConverters:StringTruncateConverter x:Key="StringTruncateConverter" />
+    <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter" />
+    <ValueConverters:VolumeLevelConverter x:Key="VolumeLevelConverter" />
+    <ValueConverters:CollectionViewConverter x:Key="CollectionViewConverter" x:Shared="False" />
 </ResourceDictionary>
