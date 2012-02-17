@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows.Data;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
 	public class UiDecadeTreeNode : UiTreeNode {
@@ -12,10 +14,11 @@ namespace Noise.UI.Dto {
 		private readonly Action<UiDecadeTreeNode>		mExpandAction;
 		private readonly Action<UiDecadeTreeNode>		mChildFillAction;
 		private readonly Action<UiDecadeTreeNode>		mLinkAction;
+		private readonly List<SortDescription>			mSortDescriptions; 
+		private	CollectionViewSource					mChildrenView;
 		private bool									mRequiresChildren;
-		private readonly ObservableCollectionEx<UiArtistTreeNode>	mChildren;
+		private readonly BindableCollection<UiArtistTreeNode>	mChildren;
 
-		public	CollectionViewSource					ChildrenView { get; private set; }
 		public	LinkNode								DecadeWebsite { get; private set; }
 
 		public UiDecadeTreeNode( DbDecadeTag tag, Action<UiDecadeTreeNode> onSelect, Action<UiDecadeTreeNode> onExpand,
@@ -27,30 +30,59 @@ namespace Noise.UI.Dto {
 			mLinkAction = linkAction;
 			mChildFillAction = childFill;
 
-			mChildren = new ObservableCollectionEx<UiArtistTreeNode>();
-			ChildrenView = new CollectionViewSource { Source = mChildren };
-			OnSortChanged( sortStrategy );
+			mSortDescriptions = new List<SortDescription>();
+			mChildren = new BindableCollection<UiArtistTreeNode> {
+					        new UiArtistTreeNode( null, new UiArtist { DisplayName = "Loading artist list..." }, null, null, null, null, null )};
+			mRequiresChildren = true;
+
+			if( sortStrategy != null ) {
+				SetSortDescriptions( sortStrategy.SortDescriptions );
+			}
 			if( sortChanged != null ) {
 				sortChanged.Subscribe( OnSortChanged );
 			}
-			mChildren.Add( new UiArtistTreeNode( null, new UiArtist { DisplayName = "Loading artist list..." }, null, null, null, null, null ));
-			mRequiresChildren = true;
 
 			if(!string.IsNullOrWhiteSpace( tag.Website )) {
 				DecadeWebsite = new LinkNode( "Decade Info", 0, OnLinkClick );
 			}
 		}
 
+		public Collection<UiArtistTreeNode> Children {
+			get{ return( mChildren ); }
+		}
+
+		public ICollectionView ChildrenView {
+			get {
+				if( mChildrenView == null ) {
+					mChildrenView = new CollectionViewSource { Source = mChildren };
+				}
+
+				return( mChildrenView.View );
+			} 
+		}
+
 		public void UpdateSort() {
-			ChildrenView.View.Refresh();
+			mChildrenView.View.Refresh();
 		}
 
 		private void OnSortChanged( ViewSortStrategy strategy ) {
-			ChildrenView.SortDescriptions.Clear();
-
 			if( strategy != null ) {
-				foreach( var sort in strategy.SortDescriptions ) {
-					ChildrenView.SortDescriptions.Add( sort );
+				SetSortDescriptions( strategy.SortDescriptions );
+			}
+		}
+
+		private void SetSortDescriptions( IEnumerable<SortDescription> sortDescriptions ) {
+			if( sortDescriptions != null ) {
+				if( mChildrenView != null ) {
+					mChildrenView.SortDescriptions.Clear();
+
+					foreach( var sortDescription in sortDescriptions ) {
+						mChildrenView.SortDescriptions.Add( sortDescription );
+					}
+				}
+				else {
+					mSortDescriptions.Clear();
+					mSortDescriptions.AddRange( sortDescriptions );
 				}
 			}
 		}
@@ -73,10 +105,8 @@ namespace Noise.UI.Dto {
 		}
 
 		public void SetChildren( IEnumerable<UiArtistTreeNode> children ) {
-			mChildren.SuspendNotification();
 			mChildren.Clear();
 			mChildren.AddRange( children );
-			mChildren.ResumeNotification();
 
 			mRequiresChildren = false;
 		}
@@ -95,10 +125,6 @@ namespace Noise.UI.Dto {
 
 		public DbDecadeTag Tag {
 			get{ return( mDecadeTag ); }
-		}
-
-		public ObservableCollectionEx<UiArtistTreeNode> Children {
-			get{ return( mChildren ); }
 		}
 
 		public override string IndexString {
