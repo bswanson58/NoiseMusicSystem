@@ -37,7 +37,7 @@ namespace Noise.UI.ViewModels {
 		private IEnumerable<string>				mSortPrefixes;
 		private IEnumerator<UiArtistTreeNode>	mTreeEnumerator;
 		private string							mLastSearchOptions;
-		private TaskHandler						mArtistPopulateTask;
+		private TaskHandler						mChildPopulateTask;
 
 		private IEnumerable<ViewSortStrategy>	mArtistSorts;
 		private ViewSortStrategy				mCurrentArtistSort;
@@ -206,19 +206,19 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		internal TaskHandler ArtistPopulateTask {
+		internal TaskHandler ChildPopulateTask {
 			get {
-				if( mArtistPopulateTask == null ) {
-					mArtistPopulateTask = new TaskHandler();
+				if( mChildPopulateTask == null ) {
+					mChildPopulateTask = new TaskHandler();
 				}
 
-				return( mArtistPopulateTask );
+				return( mChildPopulateTask );
 			}
-			set { mArtistPopulateTask = value; }
+			set { mChildPopulateTask = value; }
 		} 
 
 		private void FillDecadeArtists( UiDecadeTreeNode decadeNode ) {
-			ArtistPopulateTask.StartTask( () => {
+			ChildPopulateTask.StartTask( () => {
 											var	artistIdList = mTagManager.ArtistListForDecade( decadeNode.Tag.DbId );
 											var childNodes = ( from artistId in artistIdList
 															   select mArtistProvider.GetArtist( artistId )
@@ -231,27 +231,30 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void FillArtistAlbums( UiArtistTreeNode artistNode ) {
-			var	retValue = new List<UiAlbumTreeNode>();
-			var artist = artistNode.Artist;
+			ChildPopulateTask.StartTask( () => {
+											var	albumList = new List<UiAlbumTreeNode>();
 
-			if( artist != null ) {
-				var albumIdList = mTagManager.AlbumListForDecade( artistNode.Artist.DbId, artistNode.Parent.Tag.DbId );
+											if(( artistNode != null ) &&
+											   ( artistNode.Artist != null )) {
+												var albumIdList = mTagManager.AlbumListForDecade( artistNode.Artist.DbId, artistNode.Parent.Tag.DbId );
 
-				foreach( var albumId in albumIdList ) {
-					var dbAlbum = mAlbumProvider.GetAlbum( albumId );
+												foreach( var albumId in albumIdList ) {
+													var dbAlbum = mAlbumProvider.GetAlbum( albumId );
 
-					if( dbAlbum != null ) {
-						var uiAlbum = new UiAlbum();
-						UpdateUiAlbum( uiAlbum, dbAlbum );
-						var treeNode = new UiAlbumTreeNode( uiAlbum, OnAlbumSelect, OnAlbumPlay );
+													if( dbAlbum != null ) {
+														var uiAlbum = new UiAlbum();
+														UpdateUiAlbum( uiAlbum, dbAlbum );
+														var treeNode = new UiAlbumTreeNode( uiAlbum, OnAlbumSelect, OnAlbumPlay );
 
-						retValue.Add( treeNode );
-					}
-				}
-			}
+														albumList.Add( treeNode );
+													}
+												}
 
-			retValue.Sort( ( node1, node2 ) => node1.Album.PublishedYear.CompareTo( node2.Album.PublishedYear ));
-			artistNode.SetChildren( retValue );
+												artistNode.SetChildren( albumList );
+											}
+			                             },
+										 () => { },
+										 ex => NoiseLogger.Current.LogException( "ExplorerStrategyDecade:FillArtistAlbums", ex ));
 		}
 
 		private UiArtistTreeNode CreateArtistNode( DbArtist dbArtist, UiDecadeTreeNode parent ) {

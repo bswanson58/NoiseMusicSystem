@@ -34,7 +34,7 @@ namespace Noise.UI.Tests.ViewModels {
 				var		retValue = base.ClassUnderTest;
 
 				if( retValue != null ) {
-					retValue.ArtistPopulateTask = new TaskHandler( mTaskScheduler, mTaskScheduler );
+					retValue.ChildPopulateTask = new TaskHandler( mTaskScheduler, mTaskScheduler );
 				}
 
 				return( retValue );
@@ -133,6 +133,45 @@ namespace Noise.UI.Tests.ViewModels {
 
 			Assert.IsNotNull( treeNode.Children );
 			treeNode.Children.Should().HaveCount( 2 );
+		}
+
+		[Test]
+		public void ExpandingArtistNodeShouldPopulateAlbums() {
+			var testable = new TestableExplorerStrategyDecade();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var filter = new Mock<IDatabaseFilter>();
+			var decadeList = new List<DbDecadeTag> { new DbDecadeTag( " one" ), new DbDecadeTag( "two" ) };
+
+			testable.Mock<ITagManager>().Setup( m => m.DecadeTagList ).Returns( decadeList );
+
+			var artist1 = new DbArtist { Name = "one" };
+			var artist2 = new DbArtist { Name = "two" };
+			var artistList = new List<long> { artist1.DbId, artist2.DbId };
+			testable.Mock<ITagManager>().Setup( m => m.ArtistListForDecade( It.IsAny<long>())).Returns( artistList );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( artist1.DbId )).Returns( artist1 );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( artist2.DbId )).Returns( artist2 );
+
+			var album1 = new DbAlbum { Name = "album1" };
+			var album2 = new DbAlbum { Name = "album2" };
+			var albumList = new List<long> { album1.DbId, album2.DbId };
+			testable.Mock<ITagManager>().Setup( m => m.AlbumListForDecade( It.IsAny<long>(), It.IsAny<long>())).Returns( albumList );
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( album1.DbId )).Returns( album1 );
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( album2.DbId )).Returns( album2 );
+
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			var uiTagList = sut.BuildTree( filter.Object );
+			var treeNode = uiTagList.First() as UiDecadeTreeNode;
+
+			Assert.IsNotNull( treeNode );
+			treeNode.IsExpanded = true;
+
+			var artistNode = treeNode.Children.First();
+			Assert.IsNotNull( artistNode );
+			artistNode.IsExpanded = true;
+
+			artistNode.Children.Should().HaveCount( 2 );
 		}
 	}
 }
