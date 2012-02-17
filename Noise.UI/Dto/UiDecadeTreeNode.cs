@@ -42,9 +42,8 @@ namespace Noise.UI.Dto {
 				sortChanged.Subscribe( OnSortChanged );
 			}
 
-			if(!string.IsNullOrWhiteSpace( tag.Website )) {
-				DecadeWebsite = new LinkNode( "Decade Info", 0, OnLinkClick );
-			}
+			DecadeWebsite = !string.IsNullOrWhiteSpace( tag.Website ) ? new LinkNode( "Decade Info", 0, OnLinkClick ) :
+																		new LinkNode( string.Empty );
 		}
 
 		public Collection<UiArtistTreeNode> Children {
