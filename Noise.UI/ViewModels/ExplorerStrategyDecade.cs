@@ -12,6 +12,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
 using Noise.UI.Dto;
+using Noise.UI.Support;
 using Observal.Extensions;
 using ReusableBits.Mvvm.ViewModelSupport;
 using Condition = CuttingEdge.Conditions.Condition;
@@ -36,6 +37,7 @@ namespace Noise.UI.ViewModels {
 		private IEnumerable<string>				mSortPrefixes;
 		private IEnumerator<UiArtistTreeNode>	mTreeEnumerator;
 		private string							mLastSearchOptions;
+		private TaskHandler						mArtistPopulateTask;
 
 		private IEnumerable<ViewSortStrategy>	mArtistSorts;
 		private ViewSortStrategy				mCurrentArtistSort;
@@ -204,14 +206,28 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void FillDecadeArtists( UiDecadeTreeNode decadeNode ) {
-			var	artistIdList = mTagManager.ArtistListForDecade( decadeNode.Tag.DbId );
-			var childNodes = ( from artistId in artistIdList
-			                   select mArtistProvider.GetArtist( artistId )
-			                   into dbArtist where dbArtist != null select CreateArtistNode( dbArtist, decadeNode )).ToList();
+		internal TaskHandler ArtistPopulateTask {
+			get {
+				if( mArtistPopulateTask == null ) {
+					mArtistPopulateTask = new TaskHandler();
+				}
 
-//			childNodes.Sort( ( node1, node2 ) => string.Compare( node1.Artist.SortName, node2.Artist.SortName ));
-			decadeNode.SetChildren( childNodes );
+				return( mArtistPopulateTask );
+			}
+			set { mArtistPopulateTask = value; }
+		} 
+
+		private void FillDecadeArtists( UiDecadeTreeNode decadeNode ) {
+			ArtistPopulateTask.StartTask( () => {
+											var	artistIdList = mTagManager.ArtistListForDecade( decadeNode.Tag.DbId );
+											var childNodes = ( from artistId in artistIdList
+															   select mArtistProvider.GetArtist( artistId )
+															   into dbArtist where dbArtist != null select CreateArtistNode( dbArtist, decadeNode )).ToList();
+			                              	
+											decadeNode.SetChildren( childNodes );
+			                              },
+										  () => { },
+										  ex => NoiseLogger.Current.LogException( "ExplorerStrategyDecade:FillDecadeArtists", ex ));
 		}
 
 		private void FillArtistAlbums( UiArtistTreeNode artistNode ) {
