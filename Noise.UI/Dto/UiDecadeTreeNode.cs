@@ -61,7 +61,9 @@ namespace Noise.UI.Dto {
 		}
 
 		public void UpdateSort() {
-			mChildrenView.View.Refresh();
+			if( mChildrenView != null ) {
+				mChildrenView.View.Refresh();
+			}
 		}
 
 		private void OnSortChanged( ViewSortStrategy strategy ) {

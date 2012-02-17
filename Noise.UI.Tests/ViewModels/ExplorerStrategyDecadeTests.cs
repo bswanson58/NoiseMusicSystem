@@ -425,5 +425,50 @@ namespace Noise.UI.Tests.ViewModels {
 			Assert.IsTrue( found );
 			Assert.IsTrue( node1.IsSelected );
 		}
+
+		[Test]
+		public void DatabaseChangeUpdatesArtistNode() {
+			var testable = new TestableExplorerStrategyDecade();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var artist = new DbArtist { Name = "artist name" };
+			var node = new UiArtistTreeNode( new UiArtist { DbId = artist.DbId, Name = artist.Name }, null, null, null, null, null );
+			var artistNodes = new Collection<UiArtistTreeNode> { node };
+			var decadeNode = new UiDecadeTreeNode( new DbDecadeTag( "decade" ), null, null, null, null, null, null );
+			decadeNode.SetChildren( artistNodes );
+
+			viewModel.Setup( m => m.TreeData ).Returns( new Collection<UiTreeNode> { decadeNode });
+
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			artist.Name = "updated name";
+			sut.Handle( new Events.DatabaseItemChanged( new DbItemChangedArgs( artist, DbItemChanged.Update )));
+
+			node.Artist.Name.Should().Be( artist.Name );
+		}
+
+		[Test]
+		public void DatabaseChangeUpdatesAlbumNode() {
+			var testable = new TestableExplorerStrategyDecade();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var artist = new DbArtist();
+			var album = new DbAlbum { Name = "original name", Artist = artist.DbId };
+			var albumNode = new UiAlbumTreeNode( new UiAlbum { DbId = album.DbId, Name = album.Name }, null, null );
+			var artistNode = new UiArtistTreeNode( new UiArtist { DbId = artist.DbId, Name = artist.Name }, null, null, null, null, null );
+			artistNode.SetChildren( new List<UiAlbumTreeNode> { albumNode });
+			var artistNodes = new Collection<UiArtistTreeNode> { artistNode };
+			var decadeNode = new UiDecadeTreeNode( new DbDecadeTag( "decade" ), null, null, null, null, null, null );
+			decadeNode.SetChildren( artistNodes );
+
+			viewModel.Setup( m => m.TreeData ).Returns( new Collection<UiTreeNode> { decadeNode });
+
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			album.Name = "changed name";
+			sut.Handle( new Events.DatabaseItemChanged( new DbItemChangedArgs( album, DbItemChanged.Update )));
+
+			albumNode.Album.Name.Should().Be( album.Name );
+		}
 	}
 }

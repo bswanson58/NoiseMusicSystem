@@ -14,7 +14,6 @@ using Noise.UI.Adapters;
 using Noise.UI.Dto;
 using Noise.UI.Support;
 using Observal.Extensions;
-using ReusableBits.Mvvm.ViewModelSupport;
 using Condition = CuttingEdge.Conditions.Condition;
 
 namespace Noise.UI.ViewModels {
@@ -130,60 +129,52 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.DatabaseItemChanged eventArgs ) {
 			var item = eventArgs.ItemChangedArgs.Item;
 
-			if( item is DbArtist ) {
-				Execute.OnUIThread( () => {
-					var artist = item as DbArtist;
+			if( item != null ) {
+				if( item is DbArtist ) {
+					UpdateArtist( item as DbArtist, eventArgs.ItemChangedArgs.Change );
+				}
 
-					if( artist != null ) {
-						foreach( var decadeNode in mViewModel.TreeData.OfType<UiDecadeTreeNode>() ) {
-							var treeNode = ( from UiArtistTreeNode node in decadeNode.Children
-											 where artist.DbId == node.Artist.DbId select node ).FirstOrDefault();
-
-							switch( eventArgs.ItemChangedArgs.Change ) {
-								case DbItemChanged.Update:
-									if( treeNode != null ) {
-										UpdateUiArtist( treeNode.Artist, artist );
-
-										decadeNode.UpdateSort();
-									}
-									break;
-
-								case DbItemChanged.Insert:
-									decadeNode.Children.Add( CreateArtistNode( artist, decadeNode ));
-									break;
-
-								case DbItemChanged.Delete:
-									if( treeNode != null ) {
-										mViewModel.TreeData.Remove( treeNode );
-									}
-									break;
-							}
-						}
-					}
-				} );
+				if( item is DbAlbum ) {
+					UpdateAlbum( item as DbAlbum, eventArgs.ItemChangedArgs.Change );
+				}
 			}
-			else if(( item is DbAlbum ) &&
-			        ( eventArgs.ItemChangedArgs.Change == DbItemChanged.Update )) {
-				Execute.OnUIThread( () => {
-					var dbAlbum = item as DbAlbum;
+		}
 
-					if( dbAlbum != null ) {
-						foreach( var decadeNode in mViewModel.TreeData.OfType<UiDecadeTreeNode>() ) {
-							var treeNode = ( from UiArtistTreeNode node in decadeNode.Children
-											 where dbAlbum.Artist == node.Artist.DbId select node ).FirstOrDefault();
-							if( treeNode != null ) {
-								var uiAlbum = ( from UiAlbumTreeNode a in treeNode.Children
-												where a.Album.DbId == dbAlbum.DbId select a.Album ).FirstOrDefault();
+		private void UpdateArtist( DbArtist artist, DbItemChanged reason ) {
+			if( artist != null ) {
+				foreach( var decadeNode in mViewModel.TreeData.OfType<UiDecadeTreeNode>() ) {
+					var treeNode = ( from UiArtistTreeNode node in decadeNode.Children
+										where artist.DbId == node.Artist.DbId select node ).FirstOrDefault();
+					if( treeNode != null ) {
+						switch( reason ) {
+							case DbItemChanged.Update:
+								UpdateUiArtist( treeNode.Artist, artist );
 
-								if( uiAlbum != null ) {
-									UpdateUiAlbum( uiAlbum, dbAlbum );
-
-									treeNode.UpdateSort();
-								}
-							}
+								decadeNode.UpdateSort();
+								break;
 						}
 					}
-				});
+				}
+			}
+		}
+
+		private void UpdateAlbum( DbAlbum album, DbItemChanged reason ) {
+			if(( reason == DbItemChanged.Update ) &&
+			   ( album != null )) {
+				foreach( var decadeNode in mViewModel.TreeData.OfType<UiDecadeTreeNode>() ) {
+					var treeNode = ( from UiArtistTreeNode node in decadeNode.Children
+									 where album.Artist == node.Artist.DbId select node ).FirstOrDefault();
+					if( treeNode != null ) {
+						var uiAlbum = ( from UiAlbumTreeNode a in treeNode.Children
+										where a.Album.DbId == album.DbId select a.Album ).FirstOrDefault();
+
+						if( uiAlbum != null ) {
+							UpdateUiAlbum( uiAlbum, album );
+
+							treeNode.UpdateSort();
+						}
+					}
+				}
 			}
 		}
 
