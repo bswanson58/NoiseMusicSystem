@@ -330,8 +330,9 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
-		public bool Search( string searchText, IEnumerable<string> searchOptions ) {
+		public bool Search( string searchText, IEnumerable<string> searchOptionsList ) {
 			var retValue = false;
+			var searchOptions = searchOptionsList.ToList();
 
 			var theseOptions = String.Concat( searchOptions );
 			if(!theseOptions.Equals( mLastSearchOptions )) {
@@ -363,8 +364,9 @@ namespace Noise.UI.ViewModels {
 			return ( retValue );
 		}
 
-		private IEnumerable<UiArtistTreeNode> FindMatches( string searchText, IEnumerable<string> options ) {
+		private IEnumerable<UiArtistTreeNode> FindMatches( string searchText, IEnumerable<string> optionList ) {
 			var	retValue = new List<UiArtistTreeNode>();
+			var options = optionList.ToList();
 
 			foreach( var decadeNode in mViewModel.TreeData.OfType<UiDecadeTreeNode>() ) {
 				if( decadeNode.RequiresChildren ) {

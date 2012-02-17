@@ -335,8 +335,9 @@ namespace Noise.UI.ViewModels {
 			mAlbumSortSubject.OnNext( mCurrentAlbumSort );
 		}
 
-		public bool Search( string searchText, IEnumerable<string> searchOptions ) {
+		public bool Search( string searchText, IEnumerable<string> searchOptionsList ) {
 			var retValue = false;
+			var searchOptions = searchOptionsList.ToList();
 
 			var theseOptions = String.Concat( searchOptions );
 			if(!theseOptions.Equals( mLastSearchOptions )) {
