@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
 using FluentAssertions;
@@ -11,19 +12,37 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
+using Noise.UI.Support;
 using Noise.UI.ViewModels;
 using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.TestSupport.Mocking;
+using ReusableBits.TestSupport.Threading;
 
 namespace Noise.UI.Tests.ViewModels {
 	internal class TestableStrategyArtistAlbum : Testable<ExplorerStrategyArtistAlbum> {
 		private readonly DataTemplate	mDataTemplate;
-
+		private readonly TaskScheduler	mTaskScheduler;
+		
 		public TestableStrategyArtistAlbum() {
 			mDataTemplate = new DataTemplate();
 
+			// Set tpl tasks to use the current thread only.
+			mTaskScheduler = new CurrentThreadTaskScheduler();
+
 			Mock<IResourceProvider>().Setup( m => m.RetrieveTemplate( It.IsAny<string>())).Returns( mDataTemplate );
 			Mock<ITagManager>().Setup(  m => m.GetGenre( It.IsAny<long>())).Returns( new DbGenre( 1 ) { Name = "test genre" });
+		}
+
+		public override ExplorerStrategyArtistAlbum ClassUnderTest {
+			get {
+				var		retValue = base.ClassUnderTest;
+
+				if( retValue != null ) {
+					retValue.AlbumPopulateTask = new TaskHandler( mTaskScheduler, mTaskScheduler );
+				}
+
+				return( retValue );
+			}
 		}
 	}
 

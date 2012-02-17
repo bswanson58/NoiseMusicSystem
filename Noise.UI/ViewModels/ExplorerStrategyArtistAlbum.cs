@@ -13,6 +13,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
 using Noise.UI.Dto;
+using Noise.UI.Support;
 using Observal.Extensions;
 using ReusableBits.Mvvm.ViewModelSupport;
 using Condition = CuttingEdge.Conditions.Condition;
@@ -38,6 +39,7 @@ namespace Noise.UI.ViewModels {
 		private IEnumerable<string>				mSortPrefixes;
 		private IEnumerator<UiArtistTreeNode>	mTreeEnumerator;
 		private string							mLastSearchOptions;
+		private TaskHandler						mAlbumPopulateTask;
 
 		private IEnumerable<ViewSortStrategy>	mArtistSorts;
 		private ViewSortStrategy				mCurrentArtistSort;
@@ -258,22 +260,36 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void FillChildren( UiArtistTreeNode parent ) {
-			var	retValue = new List<UiAlbumTreeNode>();
-			var artist = parent.Artist;
-
-			if( artist != null ) {
-				using( var albumList = mAlbumProvider.GetAlbumList( artist.DbId )) {
-					foreach( var dbAlbum in from DbAlbum album in albumList.List orderby album.Name select album ) {
-						var uiAlbum = new UiAlbum { DisplayGenre = mTagManager.GetGenre( dbAlbum.Genre ) };
-						Mapper.DynamicMap( dbAlbum, uiAlbum );
-
-						retValue.Add( new UiAlbumTreeNode( uiAlbum, OnAlbumSelect, OnAlbumPlay ));
-					}
+		internal TaskHandler AlbumPopulateTask {
+			get {
+				if( mAlbumPopulateTask == null ) {
+					mAlbumPopulateTask = new TaskHandler();
 				}
-			}
 
-			parent.SetChildren( retValue );
+				return( mAlbumPopulateTask );
+			}
+			set { mAlbumPopulateTask = value; }
+		}
+
+		private void FillChildren( UiArtistTreeNode parent ) {
+			AlbumPopulateTask.StartTask( () => {
+			                             	var albums = new List<UiAlbumTreeNode>();
+
+											if(( parent != null ) &&
+											   ( parent.Artist != null )) {
+												using( var albumList = mAlbumProvider.GetAlbumList( parent.Artist.DbId )) {
+													foreach( var dbAlbum in from DbAlbum album in albumList.List orderby album.Name select album ) {
+														var uiAlbum = new UiAlbum { DisplayGenre = mTagManager.GetGenre( dbAlbum.Genre ) };
+														Mapper.DynamicMap( dbAlbum, uiAlbum );
+
+														albums.Add( new UiAlbumTreeNode( uiAlbum, OnAlbumSelect, OnAlbumPlay ));
+													}
+												}
+												parent.SetChildren( albums );
+											}
+			                             },
+										 () => { },
+										 ex => NoiseLogger.Current.LogException( "ExplorerStrategyArtistAlbum:FillChildren", ex ));
 		}
 
 		private void OnArtistSelect( UiArtistTreeNode artistNode ) {
