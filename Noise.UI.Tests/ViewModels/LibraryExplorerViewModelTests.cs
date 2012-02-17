@@ -1,15 +1,37 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
+using Noise.UI.Support;
 using Noise.UI.ViewModels;
 using ReusableBits.TestSupport.Mocking;
+using ReusableBits.TestSupport.Threading;
 
 namespace Noise.UI.Tests.ViewModels {
-	internal class TestableLibraryExplorerViewModel : Testable<LibraryExplorerViewModel> { }
+	internal class TestableLibraryExplorerViewModel : Testable<LibraryExplorerViewModel> {
+		private readonly TaskScheduler		mTaskScheduler;
+		
+		public TestableLibraryExplorerViewModel() {
+			// Set tpl tasks to use the current thread only.
+			mTaskScheduler = new CurrentThreadTaskScheduler();
+		}
+
+		public override LibraryExplorerViewModel ClassUnderTest {
+			get {
+				var		retValue = base.ClassUnderTest;
+
+				if( retValue != null ) {
+					retValue.TreeBuilderTask = new TaskHandler( mTaskScheduler, mTaskScheduler );
+				}
+
+				return( retValue );
+			}
+		}
+	}
 
 	[TestFixture]
 	public class LibraryExplorerViewModelTests {
@@ -27,7 +49,7 @@ namespace Noise.UI.Tests.ViewModels {
 		}
 
 		[Test]
-		public void DefaultViewStrategyShouldBeActivatedOnStartup() {
+		public void DefaultViewStrategyShouldBeActivatedOnTreeDataAccess() {
 			var strategy = new Mock<IExplorerViewStrategy>();
 			var testable = new TestableLibraryExplorerViewModel();
 			testable.Inject( strategy.Object );
@@ -35,7 +57,9 @@ namespace Noise.UI.Tests.ViewModels {
 			strategy.Setup( m => m.IsDefaultStrategy ).Returns( true );
 			strategy.Setup( m => m.Activate()).Verifiable();
 
-			 testable.CreateClassUnderTest();
+			var sut = testable.ClassUnderTest;
+			var treeData = sut.TreeData;
+			Assert.IsNotNull( treeData );
 
 			strategy.Verify();
 		}
@@ -81,6 +105,8 @@ namespace Noise.UI.Tests.ViewModels {
 			strategy2.Setup( m => m.Activate()).Verifiable();
 
 			var sut = testable.ClassUnderTest;
+			var treeData = sut.TreeData;
+			Assert.IsNotNull( treeData );
 			sut.SelectedStrategy = strategy2.Object;
 
 			strategy1.Verify();

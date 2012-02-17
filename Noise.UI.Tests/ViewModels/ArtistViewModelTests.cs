@@ -17,7 +17,6 @@ namespace Noise.UI.Tests.ViewModels {
 	internal class TestableArtistViewModel : Testable<ArtistViewModel> {
 		private readonly TaskScheduler		mTaskScheduler;
  
-
 		public TestableArtistViewModel() {
 			// Set tpl tasks to use the current thread only.
 			mTaskScheduler = new CurrentThreadTaskScheduler();

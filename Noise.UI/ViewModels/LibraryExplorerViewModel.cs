@@ -4,12 +4,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.UI.Adapters;
 using Noise.UI.Behaviours;
 using Noise.UI.Behaviours.EventCommandTriggers;
 using Noise.UI.Controls;
 using Noise.UI.Dto;
+using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
@@ -32,6 +34,7 @@ namespace Noise.UI.ViewModels {
 		private readonly LibraryExplorerFilter			mExplorerFilter;
 		private readonly bool							mEnableSortPrefixes;
 		private readonly List<string>					mSortPrefixes;
+		private TaskHandler								mTreeBuilderTask;
 		private readonly BindableCollection<UiTreeNode>	mTreeItems;
 		private readonly BindableCollection<IndexNode>	mIndexItems;
 		private readonly BindableCollection<SortDescription>	mTreeSortDescriptions; 
@@ -71,7 +74,7 @@ namespace Noise.UI.ViewModels {
 				strategy.UseSortPrefixes( mEnableSortPrefixes, mSortPrefixes );
 			}
 
-			SelectedStrategy = ( from strategy in strategyList where strategy.IsDefaultStrategy select strategy ).FirstOrDefault();
+			// Selecting a strategy is deferred until tree data is requested.
 		}
 
 		public IExplorerViewStrategy SelectedStrategy {
@@ -100,9 +103,25 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		internal TaskHandler TreeBuilderTask {
+			get {
+				if( mTreeBuilderTask == null ) {
+					mTreeBuilderTask = new TaskHandler();
+				}
+
+				return( mTreeBuilderTask );
+			}
+
+			set{ mTreeBuilderTask = value; }
+		}
+
 		private void UpdateTree() {
-			PopulateTree( BuildTree());
-			UpdateIndex();
+			TreeBuilderTask.StartTask( () => {
+											PopulateTree( BuildTree());
+											UpdateIndex();
+			                           },
+									   () => { },
+									   ex => NoiseLogger.Current.LogException( "LibraryExplorerViewModel:UpdateTree", ex ));
 		}
 
 		private IEnumerable<UiTreeNode> BuildTree() {
@@ -123,7 +142,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public Collection<UiTreeNode> TreeData {
-			get { return( mTreeItems ); }
+			get {
+				if( SelectedStrategy == null ) {
+					SelectedStrategy = ( from strategy in ViewStrategies where strategy.IsDefaultStrategy select strategy ).FirstOrDefault() ??
+					                   ViewStrategies.FirstOrDefault();
+				}
+
+				return( mTreeItems );
+			}
 		}
 
 		public void SetTreeSortDescription( IEnumerable<SortDescription> descriptions ) {
