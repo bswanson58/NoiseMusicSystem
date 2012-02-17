@@ -142,31 +142,29 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void UpdateArtist( DbArtist artist, DbItemChanged changeReason ) {
-			Execute.OnUIThread( () => {
-				var treeNode = ( from UiArtistTreeNode node in mViewModel.TreeData
-								 where artist.DbId == node.Artist.DbId select node ).FirstOrDefault();
+			var treeNode = ( from UiArtistTreeNode node in mViewModel.TreeData
+								where artist.DbId == node.Artist.DbId select node ).FirstOrDefault();
 
-				switch( changeReason ) {
-					case DbItemChanged.Update:
-						if( treeNode != null ) {
-							UpdateUiArtist( treeNode.Artist, artist );
-							// The tree should autmatically resort if the sort property was changed...
-							// mViewModel.SetTreeSortDescription( mCurrentArtistSort.SortDescriptions );
-						}
-						break;
+			switch( changeReason ) {
+				case DbItemChanged.Update:
+					if( treeNode != null ) {
+						UpdateUiArtist( treeNode.Artist, artist );
+						// The tree should autmatically resort if the sort property was changed...
+						// mViewModel.SetTreeSortDescription( mCurrentArtistSort.SortDescriptions );
+					}
+					break;
 
-					case DbItemChanged.Insert:
-						AddArtist( mViewModel.TreeData, artist );
-						break;
+				case DbItemChanged.Insert:
+					AddArtist( mViewModel.TreeData, artist );
+					break;
 
-					case DbItemChanged.Delete:
-						if( treeNode != null ) {
-							mViewModel.TreeData.Remove( treeNode );
-							mChangeObserver.Release( treeNode.Artist );
-						}
-						break;
-				}
-			} );
+				case DbItemChanged.Delete:
+					if( treeNode != null ) {
+						mViewModel.TreeData.Remove( treeNode );
+						mChangeObserver.Release( treeNode.Artist );
+					}
+					break;
+			}
 		}
 
 		private void UpdateAlbum( DbAlbum album, DbItemChanged changeReason ) {
