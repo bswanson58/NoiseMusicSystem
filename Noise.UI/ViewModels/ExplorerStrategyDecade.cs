@@ -20,10 +20,10 @@ using Condition = CuttingEdge.Conditions.Condition;
 namespace Noise.UI.ViewModels {
 	[Export( typeof( IExplorerViewStrategy ))]
 	internal class ExplorerStrategyDecade : IExplorerViewStrategy, IHandle<Events.DatabaseItemChanged> {
-		private const string					cSearchOptionDefault = "!";
-		private const string					cSearchArtists = "Artists";
-		private const string					cSearchAlbums = "Albums";
-		private const string					cSearchIgnoreCase = "Ignore Case";
+		internal const string					cSearchOptionDefault = "!";
+		internal const string					cSearchArtists = "Artists";
+		internal const string					cSearchAlbums = "Albums";
+		internal const string					cSearchIgnoreCase = "Ignore Case";
 
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IResourceProvider		mResourceProvider;

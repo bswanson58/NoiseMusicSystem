@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Caliburn.Micro;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -172,6 +174,256 @@ namespace Noise.UI.Tests.ViewModels {
 			artistNode.IsExpanded = true;
 
 			artistNode.Children.Should().HaveCount( 2 );
+		}
+
+		[Test]
+		public void SelectingArtistNodeShouldTriggerArtistEvent() {
+			var testable = new TestableExplorerStrategyDecade();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var filter = new Mock<IDatabaseFilter>();
+			var decadeList = new List<DbDecadeTag> { new DbDecadeTag( " one" ), new DbDecadeTag( "two" ) };
+
+			testable.Mock<ITagManager>().Setup( m => m.DecadeTagList ).Returns( decadeList );
+
+			var artist1 = new DbArtist { Name = "one" };
+			var artistList = new List<long> { artist1.DbId };
+			testable.Mock<ITagManager>().Setup( m => m.ArtistListForDecade( It.IsAny<long>())).Returns( artistList );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( artist1.DbId )).Returns( artist1 );
+
+			testable.Mock<IEventAggregator>().Setup( m => m.Publish( It.IsAny<Events.ArtistFocusRequested>())).Verifiable();
+
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			var uiTagList = sut.BuildTree( filter.Object );
+			var treeNode = uiTagList.First() as UiDecadeTreeNode;
+
+			Assert.IsNotNull( treeNode );
+			treeNode.IsExpanded = true;
+
+			var artistNode = treeNode.Children.First();
+			Assert.IsNotNull( artistNode );
+
+			artistNode.IsSelected = true;
+
+			testable.Mock<IEventAggregator>().Verify();
+		}
+
+		[Test]
+		public void SelectingAlbumNodeShouldTriggerAlbumEvent() {
+			var testable = new TestableExplorerStrategyDecade();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var filter = new Mock<IDatabaseFilter>();
+			var decadeList = new List<DbDecadeTag> { new DbDecadeTag( " one" ), new DbDecadeTag( "two" ) };
+
+			testable.Mock<ITagManager>().Setup( m => m.DecadeTagList ).Returns( decadeList );
+
+			var artist1 = new DbArtist { Name = "one" };
+			var artistList = new List<long> { artist1.DbId };
+			testable.Mock<ITagManager>().Setup( m => m.ArtistListForDecade( It.IsAny<long>())).Returns( artistList );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( artist1.DbId )).Returns( artist1 );
+
+			var album1 = new DbAlbum { Name = "album1" };
+			var albumList = new List<long> { album1.DbId };
+			testable.Mock<ITagManager>().Setup( m => m.AlbumListForDecade( It.IsAny<long>(), It.IsAny<long>())).Returns( albumList );
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( album1.DbId )).Returns( album1 );
+
+			testable.Mock<IEventAggregator>().Setup( m => m.Publish( It.IsAny<Events.AlbumFocusRequested>())).Verifiable();
+
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			var uiTagList = sut.BuildTree( filter.Object );
+			var treeNode = uiTagList.First() as UiDecadeTreeNode;
+
+			Assert.IsNotNull( treeNode );
+			treeNode.IsExpanded = true;
+
+			var artistNode = treeNode.Children.First();
+
+			Assert.IsNotNull( artistNode );
+			artistNode.IsExpanded = true;
+
+			var albumNode = artistNode.Children.First();
+			Assert.IsNotNull( albumNode );
+
+			albumNode.IsSelected = true;
+
+			testable.Mock<IEventAggregator>().Verify();
+		}
+
+		[Test]
+		public void ShouldFormatNamesBasedOnSortPrefixes() {
+			var testable = new TestableExplorerStrategyDecade();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var filter = new Mock<IDatabaseFilter>();
+			var decadeList = new List<DbDecadeTag> { new DbDecadeTag( " one" ), new DbDecadeTag( "two" ) };
+
+			testable.Mock<ITagManager>().Setup( m => m.DecadeTagList ).Returns( decadeList );
+
+			var artist = new DbArtist { Name = "The Rolling Stones" };
+			var artistList = new List<long> { artist.DbId };
+			testable.Mock<ITagManager>().Setup( m => m.ArtistListForDecade( It.IsAny<long>())).Returns( artistList );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( artist.DbId )).Returns( artist );
+
+			var sut = testable.ClassUnderTest;
+
+			sut.Initialize( viewModel.Object );
+			sut.UseSortPrefixes( true, new [] { "the" });
+
+			var uiTagList = sut.BuildTree( filter.Object );
+			var treeNode = uiTagList.First() as UiDecadeTreeNode;
+
+			Assert.IsNotNull( treeNode );
+			treeNode.IsExpanded = true;
+
+			var artistNode = treeNode.Children.First();
+
+			Assert.IsNotNull( artistNode );
+
+			artistNode.Artist.SortName.Should().NotContainEquivalentOf( "the" );
+		}
+
+		[Test]
+		public void ShouldOnlyFormatNamesStartingWithSortPrefix() {
+			var testable = new TestableExplorerStrategyDecade();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var filter = new Mock<IDatabaseFilter>();
+			var decadeList = new List<DbDecadeTag> { new DbDecadeTag( " one" ), new DbDecadeTag( "two" ) };
+
+			testable.Mock<ITagManager>().Setup( m => m.DecadeTagList ).Returns( decadeList );
+
+			var artist = new DbArtist { Name = "Joan Jett and The Blackhearts" };
+			var artistList = new List<long> { artist.DbId };
+			testable.Mock<ITagManager>().Setup( m => m.ArtistListForDecade( It.IsAny<long>())).Returns( artistList );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( artist.DbId )).Returns( artist );
+
+			var sut = testable.ClassUnderTest;
+
+			sut.Initialize( viewModel.Object );
+			sut.UseSortPrefixes( true, new [] { "the" });
+
+			var uiTagList = sut.BuildTree( filter.Object );
+			var treeNode = uiTagList.First() as UiDecadeTreeNode;
+
+			Assert.IsNotNull( treeNode );
+			treeNode.IsExpanded = true;
+
+			var artistNode = treeNode.Children.First();
+
+			Assert.IsNotNull( artistNode );
+
+			artistNode.Artist.SortName.Should().Be( artistNode.Artist.Name );
+			artistNode.Artist.DisplayName.Should().Be( artistNode.Artist.Name );
+		}
+
+		[Test]
+		public void CanSearchCaseSensitive() {
+			var testable = new TestableExplorerStrategyDecade();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var node1 = new UiArtistTreeNode( new UiArtist { Name = "Carpal Tunnel Syndrome" }, null, null, null, null, null );
+			var node2 = new UiArtistTreeNode( new UiArtist { Name = "The Rolling Stones" }, null, null, null, null, null );
+			var artistNodes = new Collection<UiArtistTreeNode> { node1, node2 };
+			var decadeNode = new UiDecadeTreeNode( new DbDecadeTag( "decade" ), null, null, null, null, null, null );
+			decadeNode.SetChildren( artistNodes );
+
+			viewModel.Setup( m => m.TreeData ).Returns( new Collection<UiTreeNode> { decadeNode });
+
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			var found = sut.Search( "Rolling", new [] { ExplorerStrategyDecade.cSearchOptionDefault } );
+
+			Assert.IsTrue( found );
+			Assert.IsTrue( node2.IsSelected );
+		}
+
+		[Test]
+		public void CanSearchCaseInsensitive() {
+			var testable = new TestableExplorerStrategyDecade();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var node1 = new UiArtistTreeNode( new UiArtist { Name = "Carpal Tunnel Syndrome" }, null, null, null, null, null );
+			var node2 = new UiArtistTreeNode( new UiArtist { Name = "The Rolling Stones" }, null, null, null, null, null );
+			var artistNodes = new Collection<UiArtistTreeNode> { node1, node2 };
+			var decadeNode = new UiDecadeTreeNode( new DbDecadeTag( "decade" ), null, null, null, null, null, null );
+			decadeNode.SetChildren( artistNodes );
+
+			viewModel.Setup( m => m.TreeData ).Returns( new Collection<UiTreeNode> { decadeNode });
+
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			var found = sut.Search( "roll", new [] { ExplorerStrategyDecade.cSearchIgnoreCase } );
+
+			Assert.IsTrue( found );
+			Assert.IsTrue( node2.IsSelected );
+		}
+
+		[Test]
+		public void SearchingWithSameOptionsContinuesSearch() {
+			var testable = new TestableExplorerStrategyDecade();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var node1 = new UiArtistTreeNode( new UiArtist { Name = "Stone Roses" }, null, null, null, null, null );
+			var node2 = new UiArtistTreeNode( new UiArtist { Name = "The Rolling Stones" }, null, null, null, null, null );
+			var artistNodes = new Collection<UiArtistTreeNode> { node1, node2 };
+			var decadeNode = new UiDecadeTreeNode( new DbDecadeTag( "decade" ), null, null, null, null, null, null );
+			decadeNode.SetChildren( artistNodes );
+
+			viewModel.Setup( m => m.TreeData ).Returns( new Collection<UiTreeNode> { decadeNode });
+
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			sut.Search( "one", new [] { ExplorerStrategyArtistAlbum.cSearchOptionDefault } );
+			var found = sut.Search( "one", new [] { ExplorerStrategyArtistAlbum.cSearchOptionDefault } );
+
+			Assert.IsTrue( found );
+			Assert.IsTrue( node2.IsSelected );
+		}
+
+		[Test]
+		public void ChangingSearchOptionsResetsSearch() {
+			var testable = new TestableExplorerStrategyDecade();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var node1 = new UiArtistTreeNode( new UiArtist { Name = "Carpal Tunnel Syndrome" }, null, null, null, null, null );
+			var node2 = new UiArtistTreeNode( new UiArtist { Name = "The Rolling Stones" }, null, null, null, null, null );
+			var artistNodes = new Collection<UiArtistTreeNode> { node1, node2 };
+			var decadeNode = new UiDecadeTreeNode( new DbDecadeTag( "decade" ), null, null, null, null, null, null );
+			decadeNode.SetChildren( artistNodes );
+
+			viewModel.Setup( m => m.TreeData ).Returns( new Collection<UiTreeNode> { decadeNode });
+
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			sut.Search( "roll", new [] { ExplorerStrategyArtistAlbum.cSearchIgnoreCase } );
+			var found = sut.Search( "ones", new [] { ExplorerStrategyArtistAlbum.cSearchOptionDefault } );
+
+			Assert.IsTrue( found );
+			Assert.IsTrue( node2.IsSelected );
+		}
+
+		[Test]
+		public void CanClearSearch() {
+			var testable = new TestableExplorerStrategyDecade();
+			var viewModel = new Mock<ILibraryExplorerViewModel>();
+			var node1 = new UiArtistTreeNode( new UiArtist { Name = "Stone Roses" }, null, null, null, null, null );
+			var node2 = new UiArtistTreeNode( new UiArtist { Name = "The Rolling Stones" }, null, null, null, null, null );
+			var artistNodes = new Collection<UiArtistTreeNode> { node1, node2 };
+			var decadeNode = new UiDecadeTreeNode( new DbDecadeTag( "decade" ), null, null, null, null, null, null );
+			decadeNode.SetChildren( artistNodes );
+
+			viewModel.Setup( m => m.TreeData ).Returns( new Collection<UiTreeNode> { decadeNode });
+
+			var sut = testable.ClassUnderTest;
+			sut.Initialize( viewModel.Object );
+
+			sut.Search( "one", new [] { ExplorerStrategyArtistAlbum.cSearchOptionDefault } );
+			sut.ClearCurrentSearch();
+			var found = sut.Search( "one", new [] { ExplorerStrategyArtistAlbum.cSearchOptionDefault } );
+
+			Assert.IsTrue( found );
+			Assert.IsTrue( node1.IsSelected );
 		}
 	}
 }
