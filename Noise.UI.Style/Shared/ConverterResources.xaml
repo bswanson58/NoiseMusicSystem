@@ -12,5 +12,4 @@
     <ValueConverters:StringTruncateConverter x:Key="StringTruncateConverter" />
     <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter" />
     <ValueConverters:VolumeLevelConverter x:Key="VolumeLevelConverter" />
-    <ValueConverters:CollectionViewConverter x:Key="CollectionViewConverter" x:Shared="False" />
 </ResourceDictionary>

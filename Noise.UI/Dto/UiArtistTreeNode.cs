@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows.Data;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
@@ -8,10 +10,11 @@ namespace Noise.UI.Dto {
 		private readonly Action<UiArtistTreeNode>	mOnSelect;
 		private readonly Action<UiArtistTreeNode>	mOnExpand;
 		private readonly Action<UiArtistTreeNode>	mChildFillAction;
+		private readonly List<SortDescription>		mSortDescriptions; 
 		private	bool								mRequiresChildren;
 		private bool								mImSorting;
+		private CollectionViewSource				mChildrenView;
 		private readonly BindableCollection<UiAlbumTreeNode>	mChildren;
-		private readonly BindableCollection<SortDescription>	mSortDescriptions; 
 
 		public	UiArtist				Artist { get; private set; }
 		public	UiDecadeTreeNode		Parent { get; private set; }
@@ -33,21 +36,31 @@ namespace Noise.UI.Dto {
 			mRequiresChildren = true;
 
 			mChildren = new BindableCollection<UiAlbumTreeNode> { new UiAlbumTreeNode( new UiAlbum { Name = "Loading album list..." }, null, null )};
-			mSortDescriptions = new BindableCollection<SortDescription> { new SortDescription( "Album.Name", ListSortDirection.Ascending )};
+			mSortDescriptions = new List<SortDescription> { new SortDescription( "Album.Name", ListSortDirection.Ascending )};
 
-			OnSortChanged( sortStrategy );
+			if( sortStrategy != null ) {
+				SetSortDescriptions( sortStrategy.SortDescriptions );
+			}
 			if( sortChanged != null ) {
 				sortChanged.Subscribe( OnSortChanged );
 			}
 		}
 
-		public BindableCollection<UiAlbumTreeNode> Children {
+		public Collection<UiAlbumTreeNode> Children {
 			get{ return( mChildren ); }
 		}
 
-		public BindableCollection<SortDescription> SortDescriptions {
-			get{ return( mSortDescriptions ); }
-		} 
+		public ICollectionView ChildrenView {
+			get {
+				if( mChildrenView == null ) {
+					mChildrenView = new CollectionViewSource { Source = mChildren };
+
+					SetSortDescriptions( mSortDescriptions );
+				}
+
+				return( mChildrenView.View );
+			}
+		}
 
 		public void SetChildren( IEnumerable<UiAlbumTreeNode> children ) {
 			mChildren.Clear();
@@ -57,13 +70,34 @@ namespace Noise.UI.Dto {
 		}
 
 		private void OnSortChanged( ViewSortStrategy strategy ) {
-			mSortDescriptions.Clear();
-			mSortDescriptions.AddRange( strategy.SortDescriptions );
+			if( strategy != null ) {
+				SetSortDescriptions( strategy.SortDescriptions );
+			}
+		}
+
+		private void SetSortDescriptions( IEnumerable<SortDescription> sortDescriptions ) {
+			if( sortDescriptions != null ) {
+				if( mChildrenView != null ) {
+					mChildrenView.SortDescriptions.Clear();
+
+					foreach( var sortDescription in sortDescriptions ) {
+						mChildrenView.SortDescriptions.Add( sortDescription );
+					}
+				}
+				else {
+					mSortDescriptions.Clear();
+					mSortDescriptions.AddRange( sortDescriptions );
+				}
+			}
 		}
 
 		public void UpdateSort() {
 			mImSorting = true;
-			mSortDescriptions.Refresh();
+			
+			if( mChildrenView != null ) {
+				mChildrenView.View.Refresh();
+			}
+
 			mImSorting = false;
 		}
 

@@ -258,7 +258,6 @@
     <Compile Include="Support\ViewModelResolver.cs" />
     <Compile Include="ValueConverters\BooleanVisibilityConverter.cs" />
     <Compile Include="ValueConverters\ByteImageConverter.cs" />
-    <Compile Include="ValueConverters\CollectionViewConverter.cs" />
     <Compile Include="ValueConverters\DateOnlyConverter.cs" />
     <Compile Include="ValueConverters\EmptyStringVisibilityConverter.cs" />
     <Compile Include="ValueConverters\HtmlTextConverter.cs" />

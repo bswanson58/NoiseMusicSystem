@@ -15,7 +15,6 @@
 
     <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter" />
     <ValueConverters:EmptyStringVisibilityConverter x:Key="EmptyStringVisibilityConverter" />
-    <ValueConverters:CollectionViewConverter x:Key="CollectionViewConverter" x:Shared="False" />
 
     <ContextMenu x:Key="ArtistMenu">
         <MenuItem Command="{Binding Rename}" Header="Rename Artist" />
@@ -118,13 +117,8 @@
 
     <HierarchicalDataTemplate x:Key="ArtistAlbumTemplate"
                               DataType="{x:Type Dto:UiArtistTreeNode}"
+                              ItemsSource="{Binding ChildrenView}"
                               ItemTemplate="{StaticResource AlbumTemplate}">
-        <HierarchicalDataTemplate.ItemsSource>
-            <MultiBinding Converter="{StaticResource CollectionViewConverter}">
-                <Binding Path="Children" />
-                <Binding Path="SortDescriptions" />
-            </MultiBinding>
-        </HierarchicalDataTemplate.ItemsSource>
         <Border Margin="0,1,0,2"
                 Background="{DynamicResource TreeItemBackground}"
                 BorderBrush="{DynamicResource ControlTextColor}"
