@@ -20,7 +20,8 @@ using Condition = CuttingEdge.Conditions.Condition;
 namespace Noise.UI.ViewModels {
 	[Export( typeof( IExplorerViewStrategy ))]
 	public class ExplorerStrategyArtistAlbum : IExplorerViewStrategy,
-											   IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
+											   IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistContentUpdated>,
+											   IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
 											   IHandle<Events.AlbumUserUpdate>, IHandle<Events.AlbumAdded>, IHandle<Events.AlbumRemoved> {
 		internal const string					cSearchOptionDefault = "!";
 		internal const string					cSearchArtists = "Artists";
@@ -129,14 +130,11 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Handle( Events.ArtistUserUpdate eventArgs ) {
-			var treeNode = ( from UiArtistTreeNode node in mViewModel.TreeData
-							 where eventArgs.ArtistId == node.Artist.DbId select node ).FirstOrDefault();
-			
-			if( treeNode != null ) {
-				UpdateUiArtist( treeNode.Artist, mArtistProvider.GetArtist( eventArgs.ArtistId ));
-				// The tree should autmatically resort if the sort property was changed...
-				// mViewModel.SetTreeSortDescription( mCurrentArtistSort.SortDescriptions );
-			}
+			UpdateArtistNode( eventArgs.ArtistId );
+		}
+
+		public void Handle( Events.ArtistContentUpdated eventArgs ) {
+			UpdateArtistNode( eventArgs.ArtistId );
 		}
 
 		public void Handle( Events.ArtistAdded eventArgs ) {
@@ -169,12 +167,18 @@ namespace Noise.UI.ViewModels {
 			var album = mAlbumProvider.GetAlbum( albumId );
 
 			if( album != null ) {
-				var treeNode = ( from UiArtistTreeNode node in mViewModel.TreeData
-								 where album.Artist == node.Artist.DbId select node ).FirstOrDefault();
+				UpdateArtistNode( album.Artist );
+			}
+		}
+
+		private void UpdateArtistNode( long artistId ) {
+			var treeNode = ( from UiArtistTreeNode node in mViewModel.TreeData
+							 where artistId == node.Artist.DbId select node ).FirstOrDefault();
 			
-				if( treeNode != null ) {
-					UpdateUiArtist( treeNode.Artist, mArtistProvider.GetArtist( album.Artist ));
-				}
+			if( treeNode != null ) {
+				UpdateUiArtist( treeNode.Artist, mArtistProvider.GetArtist( artistId ));
+				// The tree should autmatically resort if the sort property was changed...
+				// mViewModel.SetTreeSortDescription( mCurrentArtistSort.SortDescriptions );
 			}
 		}
 
