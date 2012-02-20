@@ -18,7 +18,8 @@ using Condition = CuttingEdge.Conditions.Condition;
 
 namespace Noise.UI.ViewModels {
 	[Export( typeof( IExplorerViewStrategy ))]
-	internal class ExplorerStrategyDecade : IExplorerViewStrategy, IHandle<Events.DatabaseItemChanged> {
+	internal class ExplorerStrategyDecade : IExplorerViewStrategy,
+											IHandle<Events.ArtistUserUpdate>, IHandle<Events.AlbumUserUpdate> {
 		internal const string					cSearchOptionDefault = "!";
 		internal const string					cSearchArtists = "Artists";
 		internal const string					cSearchAlbums = "Albums";
@@ -126,42 +127,23 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Handle( Events.DatabaseItemChanged eventArgs ) {
-			var item = eventArgs.ItemChangedArgs.Item;
+		public void Handle( Events.ArtistUserUpdate eventArgs ) {
+			foreach( var decadeNode in mViewModel.TreeData.OfType<UiDecadeTreeNode>() ) {
+				var treeNode = ( from UiArtistTreeNode node in decadeNode.Children
+								 where eventArgs.ArtistId == node.Artist.DbId select node ).FirstOrDefault();
+				if( treeNode != null ) {
+					UpdateUiArtist( treeNode.Artist, mArtistProvider.GetArtist( eventArgs.ArtistId ));
 
-			if( item != null ) {
-				if( item is DbArtist ) {
-					UpdateArtist( item as DbArtist, eventArgs.ItemChangedArgs.Change );
-				}
-
-				if( item is DbAlbum ) {
-					UpdateAlbum( item as DbAlbum, eventArgs.ItemChangedArgs.Change );
+					decadeNode.UpdateSort();
 				}
 			}
 		}
 
-		private void UpdateArtist( DbArtist artist, DbItemChanged reason ) {
-			if( artist != null ) {
-				foreach( var decadeNode in mViewModel.TreeData.OfType<UiDecadeTreeNode>() ) {
-					var treeNode = ( from UiArtistTreeNode node in decadeNode.Children
-										where artist.DbId == node.Artist.DbId select node ).FirstOrDefault();
-					if( treeNode != null ) {
-						switch( reason ) {
-							case DbItemChanged.Update:
-								UpdateUiArtist( treeNode.Artist, artist );
+		public void Handle( Events.AlbumUserUpdate eventArgs ) {
+			var album = mAlbumProvider.GetAlbum( eventArgs.AlbumId );
 
-								decadeNode.UpdateSort();
-								break;
-						}
-					}
-				}
-			}
-		}
-
-		private void UpdateAlbum( DbAlbum album, DbItemChanged reason ) {
-			if(( reason == DbItemChanged.Update ) &&
-			   ( album != null )) {
-				foreach( var decadeNode in mViewModel.TreeData.OfType<UiDecadeTreeNode>() ) {
+			if( album != null ) {
+				foreach( var decadeNode in mViewModel.TreeData.OfType<UiDecadeTreeNode>()) {
 					var treeNode = ( from UiArtistTreeNode node in decadeNode.Children
 									 where album.Artist == node.Artist.DbId select node ).FirstOrDefault();
 					if( treeNode != null ) {
@@ -283,20 +265,27 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void UpdateUiArtist( UiArtist uiArtist, DbArtist artist ) {
-			Mapper.DynamicMap( artist, uiArtist );
-			uiArtist.DisplayGenre = mTagManager.GetGenre( artist.Genre );
+			if(( uiArtist != null ) &&
+			   ( artist != null )) {
+				Mapper.DynamicMap( artist, uiArtist );
+				uiArtist.DisplayGenre = mTagManager.GetGenre( artist.Genre );
 
-			if( mUseSortPrefixes ) {
-				FormatSortPrefix( uiArtist );
+				if( mUseSortPrefixes ) {
+					FormatSortPrefix( uiArtist );
+				}
 			}
 		}
 
 		private static void UpdateUiAlbum( UiAlbum uiAlbum, DbAlbum dbAlbum ) {
+			if(( uiAlbum != null ) &&
+			   ( dbAlbum != null )) {
 			Mapper.DynamicMap( dbAlbum, uiAlbum );
+			}
 		}
 
 		private void FormatSortPrefix( UiArtist artist ) {
-			if( mSortPrefixes != null ) {
+			if(( artist != null ) &&
+			   ( mSortPrefixes != null )) {
 				foreach( string prefix in mSortPrefixes ) {
 					if( artist.Name.StartsWith( prefix, StringComparison.CurrentCultureIgnoreCase )) {
 						artist.SortName = artist.Name.Remove( 0, prefix.Length ).Trim();

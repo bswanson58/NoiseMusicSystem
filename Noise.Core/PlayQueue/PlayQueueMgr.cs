@@ -7,7 +7,8 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.Core.PlayQueue {
-	internal class PlayQueueMgr : IPlayQueue {
+	internal class PlayQueueMgr : IPlayQueue,
+								  IHandle<Events.TrackUserUpdate> {
 		private readonly IEventAggregator					mEventAggregator;
 		private readonly IArtistProvider					mArtistProvider;
 		private readonly IAlbumProvider						mAlbumProvider;
@@ -183,6 +184,15 @@ namespace Noise.Core.PlayQueue {
 			mPlayQueue.Add( new PlayQueueTrack( stream ));
 
 			FirePlayQueueChanged();
+		}
+
+		public void Handle( Events.TrackUserUpdate eventArgs ) {
+			foreach( var queueTrack in mPlayQueue.Where( queueTrack => ( queueTrack.Track != null ) &&
+			                                                           ( queueTrack.Track.DbId == eventArgs.TrackId ))) {
+				queueTrack.UpdateTrack( mTrackProvider.GetTrack( eventArgs.TrackId ));
+
+				FirePlayQueueChanged();
+			}
 		}
 
 		public void ClearQueue() {

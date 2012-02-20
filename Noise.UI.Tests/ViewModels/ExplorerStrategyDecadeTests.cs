@@ -437,12 +437,13 @@ namespace Noise.UI.Tests.ViewModels {
 			decadeNode.SetChildren( artistNodes );
 
 			viewModel.Setup( m => m.TreeData ).Returns( new Collection<UiTreeNode> { decadeNode });
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
 
 			var sut = testable.ClassUnderTest;
 			sut.Initialize( viewModel.Object );
 
 			artist.Name = "updated name";
-			sut.Handle( new Events.DatabaseItemChanged( new DbItemChangedArgs( artist, DbItemChanged.Update )));
+			sut.Handle( new Events.ArtistUserUpdate( artist.DbId ));
 
 			node.Artist.Name.Should().Be( artist.Name );
 		}
@@ -461,12 +462,13 @@ namespace Noise.UI.Tests.ViewModels {
 			decadeNode.SetChildren( artistNodes );
 
 			viewModel.Setup( m => m.TreeData ).Returns( new Collection<UiTreeNode> { decadeNode });
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( It.IsAny<long>())).Returns( album );
 
 			var sut = testable.ClassUnderTest;
 			sut.Initialize( viewModel.Object );
 
 			album.Name = "changed name";
-			sut.Handle( new Events.DatabaseItemChanged( new DbItemChangedArgs( album, DbItemChanged.Update )));
+			sut.Handle( new Events.AlbumUserUpdate( album.DbId ));
 
 			albumNode.Album.Name.Should().Be( album.Name );
 		}

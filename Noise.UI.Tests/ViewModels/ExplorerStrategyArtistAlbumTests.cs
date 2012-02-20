@@ -388,11 +388,12 @@ namespace Noise.UI.Tests.ViewModels {
 
 			var treeData = new Collection<UiTreeNode>();
 			viewModel.Setup( m => m.TreeData ).Returns( treeData );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
 			
 			var sut = testable.ClassUnderTest;
 			sut.Initialize( viewModel.Object );
 
-			sut.Handle( new Events.DatabaseItemChanged( new DbItemChangedArgs( artist, DbItemChanged.Insert )));
+			sut.Handle( new Events.ArtistAdded( artist.DbId ));
 
 			treeData.Should().HaveCount( 1 );			
 		}
@@ -403,6 +404,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
 			var artist = new DbArtist { Name = "artist name" };
 
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( It.IsAny<IDatabaseFilter>()))
 				.Returns( new DataProviderList<DbArtist>( null, new List<DbArtist> { artist }));
 
@@ -419,7 +421,7 @@ namespace Noise.UI.Tests.ViewModels {
 			treeNode.Artist.MonitorEvents();
 
 			artist.Name = "updated name";
-			sut.Handle( new Events.DatabaseItemChanged( new DbItemChangedArgs( artist, DbItemChanged.Update )));
+			sut.Handle( new Events.ArtistUserUpdate( artist.DbId ));
 
 			treeNode.Artist.ShouldRaisePropertyChangeFor( a => a.Name );
 		}
@@ -441,7 +443,7 @@ namespace Noise.UI.Tests.ViewModels {
 			treeData.AddRange( sut.BuildTree( null ));
 			treeData.Should().HaveCount( 1 );
 
-			sut.Handle( new Events.DatabaseItemChanged( new DbItemChangedArgs( artist, DbItemChanged.Delete )));
+			sut.Handle( new Events.ArtistRemoved( artist.DbId ));
 
 			treeData.Should().HaveCount( 0 );
 		}

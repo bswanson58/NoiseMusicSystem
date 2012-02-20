@@ -29,7 +29,7 @@ namespace Noise.Core.MediaPlayer {
 	}
 
 	internal class PlayController : IPlayController, IRequireInitialization,
-									IHandle<Events.PlayQueueChanged>, IHandle<Events.PlayQueuedTrackRequest>, IHandle<Events.DatabaseItemChanged>,
+									IHandle<Events.PlayQueueChanged>, IHandle<Events.PlayQueuedTrackRequest>,
 									IHandle<Events.SystemShutdown>, IHandle<Events.GlobalUserEvent> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IAudioPlayer			mAudioPlayer;
@@ -518,7 +518,7 @@ namespace Noise.Core.MediaPlayer {
 				if(( mEnableReplayGain ) &&
 					(!track.IsStream ) &&
 					( track.Track != null )) {
-					gain = track.Track.ReplayGainAlbumGain != 0.0f ? track.Track.ReplayGainAlbumGain : track.Track.ReplayGainTrackGain;
+					gain = track.Track.ReplayGainAlbumGain > 0.05f ? track.Track.ReplayGainAlbumGain : track.Track.ReplayGainTrackGain;
 				}
 
 				retValue = track.IsStream ? mAudioPlayer.OpenStream( track.Stream ) : mAudioPlayer.OpenFile( track.FilePath, gain );
@@ -533,24 +533,6 @@ namespace Noise.Core.MediaPlayer {
 			}
 
 			return( retValue );
-		}
-
-		public void Handle( Events.DatabaseItemChanged eventArgs ) {
-			var item = eventArgs.ItemChangedArgs.Item;
-
-			if( item is DbTrack ) {
-				var track = item as DbTrack;
-
-				foreach( var queueItem in mOpenTracks.Values ) {
-					if(( !queueItem.IsStream ) &&
-					   ( queueItem.Track.DbId == track.DbId )) {
-						queueItem.UpdateTrack( track );
-
-						FirePlaybackTrackChanged();
-						break;
-					}
-				}
-			}
 		}
 
 		private void OnStreamInfo( StreamInfo info ) {

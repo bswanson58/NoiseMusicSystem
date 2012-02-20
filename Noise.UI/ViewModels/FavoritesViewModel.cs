@@ -2,22 +2,21 @@
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class FavoritesViewModel : ViewModelBase, IHandle<Events.DatabaseItemChanged> {
+	public class FavoritesViewModel : AutomaticCommandBase,
+									  IHandle<Events.ArtistUserUpdate>, IHandle<Events.AlbumUserUpdate>, IHandle<Events.TrackUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly IDialogService			mDialogService;
-		private readonly ObservableCollectionEx<FavoriteViewNode>	mFavoritesList;
+		private readonly SortableCollection<FavoriteViewNode>	mFavoritesList;
 
 		public FavoritesViewModel( IEventAggregator eventAggregator,
 								   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
@@ -31,28 +30,27 @@ namespace Noise.UI.ViewModels {
 
 			mEventAggregator.Subscribe( this );
 
-			mFavoritesList = new ObservableCollectionEx<FavoriteViewNode>();
+			mFavoritesList = new SortableCollection<FavoriteViewNode>();
 			LoadFavorites();
 		}
 
-		public ObservableCollectionEx<FavoriteViewNode> FavoritesList {
+		public BindableCollection<FavoriteViewNode> FavoritesList {
 			get{ return( mFavoritesList ); }
 		}
 
-		public void Handle( Events.DatabaseItemChanged eventArgs ) {
-			if( eventArgs.ItemChangedArgs.Change == DbItemChanged.Favorite ) {
-				var item = eventArgs.ItemChangedArgs.Item;
+		public void Handle( Events.ArtistUserUpdate eventArgs ) {
+			LoadFavorites();
+		}
 
-				if(( item is DbArtist ) ||
-				   ( item is DbAlbum ) ||
-				   ( item is DbTrack )) {
-					Execute.OnUIThread( LoadFavorites );
-				}
-			}
+		public void Handle( Events.AlbumUserUpdate eventArgs ) {
+			LoadFavorites();
+		}
+
+		public void Handle (Events.TrackUserUpdate eventArgs ) {
+			LoadFavorites();
 		}
 
 		private void LoadFavorites() {
-			mFavoritesList.SuspendNotification();
 			mFavoritesList.Clear();
 
 			using( var list = mArtistProvider.GetFavoriteArtists()) {
@@ -77,7 +75,6 @@ namespace Noise.UI.ViewModels {
 			}
 
 			mFavoritesList.Sort( SelectSortProperty, ListSortDirection.Ascending );
-			mFavoritesList.ResumeNotification();
 
 			RaiseCanExecuteChangedEvent( "CanExecute_ExportFavorites" );
 		}

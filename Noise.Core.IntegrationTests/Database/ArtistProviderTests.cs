@@ -26,7 +26,8 @@ namespace Noise.Core.IntegrationTests.Database {
 		}
 
 		private ArtistProvider CreateSut() {
-			return( new ArtistProvider( mDatabaseManager, mArtworkProvider.Object, mTextInfoProvider.Object, mAssociationProvider.Object, mListProvider.Object ));
+			return( new ArtistProvider( mDatabaseManager, mEventAggregator.Object, mArtworkProvider.Object, mTextInfoProvider.Object, 
+										mAssociationProvider.Object, mListProvider.Object ));
 		}
 
 		[Test]

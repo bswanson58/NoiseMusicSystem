@@ -15,13 +15,12 @@ using Noise.UI.Adapters;
 using Noise.UI.Dto;
 using Noise.UI.Support;
 using Observal.Extensions;
-using ReusableBits.Mvvm.ViewModelSupport;
 using Condition = CuttingEdge.Conditions.Condition;
 
 namespace Noise.UI.ViewModels {
 	[Export( typeof( IExplorerViewStrategy ))]
 	public class ExplorerStrategyArtistAlbum : IExplorerViewStrategy,
-											   IHandle<Events.DatabaseItemChanged> {
+											   IHandle<Events.ArtistUserUpdate>, IHandle<Events.AlbumUserUpdate> {
 		internal const string					cSearchOptionDefault = "!";
 		internal const string					cSearchArtists = "Artists";
 		internal const string					cSearchAlbums = "Albums";
@@ -128,61 +127,51 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Handle( Events.DatabaseItemChanged eventArgs ) {
-			var item = eventArgs.ItemChangedArgs.Item;
-
-			if( item != null ) {
-				if( item is DbArtist ) {
-					UpdateArtist( item as DbArtist, eventArgs.ItemChangedArgs.Change );
-				}
-				if( item is DbAlbum ) {
-					UpdateAlbum( item as DbAlbum, eventArgs.ItemChangedArgs.Change );
-				}
-			}
-		}
-
-		private void UpdateArtist( DbArtist artist, DbItemChanged changeReason ) {
+		public void Handle( Events.ArtistUserUpdate eventArgs ) {
 			var treeNode = ( from UiArtistTreeNode node in mViewModel.TreeData
-								where artist.DbId == node.Artist.DbId select node ).FirstOrDefault();
-
-			switch( changeReason ) {
-				case DbItemChanged.Update:
-					if( treeNode != null ) {
-						UpdateUiArtist( treeNode.Artist, artist );
-						// The tree should autmatically resort if the sort property was changed...
-						// mViewModel.SetTreeSortDescription( mCurrentArtistSort.SortDescriptions );
-					}
-					break;
-
-				case DbItemChanged.Insert:
-					AddArtist( mViewModel.TreeData, artist );
-					break;
-
-				case DbItemChanged.Delete:
-					if( treeNode != null ) {
-						mViewModel.TreeData.Remove( treeNode );
-						mChangeObserver.Release( treeNode.Artist );
-					}
-					break;
+							 where eventArgs.ArtistId == node.Artist.DbId select node ).FirstOrDefault();
+			
+			if( treeNode != null ) {
+				UpdateUiArtist( treeNode.Artist, mArtistProvider.GetArtist( eventArgs.ArtistId ));
+				// The tree should autmatically resort if the sort property was changed...
+				// mViewModel.SetTreeSortDescription( mCurrentArtistSort.SortDescriptions );
 			}
 		}
 
-		private void UpdateAlbum( DbAlbum album, DbItemChanged changeReason ) {
-			if( changeReason == DbItemChanged.Update ) {
-				Execute.OnUIThread( () => {
-					var treeNode = ( from UiArtistTreeNode node in mViewModel.TreeData
-									 where album.Artist == node.Artist.DbId select node ).FirstOrDefault();
-					if( treeNode != null ) {
-						var uiAlbum = ( from UiAlbumTreeNode a in treeNode.Children
-										where a.Album.DbId == album.DbId select a.Album ).FirstOrDefault();
+		public void Handle( Events.ArtistAdded eventArgs ) {
+			var artist = mArtistProvider.GetArtist( eventArgs.ArtistId );
 
-						if( uiAlbum != null ) {
-							Mapper.DynamicMap( album, uiAlbum );
+			if( artist != null ) {
+				AddArtist( mViewModel.TreeData, artist );
+			}
+		}
 
-							treeNode.UpdateSort();
-						}
+		public void Handle( Events.ArtistRemoved eventArgs ) {
+			var treeNode = ( from UiArtistTreeNode node in mViewModel.TreeData
+							 where eventArgs.ArtistId == node.Artist.DbId select node ).FirstOrDefault();
+			
+			if( treeNode != null ) {
+				mViewModel.TreeData.Remove( treeNode );
+				mChangeObserver.Release( treeNode.Artist );
+			}
+		}
+
+		public void Handle( Events.AlbumUserUpdate eventArgs ) {
+			var album = mAlbumProvider.GetAlbum( eventArgs.AlbumId );
+
+			if( album != null ) {
+				var treeNode = ( from UiArtistTreeNode node in mViewModel.TreeData
+								 where album.Artist == node.Artist.DbId select node ).FirstOrDefault();
+				if( treeNode != null ) {
+					var uiAlbum = ( from UiAlbumTreeNode a in treeNode.Children
+									where a.Album.DbId == album.DbId select a.Album ).FirstOrDefault();
+
+					if( uiAlbum != null ) {
+						Mapper.DynamicMap( album, uiAlbum );
+
+						treeNode.UpdateSort();
 					}
-				});
+				}
 			}
 		}
 
@@ -223,11 +212,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void UpdateUiArtist( UiArtist uiArtist, DbArtist artist ) {
-			Mapper.DynamicMap( artist, uiArtist );
-			uiArtist.DisplayGenre = mTagManager.GetGenre( artist.Genre );
+			if(( uiArtist != null ) &&
+			   ( artist != null )) {
+				Mapper.DynamicMap( artist, uiArtist );
+				uiArtist.DisplayGenre = mTagManager.GetGenre( artist.Genre );
 
-			if( mUseSortPrefixes ) {
-				FormatSortPrefix( uiArtist );
+				if( mUseSortPrefixes ) {
+					FormatSortPrefix( uiArtist );
+				}
 			}
 		}
 

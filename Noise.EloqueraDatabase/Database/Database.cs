@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Eloquera.Client;
 using Noise.Infrastructure;
@@ -15,7 +14,6 @@ namespace Noise.EloqueraDatabase.Database {
 		private const UInt16				cDatabaseVersionMajor = 0;
 		private const UInt16				cDatabaseVersionMinor = 5;
 
-		private readonly IEventAggregator	mEventAggregator;
 		private readonly IIoc				mComponentCreator;
 		private readonly string				mDatabaseLocation;
 		private readonly string				mDatabaseName;
@@ -30,12 +28,10 @@ namespace Noise.EloqueraDatabase.Database {
 		[ImportMany("PersistenceType")]
 		public IEnumerable<Type>	PersistenceTypes;
 
-		public EloqueraDb( IEventAggregator eventAggregator, IIoc componentCreator, DatabaseConfiguration databaseConfiguration ) {
-			Condition.Requires( eventAggregator ).IsNotNull();
+		public EloqueraDb( IIoc componentCreator, DatabaseConfiguration databaseConfiguration ) {
 			Condition.Requires( componentCreator ).IsNotNull();
 			Condition.Requires( databaseConfiguration ).IsNotNull();
 
-			mEventAggregator = eventAggregator;
 			mComponentCreator = componentCreator;
 
 			DatabaseId = Guid.NewGuid().ToString();
@@ -210,10 +206,6 @@ namespace Noise.EloqueraDatabase.Database {
 
 			if( Database.GetUid( dbObject ) == -1 ) {
 				Database.Store( dbObject );
-
-				if( dbObject is DbBase ) {
-					mEventAggregator.Publish( new Events.DatabaseItemChanged( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Insert )));
-				}
 			}
 			else {
 				NoiseLogger.Current.LogMessage( String.Format( "Database:Insert - Inserting known item: {0}", dbObject.GetType()));
@@ -225,10 +217,6 @@ namespace Noise.EloqueraDatabase.Database {
 
 			if( Database.GetUid( dbObject ) != -1 ) {
 				Database.Store( dbObject );
-
-				if( dbObject is DbBase ) {
-					mEventAggregator.Publish( new Events.DatabaseItemChanged( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Update )));
-				}
 			}
 			else {
 				NoiseLogger.Current.LogMessage( String.Format( "Database:Store - Unknown dbObject: {0}", dbObject.GetType()));
@@ -251,10 +239,6 @@ namespace Noise.EloqueraDatabase.Database {
 
 			if( dbObject != null ) {
 				Database.Delete( dbObject );
-
-				if( dbObject is DbBase ) {
-					mEventAggregator.Publish( new Events.DatabaseItemChanged( new DbItemChangedArgs( dbObject as DbBase, DbItemChanged.Delete )));
-				}
 			}
 		}
 

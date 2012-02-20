@@ -1,6 +1,4 @@
-﻿using Caliburn.Micro;
-using FluentAssertions;
-using Microsoft.Practices.Prism.Events;
+﻿using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Noise.AppSupport;
@@ -27,13 +25,11 @@ namespace Noise.Core.IntegrationTests.Database {
 			mDummyLog = new Mock<ILog>();
 			NoiseLogger.Current = mDummyLog.Object;
 				
-			mEventAggregator = new Mock<IEventAggregator> { DefaultValue = DefaultValue.Mock };
-
 			mDatabaseConfiguration = new DatabaseConfiguration { DatabaseName = "Integration Test Database" };
 
 			mIocProvider = new IocProvider();
 			mBlobResolver = new BlobStorageResolver();
-			mDatabaseFactory = new EloqueraDatabaseFactory( mBlobResolver, mEventAggregator.Object, mIocProvider, mDatabaseConfiguration );
+			mDatabaseFactory = new EloqueraDatabaseFactory( mBlobResolver, mIocProvider, mDatabaseConfiguration );
 			mDatabaseManager = new DatabaseManager( mDatabaseFactory );
 
 			if( mDatabaseManager.Initialize()) {

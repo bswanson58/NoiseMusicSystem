@@ -120,7 +120,7 @@ namespace Noise.Core.Database {
 						}
 					}
 
-					mEventAggregator.Publish( new Events.DatabaseItemChanged( new DbItemChangedArgs( forArtist, DbItemChanged.Favorite )));
+					mEventAggregator.Publish( new Events.ArtistUserUpdate( forArtist.DbId ));
 				}
 			}
 			catch( Exception ex ) {
@@ -142,7 +142,7 @@ namespace Noise.Core.Database {
 							}
 						}
 
-						mEventAggregator.Publish( new Events.DatabaseItemChanged( new DbItemChangedArgs( forAlbum, DbItemChanged.Favorite )));
+						mEventAggregator.Publish( new Events.AlbumUserUpdate( forAlbum.DbId ));
 					}
 
 					using( var updater = mArtistProvider.GetArtistForUpdate( forAlbum.Artist )) {
@@ -179,7 +179,7 @@ namespace Noise.Core.Database {
 							}
 						}
 
-						mEventAggregator.Publish( new Events.DatabaseItemChanged( new DbItemChangedArgs( forTrack, DbItemChanged.Favorite )));
+						mEventAggregator.Publish( new Events.TrackUserUpdate( forTrack.DbId ));
 					}
 
 					using( var albumUpdater = mAlbumProvider.GetAlbumForUpdate( forTrack.Album )) {
@@ -229,7 +229,7 @@ namespace Noise.Core.Database {
 							updater.Update();
 						}
 
-						mEventAggregator.Publish( new Events.DatabaseItemChanged( new DbItemChangedArgs( forList, DbItemChanged.Favorite )));
+						mEventAggregator.Publish( new Events.PlayListUserUpdate( forList.DbId ));
 					}
 				}
 			}

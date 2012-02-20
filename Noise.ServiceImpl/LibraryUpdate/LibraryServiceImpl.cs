@@ -3,7 +3,6 @@ using System.ServiceModel;
 using System.ServiceProcess;
 using Caliburn.Micro;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support.Service;
 using Noise.Service.Infrastructure.Clients;
@@ -18,7 +17,7 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 		Description = "This service maintains the Noise Music System library.",
 		EventLogSource = "Noise Update Service",
 		StartMode = ServiceStartMode.Automatic)]
-	public class LibraryServiceImpl : BaseService, IHandle<Events.DatabaseItemChanged>, IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted> {
+	public class LibraryServiceImpl : BaseService, IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted> {
 		internal const string				cNoiseLibraryUpdate = "NoiseLibraryUpdate";
 
 		private readonly IEventAggregator	mEventAggregator;
@@ -91,15 +90,6 @@ namespace Noise.ServiceImpl.LibraryUpdate {
 		public void UpdateLibrary() {
 			if(!mLibraryBuilder.LibraryUpdateInProgress ) {
 				mLibraryBuilder.StartLibraryUpdate();
-			}
-		}
-
-		public void Handle( Events.DatabaseItemChanged eventArgs ) {
-			var item = eventArgs.ItemChangedArgs.Item;
-
-			if(( item is DbArtist ) ||
-			   ( item is DbAlbum )) {
-				mServiceBus.Publish( new DatabaseItemChangedMessage { ItemId = item.DbId, Change = eventArgs.ItemChangedArgs.Change });
 			}
 		}
 

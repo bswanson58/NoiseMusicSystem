@@ -20,7 +20,7 @@ namespace Noise.UI.ViewModels {
 	}
 
 	internal class AlbumTracksViewModel : AutomaticPropertyBase,
-										  IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.DatabaseItemChanged> {
+										  IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.TrackUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly ITrackProvider			mTrackProvider;
 		private long							mCurrentArtistId;
@@ -47,7 +47,9 @@ namespace Noise.UI.ViewModels {
 		private UiTrack TransformTrack( DbTrack dbTrack ) {
 			var retValue = new UiTrack( OnTrackPlay, OnTrackEdit  );
 
-			Mapper.DynamicMap( dbTrack, retValue );
+			if( dbTrack != null ) {
+				Mapper.DynamicMap( dbTrack, retValue );
+			}
 
 			return( retValue );
 		}
@@ -141,32 +143,15 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Handle( Events.DatabaseItemChanged eventArgs ) {
-			var item = eventArgs.ItemChangedArgs.Item;
+		public void Handle( Events.TrackUserUpdate eventArgs ) {
+			var track = ( from UiTrack node in mTracks where node.DbId == eventArgs.TrackId select node ).FirstOrDefault();
 
-			if(( item is DbTrack ) &&
-			   ( eventArgs.ItemChangedArgs.Change == DbItemChanged.Update ) &&
-			   ((item as DbTrack).Album == mCurrentAlbumId )) {
-				Execute.OnUIThread( () => {
-					var track = ( from UiTrack node in mTracks where node.DbId == item.DbId select node ).FirstOrDefault();
+			if( track != null ) {
+				var newTrack = TransformTrack( mTrackProvider.GetTrack( eventArgs.TrackId ));
 
-					if( track != null ) {
-						switch( eventArgs.ItemChangedArgs.Change ) {
-							case DbItemChanged.Update:
-								var newTrack = TransformTrack( item as DbTrack );
-
-								mChangeObserver.Release( track );
-								mTracks[mTracks.IndexOf( track )] = newTrack;
-								mChangeObserver.Add( newTrack );
-
-								break;
-							case DbItemChanged.Delete:
-								mTracks.Remove( track );
-
-								break;
-						}
-					}
-				});
+				mChangeObserver.Release( track );
+				mTracks[mTracks.IndexOf( track )] = newTrack;
+				mChangeObserver.Add( newTrack );
 			}
 		}
 

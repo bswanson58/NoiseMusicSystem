@@ -18,7 +18,7 @@ namespace Noise.UI.ViewModels {
 
 	public class ArtistViewModel : AutomaticCommandBase,
 								   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, 
-								   IHandle<Events.ArtistContentUpdated>, IHandle<Events.DatabaseItemChanged> {
+								   IHandle<Events.ArtistContentUpdated>, IHandle<Events.ArtistUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IArtworkProvider		mArtworkProvider;
@@ -57,8 +57,10 @@ namespace Noise.UI.ViewModels {
 		private UiArtist TransformArtist( DbArtist dbArtist ) {
 			var retValue = new UiArtist();
 
-			Mapper.DynamicMap( dbArtist, retValue );
-			retValue.DisplayGenre = mTagManager.GetGenre( dbArtist.Genre );
+			if( dbArtist != null ) {
+				Mapper.DynamicMap( dbArtist, retValue );
+				retValue.DisplayGenre = mTagManager.GetGenre( dbArtist.Genre );
+			}
 
 			return( retValue );
 		}
@@ -123,6 +125,13 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public void Handle( Events.ArtistUserUpdate eventArgs ) {
+			if(( CurrentArtist != null ) &&
+			   ( eventArgs.ArtistId == CurrentArtist.DbId )) {
+				CurrentArtist = TransformArtist( mArtistProvider.GetArtist( eventArgs.ArtistId ));
+			}
+		}
+
 		internal TaskHandler<DbArtist> ArtistTaskHandler {
 			get {
 				if( mArtistTaskHandler == null ) {
@@ -180,17 +189,6 @@ namespace Noise.UI.ViewModels {
 				if( changeNotification.PropertyName == "UiIsFavorite" ) {
 					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( notifier.DbId, notifier.UiIsFavorite ));
 				}
-			}
-		}
-
-		public void Handle( Events.DatabaseItemChanged eventArgs ) {
-			var item = eventArgs.ItemChangedArgs.Item;
-
-			if(( item is DbArtist ) &&
-			   ( CurrentArtist != null ) &&
-			   ( eventArgs.ItemChangedArgs.Change == DbItemChanged.Update ) &&
-			   ( item.DbId == CurrentArtist.DbId )) {
-				CurrentArtist = TransformArtist( item as DbArtist );
 			}
 		}
 

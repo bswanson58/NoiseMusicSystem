@@ -287,7 +287,7 @@ namespace Noise.UI.Tests.ViewModels {
 			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
 
 			album.Name = "updated name";
-			sut.Handle( new Events.DatabaseItemChanged( new DbItemChangedArgs( album, DbItemChanged.Update )));
+			sut.Handle( new Events.AlbumUserUpdate( album.DbId ));
 
 			sut.Album.Name.Should().Be( album.Name );
 		}

@@ -40,6 +40,46 @@ namespace Noise.Infrastructure {
 			}
 		}
 
+		public class ArtistAdded {
+			public	long	ArtistId { get; private set; }
+
+			public ArtistAdded( long artistId ) {
+				ArtistId = artistId;
+			}
+		}
+
+		public class ArtistRemoved {
+			public	long	ArtistId { get; private set; }
+
+			public ArtistRemoved( long artistId ) {
+				ArtistId = artistId;
+			}
+		}
+
+		public class ArtistUserUpdate {
+			public long		ArtistId { get; private set; }
+
+			public ArtistUserUpdate( long artistId ) {
+				ArtistId = artistId;
+			}
+		}
+
+		public class AlbumUserUpdate {
+			public long		AlbumId { get; private set; }
+
+			public AlbumUserUpdate( long albumId ) {
+				AlbumId = albumId;
+			}
+		}
+
+		public class TrackUserUpdate {
+			public long		TrackId { get; private set; }
+
+			public TrackUserUpdate( long trackId ) {
+				TrackId = trackId;
+			}
+		}
+
 		public class PlayQueueChanged {
 			public IPlayQueue	PlayQueue { get; private set; }
 
@@ -64,19 +104,19 @@ namespace Noise.Infrastructure {
 			}
 		}
 
+		public class PlayListUserUpdate {
+			public long		PlayListId	{ get; private set; }
+
+			public PlayListUserUpdate( long playListId ) {
+				PlayListId = playListId;
+			}
+		}
+
 		public class PlayQueuedTrackRequest {
 			public PlayQueueTrack	QueuedTrack { get; private set; }
 
 			public PlayQueuedTrackRequest( PlayQueueTrack track ) {
 				QueuedTrack = track;
-			}
-		}
-
-		public class DatabaseItemChanged {
-			public DbItemChangedArgs	ItemChangedArgs { get; private set; }
-
-			public DatabaseItemChanged( DbItemChangedArgs args ) {
-				ItemChangedArgs = args;
 			}
 		}
 

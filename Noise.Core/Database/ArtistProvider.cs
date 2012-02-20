@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -8,14 +9,17 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	internal class ArtistProvider : BaseDataProvider<DbArtist>, IArtistProvider {
+		private readonly IEventAggregator				mEventAggregator;
 		private readonly IArtworkProvider				mArtworkProvider;
 		private readonly ITextInfoProvider				mTextInfoProvider;
 		private readonly ITagAssociationProvider		mTagAssociationProvider;
 		private readonly IAssociatedItemListProvider	mAssociationProvider;
 
-		public ArtistProvider( IDatabaseManager databaseManager, IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider,
+		public ArtistProvider( IDatabaseManager databaseManager, IEventAggregator eventAggregator,
+							   IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider,
 							   ITagAssociationProvider tagAssociationProvider,	IAssociatedItemListProvider associatedItemListProvider )
 			: base( databaseManager ) {
+			mEventAggregator = eventAggregator;
 			mArtworkProvider = artworkProvider;
 			mTextInfoProvider = textInfoProvider;
 			mTagAssociationProvider = tagAssociationProvider;
@@ -27,12 +31,16 @@ namespace Noise.Core.Database {
 			Condition.Requires( artist ).IsNotNull();
 
 			InsertItem( artist );
+
+			mEventAggregator.Publish( new Events.ArtistAdded( artist.DbId ));
 		}
 
 		public void DeleteArtist( DbArtist artist ) {
 			Condition.Requires( artist ).IsNotNull();
 
 			DeleteItem( artist );
+
+			mEventAggregator.Publish( new Events.ArtistRemoved( artist.DbId ));
 		}
 
 		public DbArtist GetArtist( long dbid ) {

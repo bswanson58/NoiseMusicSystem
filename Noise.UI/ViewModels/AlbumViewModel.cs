@@ -30,7 +30,7 @@ namespace Noise.UI.ViewModels {
 	}
 
 	internal class AlbumViewModel : ViewModelBase,
-									IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.DatabaseItemChanged> {
+									IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.AlbumUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
@@ -280,14 +280,10 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Handle( Events.DatabaseItemChanged eventArgs ) {
-			var item = eventArgs.ItemChangedArgs.Item;
-
-			if(( item is DbAlbum ) &&
-			   ( mCurrentAlbum != null ) &&
-			   ( eventArgs.ItemChangedArgs.Change == DbItemChanged.Update ) &&
-			   ((item as DbAlbum).DbId == mCurrentAlbum.DbId )) {
-				Execute.OnUIThread( () => Mapper.DynamicMap( item as DbAlbum, mCurrentAlbum ));
+		public void Handle( Events.AlbumUserUpdate eventArgs ) {
+			if(( mCurrentAlbum != null ) &&
+			   ( eventArgs.AlbumId == mCurrentAlbum.DbId )) {
+				Mapper.DynamicMap( mAlbumProvider.GetAlbum( eventArgs.AlbumId ), mCurrentAlbum );
 			}
 		}
 
