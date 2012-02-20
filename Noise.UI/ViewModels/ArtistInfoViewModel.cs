@@ -15,17 +15,17 @@ namespace Noise.UI.ViewModels {
 	public class ArtistInfoViewModel : AutomaticCommandBase, IActiveAware,
 									   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>,
 									   IHandle<Events.ArtistContentUpdated>, IHandle<Events.ViewDisplayRequest> {
-		private readonly IEventAggregator			mEventAggregator;
-		private readonly IArtistProvider			mArtistProvider;
+		private readonly IEventAggregator				mEventAggregator;
+		private readonly IArtistProvider				mArtistProvider;
 		private readonly IDiscographyProvider			mDiscographyProvider;
 		private long									mCurrentArtistId;
 		private TaskHandler<ArtistSupportInfo>			mTaskHandler; 
-		private readonly BindableCollection<LinkNode>				mSimilarArtists;
-		private readonly BindableCollection<LinkNode>				mTopAlbums;
-		private readonly BindableCollection<LinkNode>				mBandMembers;
+		private readonly BindableCollection<LinkNode>	mSimilarArtists;
+		private readonly BindableCollection<LinkNode>	mTopAlbums;
+		private readonly BindableCollection<LinkNode>	mBandMembers;
 		private readonly SortableCollection<DbDiscographyRelease>	mDiscography;
 
-		public	event	EventHandler								IsActiveChanged;
+		public	event	EventHandler					IsActiveChanged;
 
 		public ArtistInfoViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IDiscographyProvider discographyProvider ) {
 			mEventAggregator = eventAggregator;
@@ -46,13 +46,20 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => IsActive, value ); }
 		}
 
+		private void ClearCurrentArtist() {
+			mSimilarArtists.Clear();
+			mTopAlbums.Clear();
+			mBandMembers.Clear();
+			mDiscography.Clear();
+			mCurrentArtistId = Constants.cDatabaseNullOid;
+
+			RaisePropertyChanged( () => SupportInfo );
+		}
+
 		public ArtistSupportInfo SupportInfo {
 			get { return( Get( () => SupportInfo )); }
 			set {
-				mSimilarArtists.Clear();
-				mTopAlbums.Clear();
-				mBandMembers.Clear();
-				mDiscography.Clear();
+				ClearCurrentArtist();
 
 				if( value != null ) {
 					if(( value.SimilarArtist != null ) &&
@@ -88,17 +95,15 @@ namespace Noise.UI.ViewModels {
 
 		private void SetCurrentArtist( long artistId ) {
 			if( mCurrentArtistId != artistId ) {
-				mCurrentArtistId = artistId;
+				ClearCurrentArtist();
 
-				SupportInfo = null;
+				mCurrentArtistId = artistId;
 				RetrieveSupportInfo( mCurrentArtistId );
 			}
 		}
 
 		public void Handle( Events.ArtistFocusRequested request ) {
-			if( request.ArtistId != mCurrentArtistId ) {
-				SetCurrentArtist( request.ArtistId );
-			}
+			SetCurrentArtist( request.ArtistId );
 
 			if(!IsActive ) {
 				mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.ArtistInfoView ));
@@ -106,9 +111,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Handle( Events.AlbumFocusRequested request ) {
-			if( request.ArtistId != mCurrentArtistId ) {
-				SetCurrentArtist( request.ArtistId );
-			}
+			SetCurrentArtist( request.ArtistId );
 		}
 
 		public void Handle( Events.ArtistContentUpdated eventArgs ) {
@@ -154,6 +157,11 @@ namespace Noise.UI.ViewModels {
 		public bool IsDisplayed {
 			get{ return( Get( () => IsDisplayed )); }
 			set{ Set( () => IsDisplayed, value ); }
+		}
+
+		[DependsUpon( "SupportInfo" )]
+		public bool ArtistValid {
+			get{ return( SupportInfo != null ); }
 		}
 
 		[DependsUpon( "SupportInfo" )]

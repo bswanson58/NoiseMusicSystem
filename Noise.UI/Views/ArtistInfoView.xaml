@@ -24,7 +24,7 @@
     <GroupBox BorderBrush="{DynamicResource TrimColor}"
               BorderThickness="1"
               Header=" Artist Information ">
-        <Grid>
+        <Grid Visibility="{Binding ArtistValid, Converter={StaticResource BooleanVisibilityConverter}}">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
