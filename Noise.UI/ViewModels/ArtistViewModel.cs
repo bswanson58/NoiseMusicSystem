@@ -99,7 +99,7 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.ArtistContentUpdated eventArgs ) {
 			if(( CurrentArtist != null ) &&
 			   ( CurrentArtist.DbId == eventArgs.ArtistId )) {
-				CurrentArtist = TransformArtist( mArtistProvider.GetArtist( eventArgs.ArtistId ));
+				RequestArtist( CurrentArtist.DbId );
 			}
 		}
 
