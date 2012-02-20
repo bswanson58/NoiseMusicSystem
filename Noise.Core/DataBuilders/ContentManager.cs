@@ -53,7 +53,6 @@ namespace Noise.Core.DataBuilders {
 
 					foreach( var provider in selectedProviders ) {
 						using( var contentList = mExpiringContentProvider.GetContentList( artistId, provider.ContentType )) {
-
 							if( contentList.List.Any()) {
 								var localProvider = provider;
 
@@ -62,11 +61,6 @@ namespace Noise.Core.DataBuilders {
 
 									contentUpdated = true;
 								}
-							}
-							else {
-								provider.UpdateContent( artist );
-
-								contentUpdated = true;
 							}
 						}
 					}

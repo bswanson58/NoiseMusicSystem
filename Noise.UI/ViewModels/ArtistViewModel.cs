@@ -65,6 +65,20 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
+		private void ClearCurrentArtist() {
+			if( mCurrentArtist != null ) {
+				mChangeObserver.Release( mCurrentArtist );
+
+				mCurrentArtist = null;
+				mArtistWebsite = null;
+				mArtistImage = null;
+
+				RaisePropertyChanged( () => Artist );
+				RaisePropertyChanged( () => ArtistImage );
+				RaisePropertyChanged( () => ArtistWebsite );
+			}
+		}
+
 		private void SetCurrentArtist( DbArtist artist ) {
 			CurrentArtist = artist != null ? TransformArtist( artist ) : null;
 		}
@@ -72,26 +86,15 @@ namespace Noise.UI.ViewModels {
 		private UiArtist CurrentArtist {
 			get{ return( mCurrentArtist ); }
 			set {
-				if( mCurrentArtist != null ) {
-					mChangeObserver.Release( mCurrentArtist );
-
-					if(( value != null ) &&
-					   ( mCurrentArtist.DbId != value.DbId )) {
-					}
-				}
+				ClearCurrentArtist();
 
 				if( value != null ) {
-					mEventAggregator.Publish( new Events.ArtistContentRequest( value.DbId ));
-
 					mCurrentArtist = value;
 					mChangeObserver.Add( mCurrentArtist );
 					RaisePropertyChanged( () => Artist );
 
 					mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
 					RaisePropertyChanged( () => ArtistWebsite );
-				}
-				else {
-					mCurrentArtist = null;
 				}
 			}
 		}
@@ -106,22 +109,24 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.ArtistFocusRequested request ) {
 			if( CurrentArtist != null ) {
 				if( request.ArtistId != CurrentArtist.DbId ) {
-					RequestArtist( request.ArtistId );
+					ClearCurrentArtist();
+					RequestArtistAndContent( request.ArtistId );
 				}
 			}
 			else {
-				RequestArtist( request.ArtistId );
+				RequestArtistAndContent( request.ArtistId );
 			}
 		}
 
 		public void Handle( Events.AlbumFocusRequested request ) {
 			if( CurrentArtist != null ) {
 				if( request.ArtistId != CurrentArtist.DbId ) {
-					RequestArtist( request.ArtistId );
+					ClearCurrentArtist();
+					RequestArtistAndContent( request.ArtistId );
 				}
 			}
 			else {
-				RequestArtist( request.ArtistId );
+				RequestArtistAndContent( request.ArtistId );
 			}
 		}
 
@@ -144,6 +149,12 @@ namespace Noise.UI.ViewModels {
 			set { mArtistTaskHandler = value; }
 		}
  
+		private void RequestArtistAndContent( long artistId ) {
+			RequestArtist( artistId );
+
+			mEventAggregator.Publish( new Events.ArtistContentRequest( artistId ));
+		}
+
 		private void RequestArtist( long artistId ) {
 			RetrieveArtist( artistId );
 			RetrieveArtwork( artistId );
