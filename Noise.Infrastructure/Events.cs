@@ -64,6 +64,22 @@ namespace Noise.Infrastructure {
 			}
 		}
 
+		public class AlbumAdded {
+			public	long	AlbumId { get; private set; }
+
+			public AlbumAdded( long albumId ) {
+				AlbumId = albumId;
+			}
+		}
+
+		public class AlbumRemoved {
+			public	long	AlbumId { get; private set; }
+
+			public AlbumRemoved( long albumId ) {
+				AlbumId = albumId;
+			}
+		}
+
 		public class AlbumUserUpdate {
 			public long		AlbumId { get; private set; }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -9,6 +10,7 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataBuilders {
 	public class MetaDataCleaner : IMetaDataCleaner {
+		private readonly IEventAggregator			mEventAggregator;
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IAlbumProvider				mAlbumProvider;
 		private readonly ITrackProvider				mTrackProvider;
@@ -24,7 +26,8 @@ namespace Noise.Core.DataBuilders {
 
 		public MetaDataCleaner( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IDbBaseProvider dbBaseProvider,
 								IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider, IExpiringContentProvider contentProvider,
-								IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider ) {
+								IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider, IEventAggregator eventAggregator ) {
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -149,11 +152,12 @@ namespace Noise.Core.DataBuilders {
 
 				if( artist != null ) {
 					using( var albumList = mAlbumProvider.GetAlbumList( artistId )) {
-						if( albumList.List.Count() == 0 ) {
+						if( !albumList.List.Any() ) {
 							NoiseLogger.Current.LogMessage( string.Format( "Deleting Artist: {0}", artist.Name ));
 							mSummary.ArtistsRemoved++;
 
 							mArtistProvider.DeleteArtist( artist );
+							mEventAggregator.Publish( new Events.ArtistRemoved( artist.DbId ));
 						}
 					}
 				}
@@ -167,9 +171,9 @@ namespace Noise.Core.DataBuilders {
 				var album = mAlbumProvider.GetAlbum( albumId );
 				if( album != null ) {
 					using( var trackList = mTrackProvider.GetTrackList( albumId )) {
-						if( trackList.List.Count() == 0 ) {
+						if( !trackList.List.Any() ) {
 							using( var contentList = mContentProvider.GetAlbumContentList( albumId )) {
-								if( contentList.List.Count() == 0 ) {
+								if( !contentList.List.Any() ) {
 									if(!retValue.Contains( album.Artist )) {
 										retValue.Add( album.Artist );
 									}
@@ -178,6 +182,7 @@ namespace Noise.Core.DataBuilders {
 									mSummary.AlbumsRemoved++;
 
 									mAlbumProvider.DeleteAlbum( album );
+									mEventAggregator.Publish( new Events.AlbumRemoved( album.DbId ));
 								}
 							}
 						}

@@ -69,18 +69,21 @@ namespace Noise.UI.ViewModels {
 			var	trackList = new List<DbTrack>();
 
 			using( var additions = mTrackProvider.GetNewlyAddedTracks()) {
-				UInt32	count = 0;
+				if(( additions != null ) &&
+				   ( additions.List != null )) {
+					UInt32	count = 0;
 
-				foreach( var track in additions.List ) {
-					if(( count < mHorizonCount ) &&
-					   ( track.DateAdded > mHorizonTime )) {
-						trackList.Add( track );
-					}
-					else {
-						break;
-					}
+					foreach( var track in additions.List ) {
+						if(( count < mHorizonCount ) &&
+						   ( track.DateAdded > mHorizonTime )) {
+							trackList.Add( track );
+						}
+						else {
+							break;
+						}
 
-					count++;
+						count++;
+					}
 				}
 			}
 

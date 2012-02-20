@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Noise.Core.Database;
 using Noise.Core.DataProviders;
@@ -12,8 +13,9 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	public class MetaDataExplorer : IMetaDataExplorer {
+		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
-		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
 		private readonly IArtworkProvider		mArtworkProvider;
 		private readonly ITextInfoProvider		mTextInfoProvider;
@@ -31,7 +33,8 @@ namespace Noise.Core.DataBuilders {
 
 		public  MetaDataExplorer( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 								  IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider, ITagManager tagManager,
-								  IStorageFolderProvider folderProvider, IStorageFileProvider fileProvider ) {
+								  IStorageFolderProvider folderProvider, IStorageFileProvider fileProvider, IEventAggregator eventAggregator ) {
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -297,6 +300,8 @@ namespace Noise.Core.DataBuilders {
 					mArtistCache.Add( retValue );
 
 					mSummary.ArtistsAdded++;
+
+					mEventAggregator.Publish( new Events.ArtistAdded( retValue.DbId ));
 					NoiseLogger.Current.LogInfo( "Added artist: {0}", retValue.Name );
 				}
 			}
@@ -334,6 +339,8 @@ namespace Noise.Core.DataBuilders {
 					artist.AlbumCount++;
 
 					mSummary.AlbumsAdded++;
+
+					mEventAggregator.Publish( new Events.AlbumAdded( retValue.DbId ));
 					NoiseLogger.Current.LogInfo( "Added album: {0}", retValue.Name );
 				}
 			}

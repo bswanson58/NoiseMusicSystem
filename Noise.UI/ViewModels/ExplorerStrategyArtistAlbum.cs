@@ -20,7 +20,8 @@ using Condition = CuttingEdge.Conditions.Condition;
 namespace Noise.UI.ViewModels {
 	[Export( typeof( IExplorerViewStrategy ))]
 	public class ExplorerStrategyArtistAlbum : IExplorerViewStrategy,
-											   IHandle<Events.ArtistUserUpdate>, IHandle<Events.AlbumUserUpdate> {
+											   IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
+											   IHandle<Events.AlbumUserUpdate>, IHandle<Events.AlbumAdded>, IHandle<Events.AlbumRemoved> {
 		internal const string					cSearchOptionDefault = "!";
 		internal const string					cSearchArtists = "Artists";
 		internal const string					cSearchAlbums = "Albums";
@@ -153,6 +154,27 @@ namespace Noise.UI.ViewModels {
 			if( treeNode != null ) {
 				mViewModel.TreeData.Remove( treeNode );
 				mChangeObserver.Release( treeNode.Artist );
+			}
+		}
+
+		public void Handle( Events.AlbumAdded eventArgs ) {
+			UpdateArtistForAlbum( eventArgs.AlbumId );
+		}
+
+		public void Handle( Events.AlbumRemoved eventArgs ) {
+			UpdateArtistForAlbum( eventArgs.AlbumId );
+		}
+
+		private void UpdateArtistForAlbum( long albumId ) {
+			var album = mAlbumProvider.GetAlbum( albumId );
+
+			if( album != null ) {
+				var treeNode = ( from UiArtistTreeNode node in mViewModel.TreeData
+								 where album.Artist == node.Artist.DbId select node ).FirstOrDefault();
+			
+				if( treeNode != null ) {
+					UpdateUiArtist( treeNode.Artist, mArtistProvider.GetArtist( album.Artist ));
+				}
 			}
 		}
 

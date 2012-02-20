@@ -12,8 +12,8 @@ namespace Noise.Core.Database {
 		private readonly ITextInfoProvider			mTextInfoProvider;
 		private readonly ITagAssociationProvider	mTagAssociationProvider;
 
-		public AlbumProvider( IDatabaseManager databaseManager, IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider,
-							  ITagAssociationProvider tagAssociationProvider ) :
+		public AlbumProvider( IDatabaseManager databaseManager,
+							  IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider, ITagAssociationProvider tagAssociationProvider ) :
 			base( databaseManager ) {
 			mArtworkProvider = artworkProvider;
 			mTextInfoProvider = textInfoProvider;
