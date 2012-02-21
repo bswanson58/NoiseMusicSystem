@@ -71,12 +71,16 @@ namespace Noise.UI.ViewModels {
 
 				mCurrentArtist = null;
 				mArtistWebsite = null;
-				mArtistImage = null;
 
 				RaisePropertyChanged( () => Artist );
-				RaisePropertyChanged( () => ArtistImage );
 				RaisePropertyChanged( () => ArtistWebsite );
 			}
+		}
+
+		public void ClearCurrentArtistInfo() {
+			mArtistImage = null;
+
+			RaisePropertyChanged( () => ArtistImage );
 		}
 
 		private void SetCurrentArtist( DbArtist artist ) {
@@ -86,8 +90,6 @@ namespace Noise.UI.ViewModels {
 		private UiArtist CurrentArtist {
 			get{ return( mCurrentArtist ); }
 			set {
-				ClearCurrentArtist();
-
 				if( value != null ) {
 					mCurrentArtist = value;
 					mChangeObserver.Add( mCurrentArtist );
@@ -95,6 +97,9 @@ namespace Noise.UI.ViewModels {
 
 					mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
 					RaisePropertyChanged( () => ArtistWebsite );
+				}
+				else {
+					ClearCurrentArtist();
 				}
 			}
 		}
@@ -109,7 +114,6 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.ArtistFocusRequested request ) {
 			if( CurrentArtist != null ) {
 				if( request.ArtistId != CurrentArtist.DbId ) {
-					ClearCurrentArtist();
 					RequestArtistAndContent( request.ArtistId );
 				}
 			}
@@ -121,7 +125,6 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.AlbumFocusRequested request ) {
 			if( CurrentArtist != null ) {
 				if( request.ArtistId != CurrentArtist.DbId ) {
-					ClearCurrentArtist();
 					RequestArtistAndContent( request.ArtistId );
 				}
 			}
@@ -133,7 +136,7 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.ArtistUserUpdate eventArgs ) {
 			if(( CurrentArtist != null ) &&
 			   ( eventArgs.ArtistId == CurrentArtist.DbId )) {
-				CurrentArtist = TransformArtist( mArtistProvider.GetArtist( eventArgs.ArtistId ));
+				RequestArtist( CurrentArtist.DbId );
 			}
 		}
 
@@ -150,6 +153,9 @@ namespace Noise.UI.ViewModels {
 		}
  
 		private void RequestArtistAndContent( long artistId ) {
+			ClearCurrentArtist();
+			ClearCurrentArtistInfo();
+
 			RequestArtist( artistId );
 
 			mEventAggregator.Publish( new Events.ArtistContentRequest( artistId ));
