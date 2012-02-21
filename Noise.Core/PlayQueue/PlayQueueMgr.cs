@@ -59,6 +59,7 @@ namespace Noise.Core.PlayQueue {
 			mStreamPlayCommand = new AsyncCommand<DbInternetStream>( OnStreamPlayCommand );
 			GlobalCommands.PlayStream.RegisterCommand( mStreamPlayCommand );
 
+			mEventAggregator.Subscribe( this );
 			NoiseLogger.Current.LogInfo( "PlayQueue created" );
 		}
 
@@ -191,7 +192,7 @@ namespace Noise.Core.PlayQueue {
 			                                                           ( queueTrack.Track.DbId == eventArgs.TrackId ))) {
 				queueTrack.UpdateTrack( mTrackProvider.GetTrack( eventArgs.TrackId ));
 
-				FirePlayQueueChanged();
+				mEventAggregator.Publish( new Events.PlaybackTrackUpdated( queueTrack ));
 			}
 		}
 

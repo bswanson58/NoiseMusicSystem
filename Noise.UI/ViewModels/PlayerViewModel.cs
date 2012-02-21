@@ -16,7 +16,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace Noise.UI.ViewModels {
 	public class PlayerViewModel : ViewModelBase, IActiveAware,
 								   IHandle<Events.PlaybackStatusChanged>, IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackInfoChanged>,
-								   IHandle<Events.PlaybackTrackStarted>, IHandle<Events.SongLyricsInfo> {
+								   IHandle<Events.PlaybackTrackStarted>, IHandle<Events.SongLyricsInfo>, IHandle<Events.PlaybackTrackUpdated> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IPlayQueue			mPlayQueue;
 		private readonly IPlayController	mPlayController;
@@ -86,6 +86,14 @@ namespace Noise.UI.ViewModels {
 
 		public void Handle( Events.PlaybackInfoChanged eventArgs ) {
 			InfoUpdateFlag++;
+		}
+
+		public void Handle( Events.PlaybackTrackUpdated eventArgs ) {
+			// Update favorite and ratings if it's the playing track.
+			if(( mPlayQueue.PlayingTrack != null ) &&
+			   ( mPlayQueue.PlayingTrack.Name.Equals( eventArgs.Track.Name ))) {
+				StartTrackFlag++;
+			}
 		}
 
 		private ePlaybackStatus CurrentStatus {

@@ -152,6 +152,14 @@ namespace Noise.Infrastructure {
 			}
 		}
 
+		public class PlaybackTrackUpdated {
+			public PlayQueueTrack	Track { get; private set; }
+
+			public PlaybackTrackUpdated( PlayQueueTrack track ) {
+				Track = track;
+			}
+		}
+
 		public class PlaybackTrackChanged { }
 		public class PlaybackInfoChanged { }
 
