@@ -250,6 +250,8 @@ namespace Noise.Core.Database {
 
 							updater.Update();
 						}
+
+						mEventAggregator.Publish( new Events.ArtistUserUpdate( forArtist.DbId ));
 					}
 				}
 			}
@@ -269,6 +271,8 @@ namespace Noise.Core.Database {
 
 							albumUpdater.Update();
 						}
+
+						mEventAggregator.Publish( new Events.AlbumUserUpdate( forAlbum.DbId ));
 					}
 
 					using( var artistUpdater = mArtistProvider.GetArtistForUpdate( forAlbum.Artist )) {
@@ -289,6 +293,8 @@ namespace Noise.Core.Database {
 
 								artistUpdater.Update();
 							}
+
+							mEventAggregator.Publish( new Events.ArtistUserUpdate( forAlbum.Artist ));
 						}
 					}
 				}
@@ -309,6 +315,8 @@ namespace Noise.Core.Database {
 
 							trackUpdater.Update();
 						}
+
+						mEventAggregator.Publish( new Events.TrackUserUpdate( forTrack.DbId ));
 					}
 
 					using( var albumUpdater = mAlbumProvider.GetAlbumForUpdate( forTrack.Album )) {
@@ -325,6 +333,8 @@ namespace Noise.Core.Database {
 								albumUpdater.Item.MaxChildRating = (Int16)maxTrackRating;
 								albumUpdater.Update();
 							}
+
+							mEventAggregator.Publish( new Events.AlbumUserUpdate( forTrack.Album ));
 
 							using( var artistUpdater = mArtistProvider.GetArtistForUpdate( albumUpdater.Item.Artist )) {
 								if( artistUpdater.Item != null ) {
@@ -343,6 +353,8 @@ namespace Noise.Core.Database {
 										artistUpdater.Item.MaxChildRating = (Int16)maxAlbumRating;
 										artistUpdater.Update();
 									}
+
+									mEventAggregator.Publish( new Events.ArtistUserUpdate( albumUpdater.Item.Artist ));
 								}
 							}
 						}
@@ -366,6 +378,8 @@ namespace Noise.Core.Database {
 							updater.Update();
 						}
 					}
+
+					mEventAggregator.Publish( new Events.PlayListUserUpdate( forList.DbId ));
 				}
 			}
 			catch( Exception ex ) {

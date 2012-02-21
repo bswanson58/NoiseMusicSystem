@@ -95,7 +95,7 @@ namespace Noise.UI.Dto {
 			mImSorting = true;
 			
 			if( mChildrenView != null ) {
-				mChildrenView.View.Refresh();
+				Execute.OnUIThread( () => mChildrenView.View.Refresh());
 			}
 
 			mImSorting = false;
