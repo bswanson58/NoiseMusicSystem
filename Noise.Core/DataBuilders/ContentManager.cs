@@ -62,6 +62,11 @@ namespace Noise.Core.DataBuilders {
 									contentUpdated = true;
 								}
 							}
+							else {
+								provider.UpdateContent( artist );
+
+								contentUpdated = true;
+							}
 						}
 					}
 
