@@ -51,7 +51,6 @@ namespace Noise.UI.ViewModels {
 			mTopAlbums.Clear();
 			mBandMembers.Clear();
 			mDiscography.Clear();
-			mCurrentArtistId = Constants.cDatabaseNullOid;
 
 			RaisePropertyChanged( () => SupportInfo );
 		}
