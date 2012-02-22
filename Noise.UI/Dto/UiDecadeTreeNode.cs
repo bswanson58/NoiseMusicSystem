@@ -106,8 +106,11 @@ namespace Noise.UI.Dto {
 		}
 
 		public void SetChildren( IEnumerable<UiArtistTreeNode> children ) {
+			mChildren.IsNotifying = false;
 			mChildren.Clear();
 			mChildren.AddRange( children );
+			mChildren.IsNotifying = true;
+			mChildren.Refresh();
 
 			mRequiresChildren = false;
 		}
