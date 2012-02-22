@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace Noise.Infrastructure.Dto {
-	public class ExpiringContent : DbBase {
+	public abstract class ExpiringContent : DbBase {
 		public	long		AssociatedItem { get; private set; }
 		public	long		Artist { get; set; }
 		public	long		Album { get; set; }

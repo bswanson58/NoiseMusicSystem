@@ -3,7 +3,7 @@ using Eloquera.Client;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure.Dto {
-	public class DbBase : IDbBase {
+	public abstract class DbBase : IDbBase {
 		[Index]
 		public long	DbId { get; private set; }
 
