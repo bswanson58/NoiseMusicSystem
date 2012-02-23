@@ -113,6 +113,7 @@
     <Compile Include="..\Common\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DataProviders\TrackProvider.cs" />
     <Compile Include="NoiseContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
