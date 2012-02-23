@@ -5,7 +5,7 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Infrastructure.Dto {
 	public abstract class DbBase : IDbBase {
 		[Index]
-		public long	DbId { get; private set; }
+		public long	DbId { get; protected set; }
 
 		protected DbBase() {
 			DbId = BitConverter.ToInt64( Guid.NewGuid().ToByteArray(), 0 );
