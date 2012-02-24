@@ -96,6 +96,9 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CuttingEdge.Conditions, Version=1.1.0.10041, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\lib\CuttingEdge.Conditions\v1.1.0.10041\CuttingEdge.Conditions.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.4.3.0\lib\net40\EntityFramework.dll</HintPath>
     </Reference>
@@ -120,17 +123,19 @@
     <Compile Include="..\Common\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ContextProvider.cs" />
+    <Compile Include="DatabaseManager\ContextProvider.cs" />
     <Compile Include="DataProviders\BaseProvider.cs" />
     <Compile Include="DataProviders\TrackProvider.cs" />
-    <Compile Include="EfProviderList.cs" />
-    <Compile Include="EfProviderShell.cs" />
-    <Compile Include="EfUpdateShell.cs" />
-    <Compile Include="EntityFrameworkDatabaseManager.cs" />
+    <Compile Include="DatabaseManager\DebugDatabaseInitialize.cs" />
+    <Compile Include="DataProviders\EfProviderList.cs" />
+    <Compile Include="DataProviders\EfProviderShell.cs" />
+    <Compile Include="DataProviders\EfUpdateShell.cs" />
+    <Compile Include="DatabaseManager\EntityFrameworkDatabaseManager.cs" />
     <Compile Include="EntityFrameworkDatabaseModule.cs" />
     <Compile Include="Interfaces\IContextProvider.cs" />
+    <Compile Include="Interfaces\IDatabaseInitializeStrategy.cs" />
     <Compile Include="Interfaces\IDbContext.cs" />
-    <Compile Include="NoiseContext.cs" />
+    <Compile Include="DatabaseManager\NoiseContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

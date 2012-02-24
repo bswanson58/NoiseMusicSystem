@@ -3,7 +3,7 @@ using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.EntityFrameworkDatabase {
+namespace Noise.EntityFrameworkDatabase.DataProviders {
 	public class EfProviderList<T> : EfProviderShell, IDataProviderList<T> where T : DbBase {
 		public		IEnumerable<T>	List { get; private set; }
 

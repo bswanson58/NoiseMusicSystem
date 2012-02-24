@@ -4,12 +4,8 @@ using System.Data.Entity.ModelConfiguration;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 
-namespace Noise.EntityFrameworkDatabase {
+namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	public class NoiseContext : DbContext, IDbContext {
-		static NoiseContext() {
-			Database.SetInitializer( new DropCreateDatabaseIfModelChanges<NoiseContext>());	
-		}
-
 		public NoiseContext() :
 			base( "NoiseDatabase" ) { }
 

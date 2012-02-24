@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Noise.EntityFrameworkDatabase.DatabaseManager;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.EntityFrameworkDatabase.Tests {

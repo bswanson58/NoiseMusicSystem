@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -12,6 +13,8 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		}
 
 		public void AddTrack( DbTrack track ) {
+			Condition.Requires( track ).IsNotNull();
+
 			using( var context = CreateContext()) {
 				context.Set<DbTrack>().Add( track );
 				context.SaveChanges();
@@ -29,6 +32,8 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbTrack> GetTrackList( DbAlbum forAlbum ) {
+			Condition.Requires( forAlbum ).IsNotNull();
+
 			var context = CreateContext();
 
 			return( new EfProviderList<DbTrack>( context, from track in context.Set<DbTrack>() where track.Album == forAlbum.DbId select track ));
@@ -53,13 +58,15 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		}
 
 		public IEnumerable<DbTrack> GetTrackListForPlayList( DbPlayList playList ) {
+			Condition.Requires( playList ).IsNotNull();
+
 			return( playList.TrackIds.Select( GetTrack ).ToList());
 		}
 
 		public IDataUpdateShell<DbTrack> GetTrackForUpdate( long trackId ) {
 			var context = CreateContext();
 
-			return( new EfUpdateShell<DbTrack>( context, GetTrack( trackId )));
+			return( new EfUpdateShell<DbTrack>( context, GetItemByKey( context, trackId )));
 		}
 
 		public long GetItemCount() {

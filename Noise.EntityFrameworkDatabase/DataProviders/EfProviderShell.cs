@@ -1,7 +1,7 @@
 ﻿using System;
 using Noise.EntityFrameworkDatabase.Interfaces;
 
-namespace Noise.EntityFrameworkDatabase {
+namespace Noise.EntityFrameworkDatabase.DataProviders {
 	public abstract class EfProviderShell {
 		protected	IDbContext		mContext;
 

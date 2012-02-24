@@ -1,4 +1,5 @@
-﻿using Noise.EntityFrameworkDatabase.Interfaces;
+﻿using CuttingEdge.Conditions;
+using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
@@ -17,10 +18,16 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			TEntity	retValue;
 
 			using( var context = CreateContext()) {
-				retValue = context.Set<TEntity>().Find( key );
+				retValue = GetItemByKey( context, key );
 			}
 
 			return( retValue );
+		}
+
+		protected TEntity GetItemByKey( IDbContext context, long key ) {
+			Condition.Requires( context ).IsNotNull();
+
+			return( context.Set<TEntity>().Find( key ));
 		}
 	}
 }

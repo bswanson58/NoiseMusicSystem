@@ -2,7 +2,7 @@
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.EntityFrameworkDatabase {
+namespace Noise.EntityFrameworkDatabase.DataProviders {
 	public class EfUpdateShell<TEntity> : EfProviderShell, IDataUpdateShell<TEntity> where TEntity : DbBase {
 		public	TEntity	Item { get; private set; }
 

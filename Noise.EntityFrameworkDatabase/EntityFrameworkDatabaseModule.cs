@@ -1,6 +1,7 @@
 ﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
-using Noise.EntityFrameworkDatabase.DataProviders;
+using Noise.EntityFrameworkDatabase.DatabaseManager;
+using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 
@@ -17,6 +18,7 @@ namespace Noise.EntityFrameworkDatabase {
 			mContainer.RegisterInstance( config );
 
 			mContainer.RegisterType<IDatabaseManager, EntityFrameworkDatabaseManager>();
+			mContainer.RegisterType<IDatabaseInitializeStrategy, DebugDatabaseInitialize>();
 /*
 			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();
 			mContainer.RegisterType<IArtistProvider, ArtistProvider>();

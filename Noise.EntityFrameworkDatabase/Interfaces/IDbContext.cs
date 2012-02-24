@@ -6,5 +6,7 @@ namespace Noise.EntityFrameworkDatabase.Interfaces {
 		IDbSet<TEntity>	Set<TEntity>() where TEntity : class;
 
         int				SaveChanges();
+
+		Database		Database { get; }
 	}
 }
