@@ -6,10 +6,10 @@ using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Noise.Core.Database;
 using Noise.Core.DataProviders;
-using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataBuilders {
 	public class MetaDataExplorer : IMetaDataExplorer {

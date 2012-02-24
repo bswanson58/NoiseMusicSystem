@@ -5,7 +5,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void							AddPlayHistory( DbPlayHistory playHistory );
 		void							DeletePlayHistory( DbPlayHistory playHistory );
 
-		DataProviderList<DbPlayHistory>	GetPlayHistoryList();
-		DataUpdateShell<DbPlayHistory>	GetPlayHistoryForUpdate( long playListId );
+		IDataProviderList<DbPlayHistory>	GetPlayHistoryList();
+		IDataUpdateShell<DbPlayHistory>		GetPlayHistoryForUpdate( long playListId );
 	}
 }

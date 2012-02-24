@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataProviders {
 	internal class FileNameProvider {

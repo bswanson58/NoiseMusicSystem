@@ -8,10 +8,10 @@ namespace Noise.Infrastructure.Interfaces {
 		StorageFolder						GetFolder( long folderId );
 		string								GetPhysicalFolderPath( StorageFolder forFolder );
 
-		DataProviderList<StorageFolder>		GetAllFolders();
-		DataProviderList<StorageFolder>		GetChildFolders( long parentId );
-		DataProviderList<StorageFolder>		GetDeletedFolderList();
-		DataUpdateShell<StorageFolder>		GetFolderForUpdate( long folderId );
+		IDataProviderList<StorageFolder>	GetAllFolders();
+		IDataProviderList<StorageFolder>	GetChildFolders( long parentId );
+		IDataProviderList<StorageFolder>	GetDeletedFolderList();
+		IDataUpdateShell<StorageFolder>		GetFolderForUpdate( long folderId );
 
 		long								GetItemCount();
 	}

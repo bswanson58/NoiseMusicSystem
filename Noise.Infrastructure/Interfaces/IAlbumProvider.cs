@@ -9,17 +9,17 @@ namespace Noise.Infrastructure.Interfaces {
 		DbAlbum						GetAlbum( long dbid );
 		DbAlbum						GetAlbumForTrack( DbTrack track );
 
-		DataProviderList<DbAlbum>	GetAllAlbums();
-		DataProviderList<DbAlbum>	GetAlbumList( DbArtist forArtist );
-		DataProviderList<DbAlbum>	GetAlbumList( long artistId );
-		DataProviderList<DbAlbum>	GetFavoriteAlbums();
+		IDataProviderList<DbAlbum>	GetAllAlbums();
+		IDataProviderList<DbAlbum>	GetAlbumList( DbArtist forArtist );
+		IDataProviderList<DbAlbum>	GetAlbumList( long artistId );
+		IDataProviderList<DbAlbum>	GetFavoriteAlbums();
 
-		DataUpdateShell<DbAlbum>	GetAlbumForUpdate( long albumId );
+		IDataUpdateShell<DbAlbum>	GetAlbumForUpdate( long albumId );
 
 		AlbumSupportInfo			GetAlbumSupportInfo( long albumId );
 
-		DataProviderList<long>		GetAlbumsInCategory( long categoryId );
-		DataProviderList<long>		GetAlbumCategories( long albumId );
+		IDataProviderList<long>		GetAlbumsInCategory( long categoryId );
+		IDataProviderList<long>		GetAlbumCategories( long albumId );
 		void						SetAlbumCategories( long artistId, long albumId, IEnumerable<long> categories );
 
 		long						GetItemCount();

@@ -28,7 +28,6 @@ namespace Noise.UI.Blendable.ViewModels {
 			var eventAggregator = new Mock<IEventAggregator>();
 			var artistProvider = new Mock<IArtistProvider>();
 			var discographyProvider = new Mock<IDiscographyProvider>();
-			var databaseShell = new Mock<IDatabaseShell>();
 
 			var vm = new ArtistInfoViewModel( eventAggregator.Object, artistProvider.Object, discographyProvider.Object );
 			// Set tpl tasks to use the current thread only.
@@ -68,7 +67,9 @@ namespace Noise.UI.Blendable.ViewModels {
 			var discographyList = new List<DbDiscographyRelease> { new DbDiscographyRelease( artist.DbId, "Let It Bleed", "LP", "Decca", 1970, DiscographyReleaseType.Release ),
 																   new DbDiscographyRelease( artist.DbId, "Some Girls", "LP", "Decca", 1981, DiscographyReleaseType.Release ),
 																   new DbDiscographyRelease( artist.DbId, "Undercover", "CD", "Decca", 1987, DiscographyReleaseType.Release )};
-			discographyProvider.Setup( m => m.GetDiscography( It.IsAny<long>())).Returns( new DataProviderList<DbDiscographyRelease>( databaseShell.Object, discographyList ));
+			var provider = new Mock<IDataProviderList<DbDiscographyRelease>>();
+ 			provider.Setup( m => m.List ).Returns( discographyList );
+			discographyProvider.Setup( m => m.GetDiscography( It.IsAny<long>())).Returns( provider.Object );
 
 			vm.Handle( new Events.ArtistFocusRequested( artist.DbId ));
 

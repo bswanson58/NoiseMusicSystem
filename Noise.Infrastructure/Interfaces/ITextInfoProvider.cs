@@ -9,6 +9,6 @@ namespace Noise.Infrastructure.Interfaces {
 		TextInfo					GetArtistTextInfo( long artistId, ContentType ofType );
 		TextInfo[]					GetAlbumTextInfo( long albumId );
 
-		DataUpdateShell<TextInfo>	GetTextInfoForUpdate( long textInfoId );
+		IDataUpdateShell<TextInfo>	GetTextInfoForUpdate( long textInfoId );
 	}
 }

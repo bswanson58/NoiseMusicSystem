@@ -6,9 +6,9 @@ namespace Noise.Infrastructure.Interfaces {
 
 		DbAssociatedItemList					GetAssociatedItems( long artistId, ContentType ofType );
 
-		DataProviderList<DbAssociatedItemList>	GetAssociatedItemLists( ContentType forType );
-		DataProviderList<DbAssociatedItemList>	GetAssociatedItemLists( long forArtist );
-
-		DataUpdateShell<DbAssociatedItemList>	GetAssociationForUpdate( long listId );
+		IDataProviderList<DbAssociatedItemList>	GetAssociatedItemLists( ContentType forType );
+		IDataProviderList<DbAssociatedItemList>	GetAssociatedItemLists( long forArtist );
+		
+		IDataUpdateShell<DbAssociatedItemList>	GetAssociationForUpdate( long listId );
 	}
 }

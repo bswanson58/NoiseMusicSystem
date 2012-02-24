@@ -2,7 +2,7 @@
 using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
-using Noise.Core.Database;
+using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;

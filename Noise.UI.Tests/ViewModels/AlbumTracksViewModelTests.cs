@@ -58,9 +58,10 @@ namespace Noise.UI.Tests.ViewModels {
 		[Test]
 		public void AlbumRequestShouldRequestTrackList() {
 			var testable = new TestableAlbumTracksViewModel();
+			var provider = new Mock<IDataProviderList<DbTrack>>(); 
 
-			testable.Mock<ITrackProvider>().Setup( m => m.GetTrackList( It.IsAny<long>()))
-				.Returns( new DataProviderList<DbTrack>( null, new List<DbTrack>())).Verifiable();
+			provider.Setup( m => m.List ).Returns( new List<DbTrack>());
+			testable.Mock<ITrackProvider>().Setup( m => m.GetTrackList( It.IsAny<long>())).Returns( provider.Object ).Verifiable();
 
 			var sut= testable.ClassUnderTest;
 			var album = new DbAlbum { Artist = 1 };
@@ -76,8 +77,10 @@ namespace Noise.UI.Tests.ViewModels {
 
 			var track1 = new DbTrack();
 			var track2 = new DbTrack();
-			testable.Mock<ITrackProvider>().Setup( m => m.GetTrackList( It.IsAny<long>()))
-				.Returns( new DataProviderList<DbTrack>( null, new List<DbTrack> { track1, track2 }));
+			var provider = new Mock<IDataProviderList<DbTrack>>();
+ 
+			provider.Setup( m => m.List ).Returns(  new List<DbTrack> { track1, track2 });
+			testable.Mock<ITrackProvider>().Setup( m => m.GetTrackList( It.IsAny<long>())).Returns( provider.Object );
 
 			var sut= testable.ClassUnderTest;
 			var album = new DbAlbum { Artist = 1 };
@@ -93,8 +96,10 @@ namespace Noise.UI.Tests.ViewModels {
 
 			var track1 = new DbTrack();
 			var track2 = new DbTrack();
-			testable.Mock<ITrackProvider>().Setup( m => m.GetTrackList( It.IsAny<long>()))
-				.Returns( new DataProviderList<DbTrack>( null, new List<DbTrack> { track1, track2 }));
+			var provider = new Mock<IDataProviderList<DbTrack>>();
+ 
+			provider.Setup( m => m.List ).Returns(  new List<DbTrack> { track1, track2 });
+			testable.Mock<ITrackProvider>().Setup( m => m.GetTrackList( It.IsAny<long>())).Returns( provider.Object );
 
 			var sut= testable.ClassUnderTest;
 			var album = new DbAlbum { Artist = 1 };
@@ -112,8 +117,10 @@ namespace Noise.UI.Tests.ViewModels {
 			var track1 = new DbTrack { VolumeName = "Disc 2", TrackNumber = 1 };
 			var track2 = new DbTrack { VolumeName = "Disc 1", TrackNumber = 3 };
 			var track3 = new DbTrack { VolumeName = "Disc 2", TrackNumber = 7 };
-			testable.Mock<ITrackProvider>().Setup( m => m.GetTrackList( It.IsAny<long>()))
-				.Returns( new DataProviderList<DbTrack>( null, new List<DbTrack> { track1, track2, track3 }));
+			var provider = new Mock<IDataProviderList<DbTrack>>();
+ 
+			provider.Setup( m => m.List ).Returns(  new List<DbTrack> { track1, track2, track3 });
+			testable.Mock<ITrackProvider>().Setup( m => m.GetTrackList( It.IsAny<long>())).Returns( provider.Object );
 
 			var sut= testable.ClassUnderTest;
 			var album = new DbAlbum { Artist = 1 };
@@ -134,8 +141,10 @@ namespace Noise.UI.Tests.ViewModels {
 			var track1 = new DbTrack { DurationMilliseconds = (int)time1.TotalMilliseconds };
  			var time2 = new TimeSpan( 0, 2, 30 );
 			var track2 = new DbTrack { DurationMilliseconds = (int)time2.TotalMilliseconds };
-			testable.Mock<ITrackProvider>().Setup( m => m.GetTrackList( It.IsAny<long>()))
-				.Returns( new DataProviderList<DbTrack>( null, new List<DbTrack> { track1, track2 }));
+			var provider = new Mock<IDataProviderList<DbTrack>>();
+ 
+			provider.Setup( m => m.List ).Returns(  new List<DbTrack> { track1, track2 });
+			testable.Mock<ITrackProvider>().Setup( m => m.GetTrackList( It.IsAny<long>())).Returns( provider.Object );
 
 			var sut= testable.ClassUnderTest;
 			var album = new DbAlbum { Artist = 1 };

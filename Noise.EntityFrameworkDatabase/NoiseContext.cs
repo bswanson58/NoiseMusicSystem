@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
+using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.EntityFrameworkDatabase {
-	public class NoiseContext : DbContext {
+	public class NoiseContext : DbContext, IDbContext {
 		static NoiseContext() {
 			Database.SetInitializer( new DropCreateDatabaseIfModelChanges<NoiseContext>());	
 		}
@@ -21,6 +22,10 @@ namespace Noise.EntityFrameworkDatabase {
 			modelBuilder.Configurations.Add( new AlbumConfiguration());
 			modelBuilder.Configurations.Add( new TrackConfiguration());
 		}
+
+		public new IDbSet<TEntity> Set<TEntity>() where TEntity : class {
+            return base.Set<TEntity>();
+        }
 	}
 
 	internal class ArtistConfiguration : EntityTypeConfiguration<DbArtist> {

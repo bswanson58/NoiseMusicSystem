@@ -5,6 +5,7 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Noise.Core.Database;
+using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;

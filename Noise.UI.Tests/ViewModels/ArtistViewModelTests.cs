@@ -184,13 +184,13 @@ namespace Noise.UI.Tests.ViewModels {
 		[Test]
 		public void EditArtistRequestCanUpdate() {
 			var testable = new TestableArtistViewModel();
-			var databaseShell = new Mock<IDatabaseShell> { DefaultValue = DefaultValue.Mock };
+			var updater = new Mock<IDataUpdateShell<DbArtist>>(); 
 
 			var artist = new DbArtist();
 
+			updater.Setup( m => m.Item ).Returns( artist );
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistForUpdate( artist.DbId ))
-				.Returns( new DataUpdateShell<DbArtist>( databaseShell.Object, artist )).Verifiable();
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistForUpdate( artist.DbId )).Returns( updater.Object ).Verifiable();
 
 			var sut = testable.ClassUnderTest;
 

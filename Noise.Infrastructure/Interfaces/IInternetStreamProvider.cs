@@ -6,7 +6,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void								DeleteStream( DbInternetStream stream );
 
 		DbInternetStream					GetStream( long streamId );
-		DataProviderList<DbInternetStream>	GetStreamList();
-		DataUpdateShell<DbInternetStream>	GetStreamForUpdate( long streamId );
+		IDataProviderList<DbInternetStream>	GetStreamList();
+		IDataUpdateShell<DbInternetStream>	GetStreamForUpdate( long streamId );
 	}
 }

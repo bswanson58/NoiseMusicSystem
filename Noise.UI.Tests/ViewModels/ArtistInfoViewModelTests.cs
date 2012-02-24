@@ -81,10 +81,11 @@ namespace Noise.UI.Tests.ViewModels {
 			var	similarArtists = new DbAssociatedItemList( 1, ContentType.SimilarArtists );
 			var topAlbums = new DbAssociatedItemList( 1, ContentType.TopAlbums );
 			var bandMembers = new DbAssociatedItemList( 1, ContentType.BandMembers );
+			var provider = new Mock<IDataProviderList<DbDiscographyRelease>>(); 
 
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) )
 				.Returns( new ArtistSupportInfo( biography, artistImage, similarArtists, topAlbums, bandMembers ) );
-			testable.Mock<IDiscographyProvider>().Setup( m => m.GetDiscography( It.IsAny<long>() ) ).Returns( (DataProviderList<DbDiscographyRelease>)null ).Verifiable();
+			testable.Mock<IDiscographyProvider>().Setup( m => m.GetDiscography( It.IsAny<long>() ) ).Returns( provider.Object ).Verifiable();
 
 			var sut = testable.ClassUnderTest;
 
@@ -111,10 +112,11 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) )
 				.Returns( new ArtistSupportInfo( biography, artistImage, similarArtists, topAlbums, bandMembers ) );
 
-			var databaseShell = new Mock<IDatabaseShell>();
 			var discoList = new List<DbDiscographyRelease>();
-			var discography = new DataProviderList<DbDiscographyRelease>( databaseShell.Object, discoList );
-			testable.Mock<IDiscographyProvider>().Setup( m => m.GetDiscography( It.IsAny<long>() ) ).Returns( discography );
+			var provider = new Mock<IDataProviderList<DbDiscographyRelease>>();
+ 
+			provider.Setup( m => m.List ).Returns( discoList );
+			testable.Mock<IDiscographyProvider>().Setup( m => m.GetDiscography( It.IsAny<long>() ) ).Returns( provider.Object );
 
 			var sut = testable.ClassUnderTest;
 			sut.MonitorEvents();

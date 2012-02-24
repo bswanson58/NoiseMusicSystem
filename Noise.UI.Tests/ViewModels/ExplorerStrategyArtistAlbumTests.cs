@@ -99,8 +99,10 @@ namespace Noise.UI.Tests.ViewModels {
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
 			var filter = new Mock<IDatabaseFilter>();
 			var artistList = new List<DbArtist> { new DbArtist(), new DbArtist(), new DbArtist() };
+			var provider = new Mock<IDataProviderList<DbArtist>>(); 
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( new DataProviderList<DbArtist>( null, artistList ));
+			provider.Setup( m => m.List ).Returns( artistList );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( provider.Object );
 
 			var sut = testable.ClassUnderTest;
 
@@ -119,9 +121,14 @@ namespace Noise.UI.Tests.ViewModels {
 			var filter = new Mock<IDatabaseFilter>();
 			var artistList = new List<DbArtist> { new DbArtist() };
 			var albumList = new List<DbAlbum> { new DbAlbum(), new DbAlbum() };
+			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
+			var albumProvider = new Mock<IDataProviderList<DbAlbum>>(); 
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( new DataProviderList<DbArtist>( null, artistList ));
-			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumList( It.IsAny<long>())).Returns( new DataProviderList<DbAlbum>( null, albumList ));
+			artistProvider.Setup( m => m.List ).Returns( artistList );
+			albumProvider.Setup( m => m.List ).Returns( albumList );
+
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( artistProvider.Object );
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumList( It.IsAny<long>())).Returns( albumProvider.Object );
 
 			var sut = testable.ClassUnderTest;
 
@@ -144,9 +151,14 @@ namespace Noise.UI.Tests.ViewModels {
 			var filter = new Mock<IDatabaseFilter>();
 			var artistList = new List<DbArtist> { new DbArtist() };
 			var albumList = new List<DbAlbum> { new DbAlbum() };
+			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
+			var albumProvider = new Mock<IDataProviderList<DbAlbum>>(); 
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( new DataProviderList<DbArtist>( null, artistList ));
-			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumList( It.IsAny<long>())).Returns( new DataProviderList<DbAlbum>( null, albumList ));
+			artistProvider.Setup( m => m.List ).Returns( artistList );
+			albumProvider.Setup( m => m.List ).Returns( albumList );
+
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( artistProvider.Object );
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumList( It.IsAny<long>())).Returns( albumProvider.Object );
 			testable.Mock<IEventAggregator>().Setup( m => m.Publish( It.IsAny<Events.ArtistFocusRequested>())).Verifiable();
 
 			var sut = testable.ClassUnderTest;
@@ -169,9 +181,14 @@ namespace Noise.UI.Tests.ViewModels {
 			var filter = new Mock<IDatabaseFilter>();
 			var artistList = new List<DbArtist> { new DbArtist() };
 			var albumList = new List<DbAlbum> { new DbAlbum() };
+			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
+			var albumProvider = new Mock<IDataProviderList<DbAlbum>>(); 
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( new DataProviderList<DbArtist>( null, artistList ));
-			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumList( It.IsAny<long>())).Returns( new DataProviderList<DbAlbum>( null, albumList ));
+			artistProvider.Setup( m => m.List ).Returns( artistList );
+			albumProvider.Setup( m => m.List ).Returns( albumList );
+
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( artistProvider.Object );
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumList( It.IsAny<long>())).Returns( albumProvider.Object );
 			testable.Mock<IEventAggregator>().Setup( m => m.Publish( It.IsAny<Events.AlbumFocusRequested>())).Verifiable();
 
 			var sut = testable.ClassUnderTest;
@@ -198,8 +215,10 @@ namespace Noise.UI.Tests.ViewModels {
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
 			var filter = new Mock<IDatabaseFilter>();
 			var artistList = new List<DbArtist> { new DbArtist { Name = "The Rolling Stones" }};
+			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( new DataProviderList<DbArtist>( null, artistList ));
+			artistProvider.Setup( m => m.List ).Returns( artistList );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( artistProvider.Object );
 
 			var sut = testable.ClassUnderTest;
 
@@ -220,8 +239,10 @@ namespace Noise.UI.Tests.ViewModels {
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
 			var filter = new Mock<IDatabaseFilter>();
 			var artistList = new List<DbArtist> { new DbArtist { Name = "Joan Jett and The Blackhearts" }};
+			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( new DataProviderList<DbArtist>( null, artistList ));
+			artistProvider.Setup( m => m.List ).Returns( artistList );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( artistProvider.Object );
 
 			var sut = testable.ClassUnderTest;
 
@@ -245,8 +266,10 @@ namespace Noise.UI.Tests.ViewModels {
 			var artistList = new List<DbArtist> { new DbArtist { Name = "Joan Jett and The Blackhearts" },
 												  new DbArtist { Name = "Jethro Tull" },
 												  new DbArtist { Name = "The Rolling Stones" }};
+			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( new DataProviderList<DbArtist>( null, artistList ));
+			artistProvider.Setup( m => m.List ).Returns( artistList );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( artistProvider.Object );
 
 			var sut = testable.ClassUnderTest;
 
@@ -264,8 +287,10 @@ namespace Noise.UI.Tests.ViewModels {
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
 			var filter = new Mock<IDatabaseFilter>();
 			var artistList = new List<DbArtist> { new DbArtist { Name = "The Rolling Stones" }};
+			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( new DataProviderList<DbArtist>( null, artistList ));
+			artistProvider.Setup( m => m.List ).Returns( artistList );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( artistProvider.Object );
 
 			var sut = testable.ClassUnderTest;
 
@@ -403,10 +428,11 @@ namespace Noise.UI.Tests.ViewModels {
 			var testable = new TestableStrategyArtistAlbum();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
 			var artist = new DbArtist { Name = "artist name" };
+			var provider = new Mock<IDataProviderList<DbArtist>>(); 
 
+			provider.Setup( m => m.List ).Returns( new List<DbArtist> { artist });
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( It.IsAny<IDatabaseFilter>()))
-				.Returns( new DataProviderList<DbArtist>( null, new List<DbArtist> { artist }));
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( It.IsAny<IDatabaseFilter>())).Returns( provider.Object );
 
 			var treeData = new BindableCollection<UiTreeNode>();
 			viewModel.Setup( m => m.TreeData ).Returns( treeData );
@@ -431,9 +457,10 @@ namespace Noise.UI.Tests.ViewModels {
 			var testable = new TestableStrategyArtistAlbum();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
 			var artist = new DbArtist();
+			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( It.IsAny<IDatabaseFilter>()))
-				.Returns( new DataProviderList<DbArtist>( null, new List<DbArtist> { artist }));
+			artistProvider.Setup( m => m.List ).Returns( new List<DbArtist> { artist });
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( It.IsAny<IDatabaseFilter>())).Returns( artistProvider.Object );
 
 			var treeData = new BindableCollection<UiTreeNode>();
 			viewModel.Setup( m => m.TreeData ).Returns( treeData );

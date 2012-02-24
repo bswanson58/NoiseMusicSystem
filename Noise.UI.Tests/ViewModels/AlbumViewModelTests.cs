@@ -170,10 +170,13 @@ namespace Noise.UI.Tests.ViewModels {
 			var tag1 = new DbTag( eTagGroup.User, "tag one" );
 			var tag2 = new DbTag( eTagGroup.User, "tag two" );
 			var tagList = new List<DbTag> { tag1, tag2 };
-			testable.Mock<ITagProvider>().Setup( m => m.GetTagList( It.Is<eTagGroup>( p => p == eTagGroup.User )))
-				.Returns( new DataProviderList<DbTag>( null, tagList ));
-			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumCategories( It.IsAny<long>()))
-				.Returns( new DataProviderList<long>( null, new [] { tag2.DbId }));
+			var tagProvider = new Mock<IDataProviderList<DbTag>>();
+			var idProvider =new Mock<IDataProviderList<long>>(); 
+ 
+			tagProvider.Setup( m => m.List ).Returns( tagList );
+			idProvider.Setup( m => m.List ).Returns( new [] { tag2.DbId });
+			testable.Mock<ITagProvider>().Setup( m => m.GetTagList( It.Is<eTagGroup>( p => p == eTagGroup.User ))).Returns( tagProvider.Object );
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumCategories( It.IsAny<long>())).Returns( idProvider.Object );
 
 			var sut = testable.ClassUnderTest;
 			sut.MonitorEvents();
@@ -356,8 +359,10 @@ namespace Noise.UI.Tests.ViewModels {
 
 			var databaseShell = new Mock<IDatabaseShell> { DefaultValue = DefaultValue.Mock };
 			databaseShell.Setup( m => m.Database.UpdateItem( album )).Verifiable();
-			var updater = new DataUpdateShell<DbAlbum>( databaseShell.Object, album );
-			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumForUpdate( album.DbId )).Returns( updater );
+			var updater =new Mock<IDataUpdateShell<DbAlbum>>();
+
+ 			updater.Setup( m => m.Item ).Returns( album );
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumForUpdate( album.DbId )).Returns( updater.Object );
 
 			var sut = testable.ClassUnderTest;
 
@@ -461,10 +466,13 @@ namespace Noise.UI.Tests.ViewModels {
 			var tag1 = new DbTag( eTagGroup.User, "tag one" );
 			var tag2 = new DbTag( eTagGroup.User, "tag two" );
 			var tagList = new List<DbTag> { tag1, tag2 };
-			testable.Mock<ITagProvider>().Setup( m => m.GetTagList( It.Is<eTagGroup>( p => p == eTagGroup.User )))
-				.Returns( new DataProviderList<DbTag>( null, tagList ));
-			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumCategories( It.IsAny<long>()))
-				.Returns( new DataProviderList<long>( null, new [] { tag1.DbId, tag2.DbId }));
+			var tagProvider = new Mock<IDataProviderList<DbTag>>();
+ 			var idProvider = new Mock<IDataProviderList<long>>();
+ 
+			tagProvider.Setup( m => m.List ).Returns( tagList );
+			idProvider.Setup( m => m.List ).Returns(  new [] { tag1.DbId, tag2.DbId });
+			testable.Mock<ITagProvider>().Setup( m => m.GetTagList( It.Is<eTagGroup>( p => p == eTagGroup.User ))).Returns( tagProvider.Object );
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumCategories( It.IsAny<long>())).Returns( idProvider.Object );
 
 			var sut = testable.ClassUnderTest;
 			sut.AlbumCategoryEditRequest.Raised += OnAlbumCategoryEditRequestConfirm;

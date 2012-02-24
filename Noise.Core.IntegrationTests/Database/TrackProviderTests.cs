@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using Noise.Core.Database;
+using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.IntegrationTests.Database {

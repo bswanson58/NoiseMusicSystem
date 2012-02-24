@@ -46,34 +46,14 @@ namespace Noise.Core {
 			mContainer.RegisterType<DatabaseStatistics, DatabaseStatistics>();
 			mContainer.RegisterType<ISummaryBuilder, SummaryBuilder>();
 
-			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();
-			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
-			mContainer.RegisterType<IAlbumProvider, AlbumProvider>();
-			mContainer.RegisterType<ITrackProvider, TrackProvider>();
-			mContainer.RegisterType<IInternetStreamProvider, InternetStreamProvider>();
-			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
-			mContainer.RegisterType<IDiscographyProvider, DbDiscographyProvider>();
-			mContainer.RegisterType<IDomainSearchProvider, DomainSearchProvider>();
-			mContainer.RegisterType<IExpiringContentProvider, ExpiringContentProvider>();
-			mContainer.RegisterType<IGenreProvider, GenreProvider>();
-			mContainer.RegisterType<ILyricProvider, LyricProvider>();
-			mContainer.RegisterType<IPlayHistoryProvider, PlayHistoryProvider>();
-			mContainer.RegisterType<IPlayListProvider, PlayListProvider>();
-			mContainer.RegisterType<IRootFolderProvider, RootFolderProvider>();
-			mContainer.RegisterType<IStorageFileProvider, StorageFileProvider>();
-			mContainer.RegisterType<IStorageFolderProvider, StorageFolderProvider>();
-			mContainer.RegisterType<ITagProvider, TagProvider>();
-			mContainer.RegisterType<ITagAssociationProvider, TagAssociationProvider>();
-			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
-			mContainer.RegisterType<ITimestampProvider, TimestampProvider>();
-			mContainer.RegisterType<IAssociatedItemListProvider, AssociatedItemListProvider>();
-
 			mContainer.RegisterType<IRequireConstruction, BackgroundTaskManager>( "BackgroundTaskManager", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRequireConstruction, ContentManager>( "ContentManager", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRequireConstruction, DataUpdates>( "DataUpdates", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRequireConstruction, FileUpdates>( "FileUpdates", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRequireConstruction, LyricsSearcher>( "LyricsSearcher", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IEnumerable<IRequireConstruction>, IRequireConstruction[]>();
+
+			mContainer.RegisterType<IDomainSearchProvider, DomainSearchProvider>();
 
 			mContainer.RegisterType<IBackgroundTask, ContentBuilder>( "ContentBuilder" );
 			mContainer.RegisterType<IBackgroundTask, DecadeTagBuilder>( "DecadeTagBuilder" );

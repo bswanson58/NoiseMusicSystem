@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using CuttingEdge.Conditions;
-using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
 using TagLib;
 using TagLib.Id3v2;
 using File = TagLib.File;

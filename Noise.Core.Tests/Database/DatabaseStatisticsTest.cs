@@ -3,7 +3,6 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Noise.Core.Database;
-using Noise.Core.FileStore;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -93,13 +92,13 @@ namespace Noise.Core.Tests.Database {
 
 		[Test]
 		public void CanGetLastScanTime() {
-			var databaseShell = new Mock<IDatabaseShell>();
 			var rootFolder = new RootFolder( 1, "path", "name" );
 			rootFolder.UpdateLibraryScan();
 
-			var list = new DataProviderList<RootFolder>( databaseShell.Object, new List<RootFolder>{ rootFolder });
+			var provider = new Mock<IDataProviderList<RootFolder>>();
+ 			provider.Setup( m => m.List ).Returns( new List<RootFolder> { rootFolder });
 
-			mRootFolderProvider.Setup( m => m.GetRootFolderList()).Returns( list );
+			mRootFolderProvider.Setup( m => m.GetRootFolderList()).Returns( provider.Object );
 
 			var sut = CreateSut();
 			sut.GatherStatistics( true );

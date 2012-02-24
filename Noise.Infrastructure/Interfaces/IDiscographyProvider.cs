@@ -5,6 +5,6 @@ namespace Noise.Infrastructure.Interfaces {
 		void									AddDiscography( DbDiscographyRelease release );
 		void									RemoveDiscography( DbDiscographyRelease release );
 
-		DataProviderList<DbDiscographyRelease>	GetDiscography( long artistId );
+		IDataProviderList<DbDiscographyRelease>	GetDiscography( long artistId );
 	}
 }

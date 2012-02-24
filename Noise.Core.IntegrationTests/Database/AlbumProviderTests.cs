@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using Noise.Core.Database;
+using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -187,11 +187,12 @@ namespace Noise.Core.IntegrationTests.Database {
 
 		[Test]
 		public void CanGetAlbumsInCategory() {
-			var databaseShell = new Mock<IDatabaseShell>();
 			var tags = new List<DbTagAssociation> { new DbTagAssociation( eTagGroup.User, 1, 1, 3 ),
 													new DbTagAssociation( eTagGroup.User, 1, 2, 4 )};
-			var tagList = new DataProviderList<DbTagAssociation>( databaseShell.Object, tags );
-			mAssociationProvider.Setup( m => m.GetTagList( It.Is<eTagGroup>( p => p == eTagGroup.User ), It.IsAny<long>())).Returns( tagList );
+			var provider = new Mock<IDataProviderList<DbTagAssociation>>();
+ 
+			provider.Setup( m => m.List ).Returns( tags );
+			mAssociationProvider.Setup( m => m.GetTagList( It.Is<eTagGroup>( p => p == eTagGroup.User ), It.IsAny<long>())).Returns( provider.Object );
 
 			var sut = CreateSut();
 			
@@ -204,11 +205,12 @@ namespace Noise.Core.IntegrationTests.Database {
 		public void CanGetCategoriesForAlbum() {
 			var album = new DbAlbum();
 
-			var databaseShell = new Mock<IDatabaseShell>();
 			var tags = new List<DbTagAssociation> { new DbTagAssociation( eTagGroup.User, 1, 1, album.DbId ),
 													new DbTagAssociation( eTagGroup.User, 2, 2, album.DbId )};
-			var tagList = new DataProviderList<DbTagAssociation>( databaseShell.Object, tags );
-			mAssociationProvider.Setup( m => m.GetAlbumTagList( It.IsAny<long>(), It.Is<eTagGroup>( p => p == eTagGroup.User ))).Returns( tagList );
+			var provider = new Mock<IDataProviderList<DbTagAssociation>>();
+ 
+			provider.Setup( m => m.List ).Returns( tags );
+			mAssociationProvider.Setup( m => m.GetAlbumTagList( It.IsAny<long>(), It.Is<eTagGroup>( p => p == eTagGroup.User ))).Returns( provider.Object );
 
 			var sut = CreateSut();
 			
@@ -221,11 +223,12 @@ namespace Noise.Core.IntegrationTests.Database {
 		public void CanSetCategoriesForAlbumRemovesOldCategories() {
 			var album = new DbAlbum();
 
-			var databaseShell = new Mock<IDatabaseShell>();
 			var tags = new List<DbTagAssociation> { new DbTagAssociation( eTagGroup.User, 1, 1, album.DbId ),
 													new DbTagAssociation( eTagGroup.User, 2, 1, album.DbId )};
-			var tagList = new DataProviderList<DbTagAssociation>( databaseShell.Object, tags );
-			mAssociationProvider.Setup( m => m.GetAlbumTagList( It.IsAny<long>(), It.Is<eTagGroup>( p => p == eTagGroup.User ))).Returns( tagList );
+			var provider = new Mock<IDataProviderList<DbTagAssociation>>();
+ 
+			provider.Setup( m => m.List ).Returns( tags );
+			mAssociationProvider.Setup( m => m.GetAlbumTagList( It.IsAny<long>(), It.Is<eTagGroup>( p => p == eTagGroup.User ))).Returns( provider.Object );
 			mAssociationProvider.Setup( m => m.RemoveAssociation( It.Is<long>( p => p == 2 ))).Verifiable();
 
 			var sut = CreateSut();
@@ -240,10 +243,11 @@ namespace Noise.Core.IntegrationTests.Database {
 		public void CanSetCategoriesForAlbumAddsNewCategories() {
 			var album = new DbAlbum();
 
-			var databaseShell = new Mock<IDatabaseShell>();
 			var tags = new List<DbTagAssociation> { new DbTagAssociation( eTagGroup.User, 1, 1, album.DbId )};
-			var tagList = new DataProviderList<DbTagAssociation>( databaseShell.Object, tags );
-			mAssociationProvider.Setup( m => m.GetAlbumTagList( It.IsAny<long>(), It.Is<eTagGroup>( p => p == eTagGroup.User ))).Returns( tagList );
+			var provider = new Mock<IDataProviderList<DbTagAssociation>>();
+ 
+			provider.Setup( m => m.List ).Returns( tags );
+			mAssociationProvider.Setup( m => m.GetAlbumTagList( It.IsAny<long>(), It.Is<eTagGroup>( p => p == eTagGroup.User ))).Returns( provider.Object );
 			mAssociationProvider.Setup( m => m.AddAssociation( It.Is<DbTagAssociation>( p => p.TagId == 2 ))).Verifiable();
 
 			var sut = CreateSut();

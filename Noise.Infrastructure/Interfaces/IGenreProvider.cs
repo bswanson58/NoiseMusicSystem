@@ -4,6 +4,6 @@ namespace Noise.Infrastructure.Interfaces {
 	public interface IGenreProvider {
 		void						AddGenre( DbGenre genre );
 
-		DataProviderList<DbGenre>	GetGenreList();
+		IDataProviderList<DbGenre>	GetGenreList();
 	}
 }

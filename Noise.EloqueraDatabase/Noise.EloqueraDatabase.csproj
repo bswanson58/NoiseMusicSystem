@@ -126,8 +126,32 @@
     <Compile Include="Database\Database.cs" />
     <Compile Include="Database\DatabaseManager.cs" />
     <Compile Include="Database\DatabaseShell.cs" />
+    <Compile Include="DataProviders\AlbumProvider.cs" />
+    <Compile Include="DataProviders\ArtistProvider.cs" />
+    <Compile Include="DataProviders\ArtworkProvider.cs" />
+    <Compile Include="DataProviders\AssociatedItemListProvider.cs" />
+    <Compile Include="DataProviders\BaseDataProvider.cs" />
+    <Compile Include="DataProviders\DbBaseProvider.cs" />
+    <Compile Include="DataProviders\DiscographyProvider.cs" />
+    <Compile Include="DataProviders\ExpiringContentProvider.cs" />
+    <Compile Include="DataProviders\GenreProvider.cs" />
+    <Compile Include="DataProviders\InternetStreamProvider.cs" />
+    <Compile Include="DataProviders\LyricProvider.cs" />
+    <Compile Include="DataProviders\PlayHistoryProvider.cs" />
+    <Compile Include="DataProviders\PlayListProvider.cs" />
+    <Compile Include="DataProviders\RootFolderProvider.cs" />
+    <Compile Include="DataProviders\StorageFileProvider.cs" />
+    <Compile Include="DataProviders\StorageFolderProvider.cs" />
+    <Compile Include="DataProviders\TagAssociationProvider.cs" />
+    <Compile Include="DataProviders\TagProvider.cs" />
+    <Compile Include="DataProviders\TextInfoProvider.cs" />
+    <Compile Include="DataProviders\TimestampProvider.cs" />
+    <Compile Include="DataProviders\TrackProvider.cs" />
     <Compile Include="EloqueraDatabaseFactory.cs" />
     <Compile Include="EloqueraDatabaseModule.cs" />
+    <Compile Include="EloqueraProviderBase.cs" />
+    <Compile Include="EloqueraProviderList.cs" />
+    <Compile Include="EloqueraUpdateShell.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

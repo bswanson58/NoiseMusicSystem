@@ -9,12 +9,12 @@ namespace Noise.Infrastructure.Interfaces {
 		string							GetPhysicalFilePath( StorageFile forFile );
 		string							GetAlbumPath( long albumId );
 
-		DataProviderList<StorageFile>	GetAllFiles();
-		DataProviderList<StorageFile>	GetDeletedFilesList();
-		DataProviderList<StorageFile>	GetFilesInFolder( long parentFolder );
-		DataProviderList<StorageFile>	GetFilesOfType( eFileType fileType );
-
-		DataUpdateShell<StorageFile>	GetFileForUpdate( long fileId );
+		IDataProviderList<StorageFile>	GetAllFiles();
+		IDataProviderList<StorageFile>	GetDeletedFilesList();
+		IDataProviderList<StorageFile>	GetFilesInFolder( long parentFolder );
+		IDataProviderList<StorageFile>	GetFilesOfType( eFileType fileType );
+		
+		IDataUpdateShell<StorageFile>	GetFileForUpdate( long fileId );
 
 		long							GetItemCount();
 	}

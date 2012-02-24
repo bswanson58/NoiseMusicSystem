@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using Noise.Core.Database;
+using Noise.EloqueraDatabase;
+using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -195,7 +196,7 @@ namespace Noise.Core.IntegrationTests.Database {
 			var databaseShell = new Mock<IDatabaseShell>();
 			var tags = new List<DbTagAssociation> { new DbTagAssociation( eTagGroup.User, 1, artist.DbId, 1 ),
 													new DbTagAssociation( eTagGroup.User, 2, artist.DbId, 2 )};
-			var tagList = new DataProviderList<DbTagAssociation>( databaseShell.Object, tags );
+			var tagList = new EloqueraProviderList<DbTagAssociation>( databaseShell.Object, tags );
 			mAssociationProvider.Setup( m => m.GetArtistTagList( It.IsAny<long>(), It.Is<eTagGroup>( p => p == eTagGroup.User ))).Returns( tagList );
 
 			var sut = CreateSut();

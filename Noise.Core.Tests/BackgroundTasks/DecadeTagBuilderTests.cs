@@ -24,7 +24,6 @@ namespace Noise.Core.Tests.BackgroundTasks {
 			private Mock<ITagAssociationProvider>	mTagAssociationProvider;
 			private Mock<ITagManager>				mTagManager;
 			private Mock<ITimestampProvider>		mTimestampProvider;
-			private Mock<IDatabaseShell>			mDatabaseShell;
 
 			private void CreateMocks() {
 				mArtistProvider = new Mock<IArtistProvider>();
@@ -33,7 +32,6 @@ namespace Noise.Core.Tests.BackgroundTasks {
 				mTagAssociationProvider = new Mock<ITagAssociationProvider>();
 				mTagManager = new Mock<ITagManager>();
 				mTimestampProvider = new Mock<ITimestampProvider>();
-				mDatabaseShell = new Mock<IDatabaseShell>();
 			}
 
 			private DecadeTagBuilder CreateSut() {
@@ -47,17 +45,22 @@ namespace Noise.Core.Tests.BackgroundTasks {
 
 			private void SetupArtistProvider( DbArtist artist ) {
 				var artists = new List<DbArtist> { artist };
-				mArtistProvider.Setup( m => m.GetArtistList()).Returns( new DataProviderList<DbArtist>( mDatabaseShell.Object, artists ));
+				var providerList = new Mock<IDataProviderList<DbArtist>>();
+ 				providerList.Setup( m => m.List ).Returns( artists );
+				mArtistProvider.Setup( m => m.GetArtistList()).Returns( providerList.Object );
 				mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
 			}
 
 			private void SetupAlbumProvider( IEnumerable<DbAlbum> albumList ) {
-				mAlbumProvider.Setup( m => m.GetAlbumList( It.IsAny<long>())).Returns( new DataProviderList<DbAlbum>( mDatabaseShell.Object, albumList ));
+				var provider = new Mock<IDataProviderList<DbAlbum>>();
+ 				provider.Setup( m => m.List ).Returns( albumList );
+				mAlbumProvider.Setup( m => m.GetAlbumList( It.IsAny<long>())).Returns( provider.Object );
 			}
 
 			private void SetupTagProvider( IEnumerable<DbTagAssociation> tagList ) {
-				mTagAssociationProvider.Setup( p => p.GetArtistTagList( It.IsAny<long>(), It.IsAny<eTagGroup>()))
-					.Returns( new DataProviderList<DbTagAssociation>( mDatabaseShell.Object, tagList ));
+				var provider = new Mock<IDataProviderList<DbTagAssociation>>();
+ 				provider.Setup( m => m.List ).Returns( tagList );
+				mTagAssociationProvider.Setup( p => p.GetArtistTagList( It.IsAny<long>(), It.IsAny<eTagGroup>())).Returns( provider.Object );
 			} 
 			
 			[Test]

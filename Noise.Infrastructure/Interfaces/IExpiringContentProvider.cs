@@ -2,7 +2,7 @@
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface IExpiringContentProvider {
-		DataProviderList<ExpiringContent>	GetContentList( long forAssociatedItem, ContentType ofType );
-		DataProviderList<ExpiringContent>	GetAlbumContentList( long albumId );
+		IDataProviderList<ExpiringContent>	GetContentList( long forAssociatedItem, ContentType ofType );
+		IDataProviderList<ExpiringContent>	GetAlbumContentList( long albumId );
 	}
 }

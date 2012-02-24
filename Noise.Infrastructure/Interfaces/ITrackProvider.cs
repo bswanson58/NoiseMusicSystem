@@ -6,14 +6,14 @@ namespace Noise.Infrastructure.Interfaces {
 		void						AddTrack( DbTrack track );
 		DbTrack						GetTrack( long trackId );
 
-		DataProviderList<DbTrack>	GetTrackList( long albumId );
-		DataProviderList<DbTrack>	GetTrackList( DbAlbum forAlbum );
-		DataProviderList<DbTrack>	GetTrackListForGenre( long genreId );
-		DataProviderList<DbTrack>	GetFavoriteTracks();
-		DataProviderList<DbTrack>	GetNewlyAddedTracks();
+		IDataProviderList<DbTrack>	GetTrackList( long albumId );
+		IDataProviderList<DbTrack>	GetTrackList( DbAlbum forAlbum );
+		IDataProviderList<DbTrack>	GetTrackListForGenre( long genreId );
+		IDataProviderList<DbTrack>	GetFavoriteTracks();
+		IDataProviderList<DbTrack>	GetNewlyAddedTracks();
 		IEnumerable<DbTrack>		GetTrackListForPlayList( DbPlayList playList );
 
-		DataUpdateShell<DbTrack>	GetTrackForUpdate( long trackId );
+		IDataUpdateShell<DbTrack>	GetTrackForUpdate( long trackId );
 
 		long						GetItemCount();
 	}
