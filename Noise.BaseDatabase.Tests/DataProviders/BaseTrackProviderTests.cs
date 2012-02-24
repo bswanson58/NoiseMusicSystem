@@ -3,16 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class TrackProviderTests : BaseDatabaseProviderTests {
-		private TrackProvider CreateSut() {
-			return( new TrackProvider( mDatabaseManager ));
-		}
-
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BaseTrackProviderTests : BaseProviderTest<ITrackProvider> {
 		[Test]
 		public void CanAddTrack() {
 			var track = new DbTrack();

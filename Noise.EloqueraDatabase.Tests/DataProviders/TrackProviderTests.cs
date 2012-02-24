@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 using Noise.BaseDatabase.Tests.DataProviders;
-using Noise.EntityFrameworkDatabase.DataProviders;
+using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
+namespace Noise.EloqueraDatabase.Tests.DataProviders {
 	[TestFixture]
 	public class TrackProviderTests : BaseTrackProviderTests {
 		private readonly ProviderTestSetup	mTestSetup;
@@ -18,7 +18,12 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 		}
 
 		protected override ITrackProvider CreateSut() {
-			return( new TrackProvider( mTestSetup.ContextProvider ));
+			return( new TrackProvider( mTestSetup.DatabaseManager ));
+		}
+
+		[TearDown]
+		public void TearDown() {
+			mTestSetup.Teardown();
 		}
 	}
 }
