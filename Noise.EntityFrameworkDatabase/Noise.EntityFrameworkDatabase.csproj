@@ -126,6 +126,7 @@
     <Compile Include="EfProviderList.cs" />
     <Compile Include="EfProviderShell.cs" />
     <Compile Include="EfUpdateShell.cs" />
+    <Compile Include="EntityFrameworkDatabaseManager.cs" />
     <Compile Include="EntityFrameworkDatabaseModule.cs" />
     <Compile Include="Interfaces\IContextProvider.cs" />
     <Compile Include="Interfaces\IDbContext.cs" />

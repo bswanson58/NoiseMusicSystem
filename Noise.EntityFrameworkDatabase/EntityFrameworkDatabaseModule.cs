@@ -15,6 +15,8 @@ namespace Noise.EntityFrameworkDatabase {
 		public void Initialize() {
 			var config = NoiseSystemConfiguration.Current.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
 			mContainer.RegisterInstance( config );
+
+			mContainer.RegisterType<IDatabaseManager, EntityFrameworkDatabaseManager>();
 /*
 			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();
 			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
