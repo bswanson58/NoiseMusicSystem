@@ -3,6 +3,7 @@ using Microsoft.Practices.Unity;
 using Noise.EloqueraDatabase.BlobStore;
 using Noise.EloqueraDatabase.DataProviders;
 using Noise.EloqueraDatabase.Database;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 
@@ -22,6 +23,7 @@ namespace Noise.EloqueraDatabase {
 			mContainer.RegisterType<IBlobStorageResolver, BlobStorageResolver>();
 			mContainer.RegisterType<IDatabaseManager, DatabaseManager>( new HierarchicalLifetimeManager());
 
+			mContainer.RegisterType<IDatabaseInfo, DatabaseInfoProvider>();
 			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();
 			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
 			mContainer.RegisterType<IAlbumProvider, AlbumProvider>();

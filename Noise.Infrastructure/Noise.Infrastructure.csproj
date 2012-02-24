@@ -201,7 +201,7 @@
     <Compile Include="Interfaces\IBlobStorageResolver.cs" />
     <Compile Include="Interfaces\ICloudSyncManager.cs" />
     <Compile Include="Interfaces\IDatabase.cs" />
-    <Compile Include="Interfaces\IDatabaseFactory.cs" />
+    <Compile Include="Interfaces\IDatabaseInfo.cs" />
     <Compile Include="Interfaces\IDatabaseManager.cs" />
     <Compile Include="Interfaces\IDatabaseShell.cs" />
     <Compile Include="Interfaces\IDataExchangeManager.cs" />

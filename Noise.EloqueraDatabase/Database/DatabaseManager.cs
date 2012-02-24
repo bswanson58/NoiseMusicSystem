@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 

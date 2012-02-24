@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using Noise.EloqueraDatabase.Database;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Rhino.Mocks;

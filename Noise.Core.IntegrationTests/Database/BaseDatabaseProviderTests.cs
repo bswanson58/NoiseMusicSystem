@@ -1,14 +1,15 @@
-﻿using FluentAssertions;
+﻿using Caliburn.Micro;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Noise.AppSupport;
 using Noise.EloqueraDatabase;
 using Noise.EloqueraDatabase.BlobStore;
 using Noise.EloqueraDatabase.Database;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
-using IEventAggregator = Caliburn.Micro.IEventAggregator;
 
 namespace Noise.Core.IntegrationTests.Database {
 	public class BaseDatabaseProviderTests {

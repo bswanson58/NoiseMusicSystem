@@ -131,6 +131,7 @@
     <Compile Include="DataProviders\ArtworkProvider.cs" />
     <Compile Include="DataProviders\AssociatedItemListProvider.cs" />
     <Compile Include="DataProviders\BaseDataProvider.cs" />
+    <Compile Include="DataProviders\DatabaseInfoProvider.cs" />
     <Compile Include="DataProviders\DbBaseProvider.cs" />
     <Compile Include="DataProviders\DiscographyProvider.cs" />
     <Compile Include="DataProviders\ExpiringContentProvider.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="EloqueraProviderBase.cs" />
     <Compile Include="EloqueraProviderList.cs" />
     <Compile Include="EloqueraUpdateShell.cs" />
+    <Compile Include="Interfaces\IDatabaseFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

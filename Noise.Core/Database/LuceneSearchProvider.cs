@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using CuttingEdge.Conditions;
 using Lucene.Net.Documents;
@@ -30,8 +31,8 @@ namespace Noise.Core.Database {
 			mDocument = new Document();
 
 			mDocument.Add( new Field( SearchItemFieldName.cItemType, eSearchItemType.TimeStamp.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED ));
-			mDocument.Add( new Field( SearchItemFieldName.cArtistId, artistId.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED ));
-			mDocument.Add( new Field( SearchItemFieldName.cTimeStamp, timeStamp.Ticks.ToString(), Field.Store.YES, Field.Index.NO ));
+			mDocument.Add( new Field( SearchItemFieldName.cArtistId, artistId.ToString( CultureInfo.InvariantCulture ), Field.Store.YES, Field.Index.NOT_ANALYZED ));
+			mDocument.Add( new Field( SearchItemFieldName.cTimeStamp, timeStamp.Ticks.ToString( CultureInfo.InvariantCulture ), Field.Store.YES, Field.Index.NO ));
 		}
 
 		internal SearchItemDetails( IndexWriter writer, eSearchItemType itemType, long artistId ) :
@@ -47,12 +48,12 @@ namespace Noise.Core.Database {
 			mDocument = new Document();
 
 			mDocument.Add( new Field( SearchItemFieldName.cItemType, itemType.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED ));
-			mDocument.Add( new Field( SearchItemFieldName.cArtistId, artistId.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED ));
+			mDocument.Add( new Field( SearchItemFieldName.cArtistId, artistId.ToString( CultureInfo.InvariantCulture ), Field.Store.YES, Field.Index.NOT_ANALYZED ));
 			if( album != null ) {
-				mDocument.Add( new Field( SearchItemFieldName.cAlbumId, album.DbId.ToString(), Field.Store.YES, Field.Index.NO ));
+				mDocument.Add( new Field( SearchItemFieldName.cAlbumId, album.DbId.ToString( CultureInfo.InvariantCulture ), Field.Store.YES, Field.Index.NO ));
 			}
 			if( track != null ) {
-				mDocument.Add( new Field( SearchItemFieldName.cTrackId, track.DbId.ToString(), Field.Store.YES, Field.Index.NO ));
+				mDocument.Add( new Field( SearchItemFieldName.cTrackId, track.DbId.ToString( CultureInfo.InvariantCulture ), Field.Store.YES, Field.Index.NO ));
 			}
 
 			var	boost = 1.0f;
@@ -181,7 +182,7 @@ namespace Noise.Core.Database {
 		}
 
 		public void DeleteArtistSearchItems() {
-			mIndexWriter.DeleteDocuments( new Term( SearchItemFieldName.cArtistId, mArtistId.ToString()));
+			mIndexWriter.DeleteDocuments( new Term( SearchItemFieldName.cArtistId, mArtistId.ToString( CultureInfo.InvariantCulture )));
 		}
 
 		public void Dispose() {
@@ -205,24 +206,22 @@ namespace Noise.Core.Database {
 	}
 
 	public class LuceneSearchProvider : ISearchProvider {
-		private	readonly IDatabaseManager	mDatabaseMgr;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
+		private readonly long				mDatabaseId;
 		private bool						mIsInitialized;
 		private	string						mIndexLocation;
 
-		public LuceneSearchProvider( IDatabaseManager databaseManager, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
-			mDatabaseMgr = databaseManager;
+		public LuceneSearchProvider( IDatabaseInfo databaseInfo, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
+			mDatabaseId = databaseInfo.DatabaseId;
 		}
 
 		public bool Initialize() {
 			mIsInitialized = false;
-
-			var	database = mDatabaseMgr.ReserveDatabase();
 
 			try {
 				var config = NoiseSystemConfiguration.Current.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
@@ -239,7 +238,7 @@ namespace Noise.Core.Database {
 							Directory.CreateDirectory( mIndexLocation );
 						}
 
-						mIndexLocation = Path.Combine( mIndexLocation, database.DatabaseVersion.DatabaseId.ToString());
+						mIndexLocation = Path.Combine( mIndexLocation, mDatabaseId.ToString( CultureInfo.InvariantCulture ));
 						if(!Directory.Exists( mIndexLocation )) {
 							Directory.CreateDirectory( mIndexLocation );
 						}
@@ -263,9 +262,6 @@ namespace Noise.Core.Database {
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - Initializing the Lucene Search Provider", ex );
-			}
-			finally {
-				mDatabaseMgr.FreeDatabase( database );
 			}
 
 			return( mIsInitialized );
@@ -366,7 +362,7 @@ namespace Noise.Core.Database {
 				try {
 					var directory = new Lucene.Net.Store.SimpleFSDirectory( new DirectoryInfo( mIndexLocation ));
 					var	searcher = new IndexSearcher( directory, true );
-					var artistTerm = new TermQuery( new Term( SearchItemFieldName.cArtistId, forArtist.DbId.ToString()));
+					var artistTerm = new TermQuery( new Term( SearchItemFieldName.cArtistId, forArtist.DbId.ToString( CultureInfo.InvariantCulture )));
 					var typeTerm = new TermQuery( new Term( SearchItemFieldName.cItemType, eSearchItemType.TimeStamp.ToString()));
 					var query = new BooleanQuery();
 
