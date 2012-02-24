@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class RootFolderProvider : BaseDataProvider<RootFolder>, IRootFolderProvider {
-		public RootFolderProvider( IDatabaseManager databaseManager ) :
+		public RootFolderProvider( IEloqueraManager databaseManager ) :
 			base( databaseManager ) { }
 
 		public void AddRootFolder( RootFolder folder ) {

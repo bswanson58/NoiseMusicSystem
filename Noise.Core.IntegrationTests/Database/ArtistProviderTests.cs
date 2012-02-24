@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using Noise.EloqueraDatabase;
 using Noise.EloqueraDatabase.DataProviders;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -9,7 +10,7 @@ namespace Noise.EloqueraDatabase.DataProviders {
 	internal class PlayListProvider : BaseDataProvider<DbPlayList>, IPlayListProvider {
 		private readonly IEventAggregator	mEventAggregator;
 
-		public PlayListProvider( IEventAggregator eventAggregator, IDatabaseManager databaseManager ) :
+		public PlayListProvider( IEventAggregator eventAggregator, IEloqueraManager databaseManager ) :
 			base( databaseManager ) {
 			mEventAggregator = eventAggregator;
 		}

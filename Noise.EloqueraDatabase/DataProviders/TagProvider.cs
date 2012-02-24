@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class TagProvider : BaseDataProvider<DbTag>, ITagProvider {
-		public TagProvider( IDatabaseManager databaseManager ) :
+		public TagProvider( IEloqueraManager databaseManager ) :
 			base( databaseManager ) { }
 
 		public void AddTag( DbTag tag ) {

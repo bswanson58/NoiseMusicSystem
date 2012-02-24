@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class StorageFolderProvider : BaseDataProvider<StorageFolder>, IStorageFolderProvider {
-		public StorageFolderProvider( IDatabaseManager databaseManager ) :
+		public StorageFolderProvider( IEloqueraManager databaseManager ) :
 			base( databaseManager ) { }
 
 		public void AddFolder( StorageFolder folder ) {

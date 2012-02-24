@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase {

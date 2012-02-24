@@ -1,5 +1,5 @@
 ﻿using System;
-using Noise.Infrastructure.Interfaces;
+using Noise.EloqueraDatabase.Interfaces;
 
 namespace Noise.EloqueraDatabase {
 	public abstract class EloqueraProviderBase : IDisposable {

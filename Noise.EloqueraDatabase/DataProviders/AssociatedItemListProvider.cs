@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using CuttingEdge.Conditions;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class AssociatedItemListProvider : BaseDataProvider<DbAssociatedItemList>, IAssociatedItemListProvider {
-		public AssociatedItemListProvider( IDatabaseManager databaseManager ) :
+		public AssociatedItemListProvider( IEloqueraManager databaseManager ) :
 			base( databaseManager ) { }
 
 		public void AddAssociationList( DbAssociatedItemList associationList ) {

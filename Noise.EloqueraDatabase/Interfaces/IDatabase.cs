@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Infrastructure.Interfaces {
+namespace Noise.EloqueraDatabase.Interfaces {
 	public interface IDatabase {
 		string			DatabaseId { get; }
 		DbVersion		DatabaseVersion { get; }

@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class LyricProvider : BaseDataProvider<DbLyric>, ILyricProvider {
-		public LyricProvider( IDatabaseManager databaseManager ) :
+		public LyricProvider( IEloqueraManager databaseManager ) :
 			base( databaseManager ) { }
 
 		public void AddLyric( DbLyric lyric ) {

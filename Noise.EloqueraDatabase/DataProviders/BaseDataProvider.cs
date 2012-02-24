@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal abstract class BaseDataProvider<T> where T : class {
-		private readonly IDatabaseManager	mDatabaseMgr;
+		private readonly IEloqueraManager	mDatabaseMgr;
 
-		protected  BaseDataProvider( IDatabaseManager databaseManager ) {
+		protected  BaseDataProvider( IEloqueraManager databaseManager ) {
 			mDatabaseMgr = databaseManager;
 		}
 

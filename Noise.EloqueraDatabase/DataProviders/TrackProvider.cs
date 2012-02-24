@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class TrackProvider : BaseDataProvider<DbTrack>, ITrackProvider {
-		public TrackProvider( IDatabaseManager databaseManager ) :
+		public TrackProvider( IEloqueraManager databaseManager ) :
 			base( databaseManager ) { }
 
 		public void AddTrack( DbTrack track ) {

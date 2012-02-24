@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using CuttingEdge.Conditions;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class InternetStreamProvider : BaseDataProvider<DbInternetStream>, IInternetStreamProvider {
-		public InternetStreamProvider( IDatabaseManager databaseManager ) :
+		public InternetStreamProvider( IEloqueraManager databaseManager ) :
 			base( databaseManager ) { }
 
 		public void AddStream( DbInternetStream stream ) {

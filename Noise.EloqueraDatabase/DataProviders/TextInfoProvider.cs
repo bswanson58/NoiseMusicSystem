@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class TextInfoProvider : BaseDataProvider<DbTextInfo>, ITextInfoProvider {
-		public TextInfoProvider( IDatabaseManager databaseManager ) :
+		public TextInfoProvider( IEloqueraManager databaseManager ) :
 			base( databaseManager ) { }
 
 		private TextInfo TransformTextInfo( DbTextInfo textInfo ) {

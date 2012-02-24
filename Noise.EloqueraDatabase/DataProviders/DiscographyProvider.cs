@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using CuttingEdge.Conditions;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class DbDiscographyProvider : BaseDataProvider<DbDiscographyRelease>, IDiscographyProvider {
-		public DbDiscographyProvider( IDatabaseManager databaseManager ) :
+		public DbDiscographyProvider( IEloqueraManager databaseManager ) :
 			base( databaseManager ) { }
 
 		public void AddDiscography( DbDiscographyRelease release ) {

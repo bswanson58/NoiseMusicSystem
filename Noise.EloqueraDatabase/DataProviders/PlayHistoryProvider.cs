@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using CuttingEdge.Conditions;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class PlayHistoryProvider : BaseDataProvider<DbPlayHistory>, IPlayHistoryProvider {
-		public PlayHistoryProvider( IDatabaseManager databaseManager ) :
+		public PlayHistoryProvider( IEloqueraManager databaseManager ) :
 			base( databaseManager ) { }
 
 		public void AddPlayHistory( DbPlayHistory playHistory ) {

@@ -18,7 +18,7 @@ namespace Noise.Core.IntegrationTests.Database {
 		protected DatabaseConfiguration				mDatabaseConfiguration;
 		protected IBlobStorageResolver				mBlobResolver;
 		protected IDatabaseFactory					mDatabaseFactory;
-		protected IDatabaseManager					mDatabaseManager;
+		protected IEloqueraManager					mDatabaseManager;
 		protected Mock<IEventAggregator>			mEventAggregator;
 
 		[SetUp]

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class ExpiringContentProvider : BaseDataProvider<ExpiringContent>, IExpiringContentProvider {
-		public ExpiringContentProvider( IDatabaseManager databaseManager ) :
+		public ExpiringContentProvider( IEloqueraManager databaseManager ) :
 			base( databaseManager ) { }
 
 		public IDataProviderList<ExpiringContent> GetContentList( long forAssociatedItem, ContentType ofType ) {

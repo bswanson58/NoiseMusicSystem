@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CuttingEdge.Conditions;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class ArtworkProvider : BaseDataProvider<DbArtwork>, IArtworkProvider {
-		public ArtworkProvider( IDatabaseManager databaseManager )
+		public ArtworkProvider( IEloqueraManager databaseManager )
 			: base( databaseManager ) {
 		}
 

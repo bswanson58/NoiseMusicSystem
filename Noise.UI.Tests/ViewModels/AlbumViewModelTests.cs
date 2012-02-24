@@ -356,11 +356,9 @@ namespace Noise.UI.Tests.ViewModels {
 			var album = new DbAlbum { Name = "original name", PublishedYear = 2000 };
 
 			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( It.IsAny<long>())).Returns( album );
-
-			var databaseShell = new Mock<IDatabaseShell> { DefaultValue = DefaultValue.Mock };
-			databaseShell.Setup( m => m.Database.UpdateItem( album )).Verifiable();
 			var updater =new Mock<IDataUpdateShell<DbAlbum>>();
 
+			updater.Setup( m => m.Update()).Verifiable();
  			updater.Setup( m => m.Item ).Returns( album );
 			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumForUpdate( album.DbId )).Returns( updater.Object );
 
@@ -374,7 +372,7 @@ namespace Noise.UI.Tests.ViewModels {
 			Assert.IsNotNull( editCommand );
 			editCommand.Execute( null );
 
-			databaseShell.Verify( m => m.Database.UpdateItem( album ), Times.Once());
+			updater.Verify();
 
 			sut.Album.Name.Should().Be( "updated name" );
 			sut.Album.PublishedYear.Should().Be( 2001 );

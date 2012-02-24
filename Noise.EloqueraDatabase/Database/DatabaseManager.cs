@@ -4,10 +4,9 @@ using System.Diagnostics;
 using System.Text;
 using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.Database {
-	public class DatabaseManager : IDatabaseManager {
+	public class DatabaseManager : IEloqueraManager {
 		private readonly object					mLockObject;
 		private readonly List<IDatabase>		mAvailableDatabases;
 		private readonly Dictionary<string, IDatabase>	mReservedDatabases;

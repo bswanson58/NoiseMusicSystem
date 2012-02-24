@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CuttingEdge.Conditions;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -14,7 +15,7 @@ namespace Noise.EloqueraDatabase.DataProviders {
 		private readonly ITrackProvider			mTrackProvider;
 		private readonly IStorageFolderProvider	mStorageFolderProvider;
 
-		public StorageFileProvider( IDatabaseManager databaseManager, IAlbumProvider albumProvider, ITrackProvider trackProvider, IStorageFolderProvider storageFolderProvider ) :
+		public StorageFileProvider( IEloqueraManager databaseManager, IAlbumProvider albumProvider, ITrackProvider trackProvider, IStorageFolderProvider storageFolderProvider ) :
 			base( databaseManager ) {
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;

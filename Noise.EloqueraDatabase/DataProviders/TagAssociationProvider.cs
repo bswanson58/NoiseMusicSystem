@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class TagAssociationProvider : BaseDataProvider<DbTagAssociation>, ITagAssociationProvider {
-		public TagAssociationProvider( IDatabaseManager databaseManager ) :
+		public TagAssociationProvider( IEloqueraManager databaseManager ) :
 			base( databaseManager ) { }
 
 		public IDataProviderList<DbTagAssociation> GetArtistTagList( long artistId, eTagGroup tagGroup ) {

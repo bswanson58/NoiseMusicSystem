@@ -1,11 +1,11 @@
-﻿using Noise.Infrastructure.Interfaces;
+﻿using Noise.EloqueraDatabase.Interfaces;
 
 namespace Noise.EloqueraDatabase.Database {
 	internal class DatabaseShell : IDatabaseShell {
-		private readonly IDatabaseManager	mDatabaseMgr;
+		private readonly IEloqueraManager	mDatabaseMgr;
 		private IDatabase					mDatabase;
 
-		public DatabaseShell( IDatabaseManager databaseManager ) {
+		public DatabaseShell( IEloqueraManager databaseManager ) {
 			mDatabaseMgr = databaseManager;
 		}
 

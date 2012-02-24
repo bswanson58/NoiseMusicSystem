@@ -21,7 +21,10 @@ namespace Noise.EloqueraDatabase {
 
 			mContainer.RegisterType<IDatabaseFactory, EloqueraDatabaseFactory>();
 			mContainer.RegisterType<IBlobStorageResolver, BlobStorageResolver>();
-			mContainer.RegisterType<IDatabaseManager, DatabaseManager>( new HierarchicalLifetimeManager());
+
+			mContainer.RegisterType<DatabaseManager>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IEloqueraManager, DatabaseManager>();
+			mContainer.RegisterType<IDatabaseManager, DatabaseManager>();
 
 			mContainer.RegisterType<IDatabaseInfo, DatabaseInfoProvider>();
 			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();

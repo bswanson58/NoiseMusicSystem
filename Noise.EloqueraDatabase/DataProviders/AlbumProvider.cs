@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
+using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -12,7 +13,7 @@ namespace Noise.EloqueraDatabase.DataProviders {
 		private readonly ITextInfoProvider			mTextInfoProvider;
 		private readonly ITagAssociationProvider	mTagAssociationProvider;
 
-		public AlbumProvider( IDatabaseManager databaseManager,
+		public AlbumProvider( IEloqueraManager databaseManager,
 							  IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider, ITagAssociationProvider tagAssociationProvider ) :
 			base( databaseManager ) {
 			mArtworkProvider = artworkProvider;

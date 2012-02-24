@@ -153,7 +153,10 @@
     <Compile Include="EloqueraProviderBase.cs" />
     <Compile Include="EloqueraProviderList.cs" />
     <Compile Include="EloqueraUpdateShell.cs" />
+    <Compile Include="Interfaces\IDatabase.cs" />
     <Compile Include="Interfaces\IDatabaseFactory.cs" />
+    <Compile Include="Interfaces\IDatabaseShell.cs" />
+    <Compile Include="Interfaces\IEloqueraManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

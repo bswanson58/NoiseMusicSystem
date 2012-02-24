@@ -1,4 +1,5 @@
-﻿using Noise.Infrastructure.Interfaces;
+﻿using Noise.EloqueraDatabase.Interfaces;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase {
 	public class EloqueraUpdateShell<T> : EloqueraProviderBase, IDataUpdateShell<T> {
