@@ -25,8 +25,10 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			Condition.Requires( item ).IsNotNull();
 
 			using( var context = CreateContext()) {
-				context.Set<TEntity>().Add( item );
-				context.SaveChanges();
+				if( GetItemByKey( context, item.DbId ) == null ) {
+					context.Set<TEntity>().Add( item );
+					context.SaveChanges();
+				}
 			}
 		}
 
