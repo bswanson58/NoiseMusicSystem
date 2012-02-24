@@ -19,7 +19,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			DbAssociatedItemList	retValue;
 
 			using( var context = CreateContext()) {
-				retValue = ( from list in Set( context ) where (( list.Artist == artistId ) && ( list.ContentType == ofType )) select list ).FirstOrDefault();
+				retValue = ( from list in Set( context ) where (( list.Artist == artistId ) && ( list.DbContentType == (int)ofType )) select list ).FirstOrDefault();
 			}
 
 			return( retValue );
@@ -28,7 +28,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		public IDataProviderList<DbAssociatedItemList> GetAssociatedItemLists( ContentType forType ) {
 			var context = CreateContext();
 
-			return( new EfProviderList<DbAssociatedItemList>( context, from list in Set( context ) where list.ContentType == forType select list ));
+			return( new EfProviderList<DbAssociatedItemList>( context, from list in Set( context ) where list.DbContentType == (int)forType select list ));
 		}
 
 		public IDataProviderList<DbAssociatedItemList> GetAssociatedItemLists( long forArtist ) {

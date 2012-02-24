@@ -99,6 +99,8 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 			HasKey( p => p.DbId );
 			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
+
+			Ignore( p => p.ContentType );
 		}
 	}
 }

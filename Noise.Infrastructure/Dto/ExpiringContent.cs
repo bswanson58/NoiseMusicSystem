@@ -1,4 +1,5 @@
 ﻿using System;
+using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public abstract class ExpiringContent : DbBase {
@@ -19,7 +20,7 @@ namespace Noise.Infrastructure.Dto {
 			IsContentAvailable = clone.IsContentAvailable;
 		}
 
-		public ExpiringContent( long associatedItem, ContentType contentType ) {
+		protected ExpiringContent( long associatedItem, ContentType contentType ) {
 			AssociatedItem = associatedItem;
 			ContentType = contentType;
 			IsContentAvailable = false;
@@ -28,6 +29,12 @@ namespace Noise.Infrastructure.Dto {
 			Album = Constants.cDatabaseNullOid;
 
 			UpdateExpiration();
+		}
+
+		[Ignore]
+		public int DbContentType {
+			get{ return((int)ContentType ); }
+			set{ ContentType = (ContentType)value; }
 		}
 
 		protected void Copy( ExpiringContent copy ) {
