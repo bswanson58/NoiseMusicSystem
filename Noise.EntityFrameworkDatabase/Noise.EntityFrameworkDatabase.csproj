@@ -124,6 +124,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="DatabaseManager\ContextProvider.cs" />
+    <Compile Include="DataProviders\AssociatedItemListProvider.cs" />
     <Compile Include="DataProviders\BaseProvider.cs" />
     <Compile Include="DataProviders\TrackProvider.cs" />
     <Compile Include="DatabaseManager\DebugDatabaseInitialize.cs" />

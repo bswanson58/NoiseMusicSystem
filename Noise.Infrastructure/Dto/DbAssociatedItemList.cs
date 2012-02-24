@@ -5,9 +5,12 @@ using System.Linq;
 using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
-	public class DbAssociatedItem {
+	public class DbAssociatedItem : DbBase {
 		public	string	Item { get; private set; }
 		public	long	AssociatedId { get; private set; }
+
+		public DbAssociatedItem() :
+			this( string.Empty ) { }
 
 		public DbAssociatedItem( string item ) {
 			Item = item;
@@ -31,6 +34,9 @@ namespace Noise.Infrastructure.Dto {
 
 	public class DbAssociatedItemList : ExpiringContent {
 		public	DbAssociatedItem[]	Items { get; set; }
+
+		public DbAssociatedItemList() :
+			this( Constants.cDatabaseNullOid, ContentType.Unknown ) { }
 
 		public DbAssociatedItemList( long associatedItem, ContentType contentType ) :
 			base( associatedItem, contentType ) {

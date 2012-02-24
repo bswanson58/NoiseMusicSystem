@@ -1,4 +1,5 @@
-﻿using CuttingEdge.Conditions;
+﻿using System.Data.Entity;
+using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 
@@ -12,6 +13,21 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 		protected IDbContext CreateContext() {
 			return( mContextProvider.CreateContext());
+		}
+
+		protected IDbSet<TEntity> Set( IDbContext fromContext ) {
+			Condition.Requires( fromContext ).IsNotNull();
+
+			return( fromContext.Set<TEntity>());
+		}
+
+		protected void AddItem( TEntity item ) {
+			Condition.Requires( item ).IsNotNull();
+
+			using( var context = CreateContext()) {
+				context.Set<TEntity>().Add( item );
+				context.SaveChanges();
+			}
 		}
 
 		protected TEntity GetItemByKey( long key ) {

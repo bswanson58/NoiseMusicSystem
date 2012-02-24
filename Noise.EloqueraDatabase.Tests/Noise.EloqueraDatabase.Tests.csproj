@@ -118,6 +118,7 @@
     <Compile Include="BlobStore\BlobStorageManagerTests.cs" />
     <Compile Include="BlobStore\BlobStorageTests.cs" />
     <Compile Include="Database\DatabaseManagerTests.cs" />
+    <Compile Include="DataProviders\AssociatedItemListTests.cs" />
     <Compile Include="DataProviders\ProviderTestSetup.cs" />
     <Compile Include="DataProviders\TrackProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

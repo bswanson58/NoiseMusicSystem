@@ -15,6 +15,8 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 		protected override void OnModelCreating( DbModelBuilder modelBuilder ) {
 			modelBuilder.Configurations.Add( new ArtistConfiguration());
+			modelBuilder.Configurations.Add( new AssociatedItemConfiguration());
+			modelBuilder.Configurations.Add( new AssociatedItemListConfiguration());
 			modelBuilder.Configurations.Add( new AlbumConfiguration());
 			modelBuilder.Configurations.Add( new TrackConfiguration());
 		}
@@ -73,6 +75,30 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			Ignore( p => p.Genre );
 			Ignore( p => p.Rating );
 			Ignore( p => p.IsUserRating );
+		}
+	}
+
+	internal class AssociatedItemConfiguration : EntityTypeConfiguration<DbAssociatedItem> {
+		internal AssociatedItemConfiguration() {
+			Map( m => {
+			     	m.ToTable( "AssociatedItems" );
+					m.MapInheritedProperties();
+			     });
+
+			HasKey( p => p.DbId );
+			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
+		}
+	}
+
+	internal class AssociatedItemListConfiguration : EntityTypeConfiguration<DbAssociatedItemList> {
+		internal AssociatedItemListConfiguration() {
+			Map( m => {
+			     	m.ToTable( "AssociatedItemLists" );
+					m.MapInheritedProperties();
+			     });
+
+			HasKey( p => p.DbId );
+			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
 		}
 	}
 }

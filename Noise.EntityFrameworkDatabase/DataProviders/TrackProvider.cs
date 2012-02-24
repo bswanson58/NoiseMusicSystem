@@ -13,12 +13,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		}
 
 		public void AddTrack( DbTrack track ) {
-			Condition.Requires( track ).IsNotNull();
-
-			using( var context = CreateContext()) {
-				context.Set<DbTrack>().Add( track );
-				context.SaveChanges();
-			}
+			AddItem( track );
 		}
 
 		public DbTrack GetTrack( long trackId ) {

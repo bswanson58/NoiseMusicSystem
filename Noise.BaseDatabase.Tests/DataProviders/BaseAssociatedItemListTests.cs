@@ -2,17 +2,11 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class AssociatedItemListProviderTests : BaseDatabaseProviderTests {
-		private IAssociatedItemListProvider CreateSut() {
-			return( new AssociatedItemListProvider( mDatabaseManager ));
-		}
-
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BaseAssociatedItemListTests : BaseProviderTest<IAssociatedItemListProvider> {
 		[Test]
 		public void CanAddAssociationList() {
 			var associationList = new DbAssociatedItemList( 1, ContentType.BandMembers );
@@ -87,7 +81,7 @@ namespace Noise.Core.IntegrationTests.Database {
 		}
 
 		[Test]
-		public void CanGetAssocaitionListForUpdate() {
+		public void CanGetAssociationListForUpdate() {
 			var list = new DbAssociatedItemList( 2, ContentType.TopAlbums );
 
 			var sut = CreateSut();

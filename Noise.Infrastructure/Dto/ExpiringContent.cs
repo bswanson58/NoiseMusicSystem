@@ -2,11 +2,11 @@
 
 namespace Noise.Infrastructure.Dto {
 	public abstract class ExpiringContent : DbBase {
-		public	long		AssociatedItem { get; private set; }
+		public	long		AssociatedItem { get; protected set; }
 		public	long		Artist { get; set; }
 		public	long		Album { get; set; }
-		public	ContentType	ContentType { get; private set; }
-		public	DateTime	HarvestDate { get; private set; }
+		public	ContentType	ContentType { get; protected set; }
+		public	DateTime	HarvestDate { get; protected set; }
 		public	bool		IsContentAvailable { get; set; }
 
 		protected ExpiringContent( ExpiringContent clone ) :
