@@ -62,5 +62,17 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 			return( context.Set<TEntity>().Find( key ));
 		}
+
+		protected EfProviderList<TEntity> GetListShell() {
+			var context = CreateContext();
+
+			return( new EfProviderList<TEntity>( context, Set( context )));
+		} 
+
+		protected EfUpdateShell<TEntity> GetUpdateShell( long forItem ) {
+			var context = CreateContext();
+
+			return( new EfUpdateShell<TEntity>( context, GetItemByKey( context, forItem )));
+		} 
 	}
 }

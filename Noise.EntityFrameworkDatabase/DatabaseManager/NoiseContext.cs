@@ -20,6 +20,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			modelBuilder.Configurations.Add( new AlbumConfiguration());
 			modelBuilder.Configurations.Add( new DiscographyConfiguration());
 			modelBuilder.Configurations.Add( new GenreConfiguration());
+			modelBuilder.Configurations.Add( new InternetStreamConfiguration());
 			modelBuilder.Configurations.Add( new TrackConfiguration());
 		}
 
@@ -123,12 +124,26 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	internal class GenreConfiguration : EntityTypeConfiguration<DbGenre> {
 		internal GenreConfiguration() {
 			Map( m => {
-			     	m.ToTable( "Genre" );
+			     	m.ToTable( "Genres" );
 					m.MapInheritedProperties();
 			     });
 
 			HasKey( p => p.DbId );
 			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
+		}
+	}
+
+	internal class InternetStreamConfiguration : EntityTypeConfiguration<DbInternetStream> {
+		internal InternetStreamConfiguration() {
+			Map( m => {
+			     	m.ToTable( "Streams" );
+					m.MapInheritedProperties();
+			     });
+
+			HasKey( p => p.DbId );
+			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
+
+			Ignore( p => p.Encoding );
 		}
 	}
 }

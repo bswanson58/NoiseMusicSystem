@@ -27,8 +27,8 @@ namespace Noise.Infrastructure.Dto {
 			DateAddedTicks = DateTime.Now.Date.Ticks;
 			Encoding = eAudioEncoding.Unknown;
 
-			Description = "";
-			Website = "";
+			Description = string.Empty;
+			Website = string.Empty;
 
 			ExternalGenre = Constants.cDatabaseNullOid;
 			UserGenre = Constants.cDatabaseNullOid;
@@ -48,6 +48,11 @@ namespace Noise.Infrastructure.Dto {
 		[Ignore]
 		public DateTime DateAdded {
 			get{ return( new DateTime( DateAddedTicks )); }
+		}
+
+		public int DbAudioRecording {
+			get{ return((int)Encoding ); }
+			set{ Encoding = (eAudioEncoding)value; }
 		}
 
 		[Export("PersistenceType")]

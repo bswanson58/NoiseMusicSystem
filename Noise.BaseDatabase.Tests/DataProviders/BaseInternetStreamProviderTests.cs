@@ -1,21 +1,14 @@
 ﻿using System;
 using FluentAssertions;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class InternetStreamProviderTests : BaseDatabaseProviderTests {
-
-		private IInternetStreamProvider CreateSut() {
-			return( new InternetStreamProvider( mDatabaseManager ));
-		}
-
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BaseInternetStreamProviderTests : BaseProviderTest<IInternetStreamProvider> {
 		[Test]
 		public void CanAddStream() {
-			var stream = new DbInternetStream();
+			var stream = new DbInternetStream { Name = "stream name", Url = "stream url" };
 
 			var sut = CreateSut();
 
@@ -32,7 +25,7 @@ namespace Noise.Core.IntegrationTests.Database {
 
 		[Test]
 		public void CannotAddDuplicateStream() {
-			var stream = new DbInternetStream();
+			var stream = new DbInternetStream { Name = "stream name", Url = "stream url" };
 
 			var sut = CreateSut();
 
@@ -46,7 +39,7 @@ namespace Noise.Core.IntegrationTests.Database {
 
 		[Test]
 		public void CanRetrieveStream() {
-			var stream = new DbInternetStream();
+			var stream = new DbInternetStream { Name = "stream name", Url = "stream url" };
 
 			var sut = CreateSut();
 			sut.AddStream( stream );
@@ -58,8 +51,8 @@ namespace Noise.Core.IntegrationTests.Database {
 
 		[Test]
 		public void CanRetrieveStreamList() {
-			var stream1 = new DbInternetStream { Name = "stream 1" };
-			var stream2 = new DbInternetStream { Name = "stream 2" };
+			var stream1 = new DbInternetStream { Name = "stream 1", Url = "url 1" };
+			var stream2 = new DbInternetStream { Name = "stream 2", Url = "url 2" };
 
 			var sut = CreateSut();
 			sut.AddStream( stream1 );
@@ -74,7 +67,7 @@ namespace Noise.Core.IntegrationTests.Database {
 
 		[Test]
 		public void CanDeleteStream() {
-			var stream = new DbInternetStream();
+			var stream = new DbInternetStream { Name = "stream name", Url = "stream url" };
 
 			var sut = CreateSut();
 			sut.AddStream( stream );
@@ -88,7 +81,7 @@ namespace Noise.Core.IntegrationTests.Database {
 
 		[Test]
 		public void CanUpdateStream() {
-			var stream = new DbInternetStream { Name = "stream name" };
+			var stream = new DbInternetStream { Name = "stream name", Url = "stream url" };
 
 			var sut = CreateSut();
 			sut.AddStream( stream );

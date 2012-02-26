@@ -1,5 +1,6 @@
 ﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
+using Noise.EntityFrameworkDatabase.DataProviders;
 using Noise.EntityFrameworkDatabase.DatabaseManager;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Configuration;
@@ -19,27 +20,27 @@ namespace Noise.EntityFrameworkDatabase {
 
 			mContainer.RegisterType<IDatabaseManager, EntityFrameworkDatabaseManager>();
 			mContainer.RegisterType<IDatabaseInitializeStrategy, DebugDatabaseInitialize>();
-/*
-			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();
-			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
-			mContainer.RegisterType<IAlbumProvider, AlbumProvider>();
+
+//			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();
+//			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
+//			mContainer.RegisterType<IAlbumProvider, AlbumProvider>();
 			mContainer.RegisterType<ITrackProvider, TrackProvider>();
 			mContainer.RegisterType<IInternetStreamProvider, InternetStreamProvider>();
-			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
-			mContainer.RegisterType<IDiscographyProvider, DbDiscographyProvider>();
-			mContainer.RegisterType<IExpiringContentProvider, ExpiringContentProvider>();
+//			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
+			mContainer.RegisterType<IDiscographyProvider, DiscographyProvider>();
+//			mContainer.RegisterType<IExpiringContentProvider, ExpiringContentProvider>();
 			mContainer.RegisterType<IGenreProvider, GenreProvider>();
-			mContainer.RegisterType<ILyricProvider, LyricProvider>();
-			mContainer.RegisterType<IPlayHistoryProvider, PlayHistoryProvider>();
-			mContainer.RegisterType<IPlayListProvider, PlayListProvider>();
-			mContainer.RegisterType<IRootFolderProvider, RootFolderProvider>();
-			mContainer.RegisterType<IStorageFileProvider, StorageFileProvider>();
-			mContainer.RegisterType<IStorageFolderProvider, StorageFolderProvider>();
-			mContainer.RegisterType<ITagProvider, TagProvider>();
-			mContainer.RegisterType<ITagAssociationProvider, TagAssociationProvider>();
-			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
-			mContainer.RegisterType<ITimestampProvider, TimestampProvider>();
+//			mContainer.RegisterType<ILyricProvider, LyricProvider>();
+//			mContainer.RegisterType<IPlayHistoryProvider, PlayHistoryProvider>();
+//			mContainer.RegisterType<IPlayListProvider, PlayListProvider>();
+//			mContainer.RegisterType<IRootFolderProvider, RootFolderProvider>();
+//			mContainer.RegisterType<IStorageFileProvider, StorageFileProvider>();
+//			mContainer.RegisterType<IStorageFolderProvider, StorageFolderProvider>();
+//			mContainer.RegisterType<ITagProvider, TagProvider>();
+//			mContainer.RegisterType<ITagAssociationProvider, TagAssociationProvider>();
+//			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
+//			mContainer.RegisterType<ITimestampProvider, TimestampProvider>();
 			mContainer.RegisterType<IAssociatedItemListProvider, AssociatedItemListProvider>();
-*/		}
+		}
 	}
 }
