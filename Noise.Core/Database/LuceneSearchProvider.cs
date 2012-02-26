@@ -209,7 +209,8 @@ namespace Noise.Core.Database {
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
-		private readonly long				mDatabaseId;
+		private readonly IDatabaseInfo		mDatabaseInfo;
+		private long						mDatabaseId;
 		private bool						mIsInitialized;
 		private	string						mIndexLocation;
 
@@ -217,13 +218,15 @@ namespace Noise.Core.Database {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
-			mDatabaseId = databaseInfo.DatabaseId;
+			mDatabaseInfo = databaseInfo;
 		}
 
 		public bool Initialize() {
 			mIsInitialized = false;
 
 			try {
+				mDatabaseId = mDatabaseInfo.DatabaseId;
+
 				var config = NoiseSystemConfiguration.Current.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
 
 				if( config != null ) {

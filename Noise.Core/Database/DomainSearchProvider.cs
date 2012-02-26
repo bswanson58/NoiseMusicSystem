@@ -11,21 +11,23 @@ namespace Noise.Core.Database {
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
 		private readonly IDbBaseProvider	mDbBaseProvider;
-		private readonly long				mDatabaseId;
+		private readonly IDatabaseInfo		mDatabaseInfo;
 
 		public DomainSearchProvider( IDatabaseInfo databaseInfo,
 									 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvide, IDbBaseProvider dbBaseProvider ) {
+			mDatabaseInfo = databaseInfo;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvide;
 			mDbBaseProvider = dbBaseProvider;
-			mDatabaseId = databaseInfo.DatabaseId;
 		}
 
 		public DataFindResults Find( string artist, string album, string track ) {
 			DataFindResults	retValue = null;
 
 			try {
+				var databaseId = mDatabaseInfo.DatabaseId;
+
 				if(!string.IsNullOrWhiteSpace( artist )) {
 					using( var artistList = mArtistProvider.GetArtistList()) {
 						var dbArtist = ( from DbArtist a in artistList.List 
@@ -40,21 +42,21 @@ namespace Noise.Core.Database {
 											using( var trackList = mTrackProvider.GetTrackList( dbAlbum )) {
 												var dbTrack = ( from DbTrack t in trackList.List
 																where t.Name.Equals( track, StringComparison.CurrentCultureIgnoreCase ) select t ).FirstOrDefault();
-												retValue = dbTrack != null ? new DataFindResults( mDatabaseId, dbArtist, dbAlbum, dbTrack, true ) :
-																			 new DataFindResults( mDatabaseId, dbArtist, dbAlbum, false );
+												retValue = dbTrack != null ? new DataFindResults( databaseId, dbArtist, dbAlbum, dbTrack, true ) :
+																			 new DataFindResults( databaseId, dbArtist, dbAlbum, false );
 											}
 										}
 										else {
-											retValue = new DataFindResults( mDatabaseId, dbArtist, dbAlbum, true );
+											retValue = new DataFindResults( databaseId, dbArtist, dbAlbum, true );
 										}
 									}
 									else {
-										retValue = new DataFindResults( mDatabaseId, dbArtist, false );
+										retValue = new DataFindResults( databaseId, dbArtist, false );
 									}
 								}
 							}
 							else {
-								retValue = new DataFindResults( mDatabaseId, dbArtist, true );
+								retValue = new DataFindResults( databaseId, dbArtist, true );
 							}
 						}
 					}
@@ -69,14 +71,15 @@ namespace Noise.Core.Database {
 
 		public DataFindResults Find( long itemId ) {
 			DataFindResults	retValue = null;
-			var item = mDbBaseProvider.GetItem( itemId );
+			var				databaseId = mDatabaseInfo.DatabaseId;
+			var				item = mDbBaseProvider.GetItem( itemId );
 
 			if( item != null ) {
-				TypeSwitch.Do( item, TypeSwitch.Case<DbArtist>( artist => retValue = new DataFindResults( mDatabaseId, artist, true )),
+				TypeSwitch.Do( item, TypeSwitch.Case<DbArtist>( artist => retValue = new DataFindResults( databaseId, artist, true )),
 									 TypeSwitch.Case<DbAlbum>( album => {
 									                           		var artist = mArtistProvider.GetArtistForAlbum( album );
 																	if( artist != null ) {
-																		retValue = new DataFindResults( mDatabaseId, mArtistProvider.GetArtistForAlbum( album ), album, true );
+																		retValue = new DataFindResults( databaseId, mArtistProvider.GetArtistForAlbum( album ), album, true );
 																	}
 																}),
 									 TypeSwitch.Case<DbTrack>( track => {
@@ -84,7 +87,7 @@ namespace Noise.Core.Database {
 																	if( album != null ) {
 																		var artist = mArtistProvider.GetArtistForAlbum( album );
 																		if( artist != null ) {
-																			retValue = new DataFindResults( mDatabaseId, artist, album, track, true );
+																			retValue = new DataFindResults( databaseId, artist, album, track, true );
 																		}
 																	}
 									                           }));
