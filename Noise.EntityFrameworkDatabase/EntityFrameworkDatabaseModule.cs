@@ -32,7 +32,7 @@ namespace Noise.EntityFrameworkDatabase {
 			mContainer.RegisterType<IGenreProvider, GenreProvider>();
 			mContainer.RegisterType<ILyricProvider, LyricProvider>();
 			mContainer.RegisterType<IPlayHistoryProvider, PlayHistoryProvider>();
-//			mContainer.RegisterType<IPlayListProvider, PlayListProvider>();
+			mContainer.RegisterType<IPlayListProvider, PlayListProvider>();
 //			mContainer.RegisterType<IRootFolderProvider, RootFolderProvider>();
 //			mContainer.RegisterType<IStorageFileProvider, StorageFileProvider>();
 //			mContainer.RegisterType<IStorageFolderProvider, StorageFolderProvider>();

@@ -32,148 +32,6 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
         }
 	}
 
-	internal class ArtistConfiguration : EntityTypeConfiguration<DbArtist> {
-		internal ArtistConfiguration() {
-			Map( m => {
-					m.ToTable( "Artists" );
-			     	m.MapInheritedProperties();
-			     });
-
-			HasKey( p => p.DbId );
-			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
-
-			Ignore( p => p.Genre );
-			Ignore( p => p.Rating );
-			Ignore( p => p.IsUserRating );
-			Ignore( p => p.DateAdded );
-		}
-	}
-
-	internal class AlbumConfiguration : EntityTypeConfiguration<DbAlbum> {
-		internal AlbumConfiguration() {
-			Map( m => {
-					m.ToTable( "Albums" );
-			     	m.MapInheritedProperties();
-			     });
-
-			HasKey( p => p.DbId );
-			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
-
-			Ignore( p => p.DateAdded );
-			Ignore( p => p.Genre );
-			Ignore( p => p.Rating );
-			Ignore( p => p.IsUserRating );
-		}
-	}
-
-	internal class TrackConfiguration : EntityTypeConfiguration<DbTrack> {
-		internal TrackConfiguration() {
-			Map( m => {
-					m.ToTable( "Tracks" );
-			     	m.MapInheritedProperties();
-			     });
-
-			HasKey( p => p.DbId );
-			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
-
-			Ignore( p => p.DateAdded );
-			Ignore( p => p.Duration );
-			Ignore( p => p.Genre );
-			Ignore( p => p.Rating );
-			Ignore( p => p.IsUserRating );
-		}
-	}
-
-	internal class AssociatedItemConfiguration : EntityTypeConfiguration<DbAssociatedItem> {
-		internal AssociatedItemConfiguration() {
-			Map( m => {
-			     	m.ToTable( "AssociatedItems" );
-					m.MapInheritedProperties();
-			     });
-
-			HasKey( p => p.DbId );
-			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
-		}
-	}
-
-	internal class AssociatedItemListConfiguration : EntityTypeConfiguration<DbAssociatedItemList> {
-		internal AssociatedItemListConfiguration() {
-			Map( m => {
-			     	m.ToTable( "AssociatedItemLists" );
-					m.MapInheritedProperties();
-			     });
-
-			HasKey( p => p.DbId );
-			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
-
-			Ignore( p => p.ContentType );
-		}
-	}
-
-	internal class DiscographyConfiguration : EntityTypeConfiguration<DbDiscographyRelease> {
-		internal DiscographyConfiguration() {
-			Map( m => {
-			     	m.ToTable( "Discography" );
-					m.MapInheritedProperties();
-			     });
-
-			HasKey( p => p.DbId );
-			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
-
-			Ignore( p => p.ReleaseType );
-		}
-	}
-
-	internal class GenreConfiguration : EntityTypeConfiguration<DbGenre> {
-		internal GenreConfiguration() {
-			Map( m => {
-			     	m.ToTable( "Genres" );
-					m.MapInheritedProperties();
-			     });
-
-			HasKey( p => p.DbId );
-			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
-		}
-	}
-
-	internal class InternetStreamConfiguration : EntityTypeConfiguration<DbInternetStream> {
-		internal InternetStreamConfiguration() {
-			Map( m => {
-			     	m.ToTable( "Streams" );
-					m.MapInheritedProperties();
-			     });
-
-			HasKey( p => p.DbId );
-			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
-
-			Ignore( p => p.Encoding );
-		}
-	}
-
-	internal class LyricConfiguration : EntityTypeConfiguration<DbLyric> {
-		internal LyricConfiguration() {
-			Map( m => {
-			     	m.ToTable( "Lyrics" );
-					m.MapInheritedProperties();
-			     });
-
-			HasKey( p => p.DbId );
-			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
-		}
-	}
-
-	internal class PlayHistoryConfiguration : EntityTypeConfiguration<DbPlayHistory> {
-		internal PlayHistoryConfiguration() {
-			Map( m => {
-			     	m.ToTable( "PlayHistory" );
-					m.MapInheritedProperties();
-			     });
-
-			HasKey( p => p.DbId );
-			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
-		}
-	}
-
 	internal abstract class BaseEntityConfiguration<TEntity> : EntityTypeConfiguration<TEntity> where TEntity : DbBase {
 		internal BaseEntityConfiguration( string tableName ) {
 			Map( m => {
@@ -185,6 +43,78 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			HasKey( p => p.DbId );
 			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
 		} 
+	}
+
+	internal class ArtistConfiguration : BaseEntityConfiguration<DbArtist> {
+		internal ArtistConfiguration() :
+			base( "Artists" ) {
+			Ignore( p => p.Genre );
+			Ignore( p => p.Rating );
+			Ignore( p => p.IsUserRating );
+			Ignore( p => p.DateAdded );
+		}
+	}
+
+	internal class AlbumConfiguration : BaseEntityConfiguration<DbAlbum> {
+		internal AlbumConfiguration() :
+			base( "Albums" ) {
+			Ignore( p => p.DateAdded );
+			Ignore( p => p.Genre );
+			Ignore( p => p.Rating );
+			Ignore( p => p.IsUserRating );
+		}
+	}
+
+	internal class TrackConfiguration : BaseEntityConfiguration<DbTrack> {
+		internal TrackConfiguration() :
+			base( "Tracks" ) {
+			Ignore( p => p.DateAdded );
+			Ignore( p => p.Duration );
+			Ignore( p => p.Genre );
+			Ignore( p => p.Rating );
+			Ignore( p => p.IsUserRating );
+		}
+	}
+
+	internal class AssociatedItemConfiguration : BaseEntityConfiguration<DbAssociatedItem> {
+		internal AssociatedItemConfiguration() :
+			base( "AssociatedItems" ) { }
+	}
+
+	internal class AssociatedItemListConfiguration : BaseEntityConfiguration<DbAssociatedItemList> {
+		internal AssociatedItemListConfiguration() :
+			base( "AssociatedItemLists" ) {
+			Ignore( p => p.ContentType );
+		}
+	}
+
+	internal class DiscographyConfiguration : BaseEntityConfiguration<DbDiscographyRelease> {
+		internal DiscographyConfiguration() :
+			base( "Discography" ) {
+			Ignore( p => p.ReleaseType );
+		}
+	}
+
+	internal class GenreConfiguration : BaseEntityConfiguration<DbGenre> {
+		internal GenreConfiguration() :
+			base( "Genres" ) { }
+	}
+
+	internal class InternetStreamConfiguration : BaseEntityConfiguration<DbInternetStream> {
+		internal InternetStreamConfiguration() :
+			base( "Streams" ) {
+			Ignore( p => p.Encoding );
+		}
+	}
+
+	internal class LyricConfiguration : BaseEntityConfiguration<DbLyric> {
+		internal LyricConfiguration() :
+			base( "Lyrics" ) { }
+	}
+
+	internal class PlayHistoryConfiguration : BaseEntityConfiguration<DbPlayHistory> {
+		internal PlayHistoryConfiguration() :
+			base( "PlayHistory" ) { }
 	}
 
 	internal class PlayListConfiguration : BaseEntityConfiguration<DbPlayList> {
