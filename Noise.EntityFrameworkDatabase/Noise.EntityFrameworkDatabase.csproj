@@ -130,6 +130,7 @@
     <Compile Include="DataProviders\GenreProvider.cs" />
     <Compile Include="DataProviders\InternetStreamProvider.cs" />
     <Compile Include="DataProviders\LyricProvider.cs" />
+    <Compile Include="DataProviders\PlayHistoryProvider.cs" />
     <Compile Include="DataProviders\TrackProvider.cs" />
     <Compile Include="DatabaseManager\DebugDatabaseInitialize.cs" />
     <Compile Include="DataProviders\EfProviderList.cs" />

@@ -2,18 +2,11 @@
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class PlayHistoryProviderTests : BaseDatabaseProviderTests {
-
-		private IPlayHistoryProvider CreateSut() {
-			return( new PlayHistoryProvider( mDatabaseManager ));
-		}
-
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BasePlayHistoryProviderTests : BaseProviderTest<IPlayHistoryProvider> {
 		[Test]
 		public void CanAddPlayHistory() {
 			var file = new StorageFile( "file name", 1, 100, DateTime.Now );

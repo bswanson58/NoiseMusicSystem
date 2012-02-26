@@ -8,6 +8,8 @@ namespace Noise.Infrastructure.Dto {
 		public	long		StorageFileId { get; private set; }
 		public	long		TrackId { get; private set; }
 
+		protected DbPlayHistory() { }
+
 		public DbPlayHistory( StorageFile track ) {
 			StorageFileId = track.DbId;
 			TrackId = track.MetaDataPointer;

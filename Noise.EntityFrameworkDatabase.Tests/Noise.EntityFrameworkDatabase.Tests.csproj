@@ -124,6 +124,7 @@
     <Compile Include="DataProviders\GenreProviderTests.cs" />
     <Compile Include="DataProviders\InternetStreamProviderTests.cs" />
     <Compile Include="DataProviders\LyricProviderTests.cs" />
+    <Compile Include="DataProviders\PlayHistoryProviderTests.cs" />
     <Compile Include="DataProviders\ProviderTestSetup.cs" />
     <Compile Include="DataProviders\TestDatabaseInitializer.cs" />
     <Compile Include="DataProviders\TrackProviderTests.cs" />
