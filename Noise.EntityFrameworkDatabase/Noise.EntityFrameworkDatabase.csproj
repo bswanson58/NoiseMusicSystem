@@ -131,6 +131,7 @@
     <Compile Include="DataProviders\InternetStreamProvider.cs" />
     <Compile Include="DataProviders\LyricProvider.cs" />
     <Compile Include="DataProviders\PlayHistoryProvider.cs" />
+    <Compile Include="DataProviders\PlayListProvider.cs" />
     <Compile Include="DataProviders\TrackProvider.cs" />
     <Compile Include="DatabaseManager\DebugDatabaseInitialize.cs" />
     <Compile Include="DataProviders\EfProviderList.cs" />
@@ -148,6 +149,10 @@
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
+      <Project>{8930138B-F96A-4A56-84CF-D660730989C9}</Project>
+      <Name>ReusableBits.Mvvm</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

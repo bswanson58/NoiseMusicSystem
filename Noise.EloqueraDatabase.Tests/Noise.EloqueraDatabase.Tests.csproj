@@ -124,6 +124,7 @@
     <Compile Include="DataProviders\InternetStreamProviderTests.cs" />
     <Compile Include="DataProviders\LyricProviderTests.cs" />
     <Compile Include="DataProviders\PlayHistoryProviderTests.cs" />
+    <Compile Include="DataProviders\PlayListProviderTests.cs" />
     <Compile Include="DataProviders\ProviderTestSetup.cs" />
     <Compile Include="DataProviders\TrackProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -144,6 +145,10 @@
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
+      <Project>{8930138B-F96A-4A56-84CF-D660730989C9}</Project>
+      <Name>ReusableBits.Mvvm</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

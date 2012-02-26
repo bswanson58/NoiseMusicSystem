@@ -23,6 +23,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			modelBuilder.Configurations.Add( new InternetStreamConfiguration());
 			modelBuilder.Configurations.Add( new LyricConfiguration());
 			modelBuilder.Configurations.Add( new PlayHistoryConfiguration());
+			modelBuilder.Configurations.Add( new PlayListConfiguration());
 			modelBuilder.Configurations.Add( new TrackConfiguration());
 		}
 
@@ -171,5 +172,23 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			HasKey( p => p.DbId );
 			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
 		}
+	}
+
+	internal abstract class BaseEntityConfiguration<TEntity> : EntityTypeConfiguration<TEntity> where TEntity : DbBase {
+		internal BaseEntityConfiguration( string tableName ) {
+			Map( m => {
+			     	m.ToTable( tableName );
+					m.MapInheritedProperties();
+			     });
+
+
+			HasKey( p => p.DbId );
+			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
+		} 
+	}
+
+	internal class PlayListConfiguration : BaseEntityConfiguration<DbPlayList> {
+		internal PlayListConfiguration() :
+			base( "PlayLists" ) { }
 	}
 }

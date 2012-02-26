@@ -2,18 +2,11 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class PlayListProviderTests : BaseDatabaseProviderTests {
-
-		private IPlayListProvider CreateSut() {
-			return( new PlayListProvider( mEventAggregator.Object, mDatabaseManager ));
-		}
-
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BasePlayListProviderTests : BaseProviderTest<IPlayListProvider> {
 		[Test]
 		public void CanAddPlayList() {
 			var playList = new DbPlayList();
