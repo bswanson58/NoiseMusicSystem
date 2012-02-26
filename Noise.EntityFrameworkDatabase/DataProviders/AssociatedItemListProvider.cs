@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
@@ -19,7 +21,8 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			DbAssociatedItemList	retValue;
 
 			using( var context = CreateContext()) {
-				retValue = ( from list in Set( context ) where (( list.Artist == artistId ) && ( list.DbContentType == (int)ofType )) select list ).FirstOrDefault();
+				retValue = Set( context ).Where( entry => (( entry.Artist == artistId ) && ( entry.DbContentType == (int)ofType )))
+											.Include( entry => entry.Items ).FirstOrDefault();
 			}
 
 			return( retValue );
@@ -28,19 +31,43 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		public IDataProviderList<DbAssociatedItemList> GetAssociatedItemLists( ContentType forType ) {
 			var context = CreateContext();
 
-			return( new EfProviderList<DbAssociatedItemList>( context, from list in Set( context ) where list.DbContentType == (int)forType select list ));
+			return( new EfProviderList<DbAssociatedItemList>( context, Set( context ).Where( entry => entry.DbContentType == (int)forType )
+																						.Include( entry => entry.Items )));
 		}
 
 		public IDataProviderList<DbAssociatedItemList> GetAssociatedItemLists( long forArtist ) {
 			var context = CreateContext();
 
-			return( new EfProviderList<DbAssociatedItemList>( context, from list in Set( context ) where list.Artist == forArtist select list ));
+			return( new EfProviderList<DbAssociatedItemList>( context, Set( context ).Where( entry => entry.Artist == forArtist )
+																						.Include( entry => entry.Items )));
 		}
 
 		public IDataUpdateShell<DbAssociatedItemList> GetAssociationForUpdate( long listId ) {
 			var context = CreateContext();
+			var item = Set( context ).Where( entry => entry.DbId == listId ).Include( entry => entry.Items ).FirstOrDefault();
 
-			return( new EfUpdateShell<DbAssociatedItemList>( context, GetItemByKey( context, listId )));
+			return( new AssociatedListUpdateShell( context, item ));
+		}
+	}
+
+	internal class AssociatedListUpdateShell : EfUpdateShell<DbAssociatedItemList> {
+		private readonly List<DbAssociatedItem>	mOriginalItems;
+ 
+		internal AssociatedListUpdateShell( IDbContext context, DbAssociatedItemList list ) :
+			base( context, list ) {
+			mOriginalItems = new List<DbAssociatedItem>( list.Items );
+		}
+
+		public override void Update() {
+			var itemSet = mContext.Set<DbAssociatedItem>();
+
+			foreach( var item in mOriginalItems ) {
+				if( Item.Items.FirstOrDefault( entry => entry.DbId == item.DbId ) == null ) {
+					itemSet.Remove( item );
+				}
+			}
+
+			base.Update();
 		}
 	}
 }

@@ -50,6 +50,20 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
+		public void CanRetrieveAssociatedItemListItems() {
+			var artist = new DbArtist();
+			var list = new DbAssociatedItemList( 2, ContentType.TopAlbums ) { Artist = artist.DbId };
+			var strings = new List<string> { "one", "2", "three" };
+			list.SetItems( strings );
+
+			var sut = CreateSut();
+			sut.AddAssociationList( list );
+
+			var retrievedAssociationList = sut.GetAssociatedItems( artist.DbId, ContentType.TopAlbums );
+			retrievedAssociationList.Items.Should().HaveCount( 3 );
+		}
+
+		[Test]
 		public void CanGetAssociationItemListForContentType() {
 			var list1 = new DbAssociatedItemList( 1, ContentType.BandMembers );
 			var list2 = new DbAssociatedItemList( 2, ContentType.Discography);

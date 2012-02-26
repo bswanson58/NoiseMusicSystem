@@ -11,7 +11,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			Item = item;
 		}
 
-		public void Update() {
+		public virtual void Update() {
 			mContext.SaveChanges();
 		}
 	}

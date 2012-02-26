@@ -33,24 +33,26 @@ namespace Noise.Infrastructure.Dto {
 	}
 
 	public class DbAssociatedItemList : ExpiringContent {
-		public	DbAssociatedItem[]	Items { get; set; }
+		public	List<DbAssociatedItem>	Items { get; protected set; }
 
 		public DbAssociatedItemList() :
-			this( Constants.cDatabaseNullOid, ContentType.Unknown ) { }
+			this( Constants.cDatabaseNullOid, ContentType.Unknown ) {
+			Items = new List<DbAssociatedItem>();
+		}
 
 		public DbAssociatedItemList( long associatedItem, ContentType contentType ) :
 			base( associatedItem, contentType ) {
-			Items = new DbAssociatedItem[0];
+			Items = new List<DbAssociatedItem>();
 		}
 
 		public void SetItems( List<string> items ) {
 			if( items != null ) {
-				Items = new DbAssociatedItem[items.Count];
+				Items.Clear();
 
-				for( var index = 0; index < items.Count; index++ ) {
-					Items[index] = new DbAssociatedItem( items[index]);
+				foreach( string t in items ) {
+					Items.Add( new DbAssociatedItem( t ));
 				}
-			} 
+			}
 		}
 
 		public IEnumerable<string> GetItems() {
