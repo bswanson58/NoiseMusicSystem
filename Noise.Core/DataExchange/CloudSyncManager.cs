@@ -13,7 +13,7 @@ using IDatabase = GDataDB.IDatabase;
 
 namespace Noise.Core.DataExchange {
 	internal class CloudSyncManager : ICloudSyncManager {
-		private readonly IDbBaseProvider			mDbBaseProvider;
+		private readonly IDatabaseInfo				mDatabaseInfo;
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IAlbumProvider				mAlbumProvider;
 		private readonly ITrackProvider				mTrackProvider;
@@ -32,9 +32,9 @@ namespace Noise.Core.DataExchange {
 		private readonly AsyncCommand<object>						mSyncWithCloud;
 		private readonly AsyncCommand<SetFavoriteCommandArgs>		mSetFavoriteCommand;
 
-		public CloudSyncManager( IDbBaseProvider dbBaseProvider, IEnumerable<ICloudSyncProvider> syncProviders, IDomainSearchProvider domainSearchProvider,
+		public CloudSyncManager( IDatabaseInfo databaseInfo, IEnumerable<ICloudSyncProvider> syncProviders, IDomainSearchProvider domainSearchProvider,
 								 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IInternetStreamProvider streamProvider ) {
-			mDbBaseProvider = dbBaseProvider;
+			mDatabaseInfo = databaseInfo;
 			mSyncProviders = syncProviders;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -66,7 +66,7 @@ namespace Noise.Core.DataExchange {
 			mLoginName = loginName;
 			mLoginPassword = password;
 
-			mDatabaseInstanceId = mDbBaseProvider.DatabaseInstanceId();
+			mDatabaseInstanceId = mDatabaseInfo.DatabaseId;
 
 			return( true );
 		}

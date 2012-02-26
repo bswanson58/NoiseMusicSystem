@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using Noise.Core.Database;
 using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -24,14 +23,6 @@ namespace Noise.Core.IntegrationTests.Database {
 			var retrievedItem = sut.GetItem( track.DbId );
 
 			track.ShouldHave().AllProperties().EqualTo( retrievedItem );
-		}
-
-		[Test]
-		public void CanGetDatabaseId() {
-			var sut = CreateSut();
-			var databaseId = sut.DatabaseInstanceId();
-
-			databaseId.Should().NotBe( 0 );
 		}
 	}
 }
