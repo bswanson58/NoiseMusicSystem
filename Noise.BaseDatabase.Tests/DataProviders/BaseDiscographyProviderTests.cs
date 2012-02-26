@@ -1,17 +1,11 @@
 ﻿using System;
 using FluentAssertions;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class DiscographyProviderTests : BaseDatabaseProviderTests {
-		private IDiscographyProvider CreateSut() {
-			return( new DbDiscographyProvider( mDatabaseManager ));
-		}
-
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BaseDiscographyProviderTests : BaseProviderTest<IDiscographyProvider> {
 		[Test]
 		public void CanAddDiscography() {
 			var disco = new DbDiscographyRelease( 1, "title", "format", "label", 1999, DiscographyReleaseType.Release );

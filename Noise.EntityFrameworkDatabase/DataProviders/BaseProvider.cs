@@ -27,6 +27,21 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			using( var context = CreateContext()) {
 				if( GetItemByKey( context, item.DbId ) == null ) {
 					context.Set<TEntity>().Add( item );
+
+					context.SaveChanges();
+				}
+			}
+		}
+
+		protected void RemoveItem( TEntity item ) {
+			Condition.Requires( item ).IsNotNull();
+
+			using( var context = CreateContext()) {
+				var entry = GetItemByKey( context, item.DbId );
+
+				if( entry != null ) {
+					Set( context ).Remove( entry );
+
 					context.SaveChanges();
 				}
 			}

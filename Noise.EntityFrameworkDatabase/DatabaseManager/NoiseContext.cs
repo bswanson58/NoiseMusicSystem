@@ -18,6 +18,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			modelBuilder.Configurations.Add( new AssociatedItemConfiguration());
 			modelBuilder.Configurations.Add( new AssociatedItemListConfiguration());
 			modelBuilder.Configurations.Add( new AlbumConfiguration());
+			modelBuilder.Configurations.Add( new DiscographyConfiguration());
 			modelBuilder.Configurations.Add( new TrackConfiguration());
 		}
 
@@ -101,6 +102,20 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
 
 			Ignore( p => p.ContentType );
+		}
+	}
+
+	internal class DiscographyConfiguration : EntityTypeConfiguration<DbDiscographyRelease> {
+		internal DiscographyConfiguration() {
+			Map( m => {
+			     	m.ToTable( "Discography" );
+					m.MapInheritedProperties();
+			     });
+
+			HasKey( p => p.DbId );
+			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
+
+			Ignore( p => p.ReleaseType );
 		}
 	}
 }

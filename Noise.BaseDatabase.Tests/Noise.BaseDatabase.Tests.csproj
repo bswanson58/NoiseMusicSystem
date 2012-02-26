@@ -115,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataProviders\BaseAssociatedItemListTests.cs" />
+    <Compile Include="DataProviders\BaseDiscographyProviderTests.cs" />
     <Compile Include="DataProviders\BaseProviderTest.cs" />
     <Compile Include="DataProviders\BaseTrackProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

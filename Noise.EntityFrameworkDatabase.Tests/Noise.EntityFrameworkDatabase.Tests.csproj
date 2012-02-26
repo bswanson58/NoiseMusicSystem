@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataProviders\AssociatedItemListTests.cs" />
+    <Compile Include="DataProviders\DiscographyProviderTests.cs" />
     <Compile Include="DataProviders\ProviderTestSetup.cs" />
     <Compile Include="DataProviders\TestDatabaseInitializer.cs" />
     <Compile Include="DataProviders\TrackProviderTests.cs" />
