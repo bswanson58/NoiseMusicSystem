@@ -1,18 +1,11 @@
 ﻿using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class LyricProviderTests : BaseDatabaseProviderTests {
-
-		private ILyricProvider CreateSut() {
-			return( new LyricProvider( mDatabaseManager ));	
-		}
-
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BaseLyricProviderTests : BaseProviderTest<ILyricProvider> {
 		[Test]
 		public void CanAddLyric() {
 			var lyric = new DbLyric( 1, 2, "Track Name" );

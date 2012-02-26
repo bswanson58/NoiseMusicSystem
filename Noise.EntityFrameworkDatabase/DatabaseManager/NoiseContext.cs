@@ -21,6 +21,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			modelBuilder.Configurations.Add( new DiscographyConfiguration());
 			modelBuilder.Configurations.Add( new GenreConfiguration());
 			modelBuilder.Configurations.Add( new InternetStreamConfiguration());
+			modelBuilder.Configurations.Add( new LyricConfiguration());
 			modelBuilder.Configurations.Add( new TrackConfiguration());
 		}
 
@@ -144,6 +145,18 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
 
 			Ignore( p => p.Encoding );
+		}
+	}
+
+	internal class LyricConfiguration : EntityTypeConfiguration<DbLyric> {
+		internal LyricConfiguration() {
+			Map( m => {
+			     	m.ToTable( "Lyrics" );
+					m.MapInheritedProperties();
+			     });
+
+			HasKey( p => p.DbId );
+			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
 		}
 	}
 }
