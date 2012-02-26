@@ -125,7 +125,6 @@
     <Compile Include="Database\BaseDatabaseProviderTests.cs" />
     <Compile Include="Database\DbBaseProviderTests.cs" />
     <Compile Include="Database\ExpiringContentProviderTests.cs" />
-    <Compile Include="Database\GenreProviderTests.cs" />
     <Compile Include="Database\InternetStreamProviderTests.cs" />
     <Compile Include="Database\LyricProviderTests.cs" />
     <Compile Include="Database\PlayHistoryProviderTests.cs" />

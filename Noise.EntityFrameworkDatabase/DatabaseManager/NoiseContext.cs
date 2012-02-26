@@ -19,6 +19,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			modelBuilder.Configurations.Add( new AssociatedItemListConfiguration());
 			modelBuilder.Configurations.Add( new AlbumConfiguration());
 			modelBuilder.Configurations.Add( new DiscographyConfiguration());
+			modelBuilder.Configurations.Add( new GenreConfiguration());
 			modelBuilder.Configurations.Add( new TrackConfiguration());
 		}
 
@@ -116,6 +117,18 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
 
 			Ignore( p => p.ReleaseType );
+		}
+	}
+
+	internal class GenreConfiguration : EntityTypeConfiguration<DbGenre> {
+		internal GenreConfiguration() {
+			Map( m => {
+			     	m.ToTable( "Genre" );
+					m.MapInheritedProperties();
+			     });
+
+			HasKey( p => p.DbId );
+			Property( p => p.DbId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
 		}
 	}
 }

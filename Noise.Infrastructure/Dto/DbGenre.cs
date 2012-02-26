@@ -11,8 +11,8 @@ namespace Noise.Infrastructure.Dto {
 		public bool				IsFavorite { get; set; }
 
 		public DbGenre() {
-			Name = "";
-			Description = "";
+			Name = string.Empty;
+			Description = string.Empty;
 		}
 
 		public DbGenre( long id ) :

@@ -9,7 +9,7 @@ namespace Noise.Infrastructure.Dto {
 		public	string	Item { get; private set; }
 		public	long	AssociatedId { get; private set; }
 
-		public DbAssociatedItem() :
+		protected DbAssociatedItem() :
 			this( string.Empty ) { }
 
 		public DbAssociatedItem( string item ) {
@@ -35,7 +35,7 @@ namespace Noise.Infrastructure.Dto {
 	public class DbAssociatedItemList : ExpiringContent {
 		public	List<DbAssociatedItem>	Items { get; protected set; }
 
-		public DbAssociatedItemList() :
+		protected DbAssociatedItemList() :
 			this( Constants.cDatabaseNullOid, ContentType.Unknown ) {
 			Items = new List<DbAssociatedItem>();
 		}
