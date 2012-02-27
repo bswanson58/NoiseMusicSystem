@@ -122,6 +122,7 @@
     <Compile Include="DataProviders\BasePlayHistoryProviderTests.cs" />
     <Compile Include="DataProviders\BasePlayListProviderTests.cs" />
     <Compile Include="DataProviders\BaseProviderTest.cs" />
+    <Compile Include="DataProviders\BaseRootFolderProviderTests.cs" />
     <Compile Include="DataProviders\BaseStorageFileProviderTests.cs" />
     <Compile Include="DataProviders\BaseStorageFolderProviderTests.cs" />
     <Compile Include="DataProviders\BaseTagAssociationProviderTests.cs" />

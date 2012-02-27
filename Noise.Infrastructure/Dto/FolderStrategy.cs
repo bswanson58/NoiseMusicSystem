@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
@@ -10,22 +11,22 @@ namespace Noise.Infrastructure.Dto {
 		Undefined = 0
 	}
 
-	public class FolderStrategy {
-		private	const int			cMaxStrategyLevel = 5;
+	public class FolderStrategy : DbBase {
+		private	const int		cMaxStrategyLevel = 5;
 
-		private eFolderStrategy[]	mFolderLevelStrategies;
-		public	bool				PreferFolderStrategy { get; set; }
+		private readonly List<eFolderStrategy>	mFolderLevelStrategies;
+		public	bool							PreferFolderStrategy { get; set; }
 
 		public FolderStrategy() {
-			mFolderLevelStrategies = new eFolderStrategy[cMaxStrategyLevel];
+			mFolderLevelStrategies = new List<eFolderStrategy>();
 
 			for( int level = 0; level < cMaxStrategyLevel; level++ ) {
-				mFolderLevelStrategies[level] = eFolderStrategy.Undefined;
+				mFolderLevelStrategies.Add( eFolderStrategy.Undefined );
 			}
 		}
 
 		public void EloqueraFixUp() {
-			mFolderLevelStrategies = Array.ConvertAll( mFolderLevelStrategies, value => (eFolderStrategy)value );
+//			mFolderLevelStrategies = Array.ConvertAll( mFolderLevelStrategies, value => (eFolderStrategy)value );
 		}
 
 		public eFolderStrategy StrategyForLevel( int folderLevel ) {

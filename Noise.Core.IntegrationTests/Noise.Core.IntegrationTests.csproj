@@ -125,7 +125,6 @@
     <Compile Include="Database\BaseDatabaseProviderTests.cs" />
     <Compile Include="Database\DbBaseProviderTests.cs" />
     <Compile Include="Database\ExpiringContentProviderTests.cs" />
-    <Compile Include="Database\RootFolderProviderTests.cs" />
     <Compile Include="Database\TextInfoProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

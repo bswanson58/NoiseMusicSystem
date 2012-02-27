@@ -2,17 +2,12 @@
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class RootFolderProviderTests : BaseDatabaseProviderTests {
-
-		private IRootFolderProvider CreateSut() {
-			return( new RootFolderProvider( mDatabaseManager ));
-		}
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BaseRootFolderProviderTests : BaseProviderTest<IRootFolderProvider> {
+		protected IStorageFolderProvider	mStorageFolderProvider;
 
 		[Test]
 		public void CanAddRootFolder() {
@@ -70,8 +65,7 @@ namespace Noise.Core.IntegrationTests.Database {
 			sut.AddRootFolder( rootFolder2 );
 
 			var storageFolder = new StorageFolder( "storage folder", 1 );
-			var storageFolderProvider = new StorageFolderProvider( mDatabaseManager );
-			storageFolderProvider.AddFolder( storageFolder );
+			mStorageFolderProvider.AddFolder( storageFolder );
 
 			using( var folderList = sut.GetRootFolderList()) {
 				folderList.List.Should().HaveCount( 2 );
@@ -113,6 +107,5 @@ namespace Noise.Core.IntegrationTests.Database {
 				folder.Name.Should().NotBe( retrievedFolder.Name );
 			}
 		}
-
 	}
 }
