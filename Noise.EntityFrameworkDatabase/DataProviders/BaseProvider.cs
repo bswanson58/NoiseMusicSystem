@@ -47,6 +47,18 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			}
 		}
 
+		protected void RemoveItem( long itemId ) {
+			using( var context = CreateContext()) {
+				var item = GetItemByKey( context, itemId );
+
+				if( item != null ) {
+					Set( context ).Remove( item );
+
+					context.SaveChanges();
+				}
+			}
+		}
+
 		protected TEntity GetItemByKey( long key ) {
 			TEntity	retValue;
 

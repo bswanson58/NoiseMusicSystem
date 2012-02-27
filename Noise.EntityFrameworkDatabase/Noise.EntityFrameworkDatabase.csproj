@@ -132,6 +132,7 @@
     <Compile Include="DataProviders\LyricProvider.cs" />
     <Compile Include="DataProviders\PlayHistoryProvider.cs" />
     <Compile Include="DataProviders\PlayListProvider.cs" />
+    <Compile Include="DataProviders\TagAssociationProvider.cs" />
     <Compile Include="DataProviders\TagProvider.cs" />
     <Compile Include="DataProviders\TrackProvider.cs" />
     <Compile Include="DatabaseManager\DebugDatabaseInitialize.cs" />

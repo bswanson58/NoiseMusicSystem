@@ -1,18 +1,11 @@
 ﻿using System;
 using FluentAssertions;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class TagAssociationProviderTests : BaseDatabaseProviderTests {
-
-		private ITagAssociationProvider CreateSut() {
-			return( new TagAssociationProvider( mDatabaseManager ));
-		}
-
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BaseTagAssociationProviderTests : BaseProviderTest<ITagAssociationProvider> {
 		[Test]
 		public void CanAddAssociation() {
 			var artist = new DbArtist();

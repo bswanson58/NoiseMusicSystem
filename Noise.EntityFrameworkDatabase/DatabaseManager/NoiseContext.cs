@@ -25,6 +25,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			modelBuilder.Configurations.Add( new PlayHistoryConfiguration());
 			modelBuilder.Configurations.Add( new PlayListConfiguration());
 			modelBuilder.Configurations.Add( new TagConfiguration());
+			modelBuilder.Configurations.Add( new TagAssociationConfiguration());
 			modelBuilder.Configurations.Add( new TrackConfiguration());
 		}
 
@@ -125,6 +126,15 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 	internal class TagConfiguration : BaseEntityConfiguration<DbTag> {
 		internal TagConfiguration() :
-			base( "Tags" ) { }
+			base( "Tags" ) {
+			Ignore( p => p.TagGroup );
+		}
+	}
+
+	internal class TagAssociationConfiguration : BaseEntityConfiguration<DbTagAssociation> {
+		internal TagAssociationConfiguration() :
+			base( "TagAssociations" ) {
+			Ignore( p => p.TagGroup );
+		}
 	}
 }
