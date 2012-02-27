@@ -26,6 +26,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			modelBuilder.Configurations.Add( new PlayListConfiguration());
 			modelBuilder.Configurations.Add( new TagConfiguration());
 			modelBuilder.Configurations.Add( new TagAssociationConfiguration());
+			modelBuilder.Configurations.Add( new TimestampConfiguration());
 			modelBuilder.Configurations.Add( new TrackConfiguration());
 		}
 
@@ -135,6 +136,14 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 		internal TagAssociationConfiguration() :
 			base( "TagAssociations" ) {
 			Ignore( p => p.TagGroup );
+		}
+	}
+
+	internal class TimestampConfiguration : EntityTypeConfiguration<DbTimestamp> {
+		internal TimestampConfiguration() {
+			ToTable( "Timestamps" );
+			HasKey( p => p.ComponentId );
+			Property( p => p.ComponentId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
 		}
 	}
 }

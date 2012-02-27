@@ -1,16 +1,9 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class TimestampProviderTests : BaseDatabaseProviderTests {
-
-		private ITimestampProvider CreateSut() {
-			return( new TimestampProvider( mDatabaseManager ));
-		}
-
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BaseTimestampProviderTests : BaseProviderTest<ITimestampProvider> {
 		[Test]
 		public void CanSetNewTimestamp() {
 			var sut = CreateSut();

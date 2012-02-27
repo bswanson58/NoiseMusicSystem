@@ -3,9 +3,11 @@ using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbTimestamp {
-		public	string		ComponentId { get; private set; }
-		public	long		Timestamp { get; private set; }
+		public	string		ComponentId { get; protected set; }
+		public	long		Timestamp { get; protected set; }
 
+		protected DbTimestamp() :
+			this( string.Empty ) { }
 
 		public DbTimestamp( string componentId ) {
 			ComponentId = componentId;
