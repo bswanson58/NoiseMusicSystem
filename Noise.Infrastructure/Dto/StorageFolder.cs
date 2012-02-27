@@ -9,6 +9,9 @@ namespace Noise.Infrastructure.Dto {
 		public long		ParentFolder { get; set; }
 		public bool		IsDeleted { get; set; }
 
+		protected StorageFolder() :
+			this( string.Empty, Constants.cDatabaseNullOid ) { }
+
 		public StorageFolder( string name, long parentFolder ) {
 			Name = name;
 			ParentFolder = parentFolder;

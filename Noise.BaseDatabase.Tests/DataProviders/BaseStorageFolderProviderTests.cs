@@ -2,19 +2,12 @@
 using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class StorageFolderProviderTests : BaseDatabaseProviderTests {
-
-		private IStorageFolderProvider CreateSut() {
-			return( new StorageFolderProvider( mDatabaseManager ));
-		}
-
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BaseStorageFolderProviderTests : BaseProviderTest<IStorageFolderProvider> {
 		[Test]
 		public void CanAddStorageFolder() {
 			var sut = CreateSut();

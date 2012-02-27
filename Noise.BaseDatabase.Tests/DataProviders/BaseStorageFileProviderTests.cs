@@ -4,31 +4,15 @@ using System.Linq;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using Noise.Core.Database;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class StorageFileProviderTests : BaseDatabaseProviderTests {
-		private Mock<IAlbumProvider>	mAlbumProvider;
-		private ITrackProvider			mTrackProvider;
-		private IStorageFolderProvider	mFolderProvider;
-
-		[SetUp]
-		public override void Setup() {
-			base.Setup();
-
-			mAlbumProvider = new Mock<IAlbumProvider>();
-			mTrackProvider = new TrackProvider( mDatabaseManager );
-			mFolderProvider = new StorageFolderProvider( mDatabaseManager );
-		}
-
-		private IStorageFileProvider CreateSut() {
-			return( new StorageFileProvider( mDatabaseManager, mAlbumProvider.Object, mTrackProvider, mFolderProvider ));
-		}
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BaseStorageFileProviderTests : BaseProviderTest<IStorageFileProvider> {
+		protected Mock<IAlbumProvider>		mAlbumProvider;
+		protected ITrackProvider			mTrackProvider;
+		protected IStorageFolderProvider	mFolderProvider;
 
 		[Test]
 		public void CanAddStorageFile() {
@@ -59,7 +43,7 @@ namespace Noise.Core.IntegrationTests.Database {
 
 				var retrieveFile = fileList.List.First();
 
-				file.ShouldHave().AllProperties().EqualTo( retrieveFile );
+				file.ShouldHave().AllPropertiesBut( p => p.FileModifiedDate ).EqualTo( retrieveFile );
 			}
 		}
 
@@ -197,7 +181,7 @@ namespace Noise.Core.IntegrationTests.Database {
 				Assert.IsNotNull( updater );
 				Assert.IsNotNull( updater.Item );
 
-				file.ShouldHave().AllProperties().EqualTo( updater.Item );
+				file.ShouldHave().AllPropertiesBut( p => p.FileModifiedDate ).EqualTo( updater.Item );
 			}
 		}
 

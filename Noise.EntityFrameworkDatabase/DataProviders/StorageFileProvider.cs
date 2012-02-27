@@ -2,49 +2,48 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CuttingEdge.Conditions;
-using Noise.EloqueraDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
-namespace Noise.EloqueraDatabase.DataProviders {
-	internal class StorageFileProvider : BaseDataProvider<StorageFile>, IStorageFileProvider {
+namespace Noise.EntityFrameworkDatabase.DataProviders {
+	public class StorageFileProvider : BaseProvider<StorageFile>, IStorageFileProvider {
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
 		private readonly IStorageFolderProvider	mStorageFolderProvider;
 
-		public StorageFileProvider( IEloqueraManager databaseManager, IAlbumProvider albumProvider, ITrackProvider trackProvider, IStorageFolderProvider storageFolderProvider ) :
-			base( databaseManager ) {
+		public StorageFileProvider( IContextProvider contextProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IStorageFolderProvider folderProvider ) :
+			base( contextProvider ) {
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
-			mStorageFolderProvider = storageFolderProvider;
+			mStorageFolderProvider = folderProvider;
 		}
 
 		public void AddFile( StorageFile file ) {
-			Condition.Requires( file ).IsNotNull();
-
-			InsertItem( file );
+			AddItem( file );
 		}
 
 		public void DeleteFile( StorageFile file ) {
-			Condition.Requires( file ).IsNotNull();
-
-			DeleteItem( file );
+			RemoveItem( file );
 		}
 
 		public StorageFile GetPhysicalFile( DbTrack forTrack ) {
-			Condition.Requires( forTrack ).IsNotNull();
+			StorageFile	retValue;
 
-			return( TryGetItem( "SELECT StorageFile Where MetaDataPointer = @trackId", new Dictionary<string, object>{{ "trackId", forTrack.DbId }}, "GetPhysicalFile" ));
+			using( var context = CreateContext()) {
+				retValue = Set( context ).FirstOrDefault( entity => entity.MetaDataPointer == forTrack.DbId );	
+			}
+
+			return( retValue );
 		}
 
 		public string GetPhysicalFilePath( StorageFile forFile ) {
 			return( StorageHelpers.GetPath( mStorageFolderProvider, forFile ));
 		}
 
-		// This code - and FindCommonParent is duplicated in the Entity Framework provider.
+		// This code - and FindCommonParent is duplicated in the Eloquera provider.
 		public string GetAlbumPath( long albumId ) {
 			var retValue = "";
 
@@ -70,23 +69,39 @@ namespace Noise.EloqueraDatabase.DataProviders {
 		}
 
 		public IDataProviderList<StorageFile> GetAllFiles() {
-			return( TryGetList( "SELECT StorageFile", "GetAllFiles" ));
+			return( GetListShell());
 		}
 
 		public IDataProviderList<StorageFile> GetDeletedFilesList() {
-			return( TryGetList( "SELECT StorageFile WHERE IsDeleted", "GetDeletedFilesList" ));
+			var context = CreateContext();
+
+			return( new EfProviderList<StorageFile>( context, Set( context ).Where( entity => entity.IsDeleted )));
 		}
 
 		public IDataProviderList<StorageFile> GetFilesInFolder( long parentFolder ) {
-			return( TryGetList( "SELECT StorageFile Where ParentFolder = @parentId", new Dictionary<string, object> {{ "parentId", parentFolder }}, "GetFilesInFolder" ));
+			var context = CreateContext();
+
+			return( new EfProviderList<StorageFile>( context, Set( context ).Where( entity => entity.ParentFolder == parentFolder )));
 		}
 
 		public IDataProviderList<StorageFile> GetFilesOfType( eFileType fileType ) {
-			return( TryGetList( "SELECT StorageFile Where FileType = @fileType", new Dictionary<string, object> {{ "fileType", fileType }}, "GetFilesOfType" ));
+			var context = CreateContext();
+
+			return( new EfProviderList<StorageFile>( context, Set( context ).Where( entity => entity.DbFileType == (int)fileType )));
 		}
 
 		public IDataUpdateShell<StorageFile> GetFileForUpdate( long fileId ) {
-			return( GetUpdateShell( "SELECT StorageFile Where DbId = @fileId", new Dictionary<string, object> {{ "fileId", fileId }}));
+			return( GetUpdateShell( fileId ));
+		}
+
+		public long GetItemCount() {
+			long	retValue;
+
+			using( var context = CreateContext()) {
+				retValue = Set( context ).Count();	
+			}
+
+			return( retValue );
 		}
 
 		private static string FindCommonParent( IEnumerable<string> paths ) {
@@ -129,8 +144,5 @@ namespace Noise.EloqueraDatabase.DataProviders {
 			return( retValue );
 		}
 
-		public long GetItemCount() {
-			return( GetItemCount( "SELECT StorageFile" ));
-		}
 	}
 }

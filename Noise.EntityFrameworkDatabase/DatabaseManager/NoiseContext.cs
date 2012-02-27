@@ -24,6 +24,8 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			modelBuilder.Configurations.Add( new LyricConfiguration());
 			modelBuilder.Configurations.Add( new PlayHistoryConfiguration());
 			modelBuilder.Configurations.Add( new PlayListConfiguration());
+			modelBuilder.Configurations.Add( new StorageFileConfiguration());
+			modelBuilder.Configurations.Add( new StorageFolderConfiguration());
 			modelBuilder.Configurations.Add( new TagConfiguration());
 			modelBuilder.Configurations.Add( new TagAssociationConfiguration());
 			modelBuilder.Configurations.Add( new TimestampConfiguration());
@@ -145,5 +147,17 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			HasKey( p => p.ComponentId );
 			Property( p => p.ComponentId ).HasDatabaseGeneratedOption( DatabaseGeneratedOption.None );
 		}
+	}
+
+	internal class StorageFileConfiguration : BaseEntityConfiguration<StorageFile> {
+		internal StorageFileConfiguration() :
+			base( "Files" ) {
+			Ignore( p => p.FileType );
+		}
+	}
+
+	internal class StorageFolderConfiguration : BaseEntityConfiguration<StorageFolder> {
+		internal StorageFolderConfiguration() :
+			base( "Folders" ) { }
 	}
 }
