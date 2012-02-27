@@ -24,6 +24,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			modelBuilder.Configurations.Add( new LyricConfiguration());
 			modelBuilder.Configurations.Add( new PlayHistoryConfiguration());
 			modelBuilder.Configurations.Add( new PlayListConfiguration());
+			modelBuilder.Configurations.Add( new TagConfiguration());
 			modelBuilder.Configurations.Add( new TrackConfiguration());
 		}
 
@@ -120,5 +121,10 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	internal class PlayListConfiguration : BaseEntityConfiguration<DbPlayList> {
 		internal PlayListConfiguration() :
 			base( "PlayLists" ) { }
+	}
+
+	internal class TagConfiguration : BaseEntityConfiguration<DbTag> {
+		internal TagConfiguration() :
+			base( "Tags" ) { }
 	}
 }

@@ -129,7 +129,6 @@
     <Compile Include="Database\StorageFileProviderTests.cs" />
     <Compile Include="Database\StorageFolderProviderTests.cs" />
     <Compile Include="Database\TagAssociationProviderTests.cs" />
-    <Compile Include="Database\TagProviderTests.cs" />
     <Compile Include="Database\TextInfoProviderTests.cs" />
     <Compile Include="Database\TimestampProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

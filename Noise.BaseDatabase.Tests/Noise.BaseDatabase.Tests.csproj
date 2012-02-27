@@ -122,6 +122,7 @@
     <Compile Include="DataProviders\BasePlayHistoryProviderTests.cs" />
     <Compile Include="DataProviders\BasePlayListProviderTests.cs" />
     <Compile Include="DataProviders\BaseProviderTest.cs" />
+    <Compile Include="DataProviders\BaseTagProviderTests.cs" />
     <Compile Include="DataProviders\BaseTrackProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

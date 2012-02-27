@@ -127,6 +127,7 @@
     <Compile Include="DataProviders\PlayHistoryProviderTests.cs" />
     <Compile Include="DataProviders\PlayListProviderTests.cs" />
     <Compile Include="DataProviders\ProviderTestSetup.cs" />
+    <Compile Include="DataProviders\TagProviderTests.cs" />
     <Compile Include="DataProviders\TestDatabaseInitializer.cs" />
     <Compile Include="DataProviders\TrackProviderTests.cs" />
     <Compile Include="NoiseContextTests.cs" />

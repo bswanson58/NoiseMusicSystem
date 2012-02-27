@@ -2,18 +2,11 @@
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class TagProviderTests : BaseDatabaseProviderTests {
-
-		private ITagProvider CreateSut() {
-			return( new TagProvider( mDatabaseManager ));
-		}
-
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BaseTagProviderTests : BaseProviderTest<ITagProvider> {
 		[Test]
 		public void CanAddTag() {
 			var tag = new DbTag( eTagGroup.User, "tag name" );

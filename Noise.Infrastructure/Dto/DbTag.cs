@@ -12,15 +12,24 @@ namespace Noise.Infrastructure.Dto {
 
 	[DebuggerDisplay("Tag = {Name}")]
 	public class DbTag : DbBase {
-		public	eTagGroup		TagGroup { get; private set; }
-		public	string			Name { get; private set; }
+		public	eTagGroup		TagGroup { get; protected set; }
+		public	string			Name { get; protected set; }
 		public	string			Description { get; set; }
-		public Int16			Rating { get; set; }
-		public bool				IsFavorite { get; set; }
+		public	Int16			Rating { get; set; }
+		public	bool			IsFavorite { get; set; }
+
+		protected DbTag() :
+			this( eTagGroup.Unknown, string.Empty ) { }
 
 		public DbTag( eTagGroup group, string name ) {
 			TagGroup = group;
 			Name = name;
+			Description = string.Empty;
+		}
+
+		public int DbTagGroup {
+			get{ return((int)TagGroup ); }
+			protected set{ TagGroup = (eTagGroup)value; }
 		}
 
 		[Export("PersistenceType")]
