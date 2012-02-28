@@ -3,30 +3,14 @@ using System.Collections.Generic;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class AlbumProviderTests : BaseDatabaseProviderTests {
-		private Mock<IArtworkProvider>				mArtworkProvider;
-		private Mock<ITextInfoProvider>				mTextInfoProvider;
-		private Mock<ITagAssociationProvider>		mAssociationProvider;
-
-		[SetUp]
-		public override void Setup() {
-			mArtworkProvider = new Mock<IArtworkProvider>();
-			mTextInfoProvider = new Mock<ITextInfoProvider>();
-			mAssociationProvider = new Mock<ITagAssociationProvider>();
-
-			base.Setup();
-		}
-
-		private AlbumProvider CreateSut() {
-			return( new AlbumProvider( mDatabaseManager, mArtworkProvider.Object, mTextInfoProvider.Object, mAssociationProvider.Object ));
-		}
-
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BaseAlbumProviderTests : BaseProviderTest<IAlbumProvider> {
+		protected Mock<IArtworkProvider>			mArtworkProvider;
+		protected Mock<ITextInfoProvider>			mTextInfoProvider;
+		protected Mock<ITagAssociationProvider>		mAssociationProvider;
 		[Test]
 		public void CanAddAlbum() {
 			var album = new DbAlbum();
@@ -223,13 +207,16 @@ namespace Noise.Core.IntegrationTests.Database {
 		public void CanSetCategoriesForAlbumRemovesOldCategories() {
 			var album = new DbAlbum();
 
-			var tags = new List<DbTagAssociation> { new DbTagAssociation( eTagGroup.User, 1, 1, album.DbId ),
-													new DbTagAssociation( eTagGroup.User, 2, 1, album.DbId )};
+			var tag1 = new DbTagAssociation( eTagGroup.User, 1, 1, album.DbId );
+			var	tag2 = new DbTagAssociation( eTagGroup.User, 2, 1, album.DbId );
+			var tags = new List<DbTagAssociation> { tag1, tag2 };
 			var provider = new Mock<IDataProviderList<DbTagAssociation>>();
  
 			provider.Setup( m => m.List ).Returns( tags );
 			mAssociationProvider.Setup( m => m.GetAlbumTagList( It.IsAny<long>(), It.Is<eTagGroup>( p => p == eTagGroup.User ))).Returns( provider.Object );
-			mAssociationProvider.Setup( m => m.RemoveAssociation( It.Is<long>( p => p == 2 ))).Verifiable();
+			mAssociationProvider.Setup( m => m.GetAlbumTagAssociation( It.IsAny<long>(), 1 )).Returns( tag1 );
+			mAssociationProvider.Setup( m => m.GetAlbumTagAssociation( It.IsAny<long>(), 2 )).Returns( tag2 );
+			mAssociationProvider.Setup( m => m.RemoveAssociation( It.Is<long>( p => p == tag2.DbId ))).Verifiable();
 
 			var sut = CreateSut();
 

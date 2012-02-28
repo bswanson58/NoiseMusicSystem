@@ -1,14 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
 	public class AlbumProvider : BaseProvider<DbAlbum>, IAlbumProvider {
-		public AlbumProvider( IContextProvider contextProvider ) :
-			base( contextProvider ) { }
+		private readonly IArtworkProvider			mArtworkProvider;
+		private readonly ITextInfoProvider			mTextInfoProvider;
+		private readonly ITagAssociationProvider	mTagAssociationProvider;
+
+		public AlbumProvider( IContextProvider contextProvider,
+							  IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider, ITagAssociationProvider tagAssociationProvider) :
+			base( contextProvider ) {
+			mArtworkProvider = artworkProvider;
+			mTextInfoProvider = textInfoProvider;
+			mTagAssociationProvider = tagAssociationProvider;
+		}
 
 		public void AddAlbum( DbAlbum album ) {
 			AddItem( album );
@@ -55,19 +66,65 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		}
 
 		public AlbumSupportInfo GetAlbumSupportInfo( long albumId ) {
-			throw new System.NotImplementedException();
+			return( new AlbumSupportInfo( mArtworkProvider.GetAlbumArtwork( albumId, ContentType.AlbumCover ),
+										  mArtworkProvider.GetAlbumArtwork( albumId, ContentType.AlbumArtwork ),
+										  mTextInfoProvider.GetAlbumTextInfo( albumId )));
 		}
 
 		public IDataProviderList<long> GetAlbumsInCategory( long categoryId ) {
-			throw new System.NotImplementedException();
+			IDataProviderList<long>	retValue = null;
+
+			try {
+				using( var tagList = mTagAssociationProvider.GetTagList( eTagGroup.User, categoryId )) {
+					retValue = new EfProviderList<long>( null, ( from DbTagAssociation tag in tagList.List select tag.AlbumId ).ToList());
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "Exception - GetTagList", ex );
+			}
+
+			return( retValue );
 		}
 
 		public IDataProviderList<long> GetAlbumCategories( long albumId ) {
-			throw new System.NotImplementedException();
+			IDataProviderList<long>	retValue = null;
+
+			try {
+				using( var tagList = mTagAssociationProvider.GetAlbumTagList( albumId, eTagGroup.User )) {
+					retValue = new EfProviderList<long>( null, ( from DbTagAssociation assoc in tagList.List select assoc.TagId ).ToList());
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "Exception - GetAlbumCategories", ex );
+			}
+
+			return( retValue );
 		}
 
 		public void SetAlbumCategories( long artistId, long albumId, IEnumerable<long> categories ) {
-			throw new System.NotImplementedException();
+			using( var currentCategories = GetAlbumCategories( albumId )) {
+				var removeList = currentCategories.List.Where( tagId => !categories.Contains( tagId )).ToList();
+				var addList = categories.Where( tagId => !currentCategories.List.Contains( tagId )).ToList();
+
+				if(( removeList.Count > 0 ) ||
+				   ( addList.Count > 0 )) {
+					try {
+						foreach( var tagId in removeList ) {
+							var association = mTagAssociationProvider.GetAlbumTagAssociation( albumId, tagId );
+							if( association != null ) {
+								mTagAssociationProvider.RemoveAssociation( association.DbId );
+							}
+						}
+
+						foreach( var tagId in addList ) {
+							mTagAssociationProvider.AddAssociation( new DbTagAssociation( eTagGroup.User, tagId, artistId, albumId ));
+						}
+					}
+					catch( Exception ex ) {
+						NoiseLogger.Current.LogException( "Exception - SetAlbumCategories", ex );
+					}
+				}
+			}
 		}
 
 		public long GetItemCount() {

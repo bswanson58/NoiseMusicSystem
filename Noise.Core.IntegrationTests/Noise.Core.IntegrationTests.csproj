@@ -119,7 +119,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database\AlbumProviderTests.cs" />
     <Compile Include="Database\BaseDatabaseProviderTests.cs" />
     <Compile Include="Database\DbBaseProviderTests.cs" />
     <Compile Include="Database\ExpiringContentProviderTests.cs" />
