@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	[DebuggerDisplay("File = {Name}")]
@@ -27,6 +28,7 @@ namespace Noise.Infrastructure.Dto {
 			IsDeleted = false;
 		}
 
+		[Ignore]
 		public int DbFileType {
 			get{ return((int)FileType ); }
 			protected set{ FileType = (eFileType)value; }

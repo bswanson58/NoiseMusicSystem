@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbTagAssociation : DbBase {
@@ -18,6 +19,7 @@ namespace Noise.Infrastructure.Dto {
 			AlbumId = albumId;
 		}
 
+		[Ignore]
 		public int DbTagGroup {
 			get{ return((int)TagGroup ); }
 			protected set{ TagGroup = (eTagGroup)value; }
