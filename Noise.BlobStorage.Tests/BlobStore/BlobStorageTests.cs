@@ -22,7 +22,8 @@ namespace Noise.BlobStorage.Tests.BlobStore {
 			mStorageResolver.Setup( m => m.StorageLevels ).Returns( 1 );
 			mStorageResolver.Setup( m => m.KeyForStorageLevel( It.IsAny<long>(), It.Is<uint>( p => p == 0  ))).Returns( "first storage level" );
 
-			var storageManager = new BlobStorageManager( mStorageResolver.Object, blobStoragePath );
+			var storageManager = new BlobStorageManager( mStorageResolver.Object );
+			storageManager.Initialize( blobStoragePath );
 
 			storageManager.DeleteStorage( cTestStorageName );
 			if( storageManager.CreateStorage( cTestStorageName )) {

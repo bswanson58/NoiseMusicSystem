@@ -3,6 +3,7 @@ using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
 	public abstract class BaseProvider<TEntity> where TEntity : DbBase {
@@ -14,6 +15,10 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 		protected IDbContext CreateContext() {
 			return( mContextProvider.CreateContext());
+		}
+
+		protected IBlobStorage BlobStorage {
+			get{ return( mContextProvider.BlobStorageManager.GetStorage()); }
 		}
 
 		protected IDbSet<TEntity> Set( IDbContext fromContext ) {

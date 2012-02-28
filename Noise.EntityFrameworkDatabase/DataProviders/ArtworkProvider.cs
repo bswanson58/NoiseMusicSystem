@@ -7,6 +7,10 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		public ArtworkProvider( IContextProvider contextProvider ) :
 			base( contextProvider ) { }
 
+		private Artwork TransformArtwork( DbArtwork artwork ) {
+			return( new Artwork( artwork ) { Image = BlobStorage.RetrieveBytes( artwork.DbId ) });
+		}
+
 		public void AddArtwork( DbArtwork artwork ) {
 			throw new System.NotImplementedException();
 		}

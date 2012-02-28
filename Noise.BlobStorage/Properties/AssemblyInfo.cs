@@ -20,3 +20,4 @@ using System.Runtime.InteropServices;
 // Allow testing classes to access internal classes.
 [assembly:InternalsVisibleTo("Noise.Core.IntegrationTests")]
 [assembly:InternalsVisibleTo("Noise.EloqueraDatabase.Tests")]
+[assembly:InternalsVisibleTo("Noise.EntityFrameworkDatabase.Tests")]

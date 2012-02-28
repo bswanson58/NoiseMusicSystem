@@ -7,16 +7,22 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.BlobStorage.BlobStore {
 	public class BlobStorageManager : IBlobStorageManager, IBlobStorage {
 		private readonly IBlobStorageResolver	mBlobResolver;
-		private readonly string					mRootStoragePath;
+		private string							mRootStoragePath;
 		private bool							mIsOpen;
 		private string							mStoragePath;
 
-		public BlobStorageManager( IBlobStorageResolver blobResolver, string rootStoragePath ) {
+		public BlobStorageManager( IBlobStorageResolver blobResolver ) {
 			mBlobResolver = blobResolver;
+
+			mRootStoragePath = string.Empty;
+			mStoragePath = string.Empty;
+			mIsOpen = false;
+		}
+
+		public bool Initialize( string rootStoragePath ) {
 			mRootStoragePath = rootStoragePath;
 
-			mIsOpen = false;
-			mStoragePath = "";
+			return( true );
 		}
 
 		public bool OpenStorage( string storageName ) {

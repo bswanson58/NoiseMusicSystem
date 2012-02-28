@@ -16,9 +16,11 @@ namespace Noise.Core.IntegrationTests.Database {
 		protected Mock<ILog>						mDummyLog;
 		protected IIoc								mIocProvider;
 		protected DatabaseConfiguration				mDatabaseConfiguration;
+		protected BlobStorageManager				mBlobStorageManager;
 		protected IBlobStorageResolver				mBlobResolver;
 		protected IDatabaseFactory					mDatabaseFactory;
 		protected IEloqueraManager					mDatabaseManager;
+		protected Mock<IDatabaseInfo>				mDatabaseInfo;
 		protected Mock<IEventAggregator>			mEventAggregator;
 
 		[SetUp]
@@ -30,7 +32,12 @@ namespace Noise.Core.IntegrationTests.Database {
 
 			mIocProvider = new IocProvider();
 			mBlobResolver = new BlobStorageResolver();
-			mDatabaseFactory = new EloqueraDatabaseFactory( mBlobResolver, mIocProvider, mDatabaseConfiguration );
+			mBlobStorageManager = new BlobStorageManager( mBlobResolver );
+
+			mDatabaseInfo = new Mock<IDatabaseInfo>();
+			mDatabaseInfo.Setup( m => m.DatabaseId ).Returns( 12345L );
+
+			mDatabaseFactory = new EloqueraDatabaseFactory( mBlobStorageManager, mIocProvider, mDatabaseInfo.Object, mDatabaseConfiguration );
 			mDatabaseManager = new DatabaseManager( mDatabaseFactory );
 
 			if( mDatabaseManager.Initialize()) {
