@@ -3,33 +3,15 @@ using System.Collections.Generic;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using Noise.EloqueraDatabase;
-using Noise.EloqueraDatabase.DataProviders;
-using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class ArtistProviderTests : BaseDatabaseProviderTests {
-		private Mock<IArtworkProvider>				mArtworkProvider;
-		private Mock<ITextInfoProvider>				mTextInfoProvider;
-		private Mock<ITagAssociationProvider>		mAssociationProvider;
-		private Mock<IAssociatedItemListProvider>	mListProvider;
-
-		[SetUp]
-		public override void Setup() {
-			mArtworkProvider = new Mock<IArtworkProvider>();
-			mTextInfoProvider = new Mock<ITextInfoProvider>();
-			mAssociationProvider = new Mock<ITagAssociationProvider>();
-			mListProvider = new Mock<IAssociatedItemListProvider>();
-
-			base.Setup();
-		}
-
-		private ArtistProvider CreateSut() {
-			return( new ArtistProvider( mDatabaseManager, mArtworkProvider.Object, mTextInfoProvider.Object, mAssociationProvider.Object, mListProvider.Object ));
-		}
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BaseArtistProviderTests : BaseProviderTest<IArtistProvider> {
+		protected Mock<IArtworkProvider>			mArtworkProvider;
+		protected Mock<ITextInfoProvider>			mTextInfoProvider;
+		protected Mock<ITagAssociationProvider>		mAssociationProvider;
+		protected Mock<IAssociatedItemListProvider>	mListProvider;
 
 		[Test]
 		public void CanAddArtist() {
@@ -194,11 +176,11 @@ namespace Noise.Core.IntegrationTests.Database {
 		public void CanGetArtistCategories() {
 			var artist = new DbArtist();
 
-			var databaseShell = new Mock<IDatabaseShell>();
 			var tags = new List<DbTagAssociation> { new DbTagAssociation( eTagGroup.User, 1, artist.DbId, 1 ),
 													new DbTagAssociation( eTagGroup.User, 2, artist.DbId, 2 )};
-			var tagList = new EloqueraProviderList<DbTagAssociation>( databaseShell.Object, tags );
-			mAssociationProvider.Setup( m => m.GetArtistTagList( It.IsAny<long>(), It.Is<eTagGroup>( p => p == eTagGroup.User ))).Returns( tagList );
+			var tagList = new Mock<IDataProviderList<DbTagAssociation>>();
+ 			tagList.Setup( m => m.List ).Returns( tags );
+			mAssociationProvider.Setup( m => m.GetArtistTagList( It.IsAny<long>(), It.Is<eTagGroup>( p => p == eTagGroup.User ))).Returns( tagList.Object );
 
 			var sut = CreateSut();
 			
