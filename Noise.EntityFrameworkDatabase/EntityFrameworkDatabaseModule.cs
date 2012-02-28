@@ -28,7 +28,7 @@ namespace Noise.EntityFrameworkDatabase {
 			mContainer.RegisterType<IInternetStreamProvider, InternetStreamProvider>();
 			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
 			mContainer.RegisterType<IDiscographyProvider, DiscographyProvider>();
-//			mContainer.RegisterType<IExpiringContentProvider, ExpiringContentProvider>();
+			mContainer.RegisterType<IExpiringContentProvider, ExpiringContentProvider>();
 			mContainer.RegisterType<IGenreProvider, GenreProvider>();
 			mContainer.RegisterType<ILyricProvider, LyricProvider>();
 			mContainer.RegisterType<IPlayHistoryProvider, PlayHistoryProvider>();
