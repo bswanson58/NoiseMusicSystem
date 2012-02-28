@@ -1,4 +1,6 @@
-﻿using Noise.EntityFrameworkDatabase.Interfaces;
+﻿using System.Linq;
+using CuttingEdge.Conditions;
+using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -7,28 +9,86 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		public TextInfoProvider( IContextProvider contextProvider ) :
 			base( contextProvider ) { }
 
+		private TextInfo TransformTextInfo( DbTextInfo textInfo ) {
+			return( new TextInfo( textInfo ) { Text = BlobStorage.RetrieveText( textInfo.DbId ) });
+		}
+
 		public void AddTextInfo( DbTextInfo info, string filePath ) {
-			throw new System.NotImplementedException();
+			Condition.Requires( info ).IsNotNull();
+			Condition.Requires( filePath ).IsNotNullOrEmpty();
+
+			AddItem( info );
+			BlobStorage.StoreText( info.DbId, string.Empty );
 		}
 
 		public void AddTextInfo( DbTextInfo info ) {
-			throw new System.NotImplementedException();
+			Condition.Requires( info ).IsNotNull();
+
+			AddItem( info );
+			BlobStorage.StoreText( info.DbId, string.Empty );
 		}
 
 		public void DeleteTextInfo( DbTextInfo textInfo ) {
-			throw new System.NotImplementedException();
+			Condition.Requires( textInfo ).IsNotNull();
+
+			RemoveItem( textInfo );
+			BlobStorage.Delete( textInfo.DbId );
 		}
 
 		public TextInfo GetArtistTextInfo( long artistId, ContentType ofType ) {
-			throw new System.NotImplementedException();
+			TextInfo	retValue = null;
+
+			using( var context = CreateContext()) {
+				var	dbTextInfo = Set( context ).FirstOrDefault( entity => (( entity.Artist == artistId ) && ( entity.DbContentType == (int)ofType )));
+			
+				if( dbTextInfo != null ) {
+					retValue = TransformTextInfo( dbTextInfo );
+				}
+			}
+
+			return( retValue );
 		}
 
 		public TextInfo[] GetAlbumTextInfo( long albumId ) {
-			throw new System.NotImplementedException();
+			TextInfo[]	retValue;
+
+			using( var context = CreateContext()) {
+				var	dbTextInfoList = Set( context ).Where( entity => entity.Album == albumId );
+			
+				retValue = dbTextInfoList.Select( TransformTextInfo ).ToArray();
+			}
+
+			return( retValue );
 		}
 
 		public IDataUpdateShell<TextInfo> GetTextInfoForUpdate( long textInfoId ) {
-			throw new System.NotImplementedException();
+			var context = CreateContext();
+			var dbTextInfo = GetItemByKey( context, textInfoId );
+
+			return( new TextUpdateShell( context, BlobStorage, dbTextInfo, TransformTextInfo( dbTextInfo )));
+		}
+	}
+
+	internal class TextUpdateShell : EfUpdateShell<TextInfo> {
+		private readonly DbTextInfo		mTextInfo;
+		private readonly IBlobStorage	mBlobStorage;
+
+		public TextUpdateShell( IDbContext context, IBlobStorage blobStorage, DbTextInfo textInfo, TextInfo item ) :
+			base( context, item ) {
+			mTextInfo = textInfo;
+			mBlobStorage = blobStorage;
+		}
+
+		public override void Update() {
+			if(( mContext != null ) &&
+			   ( Item != null )) {
+				mTextInfo.Copy( Item );
+				mContext.SaveChanges();
+
+				if( Item.Text != null ) {
+					mBlobStorage.StoreText( Item.DbId, Item.Text );
+				}
+			}
 		}
 	}
 }

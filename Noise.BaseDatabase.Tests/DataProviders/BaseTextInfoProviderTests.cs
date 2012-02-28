@@ -1,18 +1,11 @@
 ﻿using System;
 using FluentAssertions;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class TextInfoProviderTests : BaseDatabaseProviderTests {
-
-		private ITextInfoProvider CreateSut() {
-			return( new TextInfoProvider( mDatabaseManager ));
-		}
-
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BaseTextInfoProviderTests : BaseProviderTest<ITextInfoProvider> {
 		[Test]
 		public void CanAddTextInfo() {
 			var textInfo = new DbTextInfo( 1, ContentType.Biography );

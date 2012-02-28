@@ -130,6 +130,7 @@
     <Compile Include="DataProviders\StorageFolderProviderTests.cs" />
     <Compile Include="DataProviders\TagAssociationProviderTests.cs" />
     <Compile Include="DataProviders\TagProviderTests.cs" />
+    <Compile Include="DataProviders\TextInfoProviderTests.cs" />
     <Compile Include="DataProviders\TimestampProviderTests.cs" />
     <Compile Include="DataProviders\TrackProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

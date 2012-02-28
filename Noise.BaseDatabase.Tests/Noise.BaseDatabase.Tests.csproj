@@ -128,6 +128,7 @@
     <Compile Include="DataProviders\BaseStorageFolderProviderTests.cs" />
     <Compile Include="DataProviders\BaseTagAssociationProviderTests.cs" />
     <Compile Include="DataProviders\BaseTagProviderTests.cs" />
+    <Compile Include="DataProviders\BaseTextInfoProviderTests.cs" />
     <Compile Include="DataProviders\BaseTimestampProviderTests.cs" />
     <Compile Include="DataProviders\BaseTrackProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
