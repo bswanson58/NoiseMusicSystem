@@ -35,6 +35,9 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			modelBuilder.Configurations.Add( new TimestampConfiguration());
 			modelBuilder.Configurations.Add( new TrackConfiguration());
 			modelBuilder.Configurations.Add( new VersionConfiguration());
+
+			modelBuilder.Ignore<Artwork>();
+			modelBuilder.Ignore<TextInfo>();
 		}
 
 		public new IDbSet<TEntity> Set<TEntity>() where TEntity : class {
