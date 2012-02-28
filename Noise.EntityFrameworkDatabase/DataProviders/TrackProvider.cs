@@ -65,7 +65,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		}
 
 		public long GetItemCount() {
-			return( CreateContext().Set<DbTrack>().Count());
+			return( GetEntityCount());
 		}
 	}
 }

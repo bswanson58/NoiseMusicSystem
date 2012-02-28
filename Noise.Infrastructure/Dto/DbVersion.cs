@@ -3,13 +3,17 @@ using System.ComponentModel.Composition;
 using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
-	public class DbVersion {
-		public	UInt16		MajorVersion { get; private set; }
-		public	UInt16		MinorVersion { get; private set; }
-		public	long		DatabaseCreationTicks { get; private set; }
-		public	long		DatabaseId { get; private set; }
+	public class DbVersion : DbBase {
+		public	UInt16		MajorVersion { get; protected set; }
+		public	UInt16		MinorVersion { get; protected set; }
+		public	long		DatabaseCreationTicks { get; protected set; }
+		public	long		DatabaseId { get; protected set; }
 
-		public DbVersion( UInt16 majorVersion, UInt16 minorVersion ) {
+		protected DbVersion() :
+			this( 0, 0 ) { }
+
+		public DbVersion( UInt16 majorVersion, UInt16 minorVersion ) :
+			base( 1L ) {
 			MajorVersion = majorVersion;
 			MinorVersion = minorVersion;
 

@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
@@ -86,5 +87,9 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 			return( new EfUpdateShell<TEntity>( context, GetItemByKey( context, forItem )));
 		} 
+
+		protected long GetEntityCount() {
+			return( CreateContext().Set<TEntity>().Count());
+		}
 	}
 }

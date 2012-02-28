@@ -1,11 +1,15 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbTextInfo : ExpiringContent {
 		public	long			FolderLocation { get; set; }
 		public	InfoSource		Source { get; set; }
 		public	string			Name { get; set; }
+
+		protected DbTextInfo() :
+			this( Constants.cDatabaseNullOid, ContentType.Unknown) { }
 
 		protected DbTextInfo( DbTextInfo clone ) :
 			base( clone ) {
@@ -18,6 +22,7 @@ namespace Noise.Infrastructure.Dto {
 		base( associatedItem, contentType ) {
 			FolderLocation = Constants.cDatabaseNullOid;
 			Source = InfoSource.Unknown;
+			Name = string.Empty;
 		}
 
 		public void Copy( DbTextInfo copy ) {
@@ -26,6 +31,12 @@ namespace Noise.Infrastructure.Dto {
 			FolderLocation = copy.FolderLocation;
 			Source = copy.Source;
 			Name = copy.Name;
+		}
+
+		[Ignore]
+		public int DbInfoSource {
+			get{ return((int)Source ); }
+			set{ Source = (InfoSource)value; }
 		}
 
 		[Export("PersistenceType")]

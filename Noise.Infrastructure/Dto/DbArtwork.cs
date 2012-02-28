@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbArtwork : ExpiringContent {
@@ -8,6 +9,9 @@ namespace Noise.Infrastructure.Dto {
 		public	bool			IsUserSelection { get; set; }
 		public	string			Name { get; set; }
 		public	Int16			Rotation { get; set; }
+
+		protected DbArtwork() :
+			this( Constants.cDatabaseNullOid, ContentType.Unknown) { }
 
 		protected DbArtwork( DbArtwork clone ) :
 			base( clone ) {
@@ -35,6 +39,12 @@ namespace Noise.Infrastructure.Dto {
 			IsUserSelection = copy.IsUserSelection;
 			Name = copy.Name;
 			Rotation = copy.Rotation;
+		}
+
+		[Ignore]
+		public int DbInfoSource {
+			get{ return((int)Source ); }
+			set{ Source = (InfoSource)value; }
 		}
 
 		[Export("PersistenceType")]

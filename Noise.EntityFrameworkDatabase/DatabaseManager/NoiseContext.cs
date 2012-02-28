@@ -14,10 +14,11 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
  		public IDbSet<DbTrack>	Tracks { get; set; } 
 
 		protected override void OnModelCreating( DbModelBuilder modelBuilder ) {
+			modelBuilder.Configurations.Add( new AlbumConfiguration());
 			modelBuilder.Configurations.Add( new ArtistConfiguration());
+			modelBuilder.Configurations.Add( new ArtworkConfiguration());
 			modelBuilder.Configurations.Add( new AssociatedItemConfiguration());
 			modelBuilder.Configurations.Add( new AssociatedItemListConfiguration());
-			modelBuilder.Configurations.Add( new AlbumConfiguration());
 			modelBuilder.Configurations.Add( new DiscographyConfiguration());
 			modelBuilder.Configurations.Add( new GenreConfiguration());
 			modelBuilder.Configurations.Add( new InternetStreamConfiguration());
@@ -30,8 +31,10 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			modelBuilder.Configurations.Add( new StorageFolderConfiguration());
 			modelBuilder.Configurations.Add( new TagConfiguration());
 			modelBuilder.Configurations.Add( new TagAssociationConfiguration());
+			modelBuilder.Configurations.Add( new TextInfoConfiguration());
 			modelBuilder.Configurations.Add( new TimestampConfiguration());
 			modelBuilder.Configurations.Add( new TrackConfiguration());
+			modelBuilder.Configurations.Add( new VersionConfiguration());
 		}
 
 		public new IDbSet<TEntity> Set<TEntity>() where TEntity : class {
@@ -81,6 +84,11 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			Ignore( p => p.Rating );
 			Ignore( p => p.IsUserRating );
 		}
+	}
+
+	internal class ArtworkConfiguration : BaseEntityConfiguration<DbArtwork> {
+		internal ArtworkConfiguration() :
+			base( "Artwork" ) { }
 	}
 
 	internal class AssociatedItemConfiguration : BaseEntityConfiguration<DbAssociatedItem> {
@@ -143,6 +151,11 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 		}
 	}
 
+	internal class TextInfoConfiguration : BaseEntityConfiguration<DbTextInfo> {
+		internal TextInfoConfiguration() :
+			base( "TextInfo" ) { }
+	}
+
 	internal class TimestampConfiguration : EntityTypeConfiguration<DbTimestamp> {
 		internal TimestampConfiguration() {
 			ToTable( "Timestamps" );
@@ -171,5 +184,12 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	internal class RootFolderConfiguration : BaseEntityConfiguration<RootFolder> {
 		internal RootFolderConfiguration() :
 			base( "RootFolders" ) { }
+	}
+
+	internal class VersionConfiguration : BaseEntityConfiguration<DbVersion> {
+		internal VersionConfiguration() :
+			base( "Version" ) {
+			Ignore( p => p.DatabaseCreation );
+		}
 	}
 }

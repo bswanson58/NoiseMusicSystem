@@ -22,11 +22,11 @@ namespace Noise.EntityFrameworkDatabase {
 			mContainer.RegisterType<IDatabaseInitializeStrategy, DebugDatabaseInitialize>();
 
 //			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();
-//			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
-//			mContainer.RegisterType<IAlbumProvider, AlbumProvider>();
+			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
+			mContainer.RegisterType<IAlbumProvider, AlbumProvider>();
 			mContainer.RegisterType<ITrackProvider, TrackProvider>();
 			mContainer.RegisterType<IInternetStreamProvider, InternetStreamProvider>();
-//			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
+			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
 			mContainer.RegisterType<IDiscographyProvider, DiscographyProvider>();
 //			mContainer.RegisterType<IExpiringContentProvider, ExpiringContentProvider>();
 			mContainer.RegisterType<IGenreProvider, GenreProvider>();
@@ -38,7 +38,7 @@ namespace Noise.EntityFrameworkDatabase {
 			mContainer.RegisterType<IStorageFolderProvider, StorageFolderProvider>();
 			mContainer.RegisterType<ITagProvider, TagProvider>();
 			mContainer.RegisterType<ITagAssociationProvider, TagAssociationProvider>();
-//			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
+			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
 			mContainer.RegisterType<ITimestampProvider, TimestampProvider>();
 			mContainer.RegisterType<IAssociatedItemListProvider, AssociatedItemListProvider>();
 		}
