@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Noise.EloqueraDatabase.BlobStore {
+namespace Noise.BlobStorage.BlobStore {
 	public class BlobStorageException : ApplicationException {
 		public long		BlobId { get; private set; }
 		public string	BlobLocation { get; private set; }

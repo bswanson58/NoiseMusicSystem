@@ -1,6 +1,7 @@
-﻿using Noise.Infrastructure.Interfaces;
+﻿using System.Globalization;
+using Noise.Infrastructure.Interfaces;
 
-namespace Noise.EloqueraDatabase.BlobStore {
+namespace Noise.BlobStorage.BlobStore {
 	internal class BlobStorageResolver : IBlobStorageResolver {
 		private const string	cDefaultLevelName	= "_";
 
@@ -10,7 +11,7 @@ namespace Noise.EloqueraDatabase.BlobStore {
 
 		public string KeyForStorageLevel( long blobId, uint level ) {
 			var	retValue = cDefaultLevelName;
-			var blobStr = blobId.ToString();
+			var blobStr = blobId.ToString( CultureInfo.InvariantCulture );
 
 			if( blobStr.Length > ( level * 2 )) {
 				retValue = blobStr.Substring((int)level * 2, 2 );

@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
 using Noise.AppSupport;
-using Noise.EloqueraDatabase.BlobStore;
+using Noise.BlobStorage.BlobStore;
 using Noise.EloqueraDatabase.Database;
 using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;

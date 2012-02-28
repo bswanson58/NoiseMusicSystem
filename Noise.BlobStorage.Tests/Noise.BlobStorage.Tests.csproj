@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{16DCD043-E491-4F03-A46A-3C0273E8403D}</ProjectGuid>
+    <ProjectGuid>{6D24A656-0D5A-4FFF-B503-6E79F482050B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Noise.EloqueraDatabase</RootNamespace>
-    <AssemblyName>Noise.EloqueraDatabase</AssemblyName>
+    <RootNamespace>Noise.BlobStorage.Tests</RootNamespace>
+    <AssemblyName>Noise.BlobStorage.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -36,13 +36,15 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Debug\Noise.EloqueraDatabase.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>bin\Debug\Noise.BlobStorage.Tests.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -50,12 +52,13 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Release\Noise.EloqueraDatabase.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>bin\Release\Noise.BlobStorage.Tests.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
@@ -65,12 +68,13 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Debug\Noise.EloqueraDatabase.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>bin\Debug\Noise.BlobStorage.Tests.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
@@ -79,35 +83,27 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Release\Noise.EloqueraDatabase.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>bin\Release\Noise.BlobStorage.Tests.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CuttingEdge.Conditions">
-      <HintPath>..\lib\CuttingEdge.Conditions\v1.1.0.10041\CuttingEdge.Conditions.dll</HintPath>
+    <Reference Include="FluentAssertions">
+      <HintPath>..\lib\FluentAssertions\v1.7.0\FluentAssertions.dll</HintPath>
     </Reference>
-    <Reference Include="Eloquera.Client, Version=4.13.0.0, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
-      <HintPath>..\lib\Eloquera\v4.13\Eloquera.Client.dll</HintPath>
+    <Reference Include="Moq">
+      <HintPath>..\lib\Moq\v4.0.10827\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="Eloquera.Common, Version=4.13.0.0, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
-      <HintPath>..\lib\Eloquera\v4.13\Eloquera.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Prism">
-      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity">
-      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Unity.dll</HintPath>
+    <Reference Include="nunit.framework">
+      <HintPath>..\lib\NUnit\v2.5.10\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -116,49 +112,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Common\GlobalAssemblyInfo.cs">
-      <Link>Properties\GlobalAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Database\Database.cs" />
-    <Compile Include="Database\DatabaseManager.cs" />
-    <Compile Include="Database\DatabaseShell.cs" />
-    <Compile Include="DataProviders\AlbumProvider.cs" />
-    <Compile Include="DataProviders\ArtistProvider.cs" />
-    <Compile Include="DataProviders\ArtworkProvider.cs" />
-    <Compile Include="DataProviders\AssociatedItemListProvider.cs" />
-    <Compile Include="DataProviders\BaseDataProvider.cs" />
-    <Compile Include="DataProviders\DatabaseInfoProvider.cs" />
-    <Compile Include="DataProviders\DbBaseProvider.cs" />
-    <Compile Include="DataProviders\DiscographyProvider.cs" />
-    <Compile Include="DataProviders\ExpiringContentProvider.cs" />
-    <Compile Include="DataProviders\GenreProvider.cs" />
-    <Compile Include="DataProviders\InternetStreamProvider.cs" />
-    <Compile Include="DataProviders\LyricProvider.cs" />
-    <Compile Include="DataProviders\PlayHistoryProvider.cs" />
-    <Compile Include="DataProviders\PlayListProvider.cs" />
-    <Compile Include="DataProviders\RootFolderProvider.cs" />
-    <Compile Include="DataProviders\StorageFileProvider.cs" />
-    <Compile Include="DataProviders\StorageFolderProvider.cs" />
-    <Compile Include="DataProviders\TagAssociationProvider.cs" />
-    <Compile Include="DataProviders\TagProvider.cs" />
-    <Compile Include="DataProviders\TextInfoProvider.cs" />
-    <Compile Include="DataProviders\TimestampProvider.cs" />
-    <Compile Include="DataProviders\TrackProvider.cs" />
-    <Compile Include="EloqueraDatabaseFactory.cs" />
-    <Compile Include="EloqueraDatabaseModule.cs" />
-    <Compile Include="EloqueraProviderBase.cs" />
-    <Compile Include="EloqueraProviderList.cs" />
-    <Compile Include="EloqueraUpdateShell.cs" />
-    <Compile Include="Interfaces\IDatabase.cs" />
-    <Compile Include="Interfaces\IDatabaseFactory.cs" />
-    <Compile Include="Interfaces\IDatabaseShell.cs" />
-    <Compile Include="Interfaces\IEloqueraManager.cs" />
+    <Compile Include="BlobStore\BlobStorageManagerTests.cs" />
+    <Compile Include="BlobStore\BlobStorageTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Database\Eloquera.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Noise.BlobStorage\Noise.BlobStorage.csproj">
@@ -168,10 +124,6 @@
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
-      <Project>{8930138B-F96A-4A56-84CF-D660730989C9}</Project>
-      <Name>ReusableBits.Mvvm</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

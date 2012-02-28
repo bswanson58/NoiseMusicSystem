@@ -133,6 +133,10 @@
       <Project>{7ED4F983-3946-48EB-AAB7-587CEFAC4D03}</Project>
       <Name>Noise.AppSupport</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Noise.BlobStorage\Noise.BlobStorage.csproj">
+      <Project>{9F4086FD-8332-489F-8A96-8D4425DB5DF2}</Project>
+      <Name>Noise.BlobStorage</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Noise.Core\Noise.Core.csproj">
       <Project>{33A45442-71E5-4BFE-B37F-129EDB4F18E8}</Project>
       <Name>Noise.Core</Name>

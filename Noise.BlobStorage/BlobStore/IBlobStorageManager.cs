@@ -1,6 +1,6 @@
 ﻿using Noise.Infrastructure.Interfaces;
 
-namespace Noise.EloqueraDatabase.BlobStore {
+namespace Noise.BlobStorage.BlobStore {
 	public interface IBlobStorageManager {
 		bool			OpenStorage( string storageName );
 		bool			CreateStorage( string storageName );

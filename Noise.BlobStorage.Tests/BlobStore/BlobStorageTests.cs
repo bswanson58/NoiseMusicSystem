@@ -3,11 +3,11 @@ using System.IO;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.BlobStore;
+using Noise.BlobStorage.BlobStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.EloqueraDatabase.Tests.BlobStore {
+namespace Noise.BlobStorage.Tests.BlobStore {
 	[TestFixture]
 	public class BlobStorageTests {
 		private	const string				cTestStorageName = "unit test storage";

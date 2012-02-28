@@ -1,6 +1,5 @@
 ﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
-using Noise.EloqueraDatabase.BlobStore;
 using Noise.EloqueraDatabase.DataProviders;
 using Noise.EloqueraDatabase.Database;
 using Noise.EloqueraDatabase.Interfaces;
@@ -20,7 +19,6 @@ namespace Noise.EloqueraDatabase {
 			mContainer.RegisterInstance( config );
 
 			mContainer.RegisterType<IDatabaseFactory, EloqueraDatabaseFactory>();
-			mContainer.RegisterType<IBlobStorageResolver, BlobStorageResolver>();
 
 			mContainer.RegisterType<DatabaseManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IEloqueraManager, DatabaseManager>();
@@ -47,7 +45,6 @@ namespace Noise.EloqueraDatabase {
 			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
 			mContainer.RegisterType<ITimestampProvider, TimestampProvider>();
 			mContainer.RegisterType<IAssociatedItemListProvider, AssociatedItemListProvider>();
-
 		}
 	}
 }

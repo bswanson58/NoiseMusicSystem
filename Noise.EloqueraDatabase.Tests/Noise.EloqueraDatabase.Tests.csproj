@@ -115,8 +115,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlobStore\BlobStorageManagerTests.cs" />
-    <Compile Include="BlobStore\BlobStorageTests.cs" />
     <Compile Include="Database\DatabaseManagerTests.cs" />
     <Compile Include="DataProviders\AssociatedItemListTests.cs" />
     <Compile Include="DataProviders\DiscographyProviderTests.cs" />
@@ -143,6 +141,10 @@
     <ProjectReference Include="..\Noise.BaseDatabase.Tests\Noise.BaseDatabase.Tests.csproj">
       <Project>{3CD12623-662C-4FE4-B712-F484E59894B7}</Project>
       <Name>Noise.BaseDatabase.Tests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Noise.BlobStorage\Noise.BlobStorage.csproj">
+      <Project>{9F4086FD-8332-489F-8A96-8D4425DB5DF2}</Project>
+      <Name>Noise.BlobStorage</Name>
     </ProjectReference>
     <ProjectReference Include="..\Noise.EloqueraDatabase\Noise.EloqueraDatabase.csproj">
       <Project>{16DCD043-E491-4F03-A46A-3C0273E8403D}</Project>

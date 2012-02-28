@@ -4,7 +4,7 @@ using System.IO;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.EloqueraDatabase.BlobStore {
+namespace Noise.BlobStorage.BlobStore {
 	public class BlobStorageManager : IBlobStorageManager, IBlobStorage {
 		private readonly IBlobStorageResolver	mBlobResolver;
 		private readonly string					mRootStoragePath;

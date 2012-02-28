@@ -2,11 +2,11 @@
 using System.IO;
 using Moq;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.BlobStore;
+using Noise.BlobStorage.BlobStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.EloqueraDatabase.Tests.BlobStore {
+namespace Noise.BlobStorage.Tests.BlobStore {
 	[TestFixture]
 	public class BlobStorageManagerTests {
 		private const string				cTestStorageName = "unit test storage";
@@ -67,6 +67,7 @@ namespace Noise.EloqueraDatabase.Tests.BlobStore {
 
 			var opened = sut.OpenStorage( cTestStorageName );
 
+			Assert.IsTrue( opened );
 			Assert.IsTrue( sut.IsOpen );
 		}
 
@@ -74,7 +75,7 @@ namespace Noise.EloqueraDatabase.Tests.BlobStore {
 		public void CanCloseStorage() {
 			var sut = CreateSut( cTestStorageName );
 
-			var opened = sut.OpenStorage( cTestStorageName );
+			sut.OpenStorage( cTestStorageName );
 			sut.CloseStorage();
 
 			Assert.IsFalse( sut.IsOpen );
