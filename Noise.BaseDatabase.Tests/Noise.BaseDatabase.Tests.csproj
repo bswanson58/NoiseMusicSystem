@@ -114,6 +114,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataProviders\BaseArtworkProviderTests.cs" />
     <Compile Include="DataProviders\BaseAssociatedItemListTests.cs" />
     <Compile Include="DataProviders\BaseDiscographyProviderTests.cs" />
     <Compile Include="DataProviders\BaseGenreProviderTests.cs" />

@@ -121,7 +121,6 @@
   <ItemGroup>
     <Compile Include="Database\AlbumProviderTests.cs" />
     <Compile Include="Database\ArtistProviderTests.cs" />
-    <Compile Include="Database\ArtworkProviderTests.cs" />
     <Compile Include="Database\BaseDatabaseProviderTests.cs" />
     <Compile Include="Database\DbBaseProviderTests.cs" />
     <Compile Include="Database\ExpiringContentProviderTests.cs" />

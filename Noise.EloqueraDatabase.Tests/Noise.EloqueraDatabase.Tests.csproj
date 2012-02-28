@@ -116,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database\DatabaseManagerTests.cs" />
+    <Compile Include="DataProviders\ArtworkProviderTests.cs" />
     <Compile Include="DataProviders\AssociatedItemListTests.cs" />
     <Compile Include="DataProviders\DiscographyProviderTests.cs" />
     <Compile Include="DataProviders\GenreProviderTests.cs" />

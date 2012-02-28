@@ -1,16 +1,11 @@
 ﻿using System;
 using FluentAssertions;
 using NUnit.Framework;
-using Noise.EloqueraDatabase.DataProviders;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.IntegrationTests.Database {
-	[TestFixture]
-	public class ArtworkProviderTests : BaseDatabaseProviderTests {
-		private ArtworkProvider CreateSut() {
-			return( new ArtworkProvider( mDatabaseManager ));
-		}
-
+namespace Noise.BaseDatabase.Tests.DataProviders {
+	public abstract class BaseArtworkProviderTests : BaseProviderTest<IArtworkProvider> {
 		[Test]
 		public void CanAddDbArtwork() {
 			var artwork = new DbArtwork( 1, ContentType.AlbumCover );

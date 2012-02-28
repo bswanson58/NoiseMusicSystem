@@ -74,7 +74,7 @@ namespace Noise.EloqueraDatabase.DataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "AddArtwork", ex );
+				NoiseLogger.Current.LogException( "DeleteArtwork", ex );
 			}
 		}
 
@@ -116,6 +116,7 @@ namespace Noise.EloqueraDatabase.DataProviders {
 					retValue = dbArtworkList.List.Select( TransformArtwork ).ToArray();
 				}
 			}
+
 			return( retValue );
 		}
 
