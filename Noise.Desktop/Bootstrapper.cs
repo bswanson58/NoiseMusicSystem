@@ -38,6 +38,7 @@ namespace Noise.Desktop {
 				.AddModule( typeof( UI.NoiseUiModule ), "NoiseCoreModule" )
 				.AddModule( typeof( BlobStorage.BlobStorageModule ))
 				.AddModule( typeof( EloqueraDatabase.EloqueraDatabaseModule ))
+//				.AddModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ))
 				.AddModule( typeof( RemoteHost.RemoteHostModule ));
 
 			return ( catalog );
