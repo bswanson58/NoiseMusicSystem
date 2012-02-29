@@ -186,7 +186,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 	internal class RootFolderConfiguration : BaseEntityConfiguration<RootFolder> {
 		internal RootFolderConfiguration() :
-			base( "RootFolders" ) { }
+			base( "Folders" ) { }
 	}
 
 	internal class VersionConfiguration : BaseEntityConfiguration<DbVersion> {

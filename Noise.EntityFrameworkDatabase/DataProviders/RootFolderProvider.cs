@@ -1,4 +1,6 @@
-﻿using Noise.EntityFrameworkDatabase.Interfaces;
+﻿using System.Data.Entity;
+using System.Linq;
+using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -12,11 +14,16 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		}
 
 		public IDataProviderList<RootFolder> GetRootFolderList() {
-			return( GetListShell());
+			var	context = CreateContext();
+
+			return( new EfProviderList<RootFolder>( context, Set( context ).Include( entity => entity.FolderStrategy )));
 		}
 
 		public IDataUpdateShell<RootFolder> GetFolderForUpdate( long folderId ) {
-			return( GetUpdateShell( folderId ));
+			var	context = CreateContext();
+
+			return( new EfUpdateShell<RootFolder>( context, Set( context ).Include( entity => entity.FolderStrategy )
+																		  .FirstOrDefault( entity => entity.DbId == folderId )));
 		}
 	}
 }

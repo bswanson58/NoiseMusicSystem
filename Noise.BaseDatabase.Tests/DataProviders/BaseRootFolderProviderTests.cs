@@ -56,6 +56,25 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
+		public void RootFolderListReturnsFolderStrategies() {
+			var folder = new RootFolder( 1, "path", "display name" );
+			folder.FolderStrategy.SetStrategyForLevel( 0, eFolderStrategy.Artist );
+			folder.FolderStrategy.SetStrategyForLevel( 1, eFolderStrategy.Album );
+			folder.FolderStrategy.PreferFolderStrategy = true;
+
+			var sut = CreateSut();
+			sut.AddRootFolder( folder );
+
+			using( var folderList = sut.GetRootFolderList()) {
+				folderList.List.Should().HaveCount( 1 );
+
+				var	retrievedFolder = folderList.List.First();
+				retrievedFolder.ShouldHave().AllPropertiesBut( p => p.FolderStrategy ).EqualTo( folder );
+				retrievedFolder.FolderStrategy.ShouldHave().AllProperties().EqualTo( folder.FolderStrategy );
+			}
+		}
+
+		[Test]
 		public void RootFolderListDoesNotReturnStorageFolders() {
 			var rootFolder1 = new RootFolder( 1, "path 1", "folder 1" );
 			var rootFolder2 = new RootFolder( 2, "path 2", "folder 2" );
