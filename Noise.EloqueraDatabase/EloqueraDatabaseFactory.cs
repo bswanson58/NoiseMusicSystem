@@ -13,16 +13,13 @@ namespace Noise.EloqueraDatabase {
 		private const string	cBlobStorageName	= "Noise Blobs";
 
 		private readonly IIoc					mComponentCreator;
-		private readonly IDatabaseInfo			mDatabaseInfo;
 		private readonly DatabaseConfiguration	mDatabaseConfiguration;
 		private readonly IBlobStorageManager	mBlobStorageManager;
 		private bool							mBlobStorageInitialized;
 
-		public EloqueraDatabaseFactory( IBlobStorageManager blobStorageManager, IIoc componentCreator,
-										IDatabaseInfo databaseInfo, DatabaseConfiguration databaseConfiguration ) {
+		public EloqueraDatabaseFactory( IBlobStorageManager blobStorageManager, IIoc componentCreator, DatabaseConfiguration databaseConfiguration ) {
 			mBlobStorageManager = blobStorageManager;
 			mComponentCreator = componentCreator;
-			mDatabaseInfo = databaseInfo;
 			mDatabaseConfiguration = databaseConfiguration;
 
 			mBlobStorageInitialized = false;
@@ -42,7 +39,7 @@ namespace Noise.EloqueraDatabase {
 			}
 
 			if(!mBlobStorageInitialized ) {
-				InitBlobStorage();
+				InitBlobStorage( database.DatabaseVersion.DatabaseId );
 
 				mBlobStorageInitialized = true;
 			}
@@ -50,11 +47,11 @@ namespace Noise.EloqueraDatabase {
 			database.BlobStorage = mBlobStorageManager.GetStorage();
 		}
 
-		private void InitBlobStorage() {
+		private void InitBlobStorage( long databaseId ) {
 			mBlobStorageManager.Initialize( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName ));
 
 			if(!mBlobStorageManager.IsOpen ) {
-				var blobStorageName = Path.Combine( cBlobStorageName, mDatabaseInfo.DatabaseId.ToString( CultureInfo.InvariantCulture ));
+				var blobStorageName = Path.Combine( cBlobStorageName, databaseId.ToString( CultureInfo.InvariantCulture ));
 
 				if(!mBlobStorageManager.OpenStorage( blobStorageName )) {
 					mBlobStorageManager.CreateStorage( blobStorageName );

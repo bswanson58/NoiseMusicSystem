@@ -34,7 +34,7 @@ namespace Noise.AppSupport {
 		}
 
 		public bool InitializeIoc( ApplicationUsage appUsage ) {
-			mContainer.RegisterType<IIoc, IocProvider>();
+			mContainer.RegisterType<IIoc, IocProvider>( new ContainerControlledLifetimeManager());
 
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
 
