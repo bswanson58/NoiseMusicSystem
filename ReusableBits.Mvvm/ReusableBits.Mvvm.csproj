@@ -114,6 +114,7 @@
   <ItemGroup>
     <Compile Include="Caliburn.Micro\EventAggregator.cs" />
     <Compile Include="Caliburn.Micro\ExtensionMethods.cs" />
+    <Compile Include="FeatureToggle.Wpf\FeatureToggleToVisibilityConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModelSupport\AutomaticCommandBase.cs" />
     <Compile Include="ViewModelSupport\AutomaticPropertyBase.cs" />
@@ -125,6 +126,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ReusableBits\ReusableBits.csproj">
+      <Project>{0522B043-A04A-4669-90DB-204C96D52224}</Project>
+      <Name>ReusableBits</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

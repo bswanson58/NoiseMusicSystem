@@ -97,6 +97,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -105,6 +106,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FeatureToggle\AlwaysOffFeatureToggle.cs" />
+    <Compile Include="FeatureToggle\AlwaysOnFeatureToggle.cs" />
+    <Compile Include="FeatureToggle\AppSettingsKeys.cs" />
+    <Compile Include="FeatureToggle\AppSettingsProvider.cs" />
+    <Compile Include="FeatureToggle\BooleanSqlServerProvider.cs" />
+    <Compile Include="FeatureToggle\EnabledOnOrAfterDateFeatureToggle.cs" />
+    <Compile Include="FeatureToggle\EnabledOnOrBeforeDateFeatureToggle.cs" />
+    <Compile Include="FeatureToggle\IBooleanToggleValueProvider.cs" />
+    <Compile Include="FeatureToggle\IDateTimeToggleValueProvider.cs" />
+    <Compile Include="FeatureToggle\IFeatureToggle.cs" />
+    <Compile Include="FeatureToggle\INowDateAndTime.cs" />
+    <Compile Include="FeatureToggle\NowDateAndTime.cs" />
+    <Compile Include="FeatureToggle\SimpleFeatureToggle.cs" />
+    <Compile Include="FeatureToggle\SqlFeatureToggle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
