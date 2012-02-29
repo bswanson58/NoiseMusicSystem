@@ -129,6 +129,7 @@
     <Compile Include="DataProviders\ArtworkProvider.cs" />
     <Compile Include="DataProviders\AssociatedItemListProvider.cs" />
     <Compile Include="DataProviders\BaseProvider.cs" />
+    <Compile Include="DataProviders\DbBaseProvider.cs" />
     <Compile Include="DataProviders\DiscographyProvider.cs" />
     <Compile Include="DataProviders\ExpiringContentProvider.cs" />
     <Compile Include="DataProviders\GenreProvider.cs" />

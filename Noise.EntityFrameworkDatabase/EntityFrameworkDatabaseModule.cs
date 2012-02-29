@@ -21,7 +21,7 @@ namespace Noise.EntityFrameworkDatabase {
 			mContainer.RegisterType<IDatabaseManager, EntityFrameworkDatabaseManager>();
 			mContainer.RegisterType<IDatabaseInitializeStrategy, DebugDatabaseInitialize>();
 
-//			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();
+			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();
 			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
 			mContainer.RegisterType<IAlbumProvider, AlbumProvider>();
 			mContainer.RegisterType<ITrackProvider, TrackProvider>();

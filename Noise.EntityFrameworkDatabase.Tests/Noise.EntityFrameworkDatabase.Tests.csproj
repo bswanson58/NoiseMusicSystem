@@ -123,6 +123,7 @@
     <Compile Include="DataProviders\ArtistProviderTests.cs" />
     <Compile Include="DataProviders\ArtworkProviderTests.cs" />
     <Compile Include="DataProviders\AssociatedItemListTests.cs" />
+    <Compile Include="DataProviders\DbBaseProviderTests.cs" />
     <Compile Include="DataProviders\DiscographyProviderTests.cs" />
     <Compile Include="DataProviders\ExpiringContentProviderTests.cs" />
     <Compile Include="DataProviders\GenreProviderTests.cs" />
