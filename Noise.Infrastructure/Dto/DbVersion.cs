@@ -4,16 +4,18 @@ using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbVersion : DbBase {
-		public	UInt16		MajorVersion { get; protected set; }
-		public	UInt16		MinorVersion { get; protected set; }
+		public static long	DatabaseVersionDbId = 1L;
+
+		public	Int16		MajorVersion { get; protected set; }
+		public	Int16		MinorVersion { get; protected set; }
 		public	long		DatabaseCreationTicks { get; protected set; }
 		public	long		DatabaseId { get; protected set; }
 
 		protected DbVersion() :
 			this( 0, 0 ) { }
 
-		public DbVersion( UInt16 majorVersion, UInt16 minorVersion ) :
-			base( 1L ) {
+		public DbVersion( Int16 majorVersion, Int16 minorVersion ) :
+			base( DatabaseVersionDbId ) {
 			MajorVersion = majorVersion;
 			MinorVersion = minorVersion;
 

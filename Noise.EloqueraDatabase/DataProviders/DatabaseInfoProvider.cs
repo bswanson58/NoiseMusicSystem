@@ -1,11 +1,13 @@
 ﻿using System;
 using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	public class DatabaseInfoProvider : IDatabaseInfo {
 		private readonly IEloqueraManager	mDatabaseManager;
+		private DbVersion					mDatabaseVersion;
 
 		public DatabaseInfoProvider( IEloqueraManager databaseManager ) {
 			mDatabaseManager = databaseManager;
@@ -13,23 +15,48 @@ namespace Noise.EloqueraDatabase.DataProviders {
 
 		public long DatabaseId {
 			get {
-				IDatabase	database = null;
-				var			databaseId = Constants.cDatabaseNullOid;
+				var	databaseId = Constants.cDatabaseNullOid;
 
-				try {
-					database = mDatabaseManager.ReserveDatabase();
-					databaseId = database.DatabaseVersion.DatabaseId;
+				if( mDatabaseVersion == null ) {
+					RetrieveDatabaseVerson();
 				}
-				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "DatabaseInfoProvider:DatabaseId", ex );
-				}
-				finally {
-					if( database != null ) {
-						mDatabaseManager.FreeDatabase( database );
-					}
+
+				if( mDatabaseVersion != null ) {
+					databaseId = mDatabaseVersion.DatabaseId;
 				}
 
 				return( databaseId );
+			}
+		}
+
+		public DbVersion DatabaseVersion {
+			get { 
+				if( mDatabaseVersion == null ) {
+					RetrieveDatabaseVerson();
+				}
+
+				return( mDatabaseVersion );
+			}
+		}
+
+		public void InitializeDatabaseVersion( Int16 majorVersion, Int16 minorVersion ) {
+			throw new NotImplementedException();
+		}
+
+		private void RetrieveDatabaseVerson() {
+			IDatabase	database = null;
+
+			try {
+				database = mDatabaseManager.ReserveDatabase();
+				mDatabaseVersion = database.DatabaseVersion;
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "DatabaseInfoProvider:RetrieveDatabaseVersion", ex );
+			}
+			finally {
+				if( database != null ) {
+					mDatabaseManager.FreeDatabase( database );
+				}
 			}
 		}
 	}

@@ -2,8 +2,8 @@
 using Noise.EntityFrameworkDatabase.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DatabaseManager {
-	public class DebugDatabaseInitialize : IDatabaseInitializeStrategy {
-		internal class DatabaseCreatedInitializer : DropCreateDatabaseIfModelChanges<NoiseContext> {
+	public class ProductionDatabaseInitialize : IDatabaseInitializeStrategy {
+		internal class DatabaseCreatedInitializer : CreateDatabaseIfNotExists<NoiseContext> {
 			public bool		SeedWasCalled { get; private set; }
 
 			protected override void Seed( NoiseContext context ) {

@@ -124,12 +124,14 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="DatabaseManager\ContextProvider.cs" />
+    <Compile Include="DatabaseManager\ProductionDatabaseInitialize.cs" />
     <Compile Include="DataProviders\AlbumProvider.cs" />
     <Compile Include="DataProviders\ArtistProvider.cs" />
     <Compile Include="DataProviders\ArtworkProvider.cs" />
     <Compile Include="DataProviders\AssociatedItemListProvider.cs" />
     <Compile Include="DataProviders\BaseProvider.cs" />
     <Compile Include="DataProviders\DbBaseProvider.cs" />
+    <Compile Include="DataProviders\DbVersionProvider.cs" />
     <Compile Include="DataProviders\DiscographyProvider.cs" />
     <Compile Include="DataProviders\ExpiringContentProvider.cs" />
     <Compile Include="DataProviders\GenreProvider.cs" />

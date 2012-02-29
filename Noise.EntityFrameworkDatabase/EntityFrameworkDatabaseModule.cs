@@ -19,7 +19,11 @@ namespace Noise.EntityFrameworkDatabase {
 			mContainer.RegisterInstance( config );
 
 			mContainer.RegisterType<IDatabaseManager, EntityFrameworkDatabaseManager>();
+#if DEBUG
 			mContainer.RegisterType<IDatabaseInitializeStrategy, DebugDatabaseInitialize>();
+#else
+			mContainer.RegisterType<IDatabaseInitializeStrategy, ProductionDatabaseInitialize>();
+#endif
 
 			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();
 			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
@@ -41,6 +45,7 @@ namespace Noise.EntityFrameworkDatabase {
 			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
 			mContainer.RegisterType<ITimestampProvider, TimestampProvider>();
 			mContainer.RegisterType<IAssociatedItemListProvider, AssociatedItemListProvider>();
+			mContainer.RegisterType<IDatabaseInfo, DbVersionProvider>();
 		}
 	}
 }

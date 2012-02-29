@@ -8,5 +8,9 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 
 			return( true );
 		}
+
+		public bool DidCreateDatabase {
+			get { return( true ); }
+		}
 	}
 }

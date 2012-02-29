@@ -7,6 +7,8 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	public class EntityFrameworkDatabaseManager : IDatabaseManager {
+		private const Int16		cDatabaseVersionMajor = 0;
+		private const Int16		cDatabaseVersionMinor = 5;
 		private const string	cBlobStorageName	= "Noise Blobs";
 
 		private readonly IDatabaseInitializeStrategy	mInitializeStrategy;
@@ -24,6 +26,11 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 			if( mInitializeStrategy != null ) {
 				retValue = mInitializeStrategy.InitializeDatabase( mContextProvider.CreateContext());
+
+				if(( retValue ) &&
+				   ( mInitializeStrategy.DidCreateDatabase )) {
+					mDatabaseInfo.InitializeDatabaseVersion( cDatabaseVersionMajor, cDatabaseVersionMinor );
+				}
 			}
 
 			mContextProvider.BlobStorageManager.Initialize( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName ));
