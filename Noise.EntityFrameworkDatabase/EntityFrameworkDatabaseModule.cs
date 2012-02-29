@@ -19,6 +19,7 @@ namespace Noise.EntityFrameworkDatabase {
 			mContainer.RegisterInstance( config );
 
 			mContainer.RegisterType<IDatabaseManager, EntityFrameworkDatabaseManager>();
+			mContainer.RegisterType<IContextProvider, ContextProvider>();
 #if DEBUG
 			mContainer.RegisterType<IDatabaseInitializeStrategy, DebugDatabaseInitialize>();
 #else

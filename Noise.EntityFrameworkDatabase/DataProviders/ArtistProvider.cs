@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
@@ -45,9 +46,13 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbArtist> GetArtistList( IDatabaseFilter filter ) {
-			var context = CreateContext();
+			IEnumerable<DbArtist>	artistList;
 
-			return( new EfProviderList<DbArtist>( context, Set( context ).Where( entity => filter.ArtistMatch( entity ))));
+			using( var context = CreateContext()) {
+				artistList = Set( context ).ToList();
+			}
+
+			return( new EfProviderList<DbArtist>( null, artistList.Where( filter.ArtistMatch )));
 		}
 
 		public IDataProviderList<DbArtist> GetChangedArtists( long changedSince ) {

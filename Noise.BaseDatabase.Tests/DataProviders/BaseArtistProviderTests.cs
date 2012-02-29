@@ -83,10 +83,35 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 			}
 		}
 
+		internal class OneArtistFilter : IDatabaseFilter {
+			private bool	mOnlyOne;
+
+			public bool IsEnabled {
+				get { return( true ); }
+			}
+
+			public bool ArtistMatch( DbArtist artist ) {
+				var	retValue = !mOnlyOne;
+
+				mOnlyOne = true;
+
+				return( retValue );
+			}
+		}
+
 		[Test]
-		[Ignore( "Test not implemented" )]
 		public void CanGetArtistListMatchingFilter() {
-			
+			var artist1 = new DbArtist { Name = "artist 1" };
+			var artist2 = new DbArtist { Name = "artist 2" };
+
+			var sut = CreateSut();
+
+			sut.AddArtist( artist1 );
+			sut.AddArtist( artist2 );
+
+			using( var artistList = sut.GetArtistList( new OneArtistFilter())) {
+				artistList.List.Should().HaveCount( 1 );
+			}
 		}
 
 		[Test]
