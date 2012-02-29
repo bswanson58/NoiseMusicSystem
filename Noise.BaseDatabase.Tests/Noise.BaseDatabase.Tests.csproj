@@ -119,6 +119,7 @@
     <Compile Include="DataProviders\BaseArtworkProviderTests.cs" />
     <Compile Include="DataProviders\BaseAssociatedItemListTests.cs" />
     <Compile Include="DataProviders\BaseDiscographyProviderTests.cs" />
+    <Compile Include="DataProviders\BaseExpiringContentProviderTests.cs" />
     <Compile Include="DataProviders\BaseGenreProviderTests.cs" />
     <Compile Include="DataProviders\BaseInternetStreamProviderTests.cs" />
     <Compile Include="DataProviders\BaseLyricProviderTests.cs" />

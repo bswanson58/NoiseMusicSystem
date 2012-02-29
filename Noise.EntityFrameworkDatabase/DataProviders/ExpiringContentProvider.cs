@@ -16,16 +16,12 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			IDataProviderList<ExpiringContent>	retValue;
 
 			using( var context = mContextProvider.CreateContext()) {
-				var artworkList = context.Set<DbArtwork>().Where( entity => entity.AssociatedItem == forAssociatedItem && entity.DbContentType == (int)ofType );
-				var associationList = context.Set<DbAssociatedItemList>().Where( entity => entity.AssociatedItem == forAssociatedItem && entity.DbContentType == (int)ofType );
-				var discographyList = context.Set<DbDiscographyRelease>().Where( entity => entity.AssociatedItem == forAssociatedItem && entity.DbContentType == (int)ofType );
-				var textInfoList = context.Set<DbTextInfo>().Where( entity => entity.AssociatedItem == forAssociatedItem && entity.DbContentType == (int)ofType );
-
 				var	list = new List<ExpiringContent>();
- 				list.AddRange( artworkList );
-				list.AddRange( associationList );
-				list.AddRange( discographyList );
-				list.AddRange( textInfoList );
+
+				list.AddRange( context.Set<DbArtwork>().Where( entity => entity.AssociatedItem == forAssociatedItem && entity.DbContentType == (int)ofType ));
+				list.AddRange( context.Set<DbAssociatedItemList>().Where( entity => entity.AssociatedItem == forAssociatedItem && entity.DbContentType == (int)ofType ));
+				list.AddRange( context.Set<DbDiscographyRelease>().Where( entity => entity.AssociatedItem == forAssociatedItem && entity.DbContentType == (int)ofType ));
+				list.AddRange( context.Set<DbTextInfo>().Where( entity => entity.AssociatedItem == forAssociatedItem && entity.DbContentType == (int)ofType ));
 
 				retValue = new EfProviderList<ExpiringContent>( null, list );
 			}
@@ -34,7 +30,20 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		}
 
 		public IDataProviderList<ExpiringContent> GetAlbumContentList( long albumId ) {
-			throw new System.NotImplementedException();
+			IDataProviderList<ExpiringContent>	retValue;
+
+			using( var context = mContextProvider.CreateContext()) {
+				var	list = new List<ExpiringContent>();
+		
+				list.AddRange( context.Set<DbArtwork>().Where( entity => entity.Album == albumId ));
+				list.AddRange( context.Set<DbAssociatedItemList>().Where( entity => entity.Album == albumId ));
+				list.AddRange( context.Set<DbDiscographyRelease>().Where( entity => entity.Album == albumId ));
+				list.AddRange( context.Set<DbTextInfo>().Where( entity => entity.Album == albumId ));
+
+				retValue = new EfProviderList<ExpiringContent>( null, list );
+			}
+
+			return( retValue );
 		}
 	}
 }
