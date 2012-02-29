@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace JasonRoberts.FeatureToggle.Tests {
+namespace ReusableBits.Tests.FeatureToggle {
 	[TestFixture]
 	public class AlwaysOnFeatureToggleTests {
 		[Test]

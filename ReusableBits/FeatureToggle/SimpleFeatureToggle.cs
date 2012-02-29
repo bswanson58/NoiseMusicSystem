@@ -3,33 +3,28 @@
 #endif
 
 
-namespace JasonRoberts.FeatureToggle
-{
-    public abstract class SimpleFeatureToggle : IFeatureToggle
-    {
-        protected SimpleFeatureToggle()
-        {
+namespace ReusableBits.Tests.FeatureToggle {
+	public abstract class SimpleFeatureToggle : IFeatureToggle {
+		protected SimpleFeatureToggle() {
 #if (WINDOWS_PHONE)
 
             BooleanToggleValueProvider = new WindowsPhone7ApplicationResourcesSettingsProvider();
 #else
 
-            BooleanToggleValueProvider = new AppSettingsProvider();
+			BooleanToggleValueProvider = new AppSettingsProvider();
 #endif
-        }
+		}
 
 
-        public IBooleanToggleValueProvider BooleanToggleValueProvider { get; set; }
+		public IBooleanToggleValueProvider BooleanToggleValueProvider { get; set; }
 
 
-        public bool FeatureEnabled
-        {
-            get { return BooleanToggleValueProvider.EvaluateBooleanToggleValue(this); }
-        }
+		public bool FeatureEnabled {
+			get { return BooleanToggleValueProvider.EvaluateBooleanToggleValue( this ); }
+		}
 
-        public override string ToString()
-        {
-            return GetType().Name;
-        }
-    }
+		public override string ToString() {
+			return GetType().Name;
+		}
+	}
 }

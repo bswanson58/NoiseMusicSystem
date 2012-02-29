@@ -1,10 +1,10 @@
 ﻿using System.Windows;
-using JasonRoberts.FeatureToggle;
-using JasonRoberts.FeatureToggle.Wpf;
+using ReusableBits.Mvvm.FeatureToggle.Wpf;
+using ReusableBits.Tests.FeatureToggle;
 using Moq;
 using NUnit.Framework;
 
-namespace FeatureToggle.Wpf.Tests {
+namespace ReusableBits.Mvvm.Tests.FeatureToggle.Wpf {
 	[TestFixture]
 	public class FeatureToggleToVisibilityConverterTests {
 		[Test]

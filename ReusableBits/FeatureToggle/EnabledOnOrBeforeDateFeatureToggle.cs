@@ -4,33 +4,29 @@
 using JasonRoberts.FeatureToggle.Wp7;
 #endif
 
-namespace JasonRoberts.FeatureToggle
-{
-    public abstract class EnabledOnOrBeforeDateFeatureToggle : IFeatureToggle
-    {
+namespace ReusableBits.Tests.FeatureToggle {
+	public abstract class EnabledOnOrBeforeDateFeatureToggle : IFeatureToggle {
 
-        protected EnabledOnOrBeforeDateFeatureToggle()
-        {
-            NowProvider = new NowDateAndTime();
+		protected EnabledOnOrBeforeDateFeatureToggle() {
+			NowProvider = new NowDateAndTime();
 #if (WINDOWS_PHONE)
 
             ToggleValueProvider = new WindowsPhone7ApplicationResourcesSettingsProvider();
 #else
 
-            ToggleValueProvider = new AppSettingsProvider();
+			ToggleValueProvider = new AppSettingsProvider();
 #endif
-        }
+		}
 
 
 
-        public INowDateAndTime NowProvider { get; set; }
+		public INowDateAndTime NowProvider { get; set; }
 
-        public IDateTimeToggleValueProvider ToggleValueProvider { get; set; }
+		public IDateTimeToggleValueProvider ToggleValueProvider { get; set; }
 
 
-        public bool FeatureEnabled
-        {
-            get { return NowProvider.Now <= ToggleValueProvider.EvaluateDateTimeToggleValue(this); }
-        }   
-    }
+		public bool FeatureEnabled {
+			get { return NowProvider.Now <= ToggleValueProvider.EvaluateDateTimeToggleValue( this ); }
+		}
+	}
 }

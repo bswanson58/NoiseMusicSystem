@@ -1,5 +1,5 @@
 ﻿using System;
-using JasonRoberts.FeatureToggle;
+using ReusableBits.Tests.FeatureToggle;
 using Moq;
 using NUnit.Framework;
 

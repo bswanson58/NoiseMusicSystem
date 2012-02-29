@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
 using NUnit.Framework;
 
-namespace JasonRoberts.FeatureToggle.Tests {
+namespace ReusableBits.Tests.FeatureToggle.Tests {
 	[TestFixture]
 	public class BooleanSqlServerProviderTests {
 		[Test]

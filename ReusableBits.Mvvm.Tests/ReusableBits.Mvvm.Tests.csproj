@@ -111,7 +111,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FeatureToggle.Wpf.Tests\FeatureToggleToVisibilityConverterTests.cs" />
+    <Compile Include="FeatureToggle.Wpf\FeatureToggleToVisibilityConverterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModelSupport\AutomaticCommandBaseTests.cs" />
     <Compile Include="ViewModelSupport\AutomaticPropertyBaseTests.cs" />

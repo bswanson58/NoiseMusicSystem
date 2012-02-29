@@ -1,4 +1,4 @@
-﻿using JasonRoberts.FeatureToggle;
+﻿using ReusableBits.Tests.FeatureToggle;
 using NUnit.Framework;
 
 namespace FeatureToggle.Integration.Tests {

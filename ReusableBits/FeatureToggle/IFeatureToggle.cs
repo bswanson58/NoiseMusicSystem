@@ -1,7 +1,5 @@
-﻿namespace JasonRoberts.FeatureToggle
-{
-    public interface IFeatureToggle
-    {
-        bool FeatureEnabled {get;}
-    }
+﻿namespace ReusableBits.Tests.FeatureToggle {
+	public interface IFeatureToggle {
+		bool FeatureEnabled { get; }
+	}
 }
