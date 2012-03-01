@@ -71,6 +71,8 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 				var	retrievedFolder = folderList.List.First();
 				retrievedFolder.ShouldHave().AllPropertiesBut( p => p.FolderStrategy ).EqualTo( folder );
 				retrievedFolder.FolderStrategy.ShouldHave().AllProperties().EqualTo( folder.FolderStrategy );
+				retrievedFolder.FolderStrategy.StrategyForLevel( 0 ).Should().Be( folder.FolderStrategy.StrategyForLevel( 0 ));
+				retrievedFolder.FolderStrategy.StrategyForLevel( 1 ).Should().Be( folder.FolderStrategy.StrategyForLevel( 1 ));
 			}
 		}
 

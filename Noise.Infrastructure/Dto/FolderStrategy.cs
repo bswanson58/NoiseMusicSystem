@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public enum eFolderStrategy {
@@ -12,21 +12,21 @@ namespace Noise.Infrastructure.Dto {
 	}
 
 	public class FolderStrategy : DbBase {
-		private	const int		cMaxStrategyLevel = 5;
+		private	const int	cMaxStrategyLevel = 5;
 
-		private readonly List<eFolderStrategy>	mFolderLevelStrategies;
-		public	bool							PreferFolderStrategy { get; set; }
+		private eFolderStrategy[]	mFolderLevelStrategies;
+		public	bool				PreferFolderStrategy { get; set; }
 
 		public FolderStrategy() {
-			mFolderLevelStrategies = new List<eFolderStrategy>();
+			mFolderLevelStrategies = new eFolderStrategy[cMaxStrategyLevel];
 
 			for( int level = 0; level < cMaxStrategyLevel; level++ ) {
-				mFolderLevelStrategies.Add( eFolderStrategy.Undefined );
+				mFolderLevelStrategies[level] = eFolderStrategy.Undefined;
 			}
 		}
 
 		public void EloqueraFixUp() {
-//			mFolderLevelStrategies = Array.ConvertAll( mFolderLevelStrategies, value => (eFolderStrategy)value );
+			mFolderLevelStrategies = Array.ConvertAll( mFolderLevelStrategies, value => (eFolderStrategy)value );
 		}
 
 		public eFolderStrategy StrategyForLevel( int folderLevel ) {
@@ -43,6 +43,36 @@ namespace Noise.Infrastructure.Dto {
 			if( folderLevel < cMaxStrategyLevel ) {
 				mFolderLevelStrategies[folderLevel] = strategy;
 			}
+		}
+
+		[Ignore]
+		public int DbFolderStrategy1 {
+			get{ return((int)mFolderLevelStrategies[0]); }
+			protected set{ mFolderLevelStrategies[0] = (eFolderStrategy)value; }
+		}
+
+		[Ignore]
+		public int DbFolderStrategy2 {
+			get{ return((int)mFolderLevelStrategies[1]); }
+			protected set{ mFolderLevelStrategies[1] = (eFolderStrategy)value; }
+		}
+
+		[Ignore]
+		public int DbFolderStrategy3 {
+			get{ return((int)mFolderLevelStrategies[2]); }
+			protected set{ mFolderLevelStrategies[2] = (eFolderStrategy)value; }
+		}
+
+		[Ignore]
+		public int DbFolderStrategy4 {
+			get{ return((int)mFolderLevelStrategies[3]); }
+			protected set{ mFolderLevelStrategies[3] = (eFolderStrategy)value; }
+		}
+
+		[Ignore]
+		public int DbFolderStrategy5 {
+			get{ return((int)mFolderLevelStrategies[4]); }
+			protected set{ mFolderLevelStrategies[4] = (eFolderStrategy)value; }
 		}
 
 		[Export("PersistenceType")]
