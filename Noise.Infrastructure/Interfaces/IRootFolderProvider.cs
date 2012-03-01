@@ -3,8 +3,9 @@
 namespace Noise.Infrastructure.Interfaces {
 	public interface IRootFolderProvider {
 		void							AddRootFolder( RootFolder folder );
+		RootFolder						GetRootFolder( long folderId );
 
 		IDataProviderList<RootFolder>	GetRootFolderList();
-		IDataUpdateShell<RootFolder>		GetFolderForUpdate( long folderId );
+		IDataUpdateShell<RootFolder>	GetFolderForUpdate( long folderId );
 	}
 }

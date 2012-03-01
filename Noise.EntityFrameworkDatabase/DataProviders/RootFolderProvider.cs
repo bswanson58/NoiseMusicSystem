@@ -13,6 +13,16 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			AddItem( folder );
 		}
 
+		public RootFolder GetRootFolder( long folderId ) {
+			RootFolder	retValue;
+
+			using( var context = CreateContext()) {
+				retValue = Set( context ).Include( entity => entity.FolderStrategy ).FirstOrDefault( entity => entity.DbId == folderId );
+			}
+
+			return( retValue );
+		}
+
 		public IDataProviderList<RootFolder> GetRootFolderList() {
 			var	context = CreateContext();
 

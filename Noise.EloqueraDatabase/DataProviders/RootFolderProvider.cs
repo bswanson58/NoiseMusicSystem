@@ -12,6 +12,16 @@ namespace Noise.EloqueraDatabase.DataProviders {
 			InsertItem( folder );
 		}
 
+		public RootFolder GetRootFolder( long folderId ) {
+			var folder = TryGetItem( "SELECT RootFolder WHERE DbId = @folderId", new Dictionary<string, object> {{ "folderId", folderId }}, "GetRootFolder" );
+
+			if( folder != null ) {
+				folder.FolderStrategy.EloqueraFixUp();
+			}
+
+			return( folder );
+		}
+
 		// Changes in the methods below are due to an Eloquera problem when returning an array of enums.
 
 		public IDataProviderList<RootFolder> GetRootFolderList() {
