@@ -6,27 +6,31 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataProviders {
 	internal class FolderStrategyProvider {
+		private readonly IRootFolderProvider	mRootFolderProvider;
 		private readonly IStorageFolderProvider	mFolderProvider;
 		private readonly ITagManager			mTagManager;
 
-		public FolderStrategyProvider( IStorageFolderProvider folderProvider, ITagManager tagManager ) {
+		public FolderStrategyProvider( IRootFolderProvider rootFolderProvider, IStorageFolderProvider folderProvider, ITagManager tagManager ) {
+			mRootFolderProvider = rootFolderProvider;
 			mFolderProvider = folderProvider;
 			mTagManager = tagManager;
 		}
 
 		public IMetaDataProvider GetProvider( StorageFile forFile ) {
-			return( new FileStrategyProvider( mTagManager, mFolderProvider, forFile ));
+			return( new FileStrategyProvider( mTagManager, mRootFolderProvider, mFolderProvider, forFile ));
 		}
 	}
 
 	internal class FileStrategyProvider : IMetaDataProvider {
 		private	readonly ITagManager						mTagManager;
+		private readonly IRootFolderProvider				mRootFolderProvider;
 		private readonly IStorageFolderProvider				mStorageFolderProvider;
 		private readonly StorageFile						mFile;
 		private	readonly Lazy<FolderStrategyInformation>	mStrategyInformation;
 
-		public FileStrategyProvider( ITagManager tagManager, IStorageFolderProvider folderProvider, StorageFile file ) {
+		public FileStrategyProvider( ITagManager tagManager, IRootFolderProvider rootFolderProvider, IStorageFolderProvider folderProvider, StorageFile file ) {
 			mTagManager = tagManager;
+			mRootFolderProvider = rootFolderProvider;
 			mStorageFolderProvider = folderProvider;
 			mFile = file;
 
@@ -34,7 +38,7 @@ namespace Noise.Core.DataProviders {
 				FolderStrategyInformation	retValue = null;
 
 				try {
-					retValue = StorageHelpers.GetFolderStrategy( mStorageFolderProvider, mFile );
+					retValue = StorageHelpers.GetFolderStrategy( mRootFolderProvider, mStorageFolderProvider, mFile );
 				}
 				catch( Exception ex ) {
 					NoiseLogger.Current.LogException( "Exception - FileStrategyProvider:", ex );

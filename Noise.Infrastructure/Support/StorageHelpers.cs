@@ -45,7 +45,8 @@ namespace Noise.Infrastructure.Support {
 			return( Path.Combine( path, forFile.Name ));
 		}
 
-		public static FolderStrategyInformation GetFolderStrategy( IStorageFolderProvider storageFolderProvider, StorageFile forFile ) {
+		public static FolderStrategyInformation GetFolderStrategy( IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider,
+																   StorageFile forFile ) {
 			Condition.Requires( storageFolderProvider ).IsNotNull();
 			Condition.Requires( forFile ).IsNotNull();
 
@@ -62,7 +63,10 @@ namespace Noise.Infrastructure.Support {
 					folder = storageFolderProvider.GetFolder( folder.ParentFolder );
 					if( folder != null ) {
 						if( folder is RootFolder ) {
-							strategy = (folder as RootFolder).FolderStrategy;
+							var rootFolder = rootFolderProvider.GetRootFolder( folder.DbId );
+							if( rootFolder != null ) {
+								strategy = rootFolder.FolderStrategy;
+							}
 							
 							break;
 						}

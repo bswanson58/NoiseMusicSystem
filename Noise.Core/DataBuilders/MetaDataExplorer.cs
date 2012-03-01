@@ -23,6 +23,7 @@ namespace Noise.Core.DataBuilders {
 		private readonly FileTagProvider		mTagProvider;
 		private readonly FileNameProvider		mFileNameProvider;
 		private readonly FolderStrategyProvider	mStrategyProvider;
+		private readonly IRootFolderProvider	mRootFolderProvider;
 		private readonly IStorageFolderProvider	mStorageFolderProvider;
 		private readonly IStorageFileProvider	mStorageFileProvider;
 		private readonly DefaultProvider		mDefaultProvider;
@@ -33,7 +34,8 @@ namespace Noise.Core.DataBuilders {
 
 		public  MetaDataExplorer( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 								  IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider, ITagManager tagManager,
-								  IStorageFolderProvider folderProvider, IStorageFileProvider fileProvider, IEventAggregator eventAggregator ) {
+								  IRootFolderProvider rootFolderProvider, IStorageFolderProvider folderProvider, IStorageFileProvider fileProvider, 
+								  IEventAggregator eventAggregator ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -41,12 +43,13 @@ namespace Noise.Core.DataBuilders {
 			mArtworkProvider = artworkProvider;
 			mTextInfoProvider = textInfoProvider;
 			mTagManager = tagManager;
+			mRootFolderProvider = rootFolderProvider;
 			mStorageFolderProvider = folderProvider;
 			mStorageFileProvider = fileProvider;
 
 			mTagProvider = new FileTagProvider( mTagManager, mArtworkProvider, mStorageFileProvider );
 			mFileNameProvider = new FileNameProvider( mStorageFileProvider );
-			mStrategyProvider = new FolderStrategyProvider( mStorageFolderProvider, mTagManager );
+			mStrategyProvider = new FolderStrategyProvider( mRootFolderProvider, mStorageFolderProvider, mTagManager );
 			mDefaultProvider = new DefaultProvider();
 		}
 
@@ -117,7 +120,7 @@ namespace Noise.Core.DataBuilders {
 
 			try {
 				var	track = new DbTrack();
-				var folderStrategy = StorageHelpers.GetFolderStrategy( mStorageFolderProvider, file );
+				var folderStrategy = StorageHelpers.GetFolderStrategy( mRootFolderProvider, mStorageFolderProvider, file );
 				var dataProviders = new List<IMetaDataProvider>();
 
 				track.Encoding = StorageHelpers.DetermineAudioEncoding( file );
