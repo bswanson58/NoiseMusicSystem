@@ -43,11 +43,13 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 			var album = new DbAlbum();
 			var track1 = new DbTrack { Album = album.DbId };
 			var track2 = new DbTrack { Album = album.DbId };
+			var track3 = new DbTrack { Album = album.DbId + 1 };
 
 			var sut = CreateSut();
 
 			sut.AddTrack( track1 );
 			sut.AddTrack( track2 );
+			sut.AddTrack( track3 );
 
 			using( var trackList = sut.GetTrackList( album )) {
 				trackList.List.Should().HaveCount( 2 );

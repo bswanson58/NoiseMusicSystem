@@ -23,15 +23,13 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		public IDataProviderList<DbTrack> GetTrackList( long albumId ) {
 			var context = CreateContext();
 
-			return( new EfProviderList<DbTrack>( context, context.Set<DbTrack>()));
+			return( new EfProviderList<DbTrack>( context, Set( context ).Where( entity => entity.Album == albumId )));
 		}
 
 		public IDataProviderList<DbTrack> GetTrackList( DbAlbum forAlbum ) {
 			Condition.Requires( forAlbum ).IsNotNull();
 
-			var context = CreateContext();
-
-			return( new EfProviderList<DbTrack>( context, from track in context.Set<DbTrack>() where track.Album == forAlbum.DbId select track ));
+			return( GetTrackList( forAlbum.DbId ));
 		}
 
 		public IDataProviderList<DbTrack> GetTrackListForGenre( long genreId ) {
