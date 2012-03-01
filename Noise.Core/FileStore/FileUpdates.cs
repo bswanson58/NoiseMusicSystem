@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using CuttingEdge.Conditions;
 using Noise.Core.Support;
@@ -159,7 +160,7 @@ namespace Noise.Core.FileStore {
 				var	favoriteFrame = UserTextInformationFrame.Get( id3Tags, Constants.FavoriteFrameDescription, true );
 
 				if( favoriteFrame != null ) {
-					favoriteFrame.Text = new [] { args.Value.ToString()};
+					favoriteFrame.Text = new [] { args.Value.ToString( CultureInfo.InvariantCulture )};
 
 					try {
 						tags.Save();
@@ -319,7 +320,7 @@ namespace Noise.Core.FileStore {
 					var tags = File.Create( filePath );
 
 					if( args.SetPublishedYear ) {
-						tags.Tag.Year = args.PublishedYear;
+						tags.Tag.Year = (uint)args.PublishedYear;
 					}
 					if( args.SetName ) {
 						tags.Tag.Title = args.Name;

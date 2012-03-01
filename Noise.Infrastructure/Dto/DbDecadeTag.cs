@@ -3,8 +3,8 @@ using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbDecadeTag : DbTag {
-		public	UInt32		StartYear { get; set; }
-		public	UInt32		EndYear { get; set; }
+		public	Int32		StartYear { get; set; }
+		public	Int32		EndYear { get; set; }
 		public	string		Website { get; set; }
 
 		protected DbDecadeTag() :

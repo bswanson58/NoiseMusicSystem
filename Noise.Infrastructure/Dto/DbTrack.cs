@@ -14,16 +14,16 @@ namespace Noise.Infrastructure.Dto {
 		public Int32			SampleRate { get; set; }
 		public Int16			Channels { get; set; }
 		public Int16			Rating { get; set; }
-		public UInt16			TrackNumber { get; set; }
+		public Int16			TrackNumber { get; set; }
 		public string			VolumeName { get; set; }
-		public UInt32			PublishedYear { get; set; }
+		public Int32			PublishedYear { get; set; }
 		public long				DateAddedTicks { get; private set; }
 		public eAudioEncoding	Encoding { get; set; }
 		public long				CalculatedGenre { get; set; }
 		public long				ExternalGenre { get; set; }
 		public long				UserGenre { get; set; }
 		public bool				IsFavorite { get; set; }
-		public UInt32			PlayCount { get; set; }
+		public Int32			PlayCount { get; set; }
 		public float			ReplayGainAlbumGain { get; set; }
 		public float			ReplayGainAlbumPeak { get; set; }
 		public float			ReplayGainTrackGain { get; set; }

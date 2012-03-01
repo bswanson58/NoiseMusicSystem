@@ -139,7 +139,7 @@ namespace Noise.Core.DataProviders {
 										releaseType = DiscographyReleaseType.TrackAppearance;
 									}
 								}
-								mDiscographyProvider.AddDiscography( new DbDiscographyRelease( forArtist.DbId, release.Title, "", "", (uint)release.Year, releaseType )
+								mDiscographyProvider.AddDiscography( new DbDiscographyRelease( forArtist.DbId, release.Title, "", "", release.Year, releaseType )
 																		{ IsContentAvailable = true } );
 							}
 						}

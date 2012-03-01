@@ -89,7 +89,7 @@ namespace Noise.Core.DataProviders {
 				var listTrack = mFolderFiles.FirstOrDefault( item => item.Name == mFile.Name );
 
 				if( listTrack != null ) {
-					track.TrackNumber = (UInt16)( mFolderFiles.IndexOf( listTrack ) + 1 );
+					track.TrackNumber = (Int16)( mFolderFiles.IndexOf( listTrack ) + 1 );
 				}
 			}
 

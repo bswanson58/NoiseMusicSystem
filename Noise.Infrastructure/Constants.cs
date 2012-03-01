@@ -4,8 +4,8 @@ namespace Noise.Infrastructure {
 	public class Constants {
 		public	const long				cDatabaseNullOid = 0;
 
-		public	const UInt32			cUnknownYear = 0;
-		public	const UInt32			cVariousYears = 1;
+		public	const Int32				cUnknownYear = 0;
+		public	const Int32				cVariousYears = 1;
 
 		public	static DateTime			cNoExpirationDate { get; private set; }
 

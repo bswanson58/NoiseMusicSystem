@@ -4,7 +4,7 @@ namespace Noise.Infrastructure.Dto {
 	public class SetMp3TagCommandArgs : BaseCommandArgs {
 		public	bool	IsAlbum { get; private set; }
 
-		private	UInt32	mPublishedYear;
+		private	Int32	mPublishedYear;
 		public	bool	SetPublishedYear { get; private set; }
 
 		private string	mName;
@@ -39,7 +39,7 @@ namespace Noise.Infrastructure.Dto {
 			}
 		}
 
-		public UInt32 PublishedYear {
+		public Int32 PublishedYear {
 			get{ return( mPublishedYear ); }
 			set {
 				mPublishedYear = value;

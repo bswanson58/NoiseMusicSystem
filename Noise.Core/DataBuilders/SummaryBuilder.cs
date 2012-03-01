@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Noise.Core.FileStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -53,7 +52,7 @@ namespace Noise.Core.DataBuilders {
 									using( var artistUpdater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
 										using( var trackList = mTrackProvider.GetTrackList( album.DbId )) {
 											using( var albumUpdater = mAlbumProvider.GetAlbumForUpdate( album.DbId )) {
-												var years = new List<UInt32>();
+												var years = new List<Int32>();
 												var trackGenre = new Dictionary<long, int>();
 												var trackRating = 0;
 												var maxTrackRating = 0;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
@@ -103,7 +104,7 @@ namespace Noise.Core.DataProviders {
 				var retValue = "";
 
 				if( Tags != null ) {
-					retValue = Tags.Tag.Disc > 0 ? Tags.Tag.Disc.ToString() : "";
+					retValue = Tags.Tag.Disc > 0 ? Tags.Tag.Disc.ToString( CultureInfo.InvariantCulture ) : "";
 				}
 
 				return( retValue );
@@ -114,7 +115,7 @@ namespace Noise.Core.DataProviders {
 			if( Tags != null ) {
 				try {
 					if( Tags.Tag.Year != 0 ) {
-						track.PublishedYear = Tags.Tag.Year;
+						track.PublishedYear = (int)Tags.Tag.Year;
 					}
 
 					track.Performer = !String.IsNullOrWhiteSpace( Tags.Tag.FirstPerformer ) ? Tags.Tag.FirstPerformer : artist.Name;
@@ -129,7 +130,7 @@ namespace Noise.Core.DataProviders {
 					if( id3Tags != null ) {
 						var replayGainFrame = id3Tags.GetFrames( new ByteVector( "RVA2" ));
 						if(( replayGainFrame != null ) &&
-						   ( replayGainFrame.Count() > 0 )) {
+						   ( replayGainFrame.Any())) {
 							NoiseLogger.Current.LogMessage( "Found Replay Gain frame" );
 						}
 
@@ -167,17 +168,17 @@ namespace Noise.Core.DataProviders {
 						var popFrame = PopularimeterFrame.Get( id3Tags, Constants.Id3FrameUserName, false );
 						if( popFrame != null ) {
 							track.Rating = StorageHelpers.ConvertFromId3Rating( popFrame.Rating );
-							track.PlayCount = (uint)popFrame.PlayCount;
+							track.PlayCount = (int)popFrame.PlayCount;
 						}
 						else {
 							var popFrames = id3Tags.GetFrames<PopularimeterFrame>();
 							if( popFrames != null ) {
-								uint	playCount = 0;
+								int		playCount = 0;
 								var		ratings = 0;
 								var		ratingsCount = 0;
 
 								foreach( var fr in popFrames ) {
-									playCount += (uint)fr.PlayCount;
+									playCount += (int)fr.PlayCount;
 									if( fr.Rating > 0 ) {
 										ratings += StorageHelpers.ConvertFromId3Rating( fr.Rating );
 										ratingsCount++;

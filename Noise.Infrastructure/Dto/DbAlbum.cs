@@ -16,7 +16,7 @@ namespace Noise.Infrastructure.Dto {
 		[Required]
 		[RegularExpression( "^(?:0|\\d{4})$", ErrorMessage = "Only 0 (zero) or 1900-2100 are allowed.")]
 		[Range( 0, 2100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-		public UInt32			PublishedYear { get; set; }
+		public Int32			PublishedYear { get; set; }
 		public long				CalculatedGenre { get; set; }
 		public long				ExternalGenre { get; set; }
 		public long				UserGenre { get; set; }

@@ -26,7 +26,7 @@ namespace Noise.UI.Dto {
 			get{ return( DisplayGenre != null ? DisplayGenre.Name : "" ); }
 		}
 
-		public UInt32 PublishedYear {
+		public Int32 PublishedYear {
 			get{ return( Get( () => PublishedYear )); }
 			set{ Set( () => PublishedYear, value ); }
 		}
