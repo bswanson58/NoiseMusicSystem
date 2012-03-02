@@ -9,7 +9,6 @@ using Noise.Core.DataProviders;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataBuilders {
 	public class MetaDataExplorer : IMetaDataExplorer {
@@ -23,8 +22,7 @@ namespace Noise.Core.DataBuilders {
 		private readonly FileTagProvider		mTagProvider;
 		private readonly FileNameProvider		mFileNameProvider;
 		private readonly FolderStrategyProvider	mStrategyProvider;
-		private readonly IRootFolderProvider	mRootFolderProvider;
-		private readonly IStorageFolderProvider	mStorageFolderProvider;
+		private readonly IStorageFolderSupport	mStorageFolderSupport;
 		private readonly IStorageFileProvider	mStorageFileProvider;
 		private readonly DefaultProvider		mDefaultProvider;
 		private DatabaseCache<DbArtist>			mArtistCache;
@@ -34,7 +32,7 @@ namespace Noise.Core.DataBuilders {
 
 		public  MetaDataExplorer( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 								  IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider, ITagManager tagManager,
-								  IRootFolderProvider rootFolderProvider, IStorageFolderProvider folderProvider, IStorageFileProvider fileProvider, 
+								  IStorageFolderSupport storageFolderSupport, IStorageFileProvider fileProvider, 
 								  IEventAggregator eventAggregator ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
@@ -42,14 +40,13 @@ namespace Noise.Core.DataBuilders {
 			mTrackProvider = trackProvider;
 			mArtworkProvider = artworkProvider;
 			mTextInfoProvider = textInfoProvider;
+			mStorageFolderSupport = storageFolderSupport;
 			mTagManager = tagManager;
-			mRootFolderProvider = rootFolderProvider;
-			mStorageFolderProvider = folderProvider;
 			mStorageFileProvider = fileProvider;
 
-			mTagProvider = new FileTagProvider( mTagManager, mArtworkProvider, mStorageFileProvider );
-			mFileNameProvider = new FileNameProvider( mStorageFileProvider );
-			mStrategyProvider = new FolderStrategyProvider( mRootFolderProvider, mStorageFolderProvider, mTagManager );
+			mTagProvider = new FileTagProvider( mTagManager, mArtworkProvider, mStorageFolderSupport );
+			mFileNameProvider = new FileNameProvider( mStorageFileProvider, mStorageFolderSupport );
+			mStrategyProvider = new FolderStrategyProvider( mStorageFolderSupport, mTagManager );
 			mDefaultProvider = new DefaultProvider();
 		}
 
@@ -70,7 +67,7 @@ namespace Noise.Core.DataBuilders {
 					}
 
 					foreach( var file in fileEnum ) {
-						file.FileType = StorageHelpers.DetermineFileType( file );
+						file.FileType = mStorageFolderSupport.DetermineFileType( file );
 
 						switch( file.FileType ) {
 							case eFileType.Music:
@@ -120,10 +117,10 @@ namespace Noise.Core.DataBuilders {
 
 			try {
 				var	track = new DbTrack();
-				var folderStrategy = StorageHelpers.GetFolderStrategy( mRootFolderProvider, mStorageFolderProvider, file );
+				var folderStrategy = mStorageFolderSupport.GetFolderStrategy( file );
 				var dataProviders = new List<IMetaDataProvider>();
 
-				track.Encoding = StorageHelpers.DetermineAudioEncoding( file );
+				track.Encoding = mStorageFolderSupport.DetermineAudioEncoding( file );
 
 				if( folderStrategy.PreferFolderStrategy ) {
 					dataProviders.Add( mStrategyProvider.GetProvider( file ));
@@ -175,19 +172,19 @@ namespace Noise.Core.DataBuilders {
 							}
 						}
 						else {
-							NoiseLogger.Current.LogMessage( "Track name cannot be determined for file: {0}", mStorageFileProvider.GetPhysicalFilePath( file ));
+							NoiseLogger.Current.LogMessage( "Track name cannot be determined for file: {0}", mStorageFolderSupport.GetPath( file ));
 						}
 					}
 					else {
-						NoiseLogger.Current.LogMessage( "Album cannot be determined for file: {0}", mStorageFileProvider.GetPhysicalFilePath( file ));
+						NoiseLogger.Current.LogMessage( "Album cannot be determined for file: {0}", mStorageFolderSupport.GetPath( file ));
 					}
 				}
 				else {
-					NoiseLogger.Current.LogMessage( "Artist cannot determined for file: {0}", mStorageFileProvider.GetPhysicalFilePath( file ));
+					NoiseLogger.Current.LogMessage( "Artist cannot determined for file: {0}", mStorageFolderSupport.GetPath( file ));
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( String.Format( "Building Music Metadata for: {0}", mStorageFileProvider.GetPhysicalFilePath( file )), ex );
+				NoiseLogger.Current.LogException( String.Format( "Building Music Metadata for: {0}", mStorageFolderSupport.GetPath( file )), ex );
 			}
 		}
 
@@ -220,7 +217,7 @@ namespace Noise.Core.DataBuilders {
 					}
 				}
 
-				mTextInfoProvider.AddTextInfo( info, mStorageFileProvider.GetPhysicalFilePath( file ));
+				mTextInfoProvider.AddTextInfo( info, mStorageFolderSupport.GetPath( file ));
 
 				using( var updater = mStorageFileProvider.GetFileForUpdate( file.DbId )) {
 					if( updater.Item != null ) {
@@ -232,7 +229,7 @@ namespace Noise.Core.DataBuilders {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( String.Format( "Building Info Metadata for: {0}", mStorageFileProvider.GetPhysicalFilePath( file )), ex );
+				NoiseLogger.Current.LogException( String.Format( "Building Info Metadata for: {0}", mStorageFolderSupport.GetPath( file )), ex );
 			}
 		}
 
@@ -240,7 +237,7 @@ namespace Noise.Core.DataBuilders {
 			Condition.Requires( file ).IsNotNull();
 
 			try {
-				var	artwork = new DbArtwork( file.DbId, StorageHelpers.IsCoverFile( file.Name ) ? ContentType.AlbumCover : ContentType.AlbumArtwork )
+				var	artwork = new DbArtwork( file.DbId, mStorageFolderSupport.IsCoverFile( file.Name ) ? ContentType.AlbumCover : ContentType.AlbumArtwork )
 											{ Source = InfoSource.File, FolderLocation = file.ParentFolder, IsContentAvailable = true,
 											  Name = Path.GetFileNameWithoutExtension( file.Name )};
 				var dataProviders = new List<IMetaDataProvider> { mStrategyProvider.GetProvider( file ),
@@ -265,7 +262,7 @@ namespace Noise.Core.DataBuilders {
 					}
 				}
 
-				mArtworkProvider.AddArtwork( artwork, mStorageFileProvider.GetPhysicalFilePath( file ));
+				mArtworkProvider.AddArtwork( artwork, mStorageFolderSupport.GetPath( file ));
 
 				using( var updater = mStorageFileProvider.GetFileForUpdate( file.DbId )) {
 					if( updater.Item != null ) {
@@ -278,7 +275,7 @@ namespace Noise.Core.DataBuilders {
 				file.MetaDataPointer = artwork.DbId;
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( String.Format( "Building Artwork Metadata for: {0}", mStorageFileProvider.GetPhysicalFilePath( file )), ex );
+				NoiseLogger.Current.LogException( String.Format( "Building Artwork Metadata for: {0}", mStorageFolderSupport.GetPath( file )), ex );
 			}
 		}
 

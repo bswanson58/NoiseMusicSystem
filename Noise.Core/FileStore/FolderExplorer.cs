@@ -13,6 +13,7 @@ using Recls;
 namespace Noise.Core.FileStore {
 	internal class FolderExplorer : IFolderExplorer, IHandle<Events.SystemConfigurationChanged> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly IStorageFolderSupport	mStorageFolderSupport;
 		private readonly IRootFolderProvider	mRootFolderProvider;
 		private readonly IStorageFolderProvider	mStorageFolderProvider;
 		private readonly IStorageFileProvider	mStorageFileProvider;
@@ -20,9 +21,10 @@ namespace Noise.Core.FileStore {
 		private DatabaseCache<StorageFile>		mFileCache;
 		private DatabaseCache<StorageFolder>	mFolderCache;
 
-		public  FolderExplorer( IEventAggregator eventAggregator, 
+		public  FolderExplorer( IEventAggregator eventAggregator, IStorageFolderSupport storageFolderSupport,
 								IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider ) {
 			mEventAggregator = eventAggregator;
+			mStorageFolderSupport = storageFolderSupport;
 			mRootFolderProvider = rootFolderProvider;
 			mStorageFolderProvider = storageFolderProvider;
 			mStorageFileProvider = storageFileProvider;
@@ -63,7 +65,7 @@ namespace Noise.Core.FileStore {
 						}
 
 						foreach( var rootFolder in rootFolders ) {
-							if( Directory.Exists( mStorageFolderProvider.GetPhysicalFolderPath( rootFolder ))) {
+							if( Directory.Exists( mStorageFolderSupport.GetPath( rootFolder ))) {
 								NoiseLogger.Current.LogInfo( "Synchronizing folder: {0}", rootFolder.DisplayName );
 								BuildFolder( rootFolder );
 							}
@@ -127,7 +129,7 @@ namespace Noise.Core.FileStore {
 		}
 
 		private void BuildFolder( StorageFolder parent ) {
-			var directories = FileSearcher.Search( mStorageFolderProvider.GetPhysicalFolderPath( parent ), null, SearchOptions.Directories, 0 );
+			var directories = FileSearcher.Search( mStorageFolderSupport.GetPath( parent ), null, SearchOptions.Directories, 0 );
 			var folderList = mFolderCache.FindList( dbFolder => dbFolder.ParentFolder == parent.DbId );
 
 			foreach( var directory in directories ) {
@@ -140,7 +142,7 @@ namespace Noise.Core.FileStore {
 					mStorageFolderProvider.AddFolder( folder );
 
 					if( parent is RootFolder ) {
-						NoiseLogger.Current.LogInfo( string.Format( "Adding folder: {0}", mStorageFolderProvider.GetPhysicalFolderPath( folder )));
+						NoiseLogger.Current.LogInfo( string.Format( "Adding folder: {0}", mStorageFolderSupport.GetPath( folder )));
 					}
 				}
 				else {
@@ -169,7 +171,7 @@ namespace Noise.Core.FileStore {
 
 		private void BuildFolderFiles( StorageFolder storageFolder ) {
 			var dbList = mFileCache.FindList( file => file.ParentFolder == storageFolder.DbId );
-			var files = FileSearcher.BreadthFirst.Search( mStorageFolderProvider.GetPhysicalFolderPath( storageFolder ), null,
+			var files = FileSearcher.BreadthFirst.Search( mStorageFolderSupport.GetPath( storageFolder ), null,
 														  SearchOptions.Files | SearchOptions.IncludeSystem | SearchOptions.IncludeHidden, 0 );
 			foreach( var file in files ) {
 				var fileName = file.File;

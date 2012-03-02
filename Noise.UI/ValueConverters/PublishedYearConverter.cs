@@ -8,8 +8,8 @@ namespace Noise.UI.ValueConverters {
 		public object Convert( object value, Type targetType, object parameter, CultureInfo culture ) {
 			var retValue = "";
 
-			if( value is UInt32 ) {
-				var year = (UInt32)value;
+			if( value is Int32 ) {
+				var year = (Int32)value;
 
 				if( year == Constants.cUnknownYear ) {
 					retValue = string.Empty;

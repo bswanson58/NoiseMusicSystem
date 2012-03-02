@@ -2,7 +2,6 @@
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
 	public class StorageFolderProvider : BaseProvider<StorageFolder>, IStorageFolderProvider {
@@ -19,10 +18,6 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 		public StorageFolder GetFolder( long folderId ) {
 			return( GetItemByKey( folderId ));
-		}
-
-		public string GetPhysicalFolderPath( StorageFolder forFolder ) {
-			return( StorageHelpers.GetPath( this, forFolder ));
 		}
 
 		public IDataProviderList<StorageFolder> GetAllFolders() {

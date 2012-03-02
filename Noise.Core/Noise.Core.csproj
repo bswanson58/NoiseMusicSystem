@@ -238,6 +238,7 @@
     <Compile Include="FileStore\FolderExplorer.cs" />
     <Compile Include="FileStore\IFileUpdates.cs" />
     <Compile Include="FileStore\IFolderExplorer.cs" />
+    <Compile Include="FileStore\StorageFolderSupport.cs" />
     <Compile Include="MediaPlayer\AudioPlayer.cs" />
     <Compile Include="MediaPlayer\EqManager.cs" />
     <Compile Include="MediaPlayer\IAudioPlayer.cs" />

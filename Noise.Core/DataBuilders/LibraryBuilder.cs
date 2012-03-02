@@ -14,7 +14,7 @@ namespace Noise.Core.DataBuilders {
 	public class LibraryBuilder : ILibraryBuilder {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly FileSystemWatcherEx	mFolderWatcher;
-		private readonly IStorageFolderProvider	mStorageFolderProvider;
+		private readonly IStorageFolderSupport	mStorageFolderSupport;
 		private readonly IFolderExplorer		mFolderExplorer;
 		private readonly IMetaDataCleaner		mMetaDataCleaner;
 		private readonly IMetaDataExplorer		mMetaDataExplorer;
@@ -25,11 +25,11 @@ namespace Noise.Core.DataBuilders {
 		public	bool							LibraryUpdateInProgress { get; private set; }
 		public	bool							LibraryUpdatePaused { get; private set; }
 
-		public LibraryBuilder( IEventAggregator eventAggregator, IStorageFolderProvider storageFolderProvider,
+		public LibraryBuilder( IEventAggregator eventAggregator, IStorageFolderSupport storageFolderSupport,
 							   IFolderExplorer folderExplorer, IMetaDataCleaner metaDataCleaner, IMetaDataExplorer metaDataExplorer,
 							   ISummaryBuilder summaryBuilder, DatabaseStatistics databaseStatistics ) {
 			mEventAggregator = eventAggregator;
-			mStorageFolderProvider = storageFolderProvider;
+			mStorageFolderSupport = storageFolderSupport;
 			mFolderExplorer = folderExplorer;
 			mMetaDataCleaner = metaDataCleaner;
 			mMetaDataExplorer = metaDataExplorer;
@@ -64,7 +64,7 @@ namespace Noise.Core.DataBuilders {
 			var retValue = new List<string>();
 
 			try {
-				retValue.AddRange( mFolderExplorer.RootFolderList().Select( rootFolder => mStorageFolderProvider.GetPhysicalFolderPath( rootFolder )));
+				retValue.AddRange( mFolderExplorer.RootFolderList().Select( rootFolder => mStorageFolderSupport.GetPath( rootFolder )));
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - RootFolderList:", ex );

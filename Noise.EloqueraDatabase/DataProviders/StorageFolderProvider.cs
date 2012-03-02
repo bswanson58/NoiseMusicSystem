@@ -2,7 +2,6 @@
 using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class StorageFolderProvider : BaseDataProvider<StorageFolder>, IStorageFolderProvider {
@@ -19,10 +18,6 @@ namespace Noise.EloqueraDatabase.DataProviders {
 
 		public StorageFolder GetFolder( long folderId ) {
 			return( TryGetItem( "SELECT StorageFolder WHERE DbId = @folderId", new Dictionary<string, object> {{ "folderId", folderId }}, "GetStorageFolder" ));
-		}
-
-		public string GetPhysicalFolderPath( StorageFolder forFolder ) {
-			return( StorageHelpers.GetPath( this, forFolder ));
 		}
 
 		public IDataProviderList<StorageFolder> GetAllFolders() {

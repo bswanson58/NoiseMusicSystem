@@ -6,8 +6,6 @@ namespace Noise.Infrastructure.Interfaces {
 		void							DeleteFile( StorageFile file );
 
 		StorageFile						GetPhysicalFile( DbTrack forTrack );
-		string							GetPhysicalFilePath( StorageFile forFile );
-		string							GetAlbumPath( long albumId );
 
 		IDataProviderList<StorageFile>	GetAllFiles();
 		IDataProviderList<StorageFile>	GetDeletedFilesList();

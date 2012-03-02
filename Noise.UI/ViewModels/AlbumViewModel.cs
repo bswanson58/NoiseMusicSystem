@@ -38,7 +38,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IResourceProvider		mResourceProvider;
 		private readonly ITagProvider			mTagProvider;
 		private readonly ITagManager			mTagManager;
-		private readonly IStorageFileProvider	mStorageFileProvider;
+		private readonly IStorageFolderSupport	mStorageFolderSupport;
 		private UiAlbum							mCurrentAlbum;
 		private readonly BitmapImage			mUnknownImage;
 		private readonly BitmapImage			mSelectImage;
@@ -56,13 +56,13 @@ namespace Noise.UI.ViewModels {
 
 		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider,
 							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider,
-							   ITagProvider tagProvider, IStorageFileProvider storageFileProvider, ITagManager tagManager ) {
+							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager ) {
 			mEventAggregator = eventAggregator;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mArtworkProvider = artworkProvider;
+			mStorageFolderSupport = storageFolderSupport;
 			mResourceProvider = resourceProvider;
-			mStorageFileProvider = storageFileProvider;
 			mTagProvider = tagProvider;
 			mTagManager = tagManager;
 
@@ -484,7 +484,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_OpenAlbumFolder() {
 			if( mCurrentAlbum != null ) {
-				var path = mStorageFileProvider.GetAlbumPath( mCurrentAlbum.DbId );
+				var path = mStorageFolderSupport.GetAlbumPath( mCurrentAlbum.DbId );
 
 				if(!string.IsNullOrWhiteSpace( path )) {
 					mEventAggregator.Publish( new Events.LaunchRequest( path ));

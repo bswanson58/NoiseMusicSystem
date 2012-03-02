@@ -6,7 +6,6 @@ namespace Noise.Infrastructure.Interfaces {
 		void								RemoveFolder( StorageFolder folder );
 
 		StorageFolder						GetFolder( long folderId );
-		string								GetPhysicalFolderPath( StorageFolder forFolder );
 
 		IDataProviderList<StorageFolder>	GetAllFolders();
 		IDataProviderList<StorageFolder>	GetChildFolders( long parentId );

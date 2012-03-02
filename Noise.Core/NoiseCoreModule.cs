@@ -54,6 +54,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IEnumerable<IRequireConstruction>, IRequireConstruction[]>();
 
 			mContainer.RegisterType<IDomainSearchProvider, DomainSearchProvider>();
+			mContainer.RegisterType<IStorageFolderSupport, StorageFolderSupport>();
 
 			mContainer.RegisterType<IBackgroundTask, ContentBuilder>( "ContentBuilder" );
 			mContainer.RegisterType<IBackgroundTask, DecadeTagBuilder>( "DecadeTagBuilder" );

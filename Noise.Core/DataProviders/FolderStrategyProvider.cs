@@ -6,39 +6,35 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataProviders {
 	internal class FolderStrategyProvider {
-		private readonly IRootFolderProvider	mRootFolderProvider;
-		private readonly IStorageFolderProvider	mFolderProvider;
+		private readonly IStorageFolderSupport	mStorageFolderSupport;
 		private readonly ITagManager			mTagManager;
 
-		public FolderStrategyProvider( IRootFolderProvider rootFolderProvider, IStorageFolderProvider folderProvider, ITagManager tagManager ) {
-			mRootFolderProvider = rootFolderProvider;
-			mFolderProvider = folderProvider;
+		public FolderStrategyProvider( IStorageFolderSupport storageFolderSupport, ITagManager tagManager ) {
+			mStorageFolderSupport = storageFolderSupport;
 			mTagManager = tagManager;
 		}
 
 		public IMetaDataProvider GetProvider( StorageFile forFile ) {
-			return( new FileStrategyProvider( mTagManager, mRootFolderProvider, mFolderProvider, forFile ));
+			return( new FileStrategyProvider( mTagManager, mStorageFolderSupport, forFile ));
 		}
 	}
 
 	internal class FileStrategyProvider : IMetaDataProvider {
 		private	readonly ITagManager						mTagManager;
-		private readonly IRootFolderProvider				mRootFolderProvider;
-		private readonly IStorageFolderProvider				mStorageFolderProvider;
+		private readonly IStorageFolderSupport				mStorageFolderSupport;
 		private readonly StorageFile						mFile;
 		private	readonly Lazy<FolderStrategyInformation>	mStrategyInformation;
 
-		public FileStrategyProvider( ITagManager tagManager, IRootFolderProvider rootFolderProvider, IStorageFolderProvider folderProvider, StorageFile file ) {
+		public FileStrategyProvider( ITagManager tagManager, IStorageFolderSupport storageFolderSupport, StorageFile file ) {
 			mTagManager = tagManager;
-			mRootFolderProvider = rootFolderProvider;
-			mStorageFolderProvider = folderProvider;
+			mStorageFolderSupport = storageFolderSupport;
 			mFile = file;
 
 			mStrategyInformation = new Lazy<FolderStrategyInformation>(() => {
 				FolderStrategyInformation	retValue = null;
 
 				try {
-					retValue = StorageHelpers.GetFolderStrategy( mRootFolderProvider, mStorageFolderProvider, mFile );
+					retValue = mStorageFolderSupport.GetFolderStrategy( mFile );
 				}
 				catch( Exception ex ) {
 					NoiseLogger.Current.LogException( "Exception - FileStrategyProvider:", ex );

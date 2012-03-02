@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
 using Noise.Infrastructure;
@@ -58,22 +57,6 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 			using( var folderList = sut.GetAllFolders()) {
 				folderList.List.Should().HaveCount( 1 );
 			}
-		}
-
-		[Test]
-		public void CanGetFolderPath() {
-			var rootFolder = new StorageFolder( "root", Constants.cDatabaseNullOid );
-			var level1 = new StorageFolder( "one", rootFolder.DbId );
-			var level2 = new StorageFolder( "two", level1.DbId );
-
-			var sut = CreateSut();
-			sut.AddFolder( rootFolder );
-			sut.AddFolder( level1 );
-			sut.AddFolder( level2 );
-
-			var path = sut.GetPhysicalFolderPath( level2 );
-			var expectedPath = Path.Combine( rootFolder.Name, Path.Combine( level1.Name, level2.Name ));
-			path.Should().Be( expectedPath );
 		}
 
 		[Test]

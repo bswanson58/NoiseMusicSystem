@@ -5,7 +5,6 @@ using CuttingEdge.Conditions;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 using TagLib;
 using TagLib.Id3v2;
 using File = TagLib.File;
@@ -14,14 +13,14 @@ namespace Noise.Core.DataProviders {
 	public class Mp3TagProvider : IMetaDataProvider {
 		private readonly IArtworkProvider		mArtworkProvider;
 		private readonly ITagManager			mGenreManager;
-		private readonly IStorageFileProvider	mStorageFileProvider;
+		private readonly IStorageFolderSupport	mStorageFolderSupport;
 		private readonly StorageFile			mFile;
 		private	readonly Lazy<File>				mTags;
 
-		public Mp3TagProvider( IArtworkProvider artworkProvider, ITagManager tagManager, IStorageFileProvider storageFileProvider, StorageFile file ) {
+		public Mp3TagProvider( IArtworkProvider artworkProvider, ITagManager tagManager, IStorageFolderSupport storageFolderSupport, StorageFile file ) {
 			mArtworkProvider = artworkProvider;
 			mGenreManager = tagManager;
-			mStorageFileProvider = storageFileProvider;
+			mStorageFolderSupport = storageFolderSupport;
 			mFile = file;
 
 			Condition.Requires( mFile ).IsNotNull();
@@ -30,7 +29,7 @@ namespace Noise.Core.DataProviders {
 				File	retValue = null;
 
 				try {
-					retValue = OpenTagFile( mStorageFileProvider.GetPhysicalFilePath( mFile ));
+					retValue = OpenTagFile( mStorageFolderSupport.GetPath( mFile ));
 				}
 				catch( Exception ex ) {
 					NoiseLogger.Current.LogException( "Exception - Mp3TagProvider:OpenTagFile:", ex );
@@ -167,7 +166,7 @@ namespace Noise.Core.DataProviders {
 
 						var popFrame = PopularimeterFrame.Get( id3Tags, Constants.Id3FrameUserName, false );
 						if( popFrame != null ) {
-							track.Rating = StorageHelpers.ConvertFromId3Rating( popFrame.Rating );
+							track.Rating = mStorageFolderSupport.ConvertFromId3Rating( popFrame.Rating );
 							track.PlayCount = (int)popFrame.PlayCount;
 						}
 						else {
@@ -180,7 +179,7 @@ namespace Noise.Core.DataProviders {
 								foreach( var fr in popFrames ) {
 									playCount += (int)fr.PlayCount;
 									if( fr.Rating > 0 ) {
-										ratings += StorageHelpers.ConvertFromId3Rating( fr.Rating );
+										ratings += mStorageFolderSupport.ConvertFromId3Rating( fr.Rating );
 										ratingsCount++;
 									}
 								}

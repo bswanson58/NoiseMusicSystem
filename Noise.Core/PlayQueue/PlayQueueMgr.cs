@@ -14,6 +14,7 @@ namespace Noise.Core.PlayQueue {
 		private readonly IAlbumProvider						mAlbumProvider;
 		private readonly ITrackProvider						mTrackProvider;
 		private readonly IStorageFileProvider				mStorageFileProvider;
+		private readonly IStorageFolderSupport				mStorageFolderSupport;
 		private readonly List<PlayQueueTrack>				mPlayQueue;
 		private readonly List<PlayQueueTrack>				mPlayHistory;
 		private	ePlayStrategy								mPlayStrategy;
@@ -31,13 +32,15 @@ namespace Noise.Core.PlayQueue {
 		private readonly AsyncCommand<DbInternetStream>		mStreamPlayCommand;
 
 		public PlayQueueMgr( IEventAggregator eventAggregator,
-							 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IStorageFileProvider storageFileProvider,
+							 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
+							 IStorageFolderSupport storageFolderSupport, IStorageFileProvider storageFileProvider,
 							 IPlayStrategyFactory strategyFactory, IPlayExhaustedFactory exhaustedFactory ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mStorageFileProvider = storageFileProvider;
+			mStorageFolderSupport = storageFolderSupport;
 			mPlayStrategyFactory = strategyFactory;
 			mPlayExhaustedFactory = exhaustedFactory;
 
@@ -95,7 +98,7 @@ namespace Noise.Core.PlayQueue {
 					var file = mStorageFileProvider.GetPhysicalFile( track );
 
 					if( file != null ) {
-						var path = mStorageFileProvider.GetPhysicalFilePath( file );
+						var path = mStorageFolderSupport.GetPath( file );
 						var newTrack = new PlayQueueTrack( artist, album, track, file, path, strategySource );
 
 						// Place any user selected tracks before any unplayed strategy queued tracks.
@@ -128,7 +131,7 @@ namespace Noise.Core.PlayQueue {
 						var file = mStorageFileProvider.GetPhysicalFile( track );
 
 						if( file != null ) {
-							var path = mStorageFileProvider.GetPhysicalFilePath( file );
+							var path = mStorageFolderSupport.GetPath( file );
 							var newTrack = new PlayQueueTrack( artist, album, track, file, path, eStrategySource.PlayStrategy );
 							var trackIndex = mPlayQueue.IndexOf( afterTrack );
 

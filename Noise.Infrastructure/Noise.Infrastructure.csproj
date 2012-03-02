@@ -228,6 +228,7 @@
     <Compile Include="Interfaces\ISearchProvider.cs" />
     <Compile Include="Interfaces\IStorageFileProvider.cs" />
     <Compile Include="Interfaces\IStorageFolderProvider.cs" />
+    <Compile Include="Interfaces\IStorageFolderSupport.cs" />
     <Compile Include="Interfaces\ITagAssociationProvider.cs" />
     <Compile Include="Interfaces\ITagManager.cs" />
     <Compile Include="Interfaces\ITagProvider.cs" />
@@ -299,7 +300,6 @@
     <Compile Include="Support\Service\WindowsServiceInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Support\StorageHelpers.cs" />
     <Compile Include="Support\TypeSwitch.cs" />
     <Compile Include="Support\ViewModelBase.cs" />
     <Compile Include="ViewNames.cs" />

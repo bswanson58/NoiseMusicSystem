@@ -119,6 +119,7 @@
     <Compile Include="BackgroundTasks\DecadeTagBuilderTests.cs" />
     <Compile Include="Database\DatabaseCacheTests.cs" />
     <Compile Include="Database\DatabaseStatisticsTest.cs" />
+    <Compile Include="FileStore\StorageFolderSupportTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -129,6 +130,10 @@
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReusableBits.TestSupport\ReusableBits.TestSupport.csproj">
+      <Project>{3DF05387-D7BC-41D8-AE22-85A576BD3267}</Project>
+      <Name>ReusableBits.TestSupport</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

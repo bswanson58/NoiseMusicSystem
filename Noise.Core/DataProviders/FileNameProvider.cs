@@ -6,17 +6,18 @@ using System.Text.RegularExpressions;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataProviders {
 	internal class FileNameProvider {
 		private readonly IStorageFileProvider	mFileProvider;
+		private readonly IStorageFolderSupport	mStorageFolderSupport;
 		private long							mFolderId;
 		private readonly List<Regex>			mDatePatterns;
 		private List<StorageFile>				mFolderFiles;
 
-		public FileNameProvider( IStorageFileProvider fileProvider ) {
+		public FileNameProvider( IStorageFileProvider fileProvider, IStorageFolderSupport storageFolderSupport ) {
 			mFileProvider = fileProvider;
+			mStorageFolderSupport = storageFolderSupport;
 			mDatePatterns = new List<Regex>();
 
 			mDatePatterns.Add( new Regex( "(?<month>0?[1-9]|1[012]) [- .] (?<day>0?[1-9]|[12][0-9]|3[01]) [- .] (?<year>[0-9]{2,})", RegexOptions.IgnorePatternWhitespace ));
@@ -39,7 +40,7 @@ namespace Noise.Core.DataProviders {
 			try {
 				using( var fileList = mFileProvider.GetFilesInFolder( parentId )) {
 					mFolderFiles = new List<StorageFile>( from file in fileList.List 
-														  where StorageHelpers.DetermineFileType( file ) == eFileType.Music 
+														  where mStorageFolderSupport.DetermineFileType( file ) == eFileType.Music 
 														  orderby file.Name 
 														  select file );
 				}

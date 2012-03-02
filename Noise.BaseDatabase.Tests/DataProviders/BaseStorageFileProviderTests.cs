@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using FluentAssertions;
-using Moq;
 using NUnit.Framework;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -10,9 +8,6 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.BaseDatabase.Tests.DataProviders {
 	public abstract class BaseStorageFileProviderTests : BaseProviderTest<IStorageFileProvider> {
-		protected Mock<IAlbumProvider>		mAlbumProvider;
-		protected ITrackProvider			mTrackProvider;
-		protected IStorageFolderProvider	mFolderProvider;
 
 		[Test]
 		public void CanAddStorageFile() {
@@ -71,51 +66,6 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 			var retrievedFile = sut.GetPhysicalFile( track );
 
 			Assert.IsNotNull( retrievedFile );
-		}
-
-		[Test]
-		public void CanGetPathForStorageFile() {
-			var folder1 = new StorageFolder( "one", Constants.cDatabaseNullOid );
-			var folder2 = new StorageFolder( "two", folder1.DbId );
-
-			mFolderProvider.AddFolder( folder1 );
-			mFolderProvider.AddFolder( folder2 );
-
-			var file = new StorageFile( "file name", folder2.DbId, 100, DateTime.Now );
-			var sut = CreateSut();
-			var path = sut.GetPhysicalFilePath( file );
-			
-			path.Should().Be( Path.Combine( folder1.Name, Path.Combine( folder2.Name, file.Name )));
-		}
-
-		[Test]
-		public void CanGetAlbumPathForStorageFile() {
-			var parentFolder = new StorageFolder( "parent", Constants.cDatabaseNullOid );
-			var folder1 = new StorageFolder( "volume 1", parentFolder.DbId );
-			var folder2 = new StorageFolder( "volume 2", parentFolder.DbId );
-
-			mFolderProvider.AddFolder( parentFolder );
-			mFolderProvider.AddFolder( folder1 );
-			mFolderProvider.AddFolder( folder2 );
-
-			var album = new DbAlbum();
-			mAlbumProvider.Setup( m => m.GetAlbum( It.IsAny<long>())).Returns( album );
-
-			var	track1 = new DbTrack { Album = album.DbId };
-			var track2 = new DbTrack { Album = album.DbId };
-
-			mTrackProvider.AddTrack( track1 );
-			mTrackProvider.AddTrack( track2 );
-
-			var file1 = new StorageFile( "file one", folder1.DbId, 100, DateTime.Now ) { MetaDataPointer = track1.DbId };
-			var file2 = new StorageFile( "file two", folder2.DbId, 100, DateTime.Now ) { MetaDataPointer = track2.DbId };
-			var sut = CreateSut();
-			sut.AddFile( file1 );
-			sut.AddFile( file2 );
-
-			var path = sut.GetAlbumPath( album.DbId );
-			
-			path.Should().Be( parentFolder.Name + @"\" );
 		}
 
 		[Test]

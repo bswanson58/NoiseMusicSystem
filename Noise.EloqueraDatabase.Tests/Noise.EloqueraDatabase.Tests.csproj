@@ -152,6 +152,10 @@
       <Project>{9F4086FD-8332-489F-8A96-8D4425DB5DF2}</Project>
       <Name>Noise.BlobStorage</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Noise.Core\Noise.Core.csproj">
+      <Project>{33A45442-71E5-4BFE-B37F-129EDB4F18E8}</Project>
+      <Name>Noise.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Noise.EloqueraDatabase\Noise.EloqueraDatabase.csproj">
       <Project>{16DCD043-E491-4F03-A46A-3C0273E8403D}</Project>
       <Name>Noise.EloqueraDatabase</Name>

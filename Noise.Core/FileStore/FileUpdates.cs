@@ -34,6 +34,7 @@ namespace Noise.Core.FileStore {
 		private readonly ITrackProvider			mTrackProvider;
 		private readonly IDbBaseProvider		mDbBaseProvider;
 		private readonly IStorageFileProvider	mStorageFileProvider;
+		private readonly IStorageFolderSupport	mStorageFolderSupport;
 		private	readonly ISchedulerFactory		mSchedulerFactory;
 		private	readonly IScheduler				mJobScheduler;
 		private readonly List<BaseCommandArgs>	mUnfinishedCommands;
@@ -44,10 +45,12 @@ namespace Noise.Core.FileStore {
 		private AsyncCommand<UpdatePlayCountCommandArgs>	mUpdatePlayCountCommand;
 		private AsyncCommand<SetMp3TagCommandArgs>			mSetMp3TagsCommand;
 
-		public FileUpdates( ILifecycleManager lifecycleManager, ITrackProvider trackProvider, IDbBaseProvider dbBaseProvider, IStorageFileProvider storageFileProvider ) {
+		public FileUpdates( ILifecycleManager lifecycleManager, ITrackProvider trackProvider, IDbBaseProvider dbBaseProvider,
+							IStorageFolderSupport storageFolderSupport, IStorageFileProvider storageFileProvider ) {
 			mTrackProvider = trackProvider;
 			mDbBaseProvider = dbBaseProvider;
 			mStorageFileProvider = storageFileProvider;
+			mStorageFolderSupport = storageFolderSupport;
 
 			lifecycleManager.RegisterForInitialize( this );
 			lifecycleManager.RegisterForShutdown( this );
@@ -130,7 +133,7 @@ namespace Noise.Core.FileStore {
 				var file = mStorageFileProvider.GetPhysicalFile( track );
 
 				if( file != null ) {
-					switch( StorageHelpers.DetermineAudioEncoding( file )) {
+					switch( mStorageFolderSupport.DetermineAudioEncoding( file )) {
 						case eAudioEncoding.MP3:
 							SetMp3Favorite( args, track, file );
 							break;
@@ -149,7 +152,7 @@ namespace Noise.Core.FileStore {
 		}
 
 		private void SetMp3Favorite( SetFavoriteCommandArgs args, DbTrack track, StorageFile file ) {
-			var filePath = mStorageFileProvider.GetPhysicalFilePath( file );
+			var filePath = mStorageFolderSupport.GetPath( file );
 
 			ClearReadOnlyFlag( filePath );
 
@@ -213,7 +216,7 @@ namespace Noise.Core.FileStore {
 				var file = mStorageFileProvider.GetPhysicalFile( track );
 
 				if( file != null ) {
-					var filePath = mStorageFileProvider.GetPhysicalFilePath( file );
+					var filePath = mStorageFolderSupport.GetPath( file );
 
 					ClearReadOnlyFlag( filePath );
 
@@ -224,7 +227,7 @@ namespace Noise.Core.FileStore {
 						var popFrame = PopularimeterFrame.Get( id3Tags, Constants.Id3FrameUserName, true );
 
 						if( popFrame != null ) {
-							popFrame.Rating = StorageHelpers.ConvertToId3Rating( args.Value );
+							popFrame.Rating = mStorageFolderSupport.ConvertToId3Rating( args.Value );
 
 							try {
 								tags.Save();
@@ -253,7 +256,7 @@ namespace Noise.Core.FileStore {
 				var file = mStorageFileProvider.GetPhysicalFile( track );
 
 				if( file != null ) {
-					var filePath = mStorageFileProvider.GetPhysicalFilePath( file );
+					var filePath = mStorageFolderSupport.GetPath( file );
 
 					ClearReadOnlyFlag( filePath );
 
@@ -313,7 +316,7 @@ namespace Noise.Core.FileStore {
 				var file = mStorageFileProvider.GetPhysicalFile( track );
 
 				if( file != null ) {
-					var filePath = mStorageFileProvider.GetPhysicalFilePath( file );
+					var filePath = mStorageFolderSupport.GetPath( file );
 
 					ClearReadOnlyFlag( filePath );
 
