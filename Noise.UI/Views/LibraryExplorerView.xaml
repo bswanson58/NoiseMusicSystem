@@ -105,12 +105,15 @@
                             </Border>
 
                             <Grid Grid.Row="1" Grid.Column="1">
-                                <Behaviours:Reveal HorizontalAlignment="Left"
-                                                   VerticalAlignment="Top"
-                                                   IsExpanded="{TemplateBinding IsExpanded}"
-                                                   VerticalReveal="FromTopToBottom">
+                                <ItemsPresenter x:Name="ItemsHost" Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}" />
+                                <!--
+                                    <Behaviours:Reveal HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    IsExpanded="{TemplateBinding IsExpanded}"
+                                    VerticalReveal="FromTopToBottom">
                                     <ItemsPresenter x:Name="ItemsHost" Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}" />
-                                </Behaviours:Reveal>
+                                    </Behaviours:Reveal>
+                                -->
                             </Grid>
                         </Grid>
                         <ControlTemplate.Triggers>
