@@ -6,8 +6,8 @@ using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbAssociatedItem : DbBase {
-		public	string	Item { get; private set; }
-		public	long	AssociatedId { get; private set; }
+		public	string	Item { get; protected set; }
+		public	long	AssociatedId { get; protected set; }
 
 		protected DbAssociatedItem() :
 			this( string.Empty ) { }

@@ -96,7 +96,9 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 	internal class AssociatedItemConfiguration : BaseEntityConfiguration<DbAssociatedItem> {
 		internal AssociatedItemConfiguration() :
-			base( "AssociatedItems" ) { }
+			base( "AssociatedItems" ) {
+			Ignore( p => p.IsLinked );
+		}
 	}
 
 	internal class AssociatedItemListConfiguration : BaseEntityConfiguration<DbAssociatedItemList> {
@@ -115,7 +117,10 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 	internal class GenreConfiguration : BaseEntityConfiguration<DbGenre> {
 		internal GenreConfiguration() :
-			base( "Genres" ) { }
+			base( "Genres" ) {
+			Ignore( p => p.Genre );
+			Ignore( p => p.IsUserRating );
+		}
 	}
 
 	internal class InternetStreamConfiguration : BaseEntityConfiguration<DbInternetStream> {
@@ -137,7 +142,9 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 	internal class PlayListConfiguration : BaseEntityConfiguration<DbPlayList> {
 		internal PlayListConfiguration() :
-			base( "PlayLists" ) { }
+			base( "PlayLists" ) {
+			Ignore( p => p.IsUserRating );
+		}
 	}
 
 	internal class TagConfiguration : BaseEntityConfiguration<DbTag> {

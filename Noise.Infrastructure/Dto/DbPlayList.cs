@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbPlayList : DbBase, IUserSettings {
@@ -26,6 +27,7 @@ namespace Noise.Infrastructure.Dto {
 			TrackIds.AddRange( trackIds );
 		}
 
+		[Ignore]
 		public bool IsUserRating {
 			get { return( true ); }
 		}

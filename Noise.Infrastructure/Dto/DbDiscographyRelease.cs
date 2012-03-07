@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public enum DiscographyReleaseType {
@@ -30,6 +31,7 @@ namespace Noise.Infrastructure.Dto {
 			Year = year;
 		}
 
+		[Ignore]
 		public int DbDiscographyReleaseType {
 			get{ return((int)ReleaseType ); }
 			protected set{ ReleaseType = (DiscographyReleaseType)value; }

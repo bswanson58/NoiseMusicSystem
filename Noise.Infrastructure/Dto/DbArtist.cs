@@ -15,10 +15,10 @@ namespace Noise.Infrastructure.Dto {
 		public Int16			CalculatedRating { get; set; }
 		public Int16			MaxChildRating { get; set; }
 		public Int16			AlbumCount { get; set; }
-		public long				DateAddedTicks { get; private set; }
+		public long				DateAddedTicks { get; protected set; }
 		public bool				IsFavorite { get; set; }
 		public bool				HasFavorites { get; set; }
-		public long				LastChangeTicks { get; private set; }
+		public long				LastChangeTicks { get; protected set; }
 
 		public DbArtist() {
 			Name = "";

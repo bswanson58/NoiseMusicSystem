@@ -5,9 +5,9 @@ using System.Diagnostics;
 namespace Noise.Infrastructure.Dto {
 	[DebuggerDisplay("Lyrics = {SongName}")]
 	public class DbLyric : DbBase {
-		public	long	ArtistId { get; private set; }
-		public	long	TrackId { get; private set; }
-		public	string	SongName { get; private set; }
+		public	long	ArtistId { get; protected set; }
+		public	long	TrackId { get; protected set; }
+		public	string	SongName { get; protected set; }
 		public	string	SourceUrl { get; set; }
 		public	string	Lyrics { get; set; }
 
