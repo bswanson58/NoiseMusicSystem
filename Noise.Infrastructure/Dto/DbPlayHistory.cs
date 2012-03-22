@@ -5,8 +5,8 @@ using Eloquera.Client;
 namespace Noise.Infrastructure.Dto {
 	public class DbPlayHistory : DbBase {
 		public	long		PlayedOnTicks { get; set; }
-		public	long		StorageFileId { get; private set; }
-		public	long		TrackId { get; private set; }
+		public	long		StorageFileId { get; protected set; }
+		public	long		TrackId { get; protected set; }
 
 		protected DbPlayHistory() { }
 

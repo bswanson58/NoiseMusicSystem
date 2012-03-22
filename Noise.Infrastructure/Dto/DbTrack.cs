@@ -17,7 +17,7 @@ namespace Noise.Infrastructure.Dto {
 		public Int16			TrackNumber { get; set; }
 		public string			VolumeName { get; set; }
 		public Int32			PublishedYear { get; set; }
-		public long				DateAddedTicks { get; private set; }
+		public long				DateAddedTicks { get; protected set; }
 		public eAudioEncoding	Encoding { get; set; }
 		public long				CalculatedGenre { get; set; }
 		public long				ExternalGenre { get; set; }

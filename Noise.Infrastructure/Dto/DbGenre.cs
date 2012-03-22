@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	[DebuggerDisplay("Genre = {Name}")]
@@ -21,11 +22,13 @@ namespace Noise.Infrastructure.Dto {
 			Description = "";
 		}
 
+		[Ignore]
 		public long Genre {
 			get{ return( DbId ); }
 			set{ }
 		}
 
+		[Ignore]
 		public bool IsUserRating {
 			get { return( true ); }
 		}

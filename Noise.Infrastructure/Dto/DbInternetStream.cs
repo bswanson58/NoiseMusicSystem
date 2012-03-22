@@ -15,7 +15,7 @@ namespace Noise.Infrastructure.Dto {
 		public Int32			Bitrate { get; set; }
 		public Int16			Channels { get; set; }
 		public Int16			Rating { get; set; }
-		public long				DateAddedTicks { get; private set; }
+		public long				DateAddedTicks { get; protected set; }
 		public eAudioEncoding	Encoding { get; set; }
 		public long				ExternalGenre { get; set; }
 		public long				UserGenre { get; set; }
@@ -50,6 +50,7 @@ namespace Noise.Infrastructure.Dto {
 			get{ return( new DateTime( DateAddedTicks )); }
 		}
 
+		[Ignore]
 		public int DbAudioRecording {
 			get{ return((int)Encoding ); }
 			set{ Encoding = (eAudioEncoding)value; }
