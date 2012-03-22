@@ -13,6 +13,144 @@
              mc:Ignorable="d">
     <Control.Resources>
         <Behaviours:CommandReference x:Key="DeleteCommandReference" Command="{Binding DeleteCommand}" />
+
+        <Style x:Key="MouseOverTrigger" TargetType="{x:Type Expander}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="IsExpanded" Value="True" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <ControlTemplate x:Key="MouseOverExpanderTemplate" TargetType="{x:Type Expander}">
+            <ControlTemplate.Resources>
+                <Storyboard x:Key="ExpandContent">
+                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                   Duration="00:00:0.15"
+                                                   Storyboard.TargetName="ExpandSite"
+                                                   Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(ScaleTransform.ScaleY)">
+                        <SplineDoubleKeyFrame KeyTime="00:00:0.15" Value="1" />
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+                <Storyboard x:Key="CollapseContent">
+                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                   Duration="00:00:00.15"
+                                                   Storyboard.TargetName="ExpandSite"
+                                                   Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(ScaleTransform.ScaleY)">
+                        <SplineDoubleKeyFrame KeyTime="00:00:0.15" Value="0" />
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+            </ControlTemplate.Resources>
+            <Border Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="3"
+                    SnapsToDevicePixels="True">
+                <DockPanel>
+                    <ContentPresenter x:Name="HeaderSite"
+                                      Grid.Column="0"
+                                      Margin="{TemplateBinding Padding}"
+                                      HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Center"
+                                      Content="{TemplateBinding Header}"
+                                      ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      DockPanel.Dock="Top"
+                                      RecognizesAccessKey="True"
+                                      SnapsToDevicePixels="True" />
+                    <ContentPresenter x:Name="ExpandSite"
+                                      Margin="{TemplateBinding Padding}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      Content="{TemplateBinding Content}"
+                                      ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      DockPanel.Dock="Bottom"
+                                      Focusable="False">
+                        <ContentPresenter.LayoutTransform>
+                            <ScaleTransform x:Name="scaleTransform"
+                                            ScaleX="1"
+                                            ScaleY="0" />
+                        </ContentPresenter.LayoutTransform>
+                    </ContentPresenter>
+                </DockPanel>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsExpanded" Value="True">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard Storyboard="{StaticResource ExpandContent}" />
+                    </Trigger.EnterActions>
+                    <Trigger.ExitActions>
+                        <BeginStoryboard Storyboard="{StaticResource CollapseContent}" />
+                    </Trigger.ExitActions>
+                </Trigger>
+
+                <Trigger Property="ExpandDirection" Value="Right">
+                    <Setter TargetName="ExpandSite" Property="DockPanel.Dock" Value="Right" />
+                    <Setter TargetName="HeaderSite" Property="DockPanel.Dock" Value="Left" />
+                </Trigger>
+                <Trigger Property="ExpandDirection" Value="Up">
+                    <Setter TargetName="ExpandSite" Property="DockPanel.Dock" Value="Top" />
+                    <Setter TargetName="HeaderSite" Property="DockPanel.Dock" Value="Bottom" />
+                </Trigger>
+                <Trigger Property="ExpandDirection" Value="Left">
+                    <Setter TargetName="ExpandSite" Property="DockPanel.Dock" Value="Left" />
+                    <Setter TargetName="HeaderSite" Property="DockPanel.Dock" Value="Right" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <DataTemplate x:Key="QueueListItem">
+            <Border BorderThickness="0">
+                <Expander Margin="0,1,0,1"
+                          Style="{StaticResource MouseOverTrigger}"
+                          Template="{DynamicResource MouseOverExpanderTemplate}">
+                    <Expander.Header>
+                        <Grid Margin="0,1,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="25" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="45" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="0">
+                                <TextBlock FontFamily="WebDings"
+                                           FontSize="15"
+                                           Foreground="LightGreen"
+                                           Text="4"
+                                           Visibility="{Binding Path=IsPlaying,
+                                                                Converter={StaticResource BooleanVisibilityConverter}}" />
+                                <TextBlock Margin="5,0,0,0"
+                                           Foreground="Red"
+                                           Text="!"
+                                           Visibility="{Binding Path=IsFaulted,
+                                                                Converter={StaticResource BooleanVisibilityConverter}}" />
+                            </Grid>
+
+                            <TextBlock Grid.Column="1" Text="{Binding Path=FullName}" />
+                            <TextBlock Grid.Column="2"
+                                       Text="{Binding Path=Track.Duration,
+                                                      Converter={StaticResource TimeSpanConverter}}"
+                                       TextAlignment="Right" />
+                        </Grid>
+                    </Expander.Header>
+                    <Grid Margin="28,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="25" />
+                            <ColumnDefinition Width="25" />
+                            <ColumnDefinition Width="25" />
+                            <ColumnDefinition Width="25" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0" Content="1" />
+                        <Button Grid.Column="1" Content="2" />
+                        <Button Grid.Column="2" Content="3" />
+                        <Button Grid.Column="3" Content="4" />
+                        <Button Grid.Column="4" Content="5" />
+                    </Grid>
+                </Expander>
+            </Border>
+        </DataTemplate>
     </Control.Resources>
 
     <Control.InputBindings>
@@ -29,26 +167,23 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <ListView x:Name="PlayQueueListView"
-                      Grid.Row="0"
-                      Behaviours:ListViewColumns.Stretch="true"
-                      Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex,
-                                                                              Mode=OneWay}"
-                      BorderThickness="0"
-                      ItemsSource="{Binding Path=QueueList}"
-                      SelectedIndex="{Binding Path=SelectedIndex}"
-                      SelectedItem="{Binding Path=SelectedItem}">
+            <ListBox x:Name="PlayQueueListView"
+                     Grid.Row="0"
+                     ItemsSource="{Binding Path=QueueList}"
+                     ItemTemplate="{StaticResource QueueListItem}"
+                     SelectedIndex="{Binding Path=SelectedIndex}"
+                     SelectedItem="{Binding Path=SelectedItem}">
                 <EventCommandTriggers:CommandSource.Trigger>
                     <EventCommandTriggers:CommandTriggerGroup>
-                        <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=OnLoaded}" RoutedEvent="ListView.Loaded" />
+                        <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=OnLoaded}" RoutedEvent="ListBox.Loaded" />
                         <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=PlayRequested}"
                                                                   CustomParameter="{Binding ElementName=PlayQueueListView,
                                                                                             Path=SelectedValue}"
-                                                                  RoutedEvent="ListViewItem.MouseDoubleClick" />
+                                                                  RoutedEvent="ListBoxItem.MouseDoubleClick" />
                     </EventCommandTriggers:CommandTriggerGroup>
                 </EventCommandTriggers:CommandSource.Trigger>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Path=IsPlaying}" Value="true">
@@ -65,45 +200,84 @@
                             </Trigger>
                         </Style.Triggers>
                     </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+            <!--
+                <ListView x:Name="PlayQueueListView"
+                Grid.Row="0"
+                Behaviours:ListViewColumns.Stretch="true"
+                Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex,
+                Mode=OneWay}"
+                BorderThickness="0"
+                ItemsSource="{Binding Path=QueueList}"
+                SelectedIndex="{Binding Path=SelectedIndex}"
+                SelectedItem="{Binding Path=SelectedItem}">
+                <EventCommandTriggers:CommandSource.Trigger>
+                <EventCommandTriggers:CommandTriggerGroup>
+                <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=OnLoaded}" RoutedEvent="ListView.Loaded" />
+                <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=PlayRequested}"
+                CustomParameter="{Binding ElementName=PlayQueueListView,
+                Path=SelectedValue}"
+                RoutedEvent="ListViewItem.MouseDoubleClick" />
+                </EventCommandTriggers:CommandTriggerGroup>
+                </EventCommandTriggers:CommandSource.Trigger>
+                <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=IsPlaying}" Value="true">
+                <Setter Property="FontWeight" Value="Bold" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=HasPlayed}" Value="true">
+                <Setter Property="Foreground" Value="LightGray" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=IsStrategyQueued, Mode=OneTime}" Value="true">
+                <Setter Property="FontStyle" Value="Italic" />
+                </DataTrigger>
+                <Trigger Property="Behaviours:ListViewItemDragState.IsBeingDragged" Value="True">
+                <Setter Property="FontWeight" Value="Bold" />
+                </Trigger>
+                </Style.Triggers>
+                </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.View>
-                    <GridView>
-                        <GridViewColumn Width="25" HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <TextBlock FontFamily="WebDings"
-                                                   Foreground="LightGreen"
-                                                   Text="4"
-                                                   Visibility="{Binding Path=IsPlaying,
-                                                                        Converter={StaticResource BooleanVisibilityConverter}}" />
-                                        <TextBlock Margin="5,0,0,0"
-                                                   Foreground="Red"
-                                                   Text="!"
-                                                   Visibility="{Binding Path=IsFaulted,
-                                                                        Converter={StaticResource BooleanVisibilityConverter}}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Header="Track Name">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Path=FullName}" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Width="45" Header="Length">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Path=Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
+                <GridView>
+                <GridViewColumn Width="25" HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}">
+                <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                <Grid>
+                <TextBlock FontFamily="WebDings"
+                Foreground="LightGreen"
+                Text="4"
+                Visibility="{Binding Path=IsPlaying,
+                Converter={StaticResource BooleanVisibilityConverter}}" />
+                <TextBlock Margin="5,0,0,0"
+                Foreground="Red"
+                Text="!"
+                Visibility="{Binding Path=IsFaulted,
+                Converter={StaticResource BooleanVisibilityConverter}}" />
+                </Grid>
+                </DataTemplate>
+                </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+                <GridViewColumn Header="Track Name">
+                <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                <TextBlock Text="{Binding Path=FullName}" />
+                </DataTemplate>
+                </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+                <GridViewColumn Width="45" Header="Length">
+                <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                <TextBlock Text="{Binding Path=Track.Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" />
+                </DataTemplate>
+                </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+                </GridView>
                 </ListView.View>
-            </ListView>
-
+                </ListView>
+            -->
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
