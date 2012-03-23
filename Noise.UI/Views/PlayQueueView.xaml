@@ -142,6 +142,7 @@
                                    Behaviours:FadeTrimming.IsEnabled="True"
                                    Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                                    FontSize="9"
+                                   Foreground="Gray"
                                    Text="{Binding Path=QueuedTrack.AlbumName}" />
                         <TextBlock x:Name="TrackDuration"
                                    Grid.Column="3"
