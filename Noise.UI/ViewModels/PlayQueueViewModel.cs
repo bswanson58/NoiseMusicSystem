@@ -71,11 +71,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void DragOver( DropInfo dropInfo ) {
-			var draggedItem = dropInfo.Data as UiPlayQueueTrack;
-			var targetItem = dropInfo.TargetItem as UiPlayQueueTrack;
-
-			if(( draggedItem != null ) &&
-			   ( targetItem != null )) {
+			if(( dropInfo.Data is UiPlayQueueTrack ) &&
+			   ( dropInfo.TargetItem is UiPlayQueueTrack )) {
 				dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
 				dropInfo.Effects = DragDropEffects.Copy;
 			}
