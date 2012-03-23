@@ -108,7 +108,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="15" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="45" />
+                            <ColumnDefinition Width="40" />
                         </Grid.ColumnDefinitions>
 
                         <Grid Grid.Column="0">
@@ -125,7 +125,10 @@
                                                             Converter={StaticResource BooleanVisibilityConverter}}" />
                         </Grid>
 
-                        <TextBlock Grid.Column="1" Text="{Binding Path=FullName}" />
+                        <TextBlock Grid.Column="1"
+                                   Behaviours:FadeTrimming.IsEnabled="True"
+                                   Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                                   Text="{Binding Path=FullName}" />
                         <TextBlock Grid.Column="2"
                                    Margin="0,0,3,0"
                                    Text="{Binding Path=Track.Duration,
