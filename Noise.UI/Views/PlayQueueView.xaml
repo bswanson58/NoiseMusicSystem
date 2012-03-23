@@ -128,20 +128,23 @@
                                                             Converter={StaticResource BooleanVisibilityConverter}}" />
                         </Grid>
 
-                        <TextBlock Grid.Column="1"
+                        <TextBlock x:Name="TrackName"
+                                   Grid.Column="1"
                                    VerticalAlignment="Bottom"
                                    Behaviours:FadeTrimming.IsEnabled="True"
                                    Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                                    FontSize="14"
                                    Text="{Binding Path=QueuedTrack.Name}" />
-                        <TextBlock Grid.Column="2"
+                        <TextBlock x:Name="AlbumName"
+                                   Grid.Column="2"
                                    Margin="5,0,0,2"
                                    VerticalAlignment="Bottom"
                                    Behaviours:FadeTrimming.IsEnabled="True"
                                    Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                                    FontSize="9"
                                    Text="{Binding Path=QueuedTrack.AlbumName}" />
-                        <TextBlock Grid.Column="3"
+                        <TextBlock x:Name="TrackDuration"
+                                   Grid.Column="3"
                                    Margin="0,0,3,0"
                                    VerticalAlignment="Bottom"
                                    Text="{Binding Path=QueuedTrack.Track.Duration,
@@ -222,6 +225,15 @@
                     </StackPanel>
                 </Grid>
             </Expander>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Path=QueuedTrack.HasPlayed}" Value="true">
+                    <Setter TargetName="TrackName" Property="Foreground" Value="LightGray" />
+                    <Setter TargetName="AlbumName" Property="Foreground" Value="LightGray" />
+                    <Setter TargetName="TrackDuration" Property="Foreground" Value="LightGray" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+
         </DataTemplate>
     </Control.Resources>
 
@@ -263,9 +275,6 @@
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Path=QueuedTrack.IsPlaying}" Value="true">
                                 <Setter Property="FontWeight" Value="Bold" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Path=QueuedTrack.HasPlayed}" Value="true">
-                                <Setter Property="Foreground" Value="LightGray" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Path=QueuedTrack.IsStrategyQueued, Mode=OneTime}" Value="true">
                                 <Setter Property="FontStyle" Value="Italic" />
