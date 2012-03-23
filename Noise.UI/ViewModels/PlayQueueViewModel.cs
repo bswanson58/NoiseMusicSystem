@@ -183,7 +183,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiPlayQueueTrack CreateUiTrack( PlayQueueTrack track ) {
-			return( new UiPlayQueueTrack( track, MoveQueueItemUp, MoveQueueItemDown, DisplayQueueItemInfo, DequeueTrack, PlayQueueTrack, PlayFromQueueTrack ));
+			return( new UiPlayQueueTrack( track, MoveQueueItemUp, MoveQueueItemDown, DisplayQueueItemInfo, DequeueTrack,
+												 PlayQueueTrack, PlayFromQueueTrack, SetFavorite, SetRating ));
 		}
 
 		private void MoveQueueItemUp( UiPlayQueueTrack track ) {
@@ -219,6 +220,16 @@ namespace Noise.UI.ViewModels {
 
 		private void PlayFromQueueTrack( UiPlayQueueTrack track ) {
 			mPlayQueue.ContinuePlayFromTrack( track.QueuedTrack );
+		}
+
+		private void SetFavorite( UiPlayQueueTrack track ) {
+			GlobalCommands.SetFavorite.Execute( track.QueuedTrack.IsStream ? new SetFavoriteCommandArgs( track.QueuedTrack.Stream.DbId, track.IsFavorite ) :
+																			 new SetFavoriteCommandArgs( track.QueuedTrack.Track.DbId, track.IsFavorite ));
+		}
+
+		private void SetRating( UiPlayQueueTrack track ) {
+			GlobalCommands.SetRating.Execute( track.QueuedTrack.IsStream ? new SetRatingCommandArgs( track.QueuedTrack.Stream.DbId, track.Rating ) :
+																		   new SetRatingCommandArgs( track.QueuedTrack.Track.DbId, track.Rating ));
 		}
 
 		private void LoadPlayQueue() {
