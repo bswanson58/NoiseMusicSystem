@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using Caliburn.Micro;
+using GongSolutions.Wpf.DragDrop;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
-using Noise.UI.Behaviours;
 using Noise.UI.Behaviours.EventCommandTriggers;
 using Noise.UI.Dto;
 using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class PlayQueueViewModel : ViewModelBase, IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted> {
+	public class PlayQueueViewModel : ViewModelBase, IDropTarget, IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted> {
 		private readonly IEventAggregator			mEventAggregator;
 		private readonly IGenreProvider				mGenreProvider;
 		private readonly ITagProvider				mTagProvider;
@@ -26,7 +25,6 @@ namespace Noise.UI.ViewModels {
 		private int									mPlayingIndex;
 		private TimeSpan							mTotalTime;
 		private TimeSpan							mRemainingTime;
-		private	ListViewDragDropManager<UiPlayQueueTrack>			mDragManager;
 		private readonly BindableCollection<UiPlayQueueTrack>		mQueue;
 		private	readonly BindableCollection<ExhaustedStrategyItem>	mExhaustedStrategies;
 		private readonly BindableCollection<PlayStrategyItem>		mPlayStrategies;
@@ -72,9 +70,30 @@ namespace Noise.UI.ViewModels {
 			LoadPlayQueue();
 		}
 
-		public void Execute_OnLoaded( EventCommandParameter<object, RoutedEventArgs> args ) {
-//			mDragManager = new ListViewDragDropManager<UiPlayQueueTrack>( args.EventArgs.Source as ListView );
-//			mDragManager.ProcessDrop += OnDragManagerProcessDrop;
+		public void DragOver( DropInfo dropInfo ) {
+			var draggedItem = dropInfo.Data as UiPlayQueueTrack;
+			var targetItem = dropInfo.TargetItem as UiPlayQueueTrack;
+
+			if(( draggedItem != null ) &&
+			   ( targetItem != null )) {
+				dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
+				dropInfo.Effects = DragDropEffects.Copy;
+			}
+		}
+
+		public void Drop( DropInfo dropInfo ) {
+			var draggedItem = dropInfo.Data as UiPlayQueueTrack;
+			var targetIndex = dropInfo.InsertIndex;
+
+			if( draggedItem != null ) {
+				var sourceIndex = mQueue.IndexOf( draggedItem );
+
+				if( targetIndex > sourceIndex ) {
+					targetIndex--;
+				}
+
+				mPlayQueue.ReorderQueueItem( sourceIndex, targetIndex );
+			}
 		}
 
 		public void Execute_PlayRequested( EventCommandParameter<object, RoutedEventArgs> args ) {
@@ -107,10 +126,6 @@ namespace Noise.UI.ViewModels {
 
 		public bool CanExecute_DeleteCommand() {
 			return( SelectedItem != null );
-		}
-
-		private void OnDragManagerProcessDrop( object sender, ProcessDropEventArgs<UiPlayQueueTrack> args ) {
-			mPlayQueue.ReorderQueueItem( args.OldIndex, args.NewIndex );
 		}
 
 		public void Execute_MoveItemUp() {

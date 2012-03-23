@@ -4,6 +4,7 @@
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
              xmlns:Controls="clr-namespace:Noise.UI.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:DragDrop="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
              xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
@@ -257,6 +258,9 @@
                      Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex,
                                                                              Mode=OneWay}"
                      BorderThickness="0"
+                     DragDrop:DragDrop.DropHandler="{Binding}"
+                     DragDrop:DragDrop.IsDragSource="true"
+                     DragDrop:DragDrop.IsDropTarget="true"
                      ItemsSource="{Binding Path=QueueList}"
                      ItemTemplate="{StaticResource QueueListItem}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -265,7 +269,6 @@
                      SelectedItem="{Binding Path=SelectedItem}">
                 <EventCommandTriggers:CommandSource.Trigger>
                     <EventCommandTriggers:CommandTriggerGroup>
-                        <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=OnLoaded}" RoutedEvent="ListBox.Loaded" />
                         <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=PlayRequested}"
                                                                   CustomParameter="{Binding ElementName=PlayQueueListView,
                                                                                             Path=SelectedValue}"
