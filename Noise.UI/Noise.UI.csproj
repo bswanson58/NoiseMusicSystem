@@ -233,6 +233,7 @@
     <Compile Include="Dto\UiDecadeTreeNode.cs" />
     <Compile Include="Dto\UiEqBand.cs" />
     <Compile Include="Dto\UiInternetStream.cs" />
+    <Compile Include="Dto\UiPlayQueueTrack.cs" />
     <Compile Include="Dto\UiTrack.cs" />
     <Compile Include="Dto\UiTreeNode.cs" />
     <Compile Include="Dto\ViewSortStrategy.cs" />

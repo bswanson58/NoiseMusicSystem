@@ -111,5 +111,19 @@ namespace Noise.Infrastructure.Dto {
 				return( retValue );
 			}
 		}
+
+		public string AlbumName {
+			get {
+				var retValue = "";
+
+				if((!IsStream ) &&
+				   ( Album != null ) &&
+				   ( Artist != null )) {
+					retValue = string.Format( "({0}/{1})", Artist.Name, Album.Name );
+				}
+
+				return( retValue );
+			}
+		}
 	}
 }

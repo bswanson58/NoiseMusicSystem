@@ -107,31 +107,44 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="15" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="40" />
                         </Grid.ColumnDefinitions>
 
                         <Grid Grid.Column="0">
-                            <TextBlock FontFamily="WebDings"
+                            <TextBlock VerticalAlignment="Bottom"
+                                       FontFamily="WebDings"
                                        FontSize="16"
                                        Foreground="LightGreen"
                                        Text="4"
-                                       Visibility="{Binding Path=IsPlaying,
+                                       Visibility="{Binding Path=QueuedTrack.IsPlaying,
                                                             Converter={StaticResource BooleanVisibilityConverter}}" />
                             <TextBlock Margin="5,0,0,0"
+                                       VerticalAlignment="Bottom"
                                        Foreground="Red"
                                        Text="!"
-                                       Visibility="{Binding Path=IsFaulted,
+                                       Visibility="{Binding Path=QueuedTrack.IsFaulted,
                                                             Converter={StaticResource BooleanVisibilityConverter}}" />
                         </Grid>
 
                         <TextBlock Grid.Column="1"
+                                   VerticalAlignment="Bottom"
                                    Behaviours:FadeTrimming.IsEnabled="True"
                                    Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                                   Text="{Binding Path=FullName}" />
+                                   FontSize="14"
+                                   Text="{Binding Path=QueuedTrack.Name}" />
                         <TextBlock Grid.Column="2"
+                                   Margin="5,0,0,2"
+                                   VerticalAlignment="Bottom"
+                                   Behaviours:FadeTrimming.IsEnabled="True"
+                                   Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                                   FontSize="9"
+                                   Text="{Binding Path=QueuedTrack.AlbumName}" />
+                        <TextBlock Grid.Column="3"
                                    Margin="0,0,3,0"
-                                   Text="{Binding Path=Track.Duration,
+                                   VerticalAlignment="Bottom"
+                                   Text="{Binding Path=QueuedTrack.Track.Duration,
                                                   Converter={StaticResource TimeSpanConverter}}"
                                    TextAlignment="Right" />
                     </Grid>
@@ -151,6 +164,7 @@
                     <Button Grid.Column="0"
                             Width="19"
                             Height="19"
+                            Command="{Binding Path=Play}"
                             Content="4"
                             FontFamily="Webdings"
                             ToolTip="Play Now" />
@@ -158,6 +172,7 @@
                             Width="19"
                             Height="19"
                             Margin="3,0,0,0"
+                            Command="{Binding Path=PlayFromHere}"
                             Content="8"
                             FontFamily="Webdings"
                             ToolTip="Continue play from here" />
@@ -165,12 +180,14 @@
                             Width="19"
                             Height="19"
                             Margin="3,0,0,0"
+                            Command="{Binding Path=DisplayInfo}"
                             Content="{StaticResource Path_Information}"
                             ToolTip="Display Artist and Album display" />
                     <Button Grid.Column="3"
                             Width="19"
                             Height="19"
                             Margin="3,0,0,0"
+                            Command="{Binding Path=MoveUp}"
                             Content="5"
                             FontFamily="Webdings"
                             ToolTip="Move track up in queue" />
@@ -178,6 +195,7 @@
                             Width="19"
                             Height="19"
                             Margin="3,0,0,0"
+                            Command="{Binding Path=MoveDown}"
                             Content="6"
                             FontFamily="Webdings"
                             ToolTip="Move track down in queue" />
@@ -185,6 +203,7 @@
                             Width="19"
                             Height="19"
                             Margin="3,0,0,0"
+                            Command="{Binding Path=Dequeue}"
                             Content="r"
                             FontFamily="WebDings"
                             ToolTip="Remove track from queue" />
@@ -196,10 +215,10 @@
                                   Height="15"
                                   Margin="0,0,9,0"
                                   VerticalAlignment="Center"
-                                  IsChecked="{Binding Path=Track.IsFavorite,
+                                  IsChecked="{Binding Path=IsFavorite,
                                                       Mode=TwoWay}"
                                   Style="{StaticResource FavoriteCheckBoxStyle}" />
-                        <Controls:RatingControl Rating="{Binding Path=Track.Rating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
+                        <Controls:RatingControl Rating="{Binding Path=Rating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
                     </StackPanel>
                 </Grid>
             </Expander>
@@ -242,13 +261,13 @@
                     <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=IsPlaying}" Value="true">
+                            <DataTrigger Binding="{Binding Path=QueuedTrack.IsPlaying}" Value="true">
                                 <Setter Property="FontWeight" Value="Bold" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Path=HasPlayed}" Value="true">
+                            <DataTrigger Binding="{Binding Path=QueuedTrack.HasPlayed}" Value="true">
                                 <Setter Property="Foreground" Value="LightGray" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Path=IsStrategyQueued, Mode=OneTime}" Value="true">
+                            <DataTrigger Binding="{Binding Path=QueuedTrack.IsStrategyQueued, Mode=OneTime}" Value="true">
                                 <Setter Property="FontStyle" Value="Italic" />
                             </DataTrigger>
                             <Trigger Property="Behaviours:ListViewItemDragState.IsBeingDragged" Value="True">

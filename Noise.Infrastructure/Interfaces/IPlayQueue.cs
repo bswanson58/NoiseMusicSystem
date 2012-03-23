@@ -33,6 +33,7 @@ namespace Noise.Infrastructure.Interfaces {
 		PlayQueueTrack	PlayPreviousTrack();
 		void			StopPlay();
 		void			ReplayQueue();
+		void			ContinuePlayFromTrack( PlayQueueTrack track );
 
 		PlayQueueTrack	NextTrack { get; }
 		PlayQueueTrack	PreviousTrack { get; }

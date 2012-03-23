@@ -26,10 +26,10 @@ namespace Noise.UI.ViewModels {
 		private int									mPlayingIndex;
 		private TimeSpan							mTotalTime;
 		private TimeSpan							mRemainingTime;
-		private	ListViewDragDropManager<PlayQueueTrack>					mDragManager;
-		private readonly ObservableCollectionEx<PlayQueueTrack>			mQueue;
-		private	readonly ObservableCollectionEx<ExhaustedStrategyItem>	mExhaustedStrategies;
-		private readonly ObservableCollectionEx<PlayStrategyItem>		mPlayStrategies;
+		private	ListViewDragDropManager<UiPlayQueueTrack>			mDragManager;
+		private readonly BindableCollection<UiPlayQueueTrack>		mQueue;
+		private	readonly BindableCollection<ExhaustedStrategyItem>	mExhaustedStrategies;
+		private readonly BindableCollection<PlayStrategyItem>		mPlayStrategies;
 
 		public PlayQueueViewModel( IEventAggregator eventAggregator,
 								   ITagProvider tagProvider, IGenreProvider genreProvider, IInternetStreamProvider streamProvider,
@@ -42,15 +42,15 @@ namespace Noise.UI.ViewModels {
 			mPlayListProvider = playListProvider;
 			mDialogService = dialogService;
 
-			mQueue = new ObservableCollectionEx<PlayQueueTrack>();
+			mQueue = new BindableCollection<UiPlayQueueTrack>();
 			mPlayingIndex = -1;
 
-			mPlayStrategies = new ObservableCollectionEx<PlayStrategyItem>{
+			mPlayStrategies = new BindableCollection<PlayStrategyItem>{
 			                                    new PlayStrategyItem( ePlayStrategy.Next, "Normal" ),
 												new PlayStrategyItem( ePlayStrategy.Random, "Random" ),
 												new PlayStrategyItem( ePlayStrategy.TwoFers, "2 Fers" )};
 
-			mExhaustedStrategies = new ObservableCollectionEx<ExhaustedStrategyItem>{
+			mExhaustedStrategies = new BindableCollection<ExhaustedStrategyItem>{
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Stop, "Stop" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Replay, "Replay" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayCategory, "Play Category..." ),
@@ -73,13 +73,17 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_OnLoaded( EventCommandParameter<object, RoutedEventArgs> args ) {
-			mDragManager = new ListViewDragDropManager<PlayQueueTrack>( args.EventArgs.Source as ListView );
-			mDragManager.ProcessDrop += OnDragManagerProcessDrop;
+//			mDragManager = new ListViewDragDropManager<UiPlayQueueTrack>( args.EventArgs.Source as ListView );
+//			mDragManager.ProcessDrop += OnDragManagerProcessDrop;
 		}
 
 		public void Execute_PlayRequested( EventCommandParameter<object, RoutedEventArgs> args ) {
 			if( args.CustomParameter != null ) {
-				mEventAggregator.Publish( new Events.PlayQueuedTrackRequest( args.CustomParameter as PlayQueueTrack ));
+				var queuedItem  = args.CustomParameter as UiPlayQueueTrack;
+
+				if( queuedItem != null ) {
+					PlayQueueTrack( queuedItem );
+				}
 			}
 		}
 
@@ -97,7 +101,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_DeleteCommand() {
 			if( SelectedItem != null ) {
-				mPlayQueue.RemoveTrack( SelectedItem );
+				DequeueTrack( SelectedItem );
 			}
 		}
 
@@ -105,7 +109,7 @@ namespace Noise.UI.ViewModels {
 			return( SelectedItem != null );
 		}
 
-		private void OnDragManagerProcessDrop( object sender, ProcessDropEventArgs<PlayQueueTrack> args ) {
+		private void OnDragManagerProcessDrop( object sender, ProcessDropEventArgs<UiPlayQueueTrack> args ) {
 			mPlayQueue.ReorderQueueItem( args.OldIndex, args.NewIndex );
 		}
 
@@ -134,7 +138,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_RemoveItem() {
 			if( SelectedItem != null ) {
-				mPlayQueue.RemoveTrack( SelectedItem );
+				DequeueTrack( SelectedItem );
 			}
 		}
 
@@ -143,11 +147,11 @@ namespace Noise.UI.ViewModels {
 			return( SelectedItem != null );
 		}
 
-		public ObservableCollectionEx<PlayQueueTrack> QueueList {
+		public BindableCollection<UiPlayQueueTrack> QueueList {
 			get{ return( mQueue ); }
 		}
 
-		public PlayQueueTrack SelectedItem {
+		public UiPlayQueueTrack SelectedItem {
 			get{ return( Get( () => SelectedItem )); }
 			set{ Set( () => SelectedItem, value ); }
 		}
@@ -178,19 +182,58 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => PlayQueueChangedFlag, value  ); }
 		}
 
+		private UiPlayQueueTrack CreateUiTrack( PlayQueueTrack track ) {
+			return( new UiPlayQueueTrack( track, MoveQueueItemUp, MoveQueueItemDown, DisplayQueueItemInfo, DequeueTrack, PlayQueueTrack, PlayFromQueueTrack ));
+		}
+
+		private void MoveQueueItemUp( UiPlayQueueTrack track ) {
+			var index = mQueue.IndexOf( track );
+
+			mPlayQueue.ReorderQueueItem( index, index - 1 );
+		}
+
+		private void MoveQueueItemDown( UiPlayQueueTrack track ) {
+			var index = mQueue.IndexOf( track );
+
+			mPlayQueue.ReorderQueueItem( index, index + 1 );
+		}
+
+		private void DequeueTrack( UiPlayQueueTrack track ) {
+			mPlayQueue.RemoveTrack( track.QueuedTrack );
+		}
+
+		private void DisplayQueueItemInfo( UiPlayQueueTrack track ) {
+			if( track.QueuedTrack.Artist != null ) {
+				if( track.QueuedTrack.Album != null ) {
+					mEventAggregator.Publish( new Events.AlbumFocusRequested( track.QueuedTrack.Artist.DbId, track.QueuedTrack.Album.DbId ));
+				}
+				else {
+					mEventAggregator.Publish( new Events.ArtistFocusRequested( track.QueuedTrack.Artist.DbId ));
+				}
+			}
+		}
+
+		private void PlayQueueTrack( UiPlayQueueTrack track ) {
+			mEventAggregator.Publish( new Events.PlayQueuedTrackRequest( track.QueuedTrack ));
+		}
+
+		private void PlayFromQueueTrack( UiPlayQueueTrack track ) {
+			mPlayQueue.ContinuePlayFromTrack( track.QueuedTrack );
+		}
+
 		private void LoadPlayQueue() {
 			mQueue.Clear();
-			mQueue.AddRange( mPlayQueue.PlayList );
+			mQueue.AddRange( mPlayQueue.PlayList.Select( CreateUiTrack ));
 
 			mTotalTime = new TimeSpan();
 			mRemainingTime = new TimeSpan();
 
 			foreach( var track in mQueue ) {
-				mTotalTime = mTotalTime.Add( track.Track.Duration );
+				mTotalTime = mTotalTime.Add( track.QueuedTrack.Track.Duration );
 
-				if((!track.HasPlayed ) ||
-				   ( track.IsPlaying )) {
-					mRemainingTime = mRemainingTime.Add( track.Track.Duration );
+				if((!track.QueuedTrack.HasPlayed ) ||
+				   ( track.QueuedTrack.IsPlaying )) {
+					mRemainingTime = mRemainingTime.Add( track.QueuedTrack.Track.Duration );
 				}
 			}
 
@@ -216,13 +259,13 @@ namespace Noise.UI.ViewModels {
 				mRemainingTime = new TimeSpan();
 
 				foreach( var item in mQueue ) {
-					if( item.IsPlaying ) {
+					if( item.QueuedTrack.IsPlaying ) {
 						mPlayingIndex = index;
 					}
 
-					if((!item.HasPlayed ) ||
-					   ( item.IsPlaying )) {
-						mRemainingTime = mRemainingTime.Add( item.Track.Duration );
+					if((!item.QueuedTrack.HasPlayed ) ||
+					   ( item.QueuedTrack.IsPlaying )) {
+						mRemainingTime = mRemainingTime.Add( item.QueuedTrack.Track.Duration );
 					}
 
 					index++;
@@ -237,7 +280,7 @@ namespace Noise.UI.ViewModels {
 			get{ return( mPlayingIndex ); }
 		}
 
-		public ObservableCollectionEx<ExhaustedStrategyItem> ExhaustedStrategyList {
+		public BindableCollection<ExhaustedStrategyItem> ExhaustedStrategyList {
 			get{ return( mExhaustedStrategies ); }
 		}
 
@@ -320,7 +363,7 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
-		public ObservableCollectionEx<PlayStrategyItem> PlayStrategyList {
+		public BindableCollection<PlayStrategyItem> PlayStrategyList {
 			get{ return( mPlayStrategies ); }
 		}
 

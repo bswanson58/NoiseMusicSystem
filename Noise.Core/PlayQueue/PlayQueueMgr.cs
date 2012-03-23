@@ -384,6 +384,22 @@ namespace Noise.Core.PlayQueue {
 			return( track );
 		}
 
+		public void ContinuePlayFromTrack( PlayQueueTrack track ) {
+			if( mPlayQueue.Contains( track )) {
+				bool	hasPlayedSetting = true;
+
+				foreach( var t in mPlayQueue ) {
+					if( t == track ) {
+						hasPlayedSetting = false;
+					}
+
+					if(!t.IsPlaying ) {
+						t.HasPlayed = hasPlayedSetting;
+					}
+				}
+			}
+		}
+
 		public PlayQueueTrack PreviousTrack {
 			get {
 				PlayQueueTrack	retValue = null;
