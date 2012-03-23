@@ -253,6 +253,8 @@
 
             <ListBox x:Name="PlayQueueListView"
                      Grid.Row="0"
+                     Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex,
+                                                                             Mode=OneWay}"
                      BorderThickness="0"
                      ItemsSource="{Binding Path=QueueList}"
                      ItemTemplate="{StaticResource QueueListItem}"
