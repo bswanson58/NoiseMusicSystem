@@ -1,16 +1,16 @@
 ﻿using Caliburn.Micro;
-using Noise.Infrastructure.Interfaces;
+using Noise.TenFoot.Ui.ViewModels;
 
 namespace Noise.TenFooter {
     public class ShellViewModel : Conductor<object>.Collection.OneActive, IShell {
-		private INoiseManager	mNoiseManager;
+		private HomeViewModel		mHomeView;
 
-		public ShellViewModel( INoiseManager noiseManager ) {
-			mNoiseManager = noiseManager;
-		}
+		protected override void OnActivate() {
+			if( mHomeView == null ) {
+				mHomeView = new HomeViewModel();
+			}
 
-		protected override void OnInitialize() {
-			base.OnInitialize();
+			ActivateItem( mHomeView );
 		}
     }
 }

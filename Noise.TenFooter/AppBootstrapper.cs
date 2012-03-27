@@ -27,6 +27,12 @@ namespace Noise.TenFooter {
 			iocConfig.InitializeIoc( ApplicationUsage.TenFootUi );
 		}
 
+		protected override System.Collections.Generic.IEnumerable<Assembly> SelectAssemblies() {
+			return( new []{ Assembly.GetExecutingAssembly(),
+			              	Assembly.GetAssembly( typeof( TenFoot.Ui.ViewModels.HomeViewModel ))
+			              } );
+		}
+
 		protected override void OnStartup( object sender, StartupEventArgs e ) {
 			NoiseLogger.Current.LogMessage( "============================" );
 			NoiseLogger.Current.LogMessage( "Noise.TenFooter is starting." );

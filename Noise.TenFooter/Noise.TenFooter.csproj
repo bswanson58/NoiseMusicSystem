@@ -170,6 +170,10 @@
       <Project>{85472B64-4F49-4182-8709-9229E25E5119}</Project>
       <Name>Noise.RemoteHost</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Noise.TenFoot.Ui\Noise.TenFoot.Ui.csproj">
+      <Project>{C058E89B-AAC8-4E44-AB65-F45279C705F1}</Project>
+      <Name>Noise.TenFoot.Ui</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
       <Project>{8930138B-F96A-4A56-84CF-D660730989C9}</Project>
       <Name>ReusableBits.Mvvm</Name>
