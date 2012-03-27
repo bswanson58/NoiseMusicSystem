@@ -46,7 +46,7 @@ namespace Noise.UI.Tests.ViewModels {
 			NoiseLogger.Current = new Mock<ILog>().Object;
 
 			// Set the ui dispatcher to run on the current thread.
-			ReusableBits.Mvvm.ViewModelSupport.Execute.ResetWithoutDispatcher();
+			Caliburn.Micro.Execute.ResetWithoutDispatcher();
 
 			// Set up the AutoMapper configurations.
 			MappingConfiguration.Configure();

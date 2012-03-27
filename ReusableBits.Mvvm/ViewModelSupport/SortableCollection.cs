@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Caliburn.Micro;
 
 namespace ReusableBits.Mvvm.ViewModelSupport {
 	public class SortableCollection<T> : BindableCollection<T> {

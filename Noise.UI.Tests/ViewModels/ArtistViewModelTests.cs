@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Windows.Input;
+using Caliburn.Micro;
 using FluentAssertions.EventMonitoring;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Moq;
@@ -9,9 +10,9 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Support;
 using Noise.UI.ViewModels;
-using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.TestSupport.Mocking;
 using ReusableBits.TestSupport.Threading;
+using ILog = Noise.Infrastructure.Interfaces.ILog;
 
 namespace Noise.UI.Tests.ViewModels {
 	internal class TestableArtistViewModel : Testable<ArtistViewModel> {

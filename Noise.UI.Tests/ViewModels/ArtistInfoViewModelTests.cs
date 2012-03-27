@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Caliburn.Micro;
 using FluentAssertions.EventMonitoring;
 using Moq;
 using NUnit.Framework;
@@ -8,9 +9,9 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Support;
 using Noise.UI.ViewModels;
-using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.TestSupport.Mocking;
 using ReusableBits.TestSupport.Threading;
+using ILog = Noise.Infrastructure.Interfaces.ILog;
 
 namespace Noise.UI.Tests.ViewModels {
 	internal class TestableArtistInfoViewModel : Testable<ArtistInfoViewModel> {

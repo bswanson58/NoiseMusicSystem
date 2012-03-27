@@ -4,8 +4,8 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Dynamic;
 using System.Linq;
+using Caliburn.Micro;
 using Noise.Infrastructure.Interfaces;
-using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Support {
 	public class ViewModelLocator : DynamicObject {

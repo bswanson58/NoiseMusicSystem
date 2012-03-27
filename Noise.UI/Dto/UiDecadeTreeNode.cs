@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
+using Caliburn.Micro;
 using Noise.Infrastructure.Dto;
 using Noise.UI.Adapters;
-using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
 	public class UiDecadeTreeNode : UiTreeNode {

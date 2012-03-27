@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using Caliburn.Micro;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Resources;
 using Noise.UI.Support;
 using Noise.UI.ViewModels;
-using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI {
 	public class NoiseUiModule : IModule {

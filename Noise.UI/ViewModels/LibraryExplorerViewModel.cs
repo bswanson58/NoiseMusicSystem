@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using Caliburn.Micro;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;

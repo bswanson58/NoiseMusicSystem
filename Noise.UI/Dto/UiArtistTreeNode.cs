@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
-using ReusableBits.Mvvm.ViewModelSupport;
+using Caliburn.Micro;
 
 namespace Noise.UI.Dto {
 	public class UiArtistTreeNode : UiTreeNode {

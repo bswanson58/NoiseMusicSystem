@@ -15,6 +15,7 @@ using Noise.UI.Support;
 using Noise.UI.ViewModels;
 using ReusableBits.TestSupport.Mocking;
 using ReusableBits.TestSupport.Threading;
+using ILog = Noise.Infrastructure.Interfaces.ILog;
 
 namespace Noise.UI.Tests.ViewModels {
 	internal class TestableExplorerStrategyDecade : Testable<ExplorerStrategyDecade> {
@@ -51,7 +52,7 @@ namespace Noise.UI.Tests.ViewModels {
 			NoiseLogger.Current = new Mock<ILog>().Object;
 
 			// Set the ui dispatcher to run on the current thread.
-			ReusableBits.Mvvm.ViewModelSupport.Execute.ResetWithoutDispatcher();
+			Caliburn.Micro.Execute.ResetWithoutDispatcher();
 
 			// Set up the AutoMapper configurations.
 			MappingConfiguration.Configure();
