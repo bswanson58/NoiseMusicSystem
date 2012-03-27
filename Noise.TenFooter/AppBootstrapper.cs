@@ -40,6 +40,8 @@ namespace Noise.TenFooter {
 			mNoiseManager = Container.Resolve<INoiseManager>();
 			mNoiseManager.Initialize();
 
+			LogManager.GetLog = type => new DebugLogger( type) ;
+
 			// Create the ShellViewModel
 			base.OnStartup( sender, e );
 		}
