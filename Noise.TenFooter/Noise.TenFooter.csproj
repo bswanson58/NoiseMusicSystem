@@ -75,6 +75,12 @@
     <Reference Include="Common.Logging">
       <HintPath>..\lib\Quartz\v1.0.2.3\Common.Logging.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.Prism, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
@@ -164,9 +170,27 @@
       <Project>{85472B64-4F49-4182-8709-9229E25E5119}</Project>
       <Name>Noise.RemoteHost</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
+      <Project>{8930138B-F96A-4A56-84CF-D660730989C9}</Project>
+      <Name>ReusableBits.Mvvm</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(SolutionDir)lib\BASS.Net\v2.4.8.0\$(PlatformName)\bass.dll $(TargetDir)
+copy $(SolutionDir)lib\BASS.Net\v2.4.8.0\$(PlatformName)\bass_aac.dll $(TargetDir)
+copy $(SolutionDir)lib\BASS.Net\v2.4.8.0\$(PlatformName)\bass_fx.dll $(TargetDir)
+copy $(SolutionDir)lib\BASS.Net\v2.4.8.0\$(PlatformName)\bassflac.dll $(TargetDir)
+copy $(SolutionDir)lib\BASS.Net\v2.4.8.0\$(PlatformName)\bassmix.dll $(TargetDir)
+copy $(SolutionDir)lib\BASS.Net\v2.4.8.0\$(PlatformName)\basswma.dll $(TargetDir)
+copy $(SolutionDir)lib\Eloquera\v4.13\Eloquera.Client.dll $(TargetDir)
+copy $(SolutionDir)lib\Eloquera\v4.13\Eloquera.Common.dll $(TargetDir)
+copy $(SolutionDir)Noise.Core\Resources\EqPresets.xml $(TargetDir)
+copy $(SolutionDir)Noise.Core\Resources\LicenseKeys.xml $(TargetDir)
+copy $(SolutionDir)lib\NServiceBus\v2.0.0.1219\log4net.dll $(TargetDir)
+copy $(SolutionDir)lib\Quartz\v1.0.2.3\Common.Logging.dll $(TargetDir)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

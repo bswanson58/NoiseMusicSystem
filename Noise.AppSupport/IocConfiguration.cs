@@ -15,6 +15,7 @@ using Noise.ServiceImpl.LibraryUpdate;
 namespace Noise.AppSupport {
 	public enum ApplicationUsage {
 		Desktop,
+		TenFootUi,
 		Server
 	}
 
@@ -55,6 +56,11 @@ namespace Noise.AppSupport {
 
 					mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
 					mContainer.RegisterType<IWindowsService, LibraryServiceImpl>();
+
+					break;
+
+				case ApplicationUsage.TenFootUi:
+					mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
 
 					break;
 			}
