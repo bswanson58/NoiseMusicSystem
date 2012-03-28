@@ -121,6 +121,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CaliburnSupport\DebugLogger.cs" />
     <Compile Include="CaliburnSupport\UnityBootstrapper.cs" />
     <Compile Include="FeatureToggle.Wpf\FeatureToggleToVisibilityConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

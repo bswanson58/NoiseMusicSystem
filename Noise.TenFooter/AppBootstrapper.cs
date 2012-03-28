@@ -40,7 +40,7 @@ namespace Noise.TenFooter {
 //			mNoiseManager = Container.Resolve<INoiseManager>();
 //			mNoiseManager.Initialize();
 
-			LogManager.GetLog = type => new DebugLogger( type) ;
+			LogManager.GetLog = type => new CaliburnDebugLogger( type) ;
 
 			// Create the ShellViewModel
 			base.OnStartup( sender, e );

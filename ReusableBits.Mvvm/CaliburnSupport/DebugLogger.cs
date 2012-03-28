@@ -2,12 +2,12 @@
 using System.Diagnostics;
 using Caliburn.Micro;
 
-namespace Noise.TenFooter {
-	public class DebugLogger : ILog {
-		private readonly Type mType;
+namespace ReusableBits.Mvvm.CaliburnSupport {
+	public class CaliburnDebugLogger : ILog {
+//		private readonly Type mType;
 
-		public DebugLogger( Type type ) {
-			mType = type;
+		public CaliburnDebugLogger( Type type ) {
+//			mType = type;
 		}
 
 		private string CreateLogMessage( string format, params object[] args ) {
