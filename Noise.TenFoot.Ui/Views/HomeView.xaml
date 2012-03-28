@@ -5,44 +5,6 @@
              xmlns:LoopPanelSample="clr-namespace:LoopPanelSample">
 
     <UserControl.Resources>
-        <Style x:Key="LLStyle"
-               BasedOn="{StaticResource {x:Type ListBox}}"
-               TargetType="{x:Type controls:LoopingListBox}">
-            <Setter Property="Padding" Value="2" />
-            <Setter Property="Orientation" Value="Horizontal" />
-            <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Cycle" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type controls:LoopingListBox}">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}">
-                            <ScrollViewer x:Name="sv"
-                                          HorizontalScrollBarVisibility="Disabled"
-                                          Padding="{TemplateBinding Padding}"
-                                          VerticalScrollBarVisibility="Auto">
-                                <controls:LoopPanel x:Name="lp"
-                                                    BringChildrenIntoView="True"
-                                                    IsItemsHost="True"
-                                                    LastItemMargin="{TemplateBinding LastItemMargin}"
-                                                    Orientation="{TemplateBinding Orientation}"
-                                                    RelativeOffset="{TemplateBinding RelativeOffset}"
-                                                    Offset="{Binding Offset,
-                                                                     RelativeSource={RelativeSource TemplatedParent},
-                                                                     Mode=TwoWay}" />
-                            </ScrollViewer>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="Orientation" Value="Vertical">
-                                <Setter TargetName="sv" Property="HorizontalScrollBarVisibility" Value="Auto" />
-                                <Setter TargetName="sv" Property="VerticalScrollBarVisibility" Value="Disabled" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <LoopPanelSample:CharacterCollection x:Key="Characters">
             <LoopPanelSample:Character Age="10"
                                        First="Bart"
@@ -198,7 +160,6 @@
                                  LastItemMargin="1.25"
                                  Orientation="Vertical"
                                  RelativeOffset="0.4"
-                                 Style="{StaticResource LLStyle}"
                                  Offset="0.0" />
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
