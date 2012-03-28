@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="Noise.TenFoot.Ui.Views.FavoritesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:cal="http://www.caliburnproject.org"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ViewModels="clr-namespace:Noise.TenFoot.Ui.ViewModels"
+             cal:Bind.AtDesignTime="True"
+             d:DataContext="{d:DesignInstance ViewModels:FavoritesViewModel,
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="500"
+             d:DesignWidth="700"
+             mc:Ignorable="d">
+
+    <Grid>
+        <TextBlock Text="Favorites View" />
+    </Grid>
+</UserControl>

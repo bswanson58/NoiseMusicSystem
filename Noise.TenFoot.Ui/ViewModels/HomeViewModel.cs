@@ -23,7 +23,14 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		public UiMenuItem SelectedMenuList {
 			get{ return( mSelectedMenuItem ); }
-			set{ mSelectedMenuItem = value; }
+			set{ 
+				mSelectedMenuItem = value;
+ 
+				Navigate( mSelectedMenuItem.Command );
+			}
+		}
+
+		private void Navigate( eMainMenuCommand view ) {
 		}
 
 		protected override void OnViewAttached( object view, object context ) {
