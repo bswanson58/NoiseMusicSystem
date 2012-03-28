@@ -459,7 +459,9 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 				int newPivotalChildIndex = (int)adjustedOffset;
 				if( newPivotalChildIndex != PivotalChildIndex ) {
 					// add necessary correction to keep Offset the same
-					Offset += ( (int)Offset ) / ( childCount - 1 ) + ( Offset < 0 ? -1 : 0 );
+					if( childCount > 1 ) {
+						Offset += ( (int)Offset ) / ( childCount - 1 ) + ( Offset < 0 ? -1 : 0 );
+					}
 				}
 			}
 

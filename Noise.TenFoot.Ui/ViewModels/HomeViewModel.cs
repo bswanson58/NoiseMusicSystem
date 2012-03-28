@@ -1,11 +1,28 @@
 ﻿using Caliburn.Micro;
+using Noise.TenFoot.Ui.Controls.LoopingListBox;
+using Noise.TenFoot.Ui.Views;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class HomeViewModel : Screen {
-		public BindableCollection<string>	MenuChoices{ get; private set; }
+		private readonly BindableCollection<string>	mMenuChoices;
+		private LoopingListBox	mListBox;
 
 		public HomeViewModel() {
-			MenuChoices = new BindableCollection<string> { "Library", "Favorites", "Queue", "What's New" };
+			mMenuChoices = new BindableCollection<string> { "Library", "Favorites", "Queue", "What's New" };
+		}
+
+		public object MenuChoices {
+			get{ return( mMenuChoices ); }
+		}
+
+		protected override void OnViewAttached( object view, object context ) {
+			base.OnViewAttached( view, context );
+
+			mListBox = (view as HomeView).listBox;
+		}
+
+		public void HitMe() {
+			
 		}
 	}
 }
