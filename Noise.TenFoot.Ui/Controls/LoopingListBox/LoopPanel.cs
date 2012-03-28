@@ -33,36 +33,23 @@ using System.Windows.Media;
 
 namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 	public class LoopPanel : Panel {
-		#region constructors
-
-		#region static
+		private bool	mIsMeasured;
+		private bool	mInMeasure;
+		internal int	PivotalChildIndex { get; private set; }
 
 		static LoopPanel() {
-			EventManager.RegisterClassHandler( typeof( LoopPanel ), FrameworkElement.RequestBringIntoViewEvent, new RequestBringIntoViewEventHandler( OnRequestBringIntoView ) );
+			EventManager.RegisterClassHandler( typeof( LoopPanel ), RequestBringIntoViewEvent, new RequestBringIntoViewEventHandler( OnRequestBringIntoView ));
 		}
-
-		#endregion
-
-		#region public
 
 		public LoopPanel() {
 			PivotalChildIndex = -1;
 		}
 
-		#endregion
-
-		#endregion
-
-		#region dependency properties
-
-		#region BringChildrenIntoView
-
 		/// <summary>
 		/// BringChildrenIntoView Dependency Property
 		/// </summary>
 		public static readonly DependencyProperty BringChildrenIntoViewProperty =
-            DependencyProperty.Register( "BringChildrenIntoView", typeof( bool ), typeof( LoopPanel ),
-				new FrameworkPropertyMetadata( (bool)false ) );
+            DependencyProperty.Register( "BringChildrenIntoView", typeof( bool ), typeof( LoopPanel ), new FrameworkPropertyMetadata( false ));
 
 		/// <summary>
 		/// Gets or sets the BringChildrenIntoView property.  This dependency property 
@@ -74,17 +61,12 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			set { SetValue( BringChildrenIntoViewProperty, value ); }
 		}
 
-		#endregion
-
-		#region Offset
-
 		/// <summary>
 		/// Offset Dependency Property
 		/// </summary>
 		public static readonly DependencyProperty OffsetProperty =
             DependencyProperty.Register( "Offset", typeof( double ), typeof( LoopPanel ),
-				new FrameworkPropertyMetadata( (double)0.5d,
-					FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault ) );
+				new FrameworkPropertyMetadata( 0.5d, FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault ) );
 
 		/// <summary>
 		/// Gets or sets the Offset property.  This dependency property indicates the logical 
@@ -113,17 +95,12 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			set { SetValue( OffsetProperty, value ); }
 		}
 
-		#endregion
-
-		#region Orientation
-
 		/// <summary>
 		/// Orientation Dependency Property
 		/// </summary>
 		public static readonly DependencyProperty OrientationProperty =
             StackPanel.OrientationProperty.AddOwner( typeof( LoopPanel ),
-				new FrameworkPropertyMetadata( (Orientation)Orientation.Horizontal,
-					FrameworkPropertyMetadataOptions.AffectsArrange ) );
+				new FrameworkPropertyMetadata( Orientation.Horizontal, FrameworkPropertyMetadataOptions.AffectsArrange ));
 
 		/// <summary>
 		/// Gets or sets the Orientation property.  This dependency property 
@@ -134,17 +111,12 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			set { SetValue( OrientationProperty, value ); }
 		}
 
-		#endregion
-
-		#region RelativeOffset
-
 		/// <summary>
 		/// RelativeOffset Dependency Property
 		/// </summary>
 		public static readonly DependencyProperty RelativeOffsetProperty =
             DependencyProperty.Register( "RelativeOffset", typeof( double ), typeof( LoopPanel ),
-				new FrameworkPropertyMetadata( (double)0.5d, FrameworkPropertyMetadataOptions.AffectsArrange ),
-					new ValidateValueCallback( IsRelativeOffsetValid ) );
+				new FrameworkPropertyMetadata( 0.5d, FrameworkPropertyMetadataOptions.AffectsArrange ), IsRelativeOffsetValid );
 
 		/// <summary>
 		/// Gets or sets the RelativeOffset property.  This dependency property 
@@ -158,30 +130,36 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 		}
 
 		private static bool IsRelativeOffsetValid( object value ) {
-			double v = (double)value;
+			var	v = (double)value;
+
 			return ( !double.IsNaN( v )
 				&& !double.IsPositiveInfinity( v )
 				&& !double.IsNegativeInfinity( v )
 				&& v >= 0.0d && v <= 1.0d );
 		}
 
-		#endregion
+		public static readonly DependencyProperty LastItemMarginProperty =
+			DependencyProperty.Register( "LastItemMargin", typeof( double ), typeof( LoopPanel ),
+				new FrameworkPropertyMetadata( 0.5d, FrameworkPropertyMetadataOptions.AffectsArrange ), IsLastItemMarginValid );
 
-		#endregion
+		private static bool IsLastItemMarginValid( object value ) {
+			var	v = (double)value;
 
-		#region properties
+			return ( !double.IsNaN( v )
+				&& !double.IsPositiveInfinity( v )
+				&& !double.IsNegativeInfinity( v )
+				&& v >= 0.0d && v <= 10.0d );
+		}
 
-		#region internal
-
-		internal int PivotalChildIndex { get; private set; }
-
-		#endregion
-
-		#endregion
-
-		#region methods
-
-		#region public
+		/// <summary>
+		/// Gets or sets the LastItemMargin property. The dependency property adjusted the spacing
+		/// between the last and first items in the looping list. The amount is measured in terms of
+		/// child item extent i.e. 1.0 represents the height/width of one child item.
+		/// </summary>
+		public double LastItemMargin {
+			get{ return((double)GetValue( LastItemMarginProperty )); }
+			set{ SetValue( LastItemMarginProperty, value ); }
+		}
 
 		/// <summary>
 		/// Provides a helper method for scrolling the panel by viewport units rather than
@@ -194,24 +172,25 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			if( childCount == 0 ) return;
 
 			// determine the new Offset value required to move the specified viewport units
-			double newOffset = Offset;
-			int childIndex = PivotalChildIndex;
-			bool isHorizontal = ( Orientation == Orientation.Horizontal );
-			bool isForwardMovement = ( viewportUnits > 0 );
-			int directionalFactor = isForwardMovement ? 1 : -1;
-			double remainingExtent = Math.Abs( viewportUnits );
+			double	newOffset = Offset;
+			int		childIndex = PivotalChildIndex;
+			bool	isHorizontal = ( Orientation == Orientation.Horizontal );
+			bool	isForwardMovement = ( viewportUnits > 0 );
+			int		directionalFactor = isForwardMovement ? 1 : -1;
+			double	remainingExtent = Math.Abs( viewportUnits );
 			UIElement child = InternalChildren[childIndex];
-			double childExtent = isHorizontal ? child.DesiredSize.Width : child.DesiredSize.Height;
-			double fractionalOffset = ( Offset > 0 ) ? Offset - Math.Truncate( Offset ) : 1.0d - Math.Truncate( Offset ) + Offset;
-			double childRemainingExtent = isForwardMovement ? childExtent - fractionalOffset * childExtent : fractionalOffset * childExtent;
-			if( DoubleHelper.LessThanOrVirtuallyEqual( childRemainingExtent, remainingExtent ) ) {
+			double	childExtent = isHorizontal ? child.DesiredSize.Width : child.DesiredSize.Height;
+			double	fractionalOffset = ( Offset > 0 ) ? Offset - Math.Truncate( Offset ) : 1.0d - Math.Truncate( Offset ) + Offset;
+			double	childRemainingExtent = isForwardMovement ? childExtent - fractionalOffset * childExtent : fractionalOffset * childExtent;
+
+			if( DoubleHelper.LessThanOrVirtuallyEqual( childRemainingExtent, remainingExtent )) {
 				newOffset = Math.Round( isForwardMovement ? newOffset + 1 - fractionalOffset : newOffset - fractionalOffset );
 				remainingExtent -= childRemainingExtent;
 				while( DoubleHelper.StrictlyGreaterThan( remainingExtent, 0.0d ) ) {
 					childIndex = isForwardMovement ? ( childIndex + 1 ) % childCount : ( childIndex == 0 ? childCount - 1 : childIndex - 1 );
 					child = InternalChildren[childIndex];
 					childExtent = isHorizontal ? child.DesiredSize.Width : child.DesiredSize.Height;
-					if( DoubleHelper.LessThanOrVirtuallyEqual( childExtent, remainingExtent ) ) {
+					if( DoubleHelper.LessThanOrVirtuallyEqual( childExtent, remainingExtent )) {
 						newOffset += 1.0d * directionalFactor;
 						remainingExtent -= childExtent;
 					}
@@ -223,24 +202,21 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			}
 			else {
 				newOffset += remainingExtent * directionalFactor / childExtent;
-				remainingExtent = 0.0d;
 			}
+
 			Offset = newOffset;
 		}
 
-		#endregion
-
-		#region protected
-
 		protected override Size ArrangeOverride( Size finalSize ) {
 			UIElementCollection children = InternalChildren;
-			bool isHorizontal = ( Orientation == Orientation.Horizontal );
-			Rect childRect = new Rect();
-			double childExtent = 0.0;
-			int childCount = children.Count;
-			Rect controlBounds = new Rect( finalSize );
-			double nextEdge = 0, priorEdge = 0;
-			int nextIndex = 0, priorIndex = 0;
+			bool	isHorizontal = ( Orientation == Orientation.Horizontal );
+			var		childRect = new Rect();
+			double	childExtent;
+			int		childCount = children.Count;
+			var		controlBounds = new Rect( finalSize );
+			double	nextEdge = 0, priorEdge = 0;
+			int		nextIndex = 0, priorIndex = 0;
+
 			PivotalChildIndex = -1;
 
 			// arrange pivotal child
@@ -255,10 +231,10 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 				nextIndex = ( PivotalChildIndex + 1 ) % childCount;
 				priorIndex = ( PivotalChildIndex == 0 ) ? childCount - 1 : PivotalChildIndex - 1;
 
-				UIElement child = (UIElement)children[PivotalChildIndex];
+				var child = children[PivotalChildIndex];
 				if( isHorizontal ) {
 					childExtent = child.DesiredSize.Width;
-					childRect.X = finalSize.Width * RelativeOffset - childExtent * ( adjustedOffset - Math.Truncate( adjustedOffset ) );
+					childRect.X = finalSize.Width * RelativeOffset - childExtent * ( adjustedOffset - Math.Truncate( adjustedOffset ));
 					childRect.Width = childExtent;
 					nextEdge = childRect.X + childExtent;
 					priorEdge = childRect.X;
@@ -266,17 +242,25 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 				}
 				else {
 					childExtent = child.DesiredSize.Height;
-					childRect.Y = finalSize.Height * RelativeOffset - childExtent * ( adjustedOffset - Math.Truncate( adjustedOffset ) );
+					childRect.Y = finalSize.Height * RelativeOffset - childExtent * ( adjustedOffset - Math.Truncate( adjustedOffset ));
 					childRect.Height = childExtent;
 					nextEdge = childRect.Y + childExtent;
 					priorEdge = childRect.Y;
 					childRect.Width = Math.Max( finalSize.Width, child.DesiredSize.Width );
 				}
 				child.Arrange( childRect );
+
+				if( PivotalChildIndex == 0 ) {
+					priorEdge -= LastItemMargin * childExtent;
+				}
+				if( PivotalChildIndex == ( childCount - 1 )) {
+					nextEdge += LastItemMargin * childExtent;
+				}
 			}
 
 			// arrange subsequent and prior children until we run out of room
 			bool isNextFull = false, isPriorFull = false;
+
 			for( int i = 1; i < childCount; i++ ) {
 				// for odd iterations, arrange the next child
 				// for even iterations, arrange the prior child
@@ -298,9 +282,11 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 					childIndex = priorIndex;
 					priorIndex = ( priorIndex > 0 ) ? priorIndex - 1 : childCount - 1;
 				}
-				UIElement child = children[childIndex];
-				bool childArranged = false;
-				if( !( isNextFull && isPriorFull ) ) {
+
+				UIElement	child = children[childIndex];
+				bool		childArranged = false;
+
+				if( !( isNextFull && isPriorFull )) {
 					// determine the child's arrange rect
 					if( isHorizontal ) {
 						childExtent = child.DesiredSize.Width;
@@ -326,23 +312,40 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 					}
 
 					// arrange the child
-					Rect intersection = Rect.Intersect( childRect, controlBounds );
+					var intersection = Rect.Intersect( childRect, controlBounds );
+
 					if( !intersection.IsEmpty
 						&& intersection.Width * intersection.Height > 1.0e-10 ) {
 						if( isHorizontal ) {
 							if( isArrangingNext ) {
 								nextEdge = childRect.X + childExtent;
+
+								if( childIndex == ( childCount - 1 )) {
+									nextEdge += LastItemMargin * childExtent;
+								}
 							}
 							else {
 								priorEdge = childRect.X;
+
+								if( childIndex == 0 ) {
+									priorEdge -= LastItemMargin * childExtent;
+								}
 							}
 						}
 						else {
 							if( isArrangingNext ) {
 								nextEdge = childRect.Y + childExtent;
+
+								if( childIndex == ( childCount - 1 )) {
+									nextEdge += LastItemMargin * childExtent;
+								}
 							}
 							else {
 								priorEdge = childRect.Y;
+
+								if( childIndex == 0 ) {
+									priorEdge -= LastItemMargin * childExtent;
+								}
 							}
 						}
 						child.Arrange( childRect );
@@ -362,28 +365,44 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 				// if there was no room for the child, arrange it to a rect with no width or height 
 				// as a render optimization; preserve layout placement to ensure that keyboard 
 				// navigation works as expected
-				if( !childArranged ) {
+				if(!childArranged ) {
 					if( isArrangingNext && isNextFull ) {
 						if( isHorizontal ) {
 							childRect.X = nextEdge;
 							nextEdge = childRect.X + child.DesiredSize.Width;
+
+							if( childIndex == ( childCount - 1 )) {
+								nextEdge += LastItemMargin * child.DesiredSize.Width;
+							}
 						}
 						else {
 							childRect.Y = nextEdge;
 							nextEdge = childRect.Y + child.DesiredSize.Height;
+
+							if( childIndex == ( childCount - 1 )) {
+								nextEdge += LastItemMargin * child.DesiredSize.Height;
+							}
 						}
 						childRect.Width = 0;
 						childRect.Height = 0;
 						child.Arrange( childRect );
 					}
-					else if( !isArrangingNext && isPriorFull ) {
+					else if(!isArrangingNext && isPriorFull ) {
 						if( isHorizontal ) {
 							childRect.X = priorEdge - child.DesiredSize.Width;
 							priorEdge = childRect.X;
+
+							if( childIndex == 0 ) {
+								priorEdge -= LastItemMargin * child.DesiredSize.Width;
+							}
 						}
 						else {
 							childRect.Y = priorEdge - child.DesiredSize.Height;
 							priorEdge = childRect.Y;
+
+							if( childIndex == 0 ) {
+								priorEdge -= LastItemMargin * child.DesiredSize.Height;
+							}
 						}
 						childRect.Width = 0;
 						childRect.Height = 0;
@@ -391,12 +410,14 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 					}
 				}
 			}
+
 			return finalSize;
 		}
 
 		protected override Size MeasureOverride( Size availableSize ) {
-			Size desiredSize = new Size();
-			_inMeasure = true;
+			var		desiredSize = new Size();
+
+			mInMeasure = true;
 			try {
 				UIElementCollection children = InternalChildren;
 				bool isHorizontal = ( Orientation == Orientation.Horizontal );
@@ -419,10 +440,18 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 					if( isHorizontal ) {
 						desiredSize.Width += childDesiredSize.Width;
 						desiredSize.Height = Math.Max( desiredSize.Height, childDesiredSize.Height );
+
+						if( i == 0 ) {
+							desiredSize.Width += LastItemMargin * childDesiredSize.Width;
+						}
 					}
 					else {
 						desiredSize.Width = Math.Max( desiredSize.Width, childDesiredSize.Width );
 						desiredSize.Height += childDesiredSize.Height;
+
+						if( i == 0 ) {
+							desiredSize.Height += LastItemMargin * childDesiredSize.Height;
+						}
 					}
 				}
 
@@ -435,11 +464,12 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 					desiredSize.Height = Math.Min( availableSize.Height, desiredSize.Height );
 				}
 
-				_isMeasured = true;
+				mIsMeasured = true;
 			}
 			finally {
-				_inMeasure = false;
+				mInMeasure = false;
 			}
+
 			return desiredSize;
 		}
 
@@ -448,19 +478,23 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			// so that the children don't shift when the collection changes
 
 			// we do not want to process changes that occur as part of container generation
-			if( _inMeasure || !_isMeasured ) return;
+			if( mInMeasure || !mIsMeasured ) return;
 
-			int childCount = InternalChildren.Count;
+			var childCount = InternalChildren.Count;
+
 			if( visualAdded != null ) {
 				double adjustedOffset = Offset % childCount;
+
 				if( adjustedOffset < 0 ) {
 					adjustedOffset += childCount;
 				}
-				int newPivotalChildIndex = (int)adjustedOffset;
+				
+				var		newPivotalChildIndex = (int)adjustedOffset;
+
 				if( newPivotalChildIndex != PivotalChildIndex ) {
 					// add necessary correction to keep Offset the same
 					if( childCount > 1 ) {
-						Offset += ( (int)Offset ) / ( childCount - 1 ) + ( Offset < 0 ? -1 : 0 );
+						Offset += ((int)Offset ) / ( childCount - 1 ) + ( Offset < 0 ? -1 : 0 );
 					}
 				}
 			}
@@ -473,18 +507,18 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			base.OnVisualChildrenChanged( visualAdded, visualRemoved );
 		}
 
-		#endregion
-
-		#region private
-
 		private static void OnRequestBringIntoView( object sender, RequestBringIntoViewEventArgs e ) {
-			LoopPanel lp = sender as LoopPanel;
-			DependencyObject target = e.TargetObject as DependencyObject;
-			if( lp.BringChildrenIntoView && target != lp ) {
+			var		lp = sender as LoopPanel;
+			var		target = e.TargetObject;
+
+			if(( lp != null ) &&
+			   ( lp.BringChildrenIntoView ) &&
+			   ( target != lp )) {
 				UIElement child = null;
+
 				while( target != null ) {
 					if( ( target is UIElement )
-						&& lp.InternalChildren.Contains( target as UIElement ) ) {
+						&& lp.InternalChildren.Contains( target as UIElement )) {
 						child = target as UIElement;
 						break;
 					}
@@ -492,8 +526,8 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 					if( target == lp ) break;
 				}
 
-				if( child != null
-					&& lp.InternalChildren.Contains( child ) ) {
+				if(( child != null ) &&
+				   ( lp.InternalChildren.Contains( child ))) {
 					e.Handled = true;
 
 					// determine if the child needs to be brought into view
@@ -520,16 +554,5 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 				}
 			}
 		}
-
-		#endregion
-
-		#endregion
-
-		#region fields
-
-		private bool _isMeasured = false;
-		private bool _inMeasure = false;
-
-		#endregion
 	}
 }

@@ -21,8 +21,12 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			mListBox = (view as HomeView).listBox;
 		}
 
-		public void HitMe() {
-			
+		public void ScrollUp() {
+			mListBox.Offset += 1.0;
+		}
+
+		public void ScrollDown() {
+			mListBox.Offset -= 1.0;
 		}
 	}
 }

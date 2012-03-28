@@ -24,6 +24,7 @@
                                 <controls:LoopPanel x:Name="lp"
                                                     BringChildrenIntoView="True"
                                                     IsItemsHost="True"
+                                                    LastItemMargin="{TemplateBinding LastItemMargin}"
                                                     Orientation="{TemplateBinding Orientation}"
                                                     RelativeOffset="{TemplateBinding RelativeOffset}"
                                                     Offset="{Binding Offset,
@@ -185,6 +186,7 @@
     <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <controls:LoopingListBox x:Name="listBox"
@@ -193,7 +195,21 @@
                                  BorderThickness="0"
                                  ItemContainerStyle="{StaticResource CharacterContainerStyle}"
                                  ItemsSource="{Binding Source={StaticResource Characters}}"
+                                 LastItemMargin="1.25"
                                  Orientation="Vertical"
-                                 Style="{StaticResource LLStyle}" />
+                                 RelativeOffset="0.4"
+                                 Style="{StaticResource LLStyle}"
+                                 Offset="0.0" />
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button x:Name="ScrollUp"
+                    Width="130"
+                    Margin="15,0,0,0"
+                    Content="Scroll Up" />
+            <Button x:Name="ScrollDown"
+                    Width="130"
+                    Margin="15,0,0,0"
+                    Content="Scroll Down" />
+        </StackPanel>
     </Grid>
 </UserControl>

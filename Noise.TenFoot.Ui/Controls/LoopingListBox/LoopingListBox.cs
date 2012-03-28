@@ -33,108 +33,105 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
-#if SURFACE
-    public class LoopingListBox : Microsoft.Surface.Presentation.Controls.SurfaceListBox
-#else
-	public class LoopingListBox : ListBox
-#endif
- {
-		#region constructors
-
-		#region static
+	public class LoopingListBox : ListBox {
+		private		Point		mLastDragPosition;
+		protected	InputDevice	CapturedDevice { get; set; }
+		protected	LoopPanel	LoopPanel { get; private set; }
 
 		static LoopingListBox() {
-			DefaultStyleKeyProperty.OverrideMetadata( typeof( LoopingListBox ), new FrameworkPropertyMetadata( typeof( LoopingListBox ) ) );
-			EventManager.RegisterClassHandler( typeof( LoopingListBox ), LoopingListBox.BeginDragEvent, new BeginDragEventHandler( OnBeginDrag ) );
+			DefaultStyleKeyProperty.OverrideMetadata( typeof( LoopingListBox ), new FrameworkPropertyMetadata( typeof( LoopingListBox )));
+			EventManager.RegisterClassHandler( typeof( LoopingListBox ), BeginDragEvent, new BeginDragEventHandler( OnBeginDrag ));
 		}
 
-		#endregion
-
-		#endregion
-
-		#region static members
-
-		#region private methods
-
 		private static Visual GetDescendantByType( Visual element, Type type ) {
-			if( element == null ) return null;
+			if( element == null ) {
+				return null;
+			}
 
-			if( element.GetType() == type || element.GetType().IsSubclassOf( type ) ) return element;
+			if( element.GetType() == type || element.GetType().IsSubclassOf( type )) {
+				return element;
+			}
 
 			Visual foundElement = null;
-			if( element is FrameworkElement )
+			if( element is FrameworkElement ) {
 				( element as FrameworkElement ).ApplyTemplate();
+			}
 
-			for( int i = 0;
-				i < VisualTreeHelper.GetChildrenCount( element ); i++ ) {
-				Visual visual = VisualTreeHelper.GetChild( element, i ) as Visual;
+			for( int i = 0; i < VisualTreeHelper.GetChildrenCount( element ); i++ ) {
+				var visual = VisualTreeHelper.GetChild( element, i ) as Visual;
+
 				foundElement = GetDescendantByType( visual, type );
-				if( foundElement != null )
+				if( foundElement != null ) {
 					break;
+				}
 			}
 
 			return foundElement;
 		}
 
 		private static void OnDragHandleLeftButtonDown( object sender, MouseButtonEventArgs e ) {
-			UIElement uie = sender as UIElement;
-			SetIsDragging( uie, true );
-			SetDragOrigin( uie, e.GetPosition( uie ) );
-			uie.CaptureMouse();
+			var uie = sender as UIElement;
+			
+			if( uie != null ) {
+				SetIsDragging( uie, true );
+				SetDragOrigin( uie, e.GetPosition( uie ) );
+				uie.CaptureMouse();
+			}
 		}
 
 		private static void OnDragHandleLeftButtonUp( object sender, MouseButtonEventArgs e ) {
-			UIElement uie = sender as UIElement;
-			uie.ClearValue( DragOriginProperty );
-			uie.ClearValue( IsDraggingProperty );
-			if( Mouse.Captured == uie ) {
-				uie.ReleaseMouseCapture();
+			var uie = sender as UIElement;
+
+			if( uie != null ) {
+				uie.ClearValue( DragOriginProperty );
+				uie.ClearValue( IsDraggingProperty );
+				if( Mouse.Captured == uie ) {
+					uie.ReleaseMouseCapture();
+				}
 			}
 		}
 
 		private static void OnDragHandleMouseLeave( object sender, MouseEventArgs e ) {
-			UIElement uie = sender as UIElement;
-			uie.ClearValue( DragOriginProperty );
-			uie.ClearValue( IsDraggingProperty );
-			if( Mouse.Captured == uie ) {
-				uie.ReleaseMouseCapture();
+			var uie = sender as UIElement;
+
+			if( uie != null ) {
+				uie.ClearValue( DragOriginProperty );
+				uie.ClearValue( IsDraggingProperty );
+				if( Mouse.Captured == uie ) {
+					uie.ReleaseMouseCapture();
+				}
 			}
 		}
 
 		private static void OnDragHandleMouseMove( object sender, MouseEventArgs e ) {
-			UIElement uie = sender as UIElement;
-			if( GetIsDragging( uie ) ) {
-				SetIsDragging( uie, false );
-				Point dragOrigin = GetDragOrigin( uie );
-				e.Handled = true;
-				if( Mouse.Captured == uie ) {
-					uie.ReleaseMouseCapture();
+			var uie = sender as UIElement;
+			if( uie != null ) {
+				if( GetIsDragging( uie )) {
+					SetIsDragging( uie, false );
+					Point dragOrigin = GetDragOrigin( uie );
+					e.Handled = true;
+					if( Mouse.Captured == uie ) {
+						uie.ReleaseMouseCapture();
+					}
+					RaiseBeginDragEvent( uie, e.Device, dragOrigin, e.GetPosition( uie ) );
 				}
-				RaiseBeginDragEvent( uie, e.Device, dragOrigin, e.GetPosition( uie ) );
 			}
 		}
 
 		private static void OnBeginDrag( object sender, BeginDragEventArgs e ) {
-			UIElement element = e.OriginalSource as UIElement;
-			LoopingListBox loopingListBox = sender as LoopingListBox;
+			var element = e.OriginalSource as UIElement;
+			var loopingListBox = sender as LoopingListBox;
 
-			if( loopingListBox != null
-				&& loopingListBox.LoopPanel != null
-				&& element != null ) {
-				Point origin = element.TranslatePoint( e.DragOrigin, loopingListBox.LoopPanel );
-				Point current = element.TranslatePoint( e.CurrentPosition, loopingListBox.LoopPanel );
+			if(( loopingListBox != null ) &&
+			   ( loopingListBox.LoopPanel != null ) &&
+			   ( element != null )) {
+				var origin = element.TranslatePoint( e.DragOrigin, loopingListBox.LoopPanel );
+				var current = element.TranslatePoint( e.CurrentPosition, loopingListBox.LoopPanel );
+
 				loopingListBox.BeginDragOperation( e.Device, origin );
 				loopingListBox.UpdateDragPosition( current );
 			}
 		}
-
-		#endregion
-
-		#endregion
-
-		#region dependency properties
-
-		#region DragOrigin
 
 		/// <summary>
 		/// DragOrigin Protected Dependency Property
@@ -159,16 +156,12 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			d.SetValue( DragOriginProperty, value );
 		}
 
-		#endregion
-
-		#region IsDragging
-
 		/// <summary>
 		/// IsDragging Protected Dependency Property
 		/// </summary>
 		protected static readonly DependencyProperty IsDraggingProperty
             = DependencyProperty.RegisterAttached( "IsDragging", typeof( bool ), typeof( LoopingListBox ),
-				new FrameworkPropertyMetadata( (bool)false ) );
+				new FrameworkPropertyMetadata( false ));
 
 		/// <summary>
 		/// Gets the IsDragging property.  This dependency property 
@@ -186,17 +179,12 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			d.SetValue( IsDraggingProperty, value );
 		}
 
-		#endregion
-
-		#region IsDragHandle
-
 		/// <summary>
 		/// IsDragHandle Attached Dependency Property
 		/// </summary>
 		public static readonly DependencyProperty IsDragHandleProperty =
             DependencyProperty.RegisterAttached( "IsDragHandle", typeof( bool ), typeof( LoopingListBox ),
-				new FrameworkPropertyMetadata( (bool)false,
-					new PropertyChangedCallback( OnIsDragHandleChanged ) ) );
+				new FrameworkPropertyMetadata( false, OnIsDragHandleChanged ));
 
 		/// <summary>
 		/// Gets the IsDragHandle property.  This dependency property 
@@ -220,8 +208,9 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 		private static void OnIsDragHandleChanged( DependencyObject d, DependencyPropertyChangedEventArgs e ) {
 			// attach/detach the drag behavior on the target element
 			if( d is UIElement ) {
-				UIElement uie = d as UIElement;
-				if( (bool)e.NewValue ) {
+				var uie = d as UIElement;
+
+				if((bool)e.NewValue ) {
 					uie.MouseLeave += OnDragHandleMouseLeave;
 					uie.AddHandler( MouseLeftButtonDownEvent, new MouseButtonEventHandler( OnDragHandleLeftButtonDown ), true );
 					uie.AddHandler( MouseLeftButtonUpEvent, new MouseButtonEventHandler( OnDragHandleLeftButtonUp ), true );
@@ -236,15 +225,11 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			}
 		}
 
-		#endregion
-
-		#region Offset
-
 		/// <summary>
 		/// Offset Dependency Property
 		/// </summary>
 		public static readonly DependencyProperty OffsetProperty =
-            LoopPanel.OffsetProperty.AddOwner( typeof( LoopingListBox ) );
+            LoopPanel.OffsetProperty.AddOwner( typeof( LoopingListBox ));
 
 		/// <summary>
 		/// Gets or sets the Offset property.  This dependency property 
@@ -255,15 +240,11 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			set { SetValue( OffsetProperty, value ); }
 		}
 
-		#endregion
-
-		#region Orientation
-
 		/// <summary>
 		/// Orientation Dependency Property
 		/// </summary>
 		public static readonly DependencyProperty OrientationProperty =
-            LoopPanel.OrientationProperty.AddOwner( typeof( LoopingListBox ) );
+            LoopPanel.OrientationProperty.AddOwner( typeof( LoopingListBox ));
 
 		/// <summary>
 		/// Gets or sets the Orientation property.  This dependency property 
@@ -273,10 +254,6 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			get { return (Orientation)GetValue( OrientationProperty ); }
 			set { SetValue( OrientationProperty, value ); }
 		}
-
-		#endregion
-
-		#region RelativeOffset
 
 		/// <summary>
 		/// RelativeOffset Dependency Property
@@ -293,28 +270,21 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			set { SetValue( RelativeOffsetProperty, value ); }
 		}
 
-		#endregion
+		public static readonly DependencyProperty LastItemMarginProperty =
+			LoopPanel.LastItemMarginProperty.AddOwner( typeof( LoopingListBox ));
 
-		#endregion
-
-		#region properties
-
-		#region protected
-
-		protected InputDevice CapturedDevice { get; set; }
-
-		protected LoopPanel LoopPanel { get; private set; }
-
-		#endregion
-
-		#endregion
-
-		#region methods
-
-		#region public
+		/// <summary>
+		/// Gets or sets the LastItemMargin property. The dependency property adjusted the spacing
+		/// between the last and first items in the looping list. The amount is measured in terms of
+		/// child item extent i.e. 1.0 represents the height/width of one child item.
+		/// </summary>
+		public double LastItemMargin {
+			get{ return((double)GetValue( LastItemMarginProperty )); }
+			set{ SetValue( LastItemMarginProperty, value ); }
+		}
 
 		public override void OnApplyTemplate() {
-			LoopPanel = GetDescendantByType( this, typeof( LoopPanel ) ) as LoopPanel;
+			LoopPanel = GetDescendantByType( this, typeof( LoopPanel )) as LoopPanel;
 			base.OnApplyTemplate();
 		}
 
@@ -324,19 +294,15 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			}
 		}
 
-		#endregion
-
-		#region protected
-
 		protected virtual bool BeginDragOperation( InputDevice deviceToCapture, Point initialDragPosition ) {
 			// This is a helper method that provides for easy dragging of the 
 			// LoopPanel's Offset using the Mouse. It can be overridden to provide 
 			// support for other input devices like a Surface Contact.
 			bool result = false;
 			if( CapturedDevice == null ) {
-				_lastDragPosition = initialDragPosition;
+				mLastDragPosition = initialDragPosition;
 				if( deviceToCapture is MouseDevice ) {
-					MouseDevice md = deviceToCapture as MouseDevice;
+					var md = deviceToCapture as MouseDevice;
 
 					if( md.Captured != null ) md.Captured.ReleaseMouseCapture();
 
@@ -378,8 +344,10 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 		}
 
 		protected override void OnMouseMove( MouseEventArgs e ) {
-			if( e.Device == CapturedDevice && LoopPanel != null ) {
-				UpdateDragPosition( ( CapturedDevice as MouseDevice ).GetPosition( LoopPanel ) );
+			if(( e.Device == CapturedDevice ) &&
+			   ( CapturedDevice is MouseDevice ) &&
+			   ( LoopPanel != null )) {
+				UpdateDragPosition(( CapturedDevice as MouseDevice ).GetPosition( LoopPanel ) );
 				e.Handled = true;
 			}
 			else {
@@ -392,20 +360,10 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 				|| LoopPanel.Children.Count == 0 ) return;
 
 			LoopPanel.Scroll( ( LoopPanel.Orientation == Orientation.Horizontal )
-				? ( _lastDragPosition.X - currentDragPosition.X )
-				: ( _lastDragPosition.Y - currentDragPosition.Y ) );
-			_lastDragPosition = currentDragPosition;
+				? ( mLastDragPosition.X - currentDragPosition.X )
+				: ( mLastDragPosition.Y - currentDragPosition.Y ) );
+			mLastDragPosition = currentDragPosition;
 		}
-
-		#endregion
-
-		#endregion
-
-		#region events
-
-		#region public
-
-		#region BeginDrag
 
 		/// <summary>
 		/// BeginDrag Routed Event
@@ -439,24 +397,14 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 		/// <param name="dragOrigin">The origin of the drag operation relative to the input element raising the event.</param>
 		/// <param name="currentPosition">The current position of the input device relative to the input element raising the event.</param>
 		internal static BeginDragEventArgs RaiseBeginDragEvent( DependencyObject target, InputDevice device, Point dragOrigin, Point currentPosition ) {
-			if( target == null ) return null;
+			if( target == null ) {
+				return null;
+			}
 
-			BeginDragEventArgs args = new BeginDragEventArgs( device, dragOrigin, currentPosition );
-			args.RoutedEvent = BeginDragEvent;
+			var args = new BeginDragEventArgs( device, dragOrigin, currentPosition ) { RoutedEvent = BeginDragEvent };
+
 			RoutedEventHelper.RaiseEvent( target, args );
 			return args;
 		}
-
-		#endregion
-
-		#endregion
-
-		#endregion
-
-		#region fields
-
-		private Point _lastDragPosition;
-
-		#endregion
 	}
 }
