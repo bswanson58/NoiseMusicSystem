@@ -19,6 +19,7 @@
                             <LoopingListBox:LoopPanel x:Name="lp"
                                                       BringChildrenIntoView="True"
                                                       IsItemsHost="True"
+                                                      LastItemMargin="{TemplateBinding LastItemMargin}"
                                                       Orientation="{TemplateBinding Orientation}"
                                                       RelativeOffset="{TemplateBinding RelativeOffset}"
                                                       Offset="{Binding Offset,
