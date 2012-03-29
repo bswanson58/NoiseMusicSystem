@@ -138,6 +138,10 @@
       <Project>{3DF05387-D7BC-41D8-AE22-85A576BD3267}</Project>
       <Name>ReusableBits.TestSupport</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ReusableBits\ReusableBits.csproj">
+      <Project>{0522B043-A04A-4669-90DB-204C96D52224}</Project>
+      <Name>ReusableBits</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\TheRollingStonesBiography.txt" />

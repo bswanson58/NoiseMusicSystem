@@ -12,7 +12,7 @@ using Noise.UI.Behaviours;
 using Noise.UI.Behaviours.EventCommandTriggers;
 using Noise.UI.Controls;
 using Noise.UI.Dto;
-using Noise.UI.Support;
+using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {

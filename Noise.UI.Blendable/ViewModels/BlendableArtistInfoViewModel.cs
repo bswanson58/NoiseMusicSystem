@@ -8,9 +8,8 @@ using Moq;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.UI.Support;
 using Noise.UI.ViewModels;
-using ReusableBits.Mvvm.ViewModelSupport;
+using ReusableBits;
 using ReusableBits.TestSupport.Threading;
 
 namespace Noise.UI.Blendable.ViewModels {

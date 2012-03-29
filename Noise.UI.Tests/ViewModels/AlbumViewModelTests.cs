@@ -10,8 +10,8 @@ using NUnit.Framework;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.UI.Support;
 using Noise.UI.ViewModels;
+using ReusableBits;
 using ReusableBits.TestSupport.Mocking;
 using ReusableBits.TestSupport.Threading;
 

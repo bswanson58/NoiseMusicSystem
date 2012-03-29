@@ -12,9 +12,8 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Behaviours;
 using Noise.UI.Dto;
-using Noise.UI.Support;
 using Observal.Extensions;
-using ReusableBits.Mvvm.ViewModelSupport;
+using ReusableBits;
 
 namespace Noise.UI.ViewModels {
 	internal class AlbumEditRequest : InteractionRequestData<AlbumEditDialogModel> {

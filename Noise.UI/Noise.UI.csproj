@@ -266,7 +266,6 @@
     </Compile>
     <Compile Include="Support\IDialogService.cs" />
     <Compile Include="Support\MouseUtilities.cs" />
-    <Compile Include="Support\TaskHandler.cs" />
     <Compile Include="Support\ViewModelResolver.cs" />
     <Compile Include="ValueConverters\BooleanVisibilityConverter.cs" />
     <Compile Include="ValueConverters\ByteImageConverter.cs" />
@@ -457,6 +456,10 @@
     <ProjectReference Include="..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
       <Project>{8930138B-F96A-4A56-84CF-D660730989C9}</Project>
       <Name>ReusableBits.Mvvm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReusableBits\ReusableBits.csproj">
+      <Project>{0522B043-A04A-4669-90DB-204C96D52224}</Project>
+      <Name>ReusableBits</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

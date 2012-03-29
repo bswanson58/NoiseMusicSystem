@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Noise.UI.Support {
+namespace ReusableBits {
 	public class TaskHandler<TResult> {
 		private readonly TaskScheduler			mUiTaskScheduler;
 		private readonly TaskScheduler			mTaskScheduler;
