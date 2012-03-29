@@ -38,7 +38,6 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Text="Artist List View" />
@@ -50,20 +49,14 @@
                  Background="Transparent"
                  ItemTemplate="{StaticResource BasicArtist}" />
 
-        <Button x:Name="Albums"
-                Grid.Row="2"
-                Width="120"
-                HorizontalAlignment="Left"
-                Content="Albums" />
-
         <Button x:Name="Done"
-                Grid.Row="3"
+                Grid.Row="2"
                 Width="120"
                 HorizontalAlignment="Left"
                 Content="Return" />
 
         <Button x:Name="Home"
-                Grid.Row="4"
+                Grid.Row="3"
                 Width="120"
                 HorizontalAlignment="Left"
                 Content="Home" />
