@@ -13,6 +13,25 @@
              mc:Ignorable="d">
 
     <Grid>
-        <TextBlock Text="Favorites View" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Favorites View" />
+
+        <Button x:Name="Done"
+                Grid.Row="2"
+                Width="120"
+                HorizontalAlignment="Left"
+                Content="Return" />
+
+        <Button x:Name="Home"
+                Grid.Row="3"
+                Width="120"
+                HorizontalAlignment="Left"
+                Content="Home" />
     </Grid>
 </UserControl>

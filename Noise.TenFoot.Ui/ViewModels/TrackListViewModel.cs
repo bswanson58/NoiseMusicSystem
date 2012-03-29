@@ -3,7 +3,7 @@ using Noise.TenFoot.Ui.Interfaces;
 using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class FavoritesViewModel : Screen, IFavoritesList {
+	public class TrackListViewModel : Screen, IAlbumTrackList {
 		public void Home() {
 			if( Parent is INavigate ) {
 				var controller = Parent as INavigate;

@@ -6,7 +6,9 @@ using Microsoft.Practices.Unity;
 using Noise.AppSupport;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
+using Noise.TenFoot.Ui.Interfaces;
 using ReusableBits.Mvvm.CaliburnSupport;
+using UnityConfiguration;
 
 namespace Noise.TenFooter {
 	public class AppBootstrapper : UnityBootstrapper<ShellViewModel> {
@@ -25,11 +27,15 @@ namespace Noise.TenFooter {
 
 			var iocConfig = new IocConfiguration( Container );
 			iocConfig.InitializeIoc( ApplicationUsage.TenFootUi );
+
+			container.Configure( c => c.AddRegistry<UnityClassRegistration>());
+
+			// var report = container.WhatDoIHave();
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Assembly> SelectAssemblies() {
 			return( new []{ Assembly.GetExecutingAssembly(),
-			              	Assembly.GetAssembly( typeof( TenFoot.Ui.ViewModels.HomeViewModel ))
+			              	Assembly.GetAssembly( typeof( IHome ))
 			              } );
 		}
 

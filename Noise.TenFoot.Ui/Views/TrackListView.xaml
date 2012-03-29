@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Noise.TenFoot.Ui.Views.ArtistListView"
+﻿<UserControl x:Class="Noise.TenFoot.Ui.Views.TrackListView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cal="http://www.caliburnproject.org"
@@ -21,16 +21,10 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Artist List View" />
-
-        <Button x:Name="Albums"
-                Grid.Row="2"
-                Width="120"
-                HorizontalAlignment="Left"
-                Content="Albums" />
+        <TextBlock Grid.Row="0" Text="Track List View" />
 
         <Button x:Name="Done"
-                Grid.Row="3"
+                Grid.Row="2"
                 Width="120"
                 HorizontalAlignment="Left"
                 Content="Return" />
