@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Dto="clr-namespace:Noise.Infrastructure.Dto;assembly=Noise.Infrastructure"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ViewModels="clr-namespace:Noise.TenFoot.Ui.ViewModels"
              cal:Bind.AtDesignTime="True"
@@ -11,6 +12,25 @@
              d:DesignHeight="500"
              d:DesignWidth="700"
              mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="BasicArtist" DataType="{x:Type Dto:DbArtist}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           FontSize="18"
+                           Text="{Binding Path=Name}" />
+                <TextBlock Grid.Column="1"
+                           Margin="0,0,7,0"
+                           Text="{Binding Path=AlbumCount}"
+                           TextAlignment="Right" />
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -22,6 +42,13 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Text="Artist List View" />
+
+        <ListBox x:Name="ArtistList"
+                 Grid.Row="1"
+                 Margin="7,0"
+                 HorizontalContentAlignment="Stretch"
+                 Background="Transparent"
+                 ItemTemplate="{StaticResource BasicArtist}" />
 
         <Button x:Name="Albums"
                 Grid.Row="2"

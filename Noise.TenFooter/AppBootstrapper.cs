@@ -43,8 +43,8 @@ namespace Noise.TenFooter {
 			NoiseLogger.Current.LogMessage( "============================" );
 			NoiseLogger.Current.LogMessage( "Noise.TenFooter is starting." );
 
-//			mNoiseManager = Container.Resolve<INoiseManager>();
-//			mNoiseManager.Initialize();
+			mNoiseManager = Container.Resolve<INoiseManager>();
+			mNoiseManager.Initialize();
 
 			LogManager.GetLog = type => new CaliburnDebugLogger( type) ;
 
