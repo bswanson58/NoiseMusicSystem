@@ -62,6 +62,11 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			get{ return( mCurrentAlbum ); }
 			set {
 				mCurrentAlbum = value;
+
+				if( mCurrentAlbum != null ) {
+					mAlbumTrackList.SetContext( mCurrentAlbum.DbId );
+					Tracks();
+				}
 			}
 		}
 

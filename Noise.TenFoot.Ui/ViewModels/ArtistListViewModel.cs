@@ -59,8 +59,10 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			set {
 				mSelectedArtist = value;
 
-				mAlbumsList.SetContext( mSelectedArtist.DbId );
-				Albums();
+				if( mSelectedArtist != null ) {
+					mAlbumsList.SetContext( mSelectedArtist.DbId );
+					Albums();
+				}
 			}
 		}
 
