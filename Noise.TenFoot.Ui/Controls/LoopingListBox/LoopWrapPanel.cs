@@ -1,0 +1,530 @@
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+
+namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
+	public class LoopWrapPanel : Panel {
+		private bool	mIsMeasured;
+		private bool	mInMeasure;
+		internal int	PivotalChildIndex { get; private set; }
+
+		static LoopWrapPanel() {
+			EventManager.RegisterClassHandler( typeof( LoopWrapPanel ), RequestBringIntoViewEvent, new RequestBringIntoViewEventHandler( OnRequestBringIntoView ));
+		}
+
+		public LoopWrapPanel() {
+			PivotalChildIndex = -1;
+		}
+
+		/// <summary>
+		/// BringChildrenIntoView Dependency Property
+		/// </summary>
+		public static readonly DependencyProperty BringChildrenIntoViewProperty =
+            DependencyProperty.Register( "BringChildrenIntoView", typeof( bool ), typeof( LoopWrapPanel ), new FrameworkPropertyMetadata( false ));
+
+		/// <summary>
+		/// Gets or sets the BringChildrenIntoView property.  This dependency property 
+		/// indicates whether the panel should automatically adjust its Offset property to bring 
+		/// its direct children into view when they raise the RequestBringIntoView event.
+		/// </summary>
+		public bool BringChildrenIntoView {
+			get { return (bool)GetValue( BringChildrenIntoViewProperty ); }
+			set { SetValue( BringChildrenIntoViewProperty, value ); }
+		}
+
+		/// <summary>
+		/// Offset Dependency Property
+		/// </summary>
+		public static readonly DependencyProperty OffsetProperty =
+            DependencyProperty.Register( "Offset", typeof( double ), typeof( LoopWrapPanel ),
+				new FrameworkPropertyMetadata( 0.5d, FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault ) );
+
+		/// <summary>
+		/// Gets or sets the Offset property.  This dependency property indicates the logical 
+		/// offset of children (in the orientation direction) within the LoopPanel. 
+		/// 
+		/// The Offset property provides for logical units in the direction of the
+		/// panel's orientation.  This allows the panel to support per-item scrolling.
+		/// Each logical unit represents a single child.  Since children can have 
+		/// varying sizes, this means a fraction of a unit (such as 0.1) will represent
+		/// different lengths for different children.  All placement of children occurs
+		/// around the current pivotal child.  The pivotal child's index is determined 
+		/// by truncating the Offset value and applying a modulo using the child count.
+		/// 
+		/// Another way to think about this property is that its non-fractional portion
+		/// represents the index of the pivotal child (the child around which other 
+		/// children are arranged). If the value is between 0 (inclusive) 
+		/// and 1 (exclusive), the first child is the pivotal child.  The fractional
+		/// portion represents an offset for the pivotal child. 
+		/// 
+		/// The default value of 0.5 means that the first child is the pivotal child and 
+		/// it is centered along its extent (the child's width for a horizontal 
+		/// orientation or height for a vertical orientation).
+		/// </summary>
+		public double Offset {
+			get { return (double)GetValue( OffsetProperty ); }
+			set { SetValue( OffsetProperty, value ); }
+		}
+
+		/// <summary>
+		/// Orientation Dependency Property
+		/// </summary>
+		public static readonly DependencyProperty OrientationProperty =
+            StackPanel.OrientationProperty.AddOwner( typeof( LoopWrapPanel ),
+				new FrameworkPropertyMetadata( Orientation.Horizontal, FrameworkPropertyMetadataOptions.AffectsArrange ));
+
+		/// <summary>
+		/// Gets or sets the Orientation property.  This dependency property 
+		/// indicates the layout orientation of the looping children.
+		/// </summary>
+		public Orientation Orientation {
+			get { return (Orientation)GetValue( OrientationProperty ); }
+			set { SetValue( OrientationProperty, value ); }
+		}
+
+		/// <summary>
+		/// RelativeOffset Dependency Property
+		/// </summary>
+		public static readonly DependencyProperty RelativeOffsetProperty =
+            DependencyProperty.Register( "RelativeOffset", typeof( double ), typeof( LoopWrapPanel ),
+				new FrameworkPropertyMetadata( 0.5d, FrameworkPropertyMetadataOptions.AffectsArrange ), IsRelativeOffsetValid );
+
+		/// <summary>
+		/// Gets or sets the RelativeOffset property.  This dependency property 
+		/// indicates where the pivotal child is positioned within the panel. 
+		/// The default value of 0.5 means that the pivotal child is positioned
+		/// with its edge at the center of the panel.
+		/// </summary>
+		public double RelativeOffset {
+			get { return (double)GetValue( RelativeOffsetProperty ); }
+			set { SetValue( RelativeOffsetProperty, value ); }
+		}
+
+		private static bool IsRelativeOffsetValid( object value ) {
+			var	v = (double)value;
+
+			return ( !double.IsNaN( v )
+				&& !double.IsPositiveInfinity( v )
+				&& !double.IsNegativeInfinity( v )
+				&& v >= 0.0d && v <= 1.0d );
+		}
+
+		public static readonly DependencyProperty LastItemMarginProperty =
+			DependencyProperty.Register( "LastItemMargin", typeof( double ), typeof( LoopWrapPanel ),
+				new FrameworkPropertyMetadata( 0.5d, FrameworkPropertyMetadataOptions.AffectsArrange ), IsLastItemMarginValid );
+
+		private static bool IsLastItemMarginValid( object value ) {
+			var	v = (double)value;
+
+			return ( !double.IsNaN( v )
+				&& !double.IsPositiveInfinity( v )
+				&& !double.IsNegativeInfinity( v )
+				&& v >= 0.0d && v <= 10.0d );
+		}
+
+		/// <summary>
+		/// Gets or sets the LastItemMargin property. The dependency property adjusted the spacing
+		/// between the last and first items in the looping list. The amount is measured in terms of
+		/// child item extent i.e. 1.0 represents the height/width of one child item.
+		/// </summary>
+		public double LastItemMargin {
+			get{ return((double)GetValue( LastItemMarginProperty )); }
+			set{ SetValue( LastItemMarginProperty, value ); }
+		}
+
+		/// <summary>
+		/// Provides a helper method for scrolling the panel by viewport units rather than
+		/// adjusting the Offset property (which uses logical units)
+		/// </summary>
+		/// <param name="viewportUnits">The number of device independent pixels to scroll.  A positive value 
+		/// scrolls the Offset forward and a negative value scrolls it backward</param>
+		public void Scroll( double viewportUnits ) {
+			int childCount = InternalChildren.Count;
+			if( childCount == 0 ) return;
+
+			// determine the new Offset value required to move the specified viewport units
+			double	newOffset = Offset;
+			int		childIndex = PivotalChildIndex;
+			bool	isHorizontal = ( Orientation == Orientation.Horizontal );
+			bool	isForwardMovement = ( viewportUnits > 0 );
+			int		directionalFactor = isForwardMovement ? 1 : -1;
+			double	remainingExtent = Math.Abs( viewportUnits );
+			UIElement child = InternalChildren[childIndex];
+			double	childExtent = isHorizontal ? child.DesiredSize.Width : child.DesiredSize.Height;
+			double	fractionalOffset = ( Offset > 0 ) ? Offset - Math.Truncate( Offset ) : 1.0d - Math.Truncate( Offset ) + Offset;
+			double	childRemainingExtent = isForwardMovement ? childExtent - fractionalOffset * childExtent : fractionalOffset * childExtent;
+
+			if( DoubleHelper.LessThanOrVirtuallyEqual( childRemainingExtent, remainingExtent )) {
+				newOffset = Math.Round( isForwardMovement ? newOffset + 1 - fractionalOffset : newOffset - fractionalOffset );
+				remainingExtent -= childRemainingExtent;
+				while( DoubleHelper.StrictlyGreaterThan( remainingExtent, 0.0d ) ) {
+					childIndex = isForwardMovement ? ( childIndex + 1 ) % childCount : ( childIndex == 0 ? childCount - 1 : childIndex - 1 );
+					child = InternalChildren[childIndex];
+					childExtent = isHorizontal ? child.DesiredSize.Width : child.DesiredSize.Height;
+					if( DoubleHelper.LessThanOrVirtuallyEqual( childExtent, remainingExtent )) {
+						newOffset += 1.0d * directionalFactor;
+						remainingExtent -= childExtent;
+					}
+					else {
+						newOffset += remainingExtent * directionalFactor / childExtent;
+						remainingExtent = 0.0d;
+					}
+				}
+			}
+			else {
+				newOffset += remainingExtent * directionalFactor / childExtent;
+			}
+
+			Offset = newOffset;
+		}
+
+		protected override Size ArrangeOverride( Size finalSize ) {
+			UIElementCollection children = InternalChildren;
+			bool	isHorizontal = ( Orientation == Orientation.Horizontal );
+			var		childRect = new Rect();
+			double	childExtent;
+			int		childCount = children.Count;
+			var		controlBounds = new Rect( finalSize );
+			double	nextEdge = 0, priorEdge = 0;
+			int		nextIndex = 0, priorIndex = 0;
+
+			PivotalChildIndex = -1;
+
+			// arrange pivotal child
+			if( childCount > 0 ) {
+				// determine pivotal child index
+				double adjustedOffset = Offset % childCount;
+				if( adjustedOffset < 0 ) {
+					adjustedOffset = ( adjustedOffset + childCount ) % childCount;
+				}
+				PivotalChildIndex = (int)adjustedOffset;
+
+				nextIndex = ( PivotalChildIndex + 1 ) % childCount;
+				priorIndex = ( PivotalChildIndex == 0 ) ? childCount - 1 : PivotalChildIndex - 1;
+
+				var child = children[PivotalChildIndex];
+				if( isHorizontal ) {
+					childExtent = child.DesiredSize.Width;
+					childRect.X = finalSize.Width * RelativeOffset - childExtent * ( adjustedOffset - Math.Truncate( adjustedOffset ));
+					childRect.Width = childExtent;
+					nextEdge = childRect.X + childExtent;
+					priorEdge = childRect.X;
+					childRect.Height = Math.Max( finalSize.Height, child.DesiredSize.Height );
+				}
+				else {
+					childExtent = child.DesiredSize.Height;
+					childRect.Y = finalSize.Height * RelativeOffset - childExtent * ( adjustedOffset - Math.Truncate( adjustedOffset ));
+					childRect.Height = childExtent;
+					nextEdge = childRect.Y + childExtent;
+					priorEdge = childRect.Y;
+					childRect.Width = Math.Max( finalSize.Width, child.DesiredSize.Width );
+				}
+				child.Arrange( childRect );
+
+				if( PivotalChildIndex == 0 ) {
+					priorEdge -= LastItemMargin * childExtent;
+				}
+				if( PivotalChildIndex == ( childCount - 1 )) {
+					nextEdge += LastItemMargin * childExtent;
+				}
+			}
+
+			// arrange subsequent and prior children until we run out of room
+			bool isNextFull = false, isPriorFull = false;
+
+			for( int i = 1; i < childCount; i++ ) {
+				// for odd iterations, arrange the next child
+				// for even iterations, arrange the prior child
+				bool isArrangingNext = ( i % 2 == 1 );
+
+				if( isArrangingNext && isNextFull && !isPriorFull ) {
+					isArrangingNext = false;
+				}
+				else if( !isArrangingNext && isPriorFull && !isNextFull ) {
+					isArrangingNext = true;
+				}
+
+				// get the child index and adjust the appropriate counter
+				int childIndex = nextIndex;
+				if( isArrangingNext ) {
+					nextIndex = ( nextIndex + 1 ) % childCount;
+				}
+				else {
+					childIndex = priorIndex;
+					priorIndex = ( priorIndex > 0 ) ? priorIndex - 1 : childCount - 1;
+				}
+
+				UIElement	child = children[childIndex];
+				bool		childArranged = false;
+
+				if( !( isNextFull && isPriorFull )) {
+					// determine the child's arrange rect
+					if( isHorizontal ) {
+						childExtent = child.DesiredSize.Width;
+						if( isArrangingNext ) {
+							childRect.X = nextEdge;
+						}
+						else {
+							childRect.X = priorEdge - childExtent;
+						}
+						childRect.Width = childExtent;
+						childRect.Height = Math.Max( finalSize.Height, child.DesiredSize.Height );
+					}
+					else {
+						childExtent = child.DesiredSize.Height;
+						if( isArrangingNext ) {
+							childRect.Y = nextEdge;
+						}
+						else {
+							childRect.Y = priorEdge - childExtent;
+						}
+						childRect.Height = childExtent;
+						childRect.Width = Math.Max( finalSize.Width, child.DesiredSize.Width );
+					}
+
+					// arrange the child
+					var intersection = Rect.Intersect( childRect, controlBounds );
+
+					if( !intersection.IsEmpty
+						&& intersection.Width * intersection.Height > 1.0e-10 ) {
+						if( isHorizontal ) {
+							if( isArrangingNext ) {
+								nextEdge = childRect.X + childExtent;
+
+								if( childIndex == ( childCount - 1 )) {
+									nextEdge += LastItemMargin * childExtent;
+								}
+							}
+							else {
+								priorEdge = childRect.X;
+
+								if( childIndex == 0 ) {
+									priorEdge -= LastItemMargin * childExtent;
+								}
+							}
+						}
+						else {
+							if( isArrangingNext ) {
+								nextEdge = childRect.Y + childExtent;
+
+								if( childIndex == ( childCount - 1 )) {
+									nextEdge += LastItemMargin * childExtent;
+								}
+							}
+							else {
+								priorEdge = childRect.Y;
+
+								if( childIndex == 0 ) {
+									priorEdge -= LastItemMargin * childExtent;
+								}
+							}
+						}
+						child.Arrange( childRect );
+						childArranged = true;
+					}
+					else {
+						// if there's no room for the child, set the appropriate full flag
+						if( isArrangingNext ) {
+							isNextFull = true;
+						}
+						else {
+							isPriorFull = true;
+						}
+					}
+				}
+
+				// if there was no room for the child, arrange it to a rect with no width or height 
+				// as a render optimization; preserve layout placement to ensure that keyboard 
+				// navigation works as expected
+				if(!childArranged ) {
+					if( isArrangingNext && isNextFull ) {
+						if( isHorizontal ) {
+							childRect.X = nextEdge;
+							nextEdge = childRect.X + child.DesiredSize.Width;
+
+							if( childIndex == ( childCount - 1 )) {
+								nextEdge += LastItemMargin * child.DesiredSize.Width;
+							}
+						}
+						else {
+							childRect.Y = nextEdge;
+							nextEdge = childRect.Y + child.DesiredSize.Height;
+
+							if( childIndex == ( childCount - 1 )) {
+								nextEdge += LastItemMargin * child.DesiredSize.Height;
+							}
+						}
+						childRect.Width = 0;
+						childRect.Height = 0;
+						child.Arrange( childRect );
+					}
+					else if(!isArrangingNext && isPriorFull ) {
+						if( isHorizontal ) {
+							childRect.X = priorEdge - child.DesiredSize.Width;
+							priorEdge = childRect.X;
+
+							if( childIndex == 0 ) {
+								priorEdge -= LastItemMargin * child.DesiredSize.Width;
+							}
+						}
+						else {
+							childRect.Y = priorEdge - child.DesiredSize.Height;
+							priorEdge = childRect.Y;
+
+							if( childIndex == 0 ) {
+								priorEdge -= LastItemMargin * child.DesiredSize.Height;
+							}
+						}
+						childRect.Width = 0;
+						childRect.Height = 0;
+						child.Arrange( childRect );
+					}
+				}
+			}
+
+			return finalSize;
+		}
+
+		protected override Size MeasureOverride( Size availableSize ) {
+			var		desiredSize = new Size();
+
+			mInMeasure = true;
+			try {
+				UIElementCollection children = InternalChildren;
+				bool isHorizontal = ( Orientation == Orientation.Horizontal );
+				Size childSize = availableSize;
+
+				// children will be measured to their desired size in the logical direction
+				if( isHorizontal ) {
+					childSize.Width = Double.PositiveInfinity;
+				}
+				else {
+					childSize.Height = Double.PositiveInfinity;
+				}
+
+				// measure the children
+				for( int i = 0, count = children.Count; i < count; ++i ) {
+					UIElement child = children[i];
+					child.Measure( childSize );
+
+					Size childDesiredSize = child.DesiredSize;
+					if( isHorizontal ) {
+						desiredSize.Width += childDesiredSize.Width;
+						desiredSize.Height = Math.Max( desiredSize.Height, childDesiredSize.Height );
+
+						if( i == 0 ) {
+							desiredSize.Width += LastItemMargin * childDesiredSize.Width;
+						}
+					}
+					else {
+						desiredSize.Width = Math.Max( desiredSize.Width, childDesiredSize.Width );
+						desiredSize.Height += childDesiredSize.Height;
+
+						if( i == 0 ) {
+							desiredSize.Height += LastItemMargin * childDesiredSize.Height;
+						}
+					}
+				}
+
+				// The available size represents a maximum constraint in the logical direction.  We
+				// should never return a size larger than the available size.
+				if( isHorizontal ) {
+					desiredSize.Width = Math.Min( availableSize.Width, desiredSize.Width );
+				}
+				else {
+					desiredSize.Height = Math.Min( availableSize.Height, desiredSize.Height );
+				}
+
+				mIsMeasured = true;
+			}
+			finally {
+				mInMeasure = false;
+			}
+
+			return desiredSize;
+		}
+
+		protected override void OnVisualChildrenChanged( DependencyObject visualAdded, DependencyObject visualRemoved ) {
+			// changes to the children collection require an update to the Offset 
+			// so that the children don't shift when the collection changes
+
+			// we do not want to process changes that occur as part of container generation
+			if( mInMeasure || !mIsMeasured ) return;
+
+			var childCount = InternalChildren.Count;
+
+			if( visualAdded != null ) {
+				double adjustedOffset = Offset % childCount;
+
+				if( adjustedOffset < 0 ) {
+					adjustedOffset += childCount;
+				}
+				
+				var		newPivotalChildIndex = (int)adjustedOffset;
+
+				if( newPivotalChildIndex != PivotalChildIndex ) {
+					// add necessary correction to keep Offset the same
+					if( childCount > 1 ) {
+						Offset += ((int)Offset ) / ( childCount - 1 ) + ( Offset < 0 ? -1 : 0 );
+					}
+				}
+			}
+
+			if( visualRemoved != null ) {
+				// add necessary correction to keep Offset the same
+				Offset -= ( (int)Offset ) / childCount + ( Offset < 0 ? -1 : 0 );
+			}
+
+			base.OnVisualChildrenChanged( visualAdded, visualRemoved );
+		}
+
+		private static void OnRequestBringIntoView( object sender, RequestBringIntoViewEventArgs e ) {
+			var		lp = sender as LoopWrapPanel;
+			var		target = e.TargetObject;
+
+			if(( lp != null ) &&
+			   ( lp.BringChildrenIntoView ) &&
+			   ( target != lp )) {
+				UIElement child = null;
+
+				while( target != null ) {
+					if( ( target is UIElement )
+						&& lp.InternalChildren.Contains( target as UIElement )) {
+						child = target as UIElement;
+						break;
+					}
+					target = VisualTreeHelper.GetParent( target );
+					if( target == lp ) break;
+				}
+
+				if(( child != null ) &&
+				   ( lp.InternalChildren.Contains( child ))) {
+					e.Handled = true;
+
+					// determine if the child needs to be brought into view
+					GeneralTransform childTransform = child.TransformToAncestor( lp );
+					Rect childRect = childTransform.TransformBounds( new Rect( new Point( 0, 0 ), child.RenderSize ) );
+					Rect intersection = Rect.Intersect( new Rect( new Point( 0, 0 ), lp.RenderSize ), childRect );
+
+					// if the intersection is different than the child rect, it is either not visible 
+					// or only partially visible, so adjust the Offset to bring it into view
+					if( !DoubleHelper.AreVirtuallyEqual( childRect, intersection ) ) {
+						if( !intersection.IsEmpty ) {
+							// the child is already partially visible, so just scroll it into view
+							lp.Scroll( ( lp.Orientation == Orientation.Horizontal )
+								? ( DoubleHelper.AreVirtuallyEqual( childRect.X, intersection.X ) ? childRect.Width - intersection.Width + Math.Min( 0, lp.RenderSize.Width - childRect.Width ) : childRect.X - intersection.X )
+								: ( DoubleHelper.AreVirtuallyEqual( childRect.Y, intersection.Y ) ? childRect.Height - intersection.Height + Math.Min( 0, lp.RenderSize.Height - childRect.Height ) : childRect.Y - intersection.Y ) );
+						}
+						else {
+							// the child is not visible at all
+							lp.Scroll( ( lp.Orientation == Orientation.Horizontal )
+								? ( DoubleHelper.StrictlyLessThan( childRect.Right, 0.0d ) ? childRect.X : childRect.Right - lp.RenderSize.Width + Math.Min( 0, lp.RenderSize.Width - childRect.Width ) )
+								: ( DoubleHelper.StrictlyLessThan( childRect.Bottom, 0.0d ) ? childRect.Y : childRect.Bottom - lp.RenderSize.Height + Math.Min( 0, lp.RenderSize.Height - childRect.Height ) ) );
+						}
+					}
+				}
+			}
+		}
+	}
+}
