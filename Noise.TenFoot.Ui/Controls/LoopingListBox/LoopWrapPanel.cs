@@ -386,6 +386,20 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			return finalSize;
 		}
 
+		private int CalculateWraps( int childCount, int wrapCount ) {
+			var retValue = childCount / wrapCount;
+
+			if(( childCount % wrapCount ) > 0 ) {
+				retValue++;
+			}
+
+			return( retValue );
+		}
+
+		private int CalculateWrapCount( double extent, double itemExtent ) {
+			return( (int)( extent / itemExtent ));
+		}
+
 		protected override Size MeasureOverride( Size availableSize ) {
 			var		desiredSize = new Size();
 
@@ -403,27 +417,30 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 					childSize.Height = Double.PositiveInfinity;
 				}
 
-				// measure the children
-				for( int i = 0, count = children.Count; i < count; ++i ) {
-					UIElement child = children[i];
-					child.Measure( childSize );
+				// this calculation assumes that all children will measure the same size and uses
+				// the measurement of the first child.
+				if( children.Count > 0 ) {
+					UIElement	firstChild = children[0];
 
-					Size childDesiredSize = child.DesiredSize;
+					firstChild.Measure( childSize );
+					var commonChildSize = firstChild.DesiredSize;
+					int	wrapCount;
+
 					if( isHorizontal ) {
-						desiredSize.Width += childDesiredSize.Width;
-						desiredSize.Height = Math.Max( desiredSize.Height, childDesiredSize.Height );
+						wrapCount = CalculateWrapCount( availableSize.Height, commonChildSize.Height );
 
-						if( i == 0 ) {
-							desiredSize.Width += LastItemMargin * childDesiredSize.Width;
-						}
+						desiredSize.Height = commonChildSize.Height * wrapCount;
+						desiredSize.Width = commonChildSize.Width * CalculateWraps( children.Count, wrapCount );
+
+						desiredSize.Width += commonChildSize.Width * LastItemMargin;
 					}
 					else {
-						desiredSize.Width = Math.Max( desiredSize.Width, childDesiredSize.Width );
-						desiredSize.Height += childDesiredSize.Height;
+						wrapCount = CalculateWrapCount( availableSize.Width, commonChildSize.Width );
 
-						if( i == 0 ) {
-							desiredSize.Height += LastItemMargin * childDesiredSize.Height;
-						}
+						desiredSize.Width = commonChildSize.Width * wrapCount;
+						desiredSize.Height = commonChildSize.Height * CalculateWraps( children.Count, wrapCount );
+
+						desiredSize.Height += commonChildSize.Height * LastItemMargin;
 					}
 				}
 
