@@ -96,6 +96,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Text="Artist List View" />
@@ -112,16 +113,27 @@
                                  Orientation="Horizontal"
                                  RelativeOffset="0.5"
                                  Style="{StaticResource LoopingWrapBoxStyle}"
-                                 Offset="0.0" />
+                                 Offset="{Binding Path=ArtistIndex}" />
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Button x:Name="NextArtist"
+                    Width="120"
+                    Margin="7,0,0,0"
+                    Content="Next Artist" />
+            <Button x:Name="PreviousArtist"
+                    Width="120"
+                    Margin="7,0,0,0"
+                    Content="Previous Artist" />
+        </StackPanel>
 
         <Button x:Name="Done"
-                Grid.Row="2"
+                Grid.Row="3"
                 Width="120"
                 HorizontalAlignment="Left"
                 Content="Return" />
 
         <Button x:Name="Home"
-                Grid.Row="3"
+                Grid.Row="4"
                 Width="120"
                 HorizontalAlignment="Left"
                 Content="Home" />

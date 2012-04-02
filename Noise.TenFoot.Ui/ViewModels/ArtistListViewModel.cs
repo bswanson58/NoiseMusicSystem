@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System.Linq;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -13,6 +14,8 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private readonly BindableCollection<DbArtist>	mArtistList; 
 		private DbArtist								mSelectedArtist;
 		private TaskHandler								mArtistRetrievalTaskHandler;
+
+		public	double									ArtistIndex { get; set; }
 
 		public ArtistListViewModel( IAlbumList albumListViewModel, IArtistProvider artistProvider ) {
 			mAlbumsList = albumListViewModel;
@@ -42,7 +45,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private void RetrieveArtistList() {
 			ArtistRetrievalTaskHandler.StartTask( () => {
 					using( var artistList = mArtistProvider.GetArtistList()) {
-						mArtistList.AddRange( artistList.List );
+						mArtistList.AddRange( from artist in artistList.List orderby artist.Name select artist );
 					}
 				},
 				() => { },
@@ -64,6 +67,18 @@ namespace Noise.TenFoot.Ui.ViewModels {
 					Albums();
 				}
 			}
+		}
+
+		public void NextArtist() {
+			ArtistIndex += 1.0;
+
+			NotifyOfPropertyChange( () => ArtistIndex );
+		}
+
+		public void PreviousArtist() {
+			ArtistIndex -= 1.0;
+
+			NotifyOfPropertyChange( () => ArtistIndex );
 		}
 
 		public void Albums() {
