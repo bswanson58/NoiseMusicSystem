@@ -248,7 +248,7 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 					priorEdge = wrapOrigin.Y - childExtent;
 				}
 
-				var pivotalWrapIndex = mPivotalChildIndex % wrapItemCount;
+				var pivotalWrapIndex = mPivotalChildIndex / wrapItemCount;
 
 				ArrangeWrap( pivotalWrapIndex * wrapItemCount, wrapItemCount, childOffset, wrapOrigin, childSize  );
 
@@ -256,11 +256,11 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 				nextWrapIndex = ( pivotalWrapIndex + 1 ) % wrapCount;
 				priorWrapIndex = ( pivotalWrapIndex == 0 ) ? wrapCount - 1 : pivotalWrapIndex - 1;
 
-				if( mPivotalChildIndex == 0 ) {
+				if( pivotalWrapIndex == 0 ) {
 					priorEdge -= LastItemMargin * childExtent;
 				}
 
-				if( mPivotalChildIndex == ( childCount - 1 )) {
+				if( pivotalWrapIndex == ( wrapCount - 1 )) {
 					nextEdge += LastItemMargin * childExtent;
 				}
 			}
