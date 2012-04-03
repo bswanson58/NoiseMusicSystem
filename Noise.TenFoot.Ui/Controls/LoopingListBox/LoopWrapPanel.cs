@@ -196,18 +196,18 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 		}
 
 		protected override Size ArrangeOverride( Size finalSize ) {
-			UIElementCollection children = InternalChildren;
-			bool	isHorizontal = ( Orientation == Orientation.Horizontal );
-			var		childRect = new Rect();
-			double	childExtent = 0.0;
-			int		childCount = children.Count;
-			int		wrapCount = 0;
 			var		controlBounds = new Rect( finalSize );
+			bool	isHorizontal = ( Orientation == Orientation.Horizontal );
+			var		children = InternalChildren;
+			int		childCount = children.Count;
+			var		childRect = new Rect();
+			var		childSize = new Size();
+			var		childOffset = new Point();
+			double	childExtent = 0.0;
+			int		wrapCount = 0;
+			int		wrapItemCount = 0;
 			double	nextEdge = 0, priorEdge = 0;
 			int		nextWrapIndex = 0, priorWrapIndex = 0;
-			var		childSize = new Size();
-			int		wrapItemCount = 0;
-			var		childOffset = new Point();
 
 			mPivotalChildIndex = -1;
 
@@ -293,74 +293,69 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 
 				var		wrapRect = new Rect();
 
-				if( !( isNextFull && isPriorFull )) {
-					// determine the rect of this wrap.
+				// determine the child's arrange rect
+				if( isHorizontal ) {
+					wrapRect.X = isArrangingNext ? nextEdge : priorEdge;
 
-					// determine the child's arrange rect
-					if( isHorizontal ) {
-						wrapRect.X = isArrangingNext ? nextEdge : priorEdge;
+					wrapRect.Width = childExtent;
+					wrapRect.Height = Math.Max( finalSize.Height, childSize.Height * wrapItemCount );
+				}
+				else {
+					wrapRect.Y = isArrangingNext ? nextEdge : priorEdge;
+					wrapRect.Height = childExtent;
+					wrapRect.Width = Math.Max( finalSize.Width, childSize.Width * wrapItemCount );
+				}
 
-						wrapRect.Width = childExtent;
-						wrapRect.Height = Math.Max( finalSize.Height, childSize.Height * wrapItemCount );
+				if( isHorizontal ) {
+					if( isArrangingNext ) {
+						nextEdge = wrapRect.X + childExtent;
+
+						if( wrapIndex == ( wrapCount - 1 )) {
+							nextEdge += LastItemMargin * childExtent;
+						}
 					}
 					else {
-						wrapRect.Y = isArrangingNext ? nextEdge : priorEdge;
-						wrapRect.Height = childExtent;
-						wrapRect.Width = Math.Max( finalSize.Width, childSize.Width * wrapItemCount );
+						priorEdge = wrapRect.X - childExtent;
+
+						if( wrapIndex == 0 ) {
+							priorEdge -= LastItemMargin * childExtent;
+						}
 					}
+				}
+				else {
+					if( isArrangingNext ) {
+						nextEdge = wrapRect.Y + childExtent;
 
-					var intersection = Rect.Intersect( wrapRect, controlBounds );
-
-						if( isHorizontal ) {
-							if( isArrangingNext ) {
-								nextEdge = wrapRect.X + childExtent;
-
-								if( wrapIndex == ( wrapCount - 1 )) {
-									nextEdge += LastItemMargin * childExtent;
-								}
-							}
-							else {
-								priorEdge = wrapRect.X - childExtent;
-
-								if( wrapIndex == 0 ) {
-									priorEdge -= LastItemMargin * childExtent;
-								}
-							}
+						if( wrapIndex == ( wrapCount - 1 )) {
+							nextEdge += LastItemMargin * childExtent;
 						}
-						else {
-							if( isArrangingNext ) {
-								nextEdge = wrapRect.Y + childExtent;
-
-								if( wrapIndex == ( wrapCount - 1 )) {
-									nextEdge += LastItemMargin * childExtent;
-								}
-							}
-							else {
-								priorEdge = childRect.Y - childExtent;
-
-								if( wrapIndex == 0 ) {
-									priorEdge -= LastItemMargin * childExtent;
-								}
-							}
-						}
-
-					if((!intersection.IsEmpty ) &&
-					   ( intersection.Width * intersection.Height > 1.0e-10 )) {
-						ArrangeWrap( wrapIndex * wrapItemCount, wrapItemCount, childOffset, wrapRect.Location, childSize );
 					}
 					else {
-						ArrangeWrap( wrapIndex * wrapItemCount, wrapItemCount, childOffset, wrapRect.Location, new Size());
+						priorEdge = childRect.Y - childExtent;
 
-						// if there's no room for the child, set the appropriate full flag
-						if( isArrangingNext ) {
-							isNextFull = true;
-						}
-						else {
-							isPriorFull = true;
+						if( wrapIndex == 0 ) {
+							priorEdge -= LastItemMargin * childExtent;
 						}
 					}
 				}
 
+				var intersection = Rect.Intersect( wrapRect, controlBounds );
+
+				if((!intersection.IsEmpty ) &&
+				   ( intersection.Width * intersection.Height > 1.0e-10 )) {
+					ArrangeWrap( wrapIndex * wrapItemCount, wrapItemCount, childOffset, wrapRect.Location, childSize );
+				}
+				else {
+					ArrangeWrap( wrapIndex * wrapItemCount, wrapItemCount, childOffset, wrapRect.Location, new Size());
+
+					// if there's no room for the child, set the appropriate full flag
+					if( isArrangingNext ) {
+						isNextFull = true;
+					}
+					else {
+						isPriorFull = true;
+					}
+				}
 			}
 
 			return( finalSize );
@@ -421,6 +416,11 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 						desiredSize.Height = commonChildSize.Height * CalculateWraps( children.Count, wrapCount );
 
 						desiredSize.Height += commonChildSize.Height * LastItemMargin;
+					}
+
+					// Run through all of the children to have their desired size calculated.
+					foreach( UIElement child in children ) {
+						child.Measure( childSize );
 					}
 				}
 

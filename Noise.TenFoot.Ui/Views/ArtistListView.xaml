@@ -109,9 +109,9 @@
                                  BorderThickness="0"
                                  ItemContainerStyle="{StaticResource ArtistItemStyle}"
                                  ItemTemplate="{StaticResource BasicArtist}"
-                                 LastItemMargin="1.0"
+                                 LastItemMargin="0.75"
                                  Orientation="Horizontal"
-                                 RelativeOffset="0.5"
+                                 RelativeOffset="0.3"
                                  Style="{StaticResource LoopingWrapBoxStyle}"
                                  Offset="{Binding Path=ArtistIndex}" />
 
