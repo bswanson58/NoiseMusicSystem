@@ -1,8 +1,6 @@
 ﻿using Caliburn.Micro;
-using Noise.TenFoot.Ui.Controls.LoopingListBox;
 using Noise.TenFoot.Ui.Dto;
 using Noise.TenFoot.Ui.Interfaces;
-using Noise.TenFoot.Ui.Views;
 using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
@@ -12,7 +10,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private readonly IFavoritesList					mFavoritesList;
 		private UiMenuItem								mSelectedMenuItem;
 
-		private LoopingListBox	mListBox;
+		public	double									MenuListIndex { get; set; }
 
 		public HomeViewModel( IArtistList artistListViewModel, IFavoritesList favoritesListViewModel ) {
 			mArtistList = artistListViewModel;
@@ -33,7 +31,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			set{ 
 				mSelectedMenuItem = value;
  
-				Navigate( mSelectedMenuItem.Command );
+				if( mSelectedMenuItem != null ) {
+					Navigate( mSelectedMenuItem.Command );
+				}
 			}
 		}
 
@@ -53,18 +53,23 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			}
 		}
 
-		protected override void OnViewAttached( object view, object context ) {
-			base.OnViewAttached( view, context );
+		protected override void OnActivate() {
+			base.OnActivate();
 
-			mListBox = (view as HomeView).MenuList;
+			mSelectedMenuItem = null;
+			NotifyOfPropertyChange( () => SelectedMenuList );
 		}
 
 		public void ScrollUp() {
-			mListBox.Offset += 1.0;
+			MenuListIndex += 1.0;
+
+			NotifyOfPropertyChange( () => MenuListIndex );
 		}
 
 		public void ScrollDown() {
-			mListBox.Offset -= 1.0;
+			MenuListIndex -= 1.0;
+
+			NotifyOfPropertyChange( () => MenuListIndex );
 		}
 	}
 }

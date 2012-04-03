@@ -15,7 +15,7 @@
              mc:Ignorable="d">
 
     <UserControl.Resources>
-        <DataTemplate DataType="{x:Type Dto:UiMenuItem}">
+        <DataTemplate x:Key="MenuItem" DataType="{x:Type Dto:UiMenuItem}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100" />
@@ -65,12 +65,11 @@
                                  Background="Transparent"
                                  BorderThickness="0"
                                  ItemContainerStyle="{StaticResource MenuItemStyle}"
-                                 ItemsSource="{Binding MenuList}"
+                                 ItemTemplate="{StaticResource MenuItem}"
                                  LastItemMargin="1.25"
                                  Orientation="Vertical"
                                  RelativeOffset="0.5"
-                                 SelectedItem="{Binding SelectedMenuList}"
-                                 Offset="0.0" />
+                                 Offset="{Binding Path=MenuListIndex}" />
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <Button x:Name="ScrollUp"

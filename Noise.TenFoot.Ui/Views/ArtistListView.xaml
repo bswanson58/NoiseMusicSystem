@@ -15,43 +15,6 @@
              mc:Ignorable="d">
 
     <UserControl.Resources>
-        <Style x:Key="LoopingWrapBoxStyle"
-               BasedOn="{StaticResource {x:Type ListBox}}"
-               TargetType="{x:Type controls:LoopingWrapBox}">
-            <Setter Property="Padding" Value="2" />
-            <Setter Property="Orientation" Value="Horizontal" />
-            <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Cycle" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type controls:LoopingWrapBox}">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}">
-                            <ScrollViewer x:Name="sv"
-                                          HorizontalScrollBarVisibility="Disabled"
-                                          Padding="{TemplateBinding Padding}"
-                                          VerticalScrollBarVisibility="Disabled">
-                                <controls:LoopWrapPanel x:Name="lp"
-                                                        BringChildrenIntoView="True"
-                                                        IsItemsHost="True"
-                                                        LastItemMargin="{TemplateBinding LastItemMargin}"
-                                                        Orientation="{TemplateBinding Orientation}"
-                                                        RelativeOffset="{TemplateBinding RelativeOffset}"
-                                                        Offset="{Binding Offset,
-                                                                         RelativeSource={RelativeSource TemplatedParent},
-                                                                         Mode=TwoWay}" />
-                            </ScrollViewer>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="Orientation" Value="Vertical">
-                                <Setter TargetName="sv" Property="HorizontalScrollBarVisibility" Value="Disabled" />
-                                <Setter TargetName="sv" Property="VerticalScrollBarVisibility" Value="Disabled" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
         <DataTemplate x:Key="BasicArtist" DataType="{x:Type Dto:DbArtist}">
             <Grid>
@@ -112,7 +75,6 @@
                                  LastItemMargin="0.75"
                                  Orientation="Horizontal"
                                  RelativeOffset="0.3"
-                                 Style="{StaticResource LoopingWrapBoxStyle}"
                                  Offset="{Binding Path=ArtistIndex}" />
 
         <StackPanel Grid.Row="2" Orientation="Horizontal">
