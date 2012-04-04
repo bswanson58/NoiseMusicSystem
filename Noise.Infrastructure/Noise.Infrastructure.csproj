@@ -265,7 +265,6 @@
     <Compile Include="RemoteDto\TrackListResult.cs" />
     <Compile Include="Support\ApplicationLogReader.cs" />
     <Compile Include="Support\AsyncCommand.cs" />
-    <Compile Include="Support\BaseValueConverter.cs" />
     <Compile Include="Support\BindableObject.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Events.cs" />

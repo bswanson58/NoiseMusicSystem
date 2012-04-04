@@ -4,6 +4,7 @@
                     xmlns:Dto="clr-namespace:Noise.UI.Dto"
                     xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
                     xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
+                    xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
                     xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
                     xmlns:vml="clr-namespace:Noise.UI.Support">
 
@@ -14,7 +15,7 @@
                         ObjectType="{x:Type vml:DialogServiceResolver}" />
 
     <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter" />
-    <ValueConverters:EmptyStringVisibilityConverter x:Key="EmptyStringVisibilityConverter" />
+    <ReusableConverters:EmptyStringVisibilityConverter x:Key="EmptyStringVisibilityConverter" />
 
     <ContextMenu x:Key="ArtistMenu">
         <MenuItem Command="{Binding Rename}" Header="Rename Artist" />

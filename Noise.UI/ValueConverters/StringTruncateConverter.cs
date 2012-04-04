@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Noise.Infrastructure.Support;
+using ReusableBits.Ui.ValueConverters;
 
 namespace Noise.UI.ValueConverters {
 	public class StringTruncateConverter : BaseValueConverter<string, string> {

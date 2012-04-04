@@ -188,6 +188,10 @@
       <Project>{8930138B-F96A-4A56-84CF-D660730989C9}</Project>
       <Name>ReusableBits.Mvvm</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ReusableBits.Ui\ReusableBits.Ui.csproj">
+      <Project>{704BD4A9-2FC2-4716-AB94-D3714A6ACC39}</Project>
+      <Name>ReusableBits.Ui</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

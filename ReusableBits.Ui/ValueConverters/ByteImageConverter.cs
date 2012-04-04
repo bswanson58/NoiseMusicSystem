@@ -4,7 +4,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Noise.UI.ValueConverters {
+namespace ReusableBits.Ui.ValueConverters {
 	public class ByteImageConverter : IValueConverter {
 		public object Convert( object value, Type targetType, object parameter, System.Globalization.CultureInfo culture ) {
 			BitmapImage	retValue = null;

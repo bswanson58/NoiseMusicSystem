@@ -6,6 +6,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Dto="clr-namespace:Noise.Infrastructure.Dto;assembly=Noise.Infrastructure"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:UiDto="clr-namespace:Noise.TenFoot.Ui.Dto"
+             xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              xmlns:ViewModels="clr-namespace:Noise.TenFoot.Ui.ViewModels"
              cal:Bind.AtDesignTime="True"
              d:DataContext="{d:DesignInstance ViewModels:ArtistListViewModel,
@@ -15,6 +17,35 @@
              mc:Ignorable="d">
 
     <UserControl.Resources>
+        <ValueConverters:ByteImageConverter x:Key="ByteImageConverter" />
+
+        <DataTemplate x:Key="ArtistTemplate" DataType="{x:Type UiDto:UiArtist}">
+            <Grid>
+                <Image MinWidth="50"
+                       MinHeight="50"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Source="{Binding Path=ArtistImage.Image,
+                                        Converter={StaticResource ByteImageConverter}}"
+                       Stretch="Uniform" />
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0"
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal">
+                        <TextBlock Text="{Binding AlbumCount}" />
+
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="2" Text="{Binding DisplayName}" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
 
         <DataTemplate x:Key="BasicArtist" DataType="{x:Type Dto:DbArtist}">
             <Grid>
@@ -71,7 +102,7 @@
                                  Background="Transparent"
                                  BorderThickness="0"
                                  ItemContainerStyle="{StaticResource ArtistItemStyle}"
-                                 ItemTemplate="{StaticResource BasicArtist}"
+                                 ItemTemplate="{StaticResource ArtistTemplate}"
                                  LastItemMargin="0.75"
                                  Orientation="Horizontal"
                                  RelativeOffset="0.3"

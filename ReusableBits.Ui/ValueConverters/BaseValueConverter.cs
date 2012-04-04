@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Noise.Infrastructure.Support {
+namespace ReusableBits.Ui.ValueConverters {
 	public abstract class BaseValueConverter<TValue, TTarget, TParameter> : IValueConverter {
 		public object Convert( object value, Type targetType, object parameter, CultureInfo culture ) {
 			if( value.GetType() != typeof( TValue )) {

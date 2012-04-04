@@ -95,8 +95,9 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper">
-      <HintPath>..\lib\AutoMapper\v1.1.0.188\AutoMapper.dll</HintPath>
+    <Reference Include="AutoMapper, Version=2.1.266.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\AutoMapper.2.1.266\lib\net40\AutoMapper.dll</HintPath>
     </Reference>
     <Reference Include="Caliburn.Micro, Version=1.3.1.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
       <HintPath>..\packages\Caliburn.Micro.1.3.1\lib\net40\Caliburn.Micro.dll</HintPath>
@@ -267,10 +268,7 @@
     <Compile Include="Support\IDialogService.cs" />
     <Compile Include="Support\MouseUtilities.cs" />
     <Compile Include="Support\ViewModelResolver.cs" />
-    <Compile Include="ValueConverters\BooleanVisibilityConverter.cs" />
-    <Compile Include="ValueConverters\ByteImageConverter.cs" />
     <Compile Include="ValueConverters\DateOnlyConverter.cs" />
-    <Compile Include="ValueConverters\EmptyStringVisibilityConverter.cs" />
     <Compile Include="ValueConverters\HtmlTextConverter.cs" />
     <Compile Include="ValueConverters\LevelConverter.cs" />
     <Compile Include="ValueConverters\NumberToWordsConverter.cs" />
@@ -456,6 +454,10 @@
     <ProjectReference Include="..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
       <Project>{8930138B-F96A-4A56-84CF-D660730989C9}</Project>
       <Name>ReusableBits.Mvvm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReusableBits.Ui\ReusableBits.Ui.csproj">
+      <Project>{704BD4A9-2FC2-4716-AB94-D3714A6ACC39}</Project>
+      <Name>ReusableBits.Ui</Name>
     </ProjectReference>
     <ProjectReference Include="..\ReusableBits\ReusableBits.csproj">
       <Project>{0522B043-A04A-4669-90DB-204C96D52224}</Project>

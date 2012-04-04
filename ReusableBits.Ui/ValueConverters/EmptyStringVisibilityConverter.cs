@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Noise.UI.ValueConverters {
+namespace ReusableBits.Ui.ValueConverters {
 	public class EmptyStringVisibilityConverter : IValueConverter, IMultiValueConverter {
 		public object Convert( object value, Type targetType, object parameter, CultureInfo culture ) {
 			return( Convert( new[] { value }, targetType, parameter, culture ));

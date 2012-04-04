@@ -8,6 +8,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:local="clr-namespace:Noise.UI.ValueConverters"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              Height="200"
              Background="White"
              d:DesignWidth="800"
@@ -17,7 +18,7 @@
         IsDesignTimeCreatable=True}"
     -->
     <UserControl.Resources>
-        <local:ByteImageConverter x:Key="imageConverter" />
+        <ValueConverters:ByteImageConverter x:Key="imageConverter" />
     </UserControl.Resources>
 
     <UserControl.DataContext>
