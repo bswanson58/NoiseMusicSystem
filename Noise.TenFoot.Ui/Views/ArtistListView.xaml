@@ -42,7 +42,10 @@
 
                     </StackPanel>
 
-                    <TextBlock Grid.Row="2" Text="{Binding DisplayName}" />
+                    <TextBlock Grid.Row="2"
+                               FontSize="32"
+                               Foreground="White"
+                               Text="{Binding Name}" />
                 </Grid>
             </Grid>
         </DataTemplate>

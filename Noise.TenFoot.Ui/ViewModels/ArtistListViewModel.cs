@@ -51,8 +51,6 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 			if( fromArtist != null ) {
 				Mapper.DynamicMap( fromArtist, retValue );
-
-				retValue.ArtistImage = mArtworkProvider.GetArtistArtwork( retValue.DbId, ContentType.ArtistPrimaryImage );
 			}
 
 			return( retValue );
@@ -62,6 +60,10 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			ArtistRetrievalTaskHandler.StartTask( () => {
 					using( var artistList = mArtistProvider.GetArtistList()) {
 						mArtistList.AddRange( from artist in artistList.List orderby artist.Name select TransformArtist( artist ));
+					}
+
+					foreach( var artist in mArtistList ) {
+						artist.ArtistImage = mArtworkProvider.GetArtistArtwork( artist.DbId, ContentType.ArtistPrimaryImage );
 					}
 				},
 				() => { },
