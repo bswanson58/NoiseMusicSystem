@@ -7,6 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
         xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
+        xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
         xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
         Width="610"
         Height="63"
@@ -49,10 +50,10 @@
                 <TextBlock Grid.Column="0"
                            Margin="5,0,3,0"
                            VerticalAlignment="Center"
-                           Behaviours:FadeTrimming.IsEnabled="True"
-                           Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                            FontSize="13.333"
                            FontWeight="Bold"
+                           ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                           ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                            Text="{Binding TrackName}" />
 
                 <Button Grid.Column="1"

@@ -8,6 +8,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
              xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
+             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              d:DesignHeight="300"
              d:DesignWidth="900"
              mc:Ignorable="d">
@@ -412,10 +413,10 @@
                                    Visibility="{Binding TrackName,
                                                         Converter={StaticResource EmptyStringVisibilityConverter}}" />
                         <TextBlock Grid.Column="1"
-                                   Behaviours:FadeTrimming.IsEnabled="True"
-                                   Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                                    FontSize="16"
                                    FontWeight="Bold"
+                                   ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                                   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                                    Text="{Binding TrackName}" />
                     </Grid>
 

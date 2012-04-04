@@ -6,6 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Dto="clr-namespace:Noise.Infrastructure.Dto;assembly=Noise.Infrastructure"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:UiDto="clr-namespace:Noise.TenFoot.Ui.Dto"
              xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              xmlns:ViewModels="clr-namespace:Noise.TenFoot.Ui.ViewModels"
@@ -45,6 +46,8 @@
                     <TextBlock Grid.Row="2"
                                FontSize="32"
                                Foreground="White"
+                               ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                               ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                                Text="{Binding Name}" />
                 </Grid>
             </Grid>

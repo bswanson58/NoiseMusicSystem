@@ -189,7 +189,6 @@
     <Compile Include="Behaviours\EventCommandTriggers\EventCommandTrigger.cs" />
     <Compile Include="Behaviours\EventCommandTriggers\ICommandTrigger.cs" />
     <Compile Include="Behaviours\EventCommandTriggers\PropertyCommandTrigger.cs" />
-    <Compile Include="Behaviours\FadeTrimming.cs" />
     <Compile Include="Behaviours\GridUtils.cs" />
     <Compile Include="Behaviours\ImageScrubber.cs" />
     <Compile Include="Behaviours\InteractionRequestData.cs" />

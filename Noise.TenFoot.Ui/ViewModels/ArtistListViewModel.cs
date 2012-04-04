@@ -15,7 +15,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IArtworkProvider				mArtworkProvider;
 		private readonly BindableCollection<UiArtist>	mArtistList; 
-		private DbArtist								mSelectedArtist;
+		private UiArtist								mSelectedArtist;
 		private TaskHandler								mArtistRetrievalTaskHandler;
 
 		public	double									ArtistIndex { get; set; }
@@ -75,7 +75,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			get{ return( mArtistList ); }
 		}
  
-		public DbArtist SelectedArtistList {
+		public UiArtist SelectedArtistList {
 			get{ return( mSelectedArtist ); }
 			set {
 				mSelectedArtist = value;

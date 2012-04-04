@@ -8,7 +8,7 @@ using System.Windows.Media;
 // from: http://blog.hibernatingrhinos.com/12385/fade-trimming-textblocks-in-silverlight-and-wpf
 // source: https://github.com/samueldjack/FadeTrimming
 
-namespace Noise.UI.Behaviours {
+namespace ReusableBits.Ui.Behaviours {
 	public static class FadeTrimming {
 		private	const double cEpsilon = 0.00001;
 		private const double cFadeWidth = 35.0;
