@@ -9,13 +9,15 @@ using ReusableBits.Mvvm.CaliburnSupport;
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class TrackListViewModel : Screen, IAlbumTrackList {
 		private readonly ITrackProvider					mTrackProvider;
+		private readonly IEventAggregator				mEventAggregator;
 		private readonly BindableCollection<DbTrack>	mTrackList; 
 		private long									mCurrentAlbum;
 		private DbTrack									mCurrentTrack;
 		private TaskHandler								mTrackRetrievalTaskHandler;
 
-		public TrackListViewModel( ITrackProvider trackProvider ) {
+		public TrackListViewModel( ITrackProvider trackProvider, IEventAggregator eventAggregator ) {
 			mTrackProvider = trackProvider;
+			mEventAggregator = eventAggregator;
 
 			mTrackList = new BindableCollection<DbTrack>();
 		}
@@ -60,6 +62,10 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			get{ return( mCurrentTrack ); }
 			set {
 				mCurrentTrack = value;
+
+				if( mCurrentTrack != null ) {
+					GlobalCommands.PlayTrack.Execute( mCurrentTrack );
+				}
 			}
 		}
 

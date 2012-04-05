@@ -11,21 +11,13 @@
             </LinearGradientBrush>
         </Grid.Background>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="35" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="35" />
-        </Grid.ColumnDefinitions>
-
         <Grid.RowDefinitions>
-            <RowDefinition Height="35" />
+            <RowDefinition Height="15" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="35" />
+            <RowDefinition Height="15" />
         </Grid.RowDefinitions>
 
-        <ContentControl x:Name="ActiveItem"
-                        Grid.Row="1"
-                        Grid.Column="1" />
+        <ContentControl x:Name="ActiveItem" Grid.Row="1" />
     </Grid>
 
 </Window>

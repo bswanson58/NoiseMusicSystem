@@ -78,6 +78,9 @@
                    HorizontalAlignment="Right"
                    Text="Artists" />
 
+        <Rectangle Grid.Row="1"
+                   Fill="AliceBlue"
+                   Opacity="0.1" />
         <controls:LoopingWrapBox x:Name="ArtistList"
                                  Grid.Row="1"
                                  HorizontalContentAlignment="Stretch"
