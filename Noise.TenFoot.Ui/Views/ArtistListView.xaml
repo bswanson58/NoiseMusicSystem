@@ -24,6 +24,7 @@
             <Grid>
                 <Image MinWidth="50"
                        MinHeight="50"
+                       Margin="3,3,3,25"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Top"
                        Source="{Binding Path=ArtistImage.Image,
@@ -31,21 +32,14 @@
                        Stretch="Uniform" />
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0"
-                                HorizontalAlignment="Right"
-                                Orientation="Horizontal">
-                        <TextBlock Text="{Binding AlbumCount}" />
-
-                    </StackPanel>
-
-                    <TextBlock Grid.Row="2"
+                    <TextBlock Grid.Row="1"
                                FontSize="32"
                                Foreground="White"
+                               Opacity="0.85"
                                ReusableBehaviours:FadeTrimming.IsEnabled="True"
                                ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                                Text="{Binding Name}" />
@@ -53,27 +47,10 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="BasicArtist" DataType="{x:Type Dto:DbArtist}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <TextBlock Grid.Row="0"
-                           FontSize="18"
-                           Text="{Binding Path=Name}" />
-                <TextBlock Grid.Row="1"
-                           Margin="0,0,7,0"
-                           Text="{Binding Path=AlbumCount}"
-                           TextAlignment="Right" />
-            </Grid>
-        </DataTemplate>
-
         <Style x:Key="ArtistItemStyle" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Margin" Value="3,3" />
-            <Setter Property="Width" Value="200" />
-            <Setter Property="Height" Value="200" />
+            <Setter Property="Width" Value="125" />
+            <Setter Property="Height" Value="125" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -92,14 +69,14 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Artist List View" />
+        <TextBlock Grid.Row="0"
+                   HorizontalAlignment="Right"
+                   Text="Artists" />
 
         <controls:LoopingWrapBox x:Name="ArtistList"
                                  Grid.Row="1"
@@ -114,7 +91,20 @@
                                  RelativeOffset="0.3"
                                  Offset="{Binding Path=ArtistIndex}" />
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
+        <StackPanel Grid.Row="2"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+            <Button x:Name="Home"
+                    Width="120"
+                    Margin="7,0,0,0"
+                    HorizontalAlignment="Left"
+                    Content="Home" />
+            <Button x:Name="Done"
+                    Width="120"
+                    Margin="7,0,0,0"
+                    HorizontalAlignment="Left"
+                    Content="Return" />
+
             <Button x:Name="NextArtist"
                     Width="120"
                     Margin="7,0,0,0"
@@ -124,17 +114,5 @@
                     Margin="7,0,0,0"
                     Content="Previous Artist" />
         </StackPanel>
-
-        <Button x:Name="Done"
-                Grid.Row="3"
-                Width="120"
-                HorizontalAlignment="Left"
-                Content="Return" />
-
-        <Button x:Name="Home"
-                Grid.Row="4"
-                Width="120"
-                HorizontalAlignment="Left"
-                Content="Home" />
     </Grid>
 </UserControl>

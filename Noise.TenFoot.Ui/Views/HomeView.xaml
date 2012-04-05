@@ -56,28 +56,35 @@
     </UserControl.Resources>
     <Grid Background="Transparent">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
+        <TextBlock Grid.Row="0"
+                   HorizontalAlignment="Right"
+                   Text="Noise" />
+
         <controls:LoopingListBox x:Name="MenuList"
-                                 Grid.Row="0"
+                                 Grid.Row="1"
                                  Background="Transparent"
                                  BorderThickness="0"
                                  ItemContainerStyle="{StaticResource MenuItemStyle}"
                                  ItemTemplate="{StaticResource MenuItem}"
-                                 LastItemMargin="1.25"
+                                 LastItemMargin="1.1"
                                  Orientation="Vertical"
                                  RelativeOffset="0.5"
                                  Offset="{Binding Path=MenuListIndex}" />
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
+        <StackPanel Grid.Row="2"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
             <Button x:Name="ScrollUp"
-                    Width="130"
+                    Width="120"
                     Margin="15,0,0,0"
                     Content="Scroll Up" />
             <Button x:Name="ScrollDown"
-                    Width="130"
+                    Width="120"
                     Margin="15,0,0,0"
                     Content="Scroll Down" />
         </StackPanel>
