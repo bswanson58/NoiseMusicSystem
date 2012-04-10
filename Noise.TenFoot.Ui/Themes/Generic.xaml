@@ -1,5 +1,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:LoopingListBox="clr-namespace:Noise.TenFoot.Ui.Controls.LoopingListBox">
 
     <Style BasedOn="{StaticResource {x:Type ListBox}}" TargetType="{x:Type LoopingListBox:LoopingListBox}">
@@ -60,7 +62,18 @@
                                                           RelativeOffset="{TemplateBinding RelativeOffset}"
                                                           Offset="{Binding Offset,
                                                                            RelativeSource={RelativeSource TemplatedParent},
-                                                                           Mode=TwoWay}" />
+                                                                           Mode=TwoWay}">
+                                <i:Interaction.Behaviors>
+                                    <ei:FluidMoveBehavior AppliesTo="Children">
+                                        <ei:FluidMoveBehavior.EaseY>
+                                            <PowerEase EasingMode="EaseOut" />
+                                        </ei:FluidMoveBehavior.EaseY>
+                                        <ei:FluidMoveBehavior.EaseX>
+                                            <PowerEase EasingMode="EaseOut" />
+                                        </ei:FluidMoveBehavior.EaseX>
+                                    </ei:FluidMoveBehavior>
+                                </i:Interaction.Behaviors>
+                            </LoopingListBox:LoopWrapPanel>
                         </ScrollViewer>
                     </Border>
                     <ControlTemplate.Triggers>
