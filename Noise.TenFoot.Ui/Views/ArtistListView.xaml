@@ -23,12 +23,18 @@
             <Grid>
                 <Image MinWidth="50"
                        MinHeight="50"
-                       Margin="3,3,3,25"
+                       Margin="3,3,7,25"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Top"
                        Source="{Binding ArtistImage.Image,
                                         Converter={StaticResource ByteImageConverter}}"
-                       Stretch="Uniform" />
+                       Stretch="Uniform">
+                    <Image.Effect>
+                        <DropShadowEffect Opacity="0.8"
+                                          ShadowDepth="3"
+                                          Color="#FF707070" />
+                    </Image.Effect>
+                </Image>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -47,15 +53,18 @@
         </DataTemplate>
 
         <Style x:Key="ArtistItemStyle" TargetType="{x:Type ListBoxItem}">
-            <Setter Property="Margin" Value="5,5" />
+            <Setter Property="controls:LoopingWrapBox.IsDragHandle" Value="True" />
+            <Setter Property="Background" Value="#FF3B0031" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="Width" Value="125" />
             <Setter Property="Height" Value="125" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Margin" Value="5,5" />
+            <Setter Property="Padding" Value="3" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Grid x:Name="grid"
-                              Background="LightBlue"
-                              RenderTransformOrigin="0.5,0.5">
+                        <Grid x:Name="grid" RenderTransformOrigin="0.5,0.5">
                             <Grid.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform />
@@ -65,38 +74,90 @@
                                 </TransformGroup>
                             </Grid.RenderTransform>
                             <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
+                                <VisualStateGroup x:Name="SelectionStates">
                                     <VisualStateGroup.Transitions>
                                         <VisualTransition GeneratedDuration="0:0:0.3" />
                                     </VisualStateGroup.Transitions>
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="MouseOver">
+                                    <VisualState x:Name="Unselected" />
+                                    <VisualState x:Name="Selected">
                                         <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetName="Highlight" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+                                                <EasingColorKeyFrame KeyTime="0" Value="#FFFFF727" />
+                                            </ColorAnimationUsingKeyFrames>
                                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                                                <EasingDoubleKeyFrame KeyTime="0" Value="1.3" />
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="1.5" />
                                             </DoubleAnimationUsingKeyFrames>
                                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                                                <EasingDoubleKeyFrame KeyTime="0" Value="1.3" />
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="1.5" />
                                             </DoubleAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
-                                    <VisualState x:Name="Disabled" />
+                                    <VisualState x:Name="SelectedUnfocused" />
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <ContentPresenter x:Name="ContentHost"
-                                              Margin="{TemplateBinding Padding}"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            <Rectangle x:Name="Border"
+                                       Margin="0"
+                                       Fill="White"
+                                       RadiusX="3"
+                                       RadiusY="3"
+                                       Stroke="{x:Null}"
+                                       StrokeThickness="0" />
+                            <Rectangle x:Name="Highlight"
+                                       Margin="0"
+                                       Fill="#00FFF727"
+                                       RadiusX="3"
+                                       RadiusY="3"
+                                       Stroke="{x:Null}"
+                                       StrokeThickness="3" />
+                            <Grid Margin="1">
+                                <Rectangle x:Name="Background"
+                                           Margin="0"
+                                           Fill="#FF78A3DC"
+                                           RadiusX="3"
+                                           RadiusY="3"
+                                           Stroke="{x:Null}"
+                                           StrokeThickness="3" />
+                                <Rectangle x:Name="Shine"
+                                           Margin="0"
+                                           RadiusX="3"
+                                           RadiusY="3"
+                                           Stroke="{x:Null}"
+                                           StrokeThickness="3">
+                                    <Rectangle.Fill>
+                                        <RadialGradientBrush RadiusX="1">
+                                            <RadialGradientBrush.RelativeTransform>
+                                                <TransformGroup>
+                                                    <ScaleTransform CenterX="0.5"
+                                                                    CenterY="0.5"
+                                                                    ScaleX="1.25"
+                                                                    ScaleY="1.5" />
+                                                    <SkewTransform CenterX="0.5" CenterY="0.5" />
+                                                    <RotateTransform CenterX="0.5" CenterY="0.5" />
+                                                    <TranslateTransform X="-0.5" Y="-0.5" />
+                                                </TransformGroup>
+                                            </RadialGradientBrush.RelativeTransform>
+                                            <GradientStop Offset="0.155" />
+                                            <GradientStop Offset="0.996" Color="#4C506FED" />
+                                        </RadialGradientBrush>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <ContentPresenter x:Name="ContentHost"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  d:IsHidden="True" />
+                            </Grid>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
 
             <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
+                <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Panel.ZIndex" Value="1" />
                 </Trigger>
             </Style.Triggers>
+
         </Style>
 
     </UserControl.Resources>
