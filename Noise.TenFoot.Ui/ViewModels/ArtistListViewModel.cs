@@ -47,7 +47,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		private UiArtist TransformArtist( DbArtist fromArtist ) {
-			var retValue = new UiArtist();
+			var retValue = new UiArtist( OnArtistSelect );
 
 			if( fromArtist != null ) {
 				Mapper.DynamicMap( fromArtist, retValue );
@@ -71,20 +71,20 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			); 
 		}
 
+		private void OnArtistSelect( UiArtist artist ) {
+			if( artist != null ) {
+				mAlbumsList.SetContext( artist.DbId );
+				Albums();
+			}
+		}
+
 		public BindableCollection<UiArtist> ArtistList {
 			get{ return( mArtistList ); }
 		}
  
 		public UiArtist SelectedArtistList {
 			get{ return( mSelectedArtist ); }
-			set {
-				mSelectedArtist = value;
-
-				if( mSelectedArtist != null ) {
-//					mAlbumsList.SetContext( mSelectedArtist.DbId );
-//					Albums();
-				}
-			}
+			set{ mSelectedArtist = value; }
 		}
 
 		public void NextArtist() {

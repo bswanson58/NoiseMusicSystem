@@ -4,6 +4,7 @@
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:controls="clr-namespace:Noise.TenFoot.Ui.Controls.LoopingListBox"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:UiDto="clr-namespace:Noise.TenFoot.Ui.Dto"
@@ -34,6 +35,11 @@
                                           ShadowDepth="3"
                                           Color="#FF707070" />
                     </Image.Effect>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseLeftButtonDown">
+                            <i:InvokeCommandAction Command="{Binding OnSelect}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                 </Image>
                 <Grid>
                     <Grid.RowDefinitions>
