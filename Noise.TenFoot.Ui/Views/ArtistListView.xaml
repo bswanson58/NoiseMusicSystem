@@ -109,7 +109,7 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0"
-                   HorizontalAlignment="Right"
+                   Style="{DynamicResource TitleTextStyle}"
                    Text="Artists" />
 
         <Rectangle Grid.Row="1"

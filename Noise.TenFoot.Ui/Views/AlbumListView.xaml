@@ -40,7 +40,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Album List View" />
+        <TextBlock Grid.Row="0" Text="Albums" Style="{DynamicResource TitleTextStyle}" />
 
         <ListBox x:Name="AlbumList"
                  Grid.Row="1"

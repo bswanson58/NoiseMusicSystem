@@ -20,7 +20,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Favorites View" />
+        <TextBlock Grid.Row="0"
+                   Style="{DynamicResource TitleTextStyle}"
+                   Text="Favorites" />
 
         <Button x:Name="Done"
                 Grid.Row="2"
