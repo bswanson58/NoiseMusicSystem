@@ -64,13 +64,13 @@
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="Width" Value="125" />
             <Setter Property="Height" Value="125" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Margin" Value="5,5" />
-            <Setter Property="Padding" Value="3" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Grid x:Name="LayoutRoot" RenderTransformOrigin="0.5,0.5">
+                        <Grid x:Name="LayoutRoot"
+                              Margin="5,5"
+                              RenderTransformOrigin="0.25,0.25">
                             <Grid.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform />
@@ -133,12 +133,26 @@
                             </Rectangle>
                             <Rectangle x:Name="Highlight"
                                        Margin="0"
-                                       Fill="#FFFFF727"
                                        Opacity="0"
                                        RadiusX="3"
                                        RadiusY="3"
                                        Stroke="{x:Null}"
-                                       StrokeThickness="3" />
+                                       StrokeThickness="3">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                        <LinearGradientBrush.RelativeTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform CenterX="0.5" CenterY="0.5" />
+                                                <SkewTransform CenterX="0.5" CenterY="0.5" />
+                                                <RotateTransform Angle="-30" CenterX="0.5" CenterY="0.5" />
+                                                <TranslateTransform />
+                                            </TransformGroup>
+                                        </LinearGradientBrush.RelativeTransform>
+                                        <GradientStop Color="#FFF3F2CC" />
+                                        <GradientStop Offset="1" Color="#FFFFF500" />
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
                             <Grid Margin="1">
                                 <Rectangle x:Name="Background"
                                            Margin="0"
