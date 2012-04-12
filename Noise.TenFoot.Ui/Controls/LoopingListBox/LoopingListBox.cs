@@ -229,7 +229,9 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 		/// Offset Dependency Property
 		/// </summary>
 		public static readonly DependencyProperty OffsetProperty =
-            LoopPanel.OffsetProperty.AddOwner( typeof( LoopingListBox ));
+            LoopPanel.OffsetProperty.AddOwner( typeof( LoopingListBox ),
+												new FrameworkPropertyMetadata( 0.5d, FrameworkPropertyMetadataOptions.AffectsArrange | 
+																					 FrameworkPropertyMetadataOptions.BindsTwoWayByDefault ));
 
 		/// <summary>
 		/// Gets or sets the Offset property.  This dependency property 
