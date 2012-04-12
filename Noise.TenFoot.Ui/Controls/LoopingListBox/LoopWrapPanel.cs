@@ -195,6 +195,13 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			}
 		}
 
+		private double CalculateWrapTopLeft( double controlExtent, double childExtent, int childCount ) {
+			// Currently calculated as being centered.
+			var spacing = controlExtent - ( childExtent * childCount );
+
+			return( spacing / 2.0 );
+		}
+
 		protected override Size ArrangeOverride( Size finalSize ) {
 			var		controlBounds = new Rect( finalSize );
 			bool	isHorizontal = ( Orientation == Orientation.Horizontal );
@@ -204,6 +211,7 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			var		childSize = new Size();
 			var		childOffset = new Point();
 			double	childExtent = 0.0;
+			double	wrapTopLeft = 0.0;
 			int		wrapCount = 0;
 			int		wrapItemCount = 0;
 			double	nextEdge = 0, priorEdge = 0;
@@ -230,6 +238,8 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 					childSize.Height = Math.Min( finalSize.Height, child.DesiredSize.Height );
 
 					wrapItemCount = CalculateWrapCount( finalSize.Height, child.DesiredSize.Height );
+					wrapTopLeft = CalculateWrapTopLeft( finalSize.Height, child.DesiredSize.Height, wrapItemCount );
+					wrapOrigin.Y = wrapTopLeft;
 					childOffset.Y = childSize.Height;
 
 					nextEdge = wrapOrigin.X + childExtent;
@@ -242,6 +252,8 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 					childSize.Width = Math.Min( finalSize.Width, child.DesiredSize.Width );
 
 					wrapItemCount = CalculateWrapCount( finalSize.Width, child.DesiredSize.Width );
+					wrapTopLeft = CalculateWrapTopLeft( finalSize.Width, child.DesiredSize.Width, wrapItemCount );
+					wrapOrigin.X = wrapTopLeft;
 					childOffset.X = childSize.Width;
 
 					nextEdge = wrapOrigin.Y + childExtent;
@@ -296,12 +308,15 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 				// determine the child's arrange rect
 				if( isHorizontal ) {
 					wrapRect.X = isArrangingNext ? nextEdge : priorEdge;
+					wrapRect.Y = wrapTopLeft;
 
 					wrapRect.Width = childExtent;
 					wrapRect.Height = Math.Max( finalSize.Height, childSize.Height * wrapItemCount );
 				}
 				else {
 					wrapRect.Y = isArrangingNext ? nextEdge : priorEdge;
+					wrapRect.Y = wrapTopLeft;
+
 					wrapRect.Height = childExtent;
 					wrapRect.Width = Math.Max( finalSize.Width, childSize.Width * wrapItemCount );
 				}
