@@ -288,7 +288,7 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 				}
 				else {
 					wrapIndex = priorWrapIndex;
-					priorWrapIndex = ( priorWrapIndex > 0 ) ? priorWrapIndex - 1 : wrapCount;
+					priorWrapIndex = ( priorWrapIndex > 0 ) ? priorWrapIndex - 1 : wrapCount - 1;
 				}
 
 				var		wrapRect = new Rect();
