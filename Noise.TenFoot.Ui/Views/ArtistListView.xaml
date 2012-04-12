@@ -70,7 +70,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Grid x:Name="grid" RenderTransformOrigin="0.5,0.5">
+                        <Grid x:Name="LayoutRoot" RenderTransformOrigin="0.5,0.5">
                             <Grid.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform />
@@ -87,30 +87,54 @@
                                     <VisualState x:Name="Unselected" />
                                     <VisualState x:Name="Selected">
                                         <Storyboard>
-                                            <ColorAnimationUsingKeyFrames Storyboard.TargetName="Highlight" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                                <EasingColorKeyFrame KeyTime="0" Value="#FFFFF727" />
-                                            </ColorAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                                                 <EasingDoubleKeyFrame KeyTime="0" Value="1.5" />
                                             </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="1.5" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Highlight" Storyboard.TargetProperty="(UIElement.Opacity)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="SelectedUnfocused">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="1.5" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                                                 <EasingDoubleKeyFrame KeyTime="0" Value="1.5" />
                                             </DoubleAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
-                                    <VisualState x:Name="SelectedUnfocused" />
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
                             <Rectangle x:Name="Border"
                                        Margin="0"
-                                       Fill="White"
                                        RadiusX="3"
                                        RadiusY="3"
                                        Stroke="{x:Null}"
-                                       StrokeThickness="0" />
+                                       StrokeThickness="0">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush MappingMode="RelativeToBoundingBox" StartPoint="0.5,0" EndPoint="0.5,1">
+                                        <LinearGradientBrush.RelativeTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform CenterX="0.5" CenterY="0.5" />
+                                                <SkewTransform CenterX="0.5" CenterY="0.5" />
+                                                <RotateTransform Angle="-30" CenterX="0.5" CenterY="0.5" />
+                                                <TranslateTransform />
+                                            </TransformGroup>
+                                        </LinearGradientBrush.RelativeTransform>
+                                        <GradientStop Offset="1" Color="#FF2F3A54" />
+                                        <GradientStop Color="#FFD2D9E9" />
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
                             <Rectangle x:Name="Highlight"
                                        Margin="0"
-                                       Fill="#00FFF727"
+                                       Fill="#FFFFF727"
+                                       Opacity="0"
                                        RadiusX="3"
                                        RadiusY="3"
                                        Stroke="{x:Null}"
@@ -154,16 +178,15 @@
                                                   d:IsHidden="True" />
                             </Grid>
                         </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Panel.ZIndex" Value="1" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-
-            <Style.Triggers>
-                <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Panel.ZIndex" Value="1" />
-                </Trigger>
-            </Style.Triggers>
-
         </Style>
 
     </UserControl.Resources>
@@ -182,17 +205,18 @@
         <Rectangle Grid.Row="1"
                    Fill="AliceBlue"
                    Opacity="0.1" />
-        <controls:LoopingWrapBox x:Name="ArtistList"
-                                 Grid.Row="1"
+        <controls:LoopingWrapBox Grid.Row="1"
                                  HorizontalContentAlignment="Stretch"
                                  VerticalContentAlignment="Stretch"
                                  Background="Transparent"
                                  BorderThickness="0"
                                  ItemContainerStyle="{StaticResource ArtistItemStyle}"
+                                 ItemsSource="{Binding ArtistList}"
                                  ItemTemplate="{StaticResource ArtistTemplate}"
                                  LastItemMargin="0.75"
                                  Orientation="Horizontal"
                                  RelativeOffset="0.3"
+                                 SelectedItem="{Binding SelectedArtist}"
                                  Offset="{Binding ArtistIndex}" />
 
         <StackPanel Grid.Row="2"

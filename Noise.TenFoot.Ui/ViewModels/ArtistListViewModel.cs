@@ -66,7 +66,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 						artist.ArtistImage = mArtworkProvider.GetArtistArtwork( artist.DbId, ContentType.ArtistPrimaryImage );
 					}
 				},
-				() => { },
+				() => { SelectedArtist = mArtistList.FirstOrDefault(); },
 				ex => NoiseLogger.Current.LogException( "ArtistListViewModel:RetrieveArtistList", ex )
 			); 
 		}
@@ -82,21 +82,43 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			get{ return( mArtistList ); }
 		}
  
-		public UiArtist SelectedArtistList {
+		public UiArtist SelectedArtist {
 			get{ return( mSelectedArtist ); }
-			set{ mSelectedArtist = value; }
+			set {
+				mSelectedArtist = value;
+
+				if( mSelectedArtist != null ) {
+					ArtistIndex = mArtistList.IndexOf( mSelectedArtist );
+
+					NotifyOfPropertyChange( () => ArtistIndex );
+				}
+
+				NotifyOfPropertyChange( () => SelectedArtist );
+			}
 		}
 
 		public void NextArtist() {
-			ArtistIndex += 1.0;
-
-			NotifyOfPropertyChange( () => ArtistIndex );
+			SetSelectedArtist((int)ArtistIndex + 1 );
 		}
 
 		public void PreviousArtist() {
-			ArtistIndex -= 1.0;
+			SetSelectedArtist((int)ArtistIndex - 1 );
+		}
 
-			NotifyOfPropertyChange( () => ArtistIndex );
+		private void SetSelectedArtist( int index ) {
+			var artistCount = ArtistList.Count();
+
+			if( index < 0 ) {
+				index = artistCount + index;
+			}
+
+			if( index >= artistCount ) {
+				index = index % artistCount;
+			}
+
+			if( index < artistCount ) {
+				SelectedArtist = ArtistList[index];
+			}
 		}
 
 		public void Albums() {
