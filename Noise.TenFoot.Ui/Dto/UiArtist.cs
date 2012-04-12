@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Input;
 using Microsoft.Practices.Prism.Commands;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.TenFoot.Ui.Dto {
+	[DebuggerDisplay("UiArtist = {Name}")]
 	public class UiArtist : UiBase {
 		private Artwork						mArtistImage;
 		private readonly DelegateCommand	mOnSelected;
