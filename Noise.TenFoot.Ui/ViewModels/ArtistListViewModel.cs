@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows.Media.Imaging;
 using AutoMapper;
 using Caliburn.Micro;
@@ -9,6 +8,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Dto;
 using Noise.TenFoot.Ui.Interfaces;
 using ReusableBits;
+using ReusableBits.Interfaces;
 using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
@@ -23,13 +23,13 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		public	double									ArtistIndex { get; set; }
 
-		public ArtistListViewModel( IAlbumList albumListViewModel, IArtistProvider artistProvider, IArtworkProvider artworkProvider ) {
+		public ArtistListViewModel( IAlbumList albumListViewModel, IArtistProvider artistProvider, IArtworkProvider artworkProvider,
+									IResourceProvider resourceProvider ) {
 			mAlbumsList = albumListViewModel;
 			mArtistProvider = artistProvider;
 			mArtworkProvider = artworkProvider;
 
-			var path = string.Format( "pack://application:,,,/Noise.TenFoot.Ui;component/Resources/{0}", "Unknown Artist.png" );
-			mUnknownArtistImage = new BitmapImage( new Uri( path ));
+			mUnknownArtistImage = resourceProvider.RetrieveImage( "Unknown Artist.png" );
 
 			mArtistList = new BindableCollection<UiArtist>();
 		}

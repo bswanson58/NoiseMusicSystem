@@ -2,10 +2,10 @@
 using Caliburn.Micro;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
-using Noise.Infrastructure.Interfaces;
-using Noise.UI.Resources;
 using Noise.UI.Support;
 using Noise.UI.ViewModels;
+using ReusableBits.Interfaces;
+using ReusableBits.Support;
 
 namespace Noise.UI {
 	public class NoiseUiModule : IModule {
@@ -21,10 +21,12 @@ namespace Noise.UI {
 			mContainer.RegisterType<IExplorerViewStrategy, ExplorerStrategyArtistAlbum>( "ArtistAlbum" );
 			mContainer.RegisterType<IExplorerViewStrategy, ExplorerStrategyDecade>( "DecadeArtist" );
 			mContainer.RegisterType<IEnumerable<IExplorerViewStrategy>, IExplorerViewStrategy[]>();
-			mContainer.RegisterType<IResourceProvider, ResourceProvider>();
 			mContainer.RegisterType<IDialogService, DialogService>();
 
 			mContainer.RegisterType<PlaybackFocusTracker, PlaybackFocusTracker>();
+
+			var resourceLoader = new ResourceProvider( "Noise.UI", "Resources" );
+			mContainer.RegisterInstance<IResourceProvider>( resourceLoader );
 
 			MappingConfiguration.Configure();
 		}

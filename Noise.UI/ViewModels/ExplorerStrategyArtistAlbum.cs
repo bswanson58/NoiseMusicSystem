@@ -15,6 +15,7 @@ using Noise.UI.Adapters;
 using Noise.UI.Dto;
 using Observal.Extensions;
 using ReusableBits;
+using ReusableBits.Interfaces;
 using Condition = CuttingEdge.Conditions.Condition;
 
 namespace Noise.UI.ViewModels {

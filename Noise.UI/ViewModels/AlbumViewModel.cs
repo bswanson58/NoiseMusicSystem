@@ -13,6 +13,7 @@ using Noise.UI.Behaviours;
 using Noise.UI.Dto;
 using Observal.Extensions;
 using ReusableBits;
+using ReusableBits.Interfaces;
 using ReusableBits.Ui.ValueConverters;
 
 namespace Noise.UI.ViewModels {

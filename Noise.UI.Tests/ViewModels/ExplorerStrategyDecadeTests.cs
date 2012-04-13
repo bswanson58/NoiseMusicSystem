@@ -13,6 +13,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
 using Noise.UI.ViewModels;
 using ReusableBits;
+using ReusableBits.Interfaces;
 using ReusableBits.TestSupport.Mocking;
 using ReusableBits.TestSupport.Threading;
 using ILog = Noise.Infrastructure.Interfaces.ILog;

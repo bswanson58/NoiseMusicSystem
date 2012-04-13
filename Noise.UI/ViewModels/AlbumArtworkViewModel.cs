@@ -6,6 +6,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
 using Noise.UI.Support;
+using ReusableBits.Interfaces;
 
 namespace Noise.UI.ViewModels {
 	public class AlbumArtworkViewModel : DialogModelBase {
