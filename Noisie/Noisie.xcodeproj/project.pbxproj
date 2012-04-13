@@ -884,7 +884,7 @@
 		A95AF35314705F380074A070 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = "Secret Squirrel Products";
 			};
 			buildConfigurationList = A95AF35614705F380074A070 /* Build configuration list for PBXProject "Noisie" */;
