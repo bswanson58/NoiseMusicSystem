@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Windows.Media.Imaging;
 using AutoMapper;
 using Caliburn.Micro;
 using Noise.Infrastructure;
@@ -14,6 +16,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private readonly IAlbumList						mAlbumsList;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IArtworkProvider				mArtworkProvider;
+		private readonly BitmapImage					mUnknownArtistImage;
 		private readonly BindableCollection<UiArtist>	mArtistList; 
 		private UiArtist								mSelectedArtist;
 		private TaskHandler								mArtistRetrievalTaskHandler;
@@ -24,6 +27,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			mAlbumsList = albumListViewModel;
 			mArtistProvider = artistProvider;
 			mArtworkProvider = artworkProvider;
+
+			var path = string.Format( "pack://application:,,,/Noise.TenFoot.Ui;component/Resources/{0}", "Unknown Artist.png" );
+			mUnknownArtistImage = new BitmapImage( new Uri( path ));
 
 			mArtistList = new BindableCollection<UiArtist>();
 		}
@@ -66,8 +72,11 @@ namespace Noise.TenFoot.Ui.ViewModels {
 						var artwork = mArtworkProvider.GetArtistArtwork( artist.DbId, ContentType.ArtistPrimaryImage );
 
 						if(( artwork != null ) &&
-						   ( artwork.Image != null )) {
+						   ( artwork.HaveValidImage )) {
 							artist.SetArtistArtwork( artwork );
+						}
+						else {
+							artist.ArtistImage = mUnknownArtistImage;
 						}
 					}
 				},

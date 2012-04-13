@@ -36,10 +36,11 @@ namespace Noise.TenFoot.Ui.Dto {
 
 		public BitmapImage ArtistImage {
 			get {
-				if(( mArtistImage == null ) &&
-				   ( mArtistArtwork != null ) &&
-				   ( mArtistArtwork.Image != null )) {
-					mArtistImage = ByteImageConverter.CreateBitmap( mArtistArtwork.Image );
+				if( mArtistImage == null ) {
+					if(( mArtistArtwork != null ) &&
+					   ( mArtistArtwork.HaveValidImage )) {
+						mArtistImage = ByteImageConverter.CreateBitmap( mArtistArtwork.Image );
+					}
 				}
 
 				return( mArtistImage );

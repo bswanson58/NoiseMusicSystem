@@ -9,5 +9,12 @@
 		public Artwork( DbArtwork artwork ) :
 			base( artwork ) {
 		}
+
+		public bool HaveValidImage {
+			get {
+				return(( Image != null ) &&
+					   ( Image.Length > 10 ));
+			}
+		}
 	}
 }
