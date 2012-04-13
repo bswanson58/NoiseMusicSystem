@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using AutoMapper;
@@ -14,6 +13,7 @@ using Noise.UI.Behaviours;
 using Noise.UI.Dto;
 using Observal.Extensions;
 using ReusableBits;
+using ReusableBits.Ui.ValueConverters;
 
 namespace Noise.UI.ViewModels {
 	internal class AlbumEditRequest : InteractionRequestData<AlbumEditDialogModel> {
@@ -252,7 +252,7 @@ namespace Noise.UI.ViewModels {
 				}
 
 				if( cover != null ) {
-					retValue = new ImageScrubberItem( cover.DbId, CreateBitmap( cover.Image ), cover.Rotation );
+					retValue = new ImageScrubberItem( cover.DbId, ByteImageConverter.CreateBitmap( cover.Image ), cover.Rotation );
 				}
 				else {
 					if(( info.Artwork != null ) &&
@@ -328,27 +328,12 @@ namespace Noise.UI.ViewModels {
 
 				if(( SupportInfo != null ) &&
 				   ( SupportInfo.Artwork != null )) {
-					retValue.AddRange( SupportInfo.Artwork.Select( artwork => new ImageScrubberItem( artwork.DbId, CreateBitmap( artwork.Image ), artwork.Rotation )));
-					retValue.AddRange( SupportInfo.AlbumCovers.Select( cover => new ImageScrubberItem( cover.DbId, CreateBitmap( cover.Image ), cover.Rotation )));
+					retValue.AddRange( SupportInfo.Artwork.Select( artwork => new ImageScrubberItem( artwork.DbId, ByteImageConverter.CreateBitmap( artwork.Image ), artwork.Rotation )));
+					retValue.AddRange( SupportInfo.AlbumCovers.Select( cover => new ImageScrubberItem( cover.DbId, ByteImageConverter.CreateBitmap( cover.Image ), cover.Rotation )));
 				}
 
 				return( retValue );
 			}
-		}
-
-		private static BitmapImage CreateBitmap( byte[] bytes ) {
-			var bitmap = new BitmapImage();
-
-			if(( bytes != null ) &&
-			   ( bytes.GetLength( 0 ) > 0 )) {
-				var stream = new MemoryStream( bytes );
-
-				bitmap.BeginInit();
-				bitmap.StreamSource = stream;
-				bitmap.EndInit();
-			}
-
-			return( bitmap );
 		}
 
 		public void Execute_PlayAlbum() {
@@ -452,7 +437,7 @@ namespace Noise.UI.ViewModels {
 							}
 
 							if( artwork.Artwork.IsUserSelection ) {
-								AlbumCover = new ImageScrubberItem( artwork.Artwork.DbId, CreateBitmap( artwork.Artwork.Image ), artwork.Artwork.Rotation );
+								AlbumCover = new ImageScrubberItem( artwork.Artwork.DbId, ByteImageConverter.CreateBitmap( artwork.Artwork.Image ), artwork.Artwork.Rotation );
 
 								RaisePropertyChanged( () => AlbumCover );
 							}

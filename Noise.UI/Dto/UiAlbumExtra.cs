@@ -2,7 +2,7 @@
 using System.Windows.Media.Imaging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Support;
-using Noise.UI.Support;
+using ReusableBits.Ui.ValueConverters;
 
 namespace Noise.UI.Dto {
 	public class UiAlbumExtra : ViewModelBase {
@@ -16,7 +16,7 @@ namespace Noise.UI.Dto {
 
 			if(( Artwork != null ) &&
 			   ( Artwork.Image != null )) {
-				Image = BitmapUtils.CreateBitmap( Artwork.Image );
+				Image = ByteImageConverter.CreateBitmap( Artwork.Image );
 			}
 		}
 

@@ -13,16 +13,7 @@ namespace ReusableBits.Ui.ValueConverters {
 				throw new InvalidOperationException( "The target must be ImageSource or derived types" );
 
 			if( value != null && value is byte[] ) {
-				var bytes = value as byte[];
-				if( bytes.GetLength( 0 ) > 0 ) {
-					var stream = new MemoryStream( bytes );
-
-					retValue = new BitmapImage();
-
-					retValue.BeginInit();
-					retValue.StreamSource = stream;
-					retValue.EndInit();
-				}
+				retValue = CreateBitmap( value as byte[]);
 			}
 
 			return( retValue );
@@ -30,6 +21,21 @@ namespace ReusableBits.Ui.ValueConverters {
 
 		public object ConvertBack( object value, Type targetType, object parameter, System.Globalization.CultureInfo culture ) {
 			throw new NotImplementedException();
+		}
+
+		public static BitmapImage CreateBitmap( byte[] bytes ) {
+			var bitmap = new BitmapImage();
+
+			if(( bytes != null ) &&
+			   ( bytes.GetLength( 0 ) > 0 )) {
+				var stream = new MemoryStream( bytes );
+
+				bitmap.BeginInit();
+				bitmap.StreamSource = stream;
+				bitmap.EndInit();
+			}
+
+			return( bitmap );
 		}
 	}
 }
