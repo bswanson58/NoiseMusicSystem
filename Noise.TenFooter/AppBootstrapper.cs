@@ -24,6 +24,7 @@ namespace Noise.TenFooter {
 			AddModule( typeof( BlobStorage.BlobStorageModule ));
 			AddModule( typeof( RemoteHost.RemoteHostModule ));
 			AddModule( typeof( EloqueraDatabase.EloqueraDatabaseModule ));
+			AddModule( typeof( TenFoot.Ui.TenFootUiModule ));
 
 			var iocConfig = new IocConfiguration( Container );
 			iocConfig.InitializeIoc( ApplicationUsage.TenFootUi );
