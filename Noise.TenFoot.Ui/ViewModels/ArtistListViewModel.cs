@@ -63,7 +63,12 @@ namespace Noise.TenFoot.Ui.ViewModels {
 					}
 
 					foreach( var artist in mArtistList ) {
-						artist.ArtistImage = mArtworkProvider.GetArtistArtwork( artist.DbId, ContentType.ArtistPrimaryImage );
+						var artwork = mArtworkProvider.GetArtistArtwork( artist.DbId, ContentType.ArtistPrimaryImage );
+
+						if(( artwork != null ) &&
+						   ( artwork.Image != null )) {
+							artist.SetArtistArtwork( artwork );
+						}
 					}
 				},
 				() => { SelectedArtist = mArtistList.FirstOrDefault(); },

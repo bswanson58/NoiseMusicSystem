@@ -8,7 +8,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:UiDto="clr-namespace:Noise.TenFoot.Ui.Dto"
-             xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              xmlns:ViewModels="clr-namespace:Noise.TenFoot.Ui.ViewModels"
              cal:Bind.AtDesignTime="True"
              d:DataContext="{d:DesignInstance {x:Type ViewModels:ArtistListViewModel},
@@ -18,8 +17,6 @@
              mc:Ignorable="d">
 
     <UserControl.Resources>
-        <ValueConverters:ByteImageConverter x:Key="ByteImageConverter" />
-
         <DataTemplate x:Key="ArtistTemplate" DataType="{x:Type UiDto:UiArtist}">
             <Grid>
                 <Image MinWidth="50"
@@ -27,8 +24,7 @@
                        Margin="3,3,7,25"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Top"
-                       Source="{Binding ArtistImage.Image,
-                                        Converter={StaticResource ByteImageConverter}}"
+                       Source="{Binding ArtistImage}"
                        Stretch="Uniform">
                     <Image.Effect>
                         <DropShadowEffect Opacity="0.8"

@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using Microsoft.Practices.Prism.Commands;
 using Noise.Infrastructure.Dto;
+using ReusableBits.Ui.ValueConverters;
 
 namespace Noise.TenFoot.Ui.Dto {
 	[DebuggerDisplay("UiArtist = {Name}")]
 	public class UiArtist : UiBase {
-		private Artwork						mArtistImage;
+		private BitmapImage					mArtistImage;
+		private Artwork						mArtistArtwork;
 		private readonly DelegateCommand	mOnSelected;
 		private readonly Action<UiArtist>	mSelectAction; 
 
@@ -25,8 +28,22 @@ namespace Noise.TenFoot.Ui.Dto {
 			mSelectAction = onSelect;
 		}
 
-		public Artwork ArtistImage {
-			get{ return( mArtistImage ); }
+		public void SetArtistArtwork( Artwork artwork ) {
+			mArtistArtwork = artwork;
+
+			RaisePropertyChanged( () => ArtistImage );
+		}
+
+		public BitmapImage ArtistImage {
+			get {
+				if(( mArtistImage == null ) &&
+				   ( mArtistArtwork != null ) &&
+				   ( mArtistArtwork.Image != null )) {
+					mArtistImage = ByteImageConverter.CreateBitmap( mArtistArtwork.Image );
+				}
+
+				return( mArtistImage );
+			}
 			set{
 				mArtistImage = value;
 				RaisePropertyChanged( () => ArtistImage );
