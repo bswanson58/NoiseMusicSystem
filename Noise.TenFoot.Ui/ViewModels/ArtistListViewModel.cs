@@ -6,13 +6,15 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Dto;
+using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 using ReusableBits;
 using ReusableBits.Interfaces;
 using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class ArtistListViewModel : Screen, IArtistList {
+	public class ArtistListViewModel : Screen, IArtistList,
+									   IHandle<InputEvent> {
 		private readonly IAlbumList						mAlbumsList;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IArtworkProvider				mArtworkProvider;
@@ -24,7 +26,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	double									ArtistIndex { get; set; }
 
 		public ArtistListViewModel( IAlbumList albumListViewModel, IArtistProvider artistProvider, IArtworkProvider artworkProvider,
-									IResourceProvider resourceProvider ) {
+									IEventAggregator eventAggregator, IResourceProvider resourceProvider ) {
 			mAlbumsList = albumListViewModel;
 			mArtistProvider = artistProvider;
 			mArtworkProvider = artworkProvider;
@@ -32,6 +34,8 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			mUnknownArtistImage = resourceProvider.RetrieveImage( "Unknown Artist.png" );
 
 			mArtistList = new BindableCollection<UiArtist>();
+
+			eventAggregator.Subscribe( this );
 		}
 
 		protected override void OnInitialize() {
@@ -108,6 +112,25 @@ namespace Noise.TenFoot.Ui.ViewModels {
 				}
 
 				NotifyOfPropertyChange( () => SelectedArtist );
+			}
+		}
+
+		
+		public void Handle( InputEvent message ) {
+			switch( message.Command ) {
+				case InputCommand.Up:
+					PreviousArtist();
+					break;
+
+				case InputCommand.Down:
+					NextArtist();
+				break;
+
+				case InputCommand.Left:
+				break;
+
+				case InputCommand.Right:
+				break;
 			}
 		}
 
