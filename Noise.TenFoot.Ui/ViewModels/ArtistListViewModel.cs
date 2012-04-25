@@ -115,33 +115,6 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			}
 		}
 
-		
-		public void Handle( InputEvent message ) {
-			switch( message.Command ) {
-				case InputCommand.Up:
-					PreviousArtist();
-					break;
-
-				case InputCommand.Down:
-					NextArtist();
-				break;
-
-				case InputCommand.Left:
-				break;
-
-				case InputCommand.Right:
-				break;
-			}
-		}
-
-		public void NextArtist() {
-			SetSelectedArtist((int)ArtistIndex + 1 );
-		}
-
-		public void PreviousArtist() {
-			SetSelectedArtist((int)ArtistIndex - 1 );
-		}
-
 		private void SetSelectedArtist( int index ) {
 			var artistCount = ArtistList.Count();
 
@@ -156,6 +129,40 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			if( index < artistCount ) {
 				SelectedArtist = ArtistList[index];
 			}
+		}
+
+		public void Handle( InputEvent message ) {
+			switch( message.Command ) {
+				case InputCommand.Up:
+					PreviousArtist();
+					break;
+
+				case InputCommand.Down:
+					NextArtist();
+					break;
+
+				case InputCommand.Left:
+					break;
+
+				case InputCommand.Right:
+					break;
+
+				case InputCommand.Back:
+					Done();
+					break;
+
+				case InputCommand.Select:
+					Albums();
+					break;
+			}
+		}
+
+		private void NextArtist() {
+			SetSelectedArtist((int)ArtistIndex + 1 );
+		}
+
+		private void PreviousArtist() {
+			SetSelectedArtist((int)ArtistIndex - 1 );
 		}
 
 		public void Albums() {
@@ -174,7 +181,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			}
 		}
 
-		public void Done() {
+		private void Done() {
 			if( Parent is INavigate ) {
 				var controller = Parent as INavigate;
 

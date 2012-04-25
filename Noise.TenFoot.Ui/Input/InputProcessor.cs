@@ -37,6 +37,14 @@ namespace Noise.TenFoot.Ui.Input {
 					case Keys.Right:
 						mEventAggregator.Publish( new InputEvent( InputCommand.Right ));
 						break;
+
+					case Keys.Back:
+						mEventAggregator.Publish( new InputEvent( InputCommand.Back ));
+						break;
+
+					case Keys.Return:
+						mEventAggregator.Publish( new InputEvent( InputCommand.Select ));
+						break;
 				}
 			}
 		}

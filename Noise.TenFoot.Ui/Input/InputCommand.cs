@@ -3,7 +3,10 @@
 		Up,
 		Down,
 		Left,
-		Right
+		Right,
+		Back,
+		Select,
+		Play
 	}
 
 	public class InputEvent {

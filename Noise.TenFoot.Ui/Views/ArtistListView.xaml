@@ -237,20 +237,6 @@
                     Margin="7,0,0,0"
                     HorizontalAlignment="Left"
                     Content="Home" />
-            <Button x:Name="Done"
-                    Width="120"
-                    Margin="7,0,0,0"
-                    HorizontalAlignment="Left"
-                    Content="Return" />
-
-            <Button x:Name="NextArtist"
-                    Width="120"
-                    Margin="7,0,0,0"
-                    Content="Next Artist" />
-            <Button x:Name="PreviousArtist"
-                    Width="120"
-                    Margin="7,0,0,0"
-                    Content="Previous Artist" />
         </StackPanel>
     </Grid>
 </UserControl>
