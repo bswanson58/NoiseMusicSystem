@@ -289,7 +289,7 @@ namespace Noise.UI.ViewModels {
 
 					if((!item.QueuedTrack.HasPlayed ) ||
 					   ( item.QueuedTrack.IsPlaying )) {
-						mRemainingTime = mRemainingTime.Add( item.QueuedTrack.Track.Duration );
+						mRemainingTime = mRemainingTime.Add( item.QueuedTrack.Track != null ? item.QueuedTrack.Track.Duration : new TimeSpan());
 					}
 
 					index++;
