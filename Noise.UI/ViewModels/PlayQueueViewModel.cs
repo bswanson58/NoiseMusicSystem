@@ -11,7 +11,6 @@ using Noise.Infrastructure.Support;
 using Noise.UI.Behaviours.EventCommandTriggers;
 using Noise.UI.Dto;
 using Noise.UI.Support;
-using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class PlayQueueViewModel : ViewModelBase, IDropTarget, IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted> {
@@ -252,11 +251,13 @@ namespace Noise.UI.ViewModels {
 			mRemainingTime = new TimeSpan();
 
 			foreach( var track in mQueue ) {
-				mTotalTime = mTotalTime.Add( track.QueuedTrack.Track.Duration );
+				var	trackTime = track.QueuedTrack.Track != null ? track.QueuedTrack.Track.Duration : new TimeSpan();
+
+				mTotalTime = mTotalTime.Add( trackTime );
 
 				if((!track.QueuedTrack.HasPlayed ) ||
 				   ( track.QueuedTrack.IsPlaying )) {
-					mRemainingTime = mRemainingTime.Add( track.QueuedTrack.Track.Duration );
+					mRemainingTime = mRemainingTime.Add( trackTime );
 				}
 			}
 
