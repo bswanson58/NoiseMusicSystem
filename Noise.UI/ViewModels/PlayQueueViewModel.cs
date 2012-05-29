@@ -106,7 +106,8 @@ namespace Noise.UI.ViewModels {
 			var playList = new DbPlayList();
 
 			if( mDialogService.ShowDialog( DialogNames.PlayListEdit, playList ) == true ) {
-				mPlayListProvider.AddPlayList( new DbPlayList( playList.Name, playList.Description, mPlayQueue.PlayList.Select( track => track.Track.DbId )));
+				mPlayListProvider.AddPlayList( new DbPlayList( playList.Name, playList.Description,
+																mPlayQueue.PlayList.Select( track => track.IsStream ? track.Stream.DbId : track.Track.DbId )));
 			}
 		}
 

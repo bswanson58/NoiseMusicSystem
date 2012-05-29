@@ -12,6 +12,7 @@ namespace Noise.UI.ViewModels {
 
 		public PlaybackFocusTracker( IEventAggregator eventAggregator ) {
 			mEventAggregator = eventAggregator;
+			mEventAggregator.Subscribe( this );
 
 			mPlayTrackDelay = new TimeSpan( 0, 0, 30 );
 			mLastExplorerRequest = DateTime.Now - mPlayTrackDelay;
