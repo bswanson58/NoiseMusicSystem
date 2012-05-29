@@ -16,6 +16,10 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			AddItem( track );
 		}
 
+		public void DeleteTrack( DbTrack track ) {
+			RemoveItem( track );
+		}
+
 		public DbTrack GetTrack( long trackId ) {
 			return( GetItemByKey( trackId ));
 		}

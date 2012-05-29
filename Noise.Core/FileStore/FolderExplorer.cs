@@ -161,7 +161,7 @@ namespace Noise.Core.FileStore {
 			foreach( var dbFolder in folderList ) {
 				using( var updater = mStorageFolderProvider.GetFolderForUpdate( dbFolder.DbId )) {
 					if( updater.Item != null ) {
-						dbFolder.IsDeleted = true;
+						updater.Item.IsDeleted = true;
 
 						updater.Update();
 					}

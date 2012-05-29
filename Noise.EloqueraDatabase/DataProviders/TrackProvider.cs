@@ -16,6 +16,10 @@ namespace Noise.EloqueraDatabase.DataProviders {
 			InsertItem( track );
 		}
 
+		public void DeleteTrack( DbTrack track ) {
+			DeleteItem( track );
+		}
+
 		public DbTrack GetTrack( long trackId ) {
 			return( TryGetItem( "SELECT DbTrack Where DbId = @trackId", new Dictionary<string, object> {{ "trackId", trackId }}, "GetTrack" ));
 		}

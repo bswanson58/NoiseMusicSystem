@@ -18,6 +18,38 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
+		public void CanAddAllTrackProperties() {
+			var	sut = CreateSut();
+			var track = new DbTrack { Album = 1, 
+									  Bitrate = 2, 
+									  CalculatedGenre = 3,
+									  Channels = 4,
+									  DurationMilliseconds = 5,
+									  Encoding = eAudioEncoding.FLAC,
+									  ExternalGenre = 6,
+									  Name = "track name",
+									  Genre = 7,
+									  IsFavorite = true, 
+									  Performer = "performer",
+									  PlayCount = 8,
+									  PublishedYear = 9,
+									  Rating = 10,
+									  ReplayGainAlbumGain = 11,
+									  ReplayGainAlbumPeak = 12,
+									  ReplayGainTrackGain = 13,
+									  ReplayGainTrackPeak = 14,
+									  SampleRate = 15,
+									  TrackNumber = 16,
+									  UserGenre = 17,
+									  VolumeName = "volume" };
+
+			sut.AddTrack( track );
+
+			var retrievedTrack = sut.GetTrack( track.DbId );
+			track.ShouldHave().AllProperties().EqualTo( retrievedTrack );
+		}
+
+		[Test]
 		[ExpectedException( typeof( ArgumentNullException ))]
 		public void CannotAddNullTrack() {
 			var sut = CreateSut();
@@ -36,6 +68,19 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 			var retrievedTrack = sut.GetTrack( track.DbId );
 
 			track.ShouldHave().AllProperties().EqualTo( retrievedTrack );
+		}
+
+		[Test]
+		public void CanDeleteTrack() {
+			var track = new DbTrack();
+			var sut = CreateSut();
+
+			sut.AddTrack( track );
+			sut.DeleteTrack( track );
+
+			var retrievedTrack = sut.GetTrack( track.DbId );
+
+			Assert.IsNull( retrievedTrack );
 		}
 
 		[Test]

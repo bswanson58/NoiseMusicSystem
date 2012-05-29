@@ -114,17 +114,11 @@ namespace Noise.Core.DataBuilders {
 		private void CleanFile( StorageFile file ) {
 			if( file.MetaDataPointer != Constants.cDatabaseNullOid ) {
 				var associatedItem = mDbBaseProvider.GetItem( file.MetaDataPointer );
+
 				if( associatedItem != null ) {
 					TypeSwitch.Do( associatedItem, TypeSwitch.Case<DbTrack>( CleanTrack),
-												   TypeSwitch.Case<DbArtwork>( CleanContent ),
-												   TypeSwitch.Case<DbTextInfo>( CleanContent ));
-
-					if( associatedItem is DbArtwork ) {
-						mArtworkProvider.DeleteArtwork( associatedItem as DbArtwork );
-					}
-					if( associatedItem is DbTextInfo ) {
-						mTextInfoProvider.DeleteTextInfo( associatedItem as DbTextInfo );
-					}
+												   TypeSwitch.Case<DbArtwork>( CleanArtwork ),
+												   TypeSwitch.Case<DbTextInfo>( CleanTextInfo ));
 				}
 			}
 
@@ -136,14 +130,26 @@ namespace Noise.Core.DataBuilders {
 				mAlbumList.Add( track.Album );
 			}
 
+			mTrackProvider.DeleteTrack( track );
+
 			mSummary.TracksRemoved++;
 			NoiseLogger.Current.LogMessage( "Deleting Track: {0}", track.Name );
 		}
 
-		private void CleanContent( ExpiringContent content ) {
-			if(!mAlbumList.Contains( content.Album )) {
-				mAlbumList.Add( content.Album );
+		private void CleanArtwork( DbArtwork artwork ) {
+			if(!mAlbumList.Contains( artwork.Album )) {
+				mAlbumList.Add( artwork.Album );
 			}
+
+			mArtworkProvider.DeleteArtwork( artwork );
+		}
+
+		private void CleanTextInfo( DbTextInfo textInfo ) {
+			if(!mAlbumList.Contains( textInfo.Album )) {
+				mAlbumList.Add( textInfo.Album );
+			}
+
+			mTextInfoProvider.DeleteTextInfo( textInfo );
 		}
 
 		private void CleanArtists( IEnumerable<long> artists ) {
