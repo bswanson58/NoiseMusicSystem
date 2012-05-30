@@ -183,7 +183,7 @@ namespace Noise.UI.ViewModels {
 		internal TaskHandler ChildPopulateTask {
 			get {
 				if( mChildPopulateTask == null ) {
-					mChildPopulateTask = new TaskHandler();
+					Execute.OnUIThread( () => mChildPopulateTask = new TaskHandler());
 				}
 
 				return( mChildPopulateTask );

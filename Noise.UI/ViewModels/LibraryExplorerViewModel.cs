@@ -107,7 +107,7 @@ namespace Noise.UI.ViewModels {
 		internal TaskHandler TreeBuilderTask {
 			get {
 				if( mTreeBuilderTask == null ) {
-					mTreeBuilderTask = new TaskHandler();
+					Execute.OnUIThread( () => mTreeBuilderTask = new TaskHandler());
 				}
 
 				return( mTreeBuilderTask );

@@ -280,7 +280,7 @@ namespace Noise.UI.ViewModels {
 		internal TaskHandler AlbumPopulateTask {
 			get {
 				if( mAlbumPopulateTask == null ) {
-					mAlbumPopulateTask = new TaskHandler();
+					Execute.OnUIThread( () => mAlbumPopulateTask = new TaskHandler());
 				}
 
 				return( mAlbumPopulateTask );

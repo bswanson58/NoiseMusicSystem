@@ -143,7 +143,7 @@ namespace Noise.UI.ViewModels {
 		internal TaskHandler<DbArtist> ArtistTaskHandler {
 			get {
 				if( mArtistTaskHandler == null ) {
-					mArtistTaskHandler = new TaskHandler<DbArtist>();
+					Execute.OnUIThread( () => mArtistTaskHandler = new TaskHandler<DbArtist>());
 				}
 
 				return( mArtistTaskHandler );
@@ -175,7 +175,7 @@ namespace Noise.UI.ViewModels {
 		internal TaskHandler<Artwork> ArtworkTaskHandler {
 			get {
 				if( mArtworkTaskHandler == null ) {
-					mArtworkTaskHandler = new TaskHandler<Artwork>();
+					Execute.OnUIThread( () => mArtworkTaskHandler = new TaskHandler<Artwork>());
 				}
 
 				return( mArtworkTaskHandler );

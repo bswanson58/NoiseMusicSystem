@@ -105,7 +105,7 @@ namespace Noise.UI.ViewModels {
 		internal TaskHandler TracksRetrievalTaskHandler {
 			get {
 				if( mTrackRetrievalTaskHandler == null ) {
-					mTrackRetrievalTaskHandler = new TaskHandler();
+					Execute.OnUIThread( () => mTrackRetrievalTaskHandler = new TaskHandler());
 				}
 
 				return( mTrackRetrievalTaskHandler );
@@ -121,9 +121,9 @@ namespace Noise.UI.ViewModels {
 																								ascending select track );
 															SetTrackList( sortedList );
 														}
-			                                      },
-												  () => {},
-												  ex => NoiseLogger.Current.LogException( "AlbumTracksViewModel:RetrieveTracks", ex ));
+													},
+													() => {},
+													ex => NoiseLogger.Current.LogException( "AlbumTracksViewModel:RetrieveTracks", ex ));
 		}
 
 		private void OnTrackPlay( long trackId ) {

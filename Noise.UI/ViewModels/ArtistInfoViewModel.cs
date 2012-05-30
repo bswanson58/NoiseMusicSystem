@@ -122,7 +122,7 @@ namespace Noise.UI.ViewModels {
 		internal TaskHandler<ArtistSupportInfo> TaskHandler {
 			get {
 				if( mTaskHandler == null ) {
-					mTaskHandler = new TaskHandler<ArtistSupportInfo>();
+					Execute.OnUIThread( () => mTaskHandler = new TaskHandler<ArtistSupportInfo>());
 				}
 
 				return( mTaskHandler );

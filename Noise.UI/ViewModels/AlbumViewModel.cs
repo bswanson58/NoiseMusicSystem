@@ -193,7 +193,7 @@ namespace Noise.UI.ViewModels {
 		internal TaskHandler AlbumRetrievalTaskHandler {
 			get {
 				if( mAlbumRetrievalTaskHandler == null ) {
-					mAlbumRetrievalTaskHandler = new TaskHandler();
+					Execute.OnUIThread( () => mAlbumRetrievalTaskHandler = new TaskHandler());
 				}
 
 				return( mAlbumRetrievalTaskHandler );
