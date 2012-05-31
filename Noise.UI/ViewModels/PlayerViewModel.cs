@@ -119,9 +119,7 @@ namespace Noise.UI.ViewModels {
 				if( mPlayQueue.PlayingTrack != null ) {
 					var track = mPlayQueue.PlayingTrack;
 
-					retValue = track.IsStream ? track.StreamInfo != null ? String.Format( "{0} ({1}/{2})", track.StreamInfo.Title, track.StreamInfo.Artist, track.StreamInfo.Album ) :
-													String.Format( "{0} - {1}", track.Stream.Name, track.Stream.Description ) :
-												String.Format( "{0} ({1}/{2})", track.Track.Name, track.Artist.Name, track.Album.Name );
+					retValue = track.IsStream ? track.StreamInfo != null ? track.StreamInfo.Title : track.Stream.Name : track.Track.Name;
 				}
 				else if( IsInDesignMode ) {
 					retValue = "The Flying Dutchmens Tribute";
@@ -129,6 +127,26 @@ namespace Noise.UI.ViewModels {
 
 				return( retValue );
 			} 
+		}
+
+		[DependsUpon( "StartTrackFlag" )]
+		public string AlbumName {
+			get {
+				var retValue = string.Empty;
+
+				if( mPlayQueue.PlayingTrack != null ) {
+					var track = mPlayQueue.PlayingTrack;
+
+					retValue = track.IsStream ? track.StreamInfo != null ? String.Format( " ({0}/{1})", track.StreamInfo.Artist, track.StreamInfo.Album ) :
+													String.Format( " - {0}", track.Stream.Description ) :
+												String.Format( " ({0}/{1})", track.Artist.Name, track.Album.Name );
+				}
+				else if( IsInDesignMode ) {
+					retValue = "( The Trubedours/Timeless Hits and Classics)";
+				}
+
+				return( retValue );
+			}
 		}
 
 		[DependsUpon( "StartTrackFlag" )]

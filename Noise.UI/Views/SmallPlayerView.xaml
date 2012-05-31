@@ -47,15 +47,23 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0"
-                           Margin="5,0,3,0"
-                           VerticalAlignment="Center"
-                           FontSize="13.333"
-                           FontWeight="Bold"
-                           ReusableBehaviours:FadeTrimming.IsEnabled="True"
-                           ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                           Text="{Binding TrackName}" />
-
+                <StackPanel Grid.Column="0"
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Bottom"
+                               FontSize="14"
+                               FontWeight="Bold"
+                               ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                               ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                               Text="{Binding TrackName}" />
+                    <TextBlock Margin="0,0,0,1"
+                               VerticalAlignment="Bottom"
+                               FontSize="12"
+                               ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                               ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                               Text="{Binding AlbumName}" />
+                </StackPanel>
                 <Button Grid.Column="1"
                         Width="23"
                         Height="23"

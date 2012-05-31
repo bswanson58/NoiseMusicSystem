@@ -38,28 +38,30 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0"
-                      Margin="0"
-                      VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Grid.Column="0"
-                               FontSize="16"
-                               FontWeight="Bold"
+                <StackPanel Grid.Row="0"
+                            Margin="3,0,0,5"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Bottom"
+                               FontSize="22"
                                Foreground="{DynamicResource ControlTextColor}"
                                Text="Now Playing: "
                                Visibility="{Binding TrackName,
                                                     Converter={StaticResource EmptyStringVisibilityConverter}}" />
-                    <TextBlock Grid.Column="1"
-                               FontSize="16"
+                    <TextBlock VerticalAlignment="Bottom"
+                               FontSize="22"
                                FontWeight="Bold"
                                ReusableBehaviours:FadeTrimming.IsEnabled="True"
                                ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                                Text="{Binding TrackName}" />
-                </Grid>
+                    <TextBlock Margin="0,0,0,3"
+                               VerticalAlignment="Bottom"
+                               FontSize="16"
+                               Foreground="Gray"
+                               ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                               ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                               Text="{Binding AlbumName}" />
+                </StackPanel>
 
                 <Grid Grid.Row="1"
                       Margin="0,0,0,3"
