@@ -1,20 +1,124 @@
-﻿using Microsoft.Practices.Unity;
+﻿using System.Diagnostics;
+using FluentAssertions;
+using Microsoft.Practices.Unity;
+using Moq;
 using NUnit.Framework;
+using Noise.AppSupport;
+using Noise.BlobStorage.BlobStore;
 using Noise.EloqueraDatabase;
+using Noise.EloqueraDatabase.Interfaces;
+using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
+using ReusableBits.Interfaces;
 
 namespace Noise.DatabasePerformance.Tests {
 	[TestFixture]
 	public class EloqueraIdentityPerformance {
-		private readonly IUnityContainer	mContainer;
+		private const int			cFirstTimeStep	= 10000;
+		private const int			cSecondTimeStep = 20000;
+
+		private readonly IUnityContainer			mContainer;
+		private readonly DatabaseConfiguration		mDatabaseConfiguration;
+		private readonly Mock<ISystemConfiguration>	mSystemConfiguration;
+		private readonly Mock<IBlobStorageManager>	mBlobStorageManager;
+		private readonly Stopwatch					mStopWatch;
+		private IEloqueraManager					mEloqueraManager;
 
 		public EloqueraIdentityPerformance() {
+			mDatabaseConfiguration = new DatabaseConfiguration { DatabaseName = "Identity Performance", ServerName = "localhost" };
+			mSystemConfiguration = new Mock<ISystemConfiguration>();
+			mSystemConfiguration.Setup( m => m.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName )).Returns( mDatabaseConfiguration );
+			NoiseSystemConfiguration.Current = mSystemConfiguration.Object;
+
 			mContainer = new UnityContainer();
 
 			var databaseModule = new EloqueraDatabaseModule( mContainer );
+			databaseModule.Initialize();
+
+			mBlobStorageManager = new Mock<IBlobStorageManager>();
+			mBlobStorageManager.Setup( m => m.Initialize( It.IsAny<string>() )).Returns( true );
+			mBlobStorageManager.Setup( m => m.IsOpen ).Returns( true );
+			mContainer.RegisterInstance( mBlobStorageManager.Object );
+
+			mContainer.RegisterType<IIoc, IocProvider>( new ContainerControlledLifetimeManager());
+
+			mStopWatch = new Stopwatch();
 		}
 
-		private void CreateDatabaseFactory() {
-			
+		private IEloqueraManager CreateDatabaseManager() {
+			if( mEloqueraManager == null ) {
+				mEloqueraManager = mContainer.Resolve<IEloqueraManager>();
+				mEloqueraManager.Initialize();
+			}
+
+			return( mEloqueraManager );
+		}
+
+		private bool InitializeDatabase( IEloqueraManager databaseManager ) {
+			bool retValue;
+
+			using( var database = databaseManager.CreateDatabase()) {
+				database.Database.DeleteDatabase();
+			}
+
+			using( var database = databaseManager.CreateDatabase()) {
+				retValue = database.Database.OpenWithCreateDatabase();
+			}
+
+			return( retValue );
+		}
+
+		private void Teardown( IEloqueraManager databaseManager ) {
+			databaseManager.ReservedDatabaseCount.Should().Be( 0 );
+
+			using( var database = databaseManager.CreateDatabase()) {
+				database.Database.DeleteDatabase();
+			}
+		}
+
+		private void ReportTime( string message ) {
+			Debug.WriteLine( message + mStopWatch.Elapsed );
+		}
+
+		[Test]
+		public void TestIdentityPerformance() {
+			DatabaseIdentityProvider.Current.IdentityType = IdentityType.Guid;
+			RunIdentityPerformance();
+
+			DatabaseIdentityProvider.Current.IdentityType = IdentityType.SequentialGuid;
+			RunIdentityPerformance();
+
+			DatabaseIdentityProvider.Current.IdentityType = IdentityType.SequentialEndingGuid;
+			RunIdentityPerformance();
+		}
+
+		public void RunIdentityPerformance() {
+			var databaseManager = CreateDatabaseManager();
+
+			if( InitializeDatabase( databaseManager )) {
+				var trackProvider = mContainer.Resolve<ITrackProvider>();
+
+				mStopWatch.Reset();
+				ReportTime( string.Format( "Starting performance tests using identity method({0}) ", DatabaseIdentityProvider.Current.IdentityType ));
+				mStopWatch.Start();
+
+				for( int count = 0; count < cFirstTimeStep; count++ ) {
+					trackProvider.AddTrack( new DbTrack());
+				}
+
+				ReportTime( string.Format( "Time after {0} track inserts: ", cFirstTimeStep ));
+
+				for( int count = cFirstTimeStep; count < cSecondTimeStep; count++ ) {
+					trackProvider.AddTrack( new DbTrack());
+				}
+
+				ReportTime( string.Format( "Time after {0} track inserts: ", cSecondTimeStep ));
+
+				mStopWatch.Stop();
+				Teardown( databaseManager );
+			}
 		}
 	}
 }
