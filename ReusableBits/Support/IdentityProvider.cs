@@ -2,6 +2,8 @@
 using System.Security.Cryptography;
 using ReusableBits.Interfaces;
 
+// Adapted from: http://www.codeproject.com/Articles/388157/GUIDs-as-fast-primary-keys-under-multiple-database
+
 namespace ReusableBits.Support {
 	public class IdentityProvider : IIdentityProvider {
 		private	readonly RNGCryptoServiceProvider mCryptoServiceProvider;
@@ -9,6 +11,8 @@ namespace ReusableBits.Support {
 
 		public IdentityProvider() {
 			mCryptoServiceProvider = new RNGCryptoServiceProvider();
+
+			IdentityType = IdentityType.Guid;
 		}
 
 		public Guid NewIdentityAsGuid() {

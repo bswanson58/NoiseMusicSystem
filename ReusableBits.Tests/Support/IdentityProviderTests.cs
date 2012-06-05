@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using ReusableBits.Interfaces;
 using ReusableBits.Support;
@@ -82,6 +81,42 @@ namespace ReusableBits.Tests.Support {
 			var sut = CreateSut();
 
 			sut.IdentityType = IdentityType.SequentialGuid;
+
+			var guid1 = sut.NewIdentityAsString();
+			var guid2 = sut.NewIdentityAsString();
+
+			guid1.Should().NotMatch( guid2 );
+		}
+
+		[Test]
+		public void CanGenerateSequentialEndingGuidIdentities() {
+			var sut = CreateSut();
+
+			sut.IdentityType = IdentityType.SequentialEndingGuid;
+
+			var guid1 = sut.NewIdentityAsGuid();
+			var guid2 = sut.NewIdentityAsGuid();
+
+			guid1.Should().NotBe( guid2 );
+		}
+
+		[Test]
+		public void CanGenerateSequentialEndingLongIdentities() {
+			var sut = CreateSut();
+
+			sut.IdentityType = IdentityType.SequentialEndingGuid;
+
+			var guid1 = sut.NewIdentityAsLong();
+			var guid2 = sut.NewIdentityAsLong();
+
+			guid2.Should().NotBe( guid1 );
+		}
+
+		[Test]
+		public void CanGenerateSequentialEndingStringIdentities() {
+			var sut = CreateSut();
+
+			sut.IdentityType = IdentityType.SequentialEndingGuid;
 
 			var guid1 = sut.NewIdentityAsString();
 			var guid2 = sut.NewIdentityAsString();
