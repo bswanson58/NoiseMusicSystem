@@ -1,6 +1,6 @@
-﻿using System;
-using Eloquera.Client;
+﻿using Eloquera.Client;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Support;
 
 namespace Noise.Infrastructure.Dto {
 	public abstract class DbBase : IDbBase {
@@ -8,7 +8,7 @@ namespace Noise.Infrastructure.Dto {
 		public long	DbId { get; protected set; }
 
 		protected DbBase() {
-			DbId = BitConverter.ToInt64( Guid.NewGuid().ToByteArray(), 0 );
+			DbId = DatabaseIdentityProvider.Current.NewIdentityAsLong();
 		}
 
 		protected DbBase( long id ) {
