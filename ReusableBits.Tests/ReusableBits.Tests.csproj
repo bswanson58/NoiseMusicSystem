@@ -126,6 +126,7 @@
     <Compile Include="FeatureToggle\AlwaysOnFeatureToggleTests.cs" />
     <Compile Include="FeatureToggle\SimpleFeatureToggleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Support\IdentityProviderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ReusableBits\ReusableBits.csproj">

@@ -126,8 +126,10 @@
     <Compile Include="FeatureToggle\NowDateAndTime.cs" />
     <Compile Include="FeatureToggle\SimpleFeatureToggle.cs" />
     <Compile Include="FeatureToggle\SqlFeatureToggle.cs" />
+    <Compile Include="Interfaces\IIdentityProvider.cs" />
     <Compile Include="Interfaces\IResourceProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Support\IdentityProvider.cs" />
     <Compile Include="Support\ResourceProvider.cs" />
     <Compile Include="TaskHandler.cs" />
   </ItemGroup>
