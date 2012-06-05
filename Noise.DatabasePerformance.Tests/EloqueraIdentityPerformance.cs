@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using FluentAssertions;
 using Microsoft.Practices.Unity;
 using Moq;
@@ -14,6 +15,30 @@ using Noise.Infrastructure.Support;
 using ReusableBits.Interfaces;
 
 namespace Noise.DatabasePerformance.Tests {
+	internal class LongIdentity : IIdentityProvider {
+		private long			mNextIdentity;
+
+		public	IdentityType	IdentityType { get; set; }
+
+		public LongIdentity() {
+			mNextIdentity = 0L;
+		}
+
+		public Guid NewIdentityAsGuid() {
+			throw new NotImplementedException();
+		}
+
+		public long NewIdentityAsLong() {
+			mNextIdentity++;
+
+			return( mNextIdentity );
+		}
+
+		public string NewIdentityAsString() {
+			throw new NotImplementedException();
+		}
+	}
+
 	[TestFixture]
 	public class EloqueraIdentityPerformance {
 		private const int			cFirstTimeStep	= 10000;
@@ -91,6 +116,10 @@ namespace Noise.DatabasePerformance.Tests {
 			RunIdentityPerformance();
 
 			DatabaseIdentityProvider.Current.IdentityType = IdentityType.SequentialEndingGuid;
+			RunIdentityPerformance();
+
+			Debug.WriteLine( "Replacing identity generator with long int generator." );
+			DatabaseIdentityProvider.Current = new LongIdentity();
 			RunIdentityPerformance();
 		}
 
