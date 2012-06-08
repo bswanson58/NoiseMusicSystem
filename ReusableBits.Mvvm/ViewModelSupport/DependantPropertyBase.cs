@@ -24,11 +24,11 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 			VerifyDependancies();
 		}
 
-		protected override void RaisePropertyChanged( string name ) {
-			base.RaisePropertyChanged( name );
+		protected override void RaisePropertyChanged( string propertyName ) {
+			base.RaisePropertyChanged( propertyName );
 
-			if( mPropertyMap.ContainsKey( name )) {
-				mPropertyMap[name].ToList().ForEach( RaisePropertyChanged );
+			if( mPropertyMap.ContainsKey( propertyName )) {
+				mPropertyMap[propertyName].ToList().ForEach( RaisePropertyChanged );
 			}
 		}
 

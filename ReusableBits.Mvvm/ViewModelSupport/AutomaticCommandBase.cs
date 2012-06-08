@@ -59,11 +59,11 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 			command.RaiseCanExecuteChanged();
 		}
 
-		protected override void RaisePropertyChanged( string name ) {
-			base.RaisePropertyChanged( name );
+		protected override void RaisePropertyChanged( string propertyName ) {
+			base.RaisePropertyChanged( propertyName );
 
-			ExecuteDependentMethods( name );
-			FireChangesOnDependentCommands( name );
+			ExecuteDependentMethods( propertyName );
+			FireChangesOnDependentCommands( propertyName );
 		}
 
 		private void ExecuteDependentMethods( string name ) {

@@ -11,8 +11,12 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 			RaisePropertyChanged( PropertyName( property ) );
 		}
 
-		protected virtual void RaisePropertyChanged( string name ) {
-			PropertyChanged( this, new PropertyChangedEventArgs( name ));
+		protected virtual void RaisePropertyChanged( string propertyName ) {
+			PropertyChanged( this, new PropertyChangedEventArgs( propertyName ));
+		}
+
+		protected void RaiseAllPropertiesChanged() {
+			RaisePropertyChanged( string.Empty );
 		}
 
 		protected static string PropertyName<T>( Expression<Func<T>> expression ) {

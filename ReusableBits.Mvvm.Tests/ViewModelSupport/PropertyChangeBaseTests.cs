@@ -16,6 +16,10 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 		public void RaiseTestLambda() {
 			RaisePropertyChanged( () => Property1 );
 		}
+
+		public void RaiseChangeAll() {
+			RaiseAllPropertiesChanged();
+		}
 	}
 
 	[TestFixture]
@@ -33,6 +37,16 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 			sut.RaiseTestEvent( "property" );
 
 			sut.ShouldRaise( "PropertyChanged" ).WithSender( sut ).WithArgs<PropertyChangedEventArgs>( args => args.PropertyName == "property" );
+		}
+
+		[Test]
+		public void CanRaiseAllPropertiesChanged() {
+			var sut = CreateSut();
+			sut.MonitorEvents();
+
+			sut.RaiseChangeAll();
+
+			sut.ShouldRaise( "PropertyChanged" ).WithArgs<PropertyChangedEventArgs>( args => args.PropertyName == string.Empty );
 		}
 
 		[Test]
