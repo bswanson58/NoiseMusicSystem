@@ -7,6 +7,16 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 	[TestFixture]
 	public class DependantPropertyBaseTests {
 		internal class TestPropertyChangeBase : DependantPropertyBase {
+			private int mProperty4 = 4;
+
+			public int Property4 {
+				get { return( mProperty4 ); }
+				set {
+					mProperty4 = value;
+					RaisePropertyChanged( () => Property4 );
+				}
+			}
+
 			public int Property1 {
 				get { return ( 1 ); }
 			}
@@ -17,6 +27,7 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 			}
 
 			[DependsUpon( "Property2" )]
+			[DependsUpon( "Property4" )]
 			public int Property3 {
 				get { return ( 3 ); }
 			}
@@ -27,6 +38,10 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 
 			public void RaiseTestLambda() {
 				RaisePropertyChanged( () => Property1 );
+			}
+
+			public void SetProperty4() {
+				Property4 = 5;
 			}
 		}
 
@@ -57,6 +72,16 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 			sut.MonitorEvents();
 
 			sut.RaiseTestEvent( "Property1" );
+
+			sut.ShouldRaisePropertyChangeFor( subject => subject.Property3 );
+		}
+
+		[Test]
+		public void MultipleDependantPropertiesFiresChange() {
+			var sut = CreateSut();
+			sut.MonitorEvents();
+
+			sut.SetProperty4();
 
 			sut.ShouldRaisePropertyChangeFor( subject => subject.Property3 );
 		}
