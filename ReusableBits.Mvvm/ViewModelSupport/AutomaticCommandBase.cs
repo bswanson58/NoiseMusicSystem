@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Practices.Prism.Commands;
@@ -83,6 +84,27 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 			if( mCommandMap.ContainsKey( name )) {
 				mCommandMap[name].ToList().ForEach( RaiseCanExecuteChangedEvent );
 			}
+		}
+
+		public override bool TryGetMember( GetMemberBinder binder, out object result ) {
+			result = Get<object>( binder.Name );
+
+			if( result != null ) {
+				return true;
+			}
+
+			return base.TryGetMember( binder, out result );
+		}
+
+		public override bool TrySetMember( SetMemberBinder binder, object value ) {
+			var result = base.TrySetMember( binder, value );
+			if( result ) {
+				return true;
+			}
+
+			Set( binder.Name, value );
+
+			return true;
 		}
 	}
 }
