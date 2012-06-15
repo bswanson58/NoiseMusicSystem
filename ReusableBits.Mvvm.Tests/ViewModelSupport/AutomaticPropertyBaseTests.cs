@@ -1,88 +1,93 @@
 ﻿using System;
 using System.Collections.Generic;
+using FluentAssertions;
+using FluentAssertions.EventMonitoring;
 using NUnit.Framework;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 	[TestFixture]
 	public class AutomaticPropertyBaseTests {
-		private class GetterSetterByString : AutomaticPropertyBase {
-			public string Foo {
-				get { return Get<string>( "Foo" ); }
-				set { Set( "Foo", value ); }
+		private class ValuesByString : AutomaticPropertyBase {
+			public const int cIntegerDefaultValue = 13;
+
+			public string StringValue {
+				get { return Get<string>( "StringValue" ); }
+				set { Set( "StringValue", value ); }
 			}
 
-			public int MyInt {
-				get { return Get<int>( "MyInt" ); }
-				set { Set( "MyInt", value ); }
+			public int IntegerValue {
+				get { return Get<int>( "IntegerValue" ); }
+				set { Set( "IntegerValue", value ); }
 			}
 
-			public int IntWithDefault {
-				get { return Get( "IntWithDefault", 56 ); }
-				set { Set( "IntWithDefault", value ); }
+			public int IntegerWithDefault {
+				get { return Get( "IntegerWithDefault", cIntegerDefaultValue ); }
+				set { Set( "IntegerWithDefault", value ); }
 			}
-		}
+		} 
 
 		[Test]
 		public void ValuseSetByStringCanBeRetrieved() {
-			var viewModel = new GetterSetterByString { Foo = "Bar" };
+			const string testValue = "test string";
+			var viewModel = new ValuesByString { StringValue = testValue };
 
-			Assert.That( viewModel.Foo, Is.EqualTo( "Bar" ) );
+			Assert.That( viewModel.StringValue, Is.EqualTo( testValue ) );
 		}
 
 		[Test]
-		public void Int_Values_Can_Be_Gotten_And_Set() {
-			var viewModel = new GetterSetterByString { MyInt = 55 };
+		public void IntegerValuesCanBeSet() {
+			const int testValue = 33;
+			var viewModel = new ValuesByString { IntegerValue = testValue };
 
-			Assert.That( viewModel.MyInt, Is.EqualTo( 55 ) );
+			Assert.That( viewModel.IntegerValue, Is.EqualTo( testValue ));
 		}
 
 		[Test]
-		public void Setting_Value_Sends_PropertyChanged_Event() {
-			var viewModel = new GetterSetterByString();
-			string changedProperties = string.Empty;
-			viewModel.PropertyChanged += ( s, e ) => changedProperties += e.PropertyName;
+		public void SettingValueFiresPropertyChanged() {
+			var sut = new ValuesByString();
+			sut.MonitorEvents();
 
-			viewModel.Foo = "Bar";
+			sut.StringValue = "test string";
 
-			Assert.That( changedProperties, Is.EqualTo( "Foo" ) );
+			sut.ShouldRaisePropertyChangeFor( p => p.StringValue );
 		}
 
 		[Test]
-		public void Setting_Twice_Does_Not_Fail() {
-			var viewModel = new GetterSetterByString { Foo = "Bar" };
+		public void ValueCanBeSetTwice() {
+			const string testValue = "test me";
+			var sut = new ValuesByString { StringValue = testValue };
 
-			viewModel.Foo = "Baz";
+			sut.StringValue = testValue;
 
-			Assert.That( viewModel.Foo, Is.EqualTo( "Baz" ) );
+			Assert.That( sut.StringValue, Is.EqualTo( testValue ) );
 		}
 
 		[Test]
-		public void Setting_To_Same_Value_Does_Not_Fire_PropertyChanged_Twice() {
-			var viewModel = new GetterSetterByString();
-			string changedProperties = string.Empty;
-			viewModel.PropertyChanged += ( s, e ) => changedProperties += e.PropertyName;
+		public void SettingSameValueFiresSinglePropertyChanged() {
+			const string testValue = "string by two";
+			var sut = new ValuesByString { StringValue = testValue };
 
-			viewModel.Foo = "Bar";
-			viewModel.Foo = "Bar";
+			sut.MonitorEvents();
 
-			Assert.That( changedProperties, Is.EqualTo( "Foo" ) );
+			sut.StringValue = testValue;
+
+			sut.ShouldNotRaisePropertyChangeFor( p => p.StringValue );
 		}
 
 		[Test]
-		public void Setting_To_Same_Null_Value_Does_Not_Fire_PropertyChanged_Twice() {
-			var viewModel = new GetterSetterByString();
-			string changedProperties = string.Empty;
-			viewModel.PropertyChanged += ( s, e ) => changedProperties += e.PropertyName;
+		public void SettingSameValueToNullFiresSinglePropertyChange() {
+			const string testValue = "string by two";
+			var sut = new ValuesByString { StringValue = testValue };
 
-			viewModel.Foo = "test";
-			viewModel.Foo = null;
-			viewModel.Foo = null;
+			sut.MonitorEvents();
 
-			Assert.That( changedProperties, Is.EqualTo( "FooFoo" ) );
+			sut.StringValue = null;
+
+			sut.ShouldRaisePropertyChangeFor( p => p.StringValue );
 		}
 
-		private class ViewModelWithMismatchedGetAndSetNames : AutomaticPropertyBase {
+		private class ViewModelWithMismatchedPropertyNames : AutomaticPropertyBase {
 			public int Value {
 				get { return Get<int>( "WrongName" ); }
 				set { Set( "Value", value ); }
@@ -90,67 +95,64 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 		}
 
 		[Test]
-		public void Mismatched_Names_Returns_Default() {
-			var viewModel = new ViewModelWithMismatchedGetAndSetNames { Value = 55 };
+		public void MismatchedPropertiesReturnsDefault() {
+			var sut = new ViewModelWithMismatchedPropertyNames { Value = 55 };
 
-			Assert.That( viewModel.Value, Is.EqualTo( 0 ) );
+			Assert.That( sut.Value, Is.EqualTo( default( int )));
 		}
 
 		[Test]
-		public void Default_Values_On_Getter() {
-			var viewModel = new GetterSetterByString();
+		public void DefaultValuesAreReturned() {
+			var sut = new ValuesByString();
 
-			Assert.That( viewModel.IntWithDefault, Is.EqualTo( 56 ) );
+			Assert.That( sut.IntegerWithDefault, Is.EqualTo( ValuesByString.cIntegerDefaultValue ));
 		}
 
 		[Test]
-		public void Dynamic_Values_On_Setter() {
-			var viewModel = new GetterSetterByString();
+		public void SettingWithDefaultReturnsSetValue() {
+			const int defaultInteger = 77;
+			var sut = new ValuesByString { IntegerWithDefault = defaultInteger };
 
-			( viewModel as dynamic ).MyDynamicProperty = "Me";
-
-			Assert.That( ( viewModel as dynamic ).MyDynamicProperty, Is.EqualTo( "Me" ) );
+			Assert.That( sut.IntegerWithDefault, Is.EqualTo( defaultInteger ));
 		}
 
-		[Test]
-		public void Setting_With_A_Default_Getter_Retrieves_Set_Value() {
-			var viewModel = new GetterSetterByString { IntWithDefault = 99 };
+		public class ValuesByLambda : AutomaticPropertyBase {
+			public const int cDefaultIntegerValue = 11;
 
-			Assert.That( viewModel.IntWithDefault, Is.EqualTo( 99 ) );
-		}
-
-		public class ViewModelWithSemantics : AutomaticPropertyBase {
-			public string PropertyWithSemantics {
-				get { return Get( () => PropertyWithSemantics ); }
-				set { Set( () => PropertyWithSemantics, value ); }
+			public string StringValue {
+				get { return Get( () => StringValue ); }
+				set { Set( () => StringValue, value ); }
 			}
 
-			public int PropertyWithSemanticsWithDefault {
-				get { return Get( () => PropertyWithSemanticsWithDefault, 5 ); }
-				set { Set( () => PropertyWithSemanticsWithDefault, value ); }
+			public int IntegerValueWithDefault {
+				get { return Get( () => IntegerValueWithDefault, cDefaultIntegerValue ); }
+				set { Set( () => IntegerValueWithDefault, value ); }
 			}
 		}
 
 		[Test]
-		public void When_Symantics_Are_Used_We_Can_Get_And_Set() {
-			var viewModel = new ViewModelWithSemantics { PropertyWithSemantics = "Semantic" };
+		public void LambdaPropertyCanBeUsed() {
+			const string testValue = "another string";
+			var sut = new ValuesByLambda { StringValue = testValue };
 
-			Assert.That( viewModel.PropertyWithSemantics, Is.EqualTo( "Semantic" ) );
+			Assert.That( sut.StringValue, Is.EqualTo( testValue ));
 		}
 
 		[Test]
-		public void When_Symantics_Are_Used_We_Can_Get_With_Default_Value() {
-			var viewModel = new ViewModelWithSemantics();
+		public void LambdaPropertyUsesDefaultValue() {
+			var sut = new ValuesByLambda();
 
-			Assert.That( viewModel.PropertyWithSemanticsWithDefault, Is.EqualTo( 5 ) );
+			Assert.That( sut.IntegerValueWithDefault, Is.EqualTo( ValuesByLambda.cDefaultIntegerValue ));
 		}
 
 		private class InitialValueOnProperties : AutomaticPropertyBase {
+			public const string cDefaultStringValue = "default value";
 			public int InitialValueCount;
 
 			private string InitialValue() {
 				InitialValueCount++;
-				return "Default";
+
+				return( cDefaultStringValue );
 			}
 
 			public string TestProperty {
@@ -163,80 +165,47 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 		}
 
 		[Test]
-		public void Initial_Value_Is_Set_On_String_Getter() {
-			var viewModel = new InitialValueOnProperties();
+		public void InitialValueSetOnStringGetter() {
+			var sut = new InitialValueOnProperties();
 
-			var value = viewModel.TestStringProperty;
+			var value = sut.TestStringProperty;
 
-			Assert.That( value, Is.EqualTo( "Default" ) );
+			Assert.That( value, Is.EqualTo( InitialValueOnProperties.cDefaultStringValue ));
 		}
 
 		[Test]
-		public void Initial_Value_Is_Set_On_Lambda_Getter() {
-			var viewModel = new InitialValueOnProperties();
+		public void InitialValueSetOnLambdaGetter() {
+			var sut = new InitialValueOnProperties();
 
-			var value = viewModel.TestProperty;
+			var value = sut.TestProperty;
 
-			Assert.That( value, Is.EqualTo( "Default" ) );
+			Assert.That( value, Is.EqualTo( InitialValueOnProperties.cDefaultStringValue ));
 		}
 
 		[Test]
-		public void Initial_Value_Is_Only_Requested_Once() {
-			var viewModel = new InitialValueOnProperties();
+		public void InitialValueOnlyRequestedOnce() {
+			var sut = new InitialValueOnProperties();
 
-			Assert.That( viewModel.InitialValueCount, Is.EqualTo( 0 ));
-			var value = viewModel.TestProperty;
+			sut.InitialValueCount.Should().Be( 0 );
 
-			Assert.That( viewModel.InitialValueCount, Is.EqualTo( 1 ));
-			value = viewModel.TestProperty;
+			var value = sut.TestProperty;
+			sut.InitialValueCount.Should().Be( 1 );
+			value.Should().Be( InitialValueOnProperties.cDefaultStringValue );
 
-			Assert.That( viewModel.InitialValueCount, Is.EqualTo( 1 ));
+			value = sut.TestProperty;
+			sut.InitialValueCount.Should().Be( 1 );
+			value.Should().Be( InitialValueOnProperties.cDefaultStringValue );
 		}
 
 		internal class SingleDependency : AutomaticPropertyBase {
-			public int InputA {
-				get { return Get( () => InputA ); }
-				set { Set( () => InputA, value ); }
+			public int BaseProperty {
+				get { return Get( () => BaseProperty ); }
+				set { Set( () => BaseProperty, value ); }
 			}
 
-			[DependsUpon( "InputA" )]
-			public int InputASquared {
-				get { return InputA * InputA; }
-			}
-
-			public int NotDependent {
-				get { return 20; }
-			}
-		}
-
-		[Test]
-		public void When_InputA_Changes_Dependent_Notification_Fires() {
-			var viewModel = new SingleDependency();
-			var propertiesChanged = new List<string>();
-			viewModel.PropertyChanged += ( s, e ) => propertiesChanged.Add( e.PropertyName );
-
-			viewModel.InputA = 5;
-
-			Assert.That( propertiesChanged.Count, Is.EqualTo( 2 ) );
-			Assert.That( propertiesChanged[0], Is.EqualTo( "InputA" ) );
-			Assert.That( propertiesChanged[1], Is.EqualTo( "InputASquared" ) );
-		}
-
-		internal class SinglePropertyMultipleDependencies : AutomaticPropertyBase {
-			public int InputA {
-				get { return Get( () => InputA ); }
-				set { Set( () => InputA, value ); }
-			}
-
-			public int InputB {
-				get { return Get( () => InputB ); }
-				set { Set( () => InputB, value ); }
-			}
-
-			[DependsUpon( "InputA" )]
-			[DependsUpon( "InputB" )]
-			public int APlusB {
-				get { return InputA + InputB; }
+			[DependsUpon( "BaseProperty" )]
+			public int DependantProperty {
+				get { return BaseProperty * BaseProperty; }
 			}
 
 			public int NotDependent {
@@ -245,35 +214,68 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 		}
 
 		[Test]
-		public void When_InputA_And_InputB_Changes_Dependent_Notification_Fires() {
-			var viewModel = new SinglePropertyMultipleDependencies();
-			var propertiesChanged = new List<string>();
-			viewModel.PropertyChanged += ( s, e ) => propertiesChanged.Add( e.PropertyName );
+		public void BasePropertyFiresDependantProperty() {
+			var sut = new SingleDependency();
+			sut.MonitorEvents();
 
-			viewModel.InputA = 5;
-			viewModel.InputB = 6;
+			sut.BaseProperty = 5;
+
+			sut.ShouldRaisePropertyChangeFor( p => p.BaseProperty );
+			sut.ShouldRaisePropertyChangeFor( p => p.DependantProperty );
+		}
+
+		internal class MultipleDependencies : AutomaticPropertyBase {
+			public int BasePropertyOne {
+				get { return Get( () => BasePropertyOne ); }
+				set { Set( () => BasePropertyOne, value ); }
+			}
+
+			public int BasePropertyTwo {
+				get { return Get( () => BasePropertyTwo ); }
+				set { Set( () => BasePropertyTwo, value ); }
+			}
+
+			[DependsUpon( "BasePropertyOne" )]
+			[DependsUpon( "BasePropertyTwo" )]
+			public int DependantProperty {
+				get { return BasePropertyOne + BasePropertyTwo; }
+			}
+
+			public int NotDependent {
+				get { return 20; }
+			}
+		}
+
+		[Test]
+		public void BasePropertyFiresMultipleDependantProperties() {
+			var sut = new MultipleDependencies();
+			var propertiesChanged = new List<string>();
+			sut.PropertyChanged += ( s, e ) => propertiesChanged.Add( e.PropertyName );
+
+			sut.BasePropertyOne = 5;
+			sut.BasePropertyTwo = 6;
 
 			Assert.That( propertiesChanged.Count, Is.EqualTo( 4 ) );
-			Assert.That( propertiesChanged[0], Is.EqualTo( "InputA" ) );
-			Assert.That( propertiesChanged[1], Is.EqualTo( "APlusB" ) );
-			Assert.That( propertiesChanged[2], Is.EqualTo( "InputB" ) );
-			Assert.That( propertiesChanged[3], Is.EqualTo( "APlusB" ) );
+			Assert.That( propertiesChanged[0], Is.EqualTo( "BasePropertyOne" ) );
+			Assert.That( propertiesChanged[1], Is.EqualTo( "DependantProperty" ) );
+			Assert.That( propertiesChanged[2], Is.EqualTo( "BasePropertyTwo" ) );
+			Assert.That( propertiesChanged[3], Is.EqualTo( "DependantProperty" ) );
 		}
 
 		internal class MultiplePropertiesSingleDependency : AutomaticPropertyBase {
-			public int InputA {
-				get { return Get( () => InputA ); }
-				set { Set( () => InputA, value ); }
+			public int BaseProperty {
+				get { return Get( () => BaseProperty ); }
+				set { Set( () => BaseProperty, value ); }
 			}
 
-			[DependsUpon( "InputA" )]
-			public int InputASquared {
-				get { return InputA * InputA; }
+			[DependsUpon( "BaseProperty" )]
+			public int DependantPropertyOne {
+				get { return BaseProperty * BaseProperty; }
 			}
 
-			[DependsUpon( "InputA" )]
-			public int InputACubed {
-				get { return InputA * InputA * InputA; }
+			[DependsUpon( "BaseProperty" )]
+			public int DependantPropertyTwo {
+				get { return BaseProperty * BaseProperty * BaseProperty; }
 			}
 
 			public int NotDependent {
@@ -283,32 +285,30 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 
 		[Test]
 		public void When_InputA_Changes_All_Dependent_Notifications_Fires() {
-			var viewModel = new MultiplePropertiesSingleDependency();
-			var propertiesChanged = new List<string>();
-			viewModel.PropertyChanged += ( s, e ) => propertiesChanged.Add( e.PropertyName );
+			var sut = new MultiplePropertiesSingleDependency();
+			sut.MonitorEvents();
 
-			viewModel.InputA = 5;
+			sut.BaseProperty = 5;
 
-			Assert.That( propertiesChanged.Count, Is.EqualTo( 3 ) );
-			Assert.That( propertiesChanged[0], Is.EqualTo( "InputA" ) );
-			Assert.That( propertiesChanged[1], Is.EqualTo( "InputASquared" ) );
-			Assert.That( propertiesChanged[2], Is.EqualTo( "InputACubed" ) );
+			sut.ShouldRaisePropertyChangeFor( p => p.BaseProperty );
+			sut.ShouldRaisePropertyChangeFor( p => p.DependantPropertyOne );
+			sut.ShouldRaisePropertyChangeFor( p => p.DependantPropertyTwo );
 		}
 
 		internal class ChainedDependencies : AutomaticPropertyBase {
-			public int InputA {
-				get { return Get( () => InputA ); }
-				set { Set( () => InputA, value ); }
+			public int BaseProperty {
+				get { return Get( () => BaseProperty ); }
+				set { Set( () => BaseProperty, value ); }
 			}
 
-			[DependsUpon( "InputA" )]
-			public int InputASquared {
-				get { return InputA * InputA; }
+			[DependsUpon( "BaseProperty" )]
+			public int DependantPropertyOne {
+				get { return BaseProperty * BaseProperty; }
 			}
 
-			[DependsUpon( "InputASquared" )]
-			public string InputASquaredOutput {
-				get { return "A Squared = " + InputASquared; }
+			[DependsUpon( "DependantPropertyOne" )]
+			public string DependantPropertyTwo {
+				get { return "dependant propert two: " + DependantPropertyOne; }
 			}
 
 			public int NotDependent {
@@ -317,77 +317,27 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 		}
 
 		[Test]
-		public void Dependencies_Chain_Through_The_Graph() {
-			var viewModel = new ChainedDependencies();
-			var propertiesChanged = new List<string>();
-			viewModel.PropertyChanged += ( s, e ) => propertiesChanged.Add( e.PropertyName );
+		public void DependentPropertiesFirePropertyChanged() {
+			var sut = new ChainedDependencies();
+			sut.MonitorEvents();
 
-			viewModel.InputA = 5;
+			sut.BaseProperty = 5;
 
-			Assert.That( propertiesChanged.Count, Is.EqualTo( 3 ) );
-			Assert.That( propertiesChanged[0], Is.EqualTo( "InputA" ) );
-			Assert.That( propertiesChanged[1], Is.EqualTo( "InputASquared" ) );
-			Assert.That( propertiesChanged[2], Is.EqualTo( "InputASquaredOutput" ) );
+			sut.ShouldRaisePropertyChangeFor( p => p.BaseProperty );
+			sut.ShouldRaisePropertyChangeFor( p => p.DependantPropertyOne );
+			sut.ShouldRaisePropertyChangeFor( p => p.DependantPropertyTwo );
 		}
 
-		internal class DependentMethods : AutomaticCommandBase {
-			public int InputA {
-				get { return Get( () => InputA ); }
-				set { Set( () => InputA, value ); }
-			}
-
-			public int DependentMethodExecuted { get; set; }
-
-			[DependsUpon( "InputA" )]
-			public void ExecuteWhenAChanges() {
-				DependentMethodExecuted = InputA;
-			}
-
-			public void NotDependent() {
-				DependentMethodExecuted++;
-			}
-		}
-
-		[Test]
-		public void When_InputA_Changes_Dependent_Method_Executes() {
-			var viewModel = new DependentMethods { InputA = 20 };
-
-			Assert.That( viewModel.DependentMethodExecuted, Is.EqualTo( 20 ) );
-		}
-
-		public class EmptyViewModel : AutomaticPropertyBase {
-		}
-
-		[Test]
-		public void Setting_Dynamc_Properties_That_Do_Not_Exist_Can_Be_Retrieved() {
-			var viewModel = new EmptyViewModel();
-
-			viewModel.Set( "Foo", "Bar" );
-
-			Assert.That( ( viewModel as dynamic ).Foo, Is.EqualTo( "Bar" ) );
-		}
-
-		public class InvalidDependencyCheckingForMethod : DependantPropertyBase {
-			[DependsUpon( "InputA", VerifyStaticExistence = true )]
-			public void ExecuteWhenAChanges() {
-			}
-		}
-
-		[Test, ExpectedException( typeof( ArgumentException ) )]
-		public void When_Dependant_Property_For_Method_Does_Not_Exist_And_Verification_Is_Requested_Throw() {
-			new InvalidDependencyCheckingForMethod();
-		}
-
-		public class InvalidDependencyCheckingForProperty : AutomaticPropertyBase {
-			[DependsUpon( "InputA", VerifyStaticExistence = true )]
+		public class InvalidDependencyProperty : AutomaticPropertyBase {
+			[DependsUpon( "BasePropertyOne", VerifyStaticExistence = true )]
 			public string Derived {
 				get { return string.Empty; }
 			}
 		}
 
 		[Test, ExpectedException( typeof( ArgumentException ) )]
-		public void When_Dependant_Propety_For_Property_Does_Not_Exist_And_Verification_Is_Requested_Throw() {
-			new InvalidDependencyCheckingForProperty();
+		public void InvalidPropertyDependancyThrowsException() {
+			new InvalidDependencyProperty();
 		}
 	}
 }

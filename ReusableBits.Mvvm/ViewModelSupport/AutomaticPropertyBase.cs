@@ -20,6 +20,7 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 				return (T)mValues[name];
 			}
 
+			Set( name, defaultValue );
 			return defaultValue;
 		}
 
