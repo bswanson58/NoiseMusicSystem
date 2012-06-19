@@ -10,20 +10,21 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 	public class AutomaticPropertyBaseTests {
 		private class ValuesByString : AutomaticPropertyBase {
 			public const int cIntegerDefaultValue = 13;
+			public bool	     SetReturnValue { get; private set; }
 
 			public string StringValue {
 				get { return Get<string>( "StringValue" ); }
-				set { Set( "StringValue", value ); }
+				set { SetReturnValue = Set( "StringValue", value ); }
 			}
 
 			public int IntegerValue {
 				get { return Get<int>( "IntegerValue" ); }
-				set { Set( "IntegerValue", value ); }
+				set { SetReturnValue = Set( "IntegerValue", value ); }
 			}
 
 			public int IntegerWithDefault {
 				get { return Get( "IntegerWithDefault", cIntegerDefaultValue ); }
-				set { Set( "IntegerWithDefault", value ); }
+				set { SetReturnValue = Set( "IntegerWithDefault", value ); }
 			}
 		} 
 
@@ -64,6 +65,15 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 		}
 
 		[Test]
+		public void SettingValueReturnsTrue() {
+			var sut = new ValuesByString();
+
+			sut.StringValue = "test value";
+
+			Assert.That( sut.SetReturnValue, Is.True );
+		}
+
+		[Test]
 		public void SettingSameValueFiresSinglePropertyChanged() {
 			const string testValue = "string by two";
 			var sut = new ValuesByString { StringValue = testValue };
@@ -73,6 +83,16 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 			sut.StringValue = testValue;
 
 			sut.ShouldNotRaisePropertyChangeFor( p => p.StringValue );
+		}
+
+		[Test]
+		public void SettingSameValueReturnsFalse() {
+			const string testValue = "twice";
+			var sut = new ValuesByString { StringValue = testValue };
+
+			sut.StringValue = testValue;
+
+			Assert.That( sut.SetReturnValue, Is.False );
 		}
 
 		[Test]
@@ -118,15 +138,16 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 
 		public class ValuesByLambda : AutomaticPropertyBase {
 			public const int cDefaultIntegerValue = 11;
+			public bool      SetReturnValue { get; private set; }
 
 			public string StringValue {
 				get { return Get( () => StringValue ); }
-				set { Set( () => StringValue, value ); }
+				set { SetReturnValue = Set( () => StringValue, value ); }
 			}
 
 			public int IntegerValueWithDefault {
 				get { return Get( () => IntegerValueWithDefault, cDefaultIntegerValue ); }
-				set { Set( () => IntegerValueWithDefault, value ); }
+				set { SetReturnValue = Set( () => IntegerValueWithDefault, value ); }
 			}
 		}
 
@@ -143,6 +164,15 @@ namespace ReusableBits.Mvvm.Tests.ViewModelSupport {
 			var sut = new ValuesByLambda();
 
 			Assert.That( sut.IntegerValueWithDefault, Is.EqualTo( ValuesByLambda.cDefaultIntegerValue ));
+		}
+
+		[Test]
+		public void LambdaSettingValueReturnsTrue() {
+			var sut = new ValuesByLambda();
+
+			sut.StringValue = "test value";
+
+			Assert.That( sut.SetReturnValue, Is.True );
 		}
 
 		private class InitialValueOnProperties : AutomaticPropertyBase {

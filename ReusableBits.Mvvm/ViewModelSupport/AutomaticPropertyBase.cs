@@ -45,16 +45,20 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 			return Get( PropertyName( expression ), initialValue );
 		}
 
-		public void Set<T>( string name, T value ) {
+		protected bool Set<T>( Expression<Func<T>> expression, T value ) {
+			return( Set( PropertyName( expression ), value ));
+		}
+
+		protected bool Set<T>( string name, T value ) {
 			if( mValues.ContainsKey( name ) ) {
 				if(( mValues[name] == null ) &&
-				   ( Equals( value, default( T )))) {
-					return;
+					( Equals( value, default( T )))) {
+					return( false );
 				}
 
 				if(( mValues[name] != null ) &&
-				   ( mValues[name].Equals( value ))) {
-					return;
+					( mValues[name].Equals( value ))) {
+					return( false );
 				}
 
 				mValues[name] = value;
@@ -64,10 +68,8 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 			}
 
 			RaisePropertyChanged( name );
-		}
 
-		protected void Set<T>( Expression<Func<T>> expression, T value ) {
-			Set( PropertyName( expression ), value );
+			return( true );
 		}
 	}
 }
