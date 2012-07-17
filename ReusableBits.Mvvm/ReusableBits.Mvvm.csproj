@@ -139,6 +139,7 @@
     <Compile Include="CaliburnSupport\DebugLogger.cs" />
     <Compile Include="CaliburnSupport\INavigate.cs" />
     <Compile Include="CaliburnSupport\UnityBootstrapper.cs" />
+    <Compile Include="CaliburnSupport\UnityEventSubscriber.cs" />
     <Compile Include="FeatureToggle.Wpf\FeatureToggleToVisibilityConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModelSupport\AutomaticCommandBase.cs" />
