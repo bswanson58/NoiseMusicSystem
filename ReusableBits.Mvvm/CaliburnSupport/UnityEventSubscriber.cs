@@ -5,7 +5,7 @@ using Microsoft.Practices.Unity.ObjectBuilder;
 
 namespace ReusableBits.Mvvm.CaliburnSupport {
 	public class UnityEventSubscriber : UnityContainerExtension {
-		private readonly IEventAggregator	mEventAggregator;
+		protected readonly IEventAggregator	mEventAggregator;
 
 		public UnityEventSubscriber( IEventAggregator eventAggregator ) {
 			mEventAggregator = eventAggregator;
@@ -15,7 +15,7 @@ namespace ReusableBits.Mvvm.CaliburnSupport {
 			Context.Strategies.Add( new EventSubscriberStrategy( mEventAggregator ), UnityBuildStage.PostInitialization );
 		}
 
-		private class EventSubscriberStrategy : BuilderStrategy {
+		protected class EventSubscriberStrategy : BuilderStrategy {
 			private readonly IEventAggregator	mEventAggregator;
 
 			public EventSubscriberStrategy( IEventAggregator eventAggregator ) {
@@ -23,8 +23,8 @@ namespace ReusableBits.Mvvm.CaliburnSupport {
 			}
 
 			public override void PostBuildUp( IBuilderContext context ) {
-				if(( context.Existing != null ) &&
-				   ( context.Existing is IHandle )) {
+				if(( context.Existing is IHandle ) &&
+				   (!( context.Existing is IDisableAutoEventSubscribe ))) {
 					mEventAggregator.Subscribe( context.Existing );
 				}
 			}
