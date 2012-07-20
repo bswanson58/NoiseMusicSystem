@@ -36,7 +36,6 @@ namespace Noise.Core {
 			mContainer.RegisterType<IEqManager, EqManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILifecycleManager, LifecycleManager>( new HierarchicalLifetimeManager());
-//			mContainer.RegisterType<IMetaDataExplorer, MetaDataExplorer>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IStorageFileProcessor, StorageFileProcessor>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IMetaDataCleaner, MetaDataCleaner>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<INoiseManager, NoiseManager>( new HierarchicalLifetimeManager());

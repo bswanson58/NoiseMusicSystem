@@ -18,7 +18,6 @@ namespace Noise.Core.DataBuilders {
 		private readonly IStorageFolderSupport	mStorageFolderSupport;
 		private readonly IFolderExplorer		mFolderExplorer;
 		private readonly IMetaDataCleaner		mMetaDataCleaner;
-//		private readonly IMetaDataExplorer		mMetaDataExplorer;
 		private readonly IStorageFileProcessor	mStorageFileProcessor;
 		private	readonly ISummaryBuilder		mSummaryBuilder;
 		private readonly DatabaseStatistics		mDatabaseStatistics;
@@ -28,13 +27,12 @@ namespace Noise.Core.DataBuilders {
 		public	bool							LibraryUpdatePaused { get; private set; }
 
 		public LibraryBuilder( IEventAggregator eventAggregator, IStorageFolderSupport storageFolderSupport,
-							   IFolderExplorer folderExplorer, IMetaDataCleaner metaDataCleaner, IStorageFileProcessor storageFileProcessor, // IMetaDataExplorer metaDataExplorer,
+							   IFolderExplorer folderExplorer, IMetaDataCleaner metaDataCleaner, IStorageFileProcessor storageFileProcessor,
 							   ISummaryBuilder summaryBuilder, DatabaseStatistics databaseStatistics ) {
 			mEventAggregator = eventAggregator;
 			mStorageFolderSupport = storageFolderSupport;
 			mFolderExplorer = folderExplorer;
 			mMetaDataCleaner = metaDataCleaner;
-//			mMetaDataExplorer = metaDataExplorer;
 			mStorageFileProcessor = storageFileProcessor;
 			mSummaryBuilder = summaryBuilder;
 			mDatabaseStatistics = databaseStatistics;
@@ -108,9 +106,6 @@ namespace Noise.Core.DataBuilders {
 				mMetaDataCleaner.Stop();
 			}
 
-//			if( mMetaDataExplorer != null ) {
-//				mMetaDataExplorer.Stop();
-//			}
 			if( mStorageFileProcessor != null ) {
 				mStorageFileProcessor.Stop();
 			}
@@ -151,7 +146,6 @@ namespace Noise.Core.DataBuilders {
 					}
 
 					if( mContinueExploring ) {
-//						mMetaDataExplorer.BuildMetaData( results );
 						mStorageFileProcessor.Process( results );
 					}
 

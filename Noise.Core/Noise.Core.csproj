@@ -211,7 +211,6 @@
     <Compile Include="DataBuilders\ContentManager.cs" />
     <Compile Include="DataBuilders\IContentManager.cs" />
     <Compile Include="DataBuilders\IMetaDataCleaner.cs" />
-    <Compile Include="DataBuilders\IMetaDataExplorer.cs" />
     <Compile Include="DataBuilders\LibraryBuilder.cs" />
     <Compile Include="DataBuilders\MetaDataCleaner.cs" />
     <Compile Include="DataExchange\BaseExporter.cs" />
@@ -235,7 +234,6 @@
     <Compile Include="DataProviders\ILyricsProvider.cs" />
     <Compile Include="DataProviders\IMetaDataProvider.cs" />
     <Compile Include="DataBuilders\ISummaryBuilder.cs" />
-    <Compile Include="DataBuilders\MetaDataExplorer.cs" />
     <Compile Include="DataBuilders\SummaryBuilder.cs" />
     <Compile Include="DataProviders\DefaultProvider.cs" />
     <Compile Include="DataProviders\FileNameProvider.cs" />
