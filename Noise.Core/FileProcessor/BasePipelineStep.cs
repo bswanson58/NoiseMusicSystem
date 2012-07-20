@@ -3,7 +3,7 @@ using CuttingEdge.Conditions;
 using Noise.Infrastructure;
 
 namespace Noise.Core.FileProcessor {
-	internal enum ePipelineStep {
+	public enum ePipelineStep {
 		DetermineFileType,
 		BuildMusicProviders,
 		BuildInfoProviders,
@@ -20,7 +20,7 @@ namespace Noise.Core.FileProcessor {
 		Completed
 	}
 
-	internal interface IPipelineStep {
+	public interface IPipelineStep {
 		ePipelineStep	PipelineStep { get; }
 
 		IPipelineStep	AppendStep( IPipelineStep step );
@@ -28,7 +28,7 @@ namespace Noise.Core.FileProcessor {
 		IPipelineStep	Process( PipelineContext context );
 	}
 
-	internal abstract class BasePipelineStep : IPipelineStep {
+	public abstract class BasePipelineStep : IPipelineStep {
 		private IPipelineStep	mNextStep;
 		public	ePipelineStep	PipelineStep { get; private set; }
 
@@ -61,7 +61,7 @@ namespace Noise.Core.FileProcessor {
 				ProcessStep( context );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "StorageFile Pipeline step:", ex );
+				NoiseLogger.Current.LogException( "StorageFile Pipeline ProcessStep:", ex );
 			}
 
 			return( retValue );

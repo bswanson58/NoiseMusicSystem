@@ -255,6 +255,7 @@
     <Compile Include="FileProcessor\DetermineVolumePipelineStep.cs" />
     <Compile Include="FileProcessor\FileTypePipelineStep.cs" />
     <Compile Include="FileProcessor\InfoProvidersPipelineStep.cs" />
+    <Compile Include="FileProcessor\IStorageFileProcessor.cs" />
     <Compile Include="FileProcessor\MusicMetadataPipelineStep.cs" />
     <Compile Include="FileProcessor\MusicProvidersPipelineStep.cs" />
     <Compile Include="FileProcessor\PipelineContext.cs" />

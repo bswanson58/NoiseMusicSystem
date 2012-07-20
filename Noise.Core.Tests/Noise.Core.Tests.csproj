@@ -121,6 +121,7 @@
     <Compile Include="BackgroundTasks\DecadeTagBuilderTests.cs" />
     <Compile Include="Database\DatabaseCacheTests.cs" />
     <Compile Include="Database\DatabaseStatisticsTest.cs" />
+    <Compile Include="FileProcessor\StorageFileProcessorTests.cs" />
     <Compile Include="FileStore\StorageFolderSupportTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

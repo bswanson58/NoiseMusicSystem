@@ -5,7 +5,7 @@ using Noise.Core.Database;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.FileProcessor {
-	internal class PipelineContext {
+	public class PipelineContext {
 		public	DatabaseCache<DbArtist>		ArtistCache { get; private set; }
 		public	DatabaseCache<DbAlbum>		AlbumCache { get; private set; }
 		public	List<IMetaDataProvider>		MetaDataProviders { get; set; }

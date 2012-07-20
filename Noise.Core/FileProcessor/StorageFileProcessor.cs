@@ -10,30 +10,6 @@ using Noise.Infrastructure.Interfaces;
 using Stateless;
 
 namespace Noise.Core.FileProcessor {
-	public interface IStorageFileProcessor {
-		void	Process( DatabaseChangeSummary summary );
-		void	Stop();
-	}
-
-	internal enum ePipelineState {
-		Stopped,
-		DetermineFileState,
-		BuildAudioFile,
-		BuildInfoFile,
-		BuildArtworkFile,
-		BuildUndeterminedFile
-	}
-	internal enum ePipelineTrigger {
-		DetermineFileType,
-		FileTypeIsAudio,
-		FileTypeIsInfo,
-		FileTypeIsArtwork,
-		FileTypeIsUnknown,
-		Completed,
-		Undetermined,
-		Unexpected
-	}
-
 	internal class StorageFileProcessor : IStorageFileProcessor {
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
