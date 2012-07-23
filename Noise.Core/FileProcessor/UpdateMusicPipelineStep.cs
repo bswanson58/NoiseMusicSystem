@@ -39,6 +39,7 @@ namespace Noise.Core.FileProcessor {
 
 				using( var updater = mArtistProvider.GetArtistForUpdate( context.Artist.DbId )) {
 					if( updater.Item != null ) {
+						updater.Item.AlbumCount = context.Artist.AlbumCount;
 						updater.Item.UpdateLastChange();
 
 						updater.Update();

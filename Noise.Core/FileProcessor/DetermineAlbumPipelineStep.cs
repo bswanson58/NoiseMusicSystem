@@ -43,13 +43,6 @@ namespace Noise.Core.FileProcessor {
 						mAlbumProvider.AddAlbum( context.Album );
 						context.AlbumCache.Add( context.Album );
 
-						using( var updater = mArtistProvider.GetArtistForUpdate( context.Artist.DbId )) {
-							if( updater.Item != null ) {
-								updater.Item.AlbumCount++;
-
-								updater.Update();
-							}
-						}
 						context.Artist.AlbumCount++;
 						context.Summary.AlbumsAdded++;
 
