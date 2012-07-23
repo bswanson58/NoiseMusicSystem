@@ -1,4 +1,6 @@
 ﻿using Caliburn.Micro;
+using CuttingEdge.Conditions;
+using Noise.Core.DataProviders;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -17,6 +19,9 @@ namespace Noise.Core.FileProcessor {
 		}
 
 		public override void ProcessStep( PipelineContext context ) {
+			Condition.Requires( context ).IsNotNull();
+			Condition.Requires( context.MetaDataProviders ).IsNotEmpty();
+
 			var	artistName = "";
 
 			foreach( var provider in context.MetaDataProviders ) {
