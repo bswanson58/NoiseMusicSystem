@@ -7,15 +7,12 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.FileProcessor {
 	internal class DetermineAlbumPipelineStep : BasePipelineStep {
 		private readonly IEventAggregator		mEventAggregator;
-		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly IStorageFolderSupport	mStorageFolderSupport;
 
-		public DetermineAlbumPipelineStep( IEventAggregator eventAggregator, IStorageFolderSupport storageFolderSupport,
-										   IArtistProvider artistProvider, IAlbumProvider albumProvider ) :
+		public DetermineAlbumPipelineStep( IEventAggregator eventAggregator, IStorageFolderSupport storageFolderSupport, IAlbumProvider albumProvider ) :
 			base( ePipelineStep.DetermineAlbum ) {
 			mEventAggregator = eventAggregator;
-			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mStorageFolderSupport = storageFolderSupport;
 		}
