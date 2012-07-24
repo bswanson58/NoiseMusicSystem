@@ -1,4 +1,5 @@
-﻿using Noise.Infrastructure.Dto;
+﻿using CuttingEdge.Conditions;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.FileProcessor {
@@ -11,6 +12,9 @@ namespace Noise.Core.FileProcessor {
 		}
 
 		public override void ProcessStep( PipelineContext context ) {
+			Condition.Requires( context ).IsNotNull();
+			Condition.Requires( context.StorageFile ).IsNotNull();
+
 			context.StorageFile.FileType = mStorageFolderSupport.DetermineFileType( context.StorageFile );
 
 			switch( context.StorageFile.FileType ) {

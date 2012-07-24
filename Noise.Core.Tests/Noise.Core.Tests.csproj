@@ -131,6 +131,7 @@
     <Compile Include="FileProcessor\BasePipelineStepTests.cs" />
     <Compile Include="FileProcessor\DetermineAlbumPipelineStepTests.cs" />
     <Compile Include="FileProcessor\DetermineArtistPipelineStepTests.cs" />
+    <Compile Include="FileProcessor\FileTypePipelineStepTests.cs" />
     <Compile Include="FileProcessor\StorageFileProcessorTests.cs" />
     <Compile Include="FileProcessor\UpdateArtworkPipelineStepTests.cs" />
     <Compile Include="FileProcessor\UpdateInfoPipelineStepTests.cs" />
