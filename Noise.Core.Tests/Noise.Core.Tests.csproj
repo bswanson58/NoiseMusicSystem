@@ -132,6 +132,7 @@
     <Compile Include="FileProcessor\DetermineAlbumPipelineStepTests.cs" />
     <Compile Include="FileProcessor\DetermineArtistPipelineStepTests.cs" />
     <Compile Include="FileProcessor\StorageFileProcessorTests.cs" />
+    <Compile Include="FileProcessor\UpdateMusicPipelineStepTests.cs" />
     <Compile Include="FileStore\StorageFolderSupportTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
