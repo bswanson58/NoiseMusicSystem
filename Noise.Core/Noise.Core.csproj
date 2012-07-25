@@ -158,8 +158,8 @@
     <Reference Include="Recls.100.Net">
       <HintPath>..\lib\recls\Recls.100.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Stateless">
-      <HintPath>..\lib\Stateless\v2.3.1.1\Stateless.dll</HintPath>
+    <Reference Include="Stateless, Version=2.3.1.1, Culture=neutral, PublicKeyToken=93038f0927583c9a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Stateless.2.3.1.1\lib\3.5\Stateless.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
