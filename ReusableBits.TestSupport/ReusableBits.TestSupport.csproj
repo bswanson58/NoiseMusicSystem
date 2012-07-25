@@ -98,13 +98,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FluentAssertions">
-      <HintPath>..\lib\FluentAssertions\v1.7.0\FluentAssertions.dll</HintPath>
+      <HintPath>..\packages\FluentAssertions.1.7.1.1\Lib\net40\FluentAssertions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Prism">
       <HintPath>..\lib\CAL\v4.0.0.0\Microsoft.Practices.Prism.dll</HintPath>
     </Reference>
     <Reference Include="Moq">
-      <HintPath>..\lib\Moq\v4.0.10827\Moq.dll</HintPath>
+      <HintPath>..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
     </Reference>
     <Reference Include="Rhino.Mocks">
       <HintPath>..\lib\Rhino.Mocks\v3.6.Build-21\Rhino.Mocks.dll</HintPath>
@@ -131,7 +131,9 @@
     <Compile Include="Threading\CurrentThreadTaskScheduler.cs" />
     <Compile Include="Threading\DispatcherPump.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
