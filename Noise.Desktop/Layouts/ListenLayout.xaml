@@ -1,30 +1,39 @@
 ﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:Infrastructure="clr-namespace:Noise.Infrastructure;assembly=Noise.Infrastructure"
-             xmlns:Regions="clr-namespace:Microsoft.Practices.Prism.Regions;assembly=Microsoft.Practices.Prism"
-             >
+             xmlns:Regions="clr-namespace:Microsoft.Practices.Prism.Regions;assembly=Microsoft.Practices.Prism">
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="105"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="105" />
         </Grid.RowDefinitions>
-        
+
         <DockPanel Grid.Row="0">
-            <ContentControl Regions:RegionManager.RegionName="Toolbar"/>
+            <ContentControl Regions:RegionManager.RegionName="Toolbar" />
         </DockPanel>
 
-        <Grid x:Name="Content" Grid.Row="1" Margin="3,0,7,0">
+        <Grid x:Name="Content"
+              Grid.Row="1"
+              Margin="3,0,7,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
 
-            <ContentControl Grid.Column="0" Margin="3,0,7,0" Regions:RegionManager.RegionName="ListenStage"/>
-            <GridSplitter Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"/>
-            <ContentControl Grid.Column="1" Margin="0,0,3,0" Regions:RegionManager.RegionName="PlayQueue"/>
+            <ContentControl Grid.Column="0"
+                            Margin="3,0,7,0"
+                            Regions:RegionManager.RegionName="ListenStage" />
+            <GridSplitter Width="7"
+                          Height="Auto"
+                          Background="Transparent"
+                          ResizeDirection="Columns" />
+            <ContentControl Grid.Column="1"
+                            Margin="0,0,3,0"
+                            Regions:RegionManager.RegionName="PlayQueue" />
         </Grid>
 
-        <ContentControl Grid.Row="2" Margin="3,0,0,3" Regions:RegionManager.RegionName="Player"/>
+        <ContentControl Grid.Row="2"
+                        Margin="3,0,0,3"
+                        Regions:RegionManager.RegionName="Player" />
     </Grid>
 </UserControl>

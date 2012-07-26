@@ -128,7 +128,6 @@
     <Reference Include="Common.Logging">
       <HintPath>..\lib\Quartz\v1.0.2.3\Common.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Expression.Samples.PathListBoxUtils" />
     <Reference Include="Microsoft.Expression.Controls" />
     <Reference Include="Microsoft.Expression.Drawing" />
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
