@@ -321,8 +321,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="RemoteHost\INoiseRemoteData.cs" />
-    <None Include="NoisePrivateKey.snk" />
-    <None Include="NoisePublicKey.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
