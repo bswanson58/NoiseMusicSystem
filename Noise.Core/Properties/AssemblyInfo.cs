@@ -14,8 +14,5 @@ using System.Runtime.InteropServices;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible( false )]
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid( "58c928e4-3775-470c-a392-651a6d72ab9f" )]
-
 // Allow testing classes to access internal classes.
 [assembly:InternalsVisibleTo("Noise.Core.Tests")]
