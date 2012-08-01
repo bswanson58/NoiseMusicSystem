@@ -97,12 +97,9 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -113,10 +110,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
-      <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
-      <Name>Noise.Infrastructure</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Noise.UI\Noise.UI.csproj">
       <Project>{D9F288A7-A0EF-4237-A9D6-BA9CCE9C9C09}</Project>
       <Name>Noise.UI</Name>
