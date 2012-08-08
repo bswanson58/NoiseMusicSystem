@@ -254,5 +254,79 @@ namespace ReusableBits.Tests.Threading {
 
 			executionTime.Should().HaveValue();
 		}
+
+		[Test]
+		public void PauseShouldReturnNullTime() {
+			var sut = CreateSut();
+
+			sut.StartAt( mNow );
+			sut.Pause();
+			var executionTime = sut.CalculateNextExecutionTime();
+
+			executionTime.Should().NotHaveValue();
+		}
+
+		[Test]
+		public void ResumeShouldReturnTime() {
+			var sut = CreateSut();
+
+			sut.StartAt( mNow );
+			sut.Pause();
+			sut.CalculateNextExecutionTime();
+			sut.CalculateNextExecutionTime();
+			sut.Resume();
+
+			var executionTime = sut.CalculateNextExecutionTime();
+
+			executionTime.Should().HaveValue();
+
+		}
+
+		[Test]
+		public void CanSetStartFromSecondsInterval() {
+			var sut = CreateSut();
+
+			sut.StartAt( RecurringInterval.FromSeconds( 3 ));
+
+			var executionTime = sut.CalculateNextExecutionTime();
+
+			executionTime.Should().Be( mNow + new TimeSpan( 0, 0, 3 ));
+		}
+
+		[Test]
+		public void CanSetEndTimeFromMsInterval() {
+			var sut = CreateSut();
+
+			sut.EndAt( RecurringInterval.FromMilliseconds( 100 ));
+			TimeProvider.Now = () => mNow + new TimeSpan( 0, 0, 0, 0, 120 );
+
+			var executionTime = sut.CalculateNextExecutionTime();
+
+			executionTime.Should().NotHaveValue();
+		}
+
+		[Test]
+		public void CanSetIntervalFromIntervalMinutes() {
+			var sut = CreateSut();
+
+			sut.Interval( RecurringInterval.FromMinutes( 3 ));
+			sut.UpdateLastExecutionTime( mNow, mNow );
+
+			var executionTime = sut.CalculateNextExecutionTime();
+
+			executionTime.Should().Be( mNow + new TimeSpan( 0, 3, 0));
+		}
+
+		[Test]
+		public void CanSetDelayFromIntervalHours() {
+			var sut = CreateSut();
+
+			sut.Delay( RecurringInterval.FromHours( 4 ));
+			sut.UpdateLastExecutionTime( mNow, mNow );
+
+			var executionTime = sut.CalculateNextExecutionTime();
+
+			executionTime.Should().Be( mNow + new TimeSpan( 4, 0, 0));
+		}
 	}
 }

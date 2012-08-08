@@ -16,7 +16,7 @@ namespace ReusableBits.Tests.Threading {
 			mTask = new RecurringTask( TaskAction );
 		}
 
-		private void TaskAction() {
+		private void TaskAction( RecurringTask task ) {
 			mTaskExecutedCount++;
 		}
 

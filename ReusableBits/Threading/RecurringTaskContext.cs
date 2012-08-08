@@ -6,14 +6,13 @@ namespace ReusableBits.Threading {
 		Ready,
 		NotReady,
 		Completed,
-		Paused,
 		Running
 	}
 
 	public class RecurringTaskContext {
-		private readonly RecurringTask			mTask;
-		private RecurringTaskState				mTaskState;
-		private DateTime						mNextExecutionTime;
+		private readonly RecurringTask	mTask;
+		private RecurringTaskState		mTaskState;
+		private DateTime				mNextExecutionTime;
 
 		public RecurringTaskContext( RecurringTask task ) {
 			mTask = task;

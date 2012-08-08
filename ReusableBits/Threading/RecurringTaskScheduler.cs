@@ -32,8 +32,25 @@ namespace ReusableBits.Threading {
 			UpdateTimer();
 		}
 
-		public void CancelAll() {
-			
+		public RecurringTask RetrieveTask( string taskName ) {
+			return(( from t in mTaskList where t.Task.TaskId == taskName select t.Task ).FirstOrDefault());
+		}
+
+		public void RemoveAllTasks() {
+			lock( mTaskList ) {
+				mTaskList.Clear();
+			}
+
+			UpdateTimer();
+		}
+
+		public void RemoveTask( string taskName ) {
+			lock( mTaskList ) {
+				var removeList = from t in mTaskList where t.Task.TaskId == taskName select t;
+				mTaskList.RemoveAll( removeList.Contains );
+			}
+
+			UpdateTimer();
 		}
 
 		protected void OnTimer( object sender ) {
