@@ -134,6 +134,7 @@
     <Compile Include="Support\ResourceProvider.cs" />
     <Compile Include="Support\TimeProvider.cs" />
     <Compile Include="TaskHandler.cs" />
+    <Compile Include="Interfaces\IRecurringTaskScheduler.cs" />
     <Compile Include="Threading\RecurringInterval.cs" />
     <Compile Include="Threading\RecurringTask.cs" />
     <Compile Include="Threading\RecurringTaskContext.cs" />

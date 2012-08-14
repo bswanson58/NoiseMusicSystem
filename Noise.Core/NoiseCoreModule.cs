@@ -15,6 +15,7 @@ using Noise.Core.PlayQueue;
 using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
+using ReusableBits.Threading;
 
 namespace Noise.Core {
 	public class NoiseCoreModule : IModule {
@@ -72,6 +73,10 @@ namespace Noise.Core {
 
 			mContainer.RegisterType<IDomainSearchProvider, DomainSearchProvider>();
 			mContainer.RegisterType<IStorageFolderSupport, StorageFolderSupport>();
+
+			// Configure the default constructor for the RecurringTaskScheduler class.
+			mContainer.RegisterType<RecurringTaskScheduler>( new InjectionConstructor());
+			mContainer.RegisterType<IRecurringTaskScheduler, RecurringTaskScheduler>( new HierarchicalLifetimeManager());
 
 			mContainer.RegisterType<IBackgroundTask, ContentBuilder>( "ContentBuilder" );
 			mContainer.RegisterType<IBackgroundTask, DecadeTagBuilder>( "DecadeTagBuilder" );

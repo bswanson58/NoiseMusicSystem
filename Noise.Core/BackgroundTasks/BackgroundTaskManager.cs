@@ -3,79 +3,46 @@ using System.Collections.Generic;
 using Caliburn.Micro;
 using Noise.Core.Support;
 using Noise.Infrastructure;
-using ReusableBits.Support;
 using ReusableBits.Threading;
 
-//using Quartz;
-//using Quartz.Impl;
-
 namespace Noise.Core.BackgroundTasks {
-/*	internal class BackgroundTaskJob : IStatefulJob {
-		public void Execute( JobExecutionContext context ) {
-			if( context != null ) {
-				var	manager = context.Trigger.JobDataMap[BackgroundTaskManager.cBackgroundTaskName] as BackgroundTaskManager;
-
-				if( manager != null ) {
-					manager.Execute();
-				}
-			}
-		}
-	} */
-
 	public class BackgroundTaskManager : IBackgroundTaskManager, IRequireInitialization,
 										 IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted> {
-		internal const string					cBackgroundTaskName		= "BackgroundTask";
-		internal const string					cBackgroundTaskGroup	= "BackgroundTaskManager";
+		internal const string						cBackgroundTaskName		= "BackgroundTask";
+		internal const string						cBackgroundTaskGroup	= "BackgroundTaskManager";
 
-		private readonly IEventAggregator		mEventAggregator;
-		private readonly RecurringTaskScheduler	mJobScheduler;
-//		private	readonly ISchedulerFactory		mSchedulerFactory;
-//		private	readonly IScheduler				mJobScheduler;
-//		private readonly JobDetail				mTaskJobDetail;
-//		private	readonly Trigger				mTaskExecuteTrigger;
-		private IEnumerator<IBackgroundTask>	mTaskEnum;
-		private bool							mRunningTaskFlag;
-		private bool							mUpdateInProgress;
+		private readonly IEventAggregator			mEventAggregator;
+		private readonly IRecurringTaskScheduler	mJobScheduler;
+		private IEnumerator<IBackgroundTask>		mTaskEnum;
+		private bool								mRunningTaskFlag;
+		private bool								mUpdateInProgress;
 
 		private readonly IEnumerable<IBackgroundTask>	mBackgroundTasks;
 
 		public BackgroundTaskManager( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager,
-									  IEnumerable<IBackgroundTask> backgroundTasks ) {
+									  IRecurringTaskScheduler recurringTaskScheduler, IEnumerable<IBackgroundTask> backgroundTasks ) {
 			mBackgroundTasks = backgroundTasks;
 			mEventAggregator = eventAggregator;
+			mJobScheduler = recurringTaskScheduler;
 
 			lifecycleManager.RegisterForInitialize( this );
-
-			mJobScheduler = new RecurringTaskScheduler();
-
-//			mSchedulerFactory = new StdSchedulerFactory();
-//			mJobScheduler = mSchedulerFactory.GetScheduler();
-
-//			mTaskJobDetail = new JobDetail( cBackgroundTaskName, cBackgroundTaskGroup, typeof( BackgroundTaskJob ));
-
-//			mTaskExecuteTrigger = new SimpleTrigger( cBackgroundTaskName, cBackgroundTaskGroup,
-//														DateTime.UtcNow + TimeSpan.FromSeconds( 10 ), null,
-//														SimpleTrigger.RepeatIndefinitely, TimeSpan.FromSeconds( 5 )); 
-//			mTaskExecuteTrigger.JobDataMap[cBackgroundTaskName] = this;
 
 			NoiseLogger.Current.LogInfo( "BackgroundTaskManager created" );
 		}
 
 		public void Initialize() {
-			var backgroundJob = new RecurringTask( Execute );
-			backgroundJob.TaskSchedule.StartAt( TimeProvider.Now() + new TimeSpan( 0, 0, 15 )).Delay( new TimeSpan( 0, 0, 15 ));
+			var backgroundJob = new RecurringTask( Execute, "Background Tasks" );
+
+			backgroundJob.TaskSchedule.StartAt( RecurringInterval.FromSeconds( 15 ))
+									  .Delay( RecurringInterval.FromSeconds( 15 ));
 			mJobScheduler.AddRecurringTask( backgroundJob );
 
-//			mJobScheduler.Start();
 			mTaskEnum = mBackgroundTasks.GetEnumerator();
-
-//			mJobScheduler.ScheduleJob( mTaskJobDetail, mTaskExecuteTrigger );
 
 			mEventAggregator.Subscribe( this );
 		}
 
-//		public void Execute( Job job ) {
-		public void Execute() {
+		public void Execute( RecurringTask job ) {
 			IBackgroundTask	task = null;
 
 			if((!mUpdateInProgress ) &&
@@ -115,8 +82,7 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public void Shutdown() {
-//			mJobScheduler.Shutdown( true );
-			mJobScheduler.CancelAll();
+			mJobScheduler.RemoveAllTasks();
 		}
 
 		public void Handle( Events.LibraryUpdateStarted eventArgs ) {

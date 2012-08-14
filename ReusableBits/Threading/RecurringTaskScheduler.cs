@@ -7,7 +7,7 @@ using CuttingEdge.Conditions;
 using ReusableBits.Support;
 
 namespace ReusableBits.Threading {
-	public class RecurringTaskScheduler {
+	public class RecurringTaskScheduler : IRecurringTaskScheduler {
 		private readonly List<RecurringTaskContext>			mTaskList;
 		private readonly Timer								mTimer;
 		private readonly TaskHandler<RecurringTaskContext>	mTaskHandler; 

@@ -9,56 +9,41 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
-using Quartz;
-using Quartz.Impl;
+using ReusableBits.Threading;
 using TagLib;
 using TagLib.Id3v2;
 using File = TagLib.File;
 
 namespace Noise.Core.FileStore {
-	internal class BackgroundFileUpdateJob : IJob {
-		public void Execute( JobExecutionContext context ) {
-			if( context != null ) {
-				var	fileUpdater = context.Trigger.JobDataMap[FileUpdates.cBackgroundFileUpdater] as FileUpdates;
-
-				if( fileUpdater != null ) {
-					fileUpdater.ProcessUnfinishedCommands();
-				}
-			}
-		}
-	}
-
 	internal class FileUpdates : IFileUpdates, IRequireInitialization {
-		internal const string					cBackgroundFileUpdater = "BackgroundFileUpdater";
+		internal const string						cBackgroundFileUpdater = "BackgroundFileUpdater";
 
-		private readonly ITrackProvider			mTrackProvider;
-		private readonly IDbBaseProvider		mDbBaseProvider;
-		private readonly IStorageFileProvider	mStorageFileProvider;
-		private readonly IStorageFolderSupport	mStorageFolderSupport;
-		private	readonly ISchedulerFactory		mSchedulerFactory;
-		private	readonly IScheduler				mJobScheduler;
-		private readonly List<BaseCommandArgs>	mUnfinishedCommands;
-		private bool							mClearReadOnly;
+		private readonly ITrackProvider				mTrackProvider;
+		private readonly IDbBaseProvider			mDbBaseProvider;
+		private readonly IStorageFileProvider		mStorageFileProvider;
+		private readonly IStorageFolderSupport		mStorageFolderSupport;
+		private readonly IRecurringTaskScheduler	mTaskScheduler;
+		private readonly List<BaseCommandArgs>		mUnfinishedCommands;
+		private bool								mClearReadOnly;
 
 		private AsyncCommand<SetFavoriteCommandArgs>		mSetFavoriteCommand;
 		private AsyncCommand<SetRatingCommandArgs>			mSetRatingCommand;
 		private AsyncCommand<UpdatePlayCountCommandArgs>	mUpdatePlayCountCommand;
 		private AsyncCommand<SetMp3TagCommandArgs>			mSetMp3TagsCommand;
 
-		public FileUpdates( ILifecycleManager lifecycleManager, ITrackProvider trackProvider, IDbBaseProvider dbBaseProvider,
+		public FileUpdates( ILifecycleManager lifecycleManager, IRecurringTaskScheduler recurringTaskScheduler,
+						    ITrackProvider trackProvider, IDbBaseProvider dbBaseProvider,
 							IStorageFolderSupport storageFolderSupport, IStorageFileProvider storageFileProvider ) {
 			mTrackProvider = trackProvider;
 			mDbBaseProvider = dbBaseProvider;
 			mStorageFileProvider = storageFileProvider;
 			mStorageFolderSupport = storageFolderSupport;
+			mTaskScheduler = recurringTaskScheduler;
 
 			lifecycleManager.RegisterForInitialize( this );
 			lifecycleManager.RegisterForShutdown( this );
 
 			mUnfinishedCommands = new List<BaseCommandArgs>();
-			mSchedulerFactory = new StdSchedulerFactory();
-			mJobScheduler = mSchedulerFactory.GetScheduler();
-			mJobScheduler.Start();
 		}
 
 		public void Initialize() {
@@ -83,28 +68,24 @@ namespace Noise.Core.FileStore {
 				mClearReadOnly = configuration.EnableReadOnlyUpdates;
 			}
 
-			var jobDetail = new JobDetail( cBackgroundFileUpdater, "FileUpdates", typeof( BackgroundFileUpdateJob ));
-			var trigger = new SimpleTrigger( cBackgroundFileUpdater, "FileUpdates",
-											 DateTime.UtcNow + TimeSpan.FromMinutes( 1 ), null, SimpleTrigger.RepeatIndefinitely, TimeSpan.FromMinutes( 1 )); 
-			trigger.JobDataMap[cBackgroundFileUpdater] = this;
+			var backgroundJob = new RecurringTask( ProcessUnfinishedCommands, "Background File Update Task" );
+			backgroundJob.TaskSchedule.StartAt( RecurringInterval.FromMinutes( 1 )).Interval( RecurringInterval.FromMinutes( 1 ));
 
-			mJobScheduler.ScheduleJob( jobDetail, trigger );
+			mTaskScheduler.AddRecurringTask( backgroundJob );
+
 			NoiseLogger.Current.LogMessage( "Started Background FileUpdater." );
 		}
 
 		public void Shutdown() {
-			if( mJobScheduler != null ) {
-				mJobScheduler.Shutdown( false );
-			}
-
-			ProcessUnfinishedCommands();
+			mTaskScheduler.RemoveAllTasks();
+			ProcessUnfinishedCommands( null );
 
 			if( mUnfinishedCommands.Count > 0 ) {
 				NoiseLogger.Current.LogMessage( "FileUpdater: There were unfinished commands at shutdown." );
 			}
 		}
 
-		internal void ProcessUnfinishedCommands() {
+		internal void ProcessUnfinishedCommands( RecurringTask task ) {
 			if( mUnfinishedCommands.Count > 0 ) {
 				var unfinishedCommands = new List<BaseCommandArgs>();
 

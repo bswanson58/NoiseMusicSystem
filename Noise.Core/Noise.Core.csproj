@@ -120,10 +120,6 @@
       <HintPath>..\packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
-    <Reference Include="Quartz, Version=1.0.2.3, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Quartz\v1.0.2.3\Quartz.dll</HintPath>
-    </Reference>
     <Reference Include="Recls.100.Net">
       <HintPath>..\lib\recls\Recls.100.Net.dll</HintPath>
     </Reference>
