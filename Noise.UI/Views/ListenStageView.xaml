@@ -1,29 +1,30 @@
-﻿<UserControl
+﻿<UserControl x:Class="Noise.UI.Views.ListenStageView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:ec="http://schemas.microsoft.com/expression/2010/controls"
-             x:Class="Noise.UI.Views.ListenStageView" 
-             mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="600"
-             DataContext="{Binding ListenStageViewModel, Source={StaticResource ViewModelLocator}}">
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="600"
+             d:DesignWidth="600"
+             DataContext="{Binding ListenStageViewModel,
+                                   Source={StaticResource ViewModelLocator}}"
+             mc:Ignorable="d">
 
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Background="{StaticResource TreeItemBackground}" Margin="0">
+    <GroupBox Margin="0"
+              Background="{StaticResource TreeItemBackground}"
+              BorderBrush="{DynamicResource TrimColor}"
+              BorderThickness="1">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="30"/>
+                <RowDefinition Height="20" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="30" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="20" />
             </Grid.ColumnDefinitions>
-            
-        	<ec:PathListBox Grid.Column="1" Grid.Row="1"/>
-            
+
         </Grid>
     </GroupBox>
 </UserControl>
