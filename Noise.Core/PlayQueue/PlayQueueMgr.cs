@@ -256,6 +256,13 @@ namespace Noise.Core.PlayQueue {
 			FirePlayQueueChanged();
 		}
 
+		public void RemovePlayedTracks() {
+			mPlayQueue.RemoveAll( track => track.HasPlayed && !track.IsPlaying );
+			mPlayHistory.Clear();
+
+			FirePlayQueueChanged();
+		}
+
 		public void	ReorderQueueItem( int fromIndex, int toIndex ) {
 			if(( fromIndex < mPlayQueue.Count ) &&
 			   ( toIndex < mPlayQueue.Count )) {
@@ -287,6 +294,10 @@ namespace Noise.Core.PlayQueue {
 
 		public int UnplayedTrackCount {
 			get { return(( from PlayQueueTrack track in mPlayQueue where !track.HasPlayed select track ).Count()); }
+		}
+
+		public int PlayedTrackCount {
+			get { return(( from PlayQueueTrack track in mPlayQueue where track.HasPlayed && !track.IsPlaying select track ).Count()); }
 		}
 
 		public bool StrategyRequestsQueued {

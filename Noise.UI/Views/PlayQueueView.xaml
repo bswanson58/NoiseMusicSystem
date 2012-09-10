@@ -410,6 +410,10 @@
                             Margin="3"
                             Command="{Binding Path=ClearQueue}"
                             Content="Clear" />
+                    <Button Width="77" 
+                            Margin="3" 
+                            Command="{Binding Path=ClearPlayed}"
+                            Content="Clear Played"/>
                 </StackPanel>
                 <StackPanel Grid.Row="4"
                             Margin="3"

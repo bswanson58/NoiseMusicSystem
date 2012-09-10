@@ -27,6 +27,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void			StrategyAdd( DbTrack track );
 		void			StrategyAdd( DbTrack track, PlayQueueTrack afterTrack );
 		void			RemoveTrack( PlayQueueTrack track );
+		void			RemovePlayedTracks();
 		void			ClearQueue();
 
 		PlayQueueTrack	PlayNextTrack();
@@ -42,6 +43,7 @@ namespace Noise.Infrastructure.Interfaces {
 		bool			IsQueueEmpty { get; }
 		bool			IsTrackQueued( DbTrack track );
 		int				UnplayedTrackCount { get; }
+		int				PlayedTrackCount { get; }
 		bool			StrategyRequestsQueued { get; }
 
 		void			ReorderQueueItem( int fromIndex, int toIndex );

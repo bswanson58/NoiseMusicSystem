@@ -276,6 +276,16 @@ namespace Noise.UI.ViewModels {
 			return(!mPlayQueue.IsQueueEmpty );
 		}
 
+		public void Execute_ClearPlayed() {
+			mPlayQueue.RemovePlayedTracks();
+		}
+
+		[DependsUpon( "PlayingIndex" )]
+		[DependsUpon( "PlayQueueChangedFlag" )]
+		public bool CanExecute_ClearPlayed() {
+			return( mPlayQueue.PlayedTrackCount > 0 );
+		}
+
 		public void Handle( Events.PlaybackTrackStarted eventArgs ) {
 			Execute.OnUIThread( () => {
 				var index = 0;
