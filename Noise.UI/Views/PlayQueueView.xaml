@@ -8,7 +8,7 @@
              xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-             xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              d:DesignHeight="300"
              d:DesignWidth="300"
              DataContext="{Binding PlayQueueViewModel,
@@ -24,7 +24,13 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-
+        
+        <ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
+            <Grid Margin="5,15,5,0">
+                <TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="Play Something!" />
+            </Grid>
+        </ControlTemplate>
+        
         <ControlTemplate x:Key="MouseOverExpanderTemplate" TargetType="{x:Type Expander}">
             <ControlTemplate.Resources>
                 <Storyboard x:Key="ExpandContent">
@@ -268,6 +274,9 @@
                      ScrollViewer.VerticalScrollBarVisibility="Visible"
                      SelectedIndex="{Binding Path=SelectedIndex}"
                      SelectedItem="{Binding Path=SelectedItem}">
+                <i:Interaction.Behaviors>
+                    <ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
+                </i:Interaction.Behaviors>
                 <EventCommandTriggers:CommandSource.Trigger>
                     <EventCommandTriggers:CommandTriggerGroup>
                         <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=PlayRequested}"
