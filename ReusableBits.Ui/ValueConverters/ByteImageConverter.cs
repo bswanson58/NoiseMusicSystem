@@ -12,7 +12,7 @@ namespace ReusableBits.Ui.ValueConverters {
 			if( targetType != typeof( ImageSource ) )
 				throw new InvalidOperationException( "The target must be ImageSource or derived types" );
 
-			if( value != null && value is byte[] ) {
+			if( value is byte[] ) {
 				retValue = CreateBitmap( value as byte[]);
 			}
 
@@ -26,13 +26,19 @@ namespace ReusableBits.Ui.ValueConverters {
 		public static BitmapImage CreateBitmap( byte[] bytes ) {
 			var bitmap = new BitmapImage();
 
-			if(( bytes != null ) &&
-			   ( bytes.GetLength( 0 ) > 0 )) {
-				var stream = new MemoryStream( bytes );
+			try {
+				if(( bytes != null ) &&
+				   ( bytes.GetLength( 0 ) > 0 )) {
+					var stream = new MemoryStream( bytes );
 
-				bitmap.BeginInit();
-				bitmap.StreamSource = stream;
-				bitmap.EndInit();
+					bitmap.BeginInit();
+					bitmap.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+					bitmap.StreamSource = stream;
+					bitmap.EndInit();
+				}
+			}
+			catch( Exception ) {
+				bitmap = null;
 			}
 
 			return( bitmap );
