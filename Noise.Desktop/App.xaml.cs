@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using Noise.Infrastructure;
 
@@ -14,20 +15,21 @@ namespace Noise.Desktop {
 		protected override void OnStartup( StartupEventArgs e ) {
 			base.OnStartup( e );
 
-			DispatcherUnhandledException += App_DispatcherUnhandledException;
-			AppDomain.CurrentDomain.UnhandledException +=CurrentDomain_UnhandledException;
+			DispatcherUnhandledException += AppDispatcherUnhandledException;
+			AppDomain.CurrentDomain.UnhandledException +=CurrentDomainUnhandledException;
+			TaskScheduler.UnobservedTaskException += TaskSchedulerUnobservedTaskException;
 
 			mBootstrapper = new Bootstrapper();
 			mBootstrapper.Run();
 		}
 
-		private void CurrentDomain_UnhandledException( object sender, UnhandledExceptionEventArgs e ) {
+		private void CurrentDomainUnhandledException( object sender, UnhandledExceptionEventArgs e ) {
 			NoiseLogger.Current.LogException( "Application domain unhandled exception:", e.ExceptionObject as Exception );
 
 			Shutdown( -1 );
 		}
 
-		private void App_DispatcherUnhandledException( object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e ) {
+		private void AppDispatcherUnhandledException( object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e ) {
 			if( Debugger.IsAttached ) {
 				Clipboard.SetText( e.Exception.ToString());
 			}
@@ -45,5 +47,11 @@ namespace Noise.Desktop {
 
 			Shutdown( -1 );
 		}
+
+		private void TaskSchedulerUnobservedTaskException( object sender, UnobservedTaskExceptionEventArgs e ) { 
+            NoiseLogger.Current.LogException( "Task Unobserved Exception: ", e.Exception );
+ 
+            e.SetObserved(); 
+        } 
 	}
 }
