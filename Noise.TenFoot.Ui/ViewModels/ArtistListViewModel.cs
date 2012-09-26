@@ -105,7 +105,6 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		private void OnArtistSelect( UiArtist artist ) {
 			if( artist != null ) {
-				mAlbumsList.SetContext( artist.DbId );
 				DisplayAlbums();
 			}
 		}
@@ -182,9 +181,11 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		public void DisplayAlbums() {
-			if( Parent is INavigate ) {
+			if(( Parent is INavigate ) &&
+			   ( mSelectedArtist != null )) {
 				var controller = Parent as INavigate;
 
+				mAlbumsList.SetContext( mSelectedArtist.DbId );
 				controller.NavigateTo( mAlbumsList );
 			}
 		}

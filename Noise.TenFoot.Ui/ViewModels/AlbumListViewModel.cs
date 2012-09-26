@@ -88,11 +88,55 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		public void Handle( InputEvent input ) {
 			switch( input.Command ) {
+				case InputCommand.Down:
+				case InputCommand.Right:
+					SetNextAlbum();
+					break;
+
+				case InputCommand.Up:
+				case InputCommand.Left:
+					SetPreviousAlbum();
+					break;
+
 				case InputCommand.Play:
 					if( mCurrentAlbum != null ) {
 						GlobalCommands.PlayAlbum.Execute( mCurrentAlbum );
 					}
 					break;
+			}
+		}
+
+		private void SetNextAlbum() {
+			if( mAlbumList.Count > 0 ) {
+				if( mCurrentAlbum != null ) {
+					var index = mAlbumList.IndexOf( mCurrentAlbum );
+
+					if(( index != -1 ) &&
+					  (( index + 1 ) < mAlbumList.Count )) {
+						SelectedAlbumList = mAlbumList[index + 1];
+					}
+					else {
+						SelectedAlbumList = mAlbumList[0];
+					}
+				}
+				else {
+					SelectedAlbumList = mAlbumList[0];
+				}
+			}
+		}
+
+		private void SetPreviousAlbum() {
+			if( mAlbumList.Count > 0 ) {
+				if( mCurrentAlbum != null ) {
+					var index = mAlbumList.IndexOf( mCurrentAlbum );
+
+					if( index > 0 ) {
+						SelectedAlbumList = mAlbumList[index - 1 ];
+					}
+				}
+				else {
+					SelectedAlbumList = mAlbumList[mAlbumList.Count - 1];
+				}
 			}
 		}
 
