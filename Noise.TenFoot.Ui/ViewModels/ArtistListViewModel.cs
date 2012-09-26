@@ -15,6 +15,7 @@ using ReusableBits.Mvvm.CaliburnSupport;
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class ArtistListViewModel : Screen, IArtistList,
 									   IHandle<InputEvent> {
+		private readonly IEventAggregator				mEventAggregator;
 		private readonly IAlbumList						mAlbumsList;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IArtworkProvider				mArtworkProvider;
@@ -27,6 +28,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		public ArtistListViewModel( IAlbumList albumListViewModel, IArtistProvider artistProvider, IArtworkProvider artworkProvider,
 									IEventAggregator eventAggregator, IResourceProvider resourceProvider ) {
+			mEventAggregator = eventAggregator;
 			mAlbumsList = albumListViewModel;
 			mArtistProvider = artistProvider;
 			mArtworkProvider = artworkProvider;
@@ -35,13 +37,25 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 			mArtistList = new BindableCollection<UiArtist>();
 
-			eventAggregator.Subscribe( this );
+			mEventAggregator.Subscribe( this );
 		}
 
 		protected override void OnInitialize() {
 			base.OnInitialize();
 
 			RetrieveArtistList();
+		}
+
+		protected override void OnActivate() {
+			base.OnActivate();
+
+			mEventAggregator.Subscribe( this );
+		}
+
+		protected override void OnDeactivate( bool close ) {
+			base.OnDeactivate( close );
+
+			mEventAggregator.Unsubscribe( this );
 		}
 
 		internal TaskHandler ArtistRetrievalTaskHandler {
@@ -92,7 +106,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private void OnArtistSelect( UiArtist artist ) {
 			if( artist != null ) {
 				mAlbumsList.SetContext( artist.DbId );
-				Albums();
+				DisplayAlbums();
 			}
 		}
 
@@ -118,16 +132,18 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private void SetSelectedArtist( int index ) {
 			var artistCount = ArtistList.Count();
 
-			if( index < 0 ) {
-				index = artistCount + index;
-			}
+			if( artistCount > 0 ) {
+				if( index < 0 ) {
+					index = artistCount + index;
+				}
 
-			if( index >= artistCount ) {
-				index = index % artistCount;
-			}
+				if( index >= artistCount ) {
+					index = index % artistCount;
+				}
 
-			if( index < artistCount ) {
-				SelectedArtist = ArtistList[index];
+				if( index < artistCount ) {
+					SelectedArtist = ArtistList[index];
+				}
 			}
 		}
 
@@ -152,7 +168,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 					break;
 
 				case InputCommand.Select:
-					Albums();
+					DisplayAlbums();
 					break;
 			}
 		}
@@ -165,7 +181,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			SetSelectedArtist((int)ArtistIndex - 1 );
 		}
 
-		public void Albums() {
+		public void DisplayAlbums() {
 			if( Parent is INavigate ) {
 				var controller = Parent as INavigate;
 

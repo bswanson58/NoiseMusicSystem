@@ -2,12 +2,15 @@
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 using ReusableBits;
 using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class AlbumListViewModel : Screen, IAlbumList {
+	public class AlbumListViewModel : Screen, IAlbumList,
+									  IHandle<InputEvent> {
+		private readonly IEventAggregator				mEventAggregator;
 		private readonly IAlbumTrackList				mAlbumTrackList;
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly BindableCollection<DbAlbum>	mAlbumList; 
@@ -15,11 +18,24 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private DbAlbum									mCurrentAlbum;
 		private TaskHandler								mAlbumRetrievalTaskHandler;
 
-		public AlbumListViewModel( IAlbumTrackList trackListViewModel, IAlbumProvider albumProvider ) {
+		public AlbumListViewModel( IEventAggregator eventAggregator, IAlbumTrackList trackListViewModel, IAlbumProvider albumProvider ) {
+			mEventAggregator = eventAggregator;
 			mAlbumTrackList = trackListViewModel;
 			mAlbumProvider = albumProvider;
 
 			mAlbumList = new BindableCollection<DbAlbum>();
+		}
+
+		protected override void OnActivate() {
+			base.OnActivate();
+
+			mEventAggregator.Subscribe( this );
+		}
+
+		protected override void OnDeactivate( bool close ) {
+			base.OnDeactivate( close );
+
+			mEventAggregator.Unsubscribe( this );
 		}
 
 		public void SetContext( long artistId ) {
@@ -50,7 +66,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			                                     	}
 			                                     },
 												 () => { },
-												 ( ex ) => NoiseLogger.Current.LogException( "AlbumListViewModel:RetrieveAlbumsForArtist", ex )
+												 ex => NoiseLogger.Current.LogException( "AlbumListViewModel:RetrieveAlbumsForArtist", ex )
 				);
 		}
 
@@ -65,12 +81,22 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 				if( mCurrentAlbum != null ) {
 					mAlbumTrackList.SetContext( mCurrentAlbum.DbId );
-					Tracks();
+					DisplayTracks();
 				}
 			}
 		}
 
-		public void Tracks() {
+		public void Handle( InputEvent input ) {
+			switch( input.Command ) {
+				case InputCommand.Play:
+					if( mCurrentAlbum != null ) {
+						GlobalCommands.PlayAlbum.Execute( mCurrentAlbum );
+					}
+					break;
+			}
+		}
+
+		public void DisplayTracks() {
 			if( Parent is INavigate ) {
 				var controller = Parent as INavigate;
 
