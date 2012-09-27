@@ -6,15 +6,13 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Dto;
-using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 using ReusableBits;
 using ReusableBits.Interfaces;
 using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class ArtistListViewModel : Screen, IArtistList,
-									   IHandle<InputEvent> {
+	public class ArtistListViewModel : BaseListViewModel, IArtistList {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IAlbumList						mAlbumsList;
 		private readonly IArtistProvider				mArtistProvider;
@@ -105,7 +103,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		private void OnArtistSelect( UiArtist artist ) {
 			if( artist != null ) {
-				DisplayAlbums();
+				DisplayItem();
 			}
 		}
 
@@ -146,67 +144,21 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			}
 		}
 
-		public void Handle( InputEvent message ) {
-			switch( message.Command ) {
-				case InputCommand.Up:
-					PreviousArtist();
-					break;
-
-				case InputCommand.Down:
-					NextArtist();
-					break;
-
-				case InputCommand.Left:
-					break;
-
-				case InputCommand.Right:
-					break;
-
-				case InputCommand.Back:
-					Done();
-					break;
-
-				case InputCommand.Home:
-					Home();
-					break;
-
-				case InputCommand.Select:
-					DisplayAlbums();
-					break;
-			}
-		}
-
-		private void NextArtist() {
+		protected override void NextItem() {
 			SetSelectedArtist((int)ArtistIndex + 1 );
 		}
 
-		private void PreviousArtist() {
+		protected override void PreviousItem() {
 			SetSelectedArtist((int)ArtistIndex - 1 );
 		}
 
-		public void DisplayAlbums() {
+		protected override void DisplayItem() {
 			if(( Parent is INavigate ) &&
 			   ( mSelectedArtist != null )) {
 				var controller = Parent as INavigate;
 
 				mAlbumsList.SetContext( mSelectedArtist.DbId );
 				controller.NavigateTo( mAlbumsList );
-			}
-		}
-
-		public void Home() {
-			if( Parent is INavigate ) {
-				var controller = Parent as INavigate;
-
-				controller.NavigateHome();
-			}
-		}
-
-		private void Done() {
-			if( Parent is INavigate ) {
-				var controller = Parent as INavigate;
-
-				controller.NavigateReturn( this, true );
 			}
 		}
 	}
