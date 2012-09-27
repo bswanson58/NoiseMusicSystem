@@ -3,10 +3,42 @@ using Noise.TenFoot.Ui.Input;
 using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public abstract class BaseListViewModel : Screen, IHandle<InputEvent> {
+	public abstract class BaseListViewModel<TItem> : Screen, IHandle<InputEvent> where TItem : class {
+		private	readonly BindableCollection<TItem>	mItemList;
+		private	TItem								mSelectedItem;
+		private	double								mSelectedItemIndex;
+
+		protected BaseListViewModel() {
+			mItemList = new BindableCollection<TItem>();
+		}
+
 		protected virtual void NextItem() { }
 		protected virtual void PreviousItem() { }
 		protected virtual void DisplayItem() { }
+
+		public BindableCollection<TItem> ItemList {
+			get{ return( mItemList ); }
+		}
+ 
+		public TItem SelectedItem {
+			get{ return( mSelectedItem ); }
+			set {
+				mSelectedItem = value;
+
+				SelectedItemIndex = mSelectedItem != null ? mItemList.IndexOf( mSelectedItem ) : 0.0d;
+
+				NotifyOfPropertyChange( () => SelectedItem );
+			}
+		}
+
+		public double SelectedItemIndex {
+			get{ return( mSelectedItemIndex ); }
+			set {
+				mSelectedItemIndex = value;
+
+				NotifyOfPropertyChange( () => SelectedItemIndex );
+			}
+		}
 
 		protected virtual void Done() {
 			if( Parent is INavigate ) {

@@ -221,13 +221,13 @@
                                  Background="Transparent"
                                  BorderThickness="0"
                                  ItemContainerStyle="{StaticResource ArtistItemStyle}"
-                                 ItemsSource="{Binding ArtistList}"
+                                 ItemsSource="{Binding ItemList}"
                                  ItemTemplate="{StaticResource ArtistTemplate}"
                                  LastItemMargin="0.75"
                                  Orientation="Horizontal"
                                  RelativeOffset="0.3"
-                                 SelectedItem="{Binding SelectedArtist}"
-                                 Offset="{Binding ArtistIndex}" />
+                                 SelectedItem="{Binding SelectedItem}"
+                                 Offset="{Binding SelectedItemIndex}" />
 
         <StackPanel Grid.Row="2"
                     VerticalAlignment="Center"

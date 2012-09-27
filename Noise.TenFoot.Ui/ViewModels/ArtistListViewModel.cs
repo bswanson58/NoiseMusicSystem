@@ -12,17 +12,13 @@ using ReusableBits.Interfaces;
 using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class ArtistListViewModel : BaseListViewModel, IArtistList {
+	public class ArtistListViewModel : BaseListViewModel<UiArtist>, IArtistList {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IAlbumList						mAlbumsList;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IArtworkProvider				mArtworkProvider;
 		private readonly BitmapImage					mUnknownArtistImage;
-		private readonly BindableCollection<UiArtist>	mArtistList; 
-		private UiArtist								mSelectedArtist;
 		private TaskHandler								mArtistRetrievalTaskHandler;
-
-		public	double									ArtistIndex { get; set; }
 
 		public ArtistListViewModel( IAlbumList albumListViewModel, IArtistProvider artistProvider, IArtworkProvider artworkProvider,
 									IEventAggregator eventAggregator, IResourceProvider resourceProvider ) {
@@ -32,10 +28,6 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			mArtworkProvider = artworkProvider;
 
 			mUnknownArtistImage = resourceProvider.RetrieveImage( "Unknown Artist.png" );
-
-			mArtistList = new BindableCollection<UiArtist>();
-
-			mEventAggregator.Subscribe( this );
 		}
 
 		protected override void OnInitialize() {
@@ -81,10 +73,10 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private void RetrieveArtistList() {
 			ArtistRetrievalTaskHandler.StartTask( () => {
 					using( var artistList = mArtistProvider.GetArtistList()) {
-						mArtistList.AddRange( from artist in artistList.List orderby artist.Name select TransformArtist( artist ));
+						ItemList.AddRange( from artist in artistList.List orderby artist.Name select TransformArtist( artist ));
 					}
 
-					foreach( var artist in mArtistList ) {
+					foreach( var artist in ItemList ) {
 						var artwork = mArtworkProvider.GetArtistArtwork( artist.DbId, ContentType.ArtistPrimaryImage );
 
 						if(( artwork != null ) &&
@@ -96,7 +88,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 						}
 					}
 				},
-				() => { SelectedArtist = mArtistList.FirstOrDefault(); },
+				() => { SelectedItem = ItemList.FirstOrDefault(); },
 				ex => NoiseLogger.Current.LogException( "ArtistListViewModel:RetrieveArtistList", ex )
 			); 
 		}
@@ -107,27 +99,8 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			}
 		}
 
-		public BindableCollection<UiArtist> ArtistList {
-			get{ return( mArtistList ); }
-		}
- 
-		public UiArtist SelectedArtist {
-			get{ return( mSelectedArtist ); }
-			set {
-				mSelectedArtist = value;
-
-				if( mSelectedArtist != null ) {
-					ArtistIndex = mArtistList.IndexOf( mSelectedArtist );
-
-					NotifyOfPropertyChange( () => ArtistIndex );
-				}
-
-				NotifyOfPropertyChange( () => SelectedArtist );
-			}
-		}
-
 		private void SetSelectedArtist( int index ) {
-			var artistCount = ArtistList.Count();
+			var artistCount = ItemList.Count();
 
 			if( artistCount > 0 ) {
 				if( index < 0 ) {
@@ -139,25 +112,25 @@ namespace Noise.TenFoot.Ui.ViewModels {
 				}
 
 				if( index < artistCount ) {
-					SelectedArtist = ArtistList[index];
+					SelectedItem = ItemList[index];
 				}
 			}
 		}
 
 		protected override void NextItem() {
-			SetSelectedArtist((int)ArtistIndex + 1 );
+			SetSelectedArtist((int)SelectedItemIndex + 1 );
 		}
 
 		protected override void PreviousItem() {
-			SetSelectedArtist((int)ArtistIndex - 1 );
+			SetSelectedArtist((int)SelectedItemIndex - 1 );
 		}
 
 		protected override void DisplayItem() {
 			if(( Parent is INavigate ) &&
-			   ( mSelectedArtist != null )) {
+			   ( SelectedItem != null )) {
 				var controller = Parent as INavigate;
 
-				mAlbumsList.SetContext( mSelectedArtist.DbId );
+				mAlbumsList.SetContext( SelectedItem.DbId );
 				controller.NavigateTo( mAlbumsList );
 			}
 		}
