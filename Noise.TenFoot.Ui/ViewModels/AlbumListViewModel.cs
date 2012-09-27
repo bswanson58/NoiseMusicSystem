@@ -52,40 +52,6 @@ namespace Noise.TenFoot.Ui.ViewModels {
 				);
 		}
 
-		protected override void NextItem() {
-			if( ItemList.Any()) {
-				if( SelectedItem != null ) {
-					var index = ItemList.IndexOf( SelectedItem );
-
-					if(( index != -1 ) &&
-					  (( index + 1 ) < ItemList.Count )) {
-						SelectedItem = ItemList[index + 1];
-					}
-					else {
-						SelectedItem = ItemList[0];
-					}
-				}
-				else {
-					SelectedItem = ItemList[0];
-				}
-			}
-		}
-
-		protected override void PreviousItem() {
-			if( ItemList.Any()) {
-				if( SelectedItem != null ) {
-					var index = ItemList.IndexOf( SelectedItem );
-
-					if( index > 0 ) {
-						SelectedItem = ItemList[index - 1 ];
-					}
-				}
-				else {
-					SelectedItem = ItemList[ItemList.Count - 1];
-				}
-			}
-		}
-
 		protected override void DisplayItem() {
 			if(( Parent is INavigate ) &&
 			   ( SelectedItem != null )) {

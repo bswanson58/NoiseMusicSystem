@@ -15,8 +15,6 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			mItemList = new BindableCollection<TItem>();
 		}
 
-		protected virtual void NextItem() { }
-		protected virtual void PreviousItem() { }
 		protected virtual void DisplayItem() { }
 		protected virtual void PlayItem() { }
 
@@ -54,6 +52,32 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 				NotifyOfPropertyChange( () => SelectedItemIndex );
 			}
+		}
+
+		private void SetSelectedItem( int index ) {
+			var itemCount = mItemList.Count;
+
+			if( itemCount > 0 ) {
+				if( index < 0 ) {
+					index = itemCount + index;
+				}
+
+				if( index >= itemCount ) {
+					index = index % itemCount;
+				}
+
+				if( index < itemCount ) {
+					SelectedItem = ItemList[index];
+				}
+			}
+		}
+
+		protected virtual void NextItem() {
+			SetSelectedItem((int)SelectedItemIndex + 1 );
+		}
+
+		protected virtual void PreviousItem() {
+			SetSelectedItem((int)SelectedItemIndex - 1 );
 		}
 
 		protected virtual void Done() {

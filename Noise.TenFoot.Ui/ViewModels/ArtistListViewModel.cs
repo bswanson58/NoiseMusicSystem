@@ -86,32 +86,6 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			}
 		}
 
-		private void SetSelectedArtist( int index ) {
-			var artistCount = ItemList.Count();
-
-			if( artistCount > 0 ) {
-				if( index < 0 ) {
-					index = artistCount + index;
-				}
-
-				if( index >= artistCount ) {
-					index = index % artistCount;
-				}
-
-				if( index < artistCount ) {
-					SelectedItem = ItemList[index];
-				}
-			}
-		}
-
-		protected override void NextItem() {
-			SetSelectedArtist((int)SelectedItemIndex + 1 );
-		}
-
-		protected override void PreviousItem() {
-			SetSelectedArtist((int)SelectedItemIndex - 1 );
-		}
-
 		protected override void DisplayItem() {
 			if(( Parent is INavigate ) &&
 			   ( SelectedItem != null )) {
