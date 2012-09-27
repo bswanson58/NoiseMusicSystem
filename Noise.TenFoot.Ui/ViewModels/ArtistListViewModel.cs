@@ -166,6 +166,10 @@ namespace Noise.TenFoot.Ui.ViewModels {
 					Done();
 					break;
 
+				case InputCommand.Home:
+					Home();
+					break;
+
 				case InputCommand.Select:
 					DisplayAlbums();
 					break;

@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System.Linq;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -65,7 +66,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			                                     		mAlbumList.AddRange( albumList.List );
 			                                     	}
 			                                     },
-												 () => { },
+												 () => { SelectedAlbumList = mAlbumList.FirstOrDefault(); },
 												 ex => NoiseLogger.Current.LogException( "AlbumListViewModel:RetrieveAlbumsForArtist", ex )
 				);
 		}
@@ -79,10 +80,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			set {
 				mCurrentAlbum = value;
 
-				if( mCurrentAlbum != null ) {
-					mAlbumTrackList.SetContext( mCurrentAlbum.DbId );
-					DisplayTracks();
-				}
+				NotifyOfPropertyChange( () => SelectedAlbumList );
 			}
 		}
 
@@ -102,6 +100,18 @@ namespace Noise.TenFoot.Ui.ViewModels {
 					if( mCurrentAlbum != null ) {
 						GlobalCommands.PlayAlbum.Execute( mCurrentAlbum );
 					}
+					break;
+
+				case InputCommand.Select:
+					DisplayTracks();
+					break;
+
+				case InputCommand.Back:
+					Done();
+					break;
+
+				case InputCommand.Home:
+					Home();
 					break;
 			}
 		}
@@ -141,9 +151,11 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		public void DisplayTracks() {
-			if( Parent is INavigate ) {
+			if(( Parent is INavigate ) &&
+			   ( mCurrentAlbum != null )) {
 				var controller = Parent as INavigate;
 
+				mAlbumTrackList.SetContext( mCurrentAlbum.DbId );
 				controller.NavigateTo( mAlbumTrackList );
 			}
 		}

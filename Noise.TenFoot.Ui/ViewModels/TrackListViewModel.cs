@@ -1,13 +1,16 @@
-﻿using Caliburn.Micro;
+﻿using System.Linq;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 using ReusableBits;
 using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class TrackListViewModel : Screen, IAlbumTrackList {
+	public class TrackListViewModel : Screen, IAlbumTrackList,
+									  IHandle<InputEvent> {
 		private readonly ITrackProvider					mTrackProvider;
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly BindableCollection<DbTrack>	mTrackList; 
@@ -20,6 +23,18 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			mEventAggregator = eventAggregator;
 
 			mTrackList = new BindableCollection<DbTrack>();
+		}
+
+		protected override void OnActivate() {
+			base.OnActivate();
+
+			mEventAggregator.Subscribe( this );
+		}
+
+		protected override void OnDeactivate( bool close ) {
+			base.OnDeactivate( close );
+
+			mEventAggregator.Unsubscribe( this );
 		}
 
 		public void SetContext( long albumId ) {
@@ -49,7 +64,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			                                     		mTrackList.AddRange( trackList.List );
 			                                     	}
 			                                     },
-												 () => { }, 
+												 () => { SelectedTrackList = mTrackList.FirstOrDefault(); }, 
 												 ex => NoiseLogger.Current.LogException( "TrackListViewModel:RetrieveTracksForAlbum", ex )
 				);
 		}
@@ -63,12 +78,69 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			set {
 				mCurrentTrack = value;
 
+				NotifyOfPropertyChange( () => SelectedTrackList );
+			}
+		}
+
+		public void Handle( InputEvent input ) {
+			switch( input.Command ) {
+				case InputCommand.Down:
+				case InputCommand.Right:
+					SelectNextTrack();
+					break;
+
+				case InputCommand.Up:
+				case InputCommand.Left:
+					SelectPreviousTrack();
+					break;
+
+				case InputCommand.Play:
+					if( mCurrentTrack != null ) {
+						GlobalCommands.PlayTrack.Execute( mCurrentTrack );
+					}
+					break;
+
+				case InputCommand.Back:
+					Done();
+					break;
+
+				case InputCommand.Home:
+					Home();
+					break;
+			}
+		}
+
+		private void SelectNextTrack() {
+			if( mTrackList.Count > 0 ) {
 				if( mCurrentTrack != null ) {
-					GlobalCommands.PlayTrack.Execute( mCurrentTrack );
+					var index = mTrackList.IndexOf( mCurrentTrack );
+
+					if(( index != -1 ) &&
+					  (( index + 1 ) < mTrackList.Count )) {
+						SelectedTrackList = mTrackList[index + 1];
+					}
+					else {
+						SelectedTrackList = mTrackList[0];
+					}
+				}
+				else {
+					SelectedTrackList = mTrackList[0];
 				}
 			}
 		}
 
+		private void SelectPreviousTrack() {
+			if( mTrackList.Count > 0 ) {
+				if( mCurrentTrack != null ) {
+					var index = mTrackList.IndexOf( mCurrentTrack );
+
+					SelectedTrackList = index == 0 ? mTrackList[mTrackList.Count - 1] : mTrackList[index - 1 ];
+				}
+				else {
+					SelectedTrackList = mTrackList[mTrackList.Count - 1];
+				}
+			}
+		}
 
 		public void Home() {
 			if( Parent is INavigate ) {
