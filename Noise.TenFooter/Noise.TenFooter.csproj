@@ -171,6 +171,10 @@
       <Project>{C058E89B-AAC8-4E44-AB65-F45279C705F1}</Project>
       <Name>Noise.TenFoot.Ui</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Noise.UI\Noise.UI.csproj">
+      <Project>{d9f288a7-a0ef-4237-a9d6-ba9cce9c9c09}</Project>
+      <Name>Noise.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
       <Project>{8930138B-F96A-4A56-84CF-D660730989C9}</Project>
       <Name>ReusableBits.Mvvm</Name>
