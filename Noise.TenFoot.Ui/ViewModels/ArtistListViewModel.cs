@@ -13,7 +13,6 @@ using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class ArtistListViewModel : BaseListViewModel<UiArtist>, IArtistList {
-		private readonly IEventAggregator				mEventAggregator;
 		private readonly IAlbumList						mAlbumsList;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IArtworkProvider				mArtworkProvider;
@@ -21,8 +20,8 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private TaskHandler								mArtistRetrievalTaskHandler;
 
 		public ArtistListViewModel( IAlbumList albumListViewModel, IArtistProvider artistProvider, IArtworkProvider artworkProvider,
-									IEventAggregator eventAggregator, IResourceProvider resourceProvider ) {
-			mEventAggregator = eventAggregator;
+									IEventAggregator eventAggregator, IResourceProvider resourceProvider ) :
+			base( eventAggregator ) {
 			mAlbumsList = albumListViewModel;
 			mArtistProvider = artistProvider;
 			mArtworkProvider = artworkProvider;
@@ -34,18 +33,6 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			base.OnInitialize();
 
 			RetrieveArtistList();
-		}
-
-		protected override void OnActivate() {
-			base.OnActivate();
-
-			mEventAggregator.Subscribe( this );
-		}
-
-		protected override void OnDeactivate( bool close ) {
-			base.OnDeactivate( close );
-
-			mEventAggregator.Unsubscribe( this );
 		}
 
 		internal TaskHandler ArtistRetrievalTaskHandler {

@@ -4,17 +4,32 @@ using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public abstract class BaseListViewModel<TItem> : Screen, IHandle<InputEvent> where TItem : class {
+		private	readonly IEventAggregator			mEventAggregator;
 		private	readonly BindableCollection<TItem>	mItemList;
 		private	TItem								mSelectedItem;
 		private	double								mSelectedItemIndex;
 
-		protected BaseListViewModel() {
+		protected BaseListViewModel( IEventAggregator eventAggregator ) {
+			mEventAggregator = eventAggregator;
+
 			mItemList = new BindableCollection<TItem>();
 		}
 
 		protected virtual void NextItem() { }
 		protected virtual void PreviousItem() { }
 		protected virtual void DisplayItem() { }
+
+		protected override void OnActivate() {
+			base.OnActivate();
+
+			mEventAggregator.Subscribe( this );
+		}
+
+		protected override void OnDeactivate( bool close ) {
+			base.OnDeactivate( close );
+
+			mEventAggregator.Unsubscribe( this );
+		}
 
 		public BindableCollection<TItem> ItemList {
 			get{ return( mItemList ); }
