@@ -18,6 +18,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		protected virtual void NextItem() { }
 		protected virtual void PreviousItem() { }
 		protected virtual void DisplayItem() { }
+		protected virtual void PlayItem() { }
 
 		protected override void OnActivate() {
 			base.OnActivate();
@@ -96,7 +97,15 @@ namespace Noise.TenFoot.Ui.ViewModels {
 					break;
 
 				case InputCommand.Select:
-					DisplayItem();
+					if( SelectedItem != null ) {
+						DisplayItem();
+					}
+					break;
+
+				case InputCommand.Play:
+					if( SelectedItem != null ) {
+						PlayItem();
+					}
 					break;
 			}
 		}
