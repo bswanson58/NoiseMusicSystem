@@ -43,11 +43,12 @@
 
         <TextBlock Grid.Row="0" Text="Tracks" Style="{DynamicResource TitleTextStyle}" />
 
-        <ListBox x:Name="TrackList"
-                 Grid.Row="1"
+        <ListBox Grid.Row="1"
                  Margin="7,0"
                  HorizontalContentAlignment="Stretch"
                  Background="Transparent"
+                 ItemsSource="{Binding ItemList}"
+                 SelectedItem="{Binding SelectedItem}"
                  ItemTemplate="{StaticResource BasicTrack}" />
 
         <Button x:Name="Done"
