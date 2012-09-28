@@ -26,14 +26,30 @@ namespace Noise.TenFoot.Ui.Input {
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Down, Key = Keys.Down });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Left, Key = Keys.Left });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Right, Key = Keys.Right });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Back, Key = Keys.Back });
+
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Select, Key = Keys.Select });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Select, Key = Keys.Enter });
-			mInputBindings.Add( new InputBinding { Command = InputCommand.Back, Key = Keys.Back });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Enqueue, Key = Keys.Insert });
+
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Home, Key = Keys.Home });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Home, Key = Keys.Control | Keys.O });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Library, Key = Keys.L });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Library, Key = Keys.Control | Keys.G });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Queue, Key = Keys.Q });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Queue, Key = Keys.Control | Keys.T });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Favorites, Key = Keys.F });
-			mInputBindings.Add( new InputBinding { Command = InputCommand.Play, Key = Keys.P });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Favorites, Key = Keys.Control | Keys.Shift | Keys.M });
+
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Play, Key = Keys.MediaPlayPause });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Pause, Key = Keys.MediaPlayPause });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Stop, Key=Keys.MediaStop });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.NextTrack, Key = Keys.MediaNextTrack });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.PreviousTrack, Key = Keys.MediaPreviousTrack });
+
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Mute, Key = Keys.VolumeMute });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.VolumeUp, Key = Keys.VolumeUp });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.VolumeDown, Key = Keys.VolumeDown });
 
 			return( true );
 		}

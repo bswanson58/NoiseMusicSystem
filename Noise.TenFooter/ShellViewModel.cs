@@ -3,27 +3,28 @@ using System.Windows.Interop;
 using Caliburn.Micro;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
+using Noise.TenFoot.Ui.ViewModels;
 using Noise.UI.ViewModels;
 using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFooter {
     public class ShellViewModel : Conductor<object>.Collection.OneActive, INavigate, IShell {
 		private readonly IHome				mHomeView;
-		private readonly PlayerViewModel	mPlayerViewModel;
+		private readonly TransportViewModel	mTransportViewModel;
 		private readonly InputProcessor		mInputProcessor;
 		private string						mScreenTitle;
 		private string						mContextTitle;
 
-		public ShellViewModel( IHome homeViewModel, PlayerViewModel playerViewModel, InputProcessor inputProcessor ) {
+		public ShellViewModel( IHome homeViewModel, TransportViewModel transportViewModel, InputProcessor inputProcessor ) {
 			mHomeView = homeViewModel;
 			mInputProcessor = inputProcessor;
 
-			mPlayerViewModel = playerViewModel;
-			mPlayerViewModel.IsActive = true;
+			mTransportViewModel = transportViewModel;
+			mTransportViewModel.IsActive = true;
 		}
 
 	    public PlayerViewModel PlayerView {
-		    get{ return( mPlayerViewModel ); }
+		    get{ return( mTransportViewModel ); }
 	    }
 
 	    public string ScreenTitle {

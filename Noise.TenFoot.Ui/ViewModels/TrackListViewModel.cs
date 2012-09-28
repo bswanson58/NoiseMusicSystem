@@ -58,7 +58,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 				);
 		}
 
-		protected override void PlayItem() {
+		protected override void EnqueueItem() {
 			GlobalCommands.PlayTrack.Execute( SelectedItem );
 		}
 	}

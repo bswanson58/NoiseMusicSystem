@@ -12,7 +12,15 @@ namespace Noise.TenFoot.Ui.Input {
 		Favorites,
 		Queue,
 		Select,
-		Play
+		Enqueue,
+		Play,
+		Pause,
+		Stop,
+		NextTrack,
+		PreviousTrack,
+		Mute,
+		VolumeUp,
+		VolumeDown
 	}
 
 	public class InputBinding {
