@@ -26,7 +26,7 @@
             
             <StackPanel Grid.Column="0" Orientation="Horizontal">
                 <Button x:Name="NavigateHome" Margin="5" Content="Home"/>
-                <Button Margin="5" Content="Back"/>
+                <Button x:Name="NavigateBack" Margin="5" Content="Back"/>
             </StackPanel>
             
             <StackPanel Grid.Column="2" Orientation="Horizontal">

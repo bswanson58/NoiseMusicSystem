@@ -48,20 +48,6 @@ namespace Noise.TenFooter {
 			}
 		}
 
-		public override void ActivateItem( object item ) {
-			base.ActivateItem( item );
-
-			if( item is ITitledScreen ) {
-				var screen = item as ITitledScreen;
-
-				mScreenTitle = screen.Title;
-				mContextTitle = screen.Context;
-			}
-
-			NotifyOfPropertyChange( () => ScreenTitle );
-			NotifyOfPropertyChange( () => ContextTitle );
-		}
-
     	public void NavigateHome() {
 			while( ActiveItem != mHomeView ) {
 				DeactivateItem( ActiveItem, true );
@@ -72,8 +58,31 @@ namespace Noise.TenFooter {
 			ActivateItem( screen );
     	}
 
+		public void NavigateBack() {
+			NavigateReturn( ActiveItem, true );
+		}
+
+		public bool CanNavigateBack {
+			get{ return( ActiveItem != mHomeView ); }
+		}
+
     	public void NavigateReturn( object fromScreen, bool closeScreen ) {
 			DeactivateItem( fromScreen, closeScreen );
     	}
+
+		protected override void ChangeActiveItem( object newItem, bool closePrevious ) {
+			base.ChangeActiveItem( newItem, closePrevious );
+
+			if( newItem is ITitledScreen ) {
+				var screen = newItem as ITitledScreen;
+
+				mScreenTitle = screen.Title;
+				mContextTitle = screen.Context;
+			}
+
+			NotifyOfPropertyChange( () => ScreenTitle );
+			NotifyOfPropertyChange( () => ContextTitle );
+			NotifyOfPropertyChange( () => CanNavigateBack );
+		}
     }
 }
