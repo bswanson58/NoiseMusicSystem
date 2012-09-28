@@ -97,7 +97,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			   ( SelectedItem != null )) {
 				var controller = Parent as INavigate;
 
-				mAlbumsList.SetContext( SelectedItem.DbId );
+				mAlbumsList.SetContext( SelectedItem );
 				controller.NavigateTo( mAlbumsList );
 			}
 		}

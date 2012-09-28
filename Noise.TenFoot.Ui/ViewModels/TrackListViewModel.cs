@@ -23,12 +23,15 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			Context = "";
 		}
 
-		public void SetContext( long albumId ) {
-			if( mCurrentAlbum != albumId ) {
+		public void SetContext( DbAlbum album ) {
+			if(( album != null ) &&
+			   ( mCurrentAlbum != album.DbId )) {
 				ItemList.Clear();
 
-				mCurrentAlbum = albumId;
+				mCurrentAlbum = album.DbId;
 				RetrieveTracksForAlbum( mCurrentAlbum );
+
+				Context = album.Name;
 			}
 		}
 

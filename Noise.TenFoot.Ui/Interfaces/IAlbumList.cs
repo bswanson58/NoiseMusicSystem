@@ -1,5 +1,7 @@
-﻿namespace Noise.TenFoot.Ui.Interfaces {
+﻿using Noise.TenFoot.Ui.Dto;
+
+namespace Noise.TenFoot.Ui.Interfaces {
 	public interface IAlbumList {
-		void	SetContext( long artistId );
+		void	SetContext( UiArtist artist );
 	}
 }

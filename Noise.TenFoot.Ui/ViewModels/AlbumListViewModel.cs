@@ -3,6 +3,7 @@ using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.TenFoot.Ui.Dto;
 using Noise.TenFoot.Ui.Interfaces;
 using ReusableBits;
 using ReusableBits.Mvvm.CaliburnSupport;
@@ -26,12 +27,15 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			Context = "";
 		}
 
-		public void SetContext( long artistId ) {
-			if( mCurrentArtist != artistId ) {
+		public void SetContext( UiArtist artist ) {
+			if(( artist != null ) &&
+			   ( mCurrentArtist != artist.DbId )) {
 				ItemList.Clear();
 
-				mCurrentArtist = artistId;
+				mCurrentArtist = artist.DbId;
 				RetrieveAlbumsForArtist( mCurrentArtist );
+
+				Context = artist.Name;
 			}
 		}
 
@@ -63,7 +67,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			   ( SelectedItem != null )) {
 				var controller = Parent as INavigate;
 
-				mAlbumTrackList.SetContext( SelectedItem.DbId );
+				mAlbumTrackList.SetContext( SelectedItem );
 				controller.NavigateTo( mAlbumTrackList );
 			}
 		}
