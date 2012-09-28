@@ -75,5 +75,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		protected override void EnqueueItem() {
 			GlobalCommands.PlayAlbum.Execute( SelectedItem );
 		}
+
+		protected override void DequeueItem() {
+			EventAggregator.Publish( new Input.Events.DequeueAlbum( SelectedItem ));
+		}
 	}
 }

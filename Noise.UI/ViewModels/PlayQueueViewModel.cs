@@ -212,7 +212,11 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void DequeueTrack( UiPlayQueueTrack track ) {
-			mPlayQueue.RemoveTrack( track.QueuedTrack );
+			DequeueTrack( track.QueuedTrack );
+		}
+
+		protected void DequeueTrack( PlayQueueTrack track ) {
+			mPlayQueue.RemoveTrack( track );
 		}
 
 		private void DisplayQueueItemInfo( UiPlayQueueTrack track ) {

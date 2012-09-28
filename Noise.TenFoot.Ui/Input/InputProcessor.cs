@@ -31,6 +31,8 @@ namespace Noise.TenFoot.Ui.Input {
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Select, Key = Keys.Select });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Select, Key = Keys.Enter });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Enqueue, Key = Keys.Insert });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Enqueue, Key = Keys.PageUp });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Dequeue, Key = Keys.Next });
 
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Home, Key = Keys.Home });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Home, Key = Keys.Control | Keys.O });

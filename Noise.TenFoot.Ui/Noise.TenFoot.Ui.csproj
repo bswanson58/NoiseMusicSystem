@@ -146,6 +146,7 @@
     <Compile Include="Dto\UiArtist.cs" />
     <Compile Include="Dto\UiBase.cs" />
     <Compile Include="Dto\UiMenuItem.cs" />
+    <Compile Include="Input\Events.cs" />
     <Compile Include="Input\InputCommand.cs" />
     <Compile Include="Input\InputProcessor.cs" />
     <Compile Include="Input\RawKeyboardHandler.cs" />

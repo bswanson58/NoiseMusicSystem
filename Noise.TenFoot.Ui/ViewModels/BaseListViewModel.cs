@@ -17,6 +17,11 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		protected virtual void DisplayItem() { }
 		protected virtual void EnqueueItem() { }
+		protected virtual void DequeueItem() { }
+
+		protected IEventAggregator EventAggregator {
+			get{ return( mEventAggregator ); }
+		}
 
 		protected override void OnActivate() {
 			base.OnActivate();
@@ -117,6 +122,12 @@ namespace Noise.TenFoot.Ui.ViewModels {
 				case InputCommand.Enqueue:
 					if( SelectedItem != null ) {
 						EnqueueItem();
+					}
+					break;
+
+				case InputCommand.Dequeue:
+					if( SelectedItem != null ) {
+						DequeueItem();
 					}
 					break;
 			}

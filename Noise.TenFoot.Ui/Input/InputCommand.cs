@@ -13,6 +13,7 @@ namespace Noise.TenFoot.Ui.Input {
 		Queue,
 		Select,
 		Enqueue,
+		Dequeue,
 		Play,
 		Pause,
 		Stop,

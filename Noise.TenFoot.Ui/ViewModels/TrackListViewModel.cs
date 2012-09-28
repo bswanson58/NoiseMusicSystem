@@ -8,14 +8,14 @@ using ReusableBits;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class TrackListViewModel : BaseListViewModel<DbTrack>, IAlbumTrackList, ITitledScreen {
-		private readonly ITrackProvider	mTrackProvider;
-		private long					mCurrentAlbum;
-		private TaskHandler				mTrackRetrievalTaskHandler;
+		private readonly ITrackProvider		mTrackProvider;
+		private long						mCurrentAlbum;
+		private TaskHandler					mTrackRetrievalTaskHandler;
 
-		public	string					Title { get; private set; }
-		public	string					Context { get; private set; }
+		public	string						Title { get; private set; }
+		public	string						Context { get; private set; }
 
-		public TrackListViewModel( ITrackProvider trackProvider, IEventAggregator eventAggregator ) :
+		public TrackListViewModel( IEventAggregator eventAggregator, ITrackProvider trackProvider ) :
 			base( eventAggregator ) {
 			mTrackProvider = trackProvider;
 
@@ -58,8 +58,16 @@ namespace Noise.TenFoot.Ui.ViewModels {
 				);
 		}
 
+		protected override void DisplayItem() {
+			GlobalCommands.PlayTrack.Execute( SelectedItem );
+		}
+
 		protected override void EnqueueItem() {
 			GlobalCommands.PlayTrack.Execute( SelectedItem );
+		}
+
+		protected override void DequeueItem() {
+			EventAggregator.Publish( new Input.Events.DequeueTrack( SelectedItem ));
 		}
 	}
 }
