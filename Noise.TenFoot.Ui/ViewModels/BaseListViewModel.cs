@@ -93,7 +93,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			}
 		}
 
-		public void Handle( InputEvent message ) {
+		public virtual void Handle( InputEvent message ) {
 			switch( message.Command ) {
 				case InputCommand.Up:
 					PreviousItem();

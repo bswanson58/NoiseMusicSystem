@@ -8,8 +8,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ViewModels="clr-namespace:Noise.TenFoot.Ui.ViewModels"
              cal:Bind.AtDesignTime="True"
-             d:DataContext="{d:DesignInstance ViewModels:HomeViewModel,
-                                              IsDesignTimeCreatable=True}"
+             d:DataContext="{d:DesignInstance ViewModels:HomeViewModel, IsDesignTimeCreatable=True}"
              d:DesignHeight="500"
              d:DesignWidth="700"
              mc:Ignorable="d">
@@ -64,28 +63,14 @@
         <Rectangle Grid.Row="0"
                    Fill="AliceBlue"
                    Opacity="0.1" />
-        <controls:LoopingListBox x:Name="MenuList"
-                                 Grid.Row="0"
-                                 Background="Transparent"
-                                 BorderThickness="0"
+        <controls:LoopingListBox Grid.Row="0" Background="Transparent" BorderThickness="0"
+                                 ItemsSource="{Binding ItemList}"
+                                 SelectedItem="{Binding SelectedItem}"
                                  ItemContainerStyle="{StaticResource MenuItemStyle}"
                                  ItemTemplate="{StaticResource MenuItem}"
                                  LastItemMargin="1.1"
                                  Orientation="Vertical"
                                  RelativeOffset="0.5"
-                                 Offset="{Binding Path=MenuListIndex}" />
-
-        <StackPanel Grid.Row="1"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal">
-            <Button x:Name="ScrollUp"
-                    Width="120"
-                    Margin="5"
-                    Content="Scroll Up" />
-            <Button x:Name="ScrollDown"
-                    Width="120"
-                    Margin="5"
-                    Content="Scroll Down" />
-        </StackPanel>
+                                 Offset="{Binding Path=SelectedItemIndex}" />
     </Grid>
 </UserControl>

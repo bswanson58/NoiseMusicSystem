@@ -5,14 +5,11 @@ using Noise.TenFoot.Ui.Interfaces;
 using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class HomeViewModel : Screen, IHome,
-								 IHandle<InputEvent> {
-		private readonly BindableCollection<UiMenuItem>	mMenuChoices;
+	public class HomeViewModel : BaseListViewModel<UiMenuItem>, IHome {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IArtistList					mArtistList;
 		private readonly FavoritesListViewModel			mFavoritesList;
 		private readonly QueueListViewModel				mPlayerQueue;
-		private UiMenuItem								mSelectedMenuItem;
 
 		public	double									MenuListIndex { get; set; }
 
@@ -20,38 +17,29 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	string									Context { get; private set; }
 
 		public HomeViewModel( IEventAggregator eventAggregator, IArtistList artistListViewModel,
-							  FavoritesListViewModel favoritesListViewModel, QueueListViewModel playQueueViewModel ) {
+							  FavoritesListViewModel favoritesListViewModel, QueueListViewModel playQueueViewModel ) :
+			base( eventAggregator ) {
 			mEventAggregator = eventAggregator;
 			mArtistList = artistListViewModel;
 			mFavoritesList = favoritesListViewModel;
 			mPlayerQueue = playQueueViewModel;
 
-			mMenuChoices = new BindableCollection<UiMenuItem> { new UiMenuItem( eMainMenuCommand.Library, "Library", null ),
-																new UiMenuItem( eMainMenuCommand.Favorites, "Favorites", null ),
-																new UiMenuItem( eMainMenuCommand.Queue, "Queue", null ),
-																new UiMenuItem( eMainMenuCommand.Search, "Search", null )};
+			ItemList.Add( new UiMenuItem( eMainMenuCommand.Library, "Library", null ));
+			ItemList.Add( new UiMenuItem( eMainMenuCommand.Favorites, "Favorites", null ));
+			ItemList.Add( new UiMenuItem( eMainMenuCommand.Queue, "Queue", null ));
+			ItemList.Add( new UiMenuItem( eMainMenuCommand.Search, "Search", null ));
+
+			SelectedItem = ItemList[0];
+
 			Title = "Noise";
 			Context = string.Empty;
 
 			mEventAggregator.Subscribe( this );
 		}
 
-		public BindableCollection<UiMenuItem> MenuList {
-			get{ return( mMenuChoices ); }
-		}
+		public override void Handle( InputEvent input ) {
+			base.Handle( input );
 
-		public UiMenuItem SelectedMenuList {
-			get{ return( mSelectedMenuItem ); }
-			set{ 
-				mSelectedMenuItem = value;
- 
-				if( mSelectedMenuItem != null ) {
-					Navigate( mSelectedMenuItem.Command );
-				}
-			}
-		}
-
-		public void Handle( InputEvent input ) {
 			if( Parent is INavigate ) {
 				var controller = Parent as INavigate;
 
@@ -75,11 +63,11 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			}
 		}
 
-		private void Navigate( eMainMenuCommand view ) {
+		protected override void DisplayItem() {
 			if( Parent is INavigate ) {
 				var controller = Parent as INavigate;
 
-				switch( view ) {
+				switch( SelectedItem.Command ) {
 					case eMainMenuCommand.Library:
 						controller.NavigateTo( mArtistList );
 						break;
@@ -93,25 +81,6 @@ namespace Noise.TenFoot.Ui.ViewModels {
 						break;
 				}
 			}
-		}
-
-		protected override void OnActivate() {
-			base.OnActivate();
-
-			mSelectedMenuItem = null;
-			NotifyOfPropertyChange( () => SelectedMenuList );
-		}
-
-		public void ScrollUp() {
-			MenuListIndex += 1.0;
-
-			NotifyOfPropertyChange( () => MenuListIndex );
-		}
-
-		public void ScrollDown() {
-			MenuListIndex -= 1.0;
-
-			NotifyOfPropertyChange( () => MenuListIndex );
 		}
 	}
 }
