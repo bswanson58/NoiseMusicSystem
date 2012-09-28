@@ -103,6 +103,10 @@
     <Reference Include="Caliburn.Micro">
       <HintPath>..\packages\Caliburn.Micro.1.3.1\lib\net40\Caliburn.Micro.dll</HintPath>
     </Reference>
+    <Reference Include="GongSolutions.Wpf.DragDrop, Version=0.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\GongSolutions.Wpf.DragDrop\v0.1.2\GongSolutions.Wpf.DragDrop.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.4.1.0.0\lib\NET40\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
@@ -158,6 +162,7 @@
     <Compile Include="ViewModels\BaseListViewModel.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\QueueListViewModel.cs" />
     <Compile Include="ViewModels\TrackListViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -185,6 +190,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\QueueListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\TrackListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -200,6 +209,10 @@
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Noise.UI.Style\Noise.UI.Style.csproj">
+      <Project>{da31563c-5b51-4072-af18-57e4fc5de957}</Project>
+      <Name>Noise.UI.Style</Name>
     </ProjectReference>
     <ProjectReference Include="..\Noise.UI\Noise.UI.csproj">
       <Project>{d9f288a7-a0ef-4237-a9d6-ba9cce9c9c09}</Project>

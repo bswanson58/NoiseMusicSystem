@@ -79,6 +79,10 @@ namespace Noise.TenFooter {
 				mScreenTitle = screen.Title;
 				mContextTitle = screen.Context;
 			}
+			else {
+				mScreenTitle = string.Empty;
+				mContextTitle = string.Empty;
+			}
 
 			NotifyOfPropertyChange( () => ScreenTitle );
 			NotifyOfPropertyChange( () => ContextTitle );

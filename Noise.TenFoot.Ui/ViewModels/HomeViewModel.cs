@@ -8,6 +8,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private readonly BindableCollection<UiMenuItem>	mMenuChoices;
 		private readonly IArtistList					mArtistList;
 		private readonly IFavoritesList					mFavoritesList;
+		private readonly QueueListViewModel				mPlayerQueue;
 		private UiMenuItem								mSelectedMenuItem;
 
 		public	double									MenuListIndex { get; set; }
@@ -15,16 +16,18 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	string									Title { get; private set; }
 		public	string									Context { get; private set; }
 
-		public HomeViewModel( IArtistList artistListViewModel, IFavoritesList favoritesListViewModel ) {
+		public HomeViewModel( IArtistList artistListViewModel, IFavoritesList favoritesListViewModel,
+							  QueueListViewModel playQueueViewModel ) {
 			mArtistList = artistListViewModel;
 			mFavoritesList = favoritesListViewModel;
+			mPlayerQueue = playQueueViewModel;
 
 			mMenuChoices = new BindableCollection<UiMenuItem> { new UiMenuItem( eMainMenuCommand.Library, "Library", null ),
 																new UiMenuItem( eMainMenuCommand.Favorites, "Favorites", null ),
 																new UiMenuItem( eMainMenuCommand.Queue, "Queue", null ),
 																new UiMenuItem( eMainMenuCommand.Search, "Search", null )};
 			Title = "Noise";
-			Context = "";
+			Context = string.Empty;
 		}
 
 		public BindableCollection<UiMenuItem> MenuList {
@@ -53,6 +56,10 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 					case eMainMenuCommand.Favorites:
 						controller.NavigateTo( mFavoritesList );
+						break;
+
+					case eMainMenuCommand.Queue:
+						controller.NavigateTo( mPlayerQueue );
 						break;
 				}
 			}

@@ -9,6 +9,10 @@
                     <local:AppBootstrapper x:Key="bootstrapper" />
                 </ResourceDictionary>
                 <ResourceDictionary Source="/Noise.TenFoot.Ui;component/Resources/UiResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/UiResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/BrushResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/ControlStyles.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/ConverterResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
