@@ -12,12 +12,15 @@ using ReusableBits.Interfaces;
 using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class ArtistListViewModel : BaseListViewModel<UiArtist>, IArtistList {
-		private readonly IAlbumList						mAlbumsList;
-		private readonly IArtistProvider				mArtistProvider;
-		private readonly IArtworkProvider				mArtworkProvider;
-		private readonly BitmapImage					mUnknownArtistImage;
-		private TaskHandler								mArtistRetrievalTaskHandler;
+	public class ArtistListViewModel : BaseListViewModel<UiArtist>, IArtistList, ITitledScreen {
+		private readonly IAlbumList			mAlbumsList;
+		private readonly IArtistProvider	mArtistProvider;
+		private readonly IArtworkProvider	mArtworkProvider;
+		private readonly BitmapImage		mUnknownArtistImage;
+		private TaskHandler					mArtistRetrievalTaskHandler;
+
+		public	string						Title { get; private set; }
+		public	string						Context { get; private set; }
 
 		public ArtistListViewModel( IAlbumList albumListViewModel, IArtistProvider artistProvider, IArtworkProvider artworkProvider,
 									IEventAggregator eventAggregator, IResourceProvider resourceProvider ) :
@@ -27,6 +30,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			mArtworkProvider = artworkProvider;
 
 			mUnknownArtistImage = resourceProvider.RetrieveImage( "Unknown Artist.png" );
+
+			Title = "Artists";
+			Context = "";
 		}
 
 		protected override void OnInitialize() {

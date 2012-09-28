@@ -12,6 +12,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		public	double									MenuListIndex { get; set; }
 
+		public	string									Title { get; private set; }
+		public	string									Context { get; private set; }
+
 		public HomeViewModel( IArtistList artistListViewModel, IFavoritesList favoritesListViewModel ) {
 			mArtistList = artistListViewModel;
 			mFavoritesList = favoritesListViewModel;
@@ -20,6 +23,8 @@ namespace Noise.TenFoot.Ui.ViewModels {
 																new UiMenuItem( eMainMenuCommand.Favorites, "Favorites", null ),
 																new UiMenuItem( eMainMenuCommand.Queue, "Queue", null ),
 																new UiMenuItem( eMainMenuCommand.Search, "Search", null )};
+			Title = "Noise";
+			Context = "";
 		}
 
 		public BindableCollection<UiMenuItem> MenuList {

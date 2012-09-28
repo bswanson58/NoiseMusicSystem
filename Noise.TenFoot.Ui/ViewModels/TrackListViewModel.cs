@@ -7,14 +7,20 @@ using Noise.TenFoot.Ui.Interfaces;
 using ReusableBits;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class TrackListViewModel : BaseListViewModel<DbTrack>, IAlbumTrackList {
-		private readonly ITrackProvider		mTrackProvider;
-		private long						mCurrentAlbum;
-		private TaskHandler					mTrackRetrievalTaskHandler;
+	public class TrackListViewModel : BaseListViewModel<DbTrack>, IAlbumTrackList, ITitledScreen {
+		private readonly ITrackProvider	mTrackProvider;
+		private long					mCurrentAlbum;
+		private TaskHandler				mTrackRetrievalTaskHandler;
+
+		public	string					Title { get; private set; }
+		public	string					Context { get; private set; }
 
 		public TrackListViewModel( ITrackProvider trackProvider, IEventAggregator eventAggregator ) :
 			base( eventAggregator ) {
 			mTrackProvider = trackProvider;
+
+			Title = "Tracks";
+			Context = "";
 		}
 
 		public void SetContext( long albumId ) {

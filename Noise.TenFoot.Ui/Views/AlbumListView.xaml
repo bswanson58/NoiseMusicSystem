@@ -33,33 +33,11 @@
     </UserControl.Resources>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <TextBlock Grid.Row="0" Text="Albums" Style="{DynamicResource TitleTextStyle}" />
-
-        <ListBox Grid.Row="1"
-                 Margin="7,0"
+        <ListBox Margin="7,0"
                  HorizontalContentAlignment="Stretch"
                  Background="Transparent"
                  ItemsSource="{Binding ItemList}"
                  SelectedItem="{Binding SelectedItem}"
                  ItemTemplate="{StaticResource BasicAlbum}" />
-
-        <Button x:Name="Done"
-                Grid.Row="2"
-                Width="120"
-                HorizontalAlignment="Left"
-                Content="Return" />
-
-        <Button x:Name="Home"
-                Grid.Row="3"
-                Width="120"
-                HorizontalAlignment="Left"
-                Content="Home" />
     </Grid>
 </UserControl>

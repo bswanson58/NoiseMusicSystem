@@ -8,16 +8,22 @@ using ReusableBits;
 using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class AlbumListViewModel : BaseListViewModel<DbAlbum>, IAlbumList {
-		private readonly IAlbumTrackList				mAlbumTrackList;
-		private readonly IAlbumProvider					mAlbumProvider;
-		private long									mCurrentArtist;
-		private TaskHandler								mAlbumRetrievalTaskHandler;
+	public class AlbumListViewModel : BaseListViewModel<DbAlbum>, IAlbumList, ITitledScreen {
+		private readonly IAlbumTrackList	mAlbumTrackList;
+		private readonly IAlbumProvider		mAlbumProvider;
+		private long						mCurrentArtist;
+		private TaskHandler					mAlbumRetrievalTaskHandler;
+
+		public	string						Title { get; private set; }
+		public	string						Context { get; private set; }
 
 		public AlbumListViewModel( IEventAggregator eventAggregator, IAlbumTrackList trackListViewModel, IAlbumProvider albumProvider ) :
 			base( eventAggregator ) {
 			mAlbumTrackList = trackListViewModel;
 			mAlbumProvider = albumProvider;
+
+			Title = "Albums";
+			Context = "";
 		}
 
 		public void SetContext( long artistId ) {

@@ -57,20 +57,15 @@
 
     <Grid Background="Transparent">
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="3*" />
-            <RowDefinition Height="1*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="35" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0"
-                   Style="{DynamicResource TitleTextStyle}"
-                   Text="Noise" />
-
-        <Rectangle Grid.Row="1"
+        <Rectangle Grid.Row="0"
                    Fill="AliceBlue"
                    Opacity="0.1" />
         <controls:LoopingListBox x:Name="MenuList"
-                                 Grid.Row="1"
+                                 Grid.Row="0"
                                  Background="Transparent"
                                  BorderThickness="0"
                                  ItemContainerStyle="{StaticResource MenuItemStyle}"
@@ -80,16 +75,16 @@
                                  RelativeOffset="0.5"
                                  Offset="{Binding Path=MenuListIndex}" />
 
-        <StackPanel Grid.Row="2"
+        <StackPanel Grid.Row="1"
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
             <Button x:Name="ScrollUp"
                     Width="120"
-                    Margin="15,0,0,0"
+                    Margin="5"
                     Content="Scroll Up" />
             <Button x:Name="ScrollDown"
                     Width="120"
-                    Margin="15,0,0,0"
+                    Margin="5"
                     Content="Scroll Down" />
         </StackPanel>
     </Grid>

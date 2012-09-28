@@ -3,31 +3,46 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Grid>
-        <Grid>
-            <Grid.Background>
-                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                    <GradientStop Offset="0" Color="#FFB8CDE9" />
-                    <GradientStop Offset="1" Color="#FF2577E5" />
-                    <GradientStop Offset="0.845" Color="#FF6795D4" />
-                </LinearGradientBrush>
-            </Grid.Background>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Offset="0" Color="#FFB8CDE9" />
+                <GradientStop Offset="1" Color="#FF2577E5" />
+                <GradientStop Offset="0.845" Color="#FF6795D4" />
+            </LinearGradientBrush>
+        </Grid.Background>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="15" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="15" />
-            </Grid.RowDefinitions>
-
-            <ContentControl x:Name="ActiveItem" Grid.Row="1" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="75" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="170" />
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <Button x:Name="NavigateHome" Margin="5" Content="Home"/>
+                <Button Margin="5" Content="Back"/>
+            </StackPanel>
+            
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <TextBlock x:Name="ContextTitle" Margin="5" Style="{DynamicResource TitleTextStyle}" />
+                <TextBlock x:Name="ScreenTitle" Margin="5" Style="{DynamicResource TitleTextStyle}" />
+            </StackPanel>
         </Grid>
 
-        <ContentControl x:Name="PlayerView"
+        <ContentControl x:Name="ActiveItem" Grid.Row="1" />
+
+        <ContentControl x:Name="PlayerView" Grid.Row="2"
                         Width="600"
                         Height="170"
                         Margin="0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom" />
-
     </Grid>
 
 </Window>

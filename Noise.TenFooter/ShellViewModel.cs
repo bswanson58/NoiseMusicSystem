@@ -11,6 +11,8 @@ namespace Noise.TenFooter {
 		private readonly IHome				mHomeView;
 		private readonly PlayerViewModel	mPlayerViewModel;
 		private readonly InputProcessor		mInputProcessor;
+		private string						mScreenTitle;
+		private string						mContextTitle;
 
 		public ShellViewModel( IHome homeViewModel, PlayerViewModel playerViewModel, InputProcessor inputProcessor ) {
 			mHomeView = homeViewModel;
@@ -22,6 +24,14 @@ namespace Noise.TenFooter {
 
 	    public PlayerViewModel PlayerView {
 		    get{ return( mPlayerViewModel ); }
+	    }
+
+	    public string ScreenTitle {
+		    get{ return( mScreenTitle ); }
+	    }
+
+	    public string ContextTitle {
+		    get{ return( mContextTitle ); }
 	    }
 
 		protected override void OnActivate() {
@@ -36,6 +46,20 @@ namespace Noise.TenFooter {
 
 				mInputProcessor.Initialize( helper.Handle );
 			}
+		}
+
+		public override void ActivateItem( object item ) {
+			base.ActivateItem( item );
+
+			if( item is ITitledScreen ) {
+				var screen = item as ITitledScreen;
+
+				mScreenTitle = screen.Title;
+				mContextTitle = screen.Context;
+			}
+
+			NotifyOfPropertyChange( () => ScreenTitle );
+			NotifyOfPropertyChange( () => ContextTitle );
 		}
 
     	public void NavigateHome() {

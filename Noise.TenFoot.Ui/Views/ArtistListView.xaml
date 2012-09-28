@@ -202,21 +202,9 @@
     </UserControl.Resources>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="3*" />
-            <RowDefinition Height="1*" />
-        </Grid.RowDefinitions>
-
-        <TextBlock Grid.Row="0"
-                   Style="{DynamicResource TitleTextStyle}"
-                   Text="Artists" />
-
-        <Rectangle Grid.Row="1"
-                   Fill="AliceBlue"
+        <Rectangle Fill="AliceBlue"
                    Opacity="0.1" />
-        <controls:LoopingWrapBox Grid.Row="1"
-                                 HorizontalContentAlignment="Stretch"
+        <controls:LoopingWrapBox HorizontalContentAlignment="Stretch"
                                  VerticalContentAlignment="Stretch"
                                  Background="Transparent"
                                  BorderThickness="0"
@@ -228,15 +216,5 @@
                                  RelativeOffset="0.3"
                                  SelectedItem="{Binding SelectedItem}"
                                  Offset="{Binding SelectedItemIndex}" />
-
-        <StackPanel Grid.Row="2"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal">
-            <Button x:Name="Home"
-                    Width="120"
-                    Margin="7,0,0,0"
-                    HorizontalAlignment="Left"
-                    Content="Home" />
-        </StackPanel>
     </Grid>
 </UserControl>
