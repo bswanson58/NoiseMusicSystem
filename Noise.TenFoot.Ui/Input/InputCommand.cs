@@ -8,6 +8,9 @@ namespace Noise.TenFoot.Ui.Input {
 		Right,
 		Back,
 		Home,
+		Library,
+		Favorites,
+		Queue,
 		Select,
 		Play
 	}

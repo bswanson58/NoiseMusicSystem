@@ -88,14 +88,6 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			}
 		}
 
-		protected virtual void Home() {
-			if( Parent is INavigate ) {
-				var controller = Parent as INavigate;
-
-				controller.NavigateHome();
-			}
-		}
-
 		public void Handle( InputEvent message ) {
 			switch( message.Command ) {
 				case InputCommand.Up:
@@ -114,10 +106,6 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 				case InputCommand.Back:
 					Done();
-					break;
-
-				case InputCommand.Home:
-					Home();
 					break;
 
 				case InputCommand.Select:
