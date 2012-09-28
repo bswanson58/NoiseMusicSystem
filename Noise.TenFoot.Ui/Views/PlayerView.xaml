@@ -17,13 +17,21 @@
                                           ImageHeight="{Binding Path=ImageHeight, Mode=OneWayToSource}"
                                           ImageWidth="{Binding Path=ImageWidth, Mode=OneWayToSource}"
                                           SpectrumImage="{Binding Path=SpectrumImage, Mode=OneWay}" />
+        <StackPanel Orientation="Vertical" Margin="15">
+            <TextBlock Grid.Column="0" FontSize="32" Opacity="0.6" Foreground="LightGray" Text="{Binding TrackName}" />
+            <TextBlock Grid.Column="0" FontSize="18" Opacity="0.4" Foreground="LightGray" Text="{Binding AlbumName}" />
+        </StackPanel>
+        <TextBlock Grid.Column="0" Margin="15" FontSize="18" HorizontalAlignment="Right" VerticalAlignment="Bottom" Opacity="0.6" Foreground="LightGray"
+                   Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" />
+        
 
-        <StackPanel Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="37">
-            <Button Margin="5" Command="{Binding Play}" Content="Play"/>
-            <Button Margin="5" Command="{Binding Pause}" Content="Pause"/>
-            <Button Margin="5" Command="{Binding Stop}" Content="Stop"/>
-            <Button Margin="5" Command="{Binding PreviousTrack}" Content="Prev"/>
-            <Button Margin="5" Command="{Binding NextTrack}" Content="Next"/>
+        <StackPanel Orientation="Horizontal" Grid.Column="2" Margin="0,0,27,17"
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Button Margin="5,0" VerticalAlignment="Bottom" Command="{Binding Play}" FontFamily="Webdings" FontSize="48" Content="4" />
+            <Button Margin="5,0" VerticalAlignment="Bottom" Command="{Binding Pause}" FontFamily="Webdings" FontSize="48" Content=";" />
+            <Button Margin="5,0" VerticalAlignment="Bottom" Command="{Binding Stop}" FontFamily="Webdings" FontSize="48" Content="&lt;" />
+            <Button Margin="5,0" VerticalAlignment="Bottom" Command="{Binding PreviousTrack}" FontFamily="Webdings" FontSize="48" Content="9"/>
+            <Button Margin="5,0" VerticalAlignment="Bottom" Command="{Binding NextTrack}" FontFamily="Webdings" FontSize="48" Content=":"/>
         </StackPanel>
     </Grid>
 </UserControl>
