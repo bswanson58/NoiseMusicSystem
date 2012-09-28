@@ -7,10 +7,23 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <Controls:SpectrumAnalyzerDisplay Margin="5"
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        
+        <Controls:SpectrumAnalyzerDisplay Grid.Column="0"  Margin="5"
                                           ImageHeight="{Binding Path=ImageHeight, Mode=OneWayToSource}"
                                           ImageWidth="{Binding Path=ImageWidth, Mode=OneWayToSource}"
                                           SpectrumImage="{Binding Path=SpectrumImage, Mode=OneWay}" />
 
+        <StackPanel Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="37">
+            <Button Margin="5" Command="{Binding Play}" Content="Play"/>
+            <Button Margin="5" Command="{Binding Pause}" Content="Pause"/>
+            <Button Margin="5" Command="{Binding Stop}" Content="Stop"/>
+            <Button Margin="5" Command="{Binding PreviousTrack}" Content="Prev"/>
+            <Button Margin="5" Command="{Binding NextTrack}" Content="Next"/>
+        </StackPanel>
     </Grid>
 </UserControl>

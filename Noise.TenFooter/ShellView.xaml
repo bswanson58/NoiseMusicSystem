@@ -37,12 +37,7 @@
 
         <ContentControl x:Name="ActiveItem" Grid.Row="1" />
 
-        <ContentControl x:Name="PlayerView" Grid.Row="2"
-                        Width="600"
-                        Height="170"
-                        Margin="0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Bottom" />
+        <ContentControl x:Name="PlayerView" Grid.Row="2" />
     </Grid>
 
 </Window>
