@@ -152,7 +152,6 @@
     <Compile Include="Interfaces\IAlbumList.cs" />
     <Compile Include="Interfaces\IAlbumTrackList.cs" />
     <Compile Include="Interfaces\IArtistList.cs" />
-    <Compile Include="Interfaces\IFavoritesList.cs" />
     <Compile Include="Interfaces\IHome.cs" />
     <Compile Include="Interfaces\ITitledScreen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -160,7 +159,7 @@
     <Compile Include="ViewModels\AlbumListViewModel.cs" />
     <Compile Include="ViewModels\ArtistListViewModel.cs" />
     <Compile Include="ViewModels\BaseListViewModel.cs" />
-    <Compile Include="ViewModels\FavoritesViewModel.cs" />
+    <Compile Include="ViewModels\FavoritesListViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\QueueListViewModel.cs" />
     <Compile Include="ViewModels\TrackListViewModel.cs" />
@@ -179,6 +178,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ArtistListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FavoritesListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

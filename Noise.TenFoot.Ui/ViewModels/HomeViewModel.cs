@@ -7,7 +7,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 	public class HomeViewModel : Screen, IHome {
 		private readonly BindableCollection<UiMenuItem>	mMenuChoices;
 		private readonly IArtistList					mArtistList;
-		private readonly IFavoritesList					mFavoritesList;
+		private readonly FavoritesListViewModel			mFavoritesList;
 		private readonly QueueListViewModel				mPlayerQueue;
 		private UiMenuItem								mSelectedMenuItem;
 
@@ -16,7 +16,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	string									Title { get; private set; }
 		public	string									Context { get; private set; }
 
-		public HomeViewModel( IArtistList artistListViewModel, IFavoritesList favoritesListViewModel,
+		public HomeViewModel( IArtistList artistListViewModel, FavoritesListViewModel favoritesListViewModel,
 							  QueueListViewModel playQueueViewModel ) {
 			mArtistList = artistListViewModel;
 			mFavoritesList = favoritesListViewModel;
