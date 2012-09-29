@@ -34,6 +34,10 @@ namespace Noise.UI.ViewModels {
 			LoadFavorites();
 		}
 
+		public IEventAggregator EventAggregator {
+			get{ return( mEventAggregator ); }
+		}
+
 		public BindableCollection<FavoriteViewNode> FavoritesList {
 			get{ return( mFavoritesList ); }
 		}
