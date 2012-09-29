@@ -8,19 +8,25 @@ using Noise.UI.ViewModels;
 using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFooter {
-    public class ShellViewModel : Conductor<object>.Collection.OneActive, INavigate, IShell {
+    public class ShellViewModel : Conductor<object>.Collection.OneActive, INavigate, IShell,
+								  IHandle<Events.NavigateHome>, IHandle<Events.NavigateReturn> {
+		private readonly IEventAggregator	mEventAggregator;
 		private readonly IHome				mHomeView;
 		private readonly TransportViewModel	mTransportViewModel;
 		private readonly InputProcessor		mInputProcessor;
 		private string						mScreenTitle;
 		private string						mContextTitle;
 
-		public ShellViewModel( IHome homeViewModel, TransportViewModel transportViewModel, InputProcessor inputProcessor ) {
+		public ShellViewModel( IEventAggregator eventAggregator, InputProcessor inputProcessor,
+							   IHome homeViewModel, TransportViewModel transportViewModel ) {
+			mEventAggregator = eventAggregator;
 			mHomeView = homeViewModel;
 			mInputProcessor = inputProcessor;
 
 			mTransportViewModel = transportViewModel;
 			mTransportViewModel.IsActive = true;
+
+			mEventAggregator.Subscribe( this );
 		}
 
 	    public PlayerViewModel PlayerView {
@@ -49,6 +55,14 @@ namespace Noise.TenFooter {
 			}
 		}
 
+		public void Handle( Events.NavigateHome data ) {
+			NavigateHome();
+		}
+
+		public void Handle( Events.NavigateReturn screenData ) {
+			NavigateReturn( screenData.FromScreen, screenData.CloseScreen );
+		}
+
     	public void NavigateHome() {
 			while( ActiveItem != mHomeView ) {
 				DeactivateItem( ActiveItem, true );
@@ -59,16 +73,16 @@ namespace Noise.TenFooter {
 			ActivateItem( screen );
     	}
 
-		public void NavigateBack() {
-			NavigateReturn( ActiveItem, true );
-		}
-
 		public bool CanNavigateBack {
 			get{ return( ActiveItem != mHomeView ); }
 		}
 
     	public void NavigateReturn( object fromScreen, bool closeScreen ) {
 			DeactivateItem( fromScreen, closeScreen );
+
+			if( ActiveItem == null ) {
+				ActivateItem( mHomeView );
+			}
     	}
 
 		protected override void ChangeActiveItem( object newItem, bool closePrevious ) {

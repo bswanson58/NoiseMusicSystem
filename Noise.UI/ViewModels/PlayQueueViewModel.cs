@@ -69,6 +69,10 @@ namespace Noise.UI.ViewModels {
 			LoadPlayQueue();
 		}
 
+		protected IEventAggregator EventAggregator {
+			get{ return( mEventAggregator ); }
+		}
+
 		public void DragOver( DropInfo dropInfo ) {
 			if(( dropInfo.Data is UiPlayQueueTrack ) &&
 			   ( dropInfo.TargetItem is UiPlayQueueTrack )) {

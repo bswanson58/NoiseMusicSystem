@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Input;
@@ -7,8 +8,13 @@ using Noise.UI.Support;
 using Noise.UI.ViewModels;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class QueueListViewModel : PlayQueueViewModel, ITitledScreen,
-									  IHandle<Events.DequeueTrack>, IHandle<Events.DequeueAlbum> {
+	public class QueueListViewModel : PlayQueueViewModel, ITitledScreen, IActivate, IDeactivate,
+									  IHandle<InputEvent>, IHandle<Events.DequeueTrack>, IHandle<Events.DequeueAlbum> {
+		public	event EventHandler<ActivationEventArgs>		Activated = delegate { };
+		public	event EventHandler<DeactivationEventArgs>	AttemptingDeactivation = delegate { };
+		public	event EventHandler<DeactivationEventArgs>	Deactivated = delegate { };
+
+		public	bool	IsActive { get; private set; }
 		public	string	Title { get; private set; }
 		public	string	Context { get; private set; }
 
@@ -18,6 +24,20 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			base( eventAggregator, tagProvider, genreProvider, internetStreamProvider, playQueue, playListProvider, dialogService ) {
 			Title = "Now Playing";
 			Context = string.Empty;
+		}
+
+		public void Handle( InputEvent input ) {
+			if( IsActive ) {
+				switch( input.Command ) {
+					case InputCommand.Home:
+						EventAggregator.Publish( new Events.NavigateHome());
+						break;
+
+					case InputCommand.Back:
+						EventAggregator.Publish( new Events.NavigateReturn( this, true ));
+						break;
+				}
+			}
 		}
 
 		public void Handle( Events.DequeueTrack track ) {
@@ -34,6 +54,18 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			foreach( var track in queuedTracks ) {
 				DequeueTrack( track.QueuedTrack );
 			}
+		}
+
+		public void Activate() {
+			IsActive = true;
+
+			Activated( this, new ActivationEventArgs());
+		}
+
+		public void Deactivate( bool close ) {
+			IsActive = false;
+
+			Deactivated( this, new DeactivationEventArgs());
 		}
 	}
 }
