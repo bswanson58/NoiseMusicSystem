@@ -5,11 +5,10 @@ using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 using Noise.TenFoot.Ui.ViewModels;
 using Noise.UI.ViewModels;
-using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFooter {
-    public class ShellViewModel : Conductor<object>.Collection.OneActive, INavigate, IShell,
-								  IHandle<Events.NavigateHome>, IHandle<Events.NavigateReturn> {
+    public class ShellViewModel : Conductor<object>.Collection.OneActive, IShell,
+								  IHandle<Events.NavigateHome>, IHandle<Events.NavigateToScreen>, IHandle<Events.NavigateReturn> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IHome				mHomeView;
 		private readonly TransportViewModel	mTransportViewModel;
@@ -59,6 +58,10 @@ namespace Noise.TenFooter {
 			NavigateHome();
 		}
 
+		public void Handle( Events.NavigateToScreen data ) {
+			ActivateItem( data.ToScreen );
+		}
+
 		public void Handle( Events.NavigateReturn screenData ) {
 			NavigateReturn( screenData.FromScreen, screenData.CloseScreen );
 		}
@@ -67,10 +70,6 @@ namespace Noise.TenFooter {
 			while( ActiveItem != mHomeView ) {
 				DeactivateItem( ActiveItem, true );
 			}
-    	}
-
-    	public void NavigateTo( object screen ) {
-			ActivateItem( screen );
     	}
 
 		public bool CanNavigateBack {

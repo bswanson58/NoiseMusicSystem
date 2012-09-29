@@ -1,6 +1,5 @@
 ﻿using Caliburn.Micro;
 using Noise.TenFoot.Ui.Input;
-using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public abstract class BaseListViewModel<TItem> : Screen, IHandle<InputEvent> where TItem : class {
@@ -86,11 +85,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		protected virtual void Done() {
-			if( Parent is INavigate ) {
-				var controller = Parent as INavigate;
-
-				controller.NavigateReturn( this, true );
-			}
+			EventAggregator.Publish( new Events.NavigateReturn( this, true ));
 		}
 
 		public virtual void Handle( InputEvent message ) {

@@ -4,6 +4,14 @@ namespace Noise.TenFoot.Ui.Input {
 	public class Events {
 		public class NavigateHome { }
 
+		public class NavigateToScreen {
+			public	object	ToScreen { get; private set; }
+
+			public NavigateToScreen( object toScreen ) {
+				ToScreen = toScreen;
+			}
+		}
+
 		public class NavigateReturn {
 			public	object	FromScreen { get; private set; }
 			public	bool	CloseScreen { get; private set; }

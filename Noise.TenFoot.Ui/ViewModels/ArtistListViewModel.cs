@@ -9,7 +9,6 @@ using Noise.TenFoot.Ui.Dto;
 using Noise.TenFoot.Ui.Interfaces;
 using ReusableBits;
 using ReusableBits.Interfaces;
-using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class ArtistListViewModel : BaseListViewModel<UiArtist>, IArtistList, ITitledScreen {
@@ -93,13 +92,8 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		protected override void DisplayItem() {
-			if(( Parent is INavigate ) &&
-			   ( SelectedItem != null )) {
-				var controller = Parent as INavigate;
-
-				mAlbumsList.SetContext( SelectedItem );
-				controller.NavigateTo( mAlbumsList );
-			}
+			mAlbumsList.SetContext( SelectedItem );
+			EventAggregator.Publish( new Input.Events.NavigateToScreen( mAlbumsList ));
 		}
 	}
 }

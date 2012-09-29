@@ -6,7 +6,6 @@ using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Dto;
 using Noise.TenFoot.Ui.Interfaces;
 using ReusableBits;
-using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class AlbumListViewModel : BaseListViewModel<DbAlbum>, IAlbumList, ITitledScreen {
@@ -63,13 +62,8 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		protected override void DisplayItem() {
-			if(( Parent is INavigate ) &&
-			   ( SelectedItem != null )) {
-				var controller = Parent as INavigate;
-
-				mAlbumTrackList.SetContext( SelectedItem );
-				controller.NavigateTo( mAlbumTrackList );
-			}
+			mAlbumTrackList.SetContext( SelectedItem );
+			EventAggregator.Publish( new Input.Events.NavigateToScreen( mAlbumTrackList ));
 		}
 
 		protected override void EnqueueItem() {

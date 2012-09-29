@@ -2,7 +2,6 @@
 using Noise.TenFoot.Ui.Dto;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
-using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class HomeViewModel : BaseListViewModel<UiMenuItem>, IHome {
@@ -40,46 +39,38 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public override void Handle( InputEvent input ) {
 			base.Handle( input );
 
-			if( Parent is INavigate ) {
-				var controller = Parent as INavigate;
+			switch( input.Command ) {
+				case InputCommand.Home:
+					EventAggregator.Publish( new Events.NavigateHome());
+					break;
 
-				switch( input.Command ) {
-					case InputCommand.Home:
-						controller.NavigateHome();
-						break;
+				case InputCommand.Library:
+					EventAggregator.Publish( new Events.NavigateToScreen( mArtistList ));
+					break;
 
-					case InputCommand.Library:
-						controller.NavigateTo( mArtistList );
-						break;
+				case InputCommand.Favorites:
+					EventAggregator.Publish( new Events.NavigateToScreen( mFavoritesList ));
+					break;
 
-					case InputCommand.Favorites:
-						controller.NavigateTo( mFavoritesList );
-						break;
-
-					case InputCommand.Queue:
-						controller.NavigateTo( mPlayerQueue );
-						break;
-				}
+				case InputCommand.Queue:
+					EventAggregator.Publish( new Events.NavigateToScreen( mPlayerQueue ));
+					break;
 			}
 		}
 
 		protected override void DisplayItem() {
-			if( Parent is INavigate ) {
-				var controller = Parent as INavigate;
+			switch( SelectedItem.Command ) {
+				case eMainMenuCommand.Library:
+					EventAggregator.Publish( new Events.NavigateToScreen( mArtistList ));
+					break;
 
-				switch( SelectedItem.Command ) {
-					case eMainMenuCommand.Library:
-						controller.NavigateTo( mArtistList );
-						break;
+				case eMainMenuCommand.Favorites:
+					EventAggregator.Publish( new Events.NavigateToScreen( mFavoritesList ));
+					break;
 
-					case eMainMenuCommand.Favorites:
-						controller.NavigateTo( mFavoritesList );
-						break;
-
-					case eMainMenuCommand.Queue:
-						controller.NavigateTo( mPlayerQueue );
-						break;
-				}
+				case eMainMenuCommand.Queue:
+					EventAggregator.Publish( new Events.NavigateToScreen( mPlayerQueue ));
+					break;
 			}
 		}
 	}
