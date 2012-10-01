@@ -11,7 +11,7 @@ using ReusableBits;
 using ReusableBits.Interfaces;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class ArtistListViewModel : BaseListViewModel<UiArtist>, IArtistList, ITitledScreen {
+	public class ArtistListViewModel : BaseListViewModel<UiArtist>, IHomeScreen {
 		private readonly IAlbumList			mAlbumsList;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IArtworkProvider	mArtworkProvider;
@@ -20,6 +20,8 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		public	string						Title { get; private set; }
 		public	string						Context { get; private set; }
+		public	eMainMenuCommand			MenuCommand { get; private set; }
+		public	int							ScreenOrder { get; private set; }
 
 		public ArtistListViewModel( IAlbumList albumListViewModel, IArtistProvider artistProvider, IArtworkProvider artworkProvider,
 									IEventAggregator eventAggregator, IResourceProvider resourceProvider ) :
@@ -32,6 +34,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 			Title = "Artists";
 			Context = "";
+
+			MenuCommand = eMainMenuCommand.Library;
+			ScreenOrder = 1;
 		}
 
 		protected override void OnInitialize() {

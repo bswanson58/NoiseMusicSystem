@@ -1,34 +1,30 @@
-﻿using Caliburn.Micro;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Caliburn.Micro;
 using Noise.TenFoot.Ui.Dto;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class HomeViewModel : BaseListViewModel<UiMenuItem>, IHome {
-		private readonly IEventAggregator				mEventAggregator;
-		private readonly IArtistList					mArtistList;
-		private readonly FavoritesListViewModel			mFavoritesList;
-		private readonly QueueListViewModel				mPlayerQueue;
+		private readonly IEventAggregator		mEventAggregator;
+		private readonly List<IHomeScreen>		mHomeScreens; 
 
-		public	double									MenuListIndex { get; set; }
+		public	double							MenuListIndex { get; set; }
 
-		public	string									Title { get; private set; }
-		public	string									Context { get; private set; }
+		public	string							Title { get; private set; }
+		public	string							Context { get; private set; }
 
-		public HomeViewModel( IEventAggregator eventAggregator, IArtistList artistListViewModel,
-							  FavoritesListViewModel favoritesListViewModel, QueueListViewModel playQueueViewModel ) :
+		public HomeViewModel( IEventAggregator eventAggregator, ArtistListViewModel artistListViewModel,
+							  FavoritesListViewModel favoritesListViewModel, QueueListViewModel queueListViewModel ) :
 			base( eventAggregator ) {
 			mEventAggregator = eventAggregator;
-			mArtistList = artistListViewModel;
-			mFavoritesList = favoritesListViewModel;
-			mPlayerQueue = playQueueViewModel;
 
-			ItemList.Add( new UiMenuItem( eMainMenuCommand.Library, "Library", null ));
-			ItemList.Add( new UiMenuItem( eMainMenuCommand.Favorites, "Favorites", null ));
-			ItemList.Add( new UiMenuItem( eMainMenuCommand.Queue, "Queue", null ));
-			ItemList.Add( new UiMenuItem( eMainMenuCommand.Search, "Search", null ));
+			var screens = new [] { artistListViewModel as IHomeScreen, favoritesListViewModel, queueListViewModel };
+			mHomeScreens = new List<IHomeScreen>( from screen in screens orderby screen.ScreenOrder select screen );
 
-			SelectedItem = ItemList[0];
+			ItemList.AddRange( from screen in mHomeScreens select new UiMenuItem( screen.MenuCommand, screen.Title, null ));
+			SelectedItem = ItemList.FirstOrDefault();
 
 			Title = "Noise";
 			Context = string.Empty;
@@ -45,32 +41,28 @@ namespace Noise.TenFoot.Ui.ViewModels {
 					break;
 
 				case InputCommand.Library:
-					EventAggregator.Publish( new Events.NavigateToScreen( mArtistList ));
+					NavigateToScreen( eMainMenuCommand.Library );
 					break;
 
 				case InputCommand.Favorites:
-					EventAggregator.Publish( new Events.NavigateToScreen( mFavoritesList ));
+					NavigateToScreen( eMainMenuCommand.Favorites );
 					break;
 
 				case InputCommand.Queue:
-					EventAggregator.Publish( new Events.NavigateToScreen( mPlayerQueue ));
+					NavigateToScreen( eMainMenuCommand.Queue );
 					break;
 			}
 		}
 
 		protected override void DisplayItem() {
-			switch( SelectedItem.Command ) {
-				case eMainMenuCommand.Library:
-					EventAggregator.Publish( new Events.NavigateToScreen( mArtistList ));
-					break;
+			NavigateToScreen( SelectedItem.Command );
+		}
 
-				case eMainMenuCommand.Favorites:
-					EventAggregator.Publish( new Events.NavigateToScreen( mFavoritesList ));
-					break;
+		private void NavigateToScreen( eMainMenuCommand command ) {
+			var screen = ( from s in mHomeScreens where s.MenuCommand == command select s ).FirstOrDefault();
 
-				case eMainMenuCommand.Queue:
-					EventAggregator.Publish( new Events.NavigateToScreen( mPlayerQueue ));
-					break;
+			if( screen != null ) {
+				EventAggregator.Publish( new Events.NavigateToScreen( screen ));
 			}
 		}
 	}

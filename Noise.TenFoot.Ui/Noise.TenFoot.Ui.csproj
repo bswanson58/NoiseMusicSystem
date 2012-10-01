@@ -152,8 +152,8 @@
     <Compile Include="Input\RawKeyboardHandler.cs" />
     <Compile Include="Interfaces\IAlbumList.cs" />
     <Compile Include="Interfaces\IAlbumTrackList.cs" />
-    <Compile Include="Interfaces\IArtistList.cs" />
     <Compile Include="Interfaces\IHome.cs" />
+    <Compile Include="Interfaces\IHomeScreen.cs" />
     <Compile Include="Interfaces\ITitledScreen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TenFootUiModule.cs" />

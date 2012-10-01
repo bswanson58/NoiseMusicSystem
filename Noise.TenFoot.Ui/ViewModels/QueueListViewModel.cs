@@ -2,21 +2,24 @@
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure.Interfaces;
+using Noise.TenFoot.Ui.Dto;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 using Noise.UI.Support;
 using Noise.UI.ViewModels;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class QueueListViewModel : PlayQueueViewModel, ITitledScreen, IActivate, IDeactivate,
+	public class QueueListViewModel : PlayQueueViewModel, IHomeScreen, IActivate, IDeactivate,
 									  IHandle<InputEvent>, IHandle<Events.DequeueTrack>, IHandle<Events.DequeueAlbum> {
 		public	event EventHandler<ActivationEventArgs>		Activated = delegate { };
 		public	event EventHandler<DeactivationEventArgs>	AttemptingDeactivation = delegate { };
 		public	event EventHandler<DeactivationEventArgs>	Deactivated = delegate { };
 
-		public	bool	IsActive { get; private set; }
-		public	string	Title { get; private set; }
-		public	string	Context { get; private set; }
+		public	bool				IsActive { get; private set; }
+		public	string				Title { get; private set; }
+		public	string				Context { get; private set; }
+		public	eMainMenuCommand	MenuCommand { get; private set; }
+		public	int					ScreenOrder { get; private set; }
 
 		public QueueListViewModel( IEventAggregator eventAggregator, ITagProvider tagProvider, IGenreProvider genreProvider,
 								   IInternetStreamProvider internetStreamProvider, IPlayQueue playQueue,
@@ -24,6 +27,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			base( eventAggregator, tagProvider, genreProvider, internetStreamProvider, playQueue, playListProvider, dialogService ) {
 			Title = "Now Playing";
 			Context = string.Empty;
+
+			MenuCommand = eMainMenuCommand.Queue;
+			ScreenOrder = 3;
 		}
 
 		public void Handle( InputEvent input ) {
