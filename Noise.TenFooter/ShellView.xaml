@@ -25,8 +25,8 @@
             </Grid.ColumnDefinitions>
             
             <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <Button x:Name="NavigateHome" Margin="5" Content="Home"/>
-                <Button x:Name="NavigateBack" Margin="5" Content="Back"/>
+                <Button x:Name="NavigateHome" Style="{StaticResource TenfootButtonStyle}" Height="65" Width="65" Margin="5" Content="{StaticResource Path_Home}"/>
+                <Button x:Name="NavigateBack" Style="{StaticResource TenfootButtonStyle}" Height="65" Width="65" Margin="5" Content="{StaticResource Path_Back}"/>
             </StackPanel>
             
             <StackPanel Grid.Column="2" Orientation="Horizontal">
