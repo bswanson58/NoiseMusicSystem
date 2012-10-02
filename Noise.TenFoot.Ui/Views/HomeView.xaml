@@ -28,15 +28,15 @@
                 <TextBlock Grid.Column="1"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Center"
-                           FontSize="36"
-                           FontWeight="Bold"
+                           Style="{StaticResource ContentTextStyle}"
+                           FontSize="48"
                            Text="{Binding Title}" />
             </Grid>
         </DataTemplate>
 
         <Style x:Key="MenuItemStyle" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Margin" Value="0,5" />
-            <Setter Property="Width" Value="330" />
+            <Setter Property="Width" Value="430" />
             <Setter Property="Height" Value="120" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -60,9 +60,6 @@
             <RowDefinition Height="35" />
         </Grid.RowDefinitions>
 
-        <Rectangle Grid.Row="0"
-                   Fill="AliceBlue"
-                   Opacity="0.1" />
         <controls:LoopingListBox Grid.Row="0" Background="Transparent" BorderThickness="0"
                                  ItemsSource="{Binding ItemList}"
                                  SelectedItem="{Binding SelectedItem}"

@@ -91,7 +91,12 @@ namespace Noise.TenFooter {
 				var screen = newItem as ITitledScreen;
 
 				mScreenTitle = screen.Title;
-				mContextTitle = screen.Context;
+				if(!string.IsNullOrWhiteSpace( screen.Context )) {
+					mContextTitle = screen.Context + ":";
+				}
+				else {
+					mContextTitle = string.Empty;
+				}
 			}
 			else {
 				mScreenTitle = string.Empty;

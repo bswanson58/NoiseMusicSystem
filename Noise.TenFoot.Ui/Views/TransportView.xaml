@@ -13,25 +13,29 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
+        <!-- Now Playing Display -->
         <Controls:SpectrumAnalyzerDisplay Grid.Column="0"  Margin="5"
                                           ImageHeight="{Binding Path=ImageHeight, Mode=OneWayToSource}"
                                           ImageWidth="{Binding Path=ImageWidth, Mode=OneWayToSource}"
                                           SpectrumImage="{Binding Path=SpectrumImage, Mode=OneWay}" />
         <StackPanel Orientation="Vertical" Margin="15">
-            <TextBlock Grid.Column="0" FontSize="32" Opacity="0.6" Foreground="LightGray" Text="{Binding TrackName}" />
-            <TextBlock Grid.Column="0" FontSize="18" Opacity="0.4" Foreground="LightGray" Text="{Binding AlbumName}" />
+            <TextBlock Grid.Column="0" FontSize="32" Opacity="0.7" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource DarkTextBrush}" 
+                       Text="{Binding TrackName}" />
+            <TextBlock Grid.Column="0" FontSize="18" Opacity="0.5" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource DarkTextBrush}"
+                       Text="{Binding AlbumName}" />
         </StackPanel>
-        <TextBlock Grid.Column="0" Margin="15" FontSize="18" HorizontalAlignment="Right" VerticalAlignment="Bottom" Opacity="0.6" Foreground="LightGray"
+
+        <TextBlock Grid.Column="0" Margin="15" FontSize="24" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource DarkTextBrush}"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Opacity="0.5" 
                    Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" />
 
-
-        <StackPanel Orientation="Horizontal" Grid.Column="2" Margin="0,0,27,17"
-                    HorizontalAlignment="Right" VerticalAlignment="Bottom">
-            <Button Margin="5,0" VerticalAlignment="Bottom" Command="{Binding Play}" FontFamily="Webdings" FontSize="48" Content="4" />
-            <Button Margin="5,0" VerticalAlignment="Bottom" Command="{Binding Pause}" FontFamily="Webdings" FontSize="48" Content=";" />
-            <Button Margin="5,0" VerticalAlignment="Bottom" Command="{Binding Stop}" FontFamily="Webdings" FontSize="48" Content="&lt;" />
-            <Button Margin="5,0" VerticalAlignment="Bottom" Command="{Binding PreviousTrack}" FontFamily="Webdings" FontSize="48" Content="9"/>
-            <Button Margin="5,0" VerticalAlignment="Bottom" Command="{Binding NextTrack}" FontFamily="Webdings" FontSize="48" Content=":"/>
+        <!-- Transport Controls -->
+        <StackPanel Orientation="Horizontal" Grid.Column="2" Height="75" Margin="0,0,27,17" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Button Margin="1" Command="{Binding Play}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaPlay}" />
+            <Button Margin="1" Command="{Binding Pause}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaPause}" />
+            <Button Margin="1" Command="{Binding Stop}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaStop}" />
+            <Button Margin="1" Command="{Binding PreviousTrack}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaPrevious}" />
+            <Button Margin="1" Command="{Binding NextTrack}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaNext}" />
         </StackPanel>
     </Grid>
 </UserControl>
