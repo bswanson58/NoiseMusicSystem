@@ -7,7 +7,6 @@ using Noise.TenFoot.Ui.Interfaces;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class HomeViewModel : BaseListViewModel<UiMenuItem>, IHome {
-		private readonly IEventAggregator		mEventAggregator;
 		private readonly List<IHomeScreen>		mHomeScreens; 
 
 		public	double							MenuListIndex { get; set; }
@@ -18,7 +17,6 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public HomeViewModel( IEventAggregator eventAggregator, ArtistListViewModel artistListViewModel,
 							  FavoritesListViewModel favoritesListViewModel, QueueListViewModel queueListViewModel ) :
 			base( eventAggregator ) {
-			mEventAggregator = eventAggregator;
 
 			var screens = new [] { artistListViewModel as IHomeScreen, favoritesListViewModel, queueListViewModel };
 			mHomeScreens = new List<IHomeScreen>( from screen in screens orderby screen.ScreenOrder select screen );
@@ -28,13 +26,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 			Title = "Noise";
 			Context = string.Empty;
-
-			mEventAggregator.Subscribe( this );
 		}
 
-		public override void Handle( InputEvent input ) {
-			base.Handle( input );
-
+		public void ProcessInput( InputEvent input ) {
 			switch( input.Command ) {
 				case InputCommand.Home:
 					EventAggregator.Publish( new Events.NavigateHome());

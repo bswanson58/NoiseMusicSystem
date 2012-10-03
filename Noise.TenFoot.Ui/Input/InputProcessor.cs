@@ -9,6 +9,7 @@ namespace Noise.TenFoot.Ui.Input {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly RawKeyboardHandler	mKeyboardhandler;
 		private readonly List<InputBinding>	mInputBindings;
+		private Action<InputEvent>			mInputHandler;
 		private bool						mShiftPressed;
 		private bool						mControlPressed;
 
@@ -16,6 +17,15 @@ namespace Noise.TenFoot.Ui.Input {
 			mEventAggregator = eventAggregator;
 			mKeyboardhandler = keyboardHandler;
 			mInputBindings = new List<InputBinding>();
+			mInputHandler = input => { };
+		}
+
+		public bool Initialize( IntPtr hwnd, Action<InputEvent> inputHandler ) {
+			if( inputHandler != null ) {
+				mInputHandler = inputHandler;
+			}
+
+			return( Initialize( hwnd ));
 		}
 
 		public bool Initialize( IntPtr hwnd ) {
@@ -32,6 +42,7 @@ namespace Noise.TenFoot.Ui.Input {
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Select, Key = Keys.Enter });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Enqueue, Key = Keys.Insert });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Enqueue, Key = Keys.PageUp });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Dequeue, Key = Keys.Delete });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Dequeue, Key = Keys.Next });
 
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Home, Key = Keys.Home });
@@ -72,7 +83,10 @@ namespace Noise.TenFoot.Ui.Input {
 																  b.Shift == mShiftPressed && 
 																  b.Control == mControlPressed );
 				if( binding != null ) {
-					mEventAggregator.Publish( new InputEvent( binding.Command ));
+					var input = new InputEvent( binding.Command );
+
+					mEventAggregator.Publish( input );
+					mInputHandler( input );
 				}
 			}
 			else {

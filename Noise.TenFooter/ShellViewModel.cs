@@ -50,7 +50,7 @@ namespace Noise.TenFooter {
 			if( view is Window ) {
 				var helper = new WindowInteropHelper( view as Window );
 
-				mInputProcessor.Initialize( helper.Handle );
+				mInputProcessor.Initialize( helper.Handle, mHomeView.ProcessInput );
 			}
 		}
 
