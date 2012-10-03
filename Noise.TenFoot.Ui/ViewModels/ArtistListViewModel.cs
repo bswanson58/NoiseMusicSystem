@@ -18,7 +18,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private readonly BitmapImage		mUnknownArtistImage;
 		private TaskHandler					mArtistRetrievalTaskHandler;
 
-		public	string						Title { get; private set; }
+		public	string						ScreenTitle { get; private set; }
+		public	string						MenuTitle { get; private set; }
+		public	string						Description { get; private set; }
 		public	string						Context { get; private set; }
 		public	eMainMenuCommand			MenuCommand { get; private set; }
 		public	int							ScreenOrder { get; private set; }
@@ -32,7 +34,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 			mUnknownArtistImage = resourceProvider.RetrieveImage( "Unknown Artist.png" );
 
-			Title = "Artists";
+			ScreenTitle = "Artists";
+			MenuTitle = "Library";
+			Description = "Music Library";
 			Context = "";
 
 			MenuCommand = eMainMenuCommand.Library;

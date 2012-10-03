@@ -12,14 +12,14 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private long						mCurrentAlbum;
 		private TaskHandler					mTrackRetrievalTaskHandler;
 
-		public	string						Title { get; private set; }
+		public	string						ScreenTitle { get; private set; }
 		public	string						Context { get; private set; }
 
 		public TrackListViewModel( IEventAggregator eventAggregator, ITrackProvider trackProvider ) :
 			base( eventAggregator ) {
 			mTrackProvider = trackProvider;
 
-			Title = "Tracks";
+			ScreenTitle = "Tracks";
 			Context = "";
 		}
 

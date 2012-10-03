@@ -14,7 +14,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private long						mCurrentArtist;
 		private TaskHandler					mAlbumRetrievalTaskHandler;
 
-		public	string						Title { get; private set; }
+		public	string						ScreenTitle { get; private set; }
 		public	string						Context { get; private set; }
 
 		public AlbumListViewModel( IEventAggregator eventAggregator, IAlbumTrackList trackListViewModel, IAlbumProvider albumProvider ) :
@@ -22,7 +22,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			mAlbumTrackList = trackListViewModel;
 			mAlbumProvider = albumProvider;
 
-			Title = "Albums";
+			ScreenTitle = "Albums";
 			Context = "";
 		}
 

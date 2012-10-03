@@ -145,7 +145,6 @@
     <Compile Include="Controls\LoopingListBox\RoutedEventHelper.cs" />
     <Compile Include="Dto\UiArtist.cs" />
     <Compile Include="Dto\UiBase.cs" />
-    <Compile Include="Dto\UiMenuItem.cs" />
     <Compile Include="Input\Events.cs" />
     <Compile Include="Input\InputCommand.cs" />
     <Compile Include="Input\InputProcessor.cs" />

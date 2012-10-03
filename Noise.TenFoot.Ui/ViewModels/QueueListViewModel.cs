@@ -16,7 +16,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	event EventHandler<DeactivationEventArgs>	Deactivated = delegate { };
 
 		public	bool				IsActive { get; private set; }
-		public	string				Title { get; private set; }
+		public	string				ScreenTitle { get; private set; }
+		public	string				MenuTitle { get; private set; }
+		public	string				Description { get; private set; }
 		public	string				Context { get; private set; }
 		public	eMainMenuCommand	MenuCommand { get; private set; }
 		public	int					ScreenOrder { get; private set; }
@@ -25,7 +27,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 								   IInternetStreamProvider internetStreamProvider, IPlayQueue playQueue,
 								   IPlayListProvider playListProvider, IDialogService dialogService ) :
 			base( eventAggregator, tagProvider, genreProvider, internetStreamProvider, playQueue, playListProvider, dialogService ) {
-			Title = "Now Playing";
+			ScreenTitle = "Now Playing";
+			MenuTitle = "Now Playing";
+			Description = "List of songs being played.";
 			Context = string.Empty;
 
 			MenuCommand = eMainMenuCommand.Queue;

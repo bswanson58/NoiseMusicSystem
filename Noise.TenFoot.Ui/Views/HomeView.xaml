@@ -4,34 +4,44 @@
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:controls="clr-namespace:Noise.TenFoot.Ui.Controls.LoopingListBox"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Dto="clr-namespace:Noise.TenFoot.Ui.Dto"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ViewModels="clr-namespace:Noise.TenFoot.Ui.ViewModels"
-             cal:Bind.AtDesignTime="True"
+             xmlns:Interfaces="clr-namespace:Noise.TenFoot.Ui.Interfaces" cal:Bind.AtDesignTime="True"
              d:DataContext="{d:DesignInstance ViewModels:HomeViewModel, IsDesignTimeCreatable=True}"
              d:DesignHeight="500"
              d:DesignWidth="700"
              mc:Ignorable="d">
 
     <UserControl.Resources>
-        <DataTemplate x:Key="MenuItem" DataType="{x:Type Dto:UiMenuItem}">
+        <DataTemplate x:Key="MenuItem" DataType="{x:Type Interfaces:IHomeScreen}">
             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-
-                <Image Grid.Column="0"
-                       Margin="5"
-                       Source="{Binding Image}"
-                       Stretch="Fill" />
-                <TextBlock Grid.Column="1"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Center"
-                           Style="{StaticResource ContentTextStyle}"
-                           FontSize="48"
-                           Text="{Binding Title}" />
+                
+                <Rectangle x:Name="highlight" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2"
+                           RadiusX="5" RadiusY="5" Stroke="White" Fill="Transparent" Visibility="Hidden"/>
+                
+                <Image Grid.Row="0" Grid.Column="0" Margin="5" Source="{Binding Image}" Stretch="Fill" />
+                
+                <TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0"
+                           FontSize="48" Style="{StaticResource ContentTextStyle}" Text="{Binding MenuTitle}" />
+                <TextBlock x:Name="description" Grid.Row="1" Grid.Column="1" Margin="5,0,5,5" Visibility="Hidden"
+                           FontSize="18" Style="{StaticResource ContentTextStyle}" Text="{Binding Description}"/>
             </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger
+                Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="True">
+                    <Setter TargetName="description" Property="Visibility" Value="Visible"/>
+                    <Setter TargetName="highlight" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
 
         <Style x:Key="MenuItemStyle" TargetType="{x:Type ListBoxItem}">
@@ -42,8 +52,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
                         <Grid>
-                            <ContentPresenter x:Name="ContentHost"
-                                              Margin="{TemplateBinding Padding}"
+                            <ContentPresenter x:Name="ContentHost" Margin="{TemplateBinding Padding}"
                                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Grid>
@@ -57,7 +66,6 @@
     <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="35" />
         </Grid.RowDefinitions>
 
         <controls:LoopingListBox Grid.Row="0" Background="Transparent" BorderThickness="0"
@@ -67,7 +75,8 @@
                                  ItemTemplate="{StaticResource MenuItem}"
                                  LastItemMargin="1.1"
                                  Orientation="Vertical"
-                                 RelativeOffset="0.5"
+                                 HorizontalContentAlignment="Stretch"
+                                 RelativeOffset="0.6"
                                  Offset="{Binding Path=SelectedItemIndex}" />
     </Grid>
 </UserControl>

@@ -15,7 +15,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	event EventHandler<DeactivationEventArgs>	Deactivated = delegate { };
 
 		public	bool				IsActive { get; private set; }
-		public	string				Title { get; private set; }
+		public	string				ScreenTitle { get; private set; }
+		public	string				MenuTitle { get; private set; }
+		public	string				Description { get; private set; }
 		public	string				Context { get; private set; }
 		public	eMainMenuCommand	MenuCommand { get; private set; }
 		public	int					ScreenOrder { get; private set; }
@@ -24,7 +26,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 								      IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 								      IDataExchangeManager dataExchangeManager, IDialogService dialogService ) :
 			base( eventAggregator, artistProvider, albumProvider, trackProvider, dataExchangeManager, dialogService ) {
-			Title = "Favorites";
+			ScreenTitle = "Favorites";
+			MenuTitle = "Favorites";
+			Description = "Favorites songs list.";
 			Context = string.Empty;
 
 			MenuCommand = eMainMenuCommand.Favorites;

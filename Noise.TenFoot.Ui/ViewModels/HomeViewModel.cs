@@ -1,17 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Caliburn.Micro;
 using Noise.TenFoot.Ui.Dto;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class HomeViewModel : BaseListViewModel<UiMenuItem>, IHome {
-		private readonly List<IHomeScreen>		mHomeScreens; 
-
+	public class HomeViewModel : BaseListViewModel<IHomeScreen>, IHome {
 		public	double							MenuListIndex { get; set; }
 
-		public	string							Title { get; private set; }
+		public	string							ScreenTitle { get; private set; }
 		public	string							Context { get; private set; }
 
 		public HomeViewModel( IEventAggregator eventAggregator, ArtistListViewModel artistListViewModel,
@@ -19,12 +16,11 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			base( eventAggregator ) {
 
 			var screens = new [] { artistListViewModel as IHomeScreen, favoritesListViewModel, queueListViewModel };
-			mHomeScreens = new List<IHomeScreen>( from screen in screens orderby screen.ScreenOrder select screen );
+			ItemList.AddRange( from screen in screens orderby screen.ScreenOrder select screen );
 
-			ItemList.AddRange( from screen in mHomeScreens select new UiMenuItem( screen.MenuCommand, screen.Title, null ));
 			SelectedItem = ItemList.FirstOrDefault();
 
-			Title = "Noise";
+			ScreenTitle = "Noise";
 			Context = string.Empty;
 		}
 
@@ -49,11 +45,11 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		protected override void DisplayItem() {
-			NavigateToScreen( SelectedItem.Command );
+			NavigateToScreen( SelectedItem.MenuCommand );
 		}
 
 		private void NavigateToScreen( eMainMenuCommand command ) {
-			var screen = ( from s in mHomeScreens where s.MenuCommand == command select s ).FirstOrDefault();
+			var screen = ( from s in ItemList where s.MenuCommand == command select s ).FirstOrDefault();
 
 			if( screen != null ) {
 				EventAggregator.Publish( new Events.NavigateToScreen( screen ));
