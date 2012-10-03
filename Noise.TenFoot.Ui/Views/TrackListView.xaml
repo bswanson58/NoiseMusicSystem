@@ -16,26 +16,53 @@
     <UserControl.Resources>
         <DataTemplate x:Key="BasicTrack" DataType="{x:Type Dto:DbTrack}">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="100" />
-                </Grid.ColumnDefinitions>
+                <Grid x:Name="normal">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="45" />
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0"
-                           FontSize="18"
-                           Text="{Binding Path=Name}" />
-                <TextBlock Grid.Column="1"
-                           Margin="0,0,7,0"
-                           Text="{Binding Path=Duration}"
-                           TextAlignment="Right" />
+                    <TextBlock Grid.Column="0" Style="{StaticResource ListTextStyle}" Text="{Binding Path=TrackNumber}" Opacity="0.4" TextAlignment="Right" />
+                        
+                    <TextBlock Grid.Column="1" Style="{StaticResource ListTextStyle}" Text="{Binding Name}" Margin="11,0,0,0"/>
+
+                    <TextBlock Grid.Column="3" Style="{StaticResource ListTextStyle}" TextAlignment="Right"
+                               Text="{Binding Path=Duration, Converter={StaticResource TimeSpanConverter}}"/>
+                </Grid>
+
+                <Grid x:Name="highlight" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="45" />
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Style="{StaticResource ListHighlightTextStyle}" Text="{Binding Path=TrackNumber}" TextAlignment="Right" />
+
+                    <TextBlock Grid.Column="1" Style="{StaticResource ListHighlightTextStyle}" Text="{Binding Name}" Margin="11,0,0,0"/>
+
+                    <TextBlock Grid.Column="3" Style="{StaticResource ListHighlightTextStyle}" TextAlignment="Right"
+                               Text="{Binding Path=Duration, Converter={StaticResource TimeSpanConverter}}"/>
+                </Grid>
             </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="True">
+                    <Setter TargetName="normal" Property="Visibility" Value="Collapsed"/>
+                    <Setter TargetName="highlight" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
 
     <Grid>
-        <ListBox Margin="7,0"
+        <ListBox Margin="15,0"
                  HorizontalContentAlignment="Stretch"
                  Background="Transparent"
+                 BorderThickness="0"
+                 ItemContainerStyle="{StaticResource ListItemStyle}"
                  ItemsSource="{Binding ItemList}"
                  SelectedItem="{Binding SelectedItem}"
                  ItemTemplate="{StaticResource BasicTrack}" />

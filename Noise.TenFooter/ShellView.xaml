@@ -29,7 +29,7 @@
                 <Button x:Name="NavigateBack" Style="{StaticResource TenfootButtonStyle}" Margin="5" Content="{StaticResource Path_Back}"/>
             </StackPanel>
             
-            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,7,0">
                 <TextBlock x:Name="ContextTitle" Margin="5" FontSize="54" Style="{StaticResource BasicTextStyle}" />
                 <TextBlock x:Name="ScreenTitle" Margin="5" FontSize="54" Style="{StaticResource BasicTextStyle}" />
             </StackPanel>
@@ -38,7 +38,7 @@
         <Grid Grid.Row="1">
             <Rectangle Fill="{StaticResource ContentBackgroundBrush}" Opacity="0.05" />
 
-            <ContentControl x:Name="ActiveItem" />
+            <ContentControl x:Name="ActiveItem" Margin="7,0" />
         </Grid>
 
         <ContentControl x:Name="PlayerView" Grid.Row="2" />
