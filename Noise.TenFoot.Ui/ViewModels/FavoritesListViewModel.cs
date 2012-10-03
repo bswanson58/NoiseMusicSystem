@@ -1,7 +1,6 @@
 ﻿using System;
 using Caliburn.Micro;
 using Noise.Infrastructure.Interfaces;
-using Noise.TenFoot.Ui.Dto;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 using Noise.UI.Support;

@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Caliburn.Micro;
-using Noise.TenFoot.Ui.Dto;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 
