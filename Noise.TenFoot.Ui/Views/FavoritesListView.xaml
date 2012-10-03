@@ -4,35 +4,51 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours;assembly=Noise.UI"
+             xmlns:Adapters="clr-namespace:Noise.UI.Adapters;assembly=Noise.UI"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
-        <ListView Grid.Row="0" BorderThickness="0" Background="Transparent"  ItemsSource="{Binding Path=FavoritesList}"
-                  Behaviours:ListViewColumns.Stretch="true"
-                  Behaviours:GridViewSort.AutoSort="True">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="{x:Type ListViewItem}">
-                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayFavorite}"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Title}" Behaviours:GridViewSort.PropertyName="Title"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+    <UserControl.Resources>
+        <DataTemplate x:Key="FavoritesTemplate" DataType="{x:Type Adapters:FavoriteViewNode}">
+            <Grid>
+                <Grid x:Name="normal">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="1" Style="{StaticResource ListTextStyle}" Text="{Binding Title}" Margin="11,0,0,0"/>
+                </Grid>
+
+                <Grid x:Name="highlight" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="1" Style="{StaticResource ListHighlightTextStyle}" Text="{Binding Title}" Margin="11,0,0,0"/>
+                </Grid>
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="True">
+                    <Setter TargetName="normal" Property="Visibility" Value="Collapsed"/>
+                    <Setter TargetName="highlight" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <ListBox Margin="15,0"
+                 Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding RelativeSource={RelativeSource Self}, Path=SelectedIndex}"
+                 HorizontalContentAlignment="Stretch"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                 ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                 ItemsSource="{Binding FavoritesList}"
+                 SelectedItem="{Binding SelectedItem}"
+                 ItemContainerStyle="{StaticResource ListItemStyle}"
+                 ItemTemplate="{StaticResource FavoritesTemplate}" />
     </Grid>
 </UserControl>

@@ -6,7 +6,7 @@
              xmlns:Dto="clr-namespace:Noise.Infrastructure.Dto;assembly=Noise.Infrastructure"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ViewModels="clr-namespace:Noise.TenFoot.Ui.ViewModels"
-             cal:Bind.AtDesignTime="True"
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours;assembly=Noise.UI" cal:Bind.AtDesignTime="True"
              d:DataContext="{d:DesignInstance ViewModels:ArtistListViewModel,
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="500"
@@ -80,10 +80,13 @@
     </UserControl.Resources>
     
     <Grid>
-        <ListBox Margin="11,0"
+        <ListBox Margin="15,0"
+                 Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding RelativeSource={RelativeSource Self}, Path=SelectedIndex}"
                  HorizontalContentAlignment="Stretch"
                  Background="Transparent"
                  BorderThickness="0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                 ScrollViewer.VerticalScrollBarVisibility="Hidden"
                  ItemContainerStyle="{StaticResource ListItemStyle}"
                  ItemsSource="{Binding ItemList}"
                  SelectedItem="{Binding SelectedItem}"
