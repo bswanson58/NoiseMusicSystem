@@ -28,7 +28,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			base( eventAggregator, tagProvider, genreProvider, internetStreamProvider, playQueue, playListProvider, dialogService ) {
 			ScreenTitle = "Now Playing";
 			MenuTitle = "Now Playing";
-			Description = "List of songs being played.";
+			Description = "display the songs being played";
 			Context = string.Empty;
 
 			MenuCommand = eMainMenuCommand.Queue;

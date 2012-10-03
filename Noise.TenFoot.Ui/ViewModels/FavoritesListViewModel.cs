@@ -27,7 +27,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			base( eventAggregator, artistProvider, albumProvider, trackProvider, dataExchangeManager, dialogService ) {
 			ScreenTitle = "Favorites";
 			MenuTitle = "Favorites";
-			Description = "Favorites songs list.";
+			Description = "display favorites songs";
 			Context = string.Empty;
 
 			MenuCommand = eMainMenuCommand.Favorites;

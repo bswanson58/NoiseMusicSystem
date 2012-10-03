@@ -36,7 +36,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 			ScreenTitle = "Artists";
 			MenuTitle = "Library";
-			Description = "Music Library";
+			Description = "explore the music library";
 			Context = "";
 
 			MenuCommand = eMainMenuCommand.Library;
