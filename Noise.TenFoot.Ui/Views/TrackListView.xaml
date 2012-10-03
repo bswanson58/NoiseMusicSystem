@@ -58,7 +58,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <ListBox Margin="15,0"
+        <ListBox Margin="15,0,15,5"
                  Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding RelativeSource={RelativeSource Self}, Path=SelectedIndex}"
                  HorizontalContentAlignment="Stretch"
                  Background="Transparent"

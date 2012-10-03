@@ -6,6 +6,7 @@ using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 using Noise.UI.Support;
 using Noise.UI.ViewModels;
+using Events = Noise.TenFoot.Ui.Input.Events;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class QueueListViewModel : PlayQueueViewModel, IHomeScreen, IActivate, IDeactivate,
@@ -30,16 +31,58 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			MenuTitle = "Now Playing";
 			Description = "display the songs being played";
 			Context = string.Empty;
+			SelectedIndex = -1;
 
 			MenuCommand = eMainMenuCommand.Queue;
 			ScreenOrder = 3;
 		}
 
+		private void SetSelectedItem( int index ) {
+			var itemCount = QueueList.Count;
+
+			if( itemCount > 0 ) {
+				if( index < 0 ) {
+					index = itemCount + index;
+				}
+
+				if( index >= itemCount ) {
+					index = index % itemCount;
+				}
+
+				if( index < itemCount ) {
+					SelectedItem = QueueList[index];
+					SelectedIndex = index;
+				}
+			}
+		}
+
+		private void NextItem() {
+			SetSelectedItem( SelectedIndex + 1 );
+		}
+
+		private void PreviousItem() {
+			SetSelectedItem( SelectedIndex - 1 );
+		}
+
+		private void DequeueItem() {
+			EventAggregator.Publish( new Events.DequeueTrack( SelectedItem.QueuedTrack.Track ));
+		}
+
 		public void Handle( InputEvent input ) {
 			if( IsActive ) {
 				switch( input.Command ) {
-					case InputCommand.Home:
-						EventAggregator.Publish( new Events.NavigateHome());
+					case InputCommand.Up:
+						PreviousItem();
+						break;
+
+					case InputCommand.Down:
+						NextItem();
+						break;
+
+					case InputCommand.Dequeue:
+						if( SelectedItem != null ) {
+							DequeueItem();
+						}
 						break;
 
 					case InputCommand.Back:

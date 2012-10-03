@@ -11,66 +11,80 @@
     
     <UserControl.Resources>
         <ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
-            <Grid Margin="5,15,5,0">
-                <TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="Play Something!" />
+            <Grid Margin="5,55,5,0">
+                <TextBlock Style="{StaticResource ListTextStyle}" Foreground="LightGray" HorizontalAlignment="Center" Text="Play Something!" />
             </Grid>
         </ControlTemplate>
 
         <DataTemplate x:Key="QueueListItem">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="15" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="40" />
-                </Grid.ColumnDefinitions>
+                <Grid x:Name="normal">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="35" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0">
-                    <TextBlock VerticalAlignment="Bottom"
-                               FontFamily="WebDings"
-                               FontSize="16"
-                               Foreground="LightGreen"
-                               Text="4"
-                               Visibility="{Binding Path=QueuedTrack.IsPlaying,
-                               Converter={StaticResource BooleanVisibilityConverter}}" />
-                    <TextBlock Margin="5,0,0,0"
-                               VerticalAlignment="Bottom"
-                               Foreground="Red"
-                               Text="!"
-                               Visibility="{Binding Path=QueuedTrack.IsFaulted,
-                               Converter={StaticResource BooleanVisibilityConverter}}" />
-                </Grid>
+                    <Grid Grid.Column="0">
+                        <TextBlock VerticalAlignment="Center" FontFamily="WebDings" FontSize="36" Foreground="LightGreen" Text="4"
+                               Visibility="{Binding Path=QueuedTrack.IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}" />
+                        <TextBlock Margin="5,0,0,0" VerticalAlignment="Bottom" FontSize="36" Foreground="Red" Text="!"
+                               Visibility="{Binding Path=QueuedTrack.IsFaulted, Converter={StaticResource BooleanVisibilityConverter}}" />
+                    </Grid>
 
-                <TextBlock x:Name="TrackName"
-                           Grid.Column="1"
-                           VerticalAlignment="Bottom"
-                           FontSize="14"
+                    <TextBlock x:Name="TrackName" Grid.Column="1" VerticalAlignment="Bottom" Style="{StaticResource ListTextStyle}"
                            ReusableBehaviours:FadeTrimming.IsEnabled="True"
                            ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                            Text="{Binding Path=QueuedTrack.Name}" />
-                <TextBlock x:Name="AlbumName"
-                           Grid.Column="2"
-                           Margin="5,0,0,2"
-                           VerticalAlignment="Bottom"
-                           FontSize="9"
-                           Foreground="Gray"
+                    <TextBlock x:Name="AlbumName" Grid.Column="2" Margin="5,0,0,2" VerticalAlignment="Bottom"
+                           Style="{StaticResource ListTextStyle}" Opacity="0.6"
                            ReusableBehaviours:FadeTrimming.IsEnabled="True"
                            ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                            Text="{Binding Path=QueuedTrack.AlbumName}" />
-                <TextBlock x:Name="TrackDuration"
-                           Grid.Column="3"
-                           Margin="0,0,3,0"
-                           VerticalAlignment="Bottom"
-                           Text="{Binding Path=QueuedTrack.Track.Duration,
-                           Converter={StaticResource TimeSpanConverter}}"
-                           TextAlignment="Right" />
-            </Grid>
+                    <TextBlock x:Name="TrackDuration" Grid.Column="3" Margin="0,0,3,0" VerticalAlignment="Bottom" TextAlignment="Right"
+                           Style="{StaticResource ListTextStyle}"
+                           Text="{Binding Path=QueuedTrack.Track.Duration, Converter={StaticResource TimeSpanConverter}}" />
+                </Grid>
 
+                <Grid x:Name="highlight" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="35" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0">
+                        <TextBlock VerticalAlignment="Center" FontFamily="WebDings" FontSize="36" Foreground="LightGreen" Text="4"
+                               Visibility="{Binding Path=QueuedTrack.IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}" />
+                        <TextBlock Margin="5,0,0,0" VerticalAlignment="Bottom" FontSize="36" Foreground="Red" Text="!"
+                               Visibility="{Binding Path=QueuedTrack.IsFaulted, Converter={StaticResource BooleanVisibilityConverter}}" />
+                    </Grid>
+
+                    <TextBlock Grid.Column="1" VerticalAlignment="Bottom" Style="{StaticResource ListHighlightTextStyle}"
+                           ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                           ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                           Text="{Binding Path=QueuedTrack.Name}" />
+                    <TextBlock Grid.Column="2" Margin="5,0,0,2" VerticalAlignment="Bottom"
+                           Style="{StaticResource ListHighlightTextStyle}" Opacity="0.6"
+                           ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                           ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                           Text="{Binding Path=QueuedTrack.AlbumName}" />
+                    <TextBlock Grid.Column="3" Margin="0,0,3,0" VerticalAlignment="Bottom" TextAlignment="Right"
+                           Style="{StaticResource ListHighlightTextStyle}"
+                           Text="{Binding Path=QueuedTrack.Track.Duration, Converter={StaticResource TimeSpanConverter}}" />
+                </Grid>
+            </Grid>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding Path=QueuedTrack.HasPlayed}" Value="true">
                     <Setter TargetName="TrackName" Property="Foreground" Value="LightGray" />
                     <Setter TargetName="AlbumName" Property="Foreground" Value="LightGray" />
                     <Setter TargetName="TrackDuration" Property="Foreground" Value="LightGray" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="True">
+                    <Setter TargetName="normal" Property="Visibility" Value="Collapsed"/>
+                    <Setter TargetName="highlight" Property="Visibility" Value="Visible"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
 
@@ -78,24 +92,31 @@
     </UserControl.Resources>
 
     <Grid>
-        <ListBox x:Name="PlayQueueListView"
+        <ListBox Margin="5,0,15,5"
                  Background="Transparent"
-                 Grid.Row="0"
                  Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex, Mode=OneWay}"
                  BorderThickness="0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                 ScrollViewer.VerticalScrollBarVisibility="Hidden"
                  ItemsSource="{Binding Path=QueueList}"
                  ItemTemplate="{StaticResource QueueListItem}"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 ScrollViewer.VerticalScrollBarVisibility="Visible"
-                 SelectedIndex="{Binding Path=SelectedIndex}"
-                 SelectedItem="{Binding Path=SelectedItem}">
+                 SelectedItem="{Binding SelectedItem}">
             <i:Interaction.Behaviors>
                 <ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
             </i:Interaction.Behaviors>
 
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                <Grid>
+                                    <ContentPresenter x:Name="ContentHost" HorizontalAlignment="Stretch"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Path=QueuedTrack.IsPlaying}" Value="true">
                             <Setter Property="FontWeight" Value="Bold" />
