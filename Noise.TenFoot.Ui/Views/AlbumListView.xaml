@@ -16,26 +16,89 @@
     <UserControl.Resources>
         <DataTemplate x:Key="BasicAlbum" DataType="{x:Type Dto:DbAlbum}">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="100" />
-                </Grid.ColumnDefinitions>
+                <Grid x:Name="normal">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Grid.Column="0" Style="{StaticResource ListTextStyle}" Text="{Binding Name}"/>
 
-                <TextBlock Grid.Column="0"
-                           FontSize="18"
-                           Text="{Binding Path=Name}" />
-                <TextBlock Grid.Column="1"
-                           Margin="0,0,7,0"
-                           Text="{Binding Path=TrackCount}"
-                           TextAlignment="Right" />
+                    <StackPanel Grid.Column="2" Margin="0,0,9,0" Orientation="Horizontal">
+                        <StackPanel.Visibility>
+                            <MultiBinding Converter="{StaticResource EmptyStringVisibilityConverter}">
+                                <Binding Converter="{StaticResource PublishedYearConverter}" Path="PublishedYear" />
+                            </MultiBinding>
+                        </StackPanel.Visibility>
+                        <TextBlock Style="{StaticResource ListTextStyle}" Text="(" />
+                        <TextBlock Style="{StaticResource ListTextStyle}" Text="{Binding PublishedYear, Converter={StaticResource PublishedYearConverter}}" />
+                        <TextBlock Style="{StaticResource ListTextStyle}" Text=")" />
+                    </StackPanel>
+                    
+                    <StackPanel Grid.Column="3" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource ListTextStyle}" TextAlignment="Right" Text="{Binding TrackCount}"/>
+                        <TextBlock Style="{StaticResource ListTextStyle}" Opacity="0.8" Text=" tracks"/>
+                    </StackPanel>
+                </Grid>
+                
+                <Grid x:Name="highlight" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Style="{StaticResource ListHighlightTextStyle}" Text="{Binding Name}"/>
+
+                    <StackPanel Grid.Column="2" Margin="0,0,9,0" Orientation="Horizontal">
+                        <StackPanel.Visibility>
+                            <MultiBinding Converter="{StaticResource EmptyStringVisibilityConverter}">
+                                <Binding Converter="{StaticResource PublishedYearConverter}" Path="PublishedYear" />
+                            </MultiBinding>
+                        </StackPanel.Visibility>
+                        <TextBlock Style="{StaticResource ListHighlightTextStyle}" Text="(" />
+                        <TextBlock Style="{StaticResource ListHighlightTextStyle}" Text="{Binding PublishedYear, Converter={StaticResource PublishedYearConverter}}" />
+                        <TextBlock Style="{StaticResource ListHighlightTextStyle}" Text=")" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="3" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource ListHighlightTextStyle}" TextAlignment="Right" Text="{Binding TrackCount}"/>
+                        <TextBlock Style="{StaticResource ListHighlightTextStyle}" Opacity="0.8" Text=" tracks"/>
+                    </StackPanel>
+                </Grid>
             </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="True">
+                    <Setter TargetName="normal" Property="Visibility" Value="Collapsed"/>
+                    <Setter TargetName="highlight" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
+        
+        <Style x:Key="ListItemStyle" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Grid>
+                            <ContentPresenter x:Name="ContentHost" Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <Grid>
-        <ListBox Margin="7,0"
+        <ListBox Margin="11,0"
                  HorizontalContentAlignment="Stretch"
                  Background="Transparent"
+                 BorderThickness="0"
+                 ItemContainerStyle="{StaticResource ListItemStyle}"
                  ItemsSource="{Binding ItemList}"
                  SelectedItem="{Binding SelectedItem}"
                  ItemTemplate="{StaticResource BasicAlbum}" />

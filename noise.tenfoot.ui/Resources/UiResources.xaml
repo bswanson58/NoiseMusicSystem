@@ -47,7 +47,17 @@
     <Style x:Key="ContentTextStyle" BasedOn="{StaticResource BasicTextStyle}" TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground" Value="{StaticResource LightTextBrush}" />
     </Style>
+    
+    <Style x:Key="ListTextStyle" BasedOn="{StaticResource BasicTextStyle}" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{StaticResource LightTextBrush}" />
+        <Setter Property="FontSize" Value="28"/>
+    </Style>
 
+    <Style x:Key="ListHighlightTextStyle" BasedOn="{StaticResource BasicTextStyle}" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{StaticResource FocusBrush}" />
+        <Setter Property="FontSize" Value="32"/>
+    </Style>
+    
     <Style x:Key="HighlightTextStyle" BasedOn="{StaticResource BasicTextStyle}" TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground" Value="{StaticResource FocusBrush}" />
     </Style>
