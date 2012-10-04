@@ -4,9 +4,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui">
 
-        <i:Interaction.Behaviors>
-            <Behaviours:FullScreenBehavior FullScreenOnMaximize="True" RestoreOnEscape="True" />
-            <Behaviours:MouseHideBehavior/>
+    <i:Interaction.Behaviors>
+        <Behaviours:FullScreenBehavior FullScreenOnStartup="False"  FullScreenOnMaximize="True" RestoreOnEscape="True" />
+        <Behaviours:MouseHideBehavior Timeout="2.0"/>
     </i:Interaction.Behaviors>
 
     <Grid>

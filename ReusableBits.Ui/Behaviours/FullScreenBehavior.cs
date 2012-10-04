@@ -10,9 +10,10 @@ namespace ReusableBits.Ui.Behaviours {
 	//<Window ... >
     //<i:Interaction.Behaviors>
     //    <Behaviours:FullScreenBehavior
-    //            FullScreenOnDoubleClick="True"
-    //            FullScreenOnMaximize="True"
-    //            RestoreOnEscape="True" />
+	//				FullScreenOnStartup="False"
+    //				FullScreenOnDoubleClick="True"
+    //				FullScreenOnMaximize="True"
+    //				RestoreOnEscape="True" />
 	//
     //</i:Interaction.Behaviors>
 	//</Window>
@@ -28,9 +29,21 @@ namespace ReusableBits.Ui.Behaviours {
 
 		private HwndSource mHwndSource;
 
+		public static readonly DependencyProperty FullScreenOnStartupProperty =
+			DependencyProperty.Register(
+				"FullScreenOnStartup", typeof( bool ), typeof( FullScreenBehavior ), new PropertyMetadata( default( bool )));
+
+		/// <summary>
+		/// Whether or not the window should maximize at atartup.
+		/// </summary>
+		public bool FullScreenOnStartup {
+			get { return (bool)GetValue( FullScreenOnStartupProperty ); }
+			set { SetValue( FullScreenOnStartupProperty, value ); }
+		}
+
 		public static readonly DependencyProperty FullScreenOnMaximizeProperty =
 			DependencyProperty.Register(
-				"FullScreenOnMaximize", typeof( bool ), typeof( FullScreenBehavior ), new PropertyMetadata( default( bool ) ) );
+				"FullScreenOnMaximize", typeof( bool ), typeof( FullScreenBehavior ), new PropertyMetadata( default( bool )));
 
 		/// <summary>
 		/// Whether or not user initiated maximizing should put the window into full-screen mode.
@@ -42,7 +55,7 @@ namespace ReusableBits.Ui.Behaviours {
 
 		public static readonly DependencyProperty FullScreenOnDoubleClickProperty =
 			DependencyProperty.Register(
-				"FullScreenOnDoubleClick", typeof( bool ), typeof( FullScreenBehavior ), new PropertyMetadata( default( bool ) ) );
+				"FullScreenOnDoubleClick", typeof( bool ), typeof( FullScreenBehavior ), new PropertyMetadata( default( bool )));
 
 		/// <summary>
 		/// Whether or not double clicking the window's contents should put the window into full-screen mode.
@@ -53,7 +66,7 @@ namespace ReusableBits.Ui.Behaviours {
 		}
 
 		public static readonly DependencyProperty RestoreOnEscapeProperty = DependencyProperty.Register(
-			"RestoreOnEscape", typeof( bool ), typeof( FullScreenBehavior ), new PropertyMetadata( default( bool ) ) );
+			"RestoreOnEscape", typeof( bool ), typeof( FullScreenBehavior ), new PropertyMetadata( default( bool )));
 
 		/// <summary>
 		/// Whether or not pressing escape while in full screen mode returns to windowed mode.
@@ -115,9 +128,10 @@ namespace ReusableBits.Ui.Behaviours {
 		protected override void OnAttached() {
 			base.OnAttached();
 
-			AssociatedObject.SourceInitialized += Window_SourceInitialized;
-			AssociatedObject.MouseDoubleClick += Window_MouseDoubleClick;
-			AssociatedObject.KeyDown += Window_KeyDown;
+			AssociatedObject.Loaded += OnLoaded;
+			AssociatedObject.SourceInitialized += OnSourceInitialized;
+			AssociatedObject.MouseDoubleClick += OnMouseDoubleClick;
+			AssociatedObject.KeyDown += OnKeyDown;
 
 			AttachHook();
 		}
@@ -129,9 +143,10 @@ namespace ReusableBits.Ui.Behaviours {
 		protected override void OnDetaching() {
 			DetachHook();
 
-			AssociatedObject.SourceInitialized -= Window_SourceInitialized;
-			AssociatedObject.MouseDoubleClick -= Window_MouseDoubleClick;
-			AssociatedObject.KeyDown -= Window_KeyDown;
+			AssociatedObject.Loaded -= OnLoaded;
+			AssociatedObject.SourceInitialized -= OnSourceInitialized;
+			AssociatedObject.MouseDoubleClick -= OnMouseDoubleClick;
+			AssociatedObject.KeyDown -= OnKeyDown;
 
 			base.OnDetaching();
 		}
@@ -186,12 +201,18 @@ namespace ReusableBits.Ui.Behaviours {
 			return IntPtr.Zero;
 		}
 
+		private void OnLoaded( object sender, RoutedEventArgs args ) {
+			if( FullScreenOnStartup ) {
+				SetIsFullScreen( AssociatedObject, true );
+			}
+		}
+
 		/// <summary>
 		/// Handles the SourceInitialized event of the Window.
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The instance containing the event data.</param>
-		private void Window_SourceInitialized( object sender, EventArgs e ) {
+		private void OnSourceInitialized( object sender, EventArgs e ) {
 			AttachHook();
 		}
 
@@ -200,7 +221,7 @@ namespace ReusableBits.Ui.Behaviours {
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The instance containing the event data.</param>
-		private void Window_MouseDoubleClick( object sender, MouseButtonEventArgs e ) {
+		private void OnMouseDoubleClick( object sender, MouseButtonEventArgs e ) {
 			if( e.Handled == false ) {
 				if( FullScreenOnDoubleClick ) {
 					bool current = GetIsFullScreen( AssociatedObject );
@@ -214,7 +235,7 @@ namespace ReusableBits.Ui.Behaviours {
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The instance containing the event data.</param>
-		private void Window_KeyDown( object sender, KeyEventArgs e ) {
+		private void OnKeyDown( object sender, KeyEventArgs e ) {
 			if( e.Key == Key.Escape &&
 			    e.Handled == false ) {
 				if( RestoreOnEscape ) {
