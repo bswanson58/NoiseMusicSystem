@@ -65,7 +65,21 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		private void DequeueItem() {
-			EventAggregator.Publish( new Events.DequeueTrack( SelectedItem.QueuedTrack.Track ));
+			if( QueueList.Any()) {
+				if( SelectedItem != null ) {
+					EventAggregator.Publish( new Events.DequeueTrack( SelectedItem.QueuedTrack.Track ));
+				}
+				else {
+					var playedItems = QueueList.Count( item => item.QueuedTrack.HasPlayed );
+
+					if( playedItems > 0 ) {
+						Execute_ClearPlayed();	
+					}
+					else {
+						Execute_ClearQueue( this );
+					}
+				}
+			}
 		}
 
 		public void Handle( InputEvent input ) {
@@ -80,9 +94,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 						break;
 
 					case InputCommand.Dequeue:
-						if( SelectedItem != null ) {
-							DequeueItem();
-						}
+						DequeueItem();
 						break;
 
 					case InputCommand.Back:
