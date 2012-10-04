@@ -83,6 +83,7 @@
       <HintPath>..\packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml">
@@ -182,6 +183,10 @@
     <ProjectReference Include="..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
       <Project>{8930138B-F96A-4A56-84CF-D660730989C9}</Project>
       <Name>ReusableBits.Mvvm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReusableBits.Ui\ReusableBits.Ui.csproj">
+      <Project>{704bd4a9-2fc2-4716-ab94-d3714a6acc39}</Project>
+      <Name>ReusableBits.Ui</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

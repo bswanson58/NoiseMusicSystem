@@ -1,6 +1,12 @@
 ﻿<Window x:Class="Noise.TenFooter.ShellView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui">
+
+        <i:Interaction.Behaviors>
+            <Behaviours:FullScreenBehavior FullScreenOnMaximize="True" RestoreOnEscape="True" />
+        </i:Interaction.Behaviors>
 
     <Grid>
         <Grid.Background>
@@ -36,7 +42,7 @@
         </Grid>
 
         <Grid Grid.Row="1">
-            <Rectangle Fill="{StaticResource ContentBackgroundBrush}" Opacity="0.05" />
+            <Rectangle Fill="{StaticResource ContentBackgroundBrush}" Opacity="0.07" />
 
             <ContentControl x:Name="ActiveItem" Margin="7,0" />
         </Grid>
