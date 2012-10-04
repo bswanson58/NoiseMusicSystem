@@ -27,7 +27,8 @@
         </StackPanel>
 
         <TextBlock Grid.Column="0" Margin="15" FontSize="24" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource PlayingBrush}"
-                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Opacity="0.5" 
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Opacity="0.5"
+                   Visibility="{Binding TrackTime, Converter={StaticResource TimeSpanVisibilityConverter}}"
                    Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" />
 
         <!-- Transport Controls -->

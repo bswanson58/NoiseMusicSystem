@@ -12,5 +12,6 @@
     <ValueConverters:RelativeTimeConverter x:Key="RelativeTimeConverter" />
     <ValueConverters:StringTruncateConverter x:Key="StringTruncateConverter" />
     <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter" />
+    <ValueConverters:TimeSpanVisibilityConverter x:Key="TimeSpanVisibilityConverter" />
     <ValueConverters:VolumeLevelConverter x:Key="VolumeLevelConverter" />
 </ResourceDictionary>

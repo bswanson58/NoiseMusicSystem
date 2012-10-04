@@ -264,6 +264,7 @@
     <Compile Include="ValueConverters\RelativeTimeConverter.cs" />
     <Compile Include="ValueConverters\StringTruncateConverter.cs" />
     <Compile Include="ValueConverters\TimeSpanConverter.cs" />
+    <Compile Include="ValueConverters\TimeSpanVisibilityConverter.cs" />
     <Compile Include="ValueConverters\VolumeLevelConverter.cs" />
     <Compile Include="ViewModels\AlbumEditDialogModel.cs" />
     <Compile Include="ViewModels\AlbumTracksViewModel.cs" />
