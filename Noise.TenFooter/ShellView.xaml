@@ -6,7 +6,8 @@
 
         <i:Interaction.Behaviors>
             <Behaviours:FullScreenBehavior FullScreenOnMaximize="True" RestoreOnEscape="True" />
-        </i:Interaction.Behaviors>
+            <Behaviours:MouseHideBehavior/>
+    </i:Interaction.Behaviors>
 
     <Grid>
         <Grid.Background>
