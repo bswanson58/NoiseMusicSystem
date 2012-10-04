@@ -90,6 +90,15 @@
                  ItemContainerStyle="{StaticResource ListItemStyle}"
                  ItemsSource="{Binding ItemList}"
                  SelectedItem="{Binding SelectedItem}"
-                 ItemTemplate="{StaticResource BasicAlbum}" />
+                 ItemTemplate="{StaticResource BasicAlbum}">
+
+            <ListBox.OpacityMask>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Offset="0" Color="Black" />
+                    <GradientStop Offset="0.85" Color="Black" />
+                    <GradientStop Offset="1" Color="Transparent" />
+                </LinearGradientBrush>
+            </ListBox.OpacityMask>
+        </ListBox>
     </Grid>
 </UserControl>

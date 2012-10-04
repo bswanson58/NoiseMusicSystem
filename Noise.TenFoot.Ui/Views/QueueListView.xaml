@@ -92,7 +92,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <ListBox Margin="5,0,15,5"
+        <ListBox Margin="15,0"
                  Background="Transparent"
                  Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex, Mode=OneWay}"
                  BorderThickness="0"
@@ -127,6 +127,14 @@
                     </Style.Triggers>
                 </Style>
             </ListBox.ItemContainerStyle>
+            
+            <ListBox.OpacityMask>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Offset="0" Color="Black" />
+                    <GradientStop Offset="0.85" Color="Black" />
+                    <GradientStop Offset="1" Color="Transparent" />
+                </LinearGradientBrush>
+            </ListBox.OpacityMask>
         </ListBox>
 
     </Grid>

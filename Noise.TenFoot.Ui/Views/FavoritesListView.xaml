@@ -5,10 +5,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours;assembly=Noise.UI"
              xmlns:Adapters="clr-namespace:Noise.UI.Adapters;assembly=Noise.UI"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
     <UserControl.Resources>
+        <ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
+            <Grid Margin="5,55,5,0">
+                <TextBlock Style="{StaticResource ListTextStyle}" Foreground="LightGray" HorizontalAlignment="Center" Text="There are no favorites!" />
+            </Grid>
+        </ControlTemplate>
+
         <DataTemplate x:Key="FavoritesTemplate" DataType="{x:Type Adapters:FavoriteViewNode}">
             <Grid>
                 <Grid x:Name="normal">
@@ -49,6 +57,18 @@
                  ItemsSource="{Binding FavoritesList}"
                  SelectedItem="{Binding SelectedItem}"
                  ItemContainerStyle="{StaticResource ListItemStyle}"
-                 ItemTemplate="{StaticResource FavoritesTemplate}" />
+                 ItemTemplate="{StaticResource FavoritesTemplate}">
+            <i:Interaction.Behaviors>
+                <ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
+            </i:Interaction.Behaviors>
+
+            <ListBox.OpacityMask>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Offset="0" Color="Black" />
+                    <GradientStop Offset="0.85" Color="Black" />
+                    <GradientStop Offset="1" Color="Transparent" />
+                </LinearGradientBrush>
+            </ListBox.OpacityMask>
+        </ListBox>
     </Grid>
 </UserControl>

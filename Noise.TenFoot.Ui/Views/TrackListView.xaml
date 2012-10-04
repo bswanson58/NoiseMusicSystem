@@ -58,7 +58,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <ListBox Margin="15,0,15,5"
+        <ListBox Margin="15,0"
                  Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding RelativeSource={RelativeSource Self}, Path=SelectedIndex}"
                  HorizontalContentAlignment="Stretch"
                  Background="Transparent"
@@ -68,6 +68,15 @@
                  ItemContainerStyle="{StaticResource ListItemStyle}"
                  ItemsSource="{Binding ItemList}"
                  SelectedItem="{Binding SelectedItem}"
-                 ItemTemplate="{StaticResource BasicTrack}" />
+                 ItemTemplate="{StaticResource BasicTrack}">
+
+            <ListBox.OpacityMask>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Offset="0" Color="Black" />
+                    <GradientStop Offset="0.85" Color="Black" />
+                    <GradientStop Offset="1" Color="Transparent" />
+                </LinearGradientBrush>
+            </ListBox.OpacityMask>
+        </ListBox>
     </Grid>
 </UserControl>

@@ -12,7 +12,6 @@
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
                 <GradientStop Offset="0" Color="{StaticResource GradientStartColor}" />
-<!--                <GradientStop Offset="0.845" Color="{StaticResource GradientMid}" /> -->
                 <GradientStop Offset="1" Color="{StaticResource GradientStopColor}" />
             </LinearGradientBrush>
         </Grid.Background>
