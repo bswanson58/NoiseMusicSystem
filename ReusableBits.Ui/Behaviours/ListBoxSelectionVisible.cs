@@ -3,6 +3,12 @@ using System.Windows.Controls;
 using System.Windows.Interactivity;
 
 namespace ReusableBits.Ui.Behaviours {
+	// usage: ( Timeout is in seconds )
+	//<ListBox ... >
+    //<i:Interaction.Behaviors>
+    //    <Behaviours:ListBoxSelectionVisible />
+    //</i:Interaction.Behaviors>
+	//</ListBox>
 	public class ListBoxSelectionVisible : Behavior<ListBox> {
 		/// <summary>
 		///  When Beahvior is attached
