@@ -3,13 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Controls="clr-namespace:Noise.UI.Controls;assembly=Noise.UI" 
+             xmlns:Controls="clr-namespace:Noise.UI.Controls;assembly=Noise.UI"
+             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
@@ -19,13 +20,13 @@
                                           ImageWidth="{Binding Path=ImageWidth, Mode=OneWayToSource}"
                                           SpectrumImage="{Binding Path=SpectrumImage, Mode=OneWay}" />
         <StackPanel Orientation="Vertical" Margin="15">
-            <TextBlock Grid.Column="0" FontSize="32" Opacity="0.7" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource DarkTextBrush}" 
-                       Text="{Binding TrackName}" />
-            <TextBlock Grid.Column="0" FontSize="18" Opacity="0.5" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource DarkTextBrush}"
-                       Text="{Binding AlbumName}" />
+            <TextBlock Grid.Column="0" FontSize="36" Opacity="0.7" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource PlayingBrush}" 
+                       Text="{Binding TrackName}" ReusableBehaviours:FadeTrimming.IsEnabled="True" />
+            <TextBlock Grid.Column="0" FontSize="22" Opacity="0.5" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource PlayingBrush}"
+                       Text="{Binding AlbumName}" ReusableBehaviours:FadeTrimming.IsEnabled="True" />
         </StackPanel>
 
-        <TextBlock Grid.Column="0" Margin="15" FontSize="24" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource DarkTextBrush}"
+        <TextBlock Grid.Column="0" Margin="15" FontSize="24" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource PlayingBrush}"
                    HorizontalAlignment="Right" VerticalAlignment="Bottom" Opacity="0.5" 
                    Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" />
 

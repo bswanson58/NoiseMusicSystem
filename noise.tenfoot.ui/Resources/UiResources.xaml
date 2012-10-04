@@ -7,6 +7,7 @@
     <Color x:Key="PrimaryHighlight">#4C81E4</Color>
     <Color x:Key="PrimaryLight">#749CE4</Color>
     <Color x:Key="FocusColor">#FFCF75</Color>
+    <Color x:Key="PlayingColor">#3BE0CE</Color>
 
     <!-- Logical Color Mappings -->
     <DynamicResource x:Key="GradientStartColor" ResourceKey="PrimaryLight"/>
@@ -23,6 +24,7 @@
     <SolidColorBrush x:Key="HighlightBrush" Color="{StaticResource PrimaryHighlight}"/>
     <SolidColorBrush x:Key="LightBrush" Color="{StaticResource PrimaryLight}"/>
     <SolidColorBrush x:Key="FocusBrush" Color="{StaticResource FocusColor}"/>
+    <SolidColorBrush x:Key="PlayingBrush" Color="{StaticResource PlayingColor}"/>
 
     <!-- Component Text Mapppings -->
     <SolidColorBrush x:Key="ButtonFocusBrush" Color="{StaticResource PrimaryColor}"/>
