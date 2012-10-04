@@ -99,6 +99,7 @@
                  SelectedItem="{Binding SelectedItem}">
             <i:Interaction.Behaviors>
                 <ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
+                <ReusableBehaviours:ListBoxSelectionVisible/>
             </i:Interaction.Behaviors>
 
             <ListBox.ItemContainerStyle>

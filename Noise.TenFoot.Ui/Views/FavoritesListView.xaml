@@ -47,14 +47,14 @@
     </UserControl.Resources>
 
     <Grid>
-        <ListBox Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding RelativeSource={RelativeSource Self}, Path=SelectedIndex}"
-                 ItemsSource="{Binding FavoritesList}"
+        <ListBox ItemsSource="{Binding FavoritesList}"
                  SelectedItem="{Binding SelectedItem}"
                  Style="{StaticResource ListBoxStyle}"
                  ItemContainerStyle="{StaticResource ListItemStyle}"
                  ItemTemplate="{StaticResource FavoritesTemplate}">
             <i:Interaction.Behaviors>
                 <ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
+                <ReusableBehaviours:ListBoxSelectionVisible/>
             </i:Interaction.Behaviors>
         </ListBox>
     </Grid>

@@ -6,7 +6,10 @@
              xmlns:Dto="clr-namespace:Noise.Infrastructure.Dto;assembly=Noise.Infrastructure"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ViewModels="clr-namespace:Noise.TenFoot.Ui.ViewModels"
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours;assembly=Noise.UI" cal:Bind.AtDesignTime="True"
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours;assembly=Noise.UI"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             cal:Bind.AtDesignTime="True"
              d:DataContext="{d:DesignInstance ViewModels:ArtistListViewModel,
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="500"
@@ -80,11 +83,14 @@
     </UserControl.Resources>
     
     <Grid>
-        <ListBox Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding RelativeSource={RelativeSource Self}, Path=SelectedIndex}"
-                 Style="{StaticResource ListBoxStyle}"
+        <ListBox Style="{StaticResource ListBoxStyle}"
                  ItemContainerStyle="{StaticResource ListItemStyle}"
                  ItemsSource="{Binding ItemList}"
                  SelectedItem="{Binding SelectedItem}"
-                 ItemTemplate="{StaticResource BasicAlbum}"/>
+                 ItemTemplate="{StaticResource BasicAlbum}">
+            <i:Interaction.Behaviors>
+                <ReusableBehaviours:ListBoxSelectionVisible/>
+            </i:Interaction.Behaviors>
+        </ListBox>
     </Grid>
 </UserControl>
