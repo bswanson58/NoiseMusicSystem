@@ -46,13 +46,13 @@ namespace Noise.TenFoot.Ui.Input {
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Dequeue, Key = Keys.Next });
 
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Home, Key = Keys.Home });
-			mInputBindings.Add( new InputBinding { Command = InputCommand.Home, Key = Keys.Control | Keys.O });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Home, Key = Keys.T, Shift = true, Control = true });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Library, Key = Keys.L });
-			mInputBindings.Add( new InputBinding { Command = InputCommand.Library, Key = Keys.Control | Keys.G });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Library, Key = Keys.M, Control = true });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Queue, Key = Keys.Q });
-			mInputBindings.Add( new InputBinding { Command = InputCommand.Queue, Key = Keys.Control | Keys.T });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Queue, Key = Keys.I, Control = true });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Favorites, Key = Keys.F });
-			mInputBindings.Add( new InputBinding { Command = InputCommand.Favorites, Key = Keys.Control | Keys.Shift | Keys.M });
+			mInputBindings.Add( new InputBinding { Command = InputCommand.Favorites, Key = Keys.E, Control = true });
 
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Play, Key = Keys.MediaPlayPause });
 			mInputBindings.Add( new InputBinding { Command = InputCommand.Pause, Key = Keys.MediaPlayPause });
