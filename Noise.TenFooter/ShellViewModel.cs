@@ -65,6 +65,8 @@ namespace Noise.TenFooter {
 		}
 
 		protected override void OnActivate() {
+			DisplayName = "Noise At 10feet";
+
 			ActivateItem( mHomeView );
 		}
 

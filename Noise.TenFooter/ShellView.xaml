@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui">
+        xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+        Icon="Noise.ico">
 
     <i:Interaction.Behaviors>
         <Behaviours:FullScreenBehavior FullScreenOnStartup="False"  FullScreenOnMaximize="True" RestoreOnEscape="True" />
