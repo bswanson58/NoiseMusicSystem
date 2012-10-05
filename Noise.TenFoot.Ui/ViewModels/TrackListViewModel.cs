@@ -50,7 +50,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private void RetrieveTracksForAlbum( long albumId ) {
 			TrackRetrievalTaskHandler.StartTask( () => {
 			                                     	using( var trackList = mTrackProvider.GetTrackList( albumId )) {
-			                                     		ItemList.AddRange( trackList.List );
+			                                     		ItemList.AddRange( from track in trackList.List 
+																		   orderby track.VolumeName, track.TrackNumber ascending
+																		   select track );
 			                                     	}
 			                                     },
 												 () => { SelectedItem = ItemList.FirstOrDefault(); }, 
