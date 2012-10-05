@@ -55,7 +55,7 @@
 
             <ContentControl x:Name="PlayerView" Grid.Column="0" />
             
-            <TextBlock Grid.Column="1" Margin="15" VerticalAlignment="Bottom" FontSize="24"
+            <TextBlock Grid.Column="1" Margin="15" VerticalAlignment="Bottom" FontSize="28"
                        Style="{StaticResource BasicTextStyle}" Text="{Binding CurrentTime, Converter={StaticResource TimeFormatter}}" />
         </Grid>
     </Grid>
