@@ -54,6 +54,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 					SelectedIndex = index;
 				}
 			}
+			else {
+				SelectedIndex = -1;
+			}
 		}
 
 		private void NextItem() {
@@ -79,6 +82,8 @@ namespace Noise.TenFoot.Ui.ViewModels {
 						Execute_ClearQueue( this );
 					}
 				}
+
+				SetSelectedItem( Math.Min( SelectedIndex, QueueList.Count - 1 ));
 			}
 		}
 
