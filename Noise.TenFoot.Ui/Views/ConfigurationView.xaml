@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             Height="200"
+             Height="230"
              Width="500"
              mc:Ignorable="d" 
-             d:DesignHeight="200" d:DesignWidth="500">
+             d:DesignHeight="230" d:DesignWidth="500">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -21,6 +21,8 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="9"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="7"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="7"/>
                 <RowDefinition Height="Auto"/>
@@ -41,8 +43,12 @@
                 <Button x:Name="BrowseFolder" Grid.Column="1" Margin="7" Width="23" Content="..."/>
             </Grid>
             
-            <CheckBox x:Name="AllowInternet" Grid.Row="4" Grid.Column="1" Margin="5" Content="Allow Internet Usage"/>
-            <CheckBox x:Name="EnableRemote" Grid.Row="5" Grid.Column="1" Margin="5" Content="Enable Remote Access"/>
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="When Exhausted:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <ComboBox x:Name="ExhaustedStrategyList" Grid.Row="4" Grid.Column="1" Width="150" HorizontalAlignment="Left" Margin="7" 
+                      SelectedItem="{Binding ExhaustedStrategy}" DisplayMemberPath="Title"/>
+            
+            <CheckBox x:Name="AllowInternet" Grid.Row="6" Grid.Column="1" Margin="5" Content="Allow Internet Usage"/>
+            <CheckBox x:Name="EnableRemote" Grid.Row="7" Grid.Column="1" Margin="5" Content="Enable Remote Access"/>
         </Grid>
         
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5" HorizontalAlignment="Right">
