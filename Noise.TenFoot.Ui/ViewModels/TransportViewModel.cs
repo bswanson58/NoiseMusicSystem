@@ -17,10 +17,11 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		private void PlayOrPause() {
-			if( CanExecute_Play( null )) {
-				Execute_Play( null );
+			if( CanExecute_Pause( null )) {
+				Execute_Pause( null );
 			}
-			else {Execute_Pause( null );
+			else {
+				Execute_Play( null );
 			}
 		}
 
