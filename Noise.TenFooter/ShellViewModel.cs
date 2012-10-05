@@ -11,19 +11,24 @@ using Noise.UI.ViewModels;
 namespace Noise.TenFooter {
     public class ShellViewModel : Conductor<object>.Collection.OneActive, IShell,
 								  IHandle<Events.NavigateHome>, IHandle<Events.NavigateToScreen>, IHandle<Events.NavigateReturn> {
-		private readonly IEventAggregator	mEventAggregator;
-		private readonly IHome				mHomeView;
-		private readonly TransportViewModel	mTransportViewModel;
-		private readonly InputProcessor		mInputProcessor;
-		private readonly DispatcherTimer	mTimer;
-		private DateTime					mCurrentTime;
-		private string						mScreenTitle;
-		private string						mContextTitle;
+		private readonly IEventAggregator		mEventAggregator;
+		private readonly IWindowManager			mWindowManager;
+		private readonly IHome					mHomeView;
+		private readonly ConfigurationViewModel	mConfiguration;
+		private readonly TransportViewModel		mTransportViewModel;
+		private readonly InputProcessor			mInputProcessor;
+		private readonly DispatcherTimer		mTimer;
+		private DateTime						mCurrentTime;
+		private string							mScreenTitle;
+		private string							mContextTitle;
+		private bool							mDialogActive;
 
-		public ShellViewModel( IEventAggregator eventAggregator, InputProcessor inputProcessor,
-							   IHome homeViewModel, TransportViewModel transportViewModel ) {
+		public ShellViewModel( IEventAggregator eventAggregator, InputProcessor inputProcessor, IWindowManager windowManager,
+							   IHome homeViewModel, TransportViewModel transportViewModel, ConfigurationViewModel configurationViewModel ) {
 			mEventAggregator = eventAggregator;
+			mWindowManager = windowManager;
 			mHomeView = homeViewModel;
+			mConfiguration = configurationViewModel;
 			mInputProcessor = inputProcessor;
 
 			mTransportViewModel = transportViewModel;
@@ -76,8 +81,25 @@ namespace Noise.TenFooter {
 			if( view is Window ) {
 				var helper = new WindowInteropHelper( view as Window );
 
-				mInputProcessor.Initialize( helper.Handle, mHomeView.ProcessInput );
+				mInputProcessor.Initialize( helper.Handle, ProcessInput );
 			}
+		}
+
+		private void ProcessInput( InputEvent input ) {
+			if(!mDialogActive ) {
+				switch( input.Command ) {
+					case InputCommand.Configuration:
+						mDialogActive = true;
+						mWindowManager.ShowDialog( mConfiguration );
+						mDialogActive = false;
+						break;
+
+					default:
+						mHomeView.ProcessInput( input );
+						break;
+				}
+			}
+			
 		}
 
 		public void Handle( Events.NavigateHome data ) {

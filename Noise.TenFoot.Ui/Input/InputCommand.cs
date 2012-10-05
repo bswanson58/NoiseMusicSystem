@@ -21,7 +21,8 @@ namespace Noise.TenFoot.Ui.Input {
 		PreviousTrack,
 		Mute,
 		VolumeUp,
-		VolumeDown
+		VolumeDown,
+		Configuration
 	}
 
 	public class InputBinding {
