@@ -698,6 +698,21 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
+		public double PlayPositionPercentage {
+			get {
+				var retValue = 0.0D;
+
+				if( mCurrentChannel != 0 ) {
+					if(( mCurrentPosition.Ticks > 0 ) &&
+					   ( mCurrentLength > mCurrentPosition )) {
+						retValue = Math.Min( 1.0D, mCurrentPosition.TotalMilliseconds / mCurrentLength.TotalMilliseconds );
+					}
+				}
+
+				return( retValue );
+			}
+		}
+
 		public long PlayPosition {
 			get { return( mCurrentChannel != 0 ? 
 								( mCurrentPosition.Ticks < mCurrentLength.Ticks ? mCurrentPosition.Ticks : mCurrentLength.Ticks ) : 0L ); }

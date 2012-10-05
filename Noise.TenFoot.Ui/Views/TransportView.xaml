@@ -9,32 +9,51 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
         <!-- Now Playing Display -->
-        <Controls:SpectrumAnalyzerDisplay Grid.Column="0"  Margin="5"
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Controls:SpectrumAnalyzerDisplay Grid.Row="0"  Margin="5,0"
                                           ImageHeight="{Binding Path=ImageHeight, Mode=OneWayToSource}"
                                           ImageWidth="{Binding Path=ImageWidth, Mode=OneWayToSource}"
                                           SpectrumImage="{Binding Path=SpectrumImage, Mode=OneWay}" />
-        <StackPanel Orientation="Vertical" Margin="15">
-            <TextBlock Grid.Column="0" FontSize="36" Opacity="0.7" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource PlayingBrush}" 
+            
+            <!-- Track Name/Album -->
+            <StackPanel Grid.Row="0" Orientation="Vertical" Margin="15">
+                <TextBlock FontSize="36" Opacity="0.7" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource PlayingBrush}" 
                        Text="{Binding TrackName}" ReusableBehaviours:FadeTrimming.IsEnabled="True" />
-            <TextBlock Grid.Column="0" FontSize="22" Opacity="0.5" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource PlayingBrush}"
+                <TextBlock FontSize="22" Opacity="0.5" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource PlayingBrush}"
                        Text="{Binding AlbumName}" ReusableBehaviours:FadeTrimming.IsEnabled="True" />
-        </StackPanel>
+            </StackPanel>
 
-        <TextBlock Grid.Column="0" Margin="15" FontSize="24" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource PlayingBrush}"
-                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Opacity="0.5"
-                   Visibility="{Binding TrackTime, Converter={StaticResource TimeSpanVisibilityConverter}}"
-                   Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" />
+            <!-- Playing Time -->
+            <TextBlock Grid.Row="0" FontSize="24" Style="{StaticResource BasicTextStyle}" Foreground="{StaticResource PlayingBrush}"
+                       Margin="0,0,15,20" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                       Visibility="{Binding TrackTime, Converter={StaticResource TimeSpanVisibilityConverter}}"
+                       Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" />
+            
+            <!-- Playing Time Bar -->
+            <Rectangle Grid.Row="1" Height="5" Margin="5,5,5,11" StrokeThickness="0" >
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                        <GradientStop Color="{StaticResource PlayingColor}" Offset="{Binding PlayPositionPercentage}"/>
+                        <GradientStop Color="Transparent" Offset="{Binding PlayPositionPercentage}"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Grid>
 
         <!-- Transport Controls -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             
@@ -45,6 +64,7 @@
                 <Button Margin="1" Command="{Binding PreviousTrack}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaPrevious}" />
                 <Button Margin="1" Command="{Binding NextTrack}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaNext}" />
             </StackPanel>
+
         </Grid>
     </Grid>
 </UserControl>

@@ -70,6 +70,7 @@ namespace Noise.Infrastructure.Interfaces {
 		TimeSpan		TrackTime { get; }
 		void			ToggleTimeDisplay();
 		long			PlayPosition { get; set; }
+		double			PlayPositionPercentage { get; }
 		long			TrackEndPosition { get; }
 
 		BitmapSource	GetSpectrumImage( int height, int width, Color baseColor, Color peakColor, Color peakHoldColor );
