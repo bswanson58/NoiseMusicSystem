@@ -113,6 +113,7 @@
     <Compile Include="ValueConverters\BooleanVisibilityConverter.cs" />
     <Compile Include="ValueConverters\ByteImageConverter.cs" />
     <Compile Include="ValueConverters\EmptyStringVisibilityConverter.cs" />
+    <Compile Include="ValueConverters\TimeFormatter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

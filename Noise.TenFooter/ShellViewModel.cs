@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Threading;
 using Caliburn.Micro;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
@@ -13,6 +15,8 @@ namespace Noise.TenFooter {
 		private readonly IHome				mHomeView;
 		private readonly TransportViewModel	mTransportViewModel;
 		private readonly InputProcessor		mInputProcessor;
+		private readonly DispatcherTimer	mTimer;
+		private DateTime					mCurrentTime;
 		private string						mScreenTitle;
 		private string						mContextTitle;
 
@@ -24,6 +28,11 @@ namespace Noise.TenFooter {
 
 			mTransportViewModel = transportViewModel;
 			mTransportViewModel.IsActive = true;
+
+			CurrentTime = DateTime.Now;
+			mTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds( 3.0D ) };
+			mTimer.Tick += OnTimer;
+			mTimer.Start();
 
 			mEventAggregator.Subscribe( this );
 		}
@@ -39,6 +48,21 @@ namespace Noise.TenFooter {
 	    public string ContextTitle {
 		    get{ return( mContextTitle ); }
 	    }
+
+	    public DateTime CurrentTime {
+		    get{ return( mCurrentTime ); }
+			set {
+				if( mCurrentTime != value ) {
+					mCurrentTime = value;
+
+					NotifyOfPropertyChange( () => CurrentTime );
+				}
+			}
+	    }
+
+		private void OnTimer( object sender, EventArgs args ) {
+			CurrentTime = DateTime.Now;
+		}
 
 		protected override void OnActivate() {
 			ActivateItem( mHomeView );

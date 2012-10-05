@@ -11,7 +11,6 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
         <!-- Now Playing Display -->
@@ -32,12 +31,20 @@
                    Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" />
 
         <!-- Transport Controls -->
-        <StackPanel Orientation="Horizontal" Grid.Column="2" Height="75" Margin="0,0,27,17" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-            <Button Margin="1" Command="{Binding Play}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaPlay}" />
-            <Button Margin="1" Command="{Binding Pause}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaPause}" />
-            <Button Margin="1" Command="{Binding Stop}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaStop}" />
-            <Button Margin="1" Command="{Binding PreviousTrack}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaPrevious}" />
-            <Button Margin="1" Command="{Binding NextTrack}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaNext}" />
-        </StackPanel>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <StackPanel Orientation="Horizontal" Grid.Row="1" Height="75" Margin="0,17" HorizontalAlignment="Center">
+                <Button Margin="1" Command="{Binding Play}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaPlay}" />
+                <Button Margin="1" Command="{Binding Pause}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaPause}" />
+                <Button Margin="1" Command="{Binding Stop}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaStop}" />
+                <Button Margin="1" Command="{Binding PreviousTrack}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaPrevious}" />
+                <Button Margin="1" Command="{Binding NextTrack}" Style="{StaticResource TenfootButtonStyle}" Content="{StaticResource Path_MediaNext}" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>
