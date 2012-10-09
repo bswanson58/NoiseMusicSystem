@@ -58,7 +58,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			}
 		}
 
-		private void SetSelectedItem( int index ) {
+		protected void SetSelectedItem( int index ) {
 			var itemCount = mItemList.Count;
 
 			if( itemCount > 0 ) {
@@ -84,6 +84,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			SetSelectedItem((int)SelectedItemIndex - 1 );
 		}
 
+		protected virtual void Left() { }
+		protected virtual void Right() { }
+
 		protected virtual void Done() {
 			EventAggregator.Publish( new Events.NavigateReturn( this, true ));
 		}
@@ -99,9 +102,11 @@ namespace Noise.TenFoot.Ui.ViewModels {
 					break;
 
 				case InputCommand.Left:
+					Left();
 					break;
 
 				case InputCommand.Right:
+					Right();
 					break;
 
 				case InputCommand.Back:

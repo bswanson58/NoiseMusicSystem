@@ -133,6 +133,17 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			set{ SetValue( LastItemMarginProperty, value ); }
 		}
 
+		public static readonly DependencyProperty WrapItemCountProperty =
+			DependencyProperty.Register( "WrapItemCount", typeof( int ), typeof( LoopWrapPanel ),
+				new FrameworkPropertyMetadata( 0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault ));
+		/// <summary>
+		/// Indicates the number of items that will be displayed in each row/column.
+		/// </summary>
+		public int WrapItemCount {
+			get{ return((int)GetValue( WrapItemCountProperty )); }
+			set{ SetValue( WrapItemCountProperty, value ); }
+		}
+
 		/// <summary>
 		/// Provides a helper method for scrolling the panel by viewport units rather than
 		/// adjusting the Offset property (which uses logical units)
@@ -213,7 +224,6 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			double	childExtent = 0.0;
 			double	wrapTopLeft = 0.0;
 			int		wrapCount = 0;
-			int		wrapItemCount = 0;
 			double	nextEdge = 0, priorEdge = 0;
 			int		nextWrapIndex = 0, priorWrapIndex = 0;
 
@@ -237,8 +247,8 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 					childSize.Width = childExtent;
 					childSize.Height = Math.Min( finalSize.Height, child.DesiredSize.Height );
 
-					wrapItemCount = CalculateWrapCount( finalSize.Height, child.DesiredSize.Height );
-					wrapTopLeft = CalculateWrapTopLeft( finalSize.Height, child.DesiredSize.Height, wrapItemCount );
+					WrapItemCount = CalculateWrapCount( finalSize.Height, child.DesiredSize.Height );
+					wrapTopLeft = CalculateWrapTopLeft( finalSize.Height, child.DesiredSize.Height, WrapItemCount );
 					wrapOrigin.Y = wrapTopLeft;
 					childOffset.Y = childSize.Height;
 
@@ -251,8 +261,8 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 					childSize.Height = childExtent;
 					childSize.Width = Math.Min( finalSize.Width, child.DesiredSize.Width );
 
-					wrapItemCount = CalculateWrapCount( finalSize.Width, child.DesiredSize.Width );
-					wrapTopLeft = CalculateWrapTopLeft( finalSize.Width, child.DesiredSize.Width, wrapItemCount );
+					WrapItemCount = CalculateWrapCount( finalSize.Width, child.DesiredSize.Width );
+					wrapTopLeft = CalculateWrapTopLeft( finalSize.Width, child.DesiredSize.Width, WrapItemCount );
 					wrapOrigin.X = wrapTopLeft;
 					childOffset.X = childSize.Width;
 
@@ -260,11 +270,11 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 					priorEdge = wrapOrigin.Y - childExtent;
 				}
 
-				var pivotalWrapIndex = mPivotalChildIndex / wrapItemCount;
+				var pivotalWrapIndex = mPivotalChildIndex / WrapItemCount;
 
-				ArrangeWrap( pivotalWrapIndex * wrapItemCount, wrapItemCount, childOffset, wrapOrigin, childSize  );
+				ArrangeWrap( pivotalWrapIndex * WrapItemCount, WrapItemCount, childOffset, wrapOrigin, childSize  );
 
-				wrapCount = CalculateWraps( childCount, wrapItemCount );
+				wrapCount = CalculateWraps( childCount, WrapItemCount );
 				nextWrapIndex = ( pivotalWrapIndex + 1 ) % wrapCount;
 				priorWrapIndex = ( pivotalWrapIndex == 0 ) ? wrapCount - 1 : pivotalWrapIndex - 1;
 
@@ -311,14 +321,14 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 					wrapRect.Y = wrapTopLeft;
 
 					wrapRect.Width = childExtent;
-					wrapRect.Height = Math.Max( finalSize.Height, childSize.Height * wrapItemCount );
+					wrapRect.Height = Math.Max( finalSize.Height, childSize.Height * WrapItemCount );
 				}
 				else {
 					wrapRect.Y = isArrangingNext ? nextEdge : priorEdge;
 					wrapRect.Y = wrapTopLeft;
 
 					wrapRect.Height = childExtent;
-					wrapRect.Width = Math.Max( finalSize.Width, childSize.Width * wrapItemCount );
+					wrapRect.Width = Math.Max( finalSize.Width, childSize.Width * WrapItemCount );
 				}
 
 				if( isHorizontal ) {
@@ -358,10 +368,10 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 
 				if((!intersection.IsEmpty ) &&
 				   ( intersection.Width * intersection.Height > 1.0e-10 )) {
-					ArrangeWrap( wrapIndex * wrapItemCount, wrapItemCount, childOffset, wrapRect.Location, childSize );
+					ArrangeWrap( wrapIndex * WrapItemCount, WrapItemCount, childOffset, wrapRect.Location, childSize );
 				}
 				else {
-					ArrangeWrap( wrapIndex * wrapItemCount, wrapItemCount, childOffset, wrapRect.Location, new Size());
+					ArrangeWrap( wrapIndex * WrapItemCount, WrapItemCount, childOffset, wrapRect.Location, new Size());
 
 					// if there's no room for the child, set the appropriate full flag
 					if( isArrangingNext ) {
@@ -497,7 +507,7 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 
 			if(( lp != null ) &&
 			   ( lp.BringChildrenIntoView ) &&
-			   ( target != lp )) {
+			   ( !Equals( target, lp ))) {
 				UIElement child = null;
 
 				while( target != null ) {
@@ -507,7 +517,7 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 						break;
 					}
 					target = VisualTreeHelper.GetParent( target );
-					if( target == lp ) break;
+					if( Equals( target, lp )) break;
 				}
 
 				if(( child != null ) &&

@@ -24,6 +24,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	string						Context { get; private set; }
 		public	eMainMenuCommand			MenuCommand { get; private set; }
 		public	int							ScreenOrder { get; private set; }
+		public	int							WrapItemCount { get; set; }
 
 		public ArtistListViewModel( IAlbumList albumListViewModel, IArtistProvider artistProvider, IArtworkProvider artworkProvider,
 									IEventAggregator eventAggregator, IResourceProvider resourceProvider ) :
@@ -98,6 +99,14 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			if( artist != null ) {
 				DisplayItem();
 			}
+		}
+
+		protected override void Left() {
+			SetSelectedItem((int)SelectedItemIndex - WrapItemCount );
+		}
+
+		protected override void Right() {
+			SetSelectedItem((int)SelectedItemIndex + WrapItemCount );
 		}
 
 		protected override void DisplayItem() {

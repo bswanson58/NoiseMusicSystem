@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -57,7 +58,7 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			if( uie != null ) {
 				uie.ClearValue( DragOriginProperty );
 				uie.ClearValue( IsDraggingProperty );
-				if( Mouse.Captured == uie ) {
+				if( Equals( Mouse.Captured, uie )) {
 					uie.ReleaseMouseCapture();
 				}
 			}
@@ -69,7 +70,7 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			if( uie != null ) {
 				uie.ClearValue( DragOriginProperty );
 				uie.ClearValue( IsDraggingProperty );
-				if( Mouse.Captured == uie ) {
+				if( Equals( Mouse.Captured, uie )) {
 					uie.ReleaseMouseCapture();
 				}
 			}
@@ -82,7 +83,7 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 					SetIsDragging( uie, false );
 					Point dragOrigin = GetDragOrigin( uie );
 					e.Handled = true;
-					if( Mouse.Captured == uie ) {
+					if( Equals( Mouse.Captured, uie )) {
 						uie.ReleaseMouseCapture();
 					}
 					RaiseBeginDragEvent( uie, e.Device, dragOrigin, e.GetPosition( uie ) );
@@ -257,8 +258,31 @@ namespace Noise.TenFoot.Ui.Controls.LoopingListBox {
 			set{ SetValue( LastItemMarginProperty, value ); }
 		}
 
+		public static readonly DependencyProperty WrapItemCountProperty =
+			LoopWrapPanel.WrapItemCountProperty.AddOwner( typeof( LoopingWrapBox ),
+															new FrameworkPropertyMetadata( 0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault ));
+
+		/// <summary>
+		/// Indicates the number of items that will be displayed in each row/column.
+		/// </summary>
+		public int WrapItemCount {
+			get{ return((int)GetValue( WrapItemCountProperty )); }
+			set{ SetValue( WrapItemCountProperty, value ); }
+		}
+
+		private void OnWrapItemChanged( object sender, EventArgs args ) {
+			WrapItemCount = LoopPanel.WrapItemCount;
+		}
+
 		public override void OnApplyTemplate() {
 			LoopPanel = GetDescendantByType( this, typeof( LoopWrapPanel )) as LoopWrapPanel;
+
+			if( LoopPanel != null ) {
+				var desc = DependencyPropertyDescriptor.FromProperty( LoopWrapPanel.WrapItemCountProperty, typeof( LoopWrapPanel ));
+
+				desc.AddValueChanged( LoopPanel, OnWrapItemChanged );
+			}
+
 			base.OnApplyTemplate();
 		}
 
