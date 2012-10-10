@@ -39,6 +39,27 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
+		public void CanDeleteFolder() {
+			var folder = new RootFolder( 1, "path", "folder name" );
+			var sut = CreateSut();
+
+			sut.AddRootFolder( folder );
+			sut.DeleteRootFolder( folder );
+
+			using( var folderList = sut.GetRootFolderList()) {
+				folderList.List.Should().HaveCount( 0 );
+			}
+		}
+
+		[Test]
+		[ExpectedException( typeof( ArgumentNullException ))]
+		public void CannotDeleteNullFolder() {
+			var sut = CreateSut();
+
+			sut.DeleteRootFolder( null );
+		}
+
+		[Test]
 		public void CanGetRootFolderList() {
 			var folder1 = new RootFolder( 1, "path 1", "folder 1" );
 			var folder2 = new RootFolder( 2, "path 2", "folder 2" );

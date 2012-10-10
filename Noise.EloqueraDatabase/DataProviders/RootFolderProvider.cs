@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CuttingEdge.Conditions;
 using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -20,6 +21,12 @@ namespace Noise.EloqueraDatabase.DataProviders {
 			}
 
 			return( folder );
+		}
+
+		public void DeleteRootFolder( RootFolder folder ) {
+			Condition.Requires( folder ).IsNotNull();
+
+			DeleteItem( folder );
 		}
 
 		// Changes in the methods below are due to an Eloquera problem when returning an array of enums.

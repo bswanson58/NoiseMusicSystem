@@ -1,5 +1,6 @@
 ﻿using System.Data.Entity;
 using System.Linq;
+using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -21,6 +22,12 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			}
 
 			return( retValue );
+		}
+
+		public void DeleteRootFolder( RootFolder folder ) {
+			Condition.Requires( folder ).IsNotNull();
+
+			RemoveItem( folder );
 		}
 
 		public IDataProviderList<RootFolder> GetRootFolderList() {
