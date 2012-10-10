@@ -120,6 +120,10 @@ namespace Noise.TenFooter {
 			}
     	}
 
+		public void NavigateBack() {
+			NavigateReturn( ActiveItem, true );
+		}
+
 		public bool CanNavigateBack {
 			get{ return( ActiveItem != mHomeView ); }
 		}
