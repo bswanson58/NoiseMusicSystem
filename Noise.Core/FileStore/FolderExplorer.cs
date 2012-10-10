@@ -105,15 +105,20 @@ namespace Noise.Core.FileStore {
 
 		public void LoadConfiguration() {
 			var storageConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName  );
-			int rootCount;
 
-			using( var rootList = mRootFolderProvider.GetRootFolderList()) {
-				rootCount = rootList.List.Count();
-			}
-
+			// Update the database root folders to reflect the configuration.
 			if(( storageConfig != null ) &&
-			   ( rootCount == 0 ) &&
 			   ( storageConfig.RootFolders != null )) {
+				var rootList = new List<RootFolder>();
+
+				using( var roots = mRootFolderProvider.GetRootFolderList()) {
+					rootList.AddRange( roots.List );
+				}
+
+				foreach( var folder in rootList ) {
+					mRootFolderProvider.DeleteRootFolder( folder );
+				}
+
 				foreach( RootFolderConfiguration folderConfig in storageConfig.RootFolders ) {
 					var root = new RootFolder( folderConfig.Key, folderConfig.Path, folderConfig.Description );
 

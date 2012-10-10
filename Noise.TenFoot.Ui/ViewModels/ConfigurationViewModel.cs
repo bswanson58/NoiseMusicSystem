@@ -9,16 +9,18 @@ using Noise.UI.Support;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class ConfigurationViewModel : Screen {
-		private readonly IPlayQueue		mPlayQueue;
-		private readonly IDialogService	mDialogService;
-		private string					mDatabaseName;
-		private	string					mLibraryLocation;
-		private	bool					mAllowInternet;
-		private	bool					mEnableRemote;
+		private readonly IEventAggregator	mEventAggregator;
+		private readonly IPlayQueue			mPlayQueue;
+		private readonly IDialogService		mDialogService;
+		private string						mDatabaseName;
+		private	string						mLibraryLocation;
+		private	bool						mAllowInternet;
+		private	bool						mEnableRemote;
 		private	readonly BindableCollection<ExhaustedStrategyItem>	mExhaustedStrategies;
-		private ExhaustedStrategyItem	mCurrentStrategy;
+		private ExhaustedStrategyItem		mCurrentStrategy;
 
-		public ConfigurationViewModel( IPlayQueue playQueue, IDialogService dialogService ) {
+		public ConfigurationViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IDialogService dialogService ) {
+			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
 			mDialogService = dialogService;
 
@@ -94,6 +96,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 				rootFolder.Path = LibraryLocation;
 
 				NoiseSystemConfiguration.Current.Save( libraryConfig );
+				mEventAggregator.Publish( new Events.SystemConfigurationChanged());
 			}
 		}
 
