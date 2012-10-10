@@ -32,10 +32,10 @@ namespace Noise.TenFooter {
 
 			container.Configure( c => c.AddRegistry<UnityClassRegistration>());
 
-			// var report = container.WhatDoIHave();
-
 			// Use the Noise.UI PlayerViewModel, but use the TenFoot.Ui PlayerView to display it.
 			ViewLocator.AddNamespaceMapping( "Noise.UI.ViewModels", "Noise.TenFoot.Ui.Views" );
+			
+			// NoiseLogger.Current.LogInfo( "Unity Configuration: {0}", container.WhatDoIHave());
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Assembly> SelectAssemblies() {

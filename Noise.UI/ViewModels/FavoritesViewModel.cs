@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
@@ -55,32 +56,42 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void LoadFavorites() {
-			mFavoritesList.Clear();
+			try {
+				mFavoritesList.Clear();
 
-			using( var list = mArtistProvider.GetFavoriteArtists()) {
-				foreach( var artist in list.List ) {
-					mFavoritesList.Add( new FavoriteViewNode( artist, PlayArtist, SelectArtist ) );
+				using( var list = mArtistProvider.GetFavoriteArtists()) {
+					foreach( var artist in list.List ) {
+						mFavoritesList.Add( new FavoriteViewNode( artist, PlayArtist, SelectArtist ) );
+					}
 				}
-			}
-			using( var list = mAlbumProvider.GetFavoriteAlbums()) {
-				foreach( var album in list.List ) {
-					var artist = mArtistProvider.GetArtistForAlbum( album );
 
-					mFavoritesList.Add( new FavoriteViewNode( artist, album, PlayAlbum, SelectAlbum ));
+				using( var list = mAlbumProvider.GetFavoriteAlbums()) {
+					foreach( var album in list.List ) {
+						var artist = mArtistProvider.GetArtistForAlbum( album );
+
+						mFavoritesList.Add( new FavoriteViewNode( artist, album, PlayAlbum, SelectAlbum ));
+					}
 				}
-			}
-			using( var list = mTrackProvider.GetFavoriteTracks()) {
-				foreach( var track in list.List ) {
-					var album = mAlbumProvider.GetAlbumForTrack( track );
-					var artist = mArtistProvider.GetArtistForAlbum( album );
+	
+				using( var list = mTrackProvider.GetFavoriteTracks()) {
+					foreach( var track in list.List ) {
+						var album = mAlbumProvider.GetAlbumForTrack( track );
 
-					mFavoritesList.Add( new FavoriteViewNode( artist, album, track, PlayTrack, SelectTrack ));
+						if( album != null ) {
+							var artist = mArtistProvider.GetArtistForAlbum( album );
+
+							mFavoritesList.Add( new FavoriteViewNode( artist, album, track, PlayTrack, SelectTrack ));
+						}
+					}
 				}
+
+				mFavoritesList.Sort( SelectSortProperty, ListSortDirection.Ascending );
+
+				RaiseCanExecuteChangedEvent( "CanExecute_ExportFavorites" );
 			}
-
-			mFavoritesList.Sort( SelectSortProperty, ListSortDirection.Ascending );
-
-			RaiseCanExecuteChangedEvent( "CanExecute_ExportFavorites" );
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "LoadFavorites:", ex );
+			}
 		}
 
 		private static string SelectSortProperty( FavoriteViewNode node ) {
