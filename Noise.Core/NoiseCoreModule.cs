@@ -3,6 +3,7 @@ using Caliburn.Micro;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
 using Noise.Core.BackgroundTasks;
+using Noise.Core.Configuration;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
 using Noise.Core.DataExchange;
@@ -69,6 +70,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IRequireConstruction, DataUpdates>( "DataUpdates", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRequireConstruction, FileUpdates>( "FileUpdates", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRequireConstruction, LyricsSearcher>( "LyricsSearcher", new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IRequireConstruction, LibraryConfigurationManager>( "Configuration", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IEnumerable<IRequireConstruction>, IRequireConstruction[]>();
 
 			mContainer.RegisterType<IDomainSearchProvider, DomainSearchProvider>();

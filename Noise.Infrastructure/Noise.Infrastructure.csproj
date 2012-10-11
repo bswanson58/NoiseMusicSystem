@@ -161,6 +161,7 @@
     <Compile Include="Dto\GlobalUserEventArgs.cs" />
     <Compile Include="Dto\InfoSource.cs" />
     <Compile Include="Dto\IUserSettings.cs" />
+    <Compile Include="Dto\LibraryConfiguration.cs" />
     <Compile Include="Dto\LyricsInfo.cs" />
     <Compile Include="Dto\LyricsRequestArgs.cs" />
     <Compile Include="Dto\NavigationRequestArgs.cs" />
@@ -201,6 +202,7 @@
     <Compile Include="Interfaces\ILibraryBuilder.cs" />
     <Compile Include="Interfaces\IDatabaseFilter.cs" />
     <Compile Include="Interfaces\IDbBase.cs" />
+    <Compile Include="Interfaces\ILibraryConfiguration.cs" />
     <Compile Include="Interfaces\ILicenseManager.cs" />
     <Compile Include="Interfaces\ILyricProvider.cs" />
     <Compile Include="Interfaces\IInternetStreamProvider.cs" />

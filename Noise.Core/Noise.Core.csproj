@@ -158,6 +158,7 @@
     <Compile Include="BackgroundTasks\LinkSimilarArtists.cs" />
     <Compile Include="BackgroundTasks\LinkTopAlbums.cs" />
     <Compile Include="BackgroundTasks\SearchBuilder.cs" />
+    <Compile Include="Configuration\LibraryConfigurationManager.cs" />
     <Compile Include="Database\DatabaseCache.cs" />
     <Compile Include="Database\DatabaseStatistics.cs" />
     <Compile Include="Database\DataUpdates.cs" />
