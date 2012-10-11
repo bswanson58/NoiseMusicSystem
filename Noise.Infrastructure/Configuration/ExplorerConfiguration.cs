@@ -22,6 +22,8 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cHasNetworkAccess							= "hasNetworkAccess";
 		private const string	cEnableRemoteAccess							= "enableRemoteAccess";
 		private const string	cEnablePlaybackLibraryFocus					= "enablePlaybackLibraryFocus";
+		private const string	cLastLibraryUsedProperty					= "lastLibraryUsed";
+		private const string	cLoadLastLibraryOnStartup					= "loadLastUsedLibrary";
 
 		[ConfigurationPropertyAttribute( cEnableLibraryExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
 		public bool EnableLibraryExplorer {
@@ -117,5 +119,18 @@ namespace Noise.Infrastructure.Configuration {
 			get { return ((bool)( base[cEnablePlaybackLibraryFocus] ) ); }
 			set { base[cEnablePlaybackLibraryFocus] = value; }
 		}
+
+		[ConfigurationPropertyAttribute( cLastLibraryUsedProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = 0L )]
+		public long LastLibraryUsed {
+			get { return ((long)( base[cLastLibraryUsedProperty] ) ); }
+			set { base[cLastLibraryUsedProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cLoadLastLibraryOnStartup, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "true" )]
+		public bool LoadLastLibraryOnStartup {
+			get { return ((bool)( base[cLoadLastLibraryOnStartup] ) ); }
+			set { base[cLoadLastLibraryOnStartup] = value; }
+		}
+
 	}
 }

@@ -6,6 +6,7 @@ namespace Noise.Infrastructure.Interfaces {
 		LibraryConfiguration				Current { get; }
 		IEnumerable<LibraryConfiguration>	Libraries { get; }
 
+		void		Open( long libraryId );
 		void		Open( LibraryConfiguration configuration );
 		void		Close( LibraryConfiguration configuration );
 		void		AddLibrary( LibraryConfiguration configuration );

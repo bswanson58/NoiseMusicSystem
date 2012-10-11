@@ -5,37 +5,59 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
-             Height="175" Width="350"
+             Height="235" Width="550"
              Tag="Library Configuration"
         >
     <Grid>
         <Grid Margin="5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Content="Library Configuration:" Margin="5,0,0,0"/>
-            <Label Grid.Column="0" Grid.Row="1" Content="Library Name:" HorizontalAlignment="Right"/>
-            <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Path=EditObject.Description}" Margin="3"/>
-            <Label Grid.Column="0" Grid.Row="2" Content="Library Path:" HorizontalAlignment="Right"/>
-            <Grid Grid.Column="1" Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0" Text="{Binding Path=EditObject.Path}" Margin="3"/>
-                <Button Grid.Column="1" Margin="3" Content=" ... " Command="{Binding Path=Browse}"/>
-            </Grid>
-            <CheckBox Grid.Column="1" Grid.Row="3" Content="Prefer folder strategy" IsChecked="{Binding Path=EditObject.PreferFolderStrategy}" Margin="7,3,0,0"/>
-            <Button Grid.Column="1" Grid.Row="4" Margin="3,11,3,3" HorizontalAlignment="Right" Content="Update Library" Command="{Binding Path=UpdateLibrary}"/>
+            <StackPanel Grid.Column="0" Grid.Row="0" Margin="5" Orientation="Horizontal">
+                <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Content="Libraries:" Margin="5,0,0,0"/>
+                <ComboBox Margin="5,0" Width="300" ItemsSource="{Binding LibraryList}" DisplayMemberPath="LibraryName" SelectedItem="{Binding SelectedLibrary}"/>
+            </StackPanel>
+
+            <GroupBox Grid.Column="0" Grid.Row="1" Margin="7" Header="Library Properties">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Column="0" Grid.Row="0" Content="Library Name:" HorizontalAlignment="Right"/>
+                    <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding LibraryName, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
+
+                    <Label Grid.Column="0" Grid.Row="1" Content="Database Name:" HorizontalAlignment="Right"/>
+                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding DatabaseName, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
+
+                    <Label Grid.Column="0" Grid.Row="2" Content="Media Path:" HorizontalAlignment="Right"/>
+                    <Grid Grid.Column="1" Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Text="{Binding MediaPath, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
+                        <Button Grid.Column="1" Margin="3" Content=" ... " Command="{Binding Path=Browse}"/>
+                    </Grid>
+                    
+                    <Button Grid.Column="1" Grid.Row="3" Width="70" Margin="0,9" HorizontalAlignment="Right" Content="Update" Command="{Binding UpdateConfiguration}"/>
+                </Grid>
+            </GroupBox>
+
+            <Button Grid.Column="1" Grid.Row="0" Margin="7" HorizontalAlignment="Right" Content=" Update Library " Command="{Binding Path=UpdateLibrary}"/>
         </Grid>
 
     </Grid>

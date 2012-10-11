@@ -6,8 +6,18 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Infrastructure.Dto {
 	public class MediaLocation {
-		public	string			Path { get; set; }
-		public	FolderStrategy	FolderStrategy { get; set; }
+		public	string					Path { get; set; }
+		public	bool					PreferFolderStrategy { get; set; }
+		public	List<eFolderStrategy>	FolderStrategy { get; set; }
+
+		public MediaLocation() {
+			FolderStrategy = new List<eFolderStrategy>( new [] { eFolderStrategy.Undefined,
+																 eFolderStrategy.Undefined, 
+																 eFolderStrategy.Undefined, 
+																 eFolderStrategy.Undefined, 
+																 eFolderStrategy.Undefined } );
+			Path = string.Empty;
+		}
 	}
 
 	public class LibraryConfiguration {
@@ -15,7 +25,10 @@ namespace Noise.Infrastructure.Dto {
 		public	long				LibraryId { get; set; }
 		public	string				LibraryName { get; set; }
 		public	string				DatabaseName { get; set; }
-		public	List<MediaLocation>	MediaLocations { get; private set; }
+		public	string				DatabaseServer { get; set; }
+		public	string				DatabaseUser { get; set; }
+		public	string				DatabasePassword { get; set; }
+		public	List<MediaLocation>	MediaLocations { get; set; }
 
 		public LibraryConfiguration() {
 			LibraryId = DatabaseIdentityProvider.Current.NewIdentityAsLong();
@@ -24,6 +37,9 @@ namespace Noise.Infrastructure.Dto {
 			mConfigurationPath = string.Empty;
 			LibraryName = string.Empty;
 			DatabaseName = string.Empty;
+			DatabaseServer = "localhost";
+			DatabaseUser = string.Empty;
+			DatabasePassword = string.Empty;
 		}
 
 		public static LibraryConfiguration LoadConfiguration( string fromPath ) {

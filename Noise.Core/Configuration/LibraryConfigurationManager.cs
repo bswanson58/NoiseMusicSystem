@@ -36,8 +36,6 @@ namespace Noise.Core.Configuration {
 
 				AddLibrary( defaultLibrary );
 			}
-
-			Current = mLibraries.FirstOrDefault();
 		}
 
 		public void Shutdown() {
@@ -64,6 +62,14 @@ namespace Noise.Core.Configuration {
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Loading library configuration:", ex );
+			}
+		}
+
+		public void Open( long libraryId ) {
+			var configuration = mLibraries.FirstOrDefault( c => c.LibraryId == libraryId );
+
+			if( configuration != null ) {
+				Open( configuration );
 			}
 		}
 

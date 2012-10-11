@@ -1,7 +1,6 @@
 ﻿using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
-using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Support;
@@ -9,14 +8,16 @@ using Noise.UI.Support;
 namespace Noise.UI.ViewModels {
 	public class ToolbarViewModel : ViewModelBase {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly ICloudSyncManager		mCloudSyncMgr;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly ILibraryBuilder		mLibraryBuilder;
 		private readonly IDialogService			mDialogService;
 
-		public ToolbarViewModel( IEventAggregator eventAggregator, IDialogService dialogService, 
+		public ToolbarViewModel( IEventAggregator eventAggregator, IDialogService dialogService, ILibraryConfiguration libraryConfiguration,
 								 ICloudSyncManager cloudSyncManager, IDataExchangeManager dataExchangeManager, ILibraryBuilder libraryBuilder ) {
 			mEventAggregator = eventAggregator;
+			mLibraryConfiguration = libraryConfiguration;
 			mCloudSyncMgr = cloudSyncManager;
 			mDataExchangeMgr = dataExchangeManager;
 			mLibraryBuilder = libraryBuilder;
@@ -41,14 +42,6 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Execute_DatabaseConfiguration() {
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
-
-			if( mDialogService.ShowDialog( DialogNames.DatabaseConfiguration, configuration, new DatabaseConfigurationDialogModel( mDialogService )) == true ) {
-				NoiseSystemConfiguration.Current.Save( configuration );
-			}
-		}
-
 		public void Execute_ServerConfiguration() {
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
 
@@ -58,24 +51,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_LibraryConfiguration() {
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName );
-
-			if( configuration.RootFolders.Count == 0 ) {
-				configuration.RootFolders.Add( new RootFolderConfiguration());
-			}
-			var rootFolder = configuration.RootFolders[0];
-
-			if( mDialogService.ShowDialog( DialogNames.LibraryConfiguration, rootFolder,
-											new LibraryConfigurationDialogModel( mDialogService, mLibraryBuilder )) == true ) {
-				if( rootFolder.PreferFolderStrategy ) {
-					rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 0, eFolderStrategy.Artist ));
-					rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 1, eFolderStrategy.Album ));
-					rootFolder.StorageStrategy.Add( new FolderStrategyConfiguration( 2, eFolderStrategy.Volume ));
-				}
-
-				NoiseSystemConfiguration.Current.Save( configuration );
-				mEventAggregator.Publish( new Events.SystemConfigurationChanged());
-			}
+			mDialogService.ShowDialog( DialogNames.LibraryConfiguration,
+											new LibraryConfigurationDialogModel( mDialogService, mLibraryConfiguration, mLibraryBuilder ));
 		}
 
 		public void Execute_Import() {

@@ -41,6 +41,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IStorageFileProcessor, StorageFileProcessor>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IMetaDataCleaner, MetaDataCleaner>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<INoiseManager, NoiseManager>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ILibraryConfiguration, LibraryConfigurationManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IPlayQueue, PlayQueueMgr>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IPlayHistory, PlayHistoryMgr>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IPlayController, PlayController>( new HierarchicalLifetimeManager());
@@ -70,7 +71,6 @@ namespace Noise.Core {
 			mContainer.RegisterType<IRequireConstruction, DataUpdates>( "DataUpdates", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRequireConstruction, FileUpdates>( "FileUpdates", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRequireConstruction, LyricsSearcher>( "LyricsSearcher", new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IRequireConstruction, LibraryConfigurationManager>( "Configuration", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IEnumerable<IRequireConstruction>, IRequireConstruction[]>();
 
 			mContainer.RegisterType<IDomainSearchProvider, DomainSearchProvider>();
