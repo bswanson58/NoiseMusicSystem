@@ -6,6 +6,7 @@ using System.Linq;
 using Caliburn.Micro;
 using Noise.Core.Support;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -84,6 +85,14 @@ namespace Noise.Core.Configuration {
 			if(( configuration != null ) &&
 			   ( mLibraries.Contains( configuration ))) {
 				Current = configuration;
+
+				var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+				if( expConfig != null ) {
+					expConfig.LastLibraryUsed = Current.LibraryId;
+
+					NoiseSystemConfiguration.Current.Save( expConfig );
+				}
+				
 			}
 		}
 
