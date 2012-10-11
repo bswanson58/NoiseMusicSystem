@@ -15,9 +15,6 @@ namespace Noise.EloqueraDatabase {
 		}
 
 		public void Initialize() {
-			var config = NoiseSystemConfiguration.Current.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
-			mContainer.RegisterInstance( config );
-
 			mContainer.RegisterType<IDatabaseFactory, EloqueraDatabaseFactory>();
 
 			mContainer.RegisterType<DatabaseManager>( new HierarchicalLifetimeManager());

@@ -18,7 +18,7 @@ namespace Noise.Core.Configuration {
 		public LibraryConfigurationManager( ILifecycleManager lifecycleManager ) {
 			mLibraries = new List<LibraryConfiguration>();
 
-			lifecycleManager.RegisterForInitialize( this );
+//			lifecycleManager.RegisterForInitialize( this );
 		}
 
 		public IEnumerable<LibraryConfiguration> Libraries {
@@ -43,6 +43,8 @@ namespace Noise.Core.Configuration {
 
 		private void LoadLibraries() {
 			try {
+				mLibraries.Clear();
+
 				if(!Directory.Exists( mConfigurationDirectory )) {
 					Directory.CreateDirectory( mConfigurationDirectory );
 				}
@@ -74,11 +76,16 @@ namespace Noise.Core.Configuration {
 		}
 
 		public void Open( LibraryConfiguration configuration ) {
-			throw new System.NotImplementedException();
+			Close( Current );
+
+			if(( configuration != null ) &&
+			   ( mLibraries.Contains( configuration ))) {
+				Current = configuration;
+			}
 		}
 
 		public void Close( LibraryConfiguration configuration ) {
-			throw new System.NotImplementedException();
+			Current = null;
 		}
 
 		public void AddLibrary( LibraryConfiguration configuration ) {

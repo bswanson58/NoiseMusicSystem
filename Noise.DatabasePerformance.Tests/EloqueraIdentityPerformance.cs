@@ -8,7 +8,6 @@ using Noise.AppSupport;
 using Noise.BlobStorage.BlobStore;
 using Noise.EloqueraDatabase;
 using Noise.EloqueraDatabase.Interfaces;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
@@ -44,18 +43,16 @@ namespace Noise.DatabasePerformance.Tests {
 		private const int			cFirstTimeStep	= 10000;
 		private const int			cSecondTimeStep = 20000;
 
-		private readonly IUnityContainer			mContainer;
-		private readonly DatabaseConfiguration		mDatabaseConfiguration;
-		private readonly Mock<ISystemConfiguration>	mSystemConfiguration;
-		private readonly Mock<IBlobStorageManager>	mBlobStorageManager;
-		private readonly Stopwatch					mStopWatch;
-		private IEloqueraManager					mEloqueraManager;
+		private readonly IUnityContainer				mContainer;
+		private readonly Mock<ILibraryConfiguration>	mLibraryConfiguration;
+		private readonly Mock<IBlobStorageManager>		mBlobStorageManager;
+		private readonly Stopwatch						mStopWatch;
+		private IEloqueraManager						mEloqueraManager;
 
 		public EloqueraIdentityPerformance() {
-			mDatabaseConfiguration = new DatabaseConfiguration { DatabaseName = "Identity Performance", ServerName = "localhost" };
-			mSystemConfiguration = new Mock<ISystemConfiguration>();
-			mSystemConfiguration.Setup( m => m.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName )).Returns( mDatabaseConfiguration );
-			NoiseSystemConfiguration.Current = mSystemConfiguration.Object;
+			var libraryConfig = new LibraryConfiguration { DatabaseName = "Identity Performance", DatabaseServer = "localhost" };
+			mLibraryConfiguration = new Mock<ILibraryConfiguration>();
+			mLibraryConfiguration.Setup( m => m.Current ).Returns( libraryConfig );
 
 			mContainer = new UnityContainer();
 

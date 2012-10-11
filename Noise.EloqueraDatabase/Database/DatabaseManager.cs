@@ -7,12 +7,12 @@ using Noise.Infrastructure;
 
 namespace Noise.EloqueraDatabase.Database {
 	public class DatabaseManager : IEloqueraManager {
-		private readonly object					mLockObject;
-		private readonly List<IDatabase>		mAvailableDatabases;
+		private readonly object							mLockObject;
+		private readonly List<IDatabase>				mAvailableDatabases;
 		private readonly Dictionary<string, IDatabase>	mReservedDatabases;
 		private readonly Dictionary<string, string>		mReservedStacks;
-		private readonly IDatabaseFactory		mDatabaseFactory;
-		private	bool							mHasShutdown;
+		private readonly IDatabaseFactory				mDatabaseFactory;
+		private	bool									mHasShutdown;
 
 		public DatabaseManager( IDatabaseFactory databaseFactory ) {
 			if( databaseFactory == null ) {

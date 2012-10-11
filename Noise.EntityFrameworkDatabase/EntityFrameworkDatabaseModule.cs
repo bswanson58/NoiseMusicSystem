@@ -3,7 +3,6 @@ using Microsoft.Practices.Unity;
 using Noise.EntityFrameworkDatabase.DataProviders;
 using Noise.EntityFrameworkDatabase.DatabaseManager;
 using Noise.EntityFrameworkDatabase.Interfaces;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase {
@@ -15,9 +14,6 @@ namespace Noise.EntityFrameworkDatabase {
 		}
 
 		public void Initialize() {
-			var config = NoiseSystemConfiguration.Current.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
-			mContainer.RegisterInstance( config );
-
 			mContainer.RegisterType<IDatabaseManager, EntityFrameworkDatabaseManager>();
 			mContainer.RegisterType<IContextProvider, ContextProvider>();
 #if DEBUG

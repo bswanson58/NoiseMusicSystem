@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Caliburn.Micro;
 using Noise.Core.Support;
 using Noise.Infrastructure;
@@ -42,10 +43,17 @@ namespace Noise.Core {
 
 			NoiseLogger.Current.LogMessage( "Initializing Noise Music System" );
 
+			if( mConfigurationManager is IRequireInitialization ) {
+				( mConfigurationManager as IRequireInitialization ).Initialize();
+			}
 			var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 			if( expConfig != null ) {
 				if( expConfig.LoadLastLibraryOnStartup ) {
 					mConfigurationManager.Open( expConfig.LastLibraryUsed );
+
+					if( mConfigurationManager.Current == null ) {
+						mConfigurationManager.Open( mConfigurationManager.Libraries.FirstOrDefault());
+					}
 				}
 			}
 

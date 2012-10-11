@@ -5,14 +5,14 @@ using Noise.BlobStorage.BlobStore;
 using Noise.EloqueraDatabase.Database;
 using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.Tests.DataProviders {
 	public class ProviderTestSetup {
 		public	Mock<ILog>					DummyLog { get; private set; }
 		public	IIoc						IocProvider { get; private set; }
-		public	DatabaseConfiguration		DatabaseConfiguration { get; private set; }
+		public	ILibraryConfiguration		LibraryConfiguration { get; private set; }
 		public	IBlobStorageManager			BlobStorageManager { get; private set; }
 		public	IBlobStorageResolver		BlobResolver { get; private set; }
 		public	IDatabaseFactory			DatabaseFactory { get; private set; }
@@ -22,12 +22,16 @@ namespace Noise.EloqueraDatabase.Tests.DataProviders {
 			DummyLog = new Mock<ILog>();
 			NoiseLogger.Current = DummyLog.Object;
 				
-			DatabaseConfiguration = new DatabaseConfiguration { DatabaseName = "Integration Test Database" };
+			var databaseConfig = new LibraryConfiguration { DatabaseName = "Integration Test Database" };
+
+			var configMoq = new Mock<ILibraryConfiguration>();
+			configMoq.Setup( m => m.Current ).Returns( databaseConfig );
+			LibraryConfiguration = configMoq.Object;
 
 			IocProvider = new IocProvider();
 			BlobResolver = new BlobStorageResolver();
 			BlobStorageManager = new BlobStorageManager( BlobResolver );
-			DatabaseFactory = new EloqueraDatabaseFactory( BlobStorageManager, IocProvider, DatabaseConfiguration );
+			DatabaseFactory = new EloqueraDatabaseFactory( BlobStorageManager, IocProvider, LibraryConfiguration );
 			DatabaseManager = new DatabaseManager( DatabaseFactory );
 
 			if( DatabaseManager.Initialize()) {

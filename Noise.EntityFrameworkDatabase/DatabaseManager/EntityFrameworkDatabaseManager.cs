@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure;
@@ -9,7 +8,6 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	public class EntityFrameworkDatabaseManager : IDatabaseManager {
 		private const Int16		cDatabaseVersionMajor = 0;
 		private const Int16		cDatabaseVersionMinor = 5;
-		private const string	cBlobStorageName	= "Noise Blobs";
 
 		private readonly IDatabaseInitializeStrategy	mInitializeStrategy;
 		private readonly IDatabaseInfo					mDatabaseInfo;
@@ -35,12 +33,10 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 			mContextProvider.BlobStorageManager.Initialize( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName ));
 			if(!mContextProvider.BlobStorageManager.IsOpen ) {
-				var blobStorageName = Path.Combine( cBlobStorageName, mDatabaseInfo.DatabaseId.ToString( CultureInfo.InvariantCulture ));
+				if(!mContextProvider.BlobStorageManager.OpenStorage()) {
+					mContextProvider.BlobStorageManager.CreateStorage();
 
-				if(!mContextProvider.BlobStorageManager.OpenStorage( blobStorageName )) {
-					mContextProvider.BlobStorageManager.CreateStorage( blobStorageName );
-
-					if(!mContextProvider.BlobStorageManager.OpenStorage( blobStorageName )) {
+					if(!mContextProvider.BlobStorageManager.OpenStorage()) {
 						var ex = new ApplicationException( "EntityFrameworkDatabaseManager:Blob storage could not be created." );
 
 						NoiseLogger.Current.LogException( ex );

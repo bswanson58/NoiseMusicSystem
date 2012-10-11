@@ -4,7 +4,7 @@ using Noise.BlobStorage.BlobStore;
 using Noise.EntityFrameworkDatabase.DatabaseManager;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
@@ -12,7 +12,7 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 		public	Mock<ILog>					DummyLog { get; private set; }
 		public	IBlobStorageResolver		BlobStorageResolver { get; private set; }
 		public	IBlobStorageManager			BlobStorageManager { get; private set; }			
-		public	DatabaseConfiguration		DatabaseConfiguration { get; private set; }
+		public	LibraryConfiguration		DatabaseConfiguration { get; private set; }
 		public	IDatabaseManager			DatabaseManager { get; private set; }
 		public	Mock<IDatabaseInfo>			DatabaseInfo { get; private set; }
 		public	IDatabaseInitializeStrategy	InitializeStrategy { get; private set; }
@@ -25,7 +25,7 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 			DatabaseInfo = new Mock<IDatabaseInfo>();
 			DatabaseInfo.Setup( m => m.DatabaseId ).Returns( 12345L );
 
-			DatabaseConfiguration = new DatabaseConfiguration { DatabaseName = "Integration Test Database" };
+			DatabaseConfiguration = new LibraryConfiguration { DatabaseName = "Integration Test Database" };
 			InitializeStrategy = new TestDatabaseInitializer();
 
 			BlobStorageResolver = new BlobStorageResolver();

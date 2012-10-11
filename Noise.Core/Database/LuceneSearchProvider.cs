@@ -8,7 +8,6 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -206,53 +205,34 @@ namespace Noise.Core.Database {
 	}
 
 	public class LuceneSearchProvider : ISearchProvider {
-		private readonly IArtistProvider	mArtistProvider;
-		private readonly IAlbumProvider		mAlbumProvider;
-		private readonly ITrackProvider		mTrackProvider;
-		private readonly IDatabaseInfo		mDatabaseInfo;
-		private long						mDatabaseId;
-		private bool						mIsInitialized;
-		private	string						mIndexLocation;
+		private readonly ILibraryConfiguration	mLibraryConfiguration;
+		private readonly IArtistProvider		mArtistProvider;
+		private readonly IAlbumProvider			mAlbumProvider;
+		private readonly ITrackProvider			mTrackProvider;
+		private bool							mIsInitialized;
+		private	string							mIndexLocation;
 
-		public LuceneSearchProvider( IDatabaseInfo databaseInfo, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+		public LuceneSearchProvider( ILibraryConfiguration libraryConfiguration,
+									 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+			mLibraryConfiguration = libraryConfiguration;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
-			mDatabaseInfo = databaseInfo;
 		}
 
 		public bool Initialize() {
 			mIsInitialized = false;
 
 			try {
-				mDatabaseId = mDatabaseInfo.DatabaseId;
+				if( mLibraryConfiguration.Current != null ) {
+					mIndexLocation = mLibraryConfiguration.Current.SearchDatabasePath;
 
-				var config = NoiseSystemConfiguration.Current.RetrieveConfiguration<DatabaseConfiguration>( DatabaseConfiguration.SectionName );
+					var directory = new Lucene.Net.Store.SimpleFSDirectory( new DirectoryInfo( mIndexLocation ));
+					if(!IndexReader.IndexExists( directory )) {
+						var analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer( Lucene.Net.Util.Version.LUCENE_29 );
+						var indexWriter = new IndexWriter( directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED );
 
-				if( config != null ) {
-					mIndexLocation = config.SearchIndexLocation;
-
-					var index = mIndexLocation.ToUpper().IndexOf( "%APPDATA%", StringComparison.OrdinalIgnoreCase );
-					if( index != -1 ) {
-						mIndexLocation = mIndexLocation.Remove( index, "%APPDATA%".Length );
-						mIndexLocation = mIndexLocation.Insert( index, Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), 
-																					 Constants.CompanyName ));
-						if(!Directory.Exists( mIndexLocation )) {
-							Directory.CreateDirectory( mIndexLocation );
-						}
-
-						mIndexLocation = Path.Combine( mIndexLocation, mDatabaseId.ToString( CultureInfo.InvariantCulture ));
-						if(!Directory.Exists( mIndexLocation )) {
-							Directory.CreateDirectory( mIndexLocation );
-						}
-
-						var directory = new Lucene.Net.Store.SimpleFSDirectory( new DirectoryInfo( mIndexLocation ));
-						if(!IndexReader.IndexExists( directory )) {
-							var analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer( Lucene.Net.Util.Version.LUCENE_29 );
-							var indexWriter = new IndexWriter( directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED );
-
-							indexWriter.Close();
-						}
+						indexWriter.Close();
 					}
 
 					if( Directory.Exists( mIndexLocation )) {
@@ -301,10 +281,10 @@ namespace Noise.Core.Database {
 					}
 
 					var	topDocs = searcher.Search( query, maxResults );
-					var hits = topDocs.totalHits;
+					var hits = topDocs.TotalHits;
 
 					if( hits > 0 ) {
-						foreach( var hit in topDocs.scoreDocs ) {
+						foreach( var hit in topDocs.ScoreDocs ) {
 							var document = searcher.Doc( hit.doc );
 
 							var typeField = document.GetField( SearchItemFieldName.cItemType );
@@ -373,10 +353,10 @@ namespace Noise.Core.Database {
 					query.Add( typeTerm, BooleanClause.Occur.MUST );
 
 					var	topDocs = searcher.Search( query, 1 );
-					var hits = topDocs.totalHits;
+					var hits = topDocs.TotalHits;
 
 					if( hits > 0 ) {
-						foreach( var hit in topDocs.scoreDocs ) {
+						foreach( var hit in topDocs.ScoreDocs ) {
 							var document = searcher.Doc( hit.doc );
 							var artistField = document.GetField( SearchItemFieldName.cArtistId );
 							var timeField = document.GetField( SearchItemFieldName.cTimeStamp );

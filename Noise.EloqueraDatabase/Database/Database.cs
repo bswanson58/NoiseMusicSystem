@@ -6,7 +6,6 @@ using CuttingEdge.Conditions;
 using Eloquera.Client;
 using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -29,7 +28,7 @@ namespace Noise.EloqueraDatabase.Database {
 		[ImportMany("PersistenceType")]
 		public IEnumerable<Type>	PersistenceTypes;
 
-		public EloqueraDb( IIoc componentCreator, DatabaseConfiguration databaseConfiguration ) {
+		public EloqueraDb( IIoc componentCreator, LibraryConfiguration databaseConfiguration ) {
 			Condition.Requires( componentCreator ).IsNotNull();
 			Condition.Requires( databaseConfiguration ).IsNotNull();
 
@@ -38,7 +37,7 @@ namespace Noise.EloqueraDatabase.Database {
 			DatabaseId = Guid.NewGuid().ToString();
 
 			mDatabaseName = databaseConfiguration.DatabaseName;
-			mDatabaseLocation = databaseConfiguration.ServerName;
+			mDatabaseLocation = databaseConfiguration.DatabaseServer;
 		}
 
 		public bool InitializeDatabase() {

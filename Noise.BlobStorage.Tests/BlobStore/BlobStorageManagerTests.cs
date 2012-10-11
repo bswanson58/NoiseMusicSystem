@@ -9,22 +9,20 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.BlobStorage.Tests.BlobStore {
 	[TestFixture]
 	public class BlobStorageManagerTests {
-		private const string				cTestStorageName = "unit test storage";
-
 		private	Mock<IBlobStorageResolver>	mBlobResolver;
 		private IBlobStorageManager			mStorageManager;
 		private string						mStorageName;
 
-		private IBlobStorageManager CreateSut( string storageName ) {
+		private IBlobStorageManager CreateSut() {
 			var blobStoragePath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName );
+			blobStoragePath = Path.Combine( blobStoragePath, "Test Blob Storage" );
 
 			mBlobResolver = new Mock<IBlobStorageResolver>();
 
 			var storageManager = new BlobStorageManager( mBlobResolver.Object );
 
 			storageManager.Initialize( blobStoragePath );
-			if( storageManager.CreateStorage( storageName )) {
-				mStorageName = storageName;
+			if( storageManager.CreateStorage()) {
 				mStorageManager = storageManager;
 			}
 
@@ -34,40 +32,31 @@ namespace Noise.BlobStorage.Tests.BlobStore {
 		[TearDown]
 		public void TearDown() {
 			if( mStorageManager != null ) {
-				mStorageManager.DeleteStorage( mStorageName );
+				mStorageManager.DeleteStorage();
 			}
 		}
 
 		[Test]
 		public void CanCreateStorage() {
-			var sut = CreateSut( cTestStorageName );
+			var sut = CreateSut();
 
 			Assert.IsNotNull( sut );
 		}
 
 		[Test]
 		public void CanOpenStorage() {
-			var sut = CreateSut( cTestStorageName );
+			var sut = CreateSut();
 
-			var opened = sut.OpenStorage( cTestStorageName );
+			var opened = sut.OpenStorage();
 
 			Assert.IsTrue( opened );
 		}
 
 		[Test]
-		public void CannotOpenNonExistingStorage() {
-			var sut = CreateSut( cTestStorageName );
-
-			var opened = sut.OpenStorage( "my great storage" );
-
-			Assert.IsFalse( opened );
-		}
-
-		[Test]
 		public void OpenedStorageIndicatesIsIOpen() {
-			var sut = CreateSut( cTestStorageName );
+			var sut = CreateSut();
 
-			var opened = sut.OpenStorage( cTestStorageName );
+			var opened = sut.OpenStorage();
 
 			Assert.IsTrue( opened );
 			Assert.IsTrue( sut.IsOpen );
@@ -75,9 +64,9 @@ namespace Noise.BlobStorage.Tests.BlobStore {
 
 		[Test]
 		public void CanCloseStorage() {
-			var sut = CreateSut( cTestStorageName );
+			var sut = CreateSut();
 
-			sut.OpenStorage( cTestStorageName );
+			sut.OpenStorage();
 			sut.CloseStorage();
 
 			Assert.IsFalse( sut.IsOpen );
@@ -85,11 +74,11 @@ namespace Noise.BlobStorage.Tests.BlobStore {
 
 		[Test]
 		public void CanDeleteStorage() {
-			var sut = CreateSut( cTestStorageName );
+			var sut = CreateSut();
 
-			sut.DeleteStorage( cTestStorageName );
+			sut.DeleteStorage();
 
-			var opened = sut.OpenStorage( cTestStorageName );
+			var opened = sut.OpenStorage();
 
 			Assert.IsFalse( opened );
 		}

@@ -128,7 +128,6 @@
     </Compile>
     <Compile Include="Configuration\CloudSyncConfiguration.cs" />
     <Compile Include="Configuration\ConfigurationElementCollectionEx.cs" />
-    <Compile Include="Configuration\DatabaseConfiguration.cs" />
     <Compile Include="Configuration\ExplorerConfiguration.cs" />
     <Compile Include="Configuration\ISystemConfiguration.cs" />
     <Compile Include="Configuration\AudioConfiguration.cs" />

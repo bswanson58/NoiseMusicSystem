@@ -1,43 +1,35 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
-using CuttingEdge.Conditions;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.BlobStorage.BlobStore {
 	public class BlobStorageManager : IBlobStorageManager, IBlobStorage {
 		private readonly IBlobStorageResolver	mBlobResolver;
-		private string							mRootStoragePath;
 		private bool							mIsOpen;
 		private string							mStoragePath;
 
 		public BlobStorageManager( IBlobStorageResolver blobResolver ) {
 			mBlobResolver = blobResolver;
 
-			mRootStoragePath = string.Empty;
+			mStoragePath = string.Empty;
 			mStoragePath = string.Empty;
 			mIsOpen = false;
 		}
 
 		public bool Initialize( string rootStoragePath ) {
-			mRootStoragePath = rootStoragePath;
+			mStoragePath = rootStoragePath;
 
 			return( true );
 		}
 
-		public bool OpenStorage( string storageName ) {
+		public bool OpenStorage() {
 			if(!string.IsNullOrWhiteSpace( mStoragePath )) {
 				CloseStorage();
 			}
 
-			if( Directory.Exists( mRootStoragePath )) {
-				string	storagePath = Path.Combine( mRootStoragePath, storageName );
-
-				if( Directory.Exists( storagePath )) {
-					mStoragePath = storagePath;
-
+			if( Directory.Exists( mStoragePath )) {
 					mIsOpen = true;
-				}
 			}
 
 			return( IsOpen );
@@ -47,14 +39,12 @@ namespace Noise.BlobStorage.BlobStore {
 			get{ return( mIsOpen ); }
 		}
 
-		public bool CreateStorage( string storageName ) {
-			string	storagePath = Path.Combine( mRootStoragePath, storageName );
-
-			if(!Directory.Exists( storagePath )) {
-				Directory.CreateDirectory( storagePath );
+		public bool CreateStorage() {
+			if(!Directory.Exists( mStoragePath )) {
+				Directory.CreateDirectory( mStoragePath );
 			}
 
-			return( Directory.Exists( storagePath ));
+			return( Directory.Exists( mStoragePath ));
 		}
 
 		public void CloseStorage() {
@@ -64,24 +54,13 @@ namespace Noise.BlobStorage.BlobStore {
 			}
 		}
 
-		public void DeleteStorage( string storageName ) {
-			string	storagePath = Path.Combine( mRootStoragePath, storageName );
-
-			if(( IsOpen ) &&
-			   ( string.Equals( storagePath, mStoragePath, StringComparison.InvariantCultureIgnoreCase ))) {
+		public void DeleteStorage() {
+			if( IsOpen ) {
 				CloseStorage();
 			}
 
-			if( Directory.Exists( storagePath )) {
-				Directory.Delete( storagePath, true );
-			}
-		}
-
-		public void DeleteStorage() {
-			Condition.Requires( mIsOpen );
-
-			if( IsOpen ) {
-				DeleteStorage( mStoragePath );
+			if( Directory.Exists( mStoragePath )) {
+				Directory.Delete( mStoragePath, true );
 			}
 		}
 
@@ -187,7 +166,10 @@ namespace Noise.BlobStorage.BlobStore {
 				retValue = new FileStream( blobPath, FileMode.Open, FileAccess.Read );
 			}
 			else {
-				throw new BlobStorageException( blobId, blobPath, "Attempt to retrieve nonexistent item." );
+				NoiseLogger.Current.LogInfo( "Attempt to retieve nonexistent blob item" );
+
+				retValue = new MemoryStream();
+//				throw new BlobStorageException( blobId, blobPath, "Attempt to retrieve nonexistent item." );
 			}
 
 			return( retValue );

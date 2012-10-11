@@ -10,13 +10,13 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.BlobStorage.Tests.BlobStore {
 	[TestFixture]
 	public class BlobStorageTests {
-		private	const string				cTestStorageName = "unit test storage";
 		private Mock<IBlobStorageResolver>	mStorageResolver;
 		private IBlobStorageManager			mStorageManager;
 
 		[SetUp]
 		public void Setup() {
 			var blobStoragePath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName );
+			blobStoragePath = Path.Combine( blobStoragePath, "Test Blob Storage" );
 
 			mStorageResolver = new Mock<IBlobStorageResolver>();
 			mStorageResolver.Setup( m => m.StorageLevels ).Returns( 1 );
@@ -25,9 +25,9 @@ namespace Noise.BlobStorage.Tests.BlobStore {
 			var storageManager = new BlobStorageManager( mStorageResolver.Object );
 			storageManager.Initialize( blobStoragePath );
 
-			storageManager.DeleteStorage( cTestStorageName );
-			if( storageManager.CreateStorage( cTestStorageName )) {
-				if( storageManager.OpenStorage( cTestStorageName )) {
+			storageManager.DeleteStorage();
+			if( storageManager.CreateStorage()) {
+				if( storageManager.OpenStorage()) {
 					mStorageManager = storageManager;
 				}
 			}
@@ -36,7 +36,7 @@ namespace Noise.BlobStorage.Tests.BlobStore {
 		[TearDown]
 		public void TearDown() {
 			if( mStorageManager != null ) {
-				mStorageManager.DeleteStorage( cTestStorageName );
+				mStorageManager.DeleteStorage();
 			}
 		}
 

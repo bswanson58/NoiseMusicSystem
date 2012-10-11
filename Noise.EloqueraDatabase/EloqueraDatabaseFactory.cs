@@ -1,32 +1,27 @@
 ﻿using System;
-using System.Globalization;
-using System.IO;
 using Noise.BlobStorage.BlobStore;
 using Noise.EloqueraDatabase.Database;
 using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase {
 	public class EloqueraDatabaseFactory : IDatabaseFactory {
-		private const string	cBlobStorageName	= "Noise Blobs";
-
 		private readonly IIoc					mComponentCreator;
-		private readonly DatabaseConfiguration	mDatabaseConfiguration;
+		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly IBlobStorageManager	mBlobStorageManager;
 		private bool							mBlobStorageInitialized;
 
-		public EloqueraDatabaseFactory( IBlobStorageManager blobStorageManager, IIoc componentCreator, DatabaseConfiguration databaseConfiguration ) {
+		public EloqueraDatabaseFactory( IBlobStorageManager blobStorageManager, IIoc componentCreator, ILibraryConfiguration libraryConfiguration ) {
 			mBlobStorageManager = blobStorageManager;
 			mComponentCreator = componentCreator;
-			mDatabaseConfiguration = databaseConfiguration;
+			mLibraryConfiguration = libraryConfiguration;
 
 			mBlobStorageInitialized = false;
 		}
 
 		public IDatabase GetDatabaseInstance() {
-			return( new EloqueraDb( mComponentCreator, mDatabaseConfiguration ));
+			return( new EloqueraDb( mComponentCreator, mLibraryConfiguration.Current ));
 		}
 
 		public void SetBlobStorageInstance( IDatabase  database ) {
@@ -39,7 +34,7 @@ namespace Noise.EloqueraDatabase {
 			}
 
 			if(!mBlobStorageInitialized ) {
-				InitBlobStorage( database.DatabaseVersion.DatabaseId );
+				InitBlobStorage();
 
 				mBlobStorageInitialized = true;
 			}
@@ -47,16 +42,14 @@ namespace Noise.EloqueraDatabase {
 			database.BlobStorage = mBlobStorageManager.GetStorage();
 		}
 
-		private void InitBlobStorage( long databaseId ) {
-			mBlobStorageManager.Initialize( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName ));
+		private void InitBlobStorage() {
+			mBlobStorageManager.Initialize( mLibraryConfiguration.Current.BlobDatabasePath );
 
 			if(!mBlobStorageManager.IsOpen ) {
-				var blobStorageName = Path.Combine( cBlobStorageName, databaseId.ToString( CultureInfo.InvariantCulture ));
+				if(!mBlobStorageManager.OpenStorage()) {
+					mBlobStorageManager.CreateStorage();
 
-				if(!mBlobStorageManager.OpenStorage( blobStorageName )) {
-					mBlobStorageManager.CreateStorage( blobStorageName );
-
-					if(!mBlobStorageManager.OpenStorage( blobStorageName )) {
+					if(!mBlobStorageManager.OpenStorage()) {
 						var ex = new ApplicationException( "EloqueraDatabaseFactory:Blob storage could not be created." );
 
 						NoiseLogger.Current.LogException( ex );
