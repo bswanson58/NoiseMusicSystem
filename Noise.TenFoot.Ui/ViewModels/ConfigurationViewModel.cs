@@ -2,7 +2,6 @@
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
-using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
 using Noise.UI.Support;
@@ -45,17 +44,6 @@ namespace Noise.TenFoot.Ui.ViewModels {
 				EnableRemote = configuration.EnableRemoteAccess;
 				AllowInternet = configuration.HasNetworkAccess;
 			}
-
-			var libraryConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName );
-
-			if(( libraryConfig != null ) &&
-			   ( libraryConfig.RootFolders != null )) {
-				if( libraryConfig.RootFolders.Count == 0 ) {
-					libraryConfig.RootFolders.Add( new RootFolderConfiguration());
-				}
-
-				LibraryLocation = libraryConfig.RootFolders[0].Path;
-			}
 		}
 
 		private void UpdateConfiguration() {
@@ -66,23 +54,6 @@ namespace Noise.TenFoot.Ui.ViewModels {
 				configuration.HasNetworkAccess = AllowInternet;
 
 				NoiseSystemConfiguration.Current.Save( configuration );
-			}
-
-			var libraryConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName );
-			if(( libraryConfig != null ) &&
-			   ( libraryConfig.RootFolders != null )) {
-				if( libraryConfig.RootFolders.Count == 0 ) {
-					libraryConfig.RootFolders.Add( new RootFolderConfiguration());
-
-					libraryConfig.RootFolders[0].StorageStrategy.Add( new FolderStrategyConfiguration( 0, eFolderStrategy.Artist ));
-					libraryConfig.RootFolders[0].StorageStrategy.Add( new FolderStrategyConfiguration( 1, eFolderStrategy.Album ));
-					libraryConfig.RootFolders[0].StorageStrategy.Add( new FolderStrategyConfiguration( 2, eFolderStrategy.Volume ));
-				}
-
-				var rootFolder = libraryConfig.RootFolders[0];
-				rootFolder.Path = LibraryLocation;
-
-				NoiseSystemConfiguration.Current.Save( libraryConfig );
 			}
 		}
 
