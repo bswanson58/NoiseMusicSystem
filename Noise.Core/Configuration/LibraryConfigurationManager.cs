@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using Caliburn.Micro;
 using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -10,12 +11,14 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Configuration {
 	public class LibraryConfigurationManager : ILibraryConfiguration, IRequireInitialization {
+		private readonly IEventAggregator			mEventAggregator;
 		private	readonly List<LibraryConfiguration>	mLibraries;
 		private string								mConfigurationDirectory;
 
 		public	LibraryConfiguration				Current { get; private set; }
 
-		public LibraryConfigurationManager( ILifecycleManager lifecycleManager ) {
+		public LibraryConfigurationManager( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator ) {
+			mEventAggregator = eventAggregator;
 			mLibraries = new List<LibraryConfiguration>();
 
 //			lifecycleManager.RegisterForInitialize( this );
@@ -114,6 +117,10 @@ namespace Noise.Core.Configuration {
 				var libraryPath = Path.Combine( mConfigurationDirectory, configuration.LibraryId.ToString( CultureInfo.InvariantCulture ));
 				
 				configuration.Persist( Path.Combine( libraryPath, Constants.LibraryConfigurationFile ));
+
+				if( configuration == Current ) {
+					mEventAggregator.Publish( new Events.LibraryConfigurationChanged());
+				}
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "ConfigurationManager:UpdateLibrary", ex );

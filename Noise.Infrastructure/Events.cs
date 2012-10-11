@@ -248,7 +248,7 @@ namespace Noise.Infrastructure {
 			} 
 		}
 
-		public class SystemConfigurationChanged { }
+		public class LibraryConfigurationChanged { }
 		public class SystemShutdown { }
 
 		public class GlobalUserEvent {

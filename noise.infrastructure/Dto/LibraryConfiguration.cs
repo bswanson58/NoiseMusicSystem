@@ -6,11 +6,14 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Infrastructure.Dto {
 	public class MediaLocation {
+		public	long					Key { get; set; }
 		public	string					Path { get; set; }
 		public	bool					PreferFolderStrategy { get; set; }
 		public	List<eFolderStrategy>	FolderStrategy { get; set; }
 
 		public MediaLocation() {
+			Key = DatabaseIdentityProvider.Current.NewIdentityAsLong();
+
 			FolderStrategy = new List<eFolderStrategy>( new [] { eFolderStrategy.Undefined,
 																 eFolderStrategy.Undefined, 
 																 eFolderStrategy.Undefined, 

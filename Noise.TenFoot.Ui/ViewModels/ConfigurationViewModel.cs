@@ -83,7 +83,6 @@ namespace Noise.TenFoot.Ui.ViewModels {
 				rootFolder.Path = LibraryLocation;
 
 				NoiseSystemConfiguration.Current.Save( libraryConfig );
-				mEventAggregator.Publish( new Events.SystemConfigurationChanged());
 			}
 		}
 

@@ -5,14 +5,14 @@ using System.Linq;
 using Caliburn.Micro;
 using Noise.Core.Database;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Recls;
 
 namespace Noise.Core.FileStore {
-	internal class FolderExplorer : IFolderExplorer, IHandle<Events.SystemConfigurationChanged> {
+	internal class FolderExplorer : IFolderExplorer, IHandle<Events.LibraryConfigurationChanged> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly IStorageFolderSupport	mStorageFolderSupport;
 		private readonly IRootFolderProvider	mRootFolderProvider;
 		private readonly IStorageFolderProvider	mStorageFolderProvider;
@@ -21,9 +21,10 @@ namespace Noise.Core.FileStore {
 		private DatabaseCache<StorageFile>		mFileCache;
 		private DatabaseCache<StorageFolder>	mFolderCache;
 
-		public  FolderExplorer( IEventAggregator eventAggregator, IStorageFolderSupport storageFolderSupport,
+		public  FolderExplorer( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration, IStorageFolderSupport storageFolderSupport,
 								IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider ) {
 			mEventAggregator = eventAggregator;
+			mLibraryConfiguration = libraryConfiguration;
 			mStorageFolderSupport = storageFolderSupport;
 			mRootFolderProvider = rootFolderProvider;
 			mStorageFolderProvider = storageFolderProvider;
@@ -99,16 +100,12 @@ namespace Noise.Core.FileStore {
 			mStopExploring = true;
 		}
 
-		public void Handle( Events.SystemConfigurationChanged eventArgs ) {
+		public void Handle( Events.LibraryConfigurationChanged eventArgs ) {
 			LoadConfiguration();
 		}
 
 		public void LoadConfiguration() {
-			var storageConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<StorageConfiguration>( StorageConfiguration.SectionName  );
-
-			// Update the database root folders to reflect the configuration.
-			if(( storageConfig != null ) &&
-			   ( storageConfig.RootFolders != null )) {
+			if( mLibraryConfiguration.Current != null ) {
 				var rootList = new List<RootFolder>();
 
 				using( var roots = mRootFolderProvider.GetRootFolderList()) {
@@ -119,14 +116,17 @@ namespace Noise.Core.FileStore {
 					mRootFolderProvider.DeleteRootFolder( folder );
 				}
 
-				foreach( RootFolderConfiguration folderConfig in storageConfig.RootFolders ) {
-					var root = new RootFolder( folderConfig.Key, folderConfig.Path, folderConfig.Description );
+				foreach( var mediaConfig in mLibraryConfiguration.Current.MediaLocations ) {
+					var root = new RootFolder( mediaConfig.Key, mediaConfig.Path, string.Empty );
+					var level = 0;
 
-					foreach( FolderStrategyConfiguration strategy in folderConfig.StorageStrategy ) {
-						root.FolderStrategy.SetStrategyForLevel( strategy.Level, (eFolderStrategy)strategy.Strategy );
+					foreach( var strategy in mLibraryConfiguration.Current.MediaLocations[0].FolderStrategy ) {
+						root.FolderStrategy.SetStrategyForLevel( level, strategy );
+
+						level++;
 					}
 
-					root.FolderStrategy.PreferFolderStrategy = folderConfig.PreferFolderStrategy;
+					root.FolderStrategy.PreferFolderStrategy = mediaConfig.PreferFolderStrategy;
 
 					mRootFolderProvider.AddRootFolder( root );
 				}
