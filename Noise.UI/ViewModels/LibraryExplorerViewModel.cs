@@ -32,6 +32,7 @@ namespace Noise.UI.ViewModels {
 		private const string	cVisualStateStrategy	= "DisplayStrategy";
 
 		private IExplorerViewStrategy					mViewStrategy;
+		private readonly IEventAggregator				mEventAggregator;
 		private readonly IDatabaseInfo					mDatabaseInfo;
 		private readonly PlaybackFocusTracker			mFocusTracker;
 		private readonly List<string>					mSearchOptions;
@@ -47,8 +48,9 @@ namespace Noise.UI.ViewModels {
 
 		public	IEnumerable<IExplorerViewStrategy>		ViewStrategies { get; private set; }
 
-		public LibraryExplorerViewModel( IEnumerable<IExplorerViewStrategy> viewStrategies, IDatabaseInfo databaseInfo,
-										 PlaybackFocusTracker focusTracker ) {
+		public LibraryExplorerViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
+										 IEnumerable<IExplorerViewStrategy> viewStrategies, PlaybackFocusTracker focusTracker ) {
+			mEventAggregator = eventAggregator;
 			mDatabaseInfo = databaseInfo;
 			ViewStrategies = viewStrategies.ToList();
 			mFocusTracker = focusTracker;
@@ -79,8 +81,9 @@ namespace Noise.UI.ViewModels {
 				strategy.Initialize( this );
 				strategy.UseSortPrefixes( mEnableSortPrefixes, mSortPrefixes );
 			}
-
 			// Selecting a strategy is deferred until tree data is requested.
+
+			mEventAggregator.Subscribe( this );
 		}
 
 		public IExplorerViewStrategy SelectedStrategy {

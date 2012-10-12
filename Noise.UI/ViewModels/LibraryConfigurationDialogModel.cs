@@ -16,7 +16,8 @@ namespace Noise.UI.ViewModels {
 		private string												mMediaPath;
 		private bool												mLibraryDirty;
 
-		public LibraryConfigurationDialogModel( IDialogService dialogService, ILibraryConfiguration libraryConfiguration, ILibraryBuilder libraryBuilder ) {
+		public LibraryConfigurationDialogModel( IDialogService dialogService, ILibraryConfiguration libraryConfiguration,
+												ILibraryBuilder libraryBuilder ) {
 			mDialogService = dialogService;
 			mLibraryConfiguration = libraryConfiguration;
 			mLibraryBuilder = libraryBuilder;
@@ -125,6 +126,37 @@ namespace Noise.UI.ViewModels {
 					MediaPath = path;
 				}
 			}
+		}
+
+		public void Execute_OpenLibrary() {
+			if( mSelectedLibrary != null ) {
+				mLibraryConfiguration.Open( mSelectedLibrary );
+
+				RaiseCanExecuteChangedEvent( "CanExecute_OpenLibrary" );
+				RaiseCanExecuteChangedEvent( "CanExecute_CloseLibrary" );
+			}
+		}
+
+		[DependsUpon( "SelectedLibrary" )]
+		public bool CanExecute_OpenLibrary() {
+			return(( mSelectedLibrary != null ) &&
+			       ( mSelectedLibrary != mLibraryConfiguration.Current ));
+		}
+
+		public void Execute_CloseLibrary() {
+			if(( mSelectedLibrary != null ) &&
+			   ( mSelectedLibrary == mLibraryConfiguration.Current )) {
+				mLibraryConfiguration.Close( mSelectedLibrary );
+
+				RaiseCanExecuteChangedEvent( "CanExecute_OpenLibrary" );
+				RaiseCanExecuteChangedEvent( "CanExecute_CloseLibrary" );
+			}
+		}
+
+		[DependsUpon( "SelectedLibrary" )]
+		public bool CanExecute_CloseLibrary() {
+			return(( mSelectedLibrary != null ) &&
+			       ( mSelectedLibrary == mLibraryConfiguration.Current ));
 		}
 
 		public void Execute_UpdateLibrary() {

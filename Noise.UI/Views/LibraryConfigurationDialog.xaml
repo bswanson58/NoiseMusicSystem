@@ -21,8 +21,8 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Column="0" Grid.Row="0" Margin="5" Orientation="Horizontal">
-                <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Content="Libraries:" Margin="5,0,0,0"/>
-                <ComboBox Margin="5,0" Width="300" ItemsSource="{Binding LibraryList}" DisplayMemberPath="LibraryName" SelectedItem="{Binding SelectedLibrary}"/>
+                <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" VerticalAlignment="Center" Margin="5,0,0,0" Content="Libraries:"/>
+                <ComboBox Margin="5,0" Width="300" Height="25" ItemsSource="{Binding LibraryList}" DisplayMemberPath="LibraryName" SelectedItem="{Binding SelectedLibrary}"/>
             </StackPanel>
 
             <GroupBox Grid.Column="0" Grid.Row="1" Margin="7" Header="Library Properties">
@@ -57,7 +57,11 @@
                 </Grid>
             </GroupBox>
 
-            <Button Grid.Column="1" Grid.Row="0" Margin="7" HorizontalAlignment="Right" Content=" Update Library " Command="{Binding Path=UpdateLibrary}"/>
+            <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
+                <Button Margin="7,5" Content=" Open Library " Command="{Binding Path=OpenLibrary}"/>
+                <Button Margin="7,5" Content=" Close Library " Command="{Binding Path=CloseLibrary}"/>
+                <Button Margin="7,5" Content=" Update Library " Command="{Binding Path=UpdateLibrary}"/>
+            </StackPanel>
         </Grid>
 
     </Grid>
