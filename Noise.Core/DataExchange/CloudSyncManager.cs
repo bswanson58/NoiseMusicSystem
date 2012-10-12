@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Caliburn.Micro;
 using GDataDB;
 using GDataDB.Linq;
 using Noise.Core.DataExchange.Dto;
@@ -12,7 +13,9 @@ using Noise.Infrastructure.Support;
 using IDatabase = GDataDB.IDatabase;
 
 namespace Noise.Core.DataExchange {
-	internal class CloudSyncManager : ICloudSyncManager {
+	internal class CloudSyncManager : ICloudSyncManager,
+									  IHandle<Events.DatabaseOpened> {
+		private readonly IEventAggregator			mEventAggregator;
 		private readonly IDatabaseInfo				mDatabaseInfo;
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IAlbumProvider				mAlbumProvider;
@@ -32,8 +35,10 @@ namespace Noise.Core.DataExchange {
 		private readonly AsyncCommand<object>						mSyncWithCloud;
 		private readonly AsyncCommand<SetFavoriteCommandArgs>		mSetFavoriteCommand;
 
-		public CloudSyncManager( IDatabaseInfo databaseInfo, IEnumerable<ICloudSyncProvider> syncProviders, IDomainSearchProvider domainSearchProvider,
+		public CloudSyncManager( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
+								 IEnumerable<ICloudSyncProvider> syncProviders, IDomainSearchProvider domainSearchProvider,
 								 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IInternetStreamProvider streamProvider ) {
+			mEventAggregator = eventAggregator;
 			mDatabaseInfo = databaseInfo;
 			mSyncProviders = syncProviders;
 			mArtistProvider = artistProvider;
@@ -46,27 +51,32 @@ namespace Noise.Core.DataExchange {
 
 			mSetFavoriteCommand = new AsyncCommand<SetFavoriteCommandArgs>( OnSetFavorite );
 			GlobalCommands.SetFavorite.RegisterCommand( mSetFavoriteCommand );
+
+			mEventAggregator.Subscribe( this );
 		}
 
 		public bool MaintainSynchronization {
 			get{ return( mMaintainSynchronization ); }
 			set {
-				if( mMaintainSynchronization != value ) {
 					mMaintainSynchronization = value;
 
-					if( mMaintainSynchronization ) {
-
-						UpdateFromCloud();
-					}
+				if( mDatabaseInfo.IsOpen ) {
+					UpdateFromCloud();
 				}
+			}
+		}
+
+		public void Handle( Events.DatabaseOpened args ) {
+			mDatabaseInstanceId = mDatabaseInfo.DatabaseId;
+
+			if( mMaintainSynchronization ) {
+				UpdateFromCloud();
 			}
 		}
 
 		public bool InitializeCloudSync( string loginName, string password ) {
 			mLoginName = loginName;
 			mLoginPassword = password;
-
-			mDatabaseInstanceId = mDatabaseInfo.DatabaseId;
 
 			return( true );
 		}

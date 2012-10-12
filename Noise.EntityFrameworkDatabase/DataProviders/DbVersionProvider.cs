@@ -37,6 +37,10 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			}
 		}
 
+		public bool IsOpen {
+			get{ return( false ); }
+		}
+
 		public void InitializeDatabaseVersion( Int16 majorVersion, Int16 minorVersion ) {
 			var dbVersion = new DbVersion( majorVersion, minorVersion );
 

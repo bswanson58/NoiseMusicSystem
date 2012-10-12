@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
+using Caliburn.Micro;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DatabaseManager {
-	public class EntityFrameworkDatabaseManager : IDatabaseManager {
+	public class EntityFrameworkDatabaseManager : IDatabaseManager,
+												  IHandle<Events.LibraryChanged> {
 		private const Int16		cDatabaseVersionMajor = 0;
 		private const Int16		cDatabaseVersionMinor = 5;
 
@@ -17,6 +19,14 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			mInitializeStrategy = initializeStrategy;
 			mDatabaseInfo = databaseInfo;
 			mContextProvider = contextProvider;
+		}
+
+		public bool IsOpen {
+			get{ return( false ); }
+		}
+
+		public void Handle( Events.LibraryChanged args ) {
+			
 		}
 
 		public bool Initialize() {

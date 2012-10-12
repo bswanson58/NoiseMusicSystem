@@ -2,5 +2,7 @@
 	public interface IDatabaseManager {
 		bool			Initialize();
 		void			Shutdown();
+
+		bool			IsOpen { get; }
 	}
 }

@@ -15,6 +15,7 @@ namespace Noise.EloqueraDatabase.Database {
 		private readonly Dictionary<string, IDatabase>	mReservedDatabases;
 		private readonly Dictionary<string, string>		mReservedStacks;
 		private readonly IDatabaseFactory				mDatabaseFactory;
+		private bool									mIsOpen;
 		private	bool									mHasShutdown;
 
 		public DatabaseManager( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration,
@@ -34,13 +35,17 @@ namespace Noise.EloqueraDatabase.Database {
 		}
 
 		public void Handle( Events.LibraryChanged args ) {
+			mIsOpen = false;
+
 			if( mLibraryConfiguration.Current != null ) {
 				var database = mDatabaseFactory.GetDatabaseInstance();
+
 				if( database.InitializeDatabase()) {
 					if( database.OpenWithCreateDatabase()) {
 						mDatabaseFactory.SetBlobStorageInstance( database );
 						mAvailableDatabases.Add( database );
 
+						mIsOpen = true;
 						mEventAggregator.Publish( new Events.DatabaseOpened());
 					}
 				}
@@ -49,6 +54,10 @@ namespace Noise.EloqueraDatabase.Database {
 
 		public bool Initialize() {
 			return( true );
+		}
+
+		public bool IsOpen {
+			get{ return( mIsOpen ); }
 		}
 
 		public void Shutdown() {

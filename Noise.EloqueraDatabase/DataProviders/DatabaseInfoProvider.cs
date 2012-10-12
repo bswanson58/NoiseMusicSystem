@@ -13,6 +13,10 @@ namespace Noise.EloqueraDatabase.DataProviders {
 			mDatabaseManager = databaseManager;
 		}
 
+		public bool IsOpen {
+			get{ return( mDatabaseManager.IsOpen ); }
+		}
+
 		public long DatabaseId {
 			get {
 				var	databaseId = Constants.cDatabaseNullOid;
