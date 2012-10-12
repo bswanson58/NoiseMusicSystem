@@ -1,31 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Caliburn.Micro;
 using CuttingEdge.Conditions;
-using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
-	public class TagManager : ITagManager, IRequireInitialization {
+	public class TagManager : ITagManager,
+							  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+		private readonly IEventAggregator			mEventAggregator;
 		private readonly IGenreProvider				mGenreProvider;
 		private readonly ITagProvider				mTagProvider;
 		private readonly ITagAssociationProvider	mTagAssociationProvider;
 		private readonly Dictionary<long, DbGenre>	mGenreList;
 		private readonly List<DbDecadeTag>			mDecadeList;
 
-		public TagManager( ILifecycleManager lifecycleManager, IGenreProvider genreProvider, ITagProvider tagProvider, ITagAssociationProvider tagAssociationProvider ) {
+		public TagManager( IEventAggregator eventAggregator, IGenreProvider genreProvider,
+						   ITagProvider tagProvider, ITagAssociationProvider tagAssociationProvider ) {
+			mEventAggregator = eventAggregator;
 			mGenreProvider = genreProvider;
 			mTagProvider = tagProvider;
 			mTagAssociationProvider = tagAssociationProvider;
 			mGenreList = new Dictionary<long, DbGenre>();
 			mDecadeList = new List<DbDecadeTag>();
 
-			lifecycleManager.RegisterForInitialize( this );
+			mEventAggregator.Subscribe( this );
 		}
 
-		public void Initialize() {
+		public void Handle( Events.DatabaseOpened args ) {
 			try {
 				LoadGenreList();
 				LoadDecadeList();
@@ -34,11 +38,14 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - TagManager.Initialize", ex );
+				NoiseLogger.Current.LogException( "TagManager:DatabaseOpened", ex );
 			}
 		}
 
-		public void Shutdown() { }
+		public void Handle( Events.DatabaseClosing args ) {
+			mGenreList.Clear();
+			mDecadeList.Clear();
+		}
 
 		public long ResolveGenre( string genreName ) {
 			var retValue = Constants.cDatabaseNullOid;

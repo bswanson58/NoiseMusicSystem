@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Core.Database;
-using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayHistory {
-	public class PlayHistoryMgr : IPlayHistory, IRequireInitialization {
+	public class PlayHistoryMgr : IPlayHistory,
+								  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private const int						cMaximumHistory = 100;
 
 		private readonly IEventAggregator		mEventAggregator;
@@ -17,19 +17,19 @@ namespace Noise.Core.PlayHistory {
 		private readonly ITrackProvider			mTrackProvider;
 		private DatabaseCache<DbPlayHistory>	mPlayHistory;
 
-		public PlayHistoryMgr( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
+		public PlayHistoryMgr( IEventAggregator eventAggregator,
 							   IPlayHistoryProvider playHistoryProvider, ITrackProvider trackProvider ) {
 			mEventAggregator = eventAggregator;
 			mPlayHistoryProvider = playHistoryProvider;
 			mTrackProvider = trackProvider;
 			mPlayHistory = new DatabaseCache<DbPlayHistory>( null );
 
-			lifecycleManager.RegisterForInitialize( this );
+			mEventAggregator.Subscribe( this );
 
 			NoiseLogger.Current.LogInfo( "PlayHistory created" );
 		}
 
-		public void Initialize() {
+		public void Handle( Events.DatabaseOpened args ) {
 			try {
 				using( var historyList = mPlayHistoryProvider.GetPlayHistoryList()) {
 					mPlayHistory = new DatabaseCache<DbPlayHistory>( historyList.List );
@@ -38,6 +38,10 @@ namespace Noise.Core.PlayHistory {
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - PlayHistoryMgr:ctor ", ex );
 			}
+		}
+
+		public void Handle( Events.DatabaseClosing args ) {
+			mPlayHistory.Clear();
 		}
 
 		public void Shutdown() { }

@@ -3,31 +3,31 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Caliburn.Micro;
-using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
-	public class ContentBuilder : IBackgroundTask, IRequireInitialization {
+	public class ContentBuilder : IBackgroundTask,
+								  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private	List<DbArtist>				mArtistList;
 		private IEnumerator<DbArtist>		mArtistEnum;
 
-		public ContentBuilder( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, IArtistProvider artistProvider ) {
+		public ContentBuilder( IEventAggregator eventAggregator, IArtistProvider artistProvider ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 
-			lifecycleManager.RegisterForInitialize( this );
+			mEventAggregator.Subscribe( this );
 		}
 
 		public string TaskId {
 			get { return( "Task_ContentBuilder" ); }
 		}
 
-		public void Initialize() {
+		public void Handle( Events.DatabaseOpened args ) {
 			BuildArtistList();
 			if( mArtistList.Any()) {
 				var seed = new Random( DateTime.Now.Millisecond );
@@ -40,7 +40,9 @@ namespace Noise.Core.BackgroundTasks {
 			}
 		}
 
-		public void Shutdown() { }
+		public void Handle( Events.DatabaseClosing args ) {
+			mArtistList.Clear();
+		}
 
 		public void ExecuteTask() {
 			var artist = NextArtist();

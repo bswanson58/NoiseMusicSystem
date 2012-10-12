@@ -2,37 +2,44 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using Caliburn.Micro;
 using Noise.Core.Database;
-using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
-	public class LinkSimilarArtists : IBackgroundTask, IRequireInitialization {
+	public class LinkSimilarArtists : IBackgroundTask,
+									  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+		private readonly IEventAggregator				mEventAggregator;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IAssociatedItemListProvider	mAssociationProvider;
 		private DatabaseCache<DbArtist>					mArtistCache;
 		private List<long>								mSimilarArtistLists;
 		private IEnumerator<long>						mListEnum;
 
-		public LinkSimilarArtists( ILifecycleManager lifecycleManager, IArtistProvider artistProvider, IAssociatedItemListProvider associatedItemListProvider ) {
+		public LinkSimilarArtists( IEventAggregator eventAggregator, IArtistProvider artistProvider,
+								   IAssociatedItemListProvider associatedItemListProvider ) {
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAssociationProvider = associatedItemListProvider;
 
-			lifecycleManager.RegisterForInitialize( this );
+			mEventAggregator.Subscribe( this );
 		}
 
 		public string TaskId {
 			get { return( "Task_LinkSimilarArtists" ); }
 		}
 
-		public void Initialize() {
+		public void Handle( Events.DatabaseOpened args ) {
 			InitializeLists();
 		}
 
-		public void Shutdown() { }
+		public void Handle( Events.DatabaseClosing args ) {
+			mArtistCache.Clear();
+			mSimilarArtistLists.Clear();
+		}
 
 		private void InitializeLists() {
 			try {
@@ -61,8 +68,8 @@ namespace Noise.Core.BackgroundTasks {
 
 							foreach( var similarArtist in updater.Item.Items ) {
 								var artistName = similarArtist.Item;
-								var dbArtist = mArtistCache.Find( artist => String.Compare( artist.Name, artistName, true ) == 0 );
-
+								var dbArtist = mArtistCache.Find( artist => String.Compare( artist.Name, artistName, 
+																							StringComparison.OrdinalIgnoreCase ) == 0 );
 								if( dbArtist != null ) {
 									if( similarArtist.AssociatedId != dbArtist.DbId ) {
 										similarArtist.SetAssociatedId( dbArtist.DbId );

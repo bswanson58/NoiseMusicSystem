@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Caliburn.Micro;
 using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.Database {
-	public class DatabaseManager : IEloqueraManager {
+	public class DatabaseManager : IEloqueraManager, IHandle<Events.LibraryChanged> {
+		private readonly IEventAggregator				mEventAggregator;
+		private readonly ILibraryConfiguration			mLibraryConfiguration;
 		private readonly object							mLockObject;
 		private readonly List<IDatabase>				mAvailableDatabases;
 		private readonly Dictionary<string, IDatabase>	mReservedDatabases;
@@ -14,34 +17,38 @@ namespace Noise.EloqueraDatabase.Database {
 		private readonly IDatabaseFactory				mDatabaseFactory;
 		private	bool									mHasShutdown;
 
-		public DatabaseManager( IDatabaseFactory databaseFactory ) {
-			if( databaseFactory == null ) {
-				throw new ArgumentNullException( "databaseFactory", "Initializing DatabaseManager" );
-			}
+		public DatabaseManager( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration,
+								IDatabaseFactory databaseFactory ) {
+			mEventAggregator = eventAggregator;
+			mLibraryConfiguration = libraryConfiguration;
+			mDatabaseFactory = databaseFactory;
 
 			mLockObject = new object();
-			mDatabaseFactory = databaseFactory;
 			mReservedDatabases = new Dictionary<string, IDatabase>();
 			mReservedStacks = new Dictionary<string, string>();
 			mAvailableDatabases = new List<IDatabase>();
 
+			mEventAggregator.Subscribe( this );
+
 			NoiseLogger.Current.LogInfo( "DatabaseManager created" );
 		}
 
-		public bool Initialize() {
-			var retValue = false;
+		public void Handle( Events.LibraryChanged args ) {
+			if( mLibraryConfiguration.Current != null ) {
+				var database = mDatabaseFactory.GetDatabaseInstance();
+				if( database.InitializeDatabase()) {
+					if( database.OpenWithCreateDatabase()) {
+						mDatabaseFactory.SetBlobStorageInstance( database );
+						mAvailableDatabases.Add( database );
 
-			var database = mDatabaseFactory.GetDatabaseInstance();
-			if( database.InitializeDatabase()) {
-				if( database.OpenWithCreateDatabase()) {
-					mDatabaseFactory.SetBlobStorageInstance( database );
-					mAvailableDatabases.Add( database );
-
-					retValue = true;
+						mEventAggregator.Publish( new Events.DatabaseOpened());
+					}
 				}
 			}
+		}
 
-			return( retValue );
+		public bool Initialize() {
+			return( true );
 		}
 
 		public void Shutdown() {

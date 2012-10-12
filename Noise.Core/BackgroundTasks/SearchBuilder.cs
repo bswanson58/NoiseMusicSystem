@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using Noise.Core.Support;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
-	public class SearchBuilder : IBackgroundTask, IRequireInitialization {
+	public class SearchBuilder : IBackgroundTask,
+								 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+		private readonly IEventAggregator				mEventAggregator;
 		private readonly ISearchProvider				mSearchProvider;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IAlbumProvider					mAlbumProvider;
@@ -20,9 +22,10 @@ namespace Noise.Core.BackgroundTasks {
 		private List<long>								mArtistList;
 		private IEnumerator<long>						mArtistEnum;
 
-		public SearchBuilder( ILifecycleManager lifecycleManager, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
-							  IAssociatedItemListProvider associatedItemListProvider, ILyricProvider lyricProvider, ITextInfoProvider textInfoProvider,
-							  ISearchProvider searchProvider ) {
+		public SearchBuilder( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider,
+							  ITrackProvider trackProvider, IAssociatedItemListProvider associatedItemListProvider,
+							  ILyricProvider lyricProvider, ITextInfoProvider textInfoProvider, ISearchProvider searchProvider ) {
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -31,18 +34,20 @@ namespace Noise.Core.BackgroundTasks {
 			mTextInfoProvider = textInfoProvider;
 			mSearchProvider = searchProvider;
 
-			lifecycleManager.RegisterForInitialize( this );
+			mEventAggregator.Subscribe( this );
 		}
 
 		public string TaskId {
 			get { return( "Task_SearchBuilder" ); }
 		}
 
-		public void Initialize() {
+		public void Handle( Events.DatabaseOpened args ) {
 			InitializeLists();
 		}
 
-		public void Shutdown() { }
+		public void Handle( Events.DatabaseClosing args ) {
+			mArtistList.Clear();
+		}
 
 		private void InitializeLists() {
 			using( var artistList = mArtistProvider.GetArtistList()) {

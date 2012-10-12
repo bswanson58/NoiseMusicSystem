@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using Caliburn.Micro;
 using Noise.Core.Support;
 using Noise.Infrastructure;
@@ -43,21 +43,7 @@ namespace Noise.Core {
 
 			NoiseLogger.Current.LogMessage( "Initializing Noise Music System" );
 
-			if( mConfigurationManager is IRequireInitialization ) {
-				( mConfigurationManager as IRequireInitialization ).Initialize();
-			}
-			var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-			if( expConfig != null ) {
-				if( expConfig.LoadLastLibraryOnStartup ) {
-					mConfigurationManager.Open( expConfig.LastLibraryUsed );
-
-					if( mConfigurationManager.Current == null ) {
-						mConfigurationManager.Open( mConfigurationManager.Libraries.FirstOrDefault());
-					}
-				}
-			}
-
-			if( mDatabaseManager.Initialize()) {
+			try {
 				mLifecycleManager.Initialize();
 
 				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
@@ -72,16 +58,22 @@ namespace Noise.Core {
 
 				var sysConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 				if(( sysConfig != null ) &&
-				   ( sysConfig.EnableRemoteAccess )) {
+					( sysConfig.EnableRemoteAccess )) {
 					mRemoteServer.OpenRemoteServer();
 				}
 
 				isInitialized = true;
 
 				NoiseLogger.Current.LogMessage( "Initialized NoiseManager." );
+
+				var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+				if(( expConfig != null ) &&
+					( expConfig.LoadLastLibraryOnStartup )) {
+					mConfigurationManager.Open( expConfig.LastLibraryUsed );
+				}
 			}
-			else {
-				NoiseLogger.Current.LogMessage( "Noise Manager: DatabaseManager could not be initialized" );
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "NoiseManager:Initialize", ex );
 			}
 
 			return ( isInitialized );

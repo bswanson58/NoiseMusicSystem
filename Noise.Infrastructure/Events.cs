@@ -249,6 +249,11 @@ namespace Noise.Infrastructure {
 		}
 
 		public class LibraryConfigurationChanged { }
+		public class LibraryChanged { }
+
+		public class DatabaseOpened { }
+		public class DatabaseClosing { }
+
 		public class SystemShutdown { }
 
 		public class GlobalUserEvent {

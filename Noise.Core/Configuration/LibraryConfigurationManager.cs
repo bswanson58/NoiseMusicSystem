@@ -15,14 +15,14 @@ namespace Noise.Core.Configuration {
 		private readonly IEventAggregator			mEventAggregator;
 		private	readonly List<LibraryConfiguration>	mLibraries;
 		private string								mConfigurationDirectory;
-
-		public	LibraryConfiguration				Current { get; private set; }
+		private LibraryConfiguration				mCurrentLibrary;
 
 		public LibraryConfigurationManager( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator ) {
 			mEventAggregator = eventAggregator;
 			mLibraries = new List<LibraryConfiguration>();
 
-//			lifecycleManager.RegisterForInitialize( this );
+			lifecycleManager.RegisterForInitialize( this );
+			lifecycleManager.RegisterForShutdown( this );
 		}
 
 		public IEnumerable<LibraryConfiguration> Libraries {
@@ -43,6 +43,16 @@ namespace Noise.Core.Configuration {
 		}
 
 		public void Shutdown() {
+			Current = null;
+		}
+
+		public LibraryConfiguration	Current {
+			get { return( mCurrentLibrary ); }
+			private set {
+				mCurrentLibrary = value;
+
+				mEventAggregator.Publish( new Events.LibraryChanged());
+			}
 		}
 
 		private void LoadLibraries() {

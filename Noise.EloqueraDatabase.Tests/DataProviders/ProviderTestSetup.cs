@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Caliburn.Micro;
+using FluentAssertions;
 using Moq;
 using Noise.AppSupport;
 using Noise.BlobStorage.BlobStore;
@@ -7,6 +8,7 @@ using Noise.EloqueraDatabase.Interfaces;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using ILog = Noise.Infrastructure.Interfaces.ILog;
 
 namespace Noise.EloqueraDatabase.Tests.DataProviders {
 	public class ProviderTestSetup {
@@ -32,7 +34,10 @@ namespace Noise.EloqueraDatabase.Tests.DataProviders {
 			BlobResolver = new BlobStorageResolver();
 			BlobStorageManager = new BlobStorageManager( BlobResolver );
 			DatabaseFactory = new EloqueraDatabaseFactory( BlobStorageManager, IocProvider, LibraryConfiguration );
-			DatabaseManager = new DatabaseManager( DatabaseFactory );
+
+			var eventAggreagtor = new Mock<IEventAggregator>();
+
+			DatabaseManager = new DatabaseManager( eventAggreagtor.Object, LibraryConfiguration, DatabaseFactory );
 
 			if( DatabaseManager.Initialize()) {
 				using( var database = DatabaseManager.CreateDatabase()) {

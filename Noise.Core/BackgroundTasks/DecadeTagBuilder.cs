@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using Noise.Core.Support;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
-	internal class DecadeTagBuilder : IBackgroundTask, IRequireInitialization {
+	internal class DecadeTagBuilder : IBackgroundTask,
+									  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private const string						cDecadeTagBuilderId		= "ComponentId_TagBuilder";
 
+		private readonly IEventAggregator			mEventAggregator;
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IAlbumProvider				mAlbumProvider;
 		private readonly ITagAssociationProvider	mTagAssociationProvider;
@@ -22,26 +24,29 @@ namespace Noise.Core.BackgroundTasks {
 		private long								mLastScanTicks;
 		private	long								mStartScanTicks;
 
-		public DecadeTagBuilder( ILifecycleManager lifecycleManager, ITagAssociationProvider tagAssociationProvider, ITimestampProvider timestampProvider,
+		public DecadeTagBuilder( IEventAggregator eventAggregator, ITagAssociationProvider tagAssociationProvider, ITimestampProvider timestampProvider,
 								 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager ) {
+			mEventAggregator = eventAggregator;
 			mTimestampProvider = timestampProvider;
 			mTagAssociationProvider = tagAssociationProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTagManager = tagManager;
 
-			lifecycleManager.RegisterForInitialize( this );
+			mEventAggregator.Subscribe( this );
 		}
 
 		public string TaskId {
 			get { return( "Task_DiscographyExplorer" ); }
 		}
 
-		public void Initialize() {
+		public void Handle( Events.DatabaseOpened args ) {
 			InitializeLists();
 		}
 
-		public void Shutdown() { }
+		public void Handle( Events.DatabaseClosing args ) {
+			mArtistList.Clear();
+		}
 
 		private void InitializeLists() {
 			try {

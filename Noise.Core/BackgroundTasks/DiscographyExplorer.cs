@@ -2,38 +2,44 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using Caliburn.Micro;
 using Noise.Core.Database;
-using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
-	public class DiscographyExplorer : IBackgroundTask, IRequireInitialization {
+	public class DiscographyExplorer : IBackgroundTask,
+									   IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly IDiscographyProvider	mDiscographyProvider;
 		private List<long>						mArtistList;
 		private IEnumerator<long>				mArtistEnum;
 
-		public DiscographyExplorer( ILifecycleManager lifecycleManager, IArtistProvider artistProvider, IAlbumProvider albumProvider, IDiscographyProvider discographyProvider ) {
+		public DiscographyExplorer( IEventAggregator eventAggregator, IArtistProvider artistProvider,
+									IAlbumProvider albumProvider, IDiscographyProvider discographyProvider ) {
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mDiscographyProvider = discographyProvider;
 	
-			lifecycleManager.RegisterForInitialize( this );
+			mEventAggregator.Subscribe( this );
 		}
 
 		public string TaskId {
 			get { return( "Task_DiscographyExplorer" ); }
 		}
 
-		public void Initialize() {
+		public void Handle( Events.DatabaseOpened args ) {
 			InitializeLists();
 		}
 
-		public void Shutdown() { }
+		public void Handle( Events.DatabaseClosing args ) {
+			mArtistList.Clear();
+		}
 
 		private void InitializeLists() {
 			try {

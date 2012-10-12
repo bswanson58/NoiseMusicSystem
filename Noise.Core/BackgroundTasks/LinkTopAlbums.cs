@@ -2,36 +2,42 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using Noise.Core.Support;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
-	internal class LinkTopAlbums : IBackgroundTask, IRequireInitialization {
+	internal class LinkTopAlbums : IBackgroundTask,
+								   IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+		private readonly IEventAggregator				mEventAggregator;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly IAssociatedItemListProvider	mAssociationProvider;
 		private List<long>								mArtistList;
 		private IEnumerator<long>						mArtistEnum;
 
-		public LinkTopAlbums( ILifecycleManager lifecycleManager, IArtistProvider artistProvider, IAlbumProvider albumProvider, IAssociatedItemListProvider associatedItemListProvider ) {
+		public LinkTopAlbums( IEventAggregator eventAggregator, IArtistProvider artistProvider,
+							  IAlbumProvider albumProvider, IAssociatedItemListProvider associatedItemListProvider ) {
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mAssociationProvider = associatedItemListProvider;
 
-			lifecycleManager.RegisterForInitialize( this );
+			mEventAggregator.Subscribe( this );
 		}
 
 		public string TaskId {
 			get { return( "Task_LinkTopAlbums" ); }
 		}
 
-		public void Shutdown() { }
-
-		public void Initialize() {
+		public void Handle( Events.DatabaseOpened args ) {
 			InitializeLists();
+		}
+
+		public void Handle( Events.DatabaseClosing args ) {
+			mArtistList.Clear();
 		}
 
 		private void InitializeLists() {
