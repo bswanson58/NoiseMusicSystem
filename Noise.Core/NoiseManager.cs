@@ -10,7 +10,6 @@ using Noise.Infrastructure.RemoteHost;
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private	readonly IEventAggregator			mEvents;
-		private readonly ILibraryConfiguration		mConfigurationManager;
 		private readonly ILifecycleManager			mLifecycleManager;
 		private readonly IRemoteServer				mRemoteServer;
 		private readonly ICloudSyncManager			mCloudSyncMgr;
@@ -19,7 +18,6 @@ namespace Noise.Core {
 
 		public NoiseManager( IEventAggregator eventAggregator,
 							 ILifecycleManager lifecycleManager,
-							 ILibraryConfiguration configurationManager,
 							 IDatabaseManager databaseManager,
 							 ICloudSyncManager cloudSyncManager,
 							 ILibraryBuilder libraryBuilder,
@@ -31,7 +29,6 @@ namespace Noise.Core {
 							 IEnumerable<IRequireConstruction> backgroundComponents ) {
 			mEvents = eventAggregator;
 			mLifecycleManager = lifecycleManager;
-			mConfigurationManager = configurationManager;
 			mRemoteServer = remoteServer;
 			mDatabaseManager = databaseManager;
 			mCloudSyncMgr = cloudSyncManager;
@@ -66,12 +63,6 @@ namespace Noise.Core {
 				isInitialized = true;
 
 				NoiseLogger.Current.LogMessage( "Initialized NoiseManager." );
-
-				var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-				if(( expConfig != null ) &&
-					( expConfig.LoadLastLibraryOnStartup )) {
-//					mConfigurationManager.Open( expConfig.LastLibraryUsed );
-				}
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "NoiseManager:Initialize", ex );

@@ -1,18 +1,21 @@
 ﻿using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
-	public class ToolbarViewModel : ViewModelBase {
+	public class ToolbarViewModel : ViewModelBase,
+									IHandle<Events.LibraryChanged> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly ICloudSyncManager		mCloudSyncMgr;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly ILibraryBuilder		mLibraryBuilder;
 		private readonly IDialogService			mDialogService;
+		private readonly BindableCollection<LibraryConfiguration>	mLibraries;
 
 		public ToolbarViewModel( IEventAggregator eventAggregator, IDialogService dialogService, ILibraryConfiguration libraryConfiguration,
 								 ICloudSyncManager cloudSyncManager, IDataExchangeManager dataExchangeManager, ILibraryBuilder libraryBuilder ) {
@@ -22,6 +25,36 @@ namespace Noise.UI.ViewModels {
 			mDataExchangeMgr = dataExchangeManager;
 			mLibraryBuilder = libraryBuilder;
 			mDialogService = dialogService;
+
+			mLibraries = new BindableCollection<LibraryConfiguration>( mLibraryConfiguration.Libraries );
+			CurrentLibrary = mLibraryConfiguration.Current;
+
+			mEventAggregator.Subscribe( this );
+
+			var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			if(( expConfig != null ) &&
+			   ( expConfig.LoadLastLibraryOnStartup )) {
+				mLibraryConfiguration.Open( expConfig.LastLibraryUsed );
+			}
+		}
+
+		public void Handle( Events.LibraryChanged args ) {
+			CurrentLibrary = mLibraryConfiguration.Current;
+		}
+
+		public BindableCollection<LibraryConfiguration> LibraryList {
+			get{ return( mLibraries ); }
+		} 
+
+		public LibraryConfiguration CurrentLibrary {
+			get{ return( Get( () => CurrentLibrary )); }
+			set {
+				Set( () => CurrentLibrary, value );
+
+				if( mLibraryConfiguration.Current != value ) {
+					mLibraryConfiguration.Open( value );
+				}
+			}
 		}
 
 		public void Execute_NoiseOptions() {

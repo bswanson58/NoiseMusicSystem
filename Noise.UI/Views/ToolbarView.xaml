@@ -12,10 +12,9 @@
 
     <ToolBarTray DockPanel.Dock="Top">
         <ToolBar Band="1" BandIndex="1">
-            <Button Margin="3" Command="{Binding Path=ExploreLayout}">Explore</Button>
-            <Button Margin="3" Command="{Binding Path=ListenLayout}">Listen</Button>
+            <TextBlock Margin="7,0,0,0" VerticalAlignment="Center" Text="Library:"/>
+            <ComboBox Margin="3" Width="190" ItemsSource="{Binding LibraryList}" SelectedItem="{Binding CurrentLibrary}" DisplayMemberPath="LibraryName" />
             <Button Margin="3" Command="{Binding Path=LibraryConfiguration}">Library</Button>
-            <Button Margin="3" Command="{Binding Path=ServerConfiguration}">Server</Button>
             <Button Margin="3" Command="{Binding Path=CloudConfiguration}">Cloud</Button>
             <Button Margin="3" Command="{Binding Path=NoiseOptions}">Options</Button>
             <Button Margin="3" Command="{Binding Path=SmallPlayerView}">Player</Button>
