@@ -27,10 +27,10 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	eMainMenuCommand	MenuCommand { get; private set; }
 		public	int					ScreenOrder { get; private set; }
 
-		public FavoritesListViewModel(IEventAggregator eventAggregator,
+		public FavoritesListViewModel(IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
 								      IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 								      IDataExchangeManager dataExchangeManager, IDialogService dialogService ) :
-			base( eventAggregator, artistProvider, albumProvider, trackProvider, dataExchangeManager, dialogService ) {
+			base( eventAggregator, databaseInfo, artistProvider, albumProvider, trackProvider, dataExchangeManager, dialogService ) {
 			ScreenTitle = "Favorites";
 			MenuTitle = "Favorites";
 			Description = "display favorites songs";

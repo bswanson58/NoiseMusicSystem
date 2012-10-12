@@ -10,7 +10,8 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class FavoritesViewModel : AutomaticCommandBase,
-									  IHandle<Events.ArtistUserUpdate>, IHandle<Events.AlbumUserUpdate>, IHandle<Events.TrackUserUpdate> {
+									  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>,
+	IHandle<Events.ArtistUserUpdate>, IHandle<Events.AlbumUserUpdate>, IHandle<Events.TrackUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
@@ -19,7 +20,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IDialogService			mDialogService;
 		private readonly SortableCollection<FavoriteViewNode>	mFavoritesList;
 
-		public FavoritesViewModel( IEventAggregator eventAggregator,
+		public FavoritesViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
 								   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 								   IDataExchangeManager dataExchangeManager, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
@@ -32,7 +33,10 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.Subscribe( this );
 
 			mFavoritesList = new SortableCollection<FavoriteViewNode>();
-			LoadFavorites();
+
+			if( databaseInfo.IsOpen ) {
+				LoadFavorites();
+			}
 		}
 
 		public IEventAggregator EventAggregator {
@@ -41,6 +45,14 @@ namespace Noise.UI.ViewModels {
 
 		public BindableCollection<FavoriteViewNode> FavoritesList {
 			get{ return( mFavoritesList ); }
+		}
+
+		public void Handle( Events.DatabaseOpened args ) {
+			LoadFavorites();
+		}
+
+		public void Handle( Events.DatabaseClosing args ) {
+			mFavoritesList.Clear();
 		}
 
 		public void Handle( Events.ArtistUserUpdate eventArgs ) {

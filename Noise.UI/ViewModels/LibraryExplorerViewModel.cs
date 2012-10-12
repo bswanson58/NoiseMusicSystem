@@ -7,6 +7,7 @@ using Caliburn.Micro;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
 using Noise.UI.Behaviours;
 using Noise.UI.Behaviours.EventCommandTriggers;
@@ -24,12 +25,14 @@ namespace Noise.UI.ViewModels {
 		public ExplorerSortInfo( ArtistAlbumConfigViewModel viewModel ) : base( viewModel ) { }
 	}
 
-	public class LibraryExplorerViewModel : AutomaticCommandBase, ILibraryExplorerViewModel {
+	public class LibraryExplorerViewModel : AutomaticCommandBase, ILibraryExplorerViewModel,
+											IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private const string	cVisualStateNormal		= "Normal";
 		private const string	cVisualStateIndex		= "DisplayIndex";
 		private const string	cVisualStateStrategy	= "DisplayStrategy";
 
 		private IExplorerViewStrategy					mViewStrategy;
+		private readonly IDatabaseInfo					mDatabaseInfo;
 		private readonly PlaybackFocusTracker			mFocusTracker;
 		private readonly List<string>					mSearchOptions;
 		private readonly LibraryExplorerFilter			mExplorerFilter;
@@ -44,7 +47,9 @@ namespace Noise.UI.ViewModels {
 
 		public	IEnumerable<IExplorerViewStrategy>		ViewStrategies { get; private set; }
 
-		public LibraryExplorerViewModel( IEnumerable<IExplorerViewStrategy> viewStrategies, PlaybackFocusTracker focusTracker ) {
+		public LibraryExplorerViewModel( IEnumerable<IExplorerViewStrategy> viewStrategies, IDatabaseInfo databaseInfo,
+										 PlaybackFocusTracker focusTracker ) {
+			mDatabaseInfo = databaseInfo;
 			ViewStrategies = viewStrategies.ToList();
 			mFocusTracker = focusTracker;
 
@@ -87,7 +92,15 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void ActivateStrategy( IExplorerViewStrategy strategy ) {
+		public void Handle( Events.DatabaseOpened args ) {
+			ActivateStrategy( mViewStrategy );
+		}
+		
+		public void Handle( Events.DatabaseClosing args ) {
+			DeactivateStrategy();	
+		}
+
+		private void DeactivateStrategy() {
 			mTreeItems.Clear();
 			mIndexItems.Clear();
 			mSearchOptions.Clear();
@@ -95,12 +108,18 @@ namespace Noise.UI.ViewModels {
 			if( mViewStrategy != null ) {
 				mViewStrategy.Deactivate();
 			}
+		}
+
+		private void ActivateStrategy( IExplorerViewStrategy strategy ) {
+			DeactivateStrategy();
 
 			mViewStrategy = strategy;
 			if( mViewStrategy != null ) {
 				mViewStrategy.Activate();
 
-				UpdateTree();
+				if( mDatabaseInfo.IsOpen ) {
+					UpdateTree();
+				}
 			}
 		}
 
@@ -212,7 +231,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnFiltersEdited( ExplorerFilterInfo confirmation ) {
-			if( confirmation.Confirmed ) {
+			if(( confirmation.Confirmed ) &&
+			   ( mDatabaseInfo.IsOpen )) {
 				UpdateTree();
 			}
 		}

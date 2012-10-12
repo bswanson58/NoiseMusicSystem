@@ -10,14 +10,15 @@ using Noise.UI.Dto;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
-	class StreamViewModel : ViewModelBase {
+	class StreamViewModel : ViewModelBase,
+							IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator			mEventAggregator;
 		private readonly IInternetStreamProvider	mStreamProvider;
 		private readonly IDataExchangeManager		mDataExchangeMgr;
 		private readonly IDialogService				mDialogService;
 		private readonly ObservableCollectionEx<UiInternetStream>	mStreams;
 
-		public StreamViewModel( IEventAggregator eventAggregator, IDialogService dialogService,
+		public StreamViewModel( IEventAggregator eventAggregator, IDialogService dialogService, IDatabaseInfo databaseInfo,
 								IInternetStreamProvider streamProvider, IDataExchangeManager dataExchangeManager ) {
 			mEventAggregator = eventAggregator;
 			mStreamProvider = streamProvider;
@@ -26,7 +27,19 @@ namespace Noise.UI.ViewModels {
 
 			mStreams = new ObservableCollectionEx<UiInternetStream>();
 
+			mEventAggregator.Subscribe( this );
+
+			if( databaseInfo.IsOpen ) {
+				UpdateStreams();
+			}
+		}
+
+		public void Handle( Events.DatabaseOpened args ) {
 			UpdateStreams();
+		}
+
+		public void Handle( Events.DatabaseClosing args ) {
+			mStreams.Clear();
 		}
 
 		public ObservableCollection<UiInternetStream> StreamList {

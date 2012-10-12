@@ -11,7 +11,8 @@ using Noise.UI.Dto;
 using Observal.Extensions;
 
 namespace Noise.UI.ViewModels {
-	public class PlayListViewModel : ViewModelBase, IHandle<Events.PlayListChanged> {
+	public class PlayListViewModel : ViewModelBase,
+									 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>, IHandle<Events.PlayListChanged> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
@@ -22,7 +23,7 @@ namespace Noise.UI.ViewModels {
 		private readonly Observal.Observer	mChangeObserver;
 		private readonly ObservableCollectionEx<PlayListNode>	mTreeItems;
 
-		public PlayListViewModel( IEventAggregator eventAggregator,
+		public PlayListViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
 								  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayListProvider playListProvider ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
@@ -41,11 +42,21 @@ namespace Noise.UI.ViewModels {
 
 			mEventAggregator.Subscribe( this );
 
-			BackgroundLoadPlayLists();
+			if( databaseInfo.IsOpen ) {
+				BackgroundLoadPlayLists();
+			}
 		}
 
 		public ObservableCollectionEx<PlayListNode> PlayList {
 			get{ return( mTreeItems ); }
+		}
+
+		public void Handle( Events.DatabaseOpened args ) {
+			BackgroundLoadPlayLists();
+		}
+
+		public void Handle( Events.DatabaseClosing args ) {
+			ClearPlayList();
 		}
 
 		public void Handle( Events.PlayListChanged eventArgs ) {
@@ -82,13 +93,17 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
-		private void UpdatePlayList( IEnumerable<PlayListNode> newList ) {
+		private void ClearPlayList() {
 			mTreeItems.SuspendNotification();
 			foreach( var item in mTreeItems ) {
 				mChangeObserver.Release( item.UiEdit );
 			}
 			mTreeItems.Clear();
 			mSelectedNode = null;
+		}
+
+		private void UpdatePlayList( IEnumerable<PlayListNode> newList ) {
+			ClearPlayList();
 
 			mTreeItems.AddRange( newList );
 			foreach( var item in mTreeItems ) {

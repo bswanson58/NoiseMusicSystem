@@ -8,10 +8,10 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
-using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class PlayHistoryViewModel : ViewModelBase, IHandle<Events.PlayHistoryChanged> {
+	public class PlayHistoryViewModel : ViewModelBase,
+										IHandle<Events.PlayHistoryChanged>, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IPlayHistory		mPlayHistory;
 		private readonly IArtistProvider	mArtistProvider;
@@ -37,6 +37,14 @@ namespace Noise.UI.ViewModels {
 			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => UpdateHistoryList( result.Result as IEnumerable<PlayHistoryNode>);
 
 			BackgroundPopulateHistoryList();
+		}
+
+		public void Handle( Events.DatabaseOpened args ) {
+			BackgroundPopulateHistoryList();
+		}
+
+		public void Handle( Events.DatabaseClosing args ) {
+			Execute.OnUIThread( () => mHistoryList.Clear());
 		}
 
 		public void Handle( Events.PlayHistoryChanged eventArgs ) {

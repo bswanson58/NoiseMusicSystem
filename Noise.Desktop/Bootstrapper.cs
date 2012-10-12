@@ -71,7 +71,6 @@ namespace Noise.Desktop {
 			mAppSupport = instanceContainer.Resolve<ApplicationSupport>();
 
 			mNoiseManager.Initialize();
-			mNoiseManager.StartExplorerJobs();
 			mAppSupport.Initialize();
 
 			ViewModelResolver.TypeResolver = ( type => instanceContainer.Resolve( type));

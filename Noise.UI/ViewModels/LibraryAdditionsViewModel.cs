@@ -9,10 +9,11 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
-using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class LibraryAdditionsViewModel : ViewModelBase, IHandle<Events.LibraryUpdateCompleted> {
+	public class LibraryAdditionsViewModel : ViewModelBase,
+											 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>,
+											 IHandle<Events.LibraryUpdateCompleted> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
@@ -22,7 +23,7 @@ namespace Noise.UI.ViewModels {
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<LibraryAdditionNode>	mNodeList;
 
-		public LibraryAdditionsViewModel( IEventAggregator eventAggregator,
+		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
 										  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
@@ -44,9 +45,21 @@ namespace Noise.UI.ViewModels {
 				mHorizonTime = DateTime.Now - new TimeSpan( configuration.NewAdditionsHorizonDays, 0, 0, 0 );
 			}
 
-			mBackgroundWorker.RunWorkerAsync();
+			if( databaseInfo.IsOpen ) {
+				mBackgroundWorker.RunWorkerAsync();
+			}
 
 			mEventAggregator.Subscribe( this );
+		}
+
+		public void Handle( Events.DatabaseOpened args ) {
+			if(!mBackgroundWorker.IsBusy ) {
+				mBackgroundWorker.RunWorkerAsync();
+			}
+		}
+
+		public void Handle( Events.DatabaseClosing args ) {
+			Execute.OnUIThread( () => mNodeList.Clear() );
 		}
 
 		public void Handle( Events.LibraryUpdateCompleted eventArgs ) {

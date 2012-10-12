@@ -8,7 +8,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteHost;
 
 namespace Noise.Core {
-	public class NoiseManager : INoiseManager {
+	public class NoiseManager : INoiseManager, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private	readonly IEventAggregator			mEvents;
 		private readonly ILibraryConfiguration		mConfigurationManager;
 		private readonly ILifecycleManager			mLifecycleManager;
@@ -24,7 +24,7 @@ namespace Noise.Core {
 							 ICloudSyncManager cloudSyncManager,
 							 ILibraryBuilder libraryBuilder,
 							 IRemoteServer remoteServer,
-							 // component that just need to be referrenced.
+							 // components that just need to be referrenced.
 							 IPlayController playController,
 							 ISearchProvider searchProvider,
 							 ITagManager tagManager,
@@ -45,6 +45,7 @@ namespace Noise.Core {
 
 			try {
 				mLifecycleManager.Initialize();
+				mEvents.Subscribe( this );
 
 				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
 				if( configuration != null ) {
@@ -69,7 +70,7 @@ namespace Noise.Core {
 				var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 				if(( expConfig != null ) &&
 					( expConfig.LoadLastLibraryOnStartup )) {
-					mConfigurationManager.Open( expConfig.LastLibraryUsed );
+//					mConfigurationManager.Open( expConfig.LastLibraryUsed );
 				}
 			}
 			catch( Exception ex ) {
@@ -90,7 +91,7 @@ namespace Noise.Core {
 			mDatabaseManager.Shutdown();
 		}
 
-		public void StartExplorerJobs() {
+		public void Handle( Events.DatabaseOpened arg ) {
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 			if( configuration != null ) {
@@ -103,6 +104,10 @@ namespace Noise.Core {
 
 				mLibraryBuilder.EnableUpdateOnLibraryChange = configuration.EnableLibraryChangeUpdates;
 			}
+		}
+
+		public void Handle( Events.DatabaseClosing args ) {
+			mLibraryBuilder.StopLibraryUpdate();
 		}
 	}
 }
