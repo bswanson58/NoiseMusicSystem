@@ -36,7 +36,7 @@ namespace Noise.Core.Configuration {
 			LoadLibraries();
 
 			if(!mLibraries.Any()) {
-				var defaultLibrary = new LibraryConfiguration { LibraryName = "Noise", DatabaseName = "Noise" };
+				var defaultLibrary = new LibraryConfiguration { LibraryName = "Noise", DatabaseName = "Noise", IsDefaultLibrary = true };
 
 				AddLibrary( defaultLibrary );
 			}
@@ -83,6 +83,14 @@ namespace Noise.Core.Configuration {
 			}
 		}
 
+		public void OpenDefaultLibrary() {
+			var defaultLibrary = ( from library in mLibraries where library.IsDefaultLibrary select library ).FirstOrDefault();
+
+			if( defaultLibrary != null ) {
+				Open( defaultLibrary );
+			}
+		}
+
 		public void Open( long libraryId ) {
 			var configuration = mLibraries.FirstOrDefault( c => c.LibraryId == libraryId );
 
@@ -121,6 +129,10 @@ namespace Noise.Core.Configuration {
 
 		public void AddLibrary( LibraryConfiguration configuration ) {
 			try {
+				if( configuration.IsDefaultLibrary ) {
+					ClearDefaultLibrary( configuration );
+				}
+
 				var libraryPath = Path.Combine( mConfigurationDirectory, configuration.LibraryId.ToString( CultureInfo.InvariantCulture ));
 
 				if( Directory.Exists( libraryPath )) {
@@ -142,6 +154,14 @@ namespace Noise.Core.Configuration {
 		}
 
 		public void UpdateLibrary( LibraryConfiguration configuration ) {
+			if( configuration.IsDefaultLibrary ) {
+				ClearDefaultLibrary( configuration );
+			}
+
+			StoreLibrary( configuration );
+		}
+
+		private void StoreLibrary( LibraryConfiguration configuration ) {
 			try {
 				var libraryPath = Path.Combine( mConfigurationDirectory, configuration.LibraryId.ToString( CultureInfo.InvariantCulture ));
 				
@@ -174,6 +194,17 @@ namespace Noise.Core.Configuration {
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "ConfigurationManager:DeleteLibrary", ex );
+			}
+		}
+
+		private void ClearDefaultLibrary( LibraryConfiguration configuration ) {
+			foreach( var library in mLibraries ) {
+				if(( library.IsDefaultLibrary ) &&
+				   ( library != configuration )) {
+					library.IsDefaultLibrary = false;
+
+					StoreLibrary( library );
+				}
 			}
 		}
 	}

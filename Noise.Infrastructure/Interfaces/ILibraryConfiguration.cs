@@ -8,6 +8,8 @@ namespace Noise.Infrastructure.Interfaces {
 
 		void		Open( long libraryId );
 		void		Open( LibraryConfiguration configuration );
+		void		OpenDefaultLibrary();
+
 		void		Close( LibraryConfiguration configuration );
 		void		AddLibrary( LibraryConfiguration configuration );
 		void		UpdateLibrary( LibraryConfiguration configuration );

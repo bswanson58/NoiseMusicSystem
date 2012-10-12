@@ -31,6 +31,7 @@ namespace Noise.Infrastructure.Dto {
 		public	string				DatabaseServer { get; set; }
 		public	string				DatabaseUser { get; set; }
 		public	string				DatabasePassword { get; set; }
+		public	bool				IsDefaultLibrary { get; set; }
 		public	List<MediaLocation>	MediaLocations { get; set; }
 
 		public LibraryConfiguration() {

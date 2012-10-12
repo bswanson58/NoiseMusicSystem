@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
-             Height="255" Width="550"
+             Height="275" Width="550"
              Tag="Library Configuration"
         >
     <Grid>
@@ -36,6 +36,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Label Grid.Column="0" Grid.Row="0" Content="Library Name:" HorizontalAlignment="Right"/>
                     <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding LibraryName, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
@@ -53,7 +54,9 @@
                         <Button Grid.Column="1" Margin="3" Content=" ... " Command="{Binding Path=Browse}"/>
                     </Grid>
                     
-                    <Button Grid.Column="1" Grid.Row="3" Width="70" Margin="0,9" HorizontalAlignment="Right" Content="Update" Command="{Binding UpdateConfiguration}"/>
+                    <CheckBox Grid.Column="1" Grid.Row="3" Margin="3" Content="Is Default Library" IsChecked="{Binding IsDefaultLibrary}"/>
+                    
+                    <Button Grid.Column="1" Grid.Row="4" Width="70" Margin="0,9" HorizontalAlignment="Right" Content="Update" Command="{Binding UpdateConfiguration}"/>
                 </Grid>
             </GroupBox>
 

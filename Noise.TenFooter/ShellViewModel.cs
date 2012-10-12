@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using Caliburn.Micro;
+using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 using Noise.TenFoot.Ui.ViewModels;
@@ -23,7 +24,8 @@ namespace Noise.TenFooter {
 		private string							mContextTitle;
 		private bool							mDialogActive;
 
-		public ShellViewModel( IEventAggregator eventAggregator, InputProcessor inputProcessor, IWindowManager windowManager,
+		public ShellViewModel( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration,
+							   InputProcessor inputProcessor, IWindowManager windowManager,
 							   IHome homeViewModel, TransportViewModel transportViewModel, ConfigurationViewModel configurationViewModel ) {
 			mEventAggregator = eventAggregator;
 			mWindowManager = windowManager;
@@ -40,6 +42,8 @@ namespace Noise.TenFooter {
 			mTimer.Start();
 
 			mEventAggregator.Subscribe( this );
+
+			libraryConfiguration.OpenDefaultLibrary();
 		}
 
 	    public PlayerViewModel PlayerView {

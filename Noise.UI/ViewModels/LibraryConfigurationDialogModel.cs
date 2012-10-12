@@ -17,6 +17,7 @@ namespace Noise.UI.ViewModels {
 		private string												mLibraryName;
 		private string												mDatabaseName;
 		private string												mMediaPath;
+		private bool												mIsDefaultLibrary;
 		private bool												mLibraryDirty;
 
 		public LibraryConfigurationDialogModel( IEventAggregator eventAggregator, IDialogService dialogService,
@@ -58,6 +59,7 @@ namespace Noise.UI.ViewModels {
 				if( mSelectedLibrary != null ) {
 					mLibraryName = mSelectedLibrary.LibraryName;
 					mDatabaseName = mSelectedLibrary.DatabaseName;
+					mIsDefaultLibrary = mSelectedLibrary.IsDefaultLibrary;
 
 					if( mSelectedLibrary.MediaLocations.Any()) {
 						mMediaPath = mSelectedLibrary.MediaLocations[0].Path;
@@ -67,6 +69,7 @@ namespace Noise.UI.ViewModels {
 					mLibraryName = string.Empty;
 					mDatabaseName = string.Empty;
 					mMediaPath = string.Empty;
+					mIsDefaultLibrary = false;
 				}
 
 				RaisePropertyChanged( () => SelectedLibrary );
@@ -106,11 +109,23 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		[DependsUpon( "SelectedLibrary" )]
+		public bool IsDefaultLibrary {
+			get{ return( mIsDefaultLibrary ); }
+			set {
+				mIsDefaultLibrary = value;
+				mLibraryDirty = true;
+
+				RaisePropertyChanged( () => IsDefaultLibrary );
+			}
+		}
+
 		public void Execute_UpdateConfiguration() {
 			if(( mLibraryDirty ) &&
 			   ( mSelectedLibrary != null )) {
 				mSelectedLibrary.LibraryName = mLibraryName;
 				mSelectedLibrary.DatabaseName = mDatabaseName;
+				mSelectedLibrary.IsDefaultLibrary = mIsDefaultLibrary;
 
 				if(!mSelectedLibrary.MediaLocations.Any()) {
 					var mediaLocation = new MediaLocation{ PreferFolderStrategy = true };
@@ -133,6 +148,7 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "MediaPath" )]
 		[DependsUpon( "LibraryName" )]
 		[DependsUpon( "DatabaseName" )]
+		[DependsUpon( "IsDefaultLibrary" )]
 		public bool CanExecute_UpdateConfiguration() {
 			return(( mSelectedLibrary != null ) &&
 				   ( mLibraryDirty ));
@@ -161,6 +177,7 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "LibraryName" )]
 		[DependsUpon( "DatabaseName" )]
 		[DependsUpon( "SelectedLibrary" )]
+		[DependsUpon( "IsDefaultLibrary" )]
 		public bool CanExecute_CreateLibrary() {
 			return(!mLibraryDirty );
 		}

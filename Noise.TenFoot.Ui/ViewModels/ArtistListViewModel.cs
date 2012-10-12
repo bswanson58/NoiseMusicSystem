@@ -12,6 +12,7 @@ using ReusableBits.Interfaces;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class ArtistListViewModel : BaseListViewModel<UiArtist>, IHomeScreen {
+		private readonly IDatabaseInfo		mDatabaseInfo;
 		private readonly IAlbumList			mAlbumsList;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IArtworkProvider	mArtworkProvider;
@@ -26,9 +27,10 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	int							ScreenOrder { get; private set; }
 		public	int							WrapItemCount { get; set; }
 
-		public ArtistListViewModel( IAlbumList albumListViewModel, IArtistProvider artistProvider, IArtworkProvider artworkProvider,
-									IEventAggregator eventAggregator, IResourceProvider resourceProvider ) :
+		public ArtistListViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, IDatabaseInfo databaseInfo,
+									IAlbumList albumListViewModel, IArtistProvider artistProvider, IArtworkProvider artworkProvider ) :
 			base( eventAggregator ) {
+			mDatabaseInfo = databaseInfo;
 			mAlbumsList = albumListViewModel;
 			mArtistProvider = artistProvider;
 			mArtworkProvider = artworkProvider;
@@ -73,26 +75,28 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		private void RetrieveArtistList() {
-			ArtistRetrievalTaskHandler.StartTask( () => {
-					using( var artistList = mArtistProvider.GetArtistList()) {
-						ItemList.AddRange( from artist in artistList.List orderby artist.Name select TransformArtist( artist ));
-					}
-
-					foreach( var artist in ItemList ) {
-						var artwork = mArtworkProvider.GetArtistArtwork( artist.DbId, ContentType.ArtistPrimaryImage );
-
-						if(( artwork != null ) &&
-						   ( artwork.HaveValidImage )) {
-							artist.SetArtistArtwork( artwork );
+			if( mDatabaseInfo.IsOpen ) {
+				ArtistRetrievalTaskHandler.StartTask( () => {
+						using( var artistList = mArtistProvider.GetArtistList()) {
+							ItemList.AddRange( from artist in artistList.List orderby artist.Name select TransformArtist( artist ));
 						}
-						else {
-							artist.ArtistImage = mUnknownArtistImage;
+
+						foreach( var artist in ItemList ) {
+							var artwork = mArtworkProvider.GetArtistArtwork( artist.DbId, ContentType.ArtistPrimaryImage );
+
+							if(( artwork != null ) &&
+							   ( artwork.HaveValidImage )) {
+								artist.SetArtistArtwork( artwork );
+							}
+							else {
+								artist.ArtistImage = mUnknownArtistImage;
+							}
 						}
-					}
-				},
-				() => { SelectedItem = ItemList.FirstOrDefault(); },
-				ex => NoiseLogger.Current.LogException( "ArtistListViewModel:RetrieveArtistList", ex )
-			); 
+					},
+					() => { SelectedItem = ItemList.FirstOrDefault(); },
+					ex => NoiseLogger.Current.LogException( "ArtistListViewModel:RetrieveArtistList", ex )
+				); 
+			}
 		}
 
 		private void OnArtistSelect( UiArtist artist ) {
