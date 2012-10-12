@@ -134,6 +134,7 @@ namespace Noise.Core.Configuration {
 				Directory.CreateDirectory( Path.Combine( libraryPath, Constants.SearchDatabaseDirectory ));
 
 				mLibraries.Add( configuration );
+				mEventAggregator.Publish( new Events.LibraryListChanged());
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "ConfigurationManager:AddLibrary", ex );
@@ -149,6 +150,8 @@ namespace Noise.Core.Configuration {
 				if( configuration == Current ) {
 					mEventAggregator.Publish( new Events.LibraryConfigurationChanged());
 				}
+
+				mEventAggregator.Publish( new Events.LibraryListChanged());
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "ConfigurationManager:UpdateLibrary", ex );
@@ -166,6 +169,8 @@ namespace Noise.Core.Configuration {
 				if( mLibraries.Contains( configuration )) {
 					mLibraries.Remove( configuration );
 				}
+
+				mEventAggregator.Publish( new Events.LibraryListChanged());
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "ConfigurationManager:DeleteLibrary", ex );

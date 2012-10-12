@@ -1,11 +1,14 @@
 ﻿using System.Linq;
 using Caliburn.Micro;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
-	internal class LibraryConfigurationDialogModel : DialogModelBase {
+	internal class LibraryConfigurationDialogModel : DialogModelBase, 
+													 IHandle<Events.LibraryListChanged> {
+		private readonly IEventAggregator							mEventAggregator;
 		private readonly IDialogService								mDialogService;
 		private readonly ILibraryConfiguration						mLibraryConfiguration;
 		private readonly ILibraryBuilder							mLibraryBuilder;
@@ -16,14 +19,31 @@ namespace Noise.UI.ViewModels {
 		private string												mMediaPath;
 		private bool												mLibraryDirty;
 
-		public LibraryConfigurationDialogModel( IDialogService dialogService, ILibraryConfiguration libraryConfiguration,
-												ILibraryBuilder libraryBuilder ) {
+		public LibraryConfigurationDialogModel( IEventAggregator eventAggregator, IDialogService dialogService,
+												ILibraryConfiguration libraryConfiguration, ILibraryBuilder libraryBuilder ) {
+			mEventAggregator = eventAggregator;
 			mDialogService = dialogService;
 			mLibraryConfiguration = libraryConfiguration;
 			mLibraryBuilder = libraryBuilder;
-			mLibraries = new BindableCollection<LibraryConfiguration>( mLibraryConfiguration.Libraries );
+			mLibraries = new BindableCollection<LibraryConfiguration>();
 
+			LoadLibraries();
 			SelectedLibrary = mLibraryConfiguration.Current ?? mLibraryConfiguration.Libraries.FirstOrDefault();
+
+			mEventAggregator.Subscribe( this );
+		}
+
+		public void Handle( Events.LibraryListChanged args ) {
+			LoadLibraries();
+		}
+
+		private void LoadLibraries() {
+			var selectedLibrary = mSelectedLibrary;
+
+			mLibraries.Clear();
+			mLibraries.AddRange( from library in mLibraryConfiguration.Libraries orderby library.LibraryName select library );
+
+			SelectedLibrary = selectedLibrary;
 		}
 
 		public IObservableCollection<LibraryConfiguration> LibraryList {
@@ -126,6 +146,23 @@ namespace Noise.UI.ViewModels {
 					MediaPath = path;
 				}
 			}
+		}
+
+		public void Execute_CreateLibrary() {
+			var newLibrary = new LibraryConfiguration { LibraryName = "New Library", DatabaseName = "Noise Database" };
+
+			mLibraryConfiguration.AddLibrary( newLibrary );
+
+			LoadLibraries();
+			SelectedLibrary = newLibrary;
+		}
+
+		[DependsUpon( "MediaPath" )]
+		[DependsUpon( "LibraryName" )]
+		[DependsUpon( "DatabaseName" )]
+		[DependsUpon( "SelectedLibrary" )]
+		public bool CanExecute_CreateLibrary() {
+			return(!mLibraryDirty );
 		}
 
 		public void Execute_OpenLibrary() {

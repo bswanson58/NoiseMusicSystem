@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System.Linq;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -8,7 +9,7 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class ToolbarViewModel : ViewModelBase,
-									IHandle<Events.LibraryChanged> {
+									IHandle<Events.LibraryChanged>, IHandle<Events.LibraryListChanged> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly ICloudSyncManager		mCloudSyncMgr;
@@ -26,8 +27,8 @@ namespace Noise.UI.ViewModels {
 			mLibraryBuilder = libraryBuilder;
 			mDialogService = dialogService;
 
-			mLibraries = new BindableCollection<LibraryConfiguration>( mLibraryConfiguration.Libraries );
-			CurrentLibrary = mLibraryConfiguration.Current;
+			mLibraries = new BindableCollection<LibraryConfiguration>();
+			LoadLibraries();
 
 			mEventAggregator.Subscribe( this );
 
@@ -38,8 +39,20 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		private void LoadLibraries() {
+			mLibraries.IsNotifying = false;
+			mLibraries.Clear();
+			mLibraries.AddRange( from library in mLibraryConfiguration.Libraries orderby library.LibraryName select library );
+			mLibraries.IsNotifying = true;
+			mLibraries.Refresh();
+		}
+
 		public void Handle( Events.LibraryChanged args ) {
-			CurrentLibrary = mLibraryConfiguration.Current;
+			RaisePropertyChanged( () => CurrentLibrary );
+		}
+
+		public void Handle( Events.LibraryListChanged args ) {
+			LoadLibraries();
 		}
 
 		public BindableCollection<LibraryConfiguration> LibraryList {
@@ -47,13 +60,13 @@ namespace Noise.UI.ViewModels {
 		} 
 
 		public LibraryConfiguration CurrentLibrary {
-			get{ return( Get( () => CurrentLibrary )); }
+			get{ return( mLibraryConfiguration.Current ); }
 			set {
-				Set( () => CurrentLibrary, value );
-
 				if( mLibraryConfiguration.Current != value ) {
 					mLibraryConfiguration.Open( value );
 				}
+
+				RaisePropertyChanged( () => CurrentLibrary );
 			}
 		}
 
@@ -85,7 +98,8 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_LibraryConfiguration() {
 			mDialogService.ShowDialog( DialogNames.LibraryConfiguration,
-											new LibraryConfigurationDialogModel( mDialogService, mLibraryConfiguration, mLibraryBuilder ));
+											new LibraryConfigurationDialogModel( mEventAggregator, mDialogService,
+																				 mLibraryConfiguration, mLibraryBuilder ));
 		}
 
 		public void Execute_Import() {
