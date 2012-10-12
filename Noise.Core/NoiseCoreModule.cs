@@ -25,7 +25,7 @@ namespace Noise.Core {
 		public NoiseCoreModule( IUnityContainer container ) {
 			mContainer = container;
 
-			NoiseLogger.Current.LogMessage( "------------------------------" );
+			NoiseLogger.Current.LogMessage( "==============================" );
 			NoiseLogger.Current.LogMessage( "Noise Core Module loading." );
 		}
 

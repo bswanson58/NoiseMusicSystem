@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	internal class SummaryBuilder : ISummaryBuilder {
+		private readonly IEventAggregator		mEventAggregator;
 		private readonly IRootFolderProvider	mRootFolderProvider;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
 		private bool							mStop;
 
-		public SummaryBuilder( IRootFolderProvider rootFolderProvider, IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+		public SummaryBuilder( IEventAggregator eventAggregator, IRootFolderProvider rootFolderProvider,
+							   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+			mEventAggregator = eventAggregator;
 			mRootFolderProvider =rootFolderProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -108,6 +112,7 @@ namespace Noise.Core.DataBuilders {
 										artistUpdater.Item.MaxChildRating = (Int16)maxAlbumRating;
 
 										artistUpdater.Update();
+										mEventAggregator.Publish( new Events.ArtistContentUpdated( artistUpdater.Item.DbId ));
 
 										if( mStop ) {
 											break;
