@@ -8,7 +8,7 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayQueueMgr : IPlayQueue,
-								  IHandle<Events.TrackUserUpdate> {
+								  IHandle<Events.TrackUserUpdate>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator					mEventAggregator;
 		private readonly IArtistProvider					mArtistProvider;
 		private readonly IAlbumProvider						mAlbumProvider;
@@ -197,6 +197,10 @@ namespace Noise.Core.PlayQueue {
 
 				mEventAggregator.Publish( new Events.PlaybackTrackUpdated( queueTrack ));
 			}
+		}
+
+		public void Handle( Events.DatabaseClosing args ) {
+			ClearQueue();
 		}
 
 		public void ClearQueue() {

@@ -13,6 +13,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistInfoViewModel : AutomaticCommandBase, IActiveAware,
+									   IHandle<Events.DatabaseClosing>,
 									   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>,
 									   IHandle<Events.ArtistContentUpdated>, IHandle<Events.ViewDisplayRequest> {
 		private readonly IEventAggregator				mEventAggregator;
@@ -51,6 +52,7 @@ namespace Noise.UI.ViewModels {
 			mTopAlbums.Clear();
 			mBandMembers.Clear();
 			mDiscography.Clear();
+			mCurrentArtistId = Constants.cDatabaseNullOid;
 
 			RaisePropertyChanged( () => SupportInfo );
 		}
@@ -99,6 +101,10 @@ namespace Noise.UI.ViewModels {
 				mCurrentArtistId = artistId;
 				RetrieveSupportInfo( mCurrentArtistId );
 			}
+		}
+
+		public void Handle( Events.DatabaseClosing args ) {
+			SupportInfo = null;
 		}
 
 		public void Handle( Events.ArtistFocusRequested request ) {

@@ -17,6 +17,7 @@ namespace Noise.UI.ViewModels {
 	}
 
 	public class ArtistViewModel : AutomaticCommandBase,
+								   IHandle<Events.DatabaseClosing>,
 								   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, 
 								   IHandle<Events.ArtistContentUpdated>, IHandle<Events.ArtistUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
@@ -102,6 +103,11 @@ namespace Noise.UI.ViewModels {
 					ClearCurrentArtist();
 				}
 			}
+		}
+
+		public void Handle( Events.DatabaseClosing args ) {
+			ClearCurrentArtist();
+			DisplayArtistInfoPanel();
 		}
 
 		public void Handle( Events.ArtistContentUpdated eventArgs ) {
@@ -265,6 +271,10 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_DisplayArtistInfoPanel() {
+			DisplayArtistInfoPanel();
+		}
+
+		private void DisplayArtistInfoPanel() {
 			var request = new Events.ViewDisplayRequest( ViewNames.ArtistInfoView );
 
 			mEventAggregator.Publish( request );

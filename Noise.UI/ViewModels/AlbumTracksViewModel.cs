@@ -20,6 +20,7 @@ namespace Noise.UI.ViewModels {
 	}
 
 	internal class AlbumTracksViewModel : AutomaticPropertyBase,
+										  IHandle<Events.DatabaseClosing>,
 										  IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.TrackUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly ITrackProvider			mTrackProvider;
@@ -71,7 +72,11 @@ namespace Noise.UI.ViewModels {
 			}
 
 			mTracks.Each( track => mChangeObserver.Add( track ));
-		} 
+		}
+ 
+		public void Handle( Events.DatabaseClosing args ) {
+			ClearTrackList();
+		}
 
 		public void Handle( Events.ArtistFocusRequested request ) {
 			if( mCurrentArtistId != request.ArtistId ) {

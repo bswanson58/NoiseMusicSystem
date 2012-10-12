@@ -10,10 +10,10 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
-using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistTracksViewModel : ViewModelBase, IActiveAware,
+										 IHandle<Events.DatabaseClosing>,
 										 IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
@@ -63,6 +63,11 @@ namespace Noise.UI.ViewModels {
 		public bool TracksValid {
 			get{ return( Get( () => TracksValid )); }
 			set{ Set( () => TracksValid, value ); }
+		}
+
+		public void Handle( Events.DatabaseClosing args ) {
+			TrackList.Clear();
+			TracksValid = false;
 		}
 
 		public void Handle( Events.ArtistFocusRequested request ) {

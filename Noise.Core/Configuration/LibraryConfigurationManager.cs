@@ -49,9 +49,11 @@ namespace Noise.Core.Configuration {
 		public LibraryConfiguration	Current {
 			get { return( mCurrentLibrary ); }
 			private set {
-				mCurrentLibrary = value;
+				if( mCurrentLibrary != value ) {
+					mCurrentLibrary = value;
 
-				mEventAggregator.Publish( new Events.LibraryChanged());
+					mEventAggregator.Publish( new Events.LibraryChanged());
+				}
 			}
 		}
 
@@ -94,6 +96,9 @@ namespace Noise.Core.Configuration {
 
 			if(( configuration != null ) &&
 			   ( mLibraries.Contains( configuration ))) {
+				NoiseLogger.Current.LogMessage( "------------------------------" );
+				NoiseLogger.Current.LogMessage( "Opening library: {0}", configuration.LibraryName );
+
 				Current = configuration;
 
 				var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
@@ -107,6 +112,10 @@ namespace Noise.Core.Configuration {
 		}
 
 		public void Close( LibraryConfiguration configuration ) {
+			if( mCurrentLibrary != null ) {
+				NoiseLogger.Current.LogMessage( "Closing library: {0}", mCurrentLibrary.LibraryName );
+			}
+
 			Current = null;
 		}
 

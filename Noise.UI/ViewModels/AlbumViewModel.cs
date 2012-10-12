@@ -30,6 +30,7 @@ namespace Noise.UI.ViewModels {
 	}
 
 	internal class AlbumViewModel : ViewModelBase,
+									IHandle<Events.DatabaseClosing>,
 									IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.AlbumUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IAlbumProvider			mAlbumProvider;
@@ -92,6 +93,10 @@ namespace Noise.UI.ViewModels {
 			RaisePropertyChanged( () => Album );
 			RaisePropertyChanged( () => SupportInfo );
 			RaisePropertyChanged( () => AlbumPlayTime );
+		}
+
+		public void Handle( Events.DatabaseClosing args ) {
+			ClearCurrentAlbum();
 		}
 
 		public void Handle( Events.ArtistFocusRequested request ) {

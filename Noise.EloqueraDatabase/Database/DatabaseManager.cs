@@ -16,7 +16,6 @@ namespace Noise.EloqueraDatabase.Database {
 		private readonly Dictionary<string, string>		mReservedStacks;
 		private readonly IDatabaseFactory				mDatabaseFactory;
 		private bool									mIsOpen;
-		private	bool									mHasShutdown;
 
 		public DatabaseManager( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration,
 								IDatabaseFactory databaseFactory ) {
@@ -35,7 +34,9 @@ namespace Noise.EloqueraDatabase.Database {
 		}
 
 		public void Handle( Events.LibraryChanged args ) {
-			mIsOpen = false;
+			if( mIsOpen ) {
+				CloseLibraries();
+			}
 
 			if( mLibraryConfiguration.Current != null ) {
 				var database = mDatabaseFactory.GetDatabaseInstance();
@@ -61,6 +62,16 @@ namespace Noise.EloqueraDatabase.Database {
 		}
 
 		public void Shutdown() {
+			if( mIsOpen ) {
+				CloseLibraries();
+			}
+
+			mDatabaseFactory.CloseFactory();
+		}
+
+		private void CloseLibraries() {
+			mEventAggregator.Publish( new Events.DatabaseClosing());
+
 			if( mReservedDatabases.Count > 0 ) {
 				NoiseLogger.Current.LogMessage( string.Format( "DatabaseManager has {0} reserved databases on shutdown!", mReservedDatabases.Count ));
 
@@ -83,10 +94,8 @@ namespace Noise.EloqueraDatabase.Database {
 				}
 
 				mAvailableDatabases.Clear();
-				mHasShutdown = true;
+				mIsOpen = false;
 			}
-
-			mDatabaseFactory.CloseFactory();
 		}
 
 		public IDatabaseShell CreateDatabase() {
@@ -96,7 +105,7 @@ namespace Noise.EloqueraDatabase.Database {
 		public IDatabase ReserveDatabase() {
 			IDatabase	retValue = null;
 
-			if(!mHasShutdown ) {
+			if( mIsOpen ) {
 				lock( mLockObject ) {
 					if( mAvailableDatabases.Count > 0 ) {
 						retValue = mAvailableDatabases[0];
@@ -162,7 +171,7 @@ namespace Noise.EloqueraDatabase.Database {
 
 		public void FreeDatabase( string databaseId ) {
 			lock( mLockObject ) {
-				if(!mHasShutdown ) {
+				if( mIsOpen ) {
 					if( mReservedDatabases.ContainsKey( databaseId )) {
 						var database = mReservedDatabases[databaseId];
 
