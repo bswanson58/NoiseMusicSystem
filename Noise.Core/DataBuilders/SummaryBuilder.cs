@@ -46,14 +46,14 @@ namespace Noise.Core.DataBuilders {
 						foreach( var artist in artistList.List ) {
 							NoiseLogger.Current.LogInfo( string.Format( "Building summary data for: {0}", artist.Name ));
 
-							using( var albumList = mAlbumProvider.GetAlbumList( artist.DbId )) {
+							using( var artistUpdater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
 								var albumGenre = new Dictionary<long, int>();
+								var maxAlbumRating = 0;
 								var albumCount = 0;
 								var albumRating = 0;
-								var maxAlbumRating = 0;
 
-								foreach( var album in albumList.List ) {
-									using( var artistUpdater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
+								using( var albumList = mAlbumProvider.GetAlbumList( artist.DbId )) {
+									foreach( var album in albumList.List ) {
 										using( var trackList = mTrackProvider.GetTrackList( album.DbId )) {
 											using( var albumUpdater = mAlbumProvider.GetAlbumForUpdate( album.DbId )) {
 												var years = new List<Int32>();
@@ -105,19 +105,19 @@ namespace Noise.Core.DataBuilders {
 												}
 											}
 										}
-
-										artistUpdater.Item.AlbumCount = (Int16)albumCount;
-										artistUpdater.Item.CalculatedGenre = DetermineTopGenre( albumGenre );
-										artistUpdater.Item.CalculatedRating = albumRating > 0 ? (Int16)( albumRating / albumCount ) : (Int16)0;
-										artistUpdater.Item.MaxChildRating = (Int16)maxAlbumRating;
-
-										artistUpdater.Update();
-										mEventAggregator.Publish( new Events.ArtistContentUpdated( artistUpdater.Item.DbId ));
-
-										if( mStop ) {
-											break;
-										}
 									}
+								}
+
+								artistUpdater.Item.AlbumCount = (Int16)albumCount;
+								artistUpdater.Item.CalculatedGenre = DetermineTopGenre( albumGenre );
+								artistUpdater.Item.CalculatedRating = albumRating > 0 ? (Int16)( albumRating / albumCount ) : (Int16)0;
+								artistUpdater.Item.MaxChildRating = (Int16)maxAlbumRating;
+
+								artistUpdater.Update();
+								mEventAggregator.Publish( new Events.ArtistContentUpdated( artistUpdater.Item.DbId ));
+
+								if( mStop ) {
+									break;
 								}
 							}
 						}
@@ -135,7 +135,7 @@ namespace Noise.Core.DataBuilders {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - Building summary data: ", ex );
+				NoiseLogger.Current.LogException( "SummaryBuilder:", ex );
 			}
 		}
 
