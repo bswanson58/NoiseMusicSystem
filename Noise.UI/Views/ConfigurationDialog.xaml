@@ -24,7 +24,7 @@
         </Grid.RowDefinitions>
 
         <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Content="Noise Option Settings:" Margin="5,0,0,0"/>
-        <CheckBox Grid.Column="0" Grid.Row="1" Content="Load last used library on sytartup." IsChecked="{Binding LoadLastLibraryOnStartup}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
+        <CheckBox Grid.Column="0" Grid.Row="1" Content="Load last used library on startup." IsChecked="{Binding LoadLastLibraryOnStartup}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
         <CheckBox Grid.Column="0" Grid.Row="2" Content="Update library on application startup." IsChecked="{Binding Path=EnableLibraryExplorer}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
         <CheckBox Grid.Column="0" Grid.Row="3" Content="Update library on folder changes." IsChecked="{Binding Path=EnableLibraryChangeUpdates}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
         <CheckBox Grid.Column="0" Grid.Row="4" Content="Allow Internet access" IsChecked="{Binding Path=HasNetworkAccess}" Grid.ColumnSpan="2" Margin="11,3,0,3"/>
