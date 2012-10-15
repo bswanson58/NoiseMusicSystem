@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
@@ -9,19 +8,20 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
+using ReusableBits;
 
 namespace Noise.UI.ViewModels {
 	public class LibraryAdditionsViewModel : ViewModelBase,
 											 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>,
 											 IHandle<Events.LibraryUpdateCompleted> {
-		private readonly IEventAggregator	mEventAggregator;
-		private readonly IArtistProvider	mArtistProvider;
-		private readonly IAlbumProvider		mAlbumProvider;
-		private readonly ITrackProvider		mTrackProvider;
-		private readonly DateTime			mHorizonTime;
-		private readonly UInt32				mHorizonCount;
-		private readonly BackgroundWorker	mBackgroundWorker;
-		private readonly ObservableCollectionEx<LibraryAdditionNode>	mNodeList;
+		private readonly IEventAggregator		mEventAggregator;
+		private readonly IArtistProvider		mArtistProvider;
+		private readonly IAlbumProvider			mAlbumProvider;
+		private readonly ITrackProvider			mTrackProvider;
+		private readonly DateTime				mHorizonTime;
+		private readonly UInt32					mHorizonCount;
+		private readonly BindableCollection<LibraryAdditionNode>	mNodeList;
+		private TaskHandler<IEnumerable<LibraryAdditionNode>>		mTaskHandler;
 
 		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
 										  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
@@ -30,14 +30,10 @@ namespace Noise.UI.ViewModels {
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 
-			mNodeList = new ObservableCollectionEx<LibraryAdditionNode>();
+			mNodeList = new BindableCollection<LibraryAdditionNode>();
 
 			mHorizonCount = 100;
 			mHorizonTime = DateTime.Now - new TimeSpan( 3, 0, 0, 0 );
-
-			mBackgroundWorker = new BackgroundWorker();
-			mBackgroundWorker.DoWork += ( o, args ) => args.Result = RetrieveAdditions();
-			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => UpdateList( result.Result as IEnumerable<LibraryAdditionNode>);
 
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 			if( configuration != null ) {
@@ -46,35 +42,43 @@ namespace Noise.UI.ViewModels {
 			}
 
 			if( databaseInfo.IsOpen ) {
-				mBackgroundWorker.RunWorkerAsync();
+				RetrieveWhatsNew();
 			}
 
 			mEventAggregator.Subscribe( this );
 		}
 
-		public void Handle( Events.DatabaseOpened args ) {
-			if(!mBackgroundWorker.IsBusy ) {
-				mBackgroundWorker.RunWorkerAsync();
+		internal TaskHandler<IEnumerable<LibraryAdditionNode>>  TracksRetrievalTaskHandler {
+			get {
+				if( mTaskHandler == null ) {
+					Execute.OnUIThread( () => mTaskHandler = new TaskHandler<IEnumerable<LibraryAdditionNode>>());
+				}
+
+				return( mTaskHandler );
 			}
+			set{ mTaskHandler = value; }
+		}
+
+		private void RetrieveWhatsNew() {
+			TracksRetrievalTaskHandler.StartTask( RetrieveAdditions, UpdateList,
+												  ex => NoiseLogger.Current.LogException( "LibraryAdditionsViewModel:RetrieveWhatsNew", ex ));
+		}
+
+		public void Handle( Events.DatabaseOpened args ) {
+			RetrieveWhatsNew();
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {
-			Execute.OnUIThread( () => mNodeList.Clear() );
+			mNodeList.Clear();
 		}
 
 		public void Handle( Events.LibraryUpdateCompleted eventArgs ) {
-			if(!mBackgroundWorker.IsBusy ) {
-				mBackgroundWorker.RunWorkerAsync();
-			}
+			RetrieveWhatsNew();
 		}
 
 		private void UpdateList( IEnumerable<LibraryAdditionNode> list ) {
-			Execute.OnUIThread( () => {
-				mNodeList.SuspendNotification();
-				mNodeList.Clear();
-				mNodeList.AddRange( list );
-				mNodeList.ResumeNotification();
-			});
+			mNodeList.Clear();
+			mNodeList.AddRange( list );
 		}
 
 		private IEnumerable<LibraryAdditionNode> RetrieveAdditions() {
@@ -125,7 +129,7 @@ namespace Noise.UI.ViewModels {
 			return( from LibraryAdditionNode node in retValue orderby node.Artist.Name + node.Album.Name ascending select node );
 		}
 
-		public ObservableCollectionEx<LibraryAdditionNode> NodeList {
+		public BindableCollection<LibraryAdditionNode> NodeList {
 			get{ return( mNodeList ); }
 		}
 
