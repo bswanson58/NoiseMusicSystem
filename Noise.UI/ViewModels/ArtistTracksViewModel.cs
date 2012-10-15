@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using AutoMapper;
 using Caliburn.Micro;
@@ -10,6 +9,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
+using ReusableBits;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistTracksViewModel : ViewModelBase, IActiveAware,
@@ -22,10 +22,10 @@ namespace Noise.UI.ViewModels {
 		private readonly ITagManager		mTagManager;
 		private DbArtist					mCurrentArtist;
 		private	bool						mIsActive;
-		private readonly BackgroundWorker	mBackgroundWorker;
+		private TaskHandler<IEnumerable<UiArtistTrackNode>>	mUpdateTask;
 
 		public	event EventHandler			IsActiveChanged;
-		public	ObservableCollectionEx<UiArtistTrackNode>	TrackList { get; private set; }
+		public	BindableCollection<UiArtistTrackNode>	TrackList { get; private set; }
 
 		public ArtistTracksViewModel( IEventAggregator eventAggregator,
 									  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ITagManager tagManager ) {
@@ -37,12 +37,7 @@ namespace Noise.UI.ViewModels {
 
 			mEventAggregator.Subscribe( this );
 
-			TrackList = new ObservableCollectionEx<UiArtistTrackNode>();
-
-			mBackgroundWorker = new BackgroundWorker();
-			mBackgroundWorker.DoWork += ( o, args ) => args.Result = BuildTrackList( args.Argument as DbArtist );
-			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => SetTrackList( result.Result as IEnumerable<UiArtistTrackNode>);
-
+			TrackList = new BindableCollection<UiArtistTrackNode>();
 			TracksValid = false;
 		}
 
@@ -100,15 +95,26 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		internal TaskHandler<IEnumerable<UiArtistTrackNode>>  UpdateTask {
+			get {
+				if( mUpdateTask == null ) {
+					Execute.OnUIThread( () => mUpdateTask = new TaskHandler<IEnumerable<UiArtistTrackNode>>());
+				}
+
+				return( mUpdateTask );
+			}
+			set{ mUpdateTask = value; }
+		}
+
 		private void UpdateTrackList( DbArtist artist ) {
 			mCurrentArtist = artist;
 
 			TracksValid = false;
 
 			if(( mCurrentArtist != null ) &&
-			  (!mBackgroundWorker.IsBusy ) &&
 			   ( mIsActive )) {
-				mBackgroundWorker.RunWorkerAsync( mCurrentArtist );
+				UpdateTask.StartTask( () => BuildTrackList( artist ), SetTrackList,
+									  ex => NoiseLogger.Current.LogException( "ArtistTracksViewModel:UpdateTrackList", ex ));
 			}
 		}
 
@@ -156,15 +162,11 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void SetTrackList( IEnumerable<UiArtistTrackNode> list ) {
-			Execute.OnUIThread( () => { 
-				TrackList.SuspendNotification();
-				TrackList.Clear();
-				TrackList.AddRange( from node in list orderby node.Track.Name ascending select node );
-				TrackList.ResumeNotification();
+			TrackList.Clear();
+			TrackList.AddRange( from node in list orderby node.Track.Name ascending select node );
 
-				RaisePropertyChanged( () => UniqueTrackCount );
-				TracksValid = true;
-			});
+			RaisePropertyChanged( () => UniqueTrackCount );
+			TracksValid = true;
 		}
 
 		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {

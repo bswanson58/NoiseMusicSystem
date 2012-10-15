@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
@@ -9,6 +8,7 @@ using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Dto;
 using Observal.Extensions;
+using ReusableBits;
 
 namespace Noise.UI.ViewModels {
 	public class PlayListViewModel : ViewModelBase,
@@ -19,9 +19,9 @@ namespace Noise.UI.ViewModels {
 		private readonly ITrackProvider		mTrackProvider;
 		private readonly IPlayListProvider	mPlayListProvider;
 		private PlayListNode				mSelectedNode;
-		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly Observal.Observer	mChangeObserver;
-		private readonly ObservableCollectionEx<PlayListNode>	mTreeItems;
+		private TaskHandler<IEnumerable<PlayListNode>>		mUpdateTask;
+		private readonly BindableCollection<PlayListNode>	mTreeItems;
 
 		public PlayListViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
 								  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayListProvider playListProvider ) {
@@ -31,11 +31,7 @@ namespace Noise.UI.ViewModels {
 			mTrackProvider = trackProvider;
 			mPlayListProvider = playListProvider;
 
-			mTreeItems = new ObservableCollectionEx<PlayListNode>();
-
-			mBackgroundWorker = new BackgroundWorker();
-			mBackgroundWorker.DoWork += ( o, args ) => args.Result = BuildPlayList();
-			mBackgroundWorker.RunWorkerCompleted += ( o, result ) => UpdatePlayList( result.Result as IEnumerable<PlayListNode>);
+			mTreeItems = new BindableCollection<PlayListNode>();
 
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
@@ -47,7 +43,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public ObservableCollectionEx<PlayListNode> PlayList {
+		public BindableCollection<PlayListNode> PlayList {
 			get{ return( mTreeItems ); }
 		}
 
@@ -64,9 +60,23 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void BackgroundLoadPlayLists() {
-			if(!mBackgroundWorker.IsBusy ) {
-				mBackgroundWorker.RunWorkerAsync();
+			UpdatePlayLists();
+		}
+
+		internal TaskHandler<IEnumerable<PlayListNode>>  UpdateTask {
+			get {
+				if( mUpdateTask == null ) {
+					Execute.OnUIThread( () => mUpdateTask = new TaskHandler<IEnumerable<PlayListNode>>());
+				}
+
+				return( mUpdateTask );
 			}
+			set{ mUpdateTask = value; }
+		}
+
+		private void UpdatePlayLists() {
+			UpdateTask.StartTask( BuildPlayList, SetPlayList,
+								  ex => NoiseLogger.Current.LogException( "PlayListViewModel:UpdatePlayLists", ex ));
 		}
 
 		private IEnumerable<PlayListNode> BuildPlayList() {
@@ -94,7 +104,6 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void ClearPlayList() {
-			mTreeItems.SuspendNotification();
 			foreach( var item in mTreeItems ) {
 				mChangeObserver.Release( item.UiEdit );
 			}
@@ -102,15 +111,13 @@ namespace Noise.UI.ViewModels {
 			mSelectedNode = null;
 		}
 
-		private void UpdatePlayList( IEnumerable<PlayListNode> newList ) {
+		private void SetPlayList( IEnumerable<PlayListNode> newList ) {
 			ClearPlayList();
 
 			mTreeItems.AddRange( newList );
 			foreach( var item in mTreeItems ) {
 				mChangeObserver.Add( item.UiEdit );
 			}
-
-			mTreeItems.ResumeNotification();
 		}
 
 		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {

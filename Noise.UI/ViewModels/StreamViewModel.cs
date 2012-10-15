@@ -8,6 +8,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
 using Noise.UI.Support;
+using ReusableBits;
 
 namespace Noise.UI.ViewModels {
 	class StreamViewModel : ViewModelBase,
@@ -16,7 +17,8 @@ namespace Noise.UI.ViewModels {
 		private readonly IInternetStreamProvider	mStreamProvider;
 		private readonly IDataExchangeManager		mDataExchangeMgr;
 		private readonly IDialogService				mDialogService;
-		private readonly ObservableCollectionEx<UiInternetStream>	mStreams;
+		private TaskHandler							mUpdateStreamsTask;
+		private readonly BindableCollection<UiInternetStream>	mStreams;
 
 		public StreamViewModel( IEventAggregator eventAggregator, IDialogService dialogService, IDatabaseInfo databaseInfo,
 								IInternetStreamProvider streamProvider, IDataExchangeManager dataExchangeManager ) {
@@ -25,7 +27,7 @@ namespace Noise.UI.ViewModels {
 			mDataExchangeMgr = dataExchangeManager;
 			mDialogService = dialogService;
 
-			mStreams = new ObservableCollectionEx<UiInternetStream>();
+			mStreams = new BindableCollection<UiInternetStream>();
 
 			mEventAggregator.Subscribe( this );
 
@@ -59,17 +61,29 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
-		private void UpdateStreams() {
-			mStreams.SuspendNotification();
-			mStreams.Clear();
+		internal TaskHandler UpdateStreamsTask {
+			get {
+				if( mUpdateStreamsTask == null ) {
+					Execute.OnUIThread( () => mUpdateStreamsTask = new TaskHandler());
+				}
 
-			using( var streams = mStreamProvider.GetStreamList()) {
-				mStreams.AddRange( from stream in streams.List select MapStream( stream ));
+				return( mUpdateStreamsTask );
 			}
+			set{ mUpdateStreamsTask = value; }
+		}
 
-			mStreams.ResumeNotification();
 
-			RaiseCanExecuteChangedEvent( "CanExecute_ExportStreams" );
+		private void UpdateStreams() {
+			UpdateStreamsTask.StartTask( () => {
+											mStreams.Clear();
+
+											using( var streams = mStreamProvider.GetStreamList()) {
+												mStreams.AddRange( from stream in streams.List select MapStream( stream ));
+											}
+										},
+										() => RaiseCanExecuteChangedEvent( "CanExecute_ExportStreams" ),
+										ex => NoiseLogger.Current.LogException( "StreamViewModel:UpdateStreams", ex )
+									);
 		}
 
 		private void OnWebsiteClick( UiInternetStream stream ) {
