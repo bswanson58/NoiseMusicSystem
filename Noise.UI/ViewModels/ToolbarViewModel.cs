@@ -6,6 +6,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Support;
+using ReusableBits;
 
 namespace Noise.UI.ViewModels {
 	public class ToolbarViewModel : ViewModelBase,
@@ -16,6 +17,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly ILibraryBuilder		mLibraryBuilder;
 		private readonly IDialogService			mDialogService;
+		private TaskHandler						mLibraryOpenTask;  
 		private readonly BindableCollection<LibraryConfiguration>	mLibraries;
 
 		public ToolbarViewModel( IEventAggregator eventAggregator, IDialogService dialogService, ILibraryConfiguration libraryConfiguration,
@@ -35,7 +37,7 @@ namespace Noise.UI.ViewModels {
 			var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 			if(( expConfig != null ) &&
 			   ( expConfig.LoadLastLibraryOnStartup )) {
-				mLibraryConfiguration.Open( expConfig.LastLibraryUsed );
+				OpenLibrary( expConfig.LastLibraryUsed );
 			}
 		}
 
@@ -45,6 +47,23 @@ namespace Noise.UI.ViewModels {
 			mLibraries.AddRange( from library in mLibraryConfiguration.Libraries orderby library.LibraryName select library );
 			mLibraries.IsNotifying = true;
 			mLibraries.Refresh();
+		}
+
+		internal TaskHandler LibraryOpenTask {
+			get {
+				if( mLibraryOpenTask == null ) {
+					Execute.OnUIThread( () => mLibraryOpenTask = new TaskHandler());
+				}
+
+				return( mLibraryOpenTask );
+			}
+			set{ mLibraryOpenTask = value; }
+		}
+
+		private void OpenLibrary( long libraryId ) {
+			LibraryOpenTask.StartTask( () => mLibraryConfiguration.Open( libraryId ),
+									   () => { },
+									   ex => NoiseLogger.Current.LogException( "ToolbarViewModel:OpenLibrary", ex ));
 		}
 
 		public void Handle( Events.LibraryChanged args ) {
@@ -63,7 +82,7 @@ namespace Noise.UI.ViewModels {
 			get{ return( mLibraryConfiguration.Current ); }
 			set {
 				if( mLibraryConfiguration.Current != value ) {
-					mLibraryConfiguration.Open( value );
+					OpenLibrary( value.LibraryId );
 				}
 
 				RaisePropertyChanged( () => CurrentLibrary );
