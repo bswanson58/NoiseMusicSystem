@@ -1,6 +1,8 @@
 ﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
+using Noise.Metadata.ArtistMetadata;
+using Noise.Metadata.Interfaces;
 using Noise.Metadata.Support;
 
 namespace Noise.Metadata {
@@ -13,6 +15,7 @@ namespace Noise.Metadata {
 
 		public void Initialize() {
 			mContainer.RegisterType<IRequireConstruction, MetadataManager>( "MetadataManager", new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IArtistMetadataManager, ArtistMetadataManager>();
 			mContainer.RegisterType<IMetadataStorageResolver, MetadataStorageResolver>();
 		}
 	}

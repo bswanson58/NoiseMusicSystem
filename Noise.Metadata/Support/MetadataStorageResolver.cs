@@ -1,12 +1,11 @@
 ﻿using System.Globalization;
-using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Metadata.Support {
 	public class MetadataStorageResolver : IMetadataStorageResolver {
 		public uint StorageLevels { get; private set; }
 
 		public MetadataStorageResolver() {
-			StorageLevels = 1;
+			StorageLevels = 2;
 		}
 
 		public string KeyForStorageLevel( long blobId, uint level ) {
@@ -16,9 +15,8 @@ namespace Noise.Metadata.Support {
 		public string KeyForStorageLevel( string blobId, uint level ) {
 			var retValue = "";
 
-			if((!string.IsNullOrWhiteSpace( blobId )) &&
-			   ( blobId.Length > level )) {
-				retValue = blobId[(int)level].ToString( CultureInfo.InvariantCulture );
+			if(!string.IsNullOrWhiteSpace( blobId )) {
+				retValue = level == 0 ? blobId[(int)level].ToString( CultureInfo.InvariantCulture ).ToLower() : blobId;
 			}
 
 			return( retValue );
