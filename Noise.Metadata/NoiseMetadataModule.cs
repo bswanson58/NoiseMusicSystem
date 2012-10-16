@@ -1,5 +1,6 @@
 ﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Metadata {
 	public class NoiseMetadataModule : IModule {
@@ -10,6 +11,7 @@ namespace Noise.Metadata {
 		}
 
 		public void Initialize() {
+			mContainer.RegisterType<IRequireConstruction, MetadataManager>( "MetadataManager", new HierarchicalLifetimeManager());
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Support {
 	internal class LifecycleManager : ILifecycleManager {

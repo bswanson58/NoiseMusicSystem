@@ -1,4 +1,4 @@
-﻿namespace Noise.Core.Support {
+﻿namespace Noise.Infrastructure.Interfaces {
 	public interface ILifecycleManager {
 		void	RegisterForInitialize( IRequireInitialization module );
 		void	RegisterForShutdown( IRequireInitialization module );

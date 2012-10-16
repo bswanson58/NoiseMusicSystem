@@ -202,6 +202,7 @@
     <Compile Include="Interfaces\IDbBase.cs" />
     <Compile Include="Interfaces\ILibraryConfiguration.cs" />
     <Compile Include="Interfaces\ILicenseManager.cs" />
+    <Compile Include="Interfaces\ILifecycleManager.cs" />
     <Compile Include="Interfaces\ILyricProvider.cs" />
     <Compile Include="Interfaces\IInternetStreamProvider.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
@@ -209,6 +210,7 @@
     <Compile Include="Interfaces\IPlayHistoryProvider.cs" />
     <Compile Include="Interfaces\IPlayListProvider.cs" />
     <Compile Include="Interfaces\IPlayQueue.cs" />
+    <Compile Include="Interfaces\IRequireInitialization.cs" />
     <Compile Include="Interfaces\IRootFolderProvider.cs" />
     <Compile Include="Interfaces\ISearchProvider.cs" />
     <Compile Include="Interfaces\IStorageFileProvider.cs" />

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Caliburn.Micro;
-using Noise.Core.Support;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 using ReusableBits.Threading;
 
 namespace Noise.Core.BackgroundTasks {
