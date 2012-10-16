@@ -32,8 +32,9 @@ namespace Noise.EloqueraDatabase.Tests.DataProviders {
 
 			IocProvider = new IocProvider();
 			BlobResolver = new BlobStorageResolver();
-			BlobStorageManager = new BlobStorageManager( BlobResolver );
-			DatabaseFactory = new EloqueraDatabaseFactory( BlobStorageManager, IocProvider, LibraryConfiguration );
+			BlobStorageManager = new BlobStorageManager();
+			BlobStorageManager.SetResolver( BlobResolver );
+			DatabaseFactory = new EloqueraDatabaseFactory( BlobStorageManager, BlobResolver, IocProvider, LibraryConfiguration );
 
 			var eventAggreagtor = new Mock<IEventAggregator>();
 

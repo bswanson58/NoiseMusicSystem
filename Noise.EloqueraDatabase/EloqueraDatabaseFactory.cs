@@ -12,8 +12,10 @@ namespace Noise.EloqueraDatabase {
 		private readonly IBlobStorageManager	mBlobStorageManager;
 		private bool							mBlobStorageInitialized;
 
-		public EloqueraDatabaseFactory( IBlobStorageManager blobStorageManager, IIoc componentCreator, ILibraryConfiguration libraryConfiguration ) {
+		public EloqueraDatabaseFactory( IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver,
+										IIoc componentCreator, ILibraryConfiguration libraryConfiguration ) {
 			mBlobStorageManager = blobStorageManager;
+			mBlobStorageManager.SetResolver( storageResolver );
 			mComponentCreator = componentCreator;
 			mLibraryConfiguration = libraryConfiguration;
 

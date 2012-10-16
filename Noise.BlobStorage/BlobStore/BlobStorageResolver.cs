@@ -9,6 +9,10 @@ namespace Noise.BlobStorage.BlobStore {
 			get { return( 2 ); }
 		}
 
+		public string KeyForStorageLevel( string blobId, uint level ) {
+			return( string.Empty );
+		}
+
 		public string KeyForStorageLevel( long blobId, uint level ) {
 			var	retValue = cDefaultLevelName;
 			var blobStr = blobId.ToString( CultureInfo.InvariantCulture );

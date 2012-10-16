@@ -19,7 +19,8 @@ namespace Noise.BlobStorage.Tests.BlobStore {
 
 			mBlobResolver = new Mock<IBlobStorageResolver>();
 
-			var storageManager = new BlobStorageManager( mBlobResolver.Object );
+			var storageManager = new BlobStorageManager();
+			storageManager.SetResolver( mBlobResolver.Object );
 
 			storageManager.Initialize( blobStoragePath );
 			if( storageManager.CreateStorage()) {

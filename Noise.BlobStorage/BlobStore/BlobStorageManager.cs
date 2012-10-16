@@ -1,23 +1,30 @@
 ﻿using System.Globalization;
 using System.IO;
+using CuttingEdge.Conditions;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.BlobStorage.BlobStore {
 	public class BlobStorageManager : IBlobStorageManager, IBlobStorage {
-		private readonly IBlobStorageResolver	mBlobResolver;
-		private bool							mIsOpen;
-		private string							mStoragePath;
+		private IBlobStorageResolver	mBlobResolver;
+		private bool					mIsOpen;
+		private string					mStoragePath;
 
-		public BlobStorageManager( IBlobStorageResolver blobResolver ) {
-			mBlobResolver = blobResolver;
-
+		public BlobStorageManager() {
 			mStoragePath = string.Empty;
 			mStoragePath = string.Empty;
 			mIsOpen = false;
 		}
 
+		public void SetResolver( IBlobStorageResolver resolver ) {
+			Condition.Requires( resolver ).IsNotNull();
+
+			mBlobResolver = resolver;
+		}
+
 		public bool Initialize( string rootStoragePath ) {
+			Condition.Requires( mBlobResolver ).IsNotNull();
+
 			mStoragePath = rootStoragePath;
 
 			return( true );

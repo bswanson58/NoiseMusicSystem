@@ -22,7 +22,8 @@ namespace Noise.BlobStorage.Tests.BlobStore {
 			mStorageResolver.Setup( m => m.StorageLevels ).Returns( 1 );
 			mStorageResolver.Setup( m => m.KeyForStorageLevel( It.IsAny<long>(), It.Is<uint>( p => p == 0  ))).Returns( "first storage level" );
 
-			var storageManager = new BlobStorageManager( mStorageResolver.Object );
+			var storageManager = new BlobStorageManager();
+			storageManager.SetResolver( mStorageResolver.Object );
 			storageManager.Initialize( blobStoragePath );
 
 			storageManager.DeleteStorage();
@@ -155,7 +156,6 @@ namespace Noise.BlobStorage.Tests.BlobStore {
 		}
 
 		[Test]
-		[ExpectedException( typeof( BlobStorageException ))]
 		public void CanDelete() {
 			const string textToStore = "delete me";
 

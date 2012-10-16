@@ -2,6 +2,7 @@
 
 namespace Noise.BlobStorage.BlobStore {
 	public interface IBlobStorageManager {
+		void			SetResolver( IBlobStorageResolver resolver );
 		bool			Initialize( string rootStoragePath );
 
 		bool			OpenStorage();

@@ -111,6 +111,8 @@
     <Compile Include="MetadataManager.cs" />
     <Compile Include="NoiseMetadataModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Support\IMetadataStorageResolver.cs" />
+    <Compile Include="Support\MetadataStorageResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Noise.BlobStorage\Noise.BlobStorage.csproj">
