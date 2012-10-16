@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.IO;
 using CuttingEdge.Conditions;
+using Newtonsoft.Json;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
@@ -75,6 +76,17 @@ namespace Noise.BlobStorage.BlobStore {
 			return( this );
 		}
 
+		public bool BlobExists( string blobId ) {
+			var retValue = false;
+			var	blobPath = ResolveBlobId( blobId );
+
+			if( File.Exists( blobPath )) {
+				retValue = true;
+			}
+
+			return( retValue );
+		}
+
 		public void Insert( long blobId, string fromFile ) {
 			using( var fileStream = new FileStream( fromFile, FileMode.Open, FileAccess.Read )) {
 				Insert( blobId, fileStream );
@@ -91,7 +103,45 @@ namespace Noise.BlobStorage.BlobStore {
 			StoreBlob( blobData, blobPath );
 		}
 
+		public void Insert( string blobId, string data ) {
+			string	blobPath = ResolveBlobId( blobId );
+
+			if( File.Exists( blobPath )) {
+				throw new BlobStorageException( blobId, blobPath, "Attempt to insert existing item." );
+			}
+
+			StoreText( blobId, data );
+		}
+
+		public void Insert<T>( string blobId, T data ) {
+			Insert( blobId, JsonConvert.SerializeObject( data ));
+		}
+
+		public void Store<T>( string blobId, T data ) {
+			StoreText( blobId, JsonConvert.SerializeObject( data ));
+		}
+
 		public void StoreText( long blobId, string text ) {
+			var	blobPath = ResolveBlobId( blobId );
+			var storagePath = Path.GetDirectoryName( blobPath );
+
+			if(!string.IsNullOrEmpty( storagePath )) {
+				if(!Directory.Exists( storagePath )) {
+					Directory.CreateDirectory( storagePath );
+				}
+
+				using( var blobStream = new FileStream( blobPath, FileMode.Create, FileAccess.Write )) {
+					using( var writer = new StreamWriter( blobStream )) {
+						writer.Write( text );
+
+						writer.Close();
+						blobStream.Close();
+					}
+				}
+			}
+		}
+
+		public void StoreText( string blobId, string text ) {
 			var	blobPath = ResolveBlobId( blobId );
 			var storagePath = Path.GetDirectoryName( blobPath );
 
@@ -132,7 +182,42 @@ namespace Noise.BlobStorage.BlobStore {
 			}
 		}
 
+		public void Delete( string blobId ) {
+			string	blobPath = ResolveBlobId( blobId );
+
+			if( File.Exists( blobPath )) {
+				File.Delete( blobPath );
+			}
+			else {
+				throw new BlobStorageException( blobId, blobPath, "Attempt to delete nonexistent item." );
+			}
+		}
+
 		public string RetrieveText( long blobId ) {
+			var		retValue = "";
+
+			using( var stream = Retrieve( blobId )) {
+				if( stream != null ) {
+					using( var reader = new StreamReader( stream )) {
+						retValue = reader.ReadToEnd();
+
+						reader.Close();
+					}
+
+					stream.Close();
+				}
+			}
+
+			return( retValue );
+		}
+
+		public T RetrieveObject<T>( string blobId ) {
+			var json = RetrieveText( blobId );
+
+			return( JsonConvert.DeserializeObject<T>( json ));
+		}
+
+		public string RetrieveText( string blobId ) {
 			var		retValue = "";
 
 			using( var stream = Retrieve( blobId )) {
@@ -182,6 +267,23 @@ namespace Noise.BlobStorage.BlobStore {
 			return( retValue );
 		}
 
+		public Stream Retrieve( string blobId ) {
+			Stream	retValue;
+			string	blobPath = ResolveBlobId( blobId );
+
+			if( File.Exists( blobPath )) {
+				retValue = new FileStream( blobPath, FileMode.Open, FileAccess.Read );
+			}
+			else {
+				NoiseLogger.Current.LogInfo( "Attempt to retieve nonexistent blob item" );
+
+				retValue = new MemoryStream();
+//				throw new BlobStorageException( blobId, blobPath, "Attempt to retrieve nonexistent item." );
+			}
+
+			return( retValue );
+		}
+
 		private static void StoreBlob( Stream blobData, string blobPath ) {
 			var storagePath = Path.GetDirectoryName( blobPath );
 
@@ -206,6 +308,18 @@ namespace Noise.BlobStorage.BlobStore {
 			}
 
 			retValue = Path.Combine( retValue, blobId.ToString( CultureInfo.InvariantCulture ));
+
+			return( retValue );
+		}
+
+		private string ResolveBlobId( string blobId ) {
+			var retValue = mStoragePath;
+
+			for( uint level = 0; level < mBlobResolver.StorageLevels; level++ ) {
+				retValue = Path.Combine( retValue, mBlobResolver.KeyForStorageLevel( blobId, level ));
+			}
+
+			retValue = Path.Combine( retValue, blobId );
 
 			return( retValue );
 		}
