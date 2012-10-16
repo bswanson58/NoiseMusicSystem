@@ -13,6 +13,7 @@ using ILog = Noise.Infrastructure.Interfaces.ILog;
 namespace Noise.EloqueraDatabase.Tests.DataProviders {
 	public class ProviderTestSetup {
 		public	Mock<ILog>					DummyLog { get; private set; }
+		public	Mock<IEventAggregator>		EventAggregator { get; private set; }
 		public	IIoc						IocProvider { get; private set; }
 		public	ILibraryConfiguration		LibraryConfiguration { get; private set; }
 		public	IBlobStorageManager			BlobStorageManager { get; private set; }
@@ -30,11 +31,12 @@ namespace Noise.EloqueraDatabase.Tests.DataProviders {
 			configMoq.Setup( m => m.Current ).Returns( databaseConfig );
 			LibraryConfiguration = configMoq.Object;
 
+			EventAggregator = new Mock<IEventAggregator>();
 			IocProvider = new IocProvider();
 			BlobResolver = new BlobStorageResolver();
 			BlobStorageManager = new BlobStorageManager();
 			BlobStorageManager.SetResolver( BlobResolver );
-			DatabaseFactory = new EloqueraDatabaseFactory( BlobStorageManager, BlobResolver, IocProvider, LibraryConfiguration );
+			DatabaseFactory = new EloqueraDatabaseFactory( EventAggregator.Object, BlobStorageManager, BlobResolver, IocProvider, LibraryConfiguration );
 
 			var eventAggreagtor = new Mock<IEventAggregator>();
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using Caliburn.Micro;
 using Noise.BlobStorage.BlobStore;
 using Noise.EloqueraDatabase.Database;
 using Noise.EloqueraDatabase.Interfaces;
@@ -6,18 +7,27 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase {
-	public class EloqueraDatabaseFactory : IDatabaseFactory {
+	public class EloqueraDatabaseFactory : IDatabaseFactory, IHandle<Events.LibraryChanged> {
+		private readonly IEventAggregator		mEventAggregator;
 		private readonly IIoc					mComponentCreator;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly IBlobStorageManager	mBlobStorageManager;
 		private bool							mBlobStorageInitialized;
 
-		public EloqueraDatabaseFactory( IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver,
+		public EloqueraDatabaseFactory( IEventAggregator eventAggregator, IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver,
 										IIoc componentCreator, ILibraryConfiguration libraryConfiguration ) {
+			mEventAggregator = eventAggregator;
 			mBlobStorageManager = blobStorageManager;
 			mBlobStorageManager.SetResolver( storageResolver );
 			mComponentCreator = componentCreator;
 			mLibraryConfiguration = libraryConfiguration;
+
+			mBlobStorageInitialized = false;
+			mEventAggregator.Subscribe( this );
+		}
+
+		public void Handle( Events.LibraryChanged args ) {
+			mBlobStorageManager.CloseStorage();
 
 			mBlobStorageInitialized = false;
 		}
