@@ -6,6 +6,7 @@ using Microsoft.Practices.Unity;
 using Noise.AppSupport;
 using Noise.AppSupport.FeatureToggles;
 using Noise.Infrastructure.Interfaces;
+using Noise.Metadata;
 using Noise.UI.Support;
 
 namespace Noise.Desktop {
@@ -38,6 +39,7 @@ namespace Noise.Desktop {
 				.AddModule( typeof( Service.Infrastructure.ServiceInfrastructureModule ))
 				.AddModule( typeof( UI.NoiseUiModule ), "NoiseCoreModule" )
 				.AddModule( typeof( BlobStorage.BlobStorageModule ))
+				.AddModule( typeof( NoiseMetadataModule ))
 				.AddModule( typeof( RemoteHost.RemoteHostModule ));
 
 			catalog.AddModule(( new EntityDatabaseEnabled()).FeatureEnabled ? typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule )
