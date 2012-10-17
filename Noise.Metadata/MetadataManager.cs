@@ -4,6 +4,8 @@ using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Interfaces;
+using Raven.Client;
+using Raven.Client.Embedded;
 
 namespace Noise.Metadata {
 	public class MetadataManager : IRequireInitialization,
@@ -11,6 +13,7 @@ namespace Noise.Metadata {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistMetadataManager	mArtistMetadataManager;
 		private readonly IArtistProvider		mArtistProvider;
+		private IDocumentStore					mDocumentStore;
 
 		public MetadataManager( ILifecycleManager lifecycleManager,  IEventAggregator eventAggregator,
 								IArtistMetadataManager artistMetadataManager, IArtistProvider artistProvider ) {
@@ -18,20 +21,28 @@ namespace Noise.Metadata {
 			mArtistMetadataManager = artistMetadataManager;
 			mArtistProvider = artistProvider;
 
-//			lifecycleManager.RegisterForInitialize( this );
-//			lifecycleManager.RegisterForShutdown( this );
-
-//			mEventAggregator.Subscribe( this );
+			lifecycleManager.RegisterForInitialize( this );
+			lifecycleManager.RegisterForShutdown( this );
 		}
 
 		public void Initialize() {
-			var libraryPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
-											Constants.CompanyName, 
-											Constants.LibraryConfigurationDirectory,
-											"Metadata" );
+			try {
+				var libraryPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
+												Constants.CompanyName, 
+												Constants.LibraryConfigurationDirectory,
+												"Metadata" );
+				mDocumentStore = new EmbeddableDocumentStore { DataDirectory = libraryPath };
+				mDocumentStore.Initialize();
+
+				mEventAggregator.Subscribe( this );
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "MetadataManager:Initialize", ex );
+			}
 		}
 
 		public void Shutdown() {
+			mDocumentStore.Dispose();
 		}
 
 		public void Handle( Events.ArtistAdded args ) {
