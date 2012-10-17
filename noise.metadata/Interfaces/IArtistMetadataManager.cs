@@ -1,8 +1,6 @@
-﻿using Noise.BlobStorage.BlobStore;
-
-namespace Noise.Metadata.Interfaces {
+﻿namespace Noise.Metadata.Interfaces {
 	public interface IArtistMetadataManager {
-		void		Initialize( IBlobStorageManager blobStorageManager );
+		void		Initialize();
 		void		Shutdown();
 
 		void		ArtistMentioned( string artistName );
