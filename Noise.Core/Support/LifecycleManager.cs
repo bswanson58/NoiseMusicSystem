@@ -22,25 +22,29 @@ namespace Noise.Core.Support {
 		}
 
 		public void Initialize() {
-			try {
-				mInitializeList.ForEach( module => module.Initialize());
+			foreach( var module in mInitializeList ) {
+				try {
+					module.Initialize();
+				}
+				catch( Exception ex ) {
+					NoiseLogger.Current.LogException( "LifecycleManager:Initialize", ex );	
+				}
+			}
 
-				mInitializeList.Clear();
-			}
-			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "LifecycleManager:Initialize", ex );	
-			}
+			mInitializeList.Clear();
 		}
 
 		public void Shutdown() {
-			try {
-				mShutdownList.ForEach( module => module.Shutdown());
+			foreach( var module in mShutdownList ) {
+				try {
+					module.Shutdown();
+				}
+				catch( Exception ex ) {
+					NoiseLogger.Current.LogException( "LifecycleManager:Shutdown", ex );
+				}
+			}
 
-				mShutdownList.Clear();
-			}
-			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "LifecycleManager:Shutdown", ex );
-			}
+			mShutdownList.Clear();
 		}
 	}
 }
