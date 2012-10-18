@@ -105,9 +105,6 @@
     <Reference Include="GDataDB">
       <HintPath>..\lib\GDataDB\v0.2.0.0\GDataDB.dll</HintPath>
     </Reference>
-    <Reference Include="GoogleSearchAPI">
-      <HintPath>..\lib\google-api-for-dotnet\v0.4 alpha\GoogleSearchAPI.dll</HintPath>
-    </Reference>
     <Reference Include="Lucene.Net, Version=2.9.4.1, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Lucene.Net.2.9.4.1\lib\net40\Lucene.Net.dll</HintPath>
@@ -189,7 +186,6 @@
     <Compile Include="DataExchange\ImportFavorites.cs" />
     <Compile Include="DataExchange\ImportStreams.cs" />
     <Compile Include="DataProviders\DiscogsProvider.cs" />
-    <Compile Include="DataProviders\ILyricsProvider.cs" />
     <Compile Include="DataProviders\IMetaDataProvider.cs" />
     <Compile Include="DataBuilders\ISummaryBuilder.cs" />
     <Compile Include="DataBuilders\SummaryBuilder.cs" />
@@ -199,7 +195,6 @@
     <Compile Include="DataProviders\FolderStrategyProvider.cs" />
     <Compile Include="DataProviders\ImageDownloader.cs" />
     <Compile Include="DataProviders\LastFmProvider.cs" />
-    <Compile Include="DataProviders\LyricsProvider.cs" />
     <Compile Include="DataProviders\Mp3TagProvider.cs" />
     <Compile Include="Exceptions\StorageConfigurationException.cs" />
     <Compile Include="FileProcessor\ArtworkProvidersPipelineStep.cs" />
