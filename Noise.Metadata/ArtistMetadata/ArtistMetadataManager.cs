@@ -1,8 +1,7 @@
-﻿using System.Linq;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
+using Noise.Metadata.Dto;
 using Noise.Metadata.Interfaces;
 using Raven.Client;
-using Raven.Client.Linq;
 
 namespace Noise.Metadata.ArtistMetadata {
 	public class ArtistMetadataManager : IArtistMetadataManager {
@@ -22,27 +21,25 @@ namespace Noise.Metadata.ArtistMetadata {
 		}
 
 		public void ArtistMentioned( string artistName ) {
-			GetOrCreateArtistMetadata( artistName );
+			GetOrCreateArtistStatus( artistName );
 		}
 
 		public void ArtistForgotten( string artistName ) {
 		}
 
 		public void ArtistMetadataRequested( string artistName ) {
-			var metadata = GetOrCreateArtistMetadata( artistName );
+			var metadata = GetOrCreateArtistStatus( artistName );
 		}
 
-		private ArtistMetadataInfo GetOrCreateArtistMetadata( string forArtist ) {
-			ArtistMetadataInfo	retValue = null;
+		private DbArtistStatus GetOrCreateArtistStatus( string forArtist ) {
+			DbArtistStatus	retValue = null;
 
 			if( mDocumentStore != null ) {
 				using( var session = mDocumentStore.OpenSession()) {
-					retValue = ( from metadata in session.Query<ArtistMetadataInfo>()
-								 where metadata.ArtistName == forArtist 
-								 select metadata ).FirstOrDefault();
+					retValue = session.Load<DbArtistStatus>( DbArtistStatus.FormatStatusKey( forArtist ));
 
 					if( retValue == null ) {
-						retValue = new ArtistMetadataInfo { ArtistName = forArtist };
+						retValue = new DbArtistStatus { ArtistName = forArtist };
 
 						session.Store( retValue );
 						session.SaveChanges();

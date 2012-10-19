@@ -33,6 +33,7 @@ namespace Noise.Metadata {
 												"Metadata" );
 				mDocumentStore = new EmbeddableDocumentStore { DataDirectory = libraryPath };
 				mDocumentStore.Initialize();
+				mArtistMetadataManager.Initialize( mDocumentStore );
 
 				mEventAggregator.Subscribe( this );
 			}

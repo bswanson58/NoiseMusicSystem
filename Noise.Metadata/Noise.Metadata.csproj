@@ -179,7 +179,10 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ArtistMetadata\ArtistMetadataManager.cs" />
-    <Compile Include="ArtistMetadata\ArtistMetadataStatus.cs" />
+    <Compile Include="Dto\MetadataType.cs" />
+    <Compile Include="Dto\DbArtistBiography.cs" />
+    <Compile Include="Dto\DbArtistDiscography.cs" />
+    <Compile Include="Dto\DbArtistStatus.cs" />
     <Compile Include="Interfaces\IArtistMetadataManager.cs" />
     <Compile Include="MetadataManager.cs" />
     <Compile Include="NoiseMetadataModule.cs" />
