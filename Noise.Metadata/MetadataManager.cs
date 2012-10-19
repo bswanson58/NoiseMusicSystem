@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Caliburn.Micro;
 using Noise.Infrastructure;
@@ -10,14 +11,16 @@ using Raven.Client.Embedded;
 namespace Noise.Metadata {
 	public class MetadataManager : IRequireInitialization,
 								   IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,IHandle<Events.ArtistContentRequest> {
-		private readonly IEventAggregator		mEventAggregator;
-		private readonly IArtistMetadataManager	mArtistMetadataManager;
-		private readonly IArtistProvider		mArtistProvider;
-		private IDocumentStore					mDocumentStore;
+		private readonly IEventAggregator				mEventAggregator;
+		private readonly IArtistMetadataManager			mArtistMetadataManager;
+		private readonly IArtistProvider				mArtistProvider;
+		private readonly IEnumerable<IMetadataUpdater>	mUpdaters; 
+		private IDocumentStore							mDocumentStore;
 
-		public MetadataManager( ILifecycleManager lifecycleManager,  IEventAggregator eventAggregator,
+		public MetadataManager( ILifecycleManager lifecycleManager,  IEventAggregator eventAggregator, IEnumerable<IMetadataUpdater> updaters,
 								IArtistMetadataManager artistMetadataManager, IArtistProvider artistProvider ) {
 			mEventAggregator = eventAggregator;
+			mUpdaters = updaters;
 			mArtistMetadataManager = artistMetadataManager;
 			mArtistProvider = artistProvider;
 
@@ -35,6 +38,10 @@ namespace Noise.Metadata {
 				mDocumentStore.Initialize();
 				mArtistMetadataManager.Initialize( mDocumentStore );
 
+				foreach( var updater in mUpdaters ) {
+					updater.Initialize( mDocumentStore );
+				}
+
 				mEventAggregator.Subscribe( this );
 			}
 			catch( Exception ex ) {
@@ -43,6 +50,10 @@ namespace Noise.Metadata {
 		}
 
 		public void Shutdown() {
+			foreach( var updater in mUpdaters ) {
+				updater.Shutdown();
+			}
+
 			mDocumentStore.Dispose();
 		}
 

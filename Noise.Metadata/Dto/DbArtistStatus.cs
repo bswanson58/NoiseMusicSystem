@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Noise.Metadata.Dto {
 	internal class ProviderStatus {
@@ -35,7 +36,16 @@ namespace Noise.Metadata.Dto {
 			get{ return( FormatStatusKey( ArtistName )); }
 		}
 
-		public DateTime GetLastUpdate( string forProvider ) { return DateTime.Now; }
-		public void SetLastUpdate( string forProvider ) { }
+		public ProviderStatus GetProviderStatus( string forProvider ) {
+			return(( from s in ProviderStatus where s.Provider == forProvider select s ).FirstOrDefault());
+		}
+
+		public void SetLastUpdate( string forProvider ) {
+			var status = ( from s in ProviderStatus where s.Provider == forProvider select s ).FirstOrDefault();
+
+			if( status != null ) {
+				status.LastUpdate = DateTime.Now;
+			}
+		}
 	}
 }
