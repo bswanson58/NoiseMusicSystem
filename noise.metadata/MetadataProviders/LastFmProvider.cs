@@ -44,7 +44,7 @@ namespace Noise.Metadata.MetadataProviders {
 			
 		}
 
-		// Last.fm provides artist genre, similar artists and top albums.
+		// Last.fm provides artist biography, genre, similar artists and top albums.
 		public void UpdateArtist( string artistName ) {
 			if( mSession != null ) {
 				try {
@@ -60,6 +60,8 @@ namespace Noise.Metadata.MetadataProviders {
 
 						if( artistMatch != null ) {
 							var strList = new List<string>();
+
+							artistBio.SetMetadata( eMetadataType.Biography, artistMatch.Bio.getContent());
 
 							var	tags = artistMatch.GetTopTags( 3 );
 							if( tags.GetLength( 0 ) > 0 ) {
