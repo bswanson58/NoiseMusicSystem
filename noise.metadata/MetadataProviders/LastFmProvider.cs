@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CuttingEdge.Conditions;
 using Lastfm.Services;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
+using Noise.Metadata.Dto;
 using Noise.Metadata.Interfaces;
 using Raven.Client;
 
@@ -20,15 +22,21 @@ namespace Noise.Metadata.MetadataProviders {
 		}
 
 		public void Initialize( IDocumentStore documentStore ) {
+			mDocumentStore = documentStore;
+
 			try {
 				var key = NoiseLicenseManager.Current.RetrieveKey( LicenseKeys.LastFm );
+
+				Condition.Requires( key ).IsNotNull();
 
 				if( key != null ) {
 					mSession = new Session( key.Name, key.Key );
 				}
+
+				Condition.Requires( mSession ).IsNotNull();
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "LastFmProvider creating Session:", ex );
+				NoiseLogger.Current.LogException( "LastFmProvider:Initialize", ex );
 			}
 		}
 
@@ -36,38 +44,56 @@ namespace Noise.Metadata.MetadataProviders {
 			
 		}
 
+		// Last.fm provides artist genre, similar artists and top albums.
 		public void UpdateArtist( string artistName ) {
 			if( mSession != null ) {
 				try {
-					var	artistSearch = Artist.Search( artistName, mSession );
-					var	artistMatch = artistSearch.GetFirstMatch();
-
-					if( artistMatch != null ) {
-						var	tags = artistMatch.GetTopTags( 3 );
-						if( tags.GetLength( 0 ) > 0 ) {
+					using( var session = mDocumentStore.OpenSession()) {
+						var artistBio = session.Load<DbArtistBiography>( artistName );
+						
+						if( artistBio == null ) {
+							artistBio = new DbArtistBiography { ArtistName = artistName };
 						}
 
-						var imageUrl = artistMatch.GetImageURL();
-						if(!string.IsNullOrWhiteSpace( imageUrl )) {
-						}
+						var	artistSearch = Artist.Search( artistName, mSession );
+						var	artistMatch = artistSearch.GetFirstMatch();
 
-						var	sim = artistMatch.GetSimilar( 5 );
-						var artistList = new List<string>();
-						for( int index = 0; index < sim.GetLength( 0 ); index++ ) {
-							artistList.Add( sim[index].Name );
-						}
+						if( artistMatch != null ) {
+							var strList = new List<string>();
 
-						var top = artistMatch.GetTopAlbums();
-						var albumList = new List<string>();
-						for( int index = 0; index < ( top.GetLength( 0 ) > 5 ? 5 : top.GetLength( 0 )); index++ ) {
-							albumList.Add( top[index].Item.Name );
-						}
+							var	tags = artistMatch.GetTopTags( 3 );
+							if( tags.GetLength( 0 ) > 0 ) {
+								strList.AddRange( tags.Select( tag => tag.Item.Name.ToLower()));
+								artistBio.SetMetadata( eMetadataType.Genre, strList );
+							}
 
-						NoiseLogger.Current.LogMessage( "LastFm updated artist: {0}", artistName );
+							strList.Clear();
+							var	similar = artistMatch.GetSimilar( 5 );
+							if( similar.GetLength( 0 ) > 0 ) {
+								strList.AddRange( similar.Select( sim => sim.Name ));
+								artistBio.SetMetadata( eMetadataType.SimilarArtists, strList );
+							}
+
+							strList.Clear();
+							var topAlbums = artistMatch.GetTopAlbums();
+							if( topAlbums.GetLength( 0 ) > 0 ) {
+								strList.AddRange( topAlbums.Take( 5 ).Select( album => album.Item.Name ));
+								artistBio.SetMetadata( eMetadataType.TopAlbums, strList );
+							}
+
+//							var imageUrl = artistMatch.GetImageURL();
+//							if(!string.IsNullOrWhiteSpace( imageUrl )) {
+//							}
+
+							session.Store( artistBio );
+							session.SaveChanges();
+
+							NoiseLogger.Current.LogMessage( "LastFm updated artist: {0}", artistName );
+						}
 					}
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Exception - LastFmProvider:UpdateArtistInfo:", ex );
+					NoiseLogger.Current.LogException( string.Format( "LastFm update failed for artist: {0}", artistName ), ex );
 				}
 			}
 		}
