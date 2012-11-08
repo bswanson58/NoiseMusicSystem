@@ -32,6 +32,14 @@ namespace Noise.Infrastructure {
 			}
 		}
 
+		public class ArtistMetadataUpdated {
+			public string	ArtistName { get; private set; }
+
+			public ArtistMetadataUpdated( string artistName ) {
+				ArtistName = artistName;
+			}
+		}
+
 		public class ArtistContentUpdated {
 			public long	ArtistId { get; private set; }
 

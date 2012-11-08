@@ -184,6 +184,7 @@
     </Compile>
     <Compile Include="ArtistMetadata\ArtistMetadataManager.cs" />
     <Compile Include="ArtistMetadata\ArtistMetadataUpdater.cs" />
+    <Compile Include="Dto\IMetadataBase.cs" />
     <Compile Include="Dto\MetadataType.cs" />
     <Compile Include="Dto\DbArtistBiography.cs" />
     <Compile Include="Dto\DbArtistDiscography.cs" />

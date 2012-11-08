@@ -4,5 +4,7 @@ namespace Noise.Metadata.Interfaces {
 	public interface IMetadataUpdater {
 		void	Initialize( IDocumentStore documentStore );
 		void	Shutdown();
+
+		void	QueueArtistUpdate( string forArtist );
 	}
 }

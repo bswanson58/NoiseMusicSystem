@@ -27,11 +27,12 @@ namespace Noise.UI.Blendable.ViewModels {
 			var eventAggregator = new Mock<IEventAggregator>();
 			var artistProvider = new Mock<IArtistProvider>();
 			var discographyProvider = new Mock<IDiscographyProvider>();
+			var metadataManager = new Mock<IMetadataManager>();
 
-			var vm = new ArtistInfoViewModel( eventAggregator.Object, artistProvider.Object, discographyProvider.Object );
+			var vm = new ArtistInfoViewModel( eventAggregator.Object, artistProvider.Object, metadataManager.Object );
 			// Set tpl tasks to use the current thread only.
 			var taskScheduler = new CurrentThreadTaskScheduler();
-			vm.TaskHandler = new TaskHandler<ArtistSupportInfo>( taskScheduler, taskScheduler );
+			vm.TaskHandler = new TaskHandler( taskScheduler, taskScheduler );
 
 			var artist = new DbArtist();
 
@@ -67,7 +68,7 @@ namespace Noise.UI.Blendable.ViewModels {
 																   new DbDiscographyRelease( artist.DbId, "Some Girls", "LP", "Decca", 1981, DiscographyReleaseType.Release ),
 																   new DbDiscographyRelease( artist.DbId, "Undercover", "CD", "Decca", 1987, DiscographyReleaseType.Release )};
 			var provider = new Mock<IDataProviderList<DbDiscographyRelease>>();
- 			provider.Setup( m => m.List ).Returns( discographyList );
+			provider.Setup( m => m.List ).Returns( discographyList );
 			discographyProvider.Setup( m => m.GetDiscography( It.IsAny<long>())).Returns( provider.Object );
 
 			vm.Handle( new Events.ArtistFocusRequested( artist.DbId ));

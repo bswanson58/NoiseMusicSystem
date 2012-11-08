@@ -205,6 +205,7 @@
     <Compile Include="Interfaces\ILifecycleManager.cs" />
     <Compile Include="Interfaces\ILyricProvider.cs" />
     <Compile Include="Interfaces\IInternetStreamProvider.cs" />
+    <Compile Include="Interfaces\IMetadataManager.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
     <Compile Include="Interfaces\IPlayHistory.cs" />
     <Compile Include="Interfaces\IPlayHistoryProvider.cs" />

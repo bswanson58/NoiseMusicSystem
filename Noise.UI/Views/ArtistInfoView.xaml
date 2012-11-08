@@ -32,13 +32,13 @@
             <GroupBox Margin="3,0"
                       BorderBrush="{DynamicResource TrimColor}"
                       Header=" Biography ">
-                <ScrollViewer Behaviours:ScrollViewerPosition.ChangeTrigger="{Binding SupportInfo, Mode=OneWay}">
+                <ScrollViewer Behaviours:ScrollViewerPosition.ChangeTrigger="{Binding ArtistValid, Mode=OneWay}">
                     <FlowDocumentScrollViewer VerticalScrollBarVisibility="Hidden">
                         <FlowDocument ColumnWidth="100"
                                       IsHyphenationEnabled="True"
                                       IsOptimalParagraphEnabled="True">
                             <Paragraph>
-                                <adapters:BindableRun BoundText="{Binding ArtistBio, Converter={StaticResource htmlConverter}}" />
+                                <adapters:BindableRun BoundText="{Binding ArtistBiography, Converter={StaticResource htmlConverter}}" />
                             </Paragraph>
                         </FlowDocument>
                     </FlowDocumentScrollViewer>

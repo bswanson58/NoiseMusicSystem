@@ -15,8 +15,8 @@ using ILog = Noise.Infrastructure.Interfaces.ILog;
 
 namespace Noise.UI.Tests.ViewModels {
 	internal class TestableArtistInfoViewModel : Testable<ArtistInfoViewModel> {
-		private readonly TaskScheduler			mTaskScheduler;
-		private TaskHandler<ArtistSupportInfo>	mTaskHandler;
+		private readonly TaskScheduler	mTaskScheduler;
+		private TaskHandler				mTaskHandler;
 
 		public TestableArtistInfoViewModel() {
 			// Set tpl tasks to use the current thread only.
@@ -29,7 +29,7 @@ namespace Noise.UI.Tests.ViewModels {
 
 				if(( retValue != null ) &&
 				   ( mTaskHandler == null )) {
-					mTaskHandler = new TaskHandler<ArtistSupportInfo>( mTaskScheduler, mTaskScheduler );
+					mTaskHandler = new TaskHandler( mTaskScheduler, mTaskScheduler );
 				
 					retValue.TaskHandler = mTaskHandler;
 				}
@@ -54,7 +54,7 @@ namespace Noise.UI.Tests.ViewModels {
 		public void CanCreateArtistInfoViewModel() {
 			var sut = new TestableArtistInfoViewModel().ClassUnderTest;
 
-			Assert.IsNull( sut.SupportInfo );
+			Assert.IsFalse( sut.ArtistValid );
 		}
 
 		[Test]
@@ -124,7 +124,7 @@ namespace Noise.UI.Tests.ViewModels {
 
 			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
 
-			sut.ShouldRaisePropertyChangeFor( m => m.ArtistBio, "ArtistBio" );
+			sut.ShouldRaisePropertyChangeFor( m => m.ArtistBiography, "ArtistBio" );
 			sut.ShouldRaisePropertyChangeFor( m => m.BandMembers, "BandMembers" );
 			sut.ShouldRaisePropertyChangeFor( m => m.Discography, "Discography" );
 			sut.ShouldRaisePropertyChangeFor( m => m.TopAlbums, "TopAlbums" );
@@ -181,14 +181,14 @@ namespace Noise.UI.Tests.ViewModels {
 		[Test]
 		public void ArtistInfoUpdateEventShouldRetrieveArtistInfo() {
 			var testable = new TestableArtistInfoViewModel();
-			var artist = new DbArtist();
+			var artist = new DbArtist { Name = "my favorite artist" };
 
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>())).Returns( (ArtistSupportInfo)null );
 
 			var sut = testable.ClassUnderTest;
 
 			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
-			sut.Handle( new Events.ArtistContentUpdated( artist.DbId ));
+			sut.Handle( new Events.ArtistMetadataUpdated( artist.Name ));
 
 			testable.Mock<IArtistProvider>().Verify( m => m.GetArtistSupportInfo( It.IsAny<long>()), Times.Exactly( 2 ), "GetArtistSupportInfo request" );
 		}

@@ -15,7 +15,7 @@ namespace Noise.Metadata.Dto {
 		}
 	}
 
-	internal class DbArtistStatus {
+	internal class DbArtistStatus : IMetadataBase {
 		private const string			cStatusKeyPrefix = "status/";
 
 		public	string					ArtistName { get; set; }
@@ -43,9 +43,13 @@ namespace Noise.Metadata.Dto {
 		public void SetLastUpdate( string forProvider ) {
 			var status = ( from s in ProviderStatus where s.Provider == forProvider select s ).FirstOrDefault();
 
-			if( status != null ) {
-				status.LastUpdate = DateTime.Now;
+			if( status == null ) {
+				status = new ProviderStatus { Provider = forProvider };
+
+				ProviderStatus.Add( status );
 			}
+
+			status.LastUpdate = DateTime.Now;
 		}
 	}
 }

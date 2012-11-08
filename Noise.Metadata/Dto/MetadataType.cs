@@ -1,18 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using CuttingEdge.Conditions;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Metadata.Dto {
-	public enum eMetadataType {
-		BandMembers,
-		Biography,
-		Genre,
-		SimilarArtists,
-		TopAlbums,
-		WebSite,
-		Unknown
-	}
-
 	public class StringMetadata {
 		private static readonly string cArraySeparator = Environment.NewLine;
 

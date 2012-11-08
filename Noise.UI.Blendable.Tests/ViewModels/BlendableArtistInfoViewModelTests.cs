@@ -37,7 +37,7 @@ namespace Noise.UI.Blendable.Tests.ViewModels {
 		public void ViewModelHasBiography() {
 			var sut = CreateSut();
 
-			Assert.IsNotNullOrEmpty( sut.ArtistBio );
+			Assert.IsNotNullOrEmpty( sut.ArtistBiography );
 		}
 
 		[Test]

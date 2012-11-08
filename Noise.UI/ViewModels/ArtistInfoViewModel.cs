@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism;
@@ -12,15 +11,15 @@ using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class ArtistInfoViewModel : AutomaticCommandBase, IActiveAware,
-									   IHandle<Events.DatabaseClosing>,
+	public class ArtistInfoViewModel : AutomaticCommandBase, IActiveAware, IHandle<Events.ViewDisplayRequest>, IHandle<Events.DatabaseClosing>,
 									   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>,
-									   IHandle<Events.ArtistContentUpdated>, IHandle<Events.ViewDisplayRequest> {
+									   IHandle<Events.ArtistMetadataUpdated> {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IArtistProvider				mArtistProvider;
-		private readonly IDiscographyProvider			mDiscographyProvider;
+		private readonly IMetadataManager				mMetadataManager;
 		private long									mCurrentArtistId;
-		private TaskHandler<ArtistSupportInfo>			mTaskHandler; 
+		private string									mCurrentArtistName;
+		private TaskHandler								mTaskHandler; 
 		private readonly BindableCollection<LinkNode>	mSimilarArtists;
 		private readonly BindableCollection<LinkNode>	mTopAlbums;
 		private readonly BindableCollection<LinkNode>	mBandMembers;
@@ -28,11 +27,12 @@ namespace Noise.UI.ViewModels {
 
 		public	event	EventHandler					IsActiveChanged;
 
-		public ArtistInfoViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IDiscographyProvider discographyProvider ) {
+		public ArtistInfoViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IMetadataManager metadataManager ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
-			mDiscographyProvider = discographyProvider;
+			mMetadataManager = metadataManager;
 			mCurrentArtistId = Constants.cDatabaseNullOid;
+			mCurrentArtistName = string.Empty;
 
 			mEventAggregator.Subscribe( this );
 
@@ -52,46 +52,11 @@ namespace Noise.UI.ViewModels {
 			mTopAlbums.Clear();
 			mBandMembers.Clear();
 			mDiscography.Clear();
+			ArtistBiography = string.Empty;
 			mCurrentArtistId = Constants.cDatabaseNullOid;
+			mCurrentArtistName = string.Empty;
 
-			RaisePropertyChanged( () => SupportInfo );
-		}
-
-		public ArtistSupportInfo SupportInfo {
-			get { return( Get( () => SupportInfo )); }
-			set {
-				ClearCurrentArtist();
-
-				if( value != null ) {
-					if(( value.SimilarArtist != null ) &&
-						( value.SimilarArtist.Items.Any())) {
-						mSimilarArtists.AddRange( from DbAssociatedItem artist in value.SimilarArtist.Items
-													select artist.IsLinked ? new LinkNode( artist.Item, artist.AssociatedId, OnSimilarArtistClicked ) :
-																				new LinkNode( artist.Item ));
-					}
-
-					if(( value.TopAlbums != null ) &&
-					   ( value.TopAlbums.Items.Any())) {
-						mTopAlbums.AddRange( from DbAssociatedItem album in value.TopAlbums.Items 
-												select album.IsLinked ? new LinkNode( album.Item, album.AssociatedId, OnTopAlbumClicked ) :
-																		new LinkNode( album.Item ));
-					}
-
-					if(( value.BandMembers != null ) &&
-					   ( value.BandMembers.Items.Any())) {
-						mBandMembers.AddRange( from DbAssociatedItem member in value.BandMembers.Items select new LinkNode( member.Item ));
-					}
-
-					using( var discoList = mDiscographyProvider.GetDiscography( mCurrentArtistId )) {
-						if( discoList != null ) {
-							mDiscography.AddRange( discoList.List );
-							mDiscography.Sort( release => release.Year, ListSortDirection.Descending );
-						}
-					}
-				}
-
-				Set( () => SupportInfo, value  );
-			}
+			ArtistValid = false;
 		}
 
 		private void SetCurrentArtist( long artistId ) {
@@ -99,12 +64,18 @@ namespace Noise.UI.ViewModels {
 				ClearCurrentArtist();
 
 				mCurrentArtistId = artistId;
-				RetrieveSupportInfo( mCurrentArtistId );
+
+				var	artist = mArtistProvider.GetArtist( artistId );
+				if( artist != null ) {
+					mCurrentArtistName = artist.Name;
+
+					RetrieveArtistMetadata( mCurrentArtistName );
+				}
 			}
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {
-			SupportInfo = null;
+			ClearCurrentArtist();
 		}
 
 		public void Handle( Events.ArtistFocusRequested request ) {
@@ -119,16 +90,16 @@ namespace Noise.UI.ViewModels {
 			SetCurrentArtist( request.ArtistId );
 		}
 
-		public void Handle( Events.ArtistContentUpdated eventArgs ) {
-			if( mCurrentArtistId == eventArgs.ArtistId ) {
-				RetrieveSupportInfo( mCurrentArtistId );
+		public void Handle( Events.ArtistMetadataUpdated eventArgs ) {
+			if( string.Equals( mCurrentArtistName, eventArgs.ArtistName )) {
+				RetrieveArtistMetadata( mCurrentArtistName );
 			}
 		}
 
-		internal TaskHandler<ArtistSupportInfo> TaskHandler {
+		internal TaskHandler TaskHandler {
 			get {
 				if( mTaskHandler == null ) {
-					Execute.OnUIThread( () => mTaskHandler = new TaskHandler<ArtistSupportInfo>());
+					Execute.OnUIThread( () => mTaskHandler = new TaskHandler());
 				}
 
 				return( mTaskHandler );
@@ -137,19 +108,27 @@ namespace Noise.UI.ViewModels {
 			set { mTaskHandler = value; }
 		} 
 
-		private void RetrieveSupportInfo( long artistId ) {
-			TaskHandler.StartTask( () => mArtistProvider.GetArtistSupportInfo( artistId ), 
-									result => SupportInfo = result,
-									exception => NoiseLogger.Current.LogException( "ArtistInfoViewModel:RetrieveSupportInfo", exception ));
+		private void RetrieveArtistMetadata( string artistName ) {
+			TaskHandler.StartTask( () => {
+									var info = mMetadataManager.GetArtistMetadata( artistName );
+
+									ArtistBiography = info.GetMetadata( eMetadataType.Biography );
+									mBandMembers.AddRange( info.GetMetadataArray( eMetadataType.BandMembers ).Select( item => new LinkNode( item )));
+									mSimilarArtists.AddRange( info.GetMetadataArray( eMetadataType.SimilarArtists ).Select( item => new LinkNode( item )));
+									mTopAlbums.AddRange( info.GetMetadataArray( eMetadataType.TopAlbums ).Select( item => new LinkNode( item )));
+								},
+								() => ArtistValid = true,
+								exception => NoiseLogger.Current.LogException( "ArtistInfoViewModel:RetrieveSupportInfo", exception )
+				);
 		}
 
-		private void OnSimilarArtistClicked( long artistId ) {
-			mEventAggregator.Publish( new Events.ArtistFocusRequested( artistId ));
-		}
+//		private void OnSimilarArtistClicked( long artistId ) {
+//			mEventAggregator.Publish( new Events.ArtistFocusRequested( artistId ));
+//		}
 
-		private void OnTopAlbumClicked( long albumId ) {
-			mEventAggregator.Publish( new Events.AlbumFocusRequested( mCurrentArtistId, albumId ));
-		}
+//		private void OnTopAlbumClicked( long albumId ) {
+//			mEventAggregator.Publish( new Events.AlbumFocusRequested( mCurrentArtistId, albumId ));
+//		}
 
 		public void Handle( Events.ViewDisplayRequest eventArgs ) {
 			if( ViewNames.ArtistInfoView.Equals( eventArgs.ViewName )) {
@@ -164,41 +143,28 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => IsDisplayed, value ); }
 		}
 
-		[DependsUpon( "SupportInfo" )]
 		public bool ArtistValid {
-			get{ return( SupportInfo != null ); }
+			get{ return( Get( () => ArtistValid )); }
+			set{ Set( () => ArtistValid, value ); }
 		}
 
-		[DependsUpon( "SupportInfo" )]
-		public string ArtistBio {
-			get {
-				var retValue = "";
-
-				if(( SupportInfo != null ) &&
-				   ( SupportInfo.Biography != null )) {
-					retValue = SupportInfo.Biography.Text;
-				}
-
-				return( retValue );
-			}
+		public string ArtistBiography {
+			get { return( Get( () => ArtistBiography )); }
+			set { Set( () => ArtistBiography, value ); }
 		}
 
-		[DependsUpon( "SupportInfo" )]
 		public IEnumerable<LinkNode> TopAlbums {
 			get{ return( mTopAlbums ); }
 		}
 
-		[DependsUpon( "SupportInfo" )]
 		public IEnumerable<LinkNode> SimilarArtist {
 			get { return( mSimilarArtists ); }
 		}
 
-		[DependsUpon( "SupportInfo" )]
 		public IEnumerable<LinkNode> BandMembers {
 			get { return( mBandMembers ); }
 		}
 
-		[DependsUpon( "SupportInfo" )]
 		public IEnumerable<DbDiscographyRelease> Discography {
 			get{ return( mDiscography ); }
 		}

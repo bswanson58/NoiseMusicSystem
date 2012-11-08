@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
 using Noise.Metadata.Dto;
@@ -11,15 +12,20 @@ using ReusableBits.Threading;
 
 namespace Noise.Metadata.ArtistMetadata {
 	internal class ArtistMetadataUpdater : IMetadataUpdater {
+		private readonly IEventAggregator						mEventAggregator;
 		private readonly IRecurringTaskScheduler				mTaskScheduler;
 		private readonly IEnumerable<IArtistMetadataProvider>	mProviders; 
+ 		private readonly Stack<DbArtistStatus>					mPriorityUpdateList;  
 		private IDocumentStore									mDocumentStore;
 		private IEnumerable<DbArtistStatus>						mUpdateList;
-		private IEnumerator<DbArtistStatus>						mUpdateEnumerator; 
+		private IEnumerator<DbArtistStatus>						mUpdateEnumerator;
 
-		public ArtistMetadataUpdater( IRecurringTaskScheduler taskScheduler, IEnumerable<IArtistMetadataProvider> providers  ) {
+		public ArtistMetadataUpdater( IEventAggregator eventAggregator, IRecurringTaskScheduler taskScheduler, IEnumerable<IArtistMetadataProvider> providers  ) {
+			mEventAggregator = eventAggregator;
 			mTaskScheduler = taskScheduler;
 			mProviders = providers;
+
+			mPriorityUpdateList = new Stack<DbArtistStatus>();
 		}
 
 		public void Initialize( IDocumentStore documentStore ) {
@@ -57,6 +63,20 @@ namespace Noise.Metadata.ArtistMetadata {
 			mDocumentStore = null;
 		}
 
+		public void QueueArtistUpdate( string forArtist ) {
+			if( mDocumentStore != null ) {
+				using( var session = mDocumentStore.OpenSession()) {
+					var status = session.Load<DbArtistStatus>( DbArtistStatus.FormatStatusKey( forArtist ));
+
+					if( status != null ) {
+						lock( mPriorityUpdateList ) {
+							mPriorityUpdateList.Push( status );
+						}
+					}
+				}
+			}
+		}
+
 		private void FillUpdateList() {
 			using( var session = mDocumentStore.OpenSession()) {
 				mUpdateList = ( from status in session.Query<DbArtistStatus>() select status ).ToArray();
@@ -67,12 +87,25 @@ namespace Noise.Metadata.ArtistMetadata {
 
 		private void UpdateNextArtist( RecurringTask task ) {
 			try {
-				if( mUpdateEnumerator != null ) {
-					if( mUpdateEnumerator.MoveNext()) {
-						UpdateArtist( mUpdateEnumerator.Current );
+				if( mPriorityUpdateList.Any()) {
+					DbArtistStatus artistStatus;
+
+					lock( mPriorityUpdateList ) {
+						artistStatus = mPriorityUpdateList.Pop();
 					}
-					else {
-						FillUpdateList();
+
+					UpdateArtist( artistStatus );
+
+					mEventAggregator.Publish( new Events.ArtistMetadataUpdated( artistStatus.ArtistName ));
+				}
+				else {
+					if( mUpdateEnumerator != null ) {
+						if( mUpdateEnumerator.MoveNext()) {
+							UpdateArtist( mUpdateEnumerator.Current );
+						}
+						else {
+							FillUpdateList();
+						}
 					}
 				}
 			}

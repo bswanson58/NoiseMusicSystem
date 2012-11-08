@@ -9,8 +9,8 @@ using Raven.Client;
 using Raven.Client.Embedded;
 
 namespace Noise.Metadata {
-	public class MetadataManager : IRequireInitialization,
-								   IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,IHandle<Events.ArtistContentRequest> {
+	public class MetadataManager : IRequireInitialization, IMetadataManager,
+								   IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved> {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IArtistMetadataManager			mArtistMetadataManager;
 		private readonly IArtistProvider				mArtistProvider;
@@ -73,12 +73,11 @@ namespace Noise.Metadata {
 			}
 		}
 
-		public void Handle( Events.ArtistContentRequest args ) {
-			var artist = mArtistProvider.GetArtist( args.ArtistId );
+		public IArtistMetadata GetArtistMetadata( string forArtist ) {
+			mArtistMetadataManager.ArtistMentioned( forArtist );
+			mUpdaters.Apply( updater => updater.QueueArtistUpdate( forArtist ));
 
-			if( artist != null ) {
-				mArtistMetadataManager.ArtistMetadataRequested( artist.Name );
-			}
+			return( mArtistMetadataManager.GetArtistBiography( forArtist ));
 		}
 	}
 }

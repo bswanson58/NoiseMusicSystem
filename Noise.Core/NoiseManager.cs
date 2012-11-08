@@ -26,6 +26,7 @@ namespace Noise.Core {
 							 IPlayController playController,
 							 ISearchProvider searchProvider,
 							 ITagManager tagManager,
+							 IMetadataManager metadataManager,
 							 IEnumerable<IRequireConstruction> backgroundComponents ) {
 			mEvents = eventAggregator;
 			mLifecycleManager = lifecycleManager;

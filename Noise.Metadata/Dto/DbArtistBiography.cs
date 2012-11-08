@@ -1,18 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Metadata.Dto {
-	internal class DbArtistBiography {
-		private readonly static IEnumerable<string>	mEmptyArray = new List<string>();
+	internal class DbArtistBiography : IArtistMetadata, IMetadataBase {
+		private const string			cStatusKeyPrefix = "bio/";
+		private readonly static			IEnumerable<string>	mEmptyArray = new List<string>();
  
 		public	string					ArtistName { get; set; }
 		public	List<StringMetadata>	Metadata { get; set; }
 
- 		public DbArtistBiography() {
- 			ArtistName = string.Empty;
+		public DbArtistBiography() {
+			ArtistName = string.Empty;
 			Metadata = new List<StringMetadata>();
- 		}
+		}
+
+		public static string FormatStatusKey( string artistName ) {
+			return( cStatusKeyPrefix + artistName.ToLower());
+		}
+
+		public string Id {
+			get{ return( FormatStatusKey( ArtistName )); }
+		}
 
 		public void SetMetadata( eMetadataType metadataType, string metadata ) {
 			var current = ( from m in Metadata where m.MetadataType == metadataType select m ).FirstOrDefault();

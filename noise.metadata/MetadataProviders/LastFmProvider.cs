@@ -49,11 +49,8 @@ namespace Noise.Metadata.MetadataProviders {
 			if( mSession != null ) {
 				try {
 					using( var session = mDocumentStore.OpenSession()) {
-						var artistBio = session.Load<DbArtistBiography>( artistName );
-						
-						if( artistBio == null ) {
-							artistBio = new DbArtistBiography { ArtistName = artistName };
-						}
+						var artistBio = session.Load<DbArtistBiography>( DbArtistBiography.FormatStatusKey( artistName )) ??
+						                new DbArtistBiography { ArtistName = artistName };
 
 						var	artistSearch = Artist.Search( artistName, mSession );
 						var	artistMatch = artistSearch.GetFirstMatch();

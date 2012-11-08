@@ -1,16 +1,11 @@
-﻿using Caliburn.Micro;
+﻿using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Dto;
 using Noise.Metadata.Interfaces;
 using Raven.Client;
 
 namespace Noise.Metadata.ArtistMetadata {
 	public class ArtistMetadataManager : IArtistMetadataManager {
-		private readonly IEventAggregator	mEventAggregator;
 		private IDocumentStore				mDocumentStore;
-
-		public ArtistMetadataManager( IEventAggregator eventAggregator ) {
-			mEventAggregator = eventAggregator;
-		}
 
 		public void Initialize( IDocumentStore documentStore ) {
 			mDocumentStore = documentStore;
@@ -21,30 +16,42 @@ namespace Noise.Metadata.ArtistMetadata {
 		}
 
 		public void ArtistMentioned( string artistName ) {
-			GetOrCreateArtistStatus( artistName );
+			InsureArtistStatus( artistName );
 		}
 
 		public void ArtistForgotten( string artistName ) {
 		}
 
-		public void ArtistMetadataRequested( string artistName ) {
-			var metadata = GetOrCreateArtistStatus( artistName );
+		public IArtistMetadata GetArtistBiography( string forArtist ) {
+			return( GetOrCreateArtistBiography( forArtist ));
 		}
 
-		private DbArtistStatus GetOrCreateArtistStatus( string forArtist ) {
-			DbArtistStatus	retValue = null;
-
+		private void InsureArtistStatus( string forArtist ) {
 			if( mDocumentStore != null ) {
 				using( var session = mDocumentStore.OpenSession()) {
-					retValue = session.Load<DbArtistStatus>( DbArtistStatus.FormatStatusKey( forArtist ));
+					var	status = session.Load<DbArtistStatus>( DbArtistStatus.FormatStatusKey( forArtist ));
 
-					if( retValue == null ) {
-						retValue = new DbArtistStatus { ArtistName = forArtist };
+					if( status == null ) {
+						status = new DbArtistStatus { ArtistName = forArtist };
 
-						session.Store( retValue );
+						session.Store( status );
 						session.SaveChanges();
 					}
 				}
+			}
+		}
+
+		private DbArtistBiography GetOrCreateArtistBiography( string forArtist ) {
+			var retValue = default( DbArtistBiography );
+
+			if( mDocumentStore != null ) {
+				using( var session = mDocumentStore.OpenSession()) {
+					retValue = session.Load<DbArtistBiography>( DbArtistBiography.FormatStatusKey( forArtist ));
+				}
+			}
+
+			if( retValue == null ) {
+				retValue = new DbArtistBiography { ArtistName = forArtist };
 			}
 
 			return( retValue );

@@ -15,7 +15,7 @@ namespace Noise.Metadata {
 		}
 
 		public void Initialize() {
-			mContainer.RegisterType<IRequireConstruction, MetadataManager>( "MetadataManager", new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IMetadataManager, MetadataManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IArtistMetadataManager, ArtistMetadataManager>();
 
 			mContainer.RegisterType<IMetadataUpdater, ArtistMetadataUpdater>( "ArtistMetadataUpdater" );
