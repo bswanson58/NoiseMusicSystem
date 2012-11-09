@@ -4,6 +4,7 @@ using System.Linq;
 using CuttingEdge.Conditions;
 using Lastfm.Services;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.Metadata.Dto;
@@ -14,6 +15,7 @@ namespace Noise.Metadata.MetadataProviders {
 	internal class LastFmProvider : IArtistMetadataProvider {
 		private Session			mSession;
 		private IDocumentStore	mDocumentStore;
+		private bool			mHasNetworkAccess;
 
 		public	string		ProviderKey { get; private set; }
 
@@ -25,15 +27,21 @@ namespace Noise.Metadata.MetadataProviders {
 			mDocumentStore = documentStore;
 
 			try {
-				var key = NoiseLicenseManager.Current.RetrieveKey( LicenseKeys.LastFm );
+				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+				if( configuration != null ) {
+					mHasNetworkAccess = configuration.HasNetworkAccess;
 
-				Condition.Requires( key ).IsNotNull();
+					var key = NoiseLicenseManager.Current.RetrieveKey( LicenseKeys.LastFm );
 
-				if( key != null ) {
-					mSession = new Session( key.Name, key.Key );
+					Condition.Requires( key ).IsNotNull();
+
+					if( key != null ) {
+						mSession = new Session( key.Name, key.Key );
+					}
+
+					Condition.Requires( mSession ).IsNotNull();
 				}
 
-				Condition.Requires( mSession ).IsNotNull();
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "LastFmProvider:Initialize", ex );
@@ -46,7 +54,8 @@ namespace Noise.Metadata.MetadataProviders {
 
 		// Last.fm provides artist biography, genre, similar artists and top albums.
 		public void UpdateArtist( string artistName ) {
-			if( mSession != null ) {
+			if(( mHasNetworkAccess ) &&
+			   ( mSession != null )) {
 				try {
 					using( var session = mDocumentStore.OpenSession()) {
 						var artistBio = session.Load<DbArtistBiography>( DbArtistBiography.FormatStatusKey( artistName )) ??
