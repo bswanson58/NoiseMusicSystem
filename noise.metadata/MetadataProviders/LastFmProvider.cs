@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using CuttingEdge.Conditions;
 using Lastfm.Services;
 using Noise.Infrastructure;
@@ -10,8 +12,33 @@ using Noise.Infrastructure.Support;
 using Noise.Metadata.Dto;
 using Noise.Metadata.Interfaces;
 using Raven.Client;
+using Raven.Json.Linq;
 
 namespace Noise.Metadata.MetadataProviders {
+	internal class ImageDownloader {
+		private readonly WebClient			mWebClient;
+		private readonly string				mArtistName;
+		private readonly Action< string, byte[]>	mOnDownloadComplete;
+
+		public ImageDownloader( string uriString, string artistName, Action<string, byte[]> onCompleted ) {
+			mArtistName = artistName;
+			mWebClient = new WebClient();
+			mOnDownloadComplete = onCompleted;
+
+			mWebClient.DownloadDataCompleted += OnDownloadCompleted;
+			mWebClient.DownloadDataAsync( new Uri( uriString ));
+		}
+
+		private void OnDownloadCompleted( object sender, DownloadDataCompletedEventArgs e ) {
+			if(( e.Error == null ) &&
+			   ( e.Cancelled == false )) {
+				mOnDownloadComplete( mArtistName, e.Result );
+			}			
+
+			mWebClient.DownloadDataCompleted -= OnDownloadCompleted;
+		}
+	}
+
 	internal class LastFmProvider : IArtistMetadataProvider {
 		private Session			mSession;
 		private IDocumentStore	mDocumentStore;
@@ -89,9 +116,10 @@ namespace Noise.Metadata.MetadataProviders {
 								artistBio.SetMetadata( eMetadataType.TopAlbums, strList );
 							}
 
-//							var imageUrl = artistMatch.GetImageURL();
-//							if(!string.IsNullOrWhiteSpace( imageUrl )) {
-//							}
+							var imageUrl = artistMatch.GetImageURL();
+							if(!string.IsNullOrWhiteSpace( imageUrl )) {
+								new ImageDownloader( imageUrl, artistName, ArtistImageDownloadComplete );
+							}
 
 							session.Store( artistBio );
 							session.SaveChanges();
@@ -106,22 +134,18 @@ namespace Noise.Metadata.MetadataProviders {
 			}
 		}
 
-		private static void ArtistImageDownloadComplete( IArtworkProvider artworkProvider, long artworkId, byte[] imageData ) {
-			Condition.Requires( artworkProvider ).IsNotNull();
+		private void ArtistImageDownloadComplete( string artistName, byte[] imageData ) {
 			Condition.Requires( imageData ).IsNotNull();
 
 			try {
-				using( var updater = artworkProvider.GetArtworkForUpdate( artworkId )) {
-					if( updater.Item != null ) {
-						updater.Item.Image = imageData;
-						updater.Item.UpdateExpiration();
+				if( mDocumentStore != null ) {
+					Stream	streamData = new MemoryStream( imageData );
 
-						updater.Update();
-					}
+					mDocumentStore.DatabaseCommands.PutAttachment( "artwork/" + artistName.ToLower(), null, streamData, new RavenJObject());
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - LastFmProvider:ImageDownload: ", ex );
+				NoiseLogger.Current.LogException( string.Format( "LastFmProvider:ImageDownload for artist: {0} ", artistName ), ex );
 			}
 		}
 	}

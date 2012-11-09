@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Caliburn.Micro;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Interfaces;
 using Raven.Client;
@@ -85,6 +86,13 @@ namespace Noise.Metadata {
 			mUpdaters.Apply( updater => updater.QueueArtistUpdate( forArtist ));
 
 			return( mArtistMetadataManager.GetArtistDiscography( forArtist ));
+		}
+
+		public Artwork GetArtistArtwork( string forArtist ) {
+			mArtistMetadataManager.ArtistMentioned( forArtist );
+			mUpdaters.Apply( updater => updater.QueueArtistUpdate( forArtist ));
+
+			return( mArtistMetadataManager.GetArtistArtwork( forArtist ));
 		}
 	}
 }

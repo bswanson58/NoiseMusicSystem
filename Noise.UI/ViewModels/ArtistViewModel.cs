@@ -22,8 +22,8 @@ namespace Noise.UI.ViewModels {
 								   IHandle<Events.ArtistContentUpdated>, IHandle<Events.ArtistUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
-		private readonly IArtworkProvider		mArtworkProvider;
 		private readonly ITagManager			mTagManager;
+		private readonly IMetadataManager		mMetadataManager;
 		private readonly Observal.Observer		mChangeObserver;
 		private UiArtist						mCurrentArtist;
 		private Artwork							mArtistImage;
@@ -32,11 +32,11 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler<Artwork>			mArtworkTaskHandler; 
 		private readonly InteractionRequest<ArtistEditRequest>		mArtistEditRequest;
 
-		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IArtworkProvider artworkProvider, ITagManager tagManager ) {
+		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ITagManager tagManager, IMetadataManager metadataManager ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
-			mArtworkProvider = artworkProvider;
 			mTagManager = tagManager;
+			mMetadataManager = metadataManager;
 
 			mEventAggregator.Subscribe( this );
 
@@ -86,6 +86,10 @@ namespace Noise.UI.ViewModels {
 
 		private void SetCurrentArtist( DbArtist artist ) {
 			CurrentArtist = artist != null ? TransformArtist( artist ) : null;
+
+			if( CurrentArtist != null ) {
+				RetrieveArtwork( CurrentArtist.Name );
+			}
 		}
 
 		private UiArtist CurrentArtist {
@@ -169,7 +173,6 @@ namespace Noise.UI.ViewModels {
 
 		private void RequestArtist( long artistId ) {
 			RetrieveArtist( artistId );
-			RetrieveArtwork( artistId );
 		}
 
 		private void RetrieveArtist( long artistId ) {
@@ -190,8 +193,8 @@ namespace Noise.UI.ViewModels {
 			set { mArtworkTaskHandler = value; }
 		}
 
-		private void RetrieveArtwork( long artistId ) {
-			ArtworkTaskHandler.StartTask( () => mArtworkProvider.GetArtistArtwork( artistId, ContentType.ArtistPrimaryImage ),
+		private void RetrieveArtwork( string artistName ) {
+			ArtworkTaskHandler.StartTask( () => mMetadataManager.GetArtistArtwork( artistName ),
 										   SetArtwork,
 										   exception => NoiseLogger.Current.LogException( "ArtistViewModel:GetArtistArtwork", exception ));
 		}

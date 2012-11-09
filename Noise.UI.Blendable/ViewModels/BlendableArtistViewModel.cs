@@ -27,7 +27,7 @@ namespace Noise.UI.Blendable.ViewModels {
 			var artworkProvider = new Mock<IArtworkProvider>();
 			var tagManager = new Mock<ITagManager>();
 
-			var vm = new ArtistViewModel( eventAggregator.Object, artistProvider.Object, artworkProvider.Object, tagManager.Object );
+			var vm = new ArtistViewModel( eventAggregator.Object, artistProvider.Object, tagManager.Object, null );
 			// Set tpl tasks to use the current thread only.
 			var taskScheduler = new CurrentThreadTaskScheduler();
 			vm.ArtistTaskHandler = new TaskHandler<DbArtist>( taskScheduler, taskScheduler );

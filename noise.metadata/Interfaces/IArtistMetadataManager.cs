@@ -1,4 +1,5 @@
-﻿using Noise.Infrastructure.Interfaces;
+﻿using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 using Raven.Client;
 
 namespace Noise.Metadata.Interfaces {
@@ -11,5 +12,6 @@ namespace Noise.Metadata.Interfaces {
 
 		IArtistMetadata		GetArtistBiography( string artistName );
 		IArtistDiscography	GetArtistDiscography( string artistName );
+		Artwork				GetArtistArtwork( string forArtist );
 	}
 }
