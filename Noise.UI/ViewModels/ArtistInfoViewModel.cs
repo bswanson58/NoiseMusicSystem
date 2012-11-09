@@ -22,7 +22,7 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler								mTaskHandler; 
 		private readonly BindableCollection<LinkNode>	mSimilarArtists;
 		private readonly BindableCollection<LinkNode>	mTopAlbums;
-		private readonly BindableCollection<LinkNode>	mBandMembers;
+		private readonly BindableCollection<string>		mBandMembers;
 		private readonly BindableCollection<DbDiscographyItem>	mDiscography;
 
 		public	event	EventHandler					IsActiveChanged;
@@ -38,7 +38,7 @@ namespace Noise.UI.ViewModels {
 
 			mSimilarArtists = new BindableCollection<LinkNode>();
 			mTopAlbums = new BindableCollection<LinkNode>();
-			mBandMembers = new BindableCollection<LinkNode>();
+			mBandMembers = new BindableCollection<string>();
 			mDiscography = new SortableCollection<DbDiscographyItem>();
 		}
 
@@ -115,7 +115,7 @@ namespace Noise.UI.ViewModels {
 									ArtistBiography = info.GetMetadata( eMetadataType.Biography );
 
 									mBandMembers.Clear();
-									mBandMembers.AddRange( info.GetMetadataArray( eMetadataType.BandMembers ).Select( item => new LinkNode( item )));
+									mBandMembers.AddRange( info.GetMetadataArray( eMetadataType.BandMembers ));
 
 									mSimilarArtists.Clear();
 									mSimilarArtists.AddRange( info.GetMetadataArray( eMetadataType.SimilarArtists ).Select( item => new LinkNode( item )));
@@ -171,7 +171,7 @@ namespace Noise.UI.ViewModels {
 			get { return( mSimilarArtists ); }
 		}
 
-		public IEnumerable<LinkNode> BandMembers {
+		public IEnumerable<string> BandMembers {
 			get { return( mBandMembers ); }
 		}
 

@@ -62,11 +62,7 @@
                               BorderBrush="{DynamicResource TrimColor}"
                               BorderThickness="1"
                               Header=" Band Members ">
-                        <ListBox BorderThickness="0">
-                            <GroupBox Width="6"
-                                      Height="2"
-                                      Header="GroupBox" />
-                        </ListBox>
+                        <ListBox BorderThickness="0"  ItemsSource="{Binding BandMembers}"/>
                     </GroupBox>
                     <GroupBox Grid.Column="1"
                               Margin="3,0,0,0"
