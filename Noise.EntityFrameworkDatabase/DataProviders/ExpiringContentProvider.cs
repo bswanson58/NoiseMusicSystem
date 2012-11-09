@@ -20,7 +20,6 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 				list.AddRange( context.Set<DbArtwork>().Where( entity => entity.AssociatedItem == forAssociatedItem && entity.DbContentType == (int)ofType ));
 				list.AddRange( context.Set<DbAssociatedItemList>().Where( entity => entity.AssociatedItem == forAssociatedItem && entity.DbContentType == (int)ofType ));
-				list.AddRange( context.Set<DbDiscographyRelease>().Where( entity => entity.AssociatedItem == forAssociatedItem && entity.DbContentType == (int)ofType ));
 				list.AddRange( context.Set<DbTextInfo>().Where( entity => entity.AssociatedItem == forAssociatedItem && entity.DbContentType == (int)ofType ));
 
 				retValue = new EfProviderList<ExpiringContent>( null, list );
@@ -37,7 +36,6 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		
 				list.AddRange( context.Set<DbArtwork>().Where( entity => entity.Album == albumId ));
 				list.AddRange( context.Set<DbAssociatedItemList>().Where( entity => entity.Album == albumId ));
-				list.AddRange( context.Set<DbDiscographyRelease>().Where( entity => entity.Album == albumId ));
 				list.AddRange( context.Set<DbTextInfo>().Where( entity => entity.Album == albumId ));
 
 				retValue = new EfProviderList<ExpiringContent>( null, list );

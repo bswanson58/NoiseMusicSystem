@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Caliburn.Micro;
 using FluentAssertions.EventMonitoring;
 using Moq;
@@ -82,11 +81,10 @@ namespace Noise.UI.Tests.ViewModels {
 			var	similarArtists = new DbAssociatedItemList( 1, ContentType.SimilarArtists );
 			var topAlbums = new DbAssociatedItemList( 1, ContentType.TopAlbums );
 			var bandMembers = new DbAssociatedItemList( 1, ContentType.BandMembers );
-			var provider = new Mock<IDataProviderList<DbDiscographyRelease>>(); 
 
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) )
 				.Returns( new ArtistSupportInfo( biography, artistImage, similarArtists, topAlbums, bandMembers ) );
-			testable.Mock<IDiscographyProvider>().Setup( m => m.GetDiscography( It.IsAny<long>() ) ).Returns( provider.Object ).Verifiable();
+//			testable.Mock<IDiscographyProvider>().Setup( m => m.GetDiscography( It.IsAny<long>() ) ).Returns( provider.Object ).Verifiable();
 
 			var sut = testable.ClassUnderTest;
 
@@ -94,7 +92,7 @@ namespace Noise.UI.Tests.ViewModels {
 
 			DispatcherPump.DoEvents();
 
-			testable.Mock<IDiscographyProvider>().Verify();
+//			testable.Mock<IDiscographyProvider>().Verify();
 		}
 
 		[Test]
@@ -113,11 +111,11 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistSupportInfo( It.IsAny<long>() ) )
 				.Returns( new ArtistSupportInfo( biography, artistImage, similarArtists, topAlbums, bandMembers ) );
 
-			var discoList = new List<DbDiscographyRelease>();
-			var provider = new Mock<IDataProviderList<DbDiscographyRelease>>();
+//			var discoList = new List<DbDiscographyRelease>();
+//			var provider = new Mock<IDataProviderList<DbDiscographyRelease>>();
  
-			provider.Setup( m => m.List ).Returns( discoList );
-			testable.Mock<IDiscographyProvider>().Setup( m => m.GetDiscography( It.IsAny<long>() ) ).Returns( provider.Object );
+//			provider.Setup( m => m.List ).Returns( discoList );
+//			testable.Mock<IDiscographyProvider>().Setup( m => m.GetDiscography( It.IsAny<long>() ) ).Returns( provider.Object );
 
 			var sut = testable.ClassUnderTest;
 			sut.MonitorEvents();

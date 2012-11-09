@@ -82,7 +82,7 @@ namespace Noise.Metadata.MetadataProviders {
 											releaseType = DiscographyReleaseType.TrackAppearance;
 										}
 									}
-									discography.Discography.Add( new DbDiscographyItem( release.Title, "", "", release.Year, releaseType ));
+									discography.Discography.Add( new DbDiscographyRelease( release.Title, "", "", release.Year, releaseType ));
 								}
 							}
 

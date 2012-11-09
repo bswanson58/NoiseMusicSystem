@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Caliburn.Micro;
-using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -15,16 +14,13 @@ namespace Noise.Core.BackgroundTasks {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
-		private readonly IDiscographyProvider	mDiscographyProvider;
 		private List<long>						mArtistList;
 		private IEnumerator<long>				mArtistEnum;
 
-		public DiscographyExplorer( IEventAggregator eventAggregator, IArtistProvider artistProvider,
-									IAlbumProvider albumProvider, IDiscographyProvider discographyProvider ) {
+		public DiscographyExplorer( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
-			mDiscographyProvider = discographyProvider;
 	
 			mEventAggregator.Subscribe( this );
 		}
@@ -64,6 +60,7 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public void ExecuteTask() {
+/*
 			try {
 				var artistId = NextArtist();
 
@@ -122,6 +119,7 @@ namespace Noise.Core.BackgroundTasks {
 			}
 
 			return( uniqueList.Values.ToList());
+ */
 		}
 	}
-}
+ }

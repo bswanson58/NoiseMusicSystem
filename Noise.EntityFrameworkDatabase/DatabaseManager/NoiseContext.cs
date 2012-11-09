@@ -11,7 +11,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 		public IDbSet<DbArtist>	Artists { get; set; }
 		public IDbSet<DbAlbum>	Albums { get; set; }
- 		public IDbSet<DbTrack>	Tracks { get; set; } 
+		public IDbSet<DbTrack>	Tracks { get; set; } 
 
 		protected override void OnModelCreating( DbModelBuilder modelBuilder ) {
 			modelBuilder.Configurations.Add( new AlbumConfiguration());
@@ -19,7 +19,6 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			modelBuilder.Configurations.Add( new ArtworkConfiguration());
 			modelBuilder.Configurations.Add( new AssociatedItemConfiguration());
 			modelBuilder.Configurations.Add( new AssociatedItemListConfiguration());
-			modelBuilder.Configurations.Add( new DiscographyConfiguration());
 			modelBuilder.Configurations.Add( new GenreConfiguration());
 			modelBuilder.Configurations.Add( new InternetStreamConfiguration());
 			modelBuilder.Configurations.Add( new LyricConfiguration());
@@ -41,16 +40,16 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 		}
 
 		public new IDbSet<TEntity> Set<TEntity>() where TEntity : class {
-            return base.Set<TEntity>();
-        }
+			return base.Set<TEntity>();
+		}
 	}
 
 	internal abstract class BaseEntityConfiguration<TEntity> : EntityTypeConfiguration<TEntity> where TEntity : DbBase {
 		internal BaseEntityConfiguration( string tableName ) {
 			Map( m => {
-			     	m.ToTable( tableName );
+					m.ToTable( tableName );
 					m.MapInheritedProperties();
-			     });
+				 });
 
 
 			HasKey( p => p.DbId );
@@ -105,13 +104,6 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 		internal AssociatedItemListConfiguration() :
 			base( "AssociatedItemLists" ) {
 			Ignore( p => p.ContentType );
-		}
-	}
-
-	internal class DiscographyConfiguration : BaseEntityConfiguration<DbDiscographyRelease> {
-		internal DiscographyConfiguration() :
-			base( "Discography" ) {
-			Ignore( p => p.ReleaseType );
 		}
 	}
 

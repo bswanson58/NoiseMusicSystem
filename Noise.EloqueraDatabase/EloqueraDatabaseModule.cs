@@ -28,7 +28,6 @@ namespace Noise.EloqueraDatabase {
 			mContainer.RegisterType<ITrackProvider, TrackProvider>();
 			mContainer.RegisterType<IInternetStreamProvider, InternetStreamProvider>();
 			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
-			mContainer.RegisterType<IDiscographyProvider, DbDiscographyProvider>();
 			mContainer.RegisterType<IExpiringContentProvider, ExpiringContentProvider>();
 			mContainer.RegisterType<IGenreProvider, GenreProvider>();
 			mContainer.RegisterType<ILyricProvider, LyricProvider>();

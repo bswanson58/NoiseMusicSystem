@@ -23,7 +23,7 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<LinkNode>	mSimilarArtists;
 		private readonly BindableCollection<LinkNode>	mTopAlbums;
 		private readonly BindableCollection<string>		mBandMembers;
-		private readonly BindableCollection<DbDiscographyItem>	mDiscography;
+		private readonly BindableCollection<DbDiscographyRelease>	mDiscography;
 
 		public	event	EventHandler					IsActiveChanged;
 
@@ -39,7 +39,7 @@ namespace Noise.UI.ViewModels {
 			mSimilarArtists = new BindableCollection<LinkNode>();
 			mTopAlbums = new BindableCollection<LinkNode>();
 			mBandMembers = new BindableCollection<string>();
-			mDiscography = new SortableCollection<DbDiscographyItem>();
+			mDiscography = new SortableCollection<DbDiscographyRelease>();
 		}
 
 		public bool IsActive {
@@ -175,7 +175,7 @@ namespace Noise.UI.ViewModels {
 			get { return( mBandMembers ); }
 		}
 
-		public IEnumerable<DbDiscographyItem> Discography {
+		public IEnumerable<DbDiscographyRelease> Discography {
 			get{ return( mDiscography ); }
 		}
 	}

@@ -7,11 +7,11 @@ namespace Noise.Metadata.Dto {
 		private const string	cStatusKeyPrefix = "disco/";
 
 		public	string					ArtistName { get; set; }
-		public	List<DbDiscographyItem>	Discography { get; set; }
+		public	List<DbDiscographyRelease>	Discography { get; set; }
 
 		public DbArtistDiscography() {
 			ArtistName = string.Empty;
-			Discography = new List<DbDiscographyItem>();
+			Discography = new List<DbDiscographyRelease>();
 		}
 
 		public static string FormatStatusKey( string artistName ) {

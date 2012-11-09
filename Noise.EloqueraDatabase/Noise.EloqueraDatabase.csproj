@@ -128,7 +128,6 @@
     <Compile Include="DataProviders\BaseDataProvider.cs" />
     <Compile Include="DataProviders\DatabaseInfoProvider.cs" />
     <Compile Include="DataProviders\DbBaseProvider.cs" />
-    <Compile Include="DataProviders\DiscographyProvider.cs" />
     <Compile Include="DataProviders\ExpiringContentProvider.cs" />
     <Compile Include="DataProviders\GenreProvider.cs" />
     <Compile Include="DataProviders\InternetStreamProvider.cs" />

@@ -92,9 +92,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<ICloudSyncProvider, CloudSyncStreams>( "SyncStreams" );
 			mContainer.RegisterType<IEnumerable<ICloudSyncProvider>, ICloudSyncProvider[]>();
 
-			mContainer.RegisterType<IContentProvider, BandMembersProvider>( "BandMembersProvider" );
 			mContainer.RegisterType<IContentProvider, BiographyProvider>( "BiographyProvider" );
-			mContainer.RegisterType<IContentProvider, DiscographyProvider>( "DiscographyProvider" );
 			mContainer.RegisterType<IContentProvider, SimilarArtistsProvider>( "SimilarArtists" );
 			mContainer.RegisterType<IContentProvider, TopAlbumsProvider>( "TopAlbumsProvider" );
 			mContainer.RegisterType<LastFmProvider, LastFmProvider>( new  HierarchicalLifetimeManager());
