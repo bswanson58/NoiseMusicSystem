@@ -24,6 +24,14 @@ namespace Noise.Metadata.Dto {
 			get{ return( FormatStatusKey( ArtistName )); }
 		}
 
+		public void ClearMetadata( eMetadataType metadataType ) {
+			var metadata = ( from m in Metadata where m.MetadataType == metadataType select m ).FirstOrDefault();
+
+			if( metadata != null ) {
+				Metadata.Remove( metadata );
+			}
+		}
+
 		public void SetMetadata( eMetadataType metadataType, string metadata ) {
 			var current = ( from m in Metadata where m.MetadataType == metadataType select m ).FirstOrDefault();
 

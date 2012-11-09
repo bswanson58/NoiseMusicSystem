@@ -79,5 +79,12 @@ namespace Noise.Metadata {
 
 			return( mArtistMetadataManager.GetArtistBiography( forArtist ));
 		}
+
+		public IArtistDiscography GetArtistDiscography( string forArtist ) {
+			mArtistMetadataManager.ArtistMentioned( forArtist );
+			mUpdaters.Apply( updater => updater.QueueArtistUpdate( forArtist ));
+
+			return( mArtistMetadataManager.GetArtistDiscography( forArtist ));
+		}
 	}
 }

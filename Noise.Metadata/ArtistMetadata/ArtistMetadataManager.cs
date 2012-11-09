@@ -26,6 +26,10 @@ namespace Noise.Metadata.ArtistMetadata {
 			return( GetOrCreateArtistBiography( forArtist ));
 		}
 
+		public IArtistDiscography GetArtistDiscography( string forArtist ) {
+			return( GetOrCreateArtistDiscography( forArtist ));
+		}
+
 		private void InsureArtistStatus( string forArtist ) {
 			if( mDocumentStore != null ) {
 				using( var session = mDocumentStore.OpenSession()) {
@@ -52,6 +56,22 @@ namespace Noise.Metadata.ArtistMetadata {
 
 			if( retValue == null ) {
 				retValue = new DbArtistBiography { ArtistName = forArtist };
+			}
+
+			return( retValue );
+		}
+
+		private DbArtistDiscography GetOrCreateArtistDiscography( string forArtist ) {
+			var retValue = default( DbArtistDiscography );
+
+			if( mDocumentStore != null ) {
+				using( var session = mDocumentStore.OpenSession()) {
+					retValue = session.Load<DbArtistDiscography>( DbArtistDiscography.FormatStatusKey( forArtist ));
+				}
+			}
+
+			if( retValue == null ) {
+				retValue = new DbArtistDiscography { ArtistName = forArtist };
 			}
 
 			return( retValue );

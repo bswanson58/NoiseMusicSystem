@@ -22,6 +22,7 @@ namespace Noise.Metadata {
 			mContainer.RegisterType<IEnumerable<IMetadataUpdater>, IMetadataUpdater[]>();
 
 			mContainer.RegisterType<IArtistMetadataProvider, LastFmProvider>( "LastFmProvider" );
+			mContainer.RegisterType<IArtistMetadataProvider, DiscogsProvider>( "DiscogsProvider" );
 			mContainer.RegisterType<IEnumerable<IArtistMetadataProvider>, IArtistMetadataProvider[]>();
 		}
 	}

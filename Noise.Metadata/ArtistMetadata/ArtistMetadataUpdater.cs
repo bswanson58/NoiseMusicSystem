@@ -15,7 +15,7 @@ namespace Noise.Metadata.ArtistMetadata {
 		private readonly IEventAggregator						mEventAggregator;
 		private readonly IRecurringTaskScheduler				mTaskScheduler;
 		private readonly IEnumerable<IArtistMetadataProvider>	mProviders; 
- 		private readonly Stack<DbArtistStatus>					mPriorityUpdateList;  
+		private readonly Stack<DbArtistStatus>					mPriorityUpdateList;  
 		private IDocumentStore									mDocumentStore;
 		private IEnumerable<DbArtistStatus>						mUpdateList;
 		private IEnumerator<DbArtistStatus>						mUpdateEnumerator;
@@ -95,8 +95,6 @@ namespace Noise.Metadata.ArtistMetadata {
 					}
 
 					UpdateArtist( artistStatus );
-
-					mEventAggregator.Publish( new Events.ArtistMetadataUpdated( artistStatus.ArtistName ));
 				}
 				else {
 					if( mUpdateEnumerator != null ) {
@@ -129,6 +127,8 @@ namespace Noise.Metadata.ArtistMetadata {
 						session.Store( artistStatus );
 						session.SaveChanges();
 					}
+
+					mEventAggregator.Publish( new Events.ArtistMetadataUpdated( artistStatus.ArtistName ));
 				}
 			}
 		}

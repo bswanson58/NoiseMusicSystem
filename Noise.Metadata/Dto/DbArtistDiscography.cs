@@ -1,8 +1,18 @@
-﻿namespace Noise.Metadata.Dto {
-	internal class DbArtistDiscography : IMetadataBase {
+﻿using System.Collections.Generic;
+using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
+
+namespace Noise.Metadata.Dto {
+	internal class DbArtistDiscography : IMetadataBase, IArtistDiscography {
 		private const string	cStatusKeyPrefix = "disco/";
 
-		public	string			ArtistName { get; set; }
+		public	string					ArtistName { get; set; }
+		public	List<DbDiscographyItem>	Discography { get; set; }
+
+		public DbArtistDiscography() {
+			ArtistName = string.Empty;
+			Discography = new List<DbDiscographyItem>();
+		}
 
 		public static string FormatStatusKey( string artistName ) {
 			return( cStatusKeyPrefix + artistName.ToLower());

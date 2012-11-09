@@ -23,7 +23,7 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<LinkNode>	mSimilarArtists;
 		private readonly BindableCollection<LinkNode>	mTopAlbums;
 		private readonly BindableCollection<LinkNode>	mBandMembers;
-		private readonly SortableCollection<DbDiscographyRelease>	mDiscography;
+		private readonly BindableCollection<DbDiscographyItem>	mDiscography;
 
 		public	event	EventHandler					IsActiveChanged;
 
@@ -39,7 +39,7 @@ namespace Noise.UI.ViewModels {
 			mSimilarArtists = new BindableCollection<LinkNode>();
 			mTopAlbums = new BindableCollection<LinkNode>();
 			mBandMembers = new BindableCollection<LinkNode>();
-			mDiscography = new SortableCollection<DbDiscographyRelease>();
+			mDiscography = new SortableCollection<DbDiscographyItem>();
 		}
 
 		public bool IsActive {
@@ -113,9 +113,19 @@ namespace Noise.UI.ViewModels {
 									var info = mMetadataManager.GetArtistMetadata( artistName );
 
 									ArtistBiography = info.GetMetadata( eMetadataType.Biography );
+
+									mBandMembers.Clear();
 									mBandMembers.AddRange( info.GetMetadataArray( eMetadataType.BandMembers ).Select( item => new LinkNode( item )));
+
+									mSimilarArtists.Clear();
 									mSimilarArtists.AddRange( info.GetMetadataArray( eMetadataType.SimilarArtists ).Select( item => new LinkNode( item )));
+
+									mTopAlbums.Clear();
 									mTopAlbums.AddRange( info.GetMetadataArray( eMetadataType.TopAlbums ).Select( item => new LinkNode( item )));
+
+									var discography = mMetadataManager.GetArtistDiscography( artistName );
+									mDiscography.Clear();
+									mDiscography.AddRange( from d in discography.Discography orderby d.Year descending select  d );
 								},
 								() => ArtistValid = true,
 								exception => NoiseLogger.Current.LogException( "ArtistInfoViewModel:RetrieveSupportInfo", exception )
@@ -165,7 +175,7 @@ namespace Noise.UI.ViewModels {
 			get { return( mBandMembers ); }
 		}
 
-		public IEnumerable<DbDiscographyRelease> Discography {
+		public IEnumerable<DbDiscographyItem> Discography {
 			get{ return( mDiscography ); }
 		}
 	}
