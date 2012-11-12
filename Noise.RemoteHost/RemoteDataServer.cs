@@ -15,12 +15,15 @@ namespace Noise.RemoteHost {
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
+		private readonly IMetadataManager	mMetadataManager;
 		private readonly ITagManager		mTagManager;
 
-		public RemoteDataServer( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ITagManager tagManager ) {
+		public RemoteDataServer( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
+								 ITagManager tagManager, IMetadataManager metadataManager ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
+			mMetadataManager = metadataManager;
 			mTagManager = tagManager;
 		}
 
@@ -65,15 +68,19 @@ namespace Noise.RemoteHost {
 			return( retValue );
 		}
 
-		private static RoArtistInfo TransformArtistInfo( DbArtist artist, ArtistSupportInfo supportInfo ) {
+		private static RoArtistInfo TransformArtistInfo( DbArtist artist, IArtistMetadata artistMetadata, Artwork artistImage ) {
 			var retValue = new RoArtistInfo();
 
 			Mapper.DynamicMap( artist, retValue );
-			Mapper.DynamicMap( supportInfo, retValue );
 
-			if(( supportInfo.ArtistImage != null ) &&
-			   ( supportInfo.ArtistImage.Image != null )) {
-				retValue.ArtistImage = Convert.ToBase64String( supportInfo.ArtistImage.Image );
+			retValue.Biography = artistMetadata.GetMetadata( eMetadataType.Biography );
+			retValue.BandMembers = artistMetadata.GetMetadataArray( eMetadataType.BandMembers ).ToArray();
+			retValue.SimilarArtists = artistMetadata.GetMetadataArray( eMetadataType.SimilarArtists ).ToArray();
+			retValue.TopAlbums = artistMetadata.GetMetadataArray( eMetadataType.TopAlbums ).ToArray();
+			retValue.Website = artistMetadata.GetMetadata( eMetadataType.WebSite );
+			
+			if( artistImage != null ) {
+				retValue.ArtistImage = Convert.ToBase64String( artistImage.Image );
 			}
 
 			return( retValue );
@@ -84,12 +91,12 @@ namespace Noise.RemoteHost {
 
 			try {
 				var artist = mArtistProvider.GetArtist( artistId );
-				var artistInfo = mArtistProvider.GetArtistSupportInfo( artistId );
 
-				if(( artist != null ) &&
-				   ( artistInfo != null )) {
+				if( artist != null ) {
+					var artistMetadata = mMetadataManager.GetArtistMetadata( artist.Name );
+					var artistImage = mMetadataManager.GetArtistArtwork( artist.Name );
 
-					retValue.ArtistInfo = TransformArtistInfo( artist, artistInfo );
+					retValue.ArtistInfo = TransformArtistInfo( artist, artistMetadata, artistImage );
 					retValue.Success = true;
 				}
 			}

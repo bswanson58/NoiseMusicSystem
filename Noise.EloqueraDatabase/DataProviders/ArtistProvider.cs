@@ -9,16 +9,10 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class ArtistProvider : BaseDataProvider<DbArtist>, IArtistProvider {
-		private readonly IArtworkProvider				mArtworkProvider;
-		private readonly ITextInfoProvider				mTextInfoProvider;
 		private readonly ITagAssociationProvider		mTagAssociationProvider;
 
-		public ArtistProvider( IEloqueraManager databaseManager,
-							   IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider,
-							   ITagAssociationProvider tagAssociationProvider )
+		public ArtistProvider( IEloqueraManager databaseManager, ITagAssociationProvider tagAssociationProvider )
 			: base( databaseManager ) {
-			mArtworkProvider = artworkProvider;
-			mTextInfoProvider = textInfoProvider;
 			mTagAssociationProvider = tagAssociationProvider;
 		}
 
@@ -104,11 +98,6 @@ namespace Noise.EloqueraDatabase.DataProviders {
 			}
 
 			return( retValue );
-		}
-
-		public ArtistSupportInfo GetArtistSupportInfo( long artistId ) {
-			return( new ArtistSupportInfo( mTextInfoProvider.GetArtistTextInfo( artistId, ContentType.Biography ),
-										   mArtworkProvider.GetArtistArtwork( artistId, ContentType.ArtistPrimaryImage )));
 		}
 
 		public long GetItemCount() {

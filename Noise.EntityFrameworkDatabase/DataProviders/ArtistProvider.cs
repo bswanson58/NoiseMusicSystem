@@ -9,15 +9,10 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
 	public class ArtistProvider : BaseProvider<DbArtist>, IArtistProvider {
-		private readonly IArtworkProvider				mArtworkProvider;
-		private readonly ITextInfoProvider				mTextInfoProvider;
 		private readonly ITagAssociationProvider		mTagAssociationProvider;
 
-		public ArtistProvider( IContextProvider contextProvider, IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider,
-							   ITagAssociationProvider tagAssociationProvider ) :
+		public ArtistProvider( IContextProvider contextProvider, ITagAssociationProvider tagAssociationProvider ) :
 			base( contextProvider ) {
-			mArtworkProvider = artworkProvider;
-			mTextInfoProvider = textInfoProvider;
 			mTagAssociationProvider = tagAssociationProvider;
 		}
 
@@ -104,11 +99,6 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			}
 
 			return( retValue );
-		}
-
-		public ArtistSupportInfo GetArtistSupportInfo( long artistId ) {
-			return( new ArtistSupportInfo( mTextInfoProvider.GetArtistTextInfo( artistId, ContentType.Biography ),
-										   mArtworkProvider.GetArtistArtwork( artistId, ContentType.ArtistPrimaryImage )));
 		}
 
 		public long GetItemCount() {

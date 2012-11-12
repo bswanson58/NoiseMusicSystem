@@ -202,35 +202,13 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 			var tags = new List<DbTagAssociation> { new DbTagAssociation( eTagGroup.User, 1, artist.DbId, 1 ),
 													new DbTagAssociation( eTagGroup.User, 2, artist.DbId, 2 )};
 			var tagList = new Mock<IDataProviderList<DbTagAssociation>>();
- 			tagList.Setup( m => m.List ).Returns( tags );
+			tagList.Setup( m => m.List ).Returns( tags );
 
 			var sut = CreateSut();
 			
 			using( var categoryList = sut.GetArtistCategories( artist.DbId )) {
 				categoryList.List.Should().HaveCount( 2 );
 			}
-		}
-
-		[Test]
-		public void CanGetArtistSupportInfo() {
-			var artist = new DbArtist();
-
-			var dbTextInfo = new DbTextInfo( artist.DbId, ContentType.Biography );
-			var textInfo = new TextInfo( dbTextInfo ) { Text = "some text info" };
-			mTextInfoProvider.Setup( m => m.GetArtistTextInfo( It.Is<long>( p => p == artist.DbId), 
-															   It.Is<ContentType>( p => p == ContentType.Biography ))).Returns( textInfo );
-
-			var dbArtwork = new DbArtwork( artist.DbId, ContentType.ArtistPrimaryImage );
-			var artwork = new Artwork( dbArtwork );
-			mArtworkProvider.Setup( m => m.GetArtistArtwork( It.Is<long>( p => p == artist.DbId ),
-															 It.Is<ContentType>( p => p == ContentType.ArtistPrimaryImage ))).Returns( artwork );
-
-			var sut = CreateSut();
-
-			var artistInfo = sut.GetArtistSupportInfo( artist.DbId );
-
-			artistInfo.ArtistImage.ShouldHave().AllProperties().EqualTo( artwork );
-			artistInfo.Biography.ShouldHave().AllProperties().EqualTo( textInfo );
 		}
 
 		[Test]

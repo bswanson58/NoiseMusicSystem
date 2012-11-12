@@ -22,7 +22,7 @@ namespace Noise.EloqueraDatabase.Tests.DataProviders {
 		}
 
 		protected override IArtistProvider CreateSut() {
-			return( new ArtistProvider( mTestSetup.DatabaseManager, mArtworkProvider.Object, mTextInfoProvider.Object, null ));
+			return( new ArtistProvider( mTestSetup.DatabaseManager, null ));
 		}
 
 		[TearDown]

@@ -134,7 +134,6 @@
     <Compile Include="Configuration\ServerConfiguration.cs" />
     <Compile Include="Configuration\SystemConfiguration.cs" />
     <Compile Include="Dto\AlbumSupportInfo.cs" />
-    <Compile Include="Dto\ArtistSupportInfo.cs" />
     <Compile Include="Dto\Artwork.cs" />
     <Compile Include="Dto\AudioLevels.cs" />
     <Compile Include="Dto\BaseCommandArgs.cs" />

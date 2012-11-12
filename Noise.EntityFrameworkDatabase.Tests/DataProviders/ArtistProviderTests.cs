@@ -22,7 +22,7 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 		}
 
 		protected override IArtistProvider CreateSut() {
-			return( new ArtistProvider( mTestSetup.ContextProvider, mArtworkProvider.Object, mTextInfoProvider.Object, null ));
+			return( new ArtistProvider( mTestSetup.ContextProvider, null ));
 		}
 	}
 }
