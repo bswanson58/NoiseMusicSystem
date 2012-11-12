@@ -13,15 +13,19 @@ namespace Noise.Core.DataBuilders {
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
+		private readonly IMetadataManager		mMetadataManager;
+		private readonly ITagManager			mTagManager;
 		private bool							mStop;
 
-		public SummaryBuilder( IEventAggregator eventAggregator, IRootFolderProvider rootFolderProvider,
+		public SummaryBuilder( IEventAggregator eventAggregator, IRootFolderProvider rootFolderProvider, IMetadataManager metadataManager, ITagManager tagManager,
 							   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
 			mEventAggregator = eventAggregator;
 			mRootFolderProvider =rootFolderProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
+			mMetadataManager = metadataManager;
+			mTagManager = tagManager;
 		}
 
 		public void BuildSummaryData( DatabaseChangeSummary summary ) {
@@ -112,6 +116,13 @@ namespace Noise.Core.DataBuilders {
 								artistUpdater.Item.CalculatedGenre = DetermineTopGenre( albumGenre );
 								artistUpdater.Item.CalculatedRating = albumRating > 0 ? (Int16)( albumRating / albumCount ) : (Int16)0;
 								artistUpdater.Item.MaxChildRating = (Int16)maxAlbumRating;
+
+								var artistMetadata = mMetadataManager.GetArtistMetadata( artistUpdater.Item.Name );
+								var genre = artistMetadata.GetMetadataArray( eMetadataType.Genre ).FirstOrDefault();
+
+								if(!string.IsNullOrWhiteSpace( genre )) {
+									artistUpdater.Item.ExternalGenre = mTagManager.ResolveGenre( genre );
+								}
 
 								artistUpdater.Update();
 								mEventAggregator.Publish( new Events.ArtistContentUpdated( artistUpdater.Item.DbId ));

@@ -113,10 +113,12 @@ namespace Noise.Metadata.ArtistMetadata {
 		}
 
 		private void UpdateArtist( DbArtistStatus artistStatus ) {
+			bool	updated = false;
+
 			foreach( var provider in mProviders ) {
 				var status = artistStatus.GetProviderStatus( provider.ProviderKey );
-				bool shouldUpdate = !(( status != null ) &&
-									  ( status.LastUpdate + status.Lifetime > DateTime.Now ));
+				var	shouldUpdate = !(( status != null ) &&
+									 ( status.LastUpdate + status.Lifetime > DateTime.Now ));
 
 				if( shouldUpdate ) {
 					provider.UpdateArtist( artistStatus.ArtistName );
@@ -128,8 +130,12 @@ namespace Noise.Metadata.ArtistMetadata {
 						session.SaveChanges();
 					}
 
-					mEventAggregator.Publish( new Events.ArtistMetadataUpdated( artistStatus.ArtistName ));
+					updated = true;
 				}
+			}
+
+			if( updated ) {
+					mEventAggregator.Publish( new Events.ArtistMetadataUpdated( artistStatus.ArtistName ));
 			}
 		}
 	}

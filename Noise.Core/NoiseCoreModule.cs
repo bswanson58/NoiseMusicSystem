@@ -81,6 +81,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IBackgroundTask, DiscographyExplorer>( "DiscographyExplorer" );
 			mContainer.RegisterType<IBackgroundTask, DecadeTagBuilder>( "DecadeTagBuilder" );
 			mContainer.RegisterType<IBackgroundTask, SearchBuilder>( "SearchBuilder" );
+			mContainer.RegisterType<IBackgroundTask, MetadataUpdateTask>( "MetadataUpdate" );
 			mContainer.RegisterType<IEnumerable<IBackgroundTask>, IBackgroundTask[]>();
 
 			mContainer.RegisterType<ICloudSyncProvider, CloudSyncFavorites>( "SyncFavorites" );
