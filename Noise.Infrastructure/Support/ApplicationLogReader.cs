@@ -26,7 +26,7 @@ namespace Noise.Infrastructure.Support {
 					while(!stream.EndOfStream ) {
 						var line = stream.ReadLine();
 
-						if( line.Contains( "------" )) {
+						if( line.Contains( "======" )) {
 							mLogText.Clear();
 						}
 						else {
