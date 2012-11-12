@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Metadata.Dto {
+	[DebuggerDisplay("Artist = {ArtistName}")]
 	internal class DbArtistDiscography : IMetadataBase, IArtistDiscography {
 		private const string	cStatusKeyPrefix = "disco/";
 

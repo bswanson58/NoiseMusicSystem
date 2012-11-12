@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Metadata.Dto {
+	[DebuggerDisplay("Artist = {ArtistName}")]
 	internal class DbArtistBiography : IArtistMetadata, IMetadataBase {
 		private const string			cStatusKeyPrefix = "bio/";
 		private readonly static			IEnumerable<string>	mEmptyArray = new List<string>();

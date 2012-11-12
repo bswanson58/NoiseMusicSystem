@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Noise.Metadata.Dto {
+	[DebuggerDisplay("Artist = {ArtistName}")]
 	internal class ProviderStatus {
 		public	string		Provider { get; set; }
 		public	DateTime	LastUpdate { get; set; }
