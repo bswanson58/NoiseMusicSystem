@@ -7,7 +7,6 @@ using Noise.Core.Configuration;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
 using Noise.Core.DataExchange;
-using Noise.Core.DataProviders;
 using Noise.Core.FileProcessor;
 using Noise.Core.FileStore;
 using Noise.Core.MediaPlayer;
@@ -67,7 +66,6 @@ namespace Noise.Core {
 			mContainer.RegisterType<IEnumerable<IPipelineStep>, IPipelineStep[]>();
 
 			mContainer.RegisterType<IRequireConstruction, BackgroundTaskManager>( "BackgroundTaskManager", new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IRequireConstruction, ContentManager>( "ContentManager", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRequireConstruction, DataUpdates>( "DataUpdates", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRequireConstruction, FileUpdates>( "FileUpdates", new HierarchicalLifetimeManager());
 //			mContainer.RegisterType<IRequireConstruction, LyricsSearcher>( "LyricsSearcher", new HierarchicalLifetimeManager());
@@ -90,12 +88,6 @@ namespace Noise.Core {
 			mContainer.RegisterType<ICloudSyncProvider, CloudSyncFavorites>( "SyncFavorites" );
 			mContainer.RegisterType<ICloudSyncProvider, CloudSyncStreams>( "SyncStreams" );
 			mContainer.RegisterType<IEnumerable<ICloudSyncProvider>, ICloudSyncProvider[]>();
-
-			mContainer.RegisterType<IContentProvider, BiographyProvider>( "BiographyProvider" );
-			mContainer.RegisterType<IContentProvider, SimilarArtistsProvider>( "SimilarArtists" );
-			mContainer.RegisterType<IContentProvider, TopAlbumsProvider>( "TopAlbumsProvider" );
-			mContainer.RegisterType<LastFmProvider, LastFmProvider>( new  HierarchicalLifetimeManager());
-			mContainer.RegisterType<IEnumerable<IContentProvider>, IContentProvider[]>();
 
 			mContainer.RegisterType<IPlayStrategyFactory, PlayStrategyFactory>();
 			mContainer.RegisterType<PlayStrategySingle>();
