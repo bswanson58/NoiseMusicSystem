@@ -80,9 +80,8 @@ namespace Noise.Core {
 			mContainer.RegisterType<RecurringTaskScheduler>( new InjectionConstructor());
 			mContainer.RegisterType<IRecurringTaskScheduler, RecurringTaskScheduler>( new HierarchicalLifetimeManager());
 
-			mContainer.RegisterType<IBackgroundTask, ContentBuilder>( "ContentBuilder" );
-			mContainer.RegisterType<IBackgroundTask, DecadeTagBuilder>( "DecadeTagBuilder" );
 			mContainer.RegisterType<IBackgroundTask, DiscographyExplorer>( "DiscographyExplorer" );
+			mContainer.RegisterType<IBackgroundTask, DecadeTagBuilder>( "DecadeTagBuilder" );
 			mContainer.RegisterType<IBackgroundTask, LinkSimilarArtists>( "LinkSimilarArtists" );
 			mContainer.RegisterType<IBackgroundTask, LinkTopAlbums>( "LinkTopAlbums" );
 			mContainer.RegisterType<IBackgroundTask, SearchBuilder>( "SearchBuilder" );

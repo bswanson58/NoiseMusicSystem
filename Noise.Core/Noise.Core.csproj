@@ -147,7 +147,6 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="BackgroundTasks\BackgroundTaskManager.cs" />
-    <Compile Include="BackgroundTasks\ContentBuilder.cs" />
     <Compile Include="BackgroundTasks\DecadeTagBuilder.cs" />
     <Compile Include="BackgroundTasks\DiscographyExplorer.cs" />
     <Compile Include="BackgroundTasks\IBackgroundTask.cs" />

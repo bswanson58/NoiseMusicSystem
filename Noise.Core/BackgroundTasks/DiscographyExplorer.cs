@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Caliburn.Micro;
+using Noise.Core.Database;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -14,13 +15,16 @@ namespace Noise.Core.BackgroundTasks {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
+		private readonly IMetadataManager		mMetadataManager;
 		private List<long>						mArtistList;
 		private IEnumerator<long>				mArtistEnum;
 
-		public DiscographyExplorer( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider ) {
+		public DiscographyExplorer( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider,
+									IMetadataManager metadataManager ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
+			mMetadataManager = metadataManager;
 	
 			mEventAggregator.Subscribe( this );
 		}
@@ -60,42 +64,45 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public void ExecuteTask() {
-/*
+
 			try {
 				var artistId = NextArtist();
 
 				if( artistId != 0 ) {
-					var	discography = new List<DbDiscographyRelease>();
-					using( var discographyList = mDiscographyProvider.GetDiscography( artistId )) {
-						discography.AddRange( discographyList.List );
-					}
-					var uniqueList = ReduceList( discography );
+					var artist = mArtistProvider.GetArtist( artistId );
 
-					DatabaseCache<DbAlbum>	albumCache;
-					using( var albumList = mAlbumProvider.GetAlbumList( artistId )) {
-						albumCache = new DatabaseCache<DbAlbum>( from DbAlbum album in albumList.List where album.PublishedYear == Constants.cUnknownYear select album );
-					}
+					if( artist != null ) {
+						var discography = mMetadataManager.GetArtistDiscography( artist.Name );
+						var uniqueList = ReduceList( discography.Discography );
 
-					foreach( var release in uniqueList ) {
-						var releaseTitle = release.Title;
-						var	dbAlbum = albumCache.Find( album => album.Name.Equals( releaseTitle, StringComparison.CurrentCultureIgnoreCase ));
+						DatabaseCache<DbAlbum>	albumCache;
+						using( var albumList = mAlbumProvider.GetAlbumList( artistId )) {
+							albumCache = new DatabaseCache<DbAlbum>( from DbAlbum album in albumList.List
+																	 where album.PublishedYear == Constants.cUnknownYear select album );
+						}
 
-						if( dbAlbum != null ) {
-							using( var updater = mAlbumProvider.GetAlbumForUpdate( dbAlbum.DbId )) {
-								if( updater.Item != null ) {
-									updater.Item.PublishedYear = release.Year;
+						foreach( var release in uniqueList ) {
+							var releaseTitle = release.Title;
+							var	dbAlbum = albumCache.Find( album => album.Name.Equals( releaseTitle, StringComparison.CurrentCultureIgnoreCase ));
 
-									updater.Update();
+							if( dbAlbum != null ) {
+								using( var updater = mAlbumProvider.GetAlbumForUpdate( dbAlbum.DbId )) {
+									if( updater.Item != null ) {
+										updater.Item.PublishedYear = release.Year;
+
+										updater.Update();
+									}
 								}
-							}
 
-							NoiseLogger.Current.LogMessage( string.Format( "Updating Published year from discography: album '{0}', year: '{1}'", dbAlbum.Name, release.Year ));
+								NoiseLogger.Current.LogMessage( string.Format( "Updating Published year from discography: album '{0}', year: '{1}'",
+																				dbAlbum.Name, release.Year ));
+							}
 						}
 					}
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - DiscographyExplorer:Task ", ex );
+				NoiseLogger.Current.LogException( "DiscographyExplorer:Task ", ex );
 			}
 		}
 
@@ -119,7 +126,7 @@ namespace Noise.Core.BackgroundTasks {
 			}
 
 			return( uniqueList.Values.ToList());
- */
+ 
 		}
 	}
  }
