@@ -14,8 +14,5 @@
           Behaviours:GridUtils.RowDefinitions="Auto,Auto">
         <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Name:"/>
         <TextBox x:Name="FirstFocus" Grid.Row="0" Grid.Column="1" Margin="0,5,5,5" Text="{Binding Path=Name}"/>
-
-        <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Website:"/>
-        <TextBox Grid.Row="1" Grid.Column="1" Margin="0,5,5,5" Text="{Binding Path=Website}"/>
     </Grid>
 </UserControl>

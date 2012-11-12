@@ -7,7 +7,6 @@ namespace Noise.Infrastructure.Dto {
 	[DebuggerDisplay("Artist = {Name}")]
 	public class DbArtist : DbBase, IUserSettings {
 		public string			Name { get; set; }
-		public string			Website { get; set; }
 		public long				CalculatedGenre { get; set; }
 		public long				ExternalGenre { get; set; }
 		public long				UserGenre { get; set; }
@@ -26,7 +25,6 @@ namespace Noise.Infrastructure.Dto {
 			CalculatedGenre = Constants.cDatabaseNullOid;
 			ExternalGenre = Constants.cDatabaseNullOid;
 			UserGenre = Constants.cDatabaseNullOid;
-			Website = "";
 
 			UpdateLastChange();
 		}

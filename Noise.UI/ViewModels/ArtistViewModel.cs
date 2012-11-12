@@ -61,6 +61,9 @@ namespace Noise.UI.ViewModels {
 			if( dbArtist != null ) {
 				Mapper.DynamicMap( dbArtist, retValue );
 				retValue.DisplayGenre = mTagManager.GetGenre( dbArtist.Genre );
+
+				var artistMetadata = mMetadataManager.GetArtistMetadata( dbArtist.Name );
+				retValue.Website = artistMetadata.GetMetadata( eMetadataType.WebSite );
 			}
 
 			return( retValue );
