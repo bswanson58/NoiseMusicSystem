@@ -24,11 +24,14 @@ namespace Noise.Core.PlayQueue {
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
+		private readonly IMetadataManager	mMetadataManager;
 
-		public PlayExhaustedStrategySimilar( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+		public PlayExhaustedStrategySimilar( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
+											 IMetadataManager metadataManager ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
+			mMetadataManager = metadataManager;
 		}
 
 		protected override void FillTrackList( long itemId ) {
@@ -38,26 +41,25 @@ namespace Noise.Core.PlayQueue {
 				var artistList = mQueueMgr.PlayList.Select( item => item.Artist ).Distinct( new ArtistComparer());
 
 				foreach( var artist in artistList ) {
-					var supportInfo = mArtistProvider.GetArtistSupportInfo( artist.DbId );
+					var artistBio = mMetadataManager.GetArtistMetadata( artist.Name );
+					var similarArtsts = artistBio.GetMetadataArray( eMetadataType.SimilarArtists );
 
-					foreach( var item in supportInfo.SimilarArtist.Items ) {
-						if( item.IsLinked ) {
-							var associatedArtist = mArtistProvider.GetArtist( item.AssociatedId );
+					foreach( var item in similarArtsts ) {
+						var associatedArtist = mArtistProvider.FindArtist( item );
 
-							if( associatedArtist != null ) {
-								using( var albumList = mAlbumProvider.GetAlbumList( associatedArtist )) {
-									foreach( var album in albumList.List ) {
-										using( var trackList = mTrackProvider.GetTrackList( album )) {
-											foreach( var track in trackList.List ) {
-												if(!mQueueMgr.IsTrackQueued( track )) {
-													mTrackList.Add( track );
-												}
+						if( associatedArtist != null ) {
+							using( var albumList = mAlbumProvider.GetAlbumList( associatedArtist )) {
+								foreach( var album in albumList.List ) {
+									using( var trackList = mTrackProvider.GetTrackList( album )) {
+										foreach( var track in trackList.List ) {
+											if(!mQueueMgr.IsTrackQueued( track )) {
+												mTrackList.Add( track );
 											}
 										}
+									}
 
-										if( mTrackList.Count > 250 ) {
-											break;
-										}
+									if( mTrackList.Count > 250 ) {
+										break;
 									}
 								}
 							}

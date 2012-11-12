@@ -12,16 +12,14 @@ namespace Noise.EloqueraDatabase.DataProviders {
 		private readonly IArtworkProvider				mArtworkProvider;
 		private readonly ITextInfoProvider				mTextInfoProvider;
 		private readonly ITagAssociationProvider		mTagAssociationProvider;
-		private readonly IAssociatedItemListProvider	mAssociationProvider;
 
 		public ArtistProvider( IEloqueraManager databaseManager,
 							   IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider,
-							   ITagAssociationProvider tagAssociationProvider,	IAssociatedItemListProvider associatedItemListProvider )
+							   ITagAssociationProvider tagAssociationProvider )
 			: base( databaseManager ) {
 			mArtworkProvider = artworkProvider;
 			mTextInfoProvider = textInfoProvider;
 			mTagAssociationProvider = tagAssociationProvider;
-			mAssociationProvider = associatedItemListProvider;
 		}
 
 		// IArtistProvider members
@@ -58,6 +56,11 @@ namespace Noise.EloqueraDatabase.DataProviders {
 			}
 
 			return( retValue );
+		}
+
+		public DbArtist FindArtist( string artistName ) {
+			return( TryGetItem( "SELECT DbArtist WHERE Name = @artistName", new Dictionary<string, object> {{ "artistName", artistName }},
+								"FindArtist:" ));
 		}
 
 		public IDataProviderList<DbArtist> GetChangedArtists( long changedSince ) {
@@ -105,10 +108,7 @@ namespace Noise.EloqueraDatabase.DataProviders {
 
 		public ArtistSupportInfo GetArtistSupportInfo( long artistId ) {
 			return( new ArtistSupportInfo( mTextInfoProvider.GetArtistTextInfo( artistId, ContentType.Biography ),
-										   mArtworkProvider.GetArtistArtwork( artistId, ContentType.ArtistPrimaryImage ),
-										   mAssociationProvider.GetAssociatedItems( artistId, ContentType.SimilarArtists ),
-										   mAssociationProvider.GetAssociatedItems( artistId, ContentType.TopAlbums ),
-										   mAssociationProvider.GetAssociatedItems( artistId, ContentType.BandMembers ) ));
+										   mArtworkProvider.GetArtistArtwork( artistId, ContentType.ArtistPrimaryImage )));
 		}
 
 		public long GetItemCount() {

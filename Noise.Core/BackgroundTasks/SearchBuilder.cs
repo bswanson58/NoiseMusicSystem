@@ -16,22 +16,22 @@ namespace Noise.Core.BackgroundTasks {
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly ITrackProvider					mTrackProvider;
-		private readonly IAssociatedItemListProvider	mAssociationProvider;
 		private readonly ILyricProvider					mLyricProvider;
 		private readonly ITextInfoProvider				mTextInfoProvider;
+		private readonly IMetadataManager				mMetadataManager;
 		private List<long>								mArtistList;
 		private IEnumerator<long>						mArtistEnum;
 
 		public SearchBuilder( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider,
-							  ITrackProvider trackProvider, IAssociatedItemListProvider associatedItemListProvider,
-							  ILyricProvider lyricProvider, ITextInfoProvider textInfoProvider, ISearchProvider searchProvider ) {
+							  ITrackProvider trackProvider, ILyricProvider lyricProvider, ITextInfoProvider textInfoProvider,
+							  IMetadataManager metadataManager, ISearchProvider searchProvider ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
-			mAssociationProvider = associatedItemListProvider;
 			mLyricProvider = lyricProvider;
 			mTextInfoProvider = textInfoProvider;
+			mMetadataManager = metadataManager;
 			mSearchProvider = searchProvider;
 
 			mEventAggregator.Subscribe( this );
@@ -110,36 +110,12 @@ namespace Noise.Core.BackgroundTasks {
 					indexBuilder.WriteTimeStamp();
 					indexBuilder.AddSearchItem( eSearchItemType.Artist, artist.Name );
 
-					IEnumerable<DbAssociatedItemList>	associatedItems;
-					using( var associatedList = mAssociationProvider.GetAssociatedItemLists( artist.DbId )) {
-						associatedItems = new List<DbAssociatedItemList>( from item in associatedList.List where item.IsContentAvailable select item );
-					}
-					foreach( var item in associatedItems ) {
-						var itemType = eSearchItemType.Unknown;
+					var artistBio = mMetadataManager.GetArtistMetadata( artist.Name );
 
-						switch( item.ContentType ) {
-							case ContentType.SimilarArtists:
-								itemType = eSearchItemType.SimilarArtist;
-								break;
-
-							case ContentType.TopAlbums:
-								itemType = eSearchItemType.TopAlbum;
-								break;
-
-							case ContentType.BandMembers:
-								itemType = eSearchItemType.BandMember;
-								break;
-						}
-
-						if( itemType != eSearchItemType.Unknown ) {
-							indexBuilder.AddSearchItem( itemType, item.GetItems());
-						}
-					}
-
-					var biography = mTextInfoProvider.GetArtistTextInfo( artist.DbId, ContentType.Biography );
-					if( biography != null ) {
-						indexBuilder.AddSearchItem( eSearchItemType.Biography, biography.Text );
-					}
+					indexBuilder.AddSearchItem( eSearchItemType.TopAlbum, artistBio.GetMetadataArray( eMetadataType.TopAlbums ));
+					indexBuilder.AddSearchItem( eSearchItemType.BandMember,  artistBio.GetMetadataArray( eMetadataType.BandMembers ));
+					indexBuilder.AddSearchItem( eSearchItemType.SimilarArtist, artistBio.GetMetadataArray( eMetadataType.SimilarArtists ));
+					indexBuilder.AddSearchItem( eSearchItemType.Biography, artistBio.GetMetadata( eMetadataType.Biography ));
 
 					using( var albumList = mAlbumProvider.GetAlbumList( artist )) {
 						foreach( var album in albumList.List ) {

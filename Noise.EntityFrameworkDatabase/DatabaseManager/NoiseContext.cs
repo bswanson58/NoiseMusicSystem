@@ -17,8 +17,6 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			modelBuilder.Configurations.Add( new AlbumConfiguration());
 			modelBuilder.Configurations.Add( new ArtistConfiguration());
 			modelBuilder.Configurations.Add( new ArtworkConfiguration());
-			modelBuilder.Configurations.Add( new AssociatedItemConfiguration());
-			modelBuilder.Configurations.Add( new AssociatedItemListConfiguration());
 			modelBuilder.Configurations.Add( new GenreConfiguration());
 			modelBuilder.Configurations.Add( new InternetStreamConfiguration());
 			modelBuilder.Configurations.Add( new LyricConfiguration());
@@ -91,20 +89,6 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	internal class ArtworkConfiguration : BaseEntityConfiguration<DbArtwork> {
 		internal ArtworkConfiguration() :
 			base( "Artwork" ) { }
-	}
-
-	internal class AssociatedItemConfiguration : BaseEntityConfiguration<DbAssociatedItem> {
-		internal AssociatedItemConfiguration() :
-			base( "AssociatedItems" ) {
-			Ignore( p => p.IsLinked );
-		}
-	}
-
-	internal class AssociatedItemListConfiguration : BaseEntityConfiguration<DbAssociatedItemList> {
-		internal AssociatedItemListConfiguration() :
-			base( "AssociatedItemLists" ) {
-			Ignore( p => p.ContentType );
-		}
 	}
 
 	internal class GenreConfiguration : BaseEntityConfiguration<DbGenre> {

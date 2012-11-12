@@ -17,15 +17,12 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 		public void Setup() {
 			mArtworkProvider = new Mock<IArtworkProvider>();
 			mTextInfoProvider = new Mock<ITextInfoProvider>();
-			mAssociationProvider = new Mock<ITagAssociationProvider>();
-			mListProvider = new Mock<IAssociatedItemListProvider>();
 
 			mTestSetup.Setup();
 		}
 
 		protected override IArtistProvider CreateSut() {
-			return( new ArtistProvider( mTestSetup.ContextProvider, mArtworkProvider.Object, mTextInfoProvider.Object,
-										mAssociationProvider.Object, mListProvider.Object ));
+			return( new ArtistProvider( mTestSetup.ContextProvider, mArtworkProvider.Object, mTextInfoProvider.Object, null ));
 		}
 	}
 }

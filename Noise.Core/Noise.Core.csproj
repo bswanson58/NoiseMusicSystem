@@ -151,8 +151,6 @@
     <Compile Include="BackgroundTasks\DiscographyExplorer.cs" />
     <Compile Include="BackgroundTasks\IBackgroundTask.cs" />
     <Compile Include="BackgroundTasks\IBackgroundTaskManager.cs" />
-    <Compile Include="BackgroundTasks\LinkSimilarArtists.cs" />
-    <Compile Include="BackgroundTasks\LinkTopAlbums.cs" />
     <Compile Include="BackgroundTasks\SearchBuilder.cs" />
     <Compile Include="Configuration\LibraryConfigurationManager.cs" />
     <Compile Include="Database\DatabaseCache.cs" />

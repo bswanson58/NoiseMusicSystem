@@ -180,7 +180,6 @@
     <Compile Include="Interfaces\IAlbumProvider.cs" />
     <Compile Include="Interfaces\IArtistProvider.cs" />
     <Compile Include="Interfaces\IArtworkProvider.cs" />
-    <Compile Include="Interfaces\IAssociatedItemListProvider.cs" />
     <Compile Include="Interfaces\IBlendableViewModelFactory.cs" />
     <Compile Include="Interfaces\IBlobStorage.cs" />
     <Compile Include="Interfaces\IBlobStorageResolver.cs" />
@@ -260,7 +259,6 @@
     <Compile Include="Dto\DbAlbum.cs" />
     <Compile Include="Dto\DbArtist.cs" />
     <Compile Include="Dto\DbPlayHistory.cs" />
-    <Compile Include="Dto\DbAssociatedItemList.cs" />
     <Compile Include="Dto\DbTrack.cs" />
     <Compile Include="Dto\ExpiringContent.cs" />
     <Compile Include="Dto\FileTypes.cs" />

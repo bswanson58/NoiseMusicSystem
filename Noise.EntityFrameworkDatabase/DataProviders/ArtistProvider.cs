@@ -12,15 +12,13 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		private readonly IArtworkProvider				mArtworkProvider;
 		private readonly ITextInfoProvider				mTextInfoProvider;
 		private readonly ITagAssociationProvider		mTagAssociationProvider;
-		private readonly IAssociatedItemListProvider	mAssociationProvider;
 
 		public ArtistProvider( IContextProvider contextProvider, IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider,
-							   ITagAssociationProvider tagAssociationProvider,	IAssociatedItemListProvider associatedItemListProvider ) :
+							   ITagAssociationProvider tagAssociationProvider ) :
 			base( contextProvider ) {
 			mArtworkProvider = artworkProvider;
 			mTextInfoProvider = textInfoProvider;
 			mTagAssociationProvider = tagAssociationProvider;
-			mAssociationProvider = associatedItemListProvider;
 		}
 
 		public void AddArtist( DbArtist artist ) {
@@ -39,6 +37,16 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			Condition.Requires( album ).IsNotNull();
 
 			return( GetItemByKey( album.Artist ));
+		}
+
+		public DbArtist FindArtist( string artistName ) {
+			DbArtist	retValue;
+
+			using( var context = CreateContext()) {
+				retValue = context.Set<DbArtist>().FirstOrDefault( artist => artist.Name == artistName );
+			}
+
+			return( retValue );
 		}
 
 		public IDataProviderList<DbArtist> GetArtistList() {
@@ -100,10 +108,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 		public ArtistSupportInfo GetArtistSupportInfo( long artistId ) {
 			return( new ArtistSupportInfo( mTextInfoProvider.GetArtistTextInfo( artistId, ContentType.Biography ),
-										   mArtworkProvider.GetArtistArtwork( artistId, ContentType.ArtistPrimaryImage ),
-										   mAssociationProvider.GetAssociatedItems( artistId, ContentType.SimilarArtists ),
-										   mAssociationProvider.GetAssociatedItems( artistId, ContentType.TopAlbums ),
-										   mAssociationProvider.GetAssociatedItems( artistId, ContentType.BandMembers ) ));
+										   mArtworkProvider.GetArtistArtwork( artistId, ContentType.ArtistPrimaryImage )));
 		}
 
 		public long GetItemCount() {

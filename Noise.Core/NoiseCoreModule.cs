@@ -80,8 +80,6 @@ namespace Noise.Core {
 
 			mContainer.RegisterType<IBackgroundTask, DiscographyExplorer>( "DiscographyExplorer" );
 			mContainer.RegisterType<IBackgroundTask, DecadeTagBuilder>( "DecadeTagBuilder" );
-			mContainer.RegisterType<IBackgroundTask, LinkSimilarArtists>( "LinkSimilarArtists" );
-			mContainer.RegisterType<IBackgroundTask, LinkTopAlbums>( "LinkTopAlbums" );
 			mContainer.RegisterType<IBackgroundTask, SearchBuilder>( "SearchBuilder" );
 			mContainer.RegisterType<IEnumerable<IBackgroundTask>, IBackgroundTask[]>();
 

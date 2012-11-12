@@ -10,8 +10,6 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 	public abstract class BaseArtistProviderTests : BaseProviderTest<IArtistProvider> {
 		protected Mock<IArtworkProvider>			mArtworkProvider;
 		protected Mock<ITextInfoProvider>			mTextInfoProvider;
-		protected Mock<ITagAssociationProvider>		mAssociationProvider;
-		protected Mock<IAssociatedItemListProvider>	mListProvider;
 
 		[Test]
 		public void CanAddArtist() {
@@ -205,7 +203,6 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 													new DbTagAssociation( eTagGroup.User, 2, artist.DbId, 2 )};
 			var tagList = new Mock<IDataProviderList<DbTagAssociation>>();
  			tagList.Setup( m => m.List ).Returns( tags );
-			mAssociationProvider.Setup( m => m.GetArtistTagList( It.IsAny<long>(), It.Is<eTagGroup>( p => p == eTagGroup.User ))).Returns( tagList.Object );
 
 			var sut = CreateSut();
 			
@@ -228,27 +225,12 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 			mArtworkProvider.Setup( m => m.GetArtistArtwork( It.Is<long>( p => p == artist.DbId ),
 															 It.Is<ContentType>( p => p == ContentType.ArtistPrimaryImage ))).Returns( artwork );
 
-			var similarArtists = new DbAssociatedItemList( artist.DbId, ContentType.SimilarArtists );
-			mListProvider.Setup( m => m.GetAssociatedItems( It.Is<long>( p => p == artist.DbId ),
-															It.Is<ContentType>( p => p == ContentType.SimilarArtists ))).Returns( similarArtists );
-
-			var topAlbums = new DbAssociatedItemList( artist.DbId, ContentType.TopAlbums );
-			mListProvider.Setup( m => m.GetAssociatedItems( It.Is<long>( p => p == artist.DbId ),
-															It.Is<ContentType>( p => p == ContentType.TopAlbums ))).Returns( topAlbums );
-
-			var bandMembers = new DbAssociatedItemList( artist.DbId, ContentType.BandMembers );
-			mListProvider.Setup( m => m.GetAssociatedItems( It.Is<long>( p => p == artist.DbId ),
-															It.Is<ContentType>( p => p == ContentType.BandMembers ))).Returns( bandMembers );
-
 			var sut = CreateSut();
 
 			var artistInfo = sut.GetArtistSupportInfo( artist.DbId );
 
 			artistInfo.ArtistImage.ShouldHave().AllProperties().EqualTo( artwork );
-			artistInfo.BandMembers.ShouldHave().AllProperties().EqualTo( bandMembers );
 			artistInfo.Biography.ShouldHave().AllProperties().EqualTo( textInfo );
-			artistInfo.SimilarArtist.ShouldHave().AllProperties().EqualTo( similarArtists );
-			artistInfo.TopAlbums.ShouldHave().AllProperties().EqualTo( topAlbums );
 		}
 
 		[Test]

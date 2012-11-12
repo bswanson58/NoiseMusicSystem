@@ -40,7 +40,6 @@ namespace Noise.EntityFrameworkDatabase {
 			mContainer.RegisterType<ITagAssociationProvider, TagAssociationProvider>();
 			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
 			mContainer.RegisterType<ITimestampProvider, TimestampProvider>();
-			mContainer.RegisterType<IAssociatedItemListProvider, AssociatedItemListProvider>();
 			mContainer.RegisterType<IDatabaseInfo, DbVersionProvider>();
 		}
 	}
