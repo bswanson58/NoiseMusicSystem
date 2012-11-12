@@ -191,7 +191,6 @@
     <Compile Include="Interfaces\IDbBaseProvider.cs" />
     <Compile Include="Interfaces\IDomainSearchProvider.cs" />
     <Compile Include="Interfaces\IEqManager.cs" />
-    <Compile Include="Interfaces\IExpiringContentProvider.cs" />
     <Compile Include="Interfaces\IGenreProvider.cs" />
     <Compile Include="Interfaces\IIoc.cs" />
     <Compile Include="Interfaces\ILibraryBuilder.cs" />
@@ -259,7 +258,7 @@
     <Compile Include="Dto\DbArtist.cs" />
     <Compile Include="Dto\DbPlayHistory.cs" />
     <Compile Include="Dto\DbTrack.cs" />
-    <Compile Include="Dto\ExpiringContent.cs" />
+    <Compile Include="Dto\AssociatedContent.cs" />
     <Compile Include="Dto\FileTypes.cs" />
     <Compile Include="Dto\MusicGenre.cs" />
     <Compile Include="Dto\StorageFile.cs" />

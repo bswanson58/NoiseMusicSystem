@@ -3,7 +3,7 @@ using System.ComponentModel.Composition;
 using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
-	public class DbArtwork : ExpiringContent {
+	public class DbArtwork : AssociatedContent {
 		public	long			FolderLocation { get; set; }
 		public	InfoSource		Source { get; set; }
 		public	bool			IsUserSelection { get; set; }

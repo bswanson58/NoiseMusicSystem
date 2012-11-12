@@ -15,7 +15,6 @@ namespace Noise.Core.DataBuilders {
 		private readonly IAlbumProvider				mAlbumProvider;
 		private readonly ITrackProvider				mTrackProvider;
 		private readonly IDbBaseProvider			mDbBaseProvider;
-		private readonly IExpiringContentProvider	mContentProvider;
 		private readonly IArtworkProvider			mArtworkProvider;
 		private readonly ITextInfoProvider			mTextInfoProvider;
 		private readonly IStorageFolderProvider		mStorageFolderProvider;
@@ -25,7 +24,7 @@ namespace Noise.Core.DataBuilders {
 		private readonly List<long>					mAlbumList;
 
 		public MetaDataCleaner( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IDbBaseProvider dbBaseProvider,
-								IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider, IExpiringContentProvider contentProvider,
+								IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider,
 								IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider, IEventAggregator eventAggregator ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
@@ -34,7 +33,6 @@ namespace Noise.Core.DataBuilders {
 			mDbBaseProvider = dbBaseProvider;
 			mArtworkProvider = artworkProvider;
 			mTextInfoProvider = textInfoProvider;
-			mContentProvider = contentProvider;
 			mStorageFolderProvider = storageFolderProvider;
 			mStorageFileProvider = storageFileProvider;
 
@@ -178,19 +176,15 @@ namespace Noise.Core.DataBuilders {
 				if( album != null ) {
 					using( var trackList = mTrackProvider.GetTrackList( albumId )) {
 						if( !trackList.List.Any() ) {
-							using( var contentList = mContentProvider.GetAlbumContentList( albumId )) {
-								if( !contentList.List.Any() ) {
-									if(!retValue.Contains( album.Artist )) {
-										retValue.Add( album.Artist );
-									}
-
-									NoiseLogger.Current.LogMessage( string.Format( "Deleting Album: {0}", album.Name ));
-									mSummary.AlbumsRemoved++;
-
-									mAlbumProvider.DeleteAlbum( album );
-									mEventAggregator.Publish( new Events.AlbumRemoved( album.DbId ));
-								}
+							if(!retValue.Contains( album.Artist )) {
+								retValue.Add( album.Artist );
 							}
+
+							NoiseLogger.Current.LogMessage( string.Format( "Deleting Album: {0}", album.Name ));
+							mSummary.AlbumsRemoved++;
+
+							mAlbumProvider.DeleteAlbum( album );
+							mEventAggregator.Publish( new Events.AlbumRemoved( album.DbId ));
 						}
 					}
 

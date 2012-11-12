@@ -121,7 +121,6 @@
     <Compile Include="DataProviders\ArtistProviderTests.cs" />
     <Compile Include="DataProviders\ArtworkProviderTests.cs" />
     <Compile Include="DataProviders\DbBaseProviderTests.cs" />
-    <Compile Include="DataProviders\ExpiringContentProviderTests.cs" />
     <Compile Include="DataProviders\GenreProviderTests.cs" />
     <Compile Include="DataProviders\InternetStreamProviderTests.cs" />
     <Compile Include="DataProviders\LyricProviderTests.cs" />

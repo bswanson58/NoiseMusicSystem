@@ -1,34 +1,29 @@
-﻿using System;
-using Eloquera.Client;
+﻿using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
-	public abstract class ExpiringContent : DbBase {
+	public abstract class AssociatedContent : DbBase {
 		public	long		AssociatedItem { get; protected set; }
 		public	long		Artist { get; set; }
 		public	long		Album { get; set; }
 		public	ContentType	ContentType { get; protected set; }
-		public	DateTime	HarvestDate { get; protected set; }
 		public	bool		IsContentAvailable { get; set; }
 
-		protected ExpiringContent( ExpiringContent clone ) :
+		protected AssociatedContent( AssociatedContent clone ) :
 			base( clone.DbId ) {
 			AssociatedItem = clone.AssociatedItem;
 			Artist = clone.Artist;
 			Album = clone.Album;
 			ContentType = clone.ContentType;
-			HarvestDate = clone.HarvestDate;
 			IsContentAvailable = clone.IsContentAvailable;
 		}
 
-		protected ExpiringContent( long associatedItem, ContentType contentType ) {
+		protected AssociatedContent( long associatedItem, ContentType contentType ) {
 			AssociatedItem = associatedItem;
 			ContentType = contentType;
 			IsContentAvailable = false;
 
 			Artist = Constants.cDatabaseNullOid;
 			Album = Constants.cDatabaseNullOid;
-
-			UpdateExpiration();
 		}
 
 		[Ignore]
@@ -37,15 +32,10 @@ namespace Noise.Infrastructure.Dto {
 			set{ ContentType = (ContentType)value; }
 		}
 
-		protected void Copy( ExpiringContent copy ) {
+		protected void Copy( AssociatedContent copy ) {
 			Artist = copy.Artist;
 			Album = copy.Album;
 			IsContentAvailable = copy.IsContentAvailable;
-			HarvestDate = copy.HarvestDate;
-		}
-
-		public void UpdateExpiration() {
-			HarvestDate = DateTime.Now.Date;
 		}
 	}
 }
