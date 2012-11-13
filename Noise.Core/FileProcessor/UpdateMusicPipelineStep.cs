@@ -1,15 +1,20 @@
-﻿using CuttingEdge.Conditions;
+﻿using Caliburn.Micro;
+using CuttingEdge.Conditions;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.FileProcessor {
 	internal class UpdateMusicPipelineStep :BasePipelineStep {
+		private readonly IEventAggregator		mEventAggregator;
 		private readonly IStorageFileProvider	mStorageFileProvider;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly ITrackProvider			mTrackProvider;
 
-		public UpdateMusicPipelineStep( IArtistProvider artistProvider, ITrackProvider trackProvider, IStorageFileProvider storageFileProvider ) :
+		public UpdateMusicPipelineStep( IEventAggregator eventAggregator, IArtistProvider artistProvider, ITrackProvider trackProvider,
+										IStorageFileProvider storageFileProvider ) :
 			base( ePipelineStep.UpdateMusic ) {
+			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mTrackProvider = trackProvider;
 			mStorageFileProvider = storageFileProvider;
@@ -37,13 +42,20 @@ namespace Noise.Core.FileProcessor {
 
 				context.Summary.TracksAdded++;
 
+				var albumsAdded = false;
 				using( var updater = mArtistProvider.GetArtistForUpdate( context.Artist.DbId )) {
 					if( updater.Item != null ) {
+						albumsAdded = updater.Item.AlbumCount != context.Artist.AlbumCount;
+
 						updater.Item.AlbumCount = context.Artist.AlbumCount;
 						updater.Item.UpdateLastChange();
 
 						updater.Update();
 					}
+				}
+
+				if( albumsAdded ) {
+					mEventAggregator.Publish( new Events.ArtistContentUpdated( context.Artist.DbId ));
 				}
 			}
 		}
