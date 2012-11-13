@@ -130,7 +130,7 @@ namespace Noise.Core.DataProviders {
 						var replayGainFrame = id3Tags.GetFrames( new ByteVector( "RVA2" ));
 						if(( replayGainFrame != null ) &&
 						   ( replayGainFrame.Any())) {
-							NoiseLogger.Current.LogMessage( "Found Replay Gain frame" );
+							NoiseLogger.Current.LogInfo( "Found Replay Gain frame" );
 						}
 
 						var frames = id3Tags.GetFrames<UserTextInformationFrame>();

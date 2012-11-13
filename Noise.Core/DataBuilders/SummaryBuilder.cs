@@ -48,7 +48,7 @@ namespace Noise.Core.DataBuilders {
 				if( rootFolder != null ) {
 					using( var artistList = mArtistProvider.GetChangedArtists( rootFolder.LastSummaryScan )) {
 						foreach( var artist in artistList.List ) {
-							NoiseLogger.Current.LogInfo( string.Format( "Building summary data for: {0}", artist.Name ));
+							NoiseLogger.Current.LogMessage( string.Format( "Building summary data for: {0}", artist.Name ));
 
 							using( var artistUpdater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
 								var albumGenre = new Dictionary<long, int>();

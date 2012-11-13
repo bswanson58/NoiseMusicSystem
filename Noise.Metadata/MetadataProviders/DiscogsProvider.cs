@@ -98,7 +98,7 @@ namespace Noise.Metadata.MetadataProviders {
 							session.Store( discography );
 							session.SaveChanges();
 
-							NoiseLogger.Current.LogMessage( String.Format( "Discogs updated artist: {0}", artistName ));
+							NoiseLogger.Current.LogMessage( "Discogs updated artist: {0}", artistName );
 						}
 					}
 				}

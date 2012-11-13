@@ -44,7 +44,7 @@ namespace Noise.Core.FileProcessor {
 						context.Summary.AlbumsAdded++;
 
 						mEventAggregator.Publish( new Events.AlbumAdded( context.Album.DbId ));
-						NoiseLogger.Current.LogInfo( "Added album: {0}", context.Album.Name );
+						NoiseLogger.Current.LogMessage( "Added album: {0}", context.Album.Name );
 					}
 				}
 				else {

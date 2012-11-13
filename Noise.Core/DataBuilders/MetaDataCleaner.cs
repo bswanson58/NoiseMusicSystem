@@ -131,7 +131,7 @@ namespace Noise.Core.DataBuilders {
 			mTrackProvider.DeleteTrack( track );
 
 			mSummary.TracksRemoved++;
-			NoiseLogger.Current.LogMessage( "Deleting Track: {0}", track.Name );
+			NoiseLogger.Current.LogInfo( "Deleting Track: {0}", track.Name );
 		}
 
 		private void CleanArtwork( DbArtwork artwork ) {

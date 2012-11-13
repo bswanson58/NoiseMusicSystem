@@ -67,7 +67,7 @@ namespace Noise.Core.FileStore {
 
 						foreach( var rootFolder in rootFolders ) {
 							if( Directory.Exists( mStorageFolderSupport.GetPath( rootFolder ))) {
-								NoiseLogger.Current.LogInfo( "Synchronizing folder: {0}", rootFolder.DisplayName );
+								NoiseLogger.Current.LogMessage( "Synchronizing folder: {0}", rootFolder.DisplayName );
 								BuildFolder( rootFolder );
 							}
 							else {

@@ -43,11 +43,11 @@ namespace Noise.Core.FileProcessor {
 					context.Summary.ArtistsAdded++;
 
 					mEventAggregator.Publish( new Events.ArtistAdded( context.Artist.DbId ));
-					NoiseLogger.Current.LogInfo( "Added artist: {0}", context.Artist.Name );
+					NoiseLogger.Current.LogMessage( "Added artist: {0}", context.Artist.Name );
 				}
 			}
 			else {
-				NoiseLogger.Current.LogMessage( "Artist cannot determined for file: {0}", mStorageFolderSupport.GetPath( context.StorageFile ));
+				NoiseLogger.Current.LogMessage( "Artist cannot be determined for file: {0}", mStorageFolderSupport.GetPath( context.StorageFile ));
 			}
 		}
 	}

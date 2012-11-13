@@ -156,7 +156,7 @@ namespace Noise.Core.DataBuilders {
 					NoiseLogger.Current.LogMessage( "LibraryBuilder: Update Finished." );
 
 					if( results.HaveChanges ) {
-						NoiseLogger.Current.LogInfo( string.Format( "Database changes: {0}", results ) );
+						NoiseLogger.Current.LogMessage( string.Format( "Database changes: {0}", results ) );
 					}
 
 					if( mContinueExploring ) {
@@ -184,7 +184,7 @@ namespace Noise.Core.DataBuilders {
 
 		private void LogStatistics( bool allCounts ) {
 			mDatabaseStatistics.GatherStatistics( allCounts );
-			NoiseLogger.Current.LogInfo( mDatabaseStatistics.ToString());
+			NoiseLogger.Current.LogMessage( mDatabaseStatistics.ToString());
 		}
 	}
 }
