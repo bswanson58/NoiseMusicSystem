@@ -17,6 +17,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IMetadataManager				mMetadataManager;
+		private readonly List<DbArtist>					mArtistList;
 		private long									mCurrentArtistId;
 		private string									mCurrentArtistName;
 		private TaskHandler								mTaskHandler; 
@@ -33,6 +34,7 @@ namespace Noise.UI.ViewModels {
 			mMetadataManager = metadataManager;
 			mCurrentArtistId = Constants.cDatabaseNullOid;
 			mCurrentArtistName = string.Empty;
+			mArtistList = new List<DbArtist>();
 
 			mEventAggregator.Subscribe( this );
 
@@ -76,6 +78,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Handle( Events.DatabaseClosing args ) {
 			ClearCurrentArtist();
+			mArtistList.Clear();
 		}
 
 		public void Handle( Events.ArtistFocusRequested request ) {
@@ -110,6 +113,12 @@ namespace Noise.UI.ViewModels {
 
 		private void RetrieveArtistMetadata( string artistName ) {
 			TaskHandler.StartTask( () => {
+									if(!mArtistList.Any()) {
+										using( var artistList = mArtistProvider.GetArtistList()) {
+											mArtistList.AddRange( artistList.List );
+										}
+									}
+
 									var info = mMetadataManager.GetArtistMetadata( artistName );
 
 									ArtistBiography = info.GetMetadata( eMetadataType.Biography );
@@ -117,24 +126,30 @@ namespace Noise.UI.ViewModels {
 									mBandMembers.Clear();
 									mBandMembers.AddRange( info.GetMetadataArray( eMetadataType.BandMembers ));
 
-									mSimilarArtists.Clear();
-									mSimilarArtists.AddRange( info.GetMetadataArray( eMetadataType.SimilarArtists ).Select( item => new LinkNode( item )));
-
 									mTopAlbums.Clear();
 									mTopAlbums.AddRange( info.GetMetadataArray( eMetadataType.TopAlbums ).Select( item => new LinkNode( item )));
 
 									var discography = mMetadataManager.GetArtistDiscography( artistName );
 									mDiscography.Clear();
 									mDiscography.AddRange( from d in discography.Discography orderby d.Year descending select  d );
+
+									mSimilarArtists.Clear();
+									var similarArtistList = info.GetMetadataArray( eMetadataType.SimilarArtists );
+									foreach( var similarArtist in similarArtistList ) {
+										var matchingArtist = ( from artist in mArtistList where artist.Name == similarArtist select artist ).FirstOrDefault();
+
+										mSimilarArtists.Add( matchingArtist != null ? new LinkNode( similarArtist, matchingArtist.DbId, OnSimilarArtistClicked ) :
+																					  new LinkNode( similarArtist ) );
+									}
 								},
 								() => ArtistValid = true,
 								exception => NoiseLogger.Current.LogException( "ArtistInfoViewModel:RetrieveSupportInfo", exception )
 				);
 		}
 
-//		private void OnSimilarArtistClicked( long artistId ) {
-//			mEventAggregator.Publish( new Events.ArtistFocusRequested( artistId ));
-//		}
+		private void OnSimilarArtistClicked( long artistId ) {
+			mEventAggregator.Publish( new Events.ArtistFocusRequested( artistId ));
+		}
 
 //		private void OnTopAlbumClicked( long albumId ) {
 //			mEventAggregator.Publish( new Events.AlbumFocusRequested( mCurrentArtistId, albumId ));
