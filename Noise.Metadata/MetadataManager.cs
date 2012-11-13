@@ -36,6 +36,9 @@ namespace Noise.Metadata {
 												Constants.LibraryConfigurationDirectory,
 												"Metadata" );
 				mDocumentStore = new EmbeddableDocumentStore { DataDirectory = libraryPath };
+#if DEBUG
+				( mDocumentStore as EmbeddableDocumentStore ).UseEmbeddedHttpServer = true;
+#endif
 				mDocumentStore.Initialize();
 				mArtistMetadataManager.Initialize( mDocumentStore );
 
