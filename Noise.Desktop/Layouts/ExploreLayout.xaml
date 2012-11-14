@@ -21,13 +21,22 @@
                     <ColumnDefinition Width="2*" MinWidth="200" />
                 </Grid.ColumnDefinitions>
 
-                <TabControl Grid.Column="0"
-                            Margin="3,0,4,0"
+                <!-- Library Explorer -->
+                <Grid Grid.Column="0" Margin="3,0,4,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="LibrarySelector" />
+                    
+                    <TabControl Grid.Row="1"
                             Background="Transparent"
                             BorderThickness="0"
                             ItemContainerStyle="{StaticResource TabItemRegionStyle}"
                             Regions:RegionManager.RegionName="Explorer"
                             TabStripPlacement="Bottom" />
+                </Grid>
 
                 <GridSplitter Grid.Column="0"
                               Width="7"

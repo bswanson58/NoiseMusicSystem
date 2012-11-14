@@ -1,92 +1,23 @@
-﻿using System.Linq;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
-using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Support;
-using ReusableBits;
 
 namespace Noise.UI.ViewModels {
-	public class ToolbarViewModel : ViewModelBase,
-									IHandle<Events.LibraryChanged>, IHandle<Events.LibraryListChanged> {
+	public class ToolbarViewModel : ViewModelBase {
 		private readonly IEventAggregator		mEventAggregator;
-		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly ICloudSyncManager		mCloudSyncMgr;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
-		private readonly ILibraryBuilder		mLibraryBuilder;
 		private readonly IDialogService			mDialogService;
-		private TaskHandler						mLibraryOpenTask;  
-		private readonly BindableCollection<LibraryConfiguration>	mLibraries;
 
-		public ToolbarViewModel( IEventAggregator eventAggregator, IDialogService dialogService, ILibraryConfiguration libraryConfiguration,
-								 ICloudSyncManager cloudSyncManager, IDataExchangeManager dataExchangeManager, ILibraryBuilder libraryBuilder ) {
+		public ToolbarViewModel( IEventAggregator eventAggregator, IDialogService dialogService,
+								 ICloudSyncManager cloudSyncManager, IDataExchangeManager dataExchangeManager ) {
 			mEventAggregator = eventAggregator;
-			mLibraryConfiguration = libraryConfiguration;
 			mCloudSyncMgr = cloudSyncManager;
 			mDataExchangeMgr = dataExchangeManager;
-			mLibraryBuilder = libraryBuilder;
 			mDialogService = dialogService;
-
-			mLibraries = new BindableCollection<LibraryConfiguration>();
-			LoadLibraries();
-
-			mEventAggregator.Subscribe( this );
-
-			var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-			if(( expConfig != null ) &&
-			   ( expConfig.LoadLastLibraryOnStartup )) {
-				OpenLibrary( expConfig.LastLibraryUsed );
-			}
-		}
-
-		private void LoadLibraries() {
-			mLibraries.IsNotifying = false;
-			mLibraries.Clear();
-			mLibraries.AddRange( from library in mLibraryConfiguration.Libraries orderby library.LibraryName select library );
-			mLibraries.IsNotifying = true;
-			mLibraries.Refresh();
-		}
-
-		internal TaskHandler LibraryOpenTask {
-			get {
-				if( mLibraryOpenTask == null ) {
-					Execute.OnUIThread( () => mLibraryOpenTask = new TaskHandler());
-				}
-
-				return( mLibraryOpenTask );
-			}
-			set{ mLibraryOpenTask = value; }
-		}
-
-		private void OpenLibrary( long libraryId ) {
-			LibraryOpenTask.StartTask( () => mLibraryConfiguration.Open( libraryId ),
-									   () => { },
-									   ex => NoiseLogger.Current.LogException( "ToolbarViewModel:OpenLibrary", ex ));
-		}
-
-		public void Handle( Events.LibraryChanged args ) {
-			RaisePropertyChanged( () => CurrentLibrary );
-		}
-
-		public void Handle( Events.LibraryListChanged args ) {
-			LoadLibraries();
-		}
-
-		public BindableCollection<LibraryConfiguration> LibraryList {
-			get{ return( mLibraries ); }
-		} 
-
-		public LibraryConfiguration CurrentLibrary {
-			get{ return( mLibraryConfiguration.Current ); }
-			set {
-				if( mLibraryConfiguration.Current != value ) {
-					OpenLibrary( value.LibraryId );
-				}
-
-				RaisePropertyChanged( () => CurrentLibrary );
-			}
 		}
 
 		public void Execute_NoiseOptions() {
@@ -113,12 +44,6 @@ namespace Noise.UI.ViewModels {
 			if( mDialogService.ShowDialog( DialogNames.ServerConfiguration, configuration ) == true ) {
 				NoiseSystemConfiguration.Current.Save( configuration );
 			}
-		}
-
-		public void Execute_LibraryConfiguration() {
-			mDialogService.ShowDialog( DialogNames.LibraryConfiguration,
-											new LibraryConfigurationDialogModel( mEventAggregator, mDialogService,
-																				 mLibraryConfiguration, mLibraryBuilder ));
 		}
 
 		public void Execute_Import() {

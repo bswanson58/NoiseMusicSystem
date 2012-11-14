@@ -286,6 +286,7 @@
     <Compile Include="ViewModels\LibraryAdditionsViewModel.cs" />
     <Compile Include="ViewModels\LibraryConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\LibraryExplorerViewModel.cs" />
+    <Compile Include="ViewModels\LibrarySelectorViewModel.cs" />
     <Compile Include="ViewModels\ListenStageViewModel.cs" />
     <Compile Include="ViewModels\PlaybackFocusTracker.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
@@ -364,6 +365,9 @@
     </Compile>
     <Compile Include="Views\LibraryFilterDialog.xaml.cs">
       <DependentUpon>LibraryFilterDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LibrarySelectorView.xaml.cs">
+      <DependentUpon>LibrarySelectorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ListenStageView.xaml.cs">
       <DependentUpon>ListenStageView.xaml</DependentUpon>
@@ -565,6 +569,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\LibraryFilterDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LibrarySelectorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
