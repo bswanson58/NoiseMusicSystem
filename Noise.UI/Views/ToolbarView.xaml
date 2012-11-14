@@ -5,18 +5,21 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="700">
-    
+
     <UserControl.DataContext>
         <Binding Path="ToolbarViewModel" Source="{StaticResource ViewModelLocator}"/>
     </UserControl.DataContext>
 
-    <ToolBarTray DockPanel.Dock="Top">
-        <ToolBar Band="1" BandIndex="1">
-            <Button Margin="3" Command="{Binding Path=CloudConfiguration}">Cloud</Button>
-            <Button Margin="3" Command="{Binding Path=NoiseOptions}">Options</Button>
-            <Button Margin="3" Command="{Binding Path=SmallPlayerView}">Player</Button>
-            <Button Margin="3" Command="{Binding Path=Import}">Import</Button>
-            <Button Margin="3" Command="{Binding Path=DisplayLog}">Log</Button>
-        </ToolBar>
-    </ToolBarTray>
+    <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Right">
+        <Button Margin="3,2" Height="25" Width="25" Foreground="{StaticResource ControlTextColor}"
+                Content="{StaticResource Path_CloudOptions}" Command="{Binding Path=CloudConfiguration}" ToolTip="Cloud Options"/>
+        <Button Margin="3,2" Height="25" Width="25" Foreground="{StaticResource ControlTextColor}"
+                Content="{StaticResource Path_Options}" Command="{Binding Path=NoiseOptions}" ToolTip="Options"/>
+        <Button Margin="3,2" Height="25" Width="25" Foreground="{StaticResource ControlTextColor}"
+                Command="{Binding Path=SmallPlayerView}">Player</Button>
+        <Button Margin="3,2" Height="25" Width="25" Foreground="{StaticResource ControlTextColor}"
+                Content="{StaticResource Path_Import}" Command="{Binding Path=Import}"  ToolTip="Import"/>
+        <Button Margin="3,2" Height="25" Width="25" Foreground="{StaticResource ControlTextColor}"
+                Content="{StaticResource Path_LogView}" Command="{Binding Path=DisplayLog}"  ToolTip="Display Log"/>
+    </StackPanel>
 </UserControl>

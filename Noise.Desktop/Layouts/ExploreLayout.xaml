@@ -5,16 +5,11 @@
     <Grid>
         <Grid x:Name="LayoutRoot">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <DockPanel x:Name="Toolbar" Grid.Row="0">
-                <ContentControl Regions:RegionManager.RegionName="Toolbar" />
-            </DockPanel>
-
-            <Grid x:Name="Content" Grid.Row="1">
+            <Grid x:Name="Content" Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4*" MinWidth="200" />
                     <ColumnDefinition Width="5*" MinWidth="200" />
@@ -64,10 +59,18 @@
                               ResizeDirection="Columns"
                               Style="{DynamicResource GridSplitterStyle}" />
 
-                <ContentControl Grid.Column="2" Regions:RegionManager.RegionName="PlayQueue" />
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="Toolbar" />
+                    <ContentControl Grid.Row="1" Regions:RegionManager.RegionName="PlayQueue" />
+                </Grid>
             </Grid>
 
-            <ContentControl Grid.Row="2"
+            <ContentControl Grid.Row="1"
                             Margin="3,0,0,3"
                             Regions:RegionManager.RegionName="Player" />
         </Grid>
