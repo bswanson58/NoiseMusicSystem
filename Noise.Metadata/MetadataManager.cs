@@ -31,10 +31,14 @@ namespace Noise.Metadata {
 
 		public void Initialize() {
 			try {
+				string metaDirectory = "Metadata";
+#if DEBUG
+				metaDirectory += " (Debug)";
+#endif
 				var libraryPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
 												Constants.CompanyName, 
 												Constants.LibraryConfigurationDirectory,
-												"Metadata" );
+												metaDirectory );
 				mDocumentStore = new EmbeddableDocumentStore { DataDirectory = libraryPath };
 #if DEBUG
 				( mDocumentStore as EmbeddableDocumentStore ).UseEmbeddedHttpServer = true;
