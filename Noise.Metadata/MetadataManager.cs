@@ -8,6 +8,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Interfaces;
 using Raven.Client;
 using Raven.Client.Embedded;
+using Raven.Database.Server;
 
 namespace Noise.Metadata {
 	public class MetadataManager : IRequireInitialization, IMetadataManager,
@@ -42,6 +43,7 @@ namespace Noise.Metadata {
 				mDocumentStore = new EmbeddableDocumentStore { DataDirectory = libraryPath };
 #if DEBUG
 				( mDocumentStore as EmbeddableDocumentStore ).UseEmbeddedHttpServer = true;
+				 NonAdminHttp.EnsureCanListenToWhenInNonAdminContext( 8080 );
 #endif
 				mDocumentStore.Initialize();
 				mArtistMetadataManager.Initialize( mDocumentStore );
