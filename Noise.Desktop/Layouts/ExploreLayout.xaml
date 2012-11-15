@@ -2,10 +2,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:Infrastructure="clr-namespace:Noise.Infrastructure;assembly=Noise.Infrastructure"
              xmlns:Regions="clr-namespace:Microsoft.Practices.Prism.Regions;assembly=Microsoft.Practices.Prism">
+    
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="AccentBrush" Color="#FF588CE0"/>
+    </UserControl.Resources>
+    
     <Grid>
         <Grid x:Name="LayoutRoot">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
@@ -73,6 +79,12 @@
             <ContentControl Grid.Row="1"
                             Margin="3,0,0,3"
                             Regions:RegionManager.RegionName="Player" />
+
+            <StatusBar Grid.Row="2" Background="{StaticResource AccentBrush}">
+                <StatusBarItem>
+                    <TextBlock Margin="5,0" FontSize="12" Foreground="LightGray" Text="Noise Desktop v0.9"/>
+                </StatusBarItem>
+            </StatusBar>
         </Grid>
 
         <ContentControl Width="595"
