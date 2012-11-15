@@ -35,7 +35,7 @@
             <TextBlock Grid.Column="0" Margin="7,0,3,0" VerticalAlignment="Center" Text="Active Library:"/>
             <ComboBox Grid.Column="1" Margin="3" HorizontalAlignment="Stretch" Height="25"
                       ItemsSource="{Binding LibraryList}" SelectedItem="{Binding CurrentLibrary}" DisplayMemberPath="LibraryName" />
-            <Button Grid.Column="2" Height="25" Width="25" Margin="2,3" Foreground="{StaticResource ControlTextColor}" ToolTip="Sync Library"
+            <Button Grid.Column="2" Height="25" Width="25" Margin="2,3" Padding="1" Foreground="{StaticResource ControlTextColor}" ToolTip="Sync Library"
                     Command="{Binding Path=UpdateLibrary}" Content="{StaticResource Path_Sync}"/>
             <Button Grid.Column="3" Height="25" Width="25" Margin="2,3" Foreground="{StaticResource ControlTextColor}" ToolTip="Configure Libraries"
                     Command="{Binding Path=LibraryConfiguration}" Content="{StaticResource Path_Configure}"/>
