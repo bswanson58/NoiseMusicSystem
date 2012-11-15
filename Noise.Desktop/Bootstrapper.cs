@@ -8,6 +8,7 @@ using Noise.AppSupport.FeatureToggles;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata;
 using Noise.UI.Support;
+using Noise.UI.ViewModels;
 
 namespace Noise.Desktop {
 	public class Bootstrapper : UnityBootstrapper {
@@ -18,6 +19,7 @@ namespace Noise.Desktop {
 
 		protected override DependencyObject CreateShell() {
 			mShell = Container.Resolve<Shell>();
+			mShell.DataContext = this;
 			mShell.Show();
 			mShell.Closing += OnShellClosing;
 
@@ -77,6 +79,8 @@ namespace Noise.Desktop {
 
 			ViewModelResolver.TypeResolver = ( type => instanceContainer.Resolve( type));
 			DialogServiceResolver.Current = instanceContainer.Resolve<IDialogService>();
+
+			mShell.DataContext = instanceContainer.Resolve<WindowCommandsViewModel>();
 		}
 
 		public void StopNoise() {

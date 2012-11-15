@@ -161,5 +161,9 @@ namespace Noise.UI.ViewModels {
 		public bool CanExecute_ExportStreams() {
 			return( mStreams.Count > 0 );
 		}
+
+		public void Execute_ImportStreams() {
+			GlobalCommands.ImportRadioStreams.Execute( null );
+		}
 	}
 }

@@ -49,12 +49,22 @@
                 </ListView.View>
             </ListView>
 
-            <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <Button Margin="3" Command="{Binding Path=ExportStreams}">Export</Button>
-                <Button Margin="3" Command="{Binding Path=AddStream}">Add Stream</Button>
-                <Button Margin="3" Command="{Binding Path=EditStream}">Edit Stream</Button>
-                <Button Margin="3" Command="{Binding Path=DeleteStream}">Remove Stream</Button>
-            </StackPanel>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Button Margin="3" Padding="5,0" Command="{Binding Path=ExportStreams}">Export</Button>
+                    <Button Margin="3" Padding="5,0" Command="{Binding Path=AddStream}">Add Stream</Button>
+                    <Button Margin="3" Padding="5,0" Command="{Binding Path=EditStream}">Edit Stream</Button>
+                    <Button Margin="3" Padding="5,0" Command="{Binding Path=DeleteStream}">Remove Stream</Button>
+                </StackPanel>
+
+                <Button Grid.Column="2" Margin="3" Padding="5,0" Command="{Binding Path=ImportStreams}">Import</Button>
+            </Grid>
         </Grid>
     </GroupBox>
 </UserControl>

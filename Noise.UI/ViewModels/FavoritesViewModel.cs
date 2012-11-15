@@ -148,5 +148,9 @@ namespace Noise.UI.ViewModels {
 		public bool CanExecute_ExportFavorites() {
 			return( mFavoritesList.Count > 0 );
 		}
+
+		public void Execute_ImportFavorites() {
+			GlobalCommands.ImportFavorites.Execute( null );
+		}
 	}
 }

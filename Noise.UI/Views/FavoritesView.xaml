@@ -38,9 +38,16 @@
                 </ListView.View>
             </ListView>
             
-            <StackPanel Grid.Row="1" Margin="3" Orientation="Horizontal">
-                <Button Content="Export" Command="{Binding Path=ExportFavorites}"/>
-            </StackPanel>
+            <Grid Grid.Row="1" Margin="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <Button Grid.Column="0" Padding="5,0" Content="Export" Command="{Binding Path=ExportFavorites}"/>
+                <Button Grid.Column="2" Padding="5,0" Content="Import" Command="{Binding Path=ImportFavorites}"/>
+            </Grid>
         </Grid>
     </GroupBox>
 </UserControl>

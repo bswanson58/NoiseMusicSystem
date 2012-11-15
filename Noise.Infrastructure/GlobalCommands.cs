@@ -2,7 +2,7 @@
 
 namespace Noise.Infrastructure {
 	public static class GlobalCommands {
-        public  static CompositeCommand SetFavorite = new CompositeCommand();
+		public  static CompositeCommand SetFavorite = new CompositeCommand();
 		public	static CompositeCommand	SetRating = new CompositeCommand();
 		public	static CompositeCommand	SetMp3Tags = new CompositeCommand();
 
@@ -18,5 +18,8 @@ namespace Noise.Infrastructure {
 		public	static CompositeCommand	UpdatePlayCount = new CompositeCommand();
 
 		public	static CompositeCommand	SynchronizeFromCloud = new CompositeCommand();
+
+		public	static CompositeCommand ImportFavorites = new CompositeCommand();
+		public	static CompositeCommand ImportRadioStreams = new CompositeCommand();
 	}
 }

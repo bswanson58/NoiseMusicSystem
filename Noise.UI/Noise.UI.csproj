@@ -303,6 +303,7 @@
     <Compile Include="ViewModels\StreamViewModel.cs" />
     <Compile Include="ViewModels\ToolbarViewModel.cs" />
     <Compile Include="ViewModels\TrackEditDialogModel.cs" />
+    <Compile Include="ViewModels\WindowCommandsViewModel.cs" />
     <Compile Include="Views\AlbumArtworkView.xaml.cs">
       <DependentUpon>AlbumArtworkView.xaml</DependentUpon>
     </Compile>

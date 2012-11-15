@@ -262,7 +262,7 @@
                             ToolTip="Configure View" />
 
                     <Button Grid.Column="3"
-                            Margin="3"
+                            Margin="3" Padding="5,0"
                             Command="{Binding Filter}"
                             Content="Filter"
                             Foreground="{DynamicResource ControlTextColor}" />

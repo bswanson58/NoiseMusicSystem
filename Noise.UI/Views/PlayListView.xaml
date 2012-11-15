@@ -194,7 +194,7 @@
                       ItemContainerStyle="{DynamicResource TreeViewItemStyle}" />
             
             <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <Button Margin="3" Content="Delete Playlist" Command="{Binding DeletePlayList}"/>
+                <Button Margin="3" Padding="5,0" Content="Delete Playlist" Command="{Binding DeletePlayList}"/>
             </StackPanel>
         </Grid>
     </GroupBox>

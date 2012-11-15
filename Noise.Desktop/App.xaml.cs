@@ -49,9 +49,9 @@ namespace Noise.Desktop {
 		}
 
 		private void TaskSchedulerUnobservedTaskException( object sender, UnobservedTaskExceptionEventArgs e ) { 
-            NoiseLogger.Current.LogException( "Task Unobserved Exception: ", e.Exception );
+			NoiseLogger.Current.LogException( "Task Unobserved Exception: ", e.Exception );
  
-            e.SetObserved(); 
-        } 
+			e.SetObserved(); 
+		} 
 	}
 }
