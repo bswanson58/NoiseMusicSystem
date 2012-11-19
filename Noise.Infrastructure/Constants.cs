@@ -15,6 +15,7 @@ namespace Noise.Infrastructure {
 
 		public	const string			ExploreLayout = "ExploreLayout";
 		public	const string			ListenLayout = "ListenLayout";
+		public	const string			TimeExplorerLayout = "TimeExplorerLayout";
 
 		public const string				ApplicationLogName = "noise.log";
 

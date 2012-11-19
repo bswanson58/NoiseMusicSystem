@@ -10,8 +10,7 @@
                        Fullname="Default Layout"
                        IsDefault="True">
             <Layout:Layout.Views>
-                <!-- <Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" /> -->
-                <Layout:View RegionName="TimeExplorer" Type="{x:Type Views:TimeExplorerView}" />
+                <Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" />
                 <Layout:View RegionName="LibrarySelector" Type="{x:Type Views:LibrarySelectorView}" />
                 <Layout:View RegionName="Explorer" Type="{x:Type Views:LibraryExplorerView}" />
                 <Layout:View RegionName="Explorer" Type="{x:Type Views:StreamView}" />
@@ -40,6 +39,17 @@
                 <Layout:View RegionName="ListenStage" Type="{x:Type Views:ListenStageView}" />
                 <Layout:View RegionName="PlayQueue" Type="{x:Type Views:PlayQueueView}" />
                 <Layout:View RegionName="Player" Type="{x:Type Views:PlayerView}" />
+            </Layout:Layout.Views>
+        </Layout:Layout>
+        
+        <Layout:Layout x:Name="TimeExplorerLayout"
+                       Description="This layout presents the library displayed across time."
+                       Filename="Layouts\TimeExplorerLayout.xaml"
+                       Fullname="Time Explorer Layout"
+                       IsDefault="True">
+            <Layout:Layout.Views>
+                <Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" />
+                <Layout:View RegionName="TimeExplorer" Type="{x:Type Views:TimeExplorerView}" />
             </Layout:Layout.Views>
         </Layout:Layout>
     </Layout:LayoutManager.Layouts>

@@ -70,6 +70,10 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ListenLayout ));
 		}
 
+		public void Execute_TimeExplorerLayout() {
+			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.TimeExplorerLayout ));
+		}
+
 		public void Execute_DisplayLog() {
 			var dialogModel = new	ApplicationLogDialogModel();
 
