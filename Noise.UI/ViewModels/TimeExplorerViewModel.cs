@@ -4,6 +4,7 @@ using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
@@ -58,6 +59,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly BindableCollection<DecadeList>	mDecadeList;
+		private TaskHandler					mAlbumLoaderTaskHandler;
 
 		public TimeExplorerViewModel( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration, IAlbumProvider albumProvider ) {
 			mEventAggregator = eventAggregator;
@@ -84,43 +86,64 @@ namespace Noise.UI.ViewModels {
 			get{ return( mDecadeList ); }
 		} 
 
+		internal TaskHandler AlbumLoaderTask {
+			get {
+				if( mAlbumLoaderTaskHandler == null ) {
+					Execute.OnUIThread( () => mAlbumLoaderTaskHandler = new TaskHandler());
+				}
+
+				return( mAlbumLoaderTaskHandler );
+			}
+
+			set{ mAlbumLoaderTaskHandler = value; }
+		}
+
 		private void LoadAlbums() {
-			using( var albumList = mAlbumProvider.GetAllAlbums() ) {
-				var decadeGroups = from album in albumList.List
-								   where album.PublishedYear != Constants.cUnknownYear && album.PublishedYear != Constants.cVariousYears
-								   group album by album.PublishedYear / 10 into decadeGroup
-								   orderby decadeGroup.Key
-								   select new { Decade = decadeGroup.Key, Albums = decadeGroup };
+			AlbumLoaderTask.StartTask( () => {
+				mDecadeList.Clear();
+				mDecadeList.IsNotifying = false;
 
-				foreach( var decadeGroup in decadeGroups ) {
-					var decadeList = new DecadeList( decadeGroup.Decade * 10 );
-					var yearGroups = from album in decadeGroup.Albums
-									 group album by album.PublishedYear into yearGroup
-									 orderby yearGroup.Key
-									 select new { Year = yearGroup.Key, Albums = yearGroup };
+				using( var albumList = mAlbumProvider.GetAllAlbums() ) {
+					var decadeGroups = from album in albumList.List
+									   where album.PublishedYear != Constants.cUnknownYear && album.PublishedYear != Constants.cVariousYears
+									   group album by album.PublishedYear / 10 into decadeGroup
+									   orderby decadeGroup.Key
+									   select new { Decade = decadeGroup.Key, Albums = decadeGroup };
 
-					foreach( var yearGroup in yearGroups ) {
-						var yearList = ( from year in decadeList.YearList where year.Year == yearGroup.Year select year ).FirstOrDefault();
+					foreach( var decadeGroup in decadeGroups ) {
+						var decadeList = new DecadeList( decadeGroup.Decade * 10 );
+						var yearGroups = from album in decadeGroup.Albums
+										 group album by album.PublishedYear into yearGroup
+										 orderby yearGroup.Key
+										 select new { Year = yearGroup.Key, Albums = yearGroup };
 
-						if( yearList != null ) {
-							yearList.Albums.AddRange( yearGroup.Albums );
+						foreach( var yearGroup in yearGroups ) {
+							var yearList = ( from year in decadeList.YearList where year.Year == yearGroup.Year select year ).FirstOrDefault();
+
+							if( yearList != null ) {
+								yearList.Albums.AddRange( yearGroup.Albums );
+							}
 						}
+
+						mDecadeList.Add( decadeList );
 					}
-
-					mDecadeList.Add( decadeList );
 				}
-			}
+				var albumCount = mDecadeList.Sum( d => d.AlbumsInDecade );
+				var maxInYear = ( from decade in mDecadeList from year in decade.YearList select year.AlbumsInYear ).Concat( new[]{ 0 } ).Max();
 
-			var albumCount = mDecadeList.Sum( d => d.AlbumsInDecade );
-			var maxInYear = ( from decade in mDecadeList from year in decade.YearList select year.AlbumsInYear ).Concat( new[]{ 0 } ).Max();
+				foreach( var decade in mDecadeList ) {
+					decade.DecadePercentage = (double)decade.AlbumsInDecade / albumCount;
 
-			foreach( var decade in mDecadeList ) {
-				decade.DecadePercentage = (double)decade.AlbumsInDecade / albumCount;
-
-				foreach( var year in decade.YearList ) {
-					year.YearPercentage = (double)year.AlbumsInYear / maxInYear;
+					foreach( var year in decade.YearList ) {
+						year.YearPercentage = (double)year.AlbumsInYear / maxInYear;
+					}
 				}
-			}
+
+				mDecadeList.IsNotifying = true;
+				mDecadeList.Refresh();
+			},
+			() => { },
+			ex => NoiseLogger.Current.LogException( "TimeExplorerViewModel:LoadAlbums", ex ));
 		}
 	}
 }
