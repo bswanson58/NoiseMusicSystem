@@ -39,10 +39,13 @@ namespace Noise.UI.ViewModels {
 
 			mEventAggregator.Subscribe( this );
 
-			var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-			if(( expConfig != null ) &&
-			   ( expConfig.LoadLastLibraryOnStartup )) {
-				OpenLibrary( expConfig.LastLibraryUsed );
+			if( mLibraryConfiguration.Current == null ) {
+				var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+
+				if(( expConfig != null ) &&
+				   ( expConfig.LoadLastLibraryOnStartup )) {
+					OpenLibrary( expConfig.LastLibraryUsed );
+				}
 			}
 		}
 
