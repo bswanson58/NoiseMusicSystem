@@ -301,6 +301,7 @@
     <Compile Include="ViewModels\SimilarSongViewModel.cs" />
     <Compile Include="ViewModels\SongLyricsViewModel.cs" />
     <Compile Include="ViewModels\StreamViewModel.cs" />
+    <Compile Include="ViewModels\TimeExplorerAlbumsViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerViewModel.cs" />
     <Compile Include="ViewModels\ToolbarViewModel.cs" />
     <Compile Include="ViewModels\TrackEditDialogModel.cs" />
@@ -424,6 +425,9 @@
     </Compile>
     <Compile Include="Views\StreamView.xaml.cs">
       <DependentUpon>StreamView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TimeExplorerAlbumsView.xaml.cs">
+      <DependentUpon>TimeExplorerAlbumsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TimeExplorerView.xaml.cs">
       <DependentUpon>TimeExplorerView.xaml</DependentUpon>
@@ -650,6 +654,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\StreamView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TimeExplorerAlbumsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

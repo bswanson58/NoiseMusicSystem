@@ -50,12 +50,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="3*"/>
-            <RowDefinition Height="1*"/>
-        </Grid.RowDefinitions>
-        
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding DecadeList}" ItemTemplate="{StaticResource DecadeItemTemplate}">
+        <ItemsControl ItemsSource="{Binding DecadeList}" ItemTemplate="{StaticResource DecadeItemTemplate}">
             <ItemsControl.ItemContainerStyle>
                 <Style>
                     <Setter Property="FrameworkElement.Margin" Value="5"/>
