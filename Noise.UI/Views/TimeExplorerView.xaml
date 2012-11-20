@@ -15,14 +15,9 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Border CornerRadius="3" Background="Transparent" BorderThickness="0" x:Name="IconBorder" >
-                            <ContentPresenter />
-                        </Border>
+                        <ContentPresenter />
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="true">
-                                <Setter TargetName="IconBorder" Property="Background">
-                                    <Setter.Value>LightBlue</Setter.Value>
-                                </Setter>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -55,7 +50,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <ListBox Grid.Row="0" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                <ListBox Grid.Row="0" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" BorderThickness="0"
                          ItemTemplate="{StaticResource YearItemTemplate}" ItemContainerStyle="{StaticResource YearItemStyle}"
                          SelectedItem="{Binding SelectedYear}" ItemsSource="{Binding YearList}">
                     <ListBox.ItemsPanel>
@@ -70,7 +65,7 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid>
+    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Time Explorer " Margin="0">
         <ItemsControl ItemsSource="{Binding DecadeList}" ItemTemplate="{StaticResource DecadeItemTemplate}">
             <ItemsControl.ItemContainerStyle>
                 <Style>
@@ -83,5 +78,5 @@
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
-    </Grid>
+    </GroupBox>
 </UserControl>
