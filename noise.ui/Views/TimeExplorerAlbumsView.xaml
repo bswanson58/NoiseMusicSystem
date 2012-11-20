@@ -18,8 +18,7 @@
             </Grid.RowDefinitions>
 
             <ListView Grid.Row="0" BorderThickness="0" ItemsSource="{Binding Path=AlbumList}" SelectedItem="{Binding SelectedAlbum}"
-                      Behaviours:ListViewColumns.Stretch="true"
-                      Behaviours:GridViewSort.AutoSort="True">
+                      Behaviours:ListViewColumns.Stretch="true">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="{x:Type ListViewItem}">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -34,8 +33,17 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Artist" DisplayMemberBinding="{Binding Path=Artist.Name}" Behaviours:GridViewSort.PropertyName="Title"/>
-                        <GridViewColumn Header="Album" DisplayMemberBinding="{Binding Path=Album.Name}" Behaviours:GridViewSort.PropertyName="Title"/>
+                        <GridViewColumn Header="Artist / Album">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Path=Artist.Name}"/>
+                                        <TextBlock Text=" / "/>
+                                        <TextBlock Text="{Binding Path=Album.Name}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>
