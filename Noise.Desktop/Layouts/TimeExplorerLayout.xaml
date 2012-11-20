@@ -25,7 +25,16 @@
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
 
-                <ContentControl Grid.Row="0" Margin="5" Regions:RegionManager.RegionName="TimeExplorerAlbums" />
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*" MinWidth="200" />
+                        <ColumnDefinition Width="2*" MinWidth="200" />
+                    </Grid.ColumnDefinitions>
+
+                    <ContentControl Grid.Column="0" Margin="5" Regions:RegionManager.RegionName="TimeExplorerAlbums" />
+                    <ContentControl Grid.Column="1" Margin="5" Regions:RegionManager.RegionName="TimeExplorerTracks" />
+                </Grid>
+                
                 <ContentControl Grid.Row="1" Margin="5" Regions:RegionManager.RegionName="TimeExplorer" />
             </Grid>
             

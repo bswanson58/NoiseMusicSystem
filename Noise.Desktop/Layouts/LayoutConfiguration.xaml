@@ -51,6 +51,7 @@
                 <Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" />
                 <Layout:View RegionName="TimeExplorer" Type="{x:Type Views:TimeExplorerView}" />
                 <Layout:View RegionName="TimeExplorerAlbums" Type="{x:Type Views:TimeExplorerAlbumsView}" />
+                <Layout:View RegionName="TimeExplorerTracks" Type="{x:Type Views:TimeExplorerTracksView}" />
                 <Layout:View RegionName="PlayQueue" Type="{x:Type Views:PlayQueueView}" />
                 <Layout:View RegionName="Player" Type="{x:Type Views:PlayerView}" />
                 <Layout:View RegionName="SimilarSongs" Type="{x:Type Views:SimilarSongView}" />
