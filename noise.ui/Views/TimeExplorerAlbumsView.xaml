@@ -17,7 +17,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <ListView Grid.Row="0" BorderThickness="0" ItemsSource="{Binding Path=AlbumList}" 
+            <ListView Grid.Row="0" BorderThickness="0" ItemsSource="{Binding Path=AlbumList}" SelectedItem="{Binding SelectedAlbum}"
                       Behaviours:ListViewColumns.Stretch="true"
                       Behaviours:GridViewSort.AutoSort="True">
                 <ListView.ItemContainerStyle>

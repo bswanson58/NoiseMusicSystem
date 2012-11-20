@@ -10,7 +10,8 @@ using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class TimeExplorerAlbumsViewModel : IHandle<Events.TimeExplorerAlbumFocus>,
+	public class TimeExplorerAlbumsViewModel : AutomaticCommandBase,
+											   IHandle<Events.TimeExplorerAlbumFocus>,
 											   IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator			mEventAggregator;
 		private readonly IArtistProvider			mArtistProvider;
@@ -41,7 +42,18 @@ namespace Noise.UI.ViewModels {
 
 		public BindableCollection<UiTimeExplorerAlbum> AlbumList {
 			get{ return( mAlbumList ); }
-		} 
+		}
+ 
+		public UiTimeExplorerAlbum SelectedAlbum {
+			get{ return( Get( () => SelectedAlbum )); }
+			set {
+				Set( () => SelectedAlbum, value );
+
+				if( value != null ) {
+					mEventAggregator.Publish( new Events.TimeExplorerTrackFocus( value.Album.DbId ));
+				}
+			}
+		}
 
 		internal TaskHandler AlbumLoaderTask {
 			get {
