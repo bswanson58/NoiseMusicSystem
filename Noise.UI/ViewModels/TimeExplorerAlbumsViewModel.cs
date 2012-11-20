@@ -1,35 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.UI.Dto;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class UiTimeExplorerAlbum : AutomaticCommandBase {
-		private readonly Action<UiTimeExplorerAlbum>	mOnPlay;
-
-		public	DbArtist	Artist { get; private set; }
-		public	DbAlbum		Album { get; private set; }
-
-		public UiTimeExplorerAlbum( DbArtist artist, DbAlbum album, Action<UiTimeExplorerAlbum> onPlay ) {
-			Artist = artist;
-			Album = album;
-
-			mOnPlay = onPlay;
-		}
-
-		public void Execute_Play() {
-			if( mOnPlay != null ) {
-				mOnPlay( this );
-			}
-		}
-	}
-
 	public class TimeExplorerAlbumsViewModel : IHandle<Events.TimeExplorerAlbumFocus>,
 											   IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator			mEventAggregator;
@@ -95,7 +75,7 @@ namespace Noise.UI.ViewModels {
 							}
 						}
 
-						mAlbumList.Sort( album => album.Artist.Name, ListSortDirection.Ascending );
+						mAlbumList.Sort( album => album.Artist.Name + album.Album.Name, ListSortDirection.Ascending );
 						mAlbumList.IsNotifying = true;
 						mAlbumList.Refresh();
 					},
