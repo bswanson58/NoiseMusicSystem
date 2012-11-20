@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
@@ -32,12 +33,16 @@ namespace Noise.UI.ViewModels {
 	}
 
 	public class DecadeList {
+		private readonly Action<YearList>	mOnYearSelected;
+
 		public int				Decade { get; private set; }
 		public List<YearList>	YearList { get; private set; }
 		public double			DecadePercentage { get; set; }
 
-		public DecadeList( int decade ) {
+		public DecadeList( int decade, Action<YearList> onYearSelected ) {
 			Decade = decade;
+			mOnYearSelected = onYearSelected;
+
 			YearList = new List<YearList>();
 
 			for( int year = Decade; year < Decade + 10; year++ ) {
@@ -51,6 +56,11 @@ namespace Noise.UI.ViewModels {
 
 		public int AlbumsInDecade {
 			get{ return( YearList.Sum( y => y.AlbumsInYear )); }
+		}
+
+		public YearList SelectedYear {
+			get { return( null ); }
+			set { mOnYearSelected( value ); }
 		}
 	}
 
@@ -84,7 +94,11 @@ namespace Noise.UI.ViewModels {
 
 		public BindableCollection<DecadeList> DecadeList {
 			get{ return( mDecadeList ); }
-		} 
+		}
+ 
+		public void OnYearSelected( YearList year ) {
+			mEventAggregator.Publish( new Events.TimeExplorerAlbumFocus( year.Albums ));	
+		}
 
 		internal TaskHandler AlbumLoaderTask {
 			get {
@@ -111,7 +125,7 @@ namespace Noise.UI.ViewModels {
 									   select new { Decade = decadeGroup.Key, Albums = decadeGroup };
 
 					foreach( var decadeGroup in decadeGroups ) {
-						var decadeList = new DecadeList( decadeGroup.Decade * 10 );
+						var decadeList = new DecadeList( decadeGroup.Decade * 10, OnYearSelected );
 						var yearGroups = from album in decadeGroup.Albums
 										 group album by album.PublishedYear into yearGroup
 										 orderby yearGroup.Key

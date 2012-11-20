@@ -1,4 +1,5 @@
-﻿using Noise.Infrastructure.Dto;
+﻿using System.Collections.Generic;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure {
@@ -237,6 +238,14 @@ namespace Noise.Infrastructure {
 			public SongLyricsInfo( LyricsInfo info ) {
 				LyricsInfo = info;
 			}
+		}
+
+		public class TimeExplorerAlbumFocus {
+			public	IEnumerable<DbAlbum>	AlbumList { get; private set; }
+
+			public TimeExplorerAlbumFocus( IEnumerable<DbAlbum> albumList ) {
+				AlbumList = new List<DbAlbum>( albumList );
+			} 
 		}
 
 		public class BalloonPopupOpened {

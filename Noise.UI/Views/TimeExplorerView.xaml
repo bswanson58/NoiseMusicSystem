@@ -9,10 +9,29 @@
     <UserControl.DataContext>
         <Binding Path="TimeExplorerViewModel" Source="{StaticResource ViewModelLocator}" />
     </UserControl.DataContext>
-    
+
     <UserControl.Resources>
+        <Style x:Key="YearItemStyle" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border CornerRadius="3" Background="Transparent" BorderThickness="0" x:Name="IconBorder" >
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter TargetName="IconBorder" Property="Background">
+                                    <Setter.Value>LightBlue</Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <DataTemplate x:Key="YearItemTemplate">
-            <Grid Margin="3" Visibility="{Binding ShouldDisplayYear, Converter={StaticResource BooleanVisibilityConverter}}">
+            <Grid Margin="1" Visibility="{Binding ShouldDisplayYear, Converter={StaticResource BooleanVisibilityConverter}}">
                 <Rectangle StrokeThickness="0" RenderTransformOrigin="0.5,0.5" ToolTip="{Binding Title}">
                     <Rectangle.RenderTransform>
                         <TransformGroup>
@@ -28,7 +47,7 @@
                 </Rectangle>
             </Grid>
         </DataTemplate>
-        
+
         <DataTemplate x:Key="DecadeItemTemplate">
             <Grid>
                 <Grid.RowDefinitions>
@@ -36,14 +55,16 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <ItemsControl Grid.Row="0" ItemsSource="{Binding YearList}" ItemTemplate="{StaticResource YearItemTemplate}">
-                    <ItemsControl.ItemsPanel>
+                <ListBox Grid.Row="0" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                         ItemTemplate="{StaticResource YearItemTemplate}" ItemContainerStyle="{StaticResource YearItemStyle}"
+                         SelectedItem="{Binding SelectedYear}" ItemsSource="{Binding YearList}">
+                    <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid Rows="1"/>
                         </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
-                
+                    </ListBox.ItemsPanel>
+                </ListBox>
+
                 <TextBlock Grid.Row="1" Margin="5" TextAlignment="Center" Foreground="{StaticResource ControlTextColor}" Text="{Binding Title}"/>
             </Grid>
         </DataTemplate>
