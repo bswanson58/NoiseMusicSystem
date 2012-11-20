@@ -38,7 +38,7 @@
                     
                     <ContentControl Grid.Column="1" Margin="1,0,3,0" Regions:RegionManager.RegionName="TimeExplorerTracks" />
                 </Grid>
-                
+
                 <ContentControl Grid.Row="1" Margin="1,2,2,0" Regions:RegionManager.RegionName="TimeExplorer" />
             </Grid>
             
