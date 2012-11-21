@@ -10,7 +10,7 @@
                        Fullname="Default Layout"
                        IsDefault="True">
             <Layout:Layout.Views>
-                <Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" />
+                <!--Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" /-->
                 <Layout:View RegionName="LibrarySelector" Type="{x:Type Views:LibrarySelectorView}" />
                 <Layout:View RegionName="Explorer" Type="{x:Type Views:LibraryExplorerView}" />
                 <Layout:View RegionName="Explorer" Type="{x:Type Views:StreamView}" />
@@ -48,7 +48,7 @@
                        Fullname="Time Explorer Layout"
                        IsDefault="True">
             <Layout:Layout.Views>
-                <Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" />
+                <!--Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" /-->
                 <Layout:View RegionName="TimeExplorer" Type="{x:Type Views:TimeExplorerView}" />
                 <Layout:View RegionName="TimeExplorerAlbums" Type="{x:Type Views:TimeExplorerAlbumsView}" />
                 <Layout:View RegionName="TimeExplorerTracks" Type="{x:Type Views:TimeExplorerTracksView}" />

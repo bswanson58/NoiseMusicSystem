@@ -51,7 +51,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="Toolbar" />
+                <!--ContentControl Grid.Row="0" Regions:RegionManager.RegionName="Toolbar" /-->
                 <ContentControl Grid.Row="1" Regions:RegionManager.RegionName="PlayQueue" />
             </Grid>
         </Grid>

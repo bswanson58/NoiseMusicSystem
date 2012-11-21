@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.Prism.Commands;
+﻿using Caliburn.Micro;
+using Microsoft.Practices.Prism.Commands;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
@@ -7,11 +8,13 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class WindowCommandsViewModel : AutomaticCommandBase {
+		private readonly IEventAggregator		mEventAggregator;
 		private readonly IDialogService			mDialogService;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly DelegateCommand		mImportCommand;
 
-		public WindowCommandsViewModel( IDialogService dialogService, IDataExchangeManager dataExchangeManager ) {
+		public WindowCommandsViewModel( IEventAggregator eventAggregator, IDialogService dialogService, IDataExchangeManager dataExchangeManager ) {
+			mEventAggregator = eventAggregator;
 			mDialogService = dialogService;
 			mDataExchangeMgr = dataExchangeManager;
 
@@ -34,6 +37,18 @@ namespace Noise.UI.ViewModels {
 			if( dialogModel.Initialize()) {
 				mDialogService.ShowDialog( DialogNames.ApplicationLogView, dialogModel );
 			}
+		}
+
+		public void Execute_LibraryLayout() {
+			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
+		}
+
+		public void Execute_ListenLayout() {
+			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ListenLayout ));
+		}
+
+		public void Execute_TimelineLayout() {
+			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.TimeExplorerLayout ));
 		}
 
 		private void OnImport() {
