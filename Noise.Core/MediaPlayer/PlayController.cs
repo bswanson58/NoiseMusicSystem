@@ -5,7 +5,6 @@ using System.Timers;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
-using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -36,6 +35,7 @@ namespace Noise.Core.MediaPlayer {
 		private	readonly IEqManager				mEqManager;
 		private readonly IPlayQueue				mPlayQueue;
 		private readonly IPlayHistory			mPlayHistory;
+		private readonly IScrobbler				mScrobbler;
 		private TimeSpan						mCurrentPosition;
 		private TimeSpan						mCurrentLength;
 		private bool							mDisplayTimeElapsed;
@@ -55,10 +55,12 @@ namespace Noise.Core.MediaPlayer {
 		public	IObservable<ePlayState>			PlayStateChange { get { return( mPlayStateSubject.AsObservable()); } }
 
 		public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
-							   IPlayQueue playQueue, IPlayHistory playHistory, IAudioPlayer audioPlayer, IEqManager eqManager ) {
+							   IPlayQueue playQueue, IPlayHistory playHistory, IScrobbler scrobbler,
+							   IAudioPlayer audioPlayer, IEqManager eqManager ) {
 			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
 			mPlayHistory = playHistory;
+			mScrobbler = scrobbler;
 			mAudioPlayer = audioPlayer;
 			mEqManager = eqManager;
 
@@ -427,6 +429,7 @@ namespace Noise.Core.MediaPlayer {
 			if( track != null ) {
 				track.PercentPlayed = mAudioPlayer.GetPercentPlayed( channel );
 				mPlayHistory.TrackPlayCompleted( track );
+				mScrobbler.TrackPlayed( track );
 			}
 
 			mOpenTracks.Remove( channel );
@@ -481,6 +484,8 @@ namespace Noise.Core.MediaPlayer {
 				mAudioPlayer.Play( channel );
 
 				retValue = true;
+
+				mScrobbler.TrackStarted( track );
 			}
 
 			return( retValue );

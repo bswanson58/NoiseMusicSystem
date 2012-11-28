@@ -105,6 +105,9 @@
     <Reference Include="GDataDB">
       <HintPath>..\lib\GDataDB\v0.2.0.0\GDataDB.dll</HintPath>
     </Reference>
+    <Reference Include="Lpfm.LastFmScrobbler">
+      <HintPath>..\packages\Lpfm.LastFmScrobbler.dll.1.3.0\lib\net40\Lpfm.LastFmScrobbler.dll</HintPath>
+    </Reference>
     <Reference Include="Lucene.Net, Version=2.9.4.1, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Lucene.Net.2.9.4.1\lib\net40\Lucene.Net.dll</HintPath>
@@ -222,6 +225,7 @@
     <Compile Include="NoiseManager.cs" />
     <Compile Include="Platform\SleepPreventer.cs" />
     <Compile Include="PlayHistory\PlayHistoryMgr.cs" />
+    <Compile Include="PlayHistory\PlayScrobbler.cs" />
     <Compile Include="PlayQueue\IPlayExhaustedFactory.cs" />
     <Compile Include="PlayQueue\IPlayExhaustedStrategy.cs" />
     <Compile Include="PlayQueue\IPlayStrategy.cs" />
@@ -247,10 +251,6 @@
     <Compile Include="Support\LifecycleManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LastFmSharp\LastFmSharp.csproj">
-      <Project>{B57A7572-5F5C-4166-AE0B-9814B550E9B2}</Project>
-      <Name>LastFmSharp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>

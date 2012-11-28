@@ -209,6 +209,7 @@
     <Compile Include="Interfaces\IPlayQueue.cs" />
     <Compile Include="Interfaces\IRequireInitialization.cs" />
     <Compile Include="Interfaces\IRootFolderProvider.cs" />
+    <Compile Include="Interfaces\IScrobbler.cs" />
     <Compile Include="Interfaces\ISearchProvider.cs" />
     <Compile Include="Interfaces\IStorageFileProvider.cs" />
     <Compile Include="Interfaces\IStorageFolderProvider.cs" />
