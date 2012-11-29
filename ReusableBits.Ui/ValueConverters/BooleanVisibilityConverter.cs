@@ -7,4 +7,10 @@ namespace ReusableBits.Ui.ValueConverters {
 			return value ? Visibility.Visible : Visibility.Collapsed;
 		}
 	}
+
+	public class NotBooleanVisibilityConverter : BaseValueConverter<bool, Visibility> {
+		protected override Visibility Convert( bool value, CultureInfo culture ) {
+			return value ? Visibility.Collapsed : Visibility.Visible;
+		}
+	}
 }
