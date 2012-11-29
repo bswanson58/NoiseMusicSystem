@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 
 namespace Noise.Infrastructure.Configuration {
 	public class NoiseSystemConfiguration : ISystemConfiguration {
@@ -23,7 +24,12 @@ namespace Noise.Infrastructure.Configuration {
 		}
 
 		public void Save( ConfigurationSection section ) {
-			mConfiguration.Save( ConfigurationSaveMode.Modified );
+			try {
+				mConfiguration.Save( ConfigurationSaveMode.Modified );
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "NoiseSystemConfiguration:Save", ex );
+			}
 		}
 	}
 }
