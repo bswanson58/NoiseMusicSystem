@@ -33,6 +33,8 @@ namespace Noise.UI.ViewModels {
 			mAlbumList.Clear();
 
 			LoadAlbums( args.AlbumList );
+
+			mEventAggregator.Publish( new Events.ArtistFocusRequested( Constants.cDatabaseNullOid ));
 		}
 		
 		public void Handle( Events.DatabaseClosing args ) {

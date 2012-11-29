@@ -11,7 +11,7 @@
         <Binding Path="TimeExplorerAlbumsViewModel" Source="{StaticResource ViewModelLocator}" />
     </UserControl.DataContext>
 
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Albums " Margin="0">
+    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Albums For Year " Margin="0">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
