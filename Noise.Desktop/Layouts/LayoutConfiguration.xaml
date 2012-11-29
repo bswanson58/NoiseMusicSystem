@@ -49,14 +49,14 @@
                        IsDefault="True">
             <Layout:Layout.Views>
                 <!--Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" /-->
-                <Layout:View RegionName="TimeExplorer" Type="{x:Type Views:TimeExplorerView}" />
-                <Layout:View RegionName="TimeExplorerYear" Type="{x:Type Views:TimeExplorerYearView}" />
-                <Layout:View RegionName="TimeExplorerAlbums" Type="{x:Type Views:TimeExplorerAlbumsView}" />
-                <Layout:View RegionName="AlbumInfo" Type="{x:Type Views:AlbumInfoView}" />
-                <Layout:View RegionName="PlayQueue" Type="{x:Type Views:PlayQueueView}" />
-                <Layout:View RegionName="Player" Type="{x:Type Views:PlayerView}" />
-                <Layout:View RegionName="SimilarSongs" Type="{x:Type Views:SimilarSongView}" />
-                <Layout:View RegionName="SongLyrics" Type="{x:Type Views:SongLyricsView}" />
+                <Layout:View RegionName="Timeline:Explorer" Type="{x:Type Views:TimeExplorerView}" />
+                <Layout:View RegionName="Timeline:ExplorerYear" Type="{x:Type Views:TimeExplorerYearView}" />
+                <Layout:View RegionName="Timeline:ExplorerAlbums" Type="{x:Type Views:TimeExplorerAlbumsView}" />
+                <Layout:View RegionName="Timeline:AlbumInfo" Type="{x:Type Views:AlbumInfoView}" />
+                <Layout:View RegionName="Timeline:PlayQueue" Type="{x:Type Views:PlayQueueView}" />
+                <Layout:View RegionName="Timeline:Player" Type="{x:Type Views:PlayerView}" />
+                <Layout:View RegionName="Timeline:SimilarSongs" Type="{x:Type Views:SimilarSongView}" />
+                <Layout:View RegionName="Timeline:SongLyrics" Type="{x:Type Views:SongLyricsView}" />
             </Layout:Layout.Views>
         </Layout:Layout>
     </Layout:LayoutManager.Layouts>
