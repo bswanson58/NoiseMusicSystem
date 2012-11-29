@@ -8,12 +8,12 @@ using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 using Noise.UI.Behaviours;
 using Noise.UI.Dto;
 using Observal.Extensions;
 using ReusableBits;
 using ReusableBits.Interfaces;
+using ReusableBits.Mvvm.ViewModelSupport;
 using ReusableBits.Ui.ValueConverters;
 
 namespace Noise.UI.ViewModels {
@@ -29,7 +29,7 @@ namespace Noise.UI.ViewModels {
 		public AlbumCategoryEditInfo( CategorySelectionDialogModel viewModel ) : base( viewModel ) { }
 	}
 
-	internal class AlbumViewModel : ViewModelBase,
+	internal class AlbumViewModel : AutomaticCommandBase,
 									IHandle<Events.DatabaseClosing>,
 									IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.AlbumUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
@@ -310,7 +310,7 @@ namespace Noise.UI.ViewModels {
 			get{ return( mAlbumCategories.Any()); }
 		}
 
-		private AlbumSupportInfo SupportInfo {
+		public AlbumSupportInfo SupportInfo {
 			get{ return( Get( () => SupportInfo )); }
 			set{ Set( () => SupportInfo, value ); }
 		}
