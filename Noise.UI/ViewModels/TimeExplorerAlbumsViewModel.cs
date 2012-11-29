@@ -50,7 +50,8 @@ namespace Noise.UI.ViewModels {
 				Set( () => SelectedAlbum, value );
 
 				if( value != null ) {
-					mEventAggregator.Publish( new Events.TimeExplorerTrackFocus( value.Album.DbId ));
+					mEventAggregator.Publish( new Events.ArtistFocusRequested( value.Artist.DbId ));
+					mEventAggregator.Publish( new Events.AlbumFocusRequested( value.Artist.DbId, value.Album.DbId ));
 				}
 			}
 		}

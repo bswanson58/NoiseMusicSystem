@@ -14,10 +14,10 @@ using System.Windows.Shapes;
 
 namespace Noise.UI.Views {
 	/// <summary>
-	/// Interaction logic for TimeExplorerTracksView.xaml
+	/// Interaction logic for TimeExplorerYearView.xaml
 	/// </summary>
-	public partial class TimeExplorerTracksView : UserControl {
-		public TimeExplorerTracksView() {
+	public partial class TimeExplorerYearView : UserControl {
+		public TimeExplorerYearView() {
 			InitializeComponent();
 		}
 	}

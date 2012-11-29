@@ -303,8 +303,8 @@
     <Compile Include="ViewModels\SongLyricsViewModel.cs" />
     <Compile Include="ViewModels\StreamViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerAlbumsViewModel.cs" />
-    <Compile Include="ViewModels\TimeExplorerTracksViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerViewModel.cs" />
+    <Compile Include="ViewModels\TimeExplorerYearViewModel.cs" />
     <Compile Include="ViewModels\ToolbarViewModel.cs" />
     <Compile Include="ViewModels\TrackEditDialogModel.cs" />
     <Compile Include="ViewModels\WindowCommandsViewModel.cs" />
@@ -431,11 +431,11 @@
     <Compile Include="Views\TimeExplorerAlbumsView.xaml.cs">
       <DependentUpon>TimeExplorerAlbumsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TimeExplorerTracksView.xaml.cs">
-      <DependentUpon>TimeExplorerTracksView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\TimeExplorerView.xaml.cs">
       <DependentUpon>TimeExplorerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TimeExplorerYearView.xaml.cs">
+      <DependentUpon>TimeExplorerYearView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ToolbarView.xaml.cs">
       <DependentUpon>ToolbarView.xaml</DependentUpon>
@@ -666,11 +666,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\TimeExplorerTracksView.xaml">
+    <Page Include="Views\TimeExplorerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\TimeExplorerView.xaml">
+    <Page Include="Views\TimeExplorerYearView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

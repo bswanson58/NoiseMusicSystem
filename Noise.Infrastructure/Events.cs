@@ -248,14 +248,6 @@ namespace Noise.Infrastructure {
 			} 
 		}
 
-		public class TimeExplorerTrackFocus {
-			public	long	AlbumId { get; private set; }
-
-			public TimeExplorerTrackFocus( long albumId ) {
-				AlbumId = albumId;
-			}
-		}
-
 		public class BalloonPopupOpened {
 			public string	ViewName { get; private set; }
 

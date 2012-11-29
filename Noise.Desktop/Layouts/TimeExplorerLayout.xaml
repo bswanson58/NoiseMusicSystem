@@ -31,12 +31,20 @@
                         <ColumnDefinition Width="1*" MinWidth="200" />
                     </Grid.ColumnDefinitions>
 
-                    <ContentControl Grid.Column="0" Margin="1,0,8,0" Regions:RegionManager.RegionName="TimeExplorerAlbums" />
+                    <Grid Grid.Column="0" Margin="1,0,8,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="TimeExplorerYear" />
+                        <ContentControl Grid.Row="1" Regions:RegionManager.RegionName="TimeExplorerAlbums" />
+                    </Grid>
                     
                     <GridSplitter Grid.Column="0" Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"
                                   Style="{DynamicResource GridSplitterStyle}" />
-                    
-                    <ContentControl Grid.Column="1" Margin="1,0,3,0" Regions:RegionManager.RegionName="TimeExplorerTracks" />
+
+                    <ContentControl Grid.Column="1" Margin="1,0,3,0" Regions:RegionManager.RegionName="AlbumInfo" />
                 </Grid>
 
                 <ContentControl Grid.Row="1" Margin="1,2,2,0" Regions:RegionManager.RegionName="TimeExplorer" />
