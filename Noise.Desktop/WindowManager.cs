@@ -76,6 +76,8 @@ namespace Noise.Desktop {
 					   (!string.Equals( mLayoutManager.CurrentLayout.Name, eventArgs.LayoutName )) &&
 					   ( mLayoutManager.Layouts.Exists( layout => string.Equals( layout.Name, eventArgs.LayoutName )))) {
 						mLayoutManager.LoadLayout( eventArgs.LayoutName );
+
+						GC.Collect();
 					}
 					break;
 			}
