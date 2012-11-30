@@ -37,17 +37,17 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="TimeExplorerYear" />
-                        <ContentControl Grid.Row="1" Regions:RegionManager.RegionName="TimeExplorerAlbums" />
+                        <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="Timeline:ExplorerYear" />
+                        <ContentControl Grid.Row="1" Regions:RegionManager.RegionName="Timeline:ExplorerAlbums" />
                     </Grid>
                     
                     <GridSplitter Grid.Column="0" Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"
                                   Style="{DynamicResource GridSplitterStyle}" />
 
-                    <ContentControl Grid.Column="1" Margin="1,0,3,0" Regions:RegionManager.RegionName="AlbumInfo" />
+                    <ContentControl Grid.Column="1" Margin="1,0,3,0" Regions:RegionManager.RegionName="Timeline:AlbumInfo" />
                 </Grid>
 
-                <ContentControl Grid.Row="1" Margin="1,2,2,0" Regions:RegionManager.RegionName="TimeExplorer" />
+                <ContentControl Grid.Row="1" Margin="1,2,2,0" Regions:RegionManager.RegionName="Timeline:Explorer" />
             </Grid>
             
             <GridSplitter Grid.Column="0" Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"
@@ -60,11 +60,11 @@
                 </Grid.RowDefinitions>
 
                 <!--ContentControl Grid.Row="0" Regions:RegionManager.RegionName="Toolbar" /-->
-                <ContentControl Grid.Row="1" Regions:RegionManager.RegionName="PlayQueue" />
+                <ContentControl Grid.Row="1" Regions:RegionManager.RegionName="Timeline:PlayQueue" />
             </Grid>
         </Grid>
 
-        <ContentControl Grid.Row="1" Margin="3,0,0,3" Regions:RegionManager.RegionName="Player" />
+        <ContentControl Grid.Row="1" Margin="3,0,0,3" Regions:RegionManager.RegionName="Timeline:Player" />
 
         <StatusBar Grid.Row="2" Background="{StaticResource AccentBrush}">
             <StatusBarItem>
@@ -77,13 +77,13 @@
                         Margin="50,0,0,60"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
-                        Regions:RegionManager.RegionName="SimilarSongs" />
+                        Regions:RegionManager.RegionName="Timeline:SimilarSongs" />
 
         <ContentControl Width="470"
                         Height="600"
                         Margin="120,0,0,60"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
-                        Regions:RegionManager.RegionName="SongLyrics" />
+                        Regions:RegionManager.RegionName="Timeline:SongLyrics" />
     </Grid>
 </UserControl>
