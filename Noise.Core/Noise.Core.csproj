@@ -228,6 +228,7 @@
     <Compile Include="PlayHistory\PlayScrobbler.cs" />
     <Compile Include="PlayQueue\IPlayExhaustedFactory.cs" />
     <Compile Include="PlayQueue\IPlayExhaustedStrategy.cs" />
+    <Compile Include="PlayQueue\IPlayQueueSupport.cs" />
     <Compile Include="PlayQueue\IPlayStrategy.cs" />
     <Compile Include="PlayQueue\IPlayStrategyFactory.cs" />
     <Compile Include="PlayQueue\PlayExhaustedFactory.cs" />
@@ -240,6 +241,7 @@
     <Compile Include="PlayQueue\PlayExhaustedStrategyReplay.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyStream.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyGenre.cs" />
+    <Compile Include="PlayQueue\PlayQueueRandomTracks.cs" />
     <Compile Include="PlayQueue\PlayQueueMgr.cs" />
     <Compile Include="PlayQueue\PlayStrategyFactory.cs" />
     <Compile Include="PlayQueue\PlayStrategyRandom.cs" />

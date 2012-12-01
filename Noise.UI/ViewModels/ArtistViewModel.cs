@@ -245,6 +245,17 @@ namespace Noise.UI.ViewModels {
 			get{ return( mArtistWebsite ); }
 		}
 
+		public void Execute_PlayRandomTracks() {
+			if( CurrentArtist != null ) {
+				mEventAggregator.Publish( new Events.PlayArtistTracksRandom( CurrentArtist.DbId ));
+			}
+		}
+
+		[DependsUpon( "Artist" )]
+		public bool CanExecute_PlayRandomTracks() {
+			return( CurrentArtist != null );
+		}
+
 		public IInteractionRequest ArtistEditRequest {
 			get{ return( mArtistEditRequest ); }
 		}

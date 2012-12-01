@@ -145,6 +145,22 @@ namespace Noise.Infrastructure {
 			}
 		}
 
+		public class PlayArtistTracksRandom {
+			public long		ArtistId { get; private set; }
+
+			public PlayArtistTracksRandom( long artistId ) {
+				ArtistId = artistId;
+			} 
+		}
+
+		public class PlayAlbumTracksRandom {
+			public	IEnumerable<DbAlbum>	AlbumList { get; private set; }
+
+			public PlayAlbumTracksRandom( IEnumerable<DbAlbum> albumList ) {
+				AlbumList = albumList;
+			} 
+		}
+
 		public class PlaybackStatusChanged {
 			public ePlaybackStatus	Status { get; private set; }
 

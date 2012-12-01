@@ -17,6 +17,7 @@ namespace Noise.Core.PlayQueue {
 		private readonly IStorageFolderSupport				mStorageFolderSupport;
 		private readonly List<PlayQueueTrack>				mPlayQueue;
 		private readonly List<PlayQueueTrack>				mPlayHistory;
+		private readonly List<IPlayQueueSupport>			mPlayQueueSupporters; 
 		private	ePlayStrategy								mPlayStrategy;
 		private readonly IPlayStrategyFactory				mPlayStrategyFactory;
 		private IPlayStrategy								mStrategy;
@@ -34,7 +35,8 @@ namespace Noise.Core.PlayQueue {
 		public PlayQueueMgr( IEventAggregator eventAggregator,
 							 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 							 IStorageFolderSupport storageFolderSupport, IStorageFileProvider storageFileProvider,
-							 IPlayStrategyFactory strategyFactory, IPlayExhaustedFactory exhaustedFactory ) {
+							 IPlayStrategyFactory strategyFactory, IPlayExhaustedFactory exhaustedFactory,
+							 IEnumerable<IPlayQueueSupport> playQueueSupporters ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -46,6 +48,7 @@ namespace Noise.Core.PlayQueue {
 
 			mPlayQueue = new List<PlayQueueTrack>();
 			mPlayHistory = new List<PlayQueueTrack>();
+			mPlayQueueSupporters = new List<IPlayQueueSupport>( playQueueSupporters );
 
 			PlayStrategy = ePlayStrategy.Next;
 			SetPlayExhaustedStrategy( ePlayExhaustedStrategy.Stop, Constants.cDatabaseNullOid );
@@ -61,6 +64,10 @@ namespace Noise.Core.PlayQueue {
 
 			mStreamPlayCommand = new AsyncCommand<DbInternetStream>( OnStreamPlayCommand );
 			GlobalCommands.PlayStream.RegisterCommand( mStreamPlayCommand );
+
+			foreach( var supporter in mPlayQueueSupporters ) {
+				supporter.Initialize( this );
+			}
 
 			mEventAggregator.Subscribe( this );
 			NoiseLogger.Current.LogInfo( "PlayQueue created" );

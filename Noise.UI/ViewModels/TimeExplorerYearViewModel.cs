@@ -1,11 +1,14 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class TimeExplorerYearViewModel : AutomaticCommandBase, IHandle<Events.TimeExplorerAlbumFocus> {
 		private readonly IEventAggregator	mEventAggregator;
+		private IEnumerable<DbAlbum>		mAlbumList;
 
 		public TimeExplorerYearViewModel( IEventAggregator eventAggregator ) {
 			mEventAggregator = eventAggregator;
@@ -16,6 +19,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Handle( Events.TimeExplorerAlbumFocus args ) {
+			mAlbumList = args.AlbumList;
+
 			AlbumCount = args.AlbumList.Count();
 			YearValid = AlbumCount > 0;
 
@@ -43,6 +48,18 @@ namespace Noise.UI.ViewModels {
 		public int AlbumCount {
 			get{ return( Get( () => AlbumCount )); }
 			set{ Set( () => AlbumCount, value ); }
+		}
+
+		public void Execute_PlayRandom() {
+			if( CanExecute_PlayRandom()) {
+				mEventAggregator.Publish( new Events.PlayAlbumTracksRandom( mAlbumList ));
+			}
+		}
+
+		[DependsUponAttribute( "YearValid" )]
+		public bool CanExecute_PlayRandom() {
+			return(( mAlbumList != null ) &&
+				   ( mAlbumList.Any()));
 		}
 	}
 }
