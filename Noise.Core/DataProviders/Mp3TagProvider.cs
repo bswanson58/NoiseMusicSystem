@@ -224,9 +224,11 @@ namespace Noise.Core.DataProviders {
 
 						if( picsInFolder == 0 ) {
 							foreach( var picture in pictures ) {
-								var dbPicture = new DbArtwork( track.Album, picture.Type == PictureType.FrontCover ? ContentType.AlbumCover : ContentType.AlbumArtwork )
+								var dbPicture = new DbArtwork( album.DbId, picture.Type == PictureType.FrontCover ? ContentType.AlbumCover : ContentType.AlbumArtwork )
 										{ Source = InfoSource.Tag,
 										  Name = "Embedded Tag",
+										  Artist = artist.DbId,
+										  Album = album.DbId,
 										  FolderLocation = mFile.ParentFolder };
 
 								mArtworkProvider.AddArtwork( dbPicture, picture.Data.ToArray());
