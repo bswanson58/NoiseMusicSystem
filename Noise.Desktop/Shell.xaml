@@ -8,6 +8,7 @@
                       xmlns:DisplayLog="LogVersion"
                       Title="Noise"
                       Icon="Noise.ico"
+                      ResizeMode="CanResizeWithGrip"
                       Height="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationHeight, Mode=TwoWay}"
                       Width="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationWidth, Mode=TwoWay}"
                       Top ="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationTop, Mode=TwoWay}"
