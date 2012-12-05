@@ -22,6 +22,7 @@ namespace Noise.TenFooter {
 		protected override void ConfigureContainer( IUnityContainer container ) {
 			AddModule( typeof( Core.NoiseCoreModule ));
 			AddModule( typeof( BlobStorage.BlobStorageModule ));
+			AddModule( typeof( Metadata.NoiseMetadataModule ));
 			AddModule( typeof( RemoteHost.RemoteHostModule ));
 			AddModule( typeof( EloqueraDatabase.EloqueraDatabaseModule ));
 			AddModule( typeof( UI.NoiseUiModule ));
