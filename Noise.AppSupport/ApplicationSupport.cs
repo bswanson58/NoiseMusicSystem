@@ -1,31 +1,18 @@
 ﻿using System;
 using Caliburn.Micro;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
-using Noise.Service.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport {
 	public class ApplicationSupport : IHandle<Events.UrlLaunchRequest>, IHandle<Events.LaunchRequest> {
 		private readonly IEventAggregator	mEventAggregator;
-		private readonly IServiceBusManager	mServiceBus;
 		private readonly HotkeyManager		mHotkeyManager;
 
-		public ApplicationSupport( IEventAggregator eventAggregator, IServiceBusManager serviceBusManager ) {
+		public ApplicationSupport( IEventAggregator eventAggregator ) {
 			mEventAggregator = eventAggregator;
-			mServiceBus = serviceBusManager;
 			mHotkeyManager = new HotkeyManager( mEventAggregator );
 		}
 
 		public bool Initialize() {
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
-
-			if(( configuration != null ) &&
-			   ( configuration.UseServer )) {
-				if(!mServiceBus.Initialize( configuration.ServerName )) {
-					NoiseLogger.Current.LogMessage( "ServiceBusManager was not initialized." );
-				}
-			}
-
 			mHotkeyManager.Initialize();
 
 			mEventAggregator.Subscribe( this );

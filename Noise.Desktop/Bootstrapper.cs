@@ -38,7 +38,6 @@ namespace Noise.Desktop {
 			var catalog = new ModuleCatalog();
 
 			catalog.AddModule( typeof( Core.NoiseCoreModule ))
-				.AddModule( typeof( Service.Infrastructure.ServiceInfrastructureModule ))
 				.AddModule( typeof( UI.NoiseUiModule ), "NoiseCoreModule" )
 				.AddModule( typeof( BlobStorage.BlobStorageModule ))
 				.AddModule( typeof( NoiseMetadataModule ))

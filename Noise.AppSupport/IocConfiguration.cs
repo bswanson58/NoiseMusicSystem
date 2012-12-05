@@ -6,11 +6,7 @@ using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Noise.Core.DataBuilders;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support.Service;
-using Noise.Service.Infrastructure.Clients;
-using Noise.ServiceImpl.LibraryUpdate;
 
 namespace Noise.AppSupport {
 	public enum ApplicationUsage {
@@ -37,17 +33,9 @@ namespace Noise.AppSupport {
 		public bool InitializeIoc( ApplicationUsage appUsage ) {
 			mContainer.RegisterType<IIoc, IocProvider>( new ContainerControlledLifetimeManager());
 
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
-
 			switch( appUsage ) {
 				case ApplicationUsage.Desktop:
-					if(( configuration != null ) &&
-					   ( configuration.UseServer )) {
-						mContainer.RegisterType<ILibraryBuilder, LibraryServiceUpdateClient>();
-					}
-					else {
-						mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
-					}
+					mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
 
 					break;
 
@@ -55,7 +43,6 @@ namespace Noise.AppSupport {
 					InitializeUnity();
 
 					mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
-					mContainer.RegisterType<IWindowsService, LibraryServiceImpl>();
 
 					break;
 
@@ -76,8 +63,6 @@ namespace Noise.AppSupport {
 				var catalog = new ModuleCatalog();
 
 				catalog.AddModule( typeof( Core.NoiseCoreModule ));
-				catalog.AddModule( typeof( Service.Infrastructure.ServiceInfrastructureModule ));
-				catalog.AddModule( typeof( ServiceImpl.NoiseServiceImplModule ));
 				catalog.AddModule( typeof( EloqueraDatabase.EloqueraDatabaseModule ));
 				mContainer.RegisterInstance<IModuleCatalog>( catalog );
 

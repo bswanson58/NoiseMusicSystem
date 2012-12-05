@@ -276,10 +276,6 @@
       <Project>{85472B64-4F49-4182-8709-9229E25E5119}</Project>
       <Name>Noise.RemoteHost</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Noise.Service.Infrastructure\Noise.Service.Infrastructure.csproj">
-      <Project>{BC70F5ED-672C-4690-BEF7-7950907E95C5}</Project>
-      <Name>Noise.Service.Infrastructure</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Noise.UI.Style\Noise.UI.Style.csproj">
       <Project>{DA31563C-5B51-4072-AF18-57E4FC5DE957}</Project>
       <Name>Noise.UI.Style</Name>

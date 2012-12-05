@@ -137,14 +137,6 @@
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Noise.Service.Infrastructure\Noise.Service.Infrastructure.csproj">
-      <Project>{BC70F5ED-672C-4690-BEF7-7950907E95C5}</Project>
-      <Name>Noise.Service.Infrastructure</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Noise.ServiceImpl\Noise.ServiceImpl.csproj">
-      <Project>{BB5ECD63-EFBA-439D-A669-73095840FD2E}</Project>
-      <Name>Noise.ServiceImpl</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ReusableBits\ReusableBits.csproj">
       <Project>{0522B043-A04A-4669-90DB-204C96D52224}</Project>
       <Name>ReusableBits</Name>
