@@ -120,7 +120,12 @@ namespace Noise.TenFooter {
 
     	public void NavigateHome() {
 			while( ActiveItem != mHomeView ) {
-				DeactivateItem( ActiveItem, true );
+				if( ActiveItem == null ) {
+					ActivateItem( mHomeView );
+				}
+				else {
+					DeactivateItem( ActiveItem, true );
+				}
 			}
     	}
 
