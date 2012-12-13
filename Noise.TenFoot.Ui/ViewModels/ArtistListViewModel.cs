@@ -15,7 +15,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private readonly IDatabaseInfo		mDatabaseInfo;
 		private readonly IAlbumList			mAlbumsList;
 		private readonly IArtistProvider	mArtistProvider;
-		private readonly IArtworkProvider	mArtworkProvider;
+		private readonly IMetadataManager	mMetadataManager;
 		private readonly BitmapImage		mUnknownArtistImage;
 		private TaskHandler					mArtistRetrievalTaskHandler;
 
@@ -28,12 +28,12 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	int							WrapItemCount { get; set; }
 
 		public ArtistListViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, IDatabaseInfo databaseInfo,
-									IAlbumList albumListViewModel, IArtistProvider artistProvider, IArtworkProvider artworkProvider ) :
+									IAlbumList albumListViewModel, IArtistProvider artistProvider, IMetadataManager metadataManager ) :
 			base( eventAggregator ) {
 			mDatabaseInfo = databaseInfo;
 			mAlbumsList = albumListViewModel;
 			mArtistProvider = artistProvider;
-			mArtworkProvider = artworkProvider;
+			mMetadataManager = metadataManager;
 
 			mUnknownArtistImage = resourceProvider.RetrieveImage( "Unknown Artist.png" );
 
@@ -82,7 +82,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 						}
 
 						foreach( var artist in ItemList ) {
-							var artwork = mArtworkProvider.GetArtistArtwork( artist.DbId, ContentType.ArtistPrimaryImage );
+							var artwork = mMetadataManager.GetArtistArtwork( artist.Name );
 
 							if(( artwork != null ) &&
 							   ( artwork.HaveValidImage )) {
