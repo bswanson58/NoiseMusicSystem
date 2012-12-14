@@ -76,9 +76,20 @@ namespace ReusableBits.Ui.Behaviours {
 			set { SetValue( RestoreOnEscapeProperty, value ); }
 		}
 
+		public static readonly DependencyProperty FullScreenKeyProperty = DependencyProperty.Register(
+			"FullScreenKey", typeof( Key ), typeof( FullScreenBehavior ), new PropertyMetadata( Key.F11 ));
+
 		private static readonly DependencyProperty IsFullScreenProperty = DependencyProperty.RegisterAttached(
 			"IsFullScreen", typeof( bool ), typeof( FullScreenBehavior ),
-			new PropertyMetadata( default( bool ), null, OnCoerceFullScreenChanged ) );
+			new PropertyMetadata( default( bool ), null, OnCoerceFullScreenChanged ));
+
+		/// <summary>
+		/// The key assignment that toggles the window in and out of full screen mode.
+		/// </summary>
+		public Key FullScreenKey {
+			get{ return((Key)GetValue( FullScreenKeyProperty )); }
+			set{ SetValue( FullScreenKeyProperty, value ); }
+		}
 
 		/// <summary>
 		/// Gets a value indicating whether or not the specified window is currently in full-screen mode.
@@ -195,9 +206,9 @@ namespace ReusableBits.Ui.Behaviours {
 						// Go to full screen on maximize
 						// Return from full screen on restore
 						SetIsFullScreen( AssociatedObject, ( wParam32 == SC_MAXIMIZE ) );
-					} // if
-				} // if
-			} // if
+					}
+				}
+			}
 
 			return IntPtr.Zero;
 		}
@@ -227,8 +238,8 @@ namespace ReusableBits.Ui.Behaviours {
 				if( FullScreenOnDoubleClick ) {
 					bool current = GetIsFullScreen( AssociatedObject );
 					SetIsFullScreen( AssociatedObject, !current );
-				} // if
-			} // if
+				}
+			}
 		}
 
 		/// <summary>
@@ -237,11 +248,15 @@ namespace ReusableBits.Ui.Behaviours {
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The instance containing the event data.</param>
 		private void OnKeyDown( object sender, KeyEventArgs e ) {
-			if( e.Key == Key.Escape &&
-			    e.Handled == false ) {
-				if( RestoreOnEscape ) {
-					SetIsFullScreen( AssociatedObject, false );
-				}
+			if(( e.Key == FullScreenKey ) &&
+			   ( e.Handled == false )) {
+				SetIsFullScreen(AssociatedObject, !GetIsFullScreen( AssociatedObject ));
+			}
+
+			if(( e.Key == Key.Escape ) &&
+			   ( e.Handled == false ) &&
+			   ( RestoreOnEscape )) {
+				SetIsFullScreen( AssociatedObject, false );
 			}
 		}
 	}
