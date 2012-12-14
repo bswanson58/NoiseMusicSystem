@@ -78,7 +78,7 @@ namespace ReusableBits.Ui.Behaviours {
 
 		private static readonly DependencyProperty IsFullScreenProperty = DependencyProperty.RegisterAttached(
 			"IsFullScreen", typeof( bool ), typeof( FullScreenBehavior ),
-			new PropertyMetadata( default( bool ), OnIsFullScreenChanged ) );
+			new PropertyMetadata( default( bool ), null, OnCoerceFullScreenChanged ) );
 
 		/// <summary>
 		/// Gets a value indicating whether or not the specified window is currently in full-screen mode.
@@ -97,28 +97,29 @@ namespace ReusableBits.Ui.Behaviours {
 		}
 
 		/// <summary>
-		/// Called when the value of the IsFullScreenProperty dependency property changes.
+		/// Called when the value of the IsFullScreenProperty dependency property is to be set.
+		/// This method is called whether the value will be changed or not.
 		/// </summary>
 		/// <param name="sender">The control instance.</param>
-		/// <param name="e">The event arguments.</param>
-		private static void OnIsFullScreenChanged( DependencyObject sender, DependencyPropertyChangedEventArgs e ) {
-			var window = (Window)sender;
-			var oldValue = (bool)e.OldValue;
-			var newValue = (bool)e.NewValue;
+		/// <param name="value">The value that is to be set.</param>
+		private static object OnCoerceFullScreenChanged( DependencyObject sender, object value ) {
+			if(( sender is Window ) &&
+			   ( value is bool )) {
+				var window = (Window)sender;
 
-			if( newValue != oldValue &&
-			    window != null ) {
-				if( newValue ) {
+				if((bool)value ) {
 					window.WindowStyle = WindowStyle.None;
 					window.Topmost = true;
 					window.WindowState = WindowState.Maximized;
-				} // if
+				}
 				else {
 					window.Topmost = false;
 					window.WindowStyle = WindowStyle.SingleBorderWindow;
 					window.WindowState = WindowState.Normal;
-				} // else
-			} // if
+				}
+			}
+
+			return( value );
 		}
 
 		/// <summary>
