@@ -161,6 +161,7 @@
     <Compile Include="ViewModels\ArtistListViewModel.cs" />
     <Compile Include="ViewModels\BaseListViewModel.cs" />
     <Compile Include="ViewModels\ConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\ExitViewModel.cs" />
     <Compile Include="ViewModels\FavoritesListViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\QueueListViewModel.cs" />

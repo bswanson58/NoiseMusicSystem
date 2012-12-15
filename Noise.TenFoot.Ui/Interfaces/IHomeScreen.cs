@@ -2,7 +2,8 @@
 	public enum eMainMenuCommand {
 		Favorites,
 		Library,
-		Queue
+		Queue,
+		Exit
 	}
 
 	public interface IHomeScreen : ITitledScreen {

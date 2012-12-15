@@ -10,11 +10,11 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	string							ScreenTitle { get; private set; }
 		public	string							Context { get; private set; }
 
-		public HomeViewModel( IEventAggregator eventAggregator, ArtistListViewModel artistListViewModel,
+		public HomeViewModel( IEventAggregator eventAggregator, ExitViewModel exitViewModel, ArtistListViewModel artistListViewModel,
 							  FavoritesListViewModel favoritesListViewModel, QueueListViewModel queueListViewModel ) :
 			base( eventAggregator ) {
 
-			var screens = new [] { artistListViewModel as IHomeScreen, favoritesListViewModel, queueListViewModel };
+			var screens = new [] { artistListViewModel as IHomeScreen, favoritesListViewModel, queueListViewModel, exitViewModel };
 			ItemList.AddRange( from screen in screens orderby screen.ScreenOrder select screen );
 
 			SelectedItem = ItemList.FirstOrDefault();

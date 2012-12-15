@@ -111,6 +111,16 @@ namespace Noise.TenFooter {
 		}
 
 		public void Handle( Events.NavigateToScreen data ) {
+			if( data.ToScreen is IHomeScreen ) {
+				var screen = data.ToScreen as IHomeScreen;
+
+				if( screen.MenuCommand == eMainMenuCommand.Exit ) {
+					TryClose();
+
+					return;
+				}
+			}
+
 			ActivateItem( data.ToScreen );
 		}
 
