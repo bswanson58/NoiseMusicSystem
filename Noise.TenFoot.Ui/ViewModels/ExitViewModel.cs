@@ -16,7 +16,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			ScreenOrder = 99;
 			MenuCommand = eMainMenuCommand.Exit;
 
-			Description = "Close the Noise Music System";
+			Description = "close the Noise Music System";
 			Context = string.Empty;
 		}
 	}
