@@ -18,7 +18,7 @@
             </LinearGradientBrush>
         </Grid.Background>
 
-        <Grid Margin="25"> <!-- This grid allows for the configuration of the padding around the edge of the screen -->
+        <Grid Margin="15"> <!-- This grid allows for the configuration of the padding around the edge of the screen -->
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="75" />
@@ -45,7 +45,7 @@
             </Grid>
 
             <Grid Grid.Row="1">
-                <Rectangle Fill="{StaticResource ContentBackgroundBrush}" Opacity="0.07" />
+                <Rectangle Margin="-15,0,-15,0" Fill="{StaticResource ContentBackgroundBrush}" Opacity="0.07" />
 
                 <ContentControl x:Name="ActiveItem" Margin="7,0" />
             </Grid>
