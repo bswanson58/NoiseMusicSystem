@@ -8,6 +8,7 @@ namespace Noise.Core.PlayQueue {
 		private readonly IPlayExhaustedStrategy		mStrategyFavorites;
 		private readonly IPlayExhaustedStrategy		mStrategySimilar;
 		private readonly IPlayExhaustedStrategy		mStrategyStream;
+		private readonly IPlayExhaustedStrategy		mStrategyArtist;
 		private readonly IPlayExhaustedStrategy		mStrategyGenre;
 		private readonly IPlayExhaustedStrategy		mStrategyCategory;
 
@@ -17,6 +18,7 @@ namespace Noise.Core.PlayQueue {
 									 PlayExhaustedStrategyFavorites strategyFavorites,
 									 PlayExhaustedStrategySimilar strategySimilar,
 									 PlayExhaustedStrategyStream strategyStream,
+									 PlayExhaustedStrategyArtist strategyArtist,
 									 PlayExhaustedStrategyGenre strategyGenre,
 									 PlayExhaustedStrategyCategory strategyCategory ) {
 			mStrategyStop = strategyStop;
@@ -25,6 +27,7 @@ namespace Noise.Core.PlayQueue {
 			mStrategyFavorites = strategyFavorites;
 			mStrategySimilar = strategySimilar;
 			mStrategyStream = strategyStream;
+			mStrategyArtist = strategyArtist;
 			mStrategyGenre = strategyGenre;
 			mStrategyCategory = strategyCategory;
 		}
@@ -55,6 +58,10 @@ namespace Noise.Core.PlayQueue {
 
 				case ePlayExhaustedStrategy.PlayStream:
 					retValue = mStrategyStream;
+					break;
+
+				case ePlayExhaustedStrategy.PlayArtist:
+					retValue = mStrategyArtist;
 					break;
 
 				case ePlayExhaustedStrategy.PlayGenre:

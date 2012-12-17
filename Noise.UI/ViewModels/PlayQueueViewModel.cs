@@ -15,6 +15,7 @@ using Noise.UI.Support;
 namespace Noise.UI.ViewModels {
 	public class PlayQueueViewModel : ViewModelBase, IDropTarget, IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted> {
 		private readonly IEventAggregator			mEventAggregator;
+		private readonly IArtistProvider			mArtistProvider;
 		private readonly IGenreProvider				mGenreProvider;
 		private readonly ITagProvider				mTagProvider;
 		private readonly IInternetStreamProvider	mStreamProvider;
@@ -28,10 +29,11 @@ namespace Noise.UI.ViewModels {
 		private	readonly BindableCollection<ExhaustedStrategyItem>	mExhaustedStrategies;
 		private readonly BindableCollection<PlayStrategyItem>		mPlayStrategies;
 
-		public PlayQueueViewModel( IEventAggregator eventAggregator,
+		public PlayQueueViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider,
 								   ITagProvider tagProvider, IGenreProvider genreProvider, IInternetStreamProvider streamProvider,
 								   IPlayQueue playQueue, IPlayListProvider playListProvider, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
+			mArtistProvider = artistProvider;
 			mGenreProvider = genreProvider;
 			mStreamProvider = streamProvider;
 			mTagProvider = tagProvider;
@@ -50,6 +52,7 @@ namespace Noise.UI.ViewModels {
 			mExhaustedStrategies = new BindableCollection<ExhaustedStrategyItem>{
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Stop, "Stop" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Replay, "Replay" ),
+												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayArtist, "Play Artist..." ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayCategory, "Play Category..." ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayFavorites, "Play Favorites" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlaySimilar, "Play Similar" ),
@@ -330,9 +333,9 @@ namespace Noise.UI.ViewModels {
 		public ePlayExhaustedStrategy ExhaustedStrategy {
 			get{ return( mPlayQueue.PlayExhaustedStrategy ); }
 			set {
-				long itemId = Constants.cDatabaseNullOid;
+				long itemId;
 
-				if( PromptForStrategyItem( value, ref itemId )) {
+				if( PromptForStrategyItem( value, out itemId )) {
 					mPlayQueue.SetPlayExhaustedStrategy( value, itemId );
 
 					var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
@@ -347,11 +350,12 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private bool PromptForStrategyItem( ePlayExhaustedStrategy strategy, ref long selectedItem ) {
+		private bool PromptForStrategyItem( ePlayExhaustedStrategy strategy, out long selectedItem ) {
 			var retValue = false;
 			selectedItem = Constants.cDatabaseNullOid;
 
 			if(( strategy == ePlayExhaustedStrategy.PlayStream ) ||
+			   ( strategy == ePlayExhaustedStrategy.PlayArtist ) ||
 			   ( strategy == ePlayExhaustedStrategy.PlayCategory ) ||
 			   ( strategy == ePlayExhaustedStrategy.PlayList ) ||
 			   ( strategy == ePlayExhaustedStrategy.PlayGenre )) {
@@ -370,6 +374,17 @@ namespace Noise.UI.ViewModels {
 					var	dialogModel = new SelectStreamDialogModel( mStreamProvider );
 
 					if( mDialogService.ShowDialog( DialogNames.SelectStream, dialogModel ) == true ) {
+						if( dialogModel.SelectedItem != null ) {
+							selectedItem = dialogModel.SelectedItem.DbId;
+							retValue = true;
+						}
+					}
+				}
+
+				if( strategy == ePlayExhaustedStrategy.PlayArtist ) {
+					var dialogModel = new SelectArtistDialogModel( mArtistProvider );
+
+					if( mDialogService.ShowDialog( DialogNames.SelectArtist, dialogModel ) == true ) {
 						if( dialogModel.SelectedItem != null ) {
 							selectedItem = dialogModel.SelectedItem.DbId;
 							retValue = true;

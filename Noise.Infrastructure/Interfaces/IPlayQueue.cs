@@ -12,6 +12,7 @@ namespace Noise.Infrastructure.Interfaces {
 		Stop,
 		Replay,
 		PlayList,
+		PlayArtist,
 		PlaySimilar,
 		PlayFavorites,
 		PlayStream,

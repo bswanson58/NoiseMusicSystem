@@ -23,10 +23,10 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	eMainMenuCommand	MenuCommand { get; private set; }
 		public	int					ScreenOrder { get; private set; }
 
-		public QueueListViewModel( IEventAggregator eventAggregator, ITagProvider tagProvider, IGenreProvider genreProvider,
-								   IInternetStreamProvider internetStreamProvider, IPlayQueue playQueue,
+		public QueueListViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ITagProvider tagProvider,
+								   IGenreProvider genreProvider, IInternetStreamProvider internetStreamProvider, IPlayQueue playQueue,
 								   IPlayListProvider playListProvider, IDialogService dialogService ) :
-			base( eventAggregator, tagProvider, genreProvider, internetStreamProvider, playQueue, playListProvider, dialogService ) {
+			base( eventAggregator, artistProvider, tagProvider, genreProvider, internetStreamProvider, playQueue, playListProvider, dialogService ) {
 			ScreenTitle = "Now Playing";
 			MenuTitle = "Now Playing";
 			Description = "display the songs being played";
