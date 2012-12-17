@@ -99,6 +99,15 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public void Execute_StartStrategy() {
+			mPlayQueue.StartPlayStrategy();
+		}
+
+		[DependsUpon( "PlayQueueChangedFlag" )]
+		public bool CanExecute_StartStrategy() {
+			return( mPlayQueue.CanStartPlayStrategy );
+		}
+
 		public void Execute_PlayRequested( EventCommandParameter<object, RoutedEventArgs> args ) {
 			if( args.CustomParameter != null ) {
 				var queuedItem  = args.CustomParameter as UiPlayQueueTrack;
@@ -337,6 +346,7 @@ namespace Noise.UI.ViewModels {
 
 				if( PromptForStrategyItem( value, out itemId )) {
 					mPlayQueue.SetPlayExhaustedStrategy( value, itemId );
+					RaiseCanExecuteChangedEvent( "CanExecute_StartStrategy" );
 
 					var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 

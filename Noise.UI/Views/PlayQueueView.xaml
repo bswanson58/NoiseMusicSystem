@@ -380,15 +380,17 @@
                 </Grid>
                 <Grid Grid.Row="3" Margin="3">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="1"
+                    <Button Grid.Column="0" Margin="3,0" Width="37" Content="Start" Command="{Binding StartStrategy}" />
+                    <Label Grid.Column="2"
                            Content="When Exhausted:"
                            Foreground="{DynamicResource ControlTextColor}" />
                     <ComboBox x:Name="ExhaustedStrategy"
-                              Grid.Column="2"
+                              Grid.Column="3"
                               Width="110"
                               DisplayMemberPath="Title"
                               ItemsSource="{Binding Path=ExhaustedStrategyList}"

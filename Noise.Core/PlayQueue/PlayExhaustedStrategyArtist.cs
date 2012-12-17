@@ -35,8 +35,8 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void NextTrackPlayed() {
-			if( ( mQueueMgr != null ) &&
-			   ( mQueueMgr.StrategyRequestsQueued ) ) {
+			if(( mQueueMgr != null ) &&
+			   ( mQueueMgr.StrategyRequestsQueued )) {
 				var	trackCount = mQueueMgr.UnplayedTrackCount;
 
 				if( trackCount < 3 ) {

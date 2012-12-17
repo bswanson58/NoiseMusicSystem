@@ -334,6 +334,20 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
+		public void StartPlayStrategy() {
+			if( CanStartPlayStrategy ) {
+				mExhaustedStrategy.QueueExhausted( this, mPlayExhaustedItem );
+			}
+		}
+
+		public bool CanStartPlayStrategy {
+			get {
+				return(!mPlayQueue.Any()) &&
+					  ( mExhaustedStrategy != null ) &&
+				      ( mExhaustedStrategy.PlayStrategy != ePlayExhaustedStrategy.Stop );
+			}
+		}
+
 		public PlayQueueTrack PlayNextTrack() {
 			var	track = PlayingTrack;
 
