@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Caliburn.Micro;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
@@ -11,6 +12,9 @@ using Events = Noise.TenFoot.Ui.Input.Events;
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class QueueListViewModel : PlayQueueViewModel, IHomeScreen, IActivate, IDeactivate,
 									  IHandle<InputEvent>, IHandle<Events.DequeueTrack>, IHandle<Events.DequeueAlbum> {
+		private readonly IPlayQueue		mPlayQueue;
+		private ePlayExhaustedStrategy	mCurrentStrategy;
+
 		public	event EventHandler<ActivationEventArgs>		Activated = delegate { };
 		public	event EventHandler<DeactivationEventArgs>	AttemptingDeactivation = delegate { };
 		public	event EventHandler<DeactivationEventArgs>	Deactivated = delegate { };
@@ -27,6 +31,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 								   IGenreProvider genreProvider, IInternetStreamProvider internetStreamProvider, IPlayQueue playQueue,
 								   IPlayListProvider playListProvider, IDialogService dialogService ) :
 			base( eventAggregator, artistProvider, tagProvider, genreProvider, internetStreamProvider, playQueue, playListProvider, dialogService ) {
+			mPlayQueue = playQueue;
+			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy;
+
 			ScreenTitle = "Now Playing";
 			MenuTitle = "Now Playing";
 			Description = "display the songs being played";
@@ -87,6 +94,28 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			}
 		}
 
+		private void ChangeExhaustedStrategy() {
+			switch( mCurrentStrategy ) {
+				case ePlayExhaustedStrategy.PlayFavorites:
+					mCurrentStrategy = ePlayExhaustedStrategy.Replay;
+					break;
+
+				case ePlayExhaustedStrategy.Replay:
+					mCurrentStrategy = ePlayExhaustedStrategy.Stop;
+					break;
+
+				case ePlayExhaustedStrategy.Stop:
+					mCurrentStrategy = ePlayExhaustedStrategy.PlayFavorites;
+					break;
+
+				default:
+					mCurrentStrategy = ePlayExhaustedStrategy.Stop;
+					break;
+			}
+
+			mPlayQueue.SetPlayExhaustedStrategy( mCurrentStrategy, Constants.cDatabaseNullOid );
+		}
+
 		public void Handle( InputEvent input ) {
 			if( IsActive ) {
 				switch( input.Command ) {
@@ -96,6 +125,10 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 					case InputCommand.Down:
 						NextItem();
+						break;
+
+					case InputCommand.Enqueue:
+						ChangeExhaustedStrategy();
 						break;
 
 					case InputCommand.Dequeue:

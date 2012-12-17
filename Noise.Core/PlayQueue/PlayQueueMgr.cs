@@ -489,6 +489,8 @@ namespace Noise.Core.PlayQueue {
 			mExhaustedStrategy = mPlayExhaustedFactory.ProvideExhaustedStrategy( mPlayExhaustedStrategy );
 
 			Condition.Requires( mExhaustedStrategy ).IsNotNull();
+
+			mEventAggregator.Publish( new Events.PlayExhaustedChanged( mPlayExhaustedStrategy, mPlayExhaustedItem ));
 		}
 
 		public IEnumerable<PlayQueueTrack> PlayList {

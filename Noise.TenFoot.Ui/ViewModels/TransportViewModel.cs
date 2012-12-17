@@ -6,12 +6,19 @@ using Noise.UI.ViewModels;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class TransportViewModel : PlayerViewModel,
-									  IHandle<InputEvent> {
+									  IHandle<InputEvent>, IHandle<Infrastructure.Events.PlayExhaustedChanged> {
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly IPlayQueue			mPlayQueue;
+		private ePlayExhaustedStrategy		mCurrentStrategy;
+		private string						mCurrentStrategyTitle;
 
 		public TransportViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController ) :
 			base( eventAggregator, playQueue, playController ) {
 			mEventAggregator = eventAggregator;
+			mPlayQueue = playQueue;
+
+			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy;
+			FormatPlayStrategy();
 
 			mEventAggregator.Subscribe( this );
 		}
@@ -23,6 +30,38 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			else {
 				Execute_Play( null );
 			}
+		}
+
+		public string CurrentStrategy {
+			get{ return( mCurrentStrategyTitle ); }
+		}
+
+		private void FormatPlayStrategy() {
+			switch( mCurrentStrategy ) {
+				case ePlayExhaustedStrategy.PlayArtist:
+					mCurrentStrategyTitle = "continuing play with tracks from artist";
+					break;
+
+				case ePlayExhaustedStrategy.PlayFavorites:
+					mCurrentStrategyTitle = "continuing play with favorite tracks";
+					break;
+
+				case ePlayExhaustedStrategy.Replay:
+					mCurrentStrategyTitle = "continuing play by replaying queue";
+					break;
+
+				default:
+					mCurrentStrategyTitle = string.Empty;
+					break;
+			}
+
+			RaisePropertyChanged( () => CurrentStrategy );
+		}
+
+		public void Handle( Infrastructure.Events.PlayExhaustedChanged args ) {
+			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy;
+
+			FormatPlayStrategy();
 		}
 
 		public void Handle( InputEvent input ) {

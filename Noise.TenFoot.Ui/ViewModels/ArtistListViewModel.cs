@@ -16,6 +16,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private readonly IAlbumList			mAlbumsList;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IMetadataManager	mMetadataManager;
+		private readonly IPlayQueue			mPlayQueue;
 		private readonly BitmapImage		mUnknownArtistImage;
 		private TaskHandler					mArtistRetrievalTaskHandler;
 
@@ -28,12 +29,14 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	int							WrapItemCount { get; set; }
 
 		public ArtistListViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, IDatabaseInfo databaseInfo,
-									IAlbumList albumListViewModel, IArtistProvider artistProvider, IMetadataManager metadataManager ) :
+									IAlbumList albumListViewModel, IArtistProvider artistProvider, IMetadataManager metadataManager,
+									IPlayQueue playQueue ) :
 			base( eventAggregator ) {
 			mDatabaseInfo = databaseInfo;
 			mAlbumsList = albumListViewModel;
 			mArtistProvider = artistProvider;
 			mMetadataManager = metadataManager;
+			mPlayQueue = playQueue;
 
 			mUnknownArtistImage = resourceProvider.RetrieveImage( "Unknown Artist.png" );
 
@@ -102,6 +105,15 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private void OnArtistSelect( UiArtist artist ) {
 			if( artist != null ) {
 				DisplayItem();
+			}
+		}
+
+		protected override void EnqueueItem() {
+			if( SelectedItem != null ) {
+				mPlayQueue.SetPlayExhaustedStrategy( ePlayExhaustedStrategy.PlayArtist, SelectedItem.DbId );
+				if( mPlayQueue.CanStartPlayStrategy ) {
+					mPlayQueue.StartPlayStrategy();
+				}
 			}
 		}
 

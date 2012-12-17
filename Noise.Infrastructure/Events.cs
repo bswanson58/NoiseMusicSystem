@@ -113,6 +113,16 @@ namespace Noise.Infrastructure {
 			}
 		}
 
+		public class PlayExhaustedChanged {
+			public ePlayExhaustedStrategy	ExhaustedStrategy { get; private set; }
+			public long						ExhaustedItem { get; private set; }
+
+			public PlayExhaustedChanged( ePlayExhaustedStrategy strategy, long item ) {
+				ExhaustedStrategy = strategy;
+				ExhaustedItem = item;
+			}
+		}
+
 		public class PlayHistoryChanged {
 			public IPlayHistory	PlayHistory { get; private set; }
 
