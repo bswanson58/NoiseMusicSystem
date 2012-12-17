@@ -95,14 +95,16 @@ namespace Noise.Core {
 			mContainer.RegisterType<PlayStrategyTwoFers>();
 
 			mContainer.RegisterType<IPlayExhaustedFactory, PlayExhaustedFactory>();
-			mContainer.RegisterType<PlayExhaustedStrategyCategory>();
-			mContainer.RegisterType<PlayExhaustedStrategyFavorites>();
-			mContainer.RegisterType<PlayExhaustedStrategyGenre>();
-			mContainer.RegisterType<PlayExhaustedStrategyPlayList>();
-			mContainer.RegisterType<PlayExhaustedStrategyReplay>();
-			mContainer.RegisterType<PlayExhaustedStrategySimilar>();
-			mContainer.RegisterType<PlayExhaustedStrategyStop>();
-			mContainer.RegisterType<PlayExhaustedStrategyStream>();
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyCategory>( "CategoryExhaustedStrategy" );
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyFavorites>( "FavoritesExhaustedStrategy" );
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyArtist>( "ArtistExhaustedStrategy" );
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyGenre>( "GenreExhaustedStrategy" );
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyPlayList>( "PlayListExhaustedStrategy" );
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyReplay>( "ReplayExhaustedStrategy" );
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategySimilar>( "SimilarExhaustedStrategy" );
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyStop>( "StopExhaustedStrategy" );
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyStream>( "StreamExhaustedStrategy" );
+			mContainer.RegisterType<IEnumerable<IPlayExhaustedStrategy>, IPlayExhaustedStrategy[]>();
 
 			mContainer.RegisterType<IPlayQueueSupport, PlayQueueRandomTracks>( "PlayQueueRandomTracks" );
 			mContainer.RegisterType<IEnumerable<IPlayQueueSupport>, IPlayQueueSupport[]>();

@@ -34,6 +34,10 @@ namespace Noise.Core.PlayQueue {
 			mMetadataManager = metadataManager;
 		}
 
+		public override ePlayExhaustedStrategy PlayStrategy {
+			get{ return( ePlayExhaustedStrategy.PlaySimilar ); }
+		}
+
 		protected override void FillTrackList( long itemId ) {
 			mTrackList.Clear();
 

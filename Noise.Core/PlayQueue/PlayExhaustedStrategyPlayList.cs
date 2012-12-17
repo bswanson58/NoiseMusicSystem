@@ -10,6 +10,10 @@ namespace Noise.Core.PlayQueue {
 			mTrackProvider = trackProvider;
 		}
 
+		public ePlayExhaustedStrategy PlayStrategy {
+			get{ return( ePlayExhaustedStrategy.PlayList ); }
+		}
+
 		public bool QueueExhausted( IPlayQueue queueMgr, long itemId ) {
 			var retValue = false;
 			var	playList = mPlayListProvider.GetPlayList( itemId );

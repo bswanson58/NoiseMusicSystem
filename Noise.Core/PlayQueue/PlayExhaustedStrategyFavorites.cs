@@ -10,6 +10,10 @@ namespace Noise.Core.PlayQueue {
 			mTrackProvider = trackProvider;
 		}
 
+		public override ePlayExhaustedStrategy PlayStrategy {
+			get{ return( ePlayExhaustedStrategy.PlayFavorites ); }
+		}
+
 		protected override void FillTrackList( long itemId ) {
 			mTrackList.Clear();
 

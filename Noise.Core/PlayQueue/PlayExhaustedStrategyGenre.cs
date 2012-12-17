@@ -8,6 +8,10 @@ namespace Noise.Core.PlayQueue {
 			mTrackProvider = trackProvider;
 		}
 
+		public override ePlayExhaustedStrategy PlayStrategy {
+			get{ return( ePlayExhaustedStrategy.PlayGenre ); }
+		}
+
 		protected override void FillTrackList( long itemId ) {
 			using( var trackList = mTrackProvider.GetTrackListForGenre( itemId )) {
 				var	maxTracks = 250;

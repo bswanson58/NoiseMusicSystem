@@ -2,6 +2,10 @@
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayExhaustedStrategyReplay : IPlayExhaustedStrategy {
+		public ePlayExhaustedStrategy PlayStrategy {
+			get{ return( ePlayExhaustedStrategy.Replay ); }
+		}
+
 		public bool QueueExhausted( IPlayQueue queueMgr, long itemId ) {
 			var retValue = false;
 

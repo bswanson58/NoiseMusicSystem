@@ -8,6 +8,10 @@ namespace Noise.Core.PlayQueue {
 			mStreamProvider = streamProvider;
 		}
 
+		public ePlayExhaustedStrategy PlayStrategy {
+			get{ return( ePlayExhaustedStrategy.PlayStream ); }
+		}
+
 		public bool QueueExhausted( IPlayQueue queueMgr, long itemId ) {
 			var retValue = false;
 

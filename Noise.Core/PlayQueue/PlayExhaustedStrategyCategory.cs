@@ -17,6 +17,10 @@ namespace Noise.Core.PlayQueue {
 			mAlbums = new List<long>();
 		}
 
+		public ePlayExhaustedStrategy PlayStrategy {
+			get{ return( ePlayExhaustedStrategy.PlayCategory ); }
+		}
+
 		public bool QueueExhausted( IPlayQueue queueMgr, long itemId ) {
 			mQueueMgr = queueMgr;
 			mCategoryId = itemId;

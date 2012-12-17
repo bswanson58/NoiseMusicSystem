@@ -14,6 +14,8 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		protected abstract void FillTrackList( long itemId );
+		public abstract ePlayExhaustedStrategy PlayStrategy { get; }
+
 
 		public bool QueueExhausted( IPlayQueue queueMgr, long itemId ) {
 			mQueueMgr = queueMgr;
