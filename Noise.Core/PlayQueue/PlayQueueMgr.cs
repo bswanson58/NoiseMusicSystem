@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
+using CuttingEdge.Conditions;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -352,7 +353,9 @@ namespace Noise.Core.PlayQueue {
 				}
 			}
 
-			mExhaustedStrategy.NextTrackPlayed();
+			if( mExhaustedStrategy != null ) {
+				mExhaustedStrategy.NextTrackPlayed();
+			}
 
 			return( track );
 		}
@@ -377,6 +380,7 @@ namespace Noise.Core.PlayQueue {
 					retValue = mStrategy.NextTrack( this, mPlayQueue );
 
 					if(( retValue == null ) &&
+					   ( mExhaustedStrategy != null ) &&
 					   ( mPlayQueue.Count > 0 )) {
 						if( mExhaustedStrategy.QueueExhausted( this, mPlayExhaustedItem )) {
 							retValue = mStrategy.NextTrack( this, mPlayQueue );
@@ -469,6 +473,8 @@ namespace Noise.Core.PlayQueue {
 			mPlayExhaustedStrategy = strategy;
 			mPlayExhaustedItem = itemId;
 			mExhaustedStrategy = mPlayExhaustedFactory.ProvideExhaustedStrategy( mPlayExhaustedStrategy );
+
+			Condition.Requires( mExhaustedStrategy ).IsNotNull();
 		}
 
 		public IEnumerable<PlayQueueTrack> PlayList {
