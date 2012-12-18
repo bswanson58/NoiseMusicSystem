@@ -27,15 +27,12 @@ namespace Noise.Core.PlayQueue {
 		private readonly IMetadataManager	mMetadataManager;
 
 		public PlayExhaustedStrategySimilar( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
-											 IMetadataManager metadataManager ) {
+											 IMetadataManager metadataManager ) :
+			base( ePlayExhaustedStrategy.PlaySimilar ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mMetadataManager = metadataManager;
-		}
-
-		public override ePlayExhaustedStrategy PlayStrategy {
-			get{ return( ePlayExhaustedStrategy.PlaySimilar ); }
 		}
 
 		protected override void FillTrackList( long itemId ) {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CuttingEdge.Conditions;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
@@ -22,27 +23,29 @@ namespace Noise.Core.PlayQueue {
 			get{ return( ePlayExhaustedStrategy.PlayArtist ); }
 		}
 
-		public bool QueueExhausted( IPlayQueue queueMgr, long itemId ) {
+		public bool QueueTracks( IPlayQueue queueMgr, long itemId ) {
+			Condition.Requires( queueMgr ).IsNotNull();
+
+			var retValue = false;
+
 			mQueueMgr = queueMgr;
-			mArtistId = itemId;
 
-			using( var albumList = mAlbumProvider.GetAlbumList( mArtistId )) {
+			if( mArtistId != itemId ) {
 				mAlbums.Clear();
-				mAlbums.AddRange( from album in albumList.List select album.DbId );
+				mArtistId = itemId;
 			}
 
-			return( QueueTracks( 3 ));
-		}
-
-		public void NextTrackPlayed() {
-			if(( mQueueMgr != null ) &&
-			   ( mQueueMgr.StrategyRequestsQueued )) {
-				var	trackCount = mQueueMgr.UnplayedTrackCount;
-
-				if( trackCount < 3 ) {
-					QueueTracks( 3 - trackCount );
+			if( queueMgr != null ) {
+				if(!mAlbums.Any()) {
+					using( var albumList = mAlbumProvider.GetAlbumList( mArtistId )) {
+						mAlbums.AddRange( from album in albumList.List select album.DbId );
+					}
 				}
+
+				retValue =  QueueTracks( 3 - mQueueMgr.UnplayedTrackCount );
 			}
+
+			return( retValue );
 		}
 
 		private bool QueueTracks( int trackCount ) {
@@ -51,6 +54,7 @@ namespace Noise.Core.PlayQueue {
 			var circuitBreaker = 100;
 
 			while(( trackCount > 0 ) &&
+				  ( mAlbums.Any()) &&
 			      ( circuitBreaker > 0 )) {
 				var next = r.Next( mAlbums.Count );
 				var albumId = mAlbums.Skip( next ).FirstOrDefault();

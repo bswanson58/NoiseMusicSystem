@@ -1,4 +1,5 @@
-﻿using Noise.Infrastructure.Interfaces;
+﻿using CuttingEdge.Conditions;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayExhaustedStrategyPlayList : IPlayExhaustedStrategy {
@@ -14,7 +15,9 @@ namespace Noise.Core.PlayQueue {
 			get{ return( ePlayExhaustedStrategy.PlayList ); }
 		}
 
-		public bool QueueExhausted( IPlayQueue queueMgr, long itemId ) {
+		public bool QueueTracks( IPlayQueue queueMgr, long itemId ) {
+			Condition.Requires( queueMgr ).IsNotNull();
+
 			var retValue = false;
 			var	playList = mPlayListProvider.GetPlayList( itemId );
 
@@ -29,10 +32,8 @@ namespace Noise.Core.PlayQueue {
 					}
 				}
 			}
-			return( retValue );
-		}
 
-		public void NextTrackPlayed() {
+			return( retValue );
 		}
 	}
 }

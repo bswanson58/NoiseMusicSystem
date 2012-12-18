@@ -1,49 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CuttingEdge.Conditions;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
 	internal abstract class PlayExhaustedListBase : IPlayExhaustedStrategy {
-		protected readonly List<DbTrack>	mTrackList;
-		protected IPlayQueue				mQueueMgr;
+		private readonly ePlayExhaustedStrategy	mStrategy;
+		protected readonly List<DbTrack>		mTrackList;
+		protected IPlayQueue					mQueueMgr;
+		private		long						mCurrentId;
 
-		protected PlayExhaustedListBase() {
+		protected abstract void FillTrackList( long itemId );
+
+		protected PlayExhaustedListBase( ePlayExhaustedStrategy strategy ) {
+			mStrategy = strategy;
 			mTrackList = new List<DbTrack>();
 		}
 
-		protected abstract void FillTrackList( long itemId );
-		public abstract ePlayExhaustedStrategy PlayStrategy { get; }
-
-
-		public bool QueueExhausted( IPlayQueue queueMgr, long itemId ) {
-			mQueueMgr = queueMgr;
-
-			if( !mQueueMgr.StrategyRequestsQueued ) {
-				FillTrackList( itemId );
-			}
-
-			return ( QueueTracks( 3 ) );
+		public ePlayExhaustedStrategy PlayStrategy {
+			get { return( mStrategy ); }
 		}
 
-		public void NextTrackPlayed() {
-			if( ( mQueueMgr != null ) &&
-			   ( mQueueMgr.StrategyRequestsQueued ) ) {
-				var	trackCount = mQueueMgr.UnplayedTrackCount;
+		public bool QueueTracks( IPlayQueue queueMgr, long itemId ) {
+			Condition.Requires( queueMgr ).IsNotNull();
 
-				if( trackCount < 3 ) {
-					QueueTracks( 3 - trackCount );
+			var retValue = false;
+
+			if( mCurrentId != itemId ) {
+				mTrackList.Clear();
+				mCurrentId = itemId;
+			}
+
+			if( queueMgr != null ) {
+				mQueueMgr = queueMgr;
+
+				if(!mTrackList.Any()) {
+					FillTrackList( itemId );
 				}
+
+				retValue =  QueueTracks( 3 - mQueueMgr.UnplayedTrackCount );
 			}
+
+			return( retValue );
 		}
 
-		protected bool QueueTracks( int count ) {
+		private bool QueueTracks( int count ) {
 			var retValue= false;
 
 			for( int x = 0; x < count; x++ ) {
 				if( mTrackList.Count > 0 ) {
-					mQueueMgr.StrategyAdd( SelectTrack() );
+					mQueueMgr.StrategyAdd( SelectTrack());
 
 					retValue = true;
 				}

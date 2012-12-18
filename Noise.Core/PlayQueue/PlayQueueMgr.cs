@@ -336,7 +336,7 @@ namespace Noise.Core.PlayQueue {
 
 		public void StartPlayStrategy() {
 			if( CanStartPlayStrategy ) {
-				mExhaustedStrategy.QueueExhausted( this, mPlayExhaustedItem );
+				mExhaustedStrategy.QueueTracks( this, mPlayExhaustedItem );
 			}
 		}
 
@@ -368,7 +368,7 @@ namespace Noise.Core.PlayQueue {
 			}
 
 			if( mExhaustedStrategy != null ) {
-				mExhaustedStrategy.NextTrackPlayed();
+				mExhaustedStrategy.QueueTracks( this, mPlayExhaustedItem );
 			}
 
 			return( track );
@@ -396,7 +396,7 @@ namespace Noise.Core.PlayQueue {
 					if(( retValue == null ) &&
 					   ( mExhaustedStrategy != null ) &&
 					   ( mPlayQueue.Count > 0 )) {
-						if( mExhaustedStrategy.QueueExhausted( this, mPlayExhaustedItem )) {
+						if( mExhaustedStrategy.QueueTracks( this, mPlayExhaustedItem )) {
 							retValue = mStrategy.NextTrack( this, mPlayQueue );
 						}
 					}

@@ -4,12 +4,9 @@ namespace Noise.Core.PlayQueue {
 	internal class PlayExhaustedStrategyGenre : PlayExhaustedListBase {
 		private readonly ITrackProvider	mTrackProvider;
 
-		public PlayExhaustedStrategyGenre( ITrackProvider trackProvider ) {
+		public PlayExhaustedStrategyGenre( ITrackProvider trackProvider ) :
+			base( ePlayExhaustedStrategy.PlayGenre ) {
 			mTrackProvider = trackProvider;
-		}
-
-		public override ePlayExhaustedStrategy PlayStrategy {
-			get{ return( ePlayExhaustedStrategy.PlayGenre ); }
 		}
 
 		protected override void FillTrackList( long itemId ) {

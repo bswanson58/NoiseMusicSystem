@@ -6,12 +6,9 @@ namespace Noise.Core.PlayQueue {
 	internal class PlayExhaustedStrategyFavorites : PlayExhaustedListBase {
 		private readonly	ITrackProvider	mTrackProvider;
 
-		public PlayExhaustedStrategyFavorites( ITrackProvider trackProvider ) {
+		public PlayExhaustedStrategyFavorites( ITrackProvider trackProvider ) :
+			base( ePlayExhaustedStrategy.PlayFavorites ) {
 			mTrackProvider = trackProvider;
-		}
-
-		public override ePlayExhaustedStrategy PlayStrategy {
-			get{ return( ePlayExhaustedStrategy.PlayFavorites ); }
 		}
 
 		protected override void FillTrackList( long itemId ) {
