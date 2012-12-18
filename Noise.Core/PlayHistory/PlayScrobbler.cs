@@ -70,10 +70,16 @@ namespace Noise.Core.PlayHistory {
 		}
 
 		private void SetTrackPlayed( Track playedTrack ) {
-			ScrobblerTaskHander.StartTask( () => mScrobbler.Scrobble( playedTrack ),
-				() => { },
-				exception => NoiseLogger.Current.LogException( "PlayScrobbler:Scrobble", exception )
-			);
+			if( playedTrack.Duration > TimeSpan.FromSeconds( 30 )) {
+				var timeLimit = playedTrack.WhenStartedPlaying + new TimeSpan( 0, 0, (int)playedTrack.Duration.TotalSeconds / 2 );
+
+				if( DateTime.Now > timeLimit ) {
+					ScrobblerTaskHander.StartTask( () => mScrobbler.Scrobble( playedTrack ),
+						() => { },
+						exception => NoiseLogger.Current.LogException( "PlayScrobbler:Scrobble", exception )
+					);
+				}
+			}
 		}
 
 		public void Initialize() {
