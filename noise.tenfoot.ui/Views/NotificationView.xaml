@@ -1,0 +1,57 @@
+﻿<UserControl x:Class="Noise.TenFoot.Ui.Views.NotificationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             Behaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="300">
+    <Grid >
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="NotificationState">
+                <VisualState x:Name="BaseState" />
+                <VisualState x:Name="Notifying">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="NotificationContent">
+                            <EasingDoubleKeyFrame KeyTime="0" Value="0">
+                                <EasingDoubleKeyFrame.EasingFunction>
+                                    <ExponentialEase EasingMode="EaseIn"/>
+                                </EasingDoubleKeyFrame.EasingFunction>
+                            </EasingDoubleKeyFrame>
+                            <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0.75"/>
+                            <EasingDoubleKeyFrame KeyTime="0:0:4.5" Value="0.75">
+                                <EasingDoubleKeyFrame.EasingFunction>
+                                    <ExponentialEase EasingMode="EaseOut"/>
+                                </EasingDoubleKeyFrame.EasingFunction>
+                            </EasingDoubleKeyFrame>
+                            <EasingDoubleKeyFrame KeyTime="0:0:5" Value="0"/>
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Silent">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="NotificationContent">
+                            <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock x:Name="NotificationContent" Grid.Column="1" Grid.Row="1" Padding="11"
+                   Style="{StaticResource ContentTextStyle}" Background="{StaticResource FocusBrush}" FontSize="18"/>
+    </Grid>
+</UserControl>

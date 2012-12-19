@@ -17,6 +17,7 @@ namespace Noise.TenFooter {
 		private readonly IHome					mHomeView;
 		private readonly ConfigurationViewModel	mConfiguration;
 		private readonly TransportViewModel		mTransportViewModel;
+		private readonly NotificationViewModel	mNotificationViewModel;
 		private readonly InputProcessor			mInputProcessor;
 		private readonly DispatcherTimer		mTimer;
 		private DateTime						mCurrentTime;
@@ -25,12 +26,13 @@ namespace Noise.TenFooter {
 		private bool							mDialogActive;
 
 		public ShellViewModel( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration,
-							   InputProcessor inputProcessor, IWindowManager windowManager,
+							   InputProcessor inputProcessor, IWindowManager windowManager, NotificationViewModel notificationViewModel,
 							   IHome homeViewModel, TransportViewModel transportViewModel, ConfigurationViewModel configurationViewModel ) {
 			mEventAggregator = eventAggregator;
 			mWindowManager = windowManager;
 			mHomeView = homeViewModel;
 			mConfiguration = configurationViewModel;
+			mNotificationViewModel = notificationViewModel;
 			mInputProcessor = inputProcessor;
 
 			mTransportViewModel = transportViewModel;
@@ -48,6 +50,10 @@ namespace Noise.TenFooter {
 
 	    public PlayerViewModel PlayerView {
 		    get{ return( mTransportViewModel ); }
+	    }
+
+	    public NotificationViewModel NotificationView {
+		    get{ return( mNotificationViewModel ); }
 	    }
 
 	    public string ScreenTitle {

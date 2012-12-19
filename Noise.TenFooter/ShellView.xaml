@@ -62,6 +62,8 @@
                            Style="{StaticResource BasicTextStyle}" Text="{Binding CurrentTime, Converter={StaticResource TimeFormatter}}" />
             </Grid>
         </Grid>
+        
+        <ContentControl x:Name="NotificationView" Margin="0,0,30,120" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
     </Grid>
 
 </Window>

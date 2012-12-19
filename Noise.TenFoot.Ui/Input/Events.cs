@@ -37,5 +37,13 @@ namespace Noise.TenFoot.Ui.Input {
 				Album = album;
 			}
 		}
+
+		public class UserNotification {
+			public string	NotificationContent { get; private set; }
+
+			public UserNotification( string text ) {
+				NotificationContent = text;
+			}
+		}
 	}
 }
