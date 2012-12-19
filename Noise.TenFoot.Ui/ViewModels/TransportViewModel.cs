@@ -1,5 +1,6 @@
 ﻿using System;
 using Caliburn.Micro;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Input;
 using Noise.UI.ViewModels;
@@ -8,17 +9,20 @@ namespace Noise.TenFoot.Ui.ViewModels {
 	public class TransportViewModel : PlayerViewModel,
 									  IHandle<InputEvent>, IHandle<Infrastructure.Events.PlayExhaustedChanged> {
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly IArtistProvider	mArtistProvider;
 		private readonly IPlayQueue			mPlayQueue;
 		private ePlayExhaustedStrategy		mCurrentStrategy;
 		private string						mCurrentStrategyTitle;
 
-		public TransportViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController ) :
+		public TransportViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider,
+								   IPlayQueue playQueue, IPlayController playController ) :
 			base( eventAggregator, playQueue, playController ) {
 			mEventAggregator = eventAggregator;
+			mArtistProvider = artistProvider;
 			mPlayQueue = playQueue;
 
 			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy;
-			FormatPlayStrategy();
+			FormatPlayStrategy( Constants.cDatabaseNullOid );
 
 			mEventAggregator.Subscribe( this );
 		}
@@ -36,10 +40,12 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			get{ return( mCurrentStrategyTitle ); }
 		}
 
-		private void FormatPlayStrategy() {
+		private void FormatPlayStrategy( long strategyId ) {
 			switch( mCurrentStrategy ) {
 				case ePlayExhaustedStrategy.PlayArtist:
-					mCurrentStrategyTitle = "continuing play with tracks from artist";
+					var artist = mArtistProvider.GetArtist( strategyId );
+					mCurrentStrategyTitle = artist != null ? string.Format( "continuing play with tracks from '{0}'", artist.Name ) :
+															 "continuing play with tracks from artist";
 					break;
 
 				case ePlayExhaustedStrategy.PlayFavorites:
@@ -61,7 +67,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public void Handle( Infrastructure.Events.PlayExhaustedChanged args ) {
 			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy;
 
-			FormatPlayStrategy();
+			FormatPlayStrategy( args.ExhaustedItem );
 		}
 
 		public void Handle( InputEvent input ) {
