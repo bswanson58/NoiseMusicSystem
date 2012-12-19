@@ -5,7 +5,7 @@ using System.Windows.Controls;
 // from: http://tdanemar.wordpress.com/2009/11/15/using-the-visualstatemanager-with-the-model-view-viewmodel-pattern-in-wpf-or-silverlight/
 // Add to root of control: Behaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
 
-namespace Noise.UI.Behaviours {
+namespace ReusableBits.Ui.Behaviours {
 	public class VisualStateAdapter : DependencyObject {
 		public static string GetVisualState( DependencyObject obj ) {
 			return (string)obj.GetValue( VisualStateProperty );

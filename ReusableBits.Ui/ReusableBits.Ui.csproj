@@ -108,6 +108,7 @@
     <Compile Include="Behaviours\FullScreenBehavior.cs" />
     <Compile Include="Behaviours\ListBoxSelectionVisible.cs" />
     <Compile Include="Behaviours\MouseHideBehavior.cs" />
+    <Compile Include="Behaviours\VisualStateAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueConverters\BaseValueConverter.cs" />
     <Compile Include="ValueConverters\BooleanVisibilityConverter.cs" />
