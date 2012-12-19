@@ -63,7 +63,7 @@
                                                           Offset="{Binding Offset,
                                                                            RelativeSource={RelativeSource TemplatedParent},
                                                                            Mode=TwoWay}">
-                                <i:Interaction.Behaviors>
+                                <!--i:Interaction.Behaviors>
                                     <ei:FluidMoveBehavior AppliesTo="Children">
                                         <ei:FluidMoveBehavior.EaseY>
                                             <PowerEase EasingMode="EaseOut" />
@@ -72,7 +72,7 @@
                                             <PowerEase EasingMode="EaseOut" />
                                         </ei:FluidMoveBehavior.EaseX>
                                     </ei:FluidMoveBehavior>
-                                </i:Interaction.Behaviors>
+                                </i:Interaction.Behaviors-->
                             </LoopingListBox:LoopWrapPanel>
                         </ScrollViewer>
                     </Border>
