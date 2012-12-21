@@ -53,7 +53,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private void RetrieveAlbumsForArtist( long artistId ) {
 			AlbumRetrievalTaskHandler.StartTask( () => {
 			                                     	using( var albumList = mAlbumProvider.GetAlbumList( artistId )) {
-			                                     		ItemList.AddRange( albumList.List );
+			                                     		ItemList.AddRange( from album in albumList.List orderby album.Name select album );
 			                                     	}
 			                                     },
 												 () => { SelectedItem = ItemList.FirstOrDefault(); },
