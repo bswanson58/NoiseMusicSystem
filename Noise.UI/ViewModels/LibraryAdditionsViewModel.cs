@@ -32,8 +32,8 @@ namespace Noise.UI.ViewModels {
 
 			mNodeList = new BindableCollection<LibraryAdditionNode>();
 
-			mHorizonCount = 100;
-			mHorizonTime = DateTime.Now - new TimeSpan( 3, 0, 0, 0 );
+			mHorizonCount = 1000;
+			mHorizonTime = DateTime.Now - new TimeSpan( 90, 0, 0, 0 );
 
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 			if( configuration != null ) {

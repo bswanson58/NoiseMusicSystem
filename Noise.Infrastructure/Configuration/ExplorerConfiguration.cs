@@ -78,13 +78,13 @@ namespace Noise.Infrastructure.Configuration {
 			set { base[cPlayStrategyProperty] = value; }
 		}
 
-		[ConfigurationPropertyAttribute( cNewAdditionsHorizonDaysProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = (UInt16)7 )]
+		[ConfigurationPropertyAttribute( cNewAdditionsHorizonDaysProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = (UInt16)90 )]
 		public UInt16 NewAdditionsHorizonDays {
 			get { return ((UInt16)( base[cNewAdditionsHorizonDaysProperty] ) ); }
 			set { base[cNewAdditionsHorizonDaysProperty] = value; }
 		}
 
-		[ConfigurationPropertyAttribute( cNewAdditionsHorizonCountProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = (UInt32)250 )]
+		[ConfigurationPropertyAttribute( cNewAdditionsHorizonCountProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = (UInt32)1000 )]
 		public UInt32 NewAdditionsHorizonCount {
 			get { return ((UInt32)( base[cNewAdditionsHorizonCountProperty] ) ); }
 			set { base[cNewAdditionsHorizonCountProperty] = value; }
