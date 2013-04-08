@@ -42,8 +42,15 @@ namespace Noise.Metadata {
 												metaDirectory );
 				mDocumentStore = new EmbeddableDocumentStore { DataDirectory = libraryPath };
 #if DEBUG
-				( mDocumentStore as EmbeddableDocumentStore ).UseEmbeddedHttpServer = true;
-				 NonAdminHttp.EnsureCanListenToWhenInNonAdminContext( 8080 );
+				try {
+					( mDocumentStore as EmbeddableDocumentStore ).UseEmbeddedHttpServer = true;
+					NonAdminHttp.EnsureCanListenToWhenInNonAdminContext( 8080 );
+				}
+				catch( Exception ex ) {
+					NoiseLogger.Current.LogException( "RavenDB Embedded HTTP Server could not be initialized", ex );
+
+					( mDocumentStore as EmbeddableDocumentStore ).UseEmbeddedHttpServer = false;
+				}
 #endif
 				mDocumentStore.Initialize();
 				mArtistMetadataManager.Initialize( mDocumentStore );
