@@ -36,24 +36,35 @@
   <ItemGroup>
     <Content Include="Automapper.wxi" />
     <Content Include="BASS Audio.wxi" />
+    <Content Include="CaliburnMicro.wxi" />
     <Content Include="CuttingEdge.wxi" />
     <Content Include="Eloquera.wxi" />
+    <Content Include="EntityFramework.wxi" />
     <Content Include="GDataDB.wxi" />
-    <Content Include="GoogleApiForDotNet.wxi" />
-    <Content Include="Hammock.wxi" />
+    <Content Include="GongSolutions.wxi" />
+    <Content Include="LastFmSharp.wxi" />
     <Content Include="Lucene.wxi" />
+    <Content Include="MahApps.wxi" />
     <Content Include="Microsoft.wxi" />
+    <Content Include="NewtonsoftJson.wxi" />
     <Content Include="NLog.wxi" />
     <Content Include="Noise.Core.wxi" />
-    <Content Include="NServiceBus.wxi" />
     <Content Include="Observal.wxi" />
     <Content Include="Prism.wxi" />
-    <Content Include="Quartz.wxi" />
+    <Content Include="RavenDB.wxi" />
     <Content Include="recls.wxi" />
     <Content Include="Stateless.wxi" />
     <Content Include="TagLibSharp.wxi" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DiscogsConnect\DiscogsConnect.csproj">
+      <Name>DiscogsConnect</Name>
+      <Project>{6f475ad9-e1b4-4ab1-8e82-b9f5a7608568}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\..\LastFmSharp\LastFmSharp.csproj">
       <Name>LastFmSharp</Name>
       <Project>{b57a7572-5f5c-4166-ae0b-9814b550e9b2}</Project>
@@ -78,6 +89,14 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
+    <ProjectReference Include="..\..\Noise.BlobStorage\Noise.BlobStorage.csproj">
+      <Name>Noise.BlobStorage</Name>
+      <Project>{9f4086fd-8332-489f-8a96-8d4425db5df2}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\..\Noise.Core\Noise.Core.csproj">
       <Name>Noise.Core</Name>
       <Project>{33a45442-71e5-4bfe-b37f-129edb4f18e8}</Project>
@@ -85,6 +104,30 @@
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Noise.Desktop\Noise.Desktop.csproj">
+      <Name>Noise.Desktop</Name>
+      <Project>{3ecb477e-5631-4e77-b66f-a64bc37c42ec}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Noise.EloqueraDatabase\Noise.EloqueraDatabase.csproj">
+      <Name>Noise.EloqueraDatabase</Name>
+      <Project>{16dcd043-e491-4f03-a46a-3c0273e8403d}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Noise.EntityFrameworkDatabase\Noise.EntityFrameworkDatabase.csproj">
+      <Name>Noise.EntityFrameworkDatabase</Name>
+      <Project>{ed3a5818-ed75-476b-8146-d5eee289d2a2}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
     <ProjectReference Include="..\..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Name>Noise.Infrastructure</Name>
@@ -94,29 +137,21 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\..\Noise.Service.Infrastructure\Noise.Service.Infrastructure.csproj">
-      <Name>Noise.Service.Infrastructure</Name>
-      <Project>{bc70f5ed-672c-4690-bef7-7950907e95c5}</Project>
+    <ProjectReference Include="..\..\Noise.Metadata\Noise.Metadata.csproj">
+      <Name>Noise.Metadata</Name>
+      <Project>{983d3c18-8012-48ae-ae21-b6503fc0f5b8}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\..\Noise.ServiceImpl\Noise.ServiceImpl.csproj">
-      <Name>Noise.ServiceImpl</Name>
-      <Project>{bb5ecd63-efba-439d-a669-73095840fd2e}</Project>
+    <ProjectReference Include="..\..\Noise.RemoteHost\Noise.RemoteHost.csproj">
+      <Name>Noise.RemoteHost</Name>
+      <Project>{85472b64-4f49-4182-8709-9229e25e5119}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Noise.Service\Noise.Service.csproj">
-      <Name>Noise.Service</Name>
-      <Project>{ba542e58-159a-4764-9068-8b8579d234db}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
     <ProjectReference Include="..\..\Noise.UI\Noise.UI.csproj">
       <Name>Noise.UI</Name>
@@ -125,6 +160,30 @@
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
+      <Name>ReusableBits.Mvvm</Name>
+      <Project>{8930138b-f96a-4a56-84cf-d660730989c9}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ReusableBits.Ui\ReusableBits.Ui.csproj">
+      <Name>ReusableBits.Ui</Name>
+      <Project>{704bd4a9-2fc2-4716-ab94-d3714a6acc39}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ReusableBits\ReusableBits.csproj">
+      <Name>ReusableBits</Name>
+      <Project>{0522b043-a04a-4669-90db-204c96d52224}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />

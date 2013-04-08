@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="EntityFramework.dll" Guid="">
+      <File Id="EntityFramework.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)EntityFramework.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="EntityFrameworkFiles">
+    <ComponentRef Id="EntityFramework.dll" />
+  </ComponentGroup>
+</Include>

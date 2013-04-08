@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="Newtonsoft.Json.dll" Guid="f3f858cd-b2c7-4936-a480-d17ebb3e7d32">
+      <File Id="Newtonsoft.Json.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Newtonsoft.Json.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="NewtonsoftJsonFiles">
+    <ComponentRef Id="Newtonsoft.Json.dll" />
+  </ComponentGroup>
+</Include>

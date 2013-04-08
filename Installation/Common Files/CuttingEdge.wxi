@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-  <?define CuttingEdgeLibraryFolder="$(var.SolutionDir)\lib\CuttingEdge.Conditions\v1.1.0.10041\"?>
-
   <DirectoryRef Id="INSTALLDIRECTORY">
     <Component Id="CuttingEdge.Conditions.dll" Guid="d98b4f20-cd6d-4cda-8012-c6fb7a185867">
-      <File Id="CuttingEdge.Conditions.dll" DiskId="10" Source="$(var.CuttingEdgeLibraryFolder)CuttingEdge.Conditions.dll" KeyPath="yes" Checksum="yes" />
+      <File Id="CuttingEdge.Conditions.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)CuttingEdge.Conditions.dll" KeyPath="yes" Checksum="yes" />
     </Component>
   </DirectoryRef>
 

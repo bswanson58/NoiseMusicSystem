@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="BouncyCastle.Crypto.dll" Guid="32f6f21b-55c8-4e39-928c-dc5628119347">
+      <File Id="BouncyCastle.Crypto.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)BouncyCastle.Crypto.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Esent.Interop.dll" Guid="0570fd90-e8ad-4fb1-a3de-9663d1d5a53d">
+      <File Id="Esent.Interop.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Esent.Interop.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="ICSharpCode.NRefactory.dll" Guid="aa920ed1-483a-4ccf-bda4-3a52cd792b1d">
+      <File Id="ICSharpCode.NRefactory.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)ICSharpCode.NRefactory.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Lucene.Net.Contrib.Spatial.dll" Guid="13fbac98-0273-450f-b7f2-fbe5c9c242ea">
+      <File Id="Lucene.Net.Contrib.Spatial.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Lucene.Net.Contrib.Spatial.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Lucene.Net.Contrib.SpellChecker.dll" Guid="033f570c-2da3-485d-bedc-190a026a356e">
+      <File Id="Lucene.Net.Contrib.SpellChecker.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Lucene.Net.Contrib.SpellChecker.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Raven.Abstractions.dll" Guid="2042f3cd-a492-4ed2-8ca8-cc712742a8c3">
+      <File Id="Raven.Abstractions.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Raven.Abstractions.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Raven.Client.Embedded.dll" Guid="c022788d-7999-449e-bce4-9394fc5617b0">
+      <File Id="Raven.Client.Embedded.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Raven.Client.Embedded.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Raven.Client.Lightweight.dll" Guid="785c8997-a3f5-44e9-9eca-04f3ddef4ea4">
+      <File Id="Raven.Client.Lightweight.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Raven.Client.Lightweight.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Raven.Database.dll" Guid="ae5e7d13-e5e8-4816-9b1a-0ddf30b12466">
+      <File Id="Raven.Database.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Raven.Database.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Raven.Storage.Esent.dll" Guid="c62ca0ee-f5a7-490b-99ef-27120ecfc4cf">
+      <File Id="Raven.Storage.Esent.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Raven.Storage.Esent.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Spatial4n.Core.dll" Guid="">
+      <File Id="Spatial4N.Core.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Spatial4n.Core.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="RavenDBFiles">
+    <ComponentRef Id="BouncyCastle.Crypto.dll" />
+    <ComponentRef Id="Esent.Interop.dll" />
+    <ComponentRef Id="ICSharpCode.NRefactory.dll" />
+    <ComponentRef Id="Lucene.Net.Contrib.Spatial.dll" />
+    <ComponentRef Id="Lucene.Net.Contrib.SpellChecker.dll" />
+    <ComponentRef Id="Raven.Abstractions.dll" />
+    <ComponentRef Id="Raven.Client.Embedded.dll" />
+    <ComponentRef Id="Raven.Client.Lightweight.dll" />
+    <ComponentRef Id="Raven.Database.dll" />
+    <ComponentRef Id="Raven.Storage.Esent.dll" />
+    <ComponentRef Id="Spatial4n.Core.dll" />
+  </ComponentGroup>
+</Include>

@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-  <?define StatelessLibraryFolder="$(var.SolutionDir)\lib\Stateless\v2.3.1.1\"?>
-
   <DirectoryRef Id="INSTALLDIRECTORY">
     <Component Id="Stateless.dll" Guid="b23fef01-3ed2-4cf2-842b-0bfd83015a65">
-      <File Id="Stateless.dll" DiskId="10" Source="$(var.StatelessLibraryFolder)Stateless.dll" KeyPath="yes" Checksum="yes" />
+      <File Id="Stateless.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Stateless.dll" KeyPath="yes" Checksum="yes" />
     </Component>
   </DirectoryRef>
 

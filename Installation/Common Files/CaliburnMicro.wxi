@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="Caliburn.Micro.dll" Guid="e3d8353b-6014-452f-aaac-e2bfc616ea0d">
+      <File Id="Caliburn.Micro.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Caliburn.Micro.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="CaliburnMicroFiles">
+    <ComponentRef Id="Caliburn.Micro.dll" />
+  </ComponentGroup>
+</Include>

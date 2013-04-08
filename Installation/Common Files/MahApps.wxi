@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="MahApps.Metro.dll" Guid="96053360-6aa9-4adb-9734-52063e8302f0">
+      <File Id="MahApps.Metro.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)MahApps.Metro.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="MahAppsMetroFiles">
+    <ComponentRef Id="MahApps.Metro.dll" />
+  </ComponentGroup>
+</Include>

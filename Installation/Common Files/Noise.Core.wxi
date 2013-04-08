@@ -1,26 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
   <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="DiscogsConnect" Guid="8a0e0770-338d-49d8-b687-821e8024d42b">
+      <File Id="DiscogsConnect.dll" DiskId="10" Source="$(var.DiscogsConnect.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Microsoft.Net.Http" Guid="45c537e9-6a3b-48f2-b3ed-828e01e9285d">
+      <File Id="Microsoft.Net.Http.dll" DiskId="10" Source="$(var.DiscogsConnect.TargetDir)Microsoft.Net.Http.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
     <Component Id="Noise.AppSupport" Guid="b8941cb2-e1f1-42ef-be6d-b9ec5b1537d7">
       <File Id="Noise.AppSupport.dll" DiskId="10" Source="$(var.Noise.AppSupport.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Noise.BlobStorage" Guid="d0b7ff59-e926-4499-92f2-23849a41c96c">
+      <File Id="Noise.BlobStorage.dll" DiskId="10" Source="$(var.Noise.BlobStorage.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
     <Component Id="Noise.Core" Guid="9c54113f-f515-407b-beaa-db95c082c165">
       <File Id="Noise.Core.dll" DiskId="10" Source="$(var.Noise.Core.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
+    <Component Id="Noise.EloqueraDatabase" Guid="b963f816-d3be-4f6e-a6db-5ad09d67224d">
+      <File Id="Noise.EloqueraDatabase.dll" DiskId="10" Source="$(var.Noise.EloqueraDatabase.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Noise.EntityFrameworkDatabase" Guid="96832ab1-0333-458a-b121-cd670cb40367">
+      <File Id="Noise.EntityFrameworkDatabase.dll" DiskId="10" Source="$(var.Noise.EntityFrameworkDatabase.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
     <Component Id="Noise.Infrastructure" Guid="89d9bf19-146a-427e-a102-f45e3c71f02b">
       <File Id="Noise.Infrastructure.dll" DiskId="10" Source="$(var.Noise.Infrastructure.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="Noise.Service.Infrastructure" Guid="d30c5ab4-54eb-4fcb-92b0-6aab7554c54d">
-      <File Id="Noise.Service.Infrastructure.dll" DiskId="10" Source="$(var.Noise.Service.Infrastructure.TargetPath)" KeyPath="yes" Checksum="yes" />
+    <Component Id="Noise.Metadata" Guid="3c4a1358-c49d-4624-8c5b-0f2c5a74df65">
+      <File Id="Noise.Metadata.dll" DiskId="10" Source="$(var.Noise.Metadata.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="Noise.ServiceImpl" Guid="3240d15a-f33d-4dd3-93e2-085fef545908">
-      <File Id="Noise.ServiceImpl" DiskId="1" Source="$(var.Noise.ServiceImpl.TargetDir)Noise.ServiceImpl.dll" KeyPath="yes" Checksum="yes" />
+    <Component Id="Noise.RemoteHost" Guid="f82346d0-3331-4e4d-8a9f-be8b3f149ef8">
+      <File Id="Noise.RemoteHost.dll" DiskId="10" Source="$(var.Noise.RemoteHost.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
     <Component Id="Noise.UI" Guid="382bd861-7acc-4da5-b170-67d12ad72ad3">
       <File Id="Noise.UI.dll" DiskId="10" Source="$(var.Noise.UI.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="LastFmSharp.dll" Guid="584075d6-36fd-45bd-82b9-b4ede1d83368">
-      <File Id="LastFmSharp.dll" DiskId="10" Source="$(var.LastFmSharp.TargetPath)" KeyPath="yes" Checksum="yes" />
+    <Component Id="ReusableBits" Guid="26ed7e26-cbf3-4975-b6ed-e86ee26c2616">
+      <File Id="ReusableBits.dll" DiskId="10" Source="$(var.ReusableBits.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="ReusableBits.Mvvm" Guid="19782ded-09b6-4ace-8af7-cfd7abc48fc8">
+      <File Id="ReusableBits.Mvvm.dll" DiskId="10" Source="$(var.ReusableBits.Mvvm.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="ReusableBits.Ui" Guid="4771f323-5230-487c-916e-0f15fe4b1802">
+      <File Id="ReusableBits.UI.dll" DiskId="10" Source="$(var.ReusableBits.Ui.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
     <Component Id="Composite.Layout.dll" Guid="7920fa7c-527b-4ed0-9844-25b4f4680c5b">
       <File Id="Composite.Layout.dll" DiskId="10" Source="$(var.Layout Manager.TargetPath)" KeyPath="yes" Checksum="yes" />
@@ -34,13 +55,20 @@
   </DirectoryRef>
 
   <ComponentGroup Id="CoreFiles">
+    <ComponentRef Id="DiscogsConnect" />
+    <ComponentRef Id="Microsoft.Net.Http" />
     <ComponentRef Id="Noise.AppSupport" />
+    <ComponentRef Id="Noise.BlobStorage" />
     <ComponentRef Id="Noise.Core" />
+    <ComponentRef Id="Noise.EloqueraDatabase" />
+    <ComponentRef Id="Noise.EntityFrameworkDatabase" />
     <ComponentRef Id="Noise.Infrastructure" />
-    <ComponentRef Id="Noise.Service.Infrastructure"/>
-    <ComponentRef Id="Noise.ServiceImpl"/>
+    <ComponentRef Id="Noise.Metadata"/>
+    <ComponentRef Id="Noise.RemoteHost" />
     <ComponentRef Id="Noise.UI" />
-    <ComponentRef Id="LastFmSharp.dll" />
+    <ComponentRef Id="ReusableBits" />
+    <ComponentRef Id="ReusableBits.Mvvm" />
+    <ComponentRef Id="ReusableBits.Ui" />
     <ComponentRef Id="Composite.Layout.dll"/>
     <ComponentRef Id="EqPresets.xml"/>
     <ComponentRef Id="LicenseKeys.xml"/>

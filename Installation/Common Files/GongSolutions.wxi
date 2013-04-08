@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <?define GongLibraryFolder="$(var.SolutionDir)\lib\GongSolutions.Wpf.DragDrop\v0.1.2\"?>
+  
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="GongSolutions.Wpf.DragDrop.dll" Guid="c5280cbd-638a-4d40-8581-55d2abec0e7e">
+      <File Id="GongSolutions.Wpf.DragDrop.dll" DiskId="10" Source="$(var.GongLibraryFolder)GongSolutions.Wpf.DragDrop.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="GongSolutionsFiles">
+    <ComponentRef Id="GongSolutions.Wpf.DragDrop.dll" />
+  </ComponentGroup>
+</Include>

@@ -12,7 +12,7 @@
     </Component>
     <Directory Id="DatabaseConfigFolder" Name="Database">
       <Component Id="Eloquera.config" Guid="7373E48F-F3FB-449A-8436-9947BFE4D895">
-        <File Id="Eloquera.config" DiskId="10" Source="$(var.EloqueraConfigFolder)Eloquera.config" KeyPath="yes" Checksum="yes" />
+        <File Id="Eloquera.config" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Database\Eloquera.config" KeyPath="yes" Checksum="yes" />
       </Component>
     </Directory>
   </DirectoryRef>
