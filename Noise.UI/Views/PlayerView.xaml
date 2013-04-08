@@ -31,8 +31,18 @@
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
 
+            <!--  Track progress background  -->
+            <Rectangle Grid.Column="0" StrokeThickness="0" RadiusX="5" RadiusY="5">
+                <Rectangle.Fill>
+                    <LinearGradientBrush Opacity="0.3" EndPoint="1,0.5" StartPoint="0,0.5">
+                        <GradientStop Color="#FF588CE0" Offset="{Binding PlayPositionPercentage}"/>
+                        <GradientStop Color="Transparent" Offset="{Binding PlayPositionPercentage}"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+
             <!--  Track information  -->
-            <Grid Grid.Column="0">
+            <Grid Grid.Column="0" Background="Transparent">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
@@ -220,7 +230,7 @@
                     <NoiseControls:VuMeter Grid.Column="1"
                                            Margin="0,7,7,0"
                                            Background="White"
-                                           Foreground="LightBlue"
+                                           Foreground="#FF588CE0"
                                            LeftLevel="{Binding Path=LeftLevel}"
                                            RightLevel="{Binding Path=RightLevel}" />
                     <Button Grid.Column="2"
