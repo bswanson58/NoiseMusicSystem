@@ -3,18 +3,26 @@
 	<?define BaseRegistryKey="Software\Secret Squirrel Software"?>
 	<?define ShortcutRegistryKey="$(var.BaseRegistryKey)\$(var.Noise.Desktop.Platform)\NoiseDesktop"?>
 	
-	<Product Id="0ef02795-7dc0-4cd4-8a50-c5346be3e026"
+	<!-- Product Upgrade ID: do not change -->
+	<?define ProductUpgradeCode="68F51362-142C-49D7-A702-1BCB7E933C3D"?>
+
+	<!-- To upgrade: Update the ProductVersion below to the next release -->
+	<?define ProductVersion=0.8.0.0?>
+
+	<Product Id="*"
 					 Name="Noise Desktop Install"
 					 Language="1033"
-					 Version="0.5.0.0"
+					 Version="$(var.ProductVersion)"
 					 Manufacturer="Secret Squirrel Software"
-					 UpgradeCode="479ef42d-6d35-4dc5-8531-beb5883f54f2">
+					 UpgradeCode="$(var.ProductUpgradeCode)">
 		<Package InstallerVersion="200" 
 						 Platform="$(var.Noise.Desktop.Platform)"
 						 InstallScope="perMachine"
 						 InstallPrivileges="elevated"
 						 Compressed="yes" />
 
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed. Setup will now exit."/>
+			
 		<PropertyRef Id="NETFRAMEWORK40FULL" />
 		<Condition Message="This application requires .NET Framework 4.0 Extended. Please install the .NET Framework and then run this installer again.">
 			<![CDATA[Installed OR NETFRAMEWORK40FULL]]>

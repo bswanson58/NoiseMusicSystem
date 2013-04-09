@@ -31,7 +31,7 @@
     <Component Id="Raven.Storage.Esent.dll" Guid="c62ca0ee-f5a7-490b-99ef-27120ecfc4cf">
       <File Id="Raven.Storage.Esent.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Raven.Storage.Esent.dll" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="Spatial4n.Core.dll" Guid="">
+    <Component Id="Spatial4n.Core.dll" Guid="8a63d312-aae8-4715-8da1-3e6d55e61741">
       <File Id="Spatial4N.Core.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Spatial4n.Core.dll" KeyPath="yes" Checksum="yes" />
     </Component>
   </DirectoryRef>
