@@ -169,6 +169,11 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
+		public double PlayPositionPercentagePlus {
+			get { return ( PlayPositionPercentage > 0.0D ? PlayPositionPercentage + 0.035D : 0.0D ); }
+		}
+
+		[DependsUpon( "InfoUpdateFlag" )]
 		public long TrackPosition {
 			get { return( mPlayController.PlayPosition ); }
 			set { mPlayController.PlayPosition = value; }

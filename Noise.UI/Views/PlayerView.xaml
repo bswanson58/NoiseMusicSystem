@@ -31,16 +31,6 @@
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
 
-            <!--  Track progress background  -->
-            <Rectangle Grid.Column="0" StrokeThickness="0" RadiusX="5" RadiusY="5">
-                <Rectangle.Fill>
-                    <LinearGradientBrush Opacity="0.3" EndPoint="1,0.5" StartPoint="0,0.5">
-                        <GradientStop Color="#FF588CE0" Offset="{Binding PlayPositionPercentage}"/>
-                        <GradientStop Color="Transparent" Offset="{Binding PlayPositionPercentage}"/>
-                    </LinearGradientBrush>
-                </Rectangle.Fill>
-            </Rectangle>
-
             <!--  Track information  -->
             <Grid Grid.Column="0" Background="Transparent">
                 <Grid.RowDefinitions>
@@ -48,30 +38,48 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0"
-                            Margin="3,0,0,5"
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal">
-                    <TextBlock VerticalAlignment="Bottom"
-                               FontSize="22"
-                               Foreground="{DynamicResource ControlTextColor}"
-                               Text="Now Playing: "
-                               Visibility="{Binding TrackName,
-                                                    Converter={StaticResource EmptyStringVisibilityConverter}}" />
-                    <TextBlock VerticalAlignment="Bottom"
-                               FontSize="22"
-                               FontWeight="Bold"
-                               ReusableBehaviours:FadeTrimming.IsEnabled="True"
-                               ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                               Text="{Binding TrackName}" />
-                    <TextBlock Margin="0,0,0,3"
-                               VerticalAlignment="Bottom"
-                               FontSize="16"
-                               Foreground="Gray"
-                               ReusableBehaviours:FadeTrimming.IsEnabled="True"
-                               ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                               Text="{Binding AlbumName}" />
-                </StackPanel>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" VerticalAlignment="Bottom" Margin="3,0,0,5"
+                                   FontSize="22"
+                                   Foreground="{DynamicResource ControlTextColor}"
+                                   Text="Now Playing:"
+                                   Visibility="{Binding TrackName,
+                                                        Converter={StaticResource EmptyStringVisibilityConverter}}" />
+                    
+                    <!--  Track progress background  -->
+                    <Rectangle Grid.Column="1" StrokeThickness="0" RadiusX="5" RadiusY="5" Margin="2,0,0,3">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush Opacity="0.5" EndPoint="1,0.5" StartPoint="0,0.5">
+                                <GradientStop Color="#FF588CE0" Offset="{Binding PlayPositionPercentage}"/>
+                                <GradientStop Color="Transparent" Offset="{Binding PlayPositionPercentagePlus}"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+
+                    <StackPanel Grid.Column="1"
+                                Margin="5,0,0,5"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Bottom"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                                   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                                   Text="{Binding TrackName}" />
+                        <TextBlock Margin="0,0,0,3"
+                                   VerticalAlignment="Bottom"
+                                   FontSize="16"
+                                   Foreground="Gray"
+                                   ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                                   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                                   Text="{Binding AlbumName}" />
+                    </StackPanel>
+                </Grid>
 
                 <Grid Grid.Row="1"
                       Margin="0,0,0,3"
