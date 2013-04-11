@@ -12,7 +12,7 @@ namespace Noise.Core.FileProcessor {
 		BuildAudioFile,
 		BuildInfoFile,
 		BuildArtworkFile,
-		BuildUndeterminedFile
+		BuildUnknownFile
 	}
 	public enum ePipelineTrigger {
 		DetermineFileType,

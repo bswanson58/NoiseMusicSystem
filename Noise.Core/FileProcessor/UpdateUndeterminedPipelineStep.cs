@@ -17,7 +17,7 @@ namespace Noise.Core.FileProcessor {
 
 			using( var updater = mStorageFileProvider.GetFileForUpdate( context.StorageFile.DbId )) {
 				if( updater.Item != null ) {
-					updater.Item.FileType = eFileType.Undetermined;
+					updater.Item.FileType = eFileType.Unknown;
 
 					updater.Update();
 				}

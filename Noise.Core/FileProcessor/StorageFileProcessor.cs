@@ -48,7 +48,7 @@ namespace Noise.Core.FileProcessor {
 				.Permit( ePipelineTrigger.FileTypeIsAudio, ePipelineState.BuildAudioFile )
 				.Permit( ePipelineTrigger.FileTypeIsArtwork, ePipelineState.BuildArtworkFile )
 				.Permit( ePipelineTrigger.FileTypeIsInfo, ePipelineState.BuildInfoFile )
-				.Permit( ePipelineTrigger.FileTypeIsUnknown, ePipelineState.BuildUndeterminedFile );
+				.Permit( ePipelineTrigger.FileTypeIsUnknown, ePipelineState.BuildUnknownFile );
 
 			mPipelineController.Configure( ePipelineState.BuildAudioFile )
 				.OnEntry(() => ProcessAudioFile( mPipelineContext ))
@@ -62,7 +62,7 @@ namespace Noise.Core.FileProcessor {
 				.OnEntry(() => ProcessInfoFile( mPipelineContext ))
 				.Permit( ePipelineTrigger.Completed, ePipelineState.Stopped );
 
-			mPipelineController.Configure( ePipelineState.BuildUndeterminedFile )
+			mPipelineController.Configure( ePipelineState.BuildUnknownFile )
 				.OnEntry(() => ProcessUndeterminedFile( mPipelineContext ))
 				.Permit( ePipelineTrigger.Completed, ePipelineState.Stopped );
 		}
@@ -115,7 +115,7 @@ namespace Noise.Core.FileProcessor {
 			mStopProcessing = false;
 			
 			try {
-				using( var fileList = mStorageFileProvider.GetFilesOfType( eFileType.Undetermined )) {
+				using( var fileList = mStorageFileProvider.GetFilesRequiringProcessing()) {
 					DatabaseCache<DbArtist>	artistCache;
 					DatabaseCache<DbAlbum>	albumCache;
 
