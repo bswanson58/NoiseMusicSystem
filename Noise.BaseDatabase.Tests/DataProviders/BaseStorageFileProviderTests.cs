@@ -109,14 +109,27 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
-		public void CanGetFilesOfType() {
+		public void CanGetUndeterminedFiles() {
 			var file1 = new StorageFile( "file one", 1, 100, DateTime.Now ) { FileType = eFileType.Text };
 			var file2 = new StorageFile( "file two", 2, 100, DateTime.Now ) { FileType = eFileType.Undetermined };
 			var sut = CreateSut();
 			sut.AddFile( file1 );
 			sut.AddFile( file2 );
 
-			using( var fileList = sut.GetFilesOfType( eFileType.Undetermined )) {
+			using( var fileList = sut.GetFilesRequiringProcessing()) {
+				fileList.List.Should().HaveCount( 1 );
+			}
+		}
+
+		[Test]
+		public void CanGetUpdatedFiles() {
+			var file1 = new StorageFile( "file one", 1, 100, DateTime.Now ) { FileType = eFileType.Text };
+			var file2 = new StorageFile( "file two", 2, 100, DateTime.Now ) { FileType = eFileType.Music, WasUpdated = true };
+			var sut = CreateSut();
+			sut.AddFile( file1 );
+			sut.AddFile( file2 );
+
+			using( var fileList = sut.GetFilesRequiringProcessing() ) {
 				fileList.List.Should().HaveCount( 1 );
 			}
 		}

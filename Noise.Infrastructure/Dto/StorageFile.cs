@@ -13,6 +13,7 @@ namespace Noise.Infrastructure.Dto {
 		public eFileType	FileType { get; set; }
 		public long			MetaDataPointer { get; set; }
 		public bool			IsDeleted { get; set; }
+		public bool			WasUpdated { get; set; }
 
 		public StorageFile() :
 			this( string.Empty, Constants.cDatabaseNullOid, 0L, DateTime.Now ) { }
@@ -26,6 +27,12 @@ namespace Noise.Infrastructure.Dto {
 			FileType = eFileType.Undetermined;
 			MetaDataPointer = Constants.cDatabaseNullOid;
 			IsDeleted = false;
+			WasUpdated = false;
+		}
+
+		public void UpdateModifiedDate( DateTime fileModificationDate ) {
+			FileModifiedDate = fileModificationDate;
+			WasUpdated = true;
 		}
 
 		[Ignore]

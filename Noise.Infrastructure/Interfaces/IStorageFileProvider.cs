@@ -10,8 +10,8 @@ namespace Noise.Infrastructure.Interfaces {
 		IDataProviderList<StorageFile>	GetAllFiles();
 		IDataProviderList<StorageFile>	GetDeletedFilesList();
 		IDataProviderList<StorageFile>	GetFilesInFolder( long parentFolder );
-		IDataProviderList<StorageFile>	GetFilesOfType( eFileType fileType );
-		
+		IDataProviderList<StorageFile>	GetFilesRequiringProcessing();
+
 		IDataUpdateShell<StorageFile>	GetFileForUpdate( long fileId );
 
 		long							GetItemCount();

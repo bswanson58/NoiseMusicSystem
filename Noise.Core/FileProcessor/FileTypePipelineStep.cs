@@ -5,10 +5,12 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.FileProcessor {
 	internal class FileTypePipelineStep : BasePipelineStep {
 		private readonly IStorageFolderSupport	mStorageFolderSupport;
+		private readonly ITrackProvider			mTrackProvider;
 
-		public FileTypePipelineStep( IStorageFolderSupport storageFolderSupport ) :
+		public FileTypePipelineStep( IStorageFolderSupport storageFolderSupport, ITrackProvider trackProvider ) :
 			base( ePipelineStep.DetermineFileType ) {
 			mStorageFolderSupport = storageFolderSupport;
+			mTrackProvider = trackProvider;
 		}
 
 		public override void ProcessStep( PipelineContext context ) {
@@ -20,7 +22,8 @@ namespace Noise.Core.FileProcessor {
 			switch( context.StorageFile.FileType ) {
 				case eFileType.Music:
 					context.Trigger = ePipelineTrigger.FileTypeIsAudio;
-					context.Track = new DbTrack() { Encoding = mStorageFolderSupport.DetermineAudioEncoding( context.StorageFile )};
+					context.Track = context.StorageFile.WasUpdated ? mTrackProvider.GetTrack( context.StorageFile.MetaDataPointer ) :
+																	 new DbTrack { Encoding = mStorageFolderSupport.DetermineAudioEncoding( context.StorageFile )};
 					break;
 
 				case eFileType.Picture:

@@ -91,7 +91,7 @@ namespace Noise.Core.Tests.FileProcessor {
 
 			var fileProvider = new Mock<IDataProviderList<StorageFile>>(); 
 			fileProvider.Setup( m => m.List ).Returns( mFileList );
-			retValue.Mock<IStorageFileProvider>().Setup( m => m.GetFilesOfType( eFileType.Undetermined )).Returns( fileProvider.Object );
+			retValue.Mock<IStorageFileProvider>().Setup( m => m.GetFilesRequiringProcessing()).Returns( fileProvider.Object );
 
 			return( retValue );
 		}
@@ -120,6 +120,17 @@ namespace Noise.Core.Tests.FileProcessor {
 
 			sut.ClassUnderTest.Process( mSummary );
 			mUpdateMusic.Verify( m => m.ProcessStep( It.IsAny<PipelineContext>()), Times.Once());
+		}
+
+		[Test]
+		public void CanProcessMusicUpdate() {
+			mFileList.Add( new StorageFile( "update.mp3", 0, 100, DateTime.Now ) { WasUpdated = true });
+
+			mFileType.Setup( m => m.ProcessStep( It.IsAny<PipelineContext>() ) ).Callback<PipelineContext>( context => context.Trigger = ePipelineTrigger.FileTypeIsAudio );
+			var sut = CreateSut();
+
+			sut.ClassUnderTest.Process( mSummary );
+			mUpdateMusic.Verify( m => m.ProcessStep( It.IsAny<PipelineContext>() ), Times.Once() );
 		}
 
 		[Test]

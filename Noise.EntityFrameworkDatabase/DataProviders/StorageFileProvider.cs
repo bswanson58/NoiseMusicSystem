@@ -42,11 +42,11 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			return( new EfProviderList<StorageFile>( context, Set( context ).Where( entity => entity.ParentFolder == parentFolder )));
 		}
 
-		public IDataProviderList<StorageFile> GetFilesOfType( eFileType fileType ) {
+		public IDataProviderList<StorageFile> GetFilesRequiringProcessing() {
 			var context = CreateContext();
 
-			return( new EfProviderList<StorageFile>( context, Set( context ).Where( entity => entity.DbFileType == (int)fileType )));
-		}
+			return( new EfProviderList<StorageFile>( context, Set( context ).Where( entity => ( entity.DbFileType == (int)eFileType.Undetermined ) || entity.WasUpdated )));
+		} 
 
 		public IDataUpdateShell<StorageFile> GetFileForUpdate( long fileId ) {
 			return( GetUpdateShell( fileId ));

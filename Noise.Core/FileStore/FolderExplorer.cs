@@ -184,6 +184,16 @@ namespace Noise.Core.FileStore {
 				var	dbFile = dbList.Find( f => f.Name == fileName );
 				if( dbFile != null ) {
 					dbList.Remove( dbFile );
+
+					if( file.ModificationTime != dbFile.FileModifiedDate ) {
+						using( var updater = mStorageFileProvider.GetFileForUpdate( dbFile.DbId )) {
+							if( updater.Item != null ) {
+								updater.Item.UpdateModifiedDate( file.ModificationTime );
+
+								updater.Update();
+							}
+						}
+					}
 				}
 				else {
 					mStorageFileProvider.AddFile( new StorageFile( file.File, storageFolder.DbId, file.Size, file.ModificationTime ));

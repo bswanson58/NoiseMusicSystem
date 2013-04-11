@@ -39,8 +39,9 @@ namespace Noise.EloqueraDatabase.DataProviders {
 			return( TryGetList( "SELECT StorageFile Where ParentFolder = @parentId", new Dictionary<string, object> {{ "parentId", parentFolder }}, "GetFilesInFolder" ));
 		}
 
-		public IDataProviderList<StorageFile> GetFilesOfType( eFileType fileType ) {
-			return( TryGetList( "SELECT StorageFile Where FileType = @fileType", new Dictionary<string, object> {{ "fileType", fileType }}, "GetFilesOfType" ));
+		public IDataProviderList<StorageFile> GetFilesRequiringProcessing() {
+			return ( TryGetList( "SELECT StorageFile Where FileType = @fileType OR WasUpdated = True", 
+									new Dictionary<string, object> { { "fileType", eFileType.Undetermined } }, "GetFilesRequiringProcessing" ) );
 		}
 
 		public IDataUpdateShell<StorageFile> GetFileForUpdate( long fileId ) {
