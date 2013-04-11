@@ -80,6 +80,12 @@ namespace Noise.EloqueraDatabase.DataProviders {
 
 			return( new TextInfoUpdateShell( dbShell, dbTextInfo, new TextInfo( dbTextInfo )));
 		}
+
+		public void UpdateTextInfo( long infoId, string infoFilePath ) {
+			using( var context = CreateDatabase()) {
+				context.Database.BlobStorage.Store( infoId, infoFilePath );
+			}
+		}
 	}
 
 	internal class TextInfoUpdateShell : EloqueraUpdateShell<TextInfo> {

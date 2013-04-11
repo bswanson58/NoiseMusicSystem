@@ -130,6 +130,12 @@ namespace Noise.EloqueraDatabase.DataProviders {
 
 			return( new ArtworkUpdateShell( database, dbArtwork, TransformArtwork( dbArtwork )));
 		}
+
+		public void UpdateArtworkImage( long artworkId, string imageFilePath ) {
+			using( var database = CreateDatabase()) {
+				database.Database.BlobStorage.Store( artworkId, imageFilePath );
+			}
+		}
 	}
 
 	internal class ArtworkUpdateShell : EloqueraUpdateShell<Artwork> {

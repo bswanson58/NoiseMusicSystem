@@ -10,5 +10,6 @@ namespace Noise.Infrastructure.Interfaces {
 		TextInfo[]					GetAlbumTextInfo( long albumId );
 
 		IDataUpdateShell<TextInfo>	GetTextInfoForUpdate( long textInfoId );
+		void						UpdateTextInfo( long infoId, string infoFilePath );
 	}
 }

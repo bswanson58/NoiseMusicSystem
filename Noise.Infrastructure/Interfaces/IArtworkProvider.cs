@@ -14,5 +14,6 @@ namespace Noise.Infrastructure.Interfaces {
 		IDataProviderList<DbArtwork>	GetArtworkForFolder( long folderId );
 		
 		IDataUpdateShell<Artwork>	GetArtworkForUpdate( long artworkId );
+		void						UpdateArtworkImage( long artworkId, string imageFilePath );
 	}
 }

@@ -67,6 +67,10 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 			return( new TextUpdateShell( context, BlobStorage, dbTextInfo, TransformTextInfo( dbTextInfo )));
 		}
+
+		public void UpdateTextInfo( long infoId, string infoFilePath ) {
+			BlobStorage.Store( infoId, infoFilePath );
+		}
 	}
 
 	internal class TextUpdateShell : EfUpdateShell<TextInfo> {

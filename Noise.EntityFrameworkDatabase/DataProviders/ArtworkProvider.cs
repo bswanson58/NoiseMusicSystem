@@ -120,6 +120,10 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 			return( new ArtworkUpdateShell( context, BlobStorage, dbArtwork, TransformArtwork( dbArtwork )));
 		}
+
+		public void UpdateArtworkImage( long artworkId, string imageFilePath ) {
+			BlobStorage.Store( artworkId, imageFilePath );
+		}
 	}
 
 	internal class ArtworkUpdateShell : EfUpdateShell<Artwork> {
