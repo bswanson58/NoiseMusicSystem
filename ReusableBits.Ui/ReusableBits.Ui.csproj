@@ -113,6 +113,7 @@
     <Compile Include="ValueConverters\BaseValueConverter.cs" />
     <Compile Include="ValueConverters\BooleanVisibilityConverter.cs" />
     <Compile Include="ValueConverters\ByteImageConverter.cs" />
+    <Compile Include="ValueConverters\DefaultValueOpacityConverter.cs" />
     <Compile Include="ValueConverters\EmptyStringVisibilityConverter.cs" />
     <Compile Include="ValueConverters\TimeFormatter.cs" />
   </ItemGroup>

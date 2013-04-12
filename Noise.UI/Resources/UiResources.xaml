@@ -15,6 +15,7 @@
                         ObjectType="{x:Type vml:DialogServiceResolver}" />
 
     <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter" />
+    <ReusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter"/>
     <ReusableConverters:EmptyStringVisibilityConverter x:Key="EmptyStringVisibilityConverter" />
 
     <ContextMenu x:Key="ArtistMenu">
@@ -120,7 +121,7 @@
                               DataType="{x:Type Dto:UiArtistTreeNode}"
                               ItemsSource="{Binding ChildrenView}"
                               ItemTemplate="{StaticResource AlbumTemplate}">
-        <Border Margin="0,1,0,2"
+        <Border x:Name="ArtistPanel" Margin="0,1,0,2"
                 Background="{DynamicResource TreeItemBackground}"
                 BorderBrush="{DynamicResource ControlTextColor}"
                 ContextMenu="{DynamicResource ArtistMenu}"
@@ -145,13 +146,13 @@
                             Grid.Column="2"
                             HorizontalAlignment="Right"
                             Orientation="Horizontal">
-                    <CheckBox Margin="0,9,3,0"
-                              IsChecked="{Binding Artist.UiIsFavorite,
-                                                  Mode=TwoWay}"
+                    <CheckBox x:Name="ArtistIsFavorite" Margin="0,9,3,0"
+                              Opacity="{Binding Path=Artist.UiIsFavorite, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.25}"
+                              IsChecked="{Binding Artist.UiIsFavorite, Mode=TwoWay}"
                               Style="{DynamicResource FavoriteCheckBoxStyle}" />
-                    <NoiseControls:RatingControl VerticalAlignment="Bottom"
-                                                 Rating="{Binding Path=Artist.UiRating,
-                                                                  Mode=TwoWay}"
+                    <NoiseControls:RatingControl x:Name="ArtistRating" VerticalAlignment="Bottom"
+                                                 Opacity="{Binding Path=Artist.UiRating, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.25}"
+                                                 Rating="{Binding Path=Artist.UiRating, Mode=TwoWay}"
                                                  Style="{DynamicResource NoiseRatingStyle}" />
                 </StackPanel>
 
@@ -169,6 +170,13 @@
                            Text="{Binding Artist.Genre}" />
             </Grid>
         </Border>
+        
+        <DataTemplate.Triggers>
+            <Trigger SourceName="ArtistPanel" Property="IsMouseOver" Value="True">
+                <Setter TargetName="ArtistIsFavorite" Property="Opacity" Value="1.0"/>
+                <Setter TargetName="ArtistRating" Property="Opacity" Value="1.0"/>
+            </Trigger>
+        </DataTemplate.Triggers>
     </HierarchicalDataTemplate>
 
     <!--  Library Explorer: Decade/Artist/Albums  -->
@@ -229,7 +237,7 @@
                               DataType="{x:Type Dto:UiDecadeTreeNode}"
                               ItemsSource="{Binding ChildrenView}"
                               ItemTemplate="{StaticResource DecadeArtistTemplate}">
-        <Border Margin="0,1,0,2"
+        <Border x:Name="DecadePanel" Margin="0,1,0,2"
                 Background="{DynamicResource TreeItemBackground}"
                 BorderBrush="{DynamicResource ControlTextColor}"
                 CornerRadius="3">
@@ -253,13 +261,13 @@
                             Grid.Column="2"
                             HorizontalAlignment="Right"
                             Orientation="Horizontal">
-                    <CheckBox Margin="0,9,3,0"
-                              IsChecked="{Binding Path=Tag.IsFavorite,
-                                                  Mode=TwoWay}"
+                    <CheckBox x:Name="DecadeIsFavorite" Margin="0,9,3,0"
+                              Opacity="{Binding Path=Tag.IsFavorite, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.25}"
+                              IsChecked="{Binding Path=Tag.IsFavorite, Mode=TwoWay}"
                               Style="{DynamicResource FavoriteCheckBoxStyle}" />
-                    <NoiseControls:RatingControl VerticalAlignment="Bottom"
-                                                 Rating="{Binding Path=Tag.Rating,
-                                                                  Mode=TwoWay}"
+                    <NoiseControls:RatingControl x:Name="DecadeRating" VerticalAlignment="Bottom"
+                                                 Opacity="{Binding Path=Tag.Rating, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.25}"
+                                                 Rating="{Binding Path=Tag.Rating, Mode=TwoWay}"
                                                  Style="{DynamicResource NoiseRatingStyle}" />
                 </StackPanel>
 
@@ -285,6 +293,13 @@
                 </NoiseControls:LinkLabel>
             </Grid>
         </Border>
+        
+        <DataTemplate.Triggers>
+            <Trigger SourceName="DecadePanel" Property="IsMouseOver" Value="True">
+                <Setter TargetName="DecadeIsFavorite" Property="Opacity" Value="1.0"/>
+                <Setter TargetName="DecadeRating" Property="Opacity" Value="1.0"/>
+            </Trigger>
+        </DataTemplate.Triggers>
     </HierarchicalDataTemplate>
 
     <!--  SearchTextBox  -->

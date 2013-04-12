@@ -72,10 +72,15 @@
                                     HeaderTemplate="{StaticResource FavoriteColumnHeaderTemplate}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox HorizontalAlignment="Center"
-                                          IsChecked="{Binding Path=UiIsFavorite,
-                                                              Mode=TwoWay}"
+                                <CheckBox x:Name="IsFavorite"  HorizontalAlignment="Center"
+                                          Opacity="{Binding Path=UiIsFavorite, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.1}"
+                                          IsChecked="{Binding Path=UiIsFavorite, Mode=TwoWay}"
                                           Style="{StaticResource FavoriteCheckBoxStyle}" />
+                                <DataTemplate.Triggers>
+                                    <Trigger SourceName="IsFavorite" Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="IsFavorite" Property="Opacity" Value="1.0"/>
+                                    </Trigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -84,10 +89,15 @@
                                     Header="Rating">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Controls:RatingControl HorizontalAlignment="Center"
-                                                        Rating="{Binding Path=UiRating,
-                                                                         Mode=TwoWay}"
+                                <Controls:RatingControl x:Name="Rating" HorizontalAlignment="Center"
+                                                        Opacity="{Binding Path=UiRating, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.1}"
+                                                        Rating="{Binding Path=UiRating, Mode=TwoWay}"
                                                         Style="{StaticResource NoiseRatingStyle}" />
+                                <DataTemplate.Triggers>
+                                    <Trigger SourceName="Rating" Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Rating" Property="Opacity" Value="1.0"/>
+                                    </Trigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
