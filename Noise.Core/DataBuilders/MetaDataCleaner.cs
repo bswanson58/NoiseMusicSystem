@@ -51,6 +51,7 @@ namespace Noise.Core.DataBuilders {
 			mAlbumList.Clear();
 
 			NoiseLogger.Current.LogMessage( "Starting MetaDataCleaning." );
+			mEventAggregator.Publish( new Events.StatusEvent( "Starting Library Metadata cleaning." ));
 
 			try {
 				CleanFolders();
@@ -61,6 +62,8 @@ namespace Noise.Core.DataBuilders {
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - MetaDataCleaner:", ex );
 			}
+
+			mEventAggregator.Publish( new Events.StatusEvent( "Finished Library Metadata cleaning." ));
 		}
 
 		private void CleanFolders() {

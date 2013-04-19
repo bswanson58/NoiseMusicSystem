@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Caliburn.Micro;
-using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -106,6 +105,7 @@ namespace Noise.Core.Configuration {
 			   ( mLibraries.Contains( configuration ))) {
 				NoiseLogger.Current.LogMessage( "------------------------------" );
 				NoiseLogger.Current.LogMessage( "Opening library: {0}", configuration.LibraryName );
+				mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Opening library: {0}", configuration.LibraryName )));
 
 				Current = configuration;
 
@@ -115,7 +115,6 @@ namespace Noise.Core.Configuration {
 
 					NoiseSystemConfiguration.Current.Save( expConfig );
 				}
-				
 			}
 		}
 

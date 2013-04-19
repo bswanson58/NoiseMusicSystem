@@ -102,7 +102,8 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		private void BuildSearchIndex( DbArtist artist ) {
-			NoiseLogger.Current.LogMessage( String.Format( "Building search info for {0}", artist.Name ));
+			NoiseLogger.Current.LogMessage( string.Format( "Building search info for {0}", artist.Name ));
+			mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Building search info for {0}", artist.Name )));
 
 			try {
 				using( var indexBuilder = mSearchProvider.CreateIndexBuilder( artist, false )) {
@@ -154,6 +155,8 @@ namespace Noise.Core.BackgroundTasks {
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - Building search data: ", ex );
 			}
+
+			mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Completed building search info for {0}", artist.Name )));
 		}
 	}
 }

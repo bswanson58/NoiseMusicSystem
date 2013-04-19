@@ -103,6 +103,7 @@ namespace Noise.Core.BackgroundTasks {
 								}
 
 								NoiseLogger.Current.LogMessage( string.Format( "Built decade tag associations for: {0}", artist.Name ));
+								mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Built decade tag associations for: {0}", artist.Name )));
 							}
 						}
 					}

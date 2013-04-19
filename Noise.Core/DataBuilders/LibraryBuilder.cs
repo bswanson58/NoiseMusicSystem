@@ -76,6 +76,7 @@ namespace Noise.Core.DataBuilders {
 
 		public void StartLibraryUpdate() {
 			NoiseLogger.Current.LogMessage( "LibraryBuilder: Starting Library Update." );
+			mEventAggregator.Publish( new Events.StatusEvent( "Starting Library Update." ));
 
 			ThreadPool.QueueUserWorkItem( UpdateLibrary );
 		}
@@ -154,9 +155,11 @@ namespace Noise.Core.DataBuilders {
 					}
 
 					NoiseLogger.Current.LogMessage( "LibraryBuilder: Update Finished." );
+					mEventAggregator.Publish( new Events.StatusEvent( "Library update completed." ));
 
 					if( results.HaveChanges ) {
-						NoiseLogger.Current.LogMessage( string.Format( "Database changes: {0}", results ) );
+						NoiseLogger.Current.LogMessage( string.Format( "Database changes: {0}", results ));
+						mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Database changes: {0}", results )) { ExtendDisplay = true });
 					}
 
 					if( mContinueExploring ) {
@@ -184,7 +187,9 @@ namespace Noise.Core.DataBuilders {
 
 		private void LogStatistics( bool allCounts ) {
 			mDatabaseStatistics.GatherStatistics( allCounts );
+
 			NoiseLogger.Current.LogMessage( mDatabaseStatistics.ToString());
+			mEventAggregator.Publish( new Events.StatusEvent( mDatabaseStatistics.ToString()) { ExtendDisplay = true });
 		}
 	}
 }

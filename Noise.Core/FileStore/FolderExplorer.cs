@@ -67,7 +67,9 @@ namespace Noise.Core.FileStore {
 
 						foreach( var rootFolder in rootFolders ) {
 							if( Directory.Exists( mStorageFolderSupport.GetPath( rootFolder ))) {
-								NoiseLogger.Current.LogMessage( "Synchronizing folder: {0}", rootFolder.DisplayName );
+								NoiseLogger.Current.LogMessage( "Synchronizing folder: {0}", rootFolder.Name );
+								mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Starting folder synchronization for: {0}", rootFolder.Name )));
+
 								BuildFolder( rootFolder );
 							}
 							else {
