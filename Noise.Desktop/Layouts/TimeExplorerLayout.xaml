@@ -66,11 +66,7 @@
 
         <ContentControl Grid.Row="1" Margin="3,0,0,3" Regions:RegionManager.RegionName="Timeline:Player" />
 
-        <StatusBar Grid.Row="2" Background="{StaticResource AccentBrush}">
-            <StatusBarItem>
-                <TextBlock Margin="5,0" FontSize="12" Foreground="LightGray" Text="Noise Desktop v0.9"/>
-            </StatusBarItem>
-        </StatusBar>
+        <ContentControl Grid.Row="2" Regions:RegionManager.RegionName="Timeline:Status"/>
         
         <ContentControl Width="595"
                         Height="160"

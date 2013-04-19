@@ -27,6 +27,7 @@
                 <Layout:View RegionName="Player" Type="{x:Type Views:PlayerView}" />
                 <Layout:View RegionName="SimilarSongs" Type="{x:Type Views:SimilarSongView}" />
                 <Layout:View RegionName="SongLyrics" Type="{x:Type Views:SongLyricsView}" />
+                <Layout:View RegionName="Status" Type="{x:Type Views:StatusView}" />
             </Layout:Layout.Views>
         </Layout:Layout>
         <Layout:Layout x:Name="ListenLayout"
@@ -57,6 +58,7 @@
                 <Layout:View RegionName="Timeline:Player" Type="{x:Type Views:PlayerView}" />
                 <Layout:View RegionName="Timeline:SimilarSongs" Type="{x:Type Views:SimilarSongView}" />
                 <Layout:View RegionName="Timeline:SongLyrics" Type="{x:Type Views:SongLyricsView}" />
+                <Layout:View RegionName="Timeline:Status" Type="{x:Type Views:StatusView}" />
             </Layout:Layout.Views>
         </Layout:Layout>
     </Layout:LayoutManager.Layouts>
