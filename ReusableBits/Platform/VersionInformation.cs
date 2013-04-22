@@ -4,12 +4,12 @@ using System.Reflection;
 namespace ReusableBits.Platform {
 	public static class VersionInformation {
 		public static Version Version {
-			get { return Assembly.GetCallingAssembly().GetName().Version; }
+			get { return Assembly.GetEntryAssembly().GetName().Version; }
 		}
 
 		public static string Title {
 			get {
-				object[] attributes = Assembly.GetCallingAssembly().GetCustomAttributes( typeof( AssemblyTitleAttribute ), false );
+				object[] attributes = Assembly.GetEntryAssembly().GetCustomAttributes( typeof( AssemblyTitleAttribute ), false );
 
 				if( attributes.Length > 0 ) {
 					var titleAttribute = (AssemblyTitleAttribute)attributes[0];
@@ -25,7 +25,7 @@ namespace ReusableBits.Platform {
 
 		public static string ProductName {
 			get {
-				object[] attributes = Assembly.GetCallingAssembly().GetCustomAttributes( typeof( AssemblyProductAttribute ), false );
+				object[] attributes = Assembly.GetEntryAssembly().GetCustomAttributes( typeof( AssemblyProductAttribute ), false );
 
 				return attributes.Length == 0 ? "" : ( (AssemblyProductAttribute)attributes[0] ).Product;
 			}
@@ -33,7 +33,7 @@ namespace ReusableBits.Platform {
 
 		public static string Description {
 			get {
-				object[] attributes = Assembly.GetCallingAssembly().GetCustomAttributes( typeof( AssemblyDescriptionAttribute ), false );
+				object[] attributes = Assembly.GetEntryAssembly().GetCustomAttributes( typeof( AssemblyDescriptionAttribute ), false );
 
 				return attributes.Length == 0 ? "" : ( (AssemblyDescriptionAttribute)attributes[0] ).Description;
 			}
@@ -41,7 +41,7 @@ namespace ReusableBits.Platform {
 
 		public static string CopyrightHolder {
 			get {
-				object[] attributes = Assembly.GetCallingAssembly().GetCustomAttributes( typeof( AssemblyCopyrightAttribute ), false );
+				object[] attributes = Assembly.GetEntryAssembly().GetCustomAttributes( typeof( AssemblyCopyrightAttribute ), false );
 
 				return attributes.Length == 0 ? "" : ( (AssemblyCopyrightAttribute)attributes[0] ).Copyright;
 			}
@@ -49,7 +49,7 @@ namespace ReusableBits.Platform {
 
 		public static string CompanyName {
 			get {
-				object[] attributes = Assembly.GetCallingAssembly().GetCustomAttributes( typeof( AssemblyCompanyAttribute ), false );
+				object[] attributes = Assembly.GetEntryAssembly().GetCustomAttributes( typeof( AssemblyCompanyAttribute ), false );
 
 				return attributes.Length == 0 ? "" : ( (AssemblyCompanyAttribute)attributes[0] ).Company;
 			}
