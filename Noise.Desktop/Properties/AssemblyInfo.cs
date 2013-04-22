@@ -6,7 +6,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle( "Noise.Desktop" )]
-[assembly: AssemblyDescription( "Desktop Application shell for the Noise Music System" )]
+[assembly: AssemblyDescription( "The Noise Music System desktop application" )]
 [assembly: AssemblyProduct( "Noise Music System" )]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
