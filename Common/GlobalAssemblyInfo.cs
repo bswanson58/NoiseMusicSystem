@@ -6,7 +6,7 @@ using System.Reflection;
 // associated with an assembly.
 //
 [assembly: AssemblyCompany("Secret Squirrel Products")]
-[assembly: AssemblyCopyright("Copyright © 2010-2011 Secret Squirrel Products")]
+[assembly: AssemblyCopyright("Copyright © 2010-2013 Secret Squirrel Products")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
