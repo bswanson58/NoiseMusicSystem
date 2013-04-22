@@ -49,7 +49,6 @@ namespace Noise.Core.DataBuilders {
 					using( var artistList = mArtistProvider.GetChangedArtists( rootFolder.LastSummaryScan )) {
 						foreach( var artist in artistList.List ) {
 							NoiseLogger.Current.LogMessage( string.Format( "Building summary data for: {0}", artist.Name ));
-							mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Starting summary data building for: {0}", artist.Name )));
 
 							using( var artistUpdater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
 								var albumGenre = new Dictionary<long, int>();
@@ -127,7 +126,7 @@ namespace Noise.Core.DataBuilders {
 
 								artistUpdater.Update();
 								mEventAggregator.Publish( new Events.ArtistContentUpdated( artistUpdater.Item.DbId ));
-								mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Completed summary data building for: {0}", artist.Name )));
+								mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Summary data was built for: {0}", artist.Name )));
 
 								if( mStop ) {
 									break;
