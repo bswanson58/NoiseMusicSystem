@@ -1,18 +1,24 @@
-﻿using Caliburn.Micro;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using ReusableBits.Mvvm.ViewModelSupport;
+using ReusableBits.Platform;
 using ReusableBits.Ui.Controls;
 
 namespace Noise.UI.ViewModels {
-	public class StatusViewModel : AutomaticPropertyBase, IHandle<Events.StatusEvent> {
-		private readonly IEventAggregator	mEventAggregator;
+	public class StatusViewModel : AutomaticCommandBase, IHandle<Events.StatusEvent> {
+		private readonly IEventAggregator		mEventAggregator;
+		private readonly Queue<StatusMessage>	mHoldingQueue;
+		private bool							mViewAttached;
 
-		public	string						Version { get; private set; }
+		public	string							Version { get; private set; }
 
 		public StatusViewModel( IEventAggregator eventAggregator ) {
 			mEventAggregator = eventAggregator;
+			mHoldingQueue = new Queue<StatusMessage>();
 
-			Version = "Desktop v0.9.0";
+			Version = string.Format( "{0} v{1}", VersionInformation.ProductName, VersionInformation.Version );
 
 			mEventAggregator.Subscribe( this );
 		}
@@ -22,8 +28,32 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => StatusMessage, value ); }
 		}
 
+		public void Execute_ViewAttached() {
+			StatusMessage = new StatusMessage( string.Empty ); // delay a few seconds before initial message.
+
+			StatusMessage = new StatusMessage( VersionInformation.Description );
+			StatusMessage = new StatusMessage( VersionInformation.CopyrightHolder );
+
+			while( mHoldingQueue.Any()) {
+				lock( mHoldingQueue ) {
+					StatusMessage = mHoldingQueue.Dequeue();
+				}
+			}
+
+			mViewAttached = true;
+		}
+
 		public void Handle( Events.StatusEvent status ) {
-			StatusMessage = new StatusMessage( status.Message ) { ExtendActiveDisplay = status.ExtendDisplay };
+			var message = new StatusMessage( status.Message ) { ExtendActiveDisplay = status.ExtendDisplay };
+
+			if( mViewAttached ) {
+				StatusMessage = message;
+			}
+			else {
+				lock( mHoldingQueue ) {
+					mHoldingQueue.Enqueue( message );
+				}
+			}
 		}
 	}
 }

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Controls="clr-namespace:ReusableBits.Ui.Controls;assembly=ReusableBits.Ui"
+             xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              mc:Ignorable="d" 
              d:DesignHeight="25" d:DesignWidth="700"
              Height="25">
@@ -24,7 +25,7 @@
         <Binding Path="StatusViewModel" Source="{StaticResource ViewModelLocator}" />
     </UserControl.DataContext>
 
-    <StatusBar VerticalAlignment="Bottom" Background="{DynamicResource AccentBrush}">
+    <StatusBar VerticalAlignment="Bottom" Background="{DynamicResource AccentBrush}" Behaviours:ViewAttachedNotifier.NotifyCommand="{Binding ViewAttached}">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
