@@ -280,10 +280,20 @@ namespace Noise.Core.MediaPlayer {
 
 		private void PlayTrack( Func<PlayQueueTrack> nextTrack ) {
 			var track = nextTrack();
+			var circuitBreaker = 3;
 
 			while(( track != null ) &&
+				  ( circuitBreaker > 0 ) &&
 				  (!StartTrack( track ))) {
-				CurrentStatus = ePlaybackStatus.Unknown;
+				if( track.IsStrategyQueued ) {
+					circuitBreaker--;
+
+					if( circuitBreaker == 0 ) {
+						FireStateChange( eStateTriggers.QueueExhausted );
+
+						CurrentStatus = ePlaybackStatus.Stopped;
+					}
+				}
 
 				track = nextTrack();
 			}
@@ -454,7 +464,11 @@ namespace Noise.Core.MediaPlayer {
 		public void Handle( Events.PlayQueuedTrackRequest eventArgs ) {
 			FireStateChange( eStateTriggers.ExternalPlay );
 
-			StartTrack( eventArgs.QueuedTrack );
+			if(!StartTrack( eventArgs.QueuedTrack )) {
+				FireStateChange( eStateTriggers.QueueExhausted );
+
+				CurrentStatus = ePlaybackStatus.Stopped;
+			}
 
 			mPlayQueue.PlayingTrack = eventArgs.QueuedTrack;
 
