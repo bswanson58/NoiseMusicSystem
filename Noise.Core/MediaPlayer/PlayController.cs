@@ -47,12 +47,12 @@ namespace Noise.Core.MediaPlayer {
 		private IDisposable						mPlayStatusDispose;
 		private IDisposable						mAudioLevelsDispose;
 		private IDisposable						mStreamInfoDispose;
+		private readonly Subject<ePlayState>	mPlayStateSubject;
 		private readonly Dictionary<int, PlayQueueTrack>	mOpenTracks;
 		private StateMachine<ePlayState, eStateTriggers>	mPlayStateController;
 		private ePlayState									mCurrentPlayState;
 
-		private Subject<ePlayState>				mPlayStateSubject;
-		public	IObservable<ePlayState>			PlayStateChange { get { return( mPlayStateSubject.AsObservable()); } }
+		public IObservable<ePlayState>			PlayStateChange { get { return ( mPlayStateSubject.AsObservable()); } }
 
 		public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
 							   IPlayQueue playQueue, IPlayHistory playHistory, IScrobbler scrobbler,
@@ -70,6 +70,9 @@ namespace Noise.Core.MediaPlayer {
 
 			mInfoUpdateTimer = new Timer { AutoReset = true, Enabled = false, Interval = 250 };
 			mInfoUpdateTimer.Elapsed += OnInfoUpdateTimer;
+
+			mPlayStateSubject = new Subject<ePlayState>();
+			PlayState = ePlayState.StoppedEmptyQueue;
 
 			NoiseLogger.Current.LogInfo( "PlayController created" );
 		}
@@ -116,8 +119,6 @@ namespace Noise.Core.MediaPlayer {
 				mAudioPlayer.TrackOverlapMilliseconds = audioCongfiguration.TrackOverlapMilliseconds;
 			}
 
-			mPlayStateSubject = new Subject<ePlayState>();
-			PlayState = ePlayState.StoppedEmptyQueue;
 			mPlayStateController = new StateMachine<ePlayState, eStateTriggers>( () => PlayState, newState => PlayState = newState );
 			CurrentStatus = ePlaybackStatus.Stopped;
 
