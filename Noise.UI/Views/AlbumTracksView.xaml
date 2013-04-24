@@ -104,13 +104,17 @@
                     <GridViewColumn Width="29" HeaderTemplate="{StaticResource EditColumnHeaderTemplate}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Width="17"
-                                        Height="17"
+                                <Button x:Name="TrackEdit" Width="17" Height="17" Opacity="0.1"
                                         Command="{Binding Path=Edit}"
                                         Content="{StaticResource Path_Edit}"
                                         Foreground="{StaticResource ControlTextColor}"
                                         Padding="1"
                                         ToolTip="Edit Track Properties" />
+                                <DataTemplate.Triggers>
+                                    <Trigger SourceName="TrackEdit" Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="TrackEdit" Property="Opacity" Value="1.0"/>
+                                    </Trigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
