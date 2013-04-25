@@ -20,10 +20,7 @@
                                                      InteractionRequest="{Binding Path=TrackEditRequest}" />
     </i:Interaction.Behaviors>
 
-    <GroupBox Margin="0"
-              BorderBrush="{DynamicResource TrimColor}"
-              BorderThickness="1"
-              Header=" Album Tracks ">
+    <GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}" Header=" Album Tracks ">
 
         <ListView Behaviours:GridViewSort.AutoSort="True"
                   Behaviours:ListViewColumns.Stretch="true"

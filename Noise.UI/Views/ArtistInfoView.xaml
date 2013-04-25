@@ -21,9 +21,7 @@
         <Binding Path="ArtistInfoViewModel" Source="{StaticResource ViewModelLocator}" />
     </UserControl.DataContext>
 
-    <GroupBox BorderBrush="{DynamicResource TrimColor}"
-              BorderThickness="1"
-              Header=" Artist Information ">
+    <GroupBox Margin="1,0,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Artist Information ">
         <Grid Visibility="{Binding ArtistValid, Converter={StaticResource BooleanVisibilityConverter}}">
             <Grid.RowDefinitions>
                 <RowDefinition />

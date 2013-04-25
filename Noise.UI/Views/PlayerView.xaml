@@ -19,11 +19,7 @@
         <Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
     </UserControl.DataContext>
 
-    <GroupBox Height="75"
-              Margin="3,0,3,0"
-              BorderBrush="{DynamicResource TrimColor}"
-              BorderThickness="1"
-              Header=" Player ">
+    <GroupBox Height="75" Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5*" />

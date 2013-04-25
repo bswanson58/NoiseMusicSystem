@@ -19,11 +19,7 @@
                                                      InteractionRequest="{Binding Path=LibraryConfigurationRequest}" />
     </i:Interaction.Behaviors>
    
-    <GroupBox BorderBrush="{DynamicResource TrimColor}"
-              Margin="4,0"
-              BorderThickness="1"
-              Header=" Libraries ">
-
+    <GroupBox Margin="3,0,5,0"  Style="{StaticResource SectionBorderStyle}" Header=" Libraries ">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>

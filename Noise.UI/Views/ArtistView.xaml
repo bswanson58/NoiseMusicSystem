@@ -31,9 +31,7 @@
                                                      InteractionRequest="{Binding Path=ArtistEditRequest}" />
     </i:Interaction.Behaviors>
 
-    <GroupBox BorderBrush="{DynamicResource TrimColor}"
-              BorderThickness="1"
-              Header=" Artist ">
+    <GroupBox Margin="1,0,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Artist ">
         <Grid Visibility="{Binding ArtistValid, Converter={StaticResource BooleanVisibilityConverter}}">
             <Border Background="{DynamicResource TreeItemBackground}"
                     BorderThickness="0"

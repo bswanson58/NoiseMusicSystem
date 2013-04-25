@@ -11,10 +11,7 @@
         <Binding Path="TimeExplorerYearViewModel" Source="{StaticResource ViewModelLocator}" />
     </UserControl.DataContext>
 
-    <GroupBox Margin="0"
-              BorderBrush="{DynamicResource TrimColor}"
-              BorderThickness="1"
-              Header=" In The Year ">
+    <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" In The Year ">
         <Grid>
             <Border Background="{DynamicResource TreeItemBackground}"
                 BorderThickness="0"

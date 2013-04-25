@@ -67,7 +67,7 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Time Explorer " Margin="0">
+    <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Time Explorer ">
         <ItemsControl ItemsSource="{Binding DecadeList}" ItemTemplate="{StaticResource DecadeItemTemplate}">
             <ItemsControl.ItemContainerStyle>
                 <Style>

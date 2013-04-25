@@ -60,10 +60,7 @@
         </Style>
     </UserControl.Resources>
 
-    <GroupBox Margin="0"
-              BorderBrush="{DynamicResource TrimColor}"
-              BorderThickness="1"
-              Header=" All Artist Tracks ">
+    <GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}" Header=" All Artist Tracks ">
         <Grid Visibility="{Binding Path=TracksValid, Converter={StaticResource BooleanVisibilityConverter}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />

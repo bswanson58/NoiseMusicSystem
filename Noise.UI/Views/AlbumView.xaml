@@ -27,10 +27,7 @@
                                                      InteractionRequest="{Binding Path=AlbumCategoryEditRequest}" />
     </i:Interaction.Behaviors>
 
-    <GroupBox Margin="0"
-              BorderBrush="{DynamicResource TrimColor}"
-              BorderThickness="1"
-              Header=" Album Information ">
+    <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Album Information ">
         <Border Background="{DynamicResource TreeItemBackground}"
                 BorderThickness="0"
                 CornerRadius="5"
