@@ -319,7 +319,11 @@ namespace Noise.Core.Database {
 									track = mTrackProvider.GetTrack( id );
 								}
 
-								retValue.Add( new SearchResultItem( artist, album, track, itemType ));
+								if(( artist != null ) ||
+								   ( album != null ) ||
+								   ( track != null )) {
+									retValue.Add( new SearchResultItem( artist, album, track, itemType ) );
+								}
 							}
 						}
 					}
