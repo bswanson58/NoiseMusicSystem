@@ -62,14 +62,16 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Margin="0,0,0,9" Style="{StaticResource LargeTitleStyle}" HorizontalAlignment="Right" Text="{Binding Artist.Name}" />
+                        <Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right" MaxWidth="400">
+                            <TextBlock Style="{StaticResource LargeTitleStyle}" HorizontalAlignment="Right" Text="{Binding Artist.Name}" />
+                        </Viewbox>
 
                         <!--  Rating controls  -->
                         <StackPanel Grid.Row="1"
-                                    Margin="0,1,0,5"
+                                    Margin="0,9,0,5"
                                     HorizontalAlignment="Right"
                                     Orientation="Horizontal">
-                            <CheckBox Margin="0,0,7,0"
+                            <CheckBox Margin="0,0,7,1"
                                       VerticalAlignment="Center"
                                       IsChecked="{Binding Artist.UiIsFavorite,
                                                           Mode=TwoWay}"

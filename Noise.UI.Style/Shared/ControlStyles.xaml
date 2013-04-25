@@ -14,13 +14,13 @@
 	</Style>
 	
 	<Style x:Key="LargeTitleStyle" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="#FF0000c4"/>
-		<Setter Property="FontFamily" Value="Arial Narrow"/>
-		<Setter Property="FontSize" Value="26"/>
+        <Setter Property="Foreground" Value="#FF0000A0"/>
+		<Setter Property="FontFamily" Value="Arial"/>
+		<Setter Property="FontSize" Value="32"/>
 	</Style>
 
 	<Style x:Key="SmallTitleStyle" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="#FF0000c4"/>
+        <Setter Property="Foreground" Value="#FF0000C0"/>
 		<Setter Property="FontFamily" Value="Arial"/>
 		<Setter Property="FontSize" Value="16"/>
 	</Style>
