@@ -30,13 +30,10 @@
                     </Grid.RowDefinitions>
 
                     <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="LibrarySelector" />
-                    
-                    <TabControl Grid.Row="1"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            ItemContainerStyle="{StaticResource TabItemRegionStyle}"
+
+                    <TabControl Grid.Row="1" Margin="1,7,0,-2" ItemContainerStyle="{StaticResource TabControlStyle}" BorderThickness="0"
                             Regions:RegionManager.RegionName="Explorer"
-                            TabStripPlacement="Bottom" />
+                            TabStripPlacement="Top" />
                 </Grid>
 
                 <GridSplitter Grid.Column="0"
