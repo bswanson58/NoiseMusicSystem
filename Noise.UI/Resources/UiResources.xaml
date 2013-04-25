@@ -38,7 +38,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type GridSplitter}">
-                    <Border Background="{TemplateBinding Background}"
+                    <Border x:Name="Grabber"
+                            Opacity="0.15"
+                            Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="5">
@@ -74,6 +76,11 @@
                                   Y2="30" />
                         </Canvas>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger SourceName="Grabber" Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Grabber" Property="Opacity" Value="1.0"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
