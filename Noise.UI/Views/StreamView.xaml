@@ -8,7 +8,7 @@
              Tag="Radio"
              DataContext="{Binding StreamViewModel, Source={StaticResource ViewModelLocator}}"
              >
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Radio " Margin="0">
+    <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Radio " Margin="0">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>

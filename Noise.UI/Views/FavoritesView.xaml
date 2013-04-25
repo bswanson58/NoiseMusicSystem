@@ -8,7 +8,7 @@
              DataContext="{Binding FavoritesViewModel, Source={StaticResource ViewModelLocator}}"
              d:DesignHeight="300" d:DesignWidth="300">
 
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Favorites " Margin="0">
+    <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Favorites ">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>

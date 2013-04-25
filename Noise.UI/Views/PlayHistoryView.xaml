@@ -9,7 +9,7 @@
              Tag="History"
              d:DesignHeight="300" d:DesignWidth="300">
 
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Play History " Margin="0">
+    <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Play History ">
         <ListView ItemsSource="{Binding Path=HistoryList}" BorderThickness="0"
                   Behaviours:GridViewSort.AutoSort="True"
                   Behaviours:ListViewColumns.Stretch="true">

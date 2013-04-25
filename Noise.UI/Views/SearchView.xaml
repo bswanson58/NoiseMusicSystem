@@ -9,7 +9,7 @@
              Tag="Search"
              DataContext="{Binding SearchViewModel, Source={StaticResource ViewModelLocator}}"
              >
-    <GroupBox BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Header=" Search " Margin="0">
+    <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Search ">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -32,7 +32,8 @@
                 <Button Grid.Column="4" Margin="3" Command="{Binding Path=Search}">Search</Button>
             </Grid>
 
-            <ListView Grid.Row="1" ItemsSource="{Binding Path=SearchResults}"
+            <ListView Grid.Row="1" BorderThickness="0"
+                      ItemsSource="{Binding Path=SearchResults}"
                       Behaviours:ListViewColumns.Stretch="true"
                       Behaviours:GridViewSort.AutoSort="True">
                 <ListView.ItemContainerStyle>
