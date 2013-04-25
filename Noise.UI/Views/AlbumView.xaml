@@ -55,7 +55,7 @@
                     </Image>
                 </Viewbox>
                 <Grid Grid.Column="2"
-                      Margin="3,0,11,0"
+                      Margin="3,7,11,0"
                       Behaviours:GridUtils.RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto">
                     <!--  Album name and Play button  -->
                     <Grid Grid.Row="0"
@@ -66,10 +66,9 @@
                                 Margin="0,0,3,0"
                                 Command="{Binding Path=PlayAlbum}"
                                 Style="{StaticResource PlayButtonStyle}" />
-                        <TextBlock Grid.Column="1"
+                        <TextBlock Grid.Column="1" Style="{StaticResource LargeTitleStyle}"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Center"
-                                   FontSize="20"
                                    Text="{Binding Path=Album.Name}" />
                     </Grid>
 
@@ -87,20 +86,19 @@
                         <Controls:RatingControl Rating="{Binding Path=Album.UiRating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
                     </StackPanel>
 
-                    <TextBlock Grid.Row="2"
-                               HorizontalAlignment="Right"
-                               Text="{Binding Path=Album.Genre}" />
-                    <TextBlock Grid.Row="3"
-                               HorizontalAlignment="Right"
-                               Text="{Binding Path=Album.PublishedYear,
-                                              Converter={StaticResource PublishedYearConverter}}" />
+                    <TextBlock Grid.Row="2" Style="{StaticResource SmallTitleStyle}" HorizontalAlignment="Right" Text="{Binding Path=Album.Genre}" />
+                    
+                    <!-- Published Year -->
+                    <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Style="{StaticResource SmallTitleStyle}" Opacity="0.5" Text="Published: "/>
+                        <TextBlock Style="{StaticResource SmallTitleStyle}" HorizontalAlignment="Right"
+                               Text="{Binding Path=Album.PublishedYear, Converter={StaticResource PublishedYearConverter}}" />
+                    </StackPanel>
 
                     <!--  Playing time  -->
-                    <StackPanel Grid.Row="4"
-                                HorizontalAlignment="Right"
-                                Orientation="Horizontal">
-                        <TextBlock Text="Playing time: " />
-                        <TextBlock Text="{Binding Path=AlbumPlayTime, Converter={StaticResource TimeSpanConverter}}" />
+                    <StackPanel Grid.Row="4" HorizontalAlignment="Right" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource SmallTitleStyle}" Opacity="0.5" Text="Playing time: " />
+                        <TextBlock Style="{StaticResource SmallTitleStyle}" Text="{Binding Path=AlbumPlayTime, Converter={StaticResource TimeSpanConverter}}" />
                     </StackPanel>
 
                     <!--  Categories  -->
@@ -109,8 +107,8 @@
                                 Orientation="Horizontal"
                                 Visibility="{Binding Path=HaveAlbumCategories,
                                                      Converter={StaticResource BooleanVisibilityConverter}}">
-                        <TextBlock Text="Categories: " />
-                        <TextBlock Text="{Binding Path=AlbumCategories}" />
+                        <TextBlock Style="{StaticResource SmallTitleStyle}" Opacity="0.5" Text="Categories: " />
+                        <TextBlock Style="{StaticResource SmallTitleStyle}" Text="{Binding Path=AlbumCategories}" />
                     </StackPanel>
 
                     <!--  Album commands  -->

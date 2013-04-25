@@ -24,8 +24,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0" Margin="7" VerticalAlignment="Center" FontSize="48"
-                           Foreground="{StaticResource ControlTextColor}" Text="{Binding CurrentYear}"/>
+                    <TextBlock Grid.Column="0" Margin="7" Style="{StaticResource LargeTitleStyle}" VerticalAlignment="Center" FontSize="48" Text="{Binding CurrentYear}"/>
 
                     <Grid Grid.Column="1">
                         <Grid.RowDefinitions>
@@ -36,17 +35,16 @@
                         
                         <StackPanel Grid.Row="0" HorizontalAlignment="Right" Margin="5" Orientation="Vertical">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="1">
-                                <TextBlock Text="{Binding ArtistCount}"/>
-                                <TextBlock Text =" Artists"/>
+                                <TextBlock Style="{StaticResource SmallTitleStyle}" Text="{Binding ArtistCount}"/>
+                                <TextBlock Style="{StaticResource SmallTitleStyle}" Opacity="0.5" Text =" Artists"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="1">
-                                <TextBlock Text="{Binding AlbumCount}"/>
-                                <TextBlock Text =" Albums"/>
+                                <TextBlock Style="{StaticResource SmallTitleStyle}" Text="{Binding AlbumCount}"/>
+                                <TextBlock Style="{StaticResource SmallTitleStyle}" Opacity="0.5" Text =" Albums"/>
                             </StackPanel>
                         </StackPanel>
-                        <StackPanel Grid.Row="2" HorizontalAlignment="Right" Margin="5" Orientation="Vertical">
-                            <Button Content="Play Random" Command="{Binding PlayRandom}"
-                                    ToolTip="Play a selection of tracks from this year"/>
+                        <StackPanel Grid.Row="2" HorizontalAlignment="Right" Margin="0,0,5,7" Orientation="Vertical">
+                            <Button Content="Play Random" Command="{Binding PlayRandom}" ToolTip="Play a selection of tracks from this year"/>
                         </StackPanel>
                     </Grid>
                 </Grid>

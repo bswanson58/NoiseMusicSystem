@@ -13,6 +13,18 @@
 		<Setter Property="Foreground" Value="{DynamicResource BorderTextColor}"/>
 	</Style>
 	
+	<Style x:Key="LargeTitleStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="#FF0000c4"/>
+		<Setter Property="FontFamily" Value="Arial Narrow"/>
+		<Setter Property="FontSize" Value="26"/>
+	</Style>
+
+	<Style x:Key="SmallTitleStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="#FF0000c4"/>
+		<Setter Property="FontFamily" Value="Arial"/>
+		<Setter Property="FontSize" Value="16"/>
+	</Style>
+
 	<Style x:Key="TabItemRegionStyle" TargetType="{x:Type TabItem}">
 		<Setter Property="Header" Value="{Binding Content.Tag, RelativeSource={RelativeSource Self}}" />
 	</Style>

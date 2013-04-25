@@ -52,7 +52,7 @@
                            Source="{Binding ArtistImage,
                                             Converter={StaticResource imageConverter}}"
                            Stretch="Uniform" />
-                    <Grid Grid.Column="3" Margin="3,0,11,0">
+                    <Grid Grid.Column="3" Margin="3,7,11,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -61,15 +61,12 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <TextBlock x:Name="ArtistName"
-                                   Margin="0,0,0,9"
-                                   HorizontalAlignment="Right"
-                                   FontSize="20"
-                                   Text="{Binding Artist.Name}" />
+
+                        <TextBlock Margin="0,0,0,9" Style="{StaticResource LargeTitleStyle}" HorizontalAlignment="Right" Text="{Binding Artist.Name}" />
 
                         <!--  Rating controls  -->
                         <StackPanel Grid.Row="1"
-                                    Margin="0,1"
+                                    Margin="0,1,0,5"
                                     HorizontalAlignment="Right"
                                     Orientation="Horizontal">
                             <CheckBox Margin="0,0,7,0"
@@ -80,10 +77,8 @@
                             <Controls:RatingControl Rating="{Binding Artist.UiRating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
                         </StackPanel>
 
-                        <TextBlock x:Name="Genre"
-                                   Grid.Row="2"
-                                   HorizontalAlignment="Right"
-                                   Text="{Binding Artist.Genre}" />
+                        <!-- Genre -->
+                        <TextBlock Grid.Row="2" Margin="0,5,0,0" Style="{StaticResource SmallTitleStyle}" HorizontalAlignment="Right" Text="{Binding Artist.Genre}" />
 
                         <!--  Artist website link  -->
                         <Controls:LinkLabel Grid.Row="3"
@@ -96,6 +91,8 @@
                                 <EventCommandTriggers:EventCommandTrigger Command="{Binding ArtistWebsite.LinkClicked}" RoutedEvent="Controls:LinkLabel.Click" />
                             </EventCommandTriggers:CommandSource.Trigger>
                         </Controls:LinkLabel>
+                        
+                        <!-- Button Group -->
                         <StackPanel Grid.Row="4"
                                     Height="19"
                                     Margin="52.014,0,0,5"
