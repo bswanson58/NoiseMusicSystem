@@ -55,13 +55,13 @@
                       Behaviours:GridUtils.RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto">
 
                     <!--  Album name and Play button  -->
-                    <Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right" MaxWidth="500">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Grid.Column="0" Margin="0,0,3,0" Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayAlbum}"/>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Grid.Column="0" Margin="0,0,3,0" Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayAlbum}"/>
+                        <Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right" MaxWidth="500">
                             <TextBlock Grid.Column="1" Style="{StaticResource LargeTitleStyle}" 
-                                    HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Path=Album.Name}" />
-                        </StackPanel>
+                                       HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Path=Album.Name}" />
                     </Viewbox>
+                    </StackPanel>
 
                     <!--  Favorite and rating  -->
                     <StackPanel Grid.Row="1" Margin="0,7,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
