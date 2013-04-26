@@ -12,6 +12,7 @@ namespace Noise.Infrastructure.Dto {
 		public Int32			DurationMilliseconds { get; set; }
 		public Int32			Bitrate { get; set; }
 		public Int32			SampleRate { get; set; }
+		public Int16			BeatsPerMinute { get; set; }
 		public Int16			Channels { get; set; }
 		public Int16			Rating { get; set; }
 		public Int16			TrackNumber { get; set; }

@@ -127,6 +127,8 @@ namespace Noise.Core.DataProviders {
 					var id3Tags = Tags.GetTag( TagTypes.Id3v2 ) as TagLib.Id3v2.Tag;
 
 					if( id3Tags != null ) {
+						track.BeatsPerMinute = (Int16)id3Tags.BeatsPerMinute;
+
 						var replayGainFrame = id3Tags.GetFrames( new ByteVector( "RVA2" ));
 						if(( replayGainFrame != null ) &&
 						   ( replayGainFrame.Any())) {
