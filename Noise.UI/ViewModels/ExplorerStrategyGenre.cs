@@ -172,7 +172,7 @@ namespace Noise.UI.ViewModels {
 			retValue.AddRange( from genre in mTagManager.GenreList
 							   select new UiGenreTreeNode( genre, null, null, FillGenreArtists, mCurrentArtistSort, ArtistSortChange ));
 
-			mViewModel.SetTreeSortDescription( new List<SortDescription> { new SortDescription( "Tag.StartYear", ListSortDirection.Descending ) } );
+			mViewModel.SetTreeSortDescription( new List<SortDescription> { new SortDescription( "Genre.Name", ListSortDirection.Ascending ) } );
 
 			return ( retValue );
 		}
