@@ -9,7 +9,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	public class EntityFrameworkDatabaseManager : IDatabaseManager,
 												  IHandle<Events.LibraryChanged> {
 		private const Int16		cDatabaseVersionMajor = 0;
-		private const Int16		cDatabaseVersionMinor = 5;
+		private const Int16		cDatabaseVersionMinor = 9;
 
 		private readonly IDatabaseInitializeStrategy	mInitializeStrategy;
 		private readonly IDatabaseInfo					mDatabaseInfo;
