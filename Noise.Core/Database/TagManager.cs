@@ -94,6 +94,10 @@ namespace Noise.Core.Database {
 			get{ return( mDecadeList ); }
 		}
 
+		public IEnumerable<DbGenre> GenreList {
+			get{ return( mGenreList.Values ); }
+		} 
+
 		public IEnumerable<long> ArtistListForDecade( long decadeId ) {
 			var	retValue = new List<long>();
 
@@ -112,6 +116,26 @@ namespace Noise.Core.Database {
 			}
 
 			return( retValue );
+		}
+
+		public IEnumerable<long> ArtistListForGenre( long genreId ) {
+			var	retValue = new List<long>();
+
+			using( var tags = mTagAssociationProvider.GetTagList( eTagGroup.Genre, genreId )) {
+				retValue.AddRange( tags.List.Select( tag => tag.ArtistId ).Distinct());
+			}
+
+			return ( retValue );
+		}
+
+		public IEnumerable<long> AlbumListForGenre( long artistId, long genreId ) {
+			var	retValue = new List<long>();
+
+			using( var tags = mTagAssociationProvider.GetTagList( eTagGroup.Genre, genreId ) ) {
+				retValue.AddRange( tags.List.Where( tag => tag.ArtistId == artistId ).Select( tag => tag.AlbumId ).Distinct() );
+			}
+
+			return ( retValue );
 		}
 
 		private void LoadGenreList() {

@@ -4,12 +4,14 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
 using Caliburn.Micro;
+using Noise.Infrastructure;
 
 namespace Noise.UI.Dto {
 	public class UiArtistTreeNode : UiTreeNode {
 		private readonly Action<UiArtistTreeNode>	mOnSelect;
 		private readonly Action<UiArtistTreeNode>	mOnExpand;
 		private readonly Action<UiArtistTreeNode>	mChildFillAction;
+		private readonly UiTreeNode					mParent;
 		private readonly List<SortDescription>		mSortDescriptions; 
 		private	bool								mRequiresChildren;
 		private bool								mImSorting;
@@ -17,19 +19,20 @@ namespace Noise.UI.Dto {
 		private readonly BindableCollection<UiAlbumTreeNode>	mChildren;
 
 		public	UiArtist				Artist { get; private set; }
-		public	UiDecadeTreeNode		Parent { get; private set; }
+		public	long					ParentCategoryId { get; private set; }
 
 		public UiArtistTreeNode( UiArtist artist,
 								 Action<UiArtistTreeNode> onSelect, Action<UiArtistTreeNode> onExpand, Action<UiArtistTreeNode> childFill,
 								 ViewSortStrategy sortStrategy, IObservable<ViewSortStrategy> sortChanged ) :
-			this( null, artist, onSelect, onExpand, childFill, sortStrategy, sortChanged ) { }
+			this( artist, null, Constants.cDatabaseNullOid, onSelect, onExpand, childFill, sortStrategy, sortChanged ) { }
 
-		public UiArtistTreeNode( UiDecadeTreeNode decadeNode, UiArtist artist,
+		public UiArtistTreeNode( UiArtist artist, UiTreeNode parent, long parentCategoryId,
 								 Action<UiArtistTreeNode> onSelect, Action<UiArtistTreeNode> onExpand, Action<UiArtistTreeNode> childFill,
 								 ViewSortStrategy sortStrategy, IObservable<ViewSortStrategy> sortChanged ) {
-			Parent = decadeNode;
+			ParentCategoryId = parentCategoryId;
 			Artist = artist;
 
+			mParent = parent;
 			mOnExpand = onExpand;
 			mOnSelect = onSelect;
 			mChildFillAction = childFill;
@@ -105,8 +108,8 @@ namespace Noise.UI.Dto {
 		}
 
 		protected override void OnExpand() {
-			if( Parent != null ) {
-				Parent.IsExpanded = true;
+			if( mParent != null ) {
+				mParent.IsExpanded = true;
 			}
 
 			if( mOnExpand != null ) {

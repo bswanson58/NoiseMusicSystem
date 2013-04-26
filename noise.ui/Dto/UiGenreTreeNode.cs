@@ -5,29 +5,23 @@ using System.ComponentModel;
 using System.Windows.Data;
 using Caliburn.Micro;
 using Noise.Infrastructure.Dto;
-using Noise.UI.Adapters;
 
 namespace Noise.UI.Dto {
-	public class UiDecadeTreeNode : UiTreeNode {
-		private readonly DbDecadeTag					mDecadeTag;
-		private readonly Action<UiDecadeTreeNode>		mSelectAction;
-		private readonly Action<UiDecadeTreeNode>		mExpandAction;
-		private readonly Action<UiDecadeTreeNode>		mChildFillAction;
-		private readonly Action<UiDecadeTreeNode>		mLinkAction;
+	public class UiGenreTreeNode : UiTreeNode {
+		private readonly DbGenre						mGenre;
+		private readonly Action<UiGenreTreeNode>		mSelectAction;
+		private readonly Action<UiGenreTreeNode>		mExpandAction;
+		private readonly Action<UiGenreTreeNode>		mChildFillAction;
 		private readonly List<SortDescription>			mSortDescriptions; 
 		private	CollectionViewSource					mChildrenView;
 		private bool									mRequiresChildren;
 		private readonly BindableCollection<UiArtistTreeNode>	mChildren;
 
-		public	LinkNode								DecadeWebsite { get; private set; }
-
-		public UiDecadeTreeNode( DbDecadeTag tag, Action<UiDecadeTreeNode> onSelect, Action<UiDecadeTreeNode> onExpand,
-												  Action<UiDecadeTreeNode> childFill, Action<UiDecadeTreeNode> linkAction,
-												  ViewSortStrategy sortStrategy, IObservable<ViewSortStrategy> sortChanged ) {
-			mDecadeTag = tag;
+		public UiGenreTreeNode( DbGenre genre, Action<UiGenreTreeNode> onSelect, Action<UiGenreTreeNode> onExpand, Action<UiGenreTreeNode> childFill,
+											   ViewSortStrategy sortStrategy, IObservable<ViewSortStrategy> sortChanged ) {
+			mGenre = genre;
 			mSelectAction = onSelect;
 			mExpandAction = onExpand;
-			mLinkAction = linkAction;
 			mChildFillAction = childFill;
 
 			mSortDescriptions = new List<SortDescription>();
@@ -41,9 +35,10 @@ namespace Noise.UI.Dto {
 			if( sortChanged != null ) {
 				sortChanged.Subscribe( OnSortChanged );
 			}
+		}
 
-			DecadeWebsite = !string.IsNullOrWhiteSpace( tag.Website ) ? new LinkNode( "Decade Info", 0, OnLinkClick ) :
-																		new LinkNode( string.Empty );
+		public DbGenre Genre {
+			get{ return( mGenre ); }
 		}
 
 		public Collection<UiArtistTreeNode> Children {
@@ -121,18 +116,8 @@ namespace Noise.UI.Dto {
 			}
 		}
 
-		private void OnLinkClick( long item ) {
-			if( mLinkAction != null ) {
-				mLinkAction( this );
-			}
-		}
-
-		public DbDecadeTag Tag {
-			get{ return( mDecadeTag ); }
-		}
-
 		public override string IndexString {
-			get{ return( Tag != null ? Tag.Name : "" ); }
+			get{ return( Genre != null ? Genre.Name : "" ); }
 		}
 	}
 }

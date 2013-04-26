@@ -309,6 +309,62 @@
         </DataTemplate.Triggers>
     </HierarchicalDataTemplate>
 
+    <HierarchicalDataTemplate x:Key="GenreExplorerTemplate"
+                              DataType="{x:Type Dto:UiGenreTreeNode}"
+                              ItemsSource="{Binding ChildrenView}"
+                              ItemTemplate="{StaticResource DecadeArtistTemplate}">
+        <Border x:Name="DecadePanel" Margin="0,1,0,2"
+                Background="{DynamicResource TreeItemBackground}"
+                BorderBrush="{DynamicResource ControlTextColor}"
+                CornerRadius="3">
+            <Grid Margin="3,0,3,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Grid.Column="0"
+                           FontSize="18"
+                           Text="{Binding Path=Genre.Name}" />
+
+                <StackPanel Grid.Row="0"
+                            Grid.Column="2"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal">
+                    <CheckBox x:Name="GenreIsFavorite" Margin="0,9,3,0"
+                              Opacity="{Binding Path=Genre.IsFavorite, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.25}"
+                              IsChecked="{Binding Path=Genre.IsFavorite, Mode=TwoWay}"
+                              Style="{DynamicResource FavoriteCheckBoxStyle}" />
+                    <NoiseControls:RatingControl x:Name="GenreRating" VerticalAlignment="Bottom"
+                                                 Opacity="{Binding Path=Genre.Rating, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.25}"
+                                                 Rating="{Binding Path=Genre.Rating, Mode=TwoWay}"
+                                                 Style="{DynamicResource NoiseRatingStyle}" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="11,0,0,0"
+                            Orientation="Horizontal">
+                    <TextBlock Text="{Binding Path=Genre.Description}" />
+                </StackPanel>
+
+            </Grid>
+        </Border>
+
+        <DataTemplate.Triggers>
+            <Trigger SourceName="DecadePanel" Property="IsMouseOver" Value="True">
+                <Setter TargetName="GenreIsFavorite" Property="Opacity" Value="1.0"/>
+                <Setter TargetName="GenreRating" Property="Opacity" Value="1.0"/>
+            </Trigger>
+        </DataTemplate.Triggers>
+    </HierarchicalDataTemplate>
+
     <!--  SearchTextBox  -->
     <SolidColorBrush x:Key="SearchTextBox_Background" Color="White" />
     <SolidColorBrush x:Key="SearchTextBox_InactiveBackground" Color="#CCE0F8" />

@@ -19,8 +19,8 @@ using Condition = CuttingEdge.Conditions.Condition;
 
 namespace Noise.UI.ViewModels {
 	[Export( typeof( IExplorerViewStrategy ))]
-	internal class ExplorerStrategyDecade : IExplorerViewStrategy,
-											IHandle<Events.ArtistUserUpdate>, IHandle<Events.AlbumUserUpdate> {
+	internal class ExplorerStrategyGenre : IExplorerViewStrategy,
+										   IHandle<Events.ArtistUserUpdate>, IHandle<Events.AlbumUserUpdate> {
 		internal const string					cSearchOptionDefault = "!";
 		internal const string					cSearchArtists = "Artists";
 		internal const string					cSearchAlbums = "Albums";
@@ -43,14 +43,14 @@ namespace Noise.UI.ViewModels {
 		private IEnumerable<ViewSortStrategy>	mArtistSorts;
 		private ViewSortStrategy				mCurrentArtistSort;
 		private Subject<ViewSortStrategy>		mArtistSortSubject;
-		private	IObservable<ViewSortStrategy>	ArtistSortChange { get { return( mArtistSortSubject.AsObservable()); }}
+		private IObservable<ViewSortStrategy>	ArtistSortChange { get { return ( mArtistSortSubject.AsObservable() ); } }
 		private IEnumerable<ViewSortStrategy>	mAlbumSorts;
 		private ViewSortStrategy				mCurrentAlbumSort;
 		private Subject<ViewSortStrategy>		mAlbumSortSubject;
-		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
+		private IObservable<ViewSortStrategy>	AlbumSortChange { get { return ( mAlbumSortSubject.AsObservable() ); } }
 
-		public ExplorerStrategyDecade( IEventAggregator eventAggregator, IResourceProvider resourceProvider,
-									   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager ) {
+		public ExplorerStrategyGenre( IEventAggregator eventAggregator, IResourceProvider resourceProvider,
+									  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager ) {
 			mEventAggregator = eventAggregator;
 			mResourceProvider = resourceProvider;
 			mArtistProvider = artistProvider;
@@ -62,12 +62,12 @@ namespace Noise.UI.ViewModels {
 			mViewModel = viewModel;
 
 			mChangeObserver = new Observal.Observer();
-			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
+			mChangeObserver.Extend( new PropertyChangedExtension() ).WhenPropertyChanges( OnNodeChanged );
 
 			var	strategies = new List<ViewSortStrategy> { new ViewSortStrategy( "Artist Name", new List<SortDescription> { new SortDescription( "Artist.Name", ListSortDirection.Ascending ) }),
 														  new ViewSortStrategy( "Unprefixed Artist Name", new List<SortDescription> { new SortDescription( "Artist.SortName", ListSortDirection.Ascending ) }),
 														  new ViewSortStrategy( "Genre", new List<SortDescription> { new SortDescription( "Artist.Genre", ListSortDirection.Ascending ),
-																													 new SortDescription( "Artist.SortName", ListSortDirection.Ascending )}) };
+																												     new SortDescription( "Artist.SortName", ListSortDirection.Ascending )}) };
 			mArtistSorts = strategies;
 			mCurrentArtistSort = strategies[1];
 			mArtistSortSubject = new Subject<ViewSortStrategy>();
@@ -81,19 +81,19 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public string StrategyId {
-			get{ return( "ViewStrategy_Decade" ); }
+			get { return ( "ViewStrategy_Genre" ); }
 		}
 
 		public string StrategyName {
-			get{ return( "Decades / Artists / Albums" ); }
+			get { return ( "Genre / Artists / Albums" ); }
 		}
 
 		public bool IsDefaultStrategy {
-			get{ return( false ); }
+			get { return ( false ); }
 		}
 
 		public void UseSortPrefixes( bool enable, IEnumerable<string> sortPrefixes ) {
-			mUseSortPrefixes =enable;
+			mUseSortPrefixes = enable;
 			mSortPrefixes = sortPrefixes;
 		}
 
@@ -101,14 +101,14 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.Subscribe( this );
 
 			if( mViewTemplate == null ) {
-				mViewTemplate = mResourceProvider.RetrieveTemplate( "DecadeExplorerTemplate" ) as DataTemplate;
+				mViewTemplate = mResourceProvider.RetrieveTemplate( "GenreExplorerTemplate" ) as DataTemplate;
 			}
 			Condition.Requires( mViewTemplate ).IsNotNull();
 
 			mViewModel.SetViewTemplate( mViewTemplate );
-			mViewModel.SetSearchOptions( new [] { cSearchOptionDefault + cSearchArtists,
+			mViewModel.SetSearchOptions( new[] { cSearchOptionDefault + cSearchArtists,
 												  cSearchAlbums,
-												  cSearchOptionDefault + cSearchIgnoreCase });
+												  cSearchOptionDefault + cSearchIgnoreCase } );
 		}
 
 		public void Deactivate() {
@@ -120,22 +120,23 @@ namespace Noise.UI.ViewModels {
 
 			if( notifier != null ) {
 				if( propertyNotification.PropertyName == "UiRating" ) {
-					GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( notifier.DbId, notifier.UiRating ));
+					GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( notifier.DbId, notifier.UiRating ) );
 				}
 				if( propertyNotification.PropertyName == "UiIsFavorite" ) {
-					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( notifier.DbId, notifier.UiIsFavorite ));
+					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( notifier.DbId, notifier.UiIsFavorite ) );
 				}
 			}
 		}
 
 		public void Handle( Events.ArtistUserUpdate eventArgs ) {
-			foreach( var decadeNode in mViewModel.TreeData.OfType<UiDecadeTreeNode>() ) {
-				var treeNode = ( from UiArtistTreeNode node in decadeNode.Children
-								 where eventArgs.ArtistId == node.Artist.DbId select node ).FirstOrDefault();
+			foreach( var genreNode in mViewModel.TreeData.OfType<UiGenreTreeNode>() ) {
+				var treeNode = ( from UiArtistTreeNode node in genreNode.Children
+								 where eventArgs.ArtistId == node.Artist.DbId
+								 select node ).FirstOrDefault();
 				if( treeNode != null ) {
-					UpdateUiArtist( treeNode.Artist, mArtistProvider.GetArtist( eventArgs.ArtistId ));
+					UpdateUiArtist( treeNode.Artist, mArtistProvider.GetArtist( eventArgs.ArtistId ) );
 
-					decadeNode.UpdateSort();
+					genreNode.UpdateSort();
 				}
 			}
 		}
@@ -144,12 +145,14 @@ namespace Noise.UI.ViewModels {
 			var album = mAlbumProvider.GetAlbum( eventArgs.AlbumId );
 
 			if( album != null ) {
-				foreach( var decadeNode in mViewModel.TreeData.OfType<UiDecadeTreeNode>()) {
-					var treeNode = ( from UiArtistTreeNode node in decadeNode.Children
-									 where album.Artist == node.Artist.DbId select node ).FirstOrDefault();
+				foreach( var genreNode in mViewModel.TreeData.OfType<UiGenreTreeNode>() ) {
+					var treeNode = ( from UiArtistTreeNode node in genreNode.Children
+									 where album.Artist == node.Artist.DbId
+									 select node ).FirstOrDefault();
 					if( treeNode != null ) {
 						var uiAlbum = ( from UiAlbumTreeNode a in treeNode.Children
-										where a.Album.DbId == album.DbId select a.Album ).FirstOrDefault();
+										where a.Album.DbId == album.DbId
+										select a.Album ).FirstOrDefault();
 
 						if( uiAlbum != null ) {
 							UpdateUiAlbum( uiAlbum, album );
@@ -164,84 +167,81 @@ namespace Noise.UI.ViewModels {
 		public IEnumerable<UiTreeNode> BuildTree( IDatabaseFilter filter ) {
 			Condition.Requires( mViewModel ).IsNotNull();
 
-			var retValue = new List<UiDecadeTreeNode>();
+			var retValue = new List<UiGenreTreeNode>();
 
-			retValue.AddRange( from tag in mTagManager.DecadeTagList
-								select new UiDecadeTreeNode( tag, null, null, FillDecadeArtists, WebsiteRequest, mCurrentArtistSort, ArtistSortChange ));
+			retValue.AddRange( from genre in mTagManager.GenreList
+							   select new UiGenreTreeNode( genre, null, null, FillGenreArtists, mCurrentArtistSort, ArtistSortChange ));
 
-			mViewModel.SetTreeSortDescription( new List<SortDescription> { new SortDescription( "Tag.StartYear", ListSortDirection.Descending )});
+			mViewModel.SetTreeSortDescription( new List<SortDescription> { new SortDescription( "Tag.StartYear", ListSortDirection.Descending ) } );
 
-			return( retValue );
-		}
-
-		private void WebsiteRequest( UiDecadeTreeNode decadeNode ) {
-			if(!string.IsNullOrWhiteSpace( decadeNode.Tag.Website )) {
-				mEventAggregator.Publish( new Events.UrlLaunchRequest( decadeNode.Tag.Website ));
-			}
+			return ( retValue );
 		}
 
 		internal TaskHandler ChildPopulateTask {
 			get {
 				if( mChildPopulateTask == null ) {
-					Execute.OnUIThread( () => mChildPopulateTask = new TaskHandler());
+					Execute.OnUIThread( () => mChildPopulateTask = new TaskHandler() );
 				}
 
-				return( mChildPopulateTask );
+				return ( mChildPopulateTask );
 			}
 			set { mChildPopulateTask = value; }
-		} 
+		}
 
-		private void FillDecadeArtists( UiDecadeTreeNode decadeNode ) {
+		private void FillGenreArtists( UiGenreTreeNode genreNode ) {
 			ChildPopulateTask.StartTask( () => {
-											var	artistIdList = mTagManager.ArtistListForDecade( decadeNode.Tag.DbId );
-											var childNodes = ( from artistId in artistIdList
-															   select mArtistProvider.GetArtist( artistId )
-															   into dbArtist where dbArtist != null select CreateArtistNode( dbArtist, decadeNode )).ToList();
-											
-											decadeNode.SetChildren( childNodes );
-										  },
+				var	artistIdList = mTagManager.ArtistListForGenre( genreNode.Genre.DbId );
+				var childNodes = ( from artistId in artistIdList
+								   select mArtistProvider.GetArtist( artistId )
+									   into dbArtist
+									   where dbArtist != null
+									   select CreateArtistNode( dbArtist, genreNode ) ).ToList();
+
+				genreNode.SetChildren( childNodes );
+			},
 										  () => { },
-										  ex => NoiseLogger.Current.LogException( "ExplorerStrategyDecade:FillDecadeArtists", ex ));
+										  ex => NoiseLogger.Current.LogException( "ExplorerStrategyGenre:FillGenreArtists", ex ) );
 		}
 
 		private void FillArtistAlbums( UiArtistTreeNode artistNode ) {
 			ChildPopulateTask.StartTask( () => {
-											var	albumList = new List<UiAlbumTreeNode>();
+				var	albumList = new List<UiAlbumTreeNode>();
 
-											if(( artistNode != null ) &&
-											   ( artistNode.Artist != null )) {
-												var albumIdList = mTagManager.AlbumListForDecade( artistNode.Artist.DbId, artistNode.ParentCategoryId );
+				if( ( artistNode != null ) &&
+				   ( artistNode.Artist != null ) ) {
+					var albumIdList = mTagManager.AlbumListForGenre( artistNode.Artist.DbId, artistNode.ParentCategoryId );
 
-												foreach( var albumId in albumIdList ) {
-													var dbAlbum = mAlbumProvider.GetAlbum( albumId );
+					foreach( var albumId in albumIdList ) {
+						var dbAlbum = mAlbumProvider.GetAlbum( albumId );
 
-													if( dbAlbum != null ) {
-														var uiAlbum = new UiAlbum();
-														UpdateUiAlbum( uiAlbum, dbAlbum );
-														var treeNode = new UiAlbumTreeNode( uiAlbum, OnAlbumSelect, OnAlbumPlay );
+						if( dbAlbum != null ) {
+							var uiAlbum = new UiAlbum();
+							UpdateUiAlbum( uiAlbum, dbAlbum );
+							var treeNode = new UiAlbumTreeNode( uiAlbum, OnAlbumSelect, OnAlbumPlay );
 
-														albumList.Add( treeNode );
-													}
-												}
+							albumList.Add( treeNode );
+						}
+					}
 
-												artistNode.SetChildren( albumList );
-											}
-										 },
-										 () => { },
-										 ex => NoiseLogger.Current.LogException( "ExplorerStrategyDecade:FillArtistAlbums", ex ));
+					artistNode.SetChildren( albumList );
+				}
+			},
+			() => { },
+			ex => NoiseLogger.Current.LogException( "ExplorerStrategyGenre:FillArtistAlbums", ex ) );
 		}
 
-		private UiArtistTreeNode CreateArtistNode( DbArtist dbArtist, UiDecadeTreeNode parent ) {
+		private UiArtistTreeNode CreateArtistNode( DbArtist dbArtist, UiGenreTreeNode parent ) {
 			var	uiArtist = new UiArtist();
 
 			UpdateUiArtist( uiArtist, dbArtist );
 			mChangeObserver.Add( uiArtist );
 
-			return( new UiArtistTreeNode( uiArtist, parent, parent.Tag.DbId, OnArtistSelect, null, FillArtistAlbums, mCurrentAlbumSort, AlbumSortChange ));
+			return ( new UiArtistTreeNode( uiArtist, parent, parent.Genre.DbId,
+										   OnArtistSelect, null, FillArtistAlbums, mCurrentAlbumSort, AlbumSortChange ));
 		}
 
 		public ArtistAlbumConfigViewModel ConfigureSortRequest() {
-			return( new ArtistAlbumConfigViewModel( mArtistSorts, mCurrentArtistSort, mAlbumSorts, mCurrentAlbumSort ));
+			return ( new ArtistAlbumConfigViewModel( mArtistSorts, mCurrentArtistSort, mAlbumSorts, mCurrentAlbumSort ) );
 		}
 
 		public void SortRequest( ArtistAlbumConfigViewModel request ) {
@@ -250,7 +250,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public bool CanConfigureViewSort() {
-			return( true );
+			return ( true );
 		}
 
 		private void SetArtistSorting( ViewSortStrategy strategy ) {
@@ -280,15 +280,15 @@ namespace Noise.UI.ViewModels {
 		private static void UpdateUiAlbum( UiAlbum uiAlbum, DbAlbum dbAlbum ) {
 			if(( uiAlbum != null ) &&
 			   ( dbAlbum != null )) {
-			Mapper.DynamicMap( dbAlbum, uiAlbum );
+				Mapper.DynamicMap( dbAlbum, uiAlbum );
 			}
 		}
 
 		private void FormatSortPrefix( UiArtist artist ) {
-			if(( artist != null ) &&
-			   ( mSortPrefixes != null )) {
+			if( ( artist != null ) &&
+			   ( mSortPrefixes != null ) ) {
 				foreach( string prefix in mSortPrefixes ) {
-					if( artist.Name.StartsWith( prefix, StringComparison.CurrentCultureIgnoreCase )) {
+					if( artist.Name.StartsWith( prefix, StringComparison.CurrentCultureIgnoreCase ) ) {
 						artist.SortName = artist.Name.Remove( 0, prefix.Length ).Trim();
 						artist.DisplayName = "(" + artist.Name.Insert( prefix.Length, ")" );
 
@@ -299,11 +299,11 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnArtistSelect( UiArtistTreeNode artistNode ) {
-			mEventAggregator.Publish( new Events.ArtistFocusRequested( artistNode.Artist.DbId ));
+			mEventAggregator.Publish( new Events.ArtistFocusRequested( artistNode.Artist.DbId ) );
 		}
 
 		private void OnAlbumSelect( UiAlbumTreeNode albumNode ) {
-			mEventAggregator.Publish( new Events.AlbumFocusRequested( albumNode.Album.Artist, albumNode.Album.DbId ));
+			mEventAggregator.Publish( new Events.AlbumFocusRequested( albumNode.Album.Artist, albumNode.Album.DbId ) );
 		}
 
 		private void OnAlbumPlay( UiAlbumTreeNode albumNode ) {
@@ -317,7 +317,7 @@ namespace Noise.UI.ViewModels {
 		public IEnumerable<IndexNode> BuildIndex( IEnumerable<UiTreeNode> artistList ) {
 			var	retValue = new List<IndexNode>();
 
-			return( retValue );
+			return ( retValue );
 		}
 
 		public bool Search( string searchText, IEnumerable<string> searchOptionsList ) {
@@ -325,19 +325,19 @@ namespace Noise.UI.ViewModels {
 			var searchOptions = searchOptionsList.ToList();
 
 			var theseOptions = String.Concat( searchOptions );
-			if(!theseOptions.Equals( mLastSearchOptions )) {
+			if( !theseOptions.Equals( mLastSearchOptions ) ) {
 				mLastSearchOptions = theseOptions;
 
 				ClearCurrentSearch();
 			}
 
-			if(( mTreeEnumerator != null ) &&
-			   ( mTreeEnumerator.Current != null )) {
+			if( ( mTreeEnumerator != null ) &&
+			   ( mTreeEnumerator.Current != null ) ) {
 				mTreeEnumerator.Current.IsSelected = false;
 			}
 
-			if(( mTreeEnumerator == null ) ||
-			   ( !mTreeEnumerator.MoveNext())) {
+			if( ( mTreeEnumerator == null ) ||
+			   ( !mTreeEnumerator.MoveNext() ) ) {
 				mTreeEnumerator = FindMatches( searchText, searchOptions ).GetEnumerator();
 				mTreeEnumerator.MoveNext();
 			}
@@ -358,22 +358,22 @@ namespace Noise.UI.ViewModels {
 			var	retValue = new List<UiArtistTreeNode>();
 			var options = optionList.ToList();
 
-			foreach( var decadeNode in mViewModel.TreeData.OfType<UiDecadeTreeNode>() ) {
-				if( decadeNode.RequiresChildren ) {
-					FillDecadeArtists( decadeNode );
+			foreach( var genreNode in mViewModel.TreeData.OfType<UiGenreTreeNode>() ) {
+				if( genreNode.RequiresChildren ) {
+					FillGenreArtists( genreNode );
 				}
 
-				if( options.Contains( cSearchIgnoreCase )) {
+				if( options.Contains( cSearchIgnoreCase ) ) {
 					var matchText = searchText.ToUpper();
 
-					retValue.AddRange( from node in decadeNode.Children where node.Artist.Name.ToUpper().Contains( matchText ) select node );
+					retValue.AddRange( from node in genreNode.Children where node.Artist.Name.ToUpper().Contains( matchText ) select node );
 				}
 				else {
-					retValue.AddRange( from node in decadeNode.Children where node.Artist.Name.Contains( searchText ) select node );
+					retValue.AddRange( from node in genreNode.Children where node.Artist.Name.Contains( searchText ) select node );
 				}
 			}
 
-			return( retValue );
+			return ( retValue );
 		}
 
 		public void ClearCurrentSearch() {

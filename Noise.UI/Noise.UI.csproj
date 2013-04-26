@@ -229,6 +229,7 @@
     <Compile Include="Dto\UiCategory.cs" />
     <Compile Include="Dto\UiDecadeTreeNode.cs" />
     <Compile Include="Dto\UiEqBand.cs" />
+    <Compile Include="Dto\UiGenreTreeNode.cs" />
     <Compile Include="Dto\UiInternetStream.cs" />
     <Compile Include="Dto\UiPlayQueueTrack.cs" />
     <Compile Include="Dto\UiTimeExplorerAlbum.cs" />
@@ -279,6 +280,7 @@
     <Compile Include="ViewModels\DatabaseConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\ExplorerStrategyArtistAlbum.cs" />
     <Compile Include="ViewModels\ExplorerStrategyDecade.cs" />
+    <Compile Include="ViewModels\ExplorerStrategyGenre.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
     <Compile Include="ViewModels\IExplorerViewStrategy.cs" />
     <Compile Include="ViewModels\ILibraryExplorerViewModel.cs" />
