@@ -309,18 +309,62 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0"
-                            Margin="5,5,5,3"
-                            Orientation="Vertical">
-                    <Rectangle Height="1"
-                               Fill="{DynamicResource TrimColor}"
-                               StrokeThickness="0" />
-                    <Rectangle Height="1"
-                               Fill="LightGray"
-                               StrokeThickness="0" />
+                <StackPanel Grid.Row="0" Margin="5,5,3,3" Orientation="Vertical">
+                    <Rectangle Height="1" StrokeThickness="0" Fill="{DynamicResource TrimColor}" />
+                    <Rectangle Height="1" StrokeThickness="0" Fill="LightGray" />
                 </StackPanel>
 
-                <Grid Grid.Row="1" Margin="3">
+
+                <StackPanel Grid.Row="1" Margin="0,1,0,1" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
+                            Command="{Binding Path=MoveItemUp}" Content="5" FontFamily="Webdings" />
+                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
+                            Command="{Binding Path=MoveItemDown}" Content="6" FontFamily="Webdings" />
+                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
+                            Command="{Binding Path=RemoveItem}" Content="r" FontFamily="WebDings" />
+                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
+                            Command="{Binding Path=ClearQueue}" Content="Clear" />
+                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
+                            Command="{Binding Path=ClearPlayed}" Content="Clear Played"/>
+                </StackPanel>
+
+                <Grid Grid.Row="2" Margin="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Margin="3,0,0,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=SavePlayList}" Content="Save" />
+                    <TextBlock Grid.Column="2" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Play Selection:"/>
+                    <ComboBox Grid.Column="3"
+                              Width="100"
+                              DisplayMemberPath="Title"
+                              ItemsSource="{Binding Path=PlayStrategyList}"
+                              SelectedValue="{Binding Path=PlayStrategy}"
+                              SelectedValuePath="Strategy" />
+                </Grid>
+
+                <Grid Grid.Row="3" Margin="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <Button Grid.Column="0" Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Content="Start" Command="{Binding StartStrategy}" />
+                    <TextBlock Grid.Column="2" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="When Exhausted:"/>
+                    <ComboBox Grid.Column="3"
+                              Width="100"
+                              DisplayMemberPath="Title"
+                              ItemsSource="{Binding Path=ExhaustedStrategyList}"
+                              SelectedValue="{Binding Path=ExhaustedStrategy}"
+                              SelectedValuePath="Strategy" />
+                </Grid>
+
+                <Grid Grid.Row="4" Margin="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="50" />
@@ -339,57 +383,6 @@
                     <TextBlock Grid.Row="1" Grid.Column="1" Margin="3,0,3,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
                                Text="{Binding Path=RemainingTime, Converter={StaticResource TimeSpanConverter}}" />
                 </Grid>
-
-                <Grid Grid.Row="2" Margin="3">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="1" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Play Selection:"/>
-                    <ComboBox x:Name="PlayStrategy"
-                              Grid.Column="2"
-                              Width="110"
-                              DisplayMemberPath="Title"
-                              ItemsSource="{Binding Path=PlayStrategyList}"
-                              SelectedValue="{Binding Path=PlayStrategy}"
-                              SelectedValuePath="Strategy" />
-                </Grid>
-                <Grid Grid.Row="3" Margin="3">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    
-                    <Button Grid.Column="0" Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Content="Start" Command="{Binding StartStrategy}" />
-                    <TextBlock Grid.Column="2" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="When Exhausted:"/>
-                    <ComboBox x:Name="ExhaustedStrategy"
-                              Grid.Column="3"
-                              Width="110"
-                              DisplayMemberPath="Title"
-                              ItemsSource="{Binding Path=ExhaustedStrategyList}"
-                              SelectedValue="{Binding Path=ExhaustedStrategy}"
-                              SelectedValuePath="Strategy" />
-                </Grid>
-
-                <StackPanel Grid.Row="4" Margin="0,3,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
-                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
-                            Command="{Binding Path=MoveItemUp}" Content="5" FontFamily="Webdings" />
-                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
-                            Command="{Binding Path=MoveItemDown}" Content="6" FontFamily="Webdings" />
-                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
-                            Command="{Binding Path=RemoveItem}" Content="r" FontFamily="WebDings" />
-                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
-                            Command="{Binding Path=ClearQueue}" Content="Clear" />
-                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
-                            Command="{Binding Path=ClearPlayed}" Content="Clear Played"/>
-                </StackPanel>
-                <StackPanel Grid.Row="4" Margin="3,0,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
-                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
-                            Command="{Binding Path=SavePlayList}" Content="Save" />
-                </StackPanel>
             </Grid>
         </Grid>
     </GroupBox>
