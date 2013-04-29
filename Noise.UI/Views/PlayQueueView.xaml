@@ -110,7 +110,7 @@
         </ControlTemplate>
 
         <DataTemplate x:Key="QueueListItem">
-            <Expander Style="{StaticResource MouseOverTrigger}" Template="{DynamicResource MouseOverExpanderTemplate}">
+            <Expander Margin="-9,0,0,0" Style="{StaticResource MouseOverTrigger}" Template="{DynamicResource MouseOverExpanderTemplate}">
                 <Expander.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -330,32 +330,14 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0"
-                               Grid.Column="0"
-                               HorizontalAlignment="Right"
-                               VerticalAlignment="Center"
-                               Foreground="{DynamicResource ControlTextColor}"
+                    <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
                                Text="Total Time:" />
-                    <TextBlock Grid.Row="0"
-                               Grid.Column="1"
-                               Margin="3,0,3,0"
-                               HorizontalAlignment="Right"
-                               VerticalAlignment="Center"
-                               Text="{Binding Path=TotalTime,
-                                              Converter={StaticResource TimeSpanConverter}}" />
-                    <TextBlock Grid.Row="1"
-                               Grid.Column="0"
-                               HorizontalAlignment="Right"
-                               VerticalAlignment="Center"
-                               Foreground="{DynamicResource ControlTextColor}"
+                    <TextBlock Grid.Row="0" Grid.Column="1" Margin="3,0,3,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
+                               Text="{Binding Path=TotalTime, Converter={StaticResource TimeSpanConverter}}" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
                                Text="Remaining Time:" />
-                    <TextBlock Grid.Row="1"
-                               Grid.Column="1"
-                               Margin="3,0,3,0"
-                               HorizontalAlignment="Right"
-                               VerticalAlignment="Center"
-                               Text="{Binding Path=RemainingTime,
-                                              Converter={StaticResource TimeSpanConverter}}" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="3,0,3,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
+                               Text="{Binding Path=RemainingTime, Converter={StaticResource TimeSpanConverter}}" />
                 </Grid>
 
                 <Grid Grid.Row="2" Margin="3">
@@ -364,9 +346,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="1"
-                           Content="Play Selection:"
-                           Foreground="{DynamicResource ControlTextColor}" />
+                    <TextBlock Grid.Column="1" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Play Selection:"/>
                     <ComboBox x:Name="PlayStrategy"
                               Grid.Column="2"
                               Width="110"
@@ -382,10 +362,9 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Margin="3,0" Width="37" Content="Start" Command="{Binding StartStrategy}" />
-                    <Label Grid.Column="2"
-                           Content="When Exhausted:"
-                           Foreground="{DynamicResource ControlTextColor}" />
+                    
+                    <Button Grid.Column="0" Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Content="Start" Command="{Binding StartStrategy}" />
+                    <TextBlock Grid.Column="2" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="When Exhausted:"/>
                     <ComboBox x:Name="ExhaustedStrategy"
                               Grid.Column="3"
                               Width="110"
@@ -395,42 +374,21 @@
                               SelectedValuePath="Strategy" />
                 </Grid>
 
-                <StackPanel Grid.Row="4"
-                            Margin="3"
-                            HorizontalAlignment="Right"
-                            Orientation="Horizontal">
-                    <Button Width="25"
-                            Margin="3"
-                            Command="{Binding Path=MoveItemUp}"
-                            Content="5"
-                            FontFamily="Webdings" />
-                    <Button Width="25"
-                            Margin="3"
-                            Command="{Binding Path=MoveItemDown}"
-                            Content="6"
-                            FontFamily="Webdings" />
-                    <Button Width="25"
-                            Margin="3"
-                            Command="{Binding Path=RemoveItem}"
-                            Content="r"
-                            FontFamily="WebDings" />
-                    <Button Width="37"
-                            Margin="3"
-                            Command="{Binding Path=ClearQueue}"
-                            Content="Clear" />
-                    <Button Width="77" 
-                            Margin="3" 
-                            Command="{Binding Path=ClearPlayed}"
-                            Content="Clear Played"/>
+                <StackPanel Grid.Row="4" Margin="0,3,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
+                            Command="{Binding Path=MoveItemUp}" Content="5" FontFamily="Webdings" />
+                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
+                            Command="{Binding Path=MoveItemDown}" Content="6" FontFamily="Webdings" />
+                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
+                            Command="{Binding Path=RemoveItem}" Content="r" FontFamily="WebDings" />
+                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
+                            Command="{Binding Path=ClearQueue}" Content="Clear" />
+                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
+                            Command="{Binding Path=ClearPlayed}" Content="Clear Played"/>
                 </StackPanel>
-                <StackPanel Grid.Row="4"
-                            Margin="3"
-                            HorizontalAlignment="Left"
-                            Orientation="Horizontal">
-                    <Button Width="37"
-                            Margin="3"
-                            Command="{Binding Path=SavePlayList}"
-                            Content="Save" />
+                <StackPanel Grid.Row="4" Margin="3,0,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
+                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}"
+                            Command="{Binding Path=SavePlayList}" Content="Save" />
                 </StackPanel>
             </Grid>
         </Grid>
