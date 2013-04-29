@@ -152,7 +152,7 @@
                 <GroupBox Grid.Column="1" Margin="11,-5,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Parametric Equalization ">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="95" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
@@ -180,11 +180,8 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
-                            <Button Grid.Row="3"
-                                    Margin="0,5"
-                                    HorizontalAlignment="Right"
-                                    Command="{Binding Path=ResetBands}"
-                                    Content="Reset Equalizer" />
+                            <Button Grid.Row="3" Margin="0,5" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right"
+                                    Command="{Binding Path=ResetBands}" Content="Reset Equalizer" />
                         </Grid>
 
                         <!--  Parametric Equalizer  -->

@@ -37,6 +37,11 @@
 		<Setter Property="FontSize" Value="12"/>
 	</Style>
 
+	<Style x:Key="GeneralButtonStyle" TargetType="Button">
+        <Setter Property="Padding" Value="5,3"/>
+        <Setter Property="Foreground" Value="{DynamicResource ControlTextColor}"/>
+	</Style>
+	
 	<Style x:Key="TransportButtonStyle" TargetType="Button">
 		<Setter Property="Height" Value="29"/>
 		<Setter Property="Width" Value="29"/>
