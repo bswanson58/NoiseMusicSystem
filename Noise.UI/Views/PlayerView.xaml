@@ -19,7 +19,7 @@
         <Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
     </UserControl.DataContext>
 
-    <GroupBox Height="75" Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
+    <GroupBox Height="77" Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5*" />
@@ -40,15 +40,14 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0" VerticalAlignment="Bottom" Margin="3,0,0,5"
-                                   FontSize="22"
+                    <TextBlock Grid.Column="0" VerticalAlignment="Bottom" Margin="3,-1,0,5" Style="{StaticResource MediumTitleStyle}"
                                    Foreground="{DynamicResource ControlTextColor}"
                                    Text="Now Playing:"
                                    Visibility="{Binding TrackName,
                                                         Converter={StaticResource EmptyStringVisibilityConverter}}" />
                     
                     <!--  Track progress background  -->
-                    <Rectangle Grid.Column="1" StrokeThickness="0" RadiusX="5" RadiusY="5" Margin="2,0,0,3">
+                    <Rectangle Grid.Column="1" StrokeThickness="0" RadiusX="5" RadiusY="5" Margin="2,-3,0,3">
                         <Rectangle.Fill>
                             <LinearGradientBrush Opacity="0.5" EndPoint="1,0.5" StartPoint="0,0.5">
                                 <GradientStop Color="#FF588CE0" Offset="{Binding PlayPositionPercentage}"/>
@@ -58,19 +57,14 @@
                     </Rectangle>
 
                     <StackPanel Grid.Column="1"
-                                Margin="5,0,0,5"
+                                Margin="5,-1,0,5"
                                 VerticalAlignment="Center"
                                 Orientation="Horizontal">
-                        <TextBlock VerticalAlignment="Bottom"
-                                   FontSize="22"
-                                   FontWeight="Bold"
+                        <TextBlock VerticalAlignment="Bottom" Style="{StaticResource MediumTitleStyle}"
                                    ReusableBehaviours:FadeTrimming.IsEnabled="True"
                                    ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                                    Text="{Binding TrackName}" />
-                        <TextBlock Margin="0,0,0,3"
-                                   VerticalAlignment="Bottom"
-                                   FontSize="16"
-                                   Foreground="Gray"
+                        <TextBlock Margin="0,0,0,3" VerticalAlignment="Bottom" Style="{StaticResource SmallTitleStyle}"
                                    ReusableBehaviours:FadeTrimming.IsEnabled="True"
                                    ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                                    Text="{Binding AlbumName}" />
@@ -144,44 +138,13 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0"
-                            HorizontalAlignment="Center"
-                            Orientation="Horizontal">
-                    <Button Width="27"
-                            Margin="3"
-                            Command="{Binding Play}"
-                            Content="4"
-                            FontFamily="Webdings"
-                            FontSize="16" />
-                    <Button Width="27"
-                            Margin="3"
-                            Command="{Binding Pause}"
-                            Content=";"
-                            FontFamily="Webdings"
-                            FontSize="16" />
-                    <Button Width="27"
-                            Margin="3"
-                            Command="{Binding Stop}"
-                            Content="&lt;"
-                            FontFamily="Webdings"
-                            FontSize="16" />
-                    <Button Width="27"
-                            Margin="3"
-                            Command="{Binding PreviousTrack}"
-                            Content="9"
-                            FontFamily="Webdings"
-                            FontSize="16" />
-                    <Button Width="27"
-                            Margin="3"
-                            Command="{Binding NextTrack}"
-                            Content=":"
-                            FontFamily="Webdings"
-                            FontSize="16" />
-                    <Button Width="27"
-                            Margin="3"
-                            Command="{Binding ReplayTrack}"
-                            Content="{StaticResource Path_ReplayTrack}"
-                            Padding="5" />
+                <StackPanel Grid.Row="0" HorizontalAlignment="Center" Orientation="Horizontal">
+                    <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="4" Command="{Binding Play}"/>
+                    <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=";" Command="{Binding Pause}"/>
+                    <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="&lt;" Command="{Binding Stop}"/>
+                    <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="9" Command="{Binding PreviousTrack}" />
+                    <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=":" Command="{Binding NextTrack}"/>
+                    <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_ReplayTrack}" Command="{Binding ReplayTrack}" Padding="5" />
                 </StackPanel>
                 <Slider x:Name="PositionSlider"
                         Grid.Row="1"
@@ -223,13 +186,7 @@
                                Text="x"
                                Visibility="{Binding Path=IsMuted,
                                                     Converter={StaticResource BooleanVisibilityConverter}}" />
-                    <Button Grid.Column="0"
-                            Width="27"
-                            Margin="3"
-                            Command="{Binding Path=Mute}"
-                            Content="X"
-                            FontFamily="Webdings"
-                            FontSize="16"
+                    <Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" Command="{Binding Path=Mute}"
                             Foreground="{StaticResource ControlTextColor}" />
                     <NoiseControls:VuMeter Grid.Column="1"
                                            Margin="0,7,7,0"
@@ -237,13 +194,7 @@
                                            Foreground="#FF588CE0"
                                            LeftLevel="{Binding Path=LeftLevel}"
                                            RightLevel="{Binding Path=RightLevel}" />
-                    <Button Grid.Column="2"
-                            Width="27"
-                            Margin="3"
-                            Command="{Binding Path=ExtendedPlayer}"
-                            Content="5"
-                            FontFamily="Webdings"
-                            FontSize="16"
+                    <Button Grid.Column="2" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="5" Command="{Binding Path=ExtendedPlayer}"
                             Foreground="{StaticResource ControlTextColor}" />
                 </Grid>
                 <Grid Grid.Row="1">
