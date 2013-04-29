@@ -40,11 +40,9 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0" VerticalAlignment="Bottom" Margin="3,-1,0,5" Style="{StaticResource MediumTitleStyle}"
-                                   Foreground="{DynamicResource ControlTextColor}"
-                                   Text="Now Playing:"
-                                   Visibility="{Binding TrackName,
-                                                        Converter={StaticResource EmptyStringVisibilityConverter}}" />
+                    <TextBlock Grid.Column="0" VerticalAlignment="Bottom" Margin="3,-1,0,5"
+                               Style="{StaticResource MediumTitleStyle}" Foreground="{DynamicResource ControlTextColor}"
+                               Text="Now Playing:" Visibility="{Binding TrackName, Converter={StaticResource EmptyStringVisibilityConverter}}" />
                     
                     <!--  Track progress background  -->
                     <Rectangle Grid.Column="1" StrokeThickness="0" RadiusX="5" RadiusY="5" Margin="2,-3,0,3">
@@ -72,7 +70,6 @@
                 </Grid>
 
                 <Grid Grid.Row="1"
-                      Margin="0,0,0,3"
                       Behaviours:GridUtils.ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto,Auto">
 
                     <!--  Favorites and ratings  -->
@@ -112,18 +109,12 @@
                             Content="{StaticResource Path_Lyrics}"
                             ToolTip="Display Song Lyrics" />
 
-                    <TextBlock Grid.Column="5"
-                               Margin="9,0,0,0"
-                               Text="{Binding Path=PlayState}" />
+                    <TextBlock Grid.Column="5" Margin="9,0,0,0" Style="{StaticResource ControlTitleStyle}" Text="{Binding Path=PlayState}" />
 
                     <!--  Playing position  -->
-                    <TextBlock Grid.Column="7"
-                               Foreground="{DynamicResource ControlTextColor}"
-                               Text="Position: " />
-                    <TextBlock Grid.Column="8"
-                               Margin="0,0,7,0"
-                               Text="{Binding Path=TrackTime,
-                                              Converter={StaticResource TimeSpanConverter}}">
+                    <TextBlock Grid.Column="7" Style="{StaticResource ControlTitleStyle}" Text="Position: " />
+                    <TextBlock Grid.Column="8" Margin="0,0,7,0" Style="{StaticResource ControlTitleStyle}"
+                               Text="{Binding Path=TrackTime, Converter={StaticResource TimeSpanConverter}}">
                         <EventCommandTriggers:CommandSource.Trigger>
                             <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
                         </EventCommandTriggers:CommandSource.Trigger>
@@ -150,7 +141,7 @@
                         Grid.Row="1"
                         Margin="5,0,5,0"
                         VerticalAlignment="Center"
-                        BorderThickness="0,3"
+                        BorderThickness="0,0"
                         Maximum="{Binding Path=TrackEndPosition,
                                           Mode=OneWay}"
                         Minimum="0"
@@ -204,16 +195,9 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0"
-                               Margin="0,0,5,0"
-                               HorizontalAlignment="Right"
-                               VerticalAlignment="Center"
-                               Foreground="{DynamicResource ControlTextColor}"
+                    <TextBlock Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
                                Text="Volume:" />
-                    <TextBlock Grid.Column="1"
-                               Margin="0,0,3,0"
-                               VerticalAlignment="Center"
-                               Foreground="{DynamicResource ControlTextColor}"
+                    <TextBlock Grid.Column="1" Margin="0,0,3,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
                                Text="-" />
                     <Slider x:Name="Volume"
                             Grid.Column="2"
@@ -225,14 +209,10 @@
                             Style="{StaticResource PlayerPositionSliderStyle}"
                             Value="{Binding Path=Volume,
                                             Mode=TwoWay}" />
-                    <TextBlock Grid.Column="3"
-                               Margin="3,0,0,0"
-                               VerticalAlignment="Center"
-                               Foreground="{DynamicResource ControlTextColor}"
+                    <TextBlock Grid.Column="3" Margin="3,0,0,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
                                Text="+" />
                 </Grid>
             </Grid>
-
         </Grid>
     </GroupBox>
 </UserControl>

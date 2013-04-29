@@ -30,7 +30,13 @@
 		<Setter Property="FontFamily" Value="Arial"/>
 		<Setter Property="FontSize" Value="16"/>
 	</Style>
-	
+
+	<Style x:Key="ControlTitleStyle" TargetType="TextBlock">
+		<Setter Property="Foreground" Value="{DynamicResource ControlTextColor}"/>
+		<Setter Property="FontFamily" Value="Segoe UI"/>
+		<Setter Property="FontSize" Value="12"/>
+	</Style>
+
 	<Style x:Key="TransportButtonStyle" TargetType="Button">
 		<Setter Property="Height" Value="29"/>
 		<Setter Property="Width" Value="29"/>

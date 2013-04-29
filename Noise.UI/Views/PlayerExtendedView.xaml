@@ -30,7 +30,7 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="50" />
+                <RowDefinition Height="53" />
             </Grid.RowDefinitions>
 
             <!--  Extended Controls  -->
@@ -43,7 +43,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!--  Audio Controls: Stereo Enhancement / Soft Saturation / Reverb  -->
-                <Grid Grid.Column="0">
+                <Grid Grid.Column="0" Margin="0,5,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
@@ -89,7 +89,7 @@
 
                     <CheckBox Grid.Row="3"
                               Grid.Column="0"
-                              Margin="5,5,0,0"
+                              Margin="5,3,0,0"
                               Content="Soft Saturation"
                               IsChecked="{Binding Path=SoftSaturationEnable}" />
                     <Slider Grid.Row="4"
@@ -149,10 +149,7 @@
                 </Grid>
 
                 <!--  Eq Controls  -->
-                <GroupBox Grid.Column="1"
-                          BorderBrush="{DynamicResource TrimColor}"
-                          BorderThickness="1"
-                          Header=" Parametric Equalization ">
+                <GroupBox Grid.Column="1" Margin="11,-5,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Parametric Equalization ">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="95" />
@@ -201,11 +198,7 @@
 
 
                 <!--  Spectrum Analyzer  -->
-                <GroupBox Grid.Column="2"
-                          Margin="11,0,11,0"
-                          BorderBrush="{DynamicResource TrimColor}"
-                          BorderThickness="1"
-                          Header=" Spectrum Analyzer ">
+                <GroupBox Grid.Column="2" Margin="11,-5,11,0" Style="{StaticResource SectionBorderStyle}" Header=" Spectrum Analyzer ">
                     <NoiseControls:SpectrumAnalyzerDisplay Margin="5"
                                                            ImageHeight="{Binding Path=ImageHeight,
                                                                                  Mode=OneWayToSource}"
@@ -417,7 +410,6 @@
                     </Grid>
 
                     <Grid Grid.Row="1"
-                          Margin="0,0,0,3"
                           Behaviours:GridUtils.ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto,Auto">
 
                         <!--  Favorites and ratings  -->
@@ -481,47 +473,18 @@
                     <StackPanel Grid.Row="0"
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal">
-                        <Button Width="27"
-                                Margin="3"
-                                Command="{Binding Play}"
-                                Content="4"
-                                FontFamily="Webdings"
-                                FontSize="16" />
-                        <Button Width="27"
-                                Margin="3"
-                                Command="{Binding Pause}"
-                                Content=";"
-                                FontFamily="Webdings"
-                                FontSize="16" />
-                        <Button Width="27"
-                                Margin="3"
-                                Command="{Binding Stop}"
-                                Content="&lt;"
-                                FontFamily="Webdings"
-                                FontSize="16" />
-                        <Button Width="27"
-                                Margin="3"
-                                Command="{Binding PreviousTrack}"
-                                Content="9"
-                                FontFamily="Webdings"
-                                FontSize="16" />
-                        <Button Width="27"
-                                Margin="3"
-                                Command="{Binding NextTrack}"
-                                Content=":"
-                                FontFamily="Webdings"
-                                FontSize="16" />
-                        <Button Width="27"
-                                Margin="3"
-                                Command="{Binding ReplayTrack}"
-                                Content="{StaticResource Path_ReplayTrack}"
-                                Padding="5" />
+                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="4" Command="{Binding Play}"/>
+                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=";" Command="{Binding Pause}"/>
+                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="&lt;" Command="{Binding Stop}"/>
+                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="9" Command="{Binding PreviousTrack}" />
+                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=":" Command="{Binding NextTrack}"/>
+                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_ReplayTrack}" Command="{Binding ReplayTrack}" Padding="5" />
                     </StackPanel>
+                    
                     <Slider x:Name="PositionSlider"
                             Grid.Row="1"
                             Margin="5,0,5,0"
                             VerticalAlignment="Center"
-                            BorderThickness="0,3"
                             Maximum="{Binding Path=TrackEndPosition,
                                               Mode=OneWay}"
                             Minimum="0"
@@ -554,16 +517,9 @@
                                    Foreground="Red"
                                    IsHitTestVisible="False"
                                    Text="x"
-                                   Visibility="{Binding Path=IsMuted,
-                                                        Converter={StaticResource BooleanVisibilityConverter}}" />
-                        <Button Grid.Column="0"
-                                Width="27"
-                                Margin="3"
-                                Command="{Binding Path=Mute}"
-                                Content="X"
-                                FontFamily="Webdings"
-                                FontSize="16"
-                                Foreground="{StaticResource ControlTextColor}" />
+                                   Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
+                        <Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Foreground="{StaticResource ControlTextColor}"
+                                Content="X" Command="{Binding Path=Mute}"/>
                     </Grid>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
