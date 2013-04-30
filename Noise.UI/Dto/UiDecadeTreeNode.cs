@@ -54,6 +54,8 @@ namespace Noise.UI.Dto {
 			get {
 				if( mChildrenView == null ) {
 					mChildrenView = new CollectionViewSource { Source = mChildren };
+
+					SetSortDescriptions( mSortDescriptions );
 				}
 
 				return( mChildrenView.View );
