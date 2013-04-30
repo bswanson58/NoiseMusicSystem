@@ -113,52 +113,45 @@
             <Expander Margin="-9,0,0,0" Style="{StaticResource MouseOverTrigger}" Template="{DynamicResource MouseOverExpanderTemplate}">
                 <Expander.Header>
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="15" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="40" />
-                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <Grid Grid.Row="0" Margin="0,-3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="15" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="40" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <Grid Grid.Column="0">
+                                <TextBlock Margin="0,2,0,0" FontFamily="WebDings" FontSize="18" Foreground="LightGreen" Text="4"
+                                       Visibility="{Binding Path=QueuedTrack.IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}" />
+                                <TextBlock Margin="7,0,0,0" FontSize="14" FontWeight="Bold" Foreground="Red" Text="!"
+                                       Visibility="{Binding Path=QueuedTrack.IsFaulted, Converter={StaticResource BooleanVisibilityConverter}}" />
+                            </Grid>
+                            
+                            <TextBlock x:Name="TrackName" Grid.Column="1" FontSize="14"
+                                       ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                                       ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                                       Text="{Binding Path=QueuedTrack.Name}" />
 
-                        <Grid Grid.Column="0">
-                            <TextBlock VerticalAlignment="Bottom"
-                                       FontFamily="WebDings"
-                                       FontSize="16"
-                                       Foreground="LightGreen"
-                                       Text="4"
-                                       Visibility="{Binding Path=QueuedTrack.IsPlaying,
-                                                            Converter={StaticResource BooleanVisibilityConverter}}" />
-                            <TextBlock Margin="5,0,0,0"
-                                       VerticalAlignment="Bottom"
-                                       Foreground="Red"
-                                       Text="!"
-                                       Visibility="{Binding Path=QueuedTrack.IsFaulted,
-                                                            Converter={StaticResource BooleanVisibilityConverter}}" />
+                            <TextBlock x:Name="TrackDuration" Grid.Column="2" FontSize="14" VerticalAlignment="Top" TextAlignment="Right"
+                                       Text="{Binding Path=QueuedTrack.Track.Duration, Converter={StaticResource TimeSpanConverter}}"/>
                         </Grid>
+                        
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="15" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                        <TextBlock x:Name="TrackName"
-                                   Grid.Column="1"
-                                   VerticalAlignment="Bottom"
-                                   FontSize="14"
-                                   ReusableBehaviours:FadeTrimming.IsEnabled="True"
-                                   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                                   Text="{Binding Path=QueuedTrack.Name}" />
-                        <TextBlock x:Name="AlbumName"
-                                   Grid.Column="2"
-                                   Margin="5,0,0,2"
-                                   VerticalAlignment="Bottom"
-                                   FontSize="9"
-                                   Foreground="Gray"
-                                   ReusableBehaviours:FadeTrimming.IsEnabled="True"
-                                   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                                   Text="{Binding Path=QueuedTrack.AlbumName}" />
-                        <TextBlock x:Name="TrackDuration"
-                                   Grid.Column="3"
-                                   Margin="0,0,3,0"
-                                   VerticalAlignment="Bottom"
-                                   Text="{Binding Path=QueuedTrack.Track.Duration,
-                                                  Converter={StaticResource TimeSpanConverter}}"
-                                   TextAlignment="Right" />
+                            <TextBlock x:Name="AlbumName" Grid.Column="1" Margin="5,0" FontSize="11" Foreground="Gray"
+                                       ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                                       ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                                       Text="{Binding Path=QueuedTrack.AlbumName}" />
+                        </Grid>
                     </Grid>
                 </Expander.Header>
                 <Grid Margin="15,3,5,1">
@@ -227,8 +220,7 @@
                                   Height="15"
                                   Margin="0,0,9,0"
                                   VerticalAlignment="Center"
-                                  IsChecked="{Binding Path=IsFavorite,
-                                                      Mode=TwoWay}"
+                                  IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}"
                                   Style="{StaticResource FavoriteCheckBoxStyle}" />
                         <Controls:RatingControl Rating="{Binding Path=Rating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
                     </StackPanel>
@@ -241,8 +233,15 @@
                     <Setter TargetName="AlbumName" Property="Foreground" Value="LightGray" />
                     <Setter TargetName="TrackDuration" Property="Foreground" Value="LightGray" />
                 </DataTrigger>
+              <DataTrigger Binding="{Binding Path=QueuedTrack.IsPlaying}" Value="true">
+                <Setter TargetName="TrackName" Property="FontWeight" Value="Bold" />
+                <Setter TargetName="AlbumName" Property="FontWeight" Value="Bold" />
+                <Setter TargetName="TrackDuration" Property="FontWeight" Value="Bold" />
+              </DataTrigger>
+              <DataTrigger Binding="{Binding Path=QueuedTrack.IsStrategyQueued, Mode=OneTime}" Value="true">
+                <Setter TargetName="TrackName" Property="FontStyle" Value="Italic" />
+              </DataTrigger>
             </DataTemplate.Triggers>
-
         </DataTemplate>
     </Control.Resources>
 
@@ -259,8 +258,7 @@
 
             <ListBox x:Name="PlayQueueListView"
                      Grid.Row="0"
-                     Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex,
-                                                                             Mode=OneWay}"
+                     Behaviours:ListViewEnsureVisible.VisibleIndex="{Binding Path=PlayingIndex, Mode=OneWay}"
                      BorderThickness="0"
                      DragDrop:DragDrop.DropHandler="{Binding}"
                      DragDrop:DragDrop.IsDragSource="true"
@@ -286,12 +284,6 @@
                     <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=QueuedTrack.IsPlaying}" Value="true">
-                                <Setter Property="FontWeight" Value="Bold" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Path=QueuedTrack.IsStrategyQueued, Mode=OneTime}" Value="true">
-                                <Setter Property="FontStyle" Value="Italic" />
-                            </DataTrigger>
                             <Trigger Property="Behaviours:ListViewItemDragState.IsBeingDragged" Value="True">
                                 <Setter Property="FontWeight" Value="Bold" />
                             </Trigger>

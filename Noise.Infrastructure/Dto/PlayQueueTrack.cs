@@ -119,7 +119,7 @@ namespace Noise.Infrastructure.Dto {
 				if((!IsStream ) &&
 				   ( Album != null ) &&
 				   ( Artist != null )) {
-					retValue = string.Format( "({0}/{1})", Artist.Name, Album.Name );
+					retValue = string.Format( "{0}/{1}", Artist.Name, Album.Name );
 				}
 
 				return( retValue );
