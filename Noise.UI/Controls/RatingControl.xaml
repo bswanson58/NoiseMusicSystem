@@ -87,7 +87,7 @@
                 <Grid.RenderTransform>
                     <ScaleTransform ScaleX="0.75" ScaleY="0.75"/>
                 </Grid.RenderTransform>
-                <ContentControl Content="{StaticResource Path_Clear}" Margin="7,0"/>
+                <ContentControl Content="{StaticResource Path_Clear}" Margin="7,0,0,0"/>
             </Grid>
 
             <Grid x:Name="PART_RatingPanel" Grid.Row="0" Grid.Column="1" Background="Transparent">
