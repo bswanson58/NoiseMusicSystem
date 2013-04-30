@@ -101,13 +101,13 @@
                             Command="{Binding RequestSimilarSongSearch}"
                             Content="{StaticResource Path_SimilarTracks}"
                             ToolTip="Find Similar Tracks" />
-                    <Button Grid.Column="4"
+                    <!--Button Grid.Column="4"
                             Width="17"
                             Height="17"
                             Margin="5,0,0,0"
                             Command="{Binding RequestLyrics}"
                             Content="{StaticResource Path_Lyrics}"
-                            ToolTip="Display Song Lyrics" />
+                            ToolTip="Display Song Lyrics" /-->
 
                     <TextBlock Grid.Column="5" Margin="9,0,0,0" Style="{StaticResource ControlTitleStyle}" Text="{Binding Path=PlayState}" />
 

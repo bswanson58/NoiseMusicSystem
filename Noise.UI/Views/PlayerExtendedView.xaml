@@ -437,13 +437,13 @@
                                 Command="{Binding RequestSimilarSongSearch}"
                                 Content="{StaticResource Path_SimilarTracks}"
                                 ToolTip="Find Similar Tracks" />
-                        <Button Grid.Column="4"
+                        <!--Button Grid.Column="4"
                                 Width="17"
                                 Height="17"
                                 Margin="5,0,0,0"
                                 Command="{Binding RequestLyrics}"
                                 Content="{StaticResource Path_Lyrics}"
-                                ToolTip="Display Song Lyrics" />
+                                ToolTip="Display Song Lyrics" /-->
 
                         <!--  Playing position  -->
                         <TextBlock Grid.Column="7"
