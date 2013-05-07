@@ -31,9 +31,8 @@
 
                     <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="LibrarySelector" />
 
-                    <TabControl Grid.Row="1" Margin="1,7,0,-2" ItemContainerStyle="{StaticResource TabControlStyle}" BorderThickness="0"
-                            Regions:RegionManager.RegionName="Explorer"
-                            TabStripPlacement="Top" />
+                    <TabControl Grid.Row="1" Margin="1,7,3,-2" ItemContainerStyle="{StaticResource TabControlStyle}"
+                                BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="Explorer" />
                 </Grid>
 
                 <GridSplitter Grid.Column="0"

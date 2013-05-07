@@ -193,7 +193,7 @@
                                                      InteractionRequest="{Binding Path=ExplorerSortRequest}" />
     </i:Interaction.Behaviors>
 
-    <GroupBox Margin="1,0,3,0" Style="{StaticResource SectionBorderStyle}" Header=" Library ">
+    <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Library ">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="IndexVisibility">
                 <VisualStateGroup.Transitions>
