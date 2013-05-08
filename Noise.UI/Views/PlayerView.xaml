@@ -8,11 +8,13 @@
              xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
              xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
              xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              d:DesignHeight="100"
              d:DesignWidth="1200"
              mc:Ignorable="d">
     <UserControl.Resources>
         <Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True" />
+        <ReusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
     </UserControl.Resources>
 
     <UserControl.DataContext>
@@ -73,18 +75,52 @@
                       Behaviours:GridUtils.ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto,Auto">
 
                     <!--  Favorites and ratings  -->
-                    <CheckBox x:Name="Favorite"
-                              Grid.Column="0"
-                              Margin="3,0,5,0"
-                              VerticalAlignment="Center"
-                              IsChecked="{Binding Path=IsFavorite,
-                                                  Mode=TwoWay}"
-                              Style="{StaticResource FavoriteCheckBoxStyle}" />
-                    <NoiseControls:RatingControl Grid.Column="1"
-                                                 VerticalAlignment="Center"
-                                                 Rating="{Binding Path=Rating,
-                                                                  Mode=TwoWay}"
-                                                 Style="{StaticResource NoiseRatingStyle}" />
+                    <StackPanel x:Name="_ratingPanel" Grid.Column="0" Orientation="Horizontal">
+                        <CheckBox x:Name="_favoriteControl" Margin="3,0,5,0" VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}"
+                              Opacity="{Binding Path=IsFavorite, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}" 
+                              IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}"/>
+
+                        <NoiseControls:RatingControl x:Name="_ratingControl" VerticalAlignment="Center" Style="{StaticResource NoiseRatingStyle}"
+                                                 Opacity="{Binding Path=Rating, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"   
+                                                 Rating="{Binding Path=Rating, Mode=TwoWay}" />
+                        
+                        <StackPanel.Triggers>
+                            <EventTrigger SourceName="_ratingPanel" RoutedEvent="StackPanel.MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard Storyboard.TargetName="_favoriteControl" Storyboard.TargetProperty="Opacity">
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
+                                            <LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.3" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                                <BeginStoryboard>
+                                    <Storyboard Storyboard.TargetName="_ratingControl" Storyboard.TargetProperty="Opacity">
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
+                                            <LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.3" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger SourceName="_ratingPanel" RoutedEvent="StackPanel.MouseLeave">
+                                <BeginStoryboard >
+                                    <Storyboard Storyboard.TargetName="_favoriteControl" Storyboard.TargetProperty="Opacity">
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
+                                            <LinearDoubleKeyFrame Value="{Binding Path=IsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
+                                                                  KeyTime="0:0:0.7" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                                <BeginStoryboard >
+                                    <Storyboard Storyboard.TargetName="_ratingControl" Storyboard.TargetProperty="Opacity">
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
+                                            <LinearDoubleKeyFrame Value="{Binding Path=Rating, Converter={StaticResource DefaultValueOpacityConverter}}"
+                                                                  KeyTime="0:0:0.7" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </StackPanel.Triggers>
+                    </StackPanel>
 
                     <!--  Track related commands  -->
                     <Button Grid.Column="2"
