@@ -15,7 +15,7 @@
                         ObjectType="{x:Type vml:DialogServiceResolver}" />
 
     <ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter" />
-    <ReusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter"/>
+    <ReusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" DefaultOpacity="0.25" StandardOpacity="1.0"/>
     <ReusableConverters:EmptyStringVisibilityConverter x:Key="EmptyStringVisibilityConverter" />
 
     <ContextMenu x:Key="ArtistMenu">
@@ -176,11 +176,11 @@
 
                 <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
                     <CheckBox x:Name="ArtistIsFavorite" Margin="0,7,3,0"
-                              Opacity="{Binding Path=Artist.UiIsFavorite, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.25}"
+                              Opacity="{Binding Path=Artist.UiIsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
                               IsChecked="{Binding Artist.UiIsFavorite, Mode=TwoWay}"
                               Style="{DynamicResource FavoriteCheckBoxStyle}" />
                     <NoiseControls:RatingControl x:Name="ArtistRating" Margin="0,5,3,0"
-                                                 Opacity="{Binding Path=Artist.UiRating, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.25}"
+                                                 Opacity="{Binding Path=Artist.UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"
                                                  Rating="{Binding Path=Artist.UiRating, Mode=TwoWay}"
                                                  Style="{DynamicResource NoiseRatingStyle}" />
                 </StackPanel>
@@ -237,11 +237,11 @@
 
                 <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
                     <CheckBox x:Name="DecadeIsFavorite" Margin="0,7,3,0"
-                              Opacity="{Binding Path=Tag.IsFavorite, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.25}"
+                              Opacity="{Binding Path=Tag.IsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
                               IsChecked="{Binding Path=Tag.IsFavorite, Mode=TwoWay}"
                               Style="{DynamicResource FavoriteCheckBoxStyle}" />
                     <NoiseControls:RatingControl x:Name="DecadeRating" Margin="0,5,3,0"
-                                                 Opacity="{Binding Path=Tag.Rating, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.25}"
+                                                 Opacity="{Binding Path=Tag.Rating, Converter={StaticResource DefaultValueOpacityConverter}}"
                                                  Rating="{Binding Path=Tag.Rating, Mode=TwoWay}"
                                                  Style="{DynamicResource NoiseRatingStyle}" />
                 </StackPanel>
@@ -300,11 +300,11 @@
                             HorizontalAlignment="Right"
                             Orientation="Horizontal">
                     <CheckBox x:Name="GenreIsFavorite" Margin="0,9,3,0"
-                              Opacity="{Binding Path=Genre.IsFavorite, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.25}"
+                              Opacity="{Binding Path=Genre.IsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
                               IsChecked="{Binding Path=Genre.IsFavorite, Mode=TwoWay}"
                               Style="{DynamicResource FavoriteCheckBoxStyle}" />
                     <NoiseControls:RatingControl x:Name="GenreRating" VerticalAlignment="Bottom"
-                                                 Opacity="{Binding Path=Genre.Rating, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.25}"
+                                                 Opacity="{Binding Path=Genre.Rating, Converter={StaticResource DefaultValueOpacityConverter}}"
                                                  Rating="{Binding Path=Genre.Rating, Mode=TwoWay}"
                                                  Style="{DynamicResource NoiseRatingStyle}" />
                 </StackPanel>

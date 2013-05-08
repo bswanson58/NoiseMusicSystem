@@ -6,6 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              d:DesignHeight="300"
              d:DesignWidth="300"
              mc:Ignorable="d">
@@ -13,6 +14,10 @@
     <UserControl.DataContext>
         <Binding Path="AlbumTracksViewModel" Source="{StaticResource ViewModelLocator}" />
     </UserControl.DataContext>
+    
+    <UserControl.Resources>
+        <ReusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
+    </UserControl.Resources>
 
     <i:Interaction.Behaviors>
         <Behaviours:InteractionRequestDialogBehavior DialogClass="TrackEdit"
@@ -70,7 +75,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox x:Name="IsFavorite"  HorizontalAlignment="Center"
-                                          Opacity="{Binding Path=UiIsFavorite, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.1}"
+                                          Opacity="{Binding Path=UiIsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
                                           IsChecked="{Binding Path=UiIsFavorite, Mode=TwoWay}"
                                           Style="{StaticResource FavoriteCheckBoxStyle}" />
                                 <DataTemplate.Triggers>
@@ -87,7 +92,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Controls:RatingControl x:Name="Rating" HorizontalAlignment="Center"
-                                                        Opacity="{Binding Path=UiRating, Converter={StaticResource DefaultValueOpacityConverter}, ConverterParameter=0.1}"
+                                                        Opacity="{Binding Path=UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"
                                                         Rating="{Binding Path=UiRating, Mode=TwoWay}"
                                                         Style="{StaticResource NoiseRatingStyle}" />
                                 <DataTemplate.Triggers>

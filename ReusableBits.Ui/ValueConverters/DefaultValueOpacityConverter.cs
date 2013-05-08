@@ -12,12 +12,12 @@ namespace ReusableBits.Ui.ValueConverters {
 	// 
 	[ValueConversion( typeof( object ), typeof( double ))]
 	public class DefaultValueOpacityConverter : IValueConverter {
-		private double	mDefaultValueOpacity;
-		private double	mStandardOpacity;
+		public double	StandardOpacity { get; set; }
+		public double	DefaultOpacity { get; set; }
 
 		public DefaultValueOpacityConverter() {
-			mDefaultValueOpacity = 0.0D;
-			mStandardOpacity = 1.0D;
+			DefaultOpacity = 0.0D;
+			StandardOpacity = 1.0D;
 		}
 
 		public object Convert( object value, Type targetType, object parameter, CultureInfo culture ) {
@@ -32,18 +32,7 @@ namespace ReusableBits.Ui.ValueConverters {
 				hasDefaultValue = Equals( value, defaultValue );
 			}
 
-			if( parameter is string ) {
-				var opacityValues = ( parameter as string ).Split( '|' );
-
-				if( opacityValues.Length > 0 ) {
-					double.TryParse( opacityValues[0], out mDefaultValueOpacity );
-				}
-				if( opacityValues.Length > 1 ) {
-					double.TryParse( opacityValues[1], out mStandardOpacity );
-				}
-			}
-
-			return hasDefaultValue ? mDefaultValueOpacity : mStandardOpacity;
+			return hasDefaultValue ? DefaultOpacity : StandardOpacity;
 		}
 
 		public object ConvertBack( object value, Type targetType, object parameter, CultureInfo culture ) {
