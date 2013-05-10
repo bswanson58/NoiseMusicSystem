@@ -145,3 +145,5 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+
+/Sandbox
