@@ -56,7 +56,9 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void ClearTrackList() {
-			mTracks.Each( node => mChangeObserver.Release( node ));
+			foreach( var track in mTracks ) {
+				mChangeObserver.Release( track );
+			}
 			mTracks.Clear();
 
 			AlbumPlayTime = new TimeSpan();
@@ -71,7 +73,9 @@ namespace Noise.UI.ViewModels {
 				AlbumPlayTime += dbTrack.Duration;
 			}
 
-			mTracks.Each( track => mChangeObserver.Add( track ));
+			foreach( var track in mTracks ) {
+				mChangeObserver.Add( track );
+			}
 		}
  
 		public void Handle( Events.DatabaseClosing args ) {
