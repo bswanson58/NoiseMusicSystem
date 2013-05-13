@@ -1,6 +1,7 @@
 ﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
+using Noise.RavenDatabase.DataProviders;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase {
@@ -15,7 +16,7 @@ namespace Noise.RavenDatabase {
 			mContainer.RegisterType<IDatabaseManager, RavenDatabaseManager>();
 
 //			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();
-//			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
+			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
 //			mContainer.RegisterType<IAlbumProvider, AlbumProvider>();
 //			mContainer.RegisterType<ITrackProvider, TrackProvider>();
 //			mContainer.RegisterType<IInternetStreamProvider, InternetStreamProvider>();
