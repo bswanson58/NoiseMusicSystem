@@ -13,6 +13,7 @@ namespace Noise.RavenDatabase.Interfaces {
 		void				Delete( Expression<Func<T, bool>> expression );
 		void				DeleteAll();
 
+		bool				Exists( T item );
 		bool				Exists( object key );
 		bool				Exists( object[] keys );
 		bool				Exists( Expression<Func<T, bool>> expression );

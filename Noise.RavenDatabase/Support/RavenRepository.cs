@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using CuttingEdge.Conditions;
 using Noise.RavenDatabase.Interfaces;
 using Raven.Client;
 
@@ -35,6 +36,12 @@ namespace Noise.RavenDatabase.Support {
 			strings = strings.Select( x => x.Replace( '/', '-' ).Replace( '\\', '-' ).Replace( ' ', '-' ).Replace( '^', '-' )).ToList();
 
 			return( mDatabase.Conventions.GetTypeTagName( typeof( T )) + "/" + strings.Aggregate(( x, y ) => x + "/" + y ));
+		}
+
+		public bool Exists( T item ) {
+			Condition.Requires( item ).IsNotNull();
+
+			return( Exists( mKeySelector( item )));
 		}
 
 		public bool Exists( object key ) {
@@ -76,7 +83,9 @@ namespace Noise.RavenDatabase.Support {
 		}
 
 		public void Delete( T item ) {
-			using( var session = mDatabase.OpenSession() ) {
+			Condition.Requires( item ).IsNotNull();
+
+			using( var session = mDatabase.OpenSession()) {
 				var repositoryItem = session.Load<T>( KeyGenerator( mKeySelector( item )));
 
 				if( repositoryItem != null ) {
@@ -140,17 +149,23 @@ namespace Noise.RavenDatabase.Support {
 		}
 
 		public void Add( T item ) {
-			using( var session = mDatabase.OpenSession()) {
-				session.Store( item );
+			Condition.Requires( item ).IsNotNull();
 
-				session.SaveChanges();
+			if(!Exists( item )) {
+				using( var session = mDatabase.OpenSession()) {
+						session.Store( item );
+
+						session.SaveChanges();
+				}
 			}
 		}
 
 		public void Add( IEnumerable<T> items ) {
 			using( var session = mDatabase.OpenSession()) {
 				foreach( var entity in items ) {
-					session.Store( entity );
+					if( session.Load<T>( KeyGenerator( mKeySelector( entity ))) == null ) {
+						session.Store( entity );
+					}
 				}
 
 				session.SaveChanges();
@@ -158,6 +173,8 @@ namespace Noise.RavenDatabase.Support {
 		}
 
 		public void Update( T item ) {
+			Condition.Requires( item ).IsNotNull();
+
 			using( var session = mDatabase.OpenSession() ) {
 				var repositoryItem = session.Load<T>( KeyGenerator( mKeySelector( item )));
 

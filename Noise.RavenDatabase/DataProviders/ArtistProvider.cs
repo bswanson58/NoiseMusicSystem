@@ -18,35 +18,35 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public void DeleteArtist( DbArtist artist ) {
-			throw new System.NotImplementedException();
+			mDatabase.Delete( artist );
 		}
 
 		public DbArtist GetArtist( long dbid ) {
-			throw new System.NotImplementedException();
+			return( mDatabase.Get( dbid ));
 		}
 
 		public DbArtist GetArtistForAlbum( DbAlbum album ) {
-			throw new System.NotImplementedException();
+			return( mDatabase.Get( album.Artist ));
 		}
 
 		public DbArtist FindArtist( string artistName ) {
-			throw new System.NotImplementedException();
+			return( mDatabase.Get( artist => artist.Name.Equals( artistName )));
 		}
 
 		public IDataProviderList<DbArtist> GetArtistList() {
-			throw new System.NotImplementedException();
+			return( new RavenDataProviderList<DbArtist>( mDatabase.FindAll()));
 		}
 
 		public IDataProviderList<DbArtist> GetArtistList( IDatabaseFilter filter ) {
-			throw new System.NotImplementedException();
+			return( new RavenFilteredProviderList<DbArtist>( mDatabase.FindAll(), filter ));
 		}
 
 		public IDataProviderList<DbArtist> GetChangedArtists( long changedSince ) {
-			throw new System.NotImplementedException();
+			return( new RavenDataProviderList<DbArtist>( mDatabase.Find( artist => artist.LastChangeTicks > changedSince )));
 		}
 
 		public IDataProviderList<DbArtist> GetFavoriteArtists() {
-			throw new System.NotImplementedException();
+			return( new RavenDataProviderList<DbArtist>( mDatabase.Find( artist => artist.IsFavorite )));
 		}
 
 		public IDataUpdateShell<DbArtist> GetArtistForUpdate( long artistId ) {
@@ -54,7 +54,13 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public void UpdateArtistLastChanged( long artistId ) {
-			throw new System.NotImplementedException();
+			var artist = mDatabase.Get( artistId );
+
+			if( artist != null ) {
+				artist.UpdateLastChange();
+
+				mDatabase.Update( artist );
+			}
 		}
 
 		public IDataProviderList<long> GetArtistCategories( long artistId ) {
@@ -62,7 +68,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public long GetItemCount() {
-			throw new System.NotImplementedException();
+			return( mDatabase.Count());
 		}
 	}
 }
