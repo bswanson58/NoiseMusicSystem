@@ -17,9 +17,9 @@ namespace Noise.RavenDatabase {
 
 //			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();
 			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
-//			mContainer.RegisterType<IAlbumProvider, AlbumProvider>();
-//			mContainer.RegisterType<ITrackProvider, TrackProvider>();
-//			mContainer.RegisterType<IInternetStreamProvider, InternetStreamProvider>();
+			mContainer.RegisterType<IAlbumProvider, AlbumProvider>();
+			mContainer.RegisterType<ITrackProvider, TrackProvider>();
+			mContainer.RegisterType<IInternetStreamProvider, InternetStreamProvider>();
 //			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
 //			mContainer.RegisterType<IGenreProvider, GenreProvider>();
 //			mContainer.RegisterType<ILyricProvider, LyricProvider>();
