@@ -1,15 +1,20 @@
-﻿using Noise.Infrastructure.Dto;
+﻿using System;
+using System.Linq;
+using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
 	public class ArtistProvider : IArtistProvider {
-		private readonly IDbFactory				mDbFactory;
-		private readonly IRepository<DbArtist>	mDatabase;
+		private readonly IDbFactory					mDbFactory;
+		private readonly IRepository<DbArtist>		mDatabase;
+		private readonly ITagAssociationProvider	mTagAssociationProvider;
 
-		public ArtistProvider( IDbFactory databaseFactory ) {
+		public ArtistProvider( IDbFactory databaseFactory, ITagAssociationProvider associationProvider ) {
 			mDbFactory = databaseFactory;
+			mTagAssociationProvider = associationProvider;
 
 			mDatabase = new RavenRepositoryT<DbArtist>( mDbFactory.GetLibraryDatabase(), artist => new object[] { artist.DbId });
 		}
@@ -65,7 +70,18 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<long> GetArtistCategories( long artistId ) {
-			throw new System.NotImplementedException();
+			IDataProviderList<long>	retValue = null;
+
+			try {
+				using( var tagList = mTagAssociationProvider.GetArtistTagList( artistId, eTagGroup.User )) {
+					retValue = new RavenSimpleDataProviderList<long>( from DbTagAssociation assoc in tagList.List.ToList() select assoc.TagId );
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "Exception - GetArtistCategories", ex );
+			}
+
+			return ( retValue );
 		}
 
 		public long GetItemCount() {

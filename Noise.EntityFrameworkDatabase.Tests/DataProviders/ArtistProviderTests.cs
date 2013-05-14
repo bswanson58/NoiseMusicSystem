@@ -7,7 +7,8 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 	[TestFixture]
 	public class ArtistProviderTests : BaseArtistProviderTests {
-		private readonly ProviderTestSetup	mTestSetup;
+		private readonly ProviderTestSetup		mTestSetup;
+		private Mock<ITagAssociationProvider>	mTagAssociationProvider;
 
 		public ArtistProviderTests() {
 			mTestSetup = new ProviderTestSetup();
@@ -15,14 +16,13 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 
 		[SetUp]
 		public void Setup() {
-			mArtworkProvider = new Mock<IArtworkProvider>();
-			mTextInfoProvider = new Mock<ITextInfoProvider>();
-
 			mTestSetup.Setup();
+
+			mTagAssociationProvider = new Mock<ITagAssociationProvider>();
 		}
 
 		protected override IArtistProvider CreateSut() {
-			return( new ArtistProvider( mTestSetup.ContextProvider, null ));
+			return( new ArtistProvider( mTestSetup.ContextProvider, mTagAssociationProvider.Object ));
 		}
 	}
 }

@@ -15,9 +15,6 @@ namespace Noise.EloqueraDatabase.Tests.DataProviders {
 
 		[SetUp]
 		public void Setup() {
-			mArtworkProvider = new Mock<IArtworkProvider>();
-			mTextInfoProvider = new Mock<ITextInfoProvider>();
-
 			mTestSetup.Setup();
 		}
 

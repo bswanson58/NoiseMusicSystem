@@ -8,8 +8,7 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.BaseDatabase.Tests.DataProviders {
 	public abstract class BaseArtistProviderTests : BaseProviderTest<IArtistProvider> {
-		protected Mock<IArtworkProvider>			mArtworkProvider;
-		protected Mock<ITextInfoProvider>			mTextInfoProvider;
+		protected Mock<ITagAssociationProvider>	mTagProvider;
 
 		[Test]
 		public void CanAddArtist() {
@@ -203,6 +202,7 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 													new DbTagAssociation( eTagGroup.User, 2, artist.DbId, 2 )};
 			var tagList = new Mock<IDataProviderList<DbTagAssociation>>();
 			tagList.Setup( m => m.List ).Returns( tags );
+			mTagProvider.Setup( o => o.GetArtistTagList( artist.DbId, eTagGroup.User )).Returns( tagList.Object );
 
 			var sut = CreateSut();
 			
