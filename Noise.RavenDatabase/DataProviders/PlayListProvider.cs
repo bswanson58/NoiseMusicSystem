@@ -11,7 +11,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		public PlayListProvider( IDbFactory databaseFactory ) {
 			mDbFactory = databaseFactory;
 
-			mDatabase = new RavenRepositoryT<DbPlayList>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+			mDatabase = new RavenRepository<DbPlayList>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
 		}
 
 		public void AddPlayList( DbPlayList playList ) {

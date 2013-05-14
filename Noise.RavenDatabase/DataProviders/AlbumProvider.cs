@@ -22,7 +22,7 @@ namespace Noise.RavenDatabase.DataProviders {
 			mTagAssociationProvider = tagAssociationProvider;
 			mTextInfoProvider = textInfoProvider;
 
-			mDatabase = new RavenRepositoryT<DbAlbum>( mDbFactory.GetLibraryDatabase(), album => new object[] { album.DbId });
+			mDatabase = new RavenRepository<DbAlbum>( mDbFactory.GetLibraryDatabase(), album => new object[] { album.DbId });
 		}
 
 		public void AddAlbum( DbAlbum album ) {

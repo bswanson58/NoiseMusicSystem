@@ -11,7 +11,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		public RootFolderProvider( IDbFactory databaseFactory ) {
 			mDbFactory = databaseFactory;
 
-			mDatabase = new RavenRepositoryT<RootFolder>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+			mDatabase = new RavenRepository<RootFolder>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
 		}
 
 		public void AddRootFolder( RootFolder folder ) {

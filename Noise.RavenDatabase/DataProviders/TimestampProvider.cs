@@ -11,7 +11,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		public TimestampProvider( IDbFactory databaseFactory ) {
 			mDbFactory = databaseFactory;
 
-			mDatabase = new RavenRepositoryT<DbTimestamp>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.ComponentId });
+			mDatabase = new RavenRepository<DbTimestamp>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.ComponentId });
 		}
 
 		public long GetTimestamp( string componentId ) {

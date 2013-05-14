@@ -11,7 +11,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		public StorageFileProvider( IDbFactory databaseFactory ) {
 			mDbFactory = databaseFactory;
 
-			mDatabase = new RavenRepositoryT<StorageFile>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+			mDatabase = new RavenRepository<StorageFile>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
 		}
 		public void AddFile( StorageFile file ) {
 			mDatabase.Add( file );

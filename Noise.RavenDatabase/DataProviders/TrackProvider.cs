@@ -13,7 +13,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		public TrackProvider( IDbFactory databaseFactory ) {
 			mDbFactory = databaseFactory;
 
-			mDatabase = new RavenRepositoryT<DbTrack>( mDbFactory.GetLibraryDatabase(), track => new object[] { track.DbId });
+			mDatabase = new RavenRepository<DbTrack>( mDbFactory.GetLibraryDatabase(), track => new object[] { track.DbId });
 		}
 
 		public void AddTrack( DbTrack track ) {

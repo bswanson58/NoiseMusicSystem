@@ -8,11 +8,11 @@ using Noise.RavenDatabase.Interfaces;
 using Raven.Client;
 
 namespace Noise.RavenDatabase.Support {
-	public class RavenRepositoryT<T> : IRepository<T> where T : class {
+	public class RavenRepository<T> : IRepository<T> where T : class {
 		private	readonly IDocumentStore		mDatabase;
 		private readonly Func<T, object[]>	mKeySelector; 
 
-		public RavenRepositoryT( IDocumentStore database, Func<T, object[]> keySelector ) {
+		public RavenRepository( IDocumentStore database, Func<T, object[]> keySelector ) {
 			mDatabase = database;
 			mKeySelector = keySelector;
 

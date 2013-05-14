@@ -11,7 +11,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		public TagProvider( IDbFactory databaseFactory ) {
 			mDbFactory = databaseFactory;
 
-			mDatabase = new RavenRepositoryT<DbTag>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+			mDatabase = new RavenRepository<DbTag>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
 		}
 
 		public void AddTag( DbTag tag ) {

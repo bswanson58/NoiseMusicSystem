@@ -11,7 +11,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		public TagAssociationProvider( IDbFactory databaseFactory ) {
 			mDbFactory = databaseFactory;
 
-			mDatabase = new RavenRepositoryT<DbTagAssociation>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+			mDatabase = new RavenRepository<DbTagAssociation>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
 		}
 
 		public DbTagAssociation GetAlbumTagAssociation( long albumId, long tagId ) {

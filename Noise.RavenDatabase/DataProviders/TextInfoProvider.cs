@@ -13,7 +13,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		public TextInfoProvider( IDbFactory databaseFactory ) {
 			mDbFactory = databaseFactory;
 
-			mDatabase = new RavenRepositoryT<DbTextInfo>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+			mDatabase = new RavenRepository<DbTextInfo>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
 		}
 
 		public void AddTextInfo( DbTextInfo info, string filePath ) {

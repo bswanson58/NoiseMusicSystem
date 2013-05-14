@@ -16,7 +16,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		public ArtworkProvider( IDbFactory databaseFactory ) {
 			mDbFactory = databaseFactory;
 
-			mDatabase = new RavenRepositoryT<DbArtwork>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+			mDatabase = new RavenRepository<DbArtwork>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
 		}
 
 		private Artwork TransformArtwork( DbArtwork artwork ) {

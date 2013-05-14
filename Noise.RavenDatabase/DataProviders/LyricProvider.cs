@@ -16,7 +16,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		public LyricProvider( IDbFactory databaseFactory ) {
 			mDbFactory = databaseFactory;
 
-			mDatabase = new RavenRepositoryT<DbLyric>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+			mDatabase = new RavenRepository<DbLyric>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
 		}
 
 		public void AddLyric( DbLyric lyric ) {

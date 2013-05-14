@@ -11,7 +11,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		public InternetStreamProvider( IDbFactory databaseFactory ) {
 			mDbFactory = databaseFactory;
 
-			mDatabase = new RavenRepositoryT<DbInternetStream>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+			mDatabase = new RavenRepository<DbInternetStream>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
 		}
 
 		public void AddStream( DbInternetStream stream ) {

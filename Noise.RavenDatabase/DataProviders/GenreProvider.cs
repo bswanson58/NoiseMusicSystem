@@ -11,7 +11,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		public GenreProvider( IDbFactory databaseFactory ) {
 			mDbFactory = databaseFactory;
 
-			mDatabase = new RavenRepositoryT<DbGenre>( mDbFactory.GetLibraryDatabase(), genre => new object[] { genre.DbId });
+			mDatabase = new RavenRepository<DbGenre>( mDbFactory.GetLibraryDatabase(), genre => new object[] { genre.DbId });
 		}
 
 		public void AddGenre( DbGenre genre ) {

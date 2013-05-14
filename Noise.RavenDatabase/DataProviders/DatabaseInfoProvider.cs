@@ -46,7 +46,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		private IRepository<DbVersion> Database {
 			get {
 				if( mDatabase == null ) {
-					mDatabase = new RavenRepositoryT<DbVersion>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+					mDatabase = new RavenRepository<DbVersion>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
 				}
 
 				return( mDatabase );

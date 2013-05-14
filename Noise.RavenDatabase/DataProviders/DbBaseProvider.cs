@@ -15,37 +15,37 @@ namespace Noise.RavenDatabase.DataProviders {
 			DbBase	retValue;
 
 			{
-				var database = new RavenRepositoryT<DbArtist>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId } );
+				var database = new RavenRepository<DbArtist>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId } );
 
 				retValue = database.Get( itemId );
 			}
 
 			if( retValue == null ) {
-				var database = new RavenRepositoryT<DbAlbum>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId } );
+				var database = new RavenRepository<DbAlbum>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId } );
 
 				retValue = database.Get( itemId );
 			}
 
 			if( retValue == null ) {
-				var database = new RavenRepositoryT<DbTrack>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId } );
+				var database = new RavenRepository<DbTrack>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId } );
 
 				retValue = database.Get( itemId );
 			}
 
 			if( retValue == null ) {
-				var database = new RavenRepositoryT<DbPlayList>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId } );
+				var database = new RavenRepository<DbPlayList>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId } );
 
 				retValue = database.Get( itemId );
 			}
 
 			if( retValue == null ) {
-				var database = new RavenRepositoryT<DbArtwork>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId } );
+				var database = new RavenRepository<DbArtwork>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId } );
 
 				retValue = database.Get( itemId );
 			}
 
 			if( retValue == null ) {
-				var database = new RavenRepositoryT<DbTextInfo>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId } );
+				var database = new RavenRepository<DbTextInfo>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId } );
 
 				retValue = database.Get( itemId );
 			}

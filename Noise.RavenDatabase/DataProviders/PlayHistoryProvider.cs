@@ -11,7 +11,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		public PlayHistoryProvider( IDbFactory databaseFactory ) {
 			mDbFactory = databaseFactory;
 
-			mDatabase = new RavenRepositoryT<DbPlayHistory>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+			mDatabase = new RavenRepository<DbPlayHistory>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
 		}
 
 		public void AddPlayHistory( DbPlayHistory playHistory ) {
