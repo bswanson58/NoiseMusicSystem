@@ -4,34 +4,29 @@ using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class InternetStreamProvider : IInternetStreamProvider {
-		private readonly IDbFactory						mDbFactory;
-		private readonly IRepository<DbInternetStream>	mDatabase;
-
-		public InternetStreamProvider( IDbFactory databaseFactory ) {
-			mDbFactory = databaseFactory;
-
-			mDatabase = new RavenRepository<DbInternetStream>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+	public class InternetStreamProvider : BaseProvider<DbInternetStream>, IInternetStreamProvider {
+		public InternetStreamProvider( IDbFactory databaseFactory ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }) {
 		}
 
 		public void AddStream( DbInternetStream stream ) {
-			mDatabase.Add( stream );
+			Database.Add( stream );
 		}
 
 		public void DeleteStream( DbInternetStream stream ) {
-			mDatabase.Delete( stream );
+			Database.Delete( stream );
 		}
 
 		public DbInternetStream GetStream( long streamId ) {
-			return( mDatabase.Get( streamId ));
+			return( Database.Get( streamId ));
 		}
 
 		public IDataProviderList<DbInternetStream> GetStreamList() {
-			return( new RavenDataProviderList<DbInternetStream>( mDatabase.FindAll()));
+			return( new RavenDataProviderList<DbInternetStream>( Database.FindAll()));
 		}
 
 		public IDataUpdateShell<DbInternetStream> GetStreamForUpdate( long streamId ) {
-			return( new RavenDataUpdateShell<DbInternetStream>( stream => mDatabase.Update( stream ), mDatabase.Get( streamId )));
+			return( new RavenDataUpdateShell<DbInternetStream>( stream => Database.Update( stream ), Database.Get( streamId )));
 		}
 	}
 }

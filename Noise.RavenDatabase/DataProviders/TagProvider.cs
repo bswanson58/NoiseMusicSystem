@@ -4,22 +4,17 @@ using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class TagProvider : ITagProvider {
-		private readonly IDbFactory			mDbFactory;
-		private readonly IRepository<DbTag>	mDatabase;
-
-		public TagProvider( IDbFactory databaseFactory ) {
-			mDbFactory = databaseFactory;
-
-			mDatabase = new RavenRepository<DbTag>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+	public class TagProvider : BaseProvider<DbTag>, ITagProvider {
+		public TagProvider( IDbFactory databaseFactory ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }) {
 		}
 
 		public void AddTag( DbTag tag ) {
-			mDatabase.Add( tag );
+			Database.Add( tag );
 		}
 
 		public IDataProviderList<DbTag> GetTagList( eTagGroup forGroup ) {
-			return( new RavenDataProviderList<DbTag>( mDatabase.Find( tag => tag.TagGroup == forGroup )));
+			return( new RavenDataProviderList<DbTag>( Database.Find( tag => tag.TagGroup == forGroup )));
 		}
 	}
 }

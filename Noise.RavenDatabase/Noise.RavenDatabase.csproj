@@ -143,6 +143,7 @@
     <Compile Include="Interfaces\IRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RavenDatabaseModule.cs" />
+    <Compile Include="Support\BaseProvider.cs" />
     <Compile Include="Support\QuerySession.cs" />
     <Compile Include="Support\RavenDatabaseManager.cs" />
     <Compile Include="Support\RavenDataProviderList.cs" />

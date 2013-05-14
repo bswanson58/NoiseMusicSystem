@@ -9,18 +9,13 @@ using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class ArtworkProvider : IArtworkProvider {
-		private readonly IDbFactory				mDbFactory;
-		private readonly IRepository<DbArtwork>	mDatabase;
-
-		public ArtworkProvider( IDbFactory databaseFactory ) {
-			mDbFactory = databaseFactory;
-
-			mDatabase = new RavenRepository<DbArtwork>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+	public class ArtworkProvider : BaseProvider<DbArtwork>, IArtworkProvider {
+		public ArtworkProvider( IDbFactory databaseFactory ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }) {
 		}
 
 		private Artwork TransformArtwork( DbArtwork artwork ) {
-			return( new Artwork( artwork ) { Image = mDbFactory.GetBlobStorage().RetrieveBytes( artwork.DbId ) } );
+			return( new Artwork( artwork ) { Image = DbFactory.GetBlobStorage().RetrieveBytes( artwork.DbId ) } );
 		}
 
 		public void AddArtwork( DbArtwork artwork ) {
@@ -32,10 +27,10 @@ namespace Noise.RavenDatabase.DataProviders {
 			Condition.Requires( pictureData ).IsNotNull();
 
 			try {
-				mDatabase.Add( artwork );
+				Database.Add( artwork );
 
 				var byteStream = new MemoryStream( pictureData );
-				mDbFactory.GetBlobStorage().Insert( artwork.DbId, byteStream );
+				DbFactory.GetBlobStorage().Insert( artwork.DbId, byteStream );
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "AddArtwork", ex );
@@ -47,9 +42,9 @@ namespace Noise.RavenDatabase.DataProviders {
 			Condition.Requires( filePath ).IsNotNullOrEmpty();
 
 			try {
-				mDatabase.Add( artwork );
+				Database.Add( artwork );
 
-				mDbFactory.GetBlobStorage().Insert( artwork.DbId, filePath );
+				DbFactory.GetBlobStorage().Insert( artwork.DbId, filePath );
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "AddArtwork", ex );
@@ -60,9 +55,9 @@ namespace Noise.RavenDatabase.DataProviders {
 			Condition.Requires( artwork ).IsNotNull();
 
 			try {
-				mDatabase.Delete( artwork );
+				Database.Delete( artwork );
 
-				mDbFactory.GetBlobStorage().Delete( artwork.DbId );
+				DbFactory.GetBlobStorage().Delete( artwork.DbId );
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "DeleteArtwork", ex );
@@ -72,7 +67,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		public Artwork GetArtistArtwork( long artistId, ContentType ofType ) {
 			Artwork	retValue = null;
 
-			var dbArtwork = mDatabase.Get( entity => (( entity.Artist == artistId ) && ( entity.DbContentType == (int)ofType )));
+			var dbArtwork = Database.Get( entity => (( entity.Artist == artistId ) && ( entity.DbContentType == (int)ofType )));
 
 			if( dbArtwork != null ) {
 				retValue = TransformArtwork( dbArtwork );
@@ -85,34 +80,34 @@ namespace Noise.RavenDatabase.DataProviders {
 			IQuerySession<DbArtwork>	artworkList;
 
 			if( ofType == ContentType.AlbumCover ) {
-				artworkList = mDatabase.Find( entity => (( entity.Album == albumId ) &&
+				artworkList = Database.Find( entity => (( entity.Album == albumId ) &&
 														(( entity.DbContentType == (int)ofType ) || ( entity.IsUserSelection ))));
 			}
 			else {
-				artworkList = mDatabase.Find( entity => (( entity.Album == albumId ) && ( entity.DbContentType == (int)ofType )));
+				artworkList = Database.Find( entity => (( entity.Album == albumId ) && ( entity.DbContentType == (int)ofType )));
 			}
 
 			return( artworkList.Query().Select( TransformArtwork ).ToArray());
 		}
 
 		public Artwork[] GetAlbumArtwork( long albumId ) {
-			var artworkList = mDatabase.Find( entity => entity.Album == albumId );
+			var artworkList = Database.Find( entity => entity.Album == albumId );
 
 			return( artworkList.Query().Select( TransformArtwork ).ToArray());
 		}
 
 		public IDataProviderList<DbArtwork> GetArtworkForFolder( long folderId ) {
-			return ( new RavenDataProviderList<DbArtwork>( mDatabase.Find( entity => entity.FolderLocation == folderId )));
+			return ( new RavenDataProviderList<DbArtwork>( Database.Find( entity => entity.FolderLocation == folderId )));
 		}
 
 		public IDataUpdateShell<Artwork> GetArtworkForUpdate( long artworkId ) {
-			var dbArtwork = mDatabase.Get( artworkId );
+			var dbArtwork = Database.Get( artworkId );
 
-			return( new ArtworkUpdateShell( mDatabase, mDbFactory.GetBlobStorage(), dbArtwork, TransformArtwork( dbArtwork )));
+			return( new ArtworkUpdateShell( Database, DbFactory.GetBlobStorage(), dbArtwork, TransformArtwork( dbArtwork )));
 		}
 
 		public void UpdateArtworkImage( long artworkId, string imageFilePath ) {
-			mDbFactory.GetBlobStorage().Store( artworkId, imageFilePath );
+			DbFactory.GetBlobStorage().Store( artworkId, imageFilePath );
 		}
 	}
 

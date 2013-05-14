@@ -8,41 +8,37 @@ using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class AlbumProvider : IAlbumProvider {
-		private readonly IDbFactory					mDbFactory;
-		private readonly IRepository<DbAlbum>		mDatabase;
+	public class AlbumProvider : BaseProvider<DbAlbum>, IAlbumProvider {
 		private readonly IArtworkProvider			mArtworkProvider;
 		private readonly ITextInfoProvider			mTextInfoProvider;
 		private readonly ITagAssociationProvider	mTagAssociationProvider;
 
 		public AlbumProvider( IDbFactory databaseFactory,
-							  IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider, ITagAssociationProvider tagAssociationProvider ) {
-			mDbFactory = databaseFactory;
+							  IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider, ITagAssociationProvider tagAssociationProvider ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }) {
 			mArtworkProvider = artworkProvider;
 			mTagAssociationProvider = tagAssociationProvider;
 			mTextInfoProvider = textInfoProvider;
-
-			mDatabase = new RavenRepository<DbAlbum>( mDbFactory.GetLibraryDatabase(), album => new object[] { album.DbId });
 		}
 
 		public void AddAlbum( DbAlbum album ) {
-			mDatabase.Add( album );
+			Database.Add( album );
 		}
 
 		public void DeleteAlbum( DbAlbum album ) {
-			mDatabase.Delete( album );
+			Database.Delete( album );
 		}
 
 		public DbAlbum GetAlbum( long dbid ) {
-			return( mDatabase.Get( dbid ));
+			return( Database.Get( dbid ));
 		}
 
 		public DbAlbum GetAlbumForTrack( DbTrack track ) {
-			return( mDatabase.Get( track.Album ));
+			return( Database.Get( track.Album ));
 		}
 
 		public IDataProviderList<DbAlbum> GetAllAlbums() {
-			return( new RavenDataProviderList<DbAlbum>( mDatabase.FindAll()));
+			return( new RavenDataProviderList<DbAlbum>( Database.FindAll()));
 		}
 
 		public IDataProviderList<DbAlbum> GetAlbumList( DbArtist forArtist ) {
@@ -50,15 +46,15 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbAlbum> GetAlbumList( long artistId ) {
-			return( new RavenDataProviderList<DbAlbum>( mDatabase.Find( album => album.Artist == artistId )));
+			return( new RavenDataProviderList<DbAlbum>( Database.Find( album => album.Artist == artistId )));
 		}
 
 		public IDataProviderList<DbAlbum> GetFavoriteAlbums() {
-			return( new RavenDataProviderList<DbAlbum>( mDatabase.Find( album => album.IsFavorite )));
+			return( new RavenDataProviderList<DbAlbum>( Database.Find( album => album.IsFavorite )));
 		}
 
 		public IDataUpdateShell<DbAlbum> GetAlbumForUpdate( long albumId ) {
-			return( new RavenDataUpdateShell<DbAlbum>( album => mDatabase.Update( album ), mDatabase.Get( albumId )));
+			return( new RavenDataUpdateShell<DbAlbum>( album => Database.Update( album ), Database.Get( albumId )));
 		}
 
 		public AlbumSupportInfo GetAlbumSupportInfo( long albumId ) {
@@ -125,7 +121,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public long GetItemCount() {
-			return( mDatabase.Count());
+			return( Database.Count());
 		}
 	}
 }

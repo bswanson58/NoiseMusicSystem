@@ -4,22 +4,17 @@ using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class GenreProvider : IGenreProvider {
-		private readonly IDbFactory				mDbFactory;
-		private readonly IRepository<DbGenre>	mDatabase;
-
-		public GenreProvider( IDbFactory databaseFactory ) {
-			mDbFactory = databaseFactory;
-
-			mDatabase = new RavenRepository<DbGenre>( mDbFactory.GetLibraryDatabase(), genre => new object[] { genre.DbId });
+	public class GenreProvider : BaseProvider<DbGenre>, IGenreProvider {
+		public GenreProvider( IDbFactory databaseFactory ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }) {
 		}
 
 		public void AddGenre( DbGenre genre ) {
-			mDatabase.Add( genre );
+			Database.Add( genre );
 		}
 
 		public IDataProviderList<DbGenre> GetGenreList() {
-			return( new RavenDataProviderList<DbGenre>( mDatabase.FindAll()));
+			return( new RavenDataProviderList<DbGenre>( Database.FindAll()));
 		}
 	}
 }

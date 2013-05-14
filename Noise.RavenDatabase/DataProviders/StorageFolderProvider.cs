@@ -4,46 +4,41 @@ using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class StorageFolderProvider : IStorageFolderProvider {
-		private readonly IDbFactory					mDbFactory;
-		private readonly IRepository<StorageFolder>	mDatabase;
-
-		public StorageFolderProvider( IDbFactory databaseFactory ) {
-			mDbFactory = databaseFactory;
-
-			mDatabase = new RavenRepository<StorageFolder>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+	public class StorageFolderProvider : BaseProvider<StorageFolder>, IStorageFolderProvider {
+		public StorageFolderProvider( IDbFactory databaseFactory ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }) {
 		}
 
 		public void AddFolder( StorageFolder folder ) {
-			mDatabase.Add( folder );
+			Database.Add( folder );
 		}
 
 		public void RemoveFolder( StorageFolder folder ) {
-			mDatabase.Delete( folder );
+			Database.Delete( folder );
 		}
 
 		public StorageFolder GetFolder( long folderId ) {
-			return( mDatabase.Get( folderId ));
+			return( Database.Get( folderId ));
 		}
 
 		public IDataProviderList<StorageFolder> GetAllFolders() {
-			return( new RavenDataProviderList<StorageFolder>( mDatabase.FindAll()));
+			return( new RavenDataProviderList<StorageFolder>( Database.FindAll()));
 		}
 
 		public IDataProviderList<StorageFolder> GetChildFolders( long parentId ) {
-			return( new RavenDataProviderList<StorageFolder>( mDatabase.Find( folder => folder.ParentFolder == parentId )));
+			return( new RavenDataProviderList<StorageFolder>( Database.Find( folder => folder.ParentFolder == parentId )));
 		}
 
 		public IDataProviderList<StorageFolder> GetDeletedFolderList() {
-			return( new RavenDataProviderList<StorageFolder>( mDatabase.Find( folder => folder.IsDeleted )));
+			return( new RavenDataProviderList<StorageFolder>( Database.Find( folder => folder.IsDeleted )));
 		}
 
 		public IDataUpdateShell<StorageFolder> GetFolderForUpdate( long folderId ) {
-			return( new RavenDataUpdateShell<StorageFolder>( folder => mDatabase.Update( folder ), mDatabase.Get( folderId )));
+			return( new RavenDataUpdateShell<StorageFolder>( folder => Database.Update( folder ), Database.Get( folderId )));
 		}
 
 		public long GetItemCount() {
-			return( mDatabase.Count());
+			return( Database.Count());
 		}
 	}
 }

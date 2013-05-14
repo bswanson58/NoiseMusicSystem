@@ -6,30 +6,25 @@ using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class TrackProvider : ITrackProvider {
-		private readonly IDbFactory				mDbFactory;
-		private readonly IRepository<DbTrack>	mDatabase;
-
-		public TrackProvider( IDbFactory databaseFactory ) {
-			mDbFactory = databaseFactory;
-
-			mDatabase = new RavenRepository<DbTrack>( mDbFactory.GetLibraryDatabase(), track => new object[] { track.DbId });
+	public class TrackProvider : BaseProvider<DbTrack>, ITrackProvider {
+		public TrackProvider( IDbFactory databaseFactory ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }) {
 		}
 
 		public void AddTrack( DbTrack track ) {
-			mDatabase.Add( track );
+			Database.Add( track );
 		}
 
 		public DbTrack GetTrack( long trackId ) {
-			return( mDatabase.Get( trackId ));
+			return( Database.Get( trackId ));
 		}
 
 		public void DeleteTrack( DbTrack track ) {
-			mDatabase.Delete( track );
+			Database.Delete( track );
 		}
 
 		public IDataProviderList<DbTrack> GetTrackList( long albumId ) {
-			return( new RavenDataProviderList<DbTrack>( mDatabase.Find( track => track.Album == albumId )));
+			return( new RavenDataProviderList<DbTrack>( Database.Find( track => track.Album == albumId )));
 		}
 
 		public IDataProviderList<DbTrack> GetTrackList( DbAlbum forAlbum ) {
@@ -37,15 +32,15 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbTrack> GetTrackListForGenre( long genreId ) {
-			return( new RavenDataProviderList<DbTrack>( mDatabase.Find( track => track.UserGenre == genreId )));
+			return( new RavenDataProviderList<DbTrack>( Database.Find( track => track.UserGenre == genreId )));
 		}
 
 		public IDataProviderList<DbTrack> GetFavoriteTracks() {
-			return( new RavenDataProviderList<DbTrack>( mDatabase.Find( track => track.IsFavorite )));
+			return( new RavenDataProviderList<DbTrack>( Database.Find( track => track.IsFavorite )));
 		}
 
 		public IDataProviderList<DbTrack> GetNewlyAddedTracks() {
-//			return( new RavenDataProviderList<DbTrack>( mDatabase.FindAll().Query().OrderBy( track => track.DateAddedTicks ));
+//			return( new RavenDataProviderList<DbTrack>( Database.FindAll().Query().OrderBy( track => track.DateAddedTicks ));
 			return( null );
 		}
 
@@ -54,11 +49,11 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataUpdateShell<DbTrack> GetTrackForUpdate( long trackId ) {
-			return( new RavenDataUpdateShell<DbTrack>( track => mDatabase.Update( track ), mDatabase.Get( trackId )));
+			return( new RavenDataUpdateShell<DbTrack>( track => Database.Update( track ), Database.Get( trackId )));
 		}
 
 		public long GetItemCount() {
-			return( mDatabase.Count());
+			return( Database.Count());
 		}
 	}
 }

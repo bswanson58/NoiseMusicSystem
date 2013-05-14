@@ -4,10 +4,12 @@ using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class DatabaseInfoProvider : IDatabaseInfo {
-		private readonly IDbFactory		mDbFactory;
-		private IRepository<DbVersion>	mDatabase;
-		private DbVersion				mDatabaseVersion;
+	public class DatabaseInfoProvider : BaseProvider<DbVersion>, IDatabaseInfo {
+		private DbVersion		mDatabaseVersion;
+
+		public DatabaseInfoProvider( IDbFactory databaseFactory ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }) {
+		}
 
 		public long DatabaseId {
 			get{
@@ -35,23 +37,9 @@ namespace Noise.RavenDatabase.DataProviders {
 			}
 		}
 
-		public DatabaseInfoProvider( IDbFactory databaseFactory ) {
-			mDbFactory = databaseFactory;
-		}
-
 		public bool IsOpen {
 			get { return( false ); }
 		}
-
-		private IRepository<DbVersion> Database {
-			get {
-				if( mDatabase == null ) {
-					mDatabase = new RavenRepository<DbVersion>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
-				}
-
-				return( mDatabase );
-			}
-		} 
 
 		public void InitializeDatabaseVersion( short majorVersion, short minorVersion ) {
 			RetrieveDatabaseVersion();

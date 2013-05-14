@@ -4,30 +4,25 @@ using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class PlayHistoryProvider : IPlayHistoryProvider {
-		private readonly IDbFactory					mDbFactory;
-		private readonly IRepository<DbPlayHistory>	mDatabase;
-
-		public PlayHistoryProvider( IDbFactory databaseFactory ) {
-			mDbFactory = databaseFactory;
-
-			mDatabase = new RavenRepository<DbPlayHistory>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+	public class PlayHistoryProvider : BaseProvider<DbPlayHistory>, IPlayHistoryProvider {
+		public PlayHistoryProvider( IDbFactory databaseFactory ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }) {
 		}
 
 		public void AddPlayHistory( DbPlayHistory playHistory ) {
-			mDatabase.Add( playHistory );
+			Database.Add( playHistory );
 		}
 
 		public void DeletePlayHistory( DbPlayHistory playHistory ) {
-			mDatabase.Delete( playHistory );
+			Database.Delete( playHistory );
 		}
 
 		public IDataProviderList<DbPlayHistory> GetPlayHistoryList() {
-			return( new RavenDataProviderList<DbPlayHistory>( mDatabase.FindAll()));
+			return( new RavenDataProviderList<DbPlayHistory>( Database.FindAll()));
 		}
 
 		public IDataUpdateShell<DbPlayHistory> GetPlayHistoryForUpdate( long playListId ) {
-			return( new RavenDataUpdateShell<DbPlayHistory>( entity => mDatabase.Update( entity ), mDatabase.Get( playListId )));
+			return( new RavenDataUpdateShell<DbPlayHistory>( entity => Database.Update( entity ), Database.Get( playListId )));
 		}
 	}
 }

@@ -7,65 +7,61 @@ using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class ArtistProvider : IArtistProvider {
-		private readonly IDbFactory					mDbFactory;
-		private readonly IRepository<DbArtist>		mDatabase;
+	public class ArtistProvider : BaseProvider<DbArtist>, IArtistProvider {
 		private readonly ITagAssociationProvider	mTagAssociationProvider;
 
-		public ArtistProvider( IDbFactory databaseFactory, ITagAssociationProvider associationProvider ) {
-			mDbFactory = databaseFactory;
+		public ArtistProvider( IDbFactory databaseFactory, ITagAssociationProvider associationProvider ) :
+			base( databaseFactory, entity => new object[] { entity.DbId } ) {
 			mTagAssociationProvider = associationProvider;
-
-			mDatabase = new RavenRepository<DbArtist>( mDbFactory.GetLibraryDatabase(), artist => new object[] { artist.DbId });
 		}
 
 		public void AddArtist( DbArtist artist ) {
-			mDatabase.Add( artist );
+			Database.Add( artist );
 		}
 
 		public void DeleteArtist( DbArtist artist ) {
-			mDatabase.Delete( artist );
+			Database.Delete( artist );
 		}
 
 		public DbArtist GetArtist( long dbid ) {
-			return( mDatabase.Get( dbid ));
+			return( Database.Get( dbid ));
 		}
 
 		public DbArtist GetArtistForAlbum( DbAlbum album ) {
-			return( mDatabase.Get( album.Artist ));
+			return( Database.Get( album.Artist ));
 		}
 
 		public DbArtist FindArtist( string artistName ) {
-			return( mDatabase.Get( artist => artist.Name.Equals( artistName )));
+			return( Database.Get( artist => artist.Name.Equals( artistName )));
 		}
 
 		public IDataProviderList<DbArtist> GetArtistList() {
-			return( new RavenDataProviderList<DbArtist>( mDatabase.FindAll()));
+			return( new RavenDataProviderList<DbArtist>( Database.FindAll()));
 		}
 
 		public IDataProviderList<DbArtist> GetArtistList( IDatabaseFilter filter ) {
-			return( new RavenFilteredProviderList<DbArtist>( mDatabase.FindAll(), filter ));
+			return( new RavenFilteredProviderList<DbArtist>( Database.FindAll(), filter ));
 		}
 
 		public IDataProviderList<DbArtist> GetChangedArtists( long changedSince ) {
-			return( new RavenDataProviderList<DbArtist>( mDatabase.Find( artist => artist.LastChangeTicks > changedSince )));
+			return( new RavenDataProviderList<DbArtist>( Database.Find( artist => artist.LastChangeTicks > changedSince )));
 		}
 
 		public IDataProviderList<DbArtist> GetFavoriteArtists() {
-			return( new RavenDataProviderList<DbArtist>( mDatabase.Find( artist => artist.IsFavorite )));
+			return( new RavenDataProviderList<DbArtist>( Database.Find( artist => artist.IsFavorite )));
 		}
 
 		public IDataUpdateShell<DbArtist> GetArtistForUpdate( long artistId ) {
-			return( new RavenDataUpdateShell<DbArtist>( artist => mDatabase.Update( artist ), mDatabase.Get( artistId )));
+			return( new RavenDataUpdateShell<DbArtist>( artist => Database.Update( artist ), Database.Get( artistId )));
 		}
 
 		public void UpdateArtistLastChanged( long artistId ) {
-			var artist = mDatabase.Get( artistId );
+			var artist = Database.Get( artistId );
 
 			if( artist != null ) {
 				artist.UpdateLastChange();
 
-				mDatabase.Update( artist );
+				Database.Update( artist );
 			}
 		}
 
@@ -85,7 +81,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public long GetItemCount() {
-			return( mDatabase.Count());
+			return( Database.Count());
 		}
 	}
 }

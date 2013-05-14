@@ -9,18 +9,13 @@ using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class LyricProvider : ILyricProvider {
-		private readonly IDbFactory				mDbFactory;
-		private readonly IRepository<DbLyric>	mDatabase;
-
-		public LyricProvider( IDbFactory databaseFactory ) {
-			mDbFactory = databaseFactory;
-
-			mDatabase = new RavenRepository<DbLyric>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+	public class LyricProvider : BaseProvider<DbLyric>, ILyricProvider {
+		public LyricProvider( IDbFactory databaseFactory ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }) {
 		}
 
 		public void AddLyric( DbLyric lyric ) {
-			mDatabase.Add( lyric );
+			Database.Add( lyric );
 		}
 
 		public IDataProviderList<DbLyric> GetPossibleLyrics( DbArtist artist, DbTrack track ) {
@@ -32,18 +27,18 @@ namespace Noise.RavenDatabase.DataProviders {
 			var			lyricsList = new List<DbLyric>();
 
 			try {
-				var match = mDatabase.Find( entry => (( entry.ArtistId == artist.DbId ) && ( entry.TrackId == track.DbId )));
+				var match = Database.Find( entry => (( entry.ArtistId == artist.DbId ) && ( entry.TrackId == track.DbId )));
 				if( match != null ) {
 					if( match.Query().Any()) {
 						lyricsList.Add( match.Query().First() );
 					}
 				}
 
-				var matchList = mDatabase.Find( entry => (( entry.ArtistId == artist.DbId ) &&
+				var matchList = Database.Find( entry => (( entry.ArtistId == artist.DbId ) &&
 														  ( entry.SongName.Equals( track.Name, StringComparison.CurrentCultureIgnoreCase ))));
 				lyricsList.AddRange( matchList.Query().Where( lyric => lyric.TrackId != track.DbId ) );
 
-				matchList = mDatabase.Find( entry => entry.SongName.Equals( track.Name, StringComparison.CurrentCultureIgnoreCase ));
+				matchList = Database.Find( entry => entry.SongName.Equals( track.Name, StringComparison.CurrentCultureIgnoreCase ));
 				lyricsList.AddRange( matchList.Query());
 
 				var uniqueList = lyricsList.GroupBy( lyric => lyric.TrackId ).Select( g => g.First());
@@ -58,11 +53,11 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbLyric> GetLyricsForArtist( DbArtist artist ) {
-			return( new RavenDataProviderList<DbLyric>( mDatabase.Find( entity => entity.ArtistId == artist.DbId )));
+			return( new RavenDataProviderList<DbLyric>( Database.Find( entity => entity.ArtistId == artist.DbId )));
 		}
 
 		public IDataUpdateShell<DbLyric> GetLyricForUpdate( long lyricId ) {
-			return( new RavenDataUpdateShell<DbLyric>( entity => mDatabase.Update( entity ), mDatabase.Get( lyricId )));
+			return( new RavenDataUpdateShell<DbLyric>( entity => Database.Update( entity ), Database.Get( lyricId )));
 		}
 	}
 }
