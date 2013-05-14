@@ -90,6 +90,10 @@ namespace Noise.Infrastructure.Dto {
 			get{ return( Path.Combine( mConfigurationPath, Constants.BlobDatabaseDirectory )); }
 		}
 
+		public string LibraryDatabasePath {
+			get{ return( Path.Combine( mConfigurationPath, Constants.LibraryDatabaseDirectory )); }
+		}
+
 		public string SearchDatabasePath {
 			get{ return( Path.Combine( mConfigurationPath, Constants.SearchDatabaseDirectory )); }
 		}

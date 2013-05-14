@@ -24,6 +24,7 @@ namespace Noise.Infrastructure {
 		public const string				LibraryConfigurationDirectory = "Noise Libraries";
 		public const string				LibraryConfigurationFile = "Library.config";
 		public const string				BlobDatabaseDirectory = "Blob Database";
+		public const string				LibraryDatabaseDirectory = "Library Database";
 		public const string				SearchDatabaseDirectory = "Search Database";
 
 		public const string				Id3FrameUserName = "Noise Music System";
