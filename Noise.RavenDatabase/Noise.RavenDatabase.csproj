@@ -129,6 +129,7 @@
     </Compile>
     <Compile Include="DataProviders\AlbumProvider.cs" />
     <Compile Include="DataProviders\ArtistProvider.cs" />
+    <Compile Include="DataProviders\ArtworkProvider.cs" />
     <Compile Include="DataProviders\DatabaseInfoProvider.cs" />
     <Compile Include="DataProviders\DbBaseProvider.cs" />
     <Compile Include="DataProviders\GenreProvider.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="DataProviders\StorageFolderProvider.cs" />
     <Compile Include="DataProviders\TagAssociationProvider.cs" />
     <Compile Include="DataProviders\TagProvider.cs" />
+    <Compile Include="DataProviders\TextInfoProvider.cs" />
     <Compile Include="DataProviders\TimestampProvider.cs" />
     <Compile Include="DataProviders\TrackProvider.cs" />
     <Compile Include="Interfaces\IDbFactory.cs" />

@@ -16,7 +16,7 @@ namespace Noise.RavenDatabase.Support {
 			mUpdate = null;
 		}
 
-		public void Update() {
+		public virtual void Update() {
 			if(( Item != null ) &&
 			   ( mUpdate != null )) {
 				mUpdate( Item );

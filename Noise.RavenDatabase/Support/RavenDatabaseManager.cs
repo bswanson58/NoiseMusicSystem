@@ -14,7 +14,7 @@ namespace Noise.RavenDatabase.Support {
 
 		public bool IsOpen { get; private set; }
 
-		public RavenDatabaseManager(IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration ) {
+		public RavenDatabaseManager( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration ) {
 			mEventAggregator = eventAggregator;
 			mLibraryConfiguration = libraryConfiguration;
 		}
@@ -41,6 +41,10 @@ namespace Noise.RavenDatabase.Support {
 				IsOpen = mLibraryDatabase != null;
 			}
 			return( mLibraryDatabase );
+		}
+
+		public IBlobStorage GetBlobStorage() {
+			return( null );
 		}
 
 		private IDocumentStore InitializeDatabase( string libraryPath ) {

@@ -20,7 +20,7 @@ namespace Noise.RavenDatabase {
 			mContainer.RegisterType<IAlbumProvider, AlbumProvider>();
 			mContainer.RegisterType<ITrackProvider, TrackProvider>();
 			mContainer.RegisterType<IInternetStreamProvider, InternetStreamProvider>();
-//			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
+			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
 			mContainer.RegisterType<IGenreProvider, GenreProvider>();
 			mContainer.RegisterType<ILyricProvider, LyricProvider>();
 			mContainer.RegisterType<IPlayHistoryProvider, PlayHistoryProvider>();
@@ -30,7 +30,7 @@ namespace Noise.RavenDatabase {
 			mContainer.RegisterType<IStorageFolderProvider, StorageFolderProvider>();
 			mContainer.RegisterType<ITagProvider, TagProvider>();
 			mContainer.RegisterType<ITagAssociationProvider, TagAssociationProvider>();
-//			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
+			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
 			mContainer.RegisterType<ITimestampProvider, TimestampProvider>();
 			mContainer.RegisterType<IDatabaseInfo, DatabaseInfoProvider>();
 		}
