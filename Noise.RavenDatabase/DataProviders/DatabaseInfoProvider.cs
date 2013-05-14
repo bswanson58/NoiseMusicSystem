@@ -5,9 +5,9 @@ using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
 	public class DatabaseInfoProvider : IDatabaseInfo {
-		private readonly IDbFactory				mDbFactory;
-		private readonly IRepository<DbVersion>	mDatabase;
-		private DbVersion						mDatabaseVersion;
+		private readonly IDbFactory		mDbFactory;
+		private IRepository<DbVersion>	mDatabase;
+		private DbVersion				mDatabaseVersion;
 
 		public long DatabaseId {
 			get{
@@ -37,29 +37,37 @@ namespace Noise.RavenDatabase.DataProviders {
 
 		public DatabaseInfoProvider( IDbFactory databaseFactory ) {
 			mDbFactory = databaseFactory;
-
-			mDatabase = new RavenRepositoryT<DbVersion>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
 		}
 
 		public bool IsOpen {
 			get { return( false ); }
 		}
 
+		private IRepository<DbVersion> Database {
+			get {
+				if( mDatabase == null ) {
+					mDatabase = new RavenRepositoryT<DbVersion>( mDbFactory.GetLibraryDatabase(), entity => new object[] { entity.DbId });
+				}
+
+				return( mDatabase );
+			}
+		} 
+
 		public void InitializeDatabaseVersion( short majorVersion, short minorVersion ) {
 			RetrieveDatabaseVersion();
 
 			if( mDatabaseVersion != null ) {
-				mDatabase.Delete( mDatabaseVersion );
+				Database.Delete( mDatabaseVersion );
 
 				mDatabaseVersion = null;
 			}
 
 			mDatabaseVersion = new DbVersion( majorVersion, minorVersion );
-			mDatabase.Add( mDatabaseVersion );
+			Database.Add( mDatabaseVersion );
 		}
 
 		private void RetrieveDatabaseVersion() {
-			mDatabaseVersion = mDatabase.Get( DbVersion.DatabaseVersionDbId );
+			mDatabaseVersion = Database.Get( DbVersion.DatabaseVersionDbId );
 		}
 	}
 }
