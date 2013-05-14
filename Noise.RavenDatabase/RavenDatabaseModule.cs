@@ -2,6 +2,7 @@
 using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.DataProviders;
+using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase {
@@ -13,6 +14,8 @@ namespace Noise.RavenDatabase {
 		}
 
 		public void Initialize() {
+			mContainer.RegisterType<RavenDatabaseManager>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IDbFactory, RavenDatabaseManager>();
 			mContainer.RegisterType<IDatabaseManager, RavenDatabaseManager>();
 
 			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();
