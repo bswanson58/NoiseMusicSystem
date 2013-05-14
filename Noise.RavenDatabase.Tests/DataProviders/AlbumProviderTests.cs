@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Moq;
+using NUnit.Framework;
 using Noise.BaseDatabase.Tests.DataProviders;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.DataProviders;
@@ -17,6 +18,10 @@ namespace Noise.RavenDatabase.Tests.DataProviders {
 		[SetUp]
 		public void Setup() {
 			mCommon.Setup();
+
+			mArtworkProvider = new Mock<IArtworkProvider>();
+			mTextInfoProvider = new Mock<ITextInfoProvider>();
+			mAssociationProvider = new Mock<ITagAssociationProvider>();
 		}
 
 		[TearDown]
@@ -25,7 +30,7 @@ namespace Noise.RavenDatabase.Tests.DataProviders {
 		}
 
 		protected override IAlbumProvider CreateSut() {
-			return( new AlbumProvider( mCommon.DatabaseFactory.Object ));
+			return( new AlbumProvider( mCommon.DatabaseFactory.Object, mArtworkProvider.Object, mTextInfoProvider.Object, mAssociationProvider.Object ));
 		}
 	}
 }

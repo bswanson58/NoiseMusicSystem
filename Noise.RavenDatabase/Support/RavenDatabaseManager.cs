@@ -1,4 +1,6 @@
-﻿using Caliburn.Micro;
+﻿using System;
+using Caliburn.Micro;
+using Noise.BlobStorage.BlobStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
@@ -10,13 +12,18 @@ namespace Noise.RavenDatabase.Support {
 										IHandle<Events.LibraryChanged> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
+		private readonly IBlobStorageManager	mBlobStorageManager;
 		private IDocumentStore					mLibraryDatabase;
+		private bool							mBlobStorageInitialized;
 
 		public bool IsOpen { get; private set; }
 
-		public RavenDatabaseManager( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration ) {
+		public RavenDatabaseManager( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration,
+									 IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver ) {
 			mEventAggregator = eventAggregator;
 			mLibraryConfiguration = libraryConfiguration;
+			mBlobStorageManager = blobStorageManager;
+			mBlobStorageManager.SetResolver( storageResolver );
 		}
 
 		public bool Initialize() {
@@ -27,6 +34,9 @@ namespace Noise.RavenDatabase.Support {
 
 		public void Handle( Events.LibraryChanged args ) {
 			CloseDatabase();
+
+			mBlobStorageManager.CloseStorage();
+			mBlobStorageInitialized = false;
 		}
 
 		public void Shutdown() {
@@ -44,7 +54,13 @@ namespace Noise.RavenDatabase.Support {
 		}
 
 		public IBlobStorage GetBlobStorage() {
-			return( null );
+			if( !mBlobStorageInitialized ) {
+				InitBlobStorage();
+
+				mBlobStorageInitialized = true;
+			}
+
+			return( mBlobStorageManager.GetStorage());
 		}
 
 		private IDocumentStore InitializeDatabase( string libraryPath ) {
@@ -53,6 +69,23 @@ namespace Noise.RavenDatabase.Support {
 			retValue.Initialize();
 
 			return( retValue );
+		}
+
+		private void InitBlobStorage() {
+			mBlobStorageManager.Initialize( mLibraryConfiguration.Current.BlobDatabasePath );
+
+			if(!mBlobStorageManager.IsOpen ) {
+				if(!mBlobStorageManager.OpenStorage()) {
+					mBlobStorageManager.CreateStorage();
+
+					if(!mBlobStorageManager.OpenStorage()) {
+						var ex = new ApplicationException( "RavenDatabaseManager:Blob storage could not be created." );
+
+						NoiseLogger.Current.LogException( ex );
+						throw ( ex );
+					}
+				}
+			}
 		}
 
 		private void CloseDatabase() {

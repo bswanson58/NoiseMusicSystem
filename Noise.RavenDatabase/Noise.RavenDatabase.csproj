@@ -156,12 +156,17 @@
     <Compile Include="Support\RavenDataUpdateShell.cs" />
     <Compile Include="Support\RavenFilteredProviderList.cs" />
     <Compile Include="Support\RavenRepository.cs" />
+    <Compile Include="Support\RavenSimpleDataProviderList.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Noise.BlobStorage\Noise.BlobStorage.csproj">
+      <Project>{9f4086fd-8332-489f-8a96-8d4425db5df2}</Project>
+      <Name>Noise.BlobStorage</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2c697760-1b66-4ded-b57a-b3438d5a75fc}</Project>
       <Name>Noise.Infrastructure</Name>

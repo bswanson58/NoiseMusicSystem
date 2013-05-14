@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
@@ -6,11 +9,18 @@ using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
 	public class AlbumProvider : IAlbumProvider {
-		private readonly IDbFactory				mDbFactory;
-		private readonly IRepository<DbAlbum>	mDatabase;
+		private readonly IDbFactory					mDbFactory;
+		private readonly IRepository<DbAlbum>		mDatabase;
+		private readonly IArtworkProvider			mArtworkProvider;
+		private readonly ITextInfoProvider			mTextInfoProvider;
+		private readonly ITagAssociationProvider	mTagAssociationProvider;
 
-		public AlbumProvider( IDbFactory databaseFactory ) {
+		public AlbumProvider( IDbFactory databaseFactory,
+							  IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider, ITagAssociationProvider tagAssociationProvider ) {
 			mDbFactory = databaseFactory;
+			mArtworkProvider = artworkProvider;
+			mTagAssociationProvider = tagAssociationProvider;
+			mTextInfoProvider = textInfoProvider;
 
 			mDatabase = new RavenRepositoryT<DbAlbum>( mDbFactory.GetLibraryDatabase(), album => new object[] { album.DbId });
 		}
@@ -52,19 +62,66 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public AlbumSupportInfo GetAlbumSupportInfo( long albumId ) {
-			throw new System.NotImplementedException();
+			return( new AlbumSupportInfo( mArtworkProvider.GetAlbumArtwork( albumId, ContentType.AlbumCover ),
+										  mArtworkProvider.GetAlbumArtwork( albumId, ContentType.AlbumArtwork ),
+										  mTextInfoProvider.GetAlbumTextInfo( albumId )));
 		}
 
 		public IDataProviderList<long> GetAlbumsInCategory( long categoryId ) {
-			throw new System.NotImplementedException();
+			IDataProviderList<long>	retValue = null;
+
+			try {
+				using( var tagList = mTagAssociationProvider.GetTagList( eTagGroup.User, categoryId )) {
+					retValue = new RavenSimpleDataProviderList<long>( from DbTagAssociation tag in tagList.List.ToList() select tag.AlbumId );
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "Exception - GetTagList", ex );
+			}
+
+			return ( retValue );
 		}
 
 		public IDataProviderList<long> GetAlbumCategories( long albumId ) {
-			throw new System.NotImplementedException();
+			IDataProviderList<long>	retValue = null;
+
+			try {
+				using( var tagList = mTagAssociationProvider.GetAlbumTagList( albumId, eTagGroup.User ) ) {
+					retValue = new RavenSimpleDataProviderList<long>( from DbTagAssociation assoc in tagList.List.ToList() select assoc.TagId );
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "Exception - GetAlbumCategories", ex );
+			}
+
+			return ( retValue );
 		}
 
 		public void SetAlbumCategories( long artistId, long albumId, IEnumerable<long> categories ) {
-			throw new System.NotImplementedException();
+			using( var currentCategories = GetAlbumCategories( albumId )) {
+				var categoryList = currentCategories.List.ToList();
+				var removeList = categoryList.Where( tagId => !categories.Contains( tagId )).ToList();
+				var addList = categories.Where( tagId => !categoryList.Contains( tagId )).ToList();
+
+				if(( removeList.Count > 0 ) ||
+				   ( addList.Count > 0 )) {
+					try {
+						foreach( var tagId in removeList ) {
+							var association = mTagAssociationProvider.GetAlbumTagAssociation( albumId, tagId );
+							if( association != null ) {
+								mTagAssociationProvider.RemoveAssociation( association.DbId );
+							}
+						}
+
+						foreach( var tagId in addList ) {
+							mTagAssociationProvider.AddAssociation( new DbTagAssociation( eTagGroup.User, tagId, artistId, albumId ) );
+						}
+					}
+					catch( Exception ex ) {
+						NoiseLogger.Current.LogException( "Exception - SetAlbumCategories", ex );
+					}
+				}
+			}
 		}
 
 		public long GetItemCount() {
