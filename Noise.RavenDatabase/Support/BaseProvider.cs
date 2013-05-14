@@ -10,7 +10,13 @@ namespace Noise.RavenDatabase.Support {
 		protected BaseProvider( IDbFactory factory, Func<T, object[]> keySelector ) {
 			mDbFactory = factory;
 			mKeySelector = keySelector;
+
+			mDbFactory.DatabaseClosed.Subscribe( OnDatabaseClosed );
 		} 
+
+		private void OnDatabaseClosed( bool isClosed ) {
+			mDatabase = null;
+		}
 
 		protected IRepository<T> Database {
 			get {

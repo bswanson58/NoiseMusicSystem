@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using Caliburn.Micro;
 using Noise.BlobStorage.BlobStore;
 using Noise.Infrastructure;
@@ -21,6 +23,9 @@ namespace Noise.RavenDatabase.Support {
 		private IDocumentStore					mLibraryDatabase;
 		private bool							mBlobStorageInitialized;
 
+		private readonly Subject<bool>			mDatabaseClosedSubject;
+		public	IObservable<bool>				DatabaseClosed { get { return( mDatabaseClosedSubject.AsObservable()); } }
+
 		public bool IsOpen { get; private set; }
 
 		public RavenDatabaseManager( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration,
@@ -29,29 +34,32 @@ namespace Noise.RavenDatabase.Support {
 			mLibraryConfiguration = libraryConfiguration;
 			mBlobStorageManager = blobStorageManager;
 			mBlobStorageManager.SetResolver( storageResolver );
+
+			mDatabaseClosedSubject = new Subject<bool>();
+
+			mEventAggregator.Subscribe( this );
 		}
 
 		public bool Initialize() {
-			mEventAggregator.Subscribe( this );
-
 			return( true );
 		}
 
 		public void Handle( Events.LibraryChanged args ) {
-			CloseDatabase();
+			CloseDatabases();
 
-			mBlobStorageManager.CloseStorage();
-			mBlobStorageInitialized = false;
+			if( mLibraryConfiguration.Current != null ) {
+				mEventAggregator.Publish( new Events.DatabaseOpened());
+			}
 		}
 
 		public void Shutdown() {
-			CloseDatabase();
+			CloseDatabases();
 		}
 
 		public IDocumentStore GetLibraryDatabase() {
 			if(( mLibraryDatabase == null ) &&
 			   ( mLibraryConfiguration.Current != null )) {
-				var	databaseCreated = Directory.Exists( mLibraryConfiguration.Current.LibraryDatabasePath );
+				var	databaseCreated = !Directory.Exists( mLibraryConfiguration.Current.LibraryDatabasePath );
 
 				mLibraryDatabase = InitializeDatabase( mLibraryConfiguration.Current.LibraryDatabasePath );
 
@@ -103,14 +111,18 @@ namespace Noise.RavenDatabase.Support {
 			}
 		}
 
-		private void CloseDatabase() {
+		private void CloseDatabases() {
+			IsOpen = false;
+			mDatabaseClosedSubject.OnNext( true );
+
 			if( mLibraryDatabase != null ) {
 				mLibraryDatabase.Dispose();
 
 				mLibraryDatabase = null;
 			}
 
-			IsOpen = false;
+			mBlobStorageManager.CloseStorage();
+			mBlobStorageInitialized = false;
 		}
 	}
 }
