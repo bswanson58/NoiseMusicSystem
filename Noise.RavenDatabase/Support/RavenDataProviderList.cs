@@ -14,6 +14,10 @@ namespace Noise.RavenDatabase.Support {
 			List = mSession.Query();
 		}
 
+		public RavenDataProviderList( IEnumerable<T> list ) {
+			List = list;
+		} 
+
 		public void Dispose() {
 			if( mSession != null ) {
 				mSession.Dispose();

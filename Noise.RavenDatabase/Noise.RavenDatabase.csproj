@@ -132,6 +132,7 @@
     <Compile Include="DataProviders\DatabaseInfoProvider.cs" />
     <Compile Include="DataProviders\GenreProvider.cs" />
     <Compile Include="DataProviders\InternetStreamProvider.cs" />
+    <Compile Include="DataProviders\LyricProvider.cs" />
     <Compile Include="DataProviders\PlayHistoryProvider.cs" />
     <Compile Include="DataProviders\PlayListProvider.cs" />
     <Compile Include="DataProviders\RootFolderProvider.cs" />

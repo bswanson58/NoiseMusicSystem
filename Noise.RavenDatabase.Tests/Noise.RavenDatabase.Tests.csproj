@@ -105,6 +105,7 @@
     <Compile Include="DataProviders\DatabaseInfoProviderTests.cs" />
     <Compile Include="DataProviders\GenreProviderTests.cs" />
     <Compile Include="DataProviders\InternetStreamProviderTests.cs" />
+    <Compile Include="DataProviders\LyricProviderTests.cs" />
     <Compile Include="DataProviders\PlayHistoryProviderTests.cs" />
     <Compile Include="DataProviders\PlayListProviderTests.cs" />
     <Compile Include="DataProviders\RootFolderProviderTests.cs" />

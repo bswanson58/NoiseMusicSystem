@@ -22,7 +22,7 @@ namespace Noise.RavenDatabase {
 			mContainer.RegisterType<IInternetStreamProvider, InternetStreamProvider>();
 //			mContainer.RegisterType<IArtworkProvider, ArtworkProvider>();
 			mContainer.RegisterType<IGenreProvider, GenreProvider>();
-//			mContainer.RegisterType<ILyricProvider, LyricProvider>();
+			mContainer.RegisterType<ILyricProvider, LyricProvider>();
 			mContainer.RegisterType<IPlayHistoryProvider, PlayHistoryProvider>();
 			mContainer.RegisterType<IPlayListProvider, PlayListProvider>();
 			mContainer.RegisterType<IRootFolderProvider, RootFolderProvider>();
