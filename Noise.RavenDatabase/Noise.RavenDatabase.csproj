@@ -136,6 +136,8 @@
     <Compile Include="DataProviders\RootFolderProvider.cs" />
     <Compile Include="DataProviders\StorageFileProvider.cs" />
     <Compile Include="DataProviders\StorageFolderProvider.cs" />
+    <Compile Include="DataProviders\TagAssociationProvider.cs" />
+    <Compile Include="DataProviders\TagProvider.cs" />
     <Compile Include="DataProviders\TrackProvider.cs" />
     <Compile Include="Interfaces\IDbFactory.cs" />
     <Compile Include="Interfaces\IQuerySession.cs" />

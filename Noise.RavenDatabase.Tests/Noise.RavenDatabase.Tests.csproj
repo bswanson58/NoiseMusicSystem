@@ -109,6 +109,8 @@
     <Compile Include="DataProviders\RootFolderProviderTests.cs" />
     <Compile Include="DataProviders\StorageFileProviderTests.cs" />
     <Compile Include="DataProviders\StorageFolderProviderTests.cs" />
+    <Compile Include="DataProviders\TagAssociationProviderTests.cs" />
+    <Compile Include="DataProviders\TagProviderTests.cs" />
     <Compile Include="DataProviders\TrackProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
