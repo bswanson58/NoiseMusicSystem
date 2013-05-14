@@ -106,6 +106,9 @@
     <Compile Include="DataProviders\InternetStreamProviderTests.cs" />
     <Compile Include="DataProviders\PlayHistoryProviderTests.cs" />
     <Compile Include="DataProviders\PlayListProviderTests.cs" />
+    <Compile Include="DataProviders\RootFolderProviderTests.cs" />
+    <Compile Include="DataProviders\StorageFileProviderTests.cs" />
+    <Compile Include="DataProviders\StorageFolderProviderTests.cs" />
     <Compile Include="DataProviders\TrackProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

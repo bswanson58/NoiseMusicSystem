@@ -133,6 +133,9 @@
     <Compile Include="DataProviders\InternetStreamProvider.cs" />
     <Compile Include="DataProviders\PlayHistoryProvider.cs" />
     <Compile Include="DataProviders\PlayListProvider.cs" />
+    <Compile Include="DataProviders\RootFolderProvider.cs" />
+    <Compile Include="DataProviders\StorageFileProvider.cs" />
+    <Compile Include="DataProviders\StorageFolderProvider.cs" />
     <Compile Include="DataProviders\TrackProvider.cs" />
     <Compile Include="Interfaces\IDbFactory.cs" />
     <Compile Include="Interfaces\IQuerySession.cs" />
