@@ -50,7 +50,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataUpdateShell<DbArtist> GetArtistForUpdate( long artistId ) {
-			throw new System.NotImplementedException();
+			return( new RavenDataUpdateShell<DbArtist>( artist => mDatabase.Update( artist ), mDatabase.Get( artistId )));
 		}
 
 		public void UpdateArtistLastChanged( long artistId ) {

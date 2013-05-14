@@ -136,6 +136,7 @@
     <Compile Include="Support\QuerySession.cs" />
     <Compile Include="Support\RavenDatabaseManager.cs" />
     <Compile Include="Support\RavenDataProviderList.cs" />
+    <Compile Include="Support\RavenDataUpdateShell.cs" />
     <Compile Include="Support\RavenFilteredProviderList.cs" />
     <Compile Include="Support\RavenRepository.cs" />
   </ItemGroup>
