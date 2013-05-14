@@ -32,7 +32,7 @@ namespace Noise.RavenDatabase {
 			mContainer.RegisterType<ITagAssociationProvider, TagAssociationProvider>();
 //			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
 			mContainer.RegisterType<ITimestampProvider, TimestampProvider>();
-//			mContainer.RegisterType<IDatabaseInfo, DbVersionProvider>();
+			mContainer.RegisterType<IDatabaseInfo, DatabaseInfoProvider>();
 		}
 	}
 }
