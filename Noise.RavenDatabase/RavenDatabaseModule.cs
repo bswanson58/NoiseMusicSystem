@@ -15,7 +15,7 @@ namespace Noise.RavenDatabase {
 		public void Initialize() {
 			mContainer.RegisterType<IDatabaseManager, RavenDatabaseManager>();
 
-//			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();
+			mContainer.RegisterType<IDbBaseProvider, DbBaseProvider>();
 			mContainer.RegisterType<IArtistProvider, ArtistProvider>();
 			mContainer.RegisterType<IAlbumProvider, AlbumProvider>();
 			mContainer.RegisterType<ITrackProvider, TrackProvider>();

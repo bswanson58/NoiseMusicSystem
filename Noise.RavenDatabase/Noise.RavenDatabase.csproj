@@ -130,6 +130,7 @@
     <Compile Include="DataProviders\AlbumProvider.cs" />
     <Compile Include="DataProviders\ArtistProvider.cs" />
     <Compile Include="DataProviders\DatabaseInfoProvider.cs" />
+    <Compile Include="DataProviders\DbBaseProvider.cs" />
     <Compile Include="DataProviders\GenreProvider.cs" />
     <Compile Include="DataProviders\InternetStreamProvider.cs" />
     <Compile Include="DataProviders\LyricProvider.cs" />
