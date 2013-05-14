@@ -99,7 +99,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataProviders\AlbumProviderTests.cs" />
     <Compile Include="DataProviders\ArtistProviderTests.cs" />
+    <Compile Include="DataProviders\CommonTestSetup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

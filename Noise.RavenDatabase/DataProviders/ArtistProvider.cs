@@ -13,6 +13,7 @@ namespace Noise.RavenDatabase.DataProviders {
 
 			mDatabase = new RavenRepositoryT<DbArtist>( mDbFactory.GetLibraryDatabase(), artist => new object[] { artist.DbId });
 		}
+
 		public void AddArtist( DbArtist artist ) {
 			mDatabase.Add( artist );
 		}
