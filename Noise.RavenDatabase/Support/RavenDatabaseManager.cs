@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
 using Caliburn.Micro;
 using Noise.BlobStorage.BlobStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
+using Noise.RavenDatabase.DataProviders;
 using Noise.RavenDatabase.Interfaces;
 using Raven.Client;
 using Raven.Client.Embedded;
@@ -10,6 +12,9 @@ using Raven.Client.Embedded;
 namespace Noise.RavenDatabase.Support {
 	public class RavenDatabaseManager : IDatabaseManager, IDbFactory,
 										IHandle<Events.LibraryChanged> {
+		private const Int16						cDatabaseVersionMajor = 0;
+		private const Int16						cDatabaseVersionMinor = 9;
+
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly IBlobStorageManager	mBlobStorageManager;
@@ -46,7 +51,17 @@ namespace Noise.RavenDatabase.Support {
 		public IDocumentStore GetLibraryDatabase() {
 			if(( mLibraryDatabase == null ) &&
 			   ( mLibraryConfiguration.Current != null )) {
+				var	databaseCreated = Directory.Exists( mLibraryConfiguration.Current.LibraryDatabasePath );
+
 				mLibraryDatabase = InitializeDatabase( mLibraryConfiguration.Current.LibraryDatabasePath );
+
+				if( databaseCreated ) {
+					var versionProvider = new DatabaseInfoProvider( this );
+
+					versionProvider.InitializeDatabaseVersion( cDatabaseVersionMajor, cDatabaseVersionMinor );
+
+					NoiseLogger.Current.LogMessage( "Created Library Database: {0}", mLibraryConfiguration.Current.LibraryName );
+				}
 
 				IsOpen = mLibraryDatabase != null;
 			}
