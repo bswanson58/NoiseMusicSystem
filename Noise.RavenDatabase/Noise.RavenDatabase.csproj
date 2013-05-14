@@ -138,6 +138,7 @@
     <Compile Include="DataProviders\StorageFolderProvider.cs" />
     <Compile Include="DataProviders\TagAssociationProvider.cs" />
     <Compile Include="DataProviders\TagProvider.cs" />
+    <Compile Include="DataProviders\TimestampProvider.cs" />
     <Compile Include="DataProviders\TrackProvider.cs" />
     <Compile Include="Interfaces\IDbFactory.cs" />
     <Compile Include="Interfaces\IQuerySession.cs" />
