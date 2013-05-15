@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
 using FluentAssertions;
-using FluentAssertions.EventMonitoring;
 using Moq;
 using NUnit.Framework;
 using Noise.Infrastructure;
@@ -54,7 +53,7 @@ namespace Noise.UI.Tests.ViewModels {
 			NoiseLogger.Current = new Mock<ILog>().Object;
 
 			// Set the ui dispatcher to run on the current thread.
-			Caliburn.Micro.Execute.ResetWithoutDispatcher();
+			Execute.ResetWithoutDispatcher();
 
 			// Set up the AutoMapper configurations.
 			MappingConfiguration.Configure();

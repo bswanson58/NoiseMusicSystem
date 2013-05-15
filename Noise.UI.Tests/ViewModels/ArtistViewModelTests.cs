@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Windows.Input;
 using Caliburn.Micro;
-using FluentAssertions.EventMonitoring;
+using FluentAssertions;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Moq;
 using NUnit.Framework;
@@ -83,13 +83,12 @@ namespace Noise.UI.Tests.ViewModels {
 			var artwork = new Artwork( dbArtwork ) { Image = new byte[] { 0, 1, 2, 3 }};
 
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
-			testable.Mock<IArtworkProvider>().Setup( m => m.GetArtistArtwork( It.Is<long>( p => p == artist.DbId ),
-																			  It.Is<ContentType>( p => p == ContentType.ArtistPrimaryImage ))).Returns( artwork ).Verifiable();
+			testable.Mock<IMetadataManager>().Setup( m => m.GetArtistArtwork( It.Is<string>( p => p == artist.Name ))).Returns( artwork );
 
 			var sut = testable.ClassUnderTest;
 			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
 
-			testable.Mock<IArtworkProvider>().Verify();
+			testable.Mock<IMetadataManager>().Verify();
 			Assert.IsNotNull( sut.ArtistImage );
 		}
 

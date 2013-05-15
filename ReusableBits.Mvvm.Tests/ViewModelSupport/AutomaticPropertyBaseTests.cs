@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using FluentAssertions;
-using FluentAssertions.EventMonitoring;
 using NUnit.Framework;
 using ReusableBits.Mvvm.ViewModelSupport;
 

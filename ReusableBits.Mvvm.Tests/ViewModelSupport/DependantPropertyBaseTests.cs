@@ -1,5 +1,5 @@
 ﻿using System;
-using FluentAssertions.EventMonitoring;
+using FluentAssertions;
 using NUnit.Framework;
 using ReusableBits.Mvvm.ViewModelSupport;
 

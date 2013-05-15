@@ -1,11 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Caliburn.Micro;
-using FluentAssertions.EventMonitoring;
 using Moq;
 using NUnit.Framework;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 using Noise.UI.ViewModels;
 using ReusableBits;
 using ReusableBits.TestSupport.Mocking;

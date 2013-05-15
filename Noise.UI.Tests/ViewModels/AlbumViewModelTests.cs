@@ -3,7 +3,6 @@ using System.Linq;
 using System.Windows.Input;
 using FluentAssertions;
 using System.Threading.Tasks;
-using FluentAssertions.EventMonitoring;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Moq;
 using NUnit.Framework;
@@ -359,7 +358,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var updater =new Mock<IDataUpdateShell<DbAlbum>>();
 
 			updater.Setup( m => m.Update()).Verifiable();
- 			updater.Setup( m => m.Item ).Returns( album );
+			updater.Setup( m => m.Item ).Returns( album );
 			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumForUpdate( album.DbId )).Returns( updater.Object );
 
 			var sut = testable.ClassUnderTest;
@@ -465,7 +464,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var tag2 = new DbTag( eTagGroup.User, "tag two" );
 			var tagList = new List<DbTag> { tag1, tag2 };
 			var tagProvider = new Mock<IDataProviderList<DbTag>>();
- 			var idProvider = new Mock<IDataProviderList<long>>();
+			var idProvider = new Mock<IDataProviderList<long>>();
  
 			tagProvider.Setup( m => m.List ).Returns( tagList );
 			idProvider.Setup( m => m.List ).Returns(  new [] { tag1.DbId, tag2.DbId });

@@ -63,7 +63,9 @@ namespace Noise.UI.ViewModels {
 				retValue.DisplayGenre = mTagManager.GetGenre( dbArtist.Genre );
 
 				var artistMetadata = mMetadataManager.GetArtistMetadata( dbArtist.Name );
-				retValue.Website = artistMetadata.GetMetadata( eMetadataType.WebSite );
+				if( artistMetadata != null ) {
+					retValue.Website = artistMetadata.GetMetadata( eMetadataType.WebSite );
+				}
 			}
 
 			return( retValue );
