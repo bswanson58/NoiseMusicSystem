@@ -1,6 +1,5 @@
 ﻿using Caliburn.Micro;
 using CuttingEdge.Conditions;
-using Noise.Core.DataProviders;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
