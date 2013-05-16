@@ -119,7 +119,7 @@ namespace Noise.Core.FileStore {
 				}
 
 				foreach( var mediaConfig in mLibraryConfiguration.Current.MediaLocations ) {
-					var root = new RootFolder( mediaConfig.Key, mediaConfig.Path, string.Empty );
+					var root = new RootFolder( mediaConfig.Key, mediaConfig.Path, string.Empty ) { DisplayName = mLibraryConfiguration.Current.LibraryName };
 					var level = 0;
 
 					foreach( var strategy in mLibraryConfiguration.Current.MediaLocations[0].FolderStrategy ) {
