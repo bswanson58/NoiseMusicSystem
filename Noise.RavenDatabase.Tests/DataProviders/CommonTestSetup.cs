@@ -30,8 +30,6 @@ namespace Noise.RavenDatabase.Tests.DataProviders {
 
 		public void Setup() {
 			mDatabase = new EmbeddableDocumentStore { DataDirectory = "Test Database", RunInMemory = true };
-			// Wait for all operations to complete before each query.
-			mDatabase.Conventions.DefaultQueryingConsistency = ConsistencyOptions.QueryYourWrites;
 			mDatabase.Initialize();
 
 			BlobResolver = new BlobStorageResolver();

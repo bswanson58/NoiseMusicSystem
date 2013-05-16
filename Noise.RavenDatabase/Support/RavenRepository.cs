@@ -62,7 +62,7 @@ namespace Noise.RavenDatabase.Support {
 			bool retValue;
 
 			using( var session = mDatabase.OpenSession()) {
-				retValue = session.Query<T>().FirstOrDefault( expression ) != null;
+				retValue = session.Query<T>().Customize( x => x.WaitForNonStaleResultsAsOfNow()).FirstOrDefault( expression ) != null;
 			}
 
 			return( retValue );
@@ -98,7 +98,7 @@ namespace Noise.RavenDatabase.Support {
 
 		public void Delete( Expression<Func<T, bool>> expression ) {
 			using( var session = mDatabase.OpenSession()) {
-				var query = session.Query<T>().Where( expression );
+				var query = session.Query<T>().Customize( x => x.WaitForNonStaleResultsAsOfNow()).Where( expression );
 
 				foreach( var entity in query ) {
 					session.Delete( entity );
@@ -110,7 +110,7 @@ namespace Noise.RavenDatabase.Support {
 
 		public void DeleteAll() {
 			using( var session = mDatabase.OpenSession()) {
-				var query = session.Query<T>();
+				var query = session.Query<T>().Customize( x => x.WaitForNonStaleResultsAsOfNow());
 
 				foreach( var entity in query ) {
 					session.Delete( entity );
@@ -124,7 +124,7 @@ namespace Noise.RavenDatabase.Support {
 			T	retValue;
 
 			using( var session = mDatabase.OpenSession()) {
-				retValue = session.Query<T>().FirstOrDefault( expression );
+				retValue = session.Query<T>().Customize( x => x.WaitForNonStaleResultsAsOfNow()).FirstOrDefault( expression );
 			}
 
 			return ( retValue );
@@ -134,7 +134,7 @@ namespace Noise.RavenDatabase.Support {
 			var retValue = new List<T>();
 
 			using( var session = mDatabase.OpenSession()) {
-				retValue.AddRange( session.Query<T>().Where( expression ));
+				retValue.AddRange( session.Query<T>().Customize( x => x.WaitForNonStaleResultsAsOfNow()).Where( expression ));
 			}
 
 			return( retValue );

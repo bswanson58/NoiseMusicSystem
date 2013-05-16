@@ -33,8 +33,8 @@ namespace Noise.RavenDatabase.Support {
 			}
 
 			if( mQuery == null ) {
-				mQuery = mExpression != null ? mSession.Query<T>().Where( mExpression ) :
-											   mSession.Query<T>();
+				mQuery = mExpression != null ? mSession.Query<T>().Customize( x => x.WaitForNonStaleResultsAsOfNow()).Where( mExpression ) :
+											   mSession.Query<T>().Customize( x => x.WaitForNonStaleResultsAsOfNow());
 			}
 
 			return ( mQuery );
