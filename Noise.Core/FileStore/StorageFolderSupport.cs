@@ -142,22 +142,21 @@ namespace Noise.Core.FileStore {
 				pathParts.Push( folder.Name );
 
 				while( folder.ParentFolder != Constants.cDatabaseNullOid ) {
-					folder = mStorageFolderProvider.GetFolder( folder.ParentFolder );
-					if( folder != null ) {
-						if( folder is RootFolder ) {
-							var rootFolder = mRootFolderProvider.GetRootFolder( folder.DbId );
-							if( rootFolder != null ) {
-								strategy = rootFolder.FolderStrategy;
-							}
-							
-							break;
-						}
+					var parentFolder = mStorageFolderProvider.GetFolder( folder.ParentFolder );
 
-						pathParts.Push( folder.Name );
-					}
-					else {
+					if(( parentFolder == null ) ||
+					   ( parentFolder is RootFolder )) {
+						var rootFolder = mRootFolderProvider.GetRootFolder( folder.ParentFolder );
+
+						if( rootFolder != null ) {
+							strategy = rootFolder.FolderStrategy;
+						}
+							
 						break;
 					}
+
+					folder = parentFolder;
+					pathParts.Push( folder.Name );
 				}
 
 				if( strategy != null ) {
