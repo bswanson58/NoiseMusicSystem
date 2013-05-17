@@ -83,7 +83,7 @@ namespace Noise.Core.Database {
 					break;
 			}
 
-			mDocument.SetBoost( boost );
+			mDocument.Boost = boost;
 		}
 
 		public void AddSearchText( string searchText ) {
@@ -194,7 +194,7 @@ namespace Noise.Core.Database {
 			if( mIndexWriter != null ) {
 				try {
 					mIndexWriter.Optimize();
-					mIndexWriter.Close();
+					mIndexWriter.Dispose();
 					mIndexWriter = null;
 				}
 				catch( Exception ex ) {
@@ -232,7 +232,7 @@ namespace Noise.Core.Database {
 						var analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer( Lucene.Net.Util.Version.LUCENE_29 );
 						var indexWriter = new IndexWriter( directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED );
 
-						indexWriter.Close();
+						indexWriter.Dispose();
 					}
 
 					if( Directory.Exists( mIndexLocation )) {
@@ -274,8 +274,8 @@ namespace Noise.Core.Database {
 						var typeTerm = new TermQuery( new Term( SearchItemFieldName.cItemType, searchType.ToString()));
 						var	boolQuery = new BooleanQuery();
 
-						boolQuery.Add( textQuery, BooleanClause.Occur.MUST );
-						boolQuery.Add( typeTerm, BooleanClause.Occur.MUST );
+						boolQuery.Add( textQuery, Occur.MUST );
+						boolQuery.Add( typeTerm, Occur.MUST );
 
 						query = boolQuery;
 					}
@@ -285,12 +285,12 @@ namespace Noise.Core.Database {
 
 					if( hits > 0 ) {
 						foreach( var hit in topDocs.ScoreDocs ) {
-							var document = searcher.Doc( hit.doc );
+							var document = searcher.Doc( hit.Doc );
 
 							var typeField = document.GetField( SearchItemFieldName.cItemType );
 							var	itemType = eSearchItemType.Unknown;
 							if( typeField != null ) {
-								itemType = (eSearchItemType)Enum.Parse( typeof( eSearchItemType ), typeField.StringValue());
+								itemType = (eSearchItemType)Enum.Parse( typeof( eSearchItemType ), typeField.StringValue );
 							}
 
 							if(( itemType != eSearchItemType.TimeStamp ) &&
@@ -304,17 +304,17 @@ namespace Noise.Core.Database {
 								DbTrack			track = null;
 
 								if( artistField != null ) {
-									long	id = long.Parse( artistField.StringValue());
+									long	id = long.Parse( artistField.StringValue );
 
 									artist = mArtistProvider.GetArtist( id );
 								}
 								if( albumField != null ) {
-									long	id = long.Parse( albumField.StringValue());
+									long	id = long.Parse( albumField.StringValue );
 
 									album = mAlbumProvider.GetAlbum( id );
 								}
 								if( trackField != null ) {
-									long	id = long.Parse( trackField.StringValue());
+									long	id = long.Parse( trackField.StringValue );
 
 									track = mTrackProvider.GetTrack( id );
 								}
@@ -328,7 +328,7 @@ namespace Noise.Core.Database {
 						}
 					}
 
-					searcher.Close();
+					searcher.Dispose();
 				}
 				catch( Exception ex ) {
 					NoiseLogger.Current.LogException( "Exception - Search failed: ", ex );
@@ -353,22 +353,22 @@ namespace Noise.Core.Database {
 					var typeTerm = new TermQuery( new Term( SearchItemFieldName.cItemType, eSearchItemType.TimeStamp.ToString()));
 					var query = new BooleanQuery();
 
-					query.Add( artistTerm, BooleanClause.Occur.MUST );
-					query.Add( typeTerm, BooleanClause.Occur.MUST );
+					query.Add( artistTerm, Occur.MUST );
+					query.Add( typeTerm, Occur.MUST );
 
 					var	topDocs = searcher.Search( query, 1 );
 					var hits = topDocs.TotalHits;
 
 					if( hits > 0 ) {
 						foreach( var hit in topDocs.ScoreDocs ) {
-							var document = searcher.Doc( hit.doc );
+							var document = searcher.Doc( hit.Doc );
 							var artistField = document.GetField( SearchItemFieldName.cArtistId );
 							var timeField = document.GetField( SearchItemFieldName.cTimeStamp );
 
 							if(( artistField != null ) &&
 							   ( timeField != null )) {
-								long	id = long.Parse( artistField.StringValue());
-								long	time = long.Parse( timeField.StringValue());
+								long	id = long.Parse( artistField.StringValue );
+								long	time = long.Parse( timeField.StringValue );
 
 								if( id == forArtist.DbId ) {
 									retValue = new DateTime( time );
@@ -379,7 +379,7 @@ namespace Noise.Core.Database {
 						}
 					}
 
-					searcher.Close();
+					searcher.Dispose();
 				}
 				catch( Exception ex ) {
 					NoiseLogger.Current.LogException( "Exception - DetermineTimeStamp: ", ex );
