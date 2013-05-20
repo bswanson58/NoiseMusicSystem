@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace Noise.RavenDatabase.Interfaces {
 	public interface IQuerySession<out T> : IDisposable where T : class {
-		IQueryable<T>		Query(); 
+		IEnumerable<T>		List { get; }
 	}
 }

@@ -11,7 +11,7 @@ namespace Noise.RavenDatabase.Support {
 		public RavenDataProviderList( IQuerySession<T> querySession ) {
 			mSession = querySession;
 
-			List = mSession.Query();
+			List = mSession.List;
 		}
 
 		public RavenDataProviderList( IEnumerable<T> list ) {

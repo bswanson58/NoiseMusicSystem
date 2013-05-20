@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Noise.RavenDatabase.Interfaces;
@@ -6,6 +7,8 @@ using Raven.Client;
 
 namespace Noise.RavenDatabase.Support {
 	public class QuerySession<T> : IQuerySession<T> where T : class {
+		private	const int							cTakeCount = 1024;
+
 		private	readonly IDocumentStore				mDatabase;
 		private readonly Expression<Func<T, bool>>	mExpression;
 		private	IDocumentSession					mSession;
@@ -24,6 +27,35 @@ namespace Noise.RavenDatabase.Support {
 		public void Dispose() {
 			if( mSession != null ) {
 				mSession.Dispose();
+			}
+		}
+	 
+		public IEnumerable<T> List {
+			get {
+				var start = 0;
+
+				while( true ) {
+					var sessionQueryCount = 0;
+
+					using( var session = mDatabase.OpenSession()) {
+						while( sessionQueryCount < 30 ) {
+							var query = mExpression != null ? session.Query<T>().Customize( x => x.WaitForNonStaleResultsAsOfNow()).Where( mExpression ).Take( cTakeCount ).Skip( start ).ToList() :
+															  session.Query<T>().Customize( x => x.WaitForNonStaleResultsAsOfNow()).Take( cTakeCount ).Skip( start ).ToList();
+							var queryCount = query.Count;
+
+							if( queryCount == 0 ) {
+								yield break;
+							}
+
+							foreach( T item in query ) {
+								yield return item;
+							}
+
+							start += queryCount;
+							sessionQueryCount++;
+						}
+					}
+				}
 			}
 		}
 

@@ -48,7 +48,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		public TextInfo[] GetAlbumTextInfo( long albumId ) {
 			var	dbTextInfoList = Database.Find( entity => entity.Album == albumId );
 
-			return( dbTextInfoList.Query().Select( TransformTextInfo ).ToArray());
+			return( dbTextInfoList.List.Select( TransformTextInfo ).ToArray());
 		}
 
 		public IDataUpdateShell<TextInfo> GetTextInfoForUpdate( long textInfoId ) {

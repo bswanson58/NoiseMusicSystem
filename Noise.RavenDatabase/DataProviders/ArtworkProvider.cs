@@ -87,13 +87,13 @@ namespace Noise.RavenDatabase.DataProviders {
 				artworkList = Database.Find( entity => (( entity.Album == albumId ) && ( entity.DbContentType == (int)ofType )));
 			}
 
-			return( artworkList.Query().Select( TransformArtwork ).ToArray());
+			return( artworkList.List.Select( TransformArtwork ).ToArray());
 		}
 
 		public Artwork[] GetAlbumArtwork( long albumId ) {
 			var artworkList = Database.Find( entity => entity.Album == albumId );
 
-			return( artworkList.Query().Select( TransformArtwork ).ToArray());
+			return( artworkList.List.Select( TransformArtwork ).ToArray());
 		}
 
 		public IDataProviderList<DbArtwork> GetArtworkForFolder( long folderId ) {

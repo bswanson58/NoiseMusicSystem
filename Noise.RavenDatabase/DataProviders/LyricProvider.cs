@@ -29,17 +29,17 @@ namespace Noise.RavenDatabase.DataProviders {
 			try {
 				var match = Database.Find( entry => (( entry.ArtistId == artist.DbId ) && ( entry.TrackId == track.DbId )));
 				if( match != null ) {
-					if( match.Query().Any()) {
-						lyricsList.Add( match.Query().First() );
+					if( match.List.Any()) {
+						lyricsList.Add( match.List.First() );
 					}
 				}
 
 				var matchList = Database.Find( entry => (( entry.ArtistId == artist.DbId ) &&
 														  ( entry.SongName.Equals( track.Name, StringComparison.CurrentCultureIgnoreCase ))));
-				lyricsList.AddRange( matchList.Query().Where( lyric => lyric.TrackId != track.DbId ) );
+				lyricsList.AddRange( matchList.List.Where( lyric => lyric.TrackId != track.DbId ) );
 
 				matchList = Database.Find( entry => entry.SongName.Equals( track.Name, StringComparison.CurrentCultureIgnoreCase ));
-				lyricsList.AddRange( matchList.Query());
+				lyricsList.AddRange( matchList.List );
 
 				var uniqueList = lyricsList.GroupBy( lyric => lyric.TrackId ).Select( g => g.First());
 

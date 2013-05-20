@@ -8,7 +8,7 @@ namespace Noise.RavenDatabase.Support {
 	public class RavenFilteredProviderList<T> : IDataProviderList<T> where T : DbArtist {
 		private readonly IDatabaseFilter	mFilter;
 		private IQuerySession<T>			mQuerySession;
-		private readonly IList<T>			mList; 
+		private readonly IEnumerable<T>		mList; 
 
 		public IEnumerable<T> List { get; private set; }
 
@@ -16,7 +16,7 @@ namespace Noise.RavenDatabase.Support {
 			mFilter = filter;
 			mQuerySession = querySession;
 			
-			mList = mQuerySession.Query().ToList();
+			mList = mQuerySession.List;
 			List = from entity in mList where mFilter.ArtistMatch( entity ) select entity;
 		}
 			public void Dispose() {
