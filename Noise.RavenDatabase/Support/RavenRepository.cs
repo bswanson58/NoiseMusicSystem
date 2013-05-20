@@ -151,12 +151,15 @@ namespace Noise.RavenDatabase.Support {
 		public void Add( T item ) {
 			Condition.Requires( item ).IsNotNull();
 
-			if(!Exists( item )) {
-				using( var session = mDatabase.OpenSession()) {
-						session.Store( item );
+			if( !Exists( item ) ) {
+				using( var session = mDatabase.OpenSession() ) {
+					session.Store( item );
 
-						session.SaveChanges();
+					session.SaveChanges();
 				}
+			}
+			else {
+				throw new ApplicationException( "Attempt to add existing item to Raven database." );
 			}
 		}
 
