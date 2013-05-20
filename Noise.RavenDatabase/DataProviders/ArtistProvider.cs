@@ -36,19 +36,19 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbArtist> GetArtistList() {
-			return( new RavenDataProviderList<DbArtist>( Database.FindAll()));
+			return( Database.FindAll());
 		}
 
 		public IDataProviderList<DbArtist> GetArtistList( IDatabaseFilter filter ) {
-			return( new RavenFilteredProviderList<DbArtist>( Database.FindAll(), filter ));
+			return( new RavenDataProviderList<DbArtist>( from artist in Database.FindAll().List where filter.ArtistMatch( artist ) select  artist ));
 		}
 
 		public IDataProviderList<DbArtist> GetChangedArtists( long changedSince ) {
-			return( new RavenDataProviderList<DbArtist>( Database.Find( artist => artist.LastChangeTicks > changedSince )));
+			return( Database.Find( artist => artist.LastChangeTicks > changedSince ));
 		}
 
 		public IDataProviderList<DbArtist> GetFavoriteArtists() {
-			return( new RavenDataProviderList<DbArtist>( Database.Find( artist => artist.IsFavorite )));
+			return( Database.Find( artist => artist.IsFavorite ));
 		}
 
 		public IDataUpdateShell<DbArtist> GetArtistForUpdate( long artistId ) {

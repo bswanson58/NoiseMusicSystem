@@ -14,7 +14,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbGenre> GetGenreList() {
-			return( new RavenDataProviderList<DbGenre>( Database.FindAll()));
+			return( Database.FindAll());
 		}
 	}
 }

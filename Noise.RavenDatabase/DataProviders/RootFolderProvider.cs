@@ -22,7 +22,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<RootFolder> GetRootFolderList() {
-			return( new RavenDataProviderList<RootFolder>( Database.FindAll()));
+			return( Database.FindAll());
 		}
 
 		public IDataUpdateShell<RootFolder> GetFolderForUpdate( long folderId ) {

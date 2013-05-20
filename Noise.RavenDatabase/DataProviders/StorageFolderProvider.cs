@@ -22,15 +22,15 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<StorageFolder> GetAllFolders() {
-			return( new RavenDataProviderList<StorageFolder>( Database.FindAll()));
+			return( Database.FindAll());
 		}
 
 		public IDataProviderList<StorageFolder> GetChildFolders( long parentId ) {
-			return( new RavenDataProviderList<StorageFolder>( Database.Find( folder => folder.ParentFolder == parentId )));
+			return( Database.Find( folder => folder.ParentFolder == parentId ));
 		}
 
 		public IDataProviderList<StorageFolder> GetDeletedFolderList() {
-			return( new RavenDataProviderList<StorageFolder>( Database.Find( folder => folder.IsDeleted )));
+			return( Database.Find( folder => folder.IsDeleted ));
 		}
 
 		public IDataUpdateShell<StorageFolder> GetFolderForUpdate( long folderId ) {

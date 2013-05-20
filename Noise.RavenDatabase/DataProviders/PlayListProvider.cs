@@ -22,7 +22,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbPlayList> GetPlayLists() {
-			return( new RavenDataProviderList<DbPlayList>( Database.FindAll()));
+			return( Database.FindAll());
 		}
 
 		public IDataUpdateShell<DbPlayList> GetPlayListForUpdate( long playListId ) {

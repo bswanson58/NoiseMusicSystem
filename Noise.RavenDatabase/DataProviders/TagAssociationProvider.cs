@@ -14,15 +14,15 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbTagAssociation> GetArtistTagList( long artistId, eTagGroup tagGroup ) {
-			return( new RavenDataProviderList<DbTagAssociation>( Database.Find( entity => entity.ArtistId == artistId && entity.TagGroup == tagGroup )));
+			return( Database.Find( entity => entity.ArtistId == artistId && entity.TagGroup == tagGroup ));
 		}
 
 		public IDataProviderList<DbTagAssociation> GetAlbumTagList( long albumId, eTagGroup tagGroup ) {
-			return( new RavenDataProviderList<DbTagAssociation>( Database.Find( entity => entity.AlbumId == albumId && entity.TagGroup == tagGroup ) ) );
+			return( Database.Find( entity => entity.AlbumId == albumId && entity.TagGroup == tagGroup ));
 		}
 
 		public IDataProviderList<DbTagAssociation> GetTagList( eTagGroup tagGroup, long tagId ) {
-			return( new RavenDataProviderList<DbTagAssociation>( Database.Find( entity => entity.TagGroup == tagGroup && entity.TagId == tagId )));
+			return(  Database.Find( entity => entity.TagGroup == tagGroup && entity.TagId == tagId ));
 		}
 
 		public void AddAssociation( DbTagAssociation item ) {

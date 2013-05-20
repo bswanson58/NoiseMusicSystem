@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Noise.RavenDatabase.Interfaces;
+using Noise.Infrastructure.Interfaces;
 using Raven.Client;
 
 namespace Noise.RavenDatabase.Support {
-	public class QuerySession<T> : IQuerySession<T> where T : class {
+	public class QuerySession<T> : IDataProviderList<T> where T : class {
 		private	const int							cTakeCount = 1024;
 
 		private	readonly IDocumentStore				mDatabase;

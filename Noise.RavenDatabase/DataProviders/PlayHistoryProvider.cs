@@ -18,7 +18,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbPlayHistory> GetPlayHistoryList() {
-			return( new RavenDataProviderList<DbPlayHistory>( Database.FindAll()));
+			return( Database.FindAll());
 		}
 
 		public IDataUpdateShell<DbPlayHistory> GetPlayHistoryForUpdate( long playListId ) {

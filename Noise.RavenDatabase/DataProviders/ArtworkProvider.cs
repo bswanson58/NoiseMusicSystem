@@ -77,7 +77,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public Artwork[] GetAlbumArtwork( long albumId, ContentType ofType ) {
-			IQuerySession<DbArtwork>	artworkList;
+			IDataProviderList<DbArtwork>	artworkList;
 
 			if( ofType == ContentType.AlbumCover ) {
 				artworkList = Database.Find( entity => (( entity.Album == albumId ) &&
@@ -97,7 +97,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbArtwork> GetArtworkForFolder( long folderId ) {
-			return ( new RavenDataProviderList<DbArtwork>( Database.Find( entity => entity.FolderLocation == folderId )));
+			return ( Database.Find( entity => entity.FolderLocation == folderId ));
 		}
 
 		public IDataUpdateShell<Artwork> GetArtworkForUpdate( long artworkId ) {

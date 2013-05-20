@@ -22,19 +22,19 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<StorageFile> GetAllFiles() {
-			return( new RavenDataProviderList<StorageFile>( Database.FindAll()));
+			return( Database.FindAll());
 		}
 
 		public IDataProviderList<StorageFile> GetDeletedFilesList() {
-			return( new RavenDataProviderList<StorageFile>( Database.Find( entity => entity.IsDeleted )));
+			return( Database.Find( entity => entity.IsDeleted ));
 		}
 
 		public IDataProviderList<StorageFile> GetFilesInFolder( long parentFolder ) {
-			return( new RavenDataProviderList<StorageFile>( Database.Find( entity => entity.ParentFolder == parentFolder )));
+			return( Database.Find( entity => entity.ParentFolder == parentFolder ));
 		}
 
 		public IDataProviderList<StorageFile> GetFilesRequiringProcessing() {
-			return( new RavenDataProviderList<StorageFile>( Database.Find( entity => ( entity.FileType == eFileType.Undetermined ) || entity.WasUpdated )));
+			return( Database.Find( entity => ( entity.FileType == eFileType.Undetermined ) || entity.WasUpdated ));
 		}
 
 		public IDataUpdateShell<StorageFile> GetFileForUpdate( long fileId ) {

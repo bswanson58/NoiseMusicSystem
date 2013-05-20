@@ -38,7 +38,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbAlbum> GetAllAlbums() {
-			return( new RavenDataProviderList<DbAlbum>( Database.FindAll()));
+			return( Database.FindAll());
 		}
 
 		public IDataProviderList<DbAlbum> GetAlbumList( DbArtist forArtist ) {
@@ -46,11 +46,11 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbAlbum> GetAlbumList( long artistId ) {
-			return( new RavenDataProviderList<DbAlbum>( Database.Find( album => album.Artist == artistId )));
+			return( Database.Find( album => album.Artist == artistId ));
 		}
 
 		public IDataProviderList<DbAlbum> GetFavoriteAlbums() {
-			return( new RavenDataProviderList<DbAlbum>( Database.Find( album => album.IsFavorite )));
+			return( Database.Find( album => album.IsFavorite ));
 		}
 
 		public IDataUpdateShell<DbAlbum> GetAlbumForUpdate( long albumId ) {

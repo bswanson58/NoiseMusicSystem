@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using CuttingEdge.Conditions;
+using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
 using Raven.Client;
 
@@ -93,6 +95,9 @@ namespace Noise.RavenDatabase.Support {
 
 					session.SaveChanges();
 				}
+				else {
+					NoiseLogger.Current.LogMessage( String.Format( "RavenRepository:Delete - Unknown item: {0}", item.GetType()));
+				}
 			}
 		}
 
@@ -140,26 +145,26 @@ namespace Noise.RavenDatabase.Support {
 			return( retValue );
 		} 
 
-		public IQuerySession<T> Find( Expression<Func<T, bool>> expression ) {
+		public IDataProviderList<T> Find( Expression<Func<T, bool>> expression ) {
 			return( new QuerySession<T>( mDatabase, expression ));
 		} 
 
-		public IQuerySession<T> FindAll() {
+		public IDataProviderList<T> FindAll() {
 			return ( new QuerySession<T>( mDatabase ));
 		}
 
 		public void Add( T item ) {
 			Condition.Requires( item ).IsNotNull();
 
-			if( !Exists( item )) {
-				using( var session = mDatabase.OpenSession()) {
+			if( !Exists( item ) ) {
+				using( var session = mDatabase.OpenSession() ) {
 					session.Store( item );
 
 					session.SaveChanges();
 				}
 			}
 			else {
-				throw new ApplicationException( "Attempt to add existing item to Raven database." );
+				NoiseLogger.Current.LogMessage( string.Format( "RavenRepository:Add - Inserting known item: {0}", item.GetType()));
 			}
 		}
 
@@ -185,6 +190,9 @@ namespace Noise.RavenDatabase.Support {
 					AutoMapper.Mapper.DynamicMap( item, repositoryItem );
 
 					session.SaveChanges();
+				}
+				else {
+					NoiseLogger.Current.LogMessage( String.Format( "RavenRepository:Update - Updating unknown item: {0}", item.GetType()));
 				}
 			}
 		}

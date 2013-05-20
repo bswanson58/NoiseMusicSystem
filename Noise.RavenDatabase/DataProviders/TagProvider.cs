@@ -14,7 +14,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbTag> GetTagList( eTagGroup forGroup ) {
-			return( new RavenDataProviderList<DbTag>( Database.Find( tag => tag.TagGroup == forGroup )));
+			return( Database.Find( tag => tag.TagGroup == forGroup ));
 		}
 	}
 }

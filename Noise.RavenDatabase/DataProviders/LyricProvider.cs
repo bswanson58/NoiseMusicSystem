@@ -53,7 +53,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbLyric> GetLyricsForArtist( DbArtist artist ) {
-			return( new RavenDataProviderList<DbLyric>( Database.Find( entity => entity.ArtistId == artist.DbId )));
+			return( Database.Find( entity => entity.ArtistId == artist.DbId ));
 		}
 
 		public IDataUpdateShell<DbLyric> GetLyricForUpdate( long lyricId ) {

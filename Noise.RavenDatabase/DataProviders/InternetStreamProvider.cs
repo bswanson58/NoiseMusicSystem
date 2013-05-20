@@ -22,7 +22,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbInternetStream> GetStreamList() {
-			return( new RavenDataProviderList<DbInternetStream>( Database.FindAll()));
+			return( Database.FindAll());
 		}
 
 		public IDataUpdateShell<DbInternetStream> GetStreamForUpdate( long streamId ) {
