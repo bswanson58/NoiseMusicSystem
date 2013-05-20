@@ -21,6 +21,9 @@ namespace Noise.Core.FileStore {
 		private DatabaseCache<StorageFile>		mFileCache;
 		private DatabaseCache<StorageFolder>	mFolderCache;
 
+		private long	mFoldersAdded;
+		private long	mFilesAdded;
+
 		public  FolderExplorer( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration, IStorageFolderSupport storageFolderSupport,
 								IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider ) {
 			mEventAggregator = eventAggregator;
@@ -66,6 +69,9 @@ namespace Noise.Core.FileStore {
 						}
 
 						foreach( var rootFolder in rootFolders ) {
+							mFilesAdded = 0;
+							mFoldersAdded = 0;
+
 							if( Directory.Exists( mStorageFolderSupport.GetPath( rootFolder ))) {
 								NoiseLogger.Current.LogMessage( "Synchronizing folder: {0}", rootFolder.Name );
 								mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Starting folder synchronization for: {0}", rootFolder.Name )));
@@ -87,6 +93,8 @@ namespace Noise.Core.FileStore {
 									updater.Update();
 								}
 							}
+
+							NoiseLogger.Current.LogMessage( "In Folder '{0}' there were {1} folders added with {2} files.", rootFolder.DisplayName, mFoldersAdded, mFilesAdded );
 						}
 
 						mFileCache.Clear();
@@ -147,6 +155,7 @@ namespace Noise.Core.FileStore {
 					folder = new StorageFolder( directory.File, parent.DbId );
 
 					mStorageFolderProvider.AddFolder( folder );
+					mFoldersAdded++;
 
 					if( parent is RootFolder ) {
 						NoiseLogger.Current.LogInfo( string.Format( "Adding folder: {0}", mStorageFolderSupport.GetPath( folder )));
@@ -199,6 +208,8 @@ namespace Noise.Core.FileStore {
 				}
 				else {
 					mStorageFileProvider.AddFile( new StorageFile( file.File, storageFolder.DbId, file.Size, file.ModificationTime ));
+
+					mFilesAdded++;
 				}
 
 				if( mStopExploring ) {
