@@ -34,7 +34,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<StorageFile> GetFilesRequiringProcessing() {
-			return( new RavenDataProviderList<StorageFile>( Database.Find( entity => entity.FileType == eFileType.Undetermined || entity.WasUpdated )));
+			return( new RavenDataProviderList<StorageFile>( Database.Find( entity => ( entity.FileType == eFileType.Undetermined ) || entity.WasUpdated )));
 		}
 
 		public IDataUpdateShell<StorageFile> GetFileForUpdate( long fileId ) {

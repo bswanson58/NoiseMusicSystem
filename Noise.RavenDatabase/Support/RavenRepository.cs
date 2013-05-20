@@ -151,8 +151,8 @@ namespace Noise.RavenDatabase.Support {
 		public void Add( T item ) {
 			Condition.Requires( item ).IsNotNull();
 
-			if( !Exists( item ) ) {
-				using( var session = mDatabase.OpenSession() ) {
+			if( !Exists( item )) {
+				using( var session = mDatabase.OpenSession()) {
 					session.Store( item );
 
 					session.SaveChanges();
