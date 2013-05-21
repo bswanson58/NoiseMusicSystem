@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Noise.Infrastructure.Interfaces;
 using Raven.Client;
+using Raven.Client.Linq;
 
 namespace Noise.RavenDatabase.Support {
 	public class QuerySession<T> : IDataProviderList<T> where T : class {
@@ -11,23 +12,30 @@ namespace Noise.RavenDatabase.Support {
 
 		private	readonly IDocumentStore				mDatabase;
 		private readonly Expression<Func<T, bool>>	mExpression;
-		private	IDocumentSession					mSession;
-		private IQueryable<T>						mQuery;
+		private readonly string						mIndexName;
 
 		public QuerySession( IDocumentStore database ) {
 			mDatabase = database;
+
+			mIndexName = string.Empty;
+		}
+
+		public QuerySession( IDocumentStore database, string indexName ) :
+			this( database ) {
+			mIndexName = indexName;
 		}
 
 		public QuerySession( IDocumentStore database, Expression<Func<T, bool>> expression ) :
 			this( database ) {
-			mDatabase = database;
 			mExpression = expression;
 		}
 
+		public QuerySession( IDocumentStore database, Expression<Func<T, bool>> expression, string indexName ) :
+			this( database, expression ) {
+			mIndexName = indexName;
+		}
+
 		public void Dispose() {
-			if( mSession != null ) {
-				mSession.Dispose();
-			}
 		}
 	 
 		public IEnumerable<T> List {
@@ -39,15 +47,20 @@ namespace Noise.RavenDatabase.Support {
 
 					using( var session = mDatabase.OpenSession()) {
 						while( sessionQueryCount < 30 ) {
-							var query = mExpression != null ? session.Query<T>().Customize( x => x.WaitForNonStaleResultsAsOfNow()).Where( mExpression ).Take( cTakeCount ).Skip( start ).ToList() :
-															  session.Query<T>().Customize( x => x.WaitForNonStaleResultsAsOfNow()).Take( cTakeCount ).Skip( start ).ToList();
-							var queryCount = query.Count;
+							var query = string.IsNullOrWhiteSpace( mIndexName ) ? session.Query<T>().Customize( x => x.WaitForNonStaleResultsAsOfNow()) :
+																				  session.Query<T>( mIndexName ).Customize( x => x.WaitForNonStaleResultsAsOfNow());
+							if( mExpression != null ) {
+								query = query.Where( mExpression );
+							}
+
+							var queryList = query.Take( cTakeCount ).Skip( start ).ToList();
+							var queryCount = queryList.Count;
 
 							if( queryCount == 0 ) {
 								yield break;
 							}
 
-							foreach( T item in query ) {
+							foreach( T item in queryList ) {
 								yield return item;
 							}
 
@@ -57,19 +70,6 @@ namespace Noise.RavenDatabase.Support {
 					}
 				}
 			}
-		}
-
-		public IQueryable<T> Query() {
-			if( mSession == null ) {
-				mSession = mDatabase.OpenSession();
-			}
-
-			if( mQuery == null ) {
-				mQuery = mExpression != null ? mSession.Query<T>().Customize( x => x.WaitForNonStaleResultsAsOfNow()).Where( mExpression ) :
-											   mSession.Query<T>().Customize( x => x.WaitForNonStaleResultsAsOfNow());
-			}
-
-			return ( mQuery );
 		}
 	}
 }

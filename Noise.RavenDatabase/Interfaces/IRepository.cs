@@ -21,6 +21,7 @@ namespace Noise.RavenDatabase.Interfaces {
 
 		IDataProviderList<T>	FindAll();
 		IDataProviderList<T>	Find( Expression<Func<T, bool>> expression );
+		IDataProviderList<T>	Find( Expression<Func<T, bool>> expression, string indexName );
 
 		T						Get( Expression<Func<T, bool>> expression );
 		T						Get( object key );

@@ -147,7 +147,11 @@ namespace Noise.RavenDatabase.Support {
 
 		public IDataProviderList<T> Find( Expression<Func<T, bool>> expression ) {
 			return( new QuerySession<T>( mDatabase, expression ));
-		} 
+		}
+
+		public IDataProviderList<T> Find( Expression<Func<T, bool>> expression, string indexName ) {
+			return ( new QuerySession<T>( mDatabase, expression, indexName ));
+		}
 
 		public IDataProviderList<T> FindAll() {
 			return ( new QuerySession<T>( mDatabase ));
