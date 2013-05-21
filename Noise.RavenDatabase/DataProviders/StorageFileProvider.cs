@@ -1,9 +1,35 @@
-﻿using Noise.Infrastructure.Dto;
+﻿using System.Linq;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
+using Raven.Client.Indexes;
 
 namespace Noise.RavenDatabase.DataProviders {
+	public class StorageFileByDbId : AbstractIndexCreationTask<StorageFile> {
+		public StorageFileByDbId() {
+			Map = files => from file in files select new { file.DbId };
+		}
+	}
+
+	public class StorageFileByParentFolder : AbstractIndexCreationTask<StorageFile> {
+		public StorageFileByParentFolder() {
+			Map = storageFiles => from file in storageFiles select new { file.ParentFolder };
+		}
+	}
+
+	public class StorageFileByFileType : AbstractIndexCreationTask<StorageFile> {
+		public StorageFileByFileType() {
+			Map = storageFiles => from file in storageFiles select new { file.FileType, file.WasUpdated };
+		}
+	}
+
+	public class StorageFileByIsDeleted : AbstractIndexCreationTask<StorageFile> {
+		public StorageFileByIsDeleted() {
+			Map = storageFiles => from file in storageFiles select new { file.IsDeleted };
+		}
+	}
+
 	public class StorageFileProvider : BaseProvider<StorageFile>, IStorageFileProvider {
 		public StorageFileProvider( IDbFactory databaseFactory ) :
 			base( databaseFactory, entity => new object[] { entity.DbId }) {
@@ -26,15 +52,15 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<StorageFile> GetDeletedFilesList() {
-			return( Database.Find( entity => entity.IsDeleted ));
+			return( Database.Find( entity => entity.IsDeleted, typeof( StorageFileByIsDeleted ).Name ));
 		}
 
 		public IDataProviderList<StorageFile> GetFilesInFolder( long parentFolder ) {
-			return( Database.Find( entity => entity.ParentFolder == parentFolder ));
+			return ( Database.Find( entity => entity.ParentFolder == parentFolder, typeof( StorageFileByParentFolder ).Name));
 		}
 
 		public IDataProviderList<StorageFile> GetFilesRequiringProcessing() {
-			return( Database.Find( entity => ( entity.FileType == eFileType.Undetermined ) || entity.WasUpdated ));
+			return ( Database.Find( entity => ( entity.FileType == eFileType.Undetermined ) || entity.WasUpdated, typeof( StorageFileByFileType ).Name ));
 		}
 
 		public IDataUpdateShell<StorageFile> GetFileForUpdate( long fileId ) {

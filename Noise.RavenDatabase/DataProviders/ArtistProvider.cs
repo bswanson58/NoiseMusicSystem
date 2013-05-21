@@ -5,8 +5,15 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
+using Raven.Client.Indexes;
 
 namespace Noise.RavenDatabase.DataProviders {
+	public class ArtistByLastChangedTicks : AbstractIndexCreationTask<DbArtist> {
+		public ArtistByLastChangedTicks() {
+			Map = artists => from artist in artists select new { artist.LastChangeTicks };
+		}
+	}
+
 	public class ArtistProvider : BaseProvider<DbArtist>, IArtistProvider {
 		private readonly ITagAssociationProvider	mTagAssociationProvider;
 

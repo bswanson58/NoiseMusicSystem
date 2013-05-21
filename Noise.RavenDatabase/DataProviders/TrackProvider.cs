@@ -4,8 +4,21 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
+using Raven.Client.Indexes;
 
 namespace Noise.RavenDatabase.DataProviders {
+	public class TracksByDbId : AbstractIndexCreationTask<DbTrack> {
+		public TracksByDbId() {
+			Map = tracks => from track in tracks select new { track.DbId };
+		}
+	}
+
+	public class TracksByAlbum : AbstractIndexCreationTask<DbTrack> {
+		public TracksByAlbum() {
+			Map = tracks => from track in tracks select new { track.Album };
+		}
+	}
+
 	public class TrackProvider : BaseProvider<DbTrack>, ITrackProvider {
 		public TrackProvider( IDbFactory databaseFactory ) :
 			base( databaseFactory, entity => new object[] { entity.DbId }) {
@@ -24,7 +37,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbTrack> GetTrackList( long albumId ) {
-			return( Database.Find( track => track.Album == albumId ));
+			return( Database.Find( track => track.Album == albumId, typeof( TracksByAlbum ).Name ));
 		}
 
 		public IDataProviderList<DbTrack> GetTrackList( DbAlbum forAlbum ) {
@@ -40,8 +53,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbTrack> GetNewlyAddedTracks() {
-//			return( new RavenDataProviderList<DbTrack>( Database.FindAll().Query().OrderBy( track => track.DateAddedTicks ));
-			return( null );
+			return( new RavenDataProviderList<DbTrack>( Database.FindAll().List.OrderBy( track => track.DateAddedTicks )));
 		}
 
 		public IEnumerable<DbTrack> GetTrackListForPlayList( DbPlayList playList ) {

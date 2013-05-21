@@ -6,8 +6,15 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
 using Noise.RavenDatabase.Support;
+using Raven.Client.Indexes;
 
 namespace Noise.RavenDatabase.DataProviders {
+	public class AlbumsByArtist : AbstractIndexCreationTask<DbAlbum> {
+		public AlbumsByArtist() {
+			Map = albums => from album in albums select new { album.Artist };
+		}
+	}
+
 	public class AlbumProvider : BaseProvider<DbAlbum>, IAlbumProvider {
 		private readonly IArtworkProvider			mArtworkProvider;
 		private readonly ITextInfoProvider			mTextInfoProvider;
