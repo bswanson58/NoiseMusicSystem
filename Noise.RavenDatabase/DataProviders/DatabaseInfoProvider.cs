@@ -38,7 +38,7 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public bool IsOpen {
-			get { return( false ); }
+			get { return( DbFactory.IsOpen ); }
 		}
 
 		public void InitializeDatabaseVersion( short majorVersion, short minorVersion ) {

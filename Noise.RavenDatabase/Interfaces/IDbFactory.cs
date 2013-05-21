@@ -8,5 +8,6 @@ namespace Noise.RavenDatabase.Interfaces {
 		IBlobStorage		GetBlobStorage();
 
 		IObservable<bool>	DatabaseClosed { get; }
+		bool				IsOpen { get; }
 	}
 }

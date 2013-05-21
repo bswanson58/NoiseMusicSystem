@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Reflection;
 using Caliburn.Micro;
 using Noise.BlobStorage.BlobStore;
 using Noise.Infrastructure;
@@ -10,6 +11,7 @@ using Noise.RavenDatabase.DataProviders;
 using Noise.RavenDatabase.Interfaces;
 using Raven.Client;
 using Raven.Client.Embedded;
+using Raven.Client.Indexes;
 
 namespace Noise.RavenDatabase.Support {
 	public class RavenDatabaseManager : IDatabaseManager, IDbFactory,
@@ -48,6 +50,9 @@ namespace Noise.RavenDatabase.Support {
 			CloseDatabases();
 
 			if( mLibraryConfiguration.Current != null ) {
+				// Complete the initial database creation, set the IsOpen flag.
+				GetLibraryDatabase();
+
 				mEventAggregator.Publish( new Events.DatabaseOpened());
 			}
 		}
@@ -63,6 +68,8 @@ namespace Noise.RavenDatabase.Support {
 
 				mLibraryDatabase = InitializeDatabase( mLibraryConfiguration.Current.LibraryDatabasePath );
 
+				IndexCreation.CreateIndexes( GetType().Assembly, mLibraryDatabase );
+
 				if( databaseCreated ) {
 					var versionProvider = new DatabaseInfoProvider( this );
 
@@ -73,6 +80,7 @@ namespace Noise.RavenDatabase.Support {
 
 				IsOpen = mLibraryDatabase != null;
 			}
+
 			return( mLibraryDatabase );
 		}
 

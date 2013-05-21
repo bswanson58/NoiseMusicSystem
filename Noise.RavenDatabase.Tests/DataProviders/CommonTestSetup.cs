@@ -7,8 +7,8 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
 using Raven.Client;
-using Raven.Client.Document;
 using Raven.Client.Embedded;
+using Raven.Client.Indexes;
 
 namespace Noise.RavenDatabase.Tests.DataProviders {
 	public class CommonTestSetup {
@@ -31,6 +31,7 @@ namespace Noise.RavenDatabase.Tests.DataProviders {
 		public void Setup() {
 			mDatabase = new EmbeddableDocumentStore { DataDirectory = "Test Database", RunInMemory = true };
 			mDatabase.Initialize();
+			IndexCreation.CreateIndexes( typeof( RavenDatabaseModule ).Assembly, mDatabase );
 
 			BlobResolver = new BlobStorageResolver();
 			BlobStorageManager = new BlobStorageManager();
