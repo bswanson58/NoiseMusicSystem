@@ -48,7 +48,6 @@ namespace Noise.Desktop {
 
 		public void Initialize( Window shell ) {
 			mLayoutManager.Initialize( mContainer );
-			mLayoutManager.LoadLayout( Constants.ExploreLayout );
 
 			mShell = shell;
 			mShell.StateChanged += OnShellStateChanged;
@@ -72,8 +71,9 @@ namespace Noise.Desktop {
 					break;
 
 				default:
-					if(( mLayoutManager.CurrentLayout != null ) &&
-					   (!string.Equals( mLayoutManager.CurrentLayout.Name, eventArgs.LayoutName )) &&
+					var currentLayoutName = mLayoutManager.CurrentLayout != null ? mLayoutManager.CurrentLayout.Name : string.Empty;
+
+					if((!string.Equals( currentLayoutName, eventArgs.LayoutName )) &&
 					   ( mLayoutManager.Layouts.Exists( layout => string.Equals( layout.Name, eventArgs.LayoutName )))) {
 						mLayoutManager.LoadLayout( eventArgs.LayoutName );
 

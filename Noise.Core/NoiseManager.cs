@@ -68,6 +68,8 @@ namespace Noise.Core {
 				NoiseLogger.Current.LogException( "NoiseManager:Initialize", ex );
 			}
 
+			mEvents.Publish( new Events.NoiseSystemReady( this, isInitialized ));
+
 			return ( isInitialized );
 		}
 

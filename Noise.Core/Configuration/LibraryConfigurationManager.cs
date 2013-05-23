@@ -39,6 +39,8 @@ namespace Noise.Core.Configuration {
 
 				AddLibrary( defaultLibrary );
 			}
+
+			mEventAggregator.Publish( new Events.LibraryConfigurationLoaded( this ));
 		}
 
 		public void Shutdown() {

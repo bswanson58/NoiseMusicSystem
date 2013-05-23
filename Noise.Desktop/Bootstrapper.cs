@@ -13,6 +13,7 @@ using Noise.UI.ViewModels;
 namespace Noise.Desktop {
 	public class Bootstrapper : UnityBootstrapper {
 		private INoiseManager		mNoiseManager;
+		private StartupManager		mStartupManager;
 		private WindowManager		mWindowManager;
 		private Window				mShell;
 		private	ApplicationSupport	mAppSupport;
@@ -61,25 +62,28 @@ namespace Noise.Desktop {
 		protected override void InitializeModules() {
 			base.InitializeModules();
 
-			StartNoise();
-
 			mWindowManager = new WindowManager( Container, Container.Resolve<IEventAggregator>());
 			mWindowManager.Initialize( mShell );
-		}
 
-		private void StartNoise() {
 			var instanceContainer = Container.CreateChildContainer();
 
-			mNoiseManager = instanceContainer.Resolve<INoiseManager>();
-			mAppSupport = instanceContainer.Resolve<ApplicationSupport>();
+			ViewModelResolver.TypeResolver = ( type => instanceContainer.Resolve( type ));
+			DialogServiceResolver.Current = instanceContainer.Resolve<IDialogService>();
+
+			mStartupManager = new StartupManager( Container.Resolve<IEventAggregator>());
+			mStartupManager.Initialize();
+
+			StartNoise( instanceContainer );
+		}
+
+		private void StartNoise( IUnityContainer container ) {
+			mNoiseManager = container.Resolve<INoiseManager>();
+			mAppSupport = container.Resolve<ApplicationSupport>();
 
 			mNoiseManager.Initialize();
 			mAppSupport.Initialize();
 
-			ViewModelResolver.TypeResolver = ( type => instanceContainer.Resolve( type));
-			DialogServiceResolver.Current = instanceContainer.Resolve<IDialogService>();
-
-			mShell.DataContext = instanceContainer.Resolve<WindowCommandsViewModel>();
+			mShell.DataContext = container.Resolve<WindowCommandsViewModel>();
 		}
 
 		public void StopNoise() {

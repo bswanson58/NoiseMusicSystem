@@ -291,6 +291,23 @@ namespace Noise.Infrastructure {
 			} 
 		}
 
+		public class NoiseSystemReady {
+			public INoiseManager	NoiseManager { get; private set; }
+			public bool				WasInitialized { get; private set; }
+
+			public NoiseSystemReady( INoiseManager noiseManager, bool wasInitialized ) {
+				NoiseManager = noiseManager;
+				WasInitialized = wasInitialized;
+			}
+		}
+
+		public class LibraryConfigurationLoaded {
+			public	ILibraryConfiguration	LibraryConfiguration { get; private set; }
+
+			public LibraryConfigurationLoaded( ILibraryConfiguration libraryConfiguration ) {
+				LibraryConfiguration = libraryConfiguration;
+			}	
+		}
 		public class LibraryConfigurationChanged { }
 		public class LibraryListChanged { }
 		public class LibraryChanged { }
