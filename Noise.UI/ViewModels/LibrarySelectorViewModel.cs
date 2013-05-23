@@ -2,7 +2,6 @@
 using Caliburn.Micro;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Behaviours;
@@ -38,15 +37,6 @@ namespace Noise.UI.ViewModels {
 			LoadLibraries();
 
 			mEventAggregator.Subscribe( this );
-
-			if( mLibraryConfiguration.Current == null ) {
-				var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
-				if(( expConfig != null ) &&
-				   ( expConfig.LoadLastLibraryOnStartup )) {
-					OpenLibrary( expConfig.LastLibraryUsed );
-				}
-			}
 		}
 
 		private void LoadLibraries() {
