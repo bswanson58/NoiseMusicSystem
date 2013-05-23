@@ -4,19 +4,42 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+             d:DesignHeight="600" d:DesignWidth="1100"
+             DataContext="{Binding StartupLibrarySelectionViewModel, Source={StaticResource ViewModelLocator}}" >
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="LibraryListItem">
+            <TextBlock FontSize="18" Text="{Binding LibraryName}"/>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid Height="500">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="500"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="500"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="1" Grid.Row="1" Text="Select a library."/>
+        <GroupBox Style="{StaticResource SectionBorderStyle}" FontSize="18" Header=" Select an existing library: ">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <ListBox Grid.Row="0" BorderThickness="0"
+                         ItemsSource="{Binding Path=LibraryList}"
+                         ItemTemplate="{StaticResource LibraryListItem}"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         SelectedItem="{Binding Path=SelectedLibrary}"/>
+
+                <CheckBox Grid.Row="1" Margin="3,11" FontSize="16" Content="Always open the last used library on startup" IsChecked="{Binding AlwaysOpenLastUsedLibrary}"/>
+            </Grid>
+        </GroupBox>
+
+        <TextBlock Grid.Column="1" Margin="11,0" VerticalAlignment="Center" FontSize="18" Text="or"/>
+
+        <Button Grid.Column="2" Height="32" Width="200" Content="Create a new library" Command="{Binding CreateLibrary}"/>
     </Grid>
 </UserControl>

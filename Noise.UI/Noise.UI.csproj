@@ -303,6 +303,7 @@
     <Compile Include="ViewModels\SelectStreamDialogModel.cs" />
     <Compile Include="ViewModels\SimilarSongViewModel.cs" />
     <Compile Include="ViewModels\SongLyricsViewModel.cs" />
+    <Compile Include="ViewModels\StartupLibrarySelectionViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
     <Compile Include="ViewModels\StreamViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerAlbumsViewModel.cs" />
