@@ -9,6 +9,15 @@
                        Filename="Layouts\StartupLayout.xaml"
                        Fullname="Startup Layout"/>
 
+        <Layout:Layout x:Name="LibrarySelectionLayout"
+                       Description="This layout is displayed to allow an existing library to be selected."
+                       Filename="Layouts\LibrarySelection.xaml"
+                       Fullname="Library Selection Layout">
+            <Layout:Layout.Views>
+                <Layout:View RegionName="LibrarySelection" Type="{x:Type Views:StartupLibrarySelectionView}" />
+            </Layout:Layout.Views>
+        </Layout:Layout>
+
         <Layout:Layout x:Name="ExploreLayout"
                        Description="This layout allow you to explore your music."
                        Filename="Layouts\ExploreLayout.xaml"

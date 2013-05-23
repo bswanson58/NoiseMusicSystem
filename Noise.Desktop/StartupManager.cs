@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System.Linq;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
@@ -30,12 +31,17 @@ namespace Noise.Desktop {
 		public void Handle( Events.NoiseSystemReady args ) {
 			if(( args.WasInitialized ) &&
 			   ( mLibraryConfiguration != null )) {
-				if(( mLoadLastLibraryOnStartup ) &&
-				   ( mLastLibraryUsed != Constants.cDatabaseNullOid )) {
-					mLibraryConfiguration.Open( mLastLibraryUsed );
+				   if(( mLoadLastLibraryOnStartup ) &&
+					  ( mLastLibraryUsed != Constants.cDatabaseNullOid )) {
+					   mLibraryConfiguration.Open( mLastLibraryUsed );
 
-					mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
-				}
+					   mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
+				   }
+				   else {
+					   if( mLibraryConfiguration.Libraries.Any()) {
+						   mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.LibrarySelectionLayout ));
+					   }
+				   }
 			}
 		}
 

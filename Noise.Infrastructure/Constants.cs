@@ -14,6 +14,7 @@ namespace Noise.Infrastructure {
 		public	const string			SmallPlayerViewToggle = "SmallPlayerView";
 
 		public	const string			StartupLayout = "StartupLayout"; 
+		public	const string			LibrarySelectionLayout = "LibrarySelectionLayout";
 		public	const string			ExploreLayout = "ExploreLayout";
 		public	const string			ListenLayout = "ListenLayout";
 		public	const string			TimeExplorerLayout = "TimeExplorerLayout";
