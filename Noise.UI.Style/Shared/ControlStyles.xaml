@@ -12,7 +12,25 @@
 		<Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
 		<Setter Property="Foreground" Value="{DynamicResource BorderTextColor}"/>
 	</Style>
-	
+
+	<Style x:Key="StartupFontStyle" TargetType="Control">
+		<Setter Property="Foreground" Value="#FF0000A0"/>
+		<Setter Property="FontFamily" Value="Arial"/>
+		<Setter Property="FontSize" Value="28"/>
+	</Style>
+	<Style x:Key="StartupTextStyle" TargetType="TextBlock">
+		<Setter Property="Foreground" Value="#FF0000A0"/>
+		<Setter Property="FontFamily" Value="Arial"/>
+		<Setter Property="FontSize" Value="28"/>
+	</Style>
+	<Style x:Key="StartupBorderStyle" TargetType="GroupBox">
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+		<Setter Property="Foreground" Value="#FF0000A0"/>
+		<Setter Property="FontFamily" Value="Arial"/>
+		<Setter Property="FontSize" Value="28"/>
+	</Style>
+
 	<Style x:Key="LargeTitleStyle" TargetType="TextBlock">
 		<Setter Property="Foreground" Value="#FF0000A0"/>
 		<Setter Property="FontFamily" Value="Arial"/>
@@ -38,8 +56,8 @@
 	</Style>
 
 	<Style x:Key="GeneralButtonStyle" TargetType="Button">
-        <Setter Property="Padding" Value="5,3"/>
-        <Setter Property="Foreground" Value="{DynamicResource ControlTextColor}"/>
+		<Setter Property="Padding" Value="5,3"/>
+		<Setter Property="Foreground" Value="{DynamicResource ControlTextColor}"/>
 	</Style>
 	
 	<Style x:Key="TransportButtonStyle" TargetType="Button">

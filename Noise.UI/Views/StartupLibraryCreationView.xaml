@@ -4,19 +4,36 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+             d:DesignHeight="300" d:DesignWidth="750"
+             DataContext="{Binding StartupLibraryCreationViewModel, Source={StaticResource ViewModelLocator}}">
 
-        <TextBlock Grid.Column="1" Grid.Row="1" Text="Create a library."/>
-    </Grid>
+    <GroupBox Style="{StaticResource StartupBorderStyle}" Width="750" Padding="35" Header=" Create a new library: ">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Style="{StaticResource StartupTextStyle}" Text="Enter a unique library name:"/>
+            <TextBox Grid.Row="1" Style="{StaticResource StartupFontStyle}" Text="{Binding LibraryName}" />
+            
+            <TextBlock Grid.Row="2" Margin="0,15,0,0" Style="{StaticResource StartupTextStyle}" Text="Select where the music files are located:"/>
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0" Style="{StaticResource StartupFontStyle}" Text="{Binding LibraryPath}" />
+                <Button Grid.Column="1"  Style="{StaticResource StartupFontStyle}" Margin="5,0,0,0" Padding="7,0" Content="..." Command="{Binding Browse}"/>
+            </Grid>
+
+            <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Style="{StaticResource StartupFontStyle}" Margin="0,27,0,0" Content="Let's Go!" Command="{Binding CreateLibrary}"/>
+            </StackPanel>
+        </Grid>
+    </GroupBox>
 </UserControl>

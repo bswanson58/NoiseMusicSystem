@@ -9,7 +9,7 @@
 
     <UserControl.Resources>
         <DataTemplate x:Key="LibraryListItem">
-            <TextBlock FontSize="18" Text="{Binding LibraryName}"/>
+            <TextBlock Style="{StaticResource StartupTextStyle}" Text="{Binding LibraryName}"/>
         </DataTemplate>
     </UserControl.Resources>
 
@@ -20,7 +20,7 @@
             <ColumnDefinition Width="500"/>
         </Grid.ColumnDefinitions>
 
-        <GroupBox Style="{StaticResource SectionBorderStyle}" FontSize="18" Header=" Select an existing library: ">
+        <GroupBox Style="{StaticResource StartupBorderStyle}" FontSize="18" Header=" Select an existing library: ">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -38,7 +38,7 @@
             </Grid>
         </GroupBox>
 
-        <TextBlock Grid.Column="1" Margin="11,0" VerticalAlignment="Center" FontSize="18" Text="or"/>
+        <TextBlock Grid.Column="1" Margin="11,0" VerticalAlignment="Center" Style="{StaticResource StartupTextStyle}"  Text="or"/>
 
         <Button Grid.Column="2" Height="32" Width="200" Content="Create a new library" Command="{Binding CreateLibrary}"/>
     </Grid>
