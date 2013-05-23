@@ -18,6 +18,15 @@
             </Layout:Layout.Views>
         </Layout:Layout>
 
+        <Layout:Layout x:Name="LibraryCreationLayout"
+                       Description="This layout is displayed to allow a new library to be created."
+                       Filename="Layouts\LibraryCreation.xaml"
+                       Fullname="Library Creation Layout">
+            <Layout:Layout.Views>
+                <Layout:View RegionName="LibraryCreation" Type="{x:Type Views:StartupLibraryCreationView}" />
+            </Layout:Layout.Views>
+        </Layout:Layout>
+        
         <Layout:Layout x:Name="ExploreLayout"
                        Description="This layout allow you to explore your music."
                        Filename="Layouts\ExploreLayout.xaml"

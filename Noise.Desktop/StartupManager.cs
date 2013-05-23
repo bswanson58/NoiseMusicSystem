@@ -38,9 +38,8 @@ namespace Noise.Desktop {
 					   mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
 				   }
 				   else {
-					   if( mLibraryConfiguration.Libraries.Any()) {
-						   mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.LibrarySelectionLayout ));
-					   }
+					   mEventAggregator.Publish( mLibraryConfiguration.Libraries.Any() ? new Events.WindowLayoutRequest( Constants.LibrarySelectionLayout ) :
+																						 new Events.WindowLayoutRequest( Constants.LibraryCreationLayout ));
 				   }
 			}
 		}

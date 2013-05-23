@@ -431,6 +431,9 @@
     <Compile Include="Views\SongLyricsView.xaml.cs">
       <DependentUpon>SongLyricsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\StartupLibraryCreationView.xaml.cs">
+      <DependentUpon>StartupLibraryCreationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\StartupLibrarySelectionView.xaml.cs">
       <DependentUpon>StartupLibrarySelectionView.xaml</DependentUpon>
     </Compile>
@@ -671,6 +674,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SongLyricsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\StartupLibraryCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
