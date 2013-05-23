@@ -4,6 +4,11 @@
                       xmlns:Views="clr-namespace:Noise.UI.Views;assembly=Noise.UI"
                       ShellName="Shell">
     <Layout:LayoutManager.Layouts>
+        <Layout:Layout x:Name="StartupLayout"
+                       Description="This layout is displayed while the system is initialized."
+                       Filename="Layouts\StartupLayout.xaml"
+                       Fullname="Startup Layout"/>
+
         <Layout:Layout x:Name="ExploreLayout"
                        Description="This layout allow you to explore your music."
                        Filename="Layouts\ExploreLayout.xaml"
@@ -30,11 +35,11 @@
                 <Layout:View RegionName="Status" Type="{x:Type Views:StatusView}" />
             </Layout:Layout.Views>
         </Layout:Layout>
+
         <Layout:Layout x:Name="ListenLayout"
                        Description="This layout presents information to you as you listen."
                        Filename="Layouts\ListenLayout.xaml"
-                       Fullname="Internet Stream Layout"
-                       IsDefault="True">
+                       Fullname="Internet Stream Layout">
             <Layout:Layout.Views>
                 <Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" />
                 <Layout:View RegionName="ListenStage" Type="{x:Type Views:ListenStageView}" />
@@ -42,12 +47,11 @@
                 <Layout:View RegionName="Player" Type="{x:Type Views:PlayerView}" />
             </Layout:Layout.Views>
         </Layout:Layout>
-        
+
         <Layout:Layout x:Name="TimeExplorerLayout"
                        Description="This layout presents the library displayed across time."
                        Filename="Layouts\TimeExplorerLayout.xaml"
-                       Fullname="Time Explorer Layout"
-                       IsDefault="True">
+                       Fullname="Time Explorer Layout">
             <Layout:Layout.Views>
                 <!--Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" /-->
                 <Layout:View RegionName="Timeline:Explorer" Type="{x:Type Views:TimeExplorerView}" />

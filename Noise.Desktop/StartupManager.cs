@@ -14,7 +14,7 @@ namespace Noise.Desktop {
 		}
 
 		public void Initialize() {
-			
+			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.StartupLayout ));
 		}
 
 		public void Handle( Events.NoiseSystemReady args ) {
