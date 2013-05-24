@@ -76,11 +76,11 @@ namespace Noise.Desktop {
 			StartNoise( instanceContainer );
 		}
 
-		private void StartNoise( IUnityContainer container ) {
+		private async void StartNoise( IUnityContainer container ) {
 			mNoiseManager = container.Resolve<INoiseManager>();
 			mAppSupport = container.Resolve<ApplicationSupport>();
 
-			mNoiseManager.Initialize();
+			await mNoiseManager.AsyncInitialize();
 			mAppSupport.Initialize();
 
 			mShell.DataContext = container.Resolve<WindowCommandsViewModel>();

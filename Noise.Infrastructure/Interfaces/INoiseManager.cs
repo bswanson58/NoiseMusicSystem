@@ -1,6 +1,10 @@
-﻿namespace Noise.Infrastructure.Interfaces {
+﻿using System.Threading.Tasks;
+
+namespace Noise.Infrastructure.Interfaces {
 	public interface INoiseManager {
-		bool					Initialize();
-		void					Shutdown();
+		bool		Initialize();
+		Task<bool>	AsyncInitialize();
+
+		void		Shutdown();
 	}
 }

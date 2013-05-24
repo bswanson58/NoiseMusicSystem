@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteHost;
+using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
@@ -35,6 +37,14 @@ namespace Noise.Core {
 			mLibraryBuilder = libraryBuilder;
 		}
 
+		public async Task<bool> AsyncInitialize() {
+			var initTask = new Task<bool>(() => ( Initialize()));
+
+			initTask.Start();
+
+			return( await initTask );
+		}
+		
 		public bool Initialize() {
 			var isInitialized = false;
 
@@ -68,7 +78,7 @@ namespace Noise.Core {
 				NoiseLogger.Current.LogException( "NoiseManager:Initialize", ex );
 			}
 
-			mEvents.Publish( new Events.NoiseSystemReady( this, isInitialized ));
+			mEvents.PublishOnUIThreadAsync( new Events.NoiseSystemReady( this, isInitialized ));
 
 			return ( isInitialized );
 		}
