@@ -9,7 +9,7 @@
                        Filename="Layouts\StartupLayout.xaml"
                        Fullname="Startup Layout">
             <Layout:Layout.Views>
-                <Layout:View RegionName="LibraryStartup" Type="{x:Type Views:StartupView}" />
+                <Layout:View RegionName="Startup:LibraryStartup" Type="{x:Type Views:StartupView}" />
             </Layout:Layout.Views>
         </Layout:Layout>
 

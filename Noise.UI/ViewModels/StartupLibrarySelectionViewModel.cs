@@ -26,19 +26,36 @@ namespace Noise.UI.ViewModels {
 		} 
 
 		public LibraryConfiguration SelectedLibrary {
-			get{ return( null ); }
+			get{ return( Get( () => SelectedLibrary )); }
 			set {
-				mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
-				mLibraryConfiguration.Open( value );
+				Set( () => SelectedLibrary, value );
+				OpenLibrary( value );
+			}
+		}
 
-				if( AlwaysOpenLastUsedLibrary ) {
-					var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+		public bool IsLoading {
+			get{ return( Get( () => IsLoading )); }
+			set{ Set( () => IsLoading, value ); }
+		}
 
-					if( expConfig != null ) {
-						expConfig.LoadLastLibraryOnStartup = AlwaysOpenLastUsedLibrary;
+		[DependsUpon("IsLoading")]
+		public bool IsNotLoading {
+			get{ return(!IsLoading );}
+		}
 
-						NoiseSystemConfiguration.Current.Save( expConfig );
-					}
+		private async void OpenLibrary( LibraryConfiguration configuration ) {
+			IsLoading = true;
+
+			await mLibraryConfiguration.AsyncOpen( configuration );
+			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
+
+			if( AlwaysOpenLastUsedLibrary ) {
+				var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+
+				if( expConfig != null ) {
+					expConfig.LoadLastLibraryOnStartup = AlwaysOpenLastUsedLibrary;
+
+					NoiseSystemConfiguration.Current.Save( expConfig );
 				}
 			}
 		}

@@ -4,6 +4,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Regions="clr-namespace:Microsoft.Practices.Prism.Regions;assembly=Microsoft.Practices.Prism">
 
-    <ContentControl Regions:RegionManager.RegionName="LibraryStartup" />
+    <ContentControl Regions:RegionManager.RegionName="Startup:LibraryStartup" />
 
 </UserControl>
