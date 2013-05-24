@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -119,6 +120,14 @@ namespace Noise.Core.Configuration {
 				}
 			}
 		}
+
+		public async Task AsyncOpen( LibraryConfiguration configuration ) {
+			var initTask = new Task( () => Open( configuration  ));
+
+			initTask.Start();
+
+			await initTask;
+		} 
 
 		public void Close( LibraryConfiguration configuration ) {
 			if( mCurrentLibrary != null ) {

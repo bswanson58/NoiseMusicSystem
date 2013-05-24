@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
@@ -8,6 +9,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 		void		Open( long libraryId );
 		void		Open( LibraryConfiguration configuration );
+		Task		AsyncOpen( LibraryConfiguration configuration );
 		void		OpenDefaultLibrary();
 
 		void		Close( LibraryConfiguration configuration );
