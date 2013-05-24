@@ -119,6 +119,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CaliburnSupport\DebugLogger.cs" />
+    <Compile Include="CaliburnSupport\EventAggregatorExtensions.cs" />
     <Compile Include="CaliburnSupport\IDisableAutoEventSubscribe.cs" />
     <Compile Include="CaliburnSupport\INavigate.cs" />
     <Compile Include="CaliburnSupport\UnityBootstrapper.cs" />
