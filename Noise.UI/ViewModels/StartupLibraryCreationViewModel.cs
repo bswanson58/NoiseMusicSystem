@@ -65,5 +65,9 @@ namespace Noise.UI.ViewModels {
 				LibraryPath = path;
 			}
 		}
+
+		public void Execute_Exit() {
+			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
+		}
 	}
 }

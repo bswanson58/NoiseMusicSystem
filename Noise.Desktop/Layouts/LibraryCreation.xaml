@@ -5,18 +5,6 @@
              xmlns:Regions="clr-namespace:Microsoft.Practices.Prism.Regions;assembly=Microsoft.Practices.Prism"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
 
-        <ContentControl Grid.Column="1" Grid.Row="1" Regions:RegionManager.RegionName="LibraryCreation" />
-    </Grid>
+    <ContentControl Regions:RegionManager.RegionName="LibraryCreation" />
 </UserControl>
