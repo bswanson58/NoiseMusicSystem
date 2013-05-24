@@ -54,5 +54,9 @@ namespace Noise.UI.ViewModels {
 		public void Execute_CreateLibrary() {
 			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.LibraryCreationLayout ));
 		}
+
+		public void Execute_Exit() {
+			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
+		}
 	}
 }

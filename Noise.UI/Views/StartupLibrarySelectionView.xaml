@@ -13,33 +13,73 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid Height="500">
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="../Resources/BackgroundNote.png" Opacity="0.03" TileMode="Tile" ViewportUnits="Absolute" Viewport="0,0,64,64"/>
+        </Grid.Background>
+        
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="500"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="500"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="4*" MinWidth="300"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
-        <GroupBox Style="{StaticResource StartupBorderStyle}" FontSize="18" Header=" Select an existing library: ">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
 
-                <ListBox Grid.Row="0" BorderThickness="0"
-                         ItemsSource="{Binding Path=LibraryList}"
-                         ItemTemplate="{StaticResource LibraryListItem}"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         ScrollViewer.VerticalScrollBarVisibility="Auto"
-                         SelectedItem="{Binding Path=SelectedLibrary}"/>
+            <TextBlock Grid.Row="1" Margin="0,0,0,7" Style="{StaticResource StartupTextStyle}" Text="Open an existing library:" />
+            
+            <ListBox Grid.Row="2" BorderThickness="1" Padding="4" BorderBrush="{StaticResource BorderColor}"
+                     ItemsSource="{Binding Path=LibraryList}"
+                     ItemTemplate="{StaticResource LibraryListItem}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     SelectedItem="{Binding Path=SelectedLibrary}">
+                <ListBox.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </ListBox.Resources>
+            </ListBox>
 
-                <CheckBox Grid.Row="1" Margin="3,11" FontSize="16" Content="Always open the last used library on startup" IsChecked="{Binding AlwaysOpenLastUsedLibrary}"/>
-            </Grid>
-        </GroupBox>
+            <CheckBox Grid.Row="3" Margin="3,11" Style="{StaticResource StartupSmallFontStyle}"
+                      Content="Always open the last used library on startup" IsChecked="{Binding AlwaysOpenLastUsedLibrary}"/>
+        </Grid>
 
-        <TextBlock Grid.Column="1" Margin="11,0" VerticalAlignment="Center" Style="{StaticResource StartupTextStyle}"  Text="or"/>
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
 
-        <Button Grid.Column="2" Height="32" Width="200" Content="Create a new library" Command="{Binding CreateLibrary}"/>
+            <Rectangle Grid.Row="1" Margin="0,11,0,0" Width="3" Opacity="0.5" Fill="{StaticResource StartupForegroundBrush}" />
+            <TextBlock Grid.Row="2" Margin="5,5,5,9" Opacity="0.7" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource StartupTextStyle}"  Text="or"/>
+            <Rectangle Grid.Row="3" Margin="0,0,0,11" Width="3" Opacity="0.5" Fill="{StaticResource StartupForegroundBrush}" />
+        </Grid>
+
+        <Grid Grid.Column="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <Button Grid.Row="2" Style="{StaticResource StartupButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Content="Create a new library..." Command="{Binding CreateLibrary}"/>
+            <Button Grid.Row="3" Style="{StaticResource StartupButtonStyle}" HorizontalAlignment="Right" Content="Just get me out of here!" Command="{Binding Exit}"/>
+        </Grid>
     </Grid>
 </UserControl>

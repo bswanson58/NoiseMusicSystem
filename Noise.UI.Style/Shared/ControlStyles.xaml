@@ -13,23 +13,32 @@
 		<Setter Property="Foreground" Value="{DynamicResource BorderTextColor}"/>
 	</Style>
 
+	<SolidColorBrush x:Key="StartupForegroundBrush" Color="#FF588CE0"/>
 	<Style x:Key="StartupFontStyle" TargetType="Control">
-		<Setter Property="Foreground" Value="#FF0000A0"/>
+		<Setter Property="Foreground" Value="{StaticResource StartupForegroundBrush}"/>
 		<Setter Property="FontFamily" Value="Arial"/>
 		<Setter Property="FontSize" Value="28"/>
+	</Style>
+	<Style x:Key="StartupSmallFontStyle" TargetType="Control">
+		<Setter Property="Foreground" Value="{StaticResource StartupForegroundBrush}"/>
+		<Setter Property="FontFamily" Value="Arial"/>
+		<Setter Property="FontSize" Value="16"/>
 	</Style>
 	<Style x:Key="StartupTextStyle" TargetType="TextBlock">
-		<Setter Property="Foreground" Value="#FF0000A0"/>
+		<Setter Property="Foreground" Value="{StaticResource StartupForegroundBrush}"/>
 		<Setter Property="FontFamily" Value="Arial"/>
 		<Setter Property="FontSize" Value="28"/>
 	</Style>
-	<Style x:Key="StartupBorderStyle" TargetType="GroupBox">
+	<Style x:Key="StartupBorderStyle" TargetType="GroupBox" BasedOn="{StaticResource StartupFontStyle}">
 		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
-		<Setter Property="Foreground" Value="#FF0000A0"/>
-		<Setter Property="FontFamily" Value="Arial"/>
-		<Setter Property="FontSize" Value="28"/>
 	</Style>
+	<Style x:Key="StartupButtonStyle" TargetType="Button" BasedOn="{StaticResource StartupFontStyle}">
+		<Setter Property="FontSize" Value="22"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="Padding" Value="11,3"/>
+	</Style>
+
 
 	<Style x:Key="LargeTitleStyle" TargetType="TextBlock">
 		<Setter Property="Foreground" Value="#FF0000A0"/>

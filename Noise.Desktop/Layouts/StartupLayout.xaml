@@ -16,6 +16,6 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
-        <TextBlock Grid.Column="1" Grid.Row="1" FontSize="18" Text="The Noise Music System is being initialized."/>
+        <TextBlock Grid.Column="1" Grid.Row="1" Style="{StaticResource StartupTextStyle}" Text="The Noise Music System is being initialized."/>
     </Grid>
 </UserControl>
