@@ -7,7 +7,11 @@
         <Layout:Layout x:Name="StartupLayout"
                        Description="This layout is displayed while the system is initialized."
                        Filename="Layouts\StartupLayout.xaml"
-                       Fullname="Startup Layout"/>
+                       Fullname="Startup Layout">
+            <Layout:Layout.Views>
+                <Layout:View RegionName="LibraryStartup" Type="{x:Type Views:StartupView}" />
+            </Layout:Layout.Views>
+        </Layout:Layout>
 
         <Layout:Layout x:Name="LibrarySelectionLayout"
                        Description="This layout is displayed to allow an existing library to be selected."
