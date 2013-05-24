@@ -12,48 +12,71 @@
             <ImageBrush ImageSource="../Resources/BackgroundNote.png" Opacity="0.03" TileMode="Tile" ViewportUnits="Absolute" Viewport="0,0,64,64"/>
         </Grid.Background>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="4*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="3*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        
-        <GroupBox Grid.Row="1" Grid.Column="1" Style="{StaticResource StartupBorderStyle}" Width="750" Padding="35" Header=" Create a new library: ">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+        <Grid Visibility="{Binding IsNotLoading, Converter={StaticResource BooleanVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="3*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Style="{StaticResource StartupTextStyle}" Text="Enter a unique library name:"/>
-                <TextBox Grid.Row="1" Style="{StaticResource StartupFontStyle}" Text="{Binding LibraryName}" />
+            <GroupBox Grid.Row="1" Grid.Column="1" Style="{StaticResource StartupBorderStyle}" Width="750" Padding="35" Header=" Create a new library: ">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="2" Margin="0,15,0,0" Style="{StaticResource StartupTextStyle}" Text="Select where the music files are located:"/>
-                <Grid Grid.Row="3">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Style="{StaticResource StartupTextStyle}" Text="Enter a unique library name:"/>
+                    <TextBox Grid.Row="1" Style="{StaticResource StartupFontStyle}" Text="{Binding LibraryName}" />
 
-                    <TextBox Grid.Column="0" Style="{StaticResource StartupFontStyle}" Text="{Binding LibraryPath}" />
-                    <Button Grid.Column="1" Style="{StaticResource StartupButtonStyle}" Margin="5,0,0,0" Padding="7,0" Content="..." Command="{Binding Browse}"/>
-                </Grid>
-                
-                <Button Grid.Row="4" Style="{StaticResource StartupButtonStyle}" Margin="0,27,0,0" HorizontalAlignment="Right"
+                    <TextBlock Grid.Row="2" Margin="0,15,0,0" Style="{StaticResource StartupTextStyle}" Text="Select where the music files are located:"/>
+                    <Grid Grid.Row="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Grid.Column="0" Style="{StaticResource StartupFontStyle}" Text="{Binding LibraryPath}" />
+                        <Button Grid.Column="1" Style="{StaticResource StartupButtonStyle}" Margin="5,0,0,0" Padding="7,0" Content="..." Command="{Binding Browse}"/>
+                    </Grid>
+
+                    <Button Grid.Row="4" Style="{StaticResource StartupButtonStyle}" Margin="0,27,0,0" HorizontalAlignment="Right"
                         Content="Let's Go!" Command="{Binding CreateLibrary}"/>
-            </Grid>
-        </GroupBox>
-        
-        <Button Grid.Row="3" Grid.Column="1" Margin="0,0,-27,0" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource StartupButtonStyle}"
+                </Grid>
+            </GroupBox>
+
+            <Button Grid.Row="3" Grid.Column="1" Margin="0,0,-27,0" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource StartupButtonStyle}"
                 Content="Just get me out of here!" Command="{Binding Exit}"/>
+        </Grid>
+        
+        <Grid Visibility="{Binding IsLoading, Converter={StaticResource BooleanVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Style="{StaticResource StartupTextStyle}" Text="Creating library: "/>
+                <TextBlock Style="{StaticResource StartupTextStyle}" Text="{Binding LibraryName}"/>
+            </StackPanel>
+
+            <ProgressBar Grid.Row="2" Grid.Column="1" Margin="17,9,17,0" Foreground="{StaticResource StartupForegroundBrush}" IsIndeterminate="True"/>
+        </Grid>
     </Grid>
 </UserControl>

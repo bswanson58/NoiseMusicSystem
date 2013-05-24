@@ -23,7 +23,9 @@ namespace Noise.UI.ViewModels {
 			LibraryPath = string.Empty;
 		}
 
-		public void Execute_CreateLibrary() {
+		public async void Execute_CreateLibrary() {
+			IsLoading = true;
+
 			var mediaLocation = new MediaLocation { Path = LibraryPath, PreferFolderStrategy = true };
 
 			mediaLocation.FolderStrategy[0] = eFolderStrategy.Artist;
@@ -35,7 +37,7 @@ namespace Noise.UI.ViewModels {
 			configuration.MediaLocations.Add( mediaLocation );
 
 			mLibraryConfiguration.AddLibrary( configuration );
-			mLibraryConfiguration.Open( configuration );
+			await mLibraryConfiguration.AsyncOpen( configuration );
 
 			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
 			mLibraryBuilder.StartLibraryUpdate();
@@ -49,6 +51,16 @@ namespace Noise.UI.ViewModels {
 		public string LibraryPath {
 			get { return ( Get( () => LibraryPath )); }
 			set { Set( () => LibraryPath, value ); }
+		}
+
+		public bool IsLoading {
+			get { return ( Get( () => IsLoading ) ); }
+			set { Set( () => IsLoading, value ); }
+		}
+
+		[DependsUpon( "IsLoading" )]
+		public bool IsNotLoading {
+			get { return ( !IsLoading ); }
 		}
 
 		[DependsUpon( "LibraryName" )]
