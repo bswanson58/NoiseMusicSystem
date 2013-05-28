@@ -26,6 +26,9 @@ namespace Noise.Desktop {
 		private void CurrentDomainUnhandledException( object sender, UnhandledExceptionEventArgs e ) {
 			NoiseLogger.Current.LogException( "Application domain unhandled exception:", e.ExceptionObject as Exception );
 
+			var stackTrace = new StackTrace();
+			NoiseLogger.Current.LogMessage( stackTrace.ToString());
+
 			Shutdown( -1 );
 		}
 
@@ -35,6 +38,9 @@ namespace Noise.Desktop {
 			}
 	
 			NoiseLogger.Current.LogException( "Application unhandled exception:", e.Exception );
+
+			var stackTrace = new StackTrace();
+			NoiseLogger.Current.LogMessage( stackTrace.ToString() );
 
 			if( e.Exception is ReflectionTypeLoadException ) {
 				var tle = e.Exception as ReflectionTypeLoadException;
