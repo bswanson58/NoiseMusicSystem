@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscogsConnect", "DiscogsCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Metadata", "Noise.Metadata\Noise.Metadata.csproj", "{983D3C18-8012-48AE-AE21-B6503FC0F5B8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.RavenDatabase", "Noise.RavenDatabase\Noise.RavenDatabase.csproj", "{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -518,6 +520,30 @@ Global
 		{983D3C18-8012-48AE-AE21-B6503FC0F5B8}.Release|x64.Build.0 = Release|x64
 		{983D3C18-8012-48AE-AE21-B6503FC0F5B8}.Release|x86.ActiveCfg = Release|x86
 		{983D3C18-8012-48AE-AE21-B6503FC0F5B8}.Release|x86.Build.0 = Release|x86
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|x64.ActiveCfg = Debug|x64
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|x64.Build.0 = Debug|x64
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|x86.ActiveCfg = Debug|x86
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Debug|x86.Build.0 = Debug|x86
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|Any CPU.Build.0 = Release|Any CPU
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|Mixed Platforms.ActiveCfg = Release|x86
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|Mixed Platforms.Build.0 = Release|x86
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|x64.ActiveCfg = Release|x64
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|x64.Build.0 = Release|x64
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|x86.ActiveCfg = Release|x86
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Installers - Release|x86.Build.0 = Release|x86
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|Mixed Platforms.Build.0 = Release|x86
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|x64.ActiveCfg = Release|x64
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|x64.Build.0 = Release|x64
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|x86.ActiveCfg = Release|x86
+		{81C2209C-F8DA-4693-8B2F-C68AB0C436ED}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
