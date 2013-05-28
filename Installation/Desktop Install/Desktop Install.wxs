@@ -86,6 +86,15 @@
 				<Component Id="TimeExplorerLayout.xaml" Guid="d891860b-5151-40db-9b72-f3766955d3f2">
 					<File Id="TimeExplorerLayout.xaml" DiskId="1" Source="$(var.Noise.Desktop.ProjectDir)\Layouts\TimeExplorerLayout.xaml" KeyPath="yes" Checksum="yes" />
 				</Component>
+				<Component Id="StartupLayout.xaml" Guid="71e37f9d-5be7-4d76-893c-fe7b73bf1851">
+					<File Id="StartupLayoutLayout.xaml" DiskId="1" Source="$(var.Noise.Desktop.ProjectDir)\Layouts\StartupLayout.xaml" KeyPath="yes" Checksum="yes" />
+				</Component>
+				<Component Id="LibraryCreation.xaml" Guid="5938115d-6e14-4426-938a-01175af44361">
+					<File Id="LibraryCreation.xaml" DiskId="1" Source="$(var.Noise.Desktop.ProjectDir)\Layouts\LibraryCreation.xaml" KeyPath="yes" Checksum="yes" />
+				</Component>
+				<Component Id="LibrarySelection.xaml" Guid="cfaf8ddf-c0b0-4c4d-a3f9-c6d6fe1b9339">
+					<File Id="LibrarySelection.xaml" DiskId="1" Source="$(var.Noise.Desktop.ProjectDir)\Layouts\LibrarySelection.xaml" KeyPath="yes" Checksum="yes" />
+				</Component>
 			</Directory>
 		</DirectoryRef>
 
@@ -117,6 +126,9 @@
 			<ComponentRef Id="ExploreLayout.xaml"/>
 			<ComponentRef Id="ListenLayout.xaml"/>
 			<ComponentRef Id="TimeExplorerLayout.xaml"/>
+			<ComponentRef Id="StartupLayout.xaml"/>
+			<ComponentRef Id="LibraryCreation.xaml"/>
+			<ComponentRef Id="LibrarySelection.xaml"/>
 			<ComponentRef Id="ApplicationShortcut" />
 			<ComponentRef Id="DesktopShortcut"/>
 			<ComponentRef Id="NoiseMenuFolder" />

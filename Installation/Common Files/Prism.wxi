@@ -16,6 +16,9 @@
     <Component Id="Microsoft.Practices.Unity.dll" Guid="4d93f2ac-955d-4acb-b672-c4849f560b2f">
       <File Id="Microsoft.Practices.Unity.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Unity.dll" KeyPath="yes" Checksum="yes" />
     </Component>
+    <Component Id="Microsoft.Practices.Unity.Configuration.dll" Guid="c4f3eda2-a10e-4159-bf92-ea82339a007c">
+      <File Id="Microsoft.Practices.Unity.Configuration.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Unity.Configuration.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
   </DirectoryRef>
 
   <ComponentGroup Id="PrismFiles">
@@ -24,5 +27,6 @@
     <ComponentRef Id="Microsoft.Practices.Prism.UnityExtensions.dll" />
     <ComponentRef Id="Microsoft.Practices.ServiceLocation.dll" />
     <ComponentRef Id="Microsoft.Practices.Unity.dll" />
+    <ComponentRef Id="Microsoft.Practices.Unity.Configuration.dll" />
   </ComponentGroup>
 </Include>
