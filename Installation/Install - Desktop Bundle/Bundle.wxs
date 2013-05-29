@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:bal="http://schemas.microsoft.com/wix/BalExtension">
+  <Bundle Name="The Noise Music System"
+          Version="0.8.0.0"
+          UpgradeCode="68F51362-142C-49D7-A702-1BCB7E933C3D"
+          Manufacturer="Secret Squirrel Software"
+          Copyright="Copyright© 2013, Secret Squirrel Software"
+          IconSourceFile="..\..\Common\Noise.ico"
+          AboutUrl="http://www.surroundedbybraces.com"
+          >
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense">
+      <bal:WixStandardBootstrapperApplication LicenseFile="..\Resources\license.rtf"/>
+    </BootstrapperApplicationRef>
+
+    <Variable Name="InstallFolder" Type="string" Value="[ProgramFilesFolder]Secret Squirrel Software\Noise Music System\Noise Desktop" />
+    
+    <Chain>
+      <!-- TODO: Define the list of chained packages. -->
+      <!-- <MsiPackage SourceFile="path\to\your.msi" /> -->
+
+      <?if $(var.Platform) = "x64" ?>
+      <ExePackage SourceFile="..\Prerequisites\Eloquera v4.13\EloqueraDatabase_4_13_net40_x64.exe"/>
+      <?else ?>
+      <ExePackage SourceFile="..\Prerequisites\Eloquera v4.13\EloqueraDatabase_4_13_net40_x32.exe"/>
+      <?endif ?>
+
+      <MsiPackage DisplayInternalUI="yes" Vital="yes" SourceFile="$(var.Install - Desktop.TargetPath)"/>
+    </Chain>
+  </Bundle>
+</Wix>
