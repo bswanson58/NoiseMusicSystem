@@ -20,8 +20,10 @@
       <!-- <MsiPackage SourceFile="path\to\your.msi" /> -->
 
       <?if $(var.Platform) = "x64" ?>
+      <MsiPackage SourceFile="..\Prerequisites\Bonjour\Bonjour64.msi"/>
       <ExePackage SourceFile="..\Prerequisites\Eloquera v4.13\EloqueraDatabase_4_13_net40_x64.exe"/>
       <?else ?>
+      <MsiPackage SourceFile="..\Prerequisites\Bonjour\Bonjour.msi"/>
       <ExePackage SourceFile="..\Prerequisites\Eloquera v4.13\EloqueraDatabase_4_13_net40_x32.exe"/>
       <?endif ?>
 
