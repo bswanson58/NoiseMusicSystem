@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.RavenDatabase", "Nois
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Install - Desktop Bundle", "Installation\Install - Desktop Bundle\Install - Desktop Bundle.wixproj", "{EFBE506C-C260-409A-9AB8-D6619A091F54}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BundlerUi", "Installation\BundlerUi\BundlerUi.csproj", "{415BAE6C-7FFE-47DD-860C-A1012E20400C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -567,6 +569,26 @@ Global
 		{EFBE506C-C260-409A-9AB8-D6619A091F54}.Release|x64.Build.0 = Release|x64
 		{EFBE506C-C260-409A-9AB8-D6619A091F54}.Release|x86.ActiveCfg = Release|x86
 		{EFBE506C-C260-409A-9AB8-D6619A091F54}.Release|x86.Build.0 = Release|x86
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Installers - Release|Any CPU.ActiveCfg = Release|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Installers - Release|Any CPU.Build.0 = Release|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Installers - Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Installers - Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Installers - Release|x64.ActiveCfg = Release|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Installers - Release|x64.Build.0 = Release|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Installers - Release|x86.ActiveCfg = Release|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Installers - Release|x86.Build.0 = Release|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Release|x64.ActiveCfg = Release|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -576,5 +598,6 @@ Global
 		{00BD8E1B-B1F1-43D7-BD03-BF74819E2883} = {175D21C8-5272-4E37-BD08-06E7B0408EC8}
 		{6156EB27-A408-4349-AE84-AD1CEF868936} = {175D21C8-5272-4E37-BD08-06E7B0408EC8}
 		{EFBE506C-C260-409A-9AB8-D6619A091F54} = {175D21C8-5272-4E37-BD08-06E7B0408EC8}
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C} = {175D21C8-5272-4E37-BD08-06E7B0408EC8}
 	EndGlobalSection
 EndGlobal

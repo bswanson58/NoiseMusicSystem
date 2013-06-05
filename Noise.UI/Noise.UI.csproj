@@ -759,7 +759,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\BackgroundNote.png" />
+    <Content Include="..\Common\BackgroundNote.png">
+      <Link>Resources\BackgroundNote.png</Link>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
