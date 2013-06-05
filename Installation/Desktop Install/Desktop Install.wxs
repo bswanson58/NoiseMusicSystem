@@ -7,7 +7,7 @@
 	<?define ProductUpgradeCode="68F51362-142C-49D7-A702-1BCB7E933C3D"?>
 
 	<!-- To upgrade: Update the ProductVersion below to the next release -->
-	<?define ProductVersion=0.8.0.0?>
+	<?define ProductVersion=0.9.0.0?>
 
 	<Product Id="*"
 					 Name="Noise Desktop Install"
@@ -23,9 +23,9 @@
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed. Setup will now exit."/>
 			
-		<PropertyRef Id="NETFRAMEWORK40FULL" />
-		<Condition Message="This application requires .NET Framework 4.0 Extended. Please install the .NET Framework and then run this installer again.">
-			<![CDATA[Installed OR NETFRAMEWORK40FULL]]>
+		<PropertyRef Id="NETFRAMEWORK45" />
+		<Condition Message="This application requires .NET Framework version 4.5. Please install the .NET Framework and then run this installer again.">
+			<![CDATA[Installed OR NETFRAMEWORK45]]>
 		</Condition>
 		
 		<Media Id="1" Cabinet="ApplicationFiles.cab" EmbedCab="yes" />
