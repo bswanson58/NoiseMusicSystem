@@ -38,11 +38,11 @@
     <PackageGroup Id="InstallerPackages" >
       
       <?if $(var.Platform) = "x64" ?>
-      <MsiPackage Id="Bonjour" DisplayInternalUI="no" Visible="yes" SourceFile="..\Prerequisites\Bonjour\Bonjour64.msi"/>
+      <MsiPackage Id="Bonjour" DisplayInternalUI="no" Visible="yes" SourceFile="..\Prerequisites\Bonjour v2.0.2.0\Bonjour64.msi"/>
       <ExePackage Id="Eloquera" Vital="yes" DetectCondition="Eloquera64Installed" UninstallCommand="/x /s" RepairCommand="/f"
                   SourceFile="..\Prerequisites\Eloquera v4.13\EloqueraDatabase_4_13_net40_x64.exe"/>
       <?else ?>
-      <MsiPackage Id="Bonjour" DisplayInternalUI="no" Visible="yes" SourceFile="..\Prerequisites\Bonjour\Bonjour.msi"/>
+      <MsiPackage Id="Bonjour" DisplayInternalUI="no" Visible="yes" SourceFile="..\Prerequisites\Bonjour v2.0.2.0\Bonjour.msi"/>
       <ExePackage Id="Eloquera" Vital="yes" DetectCondition="EloqueraInstalled" UninstallCommand="/x /s" RepairCommand="/f"
                   SourceFile="..\Prerequisites\Eloquera v4.13\EloqueraDatabase_4_13_net40_x32.exe"/>
       <?endif ?>
