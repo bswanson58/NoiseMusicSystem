@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
@@ -106,9 +107,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_LibraryConfiguration() {
-			var dialogModel = new LibraryConfigurationDialogModel( mEventAggregator, mDialogService, mLibraryConfiguration, mLibraryBuilder );
+			try {
+				var dialogModel = new LibraryConfigurationDialogModel( mEventAggregator, mDialogService, mLibraryConfiguration, mLibraryBuilder );
 
-			mLibraryConfigurationRequest.Raise( new LibraryConfigurationInfo( dialogModel ));
+				mLibraryConfigurationRequest.Raise( new LibraryConfigurationInfo( dialogModel ));
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "LibrarySelectorViewModel:Execute_LibraryConfiguration", ex );
+			}
 		}
 
 		public IInteractionRequest LibraryConfigurationRequest {
