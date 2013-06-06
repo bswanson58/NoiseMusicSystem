@@ -10,6 +10,9 @@
     <Component Id="ICSharpCode.NRefactory.CSharp.dll" Guid="05b5b916-f2ad-49f2-a5ea-56e8042d5df9">
       <File Id="ICSharpCode.NRefactory.CSharp.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)ICSharpCode.NRefactory.CSharp.dll" KeyPath="yes" Checksum="yes" />
     </Component>
+    <Component Id="GeoAPI.dll" Guid="0b1e622b-8958-4009-8495-474be1f7b897">
+      <File Id="GeoAPI.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)GeoAPI.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
     <Component Id="Jint.Raven.dll" Guid="896f4b84-6e4f-4db3-a020-f2229ba758ce">
       <File Id="Jint.Raven.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Jint.Raven.dll" KeyPath="yes" Checksum="yes" />
     </Component>
@@ -49,6 +52,7 @@
     <ComponentRef Id="Esent.Interop.dll" />
     <ComponentRef Id="ICSharpCode.NRefactory.dll" />
     <ComponentRef Id="ICSharpCode.NRefactory.CSharp.dll" />
+    <ComponentRef Id="GeoAPI.dll" />
     <ComponentRef Id="Jint.Raven.dll" />
     <ComponentRef Id="Mono.Cecil.dll" />
     <ComponentRef Id="Lucene.Net.Contrib.Spatial.NTS.dll" />
