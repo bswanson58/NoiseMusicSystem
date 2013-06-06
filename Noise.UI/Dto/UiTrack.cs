@@ -13,9 +13,9 @@ namespace Noise.UI.Dto {
 		public Int32			SampleRate { get; set; }
 		public Int16			Channels { get; set; }
 		public Int16			Rating { get; set; }
-		public UInt16			TrackNumber { get; set; }
+		public Int16			TrackNumber { get; set; }
 		public string			VolumeName { get; set; }
-		public UInt32			PublishedYear { get; set; }
+		public Int32			PublishedYear { get; set; }
 		public DateTime			DateAdded { get; set; }
 		public eAudioEncoding	Encoding { get; set; }
 		public string			CalculatedGenre { get; set; }
