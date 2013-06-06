@@ -49,6 +49,7 @@ namespace Noise.Desktop {
 					NoiseLogger.Current.LogException( "LoaderException:", ex );
 				}
 			}
+
 			e.Handled = true;
 
 			Shutdown( -1 );
