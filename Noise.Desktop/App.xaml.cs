@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using Noise.Infrastructure;
@@ -38,17 +37,7 @@ namespace Noise.Desktop {
 			}
 	
 			NoiseLogger.Current.LogException( "Application unhandled exception:", e.Exception );
-
-			var stackTrace = new StackTrace();
-			NoiseLogger.Current.LogMessage( stackTrace.ToString() );
-
-			if( e.Exception is ReflectionTypeLoadException ) {
-				var tle = e.Exception as ReflectionTypeLoadException;
-
-				foreach( var ex in tle.LoaderExceptions ) {
-					NoiseLogger.Current.LogException( "LoaderException:", ex );
-				}
-			}
+			NoiseLogger.Current.LogMessage( new StackTrace().ToString());
 
 			e.Handled = true;
 

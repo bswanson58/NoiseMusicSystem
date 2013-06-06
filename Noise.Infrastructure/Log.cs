@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using NLog;
 using Noise.Infrastructure.Interfaces;
 
@@ -22,6 +23,14 @@ namespace Noise.Infrastructure {
 
 		public void LogException( string message, Exception ex ) {
 			mLogger.ErrorException( message, ex );
+
+			if( ex is ReflectionTypeLoadException ) {
+				var tle = ex as ReflectionTypeLoadException;
+
+				foreach( var exc in tle.LoaderExceptions ) {
+					mLogger.ErrorException( "ReflectionTypeLoadException:", exc );
+				}
+			}
 		}
 
 		public void LogMessage( string format, params object[] parameters ) {
