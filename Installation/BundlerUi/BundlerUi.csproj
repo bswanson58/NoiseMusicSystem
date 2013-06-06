@@ -82,9 +82,9 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\Common\BackgroundNote.png">
+    <Resource Include="..\..\Common\BackgroundNote.png">
       <Link>Resources\BackgroundNote.png</Link>
-    </Content>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

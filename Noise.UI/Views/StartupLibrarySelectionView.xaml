@@ -15,7 +15,8 @@
 
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="../Resources/BackgroundNote.png" Opacity="0.03" TileMode="Tile" ViewportUnits="Absolute" Viewport="0,0,64,64"/>
+            <ImageBrush ImageSource="pack://application:,,,/Noise.UI;component/Resources/BackgroundNote.png"
+                        Opacity="0.03" TileMode="Tile" ViewportUnits="Absolute" Viewport="0,0,64,64"/>
         </Grid.Background>
         
         <Grid Visibility="{Binding IsNotLoading, Converter={StaticResource BooleanVisibilityConverter}}">
