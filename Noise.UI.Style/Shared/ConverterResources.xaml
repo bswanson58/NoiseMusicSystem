@@ -4,7 +4,6 @@
                     xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters;assembly=Noise.UI">
 
     <ReusableConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
-    <ReusableConverters:NotBooleanVisibilityConverter x:Key="NotBooleanVisibilityConverter" />
     <ReusableConverters:EmptyStringVisibilityConverter x:Key="EmptyStringVisibilityConverter" />
     <ReusableConverters:ByteImageConverter x:Key="ByteImageConverter" />
     <ReusableConverters:TimeFormatter x:Key="TimeFormatter" />
