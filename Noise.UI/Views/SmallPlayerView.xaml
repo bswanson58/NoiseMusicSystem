@@ -1,7 +1,6 @@
 ﻿<Window x:Class="Noise.UI.Views.SmallPlayerView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -19,226 +18,167 @@
         WindowStyle="None"
         mc:Ignorable="d">
 
-    <Window.Resources>
-        <Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True" />
-        <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter" />
-        <ValueConverters:PlayQueueTrackNameConverter x:Key="PlayQueueTrackNameConverter" />
-    </Window.Resources>
+  <Window.DataContext>
+    <Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
+  </Window.DataContext>
 
-    <Window.DataContext>
-        <Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
-    </Window.DataContext>
+  <Window.Resources>
+    <Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True" />
+    <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter" />
+    <ValueConverters:PlayQueueTrackNameConverter x:Key="PlayQueueTrackNameConverter" />
 
-    <Border BorderBrush="Blue"
-            BorderThickness="1"
-            CornerRadius="3">
-        <Grid x:Name="Layout" Background="#FFAAC6E5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*" />
-                <RowDefinition Height="1*" />
-            </Grid.RowDefinitions>
+    <Storyboard x:Key="FocusStoryboard">
+      <ReusableBehaviours:GridLengthAnimation BeginTime="0:0:0" Duration="0:0:0.2" Storyboard.TargetName="_col2" Storyboard.TargetProperty="Width" To="5*" />
+    </Storyboard>
+    <Storyboard x:Key="UnfocusStoryboard">
+      <ReusableBehaviours:GridLengthAnimation BeginTime="0:0:3" Duration="0:0:1.3" Storyboard.TargetName="_col2" Storyboard.TargetProperty="Width" To="0*" />
+    </Storyboard>
+  </Window.Resources>
 
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0"
-                            Margin="5,0,0,0"
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal">
-                    <TextBlock VerticalAlignment="Bottom"
-                               FontSize="14"
-                               FontWeight="Bold"
-                               ReusableBehaviours:FadeTrimming.IsEnabled="True"
-                               ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                               Text="{Binding TrackName}" />
-                    <TextBlock Margin="0,0,0,1"
-                               VerticalAlignment="Bottom"
-                               FontSize="12"
-                               ReusableBehaviours:FadeTrimming.IsEnabled="True"
-                               ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                               Text="{Binding AlbumName}" />
-                </StackPanel>
-                <Button Grid.Column="1"
-                        Width="23"
-                        Height="23"
-                        Margin="3"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Command="{Binding Path=ReplayTrack}"
-                        Content="{StaticResource Path_ReplayTrack}"
-                        Padding="4" />
+  <Window.Triggers>
+    <EventTrigger RoutedEvent="Mouse.MouseEnter" SourceName="Layout">
+      <BeginStoryboard Storyboard="{StaticResource FocusStoryboard}"/>
+    </EventTrigger>
+    <EventTrigger RoutedEvent="Mouse.MouseLeave" SourceName="Layout">
+      <BeginStoryboard Storyboard="{StaticResource UnfocusStoryboard}"/>
+    </EventTrigger>
+  </Window.Triggers>
 
-                <!--  Favorite and rating  -->
-                <CheckBox Grid.Column="2"
-                          Margin="3"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          IsChecked="{Binding Path=IsFavorite,
-                                              Mode=TwoWay}"
-                          Style="{StaticResource FavoriteCheckBoxStyle}" />
-                <NoiseControls:RatingControl Grid.Column="3"
-                                             Margin="3"
-                                             VerticalAlignment="Center"
-                                             Rating="{Binding Path=Rating,
-                                                              Mode=TwoWay}"
-                                             Style="{StaticResource NoiseRatingStyle}" />
+  <Border BorderBrush="Blue" BorderThickness="1" CornerRadius="3">
+    <Grid x:Name="Layout" Background="#FFAAC6E5">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="9*" />
+        <ColumnDefinition Width="0*" x:Name="_col2"/>
+      </Grid.ColumnDefinitions>
 
-                <!--  Mute Button  -->
-                <TextBlock Grid.Column="4"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Panel.ZIndex="1"
-                           FontFamily="Webdings"
-                           FontSize="21.333"
-                           Foreground="Red"
-                           IsHitTestVisible="False"
-                           Text="x"
-                           Visibility="{Binding Path=IsMuted,
-                                                Converter={StaticResource BooleanVisibilityConverter}}" />
-                <Button Grid.Column="4"
-                        Width="23"
-                        Height="23"
-                        Margin="3"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Command="{Binding Path=Mute}"
-                        Content="X"
-                        FontFamily="Webdings"
-                        FontSize="16"
-                        Foreground="{StaticResource ControlTextColor}" />
-                <!--  Switch to Application  -->
-                <Button Grid.Column="5"
-                        Width="23"
-                        Height="23"
-                        Margin="1,0,3,0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Command="{Binding Path=PlayerSwitch}"
-                        Content="{StaticResource Path_SwitchWindow}"
-                        Foreground="{StaticResource ControlTextColor}"
-                        Padding="5" />
-            </Grid>
 
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+      <Grid Grid.Column="0">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-                <!--  Transport Controls  -->
-                <StackPanel Grid.Column="0"
-                            Margin="3,0,3,3"
-                            Orientation="Horizontal">
-                    <Button Width="25"
-                            Height="23"
-                            Margin="0,0"
-                            Command="{Binding Play}"
-                            Content="4"
-                            FontFamily="Webdings"
-                            FontSize="16" />
-                    <Button Width="25"
-                            Height="23"
-                            Margin="3,0,0,0"
-                            Command="{Binding Pause}"
-                            Content=";"
-                            FontFamily="Webdings"
-                            FontSize="16" />
-                    <Button Width="25"
-                            Height="23"
-                            Margin="3,0,0,0"
-                            Command="{Binding Stop}"
-                            Content="&lt;"
-                            FontFamily="Webdings"
-                            FontSize="16" />
-                    <Button Width="25"
-                            Height="23"
-                            Margin="3,0,0,0"
-                            Command="{Binding PreviousTrack}"
-                            Content="9"
-                            FontFamily="Webdings"
-                            FontSize="16">
-                        <Button.ToolTip>
-                            <ToolTip>
-                                <TextBlock Text="{Binding Path=PeekPreviousTrack, Converter={StaticResource PlayQueueTrackNameConverter}}" />
-                            </ToolTip>
-                        </Button.ToolTip>
-                    </Button>
-                    <Button Width="25"
-                            Height="23"
-                            Margin="3,0,0,0"
-                            Command="{Binding NextTrack}"
-                            Content=":"
-                            FontFamily="Webdings"
-                            FontSize="16">
-                        <Button.ToolTip>
-                            <ToolTip>
-                                <TextBlock Text="{Binding Path=PeekNextTrack, Converter={StaticResource PlayQueueTrackNameConverter}}" />
-                            </ToolTip>
-                        </Button.ToolTip>
-                    </Button>
-                </StackPanel>
+        <!-- Track and album name -->
+        <Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="Both" HorizontalAlignment="Left">
+          <StackPanel Grid.Row="0" Margin="5,0" VerticalAlignment="Center" Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Bottom" FontSize="18" FontWeight="Bold"
+                       ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                       ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                       Text="{Binding TrackName}" />
+            <TextBlock Margin="0,0,0,1" VerticalAlignment="Bottom" FontSize="14"
+                       ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                       ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                       Text="{Binding AlbumName}" />
+          </StackPanel>
+        </Viewbox>
 
-                <!--  Play Position  -->
-                <StackPanel Grid.Column="1"
-                            Margin="5,0,11,0"
-                            Orientation="Horizontal">
-                    <TextBlock VerticalAlignment="Center"
-                               Foreground="{DynamicResource ControlTextColor}"
-                               Text="Position: " />
-                    <TextBlock Width="35"
-                               VerticalAlignment="Center"
-                               Text="{Binding TrackTime,
-                                              Converter={StaticResource TimeSpanConverter}}">
-                        <EventCommandTriggers:CommandSource.Trigger>
-                            <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
-                        </EventCommandTriggers:CommandSource.Trigger>
-                    </TextBlock>
-                </StackPanel>
+        <!-- Track Position and time -->
+        <Grid Grid.Row="1">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
 
-                <NoiseControls:VuMeter Grid.Column="2"
-                                       Margin="5,0,0,0"
-                                       VerticalAlignment="Center"
-                                       Background="#FFAAC6E5"
-                                       Foreground="Gray"
-                                       LeftLevel="{Binding Path=LeftLevel}"
-                                       PeakColor="Black"
-                                       RightLevel="{Binding Path=RightLevel}" />
+          <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-                <Slider x:Name="Position"
-                        Grid.Column="3"
-                        Margin="3,0"
-                        VerticalAlignment="Center"
-                        Maximum="{Binding Path=TrackEndPosition,
-                                          Mode=OneWay}"
-                        Minimum="0"
-                        Orientation="Horizontal"
-                        SnapsToDevicePixels="True"
-                        Style="{StaticResource PlayerPositionSliderStyle}"
-                        Value="{Binding Path=TrackPosition,
-                                        Mode=TwoWay}" />
+            <!-- Track Time -->
+            <StackPanel Grid.Column="0" Margin="5,0,0,0" Orientation="Horizontal">
+              <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Text="Position: " />
+              <TextBlock Width="29" VerticalAlignment="Center" Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}">
+                <EventCommandTriggers:CommandSource.Trigger>
+                  <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
+                </EventCommandTriggers:CommandSource.Trigger>
+              </TextBlock>
+            </StackPanel>
 
-                <Slider x:Name="Volume"
-                        Grid.Column="4"
-                        Width="60"
-                        Margin="3,0,0,0"
-                        VerticalAlignment="Center"
-                        Maximum="1.0"
-                        Minimum="0.0"
-                        Orientation="Horizontal"
-                        SnapsToDevicePixels="True"
-                        Style="{StaticResource PlayerPositionSliderStyle}"
-                        Value="{Binding Path=Volume,
-                                        Mode=TwoWay}" />
-            </Grid>
+            <!-- Track Position -->
+            <Slider Grid.Column="1" Margin="7,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
+                Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0" Value="{Binding Path=TrackPosition, Mode=TwoWay}"
+                Style="{StaticResource PlayerPositionSliderStyle}"/>
+          </Grid>
         </Grid>
-    </Border>
+
+        <!--NoiseControls:VuMeter Grid.Row="2" Margin="5,0,0,0" VerticalAlignment="Center" Background="#FFAAC6E5" Foreground="Gray" PeakColor="Black"
+                 LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" /-->
+
+      </Grid>
+
+      <Grid Grid.Column="1">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Replay, Favorite, Rating, Mute, Switch -->
+        <Grid Grid.Row="0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+
+          <!-- Replay Track -->
+          <Button Grid.Column="0" Width="23" Height="23" Margin="3" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center"
+                  Command="{Binding Path=ReplayTrack}" Content="{StaticResource Path_ReplayTrack}" />
+
+          <!-- Favorite and rating -->
+          <StackPanel Grid.Column="1" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
+            <CheckBox Style="{StaticResource FavoriteCheckBoxStyle}" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}" />
+            <NoiseControls:RatingControl Style="{StaticResource NoiseRatingStyle}" Rating="{Binding Path=Rating, Mode=TwoWay}" />
+          </StackPanel>
+
+          <!-- Mute Button -->
+          <TextBlock Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="1"
+                     FontFamily="Webdings" FontSize="21.333" Foreground="Red" IsHitTestVisible="False" Text="x"
+                     Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
+          <Button Grid.Column="2" Width="23" Height="23" Margin="3" HorizontalAlignment="Center" VerticalAlignment="Center"
+                  Command="{Binding Path=Mute}" Content="X" FontFamily="Webdings" FontSize="16" />
+
+          <!-- Switch to Application -->
+          <Button Grid.Column="3" Width="23" Height="23" Margin="1,0,3,0" Padding="6" HorizontalAlignment="Center" VerticalAlignment="Center"
+                  Command="{Binding Path=PlayerSwitch}" Content="{StaticResource Path_SwitchWindow}" />
+        </Grid>
+
+        <!-- Transport Controls, Volume -->
+        <Grid Grid.Row="1" Margin="3">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+
+          <Button Grid.Column="0" Width="23" Height="23" Margin="0,0" Content="4" FontFamily="Webdings" FontSize="16" Command="{Binding Play}"/>
+          <Button Grid.Column="1" Width="23" Height="23" Margin="3,0,0,0" Content=";" FontFamily="Webdings" FontSize="16" Command="{Binding Pause}"/>
+          <Button Grid.Column="2" Width="23" Height="23" Margin="3,0,0,0" Content="&lt;" FontFamily="Webdings" FontSize="16" Command="{Binding Stop}" />
+          <Button Grid.Column="3" Width="23" Height="23" Margin="3,0,0,0" Content="9" FontFamily="Webdings" FontSize="16" Command="{Binding PreviousTrack}">
+            <Button.ToolTip>
+              <ToolTip>
+                <TextBlock Text="{Binding Path=PeekPreviousTrack, Converter={StaticResource PlayQueueTrackNameConverter}}" />
+              </ToolTip>
+            </Button.ToolTip>
+          </Button>
+          <Button Grid.Column="4" Width="23" Height="23" Margin="3,0,0,0" Content=":" FontFamily="Webdings" FontSize="16" Command="{Binding NextTrack}">
+            <Button.ToolTip>
+              <ToolTip>
+                <TextBlock Text="{Binding Path=PeekNextTrack, Converter={StaticResource PlayQueueTrackNameConverter}}" />
+              </ToolTip>
+            </Button.ToolTip>
+          </Button>
+          
+          <!-- Volume Slider -->
+          <Slider Grid.Column="5" Margin="3,0,0,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
+                  Style="{StaticResource PlayerPositionSliderStyle}" Maximum="1.0" Minimum="0.0" Value="{Binding Path=Volume, Mode=TwoWay}" />
+        </Grid>
+      </Grid>
+    </Grid>
+  </Border>
 </Window>
