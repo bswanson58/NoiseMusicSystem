@@ -103,8 +103,9 @@
           </Grid>
         </Grid>
 
-        <!--NoiseControls:VuMeter Grid.Row="2" Margin="5,0,0,0" VerticalAlignment="Center" Background="#FFAAC6E5" Foreground="Gray" PeakColor="Black"
-                 LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" /-->
+        <!-- Vu Meter -->
+        <NoiseControls:HorizontalVuMeter Grid.Row="2" Margin="35,1" Foreground="DodgerBlue" PeakColor="LightSkyBlue"
+                                         LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" />
 
       </Grid>
 

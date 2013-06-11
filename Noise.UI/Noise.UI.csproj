@@ -205,6 +205,9 @@
     <Compile Include="Controls\ExplorerStrategyList.xaml.cs">
       <DependentUpon>ExplorerStrategyList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\HorizontalVuMeter.xaml.cs">
+      <DependentUpon>HorizontalVuMeter.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\LinkLabel.cs" />
     <Compile Include="Controls\ListBoxEx.cs" />
     <Compile Include="Controls\ListIndex.xaml.cs">
@@ -494,6 +497,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\ExplorerStrategyList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\HorizontalVuMeter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="Noise.UI.Controls.HorizontalVuMeter"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Controls="clr-namespace:Noise.UI.Controls" 
+             mc:Ignorable="d" 
+             d:DesignHeight="10" d:DesignWidth="300">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Controls:VuMeterBar Grid.Column="0" BlockSize="1" BlockMargin="0" Height="3" RenderTransformOrigin="0.5,0.5"
+                             PeakColor="{Binding PeakColor, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:HorizontalVuMeter}}}"
+                             PeakThreshold="{Binding PeakThreshold, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:HorizontalVuMeter}}}"
+                             Foreground="{Binding Foreground, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:HorizontalVuMeter}}}"
+                             Background="{Binding Background, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:HorizontalVuMeter}}}"
+                             Value="{Binding LeftLevel, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:HorizontalVuMeter}}}">
+            <Controls:VuMeterBar.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="1" ScaleX="-1"/>
+                    <SkewTransform AngleY="0" AngleX="0"/>
+                    <RotateTransform Angle="0"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Controls:VuMeterBar.RenderTransform>
+        </Controls:VuMeterBar>
+
+        <Ellipse Grid.Column="1" Margin="1" Width="7" Height="7" VerticalAlignment="Center" HorizontalAlignment="Center" RenderTransformOrigin="0.5,0.5"
+                 Fill="{Binding Foreground, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:HorizontalVuMeter}}}">
+            <Ellipse.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="{Binding CombinedLevel, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:HorizontalVuMeter}}}"
+                                    ScaleY="{Binding CombinedLevel, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:HorizontalVuMeter}}}"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Ellipse.RenderTransform>
+        </Ellipse>
+
+        <Controls:VuMeterBar Grid.Column="2" BlockSize="1" BlockMargin="0" Height="3"
+                             PeakColor="{Binding PeakColor, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:HorizontalVuMeter}}}"
+                             PeakThreshold="{Binding PeakThreshold, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:HorizontalVuMeter}}}"
+                             Foreground="{Binding Foreground, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:HorizontalVuMeter}}}"
+                             Background="{Binding Background, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:HorizontalVuMeter}}}"
+                             Value="{Binding RightLevel, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:HorizontalVuMeter}}}"/>
+    </Grid>
+</UserControl>
