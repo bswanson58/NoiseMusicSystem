@@ -9,6 +9,7 @@
         xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
         xmlns:ValueConverters="clr-namespace:Noise.UI.ValueConverters"
         xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+        xmlns:Views="clr-namespace:Noise.UI.Views"
         Width="610"
         Height="63"
         AllowsTransparency="True"
@@ -28,6 +29,29 @@
         <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter" />
         <ValueConverters:PlayQueueTrackNameConverter x:Key="PlayQueueTrackNameConverter" />
         <ReusableConverters:EmptyStringVisibilityConverter x:Key="CollapseIfEmptyString" HideOnEmpty="False" IsHidden="False"/>
+
+        <DataTemplate x:Key="AfterTemplate">
+            <Rectangle Fill="DodgerBlue" Opacity="0.9" Margin="0,4,-4,4"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ThumbTemplate">
+            <Path Data="M11,5.5 C11,8.5375661 9.0527515,11.683664 5.5,11 0.35949909,10.010801 -1.5541245,7.906409 -1.5932334,5.6548061 -1.6410244,2.9033501 1.4236814,0.92129328 5.5,0 8.8787726,-0.76364013 11,2.4624339 11,5.5 z" 
+                  Fill="DodgerBlue" RenderTransformOrigin="0,0.5" Stretch="Fill" StrokeThickness="0" Height="9" Width="9" >
+                <Path.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="{Binding DataContext.RightLevel, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:SmallPlayerView}}}"
+                                        ScaleY="{Binding DataContext.LeftLevel, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:SmallPlayerView}}}"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Path.RenderTransform>
+            </Path>
+        </DataTemplate>
+
+        <DataTemplate x:Key="BeforeTemplate">
+            <Rectangle Fill="{StaticResource ControlTextColor}" Opacity="0.3" Margin="-7,4,5,4"/>
+        </DataTemplate>
 
         <Storyboard x:Key="FocusStoryboard">
             <ReusableBehaviours:GridLengthAnimation BeginTime="0:0:0" Duration="0:0:0.2" Storyboard.TargetName="_col2" Storyboard.TargetProperty="Width" To="5*" />
@@ -55,13 +79,21 @@
 
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
+                <!-- Track Position -->
+                <!--Slider Grid.Column="1" Margin="7,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
+                        Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0" Value="{Binding Path=TrackPosition, Mode=TwoWay}"
+                        Style="{StaticResource PlayerPositionSliderStyle}"/-->
+                <NoiseControls:TrackSlider Grid.Row="0" Margin="7,3,7,0" Height="11" VerticalAlignment="Center"
+                                           BeforeTemplate="{StaticResource BeforeTemplate}" ThumbTemplate="{StaticResource ThumbTemplate}" AfterTemplate="{StaticResource AfterTemplate}"
+                                           Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0" SmoothedValue="{Binding Path=TrackPosition, Mode=TwoWay}"/>
+
                 <!-- Track and album name -->
-                <Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="Both" HorizontalAlignment="Left">
+                <Viewbox Grid.Row="1" Margin="0,-13,0,-5" Stretch="Uniform" StretchDirection="Both" HorizontalAlignment="Left">
                     <StackPanel Grid.Row="0" Margin="5,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <TextBlock Grid.Row="0" Margin="7,5" Visibility="{Binding TrackName, Converter={StaticResource CollapseIfEmptyString}}" 
                                    Text="Play Something!" FontSize="18" />
@@ -73,39 +105,26 @@
                     </StackPanel>
                 </Viewbox>
 
-                <!-- Track Position and time -->
-                <Grid Grid.Row="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Track Time -->
-                        <StackPanel Grid.Column="0" Margin="5,0,0,0" Orientation="Horizontal">
-                            <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Text="Position: " />
-                            <TextBlock Width="29" VerticalAlignment="Center" Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}">
+                    <!-- Track Time -->
+                    <StackPanel Grid.Column="0" Margin="5,0,0,0" Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Text="Position: " />
+                        <TextBlock Width="29" VerticalAlignment="Center" Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}">
                                 <EventCommandTriggers:CommandSource.Trigger>
                                     <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
                                 </EventCommandTriggers:CommandSource.Trigger>
-                            </TextBlock>
-                        </StackPanel>
-
-                        <!-- Track Position -->
-                        <Slider Grid.Column="1" Margin="7,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
-                                Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0" Value="{Binding Path=TrackPosition, Mode=TwoWay}"
-                                Style="{StaticResource PlayerPositionSliderStyle}"/>
-                    </Grid>
-                </Grid>
-
-                <!-- Vu Meter -->
-                <NoiseControls:HorizontalVuMeter Grid.Row="2" Margin="35,1" Foreground="DodgerBlue" PeakColor="LightSkyBlue"
+                        </TextBlock>
+                    </StackPanel>
+                    
+                    <!-- Vu Meter -->
+                    <NoiseControls:HorizontalVuMeter Grid.Column="1" Margin="35,1" Foreground="DodgerBlue" PeakColor="LightSkyBlue"
                                                  LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" />
+                </Grid>
 
             </Grid>
 
