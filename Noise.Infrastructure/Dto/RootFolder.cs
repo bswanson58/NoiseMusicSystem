@@ -8,6 +8,7 @@ namespace Noise.Infrastructure.Dto {
 		public	long			LastLibraryScan { get; protected set; }
 		public	long			LastSummaryScan { get; protected set; }
 		public	long			LastCloudSequenceId { get; set; }
+		public	long			InitialScanCompleted { get; protected set; }
 
 		protected RootFolder() :
 			this( Constants.cDatabaseNullOid, string.Empty, string.Empty ) { }
@@ -24,6 +25,10 @@ namespace Noise.Infrastructure.Dto {
 
 		public void UpdateSummaryScan() {
 			LastSummaryScan = DateTime.Now.Ticks;
+
+			if( InitialScanCompleted == 0 ) {
+				InitialScanCompleted = LastSummaryScan;
+			}
 		}
 
 		[Export("PersistenceType")]

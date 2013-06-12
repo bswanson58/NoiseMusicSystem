@@ -7,8 +7,13 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.DataProviders {
 	internal class TrackProvider : BaseDataProvider<DbTrack>, ITrackProvider {
-		public TrackProvider( IEloqueraManager databaseManager ) :
-			base( databaseManager ) { }
+		private readonly IRootFolderProvider	mRootFolderProvider;
+		private long							mInitialScanCompleted;
+
+		public TrackProvider( IEloqueraManager databaseManager, IRootFolderProvider rootFolderProvider ) :
+			base( databaseManager ) {
+			mRootFolderProvider = rootFolderProvider;
+		}
 
 		public void AddTrack( DbTrack track ) {
 			Condition.Requires( track ).IsNotNull();
@@ -43,7 +48,18 @@ namespace Noise.EloqueraDatabase.DataProviders {
 		}
 
 		public IDataProviderList<DbTrack> GetNewlyAddedTracks() {
-			return( TryGetList( "SELECT DbTrack ORDER BY DateAddedTicks DESC", "GetNewlyAddedTracks" ));
+			if( mInitialScanCompleted == 0 ) {
+				using( var folderList = mRootFolderProvider.GetRootFolderList()) {
+					foreach( var folder in folderList.List ) {
+						if( folder.InitialScanCompleted > mInitialScanCompleted ) {
+							mInitialScanCompleted = folder.InitialScanCompleted;
+						}
+					}
+				}
+			}
+
+			return( TryGetList( "SELECT DbTrack Where DateAddedTicks > @initialScan ORDER BY DateAddedTicks DESC",
+									new Dictionary<string, object>{{ "initialScan", mInitialScanCompleted }}, "GetNewlyAddedTracks" ));
 		}
 
 		public IDataUpdateShell<DbTrack> GetTrackForUpdate( long trackId ) {

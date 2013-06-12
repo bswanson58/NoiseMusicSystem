@@ -32,7 +32,7 @@ namespace Noise.Infrastructure.Dto {
 
 		public DbTrack() {
 			Album = Constants.cDatabaseNullOid;
-			DateAddedTicks = DateTime.Now.Date.Ticks;
+			DateAddedTicks = DateTime.Now.Ticks;
 			Encoding = eAudioEncoding.Unknown;
 
 			CalculatedGenre = Constants.cDatabaseNullOid;

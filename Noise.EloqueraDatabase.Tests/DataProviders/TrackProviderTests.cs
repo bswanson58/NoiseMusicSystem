@@ -18,7 +18,7 @@ namespace Noise.EloqueraDatabase.Tests.DataProviders {
 		}
 
 		protected override ITrackProvider CreateSut() {
-			return( new TrackProvider( mTestSetup.DatabaseManager ));
+			return( new TrackProvider( mTestSetup.DatabaseManager, null ));
 		}
 
 		[TearDown]
