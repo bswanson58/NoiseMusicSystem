@@ -14,7 +14,7 @@ namespace Noise.Core.PlayQueue {
 			mTrackProvider = trackProvider;
 		}
 
-		public PlayQueueTrack NextTrack( IPlayQueue queueMgr, IList<PlayQueueTrack> queue ) {
+		public PlayQueueTrack NextTrack( IPlayQueue queueMgr, IList<PlayQueueTrack> queue, IPlayStrategyParameters parameters ) {
 			var retValue = queue.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed ));
 
 			if(( retValue != null ) &&

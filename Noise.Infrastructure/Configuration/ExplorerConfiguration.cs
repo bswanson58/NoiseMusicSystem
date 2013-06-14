@@ -15,6 +15,7 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cPlayExhaustedStrategyProperty				= "playExhaustedStrategy";
 		private const string	cPlayExhaustedParametersProperty			= "playExhaustedParameters";
 		private const string	cPlayStrategyProperty						= "playStrategy";
+		private const string	cPlayStrategyParametersProperty				= "playStrategyParameters";
 		private const string	cNewAdditionsHorizonDaysProperty			= "newAdditionsHorizonDays";
 		private const string	cNewAdditionsHorizonCountProperty			= "newAdditionsHorizonCount";
 		private const string	cEnableSortPrefixesProperty					= "enableSortPrefixes";
@@ -76,6 +77,12 @@ namespace Noise.Infrastructure.Configuration {
 		public ePlayStrategy PlayStrategy {
 			get { return ((ePlayStrategy)( base[cPlayStrategyProperty] ) ); }
 			set { base[cPlayStrategyProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cPlayStrategyParametersProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "" )]
+		public string PlayStrategyParameters {
+			get { return ( (string)( base[cPlayStrategyParametersProperty] ) ); }
+			set { base[cPlayStrategyParametersProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cNewAdditionsHorizonDaysProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = (UInt16)90 )]

@@ -67,7 +67,8 @@ namespace Noise.UI.ViewModels {
 			if( configuration != null ) {
 				mPlayQueue.SetPlayExhaustedStrategy( configuration.PlayExhaustedStrategy,
 													 PlayStrategyParametersFactory.FromString( configuration.PlayExhaustedParameters ));
-				mPlayQueue.PlayStrategy = configuration.PlayStrategy;
+				mPlayQueue.SetPlayStrategy( configuration.PlayStrategy,
+													 PlayStrategyParametersFactory.FromString( configuration.PlayStrategyParameters ));
 			}
 
 			LoadPlayQueue();
@@ -439,7 +440,7 @@ namespace Noise.UI.ViewModels {
 		public ePlayStrategy PlayStrategy {
 			get{ return( mPlayQueue.PlayStrategy ); }
 			set {
-				mPlayQueue.PlayStrategy = value;
+				mPlayQueue.SetPlayStrategy( value, null );
 
 				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
