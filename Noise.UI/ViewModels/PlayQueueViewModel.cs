@@ -47,7 +47,8 @@ namespace Noise.UI.ViewModels {
 			mPlayStrategies = new BindableCollection<PlayStrategyItem>{
 			                                    new PlayStrategyItem( ePlayStrategy.Next, "Normal" ),
 												new PlayStrategyItem( ePlayStrategy.Random, "Random" ),
-												new PlayStrategyItem( ePlayStrategy.TwoFers, "2 Fers" )};
+												new PlayStrategyItem( ePlayStrategy.TwoFers, "2 Fers" ),
+												new PlayStrategyItem( ePlayStrategy.FeaturedArtists, "Featured Artist" )};
 
 			mExhaustedStrategies = new BindableCollection<ExhaustedStrategyItem>{
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Stop, "Stop" ),
@@ -346,7 +347,7 @@ namespace Noise.UI.ViewModels {
 			set {
 				IPlayStrategyParameters	parameters;
 
-				if( PromptForStrategyItem( value, out parameters )) {
+				if( PromptForExhaustedStrategyItem( value, out parameters )) {
 					mPlayQueue.SetPlayExhaustedStrategy( value, parameters );
 					RaiseCanExecuteChangedEvent( "CanExecute_StartStrategy" );
 
@@ -362,7 +363,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private bool PromptForStrategyItem( ePlayExhaustedStrategy strategy, out IPlayStrategyParameters parameters ) {
+		private bool PromptForExhaustedStrategyItem( ePlayExhaustedStrategy strategy, out IPlayStrategyParameters parameters ) {
 			var retValue = false;
 			parameters = null;
 
@@ -440,16 +441,42 @@ namespace Noise.UI.ViewModels {
 		public ePlayStrategy PlayStrategy {
 			get{ return( mPlayQueue.PlayStrategy ); }
 			set {
-				mPlayQueue.SetPlayStrategy( value, null );
+				IPlayStrategyParameters	parameters;
 
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+				if( PromptForPlayStrategyItem( value, out parameters )) {
+					mPlayQueue.SetPlayStrategy( value, parameters );
 
-				if( configuration != null ) {
-					configuration.PlayStrategy = value;
+					var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
-					NoiseSystemConfiguration.Current.Save( configuration );
+					if( configuration != null ) {
+						configuration.PlayStrategy = value;
+						configuration.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( parameters );
+
+						NoiseSystemConfiguration.Current.Save( configuration );
+					}
 				}
 			}
+		}
+
+		private bool PromptForPlayStrategyItem( ePlayStrategy strategy, out IPlayStrategyParameters parameters ) {
+			var retValue = false;
+			parameters = null;
+
+			if( strategy == ePlayStrategy.FeaturedArtists ) {
+				var dialogModel = new FeaturedArtistsDialogModel( mArtistProvider );
+
+				if( mDialogService.ShowDialog( DialogNames.FeaturedArtistsSelect, dialogModel ) == true ) {
+					if( dialogModel.Parameters != null ) {
+						parameters = dialogModel.Parameters;
+						retValue = true;
+					}
+				}
+			}
+			else {
+				retValue = true;
+			}
+
+			return( retValue );
 		}
 	}
 }

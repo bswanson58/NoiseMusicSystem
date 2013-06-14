@@ -296,6 +296,7 @@
     <Compile Include="ViewModels\ExplorerStrategyDecade.cs" />
     <Compile Include="ViewModels\ExplorerStrategyGenre.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
+    <Compile Include="ViewModels\FeaturedArtistsDialogModel.cs" />
     <Compile Include="ViewModels\IExplorerViewStrategy.cs" />
     <Compile Include="ViewModels\ILibraryExplorerViewModel.cs" />
     <Compile Include="ViewModels\LibraryAdditionsViewModel.cs" />
@@ -373,6 +374,9 @@
     </Compile>
     <Compile Include="Views\FavoritesView.xaml.cs">
       <DependentUpon>FavoritesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FeaturedArtistsDialog.xaml.cs">
+      <DependentUpon>FeaturedArtistsDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\InternetStreamDialog.xaml.cs">
       <DependentUpon>InternetStreamDialog.xaml</DependentUpon>
@@ -604,6 +608,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FavoritesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FeaturedArtistsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -93,6 +93,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<PlayStrategySingle>();
 			mContainer.RegisterType<PlayStrategyRandom>();
 			mContainer.RegisterType<PlayStrategyTwoFers>();
+			mContainer.RegisterType<PlayStrategyFeaturedArtists>();
 
 			mContainer.RegisterType<IPlayExhaustedFactory, PlayExhaustedFactory>();
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyCategory>( "CategoryExhaustedStrategy" );

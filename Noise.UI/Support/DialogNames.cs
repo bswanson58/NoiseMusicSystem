@@ -23,5 +23,6 @@
 		public const string		ArtistAlbumConfiguration	= "ArtistAlbumConfiguration";
 		public const string		CategorySelection			= "CategorySelection";
 		public const string		CategoryEdit				= "CategoryEdit";
+		public const string		FeaturedArtistsSelect		= "FeaturedArtistsSelect";
 	}
 }

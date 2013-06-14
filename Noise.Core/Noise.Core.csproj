@@ -257,6 +257,7 @@
     <Compile Include="PlayQueue\PlayQueueRandomTracks.cs" />
     <Compile Include="PlayQueue\PlayQueueMgr.cs" />
     <Compile Include="PlayQueue\PlayStrategyFactory.cs" />
+    <Compile Include="PlayQueue\PlayStrategyFeaturedArtists.cs" />
     <Compile Include="PlayQueue\PlayStrategyRandom.cs" />
     <Compile Include="PlayQueue\PlayStrategySingle.cs" />
     <Compile Include="PlayQueue\PlayStrategyTwoFers.cs" />
