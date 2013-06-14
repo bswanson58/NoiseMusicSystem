@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
 	internal abstract class PlayExhaustedListBase : IPlayExhaustedStrategy {
-		private readonly ePlayExhaustedStrategy	mStrategy;
-		protected readonly List<DbTrack>		mTrackList;
-		protected IPlayQueue					mQueueMgr;
-		private		long						mCurrentId;
+		private		readonly ePlayExhaustedStrategy	mStrategy;
+		protected	readonly List<DbTrack>			mTrackList;
+		protected	IPlayQueue						mQueueMgr;
+		private		long							mCurrentId;
 
 		protected abstract void FillTrackList( long itemId );
 
@@ -25,27 +26,33 @@ namespace Noise.Core.PlayQueue {
 
 		public bool QueueTracks( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
 			Condition.Requires( queueMgr ).IsNotNull();
-			Condition.Requires( parameters ).IsOfType( typeof( PlayStrategyParameterDbId ));
 
 			var retValue = false;
+			var itemId = Constants.cDatabaseNullOid;
 
-			if( parameters is PlayStrategyParameterDbId ) {
-				var dbParams = parameters as PlayStrategyParameterDbId;
+			if( parameters != null ) {
+				Condition.Requires( parameters ).IsOfType( typeof( PlayStrategyParameterDbId ));
 
-				if( mCurrentId != dbParams.DbItemId ) {
-					mTrackList.Clear();
-					mCurrentId = dbParams.DbItemId;
+				if( parameters is PlayStrategyParameterDbId ) {
+					var dbParams = parameters as PlayStrategyParameterDbId;
+
+					itemId = dbParams.DbItemId;
+				}
+			}
+
+			if( mCurrentId != itemId ) {
+				mTrackList.Clear();
+				mCurrentId = itemId;
+			}
+
+			if( queueMgr != null ) {
+				mQueueMgr = queueMgr;
+
+				if( !mTrackList.Any()) {
+					FillTrackList( itemId );
 				}
 
-				if( queueMgr != null ) {
-					mQueueMgr = queueMgr;
-
-					if( !mTrackList.Any()) {
-						FillTrackList( dbParams.DbItemId );
-					}
-
-					retValue = QueueTracks( 3 - mQueueMgr.UnplayedTrackCount );
-				}
+				retValue = QueueTracks( 3 - mQueueMgr.UnplayedTrackCount );
 			}
 
 			return( retValue );
