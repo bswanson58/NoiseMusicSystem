@@ -6,13 +6,15 @@ namespace Noise.Core.PlayQueue {
 		private readonly IPlayStrategy	mPlayStrategyRandom;
 		private readonly IPlayStrategy	mPlayStrategyTwoFers;
 		private readonly IPlayStrategy	mPlayFeaturedArtists;
+		private readonly IPlayStrategy	mPlayNewReleases;
 
-		public PlayStrategyFactory( PlayStrategySingle singleStrategy, PlayStrategyRandom randomStrategy,
-									PlayStrategyTwoFers twoFerStrategy, PlayStrategyFeaturedArtists featuredArtistsStrategy ) {
+		public PlayStrategyFactory( PlayStrategySingle singleStrategy, PlayStrategyRandom randomStrategy, PlayStrategyTwoFers twoFerStrategy,
+									PlayStrategyFeaturedArtists featuredArtistsStrategy, PlayStrategyNewReleases newReleasesStrategy ) {
 			mPlayStrategySingle = singleStrategy;
 			mPlayStrategyRandom = randomStrategy;
 			mPlayStrategyTwoFers = twoFerStrategy;
 			mPlayFeaturedArtists = featuredArtistsStrategy;
+			mPlayNewReleases = newReleasesStrategy;
 		}
 
 		public IPlayStrategy ProvidePlayStrategy( ePlayStrategy strategy ) {
@@ -33,6 +35,10 @@ namespace Noise.Core.PlayQueue {
 
 				case ePlayStrategy.FeaturedArtists:
 					retValue = mPlayFeaturedArtists;
+					break;
+
+				case ePlayStrategy.NewReleases:
+					retValue = mPlayNewReleases;
 					break;
 			}
 

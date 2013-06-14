@@ -6,7 +6,8 @@ namespace Noise.Infrastructure.Interfaces {
 		Next,
 		Random,
 		TwoFers,
-		FeaturedArtists
+		FeaturedArtists,
+		NewReleases
 	}
 
 	public enum ePlayExhaustedStrategy {

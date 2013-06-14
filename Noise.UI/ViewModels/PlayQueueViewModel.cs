@@ -48,7 +48,8 @@ namespace Noise.UI.ViewModels {
 			                                    new PlayStrategyItem( ePlayStrategy.Next, "Normal" ),
 												new PlayStrategyItem( ePlayStrategy.Random, "Random" ),
 												new PlayStrategyItem( ePlayStrategy.TwoFers, "2 Fers" ),
-												new PlayStrategyItem( ePlayStrategy.FeaturedArtists, "Featured Artist" )};
+												new PlayStrategyItem( ePlayStrategy.FeaturedArtists, "Featured Artist" ),
+												new PlayStrategyItem( ePlayStrategy.NewReleases, "New Releases" )};
 
 			mExhaustedStrategies = new BindableCollection<ExhaustedStrategyItem>{
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Stop, "Stop" ),
