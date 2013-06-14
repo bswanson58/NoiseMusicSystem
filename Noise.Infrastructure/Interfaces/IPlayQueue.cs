@@ -51,7 +51,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 		ePlayStrategy			PlayStrategy { get; set; }
 		ePlayExhaustedStrategy	PlayExhaustedStrategy { get; }
-		void					SetPlayExhaustedStrategy( ePlayExhaustedStrategy strategy, long itemId );
+		void					SetPlayExhaustedStrategy( ePlayExhaustedStrategy strategy, IPlayStrategyParameters parameters );
 
 		void			StartPlayStrategy();
 		bool			CanStartPlayStrategy { get; }

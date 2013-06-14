@@ -5,9 +5,10 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.UI.ViewModels {
 	class SelectArtistDialogModel {
-		private readonly List<DbArtist>	mArtistList;
+		private readonly List<DbArtist>		mArtistList;
+		private	DbArtist					mSelectedItem;
 
-		public	DbArtist				SelectedItem { get; set; }
+		public	IPlayStrategyParameters	Parameters { get; private set; }
 
 		public SelectArtistDialogModel( IArtistProvider artistProvider ) {
 			using( var artistList = artistProvider.GetArtistList()) {
@@ -17,6 +18,17 @@ namespace Noise.UI.ViewModels {
 
 		public IEnumerable<DbArtist> ArtistList {
 			get{ return( mArtistList ); }
+		}
+
+		public DbArtist SelectedItem {
+			get{ return( mSelectedItem ); }
+			set {
+				mSelectedItem = value;
+
+				if( mSelectedItem != null ) {
+					Parameters = new PlayStrategyParameterDbId( ePlayExhaustedStrategy.PlayArtist ) { DbItemId = mSelectedItem.DbId };
+				}
+			}
 		}
 	}
 }

@@ -7,7 +7,7 @@ namespace Noise.Core.PlayQueue {
 			get{ return( ePlayExhaustedStrategy.Replay ); }
 		}
 
-		public bool QueueTracks( IPlayQueue queueMgr, long itemId ) {
+		public bool QueueTracks( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
 			Condition.Requires( queueMgr ).IsNotNull();
 
 			var retValue = false;

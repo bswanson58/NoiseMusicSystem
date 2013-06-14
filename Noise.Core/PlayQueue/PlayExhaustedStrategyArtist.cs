@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
@@ -23,26 +24,30 @@ namespace Noise.Core.PlayQueue {
 			get{ return( ePlayExhaustedStrategy.PlayArtist ); }
 		}
 
-		public bool QueueTracks( IPlayQueue queueMgr, long itemId ) {
+		public bool QueueTracks( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
 			Condition.Requires( queueMgr ).IsNotNull();
 
 			var retValue = false;
 
 			mQueueMgr = queueMgr;
 
-			if( mArtistId != itemId ) {
-				mAlbums.Clear();
-				mArtistId = itemId;
-			}
+			if( parameters is PlayStrategyParameterDbId ) {
+				var	dbParam = parameters as PlayStrategyParameterDbId;
 
-			if( queueMgr != null ) {
-				if(!mAlbums.Any()) {
-					using( var albumList = mAlbumProvider.GetAlbumList( mArtistId )) {
-						mAlbums.AddRange( from album in albumList.List select album.DbId );
-					}
+				if( mArtistId != dbParam.DbItemId ) {
+					mAlbums.Clear();
+					mArtistId = dbParam.DbItemId;
 				}
 
-				retValue =  QueueTracks( 3 - mQueueMgr.UnplayedTrackCount );
+				if( queueMgr != null ) {
+					if( !mAlbums.Any() ) {
+						using( var albumList = mAlbumProvider.GetAlbumList( mArtistId ) ) {
+							mAlbums.AddRange( from album in albumList.List select album.DbId );
+						}
+					}
+
+					retValue = QueueTracks( 3 - mQueueMgr.UnplayedTrackCount );
+				}
 			}
 
 			return( retValue );

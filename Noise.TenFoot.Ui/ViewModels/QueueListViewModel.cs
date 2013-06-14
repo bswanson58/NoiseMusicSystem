@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Caliburn.Micro;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
@@ -113,7 +112,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 					break;
 			}
 
-			mPlayQueue.SetPlayExhaustedStrategy( mCurrentStrategy, Constants.cDatabaseNullOid );
+			mPlayQueue.SetPlayExhaustedStrategy( mCurrentStrategy, null );
 		}
 
 		public void Handle( InputEvent input ) {

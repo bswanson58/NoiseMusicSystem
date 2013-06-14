@@ -1,4 +1,5 @@
 ﻿using CuttingEdge.Conditions;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
@@ -15,20 +16,25 @@ namespace Noise.Core.PlayQueue {
 			get{ return( ePlayExhaustedStrategy.PlayList ); }
 		}
 
-		public bool QueueTracks( IPlayQueue queueMgr, long itemId ) {
+		public bool QueueTracks( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
 			Condition.Requires( queueMgr ).IsNotNull();
 
 			var retValue = false;
-			var	playList = mPlayListProvider.GetPlayList( itemId );
 
-			if( playList != null ) {
-				var tracks = mTrackProvider.GetTrackListForPlayList( playList );
+			if( parameters is PlayStrategyParameterDbId ) {
+				var dbParam = parameters as PlayStrategyParameterDbId;
 
-				foreach( var track in tracks ) {
-					if(!queueMgr.IsTrackQueued( track )) {
-						queueMgr.Add( track );
+				var	playList = mPlayListProvider.GetPlayList( dbParam.DbItemId );
 
-						retValue = true;
+				if( playList != null ) {
+					var tracks = mTrackProvider.GetTrackListForPlayList( playList );
+
+					foreach( var track in tracks ) {
+						if(!queueMgr.IsTrackQueued( track )) {
+							queueMgr.Add( track );
+
+							retValue = true;
+						}
 					}
 				}
 			}

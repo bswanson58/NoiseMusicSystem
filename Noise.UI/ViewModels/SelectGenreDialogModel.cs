@@ -7,7 +7,9 @@ using Noise.UI.Support;
 namespace Noise.UI.ViewModels {
 	class SelectGenreDialogModel : DialogModelBase {
 		private readonly List<DbGenre>	mGenreList;
-		public	DbGenre					SelectedItem { get; set; }
+		private	DbGenre					mSelectedItem;
+
+		public IPlayStrategyParameters Parameters { get; private set; }
 
 		public SelectGenreDialogModel( IGenreProvider genreProvider ) {
 			using( var genreList = genreProvider.GetGenreList()) {
@@ -17,6 +19,17 @@ namespace Noise.UI.ViewModels {
 
 		public IEnumerable<DbGenre> GenreList {
 			get{ return( mGenreList ); }
+		}
+
+		public DbGenre SelectedItem {
+			get { return ( mSelectedItem ); }
+			set {
+				mSelectedItem = value;
+
+				if( mSelectedItem != null ) {
+					Parameters = new PlayStrategyParameterDbId( ePlayExhaustedStrategy.PlayGenre ) { DbItemId = mSelectedItem.DbId };
+				}
+			}
 		}
 	}
 }

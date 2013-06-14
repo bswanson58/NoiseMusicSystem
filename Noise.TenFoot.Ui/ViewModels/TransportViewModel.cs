@@ -1,13 +1,14 @@
 ﻿using System;
 using Caliburn.Micro;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Input;
 using Noise.UI.ViewModels;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class TransportViewModel : PlayerViewModel,
-									  IHandle<InputEvent>, IHandle<Infrastructure.Events.PlayExhaustedChanged> {
+									  IHandle<InputEvent>, IHandle<Infrastructure.Events.PlayExhaustedStrategyChanged> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IPlayQueue			mPlayQueue;
@@ -64,10 +65,14 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			RaisePropertyChanged( () => CurrentStrategy );
 		}
 
-		public void Handle( Infrastructure.Events.PlayExhaustedChanged args ) {
+		public void Handle( Infrastructure.Events.PlayExhaustedStrategyChanged args ) {
 			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy;
 
-			FormatPlayStrategy( args.ExhaustedItem );
+			if( args.StrategyParameters is PlayStrategyParameterDbId ) {
+				var dbParam = args.StrategyParameters as PlayStrategyParameterDbId;
+
+				FormatPlayStrategy( dbParam.DbItemId );
+			}
 		}
 
 		public void Handle( InputEvent input ) {

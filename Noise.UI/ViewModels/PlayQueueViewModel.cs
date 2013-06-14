@@ -65,7 +65,8 @@ namespace Noise.UI.ViewModels {
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 			if( configuration != null ) {
-				mPlayQueue.SetPlayExhaustedStrategy( configuration.PlayExhaustedStrategy, configuration.PlayExhaustedItem );
+				mPlayQueue.SetPlayExhaustedStrategy( configuration.PlayExhaustedStrategy,
+													 PlayStrategyParametersFactory.FromString( configuration.PlayExhaustedParameters ));
 				mPlayQueue.PlayStrategy = configuration.PlayStrategy;
 			}
 
@@ -342,17 +343,17 @@ namespace Noise.UI.ViewModels {
 		public ePlayExhaustedStrategy ExhaustedStrategy {
 			get{ return( mPlayQueue.PlayExhaustedStrategy ); }
 			set {
-				long itemId;
+				IPlayStrategyParameters	parameters;
 
-				if( PromptForStrategyItem( value, out itemId )) {
-					mPlayQueue.SetPlayExhaustedStrategy( value, itemId );
+				if( PromptForStrategyItem( value, out parameters )) {
+					mPlayQueue.SetPlayExhaustedStrategy( value, parameters );
 					RaiseCanExecuteChangedEvent( "CanExecute_StartStrategy" );
 
 					var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 					if( configuration != null ) {
 						configuration.PlayExhaustedStrategy = value;
-						configuration.PlayExhaustedItem = itemId;
+						configuration.PlayExhaustedParameters = PlayStrategyParametersFactory.ToString( parameters );
 
 						NoiseSystemConfiguration.Current.Save( configuration );
 					}
@@ -360,9 +361,9 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private bool PromptForStrategyItem( ePlayExhaustedStrategy strategy, out long selectedItem ) {
+		private bool PromptForStrategyItem( ePlayExhaustedStrategy strategy, out IPlayStrategyParameters parameters ) {
 			var retValue = false;
-			selectedItem = Constants.cDatabaseNullOid;
+			parameters = null;
 
 			if(( strategy == ePlayExhaustedStrategy.PlayStream ) ||
 			   ( strategy == ePlayExhaustedStrategy.PlayArtist ) ||
@@ -373,8 +374,8 @@ namespace Noise.UI.ViewModels {
 					var dialogModel = new SelectPlayListDialogModel( mPlayListProvider );
 
 					if( mDialogService.ShowDialog( DialogNames.SelectPlayList, dialogModel ) == true ) {
-						if( dialogModel.SelectedItem != null ) {
-							selectedItem = dialogModel.SelectedItem.DbId;
+						if( dialogModel.Parameters != null ) {
+							parameters = dialogModel.Parameters;
 							retValue = true;
 						}
 					}
@@ -384,8 +385,8 @@ namespace Noise.UI.ViewModels {
 					var	dialogModel = new SelectStreamDialogModel( mStreamProvider );
 
 					if( mDialogService.ShowDialog( DialogNames.SelectStream, dialogModel ) == true ) {
-						if( dialogModel.SelectedItem != null ) {
-							selectedItem = dialogModel.SelectedItem.DbId;
+						if( dialogModel.Parameters != null ) {
+							parameters = dialogModel.Parameters;
 							retValue = true;
 						}
 					}
@@ -395,8 +396,8 @@ namespace Noise.UI.ViewModels {
 					var dialogModel = new SelectArtistDialogModel( mArtistProvider );
 
 					if( mDialogService.ShowDialog( DialogNames.SelectArtist, dialogModel ) == true ) {
-						if( dialogModel.SelectedItem != null ) {
-							selectedItem = dialogModel.SelectedItem.DbId;
+						if( dialogModel.Parameters != null ) {
+							parameters = dialogModel.Parameters;
 							retValue = true;
 						}
 					}
@@ -406,8 +407,8 @@ namespace Noise.UI.ViewModels {
 					var dialogModel = new SelectCategoryDialogModel( mTagProvider );
 
 					if( mDialogService.ShowDialog( DialogNames.SelectCategory, dialogModel ) == true ) {
-						if( dialogModel.SelectedItem != null ) {
-							selectedItem = dialogModel.SelectedItem.DbId;
+						if( dialogModel.Parameters != null ) {
+							parameters = dialogModel.Parameters;
 							retValue = true;
 						}
 					}
@@ -417,8 +418,8 @@ namespace Noise.UI.ViewModels {
 					var dialogModel = new SelectGenreDialogModel( mGenreProvider );
 
 					if( mDialogService.ShowDialog( DialogNames.SelectGenre, dialogModel ) == true ) {
-						if( dialogModel.SelectedItem != null ) {
-							selectedItem = dialogModel.SelectedItem.DbId;
+						if( dialogModel.Parameters != null ) {
+							parameters = dialogModel.Parameters;
 							retValue = true;
 						}
 					}

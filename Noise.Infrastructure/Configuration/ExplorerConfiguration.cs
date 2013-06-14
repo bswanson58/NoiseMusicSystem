@@ -13,7 +13,7 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cMinimizeToTrayProperty						= "minimizeToTray";
 		private const string	cDisplayPlayTimeElapsedProperty				= "displayPlayTimeElapsed";
 		private const string	cPlayExhaustedStrategyProperty				= "playExhaustedStrategy";
-		private const string	cPlayExhaustedItemProperty					= "playExhaustedItem";
+		private const string	cPlayExhaustedParametersProperty			= "playExhaustedParameters";
 		private const string	cPlayStrategyProperty						= "playStrategy";
 		private const string	cNewAdditionsHorizonDaysProperty			= "newAdditionsHorizonDays";
 		private const string	cNewAdditionsHorizonCountProperty			= "newAdditionsHorizonCount";
@@ -66,10 +66,10 @@ namespace Noise.Infrastructure.Configuration {
 			set { base[cPlayExhaustedStrategyProperty] = value; }
 		}
 
-		[ConfigurationPropertyAttribute( cPlayExhaustedItemProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = Constants.cDatabaseNullOid )]
-		public long PlayExhaustedItem {
-			get { return ((long)( base[cPlayExhaustedItemProperty] ) ); }
-			set { base[cPlayExhaustedItemProperty] = value; }
+		[ConfigurationPropertyAttribute( cPlayExhaustedParametersProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "" )]
+		public string PlayExhaustedParameters {
+			get { return ((string)( base[cPlayExhaustedParametersProperty] ) ); }
+			set { base[cPlayExhaustedParametersProperty] = value; }
 		}
 
 		[ConfigurationPropertyAttribute( cPlayStrategyProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = ePlayStrategy.Next )]

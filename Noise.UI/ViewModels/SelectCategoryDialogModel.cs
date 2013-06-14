@@ -6,7 +6,9 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.UI.ViewModels {
 	class SelectCategoryDialogModel {
 		private readonly List<DbTag>	mCategoryList;
-		public	DbTag					SelectedItem { get; set; }
+		private	DbTag					mSelectedItem;
+
+		public IPlayStrategyParameters Parameters { get; private set; }
 
 		public SelectCategoryDialogModel( ITagProvider tagProvider ) {
 			using( var genreList = tagProvider.GetTagList( eTagGroup.User )) {
@@ -16,6 +18,17 @@ namespace Noise.UI.ViewModels {
 
 		public IEnumerable<DbTag> CategoryList {
 			get{ return( mCategoryList ); }
+		}
+
+		public DbTag SelectedItem {
+			get { return ( mSelectedItem ); }
+			set {
+				mSelectedItem = value;
+
+				if( mSelectedItem != null ) {
+					Parameters = new PlayStrategyParameterDbId( ePlayExhaustedStrategy.PlayCategory ) { DbItemId = mSelectedItem.DbId };
+				}
+			}
 		}
 	}
 }

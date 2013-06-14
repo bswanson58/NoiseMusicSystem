@@ -23,24 +23,29 @@ namespace Noise.Core.PlayQueue {
 			get { return( mStrategy ); }
 		}
 
-		public bool QueueTracks( IPlayQueue queueMgr, long itemId ) {
+		public bool QueueTracks( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
 			Condition.Requires( queueMgr ).IsNotNull();
+			Condition.Requires( parameters ).IsOfType( typeof( PlayStrategyParameterDbId ));
 
 			var retValue = false;
 
-			if( mCurrentId != itemId ) {
-				mTrackList.Clear();
-				mCurrentId = itemId;
-			}
+			if( parameters is PlayStrategyParameterDbId ) {
+				var dbParams = parameters as PlayStrategyParameterDbId;
 
-			if( queueMgr != null ) {
-				mQueueMgr = queueMgr;
-
-				if(!mTrackList.Any()) {
-					FillTrackList( itemId );
+				if( mCurrentId != dbParams.DbItemId ) {
+					mTrackList.Clear();
+					mCurrentId = dbParams.DbItemId;
 				}
 
-				retValue =  QueueTracks( 3 - mQueueMgr.UnplayedTrackCount );
+				if( queueMgr != null ) {
+					mQueueMgr = queueMgr;
+
+					if( !mTrackList.Any()) {
+						FillTrackList( dbParams.DbItemId );
+					}
+
+					retValue = QueueTracks( 3 - mQueueMgr.UnplayedTrackCount );
+				}
 			}
 
 			return( retValue );

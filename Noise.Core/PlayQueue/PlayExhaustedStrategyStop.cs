@@ -6,7 +6,7 @@ namespace Noise.Core.PlayQueue {
 			get{ return( ePlayExhaustedStrategy.Stop ); }
 		}
 
-		public bool QueueTracks( IPlayQueue queueMgr, long itemId ) {
+		public bool QueueTracks( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
 			return( false );
 		}
 	}
