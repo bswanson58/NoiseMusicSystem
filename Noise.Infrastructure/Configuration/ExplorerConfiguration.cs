@@ -26,6 +26,14 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cLastLibraryUsedProperty					= "lastLibraryUsed";
 		private const string	cLoadLastLibraryOnStartup					= "loadLastUsedLibrary";
 
+		// Deprecated items
+		private const string	cPlayExhaustedItemProperty					= "playExhaustedItem";
+		[ConfigurationPropertyAttribute( cPlayExhaustedItemProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = Constants.cDatabaseNullOid )]
+		private long PlayExhaustedItem {
+			get { return ( (long)( base[cPlayExhaustedItemProperty] ) ); }
+			set { base[cPlayExhaustedItemProperty] = value; }
+		}
+
 		[ConfigurationPropertyAttribute( cEnableLibraryExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
 		public bool EnableLibraryExplorer {
 			get { return ((bool)( base[cEnableLibraryExplorerProperty] ) ); }
