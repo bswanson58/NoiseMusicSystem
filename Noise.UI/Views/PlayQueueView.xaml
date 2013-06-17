@@ -8,7 +8,7 @@
              xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              d:DesignHeight="300"
              d:DesignWidth="300"
              DataContext="{Binding PlayQueueViewModel,
