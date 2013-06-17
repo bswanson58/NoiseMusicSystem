@@ -198,6 +198,7 @@
     <Compile Include="Behaviours\SizeObserver.cs" />
     <Compile Include="Behaviours\SliderAnimateAfterDrag.cs" />
     <Compile Include="Behaviours\ListViewColumnStretch.cs" />
+    <Compile Include="Behaviours\TextBoxHelper.cs" />
     <Compile Include="Behaviours\TreeViewItemBehaviour.cs" />
     <Compile Include="Controls\ExplorerStrategyList.xaml.cs">
       <DependentUpon>ExplorerStrategyList.xaml</DependentUpon>

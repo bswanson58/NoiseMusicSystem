@@ -173,6 +173,7 @@
                                           Converter={StaticResource StringTruncateConverter}}" />
             </StackPanel>
         </DataTemplate>
+
     </UserControl.Resources>
 
     <UserControl.DataContext>
@@ -229,7 +230,9 @@
                 <Button Grid.Column="1" Margin="3" Height="23" Style="{StaticResource GeneralButtonStyle}" Content="{StaticResource Path_Configure}"
                             Command="{Binding Path=ConfigureView}" ToolTip="Configure View" />
 
-                <TextBox Grid.Column="2" Margin="15,3,0,3" FontSize="14" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="2" Margin="19,3,0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
+                         Behaviours:TextBoxHelper.Watermark="enter filter text..." Behaviours:TextBoxHelper.ClearTextButton="True"
+                         Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
         </Grid>
     </GroupBox>
