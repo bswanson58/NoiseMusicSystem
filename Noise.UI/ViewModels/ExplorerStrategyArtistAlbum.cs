@@ -50,6 +50,8 @@ namespace Noise.UI.ViewModels {
 		private Subject<ViewSortStrategy>		mAlbumSortSubject;
 		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
 
+		public	string							FilterText { get; set; }
+
 		public ExplorerStrategyArtistAlbum( IEventAggregator eventAggregator, IResourceProvider resourceProvider,
 											IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager ) {
 			mEventAggregator = eventAggregator;
@@ -69,7 +71,7 @@ namespace Noise.UI.ViewModels {
 			var	strategies = new List<ViewSortStrategy> { new ViewSortStrategy( "Artist Name", new List<SortDescription> { new SortDescription( "Artist.Name", ListSortDirection.Ascending ) }),
 														  new ViewSortStrategy( "Unprefixed Artist Name", new List<SortDescription> { new SortDescription( "Artist.SortName", ListSortDirection.Ascending ) }),
 														  new ViewSortStrategy( "Genre", new List<SortDescription> { new SortDescription( "Artist.Genre", ListSortDirection.Ascending ),
-																												     new SortDescription( "Artist.SortName", ListSortDirection.Ascending )}) };
+																													 new SortDescription( "Artist.SortName", ListSortDirection.Ascending )}) };
 			mArtistSorts = strategies;
 			mCurrentArtistSort = strategies[1];
 
@@ -104,7 +106,7 @@ namespace Noise.UI.ViewModels {
 
 			if( mViewTemplate == null ) {
 				mViewTemplate = mResourceProvider.RetrieveTemplate( "ArtistAlbumTemplate" ) as DataTemplate;
- 			}
+			}
 			Condition.Requires( mViewTemplate ).IsNotNull();
 
 			mViewModel.SetViewTemplate( mViewTemplate );
@@ -229,8 +231,7 @@ namespace Noise.UI.ViewModels {
 				var artist = artistList.FirstOrDefault( node => ( node is UiArtistTreeNode ) &&
 																( node as UiArtistTreeNode ).Artist.SortName.StartsWith( ch.ToString( CultureInfo.InvariantCulture )));
 
-				if(( artist != null ) &&
-				   ( artist is UiArtistTreeNode )) {
+				if( artist is UiArtistTreeNode ) {
 					retValue.Add( new IndexNode( ch.ToString( CultureInfo.InvariantCulture ), artist as UiArtistTreeNode ));
 				}
 			});
@@ -290,7 +291,7 @@ namespace Noise.UI.ViewModels {
 
 		private void FillChildren( UiArtistTreeNode parent ) {
 			AlbumPopulateTask.StartTask( () => {
-			                             	var albums = new List<UiAlbumTreeNode>();
+											var albums = new List<UiAlbumTreeNode>();
 
 											if(( parent != null ) &&
 											   ( parent.Artist != null )) {
@@ -304,7 +305,7 @@ namespace Noise.UI.ViewModels {
 												}
 												parent.SetChildren( albums );
 											}
-			                             },
+										 },
 										 () => { },
 										 ex => NoiseLogger.Current.LogException( "ExplorerStrategyArtistAlbum:FillChildren", ex ));
 		}
@@ -352,6 +353,21 @@ namespace Noise.UI.ViewModels {
 			mCurrentAlbumSort = strategy;
 
 			mAlbumSortSubject.OnNext( mCurrentAlbumSort );
+		}
+
+		public bool FilterItem( UiTreeNode node ) {
+			var retValue = true;
+
+			if(( node is UiArtistTreeNode ) &&
+			   (!string.IsNullOrWhiteSpace( FilterText ))) {
+				var artistNode = node as UiArtistTreeNode;
+
+				if( artistNode.Artist.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) {
+					retValue = false;
+				}
+			}
+
+			return( retValue );
 		}
 
 		public bool Search( string searchText, IEnumerable<string> searchOptionsList ) {

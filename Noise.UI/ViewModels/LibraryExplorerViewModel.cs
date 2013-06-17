@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
@@ -42,7 +43,8 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler								mTreeBuilderTask;
 		private readonly BindableCollection<UiTreeNode>	mTreeItems;
 		private readonly BindableCollection<IndexNode>	mIndexItems;
-		private readonly BindableCollection<SortDescription>	mTreeSortDescriptions; 
+		private ICollectionView							mTreeView;
+		private readonly List<SortDescription>			mTreeSortDescriptions; 
 		private	readonly InteractionRequest<ExplorerFilterInfo>	mExplorerFiltersEdit;
 		private	readonly InteractionRequest<ExplorerSortInfo>	mExplorerSortRequest;
 
@@ -58,7 +60,7 @@ namespace Noise.UI.ViewModels {
 			mExplorerFilter = new LibraryExplorerFilter { IsEnabled = false };
 			mTreeItems = new BindableCollection<UiTreeNode>();
 			mIndexItems = new BindableCollection<IndexNode>();
-			mTreeSortDescriptions = new BindableCollection<SortDescription>();
+			mTreeSortDescriptions = new List<SortDescription>();
 			mExplorerFiltersEdit = new InteractionRequest<ExplorerFilterInfo>();
 			mExplorerSortRequest = new InteractionRequest<ExplorerSortInfo>();
 
@@ -175,15 +177,69 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public ICollectionView TreeView {
+			get {
+				if( mTreeView == null ) {
+					mTreeView = CollectionViewSource.GetDefaultView( TreeData );
+
+					UpdateSorts();
+					mTreeView.Filter += OnTreeFilter;
+				}
+
+				return( mTreeView );
+			}
+		}
+
 		public void SetTreeSortDescription( IEnumerable<SortDescription> descriptions ) {
 			mTreeSortDescriptions.Clear();
 			mTreeSortDescriptions.AddRange( descriptions );
-		} 
-	
-		public BindableCollection<SortDescription> SortDescriptions {
-			get{ return( mTreeSortDescriptions ); }
+
+			UpdateSorts();
 		}
- 
+
+		private void UpdateSorts() {
+			if( mTreeView != null ) {
+				Execute.OnUIThread( () => {
+					mTreeView.SortDescriptions.Clear();
+
+					foreach( var sortDescrition in mTreeSortDescriptions ) {
+						mTreeView.SortDescriptions.Add( sortDescrition );
+					}
+				} );
+			}
+		}
+
+		private bool OnTreeFilter( object sender ) {
+			var retValue = true;
+
+			if(( sender is UiTreeNode ) &&
+			   ( mViewStrategy != null )) {
+				retValue = mViewStrategy.FilterItem( sender as UiTreeNode );
+			}
+			return( retValue );
+		}
+
+		public string FilterText {
+			get {
+				var retValue = string.Empty;
+
+				if( mViewStrategy != null ) {
+					retValue = mViewStrategy.FilterText;
+				}
+
+				return( retValue );
+			}
+			set {
+				if( mViewStrategy != null ) {
+					mViewStrategy.FilterText = value;
+				}
+
+				if( mTreeView != null ) {
+					mTreeView.Refresh();
+				}
+			}
+		}
+
 		public DataTemplate TreeViewItemTemplate {
 			get{ return( Get( () => TreeViewItemTemplate )); }
 		}

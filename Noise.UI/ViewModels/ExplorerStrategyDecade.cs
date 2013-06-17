@@ -49,6 +49,8 @@ namespace Noise.UI.ViewModels {
 		private Subject<ViewSortStrategy>		mAlbumSortSubject;
 		private	IObservable<ViewSortStrategy>	AlbumSortChange { get { return( mAlbumSortSubject.AsObservable()); }}
 
+		public	string							FilterText { get; set; }
+
 		public ExplorerStrategyDecade( IEventAggregator eventAggregator, IResourceProvider resourceProvider,
 									   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager ) {
 			mEventAggregator = eventAggregator;
@@ -318,6 +320,10 @@ namespace Noise.UI.ViewModels {
 			var	retValue = new List<IndexNode>();
 
 			return( retValue );
+		}
+
+		public bool FilterItem( UiTreeNode node ) {
+			return ( true );
 		}
 
 		public bool Search( string searchText, IEnumerable<string> searchOptionsList ) {

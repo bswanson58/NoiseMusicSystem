@@ -43,11 +43,13 @@ namespace Noise.UI.ViewModels {
 		private IEnumerable<ViewSortStrategy>	mArtistSorts;
 		private ViewSortStrategy				mCurrentArtistSort;
 		private Subject<ViewSortStrategy>		mArtistSortSubject;
-		private IObservable<ViewSortStrategy>	ArtistSortChange { get { return ( mArtistSortSubject.AsObservable() ); } }
+		private IObservable<ViewSortStrategy>	ArtistSortChange { get { return ( mArtistSortSubject.AsObservable() ); }}
 		private IEnumerable<ViewSortStrategy>	mAlbumSorts;
 		private ViewSortStrategy				mCurrentAlbumSort;
 		private Subject<ViewSortStrategy>		mAlbumSortSubject;
-		private IObservable<ViewSortStrategy>	AlbumSortChange { get { return ( mAlbumSortSubject.AsObservable() ); } }
+		private IObservable<ViewSortStrategy>	AlbumSortChange { get { return ( mAlbumSortSubject.AsObservable() ); }}
+
+		public	string							FilterText { get; set; }
 
 		public ExplorerStrategyGenre( IEventAggregator eventAggregator, IResourceProvider resourceProvider,
 									  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager ) {
@@ -318,6 +320,10 @@ namespace Noise.UI.ViewModels {
 			var	retValue = new List<IndexNode>();
 
 			return ( retValue );
+		}
+
+		public bool FilterItem( UiTreeNode node ) {
+			return ( true );
 		}
 
 		public bool Search( string searchText, IEnumerable<string> searchOptionsList ) {

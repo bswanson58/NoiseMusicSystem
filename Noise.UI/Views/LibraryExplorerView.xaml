@@ -4,7 +4,6 @@
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
              xmlns:Controls="clr-namespace:Noise.UI.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
@@ -174,10 +173,6 @@
                                           Converter={StaticResource StringTruncateConverter}}" />
             </StackPanel>
         </DataTemplate>
-
-        <Behaviours:BindableCollectionViewSource x:Key="TreeDataSource"
-                                                 BindableSortDescriptions="{Binding Path=SortDescriptions}"
-                                                 Source="{Binding Path=TreeData}" />
     </UserControl.Resources>
 
     <UserControl.DataContext>
@@ -202,10 +197,10 @@
                 <VisualState x:Name="Normal" />
                 <VisualState x:Name="DisplayStrategy">
                     <Storyboard>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StrategyList" Storyboard.TargetProperty="(UIElement.Opacity)">
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="_strategyList" Storyboard.TargetProperty="(UIElement.Opacity)">
                             <EasingDoubleKeyFrame KeyTime="0" Value="1" />
                         </DoubleAnimationUsingKeyFrames>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StrategyList" Storyboard.TargetProperty="(FrameworkElement.Height)">
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="_strategyList" Storyboard.TargetProperty="(FrameworkElement.Height)">
                             <EasingDoubleKeyFrame KeyTime="0" Value="300" />
                         </DoubleAnimationUsingKeyFrames>
                     </Storyboard>
@@ -219,21 +214,15 @@
                       Behaviours:ScrollingPreview.VerticalScrollingPreviewTemplate="{DynamicResource ScrollingPreviewTemplate}"
                       BorderThickness="0"
                       ItemContainerStyle="{DynamicResource TreeViewItemStyle}"
-                      ItemsSource="{Binding Source={StaticResource TreeDataSource}}"
+                      ItemsSource="{Binding TreeView}"
                       ItemTemplate="{Binding TreeViewItemTemplate}"
                       VirtualizingStackPanel.IsVirtualizing="True"
                       VirtualizingStackPanel.VirtualizationMode="Recycling" />
 
-            <Controls:ExplorerStrategyList x:Name="StrategyList"
-                                           Grid.Row="0"
-                                           Height="0"
-                                           Margin="11,0,0,0"
-                                           HorizontalAlignment="Left"
-                                           VerticalAlignment="Bottom"
-                                           Opacity="0" />
+            <Controls:ExplorerStrategyList x:Name="_strategyList" Grid.Row="0" Height="0" Margin="11,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Opacity="0" />
 
-            <Grid Grid.Row="1" Margin="15,5,0,0" Behaviours:GridUtils.ColumnDefinitions="Auto,Auto,*,Auto">
-                <Button Grid.Column="0" Margin="3" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=ToggleStrategyDisplay}">
+            <Grid Grid.Row="1" Margin="15,5,0,0" Behaviours:GridUtils.ColumnDefinitions="Auto,Auto,*">
+                <Button Grid.Column="0" Margin="3" Height="23" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=ToggleStrategyDisplay}">
                     <StackPanel Grid.Column="0" VerticalAlignment="Center" Orientation="Horizontal">
                         <TextBlock Foreground="{DynamicResource ControlTextColor}" Text="View" />
                         <TextBlock FontFamily="Webdings" FontSize="16" Foreground="{DynamicResource ControlTextColor}" Text="5" />
@@ -243,7 +232,7 @@
                 <Button Grid.Column="1" Margin="3" Height="23" Style="{StaticResource GeneralButtonStyle}" Content="{StaticResource Path_Configure}"
                             Command="{Binding Path=ConfigureView}" ToolTip="Configure View" />
 
-                <Button Grid.Column="3" Margin="3" Style="{StaticResource GeneralButtonStyle}" Content="Filter" Command="{Binding Filter}"/>
+                <TextBox Grid.Column="2" Margin="15,3,0,3" FontSize="14" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </Grid>
     </GroupBox>

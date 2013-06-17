@@ -21,6 +21,9 @@ namespace Noise.UI.ViewModels {
 		bool						Search( string searchText, IEnumerable<string> searchOptions );
 		void						ClearCurrentSearch();
 
+		bool						FilterItem( UiTreeNode item );
+		string						FilterText { get; set; }
+
 		ArtistAlbumConfigViewModel	ConfigureSortRequest();
 		void						SortRequest( ArtistAlbumConfigViewModel confirmation );
 		bool						CanConfigureViewSort();
