@@ -146,9 +146,7 @@
       <HintPath>..\lib\Microsoft\Reactive Extensions\v1.0.2787.0\System.Reactive.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Caliburn.Micro.1.5.1\lib\net40\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xaml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
@@ -173,7 +171,6 @@
     <Compile Include="Adapters\PlayListNode.cs" />
     <Compile Include="Adapters\SearchViewNode.cs" />
     <Compile Include="Adapters\UserSettingsNotifier.cs" />
-    <Compile Include="Behaviours\BindableCollectionViewSource.cs" />
     <Compile Include="Behaviours\BindablePasswordBox.cs" />
     <Compile Include="Behaviours\CommandReference.cs" />
     <Compile Include="Behaviours\DialogResult.cs" />
