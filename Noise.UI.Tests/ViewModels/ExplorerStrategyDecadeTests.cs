@@ -53,7 +53,7 @@ namespace Noise.UI.Tests.ViewModels {
 			NoiseLogger.Current = new Mock<ILog>().Object;
 
 			// Set the ui dispatcher to run on the current thread.
-			Caliburn.Micro.Execute.ResetWithoutDispatcher();
+			Execute.ResetWithoutDispatcher();
 
 			// Set up the AutoMapper configurations.
 			MappingConfiguration.Configure();
@@ -96,7 +96,6 @@ namespace Noise.UI.Tests.ViewModels {
 		public void BuildTreeShouldReturnDecadeList() {
 			var testable = new TestableExplorerStrategyDecade();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
-			var filter = new Mock<IDatabaseFilter>();
 			var decadeList = new List<DbDecadeTag> { new DbDecadeTag( " one" ), new DbDecadeTag( "two" ) };
 
 			testable.Mock<ITagManager>().Setup( m => m.DecadeTagList ).Returns( decadeList );
@@ -104,7 +103,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 			sut.Initialize( viewModel.Object );
 
-			var uiTagList = sut.BuildTree( filter.Object );
+			var uiTagList = sut.BuildTree();
 
 			Assert.IsNotNull( uiTagList );
 			uiTagList.Should().HaveCount( 2 );
@@ -114,7 +113,6 @@ namespace Noise.UI.Tests.ViewModels {
 		public void ExpandingDecadeNodesShouldPopulateArtists() {
 			var testable = new TestableExplorerStrategyDecade();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
-			var filter = new Mock<IDatabaseFilter>();
 			var decadeList = new List<DbDecadeTag> { new DbDecadeTag( " one" ), new DbDecadeTag( "two" ) };
 
 			testable.Mock<ITagManager>().Setup( m => m.DecadeTagList ).Returns( decadeList );
@@ -129,7 +127,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 			sut.Initialize( viewModel.Object );
 
-			var uiTagList = sut.BuildTree( filter.Object );
+			var uiTagList = sut.BuildTree();
 			var treeNode = uiTagList.First() as UiDecadeTreeNode;
 
 			Assert.IsNotNull( treeNode );
@@ -143,7 +141,6 @@ namespace Noise.UI.Tests.ViewModels {
 		public void ExpandingArtistNodeShouldPopulateAlbums() {
 			var testable = new TestableExplorerStrategyDecade();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
-			var filter = new Mock<IDatabaseFilter>();
 			var decadeList = new List<DbDecadeTag> { new DbDecadeTag( " one" ), new DbDecadeTag( "two" ) };
 
 			testable.Mock<ITagManager>().Setup( m => m.DecadeTagList ).Returns( decadeList );
@@ -165,7 +162,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 			sut.Initialize( viewModel.Object );
 
-			var uiTagList = sut.BuildTree( filter.Object );
+			var uiTagList = sut.BuildTree();
 			var treeNode = uiTagList.First() as UiDecadeTreeNode;
 
 			Assert.IsNotNull( treeNode );
@@ -182,7 +179,6 @@ namespace Noise.UI.Tests.ViewModels {
 		public void SelectingArtistNodeShouldTriggerArtistEvent() {
 			var testable = new TestableExplorerStrategyDecade();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
-			var filter = new Mock<IDatabaseFilter>();
 			var decadeList = new List<DbDecadeTag> { new DbDecadeTag( " one" ), new DbDecadeTag( "two" ) };
 
 			testable.Mock<ITagManager>().Setup( m => m.DecadeTagList ).Returns( decadeList );
@@ -197,7 +193,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 			sut.Initialize( viewModel.Object );
 
-			var uiTagList = sut.BuildTree( filter.Object );
+			var uiTagList = sut.BuildTree();
 			var treeNode = uiTagList.First() as UiDecadeTreeNode;
 
 			Assert.IsNotNull( treeNode );
@@ -215,7 +211,6 @@ namespace Noise.UI.Tests.ViewModels {
 		public void SelectingAlbumNodeShouldTriggerAlbumEvent() {
 			var testable = new TestableExplorerStrategyDecade();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
-			var filter = new Mock<IDatabaseFilter>();
 			var decadeList = new List<DbDecadeTag> { new DbDecadeTag( " one" ), new DbDecadeTag( "two" ) };
 
 			testable.Mock<ITagManager>().Setup( m => m.DecadeTagList ).Returns( decadeList );
@@ -235,7 +230,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 			sut.Initialize( viewModel.Object );
 
-			var uiTagList = sut.BuildTree( filter.Object );
+			var uiTagList = sut.BuildTree();
 			var treeNode = uiTagList.First() as UiDecadeTreeNode;
 
 			Assert.IsNotNull( treeNode );
@@ -258,7 +253,6 @@ namespace Noise.UI.Tests.ViewModels {
 		public void ShouldFormatNamesBasedOnSortPrefixes() {
 			var testable = new TestableExplorerStrategyDecade();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
-			var filter = new Mock<IDatabaseFilter>();
 			var decadeList = new List<DbDecadeTag> { new DbDecadeTag( " one" ), new DbDecadeTag( "two" ) };
 
 			testable.Mock<ITagManager>().Setup( m => m.DecadeTagList ).Returns( decadeList );
@@ -273,7 +267,7 @@ namespace Noise.UI.Tests.ViewModels {
 			sut.Initialize( viewModel.Object );
 			sut.UseSortPrefixes( true, new [] { "the" });
 
-			var uiTagList = sut.BuildTree( filter.Object );
+			var uiTagList = sut.BuildTree();
 			var treeNode = uiTagList.First() as UiDecadeTreeNode;
 
 			Assert.IsNotNull( treeNode );
@@ -290,7 +284,6 @@ namespace Noise.UI.Tests.ViewModels {
 		public void ShouldOnlyFormatNamesStartingWithSortPrefix() {
 			var testable = new TestableExplorerStrategyDecade();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
-			var filter = new Mock<IDatabaseFilter>();
 			var decadeList = new List<DbDecadeTag> { new DbDecadeTag( " one" ), new DbDecadeTag( "two" ) };
 
 			testable.Mock<ITagManager>().Setup( m => m.DecadeTagList ).Returns( decadeList );
@@ -305,7 +298,7 @@ namespace Noise.UI.Tests.ViewModels {
 			sut.Initialize( viewModel.Object );
 			sut.UseSortPrefixes( true, new [] { "the" });
 
-			var uiTagList = sut.BuildTree( filter.Object );
+			var uiTagList = sut.BuildTree();
 			var treeNode = uiTagList.First() as UiDecadeTreeNode;
 
 			Assert.IsNotNull( treeNode );

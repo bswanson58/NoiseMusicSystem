@@ -46,10 +46,6 @@ namespace Noise.RavenDatabase.DataProviders {
 			return( Database.FindAll());
 		}
 
-		public IDataProviderList<DbArtist> GetArtistList( IDatabaseFilter filter ) {
-			return( new RavenDataProviderList<DbArtist>( from artist in Database.FindAll().List where filter.ArtistMatch( artist ) select  artist ));
-		}
-
 		public IDataProviderList<DbArtist> GetChangedArtists( long changedSince ) {
 			return( Database.Find( artist => artist.LastChangeTicks > changedSince ));
 		}

@@ -15,7 +15,7 @@ namespace Noise.UI.ViewModels {
 		void						Activate();
 		void						Deactivate();
 
-		IEnumerable<UiTreeNode>		BuildTree( IDatabaseFilter filter );
+		IEnumerable<UiTreeNode>		BuildTree();
 		IEnumerable<IndexNode>		BuildIndex( IEnumerable<UiTreeNode> artistList );
 
 		bool						Search( string searchText, IEnumerable<string> searchOptions );

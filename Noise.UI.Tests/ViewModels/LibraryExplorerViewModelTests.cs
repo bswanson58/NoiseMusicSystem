@@ -84,7 +84,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var testable = new TestableLibraryExplorerViewModel();
 			testable.Inject( strategy.Object );
 
-			strategy.Setup( m => m.BuildTree( It.IsAny<IDatabaseFilter>())).Returns( new List<UiTreeNode>()).Verifiable();
+			strategy.Setup( m => m.BuildTree()).Returns( new List<UiTreeNode>()).Verifiable();
 
 			var sut = testable.ClassUnderTest;
 			sut.SelectedStrategy = strategy.Object;
@@ -120,7 +120,7 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Inject( strategy.Object );
 
 			var treeNode = new UiTreeNode();
-			strategy.Setup( m => m.BuildTree( It.IsAny<IDatabaseFilter>())).Returns( new List<UiTreeNode> { treeNode });
+			strategy.Setup( m => m.BuildTree()).Returns( new List<UiTreeNode> { treeNode });
 
 			var sut = testable.ClassUnderTest;
 			sut.SelectedStrategy = strategy.Object;

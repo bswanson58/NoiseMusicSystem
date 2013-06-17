@@ -97,18 +97,17 @@ namespace Noise.UI.Tests.ViewModels {
 		public void BuildTreeShouldReturnArtistList() {
 			var testable = new TestableStrategyArtistAlbum();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
-			var filter = new Mock<IDatabaseFilter>();
 			var artistList = new List<DbArtist> { new DbArtist(), new DbArtist(), new DbArtist() };
 			var provider = new Mock<IDataProviderList<DbArtist>>(); 
 
 			provider.Setup( m => m.List ).Returns( artistList );
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( provider.Object );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList()).Returns( provider.Object );
 
 			var sut = testable.ClassUnderTest;
 
 			sut.Initialize( viewModel.Object );
 
-			var uiArtistList = sut.BuildTree( filter.Object );
+			var uiArtistList = sut.BuildTree();
 
 			Assert.IsNotNull( uiArtistList );
 			uiArtistList.Should().HaveCount( 3 );
@@ -118,7 +117,6 @@ namespace Noise.UI.Tests.ViewModels {
 		public void ExpandingNodeShouldPopulateAlbums() {
 			var testable = new TestableStrategyArtistAlbum();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
-			var filter = new Mock<IDatabaseFilter>();
 			var artistList = new List<DbArtist> { new DbArtist() };
 			var albumList = new List<DbAlbum> { new DbAlbum(), new DbAlbum() };
 			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
@@ -127,14 +125,14 @@ namespace Noise.UI.Tests.ViewModels {
 			artistProvider.Setup( m => m.List ).Returns( artistList );
 			albumProvider.Setup( m => m.List ).Returns( albumList );
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( artistProvider.Object );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList()).Returns( artistProvider.Object );
 			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumList( It.IsAny<long>())).Returns( albumProvider.Object );
 
 			var sut = testable.ClassUnderTest;
 
 			sut.Initialize( viewModel.Object );
 
-			var uiArtistList = sut.BuildTree( filter.Object );
+			var uiArtistList = sut.BuildTree();
 			var treeNode = uiArtistList.First() as UiArtistTreeNode;
 
 			Assert.IsNotNull( treeNode );
@@ -148,7 +146,6 @@ namespace Noise.UI.Tests.ViewModels {
 		public void SelectingArtistNodeShouldTriggerArtistEvent() {
 			var testable = new TestableStrategyArtistAlbum();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
-			var filter = new Mock<IDatabaseFilter>();
 			var artistList = new List<DbArtist> { new DbArtist() };
 			var albumList = new List<DbAlbum> { new DbAlbum() };
 			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
@@ -157,7 +154,7 @@ namespace Noise.UI.Tests.ViewModels {
 			artistProvider.Setup( m => m.List ).Returns( artistList );
 			albumProvider.Setup( m => m.List ).Returns( albumList );
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( artistProvider.Object );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList()).Returns( artistProvider.Object );
 			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumList( It.IsAny<long>())).Returns( albumProvider.Object );
 			testable.Mock<IEventAggregator>().Setup( m => m.Publish( It.IsAny<Events.ArtistFocusRequested>())).Verifiable();
 
@@ -165,7 +162,7 @@ namespace Noise.UI.Tests.ViewModels {
 
 			sut.Initialize( viewModel.Object );
 
-			var uiArtistList = sut.BuildTree( filter.Object );
+			var uiArtistList = sut.BuildTree();
 			var treeNode = uiArtistList.First() as UiArtistTreeNode;
 
 			Assert.IsNotNull( treeNode );
@@ -178,7 +175,6 @@ namespace Noise.UI.Tests.ViewModels {
 		public void SelectingAlbumNodeShouldTriggerAlbumEvent() {
 			var testable = new TestableStrategyArtistAlbum();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
-			var filter = new Mock<IDatabaseFilter>();
 			var artistList = new List<DbArtist> { new DbArtist() };
 			var albumList = new List<DbAlbum> { new DbAlbum() };
 			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
@@ -187,7 +183,7 @@ namespace Noise.UI.Tests.ViewModels {
 			artistProvider.Setup( m => m.List ).Returns( artistList );
 			albumProvider.Setup( m => m.List ).Returns( albumList );
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( artistProvider.Object );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList()).Returns( artistProvider.Object );
 			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumList( It.IsAny<long>())).Returns( albumProvider.Object );
 			testable.Mock<IEventAggregator>().Setup( m => m.Publish( It.IsAny<Events.AlbumFocusRequested>())).Verifiable();
 
@@ -195,7 +191,7 @@ namespace Noise.UI.Tests.ViewModels {
 
 			sut.Initialize( viewModel.Object );
 
-			var uiArtistList = sut.BuildTree( filter.Object );
+			var uiArtistList = sut.BuildTree();
 			var treeNode = uiArtistList.First() as UiArtistTreeNode;
 
 			Assert.IsNotNull( treeNode );
@@ -213,19 +209,18 @@ namespace Noise.UI.Tests.ViewModels {
 		public void ShouldFormatNamesBasedOnSortPrefixes() {
 			var testable = new TestableStrategyArtistAlbum();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
-			var filter = new Mock<IDatabaseFilter>();
 			var artistList = new List<DbArtist> { new DbArtist { Name = "The Rolling Stones" }};
 			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
 
 			artistProvider.Setup( m => m.List ).Returns( artistList );
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( artistProvider.Object );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList()).Returns( artistProvider.Object );
 
 			var sut = testable.ClassUnderTest;
 
 			sut.Initialize( viewModel.Object );
 			sut.UseSortPrefixes( true, new [] { "the" });
 
-			var uiArtistList = sut.BuildTree( filter.Object );
+			var uiArtistList = sut.BuildTree();
 			var uiArtist = uiArtistList.First() as UiArtistTreeNode;
 
 			Assert.IsNotNull( uiArtist );
@@ -237,19 +232,18 @@ namespace Noise.UI.Tests.ViewModels {
 		public void ShouldOnlyFormatNamesStartingWithSortPrefix() {
 			var testable = new TestableStrategyArtistAlbum();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
-			var filter = new Mock<IDatabaseFilter>();
 			var artistList = new List<DbArtist> { new DbArtist { Name = "Joan Jett and The Blackhearts" }};
 			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
 
 			artistProvider.Setup( m => m.List ).Returns( artistList );
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( artistProvider.Object );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList()).Returns( artistProvider.Object );
 
 			var sut = testable.ClassUnderTest;
 
 			sut.Initialize( viewModel.Object );
 			sut.UseSortPrefixes( true, new [] { "the" });
 
-			var uiArtistList = sut.BuildTree( filter.Object );
+			var uiArtistList = sut.BuildTree();
 			var uiArtist = uiArtistList.First() as UiArtistTreeNode;
 
 			Assert.IsNotNull( uiArtist );
@@ -262,19 +256,18 @@ namespace Noise.UI.Tests.ViewModels {
 		public void ShouldBuildIndexOfUniqueStartingLetterArtists() {
 			var testable = new TestableStrategyArtistAlbum();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
-			var filter = new Mock<IDatabaseFilter>();
 			var artistList = new List<DbArtist> { new DbArtist { Name = "Joan Jett and The Blackhearts" },
 												  new DbArtist { Name = "Jethro Tull" },
 												  new DbArtist { Name = "The Rolling Stones" }};
 			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
 
 			artistProvider.Setup( m => m.List ).Returns( artistList );
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( artistProvider.Object );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList()).Returns( artistProvider.Object );
 
 			var sut = testable.ClassUnderTest;
 
 			sut.Initialize( viewModel.Object );
-			var uiArtistList = sut.BuildTree( filter.Object );
+			var uiArtistList = sut.BuildTree();
 			var indexList = sut.BuildIndex( uiArtistList );
 
 			Assert.IsNotNull( indexList );
@@ -285,19 +278,18 @@ namespace Noise.UI.Tests.ViewModels {
 		public void IndexShouldObserveSortPrefixes() {
 			var testable = new TestableStrategyArtistAlbum();
 			var viewModel = new Mock<ILibraryExplorerViewModel>();
-			var filter = new Mock<IDatabaseFilter>();
 			var artistList = new List<DbArtist> { new DbArtist { Name = "The Rolling Stones" }};
 			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
 
 			artistProvider.Setup( m => m.List ).Returns( artistList );
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( filter.Object )).Returns( artistProvider.Object );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList()).Returns( artistProvider.Object );
 
 			var sut = testable.ClassUnderTest;
 
 			sut.Initialize( viewModel.Object );
 			sut.UseSortPrefixes( true, new [] { "the" });
 
-			var uiArtistList = sut.BuildTree( filter.Object );
+			var uiArtistList = sut.BuildTree();
 			var indexList = sut.BuildIndex( uiArtistList );
 			var indexNode = indexList.First();
 
@@ -432,14 +424,14 @@ namespace Noise.UI.Tests.ViewModels {
 
 			provider.Setup( m => m.List ).Returns( new List<DbArtist> { artist });
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( It.IsAny<IDatabaseFilter>())).Returns( provider.Object );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList()).Returns( provider.Object );
 
 			var treeData = new BindableCollection<UiTreeNode>();
 			viewModel.Setup( m => m.TreeData ).Returns( treeData );
 			
 			var sut = testable.ClassUnderTest;
 			sut.Initialize( viewModel.Object );
-			treeData.AddRange( sut.BuildTree( null ));
+			treeData.AddRange( sut.BuildTree());
 
 			var treeNode = treeData.First() as UiArtistTreeNode;
 			Assert.IsNotNull( treeNode );
@@ -460,14 +452,14 @@ namespace Noise.UI.Tests.ViewModels {
 			var artistProvider = new Mock<IDataProviderList<DbArtist>>(); 
 
 			artistProvider.Setup( m => m.List ).Returns( new List<DbArtist> { artist });
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList( It.IsAny<IDatabaseFilter>())).Returns( artistProvider.Object );
+			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistList()).Returns( artistProvider.Object );
 
 			var treeData = new BindableCollection<UiTreeNode>();
 			viewModel.Setup( m => m.TreeData ).Returns( treeData );
 			
 			var sut = testable.ClassUnderTest;
 			sut.Initialize( viewModel.Object );
-			treeData.AddRange( sut.BuildTree( null ));
+			treeData.AddRange( sut.BuildTree());
 			treeData.Should().HaveCount( 1 );
 
 			sut.Handle( new Events.ArtistRemoved( artist.DbId ));

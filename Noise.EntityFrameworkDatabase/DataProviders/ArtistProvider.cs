@@ -48,16 +48,6 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			return( GetListShell());
 		}
 
-		public IDataProviderList<DbArtist> GetArtistList( IDatabaseFilter filter ) {
-			IEnumerable<DbArtist>	artistList;
-
-			using( var context = CreateContext()) {
-				artistList = Set( context ).ToList();
-			}
-
-			return( new EfProviderList<DbArtist>( null, artistList.Where( filter.ArtistMatch )));
-		}
-
 		public IDataProviderList<DbArtist> GetChangedArtists( long changedSince ) {
 			var context = CreateContext();
 

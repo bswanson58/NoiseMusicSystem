@@ -18,10 +18,6 @@ using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class ExplorerFilterInfo : InteractionRequestData<LibraryExplorerFilter> {
-		public ExplorerFilterInfo( LibraryExplorerFilter viewModel ) : base( viewModel ) { }
-	}
-
 	internal class ExplorerSortInfo : InteractionRequestData<ArtistAlbumConfigViewModel> {
 		public ExplorerSortInfo( ArtistAlbumConfigViewModel viewModel ) : base( viewModel ) { }
 	}
@@ -37,7 +33,6 @@ namespace Noise.UI.ViewModels {
 		private readonly IDatabaseInfo					mDatabaseInfo;
 		private readonly PlaybackFocusTracker			mFocusTracker;
 		private readonly List<string>					mSearchOptions;
-		private readonly LibraryExplorerFilter			mExplorerFilter;
 		private readonly bool							mEnableSortPrefixes;
 		private readonly List<string>					mSortPrefixes;
 		private TaskHandler								mTreeBuilderTask;
@@ -45,7 +40,6 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<IndexNode>	mIndexItems;
 		private ICollectionView							mTreeView;
 		private readonly List<SortDescription>			mTreeSortDescriptions; 
-		private	readonly InteractionRequest<ExplorerFilterInfo>	mExplorerFiltersEdit;
 		private	readonly InteractionRequest<ExplorerSortInfo>	mExplorerSortRequest;
 
 		public	IEnumerable<IExplorerViewStrategy>		ViewStrategies { get; private set; }
@@ -57,11 +51,9 @@ namespace Noise.UI.ViewModels {
 			ViewStrategies = viewStrategies.ToList();
 			mFocusTracker = focusTracker;
 
-			mExplorerFilter = new LibraryExplorerFilter { IsEnabled = false };
 			mTreeItems = new BindableCollection<UiTreeNode>();
 			mIndexItems = new BindableCollection<IndexNode>();
 			mTreeSortDescriptions = new List<SortDescription>();
-			mExplorerFiltersEdit = new InteractionRequest<ExplorerFilterInfo>();
 			mExplorerSortRequest = new InteractionRequest<ExplorerSortInfo>();
 
 			mSortPrefixes = new List<string>();
@@ -150,7 +142,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private IEnumerable<UiTreeNode> BuildTree() {
-			return( mViewStrategy.BuildTree( mExplorerFilter ));
+			return( mViewStrategy.BuildTree());
 		}
 
 		private void PopulateTree( IEnumerable<UiTreeNode> newNodes ) {
@@ -278,21 +270,6 @@ namespace Noise.UI.ViewModels {
 				Set( () => SearchText, value );
 
 				mViewStrategy.ClearCurrentSearch();
-			}
-		}
-
-		public IInteractionRequest ExplorerFilterRequest {
-			get{ return( mExplorerFiltersEdit ); }
-		}
-
-		public void Execute_Filter() {
-			mExplorerFiltersEdit.Raise( new ExplorerFilterInfo( mExplorerFilter ), OnFiltersEdited );
-		}
-
-		private void OnFiltersEdited( ExplorerFilterInfo confirmation ) {
-			if(( confirmation.Confirmed ) &&
-			   ( mDatabaseInfo.IsOpen )) {
-				UpdateTree();
 			}
 		}
 

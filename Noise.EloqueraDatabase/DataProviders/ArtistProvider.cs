@@ -37,21 +37,6 @@ namespace Noise.EloqueraDatabase.DataProviders {
 			return( TryGetList( "SELECT DbArtist", "Exception - GetArtistList:" ));
 		}
 
-		public IDataProviderList<DbArtist> GetArtistList( IDatabaseFilter filter ) {
-			IDataProviderList<DbArtist>	retValue = null;
-
-			try {
-				using( var artistList = GetList( "SELECT DbArtist" )) {
-					retValue = new EloqueraProviderList<DbArtist>( null, ( from artist in artistList.List where filter.ArtistMatch( artist ) select artist ).ToList());
-				}			
-			}
-			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "", ex );
-			}
-
-			return( retValue );
-		}
-
 		public DbArtist FindArtist( string artistName ) {
 			return( TryGetItem( "SELECT DbArtist WHERE Name = @artistName", new Dictionary<string, object> {{ "artistName", artistName }},
 								"FindArtist:" ));

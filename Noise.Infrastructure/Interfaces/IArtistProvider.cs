@@ -10,7 +10,6 @@ namespace Noise.Infrastructure.Interfaces {
 		DbArtist					FindArtist( string artistName );
 
 		IDataProviderList<DbArtist>	GetArtistList();
-		IDataProviderList<DbArtist>	GetArtistList( IDatabaseFilter filter );
 		IDataProviderList<DbArtist>	GetChangedArtists( long changedSince );
 		IDataProviderList<DbArtist>	GetFavoriteArtists();
 		IDataUpdateShell<DbArtist>	GetArtistForUpdate( long artistId );

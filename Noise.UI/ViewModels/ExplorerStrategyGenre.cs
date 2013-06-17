@@ -166,7 +166,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public IEnumerable<UiTreeNode> BuildTree( IDatabaseFilter filter ) {
+		public IEnumerable<UiTreeNode> BuildTree() {
 			Condition.Requires( mViewModel ).IsNotNull();
 
 			var retValue = new List<UiGenreTreeNode>();

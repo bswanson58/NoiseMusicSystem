@@ -204,12 +204,12 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public IEnumerable<UiTreeNode> BuildTree( IDatabaseFilter filter ) {
+		public IEnumerable<UiTreeNode> BuildTree() {
 			Condition.Requires( mViewModel ).IsNotNull();
 
 			var retValue = new List<UiTreeNode>();
 
-			using( var list = mArtistProvider.GetArtistList( filter )) {
+			using( var list = mArtistProvider.GetArtistList()) {
 				foreach( var artist in list.List ) {
 					AddArtist( retValue, artist );
 				}
