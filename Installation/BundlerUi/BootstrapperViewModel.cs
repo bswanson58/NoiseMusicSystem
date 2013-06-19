@@ -1,14 +1,16 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
 using BundlerUi.Support;
 using Microsoft.Tools.WindowsInstallerXml.Bootstrapper;
+using ErrorEventArgs = Microsoft.Tools.WindowsInstallerXml.Bootstrapper.ErrorEventArgs;
 
 namespace BundlerUi {
 	public class BootstrapperViewModel : PropertyChangedBase {
-		private const string	cPackageNoiseDesktop	= "NoiseDesktop";
-		private const string	cPackageBonjour			= "Bonjour";
-		private const string	cPackageEloquera		= "Eloquera";
+		private const string	cPackageNoise			= "NoisePackage";
 
 		internal class InstallState {
 			public const int	cUnknown				= 0;
@@ -27,25 +29,28 @@ namespace BundlerUi {
 		}
 
 		public	BootstrapperApplication	Bootstrapper { get; private set; }
-		public	bool							InstallEnabled { get; private set; }
-		public	bool							RepairEnabled { get; private set; }
-		public	bool							UninstallEnabled { get; private set; }
-		public	ObservableCollection<string>	PrerequisitesList { get; private set; }
-		public	int								CurrentState { get; private set; }
-		public	string							ExecuteMessage { get; private set; }
-		public	string							ExecuteStatus { get; private set; }
-		public	int								ExecuteProgress { get; private set; }
-		public	bool							HaveUnknownProgress { get; private set; }
-		public	string							ResultMessage { get; private set; }
-		public	string							ResultStatus { get; private set; }
-		public	string							ReleaseVersion { get; private set; }
+		public	bool								InstallEnabled { get; private set; }
+		public	bool								RepairEnabled { get; private set; }
+		public	bool								UninstallEnabled { get; private set; }
+		public	ObservableCollection<string>		PrerequisitesList { get; private set; }
+		public	int									CurrentState { get; private set; }
+		public	string								ExecuteMessage { get; private set; }
+		public	string								ExecuteStatus { get; private set; }
+		public	int									ExecuteProgress { get; private set; }
+		public	bool								HaveUnknownProgress { get; private set; }
+		public	string								ResultMessage { get; private set; }
+		public	string								ResultStatus { get; private set; }
+		public	string								ReleaseVersion { get; private set; }
+		public	string								PackageName { get; private set; }
 
-		private InstallOperation				mInstallOperation;
+		private InstallOperation					mInstallOperation;
+		private readonly Dictionary<string, string>	mPackageNames;
 
 		public BootstrapperViewModel( BootstrapperApp bootstrapper ) {
 			Bootstrapper = bootstrapper;
 
 			PrerequisitesList = new ObservableCollection<string>();
+			mPackageNames = new Dictionary<string, string>();
 			mInstallOperation = InstallOperation.Unknown;
 			ReleaseVersion = Assembly.GetAssembly( GetType()).GetName().Version.ToString();
 
@@ -73,7 +78,39 @@ namespace BundlerUi {
 			SetRepairEnabled( false );
 			SetUninstallEnabled( false );
 
+			LoadPackageData();
 			Bootstrapper.Engine.Detect();
+		}
+
+		private void LoadPackageData() {
+			string folder = Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location );
+
+			if( folder != null ) {
+				var manifestNamespace = (XNamespace)"http://schemas.microsoft.com/wix/2010/BootstrapperApplicationData";
+				var root = XElement.Load( Path.Combine( folder, "BootstrapperApplicationData.xml" ));
+
+				var packages = from pack in root.Elements( manifestNamespace + "WixPackageProperties" ) select pack;
+				foreach( var package in packages ) {
+					var packageId = package.Attribute( "Package" );
+					var name = package.Attribute( "DisplayName" );
+
+					if(( packageId != null ) &&
+					   (!string.IsNullOrWhiteSpace( packageId.Value )) &&
+					   ( name != null ) &&
+					   (!string.IsNullOrWhiteSpace( name.Value ))) {
+						mPackageNames.Add( packageId.Value, name.Value );
+					}
+				}
+
+				var bundleData = root.Elements( manifestNamespace + "WixBundleProperties" ).FirstOrDefault();
+				if( bundleData != null ) {
+					var displayName = bundleData.Attribute( "DisplayName" );
+
+					if( displayName != null ) {
+						PackageName = displayName.Value;
+					}
+				}
+			}
 		}
 
 		private void StartInstall() {
@@ -108,7 +145,7 @@ namespace BundlerUi {
 		/// msupackage) in the WiX bundle.
 		/// </summary>
 		private void OnDetectPackageComplete( object sender, DetectPackageCompleteEventArgs args ) {
-			if( args.PackageId != cPackageNoiseDesktop ) {
+			if( args.PackageId != cPackageNoise ) {
 				if( args.State == PackageState.Absent ) {
 					BootstrapperApp.BootstrapperDispatcher.Invoke( () => PrerequisitesList.Add( GetPackageDisplayName( args.PackageId )));
 				}
@@ -274,15 +311,15 @@ namespace BundlerUi {
 		private void SetOperatingExecutionMessage() {
 			switch( mInstallOperation ) {
 				case InstallOperation.Install:
-					SetExecuteMessage( "Installing The Noise Music System." );
+					SetExecuteMessage( string.Format( "Installing {0}.", PackageName ));
 					break;
 
 				case InstallOperation.Repair:
-					SetExecuteMessage( "Repairing The Noise Music System." );
+					SetExecuteMessage( string.Format( "Repairing {0}.", PackageName ));
 					break;
 
 				case InstallOperation.Uninstall:
-					SetExecuteMessage( "Uninstalling The Noise Music System." );
+					SetExecuteMessage( string.Format( "Uninstalling {0}.", PackageName ));
 					break;
 			}
 		}
@@ -312,18 +349,8 @@ namespace BundlerUi {
 		private string GetPackageDisplayName( string packageId ) {
 			var retValue = packageId;
 
-			switch( packageId ) {
-				case cPackageNoiseDesktop:
-					retValue = "Noise Music System";
-					break;
-
-				case cPackageBonjour:
-					retValue = "Bonjour";
-					break;
-
-				case cPackageEloquera:
-					retValue = "Eloquera Database";
-					break;
+			if( mPackageNames.ContainsKey( packageId )) {
+				retValue = mPackageNames[packageId];
 			}
 
 			return( retValue );

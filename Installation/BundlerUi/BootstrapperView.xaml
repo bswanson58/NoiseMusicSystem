@@ -32,7 +32,10 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Welcome to The Noise Music System!" Margin="10" FontSize="24" HorizontalAlignment="Center" Foreground="#FF588CE0" VerticalAlignment="Top" />
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBlock Text="Welcome to " Margin="0,10" FontSize="24" Foreground="#FF588CE0" VerticalAlignment="Top" />
+            <TextBlock Text="{Binding PackageName}" Margin="0,10" FontSize="24" Foreground="#FF588CE0" VerticalAlignment="Top" />
+        </StackPanel>
 
         <Grid Grid.Row="1" Visibility="{Binding CurrentState, Converter={StaticResource ShowIfPrerequisitesInstalled}}">
             <Grid.RowDefinitions>
@@ -43,7 +46,9 @@
 
             <StackPanel Grid.Row="1" Margin="17,0" Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="This setup will install The Noise Music System v"/>
+                    <TextBlock Text="This setup will install "/>
+                    <TextBlock Text="{Binding PackageName}"/>
+                    <TextBlock Text=" v"/>
                     <TextBlock Text="{Binding ReleaseVersion}"/>
                     <TextBlock Text=" on your computer."/>
                 </StackPanel>
@@ -60,7 +65,9 @@
             
             <StackPanel Grid.Row="1" Orientation="Vertical" Margin="11,0">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="This setup will install The Noise Music System v"/>
+                    <TextBlock Text="This setup will install "/>
+                    <TextBlock Text="{Binding PackageName}"/>
+                    <TextBlock Text=" v"/>
                     <TextBlock Text="{Binding ReleaseVersion}"/>
                     <TextBlock Text=" on your computer."/>
                 </StackPanel>
@@ -78,7 +85,8 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="1" Orientation="Vertical" Margin="11,0">
-                <TextBlock Margin="17,0" Text="The Noise Music System is currently installed."/>
+                <TextBlock Text="{Binding PackageName}"/>
+                <TextBlock Margin="17,0" Text=" is currently installed."/>
                 <TextBlock Margin="21,0" Text="You may press 'Uninstall' to remove it."/>
             </StackPanel>
         </Grid>
