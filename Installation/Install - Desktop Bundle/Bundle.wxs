@@ -28,6 +28,7 @@
     <PayloadGroup Id ="BundlerPayload">
       <Payload SourceFile="$(var.BundlerUi.TargetPath)"/>
       <Payload SourceFile="$(var.BundlerUi.TargetDir)BootstrapperCore.config" />
+      <Payload SourceFile="$(var.BundlerUi.TargetDir)ReusableBits.Ui.dll" />
     </PayloadGroup>
   </Fragment>
 
