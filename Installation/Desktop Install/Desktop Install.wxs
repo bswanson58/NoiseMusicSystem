@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<?define BaseRegistryKey="Software\Secret Squirrel Software"?>
+	
+	<?include ..\Common Files\Version.wxi?>
+	
 	<?define ShortcutRegistryKey="$(var.BaseRegistryKey)\$(var.Noise.Desktop.Platform)\NoiseDesktop"?>
 	
-	<!-- Product Upgrade ID: do not change -->
-	<?define ProductUpgradeCode="68F51362-142C-49D7-A702-1BCB7E933C3D"?>
-
-	<!-- To upgrade: Update the ProductVersion below to the next release -->
-	<?define ProductVersion=0.9.0.0?>
-
 	<Product Id="*"
 					 Name="Noise Desktop Install"
 					 Language="1033"
 					 Version="$(var.ProductVersion)"
-					 Manufacturer="Secret Squirrel Software"
+					 Manufacturer="$(var.Manufacturer)"
 					 UpgradeCode="$(var.ProductUpgradeCode)">
 		<Package InstallerVersion="200" 
 						 Platform="$(var.Noise.Desktop.Platform)"

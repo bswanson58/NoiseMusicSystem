@@ -2,13 +2,16 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  
+  <?include ..\Common Files\Version.wxi?>
+  
   <Bundle Name="The Noise Music System"
-          Version="0.9.0.0"
-          UpgradeCode="68F51362-142C-49D7-A702-1BCB7E933C3D"
-          Manufacturer="Secret Squirrel Software"
-          Copyright="Copyright© 2013, Secret Squirrel Software"
+          Version="$(var.ProductVersion)"
+          UpgradeCode="$(var.ProductUpgradeCode)"
+          Manufacturer="$(var.Manufacturer)"
+          Copyright="$(var.Copyright)"
           IconSourceFile="..\..\Common\Noise.ico"
-          AboutUrl="http://www.surroundedbybraces.com"
+          AboutUrl="$(var.CompanyUrl)"
           >
     <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
       <PayloadGroupRef Id ="BundlerPayload" />

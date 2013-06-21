@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+	<?include ..\Common Files\Version.wxi?>
+
 	<Fragment>
 		<WixVariable Id="WixUILicenseRtf" Value="..\Resources\license.rtf" />
 		<WixVariable Id="WixUIBannerBmp" Value="..\Resources\InstallTopBannerLogo.bmp" />
@@ -13,11 +16,11 @@
 		</UI>
 
 		<!-- Set up ARP properties -->
-		<Property Id="ARPCONTACT" Value="http://www.secretsquirrel.com/nobodyshome.htm" />
-		<Property Id="ARPHELPLINK" Value="http://www.secretsquirrel.com" />
+		<Property Id="ARPCONTACT" Value="$(var.CompanyUrl)" />
+		<Property Id="ARPHELPLINK" Value="$(var.CompanyUrl)" />
 		<Property Id="ARPHELPTELEPHONE" Value="+1.800.123.8700" />
-		<Property Id="ARPURLINFOABOUT" Value="http://www.secretsquirrel.com/productinfo.htm" />
-		<Property Id="ARPURLUPDATEINFO" Value="http://www.secretsquirrel.com/updateinfo.htm" />
+		<Property Id="ARPURLINFOABOUT" Value="$(var.CompanyUrl)" />
+		<Property Id="ARPURLUPDATEINFO" Value="$(var.CompanyUrl)" />
 		<CustomAction Id="SetARPINSTALLLOCATION" Property="ARPINSTALLLOCATION" Value="[INSTALLDIRECTORY]" />
 		<InstallExecuteSequence>
 			<Custom Action="SetARPINSTALLLOCATION" After="InstallValidate" />
