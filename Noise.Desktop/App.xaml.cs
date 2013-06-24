@@ -18,6 +18,13 @@ namespace Noise.Desktop {
 			AppDomain.CurrentDomain.UnhandledException +=CurrentDomainUnhandledException;
 			TaskScheduler.UnobservedTaskException += TaskSchedulerUnobservedTaskException;
 
+#if !DEBUG
+			var profileDirectory = System.IO.Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName );
+
+			System.Runtime.ProfileOptimization.SetProfileRoot( profileDirectory );
+			System.Runtime.ProfileOptimization.StartProfile( "Noise Desktop Startup.Profile" );
+#endif
+
 			mBootstrapper = new Bootstrapper();
 			mBootstrapper.Run();
 		}
