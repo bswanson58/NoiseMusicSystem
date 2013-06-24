@@ -3,10 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" mc:Ignorable="d"
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             mc:Ignorable="d"
              Tag="Favorites"
              DataContext="{Binding FavoritesViewModel, Source={StaticResource ViewModelLocator}}"
              d:DesignHeight="300" d:DesignWidth="300">
+    
+    <UserControl.Resources>
+        <ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
+            <Grid Margin="5,35,5,0">
+                <TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="what!? you have no favorites???" />
+            </Grid>
+        </ControlTemplate>
+    </UserControl.Resources>
 
     <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Favorites ">
         <Grid>
@@ -36,6 +47,9 @@
                         <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Title}" Behaviours:GridViewSort.PropertyName="Title"/>
                     </GridView>
                 </ListView.View>
+                <i:Interaction.Behaviors>
+                    <ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
+                </i:Interaction.Behaviors>
             </ListView>
             
             <Grid Grid.Row="1" Margin="3">
