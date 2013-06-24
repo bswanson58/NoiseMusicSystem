@@ -18,7 +18,7 @@
                                                      DialogService="{Binding Source={StaticResource DialogService}}"
                                                      InteractionRequest="{Binding Path=LibraryConfigurationRequest}" />
     </i:Interaction.Behaviors>
-   
+
     <GroupBox Margin="3,0,5,0"  Style="{StaticResource SectionBorderStyle}" Header=" Libraries ">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -29,8 +29,32 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Column="0" Margin="7,0,3,0" VerticalAlignment="Center" Text="Active Library:"/>
-            <ComboBox Grid.Column="1" Margin="3" HorizontalAlignment="Stretch" Height="25"
-                      ItemsSource="{Binding LibraryList}" SelectedItem="{Binding CurrentLibrary}" DisplayMemberPath="LibraryName" />
+
+            <ContentControl Grid.Column="1" Margin="3" HorizontalAlignment="Stretch" Height="25" Content="{Binding LibraryList}">
+                <ContentControl.ContentTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <ComboBox x:Name="combo" 
+                                      SelectedItem="{Binding DataContext.CurrentLibrary, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl }}}" 
+                                      DisplayMemberPath="LibraryName" ItemsSource="{Binding}"/>
+                            <TextBlock x:Name="prompt_select" VerticalAlignment="Center" Margin="17,0" Foreground="Red" FontStyle="Italic" IsHitTestVisible="False" Visibility="Hidden" 
+                                       Text="Please select a music library..." />
+                            <TextBlock x:Name="prompt_configure" VerticalAlignment="Center" Margin="17,0" Foreground="Red" FontStyle="Italic" IsHitTestVisible="False" Visibility="Hidden" 
+                                       Text="Please configure a music library..." />
+                        </Grid>
+                        <DataTemplate.Triggers>
+                            <Trigger SourceName="combo" Property="SelectedIndex" Value="-1">
+                                <Setter TargetName="prompt_select" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger SourceName="combo" Property="HasItems" Value="False">
+                                <Setter TargetName="prompt_configure" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="prompt_select" Property="Visibility" Value="Hidden"/>
+                            </Trigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+
             <Button Grid.Column="2" Height="25" Width="25" Margin="2,3" Padding="1" Foreground="{StaticResource ControlTextColor}" ToolTip="Sync Library"
                     Command="{Binding Path=UpdateLibrary}" Content="{StaticResource Path_Sync}"/>
             <Button Grid.Column="3" Height="25" Width="25" Margin="2,3" Foreground="{StaticResource ControlTextColor}" ToolTip="Configure Libraries"
