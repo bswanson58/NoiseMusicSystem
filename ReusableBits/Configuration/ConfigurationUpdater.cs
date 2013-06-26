@@ -8,40 +8,7 @@ using System.Text;
 using System.Xml;
 
 // from: http://stackoverflow.com/questions/1599945/how-do-you-upgrade-settings-settings-when-the-stored-data-type-changes
-
 namespace ReusableBits.Configuration {
-	internal static class ExtensionMethods {
-		public static XmlNode AppendNewElement( this XmlNode element, string name ) {
-			return AppendNewElement( element, name, null );
-		}
-
-		public static XmlNode AppendNewElement( this XmlNode element, string name, string value ) {
-			var doc = element.OwnerDocument ?? (XmlDocument)element;
-			var addedElement = doc.CreateElement( name );
-
-			if( value != null ) {
-				addedElement.InnerText = value;
-			}
-
-			element.AppendChild( addedElement );
-
-			return addedElement;
-		}
-
-		public static XmlNode AppendNewAttribute( this XmlNode element, string name, string value ) {
-			if(( element != null ) &&
-			   ( element.Attributes != null ) &&
-			   ( element.OwnerDocument != null )) {
-				var attr = element.OwnerDocument.CreateAttribute( name );
-
-				attr.Value = value;
-				element.Attributes.Append( attr );
-			}
-
-			return element;
-		}
-	}
-
 	public static class ConfigurationUpdater {
 		public static void UpdateConfiguration( Assembly forAssembly ) {
 			UpdateConfiguration( forAssembly, null );
