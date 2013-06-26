@@ -9,6 +9,7 @@ using Noise.AppSupport;
 using Noise.AppSupport.FeatureToggles;
 using Noise.Desktop.Properties;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata;
 using Noise.UI.Support;
@@ -26,7 +27,9 @@ namespace Noise.Desktop {
 		public override void Run( bool runWithDefaultConfiguration ) {
 			if(!Settings.Default.UpgradePerformed ) {
 				try {
-					ConfigurationUpdater.UpdateConfiguration( Assembly.GetExecutingAssembly());
+					var configUpgrader = new ConfigurationUpgrades();
+
+					ConfigurationUpdater.UpdateConfiguration( Assembly.GetExecutingAssembly(), configUpgrader );
 
 					Settings.Default.Reload();
 					Settings.Default.UpgradePerformed = true;

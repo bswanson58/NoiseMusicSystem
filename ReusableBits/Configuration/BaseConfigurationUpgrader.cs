@@ -9,11 +9,11 @@ namespace ReusableBits.Configuration {
 	}
 
 	/// <summary>
-	/// This class should be derived and have added methods named to facilitate updates from various past versions.
+	/// This class should be derived and have added static methods named to facilitate updates from various past versions.
 	/// Each appropriate upgrade method from the old version to the current version will be called successively.
 	/// 
 	/// An example method might be:
-	///		private void UpgradeFrom_0_9_0_0( XmlElement userSettings ) {
+	///		private static void UpgradeFrom_0_9_0_0( XmlElement userSettings ) {
 	///			var savedSearches = userSettings.SelectNodes( "//SavedSearch" );
 	///
 	///			foreach( XmlElement savedSearch in savedSearches ) {
@@ -38,7 +38,7 @@ namespace ReusableBits.Configuration {
 			if( oldSettingsVersion < MinimumVersion )
 				throw new Exception( "The minimum required version for upgrade is " + MinimumVersion );
 
-			var upgradeMethods = from method in GetType().GetMethods( BindingFlags.NonPublic )
+			var upgradeMethods = from method in GetType().GetMethods( BindingFlags.Static | BindingFlags.NonPublic )
 								 where method.Name.StartsWith( "UpgradeFrom_" )
 								 let methodVer = new { Version = new Version( method.Name.Substring( 12 ).Replace( '_', '.' ) ), Method = method }
 								 where methodVer.Version >= oldSettingsVersion && methodVer.Version < currentVersion
