@@ -112,6 +112,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\BaseConfigurationUpgrader.cs" />
+    <Compile Include="Configuration\ConfigurationUpdater.cs" />
     <Compile Include="FeatureToggle\AlwaysOffFeatureToggle.cs" />
     <Compile Include="FeatureToggle\AlwaysOnFeatureToggle.cs" />
     <Compile Include="FeatureToggle\AppSettingsKeys.cs" />

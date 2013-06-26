@@ -3,8 +3,8 @@ using System.Configuration;
 
 namespace Noise.Infrastructure.Configuration {
 	public class NoiseSystemConfiguration : ISystemConfiguration {
-		private static ISystemConfiguration	mDefaultConfiguration = new NoiseSystemConfiguration();
-		private static ISystemConfiguration	mCurrent;
+		private static readonly ISystemConfiguration		mDefaultConfiguration = new NoiseSystemConfiguration();
+		private static ISystemConfiguration					mCurrent;
 
 		private readonly System.Configuration.Configuration	mConfiguration;
 
@@ -20,7 +20,7 @@ namespace Noise.Infrastructure.Configuration {
 		public T RetrieveConfiguration<T>( string sectionName ) {
 			object section = mConfiguration.GetSection( sectionName );
 
-			return((T)section);
+			return((T)section );
 		}
 
 		public void Save( ConfigurationSection section ) {
