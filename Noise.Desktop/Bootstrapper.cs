@@ -34,6 +34,8 @@ namespace Noise.Desktop {
 					Settings.Default.Reload();
 					Settings.Default.UpgradePerformed = true;
 					Settings.Default.Save();
+
+					NoiseLogger.Current.LogMessage( "The user configuration settings were updated." );
 				}
 				catch( Exception ex ) {
 					NoiseLogger.Current.LogException( ex );
