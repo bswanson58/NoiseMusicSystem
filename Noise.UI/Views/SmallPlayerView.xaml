@@ -98,8 +98,16 @@
                         <TextBlock Grid.Row="0" Margin="7,5" Visibility="{Binding TrackName, Converter={StaticResource CollapseIfEmptyString}}" 
                                    Text="Play Something!" FontSize="18" />
 
-                        <TextBlock VerticalAlignment="Bottom" FontSize="18" FontWeight="Bold" Text="{Binding TrackName}"/>
-                        <TextBlock Margin="0,0,0,1" VerticalAlignment="Bottom" FontSize="14" Text="{Binding AlbumName}"
+                        <TextBlock VerticalAlignment="Bottom" FontSize="18" FontWeight="Bold"
+                                   ReusableBehaviours:FadedPropertyChange.Property="Text"
+                                   ReusableBehaviours:FadedPropertyChange.Duration="0:0:0.7"
+                                   ReusableBehaviours:FadedPropertyChange.TransitionDelay="0:0:0.3"
+                                   ReusableBehaviours:FadedPropertyChange.Binding="{Binding TrackName}"/>
+                        <TextBlock Margin="0,0,0,1" VerticalAlignment="Bottom" FontSize="14"
+                                   ReusableBehaviours:FadedPropertyChange.Property="Text"
+                                   ReusableBehaviours:FadedPropertyChange.Duration="0:0:0.7"
+                                   ReusableBehaviours:FadedPropertyChange.TransitionDelay="0:0:0.3"
+                                   ReusableBehaviours:FadedPropertyChange.Binding="{Binding AlbumName}"
                                    ReusableBehaviours:FadeTrimming.IsEnabled="True"
                                    ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
                     </StackPanel>
