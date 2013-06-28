@@ -131,8 +131,9 @@ namespace Noise.UI.ViewModels {
 			}
 
 			if( retValue.Any()) {
-				var maximumDate = DateTime.Now.Ticks;
-				var minimumDate = retValue.Min( node => node.Album.DateAddedTicks );
+				var maximumDate = DateTime.Now.Date.Ticks;
+				// Make sure the minimum is at least 7 days old.
+				var minimumDate = Math.Min( retValue.Min( node => node.Album.DateAddedTicks ), ( DateTime.Now - new TimeSpan( 7, 0, 0, 0 )).Ticks );
 
 				foreach( var node in retValue ) {
 					node.RelativeAge = (double)( node.Album.DateAddedTicks - minimumDate ) / ( maximumDate - minimumDate );

@@ -40,7 +40,7 @@ namespace ReusableBits.Ui.ValueConverters {
 		}
 
 		public object Convert( object value, Type targetType, object parameter, CultureInfo culture ) {
-			var retValue = MinimumOutput;
+			var retValue = MaximumOutput;
 
 			if( value != null ) {
 				try {
