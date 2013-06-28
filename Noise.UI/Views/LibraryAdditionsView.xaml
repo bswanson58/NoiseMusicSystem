@@ -10,11 +10,11 @@
              xmlns:Behaviours1="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              DataContext="{Binding LibraryAdditionsViewModel, Source={StaticResource ViewModelLocator}}"
              Tag="What's New"
-             ToolTip="{Binding DisplayMarker}"
+             AllowDrop="{Binding DisplayMarker}"
              Behaviours1:ViewDisplayedNotifier.NotifyCommand="{Binding ViewDisplayed}"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-            <!-- The ToolTip property is used to hold the boolean flag for displaying the marker on the TabItem header -->
+            <!-- The AllowDrop property is used to hold the boolean flag for displaying the marker on the TabItem header -->
     
     <Control.Resources>
         <Style x:Key="TreeViewItemFocusVisual">

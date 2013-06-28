@@ -117,7 +117,7 @@
 						<Trigger Property="IsEnabled" Value="false">
 							<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
 						</Trigger>
-						<DataTrigger Binding="{Binding Content.ToolTip, RelativeSource={RelativeSource Self}}" Value="True">
+						<DataTrigger Binding="{Binding Content.AllowDrop, RelativeSource={RelativeSource Self}}" Value="True">
 							<Setter TargetName="Marker" Property="Visibility" Value="Visible"/>
 						</DataTrigger>
 					</ControlTemplate.Triggers>
