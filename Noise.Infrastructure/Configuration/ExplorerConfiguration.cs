@@ -91,7 +91,7 @@ namespace Noise.Infrastructure.Configuration {
 			set { base[cNewAdditionsHorizonDaysProperty] = value; }
 		}
 
-		[ConfigurationPropertyAttribute( cNewAdditionsHorizonCountProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = (UInt32)1000 )]
+		[ConfigurationPropertyAttribute( cNewAdditionsHorizonCountProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = (UInt32)500 )]
 		public UInt32 NewAdditionsHorizonCount {
 			get { return ((UInt32)( base[cNewAdditionsHorizonCountProperty] ) ); }
 			set { base[cNewAdditionsHorizonCountProperty] = value; }
