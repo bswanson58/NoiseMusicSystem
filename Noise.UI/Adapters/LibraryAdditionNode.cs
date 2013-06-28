@@ -10,6 +10,7 @@ namespace Noise.UI.Adapters {
 		public	DbArtist		Artist { get; private set; }
 		public	DbAlbum			Album { get; private set; }
 		public	List<UiTrack>	TrackList { get; private set; }
+		public	double			RelativeAge { get; set; }
 		private readonly Action<LibraryAdditionNode>	mAlbumPlayAction;
 		private readonly Action<long>					mTrackPlayAction;
 		private readonly Action<LibraryAdditionNode>	mAlbumSelectAction;

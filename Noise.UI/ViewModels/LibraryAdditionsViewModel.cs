@@ -32,7 +32,7 @@ namespace Noise.UI.ViewModels {
 
 			mNodeList = new BindableCollection<LibraryAdditionNode>();
 
-			mHorizonCount = 1000;
+			mHorizonCount = 200;
 			mHorizonTime = DateTime.Now - new TimeSpan( 90, 0, 0, 0 );
 
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
@@ -126,7 +126,14 @@ namespace Noise.UI.ViewModels {
 				}
 			}
 
-			return( from LibraryAdditionNode node in retValue orderby node.Artist.Name + node.Album.Name ascending select node );
+			var maximumDate = DateTime.Now.Ticks;
+			var minimumDate = retValue.Min( node => node.Album.DateAddedTicks );
+
+			foreach( var node in retValue ) {
+				node.RelativeAge = (double)( node.Album.DateAddedTicks - minimumDate ) / ( maximumDate - minimumDate );
+			}
+
+			return( retValue );
 		}
 
 		public BindableCollection<LibraryAdditionNode> NodeList {
