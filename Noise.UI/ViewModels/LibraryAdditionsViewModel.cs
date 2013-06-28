@@ -6,12 +6,12 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using ReusableBits;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class LibraryAdditionsViewModel : ViewModelBase,
+	public class LibraryAdditionsViewModel : AutomaticCommandBase,
 											 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>,
 											 IHandle<Events.LibraryUpdateCompleted> {
 		private readonly IEventAggregator		mEventAggregator;
@@ -74,6 +74,10 @@ namespace Noise.UI.ViewModels {
 
 		public void Handle( Events.LibraryUpdateCompleted eventArgs ) {
 			RetrieveWhatsNew();
+
+			if( eventArgs.Summary.TracksAdded > 0 ) {
+				DisplayMarker = true;
+			}
 		}
 
 		private void UpdateList( IEnumerable<LibraryAdditionNode> list ) {
@@ -126,11 +130,13 @@ namespace Noise.UI.ViewModels {
 				}
 			}
 
-			var maximumDate = DateTime.Now.Ticks;
-			var minimumDate = retValue.Min( node => node.Album.DateAddedTicks );
+			if( retValue.Any()) {
+				var maximumDate = DateTime.Now.Ticks;
+				var minimumDate = retValue.Min( node => node.Album.DateAddedTicks );
 
-			foreach( var node in retValue ) {
-				node.RelativeAge = (double)( node.Album.DateAddedTicks - minimumDate ) / ( maximumDate - minimumDate );
+				foreach( var node in retValue ) {
+					node.RelativeAge = (double)( node.Album.DateAddedTicks - minimumDate ) / ( maximumDate - minimumDate );
+				}
 			}
 
 			return( retValue );
@@ -155,6 +161,15 @@ namespace Noise.UI.ViewModels {
 
 		private void OnTrackPlayRequested( long trackId ) {
 			GlobalCommands.PlayTrack.Execute( mTrackProvider.GetTrack( trackId ));
+		}
+
+		public bool DisplayMarker {
+			get{ return( Get( () => DisplayMarker )); }
+			set{ Set( () => DisplayMarker, value ); }
+		}
+
+		public void Execute_ViewDisplayed( bool state ) {
+			DisplayMarker = false;
 		}
 	}
 }

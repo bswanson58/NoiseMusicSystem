@@ -235,10 +235,10 @@ namespace Noise.Infrastructure {
 		}
 
 		public class LibraryUpdateCompleted {
-			public	long	LibraryId { get; private set; }
+			public	DatabaseChangeSummary	Summary { get; private set; }
 
-			public LibraryUpdateCompleted( long libraryId ) {
-				LibraryId = libraryId;
+			public LibraryUpdateCompleted( DatabaseChangeSummary summary ) {
+				Summary = summary;
 			}
 		}
 

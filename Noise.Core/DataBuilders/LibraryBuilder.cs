@@ -129,8 +129,9 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		private void UpdateLibrary( object state ) {
-			mContinueExploring = true;
+			var results = new DatabaseChangeSummary();
 
+			mContinueExploring = true;
 			LibraryUpdateInProgress = true;
 
 			try {
@@ -141,7 +142,6 @@ namespace Noise.Core.DataBuilders {
 						mFolderExplorer.SynchronizeDatabaseFolders();
 					}
 
-					var results = new DatabaseChangeSummary();
 					if( mContinueExploring ) {
 						mMetaDataCleaner.CleanDatabase( results );
 					}
@@ -174,7 +174,7 @@ namespace Noise.Core.DataBuilders {
 				LibraryUpdateInProgress = false;
 			}
 
-			mEventAggregator.Publish( new Events.LibraryUpdateCompleted( 0L ));
+			mEventAggregator.Publish( new Events.LibraryUpdateCompleted( results ));
 		}
 
 		public void LogLibraryStatistics() {

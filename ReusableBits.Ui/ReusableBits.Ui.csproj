@@ -113,6 +113,7 @@
     <Compile Include="Behaviours\MouseHideBehavior.cs" />
     <Compile Include="Behaviours\TriggerTrace.cs" />
     <Compile Include="Behaviours\ViewAttachedNotifier.cs" />
+    <Compile Include="Behaviours\ViewDisplayedNotifier.cs" />
     <Compile Include="Behaviours\VisualStateAdapter.cs" />
     <Compile Include="Controls\ClipToBounds.cs" />
     <Compile Include="Controls\StatusMessage.cs" />
