@@ -111,6 +111,7 @@
     <Compile Include="Behaviours\GridLengthAnimation.cs" />
     <Compile Include="Behaviours\ListBoxSelectionVisible.cs" />
     <Compile Include="Behaviours\MouseHideBehavior.cs" />
+    <Compile Include="Behaviours\TriggerTrace.cs" />
     <Compile Include="Behaviours\ViewAttachedNotifier.cs" />
     <Compile Include="Behaviours\VisualStateAdapter.cs" />
     <Compile Include="Controls\ClipToBounds.cs" />
