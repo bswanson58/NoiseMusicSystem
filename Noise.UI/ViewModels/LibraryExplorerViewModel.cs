@@ -94,7 +94,9 @@ namespace Noise.UI.ViewModels {
 		}
 		
 		public void Handle( Events.DatabaseClosing args ) {
-			DeactivateStrategy();	
+			DeactivateStrategy();
+
+			Execute.OnUIThread( () => FilterText = string.Empty );
 		}
 
 		private void DeactivateStrategy() {
@@ -229,6 +231,8 @@ namespace Noise.UI.ViewModels {
 				if( mTreeView != null ) {
 					mTreeView.Refresh();
 				}
+
+				RaisePropertyChanged( () => FilterText );
 			}
 		}
 
