@@ -37,7 +37,7 @@ namespace Noise.UI.Behaviours.EventCommandTriggers {
 			EventArgs = eventArgs;
 		}
 
-		public static EventCommandParameter<TCustomParameter, TEventArgs> Cast( object parameter ) {
+		public new static EventCommandParameter<TCustomParameter, TEventArgs> Cast( object parameter ) {
 			var parameterToCast = parameter as EventCommandParameter<object, RoutedEventArgs>;
 			if( parameterToCast == null ) {
 				throw new InvalidCastException( string.Format( "Failed to case {0} to {1}",
@@ -66,7 +66,7 @@ namespace Noise.UI.Behaviours.EventCommandTriggers {
 			Value = value;
 		}
 
-		public static PropertyCommandParameter<TCustomParameter, TValue> Cast( object parameter ) {
+		public new static PropertyCommandParameter<TCustomParameter, TValue> Cast( object parameter ) {
 			var parameterToCast = parameter as PropertyCommandParameter<object, object>;
 			if( parameterToCast == null ) {
 				throw new InvalidCastException( string.Format( "Failed to case {0} to {1}",
