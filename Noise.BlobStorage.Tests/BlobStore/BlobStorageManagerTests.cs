@@ -11,7 +11,6 @@ namespace Noise.BlobStorage.Tests.BlobStore {
 	public class BlobStorageManagerTests {
 		private	Mock<IBlobStorageResolver>	mBlobResolver;
 		private IBlobStorageManager			mStorageManager;
-		private string						mStorageName;
 
 		private IBlobStorageManager CreateSut() {
 			var blobStoragePath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName );
