@@ -26,12 +26,14 @@ namespace Noise.Infrastructure.Support {
 					while(!stream.EndOfStream ) {
 						var line = stream.ReadLine();
 
-						if( line.Contains( "======" )) {
-							mLogText.Clear();
-						}
-						else {
-							mLogText.Append( line );
-							mLogText.AppendLine();
+						if( line != null ) {
+							if( line.Contains( "======" )) {
+								mLogText.Clear();
+							}
+							else {
+								mLogText.Append( line );
+								mLogText.AppendLine();
+							}
 						}
 					}
 
@@ -40,8 +42,8 @@ namespace Noise.Infrastructure.Support {
 					retValue = true;
 				}
 			}
-			catch( Exception ex ) {
-				
+			catch( Exception ) {
+				retValue = false;
 			}
 
 			return( retValue );
