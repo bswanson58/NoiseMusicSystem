@@ -26,7 +26,7 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<string>		mBandMembers;
 		private readonly BindableCollection<DbDiscographyRelease>	mDiscography;
 
-		public	event	EventHandler					IsActiveChanged;
+		public	event	EventHandler					IsActiveChanged = delegate { };
 
 		public ArtistInfoViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IMetadataManager metadataManager ) {
 			mEventAggregator = eventAggregator;
@@ -46,7 +46,11 @@ namespace Noise.UI.ViewModels {
 
 		public bool IsActive {
 			get{ return( Get( () => IsActive )); }
-			set{ Set( () => IsActive, value ); }
+			set{ 
+				Set( () => IsActive, value );
+
+				IsActiveChanged( this, new EventArgs());
+			}
 		}
 
 		private void ClearCurrentArtist() {

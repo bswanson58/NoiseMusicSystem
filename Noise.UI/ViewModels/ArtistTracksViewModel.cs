@@ -24,7 +24,7 @@ namespace Noise.UI.ViewModels {
 		private	bool						mIsActive;
 		private TaskHandler<IEnumerable<UiArtistTrackNode>>	mUpdateTask;
 
-		public	event EventHandler			IsActiveChanged;
+		public	event EventHandler			IsActiveChanged = delegate { };
 		public	BindableCollection<UiArtistTrackNode>	TrackList { get; private set; }
 
 		public ArtistTracksViewModel( IEventAggregator eventAggregator,
@@ -52,6 +52,8 @@ namespace Noise.UI.ViewModels {
 				else {
 					TrackList.Clear();
 				}
+
+				IsActiveChanged( this, new EventArgs());
 			}
 		}
 
