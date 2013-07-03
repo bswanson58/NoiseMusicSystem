@@ -112,6 +112,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Caliburn.Micro.1.5.1\lib\net40\Caliburn.Micro.dll</HintPath>
     </Reference>
+    <Reference Include="Interop.Bonjour">
+      <HintPath>..\lib\Apple Bonjour\v2.0.2\Interop.Bonjour.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.Practices.Prism, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Prism.4.1.0.0\lib\NET40\Microsoft.Practices.Prism.dll</HintPath>
@@ -149,17 +153,6 @@
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="Bonjour">
-      <Guid>{18FBED6D-F2B7-4EC8-A4A4-46282E635308}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
