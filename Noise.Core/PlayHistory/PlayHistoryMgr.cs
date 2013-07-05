@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using Noise.Core.Database;
 using Noise.Infrastructure;
@@ -14,13 +15,17 @@ namespace Noise.Core.PlayHistory {
 
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IPlayHistoryProvider	mPlayHistoryProvider;
+		private readonly IArtistProvider		mArtistProvider;
+		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
 		private DatabaseCache<DbPlayHistory>	mPlayHistory;
 
-		public PlayHistoryMgr( IEventAggregator eventAggregator,
-							   IPlayHistoryProvider playHistoryProvider, ITrackProvider trackProvider ) {
+		public PlayHistoryMgr( IEventAggregator eventAggregator, IPlayHistoryProvider playHistoryProvider,
+							   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
 			mEventAggregator = eventAggregator;
 			mPlayHistoryProvider = playHistoryProvider;
+			mArtistProvider = artistProvider;
+			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mPlayHistory = new DatabaseCache<DbPlayHistory>( null );
 
@@ -46,7 +51,15 @@ namespace Noise.Core.PlayHistory {
 
 		public void Shutdown() { }
 
-		public void TrackPlayCompleted( PlayQueueTrack track ) {
+		public Task TrackPlayCompleted( PlayQueueTrack track ) {
+			var retValue = new Task( () => UpdatePlayHistory( track ));
+
+			retValue.Start();
+
+			return( retValue );
+		}
+
+		private void UpdatePlayHistory( PlayQueueTrack track ) {
 			if( track.PercentPlayed > 0.8 ) {
 				try {
 					var lastPlayed = mPlayHistory.FindList( history => history.StorageFileId == track.File.DbId ).FirstOrDefault();
@@ -69,8 +82,22 @@ namespace Noise.Core.PlayHistory {
 					}
 
 					using( var trackUpdate = mTrackProvider.GetTrackForUpdate( track.Track.DbId )) {
-						trackUpdate.Item.PlayCount++;
+						trackUpdate.Item.UpdateLastPlayed();
 						trackUpdate.Update();
+					}
+
+					if( track.Artist != null ) {
+						using( var artistUpdate = mArtistProvider.GetArtistForUpdate( track.Artist.DbId )) {
+							artistUpdate.Item.UpdateLastPlayed();
+							artistUpdate.Update();
+						}
+					}
+
+					if( track.Album != null ) {
+						using( var albumUpdate = mAlbumProvider.GetAlbumForUpdate( track.Album.DbId )) {
+							albumUpdate.Item.UpdateLastPlayed();
+							albumUpdate.Update();
+						}
 					}
 
 					GlobalCommands.UpdatePlayCount.Execute( new UpdatePlayCountCommandArgs( track.Track.DbId ));
