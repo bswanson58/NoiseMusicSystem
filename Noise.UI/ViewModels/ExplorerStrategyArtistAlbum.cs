@@ -362,7 +362,8 @@ namespace Noise.UI.ViewModels {
 			   (!string.IsNullOrWhiteSpace( FilterText ))) {
 				var artistNode = node as UiArtistTreeNode;
 
-				if( artistNode.Artist.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) {
+				if(( artistNode.Artist.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) &&
+				   ( artistNode.Artist.Genre.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 )) {
 					retValue = false;
 				}
 			}
