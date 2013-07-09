@@ -29,7 +29,7 @@ namespace Noise.Infrastructure.Dto {
 			CalculatedGenre = Constants.cDatabaseNullOid;
 			ExternalGenre = Constants.cDatabaseNullOid;
 			UserGenre = Constants.cDatabaseNullOid;
-			DateAddedTicks = DateTime.Now.Date.Ticks;
+			DateAddedTicks = DateTime.Now.Ticks;
 		}
 
 		[Ignore]

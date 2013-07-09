@@ -21,7 +21,7 @@ namespace Noise.Infrastructure.Dto {
 
 		public DbArtist() {
 			Name = "";
-			DateAddedTicks = DateTime.Now.Date.Ticks;
+			DateAddedTicks = DateTime.Now.Ticks;
 			CalculatedGenre = Constants.cDatabaseNullOid;
 			ExternalGenre = Constants.cDatabaseNullOid;
 			UserGenre = Constants.cDatabaseNullOid;
