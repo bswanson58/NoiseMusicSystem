@@ -2,10 +2,15 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              mc:Ignorable="d" 
              Height="100"
              d:DesignHeight="100" d:DesignWidth="400">
+    
+    <UserControl.Resources>
+        <valueConverters:BooleanVisibilityConverter x:Key="HideIfTrue" TriggerValue="True" IsHidden="True"/>
+    </UserControl.Resources>
 
     <UserControl.DataContext>
         <Binding Path="TimeExplorerYearViewModel" Source="{StaticResource ViewModelLocator}" />
@@ -50,7 +55,7 @@
                 </Grid>
             </Border>
 
-            <Grid Margin="5,15,5,0" Visibility="{Binding Path=YearValid, Converter={StaticResource NotBooleanVisibilityConverter}}">
+            <Grid Margin="5,15,5,0" Visibility="{Binding Path=YearValid, Converter={StaticResource HideIfTrue}}">
                 <TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="Select a year in the timeline!" />
             </Grid>
         </Grid>
