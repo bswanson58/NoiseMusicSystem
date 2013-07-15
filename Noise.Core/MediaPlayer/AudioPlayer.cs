@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
@@ -643,7 +644,7 @@ namespace Noise.Core.MediaPlayer {
 
 		[DllImport("gdi32.dll")]
 		public static extern bool DeleteObject(IntPtr hObject);
-      
+	  
 		public BitmapSource GetSpectrumImage( int channel, int height, int width, Color baseColor, Color peakColor, Color peakHoldColor ) {
 			BitmapSource	retValue = null;
 

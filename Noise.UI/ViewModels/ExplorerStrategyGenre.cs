@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Windows;
 using AutoMapper;
 using Caliburn.Micro;
@@ -64,7 +66,7 @@ namespace Noise.UI.ViewModels {
 			mViewModel = viewModel;
 
 			mChangeObserver = new Observal.Observer();
-			mChangeObserver.Extend( new PropertyChangedExtension() ).WhenPropertyChanges( OnNodeChanged );
+			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
 			var	strategies = new List<ViewSortStrategy> { new ViewSortStrategy( "Artist Name", new List<SortDescription> { new SortDescription( "Artist.Name", ListSortDirection.Ascending ) }),
 														  new ViewSortStrategy( "Unprefixed Artist Name", new List<SortDescription> { new SortDescription( "Artist.SortName", ListSortDirection.Ascending ) }),
