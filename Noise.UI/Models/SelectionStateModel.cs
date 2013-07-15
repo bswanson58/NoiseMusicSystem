@@ -23,14 +23,14 @@ namespace Noise.UI.Models {
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly Subject<DbArtist>		mArtistSubject;
 		private readonly Subject<DbAlbum>		mAlbumSubject;
-		private readonly TimeSpan				mPlayTrackDelay;
-		private readonly bool					mEnabled;
+		private TimeSpan						mPlayTrackDelay;
+		private bool							mPlaybackTrackFocusEnabled;
 		private DateTime						mLastFocusRequest;
 
 		public	DbArtist						CurrentArtist { get; private set; }
 		public	DbAlbum							CurrentAlbum { get; private set; }
-		public IObservable<DbArtist>			CurrentArtistChanged { get { return( mArtistSubject.AsObservable()); }}
-		public IObservable<DbAlbum>				CurrentAlbumChanged { get { return( mAlbumSubject.AsObservable()); }}
+		public	IObservable<DbArtist>			CurrentArtistChanged { get { return( mArtistSubject.AsObservable()); }}
+		public	IObservable<DbAlbum>			CurrentAlbumChanged { get { return( mAlbumSubject.AsObservable()); }}
 
 		public SelectionStateModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider ) {
 			mEventAggregator = eventAggregator;
@@ -45,10 +45,15 @@ namespace Noise.UI.Models {
 
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 			if( configuration != null ) {
-				mEnabled = configuration.EnablePlaybackLibraryFocus;
+				mPlaybackTrackFocusEnabled = configuration.EnablePlaybackLibraryFocus;
 			}
 
 			mEventAggregator.Subscribe( this );
+		}
+
+		public void SetPlaybackTrackFocus( bool enabled, TimeSpan delay ) {
+			mPlaybackTrackFocusEnabled = enabled;
+			mPlayTrackDelay = delay;
 		}
 
 		public void Handle( Events.ArtistFocusRequested args ) {
@@ -65,7 +70,7 @@ namespace Noise.UI.Models {
 		}
 
 		public void Handle( Events.PlaybackTrackStarted args ) {
-			if( mEnabled ) {
+			if( mPlaybackTrackFocusEnabled ) {
 				if( mLastFocusRequest + mPlayTrackDelay < DateTime.Now ) {
 					if( args.Track.Artist != null ) {
 						ChangeToArtist( args.Track.Artist.DbId );
