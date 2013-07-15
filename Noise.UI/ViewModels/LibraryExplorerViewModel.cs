@@ -31,7 +31,6 @@ namespace Noise.UI.ViewModels {
 		private IExplorerViewStrategy					mViewStrategy;
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IDatabaseInfo					mDatabaseInfo;
-		private readonly PlaybackFocusTracker			mFocusTracker;
 		private readonly List<string>					mSearchOptions;
 		private readonly bool							mEnableSortPrefixes;
 		private readonly List<string>					mSortPrefixes;
@@ -44,12 +43,10 @@ namespace Noise.UI.ViewModels {
 
 		public	IEnumerable<IExplorerViewStrategy>		ViewStrategies { get; private set; }
 
-		public LibraryExplorerViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
-										 IEnumerable<IExplorerViewStrategy> viewStrategies, PlaybackFocusTracker focusTracker ) {
+		public LibraryExplorerViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IEnumerable<IExplorerViewStrategy> viewStrategies ) {
 			mEventAggregator = eventAggregator;
 			mDatabaseInfo = databaseInfo;
 			ViewStrategies = viewStrategies.ToList();
-			mFocusTracker = focusTracker;
 
 			mTreeItems = new BindableCollection<UiTreeNode>();
 			mIndexItems = new BindableCollection<IndexNode>();

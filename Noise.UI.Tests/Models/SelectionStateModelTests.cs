@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.UI.Interfaces;
 using Noise.UI.Models;
 using ReusableBits.TestSupport.Mocking;
 

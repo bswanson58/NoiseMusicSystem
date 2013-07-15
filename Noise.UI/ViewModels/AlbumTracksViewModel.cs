@@ -7,9 +7,9 @@ using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 using Noise.UI.Behaviours;
 using Noise.UI.Dto;
+using Noise.UI.Interfaces;
 using Observal.Extensions;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -20,19 +20,19 @@ namespace Noise.UI.ViewModels {
 	}
 
 	internal class AlbumTracksViewModel : AutomaticPropertyBase,
-										  IHandle<Events.DatabaseClosing>,
-										  IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.TrackUserUpdate> {
+										  IHandle<Events.DatabaseClosing>, IHandle<Events.TrackUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly ISelectionState		mSelectionState;
 		private readonly ITrackProvider			mTrackProvider;
-		private long							mCurrentArtistId;
 		private long							mCurrentAlbumId;
 		private TaskHandler						mTrackRetrievalTaskHandler;
 		private readonly Observal.Observer		mChangeObserver;
 		private readonly BindableCollection<UiTrack>	mTracks;
 		private readonly InteractionRequest<TrackEditInfo>	mTrackEditRequest; 
 
-		public AlbumTracksViewModel( IEventAggregator eventAggregator, ITrackProvider trackProvider ) {
+		public AlbumTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, ITrackProvider trackProvider ) {
 			mEventAggregator = eventAggregator;
+			mSelectionState = selectionState;
 			mTrackProvider = trackProvider;
 
 			mEventAggregator.Subscribe( this );
@@ -43,6 +43,8 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
 			mTrackEditRequest = new InteractionRequest<TrackEditInfo>();
+
+			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
 		}
 
 		private UiTrack TransformTrack( DbTrack dbTrack ) {
@@ -82,27 +84,23 @@ namespace Noise.UI.ViewModels {
 			ClearTrackList();
 		}
 
-		public void Handle( Events.ArtistFocusRequested request ) {
-			if( mCurrentArtistId != request.ArtistId ) {
-				mCurrentArtistId = request.ArtistId;
+		private void OnAlbumChanged( DbAlbum album ) {
+			if( album != null ) {
+				UpdateTrackList( album.DbId );
 
+				mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.AlbumInfoView ) );
+			}
+			else {
 				ClearTrackList();
 			}
 		}
 
-		public void Handle( Events.AlbumFocusRequested request ) {
-			UpdateTrackList( request.ArtistId, request.AlbumId );
-
-			mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.AlbumInfoView ));
-		}
-
-		private void UpdateTrackList( long artistId, long albumId ) {
+		private void UpdateTrackList( long albumId ) {
 			if( albumId == Constants.cDatabaseNullOid ) {
 				ClearTrackList();
 			}
 			else {
 				if( mCurrentAlbumId != albumId ) {
-					mCurrentArtistId = artistId;
 					mCurrentAlbumId = albumId;
 					ClearTrackList();
 

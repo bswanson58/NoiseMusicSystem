@@ -253,6 +253,7 @@
     <Compile Include="Dto\UiTrack.cs" />
     <Compile Include="Dto\UiTreeNode.cs" />
     <Compile Include="Dto\ViewSortStrategy.cs" />
+    <Compile Include="Interfaces\ISelectionState.cs" />
     <Compile Include="MappingConfiguration.cs" />
     <Compile Include="Models\SelectionStateModel.cs" />
     <Compile Include="NoiseUiModule.cs" />
@@ -308,7 +309,6 @@
     <Compile Include="ViewModels\LibraryExplorerViewModel.cs" />
     <Compile Include="ViewModels\LibrarySelectorViewModel.cs" />
     <Compile Include="ViewModels\ListenStageViewModel.cs" />
-    <Compile Include="ViewModels\PlaybackFocusTracker.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\PlayHistoryViewModel.cs" />
     <Compile Include="ViewModels\PlayListViewModel.cs" />

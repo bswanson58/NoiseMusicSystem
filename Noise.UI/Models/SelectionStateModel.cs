@@ -6,16 +6,9 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.UI.Interfaces;
 
 namespace Noise.UI.Models {
-	public interface ISelectionState {
-		DbArtist				CurrentArtist { get; }
-		DbAlbum					CurrentAlbum { get; }
-
-		IObservable<DbArtist>	CurrentArtistChanged { get; }
-		IObservable<DbAlbum>	CurrentAlbumChanged { get; } 
-	}
-
 	public class SelectionStateModel : ISelectionState,
 									   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.PlaybackTrackStarted> {
 		private readonly IEventAggregator		mEventAggregator;
