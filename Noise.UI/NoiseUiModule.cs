@@ -2,6 +2,8 @@
 using Caliburn.Micro;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
+using Noise.UI.Interfaces;
+using Noise.UI.Models;
 using Noise.UI.Support;
 using Noise.UI.ViewModels;
 using ReusableBits.Interfaces;
@@ -24,7 +26,7 @@ namespace Noise.UI {
 			mContainer.RegisterType<IEnumerable<IExplorerViewStrategy>, IExplorerViewStrategy[]>();
 			mContainer.RegisterType<IDialogService, DialogService>();
 
-			mContainer.RegisterType<PlaybackFocusTracker, PlaybackFocusTracker>();
+			mContainer.RegisterType<ISelectionState, SelectionStateModel>( new ContainerControlledLifetimeManager());
 
 			var resourceLoader = new ResourceProvider( "Noise.UI", "Resources" );
 			mContainer.RegisterInstance<IResourceProvider>( resourceLoader );
