@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using Caliburn.Micro;
@@ -269,8 +270,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void LoadPlayQueue() {
-			mQueue.Clear();
-			mQueue.AddRange( mPlayQueue.PlayList.Select( CreateUiTrack ));
+			UpdateQueueList( mPlayQueue.PlayList );
 
 			mTotalTime = new TimeSpan();
 			mRemainingTime = new TimeSpan();
@@ -289,6 +289,40 @@ namespace Noise.UI.ViewModels {
 			RaisePropertyChanged( () => TotalTime );
 			RaisePropertyChanged( () => RemainingTime );
 			RaiseCanExecuteChangedEvent( "CanExecute_SavePlayList" );
+		}
+
+		private void UpdateQueueList( IEnumerable<PlayQueueTrack> playQueueList ) {
+			// Reconcile the local list with the updated list with the least amount of changes to allow the UI to indicate the changed items.
+			var newList = playQueueList.ToList();
+
+			if( newList.Any()) {
+				var deleteList = ( from track in mQueue where newList.FirstOrDefault( t => t.Uid == track.QueuedTrack.Uid ) == null select track ).ToList();
+				foreach( var track in deleteList ) {
+					mQueue.Remove( track );
+				}
+
+				var addList = ( from track in newList where mQueue.FirstOrDefault( t => t.QueuedTrack.Uid == track.Uid ) == null select track ).ToList();
+				foreach( var track in addList ) {
+					mQueue.Insert( newList.IndexOf( track ), CreateUiTrack( track ));
+				}
+
+				// finally insure that the order matches.
+				for( var index = 0; index < newList.Count; index++ ) {
+					var newTrack = newList[index];
+
+					if( mQueue[index].QueuedTrack.Uid != newTrack.Uid ) {
+						var oldTrack = mQueue.FirstOrDefault( track => track.QueuedTrack.Uid == newTrack.Uid );
+
+						if( oldTrack != null ) {
+							mQueue.Remove( oldTrack );
+							mQueue.Insert( index, oldTrack );
+						}
+					}
+				}
+			}
+			else {
+				mQueue.Clear();
+			}
 		}
 
 		public void Execute_ClearQueue( object sender ) {

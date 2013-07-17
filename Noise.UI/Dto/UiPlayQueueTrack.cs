@@ -8,13 +8,13 @@ namespace Noise.UI.Dto {
 		private bool								mIsFavorite;
 		private Int16								mRating;
 		private readonly Action<UiPlayQueueTrack>	mMoveUp;
- 		private readonly Action<UiPlayQueueTrack>	mMoveDown;
- 		private readonly Action<UiPlayQueueTrack>	mDequeue;
- 		private readonly Action<UiPlayQueueTrack>	mPlayNow;
- 		private readonly Action<UiPlayQueueTrack>	mPlayFromHere;
- 		private readonly Action<UiPlayQueueTrack>	mDisplayInfo;
+		private readonly Action<UiPlayQueueTrack>	mMoveDown;
+		private readonly Action<UiPlayQueueTrack>	mDequeue;
+		private readonly Action<UiPlayQueueTrack>	mPlayNow;
+		private readonly Action<UiPlayQueueTrack>	mPlayFromHere;
+		private readonly Action<UiPlayQueueTrack>	mDisplayInfo;
 		private readonly Action<UiPlayQueueTrack>	mOnSetFavorite;
- 		private readonly Action<UiPlayQueueTrack>	mOnSetRating; 
+		private readonly Action<UiPlayQueueTrack>	mOnSetRating; 
 
 		public UiPlayQueueTrack( PlayQueueTrack track,
 								 Action<UiPlayQueueTrack> onMoveUp, Action<UiPlayQueueTrack> onMoveDown, Action<UiPlayQueueTrack> onDisplayInfo,

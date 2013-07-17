@@ -212,6 +212,14 @@
               </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
+
+        <Style x:Key="BoldedDragListBoxItemStyle" BasedOn="{StaticResource AnimateOnInsertListBoxItemStyle}" TargetType="{x:Type ListBoxItem}">
+            <Style.Triggers>
+                <Trigger Property="Behaviours:ListViewItemDragState.IsBeingDragged" Value="True">
+                    <Setter Property="FontWeight" Value="Bold" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Control.Resources>
 
     <Control.InputBindings>
@@ -232,8 +240,10 @@
                      DragDrop:DragDrop.DropHandler="{Binding}"
                      DragDrop:DragDrop.IsDragSource="true"
                      DragDrop:DragDrop.IsDropTarget="true"
+                     HorizontalContentAlignment="Stretch"
                      ItemsSource="{Binding Path=QueueList}"
                      ItemTemplate="{StaticResource QueueListItem}"
+                     ItemContainerStyle="{StaticResource BoldedDragListBoxItemStyle}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ScrollViewer.VerticalScrollBarVisibility="Visible"
                      SelectedIndex="{Binding Path=SelectedIndex}"
@@ -249,16 +259,6 @@
                                                                   RoutedEvent="ListBoxItem.MouseDoubleClick" />
                     </EventCommandTriggers:CommandTriggerGroup>
                 </EventCommandTriggers:CommandSource.Trigger>
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <Style.Triggers>
-                            <Trigger Property="Behaviours:ListViewItemDragState.IsBeingDragged" Value="True">
-                                <Setter Property="FontWeight" Value="Bold" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </ListBox.ItemContainerStyle>
             </ListBox>
 
             <Grid Grid.Row="1">
