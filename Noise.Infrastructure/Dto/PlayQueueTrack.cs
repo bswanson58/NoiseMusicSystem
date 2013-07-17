@@ -19,6 +19,7 @@ namespace Noise.Infrastructure.Dto {
 		public	string				FilePath { get; private set; }
 		public	double				PercentPlayed { get; set; }
 		public	eStrategySource		StrategySource { get; private set; }
+		public	long				Uid { get; private set; }
 		private	bool				mIsFaulted;
 		private	bool				mIsPlaying;
 		private	bool				mHasPlayed;
@@ -36,6 +37,8 @@ namespace Noise.Infrastructure.Dto {
 			FilePath = filePath;
 
 			StrategySource = eStrategySource.User;
+
+			Uid = DatabaseIdentityProvider.Current.NewIdentityAsLong();
 		}
 
 		public void UpdateTrack( DbTrack track ) {
