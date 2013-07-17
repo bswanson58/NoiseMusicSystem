@@ -63,6 +63,11 @@ namespace Noise.UI.Dto {
 			}
 		}
 
+		public bool IsDeleting {
+			get{ return( Get( () => IsDeleting )); }
+			set{ Set( () => IsDeleting, value ); }
+		}
+
 		public void Execute_DisplayInfo() {
 			if( mDisplayInfo != null ) {
 				mDisplayInfo( this );

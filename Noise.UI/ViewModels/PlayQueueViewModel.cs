@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
 using GongSolutions.Wpf.DragDrop;
@@ -296,29 +298,43 @@ namespace Noise.UI.ViewModels {
 			var newList = playQueueList.ToList();
 
 			if( newList.Any()) {
-				var deleteList = ( from track in mQueue where newList.FirstOrDefault( t => t.Uid == track.QueuedTrack.Uid ) == null select track ).ToList();
-				foreach( var track in deleteList ) {
-					mQueue.Remove( track );
-				}
+				// Get off of the UI thread since we are potential going to sleep.
+				Task.Factory.StartNew( () => {
+					lock( mQueue ) {
+						// If there are any deletions, set the delete flag, wait a sec, and then delete them to allow the ui to animate their removal.
+						var deleteList = ( from track in mQueue where newList.FirstOrDefault( t => t.Uid == track.QueuedTrack.Uid ) == null select track ).ToList();
+						if( deleteList.Any()) {
+							foreach( var track in deleteList ) {
+								track.IsDeleting = true;
+							}
+							Thread.Sleep( new TimeSpan( 0, 0, 0, 0, 750 ));
+						}
 
-				var addList = ( from track in newList where mQueue.FirstOrDefault( t => t.QueuedTrack.Uid == track.Uid ) == null select track ).ToList();
-				foreach( var track in addList ) {
-					mQueue.Insert( newList.IndexOf( track ), CreateUiTrack( track ));
-				}
+						var removeList = ( from track in mQueue where track.IsDeleting select track ).ToList();
+						foreach( var track in removeList ) {
+							mQueue.Remove( track );
+						}
 
-				// finally insure that the order matches.
-				for( var index = 0; index < newList.Count; index++ ) {
-					var newTrack = newList[index];
+						var addList = ( from track in newList where mQueue.FirstOrDefault( t => t.QueuedTrack.Uid == track.Uid ) == null select track ).ToList();
+						foreach( var track in addList ) {
+							mQueue.Insert( newList.IndexOf( track ), CreateUiTrack( track ));
+						}
 
-					if( mQueue[index].QueuedTrack.Uid != newTrack.Uid ) {
-						var oldTrack = mQueue.FirstOrDefault( track => track.QueuedTrack.Uid == newTrack.Uid );
+						// finally insure that the order matches.
+						for( var index = 0; index < newList.Count; index++ ) {
+							var newTrack = newList[index];
 
-						if( oldTrack != null ) {
-							mQueue.Remove( oldTrack );
-							mQueue.Insert( index, oldTrack );
+							if( mQueue[index].QueuedTrack.Uid != newTrack.Uid ) {
+								var oldTrack = mQueue.FirstOrDefault( track => track.QueuedTrack.Uid == newTrack.Uid );
+
+								if( oldTrack != null ) {
+									mQueue.Remove( oldTrack );
+									mQueue.Insert( index, oldTrack );
+								}
+							}
 						}
 					}
-				}
+				} );
 			}
 			else {
 				mQueue.Clear();
