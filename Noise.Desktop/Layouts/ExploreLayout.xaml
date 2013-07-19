@@ -17,6 +17,15 @@
             <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" From="0.98" To="1.0" Duration="0:0:0.15"/>
             <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0.3"/>
         </Storyboard>
+        
+        <Storyboard x:Key="PlayerOutgoingStoryboard">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.1"/>
+        </Storyboard>
+
+        <Storyboard x:Key="PlayerIncomingStoryboard">
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" From="0.1" To="1.0" Duration="0:0:0.3"/>
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0.3"/>
+        </Storyboard>
     </UserControl.Resources>
     
     <Grid>
@@ -84,9 +93,8 @@
                 </Grid>
             </Grid>
 
-            <ContentControl Grid.Row="1"
-                            Margin="3,0,0,3"
-                            Regions:RegionManager.RegionName="Player" />
+            <ReusableControls:AnimatedContentControl Grid.Row="1" Margin="3,0,0,3" Regions:RegionManager.RegionName="Player"
+                                                     IncomingStoryboard="{StaticResource PlayerIncomingStoryboard}" IncomingRenderTransformOrigin="0.5, 0.0" />
 
             <ContentControl Grid.Row="2" Regions:RegionManager.RegionName="Status"/>
         </Grid>

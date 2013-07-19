@@ -81,7 +81,7 @@
                 <Layout:View RegionName="Timeline:ExplorerAlbums" Type="{x:Type Views:TimeExplorerAlbumsView}" />
                 <Layout:View RegionName="Timeline:AlbumInfo" Type="{x:Type Views:AlbumInfoView}" />
                 <Layout:View RegionName="Timeline:PlayQueue" Type="{x:Type Views:PlayQueueView}" />
-                <Layout:View RegionName="Timeline:Player" Type="{x:Type Views:PlayerView}" />
+                <Layout:View RegionName="Player" Type="{x:Type Views:PlayerView}" />
                 <Layout:View RegionName="Timeline:SimilarSongs" Type="{x:Type Views:SimilarSongView}" />
                 <Layout:View RegionName="Timeline:SongLyrics" Type="{x:Type Views:SongLyricsView}" />
                 <Layout:View RegionName="Timeline:Status" Type="{x:Type Views:StatusView}" />
