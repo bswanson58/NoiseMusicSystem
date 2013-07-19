@@ -10,6 +10,7 @@ using Noise.UI.Interfaces;
 
 namespace Noise.UI.Models {
 	public class SelectionStateModel : ISelectionState,
+									   IHandle<Events.WindowLayoutRequest>,
 									   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.PlaybackTrackStarted> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IArtistProvider		mArtistProvider;
@@ -47,6 +48,11 @@ namespace Noise.UI.Models {
 		public void SetPlaybackTrackFocus( bool enabled, TimeSpan delay ) {
 			mPlaybackTrackFocusEnabled = enabled;
 			mPlayTrackDelay = delay;
+		}
+
+		public void Handle( Events.WindowLayoutRequest args ) {
+			ClearArtist();
+			ClearAlbum();
 		}
 
 		public void Handle( Events.ArtistFocusRequested args ) {
