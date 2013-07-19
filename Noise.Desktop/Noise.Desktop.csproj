@@ -316,6 +316,10 @@
       <Project>{8930138b-f96a-4a56-84cf-d660730989c9}</Project>
       <Name>ReusableBits.Mvvm</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ReusableBits.Ui\ReusableBits.Ui.csproj">
+      <Project>{704bd4a9-2fc2-4716-ab94-d3714a6acc39}</Project>
+      <Name>ReusableBits.Ui</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ReusableBits\ReusableBits.csproj">
       <Project>{0522B043-A04A-4669-90DB-204C96D52224}</Project>
       <Name>ReusableBits</Name>
