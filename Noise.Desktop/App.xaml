@@ -8,6 +8,7 @@
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/BrushResources.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/ControlStyles.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/ConverterResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/ReusableBits.Ui;component/Resources/Generic.xaml" />
 
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
