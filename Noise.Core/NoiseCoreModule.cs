@@ -31,7 +31,6 @@ namespace Noise.Core {
 		public void Initialize() {
 			mContainer.RegisterInstance<IEventAggregator>( new EventAggregator(), new ContainerControlledLifetimeManager());
 
-			mContainer.RegisterType<IAudioPlayer, AudioPlayer>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ICloudSyncManager, CloudSyncManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IDataExchangeManager, DataExchangeManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IEqManager, EqManager>( new HierarchicalLifetimeManager());
@@ -83,6 +82,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IBackgroundTask, DecadeTagBuilder>( "DecadeTagBuilder" );
 			mContainer.RegisterType<IBackgroundTask, SearchBuilder>( "SearchBuilder" );
 			mContainer.RegisterType<IBackgroundTask, MetadataUpdateTask>( "MetadataUpdate" );
+			mContainer.RegisterType<IBackgroundTask, ReplayGainTask>( "ReplayGainTask" );
 			mContainer.RegisterType<IEnumerable<IBackgroundTask>, IBackgroundTask[]>();
 
 			mContainer.RegisterType<ICloudSyncProvider, CloudSyncFavorites>( "SyncFavorites" );

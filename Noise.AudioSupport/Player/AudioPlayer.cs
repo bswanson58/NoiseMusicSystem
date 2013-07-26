@@ -17,52 +17,7 @@ using Un4seen.Bass.AddOn.Mix;
 using Un4seen.Bass.AddOn.Tags;
 using Un4seen.Bass.Misc;
 
-namespace Noise.Core.MediaPlayer {
-	internal class AudioStream {
-		public	int						Channel { get; private set; }
-		public	StorageFile				PhysicalFile { get; private set; }
-		public	string					Url { get; private set; }
-		public	bool					IsActive { get; set; }
-		public	bool					InSlide { get; set; }
-		public	bool					PauseOnSlide { get; set; }
-		public	bool					StopOnSlide { get; set; }
-		public	bool					Faded { get; set; }
-		public	int						MetaDataSync { get; set; }
-		public	int						ReplayGainFx { get; set; }
-		public	int						SyncEnd { get; set; }
-		public	int						SyncNext { get; set; }
-		public	int						SyncQueued { get; set; }
-		public	int						SyncStalled { get; set; }
-
-		private AudioStream( int channel ) {
-			Channel = channel;
-		}
-
-		public AudioStream( StorageFile file, int channel ) :
-			this( channel ) {
-			PhysicalFile = file;
-		}
-
-		public AudioStream( string url, int channel ) :
-			this( channel ) {
-			Url = url;
-		}
-
-		public bool IsStream {
-			get{ return(!String.IsNullOrWhiteSpace( Url )); }
-		}
-	}
-
-	public class ChannelStatusArgs {
-		public	int				Channel { get; private set; }
-		public	ePlaybackStatus	Status { get; private set; }
-
-		public ChannelStatusArgs( int channel, ePlaybackStatus status ) {
-			Channel = channel;
-			Status = status;
-		}
-	}
-
+namespace Noise.AudioSupport.Player {
 	public class AudioPlayer : IAudioPlayer {
 		private readonly int							mMixerChannel;
 		private	readonly float							mMixerSampleRate;
@@ -97,8 +52,8 @@ namespace Noise.Core.MediaPlayer {
 		private int										mQueuedChannel;
 		private readonly Visuals						mSpectumVisual;
 
-		private readonly Subject<ChannelStatusArgs>		mChannelStatusSubject;
-		public	IObservable<ChannelStatusArgs>			ChannelStatusChange { get { return( mChannelStatusSubject.AsObservable()); } }
+		private readonly Subject<AudioChannelStatus>	mChannelStatusSubject;
+		public	IObservable<AudioChannelStatus>			ChannelStatusChange { get { return( mChannelStatusSubject.AsObservable()); } }
 
 		private readonly Subject<AudioLevels>			mAudioLevelsSubject;
 		public	IObservable<AudioLevels>				AudioLevelsChange { get { return( mAudioLevelsSubject.AsObservable()); }}
@@ -111,13 +66,13 @@ namespace Noise.Core.MediaPlayer {
 		public AudioPlayer() {
 			mCurrentStreams = new Dictionary<int, AudioStream>();
 			mEqChannels = new Dictionary<long, int>();
-			mStreamMetadataSync = new SYNCPROC( StreamSyncProc );
-			mPlayEndSyncProc = new SYNCPROC( PlayEndSyncProc );
-			mPlayRequestSyncProc = new SYNCPROC( PlayRequestSyncProc );
-			mPlayStalledSyncProc = new SYNCPROC( PlayStallSyncProc );
-			mQueuedTrackPlaySync = new SYNCPROC( PlayQueuedTrackSyncProc );
-			mSlideSyncProc = new SYNCPROC( SlideSyncProc );
-			mDownloadProc = new DOWNLOADPROC( RecordProc );
+			mStreamMetadataSync = StreamSyncProc;
+			mPlayEndSyncProc = PlayEndSyncProc;
+			mPlayRequestSyncProc = PlayRequestSyncProc;
+			mPlayStalledSyncProc = PlayStallSyncProc;
+			mQueuedTrackPlaySync = PlayQueuedTrackSyncProc;
+			mSlideSyncProc = SlideSyncProc;
+			mDownloadProc = RecordProc;
 			mSpectumVisual = new Visuals();
 
 			mReverbDelay = 1200;
@@ -164,7 +119,7 @@ namespace Noise.Core.MediaPlayer {
 			mPreampVolume = 1.0f;
 			mRecord = false;
 
-			mChannelStatusSubject = new Subject<ChannelStatusArgs>();
+			mChannelStatusSubject = new Subject<AudioChannelStatus>();
 			mAudioLevelsSubject = new Subject<AudioLevels>();
 			mAudioStreamInfoSubject = new Subject<StreamInfo>();
 
@@ -204,7 +159,7 @@ namespace Noise.Core.MediaPlayer {
 						var stream = new AudioStream( filePath, channel );
 						mCurrentStreams.Add( channel, stream );
 
-						if( gainAdjustment != 0.0f ) {
+						if( Math.Abs( gainAdjustment - 0.0f ) > 0.01f ) {
 							stream.ReplayGainFx = Bass.BASS_ChannelSetFX( channel, BASSFXType.BASS_FX_BFX_VOLUME, 2 );
 							if( stream.ReplayGainFx != 0 ) {
 								 // convert the replaygain dB gain to a linear value
@@ -307,7 +262,7 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		private void PlayEndSyncProc( int handle, int channel, int data, IntPtr user ) {
-			mChannelStatusSubject.OnNext( new ChannelStatusArgs( channel, ePlaybackStatus.TrackEnd ));
+			mChannelStatusSubject.OnNext( new AudioChannelStatus( channel, ePlaybackStatus.TrackEnd ));
 
 			StartQueuedTrack();
 		}
@@ -326,11 +281,11 @@ namespace Noise.Core.MediaPlayer {
 		}
 
 		private void PlayRequestSyncProc( int handle, int channel, int data, IntPtr user ) {
-			mChannelStatusSubject.OnNext( new ChannelStatusArgs( channel, ePlaybackStatus.RequestNext ));
+			mChannelStatusSubject.OnNext( new AudioChannelStatus( channel, ePlaybackStatus.RequestNext ));
 		}
 
 		private void PlayStallSyncProc( int handle, int channel, int data, IntPtr user ) {
-			mChannelStatusSubject.OnNext( new ChannelStatusArgs( channel, ePlaybackStatus.TrackEnd ));
+			mChannelStatusSubject.OnNext( new AudioChannelStatus( channel, ePlaybackStatus.TrackEnd ));
 		}
 
 		private void SlideSyncProc( int handle, int channel, int data, IntPtr user ) {
@@ -410,7 +365,7 @@ namespace Noise.Core.MediaPlayer {
 				}
 
 				BassMix.BASS_Mixer_ChannelPlay( stream.Channel );
-				mChannelStatusSubject.OnNext( new ChannelStatusArgs( channel, ePlaybackStatus.TrackStart ));
+				mChannelStatusSubject.OnNext( new AudioChannelStatus( channel, ePlaybackStatus.TrackStart ));
 
 				if( stream.IsStream ) {
 					PublishStreamInfo( stream.Channel );
@@ -424,7 +379,7 @@ namespace Noise.Core.MediaPlayer {
 			if( stream != null ) {
 				BassMix.BASS_Mixer_ChannelPause( stream.Channel );
 
-				mChannelStatusSubject.OnNext( new ChannelStatusArgs( stream.Channel, ePlaybackStatus.Paused ));
+				mChannelStatusSubject.OnNext( new AudioChannelStatus( stream.Channel, ePlaybackStatus.Paused ));
 			}
 		}
 
@@ -453,7 +408,7 @@ namespace Noise.Core.MediaPlayer {
 			if( stream != null ) {
 				Bass.BASS_ChannelStop( stream.Channel );
 
-				mChannelStatusSubject.OnNext( new ChannelStatusArgs( channel, ePlaybackStatus.TrackEnd ));
+				mChannelStatusSubject.OnNext( new AudioChannelStatus( channel, ePlaybackStatus.TrackEnd ));
 			}
 		}
 
@@ -656,10 +611,10 @@ namespace Noise.Core.MediaPlayer {
 
 					var bars = width > 300 ? 48 : width > 200 ? 32 : 24;
 					var barWidth = ( width - ( bars * lineGap )) / bars;
-					var bitmap = mSpectumVisual.CreateSpectrumLinePeak( mMixerChannel, width, height, 
+					var bitmap = mSpectumVisual.CreateSpectrumLinePeak( mMixerChannel, width, height,
 																		System.Drawing.Color.FromArgb( baseColor.A, baseColor.R, baseColor.G, baseColor.B ),
-																		System.Drawing.Color.FromArgb( peakColor.A, peakColor.R, peakColor.G, peakColor.B ), 
-																		System.Drawing.Color.FromArgb( peakHoldColor.A, peakHoldColor.R, peakHoldColor.G, peakHoldColor.B ), 
+																		System.Drawing.Color.FromArgb( peakColor.A, peakColor.R, peakColor.G, peakColor.B ),
+																		System.Drawing.Color.FromArgb( peakHoldColor.A, peakHoldColor.R, peakHoldColor.G, peakHoldColor.B ),
 																		System.Drawing.Color.FromArgb( 0, 0, 0, 0 ),
 																		barWidth, peakHoldHeight, lineGap, peakHoldTime, false, true, false );
 

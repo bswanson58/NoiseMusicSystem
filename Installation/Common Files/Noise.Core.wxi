@@ -10,6 +10,9 @@
     <Component Id="Noise.AppSupport" Guid="b8941cb2-e1f1-42ef-be6d-b9ec5b1537d7">
       <File Id="Noise.AppSupport.dll" DiskId="10" Source="$(var.Noise.AppSupport.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
+    <Component Id="Noise.AudioSupport" Guid="897f0504-0593-4708-b16d-001be73e691f">
+      <File Id="Noise.AudioSupport.dll" DiskId="10" Source="$(var.Noise.AudioSupport.TargetPath)" KeyPath="yes" Checksum="yes" />
+    </Component>
     <Component Id="Noise.BlobStorage" Guid="d0b7ff59-e926-4499-92f2-23849a41c96c">
       <File Id="Noise.BlobStorage.dll" DiskId="10" Source="$(var.Noise.BlobStorage.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
@@ -61,6 +64,7 @@
     <ComponentRef Id="DiscogsConnect" />
     <ComponentRef Id="Microsoft.Net.Http" />
     <ComponentRef Id="Noise.AppSupport" />
+    <ComponentRef Id="Noise.AudioSupport" />
     <ComponentRef Id="Noise.BlobStorage" />
     <ComponentRef Id="Noise.Core" />
     <ComponentRef Id="Noise.EloqueraDatabase" />

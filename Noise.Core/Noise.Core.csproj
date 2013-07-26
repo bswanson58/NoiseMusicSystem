@@ -98,10 +98,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Bass.Net, Version=2.4.8.0, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\BASS.Net\v2.4.8.0\Bass.Net.dll</HintPath>
-    </Reference>
     <Reference Include="Caliburn.Micro, Version=1.5.1.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Caliburn.Micro.1.5.1\lib\net40\Caliburn.Micro.dll</HintPath>
@@ -139,7 +135,6 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Reactive.Core">
       <HintPath>..\packages\Rx-Core.2.1.30214.0\lib\Net45\System.Reactive.Core.dll</HintPath>
     </Reference>
@@ -173,6 +168,7 @@
     <Compile Include="BackgroundTasks\IBackgroundTask.cs" />
     <Compile Include="BackgroundTasks\IBackgroundTaskManager.cs" />
     <Compile Include="BackgroundTasks\MetadataUpdateTask.cs" />
+    <Compile Include="BackgroundTasks\ReplayGainTask.cs" />
     <Compile Include="BackgroundTasks\SearchBuilder.cs" />
     <Compile Include="Configuration\LibraryConfigurationManager.cs" />
     <Compile Include="Database\DatabaseCache.cs" />
@@ -235,9 +231,7 @@
     <Compile Include="FileStore\IFileUpdates.cs" />
     <Compile Include="FileStore\IFolderExplorer.cs" />
     <Compile Include="FileStore\StorageFolderSupport.cs" />
-    <Compile Include="MediaPlayer\AudioPlayer.cs" />
     <Compile Include="MediaPlayer\EqManager.cs" />
-    <Compile Include="MediaPlayer\IAudioPlayer.cs" />
     <Compile Include="MediaPlayer\PlayController.cs" />
     <Compile Include="NoiseCoreModule.cs" />
     <Compile Include="NoiseManager.cs" />

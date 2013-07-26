@@ -22,6 +22,7 @@
 		<?include Prism.wxi ?>
 		<?include RavenDB.wxi ?>
 		<?include recls.wxi ?>
+		<?include ReplayGain.wxi ?>
 		<?include Stateless.wxi ?>
 		<?include TagLibSharp.wxi ?>
 	</Fragment>

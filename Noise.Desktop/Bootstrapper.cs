@@ -7,6 +7,7 @@ using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.Unity;
 using Noise.AppSupport;
 using Noise.AppSupport.FeatureToggles;
+using Noise.AudioSupport;
 using Noise.Desktop.Properties;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -69,6 +70,7 @@ namespace Noise.Desktop {
 
 			catalog.AddModule( typeof( Core.NoiseCoreModule ))
 				.AddModule( typeof( UI.NoiseUiModule ), "NoiseCoreModule" )
+				.AddModule( typeof( AudioSupportModule ))
 				.AddModule( typeof( BlobStorage.BlobStorageModule ))
 				.AddModule( typeof( NoiseMetadataModule ))
 				.AddModule( typeof( RemoteHost.RemoteHostModule ));

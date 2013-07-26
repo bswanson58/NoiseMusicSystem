@@ -315,7 +315,7 @@ namespace Noise.Core.MediaPlayer {
 			}
 		}
 
-		private void OnPlayStatusChanged( ChannelStatusArgs args ) {
+		private void OnPlayStatusChanged( AudioChannelStatus args ) {
 			switch( args.Status ) {
 				case ePlaybackStatus.TrackStart:
 					OnTrackStarted( args.Channel );
