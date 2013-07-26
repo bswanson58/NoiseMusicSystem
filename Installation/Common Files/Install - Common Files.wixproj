@@ -89,6 +89,14 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
+    <ProjectReference Include="..\..\Noise.AudioSupport\Noise.AudioSupport.csproj">
+      <Name>Noise.AudioSupport</Name>
+      <Project>{19dba418-08c1-4a02-bb7a-2d83a416c6a2}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\..\Noise.BlobStorage\Noise.BlobStorage.csproj">
       <Name>Noise.BlobStorage</Name>
       <Project>{9f4086fd-8332-489f-8a96-8d4425db5df2}</Project>
