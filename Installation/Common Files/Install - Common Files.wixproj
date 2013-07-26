@@ -53,6 +53,7 @@
     <Content Include="Prism.wxi" />
     <Content Include="RavenDB.wxi" />
     <Content Include="recls.wxi" />
+    <Content Include="ReplayGain.wxi" />
     <Content Include="Stateless.wxi" />
     <Content Include="TagLibSharp.wxi" />
   </ItemGroup>
