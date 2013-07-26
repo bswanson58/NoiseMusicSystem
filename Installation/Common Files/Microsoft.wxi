@@ -4,29 +4,25 @@
     <Component Id="System.Windows.Interactivity.dll" Guid="05e0e0dc-082d-44b0-94c4-0aacfb56280d">
       <File Id="System.Windows.Interactivity.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)System.Windows.Interactivity.dll" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="System.CoreEx.dll" Guid="90fb317c-c2c7-4da5-acb7-93ab1597c1e4">
-      <File Id="System.CoreEx.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)System.CoreEx.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="System.Reactive.dll" Guid="d8eb9e8c-c2a7-41cc-8a65-85c094a36cfa">
-      <File Id="System.Reactive.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)System.Reactive.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
     <Component Id="System.Reactive.Core.dll" Guid="68e3ee06-b4fb-4f74-87fa-d3f1956c2a67">
-      <File Id="System.Reactive.Core.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)System.Reactive.Core.dll" KeyPath="yes" Checksum="yes" />
+      <File Id="System.Reactive.Core.dll" DiskId="10" Source="$(var.Noise.Core.TargetDir)System.Reactive.Core.dll" KeyPath="yes" Checksum="yes" />
     </Component>
     <Component Id="System.Reactive.Interfaces.dll" Guid="d890f9bc-59cc-4014-ae3a-169859f68a1f">
-      <File Id="System.Reactive.Interfaces.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)System.Reactive.Interfaces.dll" KeyPath="yes" Checksum="yes" />
+      <File Id="System.Reactive.Interfaces.dll" DiskId="10" Source="$(var.Noise.Core.TargetDir)System.Reactive.Interfaces.dll" KeyPath="yes" Checksum="yes" />
     </Component>
     <Component Id="System.Reactive.Linq.dll" Guid="9053b4c9-f792-4bec-949b-a91dc7f610d3">
-      <File Id="System.Reactive.Linq.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)System.Reactive.Linq.dll" KeyPath="yes" Checksum="yes" />
+      <File Id="System.Reactive.Linq.dll" DiskId="10" Source="$(var.Noise.Core.TargetDir)System.Reactive.Linq.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="System.Reactive.PlatformServices.dll" Guid="5678c879-f21b-4ef3-9211-a0ea5a69b998">
+      <File Id="System.Reactive.PlatformServices.dll" DiskId="10" Source="$(var.Noise.Core.TargetDir)System.Reactive.PlatformServices.dll" KeyPath="yes" Checksum="yes" />
     </Component>
   </DirectoryRef>
 
   <ComponentGroup Id="MicrosoftFiles">
     <ComponentRef Id="System.Windows.Interactivity.dll" />
-    <ComponentRef Id="System.CoreEx.dll" />
-    <ComponentRef Id="System.Reactive.dll"/>
     <ComponentRef Id="System.Reactive.Core.dll"/>
     <ComponentRef Id="System.Reactive.Interfaces.dll"/>
     <ComponentRef Id="System.Reactive.Linq.dll"/>
+    <ComponentRef Id="System.Reactive.PlatformServices.dll" />
   </ComponentGroup>
 </Include>
