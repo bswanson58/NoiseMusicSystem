@@ -37,7 +37,7 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public string TaskId {
-			get { return( "Task_DiscographyExplorer" ); }
+			get { return( "Task_DecadeTagBuilder" ); }
 		}
 
 		public void Handle( Events.DatabaseOpened args ) {

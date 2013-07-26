@@ -340,6 +340,7 @@ copy $(SolutionDir)lib\BASS.Net\v2.4.8.0\$(PlatformName)\bassmix.dll $(TargetDir
 copy $(SolutionDir)lib\BASS.Net\v2.4.8.0\$(PlatformName)\basswma.dll $(TargetDir)
 copy $(SolutionDir)lib\Eloquera\v4.13\Eloquera.Client.dll $(TargetDir)
 copy $(SolutionDir)lib\Eloquera\v4.13\Eloquera.Common.dll $(TargetDir)
+copy $(SolutionDir)lib\ReplayGain\$(PlatformName)\ReplayGain.dll $(TargetDir)
 copy $(SolutionDir)Noise.Core\Resources\EqPresets.xml $(TargetDir)
 copy $(SolutionDir)Noise.Core\Resources\LicenseKeys.xml $(TargetDir)
 copy $(SolutionDir)lib\NServiceBus\v2.0.0.1219\log4net.dll $(TargetDir)

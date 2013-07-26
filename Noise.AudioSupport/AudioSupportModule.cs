@@ -1,6 +1,7 @@
 ﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
 using Noise.AudioSupport.Player;
+using Noise.AudioSupport.ReplayGain;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.AudioSupport {
@@ -13,7 +14,7 @@ namespace Noise.AudioSupport {
 
 		public void Initialize() {
 			mContainer.RegisterType<IAudioPlayer, AudioPlayer>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IReplayGainScanner, IReplayGainScanner>();
+			mContainer.RegisterType<IReplayGainScanner, ReplayGainScanner>();
 		}
 	}
 }
