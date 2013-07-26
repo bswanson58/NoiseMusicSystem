@@ -4,6 +4,7 @@ using System.Windows;
 using Caliburn.Micro;
 using Microsoft.Practices.Unity;
 using Noise.AppSupport;
+using Noise.AudioSupport;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Interfaces;
@@ -21,6 +22,7 @@ namespace Noise.TenFooter {
 
 		protected override void ConfigureContainer( IUnityContainer container ) {
 			AddModule( typeof( Core.NoiseCoreModule ));
+			AddModule( typeof( AudioSupportModule ));
 			AddModule( typeof( BlobStorage.BlobStorageModule ));
 			AddModule( typeof( Metadata.NoiseMetadataModule ));
 			AddModule( typeof( RemoteHost.RemoteHostModule ));

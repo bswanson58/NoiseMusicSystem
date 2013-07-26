@@ -3,7 +3,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Noise.Infrastructure.Dto;
 
-namespace Noise.Core.MediaPlayer {
+namespace Noise.Infrastructure.Interfaces {
 	public interface IAudioPlayer {
 		int					OpenFile( string filePath );
 		int					OpenFile( string filePath, float gainAdjustment );
@@ -48,7 +48,7 @@ namespace Noise.Core.MediaPlayer {
 		float				ReverbLevel { get; set; }
 		int					ReverbDelay { get; set; }
 
-		IObservable<ChannelStatusArgs>	ChannelStatusChange { get; }
+		IObservable<AudioChannelStatus>	ChannelStatusChange { get; }
 		IObservable<AudioLevels>		AudioLevelsChange { get; }
 		IObservable<StreamInfo>			AudioStreamInfoChange { get; }
 
