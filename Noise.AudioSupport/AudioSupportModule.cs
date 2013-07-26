@@ -13,6 +13,7 @@ namespace Noise.AudioSupport {
 
 		public void Initialize() {
 			mContainer.RegisterType<IAudioPlayer, AudioPlayer>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IReplayGainScanner, IReplayGainScanner>();
 		}
 	}
 }

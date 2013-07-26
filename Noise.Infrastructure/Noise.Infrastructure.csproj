@@ -182,6 +182,7 @@
     <Compile Include="Dto\PlaybackStatus.cs" />
     <Compile Include="Dto\PlayStrategyParameterDbId.cs" />
     <Compile Include="Dto\PlayQueueTrack.cs" />
+    <Compile Include="Dto\ReplayGainFile.cs" />
     <Compile Include="Dto\RootFolder.cs" />
     <Compile Include="Dto\SearchResultItem.cs" />
     <Compile Include="Dto\SetAlbumCoverCommandArgs.cs" />
@@ -224,6 +225,7 @@
     <Compile Include="Interfaces\IPlayHistoryProvider.cs" />
     <Compile Include="Interfaces\IPlayListProvider.cs" />
     <Compile Include="Interfaces\IPlayQueue.cs" />
+    <Compile Include="Interfaces\IReplayGainScanner.cs" />
     <Compile Include="Interfaces\IRequireInitialization.cs" />
     <Compile Include="Interfaces\IRootFolderProvider.cs" />
     <Compile Include="Interfaces\IScrobbler.cs" />
