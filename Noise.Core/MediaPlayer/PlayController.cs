@@ -534,15 +534,9 @@ namespace Noise.Core.MediaPlayer {
 			var retValue = 0;
 
 			if( track != null ) {
-				var gain = 0.0f;
-				
-				if(( mEnableReplayGain ) &&
-					(!track.IsStream ) &&
-					( track.Track != null )) {
-					gain = track.Track.ReplayGainAlbumGain > 0.05f ? track.Track.ReplayGainAlbumGain : track.Track.ReplayGainTrackGain;
-				}
+				retValue = track.IsStream ? mAudioPlayer.OpenStream( track.Stream ) : 
+											mAudioPlayer.OpenFile( track.FilePath, DetermineReplayGain( track ));
 
-				retValue = track.IsStream ? mAudioPlayer.OpenStream( track.Stream ) : mAudioPlayer.OpenFile( track.FilePath, gain );
 				if( retValue != 0 ) {
 					mOpenTracks.Add( retValue, track );
 
@@ -554,6 +548,70 @@ namespace Noise.Core.MediaPlayer {
 			}
 
 			return( retValue );
+		}
+
+		private float DetermineReplayGain( PlayQueueTrack track ) {
+			var retValue = 0.0f;
+
+			if(( mEnableReplayGain ) &&
+			   ( !track.IsStream ) &&
+			   ( track.Track != null )) {
+				var useAlbumGain = false;
+				var adjacentTrack = FindPreviousTrack( track );
+
+				if( track.Album != null ) {
+					if(( adjacentTrack != null ) &&
+					   ( adjacentTrack.Album.DbId == track.Album.DbId )) {
+						useAlbumGain = true;
+					}
+					else {
+						adjacentTrack = FindNextTrack( track );
+
+						if(( adjacentTrack != null ) &&
+						   ( adjacentTrack.Album.DbId == track.Album.DbId )) {
+							useAlbumGain = true;
+						}
+					}
+
+				}
+
+				retValue = useAlbumGain ? track.Track.ReplayGainAlbumGain : track.Track.ReplayGainTrackGain;
+			}
+
+			return ( retValue );
+		}
+
+		private PlayQueueTrack FindPreviousTrack( PlayQueueTrack track ) {
+			var retValue = default( PlayQueueTrack );
+
+			foreach( var queuedTrack in mPlayQueue.PlayList ) {
+				if( queuedTrack.Uid == track.Uid ) {
+					break;
+				}
+
+				retValue = queuedTrack;
+			}
+
+			return( retValue );
+		}
+
+		private PlayQueueTrack FindNextTrack( PlayQueueTrack track ) {
+			var retValue = default( PlayQueueTrack );
+			var foundTrack = false;
+
+			foreach( var queuedTrack in mPlayQueue.PlayList ) {
+				if( foundTrack ) {
+					retValue = queuedTrack;
+
+					break;;
+				}
+
+				if( queuedTrack.Uid == track.Uid ) {
+					foundTrack = true;
+				}
+			}
+
+			return ( retValue );
 		}
 
 		private void OnStreamInfo( StreamInfo info ) {
