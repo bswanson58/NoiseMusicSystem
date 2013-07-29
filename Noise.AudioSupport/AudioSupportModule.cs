@@ -14,6 +14,8 @@ namespace Noise.AudioSupport {
 
 		public void Initialize() {
 			mContainer.RegisterType<IAudioPlayer, AudioPlayer>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IEqManager, EqManager>( new HierarchicalLifetimeManager());
+
 			mContainer.RegisterType<IReplayGainScanner, ReplayGainScanner>();
 		}
 	}

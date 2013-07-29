@@ -9,7 +9,6 @@ using Noise.Core.DataBuilders;
 using Noise.Core.DataExchange;
 using Noise.Core.FileProcessor;
 using Noise.Core.FileStore;
-using Noise.Core.MediaPlayer;
 using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
 using Noise.Core.Support;
@@ -33,7 +32,6 @@ namespace Noise.Core {
 
 			mContainer.RegisterType<ICloudSyncManager, CloudSyncManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IDataExchangeManager, DataExchangeManager>( new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IEqManager, EqManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILifecycleManager, LifecycleManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IStorageFileProcessor, StorageFileProcessor>( new HierarchicalLifetimeManager());

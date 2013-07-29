@@ -7,7 +7,7 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.MediaPlayer {
+namespace Noise.AudioSupport.Player {
 	public class EqManager : IEqManager {
 		private readonly List<ParametricEqualizer>	mEqPresets;
 		private ParametricEqualizer					mCurrentEq;
