@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -20,6 +21,7 @@ namespace Noise.Core.BackgroundTasks {
 		private readonly IStorageFolderSupport	mStorageFolderSupport;
 		private readonly List<DbAlbum>			mAlbumList;
 		private IEnumerator<DbAlbum>			mAlbumEnumerator;
+		private bool							mReplayGainEnabled;
 		private bool							mDatabaseOpen;
 
 		public ReplayGainTask( IEventAggregator eventAggregator, IReplayGainScanner scanner,
@@ -35,6 +37,11 @@ namespace Noise.Core.BackgroundTasks {
 
 			mAlbumList = new List<DbAlbum>();
 
+			var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+			if( audioCongfiguration != null ) {
+				mReplayGainEnabled = audioCongfiguration.ReplayGainEnabled;
+			}
+
 			mEventAggregator.Subscribe( this );
 		}
 
@@ -43,7 +50,9 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public void Handle( Events.DatabaseOpened message ) {
-			InitializeScanList();
+			if( mReplayGainEnabled ) {
+				InitializeScanList();
+			}
 
 			mDatabaseOpen = true;
 		}
@@ -66,50 +75,53 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public void ExecuteTask() {
-			var spinCount = 5;
+			if(( mReplayGainEnabled ) &&
+			   ( mDatabaseOpen )) {
+				var spinCount = 10;
 
-			while( spinCount > 0 ) {
-				var album = NextAlbum();
+				while( spinCount > 0 ) {
+					var album = NextAlbum();
 
-				spinCount--;
+					spinCount--;
 
-				if(( mDatabaseOpen ) &&
-				   ( album != null )) {
-					var albumName = album.Name;
+					if( album != null ) {
+						var albumName = album.Name;
 
-					try {
-						var	trackList = new List<DbTrack>();
-						var artist = mArtistProvider.GetArtistForAlbum( album );
+						try {
+							var	trackList = new List<DbTrack>();
+							var artist = mArtistProvider.GetArtistForAlbum( album );
 
-						if( artist != null ) {
-							albumName = string.Format( "{0}/{1}", artist.Name, album.Name );
-						}
+							if( artist != null ) {
+								albumName = string.Format( "{0}/{1}", artist.Name, album.Name );
+							}
 
-						using( var tracks = mTrackProvider.GetTrackList( album )) {
-							if( tracks.List != null ) {
-								trackList.AddRange( tracks.List );
+							using( var tracks = mTrackProvider.GetTrackList( album )) {
+								if( tracks.List != null ) {
+									trackList.AddRange( tracks.List );
+								}
+							}
+
+							if( trackList.Any()) {
+								var scanRequired = trackList.Any( track => Math.Abs( track.ReplayGainTrackGain - 0 ) < 0.01f );
+
+								if( scanRequired ) {
+									mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Calculating ReplayGain values for: {0}", albumName )));
+
+									ExecuteScanner( trackList );
+
+									NoiseLogger.Current.LogMessage( "ReplayGainScanner updated album: '{0}' - Album gain: {1:N2}", albumName, mReplayGainScanner.AlbumGain );
+									spinCount = 0;
+								}
 							}
 						}
+						catch( Exception ex ) {
+							NoiseLogger.Current.LogException( string.Format( "ReplayGainTask scanning album '{0}'", albumName ), ex );
 
-						if( trackList.Any()) {
-							var scanRequired = trackList.Any( track => Math.Abs( track.ReplayGainTrackGain - 0 ) < 0.01f );
-
-							if( scanRequired ) {
-								mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Calculating ReplayGain values for: {0}", albumName )));
-
-								ExecuteScanner( trackList );
-
-								NoiseLogger.Current.LogMessage( "ReplayGainScanner updated album: '{0}'", albumName );
-								spinCount = 0;
-							}
+							spinCount = 0;
 						}
-					}
-					catch( Exception ex ) {
-						NoiseLogger.Current.LogException( string.Format( "ReplayGainTask scanning album '{0}'", albumName ), ex );
-
-						spinCount = 0;
 					}
 				}
+				
 			}
 		}
 
