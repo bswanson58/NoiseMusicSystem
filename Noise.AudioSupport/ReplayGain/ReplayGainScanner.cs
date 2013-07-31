@@ -99,7 +99,7 @@ namespace Noise.AudioSupport.ReplayGain {
 			var			rightChannel = new double[bufferSize];
 
 			foreach( var file in mFiles ) {
-				if( File.Exists( file.FilePath ) ) {
+				if( File.Exists( file.FilePath )) {
 					try {
 						var channel = Bass.BASS_StreamCreateFile( file.FilePath, 0, 0, BASSFlag.BASS_STREAM_DECODE );
 
@@ -131,6 +131,8 @@ namespace Noise.AudioSupport.ReplayGain {
 					}
 				}
 				else {
+					file.SetTrackFailure( "File does not exist." );
+
 					retValue = false;
 				}
 			}

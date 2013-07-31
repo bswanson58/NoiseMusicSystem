@@ -107,9 +107,13 @@ namespace Noise.Core.BackgroundTasks {
 								if( scanRequired ) {
 									mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Calculating ReplayGain values for: {0}", albumName )));
 
-									ExecuteScanner( trackList );
+									if( ExecuteScanner( trackList )) {
+										NoiseLogger.Current.LogMessage( "ReplayGainScanner updated album: '{0}' - Album gain: {1:N2}", albumName, mReplayGainScanner.AlbumGain );
+									}
+									else {
+										NoiseLogger.Current.LogMessage( "ReplayGainScanned failed for album: {0}", albumName );
+									}
 
-									NoiseLogger.Current.LogMessage( "ReplayGainScanner updated album: '{0}' - Album gain: {1:N2}", albumName, mReplayGainScanner.AlbumGain );
 									spinCount = 0;
 								}
 							}
@@ -125,7 +129,9 @@ namespace Noise.Core.BackgroundTasks {
 			}
 		}
 
-		private void ExecuteScanner( IEnumerable<DbTrack> trackList ) {
+		private bool ExecuteScanner( IEnumerable<DbTrack> trackList ) {
+			var retValue = false;
+
 			mReplayGainScanner.ResetScanner();
 
 			foreach( var track in trackList ) {
@@ -149,8 +155,12 @@ namespace Noise.Core.BackgroundTasks {
 							}
 						}
 					}
+
+					retValue = true;
 				}
 			}
+
+			return( retValue );
 		}
 
 		private void InitializeScanList() {
