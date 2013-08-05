@@ -286,12 +286,14 @@
     <Compile Include="ValueConverters\TimeSpanVisibilityConverter.cs" />
     <Compile Include="ValueConverters\VolumeLevelConverter.cs" />
     <Compile Include="ViewModels\AlbumEditDialogModel.cs" />
+    <Compile Include="ViewModels\AlbumListViewModel.cs" />
     <Compile Include="ViewModels\AlbumTracksViewModel.cs" />
     <Compile Include="ViewModels\ArtistAlbumConfigViewModel.cs" />
     <Compile Include="ViewModels\AlbumArtworkViewModel.cs" />
     <Compile Include="ViewModels\AlbumViewModel.cs" />
     <Compile Include="ViewModels\ApplicationLogDialogModel.cs" />
     <Compile Include="ViewModels\ArtistInfoViewModel.cs" />
+    <Compile Include="ViewModels\ArtistListViewModel.cs" />
     <Compile Include="ViewModels\ArtistTracksViewModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
     <Compile Include="ViewModels\CategorySelectionDialogModel.cs" />
@@ -340,6 +342,9 @@
     <Compile Include="Views\AlbumEditDialog.xaml.cs">
       <DependentUpon>AlbumEditDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\AlbumListView.xaml.cs">
+      <DependentUpon>AlbumListView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\AlbumTracksView.xaml.cs">
       <DependentUpon>AlbumTracksView.xaml</DependentUpon>
     </Compile>
@@ -357,6 +362,9 @@
     </Compile>
     <Compile Include="Views\ArtistInfoView.xaml.cs">
       <DependentUpon>ArtistInfoView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ArtistListView.xaml.cs">
+      <DependentUpon>ArtistListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ArtistTracksView.xaml.cs">
       <DependentUpon>ArtistTracksView.xaml</DependentUpon>
@@ -387,6 +395,9 @@
     </Compile>
     <Compile Include="Views\LibraryAdditionsView.xaml.cs">
       <DependentUpon>LibraryAdditionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LibraryArtistView.xaml.cs">
+      <DependentUpon>LibraryArtistView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LibraryConfigurationDialog.xaml.cs">
       <DependentUpon>LibraryConfigurationDialog.xaml</DependentUpon>
@@ -563,6 +574,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\AlbumListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\AlbumTracksView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -584,6 +599,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ArtistInfoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ArtistListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -624,6 +643,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\LibraryAdditionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LibraryArtistView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -53,5 +53,9 @@ namespace Noise.UI.Dto {
 			get{ return( Get( () => Website )); }
 			set{ Set( () => Website, value ); }
 		}
+
+		public override string ToString() {
+			return( Name );
+		}
 	}
 }
