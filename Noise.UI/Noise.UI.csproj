@@ -170,7 +170,6 @@
     <Compile Include="Adapters\DynamicProxies\UpdatingProxy.cs" />
     <Compile Include="Adapters\DynamicProxies\ValidatingProxy.cs" />
     <Compile Include="Adapters\FavoriteViewNode.cs" />
-    <Compile Include="Adapters\IndexNode.cs" />
     <Compile Include="Adapters\LibraryAdditionNode.cs" />
     <Compile Include="Adapters\LinkNode.cs" />
     <Compile Include="Adapters\PlayHistoryNode.cs" />
@@ -213,7 +212,6 @@
       <DependentUpon>HorizontalVuMeter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\LinkLabel.cs" />
-    <Compile Include="Controls\ListBoxEx.cs" />
     <Compile Include="Controls\ListIndex.xaml.cs">
       <DependentUpon>ListIndex.xaml</DependentUpon>
     </Compile>
@@ -223,7 +221,6 @@
     <Compile Include="Controls\RatingControl.xaml.cs">
       <DependentUpon>RatingControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SearchTextBox.cs" />
     <Compile Include="Controls\SpectrumAnalyzerDisplay.xaml.cs">
       <DependentUpon>SpectrumAnalyzerDisplay.xaml</DependentUpon>
     </Compile>
@@ -299,16 +296,10 @@
     <Compile Include="ViewModels\CategorySelectionDialogModel.cs" />
     <Compile Include="ViewModels\CloudConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\DatabaseConfigurationDialogModel.cs" />
-    <Compile Include="ViewModels\ExplorerStrategyArtistAlbum.cs" />
-    <Compile Include="ViewModels\ExplorerStrategyDecade.cs" />
-    <Compile Include="ViewModels\ExplorerStrategyGenre.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
     <Compile Include="ViewModels\FeaturedArtistsDialogModel.cs" />
-    <Compile Include="ViewModels\IExplorerViewStrategy.cs" />
-    <Compile Include="ViewModels\ILibraryExplorerViewModel.cs" />
     <Compile Include="ViewModels\LibraryAdditionsViewModel.cs" />
     <Compile Include="ViewModels\LibraryConfigurationDialogModel.cs" />
-    <Compile Include="ViewModels\LibraryExplorerViewModel.cs" />
     <Compile Include="ViewModels\LibrarySelectorViewModel.cs" />
     <Compile Include="ViewModels\ListenStageViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
@@ -527,8 +518,8 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ListIndex.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\ParametricEqualizerControl.xaml">
       <SubType>Designer</SubType>
