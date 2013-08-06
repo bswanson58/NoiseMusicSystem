@@ -210,7 +210,7 @@ namespace Noise.UI.ViewModels {
 		private void FormatSortPrefix( UiArtist artist ) {
 			if( mSortPrefixes != null ) {
 				foreach( string prefix in mSortPrefixes ) {
-					if( artist.Name.StartsWith( prefix, StringComparison.CurrentCultureIgnoreCase ) ) {
+					if( artist.Name.StartsWith( prefix, StringComparison.CurrentCultureIgnoreCase )) {
 						artist.SortName = artist.Name.Remove( 0, prefix.Length ).Trim();
 						artist.DisplayName = "(" + artist.Name.Insert( prefix.Length, ")" );
 

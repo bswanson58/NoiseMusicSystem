@@ -6,13 +6,19 @@
              Tag="Library"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="2*" MinHeight="100"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*" MinHeight="100"/>
         </Grid.RowDefinitions>
         
         <Views:ArtistListView Grid.Row="0"/>
-        <Views:AlbumListView Grid.Row="1"/>
+
+        <GridSplitter Grid.Row="1" Margin="0,2,0,-4" Background="Transparent" Style="{StaticResource GridSplitterHorizontalStyle}"
+                      ResizeDirection="Rows" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+
+        <Views:AlbumListView Grid.Row="2"/>
     </Grid>
 </UserControl>

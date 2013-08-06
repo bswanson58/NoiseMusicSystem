@@ -61,7 +61,7 @@
                               Height="Auto"
                               Background="Transparent"
                               ResizeDirection="Columns"
-                              Style="{DynamicResource GridSplitterStyle}" />
+                              Style="{DynamicResource GridSplitterVerticalStyle}" />
 
                 <Grid Grid.Column="1" Margin="1,0,9,0">
                     <Grid.RowDefinitions>
@@ -80,7 +80,7 @@
                               Height="Auto"
                               Background="Transparent"
                               ResizeDirection="Columns"
-                              Style="{DynamicResource GridSplitterStyle}" />
+                              Style="{DynamicResource GridSplitterVerticalStyle}" />
 
                 <Grid Grid.Column="2">
                     <Grid.RowDefinitions>

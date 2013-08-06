@@ -63,10 +63,27 @@ namespace Noise.UI.ViewModels {
 					mAlbumView = CollectionViewSource.GetDefaultView( mAlbumList );
 
 					UpdateSorts();
+					mAlbumView.Filter += OnAlbumFilter;
 				}
 
 				return( mAlbumView );
 			}
+		}
+
+		private bool OnAlbumFilter( object node ) {
+			var retValue = true;
+
+			if(( node is UiAlbum ) &&
+			   ( !string.IsNullOrWhiteSpace( FilterText ))) {
+				var albumNode = node as UiAlbum;
+
+				if( ( albumNode.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) &&
+				   ( albumNode.Genre.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 )) {
+					retValue = false;
+				}
+			}
+
+			return ( retValue );
 		}
 
 		private void UpdateSorts() {
@@ -89,6 +106,19 @@ namespace Noise.UI.ViewModels {
 				if( value != null ) {
 					mEventAggregator.Publish( new Events.AlbumFocusRequested( value.Artist, value.DbId ) );
 				}
+			}
+		}
+
+		public string FilterText {
+			get { return ( Get( () => FilterText )); }
+			set {
+				Set( () => FilterText, value );
+
+				if( mAlbumView != null ) {
+					mAlbumView.Refresh();
+				}
+
+				RaisePropertyChanged( () => FilterText );
 			}
 		}
 
@@ -136,8 +166,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void SetAlbumList( IEnumerable<DbAlbum> albumList ) {
-			mAlbumList.IsNotifying = false;
 			mAlbumList.Clear();
+			mAlbumList.IsNotifying = false;
 
 			foreach( var album in albumList ) {
 				mAlbumList.Add( TransformAlbum( album ));

@@ -6,6 +6,7 @@
              xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
@@ -81,6 +82,7 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <ListBox Grid.Row="0" BorderThickness="0"
@@ -98,6 +100,17 @@
                     <ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
                 </i:Interaction.Behaviors>
             </ListBox>
+            
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBox Grid.Column="1" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
+                         Behaviours:TextBoxHelper.Watermark="enter album filter text..." Behaviours:TextBoxHelper.ClearTextButton="True"
+                         Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
         </Grid>
     </GroupBox>
 </UserControl>

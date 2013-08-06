@@ -52,7 +52,7 @@
                     </Grid>
                     
                     <GridSplitter Grid.Column="0" Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"
-                                  Style="{DynamicResource GridSplitterStyle}" />
+                                  Style="{DynamicResource GridSplitterVerticalStyle}" />
 
                     <ContentControl Grid.Column="1" Margin="1,0,3,0" Regions:RegionManager.RegionName="Timeline:AlbumInfo" />
                 </Grid>
@@ -61,7 +61,7 @@
             </Grid>
             
             <GridSplitter Grid.Column="0" Width="7" Height="Auto" Background="Transparent" ResizeDirection="Columns"
-                          Style="{DynamicResource GridSplitterStyle}" />
+                          Style="{DynamicResource GridSplitterVerticalStyle}" />
 
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
