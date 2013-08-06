@@ -242,7 +242,7 @@ namespace Noise.UI.ViewModels {
 		}
 		[DependsUpon( "CurrentStatus" )]
 		public bool CanExecute_Play( object sender ) {
-			return( mPlayController.CanPlay );
+			return( mPlayController != null && mPlayController.CanPlay );
 		}
 
 		public void Execute_Pause( object sender ) {
@@ -250,7 +250,7 @@ namespace Noise.UI.ViewModels {
 		}
 		[DependsUpon( "CurrentStatus" )]
 		public bool CanExecute_Pause( object sender ) {
-			return( mPlayController.CanPause );
+			return ( mPlayController != null && mPlayController.CanPause );
 		}
 
 		public void Execute_Stop( object sender ) {
@@ -258,7 +258,7 @@ namespace Noise.UI.ViewModels {
 		}
 		[DependsUpon( "CurrentStatus" )]
 		public bool CanExecute_Stop( object sender ) {
-			return( mPlayController.CanStop );
+			return ( mPlayController != null && mPlayController.CanStop );
 		}
 
 		public void Execute_NextTrack( object sender ) {
@@ -266,7 +266,7 @@ namespace Noise.UI.ViewModels {
 		}
 		[DependsUpon( "CurrentStatus" )]
 		public bool CanExecute_NextTrack( object sender ) {
-			return( mPlayController.CanPlayNextTrack );
+			return ( mPlayController != null && mPlayController.CanPlayNextTrack );
 		}
 
 		public void Execute_PreviousTrack( object sender ) {
@@ -275,7 +275,7 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "CurrentStatus" )]
 		[DependsUpon( "InfoUpdateFlag" )]
 		public bool CanExecute_PreviousTrack( object sender ) {
-			return( mPlayController.CanPlayPreviousTrack );
+			return ( mPlayController != null && mPlayController.CanPlayPreviousTrack );
 		}
 
 		public void Execute_ReplayTrack() {
