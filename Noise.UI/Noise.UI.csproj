@@ -221,6 +221,9 @@
     <Compile Include="Controls\RatingControl.xaml.cs">
       <DependentUpon>RatingControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SortDescriptionList.xaml.cs">
+      <DependentUpon>SortDescriptionList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SpectrumAnalyzerDisplay.xaml.cs">
       <DependentUpon>SpectrumAnalyzerDisplay.xaml</DependentUpon>
     </Compile>
@@ -393,9 +396,6 @@
     <Compile Include="Views\LibraryConfigurationDialog.xaml.cs">
       <DependentUpon>LibraryConfigurationDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\LibraryExplorerView.xaml.cs">
-      <DependentUpon>LibraryExplorerView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\LibraryFilterDialog.xaml.cs">
       <DependentUpon>LibraryFilterDialog.xaml</DependentUpon>
     </Compile>
@@ -529,6 +529,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\SortDescriptionList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\SpectrumAnalyzerDisplay.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -642,10 +646,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\LibraryConfigurationDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\LibraryExplorerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

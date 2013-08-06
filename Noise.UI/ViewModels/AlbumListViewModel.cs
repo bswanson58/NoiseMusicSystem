@@ -13,15 +13,17 @@ using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class AlbumListViewModel : AutomaticPropertyBase,
+	public class AlbumListViewModel : AutomaticCommandBase,
 									  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+		private const string							cDisplaySortDescriptionss = "_displaySortDescriptions";
+		private const string							cHideSortDescriptions = "_normal";
+
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly ISelectionState				mSelectionState;
 		private readonly IObservableCollection<UiAlbum>	mAlbumList;
 		private ICollectionView							mAlbumView;
 		private readonly List<ViewSortStrategy>			mAlbumSorts;
-		private ViewSortStrategy						mCurrentAlbumSort;
 		private DbArtist								mCurrentArtist;
 		private TaskHandler								mAlbumRetrievalTaskHandler;
  
@@ -35,7 +37,8 @@ namespace Noise.UI.ViewModels {
 			mAlbumSorts = new List<ViewSortStrategy> { new ViewSortStrategy( "Album Name", new List<SortDescription> { new SortDescription( "Name", ListSortDirection.Ascending ) } ),
 													   new ViewSortStrategy( "Published Year", new List<SortDescription> { new SortDescription( "PublishedYear", ListSortDirection.Ascending ),
 																														   new SortDescription( "Name", ListSortDirection.Ascending ) })};
-			mCurrentAlbumSort = mAlbumSorts[0];
+			SelectedSortDescription = mAlbumSorts[0];
+			VisualStateName = cHideSortDescriptions;
 
 			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
 			mEventAggregator.Subscribe( this );
@@ -46,6 +49,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Handle( Events.DatabaseClosing args ) {
 			ClearAlbumList();
+			VisualStateName = cHideSortDescriptions;
 		}
 
 		private void OnArtistChanged( DbArtist artist ) {
@@ -70,6 +74,25 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public IEnumerable<ViewSortStrategy> SortDescriptions {
+			get{ return( mAlbumSorts ); }
+		} 
+
+		public ViewSortStrategy SelectedSortDescription {
+			get{ return( Get( () => SelectedSortDescription )); }
+			set {
+				Set( () => SelectedSortDescription, value );
+
+				UpdateSorts();
+				VisualStateName = cHideSortDescriptions;
+			}
+		}
+
+		public string VisualStateName {
+			get { return ( Get( () => VisualStateName )); }
+			set { Set( () => VisualStateName, value ); }
+		}
+
 		private bool OnAlbumFilter( object node ) {
 			var retValue = true;
 
@@ -91,8 +114,8 @@ namespace Noise.UI.ViewModels {
 				Execute.OnUIThread( () => {
 					mAlbumView.SortDescriptions.Clear();
 
-					foreach( var sortDescrition in mCurrentAlbumSort.SortDescriptions ) {
-						mAlbumView.SortDescriptions.Add( sortDescrition );
+					foreach( var sortDescription in SelectedSortDescription.SortDescriptions ) {
+						mAlbumView.SortDescriptions.Add( sortDescription );
 					}
 				} );
 			}
@@ -134,6 +157,10 @@ namespace Noise.UI.ViewModels {
 
 				return( retValue );
 			}
+		}
+
+		public void Execute_ToggleSortDisplay() {
+			VisualStateName = VisualStateName == cHideSortDescriptions ? cDisplaySortDescriptionss : cHideSortDescriptions;
 		}
 
 		internal TaskHandler AlbumsRetrievalTaskHandler {

@@ -16,10 +16,13 @@ using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class ArtistListViewModel : AutomaticPropertyBase,
+	public class ArtistListViewModel : AutomaticCommandBase,
 									   IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistContentUpdated>,
 									   IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
 									   IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+		private const string							cDisplaySortDescriptionss = "_displaySortDescriptions";
+		private const string							cHideSortDescriptions = "_normal";
+
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly ISelectionState				mSelectionState;
 		private readonly IArtistProvider				mArtistProvider;
@@ -30,7 +33,6 @@ namespace Noise.UI.ViewModels {
 		private readonly bool							mEnableSortPrefixes;
 		private readonly List<string>					mSortPrefixes;
 		private readonly List<ViewSortStrategy>			mArtistSorts;
-		private readonly ViewSortStrategy				mCurrentArtistSort;
 		private TaskHandler								mArtistRetrievalTaskHandler;
 
 		public ArtistListViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, ISelectionState selectionState ,
@@ -55,8 +57,10 @@ namespace Noise.UI.ViewModels {
 			}
 
 			mArtistSorts = new List<ViewSortStrategy> { new ViewSortStrategy( "Artist Name", new List<SortDescription> { new SortDescription( "Name", ListSortDirection.Ascending ) }),
-														new ViewSortStrategy( "Unprefixed Artist Name", new List<SortDescription> { new SortDescription( "SortName", ListSortDirection.Ascending ) })};
-			mCurrentArtistSort = mEnableSortPrefixes ? mArtistSorts[1] : mArtistSorts[0];
+														new ViewSortStrategy( "Unprefixed Artist Name", new List<SortDescription> { new SortDescription( "SortName", ListSortDirection.Ascending ) }),
+														new ViewSortStrategy( "Genre", new List<SortDescription> { new SortDescription( "Genre", ListSortDirection.Ascending ),
+																												   new SortDescription( "SortName", ListSortDirection.Ascending )}) };
+			SelectedSortDescription = mEnableSortPrefixes ? mArtistSorts[1] : mArtistSorts[0];
 
 			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
 			mEventAggregator.Subscribe( this );
@@ -72,6 +76,8 @@ namespace Noise.UI.ViewModels {
 
 		public void Handle( Events.DatabaseClosing args ) {
 			ClearArtistList();
+
+			VisualStateName = cHideSortDescriptions;
 		}
 
 		public void Handle( Events.ArtistUserUpdate eventArgs ) {
@@ -128,6 +134,25 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public IEnumerable<ViewSortStrategy> SortDescriptions {
+			get { return ( mArtistSorts ); }
+		}
+
+		public ViewSortStrategy SelectedSortDescription {
+			get { return ( Get( () => SelectedSortDescription ) ); }
+			set {
+				Set( () => SelectedSortDescription, value );
+
+				UpdateSorts();
+				VisualStateName = cHideSortDescriptions;
+			}
+		}
+
+		public string VisualStateName {
+			get { return ( Get( () => VisualStateName ) ); }
+			set { Set( () => VisualStateName, value ); }
+		}
+
 		private bool OnArtistFilter( object node ) {
 			var retValue = true;
 
@@ -149,7 +174,7 @@ namespace Noise.UI.ViewModels {
 				Execute.OnUIThread( () => {
 					mArtistView.SortDescriptions.Clear();
 
-					foreach( var sortDescrition in mCurrentArtistSort.SortDescriptions ) {
+					foreach( var sortDescrition in SelectedSortDescription.SortDescriptions ) {
 						mArtistView.SortDescriptions.Add( sortDescrition );
 					}
 				} );
@@ -178,6 +203,10 @@ namespace Noise.UI.ViewModels {
 
 				RaisePropertyChanged( () => FilterText );
 			}
+		}
+
+		public void Execute_ToggleSortDisplay() {
+			VisualStateName = VisualStateName == cHideSortDescriptions ? cDisplaySortDescriptionss : cHideSortDescriptions;
 		}
 
 		internal TaskHandler ArtistsRetrievalTaskHandler {

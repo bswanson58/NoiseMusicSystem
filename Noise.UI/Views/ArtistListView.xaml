@@ -8,6 +8,7 @@
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             ReusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     
@@ -89,6 +90,25 @@
     </UserControl.Resources>
 
     <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Artists ">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="_sortMenuVisibility">
+                <VisualStateGroup.Transitions>
+                    <VisualTransition GeneratedDuration="0:0:0.3" />
+                </VisualStateGroup.Transitions>
+                <VisualState x:Name="_normal" />
+                <VisualState x:Name="_displaySortDescriptions">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="0" Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(FrameworkElement.Height)">
+                            <EasingDoubleKeyFrame KeyTime="0" Value="300" />
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -104,11 +124,17 @@
                 </i:Interaction.Behaviors>
             </ListBox>
 
+            <NoiseControls:SortDescriptionList x:Name="_sortList" Grid.Row="0" Height="0" Margin="7,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Opacity="0" />
+            
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Margin="3" Height="21" Padding="3" HorizontalAlignment="Left" Command="{Binding Path=ToggleSortDisplay}"
+                        Style="{StaticResource GeneralButtonStyle}" Content="{StaticResource Path_SortOrder}"
+                        ToolTip="Set Artist Sort Order" />
 
                 <TextBox Grid.Column="1" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
                          Behaviours:TextBoxHelper.Watermark="enter artist filter text..." Behaviours:TextBoxHelper.ClearTextButton="True"
