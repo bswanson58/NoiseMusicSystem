@@ -112,13 +112,15 @@ namespace Noise.UI.ViewModels {
 		public string FilterText {
 			get { return ( Get( () => FilterText )); }
 			set {
-				Set( () => FilterText, value );
+				Execute.OnUIThread( () => {
+					Set( () => FilterText, value );
 
-				if( mAlbumView != null ) {
-					mAlbumView.Refresh();
-				}
+					if( mAlbumView != null ) {
+						mAlbumView.Refresh();
+					}
 
-				RaisePropertyChanged( () => FilterText );
+					RaisePropertyChanged( () => FilterText );
+				} );
 			}
 		}
 
@@ -146,6 +148,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void RetrieveAlbums( DbArtist artist ) {
+			ClearAlbumList();
+
 			mCurrentArtist = artist;
 			RaisePropertyChanged( () => ArtistName );
 
@@ -155,18 +159,18 @@ namespace Noise.UI.ViewModels {
 				}
 			},
 			() => { },
-			ex => NoiseLogger.Current.LogException( "AlbumListViewModel:RetrieveAlbums", ex ) );
+			ex => NoiseLogger.Current.LogException( "AlbumListViewModel:RetrieveAlbums", ex ));
 		}
 
 		private void ClearAlbumList() {
 			mCurrentArtist = null;
 			mAlbumList.Clear();
+			FilterText = string.Empty;
 
 			RaisePropertyChanged( () => ArtistName );
 		}
 
 		private void SetAlbumList( IEnumerable<DbAlbum> albumList ) {
-			mAlbumList.Clear();
 			mAlbumList.IsNotifying = false;
 
 			foreach( var album in albumList ) {
