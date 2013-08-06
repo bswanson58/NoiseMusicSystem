@@ -3,8 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:NoiseControls="clr-namespace:Noise.UI.Controls" xmlns:Dto="clr-namespace:Noise.UI.Dto"
+             xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
+             xmlns:Dto="clr-namespace:Noise.UI.Dto"
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     
@@ -95,8 +98,11 @@
             <ListBox Grid.Row="0" BorderThickness="0" HorizontalContentAlignment="Stretch"
                      ItemsSource="{Binding ArtistList}"
                      ItemTemplate="{StaticResource ArtistTemplate}"
-                     SelectedItem="{Binding SelectedArtist}"
-                     />
+                     SelectedItem="{Binding SelectedArtist}">
+                <i:Interaction.Behaviors>
+                    <ReusableBehaviours:ListBoxSelectionVisible />
+                </i:Interaction.Behaviors>
+            </ListBox>
 
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>

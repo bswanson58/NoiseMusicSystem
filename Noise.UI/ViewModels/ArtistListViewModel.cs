@@ -10,6 +10,7 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
+using Noise.UI.Interfaces;
 using Observal.Extensions;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -20,6 +21,7 @@ namespace Noise.UI.ViewModels {
 									   IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
 									   IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator				mEventAggregator;
+		private readonly ISelectionState				mSelectionState;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly ITagManager					mTagManager;
 		private	readonly Observal.Observer				mChangeObserver;
@@ -31,8 +33,10 @@ namespace Noise.UI.ViewModels {
 		private readonly ViewSortStrategy				mCurrentArtistSort;
 		private TaskHandler								mArtistRetrievalTaskHandler;
 
-		public ArtistListViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IArtistProvider artistProvider, ITagManager tagManager ) {
+		public ArtistListViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, ISelectionState selectionState ,
+									IArtistProvider artistProvider, ITagManager tagManager ) {
 			mEventAggregator = eventAggregator;
+			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
 			mTagManager = tagManager;
 
@@ -54,6 +58,7 @@ namespace Noise.UI.ViewModels {
 														new ViewSortStrategy( "Unprefixed Artist Name", new List<SortDescription> { new SortDescription( "SortName", ListSortDirection.Ascending ) })};
 			mCurrentArtistSort = mEnableSortPrefixes ? mArtistSorts[1] : mArtistSorts[0];
 
+			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
 			mEventAggregator.Subscribe( this );
 
 			if( databaseInfo.IsOpen ) {
@@ -92,6 +97,10 @@ namespace Noise.UI.ViewModels {
 				mArtistList.Remove( artistNode );
 				mChangeObserver.Release( artistNode );
 			}
+		}
+
+		private void OnArtistChanged( DbArtist artist ) {
+			SelectedArtist = ( from uiArtist in mArtistList where artist.DbId == uiArtist.DbId select uiArtist ).FirstOrDefault();
 		}
 
 		private void BuildArtistList() {
