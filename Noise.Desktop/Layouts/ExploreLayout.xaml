@@ -26,6 +26,13 @@
             <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" From="0.1" To="1.0" Duration="0:0:0.3"/>
             <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0.3"/>
         </Storyboard>
+        
+        <DataTemplate x:Key="TabTemplate">
+            <ReusableControls:AnimatedContentControl Content="{Binding}"
+                                                     IncomingStoryboard="{StaticResource AlbumInfoIncomingStoryboard}" IncomingRenderTransformOrigin="1.0, 0.5"
+                                                     OutgoingStoryboard="{StaticResource AlbumInfoOutgoingStoryboard}"/>
+        </DataTemplate>
+
     </UserControl.Resources>
     
     <Grid>
@@ -52,8 +59,8 @@
 
                     <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="LibrarySelector" />
 
-                    <TabControl Grid.Row="1" Margin="1,7,3,-2" ItemContainerStyle="{StaticResource TabControlStyle}"
-                                BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="Explorer" />
+                    <TabControl Grid.Row="1" Margin="1,7,3,-2" BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="Explorer"
+                                ContentTemplate="{StaticResource TabTemplate}"  ItemContainerStyle="{StaticResource TabControlStyle}" />
                 </Grid>
 
                 <GridSplitter Grid.Column="0"
