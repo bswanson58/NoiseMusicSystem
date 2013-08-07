@@ -7,14 +7,15 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
+using Noise.UI.Interfaces;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistInfoViewModel : AutomaticCommandBase, IActiveAware, IHandle<Events.ViewDisplayRequest>, IHandle<Events.DatabaseClosing>,
-									   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>,
 									   IHandle<Events.ArtistMetadataUpdated> {
 		private readonly IEventAggregator				mEventAggregator;
+		private readonly ISelectionState				mSelectionState;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IMetadataManager				mMetadataManager;
 		private readonly List<DbArtist>					mArtistList;
@@ -28,8 +29,10 @@ namespace Noise.UI.ViewModels {
 
 		public	event	EventHandler					IsActiveChanged = delegate { };
 
-		public ArtistInfoViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IMetadataManager metadataManager ) {
+		public ArtistInfoViewModel( IEventAggregator eventAggregator, ISelectionState selectionState,
+									IArtistProvider artistProvider, IMetadataManager metadataManager ) {
 			mEventAggregator = eventAggregator;
+			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
 			mMetadataManager = metadataManager;
 			mCurrentArtistId = Constants.cDatabaseNullOid;
@@ -42,6 +45,8 @@ namespace Noise.UI.ViewModels {
 			mTopAlbums = new BindableCollection<LinkNode>();
 			mBandMembers = new BindableCollection<string>();
 			mDiscography = new SortableCollection<DbDiscographyRelease>();
+
+			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
 		}
 
 		public bool IsActive {
@@ -80,21 +85,22 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Handle( Events.DatabaseClosing args ) {
-			ClearCurrentArtist();
-			mArtistList.Clear();
-		}
+		private void OnArtistChanged( DbArtist artist ) {
+			if( artist != null ) {
+				SetCurrentArtist( artist.DbId );
 
-		public void Handle( Events.ArtistFocusRequested request ) {
-			SetCurrentArtist( request.ArtistId );
-
-			if(!IsActive ) {
-				mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.ArtistInfoView ));
+				if( !IsActive ) {
+					mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.ArtistInfoView ) );
+				}
+			}
+			else {
+				ClearCurrentArtist();
 			}
 		}
 
-		public void Handle( Events.AlbumFocusRequested request ) {
-			SetCurrentArtist( request.ArtistId );
+		public void Handle( Events.DatabaseClosing args ) {
+			ClearCurrentArtist();
+			mArtistList.Clear();
 		}
 
 		public void Handle( Events.ArtistMetadataUpdated eventArgs ) {

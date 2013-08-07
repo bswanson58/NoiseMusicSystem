@@ -11,12 +11,11 @@
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              d:DesignHeight="300"
              d:DesignWidth="300"
-             DataContext="{Binding PlayQueueViewModel,
-                                   Source={StaticResource ViewModelLocator}}"
+             DataContext="{Binding PlayQueueViewModel, Source={StaticResource ViewModelLocator}}"
              mc:Ignorable="d">
     <Control.Resources>
         <Behaviours:CommandReference x:Key="DeleteCommandReference" Command="{Binding DeleteCommand}" />
-        
+
         <Style x:Key="QueueButtonStyle" TargetType="Button">
             <Setter Property="Height" Value="17"/>
             <Setter Property="Width" Value="17"/>
@@ -31,13 +30,13 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
         <ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
             <Grid Margin="5,15,5,0">
                 <TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="Play Something!" />
             </Grid>
         </ControlTemplate>
-        
+
         <ControlTemplate x:Key="MouseOverExpanderTemplate" TargetType="{x:Type Expander}">
             <ControlTemplate.Resources>
                 <Storyboard x:Key="ExpandContent">
@@ -116,85 +115,110 @@
             </ControlTemplate.Triggers>
         </ControlTemplate>
 
+        <Storyboard x:Key="ItemDeleteStoryboard" >
+            <DoubleAnimation Storyboard.TargetName="listItemLayoutRoot" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.5"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="listItemLayoutRoot" 
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CubicEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.7" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CubicEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
         <DataTemplate x:Key="QueueListItem">
-            <Expander Margin="-9,0,0,0" Style="{StaticResource MouseOverTrigger}" Template="{DynamicResource MouseOverExpanderTemplate}">
-                <Expander.Header>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        
-                        <Grid Grid.Row="0" Margin="0,-3,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="15" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="40" />
-                            </Grid.ColumnDefinitions>
-                            
-                            <Grid Grid.Column="0">
-                                <TextBlock Margin="0,2,0,0" FontFamily="WebDings" FontSize="18" Foreground="LightGreen" Text="4"
+            <Grid x:Name="listItemLayoutRoot" >
+                <Grid.LayoutTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                    </TransformGroup>
+                </Grid.LayoutTransform>
+
+                <Expander Margin="-9,0,0,0" Style="{StaticResource MouseOverTrigger}" Template="{DynamicResource MouseOverExpanderTemplate}">
+                    <Expander.Header>
+                        <Grid >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0" Margin="0,-3,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="15" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="40" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid Grid.Column="0">
+                                    <TextBlock Margin="0,2,0,0" FontFamily="WebDings" FontSize="18" Foreground="LightGreen" Text="4"
                                        Visibility="{Binding Path=QueuedTrack.IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}" />
-                                <TextBlock Margin="7,0,0,0" FontSize="14" FontWeight="Bold" Foreground="Red" Text="!"
+                                    <TextBlock Margin="7,0,0,0" FontSize="14" FontWeight="Bold" Foreground="Red" Text="!"
                                        Visibility="{Binding Path=QueuedTrack.IsFaulted, Converter={StaticResource BooleanVisibilityConverter}}" />
-                            </Grid>
-                            
-                            <TextBlock x:Name="TrackName" Grid.Column="1" FontSize="14"
+                                </Grid>
+
+                                <TextBlock x:Name="TrackName" Grid.Column="1" FontSize="14"
                                        ReusableBehaviours:FadeTrimming.IsEnabled="True"
                                        ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                                        Text="{Binding Path=QueuedTrack.Name}" />
 
-                            <TextBlock x:Name="TrackDuration" Grid.Column="2" FontSize="14" VerticalAlignment="Top" TextAlignment="Right"
+                                <TextBlock x:Name="TrackDuration" Grid.Column="2" FontSize="14" VerticalAlignment="Top" TextAlignment="Right"
                                        Text="{Binding Path=QueuedTrack.Track.Duration, Converter={StaticResource TimeSpanConverter}}"/>
-                        </Grid>
-                        
-                        <Grid Grid.Row="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="15" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
+                            </Grid>
 
-                            <TextBlock x:Name="AlbumName" Grid.Column="1" Margin="5,0" FontSize="11" Foreground="Gray"
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="15" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="AlbumName" Grid.Column="1" Margin="5,0" FontSize="11" Foreground="Gray"
                                        ReusableBehaviours:FadeTrimming.IsEnabled="True"
                                        ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
                                        Text="{Binding Path=QueuedTrack.AlbumName}" />
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </Expander.Header>
-                <Grid Margin="3,3,0,1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                    </Expander.Header>
+                    <Grid Margin="3,3,0,1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-                    <Button Grid.Column="0" Style="{StaticResource QueueButtonStyle}"
+                        <Button Grid.Column="0" Style="{StaticResource QueueButtonStyle}"
                             Command="{Binding Path=Play}" Content="4" ToolTip="Play Now" />
-                    <Button Grid.Column="1" Style="{StaticResource QueueButtonStyle}"
+                        <Button Grid.Column="1" Style="{StaticResource QueueButtonStyle}"
                             Command="{Binding Path=PlayFromHere}" Content="8" ToolTip="Continue play from here" />
-                    <Button Grid.Column="2" Style="{StaticResource QueueButtonStyle}"
+                        <Button Grid.Column="2" Style="{StaticResource QueueButtonStyle}"
                             Command="{Binding Path=DisplayInfo}" Content="{StaticResource Path_Information}" ToolTip="Display Artist and Album display" />
-                    <Button Grid.Column="3" Style="{StaticResource QueueButtonStyle}"
+                        <Button Grid.Column="3" Style="{StaticResource QueueButtonStyle}"
                             Command="{Binding Path=MoveUp}" Content="5" ToolTip="Move track up in queue" />
-                    <Button Grid.Column="4" Style="{StaticResource QueueButtonStyle}"
+                        <Button Grid.Column="4" Style="{StaticResource QueueButtonStyle}"
                             Command="{Binding Path=MoveDown}" Content="6" ToolTip="Move track down in queue" />
-                    <Button Grid.Column="5" Style="{StaticResource QueueButtonStyle}"
+                        <Button Grid.Column="5" Style="{StaticResource QueueButtonStyle}"
                             Command="{Binding Path=Dequeue}" Content="r" ToolTip="Remove track from queue" />
-                    
-                    <!--  Favorite and Rating  -->
-                    <StackPanel Grid.Column="6" HorizontalAlignment="Right" Orientation="Horizontal">
-                        <CheckBox Width="15" Height="15" Margin="0,0,4,2" VerticalAlignment="Center"
+
+                        <!--  Favorite and Rating  -->
+                        <StackPanel Grid.Column="6" HorizontalAlignment="Right" Orientation="Horizontal">
+                            <CheckBox Width="15" Height="15" Margin="0,0,4,2" VerticalAlignment="Center"
                                   IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}"
                                   Style="{StaticResource FavoriteCheckBoxStyle}" />
-                        <Controls:RatingControl Rating="{Binding Path=Rating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
-                    </StackPanel>
-                </Grid>
-            </Expander>
+                            <Controls:RatingControl Rating="{Binding Path=Rating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
+                        </StackPanel>
+                    </Grid>
+                </Expander>
+            </Grid>
 
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding Path=QueuedTrack.HasPlayed}" Value="true">
@@ -202,16 +226,29 @@
                     <Setter TargetName="AlbumName" Property="Foreground" Value="LightGray" />
                     <Setter TargetName="TrackDuration" Property="Foreground" Value="LightGray" />
                 </DataTrigger>
-              <DataTrigger Binding="{Binding Path=QueuedTrack.IsPlaying}" Value="true">
-                <Setter TargetName="TrackName" Property="FontWeight" Value="Bold" />
-                <Setter TargetName="AlbumName" Property="FontWeight" Value="Bold" />
-                <Setter TargetName="TrackDuration" Property="FontWeight" Value="Bold" />
-              </DataTrigger>
-              <DataTrigger Binding="{Binding Path=QueuedTrack.IsStrategyQueued, Mode=OneTime}" Value="true">
-                <Setter TargetName="TrackName" Property="FontStyle" Value="Italic" />
-              </DataTrigger>
+                <DataTrigger Binding="{Binding Path=QueuedTrack.IsPlaying}" Value="true">
+                    <Setter TargetName="TrackName" Property="FontWeight" Value="Bold" />
+                    <Setter TargetName="AlbumName" Property="FontWeight" Value="Bold" />
+                    <Setter TargetName="TrackDuration" Property="FontWeight" Value="Bold" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=QueuedTrack.IsStrategyQueued, Mode=OneTime}" Value="true">
+                    <Setter TargetName="TrackName" Property="FontStyle" Value="Italic" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=IsDeleting}" Value="true">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard Storyboard="{StaticResource ItemDeleteStoryboard}"/>
+                    </DataTrigger.EnterActions>
+                </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
+
+        <Style x:Key="BoldedDragListBoxItemStyle" BasedOn="{StaticResource AnimateOnInsertListBoxItemStyle}" TargetType="{x:Type ListBoxItem}">
+            <Style.Triggers>
+                <Trigger Property="Behaviours:ListViewItemDragState.IsBeingDragged" Value="True">
+                    <Setter Property="FontWeight" Value="Bold" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Control.Resources>
 
     <Control.InputBindings>
@@ -232,8 +269,10 @@
                      DragDrop:DragDrop.DropHandler="{Binding}"
                      DragDrop:DragDrop.IsDragSource="true"
                      DragDrop:DragDrop.IsDropTarget="true"
+                     HorizontalContentAlignment="Stretch"
                      ItemsSource="{Binding Path=QueueList}"
                      ItemTemplate="{StaticResource QueueListItem}"
+                     ItemContainerStyle="{StaticResource BoldedDragListBoxItemStyle}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ScrollViewer.VerticalScrollBarVisibility="Visible"
                      SelectedIndex="{Binding Path=SelectedIndex}"
@@ -249,16 +288,6 @@
                                                                   RoutedEvent="ListBoxItem.MouseDoubleClick" />
                     </EventCommandTriggers:CommandTriggerGroup>
                 </EventCommandTriggers:CommandSource.Trigger>
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <Style.Triggers>
-                            <Trigger Property="Behaviours:ListViewItemDragState.IsBeingDragged" Value="True">
-                                <Setter Property="FontWeight" Value="Bold" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </ListBox.ItemContainerStyle>
             </ListBox>
 
             <Grid Grid.Row="1">
@@ -310,7 +339,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    
+
                     <Button Grid.Column="0" Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Content="Start" Command="{Binding StartStrategy}" />
                     <TextBlock Grid.Column="2" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="When Exhausted:"/>
                     <ComboBox Grid.Column="3" Width="110" DisplayMemberPath="Title" ItemsSource="{Binding Path=ExhaustedStrategyList}"

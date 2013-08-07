@@ -7,10 +7,11 @@ using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
 using Noise.UI.Behaviours;
 using Noise.UI.Dto;
+using Noise.UI.Interfaces;
 using Observal.Extensions;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
-
+using System;
 namespace Noise.UI.ViewModels {
 	public class ArtistEditRequest : InteractionRequestData<UiArtist> {
 		public ArtistEditRequest(UiArtist artist ) : base( artist ) { } 
@@ -18,9 +19,9 @@ namespace Noise.UI.ViewModels {
 
 	public class ArtistViewModel : AutomaticCommandBase,
 								   IHandle<Events.DatabaseClosing>,
-								   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, 
 								   IHandle<Events.ArtistContentUpdated>, IHandle<Events.ArtistUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly ISelectionState		mSelectionState;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly ITagManager			mTagManager;
 		private readonly IMetadataManager		mMetadataManager;
@@ -32,8 +33,10 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler<Artwork>			mArtworkTaskHandler; 
 		private readonly InteractionRequest<ArtistEditRequest>		mArtistEditRequest;
 
-		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ITagManager tagManager, IMetadataManager metadataManager ) {
+		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ISelectionState selectionState,
+								ITagManager tagManager, IMetadataManager metadataManager ) {
 			mEventAggregator = eventAggregator;
+			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
 			mTagManager = tagManager;
 			mMetadataManager = metadataManager;
@@ -43,7 +46,9 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnArtistChanged );
 
-			mArtistEditRequest = new InteractionRequest<ArtistEditRequest>(); 
+			mArtistEditRequest = new InteractionRequest<ArtistEditRequest>();
+ 
+			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistRequested );
 		}
 
 		public UiArtist Artist {
@@ -126,32 +131,19 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Handle( Events.ArtistFocusRequested request ) {
-			if( CurrentArtist != null ) {
-				if( request.ArtistId != CurrentArtist.DbId ) {
-					RequestArtistAndContent( request.ArtistId );
-				}
-			}
-			else {
-				RequestArtistAndContent( request.ArtistId );
-			}
-		}
-
-		public void Handle( Events.AlbumFocusRequested request ) {
-			if( CurrentArtist != null ) {
-				if( request.ArtistId != CurrentArtist.DbId ) {
-					RequestArtistAndContent( request.ArtistId );
-				}
-			}
-			else {
-				RequestArtistAndContent( request.ArtistId );
-			}
-		}
-
 		public void Handle( Events.ArtistUserUpdate eventArgs ) {
 			if(( CurrentArtist != null ) &&
 			   ( eventArgs.ArtistId == CurrentArtist.DbId )) {
 				RequestArtist( CurrentArtist.DbId );
+			}
+		}
+
+		private void OnArtistRequested( DbArtist artist ) {
+			if( artist == null ) {
+				ClearCurrentArtist();
+			}
+			else {
+				RequestArtistAndContent( artist.DbId );
 			}
 		}
 

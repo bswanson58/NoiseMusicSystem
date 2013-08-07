@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Caliburn.Micro;
 using FluentAssertions;
@@ -8,6 +10,7 @@ using NUnit.Framework;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.UI.Interfaces;
 using Noise.UI.ViewModels;
 using ReusableBits;
 using ReusableBits.TestSupport.Mocking;
@@ -17,12 +20,16 @@ using ILog = Noise.Infrastructure.Interfaces.ILog;
 namespace Noise.UI.Tests.ViewModels {
 	internal class TestableArtistViewModel : Testable<ArtistViewModel> {
 		private readonly TaskScheduler		mTaskScheduler;
+		private readonly Subject<DbArtist>	mArtistSubject;
  
 		public TestableArtistViewModel() {
 			// Set tpl tasks to use the current thread only.
 			mTaskScheduler = new CurrentThreadTaskScheduler();
 
+			mArtistSubject = new Subject<DbArtist>();
+
 			Mock<ITagManager>().Setup(  m => m.GetGenre( It.IsAny<long>())).Returns( new DbGenre( 1 ) { Name = "test genre" });
+			Mock<ISelectionState>().Setup( m => m.CurrentArtistChanged ).Returns( mArtistSubject.AsObservable());
 		}
 
 		public override ArtistViewModel ClassUnderTest {
@@ -36,6 +43,10 @@ namespace Noise.UI.Tests.ViewModels {
 
 				return( retValue );
 			}
+		}
+
+		public void FireArtistChanged( DbArtist artist ) {
+			mArtistSubject.OnNext( artist );
 		}
 	}
 
@@ -68,8 +79,8 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist ).Verifiable( "GetArtist not called." );
 
 			var sut = testable.ClassUnderTest;
-			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
 
+			testable.FireArtistChanged( artist );
 			testable.Mock<IArtistProvider>().Verify();
 			Assert.IsNotNull( sut.Artist );
 		}
@@ -86,8 +97,8 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IMetadataManager>().Setup( m => m.GetArtistArtwork( It.Is<string>( p => p == artist.Name ))).Returns( artwork );
 
 			var sut = testable.ClassUnderTest;
-			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
 
+			testable.FireArtistChanged( artist );
 			testable.Mock<IMetadataManager>().Verify();
 			Assert.IsNotNull( sut.ArtistImage );
 		}
@@ -102,60 +113,13 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 			sut.MonitorEvents();
 
-			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
+			testable.FireArtistChanged( artist );
 
 			DispatcherPump.DoEvents();
 
 			sut.ShouldRaisePropertyChangeFor( m => m.Artist );
 			sut.ShouldRaisePropertyChangeFor( m => m.ArtistValid );
 			sut.ShouldRaisePropertyChangeFor( m => m.ArtistWebsite );
-		}
-
-		[Test]
-		public void SameArtistFocusShouldNotRetrieveArtistAgain() {
-			var testable = new TestableArtistViewModel();
-			var artist = new DbArtist { Name = "artist name" };
-
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.Is<long>( p => p == artist.DbId ))).Returns( artist );
-
-			var sut = testable.ClassUnderTest;
-
-			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
-			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
-
-			testable.Mock<IArtistProvider>().Verify( m => m.GetArtist( It.IsAny<long>()), Times.Exactly( 1 ));
-		}
-
-		[Test]
-		public void AlbumFocusShouldRequestArtist() {
-			var testable = new TestableArtistViewModel();
-			var artist = new DbArtist();
-			var album = new DbAlbum { Artist = artist.DbId };
-
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.Is<long>( p => p == artist.DbId ))).Returns( artist ).Verifiable();
-
-			var sut = testable.ClassUnderTest;
-
-			sut.Handle( new Events.AlbumFocusRequested( album ));
-
-			testable.Mock<IArtistProvider>().Verify();
-		}
-
-		[Test]
-		public void SecondAlbumFocusShouldNotRequestArtist() {
-			var testable = new TestableArtistViewModel();
-			var artist = new DbArtist();
-			var album1 = new DbAlbum { Artist = artist.DbId, Name = "first album" };
-			var album2 = new DbAlbum { Artist = artist.DbId, Name = "second album" };
-
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( It.Is<long>( p => p == artist.DbId ))).Returns( artist );
-
-			var sut = testable.ClassUnderTest;
-
-			sut.Handle( new Events.AlbumFocusRequested( album1 ));
-			sut.Handle( new Events.AlbumFocusRequested( album2 ));
-
-			testable.Mock<IArtistProvider>().Verify( m => m.GetArtist( It.IsAny<long>()), Times.Exactly( 1 ));
 		}
 
 		[Test]
@@ -170,7 +134,7 @@ namespace Noise.UI.Tests.ViewModels {
 
 			sut.ArtistEditRequest.Raised += OnArtistEditRequestCancel;
 
-			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
+			testable.FireArtistChanged( artist );
 			var editCommand = ( testable.ClassUnderTest as dynamic ).EditArtist as ICommand;
 
 			Assert.IsNotNull( editCommand );
@@ -196,7 +160,7 @@ namespace Noise.UI.Tests.ViewModels {
 
 			sut.ArtistEditRequest.Raised += OnArtistEditRequestConfirm;
 
-			sut.Handle( new Events.ArtistFocusRequested( artist.DbId ));
+			testable.FireArtistChanged( artist );
 			var editCommand = ( testable.ClassUnderTest as dynamic ).EditArtist as ICommand;
 
 			Assert.IsNotNull( editCommand );

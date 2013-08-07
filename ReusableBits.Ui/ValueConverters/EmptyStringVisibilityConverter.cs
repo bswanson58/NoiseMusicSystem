@@ -11,7 +11,7 @@ namespace ReusableBits.Ui.ValueConverters {
 		public	bool	IsHidden { get; set; }
 
 		// Set to true if you want visibility when the string is empty
-		// or set to false if you wnat visiblity when the string has length.
+		// or set to false if you want visiblity when the string has length.
 		public	bool	HideOnEmpty { get; set; }
 
 		public EmptyStringVisibilityConverter() {

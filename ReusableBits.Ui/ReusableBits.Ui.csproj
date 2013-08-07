@@ -115,6 +115,7 @@
     <Compile Include="Behaviours\ViewAttachedNotifier.cs" />
     <Compile Include="Behaviours\ViewDisplayedNotifier.cs" />
     <Compile Include="Behaviours\VisualStateAdapter.cs" />
+    <Compile Include="Controls\AnimatedContentControl.cs" />
     <Compile Include="Controls\ClipToBounds.cs" />
     <Compile Include="Controls\StatusMessage.cs" />
     <Compile Include="Controls\StatusPresenter.xaml.cs">
@@ -147,6 +148,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\StatusPresenter.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
