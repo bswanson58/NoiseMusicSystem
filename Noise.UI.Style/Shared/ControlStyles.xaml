@@ -41,6 +41,21 @@
 		<Setter Property="Padding" Value="11,3"/>
 	</Style>
 
+	<Style x:Key="ExplorerHeaderStyle" TargetType="TextBlock">
+		<Setter Property="FontFamily" Value="Segoe UI Semibold"/>
+		<Setter Property="FontSize" Value="18"/>
+		<Setter Property="Foreground" Value="#FF0000A0"/>
+	</Style>
+	<Style x:Key="ExplorerTitleStyle" TargetType="TextBlock">
+		<Setter Property="FontFamily" Value="Segoe UI"/>
+		<Setter Property="FontSize" Value="18"/>
+		<Setter Property="Foreground" Value="#FF0000A0"/>
+	</Style>
+	<Style x:Key="ExplorerSubtitleStyle" TargetType="TextBlock">
+		<Setter Property="FontFamily" Value="Segoe UI"/>
+		<Setter Property="FontSize" Value="12"/>
+		<Setter Property="Foreground" Value="#FF0000A0"/>
+	</Style>
 
 	<Style x:Key="LargeTitleStyle" TargetType="TextBlock">
 		<Setter Property="Foreground" Value="#FF0000A0"/>
@@ -292,7 +307,67 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
-	
+
+	<!--  Gridsplitter Grabber  -->
+	<Style x:Key="GridSplitterPreviewStyle">
+		<Setter Property="Control.Template">
+			<Setter.Value>
+				<ControlTemplate>
+					<Rectangle Fill="#80000000" />
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style x:Key="GridSplitterVerticalStyle" TargetType="{x:Type GridSplitter}">
+		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+		<Setter Property="PreviewStyle" Value="{StaticResource GridSplitterPreviewStyle}" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type GridSplitter}">
+					<Border x:Name="Grabber" Opacity="0.15" CornerRadius="5"
+							Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}">
+						<Canvas Width="7" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center" RenderOptions.EdgeMode="Aliased" UseLayoutRounding="True">
+							<Line Stroke="#A0A0A0" StrokeThickness="1" X1="2" Y1="0" X2="2" Y2="30" />
+							<Line Stroke="#A0A0A0" StrokeThickness="1" X1="6" Y1="0" X2="6" Y2="30" />
+						</Canvas>
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger SourceName="Grabber" Property="IsMouseOver" Value="True">
+							<Setter TargetName="Grabber" Property="Opacity" Value="1.0"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="GridSplitterHorizontalStyle" TargetType="{x:Type GridSplitter}">
+		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+		<Setter Property="PreviewStyle" Value="{StaticResource GridSplitterPreviewStyle}" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type GridSplitter}">
+					<Border x:Name="Grabber" Opacity="0.15" CornerRadius="5"
+							Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}">
+						<Canvas Width="30" Height="7" HorizontalAlignment="Center" VerticalAlignment="Center" RenderOptions.EdgeMode="Aliased" UseLayoutRounding="True">
+							<Line Stroke="#A0A0A0" StrokeThickness="1" X1="0" Y1="3" X2="30" Y2="3" />
+							<Line Stroke="#A0A0A0" StrokeThickness="1" X1="0" Y1="6" X2="30" Y2="6" />
+						</Canvas>
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger SourceName="Grabber" Property="IsMouseOver" Value="True">
+							<Setter TargetName="Grabber" Property="Opacity" Value="1.0"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 	<!-- Play column header style -->
 	<DataTemplate x:Key="PlayColumnHeaderTemplate">
 		<TextBlock FontFamily="WebDings" Foreground="{StaticResource ControlTextColor}" Text="4"/>
