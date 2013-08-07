@@ -25,6 +25,7 @@ namespace Noise.Infrastructure.Dto {
 		public long				UserGenre { get; set; }
 		public bool				IsFavorite { get; set; }
 		public Int32			PlayCount { get; set; }
+		public long				LastPlayedTicks { get; private set; }
 		public float			ReplayGainAlbumGain { get; set; }
 		public float			ReplayGainAlbumPeak { get; set; }
 		public float			ReplayGainTrackGain { get; set; }
@@ -64,7 +65,12 @@ namespace Noise.Infrastructure.Dto {
 			get{ return( new DateTime( DateAddedTicks )); }
 		}
 
-		[Export("PersistenceType")]
+		public void UpdateLastPlayed() {
+			PlayCount++;
+			LastPlayedTicks = DateTime.Now.Ticks;
+		}
+
+		[Export( "PersistenceType" )]
 		public static Type PersistenceType {
 			get{ return( typeof( DbTrack )); }
 		}

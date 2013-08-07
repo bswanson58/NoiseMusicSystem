@@ -23,6 +23,8 @@ namespace Noise.Infrastructure.Dto {
 		public bool				IsFavorite { get; set; }
 		public bool				HasFavorites { get; set; }
 		public long				DateAddedTicks { get; private set; }
+		public Int32			PlayCount { get; private set;}
+		public long				LastPlayedTicks { get; private set; }
 
 		public DbAlbum() {
 			Name = "";
@@ -54,7 +56,12 @@ namespace Noise.Infrastructure.Dto {
 			get{ return( new DateTime( DateAddedTicks )); }
 		}
 
-		[Export("PersistenceType")]
+		public void UpdateLastPlayed() {
+			PlayCount++;
+			LastPlayedTicks = DateTime.Now.Ticks;
+		}
+
+		[Export( "PersistenceType" )]
 		public static Type PersistenceType {
 			get{ return( typeof( DbAlbum )); }
 		}

@@ -106,7 +106,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnArtistChanged( DbArtist artist ) {
-			SelectedArtist = ( from uiArtist in mArtistList where artist.DbId == uiArtist.DbId select uiArtist ).FirstOrDefault();
+			SelectedArtist = artist != null ? ( from uiArtist in mArtistList where artist.DbId == uiArtist.DbId select uiArtist ).FirstOrDefault() : null;
 		}
 
 		private void BuildArtistList() {
