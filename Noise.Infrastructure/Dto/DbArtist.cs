@@ -20,6 +20,8 @@ namespace Noise.Infrastructure.Dto {
 		public long				LastChangeTicks { get; protected set; }
 		public Int32			PlayCount { get; private set; }
 		public long				LastPlayedTicks { get; private set; }
+		public Int32			ViewCount { get; private set; }
+		public long				LastViewedTicks { get; private set; }
 
 		public DbArtist() {
 			Name = "";
@@ -60,6 +62,11 @@ namespace Noise.Infrastructure.Dto {
 		public void UpdateLastPlayed() {
 			PlayCount++;
 			LastPlayedTicks = DateTime.Now.Ticks;
+		}
+
+		public void UpdateLastViewed() {
+			ViewCount++;
+			LastViewedTicks = DateTime.Now.Ticks;
 		}
 
 		[Export("PersistenceType")]

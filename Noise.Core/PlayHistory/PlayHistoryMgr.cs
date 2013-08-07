@@ -105,6 +105,18 @@ namespace Noise.Core.PlayHistory {
 					TrimHistoryList();
 
 					mEventAggregator.Publish( new Events.PlayHistoryChanged( this ));
+
+					if( track.Artist != null ) {
+						using( var updater = mArtistProvider.GetArtistForUpdate( track.Artist.DbId )) {
+							if( updater.Item != null ) {
+								updater.Item.UpdateLastPlayed();
+
+								updater.Update();
+							}
+						}
+
+						mEventAggregator.Publish( new Events.ArtistPlayed( track.Artist.DbId ));
+					}
 				}
 				catch( Exception ex) {
 					NoiseLogger.Current.LogException( "Exception - TrackPlayCompleted:", ex );

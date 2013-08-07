@@ -56,11 +56,13 @@ namespace Noise.UI {
 				.ForMember( dest => dest.IsUserRating, opt => opt.Ignore())
 				.ForMember( dest => dest.LastChangeTicks, opt => opt.Ignore())
 				.ForMember( dest => dest.LastPlayedTicks, opt => opt.Ignore())
+				.ForMember( dest => dest.LastViewedTicks, opt => opt.Ignore())
 				.ForMember( dest => dest.MaxChildRating, opt => opt.Ignore())
 				.ForMember( dest => dest.PlayCount, opt => opt.Ignore())
 				.ForMember( dest => dest.Rating, opt => opt.Ignore())
 				.ForMember( dest => dest.UserGenre, opt => opt.Ignore())
-				.ForMember( dest => dest.UserRating, opt => opt.Ignore());
+				.ForMember( dest => dest.UserRating, opt => opt.Ignore())
+				.ForMember( dest => dest.ViewCount, opt => opt.Ignore());
 		}
 	}
 

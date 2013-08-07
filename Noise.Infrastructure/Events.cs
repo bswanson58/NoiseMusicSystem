@@ -73,6 +73,22 @@ namespace Noise.Infrastructure {
 			}
 		}
 
+		public class ArtistViewed {
+			public	long	ArtistId { get; private set; }
+
+			public ArtistViewed( long artistId ) {
+				ArtistId = artistId;
+			}
+		}
+
+		public class ArtistPlayed {
+			public	long	ArtistId { get; private set; }
+
+			public ArtistPlayed( long artistId ) {
+				ArtistId = artistId;
+			}
+		}
+
 		public class AlbumAdded {
 			public	long	AlbumId { get; private set; }
 

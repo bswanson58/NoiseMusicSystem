@@ -56,13 +56,13 @@ namespace Noise.UI.Models {
 		}
 
 		public void Handle( Events.ArtistFocusRequested args ) {
-			ChangeToArtist( args.ArtistId );
+			ChangeToArtist( args.ArtistId, true );
 
 			mLastFocusRequest = DateTime.Now;
 		}
 
 		public void Handle( Events.AlbumFocusRequested args ) {
-			ChangeToArtist( args.ArtistId );
+			ChangeToArtist( args.ArtistId, true );
 			ChangeToAlbum( args.AlbumId );
 
 			mLastFocusRequest = DateTime.Now;
@@ -72,7 +72,7 @@ namespace Noise.UI.Models {
 			if( mPlaybackTrackFocusEnabled ) {
 				if( mLastFocusRequest + mPlayTrackDelay < DateTime.Now ) {
 					if( args.Track.Artist != null ) {
-						ChangeToArtist( args.Track.Artist.DbId );
+						ChangeToArtist( args.Track.Artist.DbId, false );
 					}
 					if( args.Track.Album != null ) {
 						ChangeToAlbum( args.Track.Album.DbId );
@@ -81,34 +81,49 @@ namespace Noise.UI.Models {
 			}
 		}
 
-		private void ChangeToArtist( long artistId ) {
+		private void ChangeToArtist( long artistId, bool notifyViewed ) {
 			if( artistId == Constants.cDatabaseNullOid ) {
 				ClearArtist();
 			}
 			else {
 				if( CurrentArtist != null ) {
 					if( CurrentArtist.DbId != artistId ) {
-						UpdateArtist( artistId );
+						UpdateArtist( artistId, notifyViewed );
 						ClearAlbum();
 					}
 				}
 				else {
-					UpdateArtist( artistId );
+					UpdateArtist( artistId, notifyViewed );
 				}
 			}
 		}
 
 		private void ClearArtist() {
-			UpdateArtist( null );
+			UpdateArtist( null, false );
 		}
 
-		private void UpdateArtist( long artistId ) {
-			UpdateArtist( mArtistProvider.GetArtist( artistId ));
+		private void UpdateArtist( long artistId, bool notifyViewed ) {
+			UpdateArtist( mArtistProvider.GetArtist( artistId ), notifyViewed );
 		}
 
-		private void UpdateArtist( DbArtist artist ) {
+		private void UpdateArtist( DbArtist artist, bool notifiedViewed ) {
 			CurrentArtist = artist;
+
 			mArtistSubject.OnNext( CurrentArtist );
+
+			if( artist != null ) {
+				using( var updater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
+					if( updater.Item != null ) {
+						updater.Item.UpdateLastViewed();
+
+						updater.Update();
+					}
+				}
+
+				if( notifiedViewed ) {
+					mEventAggregator.Publish( new Events.ArtistViewed( artist.DbId ) );
+				}
+			}
 		}
 
 		private void ChangeToAlbum( long albumId ) {

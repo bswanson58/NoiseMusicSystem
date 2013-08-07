@@ -309,6 +309,7 @@
     <Compile Include="ViewModels\PlayHistoryViewModel.cs" />
     <Compile Include="ViewModels\PlayListViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueViewModel.cs" />
+    <Compile Include="ViewModels\RecentArtistViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
     <Compile Include="ViewModels\SelectArtistDialogModel.cs" />
     <Compile Include="ViewModels\SelectCategoryDialogModel.cs" />
@@ -399,6 +400,9 @@
     <Compile Include="Views\LibraryFilterDialog.xaml.cs">
       <DependentUpon>LibraryFilterDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\LibraryRecentView.xaml.cs">
+      <DependentUpon>LibraryRecentView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LibrarySelectorView.xaml.cs">
       <DependentUpon>LibrarySelectorView.xaml</DependentUpon>
     </Compile>
@@ -425,6 +429,9 @@
     </Compile>
     <Compile Include="Views\PlayQueueView.xaml.cs">
       <DependentUpon>PlayQueueView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RecentArtistView.xaml.cs">
+      <DependentUpon>RecentArtistView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SearchView.xaml.cs">
       <DependentUpon>SearchView.xaml</DependentUpon>
@@ -653,6 +660,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\LibraryRecentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\LibrarySelectorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -686,6 +697,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlayQueueView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RecentArtistView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
