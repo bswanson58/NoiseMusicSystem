@@ -39,7 +39,6 @@
             <Border x:Name="ArtistPanel"
                 Background="Transparent"
                 BorderBrush="{DynamicResource ControlTextColor}"
-                ContextMenu="{DynamicResource ArtistMenu}"
                 CornerRadius="3">
                 <Grid>
                     <Grid.RowDefinitions>
