@@ -45,7 +45,7 @@
                 <Layout:View RegionName="Explorer" Type="{x:Type Views:SearchView}" />
                 <Layout:View RegionName="Explorer" Type="{x:Type Views:PlayHistoryView}" />
                 <Layout:View RegionName="Explorer" Type="{x:Type Views:StreamView}" />
-                <Layout:View RegionName="Explorer" Type="{x:Type Views:PlayListView}" />
+                <!--Layout:View RegionName="Explorer" Type="{x:Type Views:PlayListView}" /-->
                 <Layout:View RegionName="Explorer" Type="{x:Type Views:LibraryAdditionsView}" />
                 <Layout:View RegionName="ArtistInfo" Type="{x:Type Views:ArtistView}" />
                 <Layout:View RegionName="AlbumInfo" Type="{x:Type Views:ArtistInfoView}" />
