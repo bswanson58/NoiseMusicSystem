@@ -36,11 +36,11 @@
                         <TextBlock Text="{Binding Path=Track.Name}" Style="{StaticResource ExplorerTitleStyle}"/>
                     </Viewbox>
                     
-                    <TextBlock Grid.Column="2" Style="{StaticResource ExplorerSubtitleStyle}" FontWeight="Bold" VerticalAlignment="Bottom"
+                    <TextBlock Grid.Column="2" Style="{StaticResource ExplorerSubtitleStyle}" FontWeight="Bold" VerticalAlignment="Center"
                                Text="{Binding Path=PlayedOn, Converter={StaticResource RelativeTimeConverter}}"/>
                 </Grid>
 
-                <TextBlock Grid.Row="1" Grid.Column="1" Margin="0,0,7,0" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding Path=AlbumName}"
+                <TextBlock Grid.Row="1" Grid.Column="1" Margin="5,0" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding Path=AlbumName}"
                            ReusableBehaviours:FadeTrimming.IsEnabled="True"
                            ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
             </Grid>
