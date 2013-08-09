@@ -47,7 +47,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4*" MinWidth="200" />
                     <ColumnDefinition Width="5*" MinWidth="200" />
-                    <ColumnDefinition Width="2*" MinWidth="200" />
+                    <ColumnDefinition Width="3*" MinWidth="200" />
                 </Grid.ColumnDefinitions>
 
                 <!-- Library Explorer -->
@@ -59,7 +59,7 @@
 
                     <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="LibrarySelector" />
 
-                    <TabControl Grid.Row="1" Margin="1,7,3,-2" BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="Explorer"
+                    <TabControl Grid.Row="1" Margin="1,7,3,-2" BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="LeftPanel"
                                 ContentTemplate="{StaticResource TabTemplate}"  ItemContainerStyle="{StaticResource TabControlStyle}" />
                 </Grid>
 
@@ -96,7 +96,8 @@
                     </Grid.RowDefinitions>
 
                     <!--ContentControl Grid.Row="0" Regions:RegionManager.RegionName="Toolbar" /-->
-                    <ContentControl Grid.Row="1" Regions:RegionManager.RegionName="PlayQueue" />
+                    <TabControl Grid.Row="1" Margin="0,3,0,0"  BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="RightPanel"
+                                ContentTemplate="{StaticResource TabTemplate}"  ItemContainerStyle="{StaticResource TabControlStyle}" />
                 </Grid>
             </Grid>
 

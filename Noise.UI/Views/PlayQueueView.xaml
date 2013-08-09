@@ -12,6 +12,7 @@
              d:DesignHeight="300"
              d:DesignWidth="300"
              DataContext="{Binding PlayQueueViewModel, Source={StaticResource ViewModelLocator}}"
+             Tag="Now Playing"
              mc:Ignorable="d">
     <Control.Resources>
         <Behaviours:CommandReference x:Key="DeleteCommandReference" Command="{Binding DeleteCommand}" />

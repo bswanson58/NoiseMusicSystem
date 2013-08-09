@@ -39,19 +39,19 @@
             <Layout:Layout.Views>
                 <!--Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" /-->
                 <Layout:View RegionName="LibrarySelector" Type="{x:Type Views:LibrarySelectorView}" />
-                <Layout:View RegionName="Explorer" Type="{x:Type Views:LibraryArtistView}" />
-                <Layout:View RegionName="Explorer" Type="{x:Type Views:LibraryRecentView}" />
-                <Layout:View RegionName="Explorer" Type="{x:Type Views:FavoritesView}" />
-                <Layout:View RegionName="Explorer" Type="{x:Type Views:SearchView}" />
-                <Layout:View RegionName="Explorer" Type="{x:Type Views:PlayHistoryView}" />
-                <Layout:View RegionName="Explorer" Type="{x:Type Views:StreamView}" />
-                <!--Layout:View RegionName="Explorer" Type="{x:Type Views:PlayListView}" /-->
-                <Layout:View RegionName="Explorer" Type="{x:Type Views:LibraryAdditionsView}" />
+                <Layout:View RegionName="LeftPanel" Type="{x:Type Views:LibraryArtistView}" />
+                <Layout:View RegionName="LeftPanel" Type="{x:Type Views:LibraryRecentView}" />
+                <Layout:View RegionName="LeftPanel" Type="{x:Type Views:FavoritesView}" />
+                <Layout:View RegionName="LeftPanel" Type="{x:Type Views:SearchView}" />
+                <Layout:View RegionName="LeftPanel" Type="{x:Type Views:StreamView}" />
+                <!--Layout:View RegionName="LeftPanel" Type="{x:Type Views:PlayListView}" /-->
+                <Layout:View RegionName="LeftPanel" Type="{x:Type Views:LibraryAdditionsView}" />
                 <Layout:View RegionName="ArtistInfo" Type="{x:Type Views:ArtistView}" />
                 <Layout:View RegionName="AlbumInfo" Type="{x:Type Views:ArtistInfoView}" />
                 <Layout:View RegionName="AlbumInfo" Type="{x:Type Views:AlbumInfoView}" />
                 <Layout:View RegionName="AlbumInfo" Type="{x:Type Views:ArtistTracksView}" />
-                <Layout:View RegionName="PlayQueue" Type="{x:Type Views:PlayQueueView}" />
+                <Layout:View RegionName="RightPanel" Type="{x:Type Views:PlayQueueView}" />
+                <Layout:View RegionName="RightPanel" Type="{x:Type Views:PlayHistoryView}" />
                 <Layout:View RegionName="Player" Type="{x:Type Views:PlayerView}" />
                 <Layout:View RegionName="SimilarSongs" Type="{x:Type Views:SimilarSongView}" />
                 <Layout:View RegionName="SongLyrics" Type="{x:Type Views:SongLyricsView}" />
