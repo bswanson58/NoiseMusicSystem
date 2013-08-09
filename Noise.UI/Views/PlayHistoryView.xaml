@@ -3,14 +3,60 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" 
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
+             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              mc:Ignorable="d"
              DataContext="{Binding PlayHistoryViewModel, Source={StaticResource ViewModelLocator}}"
              Tag="History"
              d:DesignHeight="300" d:DesignWidth="300">
+    
+    <UserControl.Resources>
+        <DataTemplate x:Key="HistoryListItem" DataType="{x:Type Adapters:PlayHistoryNode}">
+            <Grid Margin="0,0,5,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" VerticalAlignment="Center" Margin="0,0,5,0"
+                        Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayTrack}"/>
+
+                <Grid Grid.Row="0" Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Viewbox Grid.Column="1" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
+                        <TextBlock Text="{Binding Path=Track.Name}" Style="{StaticResource ExplorerTitleStyle}"/>
+                    </Viewbox>
+                    
+                    <TextBlock Grid.Column="2" Style="{StaticResource ExplorerSubtitleStyle}" FontWeight="Bold" VerticalAlignment="Bottom"
+                               Text="{Binding Path=PlayedOn, Converter={StaticResource RelativeTimeConverter}}"/>
+                </Grid>
+
+                <TextBlock Grid.Row="1" Grid.Column="1" Margin="0,0,7,0" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding Path=AlbumName}"
+                           ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                           ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
 
     <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Play History ">
-        <ListView ItemsSource="{Binding Path=HistoryList}" BorderThickness="0"
+        <ListBox BorderThickness="0"
+                 HorizontalContentAlignment="Stretch"
+                 ItemsSource="{Binding Path=HistoryList}"
+                 SelectedItem="{Binding SelectedHistory}"
+                 ItemTemplate="{StaticResource HistoryListItem}"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+
+        <!--ListView ItemsSource="{Binding Path=HistoryList}" BorderThickness="0"
                   Behaviours:GridViewSort.AutoSort="True"
                   Behaviours:ListViewColumns.Stretch="true">
             <ListView.ItemContainerStyle>
@@ -62,6 +108,6 @@
                     </GridViewColumn>
                 </GridView>
             </ListView.View>
-        </ListView>
+        </ListView-->
     </GroupBox>
 </UserControl>

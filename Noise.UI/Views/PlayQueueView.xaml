@@ -12,6 +12,7 @@
              d:DesignHeight="300"
              d:DesignWidth="300"
              DataContext="{Binding PlayQueueViewModel, Source={StaticResource ViewModelLocator}}"
+             Tag="Now Playing"
              mc:Ignorable="d">
     <Control.Resources>
         <Behaviours:CommandReference x:Key="DeleteCommandReference" Command="{Binding DeleteCommand}" />
@@ -162,13 +163,17 @@
                                        Visibility="{Binding Path=QueuedTrack.IsFaulted, Converter={StaticResource BooleanVisibilityConverter}}" />
                                 </Grid>
 
-                                <TextBlock x:Name="TrackName" Grid.Column="1" FontSize="14"
+                                <Viewbox Grid.Column="1" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
+                                    <TextBlock x:Name="TrackName" Text="{Binding Path=QueuedTrack.Name}" Style="{StaticResource ExplorerTitleStyle}"/>
+                                </Viewbox>
+                                
+                                <!--TextBlock x:Name="TrackName" Grid.Column="1" FontSize="14"
                                        ReusableBehaviours:FadeTrimming.IsEnabled="True"
                                        ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                                       Text="{Binding Path=QueuedTrack.Name}" />
+                                       Text="{Binding Path=QueuedTrack.Name}" /-->
 
-                                <TextBlock x:Name="TrackDuration" Grid.Column="2" FontSize="14" VerticalAlignment="Top" TextAlignment="Right"
-                                       Text="{Binding Path=QueuedTrack.Track.Duration, Converter={StaticResource TimeSpanConverter}}"/>
+                                <TextBlock x:Name="TrackDuration" Grid.Column="2" VerticalAlignment="Top" TextAlignment="Right" Style="{StaticResource ExplorerTitleStyle}"
+                                           Text="{Binding Path=QueuedTrack.Track.Duration, Converter={StaticResource TimeSpanConverter}}"/>
                             </Grid>
 
                             <Grid Grid.Row="1">
@@ -274,7 +279,7 @@
                      ItemTemplate="{StaticResource QueueListItem}"
                      ItemContainerStyle="{StaticResource BoldedDragListBoxItemStyle}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     ScrollViewer.VerticalScrollBarVisibility="Visible"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
                      SelectedIndex="{Binding Path=SelectedIndex}"
                      SelectedItem="{Binding Path=SelectedItem}">
                 <i:Interaction.Behaviors>
