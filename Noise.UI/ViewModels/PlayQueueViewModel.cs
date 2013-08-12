@@ -58,12 +58,12 @@ namespace Noise.UI.ViewModels {
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Stop, "Stop" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Replay, "Replay" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayArtist, "Play Artist..." ),
+												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayArtistGenre, "Play Genre..." ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayCategory, "Play Category..." ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayFavorites, "Play Favorites" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlaySimilar, "Play Similar" ),
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayList, "Playlist..." ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayStream, "Radio Station..." ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayGenre, "Play Genre..." )};
+												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayStream, "Radio Station..." )};
 
 			mEventAggregator.Subscribe( this );
 
@@ -422,6 +422,7 @@ namespace Noise.UI.ViewModels {
 			   ( strategy == ePlayExhaustedStrategy.PlayArtist ) ||
 			   ( strategy == ePlayExhaustedStrategy.PlayCategory ) ||
 			   ( strategy == ePlayExhaustedStrategy.PlayList ) ||
+			   ( strategy == ePlayExhaustedStrategy.PlayArtistGenre ) ||
 			   ( strategy == ePlayExhaustedStrategy.PlayGenre )) {
 				if( strategy == ePlayExhaustedStrategy.PlayList ) {
 					var dialogModel = new SelectPlayListDialogModel( mPlayListProvider );
@@ -467,7 +468,8 @@ namespace Noise.UI.ViewModels {
 					}
 				}
 
-				if( strategy == ePlayExhaustedStrategy.PlayGenre ) {
+				if(( strategy == ePlayExhaustedStrategy.PlayGenre ) ||
+				   ( strategy == ePlayExhaustedStrategy.PlayArtistGenre )) {
 					var dialogModel = new SelectGenreDialogModel( mGenreProvider );
 
 					if( mDialogService.ShowDialog( DialogNames.SelectGenre, dialogModel ) == true ) {

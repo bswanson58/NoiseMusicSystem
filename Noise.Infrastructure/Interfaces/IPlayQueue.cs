@@ -19,6 +19,7 @@ namespace Noise.Infrastructure.Interfaces {
 		PlayFavorites,
 		PlayStream,
 		PlayGenre,
+		PlayArtistGenre,
 		PlayCategory
 	}
 

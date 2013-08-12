@@ -93,7 +93,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyCategory>( "CategoryExhaustedStrategy" );
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyFavorites>( "FavoritesExhaustedStrategy" );
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyArtist>( "ArtistExhaustedStrategy" );
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyGenre>( "GenreExhaustedStrategy" );
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyArtistGenre>( "ArtistGenreExhaustedStrategy" );
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyPlayList>( "PlayListExhaustedStrategy" );
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyReplay>( "ReplayExhaustedStrategy" );
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategySimilar>( "SimilarExhaustedStrategy" );

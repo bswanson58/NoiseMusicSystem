@@ -333,7 +333,7 @@
 
                     <!--Button Grid.Column="0" Margin="3,0,0,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=SavePlayList}" Content="Save" /-->
                     <TextBlock Grid.Column="2" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Play Selection:"/>
-                    <ComboBox Grid.Column="3" Width="110" DisplayMemberPath="Title" ItemsSource="{Binding Path=PlayStrategyList}"
+                    <ComboBox Grid.Column="3" Width="122" DisplayMemberPath="Title" ItemsSource="{Binding Path=PlayStrategyList}"
                               SelectedValue="{Binding Path=PlayStrategy}" SelectedValuePath="Strategy" />
                 </Grid>
 
@@ -347,7 +347,7 @@
 
                     <Button Grid.Column="0" Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Content="Start" Command="{Binding StartStrategy}" />
                     <TextBlock Grid.Column="2" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="When Exhausted:"/>
-                    <ComboBox Grid.Column="3" Width="110" DisplayMemberPath="Title" ItemsSource="{Binding Path=ExhaustedStrategyList}"
+                    <ComboBox Grid.Column="3" Width="122" DisplayMemberPath="Title" ItemsSource="{Binding Path=ExhaustedStrategyList}"
                               SelectedValue="{Binding Path=ExhaustedStrategy}" SelectedValuePath="Strategy" />
                 </Grid>
 
