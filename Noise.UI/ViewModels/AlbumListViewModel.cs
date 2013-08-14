@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Data;
 using AutoMapper;
 using Caliburn.Micro;
@@ -26,6 +27,8 @@ namespace Noise.UI.ViewModels {
 		private readonly List<ViewSortStrategy>			mAlbumSorts;
 		private DbArtist								mCurrentArtist;
 		private TaskHandler								mAlbumRetrievalTaskHandler;
+		private bool									mRetrievingAlbums;
+		private long									mAlbumToSelect;
  
 		public AlbumListViewModel( IEventAggregator eventAggregator, IAlbumProvider albumProvider, ISelectionState selectionState ) {
 			mEventAggregator = eventAggregator;
@@ -41,6 +44,7 @@ namespace Noise.UI.ViewModels {
 			VisualStateName = cHideSortDescriptions;
 
 			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
+			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
 			mEventAggregator.Subscribe( this );
 		}
 
@@ -59,6 +63,19 @@ namespace Noise.UI.ViewModels {
 			else {
 				ClearAlbumList();
 			} 
+		}
+
+		private void OnAlbumChanged( DbAlbum album ) {
+			mAlbumToSelect = Constants.cDatabaseNullOid;
+
+			if( album != null ) {
+				if( mRetrievingAlbums ) {
+					mAlbumToSelect = album.DbId;
+				}
+				else {
+					Set( () => SelectedAlbum, ( from a in mAlbumList where a.DbId == album.DbId select a ).FirstOrDefault());
+				}
+			}
 		}
 
 		public ICollectionView AlbumList {
@@ -100,7 +117,7 @@ namespace Noise.UI.ViewModels {
 			   ( !string.IsNullOrWhiteSpace( FilterText ))) {
 				var albumNode = node as UiAlbum;
 
-				if( ( albumNode.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) &&
+				if(( albumNode.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) &&
 				   ( albumNode.Genre.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 )) {
 					retValue = false;
 				}
@@ -127,7 +144,7 @@ namespace Noise.UI.ViewModels {
 				Set( () => SelectedAlbum, value );
 
 				if( value != null ) {
-					mEventAggregator.Publish( new Events.AlbumFocusRequested( value.Artist, value.DbId ) );
+					mEventAggregator.Publish( new Events.AlbumFocusRequested( value.Artist, value.DbId ));
 				}
 			}
 		}
@@ -175,6 +192,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void RetrieveAlbums( DbArtist artist ) {
+			mRetrievingAlbums = true;
+
 			ClearAlbumList();
 
 			mCurrentArtist = artist;
@@ -184,9 +203,21 @@ namespace Noise.UI.ViewModels {
 				using( var albums = mAlbumProvider.GetAlbumList( mCurrentArtist )) {
 					SetAlbumList( albums.List );
 				}
+
+				mRetrievingAlbums = false;
 			},
-			() => { },
-			ex => NoiseLogger.Current.LogException( "AlbumListViewModel:RetrieveAlbums", ex ));
+			() => {
+				if( mAlbumToSelect != Constants.cDatabaseNullOid ) {
+					Set( () => SelectedAlbum, ( from a in mAlbumList where a.DbId == mAlbumToSelect select a ).FirstOrDefault());
+
+					mAlbumToSelect = Constants.cDatabaseNullOid;
+				}
+			},
+			ex => {
+				NoiseLogger.Current.LogException( "AlbumListViewModel:RetrieveAlbums", ex );
+
+				mRetrievingAlbums = false;
+			} );
 		}
 
 		private void ClearAlbumList() {
