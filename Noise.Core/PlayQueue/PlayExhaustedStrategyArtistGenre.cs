@@ -5,77 +5,35 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
-	public class PlayExhaustedStrategyArtistGenre : IPlayExhaustedStrategy {
+	public class PlayExhaustedStrategyArtistGenre : PlayExhaustedStrategyRandomBase {
 		private readonly IArtistProvider	mArtistProvider;
-		private readonly IAlbumProvider		mAlbumProvider;
-		private readonly ITrackProvider		mTrackProvider;
 		private readonly List<DbArtist>		mArtistList;
-		private readonly Random				mRandom;
+		private long						mGenre;
 
-		public PlayExhaustedStrategyArtistGenre( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+		public PlayExhaustedStrategyArtistGenre( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
+			base( ePlayExhaustedStrategy.PlayArtistGenre, albumProvider, trackProvider ) {
 			mArtistProvider = artistProvider;
-			mAlbumProvider = albumProvider;
-			mTrackProvider = trackProvider;
 
 			mArtistList = new List<DbArtist>();
-			mRandom = new Random( DateTime.Now.Millisecond );
 		}
 
-		public ePlayExhaustedStrategy PlayStrategy {
-			get{ return( ePlayExhaustedStrategy.PlayArtistGenre ); }
-		}
-
-		public bool QueueTracks( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
-			var retValue = false;
-
+		protected override void ProcessParameters( IPlayStrategyParameters parameters ) {
 			if( parameters is PlayStrategyParameterDbId ) {
-				if( !mArtistList.Any()) {
-					var parms = parameters as PlayStrategyParameterDbId;
+				var parms = parameters as PlayStrategyParameterDbId;
 
-					LoadArtists( parms.DbItemId );
-				}
+				mGenre = parms.DbItemId;
+			}
+		}
 
-				if( mArtistList.Any()) {
-					var circuitBreaker = 25;
+		protected override DbTrack SelectATrack() {
+			var retValue = default( DbTrack );
 
-					while( circuitBreaker > 0 ) {
-						var track = SelectATrack();
-
-						if(( track != null ) &&
-						   ( !queueMgr.IsTrackQueued( track )) &&
-						   ( track.Rating >= 0 )) {
-							queueMgr.StrategyAdd( track );
-
-							retValue = true;
-							break;
-						}
-
-						circuitBreaker--;
-					}
-				}
+			if(!mArtistList.Any()) {
+				LoadArtists( mGenre );
 			}
 
-			return( retValue );
-		}
-
-		private DbTrack SelectATrack() {
-			var retValue = default( DbTrack );
-			var artist = mArtistList.Skip( mRandom.Next( mArtistList.Count - 1 )).Take( 1 ).FirstOrDefault();
-
-			if( artist != null ) {
-				using( var albumList = mAlbumProvider.GetAlbumList( artist )) {
-					if( albumList.List != null ) {
-						var album = albumList.List.Skip( mRandom.Next( artist.AlbumCount - 1 )).Take( 1 ).FirstOrDefault();
-
-						if( album != null ) {
-							using( var trackList = mTrackProvider.GetTrackList( album )) {
-								if( trackList != null ) {
-									retValue = trackList.List.Skip( mRandom.Next( album.TrackCount - 1 )).Take( 1 ).FirstOrDefault();
-								}
-							}
-						}
-					}
-				}
+			if( mArtistList.Any()) {
+				retValue = RandomTrackFromArtist( mArtistList.Skip( NextRandom( mArtistList.Count -1 )).Take( 1 ).FirstOrDefault());				
 			}
 
 			return( retValue );
