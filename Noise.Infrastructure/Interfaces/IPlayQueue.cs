@@ -20,7 +20,8 @@ namespace Noise.Infrastructure.Interfaces {
 		PlayStream,
 		PlayGenre,
 		PlayArtistGenre,
-		PlayCategory
+		PlayCategory,
+		SeldomPlayedArtists
 	}
 
 	public interface IPlayQueue {

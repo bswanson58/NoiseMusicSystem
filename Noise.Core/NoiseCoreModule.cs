@@ -99,6 +99,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategySimilar>( "SimilarExhaustedStrategy" );
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyStop>( "StopExhaustedStrategy" );
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyStream>( "StreamExhaustedStrategy" );
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategySeldomPlayedArtists>( "SeldomPlayedExhaustedStrategy" );
 			mContainer.RegisterType<IEnumerable<IPlayExhaustedStrategy>, IPlayExhaustedStrategy[]>();
 
 			mContainer.RegisterType<IPlayQueueSupport, PlayQueueRandomTracks>( "PlayQueueRandomTracks" );

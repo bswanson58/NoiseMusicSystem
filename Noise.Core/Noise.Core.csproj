@@ -244,11 +244,14 @@
     <Compile Include="PlayQueue\IPlayStrategyFactory.cs" />
     <Compile Include="PlayQueue\PlayExhaustedFactory.cs" />
     <Compile Include="PlayQueue\PlayExhaustedListBase.cs" />
+    <Compile Include="PlayQueue\PlayExhaustedStrategyRandomBase.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyArtist.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyArtistGenre.cs" />
+    <Compile Include="PlayQueue\PlayExhaustedStrategyBase.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyCategory.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyFavorites.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyPlayList.cs" />
+    <Compile Include="PlayQueue\PlayExhaustedStrategySeldomPlayedArtists.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategySimilar.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyStop.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyReplay.cs" />
