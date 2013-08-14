@@ -27,7 +27,9 @@ namespace Noise.Core.PlayQueue {
 			if( artist != null ) {
 				using( var albumList = mAlbumProvider.GetAlbumList( artist )) {
 					if( albumList.List != null ) {
-						retValue = RandomTrackFromAlbum( albumList.List.Skip( NextRandom( artist.AlbumCount - 1 )).Take( 1 ).FirstOrDefault());
+						var goodList = from album in albumList.List where album.Rating >= 0 select album;
+
+						retValue = RandomTrackFromAlbum( goodList.Skip( NextRandom( artist.AlbumCount - 1 )).Take( 1 ).FirstOrDefault());
 
 					}
 				}
@@ -42,7 +44,9 @@ namespace Noise.Core.PlayQueue {
 			if( album != null ) {
 				using( var trackList = mTrackProvider.GetTrackList( album )) {
 					if( trackList != null ) {
-						retValue = trackList.List.Skip( NextRandom( album.TrackCount - 1 )).Take( 1 ).FirstOrDefault();
+						var goodList = from track in trackList.List where track.Rating >= 0 select track;
+
+						retValue = goodList.Skip( NextRandom( album.TrackCount - 1 )).Take( 1 ).FirstOrDefault();
 					}
 				}
 			}

@@ -32,7 +32,8 @@ namespace Noise.Core.PlayQueue {
 		private void LoadArtists() {
 			using( var artistList = mArtistProvider.GetArtistList()) {
 				if( artistList.List != null ) {
-					mArtists.AddRange(( from artist in artistList.List orderby artist.PlayCount ascending, artist.LastPlayedTicks ascending select artist ).Take( 10 ));
+					mArtists.AddRange(( from artist in artistList.List where artist.Rating >= 0
+										orderby artist.PlayCount ascending, artist.LastPlayedTicks ascending select artist ).Take( 10 ));
 				}
 			}
 		}
