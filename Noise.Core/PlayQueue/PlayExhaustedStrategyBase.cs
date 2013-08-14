@@ -23,21 +23,19 @@ namespace Noise.Core.PlayQueue {
 
 			ProcessParameters( parameters );
 
-			if( queueMgr.UnplayedTrackCount < 3 ) {
-				while( circuitBreaker > 0 ) {
-					var track = SelectATrack();
+			while(( circuitBreaker > 0 ) &&
+				  ( queueMgr.UnplayedTrackCount < 3 )) {
+				var track = SelectATrack();
 
-					if(( track != null ) &&
-					   (!queueMgr.IsTrackQueued( track )) &&
-					   ( track.Rating >= 0 )) {
-						queueMgr.StrategyAdd( track );
+				if(( track != null ) &&
+					(!queueMgr.IsTrackQueued( track )) &&
+					( track.Rating >= 0 )) {
+					queueMgr.StrategyAdd( track );
 
-						retValue = true;
-						break;
-					}
-
-					circuitBreaker--;
+					retValue = true;
 				}
+
+				circuitBreaker--;
 			}
 
 			return ( retValue );
