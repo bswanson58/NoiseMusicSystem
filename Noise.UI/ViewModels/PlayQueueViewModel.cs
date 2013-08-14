@@ -383,6 +383,8 @@ namespace Noise.UI.ViewModels {
 
 				RaisePropertyChanged( () => PlayingIndex );
 				RaisePropertyChanged( () => RemainingTime );
+
+				SelectedItem = null;
 			});
 		}
 
