@@ -46,7 +46,8 @@ namespace Noise.Metadata.ArtistMetadata {
 		}
 
 		private void InsureArtistStatus( string forArtist ) {
-			if( mDocumentStore != null ) {
+			if(( mDocumentStore != null ) &&
+			   (!mDocumentStore.WasDisposed )) {
 				using( var session = mDocumentStore.OpenSession()) {
 					var	status = session.Load<DbArtistStatus>( DbArtistStatus.FormatStatusKey( forArtist ));
 
@@ -63,8 +64,9 @@ namespace Noise.Metadata.ArtistMetadata {
 		private DbArtistBiography GetOrCreateArtistBiography( string forArtist ) {
 			var retValue = default( DbArtistBiography );
 
-			if( mDocumentStore != null ) {
-				using( var session = mDocumentStore.OpenSession()) {
+			if(( mDocumentStore != null ) &&
+			   (!mDocumentStore.WasDisposed )) {
+				using( var session = mDocumentStore.OpenSession() ) {
 					retValue = session.Load<DbArtistBiography>( DbArtistBiography.FormatStatusKey( forArtist ));
 				}
 			}
@@ -79,8 +81,9 @@ namespace Noise.Metadata.ArtistMetadata {
 		private DbArtistDiscography GetOrCreateArtistDiscography( string forArtist ) {
 			var retValue = default( DbArtistDiscography );
 
-			if( mDocumentStore != null ) {
-				using( var session = mDocumentStore.OpenSession()) {
+			if(( mDocumentStore != null ) &&
+			   (!mDocumentStore.WasDisposed )) {
+				using( var session = mDocumentStore.OpenSession() ) {
 					retValue = session.Load<DbArtistDiscography>( DbArtistDiscography.FormatStatusKey( forArtist ));
 				}
 			}
