@@ -71,6 +71,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Handle( Events.DatabaseOpened args ) {
+			FilterText = string.Empty;
 			BuildArtistList();
 		}
 
@@ -78,6 +79,7 @@ namespace Noise.UI.ViewModels {
 			ClearArtistList();
 
 			VisualStateName = cHideSortDescriptions;
+			FilterText = string.Empty;
 		}
 
 		public void Handle( Events.ArtistUserUpdate eventArgs ) {
@@ -195,13 +197,15 @@ namespace Noise.UI.ViewModels {
 		public string FilterText {
 			get { return( Get( () => FilterText )); }
 			set {
-				Set( () => FilterText, value );
+				Execute.OnUIThread( () => {
+					Set( () => FilterText, value );
 
-				if( mArtistView != null ) {
-					mArtistView.Refresh();
-				}
+					if( mArtistView != null ) {
+						mArtistView.Refresh();
+					}
 
-				RaisePropertyChanged( () => FilterText );
+					RaisePropertyChanged( () => FilterText );
+				});
 			}
 		}
 

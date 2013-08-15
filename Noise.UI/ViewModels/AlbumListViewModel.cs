@@ -49,11 +49,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Handle( Events.DatabaseOpened args ) {
+			FilterText = string.Empty;
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {
 			ClearAlbumList();
+
 			VisualStateName = cHideSortDescriptions;
+			FilterText = string.Empty;
 		}
 
 		private void OnArtistChanged( DbArtist artist ) {
