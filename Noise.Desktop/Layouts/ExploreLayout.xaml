@@ -59,7 +59,7 @@
 
                     <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="LibrarySelector" />
 
-                    <TabControl Grid.Row="1" Margin="1,7,3,-2" BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="LeftPanel"
+                    <TabControl Grid.Row="1" Margin="1,7,3,-2" BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="LeftPanel" Background="White"
                                 ContentTemplate="{StaticResource TabTemplate}"  ItemContainerStyle="{StaticResource TabControlStyle}" />
                 </Grid>
 
@@ -96,7 +96,7 @@
                     </Grid.RowDefinitions>
 
                     <!--ContentControl Grid.Row="0" Regions:RegionManager.RegionName="Toolbar" /-->
-                    <TabControl Grid.Row="1" Margin="0,3,0,0"  BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="RightPanel"
+                    <TabControl Grid.Row="1" Margin="0,3,0,0"  BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="RightPanel" Background="White"
                                 ContentTemplate="{StaticResource TabTemplate}"  ItemContainerStyle="{StaticResource TabControlStyle}" />
                 </Grid>
             </Grid>
