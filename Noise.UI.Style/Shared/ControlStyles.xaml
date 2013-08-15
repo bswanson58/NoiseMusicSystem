@@ -270,7 +270,7 @@
 							<ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" Margin="1" />
 							<TextBlock x:Name="Message" Text="{TemplateBinding Behaviours:TextBoxHelper.Watermark}" FontStyle="Italic" Margin="9,0,0,0"
 										Foreground="Gray" IsHitTestVisible="False" FontFamily="Calibri" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Center" />
-							<Button x:Name="PART_ClearText" Foreground="{DynamicResource BorderColor}" Width="16" BorderThickness="0" Background="Transparent"
+							<Button x:Name="PART_ClearText" Foreground="{DynamicResource BorderColor}" BorderThickness="0" Background="Transparent"
 										HorizontalAlignment="Right" Margin="3" FontFamily="Marlett" Content="r" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent},
 										Path=(Behaviours:TextBoxHelper.ClearTextButton), Converter={StaticResource BooleanVisibilityConverter}}" IsTabStop="False" />
 						</Grid>
