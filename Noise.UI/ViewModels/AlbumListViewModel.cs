@@ -6,6 +6,7 @@ using System.Windows.Data;
 using AutoMapper;
 using Caliburn.Micro;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
@@ -36,12 +37,21 @@ namespace Noise.UI.ViewModels {
 			mSelectionState = selectionState;
 
 			mAlbumList = new BindableCollection<UiAlbum>();
+			VisualStateName = cHideSortDescriptions;
 
 			mAlbumSorts = new List<ViewSortStrategy> { new ViewSortStrategy( "Album Name", new List<SortDescription> { new SortDescription( "Name", ListSortDirection.Ascending ) } ),
 													   new ViewSortStrategy( "Published Year", new List<SortDescription> { new SortDescription( "PublishedYear", ListSortDirection.Ascending ),
 																														   new SortDescription( "Name", ListSortDirection.Ascending ) })};
-			SelectedSortDescription = mAlbumSorts[0];
-			VisualStateName = cHideSortDescriptions;
+
+			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			if( configuration != null ) {
+				var sortConfiguration = ( from config in mAlbumSorts where config.DisplayName == configuration.AlbumListSortOrder select config ).FirstOrDefault();
+
+				SelectedSortDescription = sortConfiguration ?? mAlbumSorts[0];
+			}
+			else {
+				SelectedSortDescription = mAlbumSorts[0];
+			}
 
 			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
@@ -103,8 +113,18 @@ namespace Noise.UI.ViewModels {
 			set {
 				Set( () => SelectedSortDescription, value );
 
-				UpdateSorts();
 				VisualStateName = cHideSortDescriptions;
+
+				if( SelectedSortDescription != null ) {
+					UpdateSorts();
+
+					var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+					if( configuration != null ) {
+						configuration.AlbumListSortOrder = SelectedSortDescription.DisplayName;
+
+						NoiseSystemConfiguration.Current.Save( configuration );
+					}
+				}
 			}
 		}
 

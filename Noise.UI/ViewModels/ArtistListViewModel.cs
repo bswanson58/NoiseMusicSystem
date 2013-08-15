@@ -44,6 +44,8 @@ namespace Noise.UI.ViewModels {
 
 			mArtistList = new BindableCollection<UiArtist>();
 			mSortPrefixes = new List<string>();
+			VisualStateName = cHideSortDescriptions;
+
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnArtistChanged );
 
@@ -60,7 +62,19 @@ namespace Noise.UI.ViewModels {
 														new ViewSortStrategy( "Unprefixed Artist Name", new List<SortDescription> { new SortDescription( "SortName", ListSortDirection.Ascending ) }),
 														new ViewSortStrategy( "Genre", new List<SortDescription> { new SortDescription( "Genre", ListSortDirection.Ascending ),
 																												   new SortDescription( "SortName", ListSortDirection.Ascending )}) };
-			SelectedSortDescription = mEnableSortPrefixes ? mArtistSorts[1] : mArtistSorts[0];
+			if( configuration != null ) {
+				var sortConfiguration = ( from config in mArtistSorts where config.DisplayName == configuration.ArtistListSortOrder select config ).FirstOrDefault();
+
+				if( sortConfiguration != null ) {
+					SelectedSortDescription = sortConfiguration;
+				}
+				else {
+					SelectedSortDescription = mEnableSortPrefixes ? mArtistSorts[1] : mArtistSorts[0];
+				}
+			}
+			else {
+				SelectedSortDescription = mEnableSortPrefixes ? mArtistSorts[1] : mArtistSorts[0];
+			}
 
 			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
 			mEventAggregator.Subscribe( this );
@@ -145,8 +159,18 @@ namespace Noise.UI.ViewModels {
 			set {
 				Set( () => SelectedSortDescription, value );
 
-				UpdateSorts();
 				VisualStateName = cHideSortDescriptions;
+
+				if( SelectedSortDescription != null ) {
+					UpdateSorts();
+
+					var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+					if( configuration != null ) {
+						configuration.ArtistListSortOrder = SelectedSortDescription.DisplayName;
+
+						NoiseSystemConfiguration.Current.Save( configuration );
+					}
+				}
 			}
 		}
 

@@ -26,6 +26,8 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cEnablePlaybackScrobbling					= "enablePlaybackScrobbling";
 		private const string	cLastLibraryUsedProperty					= "lastLibraryUsed";
 		private const string	cLoadLastLibraryOnStartup					= "loadLastUsedLibrary";
+		private const string	cArtistListSortOrderProperty				= "artistListSortOrder";
+		private const string	cAlbumListSortOrderProperty					= "albumListSortOrder";
 
 		[ConfigurationPropertyAttribute( cEnableLibraryExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
 		public bool EnableLibraryExplorer {
@@ -146,5 +148,16 @@ namespace Noise.Infrastructure.Configuration {
 			set { base[cLoadLastLibraryOnStartup] = value; }
 		}
 
+		[ConfigurationPropertyAttribute( cArtistListSortOrderProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "" )]
+		public string ArtistListSortOrder {
+			get { return ((string)( base[cArtistListSortOrderProperty])); }
+			set { base[cArtistListSortOrderProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cAlbumListSortOrderProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "" )]
+		public string AlbumListSortOrder {
+			get { return ((string)( base[cAlbumListSortOrderProperty] ) ); }
+			set { base[cAlbumListSortOrderProperty] = value; }
+		}
 	}
 }
