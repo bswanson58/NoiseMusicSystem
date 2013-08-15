@@ -14,11 +14,13 @@ using Noise.UI.Dto;
 
 namespace Noise.UI.ViewModels {
 	public class PlayerViewModel : ViewModelBase, IActiveAware,
+								   IHandle<Events.SystemShutdown>,
 								   IHandle<Events.PlaybackStatusChanged>, IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackInfoChanged>,
 								   IHandle<Events.PlaybackTrackStarted>, IHandle<Events.SongLyricsInfo>, IHandle<Events.PlaybackTrackUpdated> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IPlayQueue			mPlayQueue;
 		private readonly IPlayController	mPlayController;
+		private readonly IDisposable		mPlayStateChangeDisposable;
 		private double						mSpectrumImageWidth;
 		private double						mSpectrumImageHeight;
 		private LyricsInfo					mLyricsInfo;
@@ -54,7 +56,7 @@ namespace Noise.UI.ViewModels {
 			LoadBands();
 
 			PlayState = ePlayState.StoppedEmptyQueue.ToString();
-			mPlayController.PlayStateChange.Subscribe( OnPlayStateChange );
+			mPlayStateChangeDisposable = mPlayController.PlayStateChange.Subscribe( OnPlayStateChange );
 		}
 
 		private void OnPlayStateChange( ePlayState state ) {
@@ -68,12 +70,17 @@ namespace Noise.UI.ViewModels {
 #if DEBUG
 				return( Get( () => PlayState ));
 #else
-				return( "" );
+				return( string.Empty );
 #endif
 			} 
 			private set { Set( () => PlayState, value ); }
 		}
 
+		public void Handle( Events.SystemShutdown args ) {
+			mSpectrumUpdateTimer.Stop();
+			mEventAggregator.Unsubscribe( this );
+			mPlayStateChangeDisposable.Dispose();
+		}
 
 		public void Handle( Events.PlaybackStatusChanged eventArgs ) {
 			CurrentStatus = eventArgs.Status;

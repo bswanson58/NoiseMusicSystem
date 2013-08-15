@@ -348,6 +348,8 @@ namespace Noise.Core.PlayQueue {
 			FireStateChange( eStateTriggers.QueueCleared );
 			StopAllTracks( true );
 
+			mInfoUpdateTimer.Stop();
+			mEventAggregator.Unsubscribe( this );
 			mAudioLevelsDispose.Dispose();
 			mPlayStatusDispose.Dispose();
 			mStreamInfoDispose.Dispose();
