@@ -7,8 +7,12 @@
 					xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 					mc:Ignorable="d">
 
+	<SolidColorBrush x:Key="ControlTextColor" Color="#FF878787" />
+	<SolidColorBrush x:Key="TrimColor" Color="#FF878787" />
 	<SolidColorBrush x:Key="BorderColor" Color="#FFD0D0D0" />
 	<SolidColorBrush x:Key="BorderTextColor" Color="#FFA0A0A0"/>
+	<SolidColorBrush x:Key="ControlBackgroundColor" Color="#FFE5E5E5"/>
+	
 	<Style x:Key="SectionBorderStyle" TargetType="GroupBox">
 		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
@@ -76,14 +80,21 @@
 	</Style>
 
 	<Style x:Key="ControlTitleStyle" TargetType="TextBlock">
-		<Setter Property="Foreground" Value="{DynamicResource ControlTextColor}"/>
+		<Setter Property="Foreground" Value="{StaticResource ControlTextColor}"/>
 		<Setter Property="FontFamily" Value="Segoe UI"/>
 		<Setter Property="FontSize" Value="12"/>
 	</Style>
 
 	<Style x:Key="GeneralButtonStyle" TargetType="Button">
 		<Setter Property="Padding" Value="5,3"/>
-		<Setter Property="Foreground" Value="{DynamicResource ControlTextColor}"/>
+		<Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
+		<Setter Property="Foreground" Value="{StaticResource ControlTextColor}"/>
+	</Style>
+
+	<Style x:Key="GeneralComboStyle" TargetType="ComboBox">
+		<Setter Property="Padding" Value="5,3"/>
+		<Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
+		<Setter Property="Foreground" Value="{StaticResource ControlTextColor}"/>
 	</Style>
 	
 	<Style x:Key="TransportButtonStyle" TargetType="Button">
