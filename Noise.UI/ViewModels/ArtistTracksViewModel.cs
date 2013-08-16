@@ -9,13 +9,14 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
+using Noise.UI.Interfaces;
 using ReusableBits;
 
 namespace Noise.UI.ViewModels {
 	public class ArtistTracksViewModel : ViewModelBase, IActiveAware,
-										 IHandle<Events.DatabaseClosing>,
-										 IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested> {
+										 IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly ISelectionState	mSelectionState;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
@@ -27,9 +28,10 @@ namespace Noise.UI.ViewModels {
 		public	event EventHandler			IsActiveChanged = delegate { };
 		public	BindableCollection<UiArtistTrackNode>	TrackList { get; private set; }
 
-		public ArtistTracksViewModel( IEventAggregator eventAggregator,
+		public ArtistTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState,
 									  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ITagManager tagManager ) {
 			mEventAggregator = eventAggregator;
+			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -39,6 +41,8 @@ namespace Noise.UI.ViewModels {
 
 			TrackList = new BindableCollection<UiArtistTrackNode>();
 			TracksValid = false;
+
+			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
 		}
 
 		public bool IsActive {
@@ -67,25 +71,13 @@ namespace Noise.UI.ViewModels {
 			TracksValid = false;
 		}
 
-		public void Handle( Events.ArtistFocusRequested request ) {
-			if( mCurrentArtist != null ) {
-				if( mCurrentArtist.DbId != request.ArtistId ) {
-					UpdateTrackList( request.ArtistId );
-				}
+		private void OnArtistChanged( DbArtist artist ) {
+			if( artist != null ) {
+				UpdateTrackList( artist.DbId );
 			}
 			else {
-				UpdateTrackList( request.ArtistId );
-			}
-		}
-
-		public void Handle( Events.AlbumFocusRequested request ) {
-			if( mCurrentArtist != null ) {
-				if( mCurrentArtist.DbId != request.ArtistId ) {
-					UpdateTrackList( request.ArtistId );
-				}
-			}
-			else {
-				UpdateTrackList( request.ArtistId );
+				TrackList.Clear();
+				TracksValid = false;
 			}
 		}
 

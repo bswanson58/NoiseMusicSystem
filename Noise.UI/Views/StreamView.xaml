@@ -57,13 +57,13 @@
                 </Grid.ColumnDefinitions>
                 
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
-                    <Button Margin="3" Padding="5,0" Command="{Binding Path=ExportStreams}">Export</Button>
-                    <Button Margin="3" Padding="5,0" Command="{Binding Path=AddStream}">Add Stream</Button>
-                    <Button Margin="3" Padding="5,0" Command="{Binding Path=EditStream}">Edit Stream</Button>
-                    <Button Margin="3" Padding="5,0" Command="{Binding Path=DeleteStream}">Remove Stream</Button>
+                    <Button Margin="3" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=ExportStreams}">Export</Button>
+                    <Button Margin="3" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=AddStream}">Add Stream</Button>
+                    <Button Margin="3" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=EditStream}">Edit Stream</Button>
+                    <Button Margin="3" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=DeleteStream}">Remove Stream</Button>
                 </StackPanel>
 
-                <Button Grid.Column="2" Margin="3" Padding="5,0" Command="{Binding Path=ImportStreams}">Import</Button>
+                <Button Grid.Column="2" Margin="3" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=ImportStreams}">Import</Button>
             </Grid>
         </Grid>
     </GroupBox>

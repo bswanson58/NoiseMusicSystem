@@ -7,8 +7,12 @@
 					xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 					mc:Ignorable="d">
 
+	<SolidColorBrush x:Key="ControlTextColor" Color="#FF878787" />
+	<SolidColorBrush x:Key="TrimColor" Color="#FF878787" />
 	<SolidColorBrush x:Key="BorderColor" Color="#FFD0D0D0" />
 	<SolidColorBrush x:Key="BorderTextColor" Color="#FFA0A0A0"/>
+	<SolidColorBrush x:Key="ControlBackgroundColor" Color="#FFE5E5E5"/>
+	
 	<Style x:Key="SectionBorderStyle" TargetType="GroupBox">
 		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
@@ -41,6 +45,21 @@
 		<Setter Property="Padding" Value="11,3"/>
 	</Style>
 
+	<Style x:Key="ExplorerHeaderStyle" TargetType="TextBlock">
+		<Setter Property="FontFamily" Value="Segoe UI Semibold"/>
+		<Setter Property="FontSize" Value="18"/>
+		<Setter Property="Foreground" Value="#FF0000A0"/>
+	</Style>
+	<Style x:Key="ExplorerTitleStyle" TargetType="TextBlock">
+		<Setter Property="FontFamily" Value="Segoe UI"/>
+		<Setter Property="FontSize" Value="18"/>
+		<Setter Property="Foreground" Value="#FF0000A0"/>
+	</Style>
+	<Style x:Key="ExplorerSubtitleStyle" TargetType="TextBlock">
+		<Setter Property="FontFamily" Value="Segoe UI"/>
+		<Setter Property="FontSize" Value="12"/>
+		<Setter Property="Foreground" Value="#FF0000A0"/>
+	</Style>
 
 	<Style x:Key="LargeTitleStyle" TargetType="TextBlock">
 		<Setter Property="Foreground" Value="#FF0000A0"/>
@@ -61,14 +80,21 @@
 	</Style>
 
 	<Style x:Key="ControlTitleStyle" TargetType="TextBlock">
-		<Setter Property="Foreground" Value="{DynamicResource ControlTextColor}"/>
+		<Setter Property="Foreground" Value="{StaticResource ControlTextColor}"/>
 		<Setter Property="FontFamily" Value="Segoe UI"/>
 		<Setter Property="FontSize" Value="12"/>
 	</Style>
 
 	<Style x:Key="GeneralButtonStyle" TargetType="Button">
 		<Setter Property="Padding" Value="5,3"/>
-		<Setter Property="Foreground" Value="{DynamicResource ControlTextColor}"/>
+		<Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
+		<Setter Property="Foreground" Value="{StaticResource ControlTextColor}"/>
+	</Style>
+
+	<Style x:Key="GeneralComboStyle" TargetType="ComboBox">
+		<Setter Property="Padding" Value="5,3"/>
+		<Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
+		<Setter Property="Foreground" Value="{StaticResource ControlTextColor}"/>
 	</Style>
 	
 	<Style x:Key="TransportButtonStyle" TargetType="Button">
@@ -126,6 +152,105 @@
 		</Setter>
 	</Style>
 
+	<!-- Animate on insert for ListBoxItem -->
+	<Style x:Key="FocusVisual">
+		<Setter Property="Control.Template">
+			<Setter.Value>
+				<ControlTemplate>
+					<Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<SolidColorBrush x:Key="Item.MouseOver.Background" Color="#1F26A0DA"/>
+	<SolidColorBrush x:Key="Item.MouseOver.Border" Color="#a826A0Da"/>
+	<SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="#3DDADADA"/>
+	<SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="#FFDADADA"/>
+	<SolidColorBrush x:Key="Item.SelectedActive.Background" Color="#3D26A0DA"/>
+	<SolidColorBrush x:Key="Item.SelectedActive.Border" Color="#FF26A0DA"/>
+	<Style x:Key="AnimateOnInsertListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
+		<Setter Property="SnapsToDevicePixels" Value="True"/>
+		<Setter Property="Padding" Value="4,1"/>
+		<Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+		<Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ListBoxItem}">
+					<ControlTemplate.Resources>
+						<Storyboard x:Key="OnLoaded">
+							<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="Bd">
+								<EasingDoubleKeyFrame KeyTime="0" Value="0">
+									<EasingDoubleKeyFrame.EasingFunction>
+										<CubicEase EasingMode="EaseOut"/>
+									</EasingDoubleKeyFrame.EasingFunction>
+								</EasingDoubleKeyFrame>
+								<EasingDoubleKeyFrame KeyTime="0:0:0.7" Value="1">
+									<EasingDoubleKeyFrame.EasingFunction>
+										<CubicEase EasingMode="EaseOut"/>
+									</EasingDoubleKeyFrame.EasingFunction>
+								</EasingDoubleKeyFrame>
+							</DoubleAnimationUsingKeyFrames>
+						</Storyboard>
+					</ControlTemplate.Resources>
+					<Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true" RenderTransformOrigin="0.5,0.5">
+						<Border.RenderTransform>
+							<TransformGroup>
+								<ScaleTransform/>
+								<SkewTransform/>
+								<RotateTransform/>
+								<TranslateTransform/>
+							</TransformGroup>
+						</Border.RenderTransform>
+						<Border.LayoutTransform>
+							<TransformGroup>
+								<ScaleTransform/>
+								<SkewTransform/>
+								<RotateTransform/>
+								<TranslateTransform/>
+							</TransformGroup>
+						</Border.LayoutTransform>
+						<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+					</Border>
+					<ControlTemplate.Triggers>
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsMouseOver" Value="True"/>
+							</MultiTrigger.Conditions>
+							<Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.MouseOver.Background}"/>
+							<Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.MouseOver.Border}"/>
+						</MultiTrigger>
+						<EventTrigger RoutedEvent="FrameworkElement.Loaded">
+							<BeginStoryboard Storyboard="{StaticResource OnLoaded}"/>
+						</EventTrigger>
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="Selector.IsSelectionActive" Value="False"/>
+								<Condition Property="IsSelected" Value="True"/>
+							</MultiTrigger.Conditions>
+							<Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.SelectedInactive.Background}"/>
+							<Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.SelectedInactive.Border}"/>
+						</MultiTrigger>
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="Selector.IsSelectionActive" Value="True"/>
+								<Condition Property="IsSelected" Value="True"/>
+							</MultiTrigger.Conditions>
+							<Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.SelectedActive.Background}"/>
+							<Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.SelectedActive.Border}"/>
+						</MultiTrigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter Property="TextElement.Foreground" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 	<!-- TextBox watermarks -->
 	<ReusableConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
 	<Style x:Key="WaterMarkTextBox" TargetType="{x:Type TextBox}">
@@ -156,7 +281,7 @@
 							<ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" Margin="1" />
 							<TextBlock x:Name="Message" Text="{TemplateBinding Behaviours:TextBoxHelper.Watermark}" FontStyle="Italic" Margin="9,0,0,0"
 										Foreground="Gray" IsHitTestVisible="False" FontFamily="Calibri" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Center" />
-							<Button x:Name="PART_ClearText" Foreground="{DynamicResource BorderColor}" Width="16" BorderThickness="0" Background="Transparent"
+							<Button x:Name="PART_ClearText" Foreground="{DynamicResource BorderColor}" BorderThickness="0" Background="Transparent"
 										HorizontalAlignment="Right" Margin="3" FontFamily="Marlett" Content="r" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent},
 										Path=(Behaviours:TextBoxHelper.ClearTextButton), Converter={StaticResource BooleanVisibilityConverter}}" IsTabStop="False" />
 						</Grid>
@@ -193,7 +318,67 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
-	
+
+	<!--  Gridsplitter Grabber  -->
+	<Style x:Key="GridSplitterPreviewStyle">
+		<Setter Property="Control.Template">
+			<Setter.Value>
+				<ControlTemplate>
+					<Rectangle Fill="#80000000" />
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style x:Key="GridSplitterVerticalStyle" TargetType="{x:Type GridSplitter}">
+		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+		<Setter Property="PreviewStyle" Value="{StaticResource GridSplitterPreviewStyle}" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type GridSplitter}">
+					<Border x:Name="Grabber" Opacity="0.15" CornerRadius="5"
+							Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}">
+						<Canvas Width="7" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center" RenderOptions.EdgeMode="Aliased" UseLayoutRounding="True">
+							<Line Stroke="#A0A0A0" StrokeThickness="1" X1="2" Y1="0" X2="2" Y2="30" />
+							<Line Stroke="#A0A0A0" StrokeThickness="1" X1="6" Y1="0" X2="6" Y2="30" />
+						</Canvas>
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger SourceName="Grabber" Property="IsMouseOver" Value="True">
+							<Setter TargetName="Grabber" Property="Opacity" Value="1.0"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="GridSplitterHorizontalStyle" TargetType="{x:Type GridSplitter}">
+		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+		<Setter Property="PreviewStyle" Value="{StaticResource GridSplitterPreviewStyle}" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type GridSplitter}">
+					<Border x:Name="Grabber" Opacity="0.15" CornerRadius="5"
+							Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}">
+						<Canvas Width="30" Height="7" HorizontalAlignment="Center" VerticalAlignment="Center" RenderOptions.EdgeMode="Aliased" UseLayoutRounding="True">
+							<Line Stroke="#A0A0A0" StrokeThickness="1" X1="0" Y1="3" X2="30" Y2="3" />
+							<Line Stroke="#A0A0A0" StrokeThickness="1" X1="0" Y1="6" X2="30" Y2="6" />
+						</Canvas>
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger SourceName="Grabber" Property="IsMouseOver" Value="True">
+							<Setter TargetName="Grabber" Property="Opacity" Value="1.0"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 	<!-- Play column header style -->
 	<DataTemplate x:Key="PlayColumnHeaderTemplate">
 		<TextBlock FontFamily="WebDings" Foreground="{StaticResource ControlTextColor}" Text="4"/>

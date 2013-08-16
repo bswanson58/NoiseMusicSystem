@@ -34,7 +34,7 @@
                 <ContentControl.ContentTemplate>
                     <DataTemplate>
                         <Grid>
-                            <ComboBox x:Name="combo" 
+                            <ComboBox x:Name="combo" Style="{StaticResource GeneralComboStyle}"
                                       SelectedItem="{Binding DataContext.CurrentLibrary, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl }}}" 
                                       DisplayMemberPath="LibraryName" ItemsSource="{Binding}"/>
                             <TextBlock x:Name="prompt_select" VerticalAlignment="Center" Margin="17,0" Foreground="Red" FontStyle="Italic" IsHitTestVisible="False" Visibility="Hidden" 
@@ -55,9 +55,9 @@
                 </ContentControl.ContentTemplate>
             </ContentControl>
 
-            <Button Grid.Column="2" Height="25" Width="25" Margin="2,3" Padding="1" Foreground="{StaticResource ControlTextColor}" ToolTip="Sync Library"
+            <Button Grid.Column="2" Height="25" Width="25" Margin="2,3" Padding="1" Style="{StaticResource GeneralButtonStyle}" ToolTip="Sync Library"
                     Command="{Binding Path=UpdateLibrary}" Content="{StaticResource Path_Sync}"/>
-            <Button Grid.Column="3" Height="25" Width="25" Margin="2,3" Foreground="{StaticResource ControlTextColor}" ToolTip="Configure Libraries"
+            <Button Grid.Column="3" Height="25" Width="25" Margin="2,3" Style="{StaticResource GeneralButtonStyle}" ToolTip="Configure Libraries"
                     Command="{Binding Path=LibraryConfiguration}" Content="{StaticResource Path_Configure}"/>
         </Grid>
     </GroupBox>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <?if $(var.Noise.Core.Platform) = "x64" ?>
+  <?define ReplayGainLibraryFolder="$(var.SolutionDir)\lib\ReplayGain\x64\"?>
+  <?else ?>
+  <?define ReplayGainLibraryFolder="$(var.SolutionDir)\lib\ReplayGain\x86\"?>
+  <?endif ?>
+
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="ReplayGain.dll" Guid="722a4253-2f55-4782-b17a-3810c8906928">
+      <File Id="ReplayGain.dll" DiskId="10" Source="$(var.ReplayGainLibraryFolder)ReplayGain.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="ReplayGainFiles">
+    <ComponentRef Id="ReplayGain.dll" />
+  </ComponentGroup>
+</Include>

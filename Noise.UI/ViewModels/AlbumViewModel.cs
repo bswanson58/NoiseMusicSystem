@@ -10,6 +10,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Behaviours;
 using Noise.UI.Dto;
+using Noise.UI.Interfaces;
 using Observal.Extensions;
 using ReusableBits;
 using ReusableBits.Interfaces;
@@ -30,9 +31,9 @@ namespace Noise.UI.ViewModels {
 	}
 
 	internal class AlbumViewModel : AutomaticCommandBase,
-									IHandle<Events.DatabaseClosing>,
-									IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.AlbumUserUpdate> {
+									IHandle<Events.DatabaseClosing>, IHandle<Events.AlbumUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly ISelectionState		mSelectionState;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
 		private readonly IArtworkProvider		mArtworkProvider;
@@ -55,10 +56,11 @@ namespace Noise.UI.ViewModels {
 
 		public	TimeSpan						AlbumPlayTime { get; private set; }
 
-		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider,
+		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, ISelectionState selectionState,
 							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider,
 							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager ) {
 			mEventAggregator = eventAggregator;
+			mSelectionState = selectionState;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mArtworkProvider = artworkProvider;
@@ -80,6 +82,8 @@ namespace Noise.UI.ViewModels {
 			mAlbumEditRequest = new InteractionRequest<AlbumEditRequest>();
 			mAlbumArtworkDisplayRequest = new InteractionRequest<AlbumArtworkDisplayInfo>();
 			mAlbumCategoryEditRequest = new InteractionRequest<AlbumCategoryEditInfo>();
+
+			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
 		}
 
 		private void ClearCurrentAlbum() {
@@ -99,18 +103,15 @@ namespace Noise.UI.ViewModels {
 			ClearCurrentAlbum();
 		}
 
-		public void Handle( Events.ArtistFocusRequested request ) {
-			if( mCurrentAlbum != null ) {
-				if( mCurrentAlbum.Artist != request.ArtistId ) {
-					ClearCurrentAlbum();
-				}
+		private void OnAlbumChanged( DbAlbum album ) {
+			if( album != null ) {
+				UpdateAlbum( album.DbId );
+
+				mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.AlbumInfoView ) );
 			}
-		}
-
-		public void Handle( Events.AlbumFocusRequested request ) {
-			UpdateAlbum( request.AlbumId );
-
-			mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.AlbumInfoView ));
+			else {
+				ClearCurrentAlbum();
+			}
 		}
 
 		private void UpdateAlbum( long albumId ) {

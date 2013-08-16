@@ -32,8 +32,8 @@ namespace Noise.Core.FileProcessor {
 			context.MetaDataProviders = new List<IMetaDataProvider>();
 			if( folderStrategy.PreferFolderStrategy ) {
 				context.MetaDataProviders.Add( mStrategyProvider.GetProvider( context.StorageFile ));
-				context.MetaDataProviders.Add( mTagProvider.GetProvider( context.StorageFile, context.Track.Encoding ));
-				context.MetaDataProviders.Add( mFileNameProvider.GetProvider( context.StorageFile ));
+				context.MetaDataProviders.Add( mFileNameProvider.GetProvider( context.StorageFile ) );
+				context.MetaDataProviders.Add( mTagProvider.GetProvider( context.StorageFile, context.Track.Encoding ) );
 				context.MetaDataProviders.Add( mDefaultProvider.GetProvider( context.StorageFile ));
 			}
 			else {

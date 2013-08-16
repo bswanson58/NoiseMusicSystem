@@ -18,6 +18,10 @@ namespace Noise.Infrastructure.Dto {
 		public bool				IsFavorite { get; set; }
 		public bool				HasFavorites { get; set; }
 		public long				LastChangeTicks { get; protected set; }
+		public Int32			PlayCount { get; private set; }
+		public long				LastPlayedTicks { get; private set; }
+		public Int32			ViewCount { get; private set; }
+		public long				LastViewedTicks { get; private set; }
 
 		public DbArtist() {
 			Name = "";
@@ -53,6 +57,16 @@ namespace Noise.Infrastructure.Dto {
 
 		public void UpdateLastChange() {
 			LastChangeTicks = DateTime.Now.Ticks;
+		}
+
+		public void UpdateLastPlayed() {
+			PlayCount++;
+			LastPlayedTicks = DateTime.Now.Ticks;
+		}
+
+		public void UpdateLastViewed() {
+			ViewCount++;
+			LastViewedTicks = DateTime.Now.Ticks;
 		}
 
 		[Export("PersistenceType")]

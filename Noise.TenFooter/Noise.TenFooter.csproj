@@ -158,6 +158,10 @@
       <Project>{7ED4F983-3946-48EB-AAB7-587CEFAC4D03}</Project>
       <Name>Noise.AppSupport</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Noise.AudioSupport\Noise.AudioSupport.csproj">
+      <Project>{19dba418-08c1-4a02-bb7a-2d83a416c6a2}</Project>
+      <Name>Noise.AudioSupport</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Noise.BlobStorage\Noise.BlobStorage.csproj">
       <Project>{9F4086FD-8332-489F-8A96-8D4425DB5DF2}</Project>
       <Name>Noise.BlobStorage</Name>
@@ -221,7 +225,6 @@ copy $(SolutionDir)lib\Eloquera\v4.13\Eloquera.Client.dll $(TargetDir)
 copy $(SolutionDir)lib\Eloquera\v4.13\Eloquera.Common.dll $(TargetDir)
 copy $(SolutionDir)Noise.Core\Resources\EqPresets.xml $(TargetDir)
 copy $(SolutionDir)Noise.Core\Resources\LicenseKeys.xml $(TargetDir)
-copy $(SolutionDir)lib\NServiceBus\v2.0.0.1219\log4net.dll $(TargetDir)
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

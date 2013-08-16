@@ -59,8 +59,8 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 
-                <Button Grid.Column="0" Padding="5,0" Content="Export" Command="{Binding Path=ExportFavorites}"/>
-                <Button Grid.Column="2" Padding="5,0" Content="Import" Command="{Binding Path=ImportFavorites}"/>
+                <Button Grid.Column="0" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Export" Command="{Binding Path=ExportFavorites}"/>
+                <Button Grid.Column="2" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Import" Command="{Binding Path=ImportFavorites}"/>
             </Grid>
         </Grid>
     </GroupBox>

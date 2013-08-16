@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
   <!-- To upgrade: Update the ProductVersion below to the next release -->
-  <?define ProductVersion=0.9.0.0?>
+  <?define ProductVersion=0.9.1.0?>
 
   <!-- Product Upgrade ID: do not change -->
   <?define ProductUpgradeCode="68F51362-142C-49D7-A702-1BCB7E933C3D"?>

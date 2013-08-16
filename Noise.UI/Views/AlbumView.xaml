@@ -54,7 +54,7 @@
                     </Image>
                 </Viewbox>
                 
-                <Grid x:Name="_gridParent" Grid.Column="1" Margin="3,7,11,0"
+                <Grid x:Name="_gridParent" Grid.Column="1" Margin="3,7,11,5"
                       Behaviours:GridUtils.RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto">
 
                     <!--  Album name -->
@@ -133,40 +133,16 @@
                     </StackPanel>
 
                     <!--  Album commands  -->
-                    <StackPanel Grid.Row="7" HorizontalAlignment="Right" Orientation="Horizontal">
-                        <Button Margin="0,0,9,5" Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayAlbum}"/>
-                        <Button Width="19"
-                                Height="19"
-                                Margin="0,0,5,5"
-                                Command="{Binding Path=OpenAlbumFolder}"
-                                Content="{StaticResource Path_Folder}"
-                                Foreground="{StaticResource ControlTextColor}"
-                                Padding="1"
-                                ToolTip="Open Album Folder" />
-                        <Button Width="19"
-                                Height="19"
-                                Margin="0,0,5,5"
-                                Command="{Binding DisplayPictures}"
-                                Content="{StaticResource Path_Pictures}"
-                                Foreground="{StaticResource ControlTextColor}"
-                                Padding="1"
-                                ToolTip="Display Album Extras" />
-                        <Button Width="19"
-                                Height="19"
-                                Margin="0,0,5,5"
-                                Command="{Binding EditCategories}"
-                                Content="{StaticResource Path_Categories}"
-                                Foreground="{StaticResource ControlTextColor}"
-                                Padding="1"
-                                ToolTip="Edit Album Categories" />
-                        <Button Width="19"
-                                Height="19"
-                                Margin="0,0,0,5"
-                                Command="{Binding Path=EditAlbum}"
-                                Content="{StaticResource Path_Edit}"
-                                Foreground="{StaticResource ControlTextColor}"
-                                Padding="2"
-                                ToolTip="Edit Album Properties" />
+                    <StackPanel Grid.Row="7" Height="24" HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button Margin="0,0,9,0" Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayAlbum}"/>
+                        <Button Margin="0,0,5,0" Padding="4" Style="{StaticResource GeneralButtonStyle}"
+                                Command="{Binding Path=OpenAlbumFolder}" Content="{StaticResource Path_Folder}" ToolTip="Open Album Folder" />
+                        <Button Margin="0,0,5,0" Padding="4" Style="{StaticResource GeneralButtonStyle}"
+                                Command="{Binding DisplayPictures}" Content="{StaticResource Path_Pictures}" ToolTip="Display Album Extras" />
+                        <Button Margin="0,0,5,0" Padding="3" Style="{StaticResource GeneralButtonStyle}"
+                                Command="{Binding EditCategories}" Content="{StaticResource Path_Categories}" ToolTip="Edit Album Categories" />
+                        <Button Margin="0,0,0,0" Padding="3" Style="{StaticResource GeneralButtonStyle}"
+                                Command="{Binding Path=EditAlbum}" Content="{StaticResource Path_Edit}" ToolTip="Edit Album Properties" />
                     </StackPanel>
                 </Grid>
             </Grid>

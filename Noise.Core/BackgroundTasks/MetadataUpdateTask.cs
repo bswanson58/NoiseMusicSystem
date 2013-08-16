@@ -60,7 +60,7 @@ namespace Noise.Core.BackgroundTasks {
 					}
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( string.Format( "Updating Artist Metadata for artist: {0}", args.ArtistName ), ex );
+					NoiseLogger.Current.LogException( string.Format( "MetadataUpdateTask:Updating Artist Metadata for artist: {0}", args.ArtistName ), ex );
 				}
 			}
 		}

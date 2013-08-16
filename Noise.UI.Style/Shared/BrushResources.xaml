@@ -2,8 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours;assembly=Noise.UI">
 
-    <SolidColorBrush x:Key="ControlTextColor" Color="#FF878787" />
-    <SolidColorBrush x:Key="TrimColor" Color="#FF878787" />
     <LinearGradientBrush x:Key="TreeItemBackground" StartPoint="0.5,0" EndPoint="0.5,1">
         <GradientStop Offset="0" Color="#FF588CE0" />
         <GradientStop Offset="1" Color="White" />
@@ -17,10 +15,7 @@
         </Behaviours:NoiseGenerator.Colors>
     </Behaviours:NoiseGenerator>
     <ImageBrush x:Key="NoiseBrush"
-                ImageSource="{Binding Source={StaticResource BackgroundNoise},
-                                      Path=NoiseImage}"
-                TileMode="Tile"
-                Viewport="0,0 128,128"
-                ViewportUnits="Absolute" />
+                ImageSource="{Binding Source={StaticResource BackgroundNoise}, Path=NoiseImage}"
+                TileMode="Tile" Viewport="0,0 128,128" ViewportUnits="Absolute" />
 
 </ResourceDictionary>

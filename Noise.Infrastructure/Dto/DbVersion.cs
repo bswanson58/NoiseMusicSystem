@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
+	[DebuggerDisplay( "Version = {MajorVersion}.{MinorVersion}" )]
 	public class DbVersion : DbBase {
 		public static long	DatabaseVersionDbId = 1L;
 
@@ -21,6 +23,23 @@ namespace Noise.Infrastructure.Dto {
 
 			DatabaseCreationTicks = DateTime.Now.Ticks;
 			DatabaseId = BitConverter.ToInt64( Guid.NewGuid().ToByteArray(), 0 );
+		}
+
+		public bool IsOlderVersion( DbVersion version ) {
+			var retValue = false;
+
+			if( MajorVersion < version.MajorVersion ) {
+				retValue = true;
+			}
+			else {
+				if( MajorVersion == version.MajorVersion ) {
+					if( MinorVersion < version.MinorVersion ) {
+						retValue = true;
+					}
+				}
+			}
+
+			return( retValue );
 		}
 
 		[Ignore]

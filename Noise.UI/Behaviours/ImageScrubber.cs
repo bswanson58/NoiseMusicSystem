@@ -120,9 +120,9 @@ namespace Noise.UI.Behaviours {
 		}
 
 		private void OnMouseDown( object sender, MouseButtonEventArgs args ) {
-			if( ImageList.Count() > 0 ) {
+			if( ImageList.Any()) {
 				mScrubbing = true;
-				mStartingPosition = args.GetPosition( mImage );
+				mStartingPosition = Mouse.GetPosition( null );
 
 				mImage.CaptureMouse();
 			}
@@ -130,12 +130,12 @@ namespace Noise.UI.Behaviours {
 
 		private void OnMouseMove( object sender, MouseEventArgs args ) {
 			if( mScrubbing ) {
-				var currentPostion = args.GetPosition( mImage );
+				var currentPostion = Mouse.GetPosition( null );
 				var delta = currentPostion.X - mStartingPosition.X;
 
-				if( Math.Abs( delta ) > ( SystemParameters.MinimumHorizontalDragDistance * 2.0 )) {
-					SelectItem( delta > 0 );
+				if( Math.Abs( delta ) > ( SystemParameters.MinimumHorizontalDragDistance * 10.0 )) {
 					mStartingPosition = currentPostion;
+					SelectItem( delta > 0 );
 				}
 			}
 		}

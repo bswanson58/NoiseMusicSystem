@@ -23,8 +23,11 @@ namespace Noise.Infrastructure.Configuration {
 		private const string	cHasNetworkAccess							= "hasNetworkAccess";
 		private const string	cEnableRemoteAccess							= "enableRemoteAccess";
 		private const string	cEnablePlaybackLibraryFocus					= "enablePlaybackLibraryFocus";
+		private const string	cEnablePlaybackScrobbling					= "enablePlaybackScrobbling";
 		private const string	cLastLibraryUsedProperty					= "lastLibraryUsed";
 		private const string	cLoadLastLibraryOnStartup					= "loadLastUsedLibrary";
+		private const string	cArtistListSortOrderProperty				= "artistListSortOrder";
+		private const string	cAlbumListSortOrderProperty					= "albumListSortOrder";
 
 		[ConfigurationPropertyAttribute( cEnableLibraryExplorerProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
 		public bool EnableLibraryExplorer {
@@ -127,6 +130,12 @@ namespace Noise.Infrastructure.Configuration {
 			set { base[cEnablePlaybackLibraryFocus] = value; }
 		}
 
+		[ConfigurationPropertyAttribute( cEnablePlaybackScrobbling, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "false" )]
+		public bool EnablePlaybackScrobbling {
+			get { return ( (bool)( base[cEnablePlaybackScrobbling] ) ); }
+			set { base[cEnablePlaybackScrobbling] = value; }
+		}
+
 		[ConfigurationPropertyAttribute( cLastLibraryUsedProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = 0L )]
 		public long LastLibraryUsed {
 			get { return ((long)( base[cLastLibraryUsedProperty] ) ); }
@@ -139,5 +148,16 @@ namespace Noise.Infrastructure.Configuration {
 			set { base[cLoadLastLibraryOnStartup] = value; }
 		}
 
+		[ConfigurationPropertyAttribute( cArtistListSortOrderProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "" )]
+		public string ArtistListSortOrder {
+			get { return ((string)( base[cArtistListSortOrderProperty])); }
+			set { base[cArtistListSortOrderProperty] = value; }
+		}
+
+		[ConfigurationPropertyAttribute( cAlbumListSortOrderProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "" )]
+		public string AlbumListSortOrder {
+			get { return ((string)( base[cAlbumListSortOrderProperty] ) ); }
+			set { base[cAlbumListSortOrderProperty] = value; }
+		}
 	}
 }

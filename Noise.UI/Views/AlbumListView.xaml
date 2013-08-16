@@ -1,0 +1,146 @@
+﻿<UserControl x:Class="Noise.UI.Views.AlbumListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Dto="clr-namespace:Noise.UI.Dto"
+             xmlns:valueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours" 
+             xmlns:Controls="clr-namespace:Noise.UI.Controls"
+             ReusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.DataContext>
+        <Binding Path="AlbumListViewModel" Source="{StaticResource ViewModelLocator}" />
+    </UserControl.DataContext>
+    
+    <UserControl.Resources>
+        <valueConverters:EmptyStringVisibilityConverter x:Key="CollapseIfStringEmpty" HideOnEmpty="True" IsHidden="False"/>
+
+        <ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
+            <Grid Margin="5,15,5,0">
+                <TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="Select an artist!" />
+            </Grid>
+        </ControlTemplate>
+
+        <DataTemplate x:Key="AlbumTemplate" DataType="{x:Type Dto:UiAlbum}">
+            <Grid Margin="0,0,3,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="23" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0" Style="{DynamicResource PlayButtonStyle}" VerticalAlignment="Center" Command="{Binding PlayAlbum}" Content="4" />
+
+                        <Viewbox Grid.Column="1" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
+                            <TextBlock Style="{StaticResource ExplorerTitleStyle}" VerticalAlignment="Center" Text="{Binding Name}" />
+                        </Viewbox>
+                    </Grid>
+
+                    <Grid Grid.Row="1" Margin="7,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="23" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Foreground="{DynamicResource ControlTextColor}" Text="Tracks: " />
+                            <TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding TrackCount}" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="9,0,0,0">
+                            <StackPanel.Visibility>
+                                <MultiBinding Converter="{StaticResource EmptyStringVisibilityConverter}">
+                                    <Binding Converter="{StaticResource PublishedYearConverter}" Path="PublishedYear" />
+                                </MultiBinding>
+                            </StackPanel.Visibility>
+                            <TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Foreground="{DynamicResource ControlTextColor}" Text="Published: " />
+                            <TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding PublishedYear, Converter={StaticResource PublishedYearConverter}}" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <GroupBox Style="{StaticResource SectionBorderStyle}">
+        <GroupBox.Header>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text=" Albums "/>
+                <TextBlock Text="for " Visibility="{Binding ArtistName, Converter={StaticResource CollapseIfStringEmpty}}"/>
+                <TextBlock Text="{Binding ArtistName}"/>
+            </StackPanel>
+        </GroupBox.Header>
+        
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="_sortMenuVisibility">
+                <VisualStateGroup.Transitions>
+                    <VisualTransition GeneratedDuration="0:0:0.3" />
+                </VisualStateGroup.Transitions>
+                <VisualState x:Name="_normal" />
+                <VisualState x:Name="_displaySortDescriptions">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="0" Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(FrameworkElement.Height)">
+                            <EasingDoubleKeyFrame KeyTime="0" Value="300" />
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <ListBox Grid.Row="0" BorderThickness="0"
+                     ItemsSource="{Binding AlbumList}"
+                     ItemTemplate="{StaticResource AlbumTemplate}"
+                     SelectedItem="{Binding SelectedAlbum}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                     ScrollViewer.CanContentScroll="True"
+                     VirtualizingPanel.IsContainerVirtualizable="True"
+                     VirtualizingPanel.IsVirtualizing="True"
+                     VirtualizingPanel.VirtualizationMode="Recycling"
+                     VirtualizingPanel.ScrollUnit="Pixel"
+                     >
+                <i:Interaction.Behaviors>
+                    <ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
+                    <ReusableBehaviours:ListBoxSelectionVisible />
+                </i:Interaction.Behaviors>
+            </ListBox>
+
+            <Controls:SortDescriptionList x:Name="_sortList" Grid.Row="0" Height="0" Margin="7,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Opacity="0" />
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Margin="3" Height="21" Padding="3" HorizontalAlignment="Left" Command="{Binding Path=ToggleSortDisplay}"
+                        Style="{StaticResource GeneralButtonStyle}" Content="{StaticResource Path_SortOrder}"
+                        ToolTip="Set Album Sort Order" />
+
+                <TextBox Grid.Column="1" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
+                         Behaviours:TextBoxHelper.Watermark="enter album filter text..." Behaviours:TextBoxHelper.ClearTextButton="True"
+                         Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+        </Grid>
+    </GroupBox>
+</UserControl>

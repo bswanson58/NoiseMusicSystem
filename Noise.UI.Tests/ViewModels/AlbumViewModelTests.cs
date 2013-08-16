@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Windows.Input;
 using FluentAssertions;
 using System.Threading.Tasks;
@@ -9,6 +11,7 @@ using NUnit.Framework;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.UI.Interfaces;
 using Noise.UI.ViewModels;
 using ReusableBits;
 using ReusableBits.TestSupport.Mocking;
@@ -17,11 +20,14 @@ using ReusableBits.TestSupport.Threading;
 namespace Noise.UI.Tests.ViewModels {
 	internal class TestableAlbumViewModel : Testable<AlbumViewModel> {
 		private readonly TaskScheduler		mTaskScheduler;
- 
+		private readonly Subject<DbAlbum>	mAlbumSubject;
 
 		public TestableAlbumViewModel() {
 			// Set tpl tasks to use the current thread only.
 			mTaskScheduler = new CurrentThreadTaskScheduler();
+			mAlbumSubject = new Subject<DbAlbum>();
+
+			Mock<ISelectionState>().Setup( m => m.CurrentAlbumChanged ).Returns( mAlbumSubject.AsObservable() );
 		}
 
 		public override AlbumViewModel ClassUnderTest {
@@ -34,6 +40,10 @@ namespace Noise.UI.Tests.ViewModels {
 
 				return( retValue );
 			}
+		}
+
+		public void FireAlbumChanged( DbAlbum album ) {
+			mAlbumSubject.OnNext( album );
 		}
 	}
 
@@ -67,26 +77,11 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( It.IsAny<long>())).Returns( album ).Verifiable( "GetAlbum not called." );
 
 			var sut = testable.ClassUnderTest;
-			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+			testable.FireAlbumChanged( album );
 
 			testable.Mock<IAlbumProvider>().Verify();
 			Assert.IsNotNull( sut.Album );
 			Assert.IsTrue( sut.AlbumValid );
-		}
-
-		[Test]
-		public void DifferentArtistFocusShouldClearAlbum() {
-			var testable = new TestableAlbumViewModel();
-			var album = new DbAlbum { Artist = 1, Name = "album name" };
-
-			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( It.IsAny<long>())).Returns( album );
-
-			var sut = testable.ClassUnderTest;
-			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
-			sut.Handle( new Events.ArtistFocusRequested( album.Artist + 1 ));
-
-			Assert.IsNull( sut.Album );
-			Assert.IsFalse( sut.AlbumValid );
 		}
 
 		[Test]
@@ -97,25 +92,10 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( It.IsAny<long>())).Returns( album ).Verifiable();
 
 			var sut = testable.ClassUnderTest;
-			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
-			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+			testable.FireAlbumChanged( album );
+			testable.FireAlbumChanged( album );
 
 			testable.Mock<IAlbumProvider>().Verify( m => m.GetAlbum( It.IsAny<long>()), Times.Once());
-		}
-
-		[Test]
-		public void SameArtistRequestShouldNotClearAlbum() {
-			var testable = new TestableAlbumViewModel();
-			var album = new DbAlbum { Artist = 1, Name = "album name" };
-
-			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( It.IsAny<long>())).Returns( album ).Verifiable();
-
-			var sut = testable.ClassUnderTest;
-			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
-			sut.Handle( new Events.ArtistFocusRequested( album.Artist ));
-
-			testable.Mock<IAlbumProvider>().Verify( m => m.GetAlbum( It.IsAny<long>()), Times.Once());
-			Assert.IsNotNull( sut.Album );
 		}
 
 		[Test]
@@ -131,7 +111,7 @@ namespace Noise.UI.Tests.ViewModels {
 
 			var sut = testable.ClassUnderTest;
 
-			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+			testable.FireAlbumChanged( album );
 
 			testable.Mock<IAlbumProvider>().Verify();
 		}
@@ -151,7 +131,7 @@ namespace Noise.UI.Tests.ViewModels {
 
 			var sut = testable.ClassUnderTest;
 			sut.MonitorEvents();
-			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+			testable.FireAlbumChanged( album );
 
 			sut.ShouldRaisePropertyChangeFor( p => p.Album );
 			sut.ShouldRaisePropertyChangeFor( p => p.AlbumArtwork );
@@ -180,7 +160,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 			sut.MonitorEvents();
 
-			sut.Handle( new Events.AlbumFocusRequested( album ));
+			testable.FireAlbumChanged( album );
 
 			sut.AlbumCategories.Should().Be( tag2.Name );
 			sut.HaveAlbumCategories.Should().Be( true );
@@ -201,7 +181,7 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumSupportInfo( It.IsAny<long>())).Returns( supportInfo );
 
 			var sut = testable.ClassUnderTest;
-			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+			testable.FireAlbumChanged( album );
 
 			sut.AlbumCover.Id.Should().Be( artwork2.DbId );
 		}
@@ -220,7 +200,7 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumSupportInfo( It.IsAny<long>())).Returns( supportInfo );
 
 			var sut = testable.ClassUnderTest;
-			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+			testable.FireAlbumChanged( album );
 
 			sut.AlbumCover.Id.Should().Be( artwork2.DbId );
 		}
@@ -239,7 +219,7 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumSupportInfo( It.IsAny<long>())).Returns( supportInfo );
 
 			var sut = testable.ClassUnderTest;
-			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+			testable.FireAlbumChanged( album );
 
 			sut.AlbumCover.Id.Should().NotBe( Constants.cDatabaseNullOid );
 		}
@@ -258,7 +238,7 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumSupportInfo( It.IsAny<long>())).Returns( supportInfo );
 
 			var sut = testable.ClassUnderTest;
-			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+			testable.FireAlbumChanged( album );
 
 			sut.AlbumArtwork.Should().HaveCount( 3 );
 		}
@@ -272,7 +252,7 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumSupportInfo( It.IsAny<long>())).Returns( supportInfo );
 
 			var sut = testable.ClassUnderTest;
-			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+			testable.FireAlbumChanged( album );
 
 			sut.AlbumCover.Id.Should().Be( 0 );
 			Assert.IsNull( sut.AlbumCover.Image );
@@ -286,7 +266,7 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( It.IsAny<long>())).Returns( album );
 			
 			var sut = testable.ClassUnderTest;
-			sut.Handle( new Events.AlbumFocusRequested( album.Artist, album.DbId ));
+			testable.FireAlbumChanged( album );
 
 			album.Name = "updated name";
 			sut.Handle( new Events.AlbumUserUpdate( album.DbId ));
@@ -306,7 +286,7 @@ namespace Noise.UI.Tests.ViewModels {
 
 			sut.AlbumEditRequest.Raised += OnAlbumEditRequestCancel;
 
-			sut.Handle( new Events.AlbumFocusRequested( album ));
+			testable.FireAlbumChanged( album );
 			var editCommand = ( testable.ClassUnderTest as dynamic ).EditAlbum as ICommand;
 
 			Assert.IsNotNull( editCommand );
@@ -338,7 +318,7 @@ namespace Noise.UI.Tests.ViewModels {
 
 			sut.AlbumEditRequest.Raised += OnAlbumEditRequestConfirm;
 
-			sut.Handle( new Events.AlbumFocusRequested( album ));
+			testable.FireAlbumChanged( album );
 			var editCommand = ( testable.ClassUnderTest as dynamic ).EditAlbum as ICommand;
 
 			Assert.IsNotNull( editCommand );
@@ -365,7 +345,7 @@ namespace Noise.UI.Tests.ViewModels {
 
 			sut.AlbumEditRequest.Raised += OnAlbumEditRequestConfirm;
 
-			sut.Handle( new Events.AlbumFocusRequested( album ));
+			testable.FireAlbumChanged( album );
 			var editCommand = ( testable.ClassUnderTest as dynamic ).EditAlbum as ICommand;
 
 			Assert.IsNotNull( editCommand );
@@ -400,7 +380,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 			sut.AlbumCategoryEditRequest.Raised += OnAlbumCategoryEditRequestCancel;
 
-			sut.Handle( new Events.AlbumFocusRequested( album ));
+			testable.FireAlbumChanged( album );
 			var editCommand = ( testable.ClassUnderTest as dynamic ).EditCategories as ICommand;
 
 			Assert.IsNotNull( editCommand );
@@ -429,7 +409,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 			sut.AlbumCategoryEditRequest.Raised += OnAlbumCategoryEditRequestConfirm;
 
-			sut.Handle( new Events.AlbumFocusRequested( album ));
+			testable.FireAlbumChanged( album );
 			var editCommand = ( testable.ClassUnderTest as dynamic ).EditCategories as ICommand;
 
 			Assert.IsNotNull( editCommand );
@@ -474,7 +454,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 			sut.AlbumCategoryEditRequest.Raised += OnAlbumCategoryEditRequestConfirm;
 
-			sut.Handle( new Events.AlbumFocusRequested( album ));
+			testable.FireAlbumChanged( album );
 			var editCommand = ( testable.ClassUnderTest as dynamic ).EditCategories as ICommand;
 
 			Assert.IsNotNull( editCommand );
@@ -491,7 +471,7 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( It.IsAny<long>())).Returns( album );
 
 			var sut = testable.ClassUnderTest;
-			sut.Handle( new Events.AlbumFocusRequested( album ));
+			testable.FireAlbumChanged( album );
 
 			var editCommand = ( testable.ClassUnderTest as dynamic ).DisplayPictures as ICommand;
 			Assert.IsNotNull( editCommand );
@@ -518,7 +498,7 @@ namespace Noise.UI.Tests.ViewModels {
 
 			var sut = testable.ClassUnderTest;
 
-			sut.Handle( new Events.AlbumFocusRequested( album ));
+			testable.FireAlbumChanged( album );
 
 			var editCommand = ( testable.ClassUnderTest as dynamic ).DisplayPictures as ICommand;
 			Assert.IsNotNull( editCommand );
@@ -545,7 +525,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 			sut.AlbumArtworkDisplayRequest.Raised += OnAlbumArtworkDisplayRequestCancel;
 
-			sut.Handle( new Events.AlbumFocusRequested( album ));
+			testable.FireAlbumChanged( album );
 
 			var editCommand = ( testable.ClassUnderTest as dynamic ).DisplayPictures as ICommand;
 			Assert.IsNotNull( editCommand );
@@ -583,7 +563,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 			sut.AlbumArtworkDisplayRequest.Raised += OnAlbumArtworkDisplayRequestSetCover;
 
-			sut.Handle( new Events.AlbumFocusRequested( album ));
+			testable.FireAlbumChanged( album );
 
 			var editCommand = ( testable.ClassUnderTest as dynamic ).DisplayPictures as ICommand;
 			Assert.IsNotNull( editCommand );
@@ -611,7 +591,7 @@ namespace Noise.UI.Tests.ViewModels {
 			var sut = testable.ClassUnderTest;
 			sut.AlbumArtworkDisplayRequest.Raised += OnAlbumArtworkDisplayRequestSetCover;
 
-			sut.Handle( new Events.AlbumFocusRequested( album ));
+			testable.FireAlbumChanged( album );
 
 			var editCommand = ( testable.ClassUnderTest as dynamic ).DisplayPictures as ICommand;
 			Assert.IsNotNull( editCommand );

@@ -12,7 +12,7 @@ using ReusableBits;
 namespace Noise.Core.PlayHistory {
 	public class PlayScrobbler : IScrobbler, IRequireInitialization {
 		private Scrobbler		mScrobbler;
-		private bool			mHasNetworkAccess;
+		private bool			mEnablePlaybackScrobbling;
 		private Track			mNowPlayingTrack;
 		private TaskHandler		mScrobblerTaskHandler;
 
@@ -24,7 +24,7 @@ namespace Noise.Core.PlayHistory {
 		public void TrackStarted( PlayQueueTrack track ) {
 			ScrobblePlayingTrack();
 
-			if(( mHasNetworkAccess ) &&
+			if(( mEnablePlaybackScrobbling ) &&
 			   ( mScrobbler != null ) &&
 			   ( mScrobbler.HasSession ) &&
 			   ( track != null ) &&
@@ -86,13 +86,13 @@ namespace Noise.Core.PlayHistory {
 			try {
 				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 				if( configuration != null ) {
-					mHasNetworkAccess = configuration.HasNetworkAccess;
+					mEnablePlaybackScrobbling = configuration.HasNetworkAccess && configuration.EnablePlaybackScrobbling;
 
 					var key = NoiseLicenseManager.Current.RetrieveKey( LicenseKeys.LastFm );
 
 					Condition.Requires( key ).IsNotNull();
 
-					if(( mHasNetworkAccess ) &&
+					if(( mEnablePlaybackScrobbling ) &&
 					   ( key != null )) {
 						mScrobbler = new Scrobbler( key.Name, key.Key, "011da8bae3b980f1a794fb6eb10b0570" );
 						if(!mScrobbler.HasSession ) {
