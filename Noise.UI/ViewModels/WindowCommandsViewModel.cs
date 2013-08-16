@@ -7,6 +7,33 @@ using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
+	public class DisabledWindowCommandsViewModel :AutomaticCommandBase {
+		public void Execute_Options() { }
+		public bool CanExecute_Options() {
+			return( false );
+		}
+
+		public void Execute_LogView() { }
+		public bool CanExecute_LogView() {
+			return ( false );
+		}
+
+		public void Execute_LibraryLayout() { }
+		public bool CanExecute_LibraryLayout() {
+			return ( false );
+		}
+
+		public void Execute_ListenLayout() { }
+		public bool CanExecute_ListenLayout() {
+			return ( false );
+		}
+
+		public void Execute_TimelineLayout() { }
+		public bool CanExecute_TimelineLayout() {
+			return ( false );
+		}
+	}
+
 	public class WindowCommandsViewModel : AutomaticCommandBase {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IDialogService			mDialogService;

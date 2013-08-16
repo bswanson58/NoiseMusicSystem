@@ -50,7 +50,7 @@ namespace Noise.Desktop {
 
 		protected override DependencyObject CreateShell() {
 			mShell = Container.Resolve<Shell>();
-			mShell.DataContext = this;
+			mShell.DataContext = new DisabledWindowCommandsViewModel();
 			mShell.Show();
 			mShell.Closing += OnShellClosing;
 
