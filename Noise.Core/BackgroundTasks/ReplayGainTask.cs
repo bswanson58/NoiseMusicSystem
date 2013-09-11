@@ -102,7 +102,7 @@ namespace Noise.Core.BackgroundTasks {
 							}
 
 							if( trackList.Any()) {
-								var scanRequired = trackList.Any( track => Math.Abs( track.ReplayGainTrackGain - 0 ) < 0.01f );
+								var scanRequired = trackList.Any( track => Math.Abs( track.ReplayGainTrackGain ) > 0.01f );
 
 								if( scanRequired ) {
 									mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Calculating ReplayGain values for: {0}", albumName )));
