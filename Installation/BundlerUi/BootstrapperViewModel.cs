@@ -28,7 +28,8 @@ namespace BundlerUi {
 			Uninstall
 		}
 
-		public	BootstrapperApplication	Bootstrapper { get; private set; }
+		private	readonly BootstrapperApplication	mBootstrapper;
+		public	bool								InvokeShutdownOnComplete { get; set; }
 		public	bool								InstallEnabled { get; private set; }
 		public	bool								RepairEnabled { get; private set; }
 		public	bool								UninstallEnabled { get; private set; }
@@ -46,40 +47,44 @@ namespace BundlerUi {
 		private InstallOperation					mInstallOperation;
 		private readonly Dictionary<string, string>	mPackageNames;
 
-		public BootstrapperViewModel( BootstrapperApp bootstrapper ) {
-			Bootstrapper = bootstrapper;
+		public BootstrapperViewModel( BootstrapperApplication bootstrapper ) {
+			mBootstrapper = bootstrapper;
+
+			SetNotificationDispatcher( BootstrapperApp.BootstrapperDispatcher );
 
 			PrerequisitesList = new ObservableCollection<string>();
 			mPackageNames = new Dictionary<string, string>();
 			mInstallOperation = InstallOperation.Unknown;
-			ReleaseVersion = Assembly.GetAssembly( GetType()).GetName().Version.ToString();
-
-			SetNotificationDispatcher( BootstrapperApp.BootstrapperDispatcher );
-
-			bootstrapper.ApplyBegin += OnApplyBegin;
-			Bootstrapper.ApplyComplete += OnApplyComplete;
-
-			Bootstrapper.DetectBegin += OnDetectBegin;
-			Bootstrapper.DetectPackageComplete += OnDetectPackageComplete;
-			Bootstrapper.DetectComplete += OnDetectCompleted;
-
-			Bootstrapper.PlanComplete += OnPlanComplete;
-
-			Bootstrapper.ExecuteBegin += OnExecuteBegin;
-			Bootstrapper.ExecutePackageBegin += OnExecutePackageBegin;
-			Bootstrapper.ExecuteProgress += OnExecuteProgress;
-			Bootstrapper.ExecutePackageComplete += OnExecutePackageComplete;
-			Bootstrapper.ExecuteComplete += OnExecuteComplete;
-
-			bootstrapper.Error += OnError;
 
 			SetInstallState( InstallState.cUnknown );
 			SetInstallEnabled( false );
 			SetRepairEnabled( false );
 			SetUninstallEnabled( false );
+		}
 
+		public bool Initialize() {
+			mBootstrapper.ApplyBegin += OnApplyBegin;
+			mBootstrapper.ApplyComplete += OnApplyComplete;
+
+			mBootstrapper.DetectBegin += OnDetectBegin;
+			mBootstrapper.DetectPackageComplete += OnDetectPackageComplete;
+			mBootstrapper.DetectComplete += OnDetectCompleted;
+
+			mBootstrapper.PlanComplete += OnPlanComplete;
+
+			mBootstrapper.ExecuteBegin += OnExecuteBegin;
+			mBootstrapper.ExecutePackageBegin += OnExecutePackageBegin;
+			mBootstrapper.ExecuteProgress += OnExecuteProgress;
+			mBootstrapper.ExecutePackageComplete += OnExecutePackageComplete;
+			mBootstrapper.ExecuteComplete += OnExecuteComplete;
+
+			mBootstrapper.Error += OnError;
+
+			//ReleaseVersion = Assembly.GetAssembly( GetType()).GetName().Version.ToString();
+			ReleaseVersion = mBootstrapper.Engine.StringVariables["WixBundleVersion"];
 			LoadPackageData();
-			Bootstrapper.Engine.Detect();
+
+			return ( true );
 		}
 
 		private void LoadPackageData() {
@@ -113,22 +118,30 @@ namespace BundlerUi {
 			}
 		}
 
+		public void StartDetect() {
+			mBootstrapper.Engine.Detect();
+		}
+
 		private void StartInstall() {
 			mInstallOperation = InstallOperation.Install;
 
-			Bootstrapper.Engine.Plan( LaunchAction.Install );
+			mBootstrapper.Engine.Plan( LaunchAction.Install );
 		}
 
 		private void StartRepair() {
 			mInstallOperation = InstallOperation.Repair;
 
-			Bootstrapper.Engine.Plan( LaunchAction.Repair );
+			mBootstrapper.Engine.Plan( LaunchAction.Repair );
 		}
 
-		private void StartUninstall() {
+		public void StartUninstall() {
 			mInstallOperation = InstallOperation.Uninstall;
 
-			Bootstrapper.Engine.Plan( LaunchAction.Uninstall );
+			mBootstrapper.Engine.Plan( LaunchAction.Uninstall );
+		}
+
+		public void StartShutdown() {
+			BootstrapperApp.BootstrapperDispatcher.InvokeShutdown();
 		}
 
 		// Package Detection phase
@@ -177,6 +190,12 @@ namespace BundlerUi {
 		/// </summary>
 		private void OnApplyComplete( object sender, ApplyCompleteEventArgs args ) {
 			SetInstallState( InstallState.cCompleted );
+
+			if( InvokeShutdownOnComplete ) {
+				mBootstrapper.Engine.Log( LogLevel.Verbose, "Automatically invoking shutdown for non-interactive install" );
+
+				StartShutdown();
+			}
 		}
 
 		// Execution phase
@@ -215,7 +234,7 @@ namespace BundlerUi {
 		/// </summary>
 		private void OnPlanComplete( object sender, PlanCompleteEventArgs args ) {
 			if( args.Status >= 0 ) {
-				Bootstrapper.Engine.Apply( System.IntPtr.Zero );
+				mBootstrapper.Engine.Apply( System.IntPtr.Zero );
 			}
 		}
 
@@ -269,8 +288,8 @@ namespace BundlerUi {
 			UninstallEnabled = value;
 
 			RaisePropertyChanged( () => UninstallEnabled );
-			BootstrapperApp.BootstrapperDispatcher.Invoke( () => RepairCommand.OnCanExecuteChanged() );
-			BootstrapperApp.BootstrapperDispatcher.Invoke( () => UninstallCommand.OnCanExecuteChanged() );
+			BootstrapperApp.BootstrapperDispatcher.Invoke( () => RepairCommand.OnCanExecuteChanged());
+			BootstrapperApp.BootstrapperDispatcher.Invoke( () => UninstallCommand.OnCanExecuteChanged());
 		}
 
 		private void SetInstallState( int state ) {
