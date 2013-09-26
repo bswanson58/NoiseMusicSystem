@@ -605,7 +605,7 @@ namespace Noise.Core.PlayQueue {
 				if( foundTrack ) {
 					retValue = queuedTrack;
 
-					break;;
+					break;
 				}
 
 				if( queuedTrack.Uid == track.Uid ) {
