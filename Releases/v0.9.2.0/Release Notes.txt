@@ -1,0 +1,8 @@
+Release Notes for Noise Desktop System v0.9.2.0
+
+Defects fixed:
+
+-Added exception handling to the install bootstrapper.
+-Corrected the test to determine if a track needed replay gain to be calculated.
+-Prevented exceptions when converting JSON strings.
+-Changed the installer to not uninstall Bonjour and the Eloquera Database.
