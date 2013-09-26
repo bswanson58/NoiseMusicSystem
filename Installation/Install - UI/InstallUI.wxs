@@ -12,7 +12,6 @@
 			<UIRef Id="WixUI_InstallDir" />
 
 			<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIRECTORY" />
-
 		</UI>
 
 		<!-- Set up ARP properties -->
@@ -22,6 +21,7 @@
 		<Property Id="ARPURLINFOABOUT" Value="$(var.CompanyUrl)" />
 		<Property Id="ARPURLUPDATEINFO" Value="$(var.CompanyUrl)" />
 		<CustomAction Id="SetARPINSTALLLOCATION" Property="ARPINSTALLLOCATION" Value="[INSTALLDIRECTORY]" />
+
 		<InstallExecuteSequence>
 			<Custom Action="SetARPINSTALLLOCATION" After="InstallValidate" />
 		</InstallExecuteSequence>

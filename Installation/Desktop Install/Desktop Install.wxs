@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	
+
+	<!-- To update for the next release increment ProductVersion in Version.wxi -->
 	<?include ..\Common Files\Version.wxi?>
-	
+
+	<?define ProductName="Noise Music System Desktop"?>
 	<?define ShortcutRegistryKey="$(var.BaseRegistryKey)\$(var.Noise.Desktop.Platform)\NoiseDesktop"?>
-	
+
 	<Product Id="*"
-					 Name="Noise Desktop Install"
+					 Name="$(var.ProductName)"
 					 Language="1033"
 					 Version="$(var.ProductVersion)"
 					 Manufacturer="$(var.Manufacturer)"
 					 UpgradeCode="$(var.ProductUpgradeCode)">
-		<Package InstallerVersion="200" 
+		<Package InstallerVersion="300"
 						 Platform="$(var.Noise.Desktop.Platform)"
 						 InstallScope="perMachine"
 						 InstallPrivileges="elevated"
 						 Compressed="yes" />
-
+		
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed. Setup will now exit."/>
-			
+
 		<PropertyRef Id="NETFRAMEWORK45" />
 		<Condition Message="This application requires .NET Framework version 4.5. Please install the .NET Framework and then run this installer again.">
 			<![CDATA[Installed OR NETFRAMEWORK45]]>
 		</Condition>
-		
+
 		<Media Id="1" Cabinet="ApplicationFiles.cab" EmbedCab="yes" />
-		
+
 		<!-- Folder Locations -->
 		<?if $(var.Noise.Desktop.Platform) = "x64" ?>
 		<?define ProgramFolder="ProgramFiles64Folder"?>
@@ -53,7 +55,7 @@
 
 			<Directory Id="DesktopFolder" Name="Desktop"/>
 		</Directory>
-		
+
 		<!-- Installed Files -->
 		<DirectoryRef Id="INSTALLDIRECTORY">
 			<Component Id="Noise.Desktop.exe" Guid="df0e902d-7c40-4518-b7fb-1c9059a94713">
@@ -67,7 +69,7 @@
 			<Component Id="Noise.UI.Style.dll" Guid="3c616b69-2034-4242-af37-71de5b4bd13b">
 				<File Id="Noise.UI.Style.dll" DiskId="1" Source="$(var.Noise.UI.Style.TargetDir)Noise.UI.Style.dll" KeyPath="yes" Checksum="yes" />
 			</Component>
-			
+
 			<!-- Screen Layouts -->
 			<Directory Id="UiLayoutConfig" Name="Layouts">
 				<Component Id="LayoutConfiguration.xaml" Guid="a75c8e62-b6da-4115-b3b7-c5c4c157f0d8">
@@ -113,7 +115,7 @@
 
 		<Icon Id="AddRemoveProgramsIcon" SourceFile="$(var.Noise.Desktop.ProjectDir)..\Common\Noise.ico" />
 		<Property Id="ARPPRODUCTICON" Value="AddRemoveProgramsIcon" />
-		
+
 		<ComponentGroup Id="ApplicationFiles">
 			<ComponentRef Id="Noise.Desktop.exe" />
 			<ComponentRef Id="Noise.Desktop.config" />
@@ -129,7 +131,7 @@
 			<ComponentRef Id="DesktopShortcut"/>
 			<ComponentRef Id="NoiseMenuFolder" />
 		</ComponentGroup>
-		
+
 		<Feature Id="Complete" Title="Noise Desktop Install" Level="1" ConfigurableDirectory="INSTALLDIRECTORY">
 			<Feature Id="Application" Title="Noise Desktop Application" Level="1">
 				<ComponentGroupRef Id="ApplicationFiles" />
@@ -157,7 +159,7 @@
 				<ComponentGroupRef Id="TagLibSharpFiles"/>
 			</Feature>
 		</Feature>
-		
+
 		<UIRef Id="InstallUI" />
 
 	</Product>

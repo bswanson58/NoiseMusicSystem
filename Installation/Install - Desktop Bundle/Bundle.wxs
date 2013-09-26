@@ -4,8 +4,9 @@
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   
   <?include ..\Common Files\Version.wxi?>
+  <?define ProductName="The Noise Music System"?>
   
-  <Bundle Name="The Noise Music System"
+  <Bundle Name="$(var.ProductName)"
           Version="$(var.ProductVersion)"
           UpgradeCode="$(var.ProductUpgradeCode)"
           Manufacturer="$(var.Manufacturer)"
@@ -16,7 +17,7 @@
     <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
       <PayloadGroupRef Id ="BundlerPayload" />
     </BootstrapperApplicationRef>
-
+    
     <Variable Name="InstallFolder" Type="string" Value="[ProgramFilesFolder]Secret Squirrel Software\Noise Music System\Noise Desktop" />
 
     <Chain>
@@ -42,12 +43,12 @@
     <PackageGroup Id="InstallerPackages" >
       
       <?if $(var.Platform) = "x64" ?>
-      <MsiPackage Id="Bonjour" DisplayName="Apple Bonjour" DisplayInternalUI="no" Visible="yes" SourceFile="..\Prerequisites\Bonjour v2.0.2.0\Bonjour64.msi"/>
-      <ExePackage Id="Eloquera" Vital="yes" DetectCondition="Eloquera64Installed" UninstallCommand="/x /s" RepairCommand="/f"
+      <MsiPackage Id="Bonjour" DisplayName="Apple Bonjour" DisplayInternalUI="no" Permanent="yes" Visible="yes" SourceFile="..\Prerequisites\Bonjour v2.0.2.0\Bonjour64.msi"/>
+      <ExePackage Id="Eloquera" Vital="yes" DetectCondition="Eloquera64Installed" Permanent="yes" UninstallCommand="/x /s" RepairCommand="/f"
                   SourceFile="..\Prerequisites\Eloquera v4.13\EloqueraDatabase_4_13_net40_x64.exe"/>
       <?else ?>
-      <MsiPackage Id="Bonjour" DisplayName="Apple Bonjour" DisplayInternalUI="no" Visible="yes" SourceFile="..\Prerequisites\Bonjour v2.0.2.0\Bonjour.msi"/>
-      <ExePackage Id="Eloquera" Vital="yes" DetectCondition="EloqueraInstalled" UninstallCommand="/x /s" RepairCommand="/f"
+      <MsiPackage Id="Bonjour" DisplayName="Apple Bonjour" DisplayInternalUI="no" Permanent="yes" Visible="yes" SourceFile="..\Prerequisites\Bonjour v2.0.2.0\Bonjour.msi"/>
+      <ExePackage Id="Eloquera" Vital="yes" DetectCondition="EloqueraInstalled" Permanent="yes" UninstallCommand="/x /s" RepairCommand="/f"
                   SourceFile="..\Prerequisites\Eloquera v4.13\EloqueraDatabase_4_13_net40_x32.exe"/>
       <?endif ?>
 
