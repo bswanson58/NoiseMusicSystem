@@ -12,7 +12,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Stateless;
 
-namespace Noise.Core.PlayQueue {
+namespace Noise.Core.PlaySupport {
 	internal enum eStateTriggers {
 		UiPlay,
 		UiStop,

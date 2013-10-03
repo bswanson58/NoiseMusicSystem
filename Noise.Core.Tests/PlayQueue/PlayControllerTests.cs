@@ -4,7 +4,7 @@ using Caliburn.Micro;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using Noise.Core.PlayQueue;
+using Noise.Core.PlaySupport;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;

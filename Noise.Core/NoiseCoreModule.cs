@@ -11,6 +11,7 @@ using Noise.Core.FileProcessor;
 using Noise.Core.FileStore;
 using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
+using Noise.Core.PlaySupport;
 using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;

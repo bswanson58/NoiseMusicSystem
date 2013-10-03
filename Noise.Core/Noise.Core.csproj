@@ -231,7 +231,8 @@
     <Compile Include="FileStore\IFileUpdates.cs" />
     <Compile Include="FileStore\IFolderExplorer.cs" />
     <Compile Include="FileStore\StorageFolderSupport.cs" />
-    <Compile Include="PlayQueue\PlayController.cs" />
+    <Compile Include="PlaySupport\AudioController.cs" />
+    <Compile Include="PlaySupport\PlayController.cs" />
     <Compile Include="NoiseCoreModule.cs" />
     <Compile Include="NoiseManager.cs" />
     <Compile Include="Platform\SleepPreventer.cs" />
