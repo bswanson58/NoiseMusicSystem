@@ -83,7 +83,12 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Handle( Events.PlaybackStatusChanged eventArgs ) {
-			CurrentStatus = eventArgs.Status;
+			if( CurrentStatus != eventArgs.Status ) {
+				CurrentStatus = eventArgs.Status;
+			}
+			else {
+				RaisePropertyChanged( () => CurrentStatus );
+			}
 		}
 
 		public void Handle( Events.PlaybackTrackChanged eventArgs ) {

@@ -123,41 +123,29 @@ namespace Noise.Core.PlayQueue {
 			mPlayStateController = new StateMachine<ePlayState, eStateTriggers>( () => PlayState, newState => PlayState = newState );
 			CurrentStatus = ePlaybackStatus.Stopped;
 
+			mPlayStateController.OnUnhandledTrigger( ( state, trigger ) => { } );
+
 			mPlayStateController.Configure( ePlayState.StoppedEmptyQueue )
 				.OnEntry( StopPlay )
-				.Permit( eStateTriggers.QueueTrackAdded, ePlayState.StartPlaying )
-				.Ignore( eStateTriggers.QueueCleared )
-				.Ignore( eStateTriggers.PlayerStopped );
+				.Permit( eStateTriggers.QueueTrackAdded, ePlayState.StartPlaying );
 
 			mPlayStateController.Configure( ePlayState.Stopping )
 				.OnEntry( StopPlay )
 				.Permit( eStateTriggers.PlayerStopped, ePlayState.Stopped )
 				.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay )
-				.Ignore( eStateTriggers.PlayerPaused )
-				.Ignore( eStateTriggers.UiStop )
-				.Ignore( eStateTriggers.UiPause )
-				.Ignore( eStateTriggers.UiPlay )
-				.Ignore( eStateTriggers.UiPlayNext )
-				.Ignore( eStateTriggers.UiPlayPrevious )
-				.Ignore( eStateTriggers.QueueTrackAdded );
+				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
 
 			mPlayStateController.Configure( ePlayState.Stopped )
-				.OnEntry( StopPlay )
 				.Permit( eStateTriggers.UiPlay, ePlayState.StartPlaying )
 				.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay )
-				.Ignore( eStateTriggers.PlayerStopped )
-				.Ignore( eStateTriggers.QueueTrackAdded );
+				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
 
 			mPlayStateController.Configure( ePlayState.StartPlaying )
 				.OnEntry( StartPlaying )
 				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
 				.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
 				.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay )
-				.Ignore( eStateTriggers.QueueTrackAdded )
-				.Ignore( eStateTriggers.PlayerPaused );
+				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
 
 			mPlayStateController.Configure( ePlayState.Playing )
 				.Permit( eStateTriggers.PlayerStopped, ePlayState.PlayNext )
@@ -166,32 +154,21 @@ namespace Noise.Core.PlayQueue {
 				.Permit( eStateTriggers.UiPlayNext, ePlayState.PlayNext )
 				.Permit( eStateTriggers.UiPlayPrevious, ePlayState.PlayPrevious )
 				.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay )
-				.Ignore( eStateTriggers.QueueTrackAdded )
-				.Ignore( eStateTriggers.PlayerPaused )
-				.Ignore( eStateTriggers.PlayerPlaying );
+				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
 
 			mPlayStateController.Configure( ePlayState.PlayNext )
 				.OnEntry( PlayNext )
 				.PermitReentry( eStateTriggers.UiPlayNext )
 				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
 				.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay )
-				.Ignore( eStateTriggers.QueueTrackAdded )
-				.Ignore( eStateTriggers.PlayerPaused )
-				.Ignore( eStateTriggers.PlayerStopped );
+				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
 
 			mPlayStateController.Configure( ePlayState.Pausing )
 				.OnEntry( PausePlay )
 				.PermitReentry( eStateTriggers.PlayerPlaying )
 				.Permit( eStateTriggers.PlayerPaused, ePlayState.Paused )
 				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay )
-				.Ignore( eStateTriggers.UiStop )
-				.Ignore( eStateTriggers.UiPause )
-				.Ignore( eStateTriggers.UiPlay )
-				.Ignore( eStateTriggers.UiPlayNext )
-				.Ignore( eStateTriggers.UiPlayPrevious );
+				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
 
 			mPlayStateController.Configure( ePlayState.Paused )
 				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Pausing )
@@ -201,8 +178,7 @@ namespace Noise.Core.PlayQueue {
 				.Permit( eStateTriggers.UiPlay, ePlayState.Resuming )
 				.Permit( eStateTriggers.UiPlayNext, ePlayState.PlayNext )
 				.Permit( eStateTriggers.UiPlayPrevious, ePlayState.PlayPrevious )
-				.Permit( eStateTriggers.UiStop, ePlayState.Stopped )
-				.Ignore( eStateTriggers.QueueTrackAdded );
+				.Permit( eStateTriggers.UiStop, ePlayState.Stopping );
 
 			mPlayStateController.Configure( ePlayState.Resuming )
 				.OnEntry( ResumePlay )
@@ -212,21 +188,18 @@ namespace Noise.Core.PlayQueue {
 				.Permit( eStateTriggers.UiPause, ePlayState.Pausing )
 				.Permit( eStateTriggers.UiPlayNext, ePlayState.PlayNext )
 				.Permit( eStateTriggers.UiPlayPrevious, ePlayState.PlayPrevious )
-				.Permit( eStateTriggers.UiStop, ePlayState.Stopped );
+				.Permit( eStateTriggers.UiStop, ePlayState.Stopping );
 
 			mPlayStateController.Configure( ePlayState.PlayPrevious )
 				.OnEntry( PlayPrevious )
 				.PermitReentry( eStateTriggers.UiPlayPrevious )
 				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
 				.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay )
-				.Ignore( eStateTriggers.PlayerPaused )
-				.Ignore( eStateTriggers.PlayerStopped );
+				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
 
 			mPlayStateController.Configure( ePlayState.ExternalPlay )
 				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
-				.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped )
-				.Ignore( eStateTriggers.PlayerStopped );
+				.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped );
 		}
 
 		public void Shutdown() { }
@@ -309,6 +282,8 @@ namespace Noise.Core.PlayQueue {
 		private void FireStateChange( eStateTriggers trigger ) {
 			try {
 				mPlayStateController.Fire( trigger );
+
+				mEventAggregator.Publish( new Events.PlaybackStatusChanged( mCurrentStatus ));
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - PlayController:StateChange: ", ex );
@@ -528,6 +503,7 @@ namespace Noise.Core.PlayQueue {
 			mCurrentPosition = new TimeSpan();
 			mCurrentLength = new TimeSpan( 1 );
 
+			CurrentStatus = ePlaybackStatus.Stopped;
 			FirePlaybackTrackChanged();
 			FirePlaybackInfoChange();
 		}
@@ -689,7 +665,8 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public bool CanPlayNextTrack {
-			get{ return( mPlayStateController.CanFire( eStateTriggers.UiPlayNext )); }
+			get{ return(( mPlayStateController.CanFire( eStateTriggers.UiPlayNext )) &&
+						( mPlayQueue.NextTrack != null )); }
 		}
  
 		public void PlayPreviousTrack() {
@@ -698,16 +675,11 @@ namespace Noise.Core.PlayQueue {
 
 		public bool CanPlayPreviousTrack {
 			get {
-				var retValue = false;
-
-				if(( mPlayQueue.PreviousTrack != null ) ||
-					(( CurrentTrack != null ) &&
-					( mCurrentStatus != ePlaybackStatus.Stopped ) &&
-					( mCurrentPosition > new TimeSpan( 0,0,5 )))) {
-					retValue = true;
-				}
-
-				return( retValue );
+				return(( mPlayQueue.PreviousTrack != null ) &&
+					   ( mPlayStateController.CanFire( eStateTriggers.UiPlayPrevious )) ||
+					  (( CurrentTrack != null ) &&
+				       ( mCurrentStatus != ePlaybackStatus.Stopped ) &&
+				       ( mCurrentPosition > new TimeSpan( 0,0,5 ))));
 			}
 		}
 
