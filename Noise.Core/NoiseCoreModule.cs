@@ -31,6 +31,7 @@ namespace Noise.Core {
 		public void Initialize() {
 			mContainer.RegisterInstance<IEventAggregator>( new EventAggregator(), new ContainerControlledLifetimeManager());
 
+			mContainer.RegisterType<IAudioController, AudioController>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ICloudSyncManager, CloudSyncManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IDataExchangeManager, DataExchangeManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>( new HierarchicalLifetimeManager());

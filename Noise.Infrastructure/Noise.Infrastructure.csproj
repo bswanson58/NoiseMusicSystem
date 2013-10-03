@@ -196,6 +196,7 @@
     <Compile Include="Interfaces\IAlbumProvider.cs" />
     <Compile Include="Interfaces\IArtistProvider.cs" />
     <Compile Include="Interfaces\IArtworkProvider.cs" />
+    <Compile Include="Interfaces\IAudioController.cs" />
     <Compile Include="Interfaces\IAudioPlayer.cs" />
     <Compile Include="Interfaces\IBlendableViewModelFactory.cs" />
     <Compile Include="Interfaces\IBlobStorage.cs" />

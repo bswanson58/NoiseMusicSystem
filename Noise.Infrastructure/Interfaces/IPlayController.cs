@@ -30,36 +30,11 @@ namespace Noise.Infrastructure.Interfaces {
 		void			PlayPreviousTrack();
 		bool			CanPlayPreviousTrack { get; }
 
-		double			Volume { get; set; }
-		bool			Mute { get; set; }
-		double			PreampVolume { get; set; }
 		bool			ReplayGainEnable { get; set; }
-
-		double			PanPosition {get; set; }
-		double			PlaySpeed { get; set; }
-
-		IEqManager			EqManager { get; }
-		ParametricEqualizer	CurrentEq { get; set; }
-		bool				EqEnabled { get; set; }
-		void				SetEqValue( long bandId, float gain );
-
-		bool			TrackOverlapEnable { get; set; }
-		int				TrackOverlapMilliseconds { get; set; }
-
-		bool			StereoEnhancerEnable { get; set; }
-		double			StereoEnhancerWidth { get; set; }
-		double			StereoEnhancerWetDry { get; set; }
-
-		bool			SoftSaturationEnable { get; set; }
-		double			SoftSaturationFactor { get; set; }
-		double			SoftSaturationDepth { get; set; }
-
-		bool			ReverbEnable { get; set; }
-		float			ReverbLevel { get; set; }
-		int				ReverbDelay { get; set; }
 
 		double			LeftLevel { get; }
 		double			RightLevel { get; }
+		BitmapSource	GetSpectrumImage( int height, int width, Color baseColor, Color peakColor, Color peakHoldColor );
 
 		bool			IsFavorite {get; set; }
 		Int16			Rating { get; set; }
@@ -72,8 +47,6 @@ namespace Noise.Infrastructure.Interfaces {
 		long			PlayPosition { get; set; }
 		double			PlayPositionPercentage { get; }
 		long			TrackEndPosition { get; }
-
-		BitmapSource	GetSpectrumImage( int height, int width, Color baseColor, Color peakColor, Color peakHoldColor );
 
 		IObservable<ePlayState>	PlayStateChange { get; }
 	}

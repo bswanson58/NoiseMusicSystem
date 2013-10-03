@@ -16,8 +16,8 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private string						mCurrentStrategyTitle;
 
 		public TransportViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider,
-								   IPlayQueue playQueue, IPlayController playController ) :
-			base( eventAggregator, playQueue, playController ) {
+								   IPlayQueue playQueue, IPlayController playController, IAudioController audioController ) :
+			base( eventAggregator, playQueue, playController, audioController ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mPlayQueue = playQueue;
