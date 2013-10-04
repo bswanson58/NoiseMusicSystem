@@ -22,6 +22,13 @@ namespace Noise.Core.Tests.PlaySupport {
 		private Subject<AudioLevels>			mAudioLevelsSubject;
 		private Subject<StreamInfo>				mAudioStreamInfoSubject;
 
+		private bool							mCanPause;
+		private bool							mCanPlay;
+		private bool							mCanPlayNextTrack;
+		private bool							mCanPlayPreviousTrack;
+		private bool							mCanStop;
+		private ePlaybackStatus					mPlaybackStatus;
+
 		[SetUp]
 		public void Setup() {
 			mChannelStatusSubject = new Subject<AudioChannelStatus>();
@@ -41,6 +48,20 @@ namespace Noise.Core.Tests.PlaySupport {
 			retValue.ClassUnderTest.Initialize();
 
 			return( retValue );
+		}
+
+		private void RecordStatus( PlayController sut ) {
+			mCanPause = sut.CanPause;
+			mCanPlay = sut.CanPlay;
+			mCanPlayNextTrack = sut.CanPlayNextTrack;
+			mCanPlayPreviousTrack = sut.CanPlayPreviousTrack;
+			mCanStop = sut.CanStop;
+
+			mPlaybackStatus = sut.CurrentStatus;
+		}
+
+		private void MonitorPlaybackStatus( TestablePlayController sut ) {
+			sut.Mock<IEventAggregator>().Setup( m => m.Publish( It.Is<Events.PlaybackStatusChanged>( o => true ))).Callback(() => RecordStatus( sut.ClassUnderTest ));
 		}
 
 		[Test]
@@ -84,10 +105,12 @@ namespace Noise.Core.Tests.PlaySupport {
 
 			sut.Mock<IPlayQueue>().Setup( m => m.IsQueueEmpty ).Returns( false );
 			sut.Mock<IPlayQueue>().Setup( m => m.IsTrackQueued( It.IsAny<DbTrack>())).Returns( false );
+			MonitorPlaybackStatus( sut );
 
 			sut.ClassUnderTest.Handle( new Events.PlayQueueChanged( sut.Mock<IPlayQueue>().Object ));
 
 			sut.ClassUnderTest.CanPlay.Should().BeTrue( "Tracks in queue should allow play." );
+			mCanPlay.Should().BeTrue( "Tracks in queue should allow play." );
 		}
 
 		private void StartFirstTrack( TestablePlayController sut ) {
@@ -140,7 +163,6 @@ namespace Noise.Core.Tests.PlaySupport {
 			var sut = CreateSut();
 
 			StartFirstTrack( sut );
-
 			sut.ClassUnderTest.Stop();
 			mChannelStatusSubject.OnNext( new AudioChannelStatus( cFirstPlaybackChannel, ePlaybackStatus.Stopped ));
 
@@ -152,12 +174,13 @@ namespace Noise.Core.Tests.PlaySupport {
 			var sut = CreateSut();
 
 			sut.Mock<IPlayQueue>().Setup( m => m.IsQueueEmpty ).Returns( false );
+			MonitorPlaybackStatus( sut );
 
 			StartFirstTrack( sut );
 			sut.ClassUnderTest.Stop();
 			mChannelStatusSubject.OnNext( new AudioChannelStatus( cFirstPlaybackChannel, ePlaybackStatus.Stopped ));
 
-			sut.Mock<IEventAggregator>().Verify( m => m.Publish( IsPlaybackStatus( ePlaybackStatus.Stopped )), Times.AtLeast( 3 ), "Stop did not fire ePlaybackStatus.Stopped" );
+			mPlaybackStatus.Should().Be( ePlaybackStatus.Stopped, "Stop did not set playback status to stopped." );
 		}
 
 		[Test]
@@ -173,11 +196,14 @@ namespace Noise.Core.Tests.PlaySupport {
 		public void TrackEndShouldStopPlaybackWithEmptyQueue() {
 			var sut = CreateSut();
 
+			MonitorPlaybackStatus( sut );
+
 			StartFirstTrack( sut );
 			sut.Mock<IPlayQueue>().Setup( m => m.PlayNextTrack()).Returns( default( PlayQueueTrack ));
 
 			mChannelStatusSubject.OnNext( new AudioChannelStatus( cFirstPlaybackChannel, ePlaybackStatus.TrackEnd ));
 
+			mPlaybackStatus.Should().Be( ePlaybackStatus.Stopped, "TrackEnd did not set status to Stopped" );
 			sut.ClassUnderTest.CurrentStatus.Should().Be( ePlaybackStatus.Stopped, "TrackEnd did not set status to Stopped" );
 		}
 
@@ -201,16 +227,75 @@ namespace Noise.Core.Tests.PlaySupport {
 		public void StartShouldBeAllowedAfterStop() {
 			var sut = CreateSut();
 
-			StartFirstTrack( sut );
-
 			var nextTrack = new PlayQueueTrack( new DbArtist(), new DbAlbum(), new DbTrack(), new StorageFile(), string.Empty );
 			sut.Mock<IPlayQueue>().Setup( m => m.PlayNextTrack() ).Returns( nextTrack );
 			sut.Mock<IAudioPlayer>().Setup( m => m.OpenFile( It.IsAny<string>(), It.IsAny<float>())).Returns( 2 );
+			MonitorPlaybackStatus( sut );
+
+			StartFirstTrack( sut );
 
 			sut.ClassUnderTest.Stop();
 			mChannelStatusSubject.OnNext( new AudioChannelStatus( 2, ePlaybackStatus.Stopped ));
 
+			mCanPlay.Should().BeTrue( "Play should be allowed if queue is not empty." );
 			sut.ClassUnderTest.CanPlay.Should().BeTrue( "Play should be allowed if queue is not empty." );
+		}
+
+		[Test]
+		public void PlayingShouldAllowPausing() {
+			var sut = CreateSut();
+
+			sut.Mock<IPlayQueue>().Setup( m => m.IsQueueEmpty ).Returns( false );
+			MonitorPlaybackStatus( sut );
+			StartFirstTrack( sut );
+
+			mCanPause.Should().BeTrue( "Playing track did not enable pausing." );
+		}
+
+		[Test]
+		public void PlayingShouldAllowStopping() {
+			var sut = CreateSut();
+
+			sut.Mock<IPlayQueue>().Setup( m => m.IsQueueEmpty ).Returns( false );
+			MonitorPlaybackStatus( sut );
+			StartFirstTrack( sut );
+
+			mCanStop.Should().BeTrue( "Playing track did not enable stopping." );
+		}
+
+		[Test]
+		public void PlayingSecondTrackShouldAllowPlayingPrevious() {
+			var sut = CreateSut();
+
+			MonitorPlaybackStatus( sut );
+			StartFirstTrack( sut );
+
+			var nextTrack = new PlayQueueTrack( new DbArtist(), new DbAlbum(), new DbTrack(), new StorageFile(), string.Empty );
+			sut.Mock<IPlayQueue>().Setup( m => m.PlayNextTrack()).Returns( nextTrack );
+			sut.Mock<IPlayQueue>().Setup( m => m.PreviousTrack ).Returns( nextTrack );
+			sut.Mock<IAudioPlayer>().Setup( m => m.OpenFile( It.IsAny<string>(), It.IsAny<float>())).Returns( 2 );
+
+			mChannelStatusSubject.OnNext( new AudioChannelStatus( cFirstPlaybackChannel, ePlaybackStatus.TrackEnd ));
+			mChannelStatusSubject.OnNext( new AudioChannelStatus( 2, ePlaybackStatus.TrackStart ));
+
+			mCanPlayPreviousTrack.Should().BeTrue( "Previous tracks in queue should allow playing previous." );
+		}
+
+		[Test]
+		public void AddingSecondTrackShouldAllowPlayingNext() {
+			var sut = CreateSut();
+
+			MonitorPlaybackStatus( sut );
+			StartFirstTrack( sut );
+
+			var nextTrack = new PlayQueueTrack( new DbArtist(), new DbAlbum(), new DbTrack(), new StorageFile(), string.Empty );
+			sut.Mock<IPlayQueue>().Setup( m => m.PlayNextTrack() ).Returns( nextTrack );
+			sut.Mock<IAudioPlayer>().Setup( m => m.OpenFile( It.IsAny<string>(), It.IsAny<float>() ) ).Returns( 2 );
+
+			mChannelStatusSubject.OnNext( new AudioChannelStatus( cFirstPlaybackChannel, ePlaybackStatus.TrackEnd ));
+			mChannelStatusSubject.OnNext( new AudioChannelStatus( 2, ePlaybackStatus.TrackStart ));
+
+			mCanPlayNextTrack.Should().BeTrue( "Adding second track did not allow playing next." );
 		}
 	}
 }
