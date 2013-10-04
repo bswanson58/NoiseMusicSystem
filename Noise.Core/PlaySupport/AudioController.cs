@@ -117,6 +117,10 @@ namespace Noise.Core.PlaySupport {
 			}
 		}
 
+		public void SetDefaultPlaySpeed() {
+			PlaySpeed = 0.0;
+		}
+
 		public double PanPosition {
 			get { return ( mAudioPlayer.Pan ); }
 			set {
@@ -124,6 +128,10 @@ namespace Noise.Core.PlaySupport {
 
 				FirePlaybackInfoChange();
 			}
+		}
+
+		public void SetDefaultPanPosition() {
+			PanPosition = 0.0;
 		}
 
 		public bool EqEnabled {

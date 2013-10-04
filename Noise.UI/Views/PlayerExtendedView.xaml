@@ -14,12 +14,6 @@
              mc:Ignorable="d">
     <UserControl.Resources>
         <Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True" />
-
-        <Storyboard x:Key="SliderValueAnimate">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SpeedSlider" Storyboard.TargetProperty="(RangeBase.Value)">
-                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0" />
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
     </UserControl.Resources>
 
     <UserControl.DataContext>
@@ -285,43 +279,18 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                                   Margin="0,0,5,0"
-                                   HorizontalAlignment="Right"
-                                   VerticalAlignment="Center"
-                                   Foreground="{DynamicResource ControlTextColor}"
-                                   Text="Speed:" />
-                        <TextBlock Grid.Column="1"
-                                   Width="15"
-                                   Margin="0"
-                                   HorizontalAlignment="Right"
-                                   VerticalAlignment="Center"
-                                   Foreground="{DynamicResource ControlTextColor}"
-                                   Padding="0,0,3,0"
-                                   Text="-"
-                                   TextAlignment="Right" />
-                        <Slider x:Name="SpeedSlider"
-                                Grid.Column="2"
-                                Margin="0,7,0,0"
-                                BorderThickness="0,0,0,5"
-                                Maximum="1.0"
-                                Minimum="-1.0"
-                                Orientation="Horizontal"
-                                SnapsToDevicePixels="True"
-                                Style="{StaticResource PlayerPositionSliderStyle}"
-                                Value="{Binding Path=PlaySpeed,
-                                                Mode=TwoWay}">
-                            <i:Interaction.Behaviors>
-                                <Behaviours:SliderAnimateAfterDrag Storyboard="{StaticResource SliderValueAnimate}" />
-                            </i:Interaction.Behaviors>
-                        </Slider>
-                        <TextBlock Grid.Column="3"
-                                   Width="15"
-                                   Margin="0"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Foreground="{DynamicResource ControlTextColor}"
-                                   Text="+" />
+                        <NoiseControls:LinkLabel Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}"
+                                                 Content="Speed:" ToolTip="Click to set default play speed">
+                            <EventCommandTriggers:CommandSource.Trigger>
+                                <EventCommandTriggers:EventCommandTrigger Command="{Binding ResetPlaySpeed}" RoutedEvent="NoiseControls:LinkLabel.Click" />
+                            </EventCommandTriggers:CommandSource.Trigger>
+                        </NoiseControls:LinkLabel>
+
+                        <TextBlock Grid.Column="1" Width="15" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Padding="0,0,3,0"
+                                   Text="-" TextAlignment="Right" />
+                        <Slider x:Name="SpeedSlider" Grid.Column="2" Margin="0,7,0,0" BorderThickness="0,0,0,5" Orientation="Horizontal" SnapsToDevicePixels="True" 
+                                Style="{StaticResource PlayerPositionSliderStyle}" Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}"/>
+                        <TextBlock Grid.Column="3" Width="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Text="+" />
                     </Grid>
                     <!--  Balance  -->
                     <Grid Grid.Row="5" Margin="0,0,0,3">
@@ -331,38 +300,19 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                                   Margin="0,0,5,0"
-                                   HorizontalAlignment="Right"
-                                   VerticalAlignment="Center"
-                                   Foreground="{DynamicResource ControlTextColor}"
-                                   Text="Balance:" />
-                        <TextBlock Grid.Column="1"
-                                   Width="15"
-                                   Margin="0"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Foreground="{DynamicResource ControlTextColor}"
-                                   Padding="0,0,3,0"
-                                   Text="L"
-                                   TextAlignment="Right" />
-                        <Slider x:Name="Balance"
-                                Grid.Column="2"
-                                Margin="0,7,0,0"
-                                BorderThickness="0,0,0,5"
-                                Maximum="1.0"
-                                Minimum="-1.0"
-                                Orientation="Horizontal"
-                                SnapsToDevicePixels="True"
+                        <NoiseControls:LinkLabel Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}"
+                                                 Content="Balance:" ToolTip="Click to set default balance">
+                            <EventCommandTriggers:CommandSource.Trigger>
+                                <EventCommandTriggers:EventCommandTrigger Command="{Binding ResetPanPosition}" RoutedEvent="NoiseControls:LinkLabel.Click" />
+                            </EventCommandTriggers:CommandSource.Trigger>
+                        </NoiseControls:LinkLabel>
+
+                        <TextBlock Grid.Column="1" Width="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}"
+                                   Padding="0,0,3,0" Text="L" TextAlignment="Right" />
+                        <Slider x:Name="Balance" Grid.Column="2" Margin="0,7,0,0" BorderThickness="0,0,0,5" Orientation="Horizontal" SnapsToDevicePixels="True"
                                 Style="{StaticResource PlayerPositionSliderStyle}"
-                                Value="{Binding Path=PanPosition,
-                                                Mode=TwoWay}" />
-                        <TextBlock Grid.Column="3"
-                                   Width="15"
-                                   Margin="0"
-                                   VerticalAlignment="Center"
-                                   Foreground="{DynamicResource ControlTextColor}"
-                                   Text="R" />
+                                 Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}" />
+                        <TextBlock Grid.Column="3" Width="15" Margin="0" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Text="R" />
                     </Grid>
                 </Grid>
 

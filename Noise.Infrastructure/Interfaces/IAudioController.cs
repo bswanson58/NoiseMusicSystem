@@ -12,7 +12,9 @@ namespace Noise.Infrastructure.Interfaces {
 		double				PreampVolume { get; set; }
 
 		double				PanPosition { get; set; }
+		void				SetDefaultPanPosition();
 		double				PlaySpeed { get; set; }
+		void				SetDefaultPlaySpeed();
 
 		bool				ReverbEnable { get; set; }
 		float				ReverbLevel { get; set; }

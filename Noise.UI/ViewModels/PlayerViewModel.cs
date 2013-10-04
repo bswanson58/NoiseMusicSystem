@@ -223,10 +223,18 @@ namespace Noise.UI.ViewModels {
 			set{ mAudioController.PlaySpeed = (float)value; }
 		}
 
+		public void Execute_ResetPlaySpeed() {
+			mAudioController.SetDefaultPlaySpeed();
+		}
+
 		[DependsUpon( "InfoUpdateFlag" )]
 		public double PanPosition {
 			get{ return( mAudioController.PanPosition ); }
 			set{ mAudioController.PanPosition = (float)value; }
+		}
+
+		public void Execute_ResetPanPosition() {
+			mAudioController.SetDefaultPanPosition();
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
