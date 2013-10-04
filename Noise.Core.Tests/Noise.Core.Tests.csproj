@@ -156,7 +156,7 @@
     <Compile Include="FileProcessor\UpdateMusicPipelineStepTests.cs" />
     <Compile Include="FileProcessor\UpdateUndeterminedPipelineStepTests.cs" />
     <Compile Include="FileStore\StorageFolderSupportTests.cs" />
-    <Compile Include="PlayQueue\PlayControllerTests.cs" />
+    <Compile Include="PlaySupport\PlayControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

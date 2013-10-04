@@ -11,7 +11,7 @@ using Noise.Infrastructure.Interfaces;
 using ReusableBits.TestSupport.Mocking;
 using ILog = Noise.Infrastructure.Interfaces.ILog;
 
-namespace Noise.Core.Tests.PlayQueue {
+namespace Noise.Core.Tests.PlaySupport {
 	[TestFixture]
 	public class PlayControllerTests {
 		internal class TestablePlayController : Testable<PlayController> { }
