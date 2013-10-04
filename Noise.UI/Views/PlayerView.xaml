@@ -192,7 +192,8 @@
             <!-- Textual Play Position -->
             <StackPanel Grid.Column="0" Margin="17,0,0,0" Orientation="Horizontal">
               <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" Text="Position:" />
-              <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" Text="{Binding Path=TrackTime, Converter={StaticResource TimeSpanConverter}}">
+              <TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" ToolTip="Click to change the display format of the position time"
+                         Text="{Binding Path=TrackTime, Converter={StaticResource TimeSpanConverter}}">
                 <EventCommandTriggers:CommandSource.Trigger>
                   <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
                 </EventCommandTriggers:CommandSource.Trigger>
