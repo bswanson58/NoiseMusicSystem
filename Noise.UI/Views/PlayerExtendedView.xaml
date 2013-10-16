@@ -215,15 +215,8 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="1"
-                                Width="27"
-                                Height="27"
-                                Margin="0,0,3,-7"
-                                Command="{Binding Path=StandardPlayer}"
-                                Content="6"
-                                FontFamily="Webdings"
-                                FontSize="16"
-                                Foreground="{StaticResource ControlTextColor}" />
+                        <Button Grid.Column="1" Width="27" Height="27" Margin="0,0,3,-10" Content="6" FontFamily="Webdings" FontSize="16"
+                                Foreground="{StaticResource ControlTextColor}" Command="{Binding Path=StandardPlayer}" />
                     </Grid>
                     <!--  Replay Gain  -->
                     <CheckBox Grid.Row="2"
