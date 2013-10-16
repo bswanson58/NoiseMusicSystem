@@ -6,6 +6,7 @@ using CuttingEdge.Conditions;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using ReusableBits;
 
 namespace Noise.Core.PlayQueue {
 	internal class PlayQueueRandomTracks : IPlayQueueSupport,
@@ -13,6 +14,7 @@ namespace Noise.Core.PlayQueue {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
+		private TaskHandler					mTrackQueueTaskHandler;
 		private IPlayQueue					mPlayQueueMgr;
 
 		public PlayQueueRandomTracks( IEventAggregator eventAggregator, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
@@ -32,13 +34,32 @@ namespace Noise.Core.PlayQueue {
 		public void Handle( Events.PlayArtistTracksRandom message ) {
 			Condition.Requires( mPlayQueueMgr ).IsNotNull();
 
-			QueueFromAlbumList( BuildAlbumList( message.ArtistId ));
+			QueueTracks( () => BuildAlbumList( message.ArtistId ));
 		}
 
 		public void Handle( Events.PlayAlbumTracksRandom message ) {
 			Condition.Requires( mPlayQueueMgr ).IsNotNull();
 
-			QueueFromAlbumList( message.AlbumList );
+			QueueTracks( () => message.AlbumList );
+		}
+
+		internal TaskHandler TrackQueueTaskHandler {
+			get {
+				if( mTrackQueueTaskHandler == null ) {
+					Execute.OnUIThread( () => mTrackQueueTaskHandler = new TaskHandler() );
+				}
+
+				return ( mTrackQueueTaskHandler );
+			}
+
+			set { mTrackQueueTaskHandler = value; }
+		}
+
+
+		private void QueueTracks( Func<IEnumerable<DbAlbum>> albumList ) {
+			TrackQueueTaskHandler.StartTask( () => QueueFromAlbumList( albumList()),
+											 () => { },
+											 error => NoiseLogger.Current.LogException( "PlayQueueRandomTrack:QueueTracks", error ));
 		}
 
 		private void QueueFromAlbumList( IEnumerable<DbAlbum> albumList ) {
