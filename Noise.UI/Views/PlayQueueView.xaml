@@ -9,6 +9,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              d:DesignHeight="300"
              d:DesignWidth="300"
              DataContext="{Binding PlayQueueViewModel, Source={StaticResource ViewModelLocator}}"
@@ -16,6 +17,8 @@
              mc:Ignorable="d">
     <Control.Resources>
         <Behaviours:CommandReference x:Key="DeleteCommandReference" Command="{Binding DeleteCommand}" />
+        
+        <ValueConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" TriggerValue="False" IsHidden="False"/>
 
         <Style x:Key="QueueButtonStyle" TargetType="Button">
             <Setter Property="Height" Value="17"/>
@@ -167,11 +170,6 @@
                                     <TextBlock x:Name="TrackName" Text="{Binding Path=QueuedTrack.Name}" Style="{StaticResource ExplorerTitleStyle}"/>
                                 </Viewbox>
                                 
-                                <!--TextBlock x:Name="TrackName" Grid.Column="1" FontSize="14"
-                                       ReusableBehaviours:FadeTrimming.IsEnabled="True"
-                                       ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                                       Text="{Binding Path=QueuedTrack.Name}" /-->
-
                                 <TextBlock x:Name="TrackDuration" Grid.Column="2" VerticalAlignment="Top" TextAlignment="Right" Style="{StaticResource ExplorerTitleStyle}"
                                            Text="{Binding Path=QueuedTrack.Track.Duration, Converter={StaticResource TimeSpanConverter}}"/>
                             </Grid>
@@ -197,25 +195,29 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <Button Grid.Column="0" Style="{StaticResource QueueButtonStyle}"
-                            Command="{Binding Path=Play}" Content="4" ToolTip="Play Now" />
-                        <Button Grid.Column="1" Style="{StaticResource QueueButtonStyle}"
-                            Command="{Binding Path=PlayFromHere}" Content="8" ToolTip="Continue play from here" />
-                        <Button Grid.Column="2" Style="{StaticResource QueueButtonStyle}"
-                            Command="{Binding Path=DisplayInfo}" Content="{StaticResource Path_Information}" ToolTip="Display Artist and Album display" />
+                        <Button Grid.Column="0" Style="{StaticResource QueueButtonStyle}" Padding="0,2,0,0"
+                                Command="{Binding Path=Play}" Content="4" ToolTip="Play Now" />
+                        <Button Grid.Column="1" Style="{StaticResource QueueButtonStyle}" Padding="0,2,0,0"
+                                Command="{Binding Path=PlayFromHere}" Content="8" ToolTip="Continue play from here" />
+                        <Button Grid.Column="2" Style="{StaticResource QueueButtonStyle}" FontFamily="Arial Bold" FontSize="16" Padding="-1,0,0,0"
+                                Visibility="{Binding QueuedTrack.HasPlayed, Converter={StaticResource CollapseIfFalse}}"
+                                Command="{Binding Path=Replay}" Content="+" ToolTip="Play this track again" />
                         <Button Grid.Column="3" Style="{StaticResource QueueButtonStyle}"
-                            Command="{Binding Path=MoveUp}" Content="5" ToolTip="Move track up in queue" />
-                        <Button Grid.Column="4" Style="{StaticResource QueueButtonStyle}"
-                            Command="{Binding Path=MoveDown}" Content="6" ToolTip="Move track down in queue" />
+                                Command="{Binding Path=DisplayInfo}" Content="{StaticResource Path_Information}" ToolTip="Display Artist and Album display" />
+                        <Button Grid.Column="4" Style="{StaticResource QueueButtonStyle}" Padding="0,2,0,0"
+                                Command="{Binding Path=MoveUp}" Content="5" ToolTip="Move track up in queue" />
                         <Button Grid.Column="5" Style="{StaticResource QueueButtonStyle}"
-                            Command="{Binding Path=Dequeue}" Content="r" ToolTip="Remove track from queue" />
+                                Command="{Binding Path=MoveDown}" Content="6" ToolTip="Move track down in queue" />
+                        <Button Grid.Column="6" Style="{StaticResource QueueButtonStyle}"
+                                Command="{Binding Path=Dequeue}" Content="r" ToolTip="Remove track from queue" />
 
                         <!--  Favorite and Rating  -->
-                        <StackPanel Grid.Column="6" HorizontalAlignment="Right" Orientation="Horizontal">
+                        <StackPanel Grid.Column="8" HorizontalAlignment="Right" Orientation="Horizontal">
                             <CheckBox Width="15" Height="15" Margin="0,0,4,2" VerticalAlignment="Center"
                                   IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}"
                                   Style="{StaticResource FavoriteCheckBoxStyle}" />
