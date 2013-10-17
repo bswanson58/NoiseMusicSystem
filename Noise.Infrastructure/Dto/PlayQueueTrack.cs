@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using Noise.Infrastructure.Support;
 
 namespace Noise.Infrastructure.Dto {
@@ -10,31 +11,45 @@ namespace Noise.Infrastructure.Dto {
 
 	[DebuggerDisplay("Track = {Name}")]
 	public class PlayQueueTrack : BindableObject {
-		public	DbTrack				Track { get; private set; }
-		public	DbAlbum				Album { get; private set; }
-		public	DbArtist			Artist { get; private set; }
-		public	DbInternetStream	Stream { get; private set; }
-		public	StreamInfo			StreamInfo { get; set; }
-		public	StorageFile			File { get; private set; }
-		public	string				FilePath { get; private set; }
-		public	double				PercentPlayed { get; set; }
-		public	eStrategySource		StrategySource { get; private set; }
-		public	long				Uid { get; private set; }
-		private	bool				mIsFaulted;
-		private	bool				mIsPlaying;
-		private	bool				mHasPlayed;
+		public	DbTrack						Track { get; private set; }
+		public	DbAlbum						Album { get; private set; }
+		public	DbArtist					Artist { get; private set; }
+		public	DbInternetStream			Stream { get; private set; }
+		public	StreamInfo					StreamInfo { get; set; }
+		public	double						PercentPlayed { get; set; }
+		public	eStrategySource				StrategySource { get; private set; }
+		public	long						Uid { get; private set; }
+		private	bool						mIsFaulted;
+		private	bool						mIsPlaying;
+		private	bool						mHasPlayed;
+		private readonly Lazy<string>		mFilePath;
+		private readonly Lazy<StorageFile>	mFile; 
 
-		public PlayQueueTrack( DbArtist artist, DbAlbum album, DbTrack track, StorageFile file, string filePath, eStrategySource strategySource ) :
-			this( artist, album, track, file, filePath ) {
+		public PlayQueueTrack( DbArtist artist, DbAlbum album, DbTrack track, Func<DbTrack, StorageFile> fileProvider, Func<StorageFile, string> pathProvider , eStrategySource strategySource ) :
+			this( artist, album, track, fileProvider, pathProvider ) {
 			StrategySource = strategySource;
 		}
 
-		public PlayQueueTrack( DbArtist artist, DbAlbum album, DbTrack track, StorageFile file, string filePath ) {
+		public PlayQueueTrack( DbArtist artist, DbAlbum album, DbTrack track, Func<DbTrack, StorageFile> fileProvider, Func<StorageFile, string> pathProvider ) {
 			Artist = artist;
 			Album = album;
 			Track = track;
-			File = file;
-			FilePath = filePath;
+
+			mFile = new Lazy<StorageFile>( () => fileProvider( Track ));
+			mFilePath = new Lazy<string>( () => pathProvider( File ));
+
+			StrategySource = eStrategySource.User;
+
+			Uid = DatabaseIdentityProvider.Current.NewIdentityAsLong();
+		}
+
+		public PlayQueueTrack( DbArtist artist, DbAlbum album, DbTrack track, StorageFile file, string path ) {
+			Artist = artist;
+			Album = album;
+			Track = track;
+
+			mFile = new Lazy<StorageFile>( () => file );
+			mFilePath = new Lazy<string>( () => path );
 
 			StrategySource = eStrategySource.User;
 
@@ -49,6 +64,14 @@ namespace Noise.Infrastructure.Dto {
 			Stream = stream;
 
 			StrategySource = eStrategySource.User;
+		}
+
+		public string FilePath {
+			get{ return( mFilePath.Value ); }
+		}
+
+		public StorageFile File {
+			get{ return( mFile.Value ); }
 		}
 
 		public bool IsStream {

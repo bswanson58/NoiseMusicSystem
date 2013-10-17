@@ -97,6 +97,14 @@ namespace Noise.Core.PlayQueue {
 			FirePlayQueueChanged();
 		}
 
+		private string ResolvePath( StorageFile file ) {
+			return ( mStorageFolderSupport.GetPath( file ));
+		}
+
+		private StorageFile ResolveStorageFile( DbTrack track ) {
+			return( mStorageFileProvider.GetPhysicalFile( track ));
+		}
+
 		private void AddTrack( DbTrack track, eStrategySource strategySource ) {
 			var album = mAlbumProvider.GetAlbumForTrack( track );
 
@@ -104,25 +112,20 @@ namespace Noise.Core.PlayQueue {
 				var artist = mArtistProvider.GetArtistForAlbum( album );
 
 				if( artist != null ) {
-					var file = mStorageFileProvider.GetPhysicalFile( track );
+					var newTrack = new PlayQueueTrack( artist, album, track, ResolveStorageFile, ResolvePath, strategySource );
 
-					if( file != null ) {
-						var path = mStorageFolderSupport.GetPath( file );
-						var newTrack = new PlayQueueTrack( artist, album, track, file, path, strategySource );
-
-						// Place any user selected tracks before any unplayed strategy queued tracks.
-						if( strategySource == eStrategySource.User ) {
-							var	ptrack = mPlayQueue.Find( t => t.HasPlayed == false && t.IsPlaying == false && t.StrategySource == eStrategySource.ExhaustedStrategy );
-							if( ptrack != null ) {
-								mPlayQueue.Insert( mPlayQueue.IndexOf( ptrack ), newTrack );
-							}
-							else {
-								mPlayQueue.Add( newTrack );
-							}
+					// Place any user selected tracks before any unplayed strategy queued tracks.
+					if( strategySource == eStrategySource.User ) {
+						var	ptrack = mPlayQueue.Find( t => t.HasPlayed == false && t.IsPlaying == false && t.StrategySource == eStrategySource.ExhaustedStrategy );
+						if( ptrack != null ) {
+							mPlayQueue.Insert( mPlayQueue.IndexOf( ptrack ), newTrack );
 						}
 						else {
 							mPlayQueue.Add( newTrack );
 						}
+					}
+					else {
+						mPlayQueue.Add( newTrack );
 					}
 				}
 			}
@@ -137,17 +140,12 @@ namespace Noise.Core.PlayQueue {
 					var artist = mArtistProvider.GetArtistForAlbum( album );
 
 					if( artist != null ) {
-						var file = mStorageFileProvider.GetPhysicalFile( track );
+						var newTrack = new PlayQueueTrack( artist, album, track, ResolveStorageFile, ResolvePath, eStrategySource.PlayStrategy );
+						var trackIndex = mPlayQueue.IndexOf( afterTrack );
 
-						if( file != null ) {
-							var path = mStorageFolderSupport.GetPath( file );
-							var newTrack = new PlayQueueTrack( artist, album, track, file, path, eStrategySource.PlayStrategy );
-							var trackIndex = mPlayQueue.IndexOf( afterTrack );
+						mPlayQueue.Insert( trackIndex + 1, newTrack );
 
-							mPlayQueue.Insert( trackIndex + 1, newTrack );
-
-							FirePlayQueueChanged();
-						}
+						FirePlayQueueChanged();
 					}
 				}
 			}
