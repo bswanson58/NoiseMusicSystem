@@ -29,6 +29,7 @@ namespace Noise.Core.PlayQueue {
 		private IPlayStrategyParameters						mExhaustedStrategyParameters;
 		private	int											mReplayTrackCount;
 		private PlayQueueTrack								mReplayTrack;
+		private bool										mAddingMoreTracks;
 		private readonly AsyncCommand<DbTrack>				mTrackPlayCommand;
 		private readonly AsyncCommand<IEnumerable<DbTrack>>	mTrackListPlayCommand;
 		private readonly AsyncCommand<DbAlbum>				mAlbumPlayCommand;
@@ -165,7 +166,9 @@ namespace Noise.Core.PlayQueue {
 			using( var tracks = mTrackProvider.GetTrackList( album )) {
 				var firstTrack = true;
 				var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
-													orderby track.VolumeName, track.TrackNumber ascending select track );
+													orderby track.VolumeName, track.TrackNumber ascending select track ).ToList();
+
+				mAddingMoreTracks = sortedList.Count > 2;
 
 				foreach( DbTrack track in sortedList ) {
 					AddTrack( track, eStrategySource.User );
@@ -176,6 +179,8 @@ namespace Noise.Core.PlayQueue {
 						firstTrack = false;
 					}
 				}
+
+				mAddingMoreTracks = false;
 			}
 		}
 
@@ -366,7 +371,8 @@ namespace Noise.Core.PlayQueue {
 				}
 			}
 
-			if( mExhaustedStrategy != null ) {
+			if(( mExhaustedStrategy != null ) &&
+			   (!mAddingMoreTracks )) {
 				mExhaustedStrategy.QueueTracks( this, mExhaustedStrategyParameters );
 			}
 
@@ -394,6 +400,7 @@ namespace Noise.Core.PlayQueue {
 
 					if(( retValue == null ) &&
 					   ( mExhaustedStrategy != null ) &&
+					   (!mAddingMoreTracks ) &&
 					   ( mPlayQueue.Count > 0 )) {
 						if( mExhaustedStrategy.QueueTracks( this, mExhaustedStrategyParameters )) {
 							retValue = mStrategy.NextTrack( this, mPlayQueue, mStrategyParameters );
