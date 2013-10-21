@@ -201,7 +201,7 @@ namespace Noise.Core.PlaySupport {
 
 		private void StartPlaying() {
 			if(( mPlayQueue.PlayingTrack == null ) &&
-			   ( mPlayQueue.NextTrack == null )) {
+			   ( mPlayQueue.CanPlayNextTrack())) {
 				mPlayQueue.ReplayQueue();
 			}
 
@@ -626,7 +626,7 @@ namespace Noise.Core.PlaySupport {
 
 		public bool CanPlayNextTrack {
 			get{ return(( mPlayStateController.CanFire( eStateTriggers.UiPlayNext )) &&
-						( mPlayQueue.NextTrack != null )); }
+						( mPlayQueue.CanPlayNextTrack())); }
 		}
  
 		public void PlayPreviousTrack() {
@@ -635,7 +635,7 @@ namespace Noise.Core.PlaySupport {
 
 		public bool CanPlayPreviousTrack {
 			get {
-				return(( mPlayQueue.PreviousTrack != null ) &&
+				return(( mPlayQueue.CanPlayPreviousTrack()) &&
 					   ( mPlayStateController.CanFire( eStateTriggers.UiPlayPrevious )) ||
 					  (( CurrentTrack != null ) &&
 				       ( mCurrentStatus != ePlaybackStatus.Stopped ) &&

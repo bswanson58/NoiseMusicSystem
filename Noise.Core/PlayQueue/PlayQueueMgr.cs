@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
@@ -412,6 +413,10 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
+        public bool CanPlayNextTrack() {
+            return( mPlayQueue.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed )) != null );
+        }
+
 		public PlayQueueTrack PlayPreviousTrack() {
 			var	track = PlayingTrack;
 
@@ -458,6 +463,10 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
+        public bool CanPlayPreviousTrack() {
+            return( mPlayHistory.Count > 0 );
+        }
+            
 		public PlayQueueTrack PlayingTrack {
 			get { return( mPlayQueue.FirstOrDefault( track => ( track.IsPlaying ))); }
 			set {
