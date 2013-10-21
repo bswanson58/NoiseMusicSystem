@@ -9,7 +9,7 @@ using Noise.UI.ViewModels;
 using Events = Noise.TenFoot.Ui.Input.Events;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class QueueListViewModel : PlayQueueViewModel, IHomeScreen, IActivate, IDeactivate,
+	public class QueueListViewModel : PlayQueueListViewModel, IHomeScreen, IActivate, IDeactivate,
 									  IHandle<InputEvent>, IHandle<Events.DequeueTrack>, IHandle<Events.DequeueAlbum> {
 		private readonly IPlayQueue		mPlayQueue;
 		private ePlayExhaustedStrategy	mCurrentStrategy;
