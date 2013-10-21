@@ -278,13 +278,13 @@ namespace Noise.UI.ViewModels {
 			mTotalTime = new TimeSpan();
 			mRemainingTime = new TimeSpan();
 
-			foreach( var track in mQueue ) {
-				var	trackTime = track.QueuedTrack.Track != null ? track.QueuedTrack.Track.Duration : new TimeSpan();
+			foreach( var track in mPlayQueue.PlayList ) {
+				var	trackTime = track.Track != null ? track.Track.Duration : new TimeSpan();
 
 				mTotalTime = mTotalTime.Add( trackTime );
 
-				if((!track.QueuedTrack.HasPlayed ) ||
-				   ( track.QueuedTrack.IsPlaying )) {
+				if((!track.HasPlayed ) ||
+				   ( track.IsPlaying )) {
 					mRemainingTime = mRemainingTime.Add( trackTime );
 				}
 			}
