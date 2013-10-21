@@ -33,7 +33,9 @@ namespace Noise.Core.PlayQueue {
 			mNextFeaturedPlay--;
 
 			if( mNextFeaturedPlay < 0 ) {
-				var nextArtist = SelectNextArtist( mLastArtistPlayed );
+				mNextFeaturedPlay = NextPlayInterval();
+
+                var nextArtist = SelectNextArtist( mLastArtistPlayed );
 				var tracks = TracksForArtist( nextArtist );
 
 				if( tracks.Any()) {
@@ -44,8 +46,6 @@ namespace Noise.Core.PlayQueue {
 						queueMgr.StrategyAdd( track, retValue );
 					}
 				}
-
-				mNextFeaturedPlay = NextPlayInterval();
 			}
 
 

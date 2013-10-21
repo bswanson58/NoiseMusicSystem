@@ -26,7 +26,9 @@ namespace Noise.Core.PlayQueue {
 			mNextFeaturedPlay--;
 
 			if( mNextFeaturedPlay < 0 ) {
-				if( !mTracks.Any()) {
+				mNextFeaturedPlay = NextPlayInterval();
+
+                if( !mTracks.Any()) {
 					LoadNewReleases();
 				}
 
@@ -35,8 +37,6 @@ namespace Noise.Core.PlayQueue {
 
 					queueMgr.StrategyAdd( mTracks[trackIndex], retValue );
 				}
-
-				mNextFeaturedPlay = NextPlayInterval();
 			}
 
 
