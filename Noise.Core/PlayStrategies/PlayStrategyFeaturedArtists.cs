@@ -5,12 +5,13 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.PlayQueue {
+namespace Noise.Core.PlayStrategies {
 	public class PlayStrategyFeaturedArtists : IPlayStrategy {
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly ITrackProvider					mTrackProvider;
 		private readonly List<long>						mArtistList;
 		private readonly Dictionary<long, List<long>>	mTracks;
+        private IPlayQueue                              mPlayQueue;
 		private long									mLastArtistPlayed;
 		private int										mNextFeaturedPlay;
 		private readonly Random							mRandom;
@@ -26,10 +27,32 @@ namespace Noise.Core.PlayQueue {
 			mLastArtistPlayed = Constants.cDatabaseNullOid;
 		}
 
-		public PlayQueueTrack NextTrack( IPlayQueue queueMgr, IList<PlayQueueTrack> queue, IPlayStrategyParameters parameters ) {
-			var retValue = queue.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed ));
+	    public ePlayStrategy StrategyId {
+            get {  return( ePlayStrategy.FeaturedArtists ); }
+	    }
+	    public string DisplayName {
+            get {  return( "Featured Artists" ); }
+	    }
+
+	    public string StrategyDescription {
+            get {  return( "" ); }
+	    }
+
+	    public bool RequiresParameters {
+            get {  return( true ); }
+	    }
+
+	    public bool Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
+            mPlayQueue = queueMgr;
 
 			SyncArtistList( parameters );
+
+            return( true );
+	    }
+
+		public PlayQueueTrack NextTrack() {
+			var retValue = mPlayQueue.PlayList.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed ));
+
 			mNextFeaturedPlay--;
 
 			if( mNextFeaturedPlay < 0 ) {
@@ -43,7 +66,7 @@ namespace Noise.Core.PlayQueue {
 					var track = mTrackProvider.GetTrack( tracks[trackIndex] );
 
 					if( track != null ) {
-						queueMgr.StrategyAdd( track, retValue );
+						mPlayQueue.StrategyAdd( track, retValue );
 					}
 				}
 			}

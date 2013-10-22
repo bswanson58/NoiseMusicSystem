@@ -241,8 +241,6 @@
     <Compile Include="PlayQueue\IPlayExhaustedFactory.cs" />
     <Compile Include="PlayQueue\IPlayExhaustedStrategy.cs" />
     <Compile Include="PlayQueue\IPlayQueueSupport.cs" />
-    <Compile Include="PlayQueue\IPlayStrategy.cs" />
-    <Compile Include="PlayQueue\IPlayStrategyFactory.cs" />
     <Compile Include="PlayQueue\PlayExhaustedFactory.cs" />
     <Compile Include="PlayQueue\PlayExhaustedListBase.cs" />
     <Compile Include="PlayQueue\PlayExhaustedStrategyRandomBase.cs" />
@@ -259,12 +257,12 @@
     <Compile Include="PlayQueue\PlayExhaustedStrategyStream.cs" />
     <Compile Include="PlayQueue\PlayQueueRandomTracks.cs" />
     <Compile Include="PlayQueue\PlayQueueMgr.cs" />
-    <Compile Include="PlayQueue\PlayStrategyFactory.cs" />
-    <Compile Include="PlayQueue\PlayStrategyFeaturedArtists.cs" />
-    <Compile Include="PlayQueue\PlayStrategyNewReleases.cs" />
-    <Compile Include="PlayQueue\PlayStrategyRandom.cs" />
-    <Compile Include="PlayQueue\PlayStrategySingle.cs" />
-    <Compile Include="PlayQueue\PlayStrategyTwoFers.cs" />
+    <Compile Include="PlayStrategies\PlayStrategyFactory.cs" />
+    <Compile Include="PlayStrategies\PlayStrategyFeaturedArtists.cs" />
+    <Compile Include="PlayStrategies\PlayStrategyNewReleases.cs" />
+    <Compile Include="PlayStrategies\PlayStrategyRandom.cs" />
+    <Compile Include="PlayStrategies\PlayStrategySingle.cs" />
+    <Compile Include="PlayStrategies\PlayStrategyTwoFers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\AsyncTask\AsyncTaskEnumerator.cs" />
     <Compile Include="Support\AsyncTask\IAsyncTaskResult.cs" />

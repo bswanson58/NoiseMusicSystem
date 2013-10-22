@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System.Linq;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
@@ -17,12 +18,14 @@ namespace Noise.UI.ViewModels {
         private readonly IPlayListProvider                          mPlayListProvider;
 		private readonly IInternetStreamProvider	                mStreamProvider;
         private readonly IPlayQueue                                 mPlayQueue;
+        private readonly IPlayStrategyFactory                       mPlayStrategyFactory;
         private readonly IDialogService                             mDialogService;
 
 		private	readonly BindableCollection<ExhaustedStrategyItem>	mExhaustedStrategies;
 		private readonly BindableCollection<PlayStrategyItem>		mPlayStrategies;
 
-        public PlayQueueStrategyViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IDialogService dialogService,
+        public PlayQueueStrategyViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayStrategyFactory playStrategyFactory,
+            IDialogService dialogService,
                                            IArtistProvider artistProvider, IGenreProvider genreProvider, ITagProvider tagProvider,
                                            IInternetStreamProvider streamProvider, IPlayListProvider playListProvider ) {
             mEventAggregator = eventAggregator;
@@ -32,14 +35,11 @@ namespace Noise.UI.ViewModels {
             mPlayListProvider = playListProvider;
             mTagProvider = tagProvider;
             mPlayQueue = playQueue;
+            mPlayStrategyFactory = playStrategyFactory;
             mDialogService = dialogService;
 
-			mPlayStrategies = new BindableCollection<PlayStrategyItem>{
-			                                    new PlayStrategyItem( ePlayStrategy.Next, "Normal" ),
-												new PlayStrategyItem( ePlayStrategy.Random, "Random" ),
-												new PlayStrategyItem( ePlayStrategy.TwoFers, "2 Fers" ),
-												new PlayStrategyItem( ePlayStrategy.FeaturedArtists, "Featured Artist" ),
-												new PlayStrategyItem( ePlayStrategy.NewReleases, "New Releases" )};
+			mPlayStrategies = new BindableCollection<PlayStrategyItem>( from strategy in mPlayStrategyFactory.AvailableStrategies 
+                                                                        select new PlayStrategyItem( strategy.StrategyId, strategy.DisplayName ));
 
 			mExhaustedStrategies = new BindableCollection<ExhaustedStrategyItem>{
 												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Stop, "Stop" ),
@@ -178,31 +178,39 @@ namespace Noise.UI.ViewModels {
 			get{ return( mPlayStrategies ); }
 		}
 
-		public ePlayStrategy PlayStrategy {
-			get{ return( mPlayQueue.PlayStrategy ); }
+		public PlayStrategyItem PlayStrategy {
+			get {
+			    var strategy = mPlayQueue.PlayStrategy;
+
+                return( mPlayStrategies.FirstOrDefault( item => item.StrategyId == strategy.StrategyId ));
+			}
 			set {
-				IPlayStrategyParameters	parameters;
+                var strategy = mPlayStrategyFactory.ProvidePlayStrategy( value.StrategyId );
 
-				if( PromptForPlayStrategyItem( value, out parameters )) {
-					mPlayQueue.SetPlayStrategy( value, parameters );
+                if( strategy != null ) {
+    				IPlayStrategyParameters	parameters;
 
-					var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+                    if( PromptForPlayStrategyItem( strategy, out parameters )) {
+                        mPlayQueue.SetPlayStrategy( strategy.StrategyId, parameters );
 
-					if( configuration != null ) {
-						configuration.PlayStrategy = value;
-						configuration.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( parameters );
+                        var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
-						NoiseSystemConfiguration.Current.Save( configuration );
-					}
-				}
+					    if( configuration != null ) {
+						    configuration.PlayStrategy = strategy.StrategyId;
+						    configuration.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( parameters );
+
+						    NoiseSystemConfiguration.Current.Save( configuration );
+					    }
+                    }
+                }
 			}
 		}
 
-		private bool PromptForPlayStrategyItem( ePlayStrategy strategy, out IPlayStrategyParameters parameters ) {
+		private bool PromptForPlayStrategyItem( IPlayStrategy strategy, out IPlayStrategyParameters parameters ) {
 			var retValue = false;
 			parameters = null;
 
-			if( strategy == ePlayStrategy.FeaturedArtists ) {
+			if( strategy.RequiresParameters ) {
 				var dialogModel = new FeaturedArtistsDialogModel( mArtistProvider );
 
 				if( mDialogService.ShowDialog( DialogNames.FeaturedArtistsSelect, dialogModel ) == true ) {

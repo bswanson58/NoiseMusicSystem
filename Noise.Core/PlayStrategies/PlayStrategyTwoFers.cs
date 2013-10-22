@@ -4,17 +4,40 @@ using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.PlayQueue {
+namespace Noise.Core.PlayStrategies {
 	internal class PlayStrategyTwoFers : IPlayStrategy {
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
+        private IPlayQueue                  mPlayQueue;
 
 		public PlayStrategyTwoFers( IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 		}
 
-		public PlayQueueTrack NextTrack( IPlayQueue queueMgr, IList<PlayQueueTrack> queue, IPlayStrategyParameters parameters ) {
+	    public ePlayStrategy StrategyId {
+            get {  return( ePlayStrategy.TwoFers ); }
+	    }
+	    public string DisplayName {
+            get {  return( "Two-Fers" ); }
+	    }
+
+	    public string StrategyDescription {
+            get {  return( "" ); }
+	    }
+
+	    public bool RequiresParameters {
+            get {  return( false ); }
+	    }
+
+	    public bool Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
+            mPlayQueue = queueMgr;
+
+            return( true );
+	    }
+
+		public PlayQueueTrack NextTrack() {
+            var queue = new List<PlayQueueTrack>( mPlayQueue.PlayList );
 			var retValue = queue.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed ));
 
 			if(( retValue != null ) &&
@@ -31,13 +54,10 @@ namespace Noise.Core.PlayQueue {
 					nextTrack = queue[targetIndex + 1];
 				}
 
-				var needA2Fer = true;
-				if(( previousTrack != null ) &&
-				   ( previousTrack.Artist != null ) &&
-				   ( previousTrack.Artist.DbId == retValue.Artist.DbId )) {
-					needA2Fer = false;
-				}
-				if(( nextTrack != null ) &&
+			    var needA2Fer = !(( previousTrack != null ) &&
+			                      ( previousTrack.Artist != null ) &&
+			                      ( previousTrack.Artist.DbId == retValue.Artist.DbId ));
+			    if(( nextTrack != null ) &&
 				   ( nextTrack.Artist != null ) &&
 				   ( nextTrack.Artist.DbId == retValue.Artist.DbId )) {
 					needA2Fer = false;
@@ -55,13 +75,13 @@ namespace Noise.Core.PlayQueue {
 								var track = trackList.List.Skip( next ).FirstOrDefault();
 
 								while(( track != null ) &&
-									  ( queueMgr.IsTrackQueued( track ))) {
+									  ( mPlayQueue.IsTrackQueued( track ))) {
 									next = r.Next( trackList.List.Count() - 1 );
 									track = trackList.List.Skip( next ).FirstOrDefault();
 								}
 
 								if( track != null ) {
-									queueMgr.StrategyAdd( track, retValue );
+									mPlayQueue.StrategyAdd( track, retValue );
 								}
 							}
 						}

@@ -2,14 +2,6 @@
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
-	public enum ePlayStrategy {
-		Next,
-		Random,
-		TwoFers,
-		FeaturedArtists,
-		NewReleases
-	}
-
 	public enum ePlayExhaustedStrategy {
 		Stop,
 		Replay,
@@ -55,9 +47,9 @@ namespace Noise.Infrastructure.Interfaces {
 
 		void			ReorderQueueItem( int fromIndex, int toIndex );
 
-		ePlayStrategy			PlayStrategy { get; }
+		IPlayStrategy			PlayStrategy { get; }
 		ePlayExhaustedStrategy	PlayExhaustedStrategy { get; }
-		void					SetPlayStrategy( ePlayStrategy strategy, IPlayStrategyParameters parameters );
+		void					SetPlayStrategy( ePlayStrategy strategyId, IPlayStrategyParameters parameters );
 		void					SetPlayExhaustedStrategy( ePlayExhaustedStrategy strategy, IPlayStrategyParameters parameters );
 
 		void			StartPlayStrategy();

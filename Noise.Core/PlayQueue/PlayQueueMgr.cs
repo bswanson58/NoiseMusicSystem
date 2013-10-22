@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
@@ -20,10 +19,8 @@ namespace Noise.Core.PlayQueue {
 		private readonly List<PlayQueueTrack>				mPlayQueue;
 		private readonly List<PlayQueueTrack>				mPlayHistory;
 		private readonly List<IPlayQueueSupport>			mPlayQueueSupporters; 
-		private	ePlayStrategy								mPlayStrategy;
 		private readonly IPlayStrategyFactory				mPlayStrategyFactory;
-		private IPlayStrategy								mStrategy;
-		private IPlayStrategyParameters						mStrategyParameters;
+		private IPlayStrategy								mPlayStrategy;
 		private readonly IPlayExhaustedFactory				mPlayExhaustedFactory;
 		private ePlayExhaustedStrategy						mPlayExhaustedStrategy;
 		private IPlayExhaustedStrategy						mExhaustedStrategy;
@@ -54,7 +51,7 @@ namespace Noise.Core.PlayQueue {
 			mPlayHistory = new List<PlayQueueTrack>();
 			mPlayQueueSupporters = new List<IPlayQueueSupport>( playQueueSupporters );
 
-			SetPlayStrategy( ePlayStrategy.Next, null );
+            SetPlayStrategy( ePlayStrategy.Next, null );
 			SetPlayExhaustedStrategy( ePlayExhaustedStrategy.Stop, null );
 
 			mTrackPlayCommand = new AsyncCommand<DbTrack>( OnTrackPlayCommand );
@@ -397,14 +394,14 @@ namespace Noise.Core.PlayQueue {
 				}
 
 				if( retValue == null ) {
-					retValue = mStrategy.NextTrack( this, mPlayQueue, mStrategyParameters );
+					retValue = mPlayStrategy.NextTrack();
 
 					if(( retValue == null ) &&
 					   ( mExhaustedStrategy != null ) &&
 					   (!mAddingMoreTracks ) &&
 					   ( mPlayQueue.Count > 0 )) {
 						if( mExhaustedStrategy.QueueTracks( this, mExhaustedStrategyParameters )) {
-							retValue = mStrategy.NextTrack( this, mPlayQueue, mStrategyParameters );
+							retValue = mPlayStrategy.NextTrack();
 						}
 					}
 				}
@@ -486,14 +483,16 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
-		public ePlayStrategy PlayStrategy {
+		public IPlayStrategy PlayStrategy {
 			get { return( mPlayStrategy ); }
 		}
 
-		public void SetPlayStrategy( ePlayStrategy strategy, IPlayStrategyParameters parameters ) {
-			mPlayStrategy = strategy;
-			mStrategyParameters = parameters;
-			mStrategy = mPlayStrategyFactory.ProvidePlayStrategy( mPlayStrategy );
+		public void SetPlayStrategy( ePlayStrategy strategyId, IPlayStrategyParameters parameters ) {
+			mPlayStrategy = mPlayStrategyFactory.ProvidePlayStrategy( strategyId );
+
+            if( mPlayStrategy != null ) {
+                mPlayStrategy.Initialize( this, parameters );
+            }
 		}
 
 		public ePlayExhaustedStrategy PlayExhaustedStrategy {
@@ -511,7 +510,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public IEnumerable<PlayQueueTrack> PlayList {
-			get{ return( from track in mPlayQueue select track ); }
+			get{ return( mPlayQueue ); }
 		}
 
 		private void FirePlayQueueChanged() {
