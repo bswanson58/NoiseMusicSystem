@@ -305,6 +305,7 @@
     <Compile Include="ViewModels\PlayListViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueControlViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueListViewModel.cs" />
+    <Compile Include="ViewModels\PlayQueueStrategyViewModel.cs" />
     <Compile Include="ViewModels\RecentArtistViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
     <Compile Include="ViewModels\SelectArtistDialogModel.cs" />
@@ -428,6 +429,9 @@
     </Compile>
     <Compile Include="Views\PlayQueueListView.xaml.cs">
       <DependentUpon>PlayQueueListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlayQueueStrategyView.xaml.cs">
+      <DependentUpon>PlayQueueStrategyView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlayQueueView.xaml.cs">
       <DependentUpon>PlayQueueView.xaml</DependentUpon>
@@ -703,6 +707,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlayQueueListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlayQueueStrategyView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
