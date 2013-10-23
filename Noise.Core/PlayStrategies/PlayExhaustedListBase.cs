@@ -7,54 +7,22 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
-	internal abstract class PlayExhaustedListBase : IPlayExhaustedStrategy {
-		private		readonly ePlayExhaustedStrategy	mStrategy;
-		private		readonly string					mDisplayName;
-		private		readonly bool					mParametersRequired;
+	internal abstract class PlayExhaustedListBase : PlayExhaustedStrategyBase {
 		protected	readonly List<DbTrack>			mTrackList;
-		protected	IPlayQueue						mQueueMgr;
-		protected	IPlayStrategyParameters			mParameters;
 		private		long							mCurrentId;
 
 		protected abstract void FillTrackList( long itemId );
-		protected abstract string FormatDescription();
 
-		protected PlayExhaustedListBase( ePlayExhaustedStrategy strategy, string displayName, bool parametersRequired ) {
-			mStrategy = strategy;
-			mDisplayName = displayName;
-			mParametersRequired = parametersRequired;
+		protected PlayExhaustedListBase( ePlayExhaustedStrategy strategy, string displayName, bool parametersRequired ) :
+			base( strategy, displayName, parametersRequired ) {
 			mTrackList = new List<DbTrack>();
 		}
 
-		public ePlayExhaustedStrategy StrategyId {
-			get { return( mStrategy ); }
+		protected override DbTrack SelectATrack() {
+			throw new NotImplementedException();
 		}
 
-		public string DisplayName {
-			get{ return( mDisplayName ); }
-		}
-
-		public string StrategyDescription {
-			get {  return( FormatDescription()); }
-		}
-
-		public bool	RequiresParameters {
-			get{ return( mParametersRequired ); }
-		}
-
-		public bool Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
-			mQueueMgr = queueMgr;
-			mParameters = parameters;
-
-			Condition.Requires( mQueueMgr ).IsNotNull();
-			if( mParametersRequired ) {
-				Condition.Requires( mParameters ).IsOfType( typeof( PlayStrategyParameterDbId ));
-			}
-
-			return( true );
-		}
-
-		public bool QueueTracks() {
+		public override bool QueueTracks() {
 			Condition.Requires( mQueueMgr ).IsNotNull();
 
 			var itemId = Constants.cDatabaseNullOid;

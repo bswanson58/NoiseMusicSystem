@@ -4,11 +4,11 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
 	public abstract class PlayExhaustedStrategyBase : IPlayExhaustedStrategy {
+		private		readonly ePlayExhaustedStrategy	mStrategy;
 		private		readonly string					mDisplayName;
 		private		readonly bool					mParametersRequired;
 		protected	IPlayQueue						mQueueMgr;
 		protected	IPlayStrategyParameters			mParameters;
-		private readonly ePlayExhaustedStrategy		mStrategy;
 
 		protected abstract DbTrack SelectATrack();
 		protected abstract string FormatDescription();

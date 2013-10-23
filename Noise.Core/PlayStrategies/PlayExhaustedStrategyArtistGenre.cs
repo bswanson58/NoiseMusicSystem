@@ -33,15 +33,13 @@ namespace Noise.Core.PlayStrategies {
 				if( genre != null ) {
 					mGenreName = genre.Name;
 				}
+
+				LoadArtists( mGenre );
 			}
 		}
 
 		protected override DbTrack SelectATrack() {
 			var retValue = default( DbTrack );
-
-			if(!mArtistList.Any()) {
-				LoadArtists( mGenre );
-			}
 
 			if( mArtistList.Any()) {
 				retValue = RandomTrackFromArtist( mArtistList.Skip( NextRandom( mArtistList.Count -1 )).Take( 1 ).FirstOrDefault());				
