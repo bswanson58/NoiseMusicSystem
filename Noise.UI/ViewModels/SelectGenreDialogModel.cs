@@ -13,7 +13,7 @@ namespace Noise.UI.ViewModels {
 
 		public SelectGenreDialogModel( IGenreProvider genreProvider ) {
 			using( var genreList = genreProvider.GetGenreList()) {
-				mGenreList = new List<DbGenre>( from DbGenre genre in genreList.List orderby genre.Name ascending  select genre );
+				mGenreList = new List<DbGenre>( from DbGenre genre in genreList.List orderby genre.Name ascending select genre );
 			}
 		}
 

@@ -3,17 +3,24 @@ using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.PlayQueue {
+namespace Noise.Core.PlayStrategies {
 	public class PlayExhaustedStrategyArtistGenre : PlayExhaustedStrategyRandomBase {
 		private readonly IArtistProvider	mArtistProvider;
+		private readonly IGenreProvider		mGenreProvider;
 		private readonly List<DbArtist>		mArtistList;
 		private long						mGenre;
+		private string						mGenreName;
 
-		public PlayExhaustedStrategyArtistGenre( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
-			base( ePlayExhaustedStrategy.PlayArtistGenre, albumProvider, trackProvider ) {
+		public PlayExhaustedStrategyArtistGenre( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IGenreProvider genreProvider ) :
+			base( ePlayExhaustedStrategy.PlayArtistGenre, "Play Genre...", true, albumProvider, trackProvider ) {
 			mArtistProvider = artistProvider;
+			mGenreProvider = genreProvider;
 
 			mArtistList = new List<DbArtist>();
+		}
+
+		protected override string FormatDescription() {
+			return( string.Format( "play tracks from genre {0}", mGenreName ));
 		}
 
 		protected override void ProcessParameters( IPlayStrategyParameters parameters ) {
@@ -21,6 +28,11 @@ namespace Noise.Core.PlayQueue {
 				var parms = parameters as PlayStrategyParameterDbId;
 
 				mGenre = parms.DbItemId;
+
+				var genre = ( from g in mGenreProvider.GetGenreList().List where g.DbId == mGenre select g ).FirstOrDefault();
+				if( genre != null ) {
+					mGenreName = genre.Name;
+				}
 			}
 		}
 

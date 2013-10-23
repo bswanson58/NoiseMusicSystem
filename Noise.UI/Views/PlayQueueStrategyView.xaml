@@ -11,14 +11,22 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="5,3" Orientation="Horizontal">
             <TextBlock Text="Play tracks from the queue "/>
             <TextBlock Text="{Binding PlayStrategyDescription}"/>
             <TextBlock Text="."/>
         </StackPanel>
-        <Grid Grid.Row="1" Margin="3">
+
+		<StackPanel Grid.Row="1" Margin="5,0,5,5" Orientation="Horizontal">
+			<TextBlock Text="When the queue is empty "/>
+			<TextBlock Text="{Binding PlayExhaustedDescription}"/>
+			<TextBlock Text="."/>
+		</StackPanel>
+		
+		<Grid Grid.Row="2" Margin="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*" />
@@ -31,7 +39,7 @@
                       SelectedValue="{Binding Path=PlayStrategy}"/>
         </Grid>
 
-        <Grid Grid.Row="2" Margin="3">
+        <Grid Grid.Row="3" Margin="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*" />
@@ -42,7 +50,7 @@
             <Button Grid.Column="0" Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Content="Start" Command="{Binding StartStrategy}" />
             <TextBlock Grid.Column="2" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="When Exhausted:"/>
             <ComboBox Grid.Column="3" Width="122" DisplayMemberPath="Title" ItemsSource="{Binding Path=ExhaustedStrategyList}" Style="{StaticResource GeneralComboStyle}"
-                              SelectedValue="{Binding Path=ExhaustedStrategy}" SelectedValuePath="Strategy" />
+					  SelectedValue="{Binding Path=ExhaustedStrategy}"/>
         </Grid>
     </Grid>
 </UserControl>

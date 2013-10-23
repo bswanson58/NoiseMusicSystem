@@ -20,11 +20,9 @@ namespace Noise.Core.PlayQueue {
 		private readonly List<PlayQueueTrack>				mPlayHistory;
 		private readonly List<IPlayQueueSupport>			mPlayQueueSupporters; 
 		private readonly IPlayStrategyFactory				mPlayStrategyFactory;
-		private IPlayStrategy								mPlayStrategy;
 		private readonly IPlayExhaustedFactory				mPlayExhaustedFactory;
-		private ePlayExhaustedStrategy						mPlayExhaustedStrategy;
-		private IPlayExhaustedStrategy						mExhaustedStrategy;
-		private IPlayStrategyParameters						mExhaustedStrategyParameters;
+		private IPlayStrategy								mPlayStrategy;
+		private IPlayExhaustedStrategy						mPlayExhaustedStrategy;
 		private	int											mReplayTrackCount;
 		private PlayQueueTrack								mReplayTrack;
 		private bool										mAddingMoreTracks;
@@ -338,15 +336,15 @@ namespace Noise.Core.PlayQueue {
 
 		public void StartPlayStrategy() {
 			if( CanStartPlayStrategy ) {
-				mExhaustedStrategy.QueueTracks( this, mExhaustedStrategyParameters );
+				mPlayExhaustedStrategy.QueueTracks();
 			}
 		}
 
 		public bool CanStartPlayStrategy {
 			get {
 				return(!mPlayQueue.Any()) &&
-					  ( mExhaustedStrategy != null ) &&
-				      ( mExhaustedStrategy.PlayStrategy != ePlayExhaustedStrategy.Stop );
+					  ( mPlayExhaustedStrategy != null ) &&
+				      ( mPlayExhaustedStrategy.StrategyId != ePlayExhaustedStrategy.Stop );
 			}
 		}
 
@@ -369,9 +367,9 @@ namespace Noise.Core.PlayQueue {
 				}
 			}
 
-			if(( mExhaustedStrategy != null ) &&
+			if(( mPlayExhaustedStrategy != null ) &&
 			   (!mAddingMoreTracks )) {
-				mExhaustedStrategy.QueueTracks( this, mExhaustedStrategyParameters );
+				mPlayExhaustedStrategy.QueueTracks();
 			}
 
 			return( track );
@@ -397,10 +395,10 @@ namespace Noise.Core.PlayQueue {
 					retValue = mPlayStrategy.NextTrack();
 
 					if(( retValue == null ) &&
-					   ( mExhaustedStrategy != null ) &&
+					   ( mPlayExhaustedStrategy != null ) &&
 					   (!mAddingMoreTracks ) &&
 					   ( mPlayQueue.Count > 0 )) {
-						if( mExhaustedStrategy.QueueTracks( this, mExhaustedStrategyParameters )) {
+						if( mPlayExhaustedStrategy.QueueTracks()) {
 							retValue = mPlayStrategy.NextTrack();
 						}
 					}
@@ -493,20 +491,23 @@ namespace Noise.Core.PlayQueue {
             if( mPlayStrategy != null ) {
                 mPlayStrategy.Initialize( this, parameters );
             }
+
+			Condition.Requires( mPlayStrategy ).IsNotNull();
 		}
 
-		public ePlayExhaustedStrategy PlayExhaustedStrategy {
+		public IPlayExhaustedStrategy PlayExhaustedStrategy {
 			get { return( mPlayExhaustedStrategy ); }
 		}
 
 		public void SetPlayExhaustedStrategy( ePlayExhaustedStrategy strategy, IPlayStrategyParameters parameters ) {
-			mPlayExhaustedStrategy = strategy;
-			mExhaustedStrategyParameters = parameters;
-			mExhaustedStrategy = mPlayExhaustedFactory.ProvideExhaustedStrategy( mPlayExhaustedStrategy );
+			mPlayExhaustedStrategy = mPlayExhaustedFactory.ProvideExhaustedStrategy( strategy );
+			if( mPlayExhaustedStrategy != null ) {
+				mPlayExhaustedStrategy.Initialize( this, parameters );
 
-			Condition.Requires( mExhaustedStrategy ).IsNotNull();
+				mEventAggregator.Publish( new Events.PlayExhaustedStrategyChanged( mPlayExhaustedStrategy.StrategyId, parameters ));
+			}
 
-			mEventAggregator.Publish( new Events.PlayExhaustedStrategyChanged( mPlayExhaustedStrategy, mExhaustedStrategyParameters ));
+			Condition.Requires( mPlayExhaustedStrategy ).IsNotNull();
 		}
 
 		public IEnumerable<PlayQueueTrack> PlayList {

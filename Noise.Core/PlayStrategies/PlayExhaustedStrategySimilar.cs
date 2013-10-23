@@ -5,7 +5,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.PlayQueue {
+namespace Noise.Core.PlayStrategies {
 	internal class ArtistComparer : IEqualityComparer<DbArtist> {
 		public bool Equals( DbArtist x, DbArtist y ) {
 			if( x == null || y == null ) {
@@ -28,11 +28,15 @@ namespace Noise.Core.PlayQueue {
 
 		public PlayExhaustedStrategySimilar( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 											 IMetadataManager metadataManager ) :
-			base( ePlayExhaustedStrategy.PlaySimilar ) {
+			base( ePlayExhaustedStrategy.PlaySimilar, "Play Similar", false ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mMetadataManager = metadataManager;
+		}
+
+		protected override string FormatDescription() {
+			return( string.Format( "play tracks from similar artists" ));
 		}
 
 		protected override void FillTrackList( long itemId ) {

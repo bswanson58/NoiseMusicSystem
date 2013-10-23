@@ -28,7 +28,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public QueueListViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue ) :
 			base( eventAggregator, playQueue ) {
 			mPlayQueue = playQueue;
-			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy;
+			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy.StrategyId;
 
 			ScreenTitle = "Now Playing";
 			MenuTitle = "Now Playing";

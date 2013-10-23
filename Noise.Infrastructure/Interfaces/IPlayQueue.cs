@@ -2,20 +2,6 @@
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
-	public enum ePlayExhaustedStrategy {
-		Stop,
-		Replay,
-		PlayList,
-		PlayArtist,
-		PlaySimilar,
-		PlayFavorites,
-		PlayStream,
-		PlayGenre,
-		PlayArtistGenre,
-		PlayCategory,
-		SeldomPlayedArtists
-	}
-
 	public interface IPlayQueue {
 		void			Add( DbTrack track );
 		void			Add( DbAlbum album );
@@ -48,7 +34,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void			ReorderQueueItem( int fromIndex, int toIndex );
 
 		IPlayStrategy			PlayStrategy { get; }
-		ePlayExhaustedStrategy	PlayExhaustedStrategy { get; }
+		IPlayExhaustedStrategy	PlayExhaustedStrategy { get; }
 		void					SetPlayStrategy( ePlayStrategy strategyId, IPlayStrategyParameters parameters );
 		void					SetPlayExhaustedStrategy( ePlayExhaustedStrategy strategy, IPlayStrategyParameters parameters );
 

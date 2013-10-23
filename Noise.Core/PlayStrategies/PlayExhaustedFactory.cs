@@ -3,7 +3,7 @@ using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.PlayQueue {
+namespace Noise.Core.PlayStrategies {
 	internal class PlayExhaustedFactory : IPlayExhaustedFactory {
 		private readonly List<IPlayExhaustedStrategy>	mStrategies; 
 
@@ -11,9 +11,13 @@ namespace Noise.Core.PlayQueue {
 			mStrategies = new List<IPlayExhaustedStrategy>( strategyList );
 		}
 
+	    public IEnumerable<IPlayExhaustedStrategy> AvailableStrategies {
+            get {  return( mStrategies ); }
+	    } 
+
 		public IPlayExhaustedStrategy ProvideExhaustedStrategy( ePlayExhaustedStrategy playStrategy ) {
 			IPlayExhaustedStrategy	retValue = ( from strategy in mStrategies
-												 where strategy.PlayStrategy == playStrategy 
+												 where strategy.StrategyId == playStrategy 
 												 select  strategy ).FirstOrDefault();
 
 			Condition.Requires( retValue ).IsNotNull();

@@ -3,14 +3,15 @@ using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.PlayQueue {
+namespace Noise.Core.PlayStrategies {
 	public abstract class PlayExhaustedStrategyRandomBase : PlayExhaustedStrategyBase {
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
 		private readonly Random				mRandom;
 
-		protected PlayExhaustedStrategyRandomBase( ePlayExhaustedStrategy strategy, IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
-			base( strategy ) {
+		protected PlayExhaustedStrategyRandomBase( ePlayExhaustedStrategy strategy, string displayName, bool parametersRequired,
+												   IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
+			base( strategy, displayName, parametersRequired ) {
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 

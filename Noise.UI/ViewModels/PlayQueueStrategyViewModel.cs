@@ -19,14 +19,14 @@ namespace Noise.UI.ViewModels {
 		private readonly IInternetStreamProvider	                mStreamProvider;
         private readonly IPlayQueue                                 mPlayQueue;
         private readonly IPlayStrategyFactory                       mPlayStrategyFactory;
+		private readonly IPlayExhaustedFactory						mPlayExhaustedFactory;
         private readonly IDialogService                             mDialogService;
 
 		private	readonly BindableCollection<ExhaustedStrategyItem>	mExhaustedStrategies;
 		private readonly BindableCollection<PlayStrategyItem>		mPlayStrategies;
 
-        public PlayQueueStrategyViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayStrategyFactory playStrategyFactory,
-            IDialogService dialogService,
-                                           IArtistProvider artistProvider, IGenreProvider genreProvider, ITagProvider tagProvider,
+        public PlayQueueStrategyViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayStrategyFactory playStrategyFactory, IPlayExhaustedFactory playExhaustedFactory,
+										   IDialogService dialogService, IArtistProvider artistProvider, IGenreProvider genreProvider, ITagProvider tagProvider,
                                            IInternetStreamProvider streamProvider, IPlayListProvider playListProvider ) {
             mEventAggregator = eventAggregator;
             mArtistProvider = artistProvider;
@@ -36,28 +36,22 @@ namespace Noise.UI.ViewModels {
             mTagProvider = tagProvider;
             mPlayQueue = playQueue;
             mPlayStrategyFactory = playStrategyFactory;
+			mPlayExhaustedFactory = playExhaustedFactory;
             mDialogService = dialogService;
 
 			mPlayStrategies = new BindableCollection<PlayStrategyItem>( from strategy in mPlayStrategyFactory.AvailableStrategies 
                                                                         select new PlayStrategyItem( strategy.StrategyId, strategy.DisplayName ));
 
-			mExhaustedStrategies = new BindableCollection<ExhaustedStrategyItem>{
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Stop, "Stop" ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.Replay, "Replay" ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayArtist, "Play Artist..." ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayArtistGenre, "Play Genre..." ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayCategory, "Play Category..." ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayFavorites, "Play Favorites" ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlaySimilar, "Play Similar" ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.SeldomPlayedArtists, "Seldom Played" ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayList, "Playlist..." ),
-												new ExhaustedStrategyItem( ePlayExhaustedStrategy.PlayStream, "Radio Station..." )};
+			mExhaustedStrategies = new BindableCollection<ExhaustedStrategyItem>( from strategy in mPlayExhaustedFactory.AvailableStrategies
+																					  select new ExhaustedStrategyItem( strategy.StrategyId, strategy.DisplayName ));
 
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
 			if( configuration != null ) {
 				mPlayQueue.SetPlayExhaustedStrategy( configuration.PlayExhaustedStrategy,
 													 PlayStrategyParametersFactory.FromString( configuration.PlayExhaustedParameters ));
+				PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.StrategyDescription;
+
 				mPlayQueue.SetPlayStrategy( configuration.PlayStrategy,
 													 PlayStrategyParametersFactory.FromString( configuration.PlayStrategyParameters ));
                 PlayStrategyDescription = mPlayQueue.PlayStrategy.StrategyDescription;
@@ -77,33 +71,49 @@ namespace Noise.UI.ViewModels {
 			return( mPlayQueue.CanStartPlayStrategy );
 		}
 
+        public string PlayExhaustedDescription {
+            get {  return( Get( () => PlayExhaustedDescription )); }
+            set {  Set( () => PlayExhaustedDescription, value ); }
+        }
+
         public BindableCollection<ExhaustedStrategyItem> ExhaustedStrategyList {
 			get{ return( mExhaustedStrategies ); }
 		}
 
-		public ePlayExhaustedStrategy ExhaustedStrategy {
-			get{ return( mPlayQueue.PlayExhaustedStrategy ); }
+		public ExhaustedStrategyItem ExhaustedStrategy {
+			get {
+				var strategy = mPlayQueue.PlayExhaustedStrategy;
+
+				return( mExhaustedStrategies.FirstOrDefault( item => item.Strategy == strategy.StrategyId ));
+			}
 			set {
-				IPlayStrategyParameters	parameters;
+                var strategy = mPlayExhaustedFactory.ProvideExhaustedStrategy( value.Strategy );
 
-				if( PromptForExhaustedStrategyItem( value, out parameters )) {
-					mPlayQueue.SetPlayExhaustedStrategy( value, parameters );
-					RaiseCanExecuteChangedEvent( "CanExecute_StartStrategy" );
+                if( strategy != null ) {
+    				IPlayStrategyParameters	parameters;
 
-					var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+                    if( PromptForExhaustedStrategyItem( strategy, out parameters )) {
+                        mPlayQueue.SetPlayExhaustedStrategy( strategy.StrategyId, parameters );
+        
+                        PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.StrategyDescription;
 
-					if( configuration != null ) {
-						configuration.PlayExhaustedStrategy = value;
-						configuration.PlayExhaustedParameters = PlayStrategyParametersFactory.ToString( parameters );
+                        var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
-						NoiseSystemConfiguration.Current.Save( configuration );
-					}
-				}
+					    if( configuration != null ) {
+						    configuration.PlayExhaustedStrategy = strategy.StrategyId;
+						    configuration.PlayExhaustedParameters = PlayStrategyParametersFactory.ToString( parameters );
+
+						    NoiseSystemConfiguration.Current.Save( configuration );
+					    }
+                    }
+                }
 			}
 		}
 
-		private bool PromptForExhaustedStrategyItem( ePlayExhaustedStrategy strategy, out IPlayStrategyParameters parameters ) {
+		private bool PromptForExhaustedStrategyItem( IPlayExhaustedStrategy exhaustedStrategy, out IPlayStrategyParameters parameters ) {
 			var retValue = false;
+			var strategy = exhaustedStrategy.StrategyId;
+
 			parameters = null;
 
 			if(( strategy == ePlayExhaustedStrategy.PlayStream ) ||

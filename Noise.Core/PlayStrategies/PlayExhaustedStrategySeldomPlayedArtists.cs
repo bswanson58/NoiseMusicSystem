@@ -3,16 +3,20 @@ using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.PlayQueue {
+namespace Noise.Core.PlayStrategies {
 	public class PlayExhaustedStrategySeldomPlayedArtists : PlayExhaustedStrategyRandomBase {
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly List<DbArtist>		mArtists; 
 
 		public PlayExhaustedStrategySeldomPlayedArtists( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
-			base( ePlayExhaustedStrategy.SeldomPlayedArtists, albumProvider, trackProvider ) {
+			base( ePlayExhaustedStrategy.SeldomPlayedArtists, "Seldom Played", false, albumProvider, trackProvider ) {
 			mArtistProvider = artistProvider;
 
 			mArtists = new List<DbArtist>();
+		}
+
+		protected override string FormatDescription() {
+			return( "play seldom played tracks" );
 		}
 
 		protected override DbTrack SelectATrack() {
