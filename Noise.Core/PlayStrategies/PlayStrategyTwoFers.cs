@@ -23,7 +23,7 @@ namespace Noise.Core.PlayStrategies {
 	    }
 
 	    public string StrategyDescription {
-            get {  return( "" ); }
+            get {  return( "with two-fers from each artist" ); }
 	    }
 
 	    public bool RequiresParameters {

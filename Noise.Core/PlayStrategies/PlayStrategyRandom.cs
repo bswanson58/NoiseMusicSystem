@@ -15,7 +15,7 @@ namespace Noise.Core.PlayStrategies {
 	    }
 
 	    public string StrategyDescription {
-            get {  return( "" ); }
+            get {  return( "in random order" ); }
 	    }
 
 	    public bool RequiresParameters {

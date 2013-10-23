@@ -60,6 +60,7 @@ namespace Noise.UI.ViewModels {
 													 PlayStrategyParametersFactory.FromString( configuration.PlayExhaustedParameters ));
 				mPlayQueue.SetPlayStrategy( configuration.PlayStrategy,
 													 PlayStrategyParametersFactory.FromString( configuration.PlayStrategyParameters ));
+                PlayStrategyDescription = mPlayQueue.PlayStrategy.StrategyDescription;
 			}
 
             mEventAggregator.Subscribe( this );
@@ -174,6 +175,11 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
+        public string PlayStrategyDescription {
+            get {  return( Get( () => PlayStrategyDescription )); }
+            set {  Set( () => PlayStrategyDescription, value ); }
+        }
+
 		public BindableCollection<PlayStrategyItem> PlayStrategyList {
 			get{ return( mPlayStrategies ); }
 		}
@@ -192,6 +198,8 @@ namespace Noise.UI.ViewModels {
 
                     if( PromptForPlayStrategyItem( strategy, out parameters )) {
                         mPlayQueue.SetPlayStrategy( strategy.StrategyId, parameters );
+        
+                        PlayStrategyDescription = mPlayQueue.PlayStrategy.StrategyDescription;
 
                         var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 

@@ -29,7 +29,7 @@ namespace Noise.Core.PlayStrategies {
 	    }
 
 	    public string StrategyDescription {
-            get {  return( "" ); }
+            get {  return( "with occasional new library tracks" ); }
 	    }
 
 	    public bool RequiresParameters {

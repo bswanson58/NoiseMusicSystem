@@ -7,20 +7,24 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
 	public class PlayStrategyFeaturedArtists : IPlayStrategy {
+        private readonly IArtistProvider                mArtistProvider;
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly ITrackProvider					mTrackProvider;
 		private readonly List<long>						mArtistList;
+        private readonly List<string>                   mArtistNameList; 
 		private readonly Dictionary<long, List<long>>	mTracks;
         private IPlayQueue                              mPlayQueue;
 		private long									mLastArtistPlayed;
 		private int										mNextFeaturedPlay;
 		private readonly Random							mRandom;
  
-		public PlayStrategyFeaturedArtists( IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+		public PlayStrategyFeaturedArtists( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+            mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 
 			mArtistList = new List<long>();
+            mArtistNameList = new List<string>();
 			mTracks = new Dictionary<long, List<long>>();
 			mRandom = new Random( DateTime.Now.Millisecond );
 
@@ -35,7 +39,7 @@ namespace Noise.Core.PlayStrategies {
 	    }
 
 	    public string StrategyDescription {
-            get {  return( "" ); }
+            get { return( string.Format( "with occasional tracks from {0}", string.Join( ", ", mArtistNameList ))); }
 	    }
 
 	    public bool RequiresParameters {
@@ -93,9 +97,17 @@ namespace Noise.Core.PlayStrategies {
 					mArtistList.Clear();
 					mArtistList.Add( playParams.DbItemId );
 					mLastArtistPlayed = Constants.cDatabaseNullOid;
-
 					mTracks.Clear();
 					mNextFeaturedPlay = NextPlayInterval();
+
+                    mArtistNameList.Clear();
+                    foreach( var artist in mArtistList ) {
+                        var dbArtist = mArtistProvider.GetArtist( artist );
+
+                        if( dbArtist != null ) {
+                            mArtistNameList.Add( dbArtist.Name );
+                        }
+                    }
 				}
 			}
 		}

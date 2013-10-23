@@ -14,7 +14,7 @@ namespace Noise.Core.PlayStrategies {
 	    }
 
 	    public string StrategyDescription {
-            get {  return( "" ); }
+            get {  return( "in sequential order" ); }
 	    }
 
 	    public bool RequiresParameters {
