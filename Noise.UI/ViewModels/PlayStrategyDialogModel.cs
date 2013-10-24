@@ -41,8 +41,8 @@ namespace Noise.UI.ViewModels {
 			mPlayStrategyFactory = strategyFactory;
 			mPlayExhaustedFactory = exhaustedFactory;
 
-			mPlayStrategies = new BindableCollection<PlayStrategyItem>( from strategy in mPlayStrategyFactory.AvailableStrategies orderby strategy.DisplayName
-                                                                        select new PlayStrategyItem( strategy.StrategyId, strategy.DisplayName ));
+			mPlayStrategies = new BindableCollection<PlayStrategyItem>( from strategy in mPlayStrategyFactory.AvailableStrategies orderby strategy.StrategyName
+                                                                        select new PlayStrategyItem( strategy.StrategyId, strategy.StrategyName ));
 
 			mExhaustedStrategies = new BindableCollection<ExhaustedStrategyItem>( from strategy in mPlayExhaustedFactory.AvailableStrategies orderby strategy.DisplayName
 																					  select new ExhaustedStrategyItem( strategy.StrategyId, strategy.DisplayName ));
@@ -164,6 +164,11 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public string PlayParameterName {
+			get {  return( Get( () => PlayParameterName )); }
+			set {  Set( () => PlayParameterName, value ); }
+		}
+
 		public bool PlayParameterRequired {
 			get { return( Get( () => PlayParameterRequired )); }
 			set { Set( () => PlayParameterRequired, value ); }
@@ -210,6 +215,7 @@ namespace Noise.UI.ViewModels {
 
 		private void SetupPlayParameters( IPlayStrategy strategy, BindableCollection<NameIdPair> collection ) {
 			PlayParameterRequired = strategy.RequiresParameters;
+			PlayParameterName = strategy.ParameterName;
 
 			if( strategy.RequiresParameters ) {
 				switch( strategy.StrategyId ) {

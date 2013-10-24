@@ -18,7 +18,7 @@ namespace Noise.Core.PlayStrategies {
 	    public ePlayStrategy StrategyId {
             get {  return( ePlayStrategy.TwoFers ); }
 	    }
-	    public string DisplayName {
+	    public string StrategyName {
             get {  return( "Two-Fers" ); }
 	    }
 
@@ -29,6 +29,10 @@ namespace Noise.Core.PlayStrategies {
 	    public bool RequiresParameters {
             get {  return( false ); }
 	    }
+
+		public string ParameterName {
+			get {  return( string.Empty ); }
+		}
 
 		public IPlayStrategyParameters Parameters {
 			get {  return( null ); }

@@ -35,7 +35,7 @@ namespace Noise.Core.PlayStrategies {
 	    public ePlayStrategy StrategyId {
             get {  return( ePlayStrategy.FeaturedArtists ); }
 	    }
-	    public string DisplayName {
+	    public string StrategyName {
             get {  return( "Featured Artist..." ); }
 	    }
 
@@ -50,6 +50,10 @@ namespace Noise.Core.PlayStrategies {
 	    public bool RequiresParameters {
             get {  return( true ); }
 	    }
+
+		public string ParameterName {
+			get {  return( "Artist" ); }
+		}
 
 	    public bool Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
             mPlayQueue = queueMgr;

@@ -25,11 +25,20 @@
 			<ComboBox Width="150" DisplayMemberPath="Title" Style="{StaticResource GeneralComboStyle}"
 				  ItemsSource="{Binding Path=PlayStrategyList}" SelectedValue="{Binding Path=SelectedPlayStrategy}"/>
 
-			<StackPanel Margin="11,0" Orientation="Horizontal" Visibility="{Binding PlayParameterRequired, Converter={StaticResource HideIfFalse}}">
-				<TextBlock VerticalAlignment="Center" Text="Parameter: "/>
-				<ComboBox Width="150" DisplayMemberPath="Name" Style="{StaticResource GeneralComboStyle}"
-				  ItemsSource="{Binding Path=PlayParameterList}" SelectedValue="{Binding Path=SelectedPlayParameter}"/>
-			</StackPanel>
+			<Grid Width="250" Visibility="{Binding PlayParameterRequired, Converter={StaticResource HideIfFalse}}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+
+				<TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding PlayParameterName}"/>
+				<TextBlock Grid.Column="2" VerticalAlignment="Center" Text=": "/>
+
+				<ComboBox Grid.Column="3" Width="150" DisplayMemberPath="Name" Style="{StaticResource GeneralComboStyle}"
+						  ItemsSource="{Binding Path=PlayParameterList}" SelectedValue="{Binding Path=SelectedPlayParameter}"/>
+			</Grid>
 		</StackPanel>
 
 		<TextBlock Margin="0,11,0,5" Style="{StaticResource ControlTitleStyle}"
