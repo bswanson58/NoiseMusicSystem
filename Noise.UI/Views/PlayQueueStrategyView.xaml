@@ -10,47 +10,32 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="5,3" Orientation="Horizontal">
-            <TextBlock Text="Play tracks from the queue "/>
-            <TextBlock Text="{Binding PlayStrategyDescription}"/>
-            <TextBlock Text="."/>
+        <StackPanel Grid.Row="0" Margin="5,3,0,0" Orientation="Horizontal">
+			<TextBlock Style="{StaticResource ControlTitleStyle}" Text="Play tracks from the queue "/>
+			<TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding PlayStrategyDescription}"/>
+			<TextBlock Style="{StaticResource ControlTitleStyle}" Text="."/>
         </StackPanel>
 
-		<StackPanel Grid.Row="1" Margin="5,0,5,5" Orientation="Horizontal">
-			<TextBlock Text="When the queue is empty "/>
-			<TextBlock Text="{Binding PlayExhaustedDescription}"/>
-			<TextBlock Text="."/>
+		<StackPanel Grid.Row="1" Margin="5,1,0,7" Orientation="Horizontal">
+			<TextBlock Style="{StaticResource ControlTitleStyle}" Text="When the queue is empty "/>
+			<TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding PlayExhaustedDescription}"/>
+			<TextBlock Style="{StaticResource ControlTitleStyle}" Text="."/>
 		</StackPanel>
 		
-		<Grid Grid.Row="2" Margin="3">
+        <Grid Grid.Row="2" Margin="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="2" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Play Selection:"/>
-            <ComboBox Grid.Column="3" Width="122" DisplayMemberPath="Title" ItemsSource="{Binding Path=PlayStrategyList}" Style="{StaticResource GeneralComboStyle}"
-                      SelectedValue="{Binding Path=PlayStrategy}"/>
-        </Grid>
-
-        <Grid Grid.Row="3" Margin="3">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <Button Grid.Column="0" Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Content="Start" Command="{Binding StartStrategy}" />
-            <TextBlock Grid.Column="2" Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="When Exhausted:"/>
-            <ComboBox Grid.Column="3" Width="122" DisplayMemberPath="Title" ItemsSource="{Binding Path=ExhaustedStrategyList}" Style="{StaticResource GeneralComboStyle}"
-					  SelectedValue="{Binding Path=ExhaustedStrategy}"/>
+			<Button Grid.Column="0" Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding StartStrategy}"
+					Content="Start" ToolTip="Fill the play queue using the current strategy"/>
+			<Button Grid.Column="2" Height="25" Width="25" Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding ConfigureStrategy}" 
+					Content="{StaticResource Path_Configure}" ToolTip="Configure the play strategies"/>
         </Grid>
     </Grid>
 </UserControl>

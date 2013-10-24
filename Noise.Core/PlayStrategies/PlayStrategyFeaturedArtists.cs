@@ -14,6 +14,7 @@ namespace Noise.Core.PlayStrategies {
         private readonly List<string>                   mArtistNameList; 
 		private readonly Dictionary<long, List<long>>	mTracks;
         private IPlayQueue                              mPlayQueue;
+		private IPlayStrategyParameters					mParameters;
 		private long									mLastArtistPlayed;
 		private int										mNextFeaturedPlay;
 		private readonly Random							mRandom;
@@ -35,12 +36,16 @@ namespace Noise.Core.PlayStrategies {
             get {  return( ePlayStrategy.FeaturedArtists ); }
 	    }
 	    public string DisplayName {
-            get {  return( "Featured Artists" ); }
+            get {  return( "Featured Artist..." ); }
 	    }
 
 	    public string StrategyDescription {
             get { return( string.Format( "with occasional tracks from {0}", string.Join( ", ", mArtistNameList ))); }
 	    }
+
+		public IPlayStrategyParameters Parameters {
+			get { return( mParameters ); }
+		}
 
 	    public bool RequiresParameters {
             get {  return( true ); }
@@ -48,6 +53,7 @@ namespace Noise.Core.PlayStrategies {
 
 	    public bool Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
             mPlayQueue = queueMgr;
+			mParameters = parameters;
 
 			SyncArtistList( parameters );
 

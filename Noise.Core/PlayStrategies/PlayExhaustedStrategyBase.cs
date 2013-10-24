@@ -35,6 +35,10 @@ namespace Noise.Core.PlayStrategies {
 			get{ return( mParametersRequired ); }
 		}
 
+		public IPlayStrategyParameters Parameters {
+			get { return( mParameters ); }
+		}
+
 		public bool Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
 			mQueueMgr = queueMgr;
 			mParameters = parameters;

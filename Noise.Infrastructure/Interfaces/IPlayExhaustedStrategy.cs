@@ -18,9 +18,9 @@
         string					DisplayName {  get; }
         string					StrategyDescription {  get; }
         bool					RequiresParameters {  get; }
+		IPlayStrategyParameters Parameters {  get; }
 
         bool					Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters );
-
 		bool					QueueTracks();
 	}
 }

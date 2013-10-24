@@ -10,13 +10,13 @@ namespace Noise.Infrastructure.Interfaces {
 	}
 
     public interface IPlayStrategy {
-        ePlayStrategy   StrategyId {  get; }
-        string          DisplayName {  get; }
-        string          StrategyDescription {  get; }
-        bool            RequiresParameters {  get; }
+        ePlayStrategy			StrategyId {  get; }
+        string					DisplayName {  get; }
+        string					StrategyDescription {  get; }
+        bool					RequiresParameters {  get; }
+		IPlayStrategyParameters Parameters {  get; }
 
-        bool            Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters );
-
-		PlayQueueTrack	NextTrack();
+        bool					Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters );
+		PlayQueueTrack			NextTrack();
 	}
 }

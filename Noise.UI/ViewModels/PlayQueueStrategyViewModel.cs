@@ -1,10 +1,8 @@
-﻿using System.Linq;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
-using Noise.UI.Dto;
 using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
@@ -12,50 +10,18 @@ namespace Noise.UI.ViewModels {
     public class PlayQueueStrategyViewModel : AutomaticCommandBase,
                                               IHandle<Events.PlayQueueChanged> {
         private readonly IEventAggregator                           mEventAggregator;
-        private readonly IArtistProvider                            mArtistProvider;
-        private readonly IGenreProvider                             mGenreProvider;
-        private readonly ITagProvider                               mTagProvider;
-        private readonly IPlayListProvider                          mPlayListProvider;
-		private readonly IInternetStreamProvider	                mStreamProvider;
         private readonly IPlayQueue                                 mPlayQueue;
-        private readonly IPlayStrategyFactory                       mPlayStrategyFactory;
-		private readonly IPlayExhaustedFactory						mPlayExhaustedFactory;
         private readonly IDialogService                             mDialogService;
+		private readonly PlayStrategyDialogModel					mConfigurationDialog;
 
-		private	readonly BindableCollection<ExhaustedStrategyItem>	mExhaustedStrategies;
-		private readonly BindableCollection<PlayStrategyItem>		mPlayStrategies;
-
-        public PlayQueueStrategyViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayStrategyFactory playStrategyFactory, IPlayExhaustedFactory playExhaustedFactory,
-										   IDialogService dialogService, IArtistProvider artistProvider, IGenreProvider genreProvider, ITagProvider tagProvider,
-                                           IInternetStreamProvider streamProvider, IPlayListProvider playListProvider ) {
+        public PlayQueueStrategyViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IDialogService dialogService, PlayStrategyDialogModel configurationDialog ) {
             mEventAggregator = eventAggregator;
-            mArtistProvider = artistProvider;
-            mGenreProvider = genreProvider;
-            mStreamProvider = streamProvider;
-            mPlayListProvider = playListProvider;
-            mTagProvider = tagProvider;
             mPlayQueue = playQueue;
-            mPlayStrategyFactory = playStrategyFactory;
-			mPlayExhaustedFactory = playExhaustedFactory;
             mDialogService = dialogService;
+			mConfigurationDialog = configurationDialog;
 
-			mPlayStrategies = new BindableCollection<PlayStrategyItem>( from strategy in mPlayStrategyFactory.AvailableStrategies 
-                                                                        select new PlayStrategyItem( strategy.StrategyId, strategy.DisplayName ));
-
-			mExhaustedStrategies = new BindableCollection<ExhaustedStrategyItem>( from strategy in mPlayExhaustedFactory.AvailableStrategies
-																					  select new ExhaustedStrategyItem( strategy.StrategyId, strategy.DisplayName ));
-
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
-			if( configuration != null ) {
-				mPlayQueue.SetPlayExhaustedStrategy( configuration.PlayExhaustedStrategy,
-													 PlayStrategyParametersFactory.FromString( configuration.PlayExhaustedParameters ));
-				PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.StrategyDescription;
-
-				mPlayQueue.SetPlayStrategy( configuration.PlayStrategy,
-													 PlayStrategyParametersFactory.FromString( configuration.PlayStrategyParameters ));
-                PlayStrategyDescription = mPlayQueue.PlayStrategy.StrategyDescription;
-			}
+            PlayStrategyDescription = mPlayQueue.PlayStrategy.StrategyDescription;
+			PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.StrategyDescription;
 
             mEventAggregator.Subscribe( this );
         }
@@ -76,113 +42,34 @@ namespace Noise.UI.ViewModels {
             set {  Set( () => PlayExhaustedDescription, value ); }
         }
 
-        public BindableCollection<ExhaustedStrategyItem> ExhaustedStrategyList {
-			get{ return( mExhaustedStrategies ); }
-		}
-
-		public ExhaustedStrategyItem ExhaustedStrategy {
-			get {
-				var strategy = mPlayQueue.PlayExhaustedStrategy;
-
-				return( mExhaustedStrategies.FirstOrDefault( item => item.Strategy == strategy.StrategyId ));
-			}
-			set {
-                var strategy = mPlayExhaustedFactory.ProvideExhaustedStrategy( value.Strategy );
-
-                if( strategy != null ) {
-    				IPlayStrategyParameters	parameters;
-
-                    if( PromptForExhaustedStrategyItem( strategy, out parameters )) {
-                        mPlayQueue.SetPlayExhaustedStrategy( strategy.StrategyId, parameters );
+		private void SetPlayStrategy( ePlayStrategy strategy, IPlayStrategyParameters parameters ) {
+            mPlayQueue.SetPlayStrategy( strategy, parameters );
         
-                        PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.StrategyDescription;
+            PlayStrategyDescription = mPlayQueue.PlayStrategy.StrategyDescription;
 
-                        var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+            var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
-					    if( configuration != null ) {
-						    configuration.PlayExhaustedStrategy = strategy.StrategyId;
-						    configuration.PlayExhaustedParameters = PlayStrategyParametersFactory.ToString( parameters );
+			if( configuration != null ) {
+				configuration.PlayStrategy = strategy;
+				configuration.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( parameters );
 
-						    NoiseSystemConfiguration.Current.Save( configuration );
-					    }
-                    }
-                }
+				NoiseSystemConfiguration.Current.Save( configuration );
 			}
 		}
 
-		private bool PromptForExhaustedStrategyItem( IPlayExhaustedStrategy exhaustedStrategy, out IPlayStrategyParameters parameters ) {
-			var retValue = false;
-			var strategy = exhaustedStrategy.StrategyId;
+		private void SetPlayExhaustedStrategy( ePlayExhaustedStrategy strategy, IPlayStrategyParameters parameters ) {
+            mPlayQueue.SetPlayExhaustedStrategy( strategy, parameters );
+        
+            PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.StrategyDescription;
 
-			parameters = null;
+            var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 
-			if(( strategy == ePlayExhaustedStrategy.PlayStream ) ||
-			   ( strategy == ePlayExhaustedStrategy.PlayArtist ) ||
-			   ( strategy == ePlayExhaustedStrategy.PlayCategory ) ||
-			   ( strategy == ePlayExhaustedStrategy.PlayList ) ||
-			   ( strategy == ePlayExhaustedStrategy.PlayArtistGenre ) ||
-			   ( strategy == ePlayExhaustedStrategy.PlayGenre )) {
-				if( strategy == ePlayExhaustedStrategy.PlayList ) {
-					var dialogModel = new SelectPlayListDialogModel( mPlayListProvider );
+			if( configuration != null ) {
+				configuration.PlayExhaustedStrategy = strategy;
+				configuration.PlayExhaustedParameters = PlayStrategyParametersFactory.ToString( parameters );
 
-					if( mDialogService.ShowDialog( DialogNames.SelectPlayList, dialogModel ) == true ) {
-						if( dialogModel.Parameters != null ) {
-							parameters = dialogModel.Parameters;
-							retValue = true;
-						}
-					}
-				}
-
-				if( strategy == ePlayExhaustedStrategy.PlayStream ) {
-					var	dialogModel = new SelectStreamDialogModel( mStreamProvider );
-
-					if( mDialogService.ShowDialog( DialogNames.SelectStream, dialogModel ) == true ) {
-						if( dialogModel.Parameters != null ) {
-							parameters = dialogModel.Parameters;
-							retValue = true;
-						}
-					}
-				}
-
-				if( strategy == ePlayExhaustedStrategy.PlayArtist ) {
-					var dialogModel = new SelectArtistDialogModel( mArtistProvider );
-
-					if( mDialogService.ShowDialog( DialogNames.SelectArtist, dialogModel ) == true ) {
-						if( dialogModel.Parameters != null ) {
-							parameters = dialogModel.Parameters;
-							retValue = true;
-						}
-					}
-				}
-
-				if( strategy == ePlayExhaustedStrategy.PlayCategory ) {
-					var dialogModel = new SelectCategoryDialogModel( mTagProvider );
-
-					if( mDialogService.ShowDialog( DialogNames.SelectCategory, dialogModel ) == true ) {
-						if( dialogModel.Parameters != null ) {
-							parameters = dialogModel.Parameters;
-							retValue = true;
-						}
-					}
-				}
-
-				if(( strategy == ePlayExhaustedStrategy.PlayGenre ) ||
-				   ( strategy == ePlayExhaustedStrategy.PlayArtistGenre )) {
-					var dialogModel = new SelectGenreDialogModel( mGenreProvider );
-
-					if( mDialogService.ShowDialog( DialogNames.SelectGenre, dialogModel ) == true ) {
-						if( dialogModel.Parameters != null ) {
-							parameters = dialogModel.Parameters;
-							retValue = true;
-						}
-					}
-				}
+				NoiseSystemConfiguration.Current.Save( configuration );
 			}
-			else {
-				retValue = true;
-			}
-
-			return( retValue );
 		}
 
         public string PlayStrategyDescription {
@@ -190,59 +77,20 @@ namespace Noise.UI.ViewModels {
             set {  Set( () => PlayStrategyDescription, value ); }
         }
 
-		public BindableCollection<PlayStrategyItem> PlayStrategyList {
-			get{ return( mPlayStrategies ); }
-		}
+		public void Execute_ConfigureStrategy() {
+			mConfigurationDialog.PlayStrategy = mPlayQueue.PlayStrategy.StrategyId;
+			mConfigurationDialog.PlayStrategyParameter = mPlayQueue.PlayStrategy.Parameters;
+			mConfigurationDialog.ExhaustedStrategy = mPlayQueue.PlayExhaustedStrategy.StrategyId;
+			mConfigurationDialog.ExhaustedStrategyParameter = mPlayQueue.PlayExhaustedStrategy.Parameters;
 
-		public PlayStrategyItem PlayStrategy {
-			get {
-			    var strategy = mPlayQueue.PlayStrategy;
+			if( mDialogService.ShowDialog( DialogNames.PlayStrategyConfiguration, mConfigurationDialog ) == true ) {
+				if( mConfigurationDialog.IsConfigurationValid ) {
+					SetPlayStrategy( mConfigurationDialog.PlayStrategy, mConfigurationDialog.PlayStrategyParameter );
+					SetPlayExhaustedStrategy( mConfigurationDialog.ExhaustedStrategy, mConfigurationDialog.ExhaustedStrategyParameter );
 
-                return( mPlayStrategies.FirstOrDefault( item => item.StrategyId == strategy.StrategyId ));
-			}
-			set {
-                var strategy = mPlayStrategyFactory.ProvidePlayStrategy( value.StrategyId );
-
-                if( strategy != null ) {
-    				IPlayStrategyParameters	parameters;
-
-                    if( PromptForPlayStrategyItem( strategy, out parameters )) {
-                        mPlayQueue.SetPlayStrategy( strategy.StrategyId, parameters );
-        
-                        PlayStrategyDescription = mPlayQueue.PlayStrategy.StrategyDescription;
-
-                        var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
-					    if( configuration != null ) {
-						    configuration.PlayStrategy = strategy.StrategyId;
-						    configuration.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( parameters );
-
-						    NoiseSystemConfiguration.Current.Save( configuration );
-					    }
-                    }
-                }
-			}
-		}
-
-		private bool PromptForPlayStrategyItem( IPlayStrategy strategy, out IPlayStrategyParameters parameters ) {
-			var retValue = false;
-			parameters = null;
-
-			if( strategy.RequiresParameters ) {
-				var dialogModel = new FeaturedArtistsDialogModel( mArtistProvider );
-
-				if( mDialogService.ShowDialog( DialogNames.FeaturedArtistsSelect, dialogModel ) == true ) {
-					if( dialogModel.Parameters != null ) {
-						parameters = dialogModel.Parameters;
-						retValue = true;
-					}
+					RaiseCanExecuteChangedEvent( "CanExecute_StartStrategy" );
 				}
-			}
-			else {
-				retValue = true;
-			}
-
-			return( retValue );
+			} 
 		}
     }
 }
