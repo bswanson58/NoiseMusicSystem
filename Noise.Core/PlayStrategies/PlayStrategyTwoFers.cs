@@ -5,47 +5,22 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
-	internal class PlayStrategyTwoFers : IPlayStrategy {
+	internal class PlayStrategyTwoFers : PlayStrategyBase {
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
-        private IPlayQueue                  mPlayQueue;
 
-		public PlayStrategyTwoFers( IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+		public PlayStrategyTwoFers( IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
+			base( ePlayStrategy.TwoFers, "Two-Fers", "Plays a randomly chosen second track from the same artist for each track played." ) {
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 		}
 
-	    public ePlayStrategy StrategyId {
-            get {  return( ePlayStrategy.TwoFers ); }
-	    }
-	    public string StrategyName {
-            get {  return( "Two-Fers" ); }
+	    protected override string FormatDescription() {
+            return( "with two-fers from each artist" );
 	    }
 
-	    public string StrategyDescription {
-            get {  return( "with two-fers from each artist" ); }
-	    }
-
-	    public bool RequiresParameters {
-            get {  return( false ); }
-	    }
-
-		public string ParameterName {
-			get {  return( string.Empty ); }
-		}
-
-		public IPlayStrategyParameters Parameters {
-			get {  return( null ); }
-		}
-
-	    public bool Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
-            mPlayQueue = queueMgr;
-
-            return( true );
-	    }
-
-		public PlayQueueTrack NextTrack() {
-            var queue = new List<PlayQueueTrack>( mPlayQueue.PlayList );
+		public override PlayQueueTrack NextTrack() {
+            var queue = new List<PlayQueueTrack>( PlayQueueMgr.PlayList );
 			var retValue = queue.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed ));
 
 			if(( retValue != null ) &&
@@ -83,13 +58,13 @@ namespace Noise.Core.PlayStrategies {
 								var track = trackList.List.Skip( next ).FirstOrDefault();
 
 								while(( track != null ) &&
-									  ( mPlayQueue.IsTrackQueued( track ))) {
+									  ( PlayQueueMgr.IsTrackQueued( track ))) {
 									next = r.Next( trackList.List.Count() - 1 );
 									track = trackList.List.Skip( next ).FirstOrDefault();
 								}
 
 								if( track != null ) {
-									mPlayQueue.StrategyAdd( track, retValue );
+									PlayQueueMgr.StrategyAdd( track, retValue );
 								}
 							}
 						}

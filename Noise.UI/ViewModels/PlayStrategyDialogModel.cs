@@ -148,6 +148,11 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public string PlayStrategyDescription {
+			get {  return( Get( () => PlayStrategyDescription )); }
+			set {  Set( () => PlayStrategyDescription, value ); }
+		}
+
 		public BindableCollection<NameIdPair> PlayParameterList {
 			get {  return( mPlayParameters ); }
 		}
@@ -221,6 +226,7 @@ namespace Noise.UI.ViewModels {
 		private void SetupPlayParameters( IPlayStrategy strategy, BindableCollection<NameIdPair> collection ) {
 			PlayParameterRequired = strategy.RequiresParameters;
 			PlayParameterName = strategy.ParameterName;
+			PlayStrategyDescription = strategy.StrategyDescription;
 
 			if( strategy.RequiresParameters ) {
 				switch( strategy.StrategyId ) {

@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              Width="750"
-             Height="150"
+             Height="160"
 			 Tag="Play Strategy Configuration"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
@@ -41,7 +41,11 @@
 			</Grid>
 		</StackPanel>
 
-		<TextBlock Margin="0,11,0,5" Style="{StaticResource ControlTitleStyle}"
+		<TextBlock Margin="125,3,0,0" Style="{StaticResource ControlTitleStyle}" Text="{Binding PlayStrategyDescription}"/>
+		
+		<Rectangle Margin="3,7" Height="1" StrokeThickness="0" Fill="LightGray" />
+
+		<TextBlock Margin="0,0,0,5" Style="{StaticResource ControlTitleStyle}"
 				   Text="The exhausted strategy determines how tracks are selected for play when the selections you have added to the queue are finished."/>
 
 		<StackPanel Orientation="Horizontal">

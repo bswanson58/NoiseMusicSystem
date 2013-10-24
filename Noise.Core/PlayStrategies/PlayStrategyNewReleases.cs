@@ -5,14 +5,14 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
-	public class PlayStrategyNewReleases : IPlayStrategy {
+	public class PlayStrategyNewReleases : PlayStrategyBase {
 		private readonly ITrackProvider		mTrackProvider;
 		private readonly List<DbTrack>		mTracks;
-        private IPlayQueue                  mPlayQueue;
 		private int							mNextFeaturedPlay;
 		private readonly Random				mRandom;
  
-		public PlayStrategyNewReleases( ITrackProvider trackProvider ) {
+		public PlayStrategyNewReleases( ITrackProvider trackProvider ) :
+			base( ePlayStrategy.NewReleases, "New Releases", "Occasionally adds a random track from albums that were recently added to the library." ) {
 			mTrackProvider = trackProvider;
 
 			mTracks = new List<DbTrack>();
@@ -21,37 +21,12 @@ namespace Noise.Core.PlayStrategies {
 			mNextFeaturedPlay = NextPlayInterval();
 		}
 
-	    public ePlayStrategy StrategyId {
-            get {  return( ePlayStrategy.NewReleases ); }
-	    }
-	    public string StrategyName {
-            get {  return( "New Releases" ); }
+	    protected override string FormatDescription() {
+            return( "with occasional new library tracks" );
 	    }
 
-	    public string StrategyDescription {
-            get {  return( "with occasional new library tracks" ); }
-	    }
-
-	    public bool RequiresParameters {
-            get {  return( false ); }
-	    }
-
-		public string ParameterName {
-			get {  return( string.Empty ); }
-		}
-
-		public IPlayStrategyParameters Parameters {
-			get {  return( null ); }
-		}
-
-	    public bool Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
-            mPlayQueue = queueMgr;
-
-            return( true );
-	    }
-
-		public PlayQueueTrack NextTrack() {
-			var retValue = mPlayQueue.PlayList.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed ));
+		public override PlayQueueTrack NextTrack() {
+			var retValue = PlayQueueMgr.PlayList.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed ));
 
 			mNextFeaturedPlay--;
 
@@ -65,7 +40,7 @@ namespace Noise.Core.PlayStrategies {
 				if( mTracks.Any()) {
 					var trackIndex = mRandom.Next( mTracks.Count - 1 );
 
-					mPlayQueue.StrategyAdd( mTracks[trackIndex], retValue );
+					PlayQueueMgr.StrategyAdd( mTracks[trackIndex], retValue );
 				}
 			}
 

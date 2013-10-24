@@ -20,7 +20,7 @@ namespace Noise.UI.ViewModels {
             mDialogService = dialogService;
 			mConfigurationDialog = configurationDialog;
 
-            PlayStrategyDescription = mPlayQueue.PlayStrategy.StrategyDescription;
+            PlayStrategyDescription = mPlayQueue.PlayStrategy.ConfiguredDescription;
 			PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.StrategyDescription;
 
             mEventAggregator.Subscribe( this );
@@ -45,7 +45,7 @@ namespace Noise.UI.ViewModels {
 		private void SetPlayStrategy( ePlayStrategy strategy, IPlayStrategyParameters parameters ) {
             mPlayQueue.SetPlayStrategy( strategy, parameters );
         
-            PlayStrategyDescription = mPlayQueue.PlayStrategy.StrategyDescription;
+            PlayStrategyDescription = mPlayQueue.PlayStrategy.ConfiguredDescription;
 
             var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 

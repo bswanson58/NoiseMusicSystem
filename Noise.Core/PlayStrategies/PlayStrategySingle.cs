@@ -3,40 +3,17 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
-	internal class PlayStrategySingle : IPlayStrategy {
-        private IPlayQueue  mPlayQueue;
-
-	    public ePlayStrategy StrategyId {
-            get {  return( ePlayStrategy.Next ); }
-	    }
-	    public string StrategyName {
-            get {  return( "Normal" ); }
-	    }
-
-	    public string StrategyDescription {
-            get {  return( "in sequential order" ); }
-	    }
-
-	    public bool RequiresParameters {
-            get {  return( false ); }
-	    }
-
-		public string ParameterName {
-			get {  return( string.Empty ); }
+	internal class PlayStrategySingle : PlayStrategyBase {
+		public PlayStrategySingle() :
+			base( ePlayStrategy.Next, "Normal", "Plays tracks from the play queue in sequential order." ) {
 		}
 
-		public IPlayStrategyParameters Parameters {
-			get {  return( null ); }
-		}
-
-	    public bool Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
-            mPlayQueue = queueMgr;
-
-            return( true );
+	    protected override string FormatDescription() {
+            return( "in sequential order" );
 	    }
 
-	    public PlayQueueTrack NextTrack() {
-			return( mPlayQueue.PlayList.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed )));
+	    public override PlayQueueTrack NextTrack() {
+			return( PlayQueueMgr.PlayList.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed )));
 	    }
 	}
 }

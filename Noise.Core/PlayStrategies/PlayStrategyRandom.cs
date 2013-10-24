@@ -4,42 +4,19 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
-	internal class PlayStrategyRandom : IPlayStrategy {
-        private IPlayQueue  mPlayQueue;
-
-	    public ePlayStrategy StrategyId {
-            get {  return( ePlayStrategy.Random ); }
-	    }
-	    public string StrategyName {
-            get {  return( "Random" ); }
-	    }
-
-	    public string StrategyDescription {
-            get {  return( "in random order" ); }
-	    }
-
-	    public bool RequiresParameters {
-            get {  return( false ); }
-	    }
-
-		public string ParameterName {
-			get {  return( string.Empty ); }
+	internal class PlayStrategyRandom : PlayStrategyBase {
+		public PlayStrategyRandom() :
+			base( ePlayStrategy.Random, "Random", "Plays selected tracks from the queue in random order." ) {
 		}
 
-		public IPlayStrategyParameters Parameters {
-			get {  return( null ); }
-		}
-
-	    public bool Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
-            mPlayQueue = queueMgr;
-
-            return( true );
+	    protected override string FormatDescription() {
+            return( "in random order" );
 	    }
 
-		public PlayQueueTrack NextTrack() {
+		public override PlayQueueTrack NextTrack() {
 			PlayQueueTrack	retValue = null;
 
-			var eligibleTracks = ( from PlayQueueTrack track in mPlayQueue.PlayList where !track.HasPlayed && !track.IsPlaying select track ).ToList();
+			var eligibleTracks = ( from PlayQueueTrack track in PlayQueueMgr.PlayList where !track.HasPlayed && !track.IsPlaying select track ).ToList();
 
 			if( eligibleTracks.Any()) {
 				var r = new Random( DateTime.Now.Millisecond );

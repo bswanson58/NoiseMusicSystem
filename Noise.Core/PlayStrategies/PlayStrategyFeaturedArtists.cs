@@ -6,20 +6,19 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
-	public class PlayStrategyFeaturedArtists : IPlayStrategy {
+	public class PlayStrategyFeaturedArtists : PlayStrategyBase {
         private readonly IArtistProvider                mArtistProvider;
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly ITrackProvider					mTrackProvider;
 		private readonly List<long>						mArtistList;
         private readonly List<string>                   mArtistNameList; 
 		private readonly Dictionary<long, List<long>>	mTracks;
-        private IPlayQueue                              mPlayQueue;
-		private IPlayStrategyParameters					mParameters;
 		private long									mLastArtistPlayed;
 		private int										mNextFeaturedPlay;
 		private readonly Random							mRandom;
  
-		public PlayStrategyFeaturedArtists( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+		public PlayStrategyFeaturedArtists( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
+			base( ePlayStrategy.FeaturedArtists, "Featured Artists...", "Occasional adds a random track from the selected artist.", "Artist" ) {
             mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -32,40 +31,16 @@ namespace Noise.Core.PlayStrategies {
 			mLastArtistPlayed = Constants.cDatabaseNullOid;
 		}
 
-	    public ePlayStrategy StrategyId {
-            get {  return( ePlayStrategy.FeaturedArtists ); }
-	    }
-	    public string StrategyName {
-            get {  return( "Featured Artist..." ); }
+	    protected override string FormatDescription() {
+            return( string.Format( "with occasional tracks from {0}", string.Join( ", ", mArtistNameList )));
 	    }
 
-	    public string StrategyDescription {
-            get { return( string.Format( "with occasional tracks from {0}", string.Join( ", ", mArtistNameList ))); }
-	    }
-
-		public IPlayStrategyParameters Parameters {
-			get { return( mParameters ); }
-		}
-
-	    public bool RequiresParameters {
-            get {  return( true ); }
-	    }
-
-		public string ParameterName {
-			get {  return( "Artist" ); }
-		}
-
-	    public bool Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {
-            mPlayQueue = queueMgr;
-			mParameters = parameters;
-
+		protected override void ProcessParameters( IPlayStrategyParameters parameters ) {
 			SyncArtistList( parameters );
+		}
 
-            return( true );
-	    }
-
-		public PlayQueueTrack NextTrack() {
-			var retValue = mPlayQueue.PlayList.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed ));
+		public override PlayQueueTrack NextTrack() {
+			var retValue = PlayQueueMgr.PlayList.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed ));
 
 			mNextFeaturedPlay--;
 
@@ -80,7 +55,7 @@ namespace Noise.Core.PlayStrategies {
 					var track = mTrackProvider.GetTrack( tracks[trackIndex] );
 
 					if( track != null ) {
-						mPlayQueue.StrategyAdd( track, retValue );
+						PlayQueueMgr.StrategyAdd( track, retValue );
 					}
 				}
 			}

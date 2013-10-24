@@ -12,7 +12,8 @@ namespace Noise.Infrastructure.Interfaces {
     public interface IPlayStrategy {
         ePlayStrategy			StrategyId { get; }
         string					StrategyName { get; }
-        string					StrategyDescription { get; }
+		string					StrategyDescription { get; }
+        string					ConfiguredDescription { get; }
         bool					RequiresParameters { get; }
 		string					ParameterName { get; }
 		IPlayStrategyParameters Parameters { get; }
