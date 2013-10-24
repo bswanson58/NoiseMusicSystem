@@ -5,7 +5,8 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.PlayStrategies {
 	public abstract class PlayExhaustedStrategyBase : IPlayExhaustedStrategy {
 		private		readonly ePlayExhaustedStrategy	mStrategy;
-		private		readonly string					mDisplayName;
+		private		readonly string					mStrategyName;
+		private		readonly string					mParameterName;
 		private		readonly bool					mParametersRequired;
 		protected	IPlayQueue						mQueueMgr;
 		protected	IPlayStrategyParameters			mParameters;
@@ -13,18 +14,24 @@ namespace Noise.Core.PlayStrategies {
 		protected abstract DbTrack SelectATrack();
 		protected abstract string FormatDescription();
 
-		protected PlayExhaustedStrategyBase( ePlayExhaustedStrategy strategy, string displayName, bool parametersRequired ) {
+		protected PlayExhaustedStrategyBase( ePlayExhaustedStrategy strategy, string strategyName, bool parametersRequired ) {
 			mStrategy = strategy;
-			mDisplayName = displayName;
+			mStrategyName = strategyName;
 			mParametersRequired = parametersRequired;
+			mParameterName = string.Empty;
+		}
+
+		protected PlayExhaustedStrategyBase( ePlayExhaustedStrategy strategy, string strategyName, bool parametersRequired, string parameterName ) :
+			this( strategy, strategyName, parametersRequired ) {
+			mParameterName = parameterName;			
 		}
 
 		public ePlayExhaustedStrategy StrategyId {
 			get{ return( mStrategy ); }
 		}
 
-		public string DisplayName {
-			get{ return( mDisplayName ); }
+		public string StrategyName {
+			get{ return( mStrategyName ); }
 		}
 
 		public string StrategyDescription {
@@ -33,6 +40,10 @@ namespace Noise.Core.PlayStrategies {
 
 		public bool	RequiresParameters {
 			get{ return( mParametersRequired ); }
+		}
+
+		public string ParameterName {
+			get {  return( mParameterName ); }
 		}
 
 		public IPlayStrategyParameters Parameters {

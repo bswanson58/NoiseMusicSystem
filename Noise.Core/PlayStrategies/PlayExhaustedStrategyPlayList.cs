@@ -8,7 +8,7 @@ namespace Noise.Core.PlayStrategies {
 		private	readonly	ITrackProvider		mTrackProvider;
 
 		public PlayExhaustedStrategyPlayList( IPlayListProvider playListProvider, ITrackProvider trackProvider ) :
-			base( ePlayExhaustedStrategy.PlayList, "Play Playlist...", true ) {
+			base( ePlayExhaustedStrategy.PlayList, "Play Playlist...", true, "Play List" ) {
 			mPlayListProvider = playListProvider;
 			mTrackProvider = trackProvider;
 		}

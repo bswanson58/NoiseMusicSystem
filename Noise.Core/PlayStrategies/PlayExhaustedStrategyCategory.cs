@@ -15,7 +15,7 @@ namespace Noise.Core.PlayStrategies {
 		private string					mCategoryName;
 
 		public PlayExhaustedStrategyCategory( IAlbumProvider albumProvider, ITrackProvider trackProvider, ITagProvider tagProvider ) :
-			base( ePlayExhaustedStrategy.PlayCategory, "Play Category...", true, albumProvider, trackProvider ) {
+			base( ePlayExhaustedStrategy.PlayCategory, "Play Category...", true, "Category", albumProvider, trackProvider ) {
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mTagProvider = tagProvider;

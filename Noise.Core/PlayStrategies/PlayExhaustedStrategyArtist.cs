@@ -12,7 +12,7 @@ namespace Noise.Core.PlayStrategies {
 		private string						mArtistName;
 
 		public PlayExhaustedStrategyArtist( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
-			base( ePlayExhaustedStrategy.PlayArtist, "Play Artist...", true, albumProvider, trackProvider ) {
+			base( ePlayExhaustedStrategy.PlayArtist, "Play Artist...", true, "Artist", albumProvider, trackProvider ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 

@@ -8,7 +8,7 @@ namespace Noise.Core.PlayStrategies {
 		private string		mStreamName;
 
 		public PlayExhaustedStrategyStream( IInternetStreamProvider streamProvider ) :
-			base( ePlayExhaustedStrategy.PlayStream, "Play Radio Station...", true ) {
+			base( ePlayExhaustedStrategy.PlayStream, "Play Radio Station...", true, "Stream" ) {
 			mStreamProvider = streamProvider;
 		}
 

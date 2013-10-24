@@ -15,9 +15,10 @@
 
 	public interface IPlayExhaustedStrategy {
 		ePlayExhaustedStrategy	StrategyId { get; }
-        string					DisplayName {  get; }
+        string					StrategyName {  get; }
         string					StrategyDescription {  get; }
         bool					RequiresParameters {  get; }
+		string					ParameterName { get; }
 		IPlayStrategyParameters Parameters {  get; }
 
         bool					Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters );
