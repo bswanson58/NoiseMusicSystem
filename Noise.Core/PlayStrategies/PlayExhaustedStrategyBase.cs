@@ -4,25 +4,28 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
 	public abstract class PlayExhaustedStrategyBase : IPlayExhaustedStrategy {
-		private		readonly ePlayExhaustedStrategy	mStrategy;
-		private		readonly string					mStrategyName;
-		private		readonly string					mParameterName;
-		private		readonly bool					mParametersRequired;
-		protected	IPlayQueue						mQueueMgr;
-		protected	IPlayStrategyParameters			mParameters;
+		private	readonly ePlayExhaustedStrategy	mStrategy;
+		private	readonly string					mStrategyName;
+		private	readonly string					mStrategyDescription;
+		private	readonly string					mParameterName;
+		private	readonly bool					mParametersRequired;
+		private	IPlayStrategyParameters			mParameters;
+		private	IPlayQueue						mQueueMgr;
 
 		protected abstract DbTrack SelectATrack();
 		protected abstract string FormatDescription();
 
-		protected PlayExhaustedStrategyBase( ePlayExhaustedStrategy strategy, string strategyName, bool parametersRequired ) {
+		protected PlayExhaustedStrategyBase( ePlayExhaustedStrategy strategy, string strategyName, string strategyDescription ) {
 			mStrategy = strategy;
 			mStrategyName = strategyName;
-			mParametersRequired = parametersRequired;
+			mStrategyDescription = strategyDescription;
+			mParametersRequired = false;
 			mParameterName = string.Empty;
 		}
 
-		protected PlayExhaustedStrategyBase( ePlayExhaustedStrategy strategy, string strategyName, bool parametersRequired, string parameterName ) :
-			this( strategy, strategyName, parametersRequired ) {
+		protected PlayExhaustedStrategyBase( ePlayExhaustedStrategy strategy, string strategyName, string strategyDeecription, string parameterName ) :
+			this( strategy, strategyName, strategyDeecription ) {
+			mParametersRequired = true;
 			mParameterName = parameterName;			
 		}
 
@@ -35,6 +38,10 @@ namespace Noise.Core.PlayStrategies {
 		}
 
 		public string StrategyDescription {
+			get {  return( mStrategyDescription ); }
+		}
+
+		public string ConfiguredDescription {
 			get {  return( FormatDescription()); }
 		}
 
@@ -48,6 +55,10 @@ namespace Noise.Core.PlayStrategies {
 
 		public IPlayStrategyParameters Parameters {
 			get { return( mParameters ); }
+		}
+
+		protected IPlayQueue PlayQueueMgr {
+			get {  return( mQueueMgr ); }
 		}
 
 		public bool Initialize( IPlayQueue queueMgr, IPlayStrategyParameters parameters ) {

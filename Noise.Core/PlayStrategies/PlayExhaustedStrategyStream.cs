@@ -8,7 +8,7 @@ namespace Noise.Core.PlayStrategies {
 		private string		mStreamName;
 
 		public PlayExhaustedStrategyStream( IInternetStreamProvider streamProvider ) :
-			base( ePlayExhaustedStrategy.PlayStream, "Play Radio Station...", true, "Stream" ) {
+			base( ePlayExhaustedStrategy.PlayStream, "Play Radio Station...", "Plays the selected stream.", "Stream" ) {
 			mStreamProvider = streamProvider;
 		}
 
@@ -21,8 +21,8 @@ namespace Noise.Core.PlayStrategies {
 		}
 
 		protected override void ProcessParameters( IPlayStrategyParameters parameters ) {
-			if( mParameters is PlayStrategyParameterDbId ) {
-				var dbParam = mParameters as PlayStrategyParameterDbId;
+			if( Parameters is PlayStrategyParameterDbId ) {
+				var dbParam = Parameters as PlayStrategyParameterDbId;
 				var stream = mStreamProvider.GetStream( dbParam.DbItemId );
 
 				if( stream != null ) {
@@ -32,14 +32,14 @@ namespace Noise.Core.PlayStrategies {
 		}
 
 		public override bool QueueTracks() {
-			Condition.Requires( mQueueMgr ).IsNotNull();
+			Condition.Requires( PlayQueueMgr ).IsNotNull();
 
 			var retValue = false;
 
-			if( mParameters is PlayStrategyParameterDbId ) {
-				var dbParam = mParameters as PlayStrategyParameterDbId;
+			if( Parameters is PlayStrategyParameterDbId ) {
+				var dbParam = Parameters as PlayStrategyParameterDbId;
 
-				foreach( var item in mQueueMgr.PlayList ) {
+				foreach( var item in PlayQueueMgr.PlayList ) {
 					if(( item.IsStream ) &&
 					   ( item.Stream != null ) &&
 					   ( item.Stream.DbId == dbParam.DbItemId )) {
@@ -52,7 +52,7 @@ namespace Noise.Core.PlayStrategies {
 				if( !retValue ) {
 					var stream = mStreamProvider.GetStream( dbParam.DbItemId );
 					if( stream != null ) {
-						mQueueMgr.Add( stream );
+						PlayQueueMgr.Add( stream );
 
 						retValue = true;
 					}

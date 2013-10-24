@@ -7,7 +7,7 @@ namespace Noise.Core.PlayStrategies {
 		private readonly	ITrackProvider	mTrackProvider;
 
 		public PlayExhaustedStrategyFavorites( ITrackProvider trackProvider ) :
-			base( ePlayExhaustedStrategy.PlayFavorites, "Play Favorites", false ) {
+			base( ePlayExhaustedStrategy.PlayFavorites, "Play Favorites", "Play tracks from your list of favorites." ) {
 			mTrackProvider = trackProvider;
 		}
 
@@ -21,7 +21,7 @@ namespace Noise.Core.PlayStrategies {
 			try {
 				using( var list = mTrackProvider.GetFavoriteTracks()) {
 					foreach( var track in list.List ) {
-						if(!mQueueMgr.IsTrackQueued( track )) {
+						if(!PlayQueueMgr.IsTrackQueued( track )) {
 							mTrackList.Add( track );
 						}
 					}

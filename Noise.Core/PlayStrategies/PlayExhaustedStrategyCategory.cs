@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using CuttingEdge.Conditions;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
 	internal class PlayExhaustedStrategyCategory : PlayExhaustedStrategyRandomBase {
 		private readonly IAlbumProvider	mAlbumProvider;
-		private readonly ITrackProvider	mTrackProvider;
 		private readonly ITagProvider	mTagProvider;
 		private	readonly List<long>		mAlbums;
 		private long					mCategoryId;
 		private string					mCategoryName;
 
 		public PlayExhaustedStrategyCategory( IAlbumProvider albumProvider, ITrackProvider trackProvider, ITagProvider tagProvider ) :
-			base( ePlayExhaustedStrategy.PlayCategory, "Play Category...", true, "Category", albumProvider, trackProvider ) {
+			base( ePlayExhaustedStrategy.PlayCategory, "Play Category...", "Play random tracks from albums tagged with the chosen category.", "Category", albumProvider, trackProvider ) {
 			mAlbumProvider = albumProvider;
-			mTrackProvider = trackProvider;
 			mTagProvider = tagProvider;
 
 			mAlbums = new List<long>();

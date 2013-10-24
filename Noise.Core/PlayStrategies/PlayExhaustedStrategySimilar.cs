@@ -28,7 +28,7 @@ namespace Noise.Core.PlayStrategies {
 
 		public PlayExhaustedStrategySimilar( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 											 IMetadataManager metadataManager ) :
-			base( ePlayExhaustedStrategy.PlaySimilar, "Play Similar", false ) {
+			base( ePlayExhaustedStrategy.PlaySimilar, "Play Similar", "Play tracks from artists that are similar to the artists of tracks in the queue." ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -43,7 +43,7 @@ namespace Noise.Core.PlayStrategies {
 			mTrackList.Clear();
 
 			try {
-				var artistList = mQueueMgr.PlayList.Select( item => item.Artist ).Distinct( new ArtistComparer());
+				var artistList = PlayQueueMgr.PlayList.Select( item => item.Artist ).Distinct( new ArtistComparer());
 
 				foreach( var artist in artistList ) {
 					var artistBio = mMetadataManager.GetArtistMetadata( artist.Name );
@@ -57,7 +57,7 @@ namespace Noise.Core.PlayStrategies {
 								foreach( var album in albumList.List ) {
 									using( var trackList = mTrackProvider.GetTrackList( album )) {
 										foreach( var track in trackList.List ) {
-											if(!mQueueMgr.IsTrackQueued( track )) {
+											if(!PlayQueueMgr.IsTrackQueued( track )) {
 												mTrackList.Add( track );
 											}
 										}

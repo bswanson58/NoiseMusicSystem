@@ -8,13 +8,13 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
 	internal abstract class PlayExhaustedListBase : PlayExhaustedStrategyBase {
-		protected	readonly List<DbTrack>			mTrackList;
-		private		long							mCurrentId;
+		protected	readonly List<DbTrack>		mTrackList;
+		private		long						mCurrentId;
 
 		protected abstract void FillTrackList( long itemId );
 
-		protected PlayExhaustedListBase( ePlayExhaustedStrategy strategy, string displayName, bool parametersRequired ) :
-			base( strategy, displayName, parametersRequired ) {
+		protected PlayExhaustedListBase( ePlayExhaustedStrategy strategy, string displayName, string strategyDescription ) :
+			base( strategy, displayName, strategyDescription ) {
 			mTrackList = new List<DbTrack>();
 		}
 
@@ -23,15 +23,15 @@ namespace Noise.Core.PlayStrategies {
 		}
 
 		public override bool QueueTracks() {
-			Condition.Requires( mQueueMgr ).IsNotNull();
+			Condition.Requires( PlayQueueMgr ).IsNotNull();
 
 			var itemId = Constants.cDatabaseNullOid;
 
-			if( mParameters != null ) {
-				Condition.Requires( mParameters ).IsOfType( typeof( PlayStrategyParameterDbId ));
+			if( Parameters != null ) {
+				Condition.Requires( Parameters ).IsOfType( typeof( PlayStrategyParameterDbId ));
 
-				if( mParameters is PlayStrategyParameterDbId ) {
-					var dbParams = mParameters as PlayStrategyParameterDbId;
+				if( Parameters is PlayStrategyParameterDbId ) {
+					var dbParams = Parameters as PlayStrategyParameterDbId;
 
 					itemId = dbParams.DbItemId;
 				}
@@ -46,7 +46,7 @@ namespace Noise.Core.PlayStrategies {
 				FillTrackList( itemId );
 			}
 
-			return( QueueTracks( 3 - mQueueMgr.UnplayedTrackCount ));
+			return( QueueTracks( 3 - PlayQueueMgr.UnplayedTrackCount ));
 		}
 
 		private bool QueueTracks( int count ) {
@@ -54,7 +54,7 @@ namespace Noise.Core.PlayStrategies {
 
 			for( int x = 0; x < count; x++ ) {
 				if( mTrackList.Count > 0 ) {
-					mQueueMgr.StrategyAdd( SelectTrack());
+					PlayQueueMgr.StrategyAdd( SelectTrack());
 
 					retValue = true;
 				}

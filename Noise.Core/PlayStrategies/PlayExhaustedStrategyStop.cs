@@ -4,7 +4,7 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.PlayStrategies {
 	internal class PlayExhaustedStrategyStop : PlayExhaustedStrategyBase {
 		public PlayExhaustedStrategyStop() :
-			base( ePlayExhaustedStrategy.Stop, "Stop Playing", false ) {
+			base( ePlayExhaustedStrategy.Stop, "Stop Playing", "Stops playing." ) {
 		}
 
 		protected override string FormatDescription() {

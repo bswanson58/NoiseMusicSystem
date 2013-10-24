@@ -5,7 +5,7 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.PlayStrategies {
 	internal class PlayExhaustedStrategyReplay : PlayExhaustedStrategyBase {
 		public PlayExhaustedStrategyReplay() :
-			base( ePlayExhaustedStrategy.Replay, "Replay", false ) {
+			base( ePlayExhaustedStrategy.Replay, "Replay", "Replay the tracks in the play queue." ) {
 		}
 
 		protected override string FormatDescription() {
@@ -17,12 +17,12 @@ namespace Noise.Core.PlayStrategies {
 		}
 
 		public override bool QueueTracks() {
-			Condition.Requires( mQueueMgr ).IsNotNull();
+			Condition.Requires( PlayQueueMgr ).IsNotNull();
 
 			var retValue = false;
 
-			if( mQueueMgr.UnplayedTrackCount == 0 ) {
-				foreach( var track in mQueueMgr.PlayList ) {
+			if( PlayQueueMgr.UnplayedTrackCount == 0 ) {
+				foreach( var track in PlayQueueMgr.PlayList ) {
 					if(!track.IsPlaying ) {
 						track.HasPlayed = false;
 

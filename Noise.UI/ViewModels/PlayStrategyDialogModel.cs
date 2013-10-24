@@ -196,6 +196,11 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public string ExhaustedStrategyDescription {
+			get {  return( Get( () => ExhaustedStrategyDescription )); }
+			set {  Set( () => ExhaustedStrategyDescription, value ); }
+		}
+
 		public BindableCollection<NameIdPair> ExhaustedParameterList {
 			get {  return( mExhaustedParameters ); }
 		}
@@ -240,6 +245,7 @@ namespace Noise.UI.ViewModels {
 		private void SetupExhaustedParameters( IPlayExhaustedStrategy strategy, BindableCollection<NameIdPair> collection ) {
 			ExhaustedParameterRequired = strategy.RequiresParameters;
 			ExhaustedParameterName = strategy.ParameterName;
+			ExhaustedStrategyDescription = strategy.StrategyDescription;
 
 			if( strategy.RequiresParameters ) {
 				switch( strategy.StrategyId ) {

@@ -12,7 +12,7 @@ namespace Noise.Core.PlayStrategies {
 		private string						mGenreName;
 
 		public PlayExhaustedStrategyArtistGenre( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IGenreProvider genreProvider ) :
-			base( ePlayExhaustedStrategy.PlayArtistGenre, "Play Genre...", true, "Genre", albumProvider, trackProvider ) {
+			base( ePlayExhaustedStrategy.PlayArtistGenre, "Play Genre...", "Play random tracks from artists in the chosen genre.", "Genre", albumProvider, trackProvider ) {
 			mArtistProvider = artistProvider;
 			mGenreProvider = genreProvider;
 

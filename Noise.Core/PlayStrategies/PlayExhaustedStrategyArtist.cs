@@ -12,7 +12,7 @@ namespace Noise.Core.PlayStrategies {
 		private string						mArtistName;
 
 		public PlayExhaustedStrategyArtist( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
-			base( ePlayExhaustedStrategy.PlayArtist, "Play Artist...", true, "Artist", albumProvider, trackProvider ) {
+			base( ePlayExhaustedStrategy.PlayArtist, "Play Artist...", "Play random tracks from the selected artist.", "Artist", albumProvider, trackProvider ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 
@@ -24,8 +24,8 @@ namespace Noise.Core.PlayStrategies {
 		}
 
 		protected override void ProcessParameters( IPlayStrategyParameters parameters ) {
-			if( mParameters is PlayStrategyParameterDbId ) {
-				var	dbParam = mParameters as PlayStrategyParameterDbId;
+			if( Parameters is PlayStrategyParameterDbId ) {
+				var	dbParam = Parameters as PlayStrategyParameterDbId;
 
 				if( mArtistId != dbParam.DbItemId ) {
 					mAlbums.Clear();

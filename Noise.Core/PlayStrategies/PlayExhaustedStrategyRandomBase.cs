@@ -9,18 +9,22 @@ namespace Noise.Core.PlayStrategies {
 		private readonly ITrackProvider		mTrackProvider;
 		private readonly Random				mRandom;
 
-		protected PlayExhaustedStrategyRandomBase( ePlayExhaustedStrategy strategy, string displayName, bool parametersRequired, string parameterName,
+		protected PlayExhaustedStrategyRandomBase( ePlayExhaustedStrategy strategy, string displayName, string strategyDescription, string parameterName,
 												   IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
-			base( strategy, displayName, parametersRequired, parameterName ) {
+			base( strategy, displayName, strategyDescription, parameterName ) {
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 
 			mRandom = new Random( DateTime.Now.Millisecond );
 		}
 
-		protected PlayExhaustedStrategyRandomBase( ePlayExhaustedStrategy strategy, string displayName, bool parametersRequired,
+		protected PlayExhaustedStrategyRandomBase( ePlayExhaustedStrategy strategy, string strategyName, string strategyDescription,
 												   IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
-			this( strategy, displayName, parametersRequired, string.Empty, albumProvider, trackProvider ) {
+			base( strategy, strategyName, strategyDescription ) {
+			mAlbumProvider = albumProvider;
+			mTrackProvider = trackProvider;
+
+			mRandom = new Random( DateTime.Now.Millisecond );
 		}
 
 		protected int NextRandom( int maxValue ) {

@@ -9,7 +9,7 @@ namespace Noise.Core.PlayStrategies {
 		private readonly List<DbArtist>		mArtists; 
 
 		public PlayExhaustedStrategySeldomPlayedArtists( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
-			base( ePlayExhaustedStrategy.SeldomPlayedArtists, "Seldom Played", false, albumProvider, trackProvider ) {
+			base( ePlayExhaustedStrategy.SeldomPlayedArtists, "Seldom Played", "Play tracks that have been infrequently played.", albumProvider, trackProvider ) {
 			mArtistProvider = artistProvider;
 
 			mArtists = new List<DbArtist>();

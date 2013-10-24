@@ -21,7 +21,7 @@ namespace Noise.UI.ViewModels {
 			mConfigurationDialog = configurationDialog;
 
             PlayStrategyDescription = mPlayQueue.PlayStrategy.ConfiguredDescription;
-			PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.StrategyDescription;
+			PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.ConfiguredDescription;
 
             mEventAggregator.Subscribe( this );
         }
@@ -60,7 +60,7 @@ namespace Noise.UI.ViewModels {
 		private void SetPlayExhaustedStrategy( ePlayExhaustedStrategy strategy, IPlayStrategyParameters parameters ) {
             mPlayQueue.SetPlayExhaustedStrategy( strategy, parameters );
         
-            PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.StrategyDescription;
+            PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.ConfiguredDescription;
 
             var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 

@@ -8,7 +8,7 @@ namespace Noise.Core.PlayStrategies {
 		private	readonly	ITrackProvider		mTrackProvider;
 
 		public PlayExhaustedStrategyPlayList( IPlayListProvider playListProvider, ITrackProvider trackProvider ) :
-			base( ePlayExhaustedStrategy.PlayList, "Play Playlist...", true, "Play List" ) {
+			base( ePlayExhaustedStrategy.PlayList, "Play Playlist...", "Play the tracks from the chosen play list.", "Play List" ) {
 			mPlayListProvider = playListProvider;
 			mTrackProvider = trackProvider;
 		}
@@ -22,12 +22,12 @@ namespace Noise.Core.PlayStrategies {
 		}
 
 		public override bool QueueTracks() {
-			Condition.Requires( mQueueMgr ).IsNotNull();
+			Condition.Requires( PlayQueueMgr ).IsNotNull();
 
 			var retValue = false;
 
-			if( mParameters is PlayStrategyParameterDbId ) {
-				var dbParam = mParameters as PlayStrategyParameterDbId;
+			if( Parameters is PlayStrategyParameterDbId ) {
+				var dbParam = Parameters as PlayStrategyParameterDbId;
 
 				var	playList = mPlayListProvider.GetPlayList( dbParam.DbItemId );
 
@@ -35,8 +35,8 @@ namespace Noise.Core.PlayStrategies {
 					var tracks = mTrackProvider.GetTrackListForPlayList( playList );
 
 					foreach( var track in tracks ) {
-						if(!mQueueMgr.IsTrackQueued( track )) {
-							mQueueMgr.Add( track );
+						if(!PlayQueueMgr.IsTrackQueued( track )) {
+							PlayQueueMgr.Add( track );
 
 							retValue = true;
 						}
