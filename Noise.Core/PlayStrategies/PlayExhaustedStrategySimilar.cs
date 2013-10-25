@@ -57,7 +57,8 @@ namespace Noise.Core.PlayStrategies {
 								foreach( var album in albumList.List ) {
 									using( var trackList = mTrackProvider.GetTrackList( album )) {
 										foreach( var track in trackList.List ) {
-											if(!PlayQueueMgr.IsTrackQueued( track )) {
+											if(( track.Rating >= 0 ) &&
+											   (!PlayQueueMgr.IsTrackQueued( track ))) {
 												mTrackList.Add( track );
 											}
 										}

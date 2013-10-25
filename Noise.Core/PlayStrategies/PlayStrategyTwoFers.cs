@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using Lpfm.LastFmScrobbler;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -48,19 +50,22 @@ namespace Noise.Core.PlayStrategies {
 
 				if( needA2Fer ) {
 					var r = new Random( DateTime.Now.Millisecond );
+
 					using( var albumList = mAlbumProvider.GetAlbumList( retValue.Artist )) {
 						var next = r.Next( albumList.List.Count() - 1 );
 						var album = albumList.List.Skip( next ).FirstOrDefault();
 
 						if( album != null ) {
 							using( var trackList = mTrackProvider.GetTrackList( album )) {
-								next = r.Next( trackList.List.Count() - 1 );
-								var track = trackList.List.Skip( next ).FirstOrDefault();
+								var goodList = ( from t in trackList.List where t.Rating >= 0 select t ).ToList();
+
+								next = r.Next( goodList.Count() - 1 );
+								var track = goodList.Skip( next ).FirstOrDefault();
 
 								while(( track != null ) &&
 									  ( PlayQueueMgr.IsTrackQueued( track ))) {
-									next = r.Next( trackList.List.Count() - 1 );
-									track = trackList.List.Skip( next ).FirstOrDefault();
+									next = r.Next( goodList.Count() - 1 );
+									track = goodList.Skip( next ).FirstOrDefault();
 								}
 
 								if( track != null ) {
