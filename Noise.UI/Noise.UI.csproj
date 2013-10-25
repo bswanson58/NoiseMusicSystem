@@ -235,6 +235,7 @@
     </Compile>
     <Compile Include="Controls\VuMeterBar.cs" />
     <Compile Include="Dto\ExhaustedStrategyItem.cs" />
+    <Compile Include="Dto\NameIdPair.cs" />
     <Compile Include="Dto\PlayStrategyItem.cs" />
     <Compile Include="Dto\UiAlbum.cs" />
     <Compile Include="Dto\UiAlbumExtra.cs" />
@@ -295,7 +296,6 @@
     <Compile Include="ViewModels\CloudConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\DatabaseConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
-    <Compile Include="ViewModels\FeaturedArtistsDialogModel.cs" />
     <Compile Include="ViewModels\LibraryAdditionsViewModel.cs" />
     <Compile Include="ViewModels\LibraryConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\LibrarySelectorViewModel.cs" />
@@ -303,14 +303,12 @@
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\PlayHistoryViewModel.cs" />
     <Compile Include="ViewModels\PlayListViewModel.cs" />
-    <Compile Include="ViewModels\PlayQueueViewModel.cs" />
+    <Compile Include="ViewModels\PlayQueueControlViewModel.cs" />
+    <Compile Include="ViewModels\PlayQueueListViewModel.cs" />
+    <Compile Include="ViewModels\PlayQueueStrategyViewModel.cs" />
+    <Compile Include="ViewModels\PlayStrategyDialogModel.cs" />
     <Compile Include="ViewModels\RecentArtistViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
-    <Compile Include="ViewModels\SelectArtistDialogModel.cs" />
-    <Compile Include="ViewModels\SelectCategoryDialogModel.cs" />
-    <Compile Include="ViewModels\SelectGenreDialogModel.cs" />
-    <Compile Include="ViewModels\SelectPlayListDialogModel.cs" />
-    <Compile Include="ViewModels\SelectStreamDialogModel.cs" />
     <Compile Include="ViewModels\SimilarSongViewModel.cs" />
     <Compile Include="ViewModels\SongLyricsViewModel.cs" />
     <Compile Include="ViewModels\StartupLibraryCreationViewModel.cs" />
@@ -377,9 +375,6 @@
     <Compile Include="Views\FavoritesView.xaml.cs">
       <DependentUpon>FavoritesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\FeaturedArtistsDialog.xaml.cs">
-      <DependentUpon>FeaturedArtistsDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\InternetStreamDialog.xaml.cs">
       <DependentUpon>InternetStreamDialog.xaml</DependentUpon>
     </Compile>
@@ -422,29 +417,26 @@
     <Compile Include="Views\PlayListView.xaml.cs">
       <DependentUpon>PlayListView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PlayQueueControlView.xaml.cs">
+      <DependentUpon>PlayQueueControlView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlayQueueListView.xaml.cs">
+      <DependentUpon>PlayQueueListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlayQueueStrategyView.xaml.cs">
+      <DependentUpon>PlayQueueStrategyView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PlayQueueView.xaml.cs">
       <DependentUpon>PlayQueueView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlayStrategyDialog.xaml.cs">
+      <DependentUpon>PlayStrategyDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RecentArtistView.xaml.cs">
       <DependentUpon>RecentArtistView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SearchView.xaml.cs">
       <DependentUpon>SearchView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SelectArtistDialog.xaml.cs">
-      <DependentUpon>SelectArtistDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SelectCategoryDialog.xaml.cs">
-      <DependentUpon>SelectCategoryDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SelectGenreDialog.xaml.cs">
-      <DependentUpon>SelectGenreDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SelectPlayListDialog.xaml.cs">
-      <DependentUpon>SelectPlayListDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SelectStreamDialog.xaml.cs">
-      <DependentUpon>SelectStreamDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ServerConfigurationDialog.xaml.cs">
       <DependentUpon>ServerConfigurationDialog.xaml</DependentUpon>
@@ -631,10 +623,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\FeaturedArtistsDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\InternetStreamDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -691,7 +679,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\PlayQueueControlView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlayQueueListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlayQueueStrategyView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PlayQueueView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlayStrategyDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -700,26 +704,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SearchView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SelectArtistDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SelectCategoryDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SelectGenreDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SelectPlayListDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SelectStreamDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

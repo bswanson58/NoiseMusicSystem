@@ -221,6 +221,10 @@
     <Compile Include="Interfaces\IInternetStreamProvider.cs" />
     <Compile Include="Interfaces\IMetadataManager.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
+    <Compile Include="Interfaces\IPlayExhaustedFactory.cs" />
+    <Compile Include="Interfaces\IPlayExhaustedStrategy.cs" />
+    <Compile Include="Interfaces\IPlayStrategy.cs" />
+    <Compile Include="Interfaces\IPlayStrategyFactory.cs" />
     <Compile Include="Interfaces\IPlayStrategyParameters.cs" />
     <Compile Include="Interfaces\IPlayHistory.cs" />
     <Compile Include="Interfaces\IPlayHistoryProvider.cs" />

@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="Noise.UI.Views.PlayQueueStrategyView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             DataContext="{Binding PlayQueueStrategyViewModel, Source={StaticResource ViewModelLocator}}"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="5,3,0,0" Orientation="Horizontal">
+			<TextBlock Style="{StaticResource ControlTitleStyle}" Text="Play tracks from the queue "/>
+			<TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding PlayStrategyDescription}"/>
+			<TextBlock Style="{StaticResource ControlTitleStyle}" Text="."/>
+        </StackPanel>
+
+		<StackPanel Grid.Row="1" Margin="5,1,0,7" Orientation="Horizontal">
+			<TextBlock Style="{StaticResource ControlTitleStyle}" Text="When the queue is empty "/>
+			<TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding PlayExhaustedDescription}"/>
+			<TextBlock Style="{StaticResource ControlTitleStyle}" Text="."/>
+		</StackPanel>
+		
+        <Grid Grid.Row="2" Margin="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+			<Button Grid.Column="0" Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding StartStrategy}"
+					Content="Start" ToolTip="Fill the play queue using the current strategy"/>
+			<Button Grid.Column="2" Height="25" Width="25" Margin="3,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding ConfigureStrategy}" 
+					Content="{StaticResource Path_Configure}" ToolTip="Configure the play strategies"/>
+        </Grid>
+    </Grid>
+</UserControl>
