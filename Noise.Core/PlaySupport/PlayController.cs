@@ -88,9 +88,13 @@ namespace Noise.Core.PlaySupport {
 			mEventAggregator.Subscribe( this );
 
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
 			if( configuration != null ) {
 				mDisplayTimeElapsed = configuration.DisplayPlayTimeElapsed;
+			}
+
+			var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+			if( audioCongfiguration != null ) {
+				mEnableReplayGain = audioCongfiguration.ReplayGainEnabled;
 			}
 
 			mPlayStateController = new StateMachine<ePlayState, eStateTriggers>( () => PlayState, newState => PlayState = newState );
