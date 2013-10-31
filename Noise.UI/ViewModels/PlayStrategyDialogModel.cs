@@ -16,7 +16,7 @@ namespace Noise.UI.ViewModels {
         private readonly IPlayStrategyFactory       mPlayStrategyFactory;
 		private readonly IPlayExhaustedFactory		mPlayExhaustedFactory;
 		private readonly List<DbArtist>				mArtistList;
-		private readonly List<DbGenre>				mGenreList;
+		private readonly List<DbGenre>				mArtistGenreList;
 		private readonly List<DbInternetStream>		mStreamList;
  		private readonly List<DbPlayList>			mPlayLists; 
 		private readonly List<DbTag>				mCategoryList; 
@@ -52,7 +52,7 @@ namespace Noise.UI.ViewModels {
 
 			mArtistList = new List<DbArtist>();
 			mCategoryList = new List<DbTag>();
-			mGenreList = new List<DbGenre>();
+			mArtistGenreList = new List<DbGenre>();
 			mPlayLists = new List<DbPlayList>();
 			mStreamList = new List<DbInternetStream>();
 		}
@@ -274,11 +274,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void FillCollectionWithArtists( BindableCollection<NameIdPair> collection ) {
-			if(!mArtistList.Any()) {
-				using( var artistList = mArtistProvider.GetArtistList()) {
-					mArtistList.AddRange( from artist in artistList.List orderby artist.Name select artist );
-				}
-			}
+			FillArtistList();
 
 			collection.IsNotifying = false;
 			collection.Clear();
@@ -289,6 +285,14 @@ namespace Noise.UI.ViewModels {
 
 			collection.IsNotifying = true;
 			collection.Refresh();
+		}
+
+		private void FillArtistList() {
+			if(!mArtistList.Any()) {
+				using( var artistList = mArtistProvider.GetArtistList()) {
+					mArtistList.AddRange( from artist in artistList.List orderby artist.Name select artist );
+				}
+			}
 		}
 
 		private void FillCollectionWithCategories( BindableCollection<NameIdPair> collection ) {
@@ -310,16 +314,20 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void FillCollectionWithGenres( BindableCollection<NameIdPair> collection ) {
-			if(!mGenreList.Any()) {
+			FillArtistList();
+
+			if(!mArtistGenreList.Any()) {
 				using( var genreList = mGenreProvider.GetGenreList()) {
-					mGenreList.AddRange( from genre in genreList.List orderby genre.Name ascending  select genre );
+					var allGenres = new List<DbGenre>( from genre in genreList.List orderby genre.Name ascending select genre );
+					
+					mArtistGenreList.AddRange( allGenres.Join( mArtistList, genre => genre.DbId, artist => artist.Genre, ( genre, artist ) => genre ).Distinct());
 				}
 			}
 
 			collection.IsNotifying = false;
 			collection.Clear();
 
-			foreach( var genre in mGenreList ) {
+			foreach( var genre in mArtistGenreList ) {
 				collection.Add( new NameIdPair( genre.DbId, genre.Name ));
 			}
 
