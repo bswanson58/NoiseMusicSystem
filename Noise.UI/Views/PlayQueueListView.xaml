@@ -152,7 +152,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="15" />
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="40" />
+                                    <ColumnDefinition Width="48" />
                                 </Grid.ColumnDefinitions>
 
                                 <Grid Grid.Column="0">
