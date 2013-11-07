@@ -22,5 +22,9 @@ namespace Noise.UI.Controls {
             get { return (ObservableCollection<UiEqBand>)GetValue( EqualizerBandsProperty ); }
             set { SetValue( EqualizerBandsProperty, value ); }
         }
+
+		private void OnPreampClick( object sender, RoutedEventArgs e ) {
+			_preampSlider.Value = 1.0;
+		}
 	}
 }
