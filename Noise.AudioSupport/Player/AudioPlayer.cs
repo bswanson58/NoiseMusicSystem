@@ -616,7 +616,7 @@ namespace Noise.AudioSupport.Player {
 																		System.Drawing.Color.FromArgb( peakColor.A, peakColor.R, peakColor.G, peakColor.B ),
 																		System.Drawing.Color.FromArgb( peakHoldColor.A, peakHoldColor.R, peakHoldColor.G, peakHoldColor.B ),
 																		System.Drawing.Color.FromArgb( 0, 0, 0, 0 ),
-																		barWidth, peakHoldHeight, lineGap, peakHoldTime, false, true, false );
+																		barWidth, peakHoldHeight, lineGap, peakHoldTime, false, false, false );
 
 					if( bitmap != null ) {
 						IntPtr	hBitmap = IntPtr.Zero;
