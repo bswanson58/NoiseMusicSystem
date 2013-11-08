@@ -274,7 +274,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <NoiseControls:LinkLabel Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}"
-                                                 Content="Speed:" ToolTip="Click to set default play speed">
+                                                 Content="Speed:" LinkLabelBehavior="HoverUnderline" ToolTip="Click to set default play speed">
                             <EventCommandTriggers:CommandSource.Trigger>
                                 <EventCommandTriggers:EventCommandTrigger Command="{Binding ResetPlaySpeed}" RoutedEvent="NoiseControls:LinkLabel.Click" />
                             </EventCommandTriggers:CommandSource.Trigger>
@@ -295,7 +295,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <NoiseControls:LinkLabel Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}"
-                                                 Content="Balance:" ToolTip="Click to set default balance">
+                                                 Content="Balance:" LinkLabelBehavior="HoverUnderline" ToolTip="Click to set default balance">
                             <EventCommandTriggers:CommandSource.Trigger>
                                 <EventCommandTriggers:EventCommandTrigger Command="{Binding ResetPanPosition}" RoutedEvent="NoiseControls:LinkLabel.Click" />
                             </EventCommandTriggers:CommandSource.Trigger>

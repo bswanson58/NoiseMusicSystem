@@ -12,7 +12,8 @@
 	<SolidColorBrush x:Key="BorderColor" Color="#FFD0D0D0" />
 	<SolidColorBrush x:Key="BorderTextColor" Color="#FFA0A0A0"/>
 	<SolidColorBrush x:Key="ControlBackgroundColor" Color="#FFE5E5E5"/>
-	
+	<SolidColorBrush x:Key="TextBrush" Color="#FF0000A0"/>
+
 	<Style x:Key="SectionBorderStyle" TargetType="GroupBox">
 		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
@@ -48,27 +49,27 @@
 	<Style x:Key="ExplorerHeaderStyle" TargetType="TextBlock">
 		<Setter Property="FontFamily" Value="Segoe UI Semibold"/>
 		<Setter Property="FontSize" Value="18"/>
-		<Setter Property="Foreground" Value="#FF0000A0"/>
+		<Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
 	</Style>
 	<Style x:Key="ExplorerTitleStyle" TargetType="TextBlock">
 		<Setter Property="FontFamily" Value="Segoe UI"/>
 		<Setter Property="FontSize" Value="18"/>
-		<Setter Property="Foreground" Value="#FF0000A0"/>
+		<Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
 	</Style>
 	<Style x:Key="ExplorerSubtitleStyle" TargetType="TextBlock">
 		<Setter Property="FontFamily" Value="Segoe UI"/>
 		<Setter Property="FontSize" Value="12"/>
-		<Setter Property="Foreground" Value="#FF0000A0"/>
+		<Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
 	</Style>
 
 	<Style x:Key="LargeTitleStyle" TargetType="TextBlock">
-		<Setter Property="Foreground" Value="#FF0000A0"/>
+		<Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
 		<Setter Property="FontFamily" Value="Arial"/>
 		<Setter Property="FontSize" Value="32"/>
 	</Style>
 
 	<Style x:Key="MediumTitleStyle" TargetType="TextBlock">
-		<Setter Property="Foreground" Value="#FF0000A0"/>
+		<Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
 		<Setter Property="FontFamily" Value="Arial"/>
 		<Setter Property="FontSize" Value="28"/>
 	</Style>
