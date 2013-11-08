@@ -134,16 +134,17 @@ namespace Noise.Metadata {
 
 		public void ImportMetadata( string importName ) {
 			try {
-				var exportPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
+				var importPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
 												Constants.CompanyName, 
 												Constants.LibraryConfigurationDirectory,
 												importName );
-				if( mDocumentStore is EmbeddableDocumentStore ) {
+				if(( mDocumentStore is EmbeddableDocumentStore ) &&
+				   ( File.Exists( importPath ))) {
 					var embeddedStore = mDocumentStore as EmbeddableDocumentStore;
-					var options = new SmugglerOptions { BackupPath = exportPath };
-					var exporter = new DataDumper( embeddedStore.DocumentDatabase, options );
+					var options = new SmugglerOptions { BackupPath = importPath };
+					var importer = new DataDumper( embeddedStore.DocumentDatabase, options );
 
-					exporter.ImportData( options );
+					importer.ImportData( options );
 				}
 			}
 			catch( Exception ex ) {
