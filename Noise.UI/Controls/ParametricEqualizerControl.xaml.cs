@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using Noise.UI.Dto;
+using Noise.UI.ViewModels;
 
 namespace Noise.UI.Controls {
 	/// <summary>
@@ -24,7 +25,27 @@ namespace Noise.UI.Controls {
         }
 
 		private void OnPreampClick( object sender, RoutedEventArgs e ) {
-			_preampSlider.Value = 1.0;
+			if( sender is FrameworkElement ) {
+				var  element = sender as FrameworkElement;
+
+				if( element.DataContext is PlayerViewModel ) {
+					var viewModel = element.DataContext as PlayerViewModel;
+
+					viewModel.PreampVolume = 1.0f;
+				}
+			}
+		}
+
+		private void OnEqBandClick( object sender, RoutedEventArgs e ) {
+			if( sender is FrameworkElement ) {
+				var  element = sender as FrameworkElement;
+
+				if( element.DataContext is UiEqBand ) {
+					var band = element.DataContext as UiEqBand;
+
+					band.Gain = 0.0f;
+				}
+			}
 		}
 	}
 }

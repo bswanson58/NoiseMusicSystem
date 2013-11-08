@@ -371,7 +371,13 @@ namespace Noise.UI.ViewModels {
 
 		public double PreampVolume {
 			get{ return( mAudioController.PreampVolume ); }
-			set{ mAudioController.PreampVolume = value; }
+			set {
+				if( Math.Abs( mAudioController.PreampVolume - value ) > 0.01D ) {
+					mAudioController.PreampVolume = value;
+
+					RaisePropertyChanged( () => PreampVolume );
+				}
+			}
 		}
 
 		public bool ReplayGainEnabled {
@@ -432,9 +438,7 @@ namespace Noise.UI.ViewModels {
 				AdjustEq( band );
 			}
 
-			mAudioController.PreampVolume = 1.0f;
-
-			RaisePropertyChanged( () => PreampVolume );
+			PreampVolume = 1.0f;
 		}
 
 		[DependsUpon( "CurrentEq" )]
