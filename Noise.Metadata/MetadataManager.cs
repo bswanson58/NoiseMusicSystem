@@ -6,9 +6,11 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Interfaces;
+using Raven.Abstractions.Smuggler;
 using Raven.Client;
 using Raven.Client.Embedded;
 using Raven.Database.Server;
+using Raven.Database.Smuggler;
 
 namespace Noise.Metadata {
 	public class MetadataManager : IRequireInitialization, IMetadataManager,
@@ -109,6 +111,45 @@ namespace Noise.Metadata {
 			mUpdaters.Apply( updater => updater.QueueArtistUpdate( forArtist ));
 
 			return( mArtistMetadataManager.GetArtistArtwork( forArtist ));
+		}
+
+		public void ExportMetadata( string exportName ) {
+			try {
+				var exportPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
+												Constants.CompanyName, 
+												Constants.LibraryConfigurationDirectory,
+												exportName );
+				if( mDocumentStore is EmbeddableDocumentStore ) {
+					var embeddedStore = mDocumentStore as EmbeddableDocumentStore;
+					var options = new SmugglerOptions { BackupPath = exportPath };
+					var exporter = new DataDumper( embeddedStore.DocumentDatabase, options );
+
+					exporter.ExportData( options );
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "MetadataManager:ExportMetadata", ex );
+			}
+		}
+
+		public void ImportMetadata( string importName ) {
+			try {
+				var importPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
+												Constants.CompanyName, 
+												Constants.LibraryConfigurationDirectory,
+												importName );
+				if(( mDocumentStore is EmbeddableDocumentStore ) &&
+				   ( File.Exists( importPath ))) {
+					var embeddedStore = mDocumentStore as EmbeddableDocumentStore;
+					var options = new SmugglerOptions { BackupPath = importPath };
+					var importer = new DataDumper( embeddedStore.DocumentDatabase, options );
+
+					importer.ImportData( options );
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "MetadataManager:ImportMetadata", ex );
+			}
 		}
 	}
 }

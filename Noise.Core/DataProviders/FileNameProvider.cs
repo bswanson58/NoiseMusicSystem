@@ -13,19 +13,25 @@ namespace Noise.Core.DataProviders {
 		private readonly IStorageFolderSupport	mStorageFolderSupport;
 		private long							mFolderId;
 		private readonly List<Regex>			mDatePatterns;
+		private readonly List<Regex>			mTrackNamePatterns; 
 		private List<StorageFile>				mFolderFiles;
 
 		public FileNameProvider( IStorageFileProvider fileProvider, IStorageFolderSupport storageFolderSupport ) {
 			mFileProvider = fileProvider;
 			mStorageFolderSupport = storageFolderSupport;
-			mDatePatterns = new List<Regex>();
 
-			mDatePatterns.Add( new Regex( "(?<month>0?[1-9]|1[012]) [- .] (?<day>0?[1-9]|[12][0-9]|3[01]) [- .] (?<year>[0-9]{2,})", RegexOptions.IgnorePatternWhitespace ));
-			mDatePatterns.Add( new Regex( "(?<year1>[0-9]{4})-(?<year>[0-9]{4})" ));
-			mDatePatterns.Add( new Regex( "(?<year1>[0-9]{2})-(?<year>[0-9]{2})" ));
-			mDatePatterns.Add( new Regex( "'(?<year1>[0-9]{2})-'(?<year>[0-9]{2})" ));
-			mDatePatterns.Add( new Regex( "(?<year>[0-9]{4})" ));
-			mDatePatterns.Add( new Regex( "'(?<year>[0-9]{2})" ));
+			mDatePatterns = new List<Regex>{
+				new Regex( "(?<month>0?[1-9]|1[012]) [- .] (?<day>0?[1-9]|[12][0-9]|3[01]) [- .] (?<year>[0-9]{2,})", RegexOptions.IgnorePatternWhitespace ),
+				new Regex( "(?<year1>[0-9]{4})-(?<year>[0-9]{4})" ),
+				new Regex( "(?<year1>[0-9]{2})-(?<year>[0-9]{2})" ),
+				new Regex( "'(?<year1>[0-9]{2})-'(?<year>[0-9]{2})" ),
+				new Regex( "(?<year>[0-9]{4})" ),
+				new Regex( "'(?<year>[0-9]{2})" )
+			};
+
+			mTrackNamePatterns = new List<Regex>{
+				new Regex( @"\(*(?<index>\d{1,4}) *[\).-]* *(?<trackName>.+)" ) // 01 - trackname / 01. trackname / 01 trackname / (01) trackname
+			};
 		}
 
 		public IMetaDataProvider GetProvider( StorageFile forFile ) {
@@ -33,7 +39,7 @@ namespace Noise.Core.DataProviders {
 				BuildFolderFiles( forFile.ParentFolder );
 			}
 
-			return( new NameProvider( forFile, mFolderFiles, mDatePatterns ));
+			return( new NameProvider( forFile, mFolderFiles, mTrackNamePatterns, mDatePatterns ));
 		}
 
 		private void BuildFolderFiles( long parentId ) {
@@ -57,10 +63,12 @@ namespace Noise.Core.DataProviders {
 		private readonly StorageFile		mFile;
 		private readonly IList<StorageFile>	mFolderFiles;
 		private readonly IEnumerable<Regex>	mDatePatterns;
+		private readonly IEnumerable<Regex>	mTrackNamePatterns; 
 
-		public NameProvider( StorageFile file, IList<StorageFile> folderFiles, IEnumerable<Regex> datePatterns ) {
+		public NameProvider( StorageFile file, IList<StorageFile> folderFiles, IEnumerable<Regex> trackNamePatterns, IEnumerable<Regex> datePatterns ) {
 			mFolderFiles = folderFiles;
 			mFile = file;
+			mTrackNamePatterns = trackNamePatterns;
 			mDatePatterns = datePatterns;
 		}
 
@@ -74,10 +82,22 @@ namespace Noise.Core.DataProviders {
 
 		public string TrackName {
 			get {
+				var retValue = string.Empty;
 				var	trackName = Path.GetFileNameWithoutExtension( mFile.Name );
-				var nameParts = trackName != null ? trackName.Split( new []{ '-' }) : new string[0];
 
-				return( nameParts.Count() > 1 ? nameParts[1].Trim() : trackName );
+				if( !string.IsNullOrWhiteSpace( trackName )) {
+					foreach( var regex in mTrackNamePatterns ) {
+						var match = regex.Match( trackName );
+
+						if( match.Success ) {
+							retValue = match.Groups["trackName"].Captures[0].Value;
+
+							break;
+						}
+					}
+				}
+
+				return( retValue );
 			}
 		}
 
