@@ -41,7 +41,7 @@ namespace Noise.AudioSupport.Player {
 		private	int										mParamEqFx;
 		private int										mReverbFx;
 		private float									mReverbLevel;
-		private int										mReverbDelay;
+		private float									mReverbDelay;
 		private	readonly Dictionary<long, int>			mEqChannels;
 		private	bool									mEqEnabled;
 		private readonly DOWNLOADPROC					mDownloadProc;
@@ -75,7 +75,9 @@ namespace Noise.AudioSupport.Player {
 			mDownloadProc = RecordProc;
 			mSpectumVisual = new Visuals();
 
-			mReverbDelay = 1200;
+			mReverbDelay = 0.1f;
+			mReverbLevel = 0.3f;
+
 			mTrackOverlapMs = 100;
 
 			try {
@@ -835,12 +837,12 @@ namespace Noise.AudioSupport.Player {
 			set {
 				if( value ) {
 					if( mReverbFx == 0 ) {
-						mReverbFx = Bass.BASS_ChannelSetFX( mMixerChannel, BASSFXType.BASS_FX_BFX_REVERB, 6 );
+						mReverbFx = Bass.BASS_ChannelSetFX( mMixerChannel, BASSFXType.BASS_FX_BFX_ECHO4, 6 );
 
 						if( mReverbFx != 0 ) {
-							var reverbParam = new BASS_BFX_REVERB { fLevel = mReverbLevel, lDelay = mReverbDelay };
+							var reverbParam = new BASS_BFX_ECHO4 { fFeedback = 0.6f, fDelay = mReverbDelay, fDryMix = 1.0f, fWetMix = mReverbLevel };
 
-							if(!Bass.BASS_FXGetParameters( mReverbFx, reverbParam )) {
+							if(!Bass.BASS_FXSetParameters( mReverbFx, reverbParam )) {
 								NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not set initial reverb levels: {0}", Bass.BASS_ErrorGetCode()));
 							}
 						}
@@ -867,10 +869,10 @@ namespace Noise.AudioSupport.Player {
 				var retValue = mReverbLevel;
 
 				if( mReverbFx != 0 ) {
-					var reverbParam = new BASS_BFX_REVERB();
+					var reverbParam = new BASS_BFX_ECHO4();
 
 					if( Bass.BASS_FXGetParameters( mReverbFx, reverbParam )) {
-						retValue = reverbParam.fLevel;
+						retValue = reverbParam.fWetMix;
 					}
 				}
 
@@ -878,13 +880,13 @@ namespace Noise.AudioSupport.Player {
 			}
 			set {
 				if(( mReverbFx != 0 ) &&
-				   ( value >= 0.0f ) &&
-				   ( value <= 1.0f )) {
-					var reverbParam = new BASS_BFX_REVERB();
+				   ( value >= -2.0f ) &&
+				   ( value <= 2.0f )) {
+					var reverbParam = new BASS_BFX_ECHO4();
 
 					if( Bass.BASS_FXGetParameters( mReverbFx, reverbParam )) {
-						reverbParam.fLevel = value;
-						reverbParam.lDelay = mReverbDelay;
+						reverbParam.fWetMix = value;
+						reverbParam.fDelay = mReverbDelay;
 
 						if( Bass.BASS_FXSetParameters( mReverbFx, reverbParam )) {
 							mReverbLevel = value;
@@ -897,15 +899,15 @@ namespace Noise.AudioSupport.Player {
 			}
 		}
 
-		public int ReverbDelay {
+		public float ReverbDelay {
 			get {
 				var	retValue = mReverbDelay;
 
 				if( mReverbFx != 0 ) {
-					var reverbParam = new BASS_BFX_REVERB();
+					var reverbParam = new BASS_BFX_ECHO4();
 
 					if( Bass.BASS_FXGetParameters( mReverbFx, reverbParam )) {
-						retValue = reverbParam.lDelay;
+						retValue = reverbParam.fDelay;
 					}
 				}
 
@@ -913,13 +915,13 @@ namespace Noise.AudioSupport.Player {
 			}
 			set {
 				if(( mReverbFx != 0 ) &&
-				   ( value >= 1200 ) &&
-				   ( value <= 5000 )) {
-					var reverbParam = new BASS_BFX_REVERB();
+				   ( value >= 0.1 ) &&
+				   ( value <= 1.0 )) {
+					var reverbParam = new BASS_BFX_ECHO4();
 
 					if( Bass.BASS_FXGetParameters( mReverbFx, reverbParam )) {
-						reverbParam.lDelay = value;
-						reverbParam.fLevel = mReverbLevel;
+						reverbParam.fDelay = value;
+						reverbParam.fWetMix = mReverbLevel;
 
 						if( Bass.BASS_FXSetParameters( mReverbFx, reverbParam )) {
 							mReverbDelay = value;

@@ -94,15 +94,15 @@ namespace Noise.Infrastructure.Configuration {
 			set { base[cEnableReverbProperty] = value; }
 		}
 
-		[ConfigurationPropertyAttribute( cReverbLevelProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "0.0" )]
+		[ConfigurationPropertyAttribute( cReverbLevelProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "0.3" )]
 		public float ReverbLevel {
 			get { return ((float)( base[cReverbLevelProperty])); }
 			set { base[cReverbLevelProperty] = value; }
 		}
 
-		[ConfigurationPropertyAttribute( cReverbDelayProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "1200" )]
-		public int ReverbDelay {
-			get { return ((int)( base[cReverbDelayProperty])); }
+		[ConfigurationPropertyAttribute( cReverbDelayProperty, IsRequired = false, IsKey = false, IsDefaultCollection = false, DefaultValue = "0.1" )]
+		public float ReverbDelay {
+			get { return ((float)( base[cReverbDelayProperty])); }
 			set { base[cReverbDelayProperty] = value; }
 		}
 
