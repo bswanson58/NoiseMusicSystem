@@ -503,7 +503,7 @@ namespace Noise.UI.ViewModels {
 			set{ mAudioController.ReverbLevel = value; }
 		}
 
-		public int ReverbDelay {
+		public float ReverbDelay {
 			get{ return( mAudioController.ReverbDelay ); }
 			set{ mAudioController.ReverbDelay = value; }
 		}

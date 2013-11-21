@@ -183,7 +183,7 @@ namespace Noise.Core.PlaySupport {
 			set { mAudioPlayer.ReverbLevel = value; }
 		}
 
-		public int ReverbDelay {
+		public float ReverbDelay {
 			get { return ( mAudioPlayer.ReverbDelay ); }
 			set { mAudioPlayer.ReverbDelay = value; }
 		}

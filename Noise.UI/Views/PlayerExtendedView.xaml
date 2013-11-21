@@ -51,95 +51,29 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <CheckBox Grid.Row="0"
-                              Grid.Column="0"
-                              Margin="5,0,0,0"
-                              Content="Stereo Enhance"
-                              IsChecked="{Binding Path=StereoEnhancerEnable}" />
-                    <Slider Grid.Row="1"
-                            Grid.Column="0"
-                            Margin="0,3,0,0"
-                            BorderThickness="0,0,0,5"
-                            IsEnabled="{Binding Path=StereoEnhancerEnable}"
-                            Maximum="1.0"
-                            Minimum="0.0"
-                            Orientation="Horizontal"
-                            SnapsToDevicePixels="True"
-                            Style="{StaticResource PlayerPositionSliderStyle}"
-                            Value="{Binding Path=StereoEnhancerWidth,
-                                            Mode=TwoWay}" />
-                    <Slider Grid.Row="2"
-                            Grid.Column="0"
-                            Margin="0,3,0,0"
-                            BorderThickness="0,0,0,5"
-                            IsEnabled="{Binding Path=StereoEnhancerEnable}"
-                            Maximum="1.0"
-                            Minimum="0.0"
-                            Orientation="Horizontal"
-                            SnapsToDevicePixels="True"
-                            Style="{StaticResource PlayerPositionSliderStyle}"
-                            Value="{Binding Path=StereoEnhancerWetDry,
-                                            Mode=TwoWay}" />
+                    <CheckBox Grid.Row="0" Grid.Column="0" Margin="5,0,0,0" Content="Stereo Enhance" IsChecked="{Binding Path=StereoEnhancerEnable}" />
+                    <Slider Grid.Row="1" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=StereoEnhancerEnable}"
+                            Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+							Minimum="0.0" Maximum="1.0" Value="{Binding Path=StereoEnhancerWidth, Mode=TwoWay}" ToolTip="Width" />
+                    <Slider Grid.Row="2" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=StereoEnhancerEnable}"
+                            Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+                            Minimum="0.0" Maximum="1.0" Value="{Binding Path=StereoEnhancerWetDry, Mode=TwoWay}" ToolTip="Wet - Dry"/>
 
-                    <CheckBox Grid.Row="3"
-                              Grid.Column="0"
-                              Margin="5,3,0,0"
-                              Content="Soft Saturation"
-                              IsChecked="{Binding Path=SoftSaturationEnable}" />
-                    <Slider Grid.Row="4"
-                            Grid.Column="0"
-                            Margin="0,3,0,0"
-                            BorderThickness="0,0,0,5"
-                            IsEnabled="{Binding Path=SoftSaturationEnable}"
-                            Maximum="1.0"
-                            Minimum="0.0"
-                            Orientation="Horizontal"
-                            SnapsToDevicePixels="True"
-                            Style="{StaticResource PlayerPositionSliderStyle}"
-                            Value="{Binding Path=SoftSaturationFactor,
-                                            Mode=TwoWay}" />
-                    <Slider Grid.Row="5"
-                            Grid.Column="0"
-                            Margin="0,3,0,0"
-                            BorderThickness="0,0,0,5"
-                            IsEnabled="{Binding Path=SoftSaturationEnable}"
-                            Maximum="1.0"
-                            Minimum="0.0"
-                            Orientation="Horizontal"
-                            SnapsToDevicePixels="True"
-                            Style="{StaticResource PlayerPositionSliderStyle}"
-                            Value="{Binding Path=SoftSaturationDepth,
-                                            Mode=TwoWay}" />
+                    <CheckBox Grid.Row="3" Grid.Column="0" Margin="5,3,0,0" Content="Soft Saturation" IsChecked="{Binding Path=SoftSaturationEnable}" />
+                    <Slider Grid.Row="4" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=SoftSaturationEnable}"
+                            Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+                            Minimum="0.0" Maximum="1.0" Value="{Binding Path=SoftSaturationFactor, Mode=TwoWay}" ToolTip="Saturation Factor" />
+                    <Slider Grid.Row="5" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=SoftSaturationEnable}"
+                            Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+                            Minimum="0.0" Maximum="1.0" Value="{Binding Path=SoftSaturationDepth, Mode=TwoWay}" ToolTip="Saturation Depth"/>
 
-                    <CheckBox Grid.Row="0"
-                              Grid.Column="1"
-                              Margin="10,0,0,0"
-                              Content="Reverb"
-                              IsChecked="{Binding Path=ReverbEnable}" />
-                    <Slider Grid.Row="1"
-                            Grid.Column="1"
-                            Margin="5,3,0,0"
-                            BorderThickness="0,0,0,5"
-                            IsEnabled="{Binding Path=ReverbEnable}"
-                            Maximum="0.6"
-                            Minimum="0.0"
-                            Orientation="Horizontal"
-                            SnapsToDevicePixels="True"
-                            Style="{StaticResource PlayerPositionSliderStyle}"
-                            Value="{Binding Path=ReverbLevel,
-                                            Mode=TwoWay}" />
-                    <Slider Grid.Row="2"
-                            Grid.Column="1"
-                            Margin="5,3,0,0"
-                            BorderThickness="0,0,0,5"
-                            IsEnabled="{Binding Path=ReverbEnable}"
-                            Maximum="5000"
-                            Minimum="1200"
-                            Orientation="Horizontal"
-                            SnapsToDevicePixels="True"
-                            Style="{StaticResource PlayerPositionSliderStyle}"
-                            Value="{Binding Path=ReverbDelay,
-                                            Mode=TwoWay}" />
+                    <CheckBox Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Content="Reverb" IsChecked="{Binding Path=ReverbEnable}" />
+                    <Slider Grid.Row="1" Grid.Column="1" Margin="5,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=ReverbEnable}"
+                            Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+                            Minimum="0.0" Maximum="1.0" Value="{Binding Path=ReverbLevel, Mode=TwoWay}" ToolTip="Level (Wet Mix)" />
+                    <Slider Grid.Row="2" Grid.Column="1" Margin="5,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=ReverbEnable}"
+                            Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+                            Minimum="0.01" Maximum="0.5" Value="{Binding Path=ReverbDelay, Mode=TwoWay}" ToolTip="Reverb Delay"/>
                 </Grid>
 
                 <!--  Eq Controls  -->

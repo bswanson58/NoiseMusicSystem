@@ -18,7 +18,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 		bool				ReverbEnable { get; set; }
 		float				ReverbLevel { get; set; }
-		int					ReverbDelay { get; set; }
+		float				ReverbDelay { get; set; }
 
 		bool				SoftSaturationEnable { get; set; }
 		double				SoftSaturationFactor { get; set; }

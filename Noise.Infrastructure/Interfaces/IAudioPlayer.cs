@@ -46,7 +46,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 		bool				ReverbEnable { get; set; }
 		float				ReverbLevel { get; set; }
-		int					ReverbDelay { get; set; }
+		float				ReverbDelay { get; set; }
 
 		IObservable<AudioChannelStatus>	ChannelStatusChange { get; }
 		IObservable<AudioLevels>		AudioLevelsChange { get; }
