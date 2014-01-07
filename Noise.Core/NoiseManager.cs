@@ -24,6 +24,7 @@ namespace Noise.Core {
 							 ILibraryBuilder libraryBuilder,
 							 IRemoteServer remoteServer,
 							 // components that just need to be referrenced.
+							 IAudioController audioController,
 							 IPlayController playController,
 							 ISearchProvider searchProvider,
 							 ITagManager tagManager,

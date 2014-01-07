@@ -196,6 +196,7 @@
     <Compile Include="Interfaces\IAlbumProvider.cs" />
     <Compile Include="Interfaces\IArtistProvider.cs" />
     <Compile Include="Interfaces\IArtworkProvider.cs" />
+    <Compile Include="Interfaces\IAudioController.cs" />
     <Compile Include="Interfaces\IAudioPlayer.cs" />
     <Compile Include="Interfaces\IBlendableViewModelFactory.cs" />
     <Compile Include="Interfaces\IBlobStorage.cs" />
@@ -220,6 +221,10 @@
     <Compile Include="Interfaces\IInternetStreamProvider.cs" />
     <Compile Include="Interfaces\IMetadataManager.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
+    <Compile Include="Interfaces\IPlayExhaustedFactory.cs" />
+    <Compile Include="Interfaces\IPlayExhaustedStrategy.cs" />
+    <Compile Include="Interfaces\IPlayStrategy.cs" />
+    <Compile Include="Interfaces\IPlayStrategyFactory.cs" />
     <Compile Include="Interfaces\IPlayStrategyParameters.cs" />
     <Compile Include="Interfaces\IPlayHistory.cs" />
     <Compile Include="Interfaces\IPlayHistoryProvider.cs" />

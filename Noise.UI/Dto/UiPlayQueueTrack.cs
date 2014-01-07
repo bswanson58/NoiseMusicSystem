@@ -98,6 +98,12 @@ namespace Noise.UI.Dto {
 			}
 		}
 
+		public void Execute_Replay() {
+			if( mTrack != null ) {
+				mTrack.HasPlayed = false;
+			}
+		}
+
 		public void Execute_PlayFromHere() {
 			if( mPlayFromHere != null ) {
 				mPlayFromHere( this );

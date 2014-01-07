@@ -69,6 +69,7 @@ namespace Noise.UI.ViewModels {
 
 		private void LoadFavorites() {
 			try {
+				mFavoritesList.IsNotifying = false;
 				mFavoritesList.Clear();
 
 				using( var list = mArtistProvider.GetFavoriteArtists()) {
@@ -98,6 +99,8 @@ namespace Noise.UI.ViewModels {
 				}
 
 				mFavoritesList.Sort( SelectSortProperty, ListSortDirection.Ascending );
+				mFavoritesList.IsNotifying = true;
+				mFavoritesList.Refresh();
 
 				RaiseCanExecuteChangedEvent( "CanExecute_ExportFavorites" );
 			}

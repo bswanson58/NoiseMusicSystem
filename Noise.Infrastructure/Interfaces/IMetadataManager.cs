@@ -29,5 +29,8 @@ namespace Noise.Infrastructure.Interfaces {
 		IArtistMetadata		GetArtistMetadata( string forArtist );
 		IArtistDiscography	GetArtistDiscography( string forArtist );
 		Artwork				GetArtistArtwork( string forArtist );
+
+		void				ExportMetadata( string exportFilename );
+		void				ImportMetadata( string importFilename );
 	}
 }

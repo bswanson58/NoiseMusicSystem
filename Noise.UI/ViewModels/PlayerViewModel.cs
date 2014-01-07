@@ -20,6 +20,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IPlayQueue			mPlayQueue;
 		private readonly IPlayController	mPlayController;
+		private readonly IAudioController	mAudioController;
 		private readonly IDisposable		mPlayStateChangeDisposable;
 		private double						mSpectrumImageWidth;
 		private double						mSpectrumImageHeight;
@@ -34,10 +35,11 @@ namespace Noise.UI.ViewModels {
 		public bool						IsActive { get; set; }
 		public event EventHandler		IsActiveChanged = delegate { };
 
-		public PlayerViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController ) {
+		public PlayerViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController, IAudioController audioController ) {
 			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
 			mPlayController = playController;
+			mAudioController = audioController;
 
 			mSpectrumImageWidth = 200;
 			mSpectrumImageHeight = 100;
@@ -83,7 +85,12 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Handle( Events.PlaybackStatusChanged eventArgs ) {
-			CurrentStatus = eventArgs.Status;
+			if( CurrentStatus != eventArgs.Status ) {
+				CurrentStatus = eventArgs.Status;
+			}
+			else {
+				RaisePropertyChanged( () => CurrentStatus );
+			}
 		}
 
 		public void Handle( Events.PlaybackTrackChanged eventArgs ) {
@@ -197,29 +204,37 @@ namespace Noise.UI.ViewModels {
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public double Volume {
-			get{ return( mPlayController.Volume ); }
-			set{ mPlayController.Volume = (float)value; }
+			get{ return( mAudioController.Volume ); }
+			set{ mAudioController.Volume = (float)value; }
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public bool IsMuted {
-			get{ return( mPlayController.Mute ); }
+			get{ return( mAudioController.Mute ); }
 		}
 
 		public void Execute_Mute() {
-			mPlayController.Mute = !mPlayController.Mute;
+			mAudioController.Mute = !mAudioController.Mute;
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public double PlaySpeed {
-			get{ return( mPlayController.PlaySpeed ); }
-			set{ mPlayController.PlaySpeed = (float)value; }
+			get{ return( mAudioController.PlaySpeed ); }
+			set{ mAudioController.PlaySpeed = (float)value; }
+		}
+
+		public void Execute_ResetPlaySpeed() {
+			mAudioController.SetDefaultPlaySpeed();
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
 		public double PanPosition {
-			get{ return( mPlayController.PanPosition ); }
-			set{ mPlayController.PanPosition = (float)value; }
+			get{ return( mAudioController.PanPosition ); }
+			set{ mAudioController.PanPosition = (float)value; }
+		}
+
+		public void Execute_ResetPanPosition() {
+			mAudioController.SetDefaultPanPosition();
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
@@ -298,13 +313,13 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public bool TrackOverlapEnable {
-			get{ return( mPlayController.TrackOverlapEnable ); }
-			set{ mPlayController.TrackOverlapEnable = value; }
+			get{ return( mAudioController.TrackOverlapEnable ); }
+			set{ mAudioController.TrackOverlapEnable = value; }
 		}
 
 		public int TrackOverlapMilliseconds {
-			get{ return( mPlayController.TrackOverlapMilliseconds ); }
-			set{ mPlayController.TrackOverlapMilliseconds = value; }
+			get{ return( mAudioController.TrackOverlapMilliseconds ); }
+			set{ mAudioController.TrackOverlapMilliseconds = value; }
 		}
 
 		public void Execute_PlayerSwitch() {
@@ -355,8 +370,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public double PreampVolume {
-			get{ return( mPlayController.PreampVolume ); }
-			set{ mPlayController.PreampVolume = value; }
+			get{ return( mAudioController.PreampVolume ); }
+			set {
+				if( Math.Abs( mAudioController.PreampVolume - value ) > 0.01D ) {
+					mAudioController.PreampVolume = value;
+
+					RaisePropertyChanged( () => PreampVolume );
+				}
+			}
 		}
 
 		public bool ReplayGainEnabled {
@@ -365,13 +386,13 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public List<ParametricEqualizer> EqualizerList {
-			get{ return( new List<ParametricEqualizer>( from ParametricEqualizer eq in mPlayController.EqManager.EqPresets orderby eq.Name ascending select eq )); }
+			get{ return( new List<ParametricEqualizer>( from ParametricEqualizer eq in mAudioController.EqManager.EqPresets orderby eq.Name ascending select eq )); }
 		}
 
 		public ParametricEqualizer CurrentEq {
-			get{ return( mPlayController.CurrentEq ); }
+			get{ return( mAudioController.CurrentEq ); }
 			set {
-				mPlayController.CurrentEq = value;
+				mAudioController.CurrentEq = value;
 				Set( () => CurrentEq, value );
 
 				LoadBands();
@@ -380,10 +401,10 @@ namespace Noise.UI.ViewModels {
 
 		[DependsUpon( "CurrentEq" )]
 		public bool EqEnabled {
-			get{ return( mPlayController.EqEnabled ); }
+			get{ return( mAudioController.EqEnabled ); }
 			set {
-				mPlayController.EqEnabled = value;
-				mPlayController.EqManager.SaveEq( CurrentEq, value );
+				mAudioController.EqEnabled = value;
+				mAudioController.EqManager.SaveEq( CurrentEq, value );
 			}
 		}
 
@@ -395,18 +416,18 @@ namespace Noise.UI.ViewModels {
 		private void LoadBands() {
 			mBands.Clear();
 
-			if( mPlayController.CurrentEq != null ) {
-				foreach( var band in mPlayController.EqManager.CurrentEq.Bands ) {
-					mBands.Add( new UiEqBand( band, AdjustEq, mPlayController.EqManager.CurrentEq.IsPreset ));
+			if( mAudioController.CurrentEq != null ) {
+				foreach( var band in mAudioController.EqManager.CurrentEq.Bands ) {
+					mBands.Add( new UiEqBand( band, AdjustEq, mAudioController.EqManager.CurrentEq.IsPreset ));
 				}
 			}
 		}
 
 		private void AdjustEq( UiEqBand band ) {
-			mPlayController.SetEqValue( band.BandId, band.Gain );
+			mAudioController.SetEqValue( band.BandId, band.Gain );
 
 			if(!CurrentEq.IsPreset ) {
-				mPlayController.EqManager.SaveEq( CurrentEq, EqEnabled );
+				mAudioController.EqManager.SaveEq( CurrentEq, EqEnabled );
 			}
 		}
 
@@ -417,9 +438,7 @@ namespace Noise.UI.ViewModels {
 				AdjustEq( band );
 			}
 
-			mPlayController.PreampVolume = 1.0f;
-
-			RaisePropertyChanged( () => PreampVolume );
+			PreampVolume = 1.0f;
 		}
 
 		[DependsUpon( "CurrentEq" )]
@@ -433,60 +452,60 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public bool StereoEnhancerEnable {
-			get{ return( mPlayController.StereoEnhancerEnable ); }
+			get{ return( mAudioController.StereoEnhancerEnable ); }
 			set {
-				mPlayController.StereoEnhancerEnable = value;
+				mAudioController.StereoEnhancerEnable = value;
 
 				RaisePropertyChanged( () => StereoEnhancerEnable );
 			}
 		}
 
 		public double StereoEnhancerWidth {
-			get{ return( mPlayController.StereoEnhancerWidth ); }
-			set{ mPlayController.StereoEnhancerWidth = value; }
+			get{ return( mAudioController.StereoEnhancerWidth ); }
+			set{ mAudioController.StereoEnhancerWidth = value; }
 		}
 
 		public double StereoEnhancerWetDry {
-			get{ return( mPlayController.StereoEnhancerWetDry ); }
-			set{ mPlayController.StereoEnhancerWetDry = value; }
+			get{ return( mAudioController.StereoEnhancerWetDry ); }
+			set{ mAudioController.StereoEnhancerWetDry = value; }
 		}
 
 		public bool SoftSaturationEnable {
-			get{ return( mPlayController.SoftSaturationEnable ); }
+			get{ return( mAudioController.SoftSaturationEnable ); }
 			set {
-				mPlayController.SoftSaturationEnable = value;
+				mAudioController.SoftSaturationEnable = value;
 
 				RaisePropertyChanged( () => SoftSaturationEnable );
 			}
 		}
 
 		public double SoftSaturationDepth {
-			get{ return( mPlayController.SoftSaturationDepth ); }
-			set{ mPlayController.SoftSaturationDepth = value; }
+			get{ return( mAudioController.SoftSaturationDepth ); }
+			set{ mAudioController.SoftSaturationDepth = value; }
 		}
 
 		public double SoftSaturationFactor {
-			get{ return( mPlayController.SoftSaturationFactor ); }
-			set{ mPlayController.SoftSaturationFactor = value; }
+			get{ return( mAudioController.SoftSaturationFactor ); }
+			set{ mAudioController.SoftSaturationFactor = value; }
 		}
 
 		public bool ReverbEnable {
-			get{ return( mPlayController.ReverbEnable ); }
+			get{ return( mAudioController.ReverbEnable ); }
 			set {
-				mPlayController.ReverbEnable = value;
+				mAudioController.ReverbEnable = value;
 
 				RaisePropertyChanged( () => ReverbEnable );
 			}
 		}
 
 		public float ReverbLevel {
-			get{ return( mPlayController.ReverbLevel ); }
-			set{ mPlayController.ReverbLevel = value; }
+			get{ return( mAudioController.ReverbLevel ); }
+			set{ mAudioController.ReverbLevel = value; }
 		}
 
-		public int ReverbDelay {
-			get{ return( mPlayController.ReverbDelay ); }
-			set{ mPlayController.ReverbDelay = value; }
+		public float ReverbDelay {
+			get{ return( mAudioController.ReverbDelay ); }
+			set{ mAudioController.ReverbDelay = value; }
 		}
 
 		public void Execute_StandardPlayer() {

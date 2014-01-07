@@ -11,6 +11,8 @@ using Noise.Core.FileProcessor;
 using Noise.Core.FileStore;
 using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
+using Noise.Core.PlayStrategies;
+using Noise.Core.PlaySupport;
 using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
@@ -30,6 +32,7 @@ namespace Noise.Core {
 		public void Initialize() {
 			mContainer.RegisterInstance<IEventAggregator>( new EventAggregator(), new ContainerControlledLifetimeManager());
 
+			mContainer.RegisterType<IAudioController, AudioController>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ICloudSyncManager, CloudSyncManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IDataExchangeManager, DataExchangeManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>( new HierarchicalLifetimeManager());
@@ -87,19 +90,25 @@ namespace Noise.Core {
 			mContainer.RegisterType<ICloudSyncProvider, CloudSyncStreams>( "SyncStreams" );
 			mContainer.RegisterType<IEnumerable<ICloudSyncProvider>, ICloudSyncProvider[]>();
 
+            mContainer.RegisterType<IPlayStrategy, PlayStrategyFeaturedArtists>( ePlayStrategy.FeaturedArtists.ToString());
+            mContainer.RegisterType<IPlayStrategy, PlayStrategyNewReleases>( ePlayStrategy.NewReleases.ToString());
+            mContainer.RegisterType<IPlayStrategy, PlayStrategyRandom>( ePlayStrategy.Random.ToString());
+            mContainer.RegisterType<IPlayStrategy, PlayStrategySingle>( ePlayStrategy.Next.ToString());
+            mContainer.RegisterType<IPlayStrategy, PlayStrategyTwoFers>( ePlayStrategy.TwoFers.ToString());
+			mContainer.RegisterType<IEnumerable<IPlayStrategy>, IPlayStrategy[]>();
 			mContainer.RegisterType<IPlayStrategyFactory, PlayStrategyFactory>();
 
 			mContainer.RegisterType<IPlayExhaustedFactory, PlayExhaustedFactory>();
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyCategory>( "CategoryExhaustedStrategy" );
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyFavorites>( "FavoritesExhaustedStrategy" );
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyArtist>( "ArtistExhaustedStrategy" );
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyArtistGenre>( "ArtistGenreExhaustedStrategy" );
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyPlayList>( "PlayListExhaustedStrategy" );
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyReplay>( "ReplayExhaustedStrategy" );
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategySimilar>( "SimilarExhaustedStrategy" );
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyStop>( "StopExhaustedStrategy" );
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyStream>( "StreamExhaustedStrategy" );
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategySeldomPlayedArtists>( "SeldomPlayedExhaustedStrategy" );
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyCategory>( ePlayExhaustedStrategy.PlayCategory.ToString());
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyFavorites>( ePlayExhaustedStrategy.PlayFavorites.ToString());
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyArtist>( ePlayExhaustedStrategy.PlayArtist.ToString());
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyArtistGenre>( ePlayExhaustedStrategy.PlayArtistGenre.ToString());
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyPlayList>( ePlayExhaustedStrategy.PlayList.ToString());
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyReplay>( ePlayExhaustedStrategy.Replay.ToString());
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategySimilar>( ePlayExhaustedStrategy.PlaySimilar.ToString());
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyStop>( ePlayExhaustedStrategy.Stop.ToString());
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyStream>( ePlayExhaustedStrategy.PlayStream.ToString());
+			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategySeldomPlayedArtists>( ePlayExhaustedStrategy.SeldomPlayedArtists.ToString());
 			mContainer.RegisterType<IEnumerable<IPlayExhaustedStrategy>, IPlayExhaustedStrategy[]>();
 
 			mContainer.RegisterType<IPlayQueueSupport, PlayQueueRandomTracks>( "PlayQueueRandomTracks" );

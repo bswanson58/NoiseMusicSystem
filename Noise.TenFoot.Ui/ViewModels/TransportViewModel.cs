@@ -12,12 +12,12 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IPlayQueue			mPlayQueue;
-		private ePlayExhaustedStrategy		mCurrentStrategy;
+		private IPlayExhaustedStrategy		mCurrentStrategy;
 		private string						mCurrentStrategyTitle;
 
 		public TransportViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider,
-								   IPlayQueue playQueue, IPlayController playController ) :
-			base( eventAggregator, playQueue, playController ) {
+								   IPlayQueue playQueue, IPlayController playController, IAudioController audioController ) :
+			base( eventAggregator, playQueue, playController, audioController ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mPlayQueue = playQueue;
@@ -42,7 +42,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		private void FormatPlayStrategy( long strategyId ) {
-			switch( mCurrentStrategy ) {
+			switch( mCurrentStrategy.StrategyId ) {
 				case ePlayExhaustedStrategy.PlayArtist:
 					var artist = mArtistProvider.GetArtist( strategyId );
 					mCurrentStrategyTitle = artist != null ? string.Format( "continuing play with tracks from '{0}'", artist.Name ) :

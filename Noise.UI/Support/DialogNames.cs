@@ -9,11 +9,6 @@
 		public const string		InternetStreamEdit			= "InternetStreamEdit";
 		public const string		LibraryExplorerFilter		= "LibraryExplorerFilter";
 		public const string		PlayListEdit				= "PlayListEdit";
-		public const string		SelectArtist				= "SelectArtist";
-		public const string		SelectCategory				= "SelectCategory";
-		public const string		SelectGenre					= "SelectGenre";
-		public const string		SelectPlayList				= "SelectPlayList";
-		public const string		SelectStream				= "SelectStream";
 		public const string		Search						= "Search";
 		public const string		LyricsEdit					= "LyricsEdit";
 		public const string		ArtistEdit					= "ArtistEdit";
@@ -24,5 +19,6 @@
 		public const string		CategorySelection			= "CategorySelection";
 		public const string		CategoryEdit				= "CategoryEdit";
 		public const string		FeaturedArtistsSelect		= "FeaturedArtistsSelect";
+		public const string		PlayStrategyConfiguration	= "PlayStrategyConfiguration";
 	}
 }

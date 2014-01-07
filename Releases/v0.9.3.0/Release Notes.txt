@@ -1,0 +1,7 @@
+Release Notes for Noise Desktop System v0.9.3.0
+
+Features:
+Rework of the playback queue strategies and their exposed user interface.
+Cleanup of the user interface in the transport.
+Updated BASS Audio to version 2.4.10
+

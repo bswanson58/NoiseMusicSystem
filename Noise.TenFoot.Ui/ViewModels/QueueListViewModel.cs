@@ -4,12 +4,11 @@ using Caliburn.Micro;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
-using Noise.UI.Support;
 using Noise.UI.ViewModels;
 using Events = Noise.TenFoot.Ui.Input.Events;
 
 namespace Noise.TenFoot.Ui.ViewModels {
-	public class QueueListViewModel : PlayQueueViewModel, IHomeScreen, IActivate, IDeactivate,
+	public class QueueListViewModel : PlayQueueListViewModel, IHomeScreen, IActivate, IDeactivate,
 									  IHandle<InputEvent>, IHandle<Events.DequeueTrack>, IHandle<Events.DequeueAlbum> {
 		private readonly IPlayQueue		mPlayQueue;
 		private ePlayExhaustedStrategy	mCurrentStrategy;
@@ -26,12 +25,10 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	eMainMenuCommand	MenuCommand { get; private set; }
 		public	int					ScreenOrder { get; private set; }
 
-		public QueueListViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ITagProvider tagProvider,
-								   IGenreProvider genreProvider, IInternetStreamProvider internetStreamProvider, IPlayQueue playQueue,
-								   IPlayListProvider playListProvider, IDialogService dialogService ) :
-			base( eventAggregator, artistProvider, tagProvider, genreProvider, internetStreamProvider, playQueue, playListProvider, dialogService ) {
+		public QueueListViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue ) :
+			base( eventAggregator, playQueue ) {
 			mPlayQueue = playQueue;
-			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy;
+			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy.StrategyId;
 
 			ScreenTitle = "Now Playing";
 			MenuTitle = "Now Playing";
@@ -82,10 +79,10 @@ namespace Noise.TenFoot.Ui.ViewModels {
 					var playedItems = QueueList.Count( item => item.QueuedTrack.HasPlayed );
 
 					if( playedItems > 0 ) {
-						Execute_ClearPlayed();	
+                        mPlayQueue.RemovePlayedTracks();
 					}
 					else {
-						Execute_ClearQueue( this );
+                        mPlayQueue.ClearQueue();
 					}
 				}
 

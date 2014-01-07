@@ -226,6 +226,12 @@ namespace Noise.UI.ViewModels {
 
 					if( mArtistView != null ) {
 						mArtistView.Refresh();
+
+						// If we have filtered down to one artist, just select it.
+						if(( mArtistView is CollectionView ) &&
+						  (( mArtistView as CollectionView ).Count == 1 )) {
+							SelectedArtist = mArtistView.OfType<UiArtist>().FirstOrDefault();
+						}
 					}
 
 					RaisePropertyChanged( () => FilterText );
