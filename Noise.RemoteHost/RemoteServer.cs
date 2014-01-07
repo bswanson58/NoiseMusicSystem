@@ -46,7 +46,7 @@ namespace Noise.RemoteHost {
 				mClientList.Add( address, client );
 
 				retValue.Success = true;
-				NoiseLogger.Current.LogMessage( "Added remote client: %s", address );
+				NoiseLogger.Current.LogMessage( "Added remote client: {0}", address );
 			}
 			else {
 				retValue.ErrorMessage = "Remote client address already registered.";
@@ -62,7 +62,7 @@ namespace Noise.RemoteHost {
 				mClientList.Remove( address );
 
 				retValue.Success = true;
-				NoiseLogger.Current.LogMessage( "Removed remote client: %s", address );
+				NoiseLogger.Current.LogMessage( "Removed remote client: {0}", address );
 			}
 			else {
 				retValue.ErrorMessage = "Client address not located in map.";
