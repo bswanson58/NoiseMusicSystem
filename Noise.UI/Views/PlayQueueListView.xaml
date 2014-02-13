@@ -143,44 +143,45 @@
                 <Expander Margin="-9,0,0,0" Style="{StaticResource MouseOverTrigger}" Template="{DynamicResource MouseOverExpanderTemplate}">
                     <Expander.Header>
                         <Grid >
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="18"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
 
-                            <Grid Grid.Row="0" Margin="0,-3,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="15" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="48" />
-                                </Grid.ColumnDefinitions>
+							<Grid Grid.Column="0">
+								<TextBlock Margin="0,1,0,0" FontFamily="WebDings" FontSize="22" Foreground="LightGreen" Text="4"
+										   Visibility="{Binding Path=QueuedTrack.IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}" />
+								<TextBlock Margin="7,3,0,0" FontSize="14" FontWeight="Bold" Foreground="Red" Text="!"
+										   Visibility="{Binding Path=QueuedTrack.IsFaulted, Converter={StaticResource BooleanVisibilityConverter}}" />
+							</Grid>
 
-                                <Grid Grid.Column="0">
-                                    <TextBlock Margin="0,2,0,0" FontFamily="WebDings" FontSize="18" Foreground="LightGreen" Text="4"
-                                       Visibility="{Binding Path=QueuedTrack.IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}" />
-                                    <TextBlock Margin="7,0,0,0" FontSize="14" FontWeight="Bold" Foreground="Red" Text="!"
-                                       Visibility="{Binding Path=QueuedTrack.IsFaulted, Converter={StaticResource BooleanVisibilityConverter}}" />
-                                </Grid>
+							<Grid Grid.Column="1">
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="Auto"/>
+								</Grid.RowDefinitions>
 
-                                <Viewbox Grid.Column="1" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
-                                    <TextBlock x:Name="TrackName" Text="{Binding Path=QueuedTrack.Name}" Style="{StaticResource ExplorerTitleStyle}"/>
-                                </Viewbox>
+								<Grid Grid.Row="0" Margin="0,-3,0,0">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*" />
+										<ColumnDefinition Width="48" />
+									</Grid.ColumnDefinitions>
 
-                                <TextBlock x:Name="TrackDuration" Grid.Column="2" VerticalAlignment="Top" TextAlignment="Right" Style="{StaticResource ExplorerTitleStyle}"
-                                           Text="{Binding Path=QueuedTrack.Track.Duration, Converter={StaticResource TimeSpanConverter}}"/>
-                            </Grid>
 
-                            <Grid Grid.Row="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="15" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+									<Viewbox Grid.Column="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
+										<TextBlock x:Name="TrackName" Text="{Binding Path=QueuedTrack.Name}" Style="{StaticResource ExplorerTitleStyle}"/>
+									</Viewbox>
 
-                                <TextBlock x:Name="AlbumName" Grid.Column="1" Margin="5,0" FontSize="11" Foreground="Gray"
-                                       ReusableBehaviours:FadeTrimming.IsEnabled="True"
-                                       ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                                       Text="{Binding Path=QueuedTrack.AlbumName}" />
-                            </Grid>
+									<TextBlock x:Name="TrackDuration" Grid.Column="1" VerticalAlignment="Top" TextAlignment="Right" Style="{StaticResource ExplorerTitleStyle}"
+											   Text="{Binding Path=QueuedTrack.Track.Duration, Converter={StaticResource TimeSpanConverter}}"/>
+								</Grid>
+
+								<TextBlock x:Name="AlbumName" Grid.Row="1" Margin="5,0" FontSize="11" Foreground="Gray"
+										   ReusableBehaviours:FadeTrimming.IsEnabled="True"
+										   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+										   Text="{Binding Path=QueuedTrack.AlbumName}" />
+
+							</Grid>
                         </Grid>
                     </Expander.Header>
                     <Grid Margin="3,3,0,1">
