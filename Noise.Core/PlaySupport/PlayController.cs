@@ -205,7 +205,7 @@ namespace Noise.Core.PlaySupport {
 
 		private void StartPlaying() {
 			if(( mPlayQueue.PlayingTrack == null ) &&
-			   ( mPlayQueue.CanPlayNextTrack())) {
+			   (!mPlayQueue.CanPlayNextTrack())) {
 				mPlayQueue.ReplayQueue();
 			}
 
