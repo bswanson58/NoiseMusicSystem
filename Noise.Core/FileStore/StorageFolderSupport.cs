@@ -196,6 +196,8 @@ namespace Noise.Core.FileStore {
 						break;
 
 					case ".jpg":
+					case ".jpeg":
+					case ".png":
 					case ".bmp":
 						retValue = eFileType.Picture;
 						break;
