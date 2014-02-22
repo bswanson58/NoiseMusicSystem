@@ -140,6 +140,14 @@
     <Compile Include="Support\GlobalKeyboardHook.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Noise.AudioSupport\Noise.AudioSupport.csproj">
+      <Project>{19dba418-08c1-4a02-bb7a-2d83a416c6a2}</Project>
+      <Name>Noise.AudioSupport</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Noise.BlobStorage\Noise.BlobStorage.csproj">
+      <Project>{9f4086fd-8332-489f-8a96-8d4425db5df2}</Project>
+      <Name>Noise.BlobStorage</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Noise.Core\Noise.Core.csproj">
       <Project>{33A45442-71E5-4BFE-B37F-129EDB4F18E8}</Project>
       <Name>Noise.Core</Name>
@@ -151,6 +159,14 @@
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Noise.Metadata\Noise.Metadata.csproj">
+      <Project>{983d3c18-8012-48ae-ae21-b6503fc0f5b8}</Project>
+      <Name>Noise.Metadata</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Noise.RemoteHost\Noise.RemoteHost.csproj">
+      <Project>{85472b64-4f49-4182-8709-9229e25e5119}</Project>
+      <Name>Noise.RemoteHost</Name>
     </ProjectReference>
     <ProjectReference Include="..\ReusableBits\ReusableBits.csproj">
       <Project>{0522B043-A04A-4669-90DB-204C96D52224}</Project>
