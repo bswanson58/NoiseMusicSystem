@@ -8,7 +8,7 @@ namespace Noise.Headless {
 		DisplayName = "Noise Library Headless Service",
 		Description = "This service operates the Noise Music System library for remote clients.",
 		EventLogSource = "Noise Headless Service",
-		StartMode = ServiceStartMode.Automatic)]
+		StartMode = ServiceStartMode.Manual )]
 	public class HeadlessService : BaseService {
 		private readonly INoiseManager			mNoiseManager;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
@@ -30,7 +30,7 @@ namespace Noise.Headless {
 			}
 		}
 
-		public override void OnShutdown() {
+		public override void OnStop() {
 			mNoiseManager.Shutdown();
 		}
 	}
