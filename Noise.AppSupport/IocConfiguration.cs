@@ -5,8 +5,10 @@ using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
+using Noise.AudioSupport;
 using Noise.Core.DataBuilders;
 using Noise.Infrastructure.Interfaces;
+using Noise.Metadata;
 
 namespace Noise.AppSupport {
 	public enum ApplicationUsage {
@@ -62,8 +64,12 @@ namespace Noise.AppSupport {
 
 				var catalog = new ModuleCatalog();
 
-				catalog.AddModule( typeof( Core.NoiseCoreModule ));
-				catalog.AddModule( typeof( EloqueraDatabase.EloqueraDatabaseModule ));
+				catalog.AddModule( typeof( Core.NoiseCoreModule ))
+						.AddModule( typeof( EloqueraDatabase.EloqueraDatabaseModule ))
+						.AddModule( typeof( AudioSupportModule ))
+						.AddModule( typeof( BlobStorage.BlobStorageModule ))
+						.AddModule( typeof( NoiseMetadataModule ))
+						.AddModule( typeof( RemoteHost.RemoteHostModule ));
 				mContainer.RegisterInstance<IModuleCatalog>( catalog );
 
 				mContainer.RegisterType<IServiceLocator, UnityServiceLocatorAdapter>( new ContainerControlledLifetimeManager());
