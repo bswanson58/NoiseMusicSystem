@@ -39,11 +39,19 @@ namespace Noise.Core {
 		}
 
 		public async Task<bool> AsyncInitialize() {
-			var initTask = new Task<bool>(() => ( Initialize()));
+			var initTask = new Task<bool>(() => ( InitializeAndNotify()));
 
 			initTask.Start();
 
 			return( await initTask );
+		}
+
+		public bool InitializeAndNotify() {
+			var retValue = Initialize();
+
+			mEvents.PublishOnUIThreadAsync( new Events.NoiseSystemReady( this, retValue ));
+
+			return( retValue );
 		}
 		
 		public bool Initialize() {
@@ -67,7 +75,7 @@ namespace Noise.Core {
 
 				var sysConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 				if(( sysConfig != null ) &&
-					( sysConfig.EnableRemoteAccess )) {
+				   ( sysConfig.EnableRemoteAccess )) {
 					mRemoteServer.OpenRemoteServer();
 				}
 
@@ -78,8 +86,6 @@ namespace Noise.Core {
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "NoiseManager:Initialize", ex );
 			}
-
-			mEvents.PublishOnUIThreadAsync( new Events.NoiseSystemReady( this, isInitialized ));
 
 			return ( isInitialized );
 		}
