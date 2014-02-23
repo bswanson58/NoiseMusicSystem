@@ -8,6 +8,7 @@ using Microsoft.Practices.Unity;
 using Noise.AudioSupport;
 using Noise.Core.DataBuilders;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.RemoteHost;
 using Noise.Metadata;
 
 namespace Noise.AppSupport {
@@ -38,6 +39,7 @@ namespace Noise.AppSupport {
 			switch( appUsage ) {
 				case ApplicationUsage.Desktop:
 					mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
+					mContainer.RegisterInstance( new RemoteHostConfiguration( 81, "Noise Desktop System" ));
 
 					break;
 
@@ -45,11 +47,13 @@ namespace Noise.AppSupport {
 					InitializeUnity();
 
 					mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
+					mContainer.RegisterInstance( new RemoteHostConfiguration( 83, "Noise Headless Service" ));
 
 					break;
 
 				case ApplicationUsage.TenFootUi:
 					mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
+					mContainer.RegisterInstance( new RemoteHostConfiguration( 82, "Noise TenFoot System" ));
 
 					break;
 			}

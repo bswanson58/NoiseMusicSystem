@@ -275,6 +275,7 @@
     <Compile Include="RemoteHost\IRemoteServer.cs" />
     <Compile Include="RemoteDto\ServerVersion.cs" />
     <Compile Include="RemoteDto\TrackListResult.cs" />
+    <Compile Include="RemoteHost\RemoteHostConfiguration.cs" />
     <Compile Include="Support\ApplicationLogReader.cs" />
     <Compile Include="Support\AsyncCommand.cs" />
     <Compile Include="Support\BindableObject.cs" />

@@ -13,10 +13,13 @@ namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteServer : INoiseRemote, IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted> {
 		private readonly ILibraryConfiguration				mLibraryConfiguration;
+		private readonly RemoteHostConfiguration			mHostConfiguration;
 		private	readonly Dictionary<string, ClientEvents>	mClientList;
 
-		public RemoteServer( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration ) {
+		public RemoteServer( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration,
+							 RemoteHostConfiguration hostConfiguration ) {
 			mLibraryConfiguration = libraryConfiguration;
+			mHostConfiguration = hostConfiguration;
 			mClientList = new Dictionary<string, ClientEvents>();
 
 			eventAggregator.Subscribe( this );
@@ -32,9 +35,9 @@ namespace Noise.RemoteHost {
 		}
 
 		public RoServerInformation GetServerInformation() {
-			var	retValue = new RoServerInformation { ApiVersion = Constants.cRemoteApiVersion,
+			var	retValue = new RoServerInformation { ApiVersion = (Int16)mHostConfiguration.ApiVersion,
 													 ServerVersion = GetServerVersion(),
-													 ServerName = string.Empty };
+													 ServerName = mHostConfiguration.HostName };
 
 			if( mLibraryConfiguration.Current != null ) {
 				retValue.LibraryId = mLibraryConfiguration.Current.LibraryId;
