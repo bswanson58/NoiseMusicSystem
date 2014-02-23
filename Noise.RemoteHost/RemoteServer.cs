@@ -1,27 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteDto;
 using Noise.Infrastructure.RemoteHost;
 
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteServer : INoiseRemote, IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted> {
-		private readonly IEventAggregator					mEventAggregator;
+		private readonly ILibraryConfiguration				mLibraryConfiguration;
 		private	readonly Dictionary<string, ClientEvents>	mClientList;
 
-		public RemoteServer( IEventAggregator eventAggregator ) {
-			mEventAggregator = eventAggregator;
+		public RemoteServer( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration ) {
+			mLibraryConfiguration = libraryConfiguration;
 			mClientList = new Dictionary<string, ClientEvents>();
 
-			mEventAggregator.Subscribe( this );
+			eventAggregator.Subscribe( this );
 		}
 
 		public ServerVersion GetServerVersion() {
-			return( new ServerVersion { Major = 1, Minor = 0, Build = 0, Revision = 1 });
+			var assemblyName = Assembly.GetAssembly( GetType()).GetName();
+
+			return( new ServerVersion { Major = assemblyName.Version.Major,
+										Minor = assemblyName.Version.Minor,
+										Build = assemblyName.Version.Build,
+										Revision = assemblyName.Version.Revision });
+		}
+
+		public RoServerInformation GetServerInformation() {
+			var	retValue = new RoServerInformation { ApiVersion = Constants.cRemoteApiVersion,
+													 ServerVersion = GetServerVersion(),
+													 ServerName = string.Empty };
+
+			if( mLibraryConfiguration.Current != null ) {
+				retValue.LibraryId = mLibraryConfiguration.Current.LibraryId;
+				retValue.LibraryName = mLibraryConfiguration.Current.LibraryName;
+			}
+
+			return (retValue);
 		}
 
 		public BaseResult RequestEvents( string address ) {

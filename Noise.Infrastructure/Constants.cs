@@ -2,6 +2,8 @@
 
 namespace Noise.Infrastructure {
 	public class Constants {
+		public	const int				cRemoteApiVersion = 2;
+
 		public	const long				cDatabaseNullOid = 0;
 
 		public	const Int32				cUnknownYear = 0;
@@ -20,7 +22,7 @@ namespace Noise.Infrastructure {
 		public	const string			ListenLayout = "ListenLayout";
 		public	const string			TimeExplorerLayout = "TimeExplorerLayout";
 
-		public const string				ApplicationLogName = "noise.log";
+		public	const string			ApplicationLogName = "noise.log";
 
 		public const string				ApplicationName = "Noise";
 		public const string				CompanyName = "Secret_Squirrel_Products";

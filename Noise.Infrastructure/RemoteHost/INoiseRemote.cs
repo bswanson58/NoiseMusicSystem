@@ -10,6 +10,10 @@ namespace Noise.Infrastructure.RemoteHost {
 		ServerVersion GetServerVersion();
 
 		[OperationContract]
+		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "serverInformation")]
+		RoServerInformation GetServerInformation();
+
+		[OperationContract]
 		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "requestEvents?address={address}")]
 		BaseResult RequestEvents( string address );
 

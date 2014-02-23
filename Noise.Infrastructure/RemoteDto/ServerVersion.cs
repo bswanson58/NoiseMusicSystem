@@ -1,5 +1,5 @@
 ﻿
-namespace Noise.Infrastructure.RemoteHost {
+namespace Noise.Infrastructure.RemoteDto {
 	public class ServerVersion {
 		public int Major	{ get; set; }
 		public int Minor	{ get; set; }
