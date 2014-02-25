@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -42,6 +43,7 @@ namespace Noise.RemoteHost {
 			if( mLibraryConfiguration.Current != null ) {
 				retValue.LibraryId = mLibraryConfiguration.Current.LibraryId;
 				retValue.LibraryName = mLibraryConfiguration.Current.LibraryName;
+				retValue.LibraryCount = (Int16)mLibraryConfiguration.Libraries.Count();
 			}
 
 			return (retValue);

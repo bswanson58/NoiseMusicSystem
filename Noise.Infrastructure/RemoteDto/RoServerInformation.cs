@@ -13,5 +13,7 @@ namespace Noise.Infrastructure.RemoteDto {
 		public long				LibraryId { get; set; }
 		[DataMember]
 		public string			LibraryName { get; set; }
+		[DataMember]
+		public Int16			LibraryCount { get; set; }
 	}
 }
