@@ -136,5 +136,34 @@ namespace Noise.RemoteHost {
 
 			return( retValue );
 		}
+
+		public BaseResult ExecuteQueueCommand( QueueCommand command ) {
+			var retValue = new BaseResult();
+
+			try {
+				switch( command ) {
+					case QueueCommand.Clear:
+						mPlayQueue.ClearQueue();
+						break;
+
+					case QueueCommand.ClearPlayed:
+						mPlayQueue.RemovePlayedTracks();
+						break;
+
+					case QueueCommand.StartPlaying:
+						mPlayQueue.StartPlayStrategy();
+						break;
+				}
+
+				retValue.Success = true;
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "RemoteQueueServer:ExecuteQueueCommand", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+
+			return( retValue );
+		}
 	}
 }

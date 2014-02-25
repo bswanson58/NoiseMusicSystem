@@ -20,5 +20,9 @@ namespace Noise.Infrastructure.RemoteHost {
 		[OperationContract]
 		[WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "transportCommand?command={command}")]
 		BaseResult ExecuteTransportCommand( TransportCommand command );
+
+		[OperationContract]
+		[WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "queueCommand?command={command}")]
+		BaseResult ExecuteQueueCommand( QueueCommand command );
 	}
 }
