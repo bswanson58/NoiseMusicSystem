@@ -253,6 +253,7 @@
     <Compile Include="RemoteDto\ArtistInfoResult.cs" />
     <Compile Include="RemoteDto\FavoriteListResult.cs" />
     <Compile Include="RemoteDto\PlayQueueListResult.cs" />
+    <Compile Include="RemoteDto\QueueCommand.cs" />
     <Compile Include="RemoteDto\RoAlbum.cs" />
     <Compile Include="RemoteDto\RoAlbumInfo.cs" />
     <Compile Include="RemoteDto\RoArtist.cs" />
