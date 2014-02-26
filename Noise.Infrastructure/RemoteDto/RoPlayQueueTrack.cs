@@ -9,7 +9,11 @@ namespace Noise.Infrastructure.RemoteDto {
 		[DataMember]
 		public string	TrackName { get; set; }
 		[DataMember]
+		public long		AlbumId { get; set; }
+		[DataMember]
 		public string	AlbumName { get; set; }
+		[DataMember]
+		public long		ArtistId { get; set; }
 		[DataMember]
 		public string	ArtistName { get; set; }
 		[DataMember]
