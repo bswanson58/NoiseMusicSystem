@@ -36,10 +36,16 @@ namespace Noise.AppSupport {
 		public bool InitializeIoc( ApplicationUsage appUsage ) {
 			mContainer.RegisterType<IIoc, IocProvider>( new ContainerControlledLifetimeManager());
 
+#if DEBUG
+			const int portOffset = 10;
+#else
+			const int portOffset = 0;
+#endif
+
 			switch( appUsage ) {
 				case ApplicationUsage.Desktop:
 					mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
-					mContainer.RegisterInstance( new RemoteHostConfiguration( 81, "Noise Desktop System" ));
+					mContainer.RegisterInstance( new RemoteHostConfiguration( 71 + portOffset, "Noise Desktop System" ));
 
 					break;
 
@@ -47,13 +53,13 @@ namespace Noise.AppSupport {
 					InitializeUnity();
 
 					mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
-					mContainer.RegisterInstance( new RemoteHostConfiguration( 83, "Noise Headless Service" ));
+					mContainer.RegisterInstance( new RemoteHostConfiguration( 73 + portOffset, "Noise Headless Service" ));
 
 					break;
 
 				case ApplicationUsage.TenFootUi:
 					mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
-					mContainer.RegisterInstance( new RemoteHostConfiguration( 82, "Noise TenFoot System" ));
+					mContainer.RegisterInstance( new RemoteHostConfiguration( 72 + portOffset, "Noise TenFoot System" ));
 
 					break;
 			}
