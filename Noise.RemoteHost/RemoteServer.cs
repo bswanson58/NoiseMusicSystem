@@ -38,7 +38,7 @@ namespace Noise.RemoteHost {
 		public RoServerInformation GetServerInformation() {
 			var	retValue = new RoServerInformation { ApiVersion = (Int16)mHostConfiguration.ApiVersion,
 													 ServerVersion = GetServerVersion(),
-													 ServerName = mHostConfiguration.HostName };
+													 ServerName = mHostConfiguration.ServerName };
 
 			if( mLibraryConfiguration.Current != null ) {
 				retValue.LibraryId = mLibraryConfiguration.Current.LibraryId;
