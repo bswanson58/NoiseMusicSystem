@@ -10,6 +10,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void			StrategyAdd( DbTrack track );
 		void			StrategyAdd( DbTrack track, PlayQueueTrack afterTrack );
 		void			RemoveTrack( PlayQueueTrack track );
+		bool			RemoveTrack( long trackId );
 		void			RemovePlayedTracks();
 		void			ClearQueue();
 
@@ -20,6 +21,8 @@ namespace Noise.Infrastructure.Interfaces {
 		void			StopPlay();
 		void			ReplayQueue();
 		void			ContinuePlayFromTrack( PlayQueueTrack track );
+		bool			ContinuePlayFromTrack( long trackId );
+		bool			ReplayTrack( long trackId );
 
 		PlayQueueTrack	NextTrack { get; }
 		PlayQueueTrack	PreviousTrack { get; }

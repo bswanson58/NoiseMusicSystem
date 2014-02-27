@@ -256,6 +256,34 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
+		public bool ReplayTrack( long itemId ) {
+			bool	retValue = false;
+			var		track = mPlayQueue.FirstOrDefault( item => item.Uid == itemId );
+
+			if( track != null ) {
+				track.HasPlayed = false;
+
+				FirePlayQueueChanged();
+
+				retValue = true;
+			}
+
+			return( retValue );
+		}
+
+		public bool RemoveTrack( long itemId ) {
+			var retValue = false;
+			var track = mPlayQueue.FirstOrDefault( item => item.Uid == itemId );
+
+			if( track != null ) {
+				RemoveTrack( track );
+
+				retValue = true;
+			}
+
+			return( retValue );
+		}
+
 		public void RemoveTrack( PlayQueueTrack track ) {
 			if( track.Track !=null ) {
 				var	queuedTrack= mPlayQueue.Find( item => item.Track != null ? item.Track.DbId == track.Track.DbId : false );
@@ -449,6 +477,18 @@ namespace Noise.Core.PlayQueue {
 			return( track );
 		}
 
+		public bool ContinuePlayFromTrack( long itemId ) {
+			var retValue = false;
+			var track = mPlayQueue.FirstOrDefault( item => item.Uid == itemId );
+
+			if( track != null ) {
+				ContinuePlayFromTrack( track );
+
+				retValue = true;
+			}
+
+			return( retValue );
+		}
 		public void ContinuePlayFromTrack( PlayQueueTrack track ) {
 			if( mPlayQueue.Contains( track )) {
 				bool	hasPlayedSetting = true;

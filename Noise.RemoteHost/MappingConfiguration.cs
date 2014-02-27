@@ -39,6 +39,7 @@ namespace Noise.RemoteHost {
 				.ForMember( dest => dest.AlbumCover, opt => opt.Ignore());
 
 			CreateMap<PlayQueueTrack, RoPlayQueueTrack>()
+				.ForMember( dest => dest.Id, opt => opt.MapFrom( src => src.Uid ))
 				.ForMember( dest => dest.ArtistId, opt => opt.MapFrom( src => src.Artist.DbId ))
 				.ForMember( dest => dest.ArtistName, opt => opt.MapFrom( src => src.Artist.Name ))
 				.ForMember( dest => dest.AlbumId, opt => opt.MapFrom( src => src.Album.DbId ))

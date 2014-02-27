@@ -165,5 +165,31 @@ namespace Noise.RemoteHost {
 
 			return( retValue );
 		}
+
+		public BaseResult ExecuteQueueItemCommand( QueueItemCommand command, long itemId ) {
+			var retValue = new BaseResult();
+
+			try {
+				switch( command ) {
+					case QueueItemCommand.PlayNext:
+						retValue.Success = mPlayQueue.ContinuePlayFromTrack( itemId );
+					break;
+
+					case QueueItemCommand.Remove:
+						retValue.Success = mPlayQueue.RemoveTrack( itemId );
+						break;
+
+					case QueueItemCommand.ReplayTrack:
+						retValue.Success = mPlayQueue.ReplayTrack( itemId );
+						break;
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "RemoteQueueServer:ExecuteQueueItemCommand", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+			return( retValue );
+		}
 	}
 }
