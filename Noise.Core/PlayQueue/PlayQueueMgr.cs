@@ -50,7 +50,7 @@ namespace Noise.Core.PlayQueue {
 			mPlayHistory = new List<PlayQueueTrack>();
 			mPlayQueueSupporters = new List<IPlayQueueSupport>( playQueueSupporters );
 
-            SetPlayStrategy( ePlayStrategy.Next, null );
+			SetPlayStrategy( ePlayStrategy.Next, null );
 			SetPlayExhaustedStrategy( ePlayExhaustedStrategy.Stop, null );
 
 			lifecycleManager.RegisterForInitialize( this );
@@ -219,7 +219,7 @@ namespace Noise.Core.PlayQueue {
 
 		public void Handle( Events.TrackUserUpdate eventArgs ) {
 			foreach( var queueTrack in mPlayQueue.Where( queueTrack => ( queueTrack.Track != null ) &&
-			                                                           ( queueTrack.Track.DbId == eventArgs.TrackId ))) {
+																	   ( queueTrack.Track.DbId == eventArgs.TrackId ))) {
 				queueTrack.UpdateTrack( mTrackProvider.GetTrack( eventArgs.TrackId ));
 
 				mEventAggregator.Publish( new Events.PlaybackTrackUpdated( queueTrack ));
@@ -391,7 +391,7 @@ namespace Noise.Core.PlayQueue {
 			get {
 				return(!mPlayQueue.Any()) &&
 					  ( mPlayExhaustedStrategy != null ) &&
-				      ( mPlayExhaustedStrategy.StrategyId != ePlayExhaustedStrategy.Stop );
+					  ( mPlayExhaustedStrategy.StrategyId != ePlayExhaustedStrategy.Stop );
 			}
 		}
 
@@ -455,9 +455,9 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
-        public bool CanPlayNextTrack() {
-            return( mPlayQueue.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed )) != null );
-        }
+		public bool CanPlayNextTrack() {
+			return( mPlayQueue.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed )) != null );
+		}
 
 		public PlayQueueTrack PlayPreviousTrack() {
 			var	track = PlayingTrack;
@@ -483,6 +483,8 @@ namespace Noise.Core.PlayQueue {
 
 			if( track != null ) {
 				ContinuePlayFromTrack( track );
+
+				FirePlayQueueChanged();
 
 				retValue = true;
 			}
@@ -517,10 +519,10 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
-        public bool CanPlayPreviousTrack() {
-            return( mPlayHistory.Count > 0 );
-        }
-            
+		public bool CanPlayPreviousTrack() {
+			return( mPlayHistory.Count > 0 );
+		}
+			
 		public PlayQueueTrack PlayingTrack {
 			get { return( mPlayQueue.FirstOrDefault( track => ( track.IsPlaying ))); }
 			set {
@@ -547,9 +549,9 @@ namespace Noise.Core.PlayQueue {
 		public void SetPlayStrategy( ePlayStrategy strategyId, IPlayStrategyParameters parameters ) {
 			mPlayStrategy = mPlayStrategyFactory.ProvidePlayStrategy( strategyId );
 
-            if( mPlayStrategy != null ) {
-                mPlayStrategy.Initialize( this, parameters );
-            }
+			if( mPlayStrategy != null ) {
+				mPlayStrategy.Initialize( this, parameters );
+			}
 
 			Condition.Requires( mPlayStrategy ).IsNotNull();
 		}
