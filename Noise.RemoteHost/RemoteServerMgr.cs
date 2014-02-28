@@ -16,15 +16,18 @@ namespace Noise.RemoteHost {
 		private ServiceHost							mQueueServerHost;
 		private readonly INoiseRemoteSearch			mRemoteSearchServer;
 		private ServiceHost							mSearchServerHost;
+		private readonly INoiseRemoteTransport		mRemoteTransportServer;
+		private ServiceHost							mTransportServerHost;
 		private ServiceDiscovery					mServiceDiscovery;
 
 		public RemoteServerMgr( RemoteHostConfiguration hostConfiguration, INoiseRemote noiseRemote, INoiseRemoteData noiseRemoteData,
-								INoiseRemoteQueue noiseRemoteQueue, INoiseRemoteSearch noiseRemoteSearch ) {
+								INoiseRemoteQueue noiseRemoteQueue, INoiseRemoteSearch noiseRemoteSearch, INoiseRemoteTransport noiseRemoteTransport ) {
 			mHostConfiguration = hostConfiguration;
 			mRemoteServer = noiseRemote;
 			mRemoteDataServer = noiseRemoteData;
 			mRemoteQueueServer = noiseRemoteQueue;
 			mRemoteSearchServer = noiseRemoteSearch;
+			mRemoteTransportServer = noiseRemoteTransport;
 
 			mHostBaseAddress = string.Format( "http://localhost:{0}/Noise", mHostConfiguration.HostPort );
 		}
@@ -52,6 +55,12 @@ namespace Noise.RemoteHost {
 			mSearchServerHost.AddServiceEndpoint( typeof( INoiseRemoteSearch ), new WebHttpBinding(), new Uri( mHostBaseAddress + "/Search" ));
 			if(!OpenRemoteServer( mSearchServerHost )) {
 				mSearchServerHost = null;
+			}
+
+			mTransportServerHost = new WebServiceHost( mRemoteTransportServer );
+			mTransportServerHost.AddServiceEndpoint( typeof( INoiseRemoteTransport ), new WebHttpBinding(), new Uri( mHostBaseAddress + "/Transport" ));
+			if(!OpenRemoteServer( mTransportServerHost )) {
+				mTransportServerHost = null;
 			}
 
 			mServiceDiscovery = new ServiceDiscovery();
@@ -86,6 +95,7 @@ namespace Noise.RemoteHost {
 			CloseRemoteServer( mDataServerHost );
 			CloseRemoteServer( mQueueServerHost );
 			CloseRemoteServer( mSearchServerHost );
+			CloseRemoteServer( mTransportServerHost );
 		}
 
 		private static void CloseRemoteServer( ServiceHost host ) {

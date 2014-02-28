@@ -150,6 +150,7 @@
     <Compile Include="RemoteSearchServer.cs" />
     <Compile Include="RemoteServer.cs" />
     <Compile Include="RemoteServerMgr.cs" />
+    <Compile Include="RemoteTransportServer.cs" />
     <Compile Include="ServiceDiscovery.cs" />
   </ItemGroup>
   <ItemGroup>

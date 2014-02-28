@@ -263,6 +263,7 @@
     <Compile Include="RemoteDto\RoPlayQueueTrack.cs" />
     <Compile Include="RemoteDto\RoSearchResultItem.cs" />
     <Compile Include="RemoteDto\RoServerInformation.cs" />
+    <Compile Include="RemoteDto\RoTimeSync.cs" />
     <Compile Include="RemoteDto\RoTrack.cs" />
     <Compile Include="RemoteDto\AlbumListResult.cs" />
     <Compile Include="RemoteDto\ArtistListResult.cs" />
@@ -273,6 +274,7 @@
     <Compile Include="RemoteHost\INoiseRemote.cs" />
     <Compile Include="RemoteHost\INoiseRemoteQueue.cs" />
     <Compile Include="RemoteHost\INoiseRemoteSearch.cs" />
+    <Compile Include="RemoteHost\INoiseRemoteTransport.cs" />
     <Compile Include="RemoteHost\IRemoteServer.cs" />
     <Compile Include="RemoteDto\ServerVersion.cs" />
     <Compile Include="RemoteDto\TrackListResult.cs" />
