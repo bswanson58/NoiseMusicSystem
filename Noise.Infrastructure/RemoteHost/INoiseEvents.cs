@@ -16,8 +16,9 @@ namespace Noise.Infrastructure.RemoteHost {
         VoidCallbackArgs EndEventInQueue( IAsyncResult result );
 
         [OperationContract(AsyncPattern = true)]
-		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "eventInTransport")]
-        IAsyncResult BeginEventInTransport( AsyncCallback callback, object state );
+		[WebGet(ResponseFormat= WebMessageFormat.Json,
+			UriTemplate = "eventInTransport?time={serverTime}&state={playState}&track={currentTrack}&position={currentPosition}&length={trackLength}&sequence={sequence}")]
+        IAsyncResult BeginEventInTransport( int sequence, int playState, long serverTime, long currentTrack, long currentPosition, long trackLength, AsyncCallback callback, object state );
         VoidCallbackArgs EndEventInTransport( IAsyncResult result );
 	}
 }

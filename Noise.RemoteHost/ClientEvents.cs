@@ -3,6 +3,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.Windows.Threading;
+using Noise.Infrastructure.RemoteDto;
 using Noise.Infrastructure.RemoteHost;
 
 namespace Noise.RemoteHost {
@@ -43,15 +44,22 @@ namespace Noise.RemoteHost {
 		// EventInQueue
 		public event EventHandler<ClientCallbackArgs<VoidCallbackArgs>> EventCompleted;
 		public void EventInQueue() {
-			mService.BeginEventInQueue( EventInQueueComplete, null );
+			lock( this ) {
+				mService.BeginEventInQueue( EventInQueueComplete, null );
+			}
 		}
 		private void EventInQueueComplete( IAsyncResult result ) {
 			ServiceCallbackHandler( mService.EndEventInQueue, result, EventCompleted );
 		}
 
+		private int mSequence;
+
 		// EventInTransport
-		public void EventInTransport() {
-			mService.BeginEventInQueue( EventInTransportComplete, null );
+		public void EventInTransport( RoTransportState transportState ) {
+			lock( this ) {
+				mService.BeginEventInTransport( mSequence++, transportState.PlayState, transportState.ServerTime, transportState.CurrentTrack,
+												transportState.CurrentTrackPosition, transportState.CurrentTrackLength, EventInTransportComplete, null );
+			}
 		}
 		private void EventInTransportComplete( IAsyncResult result ) {
 			ServiceCallbackHandler( mService.EndEventInTransport, result, EventCompleted );

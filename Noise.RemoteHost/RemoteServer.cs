@@ -12,7 +12,8 @@ using Noise.Infrastructure.RemoteHost;
 
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
-	public class RemoteServer : INoiseRemote, IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted> {
+	public class RemoteServer : INoiseRemote,
+								IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted>, IHandle<Events.RemoteTransportUpdate> {
 		private readonly ILibraryConfiguration				mLibraryConfiguration;
 		private readonly RemoteHostConfiguration			mHostConfiguration;
 		private	readonly Dictionary<string, ClientEvents>	mClientList;
@@ -106,16 +107,20 @@ namespace Noise.RemoteHost {
 			new Task( OnQueueChangedTask ).Start();
 		}
 
+		public void Handle( Events.RemoteTransportUpdate args ) {
+			new Task( () => OnTransportChanged( args.TransportState )).Start();
+		}
+
 		private void OnQueueChangedTask() {
 			foreach( var client in mClientList.Values ) {
 				client.EventInQueue();
 			}
 		}
 
-/*		private void OnTransportChanged() {
+		private void OnTransportChanged( RoTransportState transportState ) {
 			foreach( var client in mClientList.Values ) {
-				client.EventInTransport();
+				client.EventInTransport( transportState );
 			}
-		} */
+		}
 	}
 }

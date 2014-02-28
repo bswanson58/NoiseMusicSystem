@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.RemoteDto;
 
 namespace Noise.Infrastructure {
 	public class Events {
@@ -347,6 +348,14 @@ namespace Noise.Infrastructure {
 
 			public StatusEvent( string message ) {
 				Message = message;
+			}
+		}
+
+		public class RemoteTransportUpdate {
+			public RoTransportState	TransportState {get; private set; }
+
+			public RemoteTransportUpdate( RoTransportState transportState ) {
+				TransportState = transportState;
 			}
 		}
 	}

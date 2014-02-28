@@ -8,5 +8,9 @@ namespace Noise.Infrastructure.RemoteHost {
 		[OperationContract]
 		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "timeSync?client={clientTimeMilliseconds}")]
 		RoTimeSync	SyncClientTime( long clientTimeMilliseconds );
+
+		[OperationContract]
+		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "getTransportState")]
+		RoTransportState GetTransportState();
 	}
 }

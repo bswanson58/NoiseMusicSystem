@@ -181,7 +181,7 @@ namespace Noise.Core.PlaySupport {
 
 		public void Shutdown() { }
 
-		private ePlayState PlayState {
+		public ePlayState PlayState {
 			get{ return( mCurrentPlayState ); }
 			set {
 				mCurrentPlayState = value;
