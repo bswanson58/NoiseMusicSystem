@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using System.ServiceModel;
+using AutoMapper;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteDto;
 using Noise.Infrastructure.RemoteHost;
@@ -45,6 +47,24 @@ namespace Noise.RemoteHost {
 			else {
 				retValue.ErrorMessage = "There is no currently open library to sync.";
 			}
+
+			return( retValue );
+		}
+
+		private RoLibrary TransformLibrary( LibraryConfiguration library ) {
+			var retValue = new RoLibrary();
+
+			Mapper.DynamicMap( library, retValue );
+
+			return( retValue );
+		}
+
+		public LibraryListResult GetLibraryList() {
+			var retValue = new LibraryListResult();
+			var libraries = mLibraryConfiguration.Libraries.Select( TransformLibrary );
+
+			retValue.Libraries = libraries.ToArray();
+			retValue.Success = true;
 
 			return( retValue );
 		}
