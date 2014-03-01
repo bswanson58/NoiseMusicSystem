@@ -18,16 +18,20 @@ namespace Noise.RemoteHost {
 		private ServiceHost							mSearchServerHost;
 		private readonly INoiseRemoteTransport		mRemoteTransportServer;
 		private ServiceHost							mTransportServerHost;
+		private readonly INoiseRemoteLibrary		mRemoteLibraryServer;
+		private ServiceHost							mLibrarySeverHost;
 		private ServiceDiscovery					mServiceDiscovery;
 
 		public RemoteServerMgr( RemoteHostConfiguration hostConfiguration, INoiseRemote noiseRemote, INoiseRemoteData noiseRemoteData,
-								INoiseRemoteQueue noiseRemoteQueue, INoiseRemoteSearch noiseRemoteSearch, INoiseRemoteTransport noiseRemoteTransport ) {
+								INoiseRemoteQueue noiseRemoteQueue, INoiseRemoteSearch noiseRemoteSearch,
+								INoiseRemoteTransport noiseRemoteTransport, INoiseRemoteLibrary noiseRemoteLibrary ) {
 			mHostConfiguration = hostConfiguration;
 			mRemoteServer = noiseRemote;
 			mRemoteDataServer = noiseRemoteData;
 			mRemoteQueueServer = noiseRemoteQueue;
 			mRemoteSearchServer = noiseRemoteSearch;
 			mRemoteTransportServer = noiseRemoteTransport;
+			mRemoteLibraryServer = noiseRemoteLibrary;
 
 			mHostBaseAddress = string.Format( "http://localhost:{0}/Noise", mHostConfiguration.HostPort );
 		}
@@ -63,6 +67,12 @@ namespace Noise.RemoteHost {
 				mTransportServerHost = null;
 			}
 
+			mLibrarySeverHost = new WebServiceHost( mRemoteLibraryServer );
+			mLibrarySeverHost.AddServiceEndpoint( typeof( INoiseRemoteLibrary ), new WebHttpBinding(), new Uri( mHostBaseAddress + "/Library" ));
+			if(!OpenRemoteServer( mLibrarySeverHost )) {
+				mLibrarySeverHost = null;
+			}
+
 			mServiceDiscovery = new ServiceDiscovery();
 			if( mServiceDiscovery.Initialize()) {
 				mServiceDiscovery.RegisterService( "_Noise._Tcp.", "Noise.Desktop", mHostConfiguration.HostPort );
@@ -96,6 +106,7 @@ namespace Noise.RemoteHost {
 			CloseRemoteServer( mQueueServerHost );
 			CloseRemoteServer( mSearchServerHost );
 			CloseRemoteServer( mTransportServerHost );
+			CloseRemoteServer( mLibrarySeverHost );
 		}
 
 		private static void CloseRemoteServer( ServiceHost host ) {

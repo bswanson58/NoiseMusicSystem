@@ -17,6 +17,7 @@ namespace Noise.RemoteHost {
 			mContainer.RegisterType<INoiseRemoteQueue, RemoteQueueServer>();
 			mContainer.RegisterType<INoiseRemoteSearch, RemoteSearchServer>();
 			mContainer.RegisterType<INoiseRemoteTransport, RemoteTransportServer>();
+			mContainer.RegisterType<INoiseRemoteLibrary, RemoteLibraryManager>();
 
 			MappingConfiguration.Configure();
 		}

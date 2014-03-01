@@ -273,6 +273,7 @@
     <Compile Include="RemoteDto\TransportCommand.cs" />
     <Compile Include="RemoteHost\INoiseEvents.cs" />
     <Compile Include="RemoteHost\INoiseRemote.cs" />
+    <Compile Include="RemoteHost\INoiseRemoteLibrary.cs" />
     <Compile Include="RemoteHost\INoiseRemoteQueue.cs" />
     <Compile Include="RemoteHost\INoiseRemoteSearch.cs" />
     <Compile Include="RemoteHost\INoiseRemoteTransport.cs" />

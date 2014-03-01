@@ -152,6 +152,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteDataServer.cs" />
     <Compile Include="RemoteHostModule.cs" />
+    <Compile Include="RemoteLibraryManager.cs" />
     <Compile Include="RemoteQueueServer.cs" />
     <Compile Include="RemoteSearchServer.cs" />
     <Compile Include="RemoteServer.cs" />
