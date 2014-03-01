@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.ServiceModel;
 using AutoMapper;
 using Noise.Infrastructure.Dto;
@@ -66,6 +67,70 @@ namespace Noise.RemoteHost {
 			retValue.Libraries = libraries.ToArray();
 			retValue.Success = true;
 
+			return( retValue );
+		}
+
+		public BaseResult UpdateLibrary( RoLibrary library ) {
+			var retValue = new BaseResult();
+
+			if( library != null ) {
+				try {
+					var existingLibrary = mLibraryConfiguration.Libraries.FirstOrDefault( lib => lib.LibraryId == library.LibraryId );
+
+					if( existingLibrary != null ) {
+						existingLibrary.LibraryName = library.LibraryName;
+						existingLibrary.DatabaseName = library.DatabaseName;
+						existingLibrary.IsDefaultLibrary = library.IsDefaultLibrary;
+
+						mLibraryConfiguration.UpdateLibrary( existingLibrary );
+
+						retValue.Success = true;
+					}
+					else {
+						retValue.ErrorMessage = "The library to be updated could not be located.";
+					}
+				}
+				catch( Exception ex ) {
+					retValue.ErrorMessage = ex.Message;
+				}
+			}
+			else {
+				retValue.ErrorMessage = "No library was received to update.";
+			}
+
+			return( retValue );
+		}
+
+		public LibraryListResult CreateLibrary( RoLibrary library ) {
+			var retValue = new LibraryListResult();
+
+			if( library != null ) {
+				try {
+					var newLibrary = new LibraryConfiguration { LibraryName = library.LibraryName,
+																DatabaseName = library.DatabaseName,
+																IsDefaultLibrary = library.IsDefaultLibrary };
+					var mediaLocation = new MediaLocation{ PreferFolderStrategy = true };
+
+					mediaLocation.FolderStrategy[0] = eFolderStrategy.Artist;
+					mediaLocation.FolderStrategy[1] = eFolderStrategy.Album;
+					mediaLocation.FolderStrategy[2] = eFolderStrategy.Volume;
+					mediaLocation.Path = library.MediaLocation;
+
+					newLibrary.MediaLocations.Add( mediaLocation );
+
+					mLibraryConfiguration.AddLibrary( newLibrary );
+
+					library.LibraryId = newLibrary.LibraryId;
+					retValue.Libraries = new[] { library };
+					retValue.Success = true;
+				}
+				catch( Exception ex ) {
+					retValue.ErrorMessage = ex.Message;
+				}
+			}
+			else {
+				retValue.ErrorMessage = "No library was received to update.";
+			}
 			return( retValue );
 		}
 	}
