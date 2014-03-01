@@ -8,5 +8,9 @@ namespace Noise.Infrastructure.RemoteHost {
 		[OperationContract]
 		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "selectLibrary?library={libraryId}")]
 		BaseResult SelectLibrary( long libraryId );
+
+		[OperationContract]
+		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "syncLibrary")]
+		BaseResult SyncLibrary();
 	}
 }

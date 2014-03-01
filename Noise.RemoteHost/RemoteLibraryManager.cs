@@ -8,9 +8,11 @@ namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteLibraryManager : INoiseRemoteLibrary {
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
+		private readonly ILibraryBuilder		mLibraryBuilder;
 
-		public RemoteLibraryManager( ILibraryConfiguration libraryConfiguration ) {
+		public RemoteLibraryManager( ILibraryConfiguration libraryConfiguration, ILibraryBuilder libraryBuilder ) {
 			mLibraryConfiguration = libraryConfiguration;
+			mLibraryBuilder = libraryBuilder;
 		}
 
 		public BaseResult SelectLibrary( long libraryId ) {
@@ -24,6 +26,24 @@ namespace Noise.RemoteHost {
 			}
 			else {
 				retValue.ErrorMessage = string.Format( "The specified library id ({0}) does not exist", libraryId );
+			}
+
+			return( retValue );
+		}
+
+		public BaseResult SyncLibrary() {
+			var retValue = new BaseResult();
+
+			if( mLibraryConfiguration.Current != null ) {
+				if(!mLibraryBuilder.LibraryUpdateInProgress ) {
+					mLibraryBuilder.StartLibraryUpdate();
+				}
+				else {
+					retValue.ErrorMessage = "A library sync is already in progress.";
+				}
+			}
+			else {
+				retValue.ErrorMessage = "There is no currently open library to sync.";
 			}
 
 			return( retValue );
