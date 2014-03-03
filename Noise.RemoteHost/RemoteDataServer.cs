@@ -271,5 +271,60 @@ namespace Noise.RemoteHost {
 
 			return( retValue );
 		}
+
+		private RoArtistTrack TransformArtistTrack( DbAlbum album, DbTrack track ) {
+			var retValue = new RoArtistTrack { TrackId = track.DbId, ArtistId = album.Artist, TrackName = track.Name };
+
+			return( retValue );
+		}
+
+		public ArtistTracksResult GetArtistTrackList( long artistId ) {
+			var retValue = new ArtistTracksResult();
+
+			try {
+				var trackSet = new Dictionary<string, RoArtistTrack>();
+				var albumSets = new Dictionary<string, List<long>>();
+
+				using( var albumList = mAlbumProvider.GetAlbumList( artistId )) {
+					foreach( var album in albumList.List ) {
+						using( var trackList = mTrackProvider.GetTrackList( album.DbId )) {
+							foreach( var track in trackList.List ) {
+								if( trackSet.ContainsKey( track.Name )) {
+									var albums = albumSets[track.Name];
+
+									albums.Add( track.Album );
+								}
+								else {
+									trackSet.Add( track.Name,
+										new RoArtistTrack { TrackId = track.DbId,
+															ArtistId = album.Artist,
+															TrackName = track.Name });
+									albumSets.Add( track.Name, new List<long> { track.Album });
+
+									retValue.UniqueTrackCount++;
+								}
+							}
+						}
+
+						retValue.AlbumCount++;
+					}
+				}
+
+				foreach( var track in trackSet.Values ) {
+					var albumList = albumSets[track.TrackName];
+
+					track.Albums = albumList.ToArray();
+				}
+
+				retValue.Success = true;
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "RemoteDataServer:GetArtistTrackList", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+
+			return( retValue );
+		}
 	}
 }
