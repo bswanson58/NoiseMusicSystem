@@ -272,12 +272,6 @@ namespace Noise.RemoteHost {
 			return( retValue );
 		}
 
-		private RoArtistTrack TransformArtistTrack( DbAlbum album, DbTrack track ) {
-			var retValue = new RoArtistTrack { TrackId = track.DbId, ArtistId = album.Artist, TrackName = track.Name };
-
-			return( retValue );
-		}
-
 		public ArtistTracksResult GetArtistTrackList( long artistId ) {
 			var retValue = new ArtistTracksResult();
 
@@ -300,8 +294,6 @@ namespace Noise.RemoteHost {
 															ArtistId = album.Artist,
 															TrackName = track.Name });
 									albumSets.Add( track.Name, new List<long> { track.Album });
-
-									retValue.UniqueTrackCount++;
 								}
 							}
 						}
@@ -316,6 +308,7 @@ namespace Noise.RemoteHost {
 					track.Albums = albumList.ToArray();
 				}
 
+				retValue.Tracks = trackSet.Values.ToArray();
 				retValue.Success = true;
 			}
 			catch( Exception ex ) {
