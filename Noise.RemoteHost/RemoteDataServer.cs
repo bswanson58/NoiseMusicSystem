@@ -273,7 +273,7 @@ namespace Noise.RemoteHost {
 		}
 
 		public ArtistTracksResult GetArtistTrackList( long artistId ) {
-			var retValue = new ArtistTracksResult();
+			var retValue = new ArtistTracksResult { ArtistId = artistId };
 
 			try {
 				var trackSet = new Dictionary<string, RoArtistTrack>();
