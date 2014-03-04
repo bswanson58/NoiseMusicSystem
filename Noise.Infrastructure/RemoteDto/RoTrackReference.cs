@@ -1,11 +1,12 @@
 ﻿using System.Runtime.Serialization;
 
 namespace Noise.Infrastructure.RemoteDto {
+
 	[DataContract]
-	public class RoArtistTrack {
+	public class RoTrackReference {
 		[DataMember]
-		public string				TrackName { get; set; }
+		public long		TrackId { get; set; }
 		[DataMember]
-		public RoTrackReference[]	Tracks { get; set; }
+		public long		AlbumId { get; set; }
 	}
 }

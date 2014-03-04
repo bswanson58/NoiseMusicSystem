@@ -277,7 +277,7 @@ namespace Noise.RemoteHost {
 
 			try {
 				var trackSet = new Dictionary<string, RoArtistTrack>();
-				var albumSets = new Dictionary<string, List<long>>();
+				var albumSets = new Dictionary<string, List<RoTrackReference>>();
 
 				using( var albumList = mAlbumProvider.GetAlbumList( artistId )) {
 					foreach( var album in albumList.List ) {
@@ -286,14 +286,13 @@ namespace Noise.RemoteHost {
 								if( trackSet.ContainsKey( track.Name )) {
 									var albums = albumSets[track.Name];
 
-									albums.Add( track.Album );
+									albums.Add( new RoTrackReference { AlbumId = album.DbId, TrackId = track.DbId });
 								}
 								else {
-									trackSet.Add( track.Name,
-										new RoArtistTrack { TrackId = track.DbId,
-															ArtistId = album.Artist,
-															TrackName = track.Name });
-									albumSets.Add( track.Name, new List<long> { track.Album });
+									trackSet.Add( track.Name, new RoArtistTrack { TrackName = track.Name });
+									albumSets.Add( track.Name, 
+													new List<RoTrackReference>{
+														new RoTrackReference { AlbumId = album.DbId, TrackId = track.DbId }});
 								}
 							}
 						}
@@ -305,7 +304,7 @@ namespace Noise.RemoteHost {
 				foreach( var track in trackSet.Values ) {
 					var albumList = albumSets[track.TrackName];
 
-					track.Albums = albumList.ToArray();
+					track.Tracks = albumList.ToArray();
 				}
 
 				retValue.Tracks = trackSet.Values.ToArray();

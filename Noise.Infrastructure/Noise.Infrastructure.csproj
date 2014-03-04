@@ -272,6 +272,7 @@
     <Compile Include="RemoteDto\AlbumListResult.cs" />
     <Compile Include="RemoteDto\ArtistListResult.cs" />
     <Compile Include="RemoteDto\BaseResult.cs" />
+    <Compile Include="RemoteDto\RoTrackReference.cs" />
     <Compile Include="RemoteDto\RoTransportState.cs" />
     <Compile Include="RemoteDto\SearchResult.cs" />
     <Compile Include="RemoteDto\TransportCommand.cs" />
