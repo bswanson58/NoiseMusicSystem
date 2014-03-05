@@ -6,8 +6,6 @@ namespace Noise.Infrastructure.RemoteDto {
 		[DataMember]
 		public long				ArtistId { get; set; }
 		[DataMember]
-		public long				AlbumCount { get; set; }
-		[DataMember]
 		public RoArtistTrack[]	Tracks { get; set; }
 	}
 }

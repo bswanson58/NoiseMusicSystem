@@ -276,39 +276,40 @@ namespace Noise.RemoteHost {
 			var retValue = new ArtistTracksResult { ArtistId = artistId };
 
 			try {
-				var trackSet = new Dictionary<string, RoArtistTrack>();
-				var albumSets = new Dictionary<string, List<RoTrackReference>>();
+				var artist = mArtistProvider.GetArtist( artistId );
 
-				using( var albumList = mAlbumProvider.GetAlbumList( artistId )) {
-					foreach( var album in albumList.List ) {
-						using( var trackList = mTrackProvider.GetTrackList( album.DbId )) {
-							foreach( var track in trackList.List ) {
-								if( trackSet.ContainsKey( track.Name )) {
-									var albums = albumSets[track.Name];
+				if( artist != null ) {
+					var trackSet = new Dictionary<string, RoArtistTrack>();
+					var albumSets = new Dictionary<string, List<RoTrackReference>>();
+					
+					using( var trackList = mTrackProvider.GetTrackList( artist )) {
+						foreach( var track in trackList.List ) {
+							if( trackSet.ContainsKey( track.Name )) {
+								var albums = albumSets[track.Name];
 
-									albums.Add( new RoTrackReference { AlbumId = album.DbId, TrackId = track.DbId });
-								}
-								else {
-									trackSet.Add( track.Name, new RoArtistTrack { TrackName = track.Name });
-									albumSets.Add( track.Name, 
-													new List<RoTrackReference>{
-														new RoTrackReference { AlbumId = album.DbId, TrackId = track.DbId }});
-								}
+								albums.Add( new RoTrackReference { AlbumId = track.Album, TrackId = track.DbId });
+							}
+							else {
+								trackSet.Add( track.Name, new RoArtistTrack { TrackName = track.Name });
+								albumSets.Add( track.Name, 
+												new List<RoTrackReference>{
+													new RoTrackReference { AlbumId = track.Album, TrackId = track.DbId }});
 							}
 						}
-
-						retValue.AlbumCount++;
 					}
+
+					foreach( var track in trackSet.Values ) {
+						var albumList = albumSets[track.TrackName];
+
+						track.Tracks = albumList.ToArray();
+					}
+
+					retValue.Tracks = trackSet.Values.ToArray();
+					retValue.Success = true;
 				}
-
-				foreach( var track in trackSet.Values ) {
-					var albumList = albumSets[track.TrackName];
-
-					track.Tracks = albumList.ToArray();
+				else {
+					retValue.ErrorMessage = "Artist could not be located.";
 				}
-
-				retValue.Tracks = trackSet.Values.ToArray();
-				retValue.Success = true;
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "RemoteDataServer:GetArtistTrackList", ex );
