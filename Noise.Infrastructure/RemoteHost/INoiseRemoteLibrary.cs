@@ -18,11 +18,11 @@ namespace Noise.Infrastructure.RemoteHost {
 		LibraryListResult GetLibraryList();
 
 		[OperationContract]
-		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "updateLibrary?library={library}")]
+		[WebInvoke(RequestFormat = WebMessageFormat.Json, ResponseFormat= WebMessageFormat.Json, Method = "PUT", UriTemplate = "updateLibrary")]
 		BaseResult UpdateLibrary( RoLibrary library );
 
 		[OperationContract]
-		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "createLibrary?library={library}")]
+		[WebInvoke(RequestFormat = WebMessageFormat.Json, ResponseFormat= WebMessageFormat.Json, Method="POST", UriTemplate = "createLibrary")]
 		LibraryListResult CreateLibrary( RoLibrary library );
 	}
 }
