@@ -123,34 +123,36 @@ namespace Noise.UI.ViewModels {
 
 		private IEnumerable<UiArtistTrackNode> BuildTrackList( DbArtist forArtist ) {
 			var trackSet = new Dictionary<string, UiArtistTrackNode>();
-			int	albumCount = 0;
+			var albumList = new Dictionary<long, DbAlbum>();
 
-			using( var albumList = mAlbumProvider.GetAlbumList( forArtist.DbId )) {
-				foreach( var album in albumList.List ) {
-					using( var trackList = mTrackProvider.GetTrackList( album.DbId )) {
-						foreach( var track in trackList.List ) {
-							var item = new UiArtistTrackNode( TransformTrack( track ), TransformAlbum( album ));
-
-							if( trackSet.ContainsKey( item.Track.Name )) {
-								var parent = trackSet[item.Track.Name];
-
-								if( parent.Children.Count == 0 ) {
-									parent.Children.Add( new UiArtistTrackNode( parent.Track, parent.Album ));
-								}
-								parent.Children.Add( item );
-							}
-							else {
-								item.Level = 1;
-								trackSet.Add( item.Track.Name, item );
-							}
-						}
-					}
-
-					albumCount++;
+			using( var albums = mAlbumProvider.GetAlbumList( forArtist.DbId )) {
+				foreach( var album in albums.List ) {
+					albumList.Add( album.DbId, album );
 				}
 			}
 
-			AlbumCount = albumCount;
+
+			using( var trackList = mTrackProvider.GetTrackList( forArtist )) {
+				foreach( var track in trackList.List ) {
+					var item = new UiArtistTrackNode( TransformTrack( track ),
+												      TransformAlbum( albumList[track.Album]));
+
+					if( trackSet.ContainsKey( item.Track.Name )) {
+						var parent = trackSet[item.Track.Name];
+
+						if( parent.Children.Count == 0 ) {
+							parent.Children.Add( new UiArtistTrackNode( parent.Track, parent.Album ));
+						}
+						parent.Children.Add( item );
+					}
+					else {
+						item.Level = 1;
+						trackSet.Add( item.Track.Name, item );
+					}
+				}
+			}
+
+			AlbumCount = albumList.Count;
 
 			return( trackSet.Values );
 		}
