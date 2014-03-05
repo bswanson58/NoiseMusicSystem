@@ -2,7 +2,6 @@
 using System.IO;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Reflection;
 using Caliburn.Micro;
 using Noise.BlobStorage.BlobStore;
 using Noise.Infrastructure;
@@ -16,8 +15,7 @@ using Raven.Client.Indexes;
 namespace Noise.RavenDatabase.Support {
 	public class RavenDatabaseManager : IDatabaseManager, IDbFactory,
 										IHandle<Events.LibraryChanged> {
-		private const Int16						cDatabaseVersionMajor = 0;
-		private const Int16						cDatabaseVersionMinor = 9;
+		private const Int16						cDatabaseVersion = 1;
 
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
@@ -73,7 +71,7 @@ namespace Noise.RavenDatabase.Support {
 				if( databaseCreated ) {
 					var versionProvider = new DatabaseInfoProvider( this );
 
-					versionProvider.InitializeDatabaseVersion( cDatabaseVersionMajor, cDatabaseVersionMinor );
+					versionProvider.InitializeDatabaseVersion( cDatabaseVersion );
 
 					NoiseLogger.Current.LogMessage( "Created Library Database: {0}", mLibraryConfiguration.Current.LibraryName );
 				}

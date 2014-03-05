@@ -41,7 +41,7 @@ namespace Noise.RavenDatabase.DataProviders {
 			get { return( DbFactory.IsOpen ); }
 		}
 
-		public void InitializeDatabaseVersion( short majorVersion, short minorVersion ) {
+		public void InitializeDatabaseVersion( short databaseVersion ) {
 			RetrieveDatabaseVersion();
 
 			if( mDatabaseVersion != null ) {
@@ -50,7 +50,7 @@ namespace Noise.RavenDatabase.DataProviders {
 				mDatabaseVersion = null;
 			}
 
-			mDatabaseVersion = new DbVersion( majorVersion, minorVersion );
+			mDatabaseVersion = new DbVersion( databaseVersion );
 			Database.Add( mDatabaseVersion );
 		}
 

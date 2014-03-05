@@ -11,8 +11,7 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.Database {
 	internal class EloqueraDb : IDatabase {
-		private const Int16					cDatabaseVersionMajor = 0;
-		private const Int16					cDatabaseVersionMinor = 10;
+		private const Int16					cDatabaseVersion = 2;
 
 		private readonly IIoc				mComponentCreator;
 		private readonly string				mDatabaseLocation;
@@ -76,7 +75,7 @@ namespace Noise.EloqueraDatabase.Database {
 					if( InternalOpenDatabase()) {
 						RegisterDatabaseTypes();
 
-						var dbVersion = new DbVersion( cDatabaseVersionMajor, cDatabaseVersionMinor );
+						var dbVersion = new DbVersion( cDatabaseVersion );
 						InsertItem( dbVersion );
 
 						CloseDatabase();
@@ -101,14 +100,14 @@ namespace Noise.EloqueraDatabase.Database {
 
 			if( InternalOpenDatabase()) {
 				if( ReadDatabaseVersion()) {
-					var currentVersion = new DbVersion( cDatabaseVersionMajor, cDatabaseVersionMinor );
+					var currentVersion = new DbVersion( cDatabaseVersion );
 
-					NoiseLogger.Current.LogMessage( String.Format( "Initialize and open '{0}' database version {1}.{2} on server '{3}'.",
-														mDatabaseName, DatabaseVersion.MajorVersion, DatabaseVersion.MinorVersion, mDatabaseLocation ));
+					NoiseLogger.Current.LogMessage( String.Format( "Initialize and open '{0}' database version {1} on server '{2}'.",
+														mDatabaseName, DatabaseVersion.DatabaseVersion, mDatabaseLocation ));
 
 					if( DatabaseVersion.IsOlderVersion( currentVersion )) {
-						NoiseLogger.Current.LogMessage( String.Format( "Updating database '{0}' to database version {1}.{2} on server '{3}'.",
-															mDatabaseName, currentVersion.MajorVersion, currentVersion.MinorVersion, mDatabaseLocation ));
+						NoiseLogger.Current.LogMessage( String.Format( "Updating database '{0}' to database version {1} on server '{2}'.",
+															mDatabaseName, currentVersion.DatabaseVersion, mDatabaseLocation ));
 
 						// Register database type should update the schema for all database types.
 						RegisterDatabaseTypes();

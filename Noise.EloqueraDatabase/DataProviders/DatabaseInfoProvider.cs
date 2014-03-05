@@ -43,7 +43,7 @@ namespace Noise.EloqueraDatabase.DataProviders {
 			}
 		}
 
-		public void InitializeDatabaseVersion( Int16 majorVersion, Int16 minorVersion ) {
+		public void InitializeDatabaseVersion( Int16 databaseVersion ) {
 			throw new NotImplementedException();
 		}
 

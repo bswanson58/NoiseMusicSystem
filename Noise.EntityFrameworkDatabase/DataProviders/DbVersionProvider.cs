@@ -41,8 +41,8 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			get{ return( false ); }
 		}
 
-		public void InitializeDatabaseVersion( Int16 majorVersion, Int16 minorVersion ) {
-			var dbVersion = new DbVersion( majorVersion, minorVersion );
+		public void InitializeDatabaseVersion( Int16 databaseVersion ) {
+			var dbVersion = new DbVersion( databaseVersion );
 
 			using( var context = CreateContext()) {
 				Set( context ).Add( dbVersion );

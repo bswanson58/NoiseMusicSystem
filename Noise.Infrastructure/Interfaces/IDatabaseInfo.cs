@@ -8,6 +8,6 @@ namespace Noise.Infrastructure.Interfaces {
 		long		DatabaseId { get; }
 		DbVersion	DatabaseVersion { get; }
 
-		void		InitializeDatabaseVersion( Int16 majorVersion, Int16 minorVersion );
+		void		InitializeDatabaseVersion( Int16 databaseVersion );
 	}
 }

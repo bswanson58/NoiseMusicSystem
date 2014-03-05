@@ -8,8 +8,7 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	public class EntityFrameworkDatabaseManager : IDatabaseManager,
 												  IHandle<Events.LibraryChanged> {
-		private const Int16		cDatabaseVersionMajor = 0;
-		private const Int16		cDatabaseVersionMinor = 9;
+		private const Int16		cDatabaseVersion = 1;
 
 		private readonly IDatabaseInitializeStrategy	mInitializeStrategy;
 		private readonly IDatabaseInfo					mDatabaseInfo;
@@ -37,7 +36,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 				if(( retValue ) &&
 				   ( mInitializeStrategy.DidCreateDatabase )) {
-					mDatabaseInfo.InitializeDatabaseVersion( cDatabaseVersionMajor, cDatabaseVersionMinor );
+					mDatabaseInfo.InitializeDatabaseVersion( cDatabaseVersion );
 				}
 			}
 
