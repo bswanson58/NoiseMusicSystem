@@ -36,6 +36,10 @@ namespace Noise.RavenDatabase.DataProviders {
 			Database.Delete( track );
 		}
 
+		public IDataProviderList<DbTrack> GetTrackList( DbArtist forArtist ) {
+			return( Database.Find( track => track.Artist == forArtist.DbId ));
+		}
+
 		public IDataProviderList<DbTrack> GetTrackList( long albumId ) {
 			return( Database.Find( track => track.Album == albumId, typeof( TracksByAlbum ).Name ));
 		}

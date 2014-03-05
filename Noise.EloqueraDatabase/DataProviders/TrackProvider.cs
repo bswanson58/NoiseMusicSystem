@@ -29,6 +29,10 @@ namespace Noise.EloqueraDatabase.DataProviders {
 			return( TryGetItem( "SELECT DbTrack Where DbId = @trackId", new Dictionary<string, object> {{ "trackId", trackId }}, "GetTrack" ));
 		}
 
+		public IDataProviderList<DbTrack> GetTrackList( DbArtist forArtist ) {
+			return( TryGetList( "SELECT DbTrack WHERE Artist = @artistId", new Dictionary<string, object>{{ "artistId", forArtist.DbId }}, "GetTrackList" ));
+		}
+
 		public IDataProviderList<DbTrack> GetTrackList( long albumId ) {
 			return( TryGetList( "SELECT DbTrack WHERE Album = @albumId", new Dictionary<string, object>{{ "albumId", albumId }}, "GetTrackList" ));
 		}

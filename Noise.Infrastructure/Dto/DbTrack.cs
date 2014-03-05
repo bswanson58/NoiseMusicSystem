@@ -8,6 +8,7 @@ namespace Noise.Infrastructure.Dto {
 	public class DbTrack : DbBase, IUserSettings {
 		public string			Name { get; set; }
 		public string			Performer { get; set; }
+		public long				Artist { get; set; }
 		public long				Album { get; set; }
 		public Int32			DurationMilliseconds { get; set; }
 		public Int32			Bitrate { get; set; }

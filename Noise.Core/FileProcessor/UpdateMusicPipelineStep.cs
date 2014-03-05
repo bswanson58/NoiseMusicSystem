@@ -52,6 +52,7 @@ namespace Noise.Core.FileProcessor {
 
 			if(( context.Artist != null ) &&
 			   ( context.Album != null )) {
+				context.Track.Artist = context.Artist.DbId;
 				context.Track.Album = context.Album.DbId;
 
 				if( context.StorageFile.WasUpdated ) {
