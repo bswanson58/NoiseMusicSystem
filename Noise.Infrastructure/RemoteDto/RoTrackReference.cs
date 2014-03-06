@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace Noise.Infrastructure.RemoteDto {
 
@@ -8,5 +9,11 @@ namespace Noise.Infrastructure.RemoteDto {
 		public long		TrackId { get; set; }
 		[DataMember]
 		public long		AlbumId { get; set; }
+		[DataMember]
+		public long		Duration { get; set; }
+		[DataMember]
+		public Int16	TrackNumber { get; set; }
+		[DataMember]
+		public string	VolumeName { get; set; }
 	}
 }

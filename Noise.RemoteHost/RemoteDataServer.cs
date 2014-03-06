@@ -284,16 +284,20 @@ namespace Noise.RemoteHost {
 					
 					using( var trackList = mTrackProvider.GetTrackList( artist )) {
 						foreach( var track in trackList.List ) {
+							var roTrack = new RoTrackReference { TrackId = track.DbId,
+																 Duration = track.DurationMilliseconds,
+																 TrackNumber = track.TrackNumber,
+																 VolumeName = track.VolumeName,
+																 AlbumId = track.Album };
+
 							if( trackSet.ContainsKey( track.Name )) {
 								var albums = albumSets[track.Name];
 
-								albums.Add( new RoTrackReference { AlbumId = track.Album, TrackId = track.DbId });
+								albums.Add( roTrack );
 							}
 							else {
 								trackSet.Add( track.Name, new RoArtistTrack { TrackName = track.Name });
-								albumSets.Add( track.Name, 
-												new List<RoTrackReference>{
-													new RoTrackReference { AlbumId = track.Album, TrackId = track.DbId }});
+								albumSets.Add( track.Name, new List<RoTrackReference>{ roTrack });
 							}
 						}
 					}
