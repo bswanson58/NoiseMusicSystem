@@ -11,16 +11,21 @@ using Noise.Infrastructure.RemoteHost;
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteQueueServer : INoiseRemoteQueue {
-		private readonly IAlbumProvider		mAlbumProvider;
-		private readonly ITrackProvider		mTrackProvider;
-		private readonly IPlayController	mPlayController;
-		private readonly IPlayQueue			mPlayQueue;
+		private readonly IAlbumProvider			mAlbumProvider;
+		private readonly ITrackProvider			mTrackProvider;
+		private readonly IPlayController		mPlayController;
+		private readonly IPlayQueue				mPlayQueue;
+		private readonly IPlayStrategyFactory	mPlayStrategyFactory;
+		private readonly IPlayExhaustedFactory	mPlayExhaustedFactory;
 
-		public RemoteQueueServer( IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayController playController, IPlayQueue playQueue ) {
+		public RemoteQueueServer( IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayController playController, IPlayQueue playQueue,
+								  IPlayStrategyFactory playStrategyFactory, IPlayExhaustedFactory playExhaustedFactory ) {
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mPlayController = playController;
 			mPlayQueue = playQueue;
+			mPlayStrategyFactory = playStrategyFactory;
+			mPlayExhaustedFactory = playExhaustedFactory;
 		}
 
 		public BaseResult EnqueueTrack( long trackId ) {
@@ -189,6 +194,45 @@ namespace Noise.RemoteHost {
 
 				retValue.ErrorMessage = ex.Message;
 			}
+			return( retValue );
+		}
+
+		public StrategyInformationResult GetStrategyInformation() {
+			var retValue = new StrategyInformationResult{ CurrentPlayStrategy = (int)mPlayQueue.PlayStrategy.StrategyId,
+														  CurrentExhaustedStrategy = (int)mPlayQueue.PlayExhaustedStrategy.StrategyId
+			};
+
+			retValue.PlayStrategies = mPlayStrategyFactory.AvailableStrategies.Select( strategy => new RoQueueStrategy( strategy )).ToArray();
+			retValue.ExhaustedStrategies = mPlayExhaustedFactory.AvailableStrategies.Select( strategy => new RoQueueStrategy( strategy )).ToArray();
+
+			retValue.Success = true;
+
+			return( retValue );
+		}
+
+		public BaseResult SetQueueStrategy( int playStrategyId, long playStrategyParameter,
+											int exhaustedStrategyId, long exhaustedStrategyParameter ) {
+			var retValue = new BaseResult();
+
+			try {
+				var playStrategy = mPlayStrategyFactory.AvailableStrategies.FirstOrDefault( strategy => strategy.StrategyId == (ePlayStrategy)playStrategyId );
+				if( playStrategy != null ) {
+					mPlayQueue.SetPlayStrategy( playStrategy.StrategyId,
+												new PlayStrategyParameterDbId( ePlayExhaustedStrategy.PlayArtist ) { DbItemId = playStrategyParameter });
+				}
+
+				var exhaustedStrategy = mPlayExhaustedFactory.AvailableStrategies.FirstOrDefault( strategy => strategy.StrategyId == (ePlayExhaustedStrategy)exhaustedStrategyId );
+				if( exhaustedStrategy != null ) {
+					mPlayQueue.SetPlayExhaustedStrategy( exhaustedStrategy.StrategyId,
+														new PlayStrategyParameterDbId( exhaustedStrategy.StrategyId ) { DbItemId = exhaustedStrategyParameter });
+				}
+
+				retValue.Success = true;
+			}
+			catch( Exception ex ) {
+				retValue.ErrorMessage = ex.Message;
+			}
+
 			return( retValue );
 		}
 	}

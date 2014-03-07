@@ -1,16 +1,16 @@
 ﻿namespace Noise.Infrastructure.Interfaces {
 	public enum ePlayExhaustedStrategy {
-		Stop,
-		Replay,
-		PlayList,
-		PlayArtist,
-		PlaySimilar,
-		PlayFavorites,
-		PlayStream,
-		PlayGenre,
-		PlayArtistGenre,
-		PlayCategory,
-		SeldomPlayedArtists
+		Stop = 1,
+		Replay = 2,
+		PlayList = 3,
+		PlayArtist = 4,
+		PlaySimilar = 5,
+		PlayFavorites = 6,
+		PlayStream = 7,
+		PlayGenre = 8,
+		PlayArtistGenre = 9,
+		PlayCategory = 10,
+		SeldomPlayedArtists = 11
 	}
 
 	public interface IPlayExhaustedStrategy {

@@ -28,5 +28,14 @@ namespace Noise.Infrastructure.RemoteHost {
 		[OperationContract]
 		[WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "queueItemCommand?command={command}&item={itemId}")]
 		BaseResult ExecuteQueueItemCommand( QueueItemCommand command, long itemId );
+
+		[OperationContract]
+		[WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "queueStrategies")]
+		StrategyInformationResult GetStrategyInformation();
+
+		[OperationContract]
+		[WebGet(ResponseFormat = WebMessageFormat.Json, 
+			UriTemplate = "setQueueStrategy?playStrategy={playStrategyId}&playParameter={playStrategyParameter}&exhaustedStrategy={exhaustedStrategyId}&exhaustedParameter={exhaustedStrategyParameter}")]
+		BaseResult SetQueueStrategy( int playStrategyId, long playStrategyParameter, int exhaustedStrategyId, long exhaustedStrategyParameter );
 	}
 }

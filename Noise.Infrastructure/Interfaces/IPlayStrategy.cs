@@ -2,11 +2,11 @@
 
 namespace Noise.Infrastructure.Interfaces {
 	public enum ePlayStrategy {
-		Next,
-		Random,
-		TwoFers,
-		FeaturedArtists,
-		NewReleases
+		Next = 1,
+		Random = 2,
+		TwoFers = 3,
+		FeaturedArtists = 4,
+		NewReleases = 5
 	}
 
     public interface IPlayStrategy {
