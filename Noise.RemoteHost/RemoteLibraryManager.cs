@@ -40,6 +40,8 @@ namespace Noise.RemoteHost {
 			if( mLibraryConfiguration.Current != null ) {
 				if(!mLibraryBuilder.LibraryUpdateInProgress ) {
 					mLibraryBuilder.StartLibraryUpdate();
+
+					retValue.Success = true;
 				}
 				else {
 					retValue.ErrorMessage = "A library sync is already in progress.";
