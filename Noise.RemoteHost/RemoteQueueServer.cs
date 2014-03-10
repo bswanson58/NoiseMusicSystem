@@ -198,12 +198,30 @@ namespace Noise.RemoteHost {
 		}
 
 		public StrategyInformationResult GetStrategyInformation() {
-			var retValue = new StrategyInformationResult{ CurrentPlayStrategy = (int)mPlayQueue.PlayStrategy.StrategyId,
-														  CurrentExhaustedStrategy = (int)mPlayQueue.PlayExhaustedStrategy.StrategyId
-			};
+			var retValue = new StrategyInformationResult();
+
+			var playStrategy = mPlayQueue.PlayStrategy;
+			if( playStrategy != null ) {
+				retValue.CurrentPlayStrategy = (int)playStrategy.StrategyId;
+
+				if( playStrategy.Parameters is PlayStrategyParameterDbId ) {
+					retValue.PlayStrategyParameter = ( playStrategy.Parameters as PlayStrategyParameterDbId ).DbItemId;
+				}
+			}
+
+			var exhaustedStrategy = mPlayQueue.PlayExhaustedStrategy;
+			if( exhaustedStrategy != null ) {
+				retValue.CurrentExhaustedStrategy = (int)exhaustedStrategy.StrategyId;
+
+				if( exhaustedStrategy.Parameters is PlayStrategyParameterDbId ) {
+					retValue.ExhaustedStrategyParameter = ( exhaustedStrategy.Parameters as PlayStrategyParameterDbId ).DbItemId;
+				}
+			}
 
 			retValue.PlayStrategies = mPlayStrategyFactory.AvailableStrategies.Select( strategy => new RoQueueStrategy( strategy )).ToArray();
 			retValue.ExhaustedStrategies = mPlayExhaustedFactory.AvailableStrategies.Select( strategy => new RoQueueStrategy( strategy )).ToArray();
+
+			// Add the possible strategy parameters.
 
 			retValue.Success = true;
 
