@@ -12,5 +12,13 @@ namespace Noise.Infrastructure.RemoteHost {
 		[OperationContract]
 		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "getTransportState")]
 		RoTransportState GetTransportState();
+
+		[OperationContract]
+		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "getAudioState")]
+		AudioStateResult GetAudioState();
+
+		[OperationContract]
+		[WebInvoke(RequestFormat = WebMessageFormat.Json, ResponseFormat= WebMessageFormat.Json, Method = "PUT", UriTemplate = "setAudioState")]
+		BaseResult SetAudioState( RoAudioState audioState );
 	}
 }

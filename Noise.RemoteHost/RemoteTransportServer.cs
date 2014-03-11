@@ -81,5 +81,25 @@ namespace Noise.RemoteHost {
 		private static long CurrentMillisecond {
 			get { return((long)(( DateTime.UtcNow - JanuaryFirst1970 ).TotalMilliseconds )); }
 		}
+
+		public AudioStateResult GetAudioState() {
+			var retValue = new AudioStateResult{ AudioState = { VolumeLevel = (int)( mAudioPlayer.Volume * 100 ) },
+												 Success = true };
+
+			return( retValue );
+		}
+
+		public BaseResult SetAudioState( RoAudioState audioState ) {
+			var retValue = new BaseResult();
+
+			if( audioState.VolumeLevel > 0 ) {
+				mAudioPlayer.Volume = (float)audioState.VolumeLevel / 100;
+			}
+
+			retValue.Success = true;
+
+			return( retValue );
+		}
+
 	}
 }
