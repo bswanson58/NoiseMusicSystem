@@ -270,6 +270,7 @@
     <Compile Include="RemoteDto\RoQueueStrategy.cs" />
     <Compile Include="RemoteDto\RoSearchResultItem.cs" />
     <Compile Include="RemoteDto\RoServerInformation.cs" />
+    <Compile Include="RemoteDto\RoStrategyInformation.cs" />
     <Compile Include="RemoteDto\RoStrategyParameter.cs" />
     <Compile Include="RemoteDto\RoTimeSync.cs" />
     <Compile Include="RemoteDto\RoTrack.cs" />

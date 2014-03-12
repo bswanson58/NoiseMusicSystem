@@ -30,7 +30,7 @@ namespace Noise.Infrastructure.RemoteHost {
 		BaseResult ExecuteQueueItemCommand( QueueItemCommand command, long itemId );
 
 		[OperationContract]
-		[WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "queueStrategies")]
+		[WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "queueStrategyInformation")]
 		StrategyInformationResult GetStrategyInformation();
 
 		[OperationContract]

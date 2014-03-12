@@ -3,10 +3,12 @@ using System.Linq;
 using System.ServiceModel;
 using AutoMapper;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteDto;
 using Noise.Infrastructure.RemoteHost;
+using Noise.Infrastructure.Support;
 
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
@@ -202,24 +204,24 @@ namespace Noise.RemoteHost {
 
 			var playStrategy = mPlayQueue.PlayStrategy;
 			if( playStrategy != null ) {
-				retValue.CurrentPlayStrategy = (int)playStrategy.StrategyId;
+				retValue.StrategyInformation.PlayStrategy = (int)playStrategy.StrategyId;
 
 				if( playStrategy.Parameters is PlayStrategyParameterDbId ) {
-					retValue.PlayStrategyParameter = ( playStrategy.Parameters as PlayStrategyParameterDbId ).DbItemId;
+					retValue.StrategyInformation.PlayStrategyParameter = ( playStrategy.Parameters as PlayStrategyParameterDbId ).DbItemId;
 				}
 			}
 
 			var exhaustedStrategy = mPlayQueue.PlayExhaustedStrategy;
 			if( exhaustedStrategy != null ) {
-				retValue.CurrentExhaustedStrategy = (int)exhaustedStrategy.StrategyId;
+				retValue.StrategyInformation.ExhaustedStrategy = (int)exhaustedStrategy.StrategyId;
 
 				if( exhaustedStrategy.Parameters is PlayStrategyParameterDbId ) {
-					retValue.ExhaustedStrategyParameter = ( exhaustedStrategy.Parameters as PlayStrategyParameterDbId ).DbItemId;
+					retValue.StrategyInformation.ExhaustedStrategyParameter = ( exhaustedStrategy.Parameters as PlayStrategyParameterDbId ).DbItemId;
 				}
 			}
 
-			retValue.PlayStrategies = mPlayStrategyFactory.AvailableStrategies.Select( strategy => new RoQueueStrategy( strategy )).ToArray();
-			retValue.ExhaustedStrategies = mPlayExhaustedFactory.AvailableStrategies.Select( strategy => new RoQueueStrategy( strategy )).ToArray();
+			retValue.StrategyInformation.PlayStrategies = mPlayStrategyFactory.AvailableStrategies.Select( strategy => new RoQueueStrategy( strategy )).ToArray();
+			retValue.StrategyInformation.ExhaustedStrategies = mPlayExhaustedFactory.AvailableStrategies.Select( strategy => new RoQueueStrategy( strategy )).ToArray();
 
 			// Add the possible strategy parameters.
 
@@ -233,17 +235,29 @@ namespace Noise.RemoteHost {
 			var retValue = new BaseResult();
 
 			try {
+				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+
 				var playStrategy = mPlayStrategyFactory.AvailableStrategies.FirstOrDefault( strategy => strategy.StrategyId == (ePlayStrategy)playStrategyId );
 				if( playStrategy != null ) {
-					mPlayQueue.SetPlayStrategy( playStrategy.StrategyId,
-												new PlayStrategyParameterDbId( ePlayExhaustedStrategy.PlayArtist ) { DbItemId = playStrategyParameter });
+					var playParameters = new PlayStrategyParameterDbId( ePlayExhaustedStrategy.PlayArtist ) { DbItemId = playStrategyParameter };
+
+					mPlayQueue.SetPlayStrategy( playStrategy.StrategyId, playParameters );
+
+					configuration.PlayStrategy = playStrategy.StrategyId;
+					configuration.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( playParameters );
 				}
 
 				var exhaustedStrategy = mPlayExhaustedFactory.AvailableStrategies.FirstOrDefault( strategy => strategy.StrategyId == (ePlayExhaustedStrategy)exhaustedStrategyId );
 				if( exhaustedStrategy != null ) {
-					mPlayQueue.SetPlayExhaustedStrategy( exhaustedStrategy.StrategyId,
-														new PlayStrategyParameterDbId( exhaustedStrategy.StrategyId ) { DbItemId = exhaustedStrategyParameter });
+					var exhaustedParameters = new PlayStrategyParameterDbId( exhaustedStrategy.StrategyId ) { DbItemId = exhaustedStrategyParameter };
+	
+					mPlayQueue.SetPlayExhaustedStrategy( exhaustedStrategy.StrategyId, exhaustedParameters );
+
+					configuration.PlayExhaustedStrategy = exhaustedStrategy.StrategyId;
+					configuration.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( exhaustedParameters );
 				}
+
+				NoiseSystemConfiguration.Current.Save( configuration );
 
 				retValue.Success = true;
 			}

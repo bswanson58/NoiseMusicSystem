@@ -5,7 +5,7 @@ namespace Noise.Infrastructure.RemoteDto {
 	[DataContract]
 	public class RoQueueStrategy {
 		[DataMember]
-		public long			StrategyId { get; set; }
+		public int			StrategyId { get; set; }
 		[DataMember]
 		public string		StrategyName { get; set; }
 		[DataMember]
