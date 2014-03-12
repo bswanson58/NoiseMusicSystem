@@ -17,6 +17,8 @@ namespace Noise.Infrastructure.RemoteDto {
 		public RoQueueStrategy[]		ExhaustedStrategies { get; set; }
 		[DataMember]
 		public RoStrategyParameter[]	GenreParameters { get; set; }
+		[DataMember]
+		public RoStrategyParameter[]	ArtistParameters { get; set; }
 
 		public RoStrategyInformation() {
 			PlayStrategies = new RoQueueStrategy[0];

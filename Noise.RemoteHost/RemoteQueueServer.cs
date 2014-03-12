@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using AutoMapper;
@@ -13,17 +14,22 @@ using Noise.Infrastructure.Support;
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteQueueServer : INoiseRemoteQueue {
+		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
+		private readonly IGenreProvider			mGenreProvider;
 		private readonly IPlayController		mPlayController;
 		private readonly IPlayQueue				mPlayQueue;
 		private readonly IPlayStrategyFactory	mPlayStrategyFactory;
 		private readonly IPlayExhaustedFactory	mPlayExhaustedFactory;
 
-		public RemoteQueueServer( IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayController playController, IPlayQueue playQueue,
+		public RemoteQueueServer( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IGenreProvider genreProvider,
+								  IPlayController playController, IPlayQueue playQueue,
 								  IPlayStrategyFactory playStrategyFactory, IPlayExhaustedFactory playExhaustedFactory ) {
+			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
+			mGenreProvider = genreProvider;
 			mPlayController = playController;
 			mPlayQueue = playQueue;
 			mPlayStrategyFactory = playStrategyFactory;
@@ -224,6 +230,23 @@ namespace Noise.RemoteHost {
 			retValue.StrategyInformation.ExhaustedStrategies = mPlayExhaustedFactory.AvailableStrategies.Select( strategy => new RoQueueStrategy( strategy )).ToArray();
 
 			// Add the possible strategy parameters.
+			using( var artistList = mArtistProvider.GetArtistList()) {
+				var parameterList = new List<RoStrategyParameter>();
+
+				parameterList.AddRange( artistList.List.Select( artist => new RoStrategyParameter{ Id = artist.DbId, Title = artist.Name } ));
+				retValue.StrategyInformation.ArtistParameters = parameterList.ToArray();
+
+				parameterList.Clear();
+
+				using( var genreList = mGenreProvider.GetGenreList()) {
+					var uniqueGenres = genreList.List.Join( artistList.List, genre => genre.DbId, artist => artist.Genre, ( genre, artist ) => genre ).Distinct();
+
+					parameterList.AddRange( uniqueGenres.Select( genre => new RoStrategyParameter { Id = genre.DbId, Title = genre.Name }));
+
+					retValue.StrategyInformation.GenreParameters = parameterList.ToArray();
+				}
+			}
+
 
 			retValue.Success = true;
 
