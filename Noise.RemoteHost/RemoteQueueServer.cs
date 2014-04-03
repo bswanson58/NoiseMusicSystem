@@ -137,6 +137,12 @@ namespace Noise.RemoteHost {
 							mPlayController.Stop();
 						}
 						break;
+
+					case TransportCommand.Repeat:
+						if( mPlayController.CurrentTrack != null ) {
+							mPlayQueue.PlayingTrackReplayCount = 1;
+						}
+						break;
 				}
 
 				retValue.Success = true;
