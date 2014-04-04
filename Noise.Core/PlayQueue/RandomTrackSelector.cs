@@ -31,6 +31,34 @@ namespace Noise.Core.PlayQueue {
 			return( SelectRandomTracks( albumList, approveTrack, count ));
 		}
 
+		public IEnumerable<DbTrack> SelectTracks( IEnumerable<SearchResultItem> searchList, Func<DbTrack, bool> approveTrack, int count ) {
+			var retValue = new List<DbTrack>();
+
+			if( searchList != null ) {
+				var albumList = new List<DbAlbum>();
+				var trackList = new List<DbTrack>();
+
+				foreach( var item in searchList ) {
+					if( item.Track != null ) {
+						trackList.Add( item.Track );
+					}
+					else {
+						if( item.Album != null ) {
+							albumList.Add( item.Album );
+						}
+					}
+				}
+
+				if( albumList.Count > 0 ) {
+					trackList.AddRange( SelectRandomTracks( albumList, track => true, Math.Max( trackList.Count, count * 3 )));
+				}
+
+				retValue.AddRange( SelectRandomTracks( trackList, approveTrack, count ));
+			}
+
+			return( retValue );
+		}
+
 		private IEnumerable<DbTrack> SelectRandomTracks( IEnumerable<DbAlbum> albums, Func<DbTrack, bool> approveTrack, int count ) {
 			var retValue = new List<DbTrack>();
 			var albumList = albums.ToList();
@@ -40,7 +68,7 @@ namespace Noise.Core.PlayQueue {
 				int	circuitBreaker = 0;
 
 				while(( retValue.Count < count ) &&
-					  ( circuitBreaker < count * 2 )) {
+					  ( circuitBreaker < ( count * 3 ))) {
 					var album = albumList.Skip( NextRandom( albumCount - 1 )).Take( 1 ).FirstOrDefault();
 
 					if( album != null ) {
@@ -55,6 +83,25 @@ namespace Noise.Core.PlayQueue {
 
 					circuitBreaker++;
 				}
+			}
+
+			return( retValue );
+		}
+
+		private IEnumerable<DbTrack> SelectRandomTracks( List<DbTrack> trackList, Func<DbTrack, bool> approveTrack, int count ) {
+			var retValue = new List<DbTrack>();
+			int	circuitBreaker = 0;
+
+			while(( retValue.Count < count ) &&
+				  ( circuitBreaker < ( count * 3 ))) {
+				var track = trackList.Skip( NextRandom( trackList.Count - 1 )).Take( 1 ).FirstOrDefault();
+
+				if(( track != null ) &&
+				   ( approveTrack( track ))) {
+					retValue.Add( track );
+				}
+
+				circuitBreaker++;
 			}
 
 			return( retValue );
