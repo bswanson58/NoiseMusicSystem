@@ -107,6 +107,14 @@ namespace Noise.Core.PlayQueue {
 			FirePlayQueueChanged();
 		}
 
+		public void Add( IEnumerable<DbTrack> trackList ) {
+			foreach( var track in trackList ) {
+				AddTrack( track, eStrategySource.User );
+			}
+
+			FirePlayQueueChanged();
+		}
+
 		public void StrategyAdd( DbTrack track ) {
 			AddTrack( track, eStrategySource.ExhaustedStrategy );
 

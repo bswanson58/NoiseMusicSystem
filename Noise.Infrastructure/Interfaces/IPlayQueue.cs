@@ -4,6 +4,7 @@ using Noise.Infrastructure.Dto;
 namespace Noise.Infrastructure.Interfaces {
 	public interface IPlayQueue {
 		void			Add( DbTrack track );
+		void			Add( IEnumerable<DbTrack> trackList );
 		void			Add( DbAlbum album );
 		void			Add( DbArtist artist );
 		void			Add( DbInternetStream stream );

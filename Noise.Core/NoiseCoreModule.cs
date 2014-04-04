@@ -112,6 +112,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IEnumerable<IPlayExhaustedStrategy>, IPlayExhaustedStrategy[]>();
 
 			mContainer.RegisterType<IPlayQueueSupport, PlayQueueRandomTracks>( "PlayQueueRandomTracks" );
+			mContainer.RegisterType<IRandomTrackSelector, RandomTrackSelector>();
 			mContainer.RegisterType<IEnumerable<IPlayQueueSupport>, IPlayQueueSupport[]>();
 		}
 	}

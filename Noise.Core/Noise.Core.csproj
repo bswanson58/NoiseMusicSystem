@@ -235,6 +235,7 @@
     <Compile Include="FileStore\IFileUpdates.cs" />
     <Compile Include="FileStore\IFolderExplorer.cs" />
     <Compile Include="FileStore\StorageFolderSupport.cs" />
+    <Compile Include="PlayQueue\RandomTrackSelector.cs" />
     <Compile Include="PlayStrategies\PlayStrategyBase.cs" />
     <Compile Include="PlaySupport\AudioController.cs" />
     <Compile Include="PlaySupport\PlayController.cs" />
