@@ -53,7 +53,9 @@ namespace Noise.Core.PlayQueue {
 					trackList.AddRange( SelectRandomTracks( albumList, track => true, Math.Max( trackList.Count, count * 3 )));
 				}
 
-				retValue.AddRange( SelectRandomTracks( trackList, approveTrack, count ));
+				if( trackList.Any()) {
+					retValue.AddRange( SelectRandomTracks( trackList, approveTrack, count ));
+				}
 			}
 
 			return( retValue );

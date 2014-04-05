@@ -57,6 +57,27 @@ namespace Noise.RemoteHost {
 			return( retValue );
 		}
 
+		public BaseResult EnqueueTrackList( long[] trackIds ) {
+			var retValue = new BaseResult();
+
+			try {
+				var trackList = trackIds.Select( trackId => mTrackProvider.GetTrack( trackId )).Where( track => track != null ).ToList();
+
+				if( trackList.Any()) {
+					mPlayQueue.Add( trackList );
+
+					retValue.Success = true;
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "RemoteQueueServer:EnqueueTrackList", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+
+			return( retValue );
+		}
+
 		public BaseResult EnqueueAlbum( long albumId ) {
 			var retValue = new BaseResult();
 

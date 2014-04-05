@@ -10,6 +10,10 @@ namespace Noise.Infrastructure.RemoteHost {
 		BaseResult EnqueueTrack( long trackId );
 
 		[OperationContract]
+		[WebInvoke(RequestFormat = WebMessageFormat.Json, ResponseFormat= WebMessageFormat.Json, Method = "PUT", UriTemplate = "enqueueTrackList")]
+		BaseResult EnqueueTrackList( long[] trackList );
+
+		[OperationContract]
 		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "enqueueAlbum?album={albumId}")]
 		BaseResult EnqueueAlbum( long albumId );
 
