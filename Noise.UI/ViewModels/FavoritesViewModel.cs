@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
@@ -16,17 +17,21 @@ namespace Noise.UI.ViewModels {
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
+		private readonly IRandomTrackSelector	mTrackSelector;
+		private readonly IPlayQueue				mPlayQueue;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly IDialogService			mDialogService;
 		private readonly SortableCollection<FavoriteViewNode>	mFavoritesList;
 
-		public FavoritesViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
+		public FavoritesViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
 								   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 								   IDataExchangeManager dataExchangeManager, IDialogService dialogService ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
+			mTrackSelector = trackSelector;
+			mPlayQueue = playQueue;
 			mDataExchangeMgr = dataExchangeManager;
 			mDialogService = dialogService;
 
@@ -103,6 +108,7 @@ namespace Noise.UI.ViewModels {
 				mFavoritesList.Refresh();
 
 				RaiseCanExecuteChangedEvent( "CanExecute_ExportFavorites" );
+				RaiseCanExecuteChangedEvent( "CanExecute_PlayRandom" );
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "LoadFavorites:", ex );
@@ -138,6 +144,14 @@ namespace Noise.UI.ViewModels {
 
 		private static void PlayTrack( FavoriteViewNode node ) {
 			GlobalCommands.PlayTrack.Execute( node.Track );
+		}
+
+		public void Execute_PlayRandom() {
+			mPlayQueue.Add( mTrackSelector.SelectTracksFromFavorites( track => !mPlayQueue.IsTrackQueued( track ), 10 ));
+		}
+
+		public bool CanExecute_PlayRandom() {
+			return( mFavoritesList.Any());
 		}
 
 		public void Execute_ExportFavorites() {

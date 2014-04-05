@@ -6,11 +6,13 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayQueue {
 	public class RandomTrackSelector : IRandomTrackSelector {
-		private readonly ITrackProvider		mTrackProvider;
+		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly ITrackProvider		mTrackProvider;
 		private readonly Random				mRandom;
 
-		public RandomTrackSelector( IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+		public RandomTrackSelector( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 
@@ -61,6 +63,57 @@ namespace Noise.Core.PlayQueue {
 			return( retValue );
 		}
 
+		public IEnumerable<DbTrack> SelectTracksFromFavorites( Func<DbTrack, bool> approveTrack, int count ) {
+			var retValue = new List<DbTrack>();
+			var trackList = new List<DbTrack>();
+
+			using( var artistList = mArtistProvider.GetFavoriteArtists()) {
+				trackList.AddRange( SelectRandomTracks( artistList.List, track => true, count ));
+			}
+			using( var albumList = mAlbumProvider.GetFavoriteAlbums()) {
+				trackList.AddRange( SelectRandomTracks( albumList.List, track => true, count ));
+			}
+			using( var favoriteTracks = mTrackProvider.GetFavoriteTracks() ) {
+				trackList.AddRange( favoriteTracks.List );
+			}
+
+			if( trackList.Any()) {
+				retValue.AddRange( SelectRandomTracks( trackList, approveTrack, count ));
+			}
+
+			return( retValue );
+		}
+
+		private IEnumerable<DbTrack> SelectRandomTracks( IEnumerable<DbArtist> artists, Func<DbTrack, bool> approveTrack, int count ) {
+			var retValue = new List<DbTrack>();
+			var artistList = artists.ToList();
+			var artistCount = artistList.Count;
+
+			if( artistList.Any()) {
+				var trackList = new List<DbTrack>();
+				int	circuitBreaker = 0;
+
+				while(( retValue.Count < count ) &&
+					  ( circuitBreaker < ( count * 2 ))) {
+					var artist = artistList.Skip( NextRandom( artistCount - 1 )).Take( 1 ).FirstOrDefault();
+
+					if( artist != null ) {
+						using( var albumList = mAlbumProvider.GetAlbumList( artist ) ) {
+							trackList.AddRange( SelectRandomTracks( albumList.List, track => true, count ));
+						}
+					}
+
+					circuitBreaker++;
+				}
+
+				if( trackList.Any() ) {
+					retValue.AddRange( SelectRandomTracks( trackList, approveTrack, count ));
+				}
+			}
+
+			return( retValue );
+		} 
+
 		private IEnumerable<DbTrack> SelectRandomTracks( IEnumerable<DbAlbum> albums, Func<DbTrack, bool> approveTrack, int count ) {
 			var retValue = new List<DbTrack>();
 			var albumList = albums.ToList();
@@ -99,6 +152,7 @@ namespace Noise.Core.PlayQueue {
 				var track = trackList.Skip( NextRandom( trackList.Count - 1 )).Take( 1 ).FirstOrDefault();
 
 				if(( track != null ) &&
+				   ( retValue.FirstOrDefault( t => t.DbId == track.DbId ) == null ) &&
 				   ( approveTrack( track ))) {
 					retValue.Add( track );
 				}
