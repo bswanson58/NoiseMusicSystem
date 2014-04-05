@@ -52,7 +52,7 @@
                 </i:Interaction.Behaviors>
             </ListView>
             
-            <Grid Grid.Row="1" Margin="3">
+            <Grid Grid.Row="1" Margin="3,7,3,3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
