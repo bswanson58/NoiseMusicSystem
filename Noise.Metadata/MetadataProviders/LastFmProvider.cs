@@ -13,6 +13,7 @@ using Noise.Metadata.Dto;
 using Noise.Metadata.Interfaces;
 using Raven.Client;
 using Raven.Json.Linq;
+using Raven.Storage.Esent.SchemaUpdates.Updates;
 
 namespace Noise.Metadata.MetadataProviders {
 	internal class ImageDownloader {
@@ -119,6 +120,13 @@ namespace Noise.Metadata.MetadataProviders {
 							var imageUrl = artistMatch.GetImageURL();
 							if(!string.IsNullOrWhiteSpace( imageUrl )) {
 								new ImageDownloader( imageUrl, artistName, ArtistImageDownloadComplete );
+							}
+
+							strList.Clear();
+							var topTracks = artistMatch.GetTopTracks();
+							if( topTracks.GetLength( 0 ) > 0 ) {
+								strList.AddRange(( from topTrack in topTracks select topTrack.Item.Title ).Take( 10 ));
+								artistBio.SetMetadata( eMetadataType.TopTracks, strList );
 							}
 
 							session.Store( artistBio );

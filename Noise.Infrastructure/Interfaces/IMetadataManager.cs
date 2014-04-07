@@ -9,6 +9,7 @@ namespace Noise.Infrastructure.Interfaces {
 		Genre,
 		SimilarArtists,
 		TopAlbums,
+		TopTracks,
 		WebSite,
 		Unknown
 	}
