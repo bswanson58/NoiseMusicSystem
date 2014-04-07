@@ -256,6 +256,7 @@
     <Compile Include="RemoteDto\AudioStateResult.cs" />
     <Compile Include="RemoteDto\FavoriteListResult.cs" />
     <Compile Include="RemoteDto\LibraryListResult.cs" />
+    <Compile Include="RemoteDto\PlayHistoryListResult.cs" />
     <Compile Include="RemoteDto\PlayQueueListResult.cs" />
     <Compile Include="RemoteDto\QueueCommand.cs" />
     <Compile Include="RemoteDto\RoAlbum.cs" />
@@ -267,6 +268,7 @@
     <Compile Include="RemoteDto\RoBase.cs" />
     <Compile Include="RemoteDto\RoFavorite.cs" />
     <Compile Include="RemoteDto\RoLibrary.cs" />
+    <Compile Include="RemoteDto\RoPlayHistory.cs" />
     <Compile Include="RemoteDto\RoPlayQueueTrack.cs" />
     <Compile Include="RemoteDto\RoQueueStrategy.cs" />
     <Compile Include="RemoteDto\RoSearchResultItem.cs" />

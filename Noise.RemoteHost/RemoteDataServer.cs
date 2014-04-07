@@ -12,17 +12,19 @@ using Noise.Infrastructure.RemoteHost;
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteDataServer : INoiseRemoteData {
-		private readonly IArtistProvider	mArtistProvider;
-		private readonly IAlbumProvider		mAlbumProvider;
-		private readonly ITrackProvider		mTrackProvider;
-		private readonly IMetadataManager	mMetadataManager;
-		private readonly ITagManager		mTagManager;
+		private readonly IArtistProvider		mArtistProvider;
+		private readonly IAlbumProvider			mAlbumProvider;
+		private readonly ITrackProvider			mTrackProvider;
+		private readonly IPlayHistoryProvider	mPlayHistory;
+		private readonly IMetadataManager		mMetadataManager;
+		private readonly ITagManager			mTagManager;
 
 		public RemoteDataServer( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
-								 ITagManager tagManager, IMetadataManager metadataManager ) {
+								 IPlayHistoryProvider playHistory, ITagManager tagManager, IMetadataManager metadataManager ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
+			mPlayHistory = playHistory;
 			mMetadataManager = metadataManager;
 			mTagManager = tagManager;
 		}
@@ -317,6 +319,40 @@ namespace Noise.RemoteHost {
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "RemoteDataServer:GetArtistTrackList", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+
+			return( retValue );
+		}
+
+		public PlayHistoryListResult GetPlayHistory() {
+			var retValue = new PlayHistoryListResult();
+
+			try {
+				using( var history = mPlayHistory.GetPlayHistoryList()) {
+					var historyList = new List<RoPlayHistory>();
+
+					foreach( var historyItem in history.List ) {
+						var track = mTrackProvider.GetTrack( historyItem.TrackId );
+
+						if( track != null ) {
+							var album = mAlbumProvider.GetAlbum( track.Album );
+							var artist = mArtistProvider.GetArtist( track.Artist );
+
+							if(( artist != null ) &&
+							   ( album != null ) ) {
+								historyList.Add( new RoPlayHistory( artist, album, track, historyItem.PlayedOnTicks ));
+							}
+						}
+					}
+
+					retValue.PlayHistory = historyList.ToArray();
+					retValue.Success = true;
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "RemoteDataServer:GetPlayHistory", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}

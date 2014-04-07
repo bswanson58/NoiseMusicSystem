@@ -32,5 +32,9 @@ namespace Noise.Infrastructure.RemoteHost {
 		[OperationContract]
 		[WebGet( ResponseFormat = WebMessageFormat.Json, UriTemplate = "artistTracks?artist={artistId}" )]
 		ArtistTracksResult GetArtistTrackList( long artistId );
+
+		[OperationContract]
+		[WebGet( ResponseFormat = WebMessageFormat.Json, UriTemplate = "playHistory" )]
+		PlayHistoryListResult GetPlayHistory();
 	}
 }
