@@ -13,7 +13,8 @@ using Noise.Infrastructure.RemoteHost;
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteServer : INoiseRemote,
-								IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted>, IHandle<Events.RemoteTransportUpdate> {
+								IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted>,
+								IHandle<Events.RemoteTransportUpdate>, IHandle<Events.PlayHistoryChanged> {
 		private readonly ILibraryConfiguration				mLibraryConfiguration;
 		private readonly RemoteHostConfiguration			mHostConfiguration;
 		private	readonly Dictionary<string, ClientEvents>	mClientList;
@@ -111,6 +112,10 @@ namespace Noise.RemoteHost {
 			new Task( () => OnTransportChanged( args.TransportState )).Start();
 		}
 
+		public void Handle( Events.PlayHistoryChanged args ) {
+			new Task( () => OnDataChanged( LibraryStateChanged.PlayHistory )).Start();
+		}
+
 		private void OnQueueChangedTask() {
 			foreach( var client in mClientList.Values ) {
 				client.EventInQueue();
@@ -120,6 +125,12 @@ namespace Noise.RemoteHost {
 		private void OnTransportChanged( RoTransportState transportState ) {
 			foreach( var client in mClientList.Values ) {
 				client.EventInTransport( transportState );
+			}
+		}
+
+		private void OnDataChanged( LibraryStateChanged stateChanged ) {
+			foreach( var client in mClientList.Values ) {
+				client.EventInLibrary( stateChanged );
 			}
 		}
 	}

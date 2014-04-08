@@ -65,6 +65,16 @@ namespace Noise.RemoteHost {
 			ServiceCallbackHandler( mService.EndEventInTransport, result, EventCompleted );
 		}
 
+		// EventInLibrary
+		public void EventInLibrary( LibraryStateChanged stateChanged ) {
+			lock( this ) {
+				mService.BeginEventInLibrary( stateChanged.ToString(), EventInLibraryComplete, null );
+			}
+		}
+		private void EventInLibraryComplete( IAsyncResult result ) {
+			ServiceCallbackHandler( mService.EndEventInLibrary, result, EventCompleted );
+		}
+
 		protected void ServiceCallbackHandler<T>( Func<IAsyncResult, T> method, IAsyncResult result, EventHandler<ClientCallbackArgs<T>> notifier ) where T : class {
 			if ( notifier != null ) {
 				Exception exception = null;
