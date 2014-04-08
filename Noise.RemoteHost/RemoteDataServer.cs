@@ -331,23 +331,13 @@ namespace Noise.RemoteHost {
 
 			try {
 				using( var history = mPlayHistory.GetPlayHistoryList()) {
-					var historyList = new List<RoPlayHistory>();
-
-					foreach( var historyItem in history.List ) {
-						var track = mTrackProvider.GetTrack( historyItem.TrackId );
-
-						if( track != null ) {
-							var album = mAlbumProvider.GetAlbum( track.Album );
-							var artist = mArtistProvider.GetArtist( track.Artist );
-
-							if(( artist != null ) &&
-							   ( album != null ) ) {
-								historyList.Add( new RoPlayHistory( artist, album, track, historyItem.PlayedOnTicks ));
-							}
-						}
-					}
-
-					retValue.PlayHistory = historyList.ToArray();
+					retValue.PlayHistory = ( from historyItem in history.List orderby historyItem.PlayedOn descending
+											 let track = mTrackProvider.GetTrack( historyItem.TrackId ) 
+											 where track != null 
+												let album = mAlbumProvider.GetAlbum( track.Album ) 
+												let artist = mArtistProvider.GetArtist( track.Artist ) 
+											 where ( artist != null ) && ( album != null ) 
+												select new RoPlayHistory( artist, album, track, historyItem.PlayedOnTicks ) ).ToArray();
 					retValue.Success = true;
 				}
 			}

@@ -11,27 +11,27 @@ namespace Noise.Infrastructure.RemoteDto {
 		[DataMember]
 		public long			TrackId { get; set; }
 		[DataMember]
-		public string		Artist { get; set; }
+		public string		ArtistName { get; set; }
 		[DataMember]
-		public string		Album { get; set; }
+		public string		AlbumName { get; set; }
 		[DataMember]
-		public string		Track { get; set; }
+		public string		TrackName { get; set; }
 		[DataMember]
 		public long			PlayedOnTicks { get; set; }
 
 		public RoPlayHistory() {
-			Artist = string.Empty;
-			Album = string.Empty;
-			Track = string.Empty;
+			ArtistName = string.Empty;
+			AlbumName = string.Empty;
+			TrackName = string.Empty;
 		}
 
 		public RoPlayHistory( DbArtist artist, DbAlbum album, DbTrack track, long playedOn ) {
 			ArtistId = artist.DbId;
-			Artist = artist.Name;
+			ArtistName = artist.Name;
 			AlbumId = album.DbId;
-			Album = album.Name;
+			AlbumName = album.Name;
 			TrackId = track.DbId;
-			Track = track.Name;
+			TrackName = track.Name;
 			PlayedOnTicks = playedOn;
 		}
 	}
