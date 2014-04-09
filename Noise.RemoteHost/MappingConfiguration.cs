@@ -24,6 +24,8 @@ namespace Noise.RemoteHost {
 				.ForMember( dest => dest.Biography, opt => opt.Ignore())
 				.ForMember( dest => dest.SimilarArtists, opt => opt.Ignore())
 				.ForMember( dest => dest.TopAlbums, opt => opt.Ignore())
+				.ForMember( dest => dest.TopTracks, opt => opt.Ignore())
+				.ForMember( dest => dest.TopTrackIds, opt => opt.Ignore())
 				.ForMember( dest => dest.Website, opt => opt.Ignore());
 
 			CreateMap<DbAlbum, RoAlbumInfo>()

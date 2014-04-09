@@ -19,6 +19,7 @@ namespace Noise.RemoteHost {
 		private readonly IPlayHistoryProvider	mPlayHistory;
 		private readonly IMetadataManager		mMetadataManager;
 		private readonly ITagManager			mTagManager;
+		private readonly Random					mRandom;
 
 		public RemoteDataServer( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 								 IPlayHistoryProvider playHistory, ITagManager tagManager, IMetadataManager metadataManager ) {
@@ -28,6 +29,7 @@ namespace Noise.RemoteHost {
 			mPlayHistory = playHistory;
 			mMetadataManager = metadataManager;
 			mTagManager = tagManager;
+			mRandom = new Random( DateTime.Now.Millisecond );
 		}
 
 		private string RetrieveGenre( long genreId ) {
@@ -80,6 +82,7 @@ namespace Noise.RemoteHost {
 			retValue.BandMembers = artistMetadata.GetMetadataArray( eMetadataType.BandMembers ).ToArray();
 			retValue.SimilarArtists = artistMetadata.GetMetadataArray( eMetadataType.SimilarArtists ).ToArray();
 			retValue.TopAlbums = artistMetadata.GetMetadataArray( eMetadataType.TopAlbums ).ToArray();
+			retValue.TopTracks = artistMetadata.GetMetadataArray( eMetadataType.TopTracks ).ToArray();
 			retValue.Website = artistMetadata.GetMetadata( eMetadataType.WebSite );
 			
 			if( artistImage != null ) {
@@ -87,6 +90,10 @@ namespace Noise.RemoteHost {
 			}
 
 			return( retValue );
+		}
+
+		protected int NextRandom( int maxValue ) {
+			return( mRandom.Next( maxValue ));
 		}
 
 		public ArtistInfoResult GetArtistInfo( long artistId ) {
@@ -100,6 +107,27 @@ namespace Noise.RemoteHost {
 					var artistImage = mMetadataManager.GetArtistArtwork( artist.Name );
 
 					retValue.ArtistInfo = TransformArtistInfo( artist, artistMetadata, artistImage );
+
+					if( retValue.ArtistInfo.TopTracks.Any()) {
+						var allTracks = mTrackProvider.GetTrackList( artist );
+						var trackIds = new List<long>();
+
+						foreach( var trackName in retValue.ArtistInfo.TopTracks ) {
+							string	name = trackName;
+							var		trackList = allTracks.List.Where( t => t.Name.Equals( name, StringComparison.CurrentCultureIgnoreCase )).ToList();
+
+							if( trackList.Any()) {
+								var selectedTrack = trackList.Skip( NextRandom( trackList.Count - 1 )).Take( 1 ).FirstOrDefault();
+
+								if( selectedTrack != null ) {
+									trackIds.Add( selectedTrack.DbId );
+								}
+							}
+						}
+
+						retValue.ArtistInfo.TopTrackIds = trackIds.ToArray();
+					}
+
 					retValue.Success = true;
 				}
 			}

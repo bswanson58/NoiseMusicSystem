@@ -193,7 +193,7 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		} 
 
-		protected int NextRandom( int maxValue ) {
+		private int NextRandom( int maxValue ) {
 			return( mRandom.Next( maxValue ));
 		}
 

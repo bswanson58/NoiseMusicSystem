@@ -16,6 +16,21 @@ namespace Noise.Infrastructure.RemoteDto {
 		[DataMember]
 		public string[]			TopAlbums { get; set; }
 		[DataMember]
+		public string[]			TopTracks { get; set; }
+		[DataMember]
+		public long[]			TopTrackIds { get; set; }
+		[DataMember]
 		public string[]			SimilarArtists { get; set; }
+
+		public RoArtistInfo() {
+			Website = string.Empty;
+			Biography = string.Empty;
+			ArtistImage = string.Empty;
+			BandMembers = new string[0];
+			TopAlbums = new string[0];
+			TopTracks = new string[0];
+			TopTrackIds = new long[0];
+			SimilarArtists = new string[0];
+		}
 	}
 }
