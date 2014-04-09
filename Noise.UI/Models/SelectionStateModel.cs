@@ -135,6 +135,9 @@ namespace Noise.UI.Models {
 					if( CurrentAlbum.DbId != albumId ) {
 						UpdateAlbum( albumId );
 					}
+					else {
+						mAlbumSubject.OnNext( CurrentAlbum );
+					}
 				}
 				else {
 					UpdateAlbum( albumId );
