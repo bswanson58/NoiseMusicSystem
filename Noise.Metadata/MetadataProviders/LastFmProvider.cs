@@ -125,7 +125,7 @@ namespace Noise.Metadata.MetadataProviders {
 							strList.Clear();
 							var topTracks = artistMatch.GetTopTracks();
 							if( topTracks.GetLength( 0 ) > 0 ) {
-								strList.AddRange(( from topTrack in topTracks select topTrack.Item.Title ).Take( 10 ));
+								strList.AddRange(( from topTrack in topTracks orderby topTrack.Weight descending select topTrack.Item.Title ).Take( 10 ));
 								artistBio.SetMetadata( eMetadataType.TopTracks, strList );
 							}
 
