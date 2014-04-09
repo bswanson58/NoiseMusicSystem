@@ -172,7 +172,6 @@ namespace Noise.UI.ViewModels {
 
 			if( artist != null ) {
 				var allTracks = mTrackProvider.GetTrackList( artist );
-				var aTracks = new List<DbTrack>( allTracks.List );
 
 				foreach( var trackName in topTracks ) {
 					string	name = trackName;
