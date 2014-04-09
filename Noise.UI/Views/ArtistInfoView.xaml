@@ -66,8 +66,8 @@
                               Margin="3,0,0,0"
                               BorderBrush="{DynamicResource TrimColor}"
                               BorderThickness="1"
-                              Header=" TopAlbums ">
-                        <ListBox BorderThickness="0" ItemsSource="{Binding TopAlbums}">
+                              Header=" Top Tracks ">
+                        <ListBox BorderThickness="0" ItemsSource="{Binding TopTracks}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Controls:LinkLabel Content="{Binding DisplayText}"

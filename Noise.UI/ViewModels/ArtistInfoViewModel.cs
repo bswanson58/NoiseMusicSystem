@@ -17,32 +17,38 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly ISelectionState				mSelectionState;
 		private readonly IArtistProvider				mArtistProvider;
+		private readonly ITrackProvider					mTrackProvider;
 		private readonly IMetadataManager				mMetadataManager;
 		private readonly List<DbArtist>					mArtistList;
 		private long									mCurrentArtistId;
 		private string									mCurrentArtistName;
 		private TaskHandler								mTaskHandler; 
+		private readonly Random							mRandom;
 		private readonly BindableCollection<LinkNode>	mSimilarArtists;
 		private readonly BindableCollection<LinkNode>	mTopAlbums;
+		private readonly BindableCollection<LinkNode>	mTopTracks; 
 		private readonly BindableCollection<string>		mBandMembers;
 		private readonly BindableCollection<DbDiscographyRelease>	mDiscography;
 
 		public	event	EventHandler					IsActiveChanged = delegate { };
 
-		public ArtistInfoViewModel( IEventAggregator eventAggregator, ISelectionState selectionState,
-									IArtistProvider artistProvider, IMetadataManager metadataManager ) {
+		public ArtistInfoViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IMetadataManager metadataManager,
+									IArtistProvider artistProvider, ITrackProvider trackProvider ) {
 			mEventAggregator = eventAggregator;
 			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
+			mTrackProvider = trackProvider;
 			mMetadataManager = metadataManager;
 			mCurrentArtistId = Constants.cDatabaseNullOid;
 			mCurrentArtistName = string.Empty;
 			mArtistList = new List<DbArtist>();
+			mRandom = new Random( DateTime.Now.Millisecond );
 
 			mEventAggregator.Subscribe( this );
 
 			mSimilarArtists = new BindableCollection<LinkNode>();
 			mTopAlbums = new BindableCollection<LinkNode>();
+			mTopTracks = new BindableCollection<LinkNode>();
 			mBandMembers = new BindableCollection<string>();
 			mDiscography = new SortableCollection<DbDiscographyRelease>();
 
@@ -151,14 +157,53 @@ namespace Noise.UI.ViewModels {
 										mSimilarArtists.Add( matchingArtist != null ? new LinkNode( similarArtist, matchingArtist.DbId, OnSimilarArtistClicked ) :
 																					  new LinkNode( similarArtist ) );
 									}
+
+									mTopTracks.Clear();
+									mTopTracks.AddRange( LinkTopTracks( info.GetMetadataArray( eMetadataType.TopTracks )));
 								},
 								() => ArtistValid = true,
-								exception => NoiseLogger.Current.LogException( "ArtistInfoViewModel:RetrieveSupportInfo", exception )
+										exception => NoiseLogger.Current.LogException( "ArtistInfoViewModel:RetrieveSupportInfo", exception )
 				);
+		}
+
+		private IEnumerable<LinkNode> LinkTopTracks( IEnumerable<string> topTracks ) {
+			var retValue = new List<LinkNode>();
+			var artist = mArtistList.FirstOrDefault( a => a.DbId == mCurrentArtistId );
+
+			if( artist != null ) {
+				var allTracks = mTrackProvider.GetTrackList( artist );
+				var aTracks = new List<DbTrack>( allTracks.List );
+
+				foreach( var trackName in topTracks ) {
+					string	name = trackName;
+					var		trackList = allTracks.List.Where( t => t.Name.Equals( name, StringComparison.CurrentCultureIgnoreCase )).ToList();
+
+					if( trackList.Any()) {
+						var selectedTrack = trackList.Skip( NextRandom( trackList.Count - 1 )).Take( 1 ).FirstOrDefault();
+
+						if( selectedTrack != null ) {
+							retValue.Add( new LinkNode( trackName, selectedTrack.Album, OnTopTrackClicked ));
+						}
+					}
+					else {
+						retValue.Add( new LinkNode( trackName ));
+					}
+				}
+			}
+
+			return( retValue );
+		} 
+
+		protected int NextRandom( int maxValue ) {
+			return( mRandom.Next( maxValue ));
 		}
 
 		private void OnSimilarArtistClicked( long artistId ) {
 			mEventAggregator.Publish( new Events.ArtistFocusRequested( artistId ));
+		}
+
+		private void OnTopTrackClicked( long albumId ) {
+			mEventAggregator.Publish( new Events.AlbumFocusRequested( mCurrentArtistId, albumId ));
 		}
 
 //		private void OnTopAlbumClicked( long albumId ) {
@@ -191,6 +236,10 @@ namespace Noise.UI.ViewModels {
 		public IEnumerable<LinkNode> TopAlbums {
 			get{ return( mTopAlbums ); }
 		}
+
+		public IEnumerable<LinkNode> TopTracks {
+			get { return( mTopTracks ); }
+		} 
 
 		public IEnumerable<LinkNode> SimilarArtist {
 			get { return( mSimilarArtists ); }
