@@ -4,6 +4,7 @@ using System.Linq;
 using System.ServiceModel;
 using AutoMapper;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteDto;
@@ -310,6 +311,59 @@ namespace Noise.RemoteHost {
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "RemoteDataServer:GetArtistTrackList", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+
+			return( retValue );
+		}
+
+		public LibraryAdditionsListResult GetNewTracks() {
+			var retValue = new LibraryAdditionsListResult();
+
+			try {
+				var	horizonCount = 200;
+				var	horizonTime = DateTime.Now - new TimeSpan( 90, 0, 0, 0 );
+				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+
+				if( configuration != null ) {
+					horizonCount = (int)configuration.NewAdditionsHorizonCount;
+					horizonTime = DateTime.Now - new TimeSpan( configuration.NewAdditionsHorizonDays, 0, 0, 0 );
+				}
+
+				var	trackList = new List<RoTrack>();
+
+				using( var additions = mTrackProvider.GetNewlyAddedTracks()) {
+					if(( additions != null ) &&
+					   ( additions.List != null )) {
+						UInt32	count = 0;
+
+						foreach( var track in additions.List ) {
+							if(( count < horizonCount ) &&
+							   ( track.DateAdded > horizonTime )) {
+								var artist = mArtistProvider.GetArtist( track.Artist );
+								var album = mAlbumProvider.GetAlbum( track.Album );
+
+								if(( artist != null ) &&
+								   ( album != null )) {
+									trackList.Add( new RoTrack( artist, album, track ));
+								}
+							}
+							else {
+								break;
+							}
+
+							count++;
+						}
+					}
+				}
+
+				if( trackList.Count > 0 ) {
+					retValue.NewTracks = trackList.ToArray();
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "RemoteDataServer:GetNewTracks", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}

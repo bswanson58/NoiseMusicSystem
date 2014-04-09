@@ -255,6 +255,7 @@
     <Compile Include="RemoteDto\ArtistTracksResult.cs" />
     <Compile Include="RemoteDto\AudioStateResult.cs" />
     <Compile Include="RemoteDto\FavoriteListResult.cs" />
+    <Compile Include="RemoteDto\LibraryAdditionsListResult.cs" />
     <Compile Include="RemoteDto\LibraryListResult.cs" />
     <Compile Include="RemoteDto\PlayHistoryListResult.cs" />
     <Compile Include="RemoteDto\PlayQueueListResult.cs" />
