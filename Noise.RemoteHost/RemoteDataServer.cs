@@ -336,8 +336,9 @@ namespace Noise.RemoteHost {
 											 where track != null 
 												let album = mAlbumProvider.GetAlbum( track.Album ) 
 												let artist = mArtistProvider.GetArtist( track.Artist ) 
-											 where ( artist != null ) && ( album != null ) 
-												select new RoPlayHistory( artist, album, track, historyItem.PlayedOnTicks ) ).ToArray();
+											 where ( artist != null ) && ( album != null )
+												select new RoPlayHistory( artist, album, track, historyItem.PlayedOnTicks ))
+											.Take( 30 ).ToArray();
 					retValue.Success = true;
 				}
 			}
