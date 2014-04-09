@@ -17,10 +17,6 @@ namespace Noise.RemoteHost {
 				.ForMember( dest => dest.ArtistId, opt => opt.MapFrom( src => src.Artist ))
 				.ForMember( dest => dest.Genre, opt => opt.Ignore());
 
-			CreateMap<DbTrack, RoTrack>()
-				.ForMember( dest => dest.ArtistId, opt => opt.Ignore())
-				.ForMember( dest => dest.AlbumId, opt => opt.MapFrom( src => src.Album ));
-
 			CreateMap<DbArtist, RoArtistInfo>()
 				.ForMember( dest => dest.ArtistId, opt => opt.MapFrom( src => src.DbId ))
 				.ForMember( dest => dest.ArtistImage, opt => opt.Ignore())

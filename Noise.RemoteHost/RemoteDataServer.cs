@@ -207,29 +207,20 @@ namespace Noise.RemoteHost {
 			return( retValue );
 		}
 
-		private static RoTrack TransformTrack( DbTrack dbTrack ) {
-			var retValue = new RoTrack();
-
-			Mapper.DynamicMap( dbTrack, retValue );
-
-			return( retValue );
-		}
-
 		public TrackListResult GetTrackList( long albumId ) {
 			var retValue = new TrackListResult();
 
 			try {
 				var album = mAlbumProvider.GetAlbum( albumId );
 
-				retValue.ArtistId = album.Artist;
-				retValue.AlbumId = album.DbId;
+				if( album != null ) {
+					var artist = mArtistProvider.GetArtist( album.Artist );
 
-				using( var trackList = mTrackProvider.GetTrackList( albumId )) {
-					retValue.Tracks = trackList.List.Select( TransformTrack ).ToArray();
-					foreach( var track in retValue.Tracks ) {
-						track.ArtistId = retValue.ArtistId;
+					using( var trackList = mTrackProvider.GetTrackList( albumId )) {
+						retValue.Tracks = trackList.List.Select( track => new RoTrack( artist, album, track )).ToArray();
+
+						retValue.Success = true;
 					}
-					retValue.Success = true;
 				}
 			}
 			catch( Exception ex ) {
