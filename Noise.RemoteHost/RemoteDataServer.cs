@@ -350,5 +350,85 @@ namespace Noise.RemoteHost {
 
 			return( retValue );
 		}
+
+		public BaseResult SetTrackRating( long trackId, int rating, bool isFavorite ) {
+			var retValue = new BaseResult();
+
+			try {
+				using( var dbTrack = mTrackProvider.GetTrackForUpdate( trackId )) {
+					if( dbTrack.Item != null ) {
+						dbTrack.Item.Rating = CoerceRating( rating );
+						dbTrack.Item.IsFavorite = isFavorite;
+
+						dbTrack.Update();
+						retValue.Success = true;
+					}
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "RemoteDataServer:SetTrackRating", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+
+			return( retValue );
+		}
+
+		public BaseResult SetAlbumRating( long albumId, int rating, bool isFavorite ) {
+			var retValue = new BaseResult();
+
+			try {
+				using( var dbAlbum = mAlbumProvider.GetAlbumForUpdate( albumId )) {
+					if( dbAlbum.Item != null ) {
+						dbAlbum.Item.Rating = CoerceRating( rating );
+						dbAlbum.Item.IsFavorite = isFavorite;
+
+						dbAlbum.Update();
+						retValue.Success = true;
+					}
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "RemoteDataServer:SetAlbumRating", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+
+			return( retValue );
+		}
+
+		public BaseResult SetArtistRating( long artistId, int rating, bool isFavorite ) {
+			var retValue = new BaseResult();
+
+			try {
+				using( var dbArtist = mArtistProvider.GetArtistForUpdate( artistId )) {
+					if( dbArtist.Item != null ) {
+						dbArtist.Item.Rating = CoerceRating( rating );
+						dbArtist.Item.IsFavorite = isFavorite;
+
+						dbArtist.Update();
+						retValue.Success = true;
+					}
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "RemoteDataServer:SetArtistRating", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+
+			return( retValue );
+		}
+
+		private Int16 CoerceRating( int rating ) {
+			Int16	retValue = 0;
+
+			if(( rating >= -1 ) &&
+			   ( rating <= 5 )) {
+				retValue = (Int16)rating;
+			}
+
+			return( retValue );
+		}
 	}
 }
