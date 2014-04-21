@@ -25,7 +25,7 @@ namespace Noise.Metadata.MetadataProviders {
 
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
 			if( configuration != null ) {
-				mHasNetworkAccess = configuration.HasNetworkAccess;
+//				mHasNetworkAccess = configuration.HasNetworkAccess;
 			}
 		}
 
