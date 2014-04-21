@@ -25,10 +25,6 @@ namespace Noise.Infrastructure.Dto {
 			}
 		}
 
-		public void EloqueraFixUp() {
-			mFolderLevelStrategies = Array.ConvertAll( mFolderLevelStrategies, value => (eFolderStrategy)value );
-		}
-
 		public eFolderStrategy StrategyForLevel( int folderLevel ) {
 			var retValue = eFolderStrategy.Undefined;
 

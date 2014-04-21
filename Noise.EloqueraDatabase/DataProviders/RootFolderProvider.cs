@@ -14,13 +14,7 @@ namespace Noise.EloqueraDatabase.DataProviders {
 		}
 
 		public RootFolder GetRootFolder( long folderId ) {
-			var folder = TryGetItem( "SELECT RootFolder WHERE DbId = @folderId", new Dictionary<string, object> {{ "folderId", folderId }}, "GetRootFolder" );
-
-			if( folder != null ) {
-				folder.FolderStrategy.EloqueraFixUp();
-			}
-
-			return( folder );
+			return( TryGetItem( "SELECT RootFolder WHERE DbId = @folderId", new Dictionary<string, object> {{ "folderId", folderId }}, "GetRootFolder" ));
 		}
 
 		public void DeleteRootFolder( RootFolder folder ) {
@@ -32,39 +26,11 @@ namespace Noise.EloqueraDatabase.DataProviders {
 		// Changes in the methods below are due to an Eloquera problem when returning an array of enums.
 
 		public IDataProviderList<RootFolder> GetRootFolderList() {
-//			return( TryGetList( "SELECT RootFolder", "GetRootFolderList" ));
-
-			IDataProviderList<RootFolder>	retValue = null;
-
-			using( var folderList = TryGetList( "SELECT RootFolder", "GetRootFolderList" )) {
-				if(( folderList != null ) &&
-				   ( folderList.List != null )) {
-					var convertedList = new List<RootFolder>();
-
-					foreach( var folder in folderList.List ) {
-						folder.FolderStrategy.EloqueraFixUp();
-
-						convertedList.Add( folder );
-					}
-
-					retValue = new EloqueraProviderList<RootFolder>( null, convertedList );
-				}
-			}
-
-			return( retValue );
+			return( TryGetList( "SELECT RootFolder", "GetRootFolderList" ));
 		}
 
 		public IDataUpdateShell<RootFolder> GetFolderForUpdate( long folderId ) {
-//			return( GetUpdateShell( "SELECT RootFolder Where DbId = @folderId", new Dictionary<string, object> {{ "folderId", folderId }} ));
-
-			var updater = GetUpdateShell( "SELECT RootFolder Where DbId = @folderId", new Dictionary<string, object> {{ "folderId", folderId }} );
-
-			if(( updater != null ) &&
-			   ( updater.Item != null )) {
-				updater.Item.FolderStrategy.EloqueraFixUp();
-			}
-
-			return( updater );
+			return( GetUpdateShell( "SELECT RootFolder Where DbId = @folderId", new Dictionary<string, object> {{ "folderId", folderId }} ));
 		}
 	}
 }
