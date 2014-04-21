@@ -11,7 +11,7 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EloqueraDatabase.Database {
 	internal class EloqueraDb : IDatabase {
-		private const Int16					cDatabaseVersion = 2;
+		private const Int16					cDatabaseVersion = 3;
 
 		private readonly IIoc				mComponentCreator;
 		private readonly string				mDatabaseLocation;
