@@ -54,6 +54,8 @@ namespace Noise.EloqueraDatabase.Database {
 		}
 
 		public bool Initialize() {
+			mIsOpen = true;
+
 			return( true );
 		}
 

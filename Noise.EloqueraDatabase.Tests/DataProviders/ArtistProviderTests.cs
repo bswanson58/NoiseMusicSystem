@@ -16,10 +16,11 @@ namespace Noise.EloqueraDatabase.Tests.DataProviders {
 		[SetUp]
 		public void Setup() {
 			mTestSetup.Setup();
+			mTagProvider = new Mock<ITagAssociationProvider>();
 		}
 
 		protected override IArtistProvider CreateSut() {
-			return( new ArtistProvider( mTestSetup.DatabaseManager, null ));
+			return( new ArtistProvider( mTestSetup.DatabaseManager, mTagProvider.Object ));
 		}
 
 		[TearDown]

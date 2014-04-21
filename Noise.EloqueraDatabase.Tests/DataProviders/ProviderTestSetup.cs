@@ -40,9 +40,12 @@ namespace Noise.EloqueraDatabase.Tests.DataProviders {
 
 			var eventAggreagtor = new Mock<IEventAggregator>();
 
-			DatabaseManager = new DatabaseManager( eventAggreagtor.Object, LibraryConfiguration, DatabaseFactory );
+			var manager = new DatabaseManager( eventAggreagtor.Object, LibraryConfiguration, DatabaseFactory );
 
-			if( DatabaseManager.Initialize()) {
+			if( manager.Initialize()) {
+				manager.Handle( new Events.LibraryChanged());
+				DatabaseManager = manager;
+
 				using( var database = DatabaseManager.CreateDatabase()) {
 					database.Database.OpenWithCreateDatabase();
 				}
