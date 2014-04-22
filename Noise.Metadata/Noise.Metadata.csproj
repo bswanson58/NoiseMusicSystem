@@ -155,9 +155,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscogsConnect\DiscogsConnect.csproj">
-      <Project>{6f475ad9-e1b4-4ab1-8e82-b9f5a7608568}</Project>
-      <Name>DiscogsConnect</Name>
+    <ProjectReference Include="..\DiscogsNet\DiscogsNet.csproj">
+      <Project>{1b087a97-c17a-4f75-80b1-8cc1fbfe90fb}</Project>
+      <Name>DiscogsNet</Name>
     </ProjectReference>
     <ProjectReference Include="..\LastFmSharp\LastFmSharp.csproj">
       <Project>{b57a7572-5f5c-4166-ae0b-9814b550e9b2}</Project>
