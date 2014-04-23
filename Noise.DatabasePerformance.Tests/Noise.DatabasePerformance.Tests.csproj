@@ -164,8 +164,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(SolutionDir)lib\Eloquera\v4.13\Eloquera.Client.dll $(TargetDir)
-copy $(SolutionDir)lib\Eloquera\v4.13\Eloquera.Common.dll $(TargetDir)</PostBuildEvent>
+    <PostBuildEvent>copy $(SolutionDir)lib\Eloquera\v6.3\Eloquera.Client.dll $(TargetDir)
+copy $(SolutionDir)lib\Eloquera\v6.3\Eloquera.Common.dll $(TargetDir)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

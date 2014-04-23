@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 using Noise.EntityFrameworkDatabase.Interfaces;
@@ -6,8 +6,11 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	public class NoiseContext : DbContext, IDbContext {
-		public NoiseContext() :
-			base( "NoiseDatabase" ) { }
+		public NoiseContext( string databaseName ) :
+			base( databaseName ) {
+			Database.Connection.ConnectionString = 
+				string.Format( @"Data Source=(localdb)\v11.0;Integrated Security=true;MultipleActiveResultSets=True;AttachDbFileName={0}", databaseName );
+		}
 
 		public IDbSet<DbArtist>	Artists { get; set; }
 		public IDbSet<DbAlbum>	Albums { get; set; }
@@ -81,7 +84,6 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			Ignore( p => p.DateAdded );
 			Ignore( p => p.Duration );
 			Ignore( p => p.Genre );
-			Ignore( p => p.Rating );
 			Ignore( p => p.IsUserRating );
 		}
 	}

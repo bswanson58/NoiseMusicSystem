@@ -8,7 +8,7 @@ namespace Noise.EntityFrameworkDatabase.Tests {
 
 		[Test]
 		public void CanCreateDatabase() {
-			var context = new NoiseContext();
+			var context = new NoiseContext( "Test Database" );
 
 			Assert.IsNotNull( context );
 		}
@@ -17,7 +17,7 @@ namespace Noise.EntityFrameworkDatabase.Tests {
 		public void CanAddArtist() {
 			var artist = new DbArtist { Name = "The Rolling Stones" };
 
-			using( var context = new NoiseContext()) {
+			using( var context = new NoiseContext( "Test Database" )) {
 				context.Artists.Add( artist );
 
 				context.SaveChanges();

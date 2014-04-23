@@ -8,7 +8,6 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 	[TestFixture]
 	public class ArtistProviderTests : BaseArtistProviderTests {
 		private readonly ProviderTestSetup		mTestSetup;
-		private Mock<ITagAssociationProvider>	mTagAssociationProvider;
 
 		public ArtistProviderTests() {
 			mTestSetup = new ProviderTestSetup();
@@ -18,11 +17,11 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 		public void Setup() {
 			mTestSetup.Setup();
 
-			mTagAssociationProvider = new Mock<ITagAssociationProvider>();
+			mTagProvider = new Mock<ITagAssociationProvider>();
 		}
 
 		protected override IArtistProvider CreateSut() {
-			return( new ArtistProvider( mTestSetup.ContextProvider, mTagAssociationProvider.Object ));
+			return( new ArtistProvider( mTestSetup.ContextProvider, mTagProvider.Object ));
 		}
 	}
 }
