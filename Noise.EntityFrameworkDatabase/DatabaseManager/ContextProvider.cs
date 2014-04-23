@@ -11,9 +11,10 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 		private readonly IBlobStorageManager	mBlobStorageManager;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 
-		public ContextProvider( ILibraryConfiguration libraryConfiguration, IBlobStorageManager blobStorageManager ) {
+		public ContextProvider( ILibraryConfiguration libraryConfiguration, IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver ) {
 			mLibraryConfiguration = libraryConfiguration;
 			mBlobStorageManager = blobStorageManager;
+			mBlobStorageManager.SetResolver( storageResolver );
 		}
 
 		public IBlobStorageManager BlobStorageManager {
