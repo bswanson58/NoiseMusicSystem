@@ -319,6 +319,8 @@ namespace Noise.BlobStorage.BlobStore {
 				retValue = Path.Combine( retValue, mBlobResolver.KeyForStorageLevel( blobId, level ));
 			}
 
+			retValue = Path.Combine( retValue, blobId );
+
 			return( retValue );
 		}
 	}
