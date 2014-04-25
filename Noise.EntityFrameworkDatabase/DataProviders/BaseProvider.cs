@@ -1,7 +1,9 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -31,11 +33,25 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			Condition.Requires( item ).IsNotNull();
 
 			using( var context = CreateContext()) {
-				if( GetItemByKey( context, item.DbId ) == null ) {
-					context.Set<TEntity>().Add( item );
-
-					context.SaveChanges();
+#if DEBUG
+				if( GetItemByKey( context, item.DbId ) != null ) {
+					NoiseLogger.Current.LogMessage( "Attempting to add an existing item: {0}", item.ToString());
 				}
+#endif
+
+				context.Set<TEntity>().Add( item );
+
+				context.SaveChanges();
+			}
+		}
+
+		protected void AddList( IEnumerable<TEntity> list ) {
+			using( var context = CreateContext()) {
+				foreach( var item in list ) {
+					context.Set<TEntity>().Add( item );
+				}
+
+				context.SaveChanges();
 			}
 		}
 

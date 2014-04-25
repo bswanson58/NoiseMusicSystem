@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
@@ -37,6 +38,12 @@ namespace Noise.RavenDatabase.DataProviders {
 
 		public void AddFile( StorageFile file ) {
 			Database.Add( file );
+		}
+
+		public void Add( IEnumerable<StorageFile> list ) {
+			foreach( var item in list ) {
+				AddFile( item );
+			}
 		}
 
 		public void DeleteFile( StorageFile file ) {

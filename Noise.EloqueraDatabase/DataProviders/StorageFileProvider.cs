@@ -15,6 +15,12 @@ namespace Noise.EloqueraDatabase.DataProviders {
 			InsertItem( file );
 		}
 
+		public void Add( IEnumerable<StorageFile> list ) {
+			foreach( var item in list ) {
+				AddFile( item );
+			}
+		}
+
 		public void DeleteFile( StorageFile file ) {
 			Condition.Requires( file ).IsNotNull();
 

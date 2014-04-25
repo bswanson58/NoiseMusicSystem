@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -10,6 +11,10 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 		public void AddFile( StorageFile file ) {
 			AddItem( file );
+		}
+
+		public void Add( IEnumerable<StorageFile> list ) {
+			AddList( list );
 		}
 
 		public void DeleteFile( StorageFile file ) {

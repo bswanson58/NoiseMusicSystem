@@ -189,6 +189,8 @@ namespace Noise.Core.FileStore {
 			var dbList = mFileCache.FindList( file => file.ParentFolder == storageFolder.DbId );
 			var files = FileSearcher.BreadthFirst.Search( mStorageFolderSupport.GetPath( storageFolder ), null,
 														  SearchOptions.Files | SearchOptions.IncludeSystem | SearchOptions.IncludeHidden, 0 );
+			var newFiles = new List<StorageFile>();
+
 			foreach( var file in files ) {
 				var fileName = file.File;
 
@@ -207,7 +209,7 @@ namespace Noise.Core.FileStore {
 					}
 				}
 				else {
-					mStorageFileProvider.AddFile( new StorageFile( file.File, storageFolder.DbId, file.Size, file.ModificationTime ));
+					newFiles.Add( new StorageFile( file.File, storageFolder.DbId, file.Size, file.ModificationTime ));
 
 					mFilesAdded++;
 				}
@@ -215,6 +217,10 @@ namespace Noise.Core.FileStore {
 				if( mStopExploring ) {
 					break;
 				}
+			}
+
+			if( newFiles.Any()) {
+				mStorageFileProvider.Add( newFiles );
 			}
 
 			// Any files that we have remaining must not exist on disk.
