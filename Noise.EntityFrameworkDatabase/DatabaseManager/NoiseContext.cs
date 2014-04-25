@@ -6,15 +6,22 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	public class NoiseContext : DbContext, IDbContext {
+		public	IDbSet<DbArtist>	Artists { get; set; }
+		public	IDbSet<DbAlbum>		Albums { get; set; }
+		public	IDbSet<DbTrack>		Tracks { get; set; } 
+		private readonly bool		mIsValidContext;
+
 		public NoiseContext( string databaseName ) :
 			base( databaseName ) {
 			Database.Connection.ConnectionString = 
 				string.Format( @"Data Source=(localdb)\v11.0;Integrated Security=true;MultipleActiveResultSets=True;AttachDbFileName={0}", databaseName );
+
+			mIsValidContext = !databaseName.Equals( ContextProvider.cInvalidContextName );
 		}
 
-		public IDbSet<DbArtist>	Artists { get; set; }
-		public IDbSet<DbAlbum>	Albums { get; set; }
-		public IDbSet<DbTrack>	Tracks { get; set; } 
+		public bool IsValidContext {
+			get { return( mIsValidContext ); }
+		}
 
 		protected override void OnModelCreating( DbModelBuilder modelBuilder ) {
 			modelBuilder.Configurations.Add( new AlbumConfiguration());

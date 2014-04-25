@@ -225,6 +225,7 @@
     <Compile Include="Interfaces\ILyricProvider.cs" />
     <Compile Include="Interfaces\IInternetStreamProvider.cs" />
     <Compile Include="Interfaces\IMetadataManager.cs" />
+    <Compile Include="Interfaces\INoiseEnvironment.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
     <Compile Include="Interfaces\IPlayExhaustedFactory.cs" />
     <Compile Include="Interfaces\IPlayExhaustedStrategy.cs" />

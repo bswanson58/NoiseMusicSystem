@@ -38,7 +38,15 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		}
 
 		public bool IsOpen {
-			get{ return( false ); }
+			get {
+				bool retValue;
+
+				using( var context = CreateContext()) {
+					retValue = context.IsValidContext;
+				}
+
+				return( retValue );
+			}
 		}
 
 		public void InitializeDatabaseVersion( Int16 databaseVersion ) {
@@ -53,7 +61,9 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 		private void RetrieveDatabaseVersion() {
 			using( var context = CreateContext()) {
-				mDatabaseVersion = Set( context ).FirstOrDefault( entity => entity.DbId == DbVersion.DatabaseVersionDbId );
+				if( context.IsValidContext ) {
+					mDatabaseVersion = Set( context ).FirstOrDefault( entity => entity.DbId == DbVersion.DatabaseVersionDbId );
+				}
 			}
 		}
 	}
