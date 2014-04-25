@@ -38,7 +38,9 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {
-			mArtistList.Clear();
+			if( mArtistList != null ) {
+				mArtistList.Clear();
+			}
 		}
 
 		private void InitializeLists() {
@@ -49,7 +51,7 @@ namespace Noise.Core.BackgroundTasks {
 				mArtistEnum = mArtistList.GetEnumerator();
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "", ex );
+				NoiseLogger.Current.LogException( "DiscographyExplorer:InitializeLists", ex );
 			}
 		}
 
