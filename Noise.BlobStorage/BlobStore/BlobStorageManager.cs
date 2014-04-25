@@ -37,7 +37,7 @@ namespace Noise.BlobStorage.BlobStore {
 			}
 
 			if( Directory.Exists( mStoragePath )) {
-					mIsOpen = true;
+				mIsOpen = true;
 			}
 
 			return( IsOpen );

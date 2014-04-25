@@ -16,14 +16,16 @@ namespace Noise.Metadata {
 	public class MetadataManager : IRequireInitialization, IMetadataManager,
 								   IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved> {
 		private readonly IEventAggregator				mEventAggregator;
+		private readonly INoiseEnvironment				mNoiseEnvironment;
 		private readonly IArtistMetadataManager			mArtistMetadataManager;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IEnumerable<IMetadataUpdater>	mUpdaters; 
 		private IDocumentStore							mDocumentStore;
 
-		public MetadataManager( ILifecycleManager lifecycleManager,  IEventAggregator eventAggregator, IEnumerable<IMetadataUpdater> updaters,
-								IArtistMetadataManager artistMetadataManager, IArtistProvider artistProvider ) {
+		public MetadataManager( ILifecycleManager lifecycleManager,  IEventAggregator eventAggregator, INoiseEnvironment noiseEnvironment,
+								IEnumerable<IMetadataUpdater> updaters, IArtistMetadataManager artistMetadataManager, IArtistProvider artistProvider ) {
 			mEventAggregator = eventAggregator;
+			mNoiseEnvironment = noiseEnvironment;
 			mUpdaters = updaters;
 			mArtistMetadataManager = artistMetadataManager;
 			mArtistProvider = artistProvider;
@@ -38,10 +40,7 @@ namespace Noise.Metadata {
 #if DEBUG
 				metaDirectory += " (Debug)";
 #endif
-				var libraryPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
-												Constants.CompanyName, 
-												Constants.LibraryConfigurationDirectory,
-												metaDirectory );
+				var libraryPath = Path.Combine( mNoiseEnvironment.LibraryDirectory(), metaDirectory );
 				mDocumentStore = new EmbeddableDocumentStore { DataDirectory = libraryPath };
 #if DEBUG
 				try {

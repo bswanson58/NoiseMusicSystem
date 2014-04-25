@@ -13,12 +13,13 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.Configuration {
 	public class LibraryConfigurationManager : ILibraryConfiguration, IRequireInitialization {
 		private readonly IEventAggregator			mEventAggregator;
+		private readonly INoiseEnvironment			mNoiseEnvironment;
 		private	readonly List<LibraryConfiguration>	mLibraries;
-		private string								mConfigurationDirectory;
 		private LibraryConfiguration				mCurrentLibrary;
 
-		public LibraryConfigurationManager( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator ) {
+		public LibraryConfigurationManager( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, INoiseEnvironment noiseEnvironment ) {
 			mEventAggregator = eventAggregator;
+			mNoiseEnvironment = noiseEnvironment;
 			mLibraries = new List<LibraryConfiguration>();
 
 			lifecycleManager.RegisterForInitialize( this );
@@ -30,9 +31,6 @@ namespace Noise.Core.Configuration {
 		}
 
 		public void Initialize() {
-			mConfigurationDirectory = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
-													Constants.CompanyName, 
-													Constants.LibraryConfigurationDirectory );
 			LoadLibraries();
 
 //			if(!mLibraries.Any()) {
@@ -63,11 +61,7 @@ namespace Noise.Core.Configuration {
 			try {
 				mLibraries.Clear();
 
-				if(!Directory.Exists( mConfigurationDirectory )) {
-					Directory.CreateDirectory( mConfigurationDirectory );
-				}
-
-				foreach( var directory in Directory.EnumerateDirectories( mConfigurationDirectory )) {
+				foreach( var directory in Directory.EnumerateDirectories( mNoiseEnvironment.LibraryDirectory())) {
 					var configDirectory = new DirectoryInfo( directory );
 					var configFile = configDirectory.GetFiles( Constants.LibraryConfigurationFile ).FirstOrDefault();
 
@@ -143,7 +137,7 @@ namespace Noise.Core.Configuration {
 					ClearDefaultLibrary( configuration );
 				}
 
-				var libraryPath = Path.Combine( mConfigurationDirectory, configuration.LibraryId.ToString( CultureInfo.InvariantCulture ));
+				var libraryPath = GetLibraryFolder( configuration );
 
 				if( Directory.Exists( libraryPath )) {
 					DeleteLibrary( configuration );
@@ -173,9 +167,7 @@ namespace Noise.Core.Configuration {
 
 		private void StoreLibrary( LibraryConfiguration configuration ) {
 			try {
-				var libraryPath = Path.Combine( mConfigurationDirectory, configuration.LibraryId.ToString( CultureInfo.InvariantCulture ));
-				
-				configuration.Persist( Path.Combine( libraryPath, Constants.LibraryConfigurationFile ));
+				configuration.Persist( Path.Combine( GetLibraryFolder( configuration ), Constants.LibraryConfigurationFile ));
 
 				if( configuration == Current ) {
 					mEventAggregator.Publish( new Events.LibraryConfigurationChanged());
@@ -190,7 +182,7 @@ namespace Noise.Core.Configuration {
 
 		public void DeleteLibrary( LibraryConfiguration configuration ) {
 			try {
-				var libraryPath = Path.Combine( mConfigurationDirectory, configuration.LibraryId.ToString( CultureInfo.InvariantCulture ));
+				var libraryPath = GetLibraryFolder( configuration );
 
 				if( Directory.Exists( libraryPath )) {
 					Directory.Delete( libraryPath );
@@ -217,5 +209,15 @@ namespace Noise.Core.Configuration {
 				}
 			}
 		}
+
+		public string GetLibraryFolder( LibraryConfiguration libraryConfiguration ) {
+			var retValue = Path.Combine( mNoiseEnvironment.LibraryDirectory(), libraryConfiguration.LibraryId.ToString( CultureInfo.InvariantCulture ));
+
+			if(!Directory.Exists( retValue )) {
+				Directory.CreateDirectory( retValue );
+			}
+
+			return( retValue );
+		} 
 	}
 }

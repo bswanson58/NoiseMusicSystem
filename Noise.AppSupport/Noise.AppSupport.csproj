@@ -136,6 +136,7 @@
     <Compile Include="HotkeyManager.cs" />
     <Compile Include="IocConfiguration.cs" />
     <Compile Include="IocProvider.cs" />
+    <Compile Include="NoiseEnvironment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\GlobalKeyboardHook.cs" />
   </ItemGroup>

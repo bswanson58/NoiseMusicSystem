@@ -35,6 +35,7 @@ namespace Noise.AppSupport {
 
 		public bool InitializeIoc( ApplicationUsage appUsage ) {
 			mContainer.RegisterType<IIoc, IocProvider>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<INoiseEnvironment, NoiseEnvironment>();
 
 #if DEBUG
 			const int portOffset = 10;
