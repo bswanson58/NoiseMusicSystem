@@ -7,7 +7,7 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	public class EntityFrameworkDatabaseManager : IDatabaseManager,
 												  IHandle<Events.LibraryChanged> {
-		private const Int16		cDatabaseVersion = 1;
+		private const Int16		cDatabaseVersion = 4;
 
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IDatabaseInitializeStrategy	mInitializeStrategy;
@@ -48,9 +48,16 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 		private void OpenDatabase() {
 			if( mInitializeStrategy != null ) {
-				if(( mInitializeStrategy.InitializeDatabase( mContextProvider.CreateContext()) &&
-					( mInitializeStrategy.DidCreateDatabase ))) {
-					mDatabaseInfo.InitializeDatabaseVersion( cDatabaseVersion );
+				if( mInitializeStrategy.InitializeDatabase( mContextProvider.CreateContext())) {
+					if( mInitializeStrategy.DidCreateDatabase ) {
+						mDatabaseInfo.InitializeDatabaseVersion( cDatabaseVersion );
+
+						NoiseLogger.Current.LogMessage( "Created Database: '{0}'", mLibraryConfiguration.Current.DatabaseName );
+					}
+					else {
+						NoiseLogger.Current.LogMessage( "Opened Database: '{0}', database version: {1}", 
+														mLibraryConfiguration.Current.DatabaseName,	mDatabaseInfo.DatabaseVersion.DatabaseVersion );
+					}
 				}
 			}
 
