@@ -34,14 +34,17 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 			using( var context = CreateContext()) {
 #if DEBUG
-				if( GetItemByKey( context, item.DbId ) != null ) {
+				if( GetItemByKey( context, item.DbId ) == null ) {
+#endif
+					context.Set<TEntity>().Add( item );
+
+					context.SaveChanges();
+#if DEBUG
+				}
+				else {
 					NoiseLogger.Current.LogMessage( "Attempting to add an existing item: {0}", item.ToString());
 				}
 #endif
-
-				context.Set<TEntity>().Add( item );
-
-				context.SaveChanges();
 			}
 		}
 

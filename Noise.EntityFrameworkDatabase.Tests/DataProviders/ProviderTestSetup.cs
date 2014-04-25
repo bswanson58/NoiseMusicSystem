@@ -12,6 +12,7 @@ using ILog = Noise.Infrastructure.Interfaces.ILog;
 namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 	public class ProviderTestSetup {
 		public	const string				cTestingDirectory = @"D:\Noise Testing";
+		public	const string				cDatabaseName = "Integration Test Database";
 
 		public	Mock<ILog>					DummyLog { get; private set; }
 		public	IBlobStorageResolver		BlobStorageResolver { get; private set; }
@@ -27,11 +28,11 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 		public void Setup() {
 			DummyLog = new Mock<ILog>();
 			NoiseLogger.Current = DummyLog.Object;
-				
+
 			DatabaseInfo = new Mock<IDatabaseInfo>();
 			DatabaseInfo.Setup( m => m.DatabaseId ).Returns( 12345L );
 
-			DatabaseConfiguration = new LibraryConfiguration { DatabaseName = "Integration Test Database", LibraryId = 12345 };
+			DatabaseConfiguration = new LibraryConfiguration { DatabaseName = cDatabaseName, LibraryId = 12345 };
 			DatabaseConfiguration.SetConfigurationPath( cTestingDirectory );
 
 			LibraryConfiguration = new Mock<ILibraryConfiguration>();
@@ -46,11 +47,14 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 			BlobStorageManager.SetResolver( BlobStorageResolver );
 			ContextProvider = new ContextProvider( LibraryConfiguration.Object, BlobStorageManager, BlobStorageResolver );
 
-			DatabaseManager = new EntityFrameworkDatabaseManager( EventAggregator.Object, LibraryConfiguration.Object,
-																  InitializeStrategy, DatabaseInfo.Object, ContextProvider );
+			var manager = new EntityFrameworkDatabaseManager( EventAggregator.Object, LibraryConfiguration.Object,
+															  InitializeStrategy, DatabaseInfo.Object, ContextProvider );
 
-			var	initialized = DatabaseManager.Initialize();
+			var	initialized = manager.Initialize();
 			Assert.IsTrue( initialized );
+
+			manager.Handle( new Events.LibraryChanged());
+			DatabaseManager = manager;
 		}
 	}
 }
