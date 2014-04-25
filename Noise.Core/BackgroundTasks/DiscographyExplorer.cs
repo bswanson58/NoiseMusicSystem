@@ -90,7 +90,7 @@ namespace Noise.Core.BackgroundTasks {
 							if( dbAlbum != null ) {
 								using( var updater = mAlbumProvider.GetAlbumForUpdate( dbAlbum.DbId )) {
 									if( updater.Item != null ) {
-										updater.Item.PublishedYear = release.Year;
+										updater.Item.SetPublishedYear( release.Year );
 
 										updater.Update();
 									}

@@ -82,13 +82,13 @@ namespace Noise.Core.DataBuilders {
 												}
 
 												if( years.Count == 0 ) {
-													albumUpdater.Item.PublishedYear = Constants.cUnknownYear;
+													albumUpdater.Item.SetPublishedYear( Constants.cUnknownYear );
 												}
 												else if( years.Count == 1 ) {
-													albumUpdater.Item.PublishedYear = years.First();
+													albumUpdater.Item.SetPublishedYear( years.First());
 												}
 												else {
-													albumUpdater.Item.PublishedYear = Constants.cVariousYears;
+													albumUpdater.Item.SetPublishedYear( Constants.cVariousYears );
 												}
 
 												albumUpdater.Item.CalculatedGenre = DetermineTopGenre( trackGenre );

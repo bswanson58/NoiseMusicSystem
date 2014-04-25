@@ -14,7 +14,7 @@ namespace Noise.Infrastructure.Dto {
 		public Int16			MaxChildRating { get; set; }
 		public Int16			TrackCount { get; set; }
 		[Required]
-		[RegularExpression( "^(?:0|\\d{4})$", ErrorMessage = "Only 0 (zero) or 1900-2100 are allowed.")]
+		[RegularExpression( "^(?:0|1|\\d{4})$", ErrorMessage = "Only 0 (zero) or 1900-2100 are allowed.")]
 		[Range( 0, 2100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		public Int32			PublishedYear { get; set; }
 		public long				CalculatedGenre { get; set; }
@@ -59,6 +59,15 @@ namespace Noise.Infrastructure.Dto {
 		public void UpdateLastPlayed() {
 			PlayCount++;
 			LastPlayedTicks = DateTime.Now.Ticks;
+		}
+
+		public void SetPublishedYear( int year ) {
+			if(( year == Constants.cUnknownYear ) ||
+			   ( year == Constants.cVariousYears ) ||
+			  (( year >= 1900 ) &&
+			   ( year <= 2100 ))) {
+				PublishedYear = year;
+			}
 		}
 
 		[Export( "PersistenceType" )]
