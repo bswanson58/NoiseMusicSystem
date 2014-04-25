@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using Noise.BlobStorage.BlobStore;
 using Noise.EntityFrameworkDatabase.Interfaces;
@@ -8,10 +7,13 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	public class ContextProvider : IContextProvider {
+		public	const string					cInvalidContextName = "_invalid_context_";
+
 		private readonly IBlobStorageManager	mBlobStorageManager;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 
-		public ContextProvider( ILibraryConfiguration libraryConfiguration, IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver ) {
+		public ContextProvider( ILibraryConfiguration libraryConfiguration,
+								IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver ) {
 			mLibraryConfiguration = libraryConfiguration;
 			mBlobStorageManager = blobStorageManager;
 			mBlobStorageManager.SetResolver( storageResolver );
@@ -22,16 +24,15 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 		}
 
 		public IDbContext	CreateContext() {
-			var databaseName = "unknown";
+			var databaseName = cInvalidContextName;
 
 			if( mLibraryConfiguration.Current != null ) {
 				try {
-					var databasePath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData ),
-													Constants.CompanyName, 
-													Constants.LibraryConfigurationDirectory,
-													mLibraryConfiguration.Current.LibraryId.ToString( CultureInfo.InvariantCulture ));
+					var databasePath = mLibraryConfiguration.Current.LibraryDatabasePath;
 
-					Directory.CreateDirectory( databasePath );
+					if( !Directory.Exists( databasePath ) ) {
+						Directory.CreateDirectory( databasePath );
+					}
 
 					databaseName = Path.Combine( databasePath, mLibraryConfiguration.Current.DatabaseName );
 				}

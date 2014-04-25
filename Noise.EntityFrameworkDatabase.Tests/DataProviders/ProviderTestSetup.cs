@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Caliburn.Micro;
+using Moq;
 using NUnit.Framework;
 using Noise.BlobStorage.BlobStore;
 using Noise.EntityFrameworkDatabase.DatabaseManager;
@@ -6,9 +7,12 @@ using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using ILog = Noise.Infrastructure.Interfaces.ILog;
 
 namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 	public class ProviderTestSetup {
+		public	const string				cTestingDirectory = @"D:\Noise Testing";
+
 		public	Mock<ILog>					DummyLog { get; private set; }
 		public	IBlobStorageResolver		BlobStorageResolver { get; private set; }
 		public	IBlobStorageManager			BlobStorageManager { get; private set; }
@@ -18,6 +22,7 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 		public	Mock<IDatabaseInfo>			DatabaseInfo { get; private set; }
 		public	IDatabaseInitializeStrategy	InitializeStrategy { get; private set; }
 		public	IContextProvider			ContextProvider { get; private set; }
+		public Mock<IEventAggregator>		EventAggregator { get; set; }
 
 		public void Setup() {
 			DummyLog = new Mock<ILog>();
@@ -27,17 +32,22 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 			DatabaseInfo.Setup( m => m.DatabaseId ).Returns( 12345L );
 
 			DatabaseConfiguration = new LibraryConfiguration { DatabaseName = "Integration Test Database", LibraryId = 12345 };
+			DatabaseConfiguration.SetConfigurationPath( cTestingDirectory );
+
 			LibraryConfiguration = new Mock<ILibraryConfiguration>();
 			LibraryConfiguration.Setup( f => f.Current ).Returns( DatabaseConfiguration );
+
+			EventAggregator = new Mock<IEventAggregator>();
 
 			InitializeStrategy = new TestDatabaseInitializer();
 
 			BlobStorageResolver = new BlobStorageResolver();
 			BlobStorageManager = new BlobStorageManager();
 			BlobStorageManager.SetResolver( BlobStorageResolver );
-			ContextProvider = new ContextProvider( LibraryConfiguration.Object, BlobStorageManager );
+			ContextProvider = new ContextProvider( LibraryConfiguration.Object, BlobStorageManager, BlobStorageResolver );
 
-			DatabaseManager = new EntityFrameworkDatabaseManager( InitializeStrategy, DatabaseInfo.Object, ContextProvider );
+			DatabaseManager = new EntityFrameworkDatabaseManager( EventAggregator.Object, LibraryConfiguration.Object,
+																  InitializeStrategy, DatabaseInfo.Object, ContextProvider );
 
 			var	initialized = DatabaseManager.Initialize();
 			Assert.IsTrue( initialized );

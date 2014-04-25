@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Caliburn.Micro;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure;
@@ -10,37 +9,52 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 												  IHandle<Events.LibraryChanged> {
 		private const Int16		cDatabaseVersion = 1;
 
+		private readonly IEventAggregator				mEventAggregator;
 		private readonly IDatabaseInitializeStrategy	mInitializeStrategy;
 		private readonly IDatabaseInfo					mDatabaseInfo;
 		private readonly IContextProvider				mContextProvider;
+		private readonly ILibraryConfiguration			mLibraryConfiguration;
 
-		public EntityFrameworkDatabaseManager( IDatabaseInitializeStrategy initializeStrategy, IDatabaseInfo databaseInfo, IContextProvider contextProvider ) {
+		public EntityFrameworkDatabaseManager( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration,
+											   IDatabaseInitializeStrategy initializeStrategy, IDatabaseInfo databaseInfo, IContextProvider contextProvider ) {
+			mEventAggregator = eventAggregator;
 			mInitializeStrategy = initializeStrategy;
 			mDatabaseInfo = databaseInfo;
 			mContextProvider = contextProvider;
+			mLibraryConfiguration = libraryConfiguration;
+
+			mEventAggregator.Subscribe( this );
 		}
 
 		public bool IsOpen {
-			get{ return( false ); }
+			get{ return( mLibraryConfiguration.Current != null ); }
 		}
 
 		public void Handle( Events.LibraryChanged args ) {
-			
+			CloseDatabase();
+
+			if( mLibraryConfiguration.Current != null ) {
+				OpenDatabase();
+			}
 		}
 
 		public bool Initialize() {
-			var retValue = false;
+			return( true );
+		}
 
+		public void Shutdown() {
+			CloseDatabase();
+		}
+
+		private void OpenDatabase() {
 			if( mInitializeStrategy != null ) {
-				retValue = mInitializeStrategy.InitializeDatabase( mContextProvider.CreateContext());
-
-				if(( retValue ) &&
-				   ( mInitializeStrategy.DidCreateDatabase )) {
+				if(( mInitializeStrategy.InitializeDatabase( mContextProvider.CreateContext()) &&
+					( mInitializeStrategy.DidCreateDatabase ))) {
 					mDatabaseInfo.InitializeDatabaseVersion( cDatabaseVersion );
 				}
 			}
 
-			mContextProvider.BlobStorageManager.Initialize( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName ));
+			mContextProvider.BlobStorageManager.Initialize( mLibraryConfiguration.Current.BlobDatabasePath );
 			if(!mContextProvider.BlobStorageManager.IsOpen ) {
 				if(!mContextProvider.BlobStorageManager.OpenStorage()) {
 					mContextProvider.BlobStorageManager.CreateStorage();
@@ -54,10 +68,15 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 				}
 			}
 
-			return( retValue );
+			mEventAggregator.Publish( new Events.DatabaseOpened());
 		}
 
-		public void Shutdown() {
+		private void CloseDatabase() {
+			mEventAggregator.Publish( new Events.DatabaseClosing());
+
+			if( mContextProvider.BlobStorageManager.IsOpen ) {
+				mContextProvider.BlobStorageManager.CloseStorage();
+			}
 		}
 	}
 }
