@@ -85,7 +85,8 @@ namespace Noise.RemoteHost {
 			retValue.TopTracks = artistMetadata.GetMetadataArray( eMetadataType.TopTracks ).ToArray();
 			retValue.Website = artistMetadata.GetMetadata( eMetadataType.WebSite );
 			
-			if( artistImage != null ) {
+			if(( artistImage != null ) &&
+			   ( artistImage.Image != null )) {
 				retValue.ArtistImage = Convert.ToBase64String( artistImage.Image );
 			}
 
@@ -206,7 +207,8 @@ namespace Noise.RemoteHost {
 			Mapper.DynamicMap( supportInfo, retValue );
 
 			var	artwork = SelectAlbumCover( supportInfo );
-			if( artwork != null ) {
+			if(( artwork != null ) &&
+			   ( artwork.Image != null )) {
 				retValue.AlbumCover = Convert.ToBase64String( artwork.Image );
 			}
 
