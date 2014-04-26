@@ -14,7 +14,6 @@ using Noise.Core.PlayQueue;
 using Noise.Core.PlayStrategies;
 using Noise.Core.PlaySupport;
 using Noise.Core.Support;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using ReusableBits.Threading;
 
@@ -24,9 +23,6 @@ namespace Noise.Core {
 
 		public NoiseCoreModule( IUnityContainer container ) {
 			mContainer = container;
-
-			NoiseLogger.Current.LogMessage( "==============================" );
-			NoiseLogger.Current.LogMessage( "Noise Core Module loading." );
 		}
 
 		public void Initialize() {
@@ -90,11 +86,11 @@ namespace Noise.Core {
 			mContainer.RegisterType<ICloudSyncProvider, CloudSyncStreams>( "SyncStreams" );
 			mContainer.RegisterType<IEnumerable<ICloudSyncProvider>, ICloudSyncProvider[]>();
 
-            mContainer.RegisterType<IPlayStrategy, PlayStrategyFeaturedArtists>( ePlayStrategy.FeaturedArtists.ToString());
-            mContainer.RegisterType<IPlayStrategy, PlayStrategyNewReleases>( ePlayStrategy.NewReleases.ToString());
-            mContainer.RegisterType<IPlayStrategy, PlayStrategyRandom>( ePlayStrategy.Random.ToString());
-            mContainer.RegisterType<IPlayStrategy, PlayStrategySingle>( ePlayStrategy.Next.ToString());
-            mContainer.RegisterType<IPlayStrategy, PlayStrategyTwoFers>( ePlayStrategy.TwoFers.ToString());
+			mContainer.RegisterType<IPlayStrategy, PlayStrategyFeaturedArtists>( ePlayStrategy.FeaturedArtists.ToString());
+			mContainer.RegisterType<IPlayStrategy, PlayStrategyNewReleases>( ePlayStrategy.NewReleases.ToString());
+			mContainer.RegisterType<IPlayStrategy, PlayStrategyRandom>( ePlayStrategy.Random.ToString());
+			mContainer.RegisterType<IPlayStrategy, PlayStrategySingle>( ePlayStrategy.Next.ToString());
+			mContainer.RegisterType<IPlayStrategy, PlayStrategyTwoFers>( ePlayStrategy.TwoFers.ToString());
 			mContainer.RegisterType<IEnumerable<IPlayStrategy>, IPlayStrategy[]>();
 			mContainer.RegisterType<IPlayStrategyFactory, PlayStrategyFactory>();
 

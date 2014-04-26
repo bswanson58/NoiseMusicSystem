@@ -108,6 +108,9 @@ namespace Noise.Desktop {
 		}
 
 		private async void StartNoise( IUnityContainer container ) {
+			NoiseLogger.Current.LogMessage( "==============================" );
+			NoiseLogger.Current.LogMessage( "Noise.Desktop System starting." );
+
 			mNoiseManager = container.Resolve<INoiseManager>();
 			mAppSupport = container.Resolve<ApplicationSupport>();
 
@@ -132,6 +135,8 @@ namespace Noise.Desktop {
 			}
 
 			Settings.Default.Save();
+
+			NoiseLogger.Current.LogMessage( "### Noise.Desktop System stopped." );
 		}
 	}
 }
