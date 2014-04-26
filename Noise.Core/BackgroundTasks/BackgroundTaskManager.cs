@@ -33,7 +33,7 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public void Handle( Events.DatabaseOpened args ) {
-			var backgroundJob = new RecurringTask( Execute, "Background Tasks" );
+			var backgroundJob = new RecurringTask( Execute, cBackgroundTaskName );
 
 			backgroundJob.TaskSchedule.StartAt( RecurringInterval.FromSeconds( 15 ))
 									  .Delay( RecurringInterval.FromSeconds( 15 ));
@@ -41,7 +41,7 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {
-			mJobScheduler.RemoveAllTasks();
+			mJobScheduler.RemoveTask( cBackgroundTaskName );
 			mUpdateInProgress = false;
 		}
 

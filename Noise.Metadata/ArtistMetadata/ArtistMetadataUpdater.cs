@@ -12,6 +12,8 @@ using ReusableBits.Threading;
 
 namespace Noise.Metadata.ArtistMetadata {
 	internal class ArtistMetadataUpdater : IMetadataUpdater {
+		private const string									cBackgroundTaskName = "Artist Metadata Updateer";
+
 		private readonly IEventAggregator						mEventAggregator;
 		private readonly IRecurringTaskScheduler				mTaskScheduler;
 		private readonly IEnumerable<IArtistMetadataProvider>	mProviders; 
@@ -40,7 +42,7 @@ namespace Noise.Metadata.ArtistMetadata {
 
 				FillUpdateList();
 
-				var updateTask = new RecurringTask( UpdateNextArtist );
+				var updateTask = new RecurringTask( UpdateNextArtist, cBackgroundTaskName );
 
 				updateTask.TaskSchedule.StartAt( RecurringInterval.FromSeconds( 15 ))
 									   .Delay( RecurringInterval.FromSeconds( 10 ));
@@ -54,7 +56,7 @@ namespace Noise.Metadata.ArtistMetadata {
 		public void Shutdown() {
 			mUpdateEnumerator = null;
 			mUpdateList = null;
-			mTaskScheduler.RemoveAllTasks();
+			mTaskScheduler.RemoveTask( cBackgroundTaskName );
 
 			foreach( var provider in mProviders ) {
 				provider.Shutdown();

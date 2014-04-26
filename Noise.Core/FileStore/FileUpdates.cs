@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using CuttingEdge.Conditions;
-using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -68,7 +67,7 @@ namespace Noise.Core.FileStore {
 				mClearReadOnly = configuration.EnableReadOnlyUpdates;
 			}
 
-			var backgroundJob = new RecurringTask( ProcessUnfinishedCommands, "Background File Update Task" );
+			var backgroundJob = new RecurringTask( ProcessUnfinishedCommands, cBackgroundFileUpdater );
 			backgroundJob.TaskSchedule.StartAt( RecurringInterval.FromMinutes( 1 )).Interval( RecurringInterval.FromMinutes( 1 ));
 
 			mTaskScheduler.AddRecurringTask( backgroundJob );
@@ -77,7 +76,7 @@ namespace Noise.Core.FileStore {
 		}
 
 		public void Shutdown() {
-			mTaskScheduler.RemoveAllTasks();
+			mTaskScheduler.RemoveTask( cBackgroundFileUpdater );
 			ProcessUnfinishedCommands( null );
 
 			if( mUnfinishedCommands.Count > 0 ) {
@@ -108,8 +107,7 @@ namespace Noise.Core.FileStore {
 
 			var item = mDbBaseProvider.GetItem( args.ItemId );
 
-			if(( item != null ) &&
-			   ( item is DbTrack )) {
+			if( item is DbTrack ) {
 				var track = item as DbTrack;
 				var file = mStorageFileProvider.GetPhysicalFile( track );
 
@@ -191,8 +189,7 @@ namespace Noise.Core.FileStore {
 			
 			var item = mDbBaseProvider.GetItem( args.ItemId );
 
-			if(( item != null ) &&
-			   ( item is DbTrack )) {
+			if( item is DbTrack ) {
 				var track = item as DbTrack;
 				var file = mStorageFileProvider.GetPhysicalFile( track );
 
@@ -231,8 +228,7 @@ namespace Noise.Core.FileStore {
 			
 			var item = mDbBaseProvider.GetItem( args.ItemId );
 
-			if(( item != null ) &&
-			   ( item is DbTrack )) {
+			if( item is DbTrack ) {
 				var track = item as DbTrack;
 				var file = mStorageFileProvider.GetPhysicalFile( track );
 
@@ -291,8 +287,7 @@ namespace Noise.Core.FileStore {
 			Condition.Requires( item ).IsNotNull();
 			Condition.Requires( item ).IsOfType( typeof( DbTrack ));
 
-			if(( item != null ) &&
-			   ( item is DbTrack )) {
+			if( item is DbTrack ) {
 				var track = item as DbTrack;
 				var file = mStorageFileProvider.GetPhysicalFile( track );
 
