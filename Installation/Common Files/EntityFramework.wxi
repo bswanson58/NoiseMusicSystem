@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
   <DirectoryRef Id="INSTALLDIRECTORY">
-    <Component Id="EntityFramework.dll" Guid="26d38bed-df91-40ae-ba05-289ab47421f7">
-      <File Id="EntityFramework.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)EntityFramework.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
+	<Component Id="EntityFramework.dll" Guid="26d38bed-df91-40ae-ba05-289ab47421f7">
+	  <File Id="EntityFramework.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)EntityFramework.dll" KeyPath="yes" Checksum="yes" />
+	</Component>
+	  <Component Id="EntityFramework.SqlServer.dll" Guid="141e2f09-03fc-4dd1-926f-0b2ec4bb06ac">
+		  <File Id="EntityFramework.SqlServer.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)EntityFramework.SqlServer.dll" KeyPath="yes" Checksum="yes" />
+	  </Component>
   </DirectoryRef>
 
   <ComponentGroup Id="EntityFrameworkFiles">
-    <ComponentRef Id="EntityFramework.dll" />
+	  <ComponentRef Id="EntityFramework.dll" />
+	  <ComponentRef Id="EntityFramework.SqlServer.dll" />
   </ComponentGroup>
 </Include>

@@ -140,7 +140,6 @@
 				<ComponentGroupRef Id="BassAudioFiles"/>
 				<ComponentGroupRef Id="CaliburnMicroFiles"/>
 				<ComponentGroupRef Id="CuttingEdgeFiles"/>
-				<ComponentGroupRef Id="EloqueraFiles"/>
 				<ComponentGroupRef Id="EntityFrameworkFiles"/>
 				<ComponentGroupRef Id="GDataDBFiles"/>
 				<ComponentGroupRef Id="GongSolutionsFiles"/>

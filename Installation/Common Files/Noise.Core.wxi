@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
   <DirectoryRef Id="INSTALLDIRECTORY">
-    <Component Id="DiscogsConnect" Guid="8a0e0770-338d-49d8-b687-821e8024d42b">
-      <File Id="DiscogsConnect.dll" DiskId="10" Source="$(var.DiscogsConnect.TargetPath)" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Microsoft.Net.Http" Guid="45c537e9-6a3b-48f2-b3ed-828e01e9285d">
-      <File Id="Microsoft.Net.Http.dll" DiskId="10" Source="$(var.DiscogsConnect.TargetDir)Microsoft.Net.Http.dll" KeyPath="yes" Checksum="yes" />
+    <Component Id="DiscogsNet" Guid="47292281-f977-4f6a-9e81-18881c661045">
+      <File Id="DiscogsNet.dll" DiskId="10" Source="$(var.DiscogsNet.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
     <Component Id="Noise.AppSupport" Guid="b8941cb2-e1f1-42ef-be6d-b9ec5b1537d7">
       <File Id="Noise.AppSupport.dll" DiskId="10" Source="$(var.Noise.AppSupport.TargetPath)" KeyPath="yes" Checksum="yes" />
@@ -18,9 +15,6 @@
     </Component>
     <Component Id="Noise.Core" Guid="9c54113f-f515-407b-beaa-db95c082c165">
       <File Id="Noise.Core.dll" DiskId="10" Source="$(var.Noise.Core.TargetPath)" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Noise.EloqueraDatabase" Guid="b963f816-d3be-4f6e-a6db-5ad09d67224d">
-      <File Id="Noise.EloqueraDatabase.dll" DiskId="10" Source="$(var.Noise.EloqueraDatabase.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
     <Component Id="Noise.EntityFrameworkDatabase" Guid="96832ab1-0333-458a-b121-cd670cb40367">
       <File Id="Noise.EntityFrameworkDatabase.dll" DiskId="10" Source="$(var.Noise.EntityFrameworkDatabase.TargetPath)" KeyPath="yes" Checksum="yes" />
@@ -61,13 +55,11 @@
   </DirectoryRef>
 
   <ComponentGroup Id="CoreFiles">
-    <ComponentRef Id="DiscogsConnect" />
-    <ComponentRef Id="Microsoft.Net.Http" />
+    <ComponentRef Id="DiscogsNet" />
     <ComponentRef Id="Noise.AppSupport" />
     <ComponentRef Id="Noise.AudioSupport" />
     <ComponentRef Id="Noise.BlobStorage" />
     <ComponentRef Id="Noise.Core" />
-    <ComponentRef Id="Noise.EloqueraDatabase" />
     <ComponentRef Id="Noise.EntityFrameworkDatabase" />
     <ComponentRef Id="Noise.Infrastructure" />
     <ComponentRef Id="Noise.Metadata"/>

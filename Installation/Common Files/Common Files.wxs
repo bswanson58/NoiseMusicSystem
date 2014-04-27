@@ -8,7 +8,6 @@
 		<?include BASS Audio.wxi ?>
 		<?include CaliburnMicro.wxi ?>
 		<?include CuttingEdge.wxi ?>
-		<?include Eloquera.wxi ?>
 		<?include EntityFramework.wxi ?>
 		<?include GDataDB.wxi ?>
 		<?include GongSolutions.wxi ?>
