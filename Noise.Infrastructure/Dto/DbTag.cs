@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public enum eTagGroup {
@@ -28,7 +27,6 @@ namespace Noise.Infrastructure.Dto {
 			Description = string.Empty;
 		}
 
-		[Ignore]
 		public int DbTagGroup {
 			get{ return((int)TagGroup ); }
 			protected set{ TagGroup = (eTagGroup)value; }

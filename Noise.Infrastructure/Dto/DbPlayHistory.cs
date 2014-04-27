@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbPlayHistory : DbBase {
@@ -16,7 +15,6 @@ namespace Noise.Infrastructure.Dto {
 			PlayedOnTicks = DateTime.Now.Ticks;
 		}
 
-		[Ignore]
 		public DateTime PlayedOn {
 			get{ return( new DateTime( PlayedOnTicks )); }
 		}

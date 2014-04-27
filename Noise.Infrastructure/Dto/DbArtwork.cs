@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbArtwork : AssociatedContent {
@@ -41,7 +40,6 @@ namespace Noise.Infrastructure.Dto {
 			Rotation = copy.Rotation;
 		}
 
-		[Ignore]
 		public int DbInfoSource {
 			get{ return((int)Source ); }
 			set{ Source = (InfoSource)value; }

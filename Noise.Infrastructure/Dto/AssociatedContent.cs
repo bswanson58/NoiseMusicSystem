@@ -1,6 +1,4 @@
-﻿using Eloquera.Client;
-
-namespace Noise.Infrastructure.Dto {
+﻿namespace Noise.Infrastructure.Dto {
 	public abstract class AssociatedContent : DbBase {
 		public	long		AssociatedItem { get; protected set; }
 		public	long		Artist { get; set; }
@@ -26,7 +24,6 @@ namespace Noise.Infrastructure.Dto {
 			Album = Constants.cDatabaseNullOid;
 		}
 
-		[Ignore]
 		public int DbContentType {
 			get{ return((int)ContentType ); }
 			set{ ContentType = (ContentType)value; }

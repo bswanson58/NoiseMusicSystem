@@ -6,7 +6,6 @@ using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.Unity;
 using Noise.AppSupport;
-using Noise.AppSupport.FeatureToggles;
 using Noise.AudioSupport;
 using Noise.Desktop.Properties;
 using Noise.Infrastructure;
@@ -73,10 +72,8 @@ namespace Noise.Desktop {
 				.AddModule( typeof( AudioSupportModule ))
 				.AddModule( typeof( BlobStorage.BlobStorageModule ))
 				.AddModule( typeof( NoiseMetadataModule ))
-				.AddModule( typeof( RemoteHost.RemoteHostModule ));
-
-			catalog.AddModule(( new EntityDatabaseEnabled()).FeatureEnabled ? typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule )
-																			: typeof( EloqueraDatabase.EloqueraDatabaseModule ));
+				.AddModule( typeof( RemoteHost.RemoteHostModule ))
+				.AddModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ));
 
 			return ( catalog );
 		}

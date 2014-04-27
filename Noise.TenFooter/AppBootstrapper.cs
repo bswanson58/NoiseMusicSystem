@@ -26,7 +26,7 @@ namespace Noise.TenFooter {
 			AddModule( typeof( BlobStorage.BlobStorageModule ));
 			AddModule( typeof( Metadata.NoiseMetadataModule ));
 			AddModule( typeof( RemoteHost.RemoteHostModule ));
-			AddModule( typeof( EloqueraDatabase.EloqueraDatabaseModule ));
+			AddModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ));
 			AddModule( typeof( UI.NoiseUiModule ));
 			AddModule( typeof( TenFoot.Ui.TenFootUiModule ));
 

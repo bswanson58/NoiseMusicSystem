@@ -132,7 +132,6 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ApplicationSupport.cs" />
-    <Compile Include="FeatureToggles\NoiseFeatureToggles.cs" />
     <Compile Include="HotkeyManager.cs" />
     <Compile Include="IocConfiguration.cs" />
     <Compile Include="IocProvider.cs" />
@@ -153,9 +152,9 @@
       <Project>{33A45442-71E5-4BFE-B37F-129EDB4F18E8}</Project>
       <Name>Noise.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Noise.EloqueraDatabase\Noise.EloqueraDatabase.csproj">
-      <Project>{16DCD043-E491-4F03-A46A-3C0273E8403D}</Project>
-      <Name>Noise.EloqueraDatabase</Name>
+    <ProjectReference Include="..\Noise.EntityFrameworkDatabase\Noise.EntityFrameworkDatabase.csproj">
+      <Project>{ed3a5818-ed75-476b-8146-d5eee289d2a2}</Project>
+      <Name>Noise.EntityFrameworkDatabase</Name>
     </ProjectReference>
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
@@ -177,6 +176,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

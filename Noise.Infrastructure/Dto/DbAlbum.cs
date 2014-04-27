@@ -2,7 +2,6 @@
 using System.ComponentModel.Composition;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	[DebuggerDisplay("Album = {Name}")]
@@ -34,24 +33,20 @@ namespace Noise.Infrastructure.Dto {
 			DateAddedTicks = DateTime.Now.Ticks;
 		}
 
-		[Ignore]
 		public long Genre {
 			get{ return( UserGenre == Constants.cDatabaseNullOid ? ExternalGenre == Constants.cDatabaseNullOid ? CalculatedGenre : ExternalGenre : UserGenre ); }
 			set{ UserGenre = value; }
 		}
 
-		[Ignore]
 		public Int16 Rating {
 			get{ return( IsUserRating ? UserRating : CalculatedRating ); }
 			set{ UserRating = value; }
 		}
 
-		[Ignore]
 		public bool IsUserRating {
 			get{ return( UserRating != 0 ); }
 		}
 
-		[Ignore]
 		public DateTime DateAdded {
 			get{ return( new DateTime( DateAddedTicks )); }
 		}

@@ -1,10 +1,8 @@
-﻿using Eloquera.Client;
-using Noise.Infrastructure.Interfaces;
+﻿using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.Infrastructure.Dto {
 	public abstract class DbBase : IDbBase {
-		[Index]
 		public long	DbId { get; protected set; }
 
 		protected DbBase() {

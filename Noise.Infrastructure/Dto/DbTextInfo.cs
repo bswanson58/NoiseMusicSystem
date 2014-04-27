@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbTextInfo : AssociatedContent {
@@ -33,7 +32,6 @@ namespace Noise.Infrastructure.Dto {
 			Name = copy.Name;
 		}
 
-		[Ignore]
 		public int DbInfoSource {
 			get{ return((int)Source ); }
 			set{ Source = (InfoSource)value; }

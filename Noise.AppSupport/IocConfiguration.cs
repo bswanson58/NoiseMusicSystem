@@ -76,7 +76,7 @@ namespace Noise.AppSupport {
 				var catalog = new ModuleCatalog();
 
 				catalog.AddModule( typeof( Core.NoiseCoreModule ))
-						.AddModule( typeof( EloqueraDatabase.EloqueraDatabaseModule ))
+						.AddModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ))
 						.AddModule( typeof( AudioSupportModule ))
 						.AddModule( typeof( BlobStorage.BlobStorageModule ))
 						.AddModule( typeof( NoiseMetadataModule ))

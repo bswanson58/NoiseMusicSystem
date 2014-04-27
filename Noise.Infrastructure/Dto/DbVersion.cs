@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	[DebuggerDisplay( "Version = {DatabaseVersion}" )]
@@ -27,7 +26,6 @@ namespace Noise.Infrastructure.Dto {
 			return( DatabaseVersion < version.DatabaseVersion );
 		}
 
-		[Ignore]
 		public DateTime DatabaseCreation {
 			get{ return( new DateTime( DatabaseCreationTicks )); }
 		}

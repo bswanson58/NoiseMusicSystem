@@ -2,7 +2,6 @@
 using System.ComponentModel.Composition;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	[DebuggerDisplay("Stream = {Name}")]
@@ -34,23 +33,19 @@ namespace Noise.Infrastructure.Dto {
 			UserGenre = Constants.cDatabaseNullOid;
 		}
 
-		[Ignore]
 		public long Genre {
 			get{ return( UserGenre == Constants.cDatabaseNullOid ?  ExternalGenre : UserGenre ); }
 			set{ UserGenre = value; }
 		}
 
-		[Ignore]
 		public bool IsUserRating {
 			get{ return( true ); }
 		}
 
-		[Ignore]
 		public DateTime DateAdded {
 			get{ return( new DateTime( DateAddedTicks )); }
 		}
 
-		[Ignore]
 		public int DbAudioRecording {
 			get{ return((int)Encoding ); }
 			set{ Encoding = (eAudioEncoding)value; }

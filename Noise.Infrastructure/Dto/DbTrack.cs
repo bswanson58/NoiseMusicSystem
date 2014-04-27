@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	[DebuggerDisplay("Track = {Name}")]
@@ -45,23 +44,19 @@ namespace Noise.Infrastructure.Dto {
 			VolumeName = string.Empty;
 		}
 
-		[Ignore]
 		public TimeSpan Duration {
 			get{ return( new TimeSpan( 0, 0, 0, 0, DurationMilliseconds )); }
 		}
 
-		[Ignore]
 		public long Genre {
 			get{ return( UserGenre == Constants.cDatabaseNullOid ? ( ExternalGenre == Constants.cDatabaseNullOid ? CalculatedGenre : ExternalGenre ) : UserGenre ); }
 			set{ UserGenre = value; }
 		}
 
-		[Ignore]
 		public bool IsUserRating {
 			get{ return( true ); }
 		}
 
-		[Ignore]
 		public DateTime DateAdded {
 			get{ return( new DateTime( DateAddedTicks )); }
 		}
