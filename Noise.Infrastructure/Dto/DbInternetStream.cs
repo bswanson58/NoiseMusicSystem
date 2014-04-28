@@ -46,11 +46,6 @@ namespace Noise.Infrastructure.Dto {
 			get{ return( new DateTime( DateAddedTicks )); }
 		}
 
-		public int DbAudioRecording {
-			get{ return((int)Encoding ); }
-			set{ Encoding = (eAudioEncoding)value; }
-		}
-
 		[Export("PersistenceType")]
 		public static Type PersistenceType {
 			get{ return( typeof( DbInternetStream )); }

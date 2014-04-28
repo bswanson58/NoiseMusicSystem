@@ -36,6 +36,19 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
+		public void CanStoreAllPlayListProperties() {
+			var playList = new DbPlayList( "list name", "list description", new long[]{ 3, 4, 5 }) {
+											Genre = 1,
+											IsFavorite = true,
+											Rating = 2 };
+			var sut = CreateSut();
+			sut.AddPlayList( playList );
+
+			var result = sut.GetPlayList( playList.DbId );
+			result.ShouldHave().AllProperties().EqualTo( playList );
+		}
+
+		[Test]
 		public void CanDeletePlayList() {
 			var playList = new DbPlayList();
 

@@ -110,9 +110,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 	internal class InternetStreamConfiguration : BaseEntityConfiguration<DbInternetStream> {
 		internal InternetStreamConfiguration() :
-			base( "Streams" ) {
-			Ignore( p => p.Encoding );
-		}
+			base( "Streams" ) { }
 	}
 
 	internal class LyricConfiguration : BaseEntityConfiguration<DbLyric> {
@@ -128,6 +126,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	internal class PlayListConfiguration : BaseEntityConfiguration<DbPlayList> {
 		internal PlayListConfiguration() :
 			base( "PlayLists" ) {
+			Ignore( p => p.TrackIds );
 			Ignore( p => p.IsUserRating );
 		}
 	}

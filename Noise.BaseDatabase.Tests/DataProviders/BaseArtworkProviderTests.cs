@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using Noise.Infrastructure.Dto;
@@ -23,6 +24,26 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 			var sut = CreateSut();
 
 			sut.AddArtwork( artwork, image );
+		}
+
+		[Test]
+		public void CanStoreAllArtworkProperties() {
+			var dbArtwork = new DbArtwork( 7, ContentType.AlbumArtwork ) { Album = 1,
+																			Artist = 2,
+																			FolderLocation = 3,
+																			IsContentAvailable = true,
+																			IsUserSelection = true,
+																			Name = "album cover",
+																			Rotation = 4,
+																			Source = InfoSource.Tag };
+			var image = new byte[] { 1, 2, 3, 4 };
+			var artwork = new Artwork( dbArtwork ) { Image = image };
+
+			var sut = CreateSut();
+			sut.AddArtwork( dbArtwork, image );
+
+			var result = sut.GetArtworkForFolder( 3 );
+			result.List.First().ShouldHave().AllProperties().EqualTo( artwork );
 		}
 
 		[Test]

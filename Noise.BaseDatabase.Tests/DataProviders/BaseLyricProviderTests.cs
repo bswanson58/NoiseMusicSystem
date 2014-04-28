@@ -16,6 +16,17 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
+		public void CanStoreAllLyricsProperties() {
+			var lyric = new DbLyric( 1, 2, "track name" ) { Lyrics = "some lyrics", SourceUrl = "some url" };
+
+			var sut = CreateSut();
+			sut.AddLyric( lyric );
+
+			var result = sut.GetLyricForUpdate( lyric.DbId );
+			result.Item.ShouldHave().AllProperties().EqualTo( lyric );
+		}
+
+		[Test]
 		public void CanGetLyricsForArtist() {
 			var artist = new DbArtist();
 			var lyric1 = new DbLyric( artist.DbId, 1, "" );
