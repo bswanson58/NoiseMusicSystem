@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Linq;
+using NLog.LayoutRenderers;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbPlayList : DbBase, IUserSettings {
@@ -33,7 +34,11 @@ namespace Noise.Infrastructure.Dto {
 
 		public IEnumerable<long> TrackIds {
 			get {
-				return( Array.ConvertAll( PersistedTrackIds.Split( ';' ), long.Parse ).ToList());
+				if(!string.IsNullOrWhiteSpace( PersistedTrackIds )) {
+					return( Array.ConvertAll( PersistedTrackIds.Split( ';' ), long.Parse ).ToList());
+				}
+
+				return( new long[0]);
 			}
 			set {
 				PersistedTrackIds = String.Join( ";", value.Select( p => p.ToString( CultureInfo.InvariantCulture )).ToArray());
