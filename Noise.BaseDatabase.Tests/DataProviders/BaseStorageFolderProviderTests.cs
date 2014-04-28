@@ -24,6 +24,17 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
+		public void CanStoreAllFolderProperties() {
+			var folder = new StorageFolder( "my folder", 1 ) { IsDeleted = true };
+
+			var sut = CreateSut();
+			sut.AddFolder( folder );
+
+			var result = sut.GetFolder( folder.DbId );
+			result.ShouldHave().AllProperties().EqualTo( folder );
+		}
+
+		[Test]
 		public void CanRetrieveFolder() {
 			var folder = new StorageFolder( "folder name", 1 );
 			var sut = CreateSut();

@@ -26,6 +26,26 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
+		public void CanStoreAllRootFolderProperties() {
+			var strategy = new FolderStrategy { PreferFolderStrategy = true };
+			strategy.SetStrategyForLevel( 0, eFolderStrategy.Artist );
+			strategy.SetStrategyForLevel( 1, eFolderStrategy.Album );
+			strategy.SetStrategyForLevel( 2, eFolderStrategy.Volume );
+
+			var folder = new RootFolder( 1, "path", "name" ) { IsDeleted = true, LastCloudSequenceId = 2, ParentFolder = 3, FolderStrategy = strategy };
+
+			folder.UpdateLibraryScan();
+			folder.UpdateSummaryScan();
+
+			var sut = CreateSut();
+			sut.AddRootFolder( folder );
+
+			var result = sut.GetRootFolder( folder.DbId );
+			result.ShouldHave().AllPropertiesBut( p => p.FolderStrategy ).EqualTo( folder );
+			result.FolderStrategy.ShouldHave().AllProperties().EqualTo( folder.FolderStrategy );
+		}
+
+		[Test]
 		public void CannotAddDuplicateFolder() {
 			var folder = new RootFolder( 1, "path", "folder name" );
 			var sut = CreateSut();

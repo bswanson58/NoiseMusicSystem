@@ -27,11 +27,6 @@ namespace Noise.Infrastructure.Dto {
 			Description = string.Empty;
 		}
 
-		public int DbTagGroup {
-			get{ return((int)TagGroup ); }
-			protected set{ TagGroup = (eTagGroup)value; }
-		}
-
 		[Export("PersistenceType")]
 		public static Type PersistenceType {
 			get{ return( typeof( DbTag )); }

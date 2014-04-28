@@ -133,16 +133,12 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 	internal class TagConfiguration : BaseEntityConfiguration<DbTag> {
 		internal TagConfiguration() :
-			base( "Tags" ) {
-			Ignore( p => p.TagGroup );
-		}
+			base( "Tags" ) { }
 	}
 
 	internal class TagAssociationConfiguration : BaseEntityConfiguration<DbTagAssociation> {
 		internal TagAssociationConfiguration() :
-			base( "TagAssociations" ) {
-			Ignore( p => p.TagGroup );
-		}
+			base( "TagAssociations" ) { }
 	}
 
 	internal class TextInfoConfiguration : BaseEntityConfiguration<DbTextInfo> {
@@ -160,9 +156,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 	internal class StorageFileConfiguration : BaseEntityConfiguration<StorageFile> {
 		internal StorageFileConfiguration() :
-			base( "Files" ) {
-			Ignore( p => p.FileType );
-		}
+			base( "Files" ) { }
 	}
 
 	internal class StorageFolderConfiguration : BaseEntityConfiguration<StorageFolder> {

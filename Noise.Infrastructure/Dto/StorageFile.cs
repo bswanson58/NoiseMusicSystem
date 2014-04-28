@@ -34,11 +34,6 @@ namespace Noise.Infrastructure.Dto {
 			WasUpdated = true;
 		}
 
-		public int DbFileType {
-			get{ return((int)FileType ); }
-			protected set{ FileType = (eFileType)value; }
-		}
-
 		[Export("PersistenceType")]
 		public static Type PersistenceType {
 			get{ return( typeof( StorageFile )); }

@@ -50,7 +50,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		public IDataProviderList<StorageFile> GetFilesRequiringProcessing() {
 			var context = CreateContext();
 
-			return( new EfProviderList<StorageFile>( context, Set( context ).Where( entity => ( entity.DbFileType == (int)eFileType.Undetermined ) || entity.WasUpdated )));
+			return( new EfProviderList<StorageFile>( context, Set( context ).Where( entity => ( entity.FileType == eFileType.Undetermined ) || entity.WasUpdated )));
 		} 
 
 		public IDataUpdateShell<StorageFile> GetFileForUpdate( long fileId ) {

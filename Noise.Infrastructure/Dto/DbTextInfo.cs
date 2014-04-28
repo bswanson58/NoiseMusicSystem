@@ -32,11 +32,6 @@ namespace Noise.Infrastructure.Dto {
 			Name = copy.Name;
 		}
 
-		public int DbInfoSource {
-			get{ return((int)Source ); }
-			set{ Source = (InfoSource)value; }
-		}
-
 		[Export("PersistenceType")]
 		public static Type PersistenceType {
 			get{ return( typeof( DbTextInfo )); }

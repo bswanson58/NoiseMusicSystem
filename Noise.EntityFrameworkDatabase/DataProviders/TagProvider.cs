@@ -15,7 +15,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		public IDataProviderList<DbTag> GetTagList( eTagGroup forGroup ) {
 			var context = CreateContext();
 
-			return( new EfProviderList<DbTag>( context, Set( context ).Where( entry => entry.DbTagGroup == (int)forGroup )));
+			return( new EfProviderList<DbTag>( context, Set( context ).Where( entry => entry.TagGroup == forGroup )));
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			base( contextProvider ) { }
 
 		public DbTagAssociation GetAlbumTagAssociation( long albumId, long tagId ) {
-			DbTagAssociation	retValue = null;
+			DbTagAssociation	retValue;
 
 			using( var context = CreateContext()) {
 				retValue = Set( context ).FirstOrDefault( entity => (( entity.AlbumId == albumId ) && ( entity.TagId == tagId )));
@@ -21,21 +21,21 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			var context = CreateContext();
 
 			return( new EfProviderList<DbTagAssociation>( context, Set( context ).Where( entity => (( entity.ArtistId == artistId ) &&
-																									( entity.DbTagGroup == (int)tagGroup )))));
+																									( entity.TagGroup == tagGroup )))));
 		}
 
 		public IDataProviderList<DbTagAssociation> GetAlbumTagList( long albumId, eTagGroup tagGroup ) {
 			var context = CreateContext();
 
 			return( new EfProviderList<DbTagAssociation>( context, Set( context ).Where( entity => (( entity.AlbumId == albumId ) &&
-																									( entity.DbTagGroup == (int)tagGroup )))));
+																									( entity.TagGroup == tagGroup )))));
 		}
 
 		public IDataProviderList<DbTagAssociation> GetTagList( eTagGroup tagGroup, long tagId ) {
 			var context = CreateContext();
 
 			return( new EfProviderList<DbTagAssociation>( context, Set( context ).Where( entity => (( entity.TagId == tagId ) &&
-																									( entity.DbTagGroup == (int)tagGroup )))));
+																									( entity.TagGroup == tagGroup )))));
 		}
 
 		public void AddAssociation( DbTagAssociation item ) {

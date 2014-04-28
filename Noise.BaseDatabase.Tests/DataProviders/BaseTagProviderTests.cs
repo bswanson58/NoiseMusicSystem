@@ -24,6 +24,17 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
+		public void CanStoreAllTagProperties() {
+			var tag = new DbTag( eTagGroup.Genre, "tag name" ) { Description = "description", Rating = 1, IsFavorite = true };
+
+			var sut = CreateSut();
+			sut.AddTag( tag );
+
+			var results = sut.GetTagList( eTagGroup.Genre );
+			results.List.First().ShouldHave().AllProperties().EqualTo( tag );
+		}
+
+		[Test]
 		public void CanGetTagList() {
 			var tag1 = new DbTag( eTagGroup.User, "user tag" );
 			var tag2 = new DbTag( eTagGroup.Decade, "decade tag" );

@@ -26,6 +26,20 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
+		public void CanStoreAllAssociationProperties() {
+			var artist = new DbArtist();
+			var album = new DbAlbum();
+			var tag = new DbTag( eTagGroup.Decade, "tag name" );
+			var association = new DbTagAssociation( eTagGroup.Decade, tag.DbId, artist.DbId, album.DbId );
+			var sut = CreateSut();
+
+			sut.AddAssociation( association );
+
+			var result = sut.GetAlbumTagAssociation( album.DbId, tag.DbId );
+			result.ShouldHave().AllProperties().EqualTo( association );
+		}
+
+		[Test]
 		public void CanRemoveAssociation() {
 			var album = new DbAlbum();
 			var association = new DbTagAssociation( eTagGroup.Decade, album.DbId, album.DbId, album.DbId );
