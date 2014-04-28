@@ -29,6 +29,31 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
+		public void CanStoreAllAlbumProperties() {
+			var album = new DbAlbum{
+				Artist = 1,
+				CalculatedGenre = 2,
+				CalculatedRating = 3,
+				ExternalGenre = 4,
+				HasFavorites = true,
+				Genre = 5,
+				IsFavorite = true,
+				Name = "My Favorite Album",
+				MaxChildRating = 8,
+				TrackCount = 9,
+				PublishedYear = 1958,
+				UserGenre = 6,
+				UserRating = 7 };
+			album.UpdateLastPlayed();
+
+			var sut = CreateSut();
+			sut.AddAlbum( album );
+
+			var result = sut.GetAlbum( album.DbId );
+			result.ShouldHave().AllProperties().EqualTo( album );
+		}
+
+		[Test]
 		public void CannotAddExistingAlbum() {
 			var album = new DbAlbum { Artist = 1 };
 
