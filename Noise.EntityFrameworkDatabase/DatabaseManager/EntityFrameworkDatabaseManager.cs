@@ -47,35 +47,40 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 		}
 
 		private void OpenDatabase() {
-			if( mInitializeStrategy != null ) {
-				if( mInitializeStrategy.InitializeDatabase( mContextProvider.CreateContext())) {
-					if( mInitializeStrategy.DidCreateDatabase ) {
-						mDatabaseInfo.InitializeDatabaseVersion( cDatabaseVersion );
+			try { 
+				if( mInitializeStrategy != null ) {
+					if( mInitializeStrategy.InitializeDatabase( mContextProvider.CreateContext())) {
+						if( mInitializeStrategy.DidCreateDatabase ) {
+							mDatabaseInfo.InitializeDatabaseVersion( cDatabaseVersion );
 
-						NoiseLogger.Current.LogMessage( "Created Database: '{0}'", mLibraryConfiguration.Current.DatabaseName );
-					}
-					else {
-						NoiseLogger.Current.LogMessage( "Opened Database: '{0}', database version: {1}", 
-														mLibraryConfiguration.Current.DatabaseName,	mDatabaseInfo.DatabaseVersion.DatabaseVersion );
+							NoiseLogger.Current.LogMessage( "Created Database: '{0}'", mLibraryConfiguration.Current.DatabaseName );
+						}
+						else {
+							NoiseLogger.Current.LogMessage( "Opened Database: '{0}', database version: {1}", 
+															mLibraryConfiguration.Current.DatabaseName,	mDatabaseInfo.DatabaseVersion.DatabaseVersion );
+						}
 					}
 				}
-			}
 
-			mContextProvider.BlobStorageManager.Initialize( mLibraryConfiguration.Current.BlobDatabasePath );
-			if(!mContextProvider.BlobStorageManager.IsOpen ) {
-				if(!mContextProvider.BlobStorageManager.OpenStorage()) {
-					mContextProvider.BlobStorageManager.CreateStorage();
-
+				mContextProvider.BlobStorageManager.Initialize( mLibraryConfiguration.Current.BlobDatabasePath );
+				if(!mContextProvider.BlobStorageManager.IsOpen ) {
 					if(!mContextProvider.BlobStorageManager.OpenStorage()) {
-						var ex = new ApplicationException( "EntityFrameworkDatabaseManager:Blob storage could not be created." );
+						mContextProvider.BlobStorageManager.CreateStorage();
 
-						NoiseLogger.Current.LogException( ex );
-						throw( ex );
+						if(!mContextProvider.BlobStorageManager.OpenStorage()) {
+							var ex = new ApplicationException( "EntityFrameworkDatabaseManager:Blob storage could not be created." );
+
+							NoiseLogger.Current.LogException( ex );
+							throw( ex );
+						}
 					}
 				}
-			}
 
-			mEventAggregator.Publish( new Events.DatabaseOpened());
+				mEventAggregator.Publish( new Events.DatabaseOpened());
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( string.Format( "The database '{0}' could not be opened.", mLibraryConfiguration.Current.DatabaseName ), ex );
+			}
 		}
 
 		private void CloseDatabase() {
