@@ -7,6 +7,8 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
 	public class RootFolderProvider : BaseProvider<RootFolder>, IRootFolderProvider {
+		private	long	mFirstScanCompleted;
+
 		public RootFolderProvider( IContextProvider contextProvider ) :
 			base( contextProvider ) { }
 
@@ -41,6 +43,20 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 			return( new EfUpdateShell<RootFolder>( context, Set( context ).Include( entity => entity.FolderStrategy )
 																		  .FirstOrDefault( entity => entity.DbId == folderId )));
+		}
+
+		public long FirstScanCompleted() {
+			var retValue = mFirstScanCompleted;
+
+			if( retValue == 0 ) {
+				using( var folderList = GetRootFolderList() ) {
+					mFirstScanCompleted = folderList.List.Max( folder => folder.InitialScanCompleted );
+				}
+
+				retValue = mFirstScanCompleted;
+			}
+
+			return( retValue );
 		}
 	}
 }

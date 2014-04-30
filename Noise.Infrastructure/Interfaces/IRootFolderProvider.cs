@@ -8,5 +8,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 		IDataProviderList<RootFolder>	GetRootFolderList();
 		IDataUpdateShell<RootFolder>	GetFolderForUpdate( long folderId );
+
+		long							FirstScanCompleted();
 	}
 }

@@ -7,9 +7,11 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
 	public class TrackProvider : BaseProvider<DbTrack>, ITrackProvider {
+		private readonly IRootFolderProvider	mRootFolderProvider;
 
-		public TrackProvider( IContextProvider contextProvider ) :
+		public TrackProvider( IContextProvider contextProvider, IRootFolderProvider rootFolderProvider ) :
 			base( contextProvider ) {
+			mRootFolderProvider = rootFolderProvider;
 		}
 
 		public void AddTrack( DbTrack track ) {
@@ -56,8 +58,12 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 		public IDataProviderList<DbTrack> GetNewlyAddedTracks() {
 			var context = CreateContext();
+			var firstScanCompleted = mRootFolderProvider.FirstScanCompleted();
 
-			return( new EfProviderList<DbTrack>( context, from track in context.Set<DbTrack>() orderby track.DateAddedTicks select track ));
+			return( new EfProviderList<DbTrack>( context, from track in context.Set<DbTrack>() 
+														  where track.DateAddedTicks > firstScanCompleted 
+														  orderby track.DateAddedTicks descending 
+														  select track ));
 		}
 
 		public IEnumerable<DbTrack> GetTrackListForPlayList( DbPlayList playList ) {
