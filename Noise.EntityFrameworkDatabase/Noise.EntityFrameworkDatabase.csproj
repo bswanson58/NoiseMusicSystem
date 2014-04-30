@@ -147,6 +147,7 @@
     <Compile Include="DatabaseManager\ContextProvider.cs" />
     <Compile Include="DatabaseManager\NoiseDbConfiguration.cs" />
     <Compile Include="DatabaseManager\ProductionDatabaseInitialize.cs" />
+    <Compile Include="DatabaseUtility\SqlDatabaseManager.cs" />
     <Compile Include="DataProviders\AlbumProvider.cs" />
     <Compile Include="DataProviders\ArtistProvider.cs" />
     <Compile Include="DataProviders\ArtworkProvider.cs" />
@@ -191,6 +192,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

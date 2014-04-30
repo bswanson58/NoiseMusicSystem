@@ -137,6 +137,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseUtility\SqlDatabaseManagerTests.cs" />
     <Compile Include="DataProviders\AlbumProviderTests.cs" />
     <Compile Include="DataProviders\ArtistProviderTests.cs" />
     <Compile Include="DataProviders\ArtworkProviderTests.cs" />
