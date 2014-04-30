@@ -16,7 +16,7 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 		[SetUp]
 		public void Setup() {
 			mTestSetup.Setup();
-			mTrackProvider = new TrackProvider( mTestSetup.ContextProvider );
+			mTrackProvider = new TrackProvider( mTestSetup.ContextProvider, null );
 		}
 
 		protected override IDbBaseProvider CreateSut() {
