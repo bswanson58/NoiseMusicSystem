@@ -2,6 +2,20 @@
 using System.Data.SqlClient;
 
 namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
+	public class DatabaseFileInfo {
+		public	string		LogicalName { get; private set; }
+		public	string		PhysicalName { get; private set; }
+		public	string		FileType { get; private set; }
+		public	long		FileSize { get; private set; }
+
+		public DatabaseFileInfo( string logicalName, string physicalName, string fileType, long fileSize ) {
+			LogicalName = logicalName;
+			PhysicalName = physicalName;
+			FileType = fileType;
+			FileSize = fileSize;
+		}
+	}
+
 	public class SqlDatabaseManager {
 
 		public IEnumerable<string> GetDatabaseList() {
@@ -9,11 +23,12 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 
 			using( var connection = CreateConnection()) {
 				connection.Open();
+				const string cmdText = "SELECT DB_NAME(database_id), name, physical_name FROM sys.master_files WHERE type = 0 AND database_id > 4;";
 
-				using( var command = new SqlCommand( "SELECT [name] FROM sys.databases", connection )) {
+				using( var command = new SqlCommand( cmdText, connection )) {
 					using( var reader = command.ExecuteReader()) {
-						while( reader.Read() ) {
-							retValue.Add( reader.GetString( 0 ));
+						while( reader.Read()) {
+							retValue.Add( reader.GetString( 1 ));
 						}
 					}
 				}
@@ -21,6 +36,45 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 
 			return( retValue );
 		}
+
+		public string GetDatabaseName( string databaseName ) {
+			var retValue = string.Empty;
+
+			using( var connection = CreateConnection()) {
+				connection.Open();
+				var cmdText = string.Format( "SELECT DB_NAME(database_id), name, physical_name FROM sys.master_files WHERE name = '{0}';", databaseName );
+
+				using( var command = new SqlCommand( cmdText, connection )) {
+					using( var reader = command.ExecuteReader()) {
+						while( reader.Read()) {
+							retValue = reader.GetString( 0 );
+						}
+					}
+				}
+			}
+
+			return( retValue );
+		}
+
+		public string GetDatabaseLocation( string databaseName ) {
+			var retValue = string.Empty;
+
+			using( var connection = CreateConnection()) {
+				connection.Open();
+				var cmdText = string.Format( "SELECT DB_NAME(database_id), name, physical_name FROM sys.master_files WHERE name = '{0}';", databaseName );
+
+				using( var command = new SqlCommand( cmdText, connection )) {
+					using( var reader = command.ExecuteReader()) {
+						while( reader.Read()) {
+							retValue = reader.GetString( 1 );
+						}
+					}
+				}
+			}
+
+			return( retValue );
+		}
+
 
 		public void AttachDatabase( string databaseName, string databaseFile ) {
 			using( var connection = CreateConnection()) {
@@ -70,6 +124,26 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 					command.ExecuteNonQuery();
 				}
 			}
+		}
+
+		public IEnumerable<DatabaseFileInfo> RestoreFileList( string backupFile ) {
+			var retValue = new List<DatabaseFileInfo>();
+
+			using( var connection = CreateConnection()) {
+				string	commandText = string.Format( "RESTORE FILELISTONLY FROM DISK='{0}'", backupFile );
+
+				connection.Open();
+
+				using( var command = new SqlCommand( commandText, connection )) {
+					using( var reader = command.ExecuteReader()) {
+						while( reader.Read()) {
+							retValue.Add( new DatabaseFileInfo( reader.GetString( 0 ), reader.GetString( 1 ), reader.GetString( 2 ), reader.GetInt64( 4 )));
+						}
+					}
+				}
+			}
+
+			return( retValue );
 		}
 
 		private SqlConnection CreateConnection() {
