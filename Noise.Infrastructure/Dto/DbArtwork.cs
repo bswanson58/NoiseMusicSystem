@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbArtwork : AssociatedContent {
@@ -38,11 +37,6 @@ namespace Noise.Infrastructure.Dto {
 			IsUserSelection = copy.IsUserSelection;
 			Name = copy.Name;
 			Rotation = copy.Rotation;
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbArtwork )); }
 		}
 	}
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 
 namespace Noise.Infrastructure.Dto {
@@ -64,11 +63,6 @@ namespace Noise.Infrastructure.Dto {
 		public void UpdateLastPlayed() {
 			PlayCount++;
 			LastPlayedTicks = DateTime.Now.Ticks;
-		}
-
-		[Export( "PersistenceType" )]
-		public static Type PersistenceType {
-			get{ return( typeof( DbTrack )); }
 		}
 	}
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace Noise.Infrastructure.Dto {
 	[DebuggerDisplay("Folder = {Name}")]
@@ -22,11 +20,6 @@ namespace Noise.Infrastructure.Dto {
 			base( dbId ) {
 			Name = path;
 			ParentFolder = Constants.cDatabaseNullOid;
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( StorageFolder )); }
 		}
 	}
 }

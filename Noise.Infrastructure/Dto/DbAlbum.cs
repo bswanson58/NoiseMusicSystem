@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 
@@ -63,11 +62,6 @@ namespace Noise.Infrastructure.Dto {
 			   ( year <= 2100 ))) {
 				PublishedYear = year;
 			}
-		}
-
-		[Export( "PersistenceType" )]
-		public static Type PersistenceType {
-			get{ return( typeof( DbAlbum )); }
 		}
 	}
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.Composition;
-
-namespace Noise.Infrastructure.Dto {
+﻿namespace Noise.Infrastructure.Dto {
 	public class DbTimestamp {
 		public	string		ComponentId { get; protected set; }
 		public	long		Timestamp { get; protected set; }
@@ -17,11 +14,6 @@ namespace Noise.Infrastructure.Dto {
 
 		public void SetTimestamp( long ticks ) {
 			Timestamp = ticks;
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbTimestamp )); }
 		}
 	}
 }

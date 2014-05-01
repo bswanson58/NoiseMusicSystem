@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 
 namespace Noise.Infrastructure.Dto {
@@ -25,11 +24,6 @@ namespace Noise.Infrastructure.Dto {
 			TagGroup = group;
 			Name = name;
 			Description = string.Empty;
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbTag )); }
 		}
 	}
 }

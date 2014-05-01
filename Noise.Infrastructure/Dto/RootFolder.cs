@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
 	public class RootFolder : StorageFolder {
@@ -29,11 +28,6 @@ namespace Noise.Infrastructure.Dto {
 			if( InitialScanCompleted == 0 ) {
 				InitialScanCompleted = LastSummaryScan;
 			}
-		}
-
-		[Export("PersistenceType")]
-		public static new Type PersistenceType {
-			get{ return( typeof( RootFolder )); }
 		}
 	}
 }

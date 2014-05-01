@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbDecadeTag : DbTag {
@@ -13,11 +12,6 @@ namespace Noise.Infrastructure.Dto {
 		public DbDecadeTag( string name ) :
 			base( eTagGroup.Decade, name ) {
 			Website = string.Empty;
-		}
-
-		[Export("PersistenceType")]
-		public static new Type PersistenceType {
-			get{ return( typeof( DbDecadeTag )); }
 		}
 	}
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.Composition;
-
-namespace Noise.Infrastructure.Dto {
+﻿namespace Noise.Infrastructure.Dto {
 	public class DbTagAssociation : DbBase {
 		public	long		TagId { get; protected set; }
 		public	eTagGroup	TagGroup { get; protected set; }
@@ -16,11 +13,6 @@ namespace Noise.Infrastructure.Dto {
 			TagGroup = group;
 			ArtistId = artistId;
 			AlbumId = albumId;
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbTagAssociation )); }
 		}
 	}
 }

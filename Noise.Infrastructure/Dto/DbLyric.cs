@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace Noise.Infrastructure.Dto {
 	[DebuggerDisplay("Lyrics = {SongName}")]
@@ -21,11 +19,6 @@ namespace Noise.Infrastructure.Dto {
 
 			SourceUrl = "";
 			Lyrics = "";
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbLyric )); }
 		}
 	}
 }

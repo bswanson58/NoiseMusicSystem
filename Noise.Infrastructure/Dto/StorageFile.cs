@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 
 namespace Noise.Infrastructure.Dto {
@@ -32,11 +31,6 @@ namespace Noise.Infrastructure.Dto {
 		public void UpdateModifiedDate( DateTime fileModificationDate ) {
 			FileModifiedDate = fileModificationDate;
 			WasUpdated = true;
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( StorageFile )); }
 		}
 	}
 }

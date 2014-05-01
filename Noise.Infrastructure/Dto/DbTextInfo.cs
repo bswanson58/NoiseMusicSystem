@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.Composition;
-
-namespace Noise.Infrastructure.Dto {
+﻿namespace Noise.Infrastructure.Dto {
 	public class DbTextInfo : AssociatedContent {
 		public	long			FolderLocation { get; set; }
 		public	InfoSource		Source { get; set; }
@@ -30,11 +27,6 @@ namespace Noise.Infrastructure.Dto {
 			FolderLocation = copy.FolderLocation;
 			Source = copy.Source;
 			Name = copy.Name;
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbTextInfo )); }
 		}
 	}
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.Composition;
-
-namespace Noise.Infrastructure.Dto {
+﻿namespace Noise.Infrastructure.Dto {
 	public enum eFolderStrategy {
 		Artist = 1,
 		Album = 2,
@@ -63,11 +60,6 @@ namespace Noise.Infrastructure.Dto {
 		public int DbFolderStrategy5 {
 			get{ return((int)mFolderLevelStrategies[4]); }
 			protected set{ mFolderLevelStrategies[4] = (eFolderStrategy)value; }
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( FolderStrategy )); }
 		}
 	}
 }

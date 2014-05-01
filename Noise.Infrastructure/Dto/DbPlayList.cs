@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Linq;
-using NLog.LayoutRenderers;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbPlayList : DbBase, IUserSettings {
@@ -43,11 +41,6 @@ namespace Noise.Infrastructure.Dto {
 			set {
 				PersistedTrackIds = String.Join( ";", value.Select( p => p.ToString( CultureInfo.InvariantCulture )).ToArray());
 			}
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbPlayList )); }
 		}
 	}
 }

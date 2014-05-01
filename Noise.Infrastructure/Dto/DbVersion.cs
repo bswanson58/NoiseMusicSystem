@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 
 namespace Noise.Infrastructure.Dto {
@@ -28,11 +27,6 @@ namespace Noise.Infrastructure.Dto {
 
 		public DateTime DatabaseCreation {
 			get{ return( new DateTime( DatabaseCreationTicks )); }
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbVersion )); }
 		}
 	}
 }

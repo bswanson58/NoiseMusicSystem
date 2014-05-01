@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 
@@ -44,11 +43,6 @@ namespace Noise.Infrastructure.Dto {
 
 		public DateTime DateAdded {
 			get{ return( new DateTime( DateAddedTicks )); }
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbInternetStream )); }
 		}
 	}
 }
