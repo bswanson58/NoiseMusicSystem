@@ -49,8 +49,10 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			var retValue = mFirstScanCompleted;
 
 			if( retValue == 0 ) {
-				using( var folderList = GetRootFolderList() ) {
-					mFirstScanCompleted = folderList.List.Max( folder => folder.InitialScanCompleted );
+				using( var folderList = GetRootFolderList()) {
+					if( folderList.List.Any()) {
+						mFirstScanCompleted = folderList.List.Max( folder => folder.InitialScanCompleted );
+					}
 				}
 
 				retValue = mFirstScanCompleted;
