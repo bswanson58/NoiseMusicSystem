@@ -198,7 +198,7 @@ namespace Noise.Core.FileStore {
 				if( dbFile != null ) {
 					dbList.Remove( dbFile );
 
-					if( file.ModificationTime != dbFile.FileModifiedDate ) {
+					if( file.ModificationTime.Ticks != dbFile.FileModifiedTicks ) {
 						using( var updater = mStorageFileProvider.GetFileForUpdate( dbFile.DbId )) {
 							if( updater.Item != null ) {
 								updater.Item.UpdateModifiedDate( file.ModificationTime );

@@ -7,7 +7,7 @@ namespace Noise.Infrastructure.Dto {
 		public string		Name { get; protected set; }
 		public long			ParentFolder { get; protected set; }
 		public long			FileSize { get; protected set; }
-		public DateTime		FileModifiedDate { get; protected set; }
+		public long			FileModifiedTicks { get; protected set; }
 		public eFileType	FileType { get; set; }
 		public long			MetaDataPointer { get; set; }
 		public bool			IsDeleted { get; set; }
@@ -20,7 +20,7 @@ namespace Noise.Infrastructure.Dto {
 			Name = name;
 			ParentFolder = parentFolder;
 			FileSize = fileSize;
-			FileModifiedDate = modifiedDate;
+			FileModifiedTicks = modifiedDate.Ticks;
 
 			FileType = eFileType.Undetermined;
 			MetaDataPointer = Constants.cDatabaseNullOid;
@@ -29,7 +29,7 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public void UpdateModifiedDate( DateTime fileModificationDate ) {
-			FileModifiedDate = fileModificationDate;
+			FileModifiedTicks = fileModificationDate.Ticks;
 			WasUpdated = true;
 		}
 	}

@@ -52,7 +52,7 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 
 				var retrieveFile = fileList.List.First();
 
-				file.ShouldHave().AllPropertiesBut( p => p.FileModifiedDate ).EqualTo( retrieveFile );
+				file.ShouldHave().AllPropertiesBut( p => p.FileModifiedTicks ).EqualTo( retrieveFile );
 			}
 		}
 
@@ -158,7 +158,7 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 				Assert.IsNotNull( updater );
 				Assert.IsNotNull( updater.Item );
 
-				file.ShouldHave().AllPropertiesBut( p => p.FileModifiedDate ).EqualTo( updater.Item );
+				file.ShouldHave().AllPropertiesBut( p => p.FileModifiedTicks ).EqualTo( updater.Item );
 			}
 		}
 
