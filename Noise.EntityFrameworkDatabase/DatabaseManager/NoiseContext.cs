@@ -11,12 +11,11 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 		public	IDbSet<DbTrack>		Tracks { get; set; } 
 		private readonly bool		mIsValidContext;
 
-		public NoiseContext( string databaseName ) :
+		public NoiseContext( string databaseName, string databaseConnectionString ) :
 			base( databaseName ) {
-			Database.Connection.ConnectionString = 
-				string.Format( @"Data Source=(localdb)\v11.0;Integrated Security=true;MultipleActiveResultSets=True;AttachDbFileName={0}", databaseName );
-
-			mIsValidContext = !databaseName.Equals( ContextProvider.cInvalidContextName );
+			mIsValidContext = !string.IsNullOrWhiteSpace( databaseConnectionString );
+	
+			Database.Connection.ConnectionString = databaseConnectionString;
 		}
 
 		public bool IsValidContext {

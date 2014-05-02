@@ -45,6 +45,8 @@ namespace Noise.Infrastructure {
 
 		public const string				ExportFileExtension = ".noise";
 
+		public const string				Ef_DatabaseFileExtension = "_noise.mdf";
+
 		static Constants() {
 			cNoExpirationDate = DateTime.MaxValue;
 		}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using Noise.BlobStorage.BlobStore;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure;
@@ -25,23 +26,27 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 		public IDbContext	CreateContext() {
 			var databaseName = cInvalidContextName;
+			var connectionString = string.Empty;
 
 			if( mLibraryConfiguration.Current != null ) {
 				try {
 					var databasePath = mLibraryConfiguration.Current.LibraryDatabasePath;
 
-					if( !Directory.Exists( databasePath ) ) {
+					if( !Directory.Exists( databasePath )) {
 						Directory.CreateDirectory( databasePath );
 					}
 
-					databaseName = Path.Combine( databasePath, mLibraryConfiguration.Current.DatabaseName );
+					databaseName = mLibraryConfiguration.Current.DatabaseName;
+					databasePath = Path.Combine( databasePath, mLibraryConfiguration.Current.DatabaseName + Constants.Ef_DatabaseFileExtension );
+					connectionString = string.Format( @"Data Source=(localdb)\v11.0;Integrated Security=true;MultipleActiveResultSets=True;AttachDbFileName={0}", databasePath );
+
 				}
 				catch( Exception ex ) {
 					NoiseLogger.Current.LogException( "ContextProvider:CreateContext", ex );
 				}
 			}
 
-			return( new NoiseContext( databaseName ));
+			return( new NoiseContext( databaseName, connectionString ));
 		}
 	}
 }

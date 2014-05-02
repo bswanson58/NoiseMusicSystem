@@ -19,6 +19,13 @@ namespace Noise.EntityFrameworkDatabase.Tests.DatabaseUtility {
 		}
 
 		[Test]
+		public void CanAttachDatabase() {
+			var sut = CreateSut();
+
+			sut.AttachDatabase( "Local Noise.mdf", @"" );
+		}
+
+		[Test]
 		public void CanDetachDatabase() {
 			var sut = CreateSut();
 
@@ -55,9 +62,15 @@ namespace Noise.EntityFrameworkDatabase.Tests.DatabaseUtility {
 			var sut = CreateSut();
 
 			var databaseName = sut.GetDatabaseName( "Local Noise.mdf" );
-			sut.DetachDatabase( databaseName );
+			if( !string.IsNullOrWhiteSpace( databaseName )) {
+				sut.DetachDatabase( databaseName );
+			}
+			else {
+				databaseName = "Local Noise.mdf";
+			}
+
 			sut.RestoreFileList( @"D:\Local Noise.bak" );
-			sut.RestoreDatabase( databaseName, @"D:\Local Noise.bak" );
+			sut.RestoreDatabase( "foo", @"D:\Local Noise.bak" );
 		}
 	}
 }
