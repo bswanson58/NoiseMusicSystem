@@ -45,7 +45,6 @@ namespace Noise.AppSupport {
 
 			switch( appUsage ) {
 				case ApplicationUsage.Desktop:
-					mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
 					mContainer.RegisterInstance( new RemoteHostConfiguration( 71 + portOffset, "Noise Desktop System" ));
 
 					break;
@@ -53,13 +52,11 @@ namespace Noise.AppSupport {
 				case ApplicationUsage.Server:
 					InitializeUnity();
 
-					mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
 					mContainer.RegisterInstance( new RemoteHostConfiguration( 73 + portOffset, "Noise Headless Service" ));
 
 					break;
 
 				case ApplicationUsage.TenFootUi:
-					mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>();
 					mContainer.RegisterInstance( new RemoteHostConfiguration( 72 + portOffset, "Noise TenFoot System" ));
 
 					break;
