@@ -8,6 +8,8 @@ namespace Noise.EntityFrameworkDatabase.Tests {
 	public class NoiseContextTests {
 		private const string	cDatabasePath = @"D:\Noise Testing";
 		private const string	cDatabaseName = "Noise Context Test Database";
+		private	const string	cConnectionString = @"Data Source=(localdb)\v11.0;Integrated Security=true;MultipleActiveResultSets=True;AttachDbFileName={0}";
+
 
 		[SetUp]
 		public void Setup() {
@@ -17,8 +19,16 @@ namespace Noise.EntityFrameworkDatabase.Tests {
 		}
 
 		[Test]
+		private NoiseContext CreateSut() {
+			var	databasePath = Path.Combine( cDatabasePath, cDatabasePath );
+			var connectionString = string.Format( cConnectionString, databasePath );
+
+			return( new NoiseContext( cDatabaseName, connectionString ));
+		}
+
+		[Test]
 		public void CanCreateDatabase() {
-			var context = new NoiseContext( Path.Combine( cDatabasePath, cDatabaseName ));
+			var context = CreateSut();
 
 			Assert.IsNotNull( context );
 		}
@@ -27,7 +37,7 @@ namespace Noise.EntityFrameworkDatabase.Tests {
 		public void CanAddArtist() {
 			var artist = new DbArtist { Name = "The Rolling Stones" };
 
-			using( var context = new NoiseContext( Path.Combine( cDatabasePath, cDatabaseName ))) {
+			using( var context = CreateSut()) {
 				context.Artists.Add( artist );
 
 				context.SaveChanges();
