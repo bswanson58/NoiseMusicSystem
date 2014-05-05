@@ -42,6 +42,7 @@ namespace Noise.Metadata {
 #endif
 				var libraryPath = Path.Combine( mNoiseEnvironment.LibraryDirectory(), metaDirectory );
 				mDocumentStore = new EmbeddableDocumentStore { DataDirectory = libraryPath };
+/*
 #if DEBUG
 				try {
 					( mDocumentStore as EmbeddableDocumentStore ).UseEmbeddedHttpServer = true;
@@ -53,6 +54,7 @@ namespace Noise.Metadata {
 					( mDocumentStore as EmbeddableDocumentStore ).UseEmbeddedHttpServer = false;
 				}
 #endif
+ */
 				mDocumentStore.Initialize();
 				mArtistMetadataManager.Initialize( mDocumentStore );
 
@@ -123,7 +125,7 @@ namespace Noise.Metadata {
 					var options = new SmugglerOptions { BackupPath = exportPath };
 					var exporter = new DataDumper( embeddedStore.DocumentDatabase, options );
 
-					exporter.ExportData( options );
+//					exporter.ExportData( options );
 				}
 			}
 			catch( Exception ex ) {
