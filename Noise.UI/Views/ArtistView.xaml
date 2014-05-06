@@ -133,7 +133,7 @@
                         <StackPanel Grid.Row="4" Height="24" Margin="52,0,0,5" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal"
                                     d:LayoutOverrides="Width">
                             <Button Margin="0,0,11,0" Style="{StaticResource GeneralButtonStyle}" 
-                                    Content="Play Random" Command="{Binding PlayRandomTracks}" ToolTip="Play a selection of tracks from this artist"/>
+                                    Content="Play Top Tracks" Command="{Binding PlayTopTracks}" ToolTip="Play the top tracks by this artist"/>
                             <Button Margin="0,0,5,0" Padding="3" HorizontalAlignment="Center" VerticalAlignment="Top" Style="{StaticResource GeneralButtonStyle}" 
                                     Command="{Binding DisplayArtistInfoPanel}" Content="{StaticResource Path_Artist}" ToolTip="Display Artist Information" />
                             <Button Margin="0,0,5,0" Padding="3" Style="{StaticResource GeneralButtonStyle}"

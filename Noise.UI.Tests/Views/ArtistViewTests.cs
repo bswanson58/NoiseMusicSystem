@@ -10,7 +10,7 @@ namespace Noise.UI.Tests.Views {
 	public class ArtistViewTests {
 
 		private ArtistViewModel CreateViewModel() {
-			return( new ArtistViewModel( null, null, null, null, null ));
+			return( new ArtistViewModel( null, null, null, null, null, null, null ));
 		}
 
 		private void AssertMessage( string message ) {
@@ -18,7 +18,7 @@ namespace Noise.UI.Tests.Views {
 		}
 
 		[Test]
-		[Ignore( "This inly works in when running under the debugger." )]
+		[Ignore( "This only works in when running under the debugger." )]
 		public void AreBindingsValid() {
 			ViewModelResolver.TypeResolver = ( type => CreateViewModel());
 			BindingErrorListener.Listen( AssertMessage );

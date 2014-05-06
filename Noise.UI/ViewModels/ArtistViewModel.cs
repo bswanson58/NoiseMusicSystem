@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AutoMapper;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
@@ -23,23 +25,34 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly ISelectionState		mSelectionState;
 		private readonly IArtistProvider		mArtistProvider;
+		private readonly ITrackProvider			mTrackProvider;
 		private readonly ITagManager			mTagManager;
 		private readonly IMetadataManager		mMetadataManager;
+		private readonly IPlayQueue				mPlayQueue;
 		private readonly Observal.Observer		mChangeObserver;
+		private readonly List<DbTrack>			mTopPlayTracks; 
+		private readonly Random					mRandom;
+		private DbArtist						mDbArtist;
 		private UiArtist						mCurrentArtist;
 		private Artwork							mArtistImage;
 		private LinkNode						mArtistWebsite;
 		private TaskHandler<DbArtist>			mArtistTaskHandler; 
 		private TaskHandler<Artwork>			mArtworkTaskHandler; 
+		private TaskHandler						mTopTracksTaskHandler;
 		private readonly InteractionRequest<ArtistEditRequest>		mArtistEditRequest;
 
-		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ISelectionState selectionState,
-								ITagManager tagManager, IMetadataManager metadataManager ) {
+		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ITrackProvider trackProvider,
+								ISelectionState selectionState, ITagManager tagManager, IMetadataManager metadataManager, IPlayQueue playQueue ) {
 			mEventAggregator = eventAggregator;
 			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
+			mTrackProvider = trackProvider;
 			mTagManager = tagManager;
 			mMetadataManager = metadataManager;
+			mPlayQueue = playQueue;
+
+			mTopPlayTracks = new List<DbTrack>();
+			mRandom = new Random( DateTime.Now.Millisecond );
 
 			mEventAggregator.Subscribe( this );
 
@@ -81,6 +94,7 @@ namespace Noise.UI.ViewModels {
 				mChangeObserver.Release( mCurrentArtist );
 
 				mCurrentArtist = null;
+				mDbArtist = null;
 				mArtistWebsite = null;
 
 				RaisePropertyChanged( () => Artist );
@@ -90,15 +104,20 @@ namespace Noise.UI.ViewModels {
 
 		public void ClearCurrentArtistInfo() {
 			mArtistImage = null;
+			mTopPlayTracks.Clear();
 
 			RaisePropertyChanged( () => ArtistImage );
+			RaiseCanExecuteChangedEvent( "CanExecute_PlayTopTracks" );
 		}
 
 		private void SetCurrentArtist( DbArtist artist ) {
 			CurrentArtist = artist != null ? TransformArtist( artist ) : null;
 
 			if( CurrentArtist != null ) {
+				mDbArtist = artist;
+
 				RetrieveArtwork( CurrentArtist.Name );
+				RetrieveTopTracks();
 			}
 		}
 
@@ -196,6 +215,51 @@ namespace Noise.UI.ViewModels {
 										   exception => NoiseLogger.Current.LogException( "ArtistViewModel:GetArtistArtwork", exception ));
 		}
 
+		internal TaskHandler TopTracksTaskHandler {
+			get {
+				if( mTopTracksTaskHandler == null ) {
+					Execute.OnUIThread( () => mTopTracksTaskHandler = new TaskHandler());
+				}
+
+				return( mTopTracksTaskHandler );
+			}
+			set {
+				mTopTracksTaskHandler = value;
+			}
+		}
+
+		private void RetrieveTopTracks() {
+			TopTracksTaskHandler.StartTask( () => {
+												if( mDbArtist != null ) {
+													var info = mMetadataManager.GetArtistMetadata( mDbArtist.Name );
+													var topTracks = info.GetMetadataArray( eMetadataType.TopTracks ).ToArray();
+
+													if( topTracks.Any()) {
+														var allTracks = mTrackProvider.GetTrackList( mDbArtist );
+
+														foreach( var trackName in topTracks ) {
+															string	name = trackName;
+															var		trackList = allTracks.List.Where( t => t.Name.Equals( name, StringComparison.CurrentCultureIgnoreCase )).ToList();
+
+															if( trackList.Any()) {
+																var selectedTrack = trackList.Skip( NextRandom( trackList.Count - 1 )).Take( 1 ).FirstOrDefault();
+
+																if( selectedTrack != null ) {
+																	mTopPlayTracks.Add( selectedTrack );
+																}
+															}
+														}
+													}
+												}
+											},
+											() => RaiseCanExecuteChangedEvent( "CanExecute_PlayTopTracks" ),
+											exception => NoiseLogger.Current.LogException( "ArtistViewModel:RetrieveTopTracks", exception ));
+		}
+
+		private int NextRandom( int maxValue ) {
+			return( mRandom.Next( maxValue ));
+		}
+
 		private void SetArtwork( Artwork artwork ) {
 			mArtistImage = artwork;
 
@@ -243,6 +307,16 @@ namespace Noise.UI.ViewModels {
 			if( CurrentArtist != null ) {
 				mEventAggregator.Publish( new Events.PlayArtistTracksRandom( CurrentArtist.DbId ));
 			}
+		}
+
+		public void Execute_PlayTopTracks() {
+			if( mTopPlayTracks.Any()) {
+				mPlayQueue.Add( mTopPlayTracks );
+			}
+		}
+
+		public bool CanExecute_PlayTopTracks() {
+			return( mTopPlayTracks.Any());
 		}
 
 		[DependsUpon( "Artist" )]
