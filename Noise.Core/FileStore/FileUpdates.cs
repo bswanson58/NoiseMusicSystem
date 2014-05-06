@@ -27,7 +27,6 @@ namespace Noise.Core.FileStore {
 
 		private AsyncCommand<SetFavoriteCommandArgs>		mSetFavoriteCommand;
 		private AsyncCommand<SetRatingCommandArgs>			mSetRatingCommand;
-		private AsyncCommand<UpdatePlayCountCommandArgs>	mUpdatePlayCountCommand;
 		private AsyncCommand<SetMp3TagCommandArgs>			mSetMp3TagsCommand;
 
 		public FileUpdates( ILifecycleManager lifecycleManager, IRecurringTaskScheduler recurringTaskScheduler,
@@ -53,10 +52,6 @@ namespace Noise.Core.FileStore {
 			mSetRatingCommand = new AsyncCommand<SetRatingCommandArgs>( OnSetRating );
 			mSetRatingCommand.ExecutionComplete += OnExecutionComplete;
 			GlobalCommands.SetRating.RegisterCommand( mSetRatingCommand );
-
-			mUpdatePlayCountCommand = new AsyncCommand<UpdatePlayCountCommandArgs>( OnUpdatePlayCount );
-			mUpdatePlayCountCommand.ExecutionComplete += OnExecutionComplete;
-			GlobalCommands.UpdatePlayCount.RegisterCommand( mUpdatePlayCountCommand );
 
 			mSetMp3TagsCommand = new AsyncCommand<SetMp3TagCommandArgs>( OnSetMp3Tags );
 			mSetMp3TagsCommand.ExecutionComplete += OnExecutionComplete;
@@ -96,8 +91,7 @@ namespace Noise.Core.FileStore {
 				foreach( var command in unfinishedCommands ) {
 					TypeSwitch.Do( command, TypeSwitch.Case<SetFavoriteCommandArgs>( OnSetFavorite ),
 											TypeSwitch.Case<SetRatingCommandArgs>( OnSetRating ),
-											TypeSwitch.Case<SetMp3TagCommandArgs>( SetMp3FileTags ),
-											TypeSwitch.Case<UpdatePlayCountCommandArgs>( OnUpdatePlayCount ));
+											TypeSwitch.Case<SetMp3TagCommandArgs>( SetMp3FileTags ));
 				}
 			}
 		}
@@ -212,45 +206,6 @@ namespace Noise.Core.FileStore {
 							}
 							catch( Exception ) {
 								NoiseLogger.Current.LogMessage( string.Format( "FileUpdates:SetRating - Queueing for later: {0}", track.Name ));
-
-								lock( mUnfinishedCommands ) {
-									mUnfinishedCommands.Add( args );
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		private void OnUpdatePlayCount( UpdatePlayCountCommandArgs args ) {
-			Condition.Requires( args ).IsNotNull();
-			
-			var item = mDbBaseProvider.GetItem( args.ItemId );
-
-			if( item is DbTrack ) {
-				var track = item as DbTrack;
-				var file = mStorageFileProvider.GetPhysicalFile( track );
-
-				if( file != null ) {
-					var filePath = mStorageFolderSupport.GetPath( file );
-
-					ClearReadOnlyFlag( filePath );
-
-					var tags = File.Create( filePath );
-					var id3Tags = tags.GetTag( TagTypes.Id3v2 ) as TagLib.Id3v2.Tag;
-
-					if( id3Tags != null ) {
-						var popFrame = PopularimeterFrame.Get( id3Tags, Constants.Id3FrameUserName, true );
-
-						if( popFrame != null ) {
-							popFrame.PlayCount++;
-
-							try {
-								tags.Save();
-							}
-							catch( Exception ) {
-								NoiseLogger.Current.LogMessage( string.Format( "FileUpdates:UpdatePlayCount - Queueing for later: {0}", track.Name ));
 
 								lock( mUnfinishedCommands ) {
 									mUnfinishedCommands.Add( args );
