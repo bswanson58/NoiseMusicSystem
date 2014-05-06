@@ -9,7 +9,6 @@ using Noise.Metadata.Interfaces;
 using Raven.Abstractions.Smuggler;
 using Raven.Client;
 using Raven.Client.Embedded;
-using Raven.Database.Server;
 using Raven.Database.Smuggler;
 
 namespace Noise.Metadata {
@@ -43,7 +42,6 @@ namespace Noise.Metadata {
 				var libraryPath = Path.Combine( mNoiseEnvironment.LibraryDirectory(), metaDirectory );
 				mDocumentStore = new EmbeddableDocumentStore { DataDirectory = libraryPath };
 /*
-#if DEBUG
 				try {
 					( mDocumentStore as EmbeddableDocumentStore ).UseEmbeddedHttpServer = true;
 					NonAdminHttp.EnsureCanListenToWhenInNonAdminContext( 8080 );
@@ -53,7 +51,6 @@ namespace Noise.Metadata {
 
 					( mDocumentStore as EmbeddableDocumentStore ).UseEmbeddedHttpServer = false;
 				}
-#endif
  */
 				mDocumentStore.Initialize();
 				mArtistMetadataManager.Initialize( mDocumentStore );
@@ -125,7 +122,7 @@ namespace Noise.Metadata {
 					var options = new SmugglerOptions { BackupPath = exportPath };
 					var exporter = new DataDumper( embeddedStore.DocumentDatabase, options );
 
-//					exporter.ExportData( options );
+					exporter.ExportData( null, options, false );
 				}
 			}
 			catch( Exception ex ) {
@@ -145,7 +142,7 @@ namespace Noise.Metadata {
 					var options = new SmugglerOptions { BackupPath = importPath };
 					var importer = new DataDumper( embeddedStore.DocumentDatabase, options );
 
-					importer.ImportData( options );
+					importer.ImportData( null, options );
 				}
 			}
 			catch( Exception ex ) {
