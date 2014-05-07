@@ -1,7 +1,7 @@
 ﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ReusableControls="clr-namespace:ReusableBits.Ui.Controls;assembly=ReusableBits.Ui"
-             xmlns:Regions="clr-namespace:Microsoft.Practices.Prism.Regions;assembly=Microsoft.Practices.Prism">
+             xmlns:Regions="http://www.codeplex.com/CompositeWPF">
     
     <UserControl.Resources>
         <SolidColorBrush x:Key="AccentBrush" Color="#FF588CE0"/>
