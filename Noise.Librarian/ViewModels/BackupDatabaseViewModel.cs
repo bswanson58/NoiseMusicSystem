@@ -1,7 +1,11 @@
-﻿namespace Noise.Librarian.ViewModels {
+﻿using Noise.Infrastructure.Interfaces;
+
+namespace Noise.Librarian.ViewModels {
 	public class BackupDatabaseViewModel {
-		public BackupDatabaseViewModel() {
-			
+		private readonly ILibraryConfiguration	mLibraryConfiguration;
+
+		public BackupDatabaseViewModel( ILibraryConfiguration libraryConfiguration ) {
+			mLibraryConfiguration = libraryConfiguration;
 		}
 	}
 }

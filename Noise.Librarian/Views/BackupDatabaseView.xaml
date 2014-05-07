@@ -3,14 +3,11 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:ViewModels="clr-namespace:Noise.Librarian.ViewModels"
+			 xmlns:Mvvm="clr-namespace:Microsoft.Practices.Prism.Mvvm;assembly=Microsoft.Practices.Prism.Mvvm.Desktop"
+			 Mvvm:ViewModelLocator.AutoWireViewModel="True"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="300">
 
-	<UserControl.DataContext>
-		<ViewModels:BackupDatabaseViewModel/>
-	</UserControl.DataContext>
-	
 	<Grid>
 		<TextBlock>Database Backup</TextBlock>
 	</Grid>

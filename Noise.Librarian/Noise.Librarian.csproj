@@ -177,9 +177,29 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Noise.AppSupport\Noise.AppSupport.csproj">
+      <Project>{7ed4f983-3946-48eb-aab7-587cefac4d03}</Project>
+      <Name>Noise.AppSupport</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Noise.BlobStorage\Noise.BlobStorage.csproj">
+      <Project>{9f4086fd-8332-489f-8a96-8d4425db5df2}</Project>
+      <Name>Noise.BlobStorage</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Noise.Core\Noise.Core.csproj">
+      <Project>{33a45442-71e5-4bfe-b37f-129edb4f18e8}</Project>
+      <Name>Noise.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Noise.EntityFrameworkDatabase\Noise.EntityFrameworkDatabase.csproj">
+      <Project>{ed3a5818-ed75-476b-8146-d5eee289d2a2}</Project>
+      <Name>Noise.EntityFrameworkDatabase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2c697760-1b66-4ded-b57a-b3438d5a75fc}</Project>
       <Name>Noise.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Noise.Metadata\Noise.Metadata.csproj">
+      <Project>{983d3c18-8012-48ae-ae21-b6503fc0f5b8}</Project>
+      <Name>Noise.Metadata</Name>
     </ProjectReference>
     <ProjectReference Include="..\Noise.UI\Noise.UI.csproj">
       <Project>{d9f288a7-a0ef-4237-a9d6-ba9cce9c9c09}</Project>

@@ -6,7 +6,6 @@ using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Noise.AudioSupport;
-using Noise.Core.DataBuilders;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteHost;
 using Noise.Metadata;
@@ -15,7 +14,8 @@ namespace Noise.AppSupport {
 	public enum ApplicationUsage {
 		Desktop,
 		TenFootUi,
-		Server
+		Server,
+		Librarian
 	}
 
 	public class IocConfiguration {
