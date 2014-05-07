@@ -1,7 +1,7 @@
-﻿<Window x:Class="Noise.Librarian.MainWindow"
+﻿<Window x:Class="Noise.Librarian.Views.Shell"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
+        Title="The Noise Librarian" Height="500" Width="800">
     <Grid>
         
     </Grid>

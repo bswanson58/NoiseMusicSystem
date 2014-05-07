@@ -19,7 +19,7 @@ namespace Noise.Librarian {
 			TaskScheduler.UnobservedTaskException += TaskSchedulerUnobservedTaskException;
 
 			mBootstrapper = new Bootstrapper();
-//			mBootstrapper.Run();
+			mBootstrapper.Run();
 		}
 
 		private void CurrentDomainUnhandledException( object sender, UnhandledExceptionEventArgs e ) {
