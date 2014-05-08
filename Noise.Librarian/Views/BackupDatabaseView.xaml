@@ -6,27 +6,32 @@
 			 xmlns:Mvvm="clr-namespace:Microsoft.Practices.Prism.Mvvm;assembly=Microsoft.Practices.Prism.Mvvm.Desktop"
 			 Mvvm:ViewModelLocator.AutoWireViewModel="True"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="100" d:DesignWidth="800">
+			 d:DesignHeight="150" d:DesignWidth="800">
 
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="Auto"/>
-		</Grid.RowDefinitions>
-		
-		<Grid Grid.Row="1">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="1*"/>
-				<ColumnDefinition Width="1*"/>
-				<ColumnDefinition Width="3*"/>
-			</Grid.ColumnDefinitions>
-			
-			<StackPanel Grid.Column="0" Orientation="Vertical">
-				<TextBlock Text="Libraries:"/>
-				<ComboBox ItemsSource="{Binding LibraryList}" SelectedItem="{Binding CurrentLibrary}" DisplayMemberPath="LibraryName" />
-			</StackPanel>
-			
-			<Button Grid.Column="1" Content="Backup" Command="{Binding BackupLibrary}"/>
+	<GroupBox Margin="7,5" Header=" Library Backup ">
+		<Grid Margin="7">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<TextBlock Grid.Row="0" Margin="0,0,0,5" VerticalAlignment="Bottom">
+			A Backup of a library may be done to save the current version of the library. The Backup may later be Restored or Exported.</TextBlock>
+
+			<Grid Grid.Row="1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="2*"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="4*"/>
+				</Grid.ColumnDefinitions>
+
+				<StackPanel Grid.Column="0" Orientation="Vertical">
+					<TextBlock Margin="5,3,0,3" Text="Available Libraries:"/>
+					<ComboBox ItemsSource="{Binding LibraryList}" SelectedItem="{Binding CurrentLibrary}" DisplayMemberPath="LibraryName" />
+				</StackPanel>
+
+				<Button Grid.Column="1" Margin="15,9,0,0" Width="100" HorizontalAlignment="Left" Content="Backup" Command="{Binding BackupLibrary}"/>
+			</Grid>
 		</Grid>
-	</Grid>
+	</GroupBox>
 </UserControl>
