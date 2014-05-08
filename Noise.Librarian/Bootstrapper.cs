@@ -6,12 +6,42 @@ using Microsoft.Practices.Prism.Mvvm;
 using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.Unity;
 using Noise.AppSupport;
+using Noise.Infrastructure;
+using Noise.Librarian.Interfaces;
 using Noise.Librarian.Views;
 using Noise.UI.Support;
 
 namespace Noise.Librarian {
 	public class Bootstrapper : UnityBootstrapper {
 		private Window		mShell;
+		private ILibrarian	mLibrarian;
+
+		protected override IModuleCatalog CreateModuleCatalog() {
+			var catalog = new ModuleCatalog();
+
+			catalog.AddModule( typeof( Core.NoiseCoreModule ))
+				.AddModule( typeof( UI.NoiseUiModule ), "NoiseCoreModule" )
+				.AddModule( typeof( BlobStorage.BlobStorageModule ))
+				.AddModule( typeof( Metadata.NoiseMetadataModule ))
+				.AddModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ))
+				.AddModule( typeof( LibrarianModule ));
+
+			return ( catalog );
+		}
+
+		protected override void ConfigureContainer() {
+			base.ConfigureContainer();
+
+			Container.RegisterType<Shell, Shell>();
+
+			var iocConfig = new IocConfiguration( Container );
+			iocConfig.InitializeIoc( ApplicationUsage.Librarian );
+
+			ViewModelLocationProvider.SetDefaultViewTypeToViewModelTypeResolver( ViewModelTypeResolver );
+			ViewModelLocationProvider.SetDefaultViewModelFactory( CreateViewModel );
+
+			Container.Resolve<IModuleManager>().Run();
+		}
 
 		protected override DependencyObject CreateShell() {
 			mShell = Container.Resolve<Shell>();
@@ -29,22 +59,27 @@ namespace Noise.Librarian {
 			Shutdown();
 		}
 
-		private void Shutdown() {
-			
+		protected override void InitializeModules() {
+			base.InitializeModules();
+
+			Startup();
 		}
 
-		protected override void ConfigureContainer() {
-			base.ConfigureContainer();
+		private void Startup() {
+			NoiseLogger.Current.LogMessage( "==============================" );
+			NoiseLogger.Current.LogMessage( "Noise.Librarian starting." );
 
-			Container.RegisterType<Shell, Shell>();
+			mLibrarian = Container.Resolve<ILibrarian>();
 
-			var iocConfig = new IocConfiguration( Container );
-			iocConfig.InitializeIoc( ApplicationUsage.Librarian );
+			if(!mLibrarian.Initialize()) {
+				NoiseLogger.Current.LogInfo( "Noise Librarian failed to initialize." );
+			}
+		}
 
-			ViewModelLocationProvider.SetDefaultViewTypeToViewModelTypeResolver( ViewModelTypeResolver );
-			ViewModelLocationProvider.SetDefaultViewModelFactory( CreateViewModel );
-
-			Container.Resolve<IModuleManager>().Run();
+		private void Shutdown() {
+			if( mLibrarian != null ) {
+				mLibrarian.Shutdown();
+			}
 		}
 
 		private Type ViewModelTypeResolver( Type viewType ) {
@@ -56,18 +91,6 @@ namespace Noise.Librarian {
 
 		private object CreateViewModel( Type modelType ) {
 			return( Container.Resolve( modelType ));
-		}
-
-		protected override IModuleCatalog CreateModuleCatalog() {
-			var catalog = new ModuleCatalog();
-
-			catalog.AddModule( typeof( Core.NoiseCoreModule ))
-				.AddModule( typeof( UI.NoiseUiModule ), "NoiseCoreModule" )
-				.AddModule( typeof( BlobStorage.BlobStorageModule ))
-				.AddModule( typeof( Metadata.NoiseMetadataModule ))
-				.AddModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ));
-
-			return ( catalog );
 		}
 	}
 }

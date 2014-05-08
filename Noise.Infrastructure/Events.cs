@@ -332,6 +332,7 @@ namespace Noise.Infrastructure {
 		public class DatabaseOpened { }
 		public class DatabaseClosing { }
 
+		public class SystemInitialized { }
 		public class SystemShutdown { }
 
 		public class GlobalUserEvent {
