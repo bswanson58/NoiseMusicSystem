@@ -228,6 +228,7 @@
     <Compile Include="Interfaces\ICloudSyncManager.cs" />
     <Compile Include="Interfaces\IDatabaseInfo.cs" />
     <Compile Include="Interfaces\IDatabaseManager.cs" />
+    <Compile Include="Interfaces\IDatabaseUtility.cs" />
     <Compile Include="Interfaces\IDataExchangeManager.cs" />
     <Compile Include="Interfaces\IDataProviderList.cs" />
     <Compile Include="Interfaces\IDataUpdateShell.cs" />

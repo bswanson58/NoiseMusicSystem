@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
+using Noise.EntityFrameworkDatabase.DatabaseManager;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 	public class DatabaseFileInfo {
@@ -16,7 +18,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 		}
 	}
 
-	public class SqlDatabaseManager {
+	public class SqlDatabaseManager : IDatabaseUtility {
 
 		public IEnumerable<string> GetDatabaseList() {
 			var retValue = new List<string>();
@@ -37,8 +39,9 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 			return( retValue );
 		}
 
-		public string GetDatabaseName( string databaseName ) {
+		public string GetDatabaseName( string libraryName ) {
 			var retValue = string.Empty;
+			var databaseName = ContextProvider.FormatDatabaseName( libraryName );
 
 			using( var connection = CreateConnection()) {
 				connection.Open();

@@ -215,6 +215,10 @@
       <Project>{d9f288a7-a0ef-4237-a9d6-ba9cce9c9c09}</Project>
       <Name>Noise.UI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
+      <Project>{8930138b-f96a-4a56-84cf-d660730989c9}</Project>
+      <Name>ReusableBits.Mvvm</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\BackupDatabaseView.xaml">

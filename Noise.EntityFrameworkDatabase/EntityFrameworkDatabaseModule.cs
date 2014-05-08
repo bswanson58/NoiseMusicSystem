@@ -1,5 +1,6 @@
 ﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
+using Noise.EntityFrameworkDatabase.DatabaseUtility;
 using Noise.EntityFrameworkDatabase.DataProviders;
 using Noise.EntityFrameworkDatabase.DatabaseManager;
 using Noise.EntityFrameworkDatabase.Interfaces;
@@ -40,6 +41,8 @@ namespace Noise.EntityFrameworkDatabase {
 			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
 			mContainer.RegisterType<ITimestampProvider, TimestampProvider>();
 			mContainer.RegisterType<IDatabaseInfo, DbVersionProvider>();
+
+			mContainer.RegisterType<IDatabaseUtility, SqlDatabaseManager>();
 		}
 	}
 }

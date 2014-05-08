@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using Noise.BlobStorage.BlobStore;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure;
@@ -37,7 +36,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 					}
 
 					databaseName = mLibraryConfiguration.Current.DatabaseName;
-					databasePath = Path.Combine( databasePath, mLibraryConfiguration.Current.DatabaseName + Constants.Ef_DatabaseFileExtension );
+					databasePath = Path.Combine( databasePath, FormatDatabaseName( mLibraryConfiguration.Current.DatabaseName  ));
 					connectionString = string.Format( @"Data Source=(localdb)\v11.0;Integrated Security=true;MultipleActiveResultSets=True;AttachDbFileName={0}", databasePath );
 
 				}
@@ -47,6 +46,10 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			}
 
 			return( new NoiseContext( databaseName, connectionString ));
+		}
+
+		public static string FormatDatabaseName( string libraryName ) {
+			return( libraryName + Constants.Ef_DatabaseFileExtension );
 		}
 	}
 }

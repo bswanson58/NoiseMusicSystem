@@ -25,5 +25,15 @@ namespace Noise.AppSupport {
 
 			return( retValue );
 		}
+
+		public string BackupDirectory() {
+			var retValue = Path.Combine( ApplicationDirectory(), Constants.LibraryBackupDirectory );
+
+			if(!Directory.Exists( retValue )) {
+				Directory.CreateDirectory( retValue );
+			}
+
+			return( retValue );
+		}
 	}
 }

@@ -218,6 +218,28 @@ namespace Noise.Core.Configuration {
 			}
 
 			return( retValue );
-		} 
+		}
+
+		public string OpenLibraryBackup( LibraryConfiguration libraryConfiguration ) {
+			var backupDate = DateTime.Now.ToString( "yyyy-MM-dd HH-mm-ss" );
+			var retValue = Path.Combine( mNoiseEnvironment.BackupDirectory(),
+										libraryConfiguration.LibraryId.ToString( CultureInfo.InvariantCulture ),
+										backupDate );
+
+			if(!Directory.Exists( retValue )) {
+				Directory.CreateDirectory( retValue );
+			}
+
+			return( retValue );
+		}
+
+		public void CloseLibraryBackup( LibraryConfiguration libraryConfiguration, string backupDirectory ) {
+		}
+
+		public void AbortLibraryBackup( LibraryConfiguration libraryConfiguration, string backupDirectory ) {
+			if( Directory.Exists( backupDirectory )) {
+				Directory.Delete( backupDirectory );
+			}
+		}
 	}
 }

@@ -27,6 +27,7 @@ namespace Noise.Infrastructure {
 		public const string				ApplicationName = "Noise";
 		public const string				CompanyName = "Secret_Squirrel_Products";
 		public const string				LibraryConfigurationDirectory = "Noise Libraries";
+		public const string				LibraryBackupDirectory = "Library Backups";
 		public const string				LibraryConfigurationFile = "Library.config";
 		public const string				BlobDatabaseDirectory = "Blob Database";
 		public const string				LibraryDatabaseDirectory = "Library Database";
@@ -46,6 +47,7 @@ namespace Noise.Infrastructure {
 		public const string				ExportFileExtension = ".noise";
 
 		public const string				Ef_DatabaseFileExtension = "_noise.mdf";
+		public const string				Ef_DatabaseBackupExtension = ".bak";
 
 		static Constants() {
 			cNoExpirationDate = DateTime.MaxValue;
