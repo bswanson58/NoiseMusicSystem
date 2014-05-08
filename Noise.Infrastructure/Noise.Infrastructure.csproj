@@ -178,6 +178,7 @@
     <Compile Include="Dto\BasePlayStrategyParameters.cs" />
     <Compile Include="Dto\ContentType.cs" />
     <Compile Include="Dto\DatabaseChangeSummary.cs" />
+    <Compile Include="Dto\DatabaseFileInfo.cs" />
     <Compile Include="Dto\DataFindResults.cs" />
     <Compile Include="Dto\DbArtwork.cs" />
     <Compile Include="Dto\DbBase.cs" />
@@ -197,6 +198,7 @@
     <Compile Include="Dto\GlobalUserEventArgs.cs" />
     <Compile Include="Dto\InfoSource.cs" />
     <Compile Include="Dto\IUserSettings.cs" />
+    <Compile Include="Dto\LibraryBackup.cs" />
     <Compile Include="Dto\LibraryConfiguration.cs" />
     <Compile Include="Dto\LyricsInfo.cs" />
     <Compile Include="Dto\LyricsRequestArgs.cs" />

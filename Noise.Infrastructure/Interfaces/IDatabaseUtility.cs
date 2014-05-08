@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
+using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
 	public interface IDatabaseUtility {
-		IEnumerable<string> GetDatabaseList();
-		string				GetDatabaseName( string libraryName );
+		IEnumerable<string>				GetDatabaseList();
+		string							GetDatabaseName( string libraryName );
 
-		void				BackupDatabase( string databaseName, string backupLocation );
-		void				RestoreDatabase( string databaseName, string restoreLocation );
+		void							DetachDatabase( string databaseName );
+		void							BackupDatabase( string databaseName, string backupLocation );
+		IEnumerable<DatabaseFileInfo>	RestoreFileList( string backupFile );
+		void							RestoreDatabase( string databaseName, string restoreLocation );
 	}
 }

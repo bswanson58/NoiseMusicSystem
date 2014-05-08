@@ -61,6 +61,8 @@ namespace Noise.Librarian.Models {
 						mDatabaseUtility.BackupDatabase( databaseName, backupDatabaseName );
 
 						mLibraryConfiguration.CloseLibraryBackup( library, backupDirectory );
+
+						NoiseLogger.Current.LogInfo( "Backup of library '{0}' was completed ('{1}')", library.LibraryName, Path.GetDirectoryName( backupDirectory ));
 					}
 				}
 				catch( Exception ex ) {
@@ -71,6 +73,47 @@ namespace Noise.Librarian.Models {
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "LibrarianModel:BackupDatabase - Could not open library backup.", ex );
+			}
+		}
+
+		public void RestoreDatabase( LibraryConfiguration library, LibraryBackup libraryBackup ) {
+			try {
+				if( Directory.Exists( libraryBackup.BackupPath )) {
+					var backupDatabasePath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
+					var backupDatabaseName = Path.Combine( backupDatabasePath, library.DatabaseName + Constants.Ef_DatabaseBackupExtension );
+
+					if( File.Exists( backupDatabaseName )) {
+						var databaseName = mDatabaseUtility.GetDatabaseName( library.DatabaseName );
+
+						if( !string.IsNullOrWhiteSpace( databaseName )) {
+							mDatabaseUtility.DetachDatabase( databaseName );
+						}
+						else {
+							databaseName = library.DatabaseName.Replace( ' ', '_' );
+						}
+
+						var files = mDatabaseUtility.RestoreFileList( backupDatabaseName );
+
+						foreach( var file in files ) {
+							var path = Path.GetDirectoryName( file.PhysicalName );
+
+							if((!string.IsNullOrWhiteSpace( path )) &&
+							   (!Directory.Exists( path ))) {
+								Directory.CreateDirectory( path );
+							}
+						}
+
+						mDatabaseUtility.RestoreDatabase( databaseName, backupDatabaseName );
+
+						NoiseLogger.Current.LogInfo( "Restore of library '{0}' was completed ('{1} - {2}')",
+														library.LibraryName, 
+														libraryBackup.BackupDate.ToShortDateString(),
+														libraryBackup.BackupDate.ToShortTimeString() );
+					}
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "LibrarianModel:RestoreDatabase", ex );
 			}
 		}
 

@@ -19,8 +19,9 @@ namespace Noise.Infrastructure.Interfaces {
 
 		string		GetLibraryFolder( LibraryConfiguration libraryConfiguration );
 
-		string		OpenLibraryBackup( LibraryConfiguration libraryConfiguration );
-		void		CloseLibraryBackup( LibraryConfiguration libraryConfiguration, string backupDirectory );
-		void		AbortLibraryBackup( LibraryConfiguration libraryConfiguration, string backupDirectory );
+		IEnumerable<LibraryBackup>	GetLibraryBackups( LibraryConfiguration forLibrary );
+		string						OpenLibraryBackup( LibraryConfiguration libraryConfiguration );
+		void						CloseLibraryBackup( LibraryConfiguration libraryConfiguration, string backupDirectory );
+		void						AbortLibraryBackup( LibraryConfiguration libraryConfiguration, string backupDirectory );
 	}
 }

@@ -12,6 +12,8 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Configuration {
 	public class LibraryConfigurationManager : ILibraryConfiguration, IRequireInitialization {
+		private const string						cBackupDateFormat = "yyyy-MM-dd HH-mm-ss";
+
 		private readonly IEventAggregator			mEventAggregator;
 		private readonly INoiseEnvironment			mNoiseEnvironment;
 		private	readonly List<LibraryConfiguration>	mLibraries;
@@ -220,8 +222,28 @@ namespace Noise.Core.Configuration {
 			return( retValue );
 		}
 
+		public IEnumerable<LibraryBackup> GetLibraryBackups( LibraryConfiguration forLibrary ) {
+			var retValue = new List<LibraryBackup>();
+			var backupPath = Path.Combine( mNoiseEnvironment.BackupDirectory(), forLibrary.LibraryId.ToString( CultureInfo.InvariantCulture ));
+
+			if( Directory.Exists( backupPath )) {
+				var backupDirectories = Directory.EnumerateDirectories( backupPath );
+
+				foreach( var directory in backupDirectories ) {
+					DateTime	backupTime;
+					var			directoryName = Path.GetFileName( directory );
+
+					if( DateTime.TryParseExact( directoryName, cBackupDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out backupTime )) {
+						retValue.Add( new LibraryBackup( backupTime, directory ));
+					}
+				}
+			}
+
+			return( retValue );
+		}
+
 		public string OpenLibraryBackup( LibraryConfiguration libraryConfiguration ) {
-			var backupDate = DateTime.Now.ToString( "yyyy-MM-dd HH-mm-ss" );
+			var backupDate = DateTime.Now.ToString( cBackupDateFormat );
 			var retValue = Path.Combine( mNoiseEnvironment.BackupDirectory(),
 										libraryConfiguration.LibraryId.ToString( CultureInfo.InvariantCulture ),
 										backupDate );

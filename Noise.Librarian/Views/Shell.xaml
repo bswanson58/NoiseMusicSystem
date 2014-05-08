@@ -11,5 +11,6 @@
 		</Grid.RowDefinitions>
 		
 		<Views:BackupDatabaseView Grid.Row="0"/>
+		<Views:RestoreDatabaseView Grid.Row="1"/>
 	</Grid>
 </Window>

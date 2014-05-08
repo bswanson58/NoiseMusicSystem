@@ -6,5 +6,6 @@ namespace Noise.Librarian.Interfaces {
 		void	Shutdown();
 
 		void	BackupDatabase( LibraryConfiguration library );
+		void	RestoreDatabase( LibraryConfiguration library, LibraryBackup libraryBackup );
 	}
 }
