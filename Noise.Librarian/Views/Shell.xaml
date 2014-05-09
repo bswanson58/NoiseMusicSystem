@@ -8,10 +8,12 @@
 			<RowDefinition Height="1*"/>
 			<RowDefinition Height="1*"/>
 			<RowDefinition Height="1*"/>
+			<RowDefinition Height="1*"/>
 		</Grid.RowDefinitions>
 		
 		<Views:BackupDatabaseView Grid.Row="0"/>
 		<Views:RestoreDatabaseView Grid.Row="1"/>
-		<Views:ImportDatabaseView Grid.Row="2"/>
+		<Views:ExportDatabaseView Grid.Row="2"/>
+		<Views:ImportDatabaseView Grid.Row="3"/>
 	</Grid>
 </Window>

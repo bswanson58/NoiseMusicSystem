@@ -45,7 +45,7 @@ namespace Noise.Librarian.ViewModels {
 		public void Execute_RestoreLibrary() {
 			if(( CurrentLibrary != null ) &&
 			   ( CurrentBackup != null )) {
-				mLibrarian.RestoreDatabase( CurrentLibrary, CurrentBackup );
+				mLibrarian.RestoreLibrary( CurrentLibrary, CurrentBackup );
 			}
 		}
 

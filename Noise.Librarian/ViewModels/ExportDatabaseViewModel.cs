@@ -7,14 +7,14 @@ using Noise.Librarian.Interfaces;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.Librarian.ViewModels {
-	public class BackupDatabaseViewModel : AutomaticCommandBase,
+	public class ExportDatabaseViewModel : AutomaticCommandBase,
 										   IHandle<Events.SystemInitialized> {
 		private readonly ILibraryConfiguration						mLibraryConfiguration;
 		private readonly ILibrarian									mLibrarian;
 		private readonly BindableCollection<LibraryConfiguration>	mLibraries; 
 		private LibraryConfiguration								mCurrentLibrary;
 
-		public BackupDatabaseViewModel( IEventAggregator eventAggregator, ILibrarian librarian, ILibraryConfiguration libraryConfiguration ) {
+		public ExportDatabaseViewModel( IEventAggregator eventAggregator, ILibrarian librarian, ILibraryConfiguration libraryConfiguration ) {
 			mLibrarian = librarian;
 			mLibraryConfiguration = libraryConfiguration;
 
@@ -43,14 +43,19 @@ namespace Noise.Librarian.ViewModels {
 			}
 		}
 
-		public void Execute_BackupLibrary() {
+		public string ExportPath {
+			get {  return( Get( () => ExportPath )); }
+			set {  Set( () => ExportPath, value ); }
+		}
+
+		public void Execute_ExportLibrary() {
 			if( mCurrentLibrary != null ) {
-				mLibrarian.BackupLibrary( mCurrentLibrary );
+				mLibrarian.ExportLibrary( mCurrentLibrary, ExportPath );
 			}
 		}
 
 		[DependsUpon( "CurrentLibrary" )]
-		public bool CanExecute_BackupLibrary() {
+		public bool CanExecute_ExportLibrary() {
 			return( mCurrentLibrary != null );
 		}
 	}

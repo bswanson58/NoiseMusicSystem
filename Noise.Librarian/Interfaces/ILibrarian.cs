@@ -5,9 +5,10 @@ namespace Noise.Librarian.Interfaces {
 		bool	Initialize();
 		void	Shutdown();
 
-		void	BackupDatabase( LibraryConfiguration library );
-		void	RestoreDatabase( LibraryConfiguration library, LibraryBackup libraryBackup );
+		void	BackupLibrary( LibraryConfiguration library );
+		void	RestoreLibrary( LibraryConfiguration library, LibraryBackup libraryBackup );
 
-		void	ImportDatabase( LibraryConfiguration library, LibraryBackup libraryBackup );
+		void	ExportLibrary( LibraryConfiguration library, string exportPath );
+		void	ImportLibrary( LibraryConfiguration library, LibraryBackup libraryBackup );
 	}
 }

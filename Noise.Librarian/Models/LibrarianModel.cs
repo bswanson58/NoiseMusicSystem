@@ -45,7 +45,7 @@ namespace Noise.Librarian.Models {
 			return( true );
 		}
 
-		public void BackupDatabase( LibraryConfiguration library ) {
+		public void BackupLibrary( LibraryConfiguration library ) {
 			try {
 				var libraryBackup = mLibraryConfiguration.OpenLibraryBackup( library );
 
@@ -70,15 +70,15 @@ namespace Noise.Librarian.Models {
 				catch( Exception ex ) {
 					mLibraryConfiguration.AbortLibraryBackup( library, libraryBackup );
 
-					NoiseLogger.Current.LogException( "LibrarianModel:BackupDatabase - Database backup failed.", ex );
+					NoiseLogger.Current.LogException( "LibrarianModel:BackupLibrary - Database backup failed.", ex );
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "LibrarianModel:BackupDatabase - Could not open library backup.", ex );
+				NoiseLogger.Current.LogException( "LibrarianModel:BackupLibrary - Could not open library backup.", ex );
 			}
 		}
 
-		public void RestoreDatabase( LibraryConfiguration library, LibraryBackup libraryBackup ) {
+		public void RestoreLibrary( LibraryConfiguration library, LibraryBackup libraryBackup ) {
 			try {
 				if( Directory.Exists( libraryBackup.BackupPath )) {
 					var backupDatabasePath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
@@ -115,11 +115,15 @@ namespace Noise.Librarian.Models {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "LibrarianModel:RestoreDatabase", ex );
+				NoiseLogger.Current.LogException( "LibrarianModel:RestoreLibrary", ex );
 			}
 		}
 
-		public void ImportDatabase( LibraryConfiguration library, LibraryBackup libraryBackup ) {
+		public void ExportLibrary( LibraryConfiguration library, string exportPath ) {
+			
+		}
+
+		public void ImportLibrary( LibraryConfiguration library, LibraryBackup libraryBackup ) {
 			try {
 				if( Directory.Exists( libraryBackup.BackupPath )) {
 					var newLibrary = mLibraryConfiguration.OpenLibraryRestore( library, libraryBackup );
@@ -149,7 +153,7 @@ namespace Noise.Librarian.Models {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( string.Format( "LibrarianModel:ImportDatabase from '{0}'", libraryBackup.BackupPath ), ex );
+				NoiseLogger.Current.LogException( string.Format( "LibrarianModel:ImportLibrary from '{0}'", libraryBackup.BackupPath ), ex );
 			}
 		}
 
