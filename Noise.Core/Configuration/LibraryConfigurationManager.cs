@@ -255,6 +255,8 @@ namespace Noise.Core.Configuration {
 				Directory.CreateDirectory( retValue.BackupPath );
 			}
 
+			libraryConfiguration.Persist( Path.Combine( retValue.BackupPath, Constants.LibraryConfigurationFile ));
+
 			return( retValue );
 		}
 
@@ -265,6 +267,20 @@ namespace Noise.Core.Configuration {
 			if( Directory.Exists( backup.BackupPath )) {
 				Directory.Delete( backup.BackupPath );
 			}
+		}
+
+		public LibraryBackup OpenLibraryExport( LibraryConfiguration libraryConfiguration, string exportPath ) {
+			var	retValue = new LibraryBackup( DateTime.Now, exportPath );
+
+			libraryConfiguration.Persist( Path.Combine( retValue.BackupPath, Constants.LibraryConfigurationFile ));
+
+			return( retValue );
+		}
+
+		public void CloseLibraryExport( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {
+		}
+
+		public void AbortLibraryExport( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {
 		}
 
 		public LibraryConfiguration OpenLibraryRestore( LibraryConfiguration library, LibraryBackup fromBackup ) {

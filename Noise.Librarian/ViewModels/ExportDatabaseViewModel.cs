@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -19,6 +20,8 @@ namespace Noise.Librarian.ViewModels {
 			mLibraryConfiguration = libraryConfiguration;
 
 			mLibraries = new BindableCollection<LibraryConfiguration>();
+
+			ExportPath = @"D:\Exported Library";
 
 			eventAggregator.Subscribe( this );
 		}
@@ -49,14 +52,17 @@ namespace Noise.Librarian.ViewModels {
 		}
 
 		public void Execute_ExportLibrary() {
-			if( mCurrentLibrary != null ) {
+			if(( mCurrentLibrary != null ) &&
+			   ( Directory.Exists( ExportPath ))) {
 				mLibrarian.ExportLibrary( mCurrentLibrary, ExportPath );
 			}
 		}
 
 		[DependsUpon( "CurrentLibrary" )]
+		[DependsUpon( "ExportPath" )]
 		public bool CanExecute_ExportLibrary() {
-			return( mCurrentLibrary != null );
+			return(( mCurrentLibrary != null ) &&
+				   ( Directory.Exists( ExportPath )));
 		}
 	}
 }

@@ -120,7 +120,36 @@ namespace Noise.Librarian.Models {
 		}
 
 		public void ExportLibrary( LibraryConfiguration library, string exportPath ) {
-			
+			try {
+				var libraryBackup = mLibraryConfiguration.OpenLibraryExport( library, exportPath );
+
+				try {
+					var databaseName = mDatabaseUtility.GetDatabaseName( library.DatabaseName );
+
+					if(!string.IsNullOrEmpty( databaseName )) {
+						var backupDatabasePath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
+						var backupDatabaseName = Path.Combine( backupDatabasePath, library.DatabaseName + Constants.Ef_DatabaseBackupExtension );
+
+						if(!Directory.Exists( backupDatabasePath )) {
+							Directory.CreateDirectory( backupDatabasePath );
+						}
+
+						mDatabaseUtility.BackupDatabase( databaseName, backupDatabaseName );
+
+						mLibraryConfiguration.CloseLibraryExport( library, libraryBackup );
+
+						NoiseLogger.Current.LogMessage( "Export of library '{0}' was completed to ('{1}')", library.LibraryName, libraryBackup.BackupPath );
+					}
+				}
+				catch( Exception ex ) {
+					mLibraryConfiguration.AbortLibraryExport( library, libraryBackup );
+
+					NoiseLogger.Current.LogException( "LibrarianModel:BackupLibrary - Database backup failed.", ex );
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogMessage( "LibrarianModel:ExportLibrary", ex );
+			}
 		}
 
 		public void ImportLibrary( LibraryConfiguration library, LibraryBackup libraryBackup ) {

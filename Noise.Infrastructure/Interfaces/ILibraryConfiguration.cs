@@ -24,6 +24,10 @@ namespace Noise.Infrastructure.Interfaces {
 		void						CloseLibraryBackup( LibraryConfiguration libraryConfiguration, LibraryBackup backup );
 		void						AbortLibraryBackup( LibraryConfiguration libraryConfiguration, LibraryBackup backup );
 
+		LibraryBackup				OpenLibraryExport( LibraryConfiguration libraryConfiguration, string exportPath );
+		void						CloseLibraryExport( LibraryConfiguration libraryConfiguration, LibraryBackup backup );
+		void						AbortLibraryExport( LibraryConfiguration libraryConfiguration, LibraryBackup backup );
+
 		LibraryConfiguration		OpenLibraryRestore( LibraryConfiguration library, LibraryBackup fromBackup );
 		void						CloseLibraryRestore( LibraryConfiguration library );
 	}
