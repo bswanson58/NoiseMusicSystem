@@ -9,7 +9,7 @@
 			 d:DesignHeight="150" d:DesignWidth="800">
 
 	<GroupBox Margin="7,5" Header=" Library Import ">
-		<Grid>
+		<Grid Margin="3">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="Auto"/>
@@ -31,7 +31,7 @@
 					<TextBox Text="{Binding LibraryName, UpdateSourceTrigger=PropertyChanged}"/>
 				</StackPanel>
 				
-				<Button Grid.Column="1" Width="150" Height="32" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="Import" Command="{Binding ImportLibrary}"/>
+				<Button Grid.Column="1" Margin="3,0" Width="100" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="Import" Command="{Binding ImportLibrary}"/>
 			</Grid>
 		</Grid>
 	</GroupBox>

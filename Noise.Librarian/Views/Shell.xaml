@@ -8,7 +8,7 @@
 			<RowDefinition Height="1*"/>
 			<RowDefinition Height="1*"/>
 			<RowDefinition Height="1*"/>
-			<RowDefinition Height="1*"/>
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 		
 		<Views:BackupDatabaseView Grid.Row="0"/>

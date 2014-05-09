@@ -9,7 +9,7 @@
              d:DesignHeight="150" d:DesignWidth="800">
 
 	<GroupBox Margin="7,5" Header=" Library Restore ">
-		<Grid Margin="7">
+		<Grid Margin="3">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="Auto"/>
@@ -20,10 +20,9 @@
 
 			<Grid Grid.Row="1">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="2*" MinWidth="180"/>
-					<ColumnDefinition Width="2*" MinWidth="180"/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="4*"/>
+					<ColumnDefinition Width="240"/>
+					<ColumnDefinition Width="240"/>
+					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
 
 				<StackPanel Grid.Column="0" Orientation="Vertical">
@@ -36,7 +35,7 @@
 					<ComboBox ItemsSource="{Binding BackupList}" SelectedItem="{Binding CurrentBackup}" DisplayMemberPath="BackupDate" />
 				</StackPanel>
 
-				<Button Grid.Column="2" Margin="15,9,0,0" Width="100" HorizontalAlignment="Left" Content="Restore" Command="{Binding RestoreLibrary}"/>
+				<Button Grid.Column="2" Margin="3,0" Width="100" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="Restore" Command="{Binding RestoreLibrary}"/>
 			</Grid>
 		</Grid>
 	</GroupBox>

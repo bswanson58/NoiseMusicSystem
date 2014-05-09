@@ -64,7 +64,7 @@ namespace Noise.Librarian.Models {
 
 						mLibraryConfiguration.CloseLibraryBackup( library, libraryBackup );
 
-						NoiseLogger.Current.LogMessage( "Backup of library '{0}' was completed ('{1}')", library.LibraryName, libraryBackup.BackupPath );
+						NoiseLogger.Current.LogMessage( "Backup of library '{0}' was completed ('{1}')", library.LibraryName, libraryBackup.BackupDate );
 					}
 				}
 				catch( Exception ex ) {
