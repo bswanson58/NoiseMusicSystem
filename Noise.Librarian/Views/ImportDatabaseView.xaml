@@ -6,7 +6,7 @@
 			 xmlns:Mvvm="clr-namespace:Microsoft.Practices.Prism.Mvvm;assembly=Microsoft.Practices.Prism.Mvvm.Desktop"
 			 Mvvm:ViewModelLocator.AutoWireViewModel="True"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="150" d:DesignWidth="800">
+			 d:DesignHeight="170" d:DesignWidth="800">
 
 	<GroupBox Margin="7,5" Header=" Library Import ">
 		<Grid Margin="3">
@@ -16,16 +16,16 @@
 			</Grid.RowDefinitions>
 
 			<TextBlock Grid.Row="0" Margin="0,0,0,5" VerticalAlignment="Bottom">
-			A library may be import to move a library from a different installation.</TextBlock>
+			A previously Exported library may be Imported to move a library from a different installation.</TextBlock>
 
 			<Grid Grid.Row="1">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 				
-				<StackPanel Grid.Column="0" Width="300" Orientation="Vertical">
-					<TextBlock Text="Import Location:" />
+				<StackPanel Grid.Column="0" Margin="0,0,15,0" Orientation="Vertical">
+					<TextBlock Margin="3,0" Text="Import Location:" />
 					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="*"/>
@@ -33,10 +33,10 @@
 						</Grid.ColumnDefinitions>
 						
 						<TextBox Grid.Column="0" Text="{Binding ImportPath, UpdateSourceTrigger=PropertyChanged}"/>
-						<Button Grid.Column="1" Margin="5,0" Width="25" Content="..." Command="{Binding Browse}"/>
+						<Button Grid.Column="1" Margin="5,0,0,0" Width="25" Content="..." Command="{Binding Browse}"/>
 					</Grid>
-					<TextBlock Margin="0,9,0,0" Text="Library Name:"/>
-					<TextBox Text="{Binding LibraryName, UpdateSourceTrigger=PropertyChanged}"/>
+					<TextBlock Margin="3,9,0,0" Text="Library Name:"/>
+					<TextBox Margin="0,0,30,0" Text="{Binding LibraryName, UpdateSourceTrigger=PropertyChanged}"/>
 				</StackPanel>
 				
 				<Button Grid.Column="1" Margin="3,0" Width="100" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="Import" Command="{Binding ImportLibrary}"/>

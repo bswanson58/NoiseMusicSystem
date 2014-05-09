@@ -16,7 +16,7 @@
 			</Grid.RowDefinitions>
 
 			<TextBlock Grid.Row="0" Margin="0,0,0,5" VerticalAlignment="Bottom">
-			A Backup of a library may be done to save the current version of the library. The Backup may later be Restored or Exported.</TextBlock>
+			A Backup of a library may be made to save the current state of the library. The Backup may later be Restored.</TextBlock>
 
 			<Grid Grid.Row="1">
 				<Grid.ColumnDefinitions>

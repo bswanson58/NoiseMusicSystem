@@ -16,7 +16,7 @@
 			</Grid.RowDefinitions>
 
 			<TextBlock Grid.Row="0" Margin="0,0,0,5" VerticalAlignment="Bottom">
-			A library may be export to move it to a different installation.</TextBlock>
+			A library may be Exported to facilitate Importing it into a different installation.</TextBlock>
 
 			<Grid Grid.Row="1">
 				<Grid.ColumnDefinitions>

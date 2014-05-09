@@ -24,8 +24,6 @@ namespace Noise.Librarian.ViewModels {
 
 			mLibraries = new BindableCollection<LibraryConfiguration>();
 
-			ExportPath = @"D:\Exported Library";
-
 			eventAggregator.Subscribe( this );
 		}
 
@@ -79,7 +77,7 @@ namespace Noise.Librarian.ViewModels {
 		public void Execute_Browse( object sender ) {
 			string path = ExportPath;
 
-			if( mDialogService.SelectFolderDialog( "Select export location", ref path ).GetValueOrDefault( false )) {
+			if( mDialogService.SelectFolderDialog( "Select export location:", ref path ).GetValueOrDefault( false )) {
 				ExportPath = path;
 			}
 		}

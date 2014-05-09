@@ -14,14 +14,22 @@ namespace Noise.Librarian.ViewModels {
 		public ImportDatabaseViewModel( ILibrarian librarian, IDialogService dialogService ) {
 			mLibrarian = librarian;
 			mDialogService = dialogService;
-
-			ImportPath = @"D:\Import\Library.config";
-			LibraryName = "Imported Library";
 		}
 
 		public string ImportPath {
 			get {  return( Get( () => ImportPath )); }
-			set {  Set( () => ImportPath, value ); }
+			set {
+				Set( () => ImportPath, value );
+
+				if(( string.IsNullOrWhiteSpace( LibraryName )) &&
+				   ( File.Exists( ImportPath ))) {
+					var library = LibraryConfiguration.LoadConfiguration( ImportPath );
+
+					if( library != null ) {
+						LibraryName = library.LibraryName;
+					}
+				}
+			}
 		}
 
 		public string LibraryName {
@@ -34,9 +42,11 @@ namespace Noise.Librarian.ViewModels {
 				var backup = new LibraryBackup( DateTime.Now, Path.GetDirectoryName( ImportPath ));
 				var library = LibraryConfiguration.LoadConfiguration( ImportPath );
 
-				library.LibraryName = LibraryName;
+				if( library != null ) {
+					library.LibraryName = LibraryName;
 
-				mLibrarian.ImportLibrary( library, backup );
+					mLibrarian.ImportLibrary( library, backup );
+				}
 			}
 		}
 
@@ -50,7 +60,7 @@ namespace Noise.Librarian.ViewModels {
 		public void Execute_Browse( object sender ) {
 			string path;
 
-			if( mDialogService.OpenFileDialog( "Select library import location", "*.*", "Configuration Files|" + Constants.LibraryConfigurationFile, out path ).GetValueOrDefault( false )) {
+			if( mDialogService.OpenFileDialog( "Select library to import:", "*.*", "Configuration Files|" + Constants.LibraryConfigurationFile, out path ).GetValueOrDefault( false )) {
 				ImportPath = path;
 			}
 		}
