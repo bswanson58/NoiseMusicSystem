@@ -31,7 +31,10 @@ namespace Noise.Librarian.ViewModels {
 			mLibraries.AddRange( mLibraryConfiguration.Libraries );
 
 			CurrentLibrary = mLibraries.FirstOrDefault();
+			LoadBackups();
+		}
 
+		private void LoadBackups() {
 			mLibraryBackups.Clear();
 			if( CurrentLibrary != null ) {
 				mLibraryBackups.AddRange( from backup in mLibraryConfiguration.GetLibraryBackups( CurrentLibrary )
@@ -63,6 +66,8 @@ namespace Noise.Librarian.ViewModels {
 			get {  return( mCurrentLibrary ); }
 			set {
 				mCurrentLibrary = value;
+
+				LoadBackups();
 
 				RaisePropertyChanged( () => CurrentLibrary );
 			}

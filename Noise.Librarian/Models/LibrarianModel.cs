@@ -64,7 +64,7 @@ namespace Noise.Librarian.Models {
 
 						mLibraryConfiguration.CloseLibraryBackup( library, libraryBackup );
 
-						NoiseLogger.Current.LogInfo( "Backup of library '{0}' was completed ('{1}')", library.LibraryName, libraryBackup.BackupPath );
+						NoiseLogger.Current.LogMessage( "Backup of library '{0}' was completed ('{1}')", library.LibraryName, libraryBackup.BackupPath );
 					}
 				}
 				catch( Exception ex ) {
@@ -107,7 +107,7 @@ namespace Noise.Librarian.Models {
 
 						mDatabaseUtility.RestoreDatabase( databaseName, backupDatabaseName );
 
-						NoiseLogger.Current.LogInfo( "Restore of library '{0}' was completed ('{1} - {2}')",
+						NoiseLogger.Current.LogMessage( "Restore of library '{0}' was completed ('{1} - {2}')",
 														library.LibraryName, 
 														libraryBackup.BackupDate.ToShortDateString(),
 														libraryBackup.BackupDate.ToShortTimeString() );
@@ -148,7 +148,7 @@ namespace Noise.Librarian.Models {
 						mDatabaseUtility.RestoreDatabase( databaseName, importDatabaseName, fileList, locationList );
 						mLibraryConfiguration.CloseLibraryRestore( newLibrary );
 
-						NoiseLogger.Current.LogInfo( "Import of library '{0}' was completed.", library.LibraryName );
+						NoiseLogger.Current.LogMessage( "Import of library '{0}' was completed.", library.LibraryName );
 					}
 				}
 			}

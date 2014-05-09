@@ -32,6 +32,8 @@ namespace Noise.Librarian.ViewModels {
 				var backup = new LibraryBackup( DateTime.Now, Path.GetDirectoryName( ImportPath ));
 				var library = LibraryConfiguration.LoadConfiguration( ImportPath );
 
+				library.LibraryName = LibraryName;
+
 				mLibrarian.ImportLibrary( library, backup );
 			}
 		}
