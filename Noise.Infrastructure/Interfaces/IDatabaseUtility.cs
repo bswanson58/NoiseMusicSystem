@@ -10,5 +10,6 @@ namespace Noise.Infrastructure.Interfaces {
 		void							BackupDatabase( string databaseName, string backupLocation );
 		IEnumerable<DatabaseFileInfo>	RestoreFileList( string backupFile );
 		void							RestoreDatabase( string databaseName, string restoreLocation );
+		void							RestoreDatabase( string databaseName, string restoreLocation, IEnumerable<string> fileList, IEnumerable<string> locationList );
 	}
 }

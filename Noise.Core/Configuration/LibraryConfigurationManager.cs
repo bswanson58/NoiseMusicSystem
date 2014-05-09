@@ -148,6 +148,7 @@ namespace Noise.Core.Configuration {
 				Directory.CreateDirectory( libraryPath );
 				configuration.Persist( Path.Combine( libraryPath, Constants.LibraryConfigurationFile ));
 
+				Directory.CreateDirectory( Path.Combine( libraryPath, Constants.LibraryDatabaseDirectory ));
 				Directory.CreateDirectory( Path.Combine( libraryPath, Constants.BlobDatabaseDirectory ));
 				Directory.CreateDirectory( Path.Combine( libraryPath, Constants.SearchDatabaseDirectory ));
 
@@ -242,26 +243,41 @@ namespace Noise.Core.Configuration {
 			return( retValue );
 		}
 
-		public string OpenLibraryBackup( LibraryConfiguration libraryConfiguration ) {
-			var backupDate = DateTime.Now.ToString( cBackupDateFormat );
-			var retValue = Path.Combine( mNoiseEnvironment.BackupDirectory(),
-										libraryConfiguration.LibraryId.ToString( CultureInfo.InvariantCulture ),
-										backupDate );
+		public LibraryBackup OpenLibraryBackup( LibraryConfiguration libraryConfiguration ) {
+			var backupDate = DateTime.Now;
+			var backupFolder = backupDate.ToString( cBackupDateFormat );
+			var backupPath = Path.Combine( mNoiseEnvironment.BackupDirectory(),
+											libraryConfiguration.LibraryId.ToString( CultureInfo.InvariantCulture ),
+											backupFolder );
+			var	retValue = new LibraryBackup( backupDate, backupPath );
 
-			if(!Directory.Exists( retValue )) {
-				Directory.CreateDirectory( retValue );
+			if(!Directory.Exists( retValue.BackupPath )) {
+				Directory.CreateDirectory( retValue.BackupPath );
 			}
 
 			return( retValue );
 		}
 
-		public void CloseLibraryBackup( LibraryConfiguration libraryConfiguration, string backupDirectory ) {
+		public void CloseLibraryBackup( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {
 		}
 
-		public void AbortLibraryBackup( LibraryConfiguration libraryConfiguration, string backupDirectory ) {
-			if( Directory.Exists( backupDirectory )) {
-				Directory.Delete( backupDirectory );
+		public void AbortLibraryBackup( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {
+			if( Directory.Exists( backup.BackupPath )) {
+				Directory.Delete( backup.BackupPath );
 			}
+		}
+
+		public LibraryConfiguration OpenLibraryRestore( LibraryConfiguration library, LibraryBackup fromBackup ) {
+			var importLibrary = new LibraryConfiguration { LibraryName = library.LibraryName, DatabaseName = library.DatabaseName, 
+														   DatabaseServer = library.DatabaseServer,  DatabasePassword = library.DatabasePassword, DatabaseUser = library.DatabaseUser,
+														   MediaLocations = library.MediaLocations};
+
+			AddLibrary( importLibrary );
+
+			return( importLibrary );
+		}
+
+		public void CloseLibraryRestore( LibraryConfiguration library ) {
 		}
 	}
 }

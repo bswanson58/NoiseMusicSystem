@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -45,13 +47,13 @@ namespace Noise.Librarian.Models {
 
 		public void BackupDatabase( LibraryConfiguration library ) {
 			try {
-				var backupDirectory = mLibraryConfiguration.OpenLibraryBackup( library );
+				var libraryBackup = mLibraryConfiguration.OpenLibraryBackup( library );
 
 				try {
 					var databaseName = mDatabaseUtility.GetDatabaseName( library.DatabaseName );
 
 					if(!string.IsNullOrEmpty( databaseName )) {
-						var backupDatabasePath = Path.Combine( backupDirectory, Constants.LibraryDatabaseDirectory );
+						var backupDatabasePath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
 						var backupDatabaseName = Path.Combine( backupDatabasePath, library.DatabaseName + Constants.Ef_DatabaseBackupExtension );
 
 						if(!Directory.Exists( backupDatabasePath )) {
@@ -60,13 +62,13 @@ namespace Noise.Librarian.Models {
 
 						mDatabaseUtility.BackupDatabase( databaseName, backupDatabaseName );
 
-						mLibraryConfiguration.CloseLibraryBackup( library, backupDirectory );
+						mLibraryConfiguration.CloseLibraryBackup( library, libraryBackup );
 
-						NoiseLogger.Current.LogInfo( "Backup of library '{0}' was completed ('{1}')", library.LibraryName, Path.GetDirectoryName( backupDirectory ));
+						NoiseLogger.Current.LogInfo( "Backup of library '{0}' was completed ('{1}')", library.LibraryName, libraryBackup.BackupPath );
 					}
 				}
 				catch( Exception ex ) {
-					mLibraryConfiguration.AbortLibraryBackup( library, backupDirectory );
+					mLibraryConfiguration.AbortLibraryBackup( library, libraryBackup );
 
 					NoiseLogger.Current.LogException( "LibrarianModel:BackupDatabase - Database backup failed.", ex );
 				}
@@ -114,6 +116,40 @@ namespace Noise.Librarian.Models {
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "LibrarianModel:RestoreDatabase", ex );
+			}
+		}
+
+		public void ImportDatabase( LibraryConfiguration library, LibraryBackup libraryBackup ) {
+			try {
+				if( Directory.Exists( libraryBackup.BackupPath )) {
+					var newLibrary = mLibraryConfiguration.OpenLibraryRestore( library, libraryBackup );
+					var importDatabasePath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
+					var	databaseName = library.DatabaseName.Replace( ' ', '_' );
+					var importDatabaseName = Directory.EnumerateFiles( importDatabasePath, "*" + Constants.Ef_DatabaseBackupExtension ).FirstOrDefault();
+
+					if(!string.IsNullOrWhiteSpace( importDatabaseName )) {
+						var restoreList = mDatabaseUtility.RestoreFileList( importDatabaseName );
+						var fileList = new List<string>();
+						var locationList = new List<string>();
+
+						foreach( var file in restoreList ) {
+							var fileName = Path.GetFileName( file.PhysicalName );
+
+							if(!string.IsNullOrWhiteSpace( fileName )) {
+								fileList.Add( fileName );
+								locationList.Add( Path.Combine( newLibrary.LibraryDatabasePath, fileName ));
+							}
+						}
+
+						mDatabaseUtility.RestoreDatabase( databaseName, importDatabaseName, fileList, locationList );
+						mLibraryConfiguration.CloseLibraryRestore( newLibrary );
+
+						NoiseLogger.Current.LogInfo( "Import of library '{0}' was completed.", library.LibraryName );
+					}
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( string.Format( "LibrarianModel:ImportDatabase from '{0}'", libraryBackup.BackupPath ), ex );
 			}
 		}
 

@@ -7,5 +7,7 @@ namespace Noise.Librarian.Interfaces {
 
 		void	BackupDatabase( LibraryConfiguration library );
 		void	RestoreDatabase( LibraryConfiguration library, LibraryBackup libraryBackup );
+
+		void	ImportDatabase( LibraryConfiguration library, LibraryBackup libraryBackup );
 	}
 }

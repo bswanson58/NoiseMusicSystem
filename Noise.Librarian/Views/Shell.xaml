@@ -12,5 +12,6 @@
 		
 		<Views:BackupDatabaseView Grid.Row="0"/>
 		<Views:RestoreDatabaseView Grid.Row="1"/>
+		<Views:ImportDatabaseView Grid.Row="2"/>
 	</Grid>
 </Window>

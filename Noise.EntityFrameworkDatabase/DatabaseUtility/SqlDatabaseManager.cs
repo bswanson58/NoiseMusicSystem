@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
+using Microsoft.Practices.ObjectBuilder2;
 using Noise.EntityFrameworkDatabase.DatabaseManager;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -107,6 +109,26 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 			using( var connection = CreateConnection()) {
 				string	commandText = string.Format( "RESTORE DATABASE {0} FROM DISK='{1}' WITH REPLACE, RECOVERY;",
 													databaseName, restoreLocation );
+
+				connection.Open();
+
+				using( var command = new SqlCommand( commandText, connection )) {
+					command.ExecuteNonQuery();
+				}
+			}
+		}
+
+		public void RestoreDatabase( string databaseName, string restoreLocation, IEnumerable<string> fileList, IEnumerable<string> locationList ) {
+			using( var connection = CreateConnection()) {
+				var moveList = new List<string>();
+
+				for( int index = 0; index < fileList.Count(); index++ ) {
+					moveList.Add( string.Format( "MOVE '{0}' TO '{1}'", fileList.ElementAt( index ), locationList.ElementAt( index )));
+				}
+
+				var		moveText = moveList.JoinStrings( ", " );
+				string	commandText = string.Format( "RESTORE DATABASE {0} FROM DISK='{1}' WITH REPLACE, RECOVERY, {2}",
+													databaseName, restoreLocation, moveText );
 
 				connection.Open();
 

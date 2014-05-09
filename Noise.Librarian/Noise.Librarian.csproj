@@ -151,9 +151,13 @@
     <Compile Include="LibrarianModule.cs" />
     <Compile Include="Models\LibrarianModel.cs" />
     <Compile Include="ViewModels\BackupDatabaseViewModel.cs" />
+    <Compile Include="ViewModels\ImportDatabaseViewModel.cs" />
     <Compile Include="ViewModels\RestoreDatabaseViewModel.cs" />
     <Compile Include="Views\BackupDatabaseView.xaml.cs">
       <DependentUpon>BackupDatabaseView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ImportDatabaseView.xaml.cs">
+      <DependentUpon>ImportDatabaseView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RestoreDatabaseView.xaml.cs">
       <DependentUpon>RestoreDatabaseView.xaml</DependentUpon>
@@ -226,6 +230,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\BackupDatabaseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ImportDatabaseView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
