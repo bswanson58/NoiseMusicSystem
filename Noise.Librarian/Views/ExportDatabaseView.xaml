@@ -32,7 +32,15 @@
 				
 				<StackPanel Grid.Column="1" Margin="9,0" Orientation="Vertical">
 					<TextBlock Margin="3" Text="Export Location:"/>
-					<TextBox Text="{Binding ExportPath, UpdateSourceTrigger=LostFocus}"/>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						
+						<TextBox Grid.Column="0" Text="{Binding ExportPath, UpdateSourceTrigger=LostFocus}"/>
+						<Button Grid.Column="1" Margin="5,0" Width="25" Content="..." Command="{Binding Browse}"/>
+					</Grid>
 				</StackPanel>
 
 				<Button Grid.Column="2" Margin="3,0" Width="100" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="Export" Command="{Binding ExportLibrary}"/>

@@ -1,17 +1,19 @@
 ﻿using System;
 using System.IO;
-using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Librarian.Interfaces;
+using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.Librarian.ViewModels {
 	public class ImportDatabaseViewModel : AutomaticCommandBase {
+		private readonly IDialogService	mDialogService;
 		private readonly ILibrarian		mLibrarian;
 
-		public ImportDatabaseViewModel( ILibrarian librarian ) {
+		public ImportDatabaseViewModel( ILibrarian librarian, IDialogService dialogService ) {
 			mLibrarian = librarian;
+			mDialogService = dialogService;
 
 			ImportPath = @"D:\Import\Library.config";
 			LibraryName = "Imported Library";
@@ -43,6 +45,14 @@ namespace Noise.Librarian.ViewModels {
 		public bool CanExecute_ImportLibrary() {
 			return(!string.IsNullOrWhiteSpace( ImportPath ) &&
 				  (!string.IsNullOrWhiteSpace( LibraryName )));
+		}
+
+		public void Execute_Browse( object sender ) {
+			string path;
+
+			if( mDialogService.OpenFileDialog( "Select library import location", "*.*", "Configuration Files|" + Constants.LibraryConfigurationFile, out path ).GetValueOrDefault( false )) {
+				ImportPath = path;
+			}
 		}
 	}
 }

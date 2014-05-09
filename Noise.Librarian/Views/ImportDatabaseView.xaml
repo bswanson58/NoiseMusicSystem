@@ -26,7 +26,15 @@
 				
 				<StackPanel Grid.Column="0" Width="300" Orientation="Vertical">
 					<TextBlock Text="Import Location:" />
-					<TextBox Text="{Binding ImportPath, UpdateSourceTrigger=PropertyChanged}"/>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						
+						<TextBox Grid.Column="0" Text="{Binding ImportPath, UpdateSourceTrigger=PropertyChanged}"/>
+						<Button Grid.Column="1" Margin="5,0" Width="25" Content="..." Command="{Binding Browse}"/>
+					</Grid>
 					<TextBlock Margin="0,9,0,0" Text="Library Name:"/>
 					<TextBox Text="{Binding LibraryName, UpdateSourceTrigger=PropertyChanged}"/>
 				</StackPanel>
