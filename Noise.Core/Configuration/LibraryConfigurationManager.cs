@@ -255,12 +255,13 @@ namespace Noise.Core.Configuration {
 				Directory.CreateDirectory( retValue.BackupPath );
 			}
 
-			libraryConfiguration.Persist( Path.Combine( retValue.BackupPath, Constants.LibraryConfigurationFile ));
-
 			return( retValue );
 		}
 
 		public void CloseLibraryBackup( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {
+			libraryConfiguration.Persist( Path.Combine( backup.BackupPath, Constants.LibraryConfigurationFile ));
+
+			mEventAggregator.Publish( new Events.LibraryBackupsChanged());
 		}
 
 		public void AbortLibraryBackup( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {
@@ -269,21 +270,24 @@ namespace Noise.Core.Configuration {
 			}
 		}
 
+		public void OpenLibraryRestore( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) { }
+		public void CloseLibraryRestore( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) { }
+		public void AbortLibraryRestore( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) { }
+
 		public LibraryBackup OpenLibraryExport( LibraryConfiguration libraryConfiguration, string exportPath ) {
 			var	retValue = new LibraryBackup( DateTime.Now, exportPath );
-
-			libraryConfiguration.Persist( Path.Combine( retValue.BackupPath, Constants.LibraryConfigurationFile ));
 
 			return( retValue );
 		}
 
 		public void CloseLibraryExport( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {
+			libraryConfiguration.Persist( Path.Combine( backup.BackupPath, Constants.LibraryConfigurationFile ));
 		}
 
 		public void AbortLibraryExport( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {
 		}
 
-		public LibraryConfiguration OpenLibraryRestore( LibraryConfiguration library, LibraryBackup fromBackup ) {
+		public LibraryConfiguration OpenLibraryImport( LibraryConfiguration library, LibraryBackup fromBackup ) {
 			var importLibrary = new LibraryConfiguration { LibraryName = library.LibraryName, DatabaseName = library.DatabaseName, 
 														   DatabaseServer = library.DatabaseServer,  DatabasePassword = library.DatabasePassword, DatabaseUser = library.DatabaseUser,
 														   MediaLocations = library.MediaLocations};
@@ -293,7 +297,10 @@ namespace Noise.Core.Configuration {
 			return( importLibrary );
 		}
 
-		public void CloseLibraryRestore( LibraryConfiguration library ) {
+		public void CloseLibraryImport( LibraryConfiguration library ) {
+			mEventAggregator.Publish( new Events.LibraryListChanged());
 		}
+
+		public void AbortLibraryImport( LibraryConfiguration library ) { }
 	}
 }

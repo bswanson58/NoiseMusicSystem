@@ -328,6 +328,7 @@ namespace Noise.Infrastructure {
 		public class LibraryConfigurationChanged { }
 		public class LibraryListChanged { }
 		public class LibraryChanged { }
+		public class LibraryBackupsChanged { }
 
 		public class DatabaseOpened { }
 		public class DatabaseClosing { }

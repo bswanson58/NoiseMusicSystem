@@ -83,6 +83,8 @@ namespace Noise.Librarian.Models {
 				if( Directory.Exists( libraryBackup.BackupPath )) {
 					var backupDatabasePath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
 					var backupDatabaseName = Path.Combine( backupDatabasePath, library.DatabaseName + Constants.Ef_DatabaseBackupExtension );
+					
+					mLibraryConfiguration.OpenLibraryRestore( library, libraryBackup );
 
 					if( File.Exists( backupDatabaseName )) {
 						var databaseName = mDatabaseUtility.GetDatabaseName( library.DatabaseName );
@@ -106,6 +108,7 @@ namespace Noise.Librarian.Models {
 						}
 
 						mDatabaseUtility.RestoreDatabase( databaseName, backupDatabaseName );
+						mLibraryConfiguration.CloseLibraryRestore( library, libraryBackup );
 
 						NoiseLogger.Current.LogMessage( "Restore of library '{0}' was completed ('{1} - {2}')",
 														library.LibraryName, 
@@ -116,6 +119,8 @@ namespace Noise.Librarian.Models {
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "LibrarianModel:RestoreLibrary", ex );
+
+				mLibraryConfiguration.AbortLibraryRestore( library, libraryBackup );
 			}
 		}
 
@@ -155,7 +160,7 @@ namespace Noise.Librarian.Models {
 		public void ImportLibrary( LibraryConfiguration library, LibraryBackup libraryBackup ) {
 			try {
 				if( Directory.Exists( libraryBackup.BackupPath )) {
-					var newLibrary = mLibraryConfiguration.OpenLibraryRestore( library, libraryBackup );
+					var newLibrary = mLibraryConfiguration.OpenLibraryImport( library, libraryBackup );
 					var importDatabasePath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
 					var	databaseName = library.DatabaseName.Replace( ' ', '_' );
 					var importDatabaseName = Directory.EnumerateFiles( importDatabasePath, "*" + Constants.Ef_DatabaseBackupExtension ).FirstOrDefault();
@@ -175,7 +180,7 @@ namespace Noise.Librarian.Models {
 						}
 
 						mDatabaseUtility.RestoreDatabase( databaseName, importDatabaseName, fileList, locationList );
-						mLibraryConfiguration.CloseLibraryRestore( newLibrary );
+						mLibraryConfiguration.CloseLibraryImport( newLibrary );
 
 						NoiseLogger.Current.LogMessage( "Import of library '{0}' was completed.", library.LibraryName );
 					}
@@ -183,6 +188,8 @@ namespace Noise.Librarian.Models {
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( string.Format( "LibrarianModel:ImportLibrary from '{0}'", libraryBackup.BackupPath ), ex );
+
+				mLibraryConfiguration.AbortLibraryImport( library );
 			}
 		}
 

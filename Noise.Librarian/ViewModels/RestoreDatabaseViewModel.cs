@@ -8,7 +8,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.Librarian.ViewModels {
 	public class RestoreDatabaseViewModel : AutomaticCommandBase,
-											IHandle<Events.SystemInitialized> {
+											IHandle<Events.SystemInitialized>, IHandle<Events.LibraryListChanged>, IHandle<Events.LibraryBackupsChanged> {
 		private readonly ILibraryConfiguration						mLibraryConfiguration;
 		private readonly ILibrarian									mLibrarian;
 		private readonly BindableCollection<LibraryConfiguration>	mLibraries; 
@@ -27,6 +27,18 @@ namespace Noise.Librarian.ViewModels {
 		}
 
 		public void Handle( Events.SystemInitialized message ) {
+			LoadLibraries();
+		}
+
+		public void Handle( Events.LibraryListChanged args ) {
+			LoadLibraries();
+		}
+
+		public void Handle( Events.LibraryBackupsChanged args ) {
+			LoadBackups();
+		}
+
+		private void LoadLibraries() {
 			mLibraries.Clear();
 			mLibraries.AddRange( mLibraryConfiguration.Libraries );
 

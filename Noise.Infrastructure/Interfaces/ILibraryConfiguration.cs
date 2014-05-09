@@ -24,11 +24,16 @@ namespace Noise.Infrastructure.Interfaces {
 		void						CloseLibraryBackup( LibraryConfiguration libraryConfiguration, LibraryBackup backup );
 		void						AbortLibraryBackup( LibraryConfiguration libraryConfiguration, LibraryBackup backup );
 
+		void						OpenLibraryRestore( LibraryConfiguration libraryConfiguration, LibraryBackup backup );
+		void						CloseLibraryRestore( LibraryConfiguration libraryConfiguration, LibraryBackup backup );
+		void						AbortLibraryRestore( LibraryConfiguration libraryConfiguration, LibraryBackup backup );
+
 		LibraryBackup				OpenLibraryExport( LibraryConfiguration libraryConfiguration, string exportPath );
 		void						CloseLibraryExport( LibraryConfiguration libraryConfiguration, LibraryBackup backup );
 		void						AbortLibraryExport( LibraryConfiguration libraryConfiguration, LibraryBackup backup );
 
-		LibraryConfiguration		OpenLibraryRestore( LibraryConfiguration library, LibraryBackup fromBackup );
-		void						CloseLibraryRestore( LibraryConfiguration library );
+		LibraryConfiguration		OpenLibraryImport( LibraryConfiguration library, LibraryBackup fromBackup );
+		void						CloseLibraryImport( LibraryConfiguration library );
+		void						AbortLibraryImport( LibraryConfiguration library );
 	}
 }
