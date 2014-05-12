@@ -49,7 +49,9 @@ namespace Noise.Core.PlayStrategies {
 		}
 
 		private void LoadArtists( long genreId ) {
-			using( var artists = mArtistProvider.GetArtistList() ) {
+			mArtistList.Clear();
+
+			using( var artists = mArtistProvider.GetArtistList()) {
 				if( artists.List != null ) {
 					mArtistList.AddRange( from artist in artists.List where artist.Genre == genreId && artist.Rating >= 0 select artist );
 				}
