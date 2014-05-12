@@ -8,12 +8,10 @@ using Lastfm.Services;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 using Noise.Metadata.Dto;
 using Noise.Metadata.Interfaces;
 using Raven.Client;
 using Raven.Json.Linq;
-using Raven.Storage.Esent.SchemaUpdates.Updates;
 
 namespace Noise.Metadata.MetadataProviders {
 	internal class ImageDownloader {
@@ -51,7 +49,7 @@ namespace Noise.Metadata.MetadataProviders {
 			ProviderKey = "LastFm";
 		}
 
-		public void Initialize( IDocumentStore documentStore ) {
+		public void Initialize( IDocumentStore documentStore, ILicenseManager licenseManager ) {
 			mDocumentStore = documentStore;
 
 			try {
@@ -59,7 +57,7 @@ namespace Noise.Metadata.MetadataProviders {
 				if( configuration != null ) {
 					mHasNetworkAccess = configuration.HasNetworkAccess;
 
-					var key = NoiseLicenseManager.Current.RetrieveKey( LicenseKeys.LastFm );
+					var key = licenseManager.RetrieveKey( LicenseKeys.LastFm );
 
 					Condition.Requires( key ).IsNotNull();
 

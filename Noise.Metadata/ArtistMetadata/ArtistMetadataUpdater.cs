@@ -4,6 +4,7 @@ using System.Linq;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Dto;
 using Noise.Metadata.Interfaces;
 using Raven.Client;
@@ -15,6 +16,7 @@ namespace Noise.Metadata.ArtistMetadata {
 		private const string									cBackgroundTaskName = "Artist Metadata Updateer";
 
 		private readonly IEventAggregator						mEventAggregator;
+		private readonly ILicenseManager						mLicenseManager;
 		private readonly IRecurringTaskScheduler				mTaskScheduler;
 		private readonly IEnumerable<IArtistMetadataProvider>	mProviders; 
 		private readonly Stack<DbArtistStatus>					mPriorityUpdateList;  
@@ -22,8 +24,10 @@ namespace Noise.Metadata.ArtistMetadata {
 		private IEnumerable<DbArtistStatus>						mUpdateList;
 		private IEnumerator<DbArtistStatus>						mUpdateEnumerator;
 
-		public ArtistMetadataUpdater( IEventAggregator eventAggregator, IRecurringTaskScheduler taskScheduler, IEnumerable<IArtistMetadataProvider> providers  ) {
+		public ArtistMetadataUpdater( IEventAggregator eventAggregator, ILicenseManager licenseManager,
+									  IRecurringTaskScheduler taskScheduler, IEnumerable<IArtistMetadataProvider> providers  ) {
 			mEventAggregator = eventAggregator;
+			mLicenseManager = licenseManager;
 			mTaskScheduler = taskScheduler;
 			mProviders = providers;
 
@@ -37,7 +41,7 @@ namespace Noise.Metadata.ArtistMetadata {
 
 			try {
 				foreach( var provider in mProviders ) {
-					provider.Initialize( mDocumentStore );
+					provider.Initialize( mDocumentStore, mLicenseManager );
 				}
 
 				FillUpdateList();

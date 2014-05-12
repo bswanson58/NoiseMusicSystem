@@ -21,7 +21,7 @@ namespace Noise.Metadata.MetadataProviders {
 			ProviderKey = "Discogs";
 		}
 
-		public void Initialize( IDocumentStore documentStore ) {
+		public void Initialize( IDocumentStore documentStore, ILicenseManager licenseManager ) {
 			mDocumentStore = documentStore;
 
 			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );

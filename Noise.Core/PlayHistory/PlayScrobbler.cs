@@ -6,17 +6,19 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 using ReusableBits;
 
 namespace Noise.Core.PlayHistory {
 	public class PlayScrobbler : IScrobbler, IRequireInitialization {
-		private Scrobbler		mScrobbler;
-		private bool			mEnablePlaybackScrobbling;
-		private Track			mNowPlayingTrack;
-		private TaskHandler		mScrobblerTaskHandler;
+		private readonly ILicenseManager	mLicenseManager;
+		private Scrobbler					mScrobbler;
+		private bool						mEnablePlaybackScrobbling;
+		private Track						mNowPlayingTrack;
+		private TaskHandler					mScrobblerTaskHandler;
 
-		public PlayScrobbler( ILifecycleManager lifecycleManager ) {
+		public PlayScrobbler( ILifecycleManager lifecycleManager, ILicenseManager licenseManager ) {
+			mLicenseManager = licenseManager;
+
 			lifecycleManager.RegisterForInitialize( this );
 			lifecycleManager.RegisterForShutdown( this );
 		}
@@ -88,7 +90,7 @@ namespace Noise.Core.PlayHistory {
 				if( configuration != null ) {
 					mEnablePlaybackScrobbling = configuration.HasNetworkAccess && configuration.EnablePlaybackScrobbling;
 
-					var key = NoiseLicenseManager.Current.RetrieveKey( LicenseKeys.LastFm );
+					var key = mLicenseManager.RetrieveKey( LicenseKeys.LastFm );
 
 					Condition.Requires( key ).IsNotNull();
 

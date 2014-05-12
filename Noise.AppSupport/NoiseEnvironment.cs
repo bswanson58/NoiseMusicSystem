@@ -35,5 +35,15 @@ namespace Noise.AppSupport {
 
 			return( retValue );
 		}
+
+		public string ConfigurationDirectory() {
+			var retValue = Path.Combine( ApplicationDirectory(), Constants.ConfigurationDirectory );
+
+			if(!Directory.Exists( retValue )) {
+				Directory.CreateDirectory( retValue );
+			}
+
+			return( retValue );
+		}
 	}
 }
