@@ -13,7 +13,7 @@ namespace Noise.Infrastructure.RemoteDto {
 		[DataMember]
 		public Int16			Rating { get; set; }
 		[DataMember]
-		public UInt32			PublishedYear { get; set; }
+		public Int32			PublishedYear { get; set; }
 		[DataMember]
 		public string			Genre { get; set; }
 		[DataMember]
