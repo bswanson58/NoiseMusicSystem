@@ -1,67 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-  <DirectoryRef Id="INSTALLDIRECTORY">
-    <Component Id="Esent.Interop.dll" Guid="0570fd90-e8ad-4fb1-a3de-9663d1d5a53d">
-      <File Id="Esent.Interop.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Esent.Interop.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="ICSharpCode.NRefactory.dll" Guid="aa920ed1-483a-4ccf-bda4-3a52cd792b1d">
-      <File Id="ICSharpCode.NRefactory.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)ICSharpCode.NRefactory.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="ICSharpCode.NRefactory.CSharp.dll" Guid="05b5b916-f2ad-49f2-a5ea-56e8042d5df9">
-      <File Id="ICSharpCode.NRefactory.CSharp.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)ICSharpCode.NRefactory.CSharp.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="GeoAPI.dll" Guid="0b1e622b-8958-4009-8495-474be1f7b897">
-      <File Id="GeoAPI.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)GeoAPI.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Jint.Raven.dll" Guid="896f4b84-6e4f-4db3-a020-f2229ba758ce">
-      <File Id="Jint.Raven.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Jint.Raven.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Mono.Cecil.dll" Guid="95b47e26-149c-4a01-8c9a-fe82d0615586">
-      <File Id="Mono.Cecil.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Mono.Cecil.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="NetTopologySuite.dll" Guid="fac2b1b6-7675-4bda-ab6d-56671b306ba1">
-      <File Id="NetTopologySuite.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)NetTopologySuite.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="PowerCollections.dll" Guid="acf92b07-6597-4b84-ae14-0c8c64b71b57">
-      <File Id="PowerCollections.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)PowerCollections.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Lucene.Net.Contrib.Spatial.NTS.dll" Guid="13fbac98-0273-450f-b7f2-fbe5c9c242ea">
-      <File Id="Lucene.Net.Contrib.Spatial.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Lucene.Net.Contrib.Spatial.NTS.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <!--Component Id="Lucene.Net.dll" Guid="df5796ef-10fa-4b1f-9e63-fb6ad85d505f">
-      <File Id="Lucene.Net.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Lucene.Net.dll" KeyPath="yes" Checksum="yes" />
-    </Component-->
-    <Component Id="Raven.Abstractions.dll" Guid="2042f3cd-a492-4ed2-8ca8-cc712742a8c3">
-      <File Id="Raven.Abstractions.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Raven.Abstractions.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Raven.Client.Embedded.dll" Guid="c022788d-7999-449e-bce4-9394fc5617b0">
-      <File Id="Raven.Client.Embedded.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Raven.Client.Embedded.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Raven.Client.Lightweight.dll" Guid="785c8997-a3f5-44e9-9eca-04f3ddef4ea4">
-      <File Id="Raven.Client.Lightweight.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Raven.Client.Lightweight.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Raven.Database.dll" Guid="ae5e7d13-e5e8-4816-9b1a-0ddf30b12466">
-      <File Id="Raven.Database.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Raven.Database.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Spatial4n.Core.NTS.dll" Guid="8a63d312-aae8-4715-8da1-3e6d55e61741">
-      <File Id="Spatial4N.Core.NTS.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Spatial4n.Core.NTS.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-  </DirectoryRef>
+	<DirectoryRef Id="INSTALLDIRECTORY">
+		<Component Id="Esent.Interop.dll" Guid="0570fd90-e8ad-4fb1-a3de-9663d1d5a53d">
+			<File Id="Esent.Interop.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Esent.Interop.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="ICSharpCode.NRefactory.dll" Guid="aa920ed1-483a-4ccf-bda4-3a52cd792b1d">
+			<File Id="ICSharpCode.NRefactory.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)ICSharpCode.NRefactory.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="ICSharpCode.NRefactory.CSharp.dll" Guid="05b5b916-f2ad-49f2-a5ea-56e8042d5df9">
+			<File Id="ICSharpCode.NRefactory.CSharp.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)ICSharpCode.NRefactory.CSharp.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="GeoAPI.dll" Guid="0b1e622b-8958-4009-8495-474be1f7b897">
+			<File Id="GeoAPI.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)GeoAPI.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Jint.Raven.dll" Guid="896f4b84-6e4f-4db3-a020-f2229ba758ce">
+			<File Id="Jint.Raven.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Jint.Raven.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Lucene.Net.Contrib.Spatial.NTS.dll" Guid="13fbac98-0273-450f-b7f2-fbe5c9c242ea">
+			<File Id="Lucene.Net.Contrib.Spatial.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Lucene.Net.Contrib.Spatial.NTS.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Mono.Cecil.dll" Guid="95b47e26-149c-4a01-8c9a-fe82d0615586">
+			<File Id="Mono.Cecil.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Mono.Cecil.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Microsoft.Data.Edm.dll" Guid="aa598cf0-4f8f-4ff3-b136-3f3eb4443cb1">
+			<File Id="Microsoft.Data.Edm.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Data.Edm.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Microsoft.Data.OData.dll" Guid="d7667b3b-f643-466c-9de0-e3145340353f">
+			<File Id="Microsoft.Data.OData.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Data.OData.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Microsoft.Data.Services.Client.dll" Guid="19cd69e6-5aeb-43af-9d22-e5fcb85dad1d">
+			<File Id="Microsoft.Data.Services.Client.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Data.Services.Client.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Microsoft.WindowsAzure.Storage.dll" Guid="2cbfd072-f315-4a30-9180-7e2351f525d7">
+			<File Id="Microsoft.WindowsAzure.Storage.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.WindowsAzure.Storage.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="NetTopologySuite.dll" Guid="fac2b1b6-7675-4bda-ab6d-56671b306ba1">
+			<File Id="NetTopologySuite.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)NetTopologySuite.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="PowerCollections.dll" Guid="acf92b07-6597-4b84-ae14-0c8c64b71b57">
+			<File Id="PowerCollections.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)PowerCollections.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<!--Component Id="Lucene.Net.dll" Guid="df5796ef-10fa-4b1f-9e63-fb6ad85d505f">
+	  <File Id="Lucene.Net.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Lucene.Net.dll" KeyPath="yes" Checksum="yes" />
+	</Component-->
+		<Component Id="Raven.Abstractions.dll" Guid="2042f3cd-a492-4ed2-8ca8-cc712742a8c3">
+			<File Id="Raven.Abstractions.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Raven.Abstractions.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Raven.Client.Embedded.dll" Guid="c022788d-7999-449e-bce4-9394fc5617b0">
+			<File Id="Raven.Client.Embedded.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Raven.Client.Embedded.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Raven.Client.Lightweight.dll" Guid="785c8997-a3f5-44e9-9eca-04f3ddef4ea4">
+			<File Id="Raven.Client.Lightweight.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Raven.Client.Lightweight.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Raven.Database.dll" Guid="ae5e7d13-e5e8-4816-9b1a-0ddf30b12466">
+			<File Id="Raven.Database.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Raven.Database.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Spatial4n.Core.NTS.dll" Guid="8a63d312-aae8-4715-8da1-3e6d55e61741">
+			<File Id="Spatial4N.Core.NTS.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Spatial4n.Core.NTS.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="System.Spatial.dll" Guid="24534f06-3cdb-4e6a-822c-cda1cf915279">
+			<File Id="System.Spatial.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)System.Spatial.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
 
-  <ComponentGroup Id="RavenDBFiles">
-    <ComponentRef Id="Esent.Interop.dll" />
-    <ComponentRef Id="ICSharpCode.NRefactory.dll" />
-    <ComponentRef Id="ICSharpCode.NRefactory.CSharp.dll" />
-    <ComponentRef Id="GeoAPI.dll" />
-    <ComponentRef Id="Jint.Raven.dll" />
-    <ComponentRef Id="Mono.Cecil.dll" />
-    <ComponentRef Id="Lucene.Net.Contrib.Spatial.NTS.dll" />
-    <ComponentRef Id="NetTopologySuite.dll" />
-    <ComponentRef Id="PowerCollections.dll" />
-    <ComponentRef Id="Raven.Abstractions.dll" />
-    <ComponentRef Id="Raven.Client.Embedded.dll" />
-    <ComponentRef Id="Raven.Client.Lightweight.dll" />
-    <ComponentRef Id="Raven.Database.dll" />
-    <ComponentRef Id="Spatial4n.Core.NTS.dll" />
-  </ComponentGroup>
+	</DirectoryRef>
+
+	<ComponentGroup Id="RavenDBFiles">
+		<ComponentRef Id="Esent.Interop.dll" />
+		<ComponentRef Id="ICSharpCode.NRefactory.dll" />
+		<ComponentRef Id="ICSharpCode.NRefactory.CSharp.dll" />
+		<ComponentRef Id="GeoAPI.dll" />
+		<ComponentRef Id="Jint.Raven.dll" />
+		<ComponentRef Id="Lucene.Net.Contrib.Spatial.NTS.dll" />
+		<ComponentRef Id="Microsoft.Data.Edm.dll" />
+		<ComponentRef Id="Microsoft.Data.OData.dll" />
+		<ComponentRef Id="Microsoft.Data.Services.Client.dll" />
+		<ComponentRef Id="Microsoft.WindowsAzure.Storage.dll" />
+		<ComponentRef Id="Mono.Cecil.dll" />
+		<ComponentRef Id="NetTopologySuite.dll" />
+		<ComponentRef Id="PowerCollections.dll" />
+		<ComponentRef Id="Raven.Abstractions.dll" />
+		<ComponentRef Id="Raven.Client.Embedded.dll" />
+		<ComponentRef Id="Raven.Client.Lightweight.dll" />
+		<ComponentRef Id="Raven.Database.dll" />
+		<ComponentRef Id="Spatial4n.Core.NTS.dll" />
+		<ComponentRef Id="System.Spatial.dll" />
+	</ComponentGroup>
 </Include>

@@ -1,32 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-  <DirectoryRef Id="INSTALLDIRECTORY">
-    <Component Id="Microsoft.Practices.Prism.dll" Guid="b8afc7d4-ae8a-47fb-be12-ce7b1c198f59">
-      <File Id="Microsoft.Practices.Prism.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Prism.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Microsoft.Practices.Prism.Interactivity.dll" Guid="039e8b84-ee77-480f-821d-fec09e6b5c4d">
-      <File Id="Microsoft.Practices.Prism.Interactivity.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Prism.Interactivity.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Microsoft.Practices.Prism.UnityExtensions.dll" Guid="bac1241f-5d0e-45ad-a0a3-f54e1a0b6bbc">
-      <File Id="Microsoft.Practices.Prism.UnityExtensions.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Prism.UnityExtensions.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Microsoft.Practices.ServiceLocation.dll" Guid="36c9907f-a323-4de0-b836-ff03b77cd76d">
-      <File Id="Microsoft.Practices.ServiceLocation.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.ServiceLocation.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Microsoft.Practices.Unity.dll" Guid="4d93f2ac-955d-4acb-b672-c4849f560b2f">
-      <File Id="Microsoft.Practices.Unity.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Unity.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="Microsoft.Practices.Unity.Configuration.dll" Guid="c4f3eda2-a10e-4159-bf92-ea82339a007c">
-      <File Id="Microsoft.Practices.Unity.Configuration.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Unity.Configuration.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
-  </DirectoryRef>
+	<DirectoryRef Id="INSTALLDIRECTORY">
+		<Component Id="Microsoft.Practices.Prism.Composition.dll" Guid="b18183ad-a8c0-4b50-8eba-b3e91eda341f">
+			<File Id="Microsoft.Practices.Prism.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Prism.Composition.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Microsoft.Practices.Prism.Interactivity.dll" Guid="039e8b84-ee77-480f-821d-fec09e6b5c4d">
+			<File Id="Microsoft.Practices.Prism.Interactivity.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Prism.Interactivity.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Microsoft.Practices.Prism.Mvvm.dll" Guid="6e6e9609-a41e-4fa5-bdc1-0dbd8d9d2ecd">
+			<File Id="Microsoft.Practices.Prism.Mvvm.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Prism.Mvvm.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Microsoft.Practices.Prism.Mvvm.Desktop.dll" Guid="342e36fb-1ed5-4151-b119-066d74dd3877">
+			<File Id="Microsoft.Practices.Prism.Mvvm.Desktop.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Prism.Mvvm.Desktop.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Microsoft.Practices.Prism.PubSubEvents.dll" Guid="e917a172-a091-454a-a06e-b4263e719ed6">
+			<File Id="Microsoft.Practices.Prism.PubSubEvents.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Prism.PubSubEvents.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Microsoft.Practices.Prism.SharedInterfaces.dll" Guid="0d8058dc-504d-4814-9821-6585b16e8e8e">
+			<File Id="Microsoft.Practices.Prism.SharedInterfaces.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Prism.SharedInterfaces.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Microsoft.Practices.Prism.UnityExtensions.dll" Guid="bac1241f-5d0e-45ad-a0a3-f54e1a0b6bbc">
+			<File Id="Microsoft.Practices.Prism.UnityExtensions.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Prism.UnityExtensions.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Microsoft.Practices.ServiceLocation.dll" Guid="36c9907f-a323-4de0-b836-ff03b77cd76d">
+			<File Id="Microsoft.Practices.ServiceLocation.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.ServiceLocation.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Microsoft.Practices.Unity.dll" Guid="4d93f2ac-955d-4acb-b672-c4849f560b2f">
+			<File Id="Microsoft.Practices.Unity.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Unity.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Microsoft.Practices.Unity.Configuration.dll" Guid="c4f3eda2-a10e-4159-bf92-ea82339a007c">
+			<File Id="Microsoft.Practices.Unity.Configuration.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Unity.Configuration.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Microsoft.Practices.Unity.RegistrationByConvention.dll" Guid="c8e170f3-dbfc-48cb-843b-7ab2a8332860">
+			<File Id="Microsoft.Practices.Unity.RegistrationByConvention.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Microsoft.Practices.Unity.RegistrationByConvention.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+	</DirectoryRef>
 
-  <ComponentGroup Id="PrismFiles">
-    <ComponentRef Id="Microsoft.Practices.Prism.dll" />
-    <ComponentRef Id="Microsoft.Practices.Prism.Interactivity.dll" />
-    <ComponentRef Id="Microsoft.Practices.Prism.UnityExtensions.dll" />
-    <ComponentRef Id="Microsoft.Practices.ServiceLocation.dll" />
-    <ComponentRef Id="Microsoft.Practices.Unity.dll" />
-    <ComponentRef Id="Microsoft.Practices.Unity.Configuration.dll" />
-  </ComponentGroup>
+	<ComponentGroup Id="PrismFiles">
+		<ComponentRef Id="Microsoft.Practices.Prism.Composition.dll" />
+		<ComponentRef Id="Microsoft.Practices.Prism.Interactivity.dll" />
+		<ComponentRef Id="Microsoft.Practices.Prism.Mvvm.dll" />
+		<ComponentRef Id="Microsoft.Practices.Prism.Mvvm.Desktop.dll" />
+		<ComponentRef Id="Microsoft.Practices.Prism.PubSubEvents.dll" />
+		<ComponentRef Id="Microsoft.Practices.Prism.SharedInterfaces.dll" />
+		<ComponentRef Id="Microsoft.Practices.Prism.UnityExtensions.dll" />
+		<ComponentRef Id="Microsoft.Practices.ServiceLocation.dll" />
+		<ComponentRef Id="Microsoft.Practices.Unity.dll" />
+		<ComponentRef Id="Microsoft.Practices.Unity.Configuration.dll" />
+		<ComponentRef Id="Microsoft.Practices.Unity.RegistrationByConvention.dll" />
+	</ComponentGroup>
 </Include>
