@@ -34,6 +34,7 @@ namespace Noise.Infrastructure {
 		public const string				BlobDatabaseDirectory = "Blob Database";
 		public const string				LibraryDatabaseDirectory = "Library Database";
 		public const string				SearchDatabaseDirectory = "Search Database";
+		public const string				SearchDatabaseBackupName = "Search Database.bak";
 		public const string				MetadataDirectory = "Metadata";
 		public const string				MetadataBackupName = "Metadata.bak";
 

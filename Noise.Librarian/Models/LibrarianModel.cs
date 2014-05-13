@@ -15,6 +15,7 @@ namespace Noise.Librarian.Models {
 		private readonly IDatabaseManager		mDatabaseManager;
 		private readonly IDatabaseUtility		mDatabaseUtility;
 		private readonly IMetadataManager		mMetadataManager;
+		private readonly IDirectoryArchiver		mDirectoryArchiver;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 
 		public LibrarianModel( IEventAggregator eventAggregator,
@@ -22,12 +23,14 @@ namespace Noise.Librarian.Models {
 							   IDatabaseManager databaseManager,
 							   IDatabaseUtility databaseUtility,
 							   IMetadataManager metadataManager,
+							   IDirectoryArchiver directoryArchiver,
 							   ILibraryConfiguration libraryConfiguration ) {
 			mEventAggregator = eventAggregator;
 			mLifecycleManager = lifecycleManager;
 			mDatabaseManager = databaseManager;
 			mDatabaseUtility = databaseUtility;
 			mMetadataManager = metadataManager;
+			mDirectoryArchiver = directoryArchiver;
 			mLibraryConfiguration = libraryConfiguration;
 		}
 
@@ -56,23 +59,30 @@ namespace Noise.Librarian.Models {
 					var databaseName = mDatabaseUtility.GetDatabaseName( library.DatabaseName );
 
 					if(!string.IsNullOrEmpty( databaseName )) {
-						var backupDatabasePath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
-						var backupDatabaseName = Path.Combine( backupDatabasePath, library.DatabaseName + Constants.Ef_DatabaseBackupExtension );
+						var backupPath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
+						var backupName = Path.Combine( backupPath, library.DatabaseName + Constants.Ef_DatabaseBackupExtension );
 
-						if(!Directory.Exists( backupDatabasePath )) {
-							Directory.CreateDirectory( backupDatabasePath );
+						if(!Directory.Exists( backupPath )) {
+							Directory.CreateDirectory( backupPath );
 						}
 
-						mDatabaseUtility.BackupDatabase( databaseName, backupDatabaseName );
+						mDatabaseUtility.BackupDatabase( databaseName, backupName );
 
-						var backupMetadataPath = Path.Combine( libraryBackup.BackupPath, Constants.MetadataDirectory );
-						var backupMetadataName = Path.Combine( backupMetadataPath, Constants.MetadataBackupName );
+						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.MetadataDirectory );
+						backupName = Path.Combine( backupPath, Constants.MetadataBackupName );
 
-						if(!Directory.Exists( backupMetadataPath )) {
-							Directory.CreateDirectory( backupMetadataPath );
+						if(!Directory.Exists( backupPath )) {
+							Directory.CreateDirectory( backupPath );
 						}
 
-						mMetadataManager.ExportMetadata( backupMetadataName );
+						mMetadataManager.ExportMetadata( backupName );
+
+						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.SearchDatabaseDirectory );
+						backupName = Path.Combine( backupPath, Constants.SearchDatabaseBackupName );
+						if(!Directory.Exists( backupPath )) {
+							Directory.CreateDirectory( backupPath );
+						}
+						mDirectoryArchiver.BackupDirectory( library.SearchDatabasePath, backupName );
 
 						mLibraryConfiguration.CloseLibraryBackup( library, libraryBackup );
 
@@ -127,6 +137,12 @@ namespace Noise.Librarian.Models {
 							mMetadataManager.ImportMetadata( backupMetadataName );
 						}
 
+						var backupSearchName = Path.Combine( libraryBackup.BackupPath, Constants.SearchDatabaseDirectory, Constants.SearchDatabaseBackupName );
+
+						if( File.Exists( backupSearchName )) {
+							mDirectoryArchiver.RestoreDirectory( backupSearchName, library.SearchDatabasePath );
+						}
+
 						mLibraryConfiguration.CloseLibraryRestore( library, libraryBackup );
 
 						NoiseLogger.Current.LogMessage( "Restore of library '{0}' was completed ('{1} - {2}')",
@@ -160,14 +176,22 @@ namespace Noise.Librarian.Models {
 
 						mDatabaseUtility.BackupDatabase( databaseName, backupDatabaseName );
 
-						var backupMetadataPath = Path.Combine( libraryBackup.BackupPath, Constants.MetadataDirectory );
-						var backupMetadataName = Path.Combine( backupMetadataPath, Constants.MetadataBackupName );
+						var backupPath = Path.Combine( libraryBackup.BackupPath, Constants.MetadataDirectory );
+						var backupName = Path.Combine( backupPath, Constants.MetadataBackupName );
 
-						if(!Directory.Exists( backupMetadataPath )) {
-							Directory.CreateDirectory( backupMetadataPath );
+						if(!Directory.Exists( backupPath )) {
+							Directory.CreateDirectory( backupPath );
 						}
 		
-						mMetadataManager.ExportMetadata( backupMetadataName );
+						mMetadataManager.ExportMetadata( backupName );
+
+						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.SearchDatabaseDirectory );
+						backupName = Path.Combine( backupPath, Constants.SearchDatabaseBackupName );
+
+						if(!Directory.Exists( backupPath )) {
+							Directory.CreateDirectory( backupPath );
+						}
+						mDirectoryArchiver.BackupDirectory( library.SearchDatabasePath, backupName );
 
 						mLibraryConfiguration.CloseLibraryExport( library, libraryBackup );
 
@@ -213,6 +237,12 @@ namespace Noise.Librarian.Models {
 						
 						if( File.Exists( backupMetadataName )) {
 							mMetadataManager.ImportMetadata( backupMetadataName );
+						}
+
+						var backupSearchName = Path.Combine( libraryBackup.BackupPath, Constants.SearchDatabaseDirectory, Constants.SearchDatabaseBackupName );
+
+						if( File.Exists( backupSearchName )) {
+							mDirectoryArchiver.RestoreDirectory( backupSearchName, newLibrary.SearchDatabasePath );
 						}
 
 						mLibraryConfiguration.CloseLibraryImport( newLibrary );

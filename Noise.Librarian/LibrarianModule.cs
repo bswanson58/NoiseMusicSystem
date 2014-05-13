@@ -12,6 +12,7 @@ namespace Noise.Librarian {
 		}
 		public void Initialize() {
 			mContainer.RegisterType<ILibrarian, LibrarianModel>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IDirectoryArchiver, DirectoryArchiver>();
 		}
 	}
 }
