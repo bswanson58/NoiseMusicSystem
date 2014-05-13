@@ -55,7 +55,9 @@
 
 			<Directory Id="CommonAppDataFolder">
 				<Directory Id="ProductDataFolder" Name="Secret Squirrel Software">
-					<Directory Id="ProductConfigFolder" Name="Noise Configuration" />
+					<Directory Id="ProductFolder" Name="Noise Music System">
+						<Directory Id="ProductConfigFolder" Name="Configuration" />
+					</Directory>
 				</Directory>
 			</Directory>
 

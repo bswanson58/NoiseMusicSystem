@@ -24,15 +24,15 @@ namespace Noise.Infrastructure {
 
 		public	const string			ApplicationLogName = "noise.log";
 
-		public const string				ApplicationName = "Noise";
+		public const string				ApplicationName = "Noise Music System";
 		public const string				CompanyName = "Secret Squirrel Software";
-		public const string				LibraryConfigurationDirectory = "Noise Libraries";
-		public const string				LibraryBackupDirectory = "Library Backups";
+		public const string				LibraryConfigurationDirectory = "Libraries";
+		public const string				LibraryBackupDirectory = "Backups";
+		public const string				ConfigurationDirectory = "Configuration";
 		public const string				LibraryConfigurationFile = "Library.config";
 		public const string				BlobDatabaseDirectory = "Blob Database";
 		public const string				LibraryDatabaseDirectory = "Library Database";
 		public const string				SearchDatabaseDirectory = "Search Database";
-		public const string				ConfigurationDirectory = "Noise Configuration";
 
 		public const string				Id3FrameUserName = "Noise Music System";
 		public const string				FavoriteFrameDescription = "Noise Music System - Favorite Track Flag";

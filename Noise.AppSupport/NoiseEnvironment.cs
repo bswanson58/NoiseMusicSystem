@@ -7,7 +7,8 @@ namespace Noise.AppSupport {
 	public class NoiseEnvironment : INoiseEnvironment {
 		public string ApplicationDirectory() {
 			var retValue = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData ),
-										 Constants.CompanyName );
+										 Constants.CompanyName,
+										 Constants.ApplicationName );
 
 			if(!Directory.Exists( retValue )) {
 				Directory.CreateDirectory( retValue );
