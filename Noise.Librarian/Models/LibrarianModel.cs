@@ -71,6 +71,7 @@ namespace Noise.Librarian.Models {
 						if(!Directory.Exists( backupMetadataPath )) {
 							Directory.CreateDirectory( backupMetadataPath );
 						}
+
 						mMetadataManager.ExportMetadata( backupMetadataName );
 
 						mLibraryConfiguration.CloseLibraryBackup( library, libraryBackup );
@@ -159,6 +160,15 @@ namespace Noise.Librarian.Models {
 
 						mDatabaseUtility.BackupDatabase( databaseName, backupDatabaseName );
 
+						var backupMetadataPath = Path.Combine( libraryBackup.BackupPath, Constants.MetadataDirectory );
+						var backupMetadataName = Path.Combine( backupMetadataPath, Constants.MetadataBackupName );
+
+						if(!Directory.Exists( backupMetadataPath )) {
+							Directory.CreateDirectory( backupMetadataPath );
+						}
+		
+						mMetadataManager.ExportMetadata( backupMetadataName );
+
 						mLibraryConfiguration.CloseLibraryExport( library, libraryBackup );
 
 						NoiseLogger.Current.LogMessage( "Export of library '{0}' was completed to ('{1}')", library.LibraryName, libraryBackup.BackupPath );
@@ -198,6 +208,13 @@ namespace Noise.Librarian.Models {
 						}
 
 						mDatabaseUtility.RestoreDatabase( databaseName, importDatabaseName, fileList, locationList );
+		
+						var backupMetadataName = Path.Combine( libraryBackup.BackupPath, Constants.MetadataDirectory, Constants.MetadataBackupName );
+						
+						if( File.Exists( backupMetadataName )) {
+							mMetadataManager.ImportMetadata( backupMetadataName );
+						}
+
 						mLibraryConfiguration.CloseLibraryImport( newLibrary );
 
 						NoiseLogger.Current.LogMessage( "Import of library '{0}' was completed.", library.LibraryName );
