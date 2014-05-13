@@ -113,5 +113,18 @@
 		</Feature>
 
 		<UIRef Id="InstallUI" />
+		
+		<!-- Custom action to set WCF namespace reservation -->
+		<CustomAction Id="ListenerServiceAddReservation" Execute="deferred" Return="asyncWait" Directory="INSTALLDIRECTORY"
+					  ExeCommand='[SystemFolder]netsh.exe http add urlacl url=http://+:73/Noise user="NT AUTHORITY\NETWORKSERVICE"' />
+
+		<CustomAction Id="ListenerServiceDeleteReservation" Execute="deferred" Return="asyncWait" Directory="INSTALLDIRECTORY"
+					  ExeCommand="[SystemFolder]netsh.exe http delete urlacl url=http://+:73/Noise" />
+
+		<InstallExecuteSequence>
+			<Custom Action="ListenerServiceAddReservation" After="InstallInitialize">NOT Installed</Custom>
+			<Custom Action="ListenerServiceDeleteReservation" Before="InstallFinalize">Installed</Custom>
+		</InstallExecuteSequence>
+
 	</Product>
 </Wix>
