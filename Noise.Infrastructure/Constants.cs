@@ -25,7 +25,7 @@ namespace Noise.Infrastructure {
 		public	const string			ApplicationLogName = "noise.log";
 
 		public const string				ApplicationName = "Noise";
-		public const string				CompanyName = "Secret_Squirrel_Products";
+		public const string				CompanyName = "Secret Squirrel Software";
 		public const string				LibraryConfigurationDirectory = "Noise Libraries";
 		public const string				LibraryBackupDirectory = "Library Backups";
 		public const string				LibraryConfigurationFile = "Library.config";
