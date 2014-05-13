@@ -35,7 +35,7 @@ namespace Noise.Metadata {
 
 		public void Initialize() {
 			try {
-				string metaDirectory = "Metadata";
+				string metaDirectory = Constants.MetadataDirectory;
 #if DEBUG
 				metaDirectory += " (Debug)";
 #endif
@@ -111,12 +111,8 @@ namespace Noise.Metadata {
 			return( mArtistMetadataManager.GetArtistArtwork( forArtist ));
 		}
 
-		public void ExportMetadata( string exportName ) {
+		public void ExportMetadata( string exportPath ) {
 			try {
-				var exportPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
-												Constants.CompanyName, 
-												Constants.LibraryConfigurationDirectory,
-												exportName );
 				if( mDocumentStore is EmbeddableDocumentStore ) {
 					var embeddedStore = mDocumentStore as EmbeddableDocumentStore;
 					var options = new SmugglerOptions { BackupPath = exportPath };
@@ -130,12 +126,8 @@ namespace Noise.Metadata {
 			}
 		}
 
-		public void ImportMetadata( string importName ) {
+		public void ImportMetadata( string importPath ) {
 			try {
-				var importPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
-												Constants.CompanyName, 
-												Constants.LibraryConfigurationDirectory,
-												importName );
 				if(( mDocumentStore is EmbeddableDocumentStore ) &&
 				   ( File.Exists( importPath ))) {
 					var embeddedStore = mDocumentStore as EmbeddableDocumentStore;
