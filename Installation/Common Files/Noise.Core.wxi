@@ -46,12 +46,6 @@
     <Component Id="Composite.Layout.dll" Guid="7920fa7c-527b-4ed0-9844-25b4f4680c5b">
       <File Id="Composite.Layout.dll" DiskId="10" Source="$(var.Layout Manager.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="EqPresets.xml" Guid="999a7fff-eed4-42da-ab6f-9a62ccd8df77">
-      <File Id="EqPresets.xml" DiskId="10" Source="$(var.Noise.Core.ProjectDir)Resources\EqPresets.xml" KeyPath="yes" Checksum="yes" />
-    </Component>
-    <Component Id="LicenseKeys.xml" Guid="cfa52101-be10-4843-b49c-51e394bf7e55">
-      <File Id="LicenseKeys.xml" DiskId="10" Source="$(var.Noise.Core.ProjectDir)Resources\LicenseKeys.xml" KeyPath="yes" Checksum="yes" />
-    </Component>
   </DirectoryRef>
 
   <ComponentGroup Id="CoreFiles">
@@ -70,7 +64,5 @@
     <ComponentRef Id="ReusableBits.Mvvm" />
     <ComponentRef Id="ReusableBits.Ui" />
     <ComponentRef Id="Composite.Layout.dll"/>
-    <ComponentRef Id="EqPresets.xml"/>
-    <ComponentRef Id="LicenseKeys.xml"/>
   </ComponentGroup>
 </Include>

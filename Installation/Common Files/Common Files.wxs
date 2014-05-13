@@ -7,6 +7,7 @@
 		<?include Automapper.wxi ?>
 		<?include BASS Audio.wxi ?>
 		<?include CaliburnMicro.wxi ?>
+		<?include Configuration.wxi?>
 		<?include CuttingEdge.wxi ?>
 		<?include EntityFramework.wxi ?>
 		<?include GDataDB.wxi ?>

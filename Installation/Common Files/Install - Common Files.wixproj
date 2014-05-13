@@ -37,6 +37,7 @@
     <Content Include="Automapper.wxi" />
     <Content Include="BASS Audio.wxi" />
     <Content Include="CaliburnMicro.wxi" />
+    <Content Include="Configuration.wxi" />
     <Content Include="CuttingEdge.wxi" />
     <Content Include="EntityFramework.wxi" />
     <Content Include="GDataDB.wxi" />

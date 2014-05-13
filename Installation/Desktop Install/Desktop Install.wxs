@@ -53,6 +53,12 @@
 				</Directory>
 			</Directory>
 
+			<Directory Id="CommonAppDataFolder">
+				<Directory Id="ProductDataFolder" Name="Secret Squirrel Software">
+					<Directory Id="ProductConfigFolder" Name="Noise Configuration" />
+				</Directory>
+			</Directory>
+
 			<Directory Id="DesktopFolder" Name="Desktop"/>
 		</Directory>
 
@@ -139,6 +145,7 @@
 				<ComponentGroupRef Id="AutomapperFiles"/>
 				<ComponentGroupRef Id="BassAudioFiles"/>
 				<ComponentGroupRef Id="CaliburnMicroFiles"/>
+				<ComponentGroupRef Id="ConfigurationFiles"/>
 				<ComponentGroupRef Id="CuttingEdgeFiles"/>
 				<ComponentGroupRef Id="EntityFrameworkFiles"/>
 				<ComponentGroupRef Id="GDataDBFiles"/>
