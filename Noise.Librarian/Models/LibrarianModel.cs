@@ -14,17 +14,20 @@ namespace Noise.Librarian.Models {
 		private readonly ILifecycleManager		mLifecycleManager;
 		private readonly IDatabaseManager		mDatabaseManager;
 		private readonly IDatabaseUtility		mDatabaseUtility;
+		private readonly IMetadataManager		mMetadataManager;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 
 		public LibrarianModel( IEventAggregator eventAggregator,
 							   ILifecycleManager lifecycleManager,
 							   IDatabaseManager databaseManager,
 							   IDatabaseUtility databaseUtility,
+							   IMetadataManager metadataManager,
 							   ILibraryConfiguration libraryConfiguration ) {
 			mEventAggregator = eventAggregator;
 			mLifecycleManager = lifecycleManager;
 			mDatabaseManager = databaseManager;
 			mDatabaseUtility = databaseUtility;
+			mMetadataManager = metadataManager;
 			mLibraryConfiguration = libraryConfiguration;
 		}
 
@@ -61,6 +64,14 @@ namespace Noise.Librarian.Models {
 						}
 
 						mDatabaseUtility.BackupDatabase( databaseName, backupDatabaseName );
+
+						var backupMetadataPath = Path.Combine( libraryBackup.BackupPath, Constants.MetadataDirectory );
+						var backupMetadataName = Path.Combine( backupMetadataPath, Constants.MetadataBackupName );
+
+						if(!Directory.Exists( backupMetadataPath )) {
+							Directory.CreateDirectory( backupMetadataPath );
+						}
+						mMetadataManager.ExportMetadata( backupMetadataName );
 
 						mLibraryConfiguration.CloseLibraryBackup( library, libraryBackup );
 
@@ -108,6 +119,13 @@ namespace Noise.Librarian.Models {
 						}
 
 						mDatabaseUtility.RestoreDatabase( databaseName, backupDatabaseName );
+
+						var backupMetadataName = Path.Combine( libraryBackup.BackupPath, Constants.MetadataDirectory, Constants.MetadataBackupName );
+						
+						if( File.Exists( backupMetadataName )) {
+							mMetadataManager.ImportMetadata( backupMetadataName );
+						}
+
 						mLibraryConfiguration.CloseLibraryRestore( library, libraryBackup );
 
 						NoiseLogger.Current.LogMessage( "Restore of library '{0}' was completed ('{1} - {2}')",

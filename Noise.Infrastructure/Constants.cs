@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 
 namespace Noise.Infrastructure {
 	public class Constants {
@@ -34,6 +35,7 @@ namespace Noise.Infrastructure {
 		public const string				LibraryDatabaseDirectory = "Library Database";
 		public const string				SearchDatabaseDirectory = "Search Database";
 		public const string				MetadataDirectory = "Metadata";
+		public const string				MetadataBackupName = "Metadata.bak";
 
 		public const string				Id3FrameUserName = "Noise Music System";
 		public const string				FavoriteFrameDescription = "Noise Music System - Favorite Track Flag";
