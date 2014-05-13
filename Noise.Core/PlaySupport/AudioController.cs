@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System.IO;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -8,11 +9,14 @@ namespace Noise.Core.PlaySupport {
 	public class AudioController : IAudioController, IRequireInitialization,
 								   IHandle<Events.SystemShutdown> {
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly INoiseEnvironment	mNoiseEnvironment;
 		private readonly IAudioPlayer		mAudioPlayer;
 		private	readonly IEqManager			mEqManager;
 
-		public AudioController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, IAudioPlayer audioPlayer, IEqManager eqManager ) {
+		public AudioController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, INoiseEnvironment noiseEnvironment,
+								IAudioPlayer audioPlayer, IEqManager eqManager ) {
 			mEventAggregator = eventAggregator;
+			mNoiseEnvironment = noiseEnvironment;
 			mAudioPlayer = audioPlayer;
 			mEqManager = eqManager;
 
@@ -38,7 +42,7 @@ namespace Noise.Core.PlaySupport {
 				mAudioPlayer.TrackOverlapMilliseconds = audioCongfiguration.TrackOverlapMilliseconds;
 			}
 
-			if( mEqManager.Initialize( Constants.EqPresetsFile )) {
+			if( mEqManager.Initialize( Path.Combine( mNoiseEnvironment.ConfigurationDirectory(), Constants.EqPresetsFile ))) {
 				mAudioPlayer.ParametricEq = mEqManager.CurrentEq;
 			}
 			else {
