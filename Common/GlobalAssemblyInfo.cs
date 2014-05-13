@@ -5,8 +5,8 @@ using System.Reflection;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly: AssemblyCompany("Secret Squirrel Products")]
-[assembly: AssemblyCopyright("Copyright © 2010-2013 Secret Squirrel Products")]
+[assembly: AssemblyCompany("Secret Squirrel Software")]
+[assembly: AssemblyCopyright("Copyright © 2010-2013 Secret Squirrel Software")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
