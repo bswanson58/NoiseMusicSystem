@@ -150,7 +150,7 @@ namespace Noise.Librarian.Models {
 						}
 
 						var backupBlobPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
-						mDirectoryArchiver.RestoreDirectory( backupBlobPath, library.BlobDatabasePath );
+						mDirectoryArchiver.RestoreSubdirectories( backupBlobPath, library.BlobDatabasePath );
 
 						mLibraryConfiguration.CloseLibraryRestore( library, libraryBackup );
 
@@ -261,7 +261,7 @@ namespace Noise.Librarian.Models {
 						}
 
 						var backupBlobPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
-						mDirectoryArchiver.RestoreDirectory( backupBlobPath, newLibrary.BlobDatabasePath );
+						mDirectoryArchiver.RestoreSubdirectories( backupBlobPath, newLibrary.BlobDatabasePath );
 
 						mLibraryConfiguration.CloseLibraryImport( newLibrary );
 

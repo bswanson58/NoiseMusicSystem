@@ -9,7 +9,7 @@ namespace Noise.Librarian.Models {
 		}
 
 		public void RestoreDirectory( string sourceName, string destinationPath ) {
-			ZipFile.ExtractToDirectory( sourceName, destinationPath );
+			Compression.ImprovedExtractToDirectory( sourceName, destinationPath, Compression.Overwrite.Always );
 		}
 
 		public void BackupSubdirectories( string sourcePath, string destinationPath ) {
@@ -29,7 +29,7 @@ namespace Noise.Librarian.Models {
 				var archiveList = Directory.EnumerateFiles( sourcePath );
 
 				foreach( var archiveFile in archiveList ) {
-					ZipFile.ExtractToDirectory( archiveFile, destinationPath );
+					Compression.ImprovedExtractToDirectory( archiveFile, destinationPath, Compression.Overwrite.Always );
 				}
 			}
 		}
