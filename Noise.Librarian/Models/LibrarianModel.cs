@@ -84,6 +84,12 @@ namespace Noise.Librarian.Models {
 						}
 						mDirectoryArchiver.BackupDirectory( library.SearchDatabasePath, backupName );
 
+						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
+						if(!Directory.Exists( backupPath )) {
+							Directory.CreateDirectory( backupPath );
+						}
+						mDirectoryArchiver.BackupSubdirectories( library.BlobDatabasePath, backupPath );
+
 						mLibraryConfiguration.CloseLibraryBackup( library, libraryBackup );
 
 						NoiseLogger.Current.LogMessage( "Backup of library '{0}' was completed ('{1}')", library.LibraryName, libraryBackup.BackupDate );
@@ -143,6 +149,9 @@ namespace Noise.Librarian.Models {
 							mDirectoryArchiver.RestoreDirectory( backupSearchName, library.SearchDatabasePath );
 						}
 
+						var backupBlobPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
+						mDirectoryArchiver.RestoreDirectory( backupBlobPath, library.BlobDatabasePath );
+
 						mLibraryConfiguration.CloseLibraryRestore( library, libraryBackup );
 
 						NoiseLogger.Current.LogMessage( "Restore of library '{0}' was completed ('{1} - {2}')",
@@ -192,6 +201,12 @@ namespace Noise.Librarian.Models {
 							Directory.CreateDirectory( backupPath );
 						}
 						mDirectoryArchiver.BackupDirectory( library.SearchDatabasePath, backupName );
+
+						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
+						if(!Directory.Exists( backupPath )) {
+							Directory.CreateDirectory( backupPath );
+						}
+						mDirectoryArchiver.BackupSubdirectories( library.BlobDatabasePath, backupPath );
 
 						mLibraryConfiguration.CloseLibraryExport( library, libraryBackup );
 
@@ -244,6 +259,9 @@ namespace Noise.Librarian.Models {
 						if( File.Exists( backupSearchName )) {
 							mDirectoryArchiver.RestoreDirectory( backupSearchName, newLibrary.SearchDatabasePath );
 						}
+
+						var backupBlobPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
+						mDirectoryArchiver.RestoreDirectory( backupBlobPath, newLibrary.BlobDatabasePath );
 
 						mLibraryConfiguration.CloseLibraryImport( newLibrary );
 
