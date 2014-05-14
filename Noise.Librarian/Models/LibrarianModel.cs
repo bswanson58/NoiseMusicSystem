@@ -19,6 +19,7 @@ namespace Noise.Librarian.Models {
 		private readonly IDirectoryArchiver		mDirectoryArchiver;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private TaskHandler						mBackupTaskHandler;
+		private TaskHandler						mExportTaskHandler;
 
 		public LibrarianModel( IEventAggregator eventAggregator,
 							   ILifecycleManager lifecycleManager,
@@ -56,7 +57,7 @@ namespace Noise.Librarian.Models {
 		protected TaskHandler BackupTaskHandler {
 			get {
 				if( mBackupTaskHandler == null ) {
-					mBackupTaskHandler = new TaskHandler();
+					Execute.OnUIThread( () => mBackupTaskHandler = new TaskHandler());
 				}
 
 				return( mBackupTaskHandler );
@@ -197,12 +198,34 @@ namespace Noise.Librarian.Models {
 			}
 		}
 
-		public void ExportLibrary( LibraryConfiguration library, string exportPath ) {
+		protected TaskHandler ExportTaskHandler {
+			get {
+				if( mExportTaskHandler == null ) {
+					Execute.OnUIThread( () => mExportTaskHandler = new TaskHandler());
+				}
+
+				return( mExportTaskHandler );
+			}
+			set {  mExportTaskHandler = value; }
+		}
+
+		public void ExportLibrary( LibraryConfiguration library, string exportPath, Action<ProgressReport> progressCallback ) {
+			if(( library != null ) &&
+			   ( progressCallback != null )) {
+				ExportTaskHandler.StartTask( () => ExportLibraryTask( library, exportPath, progressCallback ),
+											 () => progressCallback( new ProgressReport( "Export Completed - Success", string.Empty )),
+											 error => progressCallback( new ProgressReport( "Export Failed.", string.Empty )));
+			}
+		}
+
+		private void ExportLibraryTask( LibraryConfiguration library, string exportPath, Action<ProgressReport> progressCallback ) {
 			try {
 				var libraryBackup = mLibraryConfiguration.OpenLibraryExport( library, exportPath );
 
 				try {
 					var databaseName = mDatabaseUtility.GetDatabaseName( library.DatabaseName );
+
+					progressCallback( new ProgressReport( "Starting Library export", library.LibraryName, 0 ));
 
 					if(!string.IsNullOrEmpty( databaseName )) {
 						var backupDatabasePath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
@@ -212,6 +235,7 @@ namespace Noise.Librarian.Models {
 							Directory.CreateDirectory( backupDatabasePath );
 						}
 
+						progressCallback( new ProgressReport( "Starting database export", library.DatabaseName, 0 ));
 						mDatabaseUtility.BackupDatabase( databaseName, backupDatabaseName );
 
 						var backupPath = Path.Combine( libraryBackup.BackupPath, Constants.MetadataDirectory );
@@ -221,6 +245,7 @@ namespace Noise.Librarian.Models {
 							Directory.CreateDirectory( backupPath );
 						}
 		
+						progressCallback( new ProgressReport( "Starting Metadata export", library.LibraryName, 0 ));
 						mMetadataManager.ExportMetadata( backupName );
 
 						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.SearchDatabaseDirectory );
@@ -229,13 +254,15 @@ namespace Noise.Librarian.Models {
 						if(!Directory.Exists( backupPath )) {
 							Directory.CreateDirectory( backupPath );
 						}
+
+						progressCallback( new ProgressReport( "Starting Search Database export", library.LibraryName, 0 ));
 						mDirectoryArchiver.BackupDirectory( library.SearchDatabasePath, backupName );
 
 						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
 						if(!Directory.Exists( backupPath )) {
 							Directory.CreateDirectory( backupPath );
 						}
-						mDirectoryArchiver.BackupSubdirectories( library.BlobDatabasePath, backupPath, null );
+						mDirectoryArchiver.BackupSubdirectories( library.BlobDatabasePath, backupPath, progressCallback );
 
 						mLibraryConfiguration.CloseLibraryExport( library, libraryBackup );
 
@@ -245,10 +272,12 @@ namespace Noise.Librarian.Models {
 				catch( Exception ex ) {
 					mLibraryConfiguration.AbortLibraryExport( library, libraryBackup );
 
+					progressCallback( new ProgressReport( "Export Library failed.", library.LibraryName ));
 					NoiseLogger.Current.LogException( "LibrarianModel:BackupLibrary - Database backup failed.", ex );
 				}
 			}
 			catch( Exception ex ) {
+				progressCallback( new ProgressReport( "Export Library failed.", library.LibraryName ));
 				NoiseLogger.Current.LogMessage( "LibrarianModel:ExportLibrary", ex );
 			}
 		}

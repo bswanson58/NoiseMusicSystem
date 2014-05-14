@@ -5,6 +5,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Librarian.Interfaces;
+using Noise.Librarian.Models;
 using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
@@ -63,14 +64,51 @@ namespace Noise.Librarian.ViewModels {
 		public void Execute_ExportLibrary() {
 			if(( mCurrentLibrary != null ) &&
 			   ( Directory.Exists( ExportPath ))) {
-				mLibrarian.ExportLibrary( mCurrentLibrary, ExportPath );
+				mLibrarian.ExportLibrary( mCurrentLibrary, ExportPath, OnExportProgress );
 			}
+		}
+
+		private void OnExportProgress( ProgressReport args ) {
+			ProgressPhase = args.CurrentPhase;
+			ProgressItem = args.CurrentItem;
+			Progress = args.Progress;
+			ProgressActive = !args.Completed;
+		}
+
+		public string ProgressPhase {
+			get {  return( Get( () => ProgressPhase )); }
+			set {  Set( () => ProgressPhase, value ); }
+		}
+
+		public string ProgressItem {
+			get {  return( Get( () => ProgressItem )); }
+			set {  Set( () => ProgressItem, value ); }
+		}
+
+		public int Progress {
+			get {  return( Get( () => Progress )); }
+			set {  Set( () => Progress, value ); }
+		}
+
+		public bool ProgressActive {
+			get {  return( Get( () => ProgressActive )); }
+			set {
+				Set( () => ProgressActive, value );
+				CanExport = !ProgressActive;
+			}
+		}
+
+		public bool CanExport {
+			get {  return( Get( () => CanExport )); }
+			set {  Set( () => CanExport, value ); }
 		}
 
 		[DependsUpon( "CurrentLibrary" )]
 		[DependsUpon( "ExportPath" )]
+		[DependsUpon( "ProgressActive")]
 		public bool CanExecute_ExportLibrary() {
 			return(( mCurrentLibrary != null ) &&
+				   (!ProgressActive ) &&
 				   ( Directory.Exists( ExportPath )));
 		}
 
