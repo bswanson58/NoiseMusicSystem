@@ -7,6 +7,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Librarian.Interfaces;
+using ReusableBits;
 
 namespace Noise.Librarian.Models {
 	public class LibrarianModel : ILibrarian {
@@ -17,6 +18,7 @@ namespace Noise.Librarian.Models {
 		private readonly IMetadataManager		mMetadataManager;
 		private readonly IDirectoryArchiver		mDirectoryArchiver;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
+		private TaskHandler						mBackupTaskHandler;
 
 		public LibrarianModel( IEventAggregator eventAggregator,
 							   ILifecycleManager lifecycleManager,
@@ -51,12 +53,34 @@ namespace Noise.Librarian.Models {
 			return( true );
 		}
 
-		public void BackupLibrary( LibraryConfiguration library ) {
+		protected TaskHandler BackupTaskHandler {
+			get {
+				if( mBackupTaskHandler == null ) {
+					mBackupTaskHandler = new TaskHandler();
+				}
+
+				return( mBackupTaskHandler );
+			}
+			set {  mBackupTaskHandler = value; }
+		}
+
+		public void BackupLibrary( LibraryConfiguration library, Action<ProgressReport> progressCallback ) {
+			if(( library != null ) &&
+			   ( progressCallback != null )) {
+				BackupTaskHandler.StartTask( () => BackupLibraryTask( library, progressCallback ),
+											 () => progressCallback( new ProgressReport( "Backup Completed - Success", string.Empty )),
+											 error => progressCallback( new ProgressReport( "Backup Failed.", string.Empty )));
+			}
+		}
+
+		private void BackupLibraryTask( LibraryConfiguration library, Action<ProgressReport> progressCallback ) {
 			try {
 				var libraryBackup = mLibraryConfiguration.OpenLibraryBackup( library );
 
 				try {
 					var databaseName = mDatabaseUtility.GetDatabaseName( library.DatabaseName );
+
+					progressCallback( new ProgressReport( "Starting Library backup", library.DatabaseName, 0 ));
 
 					if(!string.IsNullOrEmpty( databaseName )) {
 						var backupPath = Path.Combine( libraryBackup.BackupPath, Constants.LibraryDatabaseDirectory );
@@ -66,6 +90,7 @@ namespace Noise.Librarian.Models {
 							Directory.CreateDirectory( backupPath );
 						}
 
+						progressCallback( new ProgressReport( "Starting database backup", library.DatabaseName, 250 ));
 						mDatabaseUtility.BackupDatabase( databaseName, backupName );
 
 						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.MetadataDirectory );
@@ -75,6 +100,7 @@ namespace Noise.Librarian.Models {
 							Directory.CreateDirectory( backupPath );
 						}
 
+						progressCallback( new ProgressReport( "Starting Metadata backup", library.LibraryName, 500 ));
 						mMetadataManager.ExportMetadata( backupName );
 
 						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.SearchDatabaseDirectory );
@@ -82,13 +108,14 @@ namespace Noise.Librarian.Models {
 						if(!Directory.Exists( backupPath )) {
 							Directory.CreateDirectory( backupPath );
 						}
+						progressCallback( new ProgressReport( "Starting Search Database backup", library.LibraryName, 750 ));
 						mDirectoryArchiver.BackupDirectory( library.SearchDatabasePath, backupName );
 
 						backupPath = Path.Combine( libraryBackup.BackupPath, Constants.BlobDatabaseDirectory );
 						if(!Directory.Exists( backupPath )) {
 							Directory.CreateDirectory( backupPath );
 						}
-						mDirectoryArchiver.BackupSubdirectories( library.BlobDatabasePath, backupPath );
+						mDirectoryArchiver.BackupSubdirectories( library.BlobDatabasePath, backupPath, progressCallback );
 
 						mLibraryConfiguration.CloseLibraryBackup( library, libraryBackup );
 
@@ -98,10 +125,12 @@ namespace Noise.Librarian.Models {
 				catch( Exception ex ) {
 					mLibraryConfiguration.AbortLibraryBackup( library, libraryBackup );
 
+					progressCallback( new ProgressReport( "Completed Library backup.", "Failed" ));
 					NoiseLogger.Current.LogException( "LibrarianModel:BackupLibrary - Database backup failed.", ex );
 				}
 			}
 			catch( Exception ex ) {
+				progressCallback( new ProgressReport( "Completed Library backup.", "Failed" ));
 				NoiseLogger.Current.LogException( "LibrarianModel:BackupLibrary - Could not open library backup.", ex );
 			}
 		}
@@ -206,7 +235,7 @@ namespace Noise.Librarian.Models {
 						if(!Directory.Exists( backupPath )) {
 							Directory.CreateDirectory( backupPath );
 						}
-						mDirectoryArchiver.BackupSubdirectories( library.BlobDatabasePath, backupPath );
+						mDirectoryArchiver.BackupSubdirectories( library.BlobDatabasePath, backupPath, null );
 
 						mLibraryConfiguration.CloseLibraryExport( library, libraryBackup );
 

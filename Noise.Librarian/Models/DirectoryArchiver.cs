@@ -1,6 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using Ionic.Zip;
 using Noise.Librarian.Interfaces;
+using ZipFile = System.IO.Compression.ZipFile;
 
 namespace Noise.Librarian.Models {
 	public class DirectoryArchiver : IDirectoryArchiver {
@@ -12,14 +16,34 @@ namespace Noise.Librarian.Models {
 			Compression.ImprovedExtractToDirectory( sourceName, destinationPath, Compression.Overwrite.Always );
 		}
 
-		public void BackupSubdirectories( string sourcePath, string destinationPath ) {
+		public void BackupSubdirectories( string sourcePath, string destinationPath, Action<ProgressReport> progressCallback ) {
 			if( Directory.Exists( sourcePath )) {
-				var directoryList = Directory.EnumerateDirectories( sourcePath );
+				var directoryList = Directory.EnumerateDirectories( sourcePath ).ToArray();
+				var perDirectoryMultiplier = (float)1000 / directoryList.Count();
+				var progressBase = 0f;
 
 				foreach( var directory in directoryList ) {
-					var archiveName = Path.Combine( destinationPath, Path.GetFileName( directory ));
+					var directoryName = Path.GetFileName( directory );
+					var archiveName = Path.Combine( destinationPath, directoryName );
 
-					ZipFile.CreateFromDirectory( directory, archiveName, CompressionLevel.Fastest, true );
+					using( var zipFile = new Ionic.Zip.ZipFile( archiveName )) {
+						if( progressCallback != null ) {
+							var @base = progressBase;
+
+							zipFile.SaveProgress += ( sender, args ) => {
+								if( args.EventType == ZipProgressEventType.Saving_AfterWriteEntry ) {
+									progressCallback( new ProgressReport( "Archiving Directory", directoryName,
+																			(int)(( perDirectoryMultiplier * ((float)args.EntriesSaved / args.EntriesTotal )) + @base )));
+								}
+							};
+						}
+
+						zipFile.AddDirectory( directory, directoryName );
+
+						zipFile.Save();
+					}
+
+					progressBase += perDirectoryMultiplier;
 				}
 			}
 		}

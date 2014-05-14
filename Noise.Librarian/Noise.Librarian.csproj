@@ -80,6 +80,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Caliburn.Micro.1.5.2\lib\net45\Caliburn.Micro.dll</HintPath>
     </Reference>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\packages\DotNetZip.1.9.2\lib\net20\Ionic.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Prism.Composition">
       <HintPath>..\packages\Prism.Composition.5.0.0\lib\NET45\Microsoft.Practices.Prism.Composition.dll</HintPath>
     </Reference>
@@ -155,6 +158,7 @@
     <Compile Include="Models\Compression.cs" />
     <Compile Include="Models\DirectoryArchiver.cs" />
     <Compile Include="Models\LibrarianModel.cs" />
+    <Compile Include="Models\ProgressReport.cs" />
     <Compile Include="ViewModels\BackupDatabaseViewModel.cs" />
     <Compile Include="ViewModels\ExportDatabaseViewModel.cs" />
     <Compile Include="ViewModels\ImportDatabaseViewModel.cs" />
@@ -235,6 +239,14 @@
     <ProjectReference Include="..\ReusableBits.Mvvm\ReusableBits.Mvvm.csproj">
       <Project>{8930138b-f96a-4a56-84cf-d660730989c9}</Project>
       <Name>ReusableBits.Mvvm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReusableBits.Ui\ReusableBits.Ui.csproj">
+      <Project>{704bd4a9-2fc2-4716-ab94-d3714a6acc39}</Project>
+      <Name>ReusableBits.Ui</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReusableBits\ReusableBits.csproj">
+      <Project>{0522b043-a04a-4669-90db-204c96d52224}</Project>
+      <Name>ReusableBits</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
