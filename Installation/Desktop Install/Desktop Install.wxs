@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+	 xmlns:fire="http://schemas.microsoft.com/wix/FirewallExtension">
 
 	<!-- To update for the next release increment ProductVersion in Version.wxi -->
 	<?include ..\Common Files\Version.wxi?>
@@ -67,7 +68,10 @@
 		<!-- Installed Files -->
 		<DirectoryRef Id="INSTALLDIRECTORY">
 			<Component Id="Noise.Desktop.exe" Guid="df0e902d-7c40-4518-b7fb-1c9059a94713">
-				<File Id="Noise.Desktop.exe" DiskId="1" Source="$(var.Noise.Desktop.TargetPath)" KeyPath="yes" Checksum="yes" />
+				<File Id="Noise.Desktop.exe" DiskId="1" Source="$(var.Noise.Desktop.TargetPath)" KeyPath="yes" Checksum="yes" >
+					<fire:FirewallException Id="Desktop.Firewall.Exception" Name="Noise Music System Desktop" Description="Noise Music System support for remote clients."
+											Port="71" Protocol="tcp" Scope="localSubnet" />
+				</File>
 			</Component>
 
 			<Component Id="Noise.Desktop.config" Guid="49b5433a-a532-4d5c-86b9-632f60befe01">
