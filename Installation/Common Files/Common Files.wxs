@@ -9,6 +9,7 @@
 		<?include CaliburnMicro.wxi ?>
 		<?include Configuration.wxi?>
 		<?include CuttingEdge.wxi ?>
+		<?include DotNetZip.wxi ?>
 		<?include EntityFramework.wxi ?>
 		<?include GDataDB.wxi ?>
 		<?include GongSolutions.wxi ?>

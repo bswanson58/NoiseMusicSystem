@@ -4,7 +4,7 @@
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   
   <?include ..\Common Files\Version.wxi?>
-  <?define ProductName="The Noise Music System"?>
+  <?define ProductName="Noise Music Desktop"?>
   
   <Bundle Name="$(var.ProductName)"
           Version="$(var.ProductVersion)"

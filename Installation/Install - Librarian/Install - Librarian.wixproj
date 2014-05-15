@@ -4,9 +4,9 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>3.8</ProductVersion>
-    <ProjectGuid>5af0e619-1a1e-41eb-b120-37f5cb51a6cf</ProjectGuid>
+    <ProjectGuid>469b2ebe-c6b6-44e9-9b29-37caafe9767a</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>Noise Music Service Installer</OutputName>
+    <OutputName>Noise Music Librarian Installer</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
@@ -30,28 +30,12 @@
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Headless Install.wxs" />
+    <Compile Include="Librarian Install.wxs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Noise.Desktop\Noise.Desktop.csproj">
-      <Name>Noise.Desktop</Name>
-      <Project>{3ecb477e-5631-4e77-b66f-a64bc37c42ec}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Noise.Headless\Noise.Headless.csproj">
-      <Name>Noise.Headless</Name>
-      <Project>{8af36109-6d52-4b28-9699-2b27a751a0a4}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
-    <ProjectReference Include="..\..\ReusableBits.Service\ReusableBits.Service.csproj">
-      <Name>ReusableBits.Service</Name>
-      <Project>{8dfa71be-5591-41a2-b640-a9f3984422a9}</Project>
+    <ProjectReference Include="..\..\Noise.Librarian\Noise.Librarian.csproj">
+      <Name>Noise.Librarian</Name>
+      <Project>{37156bd4-8e37-4f2c-85c8-4e48359efed9}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
@@ -75,10 +59,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <WixExtension Include="WixFirewallExtension">
-      <HintPath>$(WixExtDir)\WixFirewallExtension.dll</HintPath>
-      <Name>WixFirewallExtension</Name>
-    </WixExtension>
     <WixExtension Include="WixUtilExtension">
       <HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
       <Name>WixUtilExtension</Name>

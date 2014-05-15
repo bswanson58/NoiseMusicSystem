@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<!-- To update for the next release increment ProductVersion in Version.wxi -->
+	<?include ..\Common Files\Version.wxi?>
+
+	<?define ProductName="Noise Music Librarian"?>
+	<?define ShortcutRegistryKey="$(var.BaseRegistryKey)\$(var.Noise.Librarian.Platform)\NoiseLibrarian"?>
+
+	<Product Id="*"
+			 Name="$(var.ProductName)"
+			 Language="1033"
+			 Version="$(var.ProductVersion)"
+			 Manufacturer="$(var.Manufacturer)"
+			 UpgradeCode="ab6235f9-0041-489b-929b-c66d738ffcfc">
+		<Package InstallerVersion="300"
+				 Platform="$(var.Noise.Librarian.Platform)"
+				 InstallScope="perMachine"
+				 InstallPrivileges="elevated"
+				 Compressed="yes" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+		<PropertyRef Id="NETFRAMEWORK45" />
+		<Condition Message="This application requires .NET Framework version 4.5. Please install the .NET Framework and then run this installer again.">
+			<![CDATA[Installed OR NETFRAMEWORK45]]>
+		</Condition>
+
+		<Media Id="1" Cabinet="ApplicationFiles.cab" EmbedCab="yes" />
+
+		<!-- Folder Locations -->
+		<?if $(var.Noise.Librarian.Platform) = "x64" ?>
+		<?define ProgramFolder="ProgramFiles64Folder"?>
+		<?else ?>
+		<?define ProgramFolder="ProgramFilesFolder"?>
+		<?endif ?>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="$(var.ProgramFolder)">
+				<Directory Id="CompanyDirectory" Name="Secret Squirrel Software">
+					<Directory Id="CommonDirectory" Name="Noise Music System">
+						<Directory Id="INSTALLDIRECTORY" Name="Noise Music Librarian" />
+					</Directory>
+				</Directory>
+			</Directory>
+
+			<Directory Id="ProgramMenuFolder">
+				<Directory Id="CompanyMenuFolder" Name="Secret Squirrel Software">
+					<Directory Id="ProductMenuFolder" Name="Noise Music System" />
+					<Component Id='NoiseMenuFolder' Guid="20454f59-d1d9-4862-916f-74cd364b37d9">
+						<RemoveFolder Id='NoiseMenuFolder' On='uninstall'/>
+						<RegistryValue Root="HKCU" Key="$(var.ShortcutRegistryKey)\NoiseMenuFolder" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+					</Component>
+				</Directory>
+			</Directory>
+
+			<Directory Id="CommonAppDataFolder">
+				<Directory Id="ProductDataFolder" Name="Secret Squirrel Software">
+					<Directory Id="ProductFolder" Name="Noise Music System">
+						<Directory Id="ProductConfigFolder" Name="Configuration" />
+					</Directory>
+				</Directory>
+			</Directory>
+			
+			<Directory Id="DesktopFolder" Name="Desktop"/>
+		</Directory>
+
+		<!-- Installed Files -->
+		<DirectoryRef Id="INSTALLDIRECTORY">
+			<Component Id="Noise.Librarian.exe" Guid="142df394-4214-42b7-92a7-75bb1f7d7143">
+				<File Id="Noise.Librarian.exe" DiskId="1" Source="$(var.Noise.Librarian.TargetPath)" KeyPath="yes" Checksum="yes" />
+			</Component>
+
+			<Component Id="Noise.Librarian.config" Guid="d73b1fd7-2681-45af-81de-e4f57fd6f8f1">
+				<File Id="Noise.Librarian.config" DiskId="1" Source="$(var.Noise.Librarian.TargetDir)Noise.Librarian.exe.config" KeyPath="yes" Checksum="yes" />
+			</Component>
+		</DirectoryRef>
+
+		<!-- Shortcuts -->
+		<DirectoryRef Id="ProductMenuFolder">
+			<Component Id="ApplicationShortcut" Guid="8322cb53-f40b-4593-99c2-7eecc0ea5e12">
+				<Shortcut Id="ApplicationStartMenuShortcut" Name="Noise Librarian" Description="Noise Music Librarian" Target="[INSTALLDIRECTORY]Noise.Librarian.exe" WorkingDirectory="INSTALLDIRECTORY" />
+				<RemoveFolder Id="ApplicationShortcut" On="uninstall" />
+				<RegistryValue Root="HKCU" Key="$(var.ShortcutRegistryKey)\ApplicationShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+			</Component>
+		</DirectoryRef>
+
+		<DirectoryRef Id="DesktopFolder">
+			<Component Id="DesktopShortcut" Guid="862efe70-6d8a-4bf4-ad1e-f9954a635ce4">
+				<Shortcut Id="DesktopShortcut" Name="Noise Librarian" Description="Noise Music Librarian" Target="[INSTALLDIRECTORY]Noise.Librarian.exe" WorkingDirectory="INSTALLDIRECTORY" />
+				<RemoveFolder Id="DesktopShortcut" On="uninstall" />
+				<RegistryValue Root="HKCU" Key="$(var.ShortcutRegistryKey)\DesktopShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+			</Component>
+		</DirectoryRef>
+
+		<Icon Id="AddRemoveProgramsIcon" SourceFile="$(var.Noise.Librarian.ProjectDir)..\Common\Noise.ico" />
+		<Property Id="ARPPRODUCTICON" Value="AddRemoveProgramsIcon" />
+
+		<ComponentGroup Id="ApplicationFiles">
+			<ComponentRef Id="Noise.Librarian.exe" />
+			<ComponentRef Id="Noise.Librarian.config" />
+			<ComponentRef Id="ApplicationShortcut" />
+			<ComponentRef Id="DesktopShortcut"/>
+			<ComponentRef Id="NoiseMenuFolder" />
+		</ComponentGroup>
+
+		<Feature Id="Complete" Title="Noise Librarian Install" Level="1" ConfigurableDirectory="INSTALLDIRECTORY">
+			<Feature Id="Application" Title="Noise Librarian Application" Level="1">
+				<ComponentGroupRef Id="ApplicationFiles" />
+				<ComponentGroupRef Id="CoreFiles"/>
+				<ComponentGroupRef Id="AutomapperFiles"/>
+				<ComponentGroupRef Id="BassAudioFiles"/>
+				<ComponentGroupRef Id="CaliburnMicroFiles"/>
+				<ComponentGroupRef Id="CuttingEdgeFiles"/>
+				<ComponentGroupRef Id="DotNetZipFiles"/>
+				<ComponentGroupRef Id="EntityFrameworkFiles"/>
+				<ComponentGroupRef Id="GDataDBFiles"/>
+				<ComponentGroupRef Id="LastFmSharpFiles"/>
+				<ComponentGroupRef Id="LuceneFiles"/>
+				<ComponentGroupRef Id="MicrosoftFiles"/>
+				<ComponentGroupRef Id="NewtonsoftJsonFiles"/>
+				<ComponentGroupRef Id="NLogFiles"/>
+				<ComponentGroupRef Id="PrismFiles"/>
+				<ComponentGroupRef Id="RavenDBFiles"/>
+				<ComponentGroupRef Id="ReclsFiles"/>
+			</Feature>
+		</Feature>
+
+		<Feature Id="UnnecessaryFiles" Title="Unnecessary Files" Level="0">
+			<ComponentGroupRef Id="ConfigurationFiles"/>
+			<ComponentGroupRef Id="GongSolutionsFiles"/>
+			<ComponentGroupRef Id="MahAppsMetroFiles"/>
+			<ComponentGroupRef Id="ObservalFiles"/>
+			<ComponentGroupRef Id="ReplayGainFiles"/>
+			<ComponentGroupRef Id="StatelessFiles"/>
+			<ComponentGroupRef Id="TagLibSharpFiles"/>
+		</Feature>
+
+		<UIRef Id="InstallUI" />
+
+	</Product>
+</Wix>

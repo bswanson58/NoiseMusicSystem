@@ -5,7 +5,7 @@
 	<!-- To update for the next release increment ProductVersion in Version.wxi -->
 	<?include ..\Common Files\Version.wxi?>
 
-	<?define ProductName="Noise Music System Desktop"?>
+	<?define ProductName="Noise Music Desktop"?>
 	<?define ShortcutRegistryKey="$(var.BaseRegistryKey)\$(var.Noise.Desktop.Platform)\NoiseDesktop"?>
 
 	<Product Id="*"
@@ -111,7 +111,7 @@
 		<!-- Shortcuts -->
 		<DirectoryRef Id="ProductMenuFolder">
 			<Component Id="ApplicationShortcut" Guid="d18cbb35-ec2b-455d-999b-3959a2ab8305">
-				<Shortcut Id="ApplicationStartMenuShortcut" Name="Noise" Description="Noise Desktop Application" Target="[INSTALLDIRECTORY]Noise.Desktop.exe" WorkingDirectory="INSTALLDIRECTORY" />
+				<Shortcut Id="ApplicationStartMenuShortcut" Name="Noise Music" Description="Noise Desktop Application" Target="[INSTALLDIRECTORY]Noise.Desktop.exe" WorkingDirectory="INSTALLDIRECTORY" />
 				<RemoveFolder Id="ApplicationShortcut" On="uninstall" />
 				<RegistryValue Root="HKCU" Key="$(var.ShortcutRegistryKey)\ApplicationShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes" />
 			</Component>
@@ -119,7 +119,7 @@
 
 		<DirectoryRef Id="DesktopFolder">
 			<Component Id="DesktopShortcut" Guid="3645e7ce-d910-40fe-8ba9-ed1b8592a341">
-				<Shortcut Id="DesktopShortcut" Name="Noise" Description="Noise Desktop Application" Target="[INSTALLDIRECTORY]Noise.Desktop.exe" WorkingDirectory="INSTALLDIRECTORY" />
+				<Shortcut Id="DesktopShortcut" Name="Noise Music" Description="Noise Music Desktop Application" Target="[INSTALLDIRECTORY]Noise.Desktop.exe" WorkingDirectory="INSTALLDIRECTORY" />
 				<RemoveFolder Id="DesktopShortcut" On="uninstall" />
 				<RegistryValue Root="HKCU" Key="$(var.ShortcutRegistryKey)\DesktopShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes" />
 			</Component>
@@ -170,6 +170,10 @@
 				<ComponentGroupRef Id="StatelessFiles"/>
 				<ComponentGroupRef Id="TagLibSharpFiles"/>
 			</Feature>
+		</Feature>
+
+		<Feature Id="UnnecessaryFiles" Title="Unnecessary Files" Level="0">
+			<ComponentGroupRef Id="DotNetZipFiles"/>
 		</Feature>
 
 		<UIRef Id="InstallUI" />

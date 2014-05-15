@@ -5,7 +5,7 @@
 	<!-- To update for the next release increment ProductVersion in Version.wxi -->
 	<?include ..\Common Files\Version.wxi?>
 
-	<?define ProductName="Noise Music System Service"?>
+	<?define ProductName="Noise Music Service"?>
 
 	<Product Id="*"
 			 Name="$(var.ProductName)"
@@ -114,6 +114,7 @@
 		</Feature>
 
 		<Feature Id="UnnecessaryFiles" Title="Unnecessary Files" Level="0">
+			<ComponentGroupRef Id="DotNetZipFiles"/>
 			<ComponentGroupRef Id="MahAppsMetroFiles"/>
 		</Feature>
 
