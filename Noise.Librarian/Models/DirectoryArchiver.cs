@@ -9,6 +9,8 @@ namespace Noise.Librarian.Models {
 		public void BackupDirectory( string sourcePath, string destinationName ) {
 			using( var zipFile = new ZipFile( destinationName ) ) {
 				zipFile.AddDirectory( sourcePath );
+
+				zipFile.Save();
 			}
 		}
 
