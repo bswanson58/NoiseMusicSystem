@@ -4,14 +4,20 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:Mvvm="clr-namespace:Microsoft.Practices.Prism.Mvvm;assembly=Microsoft.Practices.Prism.Mvvm.Desktop"
+			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 Mvvm:ViewModelLocator.AutoWireViewModel="True"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="170" d:DesignWidth="800">
+
+	<UserControl.Resources>
+		<ValueConverters:BooleanVisibilityConverter x:Key="VisibleOnTrue" TriggerValue="False" IsHidden="False"/>
+	</UserControl.Resources>
 
 	<GroupBox Margin="7,5" Header=" Library Import ">
 		<Grid Margin="3">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*"/>
+				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
@@ -32,14 +38,27 @@
 							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 						
-						<TextBox Grid.Column="0" Text="{Binding ImportPath, UpdateSourceTrigger=PropertyChanged}"/>
-						<Button Grid.Column="1" Margin="5,0,0,0" Width="25" Content="..." Command="{Binding Browse}"/>
+						<TextBox Grid.Column="0" IsEnabled="{Binding CanEdit}" Text="{Binding ImportPath, UpdateSourceTrigger=PropertyChanged}"/>
+						<Button Grid.Column="1" Margin="5,0,0,0" Width="25" Content="..." IsEnabled="{Binding CanEdit}" Command="{Binding Browse}"/>
 					</Grid>
 					<TextBlock Margin="3,9,0,0" Text="Library Name:"/>
-					<TextBox Margin="0,0,30,0" Text="{Binding LibraryName, UpdateSourceTrigger=PropertyChanged}"/>
+					<TextBox Margin="0,0,30,0" IsEnabled="{Binding CanEdit}" Text="{Binding LibraryName, UpdateSourceTrigger=PropertyChanged}"/>
 				</StackPanel>
 				
 				<Button Grid.Column="1" Margin="3,0" Width="100" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="Import" Command="{Binding ImportLibrary}"/>
+			</Grid>
+
+			<Grid Grid.Row="2" Margin="0,7,3,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="2*"/>
+				</Grid.ColumnDefinitions>
+
+				<TextBlock Grid.Column="0" TextAlignment="Right" Text="{Binding ProgressPhase}"/>
+				<TextBlock Grid.Column="1" Margin="5,0" Text="{Binding ProgressItem}"/>
+				<ProgressBar Grid.Column="2" Minimum="0" Maximum="1000"  Value="{Binding Progress}"
+							 Visibility="{Binding ProgressActive, Converter={StaticResource VisibleOnTrue}}"/>
 			</Grid>
 		</Grid>
 	</GroupBox>

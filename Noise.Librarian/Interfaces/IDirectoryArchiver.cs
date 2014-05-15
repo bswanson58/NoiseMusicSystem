@@ -7,6 +7,6 @@ namespace Noise.Librarian.Interfaces {
 		void	BackupSubdirectories( string sourcePath, string destinationPath, Action<ProgressReport> progressCallback );
 
 		void	RestoreDirectory( string sourceName, string destinationPath );
-		void	RestoreSubdirectories( string sourcePath, string destinationPath );
+		void	RestoreSubdirectories( string sourcePath, string destinationPath, Action<ProgressReport> progressCallback );
 	}
 }

@@ -1,19 +1,21 @@
 ﻿using System;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using Ionic.Zip;
 using Noise.Librarian.Interfaces;
-using ZipFile = System.IO.Compression.ZipFile;
 
 namespace Noise.Librarian.Models {
 	public class DirectoryArchiver : IDirectoryArchiver {
 		public void BackupDirectory( string sourcePath, string destinationName ) {
-			ZipFile.CreateFromDirectory( sourcePath, destinationName, CompressionLevel.Optimal, false );
+			using( var zipFile = new ZipFile( destinationName ) ) {
+				zipFile.AddDirectory( sourcePath );
+			}
 		}
 
 		public void RestoreDirectory( string sourceName, string destinationPath ) {
-			Compression.ImprovedExtractToDirectory( sourceName, destinationPath, Compression.Overwrite.Always );
+			using( var zipFile = ZipFile.Read( sourceName )) {
+				zipFile.ExtractAll( destinationPath, ExtractExistingFileAction.OverwriteSilently );
+			}
 		}
 
 		public void BackupSubdirectories( string sourcePath, string destinationPath, Action<ProgressReport> progressCallback ) {
@@ -26,7 +28,7 @@ namespace Noise.Librarian.Models {
 					var directoryName = Path.GetFileName( directory );
 					var archiveName = Path.Combine( destinationPath, directoryName );
 
-					using( var zipFile = new Ionic.Zip.ZipFile( archiveName )) {
+					using( var zipFile = new ZipFile( archiveName )) {
 						if( progressCallback != null ) {
 							var @base = progressBase;
 
@@ -48,12 +50,30 @@ namespace Noise.Librarian.Models {
 			}
 		}
 
-		public void RestoreSubdirectories( string sourcePath, string destinationPath ) {
+		public void RestoreSubdirectories( string sourcePath, string destinationPath, Action<ProgressReport> progressCallback ) {
 			if( Directory.Exists( sourcePath )) {
-				var archiveList = Directory.EnumerateFiles( sourcePath );
+				var archiveList = Directory.EnumerateFiles( sourcePath ).ToArray();
+				var perDirectoryMultiplier = (float)1000 / archiveList.Count();
+				var progressBase = 0f;
 
 				foreach( var archiveFile in archiveList ) {
-					Compression.ImprovedExtractToDirectory( archiveFile, destinationPath, Compression.Overwrite.Always );
+					using( var zipFile = ZipFile.Read( archiveFile )) {
+						if( progressCallback != null ) {
+							var @base = progressBase;
+							var @archive = Path.GetFileName( archiveFile );
+
+							zipFile.ExtractProgress += ( sender, args ) => {
+								if( args.EventType == ZipProgressEventType.Extracting_AfterExtractEntry ) {
+									progressCallback( new ProgressReport( "Restoring Directory", @archive,
+																			(int)(( perDirectoryMultiplier * ((float)args.EntriesExtracted / args.EntriesTotal )) + @base )));
+								}
+							};
+						}
+
+						zipFile.ExtractAll( destinationPath, ExtractExistingFileAction.OverwriteSilently );
+					}
+
+					progressBase += perDirectoryMultiplier;
 				}
 			}
 		}

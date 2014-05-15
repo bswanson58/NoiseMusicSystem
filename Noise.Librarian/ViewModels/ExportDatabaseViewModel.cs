@@ -24,6 +24,7 @@ namespace Noise.Librarian.ViewModels {
 			mDialogService = dialogService;
 
 			mLibraries = new BindableCollection<LibraryConfiguration>();
+			ProgressActive = false;
 
 			eventAggregator.Subscribe( this );
 		}
@@ -68,6 +69,15 @@ namespace Noise.Librarian.ViewModels {
 			}
 		}
 
+		[DependsUpon( "CurrentLibrary" )]
+		[DependsUpon( "ExportPath" )]
+		[DependsUpon( "ProgressActive")]
+		public bool CanExecute_ExportLibrary() {
+			return(( mCurrentLibrary != null ) &&
+				   (!ProgressActive ) &&
+				   ( Directory.Exists( ExportPath )));
+		}
+
 		private void OnExportProgress( ProgressReport args ) {
 			ProgressPhase = args.CurrentPhase;
 			ProgressItem = args.CurrentItem;
@@ -94,22 +104,13 @@ namespace Noise.Librarian.ViewModels {
 			get {  return( Get( () => ProgressActive )); }
 			set {
 				Set( () => ProgressActive, value );
-				CanExport = !ProgressActive;
+				CanEdit = !ProgressActive;
 			}
 		}
 
-		public bool CanExport {
-			get {  return( Get( () => CanExport )); }
-			set {  Set( () => CanExport, value ); }
-		}
-
-		[DependsUpon( "CurrentLibrary" )]
-		[DependsUpon( "ExportPath" )]
-		[DependsUpon( "ProgressActive")]
-		public bool CanExecute_ExportLibrary() {
-			return(( mCurrentLibrary != null ) &&
-				   (!ProgressActive ) &&
-				   ( Directory.Exists( ExportPath )));
+		public bool CanEdit {
+			get {  return( Get( () => CanEdit )); }
+			set {  Set( () => CanEdit, value ); }
 		}
 
 		public void Execute_Browse( object sender ) {

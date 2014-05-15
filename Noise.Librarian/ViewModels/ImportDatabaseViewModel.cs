@@ -3,6 +3,7 @@ using System.IO;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Librarian.Interfaces;
+using Noise.Librarian.Models;
 using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
@@ -14,6 +15,8 @@ namespace Noise.Librarian.ViewModels {
 		public ImportDatabaseViewModel( ILibrarian librarian, IDialogService dialogService ) {
 			mLibrarian = librarian;
 			mDialogService = dialogService;
+
+			ProgressActive = false;
 		}
 
 		public string ImportPath {
@@ -37,6 +40,41 @@ namespace Noise.Librarian.ViewModels {
 			set {  Set( () => LibraryName, value ); }
 		}
 
+		private void OnImportProgress( ProgressReport args ) {
+			ProgressPhase = args.CurrentPhase;
+			ProgressItem = args.CurrentItem;
+			Progress = args.Progress;
+			ProgressActive = !args.Completed;
+		}
+
+		public string ProgressPhase {
+			get {  return( Get( () => ProgressPhase )); }
+			set {  Set( () => ProgressPhase, value ); }
+		}
+
+		public string ProgressItem {
+			get {  return( Get( () => ProgressItem )); }
+			set {  Set( () => ProgressItem, value ); }
+		}
+
+		public int Progress {
+			get {  return( Get( () => Progress )); }
+			set {  Set( () => Progress, value ); }
+		}
+
+		public bool ProgressActive {
+			get {  return( Get( () => ProgressActive )); }
+			set {
+				Set( () => ProgressActive, value );
+				CanEdit = !ProgressActive;
+			}
+		}
+
+		public bool CanEdit {
+			get {  return( Get( () => CanEdit )); }
+			set {  Set( () => CanEdit, value ); }
+		}
+
 		public void Execute_ImportLibrary() {
 			if( !string.IsNullOrWhiteSpace( ImportPath )) {
 				var backup = new LibraryBackup( DateTime.Now, Path.GetDirectoryName( ImportPath ));
@@ -45,15 +83,17 @@ namespace Noise.Librarian.ViewModels {
 				if( library != null ) {
 					library.LibraryName = LibraryName;
 
-					mLibrarian.ImportLibrary( library, backup );
+					mLibrarian.ImportLibrary( library, backup, OnImportProgress );
 				}
 			}
 		}
 
 		[DependsUpon( "ImportPath" )]
 		[DependsUpon( "LibraryName" )]
+		[DependsUpon( "ProgressActive" )]
 		public bool CanExecute_ImportLibrary() {
 			return(!string.IsNullOrWhiteSpace( ImportPath ) &&
+				  (!ProgressActive ) &&
 				  (!string.IsNullOrWhiteSpace( LibraryName )));
 		}
 

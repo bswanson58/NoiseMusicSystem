@@ -8,9 +8,9 @@ namespace Noise.Librarian.Interfaces {
 		void	Shutdown();
 
 		void	BackupLibrary( LibraryConfiguration library, Action<ProgressReport> progressCallback );
-		void	RestoreLibrary( LibraryConfiguration library, LibraryBackup libraryBackup );
+		void	RestoreLibrary( LibraryConfiguration library, LibraryBackup libraryBackup, Action<ProgressReport> progressCallback );
 
 		void	ExportLibrary( LibraryConfiguration library, string exportPath, Action<ProgressReport> progressCallback );
-		void	ImportLibrary( LibraryConfiguration library, LibraryBackup libraryBackup );
+		void	ImportLibrary( LibraryConfiguration library, LibraryBackup libraryBackup, Action<ProgressReport> progressCallback );
 	}
 }

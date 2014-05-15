@@ -4,6 +4,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Librarian.Interfaces;
+using Noise.Librarian.Models;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.Librarian.ViewModels {
@@ -22,6 +23,7 @@ namespace Noise.Librarian.ViewModels {
 
 			mLibraries = new BindableCollection<LibraryConfiguration>();
 			mLibraryBackups = new BindableCollection<LibraryBackup>();
+			ProgressActive = false;
 
 			eventAggregator.Subscribe( this );
 		}
@@ -57,16 +59,53 @@ namespace Noise.Librarian.ViewModels {
 			CurrentBackup = mLibraryBackups.FirstOrDefault();
 		}
 
+		private void OnRestoreProgress( ProgressReport args ) {
+			ProgressPhase = args.CurrentPhase;
+			ProgressItem = args.CurrentItem;
+			Progress = args.Progress;
+			ProgressActive = !args.Completed;
+		}
+
+		public string ProgressPhase {
+			get {  return( Get( () => ProgressPhase )); }
+			set {  Set( () => ProgressPhase, value ); }
+		}
+
+		public string ProgressItem {
+			get {  return( Get( () => ProgressItem )); }
+			set {  Set( () => ProgressItem, value ); }
+		}
+
+		public int Progress {
+			get {  return( Get( () => Progress )); }
+			set {  Set( () => Progress, value ); }
+		}
+
+		public bool ProgressActive {
+			get {  return( Get( () => ProgressActive )); }
+			set {
+				Set( () => ProgressActive, value );
+				CanEdit = !ProgressActive;
+			}
+		}
+
+		public bool CanEdit {
+			get {  return( Get( () => CanEdit )); }
+			set {  Set( () => CanEdit, value ); }
+		}
+
 		public void Execute_RestoreLibrary() {
 			if(( CurrentLibrary != null ) &&
 			   ( CurrentBackup != null )) {
-				mLibrarian.RestoreLibrary( CurrentLibrary, CurrentBackup );
+				mLibrarian.RestoreLibrary( CurrentLibrary, CurrentBackup, OnRestoreProgress );
 			}
 		}
 
 		[DependsUpon( "CurrentBackup" )]
+		[DependsUpon( "ProgressActive" )]
 		public bool CanExecute_RestoreLibrary() {
 			return(( CurrentLibrary != null ) &&
+				   (!ProgressActive ) &&
 				   ( CurrentBackup != null ));
 		}
 

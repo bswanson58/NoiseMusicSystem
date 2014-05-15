@@ -33,11 +33,11 @@
 				<StackPanel Grid.Column="0" Orientation="Vertical">
 					<TextBlock Margin="5,3,0,3" Text="Available Libraries:"/>
 					<ComboBox ItemsSource="{Binding LibraryList}" SelectedItem="{Binding CurrentLibrary}"
-							  IsEnabled="{Binding CanBackup}" DisplayMemberPath="LibraryName" />
+							  IsEnabled="{Binding CanEdit}" DisplayMemberPath="LibraryName" />
 				</StackPanel>
 
 				<Button Grid.Column="1" Margin="3,0" Width="100" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
-						IsEnabled="{Binding CanBackup}" Content="Backup" Command="{Binding BackupLibrary}"/>
+						Content="Backup" Command="{Binding BackupLibrary}"/>
 			</Grid>
 			
 			<Grid Grid.Row="2" Margin="0,7,3,0">

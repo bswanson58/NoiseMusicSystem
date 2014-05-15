@@ -155,7 +155,6 @@
     <Compile Include="Interfaces\IDirectoryArchiver.cs" />
     <Compile Include="Interfaces\ILibrarian.cs" />
     <Compile Include="LibrarianModule.cs" />
-    <Compile Include="Models\Compression.cs" />
     <Compile Include="Models\DirectoryArchiver.cs" />
     <Compile Include="Models\LibrarianModel.cs" />
     <Compile Include="Models\ProgressReport.cs" />

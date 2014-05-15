@@ -21,7 +21,6 @@ namespace Noise.Librarian.ViewModels {
 
 			mLibraries = new BindableCollection<LibraryConfiguration>();
 			ProgressActive = false;
-			CanBackup = false;
 
 			eventAggregator.Subscribe( this );
 		}
@@ -39,7 +38,7 @@ namespace Noise.Librarian.ViewModels {
 			mLibraries.AddRange( mLibraryConfiguration.Libraries );
 
 			CurrentLibrary = mLibraries.FirstOrDefault();
-			CanBackup = mLibraries.Any();
+			CanEdit = mLibraries.Any();
 		}
 
 		public BindableCollection<LibraryConfiguration> LibraryList {
@@ -59,6 +58,13 @@ namespace Noise.Librarian.ViewModels {
 			if( mCurrentLibrary != null ) {
 				mLibrarian.BackupLibrary( mCurrentLibrary, OnBackupProgress );
 			}
+		}
+
+		[DependsUpon( "CurrentLibrary" )]
+		[DependsUpon( "ProgressActive" )]
+		public bool CanExecute_BackupLibrary() {
+			return(( mCurrentLibrary != null ) &&
+				   (!ProgressActive ));
 		}
 
 		private void OnBackupProgress( ProgressReport args ) {
@@ -87,18 +93,13 @@ namespace Noise.Librarian.ViewModels {
 			get {  return( Get( () => ProgressActive )); }
 			set {
 				Set( () => ProgressActive, value );
-				CanBackup = !ProgressActive;
+				CanEdit = !ProgressActive;
 			}
 		}
 
-		public bool CanBackup {
-			get {  return( Get( () => CanBackup )); }
-			set {  Set( () => CanBackup, value ); }
-		}
-
-		[DependsUpon( "CurrentLibrary" )]
-		public bool CanExecute_BackupLibrary() {
-			return( mCurrentLibrary != null );
+		public bool CanEdit {
+			get {  return( Get( () => CanEdit )); }
+			set {  Set( () => CanEdit, value ); }
 		}
 	}
 }

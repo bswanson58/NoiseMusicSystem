@@ -33,7 +33,7 @@
 
 				<StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Bottom">
 					<TextBlock Margin="5,3,0,0" Text="Available Libraries:"/>
-					<ComboBox ItemsSource="{Binding LibraryList}" SelectedItem="{Binding CurrentLibrary}" IsEnabled="{Binding CanExport}" DisplayMemberPath="LibraryName" />
+					<ComboBox ItemsSource="{Binding LibraryList}" SelectedItem="{Binding CurrentLibrary}" IsEnabled="{Binding CanEdit}" DisplayMemberPath="LibraryName" />
 				</StackPanel>
 				
 				<StackPanel Grid.Column="1" Margin="9,0" Orientation="Vertical">
@@ -44,8 +44,8 @@
 							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 						
-						<TextBox Grid.Column="0" Text="{Binding ExportPath, UpdateSourceTrigger=LostFocus}"/>
-						<Button Grid.Column="1" Margin="5,0" Width="25" Content="..." Command="{Binding Browse}"/>
+						<TextBox Grid.Column="0" IsEnabled="{Binding CanEdit}" Text="{Binding ExportPath, UpdateSourceTrigger=LostFocus}"/>
+						<Button Grid.Column="1" Margin="5,0" Width="25" IsEnabled="{Binding CanEdit}" Content="..." Command="{Binding Browse}"/>
 					</Grid>
 				</StackPanel>
 
