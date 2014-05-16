@@ -44,8 +44,6 @@ namespace Noise.Metadata.ArtistMetadata {
 					provider.Initialize( mDocumentStore, mLicenseManager );
 				}
 
-				FillUpdateList();
-
 				var updateTask = new RecurringTask( UpdateNextArtist, cBackgroundTaskName );
 
 				updateTask.TaskSchedule.StartAt( RecurringInterval.FromSeconds( 15 ))
@@ -110,6 +108,9 @@ namespace Noise.Metadata.ArtistMetadata {
 						else {
 							FillUpdateList();
 						}
+					}
+					else {
+						FillUpdateList();
 					}
 				}
 			}
