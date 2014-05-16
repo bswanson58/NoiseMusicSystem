@@ -111,14 +111,16 @@ namespace Noise.Metadata {
 			return( mArtistMetadataManager.GetArtistArtwork( forArtist ));
 		}
 
-		public void ExportMetadata( string exportPath ) {
+		public async void ExportMetadata( string exportPath ) {
 			try {
 				if( mDocumentStore is EmbeddableDocumentStore ) {
 					var embeddedStore = mDocumentStore as EmbeddableDocumentStore;
-					var options = new SmugglerOptions { BackupPath = exportPath };
+					var options = new SmugglerOptions();
 					var exporter = new DataDumper( embeddedStore.DocumentDatabase, options );
 
-					exporter.ExportData( null, options, false );
+					using( var stream = File.OpenWrite( exportPath )) {
+						await exporter.ExportData( stream, options, false );
+					}
 				}
 			}
 			catch( Exception ex ) {
@@ -126,15 +128,17 @@ namespace Noise.Metadata {
 			}
 		}
 
-		public void ImportMetadata( string importPath ) {
+		public async void ImportMetadata( string importPath ) {
 			try {
 				if(( mDocumentStore is EmbeddableDocumentStore ) &&
 				   ( File.Exists( importPath ))) {
 					var embeddedStore = mDocumentStore as EmbeddableDocumentStore;
-					var options = new SmugglerOptions { BackupPath = importPath };
+					var options = new SmugglerOptions();
 					var importer = new DataDumper( embeddedStore.DocumentDatabase, options );
 
-					importer.ImportData( null, options );
+					using( var stream = File.OpenRead( importPath )) {
+						await importer.ImportData( stream, options );
+					}
 				}
 			}
 			catch( Exception ex ) {
