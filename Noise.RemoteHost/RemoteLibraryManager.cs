@@ -83,6 +83,9 @@ namespace Noise.RemoteHost {
 						existingLibrary.LibraryName = library.LibraryName;
 						existingLibrary.DatabaseName = library.DatabaseName;
 						existingLibrary.IsDefaultLibrary = library.IsDefaultLibrary;
+						if( existingLibrary.MediaLocations.Any()) {
+							existingLibrary.MediaLocations[0].Path = library.MediaLocation;
+						}
 
 						mLibraryConfiguration.UpdateLibrary( existingLibrary );
 
