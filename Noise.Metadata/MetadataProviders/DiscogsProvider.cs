@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using DiscogsNet.Api;
-using DiscogsNet.Model.Search;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Dto;
 using Noise.Metadata.Interfaces;
+using Noise.Metadata.MetadataProviders.Discogs;
 using Raven.Client;
 
 namespace Noise.Metadata.MetadataProviders {
@@ -33,37 +33,46 @@ namespace Noise.Metadata.MetadataProviders {
 		public void Shutdown() {
 		}
 
-		public void UpdateArtist( string artistName ) {
+		public async void UpdateArtist( string artistName ) {
 			if( mHasNetworkAccess ) {
 				try {
-					var client = new Discogs3();
-					var searchResults = client.Search( new SearchQuery { Query = artistName, Type = SearchItemType.Artist });
+					var discogsClient = new DiscogsClient();
+					var searchResults = await discogsClient.ArtistSearch( artistName );
 
 					if(( searchResults != null ) &&
-					   ( searchResults.Results.GetLength( 0 ) > 0 )) {
-						var result = searchResults.Results[0];
+					   ( searchResults.Any())) {
+						var result = searchResults[0];
 
-						if( result.Type == SearchItemType.Artist ) {
-							var discogsArtist = client.GetArtist( result.Id );
+						if( result.Type.Equals( DiscogsClient.cSearchItemTypeArtist )) {
+							var discogsArtist = await discogsClient.GetArtist( result.Id );
 
 							using( var session = mDocumentStore.OpenSession()) {
 								var artistBio = session.Load<DbArtistBiography>( DbArtistBiography.FormatStatusKey( artistName )) ??
 												new DbArtistBiography { ArtistName = artistName };
 								var discography = session.Load<DbArtistDiscography>( DbArtistDiscography.FormatStatusKey( artistName )) ??
 												new DbArtistDiscography { ArtistName = artistName };
+								var bandMembers = new List<string>();
 
 								if( discogsArtist.Members != null ) {
-									artistBio.SetMetadata( eMetadataType.BandMembers, discogsArtist.Members.ToList());
+									bandMembers.AddRange( from m in discogsArtist.Members where m.Active select m.Name );
+									bandMembers.AddRange( from m in discogsArtist.Members where !m.Active select "-" + m.Name );
+								}
+								if( discogsArtist.Groups != null ) {
+									bandMembers.AddRange( from g in discogsArtist.Groups select "(" + g.Name + ")" );
+								}
+
+								if( bandMembers.Any()) {
+									artistBio.SetMetadata( eMetadataType.BandMembers, bandMembers );
 								}
 								else {
 									artistBio.ClearMetadata( eMetadataType.BandMembers );
 								}
 
-								var artistReleases = client.GetArtistReleases( result.Id );
+								var artistReleases = await discogsClient.GetArtistReleases( result.Id );
 								if( artistReleases != null ) {
 									discography.Discography.Clear();
 
-									foreach( var release in artistReleases.Releases ) {
+									foreach( var release in artistReleases ) {
 										var releaseType = DiscographyReleaseType.Other;
 
 										if( String.Compare(release.Role, "Main", StringComparison.OrdinalIgnoreCase) == 0 ) {
@@ -82,8 +91,8 @@ namespace Noise.Metadata.MetadataProviders {
 
 
 								if(( discogsArtist.Urls != null ) &&
-								   ( discogsArtist.Urls.GetLength( 0 ) > 0 ) &&
-								   ( !string.IsNullOrWhiteSpace( discogsArtist.Urls[0] ))) {
+									( discogsArtist.Urls.GetLength( 0 ) > 0 ) &&
+									( !string.IsNullOrWhiteSpace( discogsArtist.Urls[0] ))) {
 									var url = discogsArtist.Urls[0];
 
 									artistBio.SetMetadata( eMetadataType.WebSite, url.Replace( Environment.NewLine, "" ).Replace( "\n", "" ).Replace( "\r", "" ));
@@ -99,7 +108,7 @@ namespace Noise.Metadata.MetadataProviders {
 					}
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( string.Format( "Discogs failed for artist: {0}", artistName ), ex );
+					NoiseLogger.Current.LogException( string.Format( "Discogs search failed for artist: {0}", artistName ), ex );
 				}
 			}
 		}
