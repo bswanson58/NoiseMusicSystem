@@ -16,6 +16,7 @@ namespace Noise.Metadata.ArtistMetadata {
 
 		private readonly IEventAggregator						mEventAggregator;
 		private readonly ILicenseManager						mLicenseManager;
+		private readonly IDatabaseInfo							mDatabaseInfo;
 		private readonly IArtistProvider						mArtistProvider;
 		private readonly IRecurringTaskScheduler				mTaskScheduler;
 		private readonly IEnumerable<IArtistMetadataProvider>	mProviders; 
@@ -24,10 +25,11 @@ namespace Noise.Metadata.ArtistMetadata {
 		private IEnumerable<string>								mUpdateList;
 		private IEnumerator<string>								mUpdateEnumerator;
 
-		public ArtistMetadataUpdater( IEventAggregator eventAggregator, ILicenseManager licenseManager, IArtistProvider artistProvider,
+		public ArtistMetadataUpdater( IEventAggregator eventAggregator, ILicenseManager licenseManager, IDatabaseInfo databaseInfo, IArtistProvider artistProvider,
 									  IRecurringTaskScheduler taskScheduler, IEnumerable<IArtistMetadataProvider> providers  ) {
 			mEventAggregator = eventAggregator;
 			mLicenseManager = licenseManager;
+			mDatabaseInfo = databaseInfo;
 			mArtistProvider = artistProvider;
 			mTaskScheduler = taskScheduler;
 			mProviders = providers;
@@ -96,9 +98,11 @@ namespace Noise.Metadata.ArtistMetadata {
 		}
 
 		private void FillUpdateList() {
-			mUpdateList = ( from artist in mArtistProvider.GetArtistList().List select artist.Name ).ToArray();
+			if( mDatabaseInfo.IsOpen ) {
+				mUpdateList = ( from artist in mArtistProvider.GetArtistList().List select artist.Name ).ToArray();
 
-			mUpdateEnumerator = mUpdateList.GetEnumerator();
+				mUpdateEnumerator = mUpdateList.GetEnumerator();
+			}
 		}
 
 		private void UpdateNextArtist( RecurringTask task ) {
