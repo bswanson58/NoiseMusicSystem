@@ -56,24 +56,11 @@
 						<ColumnDefinition />
 					</Grid.ColumnDefinitions>
 					<GroupBox Grid.Column="0"
-							  Margin="0"
-							  BorderBrush="{DynamicResource TrimColor}"
-							  BorderThickness="1"
-							  Header=" Top Albums ">
-						<ListBox BorderThickness="0" ItemsSource="{Binding TopAlbums}">
-							<ListBox.ItemTemplate>
-								<DataTemplate>
-									<Controls:LinkLabel Content="{Binding DisplayText}"
-														IsEnabled="{Binding IsLinked}"
-														LinkLabelBehavior="HoverUnderline"
-														Padding="0">
-										<EventCommandTriggers:CommandSource.Trigger>
-											<EventCommandTriggers:EventCommandTrigger Command="{Binding LinkClicked}" RoutedEvent="Controls:LinkLabel.Click" />
-										</EventCommandTriggers:CommandSource.Trigger>
-									</Controls:LinkLabel>
-								</DataTemplate>
-							</ListBox.ItemTemplate>
-						</ListBox>
+                              Margin="0"
+                              BorderBrush="{DynamicResource TrimColor}"
+                              BorderThickness="1"
+                              Header=" Band Members ">
+						<ListBox BorderThickness="0"  ItemsSource="{Binding BandMembers}"/>
 					</GroupBox>
 					<GroupBox Grid.Column="1"
 							  Margin="3,0,0,0"

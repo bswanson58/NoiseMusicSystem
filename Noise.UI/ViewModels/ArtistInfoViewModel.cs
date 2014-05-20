@@ -140,7 +140,12 @@ namespace Noise.UI.ViewModels {
 									ArtistBiography = info.GetMetadata( eMetadataType.Biography );
 
 									mBandMembers.Clear();
-									mBandMembers.AddRange( info.GetMetadataArray( eMetadataType.BandMembers ));
+									// current members
+									mBandMembers.AddRange( from m in info.GetMetadataArray( eMetadataType.BandMembers ) where !m.StartsWith( "-" ) && !m.StartsWith( "(" ) orderby m select m );
+									// other groups
+									mBandMembers.AddRange( from m in info.GetMetadataArray( eMetadataType.BandMembers ) where m.StartsWith( "(" ) orderby m select m );
+									// past members
+									mBandMembers.AddRange( from m in info.GetMetadataArray( eMetadataType.BandMembers ) where m.StartsWith( "-" ) orderby m select m );
 
 									mTopAlbums.Clear();
 									mTopAlbums.AddRange( info.GetMetadataArray( eMetadataType.TopAlbums ).Select( item => new LinkNode( item )));
