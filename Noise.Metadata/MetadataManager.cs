@@ -8,6 +8,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Interfaces;
 using Raven.Abstractions.Smuggler;
 using Raven.Client;
+using Raven.Client.Document;
 using Raven.Client.Embedded;
 using Raven.Database.Smuggler;
 
@@ -41,6 +42,7 @@ namespace Noise.Metadata {
 #endif
 				var libraryPath = Path.Combine( mNoiseEnvironment.LibraryDirectory(), metaDirectory );
 				mDocumentStore = new EmbeddableDocumentStore { DataDirectory = libraryPath };
+				mDocumentStore.Conventions.DefaultQueryingConsistency = ConsistencyOptions.AlwaysWaitForNonStaleResultsAsOfLastWrite;
 /*
 				try {
 					( mDocumentStore as EmbeddableDocumentStore ).UseEmbeddedHttpServer = true;

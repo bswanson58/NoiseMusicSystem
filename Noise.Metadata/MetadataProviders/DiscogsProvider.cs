@@ -105,6 +105,12 @@ namespace Noise.Metadata.MetadataProviders {
 								NoiseLogger.Current.LogMessage( "Discogs updated artist: {0}", artistName );
 							}
 						}
+						else {
+							NoiseLogger.Current.LogMessage( string.Format( "Discogs search did not locate an artsit: {0}", artistName ));
+						}
+					}
+					else {
+						NoiseLogger.Current.LogMessage( string.Format( "Discogs search failed for: {0}", artistName ));
 					}
 				}
 				catch( Exception ex ) {
