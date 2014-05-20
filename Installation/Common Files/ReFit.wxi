@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<DirectoryRef Id="INSTALLDIRECTORY">
+		<Component Id="Refit.dll" Guid="adc12d70-7339-4555-981c-880cf7323d49">
+			<File Id="Refit.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Refit.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="RefitPortable.dll" Guid="107e4019-a302-4dfc-a5e9-eb3db167d7eb">
+			<File Id="RefitPortable.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Refit-Portable.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="Castle.Core.dll" Guid="6c41c674-736f-4c07-8e8b-d6d65e306033">
+			<File Id="Castle.Core.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Castle.Core.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+	</DirectoryRef>
+
+	<ComponentGroup Id="RefitFiles">
+		<ComponentRef Id="Refit.dll" />
+		<ComponentRef Id="RefitPortable.dll" />
+		<ComponentRef Id="Castle.Core.dll" />
+	</ComponentGroup>
+</Include>

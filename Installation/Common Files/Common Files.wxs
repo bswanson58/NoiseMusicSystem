@@ -23,6 +23,7 @@
 		<?include Prism.wxi ?>
 		<?include RavenDB.wxi ?>
 		<?include recls.wxi ?>
+		<?include Refit.wxi ?>
 		<?include ReplayGain.wxi ?>
 		<?include Stateless.wxi ?>
 		<?include TagLibSharp.wxi ?>

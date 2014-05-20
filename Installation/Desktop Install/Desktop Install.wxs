@@ -166,6 +166,7 @@
 				<ComponentGroupRef Id="PrismFiles"/>
 				<ComponentGroupRef Id="RavenDBFiles"/>
 				<ComponentGroupRef Id="ReclsFiles"/>
+				<ComponentGroupRef Id="RefitFiles"/>
 				<ComponentGroupRef Id="ReplayGainFiles"/>
 				<ComponentGroupRef Id="StatelessFiles"/>
 				<ComponentGroupRef Id="TagLibSharpFiles"/>

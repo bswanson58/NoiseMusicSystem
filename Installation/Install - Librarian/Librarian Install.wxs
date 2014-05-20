@@ -129,6 +129,7 @@
 			<ComponentGroupRef Id="GongSolutionsFiles"/>
 			<ComponentGroupRef Id="MahAppsMetroFiles"/>
 			<ComponentGroupRef Id="ObservalFiles"/>
+			<ComponentGroupRef Id="RefitFiles"/>
 			<ComponentGroupRef Id="ReplayGainFiles"/>
 			<ComponentGroupRef Id="StatelessFiles"/>
 			<ComponentGroupRef Id="TagLibSharpFiles"/>

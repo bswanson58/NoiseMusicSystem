@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
   <DirectoryRef Id="INSTALLDIRECTORY">
-    <Component Id="DiscogsNet" Guid="47292281-f977-4f6a-9e81-18881c661045">
-      <File Id="DiscogsNet.dll" DiskId="10" Source="$(var.DiscogsNet.TargetPath)" KeyPath="yes" Checksum="yes" />
-    </Component>
     <Component Id="Noise.AppSupport" Guid="b8941cb2-e1f1-42ef-be6d-b9ec5b1537d7">
       <File Id="Noise.AppSupport.dll" DiskId="10" Source="$(var.Noise.AppSupport.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
@@ -49,7 +46,6 @@
   </DirectoryRef>
 
   <ComponentGroup Id="CoreFiles">
-    <ComponentRef Id="DiscogsNet" />
     <ComponentRef Id="Noise.AppSupport" />
     <ComponentRef Id="Noise.AudioSupport" />
     <ComponentRef Id="Noise.BlobStorage" />
