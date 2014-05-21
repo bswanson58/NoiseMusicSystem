@@ -55,10 +55,9 @@
 		<!-- Installed Files -->
 		<DirectoryRef Id="INSTALLDIRECTORY">
 			<Component Id="Noise.Headless.exe" Guid="a08274ac-a6be-4019-9ebf-a7770e636c62">
-				<File Id="Noise.Headless.exe" DiskId="1" Source="$(var.Noise.Headless.TargetPath)" KeyPath="yes" Checksum="yes" >
-					<fire:FirewallException Id="Service.Firewall.Exception" Name="Noise Music System Service" Description="Noise Music System support for remote clients."
-											Port="73" Protocol="tcp" Scope="localSubnet"/>
-				</File>
+				<File Id="Noise.Headless.exe" DiskId="1" Source="$(var.Noise.Headless.TargetPath)" KeyPath="yes" Checksum="yes" />
+				<fire:FirewallException Id="Service.Firewall.Exception" Name="Noise Music System Service" Description="Noise Music System support for remote clients."
+										Port="73" Protocol="tcp" Scope="localSubnet"/>
 				<ServiceInstall Id="ServiceInstall" Type="ownProcess" Vital="yes" Name="NoiseMusicService"
 								DisplayName="Noise Music System Service"
 								Description="This service support remote Noise Music System clients."
@@ -129,7 +128,7 @@
 					  ExeCommand="[SystemFolder]netsh.exe http delete urlacl url=http://+:73/Noise" />
 
 		<InstallExecuteSequence>
-			<Custom Action="ListenerServiceAddReservation" After="InstallInitialize">NOT Installed</Custom>
+			<Custom Action="ListenerServiceAddReservation" Before="StartServices">NOT Installed</Custom>
 			<Custom Action="ListenerServiceDeleteReservation" Before="InstallFinalize">Installed</Custom>
 		</InstallExecuteSequence>
 
