@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -24,32 +25,37 @@ namespace Noise.Core.PlaySupport {
 		}
 
 		public void Initialize() {
-			var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+			try {
+				var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
 
-			if( audioCongfiguration != null ) {
-				mAudioPlayer.EqEnabled = audioCongfiguration.EqEnabled;
-				mAudioPlayer.PreampVolume = audioCongfiguration.PreampGain;
-				mAudioPlayer.StereoEnhancerEnable = audioCongfiguration.StereoEnhancerEnabled;
-				mAudioPlayer.StereoEnhancerWidth = audioCongfiguration.StereoEnhancerWidth;
-				mAudioPlayer.StereoEnhancerWetDry = audioCongfiguration.StereoEnhancerWetDry;
-				mAudioPlayer.SoftSaturationEnable = audioCongfiguration.SoftSaturationEnabled;
-				mAudioPlayer.SoftSaturationFactor = audioCongfiguration.SoftSaturationFactor;
-				mAudioPlayer.SoftSaturationDepth = audioCongfiguration.SoftSaturationDepth;
-				mAudioPlayer.ReverbEnable = audioCongfiguration.ReverbEnabled;
-				mAudioPlayer.ReverbDelay = audioCongfiguration.ReverbDelay;
-				mAudioPlayer.ReverbLevel = audioCongfiguration.ReverbLevel;
-				mAudioPlayer.TrackOverlapEnable = audioCongfiguration.TrackOverlapEnabled;
-				mAudioPlayer.TrackOverlapMilliseconds = audioCongfiguration.TrackOverlapMilliseconds;
-			}
+				if( audioCongfiguration != null ) {
+					mAudioPlayer.EqEnabled = audioCongfiguration.EqEnabled;
+					mAudioPlayer.PreampVolume = audioCongfiguration.PreampGain;
+					mAudioPlayer.StereoEnhancerEnable = audioCongfiguration.StereoEnhancerEnabled;
+					mAudioPlayer.StereoEnhancerWidth = audioCongfiguration.StereoEnhancerWidth;
+					mAudioPlayer.StereoEnhancerWetDry = audioCongfiguration.StereoEnhancerWetDry;
+					mAudioPlayer.SoftSaturationEnable = audioCongfiguration.SoftSaturationEnabled;
+					mAudioPlayer.SoftSaturationFactor = audioCongfiguration.SoftSaturationFactor;
+					mAudioPlayer.SoftSaturationDepth = audioCongfiguration.SoftSaturationDepth;
+					mAudioPlayer.ReverbEnable = audioCongfiguration.ReverbEnabled;
+					mAudioPlayer.ReverbDelay = audioCongfiguration.ReverbDelay;
+					mAudioPlayer.ReverbLevel = audioCongfiguration.ReverbLevel;
+					mAudioPlayer.TrackOverlapEnable = audioCongfiguration.TrackOverlapEnabled;
+					mAudioPlayer.TrackOverlapMilliseconds = audioCongfiguration.TrackOverlapMilliseconds;
+				}
 
-			if( mEqManager.Initialize( Path.Combine( mNoiseEnvironment.ConfigurationDirectory(), Constants.EqPresetsFile ))) {
-				mAudioPlayer.ParametricEq = mEqManager.CurrentEq;
-			}
-			else {
-				NoiseLogger.Current.LogMessage( "EqManager could not be initialized." );
-			}
+				if( mEqManager.Initialize( Path.Combine( mNoiseEnvironment.ConfigurationDirectory(), Constants.EqPresetsFile ))) {
+					mAudioPlayer.ParametricEq = mEqManager.CurrentEq;
+				}
+				else {
+					NoiseLogger.Current.LogMessage( "EqManager could not be initialized." );
+				}
 
-			mEventAggregator.Subscribe( this );
+				mEventAggregator.Subscribe( this );
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "AudioController:Initialize", ex );
+			}
 		}
 
 		public void Shutdown() { }

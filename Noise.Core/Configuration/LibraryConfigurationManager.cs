@@ -35,12 +35,6 @@ namespace Noise.Core.Configuration {
 		public void Initialize() {
 			LoadLibraries();
 
-//			if(!mLibraries.Any()) {
-//				var defaultLibrary = new LibraryConfiguration { LibraryName = "Noise", DatabaseName = "Noise", IsDefaultLibrary = true };
-
-//				AddLibrary( defaultLibrary );
-//			}
-
 			mEventAggregator.Publish( new Events.LibraryConfigurationLoaded( this ));
 		}
 

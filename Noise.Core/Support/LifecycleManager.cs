@@ -27,7 +27,7 @@ namespace Noise.Core.Support {
 					module.Initialize();
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "LifecycleManager:Initialize", ex );	
+					NoiseLogger.Current.LogException( string.Format( "LifecycleManager:Initialize of :{0}", module.GetType()), ex );	
 				}
 			}
 

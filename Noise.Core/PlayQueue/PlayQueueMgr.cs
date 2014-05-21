@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
@@ -60,7 +61,12 @@ namespace Noise.Core.PlayQueue {
 
 		public void Initialize() {
 			foreach( var supporter in mPlayQueueSupporters ) {
-				supporter.Initialize( this );
+				try {
+					supporter.Initialize( this );
+				}
+				catch( Exception ex ) {
+					NoiseLogger.Current.LogException( string.Format( "PlayQueueManager initializing queue supporter: {0}", supporter.GetType()), ex );
+				}
 			}
 
 			mTrackPlayCommand = new AsyncCommand<DbTrack>( OnTrackPlayCommand );

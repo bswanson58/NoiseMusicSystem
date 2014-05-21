@@ -77,106 +77,111 @@ namespace Noise.Core.PlaySupport {
 		}
 
 		public void Initialize() {
-			mSampleLevels = new AudioLevels();
-			mCurrentPosition = new TimeSpan();
-			mCurrentLength = new TimeSpan( 1 );
+			try {
+				mSampleLevels = new AudioLevels();
+				mCurrentPosition = new TimeSpan();
+				mCurrentLength = new TimeSpan( 1 );
 
-			mPlayStatusDispose = mAudioPlayer.ChannelStatusChange.Subscribe( OnPlayStatusChanged );
-			mAudioLevelsDispose = mAudioPlayer.AudioLevelsChange.Subscribe( OnAudioLevelsChanged );
-			mStreamInfoDispose = mAudioPlayer.AudioStreamInfoChange.Subscribe( OnStreamInfo );
+				mPlayStatusDispose = mAudioPlayer.ChannelStatusChange.Subscribe( OnPlayStatusChanged );
+				mAudioLevelsDispose = mAudioPlayer.AudioLevelsChange.Subscribe( OnAudioLevelsChanged );
+				mStreamInfoDispose = mAudioPlayer.AudioStreamInfoChange.Subscribe( OnStreamInfo );
 
-			mEventAggregator.Subscribe( this );
+				mEventAggregator.Subscribe( this );
 
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-			if( configuration != null ) {
-				mDisplayTimeElapsed = configuration.DisplayPlayTimeElapsed;
+				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+				if( configuration != null ) {
+					mDisplayTimeElapsed = configuration.DisplayPlayTimeElapsed;
+				}
+
+				var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+				if( audioCongfiguration != null ) {
+					mEnableReplayGain = audioCongfiguration.ReplayGainEnabled;
+				}
+
+				mPlayStateController = new StateMachine<ePlayState, eStateTriggers>( () => PlayState, newState => PlayState = newState );
+				CurrentStatus = ePlaybackStatus.Stopped;
+
+				mPlayStateController.OnUnhandledTrigger( ( state, trigger ) => { } );
+
+				mPlayStateController.Configure( ePlayState.StoppedEmptyQueue )
+					.OnEntry( StopPlay )
+					.Permit( eStateTriggers.QueueTrackAdded, ePlayState.StartPlaying );
+
+				mPlayStateController.Configure( ePlayState.Stopping )
+					.OnEntry( StopPlay )
+					.Permit( eStateTriggers.PlayerStopped, ePlayState.Stopped )
+					.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
+					.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
+
+				mPlayStateController.Configure( ePlayState.Stopped )
+					.Permit( eStateTriggers.UiPlay, ePlayState.StartPlaying )
+					.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
+					.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
+
+				mPlayStateController.Configure( ePlayState.StartPlaying )
+					.OnEntry( StartPlaying )
+					.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
+					.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
+					.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped )
+					.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
+
+				mPlayStateController.Configure( ePlayState.Playing )
+					.Permit( eStateTriggers.PlayerStopped, ePlayState.PlayNext )
+					.Permit( eStateTriggers.UiStop, ePlayState.Stopping )
+					.Permit( eStateTriggers.UiPause, ePlayState.Pausing )
+					.Permit( eStateTriggers.UiPlayNext, ePlayState.PlayNext )
+					.Permit( eStateTriggers.UiPlayPrevious, ePlayState.PlayPrevious )
+					.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
+					.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
+
+				mPlayStateController.Configure( ePlayState.PlayNext )
+					.OnEntry( PlayNext )
+					.PermitReentry( eStateTriggers.UiPlayNext )
+					.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
+					.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped )
+					.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
+
+				mPlayStateController.Configure( ePlayState.Pausing )
+					.OnEntry( PausePlay )
+					.PermitReentry( eStateTriggers.PlayerPlaying )
+					.Permit( eStateTriggers.PlayerPaused, ePlayState.Paused )
+					.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
+					.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
+
+				mPlayStateController.Configure( ePlayState.Paused )
+					.Permit( eStateTriggers.PlayerPlaying, ePlayState.Pausing )
+					.Permit( eStateTriggers.PlayerStopped, ePlayState.Stopped )
+					.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
+					.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay )
+					.Permit( eStateTriggers.UiPlay, ePlayState.Resuming )
+					.Permit( eStateTriggers.UiPlayNext, ePlayState.PlayNext )
+					.Permit( eStateTriggers.UiPlayPrevious, ePlayState.PlayPrevious )
+					.Permit( eStateTriggers.UiStop, ePlayState.Stopping );
+
+				mPlayStateController.Configure( ePlayState.Resuming )
+					.OnEntry( ResumePlay )
+					.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
+					.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
+					.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay )
+					.Permit( eStateTriggers.UiPause, ePlayState.Pausing )
+					.Permit( eStateTriggers.UiPlayNext, ePlayState.PlayNext )
+					.Permit( eStateTriggers.UiPlayPrevious, ePlayState.PlayPrevious )
+					.Permit( eStateTriggers.UiStop, ePlayState.Stopping );
+
+				mPlayStateController.Configure( ePlayState.PlayPrevious )
+					.OnEntry( PlayPrevious )
+					.PermitReentry( eStateTriggers.UiPlayPrevious )
+					.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
+					.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped )
+					.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
+
+				mPlayStateController.Configure( ePlayState.ExternalPlay )
+					.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
+					.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped );
 			}
-
-			var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
-			if( audioCongfiguration != null ) {
-				mEnableReplayGain = audioCongfiguration.ReplayGainEnabled;
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "PlayController:Initialize", ex );
 			}
-
-			mPlayStateController = new StateMachine<ePlayState, eStateTriggers>( () => PlayState, newState => PlayState = newState );
-			CurrentStatus = ePlaybackStatus.Stopped;
-
-			mPlayStateController.OnUnhandledTrigger( ( state, trigger ) => { } );
-
-			mPlayStateController.Configure( ePlayState.StoppedEmptyQueue )
-				.OnEntry( StopPlay )
-				.Permit( eStateTriggers.QueueTrackAdded, ePlayState.StartPlaying );
-
-			mPlayStateController.Configure( ePlayState.Stopping )
-				.OnEntry( StopPlay )
-				.Permit( eStateTriggers.PlayerStopped, ePlayState.Stopped )
-				.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
-
-			mPlayStateController.Configure( ePlayState.Stopped )
-				.Permit( eStateTriggers.UiPlay, ePlayState.StartPlaying )
-				.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
-
-			mPlayStateController.Configure( ePlayState.StartPlaying )
-				.OnEntry( StartPlaying )
-				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
-				.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
-				.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
-
-			mPlayStateController.Configure( ePlayState.Playing )
-				.Permit( eStateTriggers.PlayerStopped, ePlayState.PlayNext )
-				.Permit( eStateTriggers.UiStop, ePlayState.Stopping )
-				.Permit( eStateTriggers.UiPause, ePlayState.Pausing )
-				.Permit( eStateTriggers.UiPlayNext, ePlayState.PlayNext )
-				.Permit( eStateTriggers.UiPlayPrevious, ePlayState.PlayPrevious )
-				.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
-
-			mPlayStateController.Configure( ePlayState.PlayNext )
-				.OnEntry( PlayNext )
-				.PermitReentry( eStateTriggers.UiPlayNext )
-				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
-				.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
-
-			mPlayStateController.Configure( ePlayState.Pausing )
-				.OnEntry( PausePlay )
-				.PermitReentry( eStateTriggers.PlayerPlaying )
-				.Permit( eStateTriggers.PlayerPaused, ePlayState.Paused )
-				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
-
-			mPlayStateController.Configure( ePlayState.Paused )
-				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Pausing )
-				.Permit( eStateTriggers.PlayerStopped, ePlayState.Stopped )
-				.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay )
-				.Permit( eStateTriggers.UiPlay, ePlayState.Resuming )
-				.Permit( eStateTriggers.UiPlayNext, ePlayState.PlayNext )
-				.Permit( eStateTriggers.UiPlayPrevious, ePlayState.PlayPrevious )
-				.Permit( eStateTriggers.UiStop, ePlayState.Stopping );
-
-			mPlayStateController.Configure( ePlayState.Resuming )
-				.OnEntry( ResumePlay )
-				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
-				.Permit( eStateTriggers.QueueCleared, ePlayState.StoppedEmptyQueue )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay )
-				.Permit( eStateTriggers.UiPause, ePlayState.Pausing )
-				.Permit( eStateTriggers.UiPlayNext, ePlayState.PlayNext )
-				.Permit( eStateTriggers.UiPlayPrevious, ePlayState.PlayPrevious )
-				.Permit( eStateTriggers.UiStop, ePlayState.Stopping );
-
-			mPlayStateController.Configure( ePlayState.PlayPrevious )
-				.OnEntry( PlayPrevious )
-				.PermitReentry( eStateTriggers.UiPlayPrevious )
-				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
-				.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped )
-				.Permit( eStateTriggers.ExternalPlay, ePlayState.ExternalPlay );
-
-			mPlayStateController.Configure( ePlayState.ExternalPlay )
-				.Permit( eStateTriggers.PlayerPlaying, ePlayState.Playing )
-				.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped );
 		}
 
 		public void Shutdown() { }
