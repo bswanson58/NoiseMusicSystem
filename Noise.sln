@@ -49,8 +49,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BundlerUi", "Installation\B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.AudioSupport", "Noise.AudioSupport\Noise.AudioSupport.csproj", "{19DBA418-08C1-4A02-BB7A-2D83A416C6A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscogsNet", "DiscogsNet\DiscogsNet.csproj", "{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}"
-EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Install - Headless", "Installation\Install - Headless\Install - Headless.wixproj", "{5AF0E619-1A1E-41EB-B120-37F5CB51A6CF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Headless", "Noise.Headless\Noise.Headless.csproj", "{8AF36109-6D52-4B28-9699-2B27A751A0A4}"
@@ -579,26 +577,6 @@ Global
 		{19DBA418-08C1-4A02-BB7A-2D83A416C6A2}.Release|x64.Build.0 = Release|x64
 		{19DBA418-08C1-4A02-BB7A-2D83A416C6A2}.Release|x86.ActiveCfg = Release|x86
 		{19DBA418-08C1-4A02-BB7A-2D83A416C6A2}.Release|x86.Build.0 = Release|x86
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Installers - Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Installers - Release|Any CPU.Build.0 = Release|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Installers - Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Installers - Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Installers - Release|x64.ActiveCfg = Release|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Installers - Release|x64.Build.0 = Release|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Installers - Release|x86.ActiveCfg = Release|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Installers - Release|x86.Build.0 = Release|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Release|x64.ActiveCfg = Release|Any CPU
-		{1B087A97-C17A-4F75-80B1-8CC1FBFE90FB}.Release|x86.ActiveCfg = Release|Any CPU
 		{5AF0E619-1A1E-41EB-B120-37F5CB51A6CF}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{5AF0E619-1A1E-41EB-B120-37F5CB51A6CF}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{5AF0E619-1A1E-41EB-B120-37F5CB51A6CF}.Debug|Mixed Platforms.Build.0 = Debug|x86
