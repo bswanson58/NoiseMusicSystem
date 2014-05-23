@@ -4,12 +4,16 @@ using Newtonsoft.Json;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.AppSupport {
+namespace Noise.AppSupport.Preferences {
 	public class PreferencesManager : IPreferences {
 		private readonly INoiseEnvironment	mEnvironment;
 
 		public PreferencesManager( INoiseEnvironment noiseEnvironment ) {
 			mEnvironment = noiseEnvironment;
+		}
+
+		protected virtual T CreateDefault<T>() {
+			return( Activator.CreateInstance<T>());
 		}
 
 		public T Load<T>() where T : new() {
@@ -28,7 +32,7 @@ namespace Noise.AppSupport {
 			}
 
 			if( Equals( retValue, default( T ))) {
-				retValue = new T();
+				retValue = CreateDefault<T>();
 			}
 
 			return( retValue );
