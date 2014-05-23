@@ -37,6 +37,9 @@ namespace Noise.Infrastructure {
 		public const string				SearchDatabaseBackupName = "Search Database.bak";
 		public const string				MetadataDirectory = "Metadata";
 		public const string				MetadataBackupName = "Metadata.bak";
+		public const string				DesktopPreferencesDirectory = "Desktop";
+		public const string				HeadlessPreferencesDirectory = "Headless";
+		public const string				TenFootPreferencesDirectory = "TenFoot";
 
 		public const string				Id3FrameUserName = "Noise Music System";
 		public const string				FavoriteFrameDescription = "Noise Music System - Favorite Track Flag";

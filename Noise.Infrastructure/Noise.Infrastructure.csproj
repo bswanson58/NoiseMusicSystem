@@ -258,6 +258,7 @@
     <Compile Include="Interfaces\IPlayHistoryProvider.cs" />
     <Compile Include="Interfaces\IPlayListProvider.cs" />
     <Compile Include="Interfaces\IPlayQueue.cs" />
+    <Compile Include="Interfaces\IPreferences.cs" />
     <Compile Include="Interfaces\IRandomTrackSelector.cs" />
     <Compile Include="Interfaces\IReplayGainScanner.cs" />
     <Compile Include="Interfaces\IRequireInitialization.cs" />

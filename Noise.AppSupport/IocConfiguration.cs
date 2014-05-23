@@ -6,6 +6,7 @@ using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Noise.AudioSupport;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteHost;
 using Noise.Metadata;
@@ -35,7 +36,7 @@ namespace Noise.AppSupport {
 
 		public bool InitializeIoc( ApplicationUsage appUsage ) {
 			mContainer.RegisterType<IIoc, IocProvider>( new ContainerControlledLifetimeManager());
-			mContainer.RegisterType<INoiseEnvironment, NoiseEnvironment>();
+			mContainer.RegisterType<IPreferences, PreferencesManager>( new HierarchicalLifetimeManager());
 
 #if DEBUG
 			const int portOffset = 10;
@@ -45,7 +46,9 @@ namespace Noise.AppSupport {
 
 			switch( appUsage ) {
 				case ApplicationUsage.Desktop:
+				case ApplicationUsage.Librarian:
 					mContainer.RegisterInstance( new RemoteHostConfiguration( 71 + portOffset, "Noise Desktop System" ));
+					mContainer.RegisterInstance<INoiseEnvironment>( new NoiseEnvironment( Constants.DesktopPreferencesDirectory ));
 
 					break;
 
@@ -53,11 +56,13 @@ namespace Noise.AppSupport {
 					InitializeUnity();
 
 					mContainer.RegisterInstance( new RemoteHostConfiguration( 73 + portOffset, "Noise Headless Service" ));
+					mContainer.RegisterInstance<INoiseEnvironment>( new NoiseEnvironment( Constants.HeadlessPreferencesDirectory ));
 
 					break;
 
 				case ApplicationUsage.TenFootUi:
 					mContainer.RegisterInstance( new RemoteHostConfiguration( 72 + portOffset, "Noise TenFoot System" ));
+					mContainer.RegisterInstance<INoiseEnvironment>( new NoiseEnvironment( Constants.TenFootPreferencesDirectory ));
 
 					break;
 			}

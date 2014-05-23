@@ -5,6 +5,12 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport {
 	public class NoiseEnvironment : INoiseEnvironment {
+		private readonly string		mApplicationName;
+
+		public NoiseEnvironment( string applicationName ) {
+			mApplicationName = applicationName;
+		}
+
 		public string ApplicationDirectory() {
 			var retValue = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData ),
 										 Constants.CompanyName,
@@ -39,6 +45,16 @@ namespace Noise.AppSupport {
 
 		public string ConfigurationDirectory() {
 			var retValue = Path.Combine( ApplicationDirectory(), Constants.ConfigurationDirectory );
+
+			if(!Directory.Exists( retValue )) {
+				Directory.CreateDirectory( retValue );
+			}
+
+			return( retValue );
+		}
+
+		public string PreferencesDirectory() {
+			var retValue = Path.Combine( ApplicationDirectory(), Constants.ConfigurationDirectory, mApplicationName );
 
 			if(!Directory.Exists( retValue )) {
 				Directory.CreateDirectory( retValue );
