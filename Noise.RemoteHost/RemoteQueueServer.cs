@@ -285,16 +285,11 @@ namespace Noise.RemoteHost {
 			var retValue = new BaseResult();
 
 			try {
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
 				var playStrategy = mPlayStrategyFactory.AvailableStrategies.FirstOrDefault( strategy => strategy.StrategyId == (ePlayStrategy)playStrategyId );
 				if( playStrategy != null ) {
 					var playParameters = new PlayStrategyParameterDbId( ePlayExhaustedStrategy.PlayArtist ) { DbItemId = playStrategyParameter };
 
 					mPlayQueue.SetPlayStrategy( playStrategy.StrategyId, playParameters );
-
-					configuration.PlayStrategy = playStrategy.StrategyId;
-					configuration.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( playParameters );
 				}
 
 				var exhaustedStrategy = mPlayExhaustedFactory.AvailableStrategies.FirstOrDefault( strategy => strategy.StrategyId == (ePlayExhaustedStrategy)exhaustedStrategyId );
@@ -302,12 +297,7 @@ namespace Noise.RemoteHost {
 					var exhaustedParameters = new PlayStrategyParameterDbId( exhaustedStrategy.StrategyId ) { DbItemId = exhaustedStrategyParameter };
 	
 					mPlayQueue.SetPlayExhaustedStrategy( exhaustedStrategy.StrategyId, exhaustedParameters );
-
-					configuration.PlayExhaustedStrategy = exhaustedStrategy.StrategyId;
-					configuration.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( exhaustedParameters );
 				}
-
-				NoiseSystemConfiguration.Current.Save( configuration );
 
 				retValue.Success = true;
 			}

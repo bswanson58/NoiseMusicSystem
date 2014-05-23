@@ -11,13 +11,15 @@ using ReusableBits;
 namespace Noise.Core.PlayHistory {
 	public class PlayScrobbler : IScrobbler, IRequireInitialization {
 		private readonly ILicenseManager	mLicenseManager;
+		private readonly IPreferences		mPreferences;
 		private Scrobbler					mScrobbler;
 		private bool						mEnablePlaybackScrobbling;
 		private Track						mNowPlayingTrack;
 		private TaskHandler					mScrobblerTaskHandler;
 
-		public PlayScrobbler( ILifecycleManager lifecycleManager, ILicenseManager licenseManager ) {
+		public PlayScrobbler( ILifecycleManager lifecycleManager, ILicenseManager licenseManager, IPreferences preferences ) {
 			mLicenseManager = licenseManager;
+			mPreferences = preferences;
 
 			lifecycleManager.RegisterForInitialize( this );
 			lifecycleManager.RegisterForShutdown( this );
@@ -86,20 +88,19 @@ namespace Noise.Core.PlayHistory {
 
 		public void Initialize() {
 			try {
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-				if( configuration != null ) {
-					mEnablePlaybackScrobbling = configuration.HasNetworkAccess && configuration.EnablePlaybackScrobbling;
+				var preferences = mPreferences.Load<NoiseCorePreferences>();
 
-					var key = mLicenseManager.RetrieveKey( LicenseKeys.LastFm );
+				mEnablePlaybackScrobbling = preferences.HasNetworkAccess && preferences.EnablePlaybackScrobbling;
 
-					Condition.Requires( key ).IsNotNull();
+				var key = mLicenseManager.RetrieveKey( LicenseKeys.LastFm );
 
-					if(( mEnablePlaybackScrobbling ) &&
-					   ( key != null )) {
-						mScrobbler = new Scrobbler( key.Name, key.Key, "011da8bae3b980f1a794fb6eb10b0570" );
-						if(!mScrobbler.HasSession ) {
-							NoiseLogger.Current.LogInfo( "Scrobbler session could not be created." );
-						}
+				Condition.Requires( key ).IsNotNull();
+
+				if(( mEnablePlaybackScrobbling ) &&
+					( key != null )) {
+					mScrobbler = new Scrobbler( key.Name, key.Key, "011da8bae3b980f1a794fb6eb10b0570" );
+					if(!mScrobbler.HasSession ) {
+						NoiseLogger.Current.LogInfo( "Scrobbler session could not be created." );
 					}
 				}
 

@@ -16,12 +16,15 @@ namespace Noise.Core.Configuration {
 
 		private readonly IEventAggregator			mEventAggregator;
 		private readonly INoiseEnvironment			mNoiseEnvironment;
+		private readonly IPreferences				mPreferences;
 		private	readonly List<LibraryConfiguration>	mLibraries;
 		private LibraryConfiguration				mCurrentLibrary;
 
-		public LibraryConfigurationManager( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, INoiseEnvironment noiseEnvironment ) {
+		public LibraryConfigurationManager( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
+											INoiseEnvironment noiseEnvironment, IPreferences preferences ) {
 			mEventAggregator = eventAggregator;
 			mNoiseEnvironment = noiseEnvironment;
+			mPreferences = preferences;
 			mLibraries = new List<LibraryConfiguration>();
 
 			lifecycleManager.RegisterForInitialize( this );
@@ -102,12 +105,10 @@ namespace Noise.Core.Configuration {
 
 				Current = configuration;
 
-				var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-				if( expConfig != null ) {
-					expConfig.LastLibraryUsed = Current.LibraryId;
+				var preferences = mPreferences.Load<NoiseCorePreferences>();
 
-					NoiseSystemConfiguration.Current.Save( expConfig );
-				}
+				preferences.LastLibraryUsed = Current.LibraryId;
+				mPreferences.Save( preferences );
 			}
 		}
 

@@ -10,12 +10,13 @@ using ReusableBits.Mvvm.CaliburnSupport;
 
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
-		private	readonly IEventAggregator			mEvents;
-		private readonly ILifecycleManager			mLifecycleManager;
-		private readonly IRemoteServer				mRemoteServer;
-		private readonly ICloudSyncManager			mCloudSyncMgr;
-		private readonly ILibraryBuilder			mLibraryBuilder;
-		private readonly IDatabaseManager			mDatabaseManager;
+		private	readonly IEventAggregator		mEvents;
+		private readonly ILifecycleManager		mLifecycleManager;
+		private readonly IPreferences			mPreferences;
+		private readonly IRemoteServer			mRemoteServer;
+		private readonly ICloudSyncManager		mCloudSyncMgr;
+		private readonly ILibraryBuilder		mLibraryBuilder;
+		private readonly IDatabaseManager		mDatabaseManager;
 
 		public NoiseManager( IEventAggregator eventAggregator,
 							 ILifecycleManager lifecycleManager,
@@ -23,6 +24,7 @@ namespace Noise.Core {
 							 ICloudSyncManager cloudSyncManager,
 							 ILibraryBuilder libraryBuilder,
 							 IRemoteServer remoteServer,
+							 IPreferences preferences,
 							 // components that just need to be referrenced.
 							 IAudioController audioController,
 							 IPlayController playController,
@@ -36,6 +38,7 @@ namespace Noise.Core {
 			mDatabaseManager = databaseManager;
 			mCloudSyncMgr = cloudSyncManager;
 			mLibraryBuilder = libraryBuilder;
+			mPreferences = preferences;
 		}
 
 		public async Task<bool> AsyncInitialize() {
@@ -73,9 +76,9 @@ namespace Noise.Core {
 					}
 				}
 
-				var sysConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-				if(( sysConfig != null ) &&
-				   ( sysConfig.EnableRemoteAccess )) {
+				var preferences = mPreferences.Load<NoiseCorePreferences>();
+
+				if( preferences.EnableRemoteAccess ) {
 					mRemoteServer.OpenRemoteServer();
 				}
 
@@ -102,18 +105,7 @@ namespace Noise.Core {
 		}
 
 		public void Handle( Events.DatabaseOpened arg ) {
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
-			if( configuration != null ) {
-				if( configuration.EnableLibraryExplorer ) {
-					mLibraryBuilder.StartLibraryUpdate();
-				}
-				else {
-					mLibraryBuilder.LogLibraryStatistics();
-				}
-
-				mLibraryBuilder.EnableUpdateOnLibraryChange = configuration.EnableLibraryChangeUpdates;
-			}
+			mLibraryBuilder.LogLibraryStatistics();
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {

@@ -57,10 +57,7 @@ namespace Noise.Core.FileStore {
 			mSetMp3TagsCommand.ExecutionComplete += OnExecutionComplete;
 			GlobalCommands.SetMp3Tags.RegisterCommand( mSetMp3TagsCommand );
 
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-			if( configuration != null ) {
-				mClearReadOnly = configuration.EnableReadOnlyUpdates;
-			}
+			mClearReadOnly = false;
 
 			var backgroundJob = new RecurringTask( ProcessUnfinishedCommands, cBackgroundFileUpdater );
 			backgroundJob.TaskSchedule.StartAt( RecurringInterval.FromMinutes( 1 )).Interval( RecurringInterval.FromMinutes( 1 ));

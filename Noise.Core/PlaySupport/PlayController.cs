@@ -36,6 +36,7 @@ namespace Noise.Core.PlaySupport {
 		private readonly IPlayQueue				mPlayQueue;
 		private readonly IPlayHistory			mPlayHistory;
 		private readonly IScrobbler				mScrobbler;
+		private readonly IPreferences			mPreferences;
 		private TimeSpan						mCurrentPosition;
 		private TimeSpan						mCurrentLength;
 		private bool							mDisplayTimeElapsed;
@@ -56,12 +57,13 @@ namespace Noise.Core.PlaySupport {
 
 		public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
 							   IPlayQueue playQueue, IPlayHistory playHistory, IScrobbler scrobbler,
-							   IAudioPlayer audioPlayer ) {
+							   IAudioPlayer audioPlayer, IPreferences preferences ) {
 			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
 			mPlayHistory = playHistory;
 			mScrobbler = scrobbler;
 			mAudioPlayer = audioPlayer;
+			mPreferences = preferences;
 
 			lifecycleManager.RegisterForInitialize( this );
 
@@ -88,10 +90,9 @@ namespace Noise.Core.PlaySupport {
 
 				mEventAggregator.Subscribe( this );
 
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-				if( configuration != null ) {
-					mDisplayTimeElapsed = configuration.DisplayPlayTimeElapsed;
-				}
+
+				var preferences = mPreferences.Load<NoiseCorePreferences>();
+				mDisplayTimeElapsed = preferences.DisplayPlayTimeElapsed;
 
 				var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
 				if( audioCongfiguration != null ) {
@@ -317,14 +318,6 @@ namespace Noise.Core.PlaySupport {
 
 				NoiseSystemConfiguration.Current.Save( audioCongfiguration );
 			}			
-
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
-			if( configuration != null ) {
-				configuration.DisplayPlayTimeElapsed = mDisplayTimeElapsed;
-
-				NoiseSystemConfiguration.Current.Save( configuration );
-			}
 		}
 
 		public ePlaybackStatus CurrentStatus {
@@ -695,6 +688,11 @@ namespace Noise.Core.PlaySupport {
 
 		public void ToggleTimeDisplay() {
 			mDisplayTimeElapsed = !mDisplayTimeElapsed;
+
+			var preferences = mPreferences.Load<NoiseCorePreferences>();
+
+			preferences.DisplayPlayTimeElapsed = mDisplayTimeElapsed;
+			mPreferences.Save( preferences );
 
 			FirePlaybackInfoChange();
 		}

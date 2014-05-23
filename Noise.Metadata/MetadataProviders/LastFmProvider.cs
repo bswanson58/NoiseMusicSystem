@@ -39,35 +39,35 @@ namespace Noise.Metadata.MetadataProviders {
 	}
 
 	internal class LastFmProvider : IArtistMetadataProvider {
-		private Session			mSession;
-		private IDocumentStore	mDocumentStore;
-		private bool			mHasNetworkAccess;
+		private readonly ILicenseManager	mLicenseManager;
+		private readonly bool				mHasNetworkAccess;
+		private Session						mSession;
+		private IDocumentStore				mDocumentStore;
 
 		public	string		ProviderKey { get; private set; }
 
-		public LastFmProvider() {
+		public LastFmProvider( IPreferences preferences, ILicenseManager licenseManager ) {
+			mLicenseManager = licenseManager;
+
+			var prefs = preferences.Load<NoiseCorePreferences>();
+			mHasNetworkAccess = prefs.HasNetworkAccess;
+
 			ProviderKey = "LastFm";
 		}
 
-		public void Initialize( IDocumentStore documentStore, ILicenseManager licenseManager ) {
+		public void Initialize( IDocumentStore documentStore ) {
 			mDocumentStore = documentStore;
 
 			try {
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-				if( configuration != null ) {
-					mHasNetworkAccess = configuration.HasNetworkAccess;
+				var key = mLicenseManager.RetrieveKey( LicenseKeys.LastFm );
 
-					var key = licenseManager.RetrieveKey( LicenseKeys.LastFm );
+				Condition.Requires( key ).IsNotNull();
 
-					Condition.Requires( key ).IsNotNull();
-
-					if( key != null ) {
-						mSession = new Session( key.Name, key.Key );
-					}
-
-					Condition.Requires( mSession ).IsNotNull();
+				if( key != null ) {
+					mSession = new Session( key.Name, key.Key );
 				}
 
+				Condition.Requires( mSession ).IsNotNull();
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "LastFmProvider:Initialize", ex );

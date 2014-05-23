@@ -13,21 +13,19 @@ using Raven.Client;
 namespace Noise.Metadata.MetadataProviders {
 	internal class DiscogsProvider : IArtistMetadataProvider {
 		private IDocumentStore	mDocumentStore;
-		private bool			mHasNetworkAccess;
+		private readonly bool	mHasNetworkAccess;
 
 		public	string			ProviderKey { get; private set; }
 
-		public DiscogsProvider() {
+		public DiscogsProvider( IPreferences preferences ) {
+			var prefs = preferences.Load<NoiseCorePreferences>();
+			mHasNetworkAccess = prefs.HasNetworkAccess;
+
 			ProviderKey = "Discogs";
 		}
 
-		public void Initialize( IDocumentStore documentStore, ILicenseManager licenseManager ) {
+		public void Initialize( IDocumentStore documentStore ) {
 			mDocumentStore = documentStore;
-
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-			if( configuration != null ) {
-				mHasNetworkAccess = configuration.HasNetworkAccess;
-			}
 		}
 
 		public void Shutdown() {

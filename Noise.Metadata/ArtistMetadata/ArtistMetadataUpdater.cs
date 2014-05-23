@@ -15,7 +15,6 @@ namespace Noise.Metadata.ArtistMetadata {
 		private const string									cBackgroundTaskName = "Artist Metadata Updateer";
 
 		private readonly IEventAggregator						mEventAggregator;
-		private readonly ILicenseManager						mLicenseManager;
 		private readonly IDatabaseInfo							mDatabaseInfo;
 		private readonly IArtistProvider						mArtistProvider;
 		private readonly IRecurringTaskScheduler				mTaskScheduler;
@@ -25,10 +24,9 @@ namespace Noise.Metadata.ArtistMetadata {
 		private IEnumerable<string>								mUpdateList;
 		private IEnumerator<string>								mUpdateEnumerator;
 
-		public ArtistMetadataUpdater( IEventAggregator eventAggregator, ILicenseManager licenseManager, IDatabaseInfo databaseInfo, IArtistProvider artistProvider,
+		public ArtistMetadataUpdater( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IArtistProvider artistProvider,
 									  IRecurringTaskScheduler taskScheduler, IEnumerable<IArtistMetadataProvider> providers  ) {
 			mEventAggregator = eventAggregator;
-			mLicenseManager = licenseManager;
 			mDatabaseInfo = databaseInfo;
 			mArtistProvider = artistProvider;
 			mTaskScheduler = taskScheduler;
@@ -44,7 +42,7 @@ namespace Noise.Metadata.ArtistMetadata {
 
 			try {
 				foreach( var provider in mProviders ) {
-					provider.Initialize( mDocumentStore, mLicenseManager );
+					provider.Initialize( mDocumentStore );
 				}
 
 				var updateTask = new RecurringTask( UpdateNextArtist, cBackgroundTaskName );

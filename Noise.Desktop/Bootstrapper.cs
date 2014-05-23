@@ -98,7 +98,7 @@ namespace Noise.Desktop {
 			ViewModelResolver.TypeResolver = ( type => instanceContainer.Resolve( type ));
 			DialogServiceResolver.Current = instanceContainer.Resolve<IDialogService>();
 
-			mStartupManager = new StartupManager( Container.Resolve<IEventAggregator>());
+			mStartupManager = Container.Resolve<StartupManager>();
 			mStartupManager.Initialize();
 
 			StartNoise( instanceContainer );

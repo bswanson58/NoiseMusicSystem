@@ -37,12 +37,15 @@ namespace Noise.UI.ViewModels {
 	public class WindowCommandsViewModel : AutomaticCommandBase {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IDialogService			mDialogService;
+		private readonly IPreferences			mPreferences;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly DelegateCommand		mImportCommand;
 
-		public WindowCommandsViewModel( IEventAggregator eventAggregator, IDialogService dialogService, IDataExchangeManager dataExchangeManager ) {
+		public WindowCommandsViewModel( IEventAggregator eventAggregator, IDialogService dialogService, IPreferences preferences,
+										IDataExchangeManager dataExchangeManager ) {
 			mEventAggregator = eventAggregator;
 			mDialogService = dialogService;
+			mPreferences = preferences;
 			mDataExchangeMgr = dataExchangeManager;
 
 			mImportCommand = new DelegateCommand( OnImport );
@@ -55,6 +58,13 @@ namespace Noise.UI.ViewModels {
 
 			if( mDialogService.ShowDialog( DialogNames.NoiseOptions, configuration ) == true ) {
 				NoiseSystemConfiguration.Current.Save( configuration );
+
+				var preferences = mPreferences.Load<NoiseCorePreferences>();
+
+				preferences.HasNetworkAccess = configuration.HasNetworkAccess;
+				preferences.EnableRemoteAccess = configuration.EnableRemoteAccess;
+				preferences.LoadLastLibraryOnStartup = configuration.LoadLastLibraryOnStartup;
+				mPreferences.Save( preferences );
 			}
 		}
 

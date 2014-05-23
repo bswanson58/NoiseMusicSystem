@@ -9,7 +9,7 @@ namespace Noise.Metadata.Interfaces {
 	public interface IMetadataProvider {
 		string		ProviderKey { get; }
 
-		void		Initialize( IDocumentStore documentStore, ILicenseManager licenseManager );
+		void		Initialize( IDocumentStore documentStore );
 		void		Shutdown();
 	}
 }

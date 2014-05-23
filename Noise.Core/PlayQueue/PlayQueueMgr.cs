@@ -23,6 +23,7 @@ namespace Noise.Core.PlayQueue {
 		private readonly List<IPlayQueueSupport>	mPlayQueueSupporters; 
 		private readonly IPlayStrategyFactory		mPlayStrategyFactory;
 		private readonly IPlayExhaustedFactory		mPlayExhaustedFactory;
+		private readonly IPreferences				mPreferences;
 		private IPlayStrategy						mPlayStrategy;
 		private IPlayExhaustedStrategy				mPlayExhaustedStrategy;
 		private	int									mReplayTrackCount;
@@ -37,7 +38,7 @@ namespace Noise.Core.PlayQueue {
 							 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 							 IStorageFolderSupport storageFolderSupport, IStorageFileProvider storageFileProvider,
 							 IPlayStrategyFactory strategyFactory, IPlayExhaustedFactory exhaustedFactory,
-							 IEnumerable<IPlayQueueSupport> playQueueSupporters ) {
+							 IEnumerable<IPlayQueueSupport> playQueueSupporters, IPreferences preferences ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -46,13 +47,14 @@ namespace Noise.Core.PlayQueue {
 			mStorageFolderSupport = storageFolderSupport;
 			mPlayStrategyFactory = strategyFactory;
 			mPlayExhaustedFactory = exhaustedFactory;
+			mPreferences = preferences;
 
 			mPlayQueue = new List<PlayQueueTrack>();
 			mPlayHistory = new List<PlayQueueTrack>();
 			mPlayQueueSupporters = new List<IPlayQueueSupport>( playQueueSupporters );
 
-			SetPlayStrategy( ePlayStrategy.Next, null );
-			SetPlayExhaustedStrategy( ePlayExhaustedStrategy.Stop, null );
+			mPlayStrategy = mPlayStrategyFactory.ProvidePlayStrategy( ePlayStrategy.Next );
+			mPlayExhaustedStrategy = mPlayExhaustedFactory.ProvideExhaustedStrategy( ePlayExhaustedStrategy.Stop );
 
 			lifecycleManager.RegisterForInitialize( this );
 
@@ -85,12 +87,10 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void Handle( Events.DatabaseOpened args ) {
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var preferences = mPreferences.Load<NoiseCorePreferences>();
 
-			if( configuration != null ) {
-				SetPlayExhaustedStrategy( configuration.PlayExhaustedStrategy, PlayStrategyParametersFactory.FromString( configuration.PlayExhaustedParameters ));
-				SetPlayStrategy( configuration.PlayStrategy, PlayStrategyParametersFactory.FromString( configuration.PlayStrategyParameters ));
-			}
+			SetPlayExhaustedStrategy( preferences.PlayExhaustedStrategy, PlayStrategyParametersFactory.FromString( preferences.PlayExhaustedParameters ));
+			SetPlayStrategy( preferences.PlayStrategy, PlayStrategyParametersFactory.FromString( preferences.PlayStrategyParameters ));
 		}
 
 		public void Shutdown() {
@@ -567,6 +567,12 @@ namespace Noise.Core.PlayQueue {
 				mPlayStrategy.Initialize( this, parameters );
 			}
 
+			var preferences = mPreferences.Load<NoiseCorePreferences>();
+
+			preferences.PlayStrategy = strategyId;
+			preferences.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( parameters );
+			mPreferences.Save( preferences );
+
 			Condition.Requires( mPlayStrategy ).IsNotNull();
 		}
 
@@ -581,6 +587,12 @@ namespace Noise.Core.PlayQueue {
 
 				mEventAggregator.Publish( new Events.PlayExhaustedStrategyChanged( mPlayExhaustedStrategy.StrategyId, parameters ));
 			}
+
+			var preferences = mPreferences.Load<NoiseCorePreferences>();
+
+			preferences.PlayExhaustedStrategy = strategy;
+			preferences.PlayExhaustedParameters = PlayStrategyParametersFactory.ToString( parameters );
+			mPreferences.Save( preferences );
 
 			Condition.Requires( mPlayExhaustedStrategy ).IsNotNull();
 		}
