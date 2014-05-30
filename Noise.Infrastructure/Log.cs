@@ -18,7 +18,7 @@ namespace Noise.Infrastructure {
 		}
 
 		public void LogException( Exception ex ) {
-			LogException( "", ex );
+			LogException( string.Empty, ex );
 		}
 
 		public void LogException( string message, Exception ex ) {
@@ -30,6 +30,10 @@ namespace Noise.Infrastructure {
 				foreach( var exc in tle.LoaderExceptions ) {
 					mLogger.ErrorException( "ReflectionTypeLoadException:", exc );
 				}
+			}
+
+			if( ex.InnerException != null ) {
+				LogException( string.Format( ">>>Inner Exception of '{0}'", message ), ex.InnerException );
 			}
 		}
 
