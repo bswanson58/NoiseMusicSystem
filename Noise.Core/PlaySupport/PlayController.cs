@@ -266,10 +266,10 @@ namespace Noise.Core.PlaySupport {
 			try {
 				mPlayStateController.Fire( trigger );
 
-				mEventAggregator.Publish( new Events.PlaybackStatusChanged( mCurrentStatus ));
+				Execute.OnUIThread( () => mEventAggregator.Publish( new Events.PlaybackStatusChanged( mCurrentStatus )));
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - PlayController:StateChange: ", ex );
+				NoiseLogger.Current.LogException( "PlayController:FireStateChange", ex );
 			}
 		}
 
