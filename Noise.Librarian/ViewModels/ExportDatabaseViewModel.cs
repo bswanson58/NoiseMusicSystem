@@ -12,6 +12,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace Noise.Librarian.ViewModels {
 	public class ExportDatabaseViewModel : AutomaticCommandBase,
 										   IHandle<Events.SystemInitialized>, IHandle<Events.LibraryListChanged> {
+		private readonly IEventAggregator							mEventAggregator;
 		private readonly IDialogService								mDialogService;
 		private readonly ILibraryConfiguration						mLibraryConfiguration;
 		private readonly ILibrarian									mLibrarian;
@@ -19,6 +20,7 @@ namespace Noise.Librarian.ViewModels {
 		private LibraryConfiguration								mCurrentLibrary;
 
 		public ExportDatabaseViewModel( IEventAggregator eventAggregator, ILibrarian librarian, ILibraryConfiguration libraryConfiguration, IDialogService dialogService ) {
+			mEventAggregator = eventAggregator;
 			mLibrarian = librarian;
 			mLibraryConfiguration = libraryConfiguration;
 			mDialogService = dialogService;
@@ -26,7 +28,7 @@ namespace Noise.Librarian.ViewModels {
 			mLibraries = new BindableCollection<LibraryConfiguration>();
 			ProgressActive = false;
 
-			eventAggregator.Subscribe( this );
+			mEventAggregator.Subscribe( this );
 		}
 
 		public void Handle( Events.SystemInitialized message ) {
@@ -65,6 +67,8 @@ namespace Noise.Librarian.ViewModels {
 		public void Execute_ExportLibrary() {
 			if(( mCurrentLibrary != null ) &&
 			   ( Directory.Exists( ExportPath ))) {
+				mEventAggregator.Publish( new ProgressEvent( 0.0D, true ));
+
 				mLibrarian.ExportLibrary( mCurrentLibrary, ExportPath, OnExportProgress );
 			}
 		}
@@ -83,6 +87,8 @@ namespace Noise.Librarian.ViewModels {
 			ProgressItem = args.CurrentItem;
 			Progress = args.Progress;
 			ProgressActive = !args.Completed;
+
+			mEventAggregator.Publish( new ProgressEvent( (double)args.Progress / 1000, !args.Completed ));
 		}
 
 		public string ProgressPhase {

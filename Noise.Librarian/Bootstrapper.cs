@@ -8,6 +8,7 @@ using Microsoft.Practices.Unity;
 using Noise.AppSupport;
 using Noise.Infrastructure;
 using Noise.Librarian.Interfaces;
+using Noise.Librarian.ViewModels;
 using Noise.Librarian.Views;
 using Noise.UI.Support;
 
@@ -45,6 +46,7 @@ namespace Noise.Librarian {
 
 		protected override DependencyObject CreateShell() {
 			mShell = Container.Resolve<Shell>();
+			mShell.DataContext = Container.Resolve<ShellViewModel>();
 			mShell.Show();
 			mShell.Closing += OnShellClosing;
 

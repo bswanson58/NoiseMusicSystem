@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Librarian.Interfaces;
@@ -9,10 +10,12 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.Librarian.ViewModels {
 	public class ImportDatabaseViewModel : AutomaticCommandBase {
-		private readonly IDialogService	mDialogService;
-		private readonly ILibrarian		mLibrarian;
+		private readonly IEventAggregator	mEventAggregator;
+		private readonly IDialogService		mDialogService;
+		private readonly ILibrarian			mLibrarian;
 
-		public ImportDatabaseViewModel( ILibrarian librarian, IDialogService dialogService ) {
+		public ImportDatabaseViewModel( IEventAggregator eventAggregator, ILibrarian librarian, IDialogService dialogService ) {
+			mEventAggregator = eventAggregator;
 			mLibrarian = librarian;
 			mDialogService = dialogService;
 
@@ -45,6 +48,8 @@ namespace Noise.Librarian.ViewModels {
 			ProgressItem = args.CurrentItem;
 			Progress = args.Progress;
 			ProgressActive = !args.Completed;
+
+			mEventAggregator.Publish( new ProgressEvent( (double)args.Progress / 1000, !args.Completed ));
 		}
 
 		public string ProgressPhase {
@@ -82,6 +87,8 @@ namespace Noise.Librarian.ViewModels {
 
 				if( library != null ) {
 					library.LibraryName = LibraryName;
+
+					mEventAggregator.Publish( new ProgressEvent( 0.0D, true ));
 
 					mLibrarian.ImportLibrary( library, backup, OnImportProgress );
 				}

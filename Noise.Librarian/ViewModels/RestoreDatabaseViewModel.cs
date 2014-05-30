@@ -10,6 +10,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace Noise.Librarian.ViewModels {
 	public class RestoreDatabaseViewModel : AutomaticCommandBase,
 											IHandle<Events.SystemInitialized>, IHandle<Events.LibraryListChanged>, IHandle<Events.LibraryBackupsChanged> {
+		private readonly IEventAggregator							mEventAggregator;
 		private readonly ILibraryConfiguration						mLibraryConfiguration;
 		private readonly ILibrarian									mLibrarian;
 		private readonly BindableCollection<LibraryConfiguration>	mLibraries; 
@@ -18,6 +19,7 @@ namespace Noise.Librarian.ViewModels {
 		private LibraryBackup										mCurrentBackup;
 
 		public RestoreDatabaseViewModel( IEventAggregator eventAggregator, ILibrarian librarian, ILibraryConfiguration libraryConfiguration ) {
+			mEventAggregator = eventAggregator;
 			mLibrarian = librarian;
 			mLibraryConfiguration = libraryConfiguration;
 
@@ -25,7 +27,7 @@ namespace Noise.Librarian.ViewModels {
 			mLibraryBackups = new BindableCollection<LibraryBackup>();
 			ProgressActive = false;
 
-			eventAggregator.Subscribe( this );
+			mEventAggregator.Subscribe( this );
 		}
 
 		public void Handle( Events.SystemInitialized message ) {
@@ -64,6 +66,8 @@ namespace Noise.Librarian.ViewModels {
 			ProgressItem = args.CurrentItem;
 			Progress = args.Progress;
 			ProgressActive = !args.Completed;
+
+			mEventAggregator.Publish( new ProgressEvent( (double)args.Progress / 1000, !args.Completed ));
 		}
 
 		public string ProgressPhase {
@@ -97,6 +101,8 @@ namespace Noise.Librarian.ViewModels {
 		public void Execute_RestoreLibrary() {
 			if(( CurrentLibrary != null ) &&
 			   ( CurrentBackup != null )) {
+				mEventAggregator.Publish( new ProgressEvent( 0.0D, true ));
+
 				mLibrarian.RestoreLibrary( CurrentLibrary, CurrentBackup, OnRestoreProgress );
 			}
 		}

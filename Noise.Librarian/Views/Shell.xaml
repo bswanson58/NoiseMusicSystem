@@ -3,6 +3,11 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:Views="clr-namespace:Noise.Librarian.Views"
 		Title="The Noise Librarian" Height="600" Width="900">
+
+	<Window.TaskbarItemInfo>
+		<TaskbarItemInfo ProgressValue="{Binding Progress}" ProgressState="{Binding ProgressState}"/>
+	</Window.TaskbarItemInfo>
+	
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="1*"/>
