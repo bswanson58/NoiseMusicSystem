@@ -11,13 +11,15 @@ namespace Noise.Core.PlaySupport {
 								   IHandle<Events.SystemShutdown> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly INoiseEnvironment	mNoiseEnvironment;
+		private readonly IPreferences		mPreferences;
 		private readonly IAudioPlayer		mAudioPlayer;
 		private	readonly IEqManager			mEqManager;
 
 		public AudioController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, INoiseEnvironment noiseEnvironment,
-								IAudioPlayer audioPlayer, IEqManager eqManager ) {
+								IAudioPlayer audioPlayer, IEqManager eqManager, IPreferences preferences ) {
 			mEventAggregator = eventAggregator;
 			mNoiseEnvironment = noiseEnvironment;
+			mPreferences = preferences;
 			mAudioPlayer = audioPlayer;
 			mEqManager = eqManager;
 
@@ -26,7 +28,7 @@ namespace Noise.Core.PlaySupport {
 
 		public void Initialize() {
 			try {
-				var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+				var audioCongfiguration = mPreferences.Load<AudioPreferences>();
 
 				if( audioCongfiguration != null ) {
 					mAudioPlayer.EqEnabled = audioCongfiguration.EqEnabled;
@@ -63,7 +65,7 @@ namespace Noise.Core.PlaySupport {
 		public void Handle( Events.SystemShutdown eventArgs ) {
 			mEventAggregator.Unsubscribe( this );
 
-			var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+			var audioCongfiguration = mPreferences.Load<AudioPreferences>();
 			if( audioCongfiguration != null ) {
 				audioCongfiguration.PreampGain = mAudioPlayer.PreampVolume;
 
@@ -79,7 +81,7 @@ namespace Noise.Core.PlaySupport {
 				audioCongfiguration.TrackOverlapEnabled = mAudioPlayer.TrackOverlapEnable;
 				audioCongfiguration.TrackOverlapMilliseconds = mAudioPlayer.TrackOverlapMilliseconds;
 
-				NoiseSystemConfiguration.Current.Save( audioCongfiguration );
+				mPreferences.Save( audioCongfiguration );
 			}
 		}
 

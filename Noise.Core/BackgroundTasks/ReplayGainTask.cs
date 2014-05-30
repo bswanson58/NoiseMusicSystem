@@ -20,11 +20,11 @@ namespace Noise.Core.BackgroundTasks {
 		private readonly IStorageFileProvider	mStorageFileProvider;
 		private readonly IStorageFolderSupport	mStorageFolderSupport;
 		private readonly List<DbAlbum>			mAlbumList;
+		private readonly bool					mReplayGainEnabled;
 		private IEnumerator<DbAlbum>			mAlbumEnumerator;
-		private bool							mReplayGainEnabled;
 		private bool							mDatabaseOpen;
 
-		public ReplayGainTask( IEventAggregator eventAggregator, IReplayGainScanner scanner,
+		public ReplayGainTask( IEventAggregator eventAggregator, IReplayGainScanner scanner, IPreferences preferences,
 							   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 							   IStorageFileProvider storageFileProvider, IStorageFolderSupport storageFolderSupport ) {
 			mEventAggregator = eventAggregator;
@@ -37,7 +37,7 @@ namespace Noise.Core.BackgroundTasks {
 
 			mAlbumList = new List<DbAlbum>();
 
-			var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+			var audioCongfiguration = preferences.Load<AudioPreferences>();
 			if( audioCongfiguration != null ) {
 				mReplayGainEnabled = audioCongfiguration.ReplayGainEnabled;
 			}

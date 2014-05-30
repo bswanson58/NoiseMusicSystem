@@ -94,7 +94,7 @@ namespace Noise.Core.PlaySupport {
 				var preferences = mPreferences.Load<NoiseCorePreferences>();
 				mDisplayTimeElapsed = preferences.DisplayPlayTimeElapsed;
 
-				var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+				var audioCongfiguration = mPreferences.Load<AudioPreferences>();
 				if( audioCongfiguration != null ) {
 					mEnableReplayGain = audioCongfiguration.ReplayGainEnabled;
 				}
@@ -312,11 +312,11 @@ namespace Noise.Core.PlaySupport {
 			mPlayStatusDispose.Dispose();
 			mStreamInfoDispose.Dispose();
 
-			var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+			var audioCongfiguration = mPreferences.Load<AudioPreferences>();
 			if( audioCongfiguration != null ) {
 				audioCongfiguration.ReplayGainEnabled = mEnableReplayGain;
 
-				NoiseSystemConfiguration.Current.Save( audioCongfiguration );
+				mPreferences.Save( audioCongfiguration );
 			}			
 		}
 

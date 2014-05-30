@@ -9,10 +9,13 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.AudioSupport.Player {
 	public class EqManager : IEqManager {
+		private readonly IPreferences				mPreferences;
 		private readonly List<ParametricEqualizer>	mEqPresets;
 		private ParametricEqualizer					mCurrentEq;
 
-		public EqManager() {
+		public EqManager( IPreferences preferences ) {
+			mPreferences = preferences;
+
 			mEqPresets = new List<ParametricEqualizer>();
 		}
 
@@ -59,7 +62,7 @@ namespace Noise.AudioSupport.Player {
 
 		private bool LoadUserEq() {
 			var retValue = false;
-			var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+			var audioCongfiguration = mPreferences.Load<AudioPreferences>();
 			if( audioCongfiguration != null ) {
 				var equalizerList = ( from ParametricEqConfiguration eqConfig in audioCongfiguration.ParametricEqualizers
 				                      select eqConfig.AsParametericEqualizer()).ToList();
@@ -92,12 +95,12 @@ namespace Noise.AudioSupport.Player {
 
 			if(( eq != null ) &&
 			   (!eq.IsPreset )) {
-				var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+				var audioCongfiguration = mPreferences.Load<AudioPreferences>();
 				if( audioCongfiguration != null ) {
 					audioCongfiguration.UpdateEq( eq );
 					audioCongfiguration.EqEnabled = eqEnabled;
 
-					NoiseSystemConfiguration.Current.Save( audioCongfiguration );
+					mPreferences.Save( audioCongfiguration );
 
 					retValue = true;
 				}
@@ -117,11 +120,11 @@ namespace Noise.AudioSupport.Player {
 				   ( mCurrentEq.EqualizerId != value.EqualizerId )) {
 					mCurrentEq = value;
 
-					var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+					var audioCongfiguration = mPreferences.Load<AudioPreferences>();
 					if( audioCongfiguration != null ) {
 						audioCongfiguration.DefaultEqualizer = mCurrentEq.EqualizerId;
 
-						NoiseSystemConfiguration.Current.Save( audioCongfiguration );
+						mPreferences.Save( audioCongfiguration );
 					}
 				}
 			}
