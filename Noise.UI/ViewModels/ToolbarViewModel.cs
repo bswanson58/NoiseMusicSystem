@@ -25,14 +25,6 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Execute_ServerConfiguration() {
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ServerConfiguration>( ServerConfiguration.SectionName );
-
-			if( mDialogService.ShowDialog( DialogNames.ServerConfiguration, configuration ) == true ) {
-				NoiseSystemConfiguration.Current.Save( configuration );
-			}
-		}
-
 		public void Execute_Import() {
 			string	fileName;
 

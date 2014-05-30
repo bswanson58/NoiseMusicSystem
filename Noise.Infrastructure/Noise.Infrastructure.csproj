@@ -167,7 +167,6 @@
     <Compile Include="Configuration\ExplorerConfiguration.cs" />
     <Compile Include="Configuration\ISystemConfiguration.cs" />
     <Compile Include="Configuration\NoiseCorePreferences.cs" />
-    <Compile Include="Configuration\ServerConfiguration.cs" />
     <Compile Include="Configuration\SystemConfiguration.cs" />
     <Compile Include="Dto\AlbumSupportInfo.cs" />
     <Compile Include="Dto\Artwork.cs" />
