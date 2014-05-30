@@ -94,7 +94,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 
 		public void BackupDatabase( string databaseName, string backupLocation ) {
 			using( var connection = CreateConnection()) {
-				string	commandText = string.Format( "BACKUP DATABASE {0} TO DISK='{1}' WITH FORMAT, MEDIANAME='NoiseBackup', MEDIADESCRIPTION='Media set for {0} database';",
+				string	commandText = string.Format( "BACKUP DATABASE [{0}] TO DISK='{1}' WITH FORMAT, MEDIANAME='NoiseBackup', MEDIADESCRIPTION='Media set for {0} database';",
 													databaseName, backupLocation );
 
 				connection.Open();
@@ -107,7 +107,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 
 		public void RestoreDatabase( string databaseName, string restoreLocation ) {
 			using( var connection = CreateConnection()) {
-				string	commandText = string.Format( "RESTORE DATABASE {0} FROM DISK='{1}' WITH REPLACE, RECOVERY;",
+				string	commandText = string.Format( "RESTORE DATABASE [{0}] FROM DISK='{1}' WITH REPLACE, RECOVERY;",
 													databaseName, restoreLocation );
 
 				connection.Open();
@@ -127,7 +127,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 				}
 
 				var		moveText = moveList.JoinStrings( ", " );
-				string	commandText = string.Format( "RESTORE DATABASE {0} FROM DISK='{1}' WITH REPLACE, RECOVERY, {2}",
+				string	commandText = string.Format( "RESTORE DATABASE [{0}] FROM DISK='{1}' WITH REPLACE, RECOVERY, {2}",
 													databaseName, restoreLocation, moveText );
 
 				connection.Open();
