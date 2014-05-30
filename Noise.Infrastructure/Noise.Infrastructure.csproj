@@ -163,7 +163,6 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Configuration\AudioPreferences.cs" />
-    <Compile Include="Configuration\CloudSyncConfiguration.cs" />
     <Compile Include="Configuration\ConfigurationUpgrades.cs" />
     <Compile Include="Configuration\ExplorerConfiguration.cs" />
     <Compile Include="Configuration\ISystemConfiguration.cs" />
@@ -227,7 +226,6 @@
     <Compile Include="Interfaces\IBlendableViewModelFactory.cs" />
     <Compile Include="Interfaces\IBlobStorage.cs" />
     <Compile Include="Interfaces\IBlobStorageResolver.cs" />
-    <Compile Include="Interfaces\ICloudSyncManager.cs" />
     <Compile Include="Interfaces\IDatabaseInfo.cs" />
     <Compile Include="Interfaces\IDatabaseManager.cs" />
     <Compile Include="Interfaces\IDatabaseUtility.cs" />

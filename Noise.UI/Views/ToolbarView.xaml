@@ -16,8 +16,6 @@
         <Button Margin="3,1" Height="25" Width="25" Padding="-7" Foreground="{StaticResource ControlTextColor}"
                 Content="Time Explorer" Command="{Binding Path=TimeExplorerLayout}" ToolTip="Time Explorer"/>
 
-        <Button Margin="3,1" Height="25" Width="25" Padding="-7" Foreground="{StaticResource ControlTextColor}"
-                Content="{StaticResource Path_CloudOptions}" Command="{Binding Path=CloudConfiguration}" ToolTip="Cloud Options"/>
         <Button Margin="3,1" Height="25" Width="25" Padding="3" Foreground="{StaticResource ControlTextColor}"
                 Content="{StaticResource Path_Options}" Command="{Binding Path=NoiseOptions}" ToolTip="Options"/>
         <Button Margin="3,1" Height="25" Width="25" Padding="5" Foreground="{StaticResource ControlTextColor}" ToolTip="Toggle External Player"

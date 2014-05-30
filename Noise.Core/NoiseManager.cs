@@ -14,14 +14,12 @@ namespace Noise.Core {
 		private readonly ILifecycleManager		mLifecycleManager;
 		private readonly IPreferences			mPreferences;
 		private readonly IRemoteServer			mRemoteServer;
-		private readonly ICloudSyncManager		mCloudSyncMgr;
 		private readonly ILibraryBuilder		mLibraryBuilder;
 		private readonly IDatabaseManager		mDatabaseManager;
 
 		public NoiseManager( IEventAggregator eventAggregator,
 							 ILifecycleManager lifecycleManager,
 							 IDatabaseManager databaseManager,
-							 ICloudSyncManager cloudSyncManager,
 							 ILibraryBuilder libraryBuilder,
 							 IRemoteServer remoteServer,
 							 IPreferences preferences,
@@ -36,7 +34,6 @@ namespace Noise.Core {
 			mLifecycleManager = lifecycleManager;
 			mRemoteServer = remoteServer;
 			mDatabaseManager = databaseManager;
-			mCloudSyncMgr = cloudSyncManager;
 			mLibraryBuilder = libraryBuilder;
 			mPreferences = preferences;
 		}
@@ -65,16 +62,6 @@ namespace Noise.Core {
 			try {
 				mLifecycleManager.Initialize();
 				mEvents.Subscribe( this );
-
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
-				if( configuration != null ) {
-					if( mCloudSyncMgr.InitializeCloudSync( configuration.LoginName, configuration.LoginPassword )) {
-						mCloudSyncMgr.MaintainSynchronization = configuration.UseCloud;
-					}
-					else {
-						NoiseLogger.Current.LogMessage( "Noise Manager: Could not initialize cloud sync." );
-					}
-				}
 
 				var preferences = mPreferences.Load<NoiseCorePreferences>();
 

@@ -211,9 +211,6 @@
     <Compile Include="DataBuilders\LibraryBuilder.cs" />
     <Compile Include="DataBuilders\MetaDataCleaner.cs" />
     <Compile Include="DataExchange\BaseExporter.cs" />
-    <Compile Include="DataExchange\CloudSyncFavorites.cs" />
-    <Compile Include="DataExchange\CloudSyncManager.cs" />
-    <Compile Include="DataExchange\CloudSyncStreams.cs" />
     <Compile Include="DataExchange\DataExchangeManager.cs" />
     <Compile Include="DataExchange\Dto\CloudSyncEntry.cs" />
     <Compile Include="DataExchange\Dto\ExportBase.cs" />
@@ -222,7 +219,6 @@
     <Compile Include="DataExchange\ExchangeConstants.cs" />
     <Compile Include="DataExchange\ExportFavorites.cs" />
     <Compile Include="DataExchange\ExportStreams.cs" />
-    <Compile Include="DataExchange\ICloudSyncProvider.cs" />
     <Compile Include="DataExchange\IDataExport.cs" />
     <Compile Include="DataExchange\IDataImport.cs" />
     <Compile Include="DataExchange\ImportFavorites.cs" />

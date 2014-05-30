@@ -8,14 +8,11 @@ using Noise.UI.Support;
 namespace Noise.UI.ViewModels {
 	public class ToolbarViewModel : ViewModelBase {
 		private readonly IEventAggregator		mEventAggregator;
-		private readonly ICloudSyncManager		mCloudSyncMgr;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly IDialogService			mDialogService;
 
-		public ToolbarViewModel( IEventAggregator eventAggregator, IDialogService dialogService,
-								 ICloudSyncManager cloudSyncManager, IDataExchangeManager dataExchangeManager ) {
+		public ToolbarViewModel( IEventAggregator eventAggregator, IDialogService dialogService, IDataExchangeManager dataExchangeManager ) {
 			mEventAggregator = eventAggregator;
-			mCloudSyncMgr = cloudSyncManager;
 			mDataExchangeMgr = dataExchangeManager;
 			mDialogService = dialogService;
 		}
@@ -25,16 +22,6 @@ namespace Noise.UI.ViewModels {
 
 			if( mDialogService.ShowDialog( DialogNames.NoiseOptions, configuration ) == true ) {
 				NoiseSystemConfiguration.Current.Save( configuration );
-			}
-		}
-
-		public void Execute_CloudConfiguration() {
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
-
-			if( mDialogService.ShowDialog( DialogNames.CloudConfiguration, configuration, new CloudConfigurationDialogModel()) == true ) {
-				NoiseSystemConfiguration.Current.Save( configuration );
-
-				mCloudSyncMgr.MaintainSynchronization = configuration.UseCloud;
 			}
 		}
 
