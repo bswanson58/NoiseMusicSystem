@@ -12,6 +12,7 @@ namespace Noise.AudioSupport.Player {
 		private readonly IPreferences				mPreferences;
 		private readonly List<ParametricEqualizer>	mEqPresets;
 		private ParametricEqualizer					mCurrentEq;
+		private bool								mEqEnabled;
 
 		public EqManager( IPreferences preferences ) {
 			mPreferences = preferences;
@@ -84,6 +85,8 @@ namespace Noise.AudioSupport.Player {
 					mCurrentEq = ( from ParametricEqualizer eq in mEqPresets where eq.EqualizerId == audioCongfiguration.DefaultEqualizer select eq ).FirstOrDefault();
 				}
 
+				mEqEnabled = audioCongfiguration.EqEnabled;
+
 				retValue = true;
 			}
 
@@ -99,6 +102,7 @@ namespace Noise.AudioSupport.Player {
 				if( audioCongfiguration != null ) {
 					audioCongfiguration.UpdateEq( eq );
 					audioCongfiguration.EqEnabled = eqEnabled;
+					audioCongfiguration.DefaultEqualizer = mCurrentEq != null ? mCurrentEq.EqualizerId : 0;
 
 					mPreferences.Save( audioCongfiguration );
 
@@ -127,6 +131,18 @@ namespace Noise.AudioSupport.Player {
 						mPreferences.Save( audioCongfiguration );
 					}
 				}
+			}
+		}
+
+		public bool EqEnabled {
+			get{ return( mEqEnabled ); }
+			set {
+				mEqEnabled = value;
+				
+				var preferences = mPreferences.Load<AudioPreferences>();
+
+				preferences.EqEnabled = mEqEnabled;
+				mPreferences.Save( preferences );
 			}
 		}
 	}

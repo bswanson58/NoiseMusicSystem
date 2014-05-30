@@ -164,7 +164,6 @@
     </Compile>
     <Compile Include="Configuration\AudioPreferences.cs" />
     <Compile Include="Configuration\CloudSyncConfiguration.cs" />
-    <Compile Include="Configuration\ConfigurationElementCollectionEx.cs" />
     <Compile Include="Configuration\ConfigurationUpgrades.cs" />
     <Compile Include="Configuration\ExplorerConfiguration.cs" />
     <Compile Include="Configuration\ISystemConfiguration.cs" />

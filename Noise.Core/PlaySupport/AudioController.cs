@@ -31,7 +31,6 @@ namespace Noise.Core.PlaySupport {
 				var audioCongfiguration = mPreferences.Load<AudioPreferences>();
 
 				if( audioCongfiguration != null ) {
-					mAudioPlayer.EqEnabled = audioCongfiguration.EqEnabled;
 					mAudioPlayer.PreampVolume = audioCongfiguration.PreampGain;
 					mAudioPlayer.StereoEnhancerEnable = audioCongfiguration.StereoEnhancerEnabled;
 					mAudioPlayer.StereoEnhancerWidth = audioCongfiguration.StereoEnhancerWidth;
@@ -48,6 +47,7 @@ namespace Noise.Core.PlaySupport {
 
 				if( mEqManager.Initialize( Path.Combine( mNoiseEnvironment.ConfigurationDirectory(), Constants.EqPresetsFile ))) {
 					mAudioPlayer.ParametricEq = mEqManager.CurrentEq;
+					mAudioPlayer.EqEnabled = mEqManager.EqEnabled;
 				}
 				else {
 					NoiseLogger.Current.LogMessage( "EqManager could not be initialized." );
@@ -68,7 +68,6 @@ namespace Noise.Core.PlaySupport {
 			var audioCongfiguration = mPreferences.Load<AudioPreferences>();
 			if( audioCongfiguration != null ) {
 				audioCongfiguration.PreampGain = mAudioPlayer.PreampVolume;
-
 				audioCongfiguration.StereoEnhancerEnabled = mAudioPlayer.StereoEnhancerEnable;
 				audioCongfiguration.StereoEnhancerWidth = mAudioPlayer.StereoEnhancerWidth;
 				audioCongfiguration.StereoEnhancerWetDry = mAudioPlayer.StereoEnhancerWetDry;
@@ -148,7 +147,10 @@ namespace Noise.Core.PlaySupport {
 
 		public bool EqEnabled {
 			get { return ( mAudioPlayer.EqEnabled ); }
-			set { mAudioPlayer.EqEnabled = value; }
+			set {
+				mAudioPlayer.EqEnabled = value;
+				mEqManager.EqEnabled = value;
+			}
 		}
 
 		public void SetEqValue( long bandId, float gain ) {

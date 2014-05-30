@@ -402,10 +402,7 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "CurrentEq" )]
 		public bool EqEnabled {
 			get{ return( mAudioController.EqEnabled ); }
-			set {
-				mAudioController.EqEnabled = value;
-				mAudioController.EqManager.SaveEq( CurrentEq, value );
-			}
+			set { mAudioController.EqEnabled = value; }
 		}
 
 		[DependsUpon( "CurrentEq" )]
