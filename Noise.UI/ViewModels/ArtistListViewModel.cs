@@ -24,6 +24,7 @@ namespace Noise.UI.ViewModels {
 		private const string							cHideSortDescriptions = "_normal";
 
 		private readonly IEventAggregator				mEventAggregator;
+		private readonly IPreferences					mPreferences;
 		private readonly ISelectionState				mSelectionState;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly ITagManager					mTagManager;
@@ -35,9 +36,10 @@ namespace Noise.UI.ViewModels {
 		private readonly List<ViewSortStrategy>			mArtistSorts;
 		private TaskHandler								mArtistRetrievalTaskHandler;
 
-		public ArtistListViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, ISelectionState selectionState ,
-									IArtistProvider artistProvider, ITagManager tagManager ) {
+		public ArtistListViewModel( IEventAggregator eventAggregator, IPreferences preferences, ISelectionState selectionState ,
+									IArtistProvider artistProvider, ITagManager tagManager, IDatabaseInfo databaseInfo ) {
 			mEventAggregator = eventAggregator;
+			mPreferences = preferences;
 			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
 			mTagManager = tagManager;
@@ -49,7 +51,7 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnArtistChanged );
 
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var configuration = mPreferences.Load<UserInterfacePreferences>();
 			if( configuration != null ) {
 				mEnableSortPrefixes = configuration.EnableSortPrefixes;
 
@@ -164,11 +166,11 @@ namespace Noise.UI.ViewModels {
 				if( SelectedSortDescription != null ) {
 					UpdateSorts();
 
-					var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+					var configuration = mPreferences.Load<UserInterfacePreferences>();
 					if( configuration != null ) {
 						configuration.ArtistListSortOrder = SelectedSortDescription.DisplayName;
 
-						NoiseSystemConfiguration.Current.Save( configuration );
+						mPreferences.Save( configuration );
 					}
 				}
 			}

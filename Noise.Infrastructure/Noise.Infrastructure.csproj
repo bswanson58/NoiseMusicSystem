@@ -163,11 +163,8 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Configuration\AudioPreferences.cs" />
-    <Compile Include="Configuration\ConfigurationUpgrades.cs" />
-    <Compile Include="Configuration\ExplorerConfiguration.cs" />
-    <Compile Include="Configuration\ISystemConfiguration.cs" />
     <Compile Include="Configuration\NoiseCorePreferences.cs" />
-    <Compile Include="Configuration\SystemConfiguration.cs" />
+    <Compile Include="Configuration\UserInterfacePreferences.cs" />
     <Compile Include="Dto\AlbumSupportInfo.cs" />
     <Compile Include="Dto\Artwork.cs" />
     <Compile Include="Dto\AudioChannelStatus.cs" />

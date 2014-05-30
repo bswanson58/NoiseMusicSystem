@@ -13,6 +13,7 @@ namespace Noise.UI.Models {
 									   IHandle<Events.WindowLayoutRequest>,
 									   IHandle<Events.ArtistFocusRequested>, IHandle<Events.AlbumFocusRequested>, IHandle<Events.PlaybackTrackStarted> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly IPreferences			mPreferences;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly Subject<DbArtist>		mArtistSubject;
@@ -26,8 +27,9 @@ namespace Noise.UI.Models {
 		public	IObservable<DbArtist>			CurrentArtistChanged { get { return( mArtistSubject.AsObservable()); }}
 		public	IObservable<DbAlbum>			CurrentAlbumChanged { get { return( mAlbumSubject.AsObservable()); }}
 
-		public SelectionStateModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider ) {
+		public SelectionStateModel( IEventAggregator eventAggregator, IPreferences preferences, IArtistProvider artistProvider, IAlbumProvider albumProvider ) {
 			mEventAggregator = eventAggregator;
+			mPreferences = preferences;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 
@@ -37,7 +39,7 @@ namespace Noise.UI.Models {
 			mPlayTrackDelay = new TimeSpan( 0, 0, 30 );
 			mLastFocusRequest = DateTime.Now - mPlayTrackDelay;
 
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var configuration = mPreferences.Load<UserInterfacePreferences>();
 			if( configuration != null ) {
 				mPlaybackTrackFocusEnabled = configuration.EnablePlaybackLibraryFocus;
 			}

@@ -7,9 +7,9 @@ namespace Noise.AppSupport {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly HotkeyManager		mHotkeyManager;
 
-		public ApplicationSupport( IEventAggregator eventAggregator ) {
+		public ApplicationSupport( IEventAggregator eventAggregator, HotkeyManager hotkeyManager ) {
 			mEventAggregator = eventAggregator;
-			mHotkeyManager = new HotkeyManager( mEventAggregator );
+			mHotkeyManager = hotkeyManager;
 		}
 
 		public bool Initialize() {

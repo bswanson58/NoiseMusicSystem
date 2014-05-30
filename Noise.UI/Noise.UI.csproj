@@ -349,7 +349,6 @@
     <Compile Include="ViewModels\TimeExplorerAlbumsViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerYearViewModel.cs" />
-    <Compile Include="ViewModels\ToolbarViewModel.cs" />
     <Compile Include="ViewModels\TrackEditDialogModel.cs" />
     <Compile Include="ViewModels\WindowCommandsViewModel.cs" />
     <Compile Include="Views\AlbumArtworkView.xaml.cs">
@@ -504,9 +503,6 @@
     </Compile>
     <Compile Include="Views\TimeExplorerYearView.xaml.cs">
       <DependentUpon>TimeExplorerYearView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ToolbarView.xaml.cs">
-      <DependentUpon>ToolbarView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ConfigurationDialog.xaml.cs">
       <DependentUpon>ConfigurationDialog.xaml</DependentUpon>
@@ -783,10 +779,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\TimeExplorerYearView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ToolbarView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

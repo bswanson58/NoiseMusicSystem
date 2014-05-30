@@ -64,7 +64,7 @@
                        Filename="Layouts\ListenLayout.xaml"
                        Fullname="Internet Stream Layout">
             <Layout:Layout.Views>
-                <Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" />
+                <!--Layout:View RegionName="Toolbar" Type="{x:Type Views:ToolbarView}" /-->
                 <Layout:View RegionName="ListenStage" Type="{x:Type Views:ListenStageView}" />
                 <Layout:View RegionName="PlayQueue" Type="{x:Type Views:PlayQueueView}" />
                 <Layout:View RegionName="Player" Type="{x:Type Views:PlayerView}" />

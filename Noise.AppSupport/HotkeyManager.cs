@@ -3,21 +3,24 @@ using Noise.AppSupport.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport {
 	public class HotkeyManager : IHandle<Events.SystemShutdown> {
 		private readonly IEventAggregator	mEvents;
+		private readonly IPreferences		mPreferences;
 		private	KeyboardHook				mKeyboardHook;
 		private bool						mInstalled;
 
-		public HotkeyManager( IEventAggregator eventAggregator ) {
+		public HotkeyManager( IEventAggregator eventAggregator, IPreferences preferences ) {
 			mEvents = eventAggregator;
+			mPreferences = preferences;
 
 			mEvents.Subscribe( this );
 		}
 
 		public void Initialize() {
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var configuration = mPreferences.Load<UserInterfacePreferences>();
 
 			if( configuration.EnableGlobalHotkeys ) {
 				mKeyboardHook = new KeyboardHook();

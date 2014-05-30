@@ -23,7 +23,7 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<LibraryAdditionNode>	mNodeList;
 		private TaskHandler<IEnumerable<LibraryAdditionNode>>		mTaskHandler;
 
-		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
+		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, IPreferences preferences, IDatabaseInfo databaseInfo,
 										  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
@@ -35,7 +35,7 @@ namespace Noise.UI.ViewModels {
 			mHorizonCount = 200;
 			mHorizonTime = DateTime.Now - new TimeSpan( 90, 0, 0, 0 );
 
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var configuration = preferences.Load<UserInterfacePreferences>();
 			if( configuration != null ) {
 				mHorizonCount = configuration.NewAdditionsHorizonCount;
 				mHorizonTime = DateTime.Now - new TimeSpan( configuration.NewAdditionsHorizonDays, 0, 0, 0 );

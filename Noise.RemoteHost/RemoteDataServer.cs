@@ -19,16 +19,18 @@ namespace Noise.RemoteHost {
 		private readonly IPlayHistoryProvider	mPlayHistory;
 		private readonly IMetadataManager		mMetadataManager;
 		private readonly ITagManager			mTagManager;
+		private readonly IPreferences			mPreferences;
 		private readonly Random					mRandom;
 
 		public RemoteDataServer( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
-								 IPlayHistoryProvider playHistory, ITagManager tagManager, IMetadataManager metadataManager ) {
+								 IPlayHistoryProvider playHistory, ITagManager tagManager, IMetadataManager metadataManager, IPreferences preferences ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mPlayHistory = playHistory;
 			mMetadataManager = metadataManager;
 			mTagManager = tagManager;
+			mPreferences = preferences;
 			mRandom = new Random( DateTime.Now.Millisecond );
 		}
 
@@ -354,7 +356,7 @@ namespace Noise.RemoteHost {
 			try {
 				var	horizonCount = 200;
 				var	horizonTime = DateTime.Now - new TimeSpan( 90, 0, 0, 0 );
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+				var configuration = mPreferences.Load<UserInterfacePreferences>();
 
 				if( configuration != null ) {
 					horizonCount = (int)configuration.NewAdditionsHorizonCount;

@@ -21,6 +21,7 @@ namespace Noise.UI.ViewModels {
 		private const string							cHideSortDescriptions = "_normal";
 
 		private readonly IEventAggregator				mEventAggregator;
+		private readonly IPreferences					mPreferences;
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly ISelectionState				mSelectionState;
 		private readonly IObservableCollection<UiAlbum>	mAlbumList;
@@ -31,8 +32,9 @@ namespace Noise.UI.ViewModels {
 		private bool									mRetrievingAlbums;
 		private long									mAlbumToSelect;
  
-		public AlbumListViewModel( IEventAggregator eventAggregator, IAlbumProvider albumProvider, ISelectionState selectionState ) {
+		public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, ISelectionState selectionState ) {
 			mEventAggregator = eventAggregator;
+			mPreferences = preferences;
 			mAlbumProvider = albumProvider;
 			mSelectionState = selectionState;
 
@@ -43,7 +45,7 @@ namespace Noise.UI.ViewModels {
 													   new ViewSortStrategy( "Published Year", new List<SortDescription> { new SortDescription( "PublishedYear", ListSortDirection.Ascending ),
 																														   new SortDescription( "Name", ListSortDirection.Ascending ) })};
 
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var configuration = mPreferences.Load<UserInterfacePreferences>();
 			if( configuration != null ) {
 				var sortConfiguration = ( from config in mAlbumSorts where config.DisplayName == configuration.AlbumListSortOrder select config ).FirstOrDefault();
 
@@ -118,11 +120,11 @@ namespace Noise.UI.ViewModels {
 				if( SelectedSortDescription != null ) {
 					UpdateSorts();
 
-					var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+					var configuration = mPreferences.Load<UserInterfacePreferences>();
 					if( configuration != null ) {
 						configuration.AlbumListSortOrder = SelectedSortDescription.DisplayName;
 
-						NoiseSystemConfiguration.Current.Save( configuration );
+						mPreferences.Save( configuration );
 					}
 				}
 			}
