@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Caliburn.Micro;
 using Noise.Infrastructure;
@@ -82,6 +83,15 @@ namespace Noise.Core.PlaySupport {
 
 				mPreferences.Save( audioCongfiguration );
 			}
+		}
+
+		public IEnumerable<AudioDevice> AudioDevices {
+			get {  return( mAudioPlayer.GetDeviceList()); }
+		}
+
+		public AudioDevice CurrentAudioDevice {
+			get{ return( mAudioPlayer.GetCurrentDevice()); }
+			set{ mAudioPlayer.SetDevice( value ); }
 		}
 
 		public IEqManager EqManager {

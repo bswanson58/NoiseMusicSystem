@@ -168,6 +168,7 @@
     <Compile Include="Dto\AlbumSupportInfo.cs" />
     <Compile Include="Dto\Artwork.cs" />
     <Compile Include="Dto\AudioChannelStatus.cs" />
+    <Compile Include="Dto\AudioDevice.cs" />
     <Compile Include="Dto\AudioLevels.cs" />
     <Compile Include="Dto\BaseCommandArgs.cs" />
     <Compile Include="Dto\BasePlayStrategyParameters.cs" />

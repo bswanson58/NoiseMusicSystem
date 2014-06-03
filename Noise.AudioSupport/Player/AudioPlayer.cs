@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Runtime.InteropServices;
@@ -18,8 +19,8 @@ using Un4seen.Bass.Misc;
 
 namespace Noise.AudioSupport.Player {
 	public class AudioPlayer : IAudioPlayer {
-		private readonly int							mMixerChannel;
-		private	readonly float							mMixerSampleRate;
+		private int										mMixerChannel;
+		private	float									mMixerSampleRate;
 		private float									mPlaySpeed;
 		private float									mPan;
 		private float									mPreampVolume;
@@ -30,11 +31,11 @@ namespace Noise.AudioSupport.Player {
 		private readonly SYNCPROC						mSlideSyncProc;
 		private readonly SYNCPROC						mQueuedTrackPlaySync;
 		private readonly Dictionary<int, AudioStream>	mCurrentStreams;
-		private readonly DSP_PeakLevelMeter				mLevelMeter;
-		private readonly DSP_StereoEnhancer				mStereoEnhancer;
-		private readonly DSP_SoftSaturation				mSoftSaturation;
+		private DSP_PeakLevelMeter						mLevelMeter;
+		private DSP_StereoEnhancer						mStereoEnhancer;
+		private DSP_SoftSaturation						mSoftSaturation;
 		private ParametricEqualizer						mEq;
-		private readonly int							mMuteFx;
+		private int										mMuteFx;
 		private bool									mMuted;
 		private	int										mPreampFx;
 		private	int										mParamEqFx;
@@ -50,6 +51,8 @@ namespace Noise.AudioSupport.Player {
 		private int										mTrackOverlapMs;
 		private int										mQueuedChannel;
 		private readonly Visuals						mSpectumVisual;
+		private readonly List<AudioDevice>				mDeviceList;
+		private int										mCurrentDevice;
 
 		private readonly Subject<AudioChannelStatus>	mChannelStatusSubject;
 		public	IObservable<AudioChannelStatus>			ChannelStatusChange { get { return( mChannelStatusSubject.AsObservable()); } }
@@ -73,6 +76,8 @@ namespace Noise.AudioSupport.Player {
 			mSlideSyncProc = SlideSyncProc;
 			mDownloadProc = RecordProc;
 			mSpectumVisual = new Visuals();
+			mDeviceList = new List<AudioDevice>();
+			mCurrentDevice = -1;
 
 			mReverbDelay = 0.1f;
 			mReverbLevel = 0.3f;
@@ -86,28 +91,9 @@ namespace Noise.AudioSupport.Player {
 					BassNet.Registration( key.Name, key.Key );
 				}
 
-				Bass.BASS_Init( -1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero );
-				Bass.BASS_SetConfig( BASSConfig.BASS_CONFIG_FLOATDSP, true );
-				// Load the fx library.
-				BassFx.BASS_FX_GetVersion();
+				InitializeDevices();
+				InitializeWithDefaultDevice();
 
-				mMixerChannel = BassMix.BASS_Mixer_StreamCreate( 44100, 2, BASSFlag.BASS_SAMPLE_FLOAT );
-				if( mMixerChannel != 0 ) {
-					Bass.BASS_ChannelPlay( mMixerChannel, false );
-					Bass.BASS_ChannelGetAttribute( mMixerChannel, BASSAttribute.BASS_ATTRIB_FREQ, ref mMixerSampleRate );
-
-					mMuteFx = Bass.BASS_ChannelSetFX( mMixerChannel, BASSFXType.BASS_FX_BFX_VOLUME, 3 );
-					mStereoEnhancer = new DSP_StereoEnhancer( mMixerChannel, 4 );
-					mSoftSaturation = new DSP_SoftSaturation( mMixerChannel, 5 );
-
-					mLevelMeter = new DSP_PeakLevelMeter( mMixerChannel, -20 );
-					mLevelMeter.Notification += OnLevelMeter;
-
-					InitializePreamp();
-				}
-				else {
-					NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer: Mixer channel could not be created: {0}", Bass.BASS_ErrorGetCode()));
-				}
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( "Exception - AudioPlayer:Bass Audio could not be initialized. ", ex);
@@ -137,6 +123,92 @@ namespace Noise.AudioSupport.Player {
 			}
 			catch( Exception ex ) {
 				NoiseLogger.Current.LogException( String.Format( "Exception - AudioPlayer:Could not load Bass plugin: {0}", plugin ), ex );
+			}
+		}
+
+		private void InitializeDevices() {
+			var deviceCount = Bass.BASS_GetDeviceCount();
+
+			for( var device = 0; device < deviceCount; device++ ) {
+				var deviceInfo = Bass.BASS_GetDeviceInfo( device );
+
+				if( deviceInfo != null ) {
+					mDeviceList.Add( new AudioDevice { DeviceId = device, Name = deviceInfo.name,
+													   IsDefault = deviceInfo.IsDefault, IsEnabled = deviceInfo.IsEnabled });
+				}
+				else {
+					NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not get device info: {0}", Bass.BASS_ErrorGetCode()));
+				}
+			}
+		}
+
+		public IEnumerable<AudioDevice> GetDeviceList() {
+			return( mDeviceList );
+		}
+
+		public AudioDevice GetCurrentDevice() {
+			return( mDeviceList.FirstOrDefault( device => device.DeviceId == mCurrentDevice ));
+		}
+
+		public void SetDevice( AudioDevice device ) {
+			if( device != null ) {
+				NoiseLogger.Current.LogMessage( string.Format( "AudioController: Initializing with device: {0}", device.Name ));
+
+				InitializeWithDevice( device.DeviceId );
+			}
+		}
+
+		private void InitializeWithDefaultDevice() {
+			if( mDeviceList.Any()) {
+				SetDevice( mDeviceList.FirstOrDefault( device => device.IsDefault ));
+			}
+		}
+
+		private void InitializeWithDevice( int deviceId ) {
+			if( mCurrentStreams.Any()) {
+				var channelList = mCurrentStreams.Keys.ToArray();
+
+				foreach( var channel in channelList ) {
+					Stop( channel );					
+					CloseChannel( channel );
+				}
+			}
+
+			if( mCurrentDevice != -1 ) {
+				Bass.BASS_Free();
+			}
+
+			if( Bass.BASS_Init( deviceId, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero )) {
+				mCurrentDevice = deviceId;
+
+				if( Bass.BASS_SetConfig( BASSConfig.BASS_CONFIG_FLOATDSP, true )) {
+					// Load the fx library.
+					BassFx.BASS_FX_GetVersion();
+
+					mMixerChannel = BassMix.BASS_Mixer_StreamCreate( 44100, 2, BASSFlag.BASS_SAMPLE_FLOAT );
+					if( mMixerChannel != 0 ) {
+						Bass.BASS_ChannelPlay( mMixerChannel, false );
+						Bass.BASS_ChannelGetAttribute( mMixerChannel, BASSAttribute.BASS_ATTRIB_FREQ, ref mMixerSampleRate );
+
+						mMuteFx = Bass.BASS_ChannelSetFX( mMixerChannel, BASSFXType.BASS_FX_BFX_VOLUME, 3 );
+						mStereoEnhancer = new DSP_StereoEnhancer( mMixerChannel, 4 );
+						mSoftSaturation = new DSP_SoftSaturation( mMixerChannel, 5 );
+
+						mLevelMeter = new DSP_PeakLevelMeter( mMixerChannel, -20 );
+						mLevelMeter.Notification += OnLevelMeter;
+
+						InitializePreamp();
+					}
+					else {
+						NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer: Mixer channel could not be created: {0}", Bass.BASS_ErrorGetCode()));
+					}
+				}
+				else {
+					NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer: Could not set configuration: {0}", Bass.BASS_ErrorGetCode()));
+				}
+			}
+			else {
+				NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not initialize with device: {0}", Bass.BASS_ErrorGetCode()));
 			}
 		}
 

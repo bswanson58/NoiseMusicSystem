@@ -1,434 +1,440 @@
 ﻿<UserControl x:Class="Noise.UI.Views.PlayerExtendedView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
-             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
-             xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
-             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-             d:DesignHeight="300"
-             d:DesignWidth="900"
-             mc:Ignorable="d">
-    <UserControl.Resources>
-        <Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True" />
-    </UserControl.Resources>
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
+			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
+			 xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
+			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 d:DesignHeight="300"
+			 d:DesignWidth="900"
+			 mc:Ignorable="d">
+	<UserControl.Resources>
+		<Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True" />
+	</UserControl.Resources>
 
-    <UserControl.DataContext>
-        <Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
-    </UserControl.DataContext>
+	<UserControl.DataContext>
+		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
+	</UserControl.DataContext>
 
-    <GroupBox Height="190" Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="53" />
-            </Grid.RowDefinitions>
+	<GroupBox Height="190" Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+				<RowDefinition Height="53" />
+			</Grid.RowDefinitions>
 
-            <!--  Extended Controls  -->
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*" />
-                    <ColumnDefinition Width="6*" />
-                    <ColumnDefinition Width="5*" />
-                    <ColumnDefinition Width="4*" />
-                </Grid.ColumnDefinitions>
+			<!--  Extended Controls  -->
+			<Grid Grid.Row="0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="3*" />
+					<ColumnDefinition Width="6*" />
+					<ColumnDefinition Width="5*" />
+					<ColumnDefinition Width="4*" />
+				</Grid.ColumnDefinitions>
 
-                <!--  Audio Controls: Stereo Enhancement / Soft Saturation / Reverb  -->
-                <Grid Grid.Column="0" Margin="0,5,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+				<!--  Audio Controls: Stereo Enhancement / Soft Saturation / Reverb  -->
+				<Grid Grid.Column="0" Margin="0,5,0,0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="1*" />
+						<ColumnDefinition Width="1*" />
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
 
-                    <CheckBox Grid.Row="0" Grid.Column="0" Margin="5,0,0,0" Content="Stereo Enhance" IsChecked="{Binding Path=StereoEnhancerEnable}" />
-                    <Slider Grid.Row="1" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=StereoEnhancerEnable}"
-                            Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+					<CheckBox Grid.Row="0" Grid.Column="0" Margin="5,0,0,0" Content="Stereo Enhance" IsChecked="{Binding Path=StereoEnhancerEnable}" />
+					<Slider Grid.Row="1" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=StereoEnhancerEnable}"
+							Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=StereoEnhancerWidth, Mode=TwoWay}" ToolTip="Width" />
-                    <Slider Grid.Row="2" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=StereoEnhancerEnable}"
-                            Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
-                            Minimum="0.0" Maximum="1.0" Value="{Binding Path=StereoEnhancerWetDry, Mode=TwoWay}" ToolTip="Wet - Dry"/>
+					<Slider Grid.Row="2" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=StereoEnhancerEnable}"
+							Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+							Minimum="0.0" Maximum="1.0" Value="{Binding Path=StereoEnhancerWetDry, Mode=TwoWay}" ToolTip="Wet - Dry"/>
 
-                    <CheckBox Grid.Row="3" Grid.Column="0" Margin="5,3,0,0" Content="Soft Saturation" IsChecked="{Binding Path=SoftSaturationEnable}" />
-                    <Slider Grid.Row="4" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=SoftSaturationEnable}"
-                            Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
-                            Minimum="0.0" Maximum="1.0" Value="{Binding Path=SoftSaturationFactor, Mode=TwoWay}" ToolTip="Saturation Factor" />
-                    <Slider Grid.Row="5" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=SoftSaturationEnable}"
-                            Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
-                            Minimum="0.0" Maximum="1.0" Value="{Binding Path=SoftSaturationDepth, Mode=TwoWay}" ToolTip="Saturation Depth"/>
+					<CheckBox Grid.Row="3" Grid.Column="0" Margin="5,3,0,0" Content="Soft Saturation" IsChecked="{Binding Path=SoftSaturationEnable}" />
+					<Slider Grid.Row="4" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=SoftSaturationEnable}"
+							Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+							Minimum="0.0" Maximum="1.0" Value="{Binding Path=SoftSaturationFactor, Mode=TwoWay}" ToolTip="Saturation Factor" />
+					<Slider Grid.Row="5" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=SoftSaturationEnable}"
+							Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+							Minimum="0.0" Maximum="1.0" Value="{Binding Path=SoftSaturationDepth, Mode=TwoWay}" ToolTip="Saturation Depth"/>
 
-                    <CheckBox Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Content="Reverb" IsChecked="{Binding Path=ReverbEnable}" />
-                    <Slider Grid.Row="1" Grid.Column="1" Margin="5,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=ReverbEnable}"
-                            Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
-                            Minimum="0.0" Maximum="1.0" Value="{Binding Path=ReverbLevel, Mode=TwoWay}" ToolTip="Level (Wet Mix)" />
-                    <Slider Grid.Row="2" Grid.Column="1" Margin="5,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=ReverbEnable}"
-                            Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
-                            Minimum="0.01" Maximum="0.5" Value="{Binding Path=ReverbDelay, Mode=TwoWay}" ToolTip="Reverb Delay"/>
-                </Grid>
+					<CheckBox Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Content="Reverb" IsChecked="{Binding Path=ReverbEnable}" />
+					<Slider Grid.Row="1" Grid.Column="1" Margin="5,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=ReverbEnable}"
+							Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+							Minimum="0.0" Maximum="1.0" Value="{Binding Path=ReverbLevel, Mode=TwoWay}" ToolTip="Level (Wet Mix)" />
+					<Slider Grid.Row="2" Grid.Column="1" Margin="5,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=ReverbEnable}"
+							Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+							Minimum="0.01" Maximum="0.5" Value="{Binding Path=ReverbDelay, Mode=TwoWay}" ToolTip="Reverb Delay"/>
+				</Grid>
 
-                <!--  Eq Controls  -->
-                <GroupBox Grid.Column="1" Margin="11,-5,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Parametric Equalization ">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+				<!--  Eq Controls  -->
+				<GroupBox Grid.Column="1" Margin="11,-5,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Parametric Equalization ">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
 
-                        <Grid Grid.Column="0"
-                              Margin="5,0"
-                              VerticalAlignment="Center">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <CheckBox Grid.Row="1"
-                                      Margin="0,5"
-                                      Content="Equalization"
-                                      IsChecked="{Binding Path=EqEnabled}" />
-                            <ComboBox Grid.Row="2"
-                                      Margin="0,5"
-                                      ItemsSource="{Binding Path=EqualizerList}"
-                                      SelectedItem="{Binding Path=CurrentEq,
-                                                             Mode=TwoWay}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Path=Name}" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                            <Button Grid.Row="3" Margin="0,5" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right"
-                                    Command="{Binding Path=ResetBands}" Content="Reset Equalizer" />
-                        </Grid>
+						<Grid Grid.Column="0"
+							  Margin="5,0"
+							  VerticalAlignment="Center">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="*" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<CheckBox Grid.Row="1"
+									  Margin="0,5"
+									  Content="Equalization"
+									  IsChecked="{Binding Path=EqEnabled}" />
+							<ComboBox Grid.Row="2"
+									  Margin="0,5"
+									  ItemsSource="{Binding Path=EqualizerList}"
+									  SelectedItem="{Binding Path=CurrentEq,
+															 Mode=TwoWay}">
+								<ComboBox.ItemTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding Path=Name}" />
+									</DataTemplate>
+								</ComboBox.ItemTemplate>
+							</ComboBox>
+							<Button Grid.Row="3" Margin="0,5" Style="{StaticResource GeneralButtonStyle}" HorizontalAlignment="Right"
+									Command="{Binding Path=ResetBands}" Content="Reset Equalizer" />
+						</Grid>
 
-                        <!--  Parametric Equalizer  -->
-                        <NoiseControls:ParametricEqualizerControl Grid.Column="1"
-                                                                  HorizontalAlignment="Center"
-                                                                  EqualizerBands="{Binding Path=EqualizerBands}"
-                                                                  PreampVolume="{Binding Path=PreampVolume,
-                                                                                         Mode=TwoWay}" />
-                    </Grid>
-                </GroupBox>
+						<!--  Parametric Equalizer  -->
+						<NoiseControls:ParametricEqualizerControl Grid.Column="1"
+																  HorizontalAlignment="Center"
+																  EqualizerBands="{Binding Path=EqualizerBands}"
+																  PreampVolume="{Binding Path=PreampVolume,
+																						 Mode=TwoWay}" />
+					</Grid>
+				</GroupBox>
 
 
-                <!--  Spectrum Analyzer  -->
-                <GroupBox Grid.Column="2" Margin="11,-5,11,0" Style="{StaticResource SectionBorderStyle}" Header=" Spectrum Analyzer ">
-                    <NoiseControls:SpectrumAnalyzerDisplay Margin="5"
-                                                           ImageHeight="{Binding Path=ImageHeight,
-                                                                                 Mode=OneWayToSource}"
-                                                           ImageWidth="{Binding Path=ImageWidth,
-                                                                                Mode=OneWayToSource}"
-                                                           SpectrumImage="{Binding Path=SpectrumImage,
-                                                                                   Mode=OneWay}" />
-                </GroupBox>
+				<!--  Spectrum Analyzer  -->
+				<GroupBox Grid.Column="2" Margin="11,-5,11,0" Style="{StaticResource SectionBorderStyle}" Header=" Spectrum Analyzer ">
+					<NoiseControls:SpectrumAnalyzerDisplay Margin="5"
+														   ImageHeight="{Binding Path=ImageHeight,
+																				 Mode=OneWayToSource}"
+														   ImageWidth="{Binding Path=ImageWidth,
+																				Mode=OneWayToSource}"
+														   SpectrumImage="{Binding Path=SpectrumImage,
+																				   Mode=OneWay}" />
+				</GroupBox>
 
-                <!--  Audio Controls: Balance / Speed / Replay Gain / Track Overlap  -->
-                <Grid Grid.Column="3" VerticalAlignment="Bottom">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <!--  Switch to standard player  -->
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Button Grid.Column="1" Width="27" Height="27" Margin="0,0,3,-11" Content="6" FontFamily="Webdings" FontSize="16"
-                                Foreground="{StaticResource ControlTextColor}" Command="{Binding Path=StandardPlayer}" />
-                    </Grid>
-                    <!--  Replay Gain  -->
-                    <CheckBox Grid.Row="2"
-                              Margin="3,0,0,3"
-                              VerticalAlignment="Center"
+				<!--  Audio Controls: Balance / Speed / Replay Gain / Track Overlap  -->
+				<Grid Grid.Column="3" VerticalAlignment="Bottom">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<!--  Switch to standard player  -->
+					<Grid Grid.Row="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<Button Grid.Column="1" Width="27" Height="27" Margin="0,0,3,-11" Content="6" FontFamily="Webdings" FontSize="16"
+								Foreground="{StaticResource ControlTextColor}" Command="{Binding Path=StandardPlayer}" />
+					</Grid>
+					<!--  Replay Gain  -->
+					<CheckBox Grid.Row="2"
+							  Margin="3,0,0,3"
+							  VerticalAlignment="Center"
 							  HorizontalAlignment="Left"
-                              Content="Replay Gain"
-                              IsChecked="{Binding Path=ReplayGainEnabled}" />
-                    <!--  Track Overlap  -->
-                    <Grid Grid.Row="3">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <CheckBox Grid.Column="0"
-                                  Margin="3,0,0,0"
-                                  VerticalAlignment="Center"
-                                  Content="Overlap:"
-                                  IsChecked="{Binding Path=TrackOverlapEnable}" />
-                        <TextBlock Grid.Column="1"
-                                   Width="15"
-                                   Margin="0"
-                                   HorizontalAlignment="Right"
-                                   VerticalAlignment="Center"
-                                   Foreground="{DynamicResource ControlTextColor}"
-                                   Padding="0,0,3,0"
-                                   Text="50"
-                                   TextAlignment="Right" />
-                        <Slider x:Name="TrackOverlap"
-                                Grid.Column="2"
-                                Margin="0,7,0,0"
-                                BorderThickness="0,0,0,5"
-                                Maximum="2000"
-                                Minimum="50"
-                                Orientation="Horizontal"
-                                SnapsToDevicePixels="True"
-                                Style="{StaticResource PlayerPositionSliderStyle}"
-                                Value="{Binding Path=TrackOverlapMilliseconds,
-                                                Mode=TwoWay}" />
-                        <TextBlock Grid.Column="3"
-                                   Width="15"
-                                   Margin="0"
-                                   VerticalAlignment="Center"
-                                   Foreground="{DynamicResource ControlTextColor}"
-                                   Text="2s" />
-                    </Grid>
-                    <!--  Playback Speed  -->
-                    <Grid Grid.Row="4" Margin="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <NoiseControls:LinkLabel Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}"
-                                                 Content="Speed:" LinkLabelBehavior="HoverUnderline" ToolTip="Click to set default play speed">
-                            <EventCommandTriggers:CommandSource.Trigger>
-                                <EventCommandTriggers:EventCommandTrigger Command="{Binding ResetPlaySpeed}" RoutedEvent="NoiseControls:LinkLabel.Click" />
-                            </EventCommandTriggers:CommandSource.Trigger>
-                        </NoiseControls:LinkLabel>
+							  Content="Replay Gain"
+							  IsChecked="{Binding Path=ReplayGainEnabled}" />
+					<!--  Track Overlap  -->
+					<Grid Grid.Row="3">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="70" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<CheckBox Grid.Column="0"
+								  Margin="3,0,0,0"
+								  VerticalAlignment="Center"
+								  Content="Overlap:"
+								  IsChecked="{Binding Path=TrackOverlapEnable}" />
+						<TextBlock Grid.Column="1"
+								   Width="15"
+								   Margin="0"
+								   HorizontalAlignment="Right"
+								   VerticalAlignment="Center"
+								   Foreground="{DynamicResource ControlTextColor}"
+								   Padding="0,0,3,0"
+								   Text="50"
+								   TextAlignment="Right" />
+						<Slider x:Name="TrackOverlap"
+								Grid.Column="2"
+								Margin="0,7,0,0"
+								BorderThickness="0,0,0,5"
+								Maximum="2000"
+								Minimum="50"
+								Orientation="Horizontal"
+								SnapsToDevicePixels="True"
+								Style="{StaticResource PlayerPositionSliderStyle}"
+								Value="{Binding Path=TrackOverlapMilliseconds,
+												Mode=TwoWay}" />
+						<TextBlock Grid.Column="3"
+								   Width="15"
+								   Margin="0"
+								   VerticalAlignment="Center"
+								   Foreground="{DynamicResource ControlTextColor}"
+								   Text="2s" />
+					</Grid>
+					<!--  Playback Speed  -->
+					<Grid Grid.Row="4" Margin="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="70" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<NoiseControls:LinkLabel Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}"
+												 Content="Speed:" LinkLabelBehavior="HoverUnderline" ToolTip="Click to set default play speed">
+							<EventCommandTriggers:CommandSource.Trigger>
+								<EventCommandTriggers:EventCommandTrigger Command="{Binding ResetPlaySpeed}" RoutedEvent="NoiseControls:LinkLabel.Click" />
+							</EventCommandTriggers:CommandSource.Trigger>
+						</NoiseControls:LinkLabel>
 
-                        <TextBlock Grid.Column="1" Width="15" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Padding="0,0,3,0"
-                                   Text="-" TextAlignment="Right" />
-                        <Slider x:Name="SpeedSlider" Grid.Column="2" Margin="0,7,0,0" BorderThickness="0,0,0,5" Orientation="Horizontal" SnapsToDevicePixels="True" 
-                                Style="{StaticResource PlayerPositionSliderStyle}" Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}"/>
-                        <TextBlock Grid.Column="3" Width="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Text="+" />
-                    </Grid>
-                    <!--  Balance  -->
-                    <Grid Grid.Row="5" Margin="0,0,0,3">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <NoiseControls:LinkLabel Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}"
-                                                 Content="Balance:" LinkLabelBehavior="HoverUnderline" ToolTip="Click to set default balance">
-                            <EventCommandTriggers:CommandSource.Trigger>
-                                <EventCommandTriggers:EventCommandTrigger Command="{Binding ResetPanPosition}" RoutedEvent="NoiseControls:LinkLabel.Click" />
-                            </EventCommandTriggers:CommandSource.Trigger>
-                        </NoiseControls:LinkLabel>
+						<TextBlock Grid.Column="1" Width="15" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Padding="0,0,3,0"
+								   Text="-" TextAlignment="Right" />
+						<Slider x:Name="SpeedSlider" Grid.Column="2" Margin="0,7,0,0" BorderThickness="0,0,0,5" Orientation="Horizontal" SnapsToDevicePixels="True" 
+								Style="{StaticResource PlayerPositionSliderStyle}" Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}"/>
+						<TextBlock Grid.Column="3" Width="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Text="+" />
+					</Grid>
+					<!--  Balance  -->
+					<Grid Grid.Row="5" Margin="0,0,0,3">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="70" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<NoiseControls:LinkLabel Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}"
+												 Content="Balance:" LinkLabelBehavior="HoverUnderline" ToolTip="Click to set default balance">
+							<EventCommandTriggers:CommandSource.Trigger>
+								<EventCommandTriggers:EventCommandTrigger Command="{Binding ResetPanPosition}" RoutedEvent="NoiseControls:LinkLabel.Click" />
+							</EventCommandTriggers:CommandSource.Trigger>
+						</NoiseControls:LinkLabel>
 
-                        <TextBlock Grid.Column="1" Width="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}"
-                                   Padding="0,0,3,0" Text="L" TextAlignment="Right" />
-                        <Slider x:Name="Balance" Grid.Column="2" Margin="0,7,0,0" BorderThickness="0,0,0,5" Orientation="Horizontal" SnapsToDevicePixels="True"
-                                Style="{StaticResource PlayerPositionSliderStyle}"
-                                 Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}" />
-                        <TextBlock Grid.Column="3" Width="15" Margin="0" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Text="R" />
-                    </Grid>
-                </Grid>
+						<TextBlock Grid.Column="1" Width="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}"
+								   Padding="0,0,3,0" Text="L" TextAlignment="Right" />
+						<Slider x:Name="Balance" Grid.Column="2" Margin="0,7,0,0" BorderThickness="0,0,0,5" Orientation="Horizontal" SnapsToDevicePixels="True"
+								Style="{StaticResource PlayerPositionSliderStyle}"
+								 Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}" />
+						<TextBlock Grid.Column="3" Width="15" Margin="0" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Text="R" />
+					</Grid>
+				</Grid>
 
-            </Grid>
+			</Grid>
 
-            <!--  Basic Player Controls  -->
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="5*" />
-                    <ColumnDefinition Width="3*" />
-                    <ColumnDefinition Width="2*" />
-                </Grid.ColumnDefinitions>
+			<!--  Basic Player Controls  -->
+			<Grid Grid.Row="1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="5*" />
+					<ColumnDefinition Width="3*" />
+					<ColumnDefinition Width="2*" />
+				</Grid.ColumnDefinitions>
 
-                <!--  Track information  -->
-                <Grid Grid.Column="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+				<!--  Track information  -->
+				<Grid Grid.Column="0">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="*" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0"
-                          Margin="0"
-                          VerticalAlignment="Center">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+					<Grid Grid.Row="0"
+						  Margin="0"
+						  VerticalAlignment="Center">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0"
-                                   FontSize="16"
-                                   FontWeight="Bold"
-                                   Foreground="{DynamicResource ControlTextColor}"
-                                   Text="Now Playing: "
-                                   Visibility="{Binding TrackName,
-                                                        Converter={StaticResource EmptyStringVisibilityConverter}}" />
-                        <TextBlock Grid.Column="1"
-                                   FontSize="16"
-                                   FontWeight="Bold"
-                                   ReusableBehaviours:FadeTrimming.IsEnabled="True"
-                                   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                                   Text="{Binding TrackName}" />
-                    </Grid>
+						<TextBlock Grid.Column="0"
+								   FontSize="16"
+								   FontWeight="Bold"
+								   Foreground="{DynamicResource ControlTextColor}"
+								   Text="Now Playing: "
+								   Visibility="{Binding TrackName,
+														Converter={StaticResource EmptyStringVisibilityConverter}}" />
+						<TextBlock Grid.Column="1"
+								   FontSize="16"
+								   FontWeight="Bold"
+								   ReusableBehaviours:FadeTrimming.IsEnabled="True"
+								   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+								   Text="{Binding TrackName}" />
+					</Grid>
 
-                    <Grid Grid.Row="1"
-                          Behaviours:GridUtils.ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto,Auto">
+					<Grid Grid.Row="1"
+						  Behaviours:GridUtils.ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto,Auto">
 
-                        <!--  Favorites and ratings  -->
-                        <CheckBox x:Name="Favorite"
-                                  Grid.Column="0"
-                                  Margin="0,0,5,0"
-                                  IsChecked="{Binding Path=IsFavorite,
-                                                      Mode=TwoWay}"
-                                  Style="{StaticResource FavoriteCheckBoxStyle}" />
-                        <NoiseControls:RatingControl Grid.Column="1"
-                                                     VerticalAlignment="Center"
-                                                     Rating="{Binding Path=Rating,
-                                                                      Mode=TwoWay}"
-                                                     Style="{StaticResource NoiseRatingStyle}" />
+						<!--  Favorites and ratings  -->
+						<CheckBox x:Name="Favorite"
+								  Grid.Column="0"
+								  Margin="0,0,5,0"
+								  IsChecked="{Binding Path=IsFavorite,
+													  Mode=TwoWay}"
+								  Style="{StaticResource FavoriteCheckBoxStyle}" />
+						<NoiseControls:RatingControl Grid.Column="1"
+													 VerticalAlignment="Center"
+													 Rating="{Binding Path=Rating,
+																	  Mode=TwoWay}"
+													 Style="{StaticResource NoiseRatingStyle}" />
 
-                        <!--  Track related commands  -->
-                        <Button Grid.Column="2"
-                                Width="17"
-                                Height="17"
-                                Margin="9,0,0,0"
-                                Command="{Binding TrackInformation}"
-                                Content="{StaticResource Path_Information}"
-                                ToolTip="Sync Artist and Album display" />
-                        <Button Grid.Column="3"
-                                Width="17"
-                                Height="17"
-                                Margin="5,0,0,0"
-                                Command="{Binding RequestSimilarSongSearch}"
-                                Content="{StaticResource Path_SimilarTracks}"
-                                ToolTip="Find Similar Tracks" />
-                        <!--Button Grid.Column="4"
-                                Width="17"
-                                Height="17"
-                                Margin="5,0,0,0"
-                                Command="{Binding RequestLyrics}"
-                                Content="{StaticResource Path_Lyrics}"
-                                ToolTip="Display Song Lyrics" /-->
+						<!--  Track related commands  -->
+						<Button Grid.Column="2"
+								Width="17"
+								Height="17"
+								Margin="9,0,0,0"
+								Command="{Binding TrackInformation}"
+								Content="{StaticResource Path_Information}"
+								ToolTip="Sync Artist and Album display" />
+						<Button Grid.Column="3"
+								Width="17"
+								Height="17"
+								Margin="5,0,0,0"
+								Command="{Binding RequestSimilarSongSearch}"
+								Content="{StaticResource Path_SimilarTracks}"
+								ToolTip="Find Similar Tracks" />
+						<!--Button Grid.Column="4"
+								Width="17"
+								Height="17"
+								Margin="5,0,0,0"
+								Command="{Binding RequestLyrics}"
+								Content="{StaticResource Path_Lyrics}"
+								ToolTip="Display Song Lyrics" /-->
 
-                        <!--  Playing position  -->
-                        <TextBlock Grid.Column="7" Foreground="{DynamicResource ControlTextColor}" Text="Position: " />
-                        <TextBlock Grid.Column="8" Margin="0,0,7,0" ToolTip="Click to change the display format of the position time"
-                                   Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}">
-                            <EventCommandTriggers:CommandSource.Trigger>
-                                <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
-                            </EventCommandTriggers:CommandSource.Trigger>
-                        </TextBlock>
-                    </Grid>
-                </Grid>
+						<!--  Playing position  -->
+						<TextBlock Grid.Column="7" Foreground="{DynamicResource ControlTextColor}" Text="Position: " />
+						<TextBlock Grid.Column="8" Margin="0,0,7,0" ToolTip="Click to change the display format of the position time"
+								   Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}">
+							<EventCommandTriggers:CommandSource.Trigger>
+								<EventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
+							</EventCommandTriggers:CommandSource.Trigger>
+						</TextBlock>
+					</Grid>
+				</Grid>
 
-                <!--  Transport Controls  -->
-                <Grid Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+				<!--  Transport Controls  -->
+				<Grid Grid.Column="1">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="*" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0"
-                                HorizontalAlignment="Center"
-                                Orientation="Horizontal">
-                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="4" Command="{Binding Play}"/>
-                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=";" Command="{Binding Pause}"/>
-                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="&lt;" Command="{Binding Stop}"/>
-                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="9" Command="{Binding PreviousTrack}" />
-                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=":" Command="{Binding NextTrack}"/>
-                        <Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_ReplayTrack}" Command="{Binding ReplayTrack}" Padding="5" />
-                    </StackPanel>
-                    
-                    <Slider x:Name="PositionSlider"
-                            Grid.Row="1"
-                            Margin="5,0,5,0"
-                            VerticalAlignment="Center"
-                            Maximum="{Binding Path=TrackEndPosition,
-                                              Mode=OneWay}"
-                            Minimum="0"
-                            Orientation="Horizontal"
-                            SnapsToDevicePixels="True"
-                            Style="{StaticResource PlayerPositionSliderStyle}"
-                            Value="{Binding Path=TrackPosition,
-                                            Mode=TwoWay}" />
+					<StackPanel Grid.Row="0"
+								HorizontalAlignment="Center"
+								Orientation="Horizontal">
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="4" Command="{Binding Play}"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=";" Command="{Binding Pause}"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="&lt;" Command="{Binding Stop}"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="9" Command="{Binding PreviousTrack}" />
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=":" Command="{Binding NextTrack}"/>
+						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_ReplayTrack}" Command="{Binding ReplayTrack}" Padding="5" />
+					</StackPanel>
+					
+					<Slider x:Name="PositionSlider"
+							Grid.Row="1"
+							Margin="5,0,5,0"
+							VerticalAlignment="Center"
+							Maximum="{Binding Path=TrackEndPosition,
+											  Mode=OneWay}"
+							Minimum="0"
+							Orientation="Horizontal"
+							SnapsToDevicePixels="True"
+							Style="{StaticResource PlayerPositionSliderStyle}"
+							Value="{Binding Path=TrackPosition,
+											Mode=TwoWay}" />
 
-                </Grid>
+				</Grid>
 
-                <!--  Volume Controls  -->
-                <Grid Grid.Column="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+				<!--  Volume Controls  -->
+				<Grid Grid.Column="2">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="*" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Panel.ZIndex="1"
-                                   FontFamily="Webdings"
-                                   FontSize="21.333"
-                                   Foreground="Red"
-                                   IsHitTestVisible="False"
-                                   Text="x"
-                                   Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
-                        <Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Foreground="{StaticResource ControlTextColor}"
-                                Content="X" Command="{Binding Path=Mute}"/>
-                    </Grid>
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                                   Margin="0,0,5,0"
-                                   HorizontalAlignment="Right"
-                                   VerticalAlignment="Center"
-                                   Foreground="{DynamicResource ControlTextColor}"
-                                   Text="Volume:" />
-                        <TextBlock Grid.Column="1"
-                                   Margin="0,0,3,0"
-                                   VerticalAlignment="Center"
-                                   Foreground="{DynamicResource ControlTextColor}"
-                                   Text="-" />
-                        <Slider x:Name="Volume"
-                                Grid.Column="2"
-                                Margin="0,5,0,0"
-                                Maximum="1.0"
-                                Minimum="0.0"
-                                Orientation="Horizontal"
-                                SnapsToDevicePixels="True"
-                                Style="{StaticResource PlayerPositionSliderStyle}"
-                                Value="{Binding Path=Volume,
-                                                Mode=TwoWay}" />
-                        <TextBlock Grid.Column="3"
-                                   Margin="3,0,0,0"
-                                   VerticalAlignment="Center"
-                                   Foreground="{DynamicResource ControlTextColor}"
-                                   Text="+" />
-                    </Grid>
-                </Grid>
+					<Grid Grid.Row="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="50" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Grid.Column="0"
+								   HorizontalAlignment="Center"
+								   VerticalAlignment="Center"
+								   Panel.ZIndex="1"
+								   FontFamily="Webdings"
+								   FontSize="21.333"
+								   Foreground="Red"
+								   IsHitTestVisible="False"
+								   Text="x"
+								   Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
+						<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Foreground="{StaticResource ControlTextColor}"
+								Content="X" Command="{Binding Path=Mute}"/>
 
-            </Grid>
-        </Grid>
-    </GroupBox>
+						<!-- Audio Device Selection -->
+						<TextBlock Grid.Column="1" Margin="9,0,3,0" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Text="Device:"/>
+						<ComboBox Grid.Column="2" VerticalAlignment="Center" Margin="0,0,3,0"
+								  ItemsSource="{Binding AudioDevices}" SelectedItem="{Binding CurrentAudioDevice}" DisplayMemberPath="Name" />
+					</Grid>
+					<Grid Grid.Row="1">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="50" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<TextBlock Grid.Column="0"
+								   Margin="0,0,5,0"
+								   HorizontalAlignment="Right"
+								   VerticalAlignment="Center"
+								   Foreground="{DynamicResource ControlTextColor}"
+								   Text="Volume:" />
+						<TextBlock Grid.Column="1"
+								   Margin="0,0,3,0"
+								   VerticalAlignment="Center"
+								   Foreground="{DynamicResource ControlTextColor}"
+								   Text="-" />
+						<Slider x:Name="Volume"
+								Grid.Column="2"
+								Margin="0,5,0,0"
+								Maximum="1.0"
+								Minimum="0.0"
+								Orientation="Horizontal"
+								SnapsToDevicePixels="True"
+								Style="{StaticResource PlayerPositionSliderStyle}"
+								Value="{Binding Path=Volume,
+												Mode=TwoWay}" />
+						<TextBlock Grid.Column="3"
+								   Margin="3,0,0,0"
+								   VerticalAlignment="Center"
+								   Foreground="{DynamicResource ControlTextColor}"
+								   Text="+" />
+					</Grid>
+				</Grid>
+
+			</Grid>
+		</Grid>
+	</GroupBox>
 </UserControl>

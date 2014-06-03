@@ -369,6 +369,21 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public IEnumerable<AudioDevice>	AudioDevices {
+			get{ return( mAudioController.AudioDevices ); }
+		}
+
+		public AudioDevice CurrentAudioDevice {
+			get{ return( mAudioController.CurrentAudioDevice ); }
+			set {
+				mPlayController.Stop();
+				mAudioController.CurrentAudioDevice = value; 
+				
+				RaisePropertyChanged( () => CurrentAudioDevice );
+			}
+		}
+
+
 		public double PreampVolume {
 			get{ return( mAudioController.PreampVolume ); }
 			set {
