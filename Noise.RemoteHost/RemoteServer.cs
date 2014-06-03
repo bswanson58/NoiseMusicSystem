@@ -16,12 +16,14 @@ namespace Noise.RemoteHost {
 								IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted>,
 								IHandle<Events.RemoteTransportUpdate>, IHandle<Events.PlayHistoryChanged> {
 		private readonly ILibraryConfiguration				mLibraryConfiguration;
+		private readonly IAudioPlayer						mAudioPlayer;
 		private readonly RemoteHostConfiguration			mHostConfiguration;
 		private	readonly Dictionary<string, ClientEvents>	mClientList;
 
-		public RemoteServer( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration,
+		public RemoteServer( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration, IAudioPlayer audioPlayer,
 							 RemoteHostConfiguration hostConfiguration ) {
 			mLibraryConfiguration = libraryConfiguration;
+			mAudioPlayer = audioPlayer;
 			mHostConfiguration = hostConfiguration;
 			mClientList = new Dictionary<string, ClientEvents>();
 
@@ -48,7 +50,36 @@ namespace Noise.RemoteHost {
 				retValue.LibraryCount = (Int16)mLibraryConfiguration.Libraries.Count();
 			}
 
+			retValue.AudioDevices = mAudioPlayer.GetDeviceList().Select( device => new RoAudioDevice( device )).ToArray();
+			if( mAudioPlayer.GetCurrentDevice() != null ) {
+				retValue.CurrentAudioDevice = mAudioPlayer.GetCurrentDevice().DeviceId;
+			}
+
 			return (retValue);
+		}
+
+		public BaseResult SetOutputDevice( int outputDevice ) {
+			var retValue = new BaseResult();
+
+			try {
+				var device = mAudioPlayer.GetDeviceList().FirstOrDefault( d => d.DeviceId == outputDevice );
+
+				if( device != null ) {
+					mAudioPlayer.SetDevice( device );
+
+					retValue.Success = true;
+				}
+				else {
+					retValue.ErrorMessage = "Audio output device cound not be found.";
+				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( "RemoteServer:SetOutputDevice:", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+
+			return( retValue );
 		}
 
 		public BaseResult RequestEvents( string address ) {

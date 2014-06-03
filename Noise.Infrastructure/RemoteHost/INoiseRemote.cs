@@ -14,6 +14,10 @@ namespace Noise.Infrastructure.RemoteHost {
 		RoServerInformation GetServerInformation();
 
 		[OperationContract]
+		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "setOutputDevice?device={outputDevice}")]
+		BaseResult SetOutputDevice( int outputDevice );
+
+		[OperationContract]
 		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "requestEvents?address={address}")]
 		BaseResult RequestEvents( string address );
 

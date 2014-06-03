@@ -285,6 +285,7 @@
     <Compile Include="RemoteDto\RoArtist.cs" />
     <Compile Include="RemoteDto\RoArtistInfo.cs" />
     <Compile Include="RemoteDto\RoArtistTrack.cs" />
+    <Compile Include="RemoteDto\RoAudioDevice.cs" />
     <Compile Include="RemoteDto\RoAudioState.cs" />
     <Compile Include="RemoteDto\RoBase.cs" />
     <Compile Include="RemoteDto\RoFavorite.cs" />
