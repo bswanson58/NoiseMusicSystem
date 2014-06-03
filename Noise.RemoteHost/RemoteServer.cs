@@ -16,13 +16,15 @@ namespace Noise.RemoteHost {
 								IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted>,
 								IHandle<Events.RemoteTransportUpdate>, IHandle<Events.PlayHistoryChanged> {
 		private readonly ILibraryConfiguration				mLibraryConfiguration;
+		private readonly IPlayController					mPlayController;
 		private readonly IAudioPlayer						mAudioPlayer;
 		private readonly RemoteHostConfiguration			mHostConfiguration;
 		private	readonly Dictionary<string, ClientEvents>	mClientList;
 
-		public RemoteServer( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration, IAudioPlayer audioPlayer,
-							 RemoteHostConfiguration hostConfiguration ) {
+		public RemoteServer( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration,
+							 IPlayController playController, IAudioPlayer audioPlayer, RemoteHostConfiguration hostConfiguration ) {
 			mLibraryConfiguration = libraryConfiguration;
+			mPlayController = playController;
 			mAudioPlayer = audioPlayer;
 			mHostConfiguration = hostConfiguration;
 			mClientList = new Dictionary<string, ClientEvents>();
@@ -65,6 +67,7 @@ namespace Noise.RemoteHost {
 				var device = mAudioPlayer.GetDeviceList().FirstOrDefault( d => d.DeviceId == outputDevice );
 
 				if( device != null ) {
+					mPlayController.Stop();
 					mAudioPlayer.SetDevice( device );
 
 					retValue.Success = true;
