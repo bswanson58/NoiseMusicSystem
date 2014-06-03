@@ -19,6 +19,7 @@ namespace Noise.Infrastructure.Configuration {
 		public	float		ReverbDelay { get; set; }
 		public	bool		TrackOverlapEnabled { get; set; }
 		public	int			TrackOverlapMilliseconds { get; set; }
+		public	string		OutputDevice { get; set; }
 		public	IList<ParametricEqConfiguration> ParametricEqualizers { get; set; }
 
 		public AudioPreferences() {
@@ -34,6 +35,7 @@ namespace Noise.Infrastructure.Configuration {
 			ReverbDelay = 0.1f;
 			TrackOverlapEnabled = true;
 			TrackOverlapMilliseconds = 500;
+			OutputDevice = string.Empty;
 		}
 
 		public void UpdateEq( ParametricEqualizer eq ) {

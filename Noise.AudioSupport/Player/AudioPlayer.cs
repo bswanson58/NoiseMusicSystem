@@ -151,8 +151,9 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		public void SetDevice( AudioDevice device ) {
-			if( device != null ) {
-				NoiseLogger.Current.LogMessage( string.Format( "AudioController: Initializing with device: {0}", device.Name ));
+			if(( device != null ) &&
+			   ( device.DeviceId != mCurrentDevice )) {
+				NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Initializing with device: {0}", device.Name ));
 
 				InitializeWithDevice( device.DeviceId );
 			}

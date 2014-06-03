@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
@@ -44,6 +45,14 @@ namespace Noise.Core.PlaySupport {
 					mAudioPlayer.ReverbLevel = audioCongfiguration.ReverbLevel;
 					mAudioPlayer.TrackOverlapEnable = audioCongfiguration.TrackOverlapEnabled;
 					mAudioPlayer.TrackOverlapMilliseconds = audioCongfiguration.TrackOverlapMilliseconds;
+
+					if(!string.IsNullOrWhiteSpace( audioCongfiguration.OutputDevice )) {
+						var device = mAudioPlayer.GetDeviceList().FirstOrDefault( d => d.Name.Equals( audioCongfiguration.OutputDevice, StringComparison.InvariantCultureIgnoreCase ));
+
+						if( device != null ) {
+							mAudioPlayer.SetDevice( device );
+						}
+					}
 				}
 
 				if( mEqManager.Initialize( Path.Combine( mNoiseEnvironment.ConfigurationDirectory(), Constants.EqPresetsFile ))) {
@@ -80,6 +89,7 @@ namespace Noise.Core.PlaySupport {
 				audioCongfiguration.ReverbLevel = mAudioPlayer.ReverbLevel;
 				audioCongfiguration.TrackOverlapEnabled = mAudioPlayer.TrackOverlapEnable;
 				audioCongfiguration.TrackOverlapMilliseconds = mAudioPlayer.TrackOverlapMilliseconds;
+				audioCongfiguration.OutputDevice = mAudioPlayer.GetCurrentDevice().Name;
 
 				mPreferences.Save( audioCongfiguration );
 			}
