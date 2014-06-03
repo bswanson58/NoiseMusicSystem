@@ -127,6 +127,8 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		private void InitializeDevices() {
+			mDeviceList.Clear();
+
 			var deviceCount = Bass.BASS_GetDeviceCount();
 
 			for( var device = 0; device < deviceCount; device++ ) {
@@ -143,6 +145,8 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		public IEnumerable<AudioDevice> GetDeviceList() {
+			InitializeDevices();
+
 			return( mDeviceList );
 		}
 
