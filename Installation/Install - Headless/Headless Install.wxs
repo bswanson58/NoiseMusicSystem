@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
-	 xmlns:fire="http://schemas.microsoft.com/wix/FirewallExtension">
+	 xmlns:fire="http://schemas.microsoft.com/wix/FirewallExtension"
+	 xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 
 	<!-- To update for the next release increment ProductVersion in Version.wxi -->
 	<?include ..\Common Files\Version.wxi?>
@@ -73,7 +74,14 @@
 			<Component Id="ReusableBits.Service.dll" Guid="ef661a41-2c49-4cf9-8573-1025e334ae47">
 				<File Id="ReusableBits.Service.dll" DiskId="1" Source="$(var.ReusableBits.Service.TargetDir)ReusableBits.Service.dll" KeyPath="yes" Checksum="yes" />
 			</Component>
+		</DirectoryRef>
 
+		<DirectoryRef Id="ProductFolder">
+			<Component Id="ProgramDataPermissions" Guid="3be02cf7-91c0-4c92-bea4-f8f95c5f869c">
+				<CreateFolder>
+					<util:PermissionEx User="Users" GenericAll="yes" />
+				</CreateFolder>
+			</Component>
 		</DirectoryRef>
 
 		<Icon Id="AddRemoveProgramsIcon" SourceFile="$(var.Noise.Headless.ProjectDir)..\Common\Noise.ico" />
@@ -83,6 +91,7 @@
 			<ComponentRef Id="Noise.Headless.exe" />
 			<ComponentRef Id="Noise.Headless.config" />
 			<ComponentRef Id="ReusableBits.Service.dll"/>
+			<ComponentRef Id="ProgramDataPermissions"/>
 		</ComponentGroup>
 		
 		<Feature Id="Complete" Title="Noise Music Service Install" Level="1" ConfigurableDirectory="INSTALLDIRECTORY">
