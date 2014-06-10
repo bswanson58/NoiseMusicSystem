@@ -40,8 +40,6 @@ namespace Noise.AudioSupport.Player {
 		private	int										mPreampFx;
 		private	int										mParamEqFx;
 		private int										mReverbFx;
-		private float									mReverbLevel;
-		private float									mReverbDelay;
 		private	readonly Dictionary<long, int>			mEqChannels;
 		private	bool									mEqEnabled;
 		private readonly DOWNLOADPROC					mDownloadProc;
@@ -53,6 +51,18 @@ namespace Noise.AudioSupport.Player {
 		private readonly Visuals						mSpectumVisual;
 		private readonly List<AudioDevice>				mDeviceList;
 		private int										mCurrentDevice;
+
+		// Variables used to store parameter values before channel is created.
+		private bool									mStereoEnhancerEnable;
+		private double									mStereoEnhancerWetDry;
+		private double									mStereoEnhancerWidth;
+		private bool									mSoftSaturationEnable;
+		private double									mSoftSaturationDepth;
+		private double									mSoftSaturationFactor;
+		private bool									mReverbEnable;
+		private float									mReverbLevel;
+		private float									mReverbDelay;
+
 
 		private readonly Subject<AudioChannelStatus>	mChannelStatusSubject;
 		public	IObservable<AudioChannelStatus>			ChannelStatusChange { get { return( mChannelStatusSubject.AsObservable()); } }
@@ -151,7 +161,13 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		public AudioDevice GetCurrentDevice() {
-			return( mDeviceList.FirstOrDefault( device => device.DeviceId == mCurrentDevice ));
+			var retValue = mDeviceList.FirstOrDefault( device => device.DeviceId == mCurrentDevice );
+
+			if( retValue == null ) {
+				retValue = new AudioDevice();
+			}
+
+			return( retValue );
 		}
 
 		public void SetDevice( AudioDevice device ) {
@@ -166,6 +182,10 @@ namespace Noise.AudioSupport.Player {
 		private void InitializeWithDefaultDevice() {
 			if( mDeviceList.Any()) {
 				SetDevice( mDeviceList.FirstOrDefault( device => device.IsDefault ));
+
+				StereoEnhancerEnable = mStereoEnhancerEnable;
+				StereoEnhancerWetDry = mStereoEnhancerWetDry;
+				StereoEnhancerWidth = mStereoEnhancerWidth;
 			}
 		}
 
@@ -181,6 +201,13 @@ namespace Noise.AudioSupport.Player {
 
 			if( mCurrentDevice != -1 ) {
 				Bass.BASS_Free();
+
+				mMixerChannel = 0;
+				mMuteFx = 0;
+
+				mStereoEnhancer = null;
+				mSoftSaturation = null;
+				mLevelMeter = null;
 			}
 
 			if( Bass.BASS_Init( deviceId, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero )) {
@@ -202,7 +229,7 @@ namespace Noise.AudioSupport.Player {
 						mLevelMeter = new DSP_PeakLevelMeter( mMixerChannel, -20 );
 						mLevelMeter.Notification += OnLevelMeter;
 
-						InitializePreamp();
+						InitializeAudioParameters();
 					}
 					else {
 						NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer: Mixer channel could not be created: {0}", Bass.BASS_ErrorGetCode()));
@@ -214,6 +241,24 @@ namespace Noise.AudioSupport.Player {
 			}
 			else {
 				NoiseLogger.Current.LogMessage( string.Format( "AudioPlayer - Could not initialize with device: {0}", Bass.BASS_ErrorGetCode()));
+			}
+		}
+
+		private void InitializeAudioParameters() {
+			if( mMixerChannel != 0 ) {
+				InitializePreamp();
+
+				SoftSaturationEnable = mSoftSaturationEnable;
+				SoftSaturationDepth = mSoftSaturationDepth;
+				SoftSaturationFactor = mSoftSaturationFactor;
+
+				StereoEnhancerEnable = mStereoEnhancerEnable;
+				StereoEnhancerWetDry = mStereoEnhancerWetDry;
+				StereoEnhancerWidth = mStereoEnhancerWidth;
+
+				ReverbEnable = mReverbEnable;
+				ReverbDelay = mReverbDelay;
+				ReverbLevel = mReverbLevel;
 			}
 		}
 
@@ -859,58 +904,88 @@ namespace Noise.AudioSupport.Player {
 		}
 
 		public bool StereoEnhancerEnable {
-			get{ return(!mStereoEnhancer.IsBypassed ); }
-			set{ mStereoEnhancer.SetBypass(!value ); }
+			get{ return( mStereoEnhancerEnable ); }
+			set {
+				mStereoEnhancerEnable = value;
+
+				if( mStereoEnhancer != null ) {
+					mStereoEnhancer.SetBypass(!value );
+				}
+			}
 		}
 
 		public double StereoEnhancerWidth {
-			get{ return( mStereoEnhancer.WideCoeff / 10.0 ); }
+			get{ return( mStereoEnhancerWidth ); }
 			set {
 				if(( value >= 0.0 ) &&
 				   ( value <= 1.0 )) {
-					mStereoEnhancer.WideCoeff = value * 10.0;
+					mStereoEnhancerWidth = value * 10.0;
+
+					if( mStereoEnhancer != null ) {
+						mStereoEnhancer.WideCoeff = mStereoEnhancerWidth;
+					}
 				}
 			}
 		}
 
 		public double StereoEnhancerWetDry {
-			get{ return( mStereoEnhancer.WetDry ); }
+			get{ return( mStereoEnhancerWetDry ); }
 			set {
 				if(( value >= 0.0 ) &&
 				   ( value <= 1.0 )) {
-					mStereoEnhancer.WetDry = value;
+					mStereoEnhancerWetDry = value;
+
+					if( mStereoEnhancer != null ) {
+						mStereoEnhancer.WetDry = value;
+					}
 				}
 			}
 		}
 
 		public bool SoftSaturationEnable {
-			get{ return(!mSoftSaturation.IsBypassed ); }
-			set{ mSoftSaturation.SetBypass(!value ); }
+			get{ return( mSoftSaturationEnable ); }
+			set {
+				mSoftSaturationEnable = value;
+
+				if( mSoftSaturation != null ) {
+					mSoftSaturation.SetBypass(!mSoftSaturationEnable );
+				}
+			}
 		}
 
 		public double SoftSaturationDepth {
-			get{ return( mSoftSaturation.Depth ); }
+			get{ return( mSoftSaturationDepth ); }
 			set {
 				if(( value >= 0.0 ) &&
 				   ( value <= 1.0 )) {
-					mSoftSaturation.Depth = value;
+					mSoftSaturationDepth = value;
+
+					if( mSoftSaturation != null ) {
+						mSoftSaturation.Depth = mSoftSaturationDepth;
+					}
 				}
 			}
 		}
 
 		public double SoftSaturationFactor {
-			get{ return( mSoftSaturation.Factor ); }
+			get{ return( mSoftSaturationFactor ); }
 			set {
 				if(( value >= 0.0 ) &&
 				   ( value <= 0.999 )) {
-					mSoftSaturation.Factor = value;
+					mSoftSaturationFactor = value;
+
+					if( mSoftSaturation != null ) {
+						mSoftSaturation.Factor = mSoftSaturationFactor;
+					}
 				}
 			}
 		}
 
 		public bool ReverbEnable {
-			get{ return( mReverbFx != 0 ); }
+			get{ return( mReverbEnable ); }
 			set {
+				mReverbEnable = value;
+
 				if( value ) {
 					if( mReverbFx == 0 ) {
 						mReverbFx = Bass.BASS_ChannelSetFX( mMixerChannel, BASSFXType.BASS_FX_BFX_ECHO4, 6 );
