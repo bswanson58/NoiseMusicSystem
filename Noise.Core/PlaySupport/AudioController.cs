@@ -46,12 +46,19 @@ namespace Noise.Core.PlaySupport {
 					mAudioPlayer.TrackOverlapEnable = audioCongfiguration.TrackOverlapEnabled;
 					mAudioPlayer.TrackOverlapMilliseconds = audioCongfiguration.TrackOverlapMilliseconds;
 
-					if(!string.IsNullOrWhiteSpace( audioCongfiguration.OutputDevice )) {
-						var device = mAudioPlayer.GetDeviceList().FirstOrDefault( d => d.Name.Equals( audioCongfiguration.OutputDevice, StringComparison.InvariantCultureIgnoreCase ));
+					var deviceList = mAudioPlayer.GetDeviceList().ToArray();
+					if( deviceList.Any()) {
+						var device = default( AudioDevice );
 
-						if( device != null ) {
-							mAudioPlayer.SetDevice( device );
+						if(!string.IsNullOrWhiteSpace( audioCongfiguration.OutputDevice )) {
+							device = deviceList.FirstOrDefault( d => d.Name.Equals( audioCongfiguration.OutputDevice, StringComparison.InvariantCultureIgnoreCase ));
 						}
+
+						if( device == null ) {
+							device = deviceList.FirstOrDefault();
+						}
+
+						mAudioPlayer.SetDevice( device );
 					}
 				}
 
