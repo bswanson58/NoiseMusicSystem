@@ -28,7 +28,13 @@ namespace Noise.Core.PlayStrategies {
 		}
 
 		protected int NextRandom( int maxValue ) {
-			return( mRandom.Next( maxValue ));
+			var	retValue = 0;
+
+			if( maxValue > 0 ) {
+				retValue = mRandom.Next( maxValue );
+			}
+
+			return( retValue );
 		}
 
 		protected DbTrack RandomTrackFromArtist( DbArtist artist ) {
