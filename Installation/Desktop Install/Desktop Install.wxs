@@ -71,6 +71,8 @@
 				<File Id="Noise.Desktop.exe" DiskId="1" Source="$(var.Noise.Desktop.TargetPath)" KeyPath="yes" Checksum="yes" />
 				<fire:FirewallException Id="Desktop.Firewall.Exception" Name="Noise Music System Desktop" Description="Noise Music System support for remote clients."
 										Port="71" Protocol="tcp" Scope="localSubnet" />
+				<fire:FirewallException Id="Discovery.Firewall.Exception" Name="Noise Music System Discovery" Description="Noise Music System discovery for remote clients."
+										Port="6502" Protocol="udp" Scope="localSubnet" />
 			</Component>
 
 			<Component Id="Noise.Desktop.config" Guid="49b5433a-a532-4d5c-86b9-632f60befe01">
