@@ -1,11 +1,19 @@
 ﻿using System;
+using System.Net;
+using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using Noise.Infrastructure;
 using Noise.Infrastructure.RemoteHost;
+using Noise.RemoteHost.Discovery;
 
 namespace Noise.RemoteHost {
 	public class RemoteServerMgr : IRemoteServer {
+		private const string						cDiscoveryRealm = "NoiseMusicSystem";
+		private const string						cDiscoveryAddress = "239.10.30.58";
+		private const int							cDiscoveryPort = 6502;
+		private const int							cDiscoveryResponsePort = cDiscoveryPort + 1;
+
 		private readonly RemoteHostConfiguration	mHostConfiguration;
 		private readonly INoiseRemote				mRemoteServer;
 		private readonly string						mHostBaseAddress;
@@ -20,7 +28,7 @@ namespace Noise.RemoteHost {
 		private ServiceHost							mTransportServerHost;
 		private readonly INoiseRemoteLibrary		mRemoteLibraryServer;
 		private ServiceHost							mLibrarySeverHost;
-		private ServiceDiscovery					mServiceDiscovery;
+		private MulticastEndpoint					mDiscoveryListener;
 
 		public RemoteServerMgr( RemoteHostConfiguration hostConfiguration, INoiseRemote noiseRemote, INoiseRemoteData noiseRemoteData,
 								INoiseRemoteQueue noiseRemoteQueue, INoiseRemoteSearch noiseRemoteSearch,
@@ -73,12 +81,35 @@ namespace Noise.RemoteHost {
 				mLibrarySeverHost = null;
 			}
 
-			mServiceDiscovery = new ServiceDiscovery();
-			if( mServiceDiscovery.Initialize()) {
-				mServiceDiscovery.RegisterService( "_Noise._Tcp.", "Noise.Desktop", mHostConfiguration.HostPort );
-			}
+			StartDiscoveryListener();
 
 			NoiseLogger.Current.LogMessage( "Remote services started." );
+		}
+
+		private void StartDiscoveryListener() {
+			var	responseSender = new RequestSender( cDiscoveryResponsePort );
+			var responder = new RequestResponder( cDiscoveryRealm, responseSender );
+			var discoveryMessage = string.Format( "http://{0}:{1}", LocalIPAddress(), mHostConfiguration.HostPort );
+
+			responder.AddRequestResponse( "ServerDiscovery", "ServerEndpoint", discoveryMessage );
+
+			mDiscoveryListener = new MulticastEndpoint( IPAddress.Parse( cDiscoveryAddress ), cDiscoveryPort );
+			mDiscoveryListener.StartListener( responder );
+		}
+
+		private string LocalIPAddress() {
+			var			retValue = string.Empty;
+			IPHostEntry host = Dns.GetHostEntry( Dns.GetHostName());
+
+			foreach( var ip in host.AddressList ) {
+				if( ip.AddressFamily == AddressFamily.InterNetwork ) {
+					retValue = ip.ToString();
+
+					break;
+				}
+			}
+
+			return( retValue );
 		}
 
 		private static bool OpenRemoteServer( ServiceHost host ) {
@@ -107,6 +138,8 @@ namespace Noise.RemoteHost {
 			CloseRemoteServer( mSearchServerHost );
 			CloseRemoteServer( mTransportServerHost );
 			CloseRemoteServer( mLibrarySeverHost );
+
+			mDiscoveryListener.StopListener();
 		}
 
 		private static void CloseRemoteServer( ServiceHost host ) {
