@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
@@ -23,7 +22,6 @@ namespace Noise.Core.FileStore {
 		private readonly IStorageFolderSupport		mStorageFolderSupport;
 		private readonly IRecurringTaskScheduler	mTaskScheduler;
 		private readonly List<BaseCommandArgs>		mUnfinishedCommands;
-		private bool								mClearReadOnly;
 
 		private AsyncCommand<SetFavoriteCommandArgs>		mSetFavoriteCommand;
 		private AsyncCommand<SetRatingCommandArgs>			mSetRatingCommand;
@@ -56,8 +54,6 @@ namespace Noise.Core.FileStore {
 			mSetMp3TagsCommand = new AsyncCommand<SetMp3TagCommandArgs>( OnSetMp3Tags );
 			mSetMp3TagsCommand.ExecutionComplete += OnExecutionComplete;
 			GlobalCommands.SetMp3Tags.RegisterCommand( mSetMp3TagsCommand );
-
-			mClearReadOnly = false;
 
 			var backgroundJob = new RecurringTask( ProcessUnfinishedCommands, cBackgroundFileUpdater );
 			backgroundJob.TaskSchedule.StartAt( RecurringInterval.FromMinutes( 1 )).Interval( RecurringInterval.FromMinutes( 1 ));
@@ -279,21 +275,19 @@ namespace Noise.Core.FileStore {
 		}
 
 		private void ClearReadOnlyFlag( string file ) {
-			if( mClearReadOnly ) {
-				try {
-					if( System.IO.File.Exists( file )) {
-					   var fileAttributes = System.IO.File.GetAttributes( file );
+			try {
+				if( System.IO.File.Exists( file )) {
+					var fileAttributes = System.IO.File.GetAttributes( file );
 					
-						if( fileAttributes.HasFlag( FileAttributes.ReadOnly )) {
-							fileAttributes &= ~FileAttributes.ReadOnly;
+					if( fileAttributes.HasFlag( FileAttributes.ReadOnly )) {
+						fileAttributes &= ~FileAttributes.ReadOnly;
 
-							System.IO.File.SetAttributes( file, fileAttributes );
-						}
+						System.IO.File.SetAttributes( file, fileAttributes );
 					}
 				}
-				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( string.Format( "Exception FileUpdates:ClearReadOnlyFlag for file: ({0}) -", file ), ex );
-				}
+			}
+			catch( Exception ex ) {
+				NoiseLogger.Current.LogException( string.Format( "Exception FileUpdates:ClearReadOnlyFlag for file: ({0}) -", file ), ex );
 			}
 		}
 	}
