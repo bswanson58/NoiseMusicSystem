@@ -17,7 +17,7 @@ namespace Noise.UI.ViewModels {
 
 	public class LibrarySelectorViewModel : AutomaticCommandBase,
 											IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted>,
-											IHandle<Events.LibraryChanged>, IHandle<Events.LibraryListChanged> {
+											IHandle<Events.LibraryChanged>, IHandle<Events.LibraryListChanged>, IHandle<Events.DatabaseStatisticsUpdated> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly ILibraryBuilder		mLibraryBuilder;
@@ -25,6 +25,7 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler						mLibraryOpenTask;  
 		private	readonly InteractionRequest<LibraryConfigurationInfo>	mLibraryConfigurationRequest;
 		private readonly BindableCollection<LibraryConfiguration>		mLibraries;
+		private string							mDatabaseStatistics;
 
 		public LibrarySelectorViewModel( IEventAggregator eventAggregator, IDialogService dialogService,
 										 ILibraryConfiguration libraryConfiguration, ILibraryBuilder libraryBuilder ) {
@@ -35,6 +36,7 @@ namespace Noise.UI.ViewModels {
 
 			mLibraryConfigurationRequest = new InteractionRequest<LibraryConfigurationInfo>();
 			mLibraries = new BindableCollection<LibraryConfiguration>();
+			mDatabaseStatistics = string.Empty;
 			LoadLibraries();
 
 			mEventAggregator.Subscribe( this );
@@ -80,6 +82,15 @@ namespace Noise.UI.ViewModels {
 
 		public void Handle( Events.LibraryUpdateCompleted message ) {
 			RaiseCanExecuteChangedEvent( "CanExecute_UpdateLibrary" );
+		}
+
+		public void Handle( Events.DatabaseStatisticsUpdated message ) {
+			mDatabaseStatistics = string.Format( "Artists: {0}, Albums: {1}", message.DatabaseStatistics.ArtistCount, message.DatabaseStatistics.AlbumCount );
+			RaisePropertyChanged( () => LibraryStatistics );
+		}
+
+		public string LibraryStatistics {
+			get {  return( mDatabaseStatistics ); }
 		}
 
 		public BindableCollection<LibraryConfiguration> LibraryList {

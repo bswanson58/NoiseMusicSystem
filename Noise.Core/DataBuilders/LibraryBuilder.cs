@@ -189,6 +189,7 @@ namespace Noise.Core.DataBuilders {
 			mDatabaseStatistics.GatherStatistics( allCounts );
 
 			NoiseLogger.Current.LogMessage( mDatabaseStatistics.ToString());
+			mEventAggregator.Publish( new Events.DatabaseStatisticsUpdated( mDatabaseStatistics ));
 			mEventAggregator.Publish( new Events.StatusEvent( mDatabaseStatistics.ToString()) { ExtendDisplay = true });
 		}
 	}

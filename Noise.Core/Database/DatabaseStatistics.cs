@@ -4,7 +4,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
-	public class DatabaseStatistics {
+	public class DatabaseStatistics : IDatabaseStatistics {
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;

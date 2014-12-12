@@ -225,6 +225,7 @@
     <Compile Include="Interfaces\IBlobStorageResolver.cs" />
     <Compile Include="Interfaces\IDatabaseInfo.cs" />
     <Compile Include="Interfaces\IDatabaseManager.cs" />
+    <Compile Include="Interfaces\IDatabaseStatistics.cs" />
     <Compile Include="Interfaces\IDatabaseUtility.cs" />
     <Compile Include="Interfaces\IDataExchangeManager.cs" />
     <Compile Include="Interfaces\IDataProviderList.cs" />

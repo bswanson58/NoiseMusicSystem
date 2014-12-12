@@ -259,6 +259,14 @@ namespace Noise.Infrastructure {
 			}
 		}
 
+		public class DatabaseStatisticsUpdated {
+			public IDatabaseStatistics DatabaseStatistics {  get; private set; }
+
+			public DatabaseStatisticsUpdated( IDatabaseStatistics statistics ) {
+				DatabaseStatistics = statistics;
+			}
+		}
+
 		public class SimilarSongSearchRequest {
 			public long		TrackId { get; private set; }
 
