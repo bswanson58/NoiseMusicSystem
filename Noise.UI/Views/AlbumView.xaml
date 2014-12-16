@@ -18,7 +18,9 @@
 
     <UserControl.Resources>
         <ValueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.3"/>
-    </UserControl.Resources>
+		<ValueConverters:BooleanVisibilityConverter x:Key="CollapseIfTrue" TriggerValue="True" IsHidden="False"/>
+		<ValueConverters:BooleanVisibilityConverter x:Key="VisibleIfTrue" TriggerValue="False" IsHidden="False"/>
+	</UserControl.Resources>
     
     <i:Interaction.Behaviors>
         <Behaviours:InteractionRequestDialogBehavior DialogClass="AlbumEdit"
@@ -134,7 +136,19 @@
 
                     <!--  Album commands  -->
                     <StackPanel Grid.Row="7" Height="24" HorizontalAlignment="Right" Orientation="Horizontal">
-                        <Button Margin="0,0,9,0" Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayAlbum}"/>
+
+						<!-- Display either the play volume/volume list or play all controls based on the HasMultipleVolumes property -->
+						<StackPanel Orientation="Horizontal" Margin="0,0,9,0"
+									Visibility="{Binding Path=HasMultipleVolumes, Converter={StaticResource CollapseIfTrue}}">
+							<Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayAlbum}" />
+						</StackPanel>
+
+						<StackPanel Orientation="Horizontal" Margin="0,0,11,0"
+									Visibility="{Binding Path=HasMultipleVolumes, Converter={StaticResource VisibleIfTrue}}">
+							<Button Margin="0,0,5,0" Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayVolume}"/>
+							<ComboBox MinWidth="97" ItemsSource="{Binding VolumeNames}" SelectedItem="{Binding CurrentVolumeName}"/>
+						</StackPanel>
+						
                         <Button Margin="0,0,5,0" Padding="4" Style="{StaticResource GeneralButtonStyle}"
                                 Command="{Binding Path=OpenAlbumFolder}" Content="{StaticResource Path_Folder}" ToolTip="Open Album Folder" />
                         <Button Margin="0,0,5,0" Padding="4" Style="{StaticResource GeneralButtonStyle}"

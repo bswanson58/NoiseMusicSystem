@@ -6,6 +6,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void			Add( DbTrack track );
 		void			Add( IEnumerable<DbTrack> trackList );
 		void			Add( DbAlbum album );
+		void			Add( DbAlbum album, string volumeName );
 		void			Add( DbArtist artist );
 		void			Add( DbInternetStream stream );
 		void			StrategyAdd( DbTrack track );
@@ -16,9 +17,9 @@ namespace Noise.Infrastructure.Interfaces {
 		void			ClearQueue();
 
 		PlayQueueTrack	PlayNextTrack();
-        bool            CanPlayNextTrack();
+		bool            CanPlayNextTrack();
 		PlayQueueTrack	PlayPreviousTrack();
-        bool            CanPlayPreviousTrack();
+		bool            CanPlayPreviousTrack();
 		void			StopPlay();
 		void			ReplayQueue();
 		void			ContinuePlayFromTrack( PlayQueueTrack track );

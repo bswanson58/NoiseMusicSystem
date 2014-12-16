@@ -32,6 +32,7 @@ namespace Noise.Core.PlayQueue {
 		private AsyncCommand<DbTrack>				mTrackPlayCommand;
 		private AsyncCommand<IEnumerable<DbTrack>>	mTrackListPlayCommand;
 		private AsyncCommand<DbAlbum>				mAlbumPlayCommand;
+		private AsyncCommand<DbTrack>				mVolumePlayCommand; 
 		private AsyncCommand<DbInternetStream>		mStreamPlayCommand;
 
 		public PlayQueueMgr( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager,
@@ -80,6 +81,9 @@ namespace Noise.Core.PlayQueue {
 			mAlbumPlayCommand = new AsyncCommand<DbAlbum>( OnAlbumPlayCommand );
 			GlobalCommands.PlayAlbum.RegisterCommand( mAlbumPlayCommand );
 
+			mVolumePlayCommand = new AsyncCommand<DbTrack>( OnVolumePlayCommand );
+			GlobalCommands.PlayVolume.RegisterCommand( mVolumePlayCommand );
+
 			mStreamPlayCommand = new AsyncCommand<DbInternetStream>( OnStreamPlayCommand );
 			GlobalCommands.PlayStream.RegisterCommand( mStreamPlayCommand );
 
@@ -95,6 +99,12 @@ namespace Noise.Core.PlayQueue {
 
 		public void Shutdown() {
 			mEventAggregator.Unsubscribe( this );
+
+			GlobalCommands.PlayTrack.UnregisterCommand( mTrackPlayCommand );
+			GlobalCommands.PlayTrackList.UnregisterCommand( mTrackListPlayCommand );
+			GlobalCommands.PlayAlbum.UnregisterCommand( mAlbumPlayCommand );
+			GlobalCommands.PlayVolume.UnregisterCommand( mVolumePlayCommand );
+			GlobalCommands.PlayStream.UnregisterCommand( mStreamPlayCommand );
 		}
 
 		private void OnTrackListPlayCommand( IEnumerable<DbTrack> trackList ) {
@@ -210,6 +220,38 @@ namespace Noise.Core.PlayQueue {
 				}
 
 				mAddingMoreTracks = false;
+			}
+		}
+
+		private void OnVolumePlayCommand( DbTrack track ) {
+			var album = mAlbumProvider.GetAlbum( track.Album );
+
+			if( album != null ) {
+				Add( album, track.VolumeName );
+			}
+		}
+
+		public void Add( DbAlbum album, string volumeName ) {
+			using( var tracks = mTrackProvider.GetTrackList( album )) {
+				var firstTrack = true;
+				var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
+													where string.Equals( track.VolumeName, volumeName )
+													orderby track.VolumeName, track.TrackNumber ascending select track ).ToList();
+
+				mAddingMoreTracks = sortedList.Count > 2;
+
+				foreach( DbTrack track in sortedList ) {
+					AddTrack( track, eStrategySource.User );
+
+					if( firstTrack ) {
+						FirePlayQueueChanged();
+
+						firstTrack = false;
+					}
+				}
+
+				mAddingMoreTracks = false;
+				FirePlayQueueChanged();
 			}
 		}
 
