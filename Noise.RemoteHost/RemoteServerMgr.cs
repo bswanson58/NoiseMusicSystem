@@ -139,7 +139,9 @@ namespace Noise.RemoteHost {
 			CloseRemoteServer( mTransportServerHost );
 			CloseRemoteServer( mLibrarySeverHost );
 
-			mDiscoveryListener.StopListener();
+			if( mDiscoveryListener != null ) {
+				mDiscoveryListener.StopListener();
+			}
 		}
 
 		private static void CloseRemoteServer( ServiceHost host ) {
