@@ -109,6 +109,10 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.TimeExplorerLayout ));
 		}
 
+		public void Execute_PlaybackLayout() {
+			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ListenLayout ));
+		}
+
 		private void OnImport() {
 			string	fileName;
 

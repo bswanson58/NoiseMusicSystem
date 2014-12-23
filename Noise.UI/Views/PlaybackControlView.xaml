@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="Noise.UI.Views.PlaybackControlView"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:Views="clr-namespace:Noise.UI.Views"
+			 Tag="Now Playing">
+	
+	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Playback Control ">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<Views:PlayQueueListView Grid.Row="0"/>
+
+			<StackPanel Grid.Row="1" Margin="5,5,3,3" Orientation="Vertical">
+				<Rectangle Height="1" StrokeThickness="0" Fill="LightGray" />
+			</StackPanel>
+
+			<Views:PlayQueueControlView Grid.Row="2"/>
+
+			<StackPanel Grid.Row="3" Margin="5,5,3,3" Orientation="Vertical">
+				<Rectangle Height="1" StrokeThickness="0" Fill="LightGray" Opacity="0.3" />
+			</StackPanel>
+
+		</Grid>
+	</GroupBox>
+</UserControl>
