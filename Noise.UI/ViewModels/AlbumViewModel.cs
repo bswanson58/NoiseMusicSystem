@@ -90,6 +90,7 @@ namespace Noise.UI.ViewModels {
 			mAlbumCategoryEditRequest = new InteractionRequest<AlbumCategoryEditInfo>();
 
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
+			OnAlbumChanged( mSelectionState.CurrentAlbum );
 		}
 
 		private void ClearCurrentAlbum() {

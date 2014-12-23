@@ -62,6 +62,7 @@ namespace Noise.UI.ViewModels {
 			mArtistEditRequest = new InteractionRequest<ArtistEditRequest>();
  
 			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistRequested );
+			OnArtistRequested( mSelectionState.CurrentArtist );
 		}
 
 		public UiArtist Artist {

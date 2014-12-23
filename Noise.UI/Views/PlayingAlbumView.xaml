@@ -7,10 +7,10 @@
 			 d:DesignHeight="100" d:DesignWidth="300">
 	
 	<UserControl.DataContext>
-		<Binding Path="PlayingAlbumViewModel" Source="{StaticResource ViewModelLocator}" />
+		<Binding Path="AlbumViewModel" Source="{StaticResource ViewModelLocator}" />
 	</UserControl.DataContext>
 	
 	<Grid>
-		<TextBlock>Album</TextBlock>
+		<TextBlock Text="{Binding Album.Name}"/>
 	</Grid>
 </UserControl>

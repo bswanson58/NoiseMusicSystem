@@ -7,10 +7,10 @@
 			 d:DesignHeight="100" d:DesignWidth="300">
 	
 	<UserControl.DataContext>
-		<Binding Path="PlayingArtistViewModel" Source="{StaticResource ViewModelLocator}" />
+		<Binding Path="ArtistViewModel" Source="{StaticResource ViewModelLocator}" />
 	</UserControl.DataContext>
 	
 	<Grid>
-		<TextBlock>Artist</TextBlock>
+		<TextBlock Text="{Binding Artist.Name}"/>
 	</Grid>
 </UserControl>
