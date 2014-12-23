@@ -11,6 +11,7 @@
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
 			<Views:PlayQueueListView Grid.Row="0"/>
@@ -22,9 +23,10 @@
 			<Views:PlayQueueControlView Grid.Row="2"/>
 
 			<StackPanel Grid.Row="3" Margin="5,5,3,3" Orientation="Vertical">
-				<Rectangle Height="1" StrokeThickness="0" Fill="LightGray" Opacity="0.3" />
+				<Rectangle Height="1" StrokeThickness="0" Fill="LightGray" />
 			</StackPanel>
 
+			<Views:PlayingTransportView Grid.Row="4" />
 		</Grid>
 	</GroupBox>
 </UserControl>

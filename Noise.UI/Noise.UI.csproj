@@ -455,6 +455,9 @@
     <Compile Include="Views\PlayingTrackView.xaml.cs">
       <DependentUpon>PlayingTrackView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PlayingTransportView.xaml.cs">
+      <DependentUpon>PlayingTransportView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PlayListDialog.xaml.cs">
       <DependentUpon>PlayListDialog.xaml</DependentUpon>
     </Compile>
@@ -725,6 +728,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlayingTrackView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlayingTransportView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
