@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="Noise.UI.Views.ListenStageView"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:Views="clr-namespace:Noise.UI.Views">
 
 	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Now Playing ">
 		<Grid>
@@ -9,6 +10,10 @@
 				<RowDefinition Height="*" />
 				<RowDefinition Height="*" />
 			</Grid.RowDefinitions>
+			
+			<Views:PlayingArtistView Grid.Row="0" />
+			<Views:PlayingAlbumView Grid.Row="1" />
+			<Views:PlayingTrackView Grid.Row="2" />
 
 		</Grid>
 	</GroupBox>

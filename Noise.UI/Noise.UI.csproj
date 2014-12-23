@@ -332,6 +332,9 @@
     <Compile Include="ViewModels\LibrarySelectorViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\PlayHistoryViewModel.cs" />
+    <Compile Include="ViewModels\PlayingAlbumViewModel.cs" />
+    <Compile Include="ViewModels\PlayingArtistViewModel.cs" />
+    <Compile Include="ViewModels\PlayingTrackViewModel.cs" />
     <Compile Include="ViewModels\PlayListViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueControlViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueListViewModel.cs" />
@@ -442,6 +445,15 @@
     </Compile>
     <Compile Include="Views\PlayHistoryView.xaml.cs">
       <DependentUpon>PlayHistoryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlayingAlbumView.xaml.cs">
+      <DependentUpon>PlayingAlbumView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlayingArtistView.xaml.cs">
+      <DependentUpon>PlayingArtistView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlayingTrackView.xaml.cs">
+      <DependentUpon>PlayingTrackView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlayListDialog.xaml.cs">
       <DependentUpon>PlayListDialog.xaml</DependentUpon>
@@ -701,6 +713,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlayHistoryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlayingAlbumView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlayingArtistView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlayingTrackView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
