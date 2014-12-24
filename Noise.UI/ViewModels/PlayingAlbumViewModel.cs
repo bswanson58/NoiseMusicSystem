@@ -1,4 +1,8 @@
 ﻿namespace Noise.UI.ViewModels {
-	class PlayingAlbumViewModel {
+	public class PlayingAlbumViewModel {
+
+		public string AlbumName {
+			get {  return( string.Empty ); }
+		}
 	}
 }

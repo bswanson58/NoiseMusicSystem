@@ -131,7 +131,7 @@ namespace Noise.UI.ViewModels {
 		private void RetrieveArtwork( string artistName ) {
 			ArtworkTaskHandler.StartTask( () => mMetadataManager.GetArtistArtwork( artistName ),
 										   SetArtwork,
-										   exception => NoiseLogger.Current.LogException( "ArtistViewModel:GetArtistArtwork", exception ));
+										   exception => NoiseLogger.Current.LogException( "PlayingArtistViewModel:GetArtistArtwork", exception ));
 		}
 
 		private void SetArtwork( Artwork artwork ) {
