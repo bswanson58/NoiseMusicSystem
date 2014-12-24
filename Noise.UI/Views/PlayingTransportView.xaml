@@ -7,7 +7,7 @@
 			 d:DesignHeight="100" d:DesignWidth="300">
 
 	<UserControl.DataContext>
-		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
+		<Binding Path="TransportViewModel" Source="{StaticResource ViewModelLocator}" />
 	</UserControl.DataContext>
 
 	<StackPanel Height="43" Margin="0,0,5,0" HorizontalAlignment="Right" Orientation="Horizontal">
