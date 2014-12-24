@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism;
+using Microsoft.Practices.Prism.Regions;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -13,6 +14,7 @@ using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
 
 namespace Noise.UI.ViewModels {
+	[SyncActiveState]
 	public class PlayerViewModel : ViewModelBase, IActiveAware,
 								   IHandle<Events.SystemShutdown>,
 								   IHandle<Events.PlaybackStatusChanged>, IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackInfoChanged>,
@@ -59,6 +61,8 @@ namespace Noise.UI.ViewModels {
 
 			PlayState = ePlayState.StoppedEmptyQueue.ToString();
 			mPlayStateChangeDisposable = mPlayController.PlayStateChange.Subscribe( OnPlayStateChange );
+
+			IsActive = true; // default to the active state.
 		}
 
 		private void OnPlayStateChange( ePlayState state ) {
