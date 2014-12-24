@@ -68,7 +68,7 @@
                 <TextBlock Grid.Column="1" Margin="0,0,0,3" VerticalAlignment="Bottom" Style="{StaticResource SmallTitleStyle}"
                            ReusableBehaviours:FadeTrimming.IsEnabled="True"
                            ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-                           Text="{Binding AlbumName}" />
+                           Text="{Binding ArtistAlbumName}" />
               </Grid>
             </Grid>
           </Grid>

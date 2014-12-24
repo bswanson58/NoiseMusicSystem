@@ -142,8 +142,40 @@ namespace Noise.UI.ViewModels {
 			} 
 		}
 
+		[DependsUpon( "StartTrackFlag")]
+		public string ArtistName {
+			get {
+				var retValue = string.Empty;
+
+				if( mPlayQueue.PlayingTrack != null ) {
+					retValue = mPlayQueue.PlayingTrack.IsStream ? mPlayQueue.PlayingTrack.StreamInfo.Artist : mPlayQueue.PlayingTrack.Artist.Name;
+				}
+
+				return( retValue );
+			}
+		}
+
 		[DependsUpon( "StartTrackFlag" )]
 		public string AlbumName {
+			get {
+				var retValue = string.Empty;
+
+				if( mPlayQueue.PlayingTrack != null ) {
+					var track = mPlayQueue.PlayingTrack;
+
+					retValue = track.IsStream ? track.StreamInfo != null ? track.StreamInfo.Album : track.Stream.Description :
+												track.Album.Name;
+				}
+				else if( IsInDesignMode ) {
+					retValue = "( The Trubedours/Timeless Hits and Classics)";
+				}
+
+				return( retValue );
+			}
+		}
+
+		[DependsUpon( "StartTrackFlag" )]
+		public string ArtistAlbumName {
 			get {
 				var retValue = string.Empty;
 

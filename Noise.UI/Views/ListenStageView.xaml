@@ -3,6 +3,10 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:Views="clr-namespace:Noise.UI.Views">
 
+	<UserControl.DataContext>
+		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
+	</UserControl.DataContext>
+
 	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Now Playing ">
 		<Grid>
 			<Grid.RowDefinitions>
@@ -10,7 +14,18 @@
 				<RowDefinition Height="*" />
 				<RowDefinition Height="*" />
 			</Grid.RowDefinitions>
+			
+			<Grid Grid.Row="0">
+				<TextBlock Text="{Binding ArtistName}"/>
+			</Grid>
 
+			<Grid Grid.Row="1">
+				<TextBlock Text="{Binding AlbumName}"/>
+			</Grid>
+
+			<Grid Grid.Row="2">
+				<TextBlock Text="{Binding TrackName}"/>
+			</Grid>
 		</Grid>
 	</GroupBox>
 </UserControl>
