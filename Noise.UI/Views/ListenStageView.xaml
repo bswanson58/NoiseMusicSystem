@@ -10,10 +10,6 @@
 				<RowDefinition Height="*" />
 				<RowDefinition Height="*" />
 			</Grid.RowDefinitions>
-			
-			<Views:PlayingArtistView Grid.Row="0" />
-			<Views:PlayingAlbumView Grid.Row="1" />
-			<Views:PlayingTrackView Grid.Row="2" />
 
 		</Grid>
 	</GroupBox>

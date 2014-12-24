@@ -447,17 +447,8 @@
     <Compile Include="Views\PlayHistoryView.xaml.cs">
       <DependentUpon>PlayHistoryView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PlayingAlbumView.xaml.cs">
-      <DependentUpon>PlayingAlbumView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PlayingArtistView.xaml.cs">
-      <DependentUpon>PlayingArtistView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PlayingTrackView.xaml.cs">
-      <DependentUpon>PlayingTrackView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PlayingTransportView.xaml.cs">
-      <DependentUpon>PlayingTransportView.xaml</DependentUpon>
+    <Compile Include="Views\TransportView.xaml.cs">
+      <DependentUpon>TransportView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlayListDialog.xaml.cs">
       <DependentUpon>PlayListDialog.xaml</DependentUpon>
@@ -720,19 +711,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PlayingAlbumView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PlayingArtistView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PlayingTrackView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PlayingTransportView.xaml">
+    <Page Include="Views\TransportView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
