@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Dynamic;
 using System.Linq.Expressions;
+using Caliburn.Micro;
 
 namespace ReusableBits.Mvvm.ViewModelSupport {
 	public class PropertyChangeBase : DynamicObject, INotifyPropertyChanged {
@@ -12,7 +13,7 @@ namespace ReusableBits.Mvvm.ViewModelSupport {
 		}
 
 		protected virtual void RaisePropertyChanged( string propertyName ) {
-			PropertyChanged( this, new PropertyChangedEventArgs( propertyName ));
+			Execute.OnUIThread( () => PropertyChanged( this, new PropertyChangedEventArgs( propertyName )));
 		}
 
 		protected void RaiseAllPropertiesChanged() {

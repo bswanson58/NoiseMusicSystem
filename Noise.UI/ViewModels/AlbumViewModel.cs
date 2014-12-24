@@ -119,7 +119,7 @@ namespace Noise.UI.ViewModels {
 			if( album != null ) {
 				UpdateAlbum( album.DbId );
 
-				mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.AlbumInfoView ) );
+				mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.AlbumInfoView ));
 			}
 			else {
 				ClearCurrentAlbum();
