@@ -5,7 +5,7 @@
 			 xmlns:Views="clr-namespace:Noise.UI.Views">
 
 	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Now Playing ">
-		<Grid>
+		<Grid Background="{DynamicResource TreeItemBackground}">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
 				<RowDefinition Height="*" />

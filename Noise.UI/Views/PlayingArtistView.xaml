@@ -21,7 +21,7 @@
 			<ColumnDefinition Width="3*"/>
 		</Grid.ColumnDefinitions>
 		
-		<Image Grid.Column="0" MinWidth="50" MinHeight="50" Margin="7,7,3,0" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform"
+		<Image Grid.Column="0" MinWidth="50" MinHeight="50" Margin="9" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform"
 			   Source="{Binding ArtistImage, Converter={StaticResource imageConverter}}"/>
 		
 		<Viewbox Grid.Column="1" Margin="9,0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right">
