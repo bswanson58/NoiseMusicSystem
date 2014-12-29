@@ -2,6 +2,7 @@
 using System.Linq;
 using AutoMapper;
 using Caliburn.Micro;
+using Microsoft.Practices.Prism;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -19,7 +20,7 @@ namespace Noise.UI.ViewModels {
 		public ArtistEditRequest(UiArtist artist ) : base( artist ) { } 
 	}
 
-	public class ArtistViewModel : AutomaticCommandBase,
+	public class ArtistViewModel : AutomaticCommandBase, IActiveAware,
 								   IHandle<Events.DatabaseClosing>,
 								   IHandle<Events.ArtistContentUpdated>, IHandle<Events.ArtistUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
@@ -39,6 +40,10 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler<DbArtist>			mArtistTaskHandler; 
 		private TaskHandler<Artwork>			mArtworkTaskHandler; 
 		private TaskHandler						mTopTracksTaskHandler;
+		private IDisposable						mSelectionStateSubscription;
+		private bool							mIsActive;
+		public	event EventHandler				IsActiveChanged  = delegate { };
+
 		private readonly InteractionRequest<ArtistEditRequest>		mArtistEditRequest;
 
 		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ITrackProvider trackProvider,
@@ -61,8 +66,27 @@ namespace Noise.UI.ViewModels {
 
 			mArtistEditRequest = new InteractionRequest<ArtistEditRequest>();
  
-			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistRequested );
 			OnArtistRequested( mSelectionState.CurrentArtist );
+		}
+
+		public bool IsActive {
+			get{ return( mIsActive ); }
+			set {
+				if( mIsActive ) {
+					if( mSelectionStateSubscription != null ) {
+						mSelectionStateSubscription.Dispose();
+						mSelectionStateSubscription = null;
+					}
+				}
+				else {
+					if( mSelectionStateSubscription == null ) {
+						mSelectionStateSubscription = mSelectionState.CurrentArtistChanged.Subscribe( OnArtistRequested );
+					}
+				}
+
+				mIsActive = value;
+				IsActiveChanged( this, new EventArgs());
+			}
 		}
 
 		public UiArtist Artist {

@@ -30,6 +30,8 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<string>		mBandMembers;
 		private readonly BindableCollection<DbDiscographyRelease>	mDiscography;
 
+		private IDisposable								mSelectionStateSubscription;
+		private bool									mIsActive;
 		public	event	EventHandler					IsActiveChanged = delegate { };
 
 		public ArtistInfoViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IMetadataManager metadataManager,
@@ -51,15 +53,24 @@ namespace Noise.UI.ViewModels {
 			mTopTracks = new BindableCollection<LinkNode>();
 			mBandMembers = new BindableCollection<string>();
 			mDiscography = new SortableCollection<DbDiscographyRelease>();
-
-			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
 		}
 
 		public bool IsActive {
-			get{ return( Get( () => IsActive )); }
-			set{ 
-				Set( () => IsActive, value );
+			get{ return( mIsActive ); }
+			set {
+				if( mIsActive ) {
+					if( mSelectionStateSubscription != null ) {
+						mSelectionStateSubscription.Dispose();
+						mSelectionStateSubscription = null;
+					}
+				}
+				else {
+					if( mSelectionStateSubscription == null ) {
+						mSelectionStateSubscription = mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
+					}
+				}
 
+				mIsActive = value;
 				IsActiveChanged( this, new EventArgs());
 			}
 		}
