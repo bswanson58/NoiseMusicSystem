@@ -9,6 +9,7 @@ using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 using Noise.TenFoot.Ui.ViewModels;
 using Noise.UI.ViewModels;
+using TransportViewModel = Noise.TenFoot.Ui.ViewModels.TransportViewModel;
 
 namespace Noise.TenFooter {
 	public class ShellViewModel : Conductor<object>.Collection.OneActive, IShell,
