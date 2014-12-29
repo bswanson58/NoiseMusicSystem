@@ -1,40 +1,30 @@
-﻿using System;
-using AutoMapper;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.UI.Dto;
-using Noise.UI.Interfaces;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class PlayingArtistViewModel : AutomaticPropertyBase {
-		private readonly IEventAggregator		mEventAggregator;
-		private readonly IArtistProvider		mArtistProvider;
-		private readonly ITagManager			mTagManager;
-		private readonly IMetadataManager		mMetadataManager;
-		private readonly ISelectionState		mSelectionState;
-		private TaskHandler<DbArtist>			mArtistTaskHandler; 
-		private TaskHandler<Artwork>			mArtworkTaskHandler; 
-		private Artwork							mArtistImage;
+	public class PlayingArtistViewModel : AutomaticPropertyBase,
+										 IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackTrackUpdated> {
+		private readonly IMetadataManager	mMetadataManager;
+		private readonly IPlayQueue			mPlayQueue;
+		private TaskHandler<Artwork>		mArtworkTaskHandler; 
+		private DbArtist					mCurrentArtist;
+		private Artwork						mArtistImage;
 
-		public PlayingArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IMetadataManager metadataManager,
-									   ITagManager tagManager, ISelectionState selectionState ) {
-			mEventAggregator = eventAggregator;
-			mArtistProvider = artistProvider;
-			mTagManager = tagManager;
+		public PlayingArtistViewModel( IEventAggregator eventAggregator, IMetadataManager metadataManager, IPlayQueue playQueue ) {
 			mMetadataManager = metadataManager;
-			mSelectionState = selectionState;
+			mPlayQueue = playQueue;
 
-			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistRequested );
-			OnArtistRequested( mSelectionState.CurrentArtist );
+			UpdateArtist();
+			eventAggregator.Subscribe( this );
 		}
 
-		public UiArtist CurrentArtist {
-			get {  return( Get( () => CurrentArtist )); }
-			set {  Set( () => CurrentArtist, value ); }
+		public string ArtistName {
+			get { return( Get( () => ArtistName )); }
+			set {  Set( () => ArtistName, value ); }
 		}
 
 		public byte[] ArtistImage {
@@ -49,71 +39,50 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void ClearCurrentArtist() {
-			CurrentArtist = null;
+		private void ClearArtist() {
+			mCurrentArtist = null;
+			mArtistImage = null;
+
+			ArtistName = string.Empty;
+			RaisePropertyChanged( () => ArtistImage );
 		}
 
-		private void OnArtistRequested( DbArtist artist ) {
-			if( artist == null ) {
-				ClearCurrentArtist();
+		private void SetArtist( DbArtist artist ) {
+			mCurrentArtist = artist;
+
+			if( mCurrentArtist != null ) {
+				ArtistName = mCurrentArtist.Name;
+
+				RetrieveArtwork( ArtistName );
 			}
 			else {
-				RequestArtistAndContent( artist.DbId );
+				ClearArtist();
 			}
 		}
 
-		internal TaskHandler<DbArtist> ArtistTaskHandler {
-			get {
-				if( mArtistTaskHandler == null ) {
-					Execute.OnUIThread( () => mArtistTaskHandler = new TaskHandler<DbArtist>());
+		public void Handle( Events.PlaybackTrackChanged args ) {
+			UpdateArtist();
+		}
+
+		public void Handle( Events.PlaybackTrackUpdated args ) {
+			UpdateArtist();
+		}
+
+		private void UpdateArtist() {
+			if( mPlayQueue.PlayingTrack != null ) {
+				if( mCurrentArtist != null ) {
+					if( mPlayQueue.PlayingTrack.Artist.DbId != mCurrentArtist.DbId ) {
+						ClearArtist();
+						SetArtist( mPlayQueue.PlayingTrack.Artist );
+					}
 				}
-
-				return( mArtistTaskHandler );
-			}
-
-			set { mArtistTaskHandler = value; }
-		}
- 
-		private void RequestArtistAndContent( long artistId ) {
-			ClearCurrentArtist();
-
-			RequestArtist( artistId );
-
-			mEventAggregator.Publish( new Events.ArtistContentRequest( artistId ));
-		}
-
-		private void RequestArtist( long artistId ) {
-			RetrieveArtist( artistId );
-		}
-
-		private void RetrieveArtist( long artistId ) {
-			ArtistTaskHandler.StartTask( () => mArtistProvider.GetArtist( artistId ), 
-										SetCurrentArtist,
-										exception => NoiseLogger.Current.LogException( "PlayingArtistViewModel:GetArtist", exception ));
-		}
-
-		private void SetCurrentArtist( DbArtist artist ) {
-			CurrentArtist = artist != null ? TransformArtist( artist ) : null;
-
-			if( CurrentArtist != null ) {
-				RetrieveArtwork( CurrentArtist.Name );
-			}
-		}
-
-		private UiArtist TransformArtist( DbArtist dbArtist ) {
-			var retValue = new UiArtist();
-
-			if( dbArtist != null ) {
-				Mapper.DynamicMap( dbArtist, retValue );
-				retValue.DisplayGenre = mTagManager.GetGenre( dbArtist.Genre );
-
-				var artistMetadata = mMetadataManager.GetArtistMetadata( dbArtist.Name );
-				if( artistMetadata != null ) {
-					retValue.Website = artistMetadata.GetMetadata( eMetadataType.WebSite );
+				else {
+					SetArtist( mPlayQueue.PlayingTrack.Artist );
 				}
 			}
-
-			return( retValue );
+			else {
+				ClearArtist();
+			}
 		}
 
 		internal TaskHandler<Artwork> ArtworkTaskHandler {
