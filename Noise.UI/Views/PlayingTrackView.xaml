@@ -20,7 +20,7 @@
 
 		<!-- Track Name -->
 		<Viewbox Grid.Row="0" Margin="9,0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right">
-			<TextBlock Style="{StaticResource ExplorerTitleStyle}" FontSize="800" HorizontalAlignment="Right" Text="{Binding TrackName}" />
+			<TextBlock Style="{StaticResource LargeTitleStyle}" FontSize="800" HorizontalAlignment="Right" Text="{Binding TrackName}" />
 		</Viewbox>
 
 		<!-- Playing Time -->
