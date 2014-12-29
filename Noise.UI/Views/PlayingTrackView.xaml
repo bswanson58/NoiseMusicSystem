@@ -7,6 +7,20 @@
 		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
 	</UserControl.DataContext>
 
+	<UserControl.Resources>
+		<DataTemplate x:Key="AfterTemplate">
+			<Rectangle Fill="{StaticResource StartupForegroundBrush}" />
+		</DataTemplate>
+
+		<DataTemplate x:Key="ThumbTemplate">
+			<Rectangle Width="0" />
+		</DataTemplate>
+
+		<DataTemplate x:Key="BeforeTemplate">
+			<Rectangle Fill="{StaticResource StartupForegroundBrush}" Opacity="0" Height="3" VerticalAlignment="Center"/>
+		</DataTemplate>
+	</UserControl.Resources>
+	
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
@@ -30,13 +44,8 @@
 						   Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" />
 
 		<!-- Playing Time Bar -->
-		<Rectangle Grid.Row="1" Height="15" Margin="5,5,5,1" StrokeThickness="0" >
-			<Rectangle.Fill>
-				<LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
-					<GradientStop Color="#FF588CE0" Offset="{Binding PlayPositionPercentage}"/>
-					<GradientStop Color="Transparent" Offset="{Binding PlayPositionPercentage}"/>
-				</LinearGradientBrush>
-			</Rectangle.Fill>
-		</Rectangle>
+		<Controls:TrackSlider Grid.Row="1" Margin="5,5,15,1" Height="15"
+										   BeforeTemplate="{StaticResource BeforeTemplate}" ThumbTemplate="{StaticResource ThumbTemplate}" AfterTemplate="{StaticResource AfterTemplate}"
+										   Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0" SmoothedValue="{Binding Path=TrackPosition, Mode=TwoWay}"/>
 	</Grid>
 </UserControl>
