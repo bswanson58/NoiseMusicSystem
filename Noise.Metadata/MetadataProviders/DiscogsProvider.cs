@@ -12,12 +12,15 @@ using Raven.Client;
 
 namespace Noise.Metadata.MetadataProviders {
 	internal class DiscogsProvider : IArtistMetadataProvider {
-		private IDocumentStore	mDocumentStore;
-		private readonly bool	mHasNetworkAccess;
+		private readonly IDiscogsClient	mDiscogsClient;
+		private IDocumentStore			mDocumentStore;
+		private readonly bool			mHasNetworkAccess;
 
 		public	string			ProviderKey { get; private set; }
 
-		public DiscogsProvider( IPreferences preferences ) {
+		public DiscogsProvider( IPreferences preferences, IDiscogsClient discogsClient ) {
+			mDiscogsClient = discogsClient;
+
 			var prefs = preferences.Load<NoiseCorePreferences>();
 			mHasNetworkAccess = prefs.HasNetworkAccess;
 
@@ -34,15 +37,14 @@ namespace Noise.Metadata.MetadataProviders {
 		public async void UpdateArtist( string artistName ) {
 			if( mHasNetworkAccess ) {
 				try {
-					var discogsClient = new DiscogsClient();
-					var searchResults = await discogsClient.ArtistSearch( artistName );
+					var searchResults = await mDiscogsClient.ArtistSearch( artistName );
 
 					if(( searchResults != null ) &&
 					   ( searchResults.Any())) {
 						var result = searchResults[0];
 
 						if( result.Type.Equals( DiscogsClient.cSearchItemTypeArtist )) {
-							var discogsArtist = await discogsClient.GetArtist( result.Id );
+							var discogsArtist = await mDiscogsClient.GetArtist( result.Id );
 
 							using( var session = mDocumentStore.OpenSession()) {
 								var artistBio = session.Load<DbArtistBiography>( DbArtistBiography.FormatStatusKey( artistName )) ??
@@ -66,7 +68,7 @@ namespace Noise.Metadata.MetadataProviders {
 									artistBio.ClearMetadata( eMetadataType.BandMembers );
 								}
 
-								var artistReleases = await discogsClient.GetArtistReleases( result.Id );
+								var artistReleases = await mDiscogsClient.GetArtistReleases( result.Id );
 								if( artistReleases != null ) {
 									discography.Discography.Clear();
 
@@ -104,7 +106,7 @@ namespace Noise.Metadata.MetadataProviders {
 							}
 						}
 						else {
-							NoiseLogger.Current.LogMessage( string.Format( "Discogs search did not locate an artsit: {0}", artistName ));
+							NoiseLogger.Current.LogMessage( string.Format( "Discogs search did not locate an artist: {0}", artistName ));
 						}
 					}
 					else {

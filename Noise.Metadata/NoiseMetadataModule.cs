@@ -5,6 +5,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.ArtistMetadata;
 using Noise.Metadata.Interfaces;
 using Noise.Metadata.MetadataProviders;
+using Noise.Metadata.MetadataProviders.Discogs;
 
 namespace Noise.Metadata {
 	public class NoiseMetadataModule : IModule {
@@ -24,6 +25,8 @@ namespace Noise.Metadata {
 			mContainer.RegisterType<IArtistMetadataProvider, LastFmProvider>( "LastFmProvider" );
 			mContainer.RegisterType<IArtistMetadataProvider, DiscogsProvider>( "DiscogsProvider" );
 			mContainer.RegisterType<IEnumerable<IArtistMetadataProvider>, IArtistMetadataProvider[]>();
+
+			mContainer.RegisterType<IDiscogsClient, DiscogsClient>();
 		}
 	}
 }
