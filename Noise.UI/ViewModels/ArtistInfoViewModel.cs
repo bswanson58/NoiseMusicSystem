@@ -67,6 +67,8 @@ namespace Noise.UI.ViewModels {
 				else {
 					if( mSelectionStateSubscription == null ) {
 						mSelectionStateSubscription = mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
+
+						OnArtistChanged( mSelectionState.CurrentArtist );
 					}
 				}
 
