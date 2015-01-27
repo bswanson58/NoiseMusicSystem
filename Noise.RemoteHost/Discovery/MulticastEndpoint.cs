@@ -29,7 +29,7 @@ namespace Noise.RemoteHost.Discovery {
 			mContinueListening = true;
 
 			Task.Factory.StartNew( () => {
-				NoiseLogger.Current.LogInfo( "Multicast listener starting." );
+				NoiseLogger.Current.LogMessage( "Multicast listener starting." );
 
 				while( mContinueListening ) {
 					try {
@@ -45,7 +45,7 @@ namespace Noise.RemoteHost.Discovery {
 					}
 				}
 
-				NoiseLogger.Current.LogInfo( "Multicast listener exiting." );
+				NoiseLogger.Current.LogMessage( "Multicast listener exiting." );
 			} );
 		}
 
