@@ -29,6 +29,8 @@ namespace Noise.RemoteHost.Discovery {
 			mContinueListening = true;
 
 			Task.Factory.StartNew( () => {
+				NoiseLogger.Current.LogInfo( "Multicast listener starting." );
+
 				while( mContinueListening ) {
 					try {
 						Byte[]	data = udpClient.Receive( ref endPoint );
@@ -38,10 +40,12 @@ namespace Noise.RemoteHost.Discovery {
 					}
 					catch( Exception ex ) {
 						if((uint)ex.HResult != 0x80004005 ) {
-							NoiseLogger.Current.LogException( ex );
+							NoiseLogger.Current.LogException( "Multicast listener", ex );
 						}
 					}
 				}
+
+				NoiseLogger.Current.LogInfo( "Multicast listener exiting." );
 			} );
 		}
 

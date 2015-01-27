@@ -95,6 +95,8 @@ namespace Noise.RemoteHost {
 
 			mDiscoveryListener = new MulticastEndpoint( IPAddress.Parse( cDiscoveryAddress ), cDiscoveryPort );
 			mDiscoveryListener.StartListener( responder );
+
+			NoiseLogger.Current.LogInfo( "ServerDiscovery started for endpoint: {0}", discoveryMessage );
 		}
 
 		private string LocalIPAddress() {

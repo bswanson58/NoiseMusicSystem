@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Noise.Infrastructure;
 
 namespace Noise.RemoteHost.Discovery {
 	public class RequestResponder : IRequestResponder {
@@ -19,9 +20,13 @@ namespace Noise.RemoteHost.Discovery {
 		}
 
 		public void OnRequest( UdpMessage message ) {
+			NoiseLogger.Current.LogInfo( "UDP message received - Realm: {0}, Command: {1}, From: {2}", message.Realm, message.Command, message.Address.Address.ToString());
+
 			if( message.Realm.Equals( mRealm, StringComparison.OrdinalIgnoreCase )) {
 				if( mResponses.ContainsKey( message.Command )) {
 					mSender.SendResponse( message.Address.Address.ToString(), mResponses[message.Command]);
+
+					NoiseLogger.Current.LogInfo( "UDP message response: {0}", mResponses[message.Command]);
 				}
 			}
 		}
