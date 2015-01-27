@@ -48,7 +48,7 @@ namespace Noise.Metadata.ArtistMetadata {
 				var updateTask = new RecurringTask( UpdateNextArtist, cBackgroundTaskName );
 
 				updateTask.TaskSchedule.StartAt( RecurringInterval.FromSeconds( 15 ))
-									   .Delay( RecurringInterval.FromSeconds( 10 ));
+									   .Delay( RecurringInterval.FromSeconds( 15 ));
 				mTaskScheduler.AddRecurringTask( updateTask );
 			}
 			catch( Exception ex ) {
