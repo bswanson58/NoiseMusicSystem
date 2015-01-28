@@ -240,13 +240,15 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(SolutionDir)lib\BASS.Net\v2.4.8.0\$(PlatformName)\bass.dll $(TargetDir)
-copy $(SolutionDir)lib\BASS.Net\v2.4.8.0\$(PlatformName)\bass_aac.dll $(TargetDir)
-copy $(SolutionDir)lib\BASS.Net\v2.4.8.0\$(PlatformName)\bass_fx.dll $(TargetDir)
-copy $(SolutionDir)lib\BASS.Net\v2.4.8.0\$(PlatformName)\bassflac.dll $(TargetDir)
-copy $(SolutionDir)lib\BASS.Net\v2.4.8.0\$(PlatformName)\bassmix.dll $(TargetDir)
-copy $(SolutionDir)lib\BASS.Net\v2.4.8.0\$(PlatformName)\basswma.dll $(TargetDir)
-copy $(SolutionDir)lib\ReplayGain\$(PlatformName)\ReplayGain.dll $(TargetDir)</PostBuildEvent>
+    <PostBuildEvent>copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bass.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bass_aac.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bass_fx.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bassflac.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bassmix.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\basswma.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\ReplayGain\$(PlatformName)\ReplayGain.dll" "$(TargetDir)"
+copy "$(SolutionDir)Noise.Core\Resources\EqPresets.xml" "$(TargetDir)"
+copy "$(SolutionDir)Noise.Core\Resources\LicenseKeys.xml" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
