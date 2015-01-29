@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Noise.Infrastructure.Dto {
+	[DebuggerDisplay("RootFolder = {DisplayName}")]
 	public class RootFolder : StorageFolder {
 		public	string			DisplayName { get; set; }
 		public	FolderStrategy	FolderStrategy { get; set; }
@@ -28,6 +30,10 @@ namespace Noise.Infrastructure.Dto {
 			if( InitialScanCompleted == 0 ) {
 				InitialScanCompleted = LastSummaryScan;
 			}
+		}
+
+		public override string ToString() {
+			return( string.Format( "RootFolder \"{0}\", Id:{1}", DisplayName, DbId ));
 		}
 	}
 }

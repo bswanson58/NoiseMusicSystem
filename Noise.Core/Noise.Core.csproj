@@ -256,6 +256,9 @@
     <Compile Include="FileStore\IFileUpdates.cs" />
     <Compile Include="FileStore\IFolderExplorer.cs" />
     <Compile Include="FileStore\StorageFolderSupport.cs" />
+    <Compile Include="Logging\ILogLibraryBuildingDiscovery.cs" />
+    <Compile Include="Logging\LoggingPreferences.cs" />
+    <Compile Include="Logging\LogLibraryBuildingDiscovery.cs" />
     <Compile Include="PlayQueue\RandomTrackSelector.cs" />
     <Compile Include="PlayStrategies\PlayStrategyBase.cs" />
     <Compile Include="PlaySupport\AudioController.cs" />
@@ -313,6 +316,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Resources\LoggingPreferences" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\EQPresets.xml" />

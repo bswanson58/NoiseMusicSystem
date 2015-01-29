@@ -32,5 +32,11 @@ namespace Noise.Infrastructure.Dto {
 			FileModifiedTicks = fileModificationDate.Ticks;
 			WasUpdated = true;
 		}
+
+		public override string ToString() {
+			var isDeleted = IsDeleted ? " (Marked for deletion)" : string.Empty;
+
+			return( string.Format( "File \"{0}\", Id:{1}, Type:{2}, Type DbId:{3}{4}", Name, DbId, FileType, MetaDataPointer, isDeleted ));
+		}
 	}
 }

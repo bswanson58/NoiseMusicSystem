@@ -21,5 +21,11 @@ namespace Noise.Infrastructure.Dto {
 			Name = path;
 			ParentFolder = Constants.cDatabaseNullOid;
 		}
+
+		public override string ToString() {
+			var isDeleted = IsDeleted ? " (Marked for deletion)" : string.Empty;
+
+			return( string.Format( "Folder \"{0}\", Id:{1}{2}", Name, DbId, isDeleted ));
+		}
 	}
 }

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Core.Database;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -11,21 +12,21 @@ using Recls;
 
 namespace Noise.Core.FileStore {
 	internal class FolderExplorer : IFolderExplorer, IHandle<Events.LibraryConfigurationChanged> {
-		private readonly IEventAggregator		mEventAggregator;
-		private readonly ILibraryConfiguration	mLibraryConfiguration;
-		private readonly IStorageFolderSupport	mStorageFolderSupport;
-		private readonly IRootFolderProvider	mRootFolderProvider;
-		private readonly IStorageFolderProvider	mStorageFolderProvider;
-		private readonly IStorageFileProvider	mStorageFileProvider;
-		private bool							mStopExploring;
-		private DatabaseCache<StorageFile>		mFileCache;
-		private DatabaseCache<StorageFolder>	mFolderCache;
-
-		private long	mFoldersAdded;
-		private long	mFilesAdded;
+		private readonly ILogLibraryBuildingDiscovery	mLog;
+		private readonly IEventAggregator				mEventAggregator;
+		private readonly ILibraryConfiguration			mLibraryConfiguration;
+		private readonly IStorageFolderSupport			mStorageFolderSupport;
+		private readonly IRootFolderProvider			mRootFolderProvider;
+		private readonly IStorageFolderProvider			mStorageFolderProvider;
+		private readonly IStorageFileProvider			mStorageFileProvider;
+		private bool									mStopExploring;
+		private DatabaseCache<StorageFile>				mFileCache;
+		private DatabaseCache<StorageFolder>			mFolderCache;
 
 		public  FolderExplorer( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration, IStorageFolderSupport storageFolderSupport,
-								IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider ) {
+								IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider,
+								ILogLibraryBuildingDiscovery log ) {
+			mLog = log;
 			mEventAggregator = eventAggregator;
 			mLibraryConfiguration = libraryConfiguration;
 			mStorageFolderSupport = storageFolderSupport;
@@ -57,29 +58,27 @@ namespace Noise.Core.FileStore {
 		public void SynchronizeDatabaseFolders() {
 			mStopExploring = false;
 
-			var rootFolders = RootFolderList().ToList();
+			try {
+				var rootFolders = RootFolderList().ToList();
 
-			if( rootFolders.Any()) {
-					try {
-						using( var fileList = mStorageFileProvider.GetAllFiles()) {
-							mFileCache = new DatabaseCache<StorageFile>( fileList.List );
-						}
-						using( var folderList = mStorageFolderProvider.GetAllFolders()) {
-							mFolderCache = new DatabaseCache<StorageFolder>( folderList.List );
-						}
+				if( rootFolders.Any()) {
+					using( var fileList = mStorageFileProvider.GetAllFiles()) {
+						mFileCache = new DatabaseCache<StorageFile>( fileList.List );
+					}
+					using( var folderList = mStorageFolderProvider.GetAllFolders()) {
+						mFolderCache = new DatabaseCache<StorageFolder>( folderList.List );
+					}
 
-						foreach( var rootFolder in rootFolders ) {
-							mFilesAdded = 0;
-							mFoldersAdded = 0;
-
+					foreach( var rootFolder in rootFolders ) {
+						try {
 							if( Directory.Exists( mStorageFolderSupport.GetPath( rootFolder ))) {
-								NoiseLogger.Current.LogMessage( "Synchronizing folder: {0}", rootFolder.Name );
+								mLog.LogDiscoveryStarted( rootFolder );
 								mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Starting folder synchronization for: {0}", rootFolder.Name )));
 
 								BuildFolder( rootFolder );
 							}
 							else {
-								NoiseLogger.Current.LogMessage( "Storage folder does not exists: {0}", rootFolder.DisplayName );
+								mLog.LogLibraryNotFound( rootFolder );
 							}
 
 							if( mStopExploring ) {
@@ -94,15 +93,19 @@ namespace Noise.Core.FileStore {
 								}
 							}
 
-							NoiseLogger.Current.LogMessage( "In Folder '{0}' there were {1} folders added with {2} files.", rootFolder.DisplayName, mFoldersAdded, mFilesAdded );
+							mLog.LogDiscoveryCompleted( rootFolder );
 						}
+						catch( Exception ex ) {
+							mLog.LogDiscoveryException( rootFolder, ex );
+						}
+					}
 
-						mFileCache.Clear();
-						mFolderCache.Clear();
-					}
-					catch( Exception ex ) {
-						NoiseLogger.Current.LogException( "Exception - FolderExplorer:", ex );
-					}
+					mFileCache.Clear();
+					mFolderCache.Clear();
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogDiscoveryException( "Starting library synchronization", ex );
 			}
 		}
 
@@ -155,11 +158,8 @@ namespace Noise.Core.FileStore {
 					folder = new StorageFolder( directory.File, parent.DbId );
 
 					mStorageFolderProvider.AddFolder( folder );
-					mFoldersAdded++;
 
-					if( parent is RootFolder ) {
-						NoiseLogger.Current.LogInfo( string.Format( "Adding folder: {0}", mStorageFolderSupport.GetPath( folder )));
-					}
+					mLog.LogFolderFound( folder );
 				}
 				else {
 					folderList.Remove( folder );
@@ -182,6 +182,8 @@ namespace Noise.Core.FileStore {
 						updater.Update();
 					}
 				}
+
+				mLog.LogFolderNotFound( dbFolder );
 			}
 		}
 
@@ -206,12 +208,15 @@ namespace Noise.Core.FileStore {
 								updater.Update();
 							}
 						}
+
+						mLog.LogFileUpdated( dbFile );
 					}
 				}
 				else {
-					newFiles.Add( new StorageFile( file.File, storageFolder.DbId, file.Size, file.ModificationTime ));
+					var newFile = new StorageFile( file.File, storageFolder.DbId, file.Size, file.ModificationTime );
 
-					mFilesAdded++;
+					newFiles.Add( newFile );
+					mLog.LogFileFound( newFile );
 				}
 
 				if( mStopExploring ) {
@@ -232,6 +237,8 @@ namespace Noise.Core.FileStore {
 						updater.Update();
 					}
 				}
+
+				mLog.LogFileNotFound( dbFile );
 			}
 		}
 	}

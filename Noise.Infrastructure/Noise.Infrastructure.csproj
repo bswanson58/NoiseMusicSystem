@@ -271,6 +271,7 @@
     <Compile Include="Interfaces\ITimestampProvider.cs" />
     <Compile Include="Interfaces\ITrackProvider.cs" />
     <Compile Include="Interfaces\IViewModelResolver.cs" />
+    <Compile Include="Logging\BaseLogger.cs" />
     <Compile Include="RemoteDto\AlbumInfoResult.cs" />
     <Compile Include="RemoteDto\ArtistInfoResult.cs" />
     <Compile Include="RemoteDto\ArtistTracksResult.cs" />

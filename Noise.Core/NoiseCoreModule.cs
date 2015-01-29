@@ -9,11 +9,13 @@ using Noise.Core.DataBuilders;
 using Noise.Core.DataExchange;
 using Noise.Core.FileProcessor;
 using Noise.Core.FileStore;
+using Noise.Core.Logging;
 using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
 using Noise.Core.PlayStrategies;
 using Noise.Core.PlaySupport;
 using Noise.Core.Support;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using ReusableBits.Threading;
@@ -109,6 +111,10 @@ namespace Noise.Core {
 			mContainer.RegisterType<IPlayQueueSupport, PlayQueueRandomTracks>( "PlayQueueRandomTracks" );
 			mContainer.RegisterType<IRandomTrackSelector, RandomTrackSelector>();
 			mContainer.RegisterType<IEnumerable<IPlayQueueSupport>, IPlayQueueSupport[]>();
+
+			mContainer.RegisterType<ILogLibraryBuildingDiscovery, LogLibraryBuildingDiscovery>( new HierarchicalLifetimeManager());
+
+			mContainer.RegisterInstance( NoiseLogger.Current );
 		}
 	}
 }
