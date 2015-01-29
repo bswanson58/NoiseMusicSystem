@@ -38,5 +38,9 @@ namespace Noise.Infrastructure.Dto {
 			Name = copy.Name;
 			Rotation = copy.Rotation;
 		}
+
+		public override string ToString() {
+			return( string.Format( "Artwork \"{0}\", Id:{1}, Artist:{2}, Album:{3}, Associated Item:{4}, Type:{5}", Name, DbId, Artist, Album, AssociatedItem, ContentType ));
+		}
 	}
 }

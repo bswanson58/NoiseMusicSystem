@@ -63,5 +63,9 @@ namespace Noise.Infrastructure.Dto {
 				PublishedYear = year;
 			}
 		}
-	}
+
+		public override string ToString() {
+			return( string.Format( "Album \"{0}\", Id:{1}, Artist:{2}", Name, DbId, Artist ));
+		}
+}
 }

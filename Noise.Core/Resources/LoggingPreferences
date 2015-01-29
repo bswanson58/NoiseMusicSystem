@@ -1,7 +1,11 @@
 {
   "LogExceptions": true,
 
-  "BuildingDiscovery": false,
-  "BuildingDiscoverFiles": true,
-  "BuildingDiscoverFolders": true
+  "BuildingDiscovery": true,
+  "BuildingDiscoverFiles": false,
+  "BuildingDiscoverFolders": false,
+
+  "MetadataCleaning" : true,
+  "MetadataCleaningDomainObjects": false,
+  "MetadataCleaningFileObjects": false
 }

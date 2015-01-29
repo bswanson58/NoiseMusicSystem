@@ -113,6 +113,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IEnumerable<IPlayQueueSupport>, IPlayQueueSupport[]>();
 
 			mContainer.RegisterType<ILogLibraryBuildingDiscovery, LogLibraryBuildingDiscovery>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ILogLibraryCleaning, LogLibraryCleaning>( new HierarchicalLifetimeManager());
 
 			mContainer.RegisterInstance( NoiseLogger.Current );
 		}

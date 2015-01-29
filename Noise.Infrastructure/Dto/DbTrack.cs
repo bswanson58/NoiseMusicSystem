@@ -64,5 +64,9 @@ namespace Noise.Infrastructure.Dto {
 			PlayCount++;
 			LastPlayedTicks = DateTime.Now.Ticks;
 		}
+
+		public override string ToString() {
+			return( string.Format( "Track \"{0}\", Id:{1}, Artist:{2}, Album:{3}", Name, DbId, Artist, Album ));
+		}
 	}
 }

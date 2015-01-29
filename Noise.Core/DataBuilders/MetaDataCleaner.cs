@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -10,6 +11,7 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.DataBuilders {
 	public class MetaDataCleaner : IMetaDataCleaner {
+		private readonly ILogLibraryCleaning		mLog;
 		private readonly IEventAggregator			mEventAggregator;
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IAlbumProvider				mAlbumProvider;
@@ -25,7 +27,9 @@ namespace Noise.Core.DataBuilders {
 
 		public MetaDataCleaner( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IDbBaseProvider dbBaseProvider,
 								IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider,
-								IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider, IEventAggregator eventAggregator ) {
+								IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider,
+								IEventAggregator eventAggregator, ILogLibraryCleaning log ) {
+			mLog = log;
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -50,7 +54,7 @@ namespace Noise.Core.DataBuilders {
 			mStopCleaning = false;
 			mAlbumList.Clear();
 
-			NoiseLogger.Current.LogMessage( "Starting MetaDataCleaning." );
+			mLog.LogCleaningStarted();
 			mEventAggregator.Publish( new Events.StatusEvent( "Starting Library Metadata cleaning." ));
 
 			try {
@@ -60,9 +64,10 @@ namespace Noise.Core.DataBuilders {
 				CleanArtists( CleanAlbums( mAlbumList ));
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - MetaDataCleaner:", ex );
+				mLog.LogCleaningException( "Cleaning library", ex );
 			}
 
+			mLog.LogCleaningCompleted();
 			mEventAggregator.Publish( new Events.StatusEvent( "Finished Library Metadata cleaning." ));
 		}
 
@@ -87,8 +92,7 @@ namespace Noise.Core.DataBuilders {
 
 			CleanFolderFiles( folder );
 
-			NoiseLogger.Current.LogMessage( string.Format( "Deleting Folder: {0}", folder.Name ));
-
+			mLog.LogRemovingFolder( folder );
 			mStorageFolderProvider.RemoveFolder( folder );
 		}
 
@@ -123,6 +127,7 @@ namespace Noise.Core.DataBuilders {
 				}
 			}
 
+			mLog.LogRemovingFile( file );
 			mStorageFileProvider.DeleteFile( file );
 		}
 
@@ -132,9 +137,9 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			mTrackProvider.DeleteTrack( track );
+			mLog.LogRemovingTrack( track );
 
 			mSummary.TracksRemoved++;
-			NoiseLogger.Current.LogInfo( "Deleting Track: {0}", track.Name );
 		}
 
 		private void CleanArtwork( DbArtwork artwork ) {
@@ -143,6 +148,7 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			mArtworkProvider.DeleteArtwork( artwork );
+			mLog.LogRemovingArtwork( artwork );
 		}
 
 		private void CleanTextInfo( DbTextInfo textInfo ) {
@@ -151,6 +157,7 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			mTextInfoProvider.DeleteTextInfo( textInfo );
+			mLog.LogRemovingTextInfo( textInfo );
 		}
 
 		private void CleanArtists( IEnumerable<long> artists ) {
@@ -160,11 +167,12 @@ namespace Noise.Core.DataBuilders {
 				if( artist != null ) {
 					using( var albumList = mAlbumProvider.GetAlbumList( artistId )) {
 						if( !albumList.List.Any() ) {
-							NoiseLogger.Current.LogMessage( string.Format( "Deleting Artist: {0}", artist.Name ));
-							mSummary.ArtistsRemoved++;
-
 							mArtistProvider.DeleteArtist( artist );
+
+							mLog.LogRemovingArtist( artist );
 							mEventAggregator.Publish( new Events.ArtistRemoved( artist.DbId ));
+
+							mSummary.ArtistsRemoved++;
 						}
 					}
 				}
@@ -183,11 +191,12 @@ namespace Noise.Core.DataBuilders {
 								retValue.Add( album.Artist );
 							}
 
-							NoiseLogger.Current.LogMessage( string.Format( "Deleting Album: {0}", album.Name ));
-							mSummary.AlbumsRemoved++;
-
 							mAlbumProvider.DeleteAlbum( album );
+
+							mLog.LogRemovingAlbum( album );
 							mEventAggregator.Publish( new Events.AlbumRemoved( album.DbId ));
+
+							mSummary.AlbumsRemoved++;
 						}
 					}
 

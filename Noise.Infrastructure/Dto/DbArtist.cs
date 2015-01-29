@@ -62,5 +62,9 @@ namespace Noise.Infrastructure.Dto {
 			ViewCount++;
 			LastViewedTicks = DateTime.Now.Ticks;
 		}
+
+		public override string ToString() {
+			return( string.Format( "Artist \"{0}\", Id:{1}", Name, DbId ));
+		}
 	}
 }
