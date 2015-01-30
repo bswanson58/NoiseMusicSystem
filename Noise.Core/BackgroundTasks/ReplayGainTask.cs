@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Caliburn.Micro;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -13,6 +14,7 @@ namespace Noise.Core.BackgroundTasks {
 	public class ReplayGainTask : IBackgroundTask,
 								  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly ILogUserStatus			mUserStatus;
 		private readonly IReplayGainScanner		mReplayGainScanner;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
@@ -24,10 +26,11 @@ namespace Noise.Core.BackgroundTasks {
 		private IEnumerator<DbAlbum>			mAlbumEnumerator;
 		private bool							mDatabaseOpen;
 
-		public ReplayGainTask( IEventAggregator eventAggregator, IReplayGainScanner scanner, IPreferences preferences,
+		public ReplayGainTask( IEventAggregator eventAggregator, IReplayGainScanner scanner, IPreferences preferences, ILogUserStatus userStatus,
 							   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 							   IStorageFileProvider storageFileProvider, IStorageFolderSupport storageFolderSupport ) {
 			mEventAggregator = eventAggregator;
+			mUserStatus = userStatus;
 			mReplayGainScanner = scanner;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -105,9 +108,9 @@ namespace Noise.Core.BackgroundTasks {
 								var scanRequired = trackList.Any( track => ( Math.Abs( track.ReplayGainTrackGain ) + Math.Abs( track.ReplayGainAlbumGain )) < 0.001f );
 
 								if( scanRequired ) {
-									mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Calculating ReplayGain values for: {0}", albumName )));
-
 									if( ExecuteScanner( trackList )) {
+										mUserStatus.CalculatedReplayGain( artist, album );
+
 										NoiseLogger.Current.LogMessage( "ReplayGainScanner updated album: '{0}' - Album gain: {1:N2}", albumName, mReplayGainScanner.AlbumGain );
 									}
 									else {

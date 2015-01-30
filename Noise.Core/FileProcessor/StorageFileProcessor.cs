@@ -12,6 +12,7 @@ using Stateless;
 namespace Noise.Core.FileProcessor {
 	internal class StorageFileProcessor : IStorageFileProcessor {
 		private readonly ILogLibraryClassification	mLog;
+		private readonly ILogUserStatus				mUserStatus;
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IAlbumProvider				mAlbumProvider;
 		private readonly IStorageFileProvider		mStorageFileProvider;
@@ -28,8 +29,9 @@ namespace Noise.Core.FileProcessor {
 
 		public StorageFileProcessor( IArtistProvider artistProvider, IAlbumProvider albumProvider,
 									 IStorageFileProvider fileProvider, IStorageFolderSupport storageFolderSupport,
-								     IEnumerable<IPipelineStep> pipelineSteps, ILogLibraryClassification log  ) {
+								     IEnumerable<IPipelineStep> pipelineSteps, ILogLibraryClassification log, ILogUserStatus userStatus  ) {
 			mLog = log;
+			mUserStatus = userStatus;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mStorageFileProvider = fileProvider;
@@ -116,6 +118,7 @@ namespace Noise.Core.FileProcessor {
 
 			mStopProcessing = false;
 			mLog.LogClassificationStarted();
+			mUserStatus.StartedLibraryClassification();
 			
 			try {
 				using( var fileList = mStorageFileProvider.GetFilesRequiringProcessing()) {

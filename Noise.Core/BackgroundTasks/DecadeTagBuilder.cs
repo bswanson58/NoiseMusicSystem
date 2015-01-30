@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Caliburn.Micro;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -14,6 +15,7 @@ namespace Noise.Core.BackgroundTasks {
 		private const string						cDecadeTagBuilderId		= "ComponentId_TagBuilder";
 
 		private readonly IEventAggregator			mEventAggregator;
+		private readonly ILogUserStatus				mUserStatus;
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IAlbumProvider				mAlbumProvider;
 		private readonly ITagAssociationProvider	mTagAssociationProvider;
@@ -25,13 +27,14 @@ namespace Noise.Core.BackgroundTasks {
 		private	long								mStartScanTicks;
 
 		public DecadeTagBuilder( IEventAggregator eventAggregator, ITagAssociationProvider tagAssociationProvider, ITimestampProvider timestampProvider,
-								 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager ) {
+								 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager, ILogUserStatus userLog ) {
 			mEventAggregator = eventAggregator;
 			mTimestampProvider = timestampProvider;
 			mTagAssociationProvider = tagAssociationProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTagManager = tagManager;
+			mUserStatus = userLog;
 
 			mEventAggregator.Subscribe( this );
 		}
@@ -105,7 +108,7 @@ namespace Noise.Core.BackgroundTasks {
 								}
 
 								NoiseLogger.Current.LogMessage( string.Format( "Built decade tag associations for: {0}", artist.Name ));
-								mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Built decade tag associations for: {0}", artist.Name )));
+								mUserStatus.BuiltDecadeTags( artist );
 							}
 						}
 					}

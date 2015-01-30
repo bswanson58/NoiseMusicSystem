@@ -11,6 +11,7 @@ namespace Noise.Core.DataBuilders {
 	internal class SummaryBuilder : ISummaryBuilder {
 		private readonly ILogLibraryBuildingSummary	mLog;
 		private readonly IEventAggregator			mEventAggregator;
+		private readonly ILogUserStatus				mUserStatus;
 		private readonly IRootFolderProvider		mRootFolderProvider;
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IAlbumProvider				mAlbumProvider;
@@ -20,9 +21,11 @@ namespace Noise.Core.DataBuilders {
 		private bool								mStop;
 
 		public SummaryBuilder( IEventAggregator eventAggregator, IRootFolderProvider rootFolderProvider, IMetadataManager metadataManager, ITagManager tagManager,
-							   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ILogLibraryBuildingSummary log ) {
+							   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
+							   ILogLibraryBuildingSummary log, ILogUserStatus userStatus ) {
 			mLog = log;
 			mEventAggregator = eventAggregator;
+			mUserStatus = userStatus;
 			mRootFolderProvider =rootFolderProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -35,6 +38,7 @@ namespace Noise.Core.DataBuilders {
 			mStop = false;
 
 			mLog.LogSummaryBuildingStarted();
+			mUserStatus.StartedLibrarySummary();
 			SummarizeArtists();
 			mLog.LogSummaryBuildingCompleted();
 		}
@@ -135,7 +139,6 @@ namespace Noise.Core.DataBuilders {
 								mLog.LogSummaryArtistCompleted( artistUpdater.Item );
 								artistUpdater.Update();
 								mEventAggregator.Publish( new Events.ArtistContentUpdated( artistUpdater.Item.DbId ));
-								mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Summary data was built for: {0}", artist.Name )));
 
 								if( mStop ) {
 									break;

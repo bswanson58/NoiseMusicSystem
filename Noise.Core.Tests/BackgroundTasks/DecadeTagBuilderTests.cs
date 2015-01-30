@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Caliburn.Micro;
 using Moq;
+using Noise.Core.Logging;
 using NUnit.Framework;
 using Noise.Core.BackgroundTasks;
 using Noise.Infrastructure;
@@ -13,8 +14,8 @@ namespace Noise.Core.Tests.BackgroundTasks {
 		public class TestDecadeTagBuilder : DecadeTagBuilder {
 		public TestDecadeTagBuilder( IEventAggregator eventAggregator, ITagAssociationProvider tagAssociationProvider,
 									 ITimestampProvider timestampProvider, IArtistProvider artistProvider,
-									 IAlbumProvider albumProvider, ITagManager tagManager ) :
-			base( eventAggregator, tagAssociationProvider, timestampProvider, artistProvider, albumProvider, tagManager ) { }
+									 IAlbumProvider albumProvider, ITagManager tagManager, ILogUserStatus userStatus ) :
+			base( eventAggregator, tagAssociationProvider, timestampProvider, artistProvider, albumProvider, tagManager, userStatus ) { }
 		}
 
 		[TestFixture]
@@ -25,6 +26,7 @@ namespace Noise.Core.Tests.BackgroundTasks {
 			private Mock<ITagAssociationProvider>	mTagAssociationProvider;
 			private Mock<ITagManager>				mTagManager;
 			private Mock<ITimestampProvider>		mTimestampProvider;
+			private Mock<ILogUserStatus>			mLogUserStatus;
 
 			private void CreateMocks() {
 				mEventAggregator = new Mock<IEventAggregator>();
@@ -33,11 +35,12 @@ namespace Noise.Core.Tests.BackgroundTasks {
 				mTagAssociationProvider = new Mock<ITagAssociationProvider>();
 				mTagManager = new Mock<ITagManager>();
 				mTimestampProvider = new Mock<ITimestampProvider>();
+				mLogUserStatus = new Mock<ILogUserStatus>();
 			}
 
 			private DecadeTagBuilder CreateSut() {
 				return( new DecadeTagBuilder( mEventAggregator.Object, mTagAssociationProvider.Object, mTimestampProvider.Object,
-											  mArtistProvider.Object, mAlbumProvider.Object, mTagManager.Object ));
+											  mArtistProvider.Object, mAlbumProvider.Object, mTagManager.Object, mLogUserStatus.Object ));
 			}
 
 			private void SetupTimestampProvider( long withTime ) {
@@ -47,20 +50,20 @@ namespace Noise.Core.Tests.BackgroundTasks {
 			private void SetupArtistProvider( DbArtist artist ) {
 				var artists = new List<DbArtist> { artist };
 				var providerList = new Mock<IDataProviderList<DbArtist>>();
- 				providerList.Setup( m => m.List ).Returns( artists );
+				providerList.Setup( m => m.List ).Returns( artists );
 				mArtistProvider.Setup( m => m.GetArtistList()).Returns( providerList.Object );
 				mArtistProvider.Setup( m => m.GetArtist( It.IsAny<long>())).Returns( artist );
 			}
 
 			private void SetupAlbumProvider( IEnumerable<DbAlbum> albumList ) {
 				var provider = new Mock<IDataProviderList<DbAlbum>>();
- 				provider.Setup( m => m.List ).Returns( albumList );
+				provider.Setup( m => m.List ).Returns( albumList );
 				mAlbumProvider.Setup( m => m.GetAlbumList( It.IsAny<long>())).Returns( provider.Object );
 			}
 
 			private void SetupTagProvider( IEnumerable<DbTagAssociation> tagList ) {
 				var provider = new Mock<IDataProviderList<DbTagAssociation>>();
- 				provider.Setup( m => m.List ).Returns( tagList );
+				provider.Setup( m => m.List ).Returns( tagList );
 				mTagAssociationProvider.Setup( p => p.GetArtistTagList( It.IsAny<long>(), It.IsAny<eTagGroup>())).Returns( provider.Object );
 			} 
 			

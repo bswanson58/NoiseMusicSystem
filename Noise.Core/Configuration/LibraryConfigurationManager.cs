@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -15,14 +16,16 @@ namespace Noise.Core.Configuration {
 		private const string						cBackupDateFormat = "yyyy-MM-dd HH-mm-ss";
 
 		private readonly IEventAggregator			mEventAggregator;
+		private readonly ILogUserStatus				mUserStatus;
 		private readonly INoiseEnvironment			mNoiseEnvironment;
 		private readonly IPreferences				mPreferences;
 		private	readonly List<LibraryConfiguration>	mLibraries;
 		private LibraryConfiguration				mCurrentLibrary;
 
 		public LibraryConfigurationManager( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
-											INoiseEnvironment noiseEnvironment, IPreferences preferences ) {
+											INoiseEnvironment noiseEnvironment, IPreferences preferences, ILogUserStatus userStatus ) {
 			mEventAggregator = eventAggregator;
+			mUserStatus = userStatus;
 			mNoiseEnvironment = noiseEnvironment;
 			mPreferences = preferences;
 			mLibraries = new List<LibraryConfiguration>();
@@ -101,7 +104,8 @@ namespace Noise.Core.Configuration {
 			   ( mLibraries.Contains( configuration ))) {
 				NoiseLogger.Current.LogMessage( "------------------------------" );
 				NoiseLogger.Current.LogMessage( "Opening library: {0}", configuration.LibraryName );
-				mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Opening library: {0}", configuration.LibraryName )));
+
+				mUserStatus.OpeningLibrary( configuration );
 
 				Current = configuration;
 

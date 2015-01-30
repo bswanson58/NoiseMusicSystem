@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Core.Database;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -13,6 +14,7 @@ namespace Noise.Core.BackgroundTasks {
 	public class DiscographyExplorer : IBackgroundTask,
 									   IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly ILogUserStatus			mUserStatus;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly IMetadataManager		mMetadataManager;
@@ -20,8 +22,9 @@ namespace Noise.Core.BackgroundTasks {
 		private IEnumerator<long>				mArtistEnum;
 
 		public DiscographyExplorer( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider,
-									IMetadataManager metadataManager ) {
+									IMetadataManager metadataManager, ILogUserStatus userStatus ) {
 			mEventAggregator = eventAggregator;
+			mUserStatus = userStatus;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mMetadataManager = metadataManager;
@@ -93,13 +96,13 @@ namespace Noise.Core.BackgroundTasks {
 										updater.Item.SetPublishedYear( release.Year );
 
 										updater.Update();
+
+										mUserStatus.UpdatedAlbumPublishedYear( updater.Item );
 									}
 								}
 
 								NoiseLogger.Current.LogMessage( string.Format( "Updating Published year from discography: album '{0}', year: '{1}'",
 																				dbAlbum.Name, release.Year ));
-								mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Updating Published year from discography: album '{0}', year: '{1}'",
-																				dbAlbum.Name, release.Year )));
 							}
 						}
 					}

@@ -13,6 +13,7 @@ namespace Noise.Core.DataBuilders {
 	public class MetaDataCleaner : IMetaDataCleaner {
 		private readonly ILogLibraryCleaning		mLog;
 		private readonly IEventAggregator			mEventAggregator;
+		private readonly ILogUserStatus				mUserStatus;
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IAlbumProvider				mAlbumProvider;
 		private readonly ITrackProvider				mTrackProvider;
@@ -28,9 +29,10 @@ namespace Noise.Core.DataBuilders {
 		public MetaDataCleaner( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IDbBaseProvider dbBaseProvider,
 								IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider,
 								IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider,
-								IEventAggregator eventAggregator, ILogLibraryCleaning log ) {
+								IEventAggregator eventAggregator, ILogLibraryCleaning log, ILogUserStatus userStatus ) {
 			mLog = log;
 			mEventAggregator = eventAggregator;
+			mUserStatus = userStatus;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -55,7 +57,7 @@ namespace Noise.Core.DataBuilders {
 			mAlbumList.Clear();
 
 			mLog.LogCleaningStarted();
-			mEventAggregator.Publish( new Events.StatusEvent( "Starting Library Metadata cleaning." ));
+			mUserStatus.StartedLibraryCleaning();
 
 			try {
 				CleanFolders();
@@ -68,7 +70,6 @@ namespace Noise.Core.DataBuilders {
 			}
 
 			mLog.LogCleaningCompleted();
-			mEventAggregator.Publish( new Events.StatusEvent( "Finished Library Metadata cleaning." ));
 		}
 
 		private void CleanFolders() {

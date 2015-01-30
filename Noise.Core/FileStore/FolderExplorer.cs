@@ -14,6 +14,7 @@ namespace Noise.Core.FileStore {
 	internal class FolderExplorer : IFolderExplorer, IHandle<Events.LibraryConfigurationChanged> {
 		private readonly ILogLibraryBuildingDiscovery	mLog;
 		private readonly IEventAggregator				mEventAggregator;
+		private readonly ILogUserStatus					mUserStatus;
 		private readonly ILibraryConfiguration			mLibraryConfiguration;
 		private readonly IStorageFolderSupport			mStorageFolderSupport;
 		private readonly IRootFolderProvider			mRootFolderProvider;
@@ -25,9 +26,10 @@ namespace Noise.Core.FileStore {
 
 		public  FolderExplorer( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration, IStorageFolderSupport storageFolderSupport,
 								IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider,
-								ILogLibraryBuildingDiscovery log ) {
+								ILogLibraryBuildingDiscovery log, ILogUserStatus userStatus ) {
 			mLog = log;
 			mEventAggregator = eventAggregator;
+			mUserStatus = userStatus;
 			mLibraryConfiguration = libraryConfiguration;
 			mStorageFolderSupport = storageFolderSupport;
 			mRootFolderProvider = rootFolderProvider;
@@ -73,7 +75,7 @@ namespace Noise.Core.FileStore {
 						try {
 							if( Directory.Exists( mStorageFolderSupport.GetPath( rootFolder ))) {
 								mLog.LogDiscoveryStarted( rootFolder );
-								mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Starting folder synchronization for: {0}", rootFolder.Name )));
+								mUserStatus.StartedLibraryDiscovery();
 
 								BuildFolder( rootFolder );
 							}
