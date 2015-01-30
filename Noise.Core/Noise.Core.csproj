@@ -256,11 +256,13 @@
     <Compile Include="FileStore\IFileUpdates.cs" />
     <Compile Include="FileStore\IFolderExplorer.cs" />
     <Compile Include="FileStore\StorageFolderSupport.cs" />
+    <Compile Include="Logging\ILogLibraryBuildingSummary.cs" />
     <Compile Include="Logging\ILogLibraryClassification.cs" />
     <Compile Include="Logging\ILogLibraryCleaning.cs" />
     <Compile Include="Logging\ILogLibraryBuildingDiscovery.cs" />
     <Compile Include="Logging\LoggingPreferences.cs" />
     <Compile Include="Logging\LogLibraryBuildingDiscovery.cs" />
+    <Compile Include="Logging\LogLibraryBuildingSummary.cs" />
     <Compile Include="Logging\LogLibraryClassification.cs" />
     <Compile Include="Logging\LogLibraryCleaning.cs" />
     <Compile Include="PlayQueue\RandomTrackSelector.cs" />

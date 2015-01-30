@@ -20,6 +20,10 @@
 		public bool FileClassificationTextInfo { get; set; }
 		public bool FileClassificationUnknown { get; set; }
 
+		public bool BuildingSummary { get; set; }
+		public bool BuildingSummaryArtists { get; set; }
+		public bool BuildingSummaryAlbums { get; set; }
+
 		public bool LogAnyBuildingDiscovery {
 			get { return( BuildingDiscovery || BuildingDiscoverFiles || BuildingDiscoverFolders ); }
 		}
@@ -34,8 +38,12 @@
 			}
 		}
 
+		public bool LogAnyBuildingSummary {
+			get {  return( BuildingSummary || BuildingSummaryArtists || BuildingSummaryAlbums ); }
+		}
+
 		public bool LogAnyBuilding {
-			get {  return( LogAnyBuildingDiscovery || LogAnyCleaning || LogAnyClassification ); }
+			get {  return( LogAnyBuildingDiscovery || LogAnyCleaning || LogAnyClassification || BuildingSummary ); }
 		}
 
 		public LoggingPreferences() {
