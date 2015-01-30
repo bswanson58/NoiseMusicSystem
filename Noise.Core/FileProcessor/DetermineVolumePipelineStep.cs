@@ -14,6 +14,7 @@ namespace Noise.Core.FileProcessor {
 				context.Track.VolumeName = provider.VolumeName;
 
 				if(!string.IsNullOrWhiteSpace( context.Track.VolumeName )) {
+					context.Log.LogTrackInfo( context.StorageFile, context.Track, "Volume", context.Track.VolumeName );
 					break;
 				}
 			}

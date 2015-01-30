@@ -22,6 +22,8 @@ namespace Noise.Core.FileProcessor {
 					updater.Update();
 				}
 			}
+
+			context.Log.LogUnknownFile( context.StorageFile );
 		}
 	}
 }

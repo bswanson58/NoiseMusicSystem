@@ -18,6 +18,7 @@ namespace Noise.Core.FileProcessor {
 			Condition.Requires( context.StorageFile ).IsNotNull();
 
 			context.StorageFile.FileType = mStorageFolderSupport.DetermineFileType( context.StorageFile );
+			context.Log.LogFileTypeDetermined( context.StorageFile );
 
 			switch( context.StorageFile.FileType ) {
 				case eFileType.Music:

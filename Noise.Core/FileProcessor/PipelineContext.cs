@@ -2,10 +2,12 @@
 using CuttingEdge.Conditions;
 using Noise.Core.DataProviders;
 using Noise.Core.Database;
+using Noise.Core.Logging;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.FileProcessor {
 	public class PipelineContext {
+		public	ILogLibraryClassification	Log {  get; private set; }
 		public	DatabaseCache<DbArtist>		ArtistCache { get; private set; }
 		public	DatabaseCache<DbAlbum>		AlbumCache { get; private set; }
 		public	List<IMetaDataProvider>		MetaDataProviders { get; set; }
@@ -20,7 +22,8 @@ namespace Noise.Core.FileProcessor {
 		public	ePipelineTrigger			Trigger { get; set; }
 
 		public PipelineContext( DatabaseCache<DbArtist> artistCache, DatabaseCache<DbAlbum> albumCache,
-								StorageFile file, DatabaseChangeSummary summary ) {
+								StorageFile file, DatabaseChangeSummary summary, ILogLibraryClassification log ) {
+			Log = log;
 			ArtistCache = artistCache;
 			AlbumCache = albumCache;
 			StorageFile = file;

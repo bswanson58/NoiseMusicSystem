@@ -7,5 +7,15 @@
 
   "MetadataCleaning" : true,
   "MetadataCleaningDomainObjects": false,
-  "MetadataCleaningFileObjects": false
+  "MetadataCleaningFileObjects": false,
+
+  "FileClassification" :  true,
+  "FileClassificationFiles" :  false,
+  "FileClassificationSteps" :  false,
+  "FileClassificationArtists" :  false,
+  "FileClassificationAlbums" :  false,
+  "FileClassificationTracks" :  false,
+  "FileClassificationArtwork" :  false,
+  "FileClassificationTextInfo" :  false,
+  "FileClassificationUnknown" :  false
 }

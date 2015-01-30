@@ -39,6 +39,7 @@ namespace Noise.Core.FileProcessor {
 
 					mArtworkProvider.AddArtwork( artwork, imagePath );
 					context.StorageFile.MetaDataPointer = artwork.DbId;
+					context.Log.LogArtworkAdded( context.StorageFile, artwork );
 				}
 
 				using( var updater = mArtistProvider.GetArtistForUpdate( context.Artist.DbId )) {

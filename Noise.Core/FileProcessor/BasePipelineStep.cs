@@ -57,12 +57,7 @@ namespace Noise.Core.FileProcessor {
 		public IPipelineStep Process( PipelineContext context ) {
 			var retValue = mNextStep;
 
-			try {
-				ProcessStep( context );
-			}
-			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "StorageFile Pipeline ProcessStep:", ex );
-			}
+			ProcessStep( context );
 
 			return( retValue );
 		}
