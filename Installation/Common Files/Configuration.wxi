@@ -7,10 +7,14 @@
 		<Component Id="LicenseKeys.xml" Guid="cfa52101-be10-4843-b49c-51e394bf7e55">
 			<File Id="LicenseKeys.xml" DiskId="10" Source="$(var.Noise.Core.ProjectDir)Resources\LicenseKeys.xml" KeyPath="yes" Checksum="yes" />
 		</Component>
+		<Component Id="LoggingPreferences" Guid="a9fe3fab-6f47-4964-814b-f5391d9c226c">
+			<File Id="LoggingPreferences" DiskId="10" Source="$(var.Noise.Core.ProjectDir)Resources\LoggingPreferences" KeyPath="yes" Checksum="yes" />
+		</Component>
 	</DirectoryRef>
 
 	<ComponentGroup Id="ConfigurationFiles">
 		<ComponentRef Id="EqPresets.xml"/>
 		<ComponentRef Id="LicenseKeys.xml"/>
+		<ComponentRef Id="LoggingPreferences"/>
 	</ComponentGroup>
 	</Include>
