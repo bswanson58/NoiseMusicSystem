@@ -21,5 +21,8 @@
 
   "BuildingSummary": true,
   "BuildingSummaryArtists": true,
-  "BuildingSummaryAlbums": false
+  "BuildingSummaryAlbums": false,
+
+  "PlayQueueAddRemove":  false,
+  "PlayQueueStatusChange":  false
 }

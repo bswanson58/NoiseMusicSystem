@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -13,6 +14,7 @@ namespace Noise.Core.PlayQueue {
 	internal class PlayQueueMgr : IPlayQueue, IRequireInitialization,
 								  IHandle<Events.TrackUserUpdate>, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator			mEventAggregator;
+		private readonly ILogPlayQueue				mLog;
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IAlbumProvider				mAlbumProvider;
 		private readonly ITrackProvider				mTrackProvider;
@@ -39,8 +41,9 @@ namespace Noise.Core.PlayQueue {
 							 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 							 IStorageFolderSupport storageFolderSupport, IStorageFileProvider storageFileProvider,
 							 IPlayStrategyFactory strategyFactory, IPlayExhaustedFactory exhaustedFactory,
-							 IEnumerable<IPlayQueueSupport> playQueueSupporters, IPreferences preferences ) {
+							 IEnumerable<IPlayQueueSupport> playQueueSupporters, IPreferences preferences, ILogPlayQueue log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -58,8 +61,6 @@ namespace Noise.Core.PlayQueue {
 			mPlayExhaustedStrategy = mPlayExhaustedFactory.ProvideExhaustedStrategy( ePlayExhaustedStrategy.Stop );
 
 			lifecycleManager.RegisterForInitialize( this );
-
-			NoiseLogger.Current.LogInfo( "PlayQueue created" );
 		}
 
 		public void Initialize() {
@@ -68,7 +69,7 @@ namespace Noise.Core.PlayQueue {
 					supporter.Initialize( this );
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( string.Format( "PlayQueueManager initializing queue supporter: {0}", supporter.GetType()), ex );
+					mLog.LogQueueException( string.Format( "Initializing queue supporte: {0}", supporter.GetType()), ex );
 				}
 			}
 
@@ -167,6 +168,8 @@ namespace Noise.Core.PlayQueue {
 					else {
 						mPlayQueue.Add( newTrack );
 					}
+
+					mLog.AddedTrack( newTrack );
 				}
 			}
 		}
@@ -186,6 +189,7 @@ namespace Noise.Core.PlayQueue {
 						mPlayQueue.Insert( trackIndex + 1, newTrack );
 
 						FirePlayQueueChanged();
+						mLog.AddedTrack( newTrack );
 					}
 				}
 			}
@@ -268,7 +272,10 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void Add( DbInternetStream stream ) {
-			mPlayQueue.Add( new PlayQueueTrack( stream ));
+			var newTrack = new PlayQueueTrack( stream );
+
+			mPlayQueue.Add( newTrack );
+			mLog.AddedTrack( newTrack );
 
 			FirePlayQueueChanged();
 		}
@@ -290,6 +297,7 @@ namespace Noise.Core.PlayQueue {
 			mPlayQueue.Clear();
 			mPlayHistory.Clear();
 			PlayingTrackReplayCount = 0;
+			mLog.ClearedQueue();
 
 			FirePlayQueueChanged();
 		}
@@ -306,6 +314,8 @@ namespace Noise.Core.PlayQueue {
 			foreach( var track in mPlayQueue ) {
 				if(!track.IsPlaying ) {
 					track.HasPlayed = false;
+
+					mLog.StatusChanged( track );
 				}
 
 				track.IsFaulted = false;
@@ -320,6 +330,7 @@ namespace Noise.Core.PlayQueue {
 				track.HasPlayed = false;
 
 				FirePlayQueueChanged();
+				mLog.StatusChanged( track );
 
 				retValue = true;
 			}
@@ -333,6 +344,7 @@ namespace Noise.Core.PlayQueue {
 
 			if( track != null ) {
 				RemoveTrack( track );
+				mLog.RemovedTrack( track );
 
 				retValue = true;
 			}
@@ -342,26 +354,28 @@ namespace Noise.Core.PlayQueue {
 
 		public void RemoveTrack( PlayQueueTrack track ) {
 			if( track.Track !=null ) {
-				var	queuedTrack= mPlayQueue.Find( item => item.Track != null ? item.Track.DbId == track.Track.DbId : false );
+				var	queuedTrack= mPlayQueue.Find( item => item.Track != null && item.Track.DbId == track.Track.DbId );
 
 				if( queuedTrack != null ) {
 					mPlayQueue.Remove(  queuedTrack );
+					mLog.RemovedTrack( queuedTrack );
 				}
 
-				queuedTrack= mPlayHistory.Find( item => item.Track != null ? item.Track.DbId == track.Track.DbId : false );
+				queuedTrack= mPlayHistory.Find( item => item.Track != null && item.Track.DbId == track.Track.DbId );
 
 				if( queuedTrack != null ) {
 					mPlayHistory.Remove(  queuedTrack );
 				}
 			}
 			else if( track.Stream != null ) {
-				var	queuedTrack= mPlayQueue.Find( item => item.Stream != null ? item.Stream.DbId == track.Stream.DbId : false );
+				var	queuedTrack= mPlayQueue.Find( item => item.Stream != null && item.Stream.DbId == track.Stream.DbId );
 
 				if( queuedTrack != null ) {
 					mPlayQueue.Remove(  queuedTrack );
+					mLog.RemovedTrack( queuedTrack );
 				}
 
-				queuedTrack= mPlayHistory.Find( item => item.Stream != null ? item.Stream.DbId == track.Stream.DbId : false );
+				queuedTrack= mPlayHistory.Find( item => item.Stream != null && item.Stream.DbId == track.Stream.DbId );
 
 				if( queuedTrack != null ) {
 					mPlayHistory.Remove(  queuedTrack );
@@ -372,7 +386,13 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void RemovePlayedTracks() {
-			mPlayQueue.RemoveAll( track => track.HasPlayed && !track.IsPlaying );
+			var removeList = from track in mPlayQueue where track.HasPlayed && !track.IsPlaying select  track;
+
+			foreach( var track in removeList ) {
+				mPlayQueue.Remove( track );
+				mLog.RemovedTrack( track );
+			}
+
 			mPlayHistory.Clear();
 
 			FirePlayQueueChanged();
@@ -391,10 +411,18 @@ namespace Noise.Core.PlayQueue {
 					var playingIndex = mPlayQueue.IndexOf( playingTrack );
 
 					if( playingIndex > toIndex ) {
-						track.HasPlayed = true;
+						if(!track.HasPlayed ) {
+							track.HasPlayed = true;
+
+							mLog.StatusChanged( track );
+						}
 					}
 					if( playingIndex < toIndex ) {
-						track.HasPlayed = false;
+						if( track.HasPlayed ) {
+							track.HasPlayed = false;
+
+							mLog.StatusChanged( track );
+						}
 					}
 					if( playingIndex == toIndex ) {
 						foreach( var queuedTrack in mPlayQueue ) {
@@ -459,6 +487,7 @@ namespace Noise.Core.PlayQueue {
 				track.IsPlaying = false;
 
 				mPlayHistory.Add( track );
+				mLog.StatusChanged( track );
 			}
 
 			track = NextTrack;
@@ -468,6 +497,8 @@ namespace Noise.Core.PlayQueue {
 				if( PlayingTrackReplayCount > 0 ) {
 					PlayingTrackReplayCount--;
 				}
+
+				mLog.StatusChanged( track );
 			}
 
 			if(( mPlayExhaustedStrategy != null ) &&
@@ -483,6 +514,8 @@ namespace Noise.Core.PlayQueue {
 
 			if( track != null ) {
 				track.IsPlaying = false;
+
+				mLog.StatusChanged( track );
 			}
 		}
 
@@ -520,12 +553,16 @@ namespace Noise.Core.PlayQueue {
 
 			if( track != null ) {
 				track.IsPlaying = false;
+
+				mLog.StatusChanged( track );
 			}
 
 			track = PreviousTrack;
 			if( track != null ) {
 				track.HasPlayed = false;
 				track.IsPlaying = true;
+
+				mLog.StatusChanged( track );
 
 				mPlayHistory.Remove( mPlayHistory.Last());
 			}
@@ -557,7 +594,11 @@ namespace Noise.Core.PlayQueue {
 					}
 
 					if(!t.IsPlaying ) {
-						t.HasPlayed = hasPlayedSetting;
+						if( t.HasPlayed != hasPlayedSetting ) {
+							t.HasPlayed = hasPlayedSetting;
+
+							mLog.StatusChanged( t );
+						}
 					}
 				}
 			}
@@ -590,10 +631,14 @@ namespace Noise.Core.PlayQueue {
 					if( currentTrack != null ) {
 						currentTrack.IsPlaying = false;
 						currentTrack.HasPlayed = true;
+
+						mLog.StatusChanged( currentTrack );
 					}
 
 					value.IsPlaying = true;
 					value.HasPlayed = false;
+
+					mLog.StatusChanged( value );
 				}
 			}
 		}
@@ -615,6 +660,8 @@ namespace Noise.Core.PlayQueue {
 			preferences.PlayStrategyParameters = PlayStrategyParametersFactory.ToString( parameters );
 			mPreferences.Save( preferences );
 
+			mLog.StrategySet( strategyId, parameters );
+
 			Condition.Requires( mPlayStrategy ).IsNotNull();
 		}
 
@@ -635,6 +682,8 @@ namespace Noise.Core.PlayQueue {
 			preferences.PlayExhaustedStrategy = strategy;
 			preferences.PlayExhaustedParameters = PlayStrategyParametersFactory.ToString( parameters );
 			mPreferences.Save( preferences );
+
+			mLog.StrategySet( strategy, parameters );
 
 			Condition.Requires( mPlayExhaustedStrategy ).IsNotNull();
 		}

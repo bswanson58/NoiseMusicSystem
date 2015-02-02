@@ -24,6 +24,9 @@
 		public bool BuildingSummaryArtists { get; set; }
 		public bool BuildingSummaryAlbums { get; set; }
 
+		public bool PlayQueueAddRemove { get; set; }
+		public bool PlayQueueStatusChange { get; set; }
+
 		public bool LogAnyBuildingDiscovery {
 			get { return( BuildingDiscovery || BuildingDiscoverFiles || BuildingDiscoverFolders ); }
 		}
