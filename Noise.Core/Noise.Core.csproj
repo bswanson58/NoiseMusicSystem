@@ -261,6 +261,7 @@
     <Compile Include="Logging\ILogLibraryCleaning.cs" />
     <Compile Include="Logging\ILogLibraryBuildingDiscovery.cs" />
     <Compile Include="Logging\ILogPlayQueue.cs" />
+    <Compile Include="Logging\ILogPlayState.cs" />
     <Compile Include="Logging\ILogUserStatus.cs" />
     <Compile Include="Logging\LoggingPreferences.cs" />
     <Compile Include="Logging\LogLibraryBuildingDiscovery.cs" />
@@ -268,6 +269,7 @@
     <Compile Include="Logging\LogLibraryClassification.cs" />
     <Compile Include="Logging\LogLibraryCleaning.cs" />
     <Compile Include="Logging\LogPlayQueue.cs" />
+    <Compile Include="Logging\LogPlayState.cs" />
     <Compile Include="Logging\LogUserStatus.cs" />
     <Compile Include="PlayQueue\RandomTrackSelector.cs" />
     <Compile Include="PlayStrategies\PlayStrategyBase.cs" />

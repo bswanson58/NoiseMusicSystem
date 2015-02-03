@@ -24,5 +24,7 @@
   "BuildingSummaryAlbums": false,
 
   "PlayQueueAddRemove":  false,
-  "PlayQueueStatusChange":  false
+  "PlayQueueStatusChange":  false,
+
+  "PlayState":  false
 }

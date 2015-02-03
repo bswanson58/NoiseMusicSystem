@@ -6,6 +6,7 @@ using System.Timers;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -32,6 +33,7 @@ namespace Noise.Core.PlaySupport {
 									IHandle<Events.PlayQueueChanged>, IHandle<Events.PlayQueuedTrackRequest>,
 									IHandle<Events.SystemShutdown>, IHandle<Events.GlobalUserEvent> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly ILogPlayState			mLog;
 		private readonly IAudioPlayer			mAudioPlayer;
 		private readonly IPlayQueue				mPlayQueue;
 		private readonly IPlayHistory			mPlayHistory;
@@ -57,8 +59,9 @@ namespace Noise.Core.PlaySupport {
 
 		public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
 							   IPlayQueue playQueue, IPlayHistory playHistory, IScrobbler scrobbler,
-							   IAudioPlayer audioPlayer, IPreferences preferences ) {
+							   IAudioPlayer audioPlayer, IPreferences preferences, ILogPlayState log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mPlayQueue = playQueue;
 			mPlayHistory = playHistory;
 			mScrobbler = scrobbler;
@@ -74,8 +77,6 @@ namespace Noise.Core.PlaySupport {
 
 			mPlayStateSubject = new Subject<ePlayState>();
 			PlayState = ePlayState.StoppedEmptyQueue;
-
-			NoiseLogger.Current.LogInfo( "PlayController created" );
 		}
 
 		public void Initialize() {
@@ -181,7 +182,7 @@ namespace Noise.Core.PlaySupport {
 					.Permit( eStateTriggers.QueueExhausted, ePlayState.Stopped );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "PlayController:Initialize", ex );
+				mLog.LogPlayStateException( "Initializing PlayController", ex );
 			}
 		}
 
@@ -191,6 +192,8 @@ namespace Noise.Core.PlaySupport {
 			get{ return( mCurrentPlayState ); }
 			set {
 				mCurrentPlayState = value;
+				mLog.PlayStateSet( mCurrentPlayState );
+
 				mPlayStateSubject.OnNext( mCurrentPlayState );
 			}
 		}
@@ -224,7 +227,7 @@ namespace Noise.Core.PlaySupport {
 
 		private void PlayPrevious() {
 			if(( CurrentTrack != null ) &&
-			   ( mCurrentStatus != ePlaybackStatus.Stopped ) &&
+			   ( CurrentStatus != ePlaybackStatus.Stopped ) &&
 			   ( mCurrentPosition > new TimeSpan( 0, 0, 5 ))) {
 				PlayPosition = 0;
 
@@ -264,16 +267,19 @@ namespace Noise.Core.PlaySupport {
 
 		private void FireStateChange( eStateTriggers trigger ) {
 			try {
+				mLog.PlayStateTrigger( trigger );
 				mPlayStateController.Fire( trigger );
 
-				Execute.OnUIThread( () => mEventAggregator.Publish( new Events.PlaybackStatusChanged( mCurrentStatus )));
+				Execute.OnUIThread( () => mEventAggregator.Publish( new Events.PlaybackStatusChanged( CurrentStatus )));
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "PlayController:FireStateChange", ex );
+				mLog.LogPlayStateException( "Firing state change", ex );
 			}
 		}
 
 		private void OnPlayStatusChanged( AudioChannelStatus args ) {
+			mLog.PlaybackStatusChanged( args.Status );
+
 			switch( args.Status ) {
 				case ePlaybackStatus.TrackStart:
 					OnTrackStarted( args.Channel );
@@ -326,6 +332,7 @@ namespace Noise.Core.PlaySupport {
 				if( mCurrentStatus != value ) {
 					mCurrentStatus = value;
 
+					mLog.PlaybackStatusChanged( mCurrentStatus );
 					mEventAggregator.Publish( new Events.PlaybackStatusChanged( mCurrentStatus ));
 				}
 			}
@@ -640,7 +647,7 @@ namespace Noise.Core.PlaySupport {
 				return(( mPlayQueue.CanPlayPreviousTrack()) &&
 					   ( mPlayStateController.CanFire( eStateTriggers.UiPlayPrevious )) ||
 					  (( CurrentTrack != null ) &&
-				       ( mCurrentStatus != ePlaybackStatus.Stopped ) &&
+				       ( CurrentStatus != ePlaybackStatus.Stopped ) &&
 				       ( mCurrentPosition > new TimeSpan( 0,0,5 ))));
 			}
 		}
