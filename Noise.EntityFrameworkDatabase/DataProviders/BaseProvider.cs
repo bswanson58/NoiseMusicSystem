@@ -33,28 +33,32 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			Condition.Requires( item ).IsNotNull();
 
 			using( var context = CreateContext()) {
+				if( context.IsValidContext ) {
 #if DEBUG
-				if( GetItemByKey( context, item.DbId ) == null ) {
+					if( GetItemByKey( context, item.DbId ) == null ) {
 #endif
-					context.Set<TEntity>().Add( item );
+						context.Set<TEntity>().Add( item );
 
-					context.SaveChanges();
+						context.SaveChanges();
 #if DEBUG
-				}
-				else {
-					NoiseLogger.Current.LogMessage( "Attempting to add an existing item: {0}", item.ToString());
-				}
+					}
+					else {
+						NoiseLogger.Current.LogMessage( "Attempting to add an existing item: {0}", item.ToString());
+					}
 #endif
+				}
 			}
 		}
 
 		protected void AddList( IEnumerable<TEntity> list ) {
 			using( var context = CreateContext()) {
-				foreach( var item in list ) {
-					context.Set<TEntity>().Add( item );
-				}
+				if( context.IsValidContext ) {
+					foreach( var item in list ) {
+						context.Set<TEntity>().Add( item );
+					}
 
-				context.SaveChanges();
+					context.SaveChanges();
+				}
 			}
 		}
 
@@ -62,33 +66,39 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			Condition.Requires( item ).IsNotNull();
 
 			using( var context = CreateContext()) {
-				var entry = GetItemByKey( context, item.DbId );
+				if( context.IsValidContext ) {
+					var entry = GetItemByKey( context, item.DbId );
 
-				if( entry != null ) {
-					Set( context ).Remove( entry );
+					if( entry != null ) {
+						Set( context ).Remove( entry );
 
-					context.SaveChanges();
+						context.SaveChanges();
+					}
 				}
 			}
 		}
 
 		protected void RemoveItem( long itemId ) {
 			using( var context = CreateContext()) {
-				var item = GetItemByKey( context, itemId );
+				if( context.IsValidContext ) {
+					var item = GetItemByKey( context, itemId );
 
-				if( item != null ) {
-					Set( context ).Remove( item );
+					if( item != null ) {
+						Set( context ).Remove( item );
 
-					context.SaveChanges();
+						context.SaveChanges();
+					}
 				}
 			}
 		}
 
 		protected TEntity GetItemByKey( long key ) {
-			TEntity	retValue;
+			TEntity	retValue = default( TEntity );
 
 			using( var context = CreateContext()) {
-				retValue = GetItemByKey( context, key );
+				if( context.IsValidContext ) {
+					retValue = GetItemByKey( context, key );
+				}
 			}
 
 			return( retValue );
@@ -96,6 +106,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 		protected TEntity GetItemByKey( IDbContext context, long key ) {
 			Condition.Requires( context ).IsNotNull();
+			Condition.Requires( context.IsValidContext );
 
 			return( context.Set<TEntity>().Find( key ));
 		}
