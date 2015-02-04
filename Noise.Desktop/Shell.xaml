@@ -3,8 +3,6 @@
 					  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					  xmlns:Properties="clr-namespace:Noise.Desktop.Properties"
 					  xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-					  xmlns:Compatibility="http://schemas.openxmlformats.org/markup-compatibility/2006"
-					  xmlns:DisplayLog="LogVersion"
 					  xmlns:Regions="http://www.codeplex.com/CompositeWPF"
 					  Title="Noise"
 					  Icon="Noise.ico"
@@ -27,12 +25,6 @@
 			<Button Command="{Binding TimelineLayout}" Content="timeline" ToolTip="Display Timeline Explorer"/>
 			<Button Command="{Binding PlaybackLayout}" Content="playback" ToolTip="Display Playback Information"/>
 			<Button Command="{Binding Options}" Content="settings" ToolTip="Edit Options"/>
-
-			<Compatibility:AlternateContent>
-				<Compatibility:Choice Requires="DisplayLog">
-					<Button Command="{Binding LogView}" ToolTip="Display Log" Content="log"/>
-				</Compatibility:Choice>
-			</Compatibility:AlternateContent>
 		</Controls:WindowCommands>
 	</Controls:MetroWindow.WindowCommands>
 

@@ -89,14 +89,6 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public void Execute_LogView() {
-			var dialogModel = new	ApplicationLogDialogModel();
-
-			if( dialogModel.Initialize()) {
-				mDialogService.ShowDialog( DialogNames.ApplicationLogView, dialogModel );
-			}
-		}
-
 		public void Execute_LibraryLayout() {
 			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
 		}
