@@ -1,6 +1,7 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Logging;
 
 namespace Noise.Core.Logging {
 	public class LogPlayQueue : BaseLogger, ILogPlayQueue {

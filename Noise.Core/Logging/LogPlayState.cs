@@ -2,6 +2,7 @@
 using Noise.Core.PlaySupport;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Logging;
 
 namespace Noise.Core.Logging {
 	internal class LogPlayState : BaseLogger, ILogPlayState {

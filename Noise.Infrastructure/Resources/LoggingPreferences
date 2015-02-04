@@ -1,5 +1,6 @@
 {
   "LogExceptions": true,
+  "LogMessages":  false,
 
   "BuildingDiscovery": true,
   "BuildingDiscoverFiles": false,

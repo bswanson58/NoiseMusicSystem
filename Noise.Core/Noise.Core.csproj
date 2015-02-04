@@ -264,7 +264,6 @@
     <Compile Include="Logging\ILogPlayQueue.cs" />
     <Compile Include="Logging\ILogPlayState.cs" />
     <Compile Include="Logging\ILogUserStatus.cs" />
-    <Compile Include="Logging\LoggingPreferences.cs" />
     <Compile Include="Logging\LogLibraryBuildingDiscovery.cs" />
     <Compile Include="Logging\LogLibraryBuildingSummary.cs" />
     <Compile Include="Logging\LogLibraryClassification.cs" />
@@ -329,7 +328,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="Resources\LoggingPreferences" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\EQPresets.xml" />
