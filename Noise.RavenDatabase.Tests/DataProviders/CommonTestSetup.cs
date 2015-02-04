@@ -18,11 +18,11 @@ namespace Noise.RavenDatabase.Tests.DataProviders {
 		private Subject<bool>			mDatabaseClosedSubject;
 		public IObservable<bool>		DatabaseClosed { get { return ( mDatabaseClosedSubject.AsObservable()); } }
 
-		public	Mock<ILog>				DummyLog { get; private set; }
+		public	Mock<INoiseLog>			DummyLog { get; private set; }
 		public	Mock<IDbFactory>		DatabaseFactory { get; private set; }
 
 		public void FixtureSetup() {
-			DummyLog = new Mock<ILog>();
+			DummyLog = new Mock<INoiseLog>();
 			NoiseLogger.Current = DummyLog.Object;
 
 			mDatabaseClosedSubject = new Subject<bool>();

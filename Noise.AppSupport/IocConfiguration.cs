@@ -39,7 +39,6 @@ namespace Noise.AppSupport {
 		public bool InitializeIoc( ApplicationUsage appUsage ) {
 			mContainer.RegisterType<IPlatformLog, SeriLogAdapter>( new ContainerControlledLifetimeManager());
 			mContainer.RegisterType<INoiseLog, Logging.NoiseLogger>( new ContainerControlledLifetimeManager());
-
 			mContainer.RegisterType<IIoc, IocProvider>( new ContainerControlledLifetimeManager());
 
 #if DEBUG
@@ -74,6 +73,8 @@ namespace Noise.AppSupport {
 					break;
 			}
 
+			Infrastructure.NoiseLogger.SetPlatformLogger( mContainer.Resolve<IPlatformLog>());
+	
 			return( true );
 		}
 

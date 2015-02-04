@@ -7,14 +7,13 @@ using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using ILog = Noise.Infrastructure.Interfaces.ILog;
 
 namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 	public class ProviderTestSetup {
 		public	const string				cTestingDirectory = @"D:\Noise Testing";
 		public	const string				cDatabaseName = "Integration Test Database";
 
-		public	Mock<ILog>					DummyLog { get; private set; }
+		public	Mock<INoiseLog>				DummyLog { get; private set; }
 		public	IBlobStorageResolver		BlobStorageResolver { get; private set; }
 		public	IBlobStorageManager			BlobStorageManager { get; private set; }
 		public	Mock<ILibraryConfiguration>	LibraryConfiguration { get; private set; }
@@ -23,10 +22,10 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 		public	Mock<IDatabaseInfo>			DatabaseInfo { get; private set; }
 		public	IDatabaseInitializeStrategy	InitializeStrategy { get; private set; }
 		public	IContextProvider			ContextProvider { get; private set; }
-		public Mock<IEventAggregator>		EventAggregator { get; set; }
+		public	Mock<IEventAggregator>		EventAggregator { get; set; }
 
 		public void Setup() {
-			DummyLog = new Mock<ILog>();
+			DummyLog = new Mock<INoiseLog>();
 			NoiseLogger.Current = DummyLog.Object;
 
 			DatabaseInfo = new Mock<IDatabaseInfo>();

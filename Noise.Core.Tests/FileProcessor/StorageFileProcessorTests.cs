@@ -73,7 +73,7 @@ namespace Noise.Core.Tests.FileProcessor {
 													   mMusicMetadata.Object, mMusicProviders.Object, mUpdateArtwork.Object,
 													   mUpdateInfo.Object, mUpdateMusic.Object, mUpdateUndetermined.Object };
 
-			NoiseLogger.Current = new Mock<ILog>().Object;
+			NoiseLogger.Current = new Mock<INoiseLog>().Object;
 		}
 
 		private TestableStorageFileProcessor CreateSut() {

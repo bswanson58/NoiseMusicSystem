@@ -15,7 +15,6 @@ using Noise.UI.ViewModels;
 using ReusableBits;
 using ReusableBits.TestSupport.Mocking;
 using ReusableBits.TestSupport.Threading;
-using ILog = Noise.Infrastructure.Interfaces.ILog;
 
 namespace Noise.UI.Tests.ViewModels {
 	internal class TestableArtistViewModel : Testable<ArtistViewModel> {
@@ -55,7 +54,7 @@ namespace Noise.UI.Tests.ViewModels {
 
 		[SetUp]
 		public void Setup() {
-			NoiseLogger.Current = new Mock<ILog>().Object;
+			NoiseLogger.Current = new Mock<INoiseLog>().Object;
 
 			// Set the ui dispatcher to run on the current thread.
 			Execute.ResetWithoutDispatcher();

@@ -9,7 +9,6 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using ReusableBits.TestSupport.Mocking;
-using ILog = Noise.Infrastructure.Interfaces.ILog;
 
 namespace Noise.Core.Tests.PlaySupport {
 	[TestFixture]
@@ -35,7 +34,7 @@ namespace Noise.Core.Tests.PlaySupport {
 			mAudioLevelsSubject = new Subject<AudioLevels>();
 			mAudioStreamInfoSubject = new Subject<StreamInfo>();
 
-			NoiseLogger.Current = new Mock<ILog>().Object;
+			NoiseLogger.Current = new Mock<INoiseLog>().Object;
 		}
 
 		private TestablePlayController CreateSut() {

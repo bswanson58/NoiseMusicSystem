@@ -1,34 +1,39 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
-using NLog;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure {
-	public class NoiseLogger : ILog {
-		private static readonly ILog	mDefaultContext = new NoiseLogger();
-		private static readonly Logger	mLogger = LogManager.GetLogger( "NoiseLogger" );
-		private static ILog				mCurrent;
+	public class NoiseLogger : INoiseLog {
+		private static IPlatformLog			mPlatformLog;
+		private static INoiseLog			mCurrent;
 
-		public static ILog Current {
-			get { return( mCurrent ?? ( mCurrent = mDefaultContext )); }
+		public static void SetPlatformLogger( IPlatformLog platformLog ) {
+			mPlatformLog = platformLog;
+		}
+
+		[Obsolete("NoiseLogger.Current is obsolete - use and instance of INoiseLog")]
+		public static INoiseLog Current {
+			get { return( mCurrent ?? ( mCurrent = new NoiseLogger())); }
 
 			set {
 				mCurrent = value;
 			}
 		}
 
-		public void LogException( Exception ex ) {
-			LogException( string.Empty, ex );
-		}
-
 		public void LogException( string message, Exception ex ) {
-			mLogger.ErrorException( message, ex );
+			var frame = new StackFrame( 1 );
+			var method = frame.GetMethod();
+			var type = method.DeclaringType;
+			var name = type != null ? string.Format( "{0}:{1}", type.Name, method.Name ) : method.Name;
+
+			mPlatformLog.LogException( string.Format( "{0} - {1}", name, message ), ex );
 
 			if( ex is ReflectionTypeLoadException ) {
 				var tle = ex as ReflectionTypeLoadException;
 
 				foreach( var exc in tle.LoaderExceptions ) {
-					mLogger.ErrorException( "ReflectionTypeLoadException:", exc );
+					mPlatformLog.LogException( "ReflectionTypeLoadException:", exc );
 				}
 			}
 
@@ -38,19 +43,30 @@ namespace Noise.Infrastructure {
 		}
 
 		public void LogMessage( string format, params object[] parameters ) {
-			LogMessage( string.Format( format, parameters ));
+			var frame = new StackFrame( 1 );
+			var method = frame.GetMethod();
+			var type = method.DeclaringType;
+			var name = type != null ? string.Format( "{0}:{1}", type.Name, method.Name ) : method.Name;
+
+			mPlatformLog.LogMessage( string.Format( "{0} - {1}", name,  string.Format( format, parameters )));
 		}
 
 		public void LogMessage( string message ) {
-			mLogger.Info( message );
-		}
+			var frame = new StackFrame( 1 );
+			var method = frame.GetMethod();
+			var type = method.DeclaringType;
+			var name = type != null ? string.Format( "{0}:{1}", type.Name, method.Name ) : method.Name;
 
-		public void LogInfo( string format, params object[] parameters ) {
-			LogInfo( string.Format( format, parameters ));
+			mPlatformLog.LogMessage( string.Format( "{0} - {1}", name, message ));
 		}
 
 		public void LogInfo( string message ) {
-			mLogger.Debug( message );
+			var frame = new StackFrame( 1 );
+			var method = frame.GetMethod();
+			var type = method.DeclaringType;
+			var name = type != null ? string.Format( "{0}:{1}", type.Name, method.Name ) : method.Name;
+
+			mPlatformLog.LogMessage( string.Format( "{0} - {1}", name, message ));
 		}
 	}
 }

@@ -49,7 +49,7 @@ namespace Noise.UI.Tests.ViewModels {
 	public class AlbumTracksViewModelTests {
 		[SetUp]
 		public void Setup() {
-			NoiseLogger.Current = new Mock<ILog>().Object;
+			NoiseLogger.Current = new Mock<INoiseLog>().Object;
 
 			// Set the ui dispatcher to run on the current thread.
 			Caliburn.Micro.Execute.ResetWithoutDispatcher();

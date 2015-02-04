@@ -36,5 +36,23 @@ namespace Noise.AppSupport.Logging {
 
 			mPlatformLog.LogMessage( string.Format( "{0} - {1}", name, message ));
 		}
+
+		public void LogMessage( string format, params object[] parameters ) {
+			var frame = new StackFrame( 1 );
+			var method = frame.GetMethod();
+			var type = method.DeclaringType;
+			var name = type != null ? string.Format( "{0}:{1}", type.Name, method.Name ) : method.Name;
+
+			mPlatformLog.LogMessage( string.Format( "{0} - {1}", name,  string.Format( format, parameters )));
+		}
+
+		public void LogInfo( string message ) {
+			var frame = new StackFrame( 1 );
+			var method = frame.GetMethod();
+			var type = method.DeclaringType;
+			var name = type != null ? string.Format( "{0}:{1}", type.Name, method.Name ) : method.Name;
+
+			mPlatformLog.LogMessage( string.Format( "{0} - {1}", name, message ));
+		}
 	}
 }
