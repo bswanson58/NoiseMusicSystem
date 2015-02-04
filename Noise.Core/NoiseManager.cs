@@ -7,6 +7,7 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteHost;
 using ReusableBits.Mvvm.CaliburnSupport;
+using ReusableBits.Platform;
 
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
@@ -56,11 +57,15 @@ namespace Noise.Core {
 
 			return( retValue );
 		}
+
+		private void LogStartup() {
+			mLog.LogMessage( string.Format( "Initializing {0} v{1}", VersionInformation.ProductName, VersionInformation.Version ));
+		}
 		
 		public bool Initialize() {
 			var isInitialized = false;
 
-			mLog.LogMessage( "Initializing Noise Music System" );
+			LogStartup();
 
 			try {
 				mLifecycleManager.Initialize();
