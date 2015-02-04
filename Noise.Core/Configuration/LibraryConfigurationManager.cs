@@ -16,6 +16,7 @@ namespace Noise.Core.Configuration {
 		private const string						cBackupDateFormat = "yyyy-MM-dd HH-mm-ss";
 
 		private readonly IEventAggregator			mEventAggregator;
+		private readonly ILogLibraryConfiguration	mLog;
 		private readonly ILogUserStatus				mUserStatus;
 		private readonly INoiseEnvironment			mNoiseEnvironment;
 		private readonly IPreferences				mPreferences;
@@ -23,9 +24,11 @@ namespace Noise.Core.Configuration {
 		private LibraryConfiguration				mCurrentLibrary;
 
 		public LibraryConfigurationManager( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
-											INoiseEnvironment noiseEnvironment, IPreferences preferences, ILogUserStatus userStatus ) {
+											INoiseEnvironment noiseEnvironment, IPreferences preferences,
+											ILogUserStatus userStatus, ILogLibraryConfiguration log ) {
 			mEventAggregator = eventAggregator;
 			mUserStatus = userStatus;
+			mLog = log;
 			mNoiseEnvironment = noiseEnvironment;
 			mPreferences = preferences;
 			mLibraries = new List<LibraryConfiguration>();
@@ -52,8 +55,16 @@ namespace Noise.Core.Configuration {
 			get { return( mCurrentLibrary ); }
 			private set {
 				if( mCurrentLibrary != value ) {
+					if( mCurrentLibrary != null ) {
+						mLog.LibraryClosed( mCurrentLibrary );
+					}
+
 					mCurrentLibrary = value;
 
+					if( mCurrentLibrary != null ) {
+						mLog.LibraryOpened( mCurrentLibrary );
+						mUserStatus.OpeningLibrary( mCurrentLibrary );
+					}
 					mEventAggregator.Publish( new Events.LibraryChanged());
 				}
 			}
@@ -77,7 +88,7 @@ namespace Noise.Core.Configuration {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Loading library configuration:", ex );
+				mLog.LogException( "Loading library configuration", ex );
 			}
 		}
 
@@ -102,11 +113,6 @@ namespace Noise.Core.Configuration {
 
 			if(( configuration != null ) &&
 			   ( mLibraries.Contains( configuration ))) {
-				NoiseLogger.Current.LogMessage( "------------------------------" );
-				NoiseLogger.Current.LogMessage( "Opening library: {0}", configuration.LibraryName );
-
-				mUserStatus.OpeningLibrary( configuration );
-
 				Current = configuration;
 
 				var preferences = mPreferences.Load<NoiseCorePreferences>();
@@ -125,10 +131,6 @@ namespace Noise.Core.Configuration {
 		} 
 
 		public void Close( LibraryConfiguration configuration ) {
-			if( mCurrentLibrary != null ) {
-				NoiseLogger.Current.LogMessage( "Closing library: {0}", mCurrentLibrary.LibraryName );
-			}
-
 			Current = null;
 		}
 
@@ -155,7 +157,7 @@ namespace Noise.Core.Configuration {
 				mEventAggregator.Publish( new Events.LibraryListChanged());
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "ConfigurationManager:AddLibrary", ex );
+				mLog.LogException( "Adding library", ex );
 			}
 		}
 
@@ -178,7 +180,7 @@ namespace Noise.Core.Configuration {
 				mEventAggregator.Publish( new Events.LibraryListChanged());
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "ConfigurationManager:UpdateLibrary", ex );
+				mLog.LogException( "Storing library", ex );
 			}
 		}
 
@@ -197,7 +199,7 @@ namespace Noise.Core.Configuration {
 				mEventAggregator.Publish( new Events.LibraryListChanged());
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "ConfigurationManager:DeleteLibrary", ex );
+				mLog.LogException( "Deleting library", ex );
 			}
 		}
 

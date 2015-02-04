@@ -117,6 +117,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<ILogLibraryBuildingSummary, LogLibraryBuildingSummary>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogPlayQueue, LogPlayQueue>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogPlayState, LogPlayState>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ILogLibraryConfiguration, LogLibraryConfiguration>( new HierarchicalLifetimeManager());
 
 			mContainer.RegisterType<ILogUserStatus, LogUserStatus>( new HierarchicalLifetimeManager());
 		}

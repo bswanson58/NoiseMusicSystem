@@ -3,6 +3,8 @@
 		public bool LogExceptions { get; set; }
 		public bool LogMessages { get; set; }
 
+		public bool LibraryConfiguration { get; set; }
+
 		public bool BuildingDiscovery { get; set; }
 		public bool BuildingDiscoverFolders { get; set; }
 		public bool BuildingDiscoverFiles { get; set; }

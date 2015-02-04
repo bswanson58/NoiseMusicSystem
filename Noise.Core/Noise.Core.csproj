@@ -261,6 +261,7 @@
     <Compile Include="Logging\ILogLibraryClassification.cs" />
     <Compile Include="Logging\ILogLibraryCleaning.cs" />
     <Compile Include="Logging\ILogLibraryBuildingDiscovery.cs" />
+    <Compile Include="Logging\ILogLibraryConfiguration.cs" />
     <Compile Include="Logging\ILogPlayQueue.cs" />
     <Compile Include="Logging\ILogPlayState.cs" />
     <Compile Include="Logging\ILogUserStatus.cs" />
@@ -268,6 +269,7 @@
     <Compile Include="Logging\LogLibraryBuildingSummary.cs" />
     <Compile Include="Logging\LogLibraryClassification.cs" />
     <Compile Include="Logging\LogLibraryCleaning.cs" />
+    <Compile Include="Logging\LogLibraryConfiguration.cs" />
     <Compile Include="Logging\LogPlayQueue.cs" />
     <Compile Include="Logging\LogPlayState.cs" />
     <Compile Include="Logging\LogUserStatus.cs" />

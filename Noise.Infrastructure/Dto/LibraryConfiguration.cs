@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Json;
 using Noise.Infrastructure.Support;
 
@@ -96,6 +97,12 @@ namespace Noise.Infrastructure.Dto {
 
 		public string SearchDatabasePath {
 			get{ return( Path.Combine( mConfigurationPath, Constants.SearchDatabaseDirectory )); }
+		}
+
+		public override string ToString() {
+			var mediaPath = MediaLocations.Any() ? MediaLocations[0].Path : string.Empty;
+
+			return( string.Format( "Library \"{0}\", Database \"{1}\", Media \"{2}\"", LibraryName, DatabaseName, mediaPath ));
 		}
 	}
 }

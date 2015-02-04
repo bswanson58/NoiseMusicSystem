@@ -18,6 +18,7 @@ namespace Noise.Core.Logging {
 		private void LogQueueMessage( string format, params object[] parameters ) {
 			LogMessage( cModuleName, cPhaseName, format, parameters );
 		}
+
 		public void AddedTrack( PlayQueueTrack track ) {
 			LogOnCondition( mPreferences.PlayQueueAddRemove, ()=> LogQueueMessage( "Added: {0}", track ));
 		}
