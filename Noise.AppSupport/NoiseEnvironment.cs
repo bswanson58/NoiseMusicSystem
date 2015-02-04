@@ -33,6 +33,16 @@ namespace Noise.AppSupport {
 			return( retValue );
 		}
 
+		public string LogFileDirectory() {
+			var retValue = Path.Combine( ApplicationDirectory(), Constants.LogFileDirectory, mApplicationName );
+
+			if(!Directory.Exists( retValue )) {
+				Directory.CreateDirectory( retValue );
+			}
+
+			return( retValue );
+		}
+
 		public string BackupDirectory() {
 			var retValue = Path.Combine( ApplicationDirectory(), Constants.LibraryBackupDirectory );
 

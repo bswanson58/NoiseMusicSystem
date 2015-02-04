@@ -70,7 +70,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 						if(!mContextProvider.BlobStorageManager.OpenStorage()) {
 							var ex = new ApplicationException( "EntityFrameworkDatabaseManager:Blob storage could not be created." );
 
-							NoiseLogger.Current.LogException( ex );
+							NoiseLogger.Current.LogException( "OpenDatabase", ex );
 							throw( ex );
 						}
 					}

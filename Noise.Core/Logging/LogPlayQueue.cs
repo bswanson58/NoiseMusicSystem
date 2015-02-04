@@ -1,7 +1,6 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Logging;
 
 namespace Noise.Core.Logging {
 	public class LogPlayQueue : BaseLogger, ILogPlayQueue {
@@ -10,7 +9,7 @@ namespace Noise.Core.Logging {
 		private const string	cModuleName = "Playback";
 		private const string	cPhaseName = "PlayQueue";
 
-		public LogPlayQueue( IPreferences preferences, ILog logger ) :
+		public LogPlayQueue( IPreferences preferences, IPlatformLog logger ) :
 		base( logger ) {
 			mPreferences = preferences.Load<LoggingPreferences>();
 		}

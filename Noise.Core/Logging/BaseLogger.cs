@@ -1,11 +1,11 @@
 ﻿using System;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Infrastructure.Logging {
+namespace Noise.Core.Logging {
 	public class BaseLogger {
-		private readonly ILog	mLogger;
+		private readonly IPlatformLog	mLogger;
 
-		protected BaseLogger( ILog logger ) {
+		protected BaseLogger( IPlatformLog logger ) {
 			mLogger = logger;
 		}
 
@@ -24,7 +24,7 @@ namespace Noise.Infrastructure.Logging {
 		}
 
 		private void LogMessage( string format, params object[] parameters ) {
-			mLogger.LogMessage( format, parameters );
+			mLogger.LogMessage( string.Format( format, parameters ));
 		}
 
 		private void LogException( string message, Exception exception, string callerName = "" ) {

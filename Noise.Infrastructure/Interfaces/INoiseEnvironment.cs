@@ -4,6 +4,7 @@
 		string		BackupDirectory();
 		string		ConfigurationDirectory();
 		string		LibraryDirectory();
+		string		LogFileDirectory();
 		string		PreferencesDirectory();
 	}
 }

@@ -244,6 +244,8 @@
     <Compile Include="Interfaces\IInternetStreamProvider.cs" />
     <Compile Include="Interfaces\IMetadataManager.cs" />
     <Compile Include="Interfaces\INoiseEnvironment.cs" />
+    <Compile Include="Interfaces\INoiseLog.cs" />
+    <Compile Include="Interfaces\IPlatformLog.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
     <Compile Include="Interfaces\IPlayExhaustedFactory.cs" />
     <Compile Include="Interfaces\IPlayExhaustedStrategy.cs" />
@@ -271,7 +273,6 @@
     <Compile Include="Interfaces\ITimestampProvider.cs" />
     <Compile Include="Interfaces\ITrackProvider.cs" />
     <Compile Include="Interfaces\IViewModelResolver.cs" />
-    <Compile Include="Logging\BaseLogger.cs" />
     <Compile Include="RemoteDto\AlbumInfoResult.cs" />
     <Compile Include="RemoteDto\ArtistInfoResult.cs" />
     <Compile Include="RemoteDto\ArtistTracksResult.cs" />

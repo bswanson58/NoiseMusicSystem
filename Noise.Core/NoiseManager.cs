@@ -11,6 +11,7 @@ using ReusableBits.Mvvm.CaliburnSupport;
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private	readonly IEventAggregator		mEvents;
+		private readonly INoiseLog				mLog;
 		private readonly ILifecycleManager		mLifecycleManager;
 		private readonly IPreferences			mPreferences;
 		private readonly IRemoteServer			mRemoteServer;
@@ -18,6 +19,7 @@ namespace Noise.Core {
 		private readonly IDatabaseManager		mDatabaseManager;
 
 		public NoiseManager( IEventAggregator eventAggregator,
+							 INoiseLog log,
 							 ILifecycleManager lifecycleManager,
 							 IDatabaseManager databaseManager,
 							 ILibraryBuilder libraryBuilder,
@@ -31,6 +33,7 @@ namespace Noise.Core {
 							 IMetadataManager metadataManager,
 							 IEnumerable<IRequireConstruction> backgroundComponents ) {
 			mEvents = eventAggregator;
+			mLog = log;
 			mLifecycleManager = lifecycleManager;
 			mRemoteServer = remoteServer;
 			mDatabaseManager = databaseManager;
@@ -57,7 +60,7 @@ namespace Noise.Core {
 		public bool Initialize() {
 			var isInitialized = false;
 
-			NoiseLogger.Current.LogMessage( "Initializing Noise Music System" );
+			mLog.LogMessage( "Initializing Noise Music System" );
 
 			try {
 				mLifecycleManager.Initialize();
@@ -71,10 +74,10 @@ namespace Noise.Core {
 
 				isInitialized = true;
 
-				NoiseLogger.Current.LogMessage( "Initialized NoiseManager." );
+				mLog.LogMessage( "Noise Music System initialized" );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "NoiseManager:Initialize", ex );
+				mLog.LogException( "Initialization failed", ex );
 			}
 
 			return ( isInitialized );

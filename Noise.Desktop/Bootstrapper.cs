@@ -6,7 +6,6 @@ using Microsoft.Practices.Unity;
 using Noise.AppSupport;
 using Noise.AudioSupport;
 using Noise.Desktop.Properties;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata;
 using Noise.UI.Support;
@@ -19,6 +18,7 @@ namespace Noise.Desktop {
 		private WindowManager		mWindowManager;
 		private Window				mShell;
 		private	ApplicationSupport	mAppSupport;
+		private INoiseLog			mLog;
 
 		protected override DependencyObject CreateShell() {
 			mShell = Container.Resolve<Shell>();
@@ -58,6 +58,8 @@ namespace Noise.Desktop {
 
 			var iocConfig = new IocConfiguration( Container );
 			iocConfig.InitializeIoc( ApplicationUsage.Desktop );
+
+			mLog = Container.Resolve<INoiseLog>();
 		}
 
 		protected override void InitializeModules() {
@@ -74,13 +76,13 @@ namespace Noise.Desktop {
 			mStartupManager = Container.Resolve<StartupManager>();
 			mStartupManager.Initialize();
 
+			mLog.LogMessage( "==============================" );
+			mLog.LogMessage( "Noise.Desktop System starting." );
+
 			StartNoise( instanceContainer );
 		}
 
 		private async void StartNoise( IUnityContainer container ) {
-			NoiseLogger.Current.LogMessage( "==============================" );
-			NoiseLogger.Current.LogMessage( "Noise.Desktop System starting." );
-
 			mNoiseManager = container.Resolve<INoiseManager>();
 			mAppSupport = container.Resolve<ApplicationSupport>();
 
@@ -106,7 +108,7 @@ namespace Noise.Desktop {
 
 			Settings.Default.Save();
 
-			NoiseLogger.Current.LogMessage( "### Noise.Desktop System stopped." );
+			mLog.LogMessage( "### Noise.Desktop System stopped." );
 		}
 	}
 }

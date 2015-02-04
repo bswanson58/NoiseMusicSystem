@@ -24,6 +24,7 @@ namespace Noise.Infrastructure {
 		public	const string			TimeExplorerLayout = "TimeExplorerLayout";
 
 		public	const string			ApplicationLogName = "noise.log";
+		public	const string			LogFileDirectory = "Logs";
 
 		public const string				ApplicationName = "Noise Music System";
 		public const string				CompanyName = "Secret Squirrel Software";

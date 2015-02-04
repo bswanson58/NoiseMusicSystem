@@ -110,7 +110,7 @@ namespace Noise.RavenDatabase.Support {
 					if(!mBlobStorageManager.OpenStorage()) {
 						var ex = new ApplicationException( "RavenDatabaseManager:Blob storage could not be created." );
 
-						NoiseLogger.Current.LogException( ex );
+						NoiseLogger.Current.LogException( "InitBlobStorage", ex );
 						throw ( ex );
 					}
 				}

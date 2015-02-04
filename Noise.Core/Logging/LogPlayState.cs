@@ -2,7 +2,6 @@
 using Noise.Core.PlaySupport;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Logging;
 
 namespace Noise.Core.Logging {
 	internal class LogPlayState : BaseLogger, ILogPlayState {
@@ -11,7 +10,7 @@ namespace Noise.Core.Logging {
 		private const string	cModuleName = "Playback";
 		private const string	cPhaseName = "PlayState";
 
-		public LogPlayState( IPreferences preferences, ILog logger ) :
+		public LogPlayState( IPreferences preferences, IPlatformLog logger ) :
 		base( logger ) {
 			mPreferences = preferences.Load<LoggingPreferences>();
 		}

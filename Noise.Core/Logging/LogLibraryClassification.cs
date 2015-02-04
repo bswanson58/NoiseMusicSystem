@@ -2,7 +2,6 @@
 using Noise.Core.FileProcessor;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Logging;
 
 namespace Noise.Core.Logging {
 	public class LogLibraryClassification : BaseLogger, ILogLibraryClassification {
@@ -11,7 +10,7 @@ namespace Noise.Core.Logging {
 		private const string	cModuleName = "Library Building";
 		private const string	cPhaseName = "Classification";
 
-		public LogLibraryClassification( IPreferences preferences, ILog logger ) :
+		public LogLibraryClassification( IPreferences preferences, IPlatformLog logger ) :
 		base( logger ) {
 			mPreferences = preferences.Load<LoggingPreferences>();
 		}

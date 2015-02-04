@@ -1,7 +1,6 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Logging;
 
 namespace Noise.Core.Logging {
 	public class LogLibraryBuildingSummary : BaseLogger, ILogLibraryBuildingSummary {
@@ -10,7 +9,7 @@ namespace Noise.Core.Logging {
 		private const string	cModuleName = "Library Building";
 		private const string	cPhaseName = "Summary";
 
-		public LogLibraryBuildingSummary( IPreferences preferences, ILog logger ) :
+		public LogLibraryBuildingSummary( IPreferences preferences, IPlatformLog logger ) :
 		base( logger ) {
 			mPreferences = preferences.Load<LoggingPreferences>();
 		}

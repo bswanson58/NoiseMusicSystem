@@ -2,7 +2,6 @@
 using System.Runtime.CompilerServices;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Logging;
 
 namespace Noise.Core.Logging {
 	public class LogLibraryBuildingDiscovery : BaseLogger, ILogLibraryBuildingDiscovery {
@@ -12,7 +11,7 @@ namespace Noise.Core.Logging {
 		private const string	cModuleName = "Library Building";
 		private const string	cPhaseName = "Discovery";
 
-		public LogLibraryBuildingDiscovery( IStorageFolderSupport storageFolderSupport, IPreferences preferences, ILog logger ) :
+		public LogLibraryBuildingDiscovery( IStorageFolderSupport storageFolderSupport, IPreferences preferences, IPlatformLog logger ) :
 		base( logger ) {
 			mStorageSupport = storageFolderSupport;
 

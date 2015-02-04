@@ -5,6 +5,7 @@ using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
+using Noise.AppSupport.Logging;
 using Noise.AppSupport.Preferences;
 using Noise.AudioSupport;
 using Noise.Infrastructure;
@@ -36,6 +37,9 @@ namespace Noise.AppSupport {
 		}
 
 		public bool InitializeIoc( ApplicationUsage appUsage ) {
+			mContainer.RegisterType<IPlatformLog, SeriLogAdapter>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<INoiseLog, Logging.NoiseLogger>( new ContainerControlledLifetimeManager());
+
 			mContainer.RegisterType<IIoc, IocProvider>( new ContainerControlledLifetimeManager());
 
 #if DEBUG

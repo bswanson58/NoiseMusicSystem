@@ -15,7 +15,6 @@ using Noise.Core.PlayQueue;
 using Noise.Core.PlayStrategies;
 using Noise.Core.PlaySupport;
 using Noise.Core.Support;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using ReusableBits.Threading;
@@ -118,8 +117,6 @@ namespace Noise.Core {
 			mContainer.RegisterType<ILogLibraryBuildingSummary, LogLibraryBuildingSummary>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogPlayQueue, LogPlayQueue>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogPlayState, LogPlayState>( new HierarchicalLifetimeManager());
-
-			mContainer.RegisterInstance( NoiseLogger.Current );
 
 			mContainer.RegisterType<ILogUserStatus, LogUserStatus>( new HierarchicalLifetimeManager());
 		}
