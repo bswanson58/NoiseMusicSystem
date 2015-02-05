@@ -2,7 +2,6 @@
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Lpfm.LastFmScrobbler;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -12,14 +11,16 @@ namespace Noise.Core.PlayHistory {
 	public class PlayScrobbler : IScrobbler, IRequireInitialization {
 		private readonly ILicenseManager	mLicenseManager;
 		private readonly IPreferences		mPreferences;
+		private readonly INoiseLog			mLog;
 		private Scrobbler					mScrobbler;
 		private bool						mEnablePlaybackScrobbling;
 		private Track						mNowPlayingTrack;
 		private TaskHandler					mScrobblerTaskHandler;
 
-		public PlayScrobbler( ILifecycleManager lifecycleManager, ILicenseManager licenseManager, IPreferences preferences ) {
+		public PlayScrobbler( ILifecycleManager lifecycleManager, ILicenseManager licenseManager, IPreferences preferences, INoiseLog log ) {
 			mLicenseManager = licenseManager;
 			mPreferences = preferences;
+			mLog = log;
 
 			lifecycleManager.RegisterForInitialize( this );
 			lifecycleManager.RegisterForShutdown( this );
@@ -69,7 +70,7 @@ namespace Noise.Core.PlayHistory {
 					mNowPlayingTrack = playingTrack;
 				},
 				() => { },
-				exception => NoiseLogger.Current.LogException( "PlayScrobbler:ReportNowPlaying", exception )
+				exception => mLog.LogException( "ReportNowPlaying", exception )
 			);
 		}
 
@@ -80,7 +81,7 @@ namespace Noise.Core.PlayHistory {
 				if( DateTime.Now > timeLimit ) {
 					ScrobblerTaskHander.StartTask( () => mScrobbler.Scrobble( playedTrack ),
 						() => { },
-						exception => NoiseLogger.Current.LogException( "PlayScrobbler:Scrobble", exception )
+						exception => mLog.LogException( "Scrobble", exception )
 					);
 				}
 			}
@@ -100,13 +101,13 @@ namespace Noise.Core.PlayHistory {
 					( key != null )) {
 					mScrobbler = new Scrobbler( key.Name, key.Key, "011da8bae3b980f1a794fb6eb10b0570" );
 					if(!mScrobbler.HasSession ) {
-						NoiseLogger.Current.LogInfo( "Scrobbler session could not be created." );
+						mLog.LogException( "Scrobbler session could not be created", new ApplicationException( "Scrobbler session not created" ));
 					}
 				}
 
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Scrobbler:Initialize", ex );
+				mLog.LogException( "Initialize play scrobbler", ex );
 			}
 		}
 

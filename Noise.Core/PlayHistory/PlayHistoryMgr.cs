@@ -14,15 +14,17 @@ namespace Noise.Core.PlayHistory {
 		private const int						cMaximumHistory = 100;
 
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly INoiseLog				mLog;
 		private readonly IPlayHistoryProvider	mPlayHistoryProvider;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
 		private DatabaseCache<DbPlayHistory>	mPlayHistory;
 
-		public PlayHistoryMgr( IEventAggregator eventAggregator, IPlayHistoryProvider playHistoryProvider,
+		public PlayHistoryMgr( IEventAggregator eventAggregator, INoiseLog log, IPlayHistoryProvider playHistoryProvider,
 							   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mPlayHistoryProvider = playHistoryProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -30,8 +32,6 @@ namespace Noise.Core.PlayHistory {
 			mPlayHistory = new DatabaseCache<DbPlayHistory>( null );
 
 			mEventAggregator.Subscribe( this );
-
-			NoiseLogger.Current.LogInfo( "PlayHistory created" );
 		}
 
 		public void Handle( Events.DatabaseOpened args ) {
@@ -41,7 +41,7 @@ namespace Noise.Core.PlayHistory {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - PlayHistoryMgr:ctor ", ex );
+				mLog.LogException( "Building play history cache", ex );
 			}
 		}
 
@@ -119,7 +119,7 @@ namespace Noise.Core.PlayHistory {
 					}
 				}
 				catch( Exception ex) {
-					NoiseLogger.Current.LogException( "Exception - TrackPlayCompleted:", ex );
+					mLog.LogException( "Recording play history", ex );
 				}
 			}
 		}
