@@ -12,5 +12,9 @@ namespace Noise.Infrastructure.Dto {
 			DeviceId = -1;
 			Name = string.Empty;
 		}
+
+		public override string ToString() {
+			return( string.Format( "Audio device \"{0}\"", Name ));
+		}
 	}
 }

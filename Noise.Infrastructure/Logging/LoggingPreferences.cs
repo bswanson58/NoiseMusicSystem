@@ -5,6 +5,9 @@
 
 		public bool LibraryConfiguration { get; set; }
 
+		public bool AudioPlayback { get; set; }
+		public bool AudioSync { get; set; }
+
 		public bool BuildingDiscovery { get; set; }
 		public bool BuildingDiscoverFolders { get; set; }
 		public bool BuildingDiscoverFiles { get; set; }

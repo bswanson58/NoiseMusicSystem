@@ -7,5 +7,9 @@
 			Channel = channel;
 			Status = status;
 		}
+
+		public override string ToString() {
+			return( string.Format( "Audio channel:{0} status:{1}", Channel, Status ));
+		}
 	}
 }

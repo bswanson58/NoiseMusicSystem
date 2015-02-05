@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Noise.Infrastructure;
+using Noise.AudioSupport.Logging;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -10,12 +10,14 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.AudioSupport.Player {
 	public class EqManager : IEqManager {
 		private readonly IPreferences				mPreferences;
+		private readonly ILogAudioPlay				mLog;
 		private readonly List<ParametricEqualizer>	mEqPresets;
 		private ParametricEqualizer					mCurrentEq;
 		private bool								mEqEnabled;
 
-		public EqManager( IPreferences preferences ) {
+		public EqManager( IPreferences preferences, ILogAudioPlay log ) {
 			mPreferences = preferences;
+			mLog = log;
 
 			mEqPresets = new List<ParametricEqualizer>();
 		}
@@ -55,7 +57,7 @@ namespace Noise.AudioSupport.Player {
 				retValue = true;
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - EqPresets:LoadPresets ", ex );
+				mLog.LogException( "Loading EQ presets", ex );
 			}
 
 			return( retValue );

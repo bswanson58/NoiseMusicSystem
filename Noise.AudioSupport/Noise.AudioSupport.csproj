@@ -139,6 +139,8 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AudioSupportModule.cs" />
+    <Compile Include="Logging\ILogAudioPlay.cs" />
+    <Compile Include="Logging\LogAudioPlay.cs" />
     <Compile Include="Player\AudioPlayer.cs" />
     <Compile Include="Player\AudioStream.cs" />
     <Compile Include="Player\EqManager.cs" />

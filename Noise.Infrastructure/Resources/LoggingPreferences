@@ -4,6 +4,9 @@
 
   "LibraryConfiguration": false,
 
+  "AudioPlayback": false,
+  "AudioSync":  false,
+
   "BuildingDiscovery": true,
   "BuildingDiscoverFiles": false,
   "BuildingDiscoverFolders": false,
