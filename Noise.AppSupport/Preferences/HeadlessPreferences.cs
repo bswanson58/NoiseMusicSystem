@@ -1,10 +1,11 @@
-﻿using Noise.Infrastructure.Configuration;
+﻿using System;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport.Preferences {
 	public class HeadlessPreferences : PreferencesManager {
-		public HeadlessPreferences( INoiseEnvironment noiseEnvironment ) :
-			base( noiseEnvironment ) { }
+		public HeadlessPreferences( INoiseEnvironment noiseEnvironment, Lazy<INoiseLog> log ) :
+			base( noiseEnvironment, log ) { }
 
 		protected override T CreateDefault<T>() {
 			var retValue = base.CreateDefault<T>();

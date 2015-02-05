@@ -6,16 +6,28 @@ using Noise.Infrastructure.Logging;
 
 namespace Noise.AppSupport.Logging {
 	public class NoiseLogger : INoiseLog {
-		private readonly	IPlatformLog		mPlatformLog;
-		private readonly	LoggingPreferences	mPreferences;
+		private readonly IPlatformLog	mPlatformLog;
+		private readonly IPreferences	mPreferences;
+		private LoggingPreferences		mLoggingPreferences;
 
 		public NoiseLogger( IPlatformLog log,  IPreferences preferences ) {
 			mPlatformLog = log;
-			mPreferences = preferences.Load<LoggingPreferences>();
+			mPreferences = preferences;
+		}
+
+		private LoggingPreferences Preferences {
+			get {
+				if( mLoggingPreferences == null ) {
+					mLoggingPreferences = mPreferences.Load<LoggingPreferences>();
+				}
+
+				return( mLoggingPreferences );
+				
+			}
 		}
 
 		public void LogException( string message, Exception exception ) {
-			if( mPreferences.LogExceptions ) {
+			if( Preferences.LogExceptions ) {
 				var frame = new StackFrame( 1 );
 				var method = frame.GetMethod();
 				var type = method.DeclaringType;
@@ -34,7 +46,7 @@ namespace Noise.AppSupport.Logging {
 		}
 
 		public void LogMessage( string message ) {
-			if( mPreferences.LogMessages ) {
+			if( Preferences.LogMessages ) {
 				var frame = new StackFrame( 1 );
 				var method = frame.GetMethod();
 				var type = method.DeclaringType;
@@ -45,7 +57,7 @@ namespace Noise.AppSupport.Logging {
 		}
 
 		public void LogMessage( string format, params object[] parameters ) {
-			if( mPreferences.LogMessages ) {
+			if( Preferences.LogMessages ) {
 				var frame = new StackFrame( 1 );
 				var method = frame.GetMethod();
 				var type = method.DeclaringType;
@@ -56,7 +68,7 @@ namespace Noise.AppSupport.Logging {
 		}
 
 		public void LogInfo( string message ) {
-			if( mPreferences.LogMessages ) {
+			if( Preferences.LogMessages ) {
 				var frame = new StackFrame( 1 );
 				var method = frame.GetMethod();
 				var type = method.DeclaringType;

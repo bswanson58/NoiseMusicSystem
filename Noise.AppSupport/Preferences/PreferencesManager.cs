@@ -1,15 +1,16 @@
 ﻿using System;
 using System.IO;
 using Newtonsoft.Json;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport.Preferences {
 	public class PreferencesManager : IPreferences {
 		private readonly INoiseEnvironment	mEnvironment;
+		private readonly Lazy<INoiseLog>	mLog;
 
-		public PreferencesManager( INoiseEnvironment noiseEnvironment ) {
+		public PreferencesManager( INoiseEnvironment noiseEnvironment, Lazy<INoiseLog> log   ) {
 			mEnvironment = noiseEnvironment;
+			mLog = log;
 		}
 
 		protected virtual T CreateDefault<T>() {
@@ -28,7 +29,7 @@ namespace Noise.AppSupport.Preferences {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( string.Format( "Loading Preferences failed for '{0}'", typeof( T ).Name ), ex );
+				mLog.Value.LogException( string.Format( "Loading Preferences failed for '{0}'", typeof( T ).Name ), ex );
 			}
 
 			if( Equals( retValue, default( T ))) {
@@ -50,7 +51,7 @@ namespace Noise.AppSupport.Preferences {
 					}
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( string.Format( "Saving Preferences failed for '{0}'", typeof( T ).Name ), ex );
+					mLog.Value.LogException( string.Format( "Saving Preferences failed for '{0}'", typeof( T ).Name ), ex );
 				}
 			}
 		}

@@ -1,14 +1,17 @@
 ﻿using System;
 using Caliburn.Micro;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport {
 	public class ApplicationSupport : IHandle<Events.UrlLaunchRequest>, IHandle<Events.LaunchRequest> {
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly INoiseLog			mLog;
 		private readonly HotkeyManager		mHotkeyManager;
 
-		public ApplicationSupport( IEventAggregator eventAggregator, HotkeyManager hotkeyManager ) {
+		public ApplicationSupport( IEventAggregator eventAggregator, INoiseLog log, HotkeyManager hotkeyManager ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mHotkeyManager = hotkeyManager;
 		}
 
@@ -34,7 +37,7 @@ namespace Noise.AppSupport {
 					System.Diagnostics.Process.Start( startInfo );
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Exception - OnWebsiteRequested:", ex );
+					mLog.LogException( "Launching IExplore", ex );
 				}
 			}
 		}
@@ -44,7 +47,7 @@ namespace Noise.AppSupport {
 				System.Diagnostics.Process.Start( eventArgs.Target );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - OnLaunchRequest:", ex );
+				mLog.LogException( "OnLaunchRequest:", ex );
 			}
 		}
 	}
