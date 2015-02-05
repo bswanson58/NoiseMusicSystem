@@ -10,13 +10,15 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.FileStore {
 	public class StorageFolderSupport : IStorageFolderSupport {
+		private readonly INoiseLog				mLog;
 		private readonly IRootFolderProvider	mRootFolderProvider;
 		private readonly IStorageFolderProvider	mStorageFolderProvider;
 		private readonly IStorageFileProvider	mStorageFileProvider;
 		private readonly ITrackProvider			mTrackProvider;
 
 		public StorageFolderSupport( IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider,
-									 IStorageFileProvider storageFileProvider, ITrackProvider trackProvider ) {
+									 IStorageFileProvider storageFileProvider, ITrackProvider trackProvider, INoiseLog log ) {
+			mLog = log;
 			mRootFolderProvider = rootFolderProvider;
 			mStorageFolderProvider = storageFolderProvider;
 			mStorageFileProvider = storageFileProvider;
@@ -83,7 +85,7 @@ namespace Noise.Core.FileStore {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - GetAlbumPath:", ex );
+				mLog.LogException( "Building Album Path", ex );
 			}
 
 			return( retValue );

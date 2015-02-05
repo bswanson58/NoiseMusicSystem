@@ -12,15 +12,17 @@ namespace Noise.Core.PlaySupport {
 	public class AudioController : IAudioController, IRequireInitialization,
 								   IHandle<Events.SystemShutdown> {
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly INoiseLog			mLog;
 		private readonly INoiseEnvironment	mNoiseEnvironment;
 		private readonly IPreferences		mPreferences;
 		private readonly IAudioPlayer		mAudioPlayer;
 		private	readonly IEqManager			mEqManager;
 
 		public AudioController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, INoiseEnvironment noiseEnvironment,
-								IAudioPlayer audioPlayer, IEqManager eqManager, IPreferences preferences ) {
+								IAudioPlayer audioPlayer, IEqManager eqManager, IPreferences preferences, INoiseLog log ) {
 			mEventAggregator = eventAggregator;
 			mNoiseEnvironment = noiseEnvironment;
+			mLog = log;
 			mPreferences = preferences;
 			mAudioPlayer = audioPlayer;
 			mEqManager = eqManager;
@@ -67,13 +69,13 @@ namespace Noise.Core.PlaySupport {
 					mAudioPlayer.EqEnabled = mEqManager.EqEnabled;
 				}
 				else {
-					NoiseLogger.Current.LogMessage( "EqManager could not be initialized." );
+					mLog.LogMessage( "EqManager could not be initialized." );
 				}
 
 				mEventAggregator.Subscribe( this );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "AudioController:Initialize", ex );
+				mLog.LogException( "Initializing audio controller", ex );
 			}
 		}
 
