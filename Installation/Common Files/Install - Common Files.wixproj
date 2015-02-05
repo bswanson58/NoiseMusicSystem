@@ -56,6 +56,7 @@
     <Content Include="recls.wxi" />
     <Content Include="ReFit.wxi" />
     <Content Include="ReplayGain.wxi" />
+    <Content Include="SeriLog.wxi" />
     <Content Include="Stateless.wxi" />
     <Content Include="TagLibSharp.wxi" />
     <Content Include="Version.wxi" />

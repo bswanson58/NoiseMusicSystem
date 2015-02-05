@@ -25,6 +25,7 @@
 		<?include recls.wxi ?>
 		<?include Refit.wxi ?>
 		<?include ReplayGain.wxi ?>
+		<?include SeriLog.wxi ?>
 		<?include Stateless.wxi ?>
 		<?include TagLibSharp.wxi ?>
 	</Fragment>

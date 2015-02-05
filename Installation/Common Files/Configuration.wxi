@@ -8,7 +8,7 @@
 			<File Id="LicenseKeys.xml" DiskId="10" Source="$(var.Noise.Core.ProjectDir)Resources\LicenseKeys.xml" KeyPath="yes" Checksum="yes" />
 		</Component>
 		<Component Id="LoggingPreferences" Guid="a9fe3fab-6f47-4964-814b-f5391d9c226c">
-			<File Id="LoggingPreferences" DiskId="10" Source="$(var.Noise.Core.ProjectDir)Resources\LoggingPreferences" KeyPath="yes" Checksum="yes" />
+			<File Id="LoggingPreferences" DiskId="10" Source="$(var.Noise.Infrastructure.ProjectDir)Resources\LoggingPreferences" KeyPath="yes" Checksum="yes" />
 		</Component>
 	</DirectoryRef>
 

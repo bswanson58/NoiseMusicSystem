@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<DirectoryRef Id="INSTALLDIRECTORY">
+		<Component Id="SeriLog.dll" Guid="6d6a2f2b-90e5-4e1c-a3de-9b44d5f013b6">
+			<File Id="SeriLog.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)SeriLog.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+		<Component Id="SeriLog.FullNetFx.dll" Guid="5f1dfd48-3b04-44f4-bc30-9478a0322ba4">
+			<File Id="SeriLog.FullNetFx.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)SeriLog.FullNetFx.dll" KeyPath="yes" Checksum="yes" />
+		</Component>
+	</DirectoryRef>
+
+	<ComponentGroup Id="SeriLogFiles">
+		<ComponentRef Id="SeriLog.dll" />
+		<ComponentRef Id="SeriLog.FullNetFx.dll" />
+	</ComponentGroup>
+</Include>

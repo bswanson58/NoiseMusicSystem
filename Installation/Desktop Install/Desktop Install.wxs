@@ -169,6 +169,7 @@
 				<ComponentGroupRef Id="ReclsFiles"/>
 				<ComponentGroupRef Id="RefitFiles"/>
 				<ComponentGroupRef Id="ReplayGainFiles"/>
+				<ComponentGroupRef Id="SeriLogFiles"/>
 				<ComponentGroupRef Id="StatelessFiles"/>
 				<ComponentGroupRef Id="TagLibSharpFiles"/>
 			</Feature>
