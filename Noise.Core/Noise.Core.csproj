@@ -256,6 +256,7 @@
     <Compile Include="FileStore\IFileUpdates.cs" />
     <Compile Include="FileStore\IFolderExplorer.cs" />
     <Compile Include="FileStore\StorageFolderSupport.cs" />
+    <Compile Include="Logging\ILogLibraryBuilding.cs" />
     <Compile Include="Logging\ILogLibraryBuildingSummary.cs" />
     <Compile Include="Logging\ILogLibraryClassification.cs" />
     <Compile Include="Logging\ILogLibraryCleaning.cs" />
@@ -264,6 +265,7 @@
     <Compile Include="Logging\ILogPlayQueue.cs" />
     <Compile Include="Logging\ILogPlayState.cs" />
     <Compile Include="Logging\ILogUserStatus.cs" />
+    <Compile Include="Logging\LogLibraryBuilding.cs" />
     <Compile Include="Logging\LogLibraryBuildingDiscovery.cs" />
     <Compile Include="Logging\LogLibraryBuildingSummary.cs" />
     <Compile Include="Logging\LogLibraryClassification.cs" />
