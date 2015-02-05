@@ -1,7 +1,7 @@
 ﻿using System;
 using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.Logging {
+namespace Noise.Infrastructure.Logging {
 	public class BaseLogger {
 		private readonly IPlatformLog	mLogger;
 
