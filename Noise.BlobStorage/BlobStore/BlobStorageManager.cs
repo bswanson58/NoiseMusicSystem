@@ -2,16 +2,17 @@
 using System.IO;
 using CuttingEdge.Conditions;
 using Newtonsoft.Json;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.BlobStorage.BlobStore {
 	public class BlobStorageManager : IBlobStorageManager, IBlobStorage {
+		private readonly INoiseLog		mLog;
 		private IBlobStorageResolver	mBlobResolver;
 		private bool					mIsOpen;
 		private string					mStoragePath;
 
-		public BlobStorageManager() {
+		public BlobStorageManager( INoiseLog log ) {
+			mLog = log;
 			mStoragePath = string.Empty;
 			mStoragePath = string.Empty;
 			mIsOpen = false;
@@ -258,7 +259,7 @@ namespace Noise.BlobStorage.BlobStore {
 				retValue = new FileStream( blobPath, FileMode.Open, FileAccess.Read );
 			}
 			else {
-				NoiseLogger.Current.LogInfo( "Attempt to retieve nonexistent blob item" );
+				mLog.LogMessage( string.Format( "Attempt to retrieve non-existent blob item: {0}", blobId ));
 
 				retValue = new MemoryStream();
 //				throw new BlobStorageException( blobId, blobPath, "Attempt to retrieve nonexistent item." );
@@ -275,7 +276,7 @@ namespace Noise.BlobStorage.BlobStore {
 				retValue = new FileStream( blobPath, FileMode.Open, FileAccess.Read );
 			}
 			else {
-				NoiseLogger.Current.LogInfo( "Attempt to retieve nonexistent blob item" );
+				mLog.LogMessage( string.Format( "Attempt to retrieve non-existent blob item: {0}", blobId ));
 
 				retValue = new MemoryStream();
 //				throw new BlobStorageException( blobId, blobPath, "Attempt to retrieve nonexistent item." );

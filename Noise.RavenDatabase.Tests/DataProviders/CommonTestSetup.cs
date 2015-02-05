@@ -34,7 +34,7 @@ namespace Noise.RavenDatabase.Tests.DataProviders {
 			IndexCreation.CreateIndexes( typeof( RavenDatabaseModule ).Assembly, mDatabase );
 
 			BlobResolver = new BlobStorageResolver();
-			BlobStorageManager = new BlobStorageManager();
+			BlobStorageManager = new BlobStorageManager( DummyLog.Object );
 			BlobStorageManager.SetResolver( BlobResolver );
 
 			DatabaseFactory = new Mock<IDbFactory>();
