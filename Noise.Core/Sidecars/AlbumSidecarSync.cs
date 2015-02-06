@@ -45,42 +45,50 @@ namespace Noise.Core.Sidecars {
 			var album = NextAlbum();
 
 			if( album != null ) {
-				try { 
-					var albumSidecar = mSidecarCreator.CreateFromAlbum( album );
-					var dbSideCar = mSidecarProvider.GetSidecarForAlbum( album ) ?? new StorageSidecar();
+				try {
+					if( mSidecarWriter.IsStorageAvailable( album )) {
+						var albumSidecar = mSidecarCreator.CreateFromAlbum( album );
+						var dbSideCar = mSidecarProvider.GetSidecarForAlbum( album ) ?? new StorageSidecar();
 
-					if( albumSidecar.Version > dbSideCar.Version ) {
-						mSidecarWriter.WriteSidecar( album, albumSidecar );
-					}
+						if( albumSidecar.Version > dbSideCar.Version ) {
+							mSidecarWriter.WriteSidecar( album, albumSidecar );
 
-					if( dbSideCar.Status == SidecarStatus.Unread ) {
-						mSidecarCreator.UpdateAlbum( album, mSidecarWriter.ReadSidecar( album ));
+							mLog.LogMessage( string.Format( "Sidecar updated for {0}", album ));
+						}
 
-						using( var updater = mSidecarProvider.GetSidecarForUpdate( dbSideCar.DbId )) {
-							if( updater.Item != null ) {
-								updater.Item.Status = SidecarStatus.Read;
+						if( dbSideCar.Status == SidecarStatus.Unread ) {
+							mSidecarCreator.UpdateAlbum( album, mSidecarWriter.ReadSidecar( album ));
 
-								updater.Update();
+							using( var updater = mSidecarProvider.GetSidecarForUpdate( dbSideCar.DbId )) {
+								if( updater.Item != null ) {
+									updater.Item.Status = SidecarStatus.Read;
+
+									updater.Update();
+
+									mLog.LogMessage( string.Format( "Sidecar read for {0}", album ));
+								}
 							}
 						}
-					}
-					else {
-						var storageSidecar = mSidecarWriter.ReadSidecar( album );
+						else {
+							var storageSidecar = mSidecarWriter.ReadSidecar( album );
 
-						if( storageSidecar.Version > dbSideCar.Version ) {
-							using( var updater = mSidecarProvider.GetSidecarForUpdate( dbSideCar.DbId ))
-							if( updater.Item != null ) {
-								updater.Item.Version = storageSidecar.Version;
-
-								updater.Update();
-							}
-
-							using( var updater = mAlbumProvider.GetAlbumForUpdate( album.DbId )) {
+							if( storageSidecar.Version > dbSideCar.Version ) {
+								using( var updater = mSidecarProvider.GetSidecarForUpdate( dbSideCar.DbId ))
 								if( updater.Item != null ) {
-									mSidecarCreator.UpdateAlbum( updater.Item, storageSidecar );
+									updater.Item.Version = storageSidecar.Version;
 
 									updater.Update();
 								}
+
+								using( var updater = mAlbumProvider.GetAlbumForUpdate( album.DbId )) {
+									if( updater.Item != null ) {
+										mSidecarCreator.UpdateAlbum( updater.Item, storageSidecar );
+
+										updater.Update();
+									}
+								}
+
+								mLog.LogMessage( string.Format( "Album updated from sidecar {0}", album ));
 							}
 						}
 					}

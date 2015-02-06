@@ -16,6 +16,10 @@ namespace Noise.Core.Sidecars {
 			mStorageSupport = storageFolderSupport;
 		}
 
+		public bool IsStorageAvailable( DbAlbum album ) {
+			return( Directory.Exists( mStorageSupport.GetAlbumPath( album.DbId )));
+		} 
+
 		public void WriteSidecar( DbAlbum forAlbum, AlbumSidecar sidecar ) {
 			var sidecarPath = Path.Combine( mStorageSupport.GetAlbumPath( forAlbum.DbId ), Constants.AlbumSidecarName );
 
