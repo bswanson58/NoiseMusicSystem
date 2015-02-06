@@ -7,6 +7,7 @@ using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Noise.AppSupport.Logging;
 using Noise.AppSupport.Preferences;
+using Noise.AppSupport.Support;
 using Noise.AudioSupport;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
@@ -39,6 +40,7 @@ namespace Noise.AppSupport {
 
 		public bool InitializeIoc( ApplicationUsage appUsage ) {
 			mContainer.RegisterType<IPlatformLog, SeriLogAdapter>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<IFileWriter, JsonObjectWriter>( new ContainerControlledLifetimeManager());
 			mContainer.RegisterType<INoiseLog, Logging.NoiseLogger>( new ContainerControlledLifetimeManager());
 			mContainer.RegisterType<IIoc, IocProvider>( new ContainerControlledLifetimeManager());
 

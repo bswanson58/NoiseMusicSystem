@@ -4,8 +4,8 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport.Preferences {
 	public class HeadlessPreferences : PreferencesManager {
-		public HeadlessPreferences( INoiseEnvironment noiseEnvironment, Lazy<INoiseLog> log ) :
-			base( noiseEnvironment, log ) { }
+		public HeadlessPreferences( INoiseEnvironment noiseEnvironment, IFileWriter writer, Lazy<INoiseLog> log ) :
+			base( noiseEnvironment, writer, log ) { }
 
 		protected override T CreateDefault<T>() {
 			var retValue = base.CreateDefault<T>();

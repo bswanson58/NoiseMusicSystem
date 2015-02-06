@@ -14,7 +14,7 @@ namespace Noise.Infrastructure.Dto {
 		public	long			Version { get; set; }
 		public	SidecarStatus	Status { get; set; }
 
-		protected StorageSidecar() {
+		public StorageSidecar() {
 			Name = string.Empty;
 			ArtistId = Constants.cDatabaseNullOid;
 			AlbumId = Constants.cDatabaseNullOid;
@@ -22,10 +22,9 @@ namespace Noise.Infrastructure.Dto {
 			Status = SidecarStatus.Unread;
 		}
 
-		public StorageSidecar( string fileName, DbArtist artist, DbAlbum album ) :
+		public StorageSidecar( string fileName, DbAlbum album ) :
 		this() {
 			Name = fileName;
-			ArtistId = artist.DbId;
 			AlbumId = album.DbId;
 		}
 
@@ -33,7 +32,6 @@ namespace Noise.Infrastructure.Dto {
 			this() {
 			Name = fileName;
 			ArtistId = artist.DbId;
-			AlbumId = Constants.cDatabaseNullOid;
 		}
 	}
 }

@@ -165,6 +165,7 @@
     <Compile Include="Configuration\AudioPreferences.cs" />
     <Compile Include="Configuration\NoiseCorePreferences.cs" />
     <Compile Include="Configuration\UserInterfacePreferences.cs" />
+    <Compile Include="Dto\AlbumSidecar.cs" />
     <Compile Include="Dto\AlbumSupportInfo.cs" />
     <Compile Include="Dto\Artwork.cs" />
     <Compile Include="Dto\AudioChannelStatus.cs" />
@@ -234,6 +235,7 @@
     <Compile Include="Interfaces\IDbBaseProvider.cs" />
     <Compile Include="Interfaces\IDomainSearchProvider.cs" />
     <Compile Include="Interfaces\IEqManager.cs" />
+    <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IGenreProvider.cs" />
     <Compile Include="Interfaces\IIoc.cs" />
     <Compile Include="Interfaces\ILibraryBuilder.cs" />

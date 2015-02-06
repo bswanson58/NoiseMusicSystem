@@ -305,6 +305,9 @@
     <Compile Include="PlayStrategies\PlayStrategySingle.cs" />
     <Compile Include="PlayStrategies\PlayStrategyTwoFers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sidecars\AlbumSidecarSync.cs" />
+    <Compile Include="Sidecars\SidecarCreator.cs" />
+    <Compile Include="Sidecars\SidecarWriter.cs" />
     <Compile Include="Support\AsyncTask\AsyncTaskEnumerator.cs" />
     <Compile Include="Support\AsyncTask\IAsyncTaskResult.cs" />
     <Compile Include="Support\LifecycleManager.cs" />
