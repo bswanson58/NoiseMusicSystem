@@ -44,6 +44,10 @@ namespace Noise.Infrastructure {
 		public const string				Id3FrameUserName = "Noise Music System";
 		public const string				FavoriteFrameDescription = "Noise Music System - Favorite Track Flag";
 
+		public const string				SidecarExtension = ".nsc";
+		public const string				ArtistSidecarName = "Artist Info" + SidecarExtension;
+		public const string				AlbumSidecarName = "Album Info" + SidecarExtension;
+
 		public const string				EqPresetsFile = "EqPresets.xml";
 		public const string				LicenseKeyFile = "LicenseKeys.xml";
 

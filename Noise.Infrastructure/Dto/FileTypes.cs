@@ -5,6 +5,7 @@
 		Text,
 		PlayList,
 		Undetermined,
+		Sidecar,
 		Unknown
 	}
 }

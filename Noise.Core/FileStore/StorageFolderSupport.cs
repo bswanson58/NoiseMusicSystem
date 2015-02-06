@@ -208,6 +208,10 @@ namespace Noise.Core.FileStore {
 					case ".nfo":
 						retValue = eFileType.Text;
 						break;
+
+					case Constants.SidecarExtension:
+						retValue = eFileType.Sidecar;
+						break;
 				}
 			}
 
