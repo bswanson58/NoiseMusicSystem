@@ -251,9 +251,7 @@
     <Compile Include="FileProcessor\UpdateMusicPipelineStep.cs" />
     <Compile Include="FileProcessor\UpdateUndeterminedPipelineStep.cs" />
     <Compile Include="FileStore\FileSystemWatcherEx.cs" />
-    <Compile Include="FileStore\FileUpdates.cs" />
     <Compile Include="FileStore\FolderExplorer.cs" />
-    <Compile Include="FileStore\IFileUpdates.cs" />
     <Compile Include="FileStore\IFolderExplorer.cs" />
     <Compile Include="FileStore\StorageFolderSupport.cs" />
     <Compile Include="Logging\ILogLibraryBuilding.cs" />
