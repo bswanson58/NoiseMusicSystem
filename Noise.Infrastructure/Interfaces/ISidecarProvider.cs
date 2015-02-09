@@ -9,6 +9,8 @@ namespace Noise.Infrastructure.Interfaces {
 		StorageSidecar						GetSidecarForArtist( DbArtist artist );
 		StorageSidecar						GetSidecarForAlbum( DbAlbum album );
 
+		IDataProviderList<StorageSidecar>	GetUnreadSidecars();
+
 		IDataUpdateShell<StorageSidecar>	GetSidecarForUpdate( long dbid ); 
 	}
 }

@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using Caliburn.Micro;
 using Noise.Core.BackgroundTasks;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -14,18 +15,18 @@ namespace Noise.Core.Sidecars {
 									  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private const string				cSidecarSyncId		= "ComponentId_AlbumSidecar_Sync";
 
-		private readonly IEventAggregator	mEventAggregator;
-		private readonly INoiseLog			mLog;
-		private readonly IAlbumProvider		mAlbumProvider;
-		private readonly ISidecarProvider	mSidecarProvider;
-		private readonly SidecarCreator		mSidecarCreator;
-		private readonly SidecarWriter		mSidecarWriter;
-		private readonly List<long>			mAlbumList; 
-		private IEnumerator<long>			mAlbumEnum; 
+		private readonly IEventAggregator				mEventAggregator;
+		private readonly ILogLibraryBuildingSidecars	mLog;
+		private readonly IAlbumProvider					mAlbumProvider;
+		private readonly ISidecarProvider				mSidecarProvider;
+		private readonly SidecarCreator					mSidecarCreator;
+		private readonly SidecarWriter					mSidecarWriter;
+		private readonly List<long>						mAlbumList; 
+		private IEnumerator<long>						mAlbumEnum; 
 
 		public string TaskId { get; private set; }
 
-		public AlbumSidecarSync( IEventAggregator eventAggregator, INoiseLog log, IAlbumProvider albumProvider,
+		public AlbumSidecarSync( IEventAggregator eventAggregator, ILogLibraryBuildingSidecars log, IAlbumProvider albumProvider,
 								 ISidecarProvider sidecarProvider, SidecarCreator sidecarCreator, SidecarWriter sidecarWriter ) {
 			TaskId = cSidecarSyncId;
 
@@ -53,43 +54,28 @@ namespace Noise.Core.Sidecars {
 						if( albumSidecar.Version > dbSideCar.Version ) {
 							mSidecarWriter.WriteSidecar( album, albumSidecar );
 
-							mLog.LogMessage( string.Format( "Sidecar updated for {0}", album ));
+							mLog.LogUpdatedSidecar( dbSideCar, album );
 						}
 
-						if( dbSideCar.Status == SidecarStatus.Unread ) {
-							mSidecarCreator.UpdateAlbum( album, mSidecarWriter.ReadSidecar( album ));
+						var storageSidecar = mSidecarWriter.ReadSidecar( album );
 
-							using( var updater = mSidecarProvider.GetSidecarForUpdate( dbSideCar.DbId )) {
-								if( updater.Item != null ) {
-									updater.Item.Status = SidecarStatus.Read;
+						if( storageSidecar.Version > dbSideCar.Version ) {
+							using( var updater = mSidecarProvider.GetSidecarForUpdate( dbSideCar.DbId ))
+							if( updater.Item != null ) {
+								updater.Item.Version = storageSidecar.Version;
 
-									updater.Update();
-
-									mLog.LogMessage( string.Format( "Sidecar read for {0}", album ));
-								}
+								updater.Update();
 							}
-						}
-						else {
-							var storageSidecar = mSidecarWriter.ReadSidecar( album );
 
-							if( storageSidecar.Version > dbSideCar.Version ) {
-								using( var updater = mSidecarProvider.GetSidecarForUpdate( dbSideCar.DbId ))
+							using( var updater = mAlbumProvider.GetAlbumForUpdate( album.DbId )) {
 								if( updater.Item != null ) {
-									updater.Item.Version = storageSidecar.Version;
+									mSidecarCreator.UpdateAlbum( updater.Item, storageSidecar );
 
 									updater.Update();
 								}
-
-								using( var updater = mAlbumProvider.GetAlbumForUpdate( album.DbId )) {
-									if( updater.Item != null ) {
-										mSidecarCreator.UpdateAlbum( updater.Item, storageSidecar );
-
-										updater.Update();
-									}
-								}
-
-								mLog.LogMessage( string.Format( "Album updated from sidecar {0}", album ));
 							}
+
+							mLog.LogUpdatedAlbum( dbSideCar, album );
 						}
 					}
 				}

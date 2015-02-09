@@ -29,6 +29,8 @@
   "BuildingSummaryArtists": true,
   "BuildingSummaryAlbums": false,
 
+  "SidecarSupport": false,
+
   "PlayQueueAddRemove":  false,
   "PlayQueueStatusChange":  false,
 

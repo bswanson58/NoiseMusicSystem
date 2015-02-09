@@ -14,6 +14,7 @@ using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
 using Noise.Core.PlayStrategies;
 using Noise.Core.PlaySupport;
+using Noise.Core.Sidecars;
 using Noise.Core.Support;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
@@ -45,6 +46,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IPlayController, PlayController>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IScrobbler, PlayScrobbler>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ISearchProvider, LuceneSearchProvider>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ISidecarBuilder, SidecarBuilder>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ITagManager, TagManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<DatabaseStatistics, DatabaseStatistics>();
@@ -114,6 +116,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<ILogLibraryBuildingDiscovery, LogLibraryBuildingDiscovery>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogLibraryCleaning, LogLibraryCleaning>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogLibraryClassification, LogLibraryClassification>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ILogLibraryBuildingSidecars, LogLibraryBuildingSidecars>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogLibraryBuildingSummary, LogLibraryBuildingSummary>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogPlayQueue, LogPlayQueue>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogPlayState, LogPlayState>( new HierarchicalLifetimeManager());

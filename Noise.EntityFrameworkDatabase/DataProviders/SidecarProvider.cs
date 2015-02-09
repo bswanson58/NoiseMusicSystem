@@ -47,6 +47,12 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			return( retValue );
 		}
 
+		public IDataProviderList<StorageSidecar> GetUnreadSidecars() {
+			var context = CreateContext();
+
+			return( new EfProviderList<StorageSidecar>( context, Set( context ).Where( sidecar => sidecar.Status == SidecarStatus.Unread )));
+		}
+
 		public IDataUpdateShell<StorageSidecar> GetSidecarForUpdate( long dbid ) {
 			return( GetUpdateShell( dbid ));
 		}

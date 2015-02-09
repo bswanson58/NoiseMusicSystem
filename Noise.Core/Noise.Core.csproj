@@ -255,6 +255,7 @@
     <Compile Include="FileStore\IFolderExplorer.cs" />
     <Compile Include="FileStore\StorageFolderSupport.cs" />
     <Compile Include="Logging\ILogLibraryBuilding.cs" />
+    <Compile Include="Logging\ILogLibraryBuildingSidecars.cs" />
     <Compile Include="Logging\ILogLibraryBuildingSummary.cs" />
     <Compile Include="Logging\ILogLibraryClassification.cs" />
     <Compile Include="Logging\ILogLibraryCleaning.cs" />
@@ -265,6 +266,7 @@
     <Compile Include="Logging\ILogUserStatus.cs" />
     <Compile Include="Logging\LogLibraryBuilding.cs" />
     <Compile Include="Logging\LogLibraryBuildingDiscovery.cs" />
+    <Compile Include="Logging\LogLibraryBuildingSidecars.cs" />
     <Compile Include="Logging\LogLibraryBuildingSummary.cs" />
     <Compile Include="Logging\LogLibraryClassification.cs" />
     <Compile Include="Logging\LogLibraryCleaning.cs" />
@@ -306,6 +308,8 @@
     <Compile Include="PlayStrategies\PlayStrategyTwoFers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sidecars\AlbumSidecarSync.cs" />
+    <Compile Include="Sidecars\ISidecarBuilder.cs" />
+    <Compile Include="Sidecars\SidecarBuilder.cs" />
     <Compile Include="Sidecars\SidecarCreator.cs" />
     <Compile Include="Sidecars\SidecarWriter.cs" />
     <Compile Include="Support\AsyncTask\AsyncTaskEnumerator.cs" />

@@ -33,5 +33,9 @@ namespace Noise.Infrastructure.Dto {
 			Name = fileName;
 			ArtistId = artist.DbId;
 		}
+
+		public override string ToString() {
+			return( string.Format( "Sidecar \"{0}\", Artist: {1}, Album: {2}", Name, ArtistId, ArtistId ));
+		}
 	}
 }

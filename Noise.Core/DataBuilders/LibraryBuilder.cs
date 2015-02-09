@@ -8,6 +8,7 @@ using Noise.Core.FileProcessor;
 using Noise.Core.FileStore;
 using Noise.Core.Logging;
 using Noise.Core.Platform;
+using Noise.Core.Sidecars;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -22,6 +23,7 @@ namespace Noise.Core.DataBuilders {
 		private readonly IFolderExplorer			mFolderExplorer;
 		private readonly IMetaDataCleaner			mMetaDataCleaner;
 		private readonly IStorageFileProcessor		mStorageFileProcessor;
+		private readonly ISidecarBuilder			mSidecarBuilder;
 		private	readonly ISummaryBuilder			mSummaryBuilder;
 		private readonly DatabaseStatistics			mDatabaseStatistics;
 		private bool								mContinueExploring;
@@ -31,7 +33,8 @@ namespace Noise.Core.DataBuilders {
 
 		public LibraryBuilder( IEventAggregator eventAggregator, ILogUserStatus userStatus, ILogLibraryBuilding log,
 							   IStorageFolderSupport storageFolderSupport, IFolderExplorer folderExplorer, IMetaDataCleaner metaDataCleaner,
-							   IStorageFileProcessor storageFileProcessor, ISummaryBuilder summaryBuilder, DatabaseStatistics databaseStatistics ) {
+							   IStorageFileProcessor storageFileProcessor, ISidecarBuilder sidecarBuilder, ISummaryBuilder summaryBuilder,
+							   DatabaseStatistics databaseStatistics ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mUserStatus = userStatus;
@@ -39,6 +42,7 @@ namespace Noise.Core.DataBuilders {
 			mFolderExplorer = folderExplorer;
 			mMetaDataCleaner = metaDataCleaner;
 			mStorageFileProcessor = storageFileProcessor;
+			mSidecarBuilder = sidecarBuilder;
 			mSummaryBuilder = summaryBuilder;
 			mDatabaseStatistics = databaseStatistics;
 			mFolderWatcher = new FileSystemWatcherEx();
@@ -116,6 +120,10 @@ namespace Noise.Core.DataBuilders {
 				mStorageFileProcessor.Stop();
 			}
 
+			if( mSidecarBuilder != null ) {
+				mSidecarBuilder.Stop();
+			}
+
 			if( mSummaryBuilder != null ) {
 				mSummaryBuilder.Stop();
 			}
@@ -153,6 +161,10 @@ namespace Noise.Core.DataBuilders {
 
 					if( mContinueExploring ) {
 						mStorageFileProcessor.Process( results );
+					}
+
+					if( mContinueExploring ) {
+						mSidecarBuilder.Process();
 					}
 
 					if( mContinueExploring ) {
