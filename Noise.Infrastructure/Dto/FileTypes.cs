@@ -3,9 +3,9 @@
 		Music,
 		Picture,
 		Text,
+		Sidecar,
 		PlayList,
 		Undetermined,
-		Sidecar,
 		Unknown
 	}
 }

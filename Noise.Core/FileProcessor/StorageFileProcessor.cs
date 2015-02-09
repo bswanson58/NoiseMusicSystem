@@ -52,6 +52,7 @@ namespace Noise.Core.FileProcessor {
 				.Permit( ePipelineTrigger.FileTypeIsAudio, ePipelineState.BuildAudioFile )
 				.Permit( ePipelineTrigger.FileTypeIsArtwork, ePipelineState.BuildArtworkFile )
 				.Permit( ePipelineTrigger.FileTypeIsInfo, ePipelineState.BuildInfoFile )
+				.Permit( ePipelineTrigger.FileTypeIsSidecar, ePipelineState.BuildSidecarFile )
 				.Permit( ePipelineTrigger.FileTypeIsUnknown, ePipelineState.BuildUnknownFile );
 
 			mPipelineController.Configure( ePipelineState.BuildAudioFile )
@@ -64,6 +65,10 @@ namespace Noise.Core.FileProcessor {
 
 			mPipelineController.Configure( ePipelineState.BuildInfoFile )
 				.OnEntry(() => ProcessInfoFile( mPipelineContext ))
+				.Permit( ePipelineTrigger.Completed, ePipelineState.Stopped );
+
+			mPipelineController.Configure( ePipelineState.BuildSidecarFile )
+				.OnEntry(() => ProcessSidecarFile( mPipelineContext ))
 				.Permit( ePipelineTrigger.Completed, ePipelineState.Stopped );
 
 			mPipelineController.Configure( ePipelineState.BuildUnknownFile )
@@ -99,6 +104,14 @@ namespace Noise.Core.FileProcessor {
 									.AppendStep( mPipelineSteps[ePipelineStep.DetermineArtist])
 									.AppendStep( mPipelineSteps[ePipelineStep.DetermineAlbum])
 									.AppendStep( mPipelineSteps[ePipelineStep.UpdateInfo])
+									.AppendStep( mPipelineSteps[ePipelineStep.Completed]));
+		}
+
+		private void ProcessSidecarFile( PipelineContext context ) {
+			context.SetPipeline( mPipelineSteps[ePipelineStep.BuildSidecarProviders]
+									.AppendStep( mPipelineSteps[ePipelineStep.DetermineArtist])
+									.AppendStep( mPipelineSteps[ePipelineStep.DetermineAlbum])
+									.AppendStep( mPipelineSteps[ePipelineStep.UpdateSidecar])
 									.AppendStep( mPipelineSteps[ePipelineStep.Completed]));
 		}
 

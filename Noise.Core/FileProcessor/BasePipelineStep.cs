@@ -8,6 +8,7 @@ namespace Noise.Core.FileProcessor {
 		BuildMusicProviders,
 		BuildInfoProviders,
 		BuildArtworkProviders,
+		BuildSidecarProviders,
 		DetermineArtist,
 		DetermineAlbum,
 		DetermineVolume,
@@ -16,6 +17,7 @@ namespace Noise.Core.FileProcessor {
 		UpdateMusic,
 		UpdateArtwork,
 		UpdateInfo,
+		UpdateSidecar,
 		UpdateUndetermined,
 		Completed
 	}

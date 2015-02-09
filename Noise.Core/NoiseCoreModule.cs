@@ -65,6 +65,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IPipelineStep, UpdateMusicPipelineStep>( "UpdateMusicPipelineStep" );
 			mContainer.RegisterType<IPipelineStep, UpdateArtworkPipelineStep>( "UpdateArtworkPipelineStep" );
 			mContainer.RegisterType<IPipelineStep, UpdateInfoPipelineStep>( "UpdateInfoPipelineStep" );
+			mContainer.RegisterType<IPipelineStep, UpdateSidecarPipelineStep>( "UpdateSidecarPipelineStep" );
 			mContainer.RegisterType<IPipelineStep, UpdateUndeterminedPipelineStep>( "UpdateUndeterminedPipelineStep" );
 			mContainer.RegisterType<IEnumerable<IPipelineStep>, IPipelineStep[]>();
 
