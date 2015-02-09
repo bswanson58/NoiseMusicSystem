@@ -8,11 +8,13 @@ namespace Noise.Core.Sidecars {
 	internal class SidecarWriter {
 		private readonly IFileWriter			mWriter;
 		private readonly INoiseLog				mLog;
+		private readonly ISidecarProvider		mSidecarProvider;
 		private readonly IStorageFolderSupport	mStorageSupport;
 
-		public SidecarWriter( IFileWriter writer, IStorageFolderSupport storageFolderSupport, INoiseLog log ) {
+		public SidecarWriter( IFileWriter writer, ISidecarProvider sidecarProvider, IStorageFolderSupport storageFolderSupport, INoiseLog log ) {
 			mLog = log;
 			mWriter = writer;
+			mSidecarProvider = sidecarProvider;
 			mStorageSupport = storageFolderSupport;
 		}
 
@@ -49,6 +51,16 @@ namespace Noise.Core.Sidecars {
 			}
 
 			return( retValue );
+		}
+
+		public void UpdateSidecarVersion( DbAlbum album, StorageSidecar sidecar ) {
+			using( var updater = mSidecarProvider.GetSidecarForUpdate( sidecar.DbId )) {
+				if( updater.Item != null ) {
+					updater.Item.Version = album.Version;
+
+					updater.Update();
+				}
+			}
 		}
 	}
 }
