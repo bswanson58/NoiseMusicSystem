@@ -28,15 +28,15 @@ namespace Noise.Core.Logging {
 		}
 
 		public void LogLoadedSidecar( StorageSidecar sidecar, DbAlbum album ) {
-			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Loaded {0} for album {1}", sidecar, album ));
+			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Loaded {0} for {1}", sidecar, album ));
 		}
 
 		public void LogUpdatedSidecar( StorageSidecar sidecar, DbAlbum album ) {
-			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Updated {0} for Album {1}", sidecar, album ));
+			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Updated {0} for {1}", sidecar, album ));
 		}
 
 		public void LogUpdatedAlbum( StorageSidecar sidecar, DbAlbum album ) {
-			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Updated Album {0} from {1}", album, sidecar ));
+			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Updated {0} from {1}", album, sidecar ));
 		}
 
 		public void LogUnknownAlbumSidecar( StorageSidecar sidecar ) {
