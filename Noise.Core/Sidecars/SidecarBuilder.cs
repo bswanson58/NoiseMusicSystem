@@ -36,6 +36,7 @@ namespace Noise.Core.Sidecars {
 							using( var updater = mSidecarProvider.GetSidecarForUpdate( sidecar.DbId )) {
 								if( updater.Item != null ) {
 									updater.Item.Status = SidecarStatus.Read;
+									updater.Item.Version = album.Version;
 
 									updater.Update();
 								}

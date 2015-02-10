@@ -19,7 +19,7 @@ namespace Noise.Core.Sidecars {
 					updater.Item.IsFavorite = sidecar.IsFavorite;
 					updater.Item.Rating = sidecar.Rating;
 					updater.Item.PublishedYear = sidecar.PublishedYear;
-					updater.Item.Version = sidecar.Version;
+					updater.Item.SetVersionPreUpdate( sidecar.Version );
 					
 					album.IsFavorite = sidecar.IsFavorite;
 					album.Rating = sidecar.Rating;

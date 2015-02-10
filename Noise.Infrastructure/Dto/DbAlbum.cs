@@ -70,6 +70,10 @@ namespace Noise.Infrastructure.Dto {
 			Version++;
 		}
 
+		public void SetVersionPreUpdate( long version ) {
+			Version = version - 1;
+		}
+
 		public override string ToString() {
 			return( string.Format( "Album \"{0}\", Id:{1}, Artist:{2}", Name, DbId, Artist ));
 		}

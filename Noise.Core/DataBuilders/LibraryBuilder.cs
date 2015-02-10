@@ -120,12 +120,12 @@ namespace Noise.Core.DataBuilders {
 				mStorageFileProcessor.Stop();
 			}
 
-			if( mSidecarBuilder != null ) {
-				mSidecarBuilder.Stop();
-			}
-
 			if( mSummaryBuilder != null ) {
 				mSummaryBuilder.Stop();
+			}
+
+			if( mSidecarBuilder != null ) {
+				mSidecarBuilder.Stop();
 			}
 
 			WaitForExplorer();
@@ -164,11 +164,11 @@ namespace Noise.Core.DataBuilders {
 					}
 
 					if( mContinueExploring ) {
-						mSidecarBuilder.Process();
+						mSummaryBuilder.BuildSummaryData( results );
 					}
 
 					if( mContinueExploring ) {
-						mSummaryBuilder.BuildSummaryData( results );
+						mSidecarBuilder.Process();
 					}
 
 					mLog.BuildingCompleted( results );

@@ -69,9 +69,17 @@ namespace Noise.Core.Sidecars {
 									if(( storageSidecar != null ) &&
 									   ( storageSidecar.Version > dbSideCar.Version )) {
 										mSidecarCreator.UpdateAlbum( album, storageSidecar );
-										mSidecarWriter.UpdateSidecarVersion( album, dbSideCar );
 
-										mLog.LogUpdatedAlbum( dbSideCar, album );
+										// Get the updated album version.
+										album = mAlbumProvider.GetAlbum( album.DbId );
+										if( album != null ) {
+											mSidecarWriter.UpdateSidecarVersion( album, dbSideCar );
+
+											mLog.LogUpdatedAlbum( dbSideCar, album );
+										}
+										else {
+											mLog.LogUnknownAlbumSidecar( dbSideCar );
+										}
 									}
 								}
 							}
