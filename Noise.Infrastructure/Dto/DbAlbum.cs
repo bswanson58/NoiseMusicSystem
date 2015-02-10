@@ -32,6 +32,7 @@ namespace Noise.Infrastructure.Dto {
 			ExternalGenre = Constants.cDatabaseNullOid;
 			UserGenre = Constants.cDatabaseNullOid;
 			DateAddedTicks = DateTime.Now.Ticks;
+			PublishedYear = Constants.cUnknownYear;
 		}
 
 		public long Genre {
