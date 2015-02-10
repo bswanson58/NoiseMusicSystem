@@ -22,7 +22,7 @@ namespace Noise.AppSupport.Preferences {
 			var retValue = default( T );
 
 			try {
-				mWriter.Read<T>( Path.Combine( mEnvironment.PreferencesDirectory(), typeof( T ).Name ));
+				retValue = mWriter.Read<T>( Path.Combine( mEnvironment.PreferencesDirectory(), typeof( T ).Name ));
 			}
 			catch( Exception ex ) {
 				mLog.Value.LogException( string.Format( "Loading Preferences failed for '{0}'", typeof( T ).Name ), ex );

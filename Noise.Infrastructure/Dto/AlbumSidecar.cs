@@ -7,6 +7,8 @@ namespace Noise.Infrastructure.Dto {
 		public Int32	PublishedYear { get; set; }
 		public long		Version { get; set; }
 
+		public AlbumSidecar() { } // For Json deserialization.
+
 		public AlbumSidecar( DbAlbum album ) {
 			IsFavorite = album.IsFavorite;
 			Rating = album.Rating;
