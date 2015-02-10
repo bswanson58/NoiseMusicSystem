@@ -49,37 +49,32 @@ namespace Noise.Core.Sidecars {
 				try {
 					if( mSidecarWriter.IsStorageAvailable( album )) {
 						var dbSideCar = mSidecarProvider.GetSidecarForAlbum( album );
+						var albumSidecar = mSidecarCreator.CreateFromAlbum( album );
 
-						if( dbSideCar == null ) {
-							mSidecarProvider.Add( new StorageSidecar( Constants.AlbumSidecarName, album ) { Status = SidecarStatus.Read });
-						}
-						else {
-							var albumSidecar = mSidecarCreator.CreateFromAlbum( album );
+						if(( dbSideCar != null ) &&
+						   ( albumSidecar != null )) {
+							if( albumSidecar.Version > dbSideCar.Version ) {
+								mSidecarWriter.WriteSidecar( album, albumSidecar );
+								mSidecarWriter.UpdateSidecarVersion( album, dbSideCar );
 
-							if( albumSidecar != null ) {
-								if( albumSidecar.Version > dbSideCar.Version ) {
-									mSidecarWriter.WriteSidecar( album, albumSidecar );
-									mSidecarWriter.UpdateSidecarVersion( album, dbSideCar );
+								mLog.LogUpdatedSidecar( dbSideCar, album );
+							}
+							else {
+								var storageSidecar = mSidecarWriter.ReadSidecar( album );
 
-									mLog.LogUpdatedSidecar( dbSideCar, album );
-								}
-								else {
-									var storageSidecar = mSidecarWriter.ReadSidecar( album );
+								if(( storageSidecar != null ) &&
+									( storageSidecar.Version > dbSideCar.Version )) {
+									mSidecarCreator.UpdateAlbum( album, storageSidecar );
 
-									if(( storageSidecar != null ) &&
-									   ( storageSidecar.Version > dbSideCar.Version )) {
-										mSidecarCreator.UpdateAlbum( album, storageSidecar );
+									// Get the updated album version.
+									album = mAlbumProvider.GetAlbum( album.DbId );
+									if( album != null ) {
+										mSidecarWriter.UpdateSidecarVersion( album, dbSideCar );
 
-										// Get the updated album version.
-										album = mAlbumProvider.GetAlbum( album.DbId );
-										if( album != null ) {
-											mSidecarWriter.UpdateSidecarVersion( album, dbSideCar );
-
-											mLog.LogUpdatedAlbum( dbSideCar, album );
-										}
-										else {
-											mLog.LogUnknownAlbumSidecar( dbSideCar );
-										}
+										mLog.LogUpdatedAlbum( dbSideCar, album );
+									}
+									else {
+										mLog.LogUnknownAlbumSidecar( dbSideCar );
 									}
 								}
 							}

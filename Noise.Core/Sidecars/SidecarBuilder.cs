@@ -1,5 +1,6 @@
 ﻿using System;
 using Noise.Core.Logging;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -48,6 +49,14 @@ namespace Noise.Core.Sidecars {
 
 						if( mStopBuilding ) {
 							break;
+						}
+					}
+				}
+
+				using( var albumList = mAlbumProvider.GetAllAlbums()) {
+					foreach( var album in albumList.List ) {
+						if( mSidecarProvider.GetSidecarForAlbum( album ) == null ) {
+							mSidecarProvider.Add( new StorageSidecar( Constants.AlbumSidecarName, album ) { Status = SidecarStatus.Read });
 						}
 					}
 				}
