@@ -245,6 +245,7 @@
     <Compile Include="FileProcessor\MusicMetadataPipelineStep.cs" />
     <Compile Include="FileProcessor\MusicProvidersPipelineStep.cs" />
     <Compile Include="FileProcessor\PipelineContext.cs" />
+    <Compile Include="FileProcessor\SidecarProvidersPipelineStep.cs" />
     <Compile Include="FileProcessor\StorageFileProcessor.cs" />
     <Compile Include="FileProcessor\UpdateArtworkPipelineStep.cs" />
     <Compile Include="FileProcessor\UpdateInfoPipelineStep.cs" />

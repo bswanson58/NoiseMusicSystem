@@ -1,6 +1,4 @@
-﻿using System;
-using CuttingEdge.Conditions;
-using Noise.Infrastructure;
+﻿using CuttingEdge.Conditions;
 
 namespace Noise.Core.FileProcessor {
 	public enum ePipelineStep {
