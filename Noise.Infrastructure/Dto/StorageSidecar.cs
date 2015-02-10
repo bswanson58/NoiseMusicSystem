@@ -26,6 +26,7 @@ namespace Noise.Infrastructure.Dto {
 		this() {
 			Name = fileName;
 			AlbumId = album.DbId;
+			Version = album.Version;
 		}
 
 		public StorageSidecar( string fileName, DbArtist artist ) :

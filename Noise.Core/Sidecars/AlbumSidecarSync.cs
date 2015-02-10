@@ -48,26 +48,31 @@ namespace Noise.Core.Sidecars {
 			if( album != null ) {
 				try {
 					if( mSidecarWriter.IsStorageAvailable( album )) {
-						var albumSidecar = mSidecarCreator.CreateFromAlbum( album );
 						var dbSideCar = mSidecarProvider.GetSidecarForAlbum( album );
 
-						if(( albumSidecar != null ) &&
-						   ( dbSideCar != null )) {
-							if( albumSidecar.Version > dbSideCar.Version ) {
-								mSidecarWriter.WriteSidecar( album, albumSidecar );
-								mSidecarWriter.UpdateSidecarVersion( album, dbSideCar );
+						if( dbSideCar == null ) {
+							mSidecarProvider.Add( new StorageSidecar( Constants.AlbumSidecarName, album ) { Status = SidecarStatus.Read });
+						}
+						else {
+							var albumSidecar = mSidecarCreator.CreateFromAlbum( album );
 
-								mLog.LogUpdatedSidecar( dbSideCar, album );
-							}
-							else {
-								var storageSidecar = mSidecarWriter.ReadSidecar( album );
-
-								if(( storageSidecar != null ) &&
-								   ( storageSidecar.Version > dbSideCar.Version )) {
-									mSidecarCreator.UpdateAlbum( album, storageSidecar );
+							if( albumSidecar != null ) {
+								if( albumSidecar.Version > dbSideCar.Version ) {
+									mSidecarWriter.WriteSidecar( album, albumSidecar );
 									mSidecarWriter.UpdateSidecarVersion( album, dbSideCar );
 
-									mLog.LogUpdatedAlbum( dbSideCar, album );
+									mLog.LogUpdatedSidecar( dbSideCar, album );
+								}
+								else {
+									var storageSidecar = mSidecarWriter.ReadSidecar( album );
+
+									if(( storageSidecar != null ) &&
+									   ( storageSidecar.Version > dbSideCar.Version )) {
+										mSidecarCreator.UpdateAlbum( album, storageSidecar );
+										mSidecarWriter.UpdateSidecarVersion( album, dbSideCar );
+
+										mLog.LogUpdatedAlbum( dbSideCar, album );
+									}
 								}
 							}
 						}
@@ -94,10 +99,11 @@ namespace Noise.Core.Sidecars {
 			if( mAlbumEnum != null ) {
 				if(!mAlbumEnum.MoveNext()) {
 					InitializeLists();
+
+					mAlbumEnum.MoveNext();
 				}
-				else {
-					retValue = mAlbumProvider.GetAlbum( mAlbumEnum.Current );
-				}
+
+				retValue = mAlbumProvider.GetAlbum( mAlbumEnum.Current );
 			}
 
 			return( retValue );
@@ -107,8 +113,8 @@ namespace Noise.Core.Sidecars {
 			try {
 				mAlbumList.Clear();
 
-				using( var artistList = mAlbumProvider.GetAllAlbums()) {
-					mAlbumList.AddRange( from DbArtist artist in artistList.List select artist.DbId );
+				using( var albumList = mAlbumProvider.GetAllAlbums()) {
+					mAlbumList.AddRange( from DbAlbum album in albumList.List select album.DbId );
 				}
 				mAlbumEnum = mAlbumList.GetEnumerator();
 			}
