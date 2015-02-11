@@ -39,8 +39,16 @@ namespace Noise.Core.Logging {
 			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Updated {0} for {1}", sidecar, album ));
 		}
 
-		public void LogUpdatedAlbum( DbAlbum dbAlbum, ScAlbum scAlbum ) {
+		public void LogUpdated( DbArtist dbArtist, ScArtist scArtist ) {
+			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Updated {0} from {1}", dbArtist, scArtist ));
+		}
+
+		public void LogUpdated( DbAlbum dbAlbum, ScAlbum scAlbum ) {
 			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Updated {0} from {1}", dbAlbum, scAlbum ));
+		}
+
+		public void LogUnknownArtistSidecar( StorageSidecar sidecar ) {
+			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Unable to locate artist for {0}", sidecar ));
 		}
 
 		public void LogUnknownAlbumSidecar( StorageSidecar sidecar ) {

@@ -49,7 +49,7 @@ namespace Noise.Core.Sidecars {
 				try {
 					if( mSidecarWriter.IsStorageAvailable( album )) {
 						var dbSideCar = mSidecarProvider.GetSidecarForAlbum( album );
-						var albumSidecar = mSidecarCreator.CreateFromAlbum( album );
+						var albumSidecar = mSidecarCreator.CreateFrom( album );
 
 						if(( dbSideCar != null ) &&
 						   ( albumSidecar != null )) {
@@ -62,7 +62,7 @@ namespace Noise.Core.Sidecars {
 
 								if(( storageSidecar != null ) &&
 								   ( storageSidecar.Version > dbSideCar.Version )) {
-									mSidecarCreator.UpdateAlbum( album, storageSidecar );
+									mSidecarCreator.Update( album, storageSidecar );
 
 									// Get the updated album version.
 									album = mAlbumProvider.GetAlbum( album.DbId );

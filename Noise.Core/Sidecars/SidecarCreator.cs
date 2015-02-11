@@ -7,16 +7,22 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.Sidecars {
 	internal class SidecarCreator {
 		private readonly ILogLibraryBuildingSidecars	mLog;
+		private readonly IArtistProvider				mArtistProvider;
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly ITrackProvider					mTrackProvider;
 
-		public SidecarCreator( IAlbumProvider albumProvider, ITrackProvider trackProvider, ILogLibraryBuildingSidecars log ) {
+		public SidecarCreator( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ILogLibraryBuildingSidecars log ) {
 			mLog = log;
+			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 		}
 
-		public ScAlbum CreateFromAlbum( DbAlbum album ) {
+		public ScArtist CreateFrom( DbArtist artist ) {
+			return( new ScArtist( artist ));
+		}
+
+		public ScAlbum CreateFrom( DbAlbum album ) {
 			var retValue = new ScAlbum( album );
 
 			using( var trackList = mTrackProvider.GetTrackList( album ) ) {
@@ -28,7 +34,21 @@ namespace Noise.Core.Sidecars {
 			return( retValue );
 		}
 
-		public void UpdateAlbum( DbAlbum album, ScAlbum sidecar ) {
+		public void Update( DbArtist artist, ScArtist sidecar ) {
+			using( var updater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
+				if( updater.Item != null ) {
+					sidecar.UpdateArtist( updater.Item );
+					updater.Item.SetVersionPreUpdate( sidecar.Version );
+
+					updater.Update();
+
+					sidecar.UpdateArtist( artist );
+					mLog.LogUpdated( artist, sidecar );
+				}
+			}
+		}
+
+		public void Update( DbAlbum album, ScAlbum sidecar ) {
 			using( var updater = mAlbumProvider.GetAlbumForUpdate( album.DbId )) {
 				if( updater.Item != null ) {
 					sidecar.UpdateAlbum( updater.Item );
@@ -37,7 +57,7 @@ namespace Noise.Core.Sidecars {
 					updater.Update();
 
 					sidecar.UpdateAlbum( album );
-					mLog.LogUpdatedAlbum( album, sidecar );
+					mLog.LogUpdated( album, sidecar );
 				}
 			}
 

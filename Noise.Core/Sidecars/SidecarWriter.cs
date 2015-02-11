@@ -36,6 +36,26 @@ namespace Noise.Core.Sidecars {
 			}
 		}
 
+		public ScArtist ReadSidecar( DbArtist artist ) {
+			var retValue = default( ScArtist );
+			var sidecarPath = Path.Combine( mStorageSupport.GetArtistPath( artist.DbId ), Constants.ArtistSidecarName );
+
+			try {
+				if( File.Exists( sidecarPath )) {
+					retValue = mWriter.Read<ScArtist>( sidecarPath );
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( string.Format( "Reading sidecar from \"{0}\"", sidecarPath ), ex );
+			}
+
+			if( Equals( retValue, default( ScArtist ))) {
+				retValue = new ScArtist( artist );
+			}
+
+			return( retValue );
+		}
+
 		public ScAlbum ReadSidecar( DbAlbum forAlbum ) {
 			var retValue = default( ScAlbum );
 			var sidecarPath = Path.Combine( mStorageSupport.GetAlbumPath( forAlbum.DbId ), Constants.AlbumSidecarName );

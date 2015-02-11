@@ -35,6 +35,14 @@ namespace Noise.Infrastructure.Dto {
 			ArtistId = artist.DbId;
 		}
 
+		public bool IsArtistSidecar {
+			get {  return( ArtistId != Constants.cDatabaseNullOid ); }
+		}
+
+		public bool IsAlbumSidecar {
+			get {  return( AlbumId != Constants.cDatabaseNullOid ); }
+		}
+
 		public override string ToString() {
 			return( string.Format( "Sidecar \"{0}\", Version:{1} Artist: {2}, Album: {3}", Name, Version, ArtistId, AlbumId ));
 		}

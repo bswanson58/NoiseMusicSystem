@@ -10,7 +10,10 @@ namespace Noise.Core.Logging {
 		void	LogLoadedSidecar( StorageSidecar sidecar, DbAlbum album );
 		void	LogWriteSidecar( ScAlbum scAlbum );
 		void	LogUpdatedSidecar( StorageSidecar sidecar, DbAlbum album );
-		void	LogUpdatedAlbum( DbAlbum dbAlbum, ScAlbum scAlbum );
+		void	LogUpdated( DbAlbum dbAlbum, ScAlbum scAlbum );
+		void	LogUpdated( DbArtist dbArtist, ScArtist scArtist );
+
+		void	LogUnknownArtistSidecar( StorageSidecar sidecar );
 		void	LogUnknownAlbumSidecar( StorageSidecar sidecar );
 		void	LogUnknownTrack( DbAlbum album, ScTrack track );
 
