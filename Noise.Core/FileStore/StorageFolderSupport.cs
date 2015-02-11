@@ -71,8 +71,22 @@ namespace Noise.Core.FileStore {
 			return( retValue );
 		}
 
+		public string GetArtistPath( long artistId ) {
+			var retValue = string.Empty;
+
+			throw new NotSupportedException( "GetArtistPath needs help" );
+
+			try {
+			}
+			catch( Exception exception ) {
+				mLog.LogException( "Building artist path", exception );
+			}
+
+			return( retValue );
+		}
+
 		public string GetAlbumPath( long albumId ) {
-			var retValue = "";
+			var retValue = string.Empty;
 
 			try {
 				using( var albumTracks = mTrackProvider.GetTrackList( albumId )) {
