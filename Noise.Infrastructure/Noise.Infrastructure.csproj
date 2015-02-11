@@ -207,6 +207,7 @@
     <Compile Include="Dto\PlayQueueTrack.cs" />
     <Compile Include="Dto\ReplayGainFile.cs" />
     <Compile Include="Dto\RootFolder.cs" />
+    <Compile Include="Dto\ScArtist.cs" />
     <Compile Include="Dto\ScTrack.cs" />
     <Compile Include="Dto\SearchResultItem.cs" />
     <Compile Include="Dto\SetAlbumCoverCommandArgs.cs" />

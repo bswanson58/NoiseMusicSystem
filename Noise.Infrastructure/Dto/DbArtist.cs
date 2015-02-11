@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure.Dto {
 	[DebuggerDisplay("Artist = {Name}")]
-	public class DbArtist : DbBase, IUserSettings {
+	public class DbArtist : DbBase, IUserSettings, IVersionable {
 		public string			Name { get; set; }
 		public long				CalculatedGenre { get; set; }
 		public long				ExternalGenre { get; set; }
@@ -20,6 +21,7 @@ namespace Noise.Infrastructure.Dto {
 		public long				LastPlayedTicks { get; private set; }
 		public Int32			ViewCount { get; private set; }
 		public long				LastViewedTicks { get; private set; }
+		public long				Version { get; set; }
 
 		public DbArtist() {
 			Name = "";
@@ -61,6 +63,14 @@ namespace Noise.Infrastructure.Dto {
 		public void UpdateLastViewed() {
 			ViewCount++;
 			LastViewedTicks = DateTime.Now.Ticks;
+		}
+
+		public void UpdateVersion() {
+			Version++;
+		}
+
+		public void SetVersionPreUpdate( long version ) {
+			Version = version - 1;
 		}
 
 		public override string ToString() {
