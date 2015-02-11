@@ -31,16 +31,24 @@ namespace Noise.Core.Logging {
 			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Loaded {0} for {1}", sidecar, album ));
 		}
 
+		public void LogWriteSidecar( ScAlbum scAlbum ) {
+			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Writing {0}", scAlbum ));
+		}
+
 		public void LogUpdatedSidecar( StorageSidecar sidecar, DbAlbum album ) {
 			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Updated {0} for {1}", sidecar, album ));
 		}
 
-		public void LogUpdatedAlbum( StorageSidecar sidecar, DbAlbum album ) {
-			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Updated {0} from {1}", album, sidecar ));
+		public void LogUpdatedAlbum( DbAlbum dbAlbum, ScAlbum scAlbum ) {
+			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Updated {0} from {1}", dbAlbum, scAlbum ));
 		}
 
 		public void LogUnknownAlbumSidecar( StorageSidecar sidecar ) {
 			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Unable to locate album for {0}", sidecar ));
+		}
+
+		public void LogUnknownTrack( DbAlbum album, ScTrack track ) {
+			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Unable to locate {0} in {1}", track, album ));
 		}
 
 		public void LogException( string message, Exception exception, string callerName = "" ) {

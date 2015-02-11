@@ -56,22 +56,18 @@ namespace Noise.Core.Sidecars {
 							if( albumSidecar.Version > dbSideCar.Version ) {
 								mSidecarWriter.WriteSidecar( album, albumSidecar );
 								mSidecarWriter.UpdateSidecarVersion( album, dbSideCar );
-
-								mLog.LogUpdatedSidecar( dbSideCar, album );
 							}
 							else {
 								var storageSidecar = mSidecarWriter.ReadSidecar( album );
 
 								if(( storageSidecar != null ) &&
-									( storageSidecar.Version > dbSideCar.Version )) {
+								   ( storageSidecar.Version > dbSideCar.Version )) {
 									mSidecarCreator.UpdateAlbum( album, storageSidecar );
 
 									// Get the updated album version.
 									album = mAlbumProvider.GetAlbum( album.DbId );
 									if( album != null ) {
 										mSidecarWriter.UpdateSidecarVersion( album, dbSideCar );
-
-										mLog.LogUpdatedAlbum( dbSideCar, album );
 									}
 									else {
 										mLog.LogUnknownAlbumSidecar( dbSideCar );
@@ -82,7 +78,7 @@ namespace Noise.Core.Sidecars {
 					}
 				}
 				catch( Exception exception ) {
-					mLog.LogException( string.Format( "Syncing album sidecar for {0}", album ), exception );
+					mLog.LogException( string.Format( "Syncing sidecar for {0}", album ), exception );
 				}
 			}
 		}
@@ -122,7 +118,7 @@ namespace Noise.Core.Sidecars {
 				mAlbumEnum = mAlbumList.GetEnumerator();
 			}
 			catch( Exception ex ) {
-				mLog.LogException( "Initialize album list", ex );
+				mLog.LogException( "Initializing album list", ex );
 			}
 		}
 	}

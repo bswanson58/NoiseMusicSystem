@@ -36,7 +36,7 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public override string ToString() {
-			return( string.Format( "Sidecar \"{0}\", Artist: {1}, Album: {2}", Name, ArtistId, AlbumId ));
+			return( string.Format( "Sidecar \"{0}\", Version:{1} Artist: {2}, Album: {3}", Name, Version, ArtistId, AlbumId ));
 		}
 	}
 }
