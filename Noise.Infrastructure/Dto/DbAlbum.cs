@@ -24,6 +24,8 @@ namespace Noise.Infrastructure.Dto {
 		public long				DateAddedTicks { get; private set; }
 		public Int32			PlayCount { get; private set;}
 		public long				LastPlayedTicks { get; private set; }
+		public float			ReplayGainAlbumGain { get; set; }
+		public float			ReplayGainAlbumPeak { get; set; }
 		public long				Version { get; set; }
 
 		public DbAlbum() {

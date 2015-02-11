@@ -1,17 +1,18 @@
 ﻿using System;
 using System.IO;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Sidecars {
 	internal class SidecarWriter {
-		private readonly IFileWriter			mWriter;
-		private readonly INoiseLog				mLog;
-		private readonly ISidecarProvider		mSidecarProvider;
-		private readonly IStorageFolderSupport	mStorageSupport;
+		private readonly IFileWriter					mWriter;
+		private readonly ILogLibraryBuildingSidecars	mLog;
+		private readonly ISidecarProvider				mSidecarProvider;
+		private readonly IStorageFolderSupport			mStorageSupport;
 
-		public SidecarWriter( IFileWriter writer, ISidecarProvider sidecarProvider, IStorageFolderSupport storageFolderSupport, INoiseLog log ) {
+		public SidecarWriter( IFileWriter writer, ISidecarProvider sidecarProvider, IStorageFolderSupport storageFolderSupport, ILogLibraryBuildingSidecars log ) {
 			mLog = log;
 			mWriter = writer;
 			mSidecarProvider = sidecarProvider;
@@ -22,32 +23,34 @@ namespace Noise.Core.Sidecars {
 			return( Directory.Exists( mStorageSupport.GetAlbumPath( album.DbId )));
 		} 
 
-		public void WriteSidecar( DbAlbum forAlbum, AlbumSidecar sidecar ) {
+		public void WriteSidecar( DbAlbum forAlbum, ScAlbum sidecar ) {
 			var sidecarPath = Path.Combine( mStorageSupport.GetAlbumPath( forAlbum.DbId ), Constants.AlbumSidecarName );
 
 			try {
 				mWriter.Write( sidecarPath, sidecar );
+
+				mLog.LogWriteSidecar( sidecar );
 			}
 			catch( Exception exception ) {
-				mLog.LogException( string.Format( "Writing sidecar to \"{0}\"", sidecarPath ), exception );
+				mLog.LogException( string.Format( "Writing {0} to \"{1}\"", sidecar, sidecarPath ), exception );
 			}
 		}
 
-		public AlbumSidecar ReadSidecar( DbAlbum forAlbum ) {
-			var retValue = default( AlbumSidecar );
+		public ScAlbum ReadSidecar( DbAlbum forAlbum ) {
+			var retValue = default( ScAlbum );
 			var sidecarPath = Path.Combine( mStorageSupport.GetAlbumPath( forAlbum.DbId ), Constants.AlbumSidecarName );
 
 			try {
 				if( File.Exists( sidecarPath )) {
-					retValue = mWriter.Read<AlbumSidecar>( sidecarPath );
+					retValue = mWriter.Read<ScAlbum>( sidecarPath );
 				}
 			}
 			catch( Exception ex ) {
 				mLog.LogException( string.Format( "Reading sidecar from \"{0}\"", sidecarPath ), ex );
 			}
 
-			if( Equals( retValue, default( AlbumSidecar ))) {
-				retValue = new AlbumSidecar( forAlbum );
+			if( Equals( retValue, default( ScAlbum ))) {
+				retValue = new ScAlbum( forAlbum );
 			}
 
 			return( retValue );
@@ -60,6 +63,8 @@ namespace Noise.Core.Sidecars {
 					sidecar.Version = album.Version;
 
 					updater.Update();
+
+					mLog.LogUpdatedSidecar( sidecar, album );
 				}
 			}
 		}

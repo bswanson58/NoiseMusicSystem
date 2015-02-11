@@ -165,7 +165,7 @@
     <Compile Include="Configuration\AudioPreferences.cs" />
     <Compile Include="Configuration\NoiseCorePreferences.cs" />
     <Compile Include="Configuration\UserInterfacePreferences.cs" />
-    <Compile Include="Dto\AlbumSidecar.cs" />
+    <Compile Include="Dto\ScAlbum.cs" />
     <Compile Include="Dto\AlbumSupportInfo.cs" />
     <Compile Include="Dto\Artwork.cs" />
     <Compile Include="Dto\AudioChannelStatus.cs" />
@@ -207,6 +207,7 @@
     <Compile Include="Dto\PlayQueueTrack.cs" />
     <Compile Include="Dto\ReplayGainFile.cs" />
     <Compile Include="Dto\RootFolder.cs" />
+    <Compile Include="Dto\ScTrack.cs" />
     <Compile Include="Dto\SearchResultItem.cs" />
     <Compile Include="Dto\SetAlbumCoverCommandArgs.cs" />
     <Compile Include="Dto\SetFavoriteCommandArgs.cs" />
