@@ -7,6 +7,7 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.Sidecars {
 	internal class SidecarBuilder : ISidecarBuilder {
 		private readonly ILogLibraryBuildingSidecars	mLog;
+		private readonly ILogUserStatus					mUserLog;
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly ISidecarProvider				mSidecarProvider;
 		private readonly SidecarCreator					mSidecarCreator;
@@ -14,8 +15,9 @@ namespace Noise.Core.Sidecars {
 		private bool									mStopBuilding;
 
 		public SidecarBuilder( ISidecarProvider sidecarProvider, IAlbumProvider albumProvider, SidecarCreator sidecarCreator, SidecarWriter sidecarWriter,
-							   ILogLibraryBuildingSidecars log ) {
+							   ILogLibraryBuildingSidecars log, LogUserStatus userLog ) {
 			mLog = log;
+			mUserLog = userLog;
 			mAlbumProvider = albumProvider;
 			mSidecarProvider = sidecarProvider;
 			mSidecarCreator = sidecarCreator;
@@ -25,6 +27,7 @@ namespace Noise.Core.Sidecars {
 		public void Process() {
 			mStopBuilding = false;
 			mLog.LogSidecarBuildingStarted();
+			mUserLog.StartedSidecarBuilding();
 
 			try {
 				using( var unreadList = mSidecarProvider.GetUnreadSidecars()) {

@@ -39,6 +39,10 @@ namespace Noise.Core.Logging {
 			LogStatus( "Starting library update." );
 		}
 
+		public void StartedSidecarBuilding() {
+			LogStatus( "Started sidecar update." );
+		}
+
 		public void CompletedLibraryUpdate() {
 			LogStatus( "Completed library update." );
 		}
