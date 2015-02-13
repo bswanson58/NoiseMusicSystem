@@ -310,6 +310,7 @@
     <Compile Include="PlayStrategies\PlayStrategyTwoFers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sidecars\AlbumSidecarSync.cs" />
+    <Compile Include="Sidecars\ArtistSidecarSync.cs" />
     <Compile Include="Sidecars\ISidecarBuilder.cs" />
     <Compile Include="Sidecars\SidecarBuilder.cs" />
     <Compile Include="Sidecars\SidecarCreator.cs" />

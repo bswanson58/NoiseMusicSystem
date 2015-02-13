@@ -87,7 +87,8 @@ namespace Noise.Core {
 			mContainer.RegisterType<IBackgroundTask, SearchBuilder>( "SearchBuilder" );
 			mContainer.RegisterType<IBackgroundTask, MetadataUpdateTask>( "MetadataUpdate" );
 			mContainer.RegisterType<IBackgroundTask, ReplayGainTask>( "ReplayGainTask" );
-			mContainer.RegisterType<IBackgroundTask, AlbumSidecarSync>( "SidecarSyncTask" );
+			mContainer.RegisterType<IBackgroundTask, AlbumSidecarSync>( "AlbumSidecarSyncTask" );
+			mContainer.RegisterType<IBackgroundTask, ArtistSidecarSync>( "ArtistSidecarSyncTask" );
 			mContainer.RegisterType<IEnumerable<IBackgroundTask>, IBackgroundTask[]>();
 
 			mContainer.RegisterType<IPlayStrategy, PlayStrategyFeaturedArtists>( ePlayStrategy.FeaturedArtists.ToString());

@@ -15,9 +15,9 @@ namespace Noise.Core.FileProcessor {
 			Condition.Requires( context ).IsNotNull();
 			Condition.Requires( context.StorageFile ).IsNotNull();
 
-			if(( context.Artist != null ) &&
-			   ( context.Album != null )) {
-				mSidecarProvider.Add( new StorageSidecar( context.StorageFile.Name, context.Album ));
+			if( context.Artist != null ) {
+				mSidecarProvider.Add( context.Album != null ? new StorageSidecar( context.StorageFile.Name, context.Album )
+															: new StorageSidecar( context.StorageFile.Name, context.Artist ) );
 			}
 		}
 	}

@@ -23,8 +23,25 @@ namespace Noise.Core.Sidecars {
 			return( Directory.Exists( mStorageSupport.GetAlbumPath( album.DbId )));
 		} 
 
+		public bool IsStorageAvailable( DbArtist artist ) {
+			return( Directory.Exists( mStorageSupport.GetArtistPath( artist.DbId )));
+		} 
+
 		public void WriteSidecar( DbAlbum forAlbum, ScAlbum sidecar ) {
 			var sidecarPath = Path.Combine( mStorageSupport.GetAlbumPath( forAlbum.DbId ), Constants.AlbumSidecarName );
+
+			try {
+				mWriter.Write( sidecarPath, sidecar );
+
+				mLog.LogWriteSidecar( sidecar );
+			}
+			catch( Exception exception ) {
+				mLog.LogException( string.Format( "Writing {0} to \"{1}\"", sidecar, sidecarPath ), exception );
+			}
+		}
+
+		public void WriteSidecar( DbArtist forArtist, ScArtist sidecar ) {
+			var sidecarPath = Path.Combine( mStorageSupport.GetArtistPath( forArtist.DbId ), Constants.ArtistSidecarName );
 
 			try {
 				mWriter.Write( sidecarPath, sidecar );
@@ -85,6 +102,19 @@ namespace Noise.Core.Sidecars {
 					updater.Update();
 
 					mLog.LogUpdatedSidecar( sidecar, album );
+				}
+			}
+		}
+
+		public void UpdateSidecarVersion( DbArtist artist, StorageSidecar sidecar ) {
+			using( var updater = mSidecarProvider.GetSidecarForUpdate( sidecar.DbId )) {
+				if( updater.Item != null ) {
+					updater.Item.Version = artist.Version;
+					sidecar.Version = artist.Version;
+
+					updater.Update();
+
+					mLog.LogUpdatedSidecar( sidecar, artist );
 				}
 			}
 		}

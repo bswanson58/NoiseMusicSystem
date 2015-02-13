@@ -35,8 +35,16 @@ namespace Noise.Core.Logging {
 			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Writing {0}", scAlbum ));
 		}
 
+		public void LogWriteSidecar( ScArtist scArtist ) {
+			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Writing {0}", scArtist ));
+		}
+
 		public void LogUpdatedSidecar( StorageSidecar sidecar, DbAlbum album ) {
 			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Updated {0} for {1}", sidecar, album ));
+		}
+
+		public void LogUpdatedSidecar( StorageSidecar sidecar, DbArtist artist ) {
+			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Updated {0} for {1}", sidecar, artist ));
 		}
 
 		public void LogUpdated( DbArtist dbArtist, ScArtist scArtist ) {
