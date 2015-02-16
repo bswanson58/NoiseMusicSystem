@@ -62,6 +62,7 @@ namespace Noise.UI {
 				.ForMember( dest => dest.Rating, opt => opt.Ignore())
 				.ForMember( dest => dest.UserGenre, opt => opt.Ignore())
 				.ForMember( dest => dest.UserRating, opt => opt.Ignore())
+				.ForMember( dest => dest.Version, opt => opt.Ignore())
 				.ForMember( dest => dest.ViewCount, opt => opt.Ignore());
 		}
 	}
