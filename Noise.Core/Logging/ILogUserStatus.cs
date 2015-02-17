@@ -12,6 +12,7 @@ namespace Noise.Core.Logging {
 		void	StartedLibraryCleaning();
 		void	StartedLibraryClassification();
 		void	StartedLibrarySummary();
+		void	StartedSidecarBuilding();
 		void	CompletedLibraryUpdate();
 
 		void	BuiltDecadeTags( DbArtist artist );

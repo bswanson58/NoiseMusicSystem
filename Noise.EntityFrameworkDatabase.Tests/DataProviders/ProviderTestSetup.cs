@@ -44,7 +44,7 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 			BlobStorageResolver = new BlobStorageResolver();
 			BlobStorageManager = new BlobStorageManager( new Mock<INoiseLog>().Object );
 			BlobStorageManager.SetResolver( BlobStorageResolver );
-			ContextProvider = new ContextProvider( LibraryConfiguration.Object, BlobStorageManager, BlobStorageResolver );
+			ContextProvider = new ContextProvider( LibraryConfiguration.Object, DummyLog.Object, BlobStorageManager, BlobStorageResolver );
 
 			var manager = new EntityFrameworkDatabaseManager( EventAggregator.Object, LibraryConfiguration.Object,
 															  InitializeStrategy, DatabaseInfo.Object, ContextProvider );

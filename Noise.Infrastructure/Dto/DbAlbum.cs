@@ -1,10 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure.Dto {
 	[DebuggerDisplay("Album = {Name}")]
-	public class DbAlbum : DbBase, IUserSettings {
+	public class DbAlbum : DbBase, IUserSettings, IVersionable {
 		public string			Name { get; set; }
 		public long				Artist { get; set; }
 		public Int16			UserRating { get; set; }
@@ -23,6 +24,9 @@ namespace Noise.Infrastructure.Dto {
 		public long				DateAddedTicks { get; private set; }
 		public Int32			PlayCount { get; private set;}
 		public long				LastPlayedTicks { get; private set; }
+		public float			ReplayGainAlbumGain { get; set; }
+		public float			ReplayGainAlbumPeak { get; set; }
+		public long				Version { get; set; }
 
 		public DbAlbum() {
 			Name = "";
@@ -30,6 +34,7 @@ namespace Noise.Infrastructure.Dto {
 			ExternalGenre = Constants.cDatabaseNullOid;
 			UserGenre = Constants.cDatabaseNullOid;
 			DateAddedTicks = DateTime.Now.Ticks;
+			PublishedYear = Constants.cUnknownYear;
 		}
 
 		public long Genre {
@@ -64,8 +69,16 @@ namespace Noise.Infrastructure.Dto {
 			}
 		}
 
+		public void UpdateVersion() {
+			Version++;
+		}
+
+		public void SetVersionPreUpdate( long version ) {
+			Version = version - 1;
+		}
+
 		public override string ToString() {
 			return( string.Format( "Album \"{0}\", Id:{1}, Artist:{2}", Name, DbId, Artist ));
 		}
-}
+	}
 }

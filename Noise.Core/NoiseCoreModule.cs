@@ -14,17 +14,21 @@ using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
 using Noise.Core.PlayStrategies;
 using Noise.Core.PlaySupport;
+using Noise.Core.Sidecars;
 using Noise.Core.Support;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using ReusableBits.Threading;
 
 namespace Noise.Core {
 	public class NoiseCoreModule : IModule {
-		private readonly IUnityContainer    mContainer;
+		private readonly IUnityContainer		mContainer;
+		private readonly NoiseCorePreferences	mPreferences;
 
-		public NoiseCoreModule( IUnityContainer container ) {
+		public NoiseCoreModule( IUnityContainer container, NoiseCorePreferences preferences ) {
 			mContainer = container;
+			mPreferences = preferences;
 		}
 
 		public void Initialize() {
@@ -45,6 +49,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IPlayController, PlayController>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IScrobbler, PlayScrobbler>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ISearchProvider, LuceneSearchProvider>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ISidecarBuilder, SidecarBuilder>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ITagManager, TagManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<DatabaseStatistics, DatabaseStatistics>();
@@ -54,6 +59,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IPipelineStep, CompletedPipelineStep>( "CompletedPipelineStep" );
 			mContainer.RegisterType<IPipelineStep, MusicProvidersPipelineStep>( "MusicProvidersPipelineStep" );
 			mContainer.RegisterType<IPipelineStep, ArtworkProvidersPipelineStep>( "ArtworkProvidersPipelineStep" );
+			mContainer.RegisterType<IPipelineStep, SidecarProvidersPipelineStep>( "SidecarProvidersPipelineStep" );
 			mContainer.RegisterType<IPipelineStep, InfoProvidersPipelineStep>( "InfoProvidersPipelineStep" );
 			mContainer.RegisterType<IPipelineStep, DetermineArtistPipelineStep>( "DetermineAtistPipelineStep" );
 			mContainer.RegisterType<IPipelineStep, DetermineAlbumPipelineStep>( "DetermineAlbumPipelineStep" );
@@ -63,12 +69,12 @@ namespace Noise.Core {
 			mContainer.RegisterType<IPipelineStep, UpdateMusicPipelineStep>( "UpdateMusicPipelineStep" );
 			mContainer.RegisterType<IPipelineStep, UpdateArtworkPipelineStep>( "UpdateArtworkPipelineStep" );
 			mContainer.RegisterType<IPipelineStep, UpdateInfoPipelineStep>( "UpdateInfoPipelineStep" );
+			mContainer.RegisterType<IPipelineStep, UpdateSidecarPipelineStep>( "UpdateSidecarPipelineStep" );
 			mContainer.RegisterType<IPipelineStep, UpdateUndeterminedPipelineStep>( "UpdateUndeterminedPipelineStep" );
 			mContainer.RegisterType<IEnumerable<IPipelineStep>, IPipelineStep[]>();
 
 			mContainer.RegisterType<IRequireConstruction, BackgroundTaskManager>( "BackgroundTaskManager", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRequireConstruction, DataUpdates>( "DataUpdates", new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IRequireConstruction, FileUpdates>( "FileUpdates", new HierarchicalLifetimeManager());
 //			mContainer.RegisterType<IRequireConstruction, LyricsSearcher>( "LyricsSearcher", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IEnumerable<IRequireConstruction>, IRequireConstruction[]>();
 
@@ -84,6 +90,12 @@ namespace Noise.Core {
 			mContainer.RegisterType<IBackgroundTask, SearchBuilder>( "SearchBuilder" );
 			mContainer.RegisterType<IBackgroundTask, MetadataUpdateTask>( "MetadataUpdate" );
 			mContainer.RegisterType<IBackgroundTask, ReplayGainTask>( "ReplayGainTask" );
+			if( mPreferences.MaintainArtistSidecars ) {
+				mContainer.RegisterType<IBackgroundTask, ArtistSidecarSync>( "ArtistSidecarSyncTask" );
+			}
+			if( mPreferences.MaintainAlbumSidecars ) {
+				mContainer.RegisterType<IBackgroundTask, AlbumSidecarSync>( "AlbumSidecarSyncTask" );
+			}
 			mContainer.RegisterType<IEnumerable<IBackgroundTask>, IBackgroundTask[]>();
 
 			mContainer.RegisterType<IPlayStrategy, PlayStrategyFeaturedArtists>( ePlayStrategy.FeaturedArtists.ToString());
@@ -115,6 +127,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<ILogLibraryBuildingDiscovery, LogLibraryBuildingDiscovery>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogLibraryCleaning, LogLibraryCleaning>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogLibraryClassification, LogLibraryClassification>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ILogLibraryBuildingSidecars, LogLibraryBuildingSidecars>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogLibraryBuildingSummary, LogLibraryBuildingSummary>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogPlayQueue, LogPlayQueue>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogPlayState, LogPlayState>( new HierarchicalLifetimeManager());

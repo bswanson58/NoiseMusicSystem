@@ -9,11 +9,13 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	public class ContextProvider : IContextProvider {
 		public	const string					cInvalidContextName = "_invalid_context_";
 
+		private readonly INoiseLog				mLog;
 		private readonly IBlobStorageManager	mBlobStorageManager;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 
-		public ContextProvider( ILibraryConfiguration libraryConfiguration,
+		public ContextProvider( ILibraryConfiguration libraryConfiguration, INoiseLog log,
 								IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver ) {
+			mLog = log;
 			mLibraryConfiguration = libraryConfiguration;
 			mBlobStorageManager = blobStorageManager;
 			mBlobStorageManager.SetResolver( storageResolver );
@@ -41,7 +43,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "ContextProvider:CreateContext", ex );
+					mLog.LogException( "Creating database context", ex );
 				}
 			}
 

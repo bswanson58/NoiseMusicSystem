@@ -92,14 +92,18 @@ namespace Noise.Core.DataBuilders {
 													}
 												}
 
-												if( years.Count == 0 ) {
-													albumUpdater.Item.SetPublishedYear( Constants.cUnknownYear );
-												}
-												else if( years.Count == 1 ) {
-													albumUpdater.Item.SetPublishedYear( years.First());
-												}
-												else {
-													albumUpdater.Item.SetPublishedYear( Constants.cVariousYears );
+												// Don't overwrite the published year if it is already set.
+												if( albumUpdater.Item.PublishedYear != Constants.cUnknownYear ) {
+													if( years.Count == 0 ) {
+														albumUpdater.Item.SetPublishedYear( Constants.cUnknownYear );
+													}
+													else if( years.Count == 1 ) {
+														albumUpdater.Item.SetPublishedYear( years.First());
+													}
+													else {
+														albumUpdater.Item.SetPublishedYear( Constants.cVariousYears );
+													}
+
 												}
 
 												albumUpdater.Item.CalculatedGenre = DetermineTopGenre( trackGenre );

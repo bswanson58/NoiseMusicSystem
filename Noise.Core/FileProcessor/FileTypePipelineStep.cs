@@ -35,6 +35,10 @@ namespace Noise.Core.FileProcessor {
 					context.Trigger = ePipelineTrigger.FileTypeIsInfo;
 					break;
 
+				case eFileType.Sidecar:
+					context.Trigger = ePipelineTrigger.FileTypeIsSidecar;
+					break;
+
 				default:
 					context.Trigger = ePipelineTrigger.FileTypeIsUnknown;
 					break;

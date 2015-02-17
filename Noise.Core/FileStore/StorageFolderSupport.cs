@@ -14,14 +14,16 @@ namespace Noise.Core.FileStore {
 		private readonly IRootFolderProvider	mRootFolderProvider;
 		private readonly IStorageFolderProvider	mStorageFolderProvider;
 		private readonly IStorageFileProvider	mStorageFileProvider;
+		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
 
-		public StorageFolderSupport( IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider,
-									 IStorageFileProvider storageFileProvider, ITrackProvider trackProvider, INoiseLog log ) {
+		public StorageFolderSupport( IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider,
+									 IAlbumProvider albumProvider, ITrackProvider trackProvider, INoiseLog log ) {
 			mLog = log;
 			mRootFolderProvider = rootFolderProvider;
 			mStorageFolderProvider = storageFolderProvider;
 			mStorageFileProvider = storageFileProvider;
+			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 		}
 
@@ -71,8 +73,29 @@ namespace Noise.Core.FileStore {
 			return( retValue );
 		}
 
+		public string GetArtistPath( long artistId ) {
+			var retValue = string.Empty;
+
+			try {
+				using( var albumList = mAlbumProvider.GetAlbumList( artistId )) {
+					var album = albumList.List.FirstOrDefault();
+
+					if( album != null ) {
+						var path = GetAlbumPath( album.DbId );
+
+						retValue = Path.GetDirectoryName( path );
+					}
+				}
+			}
+			catch( Exception exception ) {
+				mLog.LogException( "Building artist path", exception );
+			}
+
+			return( retValue );
+		}
+
 		public string GetAlbumPath( long albumId ) {
-			var retValue = "";
+			var retValue = string.Empty;
 
 			try {
 				using( var albumTracks = mTrackProvider.GetTrackList( albumId )) {
@@ -207,6 +230,10 @@ namespace Noise.Core.FileStore {
 					case ".txt":
 					case ".nfo":
 						retValue = eFileType.Text;
+						break;
+
+					case Constants.SidecarExtension:
+						retValue = eFileType.Sidecar;
 						break;
 				}
 			}

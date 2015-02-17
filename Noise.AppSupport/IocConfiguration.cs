@@ -7,8 +7,10 @@ using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Noise.AppSupport.Logging;
 using Noise.AppSupport.Preferences;
+using Noise.AppSupport.Support;
 using Noise.AudioSupport;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Logging;
 using Noise.Infrastructure.RemoteHost;
@@ -39,8 +41,13 @@ namespace Noise.AppSupport {
 
 		public bool InitializeIoc( ApplicationUsage appUsage ) {
 			mContainer.RegisterType<IPlatformLog, SeriLogAdapter>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<IFileWriter, JsonObjectWriter>( new ContainerControlledLifetimeManager());
 			mContainer.RegisterType<INoiseLog, Logging.NoiseLogger>( new ContainerControlledLifetimeManager());
 			mContainer.RegisterType<IIoc, IocProvider>( new ContainerControlledLifetimeManager());
+
+			mContainer.RegisterType<AudioPreferences>( new InjectionFactory( PreferencesFactory<AudioPreferences>.CreatePreferences ));
+			mContainer.RegisterType<NoiseCorePreferences>( new InjectionFactory( PreferencesFactory<NoiseCorePreferences>.CreatePreferences ));
+			mContainer.RegisterType<UserInterfacePreferences>( new InjectionFactory( PreferencesFactory<UserInterfacePreferences>.CreatePreferences ));
 
 #if DEBUG
 			const int portOffset = 10;
@@ -58,11 +65,11 @@ namespace Noise.AppSupport {
 					break;
 
 				case ApplicationUsage.Server:
-					InitializeUnity();
-
 					mContainer.RegisterInstance( new RemoteHostConfiguration( 73 + portOffset, "Noise Headless Service" ));
 					mContainer.RegisterInstance<INoiseEnvironment>( new NoiseEnvironment( Constants.HeadlessPreferencesDirectory ));
 					mContainer.RegisterType<IPreferences, HeadlessPreferences>( new HierarchicalLifetimeManager());
+
+					InitializeUnity();
 
 					break;
 

@@ -35,6 +35,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			modelBuilder.Configurations.Add( new RootFolderConfiguration());
 			modelBuilder.Configurations.Add( new StorageFileConfiguration());
 			modelBuilder.Configurations.Add( new StorageFolderConfiguration());
+			modelBuilder.Configurations.Add( new StorageSidecarConfiguration());
 			modelBuilder.Configurations.Add( new TagConfiguration());
 			modelBuilder.Configurations.Add( new TagAssociationConfiguration());
 			modelBuilder.Configurations.Add( new TextInfoConfiguration());
@@ -161,6 +162,11 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	internal class StorageFolderConfiguration : BaseEntityConfiguration<StorageFolder> {
 		internal StorageFolderConfiguration() :
 			base( "Folders" ) { }
+	}
+
+	internal class StorageSidecarConfiguration : BaseEntityConfiguration<StorageSidecar> {
+		internal StorageSidecarConfiguration() :
+			base( "Sidecars" ) { }
 	}
 
 	internal class FolderStrategyConfiguration : BaseEntityConfiguration<FolderStrategy> {

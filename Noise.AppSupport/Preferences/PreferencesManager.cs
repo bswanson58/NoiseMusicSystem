@@ -1,15 +1,16 @@
 ﻿using System;
 using System.IO;
-using Newtonsoft.Json;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.AppSupport.Preferences {
 	public class PreferencesManager : IPreferences {
 		private readonly INoiseEnvironment	mEnvironment;
+		private readonly IFileWriter		mWriter;
 		private readonly Lazy<INoiseLog>	mLog;
 
-		public PreferencesManager( INoiseEnvironment noiseEnvironment, Lazy<INoiseLog> log   ) {
+		public PreferencesManager( INoiseEnvironment noiseEnvironment, IFileWriter writer, Lazy<INoiseLog> log   ) {
 			mEnvironment = noiseEnvironment;
+			mWriter = writer;
 			mLog = log;
 		}
 
@@ -19,14 +20,9 @@ namespace Noise.AppSupport.Preferences {
 
 		public T Load<T>() where T : new() {
 			var retValue = default( T );
-			var preferencesFile = Path.Combine( mEnvironment.PreferencesDirectory(), typeof( T ).Name );
 
 			try {
-				if( File.Exists( preferencesFile )) {
-					using( var file = File.OpenText( preferencesFile )) {
-						retValue = JsonConvert.DeserializeObject<T>( file.ReadToEnd());
-					}
-				}
+				retValue = mWriter.Read<T>( Path.Combine( mEnvironment.PreferencesDirectory(), typeof( T ).Name ));
 			}
 			catch( Exception ex ) {
 				mLog.Value.LogException( string.Format( "Loading Preferences failed for '{0}'", typeof( T ).Name ), ex );
@@ -42,13 +38,7 @@ namespace Noise.AppSupport.Preferences {
 		public void Save<T>( T preferences ) {
 			if(!Equals( preferences, null )) {
 				try {
-					var preferencesFile = Path.Combine( mEnvironment.PreferencesDirectory(), typeof( T ).Name );
-					var	json = JsonConvert.SerializeObject( preferences, Formatting.Indented );
-
-					using( var file = File.CreateText( preferencesFile )) {
-						file.Write( json );
-						file.Close();
-					}
+					mWriter.Write( Path.Combine( mEnvironment.PreferencesDirectory(), typeof( T ).Name ), preferences );
 				}
 				catch( Exception ex ) {
 					mLog.Value.LogException( string.Format( "Saving Preferences failed for '{0}'", typeof( T ).Name ), ex );
