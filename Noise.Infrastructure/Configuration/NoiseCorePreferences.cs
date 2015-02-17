@@ -1,5 +1,4 @@
-﻿using System;
-using Noise.Infrastructure.Interfaces;
+﻿using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure.Configuration {
 	public class NoiseCorePreferences {
@@ -9,6 +8,9 @@ namespace Noise.Infrastructure.Configuration {
 		public	bool					HasNetworkAccess { get; set; }
 		public	long					LastLibraryUsed { get; set; }
 		public	bool					LoadLastLibraryOnStartup { get; set; }
+
+		public bool						MaintainArtistSidecars { get; set; }
+		public bool						MaintainAlbumSidecars { get; set; }
 
 		public	ePlayExhaustedStrategy	PlayExhaustedStrategy { get; set; }
 		public	string					PlayExhaustedParameters { get; set; }
@@ -23,6 +25,9 @@ namespace Noise.Infrastructure.Configuration {
 
 			HasNetworkAccess = true;
 			LoadLastLibraryOnStartup = true;
+
+			MaintainArtistSidecars = false;
+			MaintainAlbumSidecars = true;
 		}
 	}
 }

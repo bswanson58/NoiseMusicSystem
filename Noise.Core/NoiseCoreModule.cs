@@ -16,16 +16,19 @@ using Noise.Core.PlayStrategies;
 using Noise.Core.PlaySupport;
 using Noise.Core.Sidecars;
 using Noise.Core.Support;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using ReusableBits.Threading;
 
 namespace Noise.Core {
 	public class NoiseCoreModule : IModule {
-		private readonly IUnityContainer    mContainer;
+		private readonly IUnityContainer		mContainer;
+		private readonly NoiseCorePreferences	mPreferences;
 
-		public NoiseCoreModule( IUnityContainer container ) {
+		public NoiseCoreModule( IUnityContainer container, NoiseCorePreferences preferences ) {
 			mContainer = container;
+			mPreferences = preferences;
 		}
 
 		public void Initialize() {
@@ -87,8 +90,12 @@ namespace Noise.Core {
 			mContainer.RegisterType<IBackgroundTask, SearchBuilder>( "SearchBuilder" );
 			mContainer.RegisterType<IBackgroundTask, MetadataUpdateTask>( "MetadataUpdate" );
 			mContainer.RegisterType<IBackgroundTask, ReplayGainTask>( "ReplayGainTask" );
-			mContainer.RegisterType<IBackgroundTask, AlbumSidecarSync>( "AlbumSidecarSyncTask" );
-			mContainer.RegisterType<IBackgroundTask, ArtistSidecarSync>( "ArtistSidecarSyncTask" );
+			if( mPreferences.MaintainArtistSidecars ) {
+				mContainer.RegisterType<IBackgroundTask, ArtistSidecarSync>( "ArtistSidecarSyncTask" );
+			}
+			if( mPreferences.MaintainAlbumSidecars ) {
+				mContainer.RegisterType<IBackgroundTask, AlbumSidecarSync>( "AlbumSidecarSyncTask" );
+			}
 			mContainer.RegisterType<IEnumerable<IBackgroundTask>, IBackgroundTask[]>();
 
 			mContainer.RegisterType<IPlayStrategy, PlayStrategyFeaturedArtists>( ePlayStrategy.FeaturedArtists.ToString());
