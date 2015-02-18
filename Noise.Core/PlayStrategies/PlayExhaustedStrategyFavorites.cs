@@ -23,8 +23,6 @@ namespace Noise.Core.PlayStrategies {
 					foreach( var track in list.List ) {
 						if(!PlayQueueMgr.IsTrackQueued( track )) {
 							mTrackList.Add( track );
-
-							LogTrackAdded( track );
 						}
 					}
 				}
