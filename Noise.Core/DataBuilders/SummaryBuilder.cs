@@ -93,7 +93,7 @@ namespace Noise.Core.DataBuilders {
 												}
 
 												// Don't overwrite the published year if it is already set.
-												if( albumUpdater.Item.PublishedYear != Constants.cUnknownYear ) {
+												if( albumUpdater.Item.PublishedYear == Constants.cUnknownYear ) {
 													if( years.Count == 0 ) {
 														albumUpdater.Item.SetPublishedYear( Constants.cUnknownYear );
 													}
