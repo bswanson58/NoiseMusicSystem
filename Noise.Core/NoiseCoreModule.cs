@@ -123,6 +123,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IRandomTrackSelector, RandomTrackSelector>();
 			mContainer.RegisterType<IEnumerable<IPlayQueueSupport>, IPlayQueueSupport[]>();
 
+			mContainer.RegisterType<ILogBackgroundTasks, LogBackgroundTasks>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogLibraryBuilding, LogLibraryBuilding>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogLibraryBuildingDiscovery, LogLibraryBuildingDiscovery>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILogLibraryCleaning, LogLibraryCleaning>( new HierarchicalLifetimeManager());

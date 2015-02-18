@@ -14,7 +14,7 @@ namespace Noise.Core.BackgroundTasks {
 	public class ReplayGainTask : IBackgroundTask,
 								  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator		mEventAggregator;
-		private readonly INoiseLog				mLog;
+		private readonly ILogBackgroundTasks	mLog;
 		private readonly ILogUserStatus			mUserStatus;
 		private readonly IReplayGainScanner		mReplayGainScanner;
 		private readonly IArtistProvider		mArtistProvider;
@@ -28,7 +28,7 @@ namespace Noise.Core.BackgroundTasks {
 		private bool							mDatabaseOpen;
 
 		public ReplayGainTask( IEventAggregator eventAggregator, IReplayGainScanner scanner,
-							   IPreferences preferences, ILogUserStatus userStatus, INoiseLog log,
+							   IPreferences preferences, ILogUserStatus userStatus, ILogBackgroundTasks log,
 							   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
 							   IStorageFileProvider storageFileProvider, IStorageFolderSupport storageFolderSupport ) {
 			mEventAggregator = eventAggregator;
@@ -108,10 +108,10 @@ namespace Noise.Core.BackgroundTasks {
 									if( ExecuteScanner( album, trackList )) {
 										mUserStatus.CalculatedReplayGain( artist, album );
 
-										mLog.LogMessage( string.Format( "ReplayGainScanner updated: {0} {1} - Album gain: {2:N2}", artist, album, mReplayGainScanner.AlbumGain ));
+										mLog.ReplayGainScanCompleted( artist, album );
 									}
 									else {
-										mLog.LogMessage( string.Format( "ReplayGainScanned failed for: {0} {1}", artist, album ));
+										mLog.ReplayGainScanFailed( artist, album );
 									}
 
 									spinCount = 0;

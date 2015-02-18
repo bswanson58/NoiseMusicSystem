@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Caliburn.Micro;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using ReusableBits.Threading;
@@ -15,49 +17,60 @@ namespace Noise.Core.BackgroundTasks {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IRecurringTaskScheduler		mJobScheduler;
 		private readonly IEnumerator<IBackgroundTask>	mTaskEnum;
+		private readonly ILogBackgroundTasks			mLog;
 		private bool									mRunningTaskFlag;
-		private bool									mUpdateInProgress;
 
 		private readonly IEnumerable<IBackgroundTask>	mBackgroundTasks;
 
 		public BackgroundTaskManager( IEventAggregator eventAggregator,
-									  IRecurringTaskScheduler recurringTaskScheduler, IEnumerable<IBackgroundTask> backgroundTasks ) {
+									  IRecurringTaskScheduler recurringTaskScheduler, IEnumerable<IBackgroundTask> backgroundTasks, ILogBackgroundTasks log ) {
 			mBackgroundTasks = backgroundTasks;
 			mEventAggregator = eventAggregator;
 			mJobScheduler = recurringTaskScheduler;
+			mLog = log;
 
 			mTaskEnum = mBackgroundTasks.GetEnumerator();
 			mEventAggregator.Subscribe( this );
-
-			NoiseLogger.Current.LogInfo( "BackgroundTaskManager created" );
 		}
 
 		public void Handle( Events.DatabaseOpened args ) {
+			StartTasks();
+		}
+
+		public void Handle( Events.DatabaseClosing args ) {
+			StopTasks();
+		}
+
+		public void Handle( Events.LibraryUpdateStarted eventArgs ) {
+			StopTasks();
+		}
+
+		public void Handle( Events.LibraryUpdateCompleted eventArgs ) {
+			StartTasks();
+		}
+
+		private void StartTasks() {
+			StopTasks();
+
 			var backgroundJob = new RecurringTask( Execute, cBackgroundTaskName );
 
 			backgroundJob.TaskSchedule.StartAt( RecurringInterval.FromSeconds( 15 ))
 									  .Delay( RecurringInterval.FromSeconds( 15 ));
 			mJobScheduler.AddRecurringTask( backgroundJob );
+
+			mLog.LogTasksStarting( mBackgroundTasks.Count());
 		}
 
-		public void Handle( Events.DatabaseClosing args ) {
+		private void StopTasks() {
 			mJobScheduler.RemoveTask( cBackgroundTaskName );
-			mUpdateInProgress = false;
-		}
 
-		public void Handle( Events.LibraryUpdateStarted eventArgs ) {
-			mUpdateInProgress = true;
-		}
-
-		public void Handle( Events.LibraryUpdateCompleted eventArgs ) {
-			mUpdateInProgress = false;
+			mLog.LogTasksStopping();
 		}
 
 		public void Execute( RecurringTask job ) {
 			IBackgroundTask	task = null;
 
-			if((!mUpdateInProgress ) &&
-			   (!mRunningTaskFlag )) {
+			if(!mRunningTaskFlag ) {
 				try {
 					mRunningTaskFlag = true;
 
@@ -74,7 +87,7 @@ namespace Noise.Core.BackgroundTasks {
 						taskId = task.TaskId;
 					}
 
-					NoiseLogger.Current.LogException( string.Format( "Exception - BackgroundTaskMgr '{0}'", taskId ), ex );
+					mLog.LogException( string.Format( "Executing background task '{0}'", taskId ), ex );
 				}
 				finally {
 					mRunningTaskFlag = false;

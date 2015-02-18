@@ -14,6 +14,7 @@ namespace Noise.Core.BackgroundTasks {
 	public class DiscographyExplorer : IBackgroundTask,
 									   IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly ILogBackgroundTasks	mLog;
 		private readonly ILogUserStatus			mUserStatus;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
@@ -22,8 +23,9 @@ namespace Noise.Core.BackgroundTasks {
 		private IEnumerator<long>				mArtistEnum;
 
 		public DiscographyExplorer( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider,
-									IMetadataManager metadataManager, ILogUserStatus userStatus ) {
+									IMetadataManager metadataManager, ILogBackgroundTasks log, ILogUserStatus userStatus ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mUserStatus = userStatus;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -54,7 +56,7 @@ namespace Noise.Core.BackgroundTasks {
 				mArtistEnum = mArtistList.GetEnumerator();
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "DiscographyExplorer:InitializeLists", ex );
+				mLog.LogException( "Building artist list", ex );
 			}
 		}
 
@@ -77,6 +79,8 @@ namespace Noise.Core.BackgroundTasks {
 					var artist = mArtistProvider.GetArtist( artistId );
 
 					if( artist != null ) {
+						mLog.StartingDiscographyExploring( artist );
+
 						var discography = mMetadataManager.GetArtistDiscography( artist.Name );
 						var uniqueList = ReduceList( discography.Discography );
 
@@ -97,19 +101,19 @@ namespace Noise.Core.BackgroundTasks {
 
 										updater.Update();
 
+										mLog.UpdatedFromDiscography( dbAlbum );
 										mUserStatus.UpdatedAlbumPublishedYear( updater.Item );
 									}
 								}
-
-								NoiseLogger.Current.LogMessage( string.Format( "Updating Published year from discography: album '{0}', year: '{1}'",
-																				dbAlbum.Name, release.Year ));
 							}
 						}
+
+						mLog.CompletedDiscographyExploring( artist );
 					}
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "DiscographyExplorer:Task ", ex );
+				mLog.LogException( "Scanning discography", ex );
 			}
 		}
 
