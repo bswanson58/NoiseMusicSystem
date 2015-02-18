@@ -76,8 +76,7 @@ namespace Noise.Desktop {
 			mStartupManager = Container.Resolve<StartupManager>();
 			mStartupManager.Initialize();
 
-			mLog.LogMessage( "==============================" );
-			mLog.LogMessage( "Noise.Desktop System starting." );
+			mLog.LogMessage( "+++ Noise.Desktop System starting. +++" );
 
 			StartNoise( instanceContainer );
 		}
@@ -108,7 +107,7 @@ namespace Noise.Desktop {
 
 			Settings.Default.Save();
 
-			mLog.LogMessage( "### Noise.Desktop System stopped." );
+			mLog.LogMessage( "### Noise.Desktop System stopped. ###" );
 		}
 	}
 }
