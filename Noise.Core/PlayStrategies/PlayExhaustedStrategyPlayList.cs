@@ -1,4 +1,5 @@
 ﻿using CuttingEdge.Conditions;
+using Noise.Core.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -7,8 +8,8 @@ namespace Noise.Core.PlayStrategies {
 		private readonly	IPlayListProvider	mPlayListProvider;
 		private	readonly	ITrackProvider		mTrackProvider;
 
-		public PlayExhaustedStrategyPlayList( IPlayListProvider playListProvider, ITrackProvider trackProvider ) :
-			base( ePlayExhaustedStrategy.PlayList, "Play Playlist...", "Play the tracks from the chosen play list.", "Play List" ) {
+		public PlayExhaustedStrategyPlayList( IPlayListProvider playListProvider, ITrackProvider trackProvider, ILogPlayStrategy log ) :
+			base( ePlayExhaustedStrategy.PlayList, "Play Playlist...", "Play the tracks from the chosen play list.", "Play List", log ) {
 			mPlayListProvider = playListProvider;
 			mTrackProvider = trackProvider;
 		}
@@ -38,6 +39,7 @@ namespace Noise.Core.PlayStrategies {
 						if(!PlayQueueMgr.IsTrackQueued( track )) {
 							PlayQueueMgr.Add( track );
 
+							LogTrackAdded( track );
 							retValue = true;
 						}
 					}

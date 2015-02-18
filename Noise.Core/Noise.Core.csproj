@@ -265,6 +265,7 @@
     <Compile Include="Logging\ILogLibraryConfiguration.cs" />
     <Compile Include="Logging\ILogPlayQueue.cs" />
     <Compile Include="Logging\ILogPlayState.cs" />
+    <Compile Include="Logging\ILogPlayStrategy.cs" />
     <Compile Include="Logging\ILogUserStatus.cs" />
     <Compile Include="Logging\LogLibraryBuilding.cs" />
     <Compile Include="Logging\LogLibraryBuildingDiscovery.cs" />
@@ -275,6 +276,7 @@
     <Compile Include="Logging\LogLibraryConfiguration.cs" />
     <Compile Include="Logging\LogPlayQueue.cs" />
     <Compile Include="Logging\LogPlayState.cs" />
+    <Compile Include="Logging\LogPlayStrategy.cs" />
     <Compile Include="Logging\LogUserStatus.cs" />
     <Compile Include="PlayQueue\RandomTrackSelector.cs" />
     <Compile Include="PlayStrategies\PlayStrategyBase.cs" />

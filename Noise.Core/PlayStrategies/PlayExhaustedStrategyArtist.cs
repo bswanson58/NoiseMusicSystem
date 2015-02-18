@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Noise.Core.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -11,8 +12,8 @@ namespace Noise.Core.PlayStrategies {
 		private long						mArtistId;
 		private string						mArtistName;
 
-		public PlayExhaustedStrategyArtist( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
-			base( ePlayExhaustedStrategy.PlayArtist, "Play Artist...", "Play random tracks from the selected artist.", "Artist", albumProvider, trackProvider ) {
+		public PlayExhaustedStrategyArtist( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ILogPlayStrategy log ) :
+			base( ePlayExhaustedStrategy.PlayArtist, "Play Artist...", "Play random tracks from the selected artist.", "Artist", albumProvider, trackProvider, log ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 

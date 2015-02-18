@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -13,8 +14,8 @@ namespace Noise.Core.PlayStrategies {
 
 		protected abstract void FillTrackList( long itemId );
 
-		protected PlayExhaustedListBase( ePlayExhaustedStrategy strategy, string displayName, string strategyDescription ) :
-			base( strategy, displayName, strategyDescription ) {
+		protected PlayExhaustedListBase( ePlayExhaustedStrategy strategy, string displayName, string strategyDescription, ILogPlayStrategy log ) :
+			base( strategy, displayName, strategyDescription, log ) {
 			mTrackList = new List<DbTrack>();
 		}
 

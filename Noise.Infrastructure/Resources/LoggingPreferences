@@ -33,6 +33,7 @@
 
   "PlayQueueAddRemove":  false,
   "PlayQueueStatusChange":  false,
+  "PlayQueueStrategy":  false,
 
   "PlayState":  false
 }

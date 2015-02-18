@@ -34,6 +34,7 @@
 
 		public bool PlayQueueAddRemove { get; set; }
 		public bool PlayQueueStatusChange { get; set; }
+		public bool PlayQueueStrategy { get; set; }
 
 		public bool PlayState { get; set; }
 
