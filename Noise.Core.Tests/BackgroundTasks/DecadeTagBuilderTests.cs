@@ -14,8 +14,8 @@ namespace Noise.Core.Tests.BackgroundTasks {
 		public class TestDecadeTagBuilder : DecadeTagBuilder {
 		public TestDecadeTagBuilder( IEventAggregator eventAggregator, ITagAssociationProvider tagAssociationProvider,
 									 ITimestampProvider timestampProvider, IArtistProvider artistProvider,
-									 IAlbumProvider albumProvider, ITagManager tagManager, ILogUserStatus userStatus ) :
-			base( eventAggregator, tagAssociationProvider, timestampProvider, artistProvider, albumProvider, tagManager, userStatus ) { }
+									 IAlbumProvider albumProvider, ITagManager tagManager, ILogBackgroundTasks log, ILogUserStatus userStatus ) :
+			base( eventAggregator, tagAssociationProvider, timestampProvider, artistProvider, albumProvider, tagManager, log, userStatus ) { }
 		}
 
 		[TestFixture]
@@ -27,6 +27,7 @@ namespace Noise.Core.Tests.BackgroundTasks {
 			private Mock<ITagManager>				mTagManager;
 			private Mock<ITimestampProvider>		mTimestampProvider;
 			private Mock<ILogUserStatus>			mLogUserStatus;
+			private Mock<ILogBackgroundTasks>		mLog;
 
 			private void CreateMocks() {
 				mEventAggregator = new Mock<IEventAggregator>();
@@ -36,11 +37,12 @@ namespace Noise.Core.Tests.BackgroundTasks {
 				mTagManager = new Mock<ITagManager>();
 				mTimestampProvider = new Mock<ITimestampProvider>();
 				mLogUserStatus = new Mock<ILogUserStatus>();
+				mLog = new Mock<ILogBackgroundTasks>();
 			}
 
 			private DecadeTagBuilder CreateSut() {
 				return( new DecadeTagBuilder( mEventAggregator.Object, mTagAssociationProvider.Object, mTimestampProvider.Object,
-											  mArtistProvider.Object, mAlbumProvider.Object, mTagManager.Object, mLogUserStatus.Object ));
+											  mArtistProvider.Object, mAlbumProvider.Object, mTagManager.Object, mLog.Object, mLogUserStatus.Object ));
 			}
 
 			private void SetupTimestampProvider( long withTime ) {
