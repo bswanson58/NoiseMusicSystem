@@ -29,7 +29,7 @@ namespace Noise.Infrastructure.Dto {
 		public long				Version { get; set; }
 
 		public DbAlbum() {
-			Name = "";
+			Name = string.Empty;
 			CalculatedGenre = Constants.cDatabaseNullOid;
 			ExternalGenre = Constants.cDatabaseNullOid;
 			UserGenre = Constants.cDatabaseNullOid;
