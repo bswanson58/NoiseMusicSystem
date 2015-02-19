@@ -7,7 +7,7 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	public class EntityFrameworkDatabaseManager : IDatabaseManager,
 												  IHandle<Events.LibraryChanged> {
-		private const Int16		cDatabaseVersion = 4;
+		private const Int16								cDatabaseVersion = 5;
 
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IDatabaseInitializeStrategy	mInitializeStrategy;
