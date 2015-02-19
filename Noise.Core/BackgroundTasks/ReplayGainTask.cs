@@ -159,6 +159,7 @@ namespace Noise.Core.BackgroundTasks {
 					using( var updater = mAlbumProvider.GetAlbumForUpdate( album.DbId ) ) {
 						if( updater.Item != null ) {
 							updater.Item.ReplayGainAlbumGain = (float)albumGain;
+							album.ReplayGainAlbumGain = (float)albumGain;
 
 							updater.Update();
 						}
