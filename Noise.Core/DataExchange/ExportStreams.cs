@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Xml.Linq;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataExchange {
 	public class ExportStreams : BaseExporter {
 		private readonly IInternetStreamProvider	mStreamProvider;
+		private readonly INoiseLog					mLog;
 
-		public ExportStreams( IInternetStreamProvider streamProvider ) {
+		public ExportStreams( IInternetStreamProvider streamProvider, INoiseLog log ) {
 			mStreamProvider = streamProvider;
+			mLog = log;
 		}
 
 		public override bool Export( string fileName ) {
@@ -38,7 +39,7 @@ namespace Noise.Core.DataExchange {
 					doc.Save( fileName );
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Exception - ExportStreams.Export: ", ex );
+					mLog.LogException( "Exporting streams", ex );
 
 					retValue = false;
 				}

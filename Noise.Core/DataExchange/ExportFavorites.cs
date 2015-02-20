@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Xml.Linq;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataExchange {
@@ -8,11 +7,13 @@ namespace Noise.Core.DataExchange {
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
+		private readonly INoiseLog			mLog;
 
-		public ExportFavorites( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+		public ExportFavorites( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, INoiseLog log ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
+			mLog = log;
 		}
 
 		public override bool Export( string fileName ) {
@@ -63,7 +64,7 @@ namespace Noise.Core.DataExchange {
 					doc.Save( fileName );
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Exception - ExportFavorites.Export: ", ex );
+					mLog.LogException( "Exporting favorites", ex );
 
 					retValue = false;
 				}
