@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using CuttingEdge.Conditions;
 using Lastfm.Services;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Dto;
@@ -40,17 +39,18 @@ namespace Noise.Metadata.MetadataProviders {
 
 	internal class LastFmProvider : IArtistMetadataProvider {
 		private readonly ILicenseManager	mLicenseManager;
+		private readonly INoiseLog			mLog;
 		private readonly bool				mHasNetworkAccess;
 		private Session						mSession;
 		private IDocumentStore				mDocumentStore;
 
 		public	string		ProviderKey { get; private set; }
 
-		public LastFmProvider( IPreferences preferences, ILicenseManager licenseManager ) {
+		public LastFmProvider( ILicenseManager licenseManager, NoiseCorePreferences preferences, INoiseLog log ) {
 			mLicenseManager = licenseManager;
+			mLog = log;
 
-			var prefs = preferences.Load<NoiseCorePreferences>();
-			mHasNetworkAccess = prefs.HasNetworkAccess;
+			mHasNetworkAccess = preferences.HasNetworkAccess;
 
 			ProviderKey = "LastFm";
 		}
@@ -70,7 +70,7 @@ namespace Noise.Metadata.MetadataProviders {
 				Condition.Requires( mSession ).IsNotNull();
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "LastFmProvider:Initialize", ex );
+				mLog.LogException( "Creating session", ex );
 			}
 		}
 
@@ -130,12 +130,12 @@ namespace Noise.Metadata.MetadataProviders {
 							session.Store( artistBio );
 							session.SaveChanges();
 
-							NoiseLogger.Current.LogMessage( "LastFm updated artist: {0}", artistName );
+							mLog.LogMessage( string.Format( "LastFm updated artist: {0}", artistName ));
 						}
 					}
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( string.Format( "LastFm update failed for artist: {0}", artistName ), ex );
+					mLog.LogException( string.Format( "LastFm update failed for artist: {0}", artistName ), ex );
 				}
 			}
 		}
@@ -151,7 +151,7 @@ namespace Noise.Metadata.MetadataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( string.Format( "LastFmProvider:ImageDownload for artist: {0} ", artistName ), ex );
+				mLog.LogException( string.Format( "ImageDownload failed for artist: {0} ", artistName ), ex );
 			}
 		}
 	}
