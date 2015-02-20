@@ -50,7 +50,8 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		private void StartTasks() {
-			StopTasks();
+			// Stop any existing task.
+			mJobScheduler.RemoveTask( cBackgroundTaskName );
 
 			var backgroundJob = new RecurringTask( Execute, cBackgroundTaskName );
 
