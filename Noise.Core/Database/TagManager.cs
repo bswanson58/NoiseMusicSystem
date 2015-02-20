@@ -11,6 +11,7 @@ namespace Noise.Core.Database {
 	public class TagManager : ITagManager,
 							  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator			mEventAggregator;
+		private readonly INoiseLog					mLog;
 		private readonly IGenreProvider				mGenreProvider;
 		private readonly ITagProvider				mTagProvider;
 		private readonly ITagAssociationProvider	mTagAssociationProvider;
@@ -18,8 +19,9 @@ namespace Noise.Core.Database {
 		private readonly List<DbDecadeTag>			mDecadeList;
 
 		public TagManager( IEventAggregator eventAggregator, IGenreProvider genreProvider,
-						   ITagProvider tagProvider, ITagAssociationProvider tagAssociationProvider ) {
+						   ITagProvider tagProvider, ITagAssociationProvider tagAssociationProvider, INoiseLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mGenreProvider = genreProvider;
 			mTagProvider = tagProvider;
 			mTagAssociationProvider = tagAssociationProvider;
@@ -38,7 +40,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "TagManager:DatabaseOpened", ex );
+				mLog.LogException( "Handle DatabaseOpened", ex );
 			}
 		}
 

@@ -7,7 +7,6 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -116,10 +115,12 @@ namespace Noise.Core.Database {
 	}
 
 	public class LuceneIndexBuilder : ISearchBuilder {
-		private readonly long	mArtistId;
-		private IndexWriter		mIndexWriter;
+		private readonly INoiseLog	mLog;
+		private readonly long		mArtistId;
+		private IndexWriter			mIndexWriter;
 
-		public LuceneIndexBuilder( DbArtist artist, string indexLocation, bool createIndex ) {
+		public LuceneIndexBuilder( DbArtist artist, string indexLocation, bool createIndex, INoiseLog log ) {
+			mLog = log;
 			mArtistId = artist.DbId;
 
 			var directory = new Lucene.Net.Store.SimpleFSDirectory( new DirectoryInfo( indexLocation ));
@@ -198,7 +199,7 @@ namespace Noise.Core.Database {
 					mIndexWriter = null;
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Exception - Search provider cannot close IndexWriter: ", ex );
+					mLog.LogException( "Search provider cannot close IndexWriter", ex );
 				}
 			}
 		}
@@ -209,15 +210,17 @@ namespace Noise.Core.Database {
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
+		private readonly INoiseLog				mLog;
 		private bool							mIsInitialized;
 		private	string							mIndexLocation;
 
 		public LuceneSearchProvider( ILibraryConfiguration libraryConfiguration,
-									 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+									 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, INoiseLog log ) {
 			mLibraryConfiguration = libraryConfiguration;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
+			mLog = log;
 		}
 
 		public bool Initialize() {
@@ -240,11 +243,11 @@ namespace Noise.Core.Database {
 					}
 				}
 				else {
-					NoiseLogger.Current.LogMessage( "Database configuration could not be loaded." );
+					mLog.LogMessage( "Database configuration could not be loaded." );
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - Initializing the Lucene Search Provider", ex );
+				mLog.LogException( "Initializing the Lucene Search Provider", ex );
 			}
 
 			return( mIsInitialized );
@@ -331,7 +334,7 @@ namespace Noise.Core.Database {
 					searcher.Dispose();
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Exception - Search failed: ", ex );
+					mLog.LogException( "Search failed", ex );
 				}
 			}
 
@@ -382,7 +385,7 @@ namespace Noise.Core.Database {
 					searcher.Dispose();
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Exception - DetermineTimeStamp: ", ex );
+					mLog.LogException( string.Format( "Cannot determine timestamp for {0}", forArtist ), ex );
 				}
 			}
 			return( retValue );
@@ -397,10 +400,10 @@ namespace Noise.Core.Database {
 
 			if( mIsInitialized ) {
 				try {
-					retValue = new LuceneIndexBuilder( artist, mIndexLocation, createIndex );
+					retValue = new LuceneIndexBuilder( artist, mIndexLocation, createIndex, mLog );
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Exception - Search provider cannot create IndexWriter: ", ex );
+					mLog.LogException( string.Format( "Cannot create index builder for {0}", artist ), ex );
 				}
 			}
 
