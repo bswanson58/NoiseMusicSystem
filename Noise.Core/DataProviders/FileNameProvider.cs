@@ -11,14 +11,16 @@ namespace Noise.Core.DataProviders {
 	internal class FileNameProvider {
 		private readonly IStorageFileProvider	mFileProvider;
 		private readonly IStorageFolderSupport	mStorageFolderSupport;
+		private readonly INoiseLog				mLog;
 		private long							mFolderId;
 		private readonly List<Regex>			mDatePatterns;
 		private readonly List<Regex>			mTrackNamePatterns; 
 		private List<StorageFile>				mFolderFiles;
 
-		public FileNameProvider( IStorageFileProvider fileProvider, IStorageFolderSupport storageFolderSupport ) {
+		public FileNameProvider( IStorageFileProvider fileProvider, IStorageFolderSupport storageFolderSupport, INoiseLog log ) {
 			mFileProvider = fileProvider;
 			mStorageFolderSupport = storageFolderSupport;
+			mLog = log;
 
 			mDatePatterns = new List<Regex>{
 				new Regex( "(?<month>0?[1-9]|1[012]) [- .] (?<day>0?[1-9]|[12][0-9]|3[01]) [- .] (?<year>[0-9]{2,})", RegexOptions.IgnorePatternWhitespace ),
@@ -54,7 +56,7 @@ namespace Noise.Core.DataProviders {
 				mFolderId = parentId;
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - FileNameProvider", ex );
+				mLog.LogException( "Building file list", ex );
 			}
 		}
 	}

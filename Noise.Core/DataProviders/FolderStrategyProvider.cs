@@ -8,26 +8,30 @@ namespace Noise.Core.DataProviders {
 	internal class FolderStrategyProvider {
 		private readonly IStorageFolderSupport	mStorageFolderSupport;
 		private readonly ITagManager			mTagManager;
+		private readonly INoiseLog				mLog;
 
-		public FolderStrategyProvider( IStorageFolderSupport storageFolderSupport, ITagManager tagManager ) {
+		public FolderStrategyProvider( IStorageFolderSupport storageFolderSupport, ITagManager tagManager, INoiseLog log ) {
 			mStorageFolderSupport = storageFolderSupport;
 			mTagManager = tagManager;
+			mLog = log;
 		}
 
 		public IMetaDataProvider GetProvider( StorageFile forFile ) {
-			return( new FileStrategyProvider( mTagManager, mStorageFolderSupport, forFile ));
+			return( new FileStrategyProvider( mTagManager, mStorageFolderSupport, forFile, mLog ));
 		}
 	}
 
 	internal class FileStrategyProvider : IMetaDataProvider {
 		private	readonly ITagManager						mTagManager;
 		private readonly IStorageFolderSupport				mStorageFolderSupport;
+		private readonly INoiseLog							mLog;
 		private readonly StorageFile						mFile;
 		private	readonly Lazy<FolderStrategyInformation>	mStrategyInformation;
 
-		public FileStrategyProvider( ITagManager tagManager, IStorageFolderSupport storageFolderSupport, StorageFile file ) {
+		public FileStrategyProvider( ITagManager tagManager, IStorageFolderSupport storageFolderSupport, StorageFile file, INoiseLog log ) {
 			mTagManager = tagManager;
 			mStorageFolderSupport = storageFolderSupport;
+			mLog = log;
 			mFile = file;
 
 			mStrategyInformation = new Lazy<FolderStrategyInformation>(() => {
@@ -37,7 +41,7 @@ namespace Noise.Core.DataProviders {
 					retValue = mStorageFolderSupport.GetFolderStrategy( mFile );
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Exception - FileStrategyProvider:", ex );
+					mLog.LogException( string.Format( "Getting strategy for {0}", mFile ), ex );
 				}
 
 				return( retValue );
