@@ -6,7 +6,9 @@ namespace Noise.Infrastructure.Interfaces {
 		string						GetPath( StorageFolder forFolder );
 		string						GetPath( StorageFile forFile );
 		string						GetArtistPath( long artistId);
+		StorageFolder				GetArtistFolder( long artistId );
 		string						GetAlbumPath( long albumId );
+		StorageFolder				GetAlbumFolder( long albumId );
 
 		FolderStrategyInformation	GetFolderStrategy( StorageFile forFile );
 
