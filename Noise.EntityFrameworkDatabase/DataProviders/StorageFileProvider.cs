@@ -31,6 +31,16 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			return( retValue );
 		}
 
+		public StorageFile GetFileForMetadata( long metadataId ) {
+			StorageFile	retValue;
+
+			using( var context = CreateContext()) {
+				retValue = Set( context ).FirstOrDefault( entity => entity.MetaDataPointer == metadataId );
+			}
+
+			return( retValue );
+		}
+
 		public IDataProviderList<StorageFile> GetAllFiles() {
 			return( GetListShell());
 		}

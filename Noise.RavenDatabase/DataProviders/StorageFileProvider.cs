@@ -54,6 +54,10 @@ namespace Noise.RavenDatabase.DataProviders {
 			return( Database.Get( track => track.MetaDataPointer == forTrack.DbId ));
 		}
 
+		public StorageFile GetFileForMetadata( long metadataId ) {
+			return( Database.Get( file => file.MetaDataPointer == metadataId ));
+		}
+
 		public IDataProviderList<StorageFile> GetAllFiles() {
 			return( Database.FindAll());
 		}
