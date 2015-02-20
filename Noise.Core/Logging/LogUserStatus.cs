@@ -4,7 +4,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.Logging {
-	public class LogUserStatus : ILogUserStatus {
+	internal class LogUserStatus : ILogUserStatus {
 		private readonly IEventAggregator	mEventAggregator;
 
 		public LogUserStatus( IEventAggregator eventAggregator ) {

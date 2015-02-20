@@ -4,7 +4,7 @@ using Noise.Core.Database;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.Logging {
-	internal interface ILogLibraryBuilding {
+	public interface ILogLibraryBuilding {
 		void	BuildingStarted();
 		void	BuildingCompleted( DatabaseChangeSummary summary );
 		void	DatabaseStatistics( DatabaseStatistics statistics );

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
 using Moq;
+using Noise.Core.Logging;
 using NUnit.Framework;
 using Noise.Core.Database;
 using Noise.Infrastructure.Dto;
@@ -15,6 +16,7 @@ namespace Noise.Core.Tests.Database {
 		private Mock<IRootFolderProvider>		mRootFolderProvider;
 		private Mock<IStorageFolderProvider>	mStorageFolderProvider;
 		private Mock<IStorageFileProvider>		mStorageFileProvider;
+		private Mock<ILogLibraryBuilding>		mLogProvider;
 
 		[SetUp]
 		private void Setup() {
@@ -24,11 +26,12 @@ namespace Noise.Core.Tests.Database {
 			mRootFolderProvider = new Mock<IRootFolderProvider>();
 			mStorageFolderProvider = new Mock<IStorageFolderProvider>();
 			mStorageFileProvider = new Mock<IStorageFileProvider>();
+			mLogProvider = new Mock<ILogLibraryBuilding>();
 		}
 
 		private DatabaseStatistics CreateSut() {
 			return( new DatabaseStatistics( mArtistProvider.Object, mAlbumProvider.Object, mTrackProvider.Object,
-											mRootFolderProvider.Object, mStorageFolderProvider.Object, mStorageFileProvider.Object ));
+											mRootFolderProvider.Object, mStorageFolderProvider.Object, mStorageFileProvider.Object, mLogProvider.Object ));
 		}
 
 		[Test]
@@ -96,7 +99,7 @@ namespace Noise.Core.Tests.Database {
 			rootFolder.UpdateLibraryScan();
 
 			var provider = new Mock<IDataProviderList<RootFolder>>();
- 			provider.Setup( m => m.List ).Returns( new List<RootFolder> { rootFolder });
+			provider.Setup( m => m.List ).Returns( new List<RootFolder> { rootFolder });
 
 			mRootFolderProvider.Setup( m => m.GetRootFolderList()).Returns( provider.Object );
 

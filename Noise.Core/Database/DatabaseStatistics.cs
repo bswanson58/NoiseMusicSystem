@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq;
-using Noise.Infrastructure;
+using Noise.Core.Logging;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
 	public class DatabaseStatistics : IDatabaseStatistics {
+		private readonly ILogLibraryBuilding	mLog;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
@@ -24,13 +25,15 @@ namespace Noise.Core.Database {
 		public	DateTime	LastScan { get; private set; }
 
 		public DatabaseStatistics( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
-								   IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider ) {
+								   IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider,
+								   ILogLibraryBuilding log ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mRootFolderProvider = rootFolderProvider;
 			mStorageFolderProvider = storageFolderProvider;
 			mStorageFileProvider = storageFileProvider;
+			mLog = log;
 		}
 
 		public void GatherStatistics( bool allCounts ) {
@@ -55,7 +58,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - Building Database Statistical Data.", ex );
+				mLog.LogException( "Gethering statistics", ex );
 			}
 		}
 

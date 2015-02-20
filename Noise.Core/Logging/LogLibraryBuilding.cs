@@ -5,7 +5,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Logging;
 
 namespace Noise.Core.Logging {
-	public class LogLibraryBuilding : BaseLogger, ILogLibraryBuilding {
+	internal class LogLibraryBuilding : BaseLogger, ILogLibraryBuilding {
 		private readonly LoggingPreferences		mPreferences;
 
 		private const string	cModuleName = "Library Building";
