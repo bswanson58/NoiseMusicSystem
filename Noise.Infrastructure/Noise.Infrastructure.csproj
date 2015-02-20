@@ -235,7 +235,6 @@
     <Compile Include="Interfaces\IDataProviderList.cs" />
     <Compile Include="Interfaces\IDataUpdateShell.cs" />
     <Compile Include="Interfaces\IDbBaseProvider.cs" />
-    <Compile Include="Interfaces\IDomainSearchProvider.cs" />
     <Compile Include="Interfaces\IEqManager.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IGenreProvider.cs" />

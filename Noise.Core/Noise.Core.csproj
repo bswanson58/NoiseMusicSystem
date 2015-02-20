@@ -203,7 +203,6 @@
     <Compile Include="Database\DatabaseCache.cs" />
     <Compile Include="Database\DatabaseStatistics.cs" />
     <Compile Include="Database\DataUpdates.cs" />
-    <Compile Include="Database\DomainSearchProvider.cs" />
     <Compile Include="Database\IDataUpdates.cs" />
     <Compile Include="Database\LuceneSearchProvider.cs" />
     <Compile Include="Database\TagManager.cs" />

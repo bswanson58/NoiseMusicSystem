@@ -78,7 +78,6 @@ namespace Noise.Core {
 //			mContainer.RegisterType<IRequireConstruction, LyricsSearcher>( "LyricsSearcher", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IEnumerable<IRequireConstruction>, IRequireConstruction[]>();
 
-			mContainer.RegisterType<IDomainSearchProvider, DomainSearchProvider>();
 			mContainer.RegisterType<IStorageFolderSupport, StorageFolderSupport>();
 
 			// Configure the default constructor for the RecurringTaskScheduler class.
