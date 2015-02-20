@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.UnityExtensions;
@@ -76,7 +77,7 @@ namespace Noise.Desktop {
 			mStartupManager = Container.Resolve<StartupManager>();
 			mStartupManager.Initialize();
 
-			mLog.LogMessage( "+++ Noise.Desktop System starting. +++" );
+			mLog.LogMessage( "+++++ Noise.Desktop System starting. +++++" );
 
 			StartNoise( instanceContainer );
 		}
@@ -107,7 +108,13 @@ namespace Noise.Desktop {
 
 			Settings.Default.Save();
 
-			mLog.LogMessage( "### Noise.Desktop System stopped. ###" );
+			mLog.LogMessage( "##### Noise.Desktop System stopped. #####" );
+		}
+
+		public void LogException( string reason, Exception exception ) {
+			if( mLog != null ) {
+				mLog.LogException( reason, exception );
+			}
 		}
 	}
 }
