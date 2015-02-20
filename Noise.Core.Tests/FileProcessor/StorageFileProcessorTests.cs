@@ -4,7 +4,6 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Noise.Core.FileProcessor;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using ReusableBits.TestSupport.Mocking;
@@ -72,8 +71,6 @@ namespace Noise.Core.Tests.FileProcessor {
 													   mDetermineVolume.Object, mFileType.Object, mInfoProviders.Object,
 													   mMusicMetadata.Object, mMusicProviders.Object, mUpdateArtwork.Object,
 													   mUpdateInfo.Object, mUpdateMusic.Object, mUpdateUndetermined.Object };
-
-			NoiseLogger.Current = new Mock<INoiseLog>().Object;
 		}
 
 		private TestableStorageFileProcessor CreateSut() {

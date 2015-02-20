@@ -33,8 +33,6 @@ namespace Noise.Core.Tests.PlaySupport {
 			mChannelStatusSubject = new Subject<AudioChannelStatus>();
 			mAudioLevelsSubject = new Subject<AudioLevels>();
 			mAudioStreamInfoSubject = new Subject<StreamInfo>();
-
-			NoiseLogger.Current = new Mock<INoiseLog>().Object;
 		}
 
 		private TestablePlayController CreateSut() {
