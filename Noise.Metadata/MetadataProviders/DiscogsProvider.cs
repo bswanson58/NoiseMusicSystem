@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -13,16 +12,17 @@ using Raven.Client;
 namespace Noise.Metadata.MetadataProviders {
 	internal class DiscogsProvider : IArtistMetadataProvider {
 		private readonly IDiscogsClient	mDiscogsClient;
+		private readonly INoiseLog		mLog;
 		private IDocumentStore			mDocumentStore;
 		private readonly bool			mHasNetworkAccess;
 
 		public	string			ProviderKey { get; private set; }
 
-		public DiscogsProvider( IPreferences preferences, IDiscogsClient discogsClient ) {
+		public DiscogsProvider( NoiseCorePreferences preferences, IDiscogsClient discogsClient, INoiseLog log ) {
 			mDiscogsClient = discogsClient;
+			mLog = log;
 
-			var prefs = preferences.Load<NoiseCorePreferences>();
-			mHasNetworkAccess = prefs.HasNetworkAccess;
+			mHasNetworkAccess = preferences.HasNetworkAccess;
 
 			ProviderKey = "Discogs";
 		}
@@ -102,19 +102,19 @@ namespace Noise.Metadata.MetadataProviders {
 								session.Store( discography );
 								session.SaveChanges();
 
-								NoiseLogger.Current.LogMessage( "Discogs updated artist: {0}", artistName );
+								mLog.LogMessage( string.Format( "Discogs updated artist: {0}", artistName ));
 							}
 						}
 						else {
-							NoiseLogger.Current.LogMessage( string.Format( "Discogs search did not locate an artist: {0}", artistName ));
+							mLog.LogMessage( string.Format( "Discogs search did not locate an artist: {0}", artistName ));
 						}
 					}
 					else {
-						NoiseLogger.Current.LogMessage( string.Format( "Discogs search failed for: {0}", artistName ));
+						mLog.LogMessage( string.Format( "Discogs search failed for: {0}", artistName ));
 					}
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( string.Format( "Discogs search failed for artist: {0}", artistName ), ex );
+					mLog.LogException( string.Format( "Discogs search failed for artist: {0}", artistName ), ex );
 				}
 			}
 		}
