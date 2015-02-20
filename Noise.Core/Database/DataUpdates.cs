@@ -2,7 +2,6 @@
 using System.Linq;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
-using Noise.Core.Support;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -11,6 +10,7 @@ using Noise.Infrastructure.Support;
 namespace Noise.Core.Database {
 	internal class DataUpdates : IDataUpdates, IRequireInitialization {
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly INoiseLog			mLog;
 		private readonly IDbBaseProvider	mDbBaseProvider;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
@@ -22,10 +22,11 @@ namespace Noise.Core.Database {
 		private AsyncCommand<SetRatingCommandArgs>		mSetRatingCommand;
 		private AsyncCommand<SetAlbumCoverCommandArgs>	mSetAlbumCoverCommand;
 
-		public DataUpdates( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager,
+		public DataUpdates( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager, INoiseLog log,
 							IDbBaseProvider dbBaseProvider, IPlayListProvider playListProvider,
 							IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mDbBaseProvider = dbBaseProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -34,8 +35,6 @@ namespace Noise.Core.Database {
 			mArtworkProvider = artworkProvider;
 
 			lifecycleManager.RegisterForInitialize( this );
-
-			NoiseLogger.Current.LogInfo( "DataUpdates created." );
 		}
 
 		public void Initialize() {
@@ -55,10 +54,10 @@ namespace Noise.Core.Database {
 		public void Shutdown() {
 		}
 
-		private static void OnExecutionComplete( object sender, AsyncCommandCompleteEventArgs args ) {
+		private void OnExecutionComplete( object sender, AsyncCommandCompleteEventArgs args ) {
 			if(( args != null ) &&
 			   ( args.Exception != null )) {
-				NoiseLogger.Current.LogException( "Exception - DataUpdates:OnExecutionComplete:", args.Exception );
+				mLog.LogException( "After command execution", args.Exception );
 			}
 		}
 
@@ -73,14 +72,14 @@ namespace Noise.Core.Database {
 										 TypeSwitch.Case<DbAlbum>( album => SetFavorite( album, args.Value  )),
 										 TypeSwitch.Case<DbTrack>( track => SetFavorite( track, args.Value )),
 										 TypeSwitch.Case<DbPlayList>( playList => SetFavorite( playList, args.Value )),
-										 TypeSwitch.Default( () => NoiseLogger.Current.LogMessage( String.Format( "Unknown type passed to SetFavorite: {0}", item.GetType()))));
+										 TypeSwitch.Default( () => mLog.LogMessage( String.Format( "Unknown type passed to SetFavorite: {0}", item.GetType()))));
 				}
 				else {
-					NoiseLogger.Current.LogMessage( String.Format( "Cannot locate item for SetFavoriteCommand: {0}", args.ItemId ) );
+					mLog.LogMessage( String.Format( "Cannot locate item for SetFavoriteCommand: {0}", args.ItemId ) );
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - SetFavorite:", ex );
+				mLog.LogException( "Setting favorite flag", ex );
 			}
 		}
 
@@ -95,14 +94,14 @@ namespace Noise.Core.Database {
 										 TypeSwitch.Case<DbAlbum>( album => SetRating( album, args.Value  )),
 										 TypeSwitch.Case<DbTrack>( track => SetRating( track, args.Value )),
 										 TypeSwitch.Case<DbPlayList>( playList => SetRating( playList, args.Value )),
-										 TypeSwitch.Default( () => NoiseLogger.Current.LogMessage( String.Format( "Unknown type passed to SetRating: {0}", item.GetType()))));
+										 TypeSwitch.Default( () => mLog.LogMessage( String.Format( "Unknown type passed to SetRating: {0}", item.GetType()))));
 				}
 				else {
-					NoiseLogger.Current.LogMessage( String.Format( "Cannot locate item for SetRatingCommand: {0}", args.ItemId ) );
+					mLog.LogMessage( String.Format( "Cannot locate item for SetRatingCommand: {0}", args.ItemId ) );
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - SetRating:", ex );
+				mLog.LogException( "Setting rating flag", ex );
 			}
 		}
 
@@ -124,7 +123,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - SetFavorite(DbArtist):", ex );
+				mLog.LogException( string.Format( "Setting rating for {0}", forArtist ), ex );
 			}
 		}
 
@@ -161,7 +160,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - SetFavorite(DbAlbum):", ex );
+				mLog.LogException( string.Format( "Setting favorite for {0}", forAlbum ), ex );
 			}
 		}
 
@@ -213,7 +212,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - SetFavorite(DbTrack):", ex );
+				mLog.LogException( string.Format( "Setting favorite for {0}", forTrack ), ex );
 			}
 		}
 
@@ -234,7 +233,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - SetFavorite(DbList):", ex );
+				mLog.LogException( string.Format( "Setting favorite for {0}", forList ), ex );
 			}
 		}
 
@@ -256,7 +255,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - SetRating(DbArtist):", ex );
+				mLog.LogException( string.Format( "Setting rating for {0}", forArtist ), ex );
 			}
 		}
 
@@ -300,7 +299,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - SetRating(DbAlbum):", ex );
+				mLog.LogException( string.Format( "Setting rating for {0}", forAlbum ), ex );
 			}
 		}
 
@@ -362,7 +361,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - SetRating(DbTrack):", ex );
+				mLog.LogException( string.Format( "Setting rating for {0}", forTrack ), ex );
 			}
 		}
 
@@ -383,7 +382,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - SetRating(DbPlayList):", ex );
+				mLog.LogException( string.Format( "Setting rating for {0}", forList ), ex );
 			}
 		}
 
@@ -415,7 +414,7 @@ namespace Noise.Core.Database {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - DataUpdates:OnSetAlbumCover", ex );
+				mLog.LogException( string.Format( "Setting album cover {0} for Album {1}", args.ArtworkId, args.AlbumId ), ex );
 			}
 		}
 	}

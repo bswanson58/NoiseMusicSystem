@@ -42,5 +42,9 @@ namespace Noise.Infrastructure.Dto {
 				PersistedTrackIds = String.Join( ";", value.Select( p => p.ToString( CultureInfo.InvariantCulture )).ToArray());
 			}
 		}
+
+		public override string ToString() {
+			return( string.Format( "Playlist \"{0}\"", Name ));
+		}
 	}
 }
