@@ -62,7 +62,7 @@ namespace Noise.Core.FileStore {
 		public string GetPath( StorageFile forFile ) {
 			Condition.Requires( forFile ).IsNotNull();
 
-			var retValue = "";
+			var retValue = string.Empty;
 			var parentId = forFile.ParentFolder;
 			var folder = mStorageFolderProvider.GetFolder( parentId ) ?? mRootFolderProvider.GetRootFolder( parentId );
 
@@ -83,7 +83,7 @@ namespace Noise.Core.FileStore {
 					if( album != null ) {
 						var path = GetAlbumPath( album.DbId );
 
-						retValue = Path.GetDirectoryName( path );
+						retValue = Directory.GetParent( path ).FullName;
 					}
 				}
 			}
@@ -133,6 +133,7 @@ namespace Noise.Core.FileStore {
 			catch( Exception exception ) {
 				mLog.LogException( "Retrieving artist folder", exception );
 			}
+
 			return( retValue );
 		}
 
@@ -179,9 +180,16 @@ namespace Noise.Core.FileStore {
 					var distinct = parentLists.Select( list => list.Count > level ? list[level] : Constants.cDatabaseNullOid ).Distinct().ToArray();
 
 					if( distinct.Count() == 1 ) {
-						level++;
+						var folderId = distinct.First();
 
-						retValue = mStorageFolderProvider.GetFolder( distinct.First());
+						if( folderId != Constants.cDatabaseNullOid ) {
+							level++;
+
+							retValue = mStorageFolderProvider.GetFolder( distinct.First());
+						}
+						else {
+							level = -1;
+						}
 					}
 					else {
 						level = -1;
@@ -196,10 +204,10 @@ namespace Noise.Core.FileStore {
 		}
 
 		private static string FindCommonParent( IEnumerable<string> paths ) {
-			var retValue = "";
+			var retValue = string.Empty;
 			var pathList = paths.Where( path => !string.IsNullOrWhiteSpace( path )).ToList();
 
-			if( pathList.Any() ) {
+			if( pathList.Any()) {
 				if( pathList.Count() == 1 ) {
 					retValue = pathList.First();
 				}
@@ -226,7 +234,7 @@ namespace Noise.Core.FileStore {
 						var lastSlash = retValue.LastIndexOfAny( new [] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar, Path.VolumeSeparatorChar } );
 
 						if( lastSlash > 0 ) {
-							retValue = retValue.Substring( 0, lastSlash + 1 );
+							retValue = retValue.Substring( 0, lastSlash );
 						}
 					}
 				}
