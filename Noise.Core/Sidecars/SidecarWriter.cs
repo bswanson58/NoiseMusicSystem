@@ -10,13 +10,16 @@ namespace Noise.Core.Sidecars {
 		private readonly IFileWriter					mWriter;
 		private readonly ILogLibraryBuildingSidecars	mLog;
 		private readonly ISidecarProvider				mSidecarProvider;
+		private readonly IStorageFileProvider			mStorageFileProvider;
 		private readonly IStorageFolderSupport			mStorageSupport;
 
-		public SidecarWriter( IFileWriter writer, ISidecarProvider sidecarProvider, IStorageFolderSupport storageFolderSupport, ILogLibraryBuildingSidecars log ) {
+		public SidecarWriter( IFileWriter writer, ISidecarProvider sidecarProvider, IStorageFolderSupport storageFolderSupport, IStorageFileProvider storageFileProvider,
+							  ILogLibraryBuildingSidecars log ) {
 			mLog = log;
 			mWriter = writer;
 			mSidecarProvider = sidecarProvider;
 			mStorageSupport = storageFolderSupport;
+			mStorageFileProvider = storageFileProvider;
 		}
 
 		public bool IsStorageAvailable( DbAlbum album ) {
@@ -28,28 +31,69 @@ namespace Noise.Core.Sidecars {
 		} 
 
 		public void WriteSidecar( DbAlbum forAlbum, ScAlbum sidecar ) {
-			var sidecarPath = Path.Combine( mStorageSupport.GetAlbumPath( forAlbum.DbId ), Constants.AlbumSidecarName );
+			if( IsStorageAvailable( forAlbum )) {
+				var albumPath = mStorageSupport.GetAlbumPath( forAlbum.DbId );
+				var sidecarPath = Path.Combine( albumPath, Constants.AlbumSidecarName );
 
-			try {
-				mWriter.Write( sidecarPath, sidecar );
+				try {
+					mWriter.Write( sidecarPath, sidecar );
 
-				mLog.LogWriteSidecar( sidecar );
-			}
-			catch( Exception exception ) {
-				mLog.LogException( string.Format( "Writing {0} to \"{1}\"", sidecar, sidecarPath ), exception );
+					mLog.LogWriteSidecar( sidecar );
+				}
+				catch( Exception exception ) {
+					mLog.LogException( string.Format( "Writing {0} to \"{1}\"", sidecar, sidecarPath ), exception );
+				}
+
+				InsureSideCarStorageFileExists( forAlbum, sidecarPath );
 			}
 		}
 
 		public void WriteSidecar( DbArtist forArtist, ScArtist sidecar ) {
-			var sidecarPath = Path.Combine( mStorageSupport.GetArtistPath( forArtist.DbId ), Constants.ArtistSidecarName );
+			if( IsStorageAvailable( forArtist )) {
+				var sidecarPath = Path.Combine( mStorageSupport.GetArtistPath( forArtist.DbId ), Constants.ArtistSidecarName );
 
+				try {
+					mWriter.Write( sidecarPath, sidecar );
+
+					mLog.LogWriteSidecar( sidecar );
+				}
+				catch( Exception exception ) {
+					mLog.LogException( string.Format( "Writing {0} to \"{1}\"", sidecar, sidecarPath ), exception );
+				}
+
+				InsureSideCarStorageFileExists( forArtist, sidecarPath );
+			}
+		}
+
+		private void InsureSideCarStorageFileExists( DbArtist artist, string sidecarPath ) {
 			try {
-				mWriter.Write( sidecarPath, sidecar );
+				var storageFile = mStorageFileProvider.GetFileForMetadata( artist.DbId );
+				var file = new FileInfo( sidecarPath );
 
-				mLog.LogWriteSidecar( sidecar );
+				if( storageFile == null ) {
+					var folder = mStorageSupport.GetArtistFolder( artist.DbId );
+
+					mStorageFileProvider.AddFile( new StorageFile( file.Name, folder.DbId, file.Length, file.LastWriteTime ) { FileType = eFileType.Sidecar });
+				}
 			}
 			catch( Exception exception ) {
-				mLog.LogException( string.Format( "Writing {0} to \"{1}\"", sidecar, sidecarPath ), exception );
+				mLog.LogException( string.Format( "Creating SideCar StorageFile for {0}", artist ), exception );
+			}
+		}
+
+		private void InsureSideCarStorageFileExists( DbAlbum album, string sidecarPath ) {
+			try {
+				var storageFile = mStorageFileProvider.GetFileForMetadata( album.DbId );
+				var file = new FileInfo( sidecarPath );
+
+				if( storageFile == null ) {
+					var folder = mStorageSupport.GetAlbumFolder( album.DbId );
+
+					mStorageFileProvider.AddFile( new StorageFile( file.Name, folder.DbId, file.Length, file.LastWriteTime ) { FileType = eFileType.Sidecar });
+				}
+			}
+			catch( Exception exception ) {
+				mLog.LogException( string.Format( "Creating SideCar StorageFile for {0}", album ), exception );
 			}
 		}
 
