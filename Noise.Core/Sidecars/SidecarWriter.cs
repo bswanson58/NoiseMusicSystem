@@ -68,12 +68,13 @@ namespace Noise.Core.Sidecars {
 		private void InsureSideCarStorageFileExists( DbArtist artist, string sidecarPath ) {
 			try {
 				var storageFile = mStorageFileProvider.GetFileForMetadata( artist.DbId );
-				var file = new FileInfo( sidecarPath );
 
 				if( storageFile == null ) {
+					var file = new FileInfo( sidecarPath );
 					var folder = mStorageSupport.GetArtistFolder( artist.DbId );
 
-					mStorageFileProvider.AddFile( new StorageFile( file.Name, folder.DbId, file.Length, file.LastWriteTime ) { FileType = eFileType.Sidecar });
+					mStorageFileProvider.AddFile( new StorageFile( file.Name, folder.DbId, file.Length, file.LastWriteTime )
+																	{ FileType = eFileType.Sidecar, MetaDataPointer = artist.DbId });
 				}
 			}
 			catch( Exception exception ) {
@@ -84,12 +85,13 @@ namespace Noise.Core.Sidecars {
 		private void InsureSideCarStorageFileExists( DbAlbum album, string sidecarPath ) {
 			try {
 				var storageFile = mStorageFileProvider.GetFileForMetadata( album.DbId );
-				var file = new FileInfo( sidecarPath );
 
 				if( storageFile == null ) {
+					var file = new FileInfo( sidecarPath );
 					var folder = mStorageSupport.GetAlbumFolder( album.DbId );
 
-					mStorageFileProvider.AddFile( new StorageFile( file.Name, folder.DbId, file.Length, file.LastWriteTime ) { FileType = eFileType.Sidecar });
+					mStorageFileProvider.AddFile( new StorageFile( file.Name, folder.DbId, file.Length, file.LastWriteTime ) 
+																	{ FileType = eFileType.Sidecar, MetaDataPointer = album.DbId });
 				}
 			}
 			catch( Exception exception ) {
