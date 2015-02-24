@@ -28,5 +28,9 @@ namespace Noise.Infrastructure.Dto {
 		public bool IsUserRating {
 			get { return( true ); }
 		}
+
+		public override string ToString() {
+			return( string.Format( "Genre \"{0}\"", Name ));
+		}
 	}
 }

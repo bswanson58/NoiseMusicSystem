@@ -25,5 +25,9 @@ namespace Noise.Infrastructure.Dto {
 			Name = name;
 			Description = string.Empty;
 		}
+
+		public override string ToString() {
+			return( string.Format( "Tag \"{0}\", Group:{1}", Name, TagGroup ));
+		}
 	}
 }

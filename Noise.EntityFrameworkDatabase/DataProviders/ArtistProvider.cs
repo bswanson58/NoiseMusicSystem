@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
-using Noise.Infrastructure;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
-	public class ArtistProvider : BaseProvider<DbArtist>, IArtistProvider {
+	internal class ArtistProvider : BaseProvider<DbArtist>, IArtistProvider {
 		private readonly ITagAssociationProvider		mTagAssociationProvider;
 
-		public ArtistProvider( IContextProvider contextProvider, ITagAssociationProvider tagAssociationProvider ) :
-			base( contextProvider ) {
+		public ArtistProvider( IContextProvider contextProvider, ITagAssociationProvider tagAssociationProvider, ILogDatabase log ) :
+			base( contextProvider, log ) {
 			mTagAssociationProvider = tagAssociationProvider;
 		}
 
@@ -85,7 +84,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - GetArtistCategories", ex );
+				Log.LogException( "GetArtistTagList", ex );
 			}
 
 			return( retValue );

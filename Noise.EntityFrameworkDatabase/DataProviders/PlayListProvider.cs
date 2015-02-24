@@ -1,15 +1,16 @@
 ﻿using Caliburn.Micro;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
-	public class PlayListProvider : BaseProvider<DbPlayList>, IPlayListProvider {
+	internal class PlayListProvider : BaseProvider<DbPlayList>, IPlayListProvider {
 		private readonly IEventAggregator	mEventAggregator;
 
-		public PlayListProvider( IEventAggregator eventAggregator, IContextProvider contextProvider ) :
-			base( contextProvider ) {
+		public PlayListProvider( IEventAggregator eventAggregator, IContextProvider contextProvider, ILogDatabase log ) :
+			base( contextProvider, log ) {
 			mEventAggregator = eventAggregator;
 		}
 

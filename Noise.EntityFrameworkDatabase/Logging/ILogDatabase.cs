@@ -8,6 +8,10 @@ namespace Noise.EntityFrameworkDatabase.Logging {
 		void	OpenedDatabase( LibraryConfiguration library, DbVersion databaseVersion );
 		void	ClosedDatabase();
 
+		void	AddingItem( DbBase item );
+		void	AddingExistingItem( DbBase item );
+		void	RemoveItem( DbBase item );
+
 		void	LogException( string message, Exception exception, [CallerMemberName] string callerName = "" );
 	}
 }

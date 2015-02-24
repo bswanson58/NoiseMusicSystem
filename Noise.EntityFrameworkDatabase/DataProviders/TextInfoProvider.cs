@@ -1,13 +1,14 @@
 ﻿using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
-	public class TextInfoProvider : BaseProvider<DbTextInfo>, ITextInfoProvider {
-		public TextInfoProvider( IContextProvider contextProvider ) :
-			base( contextProvider ) { }
+	internal class TextInfoProvider : BaseProvider<DbTextInfo>, ITextInfoProvider {
+		public TextInfoProvider( IContextProvider contextProvider, ILogDatabase log ) :
+			base( contextProvider, log ) { }
 
 		private TextInfo TransformTextInfo( DbTextInfo textInfo ) {
 			return( new TextInfo( textInfo ) { Text = BlobStorage.RetrieveText( textInfo.DbId ) });

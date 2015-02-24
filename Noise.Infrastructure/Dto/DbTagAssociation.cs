@@ -14,5 +14,9 @@
 			ArtistId = artistId;
 			AlbumId = albumId;
 		}
+
+		public override string ToString() {
+			return( string.Format( "TagAssociation, Artist:{0}, Album:{1}, TagGroup:{2}", ArtistId, AlbumId, TagGroup ));
+		}
 	}
 }

@@ -31,6 +31,18 @@ namespace Noise.EntityFrameworkDatabase.Logging {
 			LogOnCondition( mPreferences.DatabaseActivity, () => LogDatabaseMessage( "Closed Library" ));
 		}
 
+		public void AddingItem( DbBase item ) {
+			LogOnCondition( mPreferences.DatabaseActivity, () => LogDatabaseMessage( "Adding {0}", item ));
+		}
+
+		public void AddingExistingItem( DbBase item ) {
+			LogOnCondition( mPreferences.DatabaseActivity, () => LogDatabaseMessage( "Attempting to add existing item {0}", item ));
+		}
+
+		public void RemoveItem( DbBase item ) {
+			LogOnCondition( mPreferences.DatabaseActivity, () => LogDatabaseMessage( "Removing {0}", item ));
+		}
+
 		public void LogException( string message, Exception exception, string callerName = "" ) {
 			LogOnCondition( mPreferences.LogExceptions, () => LogException( cModuleName, cPhaseName, exception, callerName, "{0}", message ));
 		}

@@ -3,16 +3,22 @@ using System.Data.Entity;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
-using Noise.Infrastructure;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
-	public abstract class BaseProvider<TEntity> where TEntity : DbBase {
+	internal abstract class BaseProvider<TEntity> where TEntity : DbBase {
 		private	readonly IContextProvider	mContextProvider;
+		private readonly ILogDatabase		mLog;
 
-		protected BaseProvider( IContextProvider contextProvider ) {
+		protected BaseProvider( IContextProvider contextProvider, ILogDatabase log ) {
 			mContextProvider = contextProvider;
+			mLog = log;
+		}
+
+		protected ILogDatabase Log {
+			get {  return( mLog ); }
 		}
 
 		protected IDbContext CreateContext() {
@@ -40,10 +46,12 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 						context.Set<TEntity>().Add( item );
 
 						context.SaveChanges();
+
+						Log.AddingItem( item );
 #if DEBUG
 					}
 					else {
-						NoiseLogger.Current.LogMessage( "Attempting to add an existing item: {0}", item.ToString());
+						Log.AddingExistingItem( item );
 					}
 #endif
 				}
@@ -55,6 +63,8 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 				if( context.IsValidContext ) {
 					foreach( var item in list ) {
 						context.Set<TEntity>().Add( item );
+
+						Log.AddingItem( item );
 					}
 
 					context.SaveChanges();
@@ -73,6 +83,8 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 						Set( context ).Remove( entry );
 
 						context.SaveChanges();
+
+						Log.RemoveItem( item );
 					}
 				}
 			}
@@ -87,6 +99,8 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 						Set( context ).Remove( item );
 
 						context.SaveChanges();
+
+						Log.RemoveItem( item );
 					}
 				}
 			}

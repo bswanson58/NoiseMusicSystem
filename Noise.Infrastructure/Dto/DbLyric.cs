@@ -20,5 +20,9 @@ namespace Noise.Infrastructure.Dto {
 			SourceUrl = "";
 			Lyrics = "";
 		}
+
+		public override string ToString() {
+			return( string.Format( "Lyrics for \"{0}\"", SongName ));
+		}
 	}
 }

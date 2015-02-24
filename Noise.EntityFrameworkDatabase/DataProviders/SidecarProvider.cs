@@ -1,14 +1,15 @@
 ﻿using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
 	internal class SidecarProvider : BaseProvider<StorageSidecar>, ISidecarProvider {
-		public SidecarProvider( IContextProvider contextProvider ) :
-			base( contextProvider ) {
+		public SidecarProvider( IContextProvider contextProvider, ILogDatabase log ) :
+			base( contextProvider, log ) {
 		}
 
 		public void Add( StorageSidecar sidecar ) {

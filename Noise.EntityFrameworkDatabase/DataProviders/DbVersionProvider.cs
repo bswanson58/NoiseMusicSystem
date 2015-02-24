@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Linq;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
-	public class DbVersionProvider : BaseProvider<DbVersion>, IDatabaseInfo {
+	internal class DbVersionProvider : BaseProvider<DbVersion>, IDatabaseInfo {
 		private DbVersion		mDatabaseVersion;
 
-		public DbVersionProvider( IContextProvider contextProvider ) :
-			base( contextProvider ) { }
+		public DbVersionProvider( IContextProvider contextProvider, ILogDatabase log ) :
+			base( contextProvider, log ) { }
 
 		public long DatabaseId {
 			get {

@@ -17,5 +17,9 @@ namespace Noise.Infrastructure.Dto {
 		public DateTime PlayedOn {
 			get{ return( new DateTime( PlayedOnTicks )); }
 		}
+
+		public override string ToString() {
+			return( string.Format( "PlayHistory for Track:{0}", TrackId ));
+		}
 	}
 }

@@ -2,15 +2,16 @@
 using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
-	public class TrackProvider : BaseProvider<DbTrack>, ITrackProvider {
+	internal class TrackProvider : BaseProvider<DbTrack>, ITrackProvider {
 		private readonly IRootFolderProvider	mRootFolderProvider;
 
-		public TrackProvider( IContextProvider contextProvider, IRootFolderProvider rootFolderProvider ) :
-			base( contextProvider ) {
+		public TrackProvider( IContextProvider contextProvider, IRootFolderProvider rootFolderProvider, ILogDatabase log ) :
+			base( contextProvider, log ) {
 			mRootFolderProvider = rootFolderProvider;
 		}
 

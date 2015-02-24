@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
-	public class StorageFileProvider : BaseProvider<StorageFile>, IStorageFileProvider {
-		public StorageFileProvider( IContextProvider contextProvider ) :
-			base( contextProvider ) { }
+	internal class StorageFileProvider : BaseProvider<StorageFile>, IStorageFileProvider {
+		public StorageFileProvider( IContextProvider contextProvider, ILogDatabase log ) :
+			base( contextProvider, log ) { }
 
 		public void AddFile( StorageFile file ) {
 			AddItem( file );
