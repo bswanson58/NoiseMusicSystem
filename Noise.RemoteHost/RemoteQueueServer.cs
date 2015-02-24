@@ -4,12 +4,10 @@ using System.Linq;
 using System.ServiceModel;
 using AutoMapper;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteDto;
 using Noise.Infrastructure.RemoteHost;
-using Noise.Infrastructure.Support;
 
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
@@ -22,10 +20,11 @@ namespace Noise.RemoteHost {
 		private readonly IPlayQueue				mPlayQueue;
 		private readonly IPlayStrategyFactory	mPlayStrategyFactory;
 		private readonly IPlayExhaustedFactory	mPlayExhaustedFactory;
+		private readonly INoiseLog				mLog;
 
 		public RemoteQueueServer( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IGenreProvider genreProvider,
 								  IPlayController playController, IPlayQueue playQueue,
-								  IPlayStrategyFactory playStrategyFactory, IPlayExhaustedFactory playExhaustedFactory ) {
+								  IPlayStrategyFactory playStrategyFactory, IPlayExhaustedFactory playExhaustedFactory, INoiseLog log ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -34,6 +33,7 @@ namespace Noise.RemoteHost {
 			mPlayQueue = playQueue;
 			mPlayStrategyFactory = playStrategyFactory;
 			mPlayExhaustedFactory = playExhaustedFactory;
+			mLog = log;
 		}
 
 		public BaseResult EnqueueTrack( long trackId ) {
@@ -49,7 +49,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteQueueServer:EnqueueTrack", ex );
+				mLog.LogException( string.Format( "EnqueueTrack:{0}", trackId ), ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -70,7 +70,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteQueueServer:EnqueueTrackList", ex );
+				mLog.LogException( "EnqueueTrackList", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -91,7 +91,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteQueueServer:EnqueueAlbum", ex );
+				mLog.LogException( string.Format( "EnqueueAlbum:{0}", albumId ), ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -116,7 +116,7 @@ namespace Noise.RemoteHost {
 				retValue.Success = true;
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteQueueServer:GetQueuedTrackList", ex );
+				mLog.LogException( "GetQueuedTrackList", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -169,7 +169,7 @@ namespace Noise.RemoteHost {
 				retValue.Success = true;
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteQueueServer:ExecuteTransportCommand", ex );
+				mLog.LogException( string.Format( "ExecuteTransportCommand:{0}", command ), ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -198,7 +198,7 @@ namespace Noise.RemoteHost {
 				retValue.Success = true;
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteQueueServer:ExecuteQueueCommand", ex );
+				mLog.LogException( string.Format( "ExecuteQueueCommand:{0}", command ), ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -225,7 +225,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteQueueServer:ExecuteQueueItemCommand", ex );
+				mLog.LogException( string.Format( "ExecuteQueueItemCommand:{0}", command ), ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}

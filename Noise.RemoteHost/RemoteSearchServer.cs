@@ -18,12 +18,14 @@ namespace Noise.RemoteHost {
 		private	readonly ISearchProvider		mSearchProvider;
 		private readonly IRandomTrackSelector	mTrackSelector;
 		private readonly IPlayQueue				mPlayQueue;
+		private readonly INoiseLog				mLog;
 		private readonly List<DbTrack>			mApprovalList; 
 
-		public RemoteSearchServer( ISearchProvider searchProvider, IRandomTrackSelector trackSelector, IPlayQueue playQueue ) {
+		public RemoteSearchServer( ISearchProvider searchProvider, IRandomTrackSelector trackSelector, IPlayQueue playQueue, INoiseLog log ) {
 			mSearchProvider = searchProvider;
 			mTrackSelector = trackSelector;
 			mPlayQueue = playQueue;
+			mLog = log;
 
 			mApprovalList = new List<DbTrack>();
 		}
@@ -56,7 +58,7 @@ namespace Noise.RemoteHost {
 				retValue.Success = true;
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteSearchServer:Search", ex );
+				mLog.LogException( string.Format( "Search for \"{0}\"", searchText ), ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}

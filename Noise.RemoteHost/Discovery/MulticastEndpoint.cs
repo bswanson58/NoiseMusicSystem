@@ -3,17 +3,19 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.RemoteHost.Discovery {
 	public class MulticastEndpoint {
 		private readonly IPAddress		mMulticastAddress;
 		private readonly int			mMulticastPort;
+		private readonly INoiseLog		mLog;
 		private bool					mContinueListening;
 
-		public MulticastEndpoint( IPAddress multicastAddress, int port ) {
+		public MulticastEndpoint( IPAddress multicastAddress, int port, INoiseLog log ) {
 			mMulticastAddress = multicastAddress;
 			mMulticastPort = port;
+			mLog = log;
 		}
 
 		public void StartListener( IRequestResponder responder ) {
@@ -29,7 +31,7 @@ namespace Noise.RemoteHost.Discovery {
 			mContinueListening = true;
 
 			Task.Factory.StartNew( () => {
-				NoiseLogger.Current.LogMessage( "Multicast listener starting." );
+				mLog.LogMessage( string.Format( "Multicast listener starting for {0}", mMulticastAddress ));
 
 				while( mContinueListening ) {
 					try {
@@ -40,12 +42,12 @@ namespace Noise.RemoteHost.Discovery {
 					}
 					catch( Exception ex ) {
 						if((uint)ex.HResult != 0x80004005 ) {
-							NoiseLogger.Current.LogException( "Multicast listener", ex );
+							mLog.LogException( string.Format( "Multicast listener for {0}", mMulticastAddress ), ex );
 						}
 					}
 				}
 
-				NoiseLogger.Current.LogMessage( "Multicast listener exiting." );
+				mLog.LogMessage( string.Format( "Multicast listener exiting for {0}", mMulticastAddress ));
 			} );
 		}
 

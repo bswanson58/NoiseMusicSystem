@@ -20,10 +20,11 @@ namespace Noise.RemoteHost {
 		private readonly IMetadataManager		mMetadataManager;
 		private readonly ITagManager			mTagManager;
 		private readonly IPreferences			mPreferences;
+		private readonly INoiseLog				mLog;
 		private readonly Random					mRandom;
 
 		public RemoteDataServer( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
-								 IPlayHistoryProvider playHistory, ITagManager tagManager, IMetadataManager metadataManager, IPreferences preferences ) {
+								 IPlayHistoryProvider playHistory, ITagManager tagManager, IMetadataManager metadataManager, IPreferences preferences, INoiseLog log ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -31,6 +32,7 @@ namespace Noise.RemoteHost {
 			mMetadataManager = metadataManager;
 			mTagManager = tagManager;
 			mPreferences = preferences;
+			mLog = log;
 			mRandom = new Random( DateTime.Now.Millisecond );
 		}
 
@@ -67,7 +69,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteDataServer:GetArtistList", ex );
+				mLog.LogException( "GetArtistList", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -135,7 +137,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteDataServer:GetArtistInfo", ex );
+				mLog.LogException( string.Format( "GetArtistInfo for {0}", artistId ), ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -166,7 +168,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteDataServer:GetAlbumList", ex );
+				mLog.LogException( string.Format( "GetAlbumList for {0}", artistId ), ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -232,7 +234,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteDataServer:GetAlbumInfo", ex );
+				mLog.LogException( string.Format( "GetAlbumInfo for {0}", albumId ), ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -257,7 +259,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteDataServer:GetTrackList", ex );
+				mLog.LogException( string.Format( "GetTrackList for {0}", albumId ), ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -290,7 +292,7 @@ namespace Noise.RemoteHost {
 				
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteDataServer:GetFavoriteList", ex );
+				mLog.LogException( "GetFavoriteList", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -342,7 +344,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteDataServer:GetArtistTrackList", ex );
+				mLog.LogException( string.Format( "GetArtistTrackList for {0}", artistId ), ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -395,7 +397,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteDataServer:GetNewTracks", ex );
+				mLog.LogException( "GetNewTracks", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -420,7 +422,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteDataServer:GetPlayHistory", ex );
+				mLog.LogException( "GetPlayHistory", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -443,7 +445,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteDataServer:SetTrackRating", ex );
+				mLog.LogException( string.Format( "SetTrackRating for {0}", trackId ), ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -466,7 +468,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteDataServer:SetAlbumRating", ex );
+				mLog.LogException( string.Format( "SetAlbumRating for {0}", albumId ), ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -489,7 +491,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteDataServer:SetArtistRating", ex );
+				mLog.LogException( string.Format( "SetArtistRating for {0}", artistId ), ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
