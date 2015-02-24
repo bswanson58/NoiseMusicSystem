@@ -2,16 +2,16 @@
 using System.IO;
 using System.Linq;
 using CuttingEdge.Conditions;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class ArtworkProvider : BaseProvider<DbArtwork>, IArtworkProvider {
-		public ArtworkProvider( IDbFactory databaseFactory ) :
-			base( databaseFactory, entity => new object[] { entity.DbId }) {
+	internal class ArtworkProvider : BaseProvider<DbArtwork>, IArtworkProvider {
+		public ArtworkProvider( IDbFactory databaseFactory, ILogRaven log ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }, log ) {
 		}
 
 		private Artwork TransformArtwork( DbArtwork artwork ) {
@@ -33,7 +33,7 @@ namespace Noise.RavenDatabase.DataProviders {
 				DbFactory.GetBlobStorage().Insert( artwork.DbId, byteStream );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "AddArtwork", ex );
+				Log.LogException( string.Format( "Adding {0}", artwork ), ex );
 			}
 		}
 
@@ -47,7 +47,7 @@ namespace Noise.RavenDatabase.DataProviders {
 				DbFactory.GetBlobStorage().Insert( artwork.DbId, filePath );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "AddArtwork", ex );
+				Log.LogException( string.Format( "Add {0}", artwork ), ex );
 			}
 		}
 
@@ -60,7 +60,7 @@ namespace Noise.RavenDatabase.DataProviders {
 				DbFactory.GetBlobStorage().Delete( artwork.DbId );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "DeleteArtwork", ex );
+				Log.LogException( string.Format( "Deleting {0}", artwork ), ex );
 			}
 		}
 

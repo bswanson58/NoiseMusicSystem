@@ -1,12 +1,13 @@
 ﻿using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class TagAssociationProvider : BaseProvider<DbTagAssociation>, ITagAssociationProvider {
-		public TagAssociationProvider( IDbFactory databaseFactory ) :
-			base( databaseFactory, entity => new object[] { entity.DbId } ) {
+	internal class TagAssociationProvider : BaseProvider<DbTagAssociation>, ITagAssociationProvider {
+		public TagAssociationProvider( IDbFactory databaseFactory, ILogRaven log ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }, log ) {
 		}
 
 		public DbTagAssociation GetAlbumTagAssociation( long albumId, long tagId ) {

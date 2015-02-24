@@ -3,6 +3,7 @@ using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Noise.RavenDatabase.Support;
 using Raven.Client.Indexes;
 
@@ -31,9 +32,9 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 	}
 
-	public class StorageFileProvider : BaseProvider<StorageFile>, IStorageFileProvider {
-		public StorageFileProvider( IDbFactory databaseFactory ) :
-			base( databaseFactory, entity => new object[] { entity.DbId }) {
+	internal class StorageFileProvider : BaseProvider<StorageFile>, IStorageFileProvider {
+		public StorageFileProvider( IDbFactory databaseFactory, ILogRaven log ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }, log ) {
 		}
 
 		public void AddFile( StorageFile file ) {

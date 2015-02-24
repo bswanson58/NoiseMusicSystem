@@ -2,14 +2,15 @@
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class RootFolderProvider : BaseProvider<RootFolder>, IRootFolderProvider {
+	internal class RootFolderProvider : BaseProvider<RootFolder>, IRootFolderProvider {
 		private	long	mFirstScanCompleted;
 
-		public RootFolderProvider( IDbFactory databaseFactory ) :
-			base( databaseFactory, entity => new object[] { entity.DbId }) {
+		public RootFolderProvider( IDbFactory databaseFactory, ILogRaven log ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }, log ) {
 		}
 
 		public void AddRootFolder( RootFolder folder ) {

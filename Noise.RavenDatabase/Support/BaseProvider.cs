@@ -1,14 +1,17 @@
 ﻿using System;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 
 namespace Noise.RavenDatabase.Support {
-	public class BaseProvider<T> where T : class {
+	internal class BaseProvider<T> where T : class {
 		private readonly IDbFactory			mDbFactory;
+		private readonly ILogRaven			mLog;
 		private readonly Func<T, object[]>	mKeySelector; 
 		private	IRepository<T>				mDatabase;
 
-		protected BaseProvider( IDbFactory factory, Func<T, object[]> keySelector ) {
+		protected BaseProvider( IDbFactory factory, Func<T, object[]> keySelector, ILogRaven log ) {
 			mDbFactory = factory;
+			mLog = log;
 			mKeySelector = keySelector;
 
 			mDbFactory.DatabaseClosed.Subscribe( OnDatabaseClosed );
@@ -21,7 +24,7 @@ namespace Noise.RavenDatabase.Support {
 		protected IRepository<T> Database {
 			get {
 				if( mDatabase == null ) {
-					mDatabase = new RavenRepository<T>( mDbFactory.GetLibraryDatabase(), mKeySelector );
+					mDatabase = new RavenRepository<T>( mDbFactory.GetLibraryDatabase(), mKeySelector, mLog );
 				}
 
 				return( mDatabase );
@@ -30,6 +33,10 @@ namespace Noise.RavenDatabase.Support {
  
 		protected IDbFactory DbFactory {
 			get{ return( mDbFactory ); }
+		}
+
+		protected ILogRaven Log {
+			get {  return( mLog ); }
 		}
 	}
 }

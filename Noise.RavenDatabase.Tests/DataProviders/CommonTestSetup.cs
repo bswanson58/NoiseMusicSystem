@@ -3,7 +3,6 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Moq;
 using Noise.BlobStorage.BlobStore;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
 using Raven.Client;
@@ -23,7 +22,6 @@ namespace Noise.RavenDatabase.Tests.DataProviders {
 
 		public void FixtureSetup() {
 			DummyLog = new Mock<INoiseLog>();
-			NoiseLogger.Current = DummyLog.Object;
 
 			mDatabaseClosedSubject = new Subject<bool>();
 		}

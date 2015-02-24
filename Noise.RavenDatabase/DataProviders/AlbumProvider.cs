@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Noise.RavenDatabase.Support;
 using Raven.Client.Indexes;
 
@@ -15,14 +15,14 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 	}
 
-	public class AlbumProvider : BaseProvider<DbAlbum>, IAlbumProvider {
+	internal class AlbumProvider : BaseProvider<DbAlbum>, IAlbumProvider {
 		private readonly IArtworkProvider			mArtworkProvider;
 		private readonly ITextInfoProvider			mTextInfoProvider;
 		private readonly ITagAssociationProvider	mTagAssociationProvider;
 
 		public AlbumProvider( IDbFactory databaseFactory,
-							  IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider, ITagAssociationProvider tagAssociationProvider ) :
-			base( databaseFactory, entity => new object[] { entity.DbId }) {
+							  IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider, ITagAssociationProvider tagAssociationProvider, ILogRaven log ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }, log ) {
 			mArtworkProvider = artworkProvider;
 			mTagAssociationProvider = tagAssociationProvider;
 			mTextInfoProvider = textInfoProvider;
@@ -79,7 +79,7 @@ namespace Noise.RavenDatabase.DataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - GetTagList", ex );
+				Log.LogException( string.Format( "GetTagList for category:{0}", categoryId ), ex );
 			}
 
 			return ( retValue );
@@ -94,7 +94,7 @@ namespace Noise.RavenDatabase.DataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - GetAlbumCategories", ex );
+				Log.LogException( string.Format( "GetAlbumTagList for album:{0}", albumId ), ex );
 			}
 
 			return ( retValue );
@@ -121,7 +121,7 @@ namespace Noise.RavenDatabase.DataProviders {
 						}
 					}
 					catch( Exception ex ) {
-						NoiseLogger.Current.LogException( "Exception - SetAlbumCategories", ex );
+						Log.LogException( string.Format( "SetAlbumCategories for artist:{0}, album:{1}", artistId, albumId ), ex );
 					}
 				}
 			}

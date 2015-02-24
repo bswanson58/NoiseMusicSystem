@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Noise.RavenDatabase.Support;
 using Raven.Client.Indexes;
 
@@ -14,11 +14,11 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 	}
 
-	public class ArtistProvider : BaseProvider<DbArtist>, IArtistProvider {
+	internal class ArtistProvider : BaseProvider<DbArtist>, IArtistProvider {
 		private readonly ITagAssociationProvider	mTagAssociationProvider;
 
-		public ArtistProvider( IDbFactory databaseFactory, ITagAssociationProvider associationProvider ) :
-			base( databaseFactory, entity => new object[] { entity.DbId } ) {
+		public ArtistProvider( IDbFactory databaseFactory, ITagAssociationProvider associationProvider, ILogRaven log ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }, log ) {
 			mTagAssociationProvider = associationProvider;
 		}
 
@@ -77,7 +77,7 @@ namespace Noise.RavenDatabase.DataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - GetArtistCategories", ex );
+				Log.LogException( "GetArtistTagList", ex );
 			}
 
 			return ( retValue );

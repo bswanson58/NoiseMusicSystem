@@ -1,12 +1,13 @@
 ﻿using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class InternetStreamProvider : BaseProvider<DbInternetStream>, IInternetStreamProvider {
-		public InternetStreamProvider( IDbFactory databaseFactory ) :
-			base( databaseFactory, entity => new object[] { entity.DbId }) {
+	internal class InternetStreamProvider : BaseProvider<DbInternetStream>, IInternetStreamProvider {
+		public InternetStreamProvider( IDbFactory databaseFactory, ILogRaven log ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }, log ) {
 		}
 
 		public void AddStream( DbInternetStream stream ) {

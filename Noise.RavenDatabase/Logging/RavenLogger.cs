@@ -31,16 +31,24 @@ namespace Noise.RavenDatabase.Logging {
 			LogOnCondition( mPreferences.DatabaseActivity, () => LogDatabaseMessage( "Closed Library" ));
 		}
 
-		public void AddingItem( DbBase item ) {
+		public void AddingItem( object item ) {
 			LogOnCondition( mPreferences.DatabaseActivity, () => LogDatabaseMessage( "Adding {0}", item ));
 		}
 
-		public void AddingExistingItem( DbBase item ) {
+		public void AddingExistingItem( object item ) {
 			LogOnCondition( mPreferences.DatabaseActivity, () => LogDatabaseMessage( "Attempting to add existing item {0}", item ));
 		}
 
-		public void RemoveItem( DbBase item ) {
+		public void UpdateUnknownItem( object item ) {
+			LogOnCondition( mPreferences.DatabaseActivity, () => LogDatabaseMessage( "Attempting to update unknown item {0}", item ));
+		}
+
+		public void RemoveItem( object item ) {
 			LogOnCondition( mPreferences.DatabaseActivity, () => LogDatabaseMessage( "Removing {0}", item ));
+		}
+
+		public void RemoveUnknownItem( object item ) {
+			LogOnCondition( mPreferences.DatabaseActivity, () => LogDatabaseMessage( "Attempting to remove unknown item {0}", item ));
 		}
 
 		public void LogException( string message, Exception exception, string callerName = "" ) {

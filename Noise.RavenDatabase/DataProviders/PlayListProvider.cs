@@ -1,12 +1,13 @@
 ﻿using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class PlayListProvider : BaseProvider<DbPlayList>, IPlayListProvider {
-		public PlayListProvider( IDbFactory databaseFactory ) :
-			base( databaseFactory, entity => new object[] { entity.DbId }) {
+	internal class PlayListProvider : BaseProvider<DbPlayList>, IPlayListProvider {
+		public PlayListProvider( IDbFactory databaseFactory, ILogRaven log ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }, log ) {
 		}
 
 		public void AddPlayList( DbPlayList playList ) {

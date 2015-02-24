@@ -8,9 +8,11 @@ namespace Noise.RavenDatabase.Logging {
 		void	OpenedDatabase( LibraryConfiguration library );
 		void	ClosedDatabase();
 
-		void	AddingItem( DbBase item );
-		void	AddingExistingItem( DbBase item );
-		void	RemoveItem( DbBase item );
+		void	AddingItem( object item );
+		void	AddingExistingItem( object item );
+		void	UpdateUnknownItem( object item );
+		void	RemoveItem( object item );
+		void	RemoveUnknownItem( object item );
 
 		void	LogException( string message, Exception exception, [CallerMemberName] string callerName = "" );
 	}

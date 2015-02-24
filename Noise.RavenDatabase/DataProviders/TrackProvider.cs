@@ -3,11 +3,12 @@ using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Noise.RavenDatabase.Support;
 using Raven.Client.Indexes;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class TracksByDbId : AbstractIndexCreationTask<DbTrack> {
+	internal class TracksByDbId : AbstractIndexCreationTask<DbTrack> {
 		public TracksByDbId() {
 			Map = tracks => from track in tracks select new { track.DbId };
 		}
@@ -19,9 +20,9 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 	}
 
-	public class TrackProvider : BaseProvider<DbTrack>, ITrackProvider {
-		public TrackProvider( IDbFactory databaseFactory ) :
-			base( databaseFactory, entity => new object[] { entity.DbId }) {
+	internal class TrackProvider : BaseProvider<DbTrack>, ITrackProvider {
+		public TrackProvider( IDbFactory databaseFactory, ILogRaven log ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }, log ) {
 		}
 
 		public void AddTrack( DbTrack track ) {

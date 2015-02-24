@@ -1,12 +1,13 @@
 ﻿using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class TimestampProvider : BaseProvider<DbTimestamp>, ITimestampProvider {
-		public TimestampProvider( IDbFactory databaseFactory ) :
-			base( databaseFactory, entity => new object[] { entity.ComponentId }) {
+	internal class TimestampProvider : BaseProvider<DbTimestamp>, ITimestampProvider {
+		public TimestampProvider( IDbFactory databaseFactory, ILogRaven log ) :
+			base( databaseFactory, entity => new object[] { entity.ComponentId }, log ) {
 		}
 
 		public long GetTimestamp( string componentId ) {

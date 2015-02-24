@@ -72,7 +72,7 @@ namespace Noise.RavenDatabase.Support {
 				IndexCreation.CreateIndexes( GetType().Assembly, mLibraryDatabase );
 
 				if( databaseCreated ) {
-					var versionProvider = new DatabaseInfoProvider( this );
+					var versionProvider = new DatabaseInfoProvider( this, mLog );
 
 					versionProvider.InitializeDatabaseVersion( cDatabaseVersion );
 
