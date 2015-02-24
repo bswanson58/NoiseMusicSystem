@@ -96,5 +96,11 @@ namespace Noise.Librarian {
 		private object CreateViewModel( Type modelType ) {
 			return( Container.Resolve( modelType ));
 		}
+
+		public void LogException( string reason, Exception exception ) {
+			if( mLog != null ) {
+				mLog.LogException( reason, exception );
+			}
+		}
 	}
 }

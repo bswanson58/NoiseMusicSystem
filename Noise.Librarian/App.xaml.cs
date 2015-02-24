@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
-using Noise.Infrastructure;
 
 namespace Noise.Librarian {
 	/// <summary>
@@ -23,10 +22,9 @@ namespace Noise.Librarian {
 		}
 
 		private void CurrentDomainUnhandledException( object sender, UnhandledExceptionEventArgs e ) {
-			NoiseLogger.Current.LogException( "Librarian:Application domain unhandled exception:", e.ExceptionObject as Exception );
-
-			var stackTrace = new StackTrace();
-			NoiseLogger.Current.LogMessage( stackTrace.ToString());
+			if( mBootstrapper != null ) {
+				mBootstrapper.LogException( "Application Domain unhandled exception", e.ExceptionObject as Exception );
+			}
 
 			Shutdown( -1 );
 		}
@@ -35,17 +33,19 @@ namespace Noise.Librarian {
 			if( Debugger.IsAttached ) {
 				Clipboard.SetText( e.Exception.ToString());
 			}
-	
-			NoiseLogger.Current.LogException( "Librarian:Application unhandled exception:", e.Exception );
-			NoiseLogger.Current.LogMessage( new StackTrace().ToString());
+
+			if( mBootstrapper != null ) {
+				mBootstrapper.LogException( "Application Dispatcher unhandled exception", e.Exception );
+			}
 
 			e.Handled = true;
-
 			Shutdown( -1 );
 		}
 
-		private void TaskSchedulerUnobservedTaskException( object sender, UnobservedTaskExceptionEventArgs e ) { 
-			NoiseLogger.Current.LogException( "Librarian:Task Unobserved Exception: ", e.Exception );
+		private void TaskSchedulerUnobservedTaskException( object sender, UnobservedTaskExceptionEventArgs e ) {
+			if( mBootstrapper != null ) {
+				mBootstrapper.LogException( "Task Scheduler unobserved exception", e.Exception );
+			}
  
 			e.SetObserved(); 
 		} 
