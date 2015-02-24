@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.ServiceProcess;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using ReusableBits.Service;
 
@@ -13,15 +12,16 @@ namespace Noise.Headless {
 	public class HeadlessService : BaseService {
 		private readonly INoiseManager			mNoiseManager;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
+		private readonly INoiseLog				mLog;
 
-		public HeadlessService( INoiseManager noiseManager, ILibraryConfiguration libraryConfiguration ) {
+		public HeadlessService( INoiseManager noiseManager, ILibraryConfiguration libraryConfiguration, INoiseLog log ) {
 			mNoiseManager = noiseManager;
 			mLibraryConfiguration = libraryConfiguration;
+			mLog = log;
 		}
 
 		public override void OnStart( string[] args ) {
-			NoiseLogger.Current.LogMessage( "===========================" );
-			NoiseLogger.Current.LogMessage( "Noise.Headless is starting." );
+			mLog.LogMessage( "+++++ Noise.Headless starting. +++++" );
 
 			if( mNoiseManager.Initialize()) {
 				mLibraryConfiguration.OpenDefaultLibrary();
@@ -35,15 +35,14 @@ namespace Noise.Headless {
 				}
 			}
 			else {
-				NoiseLogger.Current.LogMessage( "Noise Headless Service could not start.");
+				mLog.LogMessage( "Noise Headless Service could not start.");
 			}
 		}
 
 		public override void OnStop() {
 			mNoiseManager.Shutdown();
 
-			NoiseLogger.Current.LogMessage( "Noise.Headless has stopped." );
-			NoiseLogger.Current.LogMessage( "===========================" );
+			mLog.LogMessage( "##### Noise.Desktop System stopped. #####" );
 		}
 	}
 }
