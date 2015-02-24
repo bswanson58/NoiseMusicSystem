@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Web;
-using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteHost;
 using Noise.RemoteHost.Discovery;
 
@@ -16,6 +16,7 @@ namespace Noise.RemoteHost {
 
 		private readonly RemoteHostConfiguration	mHostConfiguration;
 		private readonly INoiseRemote				mRemoteServer;
+		private readonly INoiseLog					mLog;
 		private readonly string						mHostBaseAddress;
 		private ServiceHost							mServerHost;
 		private readonly INoiseRemoteData			mRemoteDataServer;
@@ -32,7 +33,7 @@ namespace Noise.RemoteHost {
 
 		public RemoteServerMgr( RemoteHostConfiguration hostConfiguration, INoiseRemote noiseRemote, INoiseRemoteData noiseRemoteData,
 								INoiseRemoteQueue noiseRemoteQueue, INoiseRemoteSearch noiseRemoteSearch,
-								INoiseRemoteTransport noiseRemoteTransport, INoiseRemoteLibrary noiseRemoteLibrary ) {
+								INoiseRemoteTransport noiseRemoteTransport, INoiseRemoteLibrary noiseRemoteLibrary, INoiseLog log ) {
 			mHostConfiguration = hostConfiguration;
 			mRemoteServer = noiseRemote;
 			mRemoteDataServer = noiseRemoteData;
@@ -40,6 +41,7 @@ namespace Noise.RemoteHost {
 			mRemoteSearchServer = noiseRemoteSearch;
 			mRemoteTransportServer = noiseRemoteTransport;
 			mRemoteLibraryServer = noiseRemoteLibrary;
+			mLog = log;
 
 			mHostBaseAddress = string.Format( "http://localhost:{0}/Noise", mHostConfiguration.HostPort );
 		}
@@ -83,12 +85,12 @@ namespace Noise.RemoteHost {
 
 			StartDiscoveryListener();
 
-			NoiseLogger.Current.LogMessage( "Remote services started." );
+			mLog.LogMessage( "Remote services started." );
 		}
 
 		private void StartDiscoveryListener() {
 			var	responseSender = new RequestSender( cDiscoveryResponsePort );
-			var responder = new RequestResponder( cDiscoveryRealm, responseSender );
+			var responder = new RequestResponder( cDiscoveryRealm, responseSender, mLog );
 			var discoveryMessage = string.Format( "http://{0}:{1}", LocalIPAddress(), mHostConfiguration.HostPort );
 
 			responder.AddRequestResponse( "ServerDiscovery", "ServerEndpoint", discoveryMessage );
@@ -96,7 +98,7 @@ namespace Noise.RemoteHost {
 			mDiscoveryListener = new MulticastEndpoint( IPAddress.Parse( cDiscoveryAddress ), cDiscoveryPort );
 			mDiscoveryListener.StartListener( responder );
 
-			NoiseLogger.Current.LogMessage( "ServerDiscovery started for endpoint: {0}", discoveryMessage );
+			mLog.LogMessage( string.Format( "ServerDiscovery started for endpoint: {0}", discoveryMessage ));
 		}
 
 		private string LocalIPAddress() {
@@ -114,7 +116,7 @@ namespace Noise.RemoteHost {
 			return( retValue );
 		}
 
-		private static bool OpenRemoteServer( ServiceHost host ) {
+		private bool OpenRemoteServer( ServiceHost host ) {
 			bool	openSucceeded = false;
 
 			try {
@@ -123,7 +125,7 @@ namespace Noise.RemoteHost {
 				openSucceeded = true;
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteServerMgr:OpenRemoteServer", ex );
+				mLog.LogException( "OpenRemoteServer", ex );
 			}
 			finally {
 				if(!openSucceeded ) {
@@ -146,7 +148,7 @@ namespace Noise.RemoteHost {
 			}
 		}
 
-		private static void CloseRemoteServer( ServiceHost host ) {
+		private void CloseRemoteServer( ServiceHost host ) {
 			if( host != null ) {
 				bool	closeSucceeded = false;
 
@@ -156,7 +158,7 @@ namespace Noise.RemoteHost {
 					closeSucceeded = true;
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "RemoteServerMgr:CloseRemoteServer", ex );
+					mLog.LogException( "RemoteServerMgr:CloseRemoteServer", ex );
 				}
 				finally {
 					if(!closeSucceeded ) {

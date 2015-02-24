@@ -19,14 +19,16 @@ namespace Noise.RemoteHost {
 		private readonly IPlayController					mPlayController;
 		private readonly IAudioPlayer						mAudioPlayer;
 		private readonly RemoteHostConfiguration			mHostConfiguration;
+		private readonly INoiseLog							mLog;
 		private	readonly Dictionary<string, ClientEvents>	mClientList;
 
 		public RemoteServer( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration,
-							 IPlayController playController, IAudioPlayer audioPlayer, RemoteHostConfiguration hostConfiguration ) {
+							 IPlayController playController, IAudioPlayer audioPlayer, RemoteHostConfiguration hostConfiguration, INoiseLog log ) {
 			mLibraryConfiguration = libraryConfiguration;
 			mPlayController = playController;
 			mAudioPlayer = audioPlayer;
 			mHostConfiguration = hostConfiguration;
+			mLog = log;
 			mClientList = new Dictionary<string, ClientEvents>();
 
 			eventAggregator.Subscribe( this );
@@ -77,7 +79,7 @@ namespace Noise.RemoteHost {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "RemoteServer:SetOutputDevice:", ex );
+				mLog.LogException( "SetOutputDevice:", ex );
 
 				retValue.ErrorMessage = ex.Message;
 			}
@@ -95,7 +97,7 @@ namespace Noise.RemoteHost {
 					client.Close();
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "RemoteServer:client.Close:", ex );
+					mLog.LogException( string.Format( "Closing client \"{0}\"", address ), ex );
 				}
 
 				mClientList.Remove( address );
@@ -107,7 +109,7 @@ namespace Noise.RemoteHost {
 				mClientList.Add( address, client );
 
 				retValue.Success = true;
-				NoiseLogger.Current.LogMessage( "Added remote client: {0}", address );
+				mLog.LogMessage( string.Format( "Added remote client: {0}", address ));
 			}
 			else {
 				retValue.ErrorMessage = "Remote client address already registered.";
@@ -123,7 +125,7 @@ namespace Noise.RemoteHost {
 				mClientList.Remove( address );
 
 				retValue.Success = true;
-				NoiseLogger.Current.LogMessage( "Removed remote client: {0}", address );
+				mLog.LogMessage( string.Format( "Removed remote client: {0}", address ));
 			}
 			else {
 				retValue.ErrorMessage = "Client address not located in map.";

@@ -73,7 +73,7 @@ namespace Noise.RavenDatabase.Support {
 
 					versionProvider.InitializeDatabaseVersion( cDatabaseVersion );
 
-					NoiseLogger.Current.LogMessage( "Created Library Database: {0}", mLibraryConfiguration.Current.LibraryName );
+					NoiseLogger.Current.LogMessage( string.Format( "Created Meta Database: {0}", mLibraryConfiguration.Current ));
 				}
 
 				IsOpen = mLibraryDatabase != null;

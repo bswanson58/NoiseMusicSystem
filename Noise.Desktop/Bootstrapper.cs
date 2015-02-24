@@ -108,7 +108,7 @@ namespace Noise.Desktop {
 
 			Settings.Default.Save();
 
-			mLog.LogMessage( "##### Noise.Desktop System stopped. #####" );
+			mLog.LogMessage( "##### Noise.Desktop System stopped. #####", "Bootstrapper:StopNoise" );
 		}
 
 		public void LogException( string reason, Exception exception ) {

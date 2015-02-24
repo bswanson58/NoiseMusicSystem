@@ -6,7 +6,7 @@ using Microsoft.Practices.Prism.Mvvm;
 using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.Unity;
 using Noise.AppSupport;
-using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 using Noise.Librarian.Interfaces;
 using Noise.Librarian.ViewModels;
 using Noise.Librarian.Views;
@@ -16,6 +16,7 @@ namespace Noise.Librarian {
 	public class Bootstrapper : UnityBootstrapper {
 		private Window		mShell;
 		private ILibrarian	mLibrarian;
+		private INoiseLog	mLog;
 
 		protected override IModuleCatalog CreateModuleCatalog() {
 			var catalog = new ModuleCatalog();
@@ -37,6 +38,8 @@ namespace Noise.Librarian {
 
 			var iocConfig = new IocConfiguration( Container );
 			iocConfig.InitializeIoc( ApplicationUsage.Librarian );
+
+			mLog = Container.Resolve<INoiseLog>();
 
 			ViewModelLocationProvider.SetDefaultViewTypeToViewModelTypeResolver( ViewModelTypeResolver );
 			ViewModelLocationProvider.SetDefaultViewModelFactory( CreateViewModel );
@@ -68,13 +71,12 @@ namespace Noise.Librarian {
 		}
 
 		private void Startup() {
-			NoiseLogger.Current.LogMessage( "==============================" );
-			NoiseLogger.Current.LogMessage( "Noise.Librarian starting." );
+			mLog.LogMessage( "+++++ Noise.Librarian starting. +++++" );
 
 			mLibrarian = Container.Resolve<ILibrarian>();
 
 			if(!mLibrarian.Initialize()) {
-				NoiseLogger.Current.LogInfo( "Noise Librarian failed to initialize." );
+				mLog.LogMessage( "Noise.Librarian failed to initialize." );
 			}
 		}
 

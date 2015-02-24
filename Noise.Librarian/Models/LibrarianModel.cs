@@ -18,6 +18,7 @@ namespace Noise.Librarian.Models {
 		private readonly IMetadataManager		mMetadataManager;
 		private readonly IDirectoryArchiver		mDirectoryArchiver;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
+		private readonly INoiseLog				mLog;
 		private TaskHandler						mBackupTaskHandler;
 		private TaskHandler						mRestoreTaskHandler;
 		private TaskHandler						mExportTaskHandler;
@@ -29,7 +30,8 @@ namespace Noise.Librarian.Models {
 							   IDatabaseUtility databaseUtility,
 							   IMetadataManager metadataManager,
 							   IDirectoryArchiver directoryArchiver,
-							   ILibraryConfiguration libraryConfiguration ) {
+							   ILibraryConfiguration libraryConfiguration,
+							   INoiseLog log ) {
 			mEventAggregator = eventAggregator;
 			mLifecycleManager = lifecycleManager;
 			mDatabaseManager = databaseManager;
@@ -37,20 +39,21 @@ namespace Noise.Librarian.Models {
 			mMetadataManager = metadataManager;
 			mDirectoryArchiver = directoryArchiver;
 			mLibraryConfiguration = libraryConfiguration;
+			mLog = log;
 		}
 
 		public bool Initialize() {
-			NoiseLogger.Current.LogMessage( "Initializing Noise Music System - Librarian" );
+			mLog.LogMessage( "Initializing Noise Music System - Librarian" );
 
 			try {
 				mLifecycleManager.Initialize();
 
-				NoiseLogger.Current.LogMessage( "Initialized LibrarianModel." );
+				mLog.LogMessage( "Initialized LibrarianModel." );
 
 				mEventAggregator.Publish( new Events.SystemInitialized());
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "LibrarianModel:Initialize", ex );
+				mLog.LogException( "Failed to Initialize", ex );
 			}
 
 			return( true );
@@ -122,19 +125,19 @@ namespace Noise.Librarian.Models {
 
 						mLibraryConfiguration.CloseLibraryBackup( library, libraryBackup );
 
-						NoiseLogger.Current.LogMessage( "Backup of library '{0}' was completed ('{1}')", library.LibraryName, libraryBackup.BackupDate );
+						mLog.LogMessage( string.Format( "Backup of {0} was completed ('{1}')", library, libraryBackup.BackupDate ));
 					}
 				}
 				catch( Exception ex ) {
 					mLibraryConfiguration.AbortLibraryBackup( library, libraryBackup );
 
 					progressCallback( new ProgressReport( "Completed Library backup.", "Failed" ));
-					NoiseLogger.Current.LogException( "LibrarianModel:BackupLibrary - Database backup failed.", ex );
+					mLog.LogException( string.Format( "Database backup failed. {0}", library ), ex );
 				}
 			}
 			catch( Exception ex ) {
 				progressCallback( new ProgressReport( "Completed Library backup.", "Failed" ));
-				NoiseLogger.Current.LogException( "LibrarianModel:BackupLibrary - Could not open library backup.", ex );
+				mLog.LogException( string.Format( "Could not open library backup. {0}", library ), ex );
 			}
 		}
 
@@ -210,15 +213,13 @@ namespace Noise.Librarian.Models {
 
 						mLibraryConfiguration.CloseLibraryRestore( library, libraryBackup );
 
-						NoiseLogger.Current.LogMessage( "Restore of library '{0}' was completed ('{1} - {2}')",
-														library.LibraryName, 
-														libraryBackup.BackupDate.ToShortDateString(),
-														libraryBackup.BackupDate.ToShortTimeString() );
+						mLog.LogMessage( string.Format( "Restore of {0} was completed ('{1} - {2}')", library,
+														libraryBackup.BackupDate.ToShortDateString(), libraryBackup.BackupDate.ToShortTimeString()));
 					}
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "LibrarianModel:RestoreLibrary", ex );
+				mLog.LogException( string.Format( "Restoring {0}", library ), ex );
 
 				progressCallback( new ProgressReport( "Completed Library restore.", "Failed" ));
 				mLibraryConfiguration.AbortLibraryRestore( library, libraryBackup );
@@ -293,19 +294,19 @@ namespace Noise.Librarian.Models {
 
 						mLibraryConfiguration.CloseLibraryExport( library, libraryBackup );
 
-						NoiseLogger.Current.LogMessage( "Export of library '{0}' was completed to ('{1}')", library.LibraryName, libraryBackup.BackupPath );
+						mLog.LogMessage( string.Format( "Export of {0} was completed to ('{1}')", library, libraryBackup.BackupPath ));
 					}
 				}
 				catch( Exception ex ) {
 					mLibraryConfiguration.AbortLibraryExport( library, libraryBackup );
 
-					progressCallback( new ProgressReport( "Export Library failed.", library.LibraryName ));
-					NoiseLogger.Current.LogException( "LibrarianModel:BackupLibrary - Database backup failed.", ex );
+					progressCallback( new ProgressReport( "Export library failed.", library.LibraryName ));
+					mLog.LogException( string.Format( "Export library failed. {0}", library ), ex );
 				}
 			}
 			catch( Exception ex ) {
-				progressCallback( new ProgressReport( "Export Library failed.", library.LibraryName ));
-				NoiseLogger.Current.LogMessage( "LibrarianModel:ExportLibrary", ex );
+				progressCallback( new ProgressReport( "Export library failed.", library.LibraryName ));
+				mLog.LogException( string.Format( "Export of {0}", library ), ex );
 			}
 		}
 
@@ -376,12 +377,12 @@ namespace Noise.Librarian.Models {
 
 						mLibraryConfiguration.CloseLibraryImport( newLibrary );
 
-						NoiseLogger.Current.LogMessage( "Import of library '{0}' was completed.", library.LibraryName );
+						mLog.LogMessage( string.Format( "Imported {0}", library ));
 					}
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( string.Format( "LibrarianModel:ImportLibrary from '{0}'", libraryBackup.BackupPath ), ex );
+				mLog.LogException( string.Format( "Import library from '{0}'", libraryBackup.BackupPath ), ex );
 
 				progressCallback( new ProgressReport( "Completed Library import - Failed", library.LibraryName ));
 				mLibraryConfiguration.AbortLibraryImport( library );
@@ -394,7 +395,7 @@ namespace Noise.Librarian.Models {
 			mLifecycleManager.Shutdown();
 			mDatabaseManager.Shutdown();
 
-			NoiseLogger.Current.LogMessage( "Shutdown LibrarianModel." );
+			mLog.LogMessage( "Shutdown LibrarianModel." );
 		}
 	}
 }
