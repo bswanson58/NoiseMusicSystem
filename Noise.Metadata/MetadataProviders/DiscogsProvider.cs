@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -34,88 +35,94 @@ namespace Noise.Metadata.MetadataProviders {
 		public void Shutdown() {
 		}
 
-		public async void UpdateArtist( string artistName ) {
+		public void UpdateArtist( string artistName ) {
+			// Since we are running on a thread, wait for the async work to
+			//  complete before our thread is terminated.
 			if( mHasNetworkAccess ) {
-				try {
-					var searchResults = await mDiscogsClient.ArtistSearch( artistName );
+				AsyncUpdateArtist( artistName ).Wait();
+			}
+		}
 
-					if(( searchResults != null ) &&
-					   ( searchResults.Any())) {
-						var result = searchResults[0];
+		private async Task AsyncUpdateArtist( string artistName ) {
+			try {
+				var searchResults = await mDiscogsClient.ArtistSearch( artistName );
 
-						if( result.Type.Equals( DiscogsClient.cSearchItemTypeArtist )) {
-							var discogsArtist = await mDiscogsClient.GetArtist( result.Id );
+				if(( searchResults != null ) &&
+				   ( searchResults.Any())) {
+					var result = searchResults[0];
 
-							using( var session = mDocumentStore.OpenSession()) {
-								var artistBio = session.Load<DbArtistBiography>( DbArtistBiography.FormatStatusKey( artistName )) ??
-												new DbArtistBiography { ArtistName = artistName };
-								var discography = session.Load<DbArtistDiscography>( DbArtistDiscography.FormatStatusKey( artistName )) ??
-												new DbArtistDiscography { ArtistName = artistName };
-								var bandMembers = new List<string>();
+					if( result.Type.Equals( DiscogsClient.cSearchItemTypeArtist )) {
+						var discogsArtist = await mDiscogsClient.GetArtist( result.Id );
 
-								if( discogsArtist.Members != null ) {
-									bandMembers.AddRange( from m in discogsArtist.Members where m.Active select m.Name );
-									bandMembers.AddRange( from m in discogsArtist.Members where !m.Active select "-" + m.Name );
-								}
-								if( discogsArtist.Groups != null ) {
-									bandMembers.AddRange( from g in discogsArtist.Groups select "(" + g.Name + ")" );
-								}
+						using( var session = mDocumentStore.OpenSession()) {
+							var artistBio = session.Load<DbArtistBiography>( DbArtistBiography.FormatStatusKey( artistName )) ??
+											new DbArtistBiography { ArtistName = artistName };
+							var discography = session.Load<DbArtistDiscography>( DbArtistDiscography.FormatStatusKey( artistName )) ??
+											new DbArtistDiscography { ArtistName = artistName };
+							var bandMembers = new List<string>();
 
-								if( bandMembers.Any()) {
-									artistBio.SetMetadata( eMetadataType.BandMembers, bandMembers );
-								}
-								else {
-									artistBio.ClearMetadata( eMetadataType.BandMembers );
-								}
-
-								var artistReleases = await mDiscogsClient.GetArtistReleases( result.Id );
-								if( artistReleases != null ) {
-									discography.Discography.Clear();
-
-									foreach( var release in artistReleases ) {
-										var releaseType = DiscographyReleaseType.Other;
-
-										if( String.Compare(release.Role, "Main", StringComparison.OrdinalIgnoreCase) == 0 ) {
-											releaseType = DiscographyReleaseType.Release;
-										}
-										else if( String.Compare(release.Role, "Appearance", StringComparison.OrdinalIgnoreCase) == 0 ) {
-											releaseType = DiscographyReleaseType.Appearance;
-										}
-										else if( String.Compare(release.Role, "TrackAppearance", StringComparison.OrdinalIgnoreCase) == 0 ) {
-											releaseType = DiscographyReleaseType.TrackAppearance;
-										}
-
-										discography.Discography.Add( new DbDiscographyRelease( release.Title, "", "", release.Year, releaseType ));
-									}
-								}
-
-
-								if(( discogsArtist.Urls != null ) &&
-									( discogsArtist.Urls.GetLength( 0 ) > 0 ) &&
-									( !string.IsNullOrWhiteSpace( discogsArtist.Urls[0] ))) {
-									var url = discogsArtist.Urls[0];
-
-									artistBio.SetMetadata( eMetadataType.WebSite, url.Replace( Environment.NewLine, "" ).Replace( "\n", "" ).Replace( "\r", "" ));
-								}
-
-								session.Store( artistBio );
-								session.Store( discography );
-								session.SaveChanges();
-
-								mLog.LogMessage( string.Format( "Discogs updated artist: {0}", artistName ));
+							if( discogsArtist.Members != null ) {
+								bandMembers.AddRange( from m in discogsArtist.Members where m.Active select m.Name );
+								bandMembers.AddRange( from m in discogsArtist.Members where !m.Active select "-" + m.Name );
 							}
-						}
-						else {
-							mLog.LogMessage( string.Format( "Discogs search did not locate an artist: {0}", artistName ));
+							if( discogsArtist.Groups != null ) {
+								bandMembers.AddRange( from g in discogsArtist.Groups select "(" + g.Name + ")" );
+							}
+
+							if( bandMembers.Any()) {
+								artistBio.SetMetadata( eMetadataType.BandMembers, bandMembers );
+							}
+							else {
+								artistBio.ClearMetadata( eMetadataType.BandMembers );
+							}
+
+							var artistReleases = await mDiscogsClient.GetArtistReleases( result.Id );
+							if( artistReleases != null ) {
+								discography.Discography.Clear();
+
+								foreach( var release in artistReleases ) {
+									var releaseType = DiscographyReleaseType.Other;
+
+									if( String.Compare(release.Role, "Main", StringComparison.OrdinalIgnoreCase) == 0 ) {
+										releaseType = DiscographyReleaseType.Release;
+									}
+									else if( String.Compare(release.Role, "Appearance", StringComparison.OrdinalIgnoreCase) == 0 ) {
+										releaseType = DiscographyReleaseType.Appearance;
+									}
+									else if( String.Compare(release.Role, "TrackAppearance", StringComparison.OrdinalIgnoreCase) == 0 ) {
+										releaseType = DiscographyReleaseType.TrackAppearance;
+									}
+
+									discography.Discography.Add( new DbDiscographyRelease( release.Title, "", "", release.Year, releaseType ));
+								}
+							}
+
+
+							if(( discogsArtist.Urls != null ) &&
+							   ( discogsArtist.Urls.GetLength( 0 ) > 0 ) &&
+							   (!string.IsNullOrWhiteSpace( discogsArtist.Urls[0]))) {
+								var url = discogsArtist.Urls[0];
+
+								artistBio.SetMetadata( eMetadataType.WebSite, url.Replace( Environment.NewLine, "" ).Replace( "\n", "" ).Replace( "\r", "" ));
+							}
+
+							session.Store( artistBio );
+							session.Store( discography );
+							session.SaveChanges();
+
+							mLog.LogMessage( string.Format( "Updated artist \"{0}\" from Discogs", artistName ));
 						}
 					}
 					else {
-						mLog.LogMessage( string.Format( "Discogs search failed for: {0}", artistName ));
+						mLog.LogMessage( string.Format( "Discogs search did not locate artist \"{0}\"", artistName ));
 					}
 				}
-				catch( Exception ex ) {
-					mLog.LogException( string.Format( "Discogs search failed for artist: {0}", artistName ), ex );
+				else {
+					mLog.LogMessage( string.Format( "Discogs search failed for artist \"{0}\"", artistName ));
 				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( string.Format( "Discogs search failed for artist \"{0}\"", artistName ), ex );
 			}
 		}
 	}

@@ -10,6 +10,7 @@ namespace Noise.Metadata.MetadataProviders.Discogs {
 
 		private readonly ILicenseManager	mLicenseManager;
 		private string						mAccessToken;
+		private IDiscogsApi					mDiscogsApi;
 
 		public DiscogsClient( ILicenseManager licenseManager ) {
 			mLicenseManager = licenseManager;
@@ -25,23 +26,28 @@ namespace Noise.Metadata.MetadataProviders.Discogs {
 			return( mAccessToken );
 		}
 
+		private IDiscogsApi DiscogsApi {
+			get {
+				if( mDiscogsApi == null ) {
+					mDiscogsApi = RestService.For<IDiscogsApi>( cDiscogsUrl );
+				}
+
+				return( mDiscogsApi );
+			}
+		}
+
 		public async Task<ArtistSearchResult[]> ArtistSearch( string artistName ) {
-			var discogsApi = RestService.For<IDiscogsApi>( cDiscogsUrl );
-			var searchResults = await discogsApi.Search( artistName, cSearchItemTypeArtist, RetrieveLicenseKey());
+			var searchResults = await DiscogsApi.Search( artistName, cSearchItemTypeArtist, RetrieveLicenseKey());
 
 			return( searchResults.Results );
 		}
 
 		public async Task<DiscogsArtist> GetArtist( string artistId ) {
-			var discogsApi = RestService.For<IDiscogsApi>( cDiscogsUrl );
-			var artist = await discogsApi.GetArtist( artistId, RetrieveLicenseKey());
-
-			return( artist );
+			return( await DiscogsApi.GetArtist( artistId, RetrieveLicenseKey()));
 		}
 
 		public async Task<DiscogsRelease[]> GetArtistReleases( string artistId ) {
-			var discogsApi = RestService.For<IDiscogsApi>( cDiscogsUrl );
-			var releases = await discogsApi.GetArtistReleases( artistId, RetrieveLicenseKey());
+			var releases = await DiscogsApi.GetArtistReleases( artistId, RetrieveLicenseKey());
 
 			return( releases.Releases );
 		}
