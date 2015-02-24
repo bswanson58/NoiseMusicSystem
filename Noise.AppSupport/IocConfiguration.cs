@@ -12,7 +12,6 @@ using Noise.AudioSupport;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Logging;
 using Noise.Infrastructure.RemoteHost;
 using Noise.Metadata;
 
@@ -42,7 +41,7 @@ namespace Noise.AppSupport {
 		public bool InitializeIoc( ApplicationUsage appUsage ) {
 			mContainer.RegisterType<IPlatformLog, SeriLogAdapter>( new ContainerControlledLifetimeManager());
 			mContainer.RegisterType<IFileWriter, JsonObjectWriter>( new ContainerControlledLifetimeManager());
-			mContainer.RegisterType<INoiseLog, Logging.NoiseLogger>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<INoiseLog, NoiseLogger>( new ContainerControlledLifetimeManager());
 			mContainer.RegisterType<IIoc, IocProvider>( new ContainerControlledLifetimeManager());
 
 			mContainer.RegisterType<AudioPreferences>( new InjectionFactory( PreferencesFactory<AudioPreferences>.CreatePreferences ));
@@ -81,10 +80,6 @@ namespace Noise.AppSupport {
 					break;
 			}
 
-			// Configure support for original logging.
-			Infrastructure.NoiseLogger.SetPlatformLogger( mContainer.Resolve<IPlatformLog>());
-			Infrastructure.NoiseLogger.Preferences = mContainer.Resolve<IPreferences>().Load<LoggingPreferences>();
-	
 			return( true );
 		}
 
