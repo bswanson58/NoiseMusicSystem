@@ -13,6 +13,8 @@
   "BuildingDiscoverFiles": false,
   "BuildingDiscoverFolders": false,
 
+  "DatabaseActivity":  false,
+
   "MetadataCleaning" : true,
   "MetadataCleaningDomainObjects": false,
   "MetadataCleaningFileObjects": false,

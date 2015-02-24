@@ -14,6 +14,8 @@
 		public bool BuildingDiscoverFolders { get; set; }
 		public bool BuildingDiscoverFiles { get; set; }
 
+		public bool DatabaseActivity { get; set; }
+
 		public bool MetadataCleaning { get; set; }
 		public bool MetadataCleaningDomainObjects { get; set; }
 		public bool MetadataCleaningFileObjects { get; set; }

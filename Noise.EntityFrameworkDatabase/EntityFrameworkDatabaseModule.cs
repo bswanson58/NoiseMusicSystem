@@ -4,6 +4,7 @@ using Noise.EntityFrameworkDatabase.DatabaseUtility;
 using Noise.EntityFrameworkDatabase.DataProviders;
 using Noise.EntityFrameworkDatabase.DatabaseManager;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase {
@@ -44,6 +45,8 @@ namespace Noise.EntityFrameworkDatabase {
 			mContainer.RegisterType<IDatabaseInfo, DbVersionProvider>();
 
 			mContainer.RegisterType<IDatabaseUtility, SqlDatabaseManager>();
+
+			mContainer.RegisterType<ILogDatabase, LogDatabase>( new HierarchicalLifetimeManager());
 		}
 	}
 }

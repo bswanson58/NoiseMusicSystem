@@ -189,6 +189,8 @@
     <Compile Include="Interfaces\IDatabaseInitializeStrategy.cs" />
     <Compile Include="Interfaces\IDbContext.cs" />
     <Compile Include="DatabaseManager\NoiseContext.cs" />
+    <Compile Include="Logging\ILogDatabase.cs" />
+    <Compile Include="Logging\LogDatabase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
