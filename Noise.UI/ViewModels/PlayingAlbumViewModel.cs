@@ -4,21 +4,24 @@ using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.UI.Logging;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class PlayingAlbumViewModel : AutomaticPropertyBase,
-										 IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackTrackUpdated> {
+	internal class PlayingAlbumViewModel : AutomaticPropertyBase,
+										   IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackTrackUpdated> {
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly IPlayQueue			mPlayQueue;
+		private readonly IUiLog				mLog;
 		private TaskHandler<Artwork>		mArtworkTaskHandler; 
 		private DbAlbum						mCurrentAlbum;
 		private Artwork						mAlbumCover;
 
-		public PlayingAlbumViewModel( IEventAggregator eventAggregator, IAlbumProvider albumProvider, IPlayQueue playQueue ) {
+		public PlayingAlbumViewModel( IEventAggregator eventAggregator, IAlbumProvider albumProvider, IPlayQueue playQueue, IUiLog log ) {
 			mAlbumProvider = albumProvider;
 			mPlayQueue = playQueue;
+			mLog = log;
 
 			UpdateAlbum();
 			eventAggregator.Subscribe( this );
@@ -132,8 +135,8 @@ namespace Noise.UI.ViewModels {
 
 				return( cover );
 			},
-			artwork => SetAlbumArtwork( artwork ),
-			exception => NoiseLogger.Current.LogException( "PlayingAlbumViewModel.RetrieveAlbumArtwork", exception ) );
+			SetAlbumArtwork,
+			exception => mLog.LogException( string.Format( "Retrieving Album Artwork for Album:{0}", albumId ), exception ) );
 		}
 
 	}

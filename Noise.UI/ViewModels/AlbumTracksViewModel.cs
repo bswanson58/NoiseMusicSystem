@@ -10,6 +10,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.UI.Behaviours;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
+using Noise.UI.Logging;
 using Observal.Extensions;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -22,6 +23,7 @@ namespace Noise.UI.ViewModels {
 	internal class AlbumTracksViewModel : AutomaticPropertyBase,
 										  IHandle<Events.DatabaseClosing>, IHandle<Events.TrackUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly IUiLog					mLog;
 		private readonly ISelectionState		mSelectionState;
 		private readonly ITrackProvider			mTrackProvider;
 		private long							mCurrentAlbumId;
@@ -30,8 +32,9 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<UiTrack>	mTracks;
 		private readonly InteractionRequest<TrackEditInfo>	mTrackEditRequest; 
 
-		public AlbumTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, ITrackProvider trackProvider ) {
+		public AlbumTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, ITrackProvider trackProvider, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mSelectionState = selectionState;
 			mTrackProvider = trackProvider;
 
@@ -130,7 +133,7 @@ namespace Noise.UI.ViewModels {
 														}
 													},
 													() => {},
-													ex => NoiseLogger.Current.LogException( "AlbumTracksViewModel:RetrieveTracks", ex ));
+													ex => mLog.LogException( string.Format( "Retrieve tracks for {0}", forAlbumId ), ex ));
 		}
 
 		private void OnTrackPlay( long trackId ) {

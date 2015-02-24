@@ -2,21 +2,24 @@
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.UI.Logging;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class PlayingArtistViewModel : AutomaticPropertyBase,
-										 IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackTrackUpdated> {
+	internal class PlayingArtistViewModel : AutomaticPropertyBase,
+											IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackTrackUpdated> {
 		private readonly IMetadataManager	mMetadataManager;
 		private readonly IPlayQueue			mPlayQueue;
+		private readonly IUiLog				mLog;
 		private TaskHandler<Artwork>		mArtworkTaskHandler; 
 		private DbArtist					mCurrentArtist;
 		private Artwork						mArtistImage;
 
-		public PlayingArtistViewModel( IEventAggregator eventAggregator, IMetadataManager metadataManager, IPlayQueue playQueue ) {
+		public PlayingArtistViewModel( IEventAggregator eventAggregator, IMetadataManager metadataManager, IPlayQueue playQueue, IUiLog log ) {
 			mMetadataManager = metadataManager;
 			mPlayQueue = playQueue;
+			mLog = log;
 
 			UpdateArtist();
 			eventAggregator.Subscribe( this );
@@ -100,7 +103,7 @@ namespace Noise.UI.ViewModels {
 		private void RetrieveArtwork( string artistName ) {
 			ArtworkTaskHandler.StartTask( () => mMetadataManager.GetArtistArtwork( artistName ),
 										   SetArtwork,
-										   exception => NoiseLogger.Current.LogException( "PlayingArtistViewModel:GetArtistArtwork", exception ));
+										   exception => mLog.LogException( string.Format( "Getting Artist Artwork for \"{0}\"", artistName ), exception ));
 		}
 
 		private void SetArtwork( Artwork artwork ) {

@@ -7,6 +7,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
+using Noise.UI.Logging;
 using ReusableBits;
 
 namespace Noise.UI.ViewModels {
@@ -20,11 +21,12 @@ namespace Noise.UI.ViewModels {
 		}
 	}
 
-	public class SearchViewModel : ViewModelBase {
+	internal class SearchViewModel : ViewModelBase {
 		private const int										cMaxSearchResults = 100;
 		private const int										cMaxPlayItems = 10;
 
 		private readonly IEventAggregator						mEventAggregator;
+		private readonly IUiLog									mLog;
 		private readonly ISearchProvider						mSearchProvider;
 		private readonly IRandomTrackSelector					mTrackSelector;
 		private readonly IPlayQueue								mPlayQueue;
@@ -35,8 +37,9 @@ namespace Noise.UI.ViewModels {
 		private readonly List<DbTrack>							mApprovalList; 
 		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
 
-		public SearchViewModel( IEventAggregator eventAggregator, ISearchProvider searchProvider, IRandomTrackSelector trackSelector, IPlayQueue playQueue ) {
+		public SearchViewModel( IEventAggregator eventAggregator, ISearchProvider searchProvider, IRandomTrackSelector trackSelector, IPlayQueue playQueue, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mSearchProvider = searchProvider;
 			mTrackSelector = trackSelector;
 			mPlayQueue = playQueue;
@@ -103,7 +106,7 @@ namespace Noise.UI.ViewModels {
 		private void BuildSearchList() {
 			SearchTask.StartTask( () => mSearchProvider.Search( CurrentSearchType.ItemType, SearchText, cMaxSearchResults ),
 								  UpdateSearchList,
-								  error => NoiseLogger.Current.LogException( "SearchViewModel:BuildSearchList", error ));
+								  error => mLog.LogException( string.Format( "Building Search List for \"{0}\"", SearchText ), error ));
 		}
 
 		private void UpdateSearchList( IEnumerable<SearchResultItem> searchList ) {

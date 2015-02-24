@@ -8,13 +8,15 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
 using Noise.UI.Interfaces;
+using Noise.UI.Logging;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class ArtistInfoViewModel : AutomaticCommandBase, IActiveAware, IHandle<Events.ViewDisplayRequest>, IHandle<Events.DatabaseClosing>,
-									   IHandle<Events.ArtistMetadataUpdated> {
+	internal class ArtistInfoViewModel : AutomaticCommandBase, IActiveAware, IHandle<Events.ViewDisplayRequest>, IHandle<Events.DatabaseClosing>,
+										 IHandle<Events.ArtistMetadataUpdated> {
 		private readonly IEventAggregator				mEventAggregator;
+		private readonly IUiLog							mLog;
 		private readonly ISelectionState				mSelectionState;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly ITrackProvider					mTrackProvider;
@@ -35,8 +37,9 @@ namespace Noise.UI.ViewModels {
 		public	event	EventHandler					IsActiveChanged = delegate { };
 
 		public ArtistInfoViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IMetadataManager metadataManager,
-									IArtistProvider artistProvider, ITrackProvider trackProvider ) {
+									IArtistProvider artistProvider, ITrackProvider trackProvider, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
 			mTrackProvider = trackProvider;
@@ -180,7 +183,7 @@ namespace Noise.UI.ViewModels {
 									mTopTracks.AddRange( LinkTopTracks( info.GetMetadataArray( eMetadataType.TopTracks )));
 								},
 								() => ArtistValid = true,
-										exception => NoiseLogger.Current.LogException( "ArtistInfoViewModel:RetrieveSupportInfo", exception )
+										exception => mLog.LogException( string.Format( "RetrieveSupportInfo for \"{0}\"", artistName ), exception )
 				);
 		}
 

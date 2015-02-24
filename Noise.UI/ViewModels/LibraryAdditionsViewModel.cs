@@ -7,14 +7,16 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
+using Noise.UI.Logging;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class LibraryAdditionsViewModel : AutomaticCommandBase,
-											 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>,
-											 IHandle<Events.LibraryUpdateCompleted> {
+	internal class LibraryAdditionsViewModel : AutomaticCommandBase,
+											   IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>,
+											   IHandle<Events.LibraryUpdateCompleted> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly IUiLog					mLog;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
@@ -24,8 +26,9 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler<IEnumerable<LibraryAdditionNode>>		mTaskHandler;
 
 		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, IPreferences preferences, IDatabaseInfo databaseInfo,
-										  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+										  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -61,7 +64,7 @@ namespace Noise.UI.ViewModels {
 
 		private void RetrieveWhatsNew() {
 			TracksRetrievalTaskHandler.StartTask( RetrieveAdditions, UpdateList,
-												  ex => NoiseLogger.Current.LogException( "LibraryAdditionsViewModel:RetrieveWhatsNew", ex ));
+												  ex => mLog.LogException( "RetrieveWhatsNew", ex ));
 		}
 
 		public void Handle( Events.DatabaseOpened args ) {

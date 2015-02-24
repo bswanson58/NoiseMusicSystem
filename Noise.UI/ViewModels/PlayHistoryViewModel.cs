@@ -4,13 +4,15 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
+using Noise.UI.Logging;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class PlayHistoryViewModel : AutomaticPropertyBase,
-										IHandle<Events.PlayHistoryChanged>, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+	internal class PlayHistoryViewModel : AutomaticPropertyBase,
+										  IHandle<Events.PlayHistoryChanged>, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly IUiLog				mLog;
 		private readonly IPlayHistory		mPlayHistory;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
@@ -19,8 +21,9 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<PlayHistoryNode>	mHistoryList;
 
 		public PlayHistoryViewModel( IEventAggregator eventAggregator,
-									 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayHistory playHistory ) {
+									 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayHistory playHistory, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -69,7 +72,7 @@ namespace Noise.UI.ViewModels {
 									   select new PlayHistoryNode( artist, album, track, history.PlayedOn, OnPlayTrack ));
 			},
 			() => { },
-			ex => NoiseLogger.Current.LogException( "PlayHistoryViewModel:BuildHistoryList", ex ));
+			ex => mLog.LogException( "Building History List", ex ));
 		}
 
 		private static void OnPlayTrack( PlayHistoryNode node ) {

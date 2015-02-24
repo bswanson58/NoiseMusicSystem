@@ -11,6 +11,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.UI.Behaviours;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
+using Noise.UI.Logging;
 using Observal.Extensions;
 using ReusableBits;
 using ReusableBits.Interfaces;
@@ -35,6 +36,7 @@ namespace Noise.UI.ViewModels {
 		private const string						cAllTracks = "Entire Album";
 
 		private readonly IEventAggregator			mEventAggregator;
+		private readonly IUiLog						mLog;
 		private readonly ISelectionState			mSelectionState;
 		private readonly IAlbumProvider				mAlbumProvider;
 		private readonly ITrackProvider				mTrackProvider;
@@ -62,8 +64,9 @@ namespace Noise.UI.ViewModels {
 
 		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, ISelectionState selectionState,
 							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider,
-							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager ) {
+							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mSelectionState = selectionState;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -254,7 +257,7 @@ namespace Noise.UI.ViewModels {
 					}
 				},
 				() => { },
-				ex => NoiseLogger.Current.LogException( "AlbumViewModel:RetrieveAlbum", ex )
+				ex => mLog.LogException( string.Format( "Retrieving Album:{0}", albumId ), ex )
 			); 
 		}
 

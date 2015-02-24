@@ -11,16 +11,18 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
+using Noise.UI.Logging;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class AlbumListViewModel : AutomaticCommandBase,
-									  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+	internal class AlbumListViewModel : AutomaticCommandBase,
+										IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private const string							cDisplaySortDescriptionss = "_displaySortDescriptions";
 		private const string							cHideSortDescriptions = "_normal";
 
 		private readonly IEventAggregator				mEventAggregator;
+		private readonly IUiLog							mLog;
 		private readonly IPreferences					mPreferences;
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly ISelectionState				mSelectionState;
@@ -32,8 +34,9 @@ namespace Noise.UI.ViewModels {
 		private bool									mRetrievingAlbums;
 		private long									mAlbumToSelect;
  
-		public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, ISelectionState selectionState ) {
+		public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, ISelectionState selectionState, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mPreferences = preferences;
 			mAlbumProvider = albumProvider;
 			mSelectionState = selectionState;
@@ -239,7 +242,7 @@ namespace Noise.UI.ViewModels {
 				}
 			},
 			ex => {
-				NoiseLogger.Current.LogException( "AlbumListViewModel:RetrieveAlbums", ex );
+				mLog.LogException( string.Format( "Retrieving Albums for {0}", artist ), ex );
 
 				mRetrievingAlbums = false;
 			} );

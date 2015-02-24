@@ -11,6 +11,7 @@ using Noise.UI.Adapters;
 using Noise.UI.Behaviours;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
+using Noise.UI.Logging;
 using Observal.Extensions;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -20,10 +21,11 @@ namespace Noise.UI.ViewModels {
 		public ArtistEditRequest(UiArtist artist ) : base( artist ) { } 
 	}
 
-	public class ArtistViewModel : AutomaticCommandBase, IActiveAware,
-								   IHandle<Events.DatabaseClosing>,
-								   IHandle<Events.ArtistContentUpdated>, IHandle<Events.ArtistUserUpdate> {
+	internal class ArtistViewModel : AutomaticCommandBase, IActiveAware,
+									 IHandle<Events.DatabaseClosing>,
+									 IHandle<Events.ArtistContentUpdated>, IHandle<Events.ArtistUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly IUiLog					mLog;
 		private readonly ISelectionState		mSelectionState;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly ITrackProvider			mTrackProvider;
@@ -47,8 +49,9 @@ namespace Noise.UI.ViewModels {
 		private readonly InteractionRequest<ArtistEditRequest>		mArtistEditRequest;
 
 		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ITrackProvider trackProvider,
-								ISelectionState selectionState, ITagManager tagManager, IMetadataManager metadataManager, IPlayQueue playQueue ) {
+								ISelectionState selectionState, ITagManager tagManager, IMetadataManager metadataManager, IPlayQueue playQueue, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
 			mTrackProvider = trackProvider;
@@ -219,7 +222,7 @@ namespace Noise.UI.ViewModels {
 		private void RetrieveArtist( long artistId ) {
 			ArtistTaskHandler.StartTask( () => mArtistProvider.GetArtist( artistId ), 
 										SetCurrentArtist,
-										exception => NoiseLogger.Current.LogException( "ArtistViewModel:GetArtist", exception ));
+										exception => mLog.LogException( string.Format( "GetArtist:{0}", artistId ), exception ));
 		}
 
 		internal TaskHandler<Artwork> ArtworkTaskHandler {
@@ -237,7 +240,7 @@ namespace Noise.UI.ViewModels {
 		private void RetrieveArtwork( string artistName ) {
 			ArtworkTaskHandler.StartTask( () => mMetadataManager.GetArtistArtwork( artistName ),
 										   SetArtwork,
-										   exception => NoiseLogger.Current.LogException( "ArtistViewModel:GetArtistArtwork", exception ));
+										   exception => mLog.LogException( string.Format( "GetArtistArtwork for \"{0}\"", artistName ), exception ));
 		}
 
 		internal TaskHandler TopTracksTaskHandler {
@@ -278,7 +281,7 @@ namespace Noise.UI.ViewModels {
 												}
 											},
 											() => RaiseCanExecuteChangedEvent( "CanExecute_PlayTopTracks" ),
-											exception => NoiseLogger.Current.LogException( "ArtistViewModel:RetrieveTopTracks", exception ));
+											exception => mLog.LogException( "RetrieveTopTracks", exception ));
 		}
 
 		private int NextRandom( int maxValue ) {

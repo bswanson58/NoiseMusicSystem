@@ -6,14 +6,16 @@ using CuttingEdge.Conditions;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
+using Noise.UI.Logging;
 using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class FavoritesViewModel : AutomaticCommandBase,
 									  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>,
-	IHandle<Events.ArtistUserUpdate>, IHandle<Events.AlbumUserUpdate>, IHandle<Events.TrackUserUpdate> {
+									  IHandle<Events.ArtistUserUpdate>, IHandle<Events.AlbumUserUpdate>, IHandle<Events.TrackUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly IUiLog					mLog;
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
@@ -25,8 +27,9 @@ namespace Noise.UI.ViewModels {
 
 		public FavoritesViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
 								   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
-								   IDataExchangeManager dataExchangeManager, IDialogService dialogService ) {
+								   IDataExchangeManager dataExchangeManager, IDialogService dialogService, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -111,7 +114,7 @@ namespace Noise.UI.ViewModels {
 				RaiseCanExecuteChangedEvent( "CanExecute_PlayRandom" );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "LoadFavorites:", ex );
+				mLog.LogException( "Loading Favorites", ex );
 			}
 		}
 

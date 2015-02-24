@@ -10,12 +10,14 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
+using Noise.UI.Logging;
 using ReusableBits;
 
 namespace Noise.UI.ViewModels {
-	public class ArtistTracksViewModel : ViewModelBase, IActiveAware,
-										 IHandle<Events.DatabaseClosing> {
+	internal class ArtistTracksViewModel : ViewModelBase, IActiveAware,
+											IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly IUiLog				mLog;
 		private readonly ISelectionState	mSelectionState;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
@@ -29,8 +31,9 @@ namespace Noise.UI.ViewModels {
 		public	BindableCollection<UiArtistTrackNode>	TrackList { get; private set; }
 
 		public ArtistTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState,
-									  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ITagManager tagManager ) {
+									  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ITagManager tagManager, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -108,7 +111,7 @@ namespace Noise.UI.ViewModels {
 			if(( mCurrentArtist != null ) &&
 			   ( mIsActive )) {
 				UpdateTask.StartTask( () => BuildTrackList( artist ), SetTrackList,
-									  ex => NoiseLogger.Current.LogException( "ArtistTracksViewModel:UpdateTrackList", ex ));
+									  ex => mLog.LogException( string.Format( "UpdateTrackList for {0}", artist ), ex ));
 			}
 		}
 

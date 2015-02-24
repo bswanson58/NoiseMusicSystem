@@ -11,19 +11,21 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
+using Noise.UI.Logging;
 using Observal.Extensions;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class ArtistListViewModel : AutomaticCommandBase,
-									   IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistContentUpdated>,
-									   IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
-									   IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+	internal class ArtistListViewModel : AutomaticCommandBase,
+										 IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistContentUpdated>,
+										 IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
+										 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private const string							cDisplaySortDescriptionss = "_displaySortDescriptions";
 		private const string							cHideSortDescriptions = "_normal";
 
 		private readonly IEventAggregator				mEventAggregator;
+		private readonly IUiLog							mLog;
 		private readonly IPreferences					mPreferences;
 		private readonly ISelectionState				mSelectionState;
 		private readonly IArtistProvider				mArtistProvider;
@@ -37,8 +39,9 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler								mArtistRetrievalTaskHandler;
 
 		public ArtistListViewModel( IEventAggregator eventAggregator, IPreferences preferences, ISelectionState selectionState ,
-									IArtistProvider artistProvider, ITagManager tagManager, IDatabaseInfo databaseInfo ) {
+									IArtistProvider artistProvider, ITagManager tagManager, IDatabaseInfo databaseInfo, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mPreferences = preferences;
 			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
@@ -263,7 +266,7 @@ namespace Noise.UI.ViewModels {
 				}
 			},
 			() => { },
-			ex => NoiseLogger.Current.LogException( "ArtistListViewModel:RetrieveArtists", ex ) );
+			ex => mLog.LogException( "Retrieving Artists", ex ));
 		}
 
 		private UiArtist TransformArtist( DbArtist dbArtist ) {

@@ -6,21 +6,24 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
+using Noise.UI.Logging;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class TimeExplorerAlbumsViewModel : AutomaticCommandBase,
-											   IHandle<Events.TimeExplorerAlbumFocus>,
-											   IHandle<Events.DatabaseClosing> {
+	internal class TimeExplorerAlbumsViewModel : AutomaticCommandBase,
+												 IHandle<Events.TimeExplorerAlbumFocus>,
+												 IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator			mEventAggregator;
+		private readonly IUiLog						mLog;
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly Dictionary<long, DbArtist>	mArtistList;
 		private readonly SortableCollection<UiTimeExplorerAlbum>	mAlbumList; 
 		private TaskHandler							mAlbumLoadingTaskHandler;
 
-		public TimeExplorerAlbumsViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider ) {
+		public TimeExplorerAlbumsViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mArtistProvider = artistProvider;
 
 			mArtistList = new Dictionary<long, DbArtist>();
@@ -95,7 +98,7 @@ namespace Noise.UI.ViewModels {
 						mAlbumList.Refresh();
 					},
 					() => { },
-					ex => NoiseLogger.Current.LogException( "TimeExplorerAlbumsViewModel:LoadAlbums", ex ));
+					ex => mLog.LogException( "Loading Albums", ex ));
 		}
 
 		private void OnAlbumPlay( UiTimeExplorerAlbum album ) {

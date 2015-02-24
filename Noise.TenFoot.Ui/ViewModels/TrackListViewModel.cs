@@ -4,20 +4,23 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Interfaces;
+using Noise.UI.Logging;
 using ReusableBits;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class TrackListViewModel : BaseListViewModel<DbTrack>, IAlbumTrackList, ITitledScreen {
 		private readonly ITrackProvider		mTrackProvider;
+		private readonly IUiLog				mLog;
 		private long						mCurrentAlbum;
 		private TaskHandler					mTrackRetrievalTaskHandler;
 
 		public	string						ScreenTitle { get; private set; }
 		public	string						Context { get; private set; }
 
-		public TrackListViewModel( IEventAggregator eventAggregator, ITrackProvider trackProvider ) :
+		public TrackListViewModel( IEventAggregator eventAggregator, ITrackProvider trackProvider, IUiLog log ) :
 			base( eventAggregator ) {
 			mTrackProvider = trackProvider;
+			mLog = log;
 
 			ScreenTitle = "Tracks";
 			Context = "";
@@ -56,7 +59,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			                                     	}
 			                                     },
 												 () => { SelectedItem = ItemList.FirstOrDefault(); }, 
-												 ex => NoiseLogger.Current.LogException( "TrackListViewModel:RetrieveTracksForAlbum", ex )
+												 ex => mLog.LogException( string.Format( "Retrieving Tracks for Album:{0}", albumId ), ex )
 				);
 		}
 

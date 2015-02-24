@@ -7,7 +7,6 @@ using FluentAssertions;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Moq;
 using NUnit.Framework;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Interfaces;
@@ -54,8 +53,6 @@ namespace Noise.UI.Tests.ViewModels {
 
 		[SetUp]
 		public void Setup() {
-			NoiseLogger.Current = new Mock<INoiseLog>().Object;
-
 			// Set the ui dispatcher to run on the current thread.
 			Execute.ResetWithoutDispatcher();
 
