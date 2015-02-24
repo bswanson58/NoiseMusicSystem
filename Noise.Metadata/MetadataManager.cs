@@ -16,6 +16,7 @@ namespace Noise.Metadata {
 	public class MetadataManager : IRequireInitialization, IMetadataManager,
 								   IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved> {
 		private readonly IEventAggregator				mEventAggregator;
+		private readonly INoiseLog						mLog;
 		private readonly INoiseEnvironment				mNoiseEnvironment;
 		private readonly IArtistMetadataManager			mArtistMetadataManager;
 		private readonly IArtistProvider				mArtistProvider;
@@ -23,8 +24,9 @@ namespace Noise.Metadata {
 		private IDocumentStore							mDocumentStore;
 
 		public MetadataManager( ILifecycleManager lifecycleManager,  IEventAggregator eventAggregator, INoiseEnvironment noiseEnvironment,
-								IEnumerable<IMetadataUpdater> updaters, IArtistMetadataManager artistMetadataManager, IArtistProvider artistProvider ) {
+								IEnumerable<IMetadataUpdater> updaters, IArtistMetadataManager artistMetadataManager, IArtistProvider artistProvider, INoiseLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mNoiseEnvironment = noiseEnvironment;
 			mUpdaters = updaters;
 			mArtistMetadataManager = artistMetadataManager;
@@ -64,7 +66,7 @@ namespace Noise.Metadata {
 				mEventAggregator.Subscribe( this );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "MetadataManager:Initialize", ex );
+				mLog.LogException( "Failed to initialize", ex );
 			}
 		}
 
@@ -126,7 +128,7 @@ namespace Noise.Metadata {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "MetadataManager:ExportMetadata", ex );
+				mLog.LogException( string .Format( "Exporting Metadata to \"{0}\"", exportPath ), ex );
 			}
 		}
 
@@ -144,7 +146,7 @@ namespace Noise.Metadata {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "MetadataManager:ImportMetadata", ex );
+				mLog.LogException( string.Format( "Importing Metadata from \"{0}\"", importPath ), ex );
 			}
 		}
 	}

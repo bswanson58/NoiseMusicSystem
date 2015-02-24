@@ -15,6 +15,7 @@ namespace Noise.Metadata.ArtistMetadata {
 		private const string									cBackgroundTaskName = "Artist Metadata Updateer";
 
 		private readonly IEventAggregator						mEventAggregator;
+		private readonly INoiseLog								mLog;
 		private readonly IDatabaseInfo							mDatabaseInfo;
 		private readonly IArtistProvider						mArtistProvider;
 		private readonly IRecurringTaskScheduler				mTaskScheduler;
@@ -25,12 +26,13 @@ namespace Noise.Metadata.ArtistMetadata {
 		private IEnumerator<string>								mUpdateEnumerator;
 
 		public ArtistMetadataUpdater( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IArtistProvider artistProvider,
-									  IRecurringTaskScheduler taskScheduler, IEnumerable<IArtistMetadataProvider> providers  ) {
+									  IRecurringTaskScheduler taskScheduler, IEnumerable<IArtistMetadataProvider> providers, INoiseLog log ) {
 			mEventAggregator = eventAggregator;
 			mDatabaseInfo = databaseInfo;
 			mArtistProvider = artistProvider;
 			mTaskScheduler = taskScheduler;
 			mProviders = providers;
+			mLog = log;
 
 			mPriorityUpdateList = new Stack<string>();
 		}
@@ -52,7 +54,7 @@ namespace Noise.Metadata.ArtistMetadata {
 				mTaskScheduler.AddRecurringTask( updateTask );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "ArtistMetadataUpdater:Initialize", ex );
+				mLog.LogException( "Failed to initialize", ex );
 			}
 		}
 
@@ -131,7 +133,7 @@ namespace Noise.Metadata.ArtistMetadata {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "ArtistMetadataUpdater:UpdateNextArtist", ex );
+				mLog.LogException( "UpdateNextArtist", ex );
 			}
 		}
 
