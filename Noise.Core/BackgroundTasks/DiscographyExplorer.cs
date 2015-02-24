@@ -101,6 +101,7 @@ namespace Noise.Core.BackgroundTasks {
 
 										updater.Update();
 
+										dbAlbum.SetPublishedYear( release.Year );
 										mLog.UpdatedFromDiscography( dbAlbum );
 										mUserStatus.UpdatedAlbumPublishedYear( updater.Item );
 									}

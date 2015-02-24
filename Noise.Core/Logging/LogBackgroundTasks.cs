@@ -40,7 +40,7 @@ namespace Noise.Core.Logging {
 		}
 
 		public void UpdatedFromDiscography( DbAlbum album ) {
-			LogOnCondition( mPreferences.BackgroundTasks, () => LogTaskMessage( "Updated album {0}, Published: {1}", album, album.PublishedYear ));
+			LogOnCondition( mPreferences.BackgroundTasks, () => LogTaskMessage( "Updated {0}, Published: {1}", album, album.PublishedYear ));
 		}
 
 		public void CompletedDiscographyExploring( DbArtist artist ) {
