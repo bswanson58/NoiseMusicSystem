@@ -260,7 +260,12 @@ namespace Noise.Core.Configuration {
 		}
 
 		public void CloseLibraryBackup( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {
-			libraryConfiguration.Persist( Path.Combine( backup.BackupPath, Constants.LibraryConfigurationFile ));
+			try {
+				libraryConfiguration.Persist( Path.Combine( backup.BackupPath, Constants.LibraryConfigurationFile ));
+			}
+			catch( Exception exception ) {
+				mLog.LogException( string.Format( "Persisting library configuration to \"{0}\"", backup.BackupPath ), exception );
+			}
 
 			mEventAggregator.Publish( new Events.LibraryBackupsChanged());
 		}
@@ -282,7 +287,12 @@ namespace Noise.Core.Configuration {
 		}
 
 		public void CloseLibraryExport( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {
-			libraryConfiguration.Persist( Path.Combine( backup.BackupPath, Constants.LibraryConfigurationFile ));
+			try {
+				libraryConfiguration.Persist( Path.Combine( backup.BackupPath, Constants.LibraryConfigurationFile ));
+			}
+			catch( Exception exception ) {
+				mLog.LogException( string.Format( "Persisting library configuration to \"{0}\"", backup.BackupPath ), exception );
+			}
 		}
 
 		public void AbortLibraryExport( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {

@@ -94,8 +94,13 @@ namespace Noise.Core.PlayQueue {
 		public void Handle( Events.DatabaseOpened args ) {
 			var preferences = mPreferences.Load<NoiseCorePreferences>();
 
-			SetPlayExhaustedStrategy( preferences.PlayExhaustedStrategy, PlayStrategyParametersFactory.FromString( preferences.PlayExhaustedParameters ));
-			SetPlayStrategy( preferences.PlayStrategy, PlayStrategyParametersFactory.FromString( preferences.PlayStrategyParameters ));
+			try {
+				SetPlayExhaustedStrategy( preferences.PlayExhaustedStrategy, PlayStrategyParametersFactory.FromString( preferences.PlayExhaustedParameters ));
+				SetPlayStrategy( preferences.PlayStrategy, PlayStrategyParametersFactory.FromString( preferences.PlayStrategyParameters ));
+			}
+			catch( Exception exception ) {
+				mLog.LogQueueException( "Loading parameters from preferences", exception );
+			}
 		}
 
 		public void Shutdown() {

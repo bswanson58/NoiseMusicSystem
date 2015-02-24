@@ -5,17 +5,20 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Librarian.Interfaces;
 using Noise.Librarian.Models;
+using Noise.UI.Logging;
 using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.Librarian.ViewModels {
 	public class ImportDatabaseViewModel : AutomaticCommandBase {
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly IUiLog				mLog;
 		private readonly IDialogService		mDialogService;
 		private readonly ILibrarian			mLibrarian;
 
-		public ImportDatabaseViewModel( IEventAggregator eventAggregator, ILibrarian librarian, IDialogService dialogService ) {
+		public ImportDatabaseViewModel( IEventAggregator eventAggregator, ILibrarian librarian, IDialogService dialogService, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mLibrarian = librarian;
 			mDialogService = dialogService;
 
@@ -29,11 +32,16 @@ namespace Noise.Librarian.ViewModels {
 
 				if(( string.IsNullOrWhiteSpace( LibraryName )) &&
 				   ( File.Exists( ImportPath ))) {
-					var library = LibraryConfiguration.LoadConfiguration( ImportPath );
+				   try {
+						var library = LibraryConfiguration.LoadConfiguration( ImportPath );
 
-					if( library != null ) {
-						LibraryName = library.LibraryName;
-					}
+						if( library != null ) {
+							LibraryName = library.LibraryName;
+						}
+				   }
+				   catch( Exception exception ) {
+					   mLog.LogException( string.Format( "Loading configuration from \"{0}\"", ImportPath ), exception );
+				   }
 				}
 			}
 		}
@@ -81,16 +89,21 @@ namespace Noise.Librarian.ViewModels {
 		}
 
 		public void Execute_ImportLibrary() {
-			if( !string.IsNullOrWhiteSpace( ImportPath )) {
-				var backup = new LibraryBackup( DateTime.Now, Path.GetDirectoryName( ImportPath ));
-				var library = LibraryConfiguration.LoadConfiguration( ImportPath );
+			if(!string.IsNullOrWhiteSpace( ImportPath )) {
+				try {
+					var backup = new LibraryBackup( DateTime.Now, Path.GetDirectoryName( ImportPath ));
+					var library = LibraryConfiguration.LoadConfiguration( ImportPath );
 
-				if( library != null ) {
-					library.LibraryName = LibraryName;
+					if( library != null ) {
+						library.LibraryName = LibraryName;
 
-					mEventAggregator.Publish( new ProgressEvent( 0.0D, true ));
+						mEventAggregator.Publish( new ProgressEvent( 0.0D, true ));
 
-					mLibrarian.ImportLibrary( library, backup, OnImportProgress );
+						mLibrarian.ImportLibrary( library, backup, OnImportProgress );
+					}
+				}
+				catch( Exception exception ) {
+					mLog.LogException( string.Format( "Loading configuration from \"{0}\"", ImportPath ), exception );
 				}
 			}
 		}

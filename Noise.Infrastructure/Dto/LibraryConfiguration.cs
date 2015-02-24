@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -48,21 +47,13 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public static LibraryConfiguration LoadConfiguration( string fromPath ) {
-			LibraryConfiguration	retValue = null;
+			var stream = new FileStream( fromPath, FileMode.Open, FileAccess.Read );
+			var serializer = new DataContractJsonSerializer( typeof( LibraryConfiguration ));
+			var retValue = serializer.ReadObject( stream ) as LibraryConfiguration;
+			stream.Close();
 
-			try {
-				var stream = new FileStream( fromPath, FileMode.Open, FileAccess.Read );
-				var serializer = new DataContractJsonSerializer( typeof( LibraryConfiguration ));
-
-				retValue= serializer.ReadObject( stream ) as LibraryConfiguration;
-				stream.Close();
-
-				if( retValue != null ) {
-					retValue.SetConfigurationPath( Path.GetDirectoryName( fromPath ));
-				}
-			}
-			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "LibraryConfiguration:Load", ex );
+			if( retValue != null ) {
+				retValue.SetConfigurationPath( Path.GetDirectoryName( fromPath ));
 			}
 
 			return( retValue );
@@ -73,18 +64,13 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public void Persist( string toPath ) {
-			try {
-				var stream = new FileStream( toPath, FileMode.Create, FileAccess.Write );
-				var serializer = new DataContractJsonSerializer( GetType());
+			var stream = new FileStream( toPath, FileMode.Create, FileAccess.Write );
+			var serializer = new DataContractJsonSerializer( GetType());
 
-				serializer.WriteObject( stream, this );
-				stream.Close();
+			serializer.WriteObject( stream, this );
+			stream.Close();
 
-				SetConfigurationPath( Path.GetDirectoryName( toPath ));
-			}
-			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "LibraryConfiguration:Persist", ex );
-			}
+			SetConfigurationPath( Path.GetDirectoryName( toPath ));
 		}
 
 		public string BlobDatabasePath {

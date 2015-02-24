@@ -18,11 +18,13 @@ namespace Noise.Infrastructure.Support {
 
 	public class NoiseLicenseManager : ILicenseManager {
 		private readonly INoiseEnvironment	mNoiseEnvironment;
+		private readonly INoiseLog			mLog;
 
 		private readonly Dictionary<string, LicenseKey>	mKeys;
 
-		public NoiseLicenseManager( INoiseEnvironment noiseEnvironment ) {
+		public NoiseLicenseManager( INoiseEnvironment noiseEnvironment, INoiseLog log ) {
 			mNoiseEnvironment = noiseEnvironment;
+			mLog = log;
 
 			mKeys = new Dictionary<string, LicenseKey>();
 		}
@@ -46,7 +48,7 @@ namespace Noise.Infrastructure.Support {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - LicenseManager:Initialize ", ex );
+				mLog.LogException( string.Format( "Initializing licenses from \"{0}\"", licenseFile ), ex );
 			}
 		}
 
