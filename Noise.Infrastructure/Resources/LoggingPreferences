@@ -39,5 +39,7 @@
   "PlayQueueStatusChange":  false,
   "PlayQueueStrategy":  false,
 
-  "PlayState":  false
+  "PlayState":  false,
+
+  "UserInterface":  false
 }

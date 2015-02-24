@@ -42,6 +42,8 @@
 
 		public bool PlayState { get; set; }
 
+		public bool UserInterface { get; set; }
+
 		public bool LogAnyBuildingDiscovery {
 			get { return( BuildingDiscovery || BuildingDiscoverFiles || BuildingDiscoverFolders ); }
 		}

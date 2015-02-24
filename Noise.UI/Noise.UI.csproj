@@ -281,6 +281,8 @@
     <Compile Include="Dto\UiTrack.cs" />
     <Compile Include="Dto\ViewSortStrategy.cs" />
     <Compile Include="Interfaces\ISelectionState.cs" />
+    <Compile Include="Logging\IUiLog.cs" />
+    <Compile Include="Logging\UiLogger.cs" />
     <Compile Include="MappingConfiguration.cs" />
     <Compile Include="Models\SelectionStateModel.cs" />
     <Compile Include="NoiseUiModule.cs" />
