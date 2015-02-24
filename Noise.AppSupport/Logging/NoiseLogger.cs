@@ -33,7 +33,13 @@ namespace Noise.AppSupport.Logging {
 				var type = method.DeclaringType;
 				var name = type != null ? string.Format( "{0}:{1}", type.Name, method.Name ) : method.Name;
 
-				mPlatformLog.LogException( string.Format( "{0} - {1}", name, message ), exception );
+				LogException( message, exception, name );
+			}
+		}
+
+		public void LogException( string message, Exception exception, string methodName ) {
+			if( Preferences.LogExceptions ) {
+				mPlatformLog.LogException( string.Format( "{0} - {1}", methodName, message ), exception );
 
 				if( exception is ReflectionTypeLoadException ) {
 					var tle = exception as ReflectionTypeLoadException;
@@ -41,6 +47,10 @@ namespace Noise.AppSupport.Logging {
 					foreach( var exc in tle.LoaderExceptions ) {
 						mPlatformLog.LogException( "ReflectionTypeLoadException:", exc );
 					}
+				}
+
+				if( exception.InnerException != null ) {
+					LogException( string.Format( ">>>Inner Exception of '{0}'", message ), exception.InnerException, methodName );
 				}
 			}
 		}
@@ -53,6 +63,12 @@ namespace Noise.AppSupport.Logging {
 				var name = type != null ? string.Format( "{0}:{1}", type.Name, method.Name ) : method.Name;
 
 				mPlatformLog.LogMessage( string.Format( "{0} - {1}", name, message ));
+			}
+		}
+
+		public void LogMessage( string message, string methodName ) {
+			if( Preferences.LogMessages ) {
+				mPlatformLog.LogMessage( string.Format( "{0} - {1}", methodName, message ));
 			}
 		}
 

@@ -42,7 +42,13 @@ namespace Noise.Infrastructure {
 				var type = method.DeclaringType;
 				var name = type != null ? string.Format( "{0}:{1}", type.Name, method.Name ) : method.Name;
 
-				mPlatformLog.LogException( string.Format( "{0} - {1}", name, message ), ex );
+				LogException( message, ex, name );
+			}
+		}
+
+		public void LogException( string message, Exception ex, string methodName ) {
+			if( Preferences.LogExceptions ) {
+				mPlatformLog.LogException( string.Format( "{0} - {1}", methodName, message ), ex );
 
 				if( ex is ReflectionTypeLoadException ) {
 					var tle = ex as ReflectionTypeLoadException;
@@ -53,11 +59,10 @@ namespace Noise.Infrastructure {
 				}
 
 				if( ex.InnerException != null ) {
-					LogException( string.Format( ">>>Inner Exception of '{0}'", message ), ex.InnerException );
+					LogException( string.Format( ">>>Inner Exception of '{0}'", message ), ex.InnerException, methodName );
 				}
 			}
 		}
-
 		public void LogMessage( string format, params object[] parameters ) {
 			if( Preferences.LogMessages ) {
 				var frame = new StackFrame( 1 );
@@ -66,6 +71,12 @@ namespace Noise.Infrastructure {
 				var name = type != null ? string.Format( "{0}:{1}", type.Name, method.Name ) : method.Name;
 
 				mPlatformLog.LogMessage( string.Format( "{0} - {1}", name,  string.Format( format, parameters )));
+			}
+		}
+
+		public void LogMessage( string message, string methodName ) {
+			if( Preferences.LogMessages ) {
+				mPlatformLog.LogMessage( string.Format( "{0} - {1}", methodName, message ));
 			}
 		}
 

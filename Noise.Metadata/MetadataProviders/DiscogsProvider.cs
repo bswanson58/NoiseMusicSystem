@@ -110,19 +110,19 @@ namespace Noise.Metadata.MetadataProviders {
 							session.Store( discography );
 							session.SaveChanges();
 
-							mLog.LogMessage( string.Format( "Updated artist \"{0}\" from Discogs", artistName ));
+							mLog.LogMessage( string.Format( "Updated artist \"{0}\" from Discogs", artistName ), "DiscogsProvider:AsyncUpdateArtist" );
 						}
 					}
 					else {
-						mLog.LogMessage( string.Format( "Discogs search did not locate artist \"{0}\"", artistName ));
+						mLog.LogMessage( string.Format( "Discogs search did not locate artist \"{0}\"", artistName ), "DiscogsProvider:AsyncUpdateArtist" );
 					}
 				}
 				else {
-					mLog.LogMessage( string.Format( "Discogs search failed for artist \"{0}\"", artistName ));
+					mLog.LogMessage( string.Format( "Discogs search failed for artist \"{0}\"", artistName ), "DiscogsProvider:AsyncUpdateArtist" );
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Discogs search failed for artist \"{0}\"", artistName ), ex );
+				mLog.LogException( string.Format( "Discogs search failed for artist \"{0}\"", artistName ), ex, "DiscogsProvider:AsyncUpdateArtist" );
 			}
 		}
 	}
