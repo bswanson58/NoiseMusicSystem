@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using Moq;
+using Noise.EntityFrameworkDatabase.Logging;
 using NUnit.Framework;
 using Noise.BlobStorage.BlobStore;
 using Noise.EntityFrameworkDatabase.DatabaseManager;
@@ -13,7 +14,6 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 		public	const string				cTestingDirectory = @"D:\Noise Testing";
 		public	const string				cDatabaseName = "Integration Test Database";
 
-		public	Mock<INoiseLog>				DummyLog { get; private set; }
 		public	IBlobStorageResolver		BlobStorageResolver { get; private set; }
 		public	IBlobStorageManager			BlobStorageManager { get; private set; }
 		public	Mock<ILibraryConfiguration>	LibraryConfiguration { get; private set; }
@@ -23,10 +23,10 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 		public	IDatabaseInitializeStrategy	InitializeStrategy { get; private set; }
 		public	IContextProvider			ContextProvider { get; private set; }
 		public	Mock<IEventAggregator>		EventAggregator { get; set; }
+		private Mock<ILogDatabase>			Log { get; set; }
 
 		public void Setup() {
-			DummyLog = new Mock<INoiseLog>();
-			NoiseLogger.Current = DummyLog.Object;
+			Log = new Mock<ILogDatabase>();
 
 			DatabaseInfo = new Mock<IDatabaseInfo>();
 			DatabaseInfo.Setup( m => m.DatabaseId ).Returns( 12345L );
@@ -44,9 +44,9 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 			BlobStorageResolver = new BlobStorageResolver();
 			BlobStorageManager = new BlobStorageManager( new Mock<INoiseLog>().Object );
 			BlobStorageManager.SetResolver( BlobStorageResolver );
-			ContextProvider = new ContextProvider( LibraryConfiguration.Object, DummyLog.Object, BlobStorageManager, BlobStorageResolver );
+			ContextProvider = new ContextProvider( LibraryConfiguration.Object, Log.Object, BlobStorageManager, BlobStorageResolver );
 
-			var manager = new EntityFrameworkDatabaseManager( EventAggregator.Object, LibraryConfiguration.Object,
+			var manager = new EntityFrameworkDatabaseManager( EventAggregator.Object, Log.Object, LibraryConfiguration.Object,
 															  InitializeStrategy, DatabaseInfo.Object, ContextProvider );
 
 			var	initialized = manager.Initialize();

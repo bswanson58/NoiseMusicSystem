@@ -1,23 +1,26 @@
 ﻿using System;
 using Caliburn.Micro;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DatabaseManager {
-	public class EntityFrameworkDatabaseManager : IDatabaseManager,
-												  IHandle<Events.LibraryChanged> {
+	internal class EntityFrameworkDatabaseManager : IDatabaseManager,
+													IHandle<Events.LibraryChanged> {
 		private const Int16								cDatabaseVersion = 5;
 
 		private readonly IEventAggregator				mEventAggregator;
+		private readonly ILogDatabase					mLog;
 		private readonly IDatabaseInitializeStrategy	mInitializeStrategy;
 		private readonly IDatabaseInfo					mDatabaseInfo;
 		private readonly IContextProvider				mContextProvider;
 		private readonly ILibraryConfiguration			mLibraryConfiguration;
 
-		public EntityFrameworkDatabaseManager( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration,
+		public EntityFrameworkDatabaseManager( IEventAggregator eventAggregator, ILogDatabase log, ILibraryConfiguration libraryConfiguration,
 											   IDatabaseInitializeStrategy initializeStrategy, IDatabaseInfo databaseInfo, IContextProvider contextProvider ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mInitializeStrategy = initializeStrategy;
 			mDatabaseInfo = databaseInfo;
 			mContextProvider = contextProvider;
@@ -53,11 +56,10 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 						if( mInitializeStrategy.DidCreateDatabase ) {
 							mDatabaseInfo.InitializeDatabaseVersion( cDatabaseVersion );
 
-							NoiseLogger.Current.LogMessage( "Created Database: '{0}'", mLibraryConfiguration.Current.DatabaseName );
+							mLog.CreatedDatabase( mLibraryConfiguration.Current );
 						}
 						else {
-							NoiseLogger.Current.LogMessage( "Opened Database: '{0}', database version: {1}", 
-															mLibraryConfiguration.Current.DatabaseName,	mDatabaseInfo.DatabaseVersion.DatabaseVersion );
+							mLog.OpenedDatabase( mLibraryConfiguration.Current, mDatabaseInfo.DatabaseVersion );
 						}
 					}
 				}
@@ -70,7 +72,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 						if(!mContextProvider.BlobStorageManager.OpenStorage()) {
 							var ex = new ApplicationException( "EntityFrameworkDatabaseManager:Blob storage could not be created." );
 
-							NoiseLogger.Current.LogException( "OpenDatabase", ex );
+							mLog.LogException( "Blob storage cound not be created", ex );
 							throw( ex );
 						}
 					}
@@ -79,7 +81,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 				mEventAggregator.Publish( new Events.DatabaseOpened());
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( string.Format( "The database '{0}' could not be opened.", mLibraryConfiguration.Current.DatabaseName ), ex );
+				mLog.LogException( string.Format( "Database could not be opened {0}", mLibraryConfiguration.Current ), ex );
 			}
 		}
 
@@ -89,6 +91,8 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			if( mContextProvider.BlobStorageManager.IsOpen ) {
 				mContextProvider.BlobStorageManager.CloseStorage();
 			}
+
+			mLog.ClosedDatabase();
 		}
 	}
 }

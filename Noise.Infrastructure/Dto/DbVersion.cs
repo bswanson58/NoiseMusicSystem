@@ -28,5 +28,9 @@ namespace Noise.Infrastructure.Dto {
 		public DateTime DatabaseCreation {
 			get{ return( new DateTime( DatabaseCreationTicks )); }
 		}
+
+		public override string ToString() {
+			return( string.Format( "Database version {0}, Created {1} {2}", DatabaseVersion, DatabaseCreation.ToShortDateString(), DatabaseCreation.ToShortTimeString()));
+		}
 	}
 }

@@ -2,18 +2,19 @@
 using System.IO;
 using Noise.BlobStorage.BlobStore;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DatabaseManager {
-	public class ContextProvider : IContextProvider {
+	internal class ContextProvider : IContextProvider {
 		public	const string					cInvalidContextName = "_invalid_context_";
 
-		private readonly INoiseLog				mLog;
+		private readonly ILogDatabase			mLog;
 		private readonly IBlobStorageManager	mBlobStorageManager;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 
-		public ContextProvider( ILibraryConfiguration libraryConfiguration, INoiseLog log,
+		public ContextProvider( ILibraryConfiguration libraryConfiguration, ILogDatabase log,
 								IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver ) {
 			mLog = log;
 			mLibraryConfiguration = libraryConfiguration;
