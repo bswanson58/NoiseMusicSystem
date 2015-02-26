@@ -2,8 +2,6 @@
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.MetadataProviders.LastFm.Rto;
 using Refit;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json;
 
 namespace Noise.Metadata.MetadataProviders.LastFm {
 	internal class LastFmClient : ILastFmClient {

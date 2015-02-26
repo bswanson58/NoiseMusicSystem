@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 	public class LastFmArtistInfoResult {
@@ -10,24 +11,52 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 		public string					MbId { get; set; }
 		public string					Url { get; set; }
 		public int						OnTour { get; set; }
-		public List<LastFmImage>		Image { get; set; }
+
+		[JsonProperty( "image" )]
+		public List<LastFmImage>		ImageList { get; set; }
+
+		[JsonConverter( typeof( SingleOrObjectConverter<LastFmSimilarArtistList> ))]
 		public LastFmSimilarArtistList	Similar { get; set; }
+
+		[JsonConverter( typeof( SingleOrObjectConverter<LastFmTagList> ))]
 		public LastFmTagList			Tags { get; set; }
+
 		public LastFmBio				Bio { get; set; }
+
+		public LastFmArtistInfo() {
+			ImageList = new List<LastFmImage>();
+		}
 	}
 
 	public class LastFmSimilarArtistList {
-		public List<LastFmSimilarArtist> Artist { get; set; }
+		[JsonProperty( "artist" )]
+		[JsonConverter( typeof( SingleOrArrayConverter<LastFmSimilarArtist> ))]
+		public List<LastFmSimilarArtist> ArtistList { get; set; }
+
+		public LastFmSimilarArtistList() {
+			ArtistList = new List<LastFmSimilarArtist>();
+		}
 	}
 
 	public class LastFmSimilarArtist {
 		public string					Name { get; set; }
 		public string					Url { get; set; }
-		public LastFmImage[]			Image { get; set; }
+		[JsonProperty( "image" )]
+		public List<LastFmImage>		ImageList { get; set; }
+
+		public LastFmSimilarArtist() {
+			ImageList = new List<LastFmImage>();
+		}
 	}
 
 	public class LastFmTagList {
-		public List<LastFmTag>			Tag {get; set; } 
+		[JsonProperty( "tag" )]
+		[JsonConverter( typeof( SingleOrArrayConverter<LastFmTag> ))]
+		public List<LastFmTag>			TagList {get; set; }
+
+		public LastFmTagList() {
+			TagList = new List<LastFmTag>();
+		}
 	}
 
 	public class LastFmTag {

@@ -211,11 +211,14 @@
     <Compile Include="MetadataProviders\LastFmProvider.cs" />
     <Compile Include="MetadataProviders\LastFm\ILastFmApi.cs" />
     <Compile Include="MetadataProviders\LastFm\ILastFmClient.cs" />
+    <Compile Include="MetadataProviders\LastFm\ImageDownloader.cs" />
     <Compile Include="MetadataProviders\LastFm\LastFmClient.cs" />
     <Compile Include="MetadataProviders\LastFm\Rto\LastFmArtistInfo.cs" />
     <Compile Include="MetadataProviders\LastFm\Rto\LastFmArtistSearch.cs" />
     <Compile Include="MetadataProviders\LastFm\Rto\LastFmTopAlbums.cs" />
     <Compile Include="MetadataProviders\LastFm\Rto\LastFmTopTracks.cs" />
+    <Compile Include="MetadataProviders\LastFm\SingleOrArrayConverter.cs" />
+    <Compile Include="MetadataProviders\LastFm\StringOrObjectConverter.cs" />
     <Compile Include="NoiseMetadataModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RefitStubs.cs" />

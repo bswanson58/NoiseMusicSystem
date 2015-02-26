@@ -8,11 +8,21 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 	}
 
 	public class LastFmResults {
+		[JsonConverter( typeof( SingleOrObjectConverter<LastFmArtistList> ))]
 		public LastFmArtistList			ArtistMatches { get; set; }
+
+		[JsonProperty( "opensearch:totalResults" )]
+		public int						TotalResults { get; set; }
 	}
 
 	public class LastFmArtistList {
-		public List<LastFmArtist>		Artist { get; set; }
+		[JsonProperty( "artist", Required = Required.Default )]
+		[JsonConverter( typeof( SingleOrArrayConverter<LastFmArtist> ))]
+		public List<LastFmArtist>		ArtistList { get; set; }
+
+		public LastFmArtistList() {
+			ArtistList = new List<LastFmArtist>();
+		}
 	}
 
 	public class LastFmArtist {
@@ -20,7 +30,12 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 		public int						Listeners { get; set; }
 		public string					MbId { get; set; }
 		public string					Url { get; set; }
-		public List<LastFmImage>		Image { get; set; }
+		[JsonProperty( "image" )]
+		public List<LastFmImage>		ImageList { get; set; }
+
+		public LastFmArtist() {
+			ImageList = new List<LastFmImage>();
+		}
 	}
 
 	public class LastFmImage {

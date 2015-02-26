@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure.Configuration;
@@ -15,30 +14,6 @@ using Raven.Client;
 using Raven.Json.Linq;
 
 namespace Noise.Metadata.MetadataProviders {
-	internal class ImageDownloader {
-		private readonly WebClient			mWebClient;
-		private readonly string				mArtistName;
-		private readonly Action< string, byte[]>	mOnDownloadComplete;
-
-		public ImageDownloader( string uriString, string artistName, Action<string, byte[]> onCompleted ) {
-			mArtistName = artistName;
-			mWebClient = new WebClient();
-			mOnDownloadComplete = onCompleted;
-
-			mWebClient.DownloadDataCompleted += OnDownloadCompleted;
-			mWebClient.DownloadDataAsync( new Uri( uriString ));
-		}
-
-		private void OnDownloadCompleted( object sender, DownloadDataCompletedEventArgs e ) {
-			if(( e.Error == null ) &&
-			   ( e.Cancelled == false )) {
-				mOnDownloadComplete( mArtistName, e.Result );
-			}			
-
-			mWebClient.DownloadDataCompleted -= OnDownloadCompleted;
-		}
-	}
-
 	internal class LastFmProvider : IArtistMetadataProvider {
 		private readonly ILastFmClient		mLastFmClient;
 		private readonly ILicenseManager	mLicenseManager;
@@ -86,7 +61,7 @@ namespace Noise.Metadata.MetadataProviders {
 					var artistSearch = await mLastFmClient.ArtistSearch( artistName );
 
 					if( artistSearch != null ) {
-						var firstArtist = artistSearch.Artist.FirstOrDefault();
+						var firstArtist = artistSearch.ArtistList.FirstOrDefault();
 
 						if( firstArtist != null ) {
 							var artistInfo = await mLastFmClient.GetArtistInfo( firstArtist.Name );
@@ -99,6 +74,12 @@ namespace Noise.Metadata.MetadataProviders {
 								UpdateArtist( artistName, artistInfo, topAlbums, topTracks );
 							}
 						}
+						else {
+							mLog.LogMessage( string.Format( "Last.Fm unable to match artist \"{0}\"", artistName ), "LastFmProvider:AsyncUpdateArtist");
+						}
+					}
+					else {
+						mLog.LogMessage( string.Format( "Last.Fm returned no results for artist \"{0}\"", artistName ), "LastFmProvider:AsyncUpdateArtist" );
 					}
 				}
 				catch( Exception ex ) {
@@ -117,45 +98,46 @@ namespace Noise.Metadata.MetadataProviders {
 					artistBio.SetMetadata( eMetadataType.Biography, artistInfo.Bio.Content );
 					artistBio.SetMetadata( eMetadataType.YearFormed, artistInfo.Bio.YearFormed.ToString());
 
-					if( artistInfo.Tags.Tag.Any()) {
-						strList.AddRange( artistInfo.Tags.Tag.Select( tag => tag.Name.ToLower()));
+					if( artistInfo.Tags.TagList.Any()) {
+						strList.AddRange( artistInfo.Tags.TagList.Select( tag => tag.Name.ToLower()));
 						artistBio.SetMetadata( eMetadataType.Genre, strList );
 					}
 
 					strList.Clear();
 
-					if( artistInfo.Similar.Artist.Any()) {
-						strList.AddRange( artistInfo.Similar.Artist.Select( sim => sim.Name ));
+					if( artistInfo.Similar.ArtistList.Any()) {
+						strList.AddRange( artistInfo.Similar.ArtistList.Select( sim => sim.Name ));
 						artistBio.SetMetadata( eMetadataType.SimilarArtists, strList );
 					}
 
 					strList.Clear();
 
-					if( topAlbums.TopAlbums.Album.Any()) {
-						strList.AddRange( topAlbums.TopAlbums.Album.Take( 5 ).Select( album => album.Name ));
+					if( topAlbums.TopAlbums.AlbumList.Any()) {
+						strList.AddRange( topAlbums.TopAlbums.AlbumList.Take( 5 ).Select( album => album.Name ));
 						artistBio.SetMetadata( eMetadataType.TopAlbums, strList );
 					}
 
-					if( artistInfo.Image.Any()) {
-						var image = artistInfo.Image.FirstOrDefault( i => i.Size.Equals( "large", StringComparison.InvariantCultureIgnoreCase )) ??
-						            artistInfo.Image.FirstOrDefault();
+					if( artistInfo.ImageList.Any()) {
+						var image = artistInfo.ImageList.FirstOrDefault( i => i.Size.Equals( "large", StringComparison.InvariantCultureIgnoreCase )) ??
+						            artistInfo.ImageList.FirstOrDefault();
 
-						if( image != null ) {
-							new ImageDownloader( image.Url, artistName, ArtistImageDownloadComplete );
+						if(( image != null ) &&
+						   (!string.IsNullOrWhiteSpace( image.Url ))) {
+							ImageDownloader.StartDownload( image.Url, artistName, ArtistImageDownloadComplete );
 						}
 					}
 
 					strList.Clear();
 
-					if( topTracks.TopTracks.Track.Any()) {
-						strList.AddRange(( from topTrack in topTracks.TopTracks.Track orderby topTrack.Listeners descending select topTrack.Name ).Take( 10 ));
+					if( topTracks.TopTracks.TrackList.Any()) {
+						strList.AddRange(( from topTrack in topTracks.TopTracks.TrackList orderby topTrack.Listeners descending select topTrack.Name ).Take( 10 ));
 						artistBio.SetMetadata( eMetadataType.TopTracks, strList );
 					}
 
 					session.Store( artistBio );
 					session.SaveChanges();
 
-					mLog.LogMessage( string.Format( "LastFm updated artist: {0}", artistName ));
+					mLog.LogMessage( string.Format( "LastFm updated artist: {0}", artistName ), "LastFmProvider:UpdateArtist" );
 				}
 			}
 			catch( Exception ex ) {

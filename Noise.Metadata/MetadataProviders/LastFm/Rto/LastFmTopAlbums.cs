@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 	public class LastFmTopAlbums {
@@ -6,7 +7,12 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 	}
 
 	public class LastFmAlbumList {
-		public List<LastFmAlbum>	Album { get; set; }
+		[JsonProperty( "album" )]
+		public List<LastFmAlbum>	AlbumList { get; set; }
+
+		public LastFmAlbumList() {
+			AlbumList = new List<LastFmAlbum>();
+		}
 	}
 
 	public class LastFmAlbum {
@@ -14,6 +20,12 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 		public int					PlayCount { get; set; }
 		public string				MbId { get; set; }
 		public string				Url { get; set; }
-		public List<LastFmImage>	Image { get; set; }
+
+		[JsonProperty( "image" )]
+		public List<LastFmImage>	ImageList { get; set; }
+
+		public LastFmAlbum() {
+			ImageList = new List<LastFmImage>();
+		}
 	}
 }
