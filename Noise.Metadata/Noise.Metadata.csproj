@@ -224,10 +224,6 @@
     <Compile Include="RefitStubs.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LastFmSharp\LastFmSharp.csproj">
-      <Project>{b57a7572-5f5c-4166-ae0b-9814b550e9b2}</Project>
-      <Name>LastFmSharp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Noise.Infrastructure\Noise.Infrastructure.csproj">
       <Project>{2c697760-1b66-4ded-b57a-b3438d5a75fc}</Project>
       <Name>Noise.Infrastructure</Name>
