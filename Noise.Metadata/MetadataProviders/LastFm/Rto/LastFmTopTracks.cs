@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Newtonsoft.Json;
 
 namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
@@ -15,6 +16,7 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 		}
 	}
 
+	[DebuggerDisplay("Track = {Name}")]
 	public class LastFmTrack {
 		public string				Name { get; set; }
 		public int					Duration { get; set; }

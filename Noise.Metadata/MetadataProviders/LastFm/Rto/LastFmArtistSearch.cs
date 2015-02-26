@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Newtonsoft.Json;
 
 namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
@@ -28,6 +29,7 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 		}
 	}
 
+	[DebuggerDisplay("Artist = {Name}")]
 	public class LastFmArtist {
 		public string					Name { get; set; }
 		public int						Listeners { get; set; }
@@ -41,6 +43,7 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 		}
 	}
 
+	[DebuggerDisplay("Image (Size = {Size})")]
 	public class LastFmImage {
 		[JsonProperty("#text")]
 		public string					Url { get; set; }
