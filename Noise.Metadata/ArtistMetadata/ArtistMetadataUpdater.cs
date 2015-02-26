@@ -71,26 +71,25 @@ namespace Noise.Metadata.ArtistMetadata {
 		}
 
 		public void QueueArtistUpdate( string forArtist ) {
-			if(( mDocumentStore != null ) &&
-			   (!mPriorityUpdateList.Contains( forArtist ))) {
-				DbArtistStatus	artistStatus = GetArtistStatus( forArtist );
+			if( mDocumentStore != null ) {
+				lock( mPriorityUpdateList ) {
+					if(!mPriorityUpdateList.Contains( forArtist )) {
+						var	artistStatus = GetArtistStatus( forArtist );
 
-				if( artistStatus != null ) {
-					bool	needsUpdate = false;
+						if( artistStatus != null ) {
+							bool	needsUpdate = false;
 
-					foreach( var provider in mProviders ) {
-						var status = artistStatus.GetProviderStatus( provider.ProviderKey );
+							foreach( var provider in mProviders ) {
+								var status = artistStatus.GetProviderStatus( provider.ProviderKey );
 
-						needsUpdate |= !(( status != null ) &&
-										 ( status.LastUpdate + status.Lifetime > DateTime.Now ));
-						if( needsUpdate ) {
-							break;
-						}
-					}
+								needsUpdate |= !(( status != null ) &&
+												 ( status.LastUpdate + status.Lifetime > DateTime.Now ));
+								if( needsUpdate ) {
+									mPriorityUpdateList.Push( forArtist );
 
-					if( needsUpdate ) {
-						lock( mPriorityUpdateList ) {
-							mPriorityUpdateList.Push( forArtist );
+									break;
+								}
+							}
 						}
 					}
 				}
@@ -105,16 +104,22 @@ namespace Noise.Metadata.ArtistMetadata {
 			}
 		}
 
+		private string CheckForPriorityArtist() {
+			var retValue = string.Empty;
+
+			lock( mPriorityUpdateList ) {
+				if( mPriorityUpdateList.Any()) {
+					retValue = mPriorityUpdateList.Pop();
+				}
+			}
+
+			return( retValue );
+		}
 		private void UpdateNextArtist( RecurringTask task ) {
 			try {
-				string	artistName = string.Empty;
+				string	artistName = CheckForPriorityArtist();
 
-				if( mPriorityUpdateList.Any()) {
-					lock( mPriorityUpdateList ) {
-						artistName = mPriorityUpdateList.Pop();
-					}
-				}
-				else {
+				if( string.IsNullOrWhiteSpace( artistName )) {
 					if(( mUpdateEnumerator != null ) &&
 					   ( mUpdateEnumerator.MoveNext())) {
 						artistName = mUpdateEnumerator.Current;
@@ -125,7 +130,7 @@ namespace Noise.Metadata.ArtistMetadata {
 				}
 
 				if(!string.IsNullOrWhiteSpace( artistName )) {
-					DbArtistStatus	artistStatus = GetArtistStatus( artistName );
+					var	artistStatus = GetArtistStatus( artistName );
 
 					if( artistStatus != null ) {
 						UpdateArtist( artistStatus );
