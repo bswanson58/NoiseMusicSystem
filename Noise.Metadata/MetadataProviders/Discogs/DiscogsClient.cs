@@ -17,7 +17,7 @@ namespace Noise.Metadata.MetadataProviders.Discogs {
 		}
 
 		private string RetrieveLicenseKey() {
-			if( string.IsNullOrWhiteSpace( mAccessToken ) ) {
+			if( string.IsNullOrWhiteSpace( mAccessToken )) {
 				var licenseKey = mLicenseManager.RetrieveKey( LicenseKeys.Discogs );
 
 				mAccessToken = licenseKey.Key;
