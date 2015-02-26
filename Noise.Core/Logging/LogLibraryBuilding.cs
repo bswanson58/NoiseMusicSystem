@@ -21,15 +21,15 @@ namespace Noise.Core.Logging {
 		}
 
 		public void BuildingStarted() {
-			LogOnCondition( mPreferences.LogAnyBuilding, () => LogBuildingMessage( "Starting library building" ));
+			LogOnCondition( mPreferences.LogAnyBuilding || mPreferences.BasicActivity, () => LogBuildingMessage( "Starting library building" ));
 		}
 
 		public void BuildingCompleted( DatabaseChangeSummary summary ) {
-			LogOnCondition( mPreferences.LogAnyBuilding, () => LogBuildingMessage( "Completed library building: {0}", summary ));
+			LogOnCondition( mPreferences.LogAnyBuilding || mPreferences.BasicActivity, () => LogBuildingMessage( "Completed library building: {0}", summary ));
 		}
 
 		public void DatabaseStatistics( DatabaseStatistics statistics ) {
-			LogOnCondition( mPreferences.LogAnyBuilding, () => LogBuildingMessage( "{0}", statistics ));
+			LogOnCondition( mPreferences.LogAnyBuilding || mPreferences.BasicActivity, () => LogBuildingMessage( "{0}", statistics ));
 		}
 
 		public void LogException( string message, Exception exception, string callerName = "" ) {

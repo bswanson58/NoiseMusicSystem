@@ -24,7 +24,7 @@ namespace Noise.Core.Logging {
 		}
 
 		public void LogDiscoveryStarted( RootFolder folder ) {
-			LogOnCondition( mPreferences.LogAnyBuildingDiscovery, () => LogDiscoveryMessage( "Starting discovery: {0} \"{1}\"", folder, mStorageSupport.GetPath( folder )));
+			LogOnCondition( mPreferences.LogAnyBuildingDiscovery || mPreferences.BasicActivity, () => LogDiscoveryMessage( "Starting discovery: {0} \"{1}\"", folder, mStorageSupport.GetPath( folder )));
 		}
 
 		public void LogDiscoveryCompleted( RootFolder folder ) {

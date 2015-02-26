@@ -21,7 +21,7 @@ namespace Noise.Core.Logging {
 		}
 
 		public void LogClassificationStarted() {
-			LogOnCondition( mPreferences.LogAnyClassification, () => LogClassificationMessage( "Starting Library classification" ));
+			LogOnCondition( mPreferences.LogAnyClassification || mPreferences.BasicActivity, () => LogClassificationMessage( "Starting Library classification" ));
 		}
 
 		public void LogClassificationCompleted() {
@@ -45,7 +45,7 @@ namespace Noise.Core.Logging {
 		}
 
 		public void LogArtistAdded( StorageFile file, DbArtist artist ) {
-			LogOnCondition( mPreferences.FileClassificationArtists, () => LogClassificationMessage( string.Format( "Added Artist: {0} for {1}", artist, file )));
+			LogOnCondition( mPreferences.FileClassificationArtists || mPreferences.BasicActivity, () => LogClassificationMessage( string.Format( "Added Artist: {0} for {1}", artist, file )));
 		}
 
 		public void LogArtistFound( StorageFile file, DbArtist artist ) {
@@ -57,7 +57,7 @@ namespace Noise.Core.Logging {
 		}
 
 		public void LogAlbumAdded( StorageFile file, DbAlbum album ) {
-			LogOnCondition( mPreferences.FileClassificationAlbums, () => LogClassificationMessage( string.Format( "Added Album: {0} for {1}", album, file )));
+			LogOnCondition( mPreferences.FileClassificationAlbums || mPreferences.BasicActivity, () => LogClassificationMessage( string.Format( "Added Album: {0} for {1}", album, file )));
 		}
 
 		public void LogAlbumFound( StorageFile file, DbAlbum album ) {

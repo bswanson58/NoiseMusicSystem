@@ -20,7 +20,7 @@ namespace Noise.Core.Logging {
 		}
 
 		public void LogSummaryBuildingStarted() {
-			LogOnCondition( mPreferences.LogAnyBuildingSummary, () => LogSummaryMessage( "Starting library summary building" ));
+			LogOnCondition( mPreferences.LogAnyBuildingSummary || mPreferences.BasicActivity, () => LogSummaryMessage( "Starting library summary building" ));
 		}
 
 		public void LogSummaryBuildingCompleted() {

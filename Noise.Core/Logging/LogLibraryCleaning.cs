@@ -20,7 +20,7 @@ namespace Noise.Core.Logging {
 		}
 
 		public void LogCleaningStarted() {
-			LogOnCondition( mPreferences.LogAnyCleaning, () => LogCleaningMessage( "Starting Library metadata cleaning" ));
+			LogOnCondition( mPreferences.LogAnyCleaning || mPreferences.BasicActivity, () => LogCleaningMessage( "Starting Library metadata cleaning" ));
 		}
 
 		public void LogCleaningCompleted() {
@@ -40,11 +40,11 @@ namespace Noise.Core.Logging {
 		}
 
 		public void LogRemovingAlbum( DbAlbum album ) {
-			LogOnCondition( mPreferences.MetadataCleaningDomainObjects, ()=> LogCleaningMessage( "Removing album: {0}", album ));
+			LogOnCondition( mPreferences.MetadataCleaningDomainObjects || mPreferences.BasicActivity, ()=> LogCleaningMessage( "Removing album: {0}", album ));
 		}
 
 		public void LogRemovingArtist( DbArtist artist ) {
-			LogOnCondition( mPreferences.MetadataCleaningDomainObjects, ()=> LogCleaningMessage( "Removing artist: {0}", artist ));
+			LogOnCondition( mPreferences.MetadataCleaningDomainObjects || mPreferences.BasicActivity, ()=> LogCleaningMessage( "Removing artist: {0}", artist ));
 		}
 
 		public void LogRemovingArtwork( DbArtwork artwork ) {

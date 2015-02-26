@@ -20,7 +20,7 @@ namespace Noise.Core.Logging {
 		}
 
 		public void LibraryOpened( LibraryConfiguration configuration ) {
-			LogOnCondition( mPreferences.LibraryConfiguration, () => LogConfigurationMessage( "Opened {0}", configuration ));
+			LogOnCondition( mPreferences.LibraryConfiguration || mPreferences.BasicActivity, () => LogConfigurationMessage( "Opened {0}", configuration ));
 		}
 
 		public void LibraryClosed( LibraryConfiguration configuration ) {

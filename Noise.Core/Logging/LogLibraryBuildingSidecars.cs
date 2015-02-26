@@ -20,7 +20,7 @@ namespace Noise.Core.Logging {
 		}
 
 		public void LogSidecarBuildingStarted() {
-			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Started sidecar loading" ));
+			LogOnCondition( mPreferences.SidecarSupport || mPreferences.BasicActivity, () => LogBuildingMessage( "Started sidecar loading" ));
 		}
 
 		public void LogSidecarBuildingCompleted() {
@@ -32,11 +32,11 @@ namespace Noise.Core.Logging {
 		}
 
 		public void LogWriteSidecar( ScAlbum scAlbum ) {
-			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Writing {0}", scAlbum ));
+			LogOnCondition( mPreferences.SidecarSupport || mPreferences.BasicActivity, () => LogBuildingMessage( "Writing {0}", scAlbum ));
 		}
 
 		public void LogWriteSidecar( ScArtist scArtist ) {
-			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Writing {0}", scArtist ));
+			LogOnCondition( mPreferences.SidecarSupport || mPreferences.BasicActivity, () => LogBuildingMessage( "Writing {0}", scArtist ));
 		}
 
 		public void LogUpdatedSidecar( StorageSidecar sidecar, DbAlbum album ) {
@@ -48,11 +48,11 @@ namespace Noise.Core.Logging {
 		}
 
 		public void LogUpdated( DbArtist dbArtist, ScArtist scArtist ) {
-			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Updated {0} from {1}", dbArtist, scArtist ));
+			LogOnCondition( mPreferences.SidecarSupport || mPreferences.BasicActivity, () => LogBuildingMessage( "Updated {0} from {1}", dbArtist, scArtist ));
 		}
 
 		public void LogUpdated( DbAlbum dbAlbum, ScAlbum scAlbum ) {
-			LogOnCondition( mPreferences.SidecarSupport, () => LogBuildingMessage( "Updated {0} from {1}", dbAlbum, scAlbum ));
+			LogOnCondition( mPreferences.SidecarSupport || mPreferences.BasicActivity, () => LogBuildingMessage( "Updated {0} from {1}", dbAlbum, scAlbum ));
 		}
 
 		public void LogUnknownArtistSidecar( StorageSidecar sidecar ) {
