@@ -15,7 +15,10 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 		public int						TotalResults { get; set; }
 	}
 
+	[JsonObject(MemberSerialization.OptIn)]
 	public class LastFmArtistList {
+		public int						TotalResults { get; set; }
+
 		[JsonProperty( "artist", Required = Required.Default )]
 		[JsonConverter( typeof( SingleOrArrayConverter<LastFmArtist> ))]
 		public List<LastFmArtist>		ArtistList { get; set; }

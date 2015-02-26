@@ -60,7 +60,8 @@ namespace Noise.Metadata.MetadataProviders {
 				try {
 					var artistSearch = await mLastFmClient.ArtistSearch( artistName );
 
-					if( artistSearch != null ) {
+					if(( artistSearch != null ) &&
+					   ( artistSearch.TotalResults > 0 )) {
 						var firstArtist = artistSearch.ArtistList.FirstOrDefault();
 
 						if( firstArtist != null ) {
@@ -79,7 +80,7 @@ namespace Noise.Metadata.MetadataProviders {
 						}
 					}
 					else {
-						mLog.LogMessage( string.Format( "Last.Fm returned no results for artist \"{0}\"", artistName ), "LastFmProvider:AsyncUpdateArtist" );
+						mLog.LogMessage( string.Format( "Last.Fm returned no matches for artist \"{0}\"", artistName ), "LastFmProvider:AsyncUpdateArtist" );
 					}
 				}
 				catch( Exception ex ) {

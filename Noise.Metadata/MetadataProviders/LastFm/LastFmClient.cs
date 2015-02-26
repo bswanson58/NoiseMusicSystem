@@ -39,6 +39,9 @@ namespace Noise.Metadata.MetadataProviders.LastFm {
 		public async Task<LastFmArtistList> ArtistSearch( string artistName ) {
 			var searchResults = await LastFmApi.ArtistSearch( artistName, RetrieveLicenseKey(), cResultFormat );
 
+			// Push the count down into the returned value.
+			searchResults.Results.ArtistMatches.TotalResults = searchResults.Results.TotalResults;
+
 			return ( searchResults.Results.ArtistMatches );
 		}
 
