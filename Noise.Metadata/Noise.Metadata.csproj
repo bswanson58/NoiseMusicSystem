@@ -197,6 +197,8 @@
     <Compile Include="Interfaces\IArtistMetadataManager.cs" />
     <Compile Include="Interfaces\IMetadataProvider.cs" />
     <Compile Include="Interfaces\IMetadataUpdater.cs" />
+    <Compile Include="Logging\ILogMetadata.cs" />
+    <Compile Include="Logging\MetadataLogging.cs" />
     <Compile Include="MetadataManager.cs" />
     <Compile Include="MetadataProviders\DiscogsProvider.cs" />
     <Compile Include="MetadataProviders\Discogs\Rto\DiscogsArtist.cs" />

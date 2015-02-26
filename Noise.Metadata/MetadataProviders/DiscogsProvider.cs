@@ -7,19 +7,20 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Dto;
 using Noise.Metadata.Interfaces;
+using Noise.Metadata.Logging;
 using Noise.Metadata.MetadataProviders.Discogs;
 using Raven.Client;
 
 namespace Noise.Metadata.MetadataProviders {
 	internal class DiscogsProvider : IArtistMetadataProvider {
 		private readonly IDiscogsClient	mDiscogsClient;
-		private readonly INoiseLog		mLog;
+		private readonly ILogMetadata	mLog;
 		private IDocumentStore			mDocumentStore;
 		private readonly bool			mHasNetworkAccess;
 
 		public	string			ProviderKey { get; private set; }
 
-		public DiscogsProvider( NoiseCorePreferences preferences, IDiscogsClient discogsClient, INoiseLog log ) {
+		public DiscogsProvider( NoiseCorePreferences preferences, IDiscogsClient discogsClient, ILogMetadata log ) {
 			mDiscogsClient = discogsClient;
 			mLog = log;
 
@@ -110,19 +111,19 @@ namespace Noise.Metadata.MetadataProviders {
 							session.Store( discography );
 							session.SaveChanges();
 
-							mLog.LogMessage( string.Format( "Updated artist \"{0}\"", artistName ), "DiscogsProvider:UpdateArtist" );
+							mLog.LoadedMetadata( ProviderKey, artistName );
 						}
 					}
 					else {
-						mLog.LogMessage( string.Format( "Discogs search did not locate artist \"{0}\"", artistName ), "DiscogsProvider:UpdateArtist" );
+						mLog.ArtistNotFound( ProviderKey, artistName );
 					}
 				}
 				else {
-					mLog.LogMessage( string.Format( "Discogs search failed for artist \"{0}\"", artistName ), "DiscogsProvider:UpdateArtist" );
+					mLog.ArtistNotFound( ProviderKey, artistName );
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Discogs search failed for artist \"{0}\"", artistName ), ex, "DiscogsProvider:UpdateArtist" );
+				mLog.LogException( string.Format( "Discogs search failed for artist \"{0}\"", artistName ), ex );
 			}
 		}
 	}

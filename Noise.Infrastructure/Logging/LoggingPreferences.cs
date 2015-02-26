@@ -36,6 +36,8 @@
 		public bool BuildingSummaryArtists { get; set; }
 		public bool BuildingSummaryAlbums { get; set; }
 
+		public bool MetadataSupport { get; set; }
+
 		public bool SidecarSupport { get; set; }
 
 		public bool PlayQueueAddRemove { get; set; }

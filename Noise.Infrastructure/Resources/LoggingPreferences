@@ -35,6 +35,8 @@
   "BuildingSummaryArtists": true,
   "BuildingSummaryAlbums": false,
 
+  "MetadataSupport":  false,
+
   "SidecarSupport": false,
 
   "PlayQueueAddRemove":  false,

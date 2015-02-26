@@ -8,6 +8,7 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Dto;
 using Noise.Metadata.Interfaces;
+using Noise.Metadata.Logging;
 using Noise.Metadata.MetadataProviders.LastFm;
 using Noise.Metadata.MetadataProviders.LastFm.Rto;
 using Raven.Client;
@@ -17,13 +18,13 @@ namespace Noise.Metadata.MetadataProviders {
 	internal class LastFmProvider : IArtistMetadataProvider {
 		private readonly ILastFmClient		mLastFmClient;
 		private readonly ILicenseManager	mLicenseManager;
-		private readonly INoiseLog			mLog;
+		private readonly ILogMetadata		mLog;
 		private readonly bool				mHasNetworkAccess;
 		private IDocumentStore				mDocumentStore;
 
 		public	string		ProviderKey { get; private set; }
 
-		public LastFmProvider( ILastFmClient client, ILicenseManager licenseManager, NoiseCorePreferences preferences, INoiseLog log ) {
+		public LastFmProvider( ILastFmClient client, ILicenseManager licenseManager, NoiseCorePreferences preferences, ILogMetadata log ) {
 			mLastFmClient = client;
 			mLicenseManager = licenseManager;
 			mLog = log;
@@ -81,15 +82,15 @@ namespace Noise.Metadata.MetadataProviders {
 							   ( topTracks != null )) {
 								UpdateArtist( artistName, artistInfo, topAlbums, topTracks );
 
-								mLog.LogMessage( string.Format( "LastFm updated artist \"{0}\"", artistName ), "LastFmProvider:UpdateArtist" );
+								mLog.LoadedMetadata( ProviderKey, artistName );
 							}
 						}
 						else {
-							mLog.LogMessage( string.Format( "LastFm unable to match artist \"{0}\"", artistName ), "LastFmProvider:UpdateArtist");
+							mLog.ArtistNotFound( ProviderKey, artistName );
 						}
 					}
 					else {
-						mLog.LogMessage( string.Format( "LastFm returned no matches for artist \"{0}\"", artistName ), "LastFmProvider:UpdateArtist" );
+						mLog.ArtistNotFound( ProviderKey, artistName );
 					}
 				}
 				catch( Exception ex ) {

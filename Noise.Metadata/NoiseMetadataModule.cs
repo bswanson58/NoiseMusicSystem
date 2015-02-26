@@ -4,6 +4,7 @@ using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.ArtistMetadata;
 using Noise.Metadata.Interfaces;
+using Noise.Metadata.Logging;
 using Noise.Metadata.MetadataProviders;
 using Noise.Metadata.MetadataProviders.Discogs;
 using Noise.Metadata.MetadataProviders.LastFm;
@@ -29,6 +30,8 @@ namespace Noise.Metadata {
 
 			mContainer.RegisterType<IDiscogsClient, DiscogsClient>();
 			mContainer.RegisterType<ILastFmClient, LastFmClient>();
+
+			mContainer.RegisterType<ILogMetadata, MetadataLogging>( new HierarchicalLifetimeManager());
 		}
 	}
 }
