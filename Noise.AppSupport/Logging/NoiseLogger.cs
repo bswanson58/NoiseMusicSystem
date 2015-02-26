@@ -18,7 +18,14 @@ namespace Noise.AppSupport.Logging {
 		private LoggingPreferences Preferences {
 			get {
 				if( mLoggingPreferences == null ) {
-					mLoggingPreferences = mPreferences.Load<LoggingPreferences>();
+					mLoggingPreferences = new LoggingPreferences();
+
+					try {
+						mLoggingPreferences = mPreferences.Load<LoggingPreferences>();
+					}
+					catch( Exception ) {
+						mLoggingPreferences = new LoggingPreferences();
+					}
 				}
 
 				return( mLoggingPreferences );
