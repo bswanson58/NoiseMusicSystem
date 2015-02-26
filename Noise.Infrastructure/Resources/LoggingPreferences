@@ -11,17 +11,17 @@
 
   "BackgroundTasks":  false,
 
-  "BuildingDiscovery": true,
+  "BuildingDiscovery": false,
   "BuildingDiscoverFiles": false,
   "BuildingDiscoverFolders": false,
 
   "DatabaseActivity":  false,
 
-  "MetadataCleaning" : true,
+  "MetadataCleaning" : false,
   "MetadataCleaningDomainObjects": false,
   "MetadataCleaningFileObjects": false,
 
-  "FileClassification": true,
+  "FileClassification": false,
   "FileClassificationFiles": false,
   "FileClassificationSteps": false,
   "FileClassificationArtists": false,
@@ -31,8 +31,8 @@
   "FileClassificationTextInfo": false,
   "FileClassificationUnknown": false,
 
-  "BuildingSummary": true,
-  "BuildingSummaryArtists": true,
+  "BuildingSummary": false,
+  "BuildingSummaryArtists": false,
   "BuildingSummaryAlbums": false,
 
   "MetadataSupport":  false,
