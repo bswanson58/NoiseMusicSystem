@@ -11,6 +11,10 @@ namespace Noise.AppSupport {
 			mApplicationName = applicationName;
 		}
 
+		public string ApplicationName() {
+			return( mApplicationName );
+		}
+
 		public string ApplicationDirectory() {
 			var retValue = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData ),
 										 Constants.CompanyName,

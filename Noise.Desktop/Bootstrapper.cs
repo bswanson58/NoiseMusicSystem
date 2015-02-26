@@ -19,7 +19,7 @@ namespace Noise.Desktop {
 		private WindowManager		mWindowManager;
 		private Window				mShell;
 		private	ApplicationSupport	mAppSupport;
-		private INoiseLog			mLog;
+		private IApplicationLog		mLog;
 
 		protected override DependencyObject CreateShell() {
 			mShell = Container.Resolve<Shell>();
@@ -60,7 +60,7 @@ namespace Noise.Desktop {
 			var iocConfig = new IocConfiguration( Container );
 			iocConfig.InitializeIoc( ApplicationUsage.Desktop );
 
-			mLog = Container.Resolve<INoiseLog>();
+			mLog = Container.Resolve<IApplicationLog>();
 		}
 
 		protected override void InitializeModules() {
@@ -77,7 +77,7 @@ namespace Noise.Desktop {
 			mStartupManager = Container.Resolve<StartupManager>();
 			mStartupManager.Initialize();
 
-			mLog.LogMessage( "+++++ Noise.Desktop System starting. +++++" );
+			mLog.ApplicationStarting();
 
 			StartNoise( instanceContainer );
 		}
@@ -108,7 +108,7 @@ namespace Noise.Desktop {
 
 			Settings.Default.Save();
 
-			mLog.LogMessage( "##### Noise.Desktop System stopped. #####", "Bootstrapper:StopNoise" );
+			mLog.ApplicationExiting();
 		}
 
 		public void LogException( string reason, Exception exception ) {

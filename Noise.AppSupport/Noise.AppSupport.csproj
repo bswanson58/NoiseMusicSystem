@@ -161,6 +161,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ApplicationSupport.cs" />
+    <Compile Include="Logging\ApplicationLogger.cs" />
     <Compile Include="Logging\NoiseLogger.cs" />
     <Compile Include="Logging\SeriLogAdapter.cs" />
     <Compile Include="Preferences\HeadlessPreferences.cs" />

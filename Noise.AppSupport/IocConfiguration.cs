@@ -12,6 +12,7 @@ using Noise.AudioSupport;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.Logging;
 using Noise.Infrastructure.RemoteHost;
 using Noise.Metadata;
 
@@ -41,10 +42,12 @@ namespace Noise.AppSupport {
 		public bool InitializeIoc( ApplicationUsage appUsage ) {
 			mContainer.RegisterType<IPlatformLog, SeriLogAdapter>( new ContainerControlledLifetimeManager());
 			mContainer.RegisterType<IFileWriter, JsonObjectWriter>( new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<IApplicationLog, ApplicationLogger>( new ContainerControlledLifetimeManager());
 			mContainer.RegisterType<INoiseLog, NoiseLogger>( new ContainerControlledLifetimeManager());
 			mContainer.RegisterType<IIoc, IocProvider>( new ContainerControlledLifetimeManager());
 
 			mContainer.RegisterType<AudioPreferences>( new InjectionFactory( PreferencesFactory<AudioPreferences>.CreatePreferences ));
+			mContainer.RegisterType<LoggingPreferences>( new InjectionFactory( PreferencesFactory<LoggingPreferences>.CreatePreferences ));
 			mContainer.RegisterType<NoiseCorePreferences>( new InjectionFactory( PreferencesFactory<NoiseCorePreferences>.CreatePreferences ));
 			mContainer.RegisterType<UserInterfacePreferences>( new InjectionFactory( PreferencesFactory<UserInterfacePreferences>.CreatePreferences ));
 

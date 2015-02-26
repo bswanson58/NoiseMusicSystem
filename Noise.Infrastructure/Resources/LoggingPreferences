@@ -2,6 +2,8 @@
   "LogExceptions": true,
   "LogMessages":  false,
 
+  "BasicActivity": true,
+
   "LibraryConfiguration": false,
 
   "AudioPlayback": false,
