@@ -65,26 +65,35 @@ namespace Noise.Metadata.MetadataProviders {
 						var firstArtist = artistSearch.ArtistList.FirstOrDefault();
 
 						if( firstArtist != null ) {
-							var artistInfo = await mLastFmClient.GetArtistInfo( firstArtist.Name );
-							var topAlbums = await mLastFmClient.GetTopAlbums( firstArtist.Name );
-							var topTracks = await mLastFmClient.GetTopTracks( firstArtist.Name );
+							var artistInfoTask = mLastFmClient.GetArtistInfo( firstArtist.Name );
+							var topAlbumsTask = mLastFmClient.GetTopAlbums( firstArtist.Name );
+							var topTracksTask = mLastFmClient.GetTopTracks( firstArtist.Name );
+
+							// Run all tasks in parallel and wait for them all to finish.
+							await Task.WhenAll( artistInfoTask, topAlbumsTask, topTracksTask );
+
+							var artistInfo = await artistInfoTask;
+							var topAlbums = await topAlbumsTask;
+							var topTracks = await topTracksTask;
 
 							if(( artistInfo != null ) &&
 							   ( topAlbums != null ) &&
 							   ( topTracks != null )) {
 								UpdateArtist( artistName, artistInfo, topAlbums, topTracks );
+
+								mLog.LogMessage( string.Format( "LastFm updated artist \"{0}\"", artistName ), "LastFmProvider:UpdateArtist" );
 							}
 						}
 						else {
-							mLog.LogMessage( string.Format( "Last.Fm unable to match artist \"{0}\"", artistName ), "LastFmProvider:AsyncUpdateArtist");
+							mLog.LogMessage( string.Format( "LastFm unable to match artist \"{0}\"", artistName ), "LastFmProvider:UpdateArtist");
 						}
 					}
 					else {
-						mLog.LogMessage( string.Format( "Last.Fm returned no matches for artist \"{0}\"", artistName ), "LastFmProvider:AsyncUpdateArtist" );
+						mLog.LogMessage( string.Format( "LastFm returned no matches for artist \"{0}\"", artistName ), "LastFmProvider:UpdateArtist" );
 					}
 				}
 				catch( Exception ex ) {
-					mLog.LogException( string.Format( "LastFm update failed for artist: {0}", artistName ), ex );
+					mLog.LogException( string.Format( "LastFm search failed for artist \"{0}\"", artistName ), ex );
 				}
 			}
 		}
@@ -118,6 +127,13 @@ namespace Noise.Metadata.MetadataProviders {
 						artistBio.SetMetadata( eMetadataType.TopAlbums, strList );
 					}
 
+					strList.Clear();
+
+					if( topTracks.TopTracks.TrackList.Any()) {
+						strList.AddRange(( from topTrack in topTracks.TopTracks.TrackList orderby topTrack.Listeners descending select topTrack.Name ).Take( 10 ));
+						artistBio.SetMetadata( eMetadataType.TopTracks, strList );
+					}
+
 					if( artistInfo.ImageList.Any()) {
 						var image = artistInfo.ImageList.FirstOrDefault( i => i.Size.Equals( "large", StringComparison.InvariantCultureIgnoreCase )) ??
 						            artistInfo.ImageList.FirstOrDefault();
@@ -128,17 +144,8 @@ namespace Noise.Metadata.MetadataProviders {
 						}
 					}
 
-					strList.Clear();
-
-					if( topTracks.TopTracks.TrackList.Any()) {
-						strList.AddRange(( from topTrack in topTracks.TopTracks.TrackList orderby topTrack.Listeners descending select topTrack.Name ).Take( 10 ));
-						artistBio.SetMetadata( eMetadataType.TopTracks, strList );
-					}
-
 					session.Store( artistBio );
 					session.SaveChanges();
-
-					mLog.LogMessage( string.Format( "LastFm updated artist: {0}", artistName ), "LastFmProvider:UpdateArtist" );
 				}
 			}
 			catch( Exception ex ) {
