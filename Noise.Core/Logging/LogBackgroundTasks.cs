@@ -48,7 +48,7 @@ namespace Noise.Core.Logging {
 		}
 
 		public void ReplayGainScanCompleted( DbArtist artist, DbAlbum album ) {
-			LogOnCondition( mPreferences.BackgroundTasks, () => LogTaskMessage( "ReplayGain updated: {0} {1} - Album gain: {2:N2}", artist, album, album.ReplayGainAlbumGain ));
+			LogOnCondition( mPreferences.BackgroundTasks || mPreferences.BasicActivity, () => LogTaskMessage( "ReplayGain updated: {0} {1} - Album gain: {2:N2}", artist, album, album.ReplayGainAlbumGain ));
 		}
 
 		public void ReplayGainScanFailed( DbArtist artist, DbAlbum album ) {
@@ -60,7 +60,7 @@ namespace Noise.Core.Logging {
 		}
 
 		public void CompletedSearchBuilding( DbArtist artist ) {
-			LogOnCondition( mPreferences.BackgroundTasks, () => LogTaskMessage( "Completed search data building for {0}", artist ));
+			LogOnCondition( mPreferences.BackgroundTasks || mPreferences.BasicActivity, () => LogTaskMessage( "Completed search data building for {0}", artist ));
 		}
 
 		public void LogException( string message, Exception exception, string callerName = "" ) {
