@@ -5,7 +5,7 @@ namespace Noise.Metadata.MetadataProviders.LastFm {
 	internal interface ILastFmClient {
 		Task<LastFmArtistList>	ArtistSearch( string artistName );
 		Task<LastFmArtistInfo>	GetArtistInfo( string artistName );
-		Task<LastFmTopAlbums>	GetTopAlbums( string artistName );
-		Task<LastFmTopTracks>	GetTopTracks( string artistName );
+		Task<LastFmAlbumList>	GetTopAlbums( string artistName );
+		Task<LastFmTrackList>	GetTopTracks( string artistName );
 	}
 }

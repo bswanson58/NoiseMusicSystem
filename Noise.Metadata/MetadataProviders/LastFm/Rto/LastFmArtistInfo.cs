@@ -4,7 +4,13 @@ using Newtonsoft.Json;
 
 namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 	public class LastFmArtistInfoResult {
+		[JsonProperty( Required = Required.Default )]
 		public LastFmArtistInfo			Artist { get; set; }
+
+		[JsonProperty( Required = Required.Default )]
+		public int						Error { get; set; }
+		[JsonProperty( Required = Required.Default )]
+		public string					Message { get; set; }
 	}
 
 	[DebuggerDisplay("Artist = {Name}")]

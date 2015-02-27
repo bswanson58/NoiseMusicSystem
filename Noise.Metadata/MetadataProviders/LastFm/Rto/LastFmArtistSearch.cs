@@ -6,6 +6,11 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 	public class LastFmAristSearch {
 		[JsonProperty( Required = Required.Default )]
 		public LastFmResults			Results { get; set; }
+
+		[JsonProperty( Required = Required.Default )]
+		public int						Error { get; set; }
+		[JsonProperty( Required = Required.Default )]
+		public string					Message { get; set; }
 	}
 
 	public class LastFmResults {

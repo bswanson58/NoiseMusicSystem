@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.MetadataProviders.LastFm.Rto;
 using Refit;
@@ -20,7 +21,7 @@ namespace Noise.Metadata.MetadataProviders.LastFm {
 			if( string.IsNullOrWhiteSpace( mApiKey ) ) {
 				var licenseKey = mLicenseManager.RetrieveKey( LicenseKeys.LastFm );
 
-				mApiKey = licenseKey.Name;
+				mApiKey = licenseKey.Key;
 			}
 
 			return ( mApiKey );
@@ -37,30 +38,50 @@ namespace Noise.Metadata.MetadataProviders.LastFm {
 		}
 
 		public async Task<LastFmArtistList> ArtistSearch( string artistName ) {
-			var searchResults = await LastFmApi.ArtistSearch( artistName, RetrieveLicenseKey(), cResultFormat );
+			var results = await LastFmApi.ArtistSearch( artistName, RetrieveLicenseKey(), cResultFormat );
+
+			if(( results.Results == null ) ||
+			   ( results.Error != 0 )) {
+				throw new ApplicationException( string.Format( "LastFm returned error code: {0} - {1}", results.Error, results.Message ));
+			}
 
 			// Push the count down into the returned value.
-			searchResults.Results.ArtistMatches.TotalResults = searchResults.Results.TotalResults;
+			results.Results.ArtistMatches.TotalResults = results.Results.TotalResults;
 
-			return ( searchResults.Results.ArtistMatches );
+			return ( results.Results.ArtistMatches );
 		}
 
 		public async Task<LastFmArtistInfo> GetArtistInfo( string artistName ) {
 			var results = await LastFmApi.GetArtistInfo( artistName, RetrieveLicenseKey(), cResultFormat );
 
+			if(( results.Artist == null ) ||
+			   ( results.Error != 0 )) {
+				throw new ApplicationException( string.Format( "LastFm returned error code: {0} - {1}", results.Error, results.Message ));
+			}
+
 			return ( results.Artist );
 		}
 
-		public async Task<LastFmTopAlbums> GetTopAlbums( string artistName ) {
+		public async Task<LastFmAlbumList> GetTopAlbums( string artistName ) {
 			var results = await LastFmApi.GetTopAlbums( artistName, RetrieveLicenseKey(), cResultFormat );
 
-			return ( results );
+			if(( results.TopAlbums == null ) ||
+			   ( results.Error != 0 )) {
+				throw new ApplicationException( string.Format( "LastFm returned error code: {0} - {1}", results.Error, results.Message ));
+			}
+
+			return ( results.TopAlbums );
 		}
 
-		public async Task<LastFmTopTracks> GetTopTracks( string artistName ) {
+		public async Task<LastFmTrackList> GetTopTracks( string artistName ) {
 			var results = await LastFmApi.GetTopTracks( artistName, RetrieveLicenseKey(), cResultFormat );
 
-			return ( results );
+			if(( results.TopTracks == null ) ||
+			   ( results.Error != 0 )) {
+				throw new ApplicationException( string.Format( "LastFm returned error code: {0} - {1}", results.Error, results.Message ));
+			}
+
+			return ( results.TopTracks );
 		}
 	}
 }

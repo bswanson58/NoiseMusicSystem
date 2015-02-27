@@ -4,7 +4,13 @@ using Newtonsoft.Json;
 
 namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 	public class LastFmTopAlbums {
+		[JsonProperty( Required = Required.Default )]
 		public LastFmAlbumList		TopAlbums { get; set; }
+
+		[JsonProperty( Required = Required.Default )]
+		public int					Error { get; set; }
+		[JsonProperty( Required = Required.Default )]
+		public string				Message { get; set; }
 	}
 
 	public class LastFmAlbumList {

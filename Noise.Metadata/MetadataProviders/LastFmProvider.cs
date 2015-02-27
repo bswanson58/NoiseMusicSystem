@@ -99,7 +99,7 @@ namespace Noise.Metadata.MetadataProviders {
 			}
 		}
 
-		private void UpdateArtist( string artistName, LastFmArtistInfo artistInfo, LastFmTopAlbums topAlbums, LastFmTopTracks topTracks ) {
+		private void UpdateArtist( string artistName, LastFmArtistInfo artistInfo, LastFmAlbumList topAlbums, LastFmTrackList topTracks ) {
 			try {
 				using( var session = mDocumentStore.OpenSession()) {
 					var strList = new List<string>();
@@ -123,15 +123,15 @@ namespace Noise.Metadata.MetadataProviders {
 
 					strList.Clear();
 
-					if( topAlbums.TopAlbums.AlbumList.Any()) {
-						strList.AddRange( topAlbums.TopAlbums.AlbumList.Take( 5 ).Select( album => album.Name ));
+					if( topAlbums.AlbumList.Any()) {
+						strList.AddRange( topAlbums.AlbumList.Take( 5 ).Select( album => album.Name ));
 						artistBio.SetMetadata( eMetadataType.TopAlbums, strList );
 					}
 
 					strList.Clear();
 
-					if( topTracks.TopTracks.TrackList.Any()) {
-						strList.AddRange(( from topTrack in topTracks.TopTracks.TrackList orderby topTrack.Listeners descending select topTrack.Name ).Take( 10 ));
+					if( topTracks.TrackList.Any()) {
+						strList.AddRange(( from topTrack in topTracks.TrackList orderby topTrack.Listeners descending select topTrack.Name ).Take( 10 ));
 						artistBio.SetMetadata( eMetadataType.TopTracks, strList );
 					}
 
