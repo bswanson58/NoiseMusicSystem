@@ -15,6 +15,7 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 
 	public class LastFmTrackList {
 		[JsonProperty( "track" )]
+		[JsonConverter( typeof( SingleOrArrayConverter<LastFmTrack> ))]
 		public List<LastFmTrack>	TrackList { get; set; }
 
 		public LastFmTrackList() {

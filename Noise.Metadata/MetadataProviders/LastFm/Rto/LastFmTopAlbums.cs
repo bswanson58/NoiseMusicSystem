@@ -15,6 +15,7 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 
 	public class LastFmAlbumList {
 		[JsonProperty( "album" )]
+		[JsonConverter( typeof( SingleOrArrayConverter<LastFmAlbum> ))]
 		public List<LastFmAlbum>	AlbumList { get; set; }
 
 		public LastFmAlbumList() {
