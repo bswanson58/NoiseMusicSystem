@@ -391,7 +391,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void RemovePlayedTracks() {
-			var removeList = from track in mPlayQueue where track.HasPlayed && !track.IsPlaying select  track;
+			var removeList = ( from track in mPlayQueue where track.HasPlayed && !track.IsPlaying select  track ).ToList();
 
 			foreach( var track in removeList ) {
 				mPlayQueue.Remove( track );
