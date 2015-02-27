@@ -18,6 +18,8 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 		public string					Name { get; set; }
 		public string					MbId { get; set; }
 		public string					Url { get; set; }
+
+		[JsonProperty( NullValueHandling = NullValueHandling.Ignore )]
 		public int						OnTour { get; set; }
 
 		[JsonProperty( "image" )]
@@ -78,6 +80,8 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 		public string					Published { get; set; }
 		public string					Summary { get; set; }
 		public string					Content { get; set; }
+
+		[JsonProperty( NullValueHandling = NullValueHandling.Ignore )]
 		public int						YearFormed { get; set; }
 	}
 

@@ -37,7 +37,10 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 	[DebuggerDisplay("Artist = {Name}")]
 	public class LastFmArtist {
 		public string					Name { get; set; }
+
+		[JsonProperty( NullValueHandling = NullValueHandling.Ignore )]
 		public int						Listeners { get; set; }
+	
 		public string					MbId { get; set; }
 		public string					Url { get; set; }
 		[JsonProperty( "image" )]

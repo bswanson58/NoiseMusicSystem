@@ -25,7 +25,10 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 	[DebuggerDisplay("Album = {Name}")]
 	public class LastFmAlbum {
 		public string				Name { get; set; }
+
+		[JsonProperty( NullValueHandling = NullValueHandling.Ignore )]
 		public int					PlayCount { get; set; }
+
 		public string				MbId { get; set; }
 		public string				Url { get; set; }
 

@@ -25,9 +25,16 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 	[DebuggerDisplay("Track = {Name}")]
 	public class LastFmTrack {
 		public string				Name { get; set; }
+
+		[JsonProperty( NullValueHandling = NullValueHandling.Ignore )]
 		public int					Duration { get; set; }
+
+		[JsonProperty( NullValueHandling = NullValueHandling.Ignore )]
 		public int					PlayCount { get; set; }
+
+		[JsonProperty( NullValueHandling = NullValueHandling.Ignore )]
 		public int					Listeners { get; set; }
+
 		public string				MbId { get; set; }
 		public string				Url { get; set; }
 
