@@ -21,11 +21,11 @@ namespace Noise.AppSupport.Logging {
 		}
 
 		public void ApplicationStarting() {
-			LogOnCondition( mPreferences.LogMessages || mPreferences.BasicActivity, () => LogApplicationMessage( string.Format( "+++++ {0} application starting +++++", mEnvironment.ApplicationName())));
+			LogOnCondition( mPreferences.ApplicationActivity || mPreferences.BasicActivity, () => LogApplicationMessage( string.Format( "+++++ {0} application starting +++++", mEnvironment.ApplicationName())));
 		}
 
 		public void ApplicationExiting() {
-			LogOnCondition( mPreferences.LogMessages || mPreferences.BasicActivity, () => LogApplicationMessage( string.Format( "===== {0} application exiting =====", mEnvironment.ApplicationName())));
+			LogOnCondition( mPreferences.ApplicationActivity || mPreferences.BasicActivity, () => LogApplicationMessage( string.Format( "===== {0} application exiting =====", mEnvironment.ApplicationName())));
 		}
 
 		public void LogException( string message, Exception exception, string callerName = "" ) {

@@ -3,6 +3,7 @@
 		public bool LogExceptions { get; set; }
 		public bool LogMessages { get; set; }
 
+		public bool ApplicationActivity { get; set; }
 		public bool BasicActivity { get; set; }
 
 		public bool LibraryConfiguration { get; set; }

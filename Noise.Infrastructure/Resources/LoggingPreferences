@@ -2,6 +2,7 @@
   "LogExceptions": true,
   "LogMessages":  false,
 
+  "ApplicationActivity":  true,
   "BasicActivity": true,
 
   "LibraryConfiguration": false,
