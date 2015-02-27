@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure.Configuration;
@@ -107,7 +108,12 @@ namespace Noise.Metadata.MetadataProviders {
 						            new DbArtistBiography { ArtistName = artistName };
 
 					artistBio.SetMetadata( eMetadataType.Biography, artistInfo.Bio.Content );
-					artistBio.SetMetadata( eMetadataType.YearFormed, artistInfo.Bio.YearFormed.ToString());
+
+					if(( artistInfo.Bio.FormationList != null ) &&
+					   ( artistInfo.Bio.FormationList.Formation != null ) &&
+					   ( artistInfo.Bio.FormationList.Formation.Any())) {
+						UpdateArtistFormation( artistBio, artistInfo.Bio.FormationList.Formation );
+					}
 
 					if( artistInfo.Tags.TagList.Any()) {
 						strList.AddRange( artistInfo.Tags.TagList.Select( tag => tag.Name.ToLower()));
@@ -151,6 +157,23 @@ namespace Noise.Metadata.MetadataProviders {
 			}
 			catch( Exception ex ) {
 				mLog.LogException( string.Format( "LastFm update failed for artist: {0}", artistName ), ex );
+			}
+		}
+
+		private void UpdateArtistFormation( DbArtistBiography artistBio, IList<LastFmFormation> formationList ) {
+			var strFormation = new StringBuilder();
+
+			foreach( var formation in formationList ) {
+				if( strFormation.Length > 0 ) {
+					strFormation.Append( ", " );
+				}
+
+				strFormation.Append( string.Format( "{0} - {1}", formation.YearFrom == 0 ? "Unknown" : formation.YearFrom.ToString(),
+																 formation.YearTo == 0 ? "Present" : formation.YearTo.ToString()));
+			}
+
+			if( strFormation.Length > 0 ) {
+				artistBio.SetMetadata( eMetadataType.ActiveYears, strFormation.ToString());
 			}
 		}
 

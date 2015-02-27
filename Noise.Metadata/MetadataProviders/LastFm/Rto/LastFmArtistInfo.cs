@@ -80,9 +80,27 @@ namespace Noise.Metadata.MetadataProviders.LastFm.Rto {
 		public string					Published { get; set; }
 		public string					Summary { get; set; }
 		public string					Content { get; set; }
+		public string					PlaceFormed { get; set; }
 
 		[JsonProperty( NullValueHandling = NullValueHandling.Ignore )]
 		public int						YearFormed { get; set; }
+
+		[JsonProperty( NullValueHandling = NullValueHandling.Ignore )]
+		public LastFmFormationList		FormationList { get; set; }
+	}
+
+	public class LastFmFormationList {
+		[JsonConverter( typeof( SingleOrArrayConverter<LastFmFormation> ))]
+		public List<LastFmFormation>	Formation { get; set; } 
+	}
+
+	[DebuggerDisplay("Years = {YearFrom}-{YearTo}")]
+	public class LastFmFormation {
+		[JsonProperty( NullValueHandling = NullValueHandling.Ignore )]
+		public int						YearFrom { get; set; }
+
+		[JsonProperty( NullValueHandling = NullValueHandling.Ignore )]
+		public int						YearTo { get; set; }
 	}
 
 }

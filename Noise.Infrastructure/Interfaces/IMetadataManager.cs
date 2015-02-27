@@ -11,7 +11,7 @@ namespace Noise.Infrastructure.Interfaces {
 		TopAlbums,
 		TopTracks,
 		WebSite,
-		YearFormed,
+		ActiveYears,
 		Unknown
 	}
 
