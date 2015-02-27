@@ -110,6 +110,7 @@ namespace Noise.UI.ViewModels {
 
 				var artistMetadata = mMetadataManager.GetArtistMetadata( dbArtist.Name );
 				if( artistMetadata != null ) {
+					retValue.ActiveYears = artistMetadata.GetMetadata( eMetadataType.ActiveYears );
 					retValue.Website = artistMetadata.GetMetadata( eMetadataType.WebSite );
 				}
 			}

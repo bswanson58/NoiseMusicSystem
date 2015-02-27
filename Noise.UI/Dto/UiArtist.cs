@@ -15,6 +15,11 @@ namespace Noise.UI.Dto {
 		public bool				IsFavorite { get; set; }
 		public bool				HasFavorites { get; set; }
 
+		public string ActiveYears {
+			get{ return( Get( () => ActiveYears )); }
+			set{ Set( () => ActiveYears, value ); }
+		}
+
 		public Int16 AlbumCount {
 			get{ return( Get( () => AlbumCount )); }
 			set{ Set( () => AlbumCount, value ); }

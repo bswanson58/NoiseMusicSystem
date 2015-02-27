@@ -11,6 +11,7 @@ namespace Noise.UI {
 
 		protected override void Configure() {
 			CreateMap<DbArtist, UiArtist>()
+				.ForMember( dest => dest.ActiveYears, opt => opt.Ignore())
 				.ForMember( dest => dest.Genre, opt => opt.Ignore())
 				.ForMember( dest => dest.DisplayGenre, opt => opt.Ignore())
 				.ForMember( dest => dest.DisplayName, opt => opt.MapFrom( src => src.Name ))
