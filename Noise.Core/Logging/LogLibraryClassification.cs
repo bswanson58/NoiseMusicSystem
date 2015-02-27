@@ -16,8 +16,8 @@ namespace Noise.Core.Logging {
 			mPreferences = preferences.Load<LoggingPreferences>();
 		}
 
-		private void LogClassificationMessage( string format, params object[] parameters ) {
-			LogMessage( cModuleName, cPhaseName, format, parameters );
+		private void LogClassificationMessage( string format ) {
+			LogMessage( cModuleName, cPhaseName, format.Replace( '{', '_' ));
 		}
 
 		public void LogClassificationStarted() {

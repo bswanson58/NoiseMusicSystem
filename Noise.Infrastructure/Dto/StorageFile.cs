@@ -35,8 +35,9 @@ namespace Noise.Infrastructure.Dto {
 
 		public override string ToString() {
 			var isDeleted = IsDeleted ? " (Marked for deletion)" : string.Empty;
+			var cleanName = Name.Replace( '{', '_' ).Replace( '}', '_' );
 
-			return( string.Format( "File \"{0}\", Id:{1}, Type:{2}, Type DbId:{3}{4}", Name, DbId, FileType, MetaDataPointer, isDeleted ));
+			return( string.Format( "File \"{0}\", Id:{1}, Type:{2}, Type DbId:{3} {4}", cleanName, DbId, FileType, MetaDataPointer, isDeleted ));
 		}
 	}
 }
