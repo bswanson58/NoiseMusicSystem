@@ -13,7 +13,7 @@ namespace Noise.AppSupport.Logging {
 			mLog = new LoggerConfiguration()
 				.Enrich.WithProcessId()
 				.WriteTo.RollingFile( logFile, outputTemplate:"{Timestamp:MM-dd-yyyy HH:mm:ss.ffff} [pid:{ProcessId}] [{Level}] {Message}{NewLine}{Exception}",
-									  fileSizeLimitBytes:1024 * 1024,	retainedFileCountLimit:10 )
+									  fileSizeLimitBytes:4096 * 1024,	retainedFileCountLimit:10 )
 #if DEBUG
 				.WriteTo.ColoredConsole()
 #endif
