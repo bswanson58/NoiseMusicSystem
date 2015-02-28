@@ -40,13 +40,18 @@ namespace Noise.Metadata.MetadataProviders.LastFm {
 		public async Task<LastFmArtistList> ArtistSearch( string artistName ) {
 			var results = await LastFmApi.ArtistSearch( artistName, RetrieveLicenseKey(), cResultFormat );
 
+			if( results == null ) {
+				throw new ApplicationException( string.Format( "LastFm returned null ArtistSearchList" ));
+			}
 			if(( results.Results == null ) ||
 			   ( results.Error != 0 )) {
 				throw new ApplicationException( string.Format( "LastFm returned error code: {0} - {1}", results.Error, results.Message ));
 			}
 
 			// Push the count down into the returned value.
-			results.Results.ArtistMatches.TotalResults = results.Results.TotalResults;
+			if( results.Results.ArtistMatches != null ) {
+				results.Results.ArtistMatches.TotalResults = results.Results.TotalResults;
+			}
 
 			return ( results.Results.ArtistMatches );
 		}
@@ -54,6 +59,9 @@ namespace Noise.Metadata.MetadataProviders.LastFm {
 		public async Task<LastFmArtistInfo> GetArtistInfo( string artistName ) {
 			var results = await LastFmApi.GetArtistInfo( artistName, RetrieveLicenseKey(), cResultFormat );
 
+			if( results == null ) {
+				throw new ApplicationException( string.Format( "LastFm returned null ArtistInfo" ));
+			}
 			if(( results.Artist == null ) ||
 			   ( results.Error != 0 )) {
 				throw new ApplicationException( string.Format( "LastFm returned error code: {0} - {1}", results.Error, results.Message ));
@@ -65,6 +73,9 @@ namespace Noise.Metadata.MetadataProviders.LastFm {
 		public async Task<LastFmAlbumList> GetTopAlbums( string artistName ) {
 			var results = await LastFmApi.GetTopAlbums( artistName, RetrieveLicenseKey(), cResultFormat );
 
+			if( results == null ) {
+				throw new ApplicationException( string.Format( "LastFm returned null TopAlbumsList" ));
+			}
 			if(( results.TopAlbums == null ) ||
 			   ( results.Error != 0 )) {
 				throw new ApplicationException( string.Format( "LastFm returned error code: {0} - {1}", results.Error, results.Message ));
@@ -76,6 +87,9 @@ namespace Noise.Metadata.MetadataProviders.LastFm {
 		public async Task<LastFmTrackList> GetTopTracks( string artistName ) {
 			var results = await LastFmApi.GetTopTracks( artistName, RetrieveLicenseKey(), cResultFormat );
 
+			if( results == null ) {
+				throw new ApplicationException( string.Format( "LastFm returned null TopTracksList" ));
+			}
 			if(( results.TopTracks == null ) ||
 			   ( results.Error != 0 )) {
 				throw new ApplicationException( string.Format( "LastFm returned error code: {0} - {1}", results.Error, results.Message ));
