@@ -16,7 +16,7 @@ namespace Noise.Infrastructure.Logging {
 		}
 
 		private string FormatModuleName( string moduleName, string phaseName ) {
-			return( string.Format( "{0}:{1}", moduleName, phaseName ));
+			return( moduleName + ":" + phaseName );
 		}
 
 		private string ComposeMessage( string moduleName, string phaseName, string message ) {
@@ -28,7 +28,7 @@ namespace Noise.Infrastructure.Logging {
 		}
 
 		private void LogException( string message, Exception exception, string callerName = "" ) {
-			mLogger.LogException( string.Format( "Exception - {0} - {1}", message, callerName ), exception );
+			mLogger.LogException( "Exception - " + message + " - " + callerName, exception );
 		}
 
 		protected void LogMessage( string moduleName, string phaseName, string format, params object[] parameters ) {
