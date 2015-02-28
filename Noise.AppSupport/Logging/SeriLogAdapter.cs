@@ -8,11 +8,11 @@ namespace Noise.AppSupport.Logging {
 		private readonly ILogger	mLog;
 
 		public SeriLogAdapter( INoiseEnvironment environment ) {
-			var logFile = Path.Combine( environment.LogFileDirectory(), "Application Log - {Date}.log" );
+			var logFile = Path.Combine( environment.LogFileDirectory(), environment.ApplicationName() + " log - {Date}.log" );
 
 			mLog = new LoggerConfiguration()
 				.Enrich.WithProcessId()
-				.WriteTo.RollingFile( logFile, outputTemplate:"{Timestamp:MM-dd-yyyy HH:mm:ss.ffff} [pid:{ProcessId}] [{Level}] {Message}{NewLine}{Exception}",
+				.WriteTo.RollingFile( logFile, outputTemplate:"{Timestamp:MM-dd-yyyy HH:mm:ss.ffff} [{ProcessId}] [{Level}] {Message}{NewLine}{Exception}",
 									  fileSizeLimitBytes:4096 * 1024,	retainedFileCountLimit:10 )
 #if DEBUG
 				.WriteTo.ColoredConsole()
