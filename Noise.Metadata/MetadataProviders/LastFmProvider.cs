@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -160,7 +161,7 @@ namespace Noise.Metadata.MetadataProviders {
 			}
 		}
 
-		private void UpdateArtistFormation( DbArtistBiography artistBio, IList<LastFmFormation> formationList ) {
+		private void UpdateArtistFormation( DbArtistBiography artistBio, IEnumerable<LastFmFormation> formationList ) {
 			var strFormation = new StringBuilder();
 
 			foreach( var formation in formationList ) {
@@ -168,8 +169,8 @@ namespace Noise.Metadata.MetadataProviders {
 					strFormation.Append( ", " );
 				}
 
-				strFormation.Append( string.Format( "{0} - {1}", formation.YearFrom == 0 ? "Unknown" : formation.YearFrom.ToString(),
-																 formation.YearTo == 0 ? "Present" : formation.YearTo.ToString()));
+				strFormation.Append( string.Format( "{0} - {1}", formation.YearFrom == 0 ? "Unknown" : formation.YearFrom.ToString( CultureInfo.InvariantCulture ),
+																 formation.YearTo == 0 ? "Present" : formation.YearTo.ToString( CultureInfo.InvariantCulture )));
 			}
 
 			if( strFormation.Length > 0 ) {
