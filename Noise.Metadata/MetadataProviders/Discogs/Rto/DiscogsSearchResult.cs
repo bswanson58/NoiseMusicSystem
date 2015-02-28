@@ -1,6 +1,12 @@
-﻿namespace Noise.Metadata.MetadataProviders.Discogs.Rto {
+﻿using System.Collections.Generic;
+
+namespace Noise.Metadata.MetadataProviders.Discogs.Rto {
 	public class DiscogsSearchResult {
-		public ArtistSearchResult[]	Results { get; set; }
+		public List<ArtistSearchResult>	Results { get; set; }
+
+		public DiscogsSearchResult() {
+			Results = new List<ArtistSearchResult>();
+		}
 	}
 
 	public class ArtistSearchResult {

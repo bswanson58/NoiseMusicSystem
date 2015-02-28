@@ -49,8 +49,9 @@ namespace Noise.Metadata.MetadataProviders {
 				var searchResults = await mDiscogsClient.ArtistSearch( artistName );
 
 				if(( searchResults != null ) &&
-				   ( searchResults.Any())) {
-					var result = searchResults[0];
+				   ( searchResults.Results != null ) &&
+				   ( searchResults.Results.Any())) {
+					var result = searchResults.Results[0];
 
 					if( result.Type.Equals( DiscogsClient.cSearchItemTypeArtist )) {
 						var discogsArtist = await mDiscogsClient.GetArtist( result.Id );
@@ -78,10 +79,11 @@ namespace Noise.Metadata.MetadataProviders {
 							}
 
 							var artistReleases = await mDiscogsClient.GetArtistReleases( result.Id );
-							if( artistReleases != null ) {
+							if(( artistReleases != null ) &&
+							   ( artistReleases.Releases != null )) {
 								discography.Discography.Clear();
 
-								foreach( var release in artistReleases ) {
+								foreach( var release in artistReleases.Releases ) {
 									var releaseType = DiscographyReleaseType.Other;
 
 									if( String.Compare(release.Role, "Main", StringComparison.OrdinalIgnoreCase) == 0 ) {

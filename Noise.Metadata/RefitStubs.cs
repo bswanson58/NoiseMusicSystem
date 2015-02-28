@@ -57,10 +57,10 @@ namespace Noise.Metadata.MetadataProviders.Discogs
             return (Task<DiscogsArtist>) methodImpls["GetArtist"](Client, arguments);
         }
 
-        public virtual Task<DiscogsArtistReleases> GetArtistReleases(string artistId,string token)
+        public virtual Task<DiscogsArtistReleaseList> GetArtistReleases(string artistId,string token)
         {
             var arguments = new object[] { artistId,token };
-            return (Task<DiscogsArtistReleases>) methodImpls["GetArtistReleases"](Client, arguments);
+            return (Task<DiscogsArtistReleaseList>) methodImpls["GetArtistReleases"](Client, arguments);
         }
 
     }

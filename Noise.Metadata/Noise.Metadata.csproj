@@ -205,7 +205,7 @@
     <Compile Include="MetadataProviders\Discogs\DiscogsClient.cs" />
     <Compile Include="MetadataProviders\Discogs\IDiscogsApi.cs" />
     <Compile Include="MetadataProviders\Discogs\IDiscogsClient.cs" />
-    <Compile Include="MetadataProviders\Discogs\Rto\DiscogsArtistReleases.cs" />
+    <Compile Include="MetadataProviders\Discogs\Rto\DiscogsArtistReleaseList.cs" />
     <Compile Include="MetadataProviders\Discogs\Rto\DiscogsBandMember.cs" />
     <Compile Include="MetadataProviders\Discogs\Rto\DiscogsImage.cs" />
     <Compile Include="MetadataProviders\Discogs\Rto\DiscogsRelease.cs" />

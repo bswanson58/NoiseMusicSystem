@@ -36,20 +36,20 @@ namespace Noise.Metadata.MetadataProviders.Discogs {
 			}
 		}
 
-		public async Task<ArtistSearchResult[]> ArtistSearch( string artistName ) {
+		public async Task<DiscogsSearchResult> ArtistSearch( string artistName ) {
 			var searchResults = await DiscogsApi.Search( artistName, cSearchItemTypeArtist, RetrieveLicenseKey());
 
-			return( searchResults.Results );
+			return( searchResults );
 		}
 
 		public async Task<DiscogsArtist> GetArtist( string artistId ) {
 			return( await DiscogsApi.GetArtist( artistId, RetrieveLicenseKey()));
 		}
 
-		public async Task<DiscogsRelease[]> GetArtistReleases( string artistId ) {
+		public async Task<DiscogsArtistReleaseList> GetArtistReleases( string artistId ) {
 			var releases = await DiscogsApi.GetArtistReleases( artistId, RetrieveLicenseKey());
 
-			return( releases.Releases );
+			return( releases );
 		}
 	}
 }

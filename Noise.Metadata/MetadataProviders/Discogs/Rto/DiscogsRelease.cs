@@ -1,6 +1,4 @@
-﻿using System.Web.UI.WebControls;
-
-namespace Noise.Metadata.MetadataProviders.Discogs.Rto {
+﻿namespace Noise.Metadata.MetadataProviders.Discogs.Rto {
 	public class DiscogsRelease {
 		public	int			Id { get; set; }
 		public	string		Artist { get; set; }

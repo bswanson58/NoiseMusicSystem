@@ -12,6 +12,6 @@ namespace Noise.Metadata.MetadataProviders.Discogs {
 		Task<DiscogsArtist>	GetArtist([AliasAs( "id" )] string artistId,[AliasAs( "token" )] string token );
 
 		[Get( "/artists/{id}/releases" )]
-		Task<DiscogsArtistReleases> GetArtistReleases([AliasAs( "id" )] string artistId,[AliasAs( "token" )] string token );
+		Task<DiscogsArtistReleaseList> GetArtistReleases([AliasAs( "id" )] string artistId,[AliasAs( "token" )] string token );
 	}
 }
