@@ -113,7 +113,7 @@
 				<ComponentGroupRef Id="DotNetZipFiles"/>
 				<ComponentGroupRef Id="EntityFrameworkFiles"/>
 				<ComponentGroupRef Id="GDataDBFiles"/>
-				<ComponentGroupRef Id="LastFmSharpFiles"/>
+				<ComponentGroupRef Id="LastFmScrobblerFiles"/>
 				<ComponentGroupRef Id="LuceneFiles"/>
 				<ComponentGroupRef Id="MicrosoftFiles"/>
 				<ComponentGroupRef Id="NewtonsoftJsonFiles"/>

@@ -157,7 +157,7 @@
 				<ComponentGroupRef Id="EntityFrameworkFiles"/>
 				<ComponentGroupRef Id="GDataDBFiles"/>
 				<ComponentGroupRef Id="GongSolutionsFiles"/>
-				<ComponentGroupRef Id="LastFmSharpFiles"/>
+				<ComponentGroupRef Id="LastFmScrobblerFiles"/>
 				<ComponentGroupRef Id="LuceneFiles"/>
 				<ComponentGroupRef Id="MahAppsMetroFiles"/>
 				<ComponentGroupRef Id="MicrosoftFiles"/>

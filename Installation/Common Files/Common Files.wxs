@@ -13,7 +13,7 @@
 		<?include EntityFramework.wxi ?>
 		<?include GDataDB.wxi ?>
 		<?include GongSolutions.wxi ?>
-		<?include LastFmSharp.wxi ?>
+		<?include LastFmScrobbler.wxi ?>
 		<?include Lucene.wxi ?>
 		<?include MahApps.wxi?>
 		<?include Microsoft.wxi ?>
