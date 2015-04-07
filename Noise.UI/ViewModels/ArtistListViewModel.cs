@@ -114,6 +114,8 @@ namespace Noise.UI.ViewModels {
 
 			if( artist != null ) {
 				AddArtist( artist );
+
+				RaisePropertyChanged( () => ArtistCount );
 			}
 		}
 
@@ -123,6 +125,8 @@ namespace Noise.UI.ViewModels {
 			if( artistNode != null ) {
 				mArtistList.Remove( artistNode );
 				mChangeObserver.Release( artistNode );
+	
+				RaisePropertyChanged( () => ArtistCount );
 			}
 		}
 
@@ -140,6 +144,7 @@ namespace Noise.UI.ViewModels {
 			}
 
 			mArtistList.Clear();
+			RaisePropertyChanged( () => ArtistCount );
 		}
 
 		public ICollectionView ArtistList {
@@ -152,6 +157,18 @@ namespace Noise.UI.ViewModels {
 				}
 
 				return( mArtistView );
+			}
+		}
+
+		public int ArtistCount {
+			get {
+				var retValue = 0;
+
+				if( mArtistView is CollectionView ) {
+					retValue = (mArtistView as CollectionView).Count;
+				}
+
+				return( retValue );
 			}
 		}
 
@@ -240,6 +257,7 @@ namespace Noise.UI.ViewModels {
 					}
 
 					RaisePropertyChanged( () => FilterText );
+					RaisePropertyChanged( () => ArtistCount );
 				});
 			}
 		}
@@ -307,6 +325,7 @@ namespace Noise.UI.ViewModels {
 
 			mArtistList.IsNotifying = true;
 			mArtistList.Refresh();
+			RaisePropertyChanged( () => ArtistCount );
 		}
 
 		private void AddArtist( DbArtist artist ) {
