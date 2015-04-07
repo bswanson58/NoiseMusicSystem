@@ -204,6 +204,11 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public int AlbumCount {
+			get {  return( Get( () => AlbumCount )); }
+			set { Set( () => AlbumCount, value ); }
+		}
+
 		public void Execute_ToggleSortDisplay() {
 			VisualStateName = VisualStateName == cHideSortDescriptions ? cDisplaySortDescriptionss : cHideSortDescriptions;
 		}
@@ -252,6 +257,7 @@ namespace Noise.UI.ViewModels {
 			mCurrentArtist = null;
 			mAlbumList.Clear();
 			FilterText = string.Empty;
+			AlbumCount = 0;
 
 			RaisePropertyChanged( () => ArtistName );
 		}
@@ -265,6 +271,8 @@ namespace Noise.UI.ViewModels {
 
 			mAlbumList.IsNotifying = true;
 			mAlbumList.Refresh();
+
+			AlbumCount = mAlbumList.Count;
 		}
 
 		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {
