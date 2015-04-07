@@ -94,9 +94,9 @@
 	<GroupBox Style="{StaticResource SectionBorderStyle}">
 		<GroupBox.Header>
 			<StackPanel Orientation="Horizontal">
-				<TextBlock Text=" " Visibility="{Binding ArtistCount, Converter={StaticResource CollapseIfZero}}"/>
-				<TextBlock Text="{Binding ArtistCount}" Visibility="{Binding ArtistCount, Converter={StaticResource CollapseIfZero}}"/>
-				<TextBlock Text=" Artists "/>
+				<TextBlock Text=" " />
+				<TextBlock Text="{Binding ArtistListTitle}" />
+				<TextBlock Text=" " />
 			</StackPanel>
 		</GroupBox.Header>
 

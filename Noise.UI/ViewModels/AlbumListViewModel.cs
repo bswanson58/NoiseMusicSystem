@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Data;
 using AutoMapper;
 using Caliburn.Micro;
+using Humanizer;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -12,6 +13,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
 using Noise.UI.Logging;
+using Noise.UI.Resources;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
@@ -109,6 +111,23 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public int AlbumCount {
+			get {
+				var retValue = 0;
+
+				if( mAlbumView is CollectionView ) {
+					retValue = (mAlbumView as CollectionView).Count;
+				}
+
+				return( retValue );
+			}
+		}
+
+		[DependsUpon( "AlbumCount" )]
+		public string AlbumListTitle {
+			get { return( StringResources.AlbumTitle.ToQuantity( AlbumCount )); }
+		}
+
 		public IEnumerable<ViewSortStrategy> SortDescriptions {
 			get{ return( mAlbumSorts ); }
 		} 
@@ -188,6 +207,7 @@ namespace Noise.UI.ViewModels {
 					}
 
 					RaisePropertyChanged( () => FilterText );
+					RaisePropertyChanged( () => AlbumCount );
 				} );
 			}
 		}
@@ -202,11 +222,6 @@ namespace Noise.UI.ViewModels {
 
 				return( retValue );
 			}
-		}
-
-		public int AlbumCount {
-			get {  return( Get( () => AlbumCount )); }
-			set { Set( () => AlbumCount, value ); }
 		}
 
 		public void Execute_ToggleSortDisplay() {
@@ -257,9 +272,9 @@ namespace Noise.UI.ViewModels {
 			mCurrentArtist = null;
 			mAlbumList.Clear();
 			FilterText = string.Empty;
-			AlbumCount = 0;
 
 			RaisePropertyChanged( () => ArtistName );
+			RaisePropertyChanged( () => AlbumCount );
 		}
 
 		private void SetAlbumList( IEnumerable<DbAlbum> albumList ) {
@@ -272,7 +287,7 @@ namespace Noise.UI.ViewModels {
 			mAlbumList.IsNotifying = true;
 			mAlbumList.Refresh();
 
-			AlbumCount = mAlbumList.Count;
+			RaisePropertyChanged( () => AlbumCount );
 		}
 
 		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {

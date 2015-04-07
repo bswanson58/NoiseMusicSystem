@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Data;
 using AutoMapper;
 using Caliburn.Micro;
+using Humanizer;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -12,6 +13,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
 using Noise.UI.Logging;
+using Noise.UI.Resources;
 using Observal.Extensions;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -158,6 +160,11 @@ namespace Noise.UI.ViewModels {
 
 				return( mArtistView );
 			}
+		}
+
+		[DependsUpon( "ArtistCount" )]
+		public string ArtistListTitle {
+			get {  return( StringResources.ArtistTitle.ToQuantity( ArtistCount )); }
 		}
 
 		public int ArtistCount {

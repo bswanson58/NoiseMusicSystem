@@ -78,10 +78,9 @@
 	<GroupBox Style="{StaticResource SectionBorderStyle}">
 		<GroupBox.Header>
 			<StackPanel Orientation="Horizontal">
-				<TextBlock Text=" " Visibility="{Binding AlbumCount, Converter={StaticResource CollapseIfZero}}"/>
-				<TextBlock Text="{Binding AlbumCount}" Visibility="{Binding AlbumCount, Converter={StaticResource CollapseIfZero}}"/>
-				<TextBlock Text=" Albums "/>
-				<TextBlock Text="for " Visibility="{Binding ArtistName, Converter={StaticResource CollapseIfStringEmpty}}"/>
+				<TextBlock Text=" " />
+				<TextBlock Text="{Binding AlbumListTitle}" />
+				<TextBlock Text=" for " Visibility="{Binding ArtistName, Converter={StaticResource CollapseIfStringEmpty}}"/>
 				<TextBlock Text="{Binding ArtistName}"/>
 			</StackPanel>
 		</GroupBox.Header>
