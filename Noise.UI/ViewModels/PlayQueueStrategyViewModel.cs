@@ -1,8 +1,6 @@
 ﻿using Caliburn.Micro;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
-using Noise.Infrastructure.Support;
 using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
