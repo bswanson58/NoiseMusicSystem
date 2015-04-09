@@ -25,8 +25,8 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<LibraryAdditionNode>	mNodeList;
 		private TaskHandler<IEnumerable<LibraryAdditionNode>>		mTaskHandler;
 
-		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, IPreferences preferences, IDatabaseInfo databaseInfo,
-										  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,IUiLog log ) {
+		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, UserInterfacePreferences preferences, IDatabaseInfo databaseInfo,
+										  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mArtistProvider = artistProvider;
@@ -35,14 +35,8 @@ namespace Noise.UI.ViewModels {
 
 			mNodeList = new BindableCollection<LibraryAdditionNode>();
 
-			mHorizonCount = 200;
-			mHorizonTime = DateTime.Now - new TimeSpan( 90, 0, 0, 0 );
-
-			var configuration = preferences.Load<UserInterfacePreferences>();
-			if( configuration != null ) {
-				mHorizonCount = configuration.NewAdditionsHorizonCount;
-				mHorizonTime = DateTime.Now - new TimeSpan( configuration.NewAdditionsHorizonDays, 0, 0, 0 );
-			}
+			mHorizonCount = preferences.NewAdditionsHorizonCount;
+			mHorizonTime = DateTime.Now - new TimeSpan( preferences.NewAdditionsHorizonDays, 0, 0, 0 );
 
 			if( databaseInfo.IsOpen ) {
 				RetrieveWhatsNew();
