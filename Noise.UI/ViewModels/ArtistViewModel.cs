@@ -42,7 +42,7 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler<DbArtist>			mArtistTaskHandler; 
 		private TaskHandler<Artwork>			mArtworkTaskHandler; 
 		private TaskHandler						mTopTracksTaskHandler;
-		private IDisposable						mSelectionStateSubscription;
+		private IDisposable						mArtistSelectionSubscription;
 		private bool							mIsActive;
 		public	event EventHandler				IsActiveChanged  = delegate { };
 
@@ -76,14 +76,14 @@ namespace Noise.UI.ViewModels {
 			get{ return( mIsActive ); }
 			set {
 				if( mIsActive ) {
-					if( mSelectionStateSubscription != null ) {
-						mSelectionStateSubscription.Dispose();
-						mSelectionStateSubscription = null;
+					if( mArtistSelectionSubscription != null ) {
+						mArtistSelectionSubscription.Dispose();
+						mArtistSelectionSubscription = null;
 					}
 				}
 				else {
-					if( mSelectionStateSubscription == null ) {
-						mSelectionStateSubscription = mSelectionState.CurrentArtistChanged.Subscribe( OnArtistRequested );
+					if( mArtistSelectionSubscription == null ) {
+						mArtistSelectionSubscription = mSelectionState.CurrentArtistChanged.Subscribe( OnArtistRequested );
 					}
 				}
 

@@ -110,10 +110,6 @@ namespace Noise.UI.ViewModels {
 		private void OnArtistChanged( DbArtist artist ) {
 			if( artist != null ) {
 				SetCurrentArtist( artist.DbId );
-
-				if( !IsActive ) {
-					mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.ArtistInfoView ) );
-				}
 			}
 			else {
 				ClearCurrentArtist();

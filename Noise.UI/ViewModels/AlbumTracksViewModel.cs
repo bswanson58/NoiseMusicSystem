@@ -90,8 +90,6 @@ namespace Noise.UI.ViewModels {
 		private void OnAlbumChanged( DbAlbum album ) {
 			if( album != null ) {
 				UpdateTrackList( album.DbId );
-
-				mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.AlbumInfoView ) );
 			}
 			else {
 				ClearTrackList();

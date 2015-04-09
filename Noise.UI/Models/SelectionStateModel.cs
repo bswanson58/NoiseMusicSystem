@@ -112,6 +112,7 @@ namespace Noise.UI.Models {
 			CurrentArtist = artist;
 
 			mArtistSubject.OnNext( CurrentArtist );
+			mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.ArtistInfoView ));
 
 			if( artist != null ) {
 				using( var updater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
@@ -158,6 +159,10 @@ namespace Noise.UI.Models {
 		private void UpdateAlbum( DbAlbum album ) {
 			CurrentAlbum = album;
 			mAlbumSubject.OnNext( CurrentAlbum );
+
+			if( album != null ) {
+				mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.AlbumInfoView ));
+			}
 		}
 	}
 }
