@@ -41,6 +41,7 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.Subscribe( this );
 
 			mTracks = new BindableCollection<UiTrack>();
+			mCurrentAlbumId = Constants.cDatabaseNullOid;
 
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
@@ -65,11 +66,12 @@ namespace Noise.UI.ViewModels {
 				mChangeObserver.Release( track );
 			}
 			mTracks.Clear();
+			mCurrentAlbumId = Constants.cDatabaseNullOid;
 
 			AlbumPlayTime = new TimeSpan();
 		}
 
-		private void SetTrackList( IEnumerable<DbTrack> trackList ) {
+		private void SetTrackList( long albumId, IEnumerable<DbTrack> trackList ) {
 			ClearTrackList();
 
 			foreach( var dbTrack in trackList ) {
@@ -77,6 +79,7 @@ namespace Noise.UI.ViewModels {
 
 				AlbumPlayTime += dbTrack.Duration;
 			}
+			mCurrentAlbumId = albumId;
 
 			foreach( var track in mTracks ) {
 				mChangeObserver.Add( track );
@@ -102,10 +105,9 @@ namespace Noise.UI.ViewModels {
 			}
 			else {
 				if( mCurrentAlbumId != albumId ) {
-					mCurrentAlbumId = albumId;
 					ClearTrackList();
 
-					RetrieveTracks( mCurrentAlbumId );
+					RetrieveTracks( albumId );
 				}
 			}
 		}
@@ -127,7 +129,7 @@ namespace Noise.UI.ViewModels {
 															var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
 																								orderby track.VolumeName, track.TrackNumber 
 																								ascending select track );
-															SetTrackList( sortedList );
+															SetTrackList( forAlbumId, sortedList );
 														}
 													},
 													() => {},
