@@ -316,7 +316,9 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.AlbumUserUpdate eventArgs ) {
 			if(( mCurrentAlbum != null ) &&
 			   ( eventArgs.AlbumId == mCurrentAlbum.DbId )) {
+				mChangeObserver.Release( mCurrentAlbum );
 				Mapper.DynamicMap( mAlbumProvider.GetAlbum( eventArgs.AlbumId ), mCurrentAlbum );
+				mChangeObserver.Add( mCurrentAlbum );
 			}
 		}
 
