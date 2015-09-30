@@ -349,8 +349,10 @@ namespace Noise.UI.ViewModels {
 				var artist = mArtistProvider.GetArtist( artistId );
 
 				if( artist != null ) {
+					mChangeObserver.Release( uiArtist );
 					Mapper.DynamicMap( artist, uiArtist );
 					uiArtist.DisplayGenre = mTagManager.GetGenre( artist.Genre );
+					mChangeObserver.Add( uiArtist );
 
 					if( mEnableSortPrefixes ) {
 						FormatSortPrefix( uiArtist );
