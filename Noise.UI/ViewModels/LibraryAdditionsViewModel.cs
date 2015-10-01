@@ -7,6 +7,7 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
+using Noise.UI.Interfaces;
 using Noise.UI.Logging;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -20,18 +21,21 @@ namespace Noise.UI.ViewModels {
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
+		private readonly ISelectionState		mSelectionState;
 		private readonly DateTime				mHorizonTime;
 		private readonly UInt32					mHorizonCount;
 		private readonly BindableCollection<LibraryAdditionNode>	mNodeList;
+		private LibraryAdditionNode									mSelectedNode;
 		private TaskHandler<IEnumerable<LibraryAdditionNode>>		mTaskHandler;
 
-		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, UserInterfacePreferences preferences, IDatabaseInfo databaseInfo,
+		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, UserInterfacePreferences preferences, IDatabaseInfo databaseInfo, ISelectionState selectionState,
 										  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
+			mSelectionState = selectionState;
 
 			mNodeList = new BindableCollection<LibraryAdditionNode>();
 
@@ -42,6 +46,8 @@ namespace Noise.UI.ViewModels {
 				RetrieveWhatsNew();
 			}
 
+			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
+			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
 			mEventAggregator.Subscribe( this );
 		}
 
@@ -66,7 +72,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {
-			mNodeList.Clear();
+			ClearList();
 		}
 
 		public void Handle( Events.LibraryUpdateCompleted eventArgs ) {
@@ -77,8 +83,35 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void UpdateList( IEnumerable<LibraryAdditionNode> list ) {
+		private void OnArtistChanged( DbArtist newArtist ) {
+			if(( newArtist != null ) &&
+			   ( mSelectedNode != null ) &&
+			   ( mSelectedNode.Artist != null ) &&
+			   ( mSelectedNode.Artist.DbId != newArtist.DbId )) {
+				mSelectedNode = null;
+
+				RaisePropertyChanged( () => SelectedNode );
+			}
+		}
+
+		private void OnAlbumChanged( DbAlbum newAlbum ) {
+			if(( newAlbum != null ) &&
+			   ( mSelectedNode != null ) &&
+			   ( mSelectedNode.Album != null ) &&
+			   ( mSelectedNode.Album.DbId != newAlbum.DbId )) {
+				mSelectedNode = null;
+				
+				RaisePropertyChanged( () => SelectedNode );
+			}
+		}
+
+		private void ClearList() {
 			mNodeList.Clear();
+			mSelectedNode = null;
+		}
+
+		private void UpdateList( IEnumerable<LibraryAdditionNode> list ) {
+			ClearList();
 			mNodeList.AddRange( list );
 		}
 
@@ -106,7 +139,6 @@ namespace Noise.UI.ViewModels {
 			}
 
 			if( trackList.Count > 0 ) {
-				
 				foreach( var track in trackList ) {
 					var album = mAlbumProvider.GetAlbumForTrack( track );
 					if( album != null ) {
@@ -115,12 +147,8 @@ namespace Noise.UI.ViewModels {
 						if( artist != null ) {
 							var treeNode = retValue.Find( node => node.Artist.DbId == artist.DbId && node.Album.DbId == album.DbId );
 
-							if( treeNode != null ) {
-								treeNode.AddTrack( track );
-							}
-
-							else {
-								retValue.Add( new LibraryAdditionNode( artist, album, track, OnNodeSelected, OnAlbumPlayRequested, OnTrackPlayRequested ));
+							if( treeNode == null ) {
+								retValue.Add( new LibraryAdditionNode( artist, album, OnAlbumPlayRequested ));
 							}
 						}
 					}
@@ -144,21 +172,24 @@ namespace Noise.UI.ViewModels {
 			get{ return( mNodeList ); }
 		}
 
-		private void OnNodeSelected( LibraryAdditionNode node ) {
-			if( node.Artist != null ) {
-				mEventAggregator.Publish( new Events.ArtistFocusRequested( node.Artist.DbId ));
-			}
-			if( node.Album != null ) {
-				mEventAggregator.Publish( new Events.AlbumFocusRequested( node.Album ));
+		public LibraryAdditionNode SelectedNode {
+			get { return( mSelectedNode ); }
+			set {
+				mSelectedNode = value;
+
+				if( mSelectedNode != null ) {
+					if( mSelectedNode.Artist != null ) {
+						mEventAggregator.Publish( new Events.ArtistFocusRequested( mSelectedNode.Artist.DbId ));
+					}
+					if( mSelectedNode.Album != null ) {
+						mEventAggregator.Publish( new Events.AlbumFocusRequested( mSelectedNode.Album ));
+					}
+				}
 			}
 		}
 
 		private static void OnAlbumPlayRequested( LibraryAdditionNode node ) {
 			GlobalCommands.PlayAlbum.Execute( node.Album );
-		}
-
-		private void OnTrackPlayRequested( long trackId ) {
-			GlobalCommands.PlayTrack.Execute( mTrackProvider.GetTrack( trackId ));
 		}
 
 		public bool DisplayMarker {
