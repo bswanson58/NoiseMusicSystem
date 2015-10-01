@@ -4,8 +4,10 @@ using System.Linq;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Adapters;
+using Noise.UI.Interfaces;
 using Noise.UI.Logging;
 using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -23,10 +25,12 @@ namespace Noise.UI.ViewModels {
 		private readonly IPlayQueue				mPlayQueue;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly IDialogService			mDialogService;
+		private readonly ISelectionState		mSelectionState;
+		private FavoriteViewNode				mSelectedNode;
 		private readonly SortableCollection<FavoriteViewNode>	mFavoritesList;
 
 		public FavoritesViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
-								   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
+								   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ISelectionState selectionState,
 								   IDataExchangeManager dataExchangeManager, IDialogService dialogService, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
@@ -37,8 +41,11 @@ namespace Noise.UI.ViewModels {
 			mPlayQueue = playQueue;
 			mDataExchangeMgr = dataExchangeManager;
 			mDialogService = dialogService;
+			mSelectionState = selectionState;
 
 			mEventAggregator.Subscribe( this );
+			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
+			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
 
 			mFavoritesList = new SortableCollection<FavoriteViewNode>();
 
@@ -55,12 +62,28 @@ namespace Noise.UI.ViewModels {
 			get{ return( mFavoritesList ); }
 		}
 
+		public FavoriteViewNode SelectedNode {
+			get {  return( mSelectedNode ); }
+			set {
+				mSelectedNode = value;
+
+				if( mSelectedNode != null ) {
+					if( mSelectedNode.Artist != null ) {
+						mEventAggregator.Publish( new Events.ArtistFocusRequested( mSelectedNode.Artist.DbId ));
+					}
+					if( mSelectedNode.Album != null ) {
+						mEventAggregator.Publish( new Events.AlbumFocusRequested( mSelectedNode.Album ));
+					}
+				}
+			}
+		}
+
 		public void Handle( Events.DatabaseOpened args ) {
 			LoadFavorites();
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {
-			mFavoritesList.Clear();
+			ClearFavorites();
 		}
 
 		public void Handle( Events.ArtistUserUpdate eventArgs ) {
@@ -75,14 +98,36 @@ namespace Noise.UI.ViewModels {
 			LoadFavorites();
 		}
 
+		private void OnArtistChanged( DbArtist newArtist ) {
+			if(( newArtist != null ) &&
+			   ( mSelectedNode != null ) &&
+			   ( mSelectedNode.Artist != null ) &&
+			   ( mSelectedNode.Artist.DbId != newArtist.DbId )) {
+				mSelectedNode = null;
+
+				RaisePropertyChanged( () => SelectedNode );
+			}
+		}
+
+		private void OnAlbumChanged( DbAlbum newAlbum ) {
+			if(( newAlbum != null ) &&
+			   ( mSelectedNode != null ) &&
+			   ( mSelectedNode.Album != null ) &&
+			   ( mSelectedNode.Album.DbId != newAlbum.DbId )) {
+				mSelectedNode = null;
+				
+				RaisePropertyChanged( () => SelectedNode );
+			}
+		}
+
 		private void LoadFavorites() {
 			try {
 				mFavoritesList.IsNotifying = false;
-				mFavoritesList.Clear();
+				ClearFavorites();
 
 				using( var list = mArtistProvider.GetFavoriteArtists()) {
 					foreach( var artist in list.List ) {
-						mFavoritesList.Add( new FavoriteViewNode( artist, PlayArtist, SelectArtist ) );
+						mFavoritesList.Add( new FavoriteViewNode( artist, PlayArtist ) );
 					}
 				}
 
@@ -90,7 +135,7 @@ namespace Noise.UI.ViewModels {
 					foreach( var album in list.List ) {
 						var artist = mArtistProvider.GetArtistForAlbum( album );
 
-						mFavoritesList.Add( new FavoriteViewNode( artist, album, PlayAlbum, SelectAlbum ));
+						mFavoritesList.Add( new FavoriteViewNode( artist, album, PlayAlbum ));
 					}
 				}
 	
@@ -101,7 +146,7 @@ namespace Noise.UI.ViewModels {
 						if( album != null ) {
 							var artist = mArtistProvider.GetArtistForAlbum( album );
 
-							mFavoritesList.Add( new FavoriteViewNode( artist, album, track, PlayTrack, SelectTrack ));
+							mFavoritesList.Add( new FavoriteViewNode( artist, album, track, PlayTrack ));
 						}
 					}
 				}
@@ -118,24 +163,14 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		private void ClearFavorites() {
+			mFavoritesList.Clear();
+		}
+
 		private static string SelectSortProperty( FavoriteViewNode node ) {
 			Condition.Requires( node ).IsNotNull();
 
 			return( node.Track != null ? node.Track.Name : node.Album != null ? node.Album.Name : node.Artist != null ? node.Artist.Name : string.Empty );
-		}
-
-		private void SelectArtist( FavoriteViewNode node ) {
-			mEventAggregator.Publish( new Events.ArtistFocusRequested( node.Artist.DbId ));
-		}
-
-		private void SelectAlbum( FavoriteViewNode node ) {
-			if( node.Album != null ) {
-				mEventAggregator.Publish( new Events.AlbumFocusRequested( node.Album ));
-			}
-		}
-
-		private void SelectTrack( FavoriteViewNode node ) {
-			SelectAlbum( node );
 		}
 
 		private static void PlayArtist( FavoriteViewNode node ) {
