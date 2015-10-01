@@ -319,6 +319,16 @@ namespace Noise.UI.ViewModels {
 			return ( mPlayController != null && mPlayController.CanStop );
 		}
 
+		public void Execute_StopAtEndOfTrack( object sender ) {
+			mPlayController.StopAtEndOfTrack();
+
+			RaiseCanExecuteChangedEvent( "CanExecute_StopAtEndOfTrack" );
+		}
+		[DependsUpon( "CurrentStatus" )]
+		public bool CanExecute_StopAtEndOfTrack( object sender ) {
+			return ( mPlayController != null && mPlayController.CanStopAtEndOfTrack );
+		}
+
 		public void Execute_NextTrack( object sender ) {
 			mPlayController.PlayNextTrack();
 		}

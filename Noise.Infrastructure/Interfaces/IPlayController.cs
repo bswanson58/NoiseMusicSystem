@@ -27,6 +27,8 @@ namespace Noise.Infrastructure.Interfaces {
 		bool			CanPause { get; }
 		void			Stop();
 		bool			CanStop { get; }
+		void			StopAtEndOfTrack();
+		bool			CanStopAtEndOfTrack { get; }
 		void			PlayNextTrack();
 		bool			CanPlayNextTrack { get; }
 		void			PlayPreviousTrack();
