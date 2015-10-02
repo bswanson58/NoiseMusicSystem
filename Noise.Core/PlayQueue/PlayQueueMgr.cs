@@ -31,6 +31,7 @@ namespace Noise.Core.PlayQueue {
 		private	int									mReplayTrackCount;
 		private PlayQueueTrack						mReplayTrack;
 		private bool								mAddingMoreTracks;
+		private bool								mStopAtEndOfTrack;
 		private AsyncCommand<DbTrack>				mTrackPlayCommand;
 		private AsyncCommand<IEnumerable<DbTrack>>	mTrackListPlayCommand;
 		private AsyncCommand<DbAlbum>				mAlbumPlayCommand;
@@ -485,25 +486,25 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public PlayQueueTrack PlayNextTrack() {
-			var	track = PlayingTrack;
+			var	playingTrack = PlayingTrack;
 
-			if( track != null ) {
-				track.HasPlayed = true;
-				track.IsPlaying = false;
+			if( playingTrack != null ) {
+				playingTrack.HasPlayed = true;
+				playingTrack.IsPlaying = false;
 
-				mPlayHistory.Add( track );
-				mLog.StatusChanged( track );
+				mPlayHistory.Add( playingTrack );
+				mLog.StatusChanged( playingTrack );
 			}
 
-			track = NextTrack;
-			if( track != null ) {
-				track.IsPlaying = true;
+			var nextTrack = NextTrack;
+			if( nextTrack != null ) {
+				nextTrack.IsPlaying = true;
 
 				if( PlayingTrackReplayCount > 0 ) {
 					PlayingTrackReplayCount--;
 				}
 
-				mLog.StatusChanged( track );
+				mLog.StatusChanged( nextTrack );
 			}
 
 			if(( mPlayExhaustedStrategy != null ) &&
@@ -511,7 +512,11 @@ namespace Noise.Core.PlayQueue {
 				mPlayExhaustedStrategy.QueueTracks();
 			}
 
-			return( track );
+			if( playingTrack == null ) {
+				mStopAtEndOfTrack = false;
+			}
+
+			return( nextTrack );
 		}
 
 		public void StopPlay() {
@@ -524,23 +529,33 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
+		public void StopAtEndOfTrack() {
+			mStopAtEndOfTrack = true;
+		}
+
+		public bool CanStopAtEndOfTrack() {
+			return(!mStopAtEndOfTrack );
+		}
+
 		public PlayQueueTrack NextTrack {
 			get {
 				PlayQueueTrack	retValue = null;
 
-				if( PlayingTrackReplayCount > 0 ) {
-					retValue = mReplayTrack;
-				}
+				if(!mStopAtEndOfTrack ) {
+					if( PlayingTrackReplayCount > 0 ) {
+						retValue = mReplayTrack;
+					}
 
-				if( retValue == null ) {
-					retValue = mPlayStrategy.NextTrack();
+					if( retValue == null ) {
+						retValue = mPlayStrategy.NextTrack();
 
-					if(( retValue == null ) &&
-					   ( mPlayExhaustedStrategy != null ) &&
-					   (!mAddingMoreTracks ) &&
-					   ( mPlayQueue.Count > 0 )) {
-						if( mPlayExhaustedStrategy.QueueTracks()) {
-							retValue = mPlayStrategy.NextTrack();
+						if(( retValue == null ) &&
+						   ( mPlayExhaustedStrategy != null ) &&
+						   (!mAddingMoreTracks ) &&
+						   ( mPlayQueue.Count > 0 )) {
+							if( mPlayExhaustedStrategy.QueueTracks()) {
+								retValue = mPlayStrategy.NextTrack();
+							}
 						}
 					}
 				}
@@ -550,7 +565,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public bool CanPlayNextTrack() {
-			return( mPlayQueue.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed )) != null );
+			return( !mStopAtEndOfTrack && ( mPlayQueue.FirstOrDefault( track => ( !track.IsPlaying ) && ( !track.HasPlayed )) != null ));
 		}
 
 		public PlayQueueTrack PlayPreviousTrack() {

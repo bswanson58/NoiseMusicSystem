@@ -26,13 +26,15 @@ namespace Noise.Core {
 							 ILibraryBuilder libraryBuilder,
 							 IRemoteServer remoteServer,
 							 IPreferences preferences,
-							 // components that just need to be referrenced.
+							 // components that just need to be referenced.
+							 // ReSharper disable UnusedParameter.Local
 							 IAudioController audioController,
 							 IPlayController playController,
 							 ISearchProvider searchProvider,
 							 ITagManager tagManager,
 							 IMetadataManager metadataManager,
 							 IEnumerable<IRequireConstruction> backgroundComponents ) {
+							 // ReSharper restore UnusedParameter.Local
 			mEvents = eventAggregator;
 			mLog = log;
 			mLifecycleManager = lifecycleManager;
@@ -58,26 +60,23 @@ namespace Noise.Core {
 			return( retValue );
 		}
 
-		private void LogStartup() {
-			mLog.LogMessage( string.Format( "Initializing {0} v{1}", VersionInformation.ProductName, VersionInformation.Version ));
-		}
-		
 		public bool Initialize() {
 			var isInitialized = false;
 
-			LogStartup();
+			mLog.LogMessage( string.Format( "Initializing {0} v{1}", VersionInformation.ProductName, VersionInformation.Version ));
 
 			try {
 				mLifecycleManager.Initialize();
 				mEvents.Subscribe( this );
+
+				// we're initialized regardless of the status of the remote server.
+				isInitialized = true;
 
 				var preferences = mPreferences.Load<NoiseCorePreferences>();
 
 				if( preferences.EnableRemoteAccess ) {
 					mRemoteServer.OpenRemoteServer();
 				}
-
-				isInitialized = true;
 
 				mLog.LogMessage( "Noise Music System initialized" );
 			}

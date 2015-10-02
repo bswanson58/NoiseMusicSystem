@@ -153,6 +153,8 @@ namespace Noise.UI.ViewModels {
 		private UiArtist CurrentArtist {
 			get{ return( mCurrentArtist ); }
 			set {
+				ClearCurrentArtist();
+
 				if( value != null ) {
 					mCurrentArtist = value;
 					mChangeObserver.Add( mCurrentArtist );
@@ -160,9 +162,6 @@ namespace Noise.UI.ViewModels {
 
 					mArtistWebsite = new LinkNode( CurrentArtist.Website, 0, OnWebsiteRequested );
 					RaisePropertyChanged( () => ArtistWebsite );
-				}
-				else {
-					ClearCurrentArtist();
 				}
 			}
 		}

@@ -5,6 +5,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 using Noise.UI.Adapters;
+using Noise.UI.Interfaces;
 using Noise.UI.Logging;
 using Noise.UI.Support;
 using Noise.UI.ViewModels;
@@ -29,9 +30,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	int					ScreenOrder { get; private set; }
 
 		public FavoritesListViewModel(IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
-									  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
+									  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ISelectionState selectionState,
 									  IDataExchangeManager dataExchangeManager, IDialogService dialogService, IUiLog log ) :
-			base( eventAggregator, databaseInfo, playQueue, trackSelector, artistProvider, albumProvider, trackProvider, dataExchangeManager, dialogService, log ) {
+			base( eventAggregator, databaseInfo, playQueue, trackSelector, artistProvider, albumProvider, trackProvider, selectionState, dataExchangeManager, dialogService, log ) {
 			ScreenTitle = "Favorites";
 			MenuTitle = "Favorites";
 			Description = "display favorites songs";

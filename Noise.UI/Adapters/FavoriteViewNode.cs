@@ -7,29 +7,26 @@ namespace Noise.UI.Adapters {
 		public	DbArtist		Artist {get; private set; }
 		public	DbAlbum			Album { get; private set; }
 		public	DbTrack			Track { get; private set; }
-		private bool			mIsSelected;
 		private readonly Action<FavoriteViewNode>	mPlayAction;
-		private readonly Action<FavoriteViewNode>	mSelectAction;
 
-		public FavoriteViewNode( DbArtist artist, Action<FavoriteViewNode> playAction, Action<FavoriteViewNode> selectAction ) :
-			this( artist, null, null, playAction, selectAction ) {
+		public FavoriteViewNode( DbArtist artist, Action<FavoriteViewNode> playAction ) :
+			this( artist, null, null, playAction ) {
 		}
 
-		public FavoriteViewNode( DbArtist artist, DbAlbum album, Action<FavoriteViewNode> playAction, Action<FavoriteViewNode> selectAction ) :
-			this( artist, album, null, playAction, selectAction ) {
+		public FavoriteViewNode( DbArtist artist, DbAlbum album, Action<FavoriteViewNode> playAction ) :
+			this( artist, album, null, playAction ) {
 		}
 
-		public FavoriteViewNode( DbArtist artist, DbAlbum album, DbTrack track, Action<FavoriteViewNode> playAction, Action<FavoriteViewNode> selectAction ) {
+		public FavoriteViewNode( DbArtist artist, DbAlbum album, DbTrack track, Action<FavoriteViewNode> playAction ) {
 			Artist = artist;
 			Album = album;
 			Track = track;
 			mPlayAction = playAction;
-			mSelectAction = selectAction;
 		}
 
 		public string Title {
 			get {
-				var retValue = "";
+				var retValue = string.Empty;
 
 				if( Track != null ) {
 					retValue = string.Format( "{0} ({1})", Track.Name, Artist.Name );
@@ -42,19 +39,6 @@ namespace Noise.UI.Adapters {
 				}
 
 				return( retValue );
-			}
-		}
-
-		public bool IsSelected {
-			get { return mIsSelected; }
-			set {
-				if( value != mIsSelected ) {
-					mIsSelected = value;
-
-					RaisePropertyChanged( () => IsSelected );
-
-					mSelectAction( this );
-				}
 			}
 		}
 

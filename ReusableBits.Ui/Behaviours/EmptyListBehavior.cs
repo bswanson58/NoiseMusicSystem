@@ -7,12 +7,12 @@ namespace ReusableBits.Ui.Behaviours {
 	// usage:
 	//
 	//<ItemsControl ... >
-    //<i:Interaction.Behaviors>
-    //    <Behaviours:EmptyListBehavior
+	//<i:Interaction.Behaviors>
+	//    <Behaviours:EmptyListBehavior
 	//				EmptyTemplate="templateName"
 	//				ProgressTemplate="templateName"
 	//				IsUpdating="boolean value" />
-    //</i:Interaction.Behaviors>
+	//</i:Interaction.Behaviors>
 	//</ItemsControl>
 	public class EmptyListBehavior : Behavior<ItemsControl> {
 		private ControlTemplate	mDefaultTemplate;

@@ -625,8 +625,16 @@ namespace Noise.Core.PlaySupport {
 			FireStateChange( eStateTriggers.UiStop );
 		}
 
+		public void StopAtEndOfTrack() {
+			mPlayQueue.StopAtEndOfTrack();
+		}
+
 		public bool CanStop {
 			get{ return( mPlayStateController.CanFire( eStateTriggers.UiStop )); }
+		}
+
+		public bool CanStopAtEndOfTrack {
+			get{ return( mPlayQueue.CanStopAtEndOfTrack() && mPlayStateController.CanFire( eStateTriggers.UiStop )); }
 		}
 
 		public void PlayNextTrack() {

@@ -64,7 +64,8 @@ namespace Noise.Metadata.MetadataProviders {
 					var artistSearch = await mLastFmClient.ArtistSearch( artistName );
 
 					if(( artistSearch != null ) &&
-					   ( artistSearch.TotalResults > 0 )) {
+					   (artistSearch.ArtistList != null ) &&
+					   ( artistSearch.ArtistList.Count > 0 )) {
 						var firstArtist = artistSearch.ArtistList.FirstOrDefault();
 
 						if( firstArtist != null ) {
