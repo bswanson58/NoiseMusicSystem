@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
@@ -10,6 +11,7 @@ using Noise.UI.Adapters;
 using Noise.UI.Interfaces;
 using Noise.UI.Logging;
 using Noise.UI.Support;
+using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
@@ -27,6 +29,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IDialogService			mDialogService;
 		private readonly ISelectionState		mSelectionState;
 		private FavoriteViewNode				mSelectedNode;
+		private TaskHandler<IEnumerable<FavoriteViewNode>>		mTaskHandler; 
 		private readonly SortableCollection<FavoriteViewNode>	mFavoritesList;
 
 		public FavoritesViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
@@ -120,51 +123,69 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void LoadFavorites() {
-			try {
-				mFavoritesList.IsNotifying = false;
-				ClearFavorites();
+		internal TaskHandler <IEnumerable<FavoriteViewNode>> TaskHandler {
+			get {
+				if( mTaskHandler == null ) {
+					Execute.OnUIThread( () => mTaskHandler = new TaskHandler<IEnumerable<FavoriteViewNode>>());
+				}
 
+				return( mTaskHandler );
+			}
+
+			set { mTaskHandler = value; }
+		} 
+
+		private void LoadFavorites() {
+			TaskHandler.StartTask( RetrieveFavorites, SetFavorites, exception => mLog.LogException( "Loading Favorites", exception ));
+		}
+
+		private IEnumerable<FavoriteViewNode> RetrieveFavorites() {
+			var retValue = new List<FavoriteViewNode>();
+
+			try {
 				using( var list = mArtistProvider.GetFavoriteArtists()) {
-					foreach( var artist in list.List ) {
-						mFavoritesList.Add( new FavoriteViewNode( artist, PlayArtist ) );
-					}
+					retValue.AddRange( list.List.Select( artist => new FavoriteViewNode( artist, PlayArtist )));
 				}
 
 				using( var list = mAlbumProvider.GetFavoriteAlbums()) {
-					foreach( var album in list.List ) {
-						var artist = mArtistProvider.GetArtistForAlbum( album );
-
-						mFavoritesList.Add( new FavoriteViewNode( artist, album, PlayAlbum ));
-					}
+					retValue.AddRange( from album in list.List
+									   let artist = mArtistProvider.GetArtistForAlbum( album )
+									   select new FavoriteViewNode( artist, album, PlayAlbum ) );
 				}
 	
 				using( var list = mTrackProvider.GetFavoriteTracks()) {
-					foreach( var track in list.List ) {
-						var album = mAlbumProvider.GetAlbumForTrack( track );
-
-						if( album != null ) {
-							var artist = mArtistProvider.GetArtistForAlbum( album );
-
-							mFavoritesList.Add( new FavoriteViewNode( artist, album, track, PlayTrack ));
-						}
-					}
+					retValue.AddRange( from track in list.List
+									   let album = mAlbumProvider.GetAlbumForTrack( track ) 
+										where album != null
+											let artist = mArtistProvider.GetArtistForAlbum( album )
+										select new FavoriteViewNode( artist, album, track, PlayTrack ));
 				}
-
-				mFavoritesList.Sort( SelectSortProperty, ListSortDirection.Ascending );
-				mFavoritesList.IsNotifying = true;
-				mFavoritesList.Refresh();
-
-				RaiseCanExecuteChangedEvent( "CanExecute_ExportFavorites" );
-				RaiseCanExecuteChangedEvent( "CanExecute_PlayRandom" );
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Loading Favorites", ex );
 			}
+
+			return( retValue );
+		}
+
+		private void SetFavorites( IEnumerable<FavoriteViewNode> favorites ) {
+			mFavoritesList.IsNotifying = false;
+			ClearFavorites();
+
+			mFavoritesList.AddRange( favorites );
+			mFavoritesList.Sort( SelectSortProperty, ListSortDirection.Ascending );
+			mFavoritesList.IsNotifying = true;
+			mFavoritesList.Refresh();
+
+			RaiseCanExecuteChangedEvent( "CanExecute_ExportFavorites" );
+			RaiseCanExecuteChangedEvent( "CanExecute_PlayRandom" );
 		}
 
 		private void ClearFavorites() {
 			mFavoritesList.Clear();
+			mSelectedNode = null;
+
+			RaisePropertyChanged( () => SelectedNode );
 		}
 
 		private static string SelectSortProperty( FavoriteViewNode node ) {
