@@ -14,10 +14,10 @@ using Noise.UI.Dto;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class PlayQueueListViewModel : AutomaticCommandBase, IDropTarget, IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted> {
+	public class PlayQueueListViewModel : AutomaticCommandBase, IDropTarget, IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackStatusChanged> {
 		private readonly IEventAggregator			mEventAggregator;
 		private readonly IPlayQueue					mPlayQueue;
-		private int									mPlayingIndex;
+		private UiPlayQueueTrack					mPlayingItem;
 		private readonly BindableCollection<UiPlayQueueTrack>		mQueue;
 
 		public PlayQueueListViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue ) {
@@ -25,10 +25,9 @@ namespace Noise.UI.ViewModels {
 			mPlayQueue = playQueue;
 
 			mQueue = new BindableCollection<UiPlayQueueTrack>();
-			mPlayingIndex = -1;
 
 			LoadPlayQueue();
-            mEventAggregator.Subscribe( this );
+			mEventAggregator.Subscribe( this );
 		}
 
 		protected IEventAggregator EventAggregator {
@@ -44,13 +43,8 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => SelectedItem, value ); }
 		}
 
-		public int SelectedIndex {
-			get{ return( Get( () => SelectedIndex )); }
-			set{ Set( () => SelectedIndex, value ); }
-		}
-
-		public int PlayingIndex {
-			get{ return( mPlayingIndex ); }
+		public UiPlayQueueTrack PlayingItem {
+			get{ return( mPlayingItem ); }
 		}
 
 		public void DragOver( DropInfo dropInfo ) {
@@ -102,21 +96,12 @@ namespace Noise.UI.ViewModels {
 			PlayQueueChangedFlag++;
 		}
 
-		public void Handle( Events.PlaybackTrackStarted eventArgs ) {
+		public void Handle( Events.PlaybackStatusChanged eventArgs ) {
 			Execute.OnUIThread( () => {
-				var index = 0;
-
-				mPlayingIndex = -1;
-
-				foreach( var item in mQueue ) {
-					if( item.QueuedTrack.IsPlaying ) {
-						mPlayingIndex = index;
-					}
-
-					index++;
-				}
+				mPlayingItem = mQueue.FirstOrDefault( item => item.QueuedTrack.IsPlaying );
 
 				SelectedItem = null;
+				RaisePropertyChanged( () => PlayingItem );
 			});
 		}
 
