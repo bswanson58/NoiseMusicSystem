@@ -339,6 +339,7 @@
     <Compile Include="ViewModels\LibraryAdditionsViewModel.cs" />
     <Compile Include="ViewModels\LibraryConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\LibrarySelectorViewModel.cs" />
+    <Compile Include="ViewModels\PlaybackContextDialogManager.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\PlayHistoryViewModel.cs" />
     <Compile Include="ViewModels\PlayingAlbumViewModel.cs" />
@@ -440,6 +441,9 @@
     </Compile>
     <Compile Include="Views\LyricsEditDialog.xaml.cs">
       <DependentUpon>LyricsEditDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlaybackContextDialog.xaml.cs">
+      <DependentUpon>PlaybackContextDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlaybackControlView.xaml.cs">
       <DependentUpon>PlaybackControlView.xaml</DependentUpon>
@@ -703,6 +707,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\LyricsEditDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlaybackContextDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

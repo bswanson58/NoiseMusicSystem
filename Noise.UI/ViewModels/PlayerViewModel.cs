@@ -12,6 +12,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
+using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	[SyncActiveState]
@@ -23,6 +24,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IPlayQueue			mPlayQueue;
 		private readonly IPlayController	mPlayController;
 		private readonly IAudioController	mAudioController;
+		private readonly IDialogService		mDialogService;
 		private readonly IDisposable		mPlayStateChangeDisposable;
 		private double						mSpectrumImageWidth;
 		private double						mSpectrumImageHeight;
@@ -33,15 +35,19 @@ namespace Noise.UI.ViewModels {
 		private readonly Timer				mSpectrumUpdateTimer;
 		private ImageSource					mSpectrumBitmap;
 		private	readonly ObservableCollectionEx<UiEqBand>	mBands;
+		private readonly PlaybackContextDialogManager		mPlaybackContextDialogManager;
 
 		public bool						IsActive { get; set; }
 		public event EventHandler		IsActiveChanged = delegate { };
 
-		public PlayerViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController, IAudioController audioController ) {
+		public PlayerViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController, IAudioController audioController,
+								IDialogService dialogService, PlaybackContextDialogManager playbackContextDialogManager ) {
 			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
 			mPlayController = playController;
 			mAudioController = audioController;
+			mDialogService = dialogService;
+			mPlaybackContextDialogManager = playbackContextDialogManager;
 
 			mSpectrumImageWidth = 200;
 			mSpectrumImageHeight = 100;
@@ -619,5 +625,25 @@ namespace Noise.UI.ViewModels {
 			return(( mPlayController.CurrentTrack != null ) &&
 			       ( mPlayController.CurrentTrack.Album != null ));
 		}
+
+		public void Execute_ManagePlaybackContext() {
+			if(( mPlayController.CurrentTrack != null ) &&
+			   ( mDialogService != null ) &&
+			   ( mPlaybackContextDialogManager != null )) {
+				mPlaybackContextDialogManager.SetTrack( mPlayController.CurrentTrack.Album, mPlayController.CurrentTrack.Track );
+
+				if( mDialogService.ShowDialog( DialogNames.ManagePlaybackContext, mPlaybackContextDialogManager ) == true ) {
+					mPlaybackContextDialogManager.UpdatePlaybackContext();
+				}
+			}
+		}
+
+		[DependsUpon("StartTrackFlag")]
+		public bool CanExecute_ManagePlaybackContext() {
+			return(( mDialogService != null ) && 
+				   ( mPlaybackContextDialogManager != null ) &&
+				   ( mPlayController.CurrentTrack != null ));
+		}
+
 	}
 }

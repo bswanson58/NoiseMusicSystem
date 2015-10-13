@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Sidecars {
-	internal class SidecarWriter {
+	internal class SidecarWriter : ISidecarWriter {
 		private readonly IFileWriter					mWriter;
 		private readonly ILogLibraryBuildingSidecars	mLog;
 		private readonly ISidecarProvider				mSidecarProvider;
@@ -23,12 +24,48 @@ namespace Noise.Core.Sidecars {
 		}
 
 		public bool IsStorageAvailable( DbAlbum album ) {
-			return( Directory.Exists( mStorageSupport.GetAlbumPath( album.DbId )));
-		} 
+			return( IsStorageAvailable( album.DbId ));
+		}
+
+		private bool IsStorageAvailable( long albumId ) {
+			return( Directory.Exists( mStorageSupport.GetAlbumPath( albumId )));
+		}
 
 		public bool IsStorageAvailable( DbArtist artist ) {
 			return( Directory.Exists( mStorageSupport.GetArtistPath( artist.DbId )));
-		} 
+		}
+
+		public void WriteSidecar( DbTrack forTrack, ScTrack sidecar ) {
+			if( IsStorageAvailable( forTrack.Album )) {
+				var albumPath = mStorageSupport.GetAlbumPath( forTrack.Album );
+				var sidecarPath = Path.Combine( albumPath, Constants.AlbumSidecarName );
+
+				try {
+					var scAlbum = mWriter.Read<ScAlbum>( sidecarPath );
+					var scTrack = LocateTrackSidecar( forTrack, scAlbum );
+
+					if( scTrack != null ) {
+						scAlbum.TrackList.Remove( scTrack );
+					}
+					scAlbum.TrackList.Add( sidecar );
+
+					mWriter.Write( sidecarPath, scAlbum );
+
+					mLog.LogWriteSidecar( scAlbum );
+				}
+				catch( Exception exception ) {
+					mLog.LogException( string.Format( "Writing {0} to \"{1}\"", sidecar, sidecarPath ), exception );
+				}
+
+				InsureSideCarStorageFileExists( forTrack.Album, sidecarPath, "(Track)" + forTrack.Name );
+			}
+		}
+
+		private ScTrack LocateTrackSidecar( DbTrack forTrack, ScAlbum scAlbum ) {
+			return( scAlbum.TrackList.FirstOrDefault( scTrack => forTrack.Name.Equals( scTrack.TrackName, StringComparison.CurrentCultureIgnoreCase ) &&
+																 forTrack.TrackNumber == scTrack.TrackNumber &&
+																 forTrack.VolumeName.Equals( scTrack.VolumeName, StringComparison.CurrentCultureIgnoreCase )));
+		}
 
 		public void WriteSidecar( DbAlbum forAlbum, ScAlbum sidecar ) {
 			if( IsStorageAvailable( forAlbum )) {
@@ -83,19 +120,23 @@ namespace Noise.Core.Sidecars {
 		}
 
 		private void InsureSideCarStorageFileExists( DbAlbum album, string sidecarPath ) {
+			InsureSideCarStorageFileExists( album.DbId, sidecarPath, album.Name );
+		}
+
+		private void InsureSideCarStorageFileExists( long albumId, string sidecarPath, string albumName ) {
 			try {
-				var storageFile = mStorageFileProvider.GetFileForMetadata( album.DbId );
+				var storageFile = mStorageFileProvider.GetFileForMetadata( albumId );
 
 				if( storageFile == null ) {
 					var file = new FileInfo( sidecarPath );
-					var folder = mStorageSupport.GetAlbumFolder( album.DbId );
+					var folder = mStorageSupport.GetAlbumFolder( albumId );
 
 					mStorageFileProvider.AddFile( new StorageFile( file.Name, folder.DbId, file.Length, file.LastWriteTime ) 
-																	{ FileType = eFileType.Sidecar, MetaDataPointer = album.DbId });
+																	{ FileType = eFileType.Sidecar, MetaDataPointer = albumId });
 				}
 			}
 			catch( Exception exception ) {
-				mLog.LogException( string.Format( "Creating SideCar StorageFile for {0}", album ), exception );
+				mLog.LogException( string.Format( "Creating SideCar StorageFile for {0}", albumName ), exception );
 			}
 		}
 
@@ -134,6 +175,28 @@ namespace Noise.Core.Sidecars {
 
 			if( Equals( retValue, default( ScAlbum ))) {
 				retValue = new ScAlbum( forAlbum );
+			}
+
+			return( retValue );
+		}
+
+		public ScTrack ReadSidecar( DbTrack forTrack ) {
+			var retValue = default( ScTrack );
+			var sidecarPath = Path.Combine( mStorageSupport.GetAlbumPath( forTrack.Album ), Constants.AlbumSidecarName );
+
+			try {
+				if( File.Exists( sidecarPath )) {
+					var scAlbum = mWriter.Read<ScAlbum>( sidecarPath );
+
+					retValue = LocateTrackSidecar( forTrack, scAlbum );
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( string.Format( "Reading sidecar from \"{0}\"", sidecarPath ), ex );
+			}
+
+			if( Equals( retValue, default( ScTrack ))) {
+				retValue = new ScTrack( forTrack );
 			}
 
 			return( retValue );

@@ -35,6 +35,7 @@ namespace Noise.Core.PlaySupport {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly ILogPlayState			mLog;
 		private readonly IAudioPlayer			mAudioPlayer;
+		private readonly IPlaybackContextManager		mPlaybackContext;
 		private readonly IPlayQueue				mPlayQueue;
 		private readonly IPlayHistory			mPlayHistory;
 		private readonly IScrobbler				mScrobbler;
@@ -58,12 +59,13 @@ namespace Noise.Core.PlaySupport {
 		public IObservable<ePlayState>			PlayStateChange { get { return ( mPlayStateSubject.AsObservable()); } }
 
 		public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
-							   IPlayQueue playQueue, IPlayHistory playHistory, IScrobbler scrobbler,
+							   IPlayQueue playQueue, IPlayHistory playHistory, IScrobbler scrobbler, IPlaybackContextManager playbackContext,
 							   IAudioPlayer audioPlayer, IPreferences preferences, ILogPlayState log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mPlayQueue = playQueue;
 			mPlayHistory = playHistory;
+			mPlaybackContext = playbackContext;
 			mScrobbler = scrobbler;
 			mAudioPlayer = audioPlayer;
 			mPreferences = preferences;
@@ -376,6 +378,8 @@ namespace Noise.Core.PlaySupport {
 			var track = GetTrack( channel );
 
 			if( track != null ) {
+				mPlaybackContext.OpenContext( track.Track );
+
 				mEventAggregator.Publish( new Events.PlaybackTrackStarted( track ));
 				GlobalCommands.RequestLyrics.Execute( new LyricsRequestArgs( track.Artist, track.Track ));
 			}
@@ -388,6 +392,8 @@ namespace Noise.Core.PlaySupport {
 				track.PercentPlayed = mAudioPlayer.GetPercentPlayed( channel );
 				mPlayHistory.TrackPlayCompleted( track );
 				mScrobbler.TrackPlayed( track );
+
+				mPlaybackContext.CloseContext( track.Track );
 			}
 
 			mOpenTracks.Remove( channel );
