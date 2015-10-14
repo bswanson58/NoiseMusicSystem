@@ -32,26 +32,26 @@ namespace Noise.Core.PlaySupport {
 	internal class PlayController : IPlayController, IRequireInitialization,
 									IHandle<Events.PlayQueueChanged>, IHandle<Events.PlayQueuedTrackRequest>,
 									IHandle<Events.SystemShutdown>, IHandle<Events.GlobalUserEvent> {
-		private readonly IEventAggregator		mEventAggregator;
-		private readonly ILogPlayState			mLog;
-		private readonly IAudioPlayer			mAudioPlayer;
-		private readonly IPlaybackContextManager		mPlaybackContext;
-		private readonly IPlayQueue				mPlayQueue;
-		private readonly IPlayHistory			mPlayHistory;
-		private readonly IScrobbler				mScrobbler;
-		private readonly IPreferences			mPreferences;
-		private TimeSpan						mCurrentPosition;
-		private TimeSpan						mCurrentLength;
-		private bool							mDisplayTimeElapsed;
-		private AudioLevels						mSampleLevels;
-		private readonly Timer					mInfoUpdateTimer;
-		private int								mCurrentChannel;
-		private ePlaybackStatus					mCurrentStatus;
-		private bool							mEnableReplayGain;
-		private IDisposable						mPlayStatusDispose;
-		private IDisposable						mAudioLevelsDispose;
-		private IDisposable						mStreamInfoDispose;
-		private readonly Subject<ePlayState>	mPlayStateSubject;
+		private readonly IEventAggregator			mEventAggregator;
+		private readonly ILogPlayState				mLog;
+		private readonly IAudioPlayer				mAudioPlayer;
+		private readonly IPlaybackContextManager	mPlaybackContext;
+		private readonly IPlayQueue					mPlayQueue;
+		private readonly IPlayHistory				mPlayHistory;
+		private readonly IScrobbler					mScrobbler;
+		private readonly IPreferences				mPreferences;
+		private TimeSpan							mCurrentPosition;
+		private TimeSpan							mCurrentLength;
+		private bool								mDisplayTimeElapsed;
+		private AudioLevels							mSampleLevels;
+		private readonly Timer						mInfoUpdateTimer;
+		private int									mCurrentChannel;
+		private ePlaybackStatus						mCurrentStatus;
+		private bool								mEnableReplayGain;
+		private IDisposable							mPlayStatusDispose;
+		private IDisposable							mAudioLevelsDispose;
+		private IDisposable							mStreamInfoDispose;
+		private readonly Subject<ePlayState>		mPlayStateSubject;
 		private readonly Dictionary<int, PlayQueueTrack>	mOpenTracks;
 		private StateMachine<ePlayState, eStateTriggers>	mPlayStateController;
 		private ePlayState									mCurrentPlayState;

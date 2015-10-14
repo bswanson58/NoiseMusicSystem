@@ -16,18 +16,20 @@ namespace Noise.Core.PlaySupport {
 		}
 
 		public void OpenContext( DbTrack forTrack ) {
-			CloseContext( mCurrentTrack );
-
 			var album = mAlbumProvider.GetAlbum( forTrack.Album );
 
 			if( album != null ) {
-				var context = BuildContext( forTrack );
+				var newContext = BuildContext( forTrack );
 
-				if( context.HasContext()) {
-					SetContext( context );
+				ChangeContext( mCurrentContext, newContext );
 
-					mCurrentContext = context;
+				if( newContext.HasContext()) {
+					mCurrentContext = newContext;
 					mCurrentTrack = forTrack;
+				}
+				else {
+					mCurrentContext = null;
+					mCurrentTrack = null;
 				}
 			}
 		}
@@ -46,8 +48,8 @@ namespace Noise.Core.PlaySupport {
 		private PlaybackContext BuildContext( DbTrack track ) {
 			var retValue = new PlaybackContext();
 
-			retValue.CombineContext( mContextWriter.GetAlbumContext( track ));
-			retValue.CombineContext( mContextWriter.GetTrackContext( track ));
+			retValue.AddContext( mContextWriter.GetAlbumContext( track ));
+			retValue.AddContext( mContextWriter.GetTrackContext( track ));
 
 			return( retValue );
 		}
@@ -125,6 +127,29 @@ namespace Noise.Core.PlaySupport {
 
 			if( context.TrackOverlapValid ) {
 				mAudioController.TrackOverlapMilliseconds = context.PreviousTrackOverlap;
+			}
+		}
+
+		private void ChangeContext( PlaybackContext currentContext, PlaybackContext newContext ) {
+			if(( currentContext == null ) &&
+			   ( newContext != null ) &&
+			   ( newContext.HasContext())) {
+				SetContext( newContext );
+			}
+
+			if(( newContext == null ) &&
+			   ( currentContext != null )) {
+				ClearContext( currentContext );
+			}
+
+			if(( currentContext != null) &&
+			   ( newContext != null ) &&
+			   ( newContext.HasContext())) {
+				var targetContext = new PlaybackContext();
+
+				targetContext.CombineContext( currentContext, newContext );
+
+				SetContext( targetContext );
 			}
 		}
 	}
