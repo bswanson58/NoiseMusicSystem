@@ -43,11 +43,7 @@ namespace Noise.UI.ViewModels {
 			mTrackContext = mContextWriter.GetTrackContext( mCurrentTrack ) ?? new ScPlayContext();
 			mAlbumContext = mContextWriter.GetAlbumContext( mCurrentTrack ) ?? new ScPlayContext();
 
-			CurrentContext = mTrackContext.HasContext ? mTrackContextType : mAlbumContextType;
-		}
-
-		public ScPlayContext PlaybackContext {
-			get { return( mIsAlbumContext ? mAlbumContext : mTrackContext ); }
+			CurrentContext = mTrackContext.HasContext() ? mTrackContextType : mAlbumContextType;
 		}
 
 		public void UpdatePlaybackContext() {
@@ -55,6 +51,13 @@ namespace Noise.UI.ViewModels {
 				mAlbumContext.PanPosition = mAlbumContext.PanPositionValid ? mAudioController.PanPosition : 0.0;
 				mAlbumContext.PlaySpeed = mAlbumContext.PlaySpeedValid ? mAudioController.PlaySpeed : 0.0;
 				mAlbumContext.PreampVolume = mAlbumContext.PreampVolumeValid ? mAudioController.PreampVolume : 0.0;
+				mAlbumContext.ReverbDelay = mAlbumContext.ReverbValid ? mAudioController.ReverbDelay : 0.0f;
+				mAlbumContext.ReverbLevel = mAlbumContext.ReverbValid ? mAudioController.ReverbLevel : 0.0f;
+				mAlbumContext.SoftSaturationDepth = mAlbumContext.SoftSaturationValid ? mAudioController.SoftSaturationDepth : 0.0;
+				mAlbumContext.SoftSaturationFactor = mAlbumContext.SoftSaturationValid ? mAudioController.SoftSaturationFactor : 0.0;
+				mAlbumContext.StereoEnhancerWetDry = mAlbumContext.StereoEnhancerValid ? mAudioController.StereoEnhancerWetDry : 0.0;
+				mAlbumContext.StereoEnhancerWidth = mAlbumContext.StereoEnhancerValid ? mAudioController.StereoEnhancerWidth : 0.0;
+				mAlbumContext.TrackOverlapMilliseconds = mAlbumContext.TrackOverlapValid ? mAudioController.TrackOverlapMilliseconds : 0;
 
 				mContextWriter.SaveAlbumContext( mCurrentTrack, mAlbumContext );
 			}
@@ -62,6 +65,13 @@ namespace Noise.UI.ViewModels {
 				mTrackContext.PanPosition = mTrackContext.PanPositionValid ? mAudioController.PanPosition : 0.0;
 				mTrackContext.PlaySpeed = mTrackContext.PlaySpeedValid ? mAudioController.PlaySpeed : 0.0;
 				mTrackContext.PreampVolume = mTrackContext.PreampVolumeValid ? mAudioController.PreampVolume : 0.0;
+				mTrackContext.ReverbDelay = mTrackContext.ReverbValid ? mAudioController.ReverbDelay : 0.0f;
+				mTrackContext.ReverbLevel = mTrackContext.ReverbValid ? mAudioController.ReverbLevel : 0.0f;
+				mTrackContext.SoftSaturationDepth = mTrackContext.SoftSaturationValid ? mAudioController.SoftSaturationDepth : 0.0;
+				mTrackContext.SoftSaturationFactor = mTrackContext.SoftSaturationValid ? mAudioController.SoftSaturationFactor : 0.0;
+				mTrackContext.StereoEnhancerWetDry = mTrackContext.StereoEnhancerValid ? mAudioController.StereoEnhancerWetDry : 0.0;
+				mTrackContext.StereoEnhancerWidth = mTrackContext.StereoEnhancerValid ? mAudioController.StereoEnhancerWidth : 0.0;
+				mTrackContext.TrackOverlapMilliseconds = mTrackContext.TrackOverlapValid ? mAudioController.TrackOverlapMilliseconds : 0;
 
 				mContextWriter.SaveTrackContext( mCurrentTrack, mTrackContext );
 			}
@@ -69,6 +79,10 @@ namespace Noise.UI.ViewModels {
 
 		public IList<ContextType> ContextTypes {
 			get { return(mContextTypes); }
+		}
+
+		public ScPlayContext PlaybackContext {
+			get { return( mIsAlbumContext ? mAlbumContext : mTrackContext ); }
 		}
 
 		public ContextType CurrentContext {

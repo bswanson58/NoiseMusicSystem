@@ -23,7 +23,7 @@ namespace Noise.Core.PlaySupport {
 			if( album != null ) {
 				var context = BuildContext( forTrack );
 
-				if( context.HasContext ) {
+				if( context.HasContext()) {
 					SetContext( context );
 
 					mCurrentContext = context;
@@ -67,6 +67,32 @@ namespace Noise.Core.PlaySupport {
 				context.PreviousPlaySpeed = mAudioController.PlaySpeed;
 				mAudioController.PlaySpeed = context.PlaySpeed;
 			}
+
+			if( context.ReverbValid ) {
+				context.PreviousReverbDelay = mAudioController.ReverbDelay;
+				context.PreviousReverbLevel = mAudioController.ReverbLevel;
+				mAudioController.ReverbDelay = context.ReverbDelay;
+				mAudioController.ReverbLevel = context.ReverbLevel;
+			}
+
+			if( context.SoftSaturationValid ) {
+				context.PreviousSoftSaturationDepth = mAudioController.SoftSaturationDepth;
+				context.PreviousSoftSaturationFactor = mAudioController.SoftSaturationFactor;
+				mAudioController.SoftSaturationDepth = context.SoftSaturationDepth;
+				mAudioController.SoftSaturationFactor = context.SoftSaturationFactor;
+			}
+
+			if( context.StereoEnhancerValid ) {
+				context.PreviousStereoEnhancerWetDry = mAudioController.StereoEnhancerWetDry;
+				context.PreviousStereoEnhancerWidth = mAudioController.StereoEnhancerWidth;
+				mAudioController.StereoEnhancerWetDry = context.StereoEnhancerWetDry;
+				mAudioController.StereoEnhancerWidth = context.StereoEnhancerWidth;
+			}
+
+			if( context.TrackOverlapValid ) {
+				context.PreviousTrackOverlap = mAudioController.TrackOverlapMilliseconds;
+				mAudioController.TrackOverlapMilliseconds = context.TrackOverlapMilliseconds;
+			}
 		}
 
 		private void ClearContext( PlaybackContext context ) {
@@ -80,6 +106,25 @@ namespace Noise.Core.PlaySupport {
 
 			if( context.PlaySpeedValid ) {
 				mAudioController.PlaySpeed = context.PreviousPlaySpeed;
+			}
+
+			if( context.ReverbValid ) {
+				mAudioController.ReverbDelay = context.PreviousReverbDelay;
+				mAudioController.ReverbLevel = context.PreviousReverbLevel;
+			}
+
+			if( context.SoftSaturationValid ) {
+				mAudioController.SoftSaturationDepth = context.PreviousSoftSaturationDepth;
+				mAudioController.SoftSaturationFactor = context.PreviousSoftSaturationFactor;
+			}
+
+			if( context.StereoEnhancerValid ) {
+				mAudioController.StereoEnhancerWetDry = context.PreviousStereoEnhancerWetDry;
+				mAudioController.StereoEnhancerWidth = context.PreviousStereoEnhancerWidth;
+			}
+
+			if( context.TrackOverlapValid ) {
+				mAudioController.TrackOverlapMilliseconds = context.PreviousTrackOverlap;
 			}
 		}
 	}

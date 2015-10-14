@@ -6,20 +6,18 @@
 			 mc:Ignorable="d"
 			 Tag="Playback Context"
 			 Height="150"
-			 Width="400"
+			 Width="450"
 			 >
 	<Grid Margin="15">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="10"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="11"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 		
 		<StackPanel Grid.Row="0" Orientation="Horizontal">
-			<TextBlock VerticalAlignment="Center">Set the following values when playing this</TextBlock>
+			<TextBlock VerticalAlignment="Center">Set the following values when playing the current</TextBlock>
 			<ComboBox Margin="5,0,0,0" ItemsSource="{Binding ContextTypes}" SelectedItem="{Binding CurrentContext}" DisplayMemberPath="ContextName"/>
 		</StackPanel>
 
@@ -29,8 +27,27 @@
 			<TextBlock Text="'"/>
 		</StackPanel>
 
-		<CheckBox Grid.Row="3" Margin="5,3" Content="Pan Position" IsChecked="{Binding PlaybackContext.PanPositionValid}" />
-		<CheckBox Grid.Row="4" Margin="5,3" Content="Preamp Volume" IsChecked="{Binding PlaybackContext.PreampVolumeValid}" />
-		<CheckBox Grid.Row="5" Margin="5,3" Content="Play Speed" IsChecked="{Binding PlaybackContext.PlaySpeedValid}" />
+		<Grid Grid.Row="3">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<CheckBox Grid.Column="0" Grid.Row="0" Margin="5,3" Content="Stereo Enhance" IsChecked="{Binding PlaybackContext.StereoEnhancerValid}" />
+			<CheckBox Grid.Column="0" Grid.Row="1" Margin="5,3" Content="Soft Saturation" IsChecked="{Binding PlaybackContext.SoftSaturationValid}" />
+			<CheckBox Grid.Column="0" Grid.Row="2" Margin="5,3" Content="Reverb" IsChecked="{Binding PlaybackContext.ReverbValid}" />
+
+			<CheckBox Grid.Column="1" Grid.Row="0" Margin="5,3" Content="Preamp Volume" IsChecked="{Binding PlaybackContext.PreampVolumeValid}" />
+
+			<CheckBox Grid.Column="2" Grid.Row="0" Margin="5,3" Content="Track Overlap" IsChecked="{Binding PlaybackContext.TrackOverlapValid}" />
+			<CheckBox Grid.Column="2" Grid.Row="1" Margin="5,3" Content="Pan Position" IsChecked="{Binding PlaybackContext.PanPositionValid}" />
+			<CheckBox Grid.Column="2" Grid.Row="2" Margin="5,3" Content="Play Speed" IsChecked="{Binding PlaybackContext.PlaySpeedValid}" />
+		</Grid>
 	</Grid>
 </UserControl>
