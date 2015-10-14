@@ -8,5 +8,9 @@
 
 		public bool		PlaySpeedValid {  get; set; }
 		public double	PlaySpeed { get; set; }
+
+		public bool HasContext {
+			get {  return( PanPositionValid || PreampVolumeValid || PlaySpeedValid ); }
+		}
 	}
 }

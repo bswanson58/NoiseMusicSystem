@@ -45,16 +45,9 @@ namespace Noise.Core.PlaySupport {
 
 		private PlaybackContext BuildContext( DbTrack track ) {
 			var retValue = new PlaybackContext();
-			var albumContext = mContextWriter.GetAlbumContext( track );
-			var trackContext = mContextWriter.GetTrackContext( track );
 
-			if( albumContext != null ) {
-				retValue.CombineContext( albumContext );
-			}
-
-			if( trackContext != null ) {
-				retValue.CombineContext( trackContext );
-			}
+			retValue.CombineContext( mContextWriter.GetAlbumContext( track ));
+			retValue.CombineContext( mContextWriter.GetTrackContext( track ));
 
 			return( retValue );
 		}
