@@ -215,6 +215,8 @@ namespace Noise.Infrastructure {
 		public class PlaybackTrackChanged { }
 		public class PlaybackInfoChanged { }
 
+		public class AudioParametersChanged { }
+
 		public class WindowLayoutRequest {
 			public string	LayoutName { get; private set; }
 

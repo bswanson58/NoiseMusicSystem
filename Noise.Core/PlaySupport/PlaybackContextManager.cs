@@ -1,15 +1,19 @@
-﻿using Noise.Infrastructure.Dto;
+﻿using Caliburn.Micro;
+using Noise.Infrastructure;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlaySupport {
 	internal class PlaybackContextManager : IPlaybackContextManager {
+		private readonly IEventAggregator		mEventAggregator;
 		private readonly IPlaybackContextWriter	mContextWriter;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly IAudioController		mAudioController;
 		private DbTrack							mCurrentTrack;
 		private PlaybackContext					mCurrentContext;
 
-		public PlaybackContextManager( IAlbumProvider albumProvider, IAudioController audioController, IPlaybackContextWriter contextWriter ) {
+		public PlaybackContextManager( IEventAggregator eventAggregator, IAlbumProvider albumProvider, IAudioController audioController, IPlaybackContextWriter contextWriter ) {
+			mEventAggregator = eventAggregator;
 			mAlbumProvider = albumProvider;
 			mContextWriter = contextWriter;
 			mAudioController = audioController;
@@ -71,30 +75,40 @@ namespace Noise.Core.PlaySupport {
 			}
 
 			if( context.ReverbValid ) {
+				context.PreviousReverbEnabled = mAudioController.ReverbEnable;
 				context.PreviousReverbDelay = mAudioController.ReverbDelay;
 				context.PreviousReverbLevel = mAudioController.ReverbLevel;
 				mAudioController.ReverbDelay = context.ReverbDelay;
 				mAudioController.ReverbLevel = context.ReverbLevel;
+				mAudioController.ReverbEnable = context.ReverbEnabled;
 			}
 
 			if( context.SoftSaturationValid ) {
+				context.PreviousSoftSaturationEnabled = mAudioController.SoftSaturationEnable;
 				context.PreviousSoftSaturationDepth = mAudioController.SoftSaturationDepth;
 				context.PreviousSoftSaturationFactor = mAudioController.SoftSaturationFactor;
 				mAudioController.SoftSaturationDepth = context.SoftSaturationDepth;
 				mAudioController.SoftSaturationFactor = context.SoftSaturationFactor;
+				mAudioController.SoftSaturationEnable = context.SoftSaturationEnabled;
 			}
 
 			if( context.StereoEnhancerValid ) {
+				context.PreviousStereoEnhancerEnabled = mAudioController.StereoEnhancerEnable;
 				context.PreviousStereoEnhancerWetDry = mAudioController.StereoEnhancerWetDry;
 				context.PreviousStereoEnhancerWidth = mAudioController.StereoEnhancerWidth;
 				mAudioController.StereoEnhancerWetDry = context.StereoEnhancerWetDry;
 				mAudioController.StereoEnhancerWidth = context.StereoEnhancerWidth;
+				mAudioController.StereoEnhancerEnable = context.StereoEnhancerEnabled;
 			}
 
 			if( context.TrackOverlapValid ) {
+				context.TrackOverlapEnabled = mAudioController.TrackOverlapEnable;
 				context.PreviousTrackOverlap = mAudioController.TrackOverlapMilliseconds;
 				mAudioController.TrackOverlapMilliseconds = context.TrackOverlapMilliseconds;
+				mAudioController.TrackOverlapEnable = context.TrackOverlapEnabled;
 			}
+
+			mEventAggregator.Publish( new Events.AudioParametersChanged());
 		}
 
 		private void ClearContext( PlaybackContext context ) {
@@ -113,21 +127,27 @@ namespace Noise.Core.PlaySupport {
 			if( context.ReverbValid ) {
 				mAudioController.ReverbDelay = context.PreviousReverbDelay;
 				mAudioController.ReverbLevel = context.PreviousReverbLevel;
+				mAudioController.ReverbEnable = context.PreviousReverbEnabled;
 			}
 
 			if( context.SoftSaturationValid ) {
 				mAudioController.SoftSaturationDepth = context.PreviousSoftSaturationDepth;
 				mAudioController.SoftSaturationFactor = context.PreviousSoftSaturationFactor;
+				mAudioController.SoftSaturationEnable = context.PreviousSoftSaturationEnabled;
 			}
 
 			if( context.StereoEnhancerValid ) {
 				mAudioController.StereoEnhancerWetDry = context.PreviousStereoEnhancerWetDry;
 				mAudioController.StereoEnhancerWidth = context.PreviousStereoEnhancerWidth;
+				mAudioController.StereoEnhancerEnable = context.PreviousStereoEnhancerEnabled;
 			}
 
 			if( context.TrackOverlapValid ) {
 				mAudioController.TrackOverlapMilliseconds = context.PreviousTrackOverlap;
+				mAudioController.TrackOverlapEnable = context.PreviousTrackOverlapEnabled;
 			}
+
+			mEventAggregator.Publish( new Events.AudioParametersChanged());
 		}
 
 		private void ChangeContext( PlaybackContext currentContext, PlaybackContext newContext ) {
