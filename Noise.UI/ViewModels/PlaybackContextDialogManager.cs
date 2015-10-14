@@ -22,16 +22,18 @@ namespace Noise.UI.ViewModels {
 		private ScPlayContext					mTrackContext;
 		private ScPlayContext					mAlbumContext;
 		private bool							mIsAlbumContext;
-		private readonly List<ContextType>		mContextTypes; 
+		private readonly List<ContextType>		mContextTypes;
+		private readonly ContextType			mAlbumContextType;
+		private readonly ContextType			mTrackContextType;
 		private ContextType						mCurrentContext;
 
 		public PlaybackContextDialogManager( IAudioController audioController, IPlaybackContextWriter contextWriter ) {
 			mAudioController = audioController;
 			mContextWriter = contextWriter;
 
-			mCurrentContext = new ContextType( "Track", false );
-			mContextTypes = new List<ContextType>{ mCurrentContext, 
-												   new ContextType( "Album", true ) };
+			mTrackContextType = new ContextType( "Track", false );
+			mAlbumContextType = new ContextType( "Album", true );
+			mContextTypes = new List<ContextType>{ mAlbumContextType, mTrackContextType };
 		}
 
 		public void SetTrack( DbAlbum album, DbTrack track ) {
@@ -41,9 +43,7 @@ namespace Noise.UI.ViewModels {
 			mTrackContext = mContextWriter.GetTrackContext( mCurrentTrack ) ?? new ScPlayContext();
 			mAlbumContext = mContextWriter.GetAlbumContext( mCurrentTrack ) ?? new ScPlayContext();
 
-			mIsAlbumContext = false;
-
-			RaisePropertyChanged( () => PlaybackContext );
+			CurrentContext = mTrackContext.HasContext ? mTrackContextType : mAlbumContextType;
 		}
 
 		public ScPlayContext PlaybackContext {
@@ -72,11 +72,13 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public ContextType CurrentContext {
-			get { return(mCurrentContext); }
+			get { return( mCurrentContext ); }
 			set {
 				mCurrentContext = value;
 				mIsAlbumContext = mCurrentContext.IsAlbumContext;
-
+				
+				RaisePropertyChanged( () => CurrentContext );
+				RaisePropertyChanged( () => PlaybackContext );
 				RaisePropertyChanged( () => ContextDescription );
 			}
 		}
