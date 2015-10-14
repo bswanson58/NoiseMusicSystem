@@ -2,21 +2,6 @@
 
 namespace Noise.Core.PlaySupport {
 	internal class PlaybackContext : ScPlayContext {
-		public double	PreviousPanPosition { get; set; }
-		public double	PreviousPreampVolume { get; set; }
-		public double	PreviousPlaySpeed { get; set; }
-		public bool		PreviousReverbEnabled { get; set; }
-		public float	PreviousReverbLevel { get; set; }
-		public float	PreviousReverbDelay { get; set; }
-		public bool		PreviousSoftSaturationEnabled { get; set; }
-		public double	PreviousSoftSaturationFactor { get; set; }
-		public double	PreviousSoftSaturationDepth { get; set; }
-		public bool		PreviousStereoEnhancerEnabled { get; set; }
-		public double	PreviousStereoEnhancerWidth { get; set; }
-		public double	PreviousStereoEnhancerWetDry { get; set; }
-		public bool		PreviousTrackOverlapEnabled { get; set; }
-		public int		PreviousTrackOverlap { get; set; }
-
 		public void AddContext( ScPlayContext context ) {
 			if( context != null ) {
 				if( context.PanPositionValid ) {
@@ -66,7 +51,7 @@ namespace Noise.Core.PlaySupport {
 		public void CombineContext( PlaybackContext currentContext, PlaybackContext newContext ) {
 			PanPositionValid = currentContext.PanPositionValid || newContext.PanPositionValid;
 			if( currentContext.PanPositionValid ) {
-				PanPosition = currentContext.PreviousPanPosition;
+				PanPosition = currentContext.PanPosition;
 			}
 			if( newContext.PanPositionValid ) {
 				PanPosition = newContext.PanPosition;
@@ -74,7 +59,7 @@ namespace Noise.Core.PlaySupport {
 
 			PlaySpeedValid = currentContext.PlaySpeedValid || newContext.PlaySpeedValid;
 			if( currentContext.PlaySpeedValid ) {
-				PlaySpeed = currentContext.PreviousPlaySpeed;
+				PlaySpeed = currentContext.PlaySpeed;
 			}
 			if( newContext.PlaySpeedValid ) {
 				PlaySpeed = newContext.PlaySpeed;
@@ -82,7 +67,7 @@ namespace Noise.Core.PlaySupport {
 
 			PreampVolumeValid = currentContext.PreampVolumeValid || newContext.PreampVolumeValid;
 			if( currentContext.PreampVolumeValid ) {
-				PreampVolume = currentContext.PreviousPreampVolume;
+				PreampVolume = currentContext.PreampVolume;
 			}
 			if( newContext.PreampVolumeValid ) {
 				PreampVolume = newContext.PreampVolume;
@@ -90,9 +75,9 @@ namespace Noise.Core.PlaySupport {
 
 			ReverbValid = currentContext.ReverbValid || newContext.ReverbValid;
 			if( currentContext.ReverbValid ) {
-				ReverbEnabled = currentContext.PreviousReverbEnabled;
-				ReverbDelay = currentContext.PreviousReverbDelay;
-				ReverbLevel = currentContext.PreviousReverbLevel;
+				ReverbEnabled = currentContext.ReverbEnabled;
+				ReverbDelay = currentContext.ReverbDelay;
+				ReverbLevel = currentContext.ReverbLevel;
 			}
 			if(newContext.ReverbValid) {
 				ReverbEnabled = newContext.ReverbEnabled;
@@ -102,9 +87,9 @@ namespace Noise.Core.PlaySupport {
 
 			SoftSaturationValid = currentContext.SoftSaturationValid || newContext.SoftSaturationValid;
 			if( currentContext.SoftSaturationValid ) {
-				SoftSaturationEnabled = currentContext.PreviousSoftSaturationEnabled;
-				SoftSaturationDepth = currentContext.PreviousSoftSaturationDepth;
-				SoftSaturationFactor = currentContext.PreviousSoftSaturationFactor;
+				SoftSaturationEnabled = currentContext.SoftSaturationEnabled;
+				SoftSaturationDepth = currentContext.SoftSaturationDepth;
+				SoftSaturationFactor = currentContext.SoftSaturationFactor;
 			}
 			if( newContext.SoftSaturationValid ) {
 				SoftSaturationEnabled = newContext.SoftSaturationEnabled;
@@ -114,9 +99,9 @@ namespace Noise.Core.PlaySupport {
 
 			StereoEnhancerValid = currentContext.StereoEnhancerValid || newContext.StereoEnhancerValid;
 			if( currentContext.StereoEnhancerValid ) {
-				StereoEnhancerEnabled = currentContext.PreviousStereoEnhancerEnabled;
-				StereoEnhancerWetDry = currentContext.PreviousStereoEnhancerWetDry;
-				StereoEnhancerWidth = currentContext.PreviousStereoEnhancerWidth;
+				StereoEnhancerEnabled = currentContext.StereoEnhancerEnabled;
+				StereoEnhancerWetDry = currentContext.StereoEnhancerWetDry;
+				StereoEnhancerWidth = currentContext.StereoEnhancerWidth;
 			}
 			if( newContext.StereoEnhancerValid ) {
 				StereoEnhancerEnabled = newContext.StereoEnhancerEnabled;
@@ -126,8 +111,8 @@ namespace Noise.Core.PlaySupport {
 
 			TrackOverlapValid = currentContext.TrackOverlapValid || newContext.TrackOverlapValid;
 			if( currentContext.TrackOverlapValid ) {
-				TrackOverlapEnabled = currentContext.PreviousTrackOverlapEnabled;
-				TrackOverlapMilliseconds = currentContext.PreviousTrackOverlap;
+				TrackOverlapEnabled = currentContext.TrackOverlapEnabled;
+				TrackOverlapMilliseconds = currentContext.TrackOverlapMilliseconds;
 			}
 			if( newContext.TrackOverlapValid ) {
 				TrackOverlapEnabled = newContext.TrackOverlapEnabled;
