@@ -49,7 +49,7 @@ namespace Noise.Infrastructure.Interfaces {
 		bool			CanStartPlayStrategy { get; }
 
 		bool			DeletedPlayedTracks { get; set; }
-		int				MaximumPlayedTrackCount { get; set; }
+		int				MaximumPlayedTracks { get; set; }
 
 		IEnumerable<PlayQueueTrack>	PlayList { get; }
 	}
