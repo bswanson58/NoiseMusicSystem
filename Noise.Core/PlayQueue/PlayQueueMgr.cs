@@ -32,6 +32,8 @@ namespace Noise.Core.PlayQueue {
 		private PlayQueueTrack						mReplayTrack;
 		private bool								mAddingMoreTracks;
 		private bool								mStopAtEndOfTrack;
+		private bool								mDeleteUnplayedTracks;
+		private int									mMaximumUnplayedTracks;
 		private AsyncCommand<DbTrack>				mTrackPlayCommand;
 		private AsyncCommand<IEnumerable<DbTrack>>	mTrackListPlayCommand;
 		private AsyncCommand<DbAlbum>				mAlbumPlayCommand;
@@ -60,6 +62,9 @@ namespace Noise.Core.PlayQueue {
 
 			mPlayStrategy = mPlayStrategyFactory.ProvidePlayStrategy( ePlayStrategy.Next );
 			mPlayExhaustedStrategy = mPlayExhaustedFactory.ProvideExhaustedStrategy( ePlayExhaustedStrategy.Stop );
+
+			mDeleteUnplayedTracks = false;
+			mMaximumUnplayedTracks = 15;
 
 			lifecycleManager.RegisterForInitialize( this );
 		}
@@ -446,7 +451,11 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public int PlayedTrackCount {
-			get { return(( from PlayQueueTrack track in mPlayQueue where track.HasPlayed && !track.IsPlaying select track ).Count()); }
+			get { return( GetPlayedTrackList().Count()); }
+		}
+
+		private IEnumerable<PlayQueueTrack> GetPlayedTrackList() {
+			return( from PlayQueueTrack track in mPlayQueue where track.HasPlayed && !track.IsPlaying select track );
 		}
 
 		public bool StrategyRequestsQueued {
@@ -494,6 +503,8 @@ namespace Noise.Core.PlayQueue {
 
 				mPlayHistory.Add( playingTrack );
 				mLog.StatusChanged( playingTrack );
+
+				CheckQueueHorizon();
 			}
 
 			var nextTrack = NextTrack;
@@ -517,6 +528,23 @@ namespace Noise.Core.PlayQueue {
 			}
 
 			return( nextTrack );
+		}
+
+		public bool DeletedPlayedTracks {
+			get { return( mDeleteUnplayedTracks ); }
+			set {  mDeleteUnplayedTracks = value; }
+		}
+		public int MaximumPlayedTrackCount {
+			get { return( mMaximumUnplayedTracks ); }
+			set {  mMaximumUnplayedTracks = value; }
+		}
+
+		private void CheckQueueHorizon() {
+			if( mDeleteUnplayedTracks ) {
+				while( PlayedTrackCount > mMaximumUnplayedTracks ) {
+					RemoveTrack( GetPlayedTrackList().FirstOrDefault());
+				}
+			}
 		}
 
 		public void StopPlay() {
