@@ -17,6 +17,9 @@ namespace Noise.Infrastructure.Configuration {
 		public	ePlayStrategy			PlayStrategy { get; set; }
 		public	string					PlayStrategyParameters { get; set; }
 
+		public bool						DeletePlayedTracks { get; set;}
+		public int						MaximumPlayedTracks { get; set; }
+
 		public NoiseCorePreferences() {
 			PlayExhaustedStrategy = ePlayExhaustedStrategy.PlayFavorites;
 			PlayExhaustedParameters = string.Empty;
@@ -28,6 +31,9 @@ namespace Noise.Infrastructure.Configuration {
 
 			MaintainArtistSidecars = false;
 			MaintainAlbumSidecars = true;
+
+			DeletePlayedTracks = true;
+			MaximumPlayedTracks = 14;
 		}
 	}
 }
