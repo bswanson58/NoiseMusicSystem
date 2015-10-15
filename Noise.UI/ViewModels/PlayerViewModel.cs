@@ -12,17 +12,20 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
+using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	[SyncActiveState]
 	public class PlayerViewModel : ViewModelBase, IActiveAware,
 								   IHandle<Events.SystemShutdown>,
 								   IHandle<Events.PlaybackStatusChanged>, IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackInfoChanged>,
-								   IHandle<Events.PlaybackTrackStarted>, IHandle<Events.SongLyricsInfo>, IHandle<Events.PlaybackTrackUpdated> {
+								   IHandle<Events.PlaybackTrackStarted>, IHandle<Events.SongLyricsInfo>, IHandle<Events.PlaybackTrackUpdated>,
+								   IHandle<Events.AudioParametersChanged> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IPlayQueue			mPlayQueue;
 		private readonly IPlayController	mPlayController;
 		private readonly IAudioController	mAudioController;
+		private readonly IDialogService		mDialogService;
 		private readonly IDisposable		mPlayStateChangeDisposable;
 		private double						mSpectrumImageWidth;
 		private double						mSpectrumImageHeight;
@@ -33,15 +36,19 @@ namespace Noise.UI.ViewModels {
 		private readonly Timer				mSpectrumUpdateTimer;
 		private ImageSource					mSpectrumBitmap;
 		private	readonly ObservableCollectionEx<UiEqBand>	mBands;
+		private readonly PlaybackContextDialogManager		mPlaybackContextDialogManager;
 
 		public bool						IsActive { get; set; }
 		public event EventHandler		IsActiveChanged = delegate { };
 
-		public PlayerViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController, IAudioController audioController ) {
+		public PlayerViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IPlayController playController, IAudioController audioController,
+								IDialogService dialogService, PlaybackContextDialogManager playbackContextDialogManager ) {
 			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
 			mPlayController = playController;
 			mAudioController = audioController;
+			mDialogService = dialogService;
+			mPlaybackContextDialogManager = playbackContextDialogManager;
 
 			mSpectrumImageWidth = 200;
 			mSpectrumImageHeight = 100;
@@ -113,6 +120,10 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public void Handle( Events.AudioParametersChanged eventArgs ) {
+			AudioParametersFlag++;
+		}
+
 		private ePlaybackStatus CurrentStatus {
 			get { return( Get(() => CurrentStatus, ePlaybackStatus.Stopped ));  }
 			set { Set(() => CurrentStatus, value ); }
@@ -126,6 +137,11 @@ namespace Noise.UI.ViewModels {
 		private int InfoUpdateFlag {
 			get{ return( Get( () => InfoUpdateFlag, 0 ));  }
 			set{ Execute.OnUIThread( () => Set( () => InfoUpdateFlag, value )); }
+		}
+
+		private int AudioParametersFlag {
+			get { return(Get( () => AudioParametersFlag, 0 )); }
+			set { Execute.OnUIThread( () => Set( () => AudioParametersFlag, value ));}
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
@@ -254,6 +270,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
+		[DependsUpon( "AudioParametersFlag" )]
 		public double PlaySpeed {
 			get{ return( mAudioController.PlaySpeed ); }
 			set{ mAudioController.PlaySpeed = (float)value; }
@@ -264,6 +281,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "InfoUpdateFlag" )]
+		[DependsUpon( "AudioParametersFlag" )]
 		public double PanPosition {
 			get{ return( mAudioController.PanPosition ); }
 			set{ mAudioController.PanPosition = (float)value; }
@@ -358,11 +376,13 @@ namespace Noise.UI.ViewModels {
 			       ( mPlayQueue.PlayingTrackReplayCount == 0 ));
 		}
 
+		[DependsUpon( "AudioParametersFlag" )]
 		public bool TrackOverlapEnable {
 			get{ return( mAudioController.TrackOverlapEnable ); }
 			set{ mAudioController.TrackOverlapEnable = value; }
 		}
 
+		[DependsUpon( "AudioParametersFlag" )]
 		public int TrackOverlapMilliseconds {
 			get{ return( mAudioController.TrackOverlapMilliseconds ); }
 			set{ mAudioController.TrackOverlapMilliseconds = value; }
@@ -430,6 +450,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 
+		[DependsUpon( "AudioParametersFlag" )]
 		public double PreampVolume {
 			get{ return( mAudioController.PreampVolume ); }
 			set {
@@ -441,6 +462,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		[DependsUpon( "AudioParametersFlag" )]
 		public bool ReplayGainEnabled {
 			get{ return( mPlayController.ReplayGainEnable ); }
 			set{ mPlayController.ReplayGainEnable = value; }
@@ -509,6 +531,7 @@ namespace Noise.UI.ViewModels {
 			return( IsEqEditable );
 		}
 
+		[DependsUpon( "AudioParametersFlag" )]
 		public bool StereoEnhancerEnable {
 			get{ return( mAudioController.StereoEnhancerEnable ); }
 			set {
@@ -518,16 +541,19 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		[DependsUpon( "AudioParametersFlag" )]
 		public double StereoEnhancerWidth {
 			get{ return( mAudioController.StereoEnhancerWidth ); }
 			set{ mAudioController.StereoEnhancerWidth = value; }
 		}
 
+		[DependsUpon( "AudioParametersFlag" )]
 		public double StereoEnhancerWetDry {
 			get{ return( mAudioController.StereoEnhancerWetDry ); }
 			set{ mAudioController.StereoEnhancerWetDry = value; }
 		}
 
+		[DependsUpon( "AudioParametersFlag" )]
 		public bool SoftSaturationEnable {
 			get{ return( mAudioController.SoftSaturationEnable ); }
 			set {
@@ -537,16 +563,19 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		[DependsUpon( "AudioParametersFlag" )]
 		public double SoftSaturationDepth {
 			get{ return( mAudioController.SoftSaturationDepth ); }
 			set{ mAudioController.SoftSaturationDepth = value; }
 		}
 
+		[DependsUpon( "AudioParametersFlag" )]
 		public double SoftSaturationFactor {
 			get{ return( mAudioController.SoftSaturationFactor ); }
 			set{ mAudioController.SoftSaturationFactor = value; }
 		}
 
+		[DependsUpon( "AudioParametersFlag" )]
 		public bool ReverbEnable {
 			get{ return( mAudioController.ReverbEnable ); }
 			set {
@@ -556,11 +585,13 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		[DependsUpon( "AudioParametersFlag" )]
 		public float ReverbLevel {
 			get{ return( mAudioController.ReverbLevel ); }
 			set{ mAudioController.ReverbLevel = value; }
 		}
 
+		[DependsUpon( "AudioParametersFlag" )]
 		public float ReverbDelay {
 			get{ return( mAudioController.ReverbDelay ); }
 			set{ mAudioController.ReverbDelay = value; }
@@ -619,5 +650,25 @@ namespace Noise.UI.ViewModels {
 			return(( mPlayController.CurrentTrack != null ) &&
 			       ( mPlayController.CurrentTrack.Album != null ));
 		}
+
+		public void Execute_ManagePlaybackContext() {
+			if(( mPlayController.CurrentTrack != null ) &&
+			   ( mDialogService != null ) &&
+			   ( mPlaybackContextDialogManager != null )) {
+				mPlaybackContextDialogManager.SetTrack( mPlayController.CurrentTrack.Album, mPlayController.CurrentTrack.Track );
+
+				if( mDialogService.ShowDialog( DialogNames.ManagePlaybackContext, mPlaybackContextDialogManager ) == true ) {
+					mPlaybackContextDialogManager.UpdatePlaybackContext();
+				}
+			}
+		}
+
+		[DependsUpon("StartTrackFlag")]
+		public bool CanExecute_ManagePlaybackContext() {
+			return(( mDialogService != null ) && 
+				   ( mPlaybackContextDialogManager != null ) &&
+				   ( mPlayController.CurrentTrack != null ));
+		}
+
 	}
 }

@@ -32,25 +32,26 @@ namespace Noise.Core.PlaySupport {
 	internal class PlayController : IPlayController, IRequireInitialization,
 									IHandle<Events.PlayQueueChanged>, IHandle<Events.PlayQueuedTrackRequest>,
 									IHandle<Events.SystemShutdown>, IHandle<Events.GlobalUserEvent> {
-		private readonly IEventAggregator		mEventAggregator;
-		private readonly ILogPlayState			mLog;
-		private readonly IAudioPlayer			mAudioPlayer;
-		private readonly IPlayQueue				mPlayQueue;
-		private readonly IPlayHistory			mPlayHistory;
-		private readonly IScrobbler				mScrobbler;
-		private readonly IPreferences			mPreferences;
-		private TimeSpan						mCurrentPosition;
-		private TimeSpan						mCurrentLength;
-		private bool							mDisplayTimeElapsed;
-		private AudioLevels						mSampleLevels;
-		private readonly Timer					mInfoUpdateTimer;
-		private int								mCurrentChannel;
-		private ePlaybackStatus					mCurrentStatus;
-		private bool							mEnableReplayGain;
-		private IDisposable						mPlayStatusDispose;
-		private IDisposable						mAudioLevelsDispose;
-		private IDisposable						mStreamInfoDispose;
-		private readonly Subject<ePlayState>	mPlayStateSubject;
+		private readonly IEventAggregator			mEventAggregator;
+		private readonly ILogPlayState				mLog;
+		private readonly IAudioPlayer				mAudioPlayer;
+		private readonly IPlaybackContextManager	mPlaybackContext;
+		private readonly IPlayQueue					mPlayQueue;
+		private readonly IPlayHistory				mPlayHistory;
+		private readonly IScrobbler					mScrobbler;
+		private readonly IPreferences				mPreferences;
+		private TimeSpan							mCurrentPosition;
+		private TimeSpan							mCurrentLength;
+		private bool								mDisplayTimeElapsed;
+		private AudioLevels							mSampleLevels;
+		private readonly Timer						mInfoUpdateTimer;
+		private int									mCurrentChannel;
+		private ePlaybackStatus						mCurrentStatus;
+		private bool								mEnableReplayGain;
+		private IDisposable							mPlayStatusDispose;
+		private IDisposable							mAudioLevelsDispose;
+		private IDisposable							mStreamInfoDispose;
+		private readonly Subject<ePlayState>		mPlayStateSubject;
 		private readonly Dictionary<int, PlayQueueTrack>	mOpenTracks;
 		private StateMachine<ePlayState, eStateTriggers>	mPlayStateController;
 		private ePlayState									mCurrentPlayState;
@@ -58,12 +59,13 @@ namespace Noise.Core.PlaySupport {
 		public IObservable<ePlayState>			PlayStateChange { get { return ( mPlayStateSubject.AsObservable()); } }
 
 		public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
-							   IPlayQueue playQueue, IPlayHistory playHistory, IScrobbler scrobbler,
+							   IPlayQueue playQueue, IPlayHistory playHistory, IScrobbler scrobbler, IPlaybackContextManager playbackContext,
 							   IAudioPlayer audioPlayer, IPreferences preferences, ILogPlayState log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mPlayQueue = playQueue;
 			mPlayHistory = playHistory;
+			mPlaybackContext = playbackContext;
 			mScrobbler = scrobbler;
 			mAudioPlayer = audioPlayer;
 			mPreferences = preferences;
@@ -376,6 +378,8 @@ namespace Noise.Core.PlaySupport {
 			var track = GetTrack( channel );
 
 			if( track != null ) {
+				mPlaybackContext.OpenContext( track.Track );
+
 				mEventAggregator.Publish( new Events.PlaybackTrackStarted( track ));
 				GlobalCommands.RequestLyrics.Execute( new LyricsRequestArgs( track.Artist, track.Track ));
 			}
@@ -388,6 +392,8 @@ namespace Noise.Core.PlaySupport {
 				track.PercentPlayed = mAudioPlayer.GetPercentPlayed( channel );
 				mPlayHistory.TrackPlayCompleted( track );
 				mScrobbler.TrackPlayed( track );
+
+				mPlaybackContext.CloseContext( track.Track );
 			}
 
 			mOpenTracks.Remove( channel );

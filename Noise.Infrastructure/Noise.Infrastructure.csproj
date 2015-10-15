@@ -165,6 +165,7 @@
     <Compile Include="Configuration\AudioPreferences.cs" />
     <Compile Include="Configuration\NoiseCorePreferences.cs" />
     <Compile Include="Configuration\UserInterfacePreferences.cs" />
+    <Compile Include="Dto\PlaybackContext.cs" />
     <Compile Include="Dto\ScAlbum.cs" />
     <Compile Include="Dto\AlbumSupportInfo.cs" />
     <Compile Include="Dto\Artwork.cs" />
@@ -208,6 +209,7 @@
     <Compile Include="Dto\ReplayGainFile.cs" />
     <Compile Include="Dto\RootFolder.cs" />
     <Compile Include="Dto\ScArtist.cs" />
+    <Compile Include="Dto\ScPlayContext.cs" />
     <Compile Include="Dto\ScTrack.cs" />
     <Compile Include="Dto\SearchResultItem.cs" />
     <Compile Include="Dto\SetAlbumCoverCommandArgs.cs" />
@@ -251,6 +253,8 @@
     <Compile Include="Interfaces\INoiseEnvironment.cs" />
     <Compile Include="Interfaces\INoiseLog.cs" />
     <Compile Include="Interfaces\IPlatformLog.cs" />
+    <Compile Include="Interfaces\IPlaybackContextManager.cs" />
+    <Compile Include="Interfaces\IPlaybackContextWriter.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
     <Compile Include="Interfaces\IPlayExhaustedFactory.cs" />
     <Compile Include="Interfaces\IPlayExhaustedStrategy.cs" />
@@ -269,6 +273,7 @@
     <Compile Include="Interfaces\IScrobbler.cs" />
     <Compile Include="Interfaces\ISearchProvider.cs" />
     <Compile Include="Interfaces\ISidecarProvider.cs" />
+    <Compile Include="Interfaces\ISidecarWriter.cs" />
     <Compile Include="Interfaces\IStorageFileProvider.cs" />
     <Compile Include="Interfaces\IStorageFolderProvider.cs" />
     <Compile Include="Interfaces\IStorageFolderSupport.cs" />

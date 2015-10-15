@@ -12,7 +12,8 @@ namespace Noise.Infrastructure.Dto {
 		public float			ReplayGainAlbumGain { get; set; }
 		public float			ReplayGainAlbumPeak { get; set; }
 		public long				Version { get; set; }
-		public List<ScTrack>	TrackList { get; set; } 
+		public List<ScTrack>	TrackList { get; set; }
+		public ScPlayContext	PlaybackContext {  get; set; }
 
 		public ScAlbum() {
 			AlbumName = string.Empty;
