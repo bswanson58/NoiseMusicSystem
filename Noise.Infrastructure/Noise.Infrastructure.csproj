@@ -165,6 +165,7 @@
     <Compile Include="Configuration\AudioPreferences.cs" />
     <Compile Include="Configuration\NoiseCorePreferences.cs" />
     <Compile Include="Configuration\UserInterfacePreferences.cs" />
+    <Compile Include="Dto\PlaybackContext.cs" />
     <Compile Include="Dto\ScAlbum.cs" />
     <Compile Include="Dto\AlbumSupportInfo.cs" />
     <Compile Include="Dto\Artwork.cs" />

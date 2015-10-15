@@ -1,7 +1,7 @@
-﻿using Noise.Infrastructure.Dto;
+﻿using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.PlaySupport {
-	internal class PlaybackContext : ScPlayContext {
+namespace Noise.Infrastructure.Dto {
+	public class PlaybackContext : ScPlayContext {
 		public void AddContext( ScPlayContext context ) {
 			if( context != null ) {
 				if( context.PanPositionValid ) {
@@ -118,6 +118,100 @@ namespace Noise.Core.PlaySupport {
 				TrackOverlapEnabled = newContext.TrackOverlapEnabled;
 				TrackOverlapMilliseconds = newContext.TrackOverlapMilliseconds;
 			}
+		}
+
+		public void ReadAllContext( IAudioController audioController ) {
+			PanPositionValid = true;
+			PanPosition = audioController.PanPosition;
+
+			PlaySpeedValid = true;
+			PlaySpeed = audioController.PlaySpeed;
+
+			PreampVolumeValid = true;
+			PreampVolume = audioController.PreampVolume;
+
+			ReverbValid = true;
+			ReverbEnabled = audioController.ReverbEnable;
+			ReverbDelay = audioController.ReverbDelay;
+			ReverbLevel = audioController.ReverbLevel;
+
+			SoftSaturationValid = true;
+			SoftSaturationEnabled = audioController.SoftSaturationEnable;
+			SoftSaturationDepth = audioController.SoftSaturationDepth;
+			SoftSaturationFactor = audioController.SoftSaturationFactor;
+
+			StereoEnhancerValid = true;
+			StereoEnhancerEnabled = audioController.StereoEnhancerEnable;
+			StereoEnhancerWetDry = audioController.StereoEnhancerWetDry;
+			StereoEnhancerWidth = audioController.StereoEnhancerWidth;
+
+			TrackOverlapValid = true;
+			TrackOverlapEnabled = audioController.TrackOverlapEnable;
+			TrackOverlapMilliseconds = audioController.TrackOverlapMilliseconds;
+		}
+
+		public void ReadContext( IAudioController audioController ) {
+				PanPosition = PanPositionValid ? audioController.PanPosition : 0.0;
+				PlaySpeed = PlaySpeedValid ? audioController.PlaySpeed : 0.0;
+				PreampVolume = PreampVolumeValid ? audioController.PreampVolume : 0.0;
+				ReverbEnabled = ReverbValid && audioController.ReverbEnable;
+				ReverbDelay = ReverbValid ? audioController.ReverbDelay : 0.0f;
+				ReverbLevel = ReverbValid ? audioController.ReverbLevel : 0.0f;
+				SoftSaturationEnabled = SoftSaturationValid && audioController.SoftSaturationEnable;
+				SoftSaturationDepth = SoftSaturationValid ? audioController.SoftSaturationDepth : 0.0;
+				SoftSaturationFactor = SoftSaturationValid ? audioController.SoftSaturationFactor : 0.0;
+				StereoEnhancerEnabled = StereoEnhancerValid && audioController.StereoEnhancerEnable;
+				StereoEnhancerWetDry = StereoEnhancerValid ? audioController.StereoEnhancerWetDry : 0.0;
+				StereoEnhancerWidth = StereoEnhancerValid ? audioController.StereoEnhancerWidth : 0.0;
+				TrackOverlapEnabled = TrackOverlapValid && audioController.TrackOverlapEnable;
+				TrackOverlapMilliseconds = TrackOverlapValid ? audioController.TrackOverlapMilliseconds : 0;
+		}
+
+		public void WriteContext( IAudioController audioController ) {
+			if( PanPositionValid ) {
+				audioController.PanPosition = PanPosition;
+			}
+
+			if( PreampVolumeValid ) {
+				audioController.PreampVolume = PreampVolume;
+			}
+
+			if( PlaySpeedValid ) {
+				audioController.PlaySpeed = PlaySpeed;
+			}
+
+			if( ReverbValid ) {
+				audioController.ReverbDelay = ReverbDelay;
+				audioController.ReverbLevel = ReverbLevel;
+				audioController.ReverbEnable = ReverbEnabled;
+			}
+
+			if( SoftSaturationValid ) {
+				audioController.SoftSaturationDepth = SoftSaturationDepth;
+				audioController.SoftSaturationFactor = SoftSaturationFactor;
+				audioController.SoftSaturationEnable = SoftSaturationEnabled;
+			}
+
+			if( StereoEnhancerValid ) {
+				audioController.StereoEnhancerWetDry = StereoEnhancerWetDry;
+				audioController.StereoEnhancerWidth = StereoEnhancerWidth;
+				audioController.StereoEnhancerEnable = StereoEnhancerEnabled;
+			}
+
+			if( TrackOverlapValid ) {
+				audioController.TrackOverlapMilliseconds = TrackOverlapMilliseconds;
+				audioController.TrackOverlapEnable = TrackOverlapEnabled;
+			}
+		}
+
+		public bool HasContext() {
+			return( PanPositionValid || 
+					PreampVolumeValid ||
+					PlaySpeedValid ||
+					ReverbValid ||
+					SoftSaturationValid ||
+					StereoEnhancerValid ||
+					TrackOverlapValid ); 
 		}
 	}
 }

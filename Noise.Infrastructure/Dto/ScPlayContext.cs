@@ -27,15 +27,5 @@
 		public bool		TrackOverlapValid { get; set; }
 		public bool		TrackOverlapEnabled { get; set; }
 		public int		TrackOverlapMilliseconds { get; set; }
-
-		public bool HasContext() {
-			return( PanPositionValid || 
-					PreampVolumeValid ||
-					PlaySpeedValid ||
-					ReverbValid ||
-					SoftSaturationValid ||
-					StereoEnhancerValid ||
-					TrackOverlapValid ); 
-		}
 	}
 }

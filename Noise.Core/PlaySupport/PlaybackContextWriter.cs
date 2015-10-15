@@ -11,25 +11,25 @@ namespace Noise.Core.PlaySupport {
 			mSidecarWriter = sidecarWriter;
 		}
 
-		public ScPlayContext GetAlbumContext( DbTrack forTrack ) {
-			var retValue = new ScPlayContext();
+		public PlaybackContext GetAlbumContext( DbTrack forTrack ) {
+			var retValue = new PlaybackContext();
 			var album = mAlbumProvider.GetAlbum( forTrack.Album );
 
 			if( album != null ) {
 				var scAlbum = mSidecarWriter.ReadSidecar( album );
 
-				retValue = scAlbum.PlaybackContext;
+				retValue.AddContext( scAlbum.PlaybackContext );
 			}
 
 			return( retValue );
 		}
 
-		public ScPlayContext GetTrackContext( DbTrack forTrack ) {
-			var retValue = new ScPlayContext();
+		public PlaybackContext GetTrackContext( DbTrack forTrack ) {
+			var retValue = new PlaybackContext();
 			var scTrack = mSidecarWriter.ReadSidecar( forTrack );
 
 			if( scTrack != null ) {
-				retValue = scTrack.PlaybackContext;
+				retValue.AddContext( scTrack.PlaybackContext );
 			}
 
 			return( retValue );

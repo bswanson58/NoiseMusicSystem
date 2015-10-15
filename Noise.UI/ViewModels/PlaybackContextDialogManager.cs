@@ -19,8 +19,8 @@ namespace Noise.UI.ViewModels {
 		private readonly IPlaybackContextWriter	mContextWriter;
 		private DbAlbum							mCurentAlbum;
 		private	DbTrack							mCurrentTrack;
-		private ScPlayContext					mTrackContext;
-		private ScPlayContext					mAlbumContext;
+		private PlaybackContext					mTrackContext;
+		private PlaybackContext					mAlbumContext;
 		private bool							mIsAlbumContext;
 		private readonly List<ContextType>		mContextTypes;
 		private readonly ContextType			mAlbumContextType;
@@ -40,46 +40,20 @@ namespace Noise.UI.ViewModels {
 			mCurentAlbum = album;
 			mCurrentTrack = track;
 
-			mTrackContext = mContextWriter.GetTrackContext( mCurrentTrack ) ?? new ScPlayContext();
-			mAlbumContext = mContextWriter.GetAlbumContext( mCurrentTrack ) ?? new ScPlayContext();
+			mTrackContext = mContextWriter.GetTrackContext( mCurrentTrack ) ?? new PlaybackContext();
+			mAlbumContext = mContextWriter.GetAlbumContext( mCurrentTrack ) ?? new PlaybackContext();
 
-			CurrentContext = mTrackContext.HasContext() ? mTrackContextType : mAlbumContextType;
+			CurrentContext = mTrackContext.HasContext() ? mTrackContextType : mAlbumContext.HasContext() ? mAlbumContextType : mTrackContextType;
 		}
 
 		public void UpdatePlaybackContext() {
 			if( mIsAlbumContext ) {
-				mAlbumContext.PanPosition = mAlbumContext.PanPositionValid ? mAudioController.PanPosition : 0.0;
-				mAlbumContext.PlaySpeed = mAlbumContext.PlaySpeedValid ? mAudioController.PlaySpeed : 0.0;
-				mAlbumContext.PreampVolume = mAlbumContext.PreampVolumeValid ? mAudioController.PreampVolume : 0.0;
-				mAlbumContext.ReverbEnabled = mAlbumContext.ReverbValid && mAudioController.ReverbEnable;
-				mAlbumContext.ReverbDelay = mAlbumContext.ReverbValid ? mAudioController.ReverbDelay : 0.0f;
-				mAlbumContext.ReverbLevel = mAlbumContext.ReverbValid ? mAudioController.ReverbLevel : 0.0f;
-				mAlbumContext.SoftSaturationEnabled = mAlbumContext.SoftSaturationValid && mAudioController.SoftSaturationEnable;
-				mAlbumContext.SoftSaturationDepth = mAlbumContext.SoftSaturationValid ? mAudioController.SoftSaturationDepth : 0.0;
-				mAlbumContext.SoftSaturationFactor = mAlbumContext.SoftSaturationValid ? mAudioController.SoftSaturationFactor : 0.0;
-				mAlbumContext.StereoEnhancerEnabled = mAlbumContext.StereoEnhancerValid && mAudioController.StereoEnhancerEnable;
-				mAlbumContext.StereoEnhancerWetDry = mAlbumContext.StereoEnhancerValid ? mAudioController.StereoEnhancerWetDry : 0.0;
-				mAlbumContext.StereoEnhancerWidth = mAlbumContext.StereoEnhancerValid ? mAudioController.StereoEnhancerWidth : 0.0;
-				mAlbumContext.TrackOverlapEnabled = mAlbumContext.TrackOverlapValid && mAudioController.TrackOverlapEnable;
-				mAlbumContext.TrackOverlapMilliseconds = mAlbumContext.TrackOverlapValid ? mAudioController.TrackOverlapMilliseconds : 0;
+				mAlbumContext.ReadContext( mAudioController );
 
 				mContextWriter.SaveAlbumContext( mCurrentTrack, mAlbumContext );
 			}
 			else {
-				mTrackContext.PanPosition = mTrackContext.PanPositionValid ? mAudioController.PanPosition : 0.0;
-				mTrackContext.PlaySpeed = mTrackContext.PlaySpeedValid ? mAudioController.PlaySpeed : 0.0;
-				mTrackContext.PreampVolume = mTrackContext.PreampVolumeValid ? mAudioController.PreampVolume : 0.0;
-				mTrackContext.ReverbEnabled = mTrackContext.ReverbValid && mAudioController.ReverbEnable;
-				mTrackContext.ReverbDelay = mTrackContext.ReverbValid ? mAudioController.ReverbDelay : 0.0f;
-				mTrackContext.ReverbLevel = mTrackContext.ReverbValid ? mAudioController.ReverbLevel : 0.0f;
-				mTrackContext.SoftSaturationEnabled = mTrackContext.SoftSaturationValid && mAudioController.SoftSaturationEnable;
-				mTrackContext.SoftSaturationDepth = mTrackContext.SoftSaturationValid ? mAudioController.SoftSaturationDepth : 0.0;
-				mTrackContext.SoftSaturationFactor = mTrackContext.SoftSaturationValid ? mAudioController.SoftSaturationFactor : 0.0;
-				mTrackContext.StereoEnhancerEnabled = mTrackContext.StereoEnhancerValid && mAudioController.StereoEnhancerEnable;
-				mTrackContext.StereoEnhancerWetDry = mTrackContext.StereoEnhancerValid ? mAudioController.StereoEnhancerWetDry : 0.0;
-				mTrackContext.StereoEnhancerWidth = mTrackContext.StereoEnhancerValid ? mAudioController.StereoEnhancerWidth : 0.0;
-				mTrackContext.TrackOverlapEnabled = mTrackContext.TrackOverlapValid && mAudioController.TrackOverlapEnable;
-				mTrackContext.TrackOverlapMilliseconds = mTrackContext.TrackOverlapValid ? mAudioController.TrackOverlapMilliseconds : 0;
+				mTrackContext.ReadContext( mAudioController );
 
 				mContextWriter.SaveTrackContext( mCurrentTrack, mTrackContext );
 			}

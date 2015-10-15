@@ -29,7 +29,7 @@ namespace Noise.Core.PlaySupport {
 				var newContext = BuildContext( forTrack );
 
 				if( mCurrentContext == null ) {
-					CollectDefaultContext( mDefaultContext );
+					mDefaultContext.ReadAllContext( mAudioController );
 				}
 
 				if( newContext.HasContext()) {
@@ -60,75 +60,6 @@ namespace Noise.Core.PlaySupport {
 			retValue.AddContext( mContextWriter.GetTrackContext( track ));
 
 			return( retValue );
-		}
-
-		private void CollectDefaultContext( PlaybackContext context ) {
-			context.PanPositionValid = true;
-			context.PanPosition = mAudioController.PanPosition;
-
-			context.PlaySpeedValid = true;
-			context.PlaySpeed = mAudioController.PlaySpeed;
-
-			context.PreampVolumeValid = true;
-			context.PreampVolume = mAudioController.PreampVolume;
-
-			context.ReverbValid = true;
-			context.ReverbEnabled = mAudioController.ReverbEnable;
-			context.ReverbDelay = mAudioController.ReverbDelay;
-			context.ReverbLevel = mAudioController.ReverbLevel;
-
-			context.SoftSaturationValid = true;
-			context.SoftSaturationEnabled = mAudioController.SoftSaturationEnable;
-			context.SoftSaturationDepth = mAudioController.SoftSaturationDepth;
-			context.SoftSaturationFactor = mAudioController.SoftSaturationFactor;
-
-			context.StereoEnhancerValid = true;
-			context.StereoEnhancerEnabled = mAudioController.StereoEnhancerEnable;
-			context.StereoEnhancerWetDry = mAudioController.StereoEnhancerWetDry;
-			context.StereoEnhancerWidth = mAudioController.StereoEnhancerWidth;
-
-			context.TrackOverlapValid = true;
-			context.TrackOverlapEnabled = mAudioController.TrackOverlapEnable;
-			context.TrackOverlapMilliseconds = mAudioController.TrackOverlapMilliseconds;
-		}
-
-		private void SetContext( PlaybackContext context ) {
-			if( context.PanPositionValid ) {
-				mAudioController.PanPosition = context.PanPosition;
-			}
-
-			if( context.PreampVolumeValid ) {
-				mAudioController.PreampVolume = context.PreampVolume;
-			}
-
-			if( context.PlaySpeedValid ) {
-				mAudioController.PlaySpeed = context.PlaySpeed;
-			}
-
-			if( context.ReverbValid ) {
-				mAudioController.ReverbDelay = context.ReverbDelay;
-				mAudioController.ReverbLevel = context.ReverbLevel;
-				mAudioController.ReverbEnable = context.ReverbEnabled;
-			}
-
-			if( context.SoftSaturationValid ) {
-				mAudioController.SoftSaturationDepth = context.SoftSaturationDepth;
-				mAudioController.SoftSaturationFactor = context.SoftSaturationFactor;
-				mAudioController.SoftSaturationEnable = context.SoftSaturationEnabled;
-			}
-
-			if( context.StereoEnhancerValid ) {
-				mAudioController.StereoEnhancerWetDry = context.StereoEnhancerWetDry;
-				mAudioController.StereoEnhancerWidth = context.StereoEnhancerWidth;
-				mAudioController.StereoEnhancerEnable = context.StereoEnhancerEnabled;
-			}
-
-			if( context.TrackOverlapValid ) {
-				mAudioController.TrackOverlapMilliseconds = context.TrackOverlapMilliseconds;
-				mAudioController.TrackOverlapEnable = context.TrackOverlapEnabled;
-			}
-
-			mEventAggregator.Publish( new Events.AudioParametersChanged());
 		}
 
 		private void ChangeContext( PlaybackContext currentContext, PlaybackContext newContext ) {
@@ -165,6 +96,12 @@ namespace Noise.Core.PlaySupport {
 
 			mCurrentContext = null;
 			mCurrentTrack = null;
+		}
+
+		private void SetContext( PlaybackContext context ) {
+			context.WriteContext( mAudioController );
+
+			mEventAggregator.Publish( new Events.AudioParametersChanged());
 		}
 	}
 }
