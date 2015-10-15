@@ -33,7 +33,7 @@ namespace Noise.Infrastructure.Configuration {
 			MaintainAlbumSidecars = true;
 
 			DeletePlayedTracks = true;
-			MaximumPlayedTracks = 12;
+			MaximumPlayedTracks = 14;
 		}
 	}
 }
