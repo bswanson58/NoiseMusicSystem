@@ -7,79 +7,82 @@ using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteHost;
 using ReusableBits.Mvvm.CaliburnSupport;
+using ReusableBits.Platform;
 
 namespace Noise.Core {
 	public class NoiseManager : INoiseManager, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
-		private	readonly IEventAggregator			mEvents;
-		private readonly ILifecycleManager			mLifecycleManager;
-		private readonly IRemoteServer				mRemoteServer;
-		private readonly ICloudSyncManager			mCloudSyncMgr;
-		private readonly ILibraryBuilder			mLibraryBuilder;
-		private readonly IDatabaseManager			mDatabaseManager;
+		private	readonly IEventAggregator		mEvents;
+		private readonly INoiseLog				mLog;
+		private readonly ILifecycleManager		mLifecycleManager;
+		private readonly IPreferences			mPreferences;
+		private readonly IRemoteServer			mRemoteServer;
+		private readonly ILibraryBuilder		mLibraryBuilder;
+		private readonly IDatabaseManager		mDatabaseManager;
 
 		public NoiseManager( IEventAggregator eventAggregator,
+							 INoiseLog log,
 							 ILifecycleManager lifecycleManager,
 							 IDatabaseManager databaseManager,
-							 ICloudSyncManager cloudSyncManager,
 							 ILibraryBuilder libraryBuilder,
 							 IRemoteServer remoteServer,
-							 // components that just need to be referrenced.
+							 IPreferences preferences,
+							 // components that just need to be referenced.
+							 // ReSharper disable UnusedParameter.Local
 							 IAudioController audioController,
 							 IPlayController playController,
 							 ISearchProvider searchProvider,
 							 ITagManager tagManager,
 							 IMetadataManager metadataManager,
 							 IEnumerable<IRequireConstruction> backgroundComponents ) {
+							 // ReSharper restore UnusedParameter.Local
 			mEvents = eventAggregator;
+			mLog = log;
 			mLifecycleManager = lifecycleManager;
 			mRemoteServer = remoteServer;
 			mDatabaseManager = databaseManager;
-			mCloudSyncMgr = cloudSyncManager;
 			mLibraryBuilder = libraryBuilder;
+			mPreferences = preferences;
 		}
 
 		public async Task<bool> AsyncInitialize() {
-			var initTask = new Task<bool>(() => ( Initialize()));
+			var initTask = new Task<bool>(() => ( InitializeAndNotify()));
 
 			initTask.Start();
 
 			return( await initTask );
 		}
-		
+
+		public bool InitializeAndNotify() {
+			var retValue = Initialize();
+
+			mEvents.PublishOnUIThreadAsync( new Events.NoiseSystemReady( this, retValue ));
+
+			return( retValue );
+		}
+
 		public bool Initialize() {
 			var isInitialized = false;
 
-			NoiseLogger.Current.LogMessage( "Initializing Noise Music System" );
+			mLog.LogMessage( string.Format( "Initializing {0} v{1}", VersionInformation.ProductName, VersionInformation.Version ));
 
 			try {
 				mLifecycleManager.Initialize();
 				mEvents.Subscribe( this );
 
-				var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<CloudSyncConfiguration>( CloudSyncConfiguration.SectionName );
-				if( configuration != null ) {
-					if( mCloudSyncMgr.InitializeCloudSync( configuration.LoginName, configuration.LoginPassword )) {
-						mCloudSyncMgr.MaintainSynchronization = configuration.UseCloud;
-					}
-					else {
-						NoiseLogger.Current.LogMessage( "Noise Manager: Could not initialize cloud sync." );
-					}
-				}
+				// we're initialized regardless of the status of the remote server.
+				isInitialized = true;
 
-				var sysConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-				if(( sysConfig != null ) &&
-					( sysConfig.EnableRemoteAccess )) {
+				var preferences = mPreferences.Load<NoiseCorePreferences>();
+
+				if( preferences.EnableRemoteAccess ) {
 					mRemoteServer.OpenRemoteServer();
 				}
 
-				isInitialized = true;
-
-				NoiseLogger.Current.LogMessage( "Initialized NoiseManager." );
+				mLog.LogMessage( "Noise Music System initialized" );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "NoiseManager:Initialize", ex );
+				mLog.LogException( "Initialization failed", ex );
 			}
-
-			mEvents.PublishOnUIThreadAsync( new Events.NoiseSystemReady( this, isInitialized ));
 
 			return ( isInitialized );
 		}
@@ -96,18 +99,7 @@ namespace Noise.Core {
 		}
 
 		public void Handle( Events.DatabaseOpened arg ) {
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
-			if( configuration != null ) {
-				if( configuration.EnableLibraryExplorer ) {
-					mLibraryBuilder.StartLibraryUpdate();
-				}
-				else {
-					mLibraryBuilder.LogLibraryStatistics();
-				}
-
-				mLibraryBuilder.EnableUpdateOnLibraryChange = configuration.EnableLibraryChangeUpdates;
-			}
+			mLibraryBuilder.LogLibraryStatistics();
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {

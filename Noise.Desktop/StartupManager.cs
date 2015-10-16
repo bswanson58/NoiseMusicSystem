@@ -7,25 +7,25 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Desktop {
 	public class StartupManager : IHandle<Events.NoiseSystemReady>, IHandle<Events.LibraryConfigurationLoaded> {
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly IPreferences		mPreferences;
 		private ILibraryConfiguration		mLibraryConfiguration;
 		private	long						mLastLibraryUsed;
 		private bool						mLoadLastLibraryOnStartup;
 
-		public StartupManager( IEventAggregator eventAggregator ) {
+		public StartupManager( IEventAggregator eventAggregator, IPreferences preferences ) {
 			mEventAggregator = eventAggregator;
+			mPreferences = preferences;
 
 			mEventAggregator.Subscribe( this );
 		}
 
 		public void Initialize() {
+			var preferences = mPreferences.Load<NoiseCorePreferences>();
+
+			mLastLibraryUsed = preferences.LastLibraryUsed;
+			mLoadLastLibraryOnStartup = preferences.LoadLastLibraryOnStartup;
+
 			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.StartupLayout ));
-
-			var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-
-			if( expConfig != null ) {
-				mLastLibraryUsed = expConfig.LastLibraryUsed;
-				mLoadLastLibraryOnStartup = expConfig.LoadLastLibraryOnStartup;
-			}
 		}
 
 		public void Handle( Events.NoiseSystemReady args ) {

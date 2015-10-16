@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
-using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbArtwork : AssociatedContent {
@@ -41,15 +39,8 @@ namespace Noise.Infrastructure.Dto {
 			Rotation = copy.Rotation;
 		}
 
-		[Ignore]
-		public int DbInfoSource {
-			get{ return((int)Source ); }
-			set{ Source = (InfoSource)value; }
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbArtwork )); }
+		public override string ToString() {
+			return( string.Format( "Artwork \"{0}\", Id:{1}, Artist:{2}, Album:{3}, Associated Item:{4}, Type:{5}", Name, DbId, Artist, Album, AssociatedItem, ContentType ));
 		}
 	}
 }

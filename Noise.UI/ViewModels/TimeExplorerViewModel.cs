@@ -5,6 +5,7 @@ using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.UI.Logging;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
@@ -64,15 +65,17 @@ namespace Noise.UI.ViewModels {
 		}
 	}
 
-	public class TimeExplorerViewModel : AutomaticCommandBase,
-										 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+	internal class TimeExplorerViewModel : AutomaticCommandBase,
+										   IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly IUiLog				mLog;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly BindableCollection<DecadeList>	mDecadeList;
 		private TaskHandler					mAlbumLoaderTaskHandler;
 
-		public TimeExplorerViewModel( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration, IAlbumProvider albumProvider ) {
+		public TimeExplorerViewModel( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration, IAlbumProvider albumProvider, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mAlbumProvider = albumProvider;
 
 			mDecadeList = new BindableCollection<DecadeList>();
@@ -157,7 +160,7 @@ namespace Noise.UI.ViewModels {
 				mDecadeList.Refresh();
 			},
 			() => { },
-			ex => NoiseLogger.Current.LogException( "TimeExplorerViewModel:LoadAlbums", ex ));
+			ex => mLog.LogException( "Loading Albums", ex ));
 		}
 	}
 }

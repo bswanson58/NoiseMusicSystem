@@ -1,7 +1,5 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
-using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	[DebuggerDisplay("File = {Name}")]
@@ -9,7 +7,7 @@ namespace Noise.Infrastructure.Dto {
 		public string		Name { get; protected set; }
 		public long			ParentFolder { get; protected set; }
 		public long			FileSize { get; protected set; }
-		public DateTime		FileModifiedDate { get; protected set; }
+		public long			FileModifiedTicks { get; protected set; }
 		public eFileType	FileType { get; set; }
 		public long			MetaDataPointer { get; set; }
 		public bool			IsDeleted { get; set; }
@@ -22,7 +20,7 @@ namespace Noise.Infrastructure.Dto {
 			Name = name;
 			ParentFolder = parentFolder;
 			FileSize = fileSize;
-			FileModifiedDate = modifiedDate;
+			FileModifiedTicks = modifiedDate.Ticks;
 
 			FileType = eFileType.Undetermined;
 			MetaDataPointer = Constants.cDatabaseNullOid;
@@ -31,19 +29,15 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public void UpdateModifiedDate( DateTime fileModificationDate ) {
-			FileModifiedDate = fileModificationDate;
+			FileModifiedTicks = fileModificationDate.Ticks;
 			WasUpdated = true;
 		}
 
-		[Ignore]
-		public int DbFileType {
-			get{ return((int)FileType ); }
-			protected set{ FileType = (eFileType)value; }
-		}
+		public override string ToString() {
+			var isDeleted = IsDeleted ? " (Marked for deletion)" : string.Empty;
+			var cleanName = Name.Replace( '{', '_' ).Replace( '}', '_' );
 
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( StorageFile )); }
+			return( string.Format( "File \"{0}\", Id:{1}, Type:{2}, Type DbId:{3} {4}", cleanName, DbId, FileType, MetaDataPointer, isDeleted ));
 		}
 	}
 }

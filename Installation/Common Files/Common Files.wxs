@@ -7,12 +7,13 @@
 		<?include Automapper.wxi ?>
 		<?include BASS Audio.wxi ?>
 		<?include CaliburnMicro.wxi ?>
+		<?include Configuration.wxi?>
 		<?include CuttingEdge.wxi ?>
-		<?include Eloquera.wxi ?>
+		<?include DotNetZip.wxi ?>
 		<?include EntityFramework.wxi ?>
 		<?include GDataDB.wxi ?>
 		<?include GongSolutions.wxi ?>
-		<?include LastFmSharp.wxi ?>
+		<?include LastFmScrobbler.wxi ?>
 		<?include Lucene.wxi ?>
 		<?include MahApps.wxi?>
 		<?include Microsoft.wxi ?>
@@ -22,7 +23,9 @@
 		<?include Prism.wxi ?>
 		<?include RavenDB.wxi ?>
 		<?include recls.wxi ?>
+		<?include Refit.wxi ?>
 		<?include ReplayGain.wxi ?>
+		<?include SeriLog.wxi ?>
 		<?include Stateless.wxi ?>
 		<?include TagLibSharp.wxi ?>
 	</Fragment>

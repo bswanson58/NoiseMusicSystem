@@ -2,17 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Noise.Infrastructure;
+using Noise.AudioSupport.Logging;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.AudioSupport.Player {
 	public class EqManager : IEqManager {
+		private readonly IPreferences				mPreferences;
+		private readonly ILogAudioPlay				mLog;
 		private readonly List<ParametricEqualizer>	mEqPresets;
 		private ParametricEqualizer					mCurrentEq;
+		private bool								mEqEnabled;
 
-		public EqManager() {
+		public EqManager( IPreferences preferences, ILogAudioPlay log ) {
+			mPreferences = preferences;
+			mLog = log;
+
 			mEqPresets = new List<ParametricEqualizer>();
 		}
 
@@ -51,7 +57,7 @@ namespace Noise.AudioSupport.Player {
 				retValue = true;
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - EqPresets:LoadPresets ", ex );
+				mLog.LogException( "Loading EQ presets", ex );
 			}
 
 			return( retValue );
@@ -59,7 +65,7 @@ namespace Noise.AudioSupport.Player {
 
 		private bool LoadUserEq() {
 			var retValue = false;
-			var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+			var audioCongfiguration = mPreferences.Load<AudioPreferences>();
 			if( audioCongfiguration != null ) {
 				var equalizerList = ( from ParametricEqConfiguration eqConfig in audioCongfiguration.ParametricEqualizers
 				                      select eqConfig.AsParametericEqualizer()).ToList();
@@ -81,6 +87,8 @@ namespace Noise.AudioSupport.Player {
 					mCurrentEq = ( from ParametricEqualizer eq in mEqPresets where eq.EqualizerId == audioCongfiguration.DefaultEqualizer select eq ).FirstOrDefault();
 				}
 
+				mEqEnabled = audioCongfiguration.EqEnabled;
+
 				retValue = true;
 			}
 
@@ -92,12 +100,13 @@ namespace Noise.AudioSupport.Player {
 
 			if(( eq != null ) &&
 			   (!eq.IsPreset )) {
-				var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+				var audioCongfiguration = mPreferences.Load<AudioPreferences>();
 				if( audioCongfiguration != null ) {
 					audioCongfiguration.UpdateEq( eq );
 					audioCongfiguration.EqEnabled = eqEnabled;
+					audioCongfiguration.DefaultEqualizer = mCurrentEq != null ? mCurrentEq.EqualizerId : 0;
 
-					NoiseSystemConfiguration.Current.Save( audioCongfiguration );
+					mPreferences.Save( audioCongfiguration );
 
 					retValue = true;
 				}
@@ -117,13 +126,25 @@ namespace Noise.AudioSupport.Player {
 				   ( mCurrentEq.EqualizerId != value.EqualizerId )) {
 					mCurrentEq = value;
 
-					var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+					var audioCongfiguration = mPreferences.Load<AudioPreferences>();
 					if( audioCongfiguration != null ) {
 						audioCongfiguration.DefaultEqualizer = mCurrentEq.EqualizerId;
 
-						NoiseSystemConfiguration.Current.Save( audioCongfiguration );
+						mPreferences.Save( audioCongfiguration );
 					}
 				}
+			}
+		}
+
+		public bool EqEnabled {
+			get{ return( mEqEnabled ); }
+			set {
+				mEqEnabled = value;
+				
+				var preferences = mPreferences.Load<AudioPreferences>();
+
+				preferences.EqEnabled = mEqEnabled;
+				mPreferences.Save( preferences );
 			}
 		}
 	}

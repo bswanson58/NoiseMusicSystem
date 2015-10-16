@@ -123,6 +123,9 @@ namespace Noise.AudioSupport.ReplayGain {
 
 							file.SetTrackGain( ReplayGain.GetTitleGain() );
 						}
+
+						Bass.BASS_ChannelStop( channel );
+						Bass.BASS_StreamFree( channel );
 					}
 					catch( Exception ex ) {
 						file.SetTrackFailure( ex.Message );

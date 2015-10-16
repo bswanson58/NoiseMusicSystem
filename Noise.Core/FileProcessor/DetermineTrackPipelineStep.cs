@@ -1,14 +1,9 @@
 ﻿using CuttingEdge.Conditions;
-using Noise.Infrastructure;
-using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.FileProcessor {
 	internal class DetermineTrackPipelineStep : BasePipelineStep {
-		private readonly IStorageFolderSupport	mStorageFolderSupport;
-
-		public DetermineTrackPipelineStep( IStorageFolderSupport storageFolderSupport ) :
+		public DetermineTrackPipelineStep() :
 			base( ePipelineStep.DetermineTrackName ) {
-			mStorageFolderSupport = storageFolderSupport;
 		}
 
 		public override void ProcessStep( PipelineContext context ) {
@@ -25,7 +20,10 @@ namespace Noise.Core.FileProcessor {
 			}
 
 			if( string.IsNullOrWhiteSpace( context.Track.Name )) {
-				NoiseLogger.Current.LogMessage( "Track name cannot be determined for file: {0}", mStorageFolderSupport.GetPath( context.StorageFile ));
+				context.Log.LogTrackNotFound( context.StorageFile );
+			}
+			else {
+				context.Log.LogTrackAdded( context.StorageFile, context.Track );
 			}
 		}
 	}

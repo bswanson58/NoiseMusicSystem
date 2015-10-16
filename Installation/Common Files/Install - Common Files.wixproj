@@ -37,12 +37,13 @@
     <Content Include="Automapper.wxi" />
     <Content Include="BASS Audio.wxi" />
     <Content Include="CaliburnMicro.wxi" />
+    <Content Include="Configuration.wxi" />
     <Content Include="CuttingEdge.wxi" />
-    <Content Include="Eloquera.wxi" />
+    <Content Include="DotNetZip.wxi" />
     <Content Include="EntityFramework.wxi" />
     <Content Include="GDataDB.wxi" />
     <Content Include="GongSolutions.wxi" />
-    <Content Include="LastFmSharp.wxi" />
+    <Content Include="LastFmScrobbler.wxi" />
     <Content Include="Lucene.wxi" />
     <Content Include="MahApps.wxi" />
     <Content Include="Microsoft.wxi" />
@@ -53,28 +54,14 @@
     <Content Include="Prism.wxi" />
     <Content Include="RavenDB.wxi" />
     <Content Include="recls.wxi" />
+    <Content Include="ReFit.wxi" />
     <Content Include="ReplayGain.wxi" />
+    <Content Include="SeriLog.wxi" />
     <Content Include="Stateless.wxi" />
     <Content Include="TagLibSharp.wxi" />
     <Content Include="Version.wxi" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DiscogsConnect\DiscogsConnect.csproj">
-      <Name>DiscogsConnect</Name>
-      <Project>{6f475ad9-e1b4-4ab1-8e82-b9f5a7608568}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
-    <ProjectReference Include="..\..\LastFmSharp\LastFmSharp.csproj">
-      <Name>LastFmSharp</Name>
-      <Project>{b57a7572-5f5c-4166-ae0b-9814b550e9b2}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
-    </ProjectReference>
     <ProjectReference Include="..\..\LayoutManager\Layout Manager.csproj">
       <Name>Layout Manager</Name>
       <Project>{28833337-bdb1-412f-b378-575901285100}</Project>
@@ -118,14 +105,6 @@
     <ProjectReference Include="..\..\Noise.Desktop\Noise.Desktop.csproj">
       <Name>Noise.Desktop</Name>
       <Project>{3ecb477e-5631-4e77-b66f-a64bc37c42ec}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Noise.EloqueraDatabase\Noise.EloqueraDatabase.csproj">
-      <Name>Noise.EloqueraDatabase</Name>
-      <Project>{16dcd043-e491-4f03-a46a-3c0273e8403d}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>

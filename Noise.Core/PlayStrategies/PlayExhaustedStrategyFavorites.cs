@@ -1,13 +1,13 @@
 ﻿using System;
-using Noise.Infrastructure;
+using Noise.Core.Logging;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
 	internal class PlayExhaustedStrategyFavorites : PlayExhaustedListBase {
 		private readonly	ITrackProvider	mTrackProvider;
 
-		public PlayExhaustedStrategyFavorites( ITrackProvider trackProvider ) :
-			base( ePlayExhaustedStrategy.PlayFavorites, "Play Favorites", "Play tracks from your list of favorites." ) {
+		public PlayExhaustedStrategyFavorites( ITrackProvider trackProvider, ILogPlayStrategy log ) :
+			base( ePlayExhaustedStrategy.PlayFavorites, "Play Favorites", "Play tracks from your list of favorites.", log ) {
 			mTrackProvider = trackProvider;
 		}
 
@@ -28,7 +28,7 @@ namespace Noise.Core.PlayStrategies {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - PlayExhaustedStrategyFavorites: ", ex );
+				Log.LogException( "Queuing tracks", ex );
 			}
 		}
 	}

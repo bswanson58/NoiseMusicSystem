@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using Moq;
+using Noise.Core.Logging;
 using NUnit.Framework;
 using Noise.Core.FileProcessor;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using ReusableBits.TestSupport.Mocking;
@@ -12,41 +12,42 @@ namespace Noise.Core.Tests.FileProcessor {
 	public class UpdateUndeterminedPipelineStepTests {
 		internal class TestableUpdateUndeterminedPipelineStep : Testable<UpdateUndeterminedPipelineStep> { }
 
-		private DatabaseChangeSummary	mSummary;
-		private StorageFile				mStorageFile;
+		private DatabaseChangeSummary		mSummary;
+		private ILogLibraryClassification	mLog;
 
 		[SetUp]
 		public void Setup() {
 			mSummary = new DatabaseChangeSummary();
-			mStorageFile = new StorageFile();
 
-			NoiseLogger.Current = new Mock<ILog>().Object;
+			mLog = new Mock<ILogLibraryClassification>().Object;
 		}
 
 		[Test]
-		public void UpdateShouldSetStorageFileTypeToUndetermined() {
+		public void UpdateShouldSetStorageFileTypeToUnknown() {
 			var testable = new TestableUpdateUndeterminedPipelineStep();
 			var sut = testable.ClassUnderTest;
-			var context = new PipelineContext( null, null, mStorageFile, mSummary );
+			var storageFile = new StorageFile {FileType = eFileType.Undetermined };
+			var context = new PipelineContext( null, null, storageFile, mSummary, mLog );
 			var updater = new Mock<IDataUpdateShell<StorageFile>>();
 
-			updater.Setup( m => m.Item ).Returns( mStorageFile );
-			testable.Mock<IStorageFileProvider>().Setup( m => m.GetFileForUpdate( mStorageFile.DbId )).Returns( updater.Object );
+			updater.Setup( m => m.Item ).Returns( storageFile );
+			testable.Mock<IStorageFileProvider>().Setup( m => m.GetFileForUpdate( storageFile.DbId )).Returns( updater.Object );
 
 			sut.ProcessStep( context );
 
-			mStorageFile.FileType.Should().Be( eFileType.Undetermined );
+			storageFile.FileType.Should().Be( eFileType.Unknown );
 		}
 
 		[Test]
 		public void UpdateShouldUpdateStorageFile() {
 			var testable = new TestableUpdateUndeterminedPipelineStep();
 			var sut = testable.ClassUnderTest;
-			var context = new PipelineContext( null, null, mStorageFile, mSummary );
+			var storageFile = new StorageFile {FileType = eFileType.Undetermined };
+			var context = new PipelineContext( null, null, storageFile, mSummary, mLog );
 			var updater = new Mock<IDataUpdateShell<StorageFile>>();
 
-			updater.Setup( m => m.Item ).Returns( mStorageFile );
-			testable.Mock<IStorageFileProvider>().Setup( m => m.GetFileForUpdate( mStorageFile.DbId )).Returns( updater.Object );
+			updater.Setup( m => m.Item ).Returns( storageFile );
+			testable.Mock<IStorageFileProvider>().Setup( m => m.GetFileForUpdate( storageFile.DbId )).Returns( updater.Object );
 
 			sut.ProcessStep( context );
 

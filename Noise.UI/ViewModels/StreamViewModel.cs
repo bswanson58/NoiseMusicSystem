@@ -7,13 +7,15 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
+using Noise.UI.Logging;
 using Noise.UI.Support;
 using ReusableBits;
 
 namespace Noise.UI.ViewModels {
-	class StreamViewModel : ViewModelBase,
-							IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+	internal class StreamViewModel : ViewModelBase,
+									 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator			mEventAggregator;
+		private readonly IUiLog						mLog;
 		private readonly IInternetStreamProvider	mStreamProvider;
 		private readonly IDataExchangeManager		mDataExchangeMgr;
 		private readonly IDialogService				mDialogService;
@@ -21,8 +23,9 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<UiInternetStream>	mStreams;
 
 		public StreamViewModel( IEventAggregator eventAggregator, IDialogService dialogService, IDatabaseInfo databaseInfo,
-								IInternetStreamProvider streamProvider, IDataExchangeManager dataExchangeManager ) {
+								IInternetStreamProvider streamProvider, IDataExchangeManager dataExchangeManager, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mStreamProvider = streamProvider;
 			mDataExchangeMgr = dataExchangeManager;
 			mDialogService = dialogService;
@@ -82,7 +85,7 @@ namespace Noise.UI.ViewModels {
 											}
 										},
 										() => RaiseCanExecuteChangedEvent( "CanExecute_ExportStreams" ),
-										ex => NoiseLogger.Current.LogException( "StreamViewModel:UpdateStreams", ex )
+										ex => mLog.LogException( "Updating Streams", ex )
 									);
 		}
 

@@ -1,13 +1,12 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
-using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	[DebuggerDisplay("Track = {Name}")]
 	public class DbTrack : DbBase, IUserSettings {
 		public string			Name { get; set; }
 		public string			Performer { get; set; }
+		public long				Artist { get; set; }
 		public long				Album { get; set; }
 		public Int32			DurationMilliseconds { get; set; }
 		public Int32			Bitrate { get; set; }
@@ -44,23 +43,19 @@ namespace Noise.Infrastructure.Dto {
 			VolumeName = string.Empty;
 		}
 
-		[Ignore]
 		public TimeSpan Duration {
 			get{ return( new TimeSpan( 0, 0, 0, 0, DurationMilliseconds )); }
 		}
 
-		[Ignore]
 		public long Genre {
 			get{ return( UserGenre == Constants.cDatabaseNullOid ? ( ExternalGenre == Constants.cDatabaseNullOid ? CalculatedGenre : ExternalGenre ) : UserGenre ); }
 			set{ UserGenre = value; }
 		}
 
-		[Ignore]
 		public bool IsUserRating {
 			get{ return( true ); }
 		}
 
-		[Ignore]
 		public DateTime DateAdded {
 			get{ return( new DateTime( DateAddedTicks )); }
 		}
@@ -70,9 +65,8 @@ namespace Noise.Infrastructure.Dto {
 			LastPlayedTicks = DateTime.Now.Ticks;
 		}
 
-		[Export( "PersistenceType" )]
-		public static Type PersistenceType {
-			get{ return( typeof( DbTrack )); }
+		public override string ToString() {
+			return( string.Format( "Track \"{0}\", Id:{1}, Artist:{2}, Album:{3}", Name, DbId, Artist, Album ));
 		}
 	}
 }

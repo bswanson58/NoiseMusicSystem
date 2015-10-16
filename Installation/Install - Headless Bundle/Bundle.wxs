@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+	 xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
+	 xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+	<?include ..\Common Files\Version.wxi?>
+	<?define ProductName="Noise Music Service"?>
+
+	<Bundle Name="$(var.ProductName)"
+			Version="$(var.ProductVersion)"
+			UpgradeCode="$(var.ProductUpgradeCode)"
+			Manufacturer="$(var.Manufacturer)"
+			Copyright="$(var.Copyright)"
+			IconSourceFile="..\..\Common\Noise.ico"
+			AboutUrl="$(var.CompanyUrl)"
+		  >
+		<BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
+			<PayloadGroupRef Id ="BundlerPayload" />
+		</BootstrapperApplicationRef>
+
+		<Variable Name="InstallFolder" Type="string" Value="[ProgramFilesFolder]Secret Squirrel Software\Noise Music System\Noise Music Service" />
+
+		<Chain>
+			<!-- Install .Net 4.5 -->
+			<PackageGroupRef Id="NetFx45Web" />
+
+			<PackageGroupRef Id="InstallerPackages" />
+		</Chain>
+	</Bundle>
+
+	<Fragment>
+		<PayloadGroup Id ="BundlerPayload">
+			<Payload SourceFile="$(var.BundlerUi.TargetPath)"/>
+			<Payload SourceFile="$(var.BundlerUi.TargetDir)BootstrapperCore.config" />
+			<Payload SourceFile="$(var.BundlerUi.TargetDir)ReusableBits.Ui.dll" />
+		</PayloadGroup>
+	</Fragment>
+
+	<Fragment>
+		<PackageGroup Id="InstallerPackages" >
+
+			<?if $(var.Platform) = "x64" ?>
+			<MsiPackage Id="LocalDB" DisplayName="SQL Server Express 2012" DisplayInternalUI="yes" Permanent="yes" Visible="yes"
+						SourceFile="..\Prerequisites\SQL Server 2012 Express LocalDB SP1\x64\SqlLocalDB.msi"/>
+			<?else ?>
+			<MsiPackage Id="LocalDB" DisplayName="SQL Server Express 2012" DisplayInternalUI="yes" Permanent="yes" Visible="yes"
+						SourceFile="..\Prerequisites\SQL Server 2012 Express LocalDB SP1\x86\SqlLocalDB.msi"/>
+			<?endif ?>
+
+			<MsiPackage Id="NoisePackage" DisplayInternalUI="yes" Vital="yes" Visible="no" SourceFile="$(var.Install - Headless.TargetPath)"/>
+
+		</PackageGroup>
+	</Fragment>
+</Wix>

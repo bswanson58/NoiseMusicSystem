@@ -3,7 +3,6 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Moq;
 using Noise.BlobStorage.BlobStore;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
 using Raven.Client;
@@ -18,12 +17,11 @@ namespace Noise.RavenDatabase.Tests.DataProviders {
 		private Subject<bool>			mDatabaseClosedSubject;
 		public IObservable<bool>		DatabaseClosed { get { return ( mDatabaseClosedSubject.AsObservable()); } }
 
-		public	Mock<ILog>				DummyLog { get; private set; }
+		public	Mock<INoiseLog>			DummyLog { get; private set; }
 		public	Mock<IDbFactory>		DatabaseFactory { get; private set; }
 
 		public void FixtureSetup() {
-			DummyLog = new Mock<ILog>();
-			NoiseLogger.Current = DummyLog.Object;
+			DummyLog = new Mock<INoiseLog>();
 
 			mDatabaseClosedSubject = new Subject<bool>();
 		}
@@ -34,7 +32,7 @@ namespace Noise.RavenDatabase.Tests.DataProviders {
 			IndexCreation.CreateIndexes( typeof( RavenDatabaseModule ).Assembly, mDatabase );
 
 			BlobResolver = new BlobStorageResolver();
-			BlobStorageManager = new BlobStorageManager();
+			BlobStorageManager = new BlobStorageManager( DummyLog.Object );
 			BlobStorageManager.SetResolver( BlobResolver );
 
 			DatabaseFactory = new Mock<IDbFactory>();

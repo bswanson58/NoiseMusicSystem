@@ -107,7 +107,7 @@
                                    ReusableBehaviours:FadedPropertyChange.Property="Text"
                                    ReusableBehaviours:FadedPropertyChange.Duration="0:0:0.7"
                                    ReusableBehaviours:FadedPropertyChange.TransitionDelay="0:0:0.3"
-                                   ReusableBehaviours:FadedPropertyChange.Binding="{Binding AlbumName}"
+                                   ReusableBehaviours:FadedPropertyChange.Binding="{Binding ArtistAlbumName}"
                                    ReusableBehaviours:FadeTrimming.IsEnabled="True"
                                    ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
                     </StackPanel>

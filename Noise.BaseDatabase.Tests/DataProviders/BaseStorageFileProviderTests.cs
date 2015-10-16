@@ -26,6 +26,20 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
+		public void CanStoreAllFileProperties() {
+			var file = new StorageFile( "file name", 1, 2, new DateTime( 2000, 10, 30, 1, 20, 33 )){
+										FileType = eFileType.Text,
+										IsDeleted = true,
+										MetaDataPointer = 5,
+										WasUpdated = true };
+			var sut = CreateSut();
+
+			sut.AddFile( file );
+			var result = sut.GetFileForUpdate( file.DbId );
+			result.Item.ShouldHave().AllProperties().EqualTo( file );
+		}
+
+		[Test]
 		public void CanRetrieveStorageFile() {
 			var file = new StorageFile( "filename", 1, 100, DateTime.Now );
 			var sut = CreateSut();
@@ -38,7 +52,7 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 
 				var retrieveFile = fileList.List.First();
 
-				file.ShouldHave().AllPropertiesBut( p => p.FileModifiedDate ).EqualTo( retrieveFile );
+				file.ShouldHave().AllPropertiesBut( p => p.FileModifiedTicks ).EqualTo( retrieveFile );
 			}
 		}
 
@@ -144,7 +158,7 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 				Assert.IsNotNull( updater );
 				Assert.IsNotNull( updater.Item );
 
-				file.ShouldHave().AllPropertiesBut( p => p.FileModifiedDate ).EqualTo( updater.Item );
+				file.ShouldHave().AllPropertiesBut( p => p.FileModifiedTicks ).EqualTo( updater.Item );
 			}
 		}
 

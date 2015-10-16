@@ -17,7 +17,7 @@ namespace Noise.Core.Tests.FileProcessor {
 		public void CanAppendNextStep() {
 			var sut = new TestPipelineStep();
 			var nextStep = new TestPipelineStep();
-			var context = new PipelineContext( null, null, null, null );
+			var context = new PipelineContext( null, null, null, null, null );
 
 			sut.AppendStep( nextStep );
 
@@ -31,7 +31,7 @@ namespace Noise.Core.Tests.FileProcessor {
 			var sut = new TestPipelineStep();
 			var step2 = new TestPipelineStep();
 			var step3 = new TestPipelineStep();
-			var context = new PipelineContext( null, null, null, null );
+			var context = new PipelineContext( null, null, null, null, null );
 
 			sut.AppendStep( step2 );
 			sut.AppendStep( step3 );

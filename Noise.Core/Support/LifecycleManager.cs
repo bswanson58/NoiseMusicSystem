@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Support {
 	internal class LifecycleManager : ILifecycleManager {
+		private readonly INoiseLog						mLog;
 		private readonly List<IRequireInitialization>	mInitializeList;
 		private readonly List<IRequireInitialization>	mShutdownList;
 
-		public LifecycleManager() {
+		public LifecycleManager( INoiseLog log ) {
+			mLog = log;
 			mInitializeList = new List<IRequireInitialization>();
 			mShutdownList = new List<IRequireInitialization>();
 		}
@@ -27,7 +28,7 @@ namespace Noise.Core.Support {
 					module.Initialize();
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "LifecycleManager:Initialize", ex );	
+					mLog.LogException( string.Format( "Initialize of :{0}", module.GetType()), ex );	
 				}
 			}
 
@@ -40,7 +41,7 @@ namespace Noise.Core.Support {
 					module.Shutdown();
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "LifecycleManager:Shutdown", ex );
+					mLog.LogException( "Attempting shutdown", ex );
 				}
 			}
 

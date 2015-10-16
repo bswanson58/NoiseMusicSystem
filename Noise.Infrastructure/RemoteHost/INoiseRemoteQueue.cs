@@ -10,6 +10,10 @@ namespace Noise.Infrastructure.RemoteHost {
 		BaseResult EnqueueTrack( long trackId );
 
 		[OperationContract]
+		[WebInvoke(RequestFormat = WebMessageFormat.Json, ResponseFormat= WebMessageFormat.Json, Method = "PUT", UriTemplate = "enqueueTrackList")]
+		BaseResult EnqueueTrackList( long[] trackList );
+
+		[OperationContract]
 		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "enqueueAlbum?album={albumId}")]
 		BaseResult EnqueueAlbum( long albumId );
 
@@ -20,5 +24,22 @@ namespace Noise.Infrastructure.RemoteHost {
 		[OperationContract]
 		[WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "transportCommand?command={command}")]
 		BaseResult ExecuteTransportCommand( TransportCommand command );
+
+		[OperationContract]
+		[WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "queueCommand?command={command}")]
+		BaseResult ExecuteQueueCommand( QueueCommand command );
+
+		[OperationContract]
+		[WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "queueItemCommand?command={command}&item={itemId}")]
+		BaseResult ExecuteQueueItemCommand( QueueItemCommand command, long itemId );
+
+		[OperationContract]
+		[WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "queueStrategyInformation")]
+		StrategyInformationResult GetStrategyInformation();
+
+		[OperationContract]
+		[WebGet(ResponseFormat = WebMessageFormat.Json, 
+			UriTemplate = "setQueueStrategy?playStrategy={playStrategyId}&playParameter={playStrategyParameter}&exhaustedStrategy={exhaustedStrategyId}&exhaustedParameter={exhaustedStrategyParameter}")]
+		BaseResult SetQueueStrategy( int playStrategyId, long playStrategyParameter, int exhaustedStrategyId, long exhaustedStrategyParameter );
 	}
 }

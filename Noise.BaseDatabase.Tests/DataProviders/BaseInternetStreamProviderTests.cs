@@ -38,6 +38,29 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
+		public void CanStoreAllStreamProperties() {
+			var stream = new DbInternetStream { Bitrate = 1,
+												Channels = 2,
+												Description = "description",
+												Encoding = eAudioEncoding.OGG,
+												Genre = 4,
+												ExternalGenre = 5,
+												IsFavorite = true,
+												IsPlaylistWrapped = true,
+												Name = "my stream",
+												Rating = 6,
+												Url = "http://something",
+												UserGenre = 7,
+												Website = "http://somethingElse" };
+
+			var sut = CreateSut();
+			sut.AddStream( stream );
+
+			var result = sut.GetStream( stream.DbId );
+			result.ShouldHave().AllProperties().EqualTo( stream );
+		}
+
+		[Test]
 		public void CanRetrieveStream() {
 			var stream = new DbInternetStream { Name = "stream name", Url = "stream url" };
 

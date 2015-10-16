@@ -3,6 +3,7 @@
 		Music,
 		Picture,
 		Text,
+		Sidecar,
 		PlayList,
 		Undetermined,
 		Unknown

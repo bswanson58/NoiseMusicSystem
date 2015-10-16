@@ -10,6 +10,7 @@ using Microsoft.Practices.Unity;
 using Noise.Desktop.Properties;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Interfaces;
 using Noise.UI.Views;
 using Application = System.Windows.Application;
 
@@ -18,6 +19,7 @@ namespace Noise.Desktop {
 								   IHandle<Events.ExternalPlayerSwitch>, IHandle<Events.ExtendedPlayerRequest>, IHandle<Events.StandardPlayerRequest> {
 		private readonly IUnityContainer	mContainer;
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly IPreferences		mPreferences;
 		private readonly ILayoutManager		mLayoutManager;
 		private readonly IRegionManager		mRegionManager;
 		private SmallPlayerView				mPlayerView;
@@ -25,9 +27,10 @@ namespace Noise.Desktop {
 		private NotifyIcon					mNotifyIcon;
 		private WindowState					mStoredWindowState;
 
-		public WindowManager( IUnityContainer container, IEventAggregator eventAggregator ) {
+		public WindowManager( IUnityContainer container, IEventAggregator eventAggregator, IPreferences preferences ) {
 			mContainer = container;
 			mEventAggregator = eventAggregator;
+			mPreferences = preferences;
 
 			mLayoutManager = LayoutConfigurationManager.LayoutManager;
 			mRegionManager = mContainer.Resolve<IRegionManager>();
@@ -114,9 +117,9 @@ namespace Noise.Desktop {
 			}
 		}
 
-		private static bool ShouldMinimizeToTray() {
+		private bool ShouldMinimizeToTray() {
 			var retValue = false;
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var configuration = mPreferences.Load<UserInterfacePreferences>();
 			
 			if( configuration != null ) {
 				retValue = configuration.MinimizeToTray;

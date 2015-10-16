@@ -4,19 +4,21 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using CuttingEdge.Conditions;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Raven.Client;
 
 namespace Noise.RavenDatabase.Support {
-	public class RavenRepository<T> : IRepository<T> where T : class {
+	internal class RavenRepository<T> : IRepository<T> where T : class {
 		private	readonly IDocumentStore		mDatabase;
+		private readonly ILogRaven			mLog;
 		private readonly Func<T, object[]>	mKeySelector; 
 
-		public RavenRepository( IDocumentStore database, Func<T, object[]> keySelector ) {
+		public RavenRepository( IDocumentStore database, Func<T, object[]> keySelector, ILogRaven log ) {
 			mDatabase = database;
 			mKeySelector = keySelector;
+			mLog = log;
 
 			mDatabase.Conventions.RegisterIdConvention<T>(( databaseName, commands, o ) => KeyGenerator( mKeySelector( o )));
 //			mDatabase.Conventions.DocumentKeyGenerator = ( c, o ) => KeyGenerator( mKeySelector( o as T ));
@@ -94,9 +96,11 @@ namespace Noise.RavenDatabase.Support {
 					session.Delete( repositoryItem );
 
 					session.SaveChanges();
+
+					mLog.RemoveItem( repositoryItem );
 				}
 				else {
-					NoiseLogger.Current.LogMessage( String.Format( "RavenRepository:Delete - Unknown item: {0}", item.GetType()));
+					mLog.RemoveUnknownItem( item );
 				}
 			}
 		}
@@ -107,6 +111,8 @@ namespace Noise.RavenDatabase.Support {
 
 				foreach( var entity in query ) {
 					session.Delete( entity );
+
+					mLog.RemoveItem( entity );
 				}
 
 				session.SaveChanges();
@@ -119,6 +125,8 @@ namespace Noise.RavenDatabase.Support {
 
 				foreach( var entity in query ) {
 					session.Delete( entity );
+
+					mLog.RemoveItem( entity );
 				}
 
 				session.SaveChanges();
@@ -160,15 +168,17 @@ namespace Noise.RavenDatabase.Support {
 		public void Add( T item ) {
 			Condition.Requires( item ).IsNotNull();
 
-			if( !Exists( item ) ) {
+			if(!Exists( item )) {
 				using( var session = mDatabase.OpenSession() ) {
 					session.Store( item );
 
 					session.SaveChanges();
+
+					mLog.AddingItem( item );
 				}
 			}
 			else {
-				NoiseLogger.Current.LogMessage( string.Format( "RavenRepository:Add - Inserting known item: {0}", item.GetType()));
+				mLog.AddingExistingItem( item );
 			}
 		}
 
@@ -177,6 +187,8 @@ namespace Noise.RavenDatabase.Support {
 				foreach( var entity in items ) {
 					if( session.Load<T>( KeyGenerator( mKeySelector( entity ))) == null ) {
 						session.Store( entity );
+
+						mLog.AddingItem( entity );
 					}
 				}
 
@@ -196,7 +208,7 @@ namespace Noise.RavenDatabase.Support {
 					session.SaveChanges();
 				}
 				else {
-					NoiseLogger.Current.LogMessage( String.Format( "RavenRepository:Update - Updating unknown item: {0}", item.GetType()));
+					mLog.UpdateUnknownItem( item );
 				}
 			}
 		}

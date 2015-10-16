@@ -1,0 +1,57 @@
+﻿<UserControl x:Class="Noise.Librarian.Views.BackupDatabaseView"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:Mvvm="clr-namespace:Microsoft.Practices.Prism.Mvvm;assembly=Microsoft.Practices.Prism.Mvvm.Desktop"
+			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 Mvvm:ViewModelLocator.AutoWireViewModel="True"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="150" d:DesignWidth="800">
+	
+	<UserControl.Resources>
+		<ValueConverters:BooleanVisibilityConverter x:Key="VisibleOnTrue" TriggerValue="False" IsHidden="False"/>
+	</UserControl.Resources>
+
+	<GroupBox Margin="7,5" Header=" Library Backup ">
+		<Grid Margin="3">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<TextBlock Grid.Row="0" Margin="0,0,0,5" VerticalAlignment="Bottom">
+			A Backup of a library may be made to save the current state of the library. The Backup may later be Restored.</TextBlock>
+
+			<Grid Grid.Row="1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="240"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+
+				<StackPanel Grid.Column="0" Orientation="Vertical">
+					<TextBlock Margin="5,3,0,3" Text="Available Libraries:"/>
+					<ComboBox ItemsSource="{Binding LibraryList}" SelectedItem="{Binding CurrentLibrary}"
+							  IsEnabled="{Binding CanEdit}" DisplayMemberPath="LibraryName" />
+				</StackPanel>
+
+				<Button Grid.Column="1" Margin="3,0" Width="100" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+						Content="Backup" Command="{Binding BackupLibrary}"/>
+			</Grid>
+			
+			<Grid Grid.Row="2" Margin="0,7,3,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="2*"/>
+				</Grid.ColumnDefinitions>
+
+				<TextBlock Grid.Column="0" TextAlignment="Right" Text="{Binding ProgressPhase}"/>
+				<TextBlock Grid.Column="1" Margin="5,0" Text="{Binding ProgressItem}"/>
+				<ProgressBar Grid.Column="2" Minimum="0" Maximum="1000"  Value="{Binding Progress}"
+							 Visibility="{Binding ProgressActive, Converter={StaticResource VisibleOnTrue}}"/>
+			</Grid>
+		</Grid>
+	</GroupBox>
+</UserControl>

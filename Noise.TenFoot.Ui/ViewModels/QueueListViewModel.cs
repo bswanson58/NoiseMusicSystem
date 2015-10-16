@@ -24,6 +24,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	string				Context { get; private set; }
 		public	eMainMenuCommand	MenuCommand { get; private set; }
 		public	int					ScreenOrder { get; private set; }
+		private	int					mSelectedIndex;
 
 		public QueueListViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue ) :
 			base( eventAggregator, playQueue ) {
@@ -34,7 +35,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			MenuTitle = "Now Playing";
 			Description = "display the songs being played";
 			Context = string.Empty;
-			SelectedIndex = -1;
+			mSelectedIndex = -1;
 
 			MenuCommand = eMainMenuCommand.Queue;
 			ScreenOrder = 3;
@@ -54,20 +55,21 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 				if( index < itemCount ) {
 					SelectedItem = QueueList[index];
-					SelectedIndex = index;
+					mSelectedIndex = index;
 				}
 			}
 			else {
-				SelectedIndex = -1;
+				mSelectedIndex = -1;
+				SelectedItem = null;
 			}
 		}
 
 		private void NextItem() {
-			SetSelectedItem( SelectedIndex + 1 );
+			SetSelectedItem( mSelectedIndex + 1 );
 		}
 
 		private void PreviousItem() {
-			SetSelectedItem( SelectedIndex - 1 );
+			SetSelectedItem( mSelectedIndex - 1 );
 		}
 
 		private void DequeueItem() {
@@ -79,14 +81,14 @@ namespace Noise.TenFoot.Ui.ViewModels {
 					var playedItems = QueueList.Count( item => item.QueuedTrack.HasPlayed );
 
 					if( playedItems > 0 ) {
-                        mPlayQueue.RemovePlayedTracks();
+						mPlayQueue.RemovePlayedTracks();
 					}
 					else {
-                        mPlayQueue.ClearQueue();
+						mPlayQueue.ClearQueue();
 					}
 				}
 
-				SetSelectedItem( Math.Min( SelectedIndex, QueueList.Count - 1 ));
+				SetSelectedItem( Math.Min( mSelectedIndex, QueueList.Count - 1 ));
 			}
 		}
 

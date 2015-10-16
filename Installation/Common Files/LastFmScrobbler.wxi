@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <DirectoryRef Id="INSTALLDIRECTORY">
+    <Component Id="Lpfm.LastFmScrobbler.dll" Guid="7982c171-ebfb-44bd-ba38-0e2a84b94bd7">
+      <File Id="Lpfm.LastFmScrobbler.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Lpfm.LastFmScrobbler.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <ComponentGroup Id="LastFmScrobblerFiles">
+    <ComponentRef Id="Lpfm.LastFmScrobbler.dll"/>
+  </ComponentGroup>
+</Include>

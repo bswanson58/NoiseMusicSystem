@@ -1,55 +1,36 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
-using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
-	[DebuggerDisplay( "Version = {MajorVersion}.{MinorVersion}" )]
+	[DebuggerDisplay( "Version = {DatabaseVersion}" )]
 	public class DbVersion : DbBase {
 		public static long	DatabaseVersionDbId = 1L;
 
-		public	Int16		MajorVersion { get; protected set; }
-		public	Int16		MinorVersion { get; protected set; }
+		public	Int16		DatabaseVersion { get; protected set; }
 		public	long		DatabaseCreationTicks { get; protected set; }
 		public	long		DatabaseId { get; protected set; }
 
 		protected DbVersion() :
-			this( 0, 0 ) { }
+			this( 0 ) { }
 
-		public DbVersion( Int16 majorVersion, Int16 minorVersion ) :
+		public DbVersion( Int16 databaseVersion ) :
 			base( DatabaseVersionDbId ) {
-			MajorVersion = majorVersion;
-			MinorVersion = minorVersion;
+			DatabaseVersion = databaseVersion;
 
 			DatabaseCreationTicks = DateTime.Now.Ticks;
 			DatabaseId = BitConverter.ToInt64( Guid.NewGuid().ToByteArray(), 0 );
 		}
 
 		public bool IsOlderVersion( DbVersion version ) {
-			var retValue = false;
-
-			if( MajorVersion < version.MajorVersion ) {
-				retValue = true;
-			}
-			else {
-				if( MajorVersion == version.MajorVersion ) {
-					if( MinorVersion < version.MinorVersion ) {
-						retValue = true;
-					}
-				}
-			}
-
-			return( retValue );
+			return( DatabaseVersion < version.DatabaseVersion );
 		}
 
-		[Ignore]
 		public DateTime DatabaseCreation {
 			get{ return( new DateTime( DatabaseCreationTicks )); }
 		}
 
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbVersion )); }
+		public override string ToString() {
+			return( string.Format( "Database version {0}, Created {1} {2}", DatabaseVersion, DatabaseCreation.ToShortDateString(), DatabaseCreation.ToShortTimeString()));
 		}
 	}
 }

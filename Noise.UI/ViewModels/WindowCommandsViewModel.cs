@@ -34,15 +34,28 @@ namespace Noise.UI.ViewModels {
 		}
 	}
 
+	internal class ConfigurationViewModel {
+		public bool EnableGlobalHotkeys { get; set; }
+		public bool EnableRemoteAccess { get; set; }
+		public bool EnableSortPrefixes { get; set; }
+		public bool HasNetworkAccess { get; set; }
+		public bool LoadLastLibraryOnStartup { get; set; }
+		public bool MinimizeToTray { get; set; }
+		public string SortPrefixes { get; set; }
+	}
+
 	public class WindowCommandsViewModel : AutomaticCommandBase {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IDialogService			mDialogService;
+		private readonly IPreferences			mPreferences;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly DelegateCommand		mImportCommand;
 
-		public WindowCommandsViewModel( IEventAggregator eventAggregator, IDialogService dialogService, IDataExchangeManager dataExchangeManager ) {
+		public WindowCommandsViewModel( IEventAggregator eventAggregator, IDialogService dialogService, IPreferences preferences,
+										IDataExchangeManager dataExchangeManager ) {
 			mEventAggregator = eventAggregator;
 			mDialogService = dialogService;
+			mPreferences = preferences;
 			mDataExchangeMgr = dataExchangeManager;
 
 			mImportCommand = new DelegateCommand( OnImport );
@@ -51,18 +64,28 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_Options() {
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var interfacePreferences = mPreferences.Load<UserInterfacePreferences>();
+			var corePreferences = mPreferences.Load<NoiseCorePreferences>();
+			var dialogModel = new ConfigurationViewModel { EnableGlobalHotkeys = interfacePreferences.EnableGlobalHotkeys,
+														   EnableRemoteAccess = corePreferences.EnableRemoteAccess,
+														   EnableSortPrefixes = interfacePreferences.EnableSortPrefixes,
+														   HasNetworkAccess = corePreferences.HasNetworkAccess,
+														   LoadLastLibraryOnStartup = corePreferences.LoadLastLibraryOnStartup,
+														   MinimizeToTray = interfacePreferences.MinimizeToTray,
+														   SortPrefixes = interfacePreferences.SortPrefixes };
 
-			if( mDialogService.ShowDialog( DialogNames.NoiseOptions, configuration ) == true ) {
-				NoiseSystemConfiguration.Current.Save( configuration );
-			}
-		}
+			if( mDialogService.ShowDialog( DialogNames.NoiseOptions, dialogModel ) == true ) {
+				corePreferences.EnableRemoteAccess = dialogModel.EnableRemoteAccess;
+				corePreferences.HasNetworkAccess = dialogModel.HasNetworkAccess;
+				corePreferences.LoadLastLibraryOnStartup = dialogModel.LoadLastLibraryOnStartup;
 
-		public void Execute_LogView() {
-			var dialogModel = new	ApplicationLogDialogModel();
+				interfacePreferences.EnableGlobalHotkeys = dialogModel.EnableGlobalHotkeys;
+				interfacePreferences.EnableSortPrefixes = dialogModel.EnableSortPrefixes;
+				interfacePreferences.SortPrefixes = dialogModel.SortPrefixes;
+				interfacePreferences.MinimizeToTray = dialogModel.MinimizeToTray;
 
-			if( dialogModel.Initialize()) {
-				mDialogService.ShowDialog( DialogNames.ApplicationLogView, dialogModel );
+				mPreferences.Save( corePreferences );
+				mPreferences.Save( interfacePreferences );
 			}
 		}
 
@@ -76,6 +99,10 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_TimelineLayout() {
 			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.TimeExplorerLayout ));
+		}
+
+		public void Execute_PlaybackLayout() {
+			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ListenLayout ));
 		}
 
 		private void OnImport() {

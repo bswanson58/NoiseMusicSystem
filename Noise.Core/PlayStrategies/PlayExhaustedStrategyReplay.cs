@@ -1,11 +1,12 @@
 ﻿using CuttingEdge.Conditions;
+using Noise.Core.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
 	internal class PlayExhaustedStrategyReplay : PlayExhaustedStrategyBase {
-		public PlayExhaustedStrategyReplay() :
-			base( ePlayExhaustedStrategy.Replay, "Replay", "Replay the tracks in the play queue." ) {
+		public PlayExhaustedStrategyReplay( ILogPlayStrategy  log ) :
+			base( ePlayExhaustedStrategy.Replay, "Replay", "Replay the tracks in the play queue.", log ) {
 		}
 
 		protected override string FormatDescription() {

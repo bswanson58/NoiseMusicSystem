@@ -1,26 +1,29 @@
 ﻿using System;
 using System.Linq;
 using Caliburn.Micro;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.BackgroundTasks {
 	public class MetadataUpdateTask : IBackgroundTask,
 									  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>, IHandle<Events.ArtistMetadataUpdated> {
-		private readonly IEventAggregator	mEventAggregator;
-		private readonly IArtistProvider	mArtistProvider;
-		private readonly ITagManager		mTagManager;
-		private readonly IMetadataManager	mMetadataManager;
-		private bool						mDatabaseOpen;
+		private readonly IEventAggregator		mEventAggregator;
+		private readonly IArtistProvider		mArtistProvider;
+		private readonly ITagManager			mTagManager;
+		private readonly IMetadataManager		mMetadataManager;
+		private readonly ILogBackgroundTasks	mLog;
+		private bool							mDatabaseOpen;
 
 		public string TaskId { get; private set; }
 
 		public MetadataUpdateTask( IEventAggregator eventAggregator, IArtistProvider artistProvider,
-								   ITagManager tagManager, IMetadataManager metadataManager ) {
+								   ITagManager tagManager, IMetadataManager metadataManager, ILogBackgroundTasks log ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mTagManager = tagManager;
 			mMetadataManager = metadataManager;
+			mLog = log;
 
 			TaskId = "Task_MetadataUpdate";
 
@@ -51,16 +54,16 @@ namespace Noise.Core.BackgroundTasks {
 						using( var updater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
 							if(!string.IsNullOrWhiteSpace( genre )) {
 								updater.Item.ExternalGenre = mTagManager.ResolveGenre( genre );
+
+								updater.Update();
+
+								mEventAggregator.Publish( new Events.ArtistContentUpdated( artist.DbId ));
 							}
-
-							updater.Update();
 						}
-
-						mEventAggregator.Publish( new Events.ArtistContentUpdated( artist.DbId ));
 					}
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( string.Format( "MetadataUpdateTask:Updating Artist Metadata for artist: {0}", args.ArtistName ), ex );
+					mLog.LogException( string.Format( "Updating metadata for artist \"{0}\"", args.ArtistName ), ex );
 				}
 			}
 		}

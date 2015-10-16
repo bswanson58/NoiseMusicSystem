@@ -8,8 +8,6 @@ namespace Noise.Infrastructure.Interfaces {
 	}
 
 	public interface ILicenseManager {
-		bool		Initialize( string licenseFile );
-
 		LicenseKey	RetrieveKey( string keyId );
 	}
 }

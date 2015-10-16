@@ -5,11 +5,17 @@ namespace Noise.Infrastructure.RemoteDto {
 	[DataContract]
 	public class RoPlayQueueTrack {
 		[DataMember]
+		public long		Id {  get; set; }
+		[DataMember]
 		public long		TrackId { get; set; }
 		[DataMember]
 		public string	TrackName { get; set; }
 		[DataMember]
+		public long		AlbumId { get; set; }
+		[DataMember]
 		public string	AlbumName { get; set; }
+		[DataMember]
+		public long		ArtistId { get; set; }
 		[DataMember]
 		public string	ArtistName { get; set; }
 		[DataMember]

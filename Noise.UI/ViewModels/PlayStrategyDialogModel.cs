@@ -8,25 +8,25 @@ using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
 	public class PlayStrategyDialogModel : DialogModelBase {
-        private readonly IArtistProvider			mArtistProvider;
-        private readonly IGenreProvider             mGenreProvider;
-        private readonly ITagProvider               mTagProvider;
-        private readonly IPlayListProvider          mPlayListProvider;
+		private readonly IArtistProvider			mArtistProvider;
+		private readonly IGenreProvider             mGenreProvider;
+		private readonly ITagProvider               mTagProvider;
+		private readonly IPlayListProvider          mPlayListProvider;
 		private readonly IInternetStreamProvider	mStreamProvider;
-        private readonly IPlayStrategyFactory       mPlayStrategyFactory;
+		private readonly IPlayStrategyFactory       mPlayStrategyFactory;
 		private readonly IPlayExhaustedFactory		mPlayExhaustedFactory;
 		private readonly List<DbArtist>				mArtistList;
 		private readonly List<DbGenre>				mArtistGenreList;
 		private readonly List<DbInternetStream>		mStreamList;
- 		private readonly List<DbPlayList>			mPlayLists; 
-		private readonly List<DbTag>				mCategoryList; 
+		private readonly List<DbPlayList>			mPlayLists; 
+		private readonly List<DbTag>				mCategoryList;
 		private IPlayStrategy						mSelectedPlayStrategy;
 		private IPlayStrategyParameters				mPlayStrategyParameters;
 		private IPlayExhaustedStrategy				mSelectedExhaustedStrategy;
 		private IPlayStrategyParameters				mPlayExhaustedParameters;
 
 		private	readonly BindableCollection<ExhaustedStrategyItem>	mExhaustedStrategies;
- 		private readonly BindableCollection<NameIdPair>				mExhaustedParameters; 
+		private readonly BindableCollection<NameIdPair>				mExhaustedParameters; 
 		private readonly BindableCollection<PlayStrategyItem>		mPlayStrategies;
 		private readonly BindableCollection<NameIdPair>				mPlayParameters;
 
@@ -42,7 +42,7 @@ namespace Noise.UI.ViewModels {
 			mPlayExhaustedFactory = exhaustedFactory;
 
 			mPlayStrategies = new BindableCollection<PlayStrategyItem>( from strategy in mPlayStrategyFactory.AvailableStrategies orderby strategy.StrategyName
-                                                                        select new PlayStrategyItem( strategy.StrategyId, strategy.StrategyName ));
+																		select new PlayStrategyItem( strategy.StrategyId, strategy.StrategyName ));
 
 			mExhaustedStrategies = new BindableCollection<ExhaustedStrategyItem>( from strategy in mPlayExhaustedFactory.AvailableStrategies orderby strategy.StrategyName
 																					  select new ExhaustedStrategyItem( strategy.StrategyId, strategy.StrategyName ));
@@ -55,6 +55,11 @@ namespace Noise.UI.ViewModels {
 			mArtistGenreList = new List<DbGenre>();
 			mPlayLists = new List<DbPlayList>();
 			mStreamList = new List<DbInternetStream>();
+		}
+
+		public bool DeletePlayedTracks {
+			get { return( Get( () => DeletePlayedTracks )); }
+			set { Set( () => DeletePlayedTracks, value ); }
 		}
 
 		public ePlayStrategy PlayStrategy {
@@ -179,7 +184,7 @@ namespace Noise.UI.ViewModels {
 			set { Set( () => PlayParameterRequired, value ); }
 		}
 
-        public BindableCollection<ExhaustedStrategyItem> ExhaustedStrategyList {
+		public BindableCollection<ExhaustedStrategyItem> ExhaustedStrategyList {
 			get{ return( mExhaustedStrategies ); }
 		}
 

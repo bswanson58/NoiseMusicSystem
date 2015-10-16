@@ -1,7 +1,8 @@
 ﻿using System;
-using System.ComponentModel.Composition;
+using System.Diagnostics;
 
 namespace Noise.Infrastructure.Dto {
+	[DebuggerDisplay("RootFolder = {DisplayName}")]
 	public class RootFolder : StorageFolder {
 		public	string			DisplayName { get; set; }
 		public	FolderStrategy	FolderStrategy { get; set; }
@@ -31,9 +32,8 @@ namespace Noise.Infrastructure.Dto {
 			}
 		}
 
-		[Export("PersistenceType")]
-		public static new Type PersistenceType {
-			get{ return( typeof( RootFolder )); }
+		public override string ToString() {
+			return( string.Format( "RootFolder \"{0}\", Id:{1}", DisplayName, DbId ));
 		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Noise.Core.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -8,8 +9,8 @@ namespace Noise.Core.PlayStrategies {
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly List<DbArtist>		mArtists; 
 
-		public PlayExhaustedStrategySeldomPlayedArtists( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
-			base( ePlayExhaustedStrategy.SeldomPlayedArtists, "Seldom Played", "Play tracks that have been infrequently played.", albumProvider, trackProvider ) {
+		public PlayExhaustedStrategySeldomPlayedArtists( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ILogPlayStrategy log ) :
+			base( ePlayExhaustedStrategy.SeldomPlayedArtists, "Seldom Played", "Play tracks that have been infrequently played.", albumProvider, trackProvider, log ) {
 			mArtistProvider = artistProvider;
 
 			mArtists = new List<DbArtist>();
@@ -40,6 +41,8 @@ namespace Noise.Core.PlayStrategies {
 		}
 
 		private void LoadArtists() {
+			mArtists.Clear();
+
 			using( var artistList = mArtistProvider.GetArtistList()) {
 				if( artistList.List != null ) {
 					mArtists.AddRange(( from artist in artistList.List where artist.Rating >= 0

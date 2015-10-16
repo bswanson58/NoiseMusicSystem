@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
-using Noise.Infrastructure;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
-	public class AlbumProvider : BaseProvider<DbAlbum>, IAlbumProvider {
+	internal class AlbumProvider : BaseProvider<DbAlbum>, IAlbumProvider {
 		private readonly IArtworkProvider			mArtworkProvider;
 		private readonly ITextInfoProvider			mTextInfoProvider;
 		private readonly ITagAssociationProvider	mTagAssociationProvider;
 
 		public AlbumProvider( IContextProvider contextProvider,
-							  IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider, ITagAssociationProvider tagAssociationProvider) :
-			base( contextProvider ) {
+							  IArtworkProvider artworkProvider, ITextInfoProvider textInfoProvider, ITagAssociationProvider tagAssociationProvider, ILogDatabase log ) :
+			base( contextProvider, log ) {
 			mArtworkProvider = artworkProvider;
 			mTextInfoProvider = textInfoProvider;
 			mTagAssociationProvider = tagAssociationProvider;
@@ -80,7 +80,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - GetTagList", ex );
+				Log.LogException( "GetTagList", ex );
 			}
 
 			return( retValue );
@@ -95,7 +95,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - GetAlbumCategories", ex );
+				Log.LogException( "GetAlbumTagList", ex );
 			}
 
 			return( retValue );
@@ -121,7 +121,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 						}
 					}
 					catch( Exception ex ) {
-						NoiseLogger.Current.LogException( "Exception - SetAlbumCategories", ex );
+						Log.LogException( "Adding Associations", ex );
 					}
 				}
 			}

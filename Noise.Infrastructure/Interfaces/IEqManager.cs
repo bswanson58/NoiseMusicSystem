@@ -8,5 +8,6 @@ namespace Noise.Infrastructure.Interfaces {
 
 		IEnumerable<ParametricEqualizer>	EqPresets { get; }
 		ParametricEqualizer					CurrentEq { get; set; }
+		bool								EqEnabled { get; set; }
 	}
 }

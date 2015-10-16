@@ -5,6 +5,6 @@
 		Pause = 3,
 		PlayNext = 4,
 		PlayPrevious = 5,
-		Repeat
+		Repeat = 6
 	}
 }

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
-using Noise.Infrastructure;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
-	public class LyricProvider : BaseProvider<DbLyric>, ILyricProvider {
-		public LyricProvider( IContextProvider contextProvider ) :
-			base( contextProvider ) { }
+	internal class LyricProvider : BaseProvider<DbLyric>, ILyricProvider {
+		public LyricProvider( IContextProvider contextProvider, ILogDatabase log ) :
+			base( contextProvider, log ) { }
 
 		public void AddLyric( DbLyric lyric ) {
 			AddItem( lyric );
@@ -45,7 +45,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 				retValue = new EfProviderList<DbLyric>( null, uniqueList );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - GetPossibleLyrics", ex );
+				Log.LogException( string.Format( "Get lyrics for {0}, {1}", artist, track ), ex );
 			}
 			finally {
 				if( context != null ) {

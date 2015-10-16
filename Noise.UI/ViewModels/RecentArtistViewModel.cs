@@ -6,17 +6,19 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
+using Noise.UI.Logging;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class RecentArtistViewModel : AutomaticPropertyBase,
-										 IHandle<Events.ArtistPlayed>, IHandle<Events.ArtistViewed>,
-										 IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
-										 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+	internal class RecentArtistViewModel : AutomaticPropertyBase,
+										   IHandle<Events.ArtistPlayed>, IHandle<Events.ArtistViewed>,
+										   IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
+										   IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private const int								cRecentListLength = 8;
 
 		private readonly IEventAggregator				mEventAggregator;
+		private readonly IUiLog							mLog;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly ITagManager					mTagManager;
 		private readonly List<DbArtist>					mArtistList;
@@ -26,8 +28,9 @@ namespace Noise.UI.ViewModels {
 		private bool									mIAskedForArtistFocus;
 
 		public RecentArtistViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
-									  IArtistProvider artistProvider, ITagManager tagManager ) {
+									  IArtistProvider artistProvider, ITagManager tagManager, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mArtistProvider = artistProvider;
 			mTagManager = tagManager;
 
@@ -147,7 +150,7 @@ namespace Noise.UI.ViewModels {
 				BuildRecentlyViewed();
 			},
 			() => { },
-			ex => NoiseLogger.Current.LogException( "RecentArtistViewModel:RetrieveArtists", ex ) );
+			ex => mLog.LogException( "Retrieving Artists", ex ) );
 		}
 
 		private void BuildRecentlyPlayed() {

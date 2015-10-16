@@ -148,3 +148,5 @@ pip-log.txt
 .DS_Store
 
 /Sandbox
+Noise.Desktop/RefitStubs.cs
+Noise.Headless/RefitStubs.cs

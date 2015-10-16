@@ -163,12 +163,18 @@ namespace Noise.UI.Behaviours {
 
 		public static void ApplySort( ICollectionView view, string propertyName, ListView listView, GridViewColumnHeader sortedColumnHeader ) {
 			var direction = ListSortDirection.Ascending;
+			var setSort = true;
 
 			if( view.SortDescriptions.Count > 0 ) {
 				var currentSort = view.SortDescriptions[0];
 
 				if( currentSort.PropertyName == propertyName ) {
-					direction = currentSort.Direction == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+					if( currentSort.Direction == ListSortDirection.Descending ) {
+						setSort = false;
+					}
+					else {
+						direction = currentSort.Direction == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+					}
 				}
 				view.SortDescriptions.Clear();
 
@@ -177,7 +183,9 @@ namespace Noise.UI.Behaviours {
 					RemoveSortGlyph( currentSortedColumnHeader );
 				}
 			}
-			if( !string.IsNullOrEmpty( propertyName ) ) {
+
+			if(( setSort ) &&
+			   (!string.IsNullOrEmpty( propertyName ))) {
 				view.SortDescriptions.Add( new SortDescription( propertyName, direction ) );
 				if( GetShowSortGlyph( listView )) {
 					AddSortGlyph( sortedColumnHeader, direction, 

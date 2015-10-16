@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Linq;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
-	public class DbVersionProvider : BaseProvider<DbVersion>, IDatabaseInfo {
+	internal class DbVersionProvider : BaseProvider<DbVersion>, IDatabaseInfo {
 		private DbVersion		mDatabaseVersion;
 
-		public DbVersionProvider( IContextProvider contextProvider ) :
-			base( contextProvider ) { }
+		public DbVersionProvider( IContextProvider contextProvider, ILogDatabase log ) :
+			base( contextProvider, log ) { }
 
 		public long DatabaseId {
 			get {
@@ -38,11 +39,19 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		}
 
 		public bool IsOpen {
-			get{ return( false ); }
+			get {
+				bool retValue;
+
+				using( var context = CreateContext()) {
+					retValue = context.IsValidContext;
+				}
+
+				return( retValue );
+			}
 		}
 
-		public void InitializeDatabaseVersion( Int16 majorVersion, Int16 minorVersion ) {
-			var dbVersion = new DbVersion( majorVersion, minorVersion );
+		public void InitializeDatabaseVersion( Int16 databaseVersion ) {
+			var dbVersion = new DbVersion( databaseVersion );
 
 			using( var context = CreateContext()) {
 				Set( context ).Add( dbVersion );
@@ -53,7 +62,9 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 		private void RetrieveDatabaseVersion() {
 			using( var context = CreateContext()) {
-				mDatabaseVersion = Set( context ).FirstOrDefault( entity => entity.DbId == DbVersion.DatabaseVersionDbId );
+				if( context.IsValidContext ) {
+					mDatabaseVersion = Set( context ).FirstOrDefault( entity => entity.DbId == DbVersion.DatabaseVersionDbId );
+				}
 			}
 		}
 	}

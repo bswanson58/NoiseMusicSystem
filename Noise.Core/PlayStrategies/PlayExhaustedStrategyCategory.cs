@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Noise.Core.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -11,8 +12,8 @@ namespace Noise.Core.PlayStrategies {
 		private long					mCategoryId;
 		private string					mCategoryName;
 
-		public PlayExhaustedStrategyCategory( IAlbumProvider albumProvider, ITrackProvider trackProvider, ITagProvider tagProvider ) :
-			base( ePlayExhaustedStrategy.PlayCategory, "Play Category...", "Play random tracks from albums tagged with the chosen category.", "Category", albumProvider, trackProvider ) {
+		public PlayExhaustedStrategyCategory( IAlbumProvider albumProvider, ITrackProvider trackProvider, ITagProvider tagProvider, ILogPlayStrategy log ) :
+			base( ePlayExhaustedStrategy.PlayCategory, "Play Category...", "Play random tracks from albums tagged with the chosen category.", "Category", albumProvider, trackProvider, log ) {
 			mAlbumProvider = albumProvider;
 			mTagProvider = tagProvider;
 

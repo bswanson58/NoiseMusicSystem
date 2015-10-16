@@ -10,6 +10,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.UI.Behaviours;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
+using Noise.UI.Logging;
 using Observal.Extensions;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -22,6 +23,7 @@ namespace Noise.UI.ViewModels {
 	internal class AlbumTracksViewModel : AutomaticPropertyBase,
 										  IHandle<Events.DatabaseClosing>, IHandle<Events.TrackUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly IUiLog					mLog;
 		private readonly ISelectionState		mSelectionState;
 		private readonly ITrackProvider			mTrackProvider;
 		private long							mCurrentAlbumId;
@@ -30,14 +32,16 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<UiTrack>	mTracks;
 		private readonly InteractionRequest<TrackEditInfo>	mTrackEditRequest; 
 
-		public AlbumTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, ITrackProvider trackProvider ) {
+		public AlbumTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, ITrackProvider trackProvider, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mSelectionState = selectionState;
 			mTrackProvider = trackProvider;
 
 			mEventAggregator.Subscribe( this );
 
 			mTracks = new BindableCollection<UiTrack>();
+			mCurrentAlbumId = Constants.cDatabaseNullOid;
 
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
@@ -62,11 +66,12 @@ namespace Noise.UI.ViewModels {
 				mChangeObserver.Release( track );
 			}
 			mTracks.Clear();
+			mCurrentAlbumId = Constants.cDatabaseNullOid;
 
 			AlbumPlayTime = new TimeSpan();
 		}
 
-		private void SetTrackList( IEnumerable<DbTrack> trackList ) {
+		private void SetTrackList( long albumId, IEnumerable<DbTrack> trackList ) {
 			ClearTrackList();
 
 			foreach( var dbTrack in trackList ) {
@@ -74,6 +79,7 @@ namespace Noise.UI.ViewModels {
 
 				AlbumPlayTime += dbTrack.Duration;
 			}
+			mCurrentAlbumId = albumId;
 
 			foreach( var track in mTracks ) {
 				mChangeObserver.Add( track );
@@ -87,8 +93,6 @@ namespace Noise.UI.ViewModels {
 		private void OnAlbumChanged( DbAlbum album ) {
 			if( album != null ) {
 				UpdateTrackList( album.DbId );
-
-				mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.AlbumInfoView ) );
 			}
 			else {
 				ClearTrackList();
@@ -101,10 +105,9 @@ namespace Noise.UI.ViewModels {
 			}
 			else {
 				if( mCurrentAlbumId != albumId ) {
-					mCurrentAlbumId = albumId;
 					ClearTrackList();
 
-					RetrieveTracks( mCurrentAlbumId );
+					RetrieveTracks( albumId );
 				}
 			}
 		}
@@ -126,11 +129,11 @@ namespace Noise.UI.ViewModels {
 															var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
 																								orderby track.VolumeName, track.TrackNumber 
 																								ascending select track );
-															SetTrackList( sortedList );
+															SetTrackList( forAlbumId, sortedList );
 														}
 													},
 													() => {},
-													ex => NoiseLogger.Current.LogException( "AlbumTracksViewModel:RetrieveTracks", ex ));
+													ex => mLog.LogException( string.Format( "Retrieve tracks for {0}", forAlbumId ), ex ));
 		}
 
 		private void OnTrackPlay( long trackId ) {

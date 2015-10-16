@@ -38,6 +38,7 @@ namespace Noise.Core.FileProcessor {
 
 					mTextInfoProvider.AddTextInfo( info, infoPath );
 					context.StorageFile.MetaDataPointer = info.DbId;
+					context.Log.LogTextInfoAdded( context.StorageFile, info );
 				}
 
 				using( var updater = mArtistProvider.GetArtistForUpdate( context.Artist.DbId )) {

@@ -1,8 +1,10 @@
 ﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
+using Noise.EntityFrameworkDatabase.DatabaseUtility;
 using Noise.EntityFrameworkDatabase.DataProviders;
 using Noise.EntityFrameworkDatabase.DatabaseManager;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase {
@@ -14,8 +16,8 @@ namespace Noise.EntityFrameworkDatabase {
 		}
 
 		public void Initialize() {
-			mContainer.RegisterType<IDatabaseManager, EntityFrameworkDatabaseManager>();
-			mContainer.RegisterType<IContextProvider, ContextProvider>();
+			mContainer.RegisterType<IDatabaseManager, EntityFrameworkDatabaseManager>(  new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IContextProvider, ContextProvider>( new HierarchicalLifetimeManager());
 #if DEBUG
 			mContainer.RegisterType<IDatabaseInitializeStrategy, DebugDatabaseInitialize>();
 #else
@@ -33,6 +35,7 @@ namespace Noise.EntityFrameworkDatabase {
 			mContainer.RegisterType<IPlayHistoryProvider, PlayHistoryProvider>();
 			mContainer.RegisterType<IPlayListProvider, PlayListProvider>();
 			mContainer.RegisterType<IRootFolderProvider, RootFolderProvider>();
+			mContainer.RegisterType<ISidecarProvider, SidecarProvider>();
 			mContainer.RegisterType<IStorageFileProvider, StorageFileProvider>();
 			mContainer.RegisterType<IStorageFolderProvider, StorageFolderProvider>();
 			mContainer.RegisterType<ITagProvider, TagProvider>();
@@ -40,6 +43,10 @@ namespace Noise.EntityFrameworkDatabase {
 			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
 			mContainer.RegisterType<ITimestampProvider, TimestampProvider>();
 			mContainer.RegisterType<IDatabaseInfo, DbVersionProvider>();
+
+			mContainer.RegisterType<IDatabaseUtility, SqlDatabaseManager>();
+
+			mContainer.RegisterType<ILogDatabase, LogDatabase>( new HierarchicalLifetimeManager());
 		}
 	}
 }

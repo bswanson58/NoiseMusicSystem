@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using Eloquera.Client;
-
-namespace Noise.Infrastructure.Dto {
+﻿namespace Noise.Infrastructure.Dto {
 	public class DbTextInfo : AssociatedContent {
 		public	long			FolderLocation { get; set; }
 		public	InfoSource		Source { get; set; }
@@ -33,15 +29,8 @@ namespace Noise.Infrastructure.Dto {
 			Name = copy.Name;
 		}
 
-		[Ignore]
-		public int DbInfoSource {
-			get{ return((int)Source ); }
-			set{ Source = (InfoSource)value; }
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbTextInfo )); }
+		public override string ToString() {
+			return( string.Format( "TextInfo \"{0}\", Id:{1}, Artist:{2}, Album:{3}, Associated Item:{4}, Type:{5}", Name, DbId, Artist, Album, AssociatedItem, ContentType ));
 		}
 	}
 }

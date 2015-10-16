@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Noise.Infrastructure;
+using Noise.Core.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -27,8 +27,8 @@ namespace Noise.Core.PlayStrategies {
 		private readonly IMetadataManager	mMetadataManager;
 
 		public PlayExhaustedStrategySimilar( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
-											 IMetadataManager metadataManager ) :
-			base( ePlayExhaustedStrategy.PlaySimilar, "Play Similar", "Play tracks from artists that are similar to the artists of tracks in the queue." ) {
+											 IMetadataManager metadataManager, ILogPlayStrategy log ) :
+			base( ePlayExhaustedStrategy.PlaySimilar, "Play Similar", "Play tracks from artists that are similar to the artists of tracks in the queue.", log ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -60,6 +60,8 @@ namespace Noise.Core.PlayStrategies {
 											if(( track.Rating >= 0 ) &&
 											   (!PlayQueueMgr.IsTrackQueued( track ))) {
 												mTrackList.Add( track );
+
+												LogTrackAdded( track );
 											}
 										}
 									}
@@ -74,7 +76,7 @@ namespace Noise.Core.PlayStrategies {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - PlayExhaustedStrategySimilar: ", ex );
+				Log.LogException( "Selecting a similar track", ex );
 			}
 		}
 	}

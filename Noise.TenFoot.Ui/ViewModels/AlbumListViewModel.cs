@@ -5,22 +5,25 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Dto;
 using Noise.TenFoot.Ui.Interfaces;
+using Noise.UI.Logging;
 using ReusableBits;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class AlbumListViewModel : BaseListViewModel<DbAlbum>, IAlbumList, ITitledScreen {
 		private readonly IAlbumTrackList	mAlbumTrackList;
 		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly IUiLog				mLog;
 		private long						mCurrentArtist;
 		private TaskHandler					mAlbumRetrievalTaskHandler;
 
 		public	string						ScreenTitle { get; private set; }
 		public	string						Context { get; private set; }
 
-		public AlbumListViewModel( IEventAggregator eventAggregator, IAlbumTrackList trackListViewModel, IAlbumProvider albumProvider ) :
+		public AlbumListViewModel( IEventAggregator eventAggregator, IAlbumTrackList trackListViewModel, IAlbumProvider albumProvider, IUiLog log ) :
 			base( eventAggregator ) {
 			mAlbumTrackList = trackListViewModel;
 			mAlbumProvider = albumProvider;
+			mLog = log;
 
 			ScreenTitle = "Albums";
 			Context = "";
@@ -57,7 +60,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			                                     	}
 			                                     },
 												 () => { SelectedItem = ItemList.FirstOrDefault(); },
-												 ex => NoiseLogger.Current.LogException( "AlbumListViewModel:RetrieveAlbumsForArtist", ex )
+												 ex => mLog.LogException( string.Format( "Retrieving Albums for Artist:{0}", artistId ), ex )
 				);
 		}
 

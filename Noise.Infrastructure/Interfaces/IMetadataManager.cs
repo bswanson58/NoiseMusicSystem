@@ -9,7 +9,9 @@ namespace Noise.Infrastructure.Interfaces {
 		Genre,
 		SimilarArtists,
 		TopAlbums,
+		TopTracks,
 		WebSite,
+		ActiveYears,
 		Unknown
 	}
 
@@ -30,7 +32,7 @@ namespace Noise.Infrastructure.Interfaces {
 		IArtistDiscography	GetArtistDiscography( string forArtist );
 		Artwork				GetArtistArtwork( string forArtist );
 
-		void				ExportMetadata( string exportFilename );
-		void				ImportMetadata( string importFilename );
+		void				ExportMetadata( string exportPath );
+		void				ImportMetadata( string importPath );
 	}
 }

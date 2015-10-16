@@ -26,6 +26,18 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
+		public void CanStoreAllHistoryProperties() {
+			var file = new StorageFile( "file name", 1, 100, DateTime.Now ) { MetaDataPointer = 2 };
+			var playHistory = new DbPlayHistory( file );
+
+			var sut = CreateSut();
+			sut.AddPlayHistory( playHistory );
+
+			var result = sut.GetPlayHistoryForUpdate( playHistory.DbId );
+			result.Item.ShouldHave().AllProperties().EqualTo( playHistory );
+		}
+
+		[Test]
 		public void CanRetrievePlayHistoryList() {
 			var file = new StorageFile( "file name", 1, 100, DateTime.Now );
 			var playHistory = new DbPlayHistory( file );

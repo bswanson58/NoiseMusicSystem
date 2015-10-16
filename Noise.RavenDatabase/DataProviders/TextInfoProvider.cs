@@ -3,12 +3,13 @@ using CuttingEdge.Conditions;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class TextInfoProvider : BaseProvider<DbTextInfo>, ITextInfoProvider {
-		public TextInfoProvider( IDbFactory databaseFactory ) :
-			base( databaseFactory, entity => new object[] { entity.DbId }) {
+	internal class TextInfoProvider : BaseProvider<DbTextInfo>, ITextInfoProvider {
+		public TextInfoProvider( IDbFactory databaseFactory, ILogRaven log ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }, log ) {
 		}
 
 		public void AddTextInfo( DbTextInfo info, string filePath ) {

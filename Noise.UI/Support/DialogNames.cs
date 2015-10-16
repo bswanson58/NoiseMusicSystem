@@ -1,6 +1,5 @@
 ﻿namespace Noise.UI.Support {
 	public class DialogNames {
-		public const string		ApplicationLogView			= "ApplicationLogView";
 		public const string		NoiseOptions				= "NoiseOptions";
 		public const string		CloudConfiguration			= "CloudConfiguration";
 		public const string		DatabaseConfiguration		= "DatabaseConfiguration";
@@ -20,5 +19,6 @@
 		public const string		CategoryEdit				= "CategoryEdit";
 		public const string		FeaturedArtistsSelect		= "FeaturedArtistsSelect";
 		public const string		PlayStrategyConfiguration	= "PlayStrategyConfiguration";
+		public const string		ManagePlaybackContext		= "ManagePlaybackContext";
 	}
 }

@@ -1,16 +1,24 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
-	public abstract class BaseProvider<TEntity> where TEntity : DbBase {
+	internal abstract class BaseProvider<TEntity> where TEntity : DbBase {
 		private	readonly IContextProvider	mContextProvider;
+		private readonly ILogDatabase		mLog;
 
-		protected BaseProvider( IContextProvider contextProvider ) {
+		protected BaseProvider( IContextProvider contextProvider, ILogDatabase log ) {
 			mContextProvider = contextProvider;
+			mLog = log;
+		}
+
+		protected ILogDatabase Log {
+			get {  return( mLog ); }
 		}
 
 		protected IDbContext CreateContext() {
@@ -31,8 +39,33 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			Condition.Requires( item ).IsNotNull();
 
 			using( var context = CreateContext()) {
-				if( GetItemByKey( context, item.DbId ) == null ) {
-					context.Set<TEntity>().Add( item );
+				if( context.IsValidContext ) {
+#if DEBUG
+					if( GetItemByKey( context, item.DbId ) == null ) {
+#endif
+						context.Set<TEntity>().Add( item );
+
+						context.SaveChanges();
+
+						Log.AddingItem( item );
+#if DEBUG
+					}
+					else {
+						Log.AddingExistingItem( item );
+					}
+#endif
+				}
+			}
+		}
+
+		protected void AddList( IEnumerable<TEntity> list ) {
+			using( var context = CreateContext()) {
+				if( context.IsValidContext ) {
+					foreach( var item in list ) {
+						context.Set<TEntity>().Add( item );
+
+						Log.AddingItem( item );
+					}
 
 					context.SaveChanges();
 				}
@@ -43,33 +76,43 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			Condition.Requires( item ).IsNotNull();
 
 			using( var context = CreateContext()) {
-				var entry = GetItemByKey( context, item.DbId );
+				if( context.IsValidContext ) {
+					var entry = GetItemByKey( context, item.DbId );
 
-				if( entry != null ) {
-					Set( context ).Remove( entry );
+					if( entry != null ) {
+						Set( context ).Remove( entry );
 
-					context.SaveChanges();
+						context.SaveChanges();
+
+						Log.RemoveItem( item );
+					}
 				}
 			}
 		}
 
 		protected void RemoveItem( long itemId ) {
 			using( var context = CreateContext()) {
-				var item = GetItemByKey( context, itemId );
+				if( context.IsValidContext ) {
+					var item = GetItemByKey( context, itemId );
 
-				if( item != null ) {
-					Set( context ).Remove( item );
+					if( item != null ) {
+						Set( context ).Remove( item );
 
-					context.SaveChanges();
+						context.SaveChanges();
+
+						Log.RemoveItem( item );
+					}
 				}
 			}
 		}
 
 		protected TEntity GetItemByKey( long key ) {
-			TEntity	retValue;
+			TEntity	retValue = default( TEntity );
 
 			using( var context = CreateContext()) {
-				retValue = GetItemByKey( context, key );
+				if( context.IsValidContext ) {
+					retValue = GetItemByKey( context, key );
+				}
 			}
 
 			return( retValue );
@@ -77,6 +120,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 		protected TEntity GetItemByKey( IDbContext context, long key ) {
 			Condition.Requires( context ).IsNotNull();
+			Condition.Requires( context.IsValidContext );
 
 			return( context.Set<TEntity>().Find( key ));
 		}

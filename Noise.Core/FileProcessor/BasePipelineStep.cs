@@ -1,6 +1,4 @@
-﻿using System;
-using CuttingEdge.Conditions;
-using Noise.Infrastructure;
+﻿using CuttingEdge.Conditions;
 
 namespace Noise.Core.FileProcessor {
 	public enum ePipelineStep {
@@ -8,6 +6,7 @@ namespace Noise.Core.FileProcessor {
 		BuildMusicProviders,
 		BuildInfoProviders,
 		BuildArtworkProviders,
+		BuildSidecarProviders,
 		DetermineArtist,
 		DetermineAlbum,
 		DetermineVolume,
@@ -16,6 +15,7 @@ namespace Noise.Core.FileProcessor {
 		UpdateMusic,
 		UpdateArtwork,
 		UpdateInfo,
+		UpdateSidecar,
 		UpdateUndetermined,
 		Completed
 	}
@@ -57,12 +57,7 @@ namespace Noise.Core.FileProcessor {
 		public IPipelineStep Process( PipelineContext context ) {
 			var retValue = mNextStep;
 
-			try {
-				ProcessStep( context );
-			}
-			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "StorageFile Pipeline ProcessStep:", ex );
-			}
+			ProcessStep( context );
 
 			return( retValue );
 		}

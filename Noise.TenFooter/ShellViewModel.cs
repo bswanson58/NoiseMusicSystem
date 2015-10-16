@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
@@ -8,9 +9,10 @@ using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 using Noise.TenFoot.Ui.ViewModels;
 using Noise.UI.ViewModels;
+using TransportViewModel = Noise.TenFoot.Ui.ViewModels.TransportViewModel;
 
 namespace Noise.TenFooter {
-    public class ShellViewModel : Conductor<object>.Collection.OneActive, IShell,
+	public class ShellViewModel : Conductor<object>.Collection.OneActive, IShell,
 								  IHandle<Events.NavigateHome>, IHandle<Events.NavigateToScreen>, IHandle<Events.NavigateReturn> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IWindowManager			mWindowManager;
@@ -45,27 +47,39 @@ namespace Noise.TenFooter {
 
 			mEventAggregator.Subscribe( this );
 
-			libraryConfiguration.OpenDefaultLibrary();
+			OpenLibrary( libraryConfiguration );
 		}
 
-	    public PlayerViewModel PlayerView {
-		    get{ return( mTransportViewModel ); }
-	    }
+		private void OpenLibrary( ILibraryConfiguration libraryConfiguration ) {
+			libraryConfiguration.OpenDefaultLibrary();
 
-	    public NotificationViewModel NotificationView {
-		    get{ return( mNotificationViewModel ); }
-	    }
+			if( libraryConfiguration.Current == null ) {
+				var library = libraryConfiguration.Libraries.FirstOrDefault();
 
-	    public string ScreenTitle {
-		    get{ return( mScreenTitle ); }
-	    }
+				if( library != null ) {
+					libraryConfiguration.Open( library );
+				}
+			}
+		}
 
-	    public string ContextTitle {
-		    get{ return( mContextTitle ); }
-	    }
+		public PlayerViewModel PlayerView {
+			get{ return( mTransportViewModel ); }
+		}
 
-	    public DateTime CurrentTime {
-		    get{ return( mCurrentTime ); }
+		public NotificationViewModel NotificationView {
+			get{ return( mNotificationViewModel ); }
+		}
+
+		public string ScreenTitle {
+			get{ return( mScreenTitle ); }
+		}
+
+		public string ContextTitle {
+			get{ return( mContextTitle ); }
+		}
+
+		public DateTime CurrentTime {
+			get{ return( mCurrentTime ); }
 			set {
 				if( mCurrentTime != value ) {
 					mCurrentTime = value;
@@ -73,7 +87,7 @@ namespace Noise.TenFooter {
 					NotifyOfPropertyChange( () => CurrentTime );
 				}
 			}
-	    }
+		}
 
 		private void OnTimer( object sender, EventArgs args ) {
 			CurrentTime = DateTime.Now;
@@ -134,7 +148,7 @@ namespace Noise.TenFooter {
 			NavigateReturn( screenData.FromScreen, screenData.CloseScreen );
 		}
 
-    	public void NavigateHome() {
+		public void NavigateHome() {
 			while( ActiveItem != mHomeView ) {
 				if( ActiveItem == null ) {
 					ActivateItem( mHomeView );
@@ -143,7 +157,7 @@ namespace Noise.TenFooter {
 					DeactivateItem( ActiveItem, true );
 				}
 			}
-    	}
+		}
 
 		public void NavigateBack() {
 			NavigateReturn( ActiveItem, true );
@@ -153,13 +167,13 @@ namespace Noise.TenFooter {
 			get{ return( ActiveItem != mHomeView ); }
 		}
 
-    	public void NavigateReturn( object fromScreen, bool closeScreen ) {
+		public void NavigateReturn( object fromScreen, bool closeScreen ) {
 			DeactivateItem( fromScreen, closeScreen );
 
 			if( ActiveItem == null ) {
 				ActivateItem( mHomeView );
 			}
-    	}
+		}
 
 		protected override void ChangeActiveItem( object newItem, bool closePrevious ) {
 			base.ChangeActiveItem( newItem, closePrevious );
@@ -184,5 +198,5 @@ namespace Noise.TenFooter {
 			NotifyOfPropertyChange( () => ContextTitle );
 			NotifyOfPropertyChange( () => CanNavigateBack );
 		}
-    }
+	}
 }

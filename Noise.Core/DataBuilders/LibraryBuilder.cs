@@ -6,34 +6,43 @@ using Caliburn.Micro;
 using Noise.Core.Database;
 using Noise.Core.FileProcessor;
 using Noise.Core.FileStore;
+using Noise.Core.Logging;
 using Noise.Core.Platform;
+using Noise.Core.Sidecars;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
-	public class LibraryBuilder : ILibraryBuilder {
-		private readonly IEventAggregator		mEventAggregator;
-		private readonly FileSystemWatcherEx	mFolderWatcher;
-		private readonly IStorageFolderSupport	mStorageFolderSupport;
-		private readonly IFolderExplorer		mFolderExplorer;
-		private readonly IMetaDataCleaner		mMetaDataCleaner;
-		private readonly IStorageFileProcessor	mStorageFileProcessor;
-		private	readonly ISummaryBuilder		mSummaryBuilder;
-		private readonly DatabaseStatistics		mDatabaseStatistics;
-		private bool							mContinueExploring;
+	internal class LibraryBuilder : ILibraryBuilder {
+		private readonly IEventAggregator			mEventAggregator;
+		private readonly ILogLibraryBuilding		mLog;
+		private readonly ILogUserStatus				mUserStatus;
+		private readonly FileSystemWatcherEx		mFolderWatcher;
+		private readonly IStorageFolderSupport		mStorageFolderSupport;
+		private readonly IFolderExplorer			mFolderExplorer;
+		private readonly IMetaDataCleaner			mMetaDataCleaner;
+		private readonly IStorageFileProcessor		mStorageFileProcessor;
+		private readonly ISidecarBuilder			mSidecarBuilder;
+		private	readonly ISummaryBuilder			mSummaryBuilder;
+		private readonly DatabaseStatistics			mDatabaseStatistics;
+		private bool								mContinueExploring;
 
-		public	bool							LibraryUpdateInProgress { get; private set; }
-		public	bool							LibraryUpdatePaused { get; private set; }
+		public	bool								LibraryUpdateInProgress { get; private set; }
+		public	bool								LibraryUpdatePaused { get; private set; }
 
-		public LibraryBuilder( IEventAggregator eventAggregator, IStorageFolderSupport storageFolderSupport,
-							   IFolderExplorer folderExplorer, IMetaDataCleaner metaDataCleaner, IStorageFileProcessor storageFileProcessor,
-							   ISummaryBuilder summaryBuilder, DatabaseStatistics databaseStatistics ) {
+		public LibraryBuilder( IEventAggregator eventAggregator, ILogUserStatus userStatus, ILogLibraryBuilding log,
+							   IStorageFolderSupport storageFolderSupport, IFolderExplorer folderExplorer, IMetaDataCleaner metaDataCleaner,
+							   IStorageFileProcessor storageFileProcessor, ISidecarBuilder sidecarBuilder, ISummaryBuilder summaryBuilder,
+							   DatabaseStatistics databaseStatistics ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
+			mUserStatus = userStatus;
 			mStorageFolderSupport = storageFolderSupport;
 			mFolderExplorer = folderExplorer;
 			mMetaDataCleaner = metaDataCleaner;
 			mStorageFileProcessor = storageFileProcessor;
+			mSidecarBuilder = sidecarBuilder;
 			mSummaryBuilder = summaryBuilder;
 			mDatabaseStatistics = databaseStatistics;
 			mFolderWatcher = new FileSystemWatcherEx();
@@ -68,15 +77,15 @@ namespace Noise.Core.DataBuilders {
 				retValue.AddRange( mFolderExplorer.RootFolderList().Select( rootFolder => mStorageFolderSupport.GetPath( rootFolder )));
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - RootFolderList:", ex );
+				mLog.LogException( "Building root folder paths", ex );
 			}
 
 			return( retValue );
 		}
 
 		public void StartLibraryUpdate() {
-			NoiseLogger.Current.LogMessage( "LibraryBuilder: Starting Library Update." );
-			mEventAggregator.Publish( new Events.StatusEvent( "Starting Library Update." ));
+			mLog.BuildingStarted();
+			mUserStatus.StartingLibraryUpdate();
 
 			ThreadPool.QueueUserWorkItem( UpdateLibrary );
 		}
@@ -113,6 +122,10 @@ namespace Noise.Core.DataBuilders {
 
 			if( mSummaryBuilder != null ) {
 				mSummaryBuilder.Stop();
+			}
+
+			if( mSidecarBuilder != null ) {
+				mSidecarBuilder.Stop();
 			}
 
 			WaitForExplorer();
@@ -154,12 +167,15 @@ namespace Noise.Core.DataBuilders {
 						mSummaryBuilder.BuildSummaryData( results );
 					}
 
-					NoiseLogger.Current.LogMessage( "LibraryBuilder: Update Finished." );
-					mEventAggregator.Publish( new Events.StatusEvent( "Library update completed." ));
+					if( mContinueExploring ) {
+						mSidecarBuilder.Process();
+					}
+
+					mLog.BuildingCompleted( results );
+					mUserStatus.CompletedLibraryUpdate();
 
 					if( results.HaveChanges ) {
-						NoiseLogger.Current.LogMessage( string.Format( "Database changes: {0}", results ));
-						mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Database changes: {0}", results )) { ExtendDisplay = true });
+						mUserStatus.LibraryChanged( results );
 					}
 
 					if( mContinueExploring ) {
@@ -168,7 +184,7 @@ namespace Noise.Core.DataBuilders {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - LibraryBuilderUpdate: ", ex );
+				mLog.LogException( "Building libraries", ex );
 			}
 			finally {
 				LibraryUpdateInProgress = false;
@@ -188,8 +204,9 @@ namespace Noise.Core.DataBuilders {
 		private void LogStatistics( bool allCounts ) {
 			mDatabaseStatistics.GatherStatistics( allCounts );
 
-			NoiseLogger.Current.LogMessage( mDatabaseStatistics.ToString());
-			mEventAggregator.Publish( new Events.StatusEvent( mDatabaseStatistics.ToString()) { ExtendDisplay = true });
+			mLog.DatabaseStatistics( mDatabaseStatistics );
+			mEventAggregator.Publish( new Events.DatabaseStatisticsUpdated( mDatabaseStatistics ));
+			mUserStatus.LibraryStatistics( mDatabaseStatistics );
 		}
 	}
 }

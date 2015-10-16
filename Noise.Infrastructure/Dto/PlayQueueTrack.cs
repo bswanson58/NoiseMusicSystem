@@ -151,5 +151,12 @@ namespace Noise.Infrastructure.Dto {
 				return( retValue );
 			}
 		}
+
+		public override string ToString() {
+			var title = IsStream ? string.Format( "Stream: {0}", Stream.Name ) :
+								   string.Format( "Track \"{0}\" Id:{1}, Artist \"{2}\" Id:{3}, Album \"{4}\" Id:{5}",
+													Track.Name, Track.DbId, Artist.Name, Artist.DbId, Album.Name, Album.DbId );
+			return( string.Format( "PlayTrack Id:{0}, Strategy:{1}, {2}", Uid, StrategySource, title ));
+		}
 	}
 }

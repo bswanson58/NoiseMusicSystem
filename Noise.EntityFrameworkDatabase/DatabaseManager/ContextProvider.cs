@@ -1,12 +1,25 @@
-﻿using Noise.BlobStorage.BlobStore;
+﻿using System;
+using System.IO;
+using Noise.BlobStorage.BlobStore;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
+using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DatabaseManager {
-	public class ContextProvider : IContextProvider {
-		private readonly IBlobStorageManager	mBlobStorageManager;
+	internal class ContextProvider : IContextProvider {
+		public	const string					cInvalidContextName = "_invalid_context_";
 
-		public ContextProvider( IBlobStorageManager blobStorageManager ) {
+		private readonly ILogDatabase			mLog;
+		private readonly IBlobStorageManager	mBlobStorageManager;
+		private readonly ILibraryConfiguration	mLibraryConfiguration;
+
+		public ContextProvider( ILibraryConfiguration libraryConfiguration, ILogDatabase log,
+								IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver ) {
+			mLog = log;
+			mLibraryConfiguration = libraryConfiguration;
 			mBlobStorageManager = blobStorageManager;
+			mBlobStorageManager.SetResolver( storageResolver );
 		}
 
 		public IBlobStorageManager BlobStorageManager {
@@ -14,7 +27,32 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 		}
 
 		public IDbContext	CreateContext() {
-			return( new NoiseContext());
+			var databaseName = cInvalidContextName;
+			var connectionString = string.Empty;
+
+			if( mLibraryConfiguration.Current != null ) {
+				try {
+					var databasePath = mLibraryConfiguration.Current.LibraryDatabasePath;
+
+					if( !Directory.Exists( databasePath )) {
+						Directory.CreateDirectory( databasePath );
+					}
+
+					databaseName = mLibraryConfiguration.Current.DatabaseName;
+					databasePath = Path.Combine( databasePath, FormatDatabaseName( mLibraryConfiguration.Current.DatabaseName  ));
+					connectionString = string.Format( @"Data Source=(localdb)\v11.0;Integrated Security=true;MultipleActiveResultSets=True;AttachDbFileName={0}", databasePath );
+
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "Creating database context", ex );
+				}
+			}
+
+			return( new NoiseContext( databaseName, connectionString ));
+		}
+
+		public static string FormatDatabaseName( string libraryName ) {
+			return( libraryName + Constants.Ef_DatabaseFileExtension );
 		}
 	}
 }

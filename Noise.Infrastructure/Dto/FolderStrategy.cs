@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using Eloquera.Client;
-
-namespace Noise.Infrastructure.Dto {
+﻿namespace Noise.Infrastructure.Dto {
 	public enum eFolderStrategy {
 		Artist = 1,
 		Album = 2,
@@ -25,10 +21,6 @@ namespace Noise.Infrastructure.Dto {
 			}
 		}
 
-		public void EloqueraFixUp() {
-			mFolderLevelStrategies = Array.ConvertAll( mFolderLevelStrategies, value => (eFolderStrategy)value );
-		}
-
 		public eFolderStrategy StrategyForLevel( int folderLevel ) {
 			var retValue = eFolderStrategy.Undefined;
 
@@ -45,39 +37,29 @@ namespace Noise.Infrastructure.Dto {
 			}
 		}
 
-		[Ignore]
 		public int DbFolderStrategy1 {
 			get{ return((int)mFolderLevelStrategies[0]); }
 			protected set{ mFolderLevelStrategies[0] = (eFolderStrategy)value; }
 		}
 
-		[Ignore]
 		public int DbFolderStrategy2 {
 			get{ return((int)mFolderLevelStrategies[1]); }
 			protected set{ mFolderLevelStrategies[1] = (eFolderStrategy)value; }
 		}
 
-		[Ignore]
 		public int DbFolderStrategy3 {
 			get{ return((int)mFolderLevelStrategies[2]); }
 			protected set{ mFolderLevelStrategies[2] = (eFolderStrategy)value; }
 		}
 
-		[Ignore]
 		public int DbFolderStrategy4 {
 			get{ return((int)mFolderLevelStrategies[3]); }
 			protected set{ mFolderLevelStrategies[3] = (eFolderStrategy)value; }
 		}
 
-		[Ignore]
 		public int DbFolderStrategy5 {
 			get{ return((int)mFolderLevelStrategies[4]); }
 			protected set{ mFolderLevelStrategies[4] = (eFolderStrategy)value; }
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( FolderStrategy )); }
 		}
 	}
 }

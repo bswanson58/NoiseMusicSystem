@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Noise.RavenDatabase.Support;
 using Raven.Client.Indexes;
 
@@ -30,13 +32,19 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 	}
 
-	public class StorageFileProvider : BaseProvider<StorageFile>, IStorageFileProvider {
-		public StorageFileProvider( IDbFactory databaseFactory ) :
-			base( databaseFactory, entity => new object[] { entity.DbId }) {
+	internal class StorageFileProvider : BaseProvider<StorageFile>, IStorageFileProvider {
+		public StorageFileProvider( IDbFactory databaseFactory, ILogRaven log ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }, log ) {
 		}
 
 		public void AddFile( StorageFile file ) {
 			Database.Add( file );
+		}
+
+		public void Add( IEnumerable<StorageFile> list ) {
+			foreach( var item in list ) {
+				AddFile( item );
+			}
 		}
 
 		public void DeleteFile( StorageFile file ) {
@@ -45,6 +53,10 @@ namespace Noise.RavenDatabase.DataProviders {
 
 		public StorageFile GetPhysicalFile( DbTrack forTrack ) {
 			return( Database.Get( track => track.MetaDataPointer == forTrack.DbId ));
+		}
+
+		public StorageFile GetFileForMetadata( long metadataId ) {
+			return( Database.Get( file => file.MetaDataPointer == metadataId ));
 		}
 
 		public IDataProviderList<StorageFile> GetAllFiles() {

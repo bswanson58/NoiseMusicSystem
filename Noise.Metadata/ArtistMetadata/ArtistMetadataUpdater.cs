@@ -4,28 +4,37 @@ using System.Linq;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Dto;
 using Noise.Metadata.Interfaces;
 using Raven.Client;
-using Raven.Client.Linq;
 using ReusableBits.Threading;
 
 namespace Noise.Metadata.ArtistMetadata {
 	internal class ArtistMetadataUpdater : IMetadataUpdater {
+		private const string									cBackgroundTaskName = "Artist Metadata Updateer";
+
 		private readonly IEventAggregator						mEventAggregator;
+		private readonly INoiseLog								mLog;
+		private readonly IDatabaseInfo							mDatabaseInfo;
+		private readonly IArtistProvider						mArtistProvider;
 		private readonly IRecurringTaskScheduler				mTaskScheduler;
 		private readonly IEnumerable<IArtistMetadataProvider>	mProviders; 
-		private readonly Stack<DbArtistStatus>					mPriorityUpdateList;  
+		private readonly Stack<string>							mPriorityUpdateList;  
 		private IDocumentStore									mDocumentStore;
-		private IEnumerable<DbArtistStatus>						mUpdateList;
-		private IEnumerator<DbArtistStatus>						mUpdateEnumerator;
+		private IEnumerable<string>								mUpdateList;
+		private IEnumerator<string>								mUpdateEnumerator;
 
-		public ArtistMetadataUpdater( IEventAggregator eventAggregator, IRecurringTaskScheduler taskScheduler, IEnumerable<IArtistMetadataProvider> providers  ) {
+		public ArtistMetadataUpdater( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IArtistProvider artistProvider,
+									  IRecurringTaskScheduler taskScheduler, IEnumerable<IArtistMetadataProvider> providers, INoiseLog log ) {
 			mEventAggregator = eventAggregator;
+			mDatabaseInfo = databaseInfo;
+			mArtistProvider = artistProvider;
 			mTaskScheduler = taskScheduler;
 			mProviders = providers;
+			mLog = log;
 
-			mPriorityUpdateList = new Stack<DbArtistStatus>();
+			mPriorityUpdateList = new Stack<string>();
 		}
 
 		public void Initialize( IDocumentStore documentStore ) {
@@ -38,23 +47,21 @@ namespace Noise.Metadata.ArtistMetadata {
 					provider.Initialize( mDocumentStore );
 				}
 
-				FillUpdateList();
-
-				var updateTask = new RecurringTask( UpdateNextArtist );
+				var updateTask = new RecurringTask( UpdateNextArtist, cBackgroundTaskName );
 
 				updateTask.TaskSchedule.StartAt( RecurringInterval.FromSeconds( 15 ))
-									   .Delay( RecurringInterval.FromSeconds( 10 ));
+									   .Delay( RecurringInterval.FromSeconds( 15 ));
 				mTaskScheduler.AddRecurringTask( updateTask );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "ArtistMetadataUpdater:Initialize", ex );
+				mLog.LogException( "Failed to initialize", ex );
 			}
 		}
 
 		public void Shutdown() {
 			mUpdateEnumerator = null;
 			mUpdateList = null;
-			mTaskScheduler.RemoveAllTasks();
+			mTaskScheduler.RemoveTask( cBackgroundTaskName );
 
 			foreach( var provider in mProviders ) {
 				provider.Shutdown();
@@ -65,12 +72,24 @@ namespace Noise.Metadata.ArtistMetadata {
 
 		public void QueueArtistUpdate( string forArtist ) {
 			if( mDocumentStore != null ) {
-				using( var session = mDocumentStore.OpenSession()) {
-					var status = session.Load<DbArtistStatus>( DbArtistStatus.FormatStatusKey( forArtist ));
+				lock( mPriorityUpdateList ) {
+					if(!mPriorityUpdateList.Contains( forArtist )) {
+						var	artistStatus = GetArtistStatus( forArtist );
 
-					if( status != null ) {
-						lock( mPriorityUpdateList ) {
-							mPriorityUpdateList.Push( status );
+						if( artistStatus != null ) {
+							bool	needsUpdate = false;
+
+							foreach( var provider in mProviders ) {
+								var status = artistStatus.GetProviderStatus( provider.ProviderKey );
+
+								needsUpdate |= !(( status != null ) &&
+												 ( status.LastUpdate + status.Lifetime > DateTime.Now ));
+								if( needsUpdate ) {
+									mPriorityUpdateList.Push( forArtist );
+
+									break;
+								}
+							}
 						}
 					}
 				}
@@ -78,39 +97,71 @@ namespace Noise.Metadata.ArtistMetadata {
 		}
 
 		private void FillUpdateList() {
-			using( var session = mDocumentStore.OpenSession()) {
-				mUpdateList = ( from status in session.Query<DbArtistStatus>() select status ).ToArray();
-			}
+			if( mDatabaseInfo.IsOpen ) {
+				mUpdateList = ( from artist in mArtistProvider.GetArtistList().List select artist.Name ).ToArray();
 
-			mUpdateEnumerator = mUpdateList.GetEnumerator();
+				mUpdateEnumerator = mUpdateList.GetEnumerator();
+			}
 		}
 
+		private string CheckForPriorityArtist() {
+			var retValue = string.Empty;
+
+			lock( mPriorityUpdateList ) {
+				if( mPriorityUpdateList.Any()) {
+					retValue = mPriorityUpdateList.Pop();
+				}
+			}
+
+			return( retValue );
+		}
 		private void UpdateNextArtist( RecurringTask task ) {
 			try {
-				if( mPriorityUpdateList.Any()) {
-					DbArtistStatus artistStatus;
+				string	artistName = CheckForPriorityArtist();
 
-					lock( mPriorityUpdateList ) {
-						artistStatus = mPriorityUpdateList.Pop();
+				if( string.IsNullOrWhiteSpace( artistName )) {
+					if(( mUpdateEnumerator != null ) &&
+					   ( mUpdateEnumerator.MoveNext())) {
+						artistName = mUpdateEnumerator.Current;
 					}
-
-					UpdateArtist( artistStatus );
+					else {
+						FillUpdateList();
+					}
 				}
-				else {
-					if( mUpdateEnumerator != null ) {
-						if( mUpdateEnumerator.MoveNext()) {
-							UpdateArtist( mUpdateEnumerator.Current );
-						}
-						else {
-							FillUpdateList();
-						}
+
+				if(!string.IsNullOrWhiteSpace( artistName )) {
+					var	artistStatus = GetArtistStatus( artistName );
+
+					if( artistStatus != null ) {
+						UpdateArtist( artistStatus );
 					}
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "ArtistMetadataUpdater:UpdateNextArtist", ex );
+				mLog.LogException( "UpdateNextArtist", ex );
 			}
 		}
+
+		private DbArtistStatus GetArtistStatus( string forArtist ) {
+			var retValue = default( DbArtistStatus );
+
+			if(( mDocumentStore != null ) &&
+			   (!mDocumentStore.WasDisposed )) {
+				using( var session = mDocumentStore.OpenSession()) {
+					retValue = session.Load<DbArtistStatus>( DbArtistStatus.FormatStatusKey( forArtist ));
+
+					if( retValue == null ) {
+						retValue = new DbArtistStatus { ArtistName = forArtist };
+
+						session.Store( retValue );
+						session.SaveChanges();
+					}
+				}
+			}
+
+			return( retValue );
+		}
+
 
 		private void UpdateArtist( DbArtistStatus artistStatus ) {
 			bool	updated = false;

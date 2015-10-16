@@ -2,24 +2,24 @@
 using System.IO;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Reflection;
 using Caliburn.Micro;
 using Noise.BlobStorage.BlobStore;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.DataProviders;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Raven.Client;
 using Raven.Client.Embedded;
 using Raven.Client.Indexes;
 
 namespace Noise.RavenDatabase.Support {
-	public class RavenDatabaseManager : IDatabaseManager, IDbFactory,
-										IHandle<Events.LibraryChanged> {
-		private const Int16						cDatabaseVersionMajor = 0;
-		private const Int16						cDatabaseVersionMinor = 9;
+	internal class RavenDatabaseManager : IDatabaseManager, IDbFactory,
+										  IHandle<Events.LibraryChanged> {
+		private const Int16						cDatabaseVersion = 1;
 
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly ILogRaven				mLog;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly IBlobStorageManager	mBlobStorageManager;
 		private IDocumentStore					mLibraryDatabase;
@@ -31,8 +31,9 @@ namespace Noise.RavenDatabase.Support {
 		public bool IsOpen { get; private set; }
 
 		public RavenDatabaseManager( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration,
-									 IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver ) {
+									 IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver, ILogRaven log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mLibraryConfiguration = libraryConfiguration;
 			mBlobStorageManager = blobStorageManager;
 			mBlobStorageManager.SetResolver( storageResolver );
@@ -71,11 +72,14 @@ namespace Noise.RavenDatabase.Support {
 				IndexCreation.CreateIndexes( GetType().Assembly, mLibraryDatabase );
 
 				if( databaseCreated ) {
-					var versionProvider = new DatabaseInfoProvider( this );
+					var versionProvider = new DatabaseInfoProvider( this, mLog );
 
-					versionProvider.InitializeDatabaseVersion( cDatabaseVersionMajor, cDatabaseVersionMinor );
+					versionProvider.InitializeDatabaseVersion( cDatabaseVersion );
 
-					NoiseLogger.Current.LogMessage( "Created Library Database: {0}", mLibraryConfiguration.Current.LibraryName );
+					mLog.CreatedDatabase( mLibraryConfiguration.Current );
+				}
+				else {
+					mLog.OpenedDatabase( mLibraryConfiguration.Current );
 				}
 
 				IsOpen = mLibraryDatabase != null;
@@ -112,7 +116,7 @@ namespace Noise.RavenDatabase.Support {
 					if(!mBlobStorageManager.OpenStorage()) {
 						var ex = new ApplicationException( "RavenDatabaseManager:Blob storage could not be created." );
 
-						NoiseLogger.Current.LogException( ex );
+						mLog.LogException( "Initializing BlobStorage", ex );
 						throw ( ex );
 					}
 				}
@@ -131,6 +135,8 @@ namespace Noise.RavenDatabase.Support {
 
 			mBlobStorageManager.CloseStorage();
 			mBlobStorageInitialized = false;
+
+			mLog.ClosedDatabase();
 		}
 	}
 }

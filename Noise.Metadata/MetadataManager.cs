@@ -8,22 +8,26 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Interfaces;
 using Raven.Abstractions.Smuggler;
 using Raven.Client;
+using Raven.Client.Document;
 using Raven.Client.Embedded;
-using Raven.Database.Server;
 using Raven.Database.Smuggler;
 
 namespace Noise.Metadata {
 	public class MetadataManager : IRequireInitialization, IMetadataManager,
 								   IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved> {
 		private readonly IEventAggregator				mEventAggregator;
+		private readonly INoiseLog						mLog;
+		private readonly INoiseEnvironment				mNoiseEnvironment;
 		private readonly IArtistMetadataManager			mArtistMetadataManager;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IEnumerable<IMetadataUpdater>	mUpdaters; 
 		private IDocumentStore							mDocumentStore;
 
-		public MetadataManager( ILifecycleManager lifecycleManager,  IEventAggregator eventAggregator, IEnumerable<IMetadataUpdater> updaters,
-								IArtistMetadataManager artistMetadataManager, IArtistProvider artistProvider ) {
+		public MetadataManager( ILifecycleManager lifecycleManager,  IEventAggregator eventAggregator, INoiseEnvironment noiseEnvironment,
+								IEnumerable<IMetadataUpdater> updaters, IArtistMetadataManager artistMetadataManager, IArtistProvider artistProvider, INoiseLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
+			mNoiseEnvironment = noiseEnvironment;
 			mUpdaters = updaters;
 			mArtistMetadataManager = artistMetadataManager;
 			mArtistProvider = artistProvider;
@@ -34,16 +38,14 @@ namespace Noise.Metadata {
 
 		public void Initialize() {
 			try {
-				string metaDirectory = "Metadata";
+				string metaDirectory = Constants.MetadataDirectory;
 #if DEBUG
 				metaDirectory += " (Debug)";
 #endif
-				var libraryPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
-												Constants.CompanyName, 
-												Constants.LibraryConfigurationDirectory,
-												metaDirectory );
+				var libraryPath = Path.Combine( mNoiseEnvironment.LibraryDirectory(), metaDirectory );
 				mDocumentStore = new EmbeddableDocumentStore { DataDirectory = libraryPath };
-#if DEBUG
+				mDocumentStore.Conventions.DefaultQueryingConsistency = ConsistencyOptions.AlwaysWaitForNonStaleResultsAsOfLastWrite;
+/*
 				try {
 					( mDocumentStore as EmbeddableDocumentStore ).UseEmbeddedHttpServer = true;
 					NonAdminHttp.EnsureCanListenToWhenInNonAdminContext( 8080 );
@@ -53,7 +55,7 @@ namespace Noise.Metadata {
 
 					( mDocumentStore as EmbeddableDocumentStore ).UseEmbeddedHttpServer = false;
 				}
-#endif
+ */
 				mDocumentStore.Initialize();
 				mArtistMetadataManager.Initialize( mDocumentStore );
 
@@ -64,7 +66,7 @@ namespace Noise.Metadata {
 				mEventAggregator.Subscribe( this );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "MetadataManager:Initialize", ex );
+				mLog.LogException( "Failed to initialize", ex );
 			}
 		}
 
@@ -113,42 +115,38 @@ namespace Noise.Metadata {
 			return( mArtistMetadataManager.GetArtistArtwork( forArtist ));
 		}
 
-		public void ExportMetadata( string exportName ) {
+		public async void ExportMetadata( string exportPath ) {
 			try {
-				var exportPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
-												Constants.CompanyName, 
-												Constants.LibraryConfigurationDirectory,
-												exportName );
 				if( mDocumentStore is EmbeddableDocumentStore ) {
 					var embeddedStore = mDocumentStore as EmbeddableDocumentStore;
-					var options = new SmugglerOptions { BackupPath = exportPath };
+					var options = new SmugglerOptions();
 					var exporter = new DataDumper( embeddedStore.DocumentDatabase, options );
 
-					exporter.ExportData( options );
+					using( var stream = File.OpenWrite( exportPath )) {
+						await exporter.ExportData( stream, options, false );
+					}
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "MetadataManager:ExportMetadata", ex );
+				mLog.LogException( string .Format( "Exporting Metadata to \"{0}\"", exportPath ), ex );
 			}
 		}
 
-		public void ImportMetadata( string importName ) {
+		public async void ImportMetadata( string importPath ) {
 			try {
-				var importPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
-												Constants.CompanyName, 
-												Constants.LibraryConfigurationDirectory,
-												importName );
 				if(( mDocumentStore is EmbeddableDocumentStore ) &&
 				   ( File.Exists( importPath ))) {
 					var embeddedStore = mDocumentStore as EmbeddableDocumentStore;
-					var options = new SmugglerOptions { BackupPath = importPath };
+					var options = new SmugglerOptions();
 					var importer = new DataDumper( embeddedStore.DocumentDatabase, options );
 
-					importer.ImportData( options );
+					using( var stream = File.OpenRead( importPath )) {
+						await importer.ImportData( stream, options );
+					}
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "MetadataManager:ImportMetadata", ex );
+				mLog.LogException( string.Format( "Importing Metadata from \"{0}\"", importPath ), ex );
 			}
 		}
 	}

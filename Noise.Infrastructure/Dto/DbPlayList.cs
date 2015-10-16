@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using Eloquera.Client;
+using System.Globalization;
+using System.Linq;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbPlayList : DbBase, IUserSettings {
 		public string			Name { get; set; }
 		public string			Description { get; set; }
-		public List<long>		TrackIds { get; protected set; }
 		public Int16			Rating { get; set; }
 		public long				Genre { get; set; }
 		public bool				IsFavorite { get; set; }
+		public string			PersistedTrackIds { get; protected set; }
 
 		public DbPlayList() {
 			Name = string.Empty;
 			Description = string.Empty;
-
-			TrackIds = new List<long>();
+			PersistedTrackIds = string.Empty;
 		}
 
 		public DbPlayList( string name, string description, IEnumerable<long> trackIds ) :
@@ -24,17 +23,28 @@ namespace Noise.Infrastructure.Dto {
 			Name = name;
 			Description = description;
 
-			TrackIds.AddRange( trackIds );
+			TrackIds = trackIds;
 		}
 
-		[Ignore]
 		public bool IsUserRating {
 			get { return( true ); }
 		}
 
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbPlayList )); }
+		public IEnumerable<long> TrackIds {
+			get {
+				if(!string.IsNullOrWhiteSpace( PersistedTrackIds )) {
+					return( Array.ConvertAll( PersistedTrackIds.Split( ';' ), long.Parse ).ToList());
+				}
+
+				return( new long[0]);
+			}
+			set {
+				PersistedTrackIds = String.Join( ";", value.Select( p => p.ToString( CultureInfo.InvariantCulture )).ToArray());
+			}
+		}
+
+		public override string ToString() {
+			return( string.Format( "Playlist \"{0}\"", Name ));
 		}
 	}
 }

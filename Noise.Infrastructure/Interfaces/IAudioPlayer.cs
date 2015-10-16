@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Noise.Infrastructure.Dto;
@@ -48,6 +49,10 @@ namespace Noise.Infrastructure.Interfaces {
 		float				ReverbLevel { get; set; }
 		float				ReverbDelay { get; set; }
 
+		IEnumerable<AudioDevice>		GetDeviceList();
+		AudioDevice						GetCurrentDevice();
+		void							SetDevice( AudioDevice device );
+		
 		IObservable<AudioChannelStatus>	ChannelStatusChange { get; }
 		IObservable<AudioLevels>		AudioLevelsChange { get; }
 		IObservable<StreamInfo>			AudioStreamInfoChange { get; }

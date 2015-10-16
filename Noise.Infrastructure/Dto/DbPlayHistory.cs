@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
-using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public class DbPlayHistory : DbBase {
@@ -16,14 +14,12 @@ namespace Noise.Infrastructure.Dto {
 			PlayedOnTicks = DateTime.Now.Ticks;
 		}
 
-		[Ignore]
 		public DateTime PlayedOn {
 			get{ return( new DateTime( PlayedOnTicks )); }
 		}
 
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbPlayHistory )); }
+		public override string ToString() {
+			return( string.Format( "PlayHistory for Track:{0}", TrackId ));
 		}
 	}
 }

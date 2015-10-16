@@ -1,13 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Caliburn.Micro;
-using Moq;
 using NUnit.Framework;
-using Noise.Infrastructure;
 using Noise.UI.ViewModels;
 using ReusableBits;
 using ReusableBits.TestSupport.Mocking;
 using ReusableBits.TestSupport.Threading;
-using ILog = Noise.Infrastructure.Interfaces.ILog;
 
 namespace Noise.UI.Tests.ViewModels {
 	internal class TestableArtistInfoViewModel : Testable<ArtistInfoViewModel> {
@@ -40,8 +37,6 @@ namespace Noise.UI.Tests.ViewModels {
 
 		[SetUp]
 		public void Setup() {
-			NoiseLogger.Current = new Mock<ILog>().Object;
-
 			// Set the ui dispatcher to run on the current thread.
 			Execute.ResetWithoutDispatcher();
 		}

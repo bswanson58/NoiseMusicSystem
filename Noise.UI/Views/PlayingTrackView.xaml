@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="Noise.UI.Views.PlayingTrackView"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:Controls="clr-namespace:Noise.UI.Controls">
+	
+	<UserControl.DataContext>
+		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
+	</UserControl.DataContext>
+
+	<UserControl.Resources>
+		<DataTemplate x:Key="AfterTemplate">
+			<Rectangle Fill="{StaticResource StartupForegroundBrush}" />
+		</DataTemplate>
+
+		<DataTemplate x:Key="ThumbTemplate">
+			<Rectangle Width="0" />
+		</DataTemplate>
+
+		<DataTemplate x:Key="BeforeTemplate">
+			<Rectangle Fill="{StaticResource StartupForegroundBrush}" Opacity="0" Height="3" VerticalAlignment="Center"/>
+		</DataTemplate>
+	</UserControl.Resources>
+	
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<Controls:SpectrumAnalyzerDisplay Grid.Row="0"  Margin="5,0"
+										  ImageHeight="{Binding Path=ImageHeight, Mode=OneWayToSource}"
+										  ImageWidth="{Binding Path=ImageWidth, Mode=OneWayToSource}"
+										  SpectrumImage="{Binding Path=SpectrumImage, Mode=OneWay}" />
+
+		<!-- Track Name -->
+		<Viewbox Grid.Row="0" Margin="9,0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right">
+			<TextBlock Style="{StaticResource LargeTitleStyle}" FontSize="800" HorizontalAlignment="Right" Text="{Binding TrackName}" />
+		</Viewbox>
+
+		<!-- Playing Time -->
+		<TextBlock Grid.Row="0" Style="{StaticResource LargeTitleStyle}" FontSize="32" Foreground="{StaticResource StartupForegroundBrush}"
+						   Margin="0,0,15,18" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+						   Visibility="{Binding TrackTime, Converter={StaticResource TimeSpanVisibilityConverter}}"
+						   Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" />
+
+		<!-- Playing Time Bar -->
+		<Controls:TrackSlider Grid.Row="1" Margin="5,5,15,1" Height="15"
+										   BeforeTemplate="{StaticResource BeforeTemplate}" ThumbTemplate="{StaticResource ThumbTemplate}" AfterTemplate="{StaticResource AfterTemplate}"
+										   Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0" SmoothedValue="{Binding Path=TrackPosition, Mode=TwoWay}"/>
+	</Grid>
+</UserControl>

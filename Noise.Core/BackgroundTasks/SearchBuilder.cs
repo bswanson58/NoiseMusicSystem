@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Caliburn.Micro;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -12,6 +13,8 @@ namespace Noise.Core.BackgroundTasks {
 	public class SearchBuilder : IBackgroundTask,
 								 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private readonly IEventAggregator				mEventAggregator;
+		private readonly ILogBackgroundTasks			mLog;
+		private readonly ILogUserStatus					mUserStatus;
 		private readonly ISearchProvider				mSearchProvider;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IAlbumProvider					mAlbumProvider;
@@ -24,7 +27,8 @@ namespace Noise.Core.BackgroundTasks {
 
 		public SearchBuilder( IEventAggregator eventAggregator, IArtistProvider artistProvider, IAlbumProvider albumProvider,
 							  ITrackProvider trackProvider, ILyricProvider lyricProvider, ITextInfoProvider textInfoProvider,
-							  IMetadataManager metadataManager, ISearchProvider searchProvider ) {
+							  IMetadataManager metadataManager, ISearchProvider searchProvider,
+							  ILogBackgroundTasks log, ILogUserStatus userStatus ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -33,6 +37,8 @@ namespace Noise.Core.BackgroundTasks {
 			mTextInfoProvider = textInfoProvider;
 			mMetadataManager = metadataManager;
 			mSearchProvider = searchProvider;
+			mLog = log;
+			mUserStatus = userStatus;
 
 			mEventAggregator.Subscribe( this );
 		}
@@ -46,7 +52,9 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {
-			mArtistList.Clear();
+			if( mArtistList != null ) {
+				mArtistList.Clear();
+			}
 		}
 
 		private void InitializeLists() {
@@ -102,8 +110,7 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		private void BuildSearchIndex( DbArtist artist ) {
-			NoiseLogger.Current.LogMessage( string.Format( "Building search info for {0}", artist.Name ));
-			mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Building search info for {0}", artist.Name )));
+			mLog.StartingSearchBuilding( artist );
 
 			try {
 				using( var indexBuilder = mSearchProvider.CreateIndexBuilder( artist, false )) {
@@ -150,13 +157,15 @@ namespace Noise.Core.BackgroundTasks {
 							}
 						}
 					}
+
+					mUserStatus.BuiltSearchData( artist );
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - Building search data: ", ex );
+				mLog.LogException( "Building search data", ex );
 			}
 
-			mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Completed building search info for {0}", artist.Name )));
+			mLog.CompletedSearchBuilding( artist );
 		}
 	}
 }

@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class LyricProvider : BaseProvider<DbLyric>, ILyricProvider {
-		public LyricProvider( IDbFactory databaseFactory ) :
-			base( databaseFactory, entity => new object[] { entity.DbId }) {
+	internal class LyricProvider : BaseProvider<DbLyric>, ILyricProvider {
+		public LyricProvider( IDbFactory databaseFactory, ILogRaven log ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }, log ) {
 		}
 
 		public void AddLyric( DbLyric lyric ) {
@@ -46,7 +46,7 @@ namespace Noise.RavenDatabase.DataProviders {
 				retValue = new RavenDataProviderList<DbLyric>( uniqueList );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - GetPossibleLyrics", ex );
+				Log.LogException( string.Format( "GetPossibleLyrics for {0}, {1}", artist, track ), ex );
 			}
 
 			return ( retValue );

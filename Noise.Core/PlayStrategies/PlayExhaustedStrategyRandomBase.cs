@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Noise.Core.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -10,8 +11,8 @@ namespace Noise.Core.PlayStrategies {
 		private readonly Random				mRandom;
 
 		protected PlayExhaustedStrategyRandomBase( ePlayExhaustedStrategy strategy, string displayName, string strategyDescription, string parameterName,
-												   IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
-			base( strategy, displayName, strategyDescription, parameterName ) {
+												   IAlbumProvider albumProvider, ITrackProvider trackProvider, ILogPlayStrategy log ) :
+			base( strategy, displayName, strategyDescription, parameterName, log ) {
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 
@@ -19,8 +20,8 @@ namespace Noise.Core.PlayStrategies {
 		}
 
 		protected PlayExhaustedStrategyRandomBase( ePlayExhaustedStrategy strategy, string strategyName, string strategyDescription,
-												   IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
-			base( strategy, strategyName, strategyDescription ) {
+												   IAlbumProvider albumProvider, ITrackProvider trackProvider, ILogPlayStrategy log ) :
+			base( strategy, strategyName, strategyDescription, log ) {
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 
@@ -28,7 +29,13 @@ namespace Noise.Core.PlayStrategies {
 		}
 
 		protected int NextRandom( int maxValue ) {
-			return( mRandom.Next( maxValue ));
+			var	retValue = 0;
+
+			if( maxValue > 0 ) {
+				retValue = mRandom.Next( maxValue );
+			}
+
+			return( retValue );
 		}
 
 		protected DbTrack RandomTrackFromArtist( DbArtist artist ) {

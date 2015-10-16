@@ -10,12 +10,14 @@ namespace Noise.UI.ViewModels {
 	public class StartupLibrarySelectionViewModel : AutomaticCommandBase {
 		private readonly IEventAggregator							mEventAggregator;
 		private readonly ILibraryConfiguration						mLibraryConfiguration;
+		private readonly IPreferences								mPreferences;
 		private readonly BindableCollection<LibraryConfiguration>	mLibraries;
 		public	bool												AlwaysOpenLastUsedLibrary { get; set; }
 
-		public StartupLibrarySelectionViewModel( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration ) {
+		public StartupLibrarySelectionViewModel( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration, IPreferences preferences ) {
 			mEventAggregator = eventAggregator;
 			mLibraryConfiguration = libraryConfiguration;
+			mPreferences = preferences;
 
 			mLibraries = new BindableCollection<LibraryConfiguration>();
 			LoadLibraries();
@@ -50,13 +52,10 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
 
 			if( AlwaysOpenLastUsedLibrary ) {
-				var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+				var preferences = mPreferences.Load<NoiseCorePreferences>();
 
-				if( expConfig != null ) {
-					expConfig.LoadLastLibraryOnStartup = AlwaysOpenLastUsedLibrary;
-
-					NoiseSystemConfiguration.Current.Save( expConfig );
-				}
+				preferences.LoadLastLibraryOnStartup = AlwaysOpenLastUsedLibrary;
+				mPreferences.Save( preferences );
 			}
 		}
 

@@ -1,11 +1,12 @@
 ﻿using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
-	public class GenreProvider : BaseProvider<DbGenre>, IGenreProvider {
-		public GenreProvider( IContextProvider contextProvider ) :
-			base( contextProvider ) { }
+	internal class GenreProvider : BaseProvider<DbGenre>, IGenreProvider {
+		public GenreProvider( IContextProvider contextProvider, ILogDatabase log ) :
+			base( contextProvider, log ) { }
 
 		public void AddGenre( DbGenre genre ) {
 			AddItem( genre );

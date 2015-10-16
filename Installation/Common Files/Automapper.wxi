@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
   <DirectoryRef Id="INSTALLDIRECTORY">
-    <Component Id="Automapper.dll" Guid="3f703b9d-4ee7-4032-8e4a-b41d202f4f91">
-      <File Id="Automapper.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Automapper.dll" KeyPath="yes" Checksum="yes" />
-    </Component>
+	<Component Id="Automapper.dll" Guid="3f703b9d-4ee7-4032-8e4a-b41d202f4f91">
+	  <File Id="Automapper.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Automapper.dll" KeyPath="yes" Checksum="yes" />
+	</Component>
+	  <Component Id="Automapper.Net4.dll" Guid="cc06e8cf-bc2f-4fc9-a130-8ed95fafacb6">
+		  <File Id="Automapper.Net4.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Automapper.Net4.dll" KeyPath="yes" Checksum="yes" />
+	  </Component>
   </DirectoryRef>
 
   <ComponentGroup Id="AutomapperFiles">
-    <ComponentRef Id="Automapper.dll" />
+	  <ComponentRef Id="Automapper.dll" />
+	  <ComponentRef Id="Automapper.Net4.dll" />
   </ComponentGroup>
 </Include>

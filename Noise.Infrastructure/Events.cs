@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Infrastructure.RemoteDto;
 
 namespace Noise.Infrastructure {
 	public class Events {
@@ -214,6 +215,8 @@ namespace Noise.Infrastructure {
 		public class PlaybackTrackChanged { }
 		public class PlaybackInfoChanged { }
 
+		public class AudioParametersChanged { }
+
 		public class WindowLayoutRequest {
 			public string	LayoutName { get; private set; }
 
@@ -255,6 +258,14 @@ namespace Noise.Infrastructure {
 
 			public LibraryUpdateCompleted( DatabaseChangeSummary summary ) {
 				Summary = summary;
+			}
+		}
+
+		public class DatabaseStatisticsUpdated {
+			public IDatabaseStatistics DatabaseStatistics {  get; private set; }
+
+			public DatabaseStatisticsUpdated( IDatabaseStatistics statistics ) {
+				DatabaseStatistics = statistics;
 			}
 		}
 
@@ -327,10 +338,12 @@ namespace Noise.Infrastructure {
 		public class LibraryConfigurationChanged { }
 		public class LibraryListChanged { }
 		public class LibraryChanged { }
+		public class LibraryBackupsChanged { }
 
 		public class DatabaseOpened { }
 		public class DatabaseClosing { }
 
+		public class SystemInitialized { }
 		public class SystemShutdown { }
 
 		public class GlobalUserEvent {
@@ -347,6 +360,14 @@ namespace Noise.Infrastructure {
 
 			public StatusEvent( string message ) {
 				Message = message;
+			}
+		}
+
+		public class RemoteTransportUpdate {
+			public RoTransportState	TransportState {get; private set; }
+
+			public RemoteTransportUpdate( RoTransportState transportState ) {
+				TransportState = transportState;
 			}
 		}
 	}

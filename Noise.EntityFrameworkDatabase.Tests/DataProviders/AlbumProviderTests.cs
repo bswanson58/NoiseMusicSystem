@@ -1,4 +1,5 @@
 ﻿using Moq;
+using Noise.EntityFrameworkDatabase.Logging;
 using NUnit.Framework;
 using Noise.BaseDatabase.Tests.DataProviders;
 using Noise.EntityFrameworkDatabase.DataProviders;
@@ -8,9 +9,11 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 	[TestFixture]
 	public class AlbumProviderTests : BaseAlbumProviderTests {
 		private readonly ProviderTestSetup	mTestSetup;
+		private readonly Mock<ILogDatabase>	mLog;
 
 		public AlbumProviderTests() {
 			mTestSetup = new ProviderTestSetup();
+			mLog = new Mock<ILogDatabase>();
 		}
 
 		[SetUp]
@@ -23,7 +26,7 @@ namespace Noise.EntityFrameworkDatabase.Tests.DataProviders {
 		}
 
 		protected override IAlbumProvider CreateSut() {
-			return( new AlbumProvider( mTestSetup.ContextProvider, mArtworkProvider.Object, mTextInfoProvider.Object, mAssociationProvider.Object ));
+			return( new AlbumProvider( mTestSetup.ContextProvider, mArtworkProvider.Object, mTextInfoProvider.Object, mAssociationProvider.Object, mLog.Object ));
 		}
 	}
 }

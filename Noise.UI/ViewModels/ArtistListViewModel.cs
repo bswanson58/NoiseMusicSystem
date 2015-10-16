@@ -5,25 +5,30 @@ using System.Linq;
 using System.Windows.Data;
 using AutoMapper;
 using Caliburn.Micro;
+using Humanizer;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
+using Noise.UI.Logging;
+using Noise.UI.Resources;
 using Observal.Extensions;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class ArtistListViewModel : AutomaticCommandBase,
-									   IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistContentUpdated>,
-									   IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
-									   IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+	internal class ArtistListViewModel : AutomaticCommandBase,
+										 IHandle<Events.ArtistUserUpdate>, IHandle<Events.ArtistContentUpdated>,
+										 IHandle<Events.ArtistAdded>, IHandle<Events.ArtistRemoved>,
+										 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
 		private const string							cDisplaySortDescriptionss = "_displaySortDescriptions";
 		private const string							cHideSortDescriptions = "_normal";
 
 		private readonly IEventAggregator				mEventAggregator;
+		private readonly IUiLog							mLog;
+		private readonly IPreferences					mPreferences;
 		private readonly ISelectionState				mSelectionState;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly ITagManager					mTagManager;
@@ -35,9 +40,11 @@ namespace Noise.UI.ViewModels {
 		private readonly List<ViewSortStrategy>			mArtistSorts;
 		private TaskHandler								mArtistRetrievalTaskHandler;
 
-		public ArtistListViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, ISelectionState selectionState ,
-									IArtistProvider artistProvider, ITagManager tagManager ) {
+		public ArtistListViewModel( IEventAggregator eventAggregator, IPreferences preferences, ISelectionState selectionState ,
+									IArtistProvider artistProvider, ITagManager tagManager, IDatabaseInfo databaseInfo, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
+			mPreferences = preferences;
 			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
 			mTagManager = tagManager;
@@ -49,7 +56,7 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnArtistChanged );
 
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var configuration = mPreferences.Load<UserInterfacePreferences>();
 			if( configuration != null ) {
 				mEnableSortPrefixes = configuration.EnableSortPrefixes;
 
@@ -109,6 +116,8 @@ namespace Noise.UI.ViewModels {
 
 			if( artist != null ) {
 				AddArtist( artist );
+
+				RaisePropertyChanged( () => ArtistCount );
 			}
 		}
 
@@ -118,6 +127,8 @@ namespace Noise.UI.ViewModels {
 			if( artistNode != null ) {
 				mArtistList.Remove( artistNode );
 				mChangeObserver.Release( artistNode );
+	
+				RaisePropertyChanged( () => ArtistCount );
 			}
 		}
 
@@ -135,6 +146,7 @@ namespace Noise.UI.ViewModels {
 			}
 
 			mArtistList.Clear();
+			RaisePropertyChanged( () => ArtistCount );
 		}
 
 		public ICollectionView ArtistList {
@@ -147,6 +159,23 @@ namespace Noise.UI.ViewModels {
 				}
 
 				return( mArtistView );
+			}
+		}
+
+		[DependsUpon( "ArtistCount" )]
+		public string ArtistListTitle {
+			get {  return( StringResources.ArtistTitle.ToQuantity( ArtistCount )); }
+		}
+
+		public int ArtistCount {
+			get {
+				var retValue = 0;
+
+				if( mArtistView is CollectionView ) {
+					retValue = (mArtistView as CollectionView).Count;
+				}
+
+				return( retValue );
 			}
 		}
 
@@ -164,11 +193,11 @@ namespace Noise.UI.ViewModels {
 				if( SelectedSortDescription != null ) {
 					UpdateSorts();
 
-					var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+					var configuration = mPreferences.Load<UserInterfacePreferences>();
 					if( configuration != null ) {
 						configuration.ArtistListSortOrder = SelectedSortDescription.DisplayName;
 
-						NoiseSystemConfiguration.Current.Save( configuration );
+						mPreferences.Save( configuration );
 					}
 				}
 			}
@@ -235,6 +264,7 @@ namespace Noise.UI.ViewModels {
 					}
 
 					RaisePropertyChanged( () => FilterText );
+					RaisePropertyChanged( () => ArtistCount );
 				});
 			}
 		}
@@ -261,7 +291,7 @@ namespace Noise.UI.ViewModels {
 				}
 			},
 			() => { },
-			ex => NoiseLogger.Current.LogException( "ArtistListViewModel:RetrieveArtists", ex ) );
+			ex => mLog.LogException( "Retrieving Artists", ex ));
 		}
 
 		private UiArtist TransformArtist( DbArtist dbArtist ) {
@@ -302,6 +332,7 @@ namespace Noise.UI.ViewModels {
 
 			mArtistList.IsNotifying = true;
 			mArtistList.Refresh();
+			RaisePropertyChanged( () => ArtistCount );
 		}
 
 		private void AddArtist( DbArtist artist ) {
@@ -318,8 +349,10 @@ namespace Noise.UI.ViewModels {
 				var artist = mArtistProvider.GetArtist( artistId );
 
 				if( artist != null ) {
+					mChangeObserver.Release( uiArtist );
 					Mapper.DynamicMap( artist, uiArtist );
 					uiArtist.DisplayGenre = mTagManager.GetGenre( artist.Genre );
+					mChangeObserver.Add( uiArtist );
 
 					if( mEnableSortPrefixes ) {
 						FormatSortPrefix( uiArtist );

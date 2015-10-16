@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Interfaces;
@@ -49,8 +48,6 @@ namespace Noise.UI.Tests.ViewModels {
 	public class AlbumTracksViewModelTests {
 		[SetUp]
 		public void Setup() {
-			NoiseLogger.Current = new Mock<ILog>().Object;
-
 			// Set the ui dispatcher to run on the current thread.
 			Caliburn.Micro.Execute.ResetWithoutDispatcher();
 

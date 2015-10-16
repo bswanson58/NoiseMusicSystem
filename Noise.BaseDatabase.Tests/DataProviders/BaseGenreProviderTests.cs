@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using Noise.Infrastructure.Dto;
@@ -21,6 +22,17 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 			var sut = CreateSut();
 
 			sut.AddGenre( null );
+		}
+
+		[Test]
+		public void CanStoreAllGenreProperties() {
+			var genre = new DbGenre( 3 ) { Description = "description", IsFavorite = true, Name = "genre name", Rating = 2 };
+
+			var sut = CreateSut();
+			sut.AddGenre( genre );
+
+			var result = sut.GetGenreList();
+			result.List.First().ShouldHave().AllProperties().EqualTo( genre );
 		}
 
 		[Test]

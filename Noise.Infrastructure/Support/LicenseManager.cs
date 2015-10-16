@@ -17,36 +17,23 @@ namespace Noise.Infrastructure.Support {
 	}
 
 	public class NoiseLicenseManager : ILicenseManager {
-		private static ILicenseManager			mCurrent;
+		private readonly INoiseEnvironment	mNoiseEnvironment;
+		private readonly INoiseLog			mLog;
 
 		private readonly Dictionary<string, LicenseKey>	mKeys;
 
-		public static ILicenseManager Current {
-			get {
-				if( mCurrent == null ) {
-					mCurrent = new NoiseLicenseManager();
-					if(!mCurrent.Initialize( Constants.LicenseKeyFile )) {
-						NoiseLogger.Current.LogMessage( "LicenseManager could not be initialized." );
-					}
-				}
+		public NoiseLicenseManager( INoiseEnvironment noiseEnvironment, INoiseLog log ) {
+			mNoiseEnvironment = noiseEnvironment;
+			mLog = log;
 
-				return( mCurrent );
-			}
-
-			set {
-				mCurrent = value;
-			}
-		}
-
-		public NoiseLicenseManager() {
 			mKeys = new Dictionary<string, LicenseKey>();
 		}
 
-		public bool Initialize( string licenseFile ) {
-			var retValue = false;
+		private void Initialize() {
+			var licenseFile = Path.Combine( mNoiseEnvironment.ConfigurationDirectory(), Constants.LicenseKeyFile + ".debug" );
 
-			if( File.Exists( licenseFile + ".debug" )) {
-				licenseFile += ".debug";
+			if(!File.Exists( licenseFile )) {
+				licenseFile = Path.Combine( mNoiseEnvironment.ConfigurationDirectory(), Constants.LicenseKeyFile );
 			}
 
 			try {
@@ -59,18 +46,18 @@ namespace Noise.Infrastructure.Support {
 
 					mKeys.Add( key, license );
 				}
-
-				retValue = true;
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - LicenseManager:Initialize ", ex );
+				mLog.LogException( string.Format( "Initializing licenses from \"{0}\"", licenseFile ), ex );
 			}
-
-			return( retValue );
 		}
 
 		public LicenseKey RetrieveKey( string keyId ) {
 			LicenseKey	retValue = null;
+
+			if(!mKeys.Keys.Any()) {
+				Initialize();
+			}
 
 			if( mKeys.ContainsKey( keyId )) {
 				retValue = mKeys[keyId];

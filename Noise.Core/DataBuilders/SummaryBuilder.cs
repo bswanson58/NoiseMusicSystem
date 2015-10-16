@@ -2,24 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataBuilders {
 	internal class SummaryBuilder : ISummaryBuilder {
-		private readonly IEventAggregator		mEventAggregator;
-		private readonly IRootFolderProvider	mRootFolderProvider;
-		private readonly IArtistProvider		mArtistProvider;
-		private readonly IAlbumProvider			mAlbumProvider;
-		private readonly ITrackProvider			mTrackProvider;
-		private readonly IMetadataManager		mMetadataManager;
-		private readonly ITagManager			mTagManager;
-		private bool							mStop;
+		private readonly ILogLibraryBuildingSummary	mLog;
+		private readonly IEventAggregator			mEventAggregator;
+		private readonly ILogUserStatus				mUserStatus;
+		private readonly IRootFolderProvider		mRootFolderProvider;
+		private readonly IArtistProvider			mArtistProvider;
+		private readonly IAlbumProvider				mAlbumProvider;
+		private readonly ITrackProvider				mTrackProvider;
+		private readonly IMetadataManager			mMetadataManager;
+		private readonly ITagManager				mTagManager;
+		private bool								mStop;
 
 		public SummaryBuilder( IEventAggregator eventAggregator, IRootFolderProvider rootFolderProvider, IMetadataManager metadataManager, ITagManager tagManager,
-							   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+							   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
+							   ILogLibraryBuildingSummary log, ILogUserStatus userStatus ) {
+			mLog = log;
 			mEventAggregator = eventAggregator;
+			mUserStatus = userStatus;
 			mRootFolderProvider =rootFolderProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
@@ -31,7 +37,10 @@ namespace Noise.Core.DataBuilders {
 		public void BuildSummaryData( DatabaseChangeSummary summary ) {
 			mStop = false;
 
+			mLog.LogSummaryBuildingStarted();
+			mUserStatus.StartedLibrarySummary();
 			SummarizeArtists();
+			mLog.LogSummaryBuildingCompleted();
 		}
 
 		public void Stop() {
@@ -48,7 +57,7 @@ namespace Noise.Core.DataBuilders {
 				if( rootFolder != null ) {
 					using( var artistList = mArtistProvider.GetChangedArtists( rootFolder.LastSummaryScan )) {
 						foreach( var artist in artistList.List ) {
-							NoiseLogger.Current.LogMessage( string.Format( "Building summary data for: {0}", artist.Name ));
+							mLog.LogSummaryArtistStarted( artist );
 
 							using( var artistUpdater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
 								var albumGenre = new Dictionary<long, int>();
@@ -58,6 +67,8 @@ namespace Noise.Core.DataBuilders {
 
 								using( var albumList = mAlbumProvider.GetAlbumList( artist.DbId )) {
 									foreach( var album in albumList.List ) {
+										mLog.LogSummaryAlbumStarted( album );
+
 										using( var trackList = mTrackProvider.GetTrackList( album.DbId )) {
 											using( var albumUpdater = mAlbumProvider.GetAlbumForUpdate( album.DbId )) {
 												var years = new List<Int32>();
@@ -81,14 +92,18 @@ namespace Noise.Core.DataBuilders {
 													}
 												}
 
-												if( years.Count == 0 ) {
-													albumUpdater.Item.PublishedYear = Constants.cUnknownYear;
-												}
-												else if( years.Count == 1 ) {
-													albumUpdater.Item.PublishedYear = years.First();
-												}
-												else {
-													albumUpdater.Item.PublishedYear = Constants.cVariousYears;
+												// Don't overwrite the published year if it is already set.
+												if( albumUpdater.Item.PublishedYear == Constants.cUnknownYear ) {
+													if( years.Count == 0 ) {
+														albumUpdater.Item.SetPublishedYear( Constants.cUnknownYear );
+													}
+													else if( years.Count == 1 ) {
+														albumUpdater.Item.SetPublishedYear( years.First());
+													}
+													else {
+														albumUpdater.Item.SetPublishedYear( Constants.cVariousYears );
+													}
+
 												}
 
 												albumUpdater.Item.CalculatedGenre = DetermineTopGenre( trackGenre );
@@ -101,6 +116,7 @@ namespace Noise.Core.DataBuilders {
 													maxAlbumRating = maxTrackRating;
 												}
 
+												mLog.LogSummaryAlbumCompleted( albumUpdater.Item );
 												albumUpdater.Update();
 												albumCount++;
 
@@ -124,9 +140,9 @@ namespace Noise.Core.DataBuilders {
 									artistUpdater.Item.ExternalGenre = mTagManager.ResolveGenre( genre );
 								}
 
+								mLog.LogSummaryArtistCompleted( artistUpdater.Item );
 								artistUpdater.Update();
 								mEventAggregator.Publish( new Events.ArtistContentUpdated( artistUpdater.Item.DbId ));
-								mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Summary data was built for: {0}", artist.Name )));
 
 								if( mStop ) {
 									break;
@@ -147,7 +163,7 @@ namespace Noise.Core.DataBuilders {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "SummaryBuilder:", ex );
+				mLog.LogSummaryBuildingException( "Summary building", ex );
 			}
 		}
 

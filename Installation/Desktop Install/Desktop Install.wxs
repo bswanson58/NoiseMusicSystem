@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+	 xmlns:fire="http://schemas.microsoft.com/wix/FirewallExtension">
 
 	<!-- To update for the next release increment ProductVersion in Version.wxi -->
 	<?include ..\Common Files\Version.wxi?>
 
-	<?define ProductName="Noise Music System Desktop"?>
+	<?define ProductName="Noise Music Desktop"?>
 	<?define ShortcutRegistryKey="$(var.BaseRegistryKey)\$(var.Noise.Desktop.Platform)\NoiseDesktop"?>
 
 	<Product Id="*"
@@ -53,6 +54,14 @@
 				</Directory>
 			</Directory>
 
+			<Directory Id="CommonAppDataFolder">
+				<Directory Id="ProductDataFolder" Name="Secret Squirrel Software">
+					<Directory Id="ProductFolder" Name="Noise Music System">
+						<Directory Id="ProductConfigFolder" Name="Configuration" />
+					</Directory>
+				</Directory>
+			</Directory>
+
 			<Directory Id="DesktopFolder" Name="Desktop"/>
 		</Directory>
 
@@ -60,6 +69,10 @@
 		<DirectoryRef Id="INSTALLDIRECTORY">
 			<Component Id="Noise.Desktop.exe" Guid="df0e902d-7c40-4518-b7fb-1c9059a94713">
 				<File Id="Noise.Desktop.exe" DiskId="1" Source="$(var.Noise.Desktop.TargetPath)" KeyPath="yes" Checksum="yes" />
+				<fire:FirewallException Id="Desktop.Firewall.Exception" Name="Noise Music System Desktop" Description="Noise Music System support for remote clients."
+										Port="71" Protocol="tcp" Scope="localSubnet" />
+				<fire:FirewallException Id="Discovery.Firewall.Exception" Name="Noise Music System Discovery" Description="Noise Music System discovery for remote clients."
+										Port="6502" Protocol="udp" Scope="localSubnet" />
 			</Component>
 
 			<Component Id="Noise.Desktop.config" Guid="49b5433a-a532-4d5c-86b9-632f60befe01">
@@ -99,7 +112,7 @@
 		<!-- Shortcuts -->
 		<DirectoryRef Id="ProductMenuFolder">
 			<Component Id="ApplicationShortcut" Guid="d18cbb35-ec2b-455d-999b-3959a2ab8305">
-				<Shortcut Id="ApplicationStartMenuShortcut" Name="Noise" Description="Noise Desktop Application" Target="[INSTALLDIRECTORY]Noise.Desktop.exe" WorkingDirectory="INSTALLDIRECTORY" />
+				<Shortcut Id="ApplicationStartMenuShortcut" Name="Noise Music" Description="Noise Desktop Application" Target="[INSTALLDIRECTORY]Noise.Desktop.exe" WorkingDirectory="INSTALLDIRECTORY" />
 				<RemoveFolder Id="ApplicationShortcut" On="uninstall" />
 				<RegistryValue Root="HKCU" Key="$(var.ShortcutRegistryKey)\ApplicationShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes" />
 			</Component>
@@ -107,7 +120,7 @@
 
 		<DirectoryRef Id="DesktopFolder">
 			<Component Id="DesktopShortcut" Guid="3645e7ce-d910-40fe-8ba9-ed1b8592a341">
-				<Shortcut Id="DesktopShortcut" Name="Noise" Description="Noise Desktop Application" Target="[INSTALLDIRECTORY]Noise.Desktop.exe" WorkingDirectory="INSTALLDIRECTORY" />
+				<Shortcut Id="DesktopShortcut" Name="Noise Music" Description="Noise Music Desktop Application" Target="[INSTALLDIRECTORY]Noise.Desktop.exe" WorkingDirectory="INSTALLDIRECTORY" />
 				<RemoveFolder Id="DesktopShortcut" On="uninstall" />
 				<RegistryValue Root="HKCU" Key="$(var.ShortcutRegistryKey)\DesktopShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes" />
 			</Component>
@@ -139,12 +152,12 @@
 				<ComponentGroupRef Id="AutomapperFiles"/>
 				<ComponentGroupRef Id="BassAudioFiles"/>
 				<ComponentGroupRef Id="CaliburnMicroFiles"/>
+				<ComponentGroupRef Id="ConfigurationFiles"/>
 				<ComponentGroupRef Id="CuttingEdgeFiles"/>
-				<ComponentGroupRef Id="EloqueraFiles"/>
 				<ComponentGroupRef Id="EntityFrameworkFiles"/>
 				<ComponentGroupRef Id="GDataDBFiles"/>
 				<ComponentGroupRef Id="GongSolutionsFiles"/>
-				<ComponentGroupRef Id="LastFmSharpFiles"/>
+				<ComponentGroupRef Id="LastFmScrobblerFiles"/>
 				<ComponentGroupRef Id="LuceneFiles"/>
 				<ComponentGroupRef Id="MahAppsMetroFiles"/>
 				<ComponentGroupRef Id="MicrosoftFiles"/>
@@ -154,13 +167,31 @@
 				<ComponentGroupRef Id="PrismFiles"/>
 				<ComponentGroupRef Id="RavenDBFiles"/>
 				<ComponentGroupRef Id="ReclsFiles"/>
+				<ComponentGroupRef Id="RefitFiles"/>
 				<ComponentGroupRef Id="ReplayGainFiles"/>
+				<ComponentGroupRef Id="SeriLogFiles"/>
 				<ComponentGroupRef Id="StatelessFiles"/>
 				<ComponentGroupRef Id="TagLibSharpFiles"/>
 			</Feature>
 		</Feature>
 
+		<Feature Id="UnnecessaryFiles" Title="Unnecessary Files" Level="0">
+			<ComponentGroupRef Id="DotNetZipFiles"/>
+		</Feature>
+
 		<UIRef Id="InstallUI" />
+		
+		<!-- Custom action to set WCF namespace reservation -->
+		<CustomAction Id="ListenerServiceAddReservation" Execute="deferred" Return="asyncWait" Directory="INSTALLDIRECTORY"
+					  ExeCommand='[SystemFolder]netsh.exe http add urlacl url=http://+:71/Noise user="NT AUTHORITY\Authenticated Users"' />
+		
+		<CustomAction Id="ListenerServiceDeleteReservation" Execute="deferred" Return="asyncWait" Directory="INSTALLDIRECTORY"
+					  ExeCommand="[SystemFolder]netsh.exe http delete urlacl url=http://+:71/Noise" />
+		
+		<InstallExecuteSequence>        
+			<Custom Action="ListenerServiceAddReservation" Before="InstallFinalize">NOT Installed</Custom>
+			<Custom Action="ListenerServiceDeleteReservation" Before="InstallFinalize">Installed</Custom>
+		</InstallExecuteSequence>
 
 	</Product>
 </Wix>

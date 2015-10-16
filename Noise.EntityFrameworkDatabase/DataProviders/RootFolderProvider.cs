@@ -2,13 +2,16 @@
 using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
-	public class RootFolderProvider : BaseProvider<RootFolder>, IRootFolderProvider {
-		public RootFolderProvider( IContextProvider contextProvider ) :
-			base( contextProvider ) { }
+	internal class RootFolderProvider : BaseProvider<RootFolder>, IRootFolderProvider {
+		private	long	mFirstScanCompleted;
+
+		public RootFolderProvider( IContextProvider contextProvider, ILogDatabase log ) :
+			base( contextProvider, log ) { }
 
 		public void AddRootFolder( RootFolder folder ) {
 			AddItem( folder );
@@ -41,6 +44,22 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 			return( new EfUpdateShell<RootFolder>( context, Set( context ).Include( entity => entity.FolderStrategy )
 																		  .FirstOrDefault( entity => entity.DbId == folderId )));
+		}
+
+		public long FirstScanCompleted() {
+			var retValue = mFirstScanCompleted;
+
+			if( retValue == 0 ) {
+				using( var folderList = GetRootFolderList()) {
+					if( folderList.List.Any()) {
+						mFirstScanCompleted = folderList.List.Max( folder => folder.InitialScanCompleted );
+					}
+				}
+
+				retValue = mFirstScanCompleted;
+			}
+
+			return( retValue );
 		}
 	}
 }

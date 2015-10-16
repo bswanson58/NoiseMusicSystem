@@ -1,27 +1,90 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteDto;
 using Noise.Infrastructure.RemoteHost;
 
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
-	public class RemoteServer : INoiseRemote, IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted> {
-		private readonly IEventAggregator					mEventAggregator;
+	public class RemoteServer : INoiseRemote,
+								IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackTrackStarted>,
+								IHandle<Events.RemoteTransportUpdate>, IHandle<Events.PlayHistoryChanged> {
+		private readonly ILibraryConfiguration				mLibraryConfiguration;
+		private readonly IPlayController					mPlayController;
+		private readonly IAudioPlayer						mAudioPlayer;
+		private readonly RemoteHostConfiguration			mHostConfiguration;
+		private readonly INoiseLog							mLog;
 		private	readonly Dictionary<string, ClientEvents>	mClientList;
 
-		public RemoteServer( IEventAggregator eventAggregator ) {
-			mEventAggregator = eventAggregator;
+		public RemoteServer( IEventAggregator eventAggregator, ILibraryConfiguration libraryConfiguration,
+							 IPlayController playController, IAudioPlayer audioPlayer, RemoteHostConfiguration hostConfiguration, INoiseLog log ) {
+			mLibraryConfiguration = libraryConfiguration;
+			mPlayController = playController;
+			mAudioPlayer = audioPlayer;
+			mHostConfiguration = hostConfiguration;
+			mLog = log;
 			mClientList = new Dictionary<string, ClientEvents>();
 
-			mEventAggregator.Subscribe( this );
+			eventAggregator.Subscribe( this );
 		}
 
 		public ServerVersion GetServerVersion() {
-			return( new ServerVersion { Major = 1, Minor = 0, Build = 0, Revision = 1 });
+			var assemblyName = Assembly.GetAssembly( GetType()).GetName();
+
+			return( new ServerVersion { Major = assemblyName.Version.Major,
+										Minor = assemblyName.Version.Minor,
+										Build = assemblyName.Version.Build,
+										Revision = assemblyName.Version.Revision });
+		}
+
+		public RoServerInformation GetServerInformation() {
+			var	retValue = new RoServerInformation { ApiVersion = (Int16)mHostConfiguration.ApiVersion,
+													 ServerVersion = GetServerVersion(),
+													 ServerName = mHostConfiguration.ServerName };
+
+			if( mLibraryConfiguration.Current != null ) {
+				retValue.LibraryId = mLibraryConfiguration.Current.LibraryId;
+				retValue.LibraryName = mLibraryConfiguration.Current.LibraryName;
+				retValue.LibraryCount = (Int16)mLibraryConfiguration.Libraries.Count();
+			}
+
+			retValue.AudioDevices = mAudioPlayer.GetDeviceList().Select( device => new RoAudioDevice( device )).ToArray();
+			if( mAudioPlayer.GetCurrentDevice() != null ) {
+				retValue.CurrentAudioDevice = mAudioPlayer.GetCurrentDevice().DeviceId;
+			}
+
+			return (retValue);
+		}
+
+		public BaseResult SetOutputDevice( int outputDevice ) {
+			var retValue = new BaseResult();
+
+			try {
+				var device = mAudioPlayer.GetDeviceList().FirstOrDefault( d => d.DeviceId == outputDevice );
+
+				if( device != null ) {
+					mPlayController.Stop();
+					mAudioPlayer.SetDevice( device );
+
+					retValue.Success = true;
+				}
+				else {
+					retValue.ErrorMessage = "Audio output device cound not be found.";
+				}
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "SetOutputDevice:", ex );
+
+				retValue.ErrorMessage = ex.Message;
+			}
+
+			return( retValue );
 		}
 
 		public BaseResult RequestEvents( string address ) {
@@ -34,7 +97,7 @@ namespace Noise.RemoteHost {
 					client.Close();
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "RemoteServer:client.Close:", ex );
+					mLog.LogException( string.Format( "Closing client \"{0}\"", address ), ex );
 				}
 
 				mClientList.Remove( address );
@@ -46,7 +109,7 @@ namespace Noise.RemoteHost {
 				mClientList.Add( address, client );
 
 				retValue.Success = true;
-				NoiseLogger.Current.LogMessage( "Added remote client: %s", address );
+				mLog.LogMessage( string.Format( "Added remote client: {0}", address ));
 			}
 			else {
 				retValue.ErrorMessage = "Remote client address already registered.";
@@ -62,7 +125,7 @@ namespace Noise.RemoteHost {
 				mClientList.Remove( address );
 
 				retValue.Success = true;
-				NoiseLogger.Current.LogMessage( "Removed remote client: %s", address );
+				mLog.LogMessage( string.Format( "Removed remote client: {0}", address ));
 			}
 			else {
 				retValue.ErrorMessage = "Client address not located in map.";
@@ -81,16 +144,30 @@ namespace Noise.RemoteHost {
 			new Task( OnQueueChangedTask ).Start();
 		}
 
+		public void Handle( Events.RemoteTransportUpdate args ) {
+			new Task( () => OnTransportChanged( args.TransportState )).Start();
+		}
+
+		public void Handle( Events.PlayHistoryChanged args ) {
+			new Task( () => OnDataChanged( LibraryStateChanged.PlayHistory )).Start();
+		}
+
 		private void OnQueueChangedTask() {
 			foreach( var client in mClientList.Values ) {
 				client.EventInQueue();
 			}
 		}
 
-/*		private void OnTransportChanged() {
+		private void OnTransportChanged( RoTransportState transportState ) {
 			foreach( var client in mClientList.Values ) {
-				client.EventInTransport();
+				client.EventInTransport( transportState );
 			}
-		} */
+		}
+
+		private void OnDataChanged( LibraryStateChanged stateChanged ) {
+			foreach( var client in mClientList.Values ) {
+				client.EventInLibrary( stateChanged );
+			}
+		}
 	}
 }

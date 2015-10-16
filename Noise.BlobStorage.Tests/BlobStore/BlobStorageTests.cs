@@ -1,10 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Noise.BlobStorage.BlobStore;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.BlobStorage.Tests.BlobStore {
@@ -15,22 +13,21 @@ namespace Noise.BlobStorage.Tests.BlobStore {
 
 	[TestFixture]
 	public class BlobStorageTests {
+		private const string				cBlobStorage = @"D:\Noise Testing\Blob Database";
+
 		private Mock<IBlobStorageResolver>	mStorageResolver;
 		private IBlobStorageManager			mStorageManager;
 
 		[SetUp]
 		public void Setup() {
-			var blobStoragePath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), Constants.CompanyName );
-			blobStoragePath = Path.Combine( blobStoragePath, "Test Blob Storage" );
-
 			mStorageResolver = new Mock<IBlobStorageResolver>();
 			mStorageResolver.Setup( m => m.StorageLevels ).Returns( 1 );
 			mStorageResolver.Setup( m => m.KeyForStorageLevel( It.IsAny<long>(), It.Is<uint>( p => p == 0  ))).Returns( "first storage level" );
 			mStorageResolver.Setup( m => m.KeyForStorageLevel( It.IsAny<string>(), It.Is<uint>( p => p == 0  ))).Returns( "first string level" );
 
-			var storageManager = new BlobStorageManager();
+			var storageManager = new BlobStorageManager( new Mock<INoiseLog>().Object );
 			storageManager.SetResolver( mStorageResolver.Object );
-			storageManager.Initialize( blobStoragePath );
+			storageManager.Initialize( Path.Combine( cBlobStorage, "Test Blob Storage" ));
 
 			storageManager.DeleteStorage();
 			if( storageManager.CreateStorage()) {
@@ -107,7 +104,7 @@ namespace Noise.BlobStorage.Tests.BlobStore {
 		public void CanDetermineNonExistingBlob() {
 			var sut = CreateSut();
 
-			sut.Insert( "1", "1" );
+			sut.Insert( "11", "1" );
 			var exists = sut.BlobExists( "12" );
 
 			exists.Should().BeFalse();

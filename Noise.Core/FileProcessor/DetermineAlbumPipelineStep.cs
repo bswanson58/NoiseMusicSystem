@@ -8,13 +8,11 @@ namespace Noise.Core.FileProcessor {
 	internal class DetermineAlbumPipelineStep : BasePipelineStep {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IAlbumProvider			mAlbumProvider;
-		private readonly IStorageFolderSupport	mStorageFolderSupport;
 
-		public DetermineAlbumPipelineStep( IEventAggregator eventAggregator, IStorageFolderSupport storageFolderSupport, IAlbumProvider albumProvider ) :
+		public DetermineAlbumPipelineStep( IEventAggregator eventAggregator, IAlbumProvider albumProvider ) :
 			base( ePipelineStep.DetermineAlbum ) {
 			mEventAggregator = eventAggregator;
 			mAlbumProvider = albumProvider;
-			mStorageFolderSupport = storageFolderSupport;
 		}
 
 		public override void ProcessStep( PipelineContext context ) {
@@ -22,7 +20,7 @@ namespace Noise.Core.FileProcessor {
 			Condition.Requires( context.Summary ).IsNotNull();
 
 			if( context.Artist != null ) {
-				var	albumName = "";
+				var	albumName = string.Empty;
 
 				foreach( var provider in context.MetaDataProviders ) {
 					albumName = provider.Album;
@@ -44,11 +42,14 @@ namespace Noise.Core.FileProcessor {
 						context.Summary.AlbumsAdded++;
 
 						mEventAggregator.Publish( new Events.AlbumAdded( context.Album.DbId ));
-						NoiseLogger.Current.LogMessage( "Added album: {0}", context.Album.Name );
+						context.Log.LogAlbumAdded( context.StorageFile, context.Album );
+					}
+					else {
+						context.Log.LogAlbumFound( context.StorageFile, context.Album );
 					}
 				}
 				else {
-					NoiseLogger.Current.LogMessage( "Album cannot be determined for file: {0}", mStorageFolderSupport.GetPath( context.StorageFile ));
+					context.Log.LogAlbumNotFound( context.StorageFile );
 				}
 			}
 		}

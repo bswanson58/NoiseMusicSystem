@@ -1,9 +1,9 @@
 ﻿using System;
 using FluentAssertions;
 using Moq;
+using Noise.Core.Logging;
 using NUnit.Framework;
 using Noise.Core.FileProcessor;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using ReusableBits.TestSupport.Mocking;
@@ -13,10 +13,11 @@ namespace Noise.Core.Tests.FileProcessor {
 	public class UpdateInfoPipelineStepTests {
 		internal class TestableUpdateInfoPipelineStep : Testable<UpdateInfoPipelineStep> { }
 
-		private DatabaseChangeSummary	mSummary;
-		private StorageFile				mStorageFile;
-		private DbArtist				mArtist;
-		private DbAlbum					mAlbum;
+		private ILogLibraryClassification	mLog;
+		private DatabaseChangeSummary		mSummary;
+		private StorageFile					mStorageFile;
+		private DbArtist					mArtist;
+		private DbAlbum						mAlbum;
 
 		[SetUp]
 		public void Setup() {
@@ -25,14 +26,14 @@ namespace Noise.Core.Tests.FileProcessor {
 			mArtist = new DbArtist();
 			mAlbum = new DbAlbum();
 
-			NoiseLogger.Current = new Mock<ILog>().Object;
+			mLog = new Mock<ILogLibraryClassification>().Object;
 		}
 
 		[Test]
 		public void UpdateStepRequiresArtist() {
 			var testable = new TestableUpdateInfoPipelineStep();
 			var sut = testable.ClassUnderTest;
-			var context = new PipelineContext( null, null, mStorageFile, mSummary );
+			var context = new PipelineContext( null, null, mStorageFile, mSummary, mLog );
 
 			sut.ProcessStep( context );
 			testable.Mock<ITextInfoProvider>().Verify( m => m.AddTextInfo( It.IsAny<DbTextInfo>(), It.IsAny<string>()), Times.Never());
@@ -42,7 +43,7 @@ namespace Noise.Core.Tests.FileProcessor {
 		public void UpdateStepRequiresAlbum() {
 			var testable = new TestableUpdateInfoPipelineStep();
 			var sut = testable.ClassUnderTest;
-			var context = new PipelineContext( null, null, mStorageFile, mSummary );
+			var context = new PipelineContext( null, null, mStorageFile, mSummary, mLog );
 
 			sut.ProcessStep( context );
 			testable.Mock<ITextInfoProvider>().Verify( m => m.AddTextInfo( It.IsAny<DbTextInfo>(), It.IsAny<string>()), Times.Never());
@@ -52,7 +53,7 @@ namespace Noise.Core.Tests.FileProcessor {
 		public void UpdateStepAddsTextInfo() {
 			var testable = new TestableUpdateInfoPipelineStep();
 			var sut = testable.ClassUnderTest;
-			var context = new PipelineContext( null, null, mStorageFile, mSummary ) { Artist = mArtist, Album = mAlbum };
+			var context = new PipelineContext( null, null, mStorageFile, mSummary, mLog ) { Artist = mArtist, Album = mAlbum };
 
 			testable.Mock<IStorageFileProvider>().Setup( m => m.GetFileForUpdate( mStorageFile.DbId )).Returns( new Mock<IDataUpdateShell<StorageFile>>().Object );
 			testable.Mock<IArtistProvider>().Setup( m => m.GetArtistForUpdate( mArtist.DbId )).Returns( new Mock<IDataUpdateShell<DbArtist>>().Object );
@@ -66,7 +67,7 @@ namespace Noise.Core.Tests.FileProcessor {
 		public void UpdateStepSetsArtist() {
 			var testable = new TestableUpdateInfoPipelineStep();
 			var sut = testable.ClassUnderTest;
-			var context = new PipelineContext( null, null, mStorageFile, mSummary ) { Artist = mArtist, Album = mAlbum };
+			var context = new PipelineContext( null, null, mStorageFile, mSummary, mLog ) { Artist = mArtist, Album = mAlbum };
 			DbTextInfo	info = null;
 
 			testable.Mock<IStorageFileProvider>().Setup( m => m.GetFileForUpdate( mStorageFile.DbId )).Returns( new Mock<IDataUpdateShell<StorageFile>>().Object );
@@ -85,7 +86,7 @@ namespace Noise.Core.Tests.FileProcessor {
 		public void UpdateStepSetsAlbum() {
 			var testable = new TestableUpdateInfoPipelineStep();
 			var sut = testable.ClassUnderTest;
-			var context = new PipelineContext( null, null, mStorageFile, mSummary ) { Artist = mArtist, Album = mAlbum };
+			var context = new PipelineContext( null, null, mStorageFile, mSummary, mLog ) { Artist = mArtist, Album = mAlbum };
 			DbTextInfo	info = null;
 
 			testable.Mock<IStorageFileProvider>().Setup( m => m.GetFileForUpdate( mStorageFile.DbId )).Returns( new Mock<IDataUpdateShell<StorageFile>>().Object );
@@ -103,7 +104,7 @@ namespace Noise.Core.Tests.FileProcessor {
 			var testable = new TestableUpdateInfoPipelineStep();
 			var sut = testable.ClassUnderTest;
 			var storageFile = new StorageFile( "file name", 123, 321, DateTime.Now );
-			var context = new PipelineContext( null, null, storageFile, mSummary ) { Artist = mArtist, Album = mAlbum };
+			var context = new PipelineContext( null, null, storageFile, mSummary, mLog ) { Artist = mArtist, Album = mAlbum };
 			DbTextInfo	info = null;
 
 			
@@ -123,7 +124,7 @@ namespace Noise.Core.Tests.FileProcessor {
 			var sut = testable.ClassUnderTest;
 			const string fileName = "file name";
 			var storageFile = new StorageFile( fileName + ".jpg", 123, 321, DateTime.Now );
-			var context = new PipelineContext( null, null, storageFile, mSummary ) { Artist = mArtist, Album = mAlbum };
+			var context = new PipelineContext( null, null, storageFile, mSummary, mLog ) { Artist = mArtist, Album = mAlbum };
 			DbTextInfo	info = null;
 
 			
@@ -141,7 +142,7 @@ namespace Noise.Core.Tests.FileProcessor {
 		public void UpdateShouldSetStorageFileMetaDataPointer() {
 			var testable = new TestableUpdateInfoPipelineStep();
 			var sut = testable.ClassUnderTest;
-			var context = new PipelineContext( null, null, mStorageFile, mSummary ) { Artist = mArtist, Album = mAlbum };
+			var context = new PipelineContext( null, null, mStorageFile, mSummary, mLog ) { Artist = mArtist, Album = mAlbum };
 			var updater = new Mock<IDataUpdateShell<StorageFile>>();
 			DbTextInfo	info = null;
 
@@ -160,7 +161,7 @@ namespace Noise.Core.Tests.FileProcessor {
 		public void UpdateShouldSetStorageFileTypeToMusic() {
 			var testable = new TestableUpdateInfoPipelineStep();
 			var sut = testable.ClassUnderTest;
-			var context = new PipelineContext( null, null, mStorageFile, mSummary ) { Artist = mArtist, Album = mAlbum };
+			var context = new PipelineContext( null, null, mStorageFile, mSummary, mLog ) { Artist = mArtist, Album = mAlbum };
 			var updater = new Mock<IDataUpdateShell<StorageFile>>();
 
 			updater.Setup( m => m.Item ).Returns( mStorageFile );
@@ -176,7 +177,7 @@ namespace Noise.Core.Tests.FileProcessor {
 		public void UpdateShouldUpdateStorageFile() {
 			var testable = new TestableUpdateInfoPipelineStep();
 			var sut = testable.ClassUnderTest;
-			var context = new PipelineContext( null, null, mStorageFile, mSummary ) { Artist = mArtist, Album = mAlbum };
+			var context = new PipelineContext( null, null, mStorageFile, mSummary, mLog ) { Artist = mArtist, Album = mAlbum };
 			var updater = new Mock<IDataUpdateShell<StorageFile>>();
 
 			updater.Setup( m => m.Item ).Returns( mStorageFile );

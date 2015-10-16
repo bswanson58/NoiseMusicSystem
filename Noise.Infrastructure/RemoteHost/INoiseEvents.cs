@@ -4,20 +4,30 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 
 namespace Noise.Infrastructure.RemoteHost {
+	public enum LibraryStateChanged {
+		PlayHistory = 0
+	}
+
 	[DataContract]
 	public class VoidCallbackArgs {
 	}
 
 	[ServiceContract]
 	public interface INoiseEvents {
-        [OperationContract(AsyncPattern = true)]
+		[OperationContract(AsyncPattern = true)]
 		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "eventInQueue")]
-        IAsyncResult BeginEventInQueue( AsyncCallback callback, object state );
-        VoidCallbackArgs EndEventInQueue( IAsyncResult result );
+		IAsyncResult BeginEventInQueue( AsyncCallback callback, object state );
+		VoidCallbackArgs EndEventInQueue( IAsyncResult result );
 
-        [OperationContract(AsyncPattern = true)]
-		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "eventInTransport")]
-        IAsyncResult BeginEventInTransport( AsyncCallback callback, object state );
-        VoidCallbackArgs EndEventInTransport( IAsyncResult result );
+		[OperationContract(AsyncPattern = true)]
+		[WebGet(ResponseFormat= WebMessageFormat.Json,
+			UriTemplate = "eventInTransport?time={serverTime}&state={playState}&track={currentTrack}&position={currentPosition}&length={trackLength}&sequence={sequence}")]
+		IAsyncResult BeginEventInTransport( int sequence, int playState, long serverTime, long currentTrack, long currentPosition, long trackLength, AsyncCallback callback, object state );
+		VoidCallbackArgs EndEventInTransport( IAsyncResult result );
+
+		[OperationContract(AsyncPattern = true)]
+		[WebGet(ResponseFormat= WebMessageFormat.Json, UriTemplate = "eventInLibrary?changed={stateChanged}")]
+		IAsyncResult BeginEventInLibrary( string stateChanged, AsyncCallback callback, object state );
+		VoidCallbackArgs EndEventInLibrary( IAsyncResult result );
 	}
 }

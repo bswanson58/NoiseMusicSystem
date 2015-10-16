@@ -19,12 +19,16 @@ namespace Noise.Infrastructure.Interfaces {
 	}
 
 	public interface IPlayController {
+		ePlayState		PlayState { get; }
+
 		void			Play();
 		bool			CanPlay { get; }
 		void			Pause();
 		bool			CanPause { get; }
 		void			Stop();
 		bool			CanStop { get; }
+		void			StopAtEndOfTrack();
+		bool			CanStopAtEndOfTrack { get; }
 		void			PlayNextTrack();
 		bool			CanPlayNextTrack { get; }
 		void			PlayPreviousTrack();

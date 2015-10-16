@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Caliburn.Micro;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -14,6 +15,8 @@ namespace Noise.Core.BackgroundTasks {
 		private const string						cDecadeTagBuilderId		= "ComponentId_TagBuilder";
 
 		private readonly IEventAggregator			mEventAggregator;
+		private readonly ILogBackgroundTasks		mLog;
+		private readonly ILogUserStatus				mUserStatus;
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IAlbumProvider				mAlbumProvider;
 		private readonly ITagAssociationProvider	mTagAssociationProvider;
@@ -25,13 +28,15 @@ namespace Noise.Core.BackgroundTasks {
 		private	long								mStartScanTicks;
 
 		public DecadeTagBuilder( IEventAggregator eventAggregator, ITagAssociationProvider tagAssociationProvider, ITimestampProvider timestampProvider,
-								 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager ) {
+								 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITagManager tagManager, ILogBackgroundTasks log, ILogUserStatus userLog ) {
 			mEventAggregator = eventAggregator;
 			mTimestampProvider = timestampProvider;
 			mTagAssociationProvider = tagAssociationProvider;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTagManager = tagManager;
+			mLog = log;
+			mUserStatus = userLog;
 
 			mEventAggregator.Subscribe( this );
 		}
@@ -45,7 +50,9 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {
-			mArtistList.Clear();
+			if( mArtistList != null ) {
+				mArtistList.Clear();
+			}
 		}
 
 		private void InitializeLists() {
@@ -59,7 +66,7 @@ namespace Noise.Core.BackgroundTasks {
 				mArtistEnum = mArtistList.GetEnumerator();
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "", ex );
+				mLog.LogException( "Building artist list", ex );
 			}
 		}
 
@@ -83,6 +90,8 @@ namespace Noise.Core.BackgroundTasks {
 
 					if(( artist != null ) &&
 					   ( artist.LastChangeTicks > mLastScanTicks )) {
+						mLog.StartingDecadeTagBuilding( artist );
+
 						using( var tagList = mTagAssociationProvider.GetArtistTagList( artistId, eTagGroup.Decade )) {
 							foreach( var tag in tagList.List ) {
 								mTagAssociationProvider.RemoveAssociation( tag.DbId );
@@ -102,15 +111,16 @@ namespace Noise.Core.BackgroundTasks {
 									}
 								}
 
-								NoiseLogger.Current.LogMessage( string.Format( "Built decade tag associations for: {0}", artist.Name ));
-								mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Built decade tag associations for: {0}", artist.Name )));
+								mUserStatus.BuiltDecadeTags( artist );
 							}
 						}
+
+						mLog.CompletedDecadeTagBuilding( artist );
 					}
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - DecadeTagBuilder:Task ", ex );
+				mLog.LogException( "Building decade tags", ex );
 			}
 		}
 	}

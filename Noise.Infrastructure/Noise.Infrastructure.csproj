@@ -99,22 +99,46 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Eloquera.Client, Version=4.13.0.0, Culture=neutral, PublicKeyToken=170cadcdba67be6c, processorArchitecture=MSIL">
-      <HintPath>..\lib\Eloquera\v4.13\Eloquera.Client.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Practices.Prism, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Prism.4.1.0.0\lib\NET40\Microsoft.Practices.Prism.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Prism.Composition">
+      <HintPath>..\packages\Prism.Composition.5.0.0\lib\NET45\Microsoft.Practices.Prism.Composition.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Prism.Interactivity">
+      <HintPath>..\packages\Prism.Interactivity.5.0.0\lib\NET45\Microsoft.Practices.Prism.Interactivity.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.4.5.10\lib\net40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Prism.Mvvm">
+      <HintPath>..\packages\Prism.Mvvm.1.0.0\lib\net45\Microsoft.Practices.Prism.Mvvm.dll</HintPath>
     </Reference>
-    <Reference Include="NLog, Version=2.0.1.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Prism.Mvvm.Desktop">
+      <HintPath>..\packages\Prism.Mvvm.1.0.0\lib\net45\Microsoft.Practices.Prism.Mvvm.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Prism.PubSubEvents">
+      <HintPath>..\packages\Prism.PubSubEvents.1.0.0\lib\portable-sl4+wp7+windows8+net40\Microsoft.Practices.Prism.PubSubEvents.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Prism.SharedInterfaces">
+      <HintPath>..\packages\Prism.Mvvm.1.0.0\lib\net45\Microsoft.Practices.Prism.SharedInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NLog.2.0.1.2\lib\net40\NLog.dll</HintPath>
+      <HintPath>..\packages\Unity.3.5.1404.0\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Unity.3.5.1404.0\lib\net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention">
+      <HintPath>..\packages\Unity.3.5.1404.0\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=2.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NLog.2.1.0\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -138,22 +162,21 @@
     <Compile Include="..\Common\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Configuration\CloudSyncConfiguration.cs" />
-    <Compile Include="Configuration\ConfigurationElementCollectionEx.cs" />
-    <Compile Include="Configuration\ConfigurationUpgrades.cs" />
-    <Compile Include="Configuration\ExplorerConfiguration.cs" />
-    <Compile Include="Configuration\ISystemConfiguration.cs" />
-    <Compile Include="Configuration\AudioConfiguration.cs" />
-    <Compile Include="Configuration\ServerConfiguration.cs" />
-    <Compile Include="Configuration\SystemConfiguration.cs" />
+    <Compile Include="Configuration\AudioPreferences.cs" />
+    <Compile Include="Configuration\NoiseCorePreferences.cs" />
+    <Compile Include="Configuration\UserInterfacePreferences.cs" />
+    <Compile Include="Dto\PlaybackContext.cs" />
+    <Compile Include="Dto\ScAlbum.cs" />
     <Compile Include="Dto\AlbumSupportInfo.cs" />
     <Compile Include="Dto\Artwork.cs" />
     <Compile Include="Dto\AudioChannelStatus.cs" />
+    <Compile Include="Dto\AudioDevice.cs" />
     <Compile Include="Dto\AudioLevels.cs" />
     <Compile Include="Dto\BaseCommandArgs.cs" />
     <Compile Include="Dto\BasePlayStrategyParameters.cs" />
     <Compile Include="Dto\ContentType.cs" />
     <Compile Include="Dto\DatabaseChangeSummary.cs" />
+    <Compile Include="Dto\DatabaseFileInfo.cs" />
     <Compile Include="Dto\DataFindResults.cs" />
     <Compile Include="Dto\DbArtwork.cs" />
     <Compile Include="Dto\DbBase.cs" />
@@ -173,6 +196,7 @@
     <Compile Include="Dto\GlobalUserEventArgs.cs" />
     <Compile Include="Dto\InfoSource.cs" />
     <Compile Include="Dto\IUserSettings.cs" />
+    <Compile Include="Dto\LibraryBackup.cs" />
     <Compile Include="Dto\LibraryConfiguration.cs" />
     <Compile Include="Dto\LyricsInfo.cs" />
     <Compile Include="Dto\LyricsRequestArgs.cs" />
@@ -184,16 +208,21 @@
     <Compile Include="Dto\PlayQueueTrack.cs" />
     <Compile Include="Dto\ReplayGainFile.cs" />
     <Compile Include="Dto\RootFolder.cs" />
+    <Compile Include="Dto\ScArtist.cs" />
+    <Compile Include="Dto\ScPlayContext.cs" />
+    <Compile Include="Dto\ScTrack.cs" />
     <Compile Include="Dto\SearchResultItem.cs" />
     <Compile Include="Dto\SetAlbumCoverCommandArgs.cs" />
     <Compile Include="Dto\SetFavoriteCommandArgs.cs" />
     <Compile Include="Dto\SetMp3TagCommandArgs.cs" />
     <Compile Include="Dto\SetRatingCommandArgs.cs" />
+    <Compile Include="Dto\StorageSidecar.cs" />
     <Compile Include="Dto\StreamInfo.cs" />
     <Compile Include="Dto\TextInfo.cs" />
     <Compile Include="Dto\UpdatePlayCountCommandArgs.cs" />
     <Compile Include="GlobalCommands.cs" />
     <Compile Include="Interfaces\IAlbumProvider.cs" />
+    <Compile Include="Interfaces\IApplicationLog.cs" />
     <Compile Include="Interfaces\IArtistProvider.cs" />
     <Compile Include="Interfaces\IArtworkProvider.cs" />
     <Compile Include="Interfaces\IAudioController.cs" />
@@ -201,15 +230,16 @@
     <Compile Include="Interfaces\IBlendableViewModelFactory.cs" />
     <Compile Include="Interfaces\IBlobStorage.cs" />
     <Compile Include="Interfaces\IBlobStorageResolver.cs" />
-    <Compile Include="Interfaces\ICloudSyncManager.cs" />
     <Compile Include="Interfaces\IDatabaseInfo.cs" />
     <Compile Include="Interfaces\IDatabaseManager.cs" />
+    <Compile Include="Interfaces\IDatabaseStatistics.cs" />
+    <Compile Include="Interfaces\IDatabaseUtility.cs" />
     <Compile Include="Interfaces\IDataExchangeManager.cs" />
     <Compile Include="Interfaces\IDataProviderList.cs" />
     <Compile Include="Interfaces\IDataUpdateShell.cs" />
     <Compile Include="Interfaces\IDbBaseProvider.cs" />
-    <Compile Include="Interfaces\IDomainSearchProvider.cs" />
     <Compile Include="Interfaces\IEqManager.cs" />
+    <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IGenreProvider.cs" />
     <Compile Include="Interfaces\IIoc.cs" />
     <Compile Include="Interfaces\ILibraryBuilder.cs" />
@@ -220,6 +250,11 @@
     <Compile Include="Interfaces\ILyricProvider.cs" />
     <Compile Include="Interfaces\IInternetStreamProvider.cs" />
     <Compile Include="Interfaces\IMetadataManager.cs" />
+    <Compile Include="Interfaces\INoiseEnvironment.cs" />
+    <Compile Include="Interfaces\INoiseLog.cs" />
+    <Compile Include="Interfaces\IPlatformLog.cs" />
+    <Compile Include="Interfaces\IPlaybackContextManager.cs" />
+    <Compile Include="Interfaces\IPlaybackContextWriter.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
     <Compile Include="Interfaces\IPlayExhaustedFactory.cs" />
     <Compile Include="Interfaces\IPlayExhaustedStrategy.cs" />
@@ -230,11 +265,15 @@
     <Compile Include="Interfaces\IPlayHistoryProvider.cs" />
     <Compile Include="Interfaces\IPlayListProvider.cs" />
     <Compile Include="Interfaces\IPlayQueue.cs" />
+    <Compile Include="Interfaces\IPreferences.cs" />
+    <Compile Include="Interfaces\IRandomTrackSelector.cs" />
     <Compile Include="Interfaces\IReplayGainScanner.cs" />
     <Compile Include="Interfaces\IRequireInitialization.cs" />
     <Compile Include="Interfaces\IRootFolderProvider.cs" />
     <Compile Include="Interfaces\IScrobbler.cs" />
     <Compile Include="Interfaces\ISearchProvider.cs" />
+    <Compile Include="Interfaces\ISidecarProvider.cs" />
+    <Compile Include="Interfaces\ISidecarWriter.cs" />
     <Compile Include="Interfaces\IStorageFileProvider.cs" />
     <Compile Include="Interfaces\IStorageFolderProvider.cs" />
     <Compile Include="Interfaces\IStorageFolderSupport.cs" />
@@ -244,40 +283,62 @@
     <Compile Include="Interfaces\ITextInfoProvider.cs" />
     <Compile Include="Interfaces\ITimestampProvider.cs" />
     <Compile Include="Interfaces\ITrackProvider.cs" />
+    <Compile Include="Interfaces\IVersionable.cs" />
     <Compile Include="Interfaces\IViewModelResolver.cs" />
+    <Compile Include="Logging\BaseLogger.cs" />
+    <Compile Include="Logging\LoggingPreferences.cs" />
     <Compile Include="RemoteDto\AlbumInfoResult.cs" />
     <Compile Include="RemoteDto\ArtistInfoResult.cs" />
+    <Compile Include="RemoteDto\ArtistTracksResult.cs" />
+    <Compile Include="RemoteDto\AudioStateResult.cs" />
     <Compile Include="RemoteDto\FavoriteListResult.cs" />
+    <Compile Include="RemoteDto\LibraryAdditionsListResult.cs" />
+    <Compile Include="RemoteDto\LibraryListResult.cs" />
+    <Compile Include="RemoteDto\PlayHistoryListResult.cs" />
     <Compile Include="RemoteDto\PlayQueueListResult.cs" />
+    <Compile Include="RemoteDto\QueueCommand.cs" />
     <Compile Include="RemoteDto\RoAlbum.cs" />
     <Compile Include="RemoteDto\RoAlbumInfo.cs" />
     <Compile Include="RemoteDto\RoArtist.cs" />
     <Compile Include="RemoteDto\RoArtistInfo.cs" />
+    <Compile Include="RemoteDto\RoArtistTrack.cs" />
+    <Compile Include="RemoteDto\RoAudioDevice.cs" />
+    <Compile Include="RemoteDto\RoAudioState.cs" />
     <Compile Include="RemoteDto\RoBase.cs" />
     <Compile Include="RemoteDto\RoFavorite.cs" />
+    <Compile Include="RemoteDto\RoLibrary.cs" />
+    <Compile Include="RemoteDto\RoPlayHistory.cs" />
     <Compile Include="RemoteDto\RoPlayQueueTrack.cs" />
+    <Compile Include="RemoteDto\RoQueueStrategy.cs" />
     <Compile Include="RemoteDto\RoSearchResultItem.cs" />
+    <Compile Include="RemoteDto\RoServerInformation.cs" />
+    <Compile Include="RemoteDto\RoStrategyInformation.cs" />
+    <Compile Include="RemoteDto\RoStrategyParameter.cs" />
+    <Compile Include="RemoteDto\RoTimeSync.cs" />
     <Compile Include="RemoteDto\RoTrack.cs" />
     <Compile Include="RemoteDto\AlbumListResult.cs" />
     <Compile Include="RemoteDto\ArtistListResult.cs" />
     <Compile Include="RemoteDto\BaseResult.cs" />
+    <Compile Include="RemoteDto\RoTrackReference.cs" />
+    <Compile Include="RemoteDto\RoTransportState.cs" />
     <Compile Include="RemoteDto\SearchResult.cs" />
+    <Compile Include="RemoteDto\StrategyInformationResult.cs" />
     <Compile Include="RemoteDto\TransportCommand.cs" />
     <Compile Include="RemoteHost\INoiseEvents.cs" />
     <Compile Include="RemoteHost\INoiseRemote.cs" />
+    <Compile Include="RemoteHost\INoiseRemoteLibrary.cs" />
     <Compile Include="RemoteHost\INoiseRemoteQueue.cs" />
     <Compile Include="RemoteHost\INoiseRemoteSearch.cs" />
+    <Compile Include="RemoteHost\INoiseRemoteTransport.cs" />
     <Compile Include="RemoteHost\IRemoteServer.cs" />
-    <Compile Include="RemoteHost\ServerVersion.cs" />
+    <Compile Include="RemoteDto\ServerVersion.cs" />
     <Compile Include="RemoteDto\TrackListResult.cs" />
-    <Compile Include="Support\ApplicationLogReader.cs" />
+    <Compile Include="RemoteHost\RemoteHostConfiguration.cs" />
     <Compile Include="Support\AsyncCommand.cs" />
     <Compile Include="Support\BindableObject.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Events.cs" />
-    <Compile Include="Interfaces\ILog.cs" />
     <Compile Include="Interfaces\INoiseManager.cs" />
-    <Compile Include="Log.cs" />
     <Compile Include="Dto\AudioEncoding.cs" />
     <Compile Include="Dto\DbAlbum.cs" />
     <Compile Include="Dto\DbArtist.cs" />
@@ -315,12 +376,14 @@
     <Compile Include="ViewNames.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="NLog.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="RemoteHost\INoiseRemoteData.cs" />
     <None Include="packages.config" />
+    <None Include="Resources\LoggingPreferences" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ReusableBits\ReusableBits.csproj">

@@ -1,11 +1,10 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
-using Eloquera.Client;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure.Dto {
 	[DebuggerDisplay("Artist = {Name}")]
-	public class DbArtist : DbBase, IUserSettings {
+	public class DbArtist : DbBase, IUserSettings, IVersionable {
 		public string			Name { get; set; }
 		public long				CalculatedGenre { get; set; }
 		public long				ExternalGenre { get; set; }
@@ -22,6 +21,7 @@ namespace Noise.Infrastructure.Dto {
 		public long				LastPlayedTicks { get; private set; }
 		public Int32			ViewCount { get; private set; }
 		public long				LastViewedTicks { get; private set; }
+		public long				Version { get; set; }
 
 		public DbArtist() {
 			Name = "";
@@ -33,24 +33,20 @@ namespace Noise.Infrastructure.Dto {
 			UpdateLastChange();
 		}
 
-		[Ignore]
 		public long Genre {
 			get{ return( UserGenre == Constants.cDatabaseNullOid ? ( ExternalGenre == Constants.cDatabaseNullOid ? CalculatedGenre : ExternalGenre ) : UserGenre ); }
 			set{ UserGenre = value; }
 		}
 
-		[Ignore]
 		public Int16 Rating {
 			get{ return( IsUserRating ? UserRating : CalculatedRating ); }
 			set{ UserRating = value; }
 		}
 
-		[Ignore]
 		public bool IsUserRating {
 			get{ return( UserRating != 0 ); }
 		}
 
-		[Ignore]
 		public DateTime DateAdded {
 			get{ return( new DateTime( DateAddedTicks )); }
 		}
@@ -69,9 +65,16 @@ namespace Noise.Infrastructure.Dto {
 			LastViewedTicks = DateTime.Now.Ticks;
 		}
 
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbArtist )); }
+		public void UpdateVersion() {
+			Version++;
+		}
+
+		public void SetVersionPreUpdate( long version ) {
+			Version = version - 1;
+		}
+
+		public override string ToString() {
+			return( string.Format( "Artist \"{0}\", Id:{1}", Name, DbId ));
 		}
 	}
 }

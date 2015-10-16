@@ -1,33 +1,35 @@
 ﻿using Caliburn.Micro;
 using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class ConfigurationViewModel : Screen {
-		private	bool	mAllowInternet;
-		private	bool	mEnableRemote;
+		private readonly IPreferences	mPreferences;
+		private	bool					mAllowInternet;
+		private	bool					mEnableRemote;
+
+		public ConfigurationViewModel( IPreferences preferences ) {
+			mPreferences = preferences;
+		}
 
 		protected override void OnActivate() {
 			base.OnActivate();
 
 			DisplayName = "Configuration";
 
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var preferences = mPreferences.Load<NoiseCorePreferences>();
 
-			if( configuration != null ) {
-				EnableRemote = configuration.EnableRemoteAccess;
-				AllowInternet = configuration.HasNetworkAccess;
-			}
+			EnableRemote = preferences.EnableRemoteAccess;
+			AllowInternet = preferences.HasNetworkAccess;
 		}
 
 		private void UpdateConfiguration() {
-			var configuration = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
+			var preferences = mPreferences.Load<NoiseCorePreferences>();
 
-			if( configuration != null ) {
-				configuration.EnableRemoteAccess = EnableRemote;
-				configuration.HasNetworkAccess = AllowInternet;
+			preferences.EnableRemoteAccess = EnableRemote;
+			preferences.HasNetworkAccess = AllowInternet;
 
-				NoiseSystemConfiguration.Current.Save( configuration );
-			}
+			mPreferences.Save( preferences );
 		}
 
 		public bool AllowInternet {

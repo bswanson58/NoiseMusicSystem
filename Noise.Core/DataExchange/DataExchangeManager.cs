@@ -13,12 +13,15 @@ namespace Noise.Core.DataExchange {
 		private readonly IAlbumProvider				mAlbumProvider;
 		private readonly ITrackProvider				mTrackProvider;
 		private readonly IInternetStreamProvider	mStreamProvider;
+		private readonly INoiseLog					mLog;
 
-		public DataExchangeManager( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IInternetStreamProvider streamProvider ) {
+		public DataExchangeManager( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IInternetStreamProvider streamProvider,
+									INoiseLog log ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mStreamProvider = streamProvider;
+			mLog = log;
 		}
 
 		public bool ExportFavorites( string fileName ) {
@@ -76,11 +79,11 @@ namespace Noise.Core.DataExchange {
 
 			switch( exportType ) {
 				case eExchangeType.Favorites:
-					retValue = new ExportFavorites( mArtistProvider, mAlbumProvider, mTrackProvider );
+					retValue = new ExportFavorites( mArtistProvider, mAlbumProvider, mTrackProvider, mLog );
 					break;
 
 				case eExchangeType.Streams:
-					retValue = new ExportStreams( mStreamProvider );
+					retValue = new ExportStreams( mStreamProvider, mLog );
 					break;
 			}
 

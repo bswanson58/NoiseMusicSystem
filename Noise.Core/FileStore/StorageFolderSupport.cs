@@ -10,16 +10,20 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.Core.FileStore {
 	public class StorageFolderSupport : IStorageFolderSupport {
+		private readonly INoiseLog				mLog;
 		private readonly IRootFolderProvider	mRootFolderProvider;
 		private readonly IStorageFolderProvider	mStorageFolderProvider;
 		private readonly IStorageFileProvider	mStorageFileProvider;
+		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
 
-		public StorageFolderSupport( IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider,
-									 IStorageFileProvider storageFileProvider, ITrackProvider trackProvider ) {
+		public StorageFolderSupport( IRootFolderProvider rootFolderProvider, IStorageFolderProvider storageFolderProvider, IStorageFileProvider storageFileProvider,
+									 IAlbumProvider albumProvider, ITrackProvider trackProvider, INoiseLog log ) {
+			mLog = log;
 			mRootFolderProvider = rootFolderProvider;
 			mStorageFolderProvider = storageFolderProvider;
 			mStorageFileProvider = storageFileProvider;
+			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 		}
 
@@ -58,7 +62,7 @@ namespace Noise.Core.FileStore {
 		public string GetPath( StorageFile forFile ) {
 			Condition.Requires( forFile ).IsNotNull();
 
-			var retValue = "";
+			var retValue = string.Empty;
 			var parentId = forFile.ParentFolder;
 			var folder = mStorageFolderProvider.GetFolder( parentId ) ?? mRootFolderProvider.GetRootFolder( parentId );
 
@@ -69,8 +73,29 @@ namespace Noise.Core.FileStore {
 			return( retValue );
 		}
 
+		public string GetArtistPath( long artistId ) {
+			var retValue = string.Empty;
+
+			try {
+				using( var albumList = mAlbumProvider.GetAlbumList( artistId )) {
+					var album = albumList.List.FirstOrDefault();
+
+					if( album != null ) {
+						var path = GetAlbumPath( album.DbId );
+
+						retValue = Directory.GetParent( path ).FullName;
+					}
+				}
+			}
+			catch( Exception exception ) {
+				mLog.LogException( "Building artist path", exception );
+			}
+
+			return( retValue );
+		}
+
 		public string GetAlbumPath( long albumId ) {
-			var retValue = "";
+			var retValue = string.Empty;
 
 			try {
 				using( var albumTracks = mTrackProvider.GetTrackList( albumId )) {
@@ -83,17 +108,106 @@ namespace Noise.Core.FileStore {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Exception - GetAlbumPath:", ex );
+				mLog.LogException( "Building Album Path", ex );
+			}
+
+			return( retValue );
+		}
+
+		public StorageFolder GetArtistFolder( long artistId ) {
+			var retValue = default( StorageFolder );
+
+			try {
+				using( var albumList = mAlbumProvider.GetAlbumList( artistId )) {
+					var album = albumList.List.FirstOrDefault();
+
+					if( album != null ) {
+						var albumFolder = GetAlbumFolder( album.DbId );
+
+						if( albumFolder != null ) {
+							retValue = mStorageFolderProvider.GetFolder( albumFolder.ParentFolder );
+						}
+					}
+				}
+			}
+			catch( Exception exception ) {
+				mLog.LogException( "Retrieving artist folder", exception );
+			}
+
+			return( retValue );
+		}
+
+		public StorageFolder GetAlbumFolder( long albumId ) {
+			var retValue = default( StorageFolder );
+
+			try {
+				using( var albumTracks = mTrackProvider.GetTrackList( albumId )) {
+					var fileList = albumTracks.List.Select( mStorageFileProvider.GetPhysicalFile );
+					var parentList = fileList.Select( file => file.ParentFolder ).Distinct();
+					var folderList = parentList.Select( mStorageFolderProvider.GetFolder );
+
+					retValue = FindCommonAncestor( folderList.ToList());
+				}
+			}
+			catch( Exception exception ) {
+				mLog.LogException( "Retrieving album folder", exception );
+			}
+
+			return( retValue );
+		}
+
+		private StorageFolder FindCommonAncestor( IList<StorageFolder> folderList ) {
+			var retValue = default( StorageFolder );
+
+			if( folderList.Count() > 1 ) {
+				var parentLists = new List<List<long>>();
+
+				foreach( var folder in folderList ) {
+					var parentList = new List<long>();
+					var thisFolder = folder;
+
+					while( thisFolder.ParentFolder != Constants.cDatabaseNullOid ) {
+						parentList.Insert( 0, thisFolder.ParentFolder );
+
+						thisFolder = mStorageFolderProvider.GetFolder( thisFolder.ParentFolder );
+					}
+
+					parentLists.Add( parentList );
+				}
+
+				var level = 0;
+				while( level > -1 ) {
+					var distinct = parentLists.Select( list => list.Count > level ? list[level] : Constants.cDatabaseNullOid ).Distinct().ToArray();
+
+					if( distinct.Count() == 1 ) {
+						var folderId = distinct.First();
+
+						if( folderId != Constants.cDatabaseNullOid ) {
+							level++;
+
+							retValue = mStorageFolderProvider.GetFolder( distinct.First());
+						}
+						else {
+							level = -1;
+						}
+					}
+					else {
+						level = -1;
+					}
+				}
+			}
+			else {
+				retValue = folderList.FirstOrDefault();
 			}
 
 			return( retValue );
 		}
 
 		private static string FindCommonParent( IEnumerable<string> paths ) {
-			var retValue = "";
+			var retValue = string.Empty;
 			var pathList = paths.Where( path => !string.IsNullOrWhiteSpace( path )).ToList();
 
-			if( pathList.Any() ) {
+			if( pathList.Any()) {
 				if( pathList.Count() == 1 ) {
 					retValue = pathList.First();
 				}
@@ -120,7 +234,7 @@ namespace Noise.Core.FileStore {
 						var lastSlash = retValue.LastIndexOfAny( new [] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar, Path.VolumeSeparatorChar } );
 
 						if( lastSlash > 0 ) {
-							retValue = retValue.Substring( 0, lastSlash + 1 );
+							retValue = retValue.Substring( 0, lastSlash );
 						}
 					}
 				}
@@ -196,6 +310,8 @@ namespace Noise.Core.FileStore {
 						break;
 
 					case ".jpg":
+					case ".jpeg":
+					case ".png":
 					case ".bmp":
 						retValue = eFileType.Picture;
 						break;
@@ -203,6 +319,10 @@ namespace Noise.Core.FileStore {
 					case ".txt":
 					case ".nfo":
 						retValue = eFileType.Text;
+						break;
+
+					case Constants.SidecarExtension:
+						retValue = eFileType.Sidecar;
 						break;
 				}
 			}

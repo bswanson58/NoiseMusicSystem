@@ -18,6 +18,7 @@ namespace Noise.Core.FileProcessor {
 			Condition.Requires( context.StorageFile ).IsNotNull();
 
 			context.StorageFile.FileType = mStorageFolderSupport.DetermineFileType( context.StorageFile );
+			context.Log.LogFileTypeDetermined( context.StorageFile );
 
 			switch( context.StorageFile.FileType ) {
 				case eFileType.Music:
@@ -32,6 +33,10 @@ namespace Noise.Core.FileProcessor {
 
 				case eFileType.Text:
 					context.Trigger = ePipelineTrigger.FileTypeIsInfo;
+					break;
+
+				case eFileType.Sidecar:
+					context.Trigger = ePipelineTrigger.FileTypeIsSidecar;
 					break;
 
 				default:

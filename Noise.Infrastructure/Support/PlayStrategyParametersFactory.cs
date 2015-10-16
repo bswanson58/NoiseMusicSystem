@@ -18,8 +18,8 @@ namespace Noise.Infrastructure.Support {
 					}
 				}
 				catch( Exception ex ) {
-					if( !string.IsNullOrWhiteSpace( encoded ) ) {
-						NoiseLogger.Current.LogException( string.Format( "PlayStrategyParametersFactory failed to decode: '{0}'", encoded ), ex );
+					if(!string.IsNullOrWhiteSpace( encoded )) {
+						throw new ApplicationException( string.Format( "PlayStrategyParametersFactory failed to decode: '{0}'", encoded ), ex );
 					}
 				}
 			}

@@ -1,0 +1,50 @@
+{
+  "LogExceptions": true,
+  "LogMessages":  false,
+
+  "ApplicationActivity":  true,
+  "BasicActivity": true,
+
+  "LibraryConfiguration": false,
+
+  "AudioPlayback": false,
+  "AudioSync":  false,
+
+  "BackgroundTasks":  false,
+
+  "BuildingDiscovery": false,
+  "BuildingDiscoverFiles": false,
+  "BuildingDiscoverFolders": false,
+
+  "DatabaseActivity":  false,
+
+  "MetadataCleaning" : false,
+  "MetadataCleaningDomainObjects": false,
+  "MetadataCleaningFileObjects": false,
+
+  "FileClassification": false,
+  "FileClassificationFiles": false,
+  "FileClassificationSteps": false,
+  "FileClassificationArtists": false,
+  "FileClassificationAlbums": false,
+  "FileClassificationTracks": false,
+  "FileClassificationArtwork": false,
+  "FileClassificationTextInfo": false,
+  "FileClassificationUnknown": false,
+
+  "BuildingSummary": false,
+  "BuildingSummaryArtists": false,
+  "BuildingSummaryAlbums": false,
+
+  "MetadataSupport":  false,
+
+  "SidecarSupport": false,
+
+  "PlayQueueAddRemove":  false,
+  "PlayQueueStatusChange":  false,
+  "PlayQueueStrategy":  false,
+
+  "PlayState":  false,
+
+  "UserInterface":  false
+}

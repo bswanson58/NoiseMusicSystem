@@ -30,7 +30,7 @@
 
             <TextBlock Grid.Column="0" Margin="7,0,3,0" VerticalAlignment="Center" Text="Active Library:"/>
 
-            <ContentControl Grid.Column="1" Margin="3" HorizontalAlignment="Stretch" Height="25" Content="{Binding LibraryList}">
+            <ContentControl Grid.Column="1" Margin="3" HorizontalAlignment="Stretch" Height="25" Content="{Binding LibraryList}" ToolTip="{Binding LibraryStatistics}">
                 <ContentControl.ContentTemplate>
                     <DataTemplate>
                         <Grid>

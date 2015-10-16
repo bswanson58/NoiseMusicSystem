@@ -20,7 +20,9 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		[Test]
 		public void CanAddAllTrackProperties() {
 			var	sut = CreateSut();
-			var track = new DbTrack { Album = 1, 
+			var track = new DbTrack { Album = 1,
+									  Artist = 18,
+									  BeatsPerMinute = 19,
 									  Bitrate = 2, 
 									  CalculatedGenre = 3,
 									  Channels = 4,
@@ -42,6 +44,7 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 									  TrackNumber = 16,
 									  UserGenre = 17,
 									  VolumeName = "volume" };
+			track.UpdateLastPlayed();
 
 			sut.AddTrack( track );
 

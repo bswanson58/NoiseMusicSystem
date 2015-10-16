@@ -17,10 +17,6 @@ namespace Noise.RemoteHost {
 				.ForMember( dest => dest.ArtistId, opt => opt.MapFrom( src => src.Artist ))
 				.ForMember( dest => dest.Genre, opt => opt.Ignore());
 
-			CreateMap<DbTrack, RoTrack>()
-				.ForMember( dest => dest.ArtistId, opt => opt.Ignore())
-				.ForMember( dest => dest.AlbumId, opt => opt.MapFrom( src => src.Album ));
-
 			CreateMap<DbArtist, RoArtistInfo>()
 				.ForMember( dest => dest.ArtistId, opt => opt.MapFrom( src => src.DbId ))
 				.ForMember( dest => dest.ArtistImage, opt => opt.Ignore())
@@ -28,6 +24,8 @@ namespace Noise.RemoteHost {
 				.ForMember( dest => dest.Biography, opt => opt.Ignore())
 				.ForMember( dest => dest.SimilarArtists, opt => opt.Ignore())
 				.ForMember( dest => dest.TopAlbums, opt => opt.Ignore())
+				.ForMember( dest => dest.TopTracks, opt => opt.Ignore())
+				.ForMember( dest => dest.TopTrackIds, opt => opt.Ignore())
 				.ForMember( dest => dest.Website, opt => opt.Ignore());
 
 			CreateMap<DbAlbum, RoAlbumInfo>()
@@ -39,7 +37,10 @@ namespace Noise.RemoteHost {
 				.ForMember( dest => dest.AlbumCover, opt => opt.Ignore());
 
 			CreateMap<PlayQueueTrack, RoPlayQueueTrack>()
+				.ForMember( dest => dest.Id, opt => opt.MapFrom( src => src.Uid ))
+				.ForMember( dest => dest.ArtistId, opt => opt.MapFrom( src => src.Artist.DbId ))
 				.ForMember( dest => dest.ArtistName, opt => opt.MapFrom( src => src.Artist.Name ))
+				.ForMember( dest => dest.AlbumId, opt => opt.MapFrom( src => src.Album.DbId ))
 				.ForMember( dest => dest.AlbumName, opt => opt.MapFrom( src => src.Album.Name ))
 				.ForMember( dest => dest.TrackId, opt => opt.MapFrom( src => src.Track.DbId ))
 				.ForMember( dest => dest.TrackName, opt => opt.MapFrom( src => src.Track.Name ))
@@ -54,6 +55,13 @@ namespace Noise.RemoteHost {
 				.ForMember( dest => dest.TrackId, opt => opt.MapFrom( src => src.Track != null ? src.Track.DbId : Constants.cDatabaseNullOid ))
 				.ForMember( dest => dest.TrackName, opt => opt.MapFrom( src => src.Track != null ? src.Track.Name : "" ))
 				.ForMember( dest => dest.CanPlay, opt => opt.Ignore());
+
+			CreateMap<LibraryConfiguration, RoLibrary>()
+				.ForMember( dest => dest.LibraryId, opt => opt.MapFrom( src => src.LibraryId ))
+				.ForMember( dest => dest.DatabaseName, opt => opt.MapFrom( src => src.DatabaseName ))
+				.ForMember( dest => dest.IsDefaultLibrary, opt => opt.MapFrom( src => src.IsDefaultLibrary ))
+				.ForMember( dest => dest.LibraryName, opt => opt.MapFrom( src => src.LibraryName ))
+				.ForMember( dest => dest.MediaLocation, opt => opt.MapFrom( src => src.MediaLocations.Count > 0 ? src.MediaLocations[0].Path : "" ));
 		}
 	}
 

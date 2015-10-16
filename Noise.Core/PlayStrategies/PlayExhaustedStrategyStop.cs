@@ -1,10 +1,11 @@
-﻿using Noise.Infrastructure.Dto;
+﻿using Noise.Core.Logging;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
 	internal class PlayExhaustedStrategyStop : PlayExhaustedStrategyBase {
-		public PlayExhaustedStrategyStop() :
-			base( ePlayExhaustedStrategy.Stop, "Stop Playing", "Stops playing." ) {
+		public PlayExhaustedStrategyStop( ILogPlayStrategy log ) :
+			base( ePlayExhaustedStrategy.Stop, "Stop Playing", "Stops playing.", log ) {
 		}
 
 		protected override string FormatDescription() {

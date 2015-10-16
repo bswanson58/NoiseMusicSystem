@@ -14,13 +14,15 @@ namespace Noise.Core.DataProviders {
 		private readonly IArtworkProvider		mArtworkProvider;
 		private readonly ITagManager			mGenreManager;
 		private readonly IStorageFolderSupport	mStorageFolderSupport;
+		private readonly INoiseLog				mLog;
 		private readonly StorageFile			mFile;
 		private	readonly Lazy<File>				mTags;
 
-		public Mp3TagProvider( IArtworkProvider artworkProvider, ITagManager tagManager, IStorageFolderSupport storageFolderSupport, StorageFile file ) {
+		public Mp3TagProvider( IArtworkProvider artworkProvider, ITagManager tagManager, IStorageFolderSupport storageFolderSupport, StorageFile file, INoiseLog log ) {
 			mArtworkProvider = artworkProvider;
 			mGenreManager = tagManager;
 			mStorageFolderSupport = storageFolderSupport;
+			mLog = log;
 			mFile = file;
 
 			Condition.Requires( mFile ).IsNotNull();
@@ -32,20 +34,20 @@ namespace Noise.Core.DataProviders {
 					retValue = OpenTagFile( mStorageFolderSupport.GetPath( mFile ));
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Exception - Mp3TagProvider:OpenTagFile:", ex );
+					mLog.LogException( string.Format( "Getting tags for {0}", mFile ), ex );
 				}
 
 				return( retValue );	});
 		}
 
-		private static File OpenTagFile( string path ) {
+		private File OpenTagFile( string path ) {
 			File retValue = null;
 
 			try {
 				retValue = File.Create( path );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( String.Format( "Exception - Mp3TagProvider opening file: {0}", path ), ex );
+				mLog.LogException( string.Format( "Opening file \"{0}\"", path ), ex );
 			}
 
 			return( retValue );			
@@ -128,12 +130,6 @@ namespace Noise.Core.DataProviders {
 
 					if( id3Tags != null ) {
 						track.BeatsPerMinute = (Int16)id3Tags.BeatsPerMinute;
-
-						var replayGainFrame = id3Tags.GetFrames( new ByteVector( "RVA2" ));
-						if(( replayGainFrame != null ) &&
-						   ( replayGainFrame.Any())) {
-							NoiseLogger.Current.LogInfo( "Found Replay Gain frame" );
-						}
 
 						var frames = id3Tags.GetFrames<UserTextInformationFrame>();
 						if( frames != null ) {
@@ -245,7 +241,7 @@ namespace Noise.Core.DataProviders {
 					}
 				}
 				catch( Exception ex ) {
-					NoiseLogger.Current.LogException( "Mp3TagProvider", ex );
+					mLog.LogException( string.Format( "Building tags for {0}/{1}/{2}", artist, album, track ), ex );
 				}
 			}
 		}

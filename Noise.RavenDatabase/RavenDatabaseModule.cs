@@ -3,6 +3,7 @@ using Microsoft.Practices.Unity;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.DataProviders;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase {
@@ -36,6 +37,8 @@ namespace Noise.RavenDatabase {
 			mContainer.RegisterType<ITextInfoProvider, TextInfoProvider>();
 			mContainer.RegisterType<ITimestampProvider, TimestampProvider>();
 			mContainer.RegisterType<IDatabaseInfo, DatabaseInfoProvider>();
+
+			mContainer.RegisterType<ILogRaven, RavenLogger>( new HierarchicalLifetimeManager());
 		}
 	}
 }

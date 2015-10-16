@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 using Noise.EntityFrameworkDatabase.Interfaces;
@@ -6,12 +6,21 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	public class NoiseContext : DbContext, IDbContext {
-		public NoiseContext() :
-			base( "NoiseDatabase" ) { }
+		public	IDbSet<DbArtist>	Artists { get; set; }
+		public	IDbSet<DbAlbum>		Albums { get; set; }
+		public	IDbSet<DbTrack>		Tracks { get; set; } 
+		private readonly bool		mIsValidContext;
 
-		public IDbSet<DbArtist>	Artists { get; set; }
-		public IDbSet<DbAlbum>	Albums { get; set; }
-		public IDbSet<DbTrack>	Tracks { get; set; } 
+		public NoiseContext( string databaseName, string databaseConnectionString ) :
+			base( databaseName ) {
+			mIsValidContext = !string.IsNullOrWhiteSpace( databaseConnectionString );
+	
+			Database.Connection.ConnectionString = databaseConnectionString;
+		}
+
+		public bool IsValidContext {
+			get { return( mIsValidContext ); }
+		}
 
 		protected override void OnModelCreating( DbModelBuilder modelBuilder ) {
 			modelBuilder.Configurations.Add( new AlbumConfiguration());
@@ -26,6 +35,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			modelBuilder.Configurations.Add( new RootFolderConfiguration());
 			modelBuilder.Configurations.Add( new StorageFileConfiguration());
 			modelBuilder.Configurations.Add( new StorageFolderConfiguration());
+			modelBuilder.Configurations.Add( new StorageSidecarConfiguration());
 			modelBuilder.Configurations.Add( new TagConfiguration());
 			modelBuilder.Configurations.Add( new TagAssociationConfiguration());
 			modelBuilder.Configurations.Add( new TextInfoConfiguration());
@@ -81,7 +91,6 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 			Ignore( p => p.DateAdded );
 			Ignore( p => p.Duration );
 			Ignore( p => p.Genre );
-			Ignore( p => p.Rating );
 			Ignore( p => p.IsUserRating );
 		}
 	}
@@ -101,9 +110,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 	internal class InternetStreamConfiguration : BaseEntityConfiguration<DbInternetStream> {
 		internal InternetStreamConfiguration() :
-			base( "Streams" ) {
-			Ignore( p => p.Encoding );
-		}
+			base( "Streams" ) { }
 	}
 
 	internal class LyricConfiguration : BaseEntityConfiguration<DbLyric> {
@@ -119,22 +126,19 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 	internal class PlayListConfiguration : BaseEntityConfiguration<DbPlayList> {
 		internal PlayListConfiguration() :
 			base( "PlayLists" ) {
+			Ignore( p => p.TrackIds );
 			Ignore( p => p.IsUserRating );
 		}
 	}
 
 	internal class TagConfiguration : BaseEntityConfiguration<DbTag> {
 		internal TagConfiguration() :
-			base( "Tags" ) {
-			Ignore( p => p.TagGroup );
-		}
+			base( "Tags" ) { }
 	}
 
 	internal class TagAssociationConfiguration : BaseEntityConfiguration<DbTagAssociation> {
 		internal TagAssociationConfiguration() :
-			base( "TagAssociations" ) {
-			Ignore( p => p.TagGroup );
-		}
+			base( "TagAssociations" ) { }
 	}
 
 	internal class TextInfoConfiguration : BaseEntityConfiguration<DbTextInfo> {
@@ -152,14 +156,17 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 
 	internal class StorageFileConfiguration : BaseEntityConfiguration<StorageFile> {
 		internal StorageFileConfiguration() :
-			base( "Files" ) {
-			Ignore( p => p.FileType );
-		}
+			base( "Files" ) { }
 	}
 
 	internal class StorageFolderConfiguration : BaseEntityConfiguration<StorageFolder> {
 		internal StorageFolderConfiguration() :
 			base( "Folders" ) { }
+	}
+
+	internal class StorageSidecarConfiguration : BaseEntityConfiguration<StorageSidecar> {
+		internal StorageSidecarConfiguration() :
+			base( "Sidecars" ) { }
 	}
 
 	internal class FolderStrategyConfiguration : BaseEntityConfiguration<FolderStrategy> {

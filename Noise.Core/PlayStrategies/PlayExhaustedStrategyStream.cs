@@ -1,4 +1,5 @@
 ﻿using CuttingEdge.Conditions;
+using Noise.Core.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -7,8 +8,8 @@ namespace Noise.Core.PlayStrategies {
 		private readonly	IInternetStreamProvider	mStreamProvider;
 		private string		mStreamName;
 
-		public PlayExhaustedStrategyStream( IInternetStreamProvider streamProvider ) :
-			base( ePlayExhaustedStrategy.PlayStream, "Play Radio Station...", "Plays the selected stream.", "Stream" ) {
+		public PlayExhaustedStrategyStream( IInternetStreamProvider streamProvider, ILogPlayStrategy log ) :
+			base( ePlayExhaustedStrategy.PlayStream, "Play Radio Station...", "Plays the selected stream.", "Stream", log ) {
 			mStreamProvider = streamProvider;
 		}
 

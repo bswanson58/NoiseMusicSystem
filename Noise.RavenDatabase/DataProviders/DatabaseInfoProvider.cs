@@ -1,14 +1,15 @@
 ﻿using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.RavenDatabase.Interfaces;
+using Noise.RavenDatabase.Logging;
 using Noise.RavenDatabase.Support;
 
 namespace Noise.RavenDatabase.DataProviders {
-	public class DatabaseInfoProvider : BaseProvider<DbVersion>, IDatabaseInfo {
+	internal class DatabaseInfoProvider : BaseProvider<DbVersion>, IDatabaseInfo {
 		private DbVersion		mDatabaseVersion;
 
-		public DatabaseInfoProvider( IDbFactory databaseFactory ) :
-			base( databaseFactory, entity => new object[] { entity.DbId }) {
+		public DatabaseInfoProvider( IDbFactory databaseFactory, ILogRaven log ) :
+			base( databaseFactory, entity => new object[] { entity.DbId }, log ) {
 		}
 
 		public long DatabaseId {
@@ -41,7 +42,7 @@ namespace Noise.RavenDatabase.DataProviders {
 			get { return( DbFactory.IsOpen ); }
 		}
 
-		public void InitializeDatabaseVersion( short majorVersion, short minorVersion ) {
+		public void InitializeDatabaseVersion( short databaseVersion ) {
 			RetrieveDatabaseVersion();
 
 			if( mDatabaseVersion != null ) {
@@ -50,7 +51,7 @@ namespace Noise.RavenDatabase.DataProviders {
 				mDatabaseVersion = null;
 			}
 
-			mDatabaseVersion = new DbVersion( majorVersion, minorVersion );
+			mDatabaseVersion = new DbVersion( databaseVersion );
 			Database.Add( mDatabaseVersion );
 		}
 

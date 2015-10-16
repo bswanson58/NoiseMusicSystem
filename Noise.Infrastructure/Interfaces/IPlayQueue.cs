@@ -4,22 +4,29 @@ using Noise.Infrastructure.Dto;
 namespace Noise.Infrastructure.Interfaces {
 	public interface IPlayQueue {
 		void			Add( DbTrack track );
+		void			Add( IEnumerable<DbTrack> trackList );
 		void			Add( DbAlbum album );
+		void			Add( DbAlbum album, string volumeName );
 		void			Add( DbArtist artist );
 		void			Add( DbInternetStream stream );
 		void			StrategyAdd( DbTrack track );
 		void			StrategyAdd( DbTrack track, PlayQueueTrack afterTrack );
 		void			RemoveTrack( PlayQueueTrack track );
+		bool			RemoveTrack( long trackId );
 		void			RemovePlayedTracks();
 		void			ClearQueue();
 
 		PlayQueueTrack	PlayNextTrack();
-        bool            CanPlayNextTrack();
+		bool            CanPlayNextTrack();
 		PlayQueueTrack	PlayPreviousTrack();
-        bool            CanPlayPreviousTrack();
+		bool            CanPlayPreviousTrack();
 		void			StopPlay();
+		void			StopAtEndOfTrack();
+		bool			CanStopAtEndOfTrack();
 		void			ReplayQueue();
 		void			ContinuePlayFromTrack( PlayQueueTrack track );
+		bool			ContinuePlayFromTrack( long trackId );
+		bool			ReplayTrack( long trackId );
 
 		PlayQueueTrack	NextTrack { get; }
 		PlayQueueTrack	PreviousTrack { get; }
@@ -40,6 +47,9 @@ namespace Noise.Infrastructure.Interfaces {
 
 		void			StartPlayStrategy();
 		bool			CanStartPlayStrategy { get; }
+
+		bool			DeletedPlayedTracks { get; set; }
+		int				MaximumPlayedTracks { get; set; }
 
 		IEnumerable<PlayQueueTrack>	PlayList { get; }
 	}

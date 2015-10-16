@@ -1,15 +1,21 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Noise.EntityFrameworkDatabase.Interfaces;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
-	public class StorageFileProvider : BaseProvider<StorageFile>, IStorageFileProvider {
-		public StorageFileProvider( IContextProvider contextProvider ) :
-			base( contextProvider ) { }
+	internal class StorageFileProvider : BaseProvider<StorageFile>, IStorageFileProvider {
+		public StorageFileProvider( IContextProvider contextProvider, ILogDatabase log ) :
+			base( contextProvider, log ) { }
 
 		public void AddFile( StorageFile file ) {
 			AddItem( file );
+		}
+
+		public void Add( IEnumerable<StorageFile> list ) {
+			AddList( list );
 		}
 
 		public void DeleteFile( StorageFile file ) {
@@ -21,6 +27,16 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
 			using( var context = CreateContext()) {
 				retValue = Set( context ).FirstOrDefault( entity => entity.MetaDataPointer == forTrack.DbId );	
+			}
+
+			return( retValue );
+		}
+
+		public StorageFile GetFileForMetadata( long metadataId ) {
+			StorageFile	retValue;
+
+			using( var context = CreateContext()) {
+				retValue = Set( context ).FirstOrDefault( entity => entity.MetaDataPointer == metadataId );
 			}
 
 			return( retValue );
@@ -45,7 +61,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		public IDataProviderList<StorageFile> GetFilesRequiringProcessing() {
 			var context = CreateContext();
 
-			return( new EfProviderList<StorageFile>( context, Set( context ).Where( entity => ( entity.DbFileType == (int)eFileType.Undetermined ) || entity.WasUpdated )));
+			return( new EfProviderList<StorageFile>( context, Set( context ).Where( entity => ( entity.FileType == eFileType.Undetermined ) || entity.WasUpdated )));
 		} 
 
 		public IDataUpdateShell<StorageFile> GetFileForUpdate( long fileId ) {

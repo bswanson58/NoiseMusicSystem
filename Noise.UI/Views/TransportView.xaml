@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="Noise.UI.Views.PlayingTransportView"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 mc:Ignorable="d" 
+			 d:DesignHeight="100" d:DesignWidth="300">
+
+	<UserControl.DataContext>
+		<Binding Path="TransportViewModel" Source="{StaticResource ViewModelLocator}" />
+	</UserControl.DataContext>
+
+	<StackPanel Height="43" Margin="0,0,5,0" HorizontalAlignment="Right" Orientation="Horizontal">
+		<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="4" Command="{Binding Play}"/>
+		<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=";" Command="{Binding Pause}"/>
+		<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="&lt;" Command="{Binding Stop}"/>
+		<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="9" Command="{Binding PreviousTrack}" />
+		<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=":" Command="{Binding NextTrack}"/>
+		<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_ReplayTrack}" Command="{Binding ReplayTrack}" Padding="5" />
+	</StackPanel>
+</UserControl>

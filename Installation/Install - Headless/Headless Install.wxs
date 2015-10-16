@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+	 xmlns:fire="http://schemas.microsoft.com/wix/FirewallExtension"
+	 xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+	<!-- To update for the next release increment ProductVersion in Version.wxi -->
+	<?include ..\Common Files\Version.wxi?>
+
+	<?define ProductName="Noise Music Service"?>
+
+	<Product Id="*"
+			 Name="$(var.ProductName)"
+			 Language="1033"
+			 Version="$(var.ProductVersion)"
+			 Manufacturer="$(var.Manufacturer)"
+			 UpgradeCode="d78a15b0-a2fb-4022-90d0-dc90fce655bb">
+		<Package InstallerVersion="300"
+				 Platform="$(var.Noise.Headless.Platform)"
+				 InstallScope="perMachine"
+				 InstallPrivileges="elevated"
+				 Compressed="yes" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		
+		<PropertyRef Id="NETFRAMEWORK45" />
+		<Condition Message="This application requires .NET Framework version 4.5. Please install the .NET Framework and then run this installer again.">
+			<![CDATA[Installed OR NETFRAMEWORK45]]>
+		</Condition>
+
+		<Media Id="1" Cabinet="ApplicationFiles.cab" EmbedCab="yes" />
+
+		<!-- Folder Locations -->
+		<?if $(var.Noise.Headless.Platform) = "x64" ?>
+		<?define ProgramFolder="ProgramFiles64Folder"?>
+		<?else ?>
+		<?define ProgramFolder="ProgramFilesFolder"?>
+		<?endif ?>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="$(var.ProgramFolder)">
+				<Directory Id="CompanyDirectory" Name="Secret Squirrel Software">
+					<Directory Id="CommonDirectory" Name="Noise Music System">
+						<Directory Id="INSTALLDIRECTORY" Name="Noise Music Service" />
+					</Directory>
+				</Directory>
+			</Directory>
+
+			<Directory Id="CommonAppDataFolder">
+				<Directory Id="ProductDataFolder" Name="Secret Squirrel Software">
+					<Directory Id="ProductFolder" Name="Noise Music System">
+						<Directory Id="ProductConfigFolder" Name="Configuration" />
+					</Directory>
+				</Directory>
+			</Directory>
+		</Directory>
+
+		<!-- Installed Files -->
+		<DirectoryRef Id="INSTALLDIRECTORY">
+			<Component Id="Noise.Headless.exe" Guid="a08274ac-a6be-4019-9ebf-a7770e636c62">
+				<File Id="Noise.Headless.exe" DiskId="1" Source="$(var.Noise.Headless.TargetPath)" KeyPath="yes" Checksum="yes" />
+				<fire:FirewallException Id="Service.Firewall.Exception" Name="Noise Music System Service" Description="Noise Music System support for remote clients."
+										Port="73" Protocol="tcp" Scope="localSubnet"/>
+				<fire:FirewallException Id="Discovery.Firewall.Exception" Name="Noise Music System Discovery" Description="Noise Music System discovery for remote clients."
+										Port="6502" Protocol="udp" Scope="localSubnet" />
+				<ServiceInstall Id="ServiceInstall" Type="ownProcess" Vital="yes" Name="NoiseMusicService"
+								DisplayName="Noise Music System Service"
+								Description="This service support remote Noise Music System clients."
+								Start="auto" Account="NT Authority\Network Service" ErrorControl="normal" Interactive="no" />
+				<!-- <util:User Id="UpdateUserLogonAsService" UpdateIfExists="yes" CreateUser="no" Name="" LogonAsService="yes" /> -->
+				<ServiceControl Id="StartService" Start="install" Stop="both" Remove="uninstall" Name="NoiseMusicService" Wait="yes" />
+			</Component>
+
+			<Component Id="Noise.Headless.config" Guid="d73b1fd7-2681-45af-81de-e4f57fd6f8f1">
+				<File Id="Noise.Headless.config" DiskId="1" Source="$(var.Noise.Headless.TargetDir)Noise.Headless.exe.config" KeyPath="yes" Checksum="yes" />
+			</Component>
+
+			<Component Id="ReusableBits.Service.dll" Guid="ef661a41-2c49-4cf9-8573-1025e334ae47">
+				<File Id="ReusableBits.Service.dll" DiskId="1" Source="$(var.ReusableBits.Service.TargetDir)ReusableBits.Service.dll" KeyPath="yes" Checksum="yes" />
+			</Component>
+		</DirectoryRef>
+
+		<DirectoryRef Id="ProductFolder">
+			<Component Id="ProgramDataPermissions" Guid="3be02cf7-91c0-4c92-bea4-f8f95c5f869c">
+				<CreateFolder>
+					<util:PermissionEx User="Users" GenericAll="yes" />
+				</CreateFolder>
+			</Component>
+		</DirectoryRef>
+
+		<Icon Id="AddRemoveProgramsIcon" SourceFile="$(var.Noise.Headless.ProjectDir)..\Common\Noise.ico" />
+		<Property Id="ARPPRODUCTICON" Value="AddRemoveProgramsIcon" />
+
+		<ComponentGroup Id="ApplicationFiles">
+			<ComponentRef Id="Noise.Headless.exe" />
+			<ComponentRef Id="Noise.Headless.config" />
+			<ComponentRef Id="ReusableBits.Service.dll"/>
+			<ComponentRef Id="ProgramDataPermissions"/>
+		</ComponentGroup>
+		
+		<Feature Id="Complete" Title="Noise Music Service Install" Level="1" ConfigurableDirectory="INSTALLDIRECTORY">
+			<Feature Id="Application" Title="Noise Desktop Application" Level="1">
+				<ComponentGroupRef Id="ApplicationFiles" />
+				<ComponentGroupRef Id="CoreFiles"/>
+				<ComponentGroupRef Id="AutomapperFiles"/>
+				<ComponentGroupRef Id="BassAudioFiles"/>
+				<ComponentGroupRef Id="CaliburnMicroFiles"/>
+				<ComponentGroupRef Id="ConfigurationFiles"/>
+				<ComponentGroupRef Id="CuttingEdgeFiles"/>
+				<ComponentGroupRef Id="EntityFrameworkFiles"/>
+				<ComponentGroupRef Id="GDataDBFiles"/>
+				<ComponentGroupRef Id="GongSolutionsFiles"/>
+				<ComponentGroupRef Id="LastFmScrobblerFiles"/>
+				<ComponentGroupRef Id="LuceneFiles"/>
+				<ComponentGroupRef Id="MicrosoftFiles"/>
+				<ComponentGroupRef Id="NewtonsoftJsonFiles"/>
+				<ComponentGroupRef Id="NLogFiles"/>
+				<ComponentGroupRef Id="ObservalFiles"/>
+				<ComponentGroupRef Id="PrismFiles"/>
+				<ComponentGroupRef Id="RavenDBFiles"/>
+				<ComponentGroupRef Id="ReclsFiles"/>
+				<ComponentGroupRef Id="RefitFiles"/>
+				<ComponentGroupRef Id="ReplayGainFiles"/>
+				<ComponentGroupRef Id="SeriLogFiles"/>
+				<ComponentGroupRef Id="StatelessFiles"/>
+				<ComponentGroupRef Id="TagLibSharpFiles"/>
+			</Feature>
+		</Feature>
+
+		<Feature Id="UnnecessaryFiles" Title="Unnecessary Files" Level="0">
+			<ComponentGroupRef Id="DotNetZipFiles"/>
+			<ComponentGroupRef Id="MahAppsMetroFiles"/>
+		</Feature>
+
+		<UIRef Id="InstallUI" />
+		
+		<!-- Custom action to set WCF namespace reservation -->
+		<CustomAction Id="ListenerServiceAddReservation" Execute="deferred" Return="asyncWait" Directory="INSTALLDIRECTORY"
+					  ExeCommand='[SystemFolder]netsh.exe http add urlacl url=http://+:73/Noise user="NT AUTHORITY\NETWORKSERVICE"' />
+
+		<CustomAction Id="ListenerServiceDeleteReservation" Execute="deferred" Return="asyncWait" Directory="INSTALLDIRECTORY"
+					  ExeCommand="[SystemFolder]netsh.exe http delete urlacl url=http://+:73/Noise" />
+
+		<InstallExecuteSequence>
+			<Custom Action="ListenerServiceAddReservation" Before="StartServices">NOT Installed</Custom>
+			<Custom Action="ListenerServiceDeleteReservation" Before="InstallFinalize">Installed</Custom>
+		</InstallExecuteSequence>
+
+	</Product>
+</Wix>

@@ -3,14 +3,14 @@ using System.IO;
 using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.EntityFrameworkDatabase.Interfaces;
-using Noise.Infrastructure;
+using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
-	public class ArtworkProvider : BaseProvider<DbArtwork>, IArtworkProvider {
-		public ArtworkProvider( IContextProvider contextProvider ) :
-			base( contextProvider ) { }
+	internal class ArtworkProvider : BaseProvider<DbArtwork>, IArtworkProvider {
+		public ArtworkProvider( IContextProvider contextProvider, ILogDatabase log ) :
+			base( contextProvider, log ) { }
 
 		private Artwork TransformArtwork( DbArtwork artwork ) {
 			return( new Artwork( artwork ) { Image = BlobStorage.RetrieveBytes( artwork.DbId ) });
@@ -31,7 +31,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 				BlobStorage.Insert( artwork.DbId, byteStream );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "AddArtwork", ex );
+				Log.LogException( "AddArtwork", ex );
 			}
 		}
 
@@ -45,7 +45,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 				BlobStorage.Insert( artwork.DbId, filePath );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "AddArtwork", ex );
+				Log.LogException( "AddArtwork", ex );
 			}
 		}
 
@@ -58,7 +58,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 				BlobStorage.Delete( artwork.DbId );
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "DeleteArtwork", ex );
+				Log.LogException( "DeleteArtwork", ex );
 			}
 		}
 

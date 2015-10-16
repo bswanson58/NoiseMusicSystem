@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using Eloquera.Client;
-
-namespace Noise.Infrastructure.Dto {
+﻿namespace Noise.Infrastructure.Dto {
 	public class DbTagAssociation : DbBase {
 		public	long		TagId { get; protected set; }
 		public	eTagGroup	TagGroup { get; protected set; }
@@ -19,15 +15,8 @@ namespace Noise.Infrastructure.Dto {
 			AlbumId = albumId;
 		}
 
-		[Ignore]
-		public int DbTagGroup {
-			get{ return((int)TagGroup ); }
-			protected set{ TagGroup = (eTagGroup)value; }
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbTagAssociation )); }
+		public override string ToString() {
+			return( string.Format( "TagAssociation, Artist:{0}, Album:{1}, TagGroup:{2}", ArtistId, AlbumId, TagGroup ));
 		}
 	}
 }

@@ -15,20 +15,19 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		public void CanAddDatabaseVersion() {
 			var sut = CreateSut();
 
-			sut.InitializeDatabaseVersion( 1, 2 );
+			sut.InitializeDatabaseVersion( 1 );
 		}
 
 		[Test]
 		public void CanReadDatabaseVersion() {
 			var sut = CreateSut();
 
-			sut.InitializeDatabaseVersion( 1, 2 );
+			sut.InitializeDatabaseVersion( 3 );
 
 			var version = sut.DatabaseVersion;
 
 			Assert.IsNotNull( version );
-			version.MajorVersion.Should().Be( 1 );
-			version.MinorVersion.Should().Be( 2 );
+			version.DatabaseVersion.Should().Be( 3 );
 		}
 	}
 }

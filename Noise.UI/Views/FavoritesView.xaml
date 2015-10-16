@@ -1,67 +1,77 @@
 ﻿<UserControl x:Class="Noise.UI.Views.FavoritesView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
-             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-             mc:Ignorable="d"
-             Tag="Favorites"
-             DataContext="{Binding FavoritesViewModel, Source={StaticResource ViewModelLocator}}"
-             d:DesignHeight="300" d:DesignWidth="300">
-    
-    <UserControl.Resources>
-        <ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
-            <Grid Margin="5,35,5,0">
-                <TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="what!? you have no favorites???" />
-            </Grid>
-        </ControlTemplate>
-    </UserControl.Resources>
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 mc:Ignorable="d"
+			 Tag="Favorites"
+			 DataContext="{Binding FavoritesViewModel, Source={StaticResource ViewModelLocator}}"
+			 d:DesignHeight="300" d:DesignWidth="300">
+	
+	<UserControl.Resources>
+		<ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
+			<Grid Margin="5,35,5,0">
+				<TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="what!? you have no favorites???" />
+			</Grid>
+		</ControlTemplate>
+	</UserControl.Resources>
 
-    <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Favorites ">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            
-            <ListView Grid.Row="0" BorderThickness="0" ItemsSource="{Binding Path=FavoritesList}"
-            Behaviours:ListViewColumns.Stretch="true"
-            Behaviours:GridViewSort.AutoSort="True">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}">
-                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayFavorite}"/>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Title}" Behaviours:GridViewSort.PropertyName="Title"/>
-                    </GridView>
-                </ListView.View>
-                <i:Interaction.Behaviors>
-                    <ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
-                </i:Interaction.Behaviors>
-            </ListView>
-            
-            <Grid Grid.Row="1" Margin="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                
-                <Button Grid.Column="0" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Export" Command="{Binding Path=ExportFavorites}"/>
-                <Button Grid.Column="2" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Import" Command="{Binding Path=ImportFavorites}"/>
-            </Grid>
-        </Grid>
-    </GroupBox>
+	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Favorites ">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+			
+			<ListView Grid.Row="0" BorderThickness="0" 
+					  ItemsSource="{Binding Path=FavoritesList}" SelectedItem="{Binding SelectedNode}"
+					  Behaviours:ListViewColumns.Stretch="true"
+					  Behaviours:GridViewSort.AutoSort="True">
+				<ListView.ItemContainerStyle>
+					<Style TargetType="{x:Type ListViewItem}">
+						<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+					</Style>
+				</ListView.ItemContainerStyle>
+				<ListView.View>
+					<GridView>
+						<GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayFavorite}"/>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+						<GridViewColumn Header="Name" Behaviours:GridViewSort.PropertyName="Title">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Title}"/>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+						
+					</GridView>
+				</ListView.View>
+				<i:Interaction.Behaviors>
+					<ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
+				</i:Interaction.Behaviors>
+			</ListView>
+			
+			<Grid Grid.Row="1" Margin="3,7,3,3">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+
+				<Button Grid.Column="0" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Play Random" Command="{Binding Path=PlayRandom}"/>
+
+				<Button Grid.Column="2" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Export" Command="{Binding Path=ExportFavorites}"/>
+				<Button Grid.Column="3" Padding="5,0" Margin="7,0,0,0" Style="{StaticResource GeneralButtonStyle}" Content="Import" Command="{Binding Path=ImportFavorites}"/>
+			</Grid>
+		</Grid>
+	</GroupBox>
 </UserControl>

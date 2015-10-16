@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -11,16 +10,20 @@ using ReusableBits;
 namespace Noise.Core.PlayQueue {
 	internal class PlayQueueRandomTracks : IPlayQueueSupport,
 										   IHandle<Events.PlayArtistTracksRandom>, IHandle<Events.PlayAlbumTracksRandom> {
-		private readonly IEventAggregator	mEventAggregator;
-		private readonly IAlbumProvider		mAlbumProvider;
-		private readonly ITrackProvider		mTrackProvider;
-		private TaskHandler					mTrackQueueTaskHandler;
-		private IPlayQueue					mPlayQueueMgr;
+		private const int							cTracksToQueue = 10;
 
-		public PlayQueueRandomTracks( IEventAggregator eventAggregator, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+		private readonly IEventAggregator			mEventAggregator;
+		private readonly IArtistProvider			mArtistProvider;
+		private readonly IRandomTrackSelector		mTrackSelector;
+		private readonly ILogPlayStrategy			mLog;
+		private TaskHandler<IEnumerable<DbTrack>>	mTrackQueueTaskHandler;
+		private IPlayQueue							mPlayQueueMgr;
+
+		public PlayQueueRandomTracks( IEventAggregator eventAggregator, IRandomTrackSelector randomTrackSelector, IArtistProvider artistProvider, ILogPlayStrategy log ) {
 			mEventAggregator = eventAggregator;
-			mAlbumProvider = albumProvider;
-			mTrackProvider = trackProvider;
+			mTrackSelector = randomTrackSelector;
+			mArtistProvider = artistProvider;
+			mLog = log;
 		}
 
 		public bool Initialize( IPlayQueue playQueueMgr ) {
@@ -34,19 +37,23 @@ namespace Noise.Core.PlayQueue {
 		public void Handle( Events.PlayArtistTracksRandom message ) {
 			Condition.Requires( mPlayQueueMgr ).IsNotNull();
 
-			QueueTracks( () => BuildAlbumList( message.ArtistId ));
+			var artist = mArtistProvider.GetArtist( message.ArtistId );
+
+			if( artist != null ) {
+				QueueArtistTracks( artist );
+			}
 		}
 
 		public void Handle( Events.PlayAlbumTracksRandom message ) {
 			Condition.Requires( mPlayQueueMgr ).IsNotNull();
 
-			QueueTracks( () => message.AlbumList );
+			QueueAlbumTracks( message.AlbumList );
 		}
 
-		internal TaskHandler TrackQueueTaskHandler {
+		internal TaskHandler<IEnumerable<DbTrack>>  TrackQueueTaskHandler {
 			get {
 				if( mTrackQueueTaskHandler == null ) {
-					Execute.OnUIThread( () => mTrackQueueTaskHandler = new TaskHandler() );
+					Execute.OnUIThread( () => mTrackQueueTaskHandler = new TaskHandler<IEnumerable<DbTrack>> () );
 				}
 
 				return ( mTrackQueueTaskHandler );
@@ -56,62 +63,16 @@ namespace Noise.Core.PlayQueue {
 		}
 
 
-		private void QueueTracks( Func<IEnumerable<DbAlbum>> albumList ) {
-			TrackQueueTaskHandler.StartTask( () => QueueFromAlbumList( albumList()),
-											 () => { },
-											 error => NoiseLogger.Current.LogException( "PlayQueueRandomTrack:QueueTracks", error ));
+		private void QueueArtistTracks( DbArtist artist ) {
+			TrackQueueTaskHandler.StartTask( () => mTrackSelector.SelectTracks( artist, track => !mPlayQueueMgr.IsTrackQueued( track ), cTracksToQueue ),
+											 trackList  => mPlayQueueMgr.Add( trackList ),
+											 error => mLog.LogException( "Queuing tracks for artist", error ));
 		}
 
-		private void QueueFromAlbumList( IEnumerable<DbAlbum> albumList ) {
-			var trackList = BuildTrackList( albumList );
-			var queueTrackCount = 10;
-
-			while(( queueTrackCount > 0 ) &&
-			      ( trackList.Any())) {
-				var selectedTrack = SelectTrackAtRandom( trackList );
-
-				if( selectedTrack != null ) {
-					if(!mPlayQueueMgr.IsTrackQueued( selectedTrack )) {
-						mPlayQueueMgr.Add( selectedTrack );
-						trackList.Remove( selectedTrack );
-
-						queueTrackCount--;
-					}
-				}
-				else {
-					break;
-				}
-			} 
+		private void QueueAlbumTracks( IEnumerable<DbAlbum> albumList ) {
+			TrackQueueTaskHandler.StartTask( () => mTrackSelector.SelectTracks( albumList, track => !mPlayQueueMgr.IsTrackQueued( track ), cTracksToQueue ),
+											 trackList => mPlayQueueMgr.Add( trackList ),
+											 error => mLog.LogException( "Queuing tracks for album", error ));
 		}
-
-		private DbTrack SelectTrackAtRandom( List<DbTrack> trackList ) {
-			var r = new Random( DateTime.Now.Millisecond );
-			var next = r.Next( trackList.Count );
-
-			return( trackList.Skip( next ).FirstOrDefault());
-		} 
-
-		private List<DbTrack> BuildTrackList( IEnumerable<DbAlbum> albumList ) {
-			var retValue = new List<DbTrack>();
-			var minimumTrackDuration = new TimeSpan( 0, 0, 30 );
-
-			foreach( var album in albumList ) {
-				using( var albumTrackList = mTrackProvider.GetTrackList( album )) {
-					retValue.AddRange( albumTrackList.List.Where( track => track.Duration > minimumTrackDuration ) );
-				}
-			}
-
-			return( retValue );
-		}
-
-		private IEnumerable<DbAlbum> BuildAlbumList( long forArtist ) {
-			var retValue = new List<DbAlbum>();
-
-			using( var albumList = mAlbumProvider.GetAlbumList( forArtist )) {
-				retValue.AddRange( albumList.List );
-			}
-
-			return ( retValue );
-		} 
 	}
 }

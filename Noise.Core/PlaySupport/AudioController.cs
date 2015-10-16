@@ -1,4 +1,8 @@
-﻿using Caliburn.Micro;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -8,11 +12,18 @@ namespace Noise.Core.PlaySupport {
 	public class AudioController : IAudioController, IRequireInitialization,
 								   IHandle<Events.SystemShutdown> {
 		private readonly IEventAggregator	mEventAggregator;
+		private readonly INoiseLog			mLog;
+		private readonly INoiseEnvironment	mNoiseEnvironment;
+		private readonly IPreferences		mPreferences;
 		private readonly IAudioPlayer		mAudioPlayer;
 		private	readonly IEqManager			mEqManager;
 
-		public AudioController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, IAudioPlayer audioPlayer, IEqManager eqManager ) {
+		public AudioController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, INoiseEnvironment noiseEnvironment,
+								IAudioPlayer audioPlayer, IEqManager eqManager, IPreferences preferences, INoiseLog log ) {
 			mEventAggregator = eventAggregator;
+			mNoiseEnvironment = noiseEnvironment;
+			mLog = log;
+			mPreferences = preferences;
 			mAudioPlayer = audioPlayer;
 			mEqManager = eqManager;
 
@@ -20,32 +31,52 @@ namespace Noise.Core.PlaySupport {
 		}
 
 		public void Initialize() {
-			var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+			try {
+				var audioCongfiguration = mPreferences.Load<AudioPreferences>();
 
-			if( audioCongfiguration != null ) {
-				mAudioPlayer.EqEnabled = audioCongfiguration.EqEnabled;
-				mAudioPlayer.PreampVolume = audioCongfiguration.PreampGain;
-				mAudioPlayer.StereoEnhancerEnable = audioCongfiguration.StereoEnhancerEnabled;
-				mAudioPlayer.StereoEnhancerWidth = audioCongfiguration.StereoEnhancerWidth;
-				mAudioPlayer.StereoEnhancerWetDry = audioCongfiguration.StereoEnhancerWetDry;
-				mAudioPlayer.SoftSaturationEnable = audioCongfiguration.SoftSaturationEnabled;
-				mAudioPlayer.SoftSaturationFactor = audioCongfiguration.SoftSaturationFactor;
-				mAudioPlayer.SoftSaturationDepth = audioCongfiguration.SoftSaturationDepth;
-				mAudioPlayer.ReverbEnable = audioCongfiguration.ReverbEnabled;
-				mAudioPlayer.ReverbDelay = audioCongfiguration.ReverbDelay;
-				mAudioPlayer.ReverbLevel = audioCongfiguration.ReverbLevel;
-				mAudioPlayer.TrackOverlapEnable = audioCongfiguration.TrackOverlapEnabled;
-				mAudioPlayer.TrackOverlapMilliseconds = audioCongfiguration.TrackOverlapMilliseconds;
-			}
+				if( audioCongfiguration != null ) {
+					mAudioPlayer.PreampVolume = audioCongfiguration.PreampGain;
+					mAudioPlayer.StereoEnhancerEnable = audioCongfiguration.StereoEnhancerEnabled;
+					mAudioPlayer.StereoEnhancerWidth = audioCongfiguration.StereoEnhancerWidth;
+					mAudioPlayer.StereoEnhancerWetDry = audioCongfiguration.StereoEnhancerWetDry;
+					mAudioPlayer.SoftSaturationEnable = audioCongfiguration.SoftSaturationEnabled;
+					mAudioPlayer.SoftSaturationFactor = audioCongfiguration.SoftSaturationFactor;
+					mAudioPlayer.SoftSaturationDepth = audioCongfiguration.SoftSaturationDepth;
+					mAudioPlayer.ReverbEnable = audioCongfiguration.ReverbEnabled;
+					mAudioPlayer.ReverbDelay = audioCongfiguration.ReverbDelay;
+					mAudioPlayer.ReverbLevel = audioCongfiguration.ReverbLevel;
+					mAudioPlayer.TrackOverlapEnable = audioCongfiguration.TrackOverlapEnabled;
+					mAudioPlayer.TrackOverlapMilliseconds = audioCongfiguration.TrackOverlapMilliseconds;
 
-			if( mEqManager.Initialize( Constants.EqPresetsFile )) {
-				mAudioPlayer.ParametricEq = mEqManager.CurrentEq;
-			}
-			else {
-				NoiseLogger.Current.LogMessage( "EqManager could not be initialized." );
-			}
+					var deviceList = mAudioPlayer.GetDeviceList().ToArray();
+					if( deviceList.Any()) {
+						var device = default( AudioDevice );
 
-			mEventAggregator.Subscribe( this );
+						if(!string.IsNullOrWhiteSpace( audioCongfiguration.OutputDevice )) {
+							device = deviceList.FirstOrDefault( d => d.Name.Equals( audioCongfiguration.OutputDevice, StringComparison.InvariantCultureIgnoreCase ));
+						}
+
+						if( device == null ) {
+							device = deviceList.FirstOrDefault();
+						}
+
+						mAudioPlayer.SetDevice( device );
+					}
+				}
+
+				if( mEqManager.Initialize( Path.Combine( mNoiseEnvironment.ConfigurationDirectory(), Constants.EqPresetsFile ))) {
+					mAudioPlayer.ParametricEq = mEqManager.CurrentEq;
+					mAudioPlayer.EqEnabled = mEqManager.EqEnabled;
+				}
+				else {
+					mLog.LogMessage( "EqManager could not be initialized." );
+				}
+
+				mEventAggregator.Subscribe( this );
+			}
+			catch( Exception ex ) {
+				mLog.LogException( "Initializing audio controller", ex );
+			}
 		}
 
 		public void Shutdown() { }
@@ -53,10 +84,9 @@ namespace Noise.Core.PlaySupport {
 		public void Handle( Events.SystemShutdown eventArgs ) {
 			mEventAggregator.Unsubscribe( this );
 
-			var audioCongfiguration = NoiseSystemConfiguration.Current.RetrieveConfiguration<AudioConfiguration>( AudioConfiguration.SectionName );
+			var audioCongfiguration = mPreferences.Load<AudioPreferences>();
 			if( audioCongfiguration != null ) {
 				audioCongfiguration.PreampGain = mAudioPlayer.PreampVolume;
-
 				audioCongfiguration.StereoEnhancerEnabled = mAudioPlayer.StereoEnhancerEnable;
 				audioCongfiguration.StereoEnhancerWidth = mAudioPlayer.StereoEnhancerWidth;
 				audioCongfiguration.StereoEnhancerWetDry = mAudioPlayer.StereoEnhancerWetDry;
@@ -68,9 +98,19 @@ namespace Noise.Core.PlaySupport {
 				audioCongfiguration.ReverbLevel = mAudioPlayer.ReverbLevel;
 				audioCongfiguration.TrackOverlapEnabled = mAudioPlayer.TrackOverlapEnable;
 				audioCongfiguration.TrackOverlapMilliseconds = mAudioPlayer.TrackOverlapMilliseconds;
+				audioCongfiguration.OutputDevice = mAudioPlayer.GetCurrentDevice().Name;
 
-				NoiseSystemConfiguration.Current.Save( audioCongfiguration );
+				mPreferences.Save( audioCongfiguration );
 			}
+		}
+
+		public IEnumerable<AudioDevice> AudioDevices {
+			get {  return( mAudioPlayer.GetDeviceList()); }
+		}
+
+		public AudioDevice CurrentAudioDevice {
+			get{ return( mAudioPlayer.GetCurrentDevice()); }
+			set{ mAudioPlayer.SetDevice( value ); }
 		}
 
 		public IEqManager EqManager {
@@ -136,7 +176,10 @@ namespace Noise.Core.PlaySupport {
 
 		public bool EqEnabled {
 			get { return ( mAudioPlayer.EqEnabled ); }
-			set { mAudioPlayer.EqEnabled = value; }
+			set {
+				mAudioPlayer.EqEnabled = value;
+				mEqManager.EqEnabled = value;
+			}
 		}
 
 		public void SetEqValue( long bandId, float gain ) {

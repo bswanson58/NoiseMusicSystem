@@ -11,6 +11,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.UI.Behaviours;
 using Noise.UI.Dto;
 using Noise.UI.Interfaces;
+using Noise.UI.Logging;
 using Observal.Extensions;
 using ReusableBits;
 using ReusableBits.Interfaces;
@@ -32,23 +33,28 @@ namespace Noise.UI.ViewModels {
 
 	internal class AlbumViewModel : AutomaticCommandBase,
 									IHandle<Events.DatabaseClosing>, IHandle<Events.AlbumUserUpdate> {
-		private readonly IEventAggregator		mEventAggregator;
-		private readonly ISelectionState		mSelectionState;
-		private readonly IAlbumProvider			mAlbumProvider;
-		private readonly ITrackProvider			mTrackProvider;
-		private readonly IArtworkProvider		mArtworkProvider;
-		private readonly IResourceProvider		mResourceProvider;
-		private readonly ITagProvider			mTagProvider;
-		private readonly ITagManager			mTagManager;
-		private readonly IStorageFolderSupport	mStorageFolderSupport;
-		private UiAlbum							mCurrentAlbum;
-		private readonly BitmapImage			mUnknownImage;
-		private readonly BitmapImage			mSelectImage;
-		private ImageScrubberItem				mCurrentAlbumCover;
-		private string							mCategoryDisplay;
-		private readonly Observal.Observer		mChangeObserver;
-		private readonly List<long>				mAlbumCategories;
-		private TaskHandler						mAlbumRetrievalTaskHandler;
+		private const string						cAllTracks = "Entire Album";
+
+		private readonly IEventAggregator			mEventAggregator;
+		private readonly IUiLog						mLog;
+		private readonly ISelectionState			mSelectionState;
+		private readonly IAlbumProvider				mAlbumProvider;
+		private readonly ITrackProvider				mTrackProvider;
+		private readonly IArtworkProvider			mArtworkProvider;
+		private readonly IResourceProvider			mResourceProvider;
+		private readonly ITagProvider				mTagProvider;
+		private readonly ITagManager				mTagManager;
+		private readonly IStorageFolderSupport		mStorageFolderSupport;
+		private UiAlbum								mCurrentAlbum;
+		private readonly BitmapImage				mUnknownImage;
+		private readonly BitmapImage				mSelectImage;
+		private ImageScrubberItem					mCurrentAlbumCover;
+		private string								mCategoryDisplay;
+		private readonly Observal.Observer			mChangeObserver;
+		private readonly List<long>					mAlbumCategories;
+		private readonly BindableCollection<string>	mVolumeNames;
+		private string								mCurrentVolumeName;
+		private TaskHandler							mAlbumRetrievalTaskHandler;
 
 		private readonly InteractionRequest<AlbumEditRequest>			mAlbumEditRequest; 
 		private readonly InteractionRequest<AlbumArtworkDisplayInfo>	mAlbumArtworkDisplayRequest;
@@ -58,8 +64,9 @@ namespace Noise.UI.ViewModels {
 
 		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, ISelectionState selectionState,
 							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider,
-							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager ) {
+							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mSelectionState = selectionState;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -72,6 +79,8 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.Subscribe( this );
 
 			mAlbumCategories = new List<long>();
+			mVolumeNames = new BindableCollection<string>();
+			mCurrentVolumeName = string.Empty;
 
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
@@ -84,6 +93,7 @@ namespace Noise.UI.ViewModels {
 			mAlbumCategoryEditRequest = new InteractionRequest<AlbumCategoryEditInfo>();
 
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
+			OnAlbumChanged( mSelectionState.CurrentAlbum );
 		}
 
 		private void ClearCurrentAlbum() {
@@ -92,11 +102,16 @@ namespace Noise.UI.ViewModels {
 			}
 			mCurrentAlbum = null;
 			SupportInfo = null;
+			mVolumeNames.Clear();
+			mCurrentVolumeName = string.Empty;
 			mCurrentAlbumCover = new ImageScrubberItem( 0, mUnknownImage, 0 );
 
 			RaisePropertyChanged( () => Album );
 			RaisePropertyChanged( () => SupportInfo );
 			RaisePropertyChanged( () => AlbumPlayTime );
+			RaisePropertyChanged( () => HasMultipleVolumes );
+			RaisePropertyChanged( () => VolumeNames );
+			RaisePropertyChanged( () => CurrentVolumeName );
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {
@@ -106,8 +121,6 @@ namespace Noise.UI.ViewModels {
 		private void OnAlbumChanged( DbAlbum album ) {
 			if( album != null ) {
 				UpdateAlbum( album.DbId );
-
-				mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.AlbumInfoView ) );
 			}
 			else {
 				ClearCurrentAlbum();
@@ -157,14 +170,28 @@ namespace Noise.UI.ViewModels {
 			});
 		}
 
-		private void SetTrackList( IEnumerable<DbTrack> trackList ) {
+		private void SetTrackList( IEnumerable<DbTrack> tracks ) {
+			var trackList = tracks.ToList();
 			AlbumPlayTime = new TimeSpan();
 
 			foreach( var dbTrack in trackList ) {
 				AlbumPlayTime += dbTrack.Duration;
 			}
 
+			mVolumeNames.AddRange(( from track in trackList 
+									where !string.IsNullOrWhiteSpace( track.VolumeName ) 
+									orderby track.VolumeName 
+									select track.VolumeName ).Distinct());
+
+			if( mVolumeNames.Any()) {
+				mVolumeNames.Insert( 0, cAllTracks );
+				mCurrentVolumeName = cAllTracks;
+			}
+
 			RaisePropertyChanged( () => AlbumPlayTime );
+			RaisePropertyChanged( () => HasMultipleVolumes );
+			RaisePropertyChanged( () => VolumeNames );
+			RaisePropertyChanged( () => CurrentVolumeName );
 		}
 
 		private void SetAlbumCategories( IEnumerable<long> categories ) {
@@ -228,7 +255,7 @@ namespace Noise.UI.ViewModels {
 					}
 				},
 				() => { },
-				ex => NoiseLogger.Current.LogException( "AlbumViewModel:RetrieveAlbum", ex )
+				ex => mLog.LogException( string.Format( "Retrieving Album:{0}", albumId ), ex )
 			); 
 		}
 
@@ -289,7 +316,9 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.AlbumUserUpdate eventArgs ) {
 			if(( mCurrentAlbum != null ) &&
 			   ( eventArgs.AlbumId == mCurrentAlbum.DbId )) {
+				mChangeObserver.Release( mCurrentAlbum );
 				Mapper.DynamicMap( mAlbumProvider.GetAlbum( eventArgs.AlbumId ), mCurrentAlbum );
+				mChangeObserver.Add( mCurrentAlbum );
 			}
 		}
 
@@ -352,6 +381,35 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "Album" )]
 		public bool CanExecute_PlayAlbum() {
 			return( mCurrentAlbum != null ); 
+		}
+
+		public void Execute_PlayVolume() {
+			if( mCurrentAlbum != null ) {
+				if( string.Equals( cAllTracks, mCurrentVolumeName )) {
+					GlobalCommands.PlayAlbum.Execute( mAlbumProvider.GetAlbum( mCurrentAlbum.DbId ));
+				}
+				else {
+					GlobalCommands.PlayVolume.Execute( new DbTrack { Album = mCurrentAlbum.DbId, VolumeName = mCurrentVolumeName });
+				}
+			}
+		}
+
+		[DependsUpon( "Album" )]
+		public bool CanExecute_PlayVolume() {
+			return( mCurrentAlbum != null );
+		}
+
+		public bool HasMultipleVolumes {
+			get {  return( mVolumeNames.Any()); }
+		}
+
+		public BindableCollection<string> VolumeNames {
+			get {  return( mVolumeNames ); }
+		}
+
+		public string CurrentVolumeName {
+			get { return( mCurrentVolumeName ); }
+			set { mCurrentVolumeName = value ;}
 		}
 
 		public IInteractionRequest AlbumEditRequest {

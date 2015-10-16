@@ -31,6 +31,29 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 		}
 
 		[Test]
+		public void CanStoreAllArtistProperties() {
+			var artist = new DbArtist { AlbumCount = 1,
+										CalculatedGenre = 2,
+										CalculatedRating = 3,
+										ExternalGenre = 4,
+										Genre = 5,
+										HasFavorites = true,
+										IsFavorite = true,
+										MaxChildRating = 6,
+										Name = "The Foo Fighters" };
+			artist.UpdateLastChange();
+			artist.UpdateLastPlayed();
+			artist.UpdateLastViewed();
+
+			var sut = CreateSut();
+			sut.AddArtist( artist );
+
+			var result = sut.GetArtist( artist.DbId );
+
+			result.ShouldHave().AllProperties().EqualTo( artist );
+		}
+
+		[Test]
 		public void CannotAddExistingArtist() {
 			var artist = new DbArtist { Name = "an artist" };
 

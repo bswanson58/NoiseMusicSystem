@@ -5,6 +5,8 @@ using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 using Noise.UI.Adapters;
+using Noise.UI.Interfaces;
+using Noise.UI.Logging;
 using Noise.UI.Support;
 using Noise.UI.ViewModels;
 using Events = Noise.TenFoot.Ui.Input.Events;
@@ -27,10 +29,10 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	eMainMenuCommand	MenuCommand { get; private set; }
 		public	int					ScreenOrder { get; private set; }
 
-		public FavoritesListViewModel(IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
-								      IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
-								      IDataExchangeManager dataExchangeManager, IDialogService dialogService ) :
-			base( eventAggregator, databaseInfo, artistProvider, albumProvider, trackProvider, dataExchangeManager, dialogService ) {
+		public FavoritesListViewModel(IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
+									  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ISelectionState selectionState,
+									  IDataExchangeManager dataExchangeManager, IDialogService dialogService, IUiLog log ) :
+			base( eventAggregator, databaseInfo, playQueue, trackSelector, artistProvider, albumProvider, trackProvider, selectionState, dataExchangeManager, dialogService, log ) {
 			ScreenTitle = "Favorites";
 			MenuTitle = "Favorites";
 			Description = "display favorites songs";
@@ -47,7 +49,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 				mSelectedItem = value;
 				mSelectedItemIndex = mSelectedItem != null ? FavoritesList.IndexOf( mSelectedItem ) : 0;
 
- 				RaisePropertyChanged( () => SelectedItem );
+				RaisePropertyChanged( () => SelectedItem );
 			}
 		}
 

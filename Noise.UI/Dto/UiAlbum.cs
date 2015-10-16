@@ -38,6 +38,15 @@ namespace Noise.UI.Dto {
 			set{ Set( () => PublishedYear, value ); }
 		}
 
+		private bool IsUserRating {
+			get{ return( UserRating != 0 ); }
+		}
+
+		public Int16 Rating {
+			get{ return( IsUserRating ? UserRating : CalculatedRating ); }
+			set{ UserRating = value; }
+		}
+
 		public override string ToString() {
 			return( Name );
 		}

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Noise.Core.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -11,8 +12,9 @@ namespace Noise.Core.PlayStrategies {
 		private long						mGenre;
 		private string						mGenreName;
 
-		public PlayExhaustedStrategyArtistGenre( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IGenreProvider genreProvider ) :
-			base( ePlayExhaustedStrategy.PlayArtistGenre, "Play Genre...", "Play random tracks from artists in the chosen genre.", "Genre", albumProvider, trackProvider ) {
+		public PlayExhaustedStrategyArtistGenre( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
+												 IGenreProvider genreProvider, ILogPlayStrategy log ) :
+			base( ePlayExhaustedStrategy.PlayArtistGenre, "Play Genre...", "Play random tracks from artists in the chosen genre.", "Genre", albumProvider, trackProvider, log ) {
 			mArtistProvider = artistProvider;
 			mGenreProvider = genreProvider;
 
@@ -49,7 +51,9 @@ namespace Noise.Core.PlayStrategies {
 		}
 
 		private void LoadArtists( long genreId ) {
-			using( var artists = mArtistProvider.GetArtistList() ) {
+			mArtistList.Clear();
+
+			using( var artists = mArtistProvider.GetArtistList()) {
 				if( artists.List != null ) {
 					mArtistList.AddRange( from artist in artists.List where artist.Genre == genreId && artist.Rating >= 0 select artist );
 				}

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using Noise.Core.Logging;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -12,13 +13,24 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Configuration {
 	public class LibraryConfigurationManager : ILibraryConfiguration, IRequireInitialization {
+		private const string						cBackupDateFormat = "yyyy-MM-dd HH-mm-ss";
+
 		private readonly IEventAggregator			mEventAggregator;
+		private readonly ILogLibraryConfiguration	mLog;
+		private readonly ILogUserStatus				mUserStatus;
+		private readonly INoiseEnvironment			mNoiseEnvironment;
+		private readonly IPreferences				mPreferences;
 		private	readonly List<LibraryConfiguration>	mLibraries;
-		private string								mConfigurationDirectory;
 		private LibraryConfiguration				mCurrentLibrary;
 
-		public LibraryConfigurationManager( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator ) {
+		public LibraryConfigurationManager( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
+											INoiseEnvironment noiseEnvironment, IPreferences preferences,
+											ILogUserStatus userStatus, ILogLibraryConfiguration log ) {
 			mEventAggregator = eventAggregator;
+			mUserStatus = userStatus;
+			mLog = log;
+			mNoiseEnvironment = noiseEnvironment;
+			mPreferences = preferences;
 			mLibraries = new List<LibraryConfiguration>();
 
 			lifecycleManager.RegisterForInitialize( this );
@@ -30,16 +42,7 @@ namespace Noise.Core.Configuration {
 		}
 
 		public void Initialize() {
-			mConfigurationDirectory = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
-													Constants.CompanyName, 
-													Constants.LibraryConfigurationDirectory );
 			LoadLibraries();
-
-//			if(!mLibraries.Any()) {
-//				var defaultLibrary = new LibraryConfiguration { LibraryName = "Noise", DatabaseName = "Noise", IsDefaultLibrary = true };
-
-//				AddLibrary( defaultLibrary );
-//			}
 
 			mEventAggregator.Publish( new Events.LibraryConfigurationLoaded( this ));
 		}
@@ -52,8 +55,16 @@ namespace Noise.Core.Configuration {
 			get { return( mCurrentLibrary ); }
 			private set {
 				if( mCurrentLibrary != value ) {
+					if( mCurrentLibrary != null ) {
+						mLog.LibraryClosed( mCurrentLibrary );
+					}
+
 					mCurrentLibrary = value;
 
+					if( mCurrentLibrary != null ) {
+						mLog.LibraryOpened( mCurrentLibrary );
+						mUserStatus.OpeningLibrary( mCurrentLibrary );
+					}
 					mEventAggregator.Publish( new Events.LibraryChanged());
 				}
 			}
@@ -63,11 +74,7 @@ namespace Noise.Core.Configuration {
 			try {
 				mLibraries.Clear();
 
-				if(!Directory.Exists( mConfigurationDirectory )) {
-					Directory.CreateDirectory( mConfigurationDirectory );
-				}
-
-				foreach( var directory in Directory.EnumerateDirectories( mConfigurationDirectory )) {
+				foreach( var directory in Directory.EnumerateDirectories( mNoiseEnvironment.LibraryDirectory())) {
 					var configDirectory = new DirectoryInfo( directory );
 					var configFile = configDirectory.GetFiles( Constants.LibraryConfigurationFile ).FirstOrDefault();
 
@@ -81,7 +88,7 @@ namespace Noise.Core.Configuration {
 				}
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "Loading library configuration:", ex );
+				mLog.LogException( "Loading library configuration", ex );
 			}
 		}
 
@@ -106,18 +113,12 @@ namespace Noise.Core.Configuration {
 
 			if(( configuration != null ) &&
 			   ( mLibraries.Contains( configuration ))) {
-				NoiseLogger.Current.LogMessage( "------------------------------" );
-				NoiseLogger.Current.LogMessage( "Opening library: {0}", configuration.LibraryName );
-				mEventAggregator.Publish( new Events.StatusEvent( string.Format( "Opening library: {0}", configuration.LibraryName )));
-
 				Current = configuration;
 
-				var expConfig = NoiseSystemConfiguration.Current.RetrieveConfiguration<ExplorerConfiguration>( ExplorerConfiguration.SectionName );
-				if( expConfig != null ) {
-					expConfig.LastLibraryUsed = Current.LibraryId;
+				var preferences = mPreferences.Load<NoiseCorePreferences>();
 
-					NoiseSystemConfiguration.Current.Save( expConfig );
-				}
+				preferences.LastLibraryUsed = Current.LibraryId;
+				mPreferences.Save( preferences );
 			}
 		}
 
@@ -130,10 +131,6 @@ namespace Noise.Core.Configuration {
 		} 
 
 		public void Close( LibraryConfiguration configuration ) {
-			if( mCurrentLibrary != null ) {
-				NoiseLogger.Current.LogMessage( "Closing library: {0}", mCurrentLibrary.LibraryName );
-			}
-
 			Current = null;
 		}
 
@@ -143,7 +140,7 @@ namespace Noise.Core.Configuration {
 					ClearDefaultLibrary( configuration );
 				}
 
-				var libraryPath = Path.Combine( mConfigurationDirectory, configuration.LibraryId.ToString( CultureInfo.InvariantCulture ));
+				var libraryPath = GetLibraryFolder( configuration );
 
 				if( Directory.Exists( libraryPath )) {
 					DeleteLibrary( configuration );
@@ -152,6 +149,7 @@ namespace Noise.Core.Configuration {
 				Directory.CreateDirectory( libraryPath );
 				configuration.Persist( Path.Combine( libraryPath, Constants.LibraryConfigurationFile ));
 
+				Directory.CreateDirectory( Path.Combine( libraryPath, Constants.LibraryDatabaseDirectory ));
 				Directory.CreateDirectory( Path.Combine( libraryPath, Constants.BlobDatabaseDirectory ));
 				Directory.CreateDirectory( Path.Combine( libraryPath, Constants.SearchDatabaseDirectory ));
 
@@ -159,7 +157,7 @@ namespace Noise.Core.Configuration {
 				mEventAggregator.Publish( new Events.LibraryListChanged());
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "ConfigurationManager:AddLibrary", ex );
+				mLog.LogException( "Adding library", ex );
 			}
 		}
 
@@ -173,9 +171,7 @@ namespace Noise.Core.Configuration {
 
 		private void StoreLibrary( LibraryConfiguration configuration ) {
 			try {
-				var libraryPath = Path.Combine( mConfigurationDirectory, configuration.LibraryId.ToString( CultureInfo.InvariantCulture ));
-				
-				configuration.Persist( Path.Combine( libraryPath, Constants.LibraryConfigurationFile ));
+				configuration.Persist( Path.Combine( GetLibraryFolder( configuration ), Constants.LibraryConfigurationFile ));
 
 				if( configuration == Current ) {
 					mEventAggregator.Publish( new Events.LibraryConfigurationChanged());
@@ -184,13 +180,13 @@ namespace Noise.Core.Configuration {
 				mEventAggregator.Publish( new Events.LibraryListChanged());
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "ConfigurationManager:UpdateLibrary", ex );
+				mLog.LogException( "Storing library", ex );
 			}
 		}
 
 		public void DeleteLibrary( LibraryConfiguration configuration ) {
 			try {
-				var libraryPath = Path.Combine( mConfigurationDirectory, configuration.LibraryId.ToString( CultureInfo.InvariantCulture ));
+				var libraryPath = GetLibraryFolder( configuration );
 
 				if( Directory.Exists( libraryPath )) {
 					Directory.Delete( libraryPath );
@@ -203,7 +199,7 @@ namespace Noise.Core.Configuration {
 				mEventAggregator.Publish( new Events.LibraryListChanged());
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "ConfigurationManager:DeleteLibrary", ex );
+				mLog.LogException( "Deleting library", ex );
 			}
 		}
 
@@ -217,5 +213,105 @@ namespace Noise.Core.Configuration {
 				}
 			}
 		}
+
+		public string GetLibraryFolder( LibraryConfiguration libraryConfiguration ) {
+			var retValue = Path.Combine( mNoiseEnvironment.LibraryDirectory(), libraryConfiguration.LibraryId.ToString( CultureInfo.InvariantCulture ));
+
+			if(!Directory.Exists( retValue )) {
+				Directory.CreateDirectory( retValue );
+			}
+
+			return( retValue );
+		}
+
+		public IEnumerable<LibraryBackup> GetLibraryBackups( LibraryConfiguration forLibrary ) {
+			var retValue = new List<LibraryBackup>();
+			var backupPath = Path.Combine( mNoiseEnvironment.BackupDirectory(), forLibrary.LibraryId.ToString( CultureInfo.InvariantCulture ));
+
+			if( Directory.Exists( backupPath )) {
+				var backupDirectories = Directory.EnumerateDirectories( backupPath );
+
+				foreach( var directory in backupDirectories ) {
+					DateTime	backupTime;
+					var			directoryName = Path.GetFileName( directory );
+
+					if( DateTime.TryParseExact( directoryName, cBackupDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out backupTime )) {
+						retValue.Add( new LibraryBackup( backupTime, directory ));
+					}
+				}
+			}
+
+			return( retValue );
+		}
+
+		public LibraryBackup OpenLibraryBackup( LibraryConfiguration libraryConfiguration ) {
+			var backupDate = DateTime.Now;
+			var backupFolder = backupDate.ToString( cBackupDateFormat );
+			var backupPath = Path.Combine( mNoiseEnvironment.BackupDirectory(),
+											libraryConfiguration.LibraryId.ToString( CultureInfo.InvariantCulture ),
+											backupFolder );
+			var	retValue = new LibraryBackup( backupDate, backupPath );
+
+			if(!Directory.Exists( retValue.BackupPath )) {
+				Directory.CreateDirectory( retValue.BackupPath );
+			}
+
+			return( retValue );
+		}
+
+		public void CloseLibraryBackup( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {
+			try {
+				libraryConfiguration.Persist( Path.Combine( backup.BackupPath, Constants.LibraryConfigurationFile ));
+			}
+			catch( Exception exception ) {
+				mLog.LogException( string.Format( "Persisting library configuration to \"{0}\"", backup.BackupPath ), exception );
+			}
+
+			mEventAggregator.Publish( new Events.LibraryBackupsChanged());
+		}
+
+		public void AbortLibraryBackup( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {
+			if( Directory.Exists( backup.BackupPath )) {
+				Directory.Delete( backup.BackupPath );
+			}
+		}
+
+		public void OpenLibraryRestore( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) { }
+		public void CloseLibraryRestore( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) { }
+		public void AbortLibraryRestore( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) { }
+
+		public LibraryBackup OpenLibraryExport( LibraryConfiguration libraryConfiguration, string exportPath ) {
+			var	retValue = new LibraryBackup( DateTime.Now, exportPath );
+
+			return( retValue );
+		}
+
+		public void CloseLibraryExport( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {
+			try {
+				libraryConfiguration.Persist( Path.Combine( backup.BackupPath, Constants.LibraryConfigurationFile ));
+			}
+			catch( Exception exception ) {
+				mLog.LogException( string.Format( "Persisting library configuration to \"{0}\"", backup.BackupPath ), exception );
+			}
+		}
+
+		public void AbortLibraryExport( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {
+		}
+
+		public LibraryConfiguration OpenLibraryImport( LibraryConfiguration library, LibraryBackup fromBackup ) {
+			var importLibrary = new LibraryConfiguration { LibraryName = library.LibraryName, DatabaseName = library.DatabaseName, 
+														   DatabaseServer = library.DatabaseServer,  DatabasePassword = library.DatabasePassword, DatabaseUser = library.DatabaseUser,
+														   MediaLocations = library.MediaLocations};
+
+			AddLibrary( importLibrary );
+
+			return( importLibrary );
+		}
+
+		public void CloseLibraryImport( LibraryConfiguration library ) {
+			mEventAggregator.Publish( new Events.LibraryListChanged());
+		}
+
+		public void AbortLibraryImport( LibraryConfiguration library ) { }
 	}
 }

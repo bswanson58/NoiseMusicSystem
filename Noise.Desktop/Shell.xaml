@@ -1,39 +1,32 @@
 ﻿<Controls:MetroWindow x:Class="Noise.Desktop.Shell"
-                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                      xmlns:Properties="clr-namespace:Noise.Desktop.Properties"
-                      xmlns:Regions="clr-namespace:Microsoft.Practices.Prism.Regions;assembly=Microsoft.Practices.Prism"
-                      xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                      xmlns:Compatibility="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                      xmlns:DisplayLog="LogVersion"
-                      Title="Noise"
-                      Icon="Noise.ico"
-                      ResizeMode="CanResizeWithGrip"
-                      Height="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationHeight, Mode=TwoWay}"
-                      Width="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationWidth, Mode=TwoWay}"
-                      Top ="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationTop, Mode=TwoWay}"
-                      Left ="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationLeft, Mode=TwoWay}"
-                      WindowState="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationWindowState, Mode=TwoWay}"
-                      >
+					  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					  xmlns:Properties="clr-namespace:Noise.Desktop.Properties"
+					  xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+					  xmlns:Regions="http://www.codeplex.com/CompositeWPF"
+					  Title="Noise"
+					  Icon="Noise.ico"
+					  ResizeMode="CanResizeWithGrip"
+					  Height="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationHeight, Mode=TwoWay}"
+					  Width="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationWidth, Mode=TwoWay}"
+					  Top ="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationTop, Mode=TwoWay}"
+					  Left ="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationLeft, Mode=TwoWay}"
+					  WindowState="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationWindowState, Mode=TwoWay}"
+					  >
 
-    <Window.Resources>
-        <!-- MetroWindow Colors -->
-        <Color x:Key="AccentColor">#FF588CE0</Color> <!-- Title bar background -->
-    </Window.Resources>
+	<Window.Resources>
+		<!-- MetroWindow Colors -->
+		<Color x:Key="AccentColor">#FF588CE0</Color> <!-- Title bar background -->
+	</Window.Resources>
 
-    <Controls:MetroWindow.WindowCommands>
-        <Controls:WindowCommands>
-            <Button Command="{Binding LibraryLayout}" Content="library" ToolTip="Display Music Library"/>
-            <Button Command="{Binding TimelineLayout}" Content="timeline" ToolTip="Display Timeline Explorer"/>
-            <Button Command="{Binding Options}" Content="settings" ToolTip="Edit Options"/>
+	<Controls:MetroWindow.WindowCommands>
+		<Controls:WindowCommands>
+			<Button Command="{Binding LibraryLayout}" Content="library" ToolTip="Display Music Library"/>
+			<Button Command="{Binding TimelineLayout}" Content="timeline" ToolTip="Display Timeline Explorer"/>
+			<Button Command="{Binding PlaybackLayout}" Content="playback" ToolTip="Display Playback Information"/>
+			<Button Command="{Binding Options}" Content="settings" ToolTip="Edit Options"/>
+		</Controls:WindowCommands>
+	</Controls:MetroWindow.WindowCommands>
 
-            <Compatibility:AlternateContent>
-                <Compatibility:Choice Requires="DisplayLog">
-                    <Button Command="{Binding LogView}" ToolTip="Display Log" Content="log"/>
-                </Compatibility:Choice>
-            </Compatibility:AlternateContent>
-        </Controls:WindowCommands>
-    </Controls:MetroWindow.WindowCommands>
-
-    <ContentControl Regions:RegionManager.RegionName="Shell"/>
+	<ContentControl Regions:RegionManager.RegionName="Shell"/>
 </Controls:MetroWindow>

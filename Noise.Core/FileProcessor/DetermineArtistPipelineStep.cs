@@ -7,21 +7,19 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.FileProcessor {
 	internal class DetermineArtistPipelineStep : BasePipelineStep {
 		private readonly IEventAggregator		mEventAggregator;
-		private readonly IStorageFolderSupport	mStorageFolderSupport;
 		private readonly IArtistProvider		mArtistProvider;
 
-		public DetermineArtistPipelineStep( IArtistProvider artistProvider, IStorageFolderSupport storageFolderSupport, IEventAggregator eventAggregator ) :
+		public DetermineArtistPipelineStep( IArtistProvider artistProvider, IEventAggregator eventAggregator ) :
 			base( ePipelineStep.DetermineArtist ) {
 			mEventAggregator = eventAggregator;
 			mArtistProvider = artistProvider;
-			mStorageFolderSupport = storageFolderSupport;
 		}
 
 		public override void ProcessStep( PipelineContext context ) {
 			Condition.Requires( context ).IsNotNull();
 			Condition.Requires( context.MetaDataProviders ).IsNotEmpty();
 
-			var	artistName = "";
+			var	artistName = string.Empty;
 
 			foreach( var provider in context.MetaDataProviders ) {
 				artistName = provider.Artist;
@@ -42,11 +40,14 @@ namespace Noise.Core.FileProcessor {
 					context.Summary.ArtistsAdded++;
 
 					mEventAggregator.Publish( new Events.ArtistAdded( context.Artist.DbId ));
-					NoiseLogger.Current.LogMessage( "Added artist: {0}", context.Artist.Name );
+					context.Log.LogArtistAdded( context.StorageFile, context.Artist );
+				}
+				else {
+					context.Log.LogArtistFound( context.StorageFile, context.Artist );
 				}
 			}
 			else {
-				NoiseLogger.Current.LogMessage( "Artist cannot be determined for file: {0}", mStorageFolderSupport.GetPath( context.StorageFile ));
+				context.Log.LogArtistNotFound( context.StorageFile );
 			}
 		}
 	}

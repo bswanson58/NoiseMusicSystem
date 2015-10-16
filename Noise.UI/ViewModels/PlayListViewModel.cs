@@ -7,25 +7,29 @@ using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
 using Noise.UI.Dto;
+using Noise.UI.Logging;
 using Observal.Extensions;
 using ReusableBits;
 
 namespace Noise.UI.ViewModels {
-	public class PlayListViewModel : ViewModelBase,
-									 IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>, IHandle<Events.PlayListChanged> {
+	internal class PlayListViewModel : ViewModelBase,
+									   IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>, IHandle<Events.PlayListChanged> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
 		private readonly IPlayListProvider	mPlayListProvider;
+		private readonly IUiLog				mLog;
 		private PlayListNode				mSelectedNode;
 		private readonly Observal.Observer	mChangeObserver;
 		private TaskHandler<IEnumerable<PlayListNode>>		mUpdateTask;
 		private readonly BindableCollection<PlayListNode>	mTreeItems;
 
 		public PlayListViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
-								  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayListProvider playListProvider ) {
+								  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayListProvider playListProvider,
+								  IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -76,7 +80,7 @@ namespace Noise.UI.ViewModels {
 
 		private void UpdatePlayLists() {
 			UpdateTask.StartTask( BuildPlayList, SetPlayList,
-								  ex => NoiseLogger.Current.LogException( "PlayListViewModel:UpdatePlayLists", ex ));
+								  ex => mLog.LogException( "Updating PlayLists", ex ));
 		}
 
 		private IEnumerable<PlayListNode> BuildPlayList() {

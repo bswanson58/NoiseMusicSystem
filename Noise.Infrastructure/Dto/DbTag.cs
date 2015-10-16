@@ -1,7 +1,5 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
-using Eloquera.Client;
 
 namespace Noise.Infrastructure.Dto {
 	public enum eTagGroup {
@@ -28,15 +26,8 @@ namespace Noise.Infrastructure.Dto {
 			Description = string.Empty;
 		}
 
-		[Ignore]
-		public int DbTagGroup {
-			get{ return((int)TagGroup ); }
-			protected set{ TagGroup = (eTagGroup)value; }
-		}
-
-		[Export("PersistenceType")]
-		public static Type PersistenceType {
-			get{ return( typeof( DbTag )); }
+		public override string ToString() {
+			return( string.Format( "Tag \"{0}\", Group:{1}", Name, TagGroup ));
 		}
 	}
 }

@@ -2,11 +2,11 @@
 using System.Windows.Media.Imaging;
 using AutoMapper;
 using Caliburn.Micro;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Dto;
 using Noise.TenFoot.Ui.Interfaces;
+using Noise.UI.Logging;
 using ReusableBits;
 using ReusableBits.Interfaces;
 
@@ -18,6 +18,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private readonly IMetadataManager	mMetadataManager;
 		private readonly IPlayQueue			mPlayQueue;
 		private readonly BitmapImage		mUnknownArtistImage;
+		private readonly IUiLog				mLog;
 		private TaskHandler					mArtistRetrievalTaskHandler;
 
 		public	string						ScreenTitle { get; private set; }
@@ -30,8 +31,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		public ArtistListViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, IDatabaseInfo databaseInfo,
 									IAlbumList albumListViewModel, IArtistProvider artistProvider, IMetadataManager metadataManager,
-									IPlayQueue playQueue ) :
+									IPlayQueue playQueue, IUiLog log ) :
 			base( eventAggregator ) {
+			mLog = log;
 			mDatabaseInfo = databaseInfo;
 			mAlbumsList = albumListViewModel;
 			mArtistProvider = artistProvider;
@@ -97,7 +99,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 						}
 					},
 					() => { SelectedItem = ItemList.FirstOrDefault(); },
-					ex => NoiseLogger.Current.LogException( "ArtistListViewModel:RetrieveArtistList", ex )
+					ex => mLog.LogException( "Retrieving Artist List", ex )
 				); 
 			}
 		}

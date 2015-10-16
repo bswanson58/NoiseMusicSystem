@@ -2,15 +2,14 @@
 using Caliburn.Micro;
 using FluentAssertions;
 using Moq;
+using Noise.Core.Logging;
 using NUnit.Framework;
 using Noise.Core.DataProviders;
 using Noise.Core.Database;
 using Noise.Core.FileProcessor;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using ReusableBits.TestSupport.Mocking;
-using ILog = Noise.Infrastructure.Interfaces.ILog;
 
 namespace Noise.Core.Tests.FileProcessor {
 	internal class ArtistProvider : IMetaDataProvider {
@@ -43,9 +42,10 @@ namespace Noise.Core.Tests.FileProcessor {
 
 	[TestFixture]
 	public class DetermineArtistPipelineStepTests {
-		private List<DbArtist>			mArtistCacheList;
-		private List<DbAlbum>			mAlbumCacheList;
-		private DatabaseChangeSummary	mSummary;
+		private ILogLibraryClassification	mLog;
+		private List<DbArtist>				mArtistCacheList;
+		private List<DbAlbum>				mAlbumCacheList;
+		private DatabaseChangeSummary		mSummary;
 
 		[SetUp]
 		public void Setup() {
@@ -53,14 +53,14 @@ namespace Noise.Core.Tests.FileProcessor {
 			mAlbumCacheList = new List<DbAlbum>();
 			mSummary = new DatabaseChangeSummary();
 
-			NoiseLogger.Current = new Mock<ILog>().Object;
+			mLog = new Mock<ILogLibraryClassification>().Object;
 		}
 
 		[Test]
 		public void CanDetermineArtistName() {
 			const string artistName = "the artist's name";
 			var	testable = new TestableDetermineArtistPipelineStep();
-			var context = new PipelineContext( new DatabaseCache<DbArtist>( mArtistCacheList ), new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, mSummary ) {
+			var context = new PipelineContext( new DatabaseCache<DbArtist>( mArtistCacheList ), new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, mSummary, mLog ) {
 													MetaDataProviders = new List<IMetaDataProvider> { new ArtistProvider( artistName ) }};
 
 			var sut = testable.ClassUnderTest;
@@ -77,7 +77,7 @@ namespace Noise.Core.Tests.FileProcessor {
 			var artist = new DbArtist { Name = artistName };
 			mArtistCacheList.Add( artist );
 			var	testable = new TestableDetermineArtistPipelineStep();
-			var context = new PipelineContext( new DatabaseCache<DbArtist>( mArtistCacheList ), new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, mSummary ) {
+			var context = new PipelineContext( new DatabaseCache<DbArtist>( mArtistCacheList ), new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, mSummary, mLog ) {
 													MetaDataProviders = new List<IMetaDataProvider> { new ArtistProvider( artistName ) }};
 
 			var sut = testable.ClassUnderTest;
@@ -93,7 +93,7 @@ namespace Noise.Core.Tests.FileProcessor {
 			var artist = new DbArtist { Name = "another artist" };
 			mArtistCacheList.Add( artist );
 			var	testable = new TestableDetermineArtistPipelineStep();
-			var context = new PipelineContext( new DatabaseCache<DbArtist>( mArtistCacheList ), new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, mSummary ) {
+			var context = new PipelineContext( new DatabaseCache<DbArtist>( mArtistCacheList ), new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, mSummary, mLog ) {
 													MetaDataProviders = new List<IMetaDataProvider> { new ArtistProvider( artistName ) }};
 
 			var sut = testable.ClassUnderTest;
@@ -109,7 +109,7 @@ namespace Noise.Core.Tests.FileProcessor {
 			var artist = new DbArtist { Name = "another artist" };
 			mArtistCacheList.Add( artist );
 			var	testable = new TestableDetermineArtistPipelineStep();
-			var context = new PipelineContext( new DatabaseCache<DbArtist>( mArtistCacheList ), new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, mSummary ) {
+			var context = new PipelineContext( new DatabaseCache<DbArtist>( mArtistCacheList ), new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, mSummary, mLog ) {
 													MetaDataProviders = new List<IMetaDataProvider> { new ArtistProvider( artistName ) }};
 
 			var sut = testable.ClassUnderTest;
@@ -126,7 +126,7 @@ namespace Noise.Core.Tests.FileProcessor {
 			mArtistCacheList.Add( artist );
 			var artistCache = new DatabaseCache<DbArtist>( mArtistCacheList );
 			var	testable = new TestableDetermineArtistPipelineStep();
-			var context = new PipelineContext( artistCache, new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, mSummary ) {
+			var context = new PipelineContext( artistCache, new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, mSummary, mLog ) {
 													MetaDataProviders = new List<IMetaDataProvider> { new ArtistProvider( artistName ) }};
 
 			var sut = testable.ClassUnderTest;
@@ -145,7 +145,7 @@ namespace Noise.Core.Tests.FileProcessor {
 			var artistCache = new DatabaseCache<DbArtist>( mArtistCacheList );
 			var summary = new DatabaseChangeSummary();
 			var	testable = new TestableDetermineArtistPipelineStep();
-			var context = new PipelineContext( artistCache, new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, summary ) {
+			var context = new PipelineContext( artistCache, new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, summary, mLog ) {
 													MetaDataProviders = new List<IMetaDataProvider> { new ArtistProvider( artistName ) }};
 
 			var sut = testable.ClassUnderTest;
@@ -163,7 +163,7 @@ namespace Noise.Core.Tests.FileProcessor {
 			var artistCache = new DatabaseCache<DbArtist>( mArtistCacheList );
 			var summary = new DatabaseChangeSummary();
 			var	testable = new TestableDetermineArtistPipelineStep();
-			var context = new PipelineContext( artistCache, new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, summary ) {
+			var context = new PipelineContext( artistCache, new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, summary, mLog ) {
 													MetaDataProviders = new List<IMetaDataProvider> { new ArtistProvider( artistName ) }};
 
 			var sut = testable.ClassUnderTest;
@@ -181,7 +181,7 @@ namespace Noise.Core.Tests.FileProcessor {
 			var artistCache = new DatabaseCache<DbArtist>( mArtistCacheList );
 			var summary = new DatabaseChangeSummary();
 			var	testable = new TestableDetermineArtistPipelineStep();
-			var context = new PipelineContext( artistCache, new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, summary ) {
+			var context = new PipelineContext( artistCache, new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, summary, mLog ) {
 													MetaDataProviders = new List<IMetaDataProvider> { new ArtistProvider( artistName ) }};
 
 			var sut = testable.ClassUnderTest;
@@ -194,7 +194,7 @@ namespace Noise.Core.Tests.FileProcessor {
 		[Test]
 		public void UndetermineArtistShouldNotCreateArtist() {
 			var	testable = new TestableDetermineArtistPipelineStep();
-			var context = new PipelineContext( new DatabaseCache<DbArtist>( mArtistCacheList ), new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, mSummary ) {
+			var context = new PipelineContext( new DatabaseCache<DbArtist>( mArtistCacheList ), new DatabaseCache<DbAlbum>( mAlbumCacheList ), null, mSummary, mLog ) {
 													MetaDataProviders = new List<IMetaDataProvider> { new ArtistProvider( string.Empty ) }};
 
 			var sut = testable.ClassUnderTest;

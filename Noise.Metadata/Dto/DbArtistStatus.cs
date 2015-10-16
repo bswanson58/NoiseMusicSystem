@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 
 namespace Noise.Metadata.Dto {
-	[DebuggerDisplay("Artist = {ArtistName}")]
+	[DebuggerDisplay("Provider = {Provider}")]
 	internal class ProviderStatus {
 		public	string		Provider { get; set; }
 		public	DateTime	LastUpdate { get; set; }
@@ -17,6 +17,7 @@ namespace Noise.Metadata.Dto {
 		}
 	}
 
+	[DebuggerDisplay("Artist = {ArtistName}")]
 	internal class DbArtistStatus : IMetadataBase {
 		private const string			cStatusKeyPrefix = "status/";
 
@@ -39,7 +40,16 @@ namespace Noise.Metadata.Dto {
 		}
 
 		public ProviderStatus GetProviderStatus( string forProvider ) {
-			return(( from s in ProviderStatus where s.Provider == forProvider select s ).FirstOrDefault());
+			var retValue = ( from s in ProviderStatus where s.Provider == forProvider select s ).FirstOrDefault();
+
+			if( retValue == null ) {
+				retValue = new ProviderStatus { Provider = forProvider };
+
+				retValue.LastUpdate -= ( retValue.Lifetime + retValue.Lifetime );
+				ProviderStatus.Add( retValue );
+			}
+
+			return( retValue );
 		}
 
 		public void SetLastUpdate( string forProvider ) {

@@ -6,6 +6,7 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Behaviours;
+using Noise.UI.Logging;
 using Noise.UI.Support;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -15,26 +16,30 @@ namespace Noise.UI.ViewModels {
 		public LibraryConfigurationInfo( LibraryConfigurationDialogModel viewModel ) : base( viewModel ) { }
 	}
 
-	public class LibrarySelectorViewModel : AutomaticCommandBase,
-											IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted>,
-											IHandle<Events.LibraryChanged>, IHandle<Events.LibraryListChanged> {
+	internal class LibrarySelectorViewModel : AutomaticCommandBase,
+											  IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted>,
+											  IHandle<Events.LibraryChanged>, IHandle<Events.LibraryListChanged>, IHandle<Events.DatabaseStatisticsUpdated> {
 		private readonly IEventAggregator		mEventAggregator;
+		private readonly IUiLog					mLog;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly ILibraryBuilder		mLibraryBuilder;
 		private readonly IDialogService			mDialogService;
 		private TaskHandler						mLibraryOpenTask;  
 		private	readonly InteractionRequest<LibraryConfigurationInfo>	mLibraryConfigurationRequest;
 		private readonly BindableCollection<LibraryConfiguration>		mLibraries;
+		private string							mDatabaseStatistics;
 
 		public LibrarySelectorViewModel( IEventAggregator eventAggregator, IDialogService dialogService,
-										 ILibraryConfiguration libraryConfiguration, ILibraryBuilder libraryBuilder ) {
+										 ILibraryConfiguration libraryConfiguration, ILibraryBuilder libraryBuilder, IUiLog log ) {
 			mEventAggregator = eventAggregator;
+			mLog = log;
 			mDialogService = dialogService;
 			mLibraryConfiguration = libraryConfiguration;
 			mLibraryBuilder = libraryBuilder;
 
 			mLibraryConfigurationRequest = new InteractionRequest<LibraryConfigurationInfo>();
 			mLibraries = new BindableCollection<LibraryConfiguration>();
+			mDatabaseStatistics = string.Empty;
 			LoadLibraries();
 
 			mEventAggregator.Subscribe( this );
@@ -62,7 +67,7 @@ namespace Noise.UI.ViewModels {
 		private void OpenLibrary( long libraryId ) {
 			LibraryOpenTask.StartTask( () => mLibraryConfiguration.Open( libraryId ),
 									   () => { },
-									   ex => NoiseLogger.Current.LogException( "LibrarySelectorViewModel:OpenLibrary", ex ));
+									   ex => mLog.LogException( "Opening Library", ex ));
 		}
 
 		public void Handle( Events.LibraryChanged args ) {
@@ -80,6 +85,15 @@ namespace Noise.UI.ViewModels {
 
 		public void Handle( Events.LibraryUpdateCompleted message ) {
 			RaiseCanExecuteChangedEvent( "CanExecute_UpdateLibrary" );
+		}
+
+		public void Handle( Events.DatabaseStatisticsUpdated message ) {
+			mDatabaseStatistics = string.Format( "Artists: {0}, Albums: {1}", message.DatabaseStatistics.ArtistCount, message.DatabaseStatistics.AlbumCount );
+			RaisePropertyChanged( () => LibraryStatistics );
+		}
+
+		public string LibraryStatistics {
+			get {  return( mDatabaseStatistics ); }
 		}
 
 		public BindableCollection<LibraryConfiguration> LibraryList {
@@ -113,7 +127,7 @@ namespace Noise.UI.ViewModels {
 				mLibraryConfigurationRequest.Raise( new LibraryConfigurationInfo( dialogModel ));
 			}
 			catch( Exception ex ) {
-				NoiseLogger.Current.LogException( "LibrarySelectorViewModel:Execute_LibraryConfiguration", ex );
+				mLog.LogException( "Executing Library Configuration", ex );
 			}
 		}
 

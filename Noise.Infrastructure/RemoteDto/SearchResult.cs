@@ -5,5 +5,12 @@ namespace Noise.Infrastructure.RemoteDto {
 	public class SearchResult : BaseResult {
 		[DataMember]
 		public RoSearchResultItem[]		Items { get; set; }
+		[DataMember]
+		public long[]					RandomTracks { get; set; }
+
+		public SearchResult() {
+			Items = new RoSearchResultItem[0];
+			RandomTracks = new long[0];
+		}
 	}
 }
