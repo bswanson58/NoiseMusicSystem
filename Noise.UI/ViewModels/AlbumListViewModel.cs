@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows.Data;
 using AutoMapper;
 using Caliburn.Micro;
-using Humanizer;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -135,7 +134,7 @@ namespace Noise.UI.ViewModels {
 
 		[DependsUpon( "AlbumCount" )]
 		public string AlbumListTitle {
-			get { return( StringResources.AlbumTitle.ToQuantity( AlbumCount )); }
+			get { return( string.Format( AlbumCount == 0 ? StringResources.AlbumTitle : StringResources.AlbumTitlePlural, AlbumCount )); }
 		}
 
 		public IEnumerable<ViewSortStrategy> SortDescriptions {

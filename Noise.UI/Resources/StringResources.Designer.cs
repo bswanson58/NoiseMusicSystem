@@ -61,7 +61,7 @@ namespace Noise.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Album.
+        ///   Looks up a localized string similar to No Albums.
         /// </summary>
         internal static string AlbumTitle {
             get {
@@ -70,11 +70,29 @@ namespace Noise.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Artist.
+        ///   Looks up a localized string similar to {0} Albums.
+        /// </summary>
+        internal static string AlbumTitlePlural {
+            get {
+                return ResourceManager.GetString("AlbumTitlePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Artists.
         /// </summary>
         internal static string ArtistTitle {
             get {
                 return ResourceManager.GetString("ArtistTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} Artists.
+        /// </summary>
+        internal static string ArtistTitlePlural {
+            get {
+                return ResourceManager.GetString("ArtistTitlePlural", resourceCulture);
             }
         }
     }
