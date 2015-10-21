@@ -24,6 +24,7 @@
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 			
 			<ListView Grid.Row="0" BorderThickness="0" 
@@ -58,19 +59,25 @@
 					<ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
 				</i:Interaction.Behaviors>
 			</ListView>
-			
-			<Grid Grid.Row="1" Margin="3,7,3,3">
+
+			<Rectangle Grid.Row="1" Margin="3,7,3,0" Height="1" StrokeThickness="0" Fill="LightGray" Opacity="0.5" />
+
+			<Grid Grid.Row="2" Margin="3,7,3,3">
 				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="*"/>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
+				<TextBlock Grid.Column="0" Margin="5,0" VerticalAlignment="Center" Text="Display:"/>
+				<ComboBox Grid.Column="1" ItemsSource="{Binding FilterList}" DisplayMemberPath="FilterName" SelectedItem="{Binding CurrentFilter}"/>
+				
+				<Button Grid.Column="3" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Play Random" Command="{Binding Path=PlayRandom}"/>
 
-				<Button Grid.Column="0" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Play Random" Command="{Binding Path=PlayRandom}"/>
-
-				<Button Grid.Column="2" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Export" Command="{Binding Path=ExportFavorites}"/>
-				<Button Grid.Column="3" Padding="5,0" Margin="7,0,0,0" Style="{StaticResource GeneralButtonStyle}" Content="Import" Command="{Binding Path=ImportFavorites}"/>
+				<Button Grid.Column="4" Padding="5,0" Margin="15,0,0,0" Style="{StaticResource GeneralButtonStyle}" Content="Export" Command="{Binding Path=ExportFavorites}"/>
+				<Button Grid.Column="5" Padding="5,0" Margin="7,0,0,0" Style="{StaticResource GeneralButtonStyle}" Content="Import" Command="{Binding Path=ImportFavorites}"/>
 			</Grid>
 		</Grid>
 	</GroupBox>

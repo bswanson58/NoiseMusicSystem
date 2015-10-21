@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Data;
 using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
@@ -15,6 +16,20 @@ using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
+	public class FavoriteFilter {
+		public string	FilterName { get; private set; }
+		public bool		FilterArtists { get; private set; }
+		public bool		FilterAlbums { get; private set; }
+		public bool		FilterTracks { get; private set; }
+
+		public FavoriteFilter( string name, bool filterArtists, bool filterAlbums, bool filterTracks ) {
+			FilterName = name;
+			FilterArtists = filterArtists;
+			FilterAlbums = filterAlbums;
+			FilterTracks = filterTracks;
+		}
+	}
+
 	public class FavoritesViewModel : AutomaticCommandBase,
 									  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>,
 									  IHandle<Events.ArtistUserUpdate>, IHandle<Events.AlbumUserUpdate>, IHandle<Events.TrackUserUpdate> {
@@ -29,6 +44,8 @@ namespace Noise.UI.ViewModels {
 		private readonly IDialogService			mDialogService;
 		private readonly ISelectionState		mSelectionState;
 		private FavoriteViewNode				mSelectedNode;
+		private ICollectionView					mFavoritesView;
+		private readonly List<FavoriteFilter>	mFilterList; 
 		private TaskHandler<IEnumerable<FavoriteViewNode>>		mTaskHandler; 
 		private readonly SortableCollection<FavoriteViewNode>	mFavoritesList;
 
@@ -52,6 +69,13 @@ namespace Noise.UI.ViewModels {
 
 			mFavoritesList = new SortableCollection<FavoriteViewNode>();
 
+			var defaultFilter = new FavoriteFilter( "All", true, true, true );
+			mFilterList = new List<FavoriteFilter> { defaultFilter, 
+													 new FavoriteFilter( "Artists", true, false, false ),
+													 new FavoriteFilter( "Albums", false, true, false ),
+													 new FavoriteFilter( "Tracks", false, false, true )};
+			CurrentFilter = defaultFilter;
+
 			if( databaseInfo.IsOpen ) {
 				LoadFavorites();
 			}
@@ -61,8 +85,49 @@ namespace Noise.UI.ViewModels {
 			get{ return( mEventAggregator ); }
 		}
 
-		public BindableCollection<FavoriteViewNode> FavoritesList {
-			get{ return( mFavoritesList ); }
+		public IList<FavoriteFilter> FilterList {
+			get { return( mFilterList); }
+		}
+
+		public FavoriteFilter CurrentFilter {
+			get { return( Get( () => CurrentFilter )); }
+			set {
+				Set( () => CurrentFilter, value );
+
+				FavoritesList.Refresh();
+			}
+		}
+
+		public ICollectionView FavoritesList {
+			get{ 
+				if( mFavoritesView == null ) {
+					mFavoritesView = CollectionViewSource.GetDefaultView( mFavoritesList );
+
+					mFavoritesView.Filter += OnFavoriteFilter;
+				}
+
+				return( mFavoritesView );
+			}
+		}
+
+		private bool OnFavoriteFilter( object node ) {
+			var retValue = true;
+
+			if( node is FavoriteViewNode ) {
+				var favoriteNode = node as FavoriteViewNode;
+
+				if( favoriteNode.Track != null ) {
+					retValue = CurrentFilter.FilterTracks;
+				}
+				else if( favoriteNode.Album != null ) {
+					retValue = CurrentFilter.FilterAlbums;
+				}
+				else if( favoriteNode.Artist != null ) {
+					retValue = CurrentFilter.FilterArtists;
+				}
+			}
+
+			return ( retValue );
 		}
 
 		public FavoriteViewNode SelectedNode {
