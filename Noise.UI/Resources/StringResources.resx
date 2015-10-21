@@ -118,9 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AlbumTitle" xml:space="preserve">
-    <value>Album</value>
+    <value>No Albums</value>
+  </data>
+  <data name="AlbumTitlePlural" xml:space="preserve">
+    <value>{0} Albums</value>
   </data>
   <data name="ArtistTitle" xml:space="preserve">
-    <value>Artist</value>
+    <value>No Artists</value>
+  </data>
+  <data name="ArtistTitlePlural" xml:space="preserve">
+    <value>{0} Artists</value>
   </data>
 </root>
