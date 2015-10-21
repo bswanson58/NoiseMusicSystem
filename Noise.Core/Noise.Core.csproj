@@ -282,6 +282,8 @@
     <Compile Include="PlayQueue\RandomTrackSelector.cs" />
     <Compile Include="PlayStrategies\PlayStrategyBase.cs" />
     <Compile Include="PlaySupport\AudioController.cs" />
+    <Compile Include="PlaySupport\PlaybackContextManager.cs" />
+    <Compile Include="PlaySupport\PlaybackContextWriter.cs" />
     <Compile Include="PlaySupport\PlayController.cs" />
     <Compile Include="NoiseCoreModule.cs" />
     <Compile Include="NoiseManager.cs" />

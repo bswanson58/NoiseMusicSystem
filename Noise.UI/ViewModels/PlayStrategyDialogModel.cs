@@ -19,7 +19,7 @@ namespace Noise.UI.ViewModels {
 		private readonly List<DbGenre>				mArtistGenreList;
 		private readonly List<DbInternetStream>		mStreamList;
 		private readonly List<DbPlayList>			mPlayLists; 
-		private readonly List<DbTag>				mCategoryList; 
+		private readonly List<DbTag>				mCategoryList;
 		private IPlayStrategy						mSelectedPlayStrategy;
 		private IPlayStrategyParameters				mPlayStrategyParameters;
 		private IPlayExhaustedStrategy				mSelectedExhaustedStrategy;
@@ -55,6 +55,11 @@ namespace Noise.UI.ViewModels {
 			mArtistGenreList = new List<DbGenre>();
 			mPlayLists = new List<DbPlayList>();
 			mStreamList = new List<DbInternetStream>();
+		}
+
+		public bool DeletePlayedTracks {
+			get { return( Get( () => DeletePlayedTracks )); }
+			set { Set( () => DeletePlayedTracks, value ); }
 		}
 
 		public ePlayStrategy PlayStrategy {

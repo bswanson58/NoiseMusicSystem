@@ -62,11 +62,14 @@ namespace Noise.UI.ViewModels {
 			mConfigurationDialog.PlayStrategyParameter = mPlayQueue.PlayStrategy.Parameters;
 			mConfigurationDialog.ExhaustedStrategy = mPlayQueue.PlayExhaustedStrategy.StrategyId;
 			mConfigurationDialog.ExhaustedStrategyParameter = mPlayQueue.PlayExhaustedStrategy.Parameters;
+			mConfigurationDialog.DeletePlayedTracks = mPlayQueue.DeletedPlayedTracks;
 
 			if( mDialogService.ShowDialog( DialogNames.PlayStrategyConfiguration, mConfigurationDialog ) == true ) {
 				if( mConfigurationDialog.IsConfigurationValid ) {
 					SetPlayStrategy( mConfigurationDialog.PlayStrategy, mConfigurationDialog.PlayStrategyParameter );
 					SetPlayExhaustedStrategy( mConfigurationDialog.ExhaustedStrategy, mConfigurationDialog.ExhaustedStrategyParameter );
+
+					mPlayQueue.DeletedPlayedTracks = mConfigurationDialog.DeletePlayedTracks;
 
 					RaiseCanExecuteChangedEvent( "CanExecute_StartStrategy" );
 				}

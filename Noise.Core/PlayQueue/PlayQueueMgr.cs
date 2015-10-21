@@ -32,6 +32,8 @@ namespace Noise.Core.PlayQueue {
 		private PlayQueueTrack						mReplayTrack;
 		private bool								mAddingMoreTracks;
 		private bool								mStopAtEndOfTrack;
+		private bool								mDeleteUnplayedTracks;
+		private int									mMaximumPlayedTracks;
 		private AsyncCommand<DbTrack>				mTrackPlayCommand;
 		private AsyncCommand<IEnumerable<DbTrack>>	mTrackListPlayCommand;
 		private AsyncCommand<DbAlbum>				mAlbumPlayCommand;
@@ -60,6 +62,9 @@ namespace Noise.Core.PlayQueue {
 
 			mPlayStrategy = mPlayStrategyFactory.ProvidePlayStrategy( ePlayStrategy.Next );
 			mPlayExhaustedStrategy = mPlayExhaustedFactory.ProvideExhaustedStrategy( ePlayExhaustedStrategy.Stop );
+
+			mDeleteUnplayedTracks = false;
+			mMaximumPlayedTracks = 15;
 
 			lifecycleManager.RegisterForInitialize( this );
 		}
@@ -98,6 +103,9 @@ namespace Noise.Core.PlayQueue {
 			try {
 				SetPlayExhaustedStrategy( preferences.PlayExhaustedStrategy, PlayStrategyParametersFactory.FromString( preferences.PlayExhaustedParameters ));
 				SetPlayStrategy( preferences.PlayStrategy, PlayStrategyParametersFactory.FromString( preferences.PlayStrategyParameters ));
+
+				mDeleteUnplayedTracks = preferences.DeletePlayedTracks;
+				mMaximumPlayedTracks = preferences.MaximumPlayedTracks;
 			}
 			catch( Exception exception ) {
 				mLog.LogQueueException( "Loading parameters from preferences", exception );
@@ -350,7 +358,6 @@ namespace Noise.Core.PlayQueue {
 
 			if( track != null ) {
 				RemoveTrack( track );
-				mLog.RemovedTrack( track );
 
 				retValue = true;
 			}
@@ -359,36 +366,38 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public void RemoveTrack( PlayQueueTrack track ) {
-			if( track.Track !=null ) {
-				var	queuedTrack= mPlayQueue.Find( item => item.Track != null && item.Track.DbId == track.Track.DbId );
+			if( track != null ) {
+				if( track.Track !=null ) {
+					var	queuedTrack= mPlayQueue.Find( item => item.Track != null && item.Track.DbId == track.Track.DbId );
 
-				if( queuedTrack != null ) {
-					mPlayQueue.Remove(  queuedTrack );
-					mLog.RemovedTrack( queuedTrack );
+					if( queuedTrack != null ) {
+						mPlayQueue.Remove(  queuedTrack );
+						mLog.RemovedTrack( queuedTrack );
+					}
+
+					queuedTrack= mPlayHistory.Find( item => item.Track != null && item.Track.DbId == track.Track.DbId );
+
+					if( queuedTrack != null ) {
+						mPlayHistory.Remove(  queuedTrack );
+					}
+				}
+				else if( track.Stream != null ) {
+					var	queuedTrack= mPlayQueue.Find( item => item.Stream != null && item.Stream.DbId == track.Stream.DbId );
+
+					if( queuedTrack != null ) {
+						mPlayQueue.Remove(  queuedTrack );
+						mLog.RemovedTrack( queuedTrack );
+					}
+
+					queuedTrack= mPlayHistory.Find( item => item.Stream != null && item.Stream.DbId == track.Stream.DbId );
+
+					if( queuedTrack != null ) {
+						mPlayHistory.Remove(  queuedTrack );
+					}
 				}
 
-				queuedTrack= mPlayHistory.Find( item => item.Track != null && item.Track.DbId == track.Track.DbId );
-
-				if( queuedTrack != null ) {
-					mPlayHistory.Remove(  queuedTrack );
-				}
+				FirePlayQueueChanged();
 			}
-			else if( track.Stream != null ) {
-				var	queuedTrack= mPlayQueue.Find( item => item.Stream != null && item.Stream.DbId == track.Stream.DbId );
-
-				if( queuedTrack != null ) {
-					mPlayQueue.Remove(  queuedTrack );
-					mLog.RemovedTrack( queuedTrack );
-				}
-
-				queuedTrack= mPlayHistory.Find( item => item.Stream != null && item.Stream.DbId == track.Stream.DbId );
-
-				if( queuedTrack != null ) {
-					mPlayHistory.Remove(  queuedTrack );
-				}
-			}
-
-			FirePlayQueueChanged();
 		}
 
 		public void RemovePlayedTracks() {
@@ -446,7 +455,11 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		public int PlayedTrackCount {
-			get { return(( from PlayQueueTrack track in mPlayQueue where track.HasPlayed && !track.IsPlaying select track ).Count()); }
+			get { return( GetPlayedTrackList().Count()); }
+		}
+
+		private IEnumerable<PlayQueueTrack> GetPlayedTrackList() {
+			return( from PlayQueueTrack track in mPlayQueue where track.HasPlayed && !track.IsPlaying select track );
 		}
 
 		public bool StrategyRequestsQueued {
@@ -494,6 +507,8 @@ namespace Noise.Core.PlayQueue {
 
 				mPlayHistory.Add( playingTrack );
 				mLog.StatusChanged( playingTrack );
+
+				CheckQueueHorizon();
 			}
 
 			var nextTrack = NextTrack;
@@ -517,6 +532,37 @@ namespace Noise.Core.PlayQueue {
 			}
 
 			return( nextTrack );
+		}
+
+		public bool DeletedPlayedTracks {
+			get { return( mDeleteUnplayedTracks ); }
+			set {
+				mDeleteUnplayedTracks = value;
+
+				var preferences = mPreferences.Load<NoiseCorePreferences>();
+
+				preferences.DeletePlayedTracks = mDeleteUnplayedTracks;
+				mPreferences.Save( preferences );
+			}
+		}
+		public int MaximumPlayedTracks {
+			get { return( mMaximumPlayedTracks ); }
+			set {
+				mMaximumPlayedTracks = value; 
+				
+				var preferences = mPreferences.Load<NoiseCorePreferences>();
+
+				preferences.MaximumPlayedTracks = mMaximumPlayedTracks;
+				mPreferences.Save( preferences );
+			}
+		}
+
+		private void CheckQueueHorizon() {
+			if( mDeleteUnplayedTracks ) {
+				while( PlayedTrackCount > mMaximumPlayedTracks ) {
+					RemoveTrack( GetPlayedTrackList().FirstOrDefault());
+				}
+			}
 		}
 
 		public void StopPlay() {

@@ -19,5 +19,6 @@
 		public const string		CategoryEdit				= "CategoryEdit";
 		public const string		FeaturedArtistsSelect		= "FeaturedArtistsSelect";
 		public const string		PlayStrategyConfiguration	= "PlayStrategyConfiguration";
+		public const string		ManagePlaybackContext		= "ManagePlaybackContext";
 	}
 }
