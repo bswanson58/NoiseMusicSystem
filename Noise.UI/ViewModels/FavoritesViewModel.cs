@@ -98,6 +98,10 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		public SortableCollection<FavoriteViewNode> FavoritesCollection {
+			get { return( mFavoritesList ); }
+		}
+
 		public ICollectionView FavoritesList {
 			get{ 
 				if( mFavoritesView == null ) {

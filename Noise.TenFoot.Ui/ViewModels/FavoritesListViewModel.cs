@@ -47,14 +47,14 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			get{ return( mSelectedItem ); }
 			set{ 
 				mSelectedItem = value;
-				mSelectedItemIndex = mSelectedItem != null ? FavoritesList.IndexOf( mSelectedItem ) : 0;
+				mSelectedItemIndex = mSelectedItem != null ? FavoritesCollection.IndexOf( mSelectedItem ) : 0;
 
 				RaisePropertyChanged( () => SelectedItem );
 			}
 		}
 
 		private void SetSelectedItem( int index ) {
-			var itemCount = FavoritesList.Count;
+			var itemCount = FavoritesCollection.Count;
 
 			if( itemCount > 0 ) {
 				if( index < 0 ) {
@@ -66,7 +66,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 				}
 
 				if( index < itemCount ) {
-					SelectedItem = FavoritesList[index];
+					SelectedItem = FavoritesCollection[index];
 				}
 			}
 		}
