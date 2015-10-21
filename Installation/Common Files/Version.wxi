@@ -2,7 +2,7 @@
 <Include>
   <!-- To upgrade: Update the ProductVersion below to the next release -->
   <!--   Also update the version in GlobalAssemblyInfo.cs -->
-  <?define ProductVersion=0.9.5?>
+  <?define ProductVersion=0.9.4?>
 
   <!-- Product Upgrade ID: do not change -->
   <?define ProductUpgradeCode="68F51362-142C-49D7-A702-1BCB7E933C3D"?>
