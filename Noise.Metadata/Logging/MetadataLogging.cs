@@ -19,11 +19,18 @@ namespace Noise.Metadata.Logging {
 		}
 
 		public void LoadedMetadata( string provider, string forArtist ) {
-			LogOnCondition( mPreferences.MetadataSupport || mPreferences.BasicActivity, () => LogMetadataMessage( string.Format( "Provider {0} loaded metadata for artist \"{1}\"", provider, forArtist )));
+			LogOnCondition( mPreferences.MetadataSupport || mPreferences.BasicActivity, 
+							() => LogMetadataMessage( string.Format( "Provider {0} loaded metadata for artist \"{1}\"", provider, forArtist )));
 		}
 
 		public void ArtistNotFound( string provider, string forArtist ) {
-			LogOnCondition( mPreferences.MetadataSupport || mPreferences.BasicActivity, () => LogMetadataMessage( string.Format( "Provider {0} unable to match artist \"{1}\"", provider, forArtist )));
+			LogOnCondition( mPreferences.MetadataSupport || mPreferences.BasicActivity, 
+							() => LogMetadataMessage( string.Format( "Provider {0} unable to match artist \"{1}\"", provider, forArtist )));
+		}
+
+		public void DownloadedArtwork( string provider, string forArtist, int pieceCount ) {
+			LogOnCondition( mPreferences.MetadataSupport || mPreferences.BasicActivity, 
+							() => LogMetadataMessage( string.Format( "Downloaded {0} pieces of artwork for artist \"{1}\" from provider \"{2}\"", pieceCount, forArtist, provider )));
 		}
 
 		public void LogException( string message, Exception exception, string callerName = "" ) {

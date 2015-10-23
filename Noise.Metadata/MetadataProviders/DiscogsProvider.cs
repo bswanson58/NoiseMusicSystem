@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.Metadata.ArtistMetadata;
 using Noise.Metadata.Dto;
 using Noise.Metadata.Interfaces;
 using Noise.Metadata.Logging;
@@ -13,14 +14,16 @@ using Raven.Client;
 
 namespace Noise.Metadata.MetadataProviders {
 	internal class DiscogsProvider : IArtistMetadataProvider {
-		private readonly IDiscogsClient	mDiscogsClient;
-		private readonly ILogMetadata	mLog;
-		private IDocumentStore			mDocumentStore;
-		private readonly bool			mHasNetworkAccess;
+		private readonly ArtistArtworkDownloader	mArtworkDownloader;
+		private readonly IDiscogsClient				mDiscogsClient;
+		private readonly ILogMetadata				mLog;
+		private IDocumentStore						mDocumentStore;
+		private readonly bool						mHasNetworkAccess;
 
 		public	string			ProviderKey { get; private set; }
 
-		public DiscogsProvider( NoiseCorePreferences preferences, IDiscogsClient discogsClient, ILogMetadata log ) {
+		public DiscogsProvider( ArtistArtworkDownloader artworkDownloader, NoiseCorePreferences preferences, IDiscogsClient discogsClient, ILogMetadata log ) {
+			mArtworkDownloader = artworkDownloader;
 			mDiscogsClient = discogsClient;
 			mLog = log;
 
@@ -55,6 +58,8 @@ namespace Noise.Metadata.MetadataProviders {
 
 					if( result.Type.Equals( DiscogsClient.cSearchItemTypeArtist )) {
 						var discogsArtist = await mDiscogsClient.GetArtist( result.Id );
+
+						mArtworkDownloader.DownloadArtwork( artistName, discogsArtist.Images, ProviderKey );
 
 						using( var session = mDocumentStore.OpenSession()) {
 							var artistBio = session.Load<DbArtistBiography>( DbArtistBiography.FormatStatusKey( artistName )) ??
