@@ -223,6 +223,7 @@
     <Compile Include="GlobalCommands.cs" />
     <Compile Include="Interfaces\IAlbumProvider.cs" />
     <Compile Include="Interfaces\IApplicationLog.cs" />
+    <Compile Include="Interfaces\IArtistArtworkProvider.cs" />
     <Compile Include="Interfaces\IArtistProvider.cs" />
     <Compile Include="Interfaces\IArtworkProvider.cs" />
     <Compile Include="Interfaces\IAudioController.cs" />

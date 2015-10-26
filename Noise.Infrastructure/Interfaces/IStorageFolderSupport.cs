@@ -13,6 +13,7 @@ namespace Noise.Infrastructure.Interfaces {
 		FolderStrategyInformation	GetFolderStrategy( StorageFile forFile );
 
 		eFileType					DetermineFileType( StorageFile file );
+		eFileType					DetermineFileType( string fileName );
 		eAudioEncoding				DetermineAudioEncoding( StorageFile file );
 
 		bool						IsCoverFile( string fileName );

@@ -298,7 +298,19 @@ namespace Noise.Core.FileStore {
 			Condition.Requires( file.Name ).IsNotNullOrEmpty();
 
 			var retValue = eFileType.Unknown;
-			var ext = Path.GetExtension( file.Name );
+
+			if(!string.IsNullOrEmpty( file.Name )) {
+				retValue = DetermineFileType( file.Name );
+			}
+
+			return( retValue );
+		}
+
+		public eFileType DetermineFileType( string fileName ) {
+			Condition.Requires( fileName ).IsNotNullOrEmpty();
+
+			var retValue = eFileType.Unknown;
+			var ext = Path.GetExtension( fileName );
 
 			if(!string.IsNullOrEmpty( ext )) {
 				switch( ext.ToLower()) {

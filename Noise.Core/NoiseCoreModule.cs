@@ -7,6 +7,7 @@ using Noise.Core.Configuration;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
 using Noise.Core.DataExchange;
+using Noise.Core.DataProviders;
 using Noise.Core.FileProcessor;
 using Noise.Core.FileStore;
 using Noise.Core.Logging;
@@ -35,6 +36,8 @@ namespace Noise.Core {
 			mContainer.RegisterInstance<IEventAggregator>( new EventAggregator(), new ContainerControlledLifetimeManager());
 
 			mContainer.RegisterType<ILicenseManager, NoiseLicenseManager>( new HierarchicalLifetimeManager());
+
+			mContainer.RegisterType<IArtistArtworkProvider, ArtistArtworkProvider>();
 
 			mContainer.RegisterType<IAudioController, AudioController>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IDataExchangeManager, DataExchangeManager>( new HierarchicalLifetimeManager());
