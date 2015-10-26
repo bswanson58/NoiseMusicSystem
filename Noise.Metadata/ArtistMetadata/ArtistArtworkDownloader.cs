@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Logging;
 using Noise.Metadata.MetadataProviders.Discogs.Rto;
@@ -8,8 +9,6 @@ using Noise.Metadata.Support;
 
 namespace Noise.Metadata.ArtistMetadata {
 	internal class ArtistArtworkDownloader {
-		private const string					cArtworkFolder = "art";
-
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IStorageFolderSupport	mFolderSupport;
 		private readonly ILogMetadata			mLog;
@@ -29,7 +28,7 @@ namespace Noise.Metadata.ArtistMetadata {
 					var artistPath = mFolderSupport.GetArtistPath( artist.DbId );
 
 					if( Directory.Exists( artistPath )) {
-						var artworkPath = Path.Combine( artistPath, cArtworkFolder );
+						var artworkPath = Path.Combine( artistPath, Constants.LibraryMetadataFolder );
 
 						if( !Directory.Exists( artworkPath ) ) {
 							Directory.CreateDirectory( artworkPath );

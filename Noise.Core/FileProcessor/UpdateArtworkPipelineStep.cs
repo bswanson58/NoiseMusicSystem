@@ -23,31 +23,35 @@ namespace Noise.Core.FileProcessor {
 			Condition.Requires( context ).IsNotNull();
 			Condition.Requires( context.StorageFile ).IsNotNull();
 
-			if(( context.Artist != null ) &&
-			   ( context.Album != null )) {
-				var	imagePath = mStorageFolderSupport.GetPath( context.StorageFile );
+			if( context.Artist != null ) {
+				if( context.Album != null ) {
+					var	imagePath = mStorageFolderSupport.GetPath( context.StorageFile );
 
-				if( context.StorageFile.WasUpdated ) {
-					mArtworkProvider.UpdateArtworkImage( context.StorageFile.MetaDataPointer, imagePath );
+					if( context.StorageFile.WasUpdated ) {
+						mArtworkProvider.UpdateArtworkImage( context.StorageFile.MetaDataPointer, imagePath );
+					}
+					else {
+						var artwork = new DbArtwork( context.StorageFile.DbId, mStorageFolderSupport.IsCoverFile( context.StorageFile.Name ) ? ContentType.AlbumCover : 
+																																			   ContentType.AlbumArtwork ) {
+													Artist = context.Artist.DbId, Album = context.Album.DbId,
+													Source = InfoSource.File, FolderLocation = context.StorageFile.ParentFolder, IsContentAvailable = true,
+													Name = Path.GetFileNameWithoutExtension( context.StorageFile.Name )};
+
+						mArtworkProvider.AddArtwork( artwork, imagePath );
+						context.StorageFile.MetaDataPointer = artwork.DbId;
+						context.Log.LogArtworkAdded( context.StorageFile, artwork );
+					}
+
+					using( var updater = mArtistProvider.GetArtistForUpdate( context.Artist.DbId )) {
+						if( updater.Item != null ) {
+							updater.Item.UpdateLastChange();
+
+							updater.Update();
+						}
+					}
 				}
 				else {
-					var artwork = new DbArtwork( context.StorageFile.DbId, mStorageFolderSupport.IsCoverFile( context.StorageFile.Name ) ? ContentType.AlbumCover : 
-																																		   ContentType.AlbumArtwork ) {
-												Artist = context.Artist.DbId, Album = context.Album.DbId,
-												Source = InfoSource.File, FolderLocation = context.StorageFile.ParentFolder, IsContentAvailable = true,
-												Name = Path.GetFileNameWithoutExtension( context.StorageFile.Name )};
-
-					mArtworkProvider.AddArtwork( artwork, imagePath );
-					context.StorageFile.MetaDataPointer = artwork.DbId;
-					context.Log.LogArtworkAdded( context.StorageFile, artwork );
-				}
-
-				using( var updater = mArtistProvider.GetArtistForUpdate( context.Artist.DbId )) {
-					if( updater.Item != null ) {
-						updater.Item.UpdateLastChange();
-
-						updater.Update();
-					}
+					context.StorageFile.MetaDataPointer = context.Artist.DbId;
 				}
 
 				using( var updater = mStorageFileProvider.GetFileForUpdate( context.StorageFile.DbId )) {
