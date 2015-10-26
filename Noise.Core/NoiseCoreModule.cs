@@ -38,6 +38,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<ILicenseManager, NoiseLicenseManager>( new HierarchicalLifetimeManager());
 
 			mContainer.RegisterType<IArtistArtworkProvider, ArtistArtworkProvider>();
+			mContainer.RegisterType<IAlbumArtworkProvider, AlbumArtworkProvider>();
 
 			mContainer.RegisterType<IAudioController, AudioController>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IDataExchangeManager, DataExchangeManager>( new HierarchicalLifetimeManager());

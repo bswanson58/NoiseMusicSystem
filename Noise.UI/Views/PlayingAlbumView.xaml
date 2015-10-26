@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="100" d:DesignWidth="300">
 	
@@ -26,6 +27,7 @@
 		</Viewbox>
 
 		<Image Grid.Column="1" MinWidth="50" MinHeight="50" Margin="9" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform"
-			   Source="{Binding AlbumImage, Converter={StaticResource imageConverter}}"/>
+			   Behaviours:FadedPropertyChange.Property="Source" Behaviours:FadedPropertyChange.Binding="{Binding AlbumImage, Converter={StaticResource imageConverter}}" 
+			   Behaviours:FadedPropertyChange.Duration="0:0:0.2" Behaviours:FadedPropertyChange.TransitionDelay="0:0:0.1" />
 	</Grid>
 </UserControl>
