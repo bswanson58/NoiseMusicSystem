@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:Reusable="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="100" d:DesignWidth="300">
 	
@@ -22,7 +23,8 @@
 		</Grid.ColumnDefinitions>
 		
 		<Image Grid.Column="0" MinWidth="50" MinHeight="50" Margin="9" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform"
-			   Source="{Binding ArtistImage, Converter={StaticResource imageConverter}}"/>
+			   Reusable:FadedPropertyChange.Property="Source" Reusable:FadedPropertyChange.Binding="{Binding ArtistImage, Converter={StaticResource imageConverter}}" 
+			   Reusable:FadedPropertyChange.Duration="0:0:0.2" Reusable:FadedPropertyChange.TransitionDelay="0:0:0.1" />
 		
 		<Viewbox Grid.Column="1" Margin="9,0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right">
 			<TextBlock Style="{StaticResource LargeTitleStyle}" FontSize="800" HorizontalAlignment="Right" Text="{Binding ArtistName}" />

@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System.Timers;
+using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -9,17 +10,20 @@ using ReusableBits.Mvvm.ViewModelSupport;
 namespace Noise.UI.ViewModels {
 	internal class PlayingArtistViewModel : AutomaticPropertyBase,
 											IHandle<Events.PlaybackTrackChanged>, IHandle<Events.PlaybackTrackUpdated> {
-		private readonly IMetadataManager	mMetadataManager;
-		private readonly IPlayQueue			mPlayQueue;
-		private readonly IUiLog				mLog;
-		private TaskHandler<Artwork>		mArtworkTaskHandler; 
-		private DbArtist					mCurrentArtist;
-		private Artwork						mArtistImage;
+		private readonly IArtistArtworkProvider	mArtworkProvider;
+		private readonly IPlayQueue				mPlayQueue;
+		private readonly IUiLog					mLog;
+		private readonly Timer					mTimer;
+		private TaskHandler<Artwork>			mArtworkTaskHandler; 
+		private DbArtist						mCurrentArtist;
+		private Artwork							mArtistImage;
 
-		public PlayingArtistViewModel( IEventAggregator eventAggregator, IMetadataManager metadataManager, IPlayQueue playQueue, IUiLog log ) {
-			mMetadataManager = metadataManager;
+		public PlayingArtistViewModel( IEventAggregator eventAggregator, IArtistArtworkProvider artworkProvider, IPlayQueue playQueue, IUiLog log ) {
+			mArtworkProvider = artworkProvider;
 			mPlayQueue = playQueue;
 			mLog = log;
+			mTimer = new Timer { AutoReset = true, Interval = 20000, Enabled = false };
+			mTimer.Elapsed += OnTimer;
 
 			UpdateArtist();
 			eventAggregator.Subscribe( this );
@@ -48,6 +52,8 @@ namespace Noise.UI.ViewModels {
 
 			ArtistName = string.Empty;
 			RaisePropertyChanged( () => ArtistImage );
+
+			StopArtworkTimer();
 		}
 
 		private void SetArtist( DbArtist artist ) {
@@ -56,7 +62,11 @@ namespace Noise.UI.ViewModels {
 			if( mCurrentArtist != null ) {
 				ArtistName = mCurrentArtist.Name;
 
-				RetrieveArtwork( ArtistName );
+				RetrieveArtwork( mCurrentArtist );
+
+				if( mArtworkProvider.ImageCount( mCurrentArtist ) > 1 ) {
+					StartArtworkTimer();
+				}
 			}
 			else {
 				ClearArtist();
@@ -100,16 +110,30 @@ namespace Noise.UI.ViewModels {
 			set { mArtworkTaskHandler = value; }
 		}
 
-		private void RetrieveArtwork( string artistName ) {
-			ArtworkTaskHandler.StartTask( () => mMetadataManager.GetArtistArtwork( artistName ),
+		private void RetrieveArtwork( DbArtist forArtist ) {
+			ArtworkTaskHandler.StartTask( () => mArtworkProvider.GetRandomArtwork( forArtist ),
 										   SetArtwork,
-										   exception => mLog.LogException( string.Format( "Getting Artist Artwork for \"{0}\"", artistName ), exception ));
+										   exception => mLog.LogException( string.Format( "RetrieveArtwork for \"{0}\"", forArtist.Name ), exception ));
 		}
 
 		private void SetArtwork( Artwork artwork ) {
 			mArtistImage = artwork;
 
 			RaisePropertyChanged( () => ArtistImage );
+		}
+
+		private void StartArtworkTimer() {
+			mTimer.Start();
+		}
+
+		private void StopArtworkTimer() {
+			mTimer.Stop();
+		}
+
+		private void OnTimer( object sender, ElapsedEventArgs args ) {
+			if( mCurrentArtist != null ) {
+				RetrieveArtwork( mCurrentArtist );
+			}
 		}
 	}
 }
