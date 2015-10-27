@@ -57,6 +57,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void SetArtist( DbArtist artist ) {
+			ClearArtist();
 			mCurrentArtist = artist;
 
 			if( mCurrentArtist != null ) {
@@ -67,9 +68,6 @@ namespace Noise.UI.ViewModels {
 				if( mArtworkProvider.ImageCount( mCurrentArtist ) > 1 ) {
 					StartArtworkTimer();
 				}
-			}
-			else {
-				ClearArtist();
 			}
 		}
 

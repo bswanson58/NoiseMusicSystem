@@ -92,8 +92,7 @@ namespace ReusableBits.Ui.Behaviours {
 
 		// When the value changes do the fadeout-switch-fadein
 		private static void BindingChanged( DependencyObject d, DependencyPropertyChangedEventArgs e ) {
-			if(( GetBinding( d ) != null ) &&
-			   ( d.GetType().GetProperty( GetProperty( d )) != null ) ) {
+			if( d.GetType().GetProperty( GetProperty( d )) != null ) {
 				var fadeout = new Storyboard();
 				var fadeoutAnim = new DoubleAnimation { To = 0, Duration = GetDuration( d ), AccelerationRatio = 0.1 };
 

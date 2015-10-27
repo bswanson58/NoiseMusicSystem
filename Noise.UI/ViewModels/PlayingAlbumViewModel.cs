@@ -23,7 +23,7 @@ namespace Noise.UI.ViewModels {
 			mArtworkProvider = artworkProvider;
 			mPlayQueue = playQueue;
 			mLog = log;
-			mTimer = new Timer { AutoReset = true, Interval = 15000, Enabled = false };
+			mTimer = new Timer { AutoReset = true, Interval = 17000, Enabled = false };
 			mTimer.Elapsed += OnTimer;
 
 			UpdateAlbum();
@@ -58,6 +58,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void SetAlbum( DbAlbum album ) {
+			ClearAlbum();
 			mCurrentAlbum = album;
 
 			if( mCurrentAlbum != null ) {
@@ -69,9 +70,6 @@ namespace Noise.UI.ViewModels {
 				if( mArtworkProvider.ImageCount( mCurrentAlbum ) > 1 ) {
 					StartArtworkTimer();
 				}
-			}
-			else {
-				ClearAlbum();
 			}
 		}
 
