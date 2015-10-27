@@ -61,7 +61,6 @@ namespace Noise.Core.DataBuilders {
 
 							using( var artistUpdater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
 								var albumGenre = new Dictionary<long, int>();
-								var maxAlbumRating = 0;
 								var albumCount = 0;
 								var albumRating = 0;
 
@@ -74,7 +73,6 @@ namespace Noise.Core.DataBuilders {
 												var years = new List<Int32>();
 												var trackGenre = new Dictionary<long, int>();
 												var trackRating = 0;
-												var maxTrackRating = 0;
 
 												albumUpdater.Item.TrackCount = 0;
 
@@ -86,10 +84,6 @@ namespace Noise.Core.DataBuilders {
 													AddGenre( trackGenre, track.CalculatedGenre );
 													albumUpdater.Item.TrackCount++;
 													trackRating += track.Rating;
-
-													if( track.Rating > maxTrackRating ) {
-														maxTrackRating = track.Rating;
-													}
 												}
 
 												// Don't overwrite the published year if it is already set.
@@ -110,11 +104,7 @@ namespace Noise.Core.DataBuilders {
 												AddGenre( albumGenre, albumUpdater.Item.CalculatedGenre );
 
 												albumUpdater.Item.CalculatedRating = trackRating > 0 ? (Int16)( trackRating / albumUpdater.Item.TrackCount ) : (Int16)0;
-												albumUpdater.Item.MaxChildRating = (Int16)maxTrackRating;
 												albumRating += albumUpdater.Item.CalculatedRating;
-												if( maxTrackRating > maxAlbumRating ) {
-													maxAlbumRating = maxTrackRating;
-												}
 
 												mLog.LogSummaryAlbumCompleted( albumUpdater.Item );
 												albumUpdater.Update();
@@ -131,7 +121,6 @@ namespace Noise.Core.DataBuilders {
 								artistUpdater.Item.AlbumCount = (Int16)albumCount;
 								artistUpdater.Item.CalculatedGenre = DetermineTopGenre( albumGenre );
 								artistUpdater.Item.CalculatedRating = albumRating > 0 ? (Int16)( albumRating / albumCount ) : (Int16)0;
-								artistUpdater.Item.MaxChildRating = (Int16)maxAlbumRating;
 
 								var artistMetadata = mMetadataManager.GetArtistMetadata( artistUpdater.Item.Name );
 								var genre = artistMetadata.GetMetadataArray( eMetadataType.Genre ).FirstOrDefault();

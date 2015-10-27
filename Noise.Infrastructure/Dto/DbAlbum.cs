@@ -10,6 +10,7 @@ namespace Noise.Infrastructure.Dto {
 		public long				Artist { get; set; }
 		public Int16			UserRating { get; set; }
 		public Int16			CalculatedRating { get; set; }
+		[Obsolete]
 		public Int16			MaxChildRating { get; set; }
 		public Int16			TrackCount { get; set; }
 		[Required]

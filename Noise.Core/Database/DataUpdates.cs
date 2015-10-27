@@ -277,19 +277,7 @@ namespace Noise.Core.Database {
 					using( var artistUpdater = mArtistProvider.GetArtistForUpdate( forAlbum.Artist )) {
 						if( artistUpdater.Item != null ) {
 							using( var albumList = mAlbumProvider.GetAlbumList( forAlbum.Artist )) {
-								var maxAlbumRating = 0;
-
-								foreach( var album in albumList.List ) {
-									if( album.Rating > maxAlbumRating ) {
-										maxAlbumRating = album.Rating;
-									}
-									if( album.MaxChildRating > maxAlbumRating ) {
-										maxAlbumRating = album.MaxChildRating;
-									}
-								}
-
-								artistUpdater.Item.MaxChildRating = (Int16)maxAlbumRating;
-
+								artistUpdater.Item.CalculatedRating = (Int16)( albumList.List.Sum( a => a.Rating ) / albumList.List.Count());
 								artistUpdater.Update();
 							}
 
@@ -321,15 +309,7 @@ namespace Noise.Core.Database {
 					using( var albumUpdater = mAlbumProvider.GetAlbumForUpdate( forTrack.Album )) {
 						if( albumUpdater.Item != null ) {
 							using( var trackList = mTrackProvider.GetTrackList( forTrack.Album )) {
-								var maxTrackRating = 0;
-
-								foreach( var track in trackList.List ) {
-									if( track.Rating > maxTrackRating ) {
-										maxTrackRating = track.Rating;
-									}
-								}
-
-								albumUpdater.Item.MaxChildRating = (Int16)maxTrackRating;
+								albumUpdater.Item.CalculatedRating = (Int16)( trackList.List.Sum( t => t.Rating ) / trackList.List.Count());
 								albumUpdater.Update();
 							}
 
@@ -338,18 +318,7 @@ namespace Noise.Core.Database {
 							using( var artistUpdater = mArtistProvider.GetArtistForUpdate( albumUpdater.Item.Artist )) {
 								if( artistUpdater.Item != null ) {
 									using( var albumList = mAlbumProvider.GetAlbumList( albumUpdater.Item.Artist )) {
-										var maxAlbumRating = 0;
-
-										foreach( var a in albumList.List ) {
-											if( a.Rating > maxAlbumRating ) {
-												maxAlbumRating = a.Rating;
-											}
-											if( a.MaxChildRating > maxAlbumRating ) {
-												maxAlbumRating = a.MaxChildRating;
-											}
-										}
-
-										artistUpdater.Item.MaxChildRating = (Int16)maxAlbumRating;
+										artistUpdater.Item.CalculatedRating = (Int16)( albumList.List.Sum( a => a.Rating ) / albumList.List.Count());
 										artistUpdater.Update();
 									}
 
