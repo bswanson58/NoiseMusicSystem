@@ -9,8 +9,6 @@ namespace Noise.UI.Dto {
 		public long				CalculatedGenre { get; set; }
 		public long				ExternalGenre { get; set; }
 		public long				UserGenre { get; set; }
-		public Int16			UserRating { get; set; }
-		public Int16			CalculatedRating { get; set; }
 		public bool				IsFavorite { get; set; }
 		public bool				HasFavorites { get; set; }
 
@@ -34,8 +32,35 @@ namespace Noise.UI.Dto {
 			get{ return( DisplayGenre != null ? DisplayGenre.Name : "" ); }
 		}
 
-		private bool IsUserRating {
+		public Int16 CalculatedRating {
+			get { return( Get( () => CalculatedRating )); }
+			set {  Set( () => CalculatedRating, value ); }
+		}
+
+		public Int16 UserRating {
+			get { return( Get( () => UserRating )); }
+			set { Set( () => UserRating, value ); }
+		}
+
+		[DependsUpon("CalculatedRating")]
+		public Int16 Rating {
+			get{ return( IsUserRating ? UserRating : CalculatedRating ); }
+			set {
+				UserRating = value;
+				
+				RaisePropertyChanged( () => IsUserRating );
+				RaisePropertyChanged( () => UseAlternateRating );
+			}
+		}
+
+		[DependsUpon("UserRating")]
+		public bool IsUserRating {
 			get{ return( UserRating != 0 ); }
+		}
+
+		[DependsUpon("UserRating")]
+		public bool UseAlternateRating {
+			get { return(!IsUserRating ); }
 		}
 
 		public string Name {
@@ -46,11 +71,6 @@ namespace Noise.UI.Dto {
 		public string DisplayName {
 			get{ return( Get( () => DisplayName )); }
 			set{ Set( () => DisplayName, value ); }
-		}
-
-		public Int16 Rating {
-			get{ return( IsUserRating ? UserRating : CalculatedRating ); }
-			set{ UserRating = value; }
 		}
 
 		public string Website {

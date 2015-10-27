@@ -6,8 +6,6 @@ namespace Noise.UI.Dto {
 	[DebuggerDisplay("Album = {Name}")]
 	public class UiAlbum : UiBase {
 		public	long					Artist { get; set; }
-		public	Int16					UserRating { get; set; }
-		public	Int16					CalculatedRating { get; set; }
 		public	Int16					TrackCount { get; set; }
 		public	long					CalculatedGenre { get; set; }
 		public	long					ExternalGenre { get; set; }
@@ -37,13 +35,30 @@ namespace Noise.UI.Dto {
 			set{ Set( () => PublishedYear, value ); }
 		}
 
-		private bool IsUserRating {
+		public Int16 CalculatedRating {
+			get { return( Get( () => CalculatedRating )); }
+			set {  Set( () => CalculatedRating, value ); }
+		}
+
+		public Int16 UserRating {
+			get { return( Get( () => UserRating )); }
+			set { Set( () => UserRating, value ); }
+		}
+
+		[DependsUpon("UserRating")]
+		public bool IsUserRating {
 			get{ return( UserRating != 0 ); }
 		}
 
+		[DependsUpon("CalculatedRating")]
 		public Int16 Rating {
-			get{ return( IsUserRating ? UserRating : CalculatedRating ); }
-			set{ UserRating = value; }
+			get { return( IsUserRating ? UserRating : CalculatedRating ); }
+			set { UserRating = value; }
+		}
+
+		[DependsUpon("UserRating")]
+		public bool UseAlternateRating {
+			get { return(!IsUserRating ); }
 		}
 
 		public override string ToString() {

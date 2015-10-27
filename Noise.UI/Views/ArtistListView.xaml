@@ -66,6 +66,7 @@
 						<NoiseControls:RatingControl x:Name="ArtistRating" Margin="0,5,3,0"
 												 Opacity="{Binding Path=UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"
 												 Rating="{Binding Path=UiRating, Mode=TwoWay}"
+													 UseAlternate="{Binding UseAlternateRating}"
 												 Style="{DynamicResource NoiseRatingStyle}" />
 					</StackPanel>
 

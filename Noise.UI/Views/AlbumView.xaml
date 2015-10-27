@@ -72,8 +72,8 @@
 								  Opacity="{Binding Path=Album.UiIsFavorite, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"   
 								  IsChecked="{Binding Path=Album.UiIsFavorite, Mode=TwoWay}" />
 						<Controls:RatingControl x:Name="_ratingControl" Style="{StaticResource NoiseRatingStyle}" 
-												Opacity="{Binding Path=Album.UiRating, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"   
-												Rating="{Binding Path=Album.UiRating, Mode=TwoWay}"/>
+												Opacity="{Binding Album.UiRating, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"   
+												Rating="{Binding Album.UiRating, Mode=TwoWay}" UseAlternate="{Binding Album.UseAlternateRating}"/>
 						
 						<StackPanel.Triggers>
 							<EventTrigger SourceName="_ratingPanel" RoutedEvent="StackPanel.MouseEnter">
