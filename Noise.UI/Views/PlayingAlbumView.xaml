@@ -23,11 +23,13 @@
 		</Grid.ColumnDefinitions>
 
 		<Viewbox Grid.Column="0" Margin="9,0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
-			<TextBlock Style="{StaticResource LargeTitleStyle}" FontSize="800" HorizontalAlignment="Left" Text="{Binding AlbumName}" />
+			<TextBlock Style="{StaticResource LargeTitleStyle}" FontSize="800" HorizontalAlignment="Left"
+					   Behaviours:FadedPropertyChange.Property="Text" Behaviours:FadedPropertyChange.Binding="{Binding AlbumName}"
+					   Behaviours:FadedPropertyChange.Duration="0:0:0.2" />
 		</Viewbox>
 
 		<Image Grid.Column="1" MinWidth="50" MinHeight="50" Margin="9" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform"
 			   Behaviours:FadedPropertyChange.Property="Source" Behaviours:FadedPropertyChange.Binding="{Binding AlbumImage, Converter={StaticResource imageConverter}}" 
-			   Behaviours:FadedPropertyChange.Duration="0:0:0.2" Behaviours:FadedPropertyChange.TransitionDelay="0:0:0.1" />
+			   Behaviours:FadedPropertyChange.Duration="0:0:0.2" />
 	</Grid>
 </UserControl>

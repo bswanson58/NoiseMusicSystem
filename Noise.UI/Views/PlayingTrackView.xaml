@@ -1,7 +1,8 @@
 ﻿<UserControl x:Class="Noise.UI.Views.PlayingTrackView"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:Controls="clr-namespace:Noise.UI.Controls">
+			 xmlns:Controls="clr-namespace:Noise.UI.Controls"
+			 xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui">
 	
 	<UserControl.DataContext>
 		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
@@ -34,7 +35,10 @@
 
 		<!-- Track Name -->
 		<Viewbox Grid.Row="0" Margin="9,0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right">
-			<TextBlock Style="{StaticResource LargeTitleStyle}" FontSize="800" HorizontalAlignment="Right" Text="{Binding TrackName}" />
+			<TextBlock Style="{StaticResource LargeTitleStyle}" FontSize="800" HorizontalAlignment="Right"
+					   Behaviours:FadedPropertyChange.Property="Text" Behaviours:FadedPropertyChange.Binding="{Binding TrackName}"
+					   Behaviours:FadedPropertyChange.Duration="0:0:0.1" />
+
 		</Viewbox>
 
 		<!-- Playing Time -->

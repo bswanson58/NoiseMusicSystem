@@ -24,10 +24,12 @@
 		
 		<Image Grid.Column="0" MinWidth="50" MinHeight="50" Margin="9" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform"
 			   Reusable:FadedPropertyChange.Property="Source" Reusable:FadedPropertyChange.Binding="{Binding ArtistImage, Converter={StaticResource imageConverter}}" 
-			   Reusable:FadedPropertyChange.Duration="0:0:0.2" Reusable:FadedPropertyChange.TransitionDelay="0:0:0.1" />
+			   Reusable:FadedPropertyChange.Duration="0:0:0.2" />
 		
 		<Viewbox Grid.Column="1" Margin="9,0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right">
-			<TextBlock Style="{StaticResource LargeTitleStyle}" FontSize="800" HorizontalAlignment="Right" Text="{Binding ArtistName}" />
+			<TextBlock Style="{StaticResource LargeTitleStyle}" FontSize="800" HorizontalAlignment="Right"
+					   Reusable:FadedPropertyChange.Property="Text" Reusable:FadedPropertyChange.Binding="{Binding ArtistName}"
+					   Reusable:FadedPropertyChange.Duration="0:0:0.3" />
 		</Viewbox>
 	</Grid>
 </UserControl>
