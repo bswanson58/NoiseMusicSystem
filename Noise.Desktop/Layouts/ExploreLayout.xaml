@@ -1,124 +1,116 @@
 ﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:Infrastructure="clr-namespace:Noise.Infrastructure;assembly=Noise.Infrastructure"
-             xmlns:ReusableControls="clr-namespace:ReusableBits.Ui.Controls;assembly=ReusableBits.Ui"
-             xmlns:Regions="http://www.codeplex.com/CompositeWPF">
-    
-    <UserControl.Resources>
-        <SolidColorBrush x:Key="AccentBrush" Color="#FF588CE0"/>
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:Infrastructure="clr-namespace:Noise.Infrastructure;assembly=Noise.Infrastructure"
+			 xmlns:ReusableControls="clr-namespace:ReusableBits.Ui.Controls;assembly=ReusableBits.Ui"
+			 xmlns:Regions="http://www.codeplex.com/CompositeWPF">
+	
+	<UserControl.Resources>
+		<SolidColorBrush x:Key="AccentBrush" Color="#FF588CE0"/>
 
-        <Storyboard x:Key="AlbumInfoOutgoingStoryboard">
-            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" From="1.0" To="0.9" Duration="0:0:0.3"/>
-            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.3"/>
-        </Storyboard>
+		<Storyboard x:Key="AlbumInfoOutgoingStoryboard">
+			<DoubleAnimation Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" From="1.0" To="0.9" Duration="0:0:0.3"/>
+			<DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.3"/>
+		</Storyboard>
 
-        <Storyboard x:Key="AlbumInfoIncomingStoryboard">
-            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX" From="0.98" To="1.0" Duration="0:0:0.15"/>
-            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" From="0.98" To="1.0" Duration="0:0:0.15"/>
-            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0.3"/>
-        </Storyboard>
-        
-        <Storyboard x:Key="PlayerOutgoingStoryboard">
-            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.1"/>
-        </Storyboard>
+		<Storyboard x:Key="AlbumInfoIncomingStoryboard">
+			<DoubleAnimation Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX" From="0.98" To="1.0" Duration="0:0:0.15"/>
+			<DoubleAnimation Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" From="0.98" To="1.0" Duration="0:0:0.15"/>
+			<DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0.3"/>
+		</Storyboard>
+		
+		<Storyboard x:Key="PlayerOutgoingStoryboard">
+			<DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.1"/>
+		</Storyboard>
 
-        <Storyboard x:Key="PlayerIncomingStoryboard">
-            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" From="0.1" To="1.0" Duration="0:0:0.3"/>
-            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0.3"/>
-        </Storyboard>
-        
-        <DataTemplate x:Key="TabTemplate">
-            <ReusableControls:AnimatedContentControl Content="{Binding}"
-                                                     IncomingStoryboard="{StaticResource AlbumInfoIncomingStoryboard}" IncomingRenderTransformOrigin="1.0, 0.5"
-                                                     OutgoingStoryboard="{StaticResource AlbumInfoOutgoingStoryboard}"/>
-        </DataTemplate>
+		<Storyboard x:Key="PlayerIncomingStoryboard">
+			<DoubleAnimation Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" From="0.1" To="1.0" Duration="0:0:0.3"/>
+			<DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0.3"/>
+		</Storyboard>
+		
+		<DataTemplate x:Key="TabTemplate">
+			<ReusableControls:AnimatedContentControl Content="{Binding}"
+													 IncomingStoryboard="{StaticResource AlbumInfoIncomingStoryboard}" IncomingRenderTransformOrigin="1.0, 0.5"
+													 OutgoingStoryboard="{StaticResource AlbumInfoOutgoingStoryboard}"/>
+		</DataTemplate>
 
-    </UserControl.Resources>
-    
-    <Grid>
-        <Grid x:Name="LayoutRoot">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+	</UserControl.Resources>
+	
+	<Grid>
+		<Grid x:Name="LayoutRoot">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
 
-            <Grid x:Name="Content" Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="4*" MinWidth="200" />
-                    <ColumnDefinition Width="5*" MinWidth="200" />
-                    <ColumnDefinition Width="3*" MinWidth="200" />
-                </Grid.ColumnDefinitions>
+			<Grid x:Name="Content" Grid.Row="0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="4*" MinWidth="200" />
+					<ColumnDefinition Width="5*" MinWidth="200" />
+					<ColumnDefinition Width="3*" MinWidth="200" />
+				</Grid.ColumnDefinitions>
 
-                <!-- Library Explorer -->
-                <Grid Grid.Column="0" Margin="3,0,4,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
+				<!-- Library Explorer -->
+				<Grid Grid.Column="0" Margin="3,0,4,0">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+					</Grid.RowDefinitions>
 
-                    <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="LibrarySelector" />
+					<ContentControl Grid.Row="0" Regions:RegionManager.RegionName="LibrarySelector" />
 
-                    <TabControl Grid.Row="1" Margin="1,7,3,-2" BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="LeftPanel" Background="White"
-                                ContentTemplate="{StaticResource TabTemplate}"  ItemContainerStyle="{StaticResource TabControlStyle}" />
-                </Grid>
+					<TabControl Grid.Row="1" Margin="1,7,3,-2" BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="LeftPanel" Background="White"
+								ContentTemplate="{StaticResource TabTemplate}"  ItemContainerStyle="{StaticResource TabControlStyle}" />
+				</Grid>
 
-                <GridSplitter Grid.Column="0"
-                              Width="7"
-                              Height="Auto"
-                              Background="Transparent"
-                              ResizeDirection="Columns"
-                              Style="{DynamicResource GridSplitterVerticalStyle}" />
+				<GridSplitter Grid.Column="0"
+							  Width="7"
+							  Height="Auto"
+							  Background="Transparent"
+							  ResizeDirection="Columns"
+							  Style="{DynamicResource GridSplitterVerticalStyle}" />
 
-                <Grid Grid.Column="1" Margin="1,0,9,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
+				<Grid Grid.Column="1" Margin="3,0,9,0">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+					</Grid.RowDefinitions>
 
-                    <ContentControl Grid.Row="0" Regions:RegionManager.RegionName="ArtistInfo" />
-                    <ReusableControls:AnimatedContentControl Grid.Row="1" Margin="0,5,0,0" Regions:RegionManager.RegionName="AlbumInfo"
-                                                             IncomingStoryboard="{StaticResource AlbumInfoIncomingStoryboard}" IncomingRenderTransformOrigin="1.0, 0.5"
-                                                             OutgoingStoryboard="{StaticResource AlbumInfoOutgoingStoryboard}"/>
-                </Grid>
+					<ContentControl Grid.Row="0" Regions:RegionManager.RegionName="ArtistInfo" />
+					<ReusableControls:AnimatedContentControl Grid.Row="1" Margin="0,3,0,0" Regions:RegionManager.RegionName="AlbumInfo"
+															 IncomingStoryboard="{StaticResource AlbumInfoIncomingStoryboard}" IncomingRenderTransformOrigin="1.0, 0.5"
+															 OutgoingStoryboard="{StaticResource AlbumInfoOutgoingStoryboard}"/>
+				</Grid>
 
-                <GridSplitter Grid.Column="1"
-                              Width="7"
-                              Height="Auto"
-                              Background="Transparent"
-                              ResizeDirection="Columns"
-                              Style="{DynamicResource GridSplitterVerticalStyle}" />
+				<GridSplitter Grid.Column="1"
+							  Width="5"
+							  Height="Auto"
+							  Background="Transparent"
+							  ResizeDirection="Columns"
+							  Style="{DynamicResource GridSplitterVerticalStyle}" />
 
-                <Grid Grid.Column="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
+				<TabControl Grid.Column="2" Margin="0,3,0,-2"  BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="RightPanel" Background="White"
+							ContentTemplate="{StaticResource TabTemplate}"  ItemContainerStyle="{StaticResource TabControlStyle}" />
+			</Grid>
 
-                    <!--ContentControl Grid.Row="0" Regions:RegionManager.RegionName="Toolbar" /-->
-                    <TabControl Grid.Row="1" Margin="0,3,0,0"  BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="RightPanel" Background="White"
-                                ContentTemplate="{StaticResource TabTemplate}"  ItemContainerStyle="{StaticResource TabControlStyle}" />
-                </Grid>
-            </Grid>
+			<ReusableControls:AnimatedContentControl Grid.Row="1" Margin="3,0,0,3" Regions:RegionManager.RegionName="Player"
+													 IncomingStoryboard="{StaticResource PlayerIncomingStoryboard}" IncomingRenderTransformOrigin="0.5, 0.0" />
 
-            <ReusableControls:AnimatedContentControl Grid.Row="1" Margin="3,0,0,3" Regions:RegionManager.RegionName="Player"
-                                                     IncomingStoryboard="{StaticResource PlayerIncomingStoryboard}" IncomingRenderTransformOrigin="0.5, 0.0" />
+			<ContentControl Grid.Row="2" Regions:RegionManager.RegionName="Status"/>
+		</Grid>
 
-            <ContentControl Grid.Row="2" Regions:RegionManager.RegionName="Status"/>
-        </Grid>
+		<ContentControl Width="595"
+						Height="160"
+						Margin="50,0,0,60"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Bottom"
+						Regions:RegionManager.RegionName="SimilarSongs" />
 
-        <ContentControl Width="595"
-                        Height="160"
-                        Margin="50,0,0,60"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Bottom"
-                        Regions:RegionManager.RegionName="SimilarSongs" />
-
-        <ContentControl Width="470"
-                        Height="600"
-                        Margin="120,0,0,60"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Bottom"
-                        Regions:RegionManager.RegionName="SongLyrics" />
-    </Grid>
+		<ContentControl Width="470"
+						Height="600"
+						Margin="120,0,0,60"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Bottom"
+						Regions:RegionManager.RegionName="SongLyrics" />
+	</Grid>
 </UserControl>

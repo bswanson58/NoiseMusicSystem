@@ -4,7 +4,7 @@
              xmlns:Views="clr-namespace:Noise.UI.Views"
              Tag="Now Playing"
              >
-    <GroupBox Margin="2,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Play Queue ">
+    <GroupBox Margin="2,0,4,0" Style="{StaticResource SectionBorderStyle}" Header=" Play Queue ">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
