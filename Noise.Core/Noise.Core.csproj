@@ -222,6 +222,8 @@
     <Compile Include="DataExchange\IDataImport.cs" />
     <Compile Include="DataExchange\ImportFavorites.cs" />
     <Compile Include="DataExchange\ImportStreams.cs" />
+    <Compile Include="DataProviders\AlbumArtworkProvider.cs" />
+    <Compile Include="DataProviders\ArtistArtworkProvider.cs" />
     <Compile Include="DataProviders\IMetaDataProvider.cs" />
     <Compile Include="DataBuilders\ISummaryBuilder.cs" />
     <Compile Include="DataBuilders\SummaryBuilder.cs" />

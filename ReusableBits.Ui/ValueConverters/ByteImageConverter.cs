@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Data;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace ReusableBits.Ui.ValueConverters {
@@ -9,10 +8,11 @@ namespace ReusableBits.Ui.ValueConverters {
 		public object Convert( object value, Type targetType, object parameter, System.Globalization.CultureInfo culture ) {
 			BitmapImage	retValue = null;
 
-			if( targetType != typeof( ImageSource ) )
-				throw new InvalidOperationException( "The target must be ImageSource or derived types" );
+//			if( targetType != typeof( ImageSource )) { 
+//				throw new InvalidOperationException( "The target must be ImageSource or derived types" );
+//			}
 
-			if( value is byte[] ) {
+			if( value is byte[]) {
 				retValue = CreateBitmap( value as byte[]);
 			}
 
