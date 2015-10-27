@@ -129,7 +129,8 @@ namespace Noise.Core.PlayQueue {
 					if( album != null ) {
 						var track = RandomTrackFromAlbum( album );
 
-						if(( track.Rating >= 0 ) &&
+						if(( track != null ) &&
+						   ( track.Rating >= 0 ) &&
 						   ( retValue.FirstOrDefault( selectedTrack => selectedTrack.DbId == track.DbId ) == null ) &&
 						   ( approveTrack(track))) {
 							retValue.Add( track );
@@ -168,7 +169,9 @@ namespace Noise.Core.PlayQueue {
 
 			if( album != null ) {
 				using( var trackList = mTrackProvider.GetTrackList( album )) {
-					if( trackList != null ) {
+					if(( trackList != null ) &&
+					   ( trackList.List != null ) &&
+					   ( trackList.List.Any())) {
 						var minimumTrackDuration = new TimeSpan( 0, 0, 30 );
 						var goodList = from track in trackList.List where track.Rating >= 0 && track.Duration > minimumTrackDuration select track;
 
