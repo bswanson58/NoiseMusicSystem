@@ -8,7 +8,6 @@ namespace Noise.UI.Dto {
 		public	long					Artist { get; set; }
 		public	Int16					UserRating { get; set; }
 		public	Int16					CalculatedRating { get; set; }
-		public	Int16					MaxChildRating { get; set; }
 		public	Int16					TrackCount { get; set; }
 		public	long					CalculatedGenre { get; set; }
 		public	long					ExternalGenre { get; set; }

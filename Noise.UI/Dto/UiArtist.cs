@@ -11,7 +11,6 @@ namespace Noise.UI.Dto {
 		public long				UserGenre { get; set; }
 		public Int16			UserRating { get; set; }
 		public Int16			CalculatedRating { get; set; }
-		public Int16			MaxChildRating { get; set; }
 		public bool				IsFavorite { get; set; }
 		public bool				HasFavorites { get; set; }
 
