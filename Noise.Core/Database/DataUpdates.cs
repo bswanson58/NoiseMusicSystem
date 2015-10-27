@@ -146,15 +146,11 @@ namespace Noise.Core.Database {
 
 					using( var updater = mArtistProvider.GetArtistForUpdate( forAlbum.Artist )) {
 						if( updater.Item != null ) {
-							updater.Item.HasFavorites = false;
-
 							using( var albumList = mAlbumProvider.GetAlbumList( forAlbum.Artist )) {
-								if( albumList.List.Any( album => ( album.IsFavorite ) || ( album.HasFavorites ))) {
-									updater.Item.HasFavorites = true;
-								}
+								updater.Item.HasFavorites = albumList.List.Any( album => ( album.IsFavorite ) || ( album.HasFavorites ));
+		
+								updater.Update();
 							}
-						
-							updater.Update();
 						}
 					}
 				}
@@ -184,11 +180,7 @@ namespace Noise.Core.Database {
 					using( var albumUpdater = mAlbumProvider.GetAlbumForUpdate( forTrack.Album )) {
 						if( albumUpdater.Item != null ) {
 							using( var trackList = mTrackProvider.GetTrackList( forTrack.Album )) {
-								albumUpdater.Item.HasFavorites = false;
-
-								if( trackList.List.Any( t => ( t.IsFavorite ))) {
-									albumUpdater.Item.HasFavorites = true;
-								}
+								albumUpdater.Item.HasFavorites = trackList.List.Any( t => ( t.IsFavorite ));
 
 								albumUpdater.Update();
 							}
@@ -197,11 +189,7 @@ namespace Noise.Core.Database {
 							using( var artistUpdater = mArtistProvider.GetArtistForUpdate( albumUpdater.Item.Artist )) {
 								if( artistUpdater.Item != null ) {
 									using( var albumList = mAlbumProvider.GetAlbumList( albumUpdater.Item.Artist )) {
-										artistUpdater.Item.HasFavorites = false;
-
-										if( albumList.List.Any( a => ( a.IsFavorite ) || ( a.HasFavorites ))) {
-											artistUpdater.Item.HasFavorites = true;
-										}
+										artistUpdater.Item.HasFavorites = albumList.List.Any( a => ( a.IsFavorite ) || ( a.HasFavorites ));
 
 										artistUpdater.Update();
 									}
