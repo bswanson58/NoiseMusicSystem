@@ -19,7 +19,7 @@
 	
 	<UserControl.Resources>
 		<valueConverters:EmptyStringVisibilityConverter x:Key="CollapseIfStringEmpty" HideOnEmpty="True" IsHidden="False"/>
-		<valueConverters:NumericValueVisibilityConverter x:Key="CollapseIfZero" HideOnMatch="True" IsHidden="False" Value="0" />
+		<valueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="0.8" NullOpacity="0.4" FalseOpacity="0.0"/>
 
 		<ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
 			<Grid Margin="5,15,5,0">
@@ -74,8 +74,8 @@
 
 						<StackPanel Grid.Column="4" HorizontalAlignment="Right" Orientation="Horizontal">
 							<CheckBox x:Name="AlbumIsFavorite" Margin="0,0,3,0"
-										Opacity="{Binding Path=UiIsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
-										IsChecked="{Binding UiIsFavorite, Mode=TwoWay}"
+										Opacity="{Binding Path=FavoriteValue, Converter={StaticResource OpaqueIfFalse}}"
+										IsChecked="{Binding FavoriteValue, Mode=TwoWay}"
 										Style="{DynamicResource FavoriteCheckBoxStyle}" />
 							<Controls:RatingControl x:Name="AlbumRating" Margin="0,0,3,0"
 													Opacity="{Binding Path=UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"

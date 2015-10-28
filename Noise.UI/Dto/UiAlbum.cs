@@ -10,8 +10,6 @@ namespace Noise.UI.Dto {
 		public	long					CalculatedGenre { get; set; }
 		public	long					ExternalGenre { get; set; }
 		public	long					UserGenre { get; set; }
-		public	bool					IsFavorite { get; set; }
-		public	bool					HasFavorites { get; set; }
 		public	DbGenre					DisplayGenre { get ; set; }
 		private readonly Action<long>	mOnPlay;
 
@@ -33,6 +31,34 @@ namespace Noise.UI.Dto {
 		public Int32 PublishedYear {
 			get{ return( Get( () => PublishedYear )); }
 			set{ Set( () => PublishedYear, value ); }
+		}
+
+		public bool	IsFavorite {
+			get { return( Get(() => IsFavorite )); }
+			set {  Set( () => IsFavorite, value ); }
+		}
+
+		public bool	HasFavorites {
+			get { return( Get( () => HasFavorites )); }
+			set { Set( () => HasFavorites, value ); }
+		}
+
+		[DependsUpon("IsFavorite")]
+		[DependsUpon("HasFavorites")]
+		[DependsUpon("UiIsFavorite")]
+		public bool? FavoriteValue {
+			get {
+				bool? retValue = UiIsFavorite;
+
+				if(!retValue.Value ) {
+					if( HasFavorites ) {
+						retValue = null;
+					}
+				}
+
+				return( retValue );
+			}
+			set { UiIsFavorite = !UiIsFavorite; }
 		}
 
 		public Int16 CalculatedRating {

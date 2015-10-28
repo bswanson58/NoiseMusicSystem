@@ -147,6 +147,7 @@
     <Compile Include="Localization\ResourceManagerExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueConverters\BaseValueConverter.cs" />
+    <Compile Include="ValueConverters\NullableBooleanOpacityConverter.cs" />
     <Compile Include="ValueConverters\BooleanVisibilityConverter.cs" />
     <Compile Include="ValueConverters\ByteImageConverter.cs" />
     <Compile Include="ValueConverters\DefaultValueOpacityConverter.cs" />

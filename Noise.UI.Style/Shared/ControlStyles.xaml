@@ -616,7 +616,7 @@
 								<VisualState x:Name="Indeterminate">
 									<Storyboard>
 										<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="Favorite">
-											<EasingColorKeyFrame KeyTime="0" Value="#FF8DA6D8"/>
+											<EasingColorKeyFrame KeyTime="0" Value="#B03563FB"/>
 										</ColorAnimationUsingKeyFrames>
 									</Storyboard>
 								</VisualState>

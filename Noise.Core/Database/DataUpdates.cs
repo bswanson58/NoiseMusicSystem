@@ -151,6 +151,8 @@ namespace Noise.Core.Database {
 		
 								updater.Update();
 							}
+
+							mEventAggregator.Publish( new Events.ArtistUserUpdate( forAlbum.Artist ));
 						}
 					}
 				}
@@ -184,6 +186,7 @@ namespace Noise.Core.Database {
 
 								albumUpdater.Update();
 							}
+							mEventAggregator.Publish( new Events.AlbumUserUpdate( forTrack.Album ));
 
 
 							using( var artistUpdater = mArtistProvider.GetArtistForUpdate( albumUpdater.Item.Artist )) {
@@ -193,6 +196,8 @@ namespace Noise.Core.Database {
 
 										artistUpdater.Update();
 									}
+
+									mEventAggregator.Publish( new Events.ArtistUserUpdate( albumUpdater.Item.Artist ));
 								}
 							}
 						}

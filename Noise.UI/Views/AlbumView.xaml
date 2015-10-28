@@ -18,6 +18,7 @@
 
 	<UserControl.Resources>
 		<ValueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.3"/>
+		<ValueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="0.8" FalseOpacity="0.3"/>
 		<ValueConverters:BooleanVisibilityConverter x:Key="CollapseIfTrue" TriggerValue="True" IsHidden="False"/>
 		<ValueConverters:BooleanVisibilityConverter x:Key="VisibleIfTrue" TriggerValue="False" IsHidden="False"/>
 		<ValueConverters:NumericValueVisibilityConverter x:Key="HideIfZero" HideOnMatch="True" IsHidden="True"/>
@@ -69,8 +70,8 @@
 					<!--  Favorite and rating  -->
 					<StackPanel x:Name="_ratingPanel" Grid.Row="1" Margin="0,7,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
 						<CheckBox x:Name="_favoriteControl" Margin="0,0,7,1" VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}"
-								  Opacity="{Binding Path=Album.UiIsFavorite, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"   
-								  IsChecked="{Binding Path=Album.UiIsFavorite, Mode=TwoWay}" />
+								  Opacity="{Binding Path=Album.FavoriteValue, Mode=TwoWay, Converter={StaticResource OpaqueIfFalse}}"   
+								  IsChecked="{Binding Path=Album.FavoriteValue, Mode=TwoWay}" />
 						<Controls:RatingControl x:Name="_ratingControl" Style="{StaticResource NoiseRatingStyle}" 
 												Opacity="{Binding Album.UiRating, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"   
 												Rating="{Binding Album.UiRating, Mode=TwoWay}" UseAlternate="{Binding Album.UseAlternateRating}"/>
@@ -96,7 +97,7 @@
 								<BeginStoryboard >
 									<Storyboard Storyboard.TargetName="_favoriteControl" Storyboard.TargetProperty="Opacity">
 										<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
-											<LinearDoubleKeyFrame Value="{Binding Path=Album.UiIsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}" 
+											<LinearDoubleKeyFrame Value="{Binding Path=Album.FavoriteValue, Converter={StaticResource OpaqueIfFalse}}" 
 																  KeyTime="0:0:0.7" />
 										</DoubleAnimationUsingKeyFrames>
 									</Storyboard>
