@@ -18,7 +18,7 @@
 	</UserControl.DataContext>
 	
 	<UserControl.Resources>
-		<ValueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="0.8" NullOpacity="0.4" FalseOpacity="0.0"/>
+		<ValueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.0"/>
 
 		<Style x:Key="ListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
 			<Setter Property="Padding" Value="1"/>

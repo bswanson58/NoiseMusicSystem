@@ -577,6 +577,8 @@
 		<Setter Property="Background" Value="{StaticResource CheckBoxFillNormal}"/>
 		<Setter Property="BorderBrush" Value="{StaticResource CheckBoxStroke}"/>
 		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="Height" Value="18"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
 		<Setter Property="FocusVisualStyle" Value="{StaticResource EmptyCheckBoxFocusVisual}"/>
 		<Setter Property="Template">
 			<Setter.Value>
@@ -616,14 +618,24 @@
 								<VisualState x:Name="Indeterminate">
 									<Storyboard>
 										<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="Favorite">
-											<EasingColorKeyFrame KeyTime="0" Value="#B03563FB"/>
+											<EasingColorKeyFrame KeyTime="0" Value="#FF3553FB"/>
 										</ColorAnimationUsingKeyFrames>
+										<StringAnimationUsingKeyFrames Storyboard.TargetProperty="Text" Storyboard.TargetName="Favorite">
+											<DiscreteStringKeyFrame KeyTime="0" Value="J"/>
+										</StringAnimationUsingKeyFrames>
+										<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.FontFamily)" Storyboard.TargetName="Favorite">
+											<DiscreteObjectKeyFrame KeyTime="0">
+												<DiscreteObjectKeyFrame.Value>
+													<FontFamily>Wingdings</FontFamily>
+												</DiscreteObjectKeyFrame.Value>
+											</DiscreteObjectKeyFrame>
+										</ObjectAnimationUsingKeyFrames>
 									</Storyboard>
 								</VisualState>
 							</VisualStateGroup>
 						</VisualStateManager.VisualStateGroups>
-						<TextBlock x:Name="Favorite" TextWrapping="Wrap" d:LayoutOverrides="Width, Height" Text="Y" FontFamily="Webdings" FontSize="16" Foreground="#FF6E7B95"/>
-						<TextBlock x:Name="Shine" TextWrapping="Wrap" Text="Y" d:LayoutOverrides="Width, Height" Panel.ZIndex="1" FontFamily="Webdings" FontSize="16" Opacity="0">
+						<TextBlock x:Name="Favorite" TextWrapping="Wrap" Text="Y" FontFamily="Webdings" FontSize="16" Foreground="#FF6E7B95"/>
+						<TextBlock x:Name="Shine" TextWrapping="Wrap" Text="Y" FontFamily="Webdings" FontSize="16" Opacity="0" Panel.ZIndex="1">
 							<TextBlock.Foreground>
 								<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
 									<LinearGradientBrush.RelativeTransform>
