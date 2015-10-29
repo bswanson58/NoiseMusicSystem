@@ -329,7 +329,8 @@
 
 						<!--  Playing position  -->
 						<TextBlock Grid.Column="7" Foreground="{DynamicResource ControlTextColor}" Text="Position: " />
-						<TextBlock Grid.Column="8" Margin="0,0,7,0" ToolTip="Click to change the display format of the position time"
+						<TextBlock Grid.Column="8" Margin="0,0,7,0" Style="{StaticResource ControlTitleStyle}" Foreground="{StaticResource SmallTextBrush}" FontWeight="Bold"
+								   ToolTip="Click to change the display format of the position time"
 								   Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}">
 							<EventCommandTriggers:CommandSource.Trigger>
 								<EventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
