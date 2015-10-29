@@ -35,16 +35,8 @@ namespace Noise.UI.ViewModels {
 			set {  Set( () => AlbumName, value ); }
 		}
 
-		public byte[] AlbumImage {
-			get {
-				byte[]	retValue = null;
-
-				if( mAlbumCover != null ) {
-					retValue = mAlbumCover.Image;
-				}
-
-				return( retValue );
-			}
+		public Artwork AlbumImage {
+			get { return( mAlbumCover ); }
 		}
 
 		private void ClearAlbum() {
