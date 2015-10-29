@@ -18,6 +18,7 @@ namespace Noise.UI.ViewModels {
 		private DbAlbum							mCurrentAlbum;
 		private Artwork							mAlbumCover;
 		private int								mImageIndex;
+		private int								mArtworkInterval;
 
 		public PlayingAlbumViewModel( IEventAggregator eventAggregator, IAlbumArtworkProvider artworkProvider, IPlayQueue playQueue, IUiLog log ) {
 			mArtworkProvider = artworkProvider;
@@ -39,6 +40,14 @@ namespace Noise.UI.ViewModels {
 			get { return( mAlbumCover ); }
 		}
 
+		public void Handle( Events.PlaybackTrackChanged args ) {
+			UpdateAlbum();
+		}
+
+		public void Handle( Events.PlaybackTrackUpdated args ) {
+			UpdateAlbum();
+		}
+
 		private void ClearAlbum() {
 			mCurrentAlbum = null;
 			mAlbumCover = null;
@@ -47,37 +56,6 @@ namespace Noise.UI.ViewModels {
 			StopArtworkTimer();
 
 			RaisePropertyChanged( () => AlbumImage );
-		}
-
-		private void SetAlbum( DbAlbum album ) {
-			ClearAlbum();
-			mCurrentAlbum = album;
-
-			if( mCurrentAlbum != null ) {
-				AlbumName = mCurrentAlbum.Name;
-				mImageIndex = 0;
-
-				RetrieveAlbumArtwork( mCurrentAlbum );
-
-				if( mArtworkProvider.ImageCount( mCurrentAlbum ) > 1 ) {
-					StartArtworkTimer();
-				}
-			}
-		}
-
-		private void SetAlbumArtwork( Artwork artwork ) {
-			mAlbumCover = artwork;
-			mImageIndex++;
-
-			RaisePropertyChanged( () => AlbumImage );
-		}
-
-		public void Handle( Events.PlaybackTrackChanged args ) {
-			UpdateAlbum();
-		}
-
-		public void Handle( Events.PlaybackTrackUpdated args ) {
-			UpdateAlbum();
 		}
 
 		private void UpdateAlbum() {
@@ -97,6 +75,18 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+		private void SetAlbum( DbAlbum album ) {
+			ClearAlbum();
+			mCurrentAlbum = album;
+
+			if( mCurrentAlbum != null ) {
+				AlbumName = mCurrentAlbum.Name;
+				mImageIndex = 0;
+
+				RetrieveAlbumArtwork( mCurrentAlbum );
+			}
+		}
+
 		internal TaskHandler<Artwork> ArtworkRetrievalTaskHandler {
 			get {
 				if( mArtworkTaskHandler == null ) {
@@ -111,11 +101,36 @@ namespace Noise.UI.ViewModels {
 
 		private void RetrieveAlbumArtwork( DbAlbum forAlbum ) {
 			ArtworkRetrievalTaskHandler.StartTask( 
-				() => ( mImageIndex == 0 ? mArtworkProvider.GetAlbumCover( forAlbum ) : mArtworkProvider.GetNextAlbumArtwork( forAlbum, mImageIndex )),
+				() => ( GetArtwork( forAlbum )),
 				SetAlbumArtwork,
 				exception => mLog.LogException( string.Format( "Retrieving Album Artwork for album:{0}", forAlbum.Name ), exception ) );
 		}
+
+		private Artwork GetArtwork( DbAlbum forAlbum ) {
+			var artworkCount = mArtworkProvider.ImageCount( forAlbum );
+			
+			mArtworkInterval = artworkCount > 0 ? 31000 : 0;
+			mArtworkInterval = artworkCount > 2 ? 21000 : mArtworkInterval;
+			mArtworkInterval = artworkCount > 4 ? 16000 : mArtworkInterval;
+			mArtworkInterval = artworkCount > 8 ? 9000 : mArtworkInterval;
+			mArtworkInterval = artworkCount > 12 ? 6000 : mArtworkInterval;
+
+			return( mImageIndex == 0 ? mArtworkProvider.GetAlbumCover( forAlbum ) : mArtworkProvider.GetNextAlbumArtwork( forAlbum, mImageIndex ));
+		}
+
+		private void SetAlbumArtwork( Artwork artwork ) {
+			mAlbumCover = artwork;
+			mImageIndex++;
+
+			RaisePropertyChanged( () => AlbumImage );
+
+			if( mArtworkInterval > 0 ) {
+				StartArtworkTimer();
+			}
+		}
+
 		private void StartArtworkTimer() {
+			mTimer.Interval = mArtworkInterval;
 			mTimer.Start();
 		}
 

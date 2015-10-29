@@ -22,7 +22,7 @@ namespace Noise.UI.ViewModels {
 			mArtworkProvider = artworkProvider;
 			mPlayQueue = playQueue;
 			mLog = log;
-			mTimer = new Timer { AutoReset = true, Interval = 20000, Enabled = false };
+			mTimer = new Timer { AutoReset = true, Interval = 25000, Enabled = false };
 			mTimer.Elapsed += OnTimer;
 
 			UpdateArtist();
