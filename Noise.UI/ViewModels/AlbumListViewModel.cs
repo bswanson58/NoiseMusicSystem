@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Data;
 using AutoMapper;
 using Caliburn.Micro;
+using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -19,7 +20,7 @@ using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	internal class AlbumListViewModel : AutomaticCommandBase,
+	internal class AlbumListViewModel : AutomaticCommandBase, IActiveAware,
 										IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>,
 										IHandle<Events.AlbumUserUpdate> {
 		private const string							cDisplaySortDescriptionss = "_displaySortDescriptions";
@@ -37,9 +38,12 @@ namespace Noise.UI.ViewModels {
 		private DbArtist								mCurrentArtist;
 		private TaskHandler<IEnumerable<UiAlbum>>		mAlbumRetrievalTaskHandler;
 		private CancellationTokenSource					mCancellationTokenSource;
+		private bool									mIsActive;
 		private bool									mRetrievingAlbums;
 		private long									mAlbumToSelect;
  
+		public	event	EventHandler					IsActiveChanged = delegate { };
+
 		public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, ISelectionState selectionState, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
@@ -72,6 +76,25 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.Subscribe( this );
 		}
 
+		public bool IsActive {
+			get{ return( mIsActive ); }
+			set {
+				mIsActive = value;
+
+				IsActiveChanged( this, new EventArgs());
+
+				if( mIsActive ) {
+					if( mSelectionState.CurrentArtist != null ) {
+						RetrieveAlbums( mSelectionState.CurrentArtist );
+					}
+				}
+				else {
+					CancelRetrievalTask();
+					ClearAlbumList();
+				}
+			}
+		}
+
 		public void Handle( Events.DatabaseOpened args ) {
 			FilterText = string.Empty;
 		}
@@ -89,7 +112,9 @@ namespace Noise.UI.ViewModels {
 
 		private void OnArtistChanged( DbArtist artist ) {
 			if( artist != null ) {
-				RetrieveAlbums( artist );
+				if( IsActive ) {
+					RetrieveAlbums( artist );
+				}
 			}
 			else {
 				ClearAlbumList();
@@ -239,7 +264,7 @@ namespace Noise.UI.ViewModels {
 			VisualStateName = VisualStateName == cHideSortDescriptions ? cDisplaySortDescriptionss : cHideSortDescriptions;
 		}
 
-		internal TaskHandler<IEnumerable<UiAlbum>>  AlbumsRetrievalTaskHandler {
+		internal TaskHandler<IEnumerable<UiAlbum>> AlbumsRetrievalTaskHandler {
 			get {
 				if( mAlbumRetrievalTaskHandler == null ) {
 					Execute.OnUIThread( () => mAlbumRetrievalTaskHandler = new TaskHandler<IEnumerable<UiAlbum>>());
