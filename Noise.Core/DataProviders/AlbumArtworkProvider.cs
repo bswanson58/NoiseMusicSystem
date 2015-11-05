@@ -15,8 +15,10 @@ namespace Noise.Core.DataProviders {
 		}
 
 		public Artwork GetAlbumCover( DbAlbum forAlbum ) {
+			Artwork	cover = null;
+
+			if( forAlbum != null ) {
 				var albumInfo = mAlbumProvider.GetAlbumSupportInfo( forAlbum.DbId );
-				Artwork	cover = null;
 
 				if(( albumInfo.AlbumCovers != null ) &&
 				   ( albumInfo.AlbumCovers.GetLength( 0 ) > 0 )) {
@@ -37,8 +39,9 @@ namespace Noise.Core.DataProviders {
 						cover = albumInfo.Artwork[0];
 					}
 				}
+			}
 
-				return( cover );
+			return( cover );
 		}
 
 		public Artwork GetNextAlbumArtwork( DbAlbum forAlbum, int index ) {

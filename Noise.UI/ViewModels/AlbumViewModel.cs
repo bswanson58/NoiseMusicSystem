@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Media.Imaging;
 using AutoMapper;
 using Caliburn.Micro;
@@ -39,6 +40,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IUiLog						mLog;
 		private readonly ISelectionState			mSelectionState;
 		private readonly IAlbumProvider				mAlbumProvider;
+		private readonly IAlbumArtworkProvider		mAlbumArtworkProvider;
 		private readonly ITrackProvider				mTrackProvider;
 		private readonly IArtworkProvider			mArtworkProvider;
 		private readonly IResourceProvider			mResourceProvider;
@@ -55,6 +57,7 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<string>	mVolumeNames;
 		private string								mCurrentVolumeName;
 		private TaskHandler							mAlbumRetrievalTaskHandler;
+		private CancellationTokenSource				mCancellationTokenSource;
 
 		private readonly InteractionRequest<AlbumEditRequest>			mAlbumEditRequest; 
 		private readonly InteractionRequest<AlbumArtworkDisplayInfo>	mAlbumArtworkDisplayRequest;
@@ -63,12 +66,13 @@ namespace Noise.UI.ViewModels {
 		public	TimeSpan						AlbumPlayTime { get; private set; }
 
 		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, ISelectionState selectionState,
-							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider,
+							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IAlbumArtworkProvider albumArtworkProvider, IArtworkProvider artworkProvider,
 							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mSelectionState = selectionState;
 			mAlbumProvider = albumProvider;
+			mAlbumArtworkProvider = albumArtworkProvider;
 			mTrackProvider = trackProvider;
 			mArtworkProvider = artworkProvider;
 			mStorageFolderSupport = storageFolderSupport;
@@ -152,8 +156,11 @@ namespace Noise.UI.ViewModels {
 
 		private void SetAlbum( DbAlbum album ) {
 			if( album != null ) {
-			    mCurrentAlbum = TransformAlbum( album );
+				if( mCurrentAlbum != null ) {
+					mChangeObserver.Release( mCurrentAlbum );
+				}
 
+			    mCurrentAlbum = TransformAlbum( album );
 				mChangeObserver.Add( mCurrentAlbum );
 			}
 			else {
@@ -163,20 +170,29 @@ namespace Noise.UI.ViewModels {
 			RaisePropertyChanged( () => Album );
 		}
 
-		private void SetAlbumSupportInfo( AlbumSupportInfo supportInfo ) {
+		private void SetAlbumInfo( DbAlbum album, AlbumSupportInfo supportInfo ) {
 			Execute.OnUIThread( () => {
-				mCurrentAlbumCover = SelectAlbumCover( supportInfo );
+				SetAlbum( album );
+				mCurrentAlbumCover = SelectAlbumCover( album );
 				SupportInfo = supportInfo;
 			});
 		}
 
+		private ImageScrubberItem SelectAlbumCover( DbAlbum forAlbum ) {
+			var	retValue = new ImageScrubberItem( 0, mUnknownImage, 0 );
+			var cover = mAlbumArtworkProvider.GetAlbumCover( forAlbum );
+
+			if( cover != null ) {
+				retValue = new ImageScrubberItem( cover.DbId, ByteImageConverter.CreateBitmap( cover.Image ), cover.Rotation );
+			}
+
+			return( retValue );
+		}
+
 		private void SetTrackList( IEnumerable<DbTrack> tracks ) {
 			var trackList = tracks.ToList();
-			AlbumPlayTime = new TimeSpan();
 
-			foreach( var dbTrack in trackList ) {
-				AlbumPlayTime += dbTrack.Duration;
-			}
+			AlbumPlayTime = TimeSpan.FromMilliseconds( trackList.Sum( track => track.DurationMilliseconds ));
 
 			mVolumeNames.AddRange(( from track in trackList 
 									where !string.IsNullOrWhiteSpace( track.VolumeName ) 
@@ -235,68 +251,51 @@ namespace Noise.UI.ViewModels {
 			set{ mAlbumRetrievalTaskHandler = value; }
 		}
 
-		private void RetrieveAlbum( long albumId ) {
-			AlbumRetrievalTaskHandler.StartTask( () => {
-					SetAlbum( mAlbumProvider.GetAlbum( albumId ));
-					SetAlbumSupportInfo( mAlbumProvider.GetAlbumSupportInfo( albumId ));
+		private CancellationToken GenerateCanellationToken() {
+			mCancellationTokenSource = new CancellationTokenSource();
 
-					using( var trackList = mTrackProvider.GetTrackList( albumId )) {
-						if(( trackList != null ) &&
-						   ( trackList.List != null )) {
-							SetTrackList( trackList.List );
+			return( mCancellationTokenSource.Token );
+		}
+
+		private void CancelRetrievalTask() {
+			if( mCancellationTokenSource != null ) {
+				mCancellationTokenSource.Cancel();
+				mCancellationTokenSource = null;
+			}
+		}
+
+		private void RetrieveAlbum( long albumId ) {
+			CancelRetrievalTask();
+
+			var cancellationToken = GenerateCanellationToken();
+
+			AlbumRetrievalTaskHandler.StartTask( () => {
+					if(!cancellationToken.IsCancellationRequested ) {
+						SetAlbumInfo(  mAlbumProvider.GetAlbum( albumId ),
+									   mAlbumProvider.GetAlbumSupportInfo( albumId ));
+					}
+
+					if(!cancellationToken.IsCancellationRequested ) {
+						using( var trackList = mTrackProvider.GetTrackList( albumId )) {
+							if(( trackList != null ) &&
+							   ( trackList.List != null )) {
+								SetTrackList( trackList.List );
+							}
 						}
 					}
 
-					using( var categoryList = mAlbumProvider.GetAlbumCategories( albumId )) {
-						if(( categoryList != null ) &&
-						   ( categoryList.List != null )) {
-							SetAlbumCategories( categoryList.List );
+					if(!cancellationToken.IsCancellationRequested ) {
+						using( var categoryList = mAlbumProvider.GetAlbumCategories( albumId )) {
+							if(( categoryList != null ) &&
+							   ( categoryList.List != null )) {
+								SetAlbumCategories( categoryList.List );
+							}
 						}
 					}
 				},
 				() => { },
-				ex => mLog.LogException( string.Format( "Retrieving Album:{0}", albumId ), ex )
-			); 
-		}
-
-		private ImageScrubberItem SelectAlbumCover( AlbumSupportInfo info ) {
-			var	retValue = new ImageScrubberItem( 0, mUnknownImage, 0 );
-
-			if( info != null ) {
-				Artwork	cover = null;
-
-				if(( info.AlbumCovers != null ) &&
-				   ( info.AlbumCovers.GetLength( 0 ) > 0 )) {
-					cover = (( from Artwork artwork in info.AlbumCovers where artwork.IsUserSelection select artwork ).FirstOrDefault() ??
-							 ( from Artwork artwork in info.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
-							 ( from Artwork artwork in info.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault()) ??
-								info.AlbumCovers[0];
-				}
-
-				if(( cover == null ) &&
-				   ( info.Artwork != null ) &&
-				   ( info.Artwork.GetLength( 0 ) > 0 )) {
-					cover = ( from Artwork artwork in info.Artwork
-							  where artwork.Name.IndexOf( "front", StringComparison.InvariantCultureIgnoreCase ) >= 0 select artwork ).FirstOrDefault();
-
-					if(( cover == null ) &&
-					   ( info.Artwork.GetLength( 0 ) == 1 )) {
-						cover = info.Artwork[0];
-					}
-				}
-
-				if( cover != null ) {
-					retValue = new ImageScrubberItem( cover.DbId, ByteImageConverter.CreateBitmap( cover.Image ), cover.Rotation );
-				}
-				else {
-					if(( info.Artwork != null ) &&
-					   ( info.Artwork.GetLength( 0 ) > 0 )) {
-						retValue = new ImageScrubberItem( 1, mSelectImage, 0 );
-					}
-				}
-			}
-
-			return( retValue );
+				ex => mLog.LogException( string.Format( "Retrieving Album:{0}", albumId ), ex ),
+				cancellationToken ); 
 		}
 
 		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
