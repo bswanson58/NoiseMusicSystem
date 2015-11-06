@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using AutoMapper;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
@@ -22,15 +23,16 @@ namespace Noise.UI.ViewModels {
 
 	internal class AlbumTracksViewModel : AutomaticPropertyBase,
 										  IHandle<Events.DatabaseClosing>, IHandle<Events.TrackUserUpdate> {
-		private readonly IEventAggregator		mEventAggregator;
-		private readonly IUiLog					mLog;
-		private readonly ISelectionState		mSelectionState;
-		private readonly ITrackProvider			mTrackProvider;
-		private long							mCurrentAlbumId;
-		private TaskHandler						mTrackRetrievalTaskHandler;
-		private readonly Observal.Observer		mChangeObserver;
+		private readonly IEventAggregator				mEventAggregator;
+		private readonly IUiLog							mLog;
+		private readonly ISelectionState				mSelectionState;
+		private readonly ITrackProvider					mTrackProvider;
+		private readonly Observal.Observer				mChangeObserver;
 		private readonly BindableCollection<UiTrack>	mTracks;
 		private readonly InteractionRequest<TrackEditInfo>	mTrackEditRequest; 
+		private TaskHandler<IEnumerable<UiTrack>>		mTrackRetrievalTaskHandler;
+		private CancellationTokenSource					mCancellationTokenSource;
+		private long									mCurrentAlbumId;
 
 		public AlbumTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, ITrackProvider trackProvider, IUiLog log ) {
 			mEventAggregator = eventAggregator;
@@ -51,41 +53,6 @@ namespace Noise.UI.ViewModels {
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
 		}
 
-		private UiTrack TransformTrack( DbTrack dbTrack ) {
-			var retValue = new UiTrack( OnTrackPlay, OnTrackEdit  );
-
-			if( dbTrack != null ) {
-				Mapper.DynamicMap( dbTrack, retValue );
-			}
-
-			return( retValue );
-		}
-
-		private void ClearTrackList() {
-			foreach( var track in mTracks ) {
-				mChangeObserver.Release( track );
-			}
-			mTracks.Clear();
-			mCurrentAlbumId = Constants.cDatabaseNullOid;
-
-			AlbumPlayTime = new TimeSpan();
-		}
-
-		private void SetTrackList( long albumId, IEnumerable<DbTrack> trackList ) {
-			ClearTrackList();
-
-			foreach( var dbTrack in trackList ) {
-				mTracks.Add( TransformTrack( dbTrack ));
-
-				AlbumPlayTime += dbTrack.Duration;
-			}
-			mCurrentAlbumId = albumId;
-
-			foreach( var track in mTracks ) {
-				mChangeObserver.Add( track );
-			}
-		}
- 
 		public void Handle( Events.DatabaseClosing args ) {
 			ClearTrackList();
 		}
@@ -112,10 +79,10 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		internal TaskHandler TracksRetrievalTaskHandler {
+		internal TaskHandler<IEnumerable<UiTrack>>  TracksRetrievalTaskHandler {
 			get {
 				if( mTrackRetrievalTaskHandler == null ) {
-					Execute.OnUIThread( () => mTrackRetrievalTaskHandler = new TaskHandler());
+					Execute.OnUIThread( () => mTrackRetrievalTaskHandler = new TaskHandler<IEnumerable<UiTrack>> ());
 				}
 
 				return( mTrackRetrievalTaskHandler );
@@ -123,17 +90,83 @@ namespace Noise.UI.ViewModels {
 			set{ mTrackRetrievalTaskHandler = value; }
 		}
 
+		private CancellationToken GenerateCanellationToken() {
+			mCancellationTokenSource = new CancellationTokenSource();
+
+			return( mCancellationTokenSource.Token );
+		}
+
+		private void CancelRetrievalTask() {
+			if( mCancellationTokenSource != null ) {
+				mCancellationTokenSource.Cancel();
+				mCancellationTokenSource = null;
+			}
+		}
+
+		private void ClearCurrentTask() {
+			mCancellationTokenSource = null;
+		}
+
 		private void RetrieveTracks( long forAlbumId ) {
-			TracksRetrievalTaskHandler.StartTask( () => {
-														using( var tracks = mTrackProvider.GetTrackList( forAlbumId )) {
-															var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
-																								orderby track.VolumeName, track.TrackNumber 
-																								ascending select track );
-															SetTrackList( forAlbumId, sortedList );
-														}
-													},
-													() => {},
-													ex => mLog.LogException( string.Format( "Retrieve tracks for {0}", forAlbumId ), ex ));
+			CancelRetrievalTask();
+	
+			var cancellationToken = GenerateCanellationToken();
+
+			TracksRetrievalTaskHandler.StartTask( () => LoadTracks( forAlbumId, cancellationToken ),
+												albumList => UpdateUi( albumList, forAlbumId ),
+												ex => mLog.LogException( string.Format( "Retrieve tracks for {0}", forAlbumId ), ex ),
+												cancellationToken );
+		}
+
+		private IEnumerable<UiTrack> LoadTracks( long albumId, CancellationToken cancellationToken ) {
+			var retValue = new List<UiTrack>();
+
+			using( var tracks = mTrackProvider.GetTrackList( albumId )) {
+				if(!cancellationToken.IsCancellationRequested ) {
+					var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
+														orderby track.VolumeName, track.TrackNumber 
+														ascending select track );
+
+					retValue.AddRange( sortedList.Select( TransformTrack ));
+				}
+			}
+
+			return( retValue );
+		}
+
+		private void UpdateUi( IEnumerable<UiTrack> trackList, long albumId ) {
+			ClearTrackList();
+
+			mTracks.AddRange( trackList );
+			mCurrentAlbumId = albumId;
+			AlbumPlayTime = TimeSpan.FromSeconds( mTracks.Sum( track => track.Duration.TotalSeconds ));
+
+			foreach( var track in mTracks ) {
+				mChangeObserver.Add( track );
+			}
+
+			ClearCurrentTask();
+		}
+
+		private UiTrack TransformTrack( DbTrack dbTrack ) {
+			var retValue = new UiTrack( OnTrackPlay, OnTrackEdit  );
+
+			if( dbTrack != null ) {
+				Mapper.DynamicMap( dbTrack, retValue );
+			}
+
+			return( retValue );
+		}
+
+		private void ClearTrackList() {
+			foreach( var track in mTracks ) {
+				mChangeObserver.Release( track );
+			}
+
+			mTracks.Clear();
+			mCurrentAlbumId = Constants.cDatabaseNullOid;
+
+			AlbumPlayTime = new TimeSpan();
 		}
 
 		private void OnTrackPlay( long trackId ) {

@@ -292,6 +292,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>StringResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Support\ActiveAwareHelper.cs" />
     <Compile Include="Support\BindingErrorListener.cs" />
     <Compile Include="Support\DialogModelBase.cs" />
     <Compile Include="Support\DialogNames.cs" />

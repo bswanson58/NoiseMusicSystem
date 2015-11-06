@@ -70,7 +70,7 @@ namespace Noise.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} Albums.
+        ///   Looks up a localized string similar to {0:N0} Albums.
         /// </summary>
         internal static string AlbumTitlePlural {
             get {
@@ -88,7 +88,7 @@ namespace Noise.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} Artists.
+        ///   Looks up a localized string similar to {0:N0} Artists.
         /// </summary>
         internal static string ArtistTitlePlural {
             get {

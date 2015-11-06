@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
@@ -25,6 +26,7 @@ namespace Noise.UI.ViewModels {
 		private long									mCurrentArtistId;
 		private string									mCurrentArtistName;
 		private TaskHandler								mTaskHandler; 
+		private CancellationTokenSource					mCancellationTokenSource;
 		private readonly Random							mRandom;
 		private readonly BindableCollection<LinkNode>	mSimilarArtists;
 		private readonly BindableCollection<LinkNode>	mTopAlbums;
@@ -139,7 +141,28 @@ namespace Noise.UI.ViewModels {
 			set { mTaskHandler = value; }
 		} 
 
+		private CancellationToken GenerateCanellationToken() {
+			mCancellationTokenSource = new CancellationTokenSource();
+
+			return( mCancellationTokenSource.Token );
+		}
+
+		private void CancelRetrievalTask() {
+			if( mCancellationTokenSource != null ) {
+				mCancellationTokenSource.Cancel();
+				mCancellationTokenSource = null;
+			}
+		}
+
+		private void ClearCurrentTask() {
+			mCancellationTokenSource = null;
+		}
+
 		private void RetrieveArtistMetadata( string artistName ) {
+			CancelRetrievalTask();
+
+			var cancellationToken = GenerateCanellationToken();
+
 			TaskHandler.StartTask( () => {
 									if(!mArtistList.Any()) {
 										using( var artistList = mArtistProvider.GetArtistList()) {
@@ -147,43 +170,59 @@ namespace Noise.UI.ViewModels {
 										}
 									}
 
-									var info = mMetadataManager.GetArtistMetadata( artistName );
+									if( !cancellationToken.IsCancellationRequested ) {
+										var info = mMetadataManager.GetArtistMetadata( artistName );
 
-									ArtistBiography = info.GetMetadata( eMetadataType.Biography );
+										ArtistBiography = info.GetMetadata( eMetadataType.Biography );
 
-									mBandMembers.Clear();
-									// current members
-									mBandMembers.AddRange( from m in info.GetMetadataArray( eMetadataType.BandMembers ) where !m.StartsWith( "-" ) && !m.StartsWith( "(" ) orderby m select m );
-									// other groups
-									mBandMembers.AddRange( from m in info.GetMetadataArray( eMetadataType.BandMembers ) where m.StartsWith( "(" ) orderby m select m );
-									// past members
-									mBandMembers.AddRange( from m in info.GetMetadataArray( eMetadataType.BandMembers ) where m.StartsWith( "-" ) orderby m select m );
+										if( !cancellationToken.IsCancellationRequested ) {
+											mBandMembers.Clear();
+											// current members
+											mBandMembers.AddRange( from m in info.GetMetadataArray( eMetadataType.BandMembers ) where !m.StartsWith( "-" ) && !m.StartsWith( "(" ) orderby m select m );
+											// other groups
+											mBandMembers.AddRange( from m in info.GetMetadataArray( eMetadataType.BandMembers ) where m.StartsWith( "(" ) orderby m select m );
+											// past members
+											mBandMembers.AddRange( from m in info.GetMetadataArray( eMetadataType.BandMembers ) where m.StartsWith( "-" ) orderby m select m );
+										}
 
-									mTopAlbums.Clear();
-									mTopAlbums.AddRange( info.GetMetadataArray( eMetadataType.TopAlbums ).Select( item => new LinkNode( item )));
+										if( !cancellationToken.IsCancellationRequested ) {
+											mTopAlbums.Clear();
+											mTopAlbums.AddRange( info.GetMetadataArray( eMetadataType.TopAlbums ).Select( item => new LinkNode( item )));
+										}
 
-									var discography = mMetadataManager.GetArtistDiscography( artistName );
-									mDiscography.Clear();
-									mDiscography.AddRange( from d in discography.Discography orderby d.Year descending select  d );
+										if( !cancellationToken.IsCancellationRequested ) {
+											var discography = mMetadataManager.GetArtistDiscography( artistName );
+									
+											mDiscography.Clear();
+											mDiscography.AddRange( from d in discography.Discography orderby d.Year descending select  d );
+										}
 
-									mSimilarArtists.Clear();
-									var similarArtistList = info.GetMetadataArray( eMetadataType.SimilarArtists );
-									foreach( var similarArtist in similarArtistList ) {
-										var matchingArtist = ( from artist in mArtistList where artist.Name == similarArtist select artist ).FirstOrDefault();
+										if( !cancellationToken.IsCancellationRequested ) {
+											mSimilarArtists.Clear();
+											mSimilarArtists.AddRange( LinkSimiliarArtists( info.GetMetadataArray( eMetadataType.SimilarArtists ), cancellationToken ));
+										}
 
-										mSimilarArtists.Add( matchingArtist != null ? new LinkNode( similarArtist, matchingArtist.DbId, OnSimilarArtistClicked ) :
-																					  new LinkNode( similarArtist ) );
+										if( !cancellationToken.IsCancellationRequested ) {
+											mTopTracks.Clear();
+											mTopTracks.AddRange( LinkTopTracks( info.GetMetadataArray( eMetadataType.TopTracks ), cancellationToken ));
+										}
 									}
 
-									mTopTracks.Clear();
-									mTopTracks.AddRange( LinkTopTracks( info.GetMetadataArray( eMetadataType.TopTracks )));
+									ClearCurrentTask();
 								},
 								() => ArtistValid = true,
-										exception => mLog.LogException( string.Format( "RetrieveSupportInfo for \"{0}\"", artistName ), exception )
-				);
+								exception => mLog.LogException( string.Format( "RetrieveSupportInfo for \"{0}\"", artistName ), exception ),
+								cancellationToken );
 		}
 
-		private IEnumerable<LinkNode> LinkTopTracks( IEnumerable<string> topTracks ) {
+		private IEnumerable<LinkNode> LinkSimiliarArtists( IEnumerable<string> similarArtistList, CancellationToken cancellationToken ) {
+			return( from similarArtist in similarArtistList.TakeWhile( similarArtist => !cancellationToken.IsCancellationRequested )
+					let matchingArtist = ( from artist in mArtistList where artist.Name == similarArtist select artist ).FirstOrDefault()
+					select matchingArtist != null ? new LinkNode( similarArtist, matchingArtist.DbId, OnSimilarArtistClicked ) :
+													new LinkNode( similarArtist ));
+		} 
+
+		private IEnumerable<LinkNode> LinkTopTracks( IEnumerable<string> topTracks, CancellationToken cancellationToken ) {
 			var retValue = new List<LinkNode>();
 			var artist = mArtistList.FirstOrDefault( a => a.DbId == mCurrentArtistId );
 
@@ -191,6 +230,10 @@ namespace Noise.UI.ViewModels {
 				var allTracks = mTrackProvider.GetTrackList( artist );
 
 				foreach( var trackName in topTracks ) {
+					if( cancellationToken.IsCancellationRequested ) {
+						break;
+					}
+
 					string	name = trackName;
 					var		trackList = allTracks.List.Where( t => t.Name.Equals( name, StringComparison.CurrentCultureIgnoreCase )).ToList();
 

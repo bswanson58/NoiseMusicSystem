@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Data;
 using AutoMapper;
 using Caliburn.Micro;
+using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -18,7 +20,7 @@ using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	internal class AlbumListViewModel : AutomaticCommandBase,
+	internal class AlbumListViewModel : AutomaticCommandBase, IActiveAware,
 										IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>,
 										IHandle<Events.AlbumUserUpdate> {
 		private const string							cDisplaySortDescriptionss = "_displaySortDescriptions";
@@ -34,10 +36,14 @@ namespace Noise.UI.ViewModels {
 		private ICollectionView							mAlbumView;
 		private readonly List<ViewSortStrategy>			mAlbumSorts;
 		private DbArtist								mCurrentArtist;
-		private TaskHandler								mAlbumRetrievalTaskHandler;
+		private TaskHandler<IEnumerable<UiAlbum>>		mAlbumRetrievalTaskHandler;
+		private CancellationTokenSource					mCancellationTokenSource;
+		private bool									mIsActive;
 		private bool									mRetrievingAlbums;
 		private long									mAlbumToSelect;
  
+		public	event	EventHandler					IsActiveChanged = delegate { };
+
 		public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, ISelectionState selectionState, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
@@ -70,6 +76,25 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.Subscribe( this );
 		}
 
+		public bool IsActive {
+			get{ return( mIsActive ); }
+			set {
+				mIsActive = value;
+
+				IsActiveChanged( this, new EventArgs());
+
+				if( mIsActive ) {
+					if( mSelectionState.CurrentArtist != null ) {
+						RetrieveAlbums( mSelectionState.CurrentArtist );
+					}
+				}
+				else {
+					CancelRetrievalTask();
+					ClearAlbumList();
+				}
+			}
+		}
+
 		public void Handle( Events.DatabaseOpened args ) {
 			FilterText = string.Empty;
 		}
@@ -87,7 +112,9 @@ namespace Noise.UI.ViewModels {
 
 		private void OnArtistChanged( DbArtist artist ) {
 			if( artist != null ) {
-				RetrieveAlbums( artist );
+				if( IsActive ) {
+					RetrieveAlbums( artist );
+				}
 			}
 			else {
 				ClearAlbumList();
@@ -237,10 +264,10 @@ namespace Noise.UI.ViewModels {
 			VisualStateName = VisualStateName == cHideSortDescriptions ? cDisplaySortDescriptionss : cHideSortDescriptions;
 		}
 
-		internal TaskHandler AlbumsRetrievalTaskHandler {
+		internal TaskHandler<IEnumerable<UiAlbum>> AlbumsRetrievalTaskHandler {
 			get {
 				if( mAlbumRetrievalTaskHandler == null ) {
-					Execute.OnUIThread( () => mAlbumRetrievalTaskHandler = new TaskHandler() );
+					Execute.OnUIThread( () => mAlbumRetrievalTaskHandler = new TaskHandler<IEnumerable<UiAlbum>>());
 				}
 
 				return ( mAlbumRetrievalTaskHandler );
@@ -248,33 +275,39 @@ namespace Noise.UI.ViewModels {
 			set { mAlbumRetrievalTaskHandler = value; }
 		}
 
+		private CancellationToken GenerateCanellationToken() {
+			mCancellationTokenSource = new CancellationTokenSource();
+
+			return( mCancellationTokenSource.Token );
+		}
+
+		private void CancelRetrievalTask() {
+			if( mCancellationTokenSource != null ) {
+				mCancellationTokenSource.Cancel();
+				mCancellationTokenSource = null;
+			}
+		}
+
+		private void ClearCurrentTask() {
+			mCancellationTokenSource = null;
+		}
+
 		private void RetrieveAlbums( DbArtist artist ) {
+			CancelRetrievalTask();
 			mRetrievingAlbums = true;
 
-			ClearAlbumList();
+			var cancelToken = GenerateCanellationToken();
 
-			mCurrentArtist = artist;
-			RaisePropertyChanged( () => ArtistName );
-
-			AlbumsRetrievalTaskHandler.StartTask( () => {
-						using( var albums = mAlbumProvider.GetAlbumList( mCurrentArtist )) {
-							SetAlbumList( albums.List );
-						}
-
-						mRetrievingAlbums = false;
-					},
-					() => {
-						if( mAlbumToSelect != Constants.cDatabaseNullOid ) {
-							Set( () => SelectedAlbum, ( from a in mAlbumList where a.DbId == mAlbumToSelect select a ).FirstOrDefault());
-
-							mAlbumToSelect = Constants.cDatabaseNullOid;
-						}
-					},
+			AlbumsRetrievalTaskHandler.StartTask( 
+					() =>  LoadAlbums( artist, cancelToken ),
+					albumList => UpdateUi( albumList, artist ),
 					ex => {
 						mLog.LogException( string.Format( "Retrieving Albums for {0}", artist ), ex );
 
 						mRetrievingAlbums = false;
-					} );
+
+						ClearCurrentTask();
+					}, cancelToken );
 		}
 
 		private void ClearAlbumList() {
@@ -290,20 +323,26 @@ namespace Noise.UI.ViewModels {
 			RaisePropertyChanged( () => AlbumCount );
 		}
 
-		private void SetAlbumList( IEnumerable<DbAlbum> albumList ) {
-			mAlbumList.IsNotifying = false;
+		private IEnumerable<UiAlbum> LoadAlbums( DbArtist forArtist, CancellationToken cancelToken ) {
+			var retValue = new List<UiAlbum>();
 
-			foreach( var album in albumList ) {
-				var uiAlbum = TransformAlbum( album );
+			using( var albums = mAlbumProvider.GetAlbumList( forArtist )) {
+				foreach( var album in albums.List ) {
+					if(!cancelToken.IsCancellationRequested ) {
+						var uiAlbum = TransformAlbum( album );
 
-				mAlbumList.Add( uiAlbum );
-				mChangeObserver.Add( uiAlbum );
+						retValue.Add( uiAlbum );
+						mChangeObserver.Add( uiAlbum );
+					}
+					else {
+						retValue.Clear();
+
+						break;
+					}
+				}
 			}
 
-			mAlbumList.IsNotifying = true;
-			mAlbumList.Refresh();
-
-			RaisePropertyChanged( () => AlbumCount );
+			return( retValue );
 		}
 
 		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {
@@ -314,6 +353,24 @@ namespace Noise.UI.ViewModels {
 			}
 
 			return ( retValue );
+		}
+
+		private void UpdateUi( IEnumerable<UiAlbum> albumList, DbArtist artist ) {
+			ClearAlbumList();
+			mAlbumList.AddRange( albumList );
+			mCurrentArtist = artist;
+
+			RaisePropertyChanged( () => ArtistName );
+			RaisePropertyChanged( () => AlbumCount );
+
+			if( mAlbumToSelect != Constants.cDatabaseNullOid ) {
+				Set( () => SelectedAlbum, ( from a in mAlbumList where a.DbId == mAlbumToSelect select a ).FirstOrDefault());
+
+				mAlbumToSelect = Constants.cDatabaseNullOid;
+			}
+
+			mRetrievingAlbums = false;
+			ClearCurrentTask();
 		}
 
 		private void OnPlay( long albumId ) {

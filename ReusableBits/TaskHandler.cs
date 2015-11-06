@@ -16,8 +16,12 @@ namespace ReusableBits {
 			mUiTaskScheduler = uiTaskScheduler;
 		}
 
-		public void StartTask( Func<TResult> taskCode, Action<TResult> onCompletion, Action<Exception> onFault ) {
-			Task<TResult>.Factory.StartNew( taskCode, CancellationToken.None, TaskCreationOptions.None, mTaskScheduler )
+		public Task StartTask( Func<TResult> taskAction, Action<TResult> onCompletion, Action<Exception> onFault ) {
+			return( StartTask( taskAction, onCompletion, onFault, CancellationToken.None ));
+		}
+
+		public Task StartTask( Func<TResult> taskCode, Action<TResult> onCompletion, Action<Exception> onFault, CancellationToken cancellationToken ) {
+			return( Task<TResult>.Factory.StartNew( taskCode, CancellationToken.None, TaskCreationOptions.None, mTaskScheduler )
 				.ContinueWith( result => {
 					if( result.Exception != null ) {
 						HandleFault( result, onFault );
@@ -27,7 +31,7 @@ namespace ReusableBits {
 							onCompletion( result.Result );
 						}
 					} 
-				}, mUiTaskScheduler );
+				}, mUiTaskScheduler ));
 		}
 
 		private void HandleFault( Task<TResult> task, Action<Exception> faultHandler ) {
@@ -41,8 +45,8 @@ namespace ReusableBits {
 	}
 
 	public class TaskHandler {
-		private readonly TaskScheduler			mUiTaskScheduler;
-		private readonly TaskScheduler			mTaskScheduler;
+		private readonly TaskScheduler				mUiTaskScheduler;
+		private readonly TaskScheduler				mTaskScheduler;
 
 		public TaskHandler() :
 			this( TaskScheduler.Default, TaskScheduler.FromCurrentSynchronizationContext()) {
@@ -53,16 +57,22 @@ namespace ReusableBits {
 			mUiTaskScheduler = uiTaskScheduler;
 		}
 
-		public void StartTask( Action taskAction, Action onCompletion, Action<Exception> onFault ) {
-			Task.Factory.StartNew( taskAction, CancellationToken.None, TaskCreationOptions.None, mTaskScheduler )
+		public Task StartTask( Action taskAction, Action onCompletion, Action<Exception> onFault ) {
+			return( StartTask( taskAction, onCompletion, onFault, CancellationToken.None ));
+		}
+
+		public Task StartTask( Action taskAction, Action onCompletion, Action<Exception> onFault, CancellationToken cancellationToken ) {
+			return( Task.Factory.StartNew( taskAction, cancellationToken, TaskCreationOptions.None, mTaskScheduler )
 				.ContinueWith( task => {
 						if( task.Exception != null ) {
 							HandleFault( task, onFault );
 						}
 						else {
-							onCompletion();
+							if(!cancellationToken.IsCancellationRequested ) {
+								onCompletion();
+							}
 						}
-				    }, mUiTaskScheduler );
+				    }, mUiTaskScheduler ));
 		}
 
 		private void HandleFault( Task task, Action<Exception> faultHandler ) {
