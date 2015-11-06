@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using AutoMapper;
 using Caliburn.Micro;
+using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -26,6 +28,7 @@ namespace Noise.UI.ViewModels {
 		private DbArtist					mCurrentArtist;
 		private	bool						mIsActive;
 		private TaskHandler<IEnumerable<UiArtistTrackNode>>	mUpdateTask;
+		private CancellationTokenSource						mCancellationTokenSource;
 
 		public	event EventHandler			IsActiveChanged = delegate { };
 		public	BindableCollection<UiArtistTrackNode>	TrackList { get; private set; }
@@ -54,9 +57,12 @@ namespace Noise.UI.ViewModels {
 				mIsActive = value;
 
 				if( mIsActive ) {
-					UpdateTrackList( mCurrentArtist );
+					if( mSelectionState.CurrentArtist != null ) {
+						UpdateTrackList( mSelectionState.CurrentArtist );
+					}
 				}
 				else {
+					CancelRetrievalTask();
 					TrackList.Clear();
 				}
 
@@ -75,21 +81,26 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnArtistChanged( DbArtist artist ) {
-			if( artist != null ) {
-				UpdateTrackList( artist.DbId );
+			if( IsActive ) {
+				if( artist != null ) {
+					UpdateTrackList( artist );
+				}
+				else {
+					ClearTrackList();
+				}
 			}
 			else {
-				TrackList.Clear();
-				TracksValid = false;
+				ClearTrackList();
 			}
 		}
 
-		private void UpdateTrackList( long artistId ) {
-			var artist = mArtistProvider.GetArtist( artistId );
+		private void ClearTrackList() {
+			CancelRetrievalTask();
+			TrackList.Clear();
+			TracksValid = false;
 
-			if( artist != null ) {
-				UpdateTrackList( artist );
-			}
+			AlbumCount = 0;
+			UniqueTrackCount = 0;
 		}
 
 		internal TaskHandler<IEnumerable<UiArtistTrackNode>>  UpdateTask {
@@ -103,20 +114,37 @@ namespace Noise.UI.ViewModels {
 			set{ mUpdateTask = value; }
 		}
 
-		private void UpdateTrackList( DbArtist artist ) {
-			mCurrentArtist = artist;
+		private CancellationToken GenerateCanellationToken() {
+			mCancellationTokenSource = new CancellationTokenSource();
 
+			return( mCancellationTokenSource.Token );
+		}
+
+		private void CancelRetrievalTask() {
+			if( mCancellationTokenSource != null ) {
+				mCancellationTokenSource.Cancel();
+				mCancellationTokenSource = null;
+			}
+		}
+
+		private void UpdateTrackList( DbArtist artist ) {
+			CancelRetrievalTask();
 			TracksValid = false;
 
-			if(( mCurrentArtist != null ) &&
+			var cancellationToken = GenerateCanellationToken();
+
+			if(( artist != null ) &&
 			   ( mIsActive )) {
-				UpdateTask.StartTask( () => BuildTrackList( artist ), SetTrackList,
-									  ex => mLog.LogException( string.Format( "UpdateTrackList for {0}", artist ), ex ));
+				UpdateTask.StartTask( () => BuildTrackList( artist, cancellationToken ), 
+									  trackList => SetTrackList( trackList, artist ),
+									  ex => mLog.LogException( string.Format( "UpdateTrackList for {0}", artist ), ex ),
+									  cancellationToken );
 			}
 		}
 
 		public int UniqueTrackCount {
-			get{ return( TrackList.Count ); }
+			get { return( Get( () => UniqueTrackCount )); }
+			set { Set( () => UniqueTrackCount, value ); }
 		}
 
 		public int AlbumCount {
@@ -124,47 +152,55 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => AlbumCount, value ); }
 		}
 
-		private IEnumerable<UiArtistTrackNode> BuildTrackList( DbArtist forArtist ) {
+		private IEnumerable<UiArtistTrackNode> BuildTrackList( DbArtist forArtist, CancellationToken cancellationToken ) {
 			var trackSet = new Dictionary<string, UiArtistTrackNode>();
 			var albumList = new Dictionary<long, DbAlbum>();
 
+			AlbumCount = 0;
+			UniqueTrackCount = 0;
+
 			using( var albums = mAlbumProvider.GetAlbumList( forArtist.DbId )) {
-				foreach( var album in albums.List ) {
-					albumList.Add( album.DbId, album );
-				}
-			}
-
-
-			using( var trackList = mTrackProvider.GetTrackList( forArtist )) {
-				foreach( var track in trackList.List ) {
-					var item = new UiArtistTrackNode( TransformTrack( track ),
-												      TransformAlbum( albumList[track.Album]));
-
-					if( trackSet.ContainsKey( item.Track.Name )) {
-						var parent = trackSet[item.Track.Name];
-
-						if( parent.Children.Count == 0 ) {
-							parent.Children.Add( new UiArtistTrackNode( parent.Track, parent.Album ));
-						}
-						parent.Children.Add( item );
-					}
-					else {
-						item.Level = 1;
-						trackSet.Add( item.Track.Name, item );
-					}
-				}
+				albums.List.ForEach( album => albumList.Add( album.DbId, album ));
 			}
 
 			AlbumCount = albumList.Count;
 
+			using( var trackList = mTrackProvider.GetTrackList( forArtist )) {
+				foreach( var track in trackList.List ) {
+					if(!cancellationToken.IsCancellationRequested ) {
+						var item = new UiArtistTrackNode( TransformTrack( track ),
+														  TransformAlbum( albumList[track.Album]));
+
+						if( trackSet.ContainsKey( item.Track.Name )) {
+							var parent = trackSet[item.Track.Name];
+
+							if( parent.Children.Count == 0 ) {
+								parent.Children.Add( new UiArtistTrackNode( parent.Track, parent.Album ));
+							}
+							parent.Children.Add( item );
+						}
+						else {
+							item.Level = 1;
+							trackSet.Add( item.Track.Name, item );
+
+							UniqueTrackCount++;
+						}
+					}
+					else {
+						break;
+					}
+				}
+			}
+
 			return( trackSet.Values );
 		}
 
-		private void SetTrackList( IEnumerable<UiArtistTrackNode> list ) {
+		private void SetTrackList( IEnumerable<UiArtistTrackNode> list, DbArtist artist ) {
 			TrackList.Clear();
 			TrackList.AddRange( from node in list orderby node.Track.Name ascending select node );
 
-			RaisePropertyChanged( () => UniqueTrackCount );
+			mCurrentArtist = artist;
+
 			TracksValid = true;
 		}
 
