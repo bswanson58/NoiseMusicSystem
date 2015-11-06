@@ -206,11 +206,11 @@
 						Margin="0,0,23,0"
 						HorizontalAlignment="Right"
 						Orientation="Horizontal">
-				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="{Binding Path=UniqueTrackCount}" />
+				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="{Binding Path=UniqueTrackCount, StringFormat={}{0:N0}}" />
 				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text=" unique of " />
-				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="{Binding Path=TrackCount}" />
+				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="{Binding Path=TrackCount, StringFormat={}{0:N0}}" />
 				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text=" tracks from " />
-				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="{Binding Path=AlbumCount}" />
+				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="{Binding Path=AlbumCount, StringFormat={}{0:N0}}" />
 				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text=" albums." />
 			</StackPanel>
 		</Grid>

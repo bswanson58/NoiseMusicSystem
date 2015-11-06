@@ -121,12 +121,12 @@
     <value>No Albums</value>
   </data>
   <data name="AlbumTitlePlural" xml:space="preserve">
-    <value>{0} Albums</value>
+    <value>{0:N0} Albums</value>
   </data>
   <data name="ArtistTitle" xml:space="preserve">
     <value>No Artists</value>
   </data>
   <data name="ArtistTitlePlural" xml:space="preserve">
-    <value>{0} Artists</value>
+    <value>{0:N0} Artists</value>
   </data>
 </root>

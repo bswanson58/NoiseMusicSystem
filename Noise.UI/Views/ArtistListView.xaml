@@ -72,7 +72,7 @@
 
 					<StackPanel Grid.Row="1" Grid.Column="0" Margin="11,0,0,0" Orientation="Horizontal">
 						<TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Foreground="{DynamicResource ControlTextColor}" Text="Albums: " />
-						<TextBlock x:Name="AlbumCount" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding AlbumCount}" />
+						<TextBlock x:Name="AlbumCount" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding AlbumCount, StringFormat={}{0:N0}}" />
 					</StackPanel>
 
 					<TextBlock x:Name="Genre" Grid.Row="1" Grid.Column="1" Margin="0,0,3,0" Style="{StaticResource ExplorerSubtitleStyle}" HorizontalAlignment="Right" Text="{Binding Genre}" />
