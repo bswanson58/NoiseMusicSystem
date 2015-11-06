@@ -21,27 +21,22 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IUiLog				mLog;
 		private readonly ISelectionState	mSelectionState;
-		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
-		private readonly ITagManager		mTagManager;
-		private DbArtist					mCurrentArtist;
 		private	bool						mIsActive;
 		private TaskHandler<IEnumerable<UiArtistTrackNode>>	mUpdateTask;
 		private CancellationTokenSource						mCancellationTokenSource;
 
-		public	event EventHandler			IsActiveChanged = delegate { };
+		public	event EventHandler						IsActiveChanged = delegate { };
 		public	BindableCollection<UiArtistTrackNode>	TrackList { get; private set; }
 
 		public ArtistTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState,
-									  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ITagManager tagManager, IUiLog log ) {
+									  IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mSelectionState = selectionState;
-			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
-			mTagManager = tagManager;
 
 			mEventAggregator.Subscribe( this );
 
@@ -136,15 +131,10 @@ namespace Noise.UI.ViewModels {
 			if(( artist != null ) &&
 			   ( mIsActive )) {
 				UpdateTask.StartTask( () => BuildTrackList( artist, cancellationToken ), 
-									  trackList => SetTrackList( trackList, artist ),
+									  SetTrackList,
 									  ex => mLog.LogException( string.Format( "UpdateTrackList for {0}", artist ), ex ),
 									  cancellationToken );
 			}
-		}
-
-		public int UniqueTrackCount {
-			get { return( Get( () => UniqueTrackCount )); }
-			set { Set( () => UniqueTrackCount, value ); }
 		}
 
 		public int AlbumCount {
@@ -152,11 +142,22 @@ namespace Noise.UI.ViewModels {
 			set{ Set( () => AlbumCount, value ); }
 		}
 
+		public int TrackCount {
+			get { return( Get( () => TrackCount )); }
+			set { Set( () => TrackCount, value ); }
+		}
+
+		public int UniqueTrackCount {
+			get { return( Get( () => UniqueTrackCount )); }
+			set { Set( () => UniqueTrackCount, value ); }
+		}
+
 		private IEnumerable<UiArtistTrackNode> BuildTrackList( DbArtist forArtist, CancellationToken cancellationToken ) {
 			var trackSet = new Dictionary<string, UiArtistTrackNode>();
 			var albumList = new Dictionary<long, DbAlbum>();
 
 			AlbumCount = 0;
+			TrackCount = 0;
 			UniqueTrackCount = 0;
 
 			using( var albums = mAlbumProvider.GetAlbumList( forArtist.DbId )) {
@@ -170,21 +171,23 @@ namespace Noise.UI.ViewModels {
 					if(!cancellationToken.IsCancellationRequested ) {
 						var item = new UiArtistTrackNode( TransformTrack( track ),
 														  TransformAlbum( albumList[track.Album]));
+						UiArtistTrackNode	parent;
+						trackSet.TryGetValue( item.Track.Name.ToLower(), out parent );
 
-						if( trackSet.ContainsKey( item.Track.Name )) {
-							var parent = trackSet[item.Track.Name];
-
-							if( parent.Children.Count == 0 ) {
+						if( parent != null ) {
+							if(!parent.Children.Any()) {
 								parent.Children.Add( new UiArtistTrackNode( parent.Track, parent.Album ));
 							}
 							parent.Children.Add( item );
 						}
 						else {
 							item.Level = 1;
-							trackSet.Add( item.Track.Name, item );
+							trackSet.Add( item.Track.Name.ToLower(), item );
 
 							UniqueTrackCount++;
 						}
+
+						TrackCount++;
 					}
 					else {
 						break;
@@ -195,11 +198,9 @@ namespace Noise.UI.ViewModels {
 			return( trackSet.Values );
 		}
 
-		private void SetTrackList( IEnumerable<UiArtistTrackNode> list, DbArtist artist ) {
+		private void SetTrackList( IEnumerable<UiArtistTrackNode> list ) {
 			TrackList.Clear();
 			TrackList.AddRange( from node in list orderby node.Track.Name ascending select node );
-
-			mCurrentArtist = artist;
 
 			TracksValid = true;
 		}
@@ -208,7 +209,7 @@ namespace Noise.UI.ViewModels {
 			var retValue = new UiAlbum();
 
 			Mapper.DynamicMap( dbAlbum, retValue );
-			retValue.DisplayGenre = mTagManager.GetGenre( dbAlbum.Genre );
+//			retValue.DisplayGenre = mTagManager.GetGenre( dbAlbum.Genre );
 
 			return( retValue );
 		}

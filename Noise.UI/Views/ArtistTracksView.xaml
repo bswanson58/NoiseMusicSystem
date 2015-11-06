@@ -187,7 +187,7 @@
 							  VerticalScrollBarVisibility="Auto">
 					<TreeView BorderThickness="0"
 							  ItemsSource="{Binding Path=TrackList}"
-							  Style="{DynamicResource NonScrollingTreeView}" />
+							  Style="{DynamicResource NonScrollingTreeView}"/>
 				</ScrollViewer>
 			</Grid>
 
@@ -207,7 +207,9 @@
 						HorizontalAlignment="Right"
 						Orientation="Horizontal">
 				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="{Binding Path=UniqueTrackCount}" />
-				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text=" unique tracks from " />
+				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text=" unique of " />
+				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="{Binding Path=TrackCount}" />
+				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text=" tracks from " />
 				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="{Binding Path=AlbumCount}" />
 				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text=" albums." />
 			</StackPanel>
