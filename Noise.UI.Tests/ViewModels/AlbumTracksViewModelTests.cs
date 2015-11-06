@@ -5,6 +5,7 @@ using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
+using Noise.UI.Dto;
 using NUnit.Framework;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -32,7 +33,7 @@ namespace Noise.UI.Tests.ViewModels {
 				var		retValue = base.ClassUnderTest;
 
 				if( retValue != null ) {
-					retValue.TracksRetrievalTaskHandler = new TaskHandler( mTaskScheduler, mTaskScheduler );
+					retValue.TracksRetrievalTaskHandler = new TaskHandler<IEnumerable<UiTrack>>( mTaskScheduler, mTaskScheduler );
 				}
 
 				return( retValue );
