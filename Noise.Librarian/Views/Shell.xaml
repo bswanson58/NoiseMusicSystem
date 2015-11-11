@@ -2,7 +2,7 @@
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:Views="clr-namespace:Noise.Librarian.Views"
-		Title="The Noise Librarian" Height="600" Width="900">
+		Title="The Noise Librarian" Height="750" Width="900">
 
 	<Window.TaskbarItemInfo>
 		<TaskbarItemInfo ProgressValue="{Binding Progress}" ProgressState="{Binding ProgressState}"/>
@@ -13,6 +13,7 @@
 			<RowDefinition Height="1*"/>
 			<RowDefinition Height="1*"/>
 			<RowDefinition Height="1*"/>
+			<RowDefinition Height="1*"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 		
@@ -20,5 +21,6 @@
 		<Views:RestoreDatabaseView Grid.Row="1"/>
 		<Views:ExportDatabaseView Grid.Row="2"/>
 		<Views:ImportDatabaseView Grid.Row="3"/>
+		<Views:DetachDatabaseView Grid.Row="4"/>
 	</Grid>
 </Window>

@@ -160,12 +160,16 @@
     <Compile Include="Models\ProgressEvent.cs" />
     <Compile Include="Models\ProgressReport.cs" />
     <Compile Include="ViewModels\BackupDatabaseViewModel.cs" />
+    <Compile Include="ViewModels\DetachDatabaseViewModel.cs" />
     <Compile Include="ViewModels\ExportDatabaseViewModel.cs" />
     <Compile Include="ViewModels\ImportDatabaseViewModel.cs" />
     <Compile Include="ViewModels\RestoreDatabaseViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="Views\BackupDatabaseView.xaml.cs">
       <DependentUpon>BackupDatabaseView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DetachDatabaseView.xaml.cs">
+      <DependentUpon>DetachDatabaseView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ExportDatabaseView.xaml.cs">
       <DependentUpon>ExportDatabaseView.xaml</DependentUpon>
@@ -252,6 +256,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\BackupDatabaseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DetachDatabaseView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

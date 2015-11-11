@@ -174,7 +174,7 @@ namespace Noise.Librarian.Models {
 						var databaseName = mDatabaseUtility.GetDatabaseName( library.DatabaseName );
 
 						if( !string.IsNullOrWhiteSpace( databaseName )) {
-							mDatabaseUtility.DetachDatabase( databaseName );
+							mDatabaseUtility.DetachDatabase( new DatabaseInfo( databaseName ));
 						}
 						else {
 							databaseName = library.DatabaseName.Replace( ' ', '_' );
