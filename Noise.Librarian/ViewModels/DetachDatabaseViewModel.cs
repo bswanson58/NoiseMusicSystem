@@ -54,7 +54,7 @@ namespace Noise.Librarian.ViewModels {
 					ProgressText = string.Format( "Database '{0}' was successfully detached.", mCurrentDatabase.PhysicalName );
 				}
 				catch( Exception ex ) {
-					ProgressText = string.Format( "Failure detaching database '{0}'.", mCurrentDatabase.PhysicalName );
+					ProgressText = string.Format( "Failure detaching database '{0}': {1}", mCurrentDatabase.PhysicalName, ex.Message );
 				}
 
 				LoadDatabases();
