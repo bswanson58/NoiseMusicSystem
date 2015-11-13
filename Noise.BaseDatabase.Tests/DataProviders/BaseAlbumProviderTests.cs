@@ -39,7 +39,6 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 				Genre = 5,
 				IsFavorite = true,
 				Name = "My Favorite Album",
-				MaxChildRating = 8,
 				TrackCount = 9,
 				PublishedYear = 1958,
 				UserGenre = 6,
