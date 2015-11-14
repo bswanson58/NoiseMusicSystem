@@ -64,9 +64,15 @@ namespace Noise.Core.DataBuilders {
 								var albumCount = 0;
 								var albumRating = 0;
 
+								artistUpdater.Item.HasFavorites = false;
+
 								using( var albumList = mAlbumProvider.GetAlbumList( artist.DbId )) {
 									foreach( var album in albumList.List ) {
 										mLog.LogSummaryAlbumStarted( album );
+
+										if( album.IsFavorite ) {
+											artistUpdater.Item.HasFavorites = true;
+										}
 
 										using( var trackList = mTrackProvider.GetTrackList( album.DbId )) {
 											using( var albumUpdater = mAlbumProvider.GetAlbumForUpdate( album.DbId )) {
@@ -75,6 +81,7 @@ namespace Noise.Core.DataBuilders {
 												var trackRating = 0;
 
 												albumUpdater.Item.TrackCount = 0;
+												albumUpdater.Item.HasFavorites = false;
 
 												foreach( var track in trackList.List ) {
 													if(!years.Contains( track.PublishedYear )) {
@@ -84,6 +91,11 @@ namespace Noise.Core.DataBuilders {
 													AddGenre( trackGenre, track.CalculatedGenre );
 													albumUpdater.Item.TrackCount++;
 													trackRating += track.Rating;
+
+													if( track.IsFavorite ) {
+														albumUpdater.Item.HasFavorites = true;
+														artistUpdater.Item.HasFavorites = true;
+													}
 												}
 
 												// Don't overwrite the published year if it is already set.
