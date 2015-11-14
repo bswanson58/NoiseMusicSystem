@@ -31,7 +31,7 @@ namespace Noise.UI.ViewModels {
 	}
 
 	public class FavoritesViewModel : AutomaticCommandBase,
-									  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>,
+									  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>, IHandle<Events.LibraryUpdateCompleted>,
 									  IHandle<Events.ArtistUserUpdate>, IHandle<Events.AlbumUserUpdate>, IHandle<Events.TrackUserUpdate> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IUiLog					mLog;
@@ -63,10 +63,6 @@ namespace Noise.UI.ViewModels {
 			mDialogService = dialogService;
 			mSelectionState = selectionState;
 
-			mEventAggregator.Subscribe( this );
-			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
-			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
-
 			mFavoritesList = new SortableCollection<FavoriteViewNode>();
 
 			var defaultFilter = new FavoriteFilter( "All", true, true, true );
@@ -75,6 +71,10 @@ namespace Noise.UI.ViewModels {
 													 new FavoriteFilter( "Albums", false, true, false ),
 													 new FavoriteFilter( "Tracks", false, false, true )};
 			CurrentFilter = defaultFilter;
+
+			mEventAggregator.Subscribe( this );
+			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
+			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
 
 			if( databaseInfo.IsOpen ) {
 				LoadFavorites();
@@ -156,6 +156,10 @@ namespace Noise.UI.ViewModels {
 
 		public void Handle( Events.DatabaseClosing args ) {
 			ClearFavorites();
+		}
+
+		public void Handle( Events.LibraryUpdateCompleted args ) {
+			LoadFavorites();
 		}
 
 		public void Handle( Events.ArtistUserUpdate eventArgs ) {
