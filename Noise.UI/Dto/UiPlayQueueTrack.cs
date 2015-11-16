@@ -1,25 +1,19 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
-using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
-	public class UiPlayQueueTrack : AutomaticCommandBase {
+	public class UiPlayQueueTrack : UiBase {
 		private readonly PlayQueueTrack				mTrack;
-		private bool								mIsFavorite;
-		private Int16								mRating;
 		private readonly Action<UiPlayQueueTrack>	mMoveUp;
 		private readonly Action<UiPlayQueueTrack>	mMoveDown;
 		private readonly Action<UiPlayQueueTrack>	mDequeue;
 		private readonly Action<UiPlayQueueTrack>	mPlayNow;
 		private readonly Action<UiPlayQueueTrack>	mPlayFromHere;
 		private readonly Action<UiPlayQueueTrack>	mDisplayInfo;
-		private readonly Action<UiPlayQueueTrack>	mOnSetFavorite;
-		private readonly Action<UiPlayQueueTrack>	mOnSetRating; 
 
 		public UiPlayQueueTrack( PlayQueueTrack track,
 								 Action<UiPlayQueueTrack> onMoveUp, Action<UiPlayQueueTrack> onMoveDown, Action<UiPlayQueueTrack> onDisplayInfo,
-								 Action<UiPlayQueueTrack> onDequeue, Action<UiPlayQueueTrack> onPlay, Action<UiPlayQueueTrack> onPlayFromHere,
-								 Action<UiPlayQueueTrack> onSetFavorite, Action<UiPlayQueueTrack> onSetRating ) {
+								 Action<UiPlayQueueTrack> onDequeue, Action<UiPlayQueueTrack> onPlay, Action<UiPlayQueueTrack> onPlayFromHere ) {
 			mTrack = track;
 			mMoveUp = onMoveUp;
 			mMoveDown = onMoveDown;
@@ -27,40 +21,16 @@ namespace Noise.UI.Dto {
 			mDequeue = onDequeue;
 			mPlayNow = onPlay;
 			mPlayFromHere = onPlayFromHere;
-			mOnSetFavorite = onSetFavorite;
-			mOnSetRating = onSetRating;
 
 			if(( track != null ) &&
 			   ( track.Track != null )) {
-				mIsFavorite = track.Track.IsFavorite;
-				mRating = track.Track.Rating;
+				UiIsFavorite = track.Track.IsFavorite;
+				UiRating = track.Track.Rating;
 			}
 		}
 
 		public PlayQueueTrack QueuedTrack {
 			get{ return( mTrack ); }
-		}
-
-		public bool IsFavorite {
-			get{ return( mIsFavorite ); }
-			set {
-				mIsFavorite = value;
-
-				if( mOnSetFavorite != null ) {
-					mOnSetFavorite( this );
-				}
-			}
-		}
-
-		public Int16 Rating {
-			get{ return( mRating ); }
-			set {
-				mRating = value;
-
-				if( mOnSetRating != null ) {
-					mOnSetRating( this );
-				}
-			}
 		}
 
 		public bool IsDeleting {

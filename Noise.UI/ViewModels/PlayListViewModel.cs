@@ -6,7 +6,6 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
-using Noise.UI.Dto;
 using Noise.UI.Logging;
 using Observal.Extensions;
 using ReusableBits;
@@ -125,7 +124,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
-			var notifier = propertyNotification.Source as UiBase;
+/*			var notifier = propertyNotification.Source as UiBase;
 
 			if( notifier != null ) {
 				if( propertyNotification.PropertyName == "UiRating" ) {
@@ -135,6 +134,7 @@ namespace Noise.UI.ViewModels {
 					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( notifier.DbId, notifier.UiIsFavorite ));
 				}
 			}
+ */
 		}
 
 		private void OnNodeSelected( PlayListNode node ) {

@@ -31,6 +31,7 @@ namespace Noise.UI.ViewModels {
 		private readonly ISelectionState				mSelectionState;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly ITagManager					mTagManager;
+		private readonly IRatings						mRatings;
 		private	readonly Observal.Observer				mChangeObserver;
 		private readonly BindableCollection<UiArtist>	mArtistList;
 		private ICollectionView							mArtistView;
@@ -39,7 +40,7 @@ namespace Noise.UI.ViewModels {
 		private readonly List<ViewSortStrategy>			mArtistSorts;
 		private TaskHandler								mArtistRetrievalTaskHandler;
 
-		public ArtistListViewModel( IEventAggregator eventAggregator, IPreferences preferences, ISelectionState selectionState ,
+		public ArtistListViewModel( IEventAggregator eventAggregator, IPreferences preferences, ISelectionState selectionState, IRatings ratings,
 									IArtistProvider artistProvider, ITagManager tagManager, IDatabaseInfo databaseInfo, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
@@ -47,6 +48,7 @@ namespace Noise.UI.ViewModels {
 			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
 			mTagManager = tagManager;
+			mRatings = ratings;
 
 			mArtistList = new BindableCollection<UiArtist>();
 			mSortPrefixes = new List<string>();
@@ -360,15 +362,19 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private static void OnArtistChanged( PropertyChangeNotification propertyNotification ) {
+		private void OnArtistChanged( PropertyChangeNotification propertyNotification ) {
 			var notifier = propertyNotification.Source as UiBase;
 
 			if( notifier != null ) {
-				if( propertyNotification.PropertyName == "UiRating" ) {
-					GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( notifier.DbId, notifier.UiRating ));
-				}
-				if( propertyNotification.PropertyName == "UiIsFavorite" ) {
-					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( notifier.DbId, notifier.UiIsFavorite ));
+				var artist = mArtistProvider.GetArtist( notifier.DbId );
+
+				if( artist != null ) {
+					if( propertyNotification.PropertyName == "UiRating" ) {
+						mRatings.SetRating( artist, notifier.UiRating );
+					}
+					if( propertyNotification.PropertyName == "UiIsFavorite" ) {
+						mRatings.SetFavorite( artist, notifier.UiIsFavorite );
+					}
 				}
 			}
 		}

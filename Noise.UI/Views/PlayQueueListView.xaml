@@ -216,9 +216,9 @@
 						<!--  Favorite and Rating  -->
 						<StackPanel Grid.Column="8" HorizontalAlignment="Right" Orientation="Horizontal">
 							<CheckBox Width="15" Height="15" Margin="0,0,4,2" VerticalAlignment="Center"
-								  IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}"
+								  IsChecked="{Binding Path=UiIsFavorite, Mode=TwoWay}"
 								  Style="{StaticResource FavoriteCheckBoxStyle}" />
-							<Controls:RatingControl Rating="{Binding Path=Rating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
+							<Controls:RatingControl Rating="{Binding Path=UiRating, Mode=TwoWay}" Style="{StaticResource NoiseRatingStyle}" />
 						</StackPanel>
 					</Grid>
 				</Expander>

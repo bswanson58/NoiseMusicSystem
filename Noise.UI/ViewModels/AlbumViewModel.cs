@@ -46,6 +46,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IResourceProvider			mResourceProvider;
 		private readonly ITagProvider				mTagProvider;
 		private readonly ITagManager				mTagManager;
+		private readonly IRatings					mRatings;
 		private readonly IStorageFolderSupport		mStorageFolderSupport;
 		private UiAlbum								mCurrentAlbum;
 		private readonly BitmapImage				mUnknownImage;
@@ -65,7 +66,7 @@ namespace Noise.UI.ViewModels {
 
 		public	TimeSpan						AlbumPlayTime { get; private set; }
 
-		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, ISelectionState selectionState,
+		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, ISelectionState selectionState, IRatings ratings,
 							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IAlbumArtworkProvider albumArtworkProvider, IArtworkProvider artworkProvider,
 							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager, IUiLog log ) {
 			mEventAggregator = eventAggregator;
@@ -79,6 +80,7 @@ namespace Noise.UI.ViewModels {
 			mResourceProvider = resourceProvider;
 			mTagProvider = tagProvider;
 			mTagManager = tagManager;
+			mRatings = ratings;
 
 			mEventAggregator.Subscribe( this );
 
@@ -298,16 +300,19 @@ namespace Noise.UI.ViewModels {
 				cancellationToken ); 
 		}
 
-		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
+		private void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
 
 			if( propertyNotification.Source is UiBase ) {
 				var item = propertyNotification.Source as UiBase;
+				var album = mAlbumProvider.GetAlbum( item.DbId );
 
-				if( propertyNotification.PropertyName == "UiRating" ) {
-					GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( item.DbId, item.UiRating ));
-				}
-				if( propertyNotification.PropertyName == "UiIsFavorite" ) {
-					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( item.DbId, item.UiIsFavorite ));
+				if( album != null ) {
+					if( propertyNotification.PropertyName == "UiRating" ) {
+						mRatings.SetRating( album, item.UiRating );
+					}
+					if( propertyNotification.PropertyName == "UiIsFavorite" ) {
+						mRatings.SetFavorite( album, item.UiIsFavorite );
+					}
 				}
 			}
 		}

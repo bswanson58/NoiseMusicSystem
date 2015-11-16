@@ -26,8 +26,8 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	int					ScreenOrder { get; private set; }
 		private	int					mSelectedIndex;
 
-		public QueueListViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue ) :
-			base( eventAggregator, playQueue ) {
+		public QueueListViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IRatings ratings ) :
+			base( eventAggregator, playQueue, ratings ) {
 			mPlayQueue = playQueue;
 			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy.StrategyId;
 

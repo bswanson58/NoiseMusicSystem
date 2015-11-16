@@ -302,12 +302,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
+		[DependsUpon( "InfoUpdateFlag" )]
 		public bool IsFavorite {
 			get { return( mPlayController.IsFavorite ); }
 			set { mPlayController.IsFavorite = value; }
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
+		[DependsUpon( "InfoUpdateFlag" )]
 		public Int16 Rating {
 			get{ return( mPlayController.Rating ); }
 			set { mPlayController.Rating = value; }

@@ -32,6 +32,7 @@ namespace Noise.UI.ViewModels {
 		private readonly ITagManager			mTagManager;
 		private readonly IMetadataManager		mMetadataManager;
 		private readonly IPlayQueue				mPlayQueue;
+		private readonly IRatings				mRatings;
 		private readonly Observal.Observer		mChangeObserver;
 		private readonly List<DbTrack>			mTopPlayTracks; 
 		private readonly Random					mRandom;
@@ -48,7 +49,7 @@ namespace Noise.UI.ViewModels {
 
 		private readonly InteractionRequest<ArtistEditRequest>		mArtistEditRequest;
 
-		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ITrackProvider trackProvider,
+		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ITrackProvider trackProvider, IRatings ratings,
 								ISelectionState selectionState, ITagManager tagManager, IMetadataManager metadataManager, IPlayQueue playQueue, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
@@ -58,6 +59,7 @@ namespace Noise.UI.ViewModels {
 			mTagManager = tagManager;
 			mMetadataManager = metadataManager;
 			mPlayQueue = playQueue;
+			mRatings = ratings;
 
 			mTopPlayTracks = new List<DbTrack>();
 			mRandom = new Random( DateTime.Now.Millisecond );
@@ -294,15 +296,17 @@ namespace Noise.UI.ViewModels {
 			RaisePropertyChanged( () => ArtistImage );
 		}
  
-		private static void OnArtistChanged( PropertyChangeNotification changeNotification ) {
+		private void OnArtistChanged( PropertyChangeNotification changeNotification ) {
 			var notifier = changeNotification.Source as UiArtist;
 
 			if( notifier != null ) {
+				var artist = mArtistProvider.GetArtist( notifier.DbId );
+
 				if( changeNotification.PropertyName == "UiRating" ) {
-					GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( notifier.DbId, notifier.UiRating ));
+					mRatings.SetRating( artist, notifier.UiRating );
 				}
 				if( changeNotification.PropertyName == "UiIsFavorite" ) {
-					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( notifier.DbId, notifier.UiIsFavorite ));
+					mRatings.SetFavorite( artist, notifier.UiIsFavorite );
 				}
 			}
 		}

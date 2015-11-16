@@ -11,20 +11,27 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Behaviours.EventCommandTriggers;
 using Noise.UI.Dto;
+using Observal.Extensions;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	public class PlayQueueListViewModel : AutomaticCommandBase, IDropTarget, IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackStatusChanged> {
+	public class PlayQueueListViewModel : AutomaticCommandBase, IDropTarget,
+										  IHandle<Events.PlayQueueChanged>, IHandle<Events.PlaybackStatusChanged>, IHandle<Events.TrackUserUpdate> {
 		private readonly IEventAggregator			mEventAggregator;
 		private readonly IPlayQueue					mPlayQueue;
+		private readonly IRatings					mRatings;
+		private readonly Observal.Observer			mChangeObserver;
 		private UiPlayQueueTrack					mPlayingItem;
 		private readonly BindableCollection<UiPlayQueueTrack>		mQueue;
 
-		public PlayQueueListViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue ) {
+		public PlayQueueListViewModel( IEventAggregator eventAggregator, IPlayQueue playQueue, IRatings ratings ) {
 			mEventAggregator = eventAggregator;
 			mPlayQueue = playQueue;
+			mRatings = ratings;
 
 			mQueue = new BindableCollection<UiPlayQueueTrack>();
+			mChangeObserver = new Observal.Observer();
+			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
 			LoadPlayQueue();
 			mEventAggregator.Subscribe( this );
@@ -105,6 +112,31 @@ namespace Noise.UI.ViewModels {
 			});
 		}
 
+		public void Handle( Events.TrackUserUpdate args ) {
+			foreach( var track in mQueue ) {
+				if((!track.QueuedTrack.IsStream ) &&
+				   ( track.QueuedTrack.Track.DbId == args.Track.DbId )) {
+					track.UiIsFavorite = args.Track.IsFavorite;
+					track.UiRating = args.Track.Rating;
+				}
+			}
+		}
+
+		private void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
+			if( propertyNotification.Source is UiPlayQueueTrack ) {
+				var item = propertyNotification.Source as UiPlayQueueTrack;
+
+				if(!item.QueuedTrack.IsStream ) {
+					if( propertyNotification.PropertyName == "UiRating" ) {
+						mRatings.SetRating( item.QueuedTrack.Track, item.UiRating );
+					}
+					if( propertyNotification.PropertyName == "UiIsFavorite" ) {
+						mRatings.SetFavorite( item.QueuedTrack.Track, item.UiIsFavorite );
+					}
+				}
+			}
+		}
+
 		private int PlayQueueChangedFlag {
 			get{ return( Get( () => PlayQueueChangedFlag, 0 )); }
 			set{ Set( () => PlayQueueChangedFlag, value  ); }
@@ -112,7 +144,7 @@ namespace Noise.UI.ViewModels {
 
 		private UiPlayQueueTrack CreateUiTrack( PlayQueueTrack track ) {
 			return( new UiPlayQueueTrack( track, MoveQueueItemUp, MoveQueueItemDown, DisplayQueueItemInfo, DequeueTrack,
-												 PlayQueueTrack, PlayFromQueueTrack, SetFavorite, SetRating ));
+												 PlayQueueTrack, PlayFromQueueTrack ));
 		}
 
 		private void MoveQueueItemUp( UiPlayQueueTrack track ) {
@@ -154,16 +186,6 @@ namespace Noise.UI.ViewModels {
 			mPlayQueue.ContinuePlayFromTrack( track.QueuedTrack );
 		}
 
-		private void SetFavorite( UiPlayQueueTrack track ) {
-			GlobalCommands.SetFavorite.Execute( track.QueuedTrack.IsStream ? new SetFavoriteCommandArgs( track.QueuedTrack.Stream.DbId, track.IsFavorite ) :
-																			 new SetFavoriteCommandArgs( track.QueuedTrack.Track.DbId, track.IsFavorite ));
-		}
-
-		private void SetRating( UiPlayQueueTrack track ) {
-			GlobalCommands.SetRating.Execute( track.QueuedTrack.IsStream ? new SetRatingCommandArgs( track.QueuedTrack.Stream.DbId, track.Rating ) :
-																		   new SetRatingCommandArgs( track.QueuedTrack.Track.DbId, track.Rating ));
-		}
-
 		private void LoadPlayQueue() {
 			UpdateQueueList( mPlayQueue.PlayList );
 		}
@@ -187,12 +209,16 @@ namespace Noise.UI.ViewModels {
 
 						var removeList = ( from track in mQueue where track.IsDeleting select track ).ToList();
 						foreach( var track in removeList ) {
+							mChangeObserver.Release( track );
 							mQueue.Remove( track );
 						}
 
 						var addList = ( from track in newList where mQueue.FirstOrDefault( t => t.QueuedTrack.Uid == track.Uid ) == null select track ).ToList();
 						foreach( var track in addList ) {
-							mQueue.Insert( newList.IndexOf( track ), CreateUiTrack( track ));
+							var newTrack = CreateUiTrack( track );
+
+							mQueue.Insert( newList.IndexOf( track ), newTrack );
+							mChangeObserver.Add( newTrack );
 						}
 
 						// finally insure that the order matches.

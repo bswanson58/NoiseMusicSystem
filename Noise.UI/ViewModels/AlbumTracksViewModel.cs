@@ -27,6 +27,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IUiLog							mLog;
 		private readonly ISelectionState				mSelectionState;
 		private readonly ITrackProvider					mTrackProvider;
+		private readonly IRatings						mRatings;
 		private readonly Observal.Observer				mChangeObserver;
 		private readonly BindableCollection<UiTrack>	mTracks;
 		private readonly InteractionRequest<TrackEditInfo>	mTrackEditRequest; 
@@ -34,10 +35,11 @@ namespace Noise.UI.ViewModels {
 		private CancellationTokenSource					mCancellationTokenSource;
 		private long									mCurrentAlbumId;
 
-		public AlbumTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, ITrackProvider trackProvider, IUiLog log ) {
+		public AlbumTracksViewModel( IEventAggregator eventAggregator, IRatings ratings, ISelectionState selectionState, ITrackProvider trackProvider, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mSelectionState = selectionState;
+			mRatings = ratings;
 			mTrackProvider = trackProvider;
 
 			mEventAggregator.Subscribe( this );
@@ -173,24 +175,27 @@ namespace Noise.UI.ViewModels {
 			GlobalCommands.PlayTrack.Execute( mTrackProvider.GetTrack( trackId ));
 		}
 
-		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
+		private void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
 			if( propertyNotification.Source is UiBase ) {
 				var item = propertyNotification.Source as UiBase;
+				var	track= mTrackProvider.GetTrack( item.DbId );
 
-				if( propertyNotification.PropertyName == "UiRating" ) {
-					GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( item.DbId, item.UiRating ));
-				}
-				if( propertyNotification.PropertyName == "UiIsFavorite" ) {
-					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( item.DbId, item.UiIsFavorite ));
+				if( track != null ) {
+					if( propertyNotification.PropertyName == "UiRating" ) {
+						mRatings.SetRating( track, item.UiRating );
+					}
+					if( propertyNotification.PropertyName == "UiIsFavorite" ) {
+						mRatings.SetFavorite( track, item.UiIsFavorite );
+					}
 				}
 			}
 		}
 
 		public void Handle( Events.TrackUserUpdate eventArgs ) {
-			var track = ( from UiTrack node in mTracks where node.DbId == eventArgs.TrackId select node ).FirstOrDefault();
+			var track = ( from UiTrack node in mTracks where node.DbId == eventArgs.Track.DbId select node ).FirstOrDefault();
 
 			if( track != null ) {
-				var newTrack = TransformTrack( mTrackProvider.GetTrack( eventArgs.TrackId ));
+				var newTrack = TransformTrack( eventArgs.Track );
 
 				mChangeObserver.Release( track );
 				mTracks[mTracks.IndexOf( track )] = newTrack;

@@ -115,10 +115,10 @@ namespace Noise.Infrastructure {
 		}
 
 		public class TrackUserUpdate {
-			public long		TrackId { get; private set; }
+			public DbTrack	Track {  get; private set; }
 
-			public TrackUserUpdate( long trackId ) {
-				TrackId = trackId;
+			public TrackUserUpdate( DbTrack track ) {
+				Track = track;
 			}
 		}
 

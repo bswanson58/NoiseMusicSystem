@@ -232,6 +232,7 @@
     <Compile Include="DataProviders\FileTagProvider.cs" />
     <Compile Include="DataProviders\FolderStrategyProvider.cs" />
     <Compile Include="DataProviders\Mp3TagProvider.cs" />
+    <Compile Include="DataProviders\RatingsUpdater.cs" />
     <Compile Include="Exceptions\StorageConfigurationException.cs" />
     <Compile Include="FileProcessor\ArtworkProvidersPipelineStep.cs" />
     <Compile Include="FileProcessor\BasePipelineStep.cs" />

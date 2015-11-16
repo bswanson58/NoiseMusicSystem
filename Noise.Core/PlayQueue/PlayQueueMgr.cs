@@ -296,8 +296,8 @@ namespace Noise.Core.PlayQueue {
 
 		public void Handle( Events.TrackUserUpdate eventArgs ) {
 			foreach( var queueTrack in mPlayQueue.Where( queueTrack => ( queueTrack.Track != null ) &&
-																	   ( queueTrack.Track.DbId == eventArgs.TrackId ))) {
-				queueTrack.UpdateTrack( mTrackProvider.GetTrack( eventArgs.TrackId ));
+																	   ( queueTrack.Track.DbId == eventArgs.Track.DbId ))) {
+				queueTrack.UpdateTrack( eventArgs.Track );
 
 				mEventAggregator.Publish( new Events.PlaybackTrackUpdated( queueTrack ));
 			}

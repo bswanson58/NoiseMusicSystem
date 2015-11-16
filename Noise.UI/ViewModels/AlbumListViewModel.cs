@@ -30,6 +30,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IUiLog							mLog;
 		private readonly IPreferences					mPreferences;
 		private readonly IAlbumProvider					mAlbumProvider;
+		private readonly IRatings						mRatings;
 		private readonly ISelectionState				mSelectionState;
 		private	readonly Observal.Observer				mChangeObserver;
 		private readonly IObservableCollection<UiAlbum>	mAlbumList;
@@ -44,11 +45,13 @@ namespace Noise.UI.ViewModels {
  
 		public	event	EventHandler					IsActiveChanged = delegate { };
 
-		public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, ISelectionState selectionState, IUiLog log ) {
+		public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, IRatings ratings,
+								   ISelectionState selectionState, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mPreferences = preferences;
 			mAlbumProvider = albumProvider;
+			mRatings = ratings;
 			mSelectionState = selectionState;
 
 			mAlbumList = new BindableCollection<UiAlbum>();
@@ -395,15 +398,19 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private static void OnAlbumChanged( PropertyChangeNotification propertyNotification ) {
+		private void OnAlbumChanged( PropertyChangeNotification propertyNotification ) {
 			var notifier = propertyNotification.Source as UiBase;
 
 			if( notifier != null ) {
-				if( propertyNotification.PropertyName == "UiRating" ) {
-					GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( notifier.DbId, notifier.UiRating ));
-				}
-				if( propertyNotification.PropertyName == "UiIsFavorite" ) {
-					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( notifier.DbId, notifier.UiIsFavorite ));
+				var album = mAlbumProvider.GetAlbum( notifier.DbId );
+
+				if( album != null ) {
+					if( propertyNotification.PropertyName == "UiRating" ) {
+						mRatings.SetRating( album, notifier.UiRating );
+					}
+					if( propertyNotification.PropertyName == "UiIsFavorite" ) {
+						mRatings.SetFavorite( album, notifier.UiIsFavorite );
+					}
 				}
 			}
 		}

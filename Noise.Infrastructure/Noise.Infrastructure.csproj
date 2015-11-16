@@ -269,12 +269,14 @@
     <Compile Include="Interfaces\IPlayQueue.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
     <Compile Include="Interfaces\IRandomTrackSelector.cs" />
+    <Compile Include="Interfaces\IRatings.cs" />
     <Compile Include="Interfaces\IReplayGainScanner.cs" />
     <Compile Include="Interfaces\IRequireInitialization.cs" />
     <Compile Include="Interfaces\IRootFolderProvider.cs" />
     <Compile Include="Interfaces\IScrobbler.cs" />
     <Compile Include="Interfaces\ISearchProvider.cs" />
     <Compile Include="Interfaces\ISidecarProvider.cs" />
+    <Compile Include="Interfaces\ISidecarUpdater.cs" />
     <Compile Include="Interfaces\ISidecarWriter.cs" />
     <Compile Include="Interfaces\IStorageFileProvider.cs" />
     <Compile Include="Interfaces\IStorageFolderProvider.cs" />

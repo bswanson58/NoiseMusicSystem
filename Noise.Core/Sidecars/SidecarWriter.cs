@@ -7,7 +7,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Sidecars {
-	internal class SidecarWriter : ISidecarWriter {
+	internal class SidecarWriter : ISidecarWriter, ISidecarUpdater {
 		private readonly IFileWriter					mWriter;
 		private readonly ILogLibraryBuildingSidecars	mLog;
 		private readonly ISidecarProvider				mSidecarProvider;
@@ -33,6 +33,12 @@ namespace Noise.Core.Sidecars {
 
 		public bool IsStorageAvailable( DbArtist artist ) {
 			return( Directory.Exists( mStorageSupport.GetArtistPath( artist.DbId )));
+		}
+
+		public void UpdateSidecar( DbTrack forTrack ) {
+			var sidecar = new ScTrack( forTrack );
+
+			WriteSidecar( forTrack, sidecar );
 		}
 
 		public void WriteSidecar( DbTrack forTrack, ScTrack sidecar ) {
@@ -67,6 +73,12 @@ namespace Noise.Core.Sidecars {
 																 forTrack.VolumeName.Equals( scTrack.VolumeName, StringComparison.CurrentCultureIgnoreCase )));
 		}
 
+		public void UpdateSidecar( DbAlbum forAlbum ) {
+			var sidecar = new ScAlbum( forAlbum );
+
+			WriteSidecar( forAlbum, sidecar );
+		}
+
 		public void WriteSidecar( DbAlbum forAlbum, ScAlbum sidecar ) {
 			if( IsStorageAvailable( forAlbum )) {
 				var albumPath = mStorageSupport.GetAlbumPath( forAlbum.DbId );
@@ -83,6 +95,12 @@ namespace Noise.Core.Sidecars {
 
 				InsureSideCarStorageFileExists( forAlbum, sidecarPath );
 			}
+		}
+
+		public void UpdateSidecar( DbArtist forArtist ) {
+			var sidecar = new ScArtist( forArtist );
+
+			WriteSidecar( forArtist, sidecar );
 		}
 
 		public void WriteSidecar( DbArtist forArtist, ScArtist sidecar ) {
