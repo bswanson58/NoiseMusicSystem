@@ -5,7 +5,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Sidecars {
-	internal class SidecarCreator {
+	internal class SidecarCreator : ISidecarCreator {
 		private readonly ILogLibraryBuildingSidecars	mLog;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IAlbumProvider					mAlbumProvider;

@@ -11,12 +11,12 @@ namespace Noise.Core.Sidecars {
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly ISidecarProvider				mSidecarProvider;
-		private readonly SidecarCreator					mSidecarCreator;
-		private readonly SidecarWriter					mSidecarWriter;
+		private readonly ISidecarCreator				mSidecarCreator;
+		private readonly ISidecarWriter					mSidecarWriter;
 		private bool									mStopBuilding;
 
 		public SidecarBuilder( ISidecarProvider sidecarProvider, IArtistProvider artistProvider, IAlbumProvider albumProvider,
-							   SidecarCreator sidecarCreator, SidecarWriter sidecarWriter,
+							   ISidecarCreator sidecarCreator, ISidecarWriter sidecarWriter,
 							   ILogLibraryBuildingSidecars log, LogUserStatus userLog ) {
 			mLog = log;
 			mUserLog = userLog;

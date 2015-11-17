@@ -11,14 +11,16 @@ namespace Noise.Core.Sidecars {
 		private readonly IFileWriter					mWriter;
 		private readonly ILogLibraryBuildingSidecars	mLog;
 		private readonly ISidecarProvider				mSidecarProvider;
+		private readonly ISidecarCreator				mSidecarCreator;
 		private readonly IStorageFileProvider			mStorageFileProvider;
 		private readonly IStorageFolderSupport			mStorageSupport;
 
-		public SidecarWriter( IFileWriter writer, ISidecarProvider sidecarProvider, IStorageFolderSupport storageFolderSupport, IStorageFileProvider storageFileProvider,
-							  ILogLibraryBuildingSidecars log ) {
+		public SidecarWriter( IFileWriter writer, ISidecarProvider sidecarProvider, ISidecarCreator sidecarCreator,
+							  IStorageFolderSupport storageFolderSupport, IStorageFileProvider storageFileProvider, ILogLibraryBuildingSidecars log ) {
 			mLog = log;
 			mWriter = writer;
 			mSidecarProvider = sidecarProvider;
+			mSidecarCreator = sidecarCreator;
 			mStorageSupport = storageFolderSupport;
 			mStorageFileProvider = storageFileProvider;
 		}
@@ -74,9 +76,7 @@ namespace Noise.Core.Sidecars {
 		}
 
 		public void UpdateSidecar( DbAlbum forAlbum ) {
-			var sidecar = new ScAlbum( forAlbum );
-
-			WriteSidecar( forAlbum, sidecar );
+			WriteSidecar( forAlbum, mSidecarCreator.CreateFrom( forAlbum ));
 		}
 
 		public void WriteSidecar( DbAlbum forAlbum, ScAlbum sidecar ) {

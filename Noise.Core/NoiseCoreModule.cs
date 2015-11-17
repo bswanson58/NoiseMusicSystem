@@ -56,6 +56,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IScrobbler, PlayScrobbler>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ISearchProvider, LuceneSearchProvider>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ISidecarBuilder, SidecarBuilder>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ISidecarCreator, SidecarCreator>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ISidecarUpdater, SidecarWriter>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ISidecarWriter, SidecarWriter>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ITagManager, TagManager>( new HierarchicalLifetimeManager());

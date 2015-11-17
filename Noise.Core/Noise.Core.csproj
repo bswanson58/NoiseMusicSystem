@@ -318,6 +318,7 @@
     <Compile Include="Sidecars\AlbumSidecarSync.cs" />
     <Compile Include="Sidecars\ArtistSidecarSync.cs" />
     <Compile Include="Sidecars\ISidecarBuilder.cs" />
+    <Compile Include="Sidecars\ISidecarCreator.cs" />
     <Compile Include="Sidecars\SidecarBuilder.cs" />
     <Compile Include="Sidecars\SidecarCreator.cs" />
     <Compile Include="Sidecars\SidecarWriter.cs" />

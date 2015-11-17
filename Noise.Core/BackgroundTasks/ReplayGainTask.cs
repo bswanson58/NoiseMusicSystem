@@ -22,6 +22,7 @@ namespace Noise.Core.BackgroundTasks {
 		private readonly ITrackProvider			mTrackProvider;
 		private readonly IStorageFileProvider	mStorageFileProvider;
 		private readonly IStorageFolderSupport	mStorageFolderSupport;
+		private readonly ISidecarUpdater		mSidecarUpdater;
 		private readonly List<DbAlbum>			mAlbumList;
 		private readonly bool					mReplayGainEnabled;
 		private IEnumerator<DbAlbum>			mAlbumEnumerator;
@@ -30,7 +31,7 @@ namespace Noise.Core.BackgroundTasks {
 		public ReplayGainTask( IEventAggregator eventAggregator, IReplayGainScanner scanner,
 							   IPreferences preferences, ILogUserStatus userStatus, ILogBackgroundTasks log,
 							   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
-							   IStorageFileProvider storageFileProvider, IStorageFolderSupport storageFolderSupport ) {
+							   IStorageFileProvider storageFileProvider, IStorageFolderSupport storageFolderSupport, ISidecarUpdater sidecarUpdater ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mUserStatus = userStatus;
@@ -40,6 +41,7 @@ namespace Noise.Core.BackgroundTasks {
 			mTrackProvider = trackProvider;
 			mStorageFileProvider = storageFileProvider;
 			mStorageFolderSupport = storageFolderSupport;
+			mSidecarUpdater = sidecarUpdater;
 
 			mAlbumList = new List<DbAlbum>();
 
@@ -108,6 +110,8 @@ namespace Noise.Core.BackgroundTasks {
 									if( ExecuteScanner( album, trackList )) {
 										mUserStatus.CalculatedReplayGain( artist, album );
 
+										mSidecarUpdater.UpdateSidecar( mAlbumProvider.GetAlbum( album.DbId ));
+
 										mLog.ReplayGainScanCompleted( artist, album );
 									}
 									else {
@@ -156,7 +160,7 @@ namespace Noise.Core.BackgroundTasks {
 						}
 					}
 
-					using( var updater = mAlbumProvider.GetAlbumForUpdate( album.DbId ) ) {
+					using( var updater = mAlbumProvider.GetAlbumForUpdate( album.DbId )) {
 						if( updater.Item != null ) {
 							updater.Item.ReplayGainAlbumGain = (float)albumGain;
 							album.ReplayGainAlbumGain = (float)albumGain;
@@ -173,6 +177,8 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		private void InitializeScanList() {
+			mAlbumList.Clear();
+
 			using( var albumList = mAlbumProvider.GetAllAlbums()) {
 				if( albumList.List != null ) {
 					mAlbumList.AddRange( albumList.List );
