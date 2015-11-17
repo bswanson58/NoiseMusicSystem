@@ -55,7 +55,7 @@ namespace Noise.Core.DataProviders {
 						}
 					}
 
-					mSidecarUpdater.UpdateSidecar( forArtist );
+					mSidecarUpdater.UpdateSidecar( mArtistProvider.GetArtist( forArtist.DbId ));
 					mEventAggregator.Publish( new Events.ArtistUserUpdate( forArtist.DbId ));
 				}
 			}
@@ -95,7 +95,7 @@ namespace Noise.Core.DataProviders {
 						}
 					}
 
-					mSidecarUpdater.UpdateSidecar( forAlbum );
+					mSidecarUpdater.UpdateSidecar( mAlbumProvider.GetAlbum( forAlbum.DbId ));
 				}
 			}
 			catch( Exception ex ) {
@@ -143,10 +143,10 @@ namespace Noise.Core.DataProviders {
 						}
 					}
 
-					mSidecarUpdater.UpdateSidecar( forTrack );
+					var track = mTrackProvider.GetTrack( forTrack.DateAddedTicks );
 
-					forTrack.Rating = rating;
-					mEventAggregator.Publish( new Events.TrackUserUpdate( forTrack ));
+					mSidecarUpdater.UpdateSidecar( track );
+					mEventAggregator.Publish( new Events.TrackUserUpdate( track ));
 				}
 			}
 			catch( Exception ex ) {
@@ -172,7 +172,7 @@ namespace Noise.Core.DataProviders {
 						}
 					}
 
-					mSidecarUpdater.UpdateSidecar( forArtist );
+					mSidecarUpdater.UpdateSidecar( mArtistProvider.GetArtist( forArtist.DbId ));
 					mEventAggregator.Publish( new Events.ArtistUserUpdate( forArtist.DbId ));
 				}
 			}
@@ -211,7 +211,7 @@ namespace Noise.Core.DataProviders {
 						}
 					}
 
-					mSidecarUpdater.UpdateSidecar( forAlbum );
+					mSidecarUpdater.UpdateSidecar( mAlbumProvider.GetAlbum( forAlbum.DbId ));
 					mEventAggregator.Publish( new Events.AlbumUserUpdate( forAlbum.DbId ));
 				}
 			}
@@ -262,10 +262,10 @@ namespace Noise.Core.DataProviders {
 						}
 					}
 
-					mSidecarUpdater.UpdateSidecar( forTrack );
+					var track = mTrackProvider.GetTrack( forTrack.DbId );
 
-					forTrack.IsFavorite = isFavorite;
-					mEventAggregator.Publish( new Events.TrackUserUpdate( forTrack ));
+					mSidecarUpdater.UpdateSidecar( track );
+					mEventAggregator.Publish( new Events.TrackUserUpdate( track ));
 				}
 			}
 			catch( Exception ex ) {
