@@ -245,8 +245,8 @@ namespace Noise.Core.DataProviders {
 
 								albumUpdater.Update();
 							}
-							mEventAggregator.Publish( new Events.AlbumUserUpdate( forTrack.Album ));
 
+							mEventAggregator.Publish( new Events.AlbumUserUpdate( forTrack.Album ));
 
 							using( var artistUpdater = mArtistProvider.GetArtistForUpdate( albumUpdater.Item.Artist )) {
 								if( artistUpdater.Item != null ) {
