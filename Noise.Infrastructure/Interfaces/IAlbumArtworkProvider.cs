@@ -7,5 +7,7 @@ namespace Noise.Infrastructure.Interfaces {
 		Artwork GetRandomAlbumArtwork( DbAlbum forAlbum );
 
 		int		ImageCount( DbAlbum forAlbum );
+
+		void	SetAlbumCover( long albumId, long artworkId );
 	}
 }

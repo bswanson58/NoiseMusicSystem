@@ -4,8 +4,6 @@ namespace Noise.Infrastructure {
 	public static class GlobalCommands {
 		public	static CompositeCommand	SetMp3Tags = new CompositeCommand();
 
-		public	static CompositeCommand	SetAlbumCover = new CompositeCommand();
-
 		public	static CompositeCommand PlayTrack = new CompositeCommand();
 		public	static CompositeCommand PlayTrackList = new CompositeCommand();
 		public	static CompositeCommand	PlayAlbum = new CompositeCommand();

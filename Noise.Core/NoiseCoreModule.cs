@@ -83,7 +83,6 @@ namespace Noise.Core {
 			mContainer.RegisterType<IEnumerable<IPipelineStep>, IPipelineStep[]>();
 
 			mContainer.RegisterType<IRequireConstruction, BackgroundTaskManager>( "BackgroundTaskManager", new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IRequireConstruction, DataUpdates>( "DataUpdates", new HierarchicalLifetimeManager());
 //			mContainer.RegisterType<IRequireConstruction, LyricsSearcher>( "LyricsSearcher", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IEnumerable<IRequireConstruction>, IRequireConstruction[]>();
 

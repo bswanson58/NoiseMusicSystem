@@ -356,7 +356,7 @@ namespace Noise.UI.ViewModels {
 				if( value.Id != mCurrentAlbumCover.Id ) {
 					mCurrentAlbumCover = value;
 
-					GlobalCommands.SetAlbumCover.Execute( new SetAlbumCoverCommandArgs( mCurrentAlbum.DbId, value.Id ));
+					mAlbumArtworkProvider.SetAlbumCover( mCurrentAlbum.DbId, mCurrentAlbumCover.Id );
 				}
 			}
 		}
