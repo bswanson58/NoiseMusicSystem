@@ -20,7 +20,7 @@ namespace Noise.Metadata.Support {
 	}
 
 	public class UriDownloader {
-		public static async Task<List<Tuple<string, string, Exception>>> DopwnloadFileListAsync( IEnumerable<DownloadFileDetails> uriList ) {
+		public static async Task<List<Tuple<string, string, Exception>>> DownloadFileListAsync( IEnumerable<DownloadFileDetails> uriList ) {
 		    var results = new List<Tuple<string, string, Exception>>();
 
 			await uriList.ForEachAsync( fileDetail => DownloadFileTaskAsync( fileDetail ), ( input, output ) => results.Add( output ));

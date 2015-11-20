@@ -30,7 +30,7 @@ namespace Noise.Metadata.ArtistMetadata {
 					if( Directory.Exists( artistPath )) {
 						var artworkPath = Path.Combine( artistPath, Constants.LibraryMetadataFolder );
 
-						if( !Directory.Exists( artworkPath ) ) {
+						if(!Directory.Exists( artworkPath )) {
 							Directory.CreateDirectory( artworkPath );
 						}
 
@@ -44,7 +44,7 @@ namespace Noise.Metadata.ArtistMetadata {
 			var downloadList = BuildDownloadList( artworkList, artworkPath ).ToList();
 
 			if( downloadList.Any()) {
-				var resultsList = await UriDownloader.DopwnloadFileListAsync( downloadList );
+				var resultsList = await UriDownloader.DownloadFileListAsync( downloadList );
 
 				foreach( var result in resultsList ) {
 					if( result.Item3 != null ) {
