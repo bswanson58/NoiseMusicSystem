@@ -74,10 +74,10 @@
 				<TextBlock Grid.Column="0" Margin="5,0" VerticalAlignment="Center" Text="Display:"/>
 				<ComboBox Grid.Column="1" ItemsSource="{Binding FilterList}" DisplayMemberPath="FilterName" SelectedItem="{Binding CurrentFilter}"/>
 				
-				<Button Grid.Column="3" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Play Random" Command="{Binding Path=PlayRandom}"/>
+				<Button Grid.Column="3" Style="{StaticResource GeneralButtonStyle}" Content="Play Random" Command="{Binding Path=PlayRandom}"/>
 
-				<Button Grid.Column="4" Padding="5,0" Margin="15,0,0,0" Style="{StaticResource GeneralButtonStyle}" Content="Export" Command="{Binding Path=ExportFavorites}"/>
-				<Button Grid.Column="5" Padding="5,0" Margin="7,0,0,0" Style="{StaticResource GeneralButtonStyle}" Content="Import" Command="{Binding Path=ImportFavorites}"/>
+				<Button Grid.Column="4" Margin="15,0,0,0" Style="{StaticResource GeneralButtonStyle}" Content="Export" Command="{Binding Path=ExportFavorites}"/>
+				<Button Grid.Column="5" Margin="7,0,0,0" Style="{StaticResource GeneralButtonStyle}" Content="Import" Command="{Binding Path=ImportFavorites}"/>
 			</Grid>
 		</Grid>
 	</GroupBox>
