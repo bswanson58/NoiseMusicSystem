@@ -179,7 +179,8 @@ namespace Noise.BlobStorage.BlobStore {
 				File.Delete( blobPath );
 			}
 			else {
-				throw new BlobStorageException( blobId, blobPath, "Attempt to delete nonexistent item." );
+//				throw new BlobStorageException( blobId, blobPath, "Attempt to delete nonexistent item." );
+				mLog.LogMessage( string.Format( "Attempt to delete nonexistent blob - id: '{0}', path: '{1}'", blobId, blobPath ));
 			}
 		}
 
@@ -190,7 +191,8 @@ namespace Noise.BlobStorage.BlobStore {
 				File.Delete( blobPath );
 			}
 			else {
-				throw new BlobStorageException( blobId, blobPath, "Attempt to delete nonexistent item." );
+//				throw new BlobStorageException( blobId, blobPath, "Attempt to delete nonexistent item." );
+				mLog.LogMessage( string.Format( "Attempt to delete nonexistent blob - id: '{0}', path: '{1}'", blobId, blobPath ));
 			}
 		}
 
