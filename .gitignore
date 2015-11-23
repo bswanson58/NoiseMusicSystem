@@ -150,3 +150,4 @@ pip-log.txt
 /Sandbox
 Noise.Desktop/RefitStubs.cs
 Noise.Headless/RefitStubs.cs
+Noise.Metadata/RefitStubs.cs
