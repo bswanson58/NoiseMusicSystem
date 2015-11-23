@@ -145,6 +145,9 @@ copy "$(SolutionDir)Noise.Core\Resources\EqPresets.xml" "$(TargetDir)"
 copy "$(SolutionDir)Noise.Core\Resources\LicenseKeys.xml" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\refit.2.2.1\build\refit.targets" Condition="Exists('..\packages\refit.2.2.1\build\refit.targets')" />
+  <PropertyGroup>
+    <PreBuildEvent>copy "$(ProjectDir)..\Common\RefitStubs.cs" .</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -214,7 +214,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="RefitStubs.cs" />
     <Compile Include="StartupManager.cs" />
     <Compile Include="WindowManager.cs" />
     <Resource Include="Resources\Replay.png" />
@@ -390,6 +389,9 @@ copy "$(SolutionDir)Noise.Core\Resources\LicenseKeys.xml" "$(TargetDir)"</PostBu
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\refit.2.2.1\build\refit.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\refit.2.2.1\build\refit.targets'))" />
   </Target>
+  <PropertyGroup>
+    <PreBuildEvent>copy "$(ProjectDir)..\Common\RefitStubs.cs" .</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
