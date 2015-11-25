@@ -146,8 +146,3 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
-
-/Sandbox
-Noise.Desktop/RefitStubs.cs
-Noise.Headless/RefitStubs.cs
-Noise.Metadata/RefitStubs.cs
