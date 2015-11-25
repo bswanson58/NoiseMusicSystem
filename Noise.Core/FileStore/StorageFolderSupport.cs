@@ -83,7 +83,12 @@ namespace Noise.Core.FileStore {
 					if( album != null ) {
 						var path = GetAlbumPath( album.DbId );
 
-						retValue = Directory.GetParent( path ).FullName;
+						if(!string.IsNullOrWhiteSpace( path )) {
+							retValue = Directory.GetParent( path ).FullName;
+						}
+						else {
+							mLog.LogMessage( "Could not get path for album '{0}'", album.Name );
+						}
 					}
 				}
 			}
