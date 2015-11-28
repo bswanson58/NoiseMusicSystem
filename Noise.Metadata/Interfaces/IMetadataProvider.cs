@@ -1,9 +1,9 @@
-﻿using Noise.Infrastructure.Interfaces;
+﻿using System.Threading.Tasks;
 using Raven.Client;
 
 namespace Noise.Metadata.Interfaces {
 	public interface IArtistMetadataProvider : IMetadataProvider {
-		void		UpdateArtist( string artistName );
+		Task<bool>	UpdateArtist( string artistName );
 	}
 
 	public interface IMetadataProvider {

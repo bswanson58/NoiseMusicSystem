@@ -53,12 +53,10 @@ namespace Noise.Metadata.MetadataProviders {
 			
 		}
 
-		public void UpdateArtist( string artistName ) {
-			AsyncUpdateArtist( artistName ).Wait();
-		}
-
 		// Last.fm provides artist biography, genre, similar artists and top albums.
-		private async Task AsyncUpdateArtist( string artistName ) {
+		public async Task<bool> UpdateArtist( string artistName ) {
+			var retValue = false;
+
 			if( mHasNetworkAccess ) {
 				try {
 					var artistSearch = await mLastFmClient.ArtistSearch( artistName );
@@ -87,6 +85,8 @@ namespace Noise.Metadata.MetadataProviders {
 
 								mLog.LoadedMetadata( ProviderKey, artistName );
 							}
+
+							retValue = true;
 						}
 						else {
 							mLog.ArtistNotFound( ProviderKey, artistName );
@@ -97,9 +97,13 @@ namespace Noise.Metadata.MetadataProviders {
 					}
 				}
 				catch( Exception ex ) {
+					retValue = false;
+
 					mLog.LogException( string.Format( "LastFm search failed for artist \"{0}\"", artistName ), ex );
 				}
 			}
+
+			return( retValue );
 		}
 
 		private void UpdateArtist( string artistName, LastFmArtistInfo artistInfo, LastFmAlbumList topAlbums, LastFmTrackList topTracks ) {
