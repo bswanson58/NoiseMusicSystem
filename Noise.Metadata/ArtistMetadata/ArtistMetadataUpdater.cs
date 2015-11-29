@@ -172,9 +172,7 @@ namespace Noise.Metadata.ArtistMetadata {
 									 ( status.LastUpdate + status.Lifetime > DateTime.Now ));
 
 				if( shouldUpdate ) {
-					var  providerUpdated = await provider.UpdateArtist( artistStatus.ArtistName );
-
-					if( providerUpdated ) {
+					if( await provider.UpdateArtist( artistStatus.ArtistName )) {
 						using( var session = mDocumentStore.OpenSession()) {
 							artistStatus.SetLastUpdate( provider.ProviderKey );
 
