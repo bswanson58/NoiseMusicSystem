@@ -267,7 +267,8 @@ namespace Noise.UI.ViewModels {
 			return( node.Track != null ? node.Track.Name : node.Album != null ? node.Album.Name : node.Artist != null ? node.Artist.Name : string.Empty );
 		}
 
-		private static void PlayArtist( FavoriteViewNode node ) {
+		private void PlayArtist( FavoriteViewNode node ) {
+			mEventAggregator.Publish( new Events.PlayArtistTracksRandom( node.Artist.DbId ));
 		}
 
 		private static void PlayAlbum( FavoriteViewNode node ) {
