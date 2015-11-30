@@ -36,7 +36,7 @@
 													 InteractionRequest="{Binding Path=AlbumCategoryEditRequest}" />
 	</i:Interaction.Behaviors>
 
-	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Album Information ">
+	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Album ">
 		<Border Background="{DynamicResource TreeItemBackground}" BorderThickness="0" CornerRadius="5"
 				Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}">
 			<Grid Background="{StaticResource NoiseBrush}" 
