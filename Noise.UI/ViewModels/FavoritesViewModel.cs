@@ -270,7 +270,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void PlayArtist( FavoriteViewNode node ) {
-			mEventAggregator.Publish( new Events.PlayArtistTracksRandom( node.Artist.DbId ));
+			mPlayCommand.PlayRandomArtistTracks( node.Artist );
 		}
 
 		private void PlayAlbum( FavoriteViewNode node ) {
