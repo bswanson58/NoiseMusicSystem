@@ -27,6 +27,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IUiLog							mLog;
 		private readonly ISelectionState				mSelectionState;
 		private readonly ITrackProvider					mTrackProvider;
+		private readonly IPlayCommand					mPlayCommand;
 		private readonly IRatings						mRatings;
 		private readonly Observal.Observer				mChangeObserver;
 		private readonly BindableCollection<UiTrack>	mTracks;
@@ -35,12 +36,14 @@ namespace Noise.UI.ViewModels {
 		private CancellationTokenSource					mCancellationTokenSource;
 		private long									mCurrentAlbumId;
 
-		public AlbumTracksViewModel( IEventAggregator eventAggregator, IRatings ratings, ISelectionState selectionState, ITrackProvider trackProvider, IUiLog log ) {
+		public AlbumTracksViewModel( IEventAggregator eventAggregator, IRatings ratings, ISelectionState selectionState,
+									 ITrackProvider trackProvider, IPlayCommand playCommand, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mSelectionState = selectionState;
 			mRatings = ratings;
 			mTrackProvider = trackProvider;
+			mPlayCommand = playCommand;
 
 			mEventAggregator.Subscribe( this );
 
@@ -172,7 +175,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackPlay( long trackId ) {
-			GlobalCommands.PlayTrack.Execute( mTrackProvider.GetTrack( trackId ));
+			mPlayCommand.Play( mTrackProvider.GetTrack( trackId ));
 		}
 
 		private void OnNodeChanged( PropertyChangeNotification propertyNotification ) {

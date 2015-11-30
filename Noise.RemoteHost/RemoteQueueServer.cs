@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using AutoMapper;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteDto;
@@ -16,6 +15,7 @@ namespace Noise.RemoteHost {
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
 		private readonly IGenreProvider			mGenreProvider;
+		private readonly IPlayCommand			mPlayCommand;
 		private readonly IPlayController		mPlayController;
 		private readonly IPlayQueue				mPlayQueue;
 		private readonly IPlayStrategyFactory	mPlayStrategyFactory;
@@ -23,12 +23,13 @@ namespace Noise.RemoteHost {
 		private readonly INoiseLog				mLog;
 
 		public RemoteQueueServer( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IGenreProvider genreProvider,
-								  IPlayController playController, IPlayQueue playQueue,
+								  IPlayController playController, IPlayQueue playQueue,IPlayCommand playCommand,
 								  IPlayStrategyFactory playStrategyFactory, IPlayExhaustedFactory playExhaustedFactory, INoiseLog log ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mGenreProvider = genreProvider;
+			mPlayCommand = playCommand;
 			mPlayController = playController;
 			mPlayQueue = playQueue;
 			mPlayStrategyFactory = playStrategyFactory;
@@ -43,7 +44,7 @@ namespace Noise.RemoteHost {
 				var track = mTrackProvider.GetTrack( trackId );
 
 				if( track != null ) {
-					GlobalCommands.PlayTrack.Execute( track );
+					mPlayCommand.Play( track );
 
 					retValue.Success = true;
 				}
@@ -85,7 +86,7 @@ namespace Noise.RemoteHost {
 				var album = mAlbumProvider.GetAlbum( albumId );
 
 				if( album != null ) {
-					GlobalCommands.PlayAlbum.Execute( album );
+					mPlayCommand.Play( album );
 
 					retValue.Success = true;
 				}

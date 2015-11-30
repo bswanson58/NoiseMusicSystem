@@ -46,6 +46,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IResourceProvider			mResourceProvider;
 		private readonly ITagProvider				mTagProvider;
 		private readonly ITagManager				mTagManager;
+		private readonly IPlayCommand				mPlayCommand;
 		private readonly IRatings					mRatings;
 		private readonly IStorageFolderSupport		mStorageFolderSupport;
 		private UiAlbum								mCurrentAlbum;
@@ -68,7 +69,7 @@ namespace Noise.UI.ViewModels {
 
 		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, ISelectionState selectionState, IRatings ratings,
 							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IAlbumArtworkProvider albumArtworkProvider, IArtworkProvider artworkProvider,
-							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager, IUiLog log ) {
+							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager, IPlayCommand playCommand, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mSelectionState = selectionState;
@@ -81,6 +82,7 @@ namespace Noise.UI.ViewModels {
 			mTagProvider = tagProvider;
 			mTagManager = tagManager;
 			mRatings = ratings;
+			mPlayCommand = playCommand;
 
 			mEventAggregator.Subscribe( this );
 
@@ -378,7 +380,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_PlayAlbum() {
 			if( mCurrentAlbum != null ) {
-				GlobalCommands.PlayAlbum.Execute( mAlbumProvider.GetAlbum( mCurrentAlbum.DbId ));
+				mPlayCommand.Play( mAlbumProvider.GetAlbum( mCurrentAlbum.DbId ));
 			}
 		}
 
@@ -390,10 +392,10 @@ namespace Noise.UI.ViewModels {
 		public void Execute_PlayVolume() {
 			if( mCurrentAlbum != null ) {
 				if( string.Equals( cAllTracks, mCurrentVolumeName )) {
-					GlobalCommands.PlayAlbum.Execute( mAlbumProvider.GetAlbum( mCurrentAlbum.DbId ));
+					mPlayCommand.Play( mAlbumProvider.GetAlbum( mCurrentAlbum.DbId ));
 				}
 				else {
-					GlobalCommands.PlayVolume.Execute( new DbTrack { Album = mCurrentAlbum.DbId, VolumeName = mCurrentVolumeName });
+					mPlayCommand.Play( mAlbumProvider.GetAlbum( mCurrentAlbum.DbId ), mCurrentVolumeName );
 				}
 			}
 		}

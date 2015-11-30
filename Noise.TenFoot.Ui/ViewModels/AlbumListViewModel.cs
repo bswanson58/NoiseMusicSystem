@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Caliburn.Micro;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Dto;
@@ -12,6 +11,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 	public class AlbumListViewModel : BaseListViewModel<DbAlbum>, IAlbumList, ITitledScreen {
 		private readonly IAlbumTrackList	mAlbumTrackList;
 		private readonly IAlbumProvider		mAlbumProvider;
+		private readonly IPlayCommand		mPlayCommand;
 		private readonly IUiLog				mLog;
 		private long						mCurrentArtist;
 		private TaskHandler					mAlbumRetrievalTaskHandler;
@@ -19,10 +19,11 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	string						ScreenTitle { get; private set; }
 		public	string						Context { get; private set; }
 
-		public AlbumListViewModel( IEventAggregator eventAggregator, IAlbumTrackList trackListViewModel, IAlbumProvider albumProvider, IUiLog log ) :
+		public AlbumListViewModel( IEventAggregator eventAggregator, IAlbumTrackList trackListViewModel, IAlbumProvider albumProvider, IPlayCommand playCommand, IUiLog log ) :
 			base( eventAggregator ) {
 			mAlbumTrackList = trackListViewModel;
 			mAlbumProvider = albumProvider;
+			mPlayCommand = playCommand;
 			mLog = log;
 
 			ScreenTitle = "Albums";
@@ -70,7 +71,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		protected override void EnqueueItem() {
-			GlobalCommands.PlayAlbum.Execute( SelectedItem );
+			mPlayCommand.Play( SelectedItem );
 		}
 
 		protected override void DequeueItem() {

@@ -17,14 +17,16 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator			mEventAggregator;
 		private readonly IUiLog						mLog;
 		private readonly IArtistProvider			mArtistProvider;
+		private readonly IPlayCommand				mPlayCommand;
 		private readonly Dictionary<long, DbArtist>	mArtistList;
 		private readonly SortableCollection<UiTimeExplorerAlbum>	mAlbumList; 
 		private TaskHandler							mAlbumLoadingTaskHandler;
 
-		public TimeExplorerAlbumsViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IUiLog log ) {
+		public TimeExplorerAlbumsViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IPlayCommand playCommand, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mArtistProvider = artistProvider;
+			mPlayCommand = playCommand;
 
 			mArtistList = new Dictionary<long, DbArtist>();
 			mAlbumList = new SortableCollection<UiTimeExplorerAlbum>();
@@ -102,7 +104,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnAlbumPlay( UiTimeExplorerAlbum album ) {
-			GlobalCommands.PlayAlbum.Execute( album.Album );
+			mPlayCommand.Play( album.Album );
 		}
 	}
 }

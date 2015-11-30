@@ -21,14 +21,16 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly ITrackProvider		mTrackProvider;
 		private readonly ISearchProvider	mSearchProvider;
+		private readonly IPlayCommand		mPlayCommand;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
 
-		public SimilarSongViewModel( IEventAggregator eventAggregator,
+		public SimilarSongViewModel( IEventAggregator eventAggregator, IPlayCommand playCommand,
 									 ITrackProvider trackProvider, ISearchProvider searchProvider ) {
 			mEventAggregator = eventAggregator;
 			mTrackProvider = trackProvider;
 			mSearchProvider = searchProvider;
+			mPlayCommand = playCommand;
 
 			mEventAggregator.Subscribe( this );
 
@@ -114,12 +116,12 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private static void OnPlay( SearchViewNode node ) {
+		private void OnPlay( SearchViewNode node ) {
 			if( node.Track != null ) {
-				GlobalCommands.PlayTrack.Execute( node.Track );
+				mPlayCommand.Play( node.Track );
 			}
 			else if( node.Album != null ) {
-				GlobalCommands.PlayAlbum.Execute( node.Album );
+				mPlayCommand.Play( node.Album );
 			}
 		}
 

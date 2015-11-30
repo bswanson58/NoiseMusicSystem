@@ -19,16 +19,18 @@ namespace Noise.UI.ViewModels {
 		private readonly IInternetStreamProvider	mStreamProvider;
 		private readonly IDataExchangeManager		mDataExchangeMgr;
 		private readonly IDialogService				mDialogService;
+		private readonly IPlayCommand				mPlayCommand;
 		private TaskHandler							mUpdateStreamsTask;
 		private readonly BindableCollection<UiInternetStream>	mStreams;
 
-		public StreamViewModel( IEventAggregator eventAggregator, IDialogService dialogService, IDatabaseInfo databaseInfo,
+		public StreamViewModel( IEventAggregator eventAggregator, IDialogService dialogService, IDatabaseInfo databaseInfo, IPlayCommand playCommand,
 								IInternetStreamProvider streamProvider, IDataExchangeManager dataExchangeManager, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mStreamProvider = streamProvider;
 			mDataExchangeMgr = dataExchangeManager;
 			mDialogService = dialogService;
+			mPlayCommand = playCommand;
 
 			mStreams = new BindableCollection<UiInternetStream>();
 
@@ -97,7 +99,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnStreamPlay( long streamId ) {
-			GlobalCommands.PlayStream.Execute( mStreamProvider.GetStream( streamId ));
+			mPlayCommand.Play( mStreamProvider.GetStream( streamId ));
 		}
 
 		public void Execute_AddStream( object sender ) {

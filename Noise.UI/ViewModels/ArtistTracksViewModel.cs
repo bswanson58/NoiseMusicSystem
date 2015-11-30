@@ -23,6 +23,7 @@ namespace Noise.UI.ViewModels {
 		private readonly ISelectionState	mSelectionState;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
+		private readonly IPlayCommand		mPlayCommand;
 		private	bool						mIsActive;
 		private TaskHandler<IEnumerable<UiArtistTrackNode>>	mUpdateTask;
 		private CancellationTokenSource						mCancellationTokenSource;
@@ -30,13 +31,14 @@ namespace Noise.UI.ViewModels {
 		public	event EventHandler						IsActiveChanged = delegate { };
 		public	BindableCollection<UiArtistTrackNode>	TrackList { get; private set; }
 
-		public ArtistTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState,
+		public ArtistTracksViewModel( IEventAggregator eventAggregator, ISelectionState selectionState, IPlayCommand playCommand,
 									  IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mSelectionState = selectionState;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
+			mPlayCommand = playCommand;
 
 			mEventAggregator.Subscribe( this );
 
@@ -223,7 +225,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnTrackPlay( long trackId ) {
-			GlobalCommands.PlayTrack.Execute( mTrackProvider.GetTrack( trackId ));
+			mPlayCommand.Play( mTrackProvider.GetTrack( trackId ));
 		}
 	}
 }

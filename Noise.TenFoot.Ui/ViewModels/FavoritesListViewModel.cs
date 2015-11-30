@@ -1,6 +1,5 @@
 ﻿using System;
 using Caliburn.Micro;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
@@ -14,8 +13,9 @@ using Events = Noise.TenFoot.Ui.Input.Events;
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class FavoritesListViewModel : FavoritesViewModel, IHomeScreen, IActivate, IDeactivate,
 										  IHandle<InputEvent> {
-		private FavoriteViewNode	mSelectedItem;
-		private int					mSelectedItemIndex;
+		private readonly IPlayCommand	mPlayCommand;
+		private FavoriteViewNode		mSelectedItem;
+		private int						mSelectedItemIndex;
 
 		public	event EventHandler<ActivationEventArgs>		Activated = delegate { };
 		public	event EventHandler<DeactivationEventArgs>	AttemptingDeactivation = delegate { };
@@ -29,10 +29,12 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	eMainMenuCommand	MenuCommand { get; private set; }
 		public	int					ScreenOrder { get; private set; }
 
-		public FavoritesListViewModel(IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
+		public FavoritesListViewModel(IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayCommand playCommand, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
 									  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ISelectionState selectionState,
 									  IDataExchangeManager dataExchangeManager, IDialogService dialogService, IUiLog log ) :
-			base( eventAggregator, databaseInfo, playQueue, trackSelector, artistProvider, albumProvider, trackProvider, selectionState, dataExchangeManager, dialogService, log ) {
+			base( eventAggregator, databaseInfo, playCommand, playQueue, trackSelector, artistProvider, albumProvider, trackProvider, selectionState, dataExchangeManager, dialogService, log ) {
+			mPlayCommand = playCommand;
+
 			ScreenTitle = "Favorites";
 			MenuTitle = "Favorites";
 			Description = "display favorites songs";
@@ -80,7 +82,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		private void EnqueueItem() {
-			GlobalCommands.PlayTrack.Execute( SelectedItem.Track );
+			mPlayCommand.Play( SelectedItem.Track );
 		}
 
 		private void DequeueItem() {

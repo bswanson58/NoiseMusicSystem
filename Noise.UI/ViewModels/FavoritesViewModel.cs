@@ -39,6 +39,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
 		private readonly IRandomTrackSelector	mTrackSelector;
+		private readonly IPlayCommand			mPlayCommand;
 		private readonly IPlayQueue				mPlayQueue;
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly IDialogService			mDialogService;
@@ -49,7 +50,7 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler<IEnumerable<FavoriteViewNode>>		mTaskHandler; 
 		private readonly SortableCollection<FavoriteViewNode>	mFavoritesList;
 
-		public FavoritesViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
+		public FavoritesViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayCommand playCommand, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
 								   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ISelectionState selectionState,
 								   IDataExchangeManager dataExchangeManager, IDialogService dialogService, IUiLog log ) {
 			mEventAggregator = eventAggregator;
@@ -58,6 +59,7 @@ namespace Noise.UI.ViewModels {
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mTrackSelector = trackSelector;
+			mPlayCommand = playCommand;
 			mPlayQueue = playQueue;
 			mDataExchangeMgr = dataExchangeManager;
 			mDialogService = dialogService;
@@ -271,12 +273,12 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.Publish( new Events.PlayArtistTracksRandom( node.Artist.DbId ));
 		}
 
-		private static void PlayAlbum( FavoriteViewNode node ) {
-			GlobalCommands.PlayAlbum.Execute( node.Album );
+		private void PlayAlbum( FavoriteViewNode node ) {
+			mPlayCommand.Play( node.Album );
 		}
 
-		private static void PlayTrack( FavoriteViewNode node ) {
-			GlobalCommands.PlayTrack.Execute( node.Track );
+		private void PlayTrack( FavoriteViewNode node ) {
+			mPlayCommand.Play( node.Track );
 		}
 
 		public void Execute_PlayRandom() {

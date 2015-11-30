@@ -34,11 +34,6 @@ namespace Noise.Core.PlayQueue {
 		private bool								mStopAtEndOfTrack;
 		private bool								mDeleteUnplayedTracks;
 		private int									mMaximumPlayedTracks;
-		private AsyncCommand<DbTrack>				mTrackPlayCommand;
-		private AsyncCommand<IEnumerable<DbTrack>>	mTrackListPlayCommand;
-		private AsyncCommand<DbAlbum>				mAlbumPlayCommand;
-		private AsyncCommand<DbTrack>				mVolumePlayCommand; 
-		private AsyncCommand<DbInternetStream>		mStreamPlayCommand;
 
 		public PlayQueueMgr( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager,
 							 IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
@@ -79,21 +74,6 @@ namespace Noise.Core.PlayQueue {
 				}
 			}
 
-			mTrackPlayCommand = new AsyncCommand<DbTrack>( OnTrackPlayCommand );
-			GlobalCommands.PlayTrack.RegisterCommand( mTrackPlayCommand );
-
-			mTrackListPlayCommand = new AsyncCommand<IEnumerable<DbTrack>>( OnTrackListPlayCommand );
-			GlobalCommands.PlayTrackList.RegisterCommand( mTrackListPlayCommand );
-
-			mAlbumPlayCommand = new AsyncCommand<DbAlbum>( OnAlbumPlayCommand );
-			GlobalCommands.PlayAlbum.RegisterCommand( mAlbumPlayCommand );
-
-			mVolumePlayCommand = new AsyncCommand<DbTrack>( OnVolumePlayCommand );
-			GlobalCommands.PlayVolume.RegisterCommand( mVolumePlayCommand );
-
-			mStreamPlayCommand = new AsyncCommand<DbInternetStream>( OnStreamPlayCommand );
-			GlobalCommands.PlayStream.RegisterCommand( mStreamPlayCommand );
-
 			mEventAggregator.Subscribe( this );
 		}
 
@@ -114,22 +94,6 @@ namespace Noise.Core.PlayQueue {
 
 		public void Shutdown() {
 			mEventAggregator.Unsubscribe( this );
-
-			GlobalCommands.PlayTrack.UnregisterCommand( mTrackPlayCommand );
-			GlobalCommands.PlayTrackList.UnregisterCommand( mTrackListPlayCommand );
-			GlobalCommands.PlayAlbum.UnregisterCommand( mAlbumPlayCommand );
-			GlobalCommands.PlayVolume.UnregisterCommand( mVolumePlayCommand );
-			GlobalCommands.PlayStream.UnregisterCommand( mStreamPlayCommand );
-		}
-
-		private void OnTrackListPlayCommand( IEnumerable<DbTrack> trackList ) {
-			foreach( var track in trackList ) {
-				Add( track );
-			}	
-		}
-
-		private void OnTrackPlayCommand( DbTrack track ) {
-			Add( track );
 		}
 
 		public void Add( DbTrack track ) {
@@ -209,10 +173,6 @@ namespace Noise.Core.PlayQueue {
 			}
 		}
 
-		private void OnAlbumPlayCommand( DbAlbum album ) {
-			Add( album );
-		}
-
 		public void Add( DbAlbum album ) {
 			AddAlbum( album );
 
@@ -238,14 +198,6 @@ namespace Noise.Core.PlayQueue {
 				}
 
 				mAddingMoreTracks = false;
-			}
-		}
-
-		private void OnVolumePlayCommand( DbTrack track ) {
-			var album = mAlbumProvider.GetAlbum( track.Album );
-
-			if( album != null ) {
-				Add( album, track.VolumeName );
 			}
 		}
 
@@ -279,10 +231,6 @@ namespace Noise.Core.PlayQueue {
 					Add( album );
 				}
 			}
-		}
-
-		private void OnStreamPlayCommand( DbInternetStream stream ) {
-			Add( stream  );
 		}
 
 		public void Add( DbInternetStream stream ) {

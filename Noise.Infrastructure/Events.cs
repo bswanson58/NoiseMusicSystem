@@ -172,6 +172,22 @@ namespace Noise.Infrastructure {
 			}
 		}
 
+		public class AlbumQueued {
+			public DbAlbum		QueuedAlbum { get; private set; }
+
+			public AlbumQueued( DbAlbum album ) {
+				QueuedAlbum = album;
+			}
+		}
+
+		public class TrackQueued {
+			public DbTrack QueuedTrack { get; private set; }
+
+			public TrackQueued( DbTrack track ) {
+				QueuedTrack = track;
+			}
+		}
+
 		public class PlayArtistTracksRandom {
 			public long		ArtistId { get; private set; }
 

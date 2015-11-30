@@ -31,6 +31,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IPreferences					mPreferences;
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly IRatings						mRatings;
+		private readonly IPlayCommand					mPlayCommand;
 		private readonly ISelectionState				mSelectionState;
 		private	readonly Observal.Observer				mChangeObserver;
 		private readonly IObservableCollection<UiAlbum>	mAlbumList;
@@ -45,7 +46,7 @@ namespace Noise.UI.ViewModels {
  
 		public	event	EventHandler					IsActiveChanged = delegate { };
 
-		public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, IRatings ratings,
+		public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, IPlayCommand playCommand, IRatings ratings,
 								   ISelectionState selectionState, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
@@ -53,6 +54,7 @@ namespace Noise.UI.ViewModels {
 			mAlbumProvider = albumProvider;
 			mRatings = ratings;
 			mSelectionState = selectionState;
+			mPlayCommand = playCommand;
 
 			mAlbumList = new BindableCollection<UiAlbum>();
 			VisualStateName = cHideSortDescriptions;
@@ -380,7 +382,7 @@ namespace Noise.UI.ViewModels {
 			var album = mAlbumProvider.GetAlbum( albumId );
 
 			if( album != null ) {
-				GlobalCommands.PlayAlbum.Execute( album );
+				mPlayCommand.Play( album );
 			}
 		}
 
