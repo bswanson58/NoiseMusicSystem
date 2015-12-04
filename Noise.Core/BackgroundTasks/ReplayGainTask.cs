@@ -12,7 +12,8 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	public class ReplayGainTask : IBackgroundTask,
-								  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+								  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>, 
+								  IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly ILogBackgroundTasks	mLog;
 		private readonly ILogUserStatus			mUserStatus;
@@ -26,7 +27,7 @@ namespace Noise.Core.BackgroundTasks {
 		private readonly List<DbAlbum>			mAlbumList;
 		private readonly bool					mReplayGainEnabled;
 		private IEnumerator<DbAlbum>			mAlbumEnumerator;
-		private bool							mDatabaseOpen;
+		private bool							mScanEnabled;
 
 		public ReplayGainTask( IEventAggregator eventAggregator, IReplayGainScanner scanner,
 							   IPreferences preferences, ILogUserStatus userStatus, ILogBackgroundTasks log,
@@ -58,33 +59,49 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public void Handle( Events.DatabaseOpened message ) {
-			if( mReplayGainEnabled ) {
-				InitializeScanList();
-			}
-
-			mDatabaseOpen = true;
+			InitializeScan();
 		}
 
 		public void Handle( Events.DatabaseClosing message ) {
-			mAlbumList.Clear();
-			mAlbumEnumerator = null;
+			HaltScan();
+		}
 
-			mDatabaseOpen = false;
+		public void Handle( Events.LibraryUpdateStarted args ) {
+			HaltScan();
+		}
+
+		public void Handle( Events.LibraryUpdateCompleted args ) {
+			InitializeScan();
 		}
 
 		private DbAlbum NextAlbum() {
 			DbAlbum	retValue = null;
 
-			if( mAlbumEnumerator.MoveNext()) {
+			if(( mAlbumEnumerator != null ) &&
+			   ( mAlbumEnumerator.MoveNext())) {
 				retValue = mAlbumEnumerator.Current;
 			}
 
 			return ( retValue );
 		}
 
+		private void InitializeScan() {
+			if( mReplayGainEnabled ) {
+				InitializeScanList();
+
+				mScanEnabled = true;
+			}
+		}
+
+		private void HaltScan() {
+			mAlbumList.Clear();
+			mAlbumEnumerator = null;
+
+			mScanEnabled = false;
+		}
+
 		public void ExecuteTask() {
-			if(( mReplayGainEnabled ) &&
-			   ( mDatabaseOpen )) {
+			if( mScanEnabled ) {
 				var spinCount = 10;
 
 				while( spinCount > 0 ) {
@@ -146,7 +163,7 @@ namespace Noise.Core.BackgroundTasks {
 			}
 
 			if( mReplayGainScanner.CalculateReplayGain()) {
-				if( mDatabaseOpen ) {
+				if( mScanEnabled ) {
 					var albumGain = mReplayGainScanner.AlbumGain;
 
 					foreach( var file in mReplayGainScanner.FileList ) {

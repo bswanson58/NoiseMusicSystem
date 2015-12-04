@@ -76,7 +76,9 @@ namespace Noise.Core.Sidecars {
 		}
 
 		public void UpdateSidecar( DbAlbum forAlbum ) {
-			WriteSidecar( forAlbum, mSidecarCreator.CreateFrom( forAlbum ));
+			if( forAlbum != null ) {
+				WriteSidecar( forAlbum, mSidecarCreator.CreateFrom( forAlbum ));
+			}
 		}
 
 		public void WriteSidecar( DbAlbum forAlbum, ScAlbum sidecar ) {
