@@ -49,7 +49,8 @@ namespace Noise.Core.Sidecars {
 				var sidecarPath = Path.Combine( albumPath, Constants.AlbumSidecarName );
 
 				try {
-					var scAlbum = mWriter.Read<ScAlbum>( sidecarPath );
+					var scAlbum = File.Exists( sidecarPath ) ? mWriter.Read<ScAlbum>( sidecarPath ) : 
+															   mSidecarCreator.CreateFrom( forTrack );
 					var scTrack = LocateTrackSidecar( forTrack, scAlbum );
 
 					if( scTrack != null ) {
@@ -62,7 +63,7 @@ namespace Noise.Core.Sidecars {
 					mLog.LogWriteSidecar( scAlbum );
 				}
 				catch( Exception exception ) {
-					mLog.LogException( string.Format( "Writing {0} to \"{1}\"", sidecar, sidecarPath ), exception );
+					mLog.LogException( String.Format( "Writing {0} to \"{1}\"", sidecar, sidecarPath ), exception );
 				}
 
 				InsureSideCarStorageFileExists( forTrack.Album, sidecarPath, "(Track)" + forTrack.Name );
@@ -92,7 +93,7 @@ namespace Noise.Core.Sidecars {
 					mLog.LogWriteSidecar( sidecar );
 				}
 				catch( Exception exception ) {
-					mLog.LogException( string.Format( "Writing {0} to \"{1}\"", sidecar, sidecarPath ), exception );
+					mLog.LogException( String.Format( "Writing {0} to \"{1}\"", sidecar, sidecarPath ), exception );
 				}
 
 				InsureSideCarStorageFileExists( forAlbum, sidecarPath );
@@ -115,7 +116,7 @@ namespace Noise.Core.Sidecars {
 					mLog.LogWriteSidecar( sidecar );
 				}
 				catch( Exception exception ) {
-					mLog.LogException( string.Format( "Writing {0} to \"{1}\"", sidecar, sidecarPath ), exception );
+					mLog.LogException( String.Format( "Writing {0} to \"{1}\"", sidecar, sidecarPath ), exception );
 				}
 
 				InsureSideCarStorageFileExists( forArtist, sidecarPath );
@@ -124,18 +125,24 @@ namespace Noise.Core.Sidecars {
 
 		private void InsureSideCarStorageFileExists( DbArtist artist, string sidecarPath ) {
 			try {
-				var storageFile = mStorageFileProvider.GetFileForMetadata( artist.DbId );
+				if( File.Exists( sidecarPath )) {
+					var storageFile = mStorageFileProvider.GetFileForMetadata( artist.DbId );
 
-				if( storageFile == null ) {
-					var file = new FileInfo( sidecarPath );
-					var folder = mStorageSupport.GetArtistFolder( artist.DbId );
+					if( storageFile == null ) {
+						var file = new FileInfo( sidecarPath );
+						var folder = mStorageSupport.GetArtistFolder( artist.DbId );
 
-					mStorageFileProvider.AddFile( new StorageFile( file.Name, folder.DbId, file.Length, file.LastWriteTime )
-																	{ FileType = eFileType.Sidecar, MetaDataPointer = artist.DbId });
+						mStorageFileProvider.AddFile( new StorageFile( file.Name, folder.DbId, file.Length, file.LastWriteTime )
+																		{ FileType = eFileType.Sidecar, MetaDataPointer = artist.DbId });
+					}
+				}
+				else {
+					mLog.LogException( String.Format( "InsureSideCarStorageFileExists called with non-existent sidecar: '{0}'", sidecarPath ),
+										new FileNotFoundException( "", sidecarPath ));
 				}
 			}
 			catch( Exception exception ) {
-				mLog.LogException( string.Format( "Creating SideCar StorageFile for {0}", artist ), exception );
+				mLog.LogException( String.Format( "Creating SideCar StorageFile for {0}", artist ), exception );
 			}
 		}
 
@@ -156,7 +163,7 @@ namespace Noise.Core.Sidecars {
 				}
 			}
 			catch( Exception exception ) {
-				mLog.LogException( string.Format( "Creating SideCar StorageFile for {0}", albumName ), exception );
+				mLog.LogException( String.Format( "Creating SideCar StorageFile for {0}", albumName ), exception );
 			}
 		}
 
@@ -170,7 +177,7 @@ namespace Noise.Core.Sidecars {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Reading sidecar from \"{0}\"", sidecarPath ), ex );
+				mLog.LogException( String.Format( "Reading sidecar from \"{0}\"", sidecarPath ), ex );
 			}
 
 			if( Equals( retValue, default( ScArtist ))) {
@@ -190,7 +197,7 @@ namespace Noise.Core.Sidecars {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Reading sidecar from \"{0}\"", sidecarPath ), ex );
+				mLog.LogException( String.Format( "Reading sidecar from \"{0}\"", sidecarPath ), ex );
 			}
 
 			if( Equals( retValue, default( ScAlbum ))) {
@@ -212,7 +219,7 @@ namespace Noise.Core.Sidecars {
 				}
 			}
 			catch( Exception ex ) {
-				mLog.LogException( string.Format( "Reading sidecar from \"{0}\"", sidecarPath ), ex );
+				mLog.LogException( String.Format( "Reading sidecar from \"{0}\"", sidecarPath ), ex );
 			}
 
 			if( Equals( retValue, default( ScTrack ))) {

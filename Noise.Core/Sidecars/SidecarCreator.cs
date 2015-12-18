@@ -25,13 +25,19 @@ namespace Noise.Core.Sidecars {
 		public ScAlbum CreateFrom( DbAlbum album ) {
 			var retValue = new ScAlbum( album );
 
-			using( var trackList = mTrackProvider.GetTrackList( album ) ) {
-				foreach( var track in trackList.List ) {
-					retValue.TrackList.Add( new ScTrack( track ));
+			if( album != null ) {
+				using( var trackList = mTrackProvider.GetTrackList( album )) {
+					foreach( var track in trackList.List ) {
+						retValue.TrackList.Add( new ScTrack( track ));
+					}
 				}
 			}
 
 			return( retValue );
+		}
+
+		public ScAlbum CreateFrom( DbTrack track ) {
+			return( CreateFrom( mAlbumProvider.GetAlbum( track.Album )));
 		}
 
 		public void Update( DbArtist artist, ScArtist sidecar ) {
