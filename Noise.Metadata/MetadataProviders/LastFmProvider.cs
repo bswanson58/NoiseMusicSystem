@@ -148,7 +148,7 @@ namespace Noise.Metadata.MetadataProviders {
 					}
 
 					if( artistInfo.ImageList.Any()) {
-						var image = artistInfo.ImageList.FirstOrDefault( i => i.Size.Equals( "large", StringComparison.InvariantCultureIgnoreCase )) ??
+						var image = artistInfo.ImageList.FirstOrDefault( i => i.Size.Equals( "mega", StringComparison.InvariantCultureIgnoreCase )) ??
 						            artistInfo.ImageList.FirstOrDefault();
 
 						if(( image != null ) &&
@@ -191,6 +191,12 @@ namespace Noise.Metadata.MetadataProviders {
 					Stream	streamData = new MemoryStream( imageData );
 
 					mDocumentStore.DatabaseCommands.PutAttachment( "artwork/" + artistName.ToLower(), null, streamData, new RavenJObject());
+
+//					FileStream debugFile = new FileStream( string.Format( @"D:\{0}.png", artistName ), FileMode.Create, FileAccess.ReadWrite );
+
+//					streamData.Seek( 0, SeekOrigin.Begin );
+//					streamData.CopyTo( debugFile );
+//					debugFile.Close();
 				}
 			}
 			catch( Exception ex ) {
