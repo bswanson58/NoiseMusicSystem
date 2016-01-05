@@ -23,9 +23,9 @@ namespace Noise.Core.FileProcessor {
 		}
 
 		public override void ProcessStep( PipelineContext context ) {
-			Condition.Requires( context ).IsNotNull();
-			Condition.Requires( context.StorageFile ).IsNotNull();
-			Condition.Requires( context.Track ).IsNotNull();
+			Condition.Requires( context, "context" ).IsNotNull();
+			Condition.Requires( context.StorageFile, "StorageFile" ).IsNotNull();
+			Condition.Requires( context.Track, "Track" ).IsNotNull();
 
 			var folderStrategy = mStorageFolderSupport.GetFolderStrategy( context.StorageFile );
 
