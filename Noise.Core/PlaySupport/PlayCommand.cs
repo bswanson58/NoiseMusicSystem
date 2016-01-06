@@ -31,7 +31,7 @@ namespace Noise.Core.PlaySupport {
 		internal TaskHandler PlayTask {
 			get {
 				if( mPlayTask == null ) {
-					Execute.OnUIThread( () => mPlayTask = new TaskHandler());
+					mPlayTask = new TaskHandler();
 				}
 
 				return( mPlayTask );
