@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Noise.Infrastructure;
@@ -44,15 +45,21 @@ namespace Noise.Metadata.ArtistMetadata {
 			var downloadList = BuildDownloadList( artworkList, artworkPath ).ToList();
 
 			if( downloadList.Any()) {
-				var resultsList = await UriDownloader.DownloadFileListAsync( downloadList );
+				try {
+					var resultsList = await UriDownloader.DownloadFileListAsync( downloadList );
 
-				foreach( var result in resultsList ) {
-					if( result.Item3 != null ) {
-						mLog.LogException( string.Format( "Artwork download failed for artist '{0}'", artistName ), result.Item3 );
+					foreach( var result in resultsList ) {
+						if(( result != null ) &&
+						   ( result.Item3 != null )) {
+							mLog.LogException( string.Format( "Artwork download failed for artist '{0}'", artistName ), result.Item3 );
+						}
 					}
-				}
 
-				mLog.DownloadedArtwork( providerKey, artistName, ( from r in resultsList where r.Item3 == null select r ).Count());
+					mLog.DownloadedArtwork( providerKey, artistName, ( from r in resultsList where (( r != null ) && ( r.Item3 == null )) select r ).Count());
+				}
+				catch( Exception ex ) {
+					mLog.LogException( "DownloadArtworkList" ,ex );
+				}
 			}
 		}
 
