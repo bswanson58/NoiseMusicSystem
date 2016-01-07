@@ -6,7 +6,6 @@ using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
-using ReusableBits;
 
 namespace Noise.Core.PlaySupport {
 	public class PlayCommand : IPlayCommand {
@@ -16,7 +15,6 @@ namespace Noise.Core.PlaySupport {
 		private readonly IPlayQueue			mPlayQueue;
 		private readonly INoiseLog			mLog;
 		private readonly Random				mRandom;
-		private TaskHandler					mPlayTask;
 
 		public PlayCommand( IEventAggregator eventAggregator, IPlayQueue playQueue, ITrackProvider trackProvider, IMetadataManager metadataManager, INoiseLog log ) {
 			mEventAggregator = eventAggregator;
@@ -28,40 +26,34 @@ namespace Noise.Core.PlaySupport {
 			mRandom = new Random( DateTime.Now.Millisecond );
 		}
 
-		internal TaskHandler PlayTask {
-			get {
-				if( mPlayTask == null ) {
-					mPlayTask = new TaskHandler();
-				}
-
-				return( mPlayTask );
-			}
-
-			set { mPlayTask = value; }
-		}
-
 		public Task Play( DbArtist artist ) {
-			return( PlayTask.StartTask( () => mPlayQueue.Add( artist ),
-										() => {},
-										exception => mLog.LogException( string.Format( "Adding artist '{0}' to playback queue", artist.Name ), exception )));
+			return( Task.Run( () => {
+					try {
+						mPlayQueue.Add( artist );
+					}
+					catch( Exception exception ) {
+						mLog.LogException( string.Format( "Adding artist '{0}' to playback queue", artist.Name ), exception );
+					}
+				}));
 		}
 
 		public Task PlayRandomArtistTracks( DbArtist artist ) {
-			return( PlayTask.StartTask( () => mEventAggregator.Publish( new Events.PlayArtistTracksRandom( artist.DbId )),
-										() => {},
-										exception => mLog.LogException( string.Format( "Adding random artist tracks for '{0}' to playback queue", artist.Name ), exception )));
+			return( Task.Run( () => mEventAggregator.Publish( new Events.PlayArtistTracksRandom( artist.DbId ))));
 		}
 
 		public Task PlayTopArtistTracks( DbArtist artist ) {
-			return( PlayTask.StartTask( () => {
-											var tracks = RetrieveTopTracks( artist );
+			return( Task.Run( () => {
+				try {
+					var tracks = RetrieveTopTracks( artist );
 
-											if( tracks.Any()) {
-												mPlayQueue.Add( tracks );
-											}
-										},
-										() => {},
-										exception => mLog.LogException( string.Format( "Adding top tracks for artist '{0}' to playback queue", artist.Name ), exception )));
+					if( tracks.Any()) {
+						mPlayQueue.Add( tracks );
+					}
+				}
+				catch( Exception exception ) {
+					mLog.LogException( string.Format( "Adding top tracks for artist '{0}' to playback queue", artist.Name ), exception );
+				}
+			}));
 		}
 
 		private List<DbTrack> RetrieveTopTracks( DbArtist artist ) {
@@ -94,33 +86,64 @@ namespace Noise.Core.PlaySupport {
 		}
 
 		public Task Play( DbAlbum album ) {
-			return( PlayTask.StartTask( () => mPlayQueue.Add( album ),
-										() => mEventAggregator.Publish( new Events.AlbumQueued( album )),
-										exception => mLog.LogException( string.Format( "Adding album '{0}' to playback queue", album.Name ), exception )));
+			return( Task.Run( () => {
+				try {
+					mPlayQueue.Add( album );
+
+					mEventAggregator.Publish( new Events.AlbumQueued( album ));
+				}
+				catch( Exception exception ) {
+					mLog.LogException( string.Format( "Adding album '{0}' to playback queue", album.Name ), exception );
+				}
+			}));
 		}
 
 		public Task Play( DbAlbum album, string volumeName ) {
-			return( PlayTask.StartTask( () => mPlayQueue.Add( album, volumeName ),
-										() => {},
-										exception => mLog.LogException( string.Format( "Adding volume '{0}' of album '{1}' to playback queue", volumeName, album.Name ), exception )));
+			return( Task.Run( () => {
+				try {
+					mPlayQueue.Add( album, volumeName );
+
+					mEventAggregator.Publish( new Events.AlbumQueued( album ));
+				}
+				catch( Exception exception ) {
+					mLog.LogException( string.Format( "Adding volume '{0}' of album '{1}' to playback queue", volumeName, album.Name ), exception );
+				}
+			}));
 		}
 
 		public Task Play( DbTrack track ) {
-			return( PlayTask.StartTask( () => mPlayQueue.Add( track ),
-										() => mEventAggregator.Publish( new Events.TrackQueued( track )),
-										exception => mLog.LogException( string.Format( "Adding track '{0}' to playback queue", track.Name ), exception )));
+			return( Task.Run( () => {
+				try {
+					mPlayQueue.Add( track );
+
+					mEventAggregator.Publish( new Events.TrackQueued( track ));
+				}
+				catch( Exception exception ) {
+					mLog.LogException( string.Format( "Adding track '{0}' to playback queue", track.Name ), exception );
+				}
+			}));
 		}
 
 		public Task Play( IEnumerable<DbTrack> trackList ) {
-			return( PlayTask.StartTask( () => mPlayQueue.Add( trackList ),
-										() => {},
-										exception => mLog.LogException( "Adding track list to playback queue", exception )));
+			return( Task.Run( () => {
+				try {
+					mPlayQueue.Add( trackList );
+				}
+				catch( Exception exception ) {
+					mLog.LogException( "Adding track list to playback queue", exception );
+				}
+			}));
 		}
 
 		public Task Play( DbInternetStream stream ) {
-			return( PlayTask.StartTask( () => mPlayQueue.Add( stream ),
-										() => {},
-										exception => mLog.LogException( string.Format( "Adding stream '{0}' to playback queue", stream.Name ), exception )));
+			return( Task.Run( () => {
+				try {
+					mPlayQueue.Add( stream );
+				}
+				catch( Exception exception ) {
+					mLog.LogException( string.Format( "Adding stream '{0}' to playback queue", stream.Name ), exception );
+				}
+			}));
 		}
 	}
 }
