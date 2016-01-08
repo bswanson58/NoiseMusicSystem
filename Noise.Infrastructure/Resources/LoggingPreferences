@@ -1,50 +1,52 @@
+/* This configuration file may be customized and copied into an application specific directory for usage */
+/* such as: '{ProgramData directory}\Noise Music System\Configuration\Desktop\LoggingPreferences' */
 {
-  "LogExceptions": true,
-  "LogMessages":  false,
+    "LogExceptions": true,
+    "LogMessages": false,
 
-  "ApplicationActivity":  true,
-  "BasicActivity": true,
+    "ApplicationActivity": true,
+    "BasicActivity": true,
 
-  "LibraryConfiguration": false,
+    "LibraryConfiguration": false,
 
-  "AudioPlayback": false,
-  "AudioSync":  false,
+    "AudioPlayback": false,
+    "AudioSync": false,
 
-  "BackgroundTasks":  false,
+    "BackgroundTasks": false,
 
-  "BuildingDiscovery": false,
-  "BuildingDiscoverFiles": false,
-  "BuildingDiscoverFolders": false,
+    "BuildingDiscovery": false,
+    "BuildingDiscoverFiles": false,
+    "BuildingDiscoverFolders": false,
 
-  "DatabaseActivity":  false,
+    "DatabaseActivity": false,
 
-  "MetadataCleaning" : false,
-  "MetadataCleaningDomainObjects": false,
-  "MetadataCleaningFileObjects": false,
+    "MetadataCleaning": false,
+    "MetadataCleaningDomainObjects": false,
+    "MetadataCleaningFileObjects": false,
 
-  "FileClassification": false,
-  "FileClassificationFiles": false,
-  "FileClassificationSteps": false,
-  "FileClassificationArtists": false,
-  "FileClassificationAlbums": false,
-  "FileClassificationTracks": false,
-  "FileClassificationArtwork": false,
-  "FileClassificationTextInfo": false,
-  "FileClassificationUnknown": false,
+    "FileClassification": false,
+    "FileClassificationFiles": false,
+    "FileClassificationSteps": false,
+    "FileClassificationArtists": false,
+    "FileClassificationAlbums": false,
+    "FileClassificationTracks": false,
+    "FileClassificationArtwork": false,
+    "FileClassificationTextInfo": false,
+    "FileClassificationUnknown": false,
 
-  "BuildingSummary": false,
-  "BuildingSummaryArtists": false,
-  "BuildingSummaryAlbums": false,
+    "BuildingSummary": false,
+    "BuildingSummaryArtists": false,
+    "BuildingSummaryAlbums": false,
 
-  "MetadataSupport":  false,
+    "MetadataSupport": false,
 
-  "SidecarSupport": false,
+    "SidecarSupport": false,
 
-  "PlayQueueAddRemove":  false,
-  "PlayQueueStatusChange":  false,
-  "PlayQueueStrategy":  false,
+    "PlayQueueAddRemove": false,
+    "PlayQueueStatusChange": false,
+    "PlayQueueStrategy": false,
 
-  "PlayState":  false,
+    "PlayState": false,
 
-  "UserInterface":  false
+    "UserInterface": false
 }
