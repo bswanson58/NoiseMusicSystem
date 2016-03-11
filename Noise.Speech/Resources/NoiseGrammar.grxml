@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<grammar version="1.0" xml:lang="en-us"
+         xmlns="http://www.w3.org/2001/06/grammar"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.w3.org/2001/06/grammar
+                             http://www.w3.org/TR/speech-grammar/grammar-core.xsd"
+         tag-format="semantics/1.0"
+         root="NoiseGrammar">
+
+  <rule id="NoiseGrammar">
+    <!--<item repeat="0-1">What is the</item>-->
+    <ruleref special="GARBAGE" />
+
+    <ruleref uri="#introduction"/>
+
+    <ruleref special="GARBAGE" />
+
+    <one-of>
+      <item>
+        <ruleref uri="#transport"/>
+      </item>
+      <item>
+        <ruleref uri="#queue"/>
+      </item>
+      <item>
+        <ruleref uri="#view"/>
+      </item>
+    </one-of>
+
+  </rule>
+
+  <rule id="introduction">
+    <item>noise</item>
+  </rule>
+
+  <rule id="transport">
+    <ruleref uri="#transportCommands"/>
+    <tag>out.category='transport';</tag>
+    <tag>out.command=rules.transportCommands;</tag>
+  </rule>
+
+  <rule id="transportCommands">
+    <one-of>
+      <item>play</item>
+      <item>pause</item>
+      <item>stop</item>
+      <item>finish</item>
+      <item>next</item>
+      <item>skip</item>
+      <item>previous</item>
+      <item>replay</item>
+      <item>repeat</item>
+    </one-of>
+  </rule>
+
+  <rule id="queueOld">
+    <one-of>
+      <item weight="0.1">clear all</item>
+      <item weight="1.0">clear played</item>
+    </one-of>
+  </rule>
+
+  <rule id="queue">
+    <ruleref uri="#queueCommand"/>
+    <tag>out.category='queue';</tag>
+    <ruleref uri="#queueClear"/>
+    <tag>out.command=rules.queueClear;</tag>
+  </rule>
+
+  <rule id="queueCommand">
+    <one-of>
+      <item>clear</item>
+      <item>skip</item>
+    </one-of>
+  </rule>
+
+  <rule id="queueClear">
+    <one-of>
+      <item>all</item>
+      <item>played</item>
+    </one-of>
+  </rule>
+
+  <rule id="view">
+    <item>view</item>
+    
+    <ruleref uri="#viewCommands"/>
+    <tag>out.category='view';</tag>
+    <tag>out.command=rules.viewCommands;</tag>
+  </rule>
+
+  <rule id="viewCommands">
+    <one-of>
+      <item>library</item>
+      <item>playback</item>
+      <item>time line</item>
+    </one-of>
+  </rule>
+</grammar>
