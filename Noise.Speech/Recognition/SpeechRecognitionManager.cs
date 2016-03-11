@@ -2,6 +2,8 @@
 using System.IO;
 using System.Reactive.Subjects;
 using System.Speech.Recognition;
+using Caliburn.Micro;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -12,13 +14,16 @@ namespace Noise.Speech.Recognition {
 		private const string	cNoiseGrammar		= "Noise";
 		private const string	cGrammarCategory	= "category";
 		private const string	cGrammarCommand		= "command";
+		private const string	cGrammarMessage		= "message";
 
 		private readonly ILogSpeech					mLogger;
+		private readonly IEventAggregator			mEventAggregator;
 		private readonly NoiseCorePreferences		mPreferences;
 		private readonly SpeechRecognitionEngine	mRecognitionEngine;
 		private readonly Subject<CommandRequest>	mCommandSubject;
 
-		public SpeechRecognitionManager( ILifecycleManager lifecycleManager, NoiseCorePreferences preferences, ILogSpeech log ) {
+		public SpeechRecognitionManager( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager, NoiseCorePreferences preferences, ILogSpeech log ) {
+			mEventAggregator = eventAggregator;
 			mPreferences = preferences;
 			mLogger = log;
 
@@ -85,6 +90,14 @@ namespace Noise.Speech.Recognition {
 					var command = new CommandRequest( TranslateCategory( speechCategory ), TranslateCommand( speechCommand ));
 
 					mCommandSubject.OnNext( command );
+
+					if( e.Result.Semantics.ContainsKey( cGrammarMessage )) {
+						var message = e.Result.Semantics[cGrammarMessage].Value.ToString();
+
+						if(!string.IsNullOrWhiteSpace( message )) {
+							mEventAggregator.Publish( new Events.StatusEvent( message, Events.StatusEventType.Speech ));
+						}
+					}
 				}
 			}
 		}
