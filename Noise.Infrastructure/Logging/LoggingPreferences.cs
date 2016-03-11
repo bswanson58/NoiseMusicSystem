@@ -47,6 +47,8 @@
 
 		public bool PlayState { get; set; }
 
+		public bool SpeechRecognition {  get; set; }
+
 		public bool UserInterface { get; set; }
 
 		public bool LogAnyBuildingDiscovery {

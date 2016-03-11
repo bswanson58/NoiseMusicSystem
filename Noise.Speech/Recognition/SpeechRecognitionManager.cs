@@ -5,16 +5,19 @@ using System.Speech.Recognition;
 using Microsoft.Practices.Prism.PubSubEvents;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
+using Noise.Speech.Logging;
 
 namespace Noise.Speech.Recognition {
 	internal class SpeechRecognitionManager : ISpeechRecognizer, IRequireInitialization {
 		private readonly IEventAggregator			mEventAggregator;
+		private readonly ILogSpeech					mLogger;
 		private readonly NoiseCorePreferences		mPreferences;
 		private readonly SpeechRecognitionEngine	mRecognitionEngine;
 
-		public SpeechRecognitionManager( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager, NoiseCorePreferences preferences ) {
+		public SpeechRecognitionManager( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager, NoiseCorePreferences preferences, ILogSpeech log ) {
 			mEventAggregator = eventAggregator;
 			mPreferences = preferences;
+			mLogger = log;
 
 			mRecognitionEngine = new SpeechRecognitionEngine();
 
@@ -24,9 +27,9 @@ namespace Noise.Speech.Recognition {
 
 		public void Initialize() {
 			if( mPreferences.EnableSpeechCommands ) {
-				InitializeRecognizer();
-
-				ActivateRecognition();
+				if( InitializeRecognizer() ) {
+					ActivateRecognition();
+				}
 			}
 		}
 
@@ -36,13 +39,24 @@ namespace Noise.Speech.Recognition {
 			mRecognitionEngine.Dispose();
 		}
 
-		private void InitializeRecognizer() {
-			mRecognitionEngine.SetInputToDefaultAudioDevice();
-			mRecognitionEngine.InitialSilenceTimeout = TimeSpan.FromSeconds( 3 );
+		private bool InitializeRecognizer() {
+			var retValue = false;
 
-			LoadSrgsGrammar( "Noise" );
+			try {
+				mRecognitionEngine.SetInputToDefaultAudioDevice();
+				mRecognitionEngine.InitialSilenceTimeout = TimeSpan.FromSeconds( 3 );
 
-			mRecognitionEngine.SpeechRecognized += OnSpeechRecognized;
+				LoadSrgsGrammar( "Noise" );
+
+				mRecognitionEngine.SpeechRecognized += OnSpeechRecognized;
+
+				retValue = true;
+			}
+			catch( Exception ex ) {
+				mLogger.LogException( "Initializing speech recognizer", ex );
+			}
+
+			return( retValue );
 		}
 	
 		private void LoadSrgsGrammar(string grammarName) {
