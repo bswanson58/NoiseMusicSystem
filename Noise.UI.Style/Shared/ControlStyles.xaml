@@ -14,6 +14,7 @@
 	<SolidColorBrush x:Key="ControlBackgroundColor" Color="#FFE5E5E5"/>
 	<SolidColorBrush x:Key="TextBrush" Color="#FF0000A0"/>
 	<SolidColorBrush x:Key="SmallTextBrush" Color="#FF0000C0"/>
+	<SolidColorBrush x:Key="SignatureColor" Color="#FFEA6500"/>
 
 	<Style x:Key="SectionBorderStyle" TargetType="GroupBox">
 		<Setter Property="BorderThickness" Value="1"/>

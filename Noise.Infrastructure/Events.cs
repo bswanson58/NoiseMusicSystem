@@ -370,12 +370,22 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class StatusEvent {
-			public	string		Message { get; private set; }
-			public	bool		ExtendDisplay { get; set; }
+		public enum StatusEventType {
+			General,
+			Speech
+		}
 
-			public StatusEvent( string message ) {
+		public class StatusEvent {
+			public StatusEventType	StatusType { get; private set; }
+			public	string			Message { get; private set; }
+			public	bool			ExtendDisplay { get; set; }
+
+			public StatusEvent( string message ) :
+				this( message, StatusEventType.General ) { }
+
+			public StatusEvent( string message, StatusEventType statusType ) {
 				Message = message;
+				StatusType = statusType;
 			}
 		}
 
