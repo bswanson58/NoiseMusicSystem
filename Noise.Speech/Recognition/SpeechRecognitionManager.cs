@@ -1,24 +1,28 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
+using System.Reactive.Subjects;
 using System.Speech.Recognition;
-using Microsoft.Practices.Prism.PubSubEvents;
 using Noise.Infrastructure.Configuration;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Speech.Logging;
 
 namespace Noise.Speech.Recognition {
 	internal class SpeechRecognitionManager : ISpeechRecognizer, IRequireInitialization {
-		private readonly IEventAggregator			mEventAggregator;
+		private const string	cNoiseGrammar		= "Noise";
+		private const string	cGrammarCategory	= "category";
+		private const string	cGrammarCommand		= "command";
+
 		private readonly ILogSpeech					mLogger;
 		private readonly NoiseCorePreferences		mPreferences;
 		private readonly SpeechRecognitionEngine	mRecognitionEngine;
+		private readonly Subject<CommandRequest>	mCommandSubject;
 
-		public SpeechRecognitionManager( IEventAggregator eventAggregator, ILifecycleManager lifecycleManager, NoiseCorePreferences preferences, ILogSpeech log ) {
-			mEventAggregator = eventAggregator;
+		public SpeechRecognitionManager( ILifecycleManager lifecycleManager, NoiseCorePreferences preferences, ILogSpeech log ) {
 			mPreferences = preferences;
 			mLogger = log;
 
+			mCommandSubject = new Subject<CommandRequest>();
 			mRecognitionEngine = new SpeechRecognitionEngine();
 
 			lifecycleManager.RegisterForInitialize( this );
@@ -39,6 +43,10 @@ namespace Noise.Speech.Recognition {
 			mRecognitionEngine.Dispose();
 		}
 
+		public IObservable<CommandRequest> SpeechCommandRequest {
+			get {  return( mCommandSubject ); }
+		} 
+
 		private bool InitializeRecognizer() {
 			var retValue = false;
 
@@ -46,7 +54,7 @@ namespace Noise.Speech.Recognition {
 				mRecognitionEngine.SetInputToDefaultAudioDevice();
 				mRecognitionEngine.InitialSilenceTimeout = TimeSpan.FromSeconds( 3 );
 
-				LoadSrgsGrammar( "Noise" );
+				LoadSrgsGrammar( cNoiseGrammar );
 
 				mRecognitionEngine.SpeechRecognized += OnSpeechRecognized;
 
@@ -66,21 +74,63 @@ namespace Noise.Speech.Recognition {
 		}
 
 		private void OnSpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
-			string displayText = "I have no idea what you just said.";
+			if(( e.Result != null ) &&
+			   ( e.Result.Grammar != null ) &&
+			   ( e.Result.Semantics != null )) {
+				if(( e.Result.Grammar.Name.Equals( cNoiseGrammar )) &&
+				   ( e.Result.Semantics.ContainsKey( cGrammarCategory )) &&
+				   ( e.Result.Semantics.ContainsKey( cGrammarCommand ))) {
+					var speechCategory = e.Result.Semantics[cGrammarCategory].Value.ToString();
+					var speechCommand = e.Result.Semantics[cGrammarCommand].Value.ToString();
+					var command = new CommandRequest( TranslateCategory( speechCategory ), TranslateCommand( speechCommand ));
 
-			if (e.Result != null) {
-				if (e.Result.Grammar.Name.Equals("Noise")) {
-					var words = string.Join(" ", from w in e.Result.Words select w.Text);
-
-					displayText = string.Format("({0}) - Noise command: {1}-{2}",
-						words,
-						e.Result.Semantics["category"].Value,
-						e.Result.Semantics["command"].Value);
-				}
-				else {
-					displayText = e.Result.Text;
+					mCommandSubject.OnNext( command );
 				}
 			}
+		}
+
+		private CommandRequestCategory TranslateCategory( string category ) {
+			var retValue = CommandRequestCategory.Unknown;
+
+			if( category.Equals( "queue", StringComparison.InvariantCultureIgnoreCase )) {
+				retValue = CommandRequestCategory.Queue;
+			}
+			else if( category.Equals( "transport", StringComparison.InvariantCultureIgnoreCase )) {
+				retValue = CommandRequestCategory.Transport;
+			}
+			else if( category.Equals( "view", StringComparison.InvariantCultureIgnoreCase ) ) {
+				retValue = CommandRequestCategory.View;
+			}
+
+			return( retValue );
+		}
+
+		private CommandRequestItem TranslateCommand( string command ) {
+			var retValue = CommandRequestItem.Unknown;
+
+			if( command.Equals( "play", StringComparison.InvariantCultureIgnoreCase )) {
+				retValue = CommandRequestItem.StartPlaying;
+			}
+			else if( command.Equals( "pause", StringComparison.InvariantCultureIgnoreCase )) {
+				retValue = CommandRequestItem.PausePlaying;
+			}
+			else if( command.Equals( "next", StringComparison.InvariantCultureIgnoreCase )) {
+				retValue = CommandRequestItem.NextTrack;
+			}
+			else if( command.Equals( "previous", StringComparison.InvariantCultureIgnoreCase )) {
+				retValue = CommandRequestItem.PreviousTrack;
+			}
+			else if( command.Equals( "replay", StringComparison.InvariantCultureIgnoreCase )) {
+				retValue = CommandRequestItem.ReplayTrack;
+			}
+			else if( command.Equals( "stop", StringComparison.InvariantCultureIgnoreCase )) {
+				retValue = CommandRequestItem.StopPlaying;
+			}
+			else if( command.Equals( "finish", StringComparison.InvariantCultureIgnoreCase )) {
+				retValue = CommandRequestItem.FinishPlaying;
+			}
+
+			return( retValue );
 		}
 
 		private void ActivateRecognition() {
