@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Core", "Noise.Core\Noise.Core.csproj", "{33A45442-71E5-4BFE-B37F-129EDB4F18E8}"
 EndProject
@@ -70,6 +70,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReusableBits.Service", "ReusableBits.Service\ReusableBits.Service.csproj", "{8DFA71BE-5591-41A2-B640-A9F3984422A9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Librarian", "Noise.Librarian\Noise.Librarian.csproj", "{37156BD4-8E37-4F2C-85C8-4E48359EFED9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Speech", "Noise.Speech\Noise.Speech.csproj", "{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -759,6 +761,27 @@ Global
 		{37156BD4-8E37-4F2C-85C8-4E48359EFED9}.Release|x64.Build.0 = Release|x64
 		{37156BD4-8E37-4F2C-85C8-4E48359EFED9}.Release|x86.ActiveCfg = Release|x86
 		{37156BD4-8E37-4F2C-85C8-4E48359EFED9}.Release|x86.Build.0 = Release|x86
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Debug|x64.ActiveCfg = Debug|x64
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Debug|x64.Build.0 = Debug|x64
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Debug|x86.ActiveCfg = Debug|x86
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Debug|x86.Build.0 = Debug|x86
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Installers - Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Installers - Release|Any CPU.Build.0 = Release|Any CPU
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Installers - Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Installers - Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Installers - Release|x64.ActiveCfg = Release|Any CPU
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Installers - Release|x86.ActiveCfg = Release|Any CPU
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Release|x64.ActiveCfg = Release|x64
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Release|x64.Build.0 = Release|x64
+		{D4B67DAE-5E32-4360-86B2-7A7DC1DD2A81}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

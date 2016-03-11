@@ -342,6 +342,10 @@
       <Project>{85472B64-4F49-4182-8709-9229E25E5119}</Project>
       <Name>Noise.RemoteHost</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Noise.Speech\Noise.Speech.csproj">
+      <Project>{d4b67dae-5e32-4360-86b2-7a7dc1dd2a81}</Project>
+      <Name>Noise.Speech</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Noise.UI.Style\Noise.UI.Style.csproj">
       <Project>{DA31563C-5B51-4072-AF18-57E4FC5DE957}</Project>
       <Name>Noise.UI.Style</Name>

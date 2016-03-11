@@ -9,6 +9,7 @@ using Noise.AudioSupport;
 using Noise.Desktop.Properties;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata;
+using Noise.Speech;
 using Noise.UI.Support;
 using Noise.UI.ViewModels;
 
@@ -47,6 +48,7 @@ namespace Noise.Desktop {
 				.AddModule( typeof( BlobStorage.BlobStorageModule ))
 				.AddModule( typeof( NoiseMetadataModule ))
 				.AddModule( typeof( RemoteHost.RemoteHostModule ))
+				.AddModule( typeof( NoiseSpeechModule ))
 				.AddModule( typeof( EntityFrameworkDatabase.EntityFrameworkDatabaseModule ));
 
 			return ( catalog );
