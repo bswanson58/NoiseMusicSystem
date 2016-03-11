@@ -37,6 +37,7 @@ namespace Noise.UI.ViewModels {
 	internal class ConfigurationViewModel {
 		public bool EnableGlobalHotkeys { get; set; }
 		public bool EnableRemoteAccess { get; set; }
+		public bool EnableSpeechCommands { get; set; }
 		public bool EnableSortPrefixes { get; set; }
 		public bool HasNetworkAccess { get; set; }
 		public bool LoadLastLibraryOnStartup { get; set; }
@@ -68,6 +69,7 @@ namespace Noise.UI.ViewModels {
 			var corePreferences = mPreferences.Load<NoiseCorePreferences>();
 			var dialogModel = new ConfigurationViewModel { EnableGlobalHotkeys = interfacePreferences.EnableGlobalHotkeys,
 														   EnableRemoteAccess = corePreferences.EnableRemoteAccess,
+														   EnableSpeechCommands = corePreferences.EnableSpeechCommands,
 														   EnableSortPrefixes = interfacePreferences.EnableSortPrefixes,
 														   HasNetworkAccess = corePreferences.HasNetworkAccess,
 														   LoadLastLibraryOnStartup = corePreferences.LoadLastLibraryOnStartup,
@@ -76,6 +78,7 @@ namespace Noise.UI.ViewModels {
 
 			if( mDialogService.ShowDialog( DialogNames.NoiseOptions, dialogModel ) == true ) {
 				corePreferences.EnableRemoteAccess = dialogModel.EnableRemoteAccess;
+				corePreferences.EnableSpeechCommands = dialogModel.EnableSpeechCommands;
 				corePreferences.HasNetworkAccess = dialogModel.HasNetworkAccess;
 				corePreferences.LoadLastLibraryOnStartup = dialogModel.LoadLastLibraryOnStartup;
 

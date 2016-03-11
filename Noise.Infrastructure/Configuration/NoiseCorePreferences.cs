@@ -4,7 +4,7 @@ namespace Noise.Infrastructure.Configuration {
 	public class NoiseCorePreferences {
 		public	bool					DisplayPlayTimeElapsed { get; set; }
 		public	bool					EnableRemoteAccess { get; set; }
-		public bool						EnableSpeechCommands { get; set; }
+		public  bool					EnableSpeechCommands { get; set; }
 		public	bool					EnablePlaybackScrobbling { get; set; }
 		public	bool					HasNetworkAccess { get; set; }
 		public	long					LastLibraryUsed { get; set; }
