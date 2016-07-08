@@ -44,7 +44,7 @@
 						<Button Grid.Column="0" Style="{DynamicResource PlayButtonStyle}" VerticalAlignment="Center" Command="{Binding PlayAlbum}" Content="4" />
 
 						<Viewbox Grid.Column="1" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
-							<TextBlock Style="{StaticResource ExplorerTitleStyle}" VerticalAlignment="Center" Text="{Binding Name}" />
+							<TextBlock Style="{StaticResource ExplorerTitleStyle}" VerticalAlignment="Center" Text="{Binding DisplayName}" />
 						</Viewbox>
 					</Grid>
 

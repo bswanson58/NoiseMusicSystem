@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using Noise.Infrastructure.Dto;
+using ReusableBits.ExtensionClasses;
 
 namespace Noise.UI.Dto {
 	[DebuggerDisplay("Album = {Name}")]
@@ -11,9 +13,12 @@ namespace Noise.UI.Dto {
 		public	long					ExternalGenre { get; set; }
 		public	long					UserGenre { get; set; }
 		public	DbGenre					DisplayGenre { get ; set; }
+        private string                  mDisplayName;
 		private readonly Action<long>	mOnPlay;
 
-		public UiAlbum() { }
+		public UiAlbum() {
+		    mDisplayName = String.Empty;
+		}
 
 		public UiAlbum( Action<long> onPlay ) {
 			mOnPlay = onPlay;
@@ -24,11 +29,19 @@ namespace Noise.UI.Dto {
 			set{ Set( () => Name, value ); }
 		}
 
-		public string Genre {
-			get{ return( DisplayGenre != null ? DisplayGenre.Name : "" ); }
-		}
+	    public string DisplayName {
+	        get {
+                if( String.IsNullOrWhiteSpace( mDisplayName )) {
+                    mDisplayName = CreateDisplayName( Name );
+                }
 
-		public Int32 PublishedYear {
+                return ( mDisplayName );
+	        }
+	    }
+
+		public string Genre => ( DisplayGenre != null ? DisplayGenre.Name : String.Empty );
+
+	    public Int32 PublishedYear {
 			get{ return( Get( () => PublishedYear )); }
 			set{ Set( () => PublishedYear, value ); }
 		}
@@ -72,29 +85,30 @@ namespace Noise.UI.Dto {
 		}
 
 		[DependsUpon("UserRating")]
-		public bool IsUserRating {
-			get{ return( UserRating != 0 ); }
-		}
+		public bool IsUserRating => ( UserRating != 0 );
 
-		[DependsUpon("CalculatedRating")]
+	    [DependsUpon("CalculatedRating")]
 		public Int16 Rating {
 			get { return( IsUserRating ? UserRating : CalculatedRating ); }
 			set { UserRating = value; }
 		}
 
 		[DependsUpon("UserRating")]
-		public bool UseAlternateRating {
-			get { return(!IsUserRating ); }
-		}
+		public bool UseAlternateRating => (!IsUserRating );
 
-		public override string ToString() {
+	    public override string ToString() {
 			return( Name );
 		}
 
 		public void Execute_PlayAlbum() {
-			if( mOnPlay != null ) {
-				mOnPlay( DbId );
-			}
+		    mOnPlay?.Invoke( DbId );
 		}
+
+	    private static string CreateDisplayName( string fullAlbumName ) {
+            // Strip any published year from the end.
+            var regex = new Regex( @".+(?<publishedYear>-\s*\d{4})\Z" );
+
+            return fullAlbumName.Replace( regex, "publishedYear", String.Empty ).Trim();
+        }
 	}
 }

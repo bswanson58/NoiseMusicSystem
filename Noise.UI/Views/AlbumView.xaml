@@ -64,7 +64,7 @@
 					<!--  Album name -->
 					<Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right" MaxWidth="{Binding ElementName=_gridParent, Path=ActualWidth}">
 						<TextBlock Grid.Column="1" Style="{StaticResource LargeTitleStyle}" 
-									   HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Path=Album.Name}" />
+									   HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Path=Album.DisplayName}" />
 					</Viewbox>
 
 					<!--  Favorite and rating  -->
