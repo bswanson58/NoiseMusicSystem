@@ -22,62 +22,62 @@ namespace Noise.UI.Dto {
 			mPlayNow = onPlay;
 			mPlayFromHere = onPlayFromHere;
 
-			if(( track != null ) &&
-			   ( track.Track != null )) {
-				UiIsFavorite = track.Track.IsFavorite;
-				UiRating = track.Track.Rating;
-			}
+            if( track?.Track != null ) {
+                UiIsFavorite = track.Track.IsFavorite;
+                UiRating = track.Track.Rating;
+
+                mTrack.PropertyChanged += ( sender, args ) => {
+                    if(( args.PropertyName.Equals( "HasPlayed" )) ||
+                       ( args.PropertyName.Equals( "IsPlaying" ))) {
+                        RaisePropertyChanged( () => WillPlay );
+                    }
+                };
+            }
 		}
 
-		public PlayQueueTrack QueuedTrack {
-			get{ return( mTrack ); }
-		}
+		public PlayQueueTrack QueuedTrack => ( mTrack );
 
-		public bool IsDeleting {
+	    public bool IsDeleting {
 			get{ return( Get( () => IsDeleting )); }
 			set{ Set( () => IsDeleting, value ); }
 		}
 
-		public void Execute_DisplayInfo() {
-			if( mDisplayInfo != null ) {
-				mDisplayInfo( this );
-			}
-		}
+        public bool WillPlay => (!QueuedTrack.HasPlayed && !QueuedTrack.IsPlaying);
 
-		public void Execute_MoveUp() {
-			if( mMoveUp != null ) {
-				mMoveUp( this );
-			}
-		}
+	    public void Execute_DisplayInfo() {
+	        mDisplayInfo?.Invoke( this );
+	    }
 
-		public void Execute_MoveDown() {
-			if( mMoveDown != null ) {
-				mMoveDown( this );
-			}
-		}
+	    public void Execute_MoveUp() {
+	        mMoveUp?.Invoke( this );
+	    }
 
-		public void Execute_Dequeue() {
-			if( mDequeue != null ) {
-				mDequeue( this );
-			}
-		}
+	    public void Execute_MoveDown() {
+	        mMoveDown?.Invoke( this );
+	    }
 
-		public void Execute_Play() {
-			if( mPlayNow != null ) {
-				mPlayNow( this );
-			}
-		}
+	    public void Execute_Dequeue() {
+	        mDequeue?.Invoke( this );
+	    }
 
-		public void Execute_Replay() {
+	    public void Execute_Play() {
+	        mPlayNow?.Invoke( this );
+	    }
+
+	    public void Execute_Replay() {
 			if( mTrack != null ) {
 				mTrack.HasPlayed = false;
 			}
 		}
 
+        public void Execute_SkipPlaying() {
+            if( mTrack != null ) {
+                mTrack.HasPlayed = true;
+            }
+        }
+
 		public void Execute_PlayFromHere() {
-			if( mPlayFromHere != null ) {
-				mPlayFromHere( this );
-			}	
+		    mPlayFromHere?.Invoke( this );
 		}
 	}
 }

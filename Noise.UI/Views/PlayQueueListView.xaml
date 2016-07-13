@@ -15,9 +15,9 @@
 	<Control.Resources>
 		<Behaviours:CommandReference x:Key="DeleteCommandReference" Command="{Binding DeleteCommand}" />
 
-		<ValueConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" TriggerValue="False" IsHidden="False"/>
-
-		<Style x:Key="QueueButtonStyle" TargetType="Button">
+        <ValueConverters:BooleanVisibilityConverter x:Key="CollapseIfFalse" TriggerValue="False" IsHidden="False"/>
+        
+        <Style x:Key="QueueButtonStyle" TargetType="Button">
 			<Setter Property="Height" Value="17"/>
 			<Setter Property="Width" Value="17"/>
 			<Setter Property="FontFamily" Value="Webdings"/>
@@ -197,14 +197,17 @@
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
 
-						<Button Grid.Column="0" Style="{StaticResource QueueButtonStyle}" Padding="0,2,0,0"
+						<Button Grid.Column="0" Style="{StaticResource QueueButtonStyle}" Padding="0,1,0,0"
 								Command="{Binding Path=Play}" Content="4" ToolTip="Play Now" />
-						<Button Grid.Column="1" Style="{StaticResource QueueButtonStyle}" Padding="0,2,0,0"
+						<Button Grid.Column="1" Style="{StaticResource QueueButtonStyle}" Padding="0,1,0,0"
 								Command="{Binding Path=PlayFromHere}" Content="8" ToolTip="Continue play from here" />
-						<Button Grid.Column="2" Style="{StaticResource QueueButtonStyle}" FontFamily="Arial Bold" FontSize="16" Padding="-1,0,0,0"
+						<Button Grid.Column="2" Style="{StaticResource QueueButtonStyle}" FontFamily="Arial Bold" FontSize="16" Padding="0,-1,0,1"
 								Visibility="{Binding QueuedTrack.HasPlayed, Converter={StaticResource CollapseIfFalse}}"
 								Command="{Binding Path=Replay}" Content="+" ToolTip="Play this track again" />
-						<Button Grid.Column="3" Style="{StaticResource QueueButtonStyle}"
+                        <Button Grid.Column="2" Style="{StaticResource QueueButtonStyle}" FontFamily="Arial Bold" FontSize="16" Padding="0,-3,0,3"
+								Visibility="{Binding WillPlay, Converter={StaticResource CollapseIfFalse}}"
+								Command="{Binding Path=SkipPlaying}" Content="-" ToolTip="Skip playing this track" />
+                        <Button Grid.Column="3" Style="{StaticResource QueueButtonStyle}"
 								Command="{Binding Path=DisplayInfo}" Content="{StaticResource Path_Information}" ToolTip="Display Artist and Album display" />
 						<Button Grid.Column="4" Style="{StaticResource QueueButtonStyle}" Padding="0,2,0,0"
 								Command="{Binding Path=MoveUp}" Content="5" ToolTip="Move track up in queue" />
