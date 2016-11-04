@@ -8,6 +8,7 @@ namespace Noise.Librarian.Models {
 	public class DirectoryArchiver : IDirectoryArchiver {
 		public void BackupDirectory( string sourcePath, string destinationName ) {
 			using( var zipFile = new ZipFile( destinationName ) ) {
+                zipFile.UseZip64WhenSaving = Zip64Option.AsNecessary;
 				zipFile.AddDirectory( sourcePath );
 
 				zipFile.Save();
@@ -16,7 +17,9 @@ namespace Noise.Librarian.Models {
 
 		public void RestoreDirectory( string sourceName, string destinationPath ) {
 			using( var zipFile = ZipFile.Read( sourceName )) {
-				zipFile.ExtractAll( destinationPath, ExtractExistingFileAction.OverwriteSilently );
+                zipFile.UseZip64WhenSaving = Zip64Option.AsNecessary;
+
+                zipFile.ExtractAll( destinationPath, ExtractExistingFileAction.OverwriteSilently );
 			}
 		}
 
@@ -31,7 +34,9 @@ namespace Noise.Librarian.Models {
 					var archiveName = Path.Combine( destinationPath, directoryName );
 
 					using( var zipFile = new ZipFile( archiveName )) {
-						if( progressCallback != null ) {
+                        zipFile.UseZip64WhenSaving = Zip64Option.AsNecessary;
+
+                        if( progressCallback != null ) {
 							var @base = progressBase;
 
 							zipFile.SaveProgress += ( sender, args ) => {
@@ -60,7 +65,9 @@ namespace Noise.Librarian.Models {
 
 				foreach( var archiveFile in archiveList ) {
 					using( var zipFile = ZipFile.Read( archiveFile )) {
-						if( progressCallback != null ) {
+                        zipFile.UseZip64WhenSaving = Zip64Option.AsNecessary;
+
+                        if( progressCallback != null ) {
 							var @base = progressBase;
 							var @archive = Path.GetFileName( archiveFile );
 
