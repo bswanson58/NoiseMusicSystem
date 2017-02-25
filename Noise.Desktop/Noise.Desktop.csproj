@@ -378,7 +378,8 @@ copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bassmix.dll" "$(TargetD
 copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\basswma.dll" "$(TargetDir)"
 copy "$(SolutionDir)lib\ReplayGain\$(PlatformName)\ReplayGain.dll" "$(TargetDir)"
 copy "$(SolutionDir)Noise.Core\Resources\EqPresets.xml" "$(TargetDir)"
-copy "$(SolutionDir)Noise.Core\Resources\LicenseKeys.xml" "$(TargetDir)"</PostBuildEvent>
+copy "$(SolutionDir)Noise.Core\Resources\LicenseKeys.xml" "$(TargetDir)"
+copy "$(SolutionDir)Noise.Speech\Resources\NoiseGrammar.grxml" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <Import Project="..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets')" />
