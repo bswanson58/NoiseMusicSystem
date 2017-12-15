@@ -10,9 +10,9 @@
     
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="4*" MinHeight="100"/>
+            <RowDefinition Height="1*" MinHeight="100"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="3*" MinHeight="100"/>
+            <RowDefinition Height="2*" MinHeight="100"/>
         </Grid.RowDefinitions>
         
         <Views:ArtistListView Grid.Row="0"/>
