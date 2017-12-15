@@ -9,7 +9,7 @@
 			 mc:Ignorable="d"
 			 Tag="Favorites"
 			 DataContext="{Binding FavoritesViewModel, Source={StaticResource ViewModelLocator}}"
-			 d:DesignHeight="300" d:DesignWidth="300">
+			 d:DesignHeight="300" d:DesignWidth="500">
 	
 	<UserControl.Resources>
 		<ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
@@ -71,12 +71,15 @@
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
-				<TextBlock Grid.Column="0" Margin="5,0" VerticalAlignment="Center" Text="Display:"/>
+				<TextBlock Grid.Column="0" Margin="3,0" VerticalAlignment="Center" Text="Display:"/>
 				<ComboBox Grid.Column="1" ItemsSource="{Binding FilterList}" DisplayMemberPath="FilterName" SelectedItem="{Binding CurrentFilter}"/>
-				
-				<Button Grid.Column="3" Style="{StaticResource GeneralButtonStyle}" Content="Play Random" Command="{Binding Path=PlayRandom}"/>
 
-				<Button Grid.Column="4" Margin="15,0,0,0" Style="{StaticResource GeneralButtonStyle}" Content="Export" Command="{Binding Path=ExportFavorites}"/>
+                <TextBox Grid.Column="2" Margin="7,0" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"
+                         Behaviours:TextBoxHelper.Watermark="enter filter text..." Behaviours:TextBoxHelper.ClearTextButton="True"
+                         Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Button Grid.Column="3" Style="{StaticResource GeneralButtonStyle}" Content="Play Random" Command="{Binding Path=PlayRandom}"/>
+				<Button Grid.Column="4" Margin="7,0,0,0" Style="{StaticResource GeneralButtonStyle}" Content="Export" Command="{Binding Path=ExportFavorites}"/>
 				<Button Grid.Column="5" Margin="7,0,0,0" Style="{StaticResource GeneralButtonStyle}" Content="Import" Command="{Binding Path=ImportFavorites}"/>
 			</Grid>
 		</Grid>

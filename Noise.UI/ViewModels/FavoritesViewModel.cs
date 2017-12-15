@@ -83,15 +83,11 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public IEventAggregator EventAggregator {
-			get{ return( mEventAggregator ); }
-		}
+		public IEventAggregator EventAggregator => ( mEventAggregator );
 
-		public IList<FavoriteFilter> FilterList {
-			get { return( mFilterList); }
-		}
+	    public IList<FavoriteFilter> FilterList => ( mFilterList);
 
-		public FavoriteFilter CurrentFilter {
+	    public FavoriteFilter CurrentFilter {
 			get { return( Get( () => CurrentFilter )); }
 			set {
 				Set( () => CurrentFilter, value );
@@ -100,11 +96,9 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public SortableCollection<FavoriteViewNode> FavoritesCollection {
-			get { return( mFavoritesList ); }
-		}
+		public SortableCollection<FavoriteViewNode> FavoritesCollection => ( mFavoritesList );
 
-		public ICollectionView FavoritesList {
+	    public ICollectionView FavoritesList {
 			get{ 
 				if( mFavoritesView == null ) {
 					mFavoritesView = CollectionViewSource.GetDefaultView( mFavoritesList );
@@ -131,12 +125,30 @@ namespace Noise.UI.ViewModels {
 				else if( favoriteNode.Artist != null ) {
 					retValue = CurrentFilter.FilterArtists;
 				}
+
+			    if((!string.IsNullOrWhiteSpace( FilterText )) &&
+                   ( favoriteNode.Title.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 )) {
+			        retValue = false;
+			    }
 			}
 
-			return ( retValue );
+            return ( retValue );
 		}
 
-		public FavoriteViewNode SelectedNode {
+	    public string FilterText {
+	        get { return (Get( () => FilterText )); }
+	        set {
+	            Execute.OnUIThread( () => {
+	                Set( () => FilterText, value );
+
+	                mFavoritesView?.Refresh();
+
+	                RaisePropertyChanged( () => FilterText );
+	            } );
+	        }
+	    }
+		
+        public FavoriteViewNode SelectedNode {
 			get {  return( mSelectedNode ); }
 			set {
 				mSelectedNode = value;
