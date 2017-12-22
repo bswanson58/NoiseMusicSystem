@@ -62,9 +62,11 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnAlbumChanged );
 
-			mAlbumSorts = new List<ViewSortStrategy> { new ViewSortStrategy( "Album Name", new List<SortDescription> { new SortDescription( "Name", ListSortDirection.Ascending ) } ),
+			mAlbumSorts = new List<ViewSortStrategy> { new ViewSortStrategy( "Album Name", new List<SortDescription> { new SortDescription( "Name", ListSortDirection.Ascending ) }),
 													   new ViewSortStrategy( "Published Year", new List<SortDescription> { new SortDescription( "PublishedYear", ListSortDirection.Ascending ),
-																														   new SortDescription( "Name", ListSortDirection.Ascending ) })};
+																														   new SortDescription( "Name", ListSortDirection.Ascending ) }),
+			                                           new ViewSortStrategy( "Rating", new List<SortDescription> { new SortDescription("SortRating", ListSortDirection.Descending ),
+			                                                                           new SortDescription( "Name", ListSortDirection.Ascending ) }) };
 
 			var configuration = mPreferences.Load<UserInterfacePreferences>();
 			if( configuration != null ) {

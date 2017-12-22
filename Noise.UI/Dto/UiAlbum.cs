@@ -93,7 +93,10 @@ namespace Noise.UI.Dto {
 			set { UserRating = value; }
 		}
 
-		[DependsUpon("UserRating")]
+        // used to sort albums by rating in the album list.
+	    public int SortRating => IsFavorite ? 10 : Rating;
+
+	    [DependsUpon("UserRating")]
 		public bool UseAlternateRating => (!IsUserRating );
 
 	    public override string ToString() {
