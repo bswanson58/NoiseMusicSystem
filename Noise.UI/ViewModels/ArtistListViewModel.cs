@@ -69,7 +69,9 @@ namespace Noise.UI.ViewModels {
 			mArtistSorts = new List<ViewSortStrategy> { new ViewSortStrategy( "Artist Name", new List<SortDescription> { new SortDescription( "Name", ListSortDirection.Ascending ) }),
 														new ViewSortStrategy( "Unprefixed Artist Name", new List<SortDescription> { new SortDescription( "SortName", ListSortDirection.Ascending ) }),
 														new ViewSortStrategy( "Genre", new List<SortDescription> { new SortDescription( "Genre", ListSortDirection.Ascending ),
-																												   new SortDescription( "SortName", ListSortDirection.Ascending )}) };
+																												   new SortDescription( "SortName", ListSortDirection.Ascending )}),
+		                                                new ViewSortStrategy( "Rating", new List<SortDescription> { new SortDescription("SortRating", ListSortDirection.Descending ),
+		                                                                                                            new SortDescription( "SortName", ListSortDirection.Ascending ) }) };
 			if( configuration != null ) {
 				var sortConfiguration = ( from config in mArtistSorts where config.DisplayName == configuration.ArtistListSortOrder select config ).FirstOrDefault();
 

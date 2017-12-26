@@ -80,16 +80,15 @@ namespace Noise.UI.Dto {
 		}
 
 		[DependsUpon("UserRating")]
-		public bool IsUserRating {
-			get{ return( UserRating != 0 ); }
-		}
+		public bool IsUserRating => ( UserRating != 0 );
 
-		[DependsUpon("UserRating")]
-		public bool UseAlternateRating {
-			get { return(!IsUserRating ); }
-		}
+	    [DependsUpon("UserRating")]
+		public bool UseAlternateRating => (!IsUserRating );
 
-		public string Name {
+	    // used to sort albums by rating in the album list.
+	    public int SortRating => IsFavorite ? 10 : Rating;
+		
+        public string Name {
 			get{ return( Get( () => Name )); }
 			set{ Set( () => Name, value ); }
 		}
