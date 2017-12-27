@@ -4,7 +4,7 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
 	internal class PlayExhaustedStrategyFavorites : PlayExhaustedListBase {
-		private readonly	ITrackProvider	mTrackProvider;
+		private readonly ITrackProvider     mTrackProvider;
 
 		public PlayExhaustedStrategyFavorites( ITrackProvider trackProvider, ILogPlayStrategy log ) :
 			base( ePlayExhaustedStrategy.PlayFavorites, "Play Favorites", "Play tracks from your list of favorites.", log ) {
@@ -12,7 +12,7 @@ namespace Noise.Core.PlayStrategies {
 		}
 
 		protected override string FormatDescription() {
-			return( string.Format( "play favorite tracks" ));
+			return( "play favorite tracks" );
 		}
 
 		protected override void FillTrackList( long itemId ) {

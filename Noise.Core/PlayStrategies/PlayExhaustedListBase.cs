@@ -50,7 +50,7 @@ namespace Noise.Core.PlayStrategies {
 			return( QueueTracks( 3 - PlayQueueMgr.UnplayedTrackCount ));
 		}
 
-		private bool QueueTracks( int count ) {
+		protected virtual bool QueueTracks( int count ) {
 			var retValue= false;
 
 			for( int x = 0; x < count; x++ ) {
@@ -64,7 +64,7 @@ namespace Noise.Core.PlayStrategies {
 			return ( retValue );
 		}
 
-		private DbTrack SelectTrack() {
+		protected DbTrack SelectTrack() {
 			DbTrack	retValue;
 
 			if( mTrackList.Count > 1 ) {
