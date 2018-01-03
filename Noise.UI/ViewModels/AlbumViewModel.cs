@@ -178,7 +178,9 @@ namespace Noise.UI.ViewModels {
 			Execute.OnUIThread( () => {
 				SetAlbum( album );
 				mCurrentAlbumCover = SelectAlbumCover( album );
-				SupportInfo = supportInfo;
+//				SupportInfo = supportInfo;
+                RaisePropertyChanged( () => AlbumArtwork );
+                RaisePropertyChanged( () => AlbumCover );
 			});
 		}
 
@@ -276,7 +278,7 @@ namespace Noise.UI.ViewModels {
 			AlbumRetrievalTaskHandler.StartTask( () => {
 					if(!cancellationToken.IsCancellationRequested ) {
 						SetAlbumInfo(  mAlbumProvider.GetAlbum( albumId ),
-									   mAlbumProvider.GetAlbumSupportInfo( albumId ));
+									   null ); //mAlbumProvider.GetAlbumSupportInfo( albumId ));
 					}
 
 					if(!cancellationToken.IsCancellationRequested ) {
@@ -372,6 +374,11 @@ namespace Noise.UI.ViewModels {
 				   ( SupportInfo.Artwork != null )) {
 					retValue.AddRange( SupportInfo.Artwork.Select( artwork => new ImageScrubberItem( artwork.DbId, ByteImageConverter.CreateBitmap( artwork.Image ), artwork.Rotation )));
 					retValue.AddRange( SupportInfo.AlbumCovers.Select( cover => new ImageScrubberItem( cover.DbId, ByteImageConverter.CreateBitmap( cover.Image ), cover.Rotation )));
+				}
+                else {
+				    if( mCurrentAlbumCover != null ) {
+				        retValue.Add( mCurrentAlbumCover );
+				    }
 				}
 
 				return( retValue );
@@ -511,6 +518,7 @@ namespace Noise.UI.ViewModels {
 								AlbumCover = new ImageScrubberItem( artwork.Artwork.DbId, ByteImageConverter.CreateBitmap( artwork.Artwork.Image ), artwork.Artwork.Rotation );
 
 								RaisePropertyChanged( () => AlbumCover );
+                                RaisePropertyChanged( () => AlbumArtwork );
 							}
 						}
 					}
@@ -532,6 +540,9 @@ namespace Noise.UI.ViewModels {
 				   ( SupportInfo.Info.GetLength( 0 ) > 0 )) {
 					retValue = true;
 				}
+			}
+            else {
+			    retValue = mCurrentAlbumCover != null;
 			}
 
 			return( retValue );
