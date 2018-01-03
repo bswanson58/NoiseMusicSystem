@@ -17,6 +17,7 @@ namespace Noise.Infrastructure.Interfaces {
 		IDataUpdateShell<DbAlbum>	GetAlbumForUpdate( long albumId );
 
 		AlbumSupportInfo			GetAlbumSupportInfo( long albumId );
+        AlbumArtworkInfo            GetAlbumArtworkInfo( long albumId );
 
 		IDataProviderList<long>		GetAlbumsInCategory( long categoryId );
 		IDataProviderList<long>		GetAlbumCategories( long albumId );

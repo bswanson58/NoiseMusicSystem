@@ -19,45 +19,50 @@ namespace Noise.Core.DataProviders {
 		}
 
 		public Artwork GetAlbumCover( DbAlbum forAlbum ) {
-			Artwork	cover = null;
+            Artwork retValue = null;
 
 			if( forAlbum != null ) {
-				var albumInfo = mAlbumProvider.GetAlbumSupportInfo( forAlbum.DbId );
+			    DbArtwork   cover = null;
+				var         albumInfo = mAlbumProvider.GetAlbumArtworkInfo( forAlbum.DbId );
 
 				if(( albumInfo.AlbumCovers != null ) &&
 				   ( albumInfo.AlbumCovers.GetLength( 0 ) > 0 )) {
-					cover = ( from Artwork artwork in albumInfo.AlbumCovers where artwork.IsUserSelection select artwork ).FirstOrDefault() ??
-							( from Artwork artwork in albumInfo.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
-							( from Artwork artwork in albumInfo.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault() ??
+					cover = ( from DbArtwork artwork in albumInfo.AlbumCovers where artwork.IsUserSelection select artwork ).FirstOrDefault() ??
+							( from DbArtwork artwork in albumInfo.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
+							( from DbArtwork artwork in albumInfo.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault() ??
 							albumInfo.AlbumCovers[0];
 				}
 
 				if(( cover == null ) &&
 				   ( albumInfo.Artwork != null ) &&
 				   ( albumInfo.Artwork.GetLength( 0 ) > 0 )) {
-					cover = ( from Artwork artwork in albumInfo.Artwork
+					cover = ( from DbArtwork artwork in albumInfo.Artwork
 							  where artwork.Name.IndexOf( "front", StringComparison.InvariantCultureIgnoreCase ) >= 0 select artwork ).FirstOrDefault() ??
-							( from Artwork artwork in albumInfo.Artwork
+							( from DbArtwork artwork in albumInfo.Artwork
 							  where artwork.Name.IndexOf( "cover", StringComparison.InvariantCultureIgnoreCase ) >= 0 select artwork ).FirstOrDefault() ??
-							( from Artwork artwork in albumInfo.Artwork
+							( from DbArtwork artwork in albumInfo.Artwork
 							  where artwork.Name.IndexOf( "folder", StringComparison.InvariantCultureIgnoreCase ) >= 0 select artwork ).FirstOrDefault() ??
 							albumInfo.Artwork[0];
 				}
+
+                if( cover != null ) {
+                    retValue = mArtworkProvider.GetArtwork( cover.DbId );
+                }
 			}
 
-			return( cover );
+			return retValue;
 		}
 
 		public Artwork GetNextAlbumArtwork( DbAlbum forAlbum, int index ) {
 			Artwork	retValue = GetAlbumCover( forAlbum );
-			var albumInfo = mAlbumProvider.GetAlbumSupportInfo( forAlbum.DbId );
+			var albumInfo = mAlbumProvider.GetAlbumArtworkInfo( forAlbum.DbId );
 
 			if(( albumInfo.Artwork != null ) &&
 			   ( albumInfo.Artwork.GetLength( 0 ) > 0 )) {
 				index = index % ( albumInfo.Artwork.GetLength( 0 ) + 1 );
 
 				if( index > 0 ) {
-					retValue = albumInfo.Artwork[index - 1];
+					retValue = mArtworkProvider.GetArtwork( albumInfo.Artwork[index - 1].DbId );
 				}
 			}
 
@@ -66,18 +71,18 @@ namespace Noise.Core.DataProviders {
 
 		public Artwork GetRandomAlbumArtwork( DbAlbum forAlbum ) {
 			Artwork	retValue = GetAlbumCover( forAlbum );
-			var albumInfo = mAlbumProvider.GetAlbumSupportInfo( forAlbum.DbId );
+			var albumInfo = mAlbumProvider.GetAlbumArtworkInfo( forAlbum.DbId );
 
 			if(( albumInfo.Artwork != null ) &&
 			   ( albumInfo.Artwork.GetLength( 0 ) > 1 )) {
-				retValue = albumInfo.Artwork[mRandom.Next(albumInfo.Artwork.GetLength( 0 ) - 1 )];
+				retValue = mArtworkProvider.GetArtwork( albumInfo.Artwork[mRandom.Next(albumInfo.Artwork.GetLength( 0 ) - 1 )].DbId );
 			}
 
 			return( retValue );
 		}
 
 		public int ImageCount( DbAlbum forAlbum ) {
-			var albumInfo = mAlbumProvider.GetAlbumSupportInfo( forAlbum.DbId );
+			var albumInfo = mAlbumProvider.GetAlbumArtworkInfo( forAlbum.DbId );
 
 			return( albumInfo.Artwork.GetLength( 0 ));
 		}
