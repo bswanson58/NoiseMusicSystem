@@ -38,10 +38,12 @@ namespace Noise.Core.Sidecars {
 		}
 
 		public void UpdateSidecar( DbTrack forTrack ) {
-			var sidecar = new ScTrack( forTrack );
+            if( forTrack != null ) {
+                var sidecar = new ScTrack( forTrack );
 
-			WriteSidecar( forTrack, sidecar );
-		}
+                WriteSidecar( forTrack, sidecar );
+            }
+        }
 
 		public void WriteSidecar( DbTrack forTrack, ScTrack sidecar ) {
 			if( IsStorageAvailable( forTrack.Album )) {
@@ -101,10 +103,12 @@ namespace Noise.Core.Sidecars {
 		}
 
 		public void UpdateSidecar( DbArtist forArtist ) {
-			var sidecar = new ScArtist( forArtist );
+            if( forArtist != null ) {
+                var sidecar = new ScArtist( forArtist );
 
-			WriteSidecar( forArtist, sidecar );
-		}
+                WriteSidecar( forArtist, sidecar );
+            }
+        }
 
 		public void WriteSidecar( DbArtist forArtist, ScArtist sidecar ) {
 			if( IsStorageAvailable( forArtist )) {

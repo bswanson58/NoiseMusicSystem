@@ -143,7 +143,7 @@ namespace Noise.Core.DataProviders {
 						}
 					}
 
-					var track = mTrackProvider.GetTrack( forTrack.DateAddedTicks );
+					var track = mTrackProvider.GetTrack( forTrack.DbId );
 
 					mSidecarUpdater.UpdateSidecar( track );
 					mEventAggregator.Publish( new Events.TrackUserUpdate( track ));
