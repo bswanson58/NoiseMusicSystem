@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
-using Noise.Infrastructure;
 
 namespace Noise.Desktop {
 	/// <summary>
@@ -30,11 +29,9 @@ namespace Noise.Desktop {
 		}
 
 		private void CurrentDomainUnhandledException( object sender, UnhandledExceptionEventArgs e ) {
-			if( mBootstrapper != null ) {
-				mBootstrapper.LogException( "Application Domain unhandled exception", e.ExceptionObject as Exception );
-			}
+		    mBootstrapper?.LogException( "Application Domain unhandled exception", e.ExceptionObject as Exception );
 
-			Shutdown( -1 );
+		    Shutdown( -1 );
 		}
 
 		private void AppDispatcherUnhandledException( object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e ) {
@@ -42,20 +39,16 @@ namespace Noise.Desktop {
 				Clipboard.SetText( e.Exception.ToString());
 			}
 
-			if( mBootstrapper != null ) {
-				mBootstrapper.LogException( "Application Dispatcher unhandled exception", e.Exception );
-			}
+		    mBootstrapper?.LogException( "Application Dispatcher unhandled exception", e.Exception );
 
-			e.Handled = true;
+		    e.Handled = true;
 			Shutdown( -1 );
 		}
 
 		private void TaskSchedulerUnobservedTaskException( object sender, UnobservedTaskExceptionEventArgs e ) {
-			if( mBootstrapper != null ) {
-				mBootstrapper.LogException( "Task Scheduler unobserved exception", e.Exception );
-			}
- 
-			e.SetObserved(); 
+		    mBootstrapper?.LogException( "Task Scheduler unobserved exception", e.Exception );
+
+		    e.SetObserved(); 
 		} 
 	}
 }
