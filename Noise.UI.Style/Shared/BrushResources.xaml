@@ -14,6 +14,7 @@
             <Behaviours:ColorFrequency Frequency="50" Color="#19DEE6F6" />
         </Behaviours:NoiseGenerator.Colors>
     </Behaviours:NoiseGenerator>
+
     <ImageBrush x:Key="NoiseBrush"
                 ImageSource="{Binding Source={StaticResource BackgroundNoise}, Path=NoiseImage}"
                 TileMode="Tile" Viewport="0,0 128,128" ViewportUnits="Absolute" />

@@ -1,11 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-					xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-					xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 					xmlns:Controls="clr-namespace:Noise.UI.Controls;assembly=Noise.UI"
 					xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours;assembly=Noise.UI"
-					xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-					mc:Ignorable="d">
+					xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui">
 
 	<SolidColorBrush x:Key="ControlTextColor" Color="#FF878787" />
 	<SolidColorBrush x:Key="TrimColor" Color="#FF878787" />
@@ -410,11 +407,33 @@
 	</DataTemplate>
 
 	<!-- Play button style -->
+    <Style x:Key="ButtonFocusVisual">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle Margin="2"
+                               SnapsToDevicePixels="true"
+                               Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                               StrokeDashArray="1 2"
+                               StrokeThickness="1" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <LinearGradientBrush x:Key="ButtonNormalBackground" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#F3F3F3" />
+        <GradientStop Offset="0.5" Color="#EBEBEB" />
+        <GradientStop Offset="0.5" Color="#DDDDDD" />
+        <GradientStop Offset="1" Color="#CDCDCD" />
+    </LinearGradientBrush>
+
+    <SolidColorBrush x:Key="ButtonNormalBorder" Color="#FF707070" />
+
 	<Style x:Key="PlayButtonStyle" TargetType="{x:Type Button}">
 		<Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
 		<Setter Property="Background" Value="{StaticResource ButtonNormalBackground}"/>
 		<Setter Property="BorderBrush" Value="{StaticResource ButtonNormalBorder}"/>
-		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
 		<Setter Property="HorizontalContentAlignment" Value="Center"/>
 		<Setter Property="VerticalContentAlignment" Value="Center"/>
