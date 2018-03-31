@@ -229,9 +229,9 @@
 
 			<DataTemplate.Triggers>
 				<DataTrigger Binding="{Binding Path=QueuedTrack.HasPlayed}" Value="true">
-					<Setter TargetName="TrackName" Property="Foreground" Value="LightGray" />
-					<Setter TargetName="AlbumName" Property="Foreground" Value="LightGray" />
-					<Setter TargetName="TrackDuration" Property="Foreground" Value="LightGray" />
+					<Setter TargetName="TrackName" Property="Foreground" Value="Gray" />
+					<Setter TargetName="AlbumName" Property="Foreground" Value="Gray" />
+					<Setter TargetName="TrackDuration" Property="Foreground" Value="Gray" />
 				</DataTrigger>
 				<DataTrigger Binding="{Binding Path=QueuedTrack.IsPlaying}" Value="true">
 					<Setter TargetName="TrackName" Property="FontWeight" Value="Bold" />
