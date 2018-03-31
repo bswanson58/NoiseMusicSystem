@@ -32,9 +32,14 @@ namespace Noise.UI.ViewModels {
 		public bool CanExecute_TimelineLayout() {
 			return ( false );
 		}
+
+	    public void Execute_PlaybackLayout() { }
+	    public bool CanExecute_PlaybackLayout() {
+	        return (false);
+	    }
 	}
 
-	internal class ConfigurationViewModel {
+    internal class ConfigurationViewModel {
 		public bool EnableGlobalHotkeys { get; set; }
 		public bool EnableRemoteAccess { get; set; }
 		public bool EnableSpeechCommands { get; set; }
