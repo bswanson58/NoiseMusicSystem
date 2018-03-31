@@ -20,7 +20,7 @@
             <ListView Grid.Row="0" BorderThickness="0" ItemsSource="{Binding Path=AlbumList}" SelectedItem="{Binding SelectedAlbum}"
                       Behaviours:ListViewColumns.Stretch="true">
                 <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}">
+                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MetroListViewItem}">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     </Style>
                 </ListView.ItemContainerStyle>
