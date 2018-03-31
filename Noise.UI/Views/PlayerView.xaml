@@ -99,7 +99,7 @@
 					<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" Command="{Binding Path=Mute}"
 				  Foreground="{StaticResource ControlTextColor}" />
 
-					<NoiseControls:VuMeter Grid.Column="1" Margin="0,7,7,0" Background="White" Foreground="#FF588CE0"
+					<NoiseControls:VuMeter Grid.Column="1" Margin="0,7,7,0" Foreground="#FF588CE0"
 								 LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" />
 
 					<Button Grid.Column="2" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="5" Command="{Binding Path=ExtendedPlayer}"

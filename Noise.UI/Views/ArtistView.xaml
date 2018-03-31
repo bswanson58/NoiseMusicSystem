@@ -9,7 +9,6 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 Height="200"
-			 Background="White"
 			 d:DesignWidth="800"
 			 mc:Ignorable="d">
 	<!--

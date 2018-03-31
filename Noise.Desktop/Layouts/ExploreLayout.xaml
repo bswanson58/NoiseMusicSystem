@@ -59,7 +59,7 @@
 
 					<ContentControl Grid.Row="0" Regions:RegionManager.RegionName="LibrarySelector" />
 
-					<TabControl Grid.Row="1" Margin="1,7,3,-2" BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="LeftPanel" Background="White"
+					<TabControl Grid.Row="1" Margin="1,7,3,-2" BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="LeftPanel"
 								ContentTemplate="{StaticResource TabTemplate}"  ItemContainerStyle="{StaticResource TabControlStyle}" />
 				</Grid>
 
@@ -89,7 +89,7 @@
 							  ResizeDirection="Columns"
 							  Style="{DynamicResource GridSplitterVerticalStyle}" />
 
-				<TabControl Grid.Column="2" Margin="0,3,0,-2"  BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="RightPanel" Background="White"
+				<TabControl Grid.Column="2" Margin="0,3,0,-2"  BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="RightPanel"
 							ContentTemplate="{StaticResource TabTemplate}"  ItemContainerStyle="{StaticResource TabControlStyle}" />
 			</Grid>
 
