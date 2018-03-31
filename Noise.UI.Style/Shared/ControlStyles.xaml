@@ -9,14 +9,16 @@
     <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
 </ResourceDictionary.MergedDictionaries>
 
-<SolidColorBrush x:Key="ControlTextColor" Color="#FF878787" />
+    <Color x:Key="SignatureColor">#FFEA6500</Color>
+    <SolidColorBrush x:Key="SignatureBrush" Color="{StaticResource SignatureColor}"/>
+
+    <SolidColorBrush x:Key="ControlTextColor" Color="#FF878787" />
 	<SolidColorBrush x:Key="TrimColor" Color="#FF878787" />
 	<SolidColorBrush x:Key="BorderColor" Color="#FFD0D0D0" />
 	<SolidColorBrush x:Key="BorderTextColor" Color="#FFA0A0A0"/>
 	<SolidColorBrush x:Key="ControlBackgroundColor" Color="#FFE5E5E5"/>
 	<SolidColorBrush x:Key="TextBrush" Color="#FF0000A0"/>
 	<SolidColorBrush x:Key="SmallTextBrush" Color="#FF0000C0"/>
-	<SolidColorBrush x:Key="SignatureColor" Color="#FFEA6500"/>
 
 	<Style x:Key="StartupFontStyle" TargetType="Control">
 		<Setter Property="FontFamily" Value="Arial"/>
@@ -160,7 +162,7 @@
 					</Grid>
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsMouseOver" Value="true">
-							<Setter Property="Background" TargetName="Bd" Value="{StaticResource TreeItemBackground}"/>
+                            <Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.ControlLightBrush}}"/>
 						</Trigger>
 						<Trigger Property="IsSelected" Value="true">
 							<Setter Property="FontWeight" Value="Bold"/>
@@ -306,7 +308,7 @@
 							<ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" Margin="1" />
 							<TextBlock x:Name="Message" Text="{TemplateBinding Behaviours:TextBoxHelper.Watermark}" FontStyle="Italic" Margin="9,0,0,0"
 										Foreground="Gray" IsHitTestVisible="False" FontFamily="Calibri" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Center" />
-							<Button x:Name="PART_ClearText" Foreground="{DynamicResource BorderColor}" BorderThickness="0" Background="Transparent"
+							<Button x:Name="PART_ClearText" BorderThickness="0" Foreground="Gray" Background="Transparent"
 										HorizontalAlignment="Right" Margin="3" FontFamily="Marlett" Content="r" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent},
 										Path=(Behaviours:TextBoxHelper.ClearTextButton), Converter={StaticResource BooleanVisibilityConverter}}" IsTabStop="False" />
 						</Grid>
@@ -582,7 +584,7 @@
 		<Setter Property="Height" Value="13"/>
 		<Setter Property="RatingCount" Value="5"/>
 		<Setter Property="HoverColor" Value="LightBlue"/>
-		<Setter Property="RatedColor" Value="Blue"/>
+		<Setter Property="RatedColor" Value="{StaticResource SignatureBrush}"/>
 		<Setter Property="UnratedColor" Value="{StaticResource ControlTextColor}"/>
 		<Setter Property="DislikeColor" Value="Red"/>
 	</Style>
@@ -646,7 +648,7 @@
 								<VisualState x:Name="Checked">
 									<Storyboard>
 										<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="Favorite">
-											<EasingColorKeyFrame KeyTime="0" Value="#FF3553FB"/>
+											<EasingColorKeyFrame KeyTime="0" Value="{StaticResource SignatureColor}"/>
 										</ColorAnimationUsingKeyFrames>
 									</Storyboard>
 								</VisualState>
@@ -660,7 +662,7 @@
 								<VisualState x:Name="Indeterminate">
 									<Storyboard>
 										<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="Favorite">
-											<EasingColorKeyFrame KeyTime="0" Value="#FF3553FB"/>
+											<EasingColorKeyFrame KeyTime="0" Value="{StaticResource SignatureColor}"/>
 										</ColorAnimationUsingKeyFrames>
 										<StringAnimationUsingKeyFrames Storyboard.TargetProperty="Text" Storyboard.TargetName="Favorite">
 											<DiscreteStringKeyFrame KeyTime="0" Value="J"/>
