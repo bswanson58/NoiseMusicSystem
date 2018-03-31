@@ -7,8 +7,7 @@
 			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-			 Height="200"
-			 d:DesignHeight="200"
+			 Height="205"
 			 d:DesignWidth="600"
 			 mc:Ignorable="d">
 
@@ -37,7 +36,7 @@
 	</i:Interaction.Behaviors>
 
 	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Album ">
-		<Border Background="{DynamicResource TreeItemBackground}" BorderThickness="0" CornerRadius="5"
+		<Border BorderThickness="0" CornerRadius="5"
 				Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}">
 			<Grid Background="{StaticResource NoiseBrush}" 
 				  Behaviours:GridUtils.ColumnDefinitions="Auto,*">
