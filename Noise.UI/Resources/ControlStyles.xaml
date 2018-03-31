@@ -5,8 +5,7 @@
 
     <!--  LinkLabel Style  -->
 	<Style BasedOn="{StaticResource {x:Type Label}}" TargetType="{x:Type NoiseControls:LinkLabel}">
-		<Setter Property="Foreground" Value="Blue" />
-		<Setter Property="HoverForeground" Value="Red" />
+		<Setter Property="HoverForeground" Value="{DynamicResource SignatureBrush}" />
 
 		<Setter Property="HyperlinkStyle">
 			<Setter.Value>
