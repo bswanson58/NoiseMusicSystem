@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
+using Noise.Infrastructure; // required for release builds.
 
 namespace Noise.Desktop {
 	/// <summary>
