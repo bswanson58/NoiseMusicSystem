@@ -1,10 +1,15 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-					xmlns:Controls="clr-namespace:Noise.UI.Controls;assembly=Noise.UI"
+					xmlns:NoiseControls="clr-namespace:Noise.UI.Controls;assembly=Noise.UI"
 					xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours;assembly=Noise.UI"
 					xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui">
 
-	<SolidColorBrush x:Key="ControlTextColor" Color="#FF878787" />
+<!-- Add in the MahApps resource so these are based on those -->
+<ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+</ResourceDictionary.MergedDictionaries>
+
+<SolidColorBrush x:Key="ControlTextColor" Color="#FF878787" />
 	<SolidColorBrush x:Key="TrimColor" Color="#FF878787" />
 	<SolidColorBrush x:Key="BorderColor" Color="#FFD0D0D0" />
 	<SolidColorBrush x:Key="BorderTextColor" Color="#FFA0A0A0"/>
@@ -15,89 +20,70 @@
 
 	<Style x:Key="SectionBorderStyle" TargetType="GroupBox">
 		<Setter Property="BorderThickness" Value="1"/>
-		<Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
-		<Setter Property="Foreground" Value="{DynamicResource BorderTextColor}"/>
 	</Style>
 
-	<SolidColorBrush x:Key="StartupForegroundBrush" Color="#FF588CE0"/>
 	<Style x:Key="StartupFontStyle" TargetType="Control">
-		<Setter Property="Foreground" Value="{StaticResource StartupForegroundBrush}"/>
 		<Setter Property="FontFamily" Value="Arial"/>
 		<Setter Property="FontSize" Value="28"/>
 	</Style>
 	<Style x:Key="StartupSmallFontStyle" TargetType="Control">
-		<Setter Property="Foreground" Value="{StaticResource StartupForegroundBrush}"/>
 		<Setter Property="FontFamily" Value="Arial"/>
 		<Setter Property="FontSize" Value="16"/>
 	</Style>
 	<Style x:Key="StartupTextStyle" TargetType="TextBlock">
-		<Setter Property="Foreground" Value="{StaticResource StartupForegroundBrush}"/>
 		<Setter Property="FontFamily" Value="Arial"/>
 		<Setter Property="FontSize" Value="28"/>
 	</Style>
 	<Style x:Key="StartupBorderStyle" TargetType="GroupBox" BasedOn="{StaticResource StartupFontStyle}">
 		<Setter Property="BorderThickness" Value="1"/>
-		<Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
 	</Style>
 	<Style x:Key="StartupButtonStyle" TargetType="Button" BasedOn="{StaticResource StartupFontStyle}">
 		<Setter Property="FontSize" Value="22"/>
-		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="Padding" Value="11,3"/>
 	</Style>
 
 	<Style x:Key="ExplorerHeaderStyle" TargetType="TextBlock">
 		<Setter Property="FontFamily" Value="Segoe UI Semibold"/>
 		<Setter Property="FontSize" Value="18"/>
-		<Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
 	</Style>
 	<Style x:Key="ExplorerTitleStyle" TargetType="TextBlock">
 		<Setter Property="FontFamily" Value="Segoe UI"/>
 		<Setter Property="FontSize" Value="18"/>
-		<Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
 	</Style>
 	<Style x:Key="ExplorerSubtitleStyle" TargetType="TextBlock">
 		<Setter Property="FontFamily" Value="Segoe UI"/>
 		<Setter Property="FontSize" Value="12"/>
-		<Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
 	</Style>
 
 	<Style x:Key="LargeTitleStyle" TargetType="TextBlock">
-		<Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
 		<Setter Property="FontFamily" Value="Arial"/>
 		<Setter Property="FontSize" Value="32"/>
 	</Style>
 
 	<Style x:Key="MediumTitleStyle" TargetType="TextBlock">
-		<Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
 		<Setter Property="FontFamily" Value="Arial"/>
 		<Setter Property="FontSize" Value="28"/>
 	</Style>
 
 	<Style x:Key="SmallTitleStyle" TargetType="TextBlock">
-		<Setter Property="Foreground" Value="{StaticResource SmallTextBrush}"/>
 		<Setter Property="FontFamily" Value="Arial"/>
 		<Setter Property="FontSize" Value="16"/>
 	</Style>
 
 	<Style x:Key="ControlTitleStyle" TargetType="TextBlock">
-		<Setter Property="Foreground" Value="{StaticResource ControlTextColor}"/>
 		<Setter Property="FontFamily" Value="Segoe UI"/>
 		<Setter Property="FontSize" Value="12"/>
 	</Style>
 
-	<Style x:Key="GeneralButtonStyle" TargetType="Button">
+    <Style x:Key="GeneralButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Padding" Value="5,3"/>
-		<Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
-		<Setter Property="Foreground" Value="{StaticResource ControlTextColor}"/>
 	</Style>
 
-	<Style x:Key="GeneralComboStyle" TargetType="ComboBox">
+    <Style x:Key="GeneralComboStyle" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
 		<Setter Property="Padding" Value="5,3"/>
-		<Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
-		<Setter Property="Foreground" Value="{StaticResource ControlTextColor}"/>
 	</Style>
 	
-	<Style x:Key="TransportButtonStyle" TargetType="Button">
+	<Style x:Key="TransportButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Height" Value="29"/>
 		<Setter Property="Width" Value="29"/>
 		<Setter Property="FontFamily" Value="Webdings"/>
@@ -112,7 +98,6 @@
 		<Setter Property="Header" Value="{Binding Content.Tag, RelativeSource={RelativeSource Self}}" />
 		<Setter Property="BorderThickness" Value="0"/>
 		<Setter Property="FontSize" Value="18"/>
-		<Setter Property="Foreground" Value="{StaticResource ControlTextColor}"/>
 		<Setter Property="Padding" Value="6,1,6,1"/>
 		<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
 		<Setter Property="VerticalContentAlignment" Value="Stretch"/>
@@ -142,7 +127,6 @@
 						</Trigger>
 						<Trigger Property="IsSelected" Value="true">
 							<Setter Property="FontWeight" Value="Bold"/>
-							<Setter Property="Foreground" Value="#FF588CE0"/> <!-- AccentColor -->
 						</Trigger>
 						<Trigger Property="IsEnabled" Value="false">
 							<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
@@ -385,19 +369,19 @@
 
 	<!-- Play column header style -->
 	<DataTemplate x:Key="PlayColumnHeaderTemplate">
-		<TextBlock FontFamily="WebDings" Foreground="{StaticResource ControlTextColor}" Text="4"/>
+		<TextBlock FontFamily="WebDings" Text="4"/>
 	</DataTemplate>
 	
 	<!-- Edit column header style -->
 	<DataTemplate x:Key="EditColumnHeaderTemplate">
 		<Viewbox Height="12" Width="12">
 			<Canvas Width="100" Height="100" ClipToBounds="True">
-				<Path Fill="{StaticResource ControlTextColor}">
+				<Path>
 					<Path.Data>
 						<PathGeometry FillRule="Nonzero" Figures="M4.744,4.743C-1.581,11.068,-1.581,21.321,4.744,27.646L27.646,4.743C21.322,-1.582,11.068,-1.582,4.744,4.743z" />
 					</Path.Data>
 				</Path>
-				<Path Fill="{StaticResource ControlTextColor}">
+				<Path>
 					<Path.Data>
 						<PathGeometry FillRule="Nonzero" Figures="M60.893,83.794L100,100 83.795,60.893 33.914,11.013 11.012,33.914 60.893,83.794z M66.105,73.646C68.187,71.562 72.128,72.129 72.998,72.999 72.13,72.131 71.562,68.187 73.644,66.105 75.726,64.023 79.886,63.283 79.886,63.283L89.198,85.753 85.752,89.199 63.282,79.888C63.282,79.889,64.023,75.729,66.105,73.646z" />
 					</Path.Data>
@@ -557,7 +541,7 @@
 	</Style>
 	
 	<!-- Rating control -->
-	<Style x:Key="NoiseRatingStyle" TargetType="{x:Type Controls:RatingControl}">
+	<Style x:Key="NoiseRatingStyle" TargetType="{x:Type NoiseControls:RatingControl}">
 		<Setter Property="Height" Value="13"/>
 		<Setter Property="RatingCount" Value="5"/>
 		<Setter Property="HoverColor" Value="LightBlue"/>
@@ -568,7 +552,7 @@
 	
 	<!-- Favorite column header style -->
 	<DataTemplate x:Key="FavoriteColumnHeaderTemplate">
-		<TextBlock FontFamily="WebDings" Foreground="{StaticResource ControlTextColor}" Text="Y"/>
+		<TextBlock FontFamily="WebDings" Text="Y"/>
 	</DataTemplate>
 	
 	<!-- Favorite Checkbox Style-->

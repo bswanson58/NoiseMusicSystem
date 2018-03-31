@@ -109,7 +109,6 @@
                                 <Button x:Name="TrackEdit" Width="17" Height="17" Opacity="0.1"
                                         Command="{Binding Path=Edit}"
                                         Content="{StaticResource Path_Edit}"
-                                        Foreground="{StaticResource ControlTextColor}"
                                         Padding="1"
                                         ToolTip="Edit Track Properties" />
                                 <DataTemplate.Triggers>

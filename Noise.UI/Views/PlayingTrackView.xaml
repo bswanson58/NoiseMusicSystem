@@ -10,7 +10,6 @@
 
 	<UserControl.Resources>
 		<DataTemplate x:Key="AfterTemplate">
-			<Rectangle Fill="{StaticResource StartupForegroundBrush}" />
 		</DataTemplate>
 
 		<DataTemplate x:Key="ThumbTemplate">
@@ -18,7 +17,7 @@
 		</DataTemplate>
 
 		<DataTemplate x:Key="BeforeTemplate">
-			<Rectangle Fill="{StaticResource StartupForegroundBrush}" Opacity="0" Height="3" VerticalAlignment="Center"/>
+			<Rectangle Opacity="0" Height="3" VerticalAlignment="Center"/>
 		</DataTemplate>
 	</UserControl.Resources>
 	
@@ -42,7 +41,7 @@
 		</Viewbox>
 
 		<!-- Playing Time -->
-		<TextBlock Grid.Row="0" Style="{StaticResource LargeTitleStyle}" FontSize="32" Foreground="{StaticResource StartupForegroundBrush}"
+		<TextBlock Grid.Row="0" Style="{StaticResource LargeTitleStyle}" FontSize="32"
 						   Margin="0,0,15,18" HorizontalAlignment="Right" VerticalAlignment="Bottom"
 						   Visibility="{Binding TrackTime, Converter={StaticResource TimeSpanVisibilityConverter}}"
 						   Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}" />

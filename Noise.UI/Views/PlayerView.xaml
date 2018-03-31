@@ -8,6 +8,7 @@
 			 xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
 			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             Height="85"
 			 d:DesignHeight="100"
 			 d:DesignWidth="1200"
 			 mc:Ignorable="d">
@@ -20,7 +21,7 @@
 		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
 	</UserControl.DataContext>
 
-	<GroupBox Height="77" Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
+	<GroupBox Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
 		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
@@ -54,7 +55,7 @@
 							</Grid.ColumnDefinitions>
 
 							<TextBlock Grid.Column="0" VerticalAlignment="Bottom" Margin="3,-1,0,5"
-					 Style="{StaticResource MediumTitleStyle}" Foreground="{DynamicResource ControlTextColor}"
+					 Style="{StaticResource MediumTitleStyle}"
 					 Text="Now Playing:" Visibility="{Binding TrackName, Converter={StaticResource EmptyStringVisibilityConverter}}" />
 
 							<Grid Grid.Column="1" Margin="5,-1,0,5" VerticalAlignment="Center">
@@ -96,14 +97,12 @@
 					 FontFamily="Webdings" FontSize="21.333" Foreground="Red" Text="x"
 					 Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
 
-					<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" Command="{Binding Path=Mute}"
-				  Foreground="{StaticResource ControlTextColor}" />
+					<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" Command="{Binding Path=Mute}" />
 
 					<NoiseControls:VuMeter Grid.Column="1" Margin="0,7,7,0" Foreground="#FF588CE0"
 								 LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" />
 
-					<Button Grid.Column="2" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="5" Command="{Binding Path=ExtendedPlayer}"
-				  Foreground="{StaticResource ControlTextColor}" />
+					<Button Grid.Column="2" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="5" Command="{Binding Path=ExtendedPlayer}" />
 				</Grid>
 			</Grid>
 

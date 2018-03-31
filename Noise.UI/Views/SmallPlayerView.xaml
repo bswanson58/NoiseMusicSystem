@@ -50,7 +50,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="BeforeTemplate">
-            <Rectangle Fill="{StaticResource ControlTextColor}" Opacity="0.3" Margin="-7,4,5,4"/>
+            <Rectangle Opacity="0.3" Margin="-7,4,5,4"/>
         </DataTemplate>
 
         <Storyboard x:Key="FocusStoryboard">
@@ -121,7 +121,7 @@
 
                     <!-- Track Time -->
                     <StackPanel Grid.Column="0" Margin="5,0,0,0" Orientation="Horizontal">
-                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Text="Position: " />
+                        <TextBlock VerticalAlignment="Center" Text="Position: " />
                         <TextBlock Width="35" VerticalAlignment="Center" Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}">
                                 <EventCommandTriggers:CommandSource.Trigger>
                                     <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />

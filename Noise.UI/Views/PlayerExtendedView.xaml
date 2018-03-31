@@ -4,11 +4,11 @@
 			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
-			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
 			 xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
 			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             Height="195"
 			 d:DesignHeight="300"
 			 d:DesignWidth="900"
 			 mc:Ignorable="d">
@@ -20,7 +20,7 @@
 		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
 	</UserControl.DataContext>
 
-	<GroupBox Height="190" Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
+	<GroupBox Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
 		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
@@ -153,8 +153,7 @@
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
-						<Button Grid.Column="1" Width="27" Height="27" Margin="0,0,3,-11" Content="6" FontFamily="Webdings" FontSize="16"
-								Foreground="{StaticResource ControlTextColor}" Command="{Binding Path=StandardPlayer}" />
+						<Button Grid.Column="1" Width="27" Height="27" Margin="0,0,3,-11" Content="6" FontFamily="Webdings" FontSize="16" Command="{Binding Path=StandardPlayer}" />
 					</Grid>
 					<!--  Replay Gain  -->
 					<CheckBox Grid.Row="2"
@@ -181,7 +180,6 @@
 								   Margin="0"
 								   HorizontalAlignment="Right"
 								   VerticalAlignment="Center"
-								   Foreground="{DynamicResource ControlTextColor}"
 								   Padding="0,0,3,0"
 								   Text="50"
 								   TextAlignment="Right" />
@@ -196,12 +194,7 @@
 								Style="{StaticResource PlayerPositionSliderStyle}"
 								Value="{Binding Path=TrackOverlapMilliseconds,
 												Mode=TwoWay}" />
-						<TextBlock Grid.Column="3"
-								   Width="15"
-								   Margin="0"
-								   VerticalAlignment="Center"
-								   Foreground="{DynamicResource ControlTextColor}"
-								   Text="2s" />
+						<TextBlock Grid.Column="3" Width="15" Margin="0" VerticalAlignment="Center" Text="2s" />
 					</Grid>
 					<!--  Playback Speed  -->
 					<Grid Grid.Row="4" Margin="0">
@@ -211,18 +204,18 @@
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
-						<NoiseControls:LinkLabel Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}"
+						<NoiseControls:LinkLabel Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center"
 												 Content="Speed:" LinkLabelBehavior="HoverUnderline" ToolTip="Click to set default play speed">
 							<EventCommandTriggers:CommandSource.Trigger>
 								<EventCommandTriggers:EventCommandTrigger Command="{Binding ResetPlaySpeed}" RoutedEvent="NoiseControls:LinkLabel.Click" />
 							</EventCommandTriggers:CommandSource.Trigger>
 						</NoiseControls:LinkLabel>
 
-						<TextBlock Grid.Column="1" Width="15" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Padding="0,0,3,0"
+						<TextBlock Grid.Column="1" Width="15" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="0,0,3,0"
 								   Text="-" TextAlignment="Right" />
 						<Slider x:Name="SpeedSlider" Grid.Column="2" Margin="0,7,0,0" BorderThickness="0,0,0,5" Orientation="Horizontal" SnapsToDevicePixels="True" 
 								Style="{StaticResource PlayerPositionSliderStyle}" Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}"/>
-						<TextBlock Grid.Column="3" Width="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Text="+" />
+						<TextBlock Grid.Column="3" Width="15" HorizontalAlignment="Center" VerticalAlignment="Center" Text="+" />
 					</Grid>
 					<!--  Balance  -->
 					<Grid Grid.Row="5" Margin="0,0,0,3">
@@ -232,19 +225,19 @@
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
-						<NoiseControls:LinkLabel Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}"
+						<NoiseControls:LinkLabel Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center"
 												 Content="Balance:" LinkLabelBehavior="HoverUnderline" ToolTip="Click to set default balance">
 							<EventCommandTriggers:CommandSource.Trigger>
 								<EventCommandTriggers:EventCommandTrigger Command="{Binding ResetPanPosition}" RoutedEvent="NoiseControls:LinkLabel.Click" />
 							</EventCommandTriggers:CommandSource.Trigger>
 						</NoiseControls:LinkLabel>
 
-						<TextBlock Grid.Column="1" Width="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}"
+						<TextBlock Grid.Column="1" Width="15" HorizontalAlignment="Center" VerticalAlignment="Center"
 								   Padding="0,0,3,0" Text="L" TextAlignment="Right" />
 						<Slider x:Name="Balance" Grid.Column="2" Margin="0,7,0,0" BorderThickness="0,0,0,5" Orientation="Horizontal" SnapsToDevicePixels="True"
 								Style="{StaticResource PlayerPositionSliderStyle}"
 								 Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}" />
-						<TextBlock Grid.Column="3" Width="15" Margin="0" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Text="R" />
+						<TextBlock Grid.Column="3" Width="15" Margin="0" VerticalAlignment="Center" Text="R" />
 					</Grid>
 				</Grid>
 
@@ -273,17 +266,9 @@
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 
-						<TextBlock Grid.Column="0"
-								   FontSize="16"
-								   FontWeight="Bold"
-								   Foreground="{DynamicResource ControlTextColor}"
-								   Text="Now Playing: "
-								   Visibility="{Binding TrackName,
-														Converter={StaticResource EmptyStringVisibilityConverter}}" />
-						<TextBlock Grid.Column="1"
-								   FontSize="16"
-								   FontWeight="Bold"
-								   ReusableBehaviours:FadeTrimming.IsEnabled="True"
+						<TextBlock Grid.Column="0" FontSize="16" FontWeight="Bold" Text="Now Playing: "
+								   Visibility="{Binding TrackName, Converter={StaticResource EmptyStringVisibilityConverter}}" />
+						<TextBlock Grid.Column="1" FontSize="16" FontWeight="Bold" ReusableBehaviours:FadeTrimming.IsEnabled="True"
 								   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
 								   Text="{Binding TrackName}" />
 					</Grid>
@@ -328,7 +313,7 @@
 								ToolTip="Display Song Lyrics" /-->
 
 						<!--  Playing position  -->
-						<TextBlock Grid.Column="7" Foreground="{DynamicResource ControlTextColor}" Text="Position: " />
+						<TextBlock Grid.Column="7" Text="Position: " />
 						<TextBlock Grid.Column="8" Margin="0,0,7,0" Style="{StaticResource ControlTitleStyle}" Foreground="{StaticResource SmallTextBrush}" FontWeight="Bold"
 								   ToolTip="Click to change the display format of the position time"
 								   Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}">
@@ -396,11 +381,11 @@
 								   IsHitTestVisible="False"
 								   Text="x"
 								   Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
-						<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Foreground="{StaticResource ControlTextColor}"
+						<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}"
 								Content="X" Command="{Binding Path=Mute}"/>
 
 						<!-- Audio Device Selection -->
-						<TextBlock Grid.Column="1" Margin="9,0,3,0" VerticalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" Text="Device:"/>
+						<TextBlock Grid.Column="1" Margin="9,0,3,0" VerticalAlignment="Center" Text="Device:"/>
 						<ComboBox Grid.Column="2" VerticalAlignment="Center" Margin="0,0,3,0"
 								  ItemsSource="{Binding AudioDevices}" SelectedItem="{Binding CurrentAudioDevice}" DisplayMemberPath="Name" />
 					</Grid>
@@ -411,17 +396,8 @@
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
-						<TextBlock Grid.Column="0"
-								   Margin="0,0,5,0"
-								   HorizontalAlignment="Right"
-								   VerticalAlignment="Center"
-								   Foreground="{DynamicResource ControlTextColor}"
-								   Text="Volume:" />
-						<TextBlock Grid.Column="1"
-								   Margin="0,0,3,0"
-								   VerticalAlignment="Center"
-								   Foreground="{DynamicResource ControlTextColor}"
-								   Text="-" />
+						<TextBlock Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Volume:" />
+						<TextBlock Grid.Column="1" Margin="0,0,3,0" VerticalAlignment="Center" Text="-" />
 						<Slider x:Name="Volume"
 								Grid.Column="2"
 								Margin="0,5,0,0"
@@ -432,11 +408,7 @@
 								Style="{StaticResource PlayerPositionSliderStyle}"
 								Value="{Binding Path=Volume,
 												Mode=TwoWay}" />
-						<TextBlock Grid.Column="3"
-								   Margin="3,0,0,0"
-								   VerticalAlignment="Center"
-								   Foreground="{DynamicResource ControlTextColor}"
-								   Text="+" />
+						<TextBlock Grid.Column="3" Margin="3,0,0,0" VerticalAlignment="Center" Text="+" />
 					</Grid>
 				</Grid>
 

@@ -18,8 +18,8 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
-        <TextBlock Text="L" Grid.Row="0" Grid.Column="0" Margin="0,0,7,0" FontSize="9" Foreground="{DynamicResource ControlTextColor}"/>
-        <TextBlock Text="R" Grid.Row="2" Grid.Column="0" Margin="0,0,7,0" FontSize="9" Foreground="{DynamicResource ControlTextColor}"/>
+        <TextBlock Text="L" Grid.Row="0" Grid.Column="0" Margin="0,0,7,0" FontSize="9" />
+        <TextBlock Text="R" Grid.Row="2" Grid.Column="0" Margin="0,0,7,0" FontSize="9" />
         
         <Controls:VuMeterBar Grid.Row="0" Grid.Column="1" Margin="0,1,9,1" BlockSize="3" BlockMargin="1"
                              PeakColor="{Binding PeakColor, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:VuMeter}}}"

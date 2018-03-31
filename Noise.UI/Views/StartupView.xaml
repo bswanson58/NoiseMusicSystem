@@ -25,6 +25,6 @@
 
         <TextBlock Grid.Column="1" Grid.Row="1" Style="{StaticResource StartupTextStyle}" Text="The Noise Music System is being initialized."/>
         
-        <ProgressBar Grid.Column="1" Grid.Row="2" Margin="17,9,17,0" Height="5" Foreground="{StaticResource StartupForegroundBrush}" IsIndeterminate="True"/>
+        <ProgressBar Grid.Column="1" Grid.Row="2" Margin="17,9,17,0" Height="5" IsIndeterminate="True"/>
     </Grid>
 </UserControl>

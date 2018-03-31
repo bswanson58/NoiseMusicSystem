@@ -41,7 +41,6 @@
 		<DataTemplate x:Key="ArtistTemplate" DataType="{x:Type Dto:UiArtist}">
 			<Border x:Name="ArtistPanel"
 				Background="Transparent"
-				BorderBrush="{DynamicResource ControlTextColor}"
 				CornerRadius="3">
 				<Grid>
 					<Grid.RowDefinitions>
@@ -71,7 +70,7 @@
 					</StackPanel>
 
 					<StackPanel Grid.Row="1" Grid.Column="0" Margin="11,0,0,0" Orientation="Horizontal">
-						<TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Foreground="{DynamicResource ControlTextColor}" Text="Albums: " />
+						<TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Text="Albums: " />
 						<TextBlock x:Name="AlbumCount" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding AlbumCount, StringFormat={}{0:N0}}" />
 					</StackPanel>
 
