@@ -17,13 +17,9 @@
 	<UserControl.Resources>
 		<sys:Int32 x:Key="valueOfOne">1</sys:Int32>
 
-		<SolidColorBrush x:Key="ListBorder" Color="#828790" />
 		<Style x:Key="NonScrollingTreeView" TargetType="{x:Type TreeView}">
-			<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-			<Setter Property="BorderBrush" Value="{StaticResource ListBorder}" />
 			<Setter Property="BorderThickness" Value="1" />
 			<Setter Property="Padding" Value="1" />
-			<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
 			<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
 			<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
 			<Setter Property="ScrollViewer.PanningMode" Value="Both" />
@@ -131,8 +127,6 @@
 								</Grid.ColumnDefinitions>
 
 								<Border Grid.Column="0"
-										Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-										BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
 										BorderThickness="1">
 									<TextBlock HorizontalAlignment="Center"
 											   VerticalAlignment="Center"
@@ -143,8 +137,6 @@
 								<Border Grid.Column="1"
 										Grid.ColumnSpan="2"
 										Margin="-1,0,0,0"
-										Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-										BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
 										BorderThickness="1">
 									<TextBlock HorizontalAlignment="Center"
 											   VerticalAlignment="Center"
@@ -167,8 +159,6 @@
 
 								<Border Grid.Column="3"
 										Margin="-1,0,0,0"
-										Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-										BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
 										BorderThickness="1">
 									<TextBlock HorizontalAlignment="Center"
 											   VerticalAlignment="Center"
