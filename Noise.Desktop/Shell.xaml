@@ -19,14 +19,14 @@
 		<Color x:Key="AccentColor">#FF588CE0</Color> <!-- Title bar background -->
 	</Window.Resources>
 
-	<Controls:MetroWindow.WindowCommands>
+	<Controls:MetroWindow.RightWindowCommands>
 		<Controls:WindowCommands>
 			<Button Command="{Binding LibraryLayout}" Content="library" ToolTip="Display Music Library"/>
 			<Button Command="{Binding TimelineLayout}" Content="timeline" ToolTip="Display Timeline Explorer"/>
 			<Button Command="{Binding PlaybackLayout}" Content="playback" ToolTip="Display Playback Information"/>
 			<Button Command="{Binding Options}" Content="settings" ToolTip="Edit Options"/>
 		</Controls:WindowCommands>
-	</Controls:MetroWindow.WindowCommands>
+	</Controls:MetroWindow.RightWindowCommands>
 
 	<ContentControl Regions:RegionManager.RegionName="Shell"/>
 </Controls:MetroWindow>
