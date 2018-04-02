@@ -92,6 +92,10 @@
 		<Setter Property="FontSize" Value="14"></Setter>
 	</Style>
 
+    <Style x:Key="ListViewItemStretch" TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MetroListViewItem}">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
     <!-- Removes the white border around the GroupBox border -->
     <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
     <Style x:Key="SectionBorderStyle" TargetType="GroupBox">
