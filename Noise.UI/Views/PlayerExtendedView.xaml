@@ -53,26 +53,26 @@
 
 					<CheckBox Grid.Row="0" Grid.Column="0" Margin="5,0,0,0" Content="Stereo Enhance" IsChecked="{Binding Path=StereoEnhancerEnable}" />
 					<Slider Grid.Row="1" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=StereoEnhancerEnable}"
-							Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=StereoEnhancerWidth, Mode=TwoWay}" ToolTip="Width" />
 					<Slider Grid.Row="2" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=StereoEnhancerEnable}"
-							Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=StereoEnhancerWetDry, Mode=TwoWay}" ToolTip="Wet - Dry"/>
 
 					<CheckBox Grid.Row="3" Grid.Column="0" Margin="5,3,0,0" Content="Soft Saturation" IsChecked="{Binding Path=SoftSaturationEnable}" />
 					<Slider Grid.Row="4" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=SoftSaturationEnable}"
-							Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=SoftSaturationFactor, Mode=TwoWay}" ToolTip="Saturation Factor" />
 					<Slider Grid.Row="5" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=SoftSaturationEnable}"
-							Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=SoftSaturationDepth, Mode=TwoWay}" ToolTip="Saturation Depth"/>
 
 					<CheckBox Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Content="Reverb" IsChecked="{Binding Path=ReverbEnable}" />
 					<Slider Grid.Row="1" Grid.Column="1" Margin="5,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=ReverbEnable}"
-							Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=ReverbLevel, Mode=TwoWay}" ToolTip="Level (Wet Mix)" />
 					<Slider Grid.Row="2" Grid.Column="1" Margin="5,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=ReverbEnable}"
-							Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
+							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.01" Maximum="0.5" Value="{Binding Path=ReverbDelay, Mode=TwoWay}" ToolTip="Reverb Delay"/>
 
 					<Button Grid.Row="4" Grid.Column="1" Margin="0,0,5,10" Style="{StaticResource GeneralButtonStyle}" 
@@ -191,7 +191,6 @@
 								Minimum="50"
 								Orientation="Horizontal"
 								SnapsToDevicePixels="True"
-								Style="{StaticResource PlayerPositionSliderStyle}"
 								Value="{Binding Path=TrackOverlapMilliseconds,
 												Mode=TwoWay}" />
 						<TextBlock Grid.Column="3" Width="15" Margin="0" VerticalAlignment="Center" Text="2s" />
@@ -214,7 +213,7 @@
 						<TextBlock Grid.Column="1" Width="15" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="0,0,3,0"
 								   Text="-" TextAlignment="Right" />
 						<Slider x:Name="SpeedSlider" Grid.Column="2" Margin="0,7,0,0" BorderThickness="0,0,0,5" Orientation="Horizontal" SnapsToDevicePixels="True" 
-								Style="{StaticResource PlayerPositionSliderStyle}" Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}"/>
+								Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}"/>
 						<TextBlock Grid.Column="3" Width="15" HorizontalAlignment="Center" VerticalAlignment="Center" Text="+" />
 					</Grid>
 					<!--  Balance  -->
@@ -235,8 +234,7 @@
 						<TextBlock Grid.Column="1" Width="15" HorizontalAlignment="Center" VerticalAlignment="Center"
 								   Padding="0,0,3,0" Text="L" TextAlignment="Right" />
 						<Slider x:Name="Balance" Grid.Column="2" Margin="0,7,0,0" BorderThickness="0,0,0,5" Orientation="Horizontal" SnapsToDevicePixels="True"
-								Style="{StaticResource PlayerPositionSliderStyle}"
-								 Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}" />
+						        Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}" />
 						<TextBlock Grid.Column="3" Width="15" Margin="0" VerticalAlignment="Center" Text="R" />
 					</Grid>
 				</Grid>
@@ -347,14 +345,11 @@
 							Grid.Row="1"
 							Margin="5,0,5,0"
 							VerticalAlignment="Center"
-							Maximum="{Binding Path=TrackEndPosition,
-											  Mode=OneWay}"
+							Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}"
 							Minimum="0"
 							Orientation="Horizontal"
 							SnapsToDevicePixels="True"
-							Style="{StaticResource PlayerPositionSliderStyle}"
-							Value="{Binding Path=TrackPosition,
-											Mode=TwoWay}" />
+							Value="{Binding Path=TrackPosition,	Mode=TwoWay}" />
 
 				</Grid>
 
@@ -405,9 +400,7 @@
 								Minimum="0.0"
 								Orientation="Horizontal"
 								SnapsToDevicePixels="True"
-								Style="{StaticResource PlayerPositionSliderStyle}"
-								Value="{Binding Path=Volume,
-												Mode=TwoWay}" />
+								Value="{Binding Path=Volume, Mode=TwoWay}" />
 						<TextBlock Grid.Column="3" Margin="3,0,0,0" VerticalAlignment="Center" Text="+" />
 					</Grid>
 				</Grid>

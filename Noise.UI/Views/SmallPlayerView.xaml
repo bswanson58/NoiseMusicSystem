@@ -204,7 +204,7 @@
 
                     <!-- Volume Slider -->
                     <Slider Grid.Column="5" Margin="3,0,0,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
-                            Style="{StaticResource PlayerPositionSliderStyle}" Maximum="1.0" Minimum="0.0" Value="{Binding Path=Volume, Mode=TwoWay}" />
+                            Maximum="1.0" Minimum="0.0" Value="{Binding Path=Volume, Mode=TwoWay}" />
                 </Grid>
             </Grid>
         </Grid>

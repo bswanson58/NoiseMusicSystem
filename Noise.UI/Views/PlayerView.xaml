@@ -202,9 +202,9 @@
 
 						<!-- Play Postion indicator -->
 						<Slider x:Name="PositionSlider" Grid.Column="1" Margin="5,0" VerticalAlignment="Center" BorderThickness="0,0" Orientation="Horizontal"
-					SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
-					Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0"
-					Value="{Binding Path=TrackPosition, Mode=TwoWay}" />
+						        SnapsToDevicePixels="True"
+						        Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0"
+						        Value="{Binding Path=TrackPosition, Mode=TwoWay}" />
 					</Grid>
 				</Grid>
 
@@ -221,8 +221,8 @@
 					 Text="Volume:" />
 					<TextBlock Grid.Column="1" Margin="0,0,3,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
 					 Text="-" />
-					<Slider x:Name="Volume" Grid.Column="2" Margin="0,5,0,0" Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
-				  Maximum="1.0" Minimum="0.0" Value="{Binding Path=Volume, Mode=TwoWay}" />
+					<Slider x:Name="Volume" Grid.Column="2" Margin="0,5,0,0" Orientation="Horizontal" SnapsToDevicePixels="True"
+					        Maximum="1.0" Minimum="0.0" Value="{Binding Path=Volume, Mode=TwoWay}" />
 					<TextBlock Grid.Column="3" Margin="3,0,0,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
 					 Text="+" />
 				</Grid>
