@@ -288,20 +288,10 @@
 													 Style="{StaticResource NoiseRatingStyle}" />
 
 						<!--  Track related commands  -->
-						<Button Grid.Column="2"
-								Width="17"
-								Height="17"
-								Margin="9,0,0,0"
-								Command="{Binding TrackInformation}"
-								Content="{StaticResource Path_Information}"
-								ToolTip="Sync Artist and Album display" />
-						<Button Grid.Column="3"
-								Width="17"
-								Height="17"
-								Margin="5,0,0,0"
-								Command="{Binding RequestSimilarSongSearch}"
-								Content="{StaticResource Path_SimilarTracks}"
-								ToolTip="Find Similar Tracks" />
+						<Button Grid.Column="2" Margin="9,0,0,0" Style="{StaticResource QueueButtonStyle}" Padding="4"
+								Command="{Binding TrackInformation}" Content="{StaticResource Path_Information}" ToolTip="Sync Artist and Album display" />
+						<Button Grid.Column="3" Margin="5,0,0,0" Style="{StaticResource QueueButtonStyle}" Padding="4"
+								Command="{Binding RequestSimilarSongSearch}" Content="{StaticResource Path_SimilarTracks}" ToolTip="Find Similar Tracks" />
 						<!--Button Grid.Column="4"
 								Width="17"
 								Height="17"

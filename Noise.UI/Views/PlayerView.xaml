@@ -170,10 +170,10 @@
 						</StackPanel>
 
 						<!--  Track related commands  -->
-						<Button Width="17" Height="17" Margin="9,0,0,0"
-					Command="{Binding TrackInformation}" Content="{StaticResource Path_Information}" ToolTip="Sync Artist and Album display" />
-						<Button Width="17" Height="17" Margin="5,0,0,0"
-					Command="{Binding RequestSimilarSongSearch}" Content="{StaticResource Path_SimilarTracks}" ToolTip="Find Similar Tracks" />
+						<Button Margin="9,0,0,0" Padding="4" Style="{StaticResource QueueButtonStyle}" Command="{Binding TrackInformation}"
+						        Content="{StaticResource Path_Information}" ToolTip="Sync Artist and Album display" />
+						<Button Margin="5,0,0,0" Padding="4" Style="{StaticResource QueueButtonStyle}" Command="{Binding RequestSimilarSongSearch}" 
+						        Content="{StaticResource Path_SimilarTracks}" ToolTip="Find Similar Tracks" />
 						<!--Button Width="17" Height="17" Margin="5,0,0,0"
 							  Command="{Binding RequestLyrics}"  Content="{StaticResource Path_Lyrics}" ToolTip="Display Song Lyrics" /-->
 

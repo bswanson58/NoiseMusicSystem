@@ -177,7 +177,7 @@
 							</Grid>
 						</Grid>
 					</Expander.Header>
-					<Grid Margin="3,3,0,1">
+					<Grid Margin="12,3,0,1">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="Auto" />
@@ -190,24 +190,31 @@
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
 
-						<Button Grid.Column="0" Style="{StaticResource QueueButtonStyle}" Padding="0,1,0,0"
-								Command="{Binding Path=Play}" Content="4" ToolTip="Play Now" />
-						<Button Grid.Column="1" Style="{StaticResource QueueButtonStyle}" Padding="0,1,0,0"
-								Command="{Binding Path=PlayFromHere}" Content="8" ToolTip="Continue play from here" />
-						<Button Grid.Column="2" Style="{StaticResource QueueButtonStyle}" FontFamily="Arial Bold" FontSize="16" Padding="0,-1,0,1"
+						<Button Grid.Column="0" Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3"
+						        Command="{Binding Path=Play}" Content="⏵" FontSize="16" ToolTip="Play Now" />
+
+						<Button Grid.Column="1" Style="{StaticResource QueueButtonStyle}" Padding="0,0,0,3"
+						        Command="{Binding Path=PlayFromHere}" Content="⏩" FontSize="16" ToolTip="Continue play from here" />
+
+						<Button Grid.Column="2" Style="{StaticResource QueueButtonStyle}"
 								Visibility="{Binding QueuedTrack.HasPlayed, Converter={StaticResource CollapseIfFalse}}"
-								Command="{Binding Path=Replay}" Content="+" ToolTip="Play this track again" />
-                        <Button Grid.Column="2" Style="{StaticResource QueueButtonStyle}" FontFamily="Arial Bold" FontSize="16" Padding="0,-3,0,3"
+								Command="{Binding Path=Replay}" Content="➕" ToolTip="Play this track again" />
+
+                        <Button Grid.Column="2" Style="{StaticResource QueueButtonStyle}"
 								Visibility="{Binding WillPlay, Converter={StaticResource CollapseIfFalse}}"
-								Command="{Binding Path=SkipPlaying}" Content="-" ToolTip="Skip playing this track" />
+								Command="{Binding Path=SkipPlaying}" Content="➖" ToolTip="Skip playing this track" />
+
                         <Button Grid.Column="3" Style="{StaticResource QueueButtonStyle}"
-								Command="{Binding Path=DisplayInfo}" Content="{StaticResource Path_Information}" ToolTip="Display Artist and Album display" />
-						<Button Grid.Column="4" Style="{StaticResource QueueButtonStyle}" Padding="0,2,0,0"
-								Command="{Binding Path=MoveUp}" Content="5" ToolTip="Move track up in queue" />
+								Command="{Binding Path=DisplayInfo}" Content="{StaticResource Path_Information}" Padding="4" ToolTip="Display Artist and Album display" />
+
+						<Button Grid.Column="4" Style="{StaticResource QueueButtonStyle}"
+								Command="{Binding Path=MoveUp}" Content="▲" ToolTip="Move track up in queue" />
+
 						<Button Grid.Column="5" Style="{StaticResource QueueButtonStyle}"
-								Command="{Binding Path=MoveDown}" Content="6" ToolTip="Move track down in queue" />
+								Command="{Binding Path=MoveDown}" Content="▼" ToolTip="Move track down in queue" />
+
 						<Button Grid.Column="6" Style="{StaticResource QueueButtonStyle}"
-								Command="{Binding Path=Dequeue}" Content="r" ToolTip="Remove track from queue" />
+								Command="{Binding Path=Dequeue}" Content="✖" ToolTip="Remove track from queue" />
 
 						<!--  Favorite and Rating  -->
 						<StackPanel Grid.Column="8" HorizontalAlignment="Right" Orientation="Horizontal">
