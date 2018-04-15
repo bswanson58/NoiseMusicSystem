@@ -312,7 +312,7 @@
 
 						<!--  Playing position  -->
 						<TextBlock Grid.Column="7" Text="Position: " />
-						<TextBlock Grid.Column="8" Margin="0,0,7,0" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold"
+                        <TextBlock Grid.Column="8" Margin="0,0,7,0" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold" Foreground="{StaticResource SignatureBrush}"
 								   ToolTip="Click to change the display format of the position time"
 								   Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}">
 							<EventCommandTriggers:CommandSource.Trigger>
