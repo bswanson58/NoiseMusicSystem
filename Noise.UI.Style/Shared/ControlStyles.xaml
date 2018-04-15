@@ -146,15 +146,6 @@
         </Setter>
     </Style>
 
-    <DataTemplate x:Key="TabItemTemplate">
-        <TextBlock x:Name="_textBlock" Text="{Binding}"/>
-        <DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsSelected}">
-                <Setter TargetName="_textBlock" Property="Foreground" Value="{StaticResource SignatureColor}" />
-            </DataTrigger>
-        </DataTemplate.Triggers>
-    </DataTemplate>
-
     <Style x:Key="TabControlStyle" TargetType="{x:Type TabItem}">
 		<Setter Property="Header" Value="{Binding Content.Tag, RelativeSource={RelativeSource Self}}" />
 		<Setter Property="BorderThickness" Value="0"/>
