@@ -20,7 +20,11 @@
 	<SolidColorBrush x:Key="TextBrush" Color="#FF0000A0"/>
 	<SolidColorBrush x:Key="SmallTextBrush" Color="#FF0000C0"/>
 
-	<Style x:Key="StartupFontStyle" TargetType="Control">
+    <Color x:Key="SpectrumAnalyzerBaseColor">#FFEA6500</Color>
+    <Color x:Key="SpectrumAnalyzerPeakColor">#FFFF4500</Color>
+    <Color x:Key="SpectrumAnalyzerHoldColor">#FFFF2500</Color>
+
+<Style x:Key="StartupFontStyle" TargetType="Control">
 		<Setter Property="FontFamily" Value="Arial"/>
 		<Setter Property="FontSize" Value="28"/>
 	</Style>

@@ -12,6 +12,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
+using Noise.UI.Resources;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
@@ -53,9 +54,9 @@ namespace Noise.UI.ViewModels {
 			mSpectrumImageWidth = 200;
 			mSpectrumImageHeight = 100;
 
-			mBaseColor = Colors.LightBlue;
-			mPeakColor = Colors.Blue;
-			mPeakHoldColor = Colors.Blue;
+			mBaseColor = ColorResources.SpectrumAnalyzerBaseColor;
+			mPeakColor = ColorResources.SpectrumAnalyzerPeakColor;
+			mPeakHoldColor = ColorResources.SpectrumAnalyzerPeakColor;
 
 			mSpectrumUpdateTimer = new Timer { Enabled = false, Interval = 100 };
 			mSpectrumUpdateTimer.Tick += OnSpectrumUpdateTimer;
