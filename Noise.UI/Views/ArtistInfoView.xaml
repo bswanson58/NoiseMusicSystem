@@ -26,9 +26,7 @@
 				<RowDefinition />
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
-			<GroupBox Margin="3,0"
-					  BorderBrush="{DynamicResource TrimColor}"
-					  Header=" Biography ">
+			<GroupBox Margin="3,0" Header=" Biography ">
 				<ScrollViewer Behaviours:ScrollViewerPosition.ChangeTrigger="{Binding ArtistValid, Mode=OneWay}">
 					<FlowDocumentScrollViewer VerticalScrollBarVisibility="Hidden">
 						<FlowDocument ColumnWidth="100"
@@ -54,19 +52,11 @@
 						<ColumnDefinition />
 						<ColumnDefinition />
 					</Grid.ColumnDefinitions>
-					<GroupBox Grid.Column="0"
-                              Margin="0"
-                              BorderBrush="{DynamicResource TrimColor}"
-                              BorderThickness="1"
-                              Header=" Band Members ">
+					<GroupBox Grid.Column="0" Margin="0" BorderThickness="1" Header=" Band Members ">
 						<ListBox BorderThickness="0"  ItemsSource="{Binding BandMembers}"/>
 					</GroupBox>
-					<GroupBox Grid.Column="1"
-							  Margin="3,0,0,0"
-							  BorderBrush="{DynamicResource TrimColor}"
-							  BorderThickness="1"
-							  Header=" Top Tracks ">
-						<ListBox BorderThickness="0" ItemsSource="{Binding TopTracks}">
+					<GroupBox Grid.Column="1" Margin="3,0,0,0" BorderThickness="1" Header=" Top Tracks ">
+					    <ListBox BorderThickness="0" ItemsSource="{Binding TopTracks}">
 							<ListBox.ItemTemplate>
 								<DataTemplate>
 									<Controls:LinkLabel Content="{Binding DisplayText}"
@@ -81,11 +71,7 @@
 							</ListBox.ItemTemplate>
 						</ListBox>
 					</GroupBox>
-					<GroupBox Grid.Column="2"
-							  Margin="3,0,0,0"
-							  BorderBrush="{DynamicResource TrimColor}"
-							  BorderThickness="1"
-							  Header=" Similar Artists ">
+					<GroupBox Grid.Column="2" Margin="3,0,0,0" BorderThickness="1" Header=" Similar Artists ">
 						<ListBox BorderThickness="0" ItemsSource="{Binding SimilarArtist}">
 							<ListBox.ItemTemplate>
 								<DataTemplate>
@@ -102,11 +88,7 @@
 						</ListBox>
 					</GroupBox>
 				</Grid>
-				<GroupBox Grid.Row="1"
-						  Margin="0"
-						  BorderBrush="{DynamicResource TrimColor}"
-						  BorderThickness="1"
-						  Header=" Discography ">
+				<GroupBox Grid.Row="1" Margin="0" BorderThickness="1" Header=" Discography ">
 					<ListView Behaviours:GridViewSort.AutoSort="True"
 							  Behaviours:ListViewColumns.Stretch="true"
 							  BorderThickness="0"

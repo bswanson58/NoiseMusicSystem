@@ -184,12 +184,8 @@
 			<StackPanel Grid.Row="1"
 						Margin="5,5,5,3"
 						Orientation="Vertical">
-				<Rectangle Height="1"
-						   Fill="{DynamicResource TrimColor}"
-						   StrokeThickness="0" />
-				<Rectangle Height="1"
-						   Fill="LightGray"
-						   StrokeThickness="0" />
+				<Rectangle Height="1" StrokeThickness="0" />
+				<Rectangle Height="1" Fill="LightGray" StrokeThickness="0" />
 			</StackPanel>
 
 			<StackPanel Grid.Row="2"

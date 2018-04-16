@@ -56,7 +56,7 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <Border BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Background="#FFDDEDFF" CornerRadius="3" Margin="0">
+        <Border BorderThickness="1" Background="{StaticResource TrimColor}" CornerRadius="3" Margin="0">
             <Grid Margin="5" Behaviours:GridUtils.ColumnDefinitions="*,Auto">
                 <TextBlock x:Name="SearchingText" Grid.Column="0" Text="Searching for similar tracks..." HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,15,0,0" Opacity="0"/>
                 
