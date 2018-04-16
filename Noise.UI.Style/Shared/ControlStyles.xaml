@@ -16,9 +16,6 @@
 	<SolidColorBrush x:Key="TrimColor" Color="#FF878787" />
 	<SolidColorBrush x:Key="BorderColor" Color="#FFD0D0D0" />
 	<SolidColorBrush x:Key="BorderTextColor" Color="#FFA0A0A0"/>
-	<SolidColorBrush x:Key="ControlBackgroundColor" Color="#FFE5E5E5"/>
-	<SolidColorBrush x:Key="TextBrush" Color="#FF0000A0"/>
-	<SolidColorBrush x:Key="SmallTextBrush" Color="#FF0000C0"/>
 
     <Color x:Key="SpectrumAnalyzerBaseColor">#FFEA6500</Color>
     <Color x:Key="SpectrumAnalyzerPeakColor">#FFFF4500</Color>
