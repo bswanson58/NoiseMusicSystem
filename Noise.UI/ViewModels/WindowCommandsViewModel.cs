@@ -1,7 +1,6 @@
 ﻿using Caliburn.Micro;
 using Microsoft.Practices.Prism.Commands;
 using Noise.Infrastructure;
-using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -39,17 +38,6 @@ namespace Noise.UI.ViewModels {
 	    }
 	}
 
-    internal class ConfigurationViewModel {
-		public bool EnableGlobalHotkeys { get; set; }
-		public bool EnableRemoteAccess { get; set; }
-		public bool EnableSpeechCommands { get; set; }
-		public bool EnableSortPrefixes { get; set; }
-		public bool HasNetworkAccess { get; set; }
-		public bool LoadLastLibraryOnStartup { get; set; }
-		public bool MinimizeToTray { get; set; }
-		public string SortPrefixes { get; set; }
-	}
-
 	public class WindowCommandsViewModel : AutomaticCommandBase {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly IDialogService			mDialogService;
@@ -70,30 +58,10 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_Options() {
-			var interfacePreferences = mPreferences.Load<UserInterfacePreferences>();
-			var corePreferences = mPreferences.Load<NoiseCorePreferences>();
-			var dialogModel = new ConfigurationViewModel { EnableGlobalHotkeys = interfacePreferences.EnableGlobalHotkeys,
-														   EnableRemoteAccess = corePreferences.EnableRemoteAccess,
-														   EnableSpeechCommands = corePreferences.EnableSpeechCommands,
-														   EnableSortPrefixes = interfacePreferences.EnableSortPrefixes,
-														   HasNetworkAccess = corePreferences.HasNetworkAccess,
-														   LoadLastLibraryOnStartup = corePreferences.LoadLastLibraryOnStartup,
-														   MinimizeToTray = interfacePreferences.MinimizeToTray,
-														   SortPrefixes = interfacePreferences.SortPrefixes };
+			var dialogModel = new ConfigurationViewModel( mPreferences );
 
 			if( mDialogService.ShowDialog( DialogNames.NoiseOptions, dialogModel ) == true ) {
-				corePreferences.EnableRemoteAccess = dialogModel.EnableRemoteAccess;
-				corePreferences.EnableSpeechCommands = dialogModel.EnableSpeechCommands;
-				corePreferences.HasNetworkAccess = dialogModel.HasNetworkAccess;
-				corePreferences.LoadLastLibraryOnStartup = dialogModel.LoadLastLibraryOnStartup;
-
-				interfacePreferences.EnableGlobalHotkeys = dialogModel.EnableGlobalHotkeys;
-				interfacePreferences.EnableSortPrefixes = dialogModel.EnableSortPrefixes;
-				interfacePreferences.SortPrefixes = dialogModel.SortPrefixes;
-				interfacePreferences.MinimizeToTray = dialogModel.MinimizeToTray;
-
-				mPreferences.Save( corePreferences );
-				mPreferences.Save( interfacePreferences );
+                dialogModel.UpdatePreferences();
 			}
 		}
 
