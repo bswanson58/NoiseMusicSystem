@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using MahApps.Metro;
+using ReusableBits.Ui.Themes;
 
 namespace Noise.UI.Models {
     public class ThemeManager {
@@ -43,10 +44,13 @@ namespace Noise.UI.Models {
             }
         }
 
-        public static void SetApplicationTheme( string themeName, string accentName ) {
+        public static void SetApplicationTheme( string themeName, string accentName, string signatureUri ) {
             if((!String.IsNullOrWhiteSpace( themeName )) &&
                (!String.IsNullOrWhiteSpace( accentName ))) {
                 SetApplicationTheme( MahApps.Metro.ThemeManager.GetAppTheme( themeName ), MahApps.Metro.ThemeManager.GetAccent( accentName ));
+            }
+            if(!String.IsNullOrWhiteSpace( signatureUri )) {
+                SetApplicationResources( Application.Current.MainWindow, new Uri( signatureUri ));
             }
         }
 
@@ -55,6 +59,10 @@ namespace Noise.UI.Models {
                ( accent != null )) {
                 MahApps.Metro.ThemeManager.ChangeAppStyle( Application.Current, accent, theme );
             }
+        }
+
+        public static void SetApplicationResources( FrameworkElement element, Uri resources ) {
+            ThemeSelector.ApplyTheme( element, resources );
         }
      }
 }

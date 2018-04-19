@@ -13,6 +13,7 @@ namespace Noise.Infrastructure.Configuration {
 		public	UInt32		NewAdditionsHorizonCount { get; set; }
         public  string      ThemeName { get; set; }
         public  string      ThemeAccent { get; set; }
+        public  string      ThemeSignature { get; set; }
 
 		public UserInterfacePreferences() {
 			ArtistListSortOrder = string.Empty;
@@ -26,6 +27,7 @@ namespace Noise.Infrastructure.Configuration {
 
             ThemeName = "BaseDark";
             ThemeAccent = "Steel";
+            ThemeSignature = "pack://application:,,,/Noise.UI.Style;component/Themes/Signature_Orange.xaml";
 		}
 	}
 }

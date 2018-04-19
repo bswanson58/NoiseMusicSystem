@@ -36,7 +36,7 @@ namespace ReusableBits.Ui.Themes {
             }
         }
 
-        private static void ApplyTheme( FrameworkElement targetElement, Uri dictionaryUri ) {
+        public static void ApplyTheme( FrameworkElement targetElement, Uri dictionaryUri ) {
             if( targetElement != null ) {
                 try {
                     var existingDictionaries = ( from dictionary in targetElement.Resources.MergedDictionaries.OfType<ThemeResourceDictionary>() select dictionary ).ToList();

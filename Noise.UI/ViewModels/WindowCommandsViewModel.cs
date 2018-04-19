@@ -12,7 +12,7 @@ namespace Noise.UI.ViewModels {
         public DisabledWindowCommandsViewModel( IPreferences preferences ) {
             var interfacePreferences = preferences.Load<UserInterfacePreferences>();
 
-            ThemeManager.SetApplicationTheme( interfacePreferences.ThemeName, interfacePreferences.ThemeAccent );
+            ThemeManager.SetApplicationTheme( interfacePreferences.ThemeName, interfacePreferences.ThemeAccent, interfacePreferences.ThemeSignature );
         }
 
 		public void Execute_Options() { }
