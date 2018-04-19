@@ -11,6 +11,8 @@ namespace Noise.Infrastructure.Configuration {
 		public	bool		MinimizeToTray { get; set; }
 		public	UInt16		NewAdditionsHorizonDays { get; set; }
 		public	UInt32		NewAdditionsHorizonCount { get; set; }
+        public  string      ThemeName { get; set; }
+        public  string      ThemeAccent { get; set; }
 
 		public UserInterfacePreferences() {
 			ArtistListSortOrder = string.Empty;
@@ -21,6 +23,9 @@ namespace Noise.Infrastructure.Configuration {
 			NewAdditionsHorizonCount = 500;
 
 			SortPrefixes = string.Empty;
+
+            ThemeName = "BaseDark";
+            ThemeAccent = "Steel";
 		}
 	}
 }

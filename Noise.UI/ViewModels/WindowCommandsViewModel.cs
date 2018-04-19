@@ -1,12 +1,20 @@
 ﻿using Caliburn.Micro;
 using Microsoft.Practices.Prism.Commands;
 using Noise.Infrastructure;
+using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
+using Noise.UI.Models;
 using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class DisabledWindowCommandsViewModel :AutomaticCommandBase {
+        public DisabledWindowCommandsViewModel( IPreferences preferences ) {
+            var interfacePreferences = preferences.Load<UserInterfacePreferences>();
+
+            ThemeManager.SetApplicationTheme( interfacePreferences.ThemeName, interfacePreferences.ThemeAccent );
+        }
+
 		public void Execute_Options() { }
 		public bool CanExecute_Options() {
 			return( false );

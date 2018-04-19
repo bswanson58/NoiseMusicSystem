@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Models;
@@ -42,6 +43,13 @@ namespace Noise.UI.ViewModels {
             LoadLastLibraryOnStartup = corePreferences.LoadLastLibraryOnStartup;
             MinimizeToTray = interfacePreferences.MinimizeToTray;
             SortPrefixes = interfacePreferences.SortPrefixes;
+
+            if( String.IsNullOrWhiteSpace( CurrentTheme )) {
+                CurrentTheme = interfacePreferences.ThemeName;
+            }
+            if( String.IsNullOrWhiteSpace( CurrentAccent )) {
+                CurrentAccent = interfacePreferences.ThemeAccent;
+            }
         }
 
         public void UpdatePreferences() {
@@ -58,10 +66,13 @@ namespace Noise.UI.ViewModels {
             interfacePreferences.SortPrefixes = SortPrefixes;
             interfacePreferences.MinimizeToTray = MinimizeToTray;
 
+            interfacePreferences.ThemeName = CurrentTheme;
+            interfacePreferences.ThemeAccent = CurrentAccent;
+
             mPreferences.Save( corePreferences );
             mPreferences.Save( interfacePreferences );
 
-            mThemeManager.SetApplicationTheme( CurrentTheme, CurrentAccent );
+            mThemeManager.UpdateApplicationTheme( CurrentTheme, CurrentAccent );
         }
     }
 }
