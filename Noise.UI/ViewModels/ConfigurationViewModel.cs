@@ -11,6 +11,9 @@ namespace Noise.UI.ViewModels {
         private readonly IPreferences   mPreferences;
         private readonly ThemeManager   mThemeManager;
         private readonly ThemeCatalog   mThemeCatalog;
+        private string                  mCurrentThemeId;
+        private string                  mCurrentAccentId;
+        private string                  mCurrentSignatureId;
 
         public bool EnableGlobalHotkeys { get; set; }
         public bool EnableRemoteAccess { get; set; }
@@ -25,17 +28,40 @@ namespace Noise.UI.ViewModels {
         public IEnumerable<AccentColors>    AvailableAccents => mThemeCatalog.Accents;
         public IEnumerable<SignatureColors> AvailableSignatures => mThemeCatalog.Signatures;
 
-        public string           CurrentThemeId { get; set; }
-        public string           CurrentAccentId { get; set; }
-        public string           CurrentSignatureId { get; set; }
+        public string CurrentThemeId {
+            get => mCurrentThemeId;
+            set {
+                mCurrentThemeId = value;
+
+                UpdateTheme();
+            }
+        }
+
+        public string CurrentAccentId {
+            get => mCurrentAccentId;
+            set {
+                mCurrentAccentId = value;
+
+                UpdateTheme();
+            }
+        }
+
+        public string CurrentSignatureId {
+            get => mCurrentSignatureId;
+            set {
+                mCurrentSignatureId = value;
+
+                UpdateTheme();
+            }
+        }
 
         public ConfigurationViewModel( IPreferences preferences ) {
             mPreferences = preferences;
 
             mThemeManager = new ThemeManager();
             mThemeCatalog = new ThemeCatalog();
-            CurrentThemeId = mThemeManager.CurrentTheme;
-            CurrentAccentId = mThemeManager.CurrentAccent;
+            mCurrentThemeId = mThemeManager.CurrentTheme;
+            mCurrentAccentId = mThemeManager.CurrentAccent;
 
             var interfacePreferences = mPreferences.Load<UserInterfacePreferences>();
             var corePreferences = mPreferences.Load<NoiseCorePreferences>();
@@ -83,6 +109,12 @@ namespace Noise.UI.ViewModels {
 
             mPreferences.Save( corePreferences );
             mPreferences.Save( interfacePreferences );
+
+            UpdateTheme();
+        }
+
+        private void UpdateTheme() {
+            var signature = AvailableSignatures.FirstOrDefault( s => s.Id.Equals( CurrentSignatureId ));
 
             mThemeManager.UpdateApplicationTheme( CurrentThemeId, CurrentAccentId, signature?.Location );
         }
