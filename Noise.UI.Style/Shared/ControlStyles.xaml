@@ -14,14 +14,6 @@
 	<SolidColorBrush x:Key="TrimColor" Color="#FF878787" />
 	<SolidColorBrush x:Key="BorderColor" Color="#FFD0D0D0" />
 	<SolidColorBrush x:Key="BorderTextColor" Color="#FFA0A0A0"/>
-    <!--
-    <Xaml:RelativeColor x:Key="SpectrumAnalyzerBaseColor" BaseColor="{StaticResource SignatureColor}"/>
-    <Xaml:RelativeColor x:Key="SpectrumAnalyzerPeakColor" BaseColor="{StaticResource SignatureColor}"/>
-    <Xaml:RelativeColor x:Key="SpectrumAnalyzerColor" BaseColor="{StaticResource SignatureColor}"/>
-    -->
-    <Color x:Key="SpectrumAnalyzerBaseColor">#FFEA6500</Color>
-    <Color x:Key="SpectrumAnalyzerPeakColor">#FFFF4500</Color>
-    <Color x:Key="SpectrumAnalyzerHoldColor">#FFFF2500</Color>
 
     <Style x:Key="StartupFontStyle" TargetType="Control">
 		<Setter Property="FontFamily" Value="Arial"/>

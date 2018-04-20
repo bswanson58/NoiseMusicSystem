@@ -56,7 +56,7 @@ namespace Noise.UI.ViewModels {
 
 			mBaseColor = ColorResources.SpectrumAnalyzerBaseColor;
 			mPeakColor = ColorResources.SpectrumAnalyzerPeakColor;
-			mPeakHoldColor = ColorResources.SpectrumAnalyzerPeakColor;
+			mPeakHoldColor = ColorResources.SpectrumAnalyzerHoldColor;
 
 			mSpectrumUpdateTimer = new Timer { Enabled = false, Interval = 100 };
 			mSpectrumUpdateTimer.Tick += OnSpectrumUpdateTimer;
