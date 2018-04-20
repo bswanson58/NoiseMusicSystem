@@ -28,7 +28,7 @@ namespace Noise.UI.Models {
         public string               CurrentTheme => mCurrentTheme?.Name;
         public string               CurrentAccent => mCurrentAccent?.Name;
 
-        public void UpdateApplicationTheme( string themeName, string accentName ) {
+        public void UpdateApplicationTheme( string themeName, string accentName, string signatureName ) {
             if((!String.IsNullOrWhiteSpace( themeName )) &&
                (!String.IsNullOrWhiteSpace( accentName ))) {
                 var theme = MahApps.Metro.ThemeManager.GetAppTheme( themeName );
@@ -41,6 +41,10 @@ namespace Noise.UI.Models {
                     mCurrentTheme = theme;
                     mCurrentAccent = accent;
                 }
+            }
+
+            if(!String.IsNullOrWhiteSpace( signatureName )) {
+                SetApplicationResources( Application.Current.MainWindow, new Uri( signatureName ));
             }
         }
 

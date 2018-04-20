@@ -292,6 +292,7 @@
     <Compile Include="Logging\UiLogger.cs" />
     <Compile Include="MappingConfiguration.cs" />
     <Compile Include="Models\SelectionStateModel.cs" />
+    <Compile Include="Models\ThemeCatalog.cs" />
     <Compile Include="Models\ThemeManager.cs" />
     <Compile Include="NoiseUiModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

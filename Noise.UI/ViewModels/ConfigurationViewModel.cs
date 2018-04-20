@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Models;
-using ReusableBits.Mvvm.ViewModelSupport;
+using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
-    public class ConfigurationViewModel : PropertyChangeBase {
+    public class ConfigurationViewModel : DialogModelBase {
         private readonly IPreferences   mPreferences;
         private readonly ThemeManager   mThemeManager;
+        private readonly ThemeCatalog   mThemeCatalog;
 
         public bool EnableGlobalHotkeys { get; set; }
         public bool EnableRemoteAccess { get; set; }
@@ -19,18 +21,21 @@ namespace Noise.UI.ViewModels {
         public bool MinimizeToTray { get; set; }
         public string SortPrefixes { get; set; }
 
-        public IEnumerable<string>  AvailableThemes => mThemeManager.AvailableThemes;
-        public IEnumerable<string>  AvailableAccents => mThemeManager.AvailableAccents;
+        public IEnumerable<ThemeColors>     AvailableThemes => mThemeCatalog.Themes;
+        public IEnumerable<AccentColors>    AvailableAccents => mThemeCatalog.Accents;
+        public IEnumerable<SignatureColors> AvailableSignatures => mThemeCatalog.Signatures;
 
-        public string   CurrentTheme { get; set; }
-        public string   CurrentAccent { get; set; }
+        public string           CurrentThemeId { get; set; }
+        public string           CurrentAccentId { get; set; }
+        public string           CurrentSignatureId { get; set; }
 
         public ConfigurationViewModel( IPreferences preferences ) {
             mPreferences = preferences;
 
             mThemeManager = new ThemeManager();
-            CurrentTheme = mThemeManager.CurrentTheme;
-            CurrentAccent = mThemeManager.CurrentAccent;
+            mThemeCatalog = new ThemeCatalog();
+            CurrentThemeId = mThemeManager.CurrentTheme;
+            CurrentAccentId = mThemeManager.CurrentAccent;
 
             var interfacePreferences = mPreferences.Load<UserInterfacePreferences>();
             var corePreferences = mPreferences.Load<NoiseCorePreferences>();
@@ -44,12 +49,16 @@ namespace Noise.UI.ViewModels {
             MinimizeToTray = interfacePreferences.MinimizeToTray;
             SortPrefixes = interfacePreferences.SortPrefixes;
 
-            if( String.IsNullOrWhiteSpace( CurrentTheme )) {
-                CurrentTheme = interfacePreferences.ThemeName;
+            if( String.IsNullOrWhiteSpace( CurrentThemeId )) {
+                CurrentThemeId = interfacePreferences.ThemeName;
             }
-            if( String.IsNullOrWhiteSpace( CurrentAccent )) {
-                CurrentAccent = interfacePreferences.ThemeAccent;
+
+            if( String.IsNullOrWhiteSpace( CurrentAccentId )) {
+                CurrentAccentId = interfacePreferences.ThemeAccent;
             }
+
+            var signature = AvailableSignatures.FirstOrDefault( s => s.Location.Equals( interfacePreferences.ThemeSignature ));
+            CurrentSignatureId = signature?.Id;
         }
 
         public void UpdatePreferences() {
@@ -66,13 +75,16 @@ namespace Noise.UI.ViewModels {
             interfacePreferences.SortPrefixes = SortPrefixes;
             interfacePreferences.MinimizeToTray = MinimizeToTray;
 
-            interfacePreferences.ThemeName = CurrentTheme;
-            interfacePreferences.ThemeAccent = CurrentAccent;
+            interfacePreferences.ThemeName = CurrentThemeId;
+            interfacePreferences.ThemeAccent = CurrentAccentId;
+
+            var signature = AvailableSignatures.FirstOrDefault( s => s.Id.Equals( CurrentSignatureId ));
+            interfacePreferences.ThemeSignature = signature?.Location;
 
             mPreferences.Save( corePreferences );
             mPreferences.Save( interfacePreferences );
 
-            mThemeManager.UpdateApplicationTheme( CurrentTheme, CurrentAccent );
+            mThemeManager.UpdateApplicationTheme( CurrentThemeId, CurrentAccentId, signature?.Location );
         }
     }
 }
