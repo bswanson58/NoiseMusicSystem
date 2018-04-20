@@ -150,6 +150,7 @@
     <Compile Include="Themes\ThemeSelector.cs" />
     <Compile Include="Utility\DependencyObjectExtensions.cs" />
     <Compile Include="Utility\ExecutingEnvironment.cs" />
+    <Compile Include="Utility\HSLColor.cs" />
     <Compile Include="ValueConverters\BaseValueConverter.cs" />
     <Compile Include="ValueConverters\NullableBooleanOpacityConverter.cs" />
     <Compile Include="ValueConverters\BooleanVisibilityConverter.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="ValueConverters\NumericValueVisibilityConverter.cs" />
     <Compile Include="ValueConverters\TimeFormatter.cs" />
     <Compile Include="Xaml\ColorHelperExtension.cs" />
+    <Compile Include="Xaml\RelativeColor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\StatusPresenter.xaml">
