@@ -18,20 +18,19 @@ namespace Noise.UI.Models {
         }
     }
 
-    public class AccentColors {
-        private readonly Accent     mAccent;
+    public abstract class ColorBase {
+        public String   Name { get; protected set; }
+        public String   Id { get; protected set; }
+        public Color    Color { get; protected set; }
+    }
 
-        public string   Name { get; }
-        public string   Id => mAccent.Name;
-        public Color    Color { get; }
-
+    public class AccentColors : ColorBase {
         public AccentColors( Accent accent ) {
-            mAccent = accent;
-
-            Name = mAccent.Name;
+            Id = accent.Name;
+            Name = accent.Name;
 
             try {
-                var color = mAccent.Resources["AccentColor"];
+                var color = accent.Resources["AccentColor"];
 
                 if( color != null ) {
                     Color = (Color)color;
@@ -43,15 +42,14 @@ namespace Noise.UI.Models {
         }
     }
 
-    public class SignatureColors {
-        public String   Name { get; }
-        public String   Id { get; }
+    public class SignatureColors : ColorBase {
         public String   Location { get; }
 
-        public SignatureColors( string name, string location ) {
+        public SignatureColors( string name, Color color, string location ) {
             Name = name;
             Id = name;
             Location = location;
+            Color = color;
         }
     }
 
@@ -65,9 +63,20 @@ namespace Noise.UI.Models {
             Accents = from a in MahApps.Metro.ThemeManager.Accents select  new AccentColors( a );
 
             Signatures = new List<SignatureColors> {
-                                    new SignatureColors( "Orange", "pack://application:,,,/Noise.UI.Style;component/Themes/Signature_Orange.xaml" ),
-                                    new SignatureColors( "Cobalt", "pack://application:,,,/Noise.UI.Style;component/Themes/Signature_Cobalt.xaml" )
+                                    new SignatureColors( "Orange", HexToColor( "#FFEA6500" ), "pack://application:,,,/Noise.UI.Style;component/Themes/Signature_Orange.xaml" ),
+                                    new SignatureColors( "Cobalt", HexToColor( "#FF0047AB" ), "pack://application:,,,/Noise.UI.Style;component/Themes/Signature_Cobalt.xaml" )
                                 };
+        }
+
+        private static Color HexToColor( string hexValue ) {
+            var retValue = Colors.Black;
+            var color = ColorConverter.ConvertFromString( hexValue );
+
+            if( color != null ) {
+                retValue = (Color)color;
+            }
+
+            return retValue;
         }
     }
 }

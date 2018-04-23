@@ -9,7 +9,7 @@
     <UserControl.Resources>
         <ValueConverters:ColorToBrushConverter x:Key="BrushConverter"/>
         
-        <DataTemplate x:Key="AccentItemTemplate" DataType="Models:AccentColors">
+        <DataTemplate x:Key="ColorItemTemplate" DataType="Models:ColorBase">
             <StackPanel Orientation="Horizontal">
                 <Rectangle Width="10" Height="10" Margin="3,0" VerticalAlignment="Center" Fill="{Binding Color, Converter={StaticResource BrushConverter}}"/>
                 <TextBlock VerticalAlignment="Center" Margin="3,0" Text="{Binding Name}"/>
@@ -42,11 +42,11 @@
                           SelectedItem="{Binding CurrentTheme, Mode=TwoWay}" ItemsSource="{Binding AvailableThemes}"/>
                 
                 <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" Content="Accent:"/>
-                <ComboBox Grid.Column="1" Grid.Row="1" Margin="3" ItemTemplate="{StaticResource AccentItemTemplate}"
+                <ComboBox Grid.Column="1" Grid.Row="1" Margin="3" ItemTemplate="{StaticResource ColorItemTemplate}"
                           SelectedItem="{Binding CurrentAccent}" ItemsSource="{Binding AvailableAccents}"/>
                 
                 <Label Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" Content="Highlight:"/>
-                <ComboBox Grid.Column="1" Grid.Row="2" Margin="3" DisplayMemberPath="Name"
+                <ComboBox Grid.Column="1" Grid.Row="2" Margin="3" ItemTemplate="{StaticResource ColorItemTemplate}"
                           SelectedItem="{Binding CurrentSignature}" ItemsSource="{Binding AvailableSignatures}"/>
             </Grid>
         </StackPanel>
