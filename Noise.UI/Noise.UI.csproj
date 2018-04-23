@@ -631,6 +631,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Resources\TabHeader.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Resources\UiResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
