@@ -5,23 +5,27 @@ using System.Windows.Media;
 using MahApps.Metro;
 
 namespace Noise.UI.Models {
-    public class ThemeColors {
-        private readonly AppTheme   mTheme;
-
-        public string   Name { get; }
-        public string   Id => mTheme.Name;
-
-        public ThemeColors( AppTheme theme ) {
-            mTheme = theme;
-
-            Name = mTheme.Name.Replace( "Base", String.Empty );
-        }
-    }
-
     public abstract class ColorBase {
         public String   Name { get; protected set; }
         public String   Id { get; protected set; }
         public Color    Color { get; protected set; }
+    }
+
+    public class ThemeColors : ColorBase {
+        public ThemeColors( AppTheme theme ) {
+            Id = theme.Name;
+            Name = theme.Name.Replace( "Base", String.Empty );
+            try {
+                var color = theme.Resources["WindowBackgroundBrush"];
+
+                if( color is SolidColorBrush brush ) {
+                    Color = brush.Color;
+                }
+            }
+            catch( Exception ) {
+                Color = Colors.Black;
+            }
+        }
     }
 
     public class AccentColors : ColorBase {
