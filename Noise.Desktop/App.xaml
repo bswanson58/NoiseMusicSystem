@@ -10,6 +10,7 @@
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/UiResources.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/AnimatedListBox.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/FavoriteCheckbox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/GridSplitter.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/GroupBox.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/LinkLabel.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/PlayButton.xaml" />
