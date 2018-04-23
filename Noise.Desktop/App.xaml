@@ -12,6 +12,7 @@
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/FavoriteCheckbox.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/LinkLabel.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/PlayButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/WatermarkTextBox.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/Images.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/ValueConverters.xaml" />
 
