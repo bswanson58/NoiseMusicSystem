@@ -152,6 +152,7 @@
     <Compile Include="Utility\ExecutingEnvironment.cs" />
     <Compile Include="Utility\HSLColor.cs" />
     <Compile Include="ValueConverters\BaseValueConverter.cs" />
+    <Compile Include="ValueConverters\ColorToBrushConverter.cs" />
     <Compile Include="ValueConverters\NullableBooleanOpacityConverter.cs" />
     <Compile Include="ValueConverters\BooleanVisibilityConverter.cs" />
     <Compile Include="ValueConverters\ByteImageConverter.cs" />
