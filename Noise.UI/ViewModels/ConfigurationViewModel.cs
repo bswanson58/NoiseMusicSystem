@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using Caliburn.Micro;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Models;
@@ -10,10 +9,9 @@ namespace Noise.UI.ViewModels {
     public class ConfigurationViewModel : DialogModelBase {
         private readonly IPreferences   mPreferences;
         private readonly ThemeManager   mThemeManager;
-        private readonly ThemeCatalog   mThemeCatalog;
-        private string                  mCurrentThemeId;
-        private string                  mCurrentAccentId;
-        private string                  mCurrentSignatureId;
+        private ThemeColors             mCurrentTheme;
+        private AccentColors            mCurrentAccent;
+        private SignatureColors         mCurrentSignature;
 
         public bool EnableGlobalHotkeys { get; set; }
         public bool EnableRemoteAccess { get; set; }
@@ -24,32 +22,33 @@ namespace Noise.UI.ViewModels {
         public bool MinimizeToTray { get; set; }
         public string SortPrefixes { get; set; }
 
-        public IEnumerable<ThemeColors>     AvailableThemes => mThemeCatalog.Themes;
-        public IEnumerable<AccentColors>    AvailableAccents => mThemeCatalog.Accents;
-        public IEnumerable<SignatureColors> AvailableSignatures => mThemeCatalog.Signatures;
+        public BindableCollection<ThemeColors>      AvailableThemes { get; }
+        public BindableCollection<AccentColors>     AvailableAccents { get; }
+        public BindableCollection<SignatureColors>  AvailableSignatures { get; }
 
-        public string CurrentThemeId {
-            get => mCurrentThemeId;
+        public ThemeColors CurrentTheme {
+            get => mCurrentTheme;
             set {
-                mCurrentThemeId = value;
+                mCurrentTheme = value;
 
                 UpdateTheme();
             }
         }
 
-        public string CurrentAccentId {
-            get => mCurrentAccentId;
+        public AccentColors CurrentAccent {
+            get => mCurrentAccent;
             set {
-                mCurrentAccentId = value;
+                mCurrentAccent = value;
 
                 UpdateTheme();
             }
+            
         }
 
-        public string CurrentSignatureId {
-            get => mCurrentSignatureId;
+        public SignatureColors CurrentSignature {
+            get => mCurrentSignature;
             set {
-                mCurrentSignatureId = value;
+                mCurrentSignature = value;
 
                 UpdateTheme();
             }
@@ -59,9 +58,11 @@ namespace Noise.UI.ViewModels {
             mPreferences = preferences;
 
             mThemeManager = new ThemeManager();
-            mThemeCatalog = new ThemeCatalog();
-            mCurrentThemeId = mThemeManager.CurrentTheme;
-            mCurrentAccentId = mThemeManager.CurrentAccent;
+            var themeCatalog = new ThemeCatalog();
+
+            AvailableThemes = new BindableCollection<ThemeColors>( themeCatalog.Themes );
+            AvailableAccents = new BindableCollection<AccentColors>( themeCatalog.Accents );
+            AvailableSignatures = new BindableCollection<SignatureColors>( themeCatalog.Signatures );
 
             var interfacePreferences = mPreferences.Load<UserInterfacePreferences>();
             var corePreferences = mPreferences.Load<NoiseCorePreferences>();
@@ -75,16 +76,13 @@ namespace Noise.UI.ViewModels {
             MinimizeToTray = interfacePreferences.MinimizeToTray;
             SortPrefixes = interfacePreferences.SortPrefixes;
 
-            if( String.IsNullOrWhiteSpace( CurrentThemeId )) {
-                CurrentThemeId = interfacePreferences.ThemeName;
-            }
+            CurrentTheme = AvailableThemes.FirstOrDefault( t => t.Id.Equals( mThemeManager.CurrentTheme )) ??
+                           AvailableThemes.FirstOrDefault( t => t.Id.Equals( interfacePreferences.ThemeName ));
 
-            if( String.IsNullOrWhiteSpace( CurrentAccentId )) {
-                CurrentAccentId = interfacePreferences.ThemeAccent;
-            }
+            CurrentAccent = AvailableAccents.FirstOrDefault( a => a.Id.Equals( mThemeManager.CurrentAccent )) ??
+                            AvailableAccents.FirstOrDefault( a => a.Id.Equals( interfacePreferences.ThemeAccent ));
 
-            var signature = AvailableSignatures.FirstOrDefault( s => s.Location.Equals( interfacePreferences.ThemeSignature ));
-            CurrentSignatureId = signature?.Id;
+            CurrentSignature = AvailableSignatures.FirstOrDefault( s => s.Location.Equals( interfacePreferences.ThemeSignature ));
         }
 
         public void UpdatePreferences() {
@@ -101,11 +99,15 @@ namespace Noise.UI.ViewModels {
             interfacePreferences.SortPrefixes = SortPrefixes;
             interfacePreferences.MinimizeToTray = MinimizeToTray;
 
-            interfacePreferences.ThemeName = CurrentThemeId;
-            interfacePreferences.ThemeAccent = CurrentAccentId;
-
-            var signature = AvailableSignatures.FirstOrDefault( s => s.Id.Equals( CurrentSignatureId ));
-            interfacePreferences.ThemeSignature = signature?.Location;
+            if( CurrentTheme != null ) {
+                interfacePreferences.ThemeName = CurrentTheme.Id;
+            }
+            if( CurrentAccent != null ) {
+                interfacePreferences.ThemeAccent = CurrentAccent.Id;
+            }
+            if( CurrentSignature != null ) {
+                interfacePreferences.ThemeSignature = CurrentSignature.Location;
+            }
 
             mPreferences.Save( corePreferences );
             mPreferences.Save( interfacePreferences );
@@ -114,9 +116,11 @@ namespace Noise.UI.ViewModels {
         }
 
         private void UpdateTheme() {
-            var signature = AvailableSignatures.FirstOrDefault( s => s.Id.Equals( CurrentSignatureId ));
-
-            mThemeManager.UpdateApplicationTheme( CurrentThemeId, CurrentAccentId, signature?.Location );
+            if(( CurrentAccent != null ) &&
+               ( CurrentSignature != null ) &&
+               ( CurrentTheme != null )) {
+                mThemeManager.UpdateApplicationTheme( CurrentTheme.Id, CurrentAccent.Id, CurrentSignature?.Location );
+            }
         }
     }
 }
