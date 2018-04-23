@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Media;
 using MahApps.Metro;
 
 namespace Noise.UI.Models {
@@ -22,11 +23,23 @@ namespace Noise.UI.Models {
 
         public string   Name { get; }
         public string   Id => mAccent.Name;
+        public Color    Color { get; }
 
         public AccentColors( Accent accent ) {
             mAccent = accent;
 
             Name = mAccent.Name;
+
+            try {
+                var color = mAccent.Resources["AccentColor"];
+
+                if( color != null ) {
+                    Color = (Color)color;
+                }
+            }
+            catch( Exception ) {
+                Color = Colors.Black;
+            }
         }
     }
 

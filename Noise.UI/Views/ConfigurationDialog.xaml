@@ -1,8 +1,21 @@
 ﻿<UserControl x:Class="Noise.UI.Views.ConfigurationDialog"
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:Models="clr-namespace:Noise.UI.Models"
+		xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 		Height="380" Width="350"
 		Tag="Noise Options">
+    
+    <UserControl.Resources>
+        <ValueConverters:ColorToBrushConverter x:Key="BrushConverter"/>
+        
+        <DataTemplate x:Key="AccentItemTemplate" DataType="Models:AccentColors">
+            <StackPanel Orientation="Horizontal">
+                <Rectangle Width="10" Height="10" Margin="3,0" VerticalAlignment="Center" Fill="{Binding Color, Converter={StaticResource BrushConverter}}"/>
+                <TextBlock VerticalAlignment="Center" Margin="3,0" Text="{Binding Name}"/>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
 
     <Grid Background="Gray">
         <Grid.RowDefinitions>
@@ -29,7 +42,7 @@
                           SelectedItem="{Binding CurrentTheme, Mode=TwoWay}" ItemsSource="{Binding AvailableThemes}"/>
                 
                 <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" Content="Accent:"/>
-                <ComboBox Grid.Column="1" Grid.Row="1" Margin="3" DisplayMemberPath="Name"
+                <ComboBox Grid.Column="1" Grid.Row="1" Margin="3" ItemTemplate="{StaticResource AccentItemTemplate}"
                           SelectedItem="{Binding CurrentAccent}" ItemsSource="{Binding AvailableAccents}"/>
                 
                 <Label Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" Content="Highlight:"/>
