@@ -124,7 +124,7 @@
 	<Style x:Key="NoiseRatingStyle" TargetType="{x:Type NoiseControls:RatingControl}">
 		<Setter Property="Height" Value="13"/>
 		<Setter Property="RatingCount" Value="5"/>
-		<Setter Property="HoverColor" Value="LightBlue"/>
+		<Setter Property="HoverColor" Value="{DynamicResource SignatureHoverBrush}"/>
 		<Setter Property="RatedColor" Value="{DynamicResource SignatureBrush}"/>
 		<Setter Property="UnratedColor" Value="{StaticResource ControlTextColor}"/>
 		<Setter Property="DislikeColor" Value="Red"/>

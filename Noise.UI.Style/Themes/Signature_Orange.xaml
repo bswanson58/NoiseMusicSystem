@@ -5,6 +5,8 @@
     <Color x:Key="SignatureColor">#FFEA6500</Color>
     <SolidColorBrush x:Key="SignatureBrush" Color="{StaticResource SignatureColor}"/>
 
+    <SolidColorBrush x:Key="SignatureHoverBrush" Color="#80EA6500"/>
+
     <Xaml:RelativeColor x:Key="SpectrumAnalyzerBaseColor" BaseColor="{StaticResource SignatureColor}" Luminosity="0.6"/>
     <Xaml:RelativeColor x:Key="SpectrumAnalyzerHoldColor" BaseColor="{StaticResource SignatureColor}" Luminosity="1.4"/>
     <Xaml:RelativeColor x:Key="SpectrumAnalyzerPeakColor" BaseColor="{StaticResource SignatureColor}" Luminosity="1.6"/>
