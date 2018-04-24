@@ -8,7 +8,7 @@
 			 xmlns:Noise_UI_ViewModels="clr-namespace:Noise.UI.ViewModels"
 			 xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
 			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-             Height="195"
+             Height="215"
 			 d:DesignHeight="300"
 			 d:DesignWidth="900"
 			 mc:Ignorable="d">
@@ -24,15 +24,15 @@
 		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
-				<RowDefinition Height="53" />
+				<RowDefinition Height="60" />
 			</Grid.RowDefinitions>
 
 			<!--  Extended Controls  -->
 			<Grid Grid.Row="0">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="3*" />
-					<ColumnDefinition Width="6*" />
 					<ColumnDefinition Width="5*" />
+					<ColumnDefinition Width="6*" />
 					<ColumnDefinition Width="4*" />
 				</Grid.ColumnDefinitions>
 
@@ -52,26 +52,26 @@
 					</Grid.RowDefinitions>
 
 					<CheckBox Grid.Row="0" Grid.Column="0" Margin="5,0,0,0" Content="Stereo Enhance" IsChecked="{Binding Path=StereoEnhancerEnable}" />
-					<Slider Grid.Row="1" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=StereoEnhancerEnable}"
+					<Slider Grid.Row="1" Grid.Column="0" Margin="5,3,0,0" IsEnabled="{Binding Path=StereoEnhancerEnable}"
 							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=StereoEnhancerWidth, Mode=TwoWay}" ToolTip="Width" />
-					<Slider Grid.Row="2" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=StereoEnhancerEnable}"
+					<Slider Grid.Row="2" Grid.Column="0" Margin="5,3,0,0" IsEnabled="{Binding Path=StereoEnhancerEnable}"
 							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=StereoEnhancerWetDry, Mode=TwoWay}" ToolTip="Wet - Dry"/>
 
 					<CheckBox Grid.Row="3" Grid.Column="0" Margin="5,3,0,0" Content="Soft Saturation" IsChecked="{Binding Path=SoftSaturationEnable}" />
-					<Slider Grid.Row="4" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=SoftSaturationEnable}"
+					<Slider Grid.Row="4" Grid.Column="0" Margin="5,3,0,0" IsEnabled="{Binding Path=SoftSaturationEnable}"
 							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=SoftSaturationFactor, Mode=TwoWay}" ToolTip="Saturation Factor" />
-					<Slider Grid.Row="5" Grid.Column="0" Margin="0,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=SoftSaturationEnable}"
+					<Slider Grid.Row="5" Grid.Column="0" Margin="5,3,0,0" IsEnabled="{Binding Path=SoftSaturationEnable}"
 							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=SoftSaturationDepth, Mode=TwoWay}" ToolTip="Saturation Depth"/>
 
 					<CheckBox Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Content="Reverb" IsChecked="{Binding Path=ReverbEnable}" />
-					<Slider Grid.Row="1" Grid.Column="1" Margin="5,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=ReverbEnable}"
+					<Slider Grid.Row="1" Grid.Column="1" Margin="5,3,0,0" IsEnabled="{Binding Path=ReverbEnable}"
 							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.0" Maximum="1.0" Value="{Binding Path=ReverbLevel, Mode=TwoWay}" ToolTip="Level (Wet Mix)" />
-					<Slider Grid.Row="2" Grid.Column="1" Margin="5,3,0,0" BorderThickness="0,0,0,5" IsEnabled="{Binding Path=ReverbEnable}"
+					<Slider Grid.Row="2" Grid.Column="1" Margin="5,3,0,0" IsEnabled="{Binding Path=ReverbEnable}"
 							Orientation="Horizontal" SnapsToDevicePixels="True"
 							Minimum="0.01" Maximum="0.5" Value="{Binding Path=ReverbDelay, Mode=TwoWay}" ToolTip="Reverb Delay"/>
 
@@ -88,24 +88,15 @@
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 
-						<Grid Grid.Column="0"
-							  Margin="5,0"
-							  VerticalAlignment="Center">
+						<Grid Grid.Column="0" Margin="5,0" VerticalAlignment="Center">
 							<Grid.RowDefinitions>
 								<RowDefinition Height="*" />
 								<RowDefinition Height="Auto" />
 								<RowDefinition Height="Auto" />
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
-							<CheckBox Grid.Row="1"
-									  Margin="0,5"
-									  Content="Equalization"
-									  IsChecked="{Binding Path=EqEnabled}" />
-							<ComboBox Grid.Row="2"
-									  Margin="0,5"
-									  ItemsSource="{Binding Path=EqualizerList}"
-									  SelectedItem="{Binding Path=CurrentEq,
-															 Mode=TwoWay}">
+							<CheckBox Grid.Row="1" Margin="0,5" Content="Equalization" IsChecked="{Binding Path=EqEnabled}" />
+							<ComboBox Grid.Row="2" Margin="0,5" ItemsSource="{Binding Path=EqualizerList}" SelectedItem="{Binding Path=CurrentEq, Mode=TwoWay}">
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
 										<TextBlock Text="{Binding Path=Name}" />
@@ -117,11 +108,8 @@
 						</Grid>
 
 						<!--  Parametric Equalizer  -->
-						<NoiseControls:ParametricEqualizerControl Grid.Column="1"
-																  HorizontalAlignment="Center"
-																  EqualizerBands="{Binding Path=EqualizerBands}"
-																  PreampVolume="{Binding Path=PreampVolume,
-																						 Mode=TwoWay}" />
+						<NoiseControls:ParametricEqualizerControl Grid.Column="1" HorizontalAlignment="Center"
+																  EqualizerBands="{Binding Path=EqualizerBands}" PreampVolume="{Binding Path=PreampVolume, Mode=TwoWay}" />
 					</Grid>
 				</GroupBox>
 
@@ -129,122 +117,87 @@
 				<!--  Spectrum Analyzer  -->
 				<GroupBox Grid.Column="2" Margin="11,-5,11,0" Style="{StaticResource SectionBorderStyle}" Header=" Spectrum Analyzer ">
 					<NoiseControls:SpectrumAnalyzerDisplay Margin="5"
-														   ImageHeight="{Binding Path=ImageHeight,
-																				 Mode=OneWayToSource}"
-														   ImageWidth="{Binding Path=ImageWidth,
-																				Mode=OneWayToSource}"
-														   SpectrumImage="{Binding Path=SpectrumImage,
-																				   Mode=OneWay}" />
+														   ImageHeight="{Binding Path=ImageHeight, Mode=OneWayToSource}"
+														   ImageWidth="{Binding Path=ImageWidth, Mode=OneWayToSource}"
+														   SpectrumImage="{Binding Path=SpectrumImage, Mode=OneWay}" />
 				</GroupBox>
 
 				<!--  Audio Controls: Balance / Speed / Replay Gain / Track Overlap  -->
-				<Grid Grid.Column="3" VerticalAlignment="Bottom">
+				<Grid Grid.Column="3">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
-						<RowDefinition Height="*" />
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 					<!--  Switch to standard player  -->
-					<Grid Grid.Row="0">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-						</Grid.ColumnDefinitions>
-						<Button Grid.Column="1" Width="27" Height="27" Margin="0,0,3,-11" Content="6" FontFamily="Webdings" FontSize="16" Command="{Binding Path=StandardPlayer}" />
-					</Grid>
+                    <Button Grid.Row="0" Width="27" Height="27" HorizontalAlignment="Right" Margin="0,0,3,0" Content="6" FontFamily="Webdings" FontSize="16" 
+                            Command="{Binding Path=StandardPlayer}" />
 					<!--  Replay Gain  -->
-					<CheckBox Grid.Row="2"
-							  Margin="3,0,0,3"
-							  VerticalAlignment="Center"
-							  HorizontalAlignment="Left"
-							  Content="Replay Gain"
+					<CheckBox Grid.Row="1" Margin="3,0,0,5" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Replay Gain"
 							  IsChecked="{Binding Path=ReplayGainEnabled}" />
 					<!--  Track Overlap  -->
-					<Grid Grid.Row="3">
+					<Grid Grid.Row="2" Margin="0,0,0,5">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="70" />
-							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="20" />
 							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="15" />
 						</Grid.ColumnDefinitions>
-						<CheckBox Grid.Column="0"
-								  Margin="3,0,0,0"
-								  VerticalAlignment="Center"
-								  Content="Overlap:"
-								  IsChecked="{Binding Path=TrackOverlapEnable}" />
-						<TextBlock Grid.Column="1"
-								   Width="15"
-								   Margin="0"
-								   HorizontalAlignment="Right"
-								   VerticalAlignment="Center"
-								   Padding="0,0,3,0"
-								   Text="50"
-								   TextAlignment="Right" />
-						<Slider x:Name="TrackOverlap"
-								Grid.Column="2"
-								Margin="0,7,0,0"
-								BorderThickness="0,0,0,5"
-								Maximum="2000"
-								Minimum="50"
-								Orientation="Horizontal"
-								SnapsToDevicePixels="True"
-								Value="{Binding Path=TrackOverlapMilliseconds,
-												Mode=TwoWay}" />
-						<TextBlock Grid.Column="3" Width="15" Margin="0" VerticalAlignment="Center" Text="2s" />
+						<CheckBox Grid.Column="0" Margin="3,0,0,0" VerticalAlignment="Center" Content="Overlap:" IsChecked="{Binding Path=TrackOverlapEnable}" />
+						<TextBlock Grid.Column="1" VerticalAlignment="Center" Text="50" TextAlignment="Right" />
+						<Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" SnapsToDevicePixels="True" VerticalAlignment="Center"
+                                Maximum="2000" Minimum="50" Value="{Binding Path=TrackOverlapMilliseconds, Mode=TwoWay}" />
+						<TextBlock Grid.Column="3" VerticalAlignment="Center" Text="2s" />
 					</Grid>
 					<!--  Playback Speed  -->
-					<Grid Grid.Row="4" Margin="0">
+					<Grid Grid.Row="3" Margin="0,0,0,5">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="70" />
-							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="20" />
 							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="15" />
 						</Grid.ColumnDefinitions>
-						<NoiseControls:LinkLabel Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center"
+						<NoiseControls:LinkLabel Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"
 												 Content="Speed:" LinkLabelBehavior="HoverUnderline" ToolTip="Click to set default play speed">
 							<EventCommandTriggers:CommandSource.Trigger>
 								<EventCommandTriggers:EventCommandTrigger Command="{Binding ResetPlaySpeed}" RoutedEvent="NoiseControls:LinkLabel.Click" />
 							</EventCommandTriggers:CommandSource.Trigger>
 						</NoiseControls:LinkLabel>
 
-						<TextBlock Grid.Column="1" Width="15" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="0,0,3,0"
-								   Text="-" TextAlignment="Right" />
-						<Slider x:Name="SpeedSlider" Grid.Column="2" Margin="0,7,0,0" BorderThickness="0,0,0,5" Orientation="Horizontal" SnapsToDevicePixels="True" 
+						<TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Text="-" TextAlignment="Right" />
+						<Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" SnapsToDevicePixels="True" 
 								Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PlaySpeed, Mode=TwoWay}"/>
-						<TextBlock Grid.Column="3" Width="15" HorizontalAlignment="Center" VerticalAlignment="Center" Text="+" />
+						<TextBlock Grid.Column="3" VerticalAlignment="Center" Text="+" />
 					</Grid>
 					<!--  Balance  -->
-					<Grid Grid.Row="5" Margin="0,0,0,3">
+					<Grid Grid.Row="4" Margin="0,0,0,5">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="70" />
-							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="20" />
 							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="15" />
 						</Grid.ColumnDefinitions>
-						<NoiseControls:LinkLabel Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center"
+						<NoiseControls:LinkLabel Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"
 												 Content="Balance:" LinkLabelBehavior="HoverUnderline" ToolTip="Click to set default balance">
 							<EventCommandTriggers:CommandSource.Trigger>
 								<EventCommandTriggers:EventCommandTrigger Command="{Binding ResetPanPosition}" RoutedEvent="NoiseControls:LinkLabel.Click" />
 							</EventCommandTriggers:CommandSource.Trigger>
 						</NoiseControls:LinkLabel>
 
-						<TextBlock Grid.Column="1" Width="15" HorizontalAlignment="Center" VerticalAlignment="Center"
-								   Padding="0,0,3,0" Text="L" TextAlignment="Right" />
-						<Slider x:Name="Balance" Grid.Column="2" Margin="0,7,0,0" BorderThickness="0,0,0,5" Orientation="Horizontal" SnapsToDevicePixels="True"
+						<TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Text="L" TextAlignment="Right" />
+						<Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" SnapsToDevicePixels="True"
 						        Maximum="1.0" Minimum="-1.0" Value="{Binding Path=PanPosition, Mode=TwoWay}" />
-						<TextBlock Grid.Column="3" Width="15" Margin="0" VerticalAlignment="Center" Text="R" />
+						<TextBlock Grid.Column="3" VerticalAlignment="Center" Text="R" />
 					</Grid>
 				</Grid>
-
 			</Grid>
 
 			<!--  Basic Player Controls  -->
 			<Grid Grid.Row="1">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="5*" />
+					<ColumnDefinition Width="4*" />
 					<ColumnDefinition Width="3*" />
 					<ColumnDefinition Width="2*" />
 				</Grid.ColumnDefinitions>
@@ -256,9 +209,8 @@
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 
-					<Grid Grid.Row="0"
-						  Margin="0"
-						  VerticalAlignment="Center">
+                    <!-- Now playing -->
+					<Grid Grid.Row="0" Margin="5,0,0,0" VerticalAlignment="Center">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*" />
@@ -271,20 +223,13 @@
 								   Text="{Binding TrackName}" />
 					</Grid>
 
-					<Grid Grid.Row="1"
+					<Grid Grid.Row="1" Margin="5,0,0,0"
 						  Behaviours:GridUtils.ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto,Auto">
 
 						<!--  Favorites and ratings  -->
-						<CheckBox x:Name="Favorite"
-								  Grid.Column="0"
-								  Margin="0,0,5,0"
-								  IsChecked="{Binding Path=IsFavorite,
-													  Mode=TwoWay}"
+						<CheckBox Grid.Column="0" Margin="0,0,5,0" IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}"
 								  Style="{StaticResource FavoriteCheckBoxStyle}" />
-						<NoiseControls:RatingControl Grid.Column="1"
-													 VerticalAlignment="Center"
-													 Rating="{Binding Path=Rating,
-																	  Mode=TwoWay}"
+						<NoiseControls:RatingControl Grid.Column="1" VerticalAlignment="Center" Rating="{Binding Path=Rating, Mode=TwoWay}"
 													 Style="{StaticResource NoiseRatingStyle}" />
 
 						<!--  Track related commands  -->
@@ -301,8 +246,8 @@
 								ToolTip="Display Song Lyrics" /-->
 
 						<!--  Playing position  -->
-						<TextBlock Grid.Column="7" Text="Position: " />
-                        <TextBlock Grid.Column="8" Margin="0,0,7,0" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold" Foreground="{DynamicResource SignatureBrush}"
+						<TextBlock Grid.Column="7" VerticalAlignment="Center" Margin="0,0,5,0" Text="Position:" />
+                        <TextBlock Grid.Column="8" Margin="0,0,7,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold" Foreground="{DynamicResource SignatureBrush}"
 								   ToolTip="Click to change the display format of the position time"
 								   Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}">
 							<EventCommandTriggers:CommandSource.Trigger>
@@ -319,9 +264,7 @@
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 
-					<StackPanel Grid.Row="0"
-								HorizontalAlignment="Center"
-								Orientation="Horizontal">
+					<StackPanel Grid.Row="0" HorizontalAlignment="Center" Orientation="Horizontal">
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="4" Command="{Binding Play}"/>
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content=";" Command="{Binding Pause}"/>
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="&lt;" Command="{Binding Stop}"/>
@@ -331,16 +274,9 @@
 						<Button Margin="3" Style="{StaticResource TransportButtonStyle}" Content="{StaticResource Path_ReplayTrack}" Command="{Binding ReplayTrack}" Padding="5" />
 					</StackPanel>
 					
-					<Slider x:Name="PositionSlider"
-							Grid.Row="1"
-							Margin="5,0,5,0"
-							VerticalAlignment="Center"
-							Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}"
-							Minimum="0"
-							Orientation="Horizontal"
-							SnapsToDevicePixels="True"
+					<Slider Grid.Row="1" Margin="10,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
+                            Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0"
 							Value="{Binding Path=TrackPosition,	Mode=TwoWay}" />
-
 				</Grid>
 
 				<!--  Volume Controls  -->
@@ -356,18 +292,11 @@
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*"/>
 						</Grid.ColumnDefinitions>
-						<TextBlock Grid.Column="0"
-								   HorizontalAlignment="Center"
-								   VerticalAlignment="Center"
-								   Panel.ZIndex="1"
-								   FontFamily="Webdings"
-								   FontSize="21.333"
-								   Foreground="Red"
-								   IsHitTestVisible="False"
-								   Text="x"
+                        <!-- Mute -->
+						<TextBlock Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="1" 
+                                   FontFamily="Webdings" FontSize="21.333" Foreground="Red" IsHitTestVisible="False" Text="x"
 								   Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
-						<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}"
-								Content="X" Command="{Binding Path=Mute}"/>
+						<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" Command="{Binding Path=Mute}"/>
 
 						<!-- Audio Device Selection -->
 						<TextBlock Grid.Column="1" Margin="9,0,3,0" VerticalAlignment="Center" Text="Device:"/>
@@ -381,17 +310,11 @@
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
-						<TextBlock Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Volume:" />
-						<TextBlock Grid.Column="1" Margin="0,0,3,0" VerticalAlignment="Center" Text="-" />
-						<Slider x:Name="Volume"
-								Grid.Column="2"
-								Margin="0,5,0,0"
-								Maximum="1.0"
-								Minimum="0.0"
-								Orientation="Horizontal"
-								SnapsToDevicePixels="True"
-								Value="{Binding Path=Volume, Mode=TwoWay}" />
-						<TextBlock Grid.Column="3" Margin="3,0,0,0" VerticalAlignment="Center" Text="+" />
+                        <TextBlock Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Volume:" />
+						<TextBlock Grid.Column="1" VerticalAlignment="Center" Text="-" />
+						<Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" VerticalAlignment="Center" SnapsToDevicePixels="True"
+                                Minimum="0.0" Maximum="1.0" Value="{Binding Path=Volume, Mode=TwoWay}" />
+                        <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="+" />
 					</Grid>
 				</Grid>
 

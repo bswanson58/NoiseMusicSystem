@@ -54,9 +54,8 @@
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
 
-							<TextBlock Grid.Column="0" VerticalAlignment="Bottom" Margin="3,-1,0,5"
-					 Style="{StaticResource MediumTitleStyle}"
-					 Text="Now Playing:" Visibility="{Binding TrackName, Converter={StaticResource EmptyStringVisibilityConverter}}" />
+							<TextBlock Grid.Column="0" VerticalAlignment="Bottom" Margin="3,-1,0,5" Style="{StaticResource MediumTitleStyle}"
+                                       Text="Now Playing:" Visibility="{Binding TrackName, Converter={StaticResource EmptyStringVisibilityConverter}}" />
 
 							<Grid Grid.Column="1" Margin="5,-1,0,5" VerticalAlignment="Center">
 								<Grid.ColumnDefinitions>
@@ -64,12 +63,11 @@
 									<ColumnDefinition Width="*"/>
 								</Grid.ColumnDefinitions>
 
-								<TextBlock Grid.Column="0" VerticalAlignment="Bottom" Style="{StaticResource MediumTitleStyle}"
-						   Text="{Binding TrackName}" />
+								<TextBlock Grid.Column="0" VerticalAlignment="Bottom" Style="{StaticResource MediumTitleStyle}" Text="{Binding TrackName}" />
 								<TextBlock Grid.Column="1" Margin="0,0,0,3" VerticalAlignment="Bottom" Style="{StaticResource SmallTitleStyle}"
-						   ReusableBehaviours:FadeTrimming.IsEnabled="True"
-						   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-						   Text="{Binding ArtistAlbumName}" />
+                                           ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                                           ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                                           Text="{Binding ArtistAlbumName}" />
 							</Grid>
 						</Grid>
 					</Grid>
@@ -190,8 +188,9 @@
 
 						<!-- Textual Play Position -->
 						<StackPanel Grid.Column="0" Margin="17,0,0,0" Orientation="Horizontal">
-							<TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" Text="Position:" />
-							<TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold" Foreground="{DynamicResource SignatureBrush}"
+							<TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" VerticalAlignment="Center" Text="Position:" />
+							<TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold"
+                                       Foreground="{DynamicResource SignatureBrush}"
 									   ToolTip="Click to change the display format of the position time"
 									   Text="{Binding Path=TrackTime, Converter={StaticResource TimeSpanConverter}}">
 								<EventCommandTriggers:CommandSource.Trigger>
@@ -201,8 +200,7 @@
 						</StackPanel>
 
 						<!-- Play Postion indicator -->
-						<Slider x:Name="PositionSlider" Grid.Column="1" Margin="5,0" VerticalAlignment="Center" BorderThickness="0,0" Orientation="Horizontal"
-						        SnapsToDevicePixels="True"
+						<Slider Grid.Column="1" Margin="5,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
 						        Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0"
 						        Value="{Binding Path=TrackPosition, Mode=TwoWay}" />
 					</Grid>
@@ -217,16 +215,12 @@
 						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 
-					<TextBlock Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
-					 Text="Volume:" />
-					<TextBlock Grid.Column="1" Margin="0,0,3,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
-					 Text="-" />
-					<Slider x:Name="Volume" Grid.Column="2" Margin="0,5,0,0" Orientation="Horizontal" SnapsToDevicePixels="True"
+					<TextBlock Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Volume:" />
+					<TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="-" />
+					<Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" VerticalAlignment="Center" SnapsToDevicePixels="True"
 					        Maximum="1.0" Minimum="0.0" Value="{Binding Path=Volume, Mode=TwoWay}" />
-					<TextBlock Grid.Column="3" Margin="3,0,0,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
-					 Text="+" />
+					<TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="+" />
 				</Grid>
-
 			</Grid>
 		</Grid>
 	</GroupBox>
