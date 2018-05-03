@@ -120,10 +120,10 @@
 					<!-- Ravorite, Rating, Support Commands -->
 					<StackPanel Grid.Column="0" Orientation="Horizontal">
 						<!--  Favorites and ratings  -->
-						<StackPanel x:Name="_ratingPanel" Grid.Column="0" Orientation="Horizontal">
+						<StackPanel x:Name="_ratingPanel" Orientation="Horizontal">
 							<CheckBox x:Name="_favoriteControl" Margin="3,0,5,0" VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}"
-						Opacity="{Binding Path=IsFavorite, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"
-						IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}"/>
+                                      Opacity="{Binding Path=IsFavorite, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}" 
+                                      IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}"/>
 
 							<NoiseControls:RatingControl x:Name="_ratingControl" VerticalAlignment="Center" Style="{StaticResource NoiseRatingStyle}"
 										   Opacity="{Binding Path=Rating, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"
@@ -172,11 +172,6 @@
 						        Content="{StaticResource Path_Information}" ToolTip="Sync Artist and Album display" />
 						<Button Margin="5,0,0,0" Padding="4" Style="{StaticResource QueueButtonStyle}" Command="{Binding RequestSimilarSongSearch}" 
 						        Content="{StaticResource Path_SimilarTracks}" ToolTip="Find Similar Tracks" />
-						<!--Button Width="17" Height="17" Margin="5,0,0,0"
-							  Command="{Binding RequestLyrics}"  Content="{StaticResource Path_Lyrics}" ToolTip="Display Song Lyrics" /-->
-
-						<!-- Play State (debug only) -->
-						<!-- TextBlock Margin="9,0,0,0" Style="{StaticResource ControlTitleStyle}" Text="{Binding Path=PlayState}" /-->
 					</StackPanel>
 
 					<!--  Playing Position  -->

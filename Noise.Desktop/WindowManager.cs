@@ -11,6 +11,7 @@ using Noise.Desktop.Properties;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
+using Noise.UI.Models;
 using Noise.UI.Views;
 using ReusableBits.Ui.Utility;
 using Application = System.Windows.Application;
@@ -108,7 +109,12 @@ namespace Noise.Desktop {
 				mPlayerView = new SmallPlayerView { Top = Settings.Default.SmallPlayerTop, Left = Settings.Default.SmallPlayerLeft };
 
 				ExecutingEnvironment.MoveWindowIntoVisibility( mPlayerView );
+
+			    var interfacePreferences = mPreferences.Load<UserInterfacePreferences>();
+
+			    ThemeManager.SetApplicationResources( mPlayerView, new Uri( interfacePreferences.ThemeSignature ));
 			}
+
 			mPlayerView.Show();
 		}
 
