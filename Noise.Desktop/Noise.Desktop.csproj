@@ -216,12 +216,6 @@
     <Compile Include="StartupManager.cs" />
     <Compile Include="WindowManager.cs" />
     <Resource Include="Resources\Noise.ico" />
-    <Resource Include="Resources\Replay.png" />
-    <Resource Include="Resources\Next.png" />
-    <Resource Include="Resources\Pause.png" />
-    <Resource Include="Resources\Previous.png" />
-    <Resource Include="Resources\Stop.png" />
-    <Resource Include="Resources\Play.png" />
     <Resource Include="..\Common\Noise.ico">
       <Link>Noise.ico</Link>
     </Resource>
