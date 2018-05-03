@@ -98,6 +98,12 @@
 		<Setter Property="FontSize" Value="16"/>
 	</Style>
 
+    <Style x:Key="SmallPlayerButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Height" Value="29"/>
+        <Setter Property="Width" Value="29"/>
+        <Setter Property="Margin" Value="3"/>
+    </Style>
+
     <Style x:Key="QueueButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
         <Setter Property="Height" Value="10"/>
         <Setter Property="Width" Value="24"/>

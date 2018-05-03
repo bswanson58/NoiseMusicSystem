@@ -31,12 +31,6 @@
         <ValueConverters:PlayQueueTrackNameConverter x:Key="PlayQueueTrackNameConverter" />
         <ReusableConverters:EmptyStringVisibilityConverter x:Key="CollapseIfEmptyString" HideOnEmpty="False" IsHidden="False"/>
 
-        <Style x:Key="PlayerButton" TargetType="Button">
-            <Setter Property="Height" Value="25"/>
-            <Setter Property="Width" Value="25"/>
-            <Setter Property="Margin" Value="3"/>
-        </Style>
-
         <DataTemplate x:Key="AfterTemplate">
             <Rectangle Fill="{DynamicResource SignatureBrush}" Margin="0,4,-4,4"/>
         </DataTemplate>
@@ -161,7 +155,7 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Replay Track -->
-                    <Button Grid.Column="0" Style="{StaticResource PlayerButton}" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    <Button Grid.Column="0" Style="{StaticResource SmallPlayerButton}" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center"
                             Command="{Binding Path=ReplayTrack}" Content="{StaticResource Path_ReplayTrack}" />
 
                     <!-- Favorite and rating -->
@@ -174,11 +168,11 @@
                     <TextBlock Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="1"
                                FontFamily="Webdings" FontSize="21.333" Foreground="Red" IsHitTestVisible="False" Text="x"
                                Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
-                    <Button Grid.Column="2" Style="{StaticResource PlayerButton}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    <Button Grid.Column="2" Style="{StaticResource SmallPlayerButton}" HorizontalAlignment="Center" VerticalAlignment="Center"
                             Command="{Binding Path=Mute}" Content="X" FontFamily="Webdings" FontSize="16" />
 
                     <!-- Switch to Application -->
-                    <Button Grid.Column="3" Style="{StaticResource PlayerButton}" Margin="1,0,3,0" Padding="6" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    <Button Grid.Column="3" Style="{StaticResource SmallPlayerButton}" Margin="1,0,3,0" Padding="6" HorizontalAlignment="Center" VerticalAlignment="Center"
                             Command="{Binding Path=PlayerSwitch}" Content="{StaticResource Path_SwitchWindow}" />
                 </Grid>
 
@@ -193,17 +187,17 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button Grid.Column="0" Style="{StaticResource PlayerButton}" Margin="0,0" Content="4" FontFamily="Webdings" FontSize="16" Command="{Binding Play}"/>
-                    <Button Grid.Column="1" Style="{StaticResource PlayerButton}" Margin="3,0,0,0" Content=";" FontFamily="Webdings" FontSize="16" Command="{Binding Pause}"/>
-                    <Button Grid.Column="2" Style="{StaticResource PlayerButton}" Margin="3,0,0,0" Content="&lt;" FontFamily="Webdings" FontSize="16" Command="{Binding Stop}" />
-                    <Button Grid.Column="3" Style="{StaticResource PlayerButton}" Margin="3,0,0,0" Content="9" FontFamily="Webdings" FontSize="16" Command="{Binding PreviousTrack}">
+                    <Button Grid.Column="0" Style="{StaticResource SmallPlayerButton}" Margin="0,0" Content="4" FontFamily="Webdings" FontSize="16" Command="{Binding Play}"/>
+                    <Button Grid.Column="1" Style="{StaticResource SmallPlayerButton}" Margin="3,0,0,0" Content=";" FontFamily="Webdings" FontSize="16" Command="{Binding Pause}"/>
+                    <Button Grid.Column="2" Style="{StaticResource SmallPlayerButton}" Margin="3,0,0,0" Content="&lt;" FontFamily="Webdings" FontSize="16" Command="{Binding Stop}" />
+                    <Button Grid.Column="3" Style="{StaticResource SmallPlayerButton}" Margin="3,0,0,0" Content="9" FontFamily="Webdings" FontSize="16" Command="{Binding PreviousTrack}">
                         <Button.ToolTip>
                             <ToolTip>
                                 <TextBlock Text="{Binding Path=PeekPreviousTrack, Converter={StaticResource PlayQueueTrackNameConverter}}" />
                             </ToolTip>
                         </Button.ToolTip>
                     </Button>
-                    <Button Grid.Column="4" Style="{StaticResource PlayerButton}" Margin="3,0,0,0" Content=":" FontFamily="Webdings" FontSize="16" Command="{Binding NextTrack}">
+                    <Button Grid.Column="4" Style="{StaticResource SmallPlayerButton}" Margin="3,0,0,0" Content=":" FontFamily="Webdings" FontSize="16" Command="{Binding NextTrack}">
                         <Button.ToolTip>
                             <ToolTip>
                                 <TextBlock Text="{Binding Path=PeekNextTrack, Converter={StaticResource PlayQueueTrackNameConverter}}" />
