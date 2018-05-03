@@ -1,14 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Color x:Key="PlayButtonNormalFill">#FFA7C6FF</Color>
-    <Color x:Key="PlayButtonNormalStroke">Gray</Color>
-
-    <Color x:Key="PlayButtonMouseOverFill">#FF307BCE</Color>
-    <Color x:Key="PlayButtonMouseOverStroke">#FF0056FF</Color>
-
-    <Color x:Key="PlayButtonPressedFill">#FF81B2F3</Color>
-
     <!-- Play button style -->
     <Style x:Key="ButtonFocusVisual">
         <Setter Property="Control.Template">
