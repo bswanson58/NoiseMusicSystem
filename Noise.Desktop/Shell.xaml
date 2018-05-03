@@ -5,7 +5,6 @@
 					  xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
 					  xmlns:Regions="http://www.codeplex.com/CompositeWPF"
 					  Title="Noise"
-					  Icon="Noise.ico"
 					  ResizeMode="CanResizeWithGrip"
 					  Height="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationHeight, Mode=TwoWay}"
 					  Width="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationWidth, Mode=TwoWay}"
@@ -14,7 +13,16 @@
 					  WindowState="{Binding Source={x:Static Properties:Settings.Default}, Path=ApplicationWindowState, Mode=TwoWay}"
 					  >
 
-	<Controls:MetroWindow.RightWindowCommands>
+    <Controls:MetroWindow.IconTemplate>
+        <DataTemplate>
+            <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Margin="5,3,0,3" Background="Transparent"
+                  RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality">
+                <Image Source="Resources/Noise.ico"/>
+            </Grid>
+        </DataTemplate>
+    </Controls:MetroWindow.IconTemplate>
+    
+    <Controls:MetroWindow.RightWindowCommands>
 		<Controls:WindowCommands>
 			<Button Command="{Binding LibraryLayout}" Content="library" ToolTip="Display Music Library"/>
 			<Button Command="{Binding TimelineLayout}" Content="timeline" ToolTip="Display Timeline Explorer"/>
