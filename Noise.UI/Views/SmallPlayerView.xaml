@@ -72,12 +72,12 @@
     </Window.Triggers>
 
     <Border BorderThickness="2" CornerRadius="3">
-        <Grid x:Name="_layout">
+        <Grid x:Name="_layout" Background="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="9*" />
                 <ColumnDefinition Width="0*" x:Name="_col2"/>
             </Grid.ColumnDefinitions>
-
+            
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
