@@ -15,6 +15,7 @@
 	<UserControl.Resources>
 		<Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True" />
 		<ReusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
+	    <ReusableConverters:EmptyStringVisibilityConverter x:Key="DisplayIfNotEmptyString" HideOnEmpty="True" IsHidden="True"/>
 	</UserControl.Resources>
 
 	<UserControl.DataContext>
@@ -119,7 +120,7 @@
 					</Grid.ColumnDefinitions>
 
 					<!-- Ravorite, Rating, Support Commands -->
-					<StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Visibility="{Binding TrackName, Converter={StaticResource DisplayIfNotEmptyString}}">
 						<!--  Favorites and ratings  -->
 						<StackPanel x:Name="_ratingPanel" Orientation="Horizontal">
 							<CheckBox x:Name="_favoriteControl" Margin="3,0,5,0" VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}"
@@ -176,14 +177,14 @@
 					</StackPanel>
 
 					<!--  Playing Position  -->
-					<Grid Grid.Column="1">
+                    <Grid Grid.Column="1" Visibility="{Binding TrackName, Converter={StaticResource DisplayIfNotEmptyString}}">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="*"/>
 						</Grid.ColumnDefinitions>
 
 						<!-- Textual Play Position -->
-						<StackPanel Grid.Column="0" Margin="17,0,0,0" Orientation="Horizontal">
+                        <StackPanel Grid.Column="0" Margin="17,0,0,0" Orientation="Horizontal">
 							<TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" VerticalAlignment="Center" Text="Position:" />
 							<TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold"
                                        Foreground="{DynamicResource SignatureBrush}"

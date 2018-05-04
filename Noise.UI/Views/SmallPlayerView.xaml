@@ -30,6 +30,7 @@
         <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter" />
         <ValueConverters:PlayQueueTrackNameConverter x:Key="PlayQueueTrackNameConverter" />
         <ReusableConverters:EmptyStringVisibilityConverter x:Key="CollapseIfEmptyString" HideOnEmpty="False" IsHidden="False"/>
+        <ReusableConverters:EmptyStringVisibilityConverter x:Key="DisplayIfNotEmptyString" HideOnEmpty="True" IsHidden="False"/>
 
         <DataTemplate x:Key="AfterTemplate">
             <Rectangle Fill="{DynamicResource SignatureBrush}" Margin="0,4,-4,4"/>
@@ -89,7 +90,7 @@
                 <!--Slider Grid.Column="1" Margin="7,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
                         Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0" Value="{Binding Path=TrackPosition, Mode=TwoWay}"
                         Style="{StaticResource PlayerPositionSliderStyle}"/-->
-                <NoiseControls:TrackSlider Grid.Row="0" Margin="7,3,7,0" Height="11" VerticalAlignment="Center"
+                <NoiseControls:TrackSlider Grid.Row="0" Margin="7,3,7,0" Height="11" VerticalAlignment="Center" Visibility="{Binding TrackName, Converter={StaticResource DisplayIfNotEmptyString}}"
                                            BeforeTemplate="{StaticResource BeforeTemplate}" ThumbTemplate="{StaticResource ThumbTemplate}" AfterTemplate="{StaticResource AfterTemplate}"
                                            Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0" SmoothedValue="{Binding Path=TrackPosition, Mode=TwoWay}"/>
 
@@ -122,7 +123,7 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Track Time -->
-                    <StackPanel Grid.Column="0" Margin="5,0,0,0" Orientation="Horizontal">
+                    <StackPanel Grid.Column="0" Margin="5,0,0,0" Orientation="Horizontal" Visibility="{Binding TrackName, Converter={StaticResource DisplayIfNotEmptyString}}">
                         <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Position: "/>
                         <TextBlock Width="35" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Foreground="{DynamicResource SignatureBrush}"
                                    Text="{Binding TrackTime, Converter={StaticResource TimeSpanConverter}}">
