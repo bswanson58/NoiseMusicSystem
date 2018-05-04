@@ -24,10 +24,14 @@ namespace Noise.UI.ViewModels {
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 		private readonly ILibraryBuilder		mLibraryBuilder;
 		private readonly IDialogService			mDialogService;
-		private TaskHandler						mLibraryOpenTask;  
 		private	readonly InteractionRequest<LibraryConfigurationInfo>	mLibraryConfigurationRequest;
 		private readonly BindableCollection<LibraryConfiguration>		mLibraries;
+	    private TaskHandler						mLibraryOpenTask;  
 		private string							mDatabaseStatistics;
+
+	    public  string                                      LibraryStatistics => ( mDatabaseStatistics );
+	    public  BindableCollection<LibraryConfiguration>    LibraryList => ( mLibraries );
+	    public  IInteractionRequest                         LibraryConfigurationRequest => ( mLibraryConfigurationRequest );
 
 		public LibrarySelectorViewModel( IEventAggregator eventAggregator, IDialogService dialogService,
 										 ILibraryConfiguration libraryConfiguration, ILibraryBuilder libraryBuilder, IUiLog log ) {
@@ -39,8 +43,9 @@ namespace Noise.UI.ViewModels {
 
 			mLibraryConfigurationRequest = new InteractionRequest<LibraryConfigurationInfo>();
 			mLibraries = new BindableCollection<LibraryConfiguration>();
-			mDatabaseStatistics = string.Empty;
+
 			LoadLibraries();
+		    SetLibraryStatistics( mLibraryBuilder.LibraryStatistics );
 
 			mEventAggregator.Subscribe( this );
 		}
@@ -61,7 +66,7 @@ namespace Noise.UI.ViewModels {
 
 				return( mLibraryOpenTask );
 			}
-			set{ mLibraryOpenTask = value; }
+			set => mLibraryOpenTask = value;
 		}
 
 		private void OpenLibrary( long libraryId ) {
@@ -88,21 +93,18 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Handle( Events.DatabaseStatisticsUpdated message ) {
-			mDatabaseStatistics = string.Format( "Artists: {0}, Albums: {1}", message.DatabaseStatistics.ArtistCount, message.DatabaseStatistics.AlbumCount );
-			RaisePropertyChanged( () => LibraryStatistics );
+            SetLibraryStatistics( message.DatabaseStatistics );
 		}
 
-		public string LibraryStatistics {
-			get {  return( mDatabaseStatistics ); }
-		}
+        private void SetLibraryStatistics( IDatabaseStatistics statistics ) {
+            mDatabaseStatistics = $"Artists: {statistics.ArtistCount}, Albums: {statistics.AlbumCount}";
 
-		public BindableCollection<LibraryConfiguration> LibraryList {
-			get{ return( mLibraries ); }
-		} 
+            RaisePropertyChanged( () => LibraryStatistics );
+        }
 
-		public LibraryConfiguration CurrentLibrary {
-			get{ return( mLibraryConfiguration.Current ); }
-			set {
+	    public LibraryConfiguration CurrentLibrary {
+			get => ( mLibraryConfiguration.Current );
+	        set {
 				if( mLibraryConfiguration.Current != value ) {
 					OpenLibrary( value.LibraryId );
 				}
@@ -129,10 +131,6 @@ namespace Noise.UI.ViewModels {
 			catch( Exception ex ) {
 				mLog.LogException( "Executing Library Configuration", ex );
 			}
-		}
-
-		public IInteractionRequest LibraryConfigurationRequest {
-			get{ return( mLibraryConfigurationRequest ); }
 		}
 	}
 }
