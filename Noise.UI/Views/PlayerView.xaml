@@ -97,7 +97,7 @@
                                FontFamily="Webdings" FontSize="21.333" Foreground="Red" Text="x"
                                Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
 
-					<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" Command="{Binding Path=Mute}" />
+					<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" FontSize="18" Command="{Binding Path=Mute}" />
 
 					<NoiseControls:VuMeter Grid.Column="1" Margin="0,7,7,0" Foreground="{DynamicResource SignatureBrush}"
                                            LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" />
@@ -170,7 +170,7 @@
 						</StackPanel>
 
 						<!--  Track related commands  -->
-						<Button Margin="9,0,0,0" Padding="4" Style="{StaticResource QueueButtonStyle}" Command="{Binding TrackInformation}"
+						<Button Margin="9,0,0,0" Padding="5" Style="{StaticResource QueueButtonStyle}" Command="{Binding TrackInformation}"
 						        Content="{StaticResource Path_Information}" ToolTip="Sync Artist and Album display" />
 						<Button Margin="5,0,0,0" Padding="4" Style="{StaticResource QueueButtonStyle}" Command="{Binding RequestSimilarSongSearch}" 
 						        Content="{StaticResource Path_SimilarTracks}" ToolTip="Find Similar Tracks" />

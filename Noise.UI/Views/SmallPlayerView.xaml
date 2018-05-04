@@ -170,7 +170,7 @@
                                FontFamily="Webdings" FontSize="21.333" Foreground="Red" IsHitTestVisible="False" Text="x"
                                Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
                     <Button Grid.Column="2" Style="{StaticResource SmallPlayerButton}" HorizontalAlignment="Center" VerticalAlignment="Center"
-                            Command="{Binding Path=Mute}" Content="X" FontFamily="Webdings" FontSize="16" />
+                            Command="{Binding Path=Mute}" Content="X" FontFamily="Webdings" FontSize="18" />
 
                     <!-- Switch to Application -->
                     <Button Grid.Column="3" Style="{StaticResource SmallPlayerButton}" Margin="1,0,3,0" Padding="6" HorizontalAlignment="Center" VerticalAlignment="Center"

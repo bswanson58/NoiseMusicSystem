@@ -238,7 +238,7 @@
 													 Style="{StaticResource NoiseRatingStyle}" />
 
 						<!--  Track related commands  -->
-						<Button Grid.Column="2" Margin="9,0,0,0" Style="{StaticResource QueueButtonStyle}" Padding="4"
+						<Button Grid.Column="2" Margin="9,0,0,0" Style="{StaticResource QueueButtonStyle}" Padding="5"
 								Command="{Binding TrackInformation}" Content="{StaticResource Path_Information}" ToolTip="Sync Artist and Album display" />
 						<Button Grid.Column="3" Margin="5,0,0,0" Style="{StaticResource QueueButtonStyle}" Padding="4"
 								Command="{Binding RequestSimilarSongSearch}" Content="{StaticResource Path_SimilarTracks}" ToolTip="Find Similar Tracks" />
@@ -301,7 +301,7 @@
 						<TextBlock Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="1" 
                                    FontFamily="Webdings" FontSize="21.333" Foreground="Red" IsHitTestVisible="False" Text="x"
 								   Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
-						<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" Command="{Binding Path=Mute}"/>
+						<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" FontSize="18" Content="X" Command="{Binding Path=Mute}"/>
 
 						<!-- Audio Device Selection -->
 						<TextBlock Grid.Column="1" Margin="9,0,3,0" VerticalAlignment="Center" Text="Device:"/>
