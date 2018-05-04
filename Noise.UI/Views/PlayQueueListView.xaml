@@ -142,7 +142,7 @@
 							</Grid.ColumnDefinitions>
 
 							<Grid Grid.Column="0">
-								<TextBlock Margin="0,1,0,0" FontFamily="WebDings" FontSize="22" Foreground="LightGreen" Text="4"
+								<TextBlock FontFamily="WebDings" FontSize="22" Foreground="{StaticResource PlayingBrush}" Text="4"
 										   Visibility="{Binding Path=QueuedTrack.IsPlaying, Converter={StaticResource BooleanVisibilityConverter}}" />
 								<TextBlock Margin="7,3,0,0" FontSize="14" FontWeight="Bold" Foreground="Red" Text="!"
 										   Visibility="{Binding Path=QueuedTrack.IsFaulted, Converter={StaticResource BooleanVisibilityConverter}}" />

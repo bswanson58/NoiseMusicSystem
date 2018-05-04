@@ -30,6 +30,7 @@
     <Color x:Key="PlayButtonMouseOverStroke">#FF00F000</Color>
 
     <Color x:Key="PlayButtonPressedFill">#FF008600</Color>
+    <SolidColorBrush x:Key="PlayingBrush" Color="{StaticResource PlayButtonMouseOverFill}"/>
     
     <Style x:Key="StartupFontStyle" TargetType="Control">
 		<Setter Property="FontFamily" Value="Arial"/>
