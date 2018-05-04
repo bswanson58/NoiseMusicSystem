@@ -212,16 +212,21 @@
                     <!-- Now playing -->
 					<Grid Grid.Row="0" Margin="5,0,0,0" VerticalAlignment="Center">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
+						    <ColumnDefinition Width="Auto" />
+						    <ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 
-						<TextBlock Grid.Column="0" FontSize="16" FontWeight="Bold" Text="Now Playing: "
+						<TextBlock Grid.Column="0" FontSize="16" FontWeight="Bold" Style="{StaticResource SmallTitleStyle}" Text="Now Playing: "
 								   Visibility="{Binding TrackName, Converter={StaticResource EmptyStringVisibilityConverter}}" />
-						<TextBlock Grid.Column="1" FontSize="16" FontWeight="Bold" ReusableBehaviours:FadeTrimming.IsEnabled="True"
-								   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-								   Text="{Binding TrackName}" />
-					</Grid>
+                        <TextBlock Grid.Column="1" FontSize="16" FontWeight="Bold" Style="{StaticResource SmallTitleStyle}" Foreground="{DynamicResource SignatureBrush}" 
+                                   Text="{Binding TrackName}" />
+					    <TextBlock Grid.Column="2" FontSize="14" Margin="3,0" Style="{StaticResource SmallTitleStyle}" Foreground="{DynamicResource SignatureBrush}"
+					               ReusableBehaviours:FadeTrimming.IsEnabled="True"
+					               ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+					               ReusableBehaviours:FadeTrimming.ForegroundColor="{DynamicResource SignatureColor}"
+					               Text="{Binding ArtistAlbumName}" />
+                    </Grid>
 
 					<Grid Grid.Row="1" Margin="5,0,0,0"
 						  Behaviours:GridUtils.ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto,Auto">

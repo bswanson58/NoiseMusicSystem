@@ -63,10 +63,11 @@
 									<ColumnDefinition Width="*"/>
 								</Grid.ColumnDefinitions>
 
-								<TextBlock Grid.Column="0" VerticalAlignment="Bottom" Style="{StaticResource MediumTitleStyle}" Text="{Binding TrackName}" />
-								<TextBlock Grid.Column="1" Margin="0,0,0,3" VerticalAlignment="Bottom" Style="{StaticResource SmallTitleStyle}"
+								<TextBlock Grid.Column="0" VerticalAlignment="Bottom" Style="{StaticResource MediumTitleStyle}" Foreground="{DynamicResource SignatureBrush}" Text="{Binding TrackName}" />
+								<TextBlock Grid.Column="1" Margin="0,0,0,3" VerticalAlignment="Bottom" Style="{StaticResource SmallTitleStyle}" Foreground="{DynamicResource SignatureBrush}"
                                            ReusableBehaviours:FadeTrimming.IsEnabled="True"
                                            ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                                           ReusableBehaviours:FadeTrimming.ForegroundColor="{DynamicResource SignatureColor}"
                                            Text="{Binding ArtistAlbumName}" />
 							</Grid>
 						</Grid>
