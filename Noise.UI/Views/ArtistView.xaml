@@ -128,13 +128,13 @@
 									d:LayoutOverrides="Width">
 							<Button Margin="0,0,11,0" Style="{StaticResource GeneralButtonStyle}" 
 									Content="Play Top Tracks" Command="{Binding PlayTopTracks}" ToolTip="Play the top tracks by this artist"/>
-							<Button Margin="0,0,5,0" Padding="3" HorizontalAlignment="Center" VerticalAlignment="Top" Style="{StaticResource GeneralButtonStyle}" 
+							<Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}" 
 									Command="{Binding DisplayArtistInfoPanel}" Content="{StaticResource Path_Artist}" ToolTip="Display Artist Information" />
-							<Button Margin="0,0,5,0" Padding="3" Style="{StaticResource GeneralButtonStyle}"
+							<Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}"
 									Command="{Binding DisplayAlbumInfoPanel}" Content="{StaticResource Path_Album}" ToolTip="Display Album Information" />
-							<Button Margin="0,0,11,0" Padding="3" Style="{StaticResource GeneralButtonStyle}"
+							<Button Margin="0,0,11,0" Style="{StaticResource PathButtonStyle}"
 									Command="{Binding DisplayArtistTracksPanel}" Content="{StaticResource Path_Music}" ToolTip="Display All Artist Tracks" />
-							<Button Padding="3" Style="{StaticResource GeneralButtonStyle}"
+							<Button Style="{StaticResource PathButtonStyle}"
 									Command="{Binding EditArtist}" Content="{StaticResource Path_Edit}" ToolTip="Edit Artist Properties" />
 						</StackPanel>
 
