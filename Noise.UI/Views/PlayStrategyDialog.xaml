@@ -5,7 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 Width="750"
-			 Height="225"
+			 Height="235"
 			 Tag="Play Strategy Configuration"
 			 mc:Ignorable="d">
 
