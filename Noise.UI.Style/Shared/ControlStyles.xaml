@@ -11,6 +11,7 @@
 	<SolidColorBrush x:Key="TrimColor" Color="#FF878787" />
 	<SolidColorBrush x:Key="BorderColor" Color="#FFD0D0D0" />
 	<SolidColorBrush x:Key="BorderTextColor" Color="#FFA0A0A0"/>
+    <SolidColorBrush x:Key="PopupBackground" Color="#FFB0B0B0"/>
 
     <!-- Blue palette
     <Color x:Key="PlayButtonNormalFill">#FFA7C6FF</Color>
