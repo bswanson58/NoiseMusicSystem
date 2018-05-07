@@ -10,6 +10,7 @@
 
 	<UserControl.Resources>
 		<DataTemplate x:Key="AfterTemplate">
+            <Rectangle Fill="{DynamicResource SignatureBrush}"/>
 		</DataTemplate>
 
 		<DataTemplate x:Key="ThumbTemplate">
