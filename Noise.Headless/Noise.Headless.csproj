@@ -130,12 +130,12 @@
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bass.dll" "$(TargetDir)"
-copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bass_aac.dll" "$(TargetDir)"
-copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bass_fx.dll" "$(TargetDir)"
-copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bassflac.dll" "$(TargetDir)"
-copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bassmix.dll" "$(TargetDir)"
-copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\basswma.dll" "$(TargetDir)"
+    <PostBuildEvent>copy "$(SolutionDir)lib\BASS.Net\v2.4.13.8\$(PlatformName)\bass.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\BASS.Net\v2.4.13.8\$(PlatformName)\bass_aac.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\BASS.Net\v2.4.13.8\$(PlatformName)\bass_fx.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\BASS.Net\v2.4.13.8\$(PlatformName)\bassflac.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\BASS.Net\v2.4.13.8\$(PlatformName)\bassmix.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\BASS.Net\v2.4.13.8\$(PlatformName)\basswma.dll" "$(TargetDir)"
 copy "$(SolutionDir)lib\ReplayGain\$(PlatformName)\ReplayGain.dll" "$(TargetDir)"
 copy "$(SolutionDir)Noise.Core\Resources\EqPresets.xml" "$(TargetDir)"
 copy "$(SolutionDir)Noise.Core\Resources\LicenseKeys.xml" "$(TargetDir)"</PostBuildEvent>
