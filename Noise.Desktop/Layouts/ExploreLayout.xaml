@@ -4,8 +4,6 @@
 			 xmlns:Regions="http://www.codeplex.com/CompositeWPF">
 	
 	<UserControl.Resources>
-		<SolidColorBrush x:Key="AccentBrush" Color="#FF588CE0"/>
-
 		<Storyboard x:Key="AlbumInfoOutgoingStoryboard">
 			<DoubleAnimation Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" From="1.0" To="0.9" Duration="0:0:0.3"/>
 			<DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.3"/>
@@ -58,7 +56,7 @@
 
 					<ContentControl Grid.Row="0" Regions:RegionManager.RegionName="LibrarySelector" />
 
-					<TabControl Grid.Row="1" Margin="1,7,3,-2" BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="LeftPanel"
+					<TabControl Grid.Row="1" Margin="1,7,3,-2" BorderThickness="0" Background="Transparent" TabStripPlacement="Top" Regions:RegionManager.RegionName="LeftPanel"
 								ContentTemplate="{StaticResource TabTemplate}" ItemContainerStyle="{StaticResource TabControlStyle}" />
 				</Grid>
 
@@ -88,7 +86,7 @@
 							  ResizeDirection="Columns"
 							  Style="{DynamicResource GridSplitterVerticalStyle}" />
 
-				<TabControl Grid.Column="2" Margin="0,3,0,-2"  BorderThickness="0" TabStripPlacement="Top" Regions:RegionManager.RegionName="RightPanel"
+                <TabControl Grid.Column="2" Margin="0,3,0,-2" BorderThickness="0" Background="Transparent" TabStripPlacement="Top" Regions:RegionManager.RegionName="RightPanel"
 							ContentTemplate="{StaticResource TabTemplate}"  ItemContainerStyle="{StaticResource TabControlStyle}" />
 			</Grid>
 
