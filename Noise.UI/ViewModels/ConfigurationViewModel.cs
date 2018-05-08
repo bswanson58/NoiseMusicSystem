@@ -69,7 +69,6 @@ namespace Noise.UI.ViewModels {
 
             EnableGlobalHotkeys = interfacePreferences.EnableGlobalHotkeys;
             EnableRemoteAccess = corePreferences.EnableRemoteAccess;
-            EnableSpeechCommands = corePreferences.EnableSpeechCommands;
             EnableSortPrefixes = interfacePreferences.EnableSortPrefixes;
             HasNetworkAccess = corePreferences.HasNetworkAccess;
             LoadLastLibraryOnStartup = corePreferences.LoadLastLibraryOnStartup;
@@ -90,7 +89,6 @@ namespace Noise.UI.ViewModels {
             var corePreferences = mPreferences.Load<NoiseCorePreferences>();
             
             corePreferences.EnableRemoteAccess = EnableRemoteAccess;
-            corePreferences.EnableSpeechCommands = EnableSpeechCommands;
             corePreferences.HasNetworkAccess = HasNetworkAccess;
             corePreferences.LoadLastLibraryOnStartup = LoadLastLibraryOnStartup;
 

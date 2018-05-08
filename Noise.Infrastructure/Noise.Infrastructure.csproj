@@ -281,7 +281,6 @@
     <Compile Include="Interfaces\ISidecarProvider.cs" />
     <Compile Include="Interfaces\ISidecarUpdater.cs" />
     <Compile Include="Interfaces\ISidecarWriter.cs" />
-    <Compile Include="Interfaces\ISpeechRecognizer.cs" />
     <Compile Include="Interfaces\IStorageFileProvider.cs" />
     <Compile Include="Interfaces\IStorageFolderProvider.cs" />
     <Compile Include="Interfaces\IStorageFolderSupport.cs" />

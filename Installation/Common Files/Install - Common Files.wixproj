@@ -150,14 +150,6 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\..\Noise.Speech\Noise.Speech.csproj">
-      <Name>Noise.Speech</Name>
-      <Project>{d4b67dae-5e32-4360-86b2-7a7dc1dd2a81}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
     <ProjectReference Include="..\..\Noise.UI\Noise.UI.csproj">
       <Name>Noise.UI</Name>
       <Project>{d9f288a7-a0ef-4237-a9d6-ba9cce9c9c09}</Project>

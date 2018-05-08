@@ -28,9 +28,6 @@
     <Component Id="Noise.RemoteHost" Guid="f82346d0-3331-4e4d-8a9f-be8b3f149ef8">
       <File Id="Noise.RemoteHost.dll" DiskId="10" Source="$(var.Noise.RemoteHost.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
-    <Component Id="Noise.Speech" Guid="fa08e8fc-669f-40f2-9ece-8760eb1ab891">
-      <File Id="Noise.Speech.dll" DiskId="10" Source="$(var.Noise.Speech.TargetPath)" KeyPath="yes" Checksum="yes" />
-    </Component>
     <Component Id="Noise.UI" Guid="382bd861-7acc-4da5-b170-67d12ad72ad3">
       <File Id="Noise.UI.dll" DiskId="10" Source="$(var.Noise.UI.TargetPath)" KeyPath="yes" Checksum="yes" />
     </Component>
@@ -58,7 +55,6 @@
     <ComponentRef Id="Noise.Metadata"/>
     <ComponentRef Id="Noise.RavenDatabase" />
     <ComponentRef Id="Noise.RemoteHost" />
-    <ComponentRef Id="Noise.Speech" />
     <ComponentRef Id="Noise.UI" />
     <ComponentRef Id="ReusableBits" />
     <ComponentRef Id="ReusableBits.Mvvm" />

@@ -31,7 +31,6 @@ namespace Noise.Core {
 							 IAudioController audioController,
 							 IPlayController playController,
 							 ISearchProvider searchProvider,
-							 ISpeechRecognizer speechRecognizer,
 							 ITagManager tagManager,
 							 IMetadataManager metadataManager,
 							 IEnumerable<IRequireConstruction> backgroundComponents ) {
