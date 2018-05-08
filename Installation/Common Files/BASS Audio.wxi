@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-  <?define BassLibraryFolder="$(var.SolutionDir)\lib\BASS.Net\v2.4.10\"?>
+  <?define BassLibraryFolder="$(var.SolutionDir)\lib\BASS.Net\v2.4.13.8\"?>
   
   <?if $(var.Noise.Core.Platform) = "x64" ?>
-  <?define BassPlatformLibraryFolder="$(var.SolutionDir)\lib\BASS.Net\v2.4.10\x64\"?>
+  <?define BassPlatformLibraryFolder="$(var.SolutionDir)\lib\BASS.Net\v2.4.13.8\x64\"?>
   <?else ?>
-  <?define BassPlatformLibraryFolder="$(var.SolutionDir)\lib\BASS.Net\v2.4.10\x86\"?>
+  <?define BassPlatformLibraryFolder="$(var.SolutionDir)\lib\BASS.Net\v2.4.13.8\x86\"?>
   <?endif ?>
 
   <DirectoryRef Id="INSTALLDIRECTORY">
