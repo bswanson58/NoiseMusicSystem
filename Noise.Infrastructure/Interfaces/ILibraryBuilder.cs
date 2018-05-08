@@ -15,5 +15,6 @@ namespace Noise.Infrastructure.Interfaces {
 		void	LogLibraryStatistics();
 
 		IEnumerable<string>	RootFolderList();
+	    IDatabaseStatistics LibraryStatistics {get; }
 	}
 }

@@ -17,13 +17,9 @@
 	<UserControl.Resources>
 		<sys:Int32 x:Key="valueOfOne">1</sys:Int32>
 
-		<SolidColorBrush x:Key="ListBorder" Color="#828790" />
 		<Style x:Key="NonScrollingTreeView" TargetType="{x:Type TreeView}">
-			<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-			<Setter Property="BorderBrush" Value="{StaticResource ListBorder}" />
 			<Setter Property="BorderThickness" Value="1" />
 			<Setter Property="Padding" Value="1" />
-			<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
 			<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
 			<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
 			<Setter Property="ScrollViewer.PanningMode" Value="Both" />
@@ -131,8 +127,6 @@
 								</Grid.ColumnDefinitions>
 
 								<Border Grid.Column="0"
-										Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-										BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
 										BorderThickness="1">
 									<TextBlock HorizontalAlignment="Center"
 											   VerticalAlignment="Center"
@@ -143,8 +137,6 @@
 								<Border Grid.Column="1"
 										Grid.ColumnSpan="2"
 										Margin="-1,0,0,0"
-										Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-										BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
 										BorderThickness="1">
 									<TextBlock HorizontalAlignment="Center"
 											   VerticalAlignment="Center"
@@ -167,8 +159,6 @@
 
 								<Border Grid.Column="3"
 										Margin="-1,0,0,0"
-										Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-										BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
 										BorderThickness="1">
 									<TextBlock HorizontalAlignment="Center"
 											   VerticalAlignment="Center"
@@ -194,24 +184,20 @@
 			<StackPanel Grid.Row="1"
 						Margin="5,5,5,3"
 						Orientation="Vertical">
-				<Rectangle Height="1"
-						   Fill="{DynamicResource TrimColor}"
-						   StrokeThickness="0" />
-				<Rectangle Height="1"
-						   Fill="LightGray"
-						   StrokeThickness="0" />
+				<Rectangle Height="1" StrokeThickness="0" />
+				<Rectangle Height="1" Fill="LightGray" StrokeThickness="0" />
 			</StackPanel>
 
 			<StackPanel Grid.Row="2"
 						Margin="0,0,23,0"
 						HorizontalAlignment="Right"
 						Orientation="Horizontal">
-				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="{Binding Path=UniqueTrackCount, StringFormat={}{0:N0}}" />
-				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text=" unique of " />
-				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="{Binding Path=TrackCount, StringFormat={}{0:N0}}" />
-				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text=" tracks from " />
-				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text="{Binding Path=AlbumCount, StringFormat={}{0:N0}}" />
-				<TextBlock Foreground="{DynamicResource ControlTextColor}" Text=" albums." />
+				<TextBlock Text="{Binding Path=UniqueTrackCount, StringFormat={}{0:N0}}" />
+				<TextBlock Text=" unique of " />
+				<TextBlock Text="{Binding Path=TrackCount, StringFormat={}{0:N0}}" />
+				<TextBlock Text=" tracks from " />
+				<TextBlock Text="{Binding Path=AlbumCount, StringFormat={}{0:N0}}" />
+				<TextBlock Text=" albums." />
 			</StackPanel>
 		</Grid>
 	</GroupBox>

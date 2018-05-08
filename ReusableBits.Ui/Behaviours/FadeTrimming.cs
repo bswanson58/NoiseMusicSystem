@@ -137,6 +137,8 @@ namespace ReusableBits.Ui.Behaviours {
 			private Color DetermineForegroundColor( TextBlock textBlock ) {
 				// if our own Attached Property has been used to set an explicit foreground color, use that
 				if( GetForegroundColor( textBlock ) != Colors.Transparent ) {
+				    mTextBlock.Foreground = new SolidColorBrush { Color = GetForegroundColor( textBlock ) };
+
 					return GetForegroundColor( textBlock );
 				}
 

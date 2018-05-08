@@ -8,7 +8,6 @@ using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
 using Noise.TenFoot.Ui.ViewModels;
-using Noise.UI.ViewModels;
 using TransportViewModel = Noise.TenFoot.Ui.ViewModels.TransportViewModel;
 
 namespace Noise.TenFooter {
@@ -62,7 +61,7 @@ namespace Noise.TenFooter {
 			}
 		}
 
-		public PlayerViewModel PlayerView {
+		public TransportViewModel PlayerView {
 			get{ return( mTransportViewModel ); }
 		}
 

@@ -28,7 +28,7 @@
 		</ControlTemplate>
 
 		<DataTemplate x:Key="AlbumTemplate" DataType="{x:Type Dto:UiAlbum}">
-			<Border x:Name="AlbumPanel" Background="Transparent" BorderBrush="{DynamicResource ControlTextColor}" CornerRadius="3">
+			<Border x:Name="AlbumPanel" Background="Transparent" CornerRadius="3">
 				<Grid Margin="0,0,3,0">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto"/>
@@ -58,7 +58,7 @@
 						</Grid.ColumnDefinitions>
 
 						<StackPanel Grid.Column="1" Orientation="Horizontal">
-							<TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Foreground="{DynamicResource ControlTextColor}" Text="Tracks: " />
+							<TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Text="Tracks: " />
 							<TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding TrackCount}" />
 						</StackPanel>
 
@@ -68,7 +68,7 @@
 									<Binding Converter="{StaticResource PublishedYearConverter}" Path="PublishedYear" />
 								</MultiBinding>
 							</StackPanel.Visibility>
-							<TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Foreground="{DynamicResource ControlTextColor}" Text="Published: " />
+							<TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Text="Published: " />
 							<TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding PublishedYear, Converter={StaticResource PublishedYearConverter}}" />
 						</StackPanel>
 
@@ -120,7 +120,7 @@
 							<EasingDoubleKeyFrame KeyTime="0" Value="1" />
 						</DoubleAnimationUsingKeyFrames>
 						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(FrameworkElement.Height)">
-							<EasingDoubleKeyFrame KeyTime="0" Value="300" />
+							<EasingDoubleKeyFrame KeyTime="0" Value="115" />
 						</DoubleAnimationUsingKeyFrames>
 					</Storyboard>
 				</VisualState>
@@ -159,8 +159,8 @@
 					<ColumnDefinition Width="2*"/>
 				</Grid.ColumnDefinitions>
 
-				<Button Grid.Column="0" Margin="3" Height="21" Padding="3" HorizontalAlignment="Left" Command="{Binding Path=ToggleSortDisplay}"
-						Style="{StaticResource GeneralButtonStyle}" Content="{StaticResource Path_SortOrder}"
+				<Button Grid.Column="0" Margin="3" Height="21" HorizontalAlignment="Left" Command="{Binding Path=ToggleSortDisplay}"
+						Style="{StaticResource PathButtonStyle}" Content="{StaticResource Path_SortOrder}"
 						ToolTip="Set Album Sort Order" />
 
 				<TextBox Grid.Column="1" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"

@@ -8,7 +8,6 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 Height="200"
-			 d:DesignHeight="200"
 			 d:DesignWidth="600"
 			 mc:Ignorable="d">
 
@@ -37,7 +36,7 @@
 	</i:Interaction.Behaviors>
 
 	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Album ">
-		<Border Background="{DynamicResource TreeItemBackground}" BorderThickness="0" CornerRadius="5"
+		<Border BorderThickness="0" CornerRadius="5"
 				Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}">
 			<Grid Background="{StaticResource NoiseBrush}" 
 				  Behaviours:GridUtils.ColumnDefinitions="Auto,*">
@@ -138,7 +137,7 @@
 					</StackPanel>
 
 					<!--  Album commands  -->
-					<StackPanel Grid.Row="7" Height="24" HorizontalAlignment="Right" Orientation="Horizontal">
+					<StackPanel Grid.Row="7" Height="28" HorizontalAlignment="Right" Orientation="Horizontal">
 
 						<!-- Display either the play volume/volume list or play all controls based on the HasMultipleVolumes property -->
 						<StackPanel Orientation="Horizontal" Margin="0,0,9,0"
@@ -149,16 +148,16 @@
 						<StackPanel Orientation="Horizontal" Margin="0,0,11,0"
 									Visibility="{Binding Path=HasMultipleVolumes, Converter={StaticResource VisibleIfTrue}}">
 							<Button Margin="0,0,5,0" Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayVolume}"/>
-							<ComboBox MinWidth="97" ItemsSource="{Binding VolumeNames}" SelectedItem="{Binding CurrentVolumeName}"/>
+							<ComboBox MinWidth="97" Style="{StaticResource GeneralComboStyle}" ItemsSource="{Binding VolumeNames}" SelectedItem="{Binding CurrentVolumeName}"/>
 						</StackPanel>
 						
-						<Button Margin="0,0,5,0" Padding="4" Style="{StaticResource GeneralButtonStyle}"
+						<Button Margin="0,0,5,0" Padding="3,5" Style="{StaticResource PathButtonStyle}"
 								Command="{Binding Path=OpenAlbumFolder}" Content="{StaticResource Path_Folder}" ToolTip="Open Album Folder" />
-						<Button Margin="0,0,5,0" Padding="4" Style="{StaticResource GeneralButtonStyle}"
+						<Button Margin="0,0,5,0" Padding="3,5" Style="{StaticResource PathButtonStyle}"
 								Command="{Binding DisplayPictures}" Content="{StaticResource Path_Pictures}" ToolTip="Display Album Extras" />
-						<Button Margin="0,0,5,0" Padding="3" Style="{StaticResource GeneralButtonStyle}"
+						<Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}"
 								Command="{Binding EditCategories}" Content="{StaticResource Path_Categories}" ToolTip="Edit Album Categories" />
-						<Button Margin="0,0,0,0" Padding="3" Style="{StaticResource GeneralButtonStyle}"
+						<Button Margin="0,0,0,0" Style="{StaticResource PathButtonStyle}"
 								Command="{Binding Path=EditAlbum}" Content="{StaticResource Path_Edit}" ToolTip="Edit Album Properties" />
 					</StackPanel>
 				</Grid>

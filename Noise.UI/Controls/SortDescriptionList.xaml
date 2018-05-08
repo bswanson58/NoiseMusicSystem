@@ -4,31 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             Height="140" Width="155"
+             >
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5"/>
-            <ColumnDefinition Width="175"/>
-            <ColumnDefinition Width="5"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Border BorderThickness="1" CornerRadius="3" Background="{StaticResource PopupBackground}">
+        <Grid Margin="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <Border Grid.Row="1" Grid.Column="1" BorderThickness="1" CornerRadius="3" Background="WhiteSmoke">
-            <Grid Margin="7,3">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <TextBlock Grid.Row="0" Margin="3,5,0,0" Text="Sort by:"/>
+            <TextBlock Grid.Row="0" Margin="3,5,0,0" Text="Sort by:"/>
                 
-                <ListBox Grid.Row="1" Margin="5" BorderThickness="0" DisplayMemberPath="DisplayName"
-                         ItemsSource="{Binding Path=SortDescriptions}" SelectedItem="{Binding Path=SelectedSortDescription, Mode=TwoWay}"/>
-            </Grid>
-        </Border>
-    </Grid>
+            <ListBox Grid.Row="1" Margin="5" BorderThickness="0" DisplayMemberPath="DisplayName"
+                        ItemsSource="{Binding Path=SortDescriptions}" SelectedItem="{Binding Path=SelectedSortDescription, Mode=TwoWay}"/>
+        </Grid>
+    </Border>
 </UserControl>

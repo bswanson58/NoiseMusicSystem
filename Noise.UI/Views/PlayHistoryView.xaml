@@ -55,59 +55,5 @@
 				 ItemTemplate="{StaticResource HistoryListItem}"
 				 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 				 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
-
-		<!--ListView ItemsSource="{Binding Path=HistoryList}" BorderThickness="0"
-				  Behaviours:GridViewSort.AutoSort="True"
-				  Behaviours:ListViewColumns.Stretch="true">
-			<ListView.ItemContainerStyle>
-				<Style TargetType="{x:Type ListViewItem}">
-					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-					<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-				</Style>
-			</ListView.ItemContainerStyle>
-			<ListView.View>
-				<GridView>
-					<GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
-						<GridViewColumn.CellTemplate>
-							<DataTemplate>
-								<Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayTrack}">
-									<Button.CommandParameter>
-										<Binding Path="Track"/>
-									</Button.CommandParameter>
-								</Button>
-							</DataTemplate>
-						</GridViewColumn.CellTemplate>
-					</GridViewColumn>
-					<GridViewColumn Header="Track Name"  Behaviours:GridViewSort.PropertyName="Track.Name">
-						<GridViewColumn.CellTemplate>
-							<DataTemplate>
-								<StackPanel Orientation="Horizontal">
-									<TextBlock Text="{Binding Path=Track.Name}"/>
-									<TextBlock Text=" - ("/>
-									<TextBlock Text="{Binding Path=Artist.Name}"/>
-									<TextBlock Text="/"/>
-									<TextBlock Text="{Binding Path=Album.Name}"/>
-									<TextBlock Text=")"/>
-								</StackPanel>
-							</DataTemplate>
-						</GridViewColumn.CellTemplate>
-					</GridViewColumn>
-					<GridViewColumn Header="Last Played" Width="140"  Behaviours:GridViewSort.PropertyName="PlayedOn">
-						<GridViewColumn.CellTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding Path=PlayedOn, Converter={StaticResource RelativeTimeConverter}}" TextAlignment="Right" />
-							</DataTemplate>
-						</GridViewColumn.CellTemplate>
-					</GridViewColumn>
-					<GridViewColumn Header="Play Count" Width="90"  Behaviours:GridViewSort.PropertyName="Track.PlayCount">
-						<GridViewColumn.CellTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding Path=Track.PlayCount}" TextAlignment="Right" />
-							</DataTemplate>
-						</GridViewColumn.CellTemplate>
-					</GridViewColumn>
-				</GridView>
-			</ListView.View>
-		</ListView-->
 	</GroupBox>
 </UserControl>

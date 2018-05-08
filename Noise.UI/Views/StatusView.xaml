@@ -5,9 +5,8 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:Controls="clr-namespace:ReusableBits.Ui.Controls;assembly=ReusableBits.Ui"
 			 xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-			 xmlns:Views="clr-namespace:Noise.UI.Views"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="25" d:DesignWidth="700"
+			 d:DesignWidth="700"
 			 Height="25">
 	
 	<UserControl.Resources>
@@ -17,21 +16,13 @@
 			<Setter Property="Margin" Value="0" />
 		</Style>
 
-		<Style x:Key="PathForegroundSetter" TargetType="ContentPresenter">
-			<Style.Resources>
-				<Style TargetType="{x:Type Path}">
-					<Setter Property="Fill" Value="{StaticResource SignatureColor}"/>
-				</Style>
-			</Style.Resources>
-		</Style>
-
 		<DataTemplate x:Key="GeneralStatusTemplate" DataType="Controls:StatusMessage">
 			<TextBlock Foreground="LightGray" FontSize="12" Text="{Binding Message}"/>
 		</DataTemplate>
 
 		<DataTemplate x:Key="SpeechStatusTemplate" DataType="Controls:StatusMessage">
 			<StackPanel Orientation="Horizontal">
-				<ContentPresenter Margin="0,1" Style="{StaticResource PathForegroundSetter}" Content="{StaticResource Path_Microphone}"/>
+				<ContentPresenter Margin="0,1" Content="{StaticResource Path_Microphone}"/>
 				<TextBlock Foreground="LightGray" FontSize="12" Text="{Binding Message}"/>
 			</StackPanel>
 		</DataTemplate>
@@ -42,7 +33,7 @@
 		<Binding Path="StatusViewModel" Source="{StaticResource ViewModelLocator}" />
 	</UserControl.DataContext>
 
-	<StatusBar VerticalAlignment="Bottom" Background="{DynamicResource AccentBrush}" Behaviours:ViewAttachedNotifier.NotifyCommand="{Binding ViewAttached}">
+	<StatusBar VerticalAlignment="Bottom" Behaviours:ViewAttachedNotifier.NotifyCommand="{Binding ViewAttached}">
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>

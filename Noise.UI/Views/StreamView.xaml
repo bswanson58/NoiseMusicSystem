@@ -16,13 +16,9 @@
             </Grid.RowDefinitions>
 
             <ListView Grid.Row="0" BorderThickness="0" ItemsSource="{Binding Path=StreamList}" SelectedItem="{Binding Path=CurrentStream}"
-              Behaviours:ListViewColumns.Stretch="true"
-              Behaviours:GridViewSort.AutoSort="True">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListView.ItemContainerStyle>
+                      ItemContainerStyle="{StaticResource ListViewItemStretch}"
+                      Behaviours:ListViewColumns.Stretch="true"
+                      Behaviours:GridViewSort.AutoSort="True">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">

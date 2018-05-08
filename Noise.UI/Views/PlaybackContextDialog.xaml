@@ -5,7 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 mc:Ignorable="d"
 			 Tag="Playback Context"
-			 Height="150"
+			 Height="160"
 			 Width="450"
 			 >
 	<Grid Margin="15">
@@ -17,12 +17,12 @@
 		</Grid.RowDefinitions>
 		
 		<StackPanel Grid.Row="0" Orientation="Horizontal">
-			<TextBlock VerticalAlignment="Center">Set the following values when playing the current</TextBlock>
-			<ComboBox Margin="5,0,0,0" ItemsSource="{Binding ContextTypes}" SelectedItem="{Binding CurrentContext}" DisplayMemberPath="ContextName"/>
+			<TextBlock VerticalAlignment="Center" Margin="0,0,3,0">Set the following values when playing the current:</TextBlock>
+			<ComboBox Margin="5,0,0,0" Width="100" ItemsSource="{Binding ContextTypes}" SelectedItem="{Binding CurrentContext}" DisplayMemberPath="ContextName"/>
 		</StackPanel>
 
 		<StackPanel Grid.Row="1" Margin="15,0,0,0" Orientation="Horizontal">
-			<TextBlock Text="titled: '"/>
+			<TextBlock Text="Entitled: '"/>
 			<TextBlock Text="{Binding ContextDescription}"/>
 			<TextBlock Text="'"/>
 		</StackPanel>

@@ -41,7 +41,6 @@
 		<DataTemplate x:Key="ArtistTemplate" DataType="{x:Type Dto:UiArtist}">
 			<Border x:Name="ArtistPanel"
 				Background="Transparent"
-				BorderBrush="{DynamicResource ControlTextColor}"
 				CornerRadius="3">
 				<Grid>
 					<Grid.RowDefinitions>
@@ -71,7 +70,7 @@
 					</StackPanel>
 
 					<StackPanel Grid.Row="1" Grid.Column="0" Margin="11,0,0,0" Orientation="Horizontal">
-						<TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Foreground="{DynamicResource ControlTextColor}" Text="Albums: " />
+						<TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Text="Albums: " />
 						<TextBlock x:Name="AlbumCount" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding AlbumCount, StringFormat={}{0:N0}}" />
 					</StackPanel>
 
@@ -113,7 +112,7 @@
 							<EasingDoubleKeyFrame KeyTime="0" Value="1" />
 						</DoubleAnimationUsingKeyFrames>
 						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(FrameworkElement.Height)">
-							<EasingDoubleKeyFrame KeyTime="0" Value="300" />
+							<EasingDoubleKeyFrame KeyTime="0" Value="140" />
 						</DoubleAnimationUsingKeyFrames>
 					</Storyboard>
 				</VisualState>
@@ -143,8 +142,8 @@
 					<ColumnDefinition Width="2*"/>
 				</Grid.ColumnDefinitions>
 
-				<Button Grid.Column="0" Margin="3" Height="21" Padding="3" HorizontalAlignment="Left" Command="{Binding Path=ToggleSortDisplay}"
-						Style="{StaticResource GeneralButtonStyle}" Content="{StaticResource Path_SortOrder}"
+				<Button Grid.Column="0" Margin="3" Height="21" HorizontalAlignment="Left" Command="{Binding Path=ToggleSortDisplay}"
+						Style="{StaticResource PathButtonStyle}" Content="{StaticResource Path_SortOrder}"
 						ToolTip="Set Artist Sort Order" />
 
 				<TextBox Grid.Column="1" Margin="0,3" FontSize="14" BorderBrush="{StaticResource BorderColor}" Style="{StaticResource WaterMarkTextBox}"

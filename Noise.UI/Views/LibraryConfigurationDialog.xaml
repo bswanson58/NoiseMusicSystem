@@ -4,8 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 mc:Ignorable="d" 
-			 d:DesignHeight="300" d:DesignWidth="300"
-			 Height="240" Width="600"
+			 Height="265" Width="600"
 			 Tag="Library Configuration"
 		>
 	<Grid>
@@ -18,7 +17,7 @@
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="*"/>
 				</Grid.RowDefinitions>
 				
 				<StackPanel Grid.Row="0" Margin="5" Orientation="Horizontal">
@@ -57,7 +56,7 @@
 
 						<CheckBox Grid.Column="1" Grid.Row="3" Margin="3" Content="Is Default Library" IsChecked="{Binding IsDefaultLibrary}"/>
 
-						<Button Grid.Column="1" Grid.Row="4" Style="{StaticResource GeneralButtonStyle}" Margin="0,9" Width="65" HorizontalAlignment="Right"
+						<Button Grid.Column="1" Grid.Row="4" Style="{StaticResource GeneralButtonStyle}" Margin="0,5,0,0" Width="65" HorizontalAlignment="Right"
 							Content="Update" Command="{Binding UpdateConfiguration}"/>
 					</Grid>
 				</GroupBox>

@@ -6,7 +6,7 @@
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
              mc:Ignorable="d" 
-             d:DesignHeight="55" d:DesignWidth="400"
+             d:DesignHeight="75" d:DesignWidth="400"
              Height="55">
 
     <UserControl.DataContext>
@@ -19,7 +19,7 @@
                                                      InteractionRequest="{Binding Path=LibraryConfigurationRequest}" />
     </i:Interaction.Behaviors>
 
-    <GroupBox Margin="3,0,5,0"  Style="{StaticResource SectionBorderStyle}" Header=" Libraries ">
+    <GroupBox Margin="3,0,5,0"  Style="{DynamicResource SectionBorderStyle}" Header=" Libraries ">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -55,9 +55,9 @@
                 </ContentControl.ContentTemplate>
             </ContentControl>
 
-            <Button Grid.Column="2" Height="25" Width="25" Margin="2,3" Padding="1" Style="{StaticResource GeneralButtonStyle}" ToolTip="Sync Library"
+            <Button Grid.Column="2" Height="25" Width="25" Margin="2,3" Padding="1" ToolTip="Sync Library" Style="{StaticResource PathButtonStyle}"
                     Command="{Binding Path=UpdateLibrary}" Content="{StaticResource Path_Sync}"/>
-            <Button Grid.Column="3" Height="25" Width="25" Margin="2,3" Style="{StaticResource GeneralButtonStyle}" ToolTip="Configure Libraries"
+            <Button Grid.Column="3" Height="25" Width="25" Margin="2,3" ToolTip="Configure Libraries" Style="{StaticResource PathButtonStyle}" Padding="3"
                     Command="{Binding Path=LibraryConfiguration}" Content="{StaticResource Path_Configure}"/>
         </Grid>
     </GroupBox>
