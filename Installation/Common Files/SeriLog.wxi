@@ -4,13 +4,21 @@
 		<Component Id="SeriLog.dll" Guid="6d6a2f2b-90e5-4e1c-a3de-9b44d5f013b6">
 			<File Id="SeriLog.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)SeriLog.dll" KeyPath="yes" Checksum="yes" />
 		</Component>
-		<Component Id="SeriLog.FullNetFx.dll" Guid="5f1dfd48-3b04-44f4-bc30-9478a0322ba4">
-			<File Id="SeriLog.FullNetFx.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)SeriLog.FullNetFx.dll" KeyPath="yes" Checksum="yes" />
-		</Component>
+	  <Component Id="SeriLog.Enrichers.Process.dll" Guid="bd36ab01-0547-4d3d-9665-9f0eb4ae66f9">
+	    <File Id="SeriLog.Enrichers.Process.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)SeriLog.Enrichers.Process.dll" KeyPath="yes" Checksum="yes" />
+	  </Component>
+    <Component Id="SeriLog.Sinks.File.dll" Guid="68133add-44c7-4604-a425-3b55501aabe5">
+      <File Id="SeriLog.Sinks.File.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)SeriLog.Sinks.File.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+	  <Component Id="SeriLog.Sinks.RollingFile.dll" Guid="6f3c16f4-cdbd-4e62-817d-41eef8179633">
+	    <File Id="SeriLog.Sinks.RollingFile.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)SeriLog.Sinks.RollingFile.dll" KeyPath="yes" Checksum="yes" />
+	  </Component>
 	</DirectoryRef>
 
 	<ComponentGroup Id="SeriLogFiles">
-		<ComponentRef Id="SeriLog.dll" />
-		<ComponentRef Id="SeriLog.FullNetFx.dll" />
+    <ComponentRef Id="SeriLog.dll" />
+	  <ComponentRef Id="SeriLog.Enrichers.Process.dll" />
+    <ComponentRef Id="SeriLog.Sinks.File.dll" />
+	  <ComponentRef Id="SeriLog.Sinks.RollingFile.dll" />
 	</ComponentGroup>
 </Include>
