@@ -84,8 +84,8 @@ namespace Noise.UI.Tests.Models {
 			var artist = new DbArtist { Name = "artist name" };
 			var album = new DbAlbum { Artist = artist.DbId, Name = "album name" };
 
-			testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( artist.DbId ) ).Returns( artist );
-			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( album.DbId ) ).Returns( album );
+		    testable.Mock<IArtistProvider>().Setup( m => m.GetArtist( artist.DbId )).Returns( artist );
+			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( album.DbId )).Returns( album );
 
 			var sut = testable.ClassUnderTest;
 			sut.Handle( new Events.AlbumFocusRequested( album ));
