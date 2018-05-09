@@ -39,7 +39,7 @@ namespace Noise.UI.ViewModels {
 
 			LoadAlbums( args.AlbumList );
 
-			mEventAggregator.Publish( new Events.ArtistFocusRequested( Constants.cDatabaseNullOid ));
+			mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( Constants.cDatabaseNullOid ));
 		}
 		
 		public void Handle( Events.DatabaseClosing args ) {
@@ -57,8 +57,8 @@ namespace Noise.UI.ViewModels {
 				Set( () => SelectedAlbum, value );
 
 				if( value != null ) {
-					mEventAggregator.Publish( new Events.ArtistFocusRequested( value.Artist.DbId ));
-					mEventAggregator.Publish( new Events.AlbumFocusRequested( value.Artist.DbId, value.Album.DbId ));
+					mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( value.Artist.DbId ));
+					mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( value.Artist.DbId, value.Album.DbId ));
 				}
 			}
 		}

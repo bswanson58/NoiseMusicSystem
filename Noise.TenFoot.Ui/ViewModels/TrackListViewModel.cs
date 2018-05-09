@@ -73,7 +73,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		protected override void DequeueItem() {
-			EventAggregator.Publish( new Input.Events.DequeueTrack( SelectedItem ));
+			EventAggregator.PublishOnUIThread( new Input.Events.DequeueTrack( SelectedItem ));
 		}
 	}
 }

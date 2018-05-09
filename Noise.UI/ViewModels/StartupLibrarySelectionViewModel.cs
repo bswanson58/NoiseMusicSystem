@@ -49,7 +49,7 @@ namespace Noise.UI.ViewModels {
 			IsLoading = true;
 
 			await mLibraryConfiguration.AsyncOpen( configuration );
-			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
+			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
 
 			if( AlwaysOpenLastUsedLibrary ) {
 				var preferences = mPreferences.Load<NoiseCorePreferences>();
@@ -68,11 +68,11 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_CreateLibrary() {
-			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.LibraryCreationLayout ));
+			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.LibraryCreationLayout ));
 		}
 
 		public void Execute_Exit() {
-			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
+			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
 		}
 	}
 }

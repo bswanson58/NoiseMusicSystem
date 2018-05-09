@@ -56,7 +56,7 @@ namespace Noise.Core.DataProviders {
 					}
 
 					mSidecarUpdater.UpdateSidecar( mArtistProvider.GetArtist( forArtist.DbId ));
-					mEventAggregator.Publish( new Events.ArtistUserUpdate( forArtist.DbId ));
+					mEventAggregator.PublishOnUIThread( new Events.ArtistUserUpdate( forArtist.DbId ));
 				}
 			}
 			catch( Exception ex ) {
@@ -81,7 +81,7 @@ namespace Noise.Core.DataProviders {
 							albumUpdater.Update();
 						}
 
-						mEventAggregator.Publish( new Events.AlbumUserUpdate( forAlbum.DbId ));
+						mEventAggregator.PublishOnUIThread( new Events.AlbumUserUpdate( forAlbum.DbId ));
 					}
 
 					using( var artistUpdater = mArtistProvider.GetArtistForUpdate( forAlbum.Artist )) {
@@ -91,7 +91,7 @@ namespace Noise.Core.DataProviders {
 								artistUpdater.Update();
 							}
 
-							mEventAggregator.Publish( new Events.ArtistUserUpdate( forAlbum.Artist ));
+							mEventAggregator.PublishOnUIThread( new Events.ArtistUserUpdate( forAlbum.Artist ));
 						}
 					}
 
@@ -128,7 +128,7 @@ namespace Noise.Core.DataProviders {
 								albumUpdater.Update();
 							}
 
-							mEventAggregator.Publish( new Events.AlbumUserUpdate( forTrack.Album ));
+							mEventAggregator.PublishOnUIThread( new Events.AlbumUserUpdate( forTrack.Album ));
 
 							using( var artistUpdater = mArtistProvider.GetArtistForUpdate( albumUpdater.Item.Artist )) {
 								if( artistUpdater.Item != null ) {
@@ -137,7 +137,7 @@ namespace Noise.Core.DataProviders {
 										artistUpdater.Update();
 									}
 
-									mEventAggregator.Publish( new Events.ArtistUserUpdate( albumUpdater.Item.Artist ));
+									mEventAggregator.PublishOnUIThread( new Events.ArtistUserUpdate( albumUpdater.Item.Artist ));
 								}
 							}
 						}
@@ -146,7 +146,7 @@ namespace Noise.Core.DataProviders {
 					var track = mTrackProvider.GetTrack( forTrack.DbId );
 
 					mSidecarUpdater.UpdateSidecar( track );
-					mEventAggregator.Publish( new Events.TrackUserUpdate( track ));
+					mEventAggregator.PublishOnUIThread( new Events.TrackUserUpdate( track ));
 				}
 			}
 			catch( Exception ex ) {
@@ -173,7 +173,7 @@ namespace Noise.Core.DataProviders {
 					}
 
 					mSidecarUpdater.UpdateSidecar( mArtistProvider.GetArtist( forArtist.DbId ));
-					mEventAggregator.Publish( new Events.ArtistUserUpdate( forArtist.DbId ));
+					mEventAggregator.PublishOnUIThread( new Events.ArtistUserUpdate( forArtist.DbId ));
 				}
 			}
 			catch( Exception ex ) {
@@ -207,12 +207,12 @@ namespace Noise.Core.DataProviders {
 								updater.Update();
 							}
 
-							mEventAggregator.Publish( new Events.ArtistUserUpdate( forAlbum.Artist ));
+							mEventAggregator.PublishOnUIThread( new Events.ArtistUserUpdate( forAlbum.Artist ));
 						}
 					}
 
 					mSidecarUpdater.UpdateSidecar( mAlbumProvider.GetAlbum( forAlbum.DbId ));
-					mEventAggregator.Publish( new Events.AlbumUserUpdate( forAlbum.DbId ));
+					mEventAggregator.PublishOnUIThread( new Events.AlbumUserUpdate( forAlbum.DbId ));
 				}
 			}
 			catch( Exception ex ) {
@@ -246,7 +246,7 @@ namespace Noise.Core.DataProviders {
 								albumUpdater.Update();
 							}
 
-							mEventAggregator.Publish( new Events.AlbumUserUpdate( forTrack.Album ));
+							mEventAggregator.PublishOnUIThread( new Events.AlbumUserUpdate( forTrack.Album ));
 
 							using( var artistUpdater = mArtistProvider.GetArtistForUpdate( albumUpdater.Item.Artist )) {
 								if( artistUpdater.Item != null ) {
@@ -256,7 +256,7 @@ namespace Noise.Core.DataProviders {
 										artistUpdater.Update();
 									}
 
-									mEventAggregator.Publish( new Events.ArtistUserUpdate( albumUpdater.Item.Artist ));
+									mEventAggregator.PublishOnUIThread( new Events.ArtistUserUpdate( albumUpdater.Item.Artist ));
 								}
 							}
 						}
@@ -265,7 +265,7 @@ namespace Noise.Core.DataProviders {
 					var track = mTrackProvider.GetTrack( forTrack.DbId );
 
 					mSidecarUpdater.UpdateSidecar( track );
-					mEventAggregator.Publish( new Events.TrackUserUpdate( track ));
+					mEventAggregator.PublishOnUIThread( new Events.TrackUserUpdate( track ));
 				}
 			}
 			catch( Exception ex ) {

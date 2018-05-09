@@ -12,7 +12,7 @@ namespace Noise.Core.Logging {
 		}
 
 		private void LogStatus( string statusMessage, bool extended = false ) {
-			mEventAggregator.Publish( new Events.StatusEvent( statusMessage ) { ExtendDisplay = extended });
+			mEventAggregator.PublishOnUIThread( new Events.StatusEvent( statusMessage ) { ExtendDisplay = extended });
 		}
 
 		public void BuiltDecadeTags( DbArtist artist ) {

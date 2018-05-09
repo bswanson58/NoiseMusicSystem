@@ -143,7 +143,7 @@ namespace Noise.Core.DataBuilders {
 
 								mLog.LogSummaryArtistCompleted( artistUpdater.Item );
 								artistUpdater.Update();
-								mEventAggregator.Publish( new Events.ArtistContentUpdated( artistUpdater.Item.DbId ));
+								mEventAggregator.PublishOnUIThread( new Events.ArtistContentUpdated( artistUpdater.Item.DbId ));
 
 								if( mStop ) {
 									break;

@@ -171,7 +171,7 @@ namespace Noise.Core.DataBuilders {
 							mArtistProvider.DeleteArtist( artist );
 
 							mLog.LogRemovingArtist( artist );
-							mEventAggregator.Publish( new Events.ArtistRemoved( artist.DbId ));
+							mEventAggregator.PublishOnUIThread( new Events.ArtistRemoved( artist.DbId ));
 
 							mSummary.ArtistsRemoved++;
 						}
@@ -195,7 +195,7 @@ namespace Noise.Core.DataBuilders {
 							mAlbumProvider.DeleteAlbum( album );
 
 							mLog.LogRemovingAlbum( album );
-							mEventAggregator.Publish( new Events.AlbumRemoved( album.DbId ));
+							mEventAggregator.PublishOnUIThread( new Events.AlbumRemoved( album.DbId ));
 
 							mSummary.AlbumsRemoved++;
 						}

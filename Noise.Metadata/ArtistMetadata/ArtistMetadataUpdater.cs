@@ -186,7 +186,7 @@ namespace Noise.Metadata.ArtistMetadata {
 			}
 
 			if( updated ) {
-				mEventAggregator.Publish( new Events.ArtistMetadataUpdated( artistStatus.ArtistName ));
+				mEventAggregator.PublishOnUIThread( new Events.ArtistMetadataUpdated( artistStatus.ArtistName ));
 			}
 		}
 	}

@@ -170,16 +170,16 @@ namespace Noise.UI.ViewModels {
 		private void DisplayQueueItemInfo( UiPlayQueueTrack track ) {
 			if( track.QueuedTrack.Artist != null ) {
 				if( track.QueuedTrack.Album != null ) {
-					mEventAggregator.Publish( new Events.AlbumFocusRequested( track.QueuedTrack.Artist.DbId, track.QueuedTrack.Album.DbId ));
+					mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( track.QueuedTrack.Artist.DbId, track.QueuedTrack.Album.DbId ));
 				}
 				else {
-					mEventAggregator.Publish( new Events.ArtistFocusRequested( track.QueuedTrack.Artist.DbId ));
+					mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( track.QueuedTrack.Artist.DbId ));
 				}
 			}
 		}
 
 		private void PlayQueueTrack( UiPlayQueueTrack track ) {
-			mEventAggregator.Publish( new Events.PlayQueuedTrackRequest( track.QueuedTrack ));
+			mEventAggregator.PublishOnUIThread( new Events.PlayQueuedTrackRequest( track.QueuedTrack ));
 		}
 
 		private void PlayFromQueueTrack( UiPlayQueueTrack track ) {

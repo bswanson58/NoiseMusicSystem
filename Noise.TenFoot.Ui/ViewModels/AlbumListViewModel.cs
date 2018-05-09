@@ -67,7 +67,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		protected override void DisplayItem() {
 			mAlbumTrackList.SetContext( SelectedItem );
-			EventAggregator.Publish( new Input.Events.NavigateToScreen( mAlbumTrackList ));
+			EventAggregator.PublishOnUIThread( new Input.Events.NavigateToScreen( mAlbumTrackList ));
 		}
 
 		protected override void EnqueueItem() {
@@ -75,7 +75,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		protected override void DequeueItem() {
-			EventAggregator.Publish( new Input.Events.DequeueAlbum( SelectedItem ));
+			EventAggregator.PublishOnUIThread( new Input.Events.DequeueAlbum( SelectedItem ));
 		}
 	}
 }

@@ -53,6 +53,9 @@ namespace Noise.Desktop {
 		}
 
 		protected override void ConfigureContainer() {
+		    // Caliburn Micro dispatcher initialize.
+		    PlatformProvider.Current = new XamlPlatformProvider();
+
 			Container.RegisterType<Shell, Shell>();
 
 			base.ConfigureContainer();

@@ -199,7 +199,7 @@ namespace Noise.UI.ViewModels {
 
 			RequestArtist( artistId );
 
-			mEventAggregator.Publish( new Events.ArtistContentRequest( artistId ));
+			mEventAggregator.PublishOnUIThread( new Events.ArtistContentRequest( artistId ));
 		}
 
 		private void RequestArtist( long artistId ) {
@@ -267,7 +267,7 @@ namespace Noise.UI.ViewModels {
 		private void OnWebsiteRequested( long id ) {
 			if(( CurrentArtist != null ) &&
 			   (!string.IsNullOrWhiteSpace( CurrentArtist.Website ))) {
-				mEventAggregator.Publish( new Events.UrlLaunchRequest( CurrentArtist.Website ));
+				mEventAggregator.PublishOnUIThread( new Events.UrlLaunchRequest( CurrentArtist.Website ));
 			}
 		}
 
@@ -348,7 +348,7 @@ namespace Noise.UI.ViewModels {
 		private void DisplayArtistInfoPanel() {
 			var request = new Events.ViewDisplayRequest( ViewNames.ArtistInfoView );
 
-			mEventAggregator.Publish( request );
+			mEventAggregator.PublishOnUIThread( request );
 
 			ArtistInfoViewOpen = request.ViewWasOpened;
 		}
@@ -361,7 +361,7 @@ namespace Noise.UI.ViewModels {
 		public void Execute_DisplayAlbumInfoPanel() {
 			var request = new Events.ViewDisplayRequest( ViewNames.AlbumInfoView );
 
-			mEventAggregator.Publish( request );
+			mEventAggregator.PublishOnUIThread( request );
 
 			AlbumInfoViewOpen = request.ViewWasOpened;
 		}
@@ -374,7 +374,7 @@ namespace Noise.UI.ViewModels {
 		public void Execute_DisplayArtistTracksPanel() {
 			var request = new Events.ViewDisplayRequest( ViewNames.ArtistTracksView );
 
-			mEventAggregator.Publish( request );
+			mEventAggregator.PublishOnUIThread( request );
 
 			ArtistTracksViewOpen = request.ViewWasOpened;
 		}

@@ -78,7 +78,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 					}
 				}
 
-				mEventAggregator.Publish( new Events.DatabaseOpened());
+				mEventAggregator.PublishOnUIThread( new Events.DatabaseOpened());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( string.Format( "Database could not be opened {0}", mLibraryConfiguration.Current ), ex );
@@ -86,7 +86,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 		}
 
 		private void CloseDatabase() {
-			mEventAggregator.Publish( new Events.DatabaseClosing());
+			mEventAggregator.PublishOnUIThread( new Events.DatabaseClosing());
 
 			if( mContextProvider.BlobStorageManager.IsOpen ) {
 				mContextProvider.BlobStorageManager.CloseStorage();

@@ -94,7 +94,7 @@ namespace Noise.UI.ViewModels {
 		private void OnWebsiteClick( UiInternetStream stream ) {
 			if(( stream != null ) &&
 			   (!string.IsNullOrWhiteSpace( stream.Website ))) {
-				mEventAggregator.Publish( new Events.UrlLaunchRequest( stream.Website ));
+				mEventAggregator.PublishOnUIThread( new Events.UrlLaunchRequest( stream.Website ));
 			}
 		}
 

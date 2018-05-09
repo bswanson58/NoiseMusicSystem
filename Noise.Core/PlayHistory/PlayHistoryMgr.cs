@@ -104,7 +104,7 @@ namespace Noise.Core.PlayHistory {
 
 					TrimHistoryList();
 
-					mEventAggregator.Publish( new Events.PlayHistoryChanged( this ));
+					mEventAggregator.PublishOnUIThread( new Events.PlayHistoryChanged( this ));
 
 					if( track.Artist != null ) {
 						using( var updater = mArtistProvider.GetArtistForUpdate( track.Artist.DbId )) {
@@ -115,7 +115,7 @@ namespace Noise.Core.PlayHistory {
 							}
 						}
 
-						mEventAggregator.Publish( new Events.ArtistPlayed( track.Artist.DbId ));
+						mEventAggregator.PublishOnUIThread( new Events.ArtistPlayed( track.Artist.DbId ));
 					}
 				}
 				catch( Exception ex) {

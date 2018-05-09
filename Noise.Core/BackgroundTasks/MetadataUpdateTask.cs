@@ -57,7 +57,7 @@ namespace Noise.Core.BackgroundTasks {
 
 								updater.Update();
 
-								mEventAggregator.Publish( new Events.ArtistContentUpdated( artist.DbId ));
+								mEventAggregator.PublishOnUIThread( new Events.ArtistContentUpdated( artist.DbId ));
 							}
 						}
 					}

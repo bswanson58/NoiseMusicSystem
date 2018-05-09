@@ -58,7 +58,7 @@ namespace Noise.Librarian.ViewModels {
 
 		public void Execute_BackupLibrary() {
 			if( mCurrentLibrary != null ) {
-				mEventAggregator.Publish( new ProgressEvent( 0.0, true ));
+				mEventAggregator.PublishOnUIThread( new ProgressEvent( 0.0, true ));
 
 				mLibrarian.BackupLibrary( mCurrentLibrary, OnBackupProgress );
 			}
@@ -77,7 +77,7 @@ namespace Noise.Librarian.ViewModels {
 			Progress = args.Progress;
 			ProgressActive = !args.Completed;
 
-			mEventAggregator.Publish( new ProgressEvent( (double)args.Progress / 1000, !args.Completed ));
+			mEventAggregator.PublishOnUIThread( new ProgressEvent( (double)args.Progress / 1000, !args.Completed ));
 		}
 
 		public string ProgressPhase {

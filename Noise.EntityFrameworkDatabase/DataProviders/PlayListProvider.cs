@@ -39,7 +39,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		}
 
 		private void FireListChanged( DbPlayList playList ) {
-			mEventAggregator.Publish( new Events.PlayListChanged( playList ));
+			mEventAggregator.PublishOnUIThread( new Events.PlayListChanged( playList ));
 		}
 	}
 }

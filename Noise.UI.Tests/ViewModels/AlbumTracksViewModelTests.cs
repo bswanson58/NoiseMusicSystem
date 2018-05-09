@@ -49,9 +49,6 @@ namespace Noise.UI.Tests.ViewModels {
 	public class AlbumTracksViewModelTests {
 		[SetUp]
 		public void Setup() {
-			// Set the ui dispatcher to run on the current thread.
-			Caliburn.Micro.Execute.ResetWithoutDispatcher();
-
 			// Set up the AutoMapper configurations.
 			MappingConfiguration.Configure();
 		}

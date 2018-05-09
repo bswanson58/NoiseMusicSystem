@@ -130,7 +130,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		protected override void DisplayItem() {
 			mAlbumsList.SetContext( SelectedItem );
-			EventAggregator.Publish( new Input.Events.NavigateToScreen( mAlbumsList ));
+			EventAggregator.PublishOnUIThread( new Input.Events.NavigateToScreen( mAlbumsList ));
 		}
 	}
 }

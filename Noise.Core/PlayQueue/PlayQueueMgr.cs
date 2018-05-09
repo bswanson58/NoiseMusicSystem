@@ -247,7 +247,7 @@ namespace Noise.Core.PlayQueue {
 																	   ( queueTrack.Track.DbId == eventArgs.Track.DbId ))) {
 				queueTrack.UpdateTrack( eventArgs.Track );
 
-				mEventAggregator.Publish( new Events.PlaybackTrackUpdated( queueTrack ));
+				mEventAggregator.PublishOnUIThread( new Events.PlaybackTrackUpdated( queueTrack ));
 			}
 		}
 
@@ -688,7 +688,7 @@ namespace Noise.Core.PlayQueue {
 			if( mPlayExhaustedStrategy != null ) {
 				mPlayExhaustedStrategy.Initialize( this, parameters );
 
-				mEventAggregator.Publish( new Events.PlayExhaustedStrategyChanged( mPlayExhaustedStrategy.StrategyId, parameters ));
+				mEventAggregator.PublishOnUIThread( new Events.PlayExhaustedStrategyChanged( mPlayExhaustedStrategy.StrategyId, parameters ));
 			}
 
 			var preferences = mPreferences.Load<NoiseCorePreferences>();
@@ -707,7 +707,7 @@ namespace Noise.Core.PlayQueue {
 		}
 
 		private void FirePlayQueueChanged() {
-			mEventAggregator.Publish( new Events.PlayQueueChanged( this ));
+			mEventAggregator.PublishOnUIThread( new Events.PlayQueueChanged( this ));
 		}
 	}
 }

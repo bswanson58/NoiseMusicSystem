@@ -88,7 +88,7 @@ namespace Noise.Core {
 		}
 
 		public void Shutdown() {
-			mEvents.Publish( new Events.SystemShutdown());
+			mEvents.PublishOnUIThread( new Events.SystemShutdown());
 
 			mRemoteServer.CloseRemoteServer();
 			mLibraryBuilder.StopLibraryUpdate();

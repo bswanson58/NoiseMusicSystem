@@ -54,7 +54,7 @@ namespace Noise.RavenDatabase.Support {
 				// Complete the initial database creation, set the IsOpen flag.
 				GetLibraryDatabase();
 
-				mEventAggregator.Publish( new Events.DatabaseOpened());
+				mEventAggregator.PublishOnUIThread( new Events.DatabaseOpened());
 			}
 		}
 

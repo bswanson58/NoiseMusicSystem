@@ -258,15 +258,15 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnSimilarArtistClicked( long artistId ) {
-			mEventAggregator.Publish( new Events.ArtistFocusRequested( artistId ));
+			mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( artistId ));
 		}
 
 		private void OnTopTrackClicked( long albumId ) {
-			mEventAggregator.Publish( new Events.AlbumFocusRequested( mCurrentArtistId, albumId ));
+			mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( mCurrentArtistId, albumId ));
 		}
 
 //		private void OnTopAlbumClicked( long albumId ) {
-//			mEventAggregator.Publish( new Events.AlbumFocusRequested( mCurrentArtistId, albumId ));
+//			mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( mCurrentArtistId, albumId ));
 //		}
 
 		public void Handle( Events.ViewDisplayRequest eventArgs ) {

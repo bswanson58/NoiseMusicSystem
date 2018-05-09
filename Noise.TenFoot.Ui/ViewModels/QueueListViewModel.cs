@@ -75,7 +75,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		private void DequeueItem() {
 			if( QueueList.Any()) {
 				if( SelectedItem != null ) {
-					EventAggregator.Publish( new Events.DequeueTrack( SelectedItem.QueuedTrack.Track ));
+					EventAggregator.PublishOnUIThread( new Events.DequeueTrack( SelectedItem.QueuedTrack.Track ));
 				}
 				else {
 					var playedItems = QueueList.Count( item => item.QueuedTrack.HasPlayed );
@@ -134,7 +134,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 						break;
 
 					case InputCommand.Back:
-						EventAggregator.Publish( new Events.NavigateReturn( this, true ));
+						EventAggregator.PublishOnUIThread( new Events.NavigateReturn( this, true ));
 						break;
 				}
 			}

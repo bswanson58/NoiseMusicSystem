@@ -274,7 +274,7 @@ namespace Noise.Core.PlaySupport {
 				mLog.PlayStateTrigger( trigger );
 				mPlayStateController.Fire( trigger );
 
-				Execute.OnUIThread( () => mEventAggregator.Publish( new Events.PlaybackStatusChanged( CurrentStatus )));
+				Execute.OnUIThread( () => mEventAggregator.PublishOnUIThread( new Events.PlaybackStatusChanged( CurrentStatus )));
 			}
 			catch( Exception ex ) {
 				mLog.LogPlayStateException( "Firing state change", ex );
@@ -337,7 +337,7 @@ namespace Noise.Core.PlaySupport {
 					mCurrentStatus = value;
 
 					mLog.PlaybackStatusChanged( mCurrentStatus );
-					mEventAggregator.Publish( new Events.PlaybackStatusChanged( mCurrentStatus ));
+					mEventAggregator.PublishOnUIThread( new Events.PlaybackStatusChanged( mCurrentStatus ));
 				}
 			}
 		}
@@ -382,7 +382,7 @@ namespace Noise.Core.PlaySupport {
 			if( track != null ) {
 				mPlaybackContext.OpenContext( track.Track );
 
-				mEventAggregator.Publish( new Events.PlaybackTrackStarted( track ));
+				mEventAggregator.PublishOnUIThread( new Events.PlaybackTrackStarted( track ));
 				GlobalCommands.RequestLyrics.Execute( new LyricsRequestArgs( track.Artist, track.Track ));
 			}
 		}
@@ -857,11 +857,11 @@ namespace Noise.Core.PlaySupport {
 		}
 
 		private void FirePlaybackInfoChange() {
-			mEventAggregator.Publish( new Events.PlaybackInfoChanged());
+			mEventAggregator.PublishOnUIThread( new Events.PlaybackInfoChanged());
 		}
 
 		private void FirePlaybackTrackChanged() {
-			mEventAggregator.Publish( new Events.PlaybackTrackChanged());
+			mEventAggregator.PublishOnUIThread( new Events.PlaybackTrackChanged());
 		}
 	}
 }

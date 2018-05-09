@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Windows;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
 
 namespace ReusableBits.Mvvm.CaliburnSupport {
-	public class UnityBootstrapper<TRootViewModel> : Bootstrapper<TRootViewModel> {
+	public class UnityBootstrapper<TRootViewModel> : BootstrapperBase {
 		protected IUnityContainer Container { get; private set; }
+
+        public UnityBootstrapper() {
+            Initialize();
+        }
 
 		/// <summary>
 		/// Method for creating the window manager
@@ -17,6 +22,9 @@ namespace ReusableBits.Mvvm.CaliburnSupport {
 		public Func<IEventAggregator> CreateEventAggregator { get; set; }
 
 		protected override void Configure() {
+		    // Caliburn Micro dispatcher initialize.
+		    PlatformProvider.Current = new XamlPlatformProvider();
+
 			// allow base classes to change bootstrapper settings
 			ConfigureBootstrapper();
 
@@ -37,7 +45,13 @@ namespace ReusableBits.Mvvm.CaliburnSupport {
 			ConfigureContainer( Container );
 		}
 
-		/// <summary>
+	    protected override void OnStartup( object sender, StartupEventArgs e ) {
+	        base.OnStartup( sender, e );
+
+            DisplayRootViewFor<TRootViewModel>();
+	    }
+
+	    /// <summary>
 		/// Do not override unless you plan to full replace the logic. This is how the framework
 		/// retrieves services from the Unity container.
 		/// </summary>
@@ -99,9 +113,7 @@ namespace ReusableBits.Mvvm.CaliburnSupport {
 		protected void AddModule( Type moduleType ) {
 			var module = Container.Resolve( moduleType ) as IModule;
 
-			if( module != null ) {
-				module.Initialize();
-			}
+		    module?.Initialize();
 		}
 	}
 }

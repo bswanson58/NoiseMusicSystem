@@ -50,7 +50,7 @@ namespace Noise.Librarian.Models {
 
 				mLog.LogMessage( "Initialized LibrarianModel." );
 
-				mEventAggregator.Publish( new Events.SystemInitialized());
+				mEventAggregator.PublishOnUIThread( new Events.SystemInitialized());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Failed to Initialize", ex );
@@ -390,7 +390,7 @@ namespace Noise.Librarian.Models {
 		}
 
 		public void Shutdown() {
-			mEventAggregator.Publish( new Events.SystemShutdown());
+			mEventAggregator.PublishOnUIThread( new Events.SystemShutdown());
 
 			mLifecycleManager.Shutdown();
 			mDatabaseManager.Shutdown();

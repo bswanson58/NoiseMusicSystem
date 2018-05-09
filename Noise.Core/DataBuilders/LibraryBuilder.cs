@@ -135,7 +135,7 @@ namespace Noise.Core.DataBuilders {
 			LibraryUpdateInProgress = true;
 
 			try {
-				mEventAggregator.Publish( new Events.LibraryUpdateStarted( 0L ));
+				mEventAggregator.PublishOnUIThread( new Events.LibraryUpdateStarted( 0L ));
 
 				using( new SleepPreventer()) {
 					if( mContinueExploring ) {
@@ -177,7 +177,7 @@ namespace Noise.Core.DataBuilders {
 				LibraryUpdateInProgress = false;
 			}
 
-			mEventAggregator.Publish( new Events.LibraryUpdateCompleted( results ));
+			mEventAggregator.PublishOnUIThread( new Events.LibraryUpdateCompleted( results ));
 		}
 
 		public void LogLibraryStatistics() {
@@ -192,7 +192,7 @@ namespace Noise.Core.DataBuilders {
 			mDatabaseStatistics.GatherStatistics( allCounts );
 
 			mLog.DatabaseStatistics( mDatabaseStatistics );
-			mEventAggregator.Publish( new Events.DatabaseStatisticsUpdated( mDatabaseStatistics ));
+			mEventAggregator.PublishOnUIThread( new Events.DatabaseStatisticsUpdated( mDatabaseStatistics ));
 			mUserStatus.LibraryStatistics( mDatabaseStatistics );
 		}
 	}

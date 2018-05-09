@@ -34,13 +34,6 @@ namespace Noise.UI.Tests.ViewModels {
 
 	[TestFixture]
 	public class ArtistInfoViewModelTests {
-
-		[SetUp]
-		public void Setup() {
-			// Set the ui dispatcher to run on the current thread.
-			Execute.ResetWithoutDispatcher();
-		}
-
 		[Test]
 		public void CanCreateArtistInfoViewModel() {
 			var sut = new TestableArtistInfoViewModel().ClassUnderTest;

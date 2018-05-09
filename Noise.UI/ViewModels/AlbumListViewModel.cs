@@ -234,7 +234,7 @@ namespace Noise.UI.ViewModels {
 				Set( () => SelectedAlbum, value );
 
 				if( value != null ) {
-					mEventAggregator.Publish( new Events.AlbumFocusRequested( value.Artist, value.DbId ));
+					mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( value.Artist, value.DbId ));
 				}
 			}
 		}

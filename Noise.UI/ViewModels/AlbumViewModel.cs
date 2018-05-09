@@ -553,7 +553,7 @@ namespace Noise.UI.ViewModels {
 				var path = mStorageFolderSupport.GetAlbumPath( mCurrentAlbum.DbId );
 
 				if(!string.IsNullOrWhiteSpace( path )) {
-					mEventAggregator.Publish( new Events.LaunchRequest( path ));
+					mEventAggregator.PublishOnUIThread( new Events.LaunchRequest( path ));
 				}
 			}
 		}

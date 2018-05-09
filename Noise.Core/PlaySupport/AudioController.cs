@@ -242,7 +242,7 @@ namespace Noise.Core.PlaySupport {
 		}
 
 		private void FirePlaybackInfoChange() {
-			mEventAggregator.Publish( new Events.PlaybackInfoChanged() );
+			mEventAggregator.PublishOnUIThread( new Events.PlaybackInfoChanged() );
 		}
 	}
 }

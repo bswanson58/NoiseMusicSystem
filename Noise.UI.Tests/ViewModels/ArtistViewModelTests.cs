@@ -53,9 +53,6 @@ namespace Noise.UI.Tests.ViewModels {
 
 		[SetUp]
 		public void Setup() {
-			// Set the ui dispatcher to run on the current thread.
-			Execute.ResetWithoutDispatcher();
-
 			// Set up the AutoMapper configurations.
 			MappingConfiguration.Configure();
 		}

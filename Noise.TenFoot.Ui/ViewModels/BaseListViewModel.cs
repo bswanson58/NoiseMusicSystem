@@ -88,7 +88,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		protected virtual void Right() { }
 
 		protected virtual void Done() {
-			EventAggregator.Publish( new Events.NavigateReturn( this, true ));
+			EventAggregator.PublishOnUIThread( new Events.NavigateReturn( this, true ));
 		}
 
 		public virtual void Handle( InputEvent message ) {

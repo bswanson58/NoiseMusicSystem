@@ -392,7 +392,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_PlayerSwitch() {
-			mEventAggregator.Publish( new Events.ExternalPlayerSwitch());
+			mEventAggregator.PublishOnUIThread( new Events.ExternalPlayerSwitch());
 		}
 
 		private void OnSpectrumUpdateTimer( object sender, EventArgs args ) {
@@ -601,17 +601,17 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_StandardPlayer() {
-			mEventAggregator.Publish( new Events.StandardPlayerRequest());
+			mEventAggregator.PublishOnUIThread( new Events.StandardPlayerRequest());
 		}
 
 		public void Execute_ExtendedPlayer() {
-			mEventAggregator.Publish( new Events.ExtendedPlayerRequest());
+			mEventAggregator.PublishOnUIThread( new Events.ExtendedPlayerRequest());
 		}
 
 		public void Execute_RequestSimilarSongSearch() {
 			if(( mPlayController.CurrentTrack != null ) &&
 			   ( mPlayController.CurrentTrack.Track != null )) {
-				mEventAggregator.Publish( new Events.SimilarSongSearchRequest( mPlayController.CurrentTrack.Track.DbId ));
+				mEventAggregator.PublishOnUIThread( new Events.SimilarSongSearchRequest( mPlayController.CurrentTrack.Track.DbId ));
 			}
 		}
 
@@ -634,7 +634,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_RequestLyrics() {
 			if( mLyricsInfo != null ) {
-				mEventAggregator.Publish( new Events.SongLyricsRequest( mLyricsInfo ));
+				mEventAggregator.PublishOnUIThread( new Events.SongLyricsRequest( mLyricsInfo ));
 			}
 		}
 
@@ -644,7 +644,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_TrackInformation() {
 			if( mPlayController.CurrentTrack.Album != null ) {
-				mEventAggregator.Publish( new Events.AlbumFocusRequested( mPlayController.CurrentTrack.Album ));
+				mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( mPlayController.CurrentTrack.Album ));
 			}
 		}
 

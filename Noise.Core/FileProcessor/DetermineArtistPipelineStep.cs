@@ -39,7 +39,7 @@ namespace Noise.Core.FileProcessor {
 
 					context.Summary.ArtistsAdded++;
 
-					mEventAggregator.Publish( new Events.ArtistAdded( context.Artist.DbId ));
+					mEventAggregator.PublishOnUIThread( new Events.ArtistAdded( context.Artist.DbId ));
 					context.Log.LogArtistAdded( context.StorageFile, context.Artist );
 				}
 				else {

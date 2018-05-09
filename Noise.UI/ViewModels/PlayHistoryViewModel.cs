@@ -95,10 +95,10 @@ namespace Noise.UI.ViewModels {
 
 				if( SelectedHistory != null ) {
 					if( SelectedHistory.Artist != null ) {
-						mEventAggregator.Publish( new Events.ArtistFocusRequested( SelectedHistory.Artist.DbId ));
+						mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( SelectedHistory.Artist.DbId ));
 					}
 					if( SelectedHistory.Album != null ) {
-						mEventAggregator.Publish( new Events.AlbumFocusRequested( SelectedHistory.Album ));
+						mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( SelectedHistory.Album ));
 					}
 				}
 			}

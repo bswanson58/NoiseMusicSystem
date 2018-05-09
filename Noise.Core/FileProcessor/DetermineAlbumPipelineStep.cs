@@ -43,7 +43,7 @@ namespace Noise.Core.FileProcessor {
 							context.Artist.AlbumCount++;
 							context.Summary.AlbumsAdded++;
 
-							mEventAggregator.Publish( new Events.AlbumAdded( context.Album.DbId ));
+							mEventAggregator.PublishOnUIThread( new Events.AlbumAdded( context.Album.DbId ));
 							context.Log.LogAlbumAdded( context.StorageFile, context.Album );
 						}
 						else {

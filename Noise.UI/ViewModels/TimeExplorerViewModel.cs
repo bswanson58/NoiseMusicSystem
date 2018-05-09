@@ -100,7 +100,7 @@ namespace Noise.UI.ViewModels {
 		}
  
 		public void OnYearSelected( YearList year ) {
-			mEventAggregator.Publish( new Events.TimeExplorerAlbumFocus( year.Albums ));	
+			mEventAggregator.PublishOnUIThread( new Events.TimeExplorerAlbumFocus( year.Albums ));	
 		}
 
 		internal TaskHandler AlbumLoaderTask {

@@ -74,19 +74,19 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_LibraryLayout() {
-			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
+			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
 		}
 
 		public void Execute_ListenLayout() {
-			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ListenLayout ));
+			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ListenLayout ));
 		}
 
 		public void Execute_TimelineLayout() {
-			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.TimeExplorerLayout ));
+			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.TimeExplorerLayout ));
 		}
 
 		public void Execute_PlaybackLayout() {
-			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ListenLayout ));
+			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ListenLayout ));
 		}
 
 		private void OnImport() {

@@ -181,10 +181,10 @@ namespace Noise.UI.ViewModels {
 
 				if( mSelectedNode != null ) {
 					if( mSelectedNode.Artist != null ) {
-						mEventAggregator.Publish( new Events.ArtistFocusRequested( mSelectedNode.Artist.DbId ));
+						mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( mSelectedNode.Artist.DbId ));
 					}
 					if( mSelectedNode.Album != null ) {
-						mEventAggregator.Publish( new Events.AlbumFocusRequested( mSelectedNode.Album ));
+						mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( mSelectedNode.Album ));
 					}
 				}
 			}

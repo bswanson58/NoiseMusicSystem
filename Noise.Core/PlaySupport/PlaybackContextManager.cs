@@ -101,7 +101,7 @@ namespace Noise.Core.PlaySupport {
 		private void SetContext( PlaybackContext context ) {
 			context.WriteContext( mAudioController );
 
-			mEventAggregator.Publish( new Events.AudioParametersChanged());
+			mEventAggregator.PublishOnUIThread( new Events.AudioParametersChanged());
 		}
 	}
 }

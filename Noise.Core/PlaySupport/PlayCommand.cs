@@ -38,7 +38,7 @@ namespace Noise.Core.PlaySupport {
 		}
 
 		public Task PlayRandomArtistTracks( DbArtist artist ) {
-			return( Task.Run( () => mEventAggregator.Publish( new Events.PlayArtistTracksRandom( artist.DbId ))));
+			return( Task.Run( () => mEventAggregator.PublishOnUIThread( new Events.PlayArtistTracksRandom( artist.DbId ))));
 		}
 
 		public Task PlayTopArtistTracks( DbArtist artist ) {
@@ -90,7 +90,7 @@ namespace Noise.Core.PlaySupport {
 				try {
 					mPlayQueue.Add( album );
 
-					mEventAggregator.Publish( new Events.AlbumQueued( album ));
+					mEventAggregator.PublishOnUIThread( new Events.AlbumQueued( album ));
 				}
 				catch( Exception exception ) {
 					mLog.LogException( string.Format( "Adding album '{0}' to playback queue", album.Name ), exception );
@@ -103,7 +103,7 @@ namespace Noise.Core.PlaySupport {
 				try {
 					mPlayQueue.Add( album, volumeName );
 
-					mEventAggregator.Publish( new Events.AlbumQueued( album ));
+					mEventAggregator.PublishOnUIThread( new Events.AlbumQueued( album ));
 				}
 				catch( Exception exception ) {
 					mLog.LogException( string.Format( "Adding volume '{0}' of album '{1}' to playback queue", volumeName, album.Name ), exception );
@@ -116,7 +116,7 @@ namespace Noise.Core.PlaySupport {
 				try {
 					mPlayQueue.Add( track );
 
-					mEventAggregator.Publish( new Events.TrackQueued( track ));
+					mEventAggregator.PublishOnUIThread( new Events.TrackQueued( track ));
 				}
 				catch( Exception exception ) {
 					mLog.LogException( string.Format( "Adding track '{0}' to playback queue", track.Name ), exception );

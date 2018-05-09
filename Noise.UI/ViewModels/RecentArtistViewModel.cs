@@ -115,7 +115,7 @@ namespace Noise.UI.ViewModels {
 
 				if( value != null ) {
 					mIAskedForArtistFocus = true;
-					mEventAggregator.Publish( new Events.ArtistFocusRequested( value.DbId ));
+					mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( value.DbId ));
 					mIAskedForArtistFocus = false;
 				}
 			}

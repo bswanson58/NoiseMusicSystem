@@ -49,7 +49,7 @@ namespace Noise.UI.ViewModels {
 				Set( () => VisualStateName, value );
 
 				if( value != cViewStateClosed ) {
-					mEventAggregator.Publish( new Events.BalloonPopupOpened( ViewNames.SimilarSongView ));
+					mEventAggregator.PublishOnUIThread( new Events.BalloonPopupOpened( ViewNames.SimilarSongView ));
 				}
 			}
 		}
@@ -109,10 +109,10 @@ namespace Noise.UI.ViewModels {
 
 		private void OnNodeSelected( SearchViewNode node ) {
 			if( node.Artist != null ) {
-				mEventAggregator.Publish( new Events.ArtistFocusRequested( node.Artist.DbId ));
+				mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( node.Artist.DbId ));
 			}
 			if( node.Album != null ) {
-				mEventAggregator.Publish( new Events.AlbumFocusRequested( node.Album ));
+				mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( node.Album ));
 			}
 		}
 

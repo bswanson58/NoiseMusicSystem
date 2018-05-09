@@ -1,5 +1,4 @@
-﻿using Caliburn.Micro;
-using Microsoft.Practices.Prism.Modularity;
+﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
 using ReusableBits.Interfaces;
 using ReusableBits.Support;
@@ -10,8 +9,6 @@ namespace Noise.TenFoot.Ui {
 
 		public TenFootUiModule( IUnityContainer container ) {
 			mContainer = container;
-
-			Execute.InitializeWithDispatcher();
 		}
 
 		public void Initialize() {

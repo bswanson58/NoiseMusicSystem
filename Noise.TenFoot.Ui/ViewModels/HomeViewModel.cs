@@ -26,7 +26,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public void ProcessInput( InputEvent input ) {
 			switch( input.Command ) {
 				case InputCommand.Home:
-					EventAggregator.Publish( new Events.NavigateHome());
+					EventAggregator.PublishOnUIThread( new Events.NavigateHome());
 					break;
 
 				case InputCommand.Library:
@@ -51,7 +51,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			var screen = ( from s in ItemList where s.MenuCommand == command select s ).FirstOrDefault();
 
 			if( screen != null ) {
-				EventAggregator.Publish( new Events.NavigateToScreen( screen ));
+				EventAggregator.PublishOnUIThread( new Events.NavigateToScreen( screen ));
 			}
 		}
 	}

@@ -86,7 +86,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		private void DequeueItem() {
-			EventAggregator.Publish( new Events.DequeueTrack( SelectedItem.Track ));
+			EventAggregator.PublishOnUIThread( new Events.DequeueTrack( SelectedItem.Track ));
 		}
 
 		public void Handle( InputEvent input ) {
@@ -114,7 +114,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 					break;
 
 					case InputCommand.Back:
-						EventAggregator.Publish( new Events.NavigateReturn( this, true ));
+						EventAggregator.PublishOnUIThread( new Events.NavigateReturn( this, true ));
 						break;
 				}
 			}
