@@ -103,7 +103,7 @@ namespace Noise.RemoteHost {
 		private static RoPlayQueueTrack TransformQueueTrack( PlayQueueTrack queueTrac ) {
 			var retValue = new RoPlayQueueTrack();
 
-			Mapper.DynamicMap( queueTrac, retValue );
+			Mapper.Map( queueTrac, retValue );
 
 			return( retValue );
 		}

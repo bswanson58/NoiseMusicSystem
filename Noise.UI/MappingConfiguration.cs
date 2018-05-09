@@ -5,11 +5,9 @@ using Noise.UI.Dto;
 
 namespace Noise.UI {
 	public class ViewModelProfile : Profile {
-		public override string ProfileName {
-			get { return( "ViewModel" ); }
-		}
+		public override string ProfileName => ( "ViewModel" );
 
-		protected override void Configure() {
+	    public ViewModelProfile() {
 			CreateMap<DbArtist, UiArtist>()
 				.ForMember( dest => dest.ActiveYears, opt => opt.Ignore())
 				.ForMember( dest => dest.Genre, opt => opt.Ignore())
@@ -68,14 +66,6 @@ namespace Noise.UI {
 				.ForMember( dest => dest.UserRating, opt => opt.Ignore())
 				.ForMember( dest => dest.Version, opt => opt.Ignore())
 				.ForMember( dest => dest.ViewCount, opt => opt.Ignore());
-		}
-	}
-
-	public static class MappingConfiguration {
-		public static void Configure() {
-			Mapper.Initialize( x => x.AddProfile<ViewModelProfile>() );
-
-			Mapper.AssertConfigurationIsValid();
 		}
 	}
 }

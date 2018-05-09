@@ -33,7 +33,7 @@ namespace Noise.RemoteHost {
 		private static RoSearchResultItem TransformSearchItem( SearchResultItem searchItem ) {
 			var retValue = new RoSearchResultItem();
 
-			Mapper.DynamicMap( searchItem, retValue );
+			Mapper.Map( searchItem, retValue );
 
 			return( retValue );
 		}

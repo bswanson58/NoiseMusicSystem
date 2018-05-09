@@ -57,7 +57,7 @@ namespace Noise.RemoteHost {
 		private RoLibrary TransformLibrary( LibraryConfiguration library ) {
 			var retValue = new RoLibrary();
 
-			Mapper.DynamicMap( library, retValue );
+			Mapper.Map( library, retValue );
 
 			return( retValue );
 		}

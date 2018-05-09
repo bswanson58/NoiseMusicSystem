@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using Moq;
 using Noise.UI.Dto;
@@ -50,7 +51,8 @@ namespace Noise.UI.Tests.ViewModels {
 		[SetUp]
 		public void Setup() {
 			// Set up the AutoMapper configurations.
-			MappingConfiguration.Configure();
+		    Mapper.Initialize( cfg => cfg.AddProfiles( "Noise.Ui" ));
+		    Mapper.AssertConfigurationIsValid();
 		}
 
 		[Test]

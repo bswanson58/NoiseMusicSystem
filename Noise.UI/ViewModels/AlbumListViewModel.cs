@@ -356,7 +356,7 @@ namespace Noise.UI.ViewModels {
 			var retValue = new UiAlbum( OnPlay );
 
 			if( dbAlbum != null ) {
-				Mapper.DynamicMap( dbAlbum, retValue );
+				Mapper.Map( dbAlbum, retValue );
 			}
 
 			return ( retValue );
@@ -396,7 +396,7 @@ namespace Noise.UI.ViewModels {
 
 				if( album != null ) {
 					mChangeObserver.Release( uiAlbum );
-					Mapper.DynamicMap( album, uiAlbum );
+					Mapper.Map( album, uiAlbum );
 					mChangeObserver.Add( uiAlbum );
 				}
 			}

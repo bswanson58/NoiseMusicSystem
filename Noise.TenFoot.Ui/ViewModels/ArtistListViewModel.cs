@@ -73,7 +73,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			var retValue = new UiArtist( OnArtistSelect );
 
 			if( fromArtist != null ) {
-				Mapper.DynamicMap( fromArtist, retValue );
+				Mapper.Map( fromArtist, retValue );
 			}
 
 			return( retValue );

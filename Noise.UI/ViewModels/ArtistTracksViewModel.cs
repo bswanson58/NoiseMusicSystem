@@ -210,7 +210,7 @@ namespace Noise.UI.ViewModels {
 		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {
 			var retValue = new UiAlbum();
 
-			Mapper.DynamicMap( dbAlbum, retValue );
+			Mapper.Map( dbAlbum, retValue );
 //			retValue.DisplayGenre = mTagManager.GetGenre( dbAlbum.Genre );
 
 			return( retValue );
@@ -219,7 +219,7 @@ namespace Noise.UI.ViewModels {
 		private UiTrack TransformTrack( DbTrack dbTrack ) {
 			var retValue = new UiTrack( OnTrackPlay, null );
 
-			Mapper.DynamicMap( dbTrack, retValue );
+			Mapper.Map( dbTrack, retValue );
 
 			return( retValue );
 		}

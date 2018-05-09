@@ -215,7 +215,7 @@ namespace Noise.UI.ViewModels {
 			var retValue = new UiArtist();
 
 			if( dbArtist != null ) {
-				Mapper.DynamicMap( dbArtist, retValue );
+				Mapper.Map( dbArtist, retValue );
 				retValue.DisplayGenre = mTagManager.GetGenre( dbArtist.Genre );
 			}
 

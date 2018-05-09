@@ -301,7 +301,7 @@ namespace Noise.UI.ViewModels {
 			var retValue = new UiArtist();
 
 			if( dbArtist != null ) {
-				Mapper.DynamicMap( dbArtist, retValue );
+				Mapper.Map( dbArtist, retValue );
 				retValue.DisplayGenre = mTagManager.GetGenre( dbArtist.Genre );
 
 				if( mEnableSortPrefixes ) {
@@ -353,7 +353,7 @@ namespace Noise.UI.ViewModels {
 
 				if( artist != null ) {
 					mChangeObserver.Release( uiArtist );
-					Mapper.DynamicMap( artist, uiArtist );
+					Mapper.Map( artist, uiArtist );
 					uiArtist.DisplayGenre = mTagManager.GetGenre( artist.Genre );
 					mChangeObserver.Add( uiArtist );
 

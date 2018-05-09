@@ -25,8 +25,6 @@ namespace Noise.UI {
 
 			var resourceLoader = new ResourceProvider( "Noise.UI", "Resources" );
 			mContainer.RegisterInstance<IResourceProvider>( resourceLoader );
-
-			MappingConfiguration.Configure();
 		}
 	}
 }

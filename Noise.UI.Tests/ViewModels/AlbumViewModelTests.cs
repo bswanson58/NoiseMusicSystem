@@ -5,6 +5,7 @@ using System.Reactive.Subjects;
 using System.Windows.Input;
 using FluentAssertions;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Moq;
 using NUnit.Framework;
@@ -53,7 +54,8 @@ namespace Noise.UI.Tests.ViewModels {
 		[SetUp]
 		public void Setup() {
 			// Set up the AutoMapper configurations.
-			MappingConfiguration.Configure();
+		    Mapper.Initialize( cfg => cfg.AddProfiles( "Noise.Ui" ));
+		    Mapper.AssertConfigurationIsValid();
 		}
 
 		[Test]

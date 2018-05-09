@@ -1,4 +1,5 @@
 ﻿using System;
+using AutoMapper;
 using Microsoft.Practices.Prism;
 using Microsoft.Practices.Prism.Logging;
 using Microsoft.Practices.Prism.Modularity;
@@ -82,6 +83,9 @@ namespace Noise.AppSupport {
 
 					break;
 			}
+
+		    Mapper.Initialize( cfg => cfg.AddProfiles( "Noise.Ui", "Noise.RemoteHost" ));
+		    Mapper.AssertConfigurationIsValid();
 
 			return( true );
 		}

@@ -5,11 +5,9 @@ using Noise.Infrastructure.RemoteDto;
 
 namespace Noise.RemoteHost {
 	public class RemoteModelProfile : Profile {
-		public override string ProfileName {
-			get { return( "RemoteHostModel" ); }
-		}
+		public override string ProfileName => ( "RemoteHostModel" );
 
-		protected override void Configure() {
+	    public RemoteModelProfile() {
 			CreateMap<DbArtist, RoArtist>()
 				.ForMember( dest => dest.Genre, opt => opt.Ignore());
 
@@ -62,15 +60,6 @@ namespace Noise.RemoteHost {
 				.ForMember( dest => dest.IsDefaultLibrary, opt => opt.MapFrom( src => src.IsDefaultLibrary ))
 				.ForMember( dest => dest.LibraryName, opt => opt.MapFrom( src => src.LibraryName ))
 				.ForMember( dest => dest.MediaLocation, opt => opt.MapFrom( src => src.MediaLocations.Count > 0 ? src.MediaLocations[0].Path : "" ));
-		}
-	}
-
-	public static class MappingConfiguration {
-		public static void Configure() {
-			Mapper.AddProfile( new RemoteModelProfile());
-//			Mapper.Initialize( x => x.AddProfile<RemoteModelProfile>() );
-
-			Mapper.AssertConfigurationIsValid();
 		}
 	}
 }

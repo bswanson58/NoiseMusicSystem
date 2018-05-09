@@ -152,7 +152,7 @@ namespace Noise.UI.ViewModels {
 		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {
 			var retValue = new UiAlbum();
 
-			Mapper.DynamicMap( dbAlbum, retValue );
+			Mapper.Map( dbAlbum, retValue );
 			retValue.DisplayGenre = mTagManager.GetGenre( dbAlbum.Genre );
 
 			return( retValue );
@@ -325,7 +325,7 @@ namespace Noise.UI.ViewModels {
 			if(( mCurrentAlbum != null ) &&
 			   ( eventArgs.AlbumId == mCurrentAlbum.DbId )) {
 				mChangeObserver.Release( mCurrentAlbum );
-				Mapper.DynamicMap( mAlbumProvider.GetAlbum( eventArgs.AlbumId ), mCurrentAlbum );
+				Mapper.Map( mAlbumProvider.GetAlbum( eventArgs.AlbumId ), mCurrentAlbum );
 				mChangeObserver.Add( mCurrentAlbum );
 			}
 		}

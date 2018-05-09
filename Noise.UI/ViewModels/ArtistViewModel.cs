@@ -97,7 +97,7 @@ namespace Noise.UI.ViewModels {
 			var retValue = new UiArtist();
 
 			if( dbArtist != null ) {
-				Mapper.DynamicMap( dbArtist, retValue );
+				Mapper.Map( dbArtist, retValue );
 				retValue.DisplayGenre = mTagManager.GetGenre( dbArtist.Genre );
 
 				var artistMetadata = mMetadataManager.GetArtistMetadata( dbArtist.Name );
@@ -329,7 +329,7 @@ namespace Noise.UI.ViewModels {
 			if( confirmation.Confirmed ) {
 				using( var updater = mArtistProvider.GetArtistForUpdate( confirmation.ViewModel.DbId )) {
 					if( updater.Item != null ) {
-						Mapper.DynamicMap( confirmation.ViewModel, updater.Item );
+						Mapper.Map( confirmation.ViewModel, updater.Item );
 						updater.Update();
 					}
 				}

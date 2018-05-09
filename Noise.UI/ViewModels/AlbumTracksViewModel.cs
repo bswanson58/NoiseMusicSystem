@@ -157,7 +157,7 @@ namespace Noise.UI.ViewModels {
 			var retValue = new UiTrack( OnTrackPlay, OnTrackEdit  );
 
 			if( dbTrack != null ) {
-				Mapper.DynamicMap( dbTrack, retValue );
+				Mapper.Map( dbTrack, retValue );
 			}
 
 			return( retValue );

@@ -61,7 +61,7 @@ namespace Noise.UI.ViewModels {
 		private UiInternetStream MapStream( DbInternetStream dbStream ) {
 			var retValue = new UiInternetStream( OnWebsiteClick, OnStreamPlay );
 
-			Mapper.DynamicMap( dbStream, retValue );
+			Mapper.Map( dbStream, retValue );
 
 			return( retValue );
 		}
