@@ -5,7 +5,7 @@ using Noise.Infrastructure.Dto;
 using ReusableBits.ExtensionClasses;
 
 namespace Noise.UI.Dto {
-	[DebuggerDisplay("Album = {Name}")]
+	[DebuggerDisplay("Album = {" + nameof(Name) + "}")]
 	public class UiAlbum : UiBase {
 		public	long					Artist { get; set; }
 		public	Int16					TrackCount { get; set; }
@@ -71,7 +71,7 @@ namespace Noise.UI.Dto {
 
 				return( retValue );
 			}
-			set { UiIsFavorite = !UiIsFavorite; }
+			set => UiIsFavorite = !UiIsFavorite;
 		}
 
 		public Int16 CalculatedRating {
@@ -89,12 +89,12 @@ namespace Noise.UI.Dto {
 
 	    [DependsUpon("CalculatedRating")]
 		public Int16 Rating {
-			get { return( IsUserRating ? UserRating : CalculatedRating ); }
-			set { UserRating = value; }
-		}
+			get => ( IsUserRating ? UserRating : CalculatedRating );
+	        set => UserRating = value;
+	    }
 
         // used to sort albums by rating in the album list.
-	    public int SortRating => IsFavorite ? 10 : Rating;
+	    public int SortRating => IsFavorite ? 20 : ( Rating * 2 ) + ( HasFavorites ? 1 : 0 );
 
 	    [DependsUpon("UserRating")]
 		public bool UseAlternateRating => (!IsUserRating );
