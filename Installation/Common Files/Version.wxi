@@ -10,6 +10,6 @@
   <!-- Common definitions -->
   <?define Manufacturer="Secret Squirrel Software"?>
   <?define BaseRegistryKey="Software\Secret Squirrel Software"?>
-  <?define Copyright="Copyright© 2015, Secret Squirrel Software"?>
+  <?define Copyright="Copyright© 2019, Secret Squirrel Software"?>
   <?define CompanyUrl="http://www.surroundedbybraces.com"?>
 </Include>

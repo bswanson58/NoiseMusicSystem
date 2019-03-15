@@ -4,6 +4,7 @@
 lib/
 visuals/
 LicenseKeys.xml.debug
+!/Releases/**
 
 #################
 ## Visual Studio
