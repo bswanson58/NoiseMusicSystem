@@ -23,7 +23,7 @@ namespace Noise.Desktop {
 
 		protected override DependencyObject CreateShell() {
 			mShell = Container.Resolve<Shell>();
-			mShell.DataContext = new DisabledWindowCommandsViewModel();
+			mShell.DataContext = Container.Resolve<DisabledWindowCommandsViewModel>();
 			mShell.Show();
 			mShell.Closing += OnShellClosing;
 
@@ -53,6 +53,9 @@ namespace Noise.Desktop {
 		}
 
 		protected override void ConfigureContainer() {
+		    // Caliburn Micro dispatcher initialize.
+		    PlatformProvider.Current = new XamlPlatformProvider();
+
 			Container.RegisterType<Shell, Shell>();
 
 			base.ConfigureContainer();

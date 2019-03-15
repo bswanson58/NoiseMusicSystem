@@ -69,13 +69,13 @@ namespace Noise.UI.Controls {
 			}
 		}
 
-        public static DependencyProperty RatingProperty =
+		public static DependencyProperty RatingProperty =
 			DependencyProperty.Register( "Rating", typeof( int ), typeof( RatingControl ), 
 			new FrameworkPropertyMetadata( cRatingUnrated, FrameworkPropertyMetadataOptions.AffectsRender, OnRatingChanged, CoerceRatingCallback ));
-        public int Rating {
-            get { return (int)GetValue( RatingProperty ); }
-            set { SetValue( RatingProperty, value ); }
-        }
+		public int Rating {
+			get { return (int)GetValue( RatingProperty ); }
+			set { SetValue( RatingProperty, value ); }
+		}
 
 		private static object CoerceRatingCallback( DependencyObject element, object value ) {
 			var	retValue = value;
@@ -114,13 +114,36 @@ namespace Noise.UI.Controls {
 			SetPartColors();
 		}
 
-        public static DependencyProperty RatingCountProperty =
+		public static DependencyProperty UseAlternateProperty =
+			DependencyProperty.Register( "UseAlternate", typeof( bool ), typeof( RatingControl ), 
+			new FrameworkPropertyMetadata( false, FrameworkPropertyMetadataOptions.AffectsRender, OnUseAlternateChanged ));
+		public bool UseAlternate {
+			get { return (bool)GetValue( UseAlternateProperty ); }
+			set { SetValue( UseAlternateProperty, value ); }
+		}
+
+		private static void OnUseAlternateChanged( DependencyObject depObj, DependencyPropertyChangedEventArgs args ) {
+			if(( depObj is RatingControl ) &&
+			   ( args.NewValue is bool )) {
+			   ( depObj as RatingControl ).OnUseAlternateChanged();
+			}
+		}
+
+		public void OnUseAlternateChanged() {
+			foreach( var item in mRatingItems ) {
+				item.IsAlternate = UseAlternate;
+			}
+
+			SetPartColors();
+		}
+
+		public static DependencyProperty RatingCountProperty =
 			DependencyProperty.Register( "RatingCount", typeof( int ), typeof( RatingControl ), 
 			new FrameworkPropertyMetadata( cInitialRatingCount, OnRatingCountChanged ));
-        public int RatingCount {
-            get { return (int)GetValue( RatingCountProperty ); }
-            set { SetValue( RatingCountProperty, value ); }
-        }
+		public int RatingCount {
+			get { return (int)GetValue( RatingCountProperty ); }
+			set { SetValue( RatingCountProperty, value ); }
+		}
 
 		private static void OnRatingCountChanged( DependencyObject depObj, DependencyPropertyChangedEventArgs args ) {
 			if(( depObj is RatingControl ) &&
@@ -143,14 +166,14 @@ namespace Noise.UI.Controls {
 			get{ return( mRatingItems ); }
 		}
 
-        public static readonly DependencyProperty HoverColorProperty =
-            DependencyProperty.Register( "HoverColor", typeof( Brush ), typeof( RatingControl ),
-            new FrameworkPropertyMetadata( Brushes.LightBlue, FrameworkPropertyMetadataOptions.AffectsRender, OnHoverColorChanged ));
+		public static readonly DependencyProperty HoverColorProperty =
+			DependencyProperty.Register( "HoverColor", typeof( Brush ), typeof( RatingControl ),
+			new FrameworkPropertyMetadata( Brushes.LightBlue, FrameworkPropertyMetadataOptions.AffectsRender, OnHoverColorChanged ));
 
-        public Brush HoverColor {
-            get { return (Brush)GetValue( HoverColorProperty ); }
-            set { SetValue( HoverColorProperty, value ); }
-        }
+		public Brush HoverColor {
+			get { return (Brush)GetValue( HoverColorProperty ); }
+			set { SetValue( HoverColorProperty, value ); }
+		}
 
 		public static void OnHoverColorChanged( DependencyObject depObj, DependencyPropertyChangedEventArgs args ) {
 			if( depObj is RatingControl ) {
@@ -162,14 +185,14 @@ namespace Noise.UI.Controls {
 			SetPartColors();
 		}
 
-        public static readonly DependencyProperty RatedColorProperty =
-            DependencyProperty.Register( "RatedColor", typeof( Brush ), typeof( RatingControl ),
-            new FrameworkPropertyMetadata( Brushes.Green, FrameworkPropertyMetadataOptions.AffectsRender, OnRatedColorChange ));
+		public static readonly DependencyProperty RatedColorProperty =
+			DependencyProperty.Register( "RatedColor", typeof( Brush ), typeof( RatingControl ),
+			new FrameworkPropertyMetadata( Brushes.Green, FrameworkPropertyMetadataOptions.AffectsRender, OnRatedColorChange ));
 
-        public Brush RatedColor {
-            get { return (Brush)GetValue( RatedColorProperty ); }
-            set { SetValue( RatedColorProperty, value ); }
-        }
+		public Brush RatedColor {
+			get { return (Brush)GetValue( RatedColorProperty ); }
+			set { SetValue( RatedColorProperty, value ); }
+		}
 
 		public static void OnRatedColorChange( DependencyObject depObj, DependencyPropertyChangedEventArgs args ) {
 			if( depObj is RatingControl ) {
@@ -181,14 +204,14 @@ namespace Noise.UI.Controls {
 			SetRatingColors();
 		}
 
-        public static readonly DependencyProperty UnratedColorProperty =
-            DependencyProperty.Register( "UnratedColor", typeof( Brush ), typeof( RatingControl ),
-            new FrameworkPropertyMetadata( Brushes.Black, FrameworkPropertyMetadataOptions.AffectsRender, OnUnratedColorChange ));
+		public static readonly DependencyProperty UnratedColorProperty =
+			DependencyProperty.Register( "UnratedColor", typeof( Brush ), typeof( RatingControl ),
+			new FrameworkPropertyMetadata( Brushes.Black, FrameworkPropertyMetadataOptions.AffectsRender, OnUnratedColorChange ));
 
-        public Brush UnratedColor {
-            get { return (Brush)GetValue( UnratedColorProperty ); }
-            set { SetValue( UnratedColorProperty, value ); }
-        }
+		public Brush UnratedColor {
+			get { return (Brush)GetValue( UnratedColorProperty ); }
+			set { SetValue( UnratedColorProperty, value ); }
+		}
 
 		public static void OnUnratedColorChange( DependencyObject depObj, DependencyPropertyChangedEventArgs args ) {
 			if( depObj is RatingControl ) {
@@ -201,14 +224,14 @@ namespace Noise.UI.Controls {
 			SetRatingColors();
 		}
 
-        public static readonly DependencyProperty DislikeColorProperty =
-            DependencyProperty.Register( "DislikeColor", typeof( Brush ), typeof( RatingControl ),
-            new FrameworkPropertyMetadata( Brushes.Red, FrameworkPropertyMetadataOptions.AffectsRender, OnDislikeColorChanged ));
+		public static readonly DependencyProperty DislikeColorProperty =
+			DependencyProperty.Register( "DislikeColor", typeof( Brush ), typeof( RatingControl ),
+			new FrameworkPropertyMetadata( Brushes.Red, FrameworkPropertyMetadataOptions.AffectsRender, OnDislikeColorChanged ));
 
-        public Brush DislikeColor {
-            get { return (Brush)GetValue( DislikeColorProperty ); }
-            set { SetValue( DislikeColorProperty, value ); }
-        }
+		public Brush DislikeColor {
+			get { return (Brush)GetValue( DislikeColorProperty ); }
+			set { SetValue( DislikeColorProperty, value ); }
+		}
 
 		public static void OnDislikeColorChanged( DependencyObject depObj, DependencyPropertyChangedEventArgs args ) {
 			if( depObj is RatingControl ) {
@@ -266,7 +289,7 @@ namespace Noise.UI.Controls {
 
 		private void OnRatingItemHover( int ratingItem ) {
 			foreach( var item in mRatingItems ) {
-				item.IsHighlighted = item.Rating <= ratingItem ? true : false;
+				item.IsHighlighted = item.Rating <= ratingItem;
 			}
 
 			SetHoverPart( HoverPart.Rating );
@@ -331,6 +354,7 @@ namespace Noise.UI.Controls {
 
 	public class UiRatingItem : INotifyPropertyChanged {
 		public	int						Rating { get; private set; }
+		private bool					mIsAlternate;
 		private	bool					mIsHighlighted;
 		private	bool					mIsRated;
 		private bool					mIsHovering;
@@ -378,12 +402,23 @@ namespace Noise.UI.Controls {
 			} 
 		}
 
+		public bool IsAlternate {
+			get {  return( mIsAlternate ); }
+			set {
+				mIsAlternate = value;
+
+				RaisePropertyChanged( () => IsActive );
+				RaisePropertyChanged( () => IsAlternateActive );
+			}
+		}
+
 		public bool IsRated {
 			get{ return( mIsRated ); }
 			set {
 				mIsRated = value;
 
 				RaisePropertyChanged( () => IsActive );
+				RaisePropertyChanged( () => IsAlternateActive );
 			}
 		}
 
@@ -393,11 +428,16 @@ namespace Noise.UI.Controls {
 				mIsHighlighted = value;
 
 				RaisePropertyChanged( () => IsActive );
+				RaisePropertyChanged( () => IsAlternateActive );
 			}
 		}
 
 		public bool IsActive {
-			get{ return( IsRated || IsHighlighted ); }
+			get{ return(( IsRated || IsHighlighted ) && !mIsAlternate ); }
+		}
+
+		public bool IsAlternateActive {
+			get { return(( IsRated || IsHighlighted ) && mIsAlternate ); }
 		}
 
 		private void RaisePropertyChanged<TProperty>( Expression<Func<TProperty>> property ) {
@@ -427,7 +467,7 @@ namespace Noise.UI.Controls {
 			if( targetType != typeof( Visibility ))
 				throw new InvalidOperationException( "The target must be Visibility property" );
 
-			if( value != null && value is bool ) {
+			if( value is bool ) {
 				retValue = (bool)value ? Visibility.Visible : Visibility.Hidden;
 			}
 
@@ -446,7 +486,7 @@ namespace Noise.UI.Controls {
 			if( targetType != typeof( Visibility ))
 				throw new InvalidOperationException( "The target must be Visibility property" );
 
-			if( value != null && value is bool ) {
+			if( value is bool ) {
 				retValue = (bool)value ? Visibility.Hidden : Visibility.Visible;
 			}
 
@@ -469,7 +509,7 @@ namespace Noise.UI.Controls {
 		}
 
 		public static readonly DependencyProperty ObserveProperty =
-        DependencyProperty.RegisterAttached( "Observe", typeof( bool ), typeof( RatingItemObserver ),
+		DependencyProperty.RegisterAttached( "Observe", typeof( bool ), typeof( RatingItemObserver ),
 			new UIPropertyMetadata( false, OnObserveChanged ) );
 
 		static void OnObserveChanged(

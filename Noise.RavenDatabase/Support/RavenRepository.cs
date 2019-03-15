@@ -203,7 +203,7 @@ namespace Noise.RavenDatabase.Support {
 				var repositoryItem = session.Load<T>( KeyGenerator( mKeySelector( item )));
 
 				if( repositoryItem != null ) {
-					AutoMapper.Mapper.DynamicMap( item, repositoryItem );
+					AutoMapper.Mapper.Map( item, repositoryItem );
 
 					session.SaveChanges();
 				}

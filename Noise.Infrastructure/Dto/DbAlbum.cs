@@ -10,7 +10,6 @@ namespace Noise.Infrastructure.Dto {
 		public long				Artist { get; set; }
 		public Int16			UserRating { get; set; }
 		public Int16			CalculatedRating { get; set; }
-		public Int16			MaxChildRating { get; set; }
 		public Int16			TrackCount { get; set; }
 		[Required]
 		[RegularExpression( "^(?:0|1|\\d{4})$", ErrorMessage = "Only 0 (zero) or 1900-2100 are allowed.")]

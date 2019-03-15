@@ -8,19 +8,21 @@
 			 xmlns:NoiseControls="clr-namespace:Noise.UI.Controls"
 			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             Height="85"
 			 d:DesignHeight="100"
 			 d:DesignWidth="1200"
 			 mc:Ignorable="d">
 	<UserControl.Resources>
 		<Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True" />
 		<ReusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
+	    <ReusableConverters:EmptyStringVisibilityConverter x:Key="DisplayIfNotEmptyString" HideOnEmpty="True" IsHidden="True"/>
 	</UserControl.Resources>
 
 	<UserControl.DataContext>
 		<Binding Path="PlayerViewModel" Source="{StaticResource ViewModelLocator}" />
 	</UserControl.DataContext>
 
-	<GroupBox Height="77" Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
+	<GroupBox Margin="3,0,5,0" Style="{StaticResource SectionBorderStyle}" Header=" Player ">
 		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
@@ -53,9 +55,8 @@
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
 
-							<TextBlock Grid.Column="0" VerticalAlignment="Bottom" Margin="3,-1,0,5"
-					 Style="{StaticResource MediumTitleStyle}" Foreground="{DynamicResource ControlTextColor}"
-					 Text="Now Playing:" Visibility="{Binding TrackName, Converter={StaticResource EmptyStringVisibilityConverter}}" />
+							<TextBlock Grid.Column="0" VerticalAlignment="Bottom" Margin="3,-1,0,5" Style="{StaticResource MediumTitleStyle}"
+                                       Text="Now Playing:" Visibility="{Binding TrackName, Converter={StaticResource EmptyStringVisibilityConverter}}" />
 
 							<Grid Grid.Column="1" Margin="5,-1,0,5" VerticalAlignment="Center">
 								<Grid.ColumnDefinitions>
@@ -63,12 +64,12 @@
 									<ColumnDefinition Width="*"/>
 								</Grid.ColumnDefinitions>
 
-								<TextBlock Grid.Column="0" VerticalAlignment="Bottom" Style="{StaticResource MediumTitleStyle}"
-						   Text="{Binding TrackName}" />
-								<TextBlock Grid.Column="1" Margin="0,0,0,3" VerticalAlignment="Bottom" Style="{StaticResource SmallTitleStyle}"
-						   ReusableBehaviours:FadeTrimming.IsEnabled="True"
-						   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
-						   Text="{Binding ArtistAlbumName}" />
+								<TextBlock Grid.Column="0" VerticalAlignment="Bottom" Style="{StaticResource MediumTitleStyle}" Foreground="{DynamicResource SignatureBrush}" Text="{Binding TrackName}" />
+								<TextBlock Grid.Column="1" Margin="0,0,0,3" VerticalAlignment="Bottom" Style="{StaticResource SmallTitleStyle}" Foreground="{DynamicResource SignatureBrush}"
+                                           ReusableBehaviours:FadeTrimming.IsEnabled="True"
+                                           ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"
+                                           ReusableBehaviours:FadeTrimming.ForegroundColor="{DynamicResource SignatureColor}"
+                                           Text="{Binding ArtistAlbumName}" />
 							</Grid>
 						</Grid>
 					</Grid>
@@ -93,17 +94,15 @@
 					</Grid.ColumnDefinitions>
 
 					<TextBlock Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="1" IsHitTestVisible="False"
-					 FontFamily="Webdings" FontSize="21.333" Foreground="Red" Text="x"
-					 Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
+                               FontFamily="Webdings" FontSize="21.333" Foreground="Red" Text="x"
+                               Visibility="{Binding Path=IsMuted, Converter={StaticResource BooleanVisibilityConverter}}" />
 
-					<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" Command="{Binding Path=Mute}"
-				  Foreground="{StaticResource ControlTextColor}" />
+					<Button Grid.Column="0" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="X" FontSize="18" Command="{Binding Path=Mute}" />
 
-					<NoiseControls:VuMeter Grid.Column="1" Margin="0,7,7,0" Background="White" Foreground="#FF588CE0"
-								 LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" />
+					<NoiseControls:VuMeter Grid.Column="1" Margin="0,7,7,0" Foreground="{DynamicResource SignatureBrush}"
+                                           LeftLevel="{Binding Path=LeftLevel}" RightLevel="{Binding Path=RightLevel}" />
 
-					<Button Grid.Column="2" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="5" Command="{Binding Path=ExtendedPlayer}"
-				  Foreground="{StaticResource ControlTextColor}" />
+					<Button Grid.Column="2" Margin="3" Style="{StaticResource TransportButtonStyle}" Content="5" Command="{Binding Path=ExtendedPlayer}" />
 				</Grid>
 			</Grid>
 
@@ -121,12 +120,12 @@
 					</Grid.ColumnDefinitions>
 
 					<!-- Ravorite, Rating, Support Commands -->
-					<StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Visibility="{Binding TrackName, Converter={StaticResource DisplayIfNotEmptyString}}">
 						<!--  Favorites and ratings  -->
-						<StackPanel x:Name="_ratingPanel" Grid.Column="0" Orientation="Horizontal">
+						<StackPanel x:Name="_ratingPanel" Orientation="Horizontal">
 							<CheckBox x:Name="_favoriteControl" Margin="3,0,5,0" VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}"
-						Opacity="{Binding Path=IsFavorite, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"
-						IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}"/>
+                                      Opacity="{Binding Path=IsFavorite, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}" 
+                                      IsChecked="{Binding Path=IsFavorite, Mode=TwoWay}"/>
 
 							<NoiseControls:RatingControl x:Name="_ratingControl" VerticalAlignment="Center" Style="{StaticResource NoiseRatingStyle}"
 										   Opacity="{Binding Path=Rating, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"
@@ -171,40 +170,36 @@
 						</StackPanel>
 
 						<!--  Track related commands  -->
-						<Button Width="17" Height="17" Margin="9,0,0,0"
-					Command="{Binding TrackInformation}" Content="{StaticResource Path_Information}" ToolTip="Sync Artist and Album display" />
-						<Button Width="17" Height="17" Margin="5,0,0,0"
-					Command="{Binding RequestSimilarSongSearch}" Content="{StaticResource Path_SimilarTracks}" ToolTip="Find Similar Tracks" />
-						<!--Button Width="17" Height="17" Margin="5,0,0,0"
-							  Command="{Binding RequestLyrics}"  Content="{StaticResource Path_Lyrics}" ToolTip="Display Song Lyrics" /-->
-
-						<!-- Play State (debug only) -->
-						<!-- TextBlock Margin="9,0,0,0" Style="{StaticResource ControlTitleStyle}" Text="{Binding Path=PlayState}" /-->
+						<Button Margin="9,0,0,0" Padding="5" Style="{StaticResource QueueButtonStyle}" Command="{Binding TrackInformation}"
+						        Content="{StaticResource Path_Information}" ToolTip="Sync Artist and Album display" />
+						<Button Margin="5,0,0,0" Padding="4" Style="{StaticResource QueueButtonStyle}" Command="{Binding RequestSimilarSongSearch}" 
+						        Content="{StaticResource Path_SimilarTracks}" ToolTip="Find Similar Tracks" />
 					</StackPanel>
 
 					<!--  Playing Position  -->
-					<Grid Grid.Column="1">
+                    <Grid Grid.Column="1" Visibility="{Binding TrackName, Converter={StaticResource DisplayIfNotEmptyString}}">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="*"/>
 						</Grid.ColumnDefinitions>
 
 						<!-- Textual Play Position -->
-						<StackPanel Grid.Column="0" Margin="17,0,0,0" Orientation="Horizontal">
-							<TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" Text="Position:" />
-							<TextBlock Margin="0,0,5,0" Style="{StaticResource ControlTitleStyle}" ToolTip="Click to change the display format of the position time"
-						 Text="{Binding Path=TrackTime, Converter={StaticResource TimeSpanConverter}}">
-				<EventCommandTriggers:CommandSource.Trigger>
-				  <EventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
-				</EventCommandTriggers:CommandSource.Trigger>
+                        <StackPanel Grid.Column="0" Margin="17,0,0,0" Orientation="Horizontal">
+							<TextBlock Style="{StaticResource ControlTitleStyle}" Margin="0,0,3,0" VerticalAlignment="Center" Text="Position:" />
+							<TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" FontWeight="Bold"
+                                       Foreground="{DynamicResource SignatureBrush}"
+									   ToolTip="Click to change the display format of the position time"
+									   Text="{Binding Path=TrackTime, Converter={StaticResource TimeSpanConverter}}">
+								<EventCommandTriggers:CommandSource.Trigger>
+									<EventCommandTriggers:EventCommandTrigger Command="{Binding Path=ToggleTimeDisplay}" RoutedEvent="TextBlock.MouseLeftButtonDown" />
+								</EventCommandTriggers:CommandSource.Trigger>
 							</TextBlock>
 						</StackPanel>
 
 						<!-- Play Postion indicator -->
-						<Slider x:Name="PositionSlider" Grid.Column="1" Margin="5,0" VerticalAlignment="Center" BorderThickness="0,0" Orientation="Horizontal"
-					SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
-					Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0"
-					Value="{Binding Path=TrackPosition, Mode=TwoWay}" />
+						<Slider Grid.Column="1" Margin="5,0" VerticalAlignment="Center" Orientation="Horizontal" SnapsToDevicePixels="True"
+						        Maximum="{Binding Path=TrackEndPosition, Mode=OneWay}" Minimum="0"
+						        Value="{Binding Path=TrackPosition, Mode=TwoWay}" />
 					</Grid>
 				</Grid>
 
@@ -217,16 +212,12 @@
 						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 
-					<TextBlock Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
-					 Text="Volume:" />
-					<TextBlock Grid.Column="1" Margin="0,0,3,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
-					 Text="-" />
-					<Slider x:Name="Volume" Grid.Column="2" Margin="0,5,0,0" Orientation="Horizontal" SnapsToDevicePixels="True" Style="{StaticResource PlayerPositionSliderStyle}"
-				  Maximum="1.0" Minimum="0.0" Value="{Binding Path=Volume, Mode=TwoWay}" />
-					<TextBlock Grid.Column="3" Margin="3,0,0,0" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
-					 Text="+" />
+					<TextBlock Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Volume:" />
+					<TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="-" />
+					<Slider Grid.Column="2" Margin="7,0" Orientation="Horizontal" VerticalAlignment="Center" SnapsToDevicePixels="True"
+					        Maximum="1.0" Minimum="0.0" Value="{Binding Path=Volume, Mode=TwoWay}" />
+					<TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="+" />
 				</Grid>
-
 			</Grid>
 		</Grid>
 	</GroupBox>

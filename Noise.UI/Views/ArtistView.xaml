@@ -6,11 +6,9 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:EventCommandTriggers="clr-namespace:Noise.UI.Behaviours.EventCommandTriggers"
 			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-			 xmlns:local="clr-namespace:Noise.UI.ValueConverters"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 Height="200"
-			 Background="White"
 			 d:DesignWidth="800"
 			 mc:Ignorable="d">
 	<!--
@@ -20,6 +18,7 @@
 	<UserControl.Resources>
 		<ValueConverters:ByteImageConverter x:Key="imageConverter" />
 		<ValueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.3"/>
+		<ValueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.3"/>
 		<ValueConverters:EmptyStringVisibilityConverter x:Key="CollapseIfStringEmpty" HideOnEmpty="True" IsHidden="False"/>
 	</UserControl.Resources>
 
@@ -35,9 +34,7 @@
 
 	<GroupBox Margin="1,0,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Artist ">
 		<Grid Visibility="{Binding ArtistValid, Converter={StaticResource BooleanVisibilityConverter}}">
-			<Border Background="{DynamicResource TreeItemBackground}"
-					BorderThickness="0"
-					CornerRadius="5">
+			<Border BorderThickness="0" CornerRadius="5">
 				<Grid Background="{StaticResource NoiseBrush}">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto" />
@@ -45,15 +42,10 @@
 						<ColumnDefinition />
 						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
-					<Image Grid.Column="0"
-						   MinWidth="50"
-						   MinHeight="50"
-						   Margin="7,7,3,0"
-						   HorizontalAlignment="Left"
-						   VerticalAlignment="Top"
-						   Source="{Binding ArtistImage,
-											Converter={StaticResource imageConverter}}"
-						   Stretch="Uniform" />
+
+					<Image Grid.Column="0" MinWidth="50" MinHeight="50" Margin="7" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform"
+						   Source="{Binding ArtistImage, Converter={StaticResource imageConverter}}" />
+					
 					<Grid Grid.Column="3" Margin="3,7,11,0">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto" />
@@ -72,11 +64,11 @@
 						<!--  Rating controls  -->
 						<StackPanel x:Name="_ratingPanel" Grid.Row="1" Margin="0,7,0,7" HorizontalAlignment="Right" Orientation="Horizontal">
 							<CheckBox x:Name="_favoriteControl" Margin="0,0,7,1" VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}"
-									  Opacity="{Binding Path=Artist.UiIsFavorite, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"   
-									  IsChecked="{Binding Artist.UiIsFavorite, Mode=TwoWay}" />
+									  Opacity="{Binding Path=Artist.FavoriteValue, Mode=TwoWay, Converter={StaticResource OpaqueIfFalse}}"   
+									  IsChecked="{Binding Artist.FavoriteValue, Mode=TwoWay}" />
 							<Controls:RatingControl x:Name="_ratingControl" Style="{StaticResource NoiseRatingStyle}"
-													Opacity="{Binding Path=Artist.UiRating, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"   
-													Rating="{Binding Artist.UiRating, Mode=TwoWay}" />
+													Opacity="{Binding Artist.UiRating, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"   
+													Rating="{Binding Artist.UiRating, Mode=TwoWay}" UseAlternate="{Binding Artist.UseAlternateRating}" />
 							
 							<StackPanel.Triggers>
 								<EventTrigger SourceName="_ratingPanel" RoutedEvent="StackPanel.MouseEnter">
@@ -99,7 +91,7 @@
 									<BeginStoryboard >
 										<Storyboard Storyboard.TargetName="_favoriteControl" Storyboard.TargetProperty="Opacity">
 											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
-												<LinearDoubleKeyFrame Value="{Binding Path=Artist.UiIsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
+												<LinearDoubleKeyFrame Value="{Binding Path=Artist.FavoriteValue, Converter={StaticResource OpaqueIfFalse}}"
 																	  KeyTime="0:0:0.7" />
 											</DoubleAnimationUsingKeyFrames>
 										</Storyboard>
@@ -132,17 +124,17 @@
 						</Controls:LinkLabel>
 						
 						<!-- Button Group -->
-						<StackPanel Grid.Row="5" Height="24" Margin="52,0,0,5" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal"
+						<StackPanel Grid.Row="5" Height="28" Margin="52,0,0,5" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal"
 									d:LayoutOverrides="Width">
 							<Button Margin="0,0,11,0" Style="{StaticResource GeneralButtonStyle}" 
 									Content="Play Top Tracks" Command="{Binding PlayTopTracks}" ToolTip="Play the top tracks by this artist"/>
-							<Button Margin="0,0,5,0" Padding="3" HorizontalAlignment="Center" VerticalAlignment="Top" Style="{StaticResource GeneralButtonStyle}" 
+							<Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}" 
 									Command="{Binding DisplayArtistInfoPanel}" Content="{StaticResource Path_Artist}" ToolTip="Display Artist Information" />
-							<Button Margin="0,0,5,0" Padding="3" Style="{StaticResource GeneralButtonStyle}"
+							<Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}"
 									Command="{Binding DisplayAlbumInfoPanel}" Content="{StaticResource Path_Album}" ToolTip="Display Album Information" />
-							<Button Margin="0,0,11,0" Padding="3" Style="{StaticResource GeneralButtonStyle}"
+							<Button Margin="0,0,11,0" Style="{StaticResource PathButtonStyle}"
 									Command="{Binding DisplayArtistTracksPanel}" Content="{StaticResource Path_Music}" ToolTip="Display All Artist Tracks" />
-							<Button Padding="3" Style="{StaticResource GeneralButtonStyle}"
+							<Button Style="{StaticResource PathButtonStyle}"
 									Command="{Binding EditArtist}" Content="{StaticResource Path_Edit}" ToolTip="Edit Artist Properties" />
 						</StackPanel>
 

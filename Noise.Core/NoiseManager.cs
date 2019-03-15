@@ -6,7 +6,6 @@ using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.RemoteHost;
-using ReusableBits.Mvvm.CaliburnSupport;
 using ReusableBits.Platform;
 
 namespace Noise.Core {
@@ -63,9 +62,12 @@ namespace Noise.Core {
 		public bool Initialize() {
 			var isInitialized = false;
 
-			mLog.LogMessage( string.Format( "Initializing {0} v{1}", VersionInformation.ProductName, VersionInformation.Version ));
+			mLog.LogMessage( $"Initializing {VersionInformation.ProductName} v{VersionInformation.Version}" );
 
 			try {
+			    // add support for TLS v1.2
+			    System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
+
 				mLifecycleManager.Initialize();
 				mEvents.Subscribe( this );
 
@@ -88,7 +90,7 @@ namespace Noise.Core {
 		}
 
 		public void Shutdown() {
-			mEvents.Publish( new Events.SystemShutdown());
+			mEvents.PublishOnUIThread( new Events.SystemShutdown());
 
 			mRemoteServer.CloseRemoteServer();
 			mLibraryBuilder.StopLibraryUpdate();

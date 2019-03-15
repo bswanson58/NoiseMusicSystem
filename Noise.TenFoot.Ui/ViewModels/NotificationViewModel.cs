@@ -1,20 +1,17 @@
 ﻿using Caliburn.Micro;
-using Microsoft.Practices.Prism.Commands;
-using Noise.Infrastructure;
-using Noise.Infrastructure.Dto;
+using BaseEvents = Noise.Infrastructure.Events;
 using Events = Noise.TenFoot.Ui.Input.Events;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class NotificationViewModel : Screen,
-										 IHandle<Events.UserNotification>, IHandle<Events.DequeueAlbum>, IHandle<Events.DequeueTrack> {
+										 IHandle<Events.UserNotification>, IHandle<BaseEvents.TrackQueued>, IHandle<BaseEvents.AlbumQueued>,
+										 IHandle<Events.DequeueAlbum>, IHandle<Events.DequeueTrack> {
 		private const string				cSilentState = "Silent";
 		private const string				cNotifyState = "Notifying";
 
-		private	readonly IEventAggregator			mEventAggregator;
-		private readonly DelegateCommand<DbTrack>	mPlayTrackCommand;
-		private readonly DelegateCommand<DbAlbum>	mPlayAlbumCommand; 
-		private string								mNotificationContent;
-		private string								mVisualStateName;
+		private	readonly IEventAggregator	mEventAggregator;
+		private string						mNotificationContent;
+		private string						mVisualStateName;
 
 		public NotificationViewModel( IEventAggregator eventAggregator ) {
 			mEventAggregator = eventAggregator;
@@ -22,25 +19,15 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			mNotificationContent = string.Empty;
 			mVisualStateName = cSilentState;
 
-			mPlayTrackCommand = new DelegateCommand<DbTrack>( OnPlayTrack );
-			GlobalCommands.PlayTrack.RegisterCommand( mPlayTrackCommand );
-
-			mPlayAlbumCommand = new DelegateCommand<DbAlbum>( OnPlayAlbum );
-			GlobalCommands.PlayAlbum.RegisterCommand( mPlayAlbumCommand );
-
 			mEventAggregator.Subscribe( this );
 		}
 
-		private void OnPlayTrack( DbTrack track ) {
-			if( track != null ) {
-				SendNotification( string.Format( "Added track '{0}' to play list.", track.Name ));
-			}
+		public void Handle( BaseEvents.TrackQueued args ) {
+			SendNotification( string.Format( "Added track '{0}' to play list.", args.QueuedTrack.Name ));
 		}
 
-		private void OnPlayAlbum( DbAlbum album ) {
-			if( album != null ) {
-				SendNotification( string.Format( "Added album '{0}' to play list.", album.Name ));
-			}
+		public void Handle( BaseEvents.AlbumQueued args ) {
+			SendNotification( string.Format( "Added album '{0}' to play list.", args.QueuedAlbum.Name ));
 		}
 
 		public void Handle( Events.UserNotification args ) {

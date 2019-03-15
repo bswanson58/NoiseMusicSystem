@@ -86,7 +86,7 @@ namespace Noise.TenFoot.Ui.Input {
 				if( binding != null ) {
 					var input = new InputEvent( binding.Command );
 
-					mEventAggregator.Publish( input );
+					mEventAggregator.PublishOnUIThread( input );
 					mInputHandler( input );
 				}
 			}

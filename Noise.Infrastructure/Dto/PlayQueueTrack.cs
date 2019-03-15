@@ -84,11 +84,12 @@ namespace Noise.Infrastructure.Dto {
 				mIsPlaying = value;
 
 				RaisePropertyChanged( () => IsPlaying );
+				RaisePropertyChanged( () => HasPlayed );
 			}
 		}
 
 		public bool HasPlayed {
-			get{ return( mHasPlayed ); }
+			get{ return( mHasPlayed && !IsPlaying ); }
 			set {
 				mHasPlayed = value;
 

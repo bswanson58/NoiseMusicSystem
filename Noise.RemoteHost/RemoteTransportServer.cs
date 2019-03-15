@@ -45,7 +45,7 @@ namespace Noise.RemoteHost {
 			}
 
 			if( transportState != null ) {
-				mEventAggregator.Publish( new Events.RemoteTransportUpdate( transportState ));
+				mEventAggregator.PublishOnUIThread( new Events.RemoteTransportUpdate( transportState ));
 			}
 		}
 

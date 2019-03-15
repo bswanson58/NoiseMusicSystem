@@ -25,6 +25,8 @@ namespace Noise.UI.Dto {
 		private readonly Action<UiInternetStream>	mOnClick;
 		private readonly Action<long>				mOnPlay;
 
+        protected UiInternetStream() { }
+
 		public UiInternetStream( Action<UiInternetStream> onClick, Action<long> onPlay ) {
 			mOnClick = onClick;
 			mOnPlay = onPlay;

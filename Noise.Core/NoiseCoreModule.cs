@@ -7,6 +7,7 @@ using Noise.Core.Configuration;
 using Noise.Core.Database;
 using Noise.Core.DataBuilders;
 using Noise.Core.DataExchange;
+using Noise.Core.DataProviders;
 using Noise.Core.FileProcessor;
 using Noise.Core.FileStore;
 using Noise.Core.Logging;
@@ -36,6 +37,9 @@ namespace Noise.Core {
 
 			mContainer.RegisterType<ILicenseManager, NoiseLicenseManager>( new HierarchicalLifetimeManager());
 
+			mContainer.RegisterType<IArtistArtworkProvider, ArtistArtworkProvider>();
+			mContainer.RegisterType<IAlbumArtworkProvider, AlbumArtworkProvider>();
+
 			mContainer.RegisterType<IAudioController, AudioController>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IDataExchangeManager, DataExchangeManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IFolderExplorer, FolderExplorer>( new HierarchicalLifetimeManager());
@@ -44,6 +48,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IMetaDataCleaner, MetaDataCleaner>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<INoiseManager, NoiseManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILibraryConfiguration, LibraryConfigurationManager>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IPlayCommand, PlayCommand>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IPlayQueue, PlayQueueMgr>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IPlayHistory, PlayHistoryMgr>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IPlayController, PlayController>( new HierarchicalLifetimeManager());
@@ -52,8 +57,11 @@ namespace Noise.Core {
 			mContainer.RegisterType<IScrobbler, PlayScrobbler>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ISearchProvider, LuceneSearchProvider>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ISidecarBuilder, SidecarBuilder>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ISidecarCreator, SidecarCreator>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<ISidecarUpdater, SidecarWriter>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ISidecarWriter, SidecarWriter>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ITagManager, TagManager>( new HierarchicalLifetimeManager());
+			mContainer.RegisterType<IRatings, RatingsUpdater>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<DatabaseStatistics, DatabaseStatistics>();
 			mContainer.RegisterType<ISummaryBuilder, SummaryBuilder>();
@@ -77,7 +85,6 @@ namespace Noise.Core {
 			mContainer.RegisterType<IEnumerable<IPipelineStep>, IPipelineStep[]>();
 
 			mContainer.RegisterType<IRequireConstruction, BackgroundTaskManager>( "BackgroundTaskManager", new HierarchicalLifetimeManager());
-			mContainer.RegisterType<IRequireConstruction, DataUpdates>( "DataUpdates", new HierarchicalLifetimeManager());
 //			mContainer.RegisterType<IRequireConstruction, LyricsSearcher>( "LyricsSearcher", new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IEnumerable<IRequireConstruction>, IRequireConstruction[]>();
 
@@ -110,7 +117,8 @@ namespace Noise.Core {
 
 			mContainer.RegisterType<IPlayExhaustedFactory, PlayExhaustedFactory>();
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyCategory>( ePlayExhaustedStrategy.PlayCategory.ToString());
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyFavorites>( ePlayExhaustedStrategy.PlayFavorites.ToString());
+		    mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyFavorites>( ePlayExhaustedStrategy.PlayFavorites.ToString());
+		    mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyFavoritesPlus>( ePlayExhaustedStrategy.PlayFavoritesPlus.ToString());
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyArtist>( ePlayExhaustedStrategy.PlayArtist.ToString());
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyArtistGenre>( ePlayExhaustedStrategy.PlayArtistGenre.ToString());
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyPlayList>( ePlayExhaustedStrategy.PlayList.ToString());

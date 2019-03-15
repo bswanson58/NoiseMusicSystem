@@ -53,8 +53,8 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisRuleSetDirectories>;$(DevEnvDir)..\..\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;$(DevEnvDir)..\..\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
@@ -68,9 +68,9 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleSetDirectories>;$(DevEnvDir)..\..\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisRuleDirectories>;$(DevEnvDir)..\..\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -78,9 +78,14 @@
     <ApplicationIcon>..\Common\Noise.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Caliburn.Micro, Version=1.5.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Caliburn.Micro.1.5.2\lib\net45\Caliburn.Micro.dll</HintPath>
+    <Reference Include="Caliburn.Micro, Version=3.2.0.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.Core.3.2.0\lib\net45\Caliburn.Micro.dll</HintPath>
+    </Reference>
+    <Reference Include="Caliburn.Micro.Platform, Version=3.2.0.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.3.2.0\lib\net45\Caliburn.Micro.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Caliburn.Micro.Platform.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.3.2.0\lib\net45\Caliburn.Micro.Platform.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Prism.Composition">
       <HintPath>..\packages\Prism.Composition.5.0.0\lib\NET45\Microsoft.Practices.Prism.Composition.dll</HintPath>
@@ -117,7 +122,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Caliburn.Micro.1.5.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\Caliburn.Micro.3.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -240,12 +245,12 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bass.dll" "$(TargetDir)"
-copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bass_aac.dll" "$(TargetDir)"
-copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bass_fx.dll" "$(TargetDir)"
-copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bassflac.dll" "$(TargetDir)"
-copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\bassmix.dll" "$(TargetDir)"
-copy "$(SolutionDir)lib\BASS.Net\v2.4.10\$(PlatformName)\basswma.dll" "$(TargetDir)"
+    <PostBuildEvent>copy "$(SolutionDir)lib\BASS.Net\v2.4.13.8\$(PlatformName)\bass.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\BASS.Net\v2.4.13.8\$(PlatformName)\bass_aac.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\BASS.Net\v2.4.13.8\$(PlatformName)\bass_fx.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\BASS.Net\v2.4.13.8\$(PlatformName)\bassflac.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\BASS.Net\v2.4.13.8\$(PlatformName)\bassmix.dll" "$(TargetDir)"
+copy "$(SolutionDir)lib\BASS.Net\v2.4.13.8\$(PlatformName)\basswma.dll" "$(TargetDir)"
 copy "$(SolutionDir)lib\ReplayGain\$(PlatformName)\ReplayGain.dll" "$(TargetDir)"
 copy "$(SolutionDir)Noise.Core\Resources\EqPresets.xml" "$(TargetDir)"
 copy "$(SolutionDir)Noise.Core\Resources\LicenseKeys.xml" "$(TargetDir)"</PostBuildEvent>

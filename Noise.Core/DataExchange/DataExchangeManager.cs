@@ -13,14 +13,16 @@ namespace Noise.Core.DataExchange {
 		private readonly IAlbumProvider				mAlbumProvider;
 		private readonly ITrackProvider				mTrackProvider;
 		private readonly IInternetStreamProvider	mStreamProvider;
+		private readonly IRatings					mRatings;
 		private readonly INoiseLog					mLog;
 
 		public DataExchangeManager( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IInternetStreamProvider streamProvider,
-									INoiseLog log ) {
+									IRatings ratings, INoiseLog log ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mStreamProvider = streamProvider;
+			mRatings = ratings;
 			mLog = log;
 		}
 
@@ -95,7 +97,7 @@ namespace Noise.Core.DataExchange {
 
 			switch( importType ) {
 				case eExchangeType.Favorites:
-					retValue = new ImportFavorites( mArtistProvider, mAlbumProvider, mTrackProvider );
+					retValue = new ImportFavorites( mArtistProvider, mAlbumProvider, mTrackProvider, mRatings );
 					break;
 
 				case eExchangeType.Streams:

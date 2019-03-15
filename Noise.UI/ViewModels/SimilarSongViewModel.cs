@@ -21,14 +21,16 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly ITrackProvider		mTrackProvider;
 		private readonly ISearchProvider	mSearchProvider;
+		private readonly IPlayCommand		mPlayCommand;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
 
-		public SimilarSongViewModel( IEventAggregator eventAggregator,
+		public SimilarSongViewModel( IEventAggregator eventAggregator, IPlayCommand playCommand,
 									 ITrackProvider trackProvider, ISearchProvider searchProvider ) {
 			mEventAggregator = eventAggregator;
 			mTrackProvider = trackProvider;
 			mSearchProvider = searchProvider;
+			mPlayCommand = playCommand;
 
 			mEventAggregator.Subscribe( this );
 
@@ -47,7 +49,7 @@ namespace Noise.UI.ViewModels {
 				Set( () => VisualStateName, value );
 
 				if( value != cViewStateClosed ) {
-					mEventAggregator.Publish( new Events.BalloonPopupOpened( ViewNames.SimilarSongView ));
+					mEventAggregator.PublishOnUIThread( new Events.BalloonPopupOpened( ViewNames.SimilarSongView ));
 				}
 			}
 		}
@@ -107,19 +109,19 @@ namespace Noise.UI.ViewModels {
 
 		private void OnNodeSelected( SearchViewNode node ) {
 			if( node.Artist != null ) {
-				mEventAggregator.Publish( new Events.ArtistFocusRequested( node.Artist.DbId ));
+				mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( node.Artist.DbId ));
 			}
 			if( node.Album != null ) {
-				mEventAggregator.Publish( new Events.AlbumFocusRequested( node.Album ));
+				mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( node.Album ));
 			}
 		}
 
-		private static void OnPlay( SearchViewNode node ) {
+		private void OnPlay( SearchViewNode node ) {
 			if( node.Track != null ) {
-				GlobalCommands.PlayTrack.Execute( node.Track );
+				mPlayCommand.Play( node.Track );
 			}
 			else if( node.Album != null ) {
-				GlobalCommands.PlayAlbum.Execute( node.Album );
+				mPlayCommand.Play( node.Album );
 			}
 		}
 

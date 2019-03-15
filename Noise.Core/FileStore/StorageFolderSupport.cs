@@ -83,7 +83,12 @@ namespace Noise.Core.FileStore {
 					if( album != null ) {
 						var path = GetAlbumPath( album.DbId );
 
-						retValue = Directory.GetParent( path ).FullName;
+						if(!string.IsNullOrWhiteSpace( path )) {
+							retValue = Directory.GetParent( path ).FullName;
+						}
+						else {
+							mLog.LogMessage( "Could not get path for album '{0}'", album.Name );
+						}
 					}
 				}
 			}
@@ -298,7 +303,19 @@ namespace Noise.Core.FileStore {
 			Condition.Requires( file.Name ).IsNotNullOrEmpty();
 
 			var retValue = eFileType.Unknown;
-			var ext = Path.GetExtension( file.Name );
+
+			if(!string.IsNullOrEmpty( file.Name )) {
+				retValue = DetermineFileType( file.Name );
+			}
+
+			return( retValue );
+		}
+
+		public eFileType DetermineFileType( string fileName ) {
+			Condition.Requires( fileName ).IsNotNullOrEmpty();
+
+			var retValue = eFileType.Unknown;
+			var ext = Path.GetExtension( fileName );
 
 			if(!string.IsNullOrEmpty( ext )) {
 				switch( ext.ToLower()) {

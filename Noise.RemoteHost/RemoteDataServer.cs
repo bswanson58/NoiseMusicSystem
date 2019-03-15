@@ -53,7 +53,7 @@ namespace Noise.RemoteHost {
 		private RoArtist TransformArtist( DbArtist dbArtist ) {
 			var retValue = new RoArtist();
 
-			Mapper.DynamicMap( dbArtist, retValue );
+			Mapper.Map( dbArtist, retValue );
 			retValue.Genre = RetrieveGenre( dbArtist.Genre );
 
 			return( retValue );
@@ -80,7 +80,7 @@ namespace Noise.RemoteHost {
 		private static RoArtistInfo TransformArtistInfo( DbArtist artist, IArtistMetadata artistMetadata, Artwork artistImage ) {
 			var retValue = new RoArtistInfo();
 
-			Mapper.DynamicMap( artist, retValue );
+			Mapper.Map( artist, retValue );
 
 			retValue.Biography = artistMetadata.GetMetadata( eMetadataType.Biography );
 			retValue.BandMembers = artistMetadata.GetMetadataArray( eMetadataType.BandMembers ).ToArray();
@@ -148,7 +148,7 @@ namespace Noise.RemoteHost {
 		private RoAlbum TransformAlbum( DbAlbum dbAlbum ) {
 			var retValue = new RoAlbum();
 
-			Mapper.DynamicMap( dbAlbum, retValue );
+			Mapper.Map( dbAlbum, retValue );
 			retValue.Genre = RetrieveGenre( dbAlbum.Genre );
 
 			return( retValue );
@@ -207,8 +207,8 @@ namespace Noise.RemoteHost {
 		private static RoAlbumInfo TransformAlbumInfo( DbAlbum album, AlbumSupportInfo supportInfo ) {
 			var retValue = new RoAlbumInfo();
 
-			Mapper.DynamicMap( album, retValue );
-			Mapper.DynamicMap( supportInfo, retValue );
+			Mapper.Map( album, retValue );
+			Mapper.Map( supportInfo, retValue );
 
 			var	artwork = SelectAlbumCover( supportInfo );
 			if(( artwork != null ) &&

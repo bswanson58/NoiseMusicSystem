@@ -8,7 +8,6 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
 			 Height="200"
-			 d:DesignHeight="200"
 			 d:DesignWidth="600"
 			 mc:Ignorable="d">
 
@@ -18,6 +17,7 @@
 
 	<UserControl.Resources>
 		<ValueConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.3"/>
+		<ValueConverters:NullableBooleanOpacityConverter x:Key="OpaqueIfFalse" TrueOpacity="1.0" NullOpacity="1.0" FalseOpacity="0.3"/>
 		<ValueConverters:BooleanVisibilityConverter x:Key="CollapseIfTrue" TriggerValue="True" IsHidden="False"/>
 		<ValueConverters:BooleanVisibilityConverter x:Key="VisibleIfTrue" TriggerValue="False" IsHidden="False"/>
 		<ValueConverters:NumericValueVisibilityConverter x:Key="HideIfZero" HideOnMatch="True" IsHidden="True"/>
@@ -35,8 +35,8 @@
 													 InteractionRequest="{Binding Path=AlbumCategoryEditRequest}" />
 	</i:Interaction.Behaviors>
 
-	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Album Information ">
-		<Border Background="{DynamicResource TreeItemBackground}" BorderThickness="0" CornerRadius="5"
+	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Album ">
+		<Border BorderThickness="0" CornerRadius="5"
 				Visibility="{Binding Path=AlbumValid, Converter={StaticResource BooleanVisibilityConverter}}">
 			<Grid Background="{StaticResource NoiseBrush}" 
 				  Behaviours:GridUtils.ColumnDefinitions="Auto,*">
@@ -63,17 +63,17 @@
 					<!--  Album name -->
 					<Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Right" MaxWidth="{Binding ElementName=_gridParent, Path=ActualWidth}">
 						<TextBlock Grid.Column="1" Style="{StaticResource LargeTitleStyle}" 
-									   HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Path=Album.Name}" />
+									   HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Path=Album.DisplayName}" />
 					</Viewbox>
 
 					<!--  Favorite and rating  -->
 					<StackPanel x:Name="_ratingPanel" Grid.Row="1" Margin="0,7,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
 						<CheckBox x:Name="_favoriteControl" Margin="0,0,7,1" VerticalAlignment="Center" Style="{StaticResource FavoriteCheckBoxStyle}"
-								  Opacity="{Binding Path=Album.UiIsFavorite, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"   
-								  IsChecked="{Binding Path=Album.UiIsFavorite, Mode=TwoWay}" />
+								  Opacity="{Binding Path=Album.FavoriteValue, Mode=TwoWay, Converter={StaticResource OpaqueIfFalse}}"   
+								  IsChecked="{Binding Path=Album.FavoriteValue, Mode=TwoWay}" />
 						<Controls:RatingControl x:Name="_ratingControl" Style="{StaticResource NoiseRatingStyle}" 
-												Opacity="{Binding Path=Album.UiRating, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"   
-												Rating="{Binding Path=Album.UiRating, Mode=TwoWay}"/>
+												Opacity="{Binding Album.UiRating, Mode=TwoWay, Converter={StaticResource DefaultValueOpacityConverter}}"   
+												Rating="{Binding Album.UiRating, Mode=TwoWay}" UseAlternate="{Binding Album.UseAlternateRating}"/>
 						
 						<StackPanel.Triggers>
 							<EventTrigger SourceName="_ratingPanel" RoutedEvent="StackPanel.MouseEnter">
@@ -96,7 +96,7 @@
 								<BeginStoryboard >
 									<Storyboard Storyboard.TargetName="_favoriteControl" Storyboard.TargetProperty="Opacity">
 										<DoubleAnimationUsingKeyFrames BeginTime="00:00:00">
-											<LinearDoubleKeyFrame Value="{Binding Path=Album.UiIsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}" 
+											<LinearDoubleKeyFrame Value="{Binding Path=Album.FavoriteValue, Converter={StaticResource OpaqueIfFalse}}" 
 																  KeyTime="0:0:0.7" />
 										</DoubleAnimationUsingKeyFrames>
 									</Storyboard>
@@ -137,7 +137,7 @@
 					</StackPanel>
 
 					<!--  Album commands  -->
-					<StackPanel Grid.Row="7" Height="24" HorizontalAlignment="Right" Orientation="Horizontal">
+					<StackPanel Grid.Row="7" Height="28" HorizontalAlignment="Right" Orientation="Horizontal">
 
 						<!-- Display either the play volume/volume list or play all controls based on the HasMultipleVolumes property -->
 						<StackPanel Orientation="Horizontal" Margin="0,0,9,0"
@@ -148,16 +148,16 @@
 						<StackPanel Orientation="Horizontal" Margin="0,0,11,0"
 									Visibility="{Binding Path=HasMultipleVolumes, Converter={StaticResource VisibleIfTrue}}">
 							<Button Margin="0,0,5,0" Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayVolume}"/>
-							<ComboBox MinWidth="97" ItemsSource="{Binding VolumeNames}" SelectedItem="{Binding CurrentVolumeName}"/>
+							<ComboBox MinWidth="97" Style="{StaticResource GeneralComboStyle}" ItemsSource="{Binding VolumeNames}" SelectedItem="{Binding CurrentVolumeName}"/>
 						</StackPanel>
 						
-						<Button Margin="0,0,5,0" Padding="4" Style="{StaticResource GeneralButtonStyle}"
+						<Button Margin="0,0,5,0" Padding="3,5" Style="{StaticResource PathButtonStyle}"
 								Command="{Binding Path=OpenAlbumFolder}" Content="{StaticResource Path_Folder}" ToolTip="Open Album Folder" />
-						<Button Margin="0,0,5,0" Padding="4" Style="{StaticResource GeneralButtonStyle}"
+						<Button Margin="0,0,5,0" Padding="3,5" Style="{StaticResource PathButtonStyle}"
 								Command="{Binding DisplayPictures}" Content="{StaticResource Path_Pictures}" ToolTip="Display Album Extras" />
-						<Button Margin="0,0,5,0" Padding="3" Style="{StaticResource GeneralButtonStyle}"
+						<Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}"
 								Command="{Binding EditCategories}" Content="{StaticResource Path_Categories}" ToolTip="Edit Album Categories" />
-						<Button Margin="0,0,0,0" Padding="3" Style="{StaticResource GeneralButtonStyle}"
+						<Button Margin="0,0,0,0" Style="{StaticResource PathButtonStyle}"
 								Command="{Binding Path=EditAlbum}" Content="{StaticResource Path_Edit}" ToolTip="Edit Album Properties" />
 					</StackPanel>
 				</Grid>

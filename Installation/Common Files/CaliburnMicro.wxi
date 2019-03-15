@@ -4,9 +4,17 @@
     <Component Id="Caliburn.Micro.dll" Guid="e3d8353b-6014-452f-aaac-e2bfc616ea0d">
       <File Id="Caliburn.Micro.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Caliburn.Micro.dll" KeyPath="yes" Checksum="yes" />
     </Component>
+    <Component Id="Caliburn.Micro.Platform.dll" Guid="a6a0e88d-01b1-41f9-ad4e-28431c2741ef">
+      <File Id="Caliburn.Micro.Platform.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Caliburn.Micro.Platform.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
+    <Component Id="Caliburn.Micro.Platform.Core.dll" Guid="e0c8390e-297a-4d00-a6f7-167e4aee04e5">
+      <File Id="Caliburn.Micro.Platform.Core.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)Caliburn.Micro.Platform.Core.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
   </DirectoryRef>
 
   <ComponentGroup Id="CaliburnMicroFiles">
     <ComponentRef Id="Caliburn.Micro.dll" />
+    <ComponentRef Id="Caliburn.Micro.Platform.dll" />
+    <ComponentRef Id="Caliburn.Micro.Platform.Core.dll" />
   </ComponentGroup>
 </Include>

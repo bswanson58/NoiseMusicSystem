@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Data;
 using AutoMapper;
 using Caliburn.Micro;
+using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Dto;
@@ -18,7 +20,7 @@ using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	internal class AlbumListViewModel : AutomaticCommandBase,
+	internal class AlbumListViewModel : AutomaticCommandBase, IActiveAware,
 										IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>,
 										IHandle<Events.AlbumUserUpdate> {
 		private const string							cDisplaySortDescriptionss = "_displaySortDescriptions";
@@ -28,22 +30,31 @@ namespace Noise.UI.ViewModels {
 		private readonly IUiLog							mLog;
 		private readonly IPreferences					mPreferences;
 		private readonly IAlbumProvider					mAlbumProvider;
+		private readonly IRatings						mRatings;
+		private readonly IPlayCommand					mPlayCommand;
 		private readonly ISelectionState				mSelectionState;
 		private	readonly Observal.Observer				mChangeObserver;
 		private readonly IObservableCollection<UiAlbum>	mAlbumList;
 		private ICollectionView							mAlbumView;
 		private readonly List<ViewSortStrategy>			mAlbumSorts;
 		private DbArtist								mCurrentArtist;
-		private TaskHandler								mAlbumRetrievalTaskHandler;
+		private TaskHandler<IEnumerable<UiAlbum>>		mAlbumRetrievalTaskHandler;
+		private CancellationTokenSource					mCancellationTokenSource;
+		private bool									mIsActive;
 		private bool									mRetrievingAlbums;
 		private long									mAlbumToSelect;
  
-		public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, ISelectionState selectionState, IUiLog log ) {
+		public	event	EventHandler					IsActiveChanged = delegate { };
+
+		public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, IPlayCommand playCommand, IRatings ratings,
+								   ISelectionState selectionState, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mPreferences = preferences;
 			mAlbumProvider = albumProvider;
+			mRatings = ratings;
 			mSelectionState = selectionState;
+			mPlayCommand = playCommand;
 
 			mAlbumList = new BindableCollection<UiAlbum>();
 			VisualStateName = cHideSortDescriptions;
@@ -51,9 +62,11 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnAlbumChanged );
 
-			mAlbumSorts = new List<ViewSortStrategy> { new ViewSortStrategy( "Album Name", new List<SortDescription> { new SortDescription( "Name", ListSortDirection.Ascending ) } ),
+			mAlbumSorts = new List<ViewSortStrategy> { new ViewSortStrategy( "Album Name", new List<SortDescription> { new SortDescription( "Name", ListSortDirection.Ascending ) }),
 													   new ViewSortStrategy( "Published Year", new List<SortDescription> { new SortDescription( "PublishedYear", ListSortDirection.Ascending ),
-																														   new SortDescription( "Name", ListSortDirection.Ascending ) })};
+																														   new SortDescription( "Name", ListSortDirection.Ascending ) }),
+			                                           new ViewSortStrategy( "Rating", new List<SortDescription> { new SortDescription("SortRating", ListSortDirection.Descending ),
+			                                                                           new SortDescription( "Name", ListSortDirection.Ascending ) }) };
 
 			var configuration = mPreferences.Load<UserInterfacePreferences>();
 			if( configuration != null ) {
@@ -68,6 +81,25 @@ namespace Noise.UI.ViewModels {
 			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
 			mEventAggregator.Subscribe( this );
+		}
+
+		public bool IsActive {
+			get{ return( mIsActive ); }
+			set {
+				mIsActive = value;
+
+				IsActiveChanged( this, new EventArgs());
+
+				if( mIsActive ) {
+					if( mSelectionState.CurrentArtist != null ) {
+						RetrieveAlbums( mSelectionState.CurrentArtist );
+					}
+				}
+				else {
+					CancelRetrievalTask();
+					ClearAlbumList();
+				}
+			}
 		}
 
 		public void Handle( Events.DatabaseOpened args ) {
@@ -87,7 +119,9 @@ namespace Noise.UI.ViewModels {
 
 		private void OnArtistChanged( DbArtist artist ) {
 			if( artist != null ) {
-				RetrieveAlbums( artist );
+				if( IsActive ) {
+					RetrieveAlbums( artist );
+				}
 			}
 			else {
 				ClearAlbumList();
@@ -200,7 +234,7 @@ namespace Noise.UI.ViewModels {
 				Set( () => SelectedAlbum, value );
 
 				if( value != null ) {
-					mEventAggregator.Publish( new Events.AlbumFocusRequested( value.Artist, value.DbId ));
+					mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( value.Artist, value.DbId ));
 				}
 			}
 		}
@@ -237,10 +271,10 @@ namespace Noise.UI.ViewModels {
 			VisualStateName = VisualStateName == cHideSortDescriptions ? cDisplaySortDescriptionss : cHideSortDescriptions;
 		}
 
-		internal TaskHandler AlbumsRetrievalTaskHandler {
+		internal TaskHandler<IEnumerable<UiAlbum>> AlbumsRetrievalTaskHandler {
 			get {
 				if( mAlbumRetrievalTaskHandler == null ) {
-					Execute.OnUIThread( () => mAlbumRetrievalTaskHandler = new TaskHandler() );
+					Execute.OnUIThread( () => mAlbumRetrievalTaskHandler = new TaskHandler<IEnumerable<UiAlbum>>());
 				}
 
 				return ( mAlbumRetrievalTaskHandler );
@@ -248,33 +282,39 @@ namespace Noise.UI.ViewModels {
 			set { mAlbumRetrievalTaskHandler = value; }
 		}
 
+		private CancellationToken GenerateCanellationToken() {
+			mCancellationTokenSource = new CancellationTokenSource();
+
+			return( mCancellationTokenSource.Token );
+		}
+
+		private void CancelRetrievalTask() {
+			if( mCancellationTokenSource != null ) {
+				mCancellationTokenSource.Cancel();
+				mCancellationTokenSource = null;
+			}
+		}
+
+		private void ClearCurrentTask() {
+			mCancellationTokenSource = null;
+		}
+
 		private void RetrieveAlbums( DbArtist artist ) {
+			CancelRetrievalTask();
 			mRetrievingAlbums = true;
 
-			ClearAlbumList();
+			var cancelToken = GenerateCanellationToken();
 
-			mCurrentArtist = artist;
-			RaisePropertyChanged( () => ArtistName );
-
-			AlbumsRetrievalTaskHandler.StartTask( () => {
-						using( var albums = mAlbumProvider.GetAlbumList( mCurrentArtist )) {
-							SetAlbumList( albums.List );
-						}
-
-						mRetrievingAlbums = false;
-					},
-					() => {
-						if( mAlbumToSelect != Constants.cDatabaseNullOid ) {
-							Set( () => SelectedAlbum, ( from a in mAlbumList where a.DbId == mAlbumToSelect select a ).FirstOrDefault());
-
-							mAlbumToSelect = Constants.cDatabaseNullOid;
-						}
-					},
+			AlbumsRetrievalTaskHandler.StartTask( 
+					() =>  LoadAlbums( artist, cancelToken ),
+					albumList => UpdateUi( albumList, artist ),
 					ex => {
 						mLog.LogException( string.Format( "Retrieving Albums for {0}", artist ), ex );
 
 						mRetrievingAlbums = false;
-					} );
+
+						ClearCurrentTask();
+					}, cancelToken );
 		}
 
 		private void ClearAlbumList() {
@@ -290,37 +330,61 @@ namespace Noise.UI.ViewModels {
 			RaisePropertyChanged( () => AlbumCount );
 		}
 
-		private void SetAlbumList( IEnumerable<DbAlbum> albumList ) {
-			mAlbumList.IsNotifying = false;
+		private IEnumerable<UiAlbum> LoadAlbums( DbArtist forArtist, CancellationToken cancelToken ) {
+			var retValue = new List<UiAlbum>();
 
-			foreach( var album in albumList ) {
-				var uiAlbum = TransformAlbum( album );
+			using( var albums = mAlbumProvider.GetAlbumList( forArtist )) {
+				foreach( var album in albums.List ) {
+					if(!cancelToken.IsCancellationRequested ) {
+						var uiAlbum = TransformAlbum( album );
 
-				mAlbumList.Add( uiAlbum );
-				mChangeObserver.Add( uiAlbum );
+						retValue.Add( uiAlbum );
+						mChangeObserver.Add( uiAlbum );
+					}
+					else {
+						retValue.Clear();
+
+						break;
+					}
+				}
 			}
 
-			mAlbumList.IsNotifying = true;
-			mAlbumList.Refresh();
-
-			RaisePropertyChanged( () => AlbumCount );
+			return( retValue );
 		}
 
 		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {
 			var retValue = new UiAlbum( OnPlay );
 
 			if( dbAlbum != null ) {
-				Mapper.DynamicMap( dbAlbum, retValue );
+				Mapper.Map( dbAlbum, retValue );
 			}
 
 			return ( retValue );
+		}
+
+		private void UpdateUi( IEnumerable<UiAlbum> albumList, DbArtist artist ) {
+			ClearAlbumList();
+			mAlbumList.AddRange( albumList );
+			mCurrentArtist = artist;
+
+			RaisePropertyChanged( () => ArtistName );
+			RaisePropertyChanged( () => AlbumCount );
+
+			if( mAlbumToSelect != Constants.cDatabaseNullOid ) {
+				Set( () => SelectedAlbum, ( from a in mAlbumList where a.DbId == mAlbumToSelect select a ).FirstOrDefault());
+
+				mAlbumToSelect = Constants.cDatabaseNullOid;
+			}
+
+			mRetrievingAlbums = false;
+			ClearCurrentTask();
 		}
 
 		private void OnPlay( long albumId ) {
 			var album = mAlbumProvider.GetAlbum( albumId );
 
 			if( album != null ) {
-				GlobalCommands.PlayAlbum.Execute( album );
+				mPlayCommand.Play( album );
 			}
 		}
 
@@ -332,21 +396,25 @@ namespace Noise.UI.ViewModels {
 
 				if( album != null ) {
 					mChangeObserver.Release( uiAlbum );
-					Mapper.DynamicMap( album, uiAlbum );
+					Mapper.Map( album, uiAlbum );
 					mChangeObserver.Add( uiAlbum );
 				}
 			}
 		}
 
-		private static void OnAlbumChanged( PropertyChangeNotification propertyNotification ) {
+		private void OnAlbumChanged( PropertyChangeNotification propertyNotification ) {
 			var notifier = propertyNotification.Source as UiBase;
 
 			if( notifier != null ) {
-				if( propertyNotification.PropertyName == "UiRating" ) {
-					GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( notifier.DbId, notifier.UiRating ));
-				}
-				if( propertyNotification.PropertyName == "UiIsFavorite" ) {
-					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( notifier.DbId, notifier.UiIsFavorite ));
+				var album = mAlbumProvider.GetAlbum( notifier.DbId );
+
+				if( album != null ) {
+					if( propertyNotification.PropertyName == "UiRating" ) {
+						mRatings.SetRating( album, notifier.UiRating );
+					}
+					if( propertyNotification.PropertyName == "UiIsFavorite" ) {
+						mRatings.SetFavorite( album, notifier.UiIsFavorite );
+					}
 				}
 			}
 		}

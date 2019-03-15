@@ -67,7 +67,7 @@ namespace Noise.Librarian.ViewModels {
 		public void Execute_ExportLibrary() {
 			if(( mCurrentLibrary != null ) &&
 			   ( Directory.Exists( ExportPath ))) {
-				mEventAggregator.Publish( new ProgressEvent( 0.0D, true ));
+				mEventAggregator.PublishOnUIThread( new ProgressEvent( 0.0D, true ));
 
 				mLibrarian.ExportLibrary( mCurrentLibrary, ExportPath, OnExportProgress );
 			}
@@ -88,7 +88,7 @@ namespace Noise.Librarian.ViewModels {
 			Progress = args.Progress;
 			ProgressActive = !args.Completed;
 
-			mEventAggregator.Publish( new ProgressEvent( (double)args.Progress / 1000, !args.Completed ));
+			mEventAggregator.PublishOnUIThread( new ProgressEvent( (double)args.Progress / 1000, !args.Completed ));
 		}
 
 		public string ProgressPhase {

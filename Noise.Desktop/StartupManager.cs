@@ -25,7 +25,7 @@ namespace Noise.Desktop {
 			mLastLibraryUsed = preferences.LastLibraryUsed;
 			mLoadLastLibraryOnStartup = preferences.LoadLastLibraryOnStartup;
 
-			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.StartupLayout ));
+			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.StartupLayout ));
 		}
 
 		public void Handle( Events.NoiseSystemReady args ) {
@@ -35,10 +35,10 @@ namespace Noise.Desktop {
 					  ( mLastLibraryUsed != Constants.cDatabaseNullOid )) {
 					   mLibraryConfiguration.Open( mLastLibraryUsed );
 
-					   mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
+					   mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
 				   }
 				   else {
-					   mEventAggregator.Publish( mLibraryConfiguration.Libraries.Any() ? new Events.WindowLayoutRequest( Constants.LibrarySelectionLayout ) :
+					   mEventAggregator.PublishOnUIThread( mLibraryConfiguration.Libraries.Any() ? new Events.WindowLayoutRequest( Constants.LibrarySelectionLayout ) :
 																						 new Events.WindowLayoutRequest( Constants.LibraryCreationLayout ));
 				   }
 			}

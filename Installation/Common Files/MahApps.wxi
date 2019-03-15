@@ -4,9 +4,13 @@
     <Component Id="MahApps.Metro.dll" Guid="96053360-6aa9-4adb-9734-52063e8302f0">
       <File Id="MahApps.Metro.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)MahApps.Metro.dll" KeyPath="yes" Checksum="yes" />
     </Component>
+    <Component Id="ControlzEx.dll" Guid="05FA42A2-B3C5-464C-9903-FCA95EDF9D6D">
+      <File Id="ControlzEx.dll" DiskId="10" Source="$(var.Noise.Desktop.TargetDir)ControlzEx.dll" KeyPath="yes" Checksum="yes" />
+    </Component>
   </DirectoryRef>
 
   <ComponentGroup Id="MahAppsMetroFiles">
     <ComponentRef Id="MahApps.Metro.dll" />
+    <ComponentRef Id="ControlzEx.dll" />
   </ComponentGroup>
 </Include>

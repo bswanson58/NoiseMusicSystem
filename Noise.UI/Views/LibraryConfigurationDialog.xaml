@@ -1,72 +1,74 @@
 ﻿<UserControl x:Class="Noise.UI.Views.LibraryConfigurationDialog"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
-             Height="275" Width="550"
-             Tag="Library Configuration"
-        >
-    <Grid>
-        <Grid Margin="5">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 mc:Ignorable="d" 
+			 Height="265" Width="600"
+			 Tag="Library Configuration"
+		>
+	<Grid>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Grid.Row="0" Margin="5" Orientation="Horizontal">
-                <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" VerticalAlignment="Center" Margin="5,0,0,0" Content="Libraries:"/>
-                <ComboBox Margin="5,0" Width="300" Height="25" ItemsSource="{Binding LibraryList}" DisplayMemberPath="LibraryName" SelectedItem="{Binding SelectedLibrary}"/>
-            </StackPanel>
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+				
+				<StackPanel Grid.Row="0" Margin="5" Orientation="Horizontal">
+					<Label VerticalAlignment="Center" Margin="5,0,0,0" Content="Libraries:"/>
+					<ComboBox Margin="5,5" Width="385" Height="25" ItemsSource="{Binding LibraryList}" DisplayMemberPath="LibraryName" SelectedItem="{Binding SelectedLibrary}"/>
+				</StackPanel>
 
-            <GroupBox Grid.Column="0" Grid.Row="1" Margin="7" Header="Library Properties">
-                <Grid Margin="5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Label Grid.Column="0" Grid.Row="0" Content="Library Name:" HorizontalAlignment="Right"/>
-                    <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding LibraryName, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
+				<GroupBox Grid.Row="1" Margin="7" Header="Library Properties">
+					<Grid Margin="5">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="100"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+						<Label Grid.Column="0" Grid.Row="0" Content="Library Name:" HorizontalAlignment="Right"/>
+						<TextBox Grid.Column="1" Grid.Row="0" Text="{Binding LibraryName, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
 
-                    <Label Grid.Column="0" Grid.Row="1" Content="Database Name:" HorizontalAlignment="Right"/>
-                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding DatabaseName, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
+						<Label Grid.Column="0" Grid.Row="1" Content="Database Name:" HorizontalAlignment="Right"/>
+						<TextBox Grid.Column="1" Grid.Row="1" Text="{Binding DatabaseName, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
 
-                    <Label Grid.Column="0" Grid.Row="2" Content="Media Path:" HorizontalAlignment="Right"/>
-                    <Grid Grid.Column="1" Grid.Row="2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0" Text="{Binding MediaPath, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
-                        <Button Grid.Column="1" Margin="3" Content=" ... " Command="{Binding Path=Browse}"/>
-                    </Grid>
-                    
-                    <CheckBox Grid.Column="1" Grid.Row="3" Margin="3" Content="Is Default Library" IsChecked="{Binding IsDefaultLibrary}"/>
-                    
-                    <Button Grid.Column="1" Grid.Row="4" Width="70" Margin="0,9" HorizontalAlignment="Right" Content="Update" Command="{Binding UpdateConfiguration}"/>
-                </Grid>
-            </GroupBox>
+						<Label Grid.Column="0" Grid.Row="2" Content="Media Path:" HorizontalAlignment="Right"/>
+						<Grid Grid.Column="1" Grid.Row="2">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+							<TextBox Grid.Column="0" Text="{Binding MediaPath, UpdateSourceTrigger=PropertyChanged}" Margin="3"/>
+							<Button Grid.Column="1" Margin="3" Content=" ... " Command="{Binding Path=Browse}"/>
+						</Grid>
 
-            <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
-                <Button Margin="7,5" Content=" Open Library " Command="{Binding Path=OpenLibrary}"/>
-                <Button Margin="7,5" Content=" Close Library " Command="{Binding Path=CloseLibrary}"/>
-                <Button Margin="7,5" Content=" Update Library " Command="{Binding Path=UpdateLibrary}"/>
-                <Button Margin="7,23,7,0" Content=" New Library " Command="{Binding Path=CreateLibrary}"/>
-            </StackPanel>
-        </Grid>
+						<CheckBox Grid.Column="1" Grid.Row="3" Margin="3" Content="Is Default Library" IsChecked="{Binding IsDefaultLibrary}"/>
 
-    </Grid>
+						<Button Grid.Column="1" Grid.Row="4" Style="{StaticResource GeneralButtonStyle}" Margin="0,5,0,0" Width="65" HorizontalAlignment="Right"
+							Content="Update" Command="{Binding UpdateConfiguration}"/>
+					</Grid>
+				</GroupBox>
+			</Grid>
+
+			<StackPanel Grid.Column="1" Margin="15,5,0,0">
+				<Button Margin="7,5" Style="{StaticResource GeneralButtonStyle}" Content="Open Library" Command="{Binding Path=OpenLibrary}"/>
+				<Button Margin="7,5" Style="{StaticResource GeneralButtonStyle}" Content="Close Library" Command="{Binding Path=CloseLibrary}"/>
+				<Button Margin="7,5" Style="{StaticResource GeneralButtonStyle}" Content="Update Library" Command="{Binding Path=UpdateLibrary}"/>
+				<Button Margin="7,20,7,0" Style="{StaticResource GeneralButtonStyle}" Content="New Library" Command="{Binding Path=CreateLibrary}"/>
+			</StackPanel>
+		</Grid>
+
+	</Grid>
 </UserControl>

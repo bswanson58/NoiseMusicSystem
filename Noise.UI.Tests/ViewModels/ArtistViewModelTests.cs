@@ -2,7 +2,7 @@
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Caliburn.Micro;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Moq;
@@ -53,11 +53,9 @@ namespace Noise.UI.Tests.ViewModels {
 
 		[SetUp]
 		public void Setup() {
-			// Set the ui dispatcher to run on the current thread.
-			Execute.ResetWithoutDispatcher();
-
 			// Set up the AutoMapper configurations.
-			MappingConfiguration.Configure();
+		    Mapper.Initialize( cfg => cfg.AddProfiles( "Noise.Ui" ));
+		    Mapper.AssertConfigurationIsValid();
 		}
 
 		[Test]

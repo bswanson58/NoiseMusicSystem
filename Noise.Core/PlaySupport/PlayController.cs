@@ -30,14 +30,15 @@ namespace Noise.Core.PlaySupport {
 	}
 
 	internal class PlayController : IPlayController, IRequireInitialization,
-									IHandle<Events.PlayQueueChanged>, IHandle<Events.PlayQueuedTrackRequest>,
-									IHandle<Events.SystemShutdown>, IHandle<Events.GlobalUserEvent> {
+									IHandle<Events.PlayQueueChanged>, IHandle<Events.PlayQueuedTrackRequest>, IHandle<Events.TrackUserUpdate>,
+	IHandle<Events.SystemShutdown>, IHandle<Events.GlobalUserEvent> {
 		private readonly IEventAggregator			mEventAggregator;
 		private readonly ILogPlayState				mLog;
 		private readonly IAudioPlayer				mAudioPlayer;
 		private readonly IPlaybackContextManager	mPlaybackContext;
 		private readonly IPlayQueue					mPlayQueue;
 		private readonly IPlayHistory				mPlayHistory;
+		private readonly IRatings					mRatings;
 		private readonly IScrobbler					mScrobbler;
 		private readonly IPreferences				mPreferences;
 		private TimeSpan							mCurrentPosition;
@@ -58,7 +59,7 @@ namespace Noise.Core.PlaySupport {
 
 		public IObservable<ePlayState>			PlayStateChange { get { return ( mPlayStateSubject.AsObservable()); } }
 
-		public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator,
+		public PlayController( ILifecycleManager lifecycleManager, IEventAggregator eventAggregator, IRatings ratings,
 							   IPlayQueue playQueue, IPlayHistory playHistory, IScrobbler scrobbler, IPlaybackContextManager playbackContext,
 							   IAudioPlayer audioPlayer, IPreferences preferences, ILogPlayState log ) {
 			mEventAggregator = eventAggregator;
@@ -67,6 +68,7 @@ namespace Noise.Core.PlaySupport {
 			mPlayHistory = playHistory;
 			mPlaybackContext = playbackContext;
 			mScrobbler = scrobbler;
+			mRatings = ratings;
 			mAudioPlayer = audioPlayer;
 			mPreferences = preferences;
 
@@ -272,7 +274,7 @@ namespace Noise.Core.PlaySupport {
 				mLog.PlayStateTrigger( trigger );
 				mPlayStateController.Fire( trigger );
 
-				Execute.OnUIThread( () => mEventAggregator.Publish( new Events.PlaybackStatusChanged( CurrentStatus )));
+				Execute.OnUIThread( () => mEventAggregator.PublishOnUIThread( new Events.PlaybackStatusChanged( CurrentStatus )));
 			}
 			catch( Exception ex ) {
 				mLog.LogPlayStateException( "Firing state change", ex );
@@ -335,7 +337,7 @@ namespace Noise.Core.PlaySupport {
 					mCurrentStatus = value;
 
 					mLog.PlaybackStatusChanged( mCurrentStatus );
-					mEventAggregator.Publish( new Events.PlaybackStatusChanged( mCurrentStatus ));
+					mEventAggregator.PublishOnUIThread( new Events.PlaybackStatusChanged( mCurrentStatus ));
 				}
 			}
 		}
@@ -380,7 +382,7 @@ namespace Noise.Core.PlaySupport {
 			if( track != null ) {
 				mPlaybackContext.OpenContext( track.Track );
 
-				mEventAggregator.Publish( new Events.PlaybackTrackStarted( track ));
+				mEventAggregator.PublishOnUIThread( new Events.PlaybackTrackStarted( track ));
 				GlobalCommands.RequestLyrics.Execute( new LyricsRequestArgs( track.Artist, track.Track ));
 			}
 		}
@@ -779,6 +781,22 @@ namespace Noise.Core.PlaySupport {
 			return( retValue );
 		}
 
+		public void Handle( Events.TrackUserUpdate args ) {
+			var track = GetTrack( mCurrentChannel );
+
+			if(( track != null ) &&
+			   (!track.IsStream )) {
+				if( track.Track.DbId == args.Track.DbId ) {
+					var settings = GetChannelSettings( mCurrentChannel );
+
+					settings.IsFavorite = args.Track.IsFavorite;
+					settings.Rating = args.Track.Rating;
+
+					FirePlaybackInfoChange();
+				}
+			}
+		}
+
 		public bool IsFavorite {
 			get {
 				var	retValue = false;
@@ -791,16 +809,11 @@ namespace Noise.Core.PlaySupport {
 				return( retValue );
 			}
 			set {
-				var settings = GetChannelSettings( mCurrentChannel );
-				if( settings != null ) {
-					var track = GetTrack( mCurrentChannel );
+				var track = GetTrack( mCurrentChannel );
 
-					settings.IsFavorite = value;
-
-					if( track != null ) {
-						GlobalCommands.SetFavorite.Execute( track.IsStream ? new SetFavoriteCommandArgs( track.Stream.DbId, value ) :
-																			 new SetFavoriteCommandArgs( track.Track.DbId, value ));
-					}
+				if(( track != null ) &&
+					(!track.IsStream )) {
+					mRatings.SetFavorite( track.Track, value );
 				}
 			}
 		}
@@ -817,17 +830,11 @@ namespace Noise.Core.PlaySupport {
 				return( retValue );
 			}
 			set {
-				var settings = GetChannelSettings( mCurrentChannel );
+				var track = GetTrack( mCurrentChannel );
 
-				if( settings != null ) {
-					var track = GetTrack( mCurrentChannel );
-
-					settings.Rating = value;
-
-					if( track.Track != null ) {
-						GlobalCommands.SetRating.Execute( track.IsStream ? new SetRatingCommandArgs( track.Stream.DbId, value ) :
-																		   new SetRatingCommandArgs( track.Track.DbId, value ));
-					}
+				if(( track.Track != null ) &&
+				   (!track.IsStream )) {
+					mRatings.SetRating( track.Track, value );
 				}
 			}
 		}
@@ -850,11 +857,11 @@ namespace Noise.Core.PlaySupport {
 		}
 
 		private void FirePlaybackInfoChange() {
-			mEventAggregator.Publish( new Events.PlaybackInfoChanged());
+			mEventAggregator.PublishOnUIThread( new Events.PlaybackInfoChanged());
 		}
 
 		private void FirePlaybackTrackChanged() {
-			mEventAggregator.Publish( new Events.PlaybackTrackChanged());
+			mEventAggregator.PublishOnUIThread( new Events.PlaybackTrackChanged());
 		}
 	}
 }

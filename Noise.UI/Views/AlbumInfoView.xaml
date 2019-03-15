@@ -14,7 +14,7 @@
         </Grid.RowDefinitions>
 
         <Views:AlbumView Grid.Row="0" />
-        <Views:AlbumTracksView Grid.Row="1" />
+        <Views:AlbumTracksView Margin="0,3,0,0" Grid.Row="1" />
 
     </Grid>
 </UserControl>

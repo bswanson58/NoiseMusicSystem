@@ -44,7 +44,7 @@ namespace Noise.UI.ViewModels {
 		private UiCategory TransformTag( DbTag tag, IEnumerable<long> selectedList ) {
 			var retValue = new UiCategory( OnSelectionChanged );
 
-			Mapper.DynamicMap( tag, retValue );
+			Mapper.Map( tag, retValue );
 			retValue.IsSelected = selectedList.Contains( tag.DbId );
 
 			return( retValue );

@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System;
+using Caliburn.Micro;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -31,21 +32,23 @@ namespace Noise.Core.FileProcessor {
 				}
 
 				if(!string.IsNullOrWhiteSpace( albumName )) {
-					context.Album = context.AlbumCache.Find( album => album.Name == albumName && album.Artist == context.Artist.DbId );
-					if( context.Album == null ) {
-						context.Album = new DbAlbum { Name = albumName, Artist = context.Artist.DbId };
+					if(!albumName.Equals( Constants.LibraryMetadataFolder, StringComparison.InvariantCultureIgnoreCase )) {
+						context.Album = context.AlbumCache.Find( album => album.Name == albumName && album.Artist == context.Artist.DbId );
+						if( context.Album == null ) {
+							context.Album = new DbAlbum { Name = albumName, Artist = context.Artist.DbId };
 
-						mAlbumProvider.AddAlbum( context.Album );
-						context.AlbumCache.Add( context.Album );
+							mAlbumProvider.AddAlbum( context.Album );
+							context.AlbumCache.Add( context.Album );
 
-						context.Artist.AlbumCount++;
-						context.Summary.AlbumsAdded++;
+							context.Artist.AlbumCount++;
+							context.Summary.AlbumsAdded++;
 
-						mEventAggregator.Publish( new Events.AlbumAdded( context.Album.DbId ));
-						context.Log.LogAlbumAdded( context.StorageFile, context.Album );
-					}
-					else {
-						context.Log.LogAlbumFound( context.StorageFile, context.Album );
+							mEventAggregator.PublishOnUIThread( new Events.AlbumAdded( context.Album.DbId ));
+							context.Log.LogAlbumAdded( context.StorageFile, context.Album );
+						}
+						else {
+							context.Log.LogAlbumFound( context.StorageFile, context.Album );
+						}
 					}
 				}
 				else {

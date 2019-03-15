@@ -58,7 +58,7 @@ namespace Noise.Core.Tests.PlaySupport {
 		}
 
 		private void MonitorPlaybackStatus( TestablePlayController sut ) {
-			sut.Mock<IEventAggregator>().Setup( m => m.Publish( It.Is<Events.PlaybackStatusChanged>( o => true ))).Callback(() => RecordStatus( sut.ClassUnderTest ));
+			sut.Mock<IEventAggregator>().Setup( m => m.PublishOnUIThread( It.Is<Events.PlaybackStatusChanged>( o => true ))).Callback(() => RecordStatus( sut.ClassUnderTest ));
 		}
 
 		[Test]
@@ -152,7 +152,7 @@ namespace Noise.Core.Tests.PlaySupport {
 
 			StartFirstTrack( sut );
 
-			sut.Mock<IEventAggregator>().Verify( m => m.Publish( IsPlaybackStatus( ePlaybackStatus.TrackStart )), Times.Once(), "PlayStart did not fire ePlaybackStatus.TrackStart");
+			sut.Mock<IEventAggregator>().Verify( m => m.PublishOnUIThread( IsPlaybackStatus( ePlaybackStatus.TrackStart )), Times.Once(), "PlayStart did not fire ePlaybackStatus.TrackStart");
 		}
 
 		[Test]

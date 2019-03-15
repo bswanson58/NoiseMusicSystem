@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using Moq;
+using Noise.UI.Dto;
 using NUnit.Framework;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -32,7 +34,7 @@ namespace Noise.UI.Tests.ViewModels {
 				var		retValue = base.ClassUnderTest;
 
 				if( retValue != null ) {
-					retValue.TracksRetrievalTaskHandler = new TaskHandler( mTaskScheduler, mTaskScheduler );
+					retValue.TracksRetrievalTaskHandler = new TaskHandler<IEnumerable<UiTrack>>( mTaskScheduler, mTaskScheduler );
 				}
 
 				return( retValue );
@@ -48,11 +50,9 @@ namespace Noise.UI.Tests.ViewModels {
 	public class AlbumTracksViewModelTests {
 		[SetUp]
 		public void Setup() {
-			// Set the ui dispatcher to run on the current thread.
-			Caliburn.Micro.Execute.ResetWithoutDispatcher();
-
 			// Set up the AutoMapper configurations.
-			MappingConfiguration.Configure();
+		    Mapper.Initialize( cfg => cfg.AddProfiles( "Noise.Ui" ));
+		    Mapper.AssertConfigurationIsValid();
 		}
 
 		[Test]

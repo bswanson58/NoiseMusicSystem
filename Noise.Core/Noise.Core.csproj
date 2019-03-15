@@ -46,9 +46,9 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleSetDirectories>;$(DevEnvDir)..\..\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisRuleDirectories>;$(DevEnvDir)..\..\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -63,8 +63,8 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisRuleSetDirectories>;$(DevEnvDir)..\..\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;$(DevEnvDir)..\..\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -78,8 +78,8 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisRuleSetDirectories>;$(DevEnvDir)..\..\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;$(DevEnvDir)..\..\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
@@ -93,14 +93,19 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisRuleSetDirectories>;$(DevEnvDir)..\..\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;$(DevEnvDir)..\..\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Caliburn.Micro, Version=1.5.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Caliburn.Micro.1.5.2\lib\net45\Caliburn.Micro.dll</HintPath>
+    <Reference Include="Caliburn.Micro, Version=3.2.0.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.Core.3.2.0\lib\net45\Caliburn.Micro.dll</HintPath>
+    </Reference>
+    <Reference Include="Caliburn.Micro.Platform, Version=3.2.0.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.3.2.0\lib\net45\Caliburn.Micro.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Caliburn.Micro.Platform.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.3.2.0\lib\net45\Caliburn.Micro.Platform.Core.dll</HintPath>
     </Reference>
     <Reference Include="CuttingEdge.Conditions, Version=1.2.0.11174, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -152,9 +157,8 @@
     <Reference Include="Recls.100.Net">
       <HintPath>..\lib\recls\Recls.100.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Stateless, Version=2.4.0.1, Culture=neutral, PublicKeyToken=93038f0927583c9a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Stateless.2.4.0\lib\Stateless.dll</HintPath>
+    <Reference Include="Stateless, Version=4.0.0.0, Culture=neutral, PublicKeyToken=93038f0927583c9a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Stateless.4.0.0\lib\net45\Stateless.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -177,7 +181,7 @@
       <HintPath>..\packages\Rx-PlatformServices.2.2.4\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Caliburn.Micro.1.5.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\Caliburn.Micro.3.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
@@ -202,8 +206,6 @@
     <Compile Include="Configuration\LibraryConfigurationManager.cs" />
     <Compile Include="Database\DatabaseCache.cs" />
     <Compile Include="Database\DatabaseStatistics.cs" />
-    <Compile Include="Database\DataUpdates.cs" />
-    <Compile Include="Database\IDataUpdates.cs" />
     <Compile Include="Database\LuceneSearchProvider.cs" />
     <Compile Include="Database\TagManager.cs" />
     <Compile Include="DataBuilders\IMetaDataCleaner.cs" />
@@ -222,6 +224,8 @@
     <Compile Include="DataExchange\IDataImport.cs" />
     <Compile Include="DataExchange\ImportFavorites.cs" />
     <Compile Include="DataExchange\ImportStreams.cs" />
+    <Compile Include="DataProviders\AlbumArtworkProvider.cs" />
+    <Compile Include="DataProviders\ArtistArtworkProvider.cs" />
     <Compile Include="DataProviders\IMetaDataProvider.cs" />
     <Compile Include="DataBuilders\ISummaryBuilder.cs" />
     <Compile Include="DataBuilders\SummaryBuilder.cs" />
@@ -230,6 +234,7 @@
     <Compile Include="DataProviders\FileTagProvider.cs" />
     <Compile Include="DataProviders\FolderStrategyProvider.cs" />
     <Compile Include="DataProviders\Mp3TagProvider.cs" />
+    <Compile Include="DataProviders\RatingsUpdater.cs" />
     <Compile Include="Exceptions\StorageConfigurationException.cs" />
     <Compile Include="FileProcessor\ArtworkProvidersPipelineStep.cs" />
     <Compile Include="FileProcessor\BasePipelineStep.cs" />
@@ -280,10 +285,12 @@
     <Compile Include="Logging\LogPlayStrategy.cs" />
     <Compile Include="Logging\LogUserStatus.cs" />
     <Compile Include="PlayQueue\RandomTrackSelector.cs" />
+    <Compile Include="PlayStrategies\PlayExhaustedStrategyFavoritesPlus.cs" />
     <Compile Include="PlayStrategies\PlayStrategyBase.cs" />
     <Compile Include="PlaySupport\AudioController.cs" />
     <Compile Include="PlaySupport\PlaybackContextManager.cs" />
     <Compile Include="PlaySupport\PlaybackContextWriter.cs" />
+    <Compile Include="PlaySupport\PlayCommand.cs" />
     <Compile Include="PlaySupport\PlayController.cs" />
     <Compile Include="NoiseCoreModule.cs" />
     <Compile Include="NoiseManager.cs" />
@@ -317,6 +324,7 @@
     <Compile Include="Sidecars\AlbumSidecarSync.cs" />
     <Compile Include="Sidecars\ArtistSidecarSync.cs" />
     <Compile Include="Sidecars\ISidecarBuilder.cs" />
+    <Compile Include="Sidecars\ISidecarCreator.cs" />
     <Compile Include="Sidecars\SidecarBuilder.cs" />
     <Compile Include="Sidecars\SidecarCreator.cs" />
     <Compile Include="Sidecars\SidecarWriter.cs" />

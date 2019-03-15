@@ -163,7 +163,7 @@ namespace Noise.Metadata.ArtistMetadata {
 		}
 
 
-		private void UpdateArtist( DbArtistStatus artistStatus ) {
+		private async void UpdateArtist( DbArtistStatus artistStatus ) {
 			bool	updated = false;
 
 			foreach( var provider in mProviders ) {
@@ -172,21 +172,21 @@ namespace Noise.Metadata.ArtistMetadata {
 									 ( status.LastUpdate + status.Lifetime > DateTime.Now ));
 
 				if( shouldUpdate ) {
-					provider.UpdateArtist( artistStatus.ArtistName );
+					if( await provider.UpdateArtist( artistStatus.ArtistName )) {
+						using( var session = mDocumentStore.OpenSession()) {
+							artistStatus.SetLastUpdate( provider.ProviderKey );
 
-					using( var session = mDocumentStore.OpenSession()) {
-						artistStatus.SetLastUpdate( provider.ProviderKey );
+							session.Store( artistStatus );
+							session.SaveChanges();
+						}
 
-						session.Store( artistStatus );
-						session.SaveChanges();
+						updated = true;
 					}
-
-					updated = true;
 				}
 			}
 
 			if( updated ) {
-					mEventAggregator.Publish( new Events.ArtistMetadataUpdated( artistStatus.ArtistName ));
+				mEventAggregator.PublishOnUIThread( new Events.ArtistMetadataUpdated( artistStatus.ArtistName ));
 			}
 		}
 	}

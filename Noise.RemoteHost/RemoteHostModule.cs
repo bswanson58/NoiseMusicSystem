@@ -18,8 +18,6 @@ namespace Noise.RemoteHost {
 			mContainer.RegisterType<INoiseRemoteSearch, RemoteSearchServer>();
 			mContainer.RegisterType<INoiseRemoteTransport, RemoteTransportServer>();
 			mContainer.RegisterType<INoiseRemoteLibrary, RemoteLibraryManager>();
-
-			MappingConfiguration.Configure();
 		}
 	}
 }

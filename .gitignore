@@ -4,6 +4,7 @@
 lib/
 visuals/
 LicenseKeys.xml.debug
+!/Releases/**
 
 #################
 ## Visual Studio
@@ -16,6 +17,7 @@ LicenseKeys.xml.debug
 *.suo
 *.user
 *.sln.docstates
+.vs/
 
 # Build results
 [Bb]in/
@@ -147,6 +149,6 @@ pip-log.txt
 # Mac crap
 .DS_Store
 
-/Sandbox
+Installation/_latest installers
 Noise.Desktop/RefitStubs.cs
 Noise.Headless/RefitStubs.cs

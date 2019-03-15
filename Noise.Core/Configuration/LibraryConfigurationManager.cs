@@ -44,7 +44,7 @@ namespace Noise.Core.Configuration {
 		public void Initialize() {
 			LoadLibraries();
 
-			mEventAggregator.Publish( new Events.LibraryConfigurationLoaded( this ));
+			mEventAggregator.PublishOnUIThread( new Events.LibraryConfigurationLoaded( this ));
 		}
 
 		public void Shutdown() {
@@ -65,7 +65,7 @@ namespace Noise.Core.Configuration {
 						mLog.LibraryOpened( mCurrentLibrary );
 						mUserStatus.OpeningLibrary( mCurrentLibrary );
 					}
-					mEventAggregator.Publish( new Events.LibraryChanged());
+					mEventAggregator.PublishOnUIThread( new Events.LibraryChanged());
 				}
 			}
 		}
@@ -154,7 +154,7 @@ namespace Noise.Core.Configuration {
 				Directory.CreateDirectory( Path.Combine( libraryPath, Constants.SearchDatabaseDirectory ));
 
 				mLibraries.Add( configuration );
-				mEventAggregator.Publish( new Events.LibraryListChanged());
+				mEventAggregator.PublishOnUIThread( new Events.LibraryListChanged());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Adding library", ex );
@@ -174,10 +174,10 @@ namespace Noise.Core.Configuration {
 				configuration.Persist( Path.Combine( GetLibraryFolder( configuration ), Constants.LibraryConfigurationFile ));
 
 				if( configuration == Current ) {
-					mEventAggregator.Publish( new Events.LibraryConfigurationChanged());
+					mEventAggregator.PublishOnUIThread( new Events.LibraryConfigurationChanged());
 				}
 
-				mEventAggregator.Publish( new Events.LibraryListChanged());
+				mEventAggregator.PublishOnUIThread( new Events.LibraryListChanged());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Storing library", ex );
@@ -196,7 +196,7 @@ namespace Noise.Core.Configuration {
 					mLibraries.Remove( configuration );
 				}
 
-				mEventAggregator.Publish( new Events.LibraryListChanged());
+				mEventAggregator.PublishOnUIThread( new Events.LibraryListChanged());
 			}
 			catch( Exception ex ) {
 				mLog.LogException( "Deleting library", ex );
@@ -267,7 +267,7 @@ namespace Noise.Core.Configuration {
 				mLog.LogException( string.Format( "Persisting library configuration to \"{0}\"", backup.BackupPath ), exception );
 			}
 
-			mEventAggregator.Publish( new Events.LibraryBackupsChanged());
+			mEventAggregator.PublishOnUIThread( new Events.LibraryBackupsChanged());
 		}
 
 		public void AbortLibraryBackup( LibraryConfiguration libraryConfiguration, LibraryBackup backup ) {
@@ -309,7 +309,7 @@ namespace Noise.Core.Configuration {
 		}
 
 		public void CloseLibraryImport( LibraryConfiguration library ) {
-			mEventAggregator.Publish( new Events.LibraryListChanged());
+			mEventAggregator.PublishOnUIThread( new Events.LibraryListChanged());
 		}
 
 		public void AbortLibraryImport( LibraryConfiguration library ) { }

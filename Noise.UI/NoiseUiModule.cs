@@ -14,8 +14,6 @@ namespace Noise.UI {
 
 		public NoiseUiModule( IUnityContainer container ) {
 			mContainer = container;
-
-			Execute.InitializeWithDispatcher();
 		}
 
 		public void Initialize() {
@@ -27,8 +25,6 @@ namespace Noise.UI {
 
 			var resourceLoader = new ResourceProvider( "Noise.UI", "Resources" );
 			mContainer.RegisterInstance<IResourceProvider>( resourceLoader );
-
-			MappingConfiguration.Configure();
 		}
 	}
 }

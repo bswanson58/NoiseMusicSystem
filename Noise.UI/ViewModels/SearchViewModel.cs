@@ -29,6 +29,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IUiLog									mLog;
 		private readonly ISearchProvider						mSearchProvider;
 		private readonly IRandomTrackSelector					mTrackSelector;
+		private readonly IPlayCommand							mPlayCommand;
 		private readonly IPlayQueue								mPlayQueue;
 		private SearchType										mCurrentSearchType;
 		private TaskHandler<IEnumerable<SearchResultItem>>		mSearchTask; 
@@ -37,11 +38,13 @@ namespace Noise.UI.ViewModels {
 		private readonly List<DbTrack>							mApprovalList; 
 		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
 
-		public SearchViewModel( IEventAggregator eventAggregator, ISearchProvider searchProvider, IRandomTrackSelector trackSelector, IPlayQueue playQueue, IUiLog log ) {
+		public SearchViewModel( IEventAggregator eventAggregator, ISearchProvider searchProvider, IRandomTrackSelector trackSelector,
+								IPlayCommand playCommand, IPlayQueue playQueue, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mSearchProvider = searchProvider;
 			mTrackSelector = trackSelector;
+			mPlayCommand = playCommand;
 			mPlayQueue = playQueue;
 
 			mSearchResults = new ObservableCollectionEx<SearchViewNode>();
@@ -146,19 +149,19 @@ namespace Noise.UI.ViewModels {
 
 		private void OnNodeSelected( SearchViewNode node ) {
 			if( node.Artist != null ) {
-				mEventAggregator.Publish( new Events.ArtistFocusRequested( node.Artist.DbId ));
+				mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( node.Artist.DbId ));
 			}
 			if( node.Album != null ) {
-				mEventAggregator.Publish( new Events.AlbumFocusRequested( node.Album ));
+				mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( node.Album ));
 			}
 		}
 
-		private static void OnPlay( SearchViewNode node ) {
+		private void OnPlay( SearchViewNode node ) {
 			if( node.Track != null ) {
-				GlobalCommands.PlayTrack.Execute( node.Track );
+				mPlayCommand.Play( node.Track );
 			}
 			else if( node.Album != null ) {
-				GlobalCommands.PlayAlbum.Execute( node.Album );
+				mPlayCommand.Play( node.Album );
 			}
 		}
 

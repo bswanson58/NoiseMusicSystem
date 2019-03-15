@@ -53,12 +53,10 @@ namespace Noise.Metadata.MetadataProviders {
 			
 		}
 
-		public void UpdateArtist( string artistName ) {
-			AsyncUpdateArtist( artistName ).Wait();
-		}
-
 		// Last.fm provides artist biography, genre, similar artists and top albums.
-		private async Task AsyncUpdateArtist( string artistName ) {
+		public async Task<bool> UpdateArtist( string artistName ) {
+			var retValue = false;
+
 			if( mHasNetworkAccess ) {
 				try {
 					var artistSearch = await mLastFmClient.ArtistSearch( artistName );
@@ -87,6 +85,8 @@ namespace Noise.Metadata.MetadataProviders {
 
 								mLog.LoadedMetadata( ProviderKey, artistName );
 							}
+
+							retValue = true;
 						}
 						else {
 							mLog.ArtistNotFound( ProviderKey, artistName );
@@ -97,9 +97,13 @@ namespace Noise.Metadata.MetadataProviders {
 					}
 				}
 				catch( Exception ex ) {
+					retValue = false;
+
 					mLog.LogException( string.Format( "LastFm search failed for artist \"{0}\"", artistName ), ex );
 				}
 			}
+
+			return( retValue );
 		}
 
 		private void UpdateArtist( string artistName, LastFmArtistInfo artistInfo, LastFmAlbumList topAlbums, LastFmTrackList topTracks ) {
@@ -144,7 +148,7 @@ namespace Noise.Metadata.MetadataProviders {
 					}
 
 					if( artistInfo.ImageList.Any()) {
-						var image = artistInfo.ImageList.FirstOrDefault( i => i.Size.Equals( "large", StringComparison.InvariantCultureIgnoreCase )) ??
+						var image = artistInfo.ImageList.FirstOrDefault( i => i.Size.Equals( "mega", StringComparison.InvariantCultureIgnoreCase )) ??
 						            artistInfo.ImageList.FirstOrDefault();
 
 						if(( image != null ) &&
@@ -187,6 +191,12 @@ namespace Noise.Metadata.MetadataProviders {
 					Stream	streamData = new MemoryStream( imageData );
 
 					mDocumentStore.DatabaseCommands.PutAttachment( "artwork/" + artistName.ToLower(), null, streamData, new RavenJObject());
+
+//					FileStream debugFile = new FileStream( string.Format( @"D:\{0}.png", artistName ), FileMode.Create, FileAccess.ReadWrite );
+
+//					streamData.Seek( 0, SeekOrigin.Begin );
+//					streamData.CopyTo( debugFile );
+//					debugFile.Close();
 				}
 			}
 			catch( Exception ex ) {

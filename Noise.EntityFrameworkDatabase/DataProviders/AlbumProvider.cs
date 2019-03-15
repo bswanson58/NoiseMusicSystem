@@ -71,6 +71,11 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 										  mTextInfoProvider.GetAlbumTextInfo( albumId )));
 		}
 
+        public AlbumArtworkInfo GetAlbumArtworkInfo( long albumId ) {
+            return( new AlbumArtworkInfo( mArtworkProvider.GetAlbumArtworkInfo( albumId, ContentType.AlbumCover ),
+                                          mArtworkProvider.GetAlbumArtworkInfo( albumId, ContentType.AlbumArtwork )));
+        }
+
 		public IDataProviderList<long> GetAlbumsInCategory( long categoryId ) {
 			IDataProviderList<long>	retValue = null;
 

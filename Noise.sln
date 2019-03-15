@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noise.Core", "Noise.Core\Noise.Core.csproj", "{33A45442-71E5-4BFE-B37F-129EDB4F18E8}"
 EndProject
@@ -513,6 +513,7 @@ Global
 		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Debug|x86.Build.0 = Debug|Any CPU
 		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Installers - Release|Any CPU.ActiveCfg = Release|Any CPU
 		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Installers - Release|Any CPU.Build.0 = Release|Any CPU
 		{415BAE6C-7FFE-47DD-860C-A1012E20400C}.Installers - Release|Mixed Platforms.ActiveCfg = Release|Any CPU
@@ -634,7 +635,8 @@ Global
 		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Release|Any CPU.ActiveCfg = Release|x86
 		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Release|Mixed Platforms.Build.0 = Release|x86
-		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Release|x64.ActiveCfg = Release|x86
+		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Release|x64.ActiveCfg = Release|x64
+		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Release|x64.Build.0 = Release|x64
 		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Release|x86.ActiveCfg = Release|x86
 		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8}.Release|x86.Build.0 = Release|x86
 		{469B2EBE-C6B6-44E9-9B29-37CAAFE9767A}.Debug|Any CPU.ActiveCfg = Debug|x86
@@ -653,7 +655,8 @@ Global
 		{469B2EBE-C6B6-44E9-9B29-37CAAFE9767A}.Release|Any CPU.ActiveCfg = Release|x86
 		{469B2EBE-C6B6-44E9-9B29-37CAAFE9767A}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{469B2EBE-C6B6-44E9-9B29-37CAAFE9767A}.Release|Mixed Platforms.Build.0 = Release|x86
-		{469B2EBE-C6B6-44E9-9B29-37CAAFE9767A}.Release|x64.ActiveCfg = Release|x86
+		{469B2EBE-C6B6-44E9-9B29-37CAAFE9767A}.Release|x64.ActiveCfg = Release|x64
+		{469B2EBE-C6B6-44E9-9B29-37CAAFE9767A}.Release|x64.Build.0 = Release|x64
 		{469B2EBE-C6B6-44E9-9B29-37CAAFE9767A}.Release|x86.ActiveCfg = Release|x86
 		{469B2EBE-C6B6-44E9-9B29-37CAAFE9767A}.Release|x86.Build.0 = Release|x86
 		{37156BD4-8E37-4F2C-85C8-4E48359EFED9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -693,5 +696,8 @@ Global
 		{5AF0E619-1A1E-41EB-B120-37F5CB51A6CF} = {175D21C8-5272-4E37-BD08-06E7B0408EC8}
 		{B8130131-04E6-4DEB-90D8-C9858C6DE3A8} = {175D21C8-5272-4E37-BD08-06E7B0408EC8}
 		{469B2EBE-C6B6-44E9-9B29-37CAAFE9767A} = {175D21C8-5272-4E37-BD08-06E7B0408EC8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9D058FFD-C42F-4543-B966-1C4E4F90F4AD}
 	EndGlobalSection
 EndGlobal

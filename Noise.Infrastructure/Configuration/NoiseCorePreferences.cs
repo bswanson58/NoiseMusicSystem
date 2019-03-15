@@ -34,6 +34,9 @@ namespace Noise.Infrastructure.Configuration {
 
 			DeletePlayedTracks = true;
 			MaximumPlayedTracks = 14;
+
+			EnablePlaybackScrobbling = false;
+			EnableRemoteAccess = false;
 		}
 	}
 }

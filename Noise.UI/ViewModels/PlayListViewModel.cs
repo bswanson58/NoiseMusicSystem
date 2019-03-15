@@ -6,7 +6,6 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Adapters;
-using Noise.UI.Dto;
 using Noise.UI.Logging;
 using Observal.Extensions;
 using ReusableBits;
@@ -18,6 +17,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
+		private readonly IPlayCommand		mPlayCommand;
 		private readonly IPlayListProvider	mPlayListProvider;
 		private readonly IUiLog				mLog;
 		private PlayListNode				mSelectedNode;
@@ -26,13 +26,14 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<PlayListNode>	mTreeItems;
 
 		public PlayListViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo,
-								  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayListProvider playListProvider,
-								  IUiLog log ) {
+								  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
+								  IPlayCommand playCommand, IPlayListProvider playListProvider, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
+			mPlayCommand = playCommand;
 			mPlayListProvider = playListProvider;
 
 			mTreeItems = new BindableCollection<PlayListNode>();
@@ -125,7 +126,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
-			var notifier = propertyNotification.Source as UiBase;
+/*			var notifier = propertyNotification.Source as UiBase;
 
 			if( notifier != null ) {
 				if( propertyNotification.PropertyName == "UiRating" ) {
@@ -135,15 +136,16 @@ namespace Noise.UI.ViewModels {
 					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( notifier.DbId, notifier.UiIsFavorite ));
 				}
 			}
+ */
 		}
 
 		private void OnNodeSelected( PlayListNode node ) {
 			if( node.IsSelected ) {
 				if( node.Artist != null ) {
-					mEventAggregator.Publish( new Events.ArtistFocusRequested( node.Artist.DbId ));
+					mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( node.Artist.DbId ));
 				}
 				if( node.Album != null ) {
-					mEventAggregator.Publish( new Events.AlbumFocusRequested( node.Album ));
+					mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( node.Album ));
 				}
 
 				mSelectedNode = node;
@@ -155,14 +157,14 @@ namespace Noise.UI.ViewModels {
 			RaiseCanExecuteChangedEvent( "CanExecute_DeletePlayList" );
 		}
 
-		private static void OnNodePlay( PlayListNode node ) {
+		private void OnNodePlay( PlayListNode node ) {
 			if( node.Track != null ) {
-				GlobalCommands.PlayTrack.Execute( node.Track );
+				mPlayCommand.Play( node.Track );
 			}
 		}
 
-		private static void OnListPlay( PlayListNode node ) {
-			GlobalCommands.PlayTrackList.Execute( from PlayListNode children in node.TrackList select children.Track );
+		private void OnListPlay( PlayListNode node ) {
+			mPlayCommand.Play( from PlayListNode children in node.TrackList select children.Track );
 		}
 
 		public void Execute_DeletePlayList() {

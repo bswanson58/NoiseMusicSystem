@@ -64,6 +64,10 @@ namespace Noise.RavenDatabase.DataProviders {
 			}
 		}
 
+        public Artwork GetArtwork( long artworkId ) {
+            return TransformArtwork( Database.Get( artworkId ));
+        }
+
 		public Artwork GetArtistArtwork( long artistId, ContentType ofType ) {
 			Artwork	retValue = null;
 
@@ -77,26 +81,34 @@ namespace Noise.RavenDatabase.DataProviders {
 		}
 
 		public Artwork[] GetAlbumArtwork( long albumId, ContentType ofType ) {
-			IDataProviderList<DbArtwork>	artworkList;
-
-			if( ofType == ContentType.AlbumCover ) {
-				artworkList = Database.Find( entity => (( entity.Album == albumId ) &&
-														(( entity.DbContentType == (int)ofType ) || ( entity.IsUserSelection ))));
-			}
-			else {
-				artworkList = Database.Find( entity => (( entity.Album == albumId ) && ( entity.DbContentType == (int)ofType )));
-			}
-
-			return( artworkList.List.Select( TransformArtwork ).ToArray());
+            return GetAlbumArtworkInfo( albumId, ofType ).Select( TransformArtwork ).ToArray();
 		}
 
 		public Artwork[] GetAlbumArtwork( long albumId ) {
-			var artworkList = Database.Find( entity => entity.Album == albumId );
-
-			return( artworkList.List.Select( TransformArtwork ).ToArray());
+            return GetAlbumArtworkInfo( albumId ).Select( TransformArtwork ).ToArray(); 
 		}
 
-		public IDataProviderList<DbArtwork> GetArtworkForFolder( long folderId ) {
+	    public DbArtwork[] GetAlbumArtworkInfo( long albumId, ContentType ofType ) {
+	        IDataProviderList<DbArtwork>    artworkList;
+
+	        if( ofType == ContentType.AlbumCover ) {
+	            artworkList = Database.Find( entity => ((entity.Album == albumId) &&
+	                                                    ((entity.DbContentType == (int)ofType) || (entity.IsUserSelection))) );
+	        }
+	        else {
+	            artworkList = Database.Find( entity => ((entity.Album == albumId) && (entity.DbContentType == (int)ofType)) );
+	        }
+
+	        return (artworkList.List.ToArray());
+	    }
+
+        public DbArtwork[] GetAlbumArtworkInfo( long albumId ) {
+            var artworkList = Database.Find( entity => entity.Album == albumId );
+
+            return (artworkList.List.ToArray());
+	    }
+
+        public IDataProviderList<DbArtwork> GetArtworkForFolder( long folderId ) {
 			return ( Database.Find( entity => entity.FolderLocation == folderId ));
 		}
 

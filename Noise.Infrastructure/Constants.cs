@@ -48,6 +48,8 @@ namespace Noise.Infrastructure {
 		public const string				ArtistSidecarName = "Artist Info" + SidecarExtension;
 		public const string				AlbumSidecarName = "Album Info" + SidecarExtension;
 
+		public const string				LibraryMetadataFolder = "_metadata";
+
 		public const string				EqPresetsFile = "EqPresets.xml";
 		public const string				LicenseKeyFile = "LicenseKeys.xml";
 

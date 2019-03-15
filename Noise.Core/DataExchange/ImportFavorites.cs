@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Xml.Linq;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
@@ -10,11 +9,13 @@ namespace Noise.Core.DataExchange {
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IAlbumProvider		mAlbumProvider;
 		private readonly ITrackProvider		mTrackProvider;
+		private readonly IRatings			mRatings;
 
-		public ImportFavorites( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) {
+		public ImportFavorites( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IRatings ratings ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
+			mRatings = ratings;
 		}
 
 		public int Import( XElement rootElement, bool eliminateDuplicates ) {
@@ -44,7 +45,7 @@ namespace Noise.Core.DataExchange {
 																where t.Name.Equals( track, StringComparison.CurrentCultureIgnoreCase ) select t ).FirstOrDefault();
 												if( dbTrack != null ) {
 													if(!dbTrack.IsFavorite ) {
-														GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( dbTrack.DbId, true ));
+														mRatings.SetFavorite( dbTrack, true );
 
 														retValue++;
 													}
@@ -53,7 +54,7 @@ namespace Noise.Core.DataExchange {
 										}
 										else {
 											if(!dbAlbum.IsFavorite ) {
-												GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( dbAlbum.DbId, true ));
+												mRatings.SetFavorite( dbAlbum, true );
 
 												retValue++;
 											}
@@ -63,7 +64,7 @@ namespace Noise.Core.DataExchange {
 							}
 							else {
 								if(!dbArtist.IsFavorite ) {
-									GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( dbArtist.DbId, true ));
+									mRatings.SetFavorite( dbArtist, true );
 
 									retValue++;
 								}

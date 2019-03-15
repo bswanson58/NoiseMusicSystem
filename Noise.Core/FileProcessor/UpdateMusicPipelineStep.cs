@@ -93,7 +93,7 @@ namespace Noise.Core.FileProcessor {
 				}
 
 				if( albumsAdded ) {
-					mEventAggregator.Publish( new Events.ArtistContentUpdated( context.Artist.DbId ));
+					mEventAggregator.PublishOnUIThread( new Events.ArtistContentUpdated( context.Artist.DbId ));
 				}
 			}
 		}

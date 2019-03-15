@@ -115,10 +115,10 @@ namespace Noise.Infrastructure {
 		}
 
 		public class TrackUserUpdate {
-			public long		TrackId { get; private set; }
+			public DbTrack	Track {  get; private set; }
 
-			public TrackUserUpdate( long trackId ) {
-				TrackId = trackId;
+			public TrackUserUpdate( DbTrack track ) {
+				Track = track;
 			}
 		}
 
@@ -168,6 +168,22 @@ namespace Noise.Infrastructure {
 			public PlayQueueTrack	QueuedTrack { get; private set; }
 
 			public PlayQueuedTrackRequest( PlayQueueTrack track ) {
+				QueuedTrack = track;
+			}
+		}
+
+		public class AlbumQueued {
+			public DbAlbum		QueuedAlbum { get; private set; }
+
+			public AlbumQueued( DbAlbum album ) {
+				QueuedAlbum = album;
+			}
+		}
+
+		public class TrackQueued {
+			public DbTrack QueuedTrack { get; private set; }
+
+			public TrackQueued( DbTrack track ) {
 				QueuedTrack = track;
 			}
 		}
@@ -354,12 +370,22 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class StatusEvent {
-			public	string		Message { get; private set; }
-			public	bool		ExtendDisplay { get; set; }
+		public enum StatusEventType {
+			General,
+			Speech
+		}
 
-			public StatusEvent( string message ) {
+		public class StatusEvent {
+			public StatusEventType	StatusType { get; private set; }
+			public	string			Message { get; private set; }
+			public	bool			ExtendDisplay { get; set; }
+
+			public StatusEvent( string message ) :
+				this( message, StatusEventType.General ) { }
+
+			public StatusEvent( string message, StatusEventType statusType ) {
 				Message = message;
+				StatusType = statusType;
 			}
 		}
 

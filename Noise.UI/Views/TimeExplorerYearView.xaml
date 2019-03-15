@@ -18,11 +18,7 @@
 
     <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" In The Year ">
         <Grid>
-            <Border Background="{DynamicResource TreeItemBackground}"
-                BorderThickness="0"
-                CornerRadius="5"
-                Visibility="{Binding Path=YearValid,
-                                     Converter={StaticResource BooleanVisibilityConverter}}">
+            <Border BorderThickness="0" CornerRadius="5" Visibility="{Binding Path=YearValid, Converter={StaticResource BooleanVisibilityConverter}}">
                 <Grid Background="{StaticResource NoiseBrush}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>

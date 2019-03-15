@@ -62,6 +62,10 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			}
 		}
 
+        public Artwork GetArtwork( long artworkId ) {
+            return TransformArtwork( GetItemByKey( artworkId ));
+        }
+
 		public Artwork GetArtistArtwork( long artistId, ContentType ofType ) {
 			Artwork	retValue = null;
 
@@ -77,38 +81,46 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 		}
 
 		public Artwork[] GetAlbumArtwork( long albumId, ContentType ofType ) {
-			Artwork[]	retValue;
-
-			using( var context = CreateContext()) {
-				IQueryable<DbArtwork>	artworkList;
-
-				if( ofType == ContentType.AlbumCover ) {
-					artworkList = Set( context ).Where( entity => (( entity.Album == albumId ) &&
-																  (( entity.DbContentType == (int)ofType ) || ( entity.IsUserSelection ))));
-				}
-				else {
-					artworkList = Set( context ).Where( entity => (( entity.Album == albumId ) && ( entity.DbContentType == (int)ofType )));
-				}
-
-				retValue = artworkList.Select( TransformArtwork ).ToArray();
-			}
-
-			return( retValue );
+            return( GetAlbumArtworkInfo( albumId, ofType ).Select( TransformArtwork ).ToArray());
 		}
 
-		public Artwork[] GetAlbumArtwork( long albumId ) {
-			Artwork[]	retValue;
+	    public DbArtwork[] GetAlbumArtworkInfo(long albumId, ContentType ofType) {
+	        DbArtwork[]   retValue;
 
-			using( var context = CreateContext()) {
-				var artworkList = Set( context ).Where( entity => entity.Album == albumId );
+	        using( var context = CreateContext() ) {
+	            IQueryable<DbArtwork>   artworkList;
 
-				retValue = artworkList.Select( TransformArtwork ).ToArray();
-			}
+	            if( ofType == ContentType.AlbumCover ) {
+	                artworkList = Set( context ).Where( entity => ((entity.Album == albumId) &&
+	                                                               ((entity.DbContentType == (int)ofType) || (entity.IsUserSelection))) );
+	            }
+	            else {
+	                artworkList = Set( context ).Where( entity => ((entity.Album == albumId) && (entity.DbContentType == (int)ofType)) );
+	            }
 
-			return( retValue );
-		}
+	            retValue = artworkList.ToArray();
+	        }
 
-		public IDataProviderList<DbArtwork> GetArtworkForFolder( long folderId ) {
+	        return retValue;
+	    }
+
+        public DbArtwork[] GetAlbumArtworkInfo( long albumId ) {
+	        DbArtwork[]   retValue;
+
+	        using( var context = CreateContext() ) {
+	            var artworkList = Set( context ).Where( entity => entity.Album == albumId );
+
+	            retValue = artworkList.ToArray();
+	        }
+
+	        return (retValue);
+	    }
+
+	    public Artwork[] GetAlbumArtwork( long albumId ) {
+            return( GetAlbumArtworkInfo( albumId ).Select( TransformArtwork ).ToArray());
+	    }
+
+        public IDataProviderList<DbArtwork> GetArtworkForFolder( long folderId ) {
 			var context = CreateContext();
 
 			return( new EfProviderList<DbArtwork>( context, Set( context ).Where( entity => entity.FolderLocation == folderId )));

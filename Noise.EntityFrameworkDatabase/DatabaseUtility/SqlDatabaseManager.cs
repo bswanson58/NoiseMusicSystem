@@ -9,8 +9,8 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 	public class SqlDatabaseManager : IDatabaseUtility {
 
-		public IEnumerable<string> GetDatabaseList() {
-			var retValue = new List<string>();
+		public IEnumerable<DatabaseInfo> GetDatabaseList() {
+			var retValue = new List<DatabaseInfo>();
 
 			using( var connection = CreateConnection()) {
 				connection.Open();
@@ -19,7 +19,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 				using( var command = new SqlCommand( cmdText, connection )) {
 					using( var reader = command.ExecuteReader()) {
 						while( reader.Read()) {
-							retValue.Add( reader.GetString( 1 ));
+							retValue.Add( new DatabaseInfo( reader.GetString( 0 ), reader.GetString( 1 )));
 						}
 					}
 				}
@@ -80,9 +80,9 @@ namespace Noise.EntityFrameworkDatabase.DatabaseUtility {
 			}
 		}
 
-		public void DetachDatabase( string databaseName ) {
+		public void DetachDatabase( DatabaseInfo database ) {
 			using( var connection = CreateConnection()) {
-				string	commandText = string.Format( "exec sys.sp_detach_db {0}", databaseName );
+				string	commandText = string.Format( "exec sys.sp_detach_db {0}", database.DatabaseName );
 
 				connection.Open();
 

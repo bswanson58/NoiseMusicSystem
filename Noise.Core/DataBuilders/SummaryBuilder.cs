@@ -61,22 +61,27 @@ namespace Noise.Core.DataBuilders {
 
 							using( var artistUpdater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
 								var albumGenre = new Dictionary<long, int>();
-								var maxAlbumRating = 0;
 								var albumCount = 0;
 								var albumRating = 0;
+
+								artistUpdater.Item.HasFavorites = false;
 
 								using( var albumList = mAlbumProvider.GetAlbumList( artist.DbId )) {
 									foreach( var album in albumList.List ) {
 										mLog.LogSummaryAlbumStarted( album );
+
+										if( album.IsFavorite ) {
+											artistUpdater.Item.HasFavorites = true;
+										}
 
 										using( var trackList = mTrackProvider.GetTrackList( album.DbId )) {
 											using( var albumUpdater = mAlbumProvider.GetAlbumForUpdate( album.DbId )) {
 												var years = new List<Int32>();
 												var trackGenre = new Dictionary<long, int>();
 												var trackRating = 0;
-												var maxTrackRating = 0;
 
 												albumUpdater.Item.TrackCount = 0;
+												albumUpdater.Item.HasFavorites = false;
 
 												foreach( var track in trackList.List ) {
 													if(!years.Contains( track.PublishedYear )) {
@@ -87,8 +92,9 @@ namespace Noise.Core.DataBuilders {
 													albumUpdater.Item.TrackCount++;
 													trackRating += track.Rating;
 
-													if( track.Rating > maxTrackRating ) {
-														maxTrackRating = track.Rating;
+													if( track.IsFavorite ) {
+														albumUpdater.Item.HasFavorites = true;
+														artistUpdater.Item.HasFavorites = true;
 													}
 												}
 
@@ -110,11 +116,7 @@ namespace Noise.Core.DataBuilders {
 												AddGenre( albumGenre, albumUpdater.Item.CalculatedGenre );
 
 												albumUpdater.Item.CalculatedRating = trackRating > 0 ? (Int16)( trackRating / albumUpdater.Item.TrackCount ) : (Int16)0;
-												albumUpdater.Item.MaxChildRating = (Int16)maxTrackRating;
 												albumRating += albumUpdater.Item.CalculatedRating;
-												if( maxTrackRating > maxAlbumRating ) {
-													maxAlbumRating = maxTrackRating;
-												}
 
 												mLog.LogSummaryAlbumCompleted( albumUpdater.Item );
 												albumUpdater.Update();
@@ -131,7 +133,6 @@ namespace Noise.Core.DataBuilders {
 								artistUpdater.Item.AlbumCount = (Int16)albumCount;
 								artistUpdater.Item.CalculatedGenre = DetermineTopGenre( albumGenre );
 								artistUpdater.Item.CalculatedRating = albumRating > 0 ? (Int16)( albumRating / albumCount ) : (Int16)0;
-								artistUpdater.Item.MaxChildRating = (Int16)maxAlbumRating;
 
 								var artistMetadata = mMetadataManager.GetArtistMetadata( artistUpdater.Item.Name );
 								var genre = artistMetadata.GetMetadataArray( eMetadataType.Genre ).FirstOrDefault();
@@ -142,7 +143,7 @@ namespace Noise.Core.DataBuilders {
 
 								mLog.LogSummaryArtistCompleted( artistUpdater.Item );
 								artistUpdater.Update();
-								mEventAggregator.Publish( new Events.ArtistContentUpdated( artistUpdater.Item.DbId ));
+								mEventAggregator.PublishOnUIThread( new Events.ArtistContentUpdated( artistUpdater.Item.DbId ));
 
 								if( mStop ) {
 									break;

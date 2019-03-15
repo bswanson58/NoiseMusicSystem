@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Caliburn.Micro;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Interfaces;
@@ -10,6 +9,7 @@ using ReusableBits;
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class TrackListViewModel : BaseListViewModel<DbTrack>, IAlbumTrackList, ITitledScreen {
 		private readonly ITrackProvider		mTrackProvider;
+		private readonly IPlayCommand		mPlayCommand;
 		private readonly IUiLog				mLog;
 		private long						mCurrentAlbum;
 		private TaskHandler					mTrackRetrievalTaskHandler;
@@ -17,9 +17,10 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	string						ScreenTitle { get; private set; }
 		public	string						Context { get; private set; }
 
-		public TrackListViewModel( IEventAggregator eventAggregator, ITrackProvider trackProvider, IUiLog log ) :
+		public TrackListViewModel( IEventAggregator eventAggregator, ITrackProvider trackProvider, IPlayCommand playCommand, IUiLog log ) :
 			base( eventAggregator ) {
 			mTrackProvider = trackProvider;
+			mPlayCommand = playCommand;
 			mLog = log;
 
 			ScreenTitle = "Tracks";
@@ -64,15 +65,15 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		protected override void DisplayItem() {
-			GlobalCommands.PlayTrack.Execute( SelectedItem );
+			mPlayCommand.Play( SelectedItem );
 		}
 
 		protected override void EnqueueItem() {
-			GlobalCommands.PlayTrack.Execute( SelectedItem );
+			mPlayCommand.Play( SelectedItem );
 		}
 
 		protected override void DequeueItem() {
-			EventAggregator.Publish( new Input.Events.DequeueTrack( SelectedItem ));
+			EventAggregator.PublishOnUIThread( new Input.Events.DequeueTrack( SelectedItem ));
 		}
 	}
 }

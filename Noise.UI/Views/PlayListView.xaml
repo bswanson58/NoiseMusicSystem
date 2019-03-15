@@ -155,7 +155,7 @@
                                     DataType="{x:Type Adapters:PlayListNode}"
                                     ItemTemplate="{StaticResource PlayItemTemplate}"
                                     ItemsSource="{Binding Path=TrackList}">
-            <Border Margin="0,1,0,2" CornerRadius="3" BorderBrush="{DynamicResource ControlTextColor}">
+            <Border Margin="0,1,0,2" CornerRadius="3">
                 <Grid Margin="3,0,3,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

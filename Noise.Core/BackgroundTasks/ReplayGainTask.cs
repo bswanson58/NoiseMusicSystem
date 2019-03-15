@@ -12,7 +12,8 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.Core.BackgroundTasks {
 	[Export( typeof( IBackgroundTask ))]
 	public class ReplayGainTask : IBackgroundTask,
-								  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+								  IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing>, 
+								  IHandle<Events.LibraryUpdateStarted>, IHandle<Events.LibraryUpdateCompleted> {
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly ILogBackgroundTasks	mLog;
 		private readonly ILogUserStatus			mUserStatus;
@@ -22,15 +23,16 @@ namespace Noise.Core.BackgroundTasks {
 		private readonly ITrackProvider			mTrackProvider;
 		private readonly IStorageFileProvider	mStorageFileProvider;
 		private readonly IStorageFolderSupport	mStorageFolderSupport;
+		private readonly ISidecarUpdater		mSidecarUpdater;
 		private readonly List<DbAlbum>			mAlbumList;
 		private readonly bool					mReplayGainEnabled;
 		private IEnumerator<DbAlbum>			mAlbumEnumerator;
-		private bool							mDatabaseOpen;
+		private bool							mScanEnabled;
 
 		public ReplayGainTask( IEventAggregator eventAggregator, IReplayGainScanner scanner,
 							   IPreferences preferences, ILogUserStatus userStatus, ILogBackgroundTasks log,
 							   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider,
-							   IStorageFileProvider storageFileProvider, IStorageFolderSupport storageFolderSupport ) {
+							   IStorageFileProvider storageFileProvider, IStorageFolderSupport storageFolderSupport, ISidecarUpdater sidecarUpdater ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mUserStatus = userStatus;
@@ -40,6 +42,7 @@ namespace Noise.Core.BackgroundTasks {
 			mTrackProvider = trackProvider;
 			mStorageFileProvider = storageFileProvider;
 			mStorageFolderSupport = storageFolderSupport;
+			mSidecarUpdater = sidecarUpdater;
 
 			mAlbumList = new List<DbAlbum>();
 
@@ -56,33 +59,49 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		public void Handle( Events.DatabaseOpened message ) {
-			if( mReplayGainEnabled ) {
-				InitializeScanList();
-			}
-
-			mDatabaseOpen = true;
+			InitializeScan();
 		}
 
 		public void Handle( Events.DatabaseClosing message ) {
-			mAlbumList.Clear();
-			mAlbumEnumerator = null;
+			HaltScan();
+		}
 
-			mDatabaseOpen = false;
+		public void Handle( Events.LibraryUpdateStarted args ) {
+			HaltScan();
+		}
+
+		public void Handle( Events.LibraryUpdateCompleted args ) {
+			InitializeScan();
 		}
 
 		private DbAlbum NextAlbum() {
 			DbAlbum	retValue = null;
 
-			if( mAlbumEnumerator.MoveNext()) {
+			if(( mAlbumEnumerator != null ) &&
+			   ( mAlbumEnumerator.MoveNext())) {
 				retValue = mAlbumEnumerator.Current;
 			}
 
 			return ( retValue );
 		}
 
+		private void InitializeScan() {
+			if( mReplayGainEnabled ) {
+				InitializeScanList();
+
+				mScanEnabled = true;
+			}
+		}
+
+		private void HaltScan() {
+			mAlbumList.Clear();
+			mAlbumEnumerator = null;
+
+			mScanEnabled = false;
+		}
+
 		public void ExecuteTask() {
-			if(( mReplayGainEnabled ) &&
-			   ( mDatabaseOpen )) {
+			if( mScanEnabled ) {
 				var spinCount = 10;
 
 				while( spinCount > 0 ) {
@@ -107,6 +126,8 @@ namespace Noise.Core.BackgroundTasks {
 								if( scanRequired ) {
 									if( ExecuteScanner( album, trackList )) {
 										mUserStatus.CalculatedReplayGain( artist, album );
+
+										mSidecarUpdater.UpdateSidecar( mAlbumProvider.GetAlbum( album.DbId ));
 
 										mLog.ReplayGainScanCompleted( artist, album );
 									}
@@ -142,7 +163,7 @@ namespace Noise.Core.BackgroundTasks {
 			}
 
 			if( mReplayGainScanner.CalculateReplayGain()) {
-				if( mDatabaseOpen ) {
+				if( mScanEnabled ) {
 					var albumGain = mReplayGainScanner.AlbumGain;
 
 					foreach( var file in mReplayGainScanner.FileList ) {
@@ -156,7 +177,7 @@ namespace Noise.Core.BackgroundTasks {
 						}
 					}
 
-					using( var updater = mAlbumProvider.GetAlbumForUpdate( album.DbId ) ) {
+					using( var updater = mAlbumProvider.GetAlbumForUpdate( album.DbId )) {
 						if( updater.Item != null ) {
 							updater.Item.ReplayGainAlbumGain = (float)albumGain;
 							album.ReplayGainAlbumGain = (float)albumGain;
@@ -173,6 +194,8 @@ namespace Noise.Core.BackgroundTasks {
 		}
 
 		private void InitializeScanList() {
+			mAlbumList.Clear();
+
 			using( var albumList = mAlbumProvider.GetAllAlbums()) {
 				if( albumList.List != null ) {
 					mAlbumList.AddRange( albumList.List );

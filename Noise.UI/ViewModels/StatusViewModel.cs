@@ -8,6 +8,9 @@ using ReusableBits.Ui.Controls;
 
 namespace Noise.UI.ViewModels {
 	public class StatusViewModel : AutomaticCommandBase, IHandle<Events.StatusEvent> {
+		private const string	cGeneralStatusTemplate = "GeneralStatusTemplate";
+		private const string	cSpeechStatusTemplate  = "SpeechStatusTemplate";
+
 		private readonly IEventAggregator		mEventAggregator;
 		private readonly Queue<StatusMessage>	mHoldingQueue;
 		private bool							mViewAttached;
@@ -31,11 +34,11 @@ namespace Noise.UI.ViewModels {
 		public void Execute_ViewAttached() {
 			StatusMessage = new StatusMessage( string.Empty ); // delay a few seconds before initial message.
 
-			StatusMessage = new StatusMessage( VersionInformation.Description );
-			StatusMessage = new StatusMessage( VersionInformation.CopyrightHolder );
+			StatusMessage = new StatusMessage( VersionInformation.Description, cGeneralStatusTemplate );
+			StatusMessage = new StatusMessage( VersionInformation.CopyrightHolder, cGeneralStatusTemplate );
 
-			while( mHoldingQueue.Any()) {
-				lock( mHoldingQueue ) {
+			lock( mHoldingQueue ) {
+				while( mHoldingQueue.Any()) {
 					StatusMessage = mHoldingQueue.Dequeue();
 				}
 			}
@@ -44,7 +47,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Handle( Events.StatusEvent status ) {
-			var message = new StatusMessage( status.Message ) { ExtendActiveDisplay = status.ExtendDisplay };
+			var message = new StatusMessage( status.Message, SelectTemplate( status )) { ExtendActiveDisplay = status.ExtendDisplay };
 
 			if( mViewAttached ) {
 				StatusMessage = message;
@@ -54,6 +57,16 @@ namespace Noise.UI.ViewModels {
 					mHoldingQueue.Enqueue( message );
 				}
 			}
+		}
+
+		private string SelectTemplate( Events.StatusEvent status ) {
+			var retValue = cGeneralStatusTemplate;
+
+			if( status.StatusType == Events.StatusEventType.Speech ) {
+				retValue = cSpeechStatusTemplate;
+			}
+
+			return( retValue );
 		}
 	}
 }

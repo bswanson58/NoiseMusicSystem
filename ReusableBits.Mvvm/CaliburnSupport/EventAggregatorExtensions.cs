@@ -27,14 +27,5 @@ namespace ReusableBits.Mvvm.CaliburnSupport {
 			eventAggregator.Publish(message, action => System.Threading.ThreadPool.QueueUserWorkItem(state => action()));
 	#endif
 		}
-
-		/// <summary>
-		///   Publishes a message on the UI thread asynchrone.
-		/// </summary>
-		/// <param name="eventAggregator">The event aggregator.</param>
-		/// <param name = "message">The message instance.</param>
-		public static void PublishOnUIThreadAsync(this IEventAggregator eventAggregator, object message) {
-			eventAggregator.Publish(message, Execute.BeginOnUIThread);
-		}
 	}
 }

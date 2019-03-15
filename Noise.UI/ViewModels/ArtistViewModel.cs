@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using Caliburn.Micro;
 using Microsoft.Practices.Prism;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
@@ -28,14 +26,11 @@ namespace Noise.UI.ViewModels {
 		private readonly IUiLog					mLog;
 		private readonly ISelectionState		mSelectionState;
 		private readonly IArtistProvider		mArtistProvider;
-		private readonly ITrackProvider			mTrackProvider;
 		private readonly ITagManager			mTagManager;
 		private readonly IMetadataManager		mMetadataManager;
-		private readonly IPlayQueue				mPlayQueue;
+		private readonly IPlayCommand			mPlayCommand;
+		private readonly IRatings				mRatings;
 		private readonly Observal.Observer		mChangeObserver;
-		private readonly List<DbTrack>			mTopPlayTracks; 
-		private readonly Random					mRandom;
-		private DbArtist						mDbArtist;
 		private UiArtist						mCurrentArtist;
 		private Artwork							mArtistImage;
 		private LinkNode						mArtistWebsite;
@@ -48,19 +43,16 @@ namespace Noise.UI.ViewModels {
 
 		private readonly InteractionRequest<ArtistEditRequest>		mArtistEditRequest;
 
-		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, ITrackProvider trackProvider,
-								ISelectionState selectionState, ITagManager tagManager, IMetadataManager metadataManager, IPlayQueue playQueue, IUiLog log ) {
+		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IRatings ratings, ISelectionState selectionState,
+								ITagManager tagManager, IMetadataManager metadataManager, IPlayCommand playCommand, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
-			mTrackProvider = trackProvider;
 			mTagManager = tagManager;
 			mMetadataManager = metadataManager;
-			mPlayQueue = playQueue;
-
-			mTopPlayTracks = new List<DbTrack>();
-			mRandom = new Random( DateTime.Now.Millisecond );
+			mPlayCommand = playCommand;
+			mRatings = ratings;
 
 			mEventAggregator.Subscribe( this );
 
@@ -105,7 +97,7 @@ namespace Noise.UI.ViewModels {
 			var retValue = new UiArtist();
 
 			if( dbArtist != null ) {
-				Mapper.DynamicMap( dbArtist, retValue );
+				Mapper.Map( dbArtist, retValue );
 				retValue.DisplayGenre = mTagManager.GetGenre( dbArtist.Genre );
 
 				var artistMetadata = mMetadataManager.GetArtistMetadata( dbArtist.Name );
@@ -123,7 +115,6 @@ namespace Noise.UI.ViewModels {
 				mChangeObserver.Release( mCurrentArtist );
 
 				mCurrentArtist = null;
-				mDbArtist = null;
 				mArtistWebsite = null;
 
 				RaisePropertyChanged( () => Artist );
@@ -133,7 +124,6 @@ namespace Noise.UI.ViewModels {
 
 		public void ClearCurrentArtistInfo() {
 			mArtistImage = null;
-			mTopPlayTracks.Clear();
 
 			RaisePropertyChanged( () => ArtistImage );
 			RaiseCanExecuteChangedEvent( "CanExecute_PlayTopTracks" );
@@ -143,10 +133,7 @@ namespace Noise.UI.ViewModels {
 			CurrentArtist = artist != null ? TransformArtist( artist ) : null;
 
 			if( CurrentArtist != null ) {
-				mDbArtist = artist;
-
 				RetrieveArtwork( CurrentArtist.Name );
-				RetrieveTopTracks();
 			}
 		}
 
@@ -212,7 +199,7 @@ namespace Noise.UI.ViewModels {
 
 			RequestArtist( artistId );
 
-			mEventAggregator.Publish( new Events.ArtistContentRequest( artistId ));
+			mEventAggregator.PublishOnUIThread( new Events.ArtistContentRequest( artistId ));
 		}
 
 		private void RequestArtist( long artistId ) {
@@ -256,53 +243,23 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void RetrieveTopTracks() {
-			TopTracksTaskHandler.StartTask( () => {
-												if( mDbArtist != null ) {
-													var info = mMetadataManager.GetArtistMetadata( mDbArtist.Name );
-													var topTracks = info.GetMetadataArray( eMetadataType.TopTracks ).ToArray();
-
-													if( topTracks.Any()) {
-														var allTracks = mTrackProvider.GetTrackList( mDbArtist );
-
-														foreach( var trackName in topTracks ) {
-															string	name = trackName;
-															var		trackList = allTracks.List.Where( t => t.Name.Equals( name, StringComparison.CurrentCultureIgnoreCase )).ToList();
-
-															if( trackList.Any()) {
-																var selectedTrack = trackList.Skip( NextRandom( trackList.Count - 1 )).Take( 1 ).FirstOrDefault();
-
-																if( selectedTrack != null ) {
-																	mTopPlayTracks.Add( selectedTrack );
-																}
-															}
-														}
-													}
-												}
-											},
-											() => RaiseCanExecuteChangedEvent( "CanExecute_PlayTopTracks" ),
-											exception => mLog.LogException( "RetrieveTopTracks", exception ));
-		}
-
-		private int NextRandom( int maxValue ) {
-			return( mRandom.Next( maxValue ));
-		}
-
 		private void SetArtwork( Artwork artwork ) {
 			mArtistImage = artwork;
 
 			RaisePropertyChanged( () => ArtistImage );
 		}
  
-		private static void OnArtistChanged( PropertyChangeNotification changeNotification ) {
+		private void OnArtistChanged( PropertyChangeNotification changeNotification ) {
 			var notifier = changeNotification.Source as UiArtist;
 
 			if( notifier != null ) {
+				var artist = mArtistProvider.GetArtist( notifier.DbId );
+
 				if( changeNotification.PropertyName == "UiRating" ) {
-					GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( notifier.DbId, notifier.UiRating ));
+					mRatings.SetRating( artist, notifier.UiRating );
 				}
 				if( changeNotification.PropertyName == "UiIsFavorite" ) {
-					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( notifier.DbId, notifier.UiIsFavorite ));
+					mRatings.SetFavorite( artist, notifier.UiIsFavorite );
 				}
 			}
 		}
@@ -310,7 +267,7 @@ namespace Noise.UI.ViewModels {
 		private void OnWebsiteRequested( long id ) {
 			if(( CurrentArtist != null ) &&
 			   (!string.IsNullOrWhiteSpace( CurrentArtist.Website ))) {
-				mEventAggregator.Publish( new Events.UrlLaunchRequest( CurrentArtist.Website ));
+				mEventAggregator.PublishOnUIThread( new Events.UrlLaunchRequest( CurrentArtist.Website ));
 			}
 		}
 
@@ -333,18 +290,19 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_PlayRandomTracks() {
 			if( CurrentArtist != null ) {
-				mEventAggregator.Publish( new Events.PlayArtistTracksRandom( CurrentArtist.DbId ));
+				mPlayCommand.PlayRandomArtistTracks( mArtistProvider.GetArtist( CurrentArtist.DbId ));
 			}
 		}
 
 		public void Execute_PlayTopTracks() {
-			if( mTopPlayTracks.Any()) {
-				mPlayQueue.Add( mTopPlayTracks );
+			if( CurrentArtist != null ) {
+				mPlayCommand.PlayTopArtistTracks( mArtistProvider.GetArtist( CurrentArtist.DbId ));
 			}
 		}
 
+		[DependsUpon( "Artist" )]
 		public bool CanExecute_PlayTopTracks() {
-			return( mTopPlayTracks.Any());
+			return( CurrentArtist != null );
 		}
 
 		[DependsUpon( "Artist" )]
@@ -371,7 +329,7 @@ namespace Noise.UI.ViewModels {
 			if( confirmation.Confirmed ) {
 				using( var updater = mArtistProvider.GetArtistForUpdate( confirmation.ViewModel.DbId )) {
 					if( updater.Item != null ) {
-						Mapper.DynamicMap( confirmation.ViewModel, updater.Item );
+						Mapper.Map( confirmation.ViewModel, updater.Item );
 						updater.Update();
 					}
 				}
@@ -390,7 +348,7 @@ namespace Noise.UI.ViewModels {
 		private void DisplayArtistInfoPanel() {
 			var request = new Events.ViewDisplayRequest( ViewNames.ArtistInfoView );
 
-			mEventAggregator.Publish( request );
+			mEventAggregator.PublishOnUIThread( request );
 
 			ArtistInfoViewOpen = request.ViewWasOpened;
 		}
@@ -403,7 +361,7 @@ namespace Noise.UI.ViewModels {
 		public void Execute_DisplayAlbumInfoPanel() {
 			var request = new Events.ViewDisplayRequest( ViewNames.AlbumInfoView );
 
-			mEventAggregator.Publish( request );
+			mEventAggregator.PublishOnUIThread( request );
 
 			AlbumInfoViewOpen = request.ViewWasOpened;
 		}
@@ -416,7 +374,7 @@ namespace Noise.UI.ViewModels {
 		public void Execute_DisplayArtistTracksPanel() {
 			var request = new Events.ViewDisplayRequest( ViewNames.ArtistTracksView );
 
-			mEventAggregator.Publish( request );
+			mEventAggregator.PublishOnUIThread( request );
 
 			ArtistTracksViewOpen = request.ViewWasOpened;
 		}

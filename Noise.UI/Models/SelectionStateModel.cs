@@ -112,7 +112,7 @@ namespace Noise.UI.Models {
 			CurrentArtist = artist;
 
 			mArtistSubject.OnNext( CurrentArtist );
-			mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.ArtistInfoView ));
+			mEventAggregator.PublishOnUIThread( new Events.ViewDisplayRequest( ViewNames.ArtistInfoView ));
 
 			if( artist != null ) {
 				using( var updater = mArtistProvider.GetArtistForUpdate( artist.DbId )) {
@@ -124,7 +124,7 @@ namespace Noise.UI.Models {
 				}
 
 				if( notifiedViewed ) {
-					mEventAggregator.Publish( new Events.ArtistViewed( artist.DbId ) );
+					mEventAggregator.PublishOnUIThread( new Events.ArtistViewed( artist.DbId ) );
 				}
 			}
 		}
@@ -161,7 +161,7 @@ namespace Noise.UI.Models {
 			mAlbumSubject.OnNext( CurrentAlbum );
 
 			if( album != null ) {
-				mEventAggregator.Publish( new Events.ViewDisplayRequest( ViewNames.AlbumInfoView ));
+				mEventAggregator.PublishOnUIThread( new Events.ViewDisplayRequest( ViewNames.AlbumInfoView ));
 			}
 		}
 	}

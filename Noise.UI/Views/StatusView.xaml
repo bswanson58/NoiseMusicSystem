@@ -1,41 +1,49 @@
 ﻿<UserControl x:Class="Noise.UI.Views.StatusView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Controls="clr-namespace:ReusableBits.Ui.Controls;assembly=ReusableBits.Ui"
-             xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
-             mc:Ignorable="d" 
-             d:DesignHeight="25" d:DesignWidth="700"
-             Height="25">
-    
-    <UserControl.Resources>
-        <!-- since we are using a Seperator, but not as an immediate child of the StatusBar, we will make use of that style manually -->
-        <!-- thanks to WineNCheese for this one - http://tinyurl.com/byh9ac -->
-        <Style TargetType="Separator" BasedOn="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}">
-            <Setter Property="Margin" Value="0" />
-        </Style>
-        
-        <DataTemplate x:Key="StatusTemplate" DataType="Controls:StatusMessage">
-            <TextBlock Foreground="LightGray" FontSize="12" Text="{Binding Message}"/>
-        </DataTemplate>
-    </UserControl.Resources>
-    
-    <UserControl.DataContext>
-        <Binding Path="StatusViewModel" Source="{StaticResource ViewModelLocator}" />
-    </UserControl.DataContext>
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:Controls="clr-namespace:ReusableBits.Ui.Controls;assembly=ReusableBits.Ui"
+			 xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 mc:Ignorable="d" 
+			 d:DesignWidth="700"
+			 Height="25">
+	
+	<UserControl.Resources>
+		<!-- since we are using a Seperator, but not as an immediate child of the StatusBar, we will make use of that style manually -->
+		<!-- thanks to WineNCheese for this one - http://tinyurl.com/byh9ac -->
+		<Style TargetType="Separator" BasedOn="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}">
+			<Setter Property="Margin" Value="0" />
+		</Style>
 
-    <StatusBar VerticalAlignment="Bottom" Background="{DynamicResource AccentBrush}" Behaviours:ViewAttachedNotifier.NotifyCommand="{Binding ViewAttached}">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+		<DataTemplate x:Key="GeneralStatusTemplate" DataType="Controls:StatusMessage">
+			<TextBlock Foreground="LightGray" FontSize="12" Text="{Binding Message}"/>
+		</DataTemplate>
 
-            <TextBlock Grid.Column="0" Margin="5,0" FontSize="12" Foreground="LightGray" Text="{Binding Version}"/>
-            <Separator Grid.Column="1" Margin ="3,0"/>
-            <Controls:StatusPresenter Grid.Column="2" Margin="5,0" StatusTemplate="{StaticResource StatusTemplate}" StatusMessage="{Binding StatusMessage}"/>
-        </Grid>
-    </StatusBar>
+		<DataTemplate x:Key="SpeechStatusTemplate" DataType="Controls:StatusMessage">
+			<StackPanel Orientation="Horizontal">
+				<ContentPresenter Margin="0,1" Content="{StaticResource Path_Microphone}"/>
+				<TextBlock Foreground="LightGray" FontSize="12" Text="{Binding Message}"/>
+			</StackPanel>
+		</DataTemplate>
+	
+	</UserControl.Resources>
+	
+	<UserControl.DataContext>
+		<Binding Path="StatusViewModel" Source="{StaticResource ViewModelLocator}" />
+	</UserControl.DataContext>
+
+	<StatusBar VerticalAlignment="Bottom" Behaviours:ViewAttachedNotifier.NotifyCommand="{Binding ViewAttached}">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+
+			<TextBlock Grid.Column="0" Margin="5,0" FontSize="12" Foreground="LightGray" Text="{Binding Version}"/>
+			<Separator Grid.Column="1" Margin ="3,0"/>
+			<Controls:StatusPresenter Grid.Column="2" Margin="5,0" StatusMessage="{Binding StatusMessage}"/>
+		</Grid>
+	</StatusBar>
 </UserControl>

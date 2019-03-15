@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Media.Imaging;
 using AutoMapper;
 using Caliburn.Micro;
@@ -39,11 +40,14 @@ namespace Noise.UI.ViewModels {
 		private readonly IUiLog						mLog;
 		private readonly ISelectionState			mSelectionState;
 		private readonly IAlbumProvider				mAlbumProvider;
+		private readonly IAlbumArtworkProvider		mAlbumArtworkProvider;
 		private readonly ITrackProvider				mTrackProvider;
 		private readonly IArtworkProvider			mArtworkProvider;
 		private readonly IResourceProvider			mResourceProvider;
 		private readonly ITagProvider				mTagProvider;
 		private readonly ITagManager				mTagManager;
+		private readonly IPlayCommand				mPlayCommand;
+		private readonly IRatings					mRatings;
 		private readonly IStorageFolderSupport		mStorageFolderSupport;
 		private UiAlbum								mCurrentAlbum;
 		private readonly BitmapImage				mUnknownImage;
@@ -55,6 +59,7 @@ namespace Noise.UI.ViewModels {
 		private readonly BindableCollection<string>	mVolumeNames;
 		private string								mCurrentVolumeName;
 		private TaskHandler							mAlbumRetrievalTaskHandler;
+		private CancellationTokenSource				mCancellationTokenSource;
 
 		private readonly InteractionRequest<AlbumEditRequest>			mAlbumEditRequest; 
 		private readonly InteractionRequest<AlbumArtworkDisplayInfo>	mAlbumArtworkDisplayRequest;
@@ -62,19 +67,22 @@ namespace Noise.UI.ViewModels {
 
 		public	TimeSpan						AlbumPlayTime { get; private set; }
 
-		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, ISelectionState selectionState,
-							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IArtworkProvider artworkProvider,
-							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager, IUiLog log ) {
+		public AlbumViewModel( IEventAggregator eventAggregator, IResourceProvider resourceProvider, ISelectionState selectionState, IRatings ratings,
+							   IAlbumProvider albumProvider, ITrackProvider trackProvider, IAlbumArtworkProvider albumArtworkProvider, IArtworkProvider artworkProvider,
+							   ITagProvider tagProvider, IStorageFolderSupport storageFolderSupport, ITagManager tagManager, IPlayCommand playCommand, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mSelectionState = selectionState;
 			mAlbumProvider = albumProvider;
+			mAlbumArtworkProvider = albumArtworkProvider;
 			mTrackProvider = trackProvider;
 			mArtworkProvider = artworkProvider;
 			mStorageFolderSupport = storageFolderSupport;
 			mResourceProvider = resourceProvider;
 			mTagProvider = tagProvider;
 			mTagManager = tagManager;
+			mRatings = ratings;
+			mPlayCommand = playCommand;
 
 			mEventAggregator.Subscribe( this );
 
@@ -144,7 +152,7 @@ namespace Noise.UI.ViewModels {
 		private UiAlbum TransformAlbum( DbAlbum dbAlbum ) {
 			var retValue = new UiAlbum();
 
-			Mapper.DynamicMap( dbAlbum, retValue );
+			Mapper.Map( dbAlbum, retValue );
 			retValue.DisplayGenre = mTagManager.GetGenre( dbAlbum.Genre );
 
 			return( retValue );
@@ -152,8 +160,11 @@ namespace Noise.UI.ViewModels {
 
 		private void SetAlbum( DbAlbum album ) {
 			if( album != null ) {
-			    mCurrentAlbum = TransformAlbum( album );
+				if( mCurrentAlbum != null ) {
+					mChangeObserver.Release( mCurrentAlbum );
+				}
 
+			    mCurrentAlbum = TransformAlbum( album );
 				mChangeObserver.Add( mCurrentAlbum );
 			}
 			else {
@@ -163,20 +174,31 @@ namespace Noise.UI.ViewModels {
 			RaisePropertyChanged( () => Album );
 		}
 
-		private void SetAlbumSupportInfo( AlbumSupportInfo supportInfo ) {
+		private void SetAlbumInfo( DbAlbum album, AlbumSupportInfo supportInfo ) {
 			Execute.OnUIThread( () => {
-				mCurrentAlbumCover = SelectAlbumCover( supportInfo );
-				SupportInfo = supportInfo;
+				SetAlbum( album );
+				mCurrentAlbumCover = SelectAlbumCover( album );
+//				SupportInfo = supportInfo;
+                RaisePropertyChanged( () => AlbumArtwork );
+                RaisePropertyChanged( () => AlbumCover );
 			});
+		}
+
+		private ImageScrubberItem SelectAlbumCover( DbAlbum forAlbum ) {
+			var	retValue = new ImageScrubberItem( 0, mUnknownImage, 0 );
+			var cover = mAlbumArtworkProvider.GetAlbumCover( forAlbum );
+
+			if( cover != null ) {
+				retValue = new ImageScrubberItem( cover.DbId, ByteImageConverter.CreateBitmap( cover.Image ), cover.Rotation );
+			}
+
+			return( retValue );
 		}
 
 		private void SetTrackList( IEnumerable<DbTrack> tracks ) {
 			var trackList = tracks.ToList();
-			AlbumPlayTime = new TimeSpan();
 
-			foreach( var dbTrack in trackList ) {
-				AlbumPlayTime += dbTrack.Duration;
-			}
+			AlbumPlayTime = TimeSpan.FromMilliseconds( trackList.Sum( track => track.DurationMilliseconds ));
 
 			mVolumeNames.AddRange(( from track in trackList 
 									where !string.IsNullOrWhiteSpace( track.VolumeName ) 
@@ -235,80 +257,66 @@ namespace Noise.UI.ViewModels {
 			set{ mAlbumRetrievalTaskHandler = value; }
 		}
 
-		private void RetrieveAlbum( long albumId ) {
-			AlbumRetrievalTaskHandler.StartTask( () => {
-					SetAlbum( mAlbumProvider.GetAlbum( albumId ));
-					SetAlbumSupportInfo( mAlbumProvider.GetAlbumSupportInfo( albumId ));
+		private CancellationToken GenerateCanellationToken() {
+			mCancellationTokenSource = new CancellationTokenSource();
 
-					using( var trackList = mTrackProvider.GetTrackList( albumId )) {
-						if(( trackList != null ) &&
-						   ( trackList.List != null )) {
-							SetTrackList( trackList.List );
+			return( mCancellationTokenSource.Token );
+		}
+
+		private void CancelRetrievalTask() {
+			if( mCancellationTokenSource != null ) {
+				mCancellationTokenSource.Cancel();
+				mCancellationTokenSource = null;
+			}
+		}
+
+		private void RetrieveAlbum( long albumId ) {
+			CancelRetrievalTask();
+
+			var cancellationToken = GenerateCanellationToken();
+
+			AlbumRetrievalTaskHandler.StartTask( () => {
+					if(!cancellationToken.IsCancellationRequested ) {
+						SetAlbumInfo(  mAlbumProvider.GetAlbum( albumId ),
+									   null ); //mAlbumProvider.GetAlbumSupportInfo( albumId ));
+					}
+
+					if(!cancellationToken.IsCancellationRequested ) {
+						using( var trackList = mTrackProvider.GetTrackList( albumId )) {
+							if(( trackList != null ) &&
+							   ( trackList.List != null )) {
+								SetTrackList( trackList.List );
+							}
 						}
 					}
 
-					using( var categoryList = mAlbumProvider.GetAlbumCategories( albumId )) {
-						if(( categoryList != null ) &&
-						   ( categoryList.List != null )) {
-							SetAlbumCategories( categoryList.List );
+					if(!cancellationToken.IsCancellationRequested ) {
+						using( var categoryList = mAlbumProvider.GetAlbumCategories( albumId )) {
+							if(( categoryList != null ) &&
+							   ( categoryList.List != null )) {
+								SetAlbumCategories( categoryList.List );
+							}
 						}
 					}
 				},
 				() => { },
-				ex => mLog.LogException( string.Format( "Retrieving Album:{0}", albumId ), ex )
-			); 
+				ex => mLog.LogException( string.Format( "Retrieving Album:{0}", albumId ), ex ),
+				cancellationToken ); 
 		}
 
-		private ImageScrubberItem SelectAlbumCover( AlbumSupportInfo info ) {
-			var	retValue = new ImageScrubberItem( 0, mUnknownImage, 0 );
-
-			if( info != null ) {
-				Artwork	cover = null;
-
-				if(( info.AlbumCovers != null ) &&
-				   ( info.AlbumCovers.GetLength( 0 ) > 0 )) {
-					cover = (( from Artwork artwork in info.AlbumCovers where artwork.IsUserSelection select artwork ).FirstOrDefault() ??
-							 ( from Artwork artwork in info.AlbumCovers where artwork.Source == InfoSource.File select artwork ).FirstOrDefault() ??
-							 ( from Artwork artwork in info.AlbumCovers where artwork.Source == InfoSource.Tag select artwork ).FirstOrDefault()) ??
-								info.AlbumCovers[0];
-				}
-
-				if(( cover == null ) &&
-				   ( info.Artwork != null ) &&
-				   ( info.Artwork.GetLength( 0 ) > 0 )) {
-					cover = ( from Artwork artwork in info.Artwork
-							  where artwork.Name.IndexOf( "front", StringComparison.InvariantCultureIgnoreCase ) >= 0 select artwork ).FirstOrDefault();
-
-					if(( cover == null ) &&
-					   ( info.Artwork.GetLength( 0 ) == 1 )) {
-						cover = info.Artwork[0];
-					}
-				}
-
-				if( cover != null ) {
-					retValue = new ImageScrubberItem( cover.DbId, ByteImageConverter.CreateBitmap( cover.Image ), cover.Rotation );
-				}
-				else {
-					if(( info.Artwork != null ) &&
-					   ( info.Artwork.GetLength( 0 ) > 0 )) {
-						retValue = new ImageScrubberItem( 1, mSelectImage, 0 );
-					}
-				}
-			}
-
-			return( retValue );
-		}
-
-		private static void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
+		private void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
 
 			if( propertyNotification.Source is UiBase ) {
 				var item = propertyNotification.Source as UiBase;
+				var album = mAlbumProvider.GetAlbum( item.DbId );
 
-				if( propertyNotification.PropertyName == "UiRating" ) {
-					GlobalCommands.SetRating.Execute( new SetRatingCommandArgs( item.DbId, item.UiRating ));
-				}
-				if( propertyNotification.PropertyName == "UiIsFavorite" ) {
-					GlobalCommands.SetFavorite.Execute( new SetFavoriteCommandArgs( item.DbId, item.UiIsFavorite ));
+				if( album != null ) {
+					if( propertyNotification.PropertyName == "UiRating" ) {
+						mRatings.SetRating( album, item.UiRating );
+					}
+					if( propertyNotification.PropertyName == "UiIsFavorite" ) {
+						mRatings.SetFavorite( album, item.UiIsFavorite );
+					}
 				}
 			}
 		}
@@ -317,7 +325,7 @@ namespace Noise.UI.ViewModels {
 			if(( mCurrentAlbum != null ) &&
 			   ( eventArgs.AlbumId == mCurrentAlbum.DbId )) {
 				mChangeObserver.Release( mCurrentAlbum );
-				Mapper.DynamicMap( mAlbumProvider.GetAlbum( eventArgs.AlbumId ), mCurrentAlbum );
+				Mapper.Map( mAlbumProvider.GetAlbum( eventArgs.AlbumId ), mCurrentAlbum );
 				mChangeObserver.Add( mCurrentAlbum );
 			}
 		}
@@ -352,7 +360,7 @@ namespace Noise.UI.ViewModels {
 				if( value.Id != mCurrentAlbumCover.Id ) {
 					mCurrentAlbumCover = value;
 
-					GlobalCommands.SetAlbumCover.Execute( new SetAlbumCoverCommandArgs( mCurrentAlbum.DbId, value.Id ));
+					mAlbumArtworkProvider.SetAlbumCover( mCurrentAlbum.DbId, mCurrentAlbumCover.Id );
 				}
 			}
 		}
@@ -367,6 +375,11 @@ namespace Noise.UI.ViewModels {
 					retValue.AddRange( SupportInfo.Artwork.Select( artwork => new ImageScrubberItem( artwork.DbId, ByteImageConverter.CreateBitmap( artwork.Image ), artwork.Rotation )));
 					retValue.AddRange( SupportInfo.AlbumCovers.Select( cover => new ImageScrubberItem( cover.DbId, ByteImageConverter.CreateBitmap( cover.Image ), cover.Rotation )));
 				}
+                else {
+				    if( mCurrentAlbumCover != null ) {
+				        retValue.Add( mCurrentAlbumCover );
+				    }
+				}
 
 				return( retValue );
 			}
@@ -374,7 +387,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_PlayAlbum() {
 			if( mCurrentAlbum != null ) {
-				GlobalCommands.PlayAlbum.Execute( mAlbumProvider.GetAlbum( mCurrentAlbum.DbId ));
+				mPlayCommand.Play( mAlbumProvider.GetAlbum( mCurrentAlbum.DbId ));
 			}
 		}
 
@@ -386,10 +399,10 @@ namespace Noise.UI.ViewModels {
 		public void Execute_PlayVolume() {
 			if( mCurrentAlbum != null ) {
 				if( string.Equals( cAllTracks, mCurrentVolumeName )) {
-					GlobalCommands.PlayAlbum.Execute( mAlbumProvider.GetAlbum( mCurrentAlbum.DbId ));
+					mPlayCommand.Play( mAlbumProvider.GetAlbum( mCurrentAlbum.DbId ));
 				}
 				else {
-					GlobalCommands.PlayVolume.Execute( new DbTrack { Album = mCurrentAlbum.DbId, VolumeName = mCurrentVolumeName });
+					mPlayCommand.Play( mAlbumProvider.GetAlbum( mCurrentAlbum.DbId ), mCurrentVolumeName );
 				}
 			}
 		}
@@ -505,6 +518,7 @@ namespace Noise.UI.ViewModels {
 								AlbumCover = new ImageScrubberItem( artwork.Artwork.DbId, ByteImageConverter.CreateBitmap( artwork.Artwork.Image ), artwork.Artwork.Rotation );
 
 								RaisePropertyChanged( () => AlbumCover );
+                                RaisePropertyChanged( () => AlbumArtwork );
 							}
 						}
 					}
@@ -527,6 +541,9 @@ namespace Noise.UI.ViewModels {
 					retValue = true;
 				}
 			}
+            else {
+			    retValue = mCurrentAlbumCover != null;
+			}
 
 			return( retValue );
 		}
@@ -536,7 +553,7 @@ namespace Noise.UI.ViewModels {
 				var path = mStorageFolderSupport.GetAlbumPath( mCurrentAlbum.DbId );
 
 				if(!string.IsNullOrWhiteSpace( path )) {
-					mEventAggregator.Publish( new Events.LaunchRequest( path ));
+					mEventAggregator.PublishOnUIThread( new Events.LaunchRequest( path ));
 				}
 			}
 		}

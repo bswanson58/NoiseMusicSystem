@@ -25,16 +25,15 @@
                                                      InteractionRequest="{Binding Path=TrackEditRequest}" />
     </i:Interaction.Behaviors>
 
-    <GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}" Header=" Album Tracks ">
+    <GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}" Header=" Tracks ">
 
         <ListView Behaviours:GridViewSort.AutoSort="True"
                   Behaviours:ListViewColumns.Stretch="true"
-                  Behaviours:ListViewFirstItemVisible.ChangeTrigger="{Binding Path=AlbumPlayTime,
-                                                                              Mode=OneWay}"
+                  Behaviours:ListViewFirstItemVisible.ChangeTrigger="{Binding Path=AlbumPlayTime, Mode=OneWay}"
                   BorderThickness="0"
                   ItemsSource="{Binding Path=TrackList}">
             <ListView.ItemContainerStyle>
-                <Style TargetType="{x:Type ListViewItem}">
+                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MetroListViewItem}">
                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                 </Style>
@@ -109,7 +108,6 @@
                                 <Button x:Name="TrackEdit" Width="17" Height="17" Opacity="0.1"
                                         Command="{Binding Path=Edit}"
                                         Content="{StaticResource Path_Edit}"
-                                        Foreground="{StaticResource ControlTextColor}"
                                         Padding="1"
                                         ToolTip="Edit Track Properties" />
                                 <DataTemplate.Triggers>

@@ -8,7 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="70">
     
     <Grid Behaviours:GridUtils.ColumnDefinitions="5,35,5" Behaviours:GridUtils.RowDefinitions="*,Auto">
-        <Border Grid.Row="1" Grid.Column="1" BorderThickness="1" CornerRadius="3" Background="White" BorderBrush="{DynamicResource TrimColor}">
+        <Border Grid.Row="1" Grid.Column="1" BorderThickness="1" CornerRadius="3" BorderBrush="{DynamicResource TrimColor}">
             <ListBox Margin="5" BorderThickness="0" ItemsSource="{Binding Path=IndexData}" SelectedItem="{Binding Path=SelectedIndex, Mode=TwoWay}"/>
         </Border>
     </Grid>

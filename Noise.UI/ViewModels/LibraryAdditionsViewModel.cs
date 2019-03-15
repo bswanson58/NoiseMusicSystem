@@ -21,6 +21,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IArtistProvider		mArtistProvider;
 		private readonly IAlbumProvider			mAlbumProvider;
 		private readonly ITrackProvider			mTrackProvider;
+		private readonly IPlayCommand			mPlayCommand;
 		private readonly ISelectionState		mSelectionState;
 		private readonly DateTime				mHorizonTime;
 		private readonly UInt32					mHorizonCount;
@@ -29,13 +30,14 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler<IEnumerable<LibraryAdditionNode>>		mTaskHandler;
 
 		public LibraryAdditionsViewModel( IEventAggregator eventAggregator, UserInterfacePreferences preferences, IDatabaseInfo databaseInfo, ISelectionState selectionState,
-										  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log ) {
+										  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayCommand playCommand, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mSelectionState = selectionState;
+			mPlayCommand = playCommand;
 
 			mNodeList = new BindableCollection<LibraryAdditionNode>();
 
@@ -179,17 +181,17 @@ namespace Noise.UI.ViewModels {
 
 				if( mSelectedNode != null ) {
 					if( mSelectedNode.Artist != null ) {
-						mEventAggregator.Publish( new Events.ArtistFocusRequested( mSelectedNode.Artist.DbId ));
+						mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( mSelectedNode.Artist.DbId ));
 					}
 					if( mSelectedNode.Album != null ) {
-						mEventAggregator.Publish( new Events.AlbumFocusRequested( mSelectedNode.Album ));
+						mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( mSelectedNode.Album ));
 					}
 				}
 			}
 		}
 
-		private static void OnAlbumPlayRequested( LibraryAdditionNode node ) {
-			GlobalCommands.PlayAlbum.Execute( node.Album );
+		private void OnAlbumPlayRequested( LibraryAdditionNode node ) {
+			mPlayCommand.Play( node.Album );
 		}
 
 		public bool DisplayMarker {

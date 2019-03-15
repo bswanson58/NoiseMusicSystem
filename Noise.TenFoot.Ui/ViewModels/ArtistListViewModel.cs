@@ -73,7 +73,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			var retValue = new UiArtist( OnArtistSelect );
 
 			if( fromArtist != null ) {
-				Mapper.DynamicMap( fromArtist, retValue );
+				Mapper.Map( fromArtist, retValue );
 			}
 
 			return( retValue );
@@ -130,7 +130,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		protected override void DisplayItem() {
 			mAlbumsList.SetContext( SelectedItem );
-			EventAggregator.Publish( new Input.Events.NavigateToScreen( mAlbumsList ));
+			EventAggregator.PublishOnUIThread( new Input.Events.NavigateToScreen( mAlbumsList ));
 		}
 	}
 }

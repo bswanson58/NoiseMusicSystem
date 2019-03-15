@@ -16,13 +16,9 @@
             </Grid.RowDefinitions>
 
             <ListView Grid.Row="0" BorderThickness="0" ItemsSource="{Binding Path=StreamList}" SelectedItem="{Binding Path=CurrentStream}"
-              Behaviours:ListViewColumns.Stretch="true"
-              Behaviours:GridViewSort.AutoSort="True">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListView.ItemContainerStyle>
+                      ItemContainerStyle="{StaticResource ListViewItemStretch}"
+                      Behaviours:ListViewColumns.Stretch="true"
+                      Behaviours:GridViewSort.AutoSort="True">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
@@ -57,13 +53,13 @@
                 </Grid.ColumnDefinitions>
                 
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
-                    <Button Margin="3" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=ExportStreams}">Export</Button>
-                    <Button Margin="3" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=AddStream}">Add Stream</Button>
-                    <Button Margin="3" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=EditStream}">Edit Stream</Button>
-                    <Button Margin="3" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=DeleteStream}">Remove Stream</Button>
+                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=ExportStreams}">Export</Button>
+                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=AddStream}">Add Stream</Button>
+                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=EditStream}">Edit Stream</Button>
+                    <Button Margin="3" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=DeleteStream}">Remove Stream</Button>
                 </StackPanel>
 
-                <Button Grid.Column="2" Margin="3" Padding="5,0" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=ImportStreams}">Import</Button>
+                <Button Grid.Column="2" Margin="3" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=ImportStreams}">Import</Button>
             </Grid>
         </Grid>
     </GroupBox>

@@ -52,7 +52,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_PlayRandom() {
 			if( CanExecute_PlayRandom()) {
-				mEventAggregator.Publish( new Events.PlayAlbumTracksRandom( mAlbumList ));
+				mEventAggregator.PublishOnUIThread( new Events.PlayAlbumTracksRandom( mAlbumList ));
 			}
 		}
 

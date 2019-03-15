@@ -1,6 +1,5 @@
 ﻿using System;
 using Caliburn.Micro;
-using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
@@ -14,8 +13,9 @@ using Events = Noise.TenFoot.Ui.Input.Events;
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class FavoritesListViewModel : FavoritesViewModel, IHomeScreen, IActivate, IDeactivate,
 										  IHandle<InputEvent> {
-		private FavoriteViewNode	mSelectedItem;
-		private int					mSelectedItemIndex;
+		private readonly IPlayCommand	mPlayCommand;
+		private FavoriteViewNode		mSelectedItem;
+		private int						mSelectedItemIndex;
 
 		public	event EventHandler<ActivationEventArgs>		Activated = delegate { };
 		public	event EventHandler<DeactivationEventArgs>	AttemptingDeactivation = delegate { };
@@ -29,10 +29,12 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		public	eMainMenuCommand	MenuCommand { get; private set; }
 		public	int					ScreenOrder { get; private set; }
 
-		public FavoritesListViewModel(IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
+		public FavoritesListViewModel(IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayCommand playCommand, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
 									  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ISelectionState selectionState,
 									  IDataExchangeManager dataExchangeManager, IDialogService dialogService, IUiLog log ) :
-			base( eventAggregator, databaseInfo, playQueue, trackSelector, artistProvider, albumProvider, trackProvider, selectionState, dataExchangeManager, dialogService, log ) {
+			base( eventAggregator, databaseInfo, playCommand, playQueue, trackSelector, artistProvider, albumProvider, trackProvider, selectionState, dataExchangeManager, dialogService, log ) {
+			mPlayCommand = playCommand;
+
 			ScreenTitle = "Favorites";
 			MenuTitle = "Favorites";
 			Description = "display favorites songs";
@@ -47,14 +49,14 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			get{ return( mSelectedItem ); }
 			set{ 
 				mSelectedItem = value;
-				mSelectedItemIndex = mSelectedItem != null ? FavoritesList.IndexOf( mSelectedItem ) : 0;
+				mSelectedItemIndex = mSelectedItem != null ? FavoritesCollection.IndexOf( mSelectedItem ) : 0;
 
 				RaisePropertyChanged( () => SelectedItem );
 			}
 		}
 
 		private void SetSelectedItem( int index ) {
-			var itemCount = FavoritesList.Count;
+			var itemCount = FavoritesCollection.Count;
 
 			if( itemCount > 0 ) {
 				if( index < 0 ) {
@@ -66,7 +68,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 				}
 
 				if( index < itemCount ) {
-					SelectedItem = FavoritesList[index];
+					SelectedItem = FavoritesCollection[index];
 				}
 			}
 		}
@@ -80,11 +82,11 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		private void EnqueueItem() {
-			GlobalCommands.PlayTrack.Execute( SelectedItem.Track );
+			mPlayCommand.Play( SelectedItem.Track );
 		}
 
 		private void DequeueItem() {
-			EventAggregator.Publish( new Events.DequeueTrack( SelectedItem.Track ));
+			EventAggregator.PublishOnUIThread( new Events.DequeueTrack( SelectedItem.Track ));
 		}
 
 		public void Handle( InputEvent input ) {
@@ -112,7 +114,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 					break;
 
 					case InputCommand.Back:
-						EventAggregator.Publish( new Events.NavigateReturn( this, true ));
+						EventAggregator.PublishOnUIThread( new Events.NavigateReturn( this, true ));
 						break;
 				}
 			}

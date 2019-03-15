@@ -3,11 +3,18 @@ using Microsoft.Practices.Prism.Commands;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Configuration;
 using Noise.Infrastructure.Interfaces;
+using Noise.UI.Models;
 using Noise.UI.Support;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
 	public class DisabledWindowCommandsViewModel :AutomaticCommandBase {
+        public DisabledWindowCommandsViewModel( IPreferences preferences ) {
+            var interfacePreferences = preferences.Load<UserInterfacePreferences>();
+
+            ThemeManager.SetApplicationTheme( interfacePreferences.ThemeName, interfacePreferences.ThemeAccent, interfacePreferences.ThemeSignature );
+        }
+
 		public void Execute_Options() { }
 		public bool CanExecute_Options() {
 			return( false );
@@ -32,16 +39,11 @@ namespace Noise.UI.ViewModels {
 		public bool CanExecute_TimelineLayout() {
 			return ( false );
 		}
-	}
 
-	internal class ConfigurationViewModel {
-		public bool EnableGlobalHotkeys { get; set; }
-		public bool EnableRemoteAccess { get; set; }
-		public bool EnableSortPrefixes { get; set; }
-		public bool HasNetworkAccess { get; set; }
-		public bool LoadLastLibraryOnStartup { get; set; }
-		public bool MinimizeToTray { get; set; }
-		public string SortPrefixes { get; set; }
+	    public void Execute_PlaybackLayout() { }
+	    public bool CanExecute_PlaybackLayout() {
+	        return (false);
+	    }
 	}
 
 	public class WindowCommandsViewModel : AutomaticCommandBase {
@@ -64,45 +66,27 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_Options() {
-			var interfacePreferences = mPreferences.Load<UserInterfacePreferences>();
-			var corePreferences = mPreferences.Load<NoiseCorePreferences>();
-			var dialogModel = new ConfigurationViewModel { EnableGlobalHotkeys = interfacePreferences.EnableGlobalHotkeys,
-														   EnableRemoteAccess = corePreferences.EnableRemoteAccess,
-														   EnableSortPrefixes = interfacePreferences.EnableSortPrefixes,
-														   HasNetworkAccess = corePreferences.HasNetworkAccess,
-														   LoadLastLibraryOnStartup = corePreferences.LoadLastLibraryOnStartup,
-														   MinimizeToTray = interfacePreferences.MinimizeToTray,
-														   SortPrefixes = interfacePreferences.SortPrefixes };
+			var dialogModel = new ConfigurationViewModel( mPreferences );
 
 			if( mDialogService.ShowDialog( DialogNames.NoiseOptions, dialogModel ) == true ) {
-				corePreferences.EnableRemoteAccess = dialogModel.EnableRemoteAccess;
-				corePreferences.HasNetworkAccess = dialogModel.HasNetworkAccess;
-				corePreferences.LoadLastLibraryOnStartup = dialogModel.LoadLastLibraryOnStartup;
-
-				interfacePreferences.EnableGlobalHotkeys = dialogModel.EnableGlobalHotkeys;
-				interfacePreferences.EnableSortPrefixes = dialogModel.EnableSortPrefixes;
-				interfacePreferences.SortPrefixes = dialogModel.SortPrefixes;
-				interfacePreferences.MinimizeToTray = dialogModel.MinimizeToTray;
-
-				mPreferences.Save( corePreferences );
-				mPreferences.Save( interfacePreferences );
+                dialogModel.UpdatePreferences();
 			}
 		}
 
 		public void Execute_LibraryLayout() {
-			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
+			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
 		}
 
 		public void Execute_ListenLayout() {
-			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ListenLayout ));
+			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ListenLayout ));
 		}
 
 		public void Execute_TimelineLayout() {
-			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.TimeExplorerLayout ));
+			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.TimeExplorerLayout ));
 		}
 
 		public void Execute_PlaybackLayout() {
-			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ListenLayout ));
+			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ListenLayout ));
 		}
 
 		private void OnImport() {

@@ -44,7 +44,7 @@ namespace Noise.Core.PlayStrategies {
 			if( artist != null ) {
 				using( var albumList = mAlbumProvider.GetAlbumList( artist )) {
 					if( albumList.List != null ) {
-						var goodList = from album in albumList.List where album.Rating >= 0 select album;
+						var goodList = from album in albumList.List where album.Rating >= 1 select album;
 
 						retValue = RandomTrackFromAlbum( goodList.Skip( NextRandom( artist.AlbumCount - 1 )).Take( 1 ).FirstOrDefault());
 
@@ -61,7 +61,21 @@ namespace Noise.Core.PlayStrategies {
 			if( album != null ) {
 				using( var trackList = mTrackProvider.GetTrackList( album )) {
 					if( trackList != null ) {
-						var goodList = from track in trackList.List where track.Rating >= 0 select track;
+						var goodList = from track in trackList.List
+									   where (track.Rating >= 0) &&
+										     (!track.Name.ToLower().Equals("applause")) &&
+										     (!track.Name.ToLower().Equals("banter")) &&
+											 (!track.Name.ToLower().Equals("chat")) &&
+									         (!track.Name.ToLower().Equals("talk")) &&
+											 // no short tracks
+											 (track.Duration.Seconds > 30 ) &&
+											 // if the name contains 'applause', 'banter, 'chat' or 'talk' it's over 90 seconds
+											((track.Duration.Seconds > 90 ) ||
+												((!track.Name.ToLower().Contains("applause")) &&
+												 (!track.Name.ToLower().Contains("banter")) && 
+												 (!track.Name.ToLower().Contains("chat")) && 
+												 (!track.Name.ToLower().Contains("talk"))))
+									   select track;
 
 						retValue = goodList.Skip( NextRandom( album.TrackCount - 1 )).Take( 1 ).FirstOrDefault();
 					}

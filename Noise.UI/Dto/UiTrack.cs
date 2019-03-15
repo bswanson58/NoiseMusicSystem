@@ -27,6 +27,8 @@ namespace Noise.UI.Dto {
 		private readonly Action<long>	mPlayAction;
 		private readonly Action<long>	mEditAction;
 
+        protected UiTrack() { }
+
 		public UiTrack( Action<long> playAction, Action<long> editAction ) {
 			mPlayAction = playAction;
 			mEditAction = editAction;

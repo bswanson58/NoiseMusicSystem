@@ -19,7 +19,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			Condition.Requires( filePath ).IsNotNullOrEmpty();
 
 			AddItem( info );
-			BlobStorage.StoreText( info.DbId, string.Empty );
+			BlobStorage.Insert( info.DbId, filePath );
 		}
 
 		public void AddTextInfo( DbTextInfo info ) {

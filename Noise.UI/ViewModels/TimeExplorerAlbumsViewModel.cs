@@ -17,14 +17,16 @@ namespace Noise.UI.ViewModels {
 		private readonly IEventAggregator			mEventAggregator;
 		private readonly IUiLog						mLog;
 		private readonly IArtistProvider			mArtistProvider;
+		private readonly IPlayCommand				mPlayCommand;
 		private readonly Dictionary<long, DbArtist>	mArtistList;
 		private readonly SortableCollection<UiTimeExplorerAlbum>	mAlbumList; 
 		private TaskHandler							mAlbumLoadingTaskHandler;
 
-		public TimeExplorerAlbumsViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IUiLog log ) {
+		public TimeExplorerAlbumsViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IPlayCommand playCommand, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mArtistProvider = artistProvider;
+			mPlayCommand = playCommand;
 
 			mArtistList = new Dictionary<long, DbArtist>();
 			mAlbumList = new SortableCollection<UiTimeExplorerAlbum>();
@@ -37,7 +39,7 @@ namespace Noise.UI.ViewModels {
 
 			LoadAlbums( args.AlbumList );
 
-			mEventAggregator.Publish( new Events.ArtistFocusRequested( Constants.cDatabaseNullOid ));
+			mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( Constants.cDatabaseNullOid ));
 		}
 		
 		public void Handle( Events.DatabaseClosing args ) {
@@ -55,8 +57,8 @@ namespace Noise.UI.ViewModels {
 				Set( () => SelectedAlbum, value );
 
 				if( value != null ) {
-					mEventAggregator.Publish( new Events.ArtistFocusRequested( value.Artist.DbId ));
-					mEventAggregator.Publish( new Events.AlbumFocusRequested( value.Artist.DbId, value.Album.DbId ));
+					mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( value.Artist.DbId ));
+					mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( value.Artist.DbId, value.Album.DbId ));
 				}
 			}
 		}
@@ -102,7 +104,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnAlbumPlay( UiTimeExplorerAlbum album ) {
-			GlobalCommands.PlayAlbum.Execute( album.Album );
+			mPlayCommand.Play( album.Album );
 		}
 	}
 }

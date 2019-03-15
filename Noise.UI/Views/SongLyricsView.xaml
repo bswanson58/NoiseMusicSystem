@@ -34,7 +34,7 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <Border BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" Background="#FFDDEDFF" CornerRadius="3" Margin="0">
+        <Border BorderThickness="1" CornerRadius="3" Margin="0">
             <Grid Behaviours:GridUtils.ColumnDefinitions="*,Auto" Margin="5"
                   Behaviours:GridUtils.RowDefinitions="Auto,*,Auto">
                 
@@ -47,9 +47,9 @@
                 <Button Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="17" Height="17" Margin="0,1,1,5"
                         Content="{StaticResource Path_BalloonClose}" Command="{Binding Close}" />
 
-                <Border Grid.Row="1" Grid.Column="0" BorderThickness="1" BorderBrush="{DynamicResource TrimColor}" CornerRadius="5" Background="White" Grid.ColumnSpan="2">
+                <Border Grid.Row="1" Grid.Column="0" BorderThickness="1" CornerRadius="5" Grid.ColumnSpan="2">
                     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                        <TextBlock Text="{Binding Path=SongLyrics}" Margin="3" Background="White"/>
+                        <TextBlock Text="{Binding Path=SongLyrics}" Margin="3"/>
                     </ScrollViewer>
                 </Border>
                 <Grid Grid.Row="2" Grid.Column="0"  Margin="0,5,0,0" Grid.ColumnSpan="2"

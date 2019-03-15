@@ -16,10 +16,10 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Slider Grid.Row="0" Maximum="2" Minimum="0" Orientation="Vertical" Margin="5,0"  HorizontalAlignment="Center"
+            <Slider Grid.Row="0" Maximum="2" Minimum="0" Orientation="Vertical" Margin="5,5,5,8"  HorizontalAlignment="Center"
                     Value="{Binding PreampVolume, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:ParametricEqualizerControl}}}"/>
 		
-			<Controls:LinkLabel Grid.Row="1" Margin="0,-7,0,-3" HorizontalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" LinkLabelBehavior="HoverUnderline"
+			<Controls:LinkLabel Grid.Row="1" Margin="0,-7,0,-3" HorizontalAlignment="Center" LinkLabelBehavior="HoverUnderline"
 								Click="OnPreampClick" Content="Preamp" ToolTip="Click to set default level"/>
         </Grid>
         <!-- Eq Sliders -->
@@ -38,9 +38,9 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <Slider Grid.Row="0" Maximum="15" Minimum="-15" Orientation="Vertical" HorizontalAlignment="Center"
+                        <Slider Grid.Row="0" Margin="0,5,0,8" Maximum="15" Minimum="-15" Orientation="Vertical" HorizontalAlignment="Center"
                                 Value="{Binding Path=Gain, Mode=TwoWay}"  IsEnabled="{Binding Path=IsEditable}"/>
-						<Controls:LinkLabel Grid.Row="1" Margin="0,-7,0,-3" HorizontalAlignment="Center" Foreground="{DynamicResource ControlTextColor}" LinkLabelBehavior="HoverUnderline"
+						<Controls:LinkLabel Grid.Row="1" Margin="0,-7,0,-3" HorizontalAlignment="Center" LinkLabelBehavior="HoverUnderline"
 											Content="{Binding Path=CenterFrequency, Converter={StaticResource NumericTextMultitudeConverter}}" Click="OnEqBandClick"
 											ToolTip="Click to set default level"/>
                     </Grid>

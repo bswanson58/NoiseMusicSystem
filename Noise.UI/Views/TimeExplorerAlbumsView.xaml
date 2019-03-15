@@ -18,12 +18,8 @@
             </Grid.RowDefinitions>
 
             <ListView Grid.Row="0" BorderThickness="0" ItemsSource="{Binding Path=AlbumList}" SelectedItem="{Binding SelectedAlbum}"
+                      ItemContainerStyle="{StaticResource ListViewItemStretch}"
                       Behaviours:ListViewColumns.Stretch="true">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListView.ItemContainerStyle>
                 <ListView.View>
                     <GridView>
                         <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">

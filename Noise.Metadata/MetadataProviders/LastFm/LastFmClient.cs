@@ -41,7 +41,7 @@ namespace Noise.Metadata.MetadataProviders.LastFm {
 			var results = await LastFmApi.ArtistSearch( artistName, RetrieveLicenseKey(), cResultFormat );
 
 			if( results == null ) {
-				throw new ApplicationException( string.Format( "LastFm returned null ArtistSearchList" ));
+				throw new ApplicationException( string.Format( "LastFm returned null search for artist '{0}'", artistName ));
 			}
 			if(( results.Results == null ) ||
 			   ( results.Error != 0 )) {
@@ -60,7 +60,7 @@ namespace Noise.Metadata.MetadataProviders.LastFm {
 			var results = await LastFmApi.GetArtistInfo( artistName, RetrieveLicenseKey(), cResultFormat );
 
 			if( results == null ) {
-				throw new ApplicationException( string.Format( "LastFm returned null ArtistInfo" ));
+				throw new ApplicationException( string.Format( "LastFm returned null info for artist '{0}'", artistName ));
 			}
 			if(( results.Artist == null ) ||
 			   ( results.Error != 0 )) {
@@ -74,7 +74,7 @@ namespace Noise.Metadata.MetadataProviders.LastFm {
 			var results = await LastFmApi.GetTopAlbums( artistName, RetrieveLicenseKey(), cResultFormat );
 
 			if( results == null ) {
-				throw new ApplicationException( string.Format( "LastFm returned null TopAlbumsList" ));
+				throw new ApplicationException( string.Format( "LastFm returned null albumsList for artist '{0}'", artistName ));
 			}
 			if(( results.TopAlbums == null ) ||
 			   ( results.Error != 0 )) {
@@ -88,7 +88,7 @@ namespace Noise.Metadata.MetadataProviders.LastFm {
 			var results = await LastFmApi.GetTopTracks( artistName, RetrieveLicenseKey(), cResultFormat );
 
 			if( results == null ) {
-				throw new ApplicationException( string.Format( "LastFm returned null TopTracksList" ));
+				throw new ApplicationException( string.Format( "LastFm returned null TopTracksList for artist '{0}'", artistName ));
 			}
 			if(( results.TopTracks == null ) ||
 			   ( results.Error != 0 )) {

@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+			 xmlns:Behaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="100" d:DesignWidth="300">
 	
@@ -22,10 +23,17 @@
 		</Grid.ColumnDefinitions>
 
 		<Viewbox Grid.Column="0" Margin="9,0" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
-			<TextBlock Style="{StaticResource LargeTitleStyle}" FontSize="800" HorizontalAlignment="Left" Text="{Binding AlbumName}" />
+			<TextBlock Style="{StaticResource LargeTitleStyle}" FontSize="800" HorizontalAlignment="Left"
+					   Behaviours:FadedPropertyChange.Property="Text" Behaviours:FadedPropertyChange.Binding="{Binding AlbumName}"
+					   Behaviours:FadedPropertyChange.Duration="0:0:0.2" />
 		</Viewbox>
 
-		<Image Grid.Column="1" MinWidth="50" MinHeight="50" Margin="9" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform"
-			   Source="{Binding AlbumImage, Converter={StaticResource imageConverter}}"/>
+		<Image Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" MinWidth="50" MinHeight="50" Margin="9" Stretch="Uniform" 
+			   Behaviours:FadedPropertyChange.Property="Source" Behaviours:FadedPropertyChange.Binding="{Binding AlbumImage.Image, Converter={StaticResource imageConverter}}" 
+			   Behaviours:FadedPropertyChange.Duration="0:0:0.2" RenderTransformOrigin="0.5,0.5">
+			<Image.RenderTransform>
+				<RotateTransform Angle="{Binding AlbumImage.Rotation}"/>
+			</Image.RenderTransform>
+		</Image>
 	</Grid>
 </UserControl>

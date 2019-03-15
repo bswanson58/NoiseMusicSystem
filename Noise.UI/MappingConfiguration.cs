@@ -5,26 +5,28 @@ using Noise.UI.Dto;
 
 namespace Noise.UI {
 	public class ViewModelProfile : Profile {
-		public override string ProfileName {
-			get { return( "ViewModel" ); }
-		}
+		public override string ProfileName => ( "ViewModel" );
 
-		protected override void Configure() {
+	    public ViewModelProfile() {
 			CreateMap<DbArtist, UiArtist>()
 				.ForMember( dest => dest.ActiveYears, opt => opt.Ignore())
 				.ForMember( dest => dest.Genre, opt => opt.Ignore())
 				.ForMember( dest => dest.DisplayGenre, opt => opt.Ignore())
 				.ForMember( dest => dest.DisplayName, opt => opt.MapFrom( src => src.Name ))
 				.ForMember( dest => dest.SortName, opt => opt.MapFrom( src => src.Name ))
+				.ForMember( dest => dest.Rating, opt => opt.Ignore())
 				.ForMember( dest => dest.UiIsFavorite, opt => opt.MapFrom( src => src.IsFavorite ))
 				.ForMember( dest => dest.UiRating, opt => opt.MapFrom( src => src.Rating ))
+				.ForMember( dest => dest.FavoriteValue, opt => opt.Ignore())
 				.ForMember( dest => dest.Website, opt => opt.Ignore());
 
 			CreateMap<DbAlbum, UiAlbum>()
 				.ForMember( dest => dest.Genre, opt => opt.Ignore())
 				.ForMember( dest => dest.DisplayGenre, opt => opt.Ignore())
+				.ForMember( dest => dest.Rating, opt => opt.Ignore())
 				.ForMember( dest => dest.UiIsFavorite, opt => opt.MapFrom( src => src.IsFavorite ))
-				.ForMember( dest => dest.UiRating, opt => opt.MapFrom( src => src.Rating ));
+				.ForMember( dest => dest.UiRating, opt => opt.MapFrom( src => src.Rating ))
+				.ForMember( dest => dest.FavoriteValue, opt => opt.Ignore());
 
 			CreateMap<DbTrack, UiTrack>()
 				.ForMember( dest => dest.Genre, opt => opt.Ignore())
@@ -58,21 +60,12 @@ namespace Noise.UI {
 				.ForMember( dest => dest.LastChangeTicks, opt => opt.Ignore())
 				.ForMember( dest => dest.LastPlayedTicks, opt => opt.Ignore())
 				.ForMember( dest => dest.LastViewedTicks, opt => opt.Ignore())
-				.ForMember( dest => dest.MaxChildRating, opt => opt.Ignore())
 				.ForMember( dest => dest.PlayCount, opt => opt.Ignore())
 				.ForMember( dest => dest.Rating, opt => opt.Ignore())
 				.ForMember( dest => dest.UserGenre, opt => opt.Ignore())
 				.ForMember( dest => dest.UserRating, opt => opt.Ignore())
 				.ForMember( dest => dest.Version, opt => opt.Ignore())
 				.ForMember( dest => dest.ViewCount, opt => opt.Ignore());
-		}
-	}
-
-	public static class MappingConfiguration {
-		public static void Configure() {
-			Mapper.Initialize( x => x.AddProfile<ViewModelProfile>() );
-
-			Mapper.AssertConfigurationIsValid();
 		}
 	}
 }

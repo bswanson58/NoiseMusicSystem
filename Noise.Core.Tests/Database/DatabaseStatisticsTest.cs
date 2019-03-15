@@ -19,7 +19,7 @@ namespace Noise.Core.Tests.Database {
 		private Mock<ILogLibraryBuilding>		mLogProvider;
 
 		[SetUp]
-		private void Setup() {
+		public void Setup() {
 			mArtistProvider = new Mock<IArtistProvider>();
 			mAlbumProvider = new Mock<IAlbumProvider>();
 			mTrackProvider = new Mock<ITrackProvider>();

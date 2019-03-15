@@ -12,6 +12,7 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 using Noise.UI.Dto;
+using Noise.UI.Resources;
 using Noise.UI.Support;
 
 namespace Noise.UI.ViewModels {
@@ -53,9 +54,9 @@ namespace Noise.UI.ViewModels {
 			mSpectrumImageWidth = 200;
 			mSpectrumImageHeight = 100;
 
-			mBaseColor = Colors.LightBlue;
-			mPeakColor = Colors.Blue;
-			mPeakHoldColor = Colors.Blue;
+			mBaseColor = ColorResources.SpectrumAnalyzerBaseColor;
+			mPeakColor = ColorResources.SpectrumAnalyzerPeakColor;
+			mPeakHoldColor = ColorResources.SpectrumAnalyzerHoldColor;
 
 			mSpectrumUpdateTimer = new Timer { Enabled = false, Interval = 100 };
 			mSpectrumUpdateTimer.Tick += OnSpectrumUpdateTimer;
@@ -302,12 +303,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
+		[DependsUpon( "InfoUpdateFlag" )]
 		public bool IsFavorite {
 			get { return( mPlayController.IsFavorite ); }
 			set { mPlayController.IsFavorite = value; }
 		}
 
 		[DependsUpon( "StartTrackFlag" )]
+		[DependsUpon( "InfoUpdateFlag" )]
 		public Int16 Rating {
 			get{ return( mPlayController.Rating ); }
 			set { mPlayController.Rating = value; }
@@ -389,7 +392,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_PlayerSwitch() {
-			mEventAggregator.Publish( new Events.ExternalPlayerSwitch());
+			mEventAggregator.PublishOnUIThread( new Events.ExternalPlayerSwitch());
 		}
 
 		private void OnSpectrumUpdateTimer( object sender, EventArgs args ) {
@@ -598,17 +601,17 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_StandardPlayer() {
-			mEventAggregator.Publish( new Events.StandardPlayerRequest());
+			mEventAggregator.PublishOnUIThread( new Events.StandardPlayerRequest());
 		}
 
 		public void Execute_ExtendedPlayer() {
-			mEventAggregator.Publish( new Events.ExtendedPlayerRequest());
+			mEventAggregator.PublishOnUIThread( new Events.ExtendedPlayerRequest());
 		}
 
 		public void Execute_RequestSimilarSongSearch() {
 			if(( mPlayController.CurrentTrack != null ) &&
 			   ( mPlayController.CurrentTrack.Track != null )) {
-				mEventAggregator.Publish( new Events.SimilarSongSearchRequest( mPlayController.CurrentTrack.Track.DbId ));
+				mEventAggregator.PublishOnUIThread( new Events.SimilarSongSearchRequest( mPlayController.CurrentTrack.Track.DbId ));
 			}
 		}
 
@@ -631,7 +634,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_RequestLyrics() {
 			if( mLyricsInfo != null ) {
-				mEventAggregator.Publish( new Events.SongLyricsRequest( mLyricsInfo ));
+				mEventAggregator.PublishOnUIThread( new Events.SongLyricsRequest( mLyricsInfo ));
 			}
 		}
 
@@ -641,7 +644,7 @@ namespace Noise.UI.ViewModels {
 
 		public void Execute_TrackInformation() {
 			if( mPlayController.CurrentTrack.Album != null ) {
-				mEventAggregator.Publish( new Events.AlbumFocusRequested( mPlayController.CurrentTrack.Album ));
+				mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( mPlayController.CurrentTrack.Album ));
 			}
 		}
 

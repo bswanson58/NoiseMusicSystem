@@ -39,7 +39,6 @@ namespace Noise.BaseDatabase.Tests.DataProviders {
 										Genre = 5,
 										HasFavorites = true,
 										IsFavorite = true,
-										MaxChildRating = 6,
 										Name = "The Foo Fighters" };
 			artist.UpdateLastChange();
 			artist.UpdateLastPlayed();

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Noise.EntityFrameworkDatabase.DatabaseUtility;
+using Noise.Infrastructure.Interfaces;
 using NUnit.Framework;
 
 namespace Noise.EntityFrameworkDatabase.Tests.DatabaseUtility {
@@ -30,7 +31,7 @@ namespace Noise.EntityFrameworkDatabase.Tests.DatabaseUtility {
 			var sut = CreateSut();
 
 			var databaseName = sut.GetDatabaseName( "Local Noise.mdf" );
-			sut.DetachDatabase( databaseName );
+			sut.DetachDatabase( new DatabaseInfo( databaseName ));
 		}
 
 		[Test]
@@ -63,7 +64,7 @@ namespace Noise.EntityFrameworkDatabase.Tests.DatabaseUtility {
 
 			var databaseName = sut.GetDatabaseName( "Local Noise.mdf" );
 			if( !string.IsNullOrWhiteSpace( databaseName )) {
-				sut.DetachDatabase( databaseName );
+				sut.DetachDatabase( new DatabaseInfo( databaseName ));
 			}
 			else {
 				databaseName = "Local Noise.mdf";

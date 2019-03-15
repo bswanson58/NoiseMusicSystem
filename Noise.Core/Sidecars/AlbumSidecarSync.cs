@@ -19,15 +19,15 @@ namespace Noise.Core.Sidecars {
 		private readonly ILogLibraryBuildingSidecars	mLog;
 		private readonly IAlbumProvider					mAlbumProvider;
 		private readonly ISidecarProvider				mSidecarProvider;
-		private readonly SidecarCreator					mSidecarCreator;
-		private readonly SidecarWriter					mSidecarWriter;
+		private readonly ISidecarCreator				mSidecarCreator;
+		private readonly ISidecarWriter					mSidecarWriter;
 		private readonly List<long>						mAlbumList; 
 		private IEnumerator<long>						mAlbumEnum; 
 
 		public string TaskId { get; private set; }
 
 		public AlbumSidecarSync( IEventAggregator eventAggregator, ILogLibraryBuildingSidecars log, IAlbumProvider albumProvider,
-								 ISidecarProvider sidecarProvider, SidecarCreator sidecarCreator, SidecarWriter sidecarWriter ) {
+								 ISidecarProvider sidecarProvider, ISidecarCreator sidecarCreator, ISidecarWriter sidecarWriter ) {
 			TaskId = cSidecarSyncId;
 
 			mEventAggregator = eventAggregator;

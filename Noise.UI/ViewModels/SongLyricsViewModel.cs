@@ -51,7 +51,7 @@ namespace Noise.UI.ViewModels {
 				Set( () => VisualStateName, value );
 
 				if( value == cViewStateNormal ) {
-					mEventAggregator.Publish( new Events.BalloonPopupOpened( ViewNames.SongLyricsView ));
+					mEventAggregator.PublishOnUIThread( new Events.BalloonPopupOpened( ViewNames.SongLyricsView ));
 				}
 			}
 		}
@@ -167,7 +167,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_LyricsSourceClicked() {
-			mEventAggregator.Publish( new Events.UrlLaunchRequest( LyricsSource ));
+			mEventAggregator.PublishOnUIThread( new Events.UrlLaunchRequest( LyricsSource ));
 		}
 
 		public void Execute_Close() {

@@ -30,6 +30,7 @@ namespace Noise.Core.DataBuilders {
 
 		public	bool								LibraryUpdateInProgress { get; private set; }
 		public	bool								LibraryUpdatePaused { get; private set; }
+        public  IDatabaseStatistics                 LibraryStatistics => mDatabaseStatistics;
 
 		public LibraryBuilder( IEventAggregator eventAggregator, ILogUserStatus userStatus, ILogLibraryBuilding log,
 							   IStorageFolderSupport storageFolderSupport, IFolderExplorer folderExplorer, IMetaDataCleaner metaDataCleaner,
@@ -49,8 +50,8 @@ namespace Noise.Core.DataBuilders {
 		}
 
 		public bool EnableUpdateOnLibraryChange {
-			get{ return( mFolderWatcher.IsWatching ); }
-			set {
+			get => ( mFolderWatcher.IsWatching );
+		    set {
 				if( value ) {
 					var folder = RootFolderList().FirstOrDefault();
 
@@ -108,27 +109,13 @@ namespace Noise.Core.DataBuilders {
 			mContinueExploring = false;
 			ResumeLibraryUpdate();
 
-			if( mFolderExplorer != null ) {
-				mFolderExplorer.Stop();
-			}
+		    mFolderExplorer?.Stop();
+		    mMetaDataCleaner?.Stop();
+		    mStorageFileProcessor?.Stop();
+		    mSummaryBuilder?.Stop();
+		    mSidecarBuilder?.Stop();
 
-			if( mMetaDataCleaner != null ) {
-				mMetaDataCleaner.Stop();
-			}
-
-			if( mStorageFileProcessor != null ) {
-				mStorageFileProcessor.Stop();
-			}
-
-			if( mSummaryBuilder != null ) {
-				mSummaryBuilder.Stop();
-			}
-
-			if( mSidecarBuilder != null ) {
-				mSidecarBuilder.Stop();
-			}
-
-			WaitForExplorer();
+		    WaitForExplorer();
 		}
 
 		private void WaitForExplorer() {
@@ -148,7 +135,7 @@ namespace Noise.Core.DataBuilders {
 			LibraryUpdateInProgress = true;
 
 			try {
-				mEventAggregator.Publish( new Events.LibraryUpdateStarted( 0L ));
+				mEventAggregator.PublishOnUIThread( new Events.LibraryUpdateStarted( 0L ));
 
 				using( new SleepPreventer()) {
 					if( mContinueExploring ) {
@@ -190,7 +177,7 @@ namespace Noise.Core.DataBuilders {
 				LibraryUpdateInProgress = false;
 			}
 
-			mEventAggregator.Publish( new Events.LibraryUpdateCompleted( results ));
+			mEventAggregator.PublishOnUIThread( new Events.LibraryUpdateCompleted( results ));
 		}
 
 		public void LogLibraryStatistics() {
@@ -205,7 +192,7 @@ namespace Noise.Core.DataBuilders {
 			mDatabaseStatistics.GatherStatistics( allCounts );
 
 			mLog.DatabaseStatistics( mDatabaseStatistics );
-			mEventAggregator.Publish( new Events.DatabaseStatisticsUpdated( mDatabaseStatistics ));
+			mEventAggregator.PublishOnUIThread( new Events.DatabaseStatisticsUpdated( mDatabaseStatistics ));
 			mUserStatus.LibraryStatistics( mDatabaseStatistics );
 		}
 	}

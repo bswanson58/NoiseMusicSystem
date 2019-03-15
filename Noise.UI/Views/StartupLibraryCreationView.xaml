@@ -77,7 +77,7 @@
                 <TextBlock Style="{StaticResource StartupTextStyle}" Text="{Binding LibraryName}"/>
             </StackPanel>
 
-            <ProgressBar Grid.Row="2" Grid.Column="1" Margin="17,9,17,0" Height="5" Foreground="{StaticResource StartupForegroundBrush}" IsIndeterminate="True"/>
+            <ProgressBar Grid.Row="2" Grid.Column="1" Margin="17,9,17,0" Height="5" IsIndeterminate="True"/>
         </Grid>
     </Grid>
 </UserControl>

@@ -1,11 +1,10 @@
 ﻿<UserControl x:Class="Noise.UI.Views.ListenStageView"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:Controls="clr-namespace:Noise.UI.Controls"
 			 xmlns:Views="clr-namespace:Noise.UI.Views">
 
 	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Now Playing ">
-		<Grid Background="{DynamicResource TreeItemBackground}">
+		<Grid Background="{StaticResource NoiseBrush}">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
 				<RowDefinition Height="*" />

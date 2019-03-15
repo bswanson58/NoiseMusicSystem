@@ -52,7 +52,7 @@ namespace Noise.AppSupport {
 			}
 
 			if( action != UserEventAction.None ) {
-				mEvents.Publish( new Events.GlobalUserEvent( new GlobalUserEventArgs( action )));
+				mEvents.PublishOnUIThread( new Events.GlobalUserEvent( new GlobalUserEventArgs( action )));
 			}
 		}
 

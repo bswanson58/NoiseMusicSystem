@@ -189,7 +189,7 @@ namespace Noise.Core.Tests.FileProcessor {
 
 			sut.ProcessStep( context );
 
-			testable.Mock<IEventAggregator>().Verify( m => m.Publish( It.IsAny<object>() ), Times.Once());
+			testable.Mock<IEventAggregator>().Verify( m => m.PublishOnUIThread( It.IsAny<object>() ), Times.Once());
 		}
 
 		[Test]
@@ -207,7 +207,7 @@ namespace Noise.Core.Tests.FileProcessor {
 
 			sut.ProcessStep( context );
 
-			testable.Mock<IEventAggregator>().Verify( m => m.Publish( It.IsAny<object>() ), Times.Never());
+			testable.Mock<IEventAggregator>().Verify( m => m.PublishOnUIThread( It.IsAny<object>() ), Times.Never());
 		}
 
 		[Test]

@@ -11,7 +11,6 @@ namespace Noise.Infrastructure.Dto {
 		public long				UserGenre { get; set; }
 		public Int16			UserRating { get; set; }
 		public Int16			CalculatedRating { get; set; }
-		public Int16			MaxChildRating { get; set; }
 		public Int16			AlbumCount { get; set; }
 		public long				DateAddedTicks { get; protected set; }
 		public bool				IsFavorite { get; set; }

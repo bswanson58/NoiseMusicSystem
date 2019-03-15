@@ -4,18 +4,29 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/UiResources.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/BrushResources.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/ControlStyles.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Noise.UI.Style;component/Shared/ConverterResources.xaml" />
+
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/UiResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/AnimatedListBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/FavoriteCheckbox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/GridSplitter.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/GroupBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/LinkLabel.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/PlayButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/TabHeader.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/WatermarkTextBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/Images.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Noise.UI;component/Resources/ValueConverters.xaml" />
+
                 <ResourceDictionary Source="pack://application:,,,/ReusableBits.Ui;component/Resources/Generic.xaml" />
 
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-                <!--ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" /-->
-                <!--ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" /-->
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Steel.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

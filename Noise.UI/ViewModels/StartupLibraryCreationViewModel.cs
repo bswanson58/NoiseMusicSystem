@@ -39,7 +39,7 @@ namespace Noise.UI.ViewModels {
 			mLibraryConfiguration.AddLibrary( configuration );
 			await mLibraryConfiguration.AsyncOpen( configuration );
 
-			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
+			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
 			mLibraryBuilder.StartLibraryUpdate();
 		}
 
@@ -79,7 +79,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public void Execute_Exit() {
-			mEventAggregator.Publish( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
+			mEventAggregator.PublishOnUIThread( new Events.WindowLayoutRequest( Constants.ExploreLayout ));
 		}
 	}
 }
