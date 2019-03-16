@@ -2,12 +2,11 @@
 
 namespace Noise.UI.Dto {
     public class UiTag {
-        private readonly DbTag  mTag;
-
-        public  string          Name => mTag.Name;
+        public  DbTag   Tag { get; }
+        public  string  Name => Tag.Name;
 
         public UiTag( DbTag tag ) {
-            mTag = tag;
+            Tag = tag;
         }
     }
 }

@@ -1,25 +1,35 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
+using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using Noise.UI.Behaviours;
 using Noise.UI.Dto;
 using Noise.UI.Logging;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-    class TagListViewModel : AutomaticCommandBase, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
-        private readonly ITagProvider           mTagProvider;
-        private readonly IUiLog                 mLog;
-        private TaskHandler<IEnumerable<UiTag>> mTaskHandler;
+    internal class TagEditRequest : InteractionRequestData<TagEditDialogModel> {
+        public TagEditRequest( TagEditDialogModel viewModel ) : base( viewModel ) { }
+    }
 
-        public BindableCollection<UiTag>   TagList { get; }
+    class TagListViewModel : AutomaticCommandBase, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
+        private readonly ITagProvider                       mTagProvider;
+        private readonly IUiLog                             mLog;
+        private readonly InteractionRequest<TagEditRequest> mTagEditRequest;
+        private TaskHandler<IEnumerable<UiTag>>             mTaskHandler;
+
+        public BindableCollection<UiTag>    TagList { get; }
+        public IInteractionRequest          TagEditRequest => mTagEditRequest;
 
         public TagListViewModel( ITagProvider tagProvider, IDatabaseInfo databaseInfo, IUiLog log ) {
             mTagProvider = tagProvider;
             mLog = log;
+            mTagEditRequest = new InteractionRequest<TagEditRequest>();
 
             TagList = new BindableCollection<UiTag>();
 
@@ -28,7 +38,7 @@ namespace Noise.UI.ViewModels {
             }
         }
 
-        public void Handle(Events.DatabaseOpened args) {
+        public void Handle( Events.DatabaseOpened args ) {
             LoadTags();
         }
 
@@ -49,7 +59,7 @@ namespace Noise.UI.ViewModels {
         }
 
         private void LoadTags() {
-            TaskHandler.StartTask( RetrieveTags, SetTags, exception => mLog.LogException("Loading Favorites", exception));
+            TaskHandler.StartTask( RetrieveTags, SetTags, exception => mLog.LogException( "Loading Favorites", exception ));
         }
 
         private IEnumerable<UiTag> RetrieveTags() {
@@ -71,6 +81,20 @@ namespace Noise.UI.ViewModels {
             TagList.Clear();
         }
 
-        public void Execute_AddTag() { }
+        public void Execute_AddTag() {
+            var tag = new UiTag( new DbTag( eTagGroup.User, String.Empty ));
+            var dialogModel = new TagEditDialogModel( tag );
+
+            mTagEditRequest.Raise( new TagEditRequest( dialogModel ), OnTagAdded );
+        }
+
+        private void OnTagAdded( TagEditRequest confirmation) {
+            if(( confirmation.Confirmed ) &&
+               ( confirmation.ViewModel.IsValid )) {
+                mTagProvider.AddTag( confirmation.ViewModel.Tag.Tag );
+
+                LoadTags();
+            }
+        }
     }
 }

@@ -9,10 +9,10 @@ namespace Noise.Infrastructure.Dto {
 		Unknown
 	}
 
-	[DebuggerDisplay("Tag = {Name}")]
+	[DebuggerDisplay("Tag = {" + nameof( Name ) + "}")]
 	public class DbTag : DbBase {
 		public	eTagGroup		TagGroup { get; protected set; }
-		public	string			Name { get; protected set; }
+		public	string			Name { get; set; }
 		public	string			Description { get; set; }
 		public	Int16			Rating { get; set; }
 		public	bool			IsFavorite { get; set; }
@@ -27,7 +27,7 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public override string ToString() {
-			return( string.Format( "Tag \"{0}\", Group:{1}", Name, TagGroup ));
+			return( $"Tag \"{Name}\", Group:{TagGroup}" );
 		}
 	}
 }

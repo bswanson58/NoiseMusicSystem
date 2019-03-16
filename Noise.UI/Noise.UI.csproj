@@ -367,6 +367,7 @@
     <Compile Include="ViewModels\StatusViewModel.cs" />
     <Compile Include="ViewModels\StreamViewModel.cs" />
     <Compile Include="ViewModels\TagAssociationViewModel.cs" />
+    <Compile Include="ViewModels\TagEditDialogModel.cs" />
     <Compile Include="ViewModels\TagListViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerAlbumsViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerViewModel.cs" />
@@ -478,6 +479,9 @@
     </Compile>
     <Compile Include="Views\TagAssociationView.xaml.cs">
       <DependentUpon>TagAssociationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TagEditDialog.xaml.cs">
+      <DependentUpon>TagEditDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TagListView.xaml.cs">
       <DependentUpon>TagListView.xaml</DependentUpon>
@@ -798,6 +802,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\TagAssociationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TagEditDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
