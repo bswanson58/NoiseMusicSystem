@@ -12,6 +12,8 @@ namespace Noise.UI.Dto {
         public  string      Name => Tag.Name;
         public  bool        IsChecked { get; set; }
 
+        public UiTag( DbTag tag ) : this( tag, null ) { }
+
         public UiTag( DbTag tag, Action<UiTag> onEdit ) {
             Tag = tag;
             IsChecked = false;

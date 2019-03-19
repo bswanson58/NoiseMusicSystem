@@ -29,6 +29,7 @@ namespace Noise.UI.ViewModels {
 		private readonly ITrackProvider					mTrackProvider;
 		private readonly IPlayCommand					mPlayCommand;
 		private readonly IRatings						mRatings;
+        private readonly IUserTagManager                mTagManager;
 		private readonly Observal.Observer				mChangeObserver;
 		private readonly BindableCollection<UiTrack>	mTracks;
         private TaskHandler<IEnumerable<UiTrack>>		mTrackRetrievalTaskHandler;
@@ -39,13 +40,14 @@ namespace Noise.UI.ViewModels {
         public InteractionRequest<TagEditInfo>          TagEditRequest { get; }
 
 		public AlbumTracksViewModel( IEventAggregator eventAggregator, IRatings ratings, ISelectionState selectionState,
-									 ITrackProvider trackProvider, IPlayCommand playCommand, IUiLog log ) {
+									 ITrackProvider trackProvider, IPlayCommand playCommand, IUserTagManager tagManager, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mSelectionState = selectionState;
 			mRatings = ratings;
 			mTrackProvider = trackProvider;
 			mPlayCommand = playCommand;
+            mTagManager = tagManager;
 
 			mEventAggregator.Subscribe( this );
 
@@ -216,7 +218,7 @@ namespace Noise.UI.ViewModels {
             var track = mTrackProvider.GetTrack( trackId );
 
             if( track != null ) {
-                var dialogModel = new TagAssociationDialogModel( track.Name );
+                var dialogModel = new TagAssociationDialogModel( track, mTagManager.GetUserTagList(), mTagManager.GetAssociatedTags( track.DbId ));
 				
                 TagEditRequest.Raise( new TagEditInfo( dialogModel ), OnTagEdited );
             }
@@ -224,6 +226,7 @@ namespace Noise.UI.ViewModels {
 
         private void OnTagEdited( TagEditInfo confirmation ) {
             if( confirmation.Confirmed ) {
+                mTagManager.UpdateAssociations( confirmation.ViewModel.Track.DbId, confirmation.ViewModel.GetSelectedTags());
             }
         }
 	}

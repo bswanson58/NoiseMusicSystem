@@ -291,6 +291,7 @@
     <Compile Include="Interfaces\ITextInfoProvider.cs" />
     <Compile Include="Interfaces\ITimestampProvider.cs" />
     <Compile Include="Interfaces\ITrackProvider.cs" />
+    <Compile Include="Interfaces\IUserTagManager.cs" />
     <Compile Include="Interfaces\IVersionable.cs" />
     <Compile Include="Interfaces\IViewModelResolver.cs" />
     <Compile Include="Logging\BaseLogger.cs" />

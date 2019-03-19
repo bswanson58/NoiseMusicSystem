@@ -14,6 +14,10 @@ namespace Noise.RavenDatabase.DataProviders {
 			Database.Add( tag );
 		}
 
+        public DbTag GetTag( long dbid ) {
+            return Database.Get( dbid );
+        }
+
         public IDataUpdateShell<DbTag> GetTagForUpdate( long dbid ) {
             return( new RavenDataUpdateShell<DbTag>( entity => Database.Update( entity ), Database.Get( dbid )));
         }
