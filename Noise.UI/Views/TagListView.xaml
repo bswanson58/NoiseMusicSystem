@@ -19,18 +19,30 @@
         </ControlTemplate>
 
         <DataTemplate x:Key="TagItemTemplate" DataType="Dto:UiTag">
-            <Grid>
+            <Grid Background="Transparent"> <!-- Background set for mouse over support -->
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 
-                <TextBlock Grid.Column="0" Text="{Binding Name}"/>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Name}"/>
+                <Button x:Name="TrackEdit" Grid.Column="2" Margin="5,0" Width="23" Height="17" Padding="3,1" BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand"
+                        Command="{Binding Path=OnEdit}" Content="{StaticResource Path_Edit}" ToolTip="Edit Tag Properties" />
             </Grid>
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="TrackEdit" Property="Opacity" Value="1"/>
+                </Trigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
 
     <i:Interaction.Behaviors>
         <Behaviours:InteractionRequestDialogBehavior DialogClass="TagAddDialog"
+                                                     DialogService="{Binding Source={StaticResource DialogService}}"
+                                                     InteractionRequest="{Binding Path=TagAddRequest}" />
+        <Behaviours:InteractionRequestDialogBehavior DialogClass="TagEditDialog"
                                                      DialogService="{Binding Source={StaticResource DialogService}}"
                                                      InteractionRequest="{Binding Path=TagEditRequest}" />
     </i:Interaction.Behaviors>

@@ -21,5 +21,6 @@
 		public const string		PlayStrategyConfiguration	= "PlayStrategyConfiguration";
 		public const string		ManagePlaybackContext		= "ManagePlaybackContext";
         public const string     TagAddDialog                = "TagAddDialog";
+        public const string     TagEditDialog               = "TagEditDialog";
 	}
 }

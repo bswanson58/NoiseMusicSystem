@@ -1,12 +1,24 @@
-﻿using Noise.Infrastructure.Dto;
+﻿using System;
+using System.Diagnostics;
+using Noise.Infrastructure.Dto;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
-    public class UiTag {
-        public  DbTag   Tag { get; }
-        public  string  Name => Tag.Name;
+    [DebuggerDisplay("Artist = {" + nameof(Name) + "}")]
+    public class UiTag : AutomaticCommandBase {
+        private readonly Action<UiTag>  mEditAction;
 
-        public UiTag( DbTag tag ) {
+        public  DbTag       Tag { get; }
+        public  string      Name => Tag.Name;
+
+        public UiTag( DbTag tag, Action<UiTag> onEdit ) {
             Tag = tag;
+
+            mEditAction = onEdit;
+        }
+
+        public void Execute_OnEdit() {
+            mEditAction?.Invoke( this );
         }
     }
 }

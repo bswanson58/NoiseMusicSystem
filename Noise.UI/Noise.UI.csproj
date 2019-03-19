@@ -477,6 +477,12 @@
     <Compile Include="Views\PlayingTrackView.xaml.cs">
       <DependentUpon>PlayingTrackView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TagAddDialog.xaml.cs">
+      <DependentUpon>TagAddDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TagAssociationDialog.xaml.cs">
+      <DependentUpon>TagAssociationDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TagAssociationView.xaml.cs">
       <DependentUpon>TagAssociationView.xaml</DependentUpon>
     </Compile>
@@ -798,6 +804,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlayingTrackView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TagAddDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TagAssociationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

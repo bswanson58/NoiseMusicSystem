@@ -7,8 +7,8 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
-             d:DesignHeight="300"
-             d:DesignWidth="300"
+             d:DesignHeight="100"
+             d:DesignWidth="500"
              mc:Ignorable="d">
 
     <UserControl.DataContext>

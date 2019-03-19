@@ -26,6 +26,13 @@ namespace Noise.Infrastructure.Dto {
 			Description = string.Empty;
 		}
 
+        public void UpdateFrom( DbTag tag ) {
+            Name = tag.Name;
+            Description = tag.Description;
+            Rating = tag.Rating;
+            IsFavorite = tag.IsFavorite;
+        }
+
 		public override string ToString() {
 			return( $"Tag \"{Name}\", Group:{TagGroup}" );
 		}

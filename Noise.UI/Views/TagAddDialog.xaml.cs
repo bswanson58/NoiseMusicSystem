@@ -4,11 +4,11 @@ using Noise.UI.Support;
 
 namespace Noise.UI.Views {
     /// <summary>
-    /// Interaction logic for TagEditDialog.xaml
+    /// Interaction logic for TagAddDialog.xaml
     /// </summary>
-    [Export(DialogNames.TagEditDialog, typeof( FrameworkElement ))]
-    public partial class TagEditDialog {
-        public TagEditDialog() {
+    [Export(DialogNames.TagAddDialog, typeof( FrameworkElement ))]
+    public partial class TagAddDialog {
+        public TagAddDialog() {
             InitializeComponent();
         }
     }

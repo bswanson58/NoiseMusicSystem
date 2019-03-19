@@ -20,15 +20,18 @@ namespace Noise.UI.ViewModels {
     class TagListViewModel : AutomaticCommandBase, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
         private readonly ITagProvider                       mTagProvider;
         private readonly IUiLog                             mLog;
+        private readonly InteractionRequest<TagEditRequest> mTagAddRequest;
         private readonly InteractionRequest<TagEditRequest> mTagEditRequest;
         private TaskHandler<IEnumerable<UiTag>>             mTaskHandler;
 
         public BindableCollection<UiTag>    TagList { get; }
+        public IInteractionRequest          TagAddRequest => mTagAddRequest;
         public IInteractionRequest          TagEditRequest => mTagEditRequest;
 
         public TagListViewModel( ITagProvider tagProvider, IDatabaseInfo databaseInfo, IUiLog log ) {
             mTagProvider = tagProvider;
             mLog = log;
+            mTagAddRequest = new InteractionRequest<TagEditRequest>();
             mTagEditRequest = new InteractionRequest<TagEditRequest>();
 
             TagList = new BindableCollection<UiTag>();
@@ -59,14 +62,14 @@ namespace Noise.UI.ViewModels {
         }
 
         private void LoadTags() {
-            TaskHandler.StartTask( RetrieveTags, SetTags, exception => mLog.LogException( "Loading Favorites", exception ));
+            TaskHandler.StartTask( RetrieveTags, SetTags, exception => mLog.LogException( "Loading User Tags", exception ));
         }
 
         private IEnumerable<UiTag> RetrieveTags() {
             var retValue = new List<UiTag>();
 
             using( var tagList = mTagProvider.GetTagList( eTagGroup.User )) {
-                retValue.AddRange( from tag in tagList.List select new UiTag( tag ));
+                retValue.AddRange( from tag in tagList.List orderby tag.Name select new UiTag( tag, OnEditTag ));
             }
 
             return retValue;
@@ -81,11 +84,32 @@ namespace Noise.UI.ViewModels {
             TagList.Clear();
         }
 
-        public void Execute_AddTag() {
-            var tag = new UiTag( new DbTag( eTagGroup.User, String.Empty ));
+        private void OnEditTag( UiTag tag ) {
             var dialogModel = new TagEditDialogModel( tag );
 
-            mTagEditRequest.Raise( new TagEditRequest( dialogModel ), OnTagAdded );
+            mTagEditRequest.Raise( new TagEditRequest( dialogModel ), OnTagEdited );
+        }
+
+        private void OnTagEdited( TagEditRequest confirmation) {
+            if(( confirmation.Confirmed ) &&
+               ( confirmation.ViewModel.IsValid )) {
+                var updater = mTagProvider.GetTagForUpdate( confirmation.ViewModel.Tag.Tag.DbId );
+
+                if( updater.Item != null ) {
+                    updater.Item.UpdateFrom( confirmation.ViewModel.Tag.Tag );
+
+                    updater.Update();
+                }
+
+                LoadTags();
+            }
+        }
+
+        public void Execute_AddTag() {
+            var tag = new UiTag( new DbTag( eTagGroup.User, String.Empty ), null );
+            var dialogModel = new TagEditDialogModel( tag );
+
+            mTagAddRequest.Raise( new TagEditRequest( dialogModel ), OnTagAdded );
         }
 
         private void OnTagAdded( TagEditRequest confirmation) {
