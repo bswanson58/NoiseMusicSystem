@@ -6,5 +6,7 @@ namespace Noise.Infrastructure.Interfaces {
         IEnumerable<DbTag>      GetUserTagList();
         IEnumerable<DbTag>      GetAssociatedTags( long forEntity );
         void                    UpdateAssociations( long forEntity, IEnumerable<DbTag> tags );
+
+        IEnumerable<DbTagAssociation>   GetAssociations( DbTag forTag );
     }
 }

@@ -61,5 +61,15 @@ namespace Noise.Core.Database {
                 }
             }
         }
+
+        public IEnumerable<DbTagAssociation> GetAssociations( DbTag forTag ) {
+            var retValue = new List<DbTagAssociation>();
+
+            using( var list = mAssociationProvider.GetTagList( eTagGroup.User, forTag.DbId )) {
+                retValue.AddRange( list.List );
+            }
+
+            return retValue;
+        }
     }
 }
