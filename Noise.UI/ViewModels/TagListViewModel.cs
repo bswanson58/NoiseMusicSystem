@@ -19,6 +19,7 @@ namespace Noise.UI.ViewModels {
 
     class TagListViewModel : AutomaticCommandBase, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
         private readonly ITagProvider                       mTagProvider;
+        private readonly IUserTagManager                    mTagManager;
         private readonly IUiLog                             mLog;
         private readonly InteractionRequest<TagEditRequest> mTagAddRequest;
         private readonly InteractionRequest<TagEditRequest> mTagEditRequest;
@@ -28,7 +29,8 @@ namespace Noise.UI.ViewModels {
         public IInteractionRequest          TagAddRequest => mTagAddRequest;
         public IInteractionRequest          TagEditRequest => mTagEditRequest;
 
-        public TagListViewModel( ITagProvider tagProvider, IDatabaseInfo databaseInfo, IUiLog log ) {
+        public TagListViewModel( IUserTagManager tagManager, ITagProvider tagProvider, IDatabaseInfo databaseInfo, IUiLog log ) {
+            mTagManager = tagManager;
             mTagProvider = tagProvider;
             mLog = log;
             mTagAddRequest = new InteractionRequest<TagEditRequest>();
@@ -66,13 +68,7 @@ namespace Noise.UI.ViewModels {
         }
 
         private IEnumerable<UiTag> RetrieveTags() {
-            var retValue = new List<UiTag>();
-
-            using( var tagList = mTagProvider.GetTagList( eTagGroup.User )) {
-                retValue.AddRange( from tag in tagList.List orderby tag.Name select new UiTag( tag, OnEditTag ));
-            }
-
-            return retValue;
+            return( from tag in mTagManager.GetUserTagList() orderby tag.Name select new UiTag( tag, OnEditTag ));
         }
 
         private void SetTags( IEnumerable<UiTag> list ) {
