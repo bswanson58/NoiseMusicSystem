@@ -366,6 +366,7 @@
     <Compile Include="ViewModels\StartupLibrarySelectionViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
     <Compile Include="ViewModels\StreamViewModel.cs" />
+    <Compile Include="ViewModels\TagAssociationDialogModel.cs" />
     <Compile Include="ViewModels\TagAssociationViewModel.cs" />
     <Compile Include="ViewModels\TagEditDialogModel.cs" />
     <Compile Include="ViewModels\TagListViewModel.cs" />

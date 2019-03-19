@@ -1,23 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.Composition;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Noise.UI.Support;
 
 namespace Noise.UI.Views {
     /// <summary>
     /// Interaction logic for TagAssociationDialog.xaml
     /// </summary>
-    public partial class TagAssociationDialog : UserControl {
+    [Export(DialogNames.TagAssociationDialog, typeof( FrameworkElement ))]
+    public partial class TagAssociationDialog {
         public TagAssociationDialog() {
             InitializeComponent();
         }

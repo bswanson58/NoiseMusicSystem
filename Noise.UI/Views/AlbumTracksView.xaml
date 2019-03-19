@@ -20,9 +20,9 @@
     </UserControl.Resources>
 
     <i:Interaction.Behaviors>
-        <Behaviours:InteractionRequestDialogBehavior DialogClass="TrackEdit"
+        <Behaviours:InteractionRequestDialogBehavior DialogClass="TagAssociationDialog"
                                                      DialogService="{Binding Source={StaticResource DialogService}}"
-                                                     InteractionRequest="{Binding Path=TrackEditRequest}" />
+                                                     InteractionRequest="{Binding Path=TagEditRequest}" />
     </i:Interaction.Behaviors>
 
     <GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}" Header=" Tracks ">
