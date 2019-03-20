@@ -5,6 +5,7 @@ using Noise.UI.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Microsoft.Practices.Prism;
 using Noise.Infrastructure;
 using Noise.UI.Dto;
@@ -12,7 +13,7 @@ using Noise.UI.Logging;
 using ReusableBits;
 
 namespace Noise.UI.ViewModels {
-    class TagAssociationViewModel {
+    class TagAssociationViewModel : IHandle<Events.UserTagsChanged> {
         private readonly IEventAggregator       mEventAggregator;
         private readonly IUiLog                 mLog;
         private readonly IUserTagManager        mTagManager;
@@ -41,11 +42,16 @@ namespace Noise.UI.ViewModels {
             Associations = new ObservableCollection<UiTagAssociation>();
 
             mSelectionState.CurrentTagChanged.Subscribe( OnTagChanged );
+            mEventAggregator.Subscribe( this );
         }
 
         private void OnTagChanged( DbTag tag ) {
             mCurrentTag = tag;
 
+            UpdateAssociations();
+        }
+
+        public void Handle( Events.UserTagsChanged args ) {
             UpdateAssociations();
         }
 
@@ -100,7 +106,7 @@ namespace Noise.UI.ViewModels {
         }
 
         private void SetAssociations( IEnumerable<UiTagAssociation> list ) {
-            Associations.AddRange( list );
+            Associations.AddRange( from a in list orderby a.Track.Name select a );
         }
 
         private void OnAssociationPlay( UiTagAssociation tag ) {

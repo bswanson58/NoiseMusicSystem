@@ -1,14 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Caliburn.Micro;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.Database {
     class UserTagManager : IUserTagManager {
-        private readonly    ITagAssociationProvider mAssociationProvider;
-        private readonly    ITagProvider            mTagProvider;
+        private readonly IEventAggregator           mEventAggregator; 
+        private readonly ITagAssociationProvider    mAssociationProvider;
+        private readonly ITagProvider               mTagProvider;
 
-        public UserTagManager( ITagProvider tagProvider, ITagAssociationProvider associationProvider ) {
+        public UserTagManager( ITagProvider tagProvider, ITagAssociationProvider associationProvider, IEventAggregator eventAggregator ) {
+            mEventAggregator = eventAggregator;
             mTagProvider = tagProvider;
             mAssociationProvider = associationProvider;
         }
@@ -38,12 +42,15 @@ namespace Noise.Core.Database {
         public void UpdateAssociations( long forEntity, IEnumerable<DbTag> tags ) {
             var newTags = tags.ToList();
             var currentTags = GetAssociatedTags( forEntity ).ToList();
+            var updates = false;
 
             foreach( var tag in newTags ) {
                 var current = currentTags.FirstOrDefault( t => t.DbId.Equals( tag.DbId ));
 
                 if( current == null ) {
                     mAssociationProvider.AddAssociation( new DbTagAssociation( eTagGroup.User, tag.DbId, forEntity, 0L ));
+
+                    updates = true;
                 }
             }
 
@@ -56,9 +63,15 @@ namespace Noise.Core.Database {
 
                         if( association != null ) {
                             mAssociationProvider.RemoveAssociation( association.DbId );
+
+                            updates = true;
                         }
                     }
                 }
+            }
+
+            if( updates ) {
+                mEventAggregator.PublishOnUIThread( new Events.UserTagsChanged());
             }
         }
 

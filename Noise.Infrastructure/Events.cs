@@ -404,5 +404,7 @@ namespace Noise.Infrastructure {
 				TransportState = transportState;
 			}
 		}
+
+        public class UserTagsChanged { }
 	}
 }

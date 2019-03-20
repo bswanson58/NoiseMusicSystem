@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Caliburn.Micro;
 using Noise.Core.Logging;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies {
-    class PlayExhaustedStrategyUserTags : PlayExhaustedStrategyRandomBase {
+    class PlayExhaustedStrategyUserTags : PlayExhaustedStrategyRandomBase, IHandle<Events.UserTagsChanged> {
+        private readonly IEventAggregator       mEventAggregator;
         private readonly ITrackProvider         mTrackProvider;
         private readonly ITagProvider           mTagProvider;
         private readonly IUserTagManager        mTagManager;
@@ -13,13 +16,15 @@ namespace Noise.Core.PlayStrategies {
         private long                            mTagId;
         private string                          mTagName;
 
-        public PlayExhaustedStrategyUserTags( IUserTagManager tagManager, ITagProvider tagProvider, ITrackProvider trackProvider, ILogPlayStrategy log ) :
+        public PlayExhaustedStrategyUserTags( IUserTagManager tagManager, ITagProvider tagProvider, ITrackProvider trackProvider, ILogPlayStrategy log, IEventAggregator eventAggregator ) :
             base( ePlayExhaustedStrategy.PlayUserTags, "Play Tagged Tracks", "Play tracks associated with a tag.", "Tag", null, null, log ) {
+            mEventAggregator = eventAggregator;
             mTagManager = tagManager;
             mTagProvider = tagProvider;
             mTrackProvider = trackProvider;
 
             mAssociationList = new List<DbTagAssociation>();
+            mEventAggregator.Subscribe( this );
         }
 
         protected override string FormatDescription() {
@@ -39,7 +44,12 @@ namespace Noise.Core.PlayStrategies {
             }
         }
 
+        public void Handle( Events.UserTagsChanged args ) {
+            LoadAssociations();
+        }
+
         private void LoadAssociations() {
+            mAssociationList.Clear();
             mAssociationList.AddRange( mTagManager.GetAssociations( mTagId ));
         }
 
