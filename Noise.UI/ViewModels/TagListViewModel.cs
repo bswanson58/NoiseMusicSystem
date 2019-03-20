@@ -8,7 +8,6 @@ using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Behaviours;
 using Noise.UI.Dto;
-using Noise.UI.Interfaces;
 using Noise.UI.Logging;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -22,7 +21,6 @@ namespace Noise.UI.ViewModels {
         private readonly IEventAggregator                   mEventAggregator;
         private readonly ITagProvider                       mTagProvider;
         private readonly IUserTagManager                    mTagManager;
-        private readonly ISelectionState                    mSelectionState;
         private readonly IUiLog                             mLog;
         private readonly InteractionRequest<TagEditRequest> mTagAddRequest;
         private readonly InteractionRequest<TagEditRequest> mTagEditRequest;
@@ -33,11 +31,10 @@ namespace Noise.UI.ViewModels {
         public IInteractionRequest          TagAddRequest => mTagAddRequest;
         public IInteractionRequest          TagEditRequest => mTagEditRequest;
 
-        public TagListViewModel( IUserTagManager tagManager, ITagProvider tagProvider, IDatabaseInfo databaseInfo, ISelectionState selectionState,
+        public TagListViewModel( IUserTagManager tagManager, ITagProvider tagProvider, IDatabaseInfo databaseInfo,
                                  IEventAggregator eventAggregator, IUiLog log ) {
             mTagManager = tagManager;
             mTagProvider = tagProvider;
-            mSelectionState = selectionState;
             mEventAggregator = eventAggregator;
             mLog = log;
             mTagAddRequest = new InteractionRequest<TagEditRequest>();
