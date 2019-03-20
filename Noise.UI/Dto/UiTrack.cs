@@ -23,6 +23,7 @@ namespace Noise.UI.Dto {
 		public string			UserGenre { get; set; }
 		public bool				IsFavorite { get; set; }
 		public DbGenre			DisplayGenre { get; set; }
+        public bool             HasUserTags { get; set; }
 
 		private readonly Action<long>	mPlayAction;
 		private readonly Action<long>	mEditAction;

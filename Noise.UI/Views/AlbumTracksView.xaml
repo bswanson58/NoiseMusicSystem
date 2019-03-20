@@ -105,12 +105,18 @@
                     <GridViewColumn Width="29" HeaderTemplate="{StaticResource TagColumnHeaderTemplate}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Button x:Name="TrackEdit" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0"
-                                        Command="{Binding Path=Edit}" Content="{StaticResource Path_Categories}" ToolTip="Select Track Tags" />
+                                <ContentControl x:Name="TagContainer" Opacity="0.3">
+                                    <Button x:Name="TrackEdit" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
+                                            Command="{Binding Path=Edit}" Content="{StaticResource Path_Categories}" ToolTip="Select Track Tags" />
+                                </ContentControl>
                                 <DataTemplate.Triggers>
                                     <Trigger SourceName="TrackEdit" Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="TrackEdit" Property="Opacity" Value="1.0"/>
+                                        <Setter TargetName="TagContainer" Property="Opacity" Value="1.0"/>
                                     </Trigger>
+                                    <DataTrigger Binding="{Binding HasUserTags}" Value="True">
+                                        <Setter TargetName="TrackEdit" Property="Opacity" Value="1.0"/>
+                                        <Setter TargetName="TrackEdit" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                                    </DataTrigger>
                                 </DataTemplate.Triggers>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>

@@ -27,9 +27,9 @@ namespace Noise.UI.ViewModels {
 		private readonly IUiLog							mLog;
 		private readonly ISelectionState				mSelectionState;
 		private readonly ITrackProvider					mTrackProvider;
+        private readonly IUserTagManager                mTagManager;
 		private readonly IPlayCommand					mPlayCommand;
 		private readonly IRatings						mRatings;
-        private readonly IUserTagManager                mTagManager;
 		private readonly Observal.Observer				mChangeObserver;
 		private readonly BindableCollection<UiTrack>	mTracks;
         private TaskHandler<IEnumerable<UiTrack>>		mTrackRetrievalTaskHandler;
@@ -137,6 +137,10 @@ namespace Noise.UI.ViewModels {
 														ascending select track );
 
 					retValue.AddRange( sortedList.Select( TransformTrack ));
+
+                    foreach( var track in retValue ) {
+                        track.HasUserTags = mTagManager.GetAssociatedTags( track.DbId ).Any();
+                    }
 				}
 			}
 
