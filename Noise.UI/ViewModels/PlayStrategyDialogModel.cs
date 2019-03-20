@@ -20,6 +20,7 @@ namespace Noise.UI.ViewModels {
 		private readonly List<DbInternetStream>		mStreamList;
 		private readonly List<DbPlayList>			mPlayLists; 
 		private readonly List<DbTag>				mCategoryList;
+        private readonly List<DbTag>                mUserTags;
 		private IPlayStrategy						mSelectedPlayStrategy;
 		private IPlayStrategyParameters				mPlayStrategyParameters;
 		private IPlayExhaustedStrategy				mSelectedExhaustedStrategy;
@@ -55,6 +56,7 @@ namespace Noise.UI.ViewModels {
 			mArtistGenreList = new List<DbGenre>();
 			mPlayLists = new List<DbPlayList>();
 			mStreamList = new List<DbInternetStream>();
+            mUserTags = new List<DbTag>();
 		}
 
 		public bool DeletePlayedTracks {
@@ -274,6 +276,10 @@ namespace Noise.UI.ViewModels {
 					case ePlayExhaustedStrategy.PlayList:
 						FillCollectionWithPlayLists( collection );
 						break;
+
+                    case ePlayExhaustedStrategy.PlayUserTags:
+                        FillCollectionWithUserTags( collection );
+                        break;
 				}
 			}
 		}
@@ -376,5 +382,22 @@ namespace Noise.UI.ViewModels {
 			collection.Refresh();
 		}
 
+        private void FillCollectionWithUserTags( BindableCollection<NameIdPair> collection ) {
+            if(!mUserTags.Any()) {
+                using( var tagList = mTagProvider.GetTagList( eTagGroup.User )) {
+                    mUserTags.AddRange( from DbTag tag in tagList.List orderby tag.Name select tag );
+                }
+            }
+
+            collection.IsNotifying = false;
+            collection.Clear();
+
+            foreach( var tag in mUserTags ) {
+                collection.Add( new NameIdPair( tag.DbId, tag.Name ));
+            }
+
+            collection.IsNotifying = true;
+            collection.Refresh();
+        }
 	}
 }

@@ -85,7 +85,7 @@ namespace Noise.UI.ViewModels {
             var retValue = new List<UiTagAssociation>();
 
             if( mCurrentTag != null ) {
-                var associations = mTagManager.GetAssociations( mCurrentTag );
+                var associations = mTagManager.GetAssociations( mCurrentTag.DbId );
 
                 foreach( var association in associations ) {
                     var track = mTrackProvider.GetTrack( association.ArtistId );

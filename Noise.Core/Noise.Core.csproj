@@ -287,6 +287,7 @@
     <Compile Include="Logging\LogUserStatus.cs" />
     <Compile Include="PlayQueue\RandomTrackSelector.cs" />
     <Compile Include="PlayStrategies\PlayExhaustedStrategyFavoritesPlus.cs" />
+    <Compile Include="PlayStrategies\PlayExhaustedStrategyUserTags.cs" />
     <Compile Include="PlayStrategies\PlayStrategyBase.cs" />
     <Compile Include="PlaySupport\AudioController.cs" />
     <Compile Include="PlaySupport\PlaybackContextManager.cs" />

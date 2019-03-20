@@ -62,10 +62,10 @@ namespace Noise.Core.Database {
             }
         }
 
-        public IEnumerable<DbTagAssociation> GetAssociations( DbTag forTag ) {
+        public IEnumerable<DbTagAssociation> GetAssociations( long forTagId ) {
             var retValue = new List<DbTagAssociation>();
 
-            using( var list = mAssociationProvider.GetTagList( eTagGroup.User, forTag.DbId )) {
+            using( var list = mAssociationProvider.GetTagList( eTagGroup.User, forTagId )) {
                 retValue.AddRange( list.List );
             }
 

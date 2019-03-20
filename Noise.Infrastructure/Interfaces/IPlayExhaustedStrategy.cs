@@ -11,7 +11,8 @@
 		PlayArtistGenre = 9,
 		PlayCategory = 10,
 		SeldomPlayedArtists = 11,
-        PlayFavoritesPlus = 12
+        PlayFavoritesPlus = 12,
+        PlayUserTags = 13
 	}
 
 	public interface IPlayExhaustedStrategy {
