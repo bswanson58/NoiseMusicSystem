@@ -102,14 +102,11 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="29" HeaderTemplate="{StaticResource EditColumnHeaderTemplate}">
+                    <GridViewColumn Width="29" HeaderTemplate="{StaticResource TagColumnHeaderTemplate}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Button x:Name="TrackEdit" Width="17" Height="17" Opacity="0.1"
-                                        Command="{Binding Path=Edit}"
-                                        Content="{StaticResource Path_Edit}"
-                                        Padding="1"
-                                        ToolTip="Edit Track Properties" />
+                                <Button x:Name="TrackEdit" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0"
+                                        Command="{Binding Path=Edit}" Content="{StaticResource Path_Categories}" ToolTip="Select Track Tags" />
                                 <DataTemplate.Triggers>
                                     <Trigger SourceName="TrackEdit" Property="IsMouseOver" Value="True">
                                         <Setter TargetName="TrackEdit" Property="Opacity" Value="1.0"/>
