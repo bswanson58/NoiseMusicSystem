@@ -26,6 +26,14 @@ namespace Noise.Infrastructure {
 				this( album.Artist, album.DbId ) { }
 		}
 
+        public class TagFocusRequested {
+            public DbTag    Tag {  get; private set; }
+
+            public TagFocusRequested( DbTag tag) {
+                Tag = tag;
+            }
+        }
+
 		public class ArtistContentRequest {
 			public long	ArtistId { get; private set; }
 

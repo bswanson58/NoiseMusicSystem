@@ -283,6 +283,7 @@
     <Compile Include="Dto\UiInternetStream.cs" />
     <Compile Include="Dto\UiPlayQueueTrack.cs" />
     <Compile Include="Dto\UiTag.cs" />
+    <Compile Include="Dto\UiTagAssociation.cs" />
     <Compile Include="Dto\UiTimeExplorerAlbum.cs" />
     <Compile Include="Dto\UiTrack.cs" />
     <Compile Include="Dto\ViewSortStrategy.cs" />
