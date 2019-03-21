@@ -22,13 +22,15 @@
             <Grid Background="Transparent"> <!-- Background set for mouse over support -->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" VerticalAlignment="Center" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
-                <Button x:Name="TrackEdit" Grid.Column="2" Margin="5,0" Width="17" Height="15" Padding="1" BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand"
-                        Command="{Binding Path=OnEdit}" Content="{StaticResource Path_Edit}" ToolTip="Edit Tag Properties" />
+                <Button Grid.Column="0" Margin="3,0,8,0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" ToolTip="Play random tracks from this tag"/>
+                <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+                <Button x:Name="TrackEdit" Grid.Column="3" Margin="5,0" Width="17" Height="15" Padding="1" BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand"
+                        Command="{Binding Edit}" Content="{StaticResource Path_Edit}" ToolTip="Edit Tag Properties" />
             </Grid>
             <DataTemplate.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">

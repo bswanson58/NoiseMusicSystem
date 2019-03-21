@@ -20,6 +20,7 @@ namespace Noise.UI.ViewModels {
     class TagListViewModel : AutomaticCommandBase, IHandle<Events.DatabaseOpened>, IHandle<Events.DatabaseClosing> {
         private readonly IEventAggregator                   mEventAggregator;
         private readonly ITagProvider                       mTagProvider;
+        private readonly IPlayCommand                       mPlayCommand;
         private readonly IUserTagManager                    mTagManager;
         private readonly IUiLog                             mLog;
         private readonly InteractionRequest<TagEditRequest> mTagAddRequest;
@@ -31,10 +32,11 @@ namespace Noise.UI.ViewModels {
         public IInteractionRequest          TagAddRequest => mTagAddRequest;
         public IInteractionRequest          TagEditRequest => mTagEditRequest;
 
-        public TagListViewModel( IUserTagManager tagManager, ITagProvider tagProvider, IDatabaseInfo databaseInfo,
+        public TagListViewModel( IUserTagManager tagManager, ITagProvider tagProvider, IDatabaseInfo databaseInfo, IPlayCommand playCommand,
                                  IEventAggregator eventAggregator, IUiLog log ) {
             mTagManager = tagManager;
             mTagProvider = tagProvider;
+            mPlayCommand = playCommand;
             mEventAggregator = eventAggregator;
             mLog = log;
             mTagAddRequest = new InteractionRequest<TagEditRequest>();
@@ -85,7 +87,7 @@ namespace Noise.UI.ViewModels {
         }
 
         private IEnumerable<UiTag> RetrieveTags() {
-            return( from tag in mTagManager.GetUserTagList() orderby tag.Name select new UiTag( tag, OnEditTag ));
+            return( from tag in mTagManager.GetUserTagList() orderby tag.Name select new UiTag( tag, OnEditTag, OnPlayTag ));
         }
 
         private void SetTags( IEnumerable<UiTag> list ) {
@@ -95,6 +97,10 @@ namespace Noise.UI.ViewModels {
 
         private void ClearTags() {
             TagList.Clear();
+        }
+
+        private void OnPlayTag( UiTag tag ) {
+            mPlayCommand.PlayRandomTaggedTracks( tag.Tag );
         }
 
         private void OnEditTag( UiTag tag ) {
@@ -119,7 +125,7 @@ namespace Noise.UI.ViewModels {
         }
 
         public void Execute_AddTag() {
-            var tag = new UiTag( new DbTag( eTagGroup.User, String.Empty ), null );
+            var tag = new UiTag( new DbTag( eTagGroup.User, String.Empty ));
             var dialogModel = new TagEditDialogModel( tag );
 
             mTagAddRequest.Raise( new TagEditRequest( dialogModel ), OnTagAdded );
