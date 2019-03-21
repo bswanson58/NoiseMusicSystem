@@ -132,15 +132,10 @@ namespace Noise.UI.ViewModels {
 
 			using( var tracks = mTrackProvider.GetTrackList( albumId )) {
 				if(!cancellationToken.IsCancellationRequested ) {
-					var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
-														orderby track.VolumeName, track.TrackNumber 
-														ascending select track );
+					var sortedList = new List<DbTrack>( from DbTrack track in tracks.List orderby track.VolumeName, track.TrackNumber select track );
 
 					retValue.AddRange( sortedList.Select( TransformTrack ));
-
-                    foreach( var track in retValue ) {
-                        track.HasUserTags = mTagManager.GetAssociatedTags( track.DbId ).Any();
-                    }
+                    retValue.ForEach( SetTrackTags );
 				}
 			}
 
@@ -170,6 +165,10 @@ namespace Noise.UI.ViewModels {
 
 			return( retValue );
 		}
+
+        private void SetTrackTags( UiTrack track ) {
+            track?.SetTags( from tag in mTagManager.GetAssociatedTags( track.DbId ) orderby tag.Name select tag.Name );
+        }
 
 		private void ClearTrackList() {
 			foreach( var track in mTracks ) {
@@ -231,6 +230,8 @@ namespace Noise.UI.ViewModels {
         private void OnTagEdited( TagEditInfo confirmation ) {
             if( confirmation.Confirmed ) {
                 mTagManager.UpdateAssociations( confirmation.ViewModel.Track.DbId, confirmation.ViewModel.GetSelectedTags());
+
+                SetTrackTags( TrackList.FirstOrDefault( t => t.DbId.Equals( confirmation.ViewModel.Track.DbId )));
             }
         }
 	}

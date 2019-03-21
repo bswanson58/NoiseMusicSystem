@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Noise.Infrastructure.Dto;
 
 namespace Noise.UI.Dto {
-	[DebuggerDisplay("Track = {Name}")]
+	[DebuggerDisplay("Track = {" + nameof( Name ) + "}")]
 	public class UiTrack : UiBase {
 		public string			Name { get; set; }
 		public string			Performer { get; set; }
@@ -23,8 +25,12 @@ namespace Noise.UI.Dto {
 		public string			UserGenre { get; set; }
 		public bool				IsFavorite { get; set; }
 		public DbGenre			DisplayGenre { get; set; }
-        public bool             HasUserTags { get; set; }
 
+        public string           Genre => DisplayGenre != null ? DisplayGenre.Name : String.Empty;
+        public bool             HasTags => mTags.Any();
+        public string           TagsTooltip => mTags.Any() ? string.Join( Environment.NewLine, mTags ) : "Associate File Tags";
+
+        private readonly List<string>   mTags;
 		private readonly Action<long>	mPlayAction;
 		private readonly Action<long>	mEditAction;
 
@@ -33,35 +39,37 @@ namespace Noise.UI.Dto {
 		public UiTrack( Action<long> playAction, Action<long> editAction ) {
 			mPlayAction = playAction;
 			mEditAction = editAction;
+
+            mTags = new List<string>();
 		}
 
-		public string Genre {
-			get{ return( DisplayGenre != null ? DisplayGenre.Name : "" ); }
-		}
-
-		public bool IsSelected {
+        public bool IsSelected {
 			get{ return( Get( () => IsSelected )); }
 			set{ Set( () => IsSelected, value ); }
 		}
 
 		public void Execute_Play() {
-			if( mPlayAction != null ) {
-				mPlayAction( DbId );
-			}
-		}
+            mPlayAction?.Invoke( DbId );
+        }
 
 		public bool CanExecute_Play() {
 			return( mPlayAction != null );
 		}
 
 		public void Execute_Edit() {
-			if( mEditAction != null ) {
-				mEditAction( DbId );
-			}
-		}
+            mEditAction?.Invoke( DbId );
+        }
 
 		public bool CanExecute_Edit() {
 			return( mEditAction != null );
 		}
-	}
+
+        public void SetTags( IEnumerable<string> tags ) {
+            mTags.Clear();
+            mTags.AddRange( tags );
+
+            RaisePropertyChanged( () => HasTags );
+            RaisePropertyChanged( () => TagsTooltip );
+        }
+    }
 }
