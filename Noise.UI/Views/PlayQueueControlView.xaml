@@ -30,11 +30,11 @@
 
             <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
                                Text="Total Time:" />
-            <TextBlock Grid.Row="0" Grid.Column="1" Margin="3,0,3,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
+            <TextBlock Grid.Row="0" Grid.Column="1" Margin="3,0,3,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource GeneralTitleStyle}"
                                Text="{Binding Path=TotalTime, Converter={StaticResource TimeSpanConverter}}" />
             <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
                                Text="Remaining Time:" />
-            <TextBlock Grid.Row="1" Grid.Column="1" Margin="3,0,3,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}"
+            <TextBlock Grid.Row="1" Grid.Column="1" Margin="3,0,3,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource GeneralTitleStyle}"
                                Text="{Binding Path=RemainingTime, Converter={StaticResource TimeSpanConverter}}" />
         </Grid>
     </Grid>
