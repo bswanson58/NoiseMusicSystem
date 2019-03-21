@@ -13,7 +13,7 @@
     <UserControl.Resources>
         <ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
             <Grid Margin="5,35,5,0">
-                <TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="Select a tag to display associations." />
+                <TextBlock Style="{StaticResource EmptyListTextStyle}" Text="Select a tag to display associations." />
             </Grid>
         </ControlTemplate>
 

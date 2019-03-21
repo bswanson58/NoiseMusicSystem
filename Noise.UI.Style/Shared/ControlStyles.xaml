@@ -127,6 +127,12 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     </Style>
 
+    <Style x:Key="EmptyListTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Foreground" Value="{StaticResource BorderTextColor}"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+
 	<!-- Play column header style -->
 	<DataTemplate x:Key="PlayColumnHeaderTemplate">
 		<TextBlock FontFamily="WebDings" Text="4"/>

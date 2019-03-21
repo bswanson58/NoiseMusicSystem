@@ -27,7 +27,7 @@
 
 		<ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
 			<Grid Margin="5,15,5,0">
-				<TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="Play Something!" />
+                <TextBlock Style="{StaticResource EmptyListTextStyle}" Text="Play Something!" />
 			</Grid>
 		</ControlTemplate>
 

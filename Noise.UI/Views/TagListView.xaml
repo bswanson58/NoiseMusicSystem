@@ -14,7 +14,7 @@
     <UserControl.Resources>
         <ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
             <Grid Margin="5,35,5,0">
-                <TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="Press 'New Tag' to start your journey!" />
+                <TextBlock Style="{StaticResource EmptyListTextStyle}" Text="Press 'New Tag' to start your journey!" />
             </Grid>
         </ControlTemplate>
 

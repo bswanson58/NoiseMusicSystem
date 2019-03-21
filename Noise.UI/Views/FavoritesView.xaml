@@ -14,7 +14,7 @@
 	<UserControl.Resources>
 		<ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
 			<Grid Margin="5,35,5,0">
-				<TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="what!? you have no favorites???" />
+                <TextBlock Style="{StaticResource EmptyListTextStyle}" Text="what!? you have no favorites???" />
 			</Grid>
 		</ControlTemplate>
 	</UserControl.Resources>
