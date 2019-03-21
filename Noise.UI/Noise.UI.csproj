@@ -340,7 +340,6 @@
     <Compile Include="ViewModels\ArtistListViewModel.cs" />
     <Compile Include="ViewModels\ArtistTracksViewModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
-    <Compile Include="ViewModels\CategorySelectionDialogModel.cs" />
     <Compile Include="ViewModels\CloudConfigurationDialogModel.cs" />
     <Compile Include="ViewModels\ConfigurationViewModel.cs" />
     <Compile Include="ViewModels\DatabaseConfigurationDialogModel.cs" />
@@ -354,7 +353,6 @@
     <Compile Include="ViewModels\PlayingAlbumViewModel.cs" />
     <Compile Include="ViewModels\PlayingArtistViewModel.cs" />
     <Compile Include="ViewModels\PlayingTrackViewModel.cs" />
-    <Compile Include="ViewModels\PlayListViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueControlViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueListViewModel.cs" />
     <Compile Include="ViewModels\PlayQueueStrategyViewModel.cs" />
@@ -366,7 +364,6 @@
     <Compile Include="ViewModels\StartupLibraryCreationViewModel.cs" />
     <Compile Include="ViewModels\StartupLibrarySelectionViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
-    <Compile Include="ViewModels\StreamViewModel.cs" />
     <Compile Include="ViewModels\TagAssociationDialogModel.cs" />
     <Compile Include="ViewModels\TagAssociationViewModel.cs" />
     <Compile Include="ViewModels\TagEditDialogModel.cs" />
@@ -412,12 +409,6 @@
     </Compile>
     <Compile Include="Views\ArtistView.xaml.cs">
       <DependentUpon>ArtistView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\CategoryEditDialog.xaml.cs">
-      <DependentUpon>CategoryEditDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\CategorySelectionDialog.xaml.cs">
-      <DependentUpon>CategorySelectionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CloudConfigurationDialog.xaml.cs">
       <DependentUpon>CloudConfigurationDialog.xaml</DependentUpon>
@@ -503,9 +494,6 @@
     <Compile Include="Views\PlayListDialog.xaml.cs">
       <DependentUpon>PlayListDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PlayListView.xaml.cs">
-      <DependentUpon>PlayListView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\PlayQueueControlView.xaml.cs">
       <DependentUpon>PlayQueueControlView.xaml</DependentUpon>
     </Compile>
@@ -550,9 +538,6 @@
     </Compile>
     <Compile Include="Views\StatusView.xaml.cs">
       <DependentUpon>StatusView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\StreamView.xaml.cs">
-      <DependentUpon>StreamView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TimeExplorerAlbumsView.xaml.cs">
       <DependentUpon>TimeExplorerAlbumsView.xaml</DependentUpon>
@@ -721,14 +706,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CategoryEditDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\CategorySelectionDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\CloudConfigurationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -841,10 +818,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PlayListView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\PlayQueueControlView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -902,10 +875,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\StatusView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\StreamView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
