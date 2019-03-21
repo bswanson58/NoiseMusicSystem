@@ -13,7 +13,7 @@ using Noise.UI.Logging;
 using ReusableBits;
 
 namespace Noise.UI.ViewModels {
-    class TagAssociationViewModel : IHandle<Events.UserTagsChanged> {
+    class TagAssociationViewModel : PropertyChangedBase, IHandle<Events.UserTagsChanged> {
         private readonly IEventAggregator       mEventAggregator;
         private readonly IUiLog                 mLog;
         private readonly IUserTagManager        mTagManager;
@@ -27,6 +27,7 @@ namespace Noise.UI.ViewModels {
         private TaskHandler<IEnumerable<UiTagAssociation>>  mRetrievalTask;
 
         public  ObservableCollection<UiTagAssociation>  Associations { get; }
+        public  string                                  HeaderText => Associations.Any() ? $" {Associations.Count} tracks tagged with '{mCurrentTag.Name}'" : " Tagged Items ";
 
         public TagAssociationViewModel( IUserTagManager tagManager, IEventAggregator eventAggregator, ISelectionState selectionState, IPlayCommand playCommand,
                                         IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log ) {
@@ -107,6 +108,8 @@ namespace Noise.UI.ViewModels {
 
         private void SetAssociations( IEnumerable<UiTagAssociation> list ) {
             Associations.AddRange( from a in list orderby a.Track.Name select a );
+
+            NotifyOfPropertyChange( () => HeaderText );
         }
 
         private void OnAssociationPlay( UiTagAssociation tag ) {

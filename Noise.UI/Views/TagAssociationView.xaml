@@ -30,7 +30,7 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Tagged Items ">
+    <GroupBox Style="{StaticResource SectionBorderStyle}" Header="{Binding HeaderText}">
         <ListBox Margin="0,3" BorderThickness="0" ItemsSource="{Binding Associations}" SelectedItem="{Binding SelectedAssociation}"
                  ItemTemplate="{StaticResource AssociationTemplate}">
             <i:Interaction.Behaviors>
