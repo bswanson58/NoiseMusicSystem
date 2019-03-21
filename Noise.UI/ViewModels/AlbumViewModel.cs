@@ -28,10 +28,6 @@ namespace Noise.UI.ViewModels {
 		public AlbumArtworkDisplayInfo( AlbumArtworkViewModel viewModel ) : base( viewModel ) { }
 	}
 
-	internal class AlbumCategoryEditInfo : InteractionRequestData<CategorySelectionDialogModel> {
-		public AlbumCategoryEditInfo( CategorySelectionDialogModel viewModel ) : base( viewModel ) { }
-	}
-
 	internal class AlbumViewModel : AutomaticCommandBase,
 									IHandle<Events.DatabaseClosing>, IHandle<Events.AlbumUserUpdate> {
 		private const string						cAllTracks = "Entire Album";
@@ -63,7 +59,6 @@ namespace Noise.UI.ViewModels {
 
 		private readonly InteractionRequest<AlbumEditRequest>			mAlbumEditRequest; 
 		private readonly InteractionRequest<AlbumArtworkDisplayInfo>	mAlbumArtworkDisplayRequest;
-		private readonly InteractionRequest<AlbumCategoryEditInfo>		mAlbumCategoryEditRequest; 
 
 		public	TimeSpan						AlbumPlayTime { get; private set; }
 
@@ -98,7 +93,6 @@ namespace Noise.UI.ViewModels {
 
 			mAlbumEditRequest = new InteractionRequest<AlbumEditRequest>();
 			mAlbumArtworkDisplayRequest = new InteractionRequest<AlbumArtworkDisplayInfo>();
-			mAlbumCategoryEditRequest = new InteractionRequest<AlbumCategoryEditInfo>();
 
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
 			OnAlbumChanged( mSelectionState.CurrentAlbum );
@@ -174,11 +168,10 @@ namespace Noise.UI.ViewModels {
 			RaisePropertyChanged( () => Album );
 		}
 
-		private void SetAlbumInfo( DbAlbum album, AlbumSupportInfo supportInfo ) {
+		private void SetAlbumInfo( DbAlbum album ) {
 			Execute.OnUIThread( () => {
 				SetAlbum( album );
 				mCurrentAlbumCover = SelectAlbumCover( album );
-//				SupportInfo = supportInfo;
                 RaisePropertyChanged( () => AlbumArtwork );
                 RaisePropertyChanged( () => AlbumCover );
 			});
@@ -223,8 +216,7 @@ namespace Noise.UI.ViewModels {
 
 			var categoryList = new List<DbTag>();
 			using( var tagList = mTagProvider.GetTagList( eTagGroup.User )) {
-				if(( tagList != null ) &&
-				   ( tagList.List != null )) {
+				if(tagList?.List != null) {
 					categoryList.AddRange( tagList.List );
 				}
 			}
@@ -254,8 +246,8 @@ namespace Noise.UI.ViewModels {
 				return( mAlbumRetrievalTaskHandler );
 			}
 
-			set{ mAlbumRetrievalTaskHandler = value; }
-		}
+			set => mAlbumRetrievalTaskHandler = value;
+        }
 
 		private CancellationToken GenerateCanellationToken() {
 			mCancellationTokenSource = new CancellationTokenSource();
@@ -277,14 +269,12 @@ namespace Noise.UI.ViewModels {
 
 			AlbumRetrievalTaskHandler.StartTask( () => {
 					if(!cancellationToken.IsCancellationRequested ) {
-						SetAlbumInfo(  mAlbumProvider.GetAlbum( albumId ),
-									   null ); //mAlbumProvider.GetAlbumSupportInfo( albumId ));
+						SetAlbumInfo(  mAlbumProvider.GetAlbum( albumId ));
 					}
 
 					if(!cancellationToken.IsCancellationRequested ) {
 						using( var trackList = mTrackProvider.GetTrackList( albumId )) {
-							if(( trackList != null ) &&
-							   ( trackList.List != null )) {
+							if(trackList?.List != null) {
 								SetTrackList( trackList.List );
 							}
 						}
@@ -292,23 +282,21 @@ namespace Noise.UI.ViewModels {
 
 					if(!cancellationToken.IsCancellationRequested ) {
 						using( var categoryList = mAlbumProvider.GetAlbumCategories( albumId )) {
-							if(( categoryList != null ) &&
-							   ( categoryList.List != null )) {
+							if(categoryList?.List != null) {
 								SetAlbumCategories( categoryList.List );
 							}
 						}
 					}
 				},
 				() => { },
-				ex => mLog.LogException( string.Format( "Retrieving Album:{0}", albumId ), ex ),
+				ex => mLog.LogException( $"Retrieving Album:{albumId}", ex ),
 				cancellationToken ); 
 		}
 
 		private void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
 
-			if( propertyNotification.Source is UiBase ) {
-				var item = propertyNotification.Source as UiBase;
-				var album = mAlbumProvider.GetAlbum( item.DbId );
+			if( propertyNotification.Source is UiBase item ) {
+                var album = mAlbumProvider.GetAlbum( item.DbId );
 
 				if( album != null ) {
 					if( propertyNotification.PropertyName == "UiRating" ) {
@@ -330,33 +318,25 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public UiAlbum Album {
-			get{ return( mCurrentAlbum ); }
-		}
+		public UiAlbum Album => ( mCurrentAlbum );
 
-		[DependsUpon( "Album" )]
-		public bool AlbumValid {
-			get{ return( mCurrentAlbum != null ); } 
-		}
+        [DependsUpon( "Album" )]
+		public bool AlbumValid => ( mCurrentAlbum != null );
 
-		public string AlbumCategories {
-			get{ return( mCategoryDisplay ); }
-		}
+        public string AlbumCategories => ( mCategoryDisplay );
 
-		[DependsUpon( "AlbumCategories" )]
-		public bool HaveAlbumCategories {
-			get{ return( mAlbumCategories.Any()); }
-		}
+        [DependsUpon( "AlbumCategories" )]
+		public bool HaveAlbumCategories => ( mAlbumCategories.Any());
 
-		public AlbumSupportInfo SupportInfo {
+        public AlbumSupportInfo SupportInfo {
 			get{ return( Get( () => SupportInfo )); }
 			set{ Set( () => SupportInfo, value ); }
 		}
 
 		[DependsUpon( "SupportInfo" )]
 		public ImageScrubberItem AlbumCover {
-			get { return( mCurrentAlbumCover ); }
-			set {
+			get => ( mCurrentAlbumCover );
+            set {
 				if( value.Id != mCurrentAlbumCover.Id ) {
 					mCurrentAlbumCover = value;
 
@@ -370,8 +350,7 @@ namespace Noise.UI.ViewModels {
 			get {
 				var	retValue = new List<ImageScrubberItem>();
 
-				if(( SupportInfo != null ) &&
-				   ( SupportInfo.Artwork != null )) {
+				if(SupportInfo?.Artwork != null) {
 					retValue.AddRange( SupportInfo.Artwork.Select( artwork => new ImageScrubberItem( artwork.DbId, ByteImageConverter.CreateBitmap( artwork.Image ), artwork.Rotation )));
 					retValue.AddRange( SupportInfo.AlbumCovers.Select( cover => new ImageScrubberItem( cover.DbId, ByteImageConverter.CreateBitmap( cover.Image ), cover.Rotation )));
 				}
@@ -412,24 +391,18 @@ namespace Noise.UI.ViewModels {
 			return( mCurrentAlbum != null );
 		}
 
-		public bool HasMultipleVolumes {
-			get {  return( mVolumeNames.Any()); }
-		}
+		public bool HasMultipleVolumes => ( mVolumeNames.Any());
 
-		public BindableCollection<string> VolumeNames {
-			get {  return( mVolumeNames ); }
-		}
+        public BindableCollection<string> VolumeNames => ( mVolumeNames );
 
-		public string CurrentVolumeName {
-			get { return( mCurrentVolumeName ); }
-			set { mCurrentVolumeName = value ;}
-		}
+        public string CurrentVolumeName {
+			get => ( mCurrentVolumeName );
+            set => mCurrentVolumeName = value;
+        }
 
-		public IInteractionRequest AlbumEditRequest {
-			get{ return( mAlbumEditRequest ); }
-		}
+		public IInteractionRequest AlbumEditRequest => ( mAlbumEditRequest );
 
-		public void Execute_EditAlbum() {
+        public void Execute_EditAlbum() {
 			if( CanExecute_EditAlbum()) {
 				var album = new UiAlbum { DbId = mCurrentAlbum.DbId,  Name = mCurrentAlbum.Name, PublishedYear = mCurrentAlbum.PublishedYear };
 				var dialogModel = new AlbumEditDialogModel( album );
@@ -467,35 +440,14 @@ namespace Noise.UI.ViewModels {
 			return( mCurrentAlbum != null );
 		}
 
-		public IInteractionRequest AlbumCategoryEditRequest {
-			get{ return( mAlbumCategoryEditRequest ); }
-		}
-
-		public void Execute_EditCategories() {
-			if( mCurrentAlbum != null ) {
-				var dialogModel = new CategorySelectionDialogModel( mTagProvider, mAlbumCategories );
-
-				mAlbumCategoryEditRequest.Raise( new AlbumCategoryEditInfo( dialogModel ), OnCategoriesEdited );
-			}
-		}
-
-		private void OnCategoriesEdited( AlbumCategoryEditInfo confirmation ) {
-			if( confirmation.Confirmed ) {
-				SetAlbumCategories( confirmation.ViewModel.SelectedCategories );
-				mAlbumProvider.SetAlbumCategories( mCurrentAlbum.Artist, mCurrentAlbum.DbId, confirmation.ViewModel.SelectedCategories );
-			}
-		}
-
 		[DependsUpon( "Album" )]
 		public bool CanExecute_EditCategories() {
 			return( mCurrentAlbum != null ); 
 		}
 
-		public IInteractionRequest AlbumArtworkDisplayRequest {
-			get{ return( mAlbumArtworkDisplayRequest ); }
-		}
+		public IInteractionRequest AlbumArtworkDisplayRequest => ( mAlbumArtworkDisplayRequest );
 
-		public void Execute_DisplayPictures() {
+        public void Execute_DisplayPictures() {
 			if( CanExecute_DisplayPictures()) {
 				var vm = new AlbumArtworkViewModel( mAlbumProvider, mResourceProvider, mCurrentAlbum.DbId );
 
