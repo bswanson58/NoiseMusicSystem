@@ -66,6 +66,7 @@ namespace Noise.UI.Support {
 					var proxy = new DataErrorInfoProxy( editObject );
 
 					viewModel.EditObject = proxy;
+                    viewModel.DialogWindow = dialogModel;
 					dialogContent.DataContext = viewModel;
 
 					dialogModel.EditObject = proxy;
@@ -106,6 +107,7 @@ namespace Noise.UI.Support {
 					dialogModel.DialogContent = dialogContent;
 					dialogWindow.DataContext = dialogModel;
 					dialogWindow.Owner = Application.Current.MainWindow;
+                    viewModel.DialogWindow = dialogModel;
 
 					retValue = dialogWindow.ShowDialog();
 				}
