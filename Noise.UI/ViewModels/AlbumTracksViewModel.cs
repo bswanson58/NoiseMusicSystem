@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using AutoMapper;
 using Caliburn.Micro;
+using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -22,7 +23,7 @@ namespace Noise.UI.ViewModels {
     }
 
 	internal class AlbumTracksViewModel : AutomaticPropertyBase,
-										  IHandle<Events.DatabaseClosing>, IHandle<Events.TrackUserUpdate> {
+										  IHandle<Events.DatabaseClosing>, IHandle<Events.TrackUserUpdate>, IHandle<Events.UserTagsChanged> {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IUiLog							mLog;
 		private readonly ISelectionState				mSelectionState;
@@ -65,6 +66,10 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.DatabaseClosing args ) {
 			ClearTrackList();
 		}
+
+	    public void Handle( Events.UserTagsChanged message ) {
+            mTracks.ForEach( SetTrackTags );
+        }
 
 		private void OnAlbumChanged( DbAlbum album ) {
 			if( album != null ) {

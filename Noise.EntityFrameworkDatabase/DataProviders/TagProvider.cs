@@ -13,7 +13,11 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			AddItem( tag );
 		}
 
-        public DbTag GetTag( long dbid ) {
+	    public void DeleteTag( DbTag tag ) {
+	        RemoveItem( tag );
+	    }
+
+	    public DbTag GetTag( long dbid ) {
             return GetItemByKey( dbid );
         }
 

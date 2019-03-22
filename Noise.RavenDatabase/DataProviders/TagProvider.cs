@@ -14,7 +14,11 @@ namespace Noise.RavenDatabase.DataProviders {
 			Database.Add( tag );
 		}
 
-        public DbTag GetTag( long dbid ) {
+	    public void DeleteTag( DbTag tag ) {
+	        Database.Delete( tag );
+	    }
+
+	    public DbTag GetTag( long dbid ) {
             return Database.Get( dbid );
         }
 

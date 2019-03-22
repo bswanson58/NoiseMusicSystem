@@ -84,5 +84,16 @@ namespace Noise.Core.Database {
 
             return retValue;
         }
+
+        public void DeleteTag( DbTag tag ) {
+            var associations = GetAssociations( tag.DbId );
+
+            foreach( var association in associations ) {
+                mAssociationProvider.RemoveAssociation( association.DbId );
+            }
+
+            mTagProvider.DeleteTag( tag );
+            mEventAggregator.PublishOnUIThread(new Events.UserTagsChanged());
+        }
     }
 }

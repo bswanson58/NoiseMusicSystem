@@ -110,14 +110,20 @@ namespace Noise.UI.ViewModels {
         }
 
         private void OnTagEdited( TagEditRequest confirmation) {
-            if(( confirmation.Confirmed ) &&
-               ( confirmation.ViewModel.IsValid )) {
-                var updater = mTagProvider.GetTagForUpdate( confirmation.ViewModel.Tag.Tag.DbId );
+            if( confirmation.Confirmed ) {
+                if( confirmation.ViewModel.DeleteRequested ) {
+                    mTagManager.DeleteTag( confirmation.ViewModel.Tag.Tag );
+                }
+                else {
+                    if(confirmation.ViewModel.IsValid) {
+                        var updater = mTagProvider.GetTagForUpdate(confirmation.ViewModel.Tag.Tag.DbId);
 
-                if( updater.Item != null ) {
-                    updater.Item.UpdateFrom( confirmation.ViewModel.Tag.Tag );
+                        if (updater.Item != null) {
+                            updater.Item.UpdateFrom(confirmation.ViewModel.Tag.Tag);
 
-                    updater.Update();
+                            updater.Update();
+                        }
+                    }
                 }
 
                 LoadTags();

@@ -8,5 +8,7 @@ namespace Noise.Infrastructure.Interfaces {
         void                    UpdateAssociations( long forEntity, IEnumerable<DbTag> tags );
 
         IEnumerable<DbTagAssociation>   GetAssociations( long forTagId );
+
+        void                    DeleteTag( DbTag tag );
     }
 }
