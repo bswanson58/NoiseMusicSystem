@@ -95,5 +95,11 @@ namespace Noise.Core.Database {
             mTagProvider.DeleteTag( tag );
             mEventAggregator.PublishOnUIThread(new Events.UserTagsChanged());
         }
+
+        public void DeleteAssociation( DbTagAssociation association ) {
+            mAssociationProvider.RemoveAssociation( association.DbId );
+
+            mEventAggregator.PublishOnUIThread(new Events.UserTagsChanged());
+        }
     }
 }

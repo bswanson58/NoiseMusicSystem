@@ -10,5 +10,6 @@ namespace Noise.Infrastructure.Interfaces {
         IEnumerable<DbTagAssociation>   GetAssociations( long forTagId );
 
         void                    DeleteTag( DbTag tag );
+        void                    DeleteAssociation( DbTagAssociation association );
     }
 }

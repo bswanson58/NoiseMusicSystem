@@ -99,7 +99,7 @@ namespace Noise.UI.ViewModels {
                     var artist = mArtistProvider.GetArtist( track.Artist );
                     var album = mAlbumProvider.GetAlbum( track.Album );
 
-                    retValue.Add( new UiTagAssociation( association, artist, album, track, OnAssociationPlay ));
+                    retValue.Add( new UiTagAssociation( association, artist, album, track, OnAssociationPlay, OnAssociationDelete ));
                 }
             }
 
@@ -114,6 +114,10 @@ namespace Noise.UI.ViewModels {
 
         private void OnAssociationPlay( UiTagAssociation tag ) {
             mPlayCommand.Play( tag.Track );
+        }
+
+        private void OnAssociationDelete( UiTagAssociation tag ) {
+            mTagManager.DeleteAssociation( tag.Association );
         }
     }
 }

@@ -22,11 +22,20 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Margin="3,0,8,0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" />
                 <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource ListViewTextStyle}" Text="{Binding DisplayName}"/>
+
+                <Button x:Name="AssociationDelete" Grid.Column="2" Margin="5,0" Width="17" Height="15" Padding="1" BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand"
+                        Command="{Binding Delete}" Content="{StaticResource Path_Edit}" ToolTip="Remove Tag Association" />
             </Grid>
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="AssociationDelete" Property="Opacity" Value="1"/>
+                </Trigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
 
