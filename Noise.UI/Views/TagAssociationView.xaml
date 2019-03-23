@@ -22,13 +22,14 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Margin="3,0,8,0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" />
-                <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource ListViewTextStyle}" Text="{Binding DisplayName}"/>
+                <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource ListViewTextStyle}" Text="{Binding DisplayName}"
+                           Behaviours:FadeTrimming.IsEnabled="True" Behaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
 
-                <Button x:Name="AssociationDelete" Grid.Column="2" Margin="5,0" Width="17" Height="15" Padding="1" BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand"
+                <Button x:Name="AssociationDelete" Grid.Column="1" HorizontalAlignment="Right" Margin="5,0" Width="17" Height="15" Padding="1" 
+                        BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
                         Command="{Binding Delete}" Content="{StaticResource Path_Unlink}" ToolTip="Remove Tag Association" />
             </Grid>
             <DataTemplate.Triggers>
@@ -40,8 +41,8 @@
     </UserControl.Resources>
 
     <GroupBox Style="{StaticResource SectionBorderStyle}" Header="{Binding HeaderText}">
-        <ListBox Margin="0,3" BorderThickness="0" ItemsSource="{Binding Associations}" SelectedItem="{Binding SelectedAssociation}"
-                 ItemTemplate="{StaticResource AssociationTemplate}">
+        <ListBox Margin="0,3" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ItemsSource="{Binding Associations}" SelectedItem="{Binding SelectedAssociation}" ItemTemplate="{StaticResource AssociationTemplate}">
             <i:Interaction.Behaviors>
                 <Behaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
             </i:Interaction.Behaviors>

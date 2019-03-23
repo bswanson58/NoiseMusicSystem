@@ -22,14 +22,14 @@
             <Grid Background="Transparent"> <!-- Background set for mouse over support -->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Margin="3,0,8,0" Command="{Binding Play}" Style="{StaticResource PlayButtonStyle}" ToolTip="Play random tracks from this tag"/>
-                <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
-                <Button x:Name="TrackEdit" Grid.Column="3" Margin="5,0" Width="17" Height="15" Padding="1" BorderThickness="0" Background="Transparent" Opacity="0" Cursor="Hand"
+                <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"
+                           ReusableBehaviours:FadeTrimming.IsEnabled="True" ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True" />
+                <Button x:Name="TrackEdit" Grid.Column="1" Margin="5,0" HorizontalAlignment="Right" Width="17" Height="15" Padding="1" BorderThickness="0" 
+                        Background="Transparent" Opacity="0" Cursor="Hand" Focusable="False"
                         Command="{Binding Edit}" Content="{StaticResource Path_Edit}" ToolTip="Edit Tag Properties" />
             </Grid>
             <DataTemplate.Triggers>
@@ -56,8 +56,8 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <ListBox Grid.Row="0" Margin="0,3" BorderThickness="0" ItemsSource="{Binding TagList}" SelectedItem="{Binding SelectedTag}"
-                     ItemTemplate="{StaticResource TagItemTemplate}">
+            <ListBox Grid.Row="0" Margin="0,3" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ItemsSource="{Binding TagList}" SelectedItem="{Binding SelectedTag}" ItemTemplate="{StaticResource TagItemTemplate}">
                 <i:Interaction.Behaviors>
                     <ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
                 </i:Interaction.Behaviors>
