@@ -14,7 +14,7 @@
 	<UserControl.Resources>
 		<ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
 			<Grid Margin="5,35,5,0">
-				<TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="what!? you have no favorites???" />
+                <TextBlock Style="{StaticResource EmptyListTextStyle}" Text="what!? you have no favorites???" />
 			</Grid>
 		</ControlTemplate>
 	</UserControl.Resources>
@@ -29,8 +29,7 @@
 			
 			<ListView Grid.Row="0" BorderThickness="0" ItemContainerStyle="{StaticResource ListViewItemStretch}"
 					  ItemsSource="{Binding Path=FavoritesList}" SelectedItem="{Binding SelectedNode}"
-					  Behaviours:ListViewColumns.Stretch="true"
-					  Behaviours:GridViewSort.AutoSort="True">
+					  Behaviours:ListViewColumns.Stretch="true" Behaviours:GridViewSort.AutoSort="True">
 				<ListView.View>
 					<GridView>
 						<GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
@@ -43,7 +42,8 @@
 						<GridViewColumn Header="Name" Behaviours:GridViewSort.PropertyName="Title">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
-									<TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Title}"/>
+									<TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Title}"
+									           ReusableBehaviours:FadeTrimming.IsEnabled="True" ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>

@@ -7,11 +7,11 @@ namespace Noise.Infrastructure.Interfaces {
 		DbGenre						GetGenre( long genreId );
 
 		IEnumerable<DbDecadeTag>	DecadeTagList { get; }
-		IEnumerable<long>			ArtistListForDecade( long decadeId );
-		IEnumerable<long>			AlbumListForDecade( long artistId, long decadeId );
+//		IEnumerable<long>			ArtistListForDecade( long decadeId );
+//		IEnumerable<long>			AlbumListForDecade( long artistId, long decadeId );
 
-		IEnumerable<DbGenre>		GenreList { get; }
-		IEnumerable<long>			ArtistListForGenre( long genreId );
-		IEnumerable<long>			AlbumListForGenre( long artistId, long genreId );
+//		IEnumerable<DbGenre>		GenreList { get; }
+//		IEnumerable<long>			ArtistListForGenre( long genreId );
+//		IEnumerable<long>			AlbumListForGenre( long artistId, long genreId );
 	}
 }

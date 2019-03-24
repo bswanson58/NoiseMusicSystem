@@ -14,7 +14,19 @@ namespace Noise.RavenDatabase.DataProviders {
 			Database.Add( tag );
 		}
 
-		public IDataProviderList<DbTag> GetTagList( eTagGroup forGroup ) {
+	    public void DeleteTag( DbTag tag ) {
+	        Database.Delete( tag );
+	    }
+
+	    public DbTag GetTag( long dbid ) {
+            return Database.Get( dbid );
+        }
+
+        public IDataUpdateShell<DbTag> GetTagForUpdate( long dbid ) {
+            return( new RavenDataUpdateShell<DbTag>( entity => Database.Update( entity ), Database.Get( dbid )));
+        }
+
+        public IDataProviderList<DbTag> GetTagList( eTagGroup forGroup ) {
 			return( Database.Find( tag => tag.TagGroup == forGroup ));
 		}
 	}

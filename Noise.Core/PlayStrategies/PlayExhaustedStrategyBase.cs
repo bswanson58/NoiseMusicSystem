@@ -26,8 +26,8 @@ namespace Noise.Core.PlayStrategies {
 			mParameterName = string.Empty;
 		}
 
-		protected PlayExhaustedStrategyBase( ePlayExhaustedStrategy strategy, string strategyName, string strategyDeecription, string parameterName, ILogPlayStrategy log ) :
-			this( strategy, strategyName, strategyDeecription, log ) {
+		protected PlayExhaustedStrategyBase( ePlayExhaustedStrategy strategy, string strategyName, string strategyDescription, string parameterName, ILogPlayStrategy log ) :
+			this( strategy, strategyName, strategyDescription, log ) {
 			mParametersRequired = true;
 			mParameterName = parameterName;			
 		}

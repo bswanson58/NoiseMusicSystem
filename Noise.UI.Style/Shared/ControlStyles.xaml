@@ -80,9 +80,13 @@
 		<Setter Property="FontSize" Value="16"/>
 	</Style>
 
-	<Style x:Key="ControlTitleStyle" TargetType="TextBlock">
-		<Setter Property="FontFamily" Value="Segoe UI"/>
-		<Setter Property="FontSize" Value="12"/>
+    <Style x:Key="GeneralTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="12"/>
+    </Style>
+
+	<Style x:Key="ControlTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource GeneralTitleStyle}">
+        <Setter Property="Foreground" Value="{StaticResource BorderTextColor}"/>
 	</Style>
 
     <Style x:Key="GeneralButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
@@ -127,6 +131,12 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     </Style>
 
+    <Style x:Key="EmptyListTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Foreground" Value="{StaticResource BorderTextColor}"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+
 	<!-- Play column header style -->
 	<DataTemplate x:Key="PlayColumnHeaderTemplate">
 		<TextBlock FontFamily="WebDings" Text="4"/>
@@ -149,6 +159,19 @@
 			</Canvas>
 		</Viewbox>
 	</DataTemplate>
+
+    <!-- User tags header style -->
+    <DataTemplate x:Key="TagColumnHeaderTemplate">
+        <Viewbox Height="15" Width="15" Margin="3,0,0,0" Opacity="0.7">
+            <Canvas Width="100" Height="100" ClipToBounds="True">
+                <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=ListView}}">
+                    <Path.Data>
+                        <PathGeometry Figures="M0,18.952L0,37.904 60.135,98.039C62.752,100.655,66.994,100.655,69.611,98.039L98.038,69.61C100.654,66.994,100.654,62.752,98.038,60.134L37.903,0 18.952,0 0,18.952z M31.398,31.056C28.781,33.673 24.539,33.673 21.922,31.056 19.305,28.439 19.305,24.197 21.922,21.58 24.538,18.963 28.78,18.963 31.398,21.58 34.015,24.197 34.015,28.439 31.398,31.056z" FillRule="Nonzero" />
+                    </Path.Data>
+                </Path>
+            </Canvas>
+        </Viewbox>
+    </DataTemplate>
 
 	<!-- Rating control -->
 	<Style x:Key="NoiseRatingStyle" TargetType="{x:Type NoiseControls:RatingControl}">

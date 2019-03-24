@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows.Input;
@@ -375,7 +374,6 @@ namespace Noise.UI.Tests.ViewModels {
 			testable.Mock<IAlbumProvider>().Setup( m => m.SetAlbumCategories( album.Artist, album.DbId, It.IsAny<IEnumerable<long>>())).Verifiable();
 
 			var sut = testable.ClassUnderTest;
-			sut.AlbumCategoryEditRequest.Raised += OnAlbumCategoryEditRequestCancel;
 
 			testable.FireAlbumChanged( album );
 			var editCommand = ( testable.ClassUnderTest as dynamic ).EditCategories as ICommand;
@@ -393,71 +391,6 @@ namespace Noise.UI.Tests.ViewModels {
 
 			confirmation.Confirmed = false;
 			e.Callback.Invoke();
-		}
-
-		[Test]
-		public void EditCategoriesCanUpdate() {
-			var testable = new TestableAlbumViewModel();
-			var album = new DbAlbum { Name = "original name", PublishedYear = 2000 };
-
-			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( It.IsAny<long>())).Returns( album );
-			testable.Mock<IAlbumProvider>().Setup( m => m.SetAlbumCategories( album.Artist, album.DbId, It.IsAny<IEnumerable<long>>())).Verifiable();
-
-			var sut = testable.ClassUnderTest;
-			sut.AlbumCategoryEditRequest.Raised += OnAlbumCategoryEditRequestConfirm;
-
-			testable.FireAlbumChanged( album );
-			var editCommand = ( testable.ClassUnderTest as dynamic ).EditCategories as ICommand;
-
-			Assert.IsNotNull( editCommand );
-			editCommand.Execute( null );
-
-			testable.Mock<IAlbumProvider>().Verify( m => m.SetAlbumCategories( It.IsAny<long>(), It.IsAny<long>(), It.IsAny<IEnumerable<long>>()), Times.Once());
-		}
-
-		private void OnAlbumCategoryEditRequestConfirm( object sender, InteractionRequestedEventArgs e ) {
-			var confirmation = e.Context as AlbumCategoryEditInfo;
-
-			Assert.IsNotNull( confirmation );
-
-			if(( confirmation.ViewModel != null ) &&
-			   ( confirmation.ViewModel.SelectedCategories.Any())) {
-				confirmation.ViewModel.OnSelectionChanged( confirmation.ViewModel.SelectedCategories[0], false );
-			}
-
-			confirmation.Confirmed = true;
-			e.Callback.Invoke();
-		}
-
-		[Test]
-		public void EditCategoriesDoesUpdate() {
-			var testable = new TestableAlbumViewModel();
-			var album = new DbAlbum { Name = "original name", PublishedYear = 2000 };
-
-			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbum( It.IsAny<long>())).Returns( album );
-			testable.Mock<IAlbumProvider>().Setup( m => m.SetAlbumCategories( album.Artist, album.DbId, It.IsAny<IEnumerable<long>>()));
-
-			var tag1 = new DbTag( eTagGroup.User, "tag one" );
-			var tag2 = new DbTag( eTagGroup.User, "tag two" );
-			var tagList = new List<DbTag> { tag1, tag2 };
-			var tagProvider = new Mock<IDataProviderList<DbTag>>();
-			var idProvider = new Mock<IDataProviderList<long>>();
- 
-			tagProvider.Setup( m => m.List ).Returns( tagList );
-			idProvider.Setup( m => m.List ).Returns(  new [] { tag1.DbId, tag2.DbId });
-			testable.Mock<ITagProvider>().Setup( m => m.GetTagList( It.Is<eTagGroup>( p => p == eTagGroup.User ))).Returns( tagProvider.Object );
-			testable.Mock<IAlbumProvider>().Setup( m => m.GetAlbumCategories( It.IsAny<long>())).Returns( idProvider.Object );
-
-			var sut = testable.ClassUnderTest;
-			sut.AlbumCategoryEditRequest.Raised += OnAlbumCategoryEditRequestConfirm;
-
-			testable.FireAlbumChanged( album );
-			var editCommand = ( testable.ClassUnderTest as dynamic ).EditCategories as ICommand;
-
-			Assert.IsNotNull( editCommand );
-			editCommand.Execute( null );
-
-			sut.AlbumCategories.Should().Be( tag2.Name );
 		}
 
 		[Test]

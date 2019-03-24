@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using AutoMapper;
 using Caliburn.Micro;
+using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -17,33 +18,37 @@ using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.ViewModels {
-	internal class TrackEditInfo : InteractionRequestData<TrackEditDialogModel> {
-		public TrackEditInfo( TrackEditDialogModel viewModel ) : base( viewModel ) { }
-	}
+    internal class TagEditInfo : InteractionRequestData<TagAssociationDialogModel> {
+        public TagEditInfo( TagAssociationDialogModel viewModel ) : base( viewModel ) { }
+    }
 
 	internal class AlbumTracksViewModel : AutomaticPropertyBase,
-										  IHandle<Events.DatabaseClosing>, IHandle<Events.TrackUserUpdate> {
+										  IHandle<Events.DatabaseClosing>, IHandle<Events.TrackUserUpdate>, IHandle<Events.UserTagsChanged> {
 		private readonly IEventAggregator				mEventAggregator;
 		private readonly IUiLog							mLog;
 		private readonly ISelectionState				mSelectionState;
 		private readonly ITrackProvider					mTrackProvider;
+        private readonly IUserTagManager                mTagManager;
 		private readonly IPlayCommand					mPlayCommand;
 		private readonly IRatings						mRatings;
 		private readonly Observal.Observer				mChangeObserver;
 		private readonly BindableCollection<UiTrack>	mTracks;
-		private readonly InteractionRequest<TrackEditInfo>	mTrackEditRequest; 
-		private TaskHandler<IEnumerable<UiTrack>>		mTrackRetrievalTaskHandler;
+        private TaskHandler<IEnumerable<UiTrack>>		mTrackRetrievalTaskHandler;
 		private CancellationTokenSource					mCancellationTokenSource;
 		private long									mCurrentAlbumId;
 
+        public BindableCollection<UiTrack>              TrackList => mTracks;
+        public InteractionRequest<TagEditInfo>          TagEditRequest { get; }
+
 		public AlbumTracksViewModel( IEventAggregator eventAggregator, IRatings ratings, ISelectionState selectionState,
-									 ITrackProvider trackProvider, IPlayCommand playCommand, IUiLog log ) {
+									 ITrackProvider trackProvider, IPlayCommand playCommand, IUserTagManager tagManager, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mSelectionState = selectionState;
 			mRatings = ratings;
 			mTrackProvider = trackProvider;
 			mPlayCommand = playCommand;
+            mTagManager = tagManager;
 
 			mEventAggregator.Subscribe( this );
 
@@ -53,7 +58,7 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
-			mTrackEditRequest = new InteractionRequest<TrackEditInfo>();
+            TagEditRequest = new InteractionRequest<TagEditInfo>();
 
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
 		}
@@ -61,6 +66,10 @@ namespace Noise.UI.ViewModels {
 		public void Handle( Events.DatabaseClosing args ) {
 			ClearTrackList();
 		}
+
+	    public void Handle( Events.UserTagsChanged message ) {
+            mTracks.ForEach( SetTrackTags );
+        }
 
 		private void OnAlbumChanged( DbAlbum album ) {
 			if( album != null ) {
@@ -92,8 +101,8 @@ namespace Noise.UI.ViewModels {
 
 				return( mTrackRetrievalTaskHandler );
 			}
-			set{ mTrackRetrievalTaskHandler = value; }
-		}
+			set => mTrackRetrievalTaskHandler = value;
+        }
 
 		private CancellationToken GenerateCanellationToken() {
 			mCancellationTokenSource = new CancellationTokenSource();
@@ -119,7 +128,7 @@ namespace Noise.UI.ViewModels {
 
 			TracksRetrievalTaskHandler.StartTask( () => LoadTracks( forAlbumId, cancellationToken ),
 												albumList => UpdateUi( albumList, forAlbumId ),
-												ex => mLog.LogException( string.Format( "Retrieve tracks for {0}", forAlbumId ), ex ),
+												ex => mLog.LogException( $"Retrieve tracks for {forAlbumId}", ex ),
 												cancellationToken );
 		}
 
@@ -128,11 +137,10 @@ namespace Noise.UI.ViewModels {
 
 			using( var tracks = mTrackProvider.GetTrackList( albumId )) {
 				if(!cancellationToken.IsCancellationRequested ) {
-					var sortedList = new List<DbTrack>( from DbTrack track in tracks.List
-														orderby track.VolumeName, track.TrackNumber 
-														ascending select track );
+					var sortedList = new List<DbTrack>( from DbTrack track in tracks.List orderby track.VolumeName, track.TrackNumber select track );
 
 					retValue.AddRange( sortedList.Select( TransformTrack ));
+                    retValue.ForEach( SetTrackTags );
 				}
 			}
 
@@ -154,7 +162,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiTrack TransformTrack( DbTrack dbTrack ) {
-			var retValue = new UiTrack( OnTrackPlay, OnTrackEdit  );
+			var retValue = new UiTrack( OnTrackPlay, OnTagEdit  );
 
 			if( dbTrack != null ) {
 				Mapper.Map( dbTrack, retValue );
@@ -162,6 +170,10 @@ namespace Noise.UI.ViewModels {
 
 			return( retValue );
 		}
+
+        private void SetTrackTags( UiTrack track ) {
+            track?.SetTags( from tag in mTagManager.GetAssociatedTags( track.DbId ) orderby tag.Name select tag.Name );
+        }
 
 		private void ClearTrackList() {
 			foreach( var track in mTracks ) {
@@ -179,9 +191,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
-			if( propertyNotification.Source is UiBase ) {
-				var item = propertyNotification.Source as UiBase;
-				var	track= mTrackProvider.GetTrack( item.DbId );
+			if( propertyNotification.Source is UiBase item ) {
+                var	track= mTrackProvider.GetTrack( item.DbId );
 
 				if( track != null ) {
 					if( propertyNotification.PropertyName == "UiRating" ) {
@@ -206,47 +217,27 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public BindableCollection<UiTrack> TrackList {
-			get{ return( mTracks ); }
-		}
-
-		public TimeSpan AlbumPlayTime {
+        public TimeSpan AlbumPlayTime {
 			get{ return( Get( () => AlbumPlayTime )); }
 			set{ Set( () => AlbumPlayTime, value ); }
 		}
 
-		public InteractionRequest<TrackEditInfo> TrackEditRequest {
-			get{ return( mTrackEditRequest ); }
-		}  
+        private void OnTagEdit( long trackId ) {
+            var track = mTrackProvider.GetTrack( trackId );
 
-		private void OnTrackEdit( long trackId ) {
-			var track = mTrackProvider.GetTrack( trackId );
-
-			if( track != null ) {
-				var dialogModel = new TrackEditDialogModel( track );
+            if( track != null ) {
+                var dialogModel = new TagAssociationDialogModel( track, mTagManager.GetUserTagList(), mTagManager.GetAssociatedTags( track.DbId ));
 				
-				mTrackEditRequest.Raise( new TrackEditInfo( dialogModel ), OnTrackEdited );
-			}
-		}
+                TagEditRequest.Raise( new TagEditInfo( dialogModel ), OnTagEdited );
+            }
+        }
 
-		private void OnTrackEdited( TrackEditInfo confirmation ) {
-			if( confirmation.Confirmed ) {
-				using( var updater = mTrackProvider.GetTrackForUpdate( confirmation.ViewModel.Track.DbId )) {
-					if(( updater != null ) &&
-					   ( updater.Item != null )) {
-						updater.Item.Name = confirmation.ViewModel.Track.Name;
-						updater.Item.PublishedYear = confirmation.ViewModel.Track.PublishedYear;
+        private void OnTagEdited( TagEditInfo confirmation ) {
+            if( confirmation.Confirmed ) {
+                mTagManager.UpdateAssociations( confirmation.ViewModel.Track.DbId, confirmation.ViewModel.GetSelectedTags());
 
-						updater.Update();
-
-						if( confirmation.ViewModel.UpdateFileTags ) {
-							GlobalCommands.SetMp3Tags.Execute( new SetMp3TagCommandArgs( updater.Item )
-																						{ PublishedYear = updater.Item.PublishedYear,
-																						  Name = updater.Item.Name });
-						}
-					}
-				}
-			}
-		}
+                SetTrackTags( TrackList.FirstOrDefault( t => t.DbId.Equals( confirmation.ViewModel.Track.DbId )));
+            }
+        }
 	}
 }

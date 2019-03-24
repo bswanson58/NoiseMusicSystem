@@ -23,7 +23,7 @@
 
 		<ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
 			<Grid Margin="5,15,5,0">
-				<TextBlock FontSize="18" Foreground="LightGray" HorizontalAlignment="Center" Text="Select an artist!" />
+                <TextBlock Style="{StaticResource EmptyListTextStyle}" Text="Select an artist!" />
 			</Grid>
 		</ControlTemplate>
 

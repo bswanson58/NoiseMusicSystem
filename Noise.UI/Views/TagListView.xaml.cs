@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,12 +14,12 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Noise.UI.Views {
-	/// <summary>
-	/// Interaction logic for PlayListView.xaml
-	/// </summary>
-	public partial class PlayListView : UserControl {
-		public PlayListView() {
-			InitializeComponent();
-		}
-	}
+    /// <summary>
+    /// Interaction logic for TagListView.xaml
+    /// </summary>
+    public partial class TagListView : UserControl {
+        public TagListView() {
+            InitializeComponent();
+        }
+    }
 }

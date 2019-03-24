@@ -61,6 +61,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<ISidecarUpdater, SidecarWriter>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ISidecarWriter, SidecarWriter>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ITagManager, TagManager>( new HierarchicalLifetimeManager());
+            mContainer.RegisterType<IUserTagManager, UserTagManager>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IRatings, RatingsUpdater>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<ILibraryBuilder, LibraryBuilder>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<DatabaseStatistics, DatabaseStatistics>();
@@ -127,6 +128,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyStop>( ePlayExhaustedStrategy.Stop.ToString());
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyStream>( ePlayExhaustedStrategy.PlayStream.ToString());
 			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategySeldomPlayedArtists>( ePlayExhaustedStrategy.SeldomPlayedArtists.ToString());
+            mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyUserTags>( ePlayExhaustedStrategy.PlayUserTags.ToString());
 			mContainer.RegisterType<IEnumerable<IPlayExhaustedStrategy>, IPlayExhaustedStrategy[]>();
 
 			mContainer.RegisterType<IPlayQueueSupport, PlayQueueRandomTracks>( "PlayQueueRandomTracks" );

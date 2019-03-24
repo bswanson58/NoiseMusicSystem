@@ -7,6 +7,7 @@ namespace Noise.Infrastructure.Interfaces {
 		Task	Play( DbArtist artist );
 		Task	PlayRandomArtistTracks( DbArtist artist );
 		Task	PlayTopArtistTracks( DbArtist artist );
+        Task    PlayRandomTaggedTracks( DbTag tag );
 
 		Task	Play( DbAlbum album );
 		Task	Play( DbAlbum album, string volumeName );
