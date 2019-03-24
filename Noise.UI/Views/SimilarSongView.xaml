@@ -63,10 +63,9 @@
                 <TextBlock x:Name="NoResultsText" Grid.Column="0" Text="Only the current track was found." VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,15,0,0" Opacity="0"/>
                 
                 <ListView x:Name="ResultsList" Grid.Column="0" BorderThickness="0" ItemsSource="{Binding SearchResults}"
-                      Behaviours:ListViewColumns.Stretch="true"
-                      Behaviours:GridViewSort.AutoSort="True" Opacity="0">
+                      Behaviours:ListViewColumns.Stretch="true" Behaviours:GridViewSort.AutoSort="True" Opacity="0">
                     <ListView.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListViewItem}">
+                        <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MetroListViewItem}">
                             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         </Style>
