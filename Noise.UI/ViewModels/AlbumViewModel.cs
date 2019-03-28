@@ -294,7 +294,6 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnNodeChanged( PropertyChangeNotification propertyNotification ) {
-
 			if( propertyNotification.Source is UiBase item ) {
                 var album = mAlbumProvider.GetAlbum( item.DbId );
 
@@ -397,7 +396,10 @@ namespace Noise.UI.ViewModels {
 
         public string CurrentVolumeName {
 			get => ( mCurrentVolumeName );
-            set => mCurrentVolumeName = value;
+            set {
+                mCurrentVolumeName = value;
+                mSelectionState.SetCurrentAlbumVolume( cAllTracks.Equals( mCurrentVolumeName ) ? string.Empty : mCurrentVolumeName );
+            }
         }
 
 		public IInteractionRequest AlbumEditRequest => ( mAlbumEditRequest );

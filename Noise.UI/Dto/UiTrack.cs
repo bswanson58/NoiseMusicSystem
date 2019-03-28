@@ -43,6 +43,11 @@ namespace Noise.UI.Dto {
             mTags = new List<string>();
 		}
 
+        public bool IsHighlighted {
+            get {  return( Get(() => IsHighlighted ));}
+            set {  Set(() => IsHighlighted, value );}
+        }
+
         public bool IsSelected {
 			get{ return( Get( () => IsSelected )); }
 			set{ Set( () => IsSelected, value ); }

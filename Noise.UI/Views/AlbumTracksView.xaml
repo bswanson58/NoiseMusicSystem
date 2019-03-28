@@ -57,8 +57,19 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Behaviours:GridViewSort.PropertyName="Name"
-                                    DisplayMemberBinding="{Binding Path=Name}"
-                                    Header="Track Name" />
+                                    Header="Track Name">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock x:Name="TrackName" Text="{Binding Path=Name}" />
+
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
+                                        <Setter TargetName="TrackName" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Width="75"
                                     Behaviours:GridViewSort.PropertyName="Duration"
                                     Header="Duration">

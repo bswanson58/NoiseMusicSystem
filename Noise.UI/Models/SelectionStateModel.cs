@@ -19,6 +19,7 @@ namespace Noise.UI.Models {
 		private readonly Subject<DbArtist>		mArtistSubject;
 		private readonly Subject<DbAlbum>		mAlbumSubject;
         private readonly Subject<DbTag>         mTagSubject;
+        private readonly Subject<string>        mVolumeSubject;
 		private TimeSpan						mPlayTrackDelay;
 		private bool							mPlaybackTrackFocusEnabled;
 		private DateTime						mLastFocusRequest;
@@ -26,8 +27,10 @@ namespace Noise.UI.Models {
 		public	DbArtist						CurrentArtist { get; private set; }
 		public	DbAlbum							CurrentAlbum { get; private set; }
         public  DbTag                           CurrentTag { get; private set; }
+
         public	IObservable<DbArtist>			CurrentArtistChanged => ( mArtistSubject.AsObservable());
         public	IObservable<DbAlbum>			CurrentAlbumChanged => ( mAlbumSubject.AsObservable());
+        public IObservable<string>              CurrentAlbumVolumeChanged => mVolumeSubject.AsObservable();
         public  IObservable<DbTag>              CurrentTagChanged => mTagSubject.AsObservable();
 
         public SelectionStateModel( IEventAggregator eventAggregator, IPreferences preferences, IArtistProvider artistProvider, IAlbumProvider albumProvider ) {
@@ -38,6 +41,7 @@ namespace Noise.UI.Models {
 			mArtistSubject = new Subject<DbArtist>();
 			mAlbumSubject = new Subject<DbAlbum>();
             mTagSubject = new Subject<DbTag>();
+            mVolumeSubject = new Subject<string>();
 
 			mPlayTrackDelay = new TimeSpan( 0, 0, 30 );
 			mLastFocusRequest = DateTime.Now - mPlayTrackDelay;
@@ -170,12 +174,22 @@ namespace Noise.UI.Models {
 			if( album != null ) {
 				mEventAggregator.PublishOnUIThread( new Events.ViewDisplayRequest( ViewNames.AlbumInfoView ));
 			}
+
+            ClearCurrentVolume();
 		}
 
         private void ChangeToTag( DbTag tag ) {
             CurrentTag = tag;
 
             mTagSubject.OnNext( CurrentTag );
+        }
+
+        public void SetCurrentAlbumVolume( string volumeName ) {
+            mVolumeSubject.OnNext( volumeName );
+        }
+
+        private void ClearCurrentVolume() {
+            SetCurrentAlbumVolume( String.Empty );
         }
 	}
 }

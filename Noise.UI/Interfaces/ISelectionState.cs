@@ -6,9 +6,11 @@ namespace Noise.UI.Interfaces {
 		DbArtist    CurrentArtist { get; }
 		DbAlbum     CurrentAlbum { get; }
         DbTag       CurrentTag { get; }
+        void        SetCurrentAlbumVolume( string volumeName );
 
 		IObservable<DbArtist>   CurrentArtistChanged { get; }
 		IObservable<DbAlbum>    CurrentAlbumChanged { get; }
+        IObservable<string>     CurrentAlbumVolumeChanged { get; }
         IObservable<DbTag>      CurrentTagChanged { get; }
 	}
 }

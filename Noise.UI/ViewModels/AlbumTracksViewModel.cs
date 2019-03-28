@@ -61,6 +61,7 @@ namespace Noise.UI.ViewModels {
             TagEditRequest = new InteractionRequest<TagEditInfo>();
 
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
+            mSelectionState.CurrentAlbumVolumeChanged.Subscribe( OnVolumeChanged );
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {
@@ -79,6 +80,19 @@ namespace Noise.UI.ViewModels {
 				ClearTrackList();
 			}
 		}
+
+        private void OnVolumeChanged( string volumeName ) {
+            if(!string.IsNullOrWhiteSpace( volumeName )) {
+                foreach( var track in mTracks ) {
+                    track.IsHighlighted = volumeName.Equals( track.VolumeName );
+                }
+            }
+            else {
+                foreach( var track in mTracks ) {
+                    track.IsHighlighted = false;
+                }
+            }
+        }
 
 		private void UpdateTrackList( long albumId ) {
 			if( albumId == Constants.cDatabaseNullOid ) {
