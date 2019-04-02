@@ -35,6 +35,8 @@ namespace Noise.UI.ViewModels {
 		private readonly ISelectionState				mSelectionState;
 		private	readonly Observal.Observer				mChangeObserver;
 		private readonly IObservableCollection<UiAlbum>	mAlbumList;
+	    private readonly List<string>                   mSortPrefixes;
+	    private readonly bool                           mEnableSortPrefixes;
 		private ICollectionView							mAlbumView;
 		private readonly List<ViewSortStrategy>			mAlbumSorts;
 		private DbArtist								mCurrentArtist;
@@ -45,8 +47,9 @@ namespace Noise.UI.ViewModels {
 		private long									mAlbumToSelect;
  
 		public	event	EventHandler					IsActiveChanged = delegate { };
+	    public  IEnumerable<ViewSortStrategy>           SortDescriptions => mAlbumSorts;
 
-		public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, IPlayCommand playCommand, IRatings ratings,
+        public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, IPlayCommand playCommand, IRatings ratings,
 								   ISelectionState selectionState, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
@@ -57,35 +60,47 @@ namespace Noise.UI.ViewModels {
 			mPlayCommand = playCommand;
 
 			mAlbumList = new BindableCollection<UiAlbum>();
+		    mSortPrefixes = new List<string>();
 			VisualStateName = cHideSortDescriptions;
 
 			mChangeObserver = new Observal.Observer();
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnAlbumChanged );
 
 			mAlbumSorts = new List<ViewSortStrategy> { new ViewSortStrategy( "Album Name", new List<SortDescription> { new SortDescription( "Name", ListSortDirection.Ascending ) }),
-													   new ViewSortStrategy( "Published Year", new List<SortDescription> { new SortDescription( "PublishedYear", ListSortDirection.Ascending ),
-																														   new SortDescription( "Name", ListSortDirection.Ascending ) }),
+			                                           new ViewSortStrategy( "Unprefixed Album Name", new List<SortDescription> { new SortDescription( "SortName", ListSortDirection.Ascending ) }),
+                                                       new ViewSortStrategy( "Published Year", new List<SortDescription> { new SortDescription( "PublishedYear", ListSortDirection.Ascending ),
+																														   new SortDescription( "SortName", ListSortDirection.Ascending ) }),
 			                                           new ViewSortStrategy( "Rating", new List<SortDescription> { new SortDescription("SortRating", ListSortDirection.Descending ),
-			                                                                           new SortDescription( "Name", ListSortDirection.Ascending ) }) };
+			                                                                                                       new SortDescription( "SortName", ListSortDirection.Ascending ) }) };
 
 			var configuration = mPreferences.Load<UserInterfacePreferences>();
 			if( configuration != null ) {
 				var sortConfiguration = ( from config in mAlbumSorts where config.DisplayName == configuration.AlbumListSortOrder select config ).FirstOrDefault();
 
-				SelectedSortDescription = sortConfiguration ?? mAlbumSorts[0];
+			    mEnableSortPrefixes = configuration.EnableSortPrefixes;
+			    if (mEnableSortPrefixes) {
+			        mSortPrefixes.AddRange(configuration.SortPrefixes.Split('|'));
+			    }
+
+                if ( sortConfiguration != null ) {
+                    SelectedSortDescription = sortConfiguration;
+                }
+                else {
+                    SelectedSortDescription = mEnableSortPrefixes ? mAlbumSorts[1] : mAlbumSorts[0];
+                }
 			}
-			else {
+            else {
 				SelectedSortDescription = mAlbumSorts[0];
 			}
 
-			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
+		    mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
 			mEventAggregator.Subscribe( this );
 		}
 
 		public bool IsActive {
-			get{ return( mIsActive ); }
-			set {
+			get => ( mIsActive );
+		    set {
 				mIsActive = value;
 
 				IsActiveChanged( this, new EventArgs());
@@ -158,8 +173,8 @@ namespace Noise.UI.ViewModels {
 			get {
 				var retValue = 0;
 
-				if( mAlbumView is CollectionView ) {
-					retValue = (mAlbumView as CollectionView).Count;
+				if( mAlbumView is CollectionView view ) {
+					retValue = view.Count;
 				}
 
 				return( retValue );
@@ -167,15 +182,9 @@ namespace Noise.UI.ViewModels {
 		}
 
 		[DependsUpon( "AlbumCount" )]
-		public string AlbumListTitle {
-			get { return( string.Format( AlbumCount == 0 ? StringResources.AlbumTitle : StringResources.AlbumTitlePlural, AlbumCount )); }
-		}
+		public string AlbumListTitle => ( string.Format( AlbumCount == 0 ? StringResources.AlbumTitle : StringResources.AlbumTitlePlural, AlbumCount ));
 
-		public IEnumerable<ViewSortStrategy> SortDescriptions {
-			get{ return( mAlbumSorts ); }
-		} 
-
-		public ViewSortStrategy SelectedSortDescription {
+	    public ViewSortStrategy SelectedSortDescription {
 			get{ return( Get( () => SelectedSortDescription )); }
 			set {
 				Set( () => SelectedSortDescription, value );
@@ -203,11 +212,9 @@ namespace Noise.UI.ViewModels {
 		private bool OnAlbumFilter( object node ) {
 			var retValue = true;
 
-			if(( node is UiAlbum ) &&
+			if(( node is UiAlbum albumNode ) &&
 			   ( !string.IsNullOrWhiteSpace( FilterText ))) {
-				var albumNode = node as UiAlbum;
-
-				if(( albumNode.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) &&
+			    if(( albumNode.Name.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 ) &&
 				   ( albumNode.Genre.IndexOf( FilterText, StringComparison.OrdinalIgnoreCase ) == -1 )) {
 					retValue = false;
 				}
@@ -245,11 +252,9 @@ namespace Noise.UI.ViewModels {
 				Execute.OnUIThread( () => {
 					Set( () => FilterText, value );
 
-					if( mAlbumView != null ) {
-						mAlbumView.Refresh();
-					}
+				    mAlbumView?.Refresh();
 
-					RaisePropertyChanged( () => FilterText );
+				    RaisePropertyChanged( () => FilterText );
 					RaisePropertyChanged( () => AlbumCount );
 				} );
 			}
@@ -279,7 +284,7 @@ namespace Noise.UI.ViewModels {
 
 				return ( mAlbumRetrievalTaskHandler );
 			}
-			set { mAlbumRetrievalTaskHandler = value; }
+			set => mAlbumRetrievalTaskHandler = value;
 		}
 
 		private CancellationToken GenerateCanellationToken() {
@@ -309,7 +314,7 @@ namespace Noise.UI.ViewModels {
 					() =>  LoadAlbums( artist, cancelToken ),
 					albumList => UpdateUi( albumList, artist ),
 					ex => {
-						mLog.LogException( string.Format( "Retrieving Albums for {0}", artist ), ex );
+						mLog.LogException( $"Retrieving Albums for {artist}", ex );
 
 						mRetrievingAlbums = false;
 
@@ -357,12 +362,29 @@ namespace Noise.UI.ViewModels {
 
 			if( dbAlbum != null ) {
 				Mapper.Map( dbAlbum, retValue );
+
+			    if( mEnableSortPrefixes ) {
+			        FormatSortPrefix( retValue );
+			    }
 			}
 
-			return ( retValue );
+            return ( retValue );
 		}
 
-		private void UpdateUi( IEnumerable<UiAlbum> albumList, DbArtist artist ) {
+	    private void FormatSortPrefix( UiAlbum album ) {
+	        if( mSortPrefixes != null ) {
+	            foreach( string prefix in mSortPrefixes ) {
+	                if( album.Name.StartsWith( prefix, StringComparison.CurrentCultureIgnoreCase )) {
+	                    album.SortName = album.Name.Remove( 0, prefix.Length ).Trim();
+	                    album.DisplayName = "(" + album.Name.Insert( prefix.Length, ")" );
+
+	                    break;
+	                }
+	            }
+	        }
+	    }
+
+	    private void UpdateUi( IEnumerable<UiAlbum> albumList, DbArtist artist ) {
 			ClearAlbumList();
 			mAlbumList.AddRange( albumList );
 			mCurrentArtist = artist;
@@ -403,9 +425,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private void OnAlbumChanged( PropertyChangeNotification propertyNotification ) {
-			var notifier = propertyNotification.Source as UiBase;
-
-			if( notifier != null ) {
+		    if( propertyNotification.Source is UiBase notifier ) {
 				var album = mAlbumProvider.GetAlbum( notifier.DbId );
 
 				if( album != null ) {

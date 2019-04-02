@@ -13,6 +13,7 @@ namespace Noise.UI.Dto {
 		public	long					ExternalGenre { get; set; }
 		public	long					UserGenre { get; set; }
 		public	DbGenre					DisplayGenre { get ; set; }
+	    public string                   SortName { get; set; }
         private string                  mDisplayName;
 		private readonly Action<long>	mOnPlay;
 
@@ -37,6 +38,7 @@ namespace Noise.UI.Dto {
 
                 return ( mDisplayName );
 	        }
+            set => mDisplayName = CreateDisplayName( value );
 	    }
 
 		public string Genre => ( DisplayGenre != null ? DisplayGenre.Name : String.Empty );

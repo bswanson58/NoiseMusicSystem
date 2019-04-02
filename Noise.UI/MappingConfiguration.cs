@@ -26,9 +26,11 @@ namespace Noise.UI {
 				.ForMember( dest => dest.Rating, opt => opt.Ignore())
 				.ForMember( dest => dest.UiIsFavorite, opt => opt.MapFrom( src => src.IsFavorite ))
 				.ForMember( dest => dest.UiRating, opt => opt.MapFrom( src => src.Rating ))
-				.ForMember( dest => dest.FavoriteValue, opt => opt.Ignore());
+				.ForMember( dest => dest.FavoriteValue, opt => opt.Ignore())
+			    .ForMember( dest => dest.SortName, opt => opt.MapFrom(src => src.Name ))
+	            .ForMember(dest => dest.DisplayName, opt => opt.Ignore());
 
-			CreateMap<DbTrack, UiTrack>()
+            CreateMap<DbTrack, UiTrack>()
 				.ForMember( dest => dest.Genre, opt => opt.Ignore())
 				.ForMember( dest => dest.DisplayGenre, opt => opt.Ignore())
 				.ForMember( dest => dest.IsSelected, opt => opt.Ignore())
