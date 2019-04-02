@@ -79,7 +79,7 @@ namespace Noise.UI.ViewModels {
 
 			    mEnableSortPrefixes = configuration.EnableSortPrefixes;
 			    if (mEnableSortPrefixes) {
-			        mSortPrefixes.AddRange(configuration.SortPrefixes.Split('|'));
+			        mSortPrefixes.AddRange( from p in configuration.SortPrefixes.Split('|') select p.Trim());
 			    }
 
                 if ( sortConfiguration != null ) {
