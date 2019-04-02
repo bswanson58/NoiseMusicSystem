@@ -64,7 +64,7 @@ namespace Noise.UI.ViewModels {
 				if( mEnableSortPrefixes ) {
 					mSortPrefixes.AddRange( configuration.SortPrefixes.Split( '|' ));
 				}
-			}
+            }
 
 			mArtistSorts = new List<ViewSortStrategy> { new ViewSortStrategy( "Artist Name", new List<SortDescription> { new SortDescription( "Name", ListSortDirection.Ascending ) }),
 														new ViewSortStrategy( "Unprefixed Artist Name", new List<SortDescription> { new SortDescription( "SortName", ListSortDirection.Ascending ) }),
@@ -315,7 +315,7 @@ namespace Noise.UI.ViewModels {
 		private void FormatSortPrefix( UiArtist artist ) {
 			if( mSortPrefixes != null ) {
 				foreach( string prefix in mSortPrefixes ) {
-					if( artist.Name.StartsWith( prefix, StringComparison.CurrentCultureIgnoreCase )) {
+					if( artist.Name.StartsWith( prefix + " ", StringComparison.CurrentCultureIgnoreCase )) {
 						artist.SortName = artist.Name.Remove( 0, prefix.Length ).Trim();
 						artist.DisplayName = "(" + artist.Name.Insert( prefix.Length, ")" );
 

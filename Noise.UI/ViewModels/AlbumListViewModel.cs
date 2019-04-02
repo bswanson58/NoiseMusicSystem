@@ -374,7 +374,7 @@ namespace Noise.UI.ViewModels {
 	    private void FormatSortPrefix( UiAlbum album ) {
 	        if( mSortPrefixes != null ) {
 	            foreach( string prefix in mSortPrefixes ) {
-	                if( album.Name.StartsWith( prefix, StringComparison.CurrentCultureIgnoreCase )) {
+	                if( album.Name.StartsWith( prefix + " ", StringComparison.CurrentCultureIgnoreCase )) {
 	                    album.SortName = album.Name.Remove( 0, prefix.Length ).Trim();
 	                    album.DisplayName = "(" + album.Name.Insert( prefix.Length, ")" );
 
