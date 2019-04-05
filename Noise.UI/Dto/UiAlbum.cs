@@ -2,11 +2,12 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 using ReusableBits.ExtensionClasses;
 
 namespace Noise.UI.Dto {
 	[DebuggerDisplay("Album = {" + nameof(Name) + "}")]
-	public class UiAlbum : UiBase {
+	public class UiAlbum : UiBase, IPlayingItem {
 		public	long					Artist { get; set; }
 		public	Int16					TrackCount { get; set; }
 		public	long					CalculatedGenre { get; set; }
@@ -52,6 +53,11 @@ namespace Noise.UI.Dto {
 			get { return( Get(() => IsFavorite )); }
 			set {  Set( () => IsFavorite, value ); }
 		}
+
+        public bool IsPlaying {
+            get { return( Get(() => IsPlaying )); }
+            set {  Set( () => IsPlaying, value ); }
+        }
 
 		public bool	HasFavorites {
 			get { return( Get( () => HasFavorites )); }
@@ -115,5 +121,9 @@ namespace Noise.UI.Dto {
 
             return fullAlbumName.Replace( regex, "publishedYear", String.Empty ).Trim();
         }
-	}
+
+        public void SetPlayingStatus( PlayingItem item ) {
+            IsPlaying = DbId.Equals( item.Album );
+        }
+    }
 }

@@ -44,7 +44,7 @@
 						<Button Grid.Column="0" Style="{DynamicResource PlayButtonStyle}" VerticalAlignment="Center" Command="{Binding PlayAlbum}" Content="4" />
 
 						<Viewbox Grid.Column="1" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left">
-							<TextBlock Style="{StaticResource ExplorerTitleStyle}" VerticalAlignment="Center" Text="{Binding DisplayName}" />
+                            <TextBlock x:Name="AlbumName" Style="{StaticResource ExplorerTitleStyle}" VerticalAlignment="Center" Text="{Binding DisplayName}" />
 						</Viewbox>
 					</Grid>
 
@@ -93,6 +93,9 @@
 					<Setter TargetName="AlbumIsFavorite" Property="Opacity" Value="1.0"/>
 					<Setter TargetName="AlbumRating" Property="Opacity" Value="1.0"/>
 				</Trigger>
+                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                    <Setter TargetName="AlbumName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                </DataTrigger>
 			</DataTemplate.Triggers>
 
 		</DataTemplate>

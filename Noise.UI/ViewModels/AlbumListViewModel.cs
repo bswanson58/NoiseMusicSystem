@@ -33,6 +33,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IRatings						mRatings;
 		private readonly IPlayCommand					mPlayCommand;
 		private readonly ISelectionState				mSelectionState;
+        private readonly IPlayingItemHandler            mPlayingItemHandler;
 		private	readonly Observal.Observer				mChangeObserver;
 		private readonly IObservableCollection<UiAlbum>	mAlbumList;
 	    private readonly List<string>                   mSortPrefixes;
@@ -50,7 +51,7 @@ namespace Noise.UI.ViewModels {
 	    public  IEnumerable<ViewSortStrategy>           SortDescriptions => mAlbumSorts;
 
         public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, IPlayCommand playCommand, IRatings ratings,
-								   ISelectionState selectionState, IUiLog log ) {
+								   ISelectionState selectionState, IPlayingItemHandler playingItemHandler, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mPreferences = preferences;
@@ -58,6 +59,7 @@ namespace Noise.UI.ViewModels {
 			mRatings = ratings;
 			mSelectionState = selectionState;
 			mPlayCommand = playCommand;
+            mPlayingItemHandler = playingItemHandler;
 
 			mAlbumList = new BindableCollection<UiAlbum>();
 		    mSortPrefixes = new List<string>();
@@ -95,6 +97,9 @@ namespace Noise.UI.ViewModels {
 
 		    mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
+
+            mPlayingItemHandler.StartHandler( mAlbumList );
+
 			mEventAggregator.Subscribe( this );
 		}
 
@@ -397,6 +402,8 @@ namespace Noise.UI.ViewModels {
 
 				mAlbumToSelect = Constants.cDatabaseNullOid;
 			}
+
+            mPlayingItemHandler.UpdateList();
 
 			mRetrievingAlbums = false;
 			ClearCurrentTask();
