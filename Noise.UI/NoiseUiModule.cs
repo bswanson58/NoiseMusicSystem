@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
+using Noise.Infrastructure.Interfaces;
 using Noise.UI.Interfaces;
 using Noise.UI.Logging;
 using Noise.UI.Models;
@@ -20,6 +21,7 @@ namespace Noise.UI {
 			mContainer.RegisterType<IDialogService, DialogService>();
 
 			mContainer.RegisterType<ISelectionState, SelectionStateModel>( new ContainerControlledLifetimeManager());
+            mContainer.RegisterType<IPlayingItemHandler, PlayingItemHandler>( new TransientLifetimeManager());
 
 			mContainer.RegisterType<IUiLog, UiLogger>( new HierarchicalLifetimeManager());
 

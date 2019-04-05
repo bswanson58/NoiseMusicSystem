@@ -227,6 +227,7 @@ namespace Noise.Infrastructure {
 				Track = track;
 			}
 		}
+        public class PlaybackStopped { }
 
 		public class PlaybackTrackUpdated {
 			public PlayQueueTrack	Track { get; private set; }

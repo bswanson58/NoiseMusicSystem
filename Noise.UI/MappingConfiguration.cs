@@ -38,6 +38,7 @@ namespace Noise.UI {
 				.ForMember( dest => dest.UiIsFavorite, opt => opt.MapFrom( src => src.IsFavorite ))
 				.ForMember( dest => dest.UiRating, opt => opt.MapFrom( src => src.Rating ))
                 .ForMember( dest => dest.HasTags, opt => opt.Ignore())
+                .ForMember( dest => dest.IsPlaying, opt => opt.Ignore())
                 .ForMember( dest => dest.IsHighlighted, opt => opt.Ignore());
 
 			CreateMap<DbInternetStream, UiInternetStream>()

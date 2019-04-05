@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.UI.Dto {
 	[DebuggerDisplay("Track = {" + nameof( Name ) + "}")]
-	public class UiTrack : UiBase {
+	public class UiTrack : UiBase, IPlayingItem {
 		public string			Name { get; set; }
 		public string			Performer { get; set; }
 		public long				Album { get; set; }
@@ -53,7 +54,12 @@ namespace Noise.UI.Dto {
 			set{ Set( () => IsSelected, value ); }
 		}
 
-		public void Execute_Play() {
+        public bool IsPlaying {
+            get{ return( Get( () => IsPlaying )); }
+            set{ Set( () => IsPlaying, value ); }
+        }
+
+        public void Execute_Play() {
             mPlayAction?.Invoke( DbId );
         }
 
@@ -75,6 +81,10 @@ namespace Noise.UI.Dto {
 
             RaisePropertyChanged( () => HasTags );
             RaisePropertyChanged( () => TagsTooltip );
+        }
+
+        public void SetPlayingStatus( PlayingItem item ) {
+            IsPlaying = DbId.Equals( item.Track );
         }
     }
 }

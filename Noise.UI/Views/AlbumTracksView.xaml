@@ -66,6 +66,9 @@
                                     <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
                                         <Setter TargetName="TrackName" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
                                     </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                        <Setter TargetName="TrackName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                                    </DataTrigger>
                                 </DataTemplate.Triggers>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>

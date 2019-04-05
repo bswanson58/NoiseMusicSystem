@@ -291,6 +291,7 @@
     <Compile Include="Logging\IUiLog.cs" />
     <Compile Include="Logging\UiLogger.cs" />
     <Compile Include="MappingConfiguration.cs" />
+    <Compile Include="Models\PlayingItemHandler.cs" />
     <Compile Include="Models\SelectionStateModel.cs" />
     <Compile Include="Models\ThemeCatalog.cs" />
     <Compile Include="Models\ThemeManager.cs" />

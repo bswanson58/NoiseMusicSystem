@@ -31,6 +31,7 @@ namespace Noise.UI.ViewModels {
         private readonly IUserTagManager                mTagManager;
 		private readonly IPlayCommand					mPlayCommand;
 		private readonly IRatings						mRatings;
+        private readonly IPlayingItemHandler            mPlayingItemHandler;
 		private readonly Observal.Observer				mChangeObserver;
 		private readonly BindableCollection<UiTrack>	mTracks;
         private TaskHandler<IEnumerable<UiTrack>>		mTrackRetrievalTaskHandler;
@@ -40,7 +41,7 @@ namespace Noise.UI.ViewModels {
         public BindableCollection<UiTrack>              TrackList => mTracks;
         public InteractionRequest<TagEditInfo>          TagEditRequest { get; }
 
-		public AlbumTracksViewModel( IEventAggregator eventAggregator, IRatings ratings, ISelectionState selectionState,
+		public AlbumTracksViewModel( IEventAggregator eventAggregator, IRatings ratings, ISelectionState selectionState, IPlayingItemHandler playingItemHandler,
 									 ITrackProvider trackProvider, IPlayCommand playCommand, IUserTagManager tagManager, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
@@ -49,6 +50,7 @@ namespace Noise.UI.ViewModels {
 			mTrackProvider = trackProvider;
 			mPlayCommand = playCommand;
             mTagManager = tagManager;
+            mPlayingItemHandler = playingItemHandler;
 
 			mEventAggregator.Subscribe( this );
 
@@ -62,6 +64,8 @@ namespace Noise.UI.ViewModels {
 
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
             mSelectionState.CurrentAlbumVolumeChanged.Subscribe( OnVolumeChanged );
+
+            mPlayingItemHandler.StartHandler( mTracks );
 		}
 
 		public void Handle( Events.DatabaseClosing args ) {
@@ -173,6 +177,7 @@ namespace Noise.UI.ViewModels {
 			}
 
 			ClearCurrentTask();
+            mPlayingItemHandler.UpdateList();
 		}
 
 		private UiTrack TransformTrack( DbTrack dbTrack ) {
