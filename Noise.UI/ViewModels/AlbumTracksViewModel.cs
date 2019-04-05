@@ -233,6 +233,8 @@ namespace Noise.UI.ViewModels {
 				mChangeObserver.Release( track );
 				mTracks[mTracks.IndexOf( track )] = newTrack;
 				mChangeObserver.Add( newTrack );
+
+                SetTrackTags( newTrack );
 			}
 		}
 
