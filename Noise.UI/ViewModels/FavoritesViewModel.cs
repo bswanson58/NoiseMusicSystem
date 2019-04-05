@@ -44,6 +44,7 @@ namespace Noise.UI.ViewModels {
 		private readonly IDataExchangeManager	mDataExchangeMgr;
 		private readonly IDialogService			mDialogService;
 		private readonly ISelectionState		mSelectionState;
+        private readonly IPlayingItemHandler    mPlayingItemHandler;
 		private FavoriteViewNode				mSelectedNode;
 		private ICollectionView					mFavoritesView;
 		private readonly List<FavoriteFilter>	mFilterList; 
@@ -52,7 +53,7 @@ namespace Noise.UI.ViewModels {
 
 		public FavoritesViewModel( IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayCommand playCommand, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
 								   IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ISelectionState selectionState,
-								   IDataExchangeManager dataExchangeManager, IDialogService dialogService, IUiLog log ) {
+								   IDataExchangeManager dataExchangeManager, IDialogService dialogService, IPlayingItemHandler playingItemHandler, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mArtistProvider = artistProvider;
@@ -64,6 +65,7 @@ namespace Noise.UI.ViewModels {
 			mDataExchangeMgr = dataExchangeManager;
 			mDialogService = dialogService;
 			mSelectionState = selectionState;
+            mPlayingItemHandler = playingItemHandler;
 
 			mFavoritesList = new SortableCollection<FavoriteViewNode>();
 
@@ -77,6 +79,7 @@ namespace Noise.UI.ViewModels {
 			mEventAggregator.Subscribe( this );
 			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
+            mPlayingItemHandler.StartHandler( mFavoritesList );
 
 			if( databaseInfo.IsOpen ) {
 				LoadFavorites();
@@ -263,6 +266,8 @@ namespace Noise.UI.ViewModels {
 			mFavoritesList.Sort( SelectSortProperty, ListSortDirection.Ascending );
 			mFavoritesList.IsNotifying = true;
 			mFavoritesList.Refresh();
+
+            mPlayingItemHandler.UpdateList();
 
 			RaiseCanExecuteChangedEvent( "CanExecute_ExportFavorites" );
 			RaiseCanExecuteChangedEvent( "CanExecute_PlayRandom" );

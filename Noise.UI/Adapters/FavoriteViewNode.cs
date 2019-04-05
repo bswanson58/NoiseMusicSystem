@@ -1,9 +1,10 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Adapters {
-	public class FavoriteViewNode : ViewModelBase {
+	public class FavoriteViewNode : ViewModelBase, IPlayingItem {
 		public	DbArtist		Artist {get; private set; }
 		public	DbAlbum			Album { get; private set; }
 		public	DbTrack			Track { get; private set; }
@@ -42,8 +43,25 @@ namespace Noise.UI.Adapters {
 			}
 		}
 
+        public bool IsPlaying {
+            get { return( Get( () => IsPlaying )); }
+            set {  Set( () => IsPlaying, value ); }
+        }
+
 		public void Execute_PlayFavorite( object sender ) {
 			mPlayAction( this );
 		}
-	}
+
+        public void SetPlayingStatus( PlayingItem item ) {
+            if( Track != null ) {
+                IsPlaying = Track.DbId.Equals( item.Track );
+            }
+            else if( Album != null ) {
+                IsPlaying = Album.DbId.Equals( item.Album );
+            }
+            else if( Artist != null ) {
+                IsPlaying = Artist.DbId.Equals( item.Artist );
+            }
+        }
+    }
 }
