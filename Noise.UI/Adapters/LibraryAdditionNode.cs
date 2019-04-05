@@ -1,9 +1,10 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Adapters {
-	public class LibraryAdditionNode : ViewModelBase {
+	public class LibraryAdditionNode : ViewModelBase, IPlayingItem {
 		public	DbArtist		Artist { get; private set; }
 		public	DbAlbum			Album { get; private set; }
 		public	double			RelativeAge { get; set; }
@@ -16,7 +17,16 @@ namespace Noise.UI.Adapters {
 			mAlbumPlayAction = albumPlayAction;
 		}
 
-		public void Execute_Play( object sender ) {
+        public bool IsPlaying {
+            get { return( Get( () => IsPlaying )); }
+            set {  Set( () => IsPlaying, value ); }
+        }
+
+        public void SetPlayingStatus( PlayingItem item ) {
+            IsPlaying = Album.DbId.Equals( item.Album );
+        }
+
+        public void Execute_Play( object sender ) {
 			mAlbumPlayAction( this );
 		}
 	}
