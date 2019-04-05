@@ -1,9 +1,10 @@
 ﻿using System;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace Noise.UI.Dto {
-    class UiTagAssociation : AutomaticCommandBase {
+    class UiTagAssociation : AutomaticCommandBase, IPlayingItem {
         private readonly Action<UiTagAssociation>   mOnPlay;
         private readonly Action<UiTagAssociation>   mOnDelete;
 
@@ -23,6 +24,15 @@ namespace Noise.UI.Dto {
         }
 
         public string DisplayName => $"{Track.Name} ({Artist.Name}/{Album.Name})";
+
+        public bool IsPlaying {
+            get { return( Get( () => IsPlaying )); }
+            set {  Set( () => IsPlaying, value ); }
+        }
+
+        public void SetPlayingStatus( PlayingItem item ) {
+            IsPlaying = Track.DbId.Equals( item.Track );
+        }
 
         public void Execute_Play() {
             mOnPlay?.Invoke( this );

@@ -22,6 +22,7 @@ namespace Noise.UI.ViewModels {
         private readonly ITrackProvider         mTrackProvider;
         private readonly IPlayCommand           mPlayCommand;
         private readonly ISelectionState        mSelectionState;
+        private readonly IPlayingItemHandler    mPlayingItemHandler;
         private DbTag                           mCurrentTag;
         private UiTagAssociation                mCurrentAssociation;
         private TaskHandler<IEnumerable<UiTagAssociation>>  mRetrievalTask;
@@ -30,7 +31,7 @@ namespace Noise.UI.ViewModels {
         public  string                                  HeaderText => Associations.Any() ? $" {Associations.Count} tracks tagged with '{mCurrentTag.Name}'" : " Tagged Items ";
 
         public TagAssociationViewModel( IUserTagManager tagManager, IEventAggregator eventAggregator, ISelectionState selectionState, IPlayCommand playCommand,
-                                        IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IUiLog log ) {
+                                        IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IPlayingItemHandler playingItemHandler, IUiLog log ) {
             mEventAggregator = eventAggregator;
             mTagManager = tagManager;
             mSelectionState = selectionState;
@@ -38,11 +39,13 @@ namespace Noise.UI.ViewModels {
             mAlbumProvider = albumProvider;
             mTrackProvider = trackProvider;
             mPlayCommand = playCommand;
+            mPlayingItemHandler = playingItemHandler;
             mLog = log;
 
             Associations = new ObservableCollection<UiTagAssociation>();
 
             mSelectionState.CurrentTagChanged.Subscribe( OnTagChanged );
+            mPlayingItemHandler.StartHandler( Associations );
             mEventAggregator.Subscribe( this );
         }
 
@@ -108,6 +111,7 @@ namespace Noise.UI.ViewModels {
 
         private void SetAssociations( IEnumerable<UiTagAssociation> list ) {
             Associations.AddRange( from a in list orderby a.Track.Name select a );
+            mPlayingItemHandler.UpdateList();
 
             NotifyOfPropertyChange( () => HeaderText );
         }
