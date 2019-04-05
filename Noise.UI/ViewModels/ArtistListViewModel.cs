@@ -31,6 +31,7 @@ namespace Noise.UI.ViewModels {
 		private readonly ISelectionState				mSelectionState;
 		private readonly IArtistProvider				mArtistProvider;
 		private readonly ITagManager					mTagManager;
+        private readonly IPlayingItemHandler            mPlayingItemHandler;
 		private readonly IRatings						mRatings;
 		private	readonly Observal.Observer				mChangeObserver;
 		private readonly BindableCollection<UiArtist>	mArtistList;
@@ -41,13 +42,14 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler								mArtistRetrievalTaskHandler;
 
 		public ArtistListViewModel( IEventAggregator eventAggregator, IPreferences preferences, ISelectionState selectionState, IRatings ratings,
-									IArtistProvider artistProvider, ITagManager tagManager, IDatabaseInfo databaseInfo, IUiLog log ) {
+									IArtistProvider artistProvider, ITagManager tagManager, IDatabaseInfo databaseInfo, IPlayingItemHandler playingItemHandler, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mPreferences = preferences;
 			mSelectionState = selectionState;
 			mArtistProvider = artistProvider;
 			mTagManager = tagManager;
+            mPlayingItemHandler = playingItemHandler;
 			mRatings = ratings;
 
 			mArtistList = new BindableCollection<UiArtist>();
@@ -87,6 +89,7 @@ namespace Noise.UI.ViewModels {
 			}
 
 			mSelectionState.CurrentArtistChanged.Subscribe( OnArtistChanged );
+            mPlayingItemHandler.StartHandler( mArtistList );
 			mEventAggregator.Subscribe( this );
 
 			if( databaseInfo.IsOpen ) {
@@ -336,6 +339,8 @@ namespace Noise.UI.ViewModels {
 			mArtistList.IsNotifying = true;
 			mArtistList.Refresh();
 			RaisePropertyChanged( () => ArtistCount );
+
+            mPlayingItemHandler.UpdateList();
 		}
 
 		private void AddArtist( DbArtist artist ) {

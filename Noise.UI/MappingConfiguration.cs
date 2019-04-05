@@ -13,6 +13,7 @@ namespace Noise.UI {
 				.ForMember( dest => dest.Genre, opt => opt.Ignore())
 				.ForMember( dest => dest.DisplayGenre, opt => opt.Ignore())
 				.ForMember( dest => dest.DisplayName, opt => opt.MapFrom( src => src.Name ))
+                .ForMember( dest => dest.IsPlaying, opt => opt.Ignore())
 				.ForMember( dest => dest.SortName, opt => opt.MapFrom( src => src.Name ))
 				.ForMember( dest => dest.Rating, opt => opt.Ignore())
 				.ForMember( dest => dest.UiIsFavorite, opt => opt.MapFrom( src => src.IsFavorite ))

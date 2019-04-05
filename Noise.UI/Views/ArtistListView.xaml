@@ -54,7 +54,7 @@
 					</Grid.ColumnDefinitions>
 
 					<Viewbox Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Stretch="Uniform" StretchDirection="DownOnly">
-						<TextBlock Style="{StaticResource ExplorerHeaderStyle}" Text="{Binding DisplayName}" />
+						<TextBlock x:Name="ArtistName" Style="{StaticResource ExplorerHeaderStyle}" Text="{Binding DisplayName}" />
 					</Viewbox>
 
 					<StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
@@ -87,6 +87,9 @@
 					<Setter TargetName="AlbumCount" Property="FontWeight" Value="Bold"/>
 					<Setter TargetName="Genre" Property="FontWeight" Value="Bold"/>
 				</DataTrigger>
+                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                    <Setter TargetName="ArtistName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                </DataTrigger>
 			</DataTemplate.Triggers>
 		</DataTemplate>
 	</UserControl.Resources>
