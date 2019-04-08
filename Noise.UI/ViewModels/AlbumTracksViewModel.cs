@@ -235,6 +235,7 @@ namespace Noise.UI.ViewModels {
 				mChangeObserver.Add( newTrack );
 
                 SetTrackTags( newTrack );
+                mPlayingItemHandler.UpdateList();
 			}
 		}
 
