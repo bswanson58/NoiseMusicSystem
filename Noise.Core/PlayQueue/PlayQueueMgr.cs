@@ -315,33 +315,17 @@ namespace Noise.Core.PlayQueue {
 
 		public void RemoveTrack( PlayQueueTrack track ) {
 			if( track != null ) {
-				if( track.Track !=null ) {
-					var	queuedTrack= mPlayQueue.Find( item => item.Track != null && item.Track.DbId == track.Track.DbId );
+				var	queuedTrack= mPlayQueue.Find( item => item.Uid.Equals( track.Uid ));
 
-					if( queuedTrack != null ) {
-						mPlayQueue.Remove(  queuedTrack );
-						mLog.RemovedTrack( queuedTrack );
-					}
-
-					queuedTrack= mPlayHistory.Find( item => item.Track != null && item.Track.DbId == track.Track.DbId );
-
-					if( queuedTrack != null ) {
-						mPlayHistory.Remove(  queuedTrack );
-					}
+				if( queuedTrack != null ) {
+					mPlayQueue.Remove(  queuedTrack );
+					mLog.RemovedTrack( queuedTrack );
 				}
-				else if( track.Stream != null ) {
-					var	queuedTrack= mPlayQueue.Find( item => item.Stream != null && item.Stream.DbId == track.Stream.DbId );
 
-					if( queuedTrack != null ) {
-						mPlayQueue.Remove(  queuedTrack );
-						mLog.RemovedTrack( queuedTrack );
-					}
+				queuedTrack= mPlayHistory.Find( item => item.Track != null && item.Track.DbId == track.Track.DbId );
 
-					queuedTrack= mPlayHistory.Find( item => item.Stream != null && item.Stream.DbId == track.Stream.DbId );
-
-					if( queuedTrack != null ) {
-						mPlayHistory.Remove(  queuedTrack );
-					}
+				if( queuedTrack != null ) {
+					mPlayHistory.Remove(  queuedTrack );
 				}
 
 				FirePlayQueueChanged();
