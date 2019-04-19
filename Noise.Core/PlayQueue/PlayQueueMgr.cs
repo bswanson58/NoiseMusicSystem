@@ -300,7 +300,14 @@ namespace Noise.Core.PlayQueue {
 			return( retValue );
 		}
 
-		public bool RemoveTrack( long itemId ) {
+	    public void PromoteTrackFromStrategy( PlayQueueTrack track ) {
+            var queuedTrack = mPlayQueue.FirstOrDefault( t => t.Uid.Equals( track.Uid ));
+
+            queuedTrack?.PromoteStrategy();
+            FirePlayQueueChanged();
+	    }
+
+	    public bool RemoveTrack( long itemId ) {
 			var retValue = false;
 			var track = mPlayQueue.FirstOrDefault( item => item.Uid == itemId );
 
