@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -23,6 +24,7 @@ namespace Noise.Infrastructure.Dto {
 		}
 	}
 
+    [DebuggerDisplay("Library = {" + nameof(LibraryName) + "}")]
 	public class LibraryConfiguration {
 		private string				mConfigurationPath;
 		public	long				LibraryId { get; set; }
@@ -32,7 +34,12 @@ namespace Noise.Infrastructure.Dto {
 		public	string				DatabaseUser { get; set; }
 		public	string				DatabasePassword { get; set; }
 		public	bool				IsDefaultLibrary { get; set; }
+        public  bool                IsMetadataInPlace { get; set; }
 		public	List<MediaLocation>	MediaLocations { get; set; }
+
+        public string               BlobDatabasePath => Path.Combine( mConfigurationPath, Constants.BlobDatabaseDirectory );
+        public string               LibraryDatabasePath => Path.Combine( mConfigurationPath, Constants.LibraryDatabaseDirectory );
+        public string               SearchDatabasePath => Path.Combine( mConfigurationPath, Constants.SearchDatabaseDirectory );
 
 		public LibraryConfiguration() {
 			LibraryId = DatabaseIdentityProvider.Current.NewIdentityAsLong();
@@ -44,6 +51,7 @@ namespace Noise.Infrastructure.Dto {
 			DatabaseServer = "localhost";
 			DatabaseUser = string.Empty;
 			DatabasePassword = string.Empty;
+            IsMetadataInPlace = false;
 		}
 
 		public static LibraryConfiguration LoadConfiguration( string fromPath ) {
@@ -52,11 +60,9 @@ namespace Noise.Infrastructure.Dto {
 			var retValue = serializer.ReadObject( stream ) as LibraryConfiguration;
 			stream.Close();
 
-			if( retValue != null ) {
-				retValue.SetConfigurationPath( Path.GetDirectoryName( fromPath ));
-			}
+            retValue?.SetConfigurationPath( Path.GetDirectoryName( fromPath ));
 
-			return( retValue );
+            return( retValue );
 		}
 
 		public void SetConfigurationPath( string path ) {
@@ -73,19 +79,7 @@ namespace Noise.Infrastructure.Dto {
 			SetConfigurationPath( Path.GetDirectoryName( toPath ));
 		}
 
-		public string BlobDatabasePath {
-			get{ return( Path.Combine( mConfigurationPath, Constants.BlobDatabaseDirectory )); }
-		}
-
-		public string LibraryDatabasePath {
-			get{ return( Path.Combine( mConfigurationPath, Constants.LibraryDatabaseDirectory )); }
-		}
-
-		public string SearchDatabasePath {
-			get{ return( Path.Combine( mConfigurationPath, Constants.SearchDatabaseDirectory )); }
-		}
-
-		public override string ToString() {
+        public override string ToString() {
 			var mediaPath = MediaLocations.Any() ? MediaLocations[0].Path : string.Empty;
 
 			return( string.Format( "Library \"{0}\", Database \"{1}\", Media \"{2}\"", LibraryName, DatabaseName, mediaPath ));
