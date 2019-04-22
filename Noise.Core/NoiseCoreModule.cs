@@ -73,7 +73,7 @@ namespace Noise.Core {
 			mContainer.RegisterType<IPipelineStep, ArtworkProvidersPipelineStep>( "ArtworkProvidersPipelineStep" );
 			mContainer.RegisterType<IPipelineStep, SidecarProvidersPipelineStep>( "SidecarProvidersPipelineStep" );
 			mContainer.RegisterType<IPipelineStep, InfoProvidersPipelineStep>( "InfoProvidersPipelineStep" );
-			mContainer.RegisterType<IPipelineStep, DetermineArtistPipelineStep>( "DetermineAtistPipelineStep" );
+			mContainer.RegisterType<IPipelineStep, DetermineArtistPipelineStep>( "DetermineArtistPipelineStep" );
 			mContainer.RegisterType<IPipelineStep, DetermineAlbumPipelineStep>( "DetermineAlbumPipelineStep" );
 			mContainer.RegisterType<IPipelineStep, DetermineTrackPipelineStep>( "DetermineTrackNamePipelineStep" );
 			mContainer.RegisterType<IPipelineStep, DetermineVolumePipelineStep>( "DetermineVolumePipelineStep" );

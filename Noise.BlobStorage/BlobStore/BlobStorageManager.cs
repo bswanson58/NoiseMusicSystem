@@ -24,10 +24,10 @@ namespace Noise.BlobStorage.BlobStore {
 			mBlobResolver = resolver;
 		}
 
-		public bool Initialize( string rootStoragePath ) {
+		public bool Initialize( ILibraryConfiguration libraryConfiguration ) {
 			Condition.Requires( mBlobResolver ).IsNotNull();
 
-			mStoragePath = rootStoragePath;
+			mStoragePath = libraryConfiguration.Current?.BlobDatabasePath;
 
 			return( true );
 		}

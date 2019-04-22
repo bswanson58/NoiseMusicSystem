@@ -107,7 +107,7 @@ namespace Noise.RavenDatabase.Support {
 		}
 
 		private void InitBlobStorage() {
-			mBlobStorageManager.Initialize( mLibraryConfiguration.Current.BlobDatabasePath );
+			mBlobStorageManager.Initialize( mLibraryConfiguration );
 
 			if(!mBlobStorageManager.IsOpen ) {
 				if(!mBlobStorageManager.OpenStorage()) {

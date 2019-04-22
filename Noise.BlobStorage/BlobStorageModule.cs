@@ -15,6 +15,7 @@ namespace Noise.BlobStorage {
             mContainer.RegisterType<IBlobStorageProvider, BlobStorageProvider>( new HierarchicalLifetimeManager());
 			mContainer.RegisterType<IBlobStorageResolver, BlobStorageResolver>();
 			mContainer.RegisterType<IBlobStorageManager, BlobStorageManager>();
+            mContainer.RegisterType<IInPlaceStorageManager, InPlaceStorageManager>();
 		}
 	}
 }

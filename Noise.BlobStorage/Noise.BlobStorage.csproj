@@ -164,6 +164,8 @@
     <Compile Include="BlobStore\BlobStorageManager.cs" />
     <Compile Include="BlobStore\BlobStorageProvider.cs" />
     <Compile Include="BlobStore\BlobStorageResolver.cs" />
+    <Compile Include="BlobStore\InPlaceStorageManager.cs" />
+    <Compile Include="BlobStore\InPlaceStorageProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

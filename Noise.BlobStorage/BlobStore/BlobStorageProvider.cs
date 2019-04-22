@@ -9,15 +9,17 @@ namespace Noise.BlobStorage.BlobStore {
         private readonly IEventAggregator       mEventAggregator;
         private readonly INoiseLog      	    mLog;
         private readonly IBlobStorageManager	mBlobStorageManager;
+        private readonly IInPlaceStorageManager mInPlaceStorageManager;
         private readonly ILibraryConfiguration  mLibraryConfiguration;
 
         public  IBlobStorage                    BlobStorage => BlobStorageManager?.GetStorage();
 
-        public BlobStorageProvider( ILibraryConfiguration libraryConfiguration, IEventAggregator eventAggregator,
+        public BlobStorageProvider( ILibraryConfiguration libraryConfiguration, IEventAggregator eventAggregator, IInPlaceStorageManager inPlaceStorageManager,
                                     IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver, INoiseLog log ) {
             mEventAggregator = eventAggregator;
             mLog = log;
             mLibraryConfiguration = libraryConfiguration;
+            mInPlaceStorageManager = inPlaceStorageManager;
             mBlobStorageManager = blobStorageManager;
             mBlobStorageManager.SetResolver( storageResolver );
 
@@ -30,7 +32,7 @@ namespace Noise.BlobStorage.BlobStore {
             }
 
             if( mLibraryConfiguration.Current != null ) {
-                BlobStorageManager.Initialize( mLibraryConfiguration.Current.BlobDatabasePath );
+                BlobStorageManager.Initialize( mLibraryConfiguration );
 
                 if(!BlobStorageManager.IsOpen ) {
                     if(!BlobStorageManager.OpenStorage()) {
@@ -52,7 +54,7 @@ namespace Noise.BlobStorage.BlobStore {
                 var retValue = default( IBlobStorageManager );
 
                 if( mLibraryConfiguration.Current != null ) {
-                    retValue = mLibraryConfiguration.Current.IsMetadataInPlace ? mBlobStorageManager : mBlobStorageManager;
+                    retValue = mLibraryConfiguration.Current.IsMetadataInPlace ? mInPlaceStorageManager : mBlobStorageManager;
                 }
 
                 return retValue;
