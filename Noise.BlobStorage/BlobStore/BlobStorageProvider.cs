@@ -11,6 +11,8 @@ namespace Noise.BlobStorage.BlobStore {
         private readonly IBlobStorageManager	mBlobStorageManager;
         private readonly ILibraryConfiguration  mLibraryConfiguration;
 
+        public  IBlobStorage                    BlobStorage => BlobStorageManager?.GetStorage();
+
         public BlobStorageProvider( ILibraryConfiguration libraryConfiguration, IEventAggregator eventAggregator,
                                     IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver, INoiseLog log ) {
             mEventAggregator = eventAggregator;

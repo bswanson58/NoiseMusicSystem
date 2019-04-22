@@ -13,7 +13,7 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
         private readonly IBlobStorageProvider   mBlobStorageProvider;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 
-        public IBlobStorageManager              BlobStorageManager => mBlobStorageProvider.BlobStorageManager;
+        public IBlobStorage                     BlobStorage => mBlobStorageProvider.BlobStorage;
 
 		public ContextProvider( ILibraryConfiguration libraryConfiguration, ILogDatabase log, IBlobStorageProvider blobStorageProvider ) {
 			mLog = log;

@@ -2,7 +2,7 @@
 
 namespace Noise.EntityFrameworkDatabase.Interfaces {
 	public interface IContextProvider {
-		IBlobStorageManager	BlobStorageManager { get; }
+		IBlobStorage    	BlobStorage { get; }
 
 		IDbContext			CreateContext();
 	}
