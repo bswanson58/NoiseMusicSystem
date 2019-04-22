@@ -185,7 +185,8 @@
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
+						    <ColumnDefinition Width="Auto" />
+						    <ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
@@ -215,9 +216,13 @@
 
 						<Button Grid.Column="6" Style="{StaticResource QueueButtonStyle}"
 								Command="{Binding Path=Dequeue}" Content="✖" ToolTip="Remove track from queue" />
+                        
+                        <Button Grid.Column="7" Style="{StaticResource QueueButtonStyle}"
+                                Visibility="{Binding IsStrategyQueued, Converter={StaticResource CollapseIfFalse}}"
+                                Command="{Binding Path=PromoteSuggestion}" Content="{StaticResource Path_PromoteSuggestion}" Padding="5" ToolTip="Promote Suggestion"/>
 
 						<!--  Favorite and Rating  -->
-						<StackPanel Grid.Column="8" HorizontalAlignment="Right" Orientation="Horizontal">
+						<StackPanel Grid.Column="9" HorizontalAlignment="Right" Orientation="Horizontal">
 							<CheckBox Width="15" Height="15" Margin="0,0,4,2" VerticalAlignment="Center"
 								  IsChecked="{Binding Path=UiIsFavorite, Mode=TwoWay}"
 								  Style="{StaticResource FavoriteCheckBoxStyle}" />
@@ -238,7 +243,7 @@
 					<Setter TargetName="AlbumName" Property="FontWeight" Value="Bold" />
 					<Setter TargetName="TrackDuration" Property="FontWeight" Value="Bold" />
 				</DataTrigger>
-				<DataTrigger Binding="{Binding Path=QueuedTrack.IsStrategyQueued, Mode=OneTime}" Value="true">
+				<DataTrigger Binding="{Binding Path=IsStrategyQueued}" Value="true">
 					<Setter TargetName="TrackName" Property="FontStyle" Value="Italic" />
 				</DataTrigger>
 				<DataTrigger Binding="{Binding Path=IsDeleting}" Value="true">

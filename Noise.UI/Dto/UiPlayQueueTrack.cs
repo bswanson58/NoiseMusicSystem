@@ -10,10 +10,11 @@ namespace Noise.UI.Dto {
 		private readonly Action<UiPlayQueueTrack>	mPlayNow;
 		private readonly Action<UiPlayQueueTrack>	mPlayFromHere;
 		private readonly Action<UiPlayQueueTrack>	mDisplayInfo;
+        private readonly Action<UiPlayQueueTrack>   mPromoteSuggestion;
 
 		public UiPlayQueueTrack( PlayQueueTrack track,
 								 Action<UiPlayQueueTrack> onMoveUp, Action<UiPlayQueueTrack> onMoveDown, Action<UiPlayQueueTrack> onDisplayInfo,
-								 Action<UiPlayQueueTrack> onDequeue, Action<UiPlayQueueTrack> onPlay, Action<UiPlayQueueTrack> onPlayFromHere ) {
+								 Action<UiPlayQueueTrack> onDequeue, Action<UiPlayQueueTrack> onPlay, Action<UiPlayQueueTrack> onPlayFromHere, Action<UiPlayQueueTrack> onPromoteSuggestion ) {
 			mTrack = track;
 			mMoveUp = onMoveUp;
 			mMoveDown = onMoveDown;
@@ -21,6 +22,7 @@ namespace Noise.UI.Dto {
 			mDequeue = onDequeue;
 			mPlayNow = onPlay;
 			mPlayFromHere = onPlayFromHere;
+            mPromoteSuggestion = onPromoteSuggestion;
 
             if( track?.Track != null ) {
                 UiIsFavorite = track.Track.IsFavorite;
@@ -35,8 +37,12 @@ namespace Noise.UI.Dto {
             }
 		}
 
-		public PlayQueueTrack QueuedTrack => ( mTrack );
+		public PlayQueueTrack   QueuedTrack => ( mTrack );
+        public bool             IsStrategyQueued => QueuedTrack.IsStrategyQueued;
 
+        public void NotifyPlayStrategyChanged() {
+            RaisePropertyChanged( () => IsStrategyQueued );
+        }
 	    public bool IsDeleting {
 			get{ return( Get( () => IsDeleting )); }
 			set{ Set( () => IsDeleting, value ); }
@@ -79,5 +85,9 @@ namespace Noise.UI.Dto {
 		public void Execute_PlayFromHere() {
 		    mPlayFromHere?.Invoke( this );
 		}
+
+        public void Execute_PromoteSuggestion() {
+            mPromoteSuggestion?.Invoke( this );
+        }
 	}
 }

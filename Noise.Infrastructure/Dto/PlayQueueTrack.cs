@@ -66,6 +66,10 @@ namespace Noise.Infrastructure.Dto {
 			StrategySource = eStrategySource.User;
 		}
 
+        public void PromoteStrategy() {
+            StrategySource = eStrategySource.User;
+        }
+
 		public string FilePath {
 			get{ return( mFilePath.Value ); }
 		}
