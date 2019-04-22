@@ -1,6 +1,4 @@
-﻿using Noise.Infrastructure.Interfaces;
-
-namespace Noise.BlobStorage.BlobStore {
+﻿namespace Noise.Infrastructure.Interfaces {
 	public interface IBlobStorageManager {
 		void			SetResolver( IBlobStorageResolver resolver );
 		bool			Initialize( string rootStoragePath );
