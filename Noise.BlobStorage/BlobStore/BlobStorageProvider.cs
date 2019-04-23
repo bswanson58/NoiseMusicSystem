@@ -3,7 +3,6 @@ using Caliburn.Micro;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Interfaces;
 
-
 namespace Noise.BlobStorage.BlobStore {
     class BlobStorageProvider : IBlobStorageProvider, IHandle<Events.LibraryChanged> {
         private readonly IEventAggregator       mEventAggregator;
@@ -36,6 +35,7 @@ namespace Noise.BlobStorage.BlobStore {
                     mBlobStorageManager.CloseStorage();
                 }
             }
+
             if( mInPlaceStorageManager != null ) {
                 if( mInPlaceStorageManager.IsOpen ) {
                     mInPlaceStorageManager.CloseStorage();
