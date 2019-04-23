@@ -1,6 +1,8 @@
 ﻿using System.IO;
 
 namespace Noise.Infrastructure.Interfaces {
+    public interface IInPlaceStorage : IBlobStorage { }
+
 	public interface IBlobStorage {
 		bool	BlobExists( string blobId );
 

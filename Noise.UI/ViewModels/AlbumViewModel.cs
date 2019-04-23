@@ -181,7 +181,7 @@ namespace Noise.UI.ViewModels {
 			var	retValue = new ImageScrubberItem( 0, mUnknownImage, 0 );
 			var cover = mAlbumArtworkProvider.GetAlbumCover( forAlbum );
 
-			if( cover != null ) {
+			if( cover?.Image != null ) {
 				retValue = new ImageScrubberItem( cover.DbId, ByteImageConverter.CreateBitmap( cover.Image ), cover.Rotation );
 			}
 

@@ -2,33 +2,32 @@
 
 namespace Noise.BlobStorage.BlobStore {
     class InPlaceStorageManager : IInPlaceStorageManager {
-        public void SetResolver( IBlobStorageResolver resolver ) {
-            throw new System.NotImplementedException();
+        private readonly IBlobStorage   mStorage;
+
+        public InPlaceStorageManager( IInPlaceStorage storage ) {
+            mStorage = storage;
         }
 
         public bool Initialize( ILibraryConfiguration libraryConfiguration ) {
-            throw new System.NotImplementedException();
+            return true;
         }
 
         public bool OpenStorage() {
-            throw new System.NotImplementedException();
+            return true;
         }
 
         public bool CreateStorage() {
-            throw new System.NotImplementedException();
+            return true;
         }
 
-        public void CloseStorage() {
-            throw new System.NotImplementedException();
-        }
+        public void SetResolver( IBlobStorageResolver resolver ) { }
+        public void CloseStorage() { }
+        public void DeleteStorage() { }
 
-        public void DeleteStorage() {
-            throw new System.NotImplementedException();
-        }
+        public bool IsOpen => true;
 
-        public bool IsOpen { get; }
         public IBlobStorage GetStorage() {
-            throw new System.NotImplementedException();
+            return mStorage;
         }
     }
 }

@@ -1,82 +1,124 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.BlobStorage.BlobStore {
-    class InPlaceStorageProvider : IBlobStorage {
+    class InPlaceStorageProvider : IInPlaceStorage {
+        private readonly INoiseLog		        mLog;
+        private readonly IStorageFileProvider	mStorageFileProvider;
+        private readonly IStorageFolderSupport	mStorageFolderSupport;
+
+        public InPlaceStorageProvider( IStorageFileProvider storageFileProvider, IStorageFolderSupport storageFolderSupport, INoiseLog log ) {
+            mLog = log;
+            mStorageFileProvider = storageFileProvider;
+            mStorageFolderSupport = storageFolderSupport;
+        }
+
+        private string ResolvePath( long blobId ) {
+            var retValue = string.Empty;
+            var file = mStorageFileProvider.GetFileForMetadata( blobId );
+
+            if( file != null ) {
+                retValue = mStorageFolderSupport.GetPath( file );
+            }
+
+            return retValue;
+        }
+
         public bool BlobExists( string blobId ) {
-            throw new System.NotImplementedException();
+            return true;
         }
 
-        public void Insert( long blobId, string fromFile ) {
-            throw new System.NotImplementedException();
-        }
-
-        public void Insert( long blobId, Stream blobData ) {
-            throw new System.NotImplementedException();
-        }
-
+        public void Insert( long blobId, string fromFile ) { }
+        public void Insert( long blobId, Stream blobData ) { }
         public void Insert( string blobId, string data ) {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
-
         public void Insert<T>( string blobId, T data ) {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public void Store( long blobId, string fromFile ) {
-            throw new System.NotImplementedException();
-        }
-
-        public void Store( long blobId, Stream blobData ) {
-            throw new System.NotImplementedException();
-        }
-
+        public void Store( long blobId, string fromFile ) { }
+        public void Store( long blobId, Stream blobData ) { }
         public void Store<T>( string blobId, T data ) {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
-
         public void StoreText( long blobId, string text ) {
-            throw new System.NotImplementedException();
         }
-
         public void StoreText( string blobId, string text ) {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public void Delete( long blobId ) {
-            throw new System.NotImplementedException();
-        }
-
+        public void Delete( long blobId ) { }
         public void Delete( string blobId ) {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public Stream Retrieve( long blobId ) {
-            throw new System.NotImplementedException();
+            var blobPath = ResolvePath( blobId );
+            var retValue = default( Stream );
+
+            if(!string.IsNullOrWhiteSpace( blobPath )) {
+                if( File.Exists( blobPath )) {
+                    retValue = new FileStream( blobPath, FileMode.Open, FileAccess.Read );
+                }
+                else {
+                    mLog.LogMessage( $"Attempt to retrieve non-existent blob item: { blobId }" );
+
+                    retValue = new MemoryStream();
+//				throw new BlobStorageException( blobId, blobPath, "Attempt to retrieve nonexistent item." );
+                }
+            }
+
+            return( retValue );
         }
 
         public Stream Retrieve( string blobId ) {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public byte[] RetrieveBytes( long blobId ) {
-            throw new System.NotImplementedException();
+            byte[]	retValue = null;
+
+            using( var stream = Retrieve( blobId )) {
+                if( stream != null ) {
+                    retValue = new byte[stream.Length];
+
+                    stream.Read( retValue, 0, retValue.Length );
+                    stream.Close();
+                }
+            }
+			
+
+            return( retValue );
         }
 
         public string RetrieveText( long blobId ) {
-            throw new System.NotImplementedException();
+            var		retValue = string.Empty;
+
+            using( var stream = Retrieve( blobId )) {
+                if( stream != null ) {
+                    using( var reader = new StreamReader( stream )) {
+                        retValue = reader.ReadToEnd();
+
+                        reader.Close();
+                    }
+
+                    stream.Close();
+                }
+            }
+
+            return( retValue );
         }
 
         public string RetrieveText( string blobId ) {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public T RetrieveObject<T>( string blobId ) {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public void DeleteStorage() {
-            throw new System.NotImplementedException();
-        }
+        public void DeleteStorage() { }
     }
 }

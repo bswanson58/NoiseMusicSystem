@@ -8,27 +8,38 @@ namespace Noise.BlobStorage.BlobStore {
     class BlobStorageProvider : IBlobStorageProvider, IHandle<Events.LibraryChanged> {
         private readonly IEventAggregator       mEventAggregator;
         private readonly INoiseLog      	    mLog;
-        private readonly IBlobStorageManager	mBlobStorageManager;
-        private readonly IInPlaceStorageManager mInPlaceStorageManager;
         private readonly ILibraryConfiguration  mLibraryConfiguration;
+        private readonly IBlobStorageResolver   mStorageResolver;
+        private IBlobStorageManager             mBlobStorageManager;
+        private IInPlaceStorageManager          mInPlaceStorageManager;
+
+        private readonly Func<IBlobStorageManager>      mBlobStorageFactory;
+        private readonly Func<IInPlaceStorageManager>   mInPlaceStorageFactory;
 
         public  IBlobStorage                    BlobStorage => BlobStorageManager?.GetStorage();
 
-        public BlobStorageProvider( ILibraryConfiguration libraryConfiguration, IEventAggregator eventAggregator, IInPlaceStorageManager inPlaceStorageManager,
-                                    IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver, INoiseLog log ) {
+        public BlobStorageProvider( ILibraryConfiguration libraryConfiguration, IEventAggregator eventAggregator, INoiseLog log,
+                                    Func<IInPlaceStorageManager> inPlaceStorageManager, Func<IBlobStorageManager> blobStorageManager, IBlobStorageResolver storageResolver ) {
             mEventAggregator = eventAggregator;
             mLog = log;
             mLibraryConfiguration = libraryConfiguration;
-            mInPlaceStorageManager = inPlaceStorageManager;
-            mBlobStorageManager = blobStorageManager;
-            mBlobStorageManager.SetResolver( storageResolver );
+            mInPlaceStorageFactory = inPlaceStorageManager;
+            mBlobStorageFactory = blobStorageManager;
+            mStorageResolver = storageResolver;
 
             mEventAggregator.Subscribe( this );
         }
 
         public void Handle( Events.LibraryChanged args ) {
-            if( mBlobStorageManager.IsOpen ) {
-                mBlobStorageManager.CloseStorage();
+            if( mBlobStorageManager != null ) {
+                if( mBlobStorageManager.IsOpen ) {
+                    mBlobStorageManager.CloseStorage();
+                }
+            }
+            if( mInPlaceStorageManager != null ) {
+                if( mInPlaceStorageManager.IsOpen ) {
+                    mInPlaceStorageManager.CloseStorage();
+                }
             }
 
             if( mLibraryConfiguration.Current != null ) {
@@ -49,12 +60,30 @@ namespace Noise.BlobStorage.BlobStore {
             }
         }
 
-        public IBlobStorageManager  BlobStorageManager {
+        private IBlobStorageManager GetBlobStorageManager() {
+            if( mBlobStorageManager == null ) {
+                mBlobStorageManager = mBlobStorageFactory();
+                mBlobStorageManager.SetResolver( mStorageResolver );
+            }
+
+            return mBlobStorageManager;
+        }
+
+        private IBlobStorageManager GetInPlaceStorageManager() {
+            if( mInPlaceStorageManager == null ) {
+                mInPlaceStorageManager = mInPlaceStorageFactory();
+                mInPlaceStorageManager.SetResolver( mStorageResolver );
+            }
+
+            return mInPlaceStorageManager;
+        }
+
+        public IBlobStorageManager BlobStorageManager {
             get {
                 var retValue = default( IBlobStorageManager );
 
                 if( mLibraryConfiguration.Current != null ) {
-                    retValue = mLibraryConfiguration.Current.IsMetadataInPlace ? mInPlaceStorageManager : mBlobStorageManager;
+                    retValue = mLibraryConfiguration.Current.IsMetadataInPlace ? GetInPlaceStorageManager() : GetBlobStorageManager();
                 }
 
                 return retValue;
