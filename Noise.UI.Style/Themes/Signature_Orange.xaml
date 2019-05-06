@@ -3,9 +3,14 @@
 					xmlns:Xaml="clr-namespace:ReusableBits.Ui.Xaml;assembly=ReusableBits.Ui">
 
     <Color x:Key="SignatureColor">#FFEA6500</Color>
-    <SolidColorBrush x:Key="SignatureBrush" Color="{StaticResource SignatureColor}"/>
+    <SolidColorBrush x:Key="SignatureSolidBrush" Color="{StaticResource SignatureColor}"/>
 
     <SolidColorBrush x:Key="SignatureHoverBrush" Color="#80EA6500"/>
+
+    <LinearGradientBrush x:Key="SignatureBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="{StaticResource SignatureColor}" Offset="0.3" />
+        <GradientStop Color="#FF804020" Offset="0.95" />
+    </LinearGradientBrush>
 
     <Xaml:RelativeColor x:Key="SpectrumAnalyzerBaseColor" BaseColor="{StaticResource SignatureColor}" Luminosity="0.6"/>
     <Xaml:RelativeColor x:Key="SpectrumAnalyzerHoldColor" BaseColor="{StaticResource SignatureColor}" Luminosity="1.4"/>
