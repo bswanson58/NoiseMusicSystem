@@ -62,6 +62,7 @@
                     <ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
                 </i:Interaction.Behaviors>
             </ListBox>
+            <Rectangle Grid.Row="1" Height="1" VerticalAlignment="Top" Fill="{StaticResource RightFadedBrush}" Opacity="0.3" Margin="5,0,150,0"/>
             <Button Grid.Row="1" HorizontalAlignment="Right" Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="New Tag..." Command="{Binding Path=AddTag}"/>
         </Grid>
     </GroupBox>
