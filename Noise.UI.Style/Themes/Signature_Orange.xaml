@@ -8,8 +8,8 @@
     <SolidColorBrush x:Key="SignatureHoverBrush" Color="#80EA6500"/>
 
     <LinearGradientBrush x:Key="SignatureBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="{StaticResource SignatureColor}" Offset="0.3" />
-        <GradientStop Color="#FF804020" Offset="0.95" />
+        <GradientStop Color="{StaticResource SignatureColor}" Offset="0.4" />
+        <GradientStop Color="#FF804020" Offset="1" />
     </LinearGradientBrush>
 
     <Xaml:RelativeColor x:Key="SpectrumAnalyzerBaseColor" BaseColor="{StaticResource SignatureColor}" Luminosity="0.6"/>
