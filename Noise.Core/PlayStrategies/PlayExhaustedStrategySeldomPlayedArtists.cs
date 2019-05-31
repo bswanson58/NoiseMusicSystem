@@ -28,7 +28,7 @@ namespace Noise.Core.PlayStrategies {
 			}
 
 			if( mArtists.Any()) {
-				var artist = mArtists.Skip( NextRandom( mArtists.Count - 1 )).Take( 1 ).FirstOrDefault();
+				var artist = mArtists.Skip( NextRandom( mArtists.Count )).Take( 1 ).FirstOrDefault();
 
 				if( artist != null ) {
 					mArtists.Remove( artist );

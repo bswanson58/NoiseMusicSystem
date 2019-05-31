@@ -38,7 +38,7 @@ namespace Noise.Core.PlayStrategies {
 				}
 
 				if( mTracks.Any()) {
-					var trackIndex = mRandom.Next( mTracks.Count - 1 );
+					var trackIndex = mRandom.Next( mTracks.Count );
 
 					PlayQueueMgr.StrategyAdd( mTracks[trackIndex], retValue );
 				}

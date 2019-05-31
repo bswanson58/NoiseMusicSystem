@@ -46,7 +46,7 @@ namespace Noise.Core.PlayStrategies {
 					if( albumList.List != null ) {
 						var goodList = from album in albumList.List where album.Rating >= 1 select album;
 
-						retValue = RandomTrackFromAlbum( goodList.Skip( NextRandom( artist.AlbumCount - 1 )).Take( 1 ).FirstOrDefault());
+						retValue = RandomTrackFromAlbum( goodList.Skip( NextRandom( artist.AlbumCount )).Take( 1 ).FirstOrDefault());
 
 					}
 				}
@@ -77,7 +77,7 @@ namespace Noise.Core.PlayStrategies {
 												 (!track.Name.ToLower().Contains("talk"))))
 									   select track;
 
-						retValue = goodList.Skip( NextRandom( album.TrackCount - 1 )).Take( 1 ).FirstOrDefault();
+						retValue = goodList.Skip( NextRandom( album.TrackCount )).Take( 1 ).FirstOrDefault();
 					}
 				}
 			}

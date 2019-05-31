@@ -95,7 +95,7 @@ namespace Noise.Core.PlayQueue {
 
 				while(( retValue.Count < count ) &&
 					  ( circuitBreaker < ( count * 2 ))) {
-					var artist = artistList.Skip( NextRandom( artistCount - 1 )).Take( 1 ).FirstOrDefault();
+					var artist = artistList.Skip( NextRandom( artistCount )).Take( 1 ).FirstOrDefault();
 
 					if( artist != null ) {
 						using( var albumList = mAlbumProvider.GetAlbumList( artist ) ) {
@@ -124,7 +124,7 @@ namespace Noise.Core.PlayQueue {
 
 				while(( retValue.Count < count ) &&
 					  ( circuitBreaker < ( count * 3 ))) {
-					var album = albumList.Skip( NextRandom( albumCount - 1 )).Take( 1 ).FirstOrDefault();
+					var album = albumList.Skip( NextRandom( albumCount )).Take( 1 ).FirstOrDefault();
 
 					if( album != null ) {
 						var track = RandomTrackFromAlbum( album );
@@ -150,7 +150,7 @@ namespace Noise.Core.PlayQueue {
 
 			while(( retValue.Count < count ) &&
 				  ( circuitBreaker < ( count * 3 ))) {
-				var track = trackList.Skip( NextRandom( trackList.Count - 1 )).Take( 1 ).FirstOrDefault();
+				var track = trackList.Skip( NextRandom( trackList.Count )).Take( 1 ).FirstOrDefault();
 
 				if(( track != null ) &&
 				   ( retValue.FirstOrDefault( t => t.DbId == track.DbId ) == null ) &&
@@ -175,7 +175,7 @@ namespace Noise.Core.PlayQueue {
 						var minimumTrackDuration = new TimeSpan( 0, 0, 30 );
 						var goodList = from track in trackList.List where track.Rating >= 0 && track.Duration > minimumTrackDuration select track;
 
-						retValue = goodList.Skip( NextRandom( album.TrackCount - 1 )).Take( 1 ).FirstOrDefault();
+						retValue = goodList.Skip( NextRandom( album.TrackCount )).Take( 1 ).FirstOrDefault();
 					}
 				}
 			}

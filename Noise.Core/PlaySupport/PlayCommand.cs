@@ -66,7 +66,7 @@ namespace Noise.Core.PlaySupport {
                     var tracksToQueue = Math.Min( associations.Count, 10 );
 
                     while( associations.Any() && tracksToQueue > 0 ) {
-                        var association = associations.Skip( NextRandom( associations.Count - 1 )).Take( 1 ).FirstOrDefault();
+                        var association = associations.Skip( NextRandom( associations.Count )).Take( 1 ).FirstOrDefault();
 
                         if( association != null ) {
                             var track = mTrackProvider.GetTrack( association.ArtistId );
@@ -100,7 +100,7 @@ namespace Noise.Core.PlaySupport {
 					var		trackList = allTracks.List.Where( t => t.Name.Equals( name, StringComparison.CurrentCultureIgnoreCase )).ToList();
 
 					if( trackList.Any()) {
-						var selectedTrack = trackList.Skip( NextRandom( trackList.Count - 1 )).Take( 1 ).FirstOrDefault();
+						var selectedTrack = trackList.Skip( NextRandom( trackList.Count )).Take( 1 ).FirstOrDefault();
 
 						if( selectedTrack != null ) {
 							retValue.Add( selectedTrack );

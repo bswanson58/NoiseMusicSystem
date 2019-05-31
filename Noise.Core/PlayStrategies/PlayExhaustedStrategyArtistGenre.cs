@@ -44,7 +44,7 @@ namespace Noise.Core.PlayStrategies {
 			var retValue = default( DbTrack );
 
 			if( mArtistList.Any()) {
-				retValue = RandomTrackFromArtist( mArtistList.Skip( NextRandom( mArtistList.Count -1 )).Take( 1 ).FirstOrDefault());				
+				retValue = RandomTrackFromArtist( mArtistList.Skip( NextRandom( mArtistList.Count )).Take( 1 ).FirstOrDefault());				
 			}
 
 			return( retValue );
