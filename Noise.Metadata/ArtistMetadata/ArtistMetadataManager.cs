@@ -6,8 +6,13 @@ using Noise.Metadata.Interfaces;
 using Raven.Client;
 
 namespace Noise.Metadata.ArtistMetadata {
-	public class ArtistMetadataManager : IArtistMetadataManager {
-		private IDocumentStore				mDocumentStore;
+	class ArtistMetadataManager : IArtistMetadataManager {
+        private readonly IArtistArtworkSelector mArtworkSelector;
+		private IDocumentStore				    mDocumentStore;
+
+        public ArtistMetadataManager( IArtistArtworkSelector artworkSelector ) {
+            mArtworkSelector = artworkSelector;
+        }
 
 		public void Initialize( IDocumentStore documentStore ) {
 			mDocumentStore = documentStore;
@@ -34,13 +39,17 @@ namespace Noise.Metadata.ArtistMetadata {
 
 		public Artwork GetArtistArtwork( string forArtist ) {
 			var	retValue = new Artwork( new DbArtwork( Constants.cDatabaseNullOid, ContentType.ArtistPrimaryImage ));
-			var attachment = mDocumentStore.DatabaseCommands.GetAttachment( "artwork/" + forArtist.ToLower());
 
-			if( attachment != null ) {
-				retValue.Image = new byte[attachment.Size];
+            mArtworkSelector.SelectArtwork( forArtist, retValue );
+            if(!retValue.HaveValidImage ) {
+                var attachment = mDocumentStore.DatabaseCommands.GetAttachment( "artwork/" + forArtist.ToLower());
 
-				attachment.Data().Read( retValue.Image, 0, attachment.Size );
-			}
+                if( attachment != null ) {
+                    retValue.Image = new byte[attachment.Size];
+
+                    attachment.Data().Read( retValue.Image, 0, attachment.Size );
+                }
+            }
 
 			return( retValue );
 		}
