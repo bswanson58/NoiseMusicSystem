@@ -8,7 +8,7 @@
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="RightFadedBrush" StartPoint="0,0" EndPoint="1,0">
-        <GradientStop Offset="0.9" Color="{DynamicResource Border}" />
+        <GradientStop Offset="0.9" Color="{DynamicResource BorderLineColor}" />
         <GradientStop Offset="1" Color="Transparent" />
     </LinearGradientBrush>
 
