@@ -54,6 +54,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <ListBox Grid.Row="0" Margin="0,3" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -62,8 +63,22 @@
                     <ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
                 </i:Interaction.Behaviors>
             </ListBox>
-            <Rectangle Grid.Row="1" Height="1" VerticalAlignment="Top" Fill="{StaticResource RightFadedBrush}" Opacity="0.3" Margin="5,0,150,0"/>
-            <Button Grid.Row="1" HorizontalAlignment="Right" Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="New Tag..." Command="{Binding Path=AddTag}"/>
+
+            <Rectangle Grid.Row="1" Margin="3,0,3,5" Height="1" Fill="{StaticResource DoubleFadedBrush}" Opacity="0.3" />
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="New Tag..." Command="{Binding Path=AddTag}"/>
+
+                <Button Grid.Column="2" Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="Export Tags" Command="{Binding Path=ExportTags}"/>
+                <Button Grid.Column="3" Margin="5" Style="{StaticResource GeneralButtonStyle}" Content="Import Tags" Command="{Binding Path=ImportTags}"/>
+            </Grid>
         </Grid>
     </GroupBox>
 </UserControl>

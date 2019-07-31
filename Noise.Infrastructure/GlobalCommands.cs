@@ -12,5 +12,6 @@ namespace Noise.Infrastructure {
 
 		public	static CompositeCommand ImportFavorites = new CompositeCommand();
 		public	static CompositeCommand ImportRadioStreams = new CompositeCommand();
+        public  static CompositeCommand ImportUserTags = new CompositeCommand();
 	}
 }

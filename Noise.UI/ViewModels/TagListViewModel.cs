@@ -9,6 +9,7 @@ using Noise.Infrastructure.Interfaces;
 using Noise.UI.Behaviours;
 using Noise.UI.Dto;
 using Noise.UI.Logging;
+using Noise.UI.Support;
 using ReusableBits;
 using ReusableBits.Mvvm.ViewModelSupport;
 
@@ -22,7 +23,9 @@ namespace Noise.UI.ViewModels {
         private readonly ITagProvider                       mTagProvider;
         private readonly IPlayCommand                       mPlayCommand;
         private readonly IUserTagManager                    mTagManager;
+        private readonly IDialogService                     mDialogService;
         private readonly IUiLog                             mLog;
+        private readonly IDataExchangeManager               mDataExchangeManager;
         private readonly InteractionRequest<TagEditRequest> mTagAddRequest;
         private readonly InteractionRequest<TagEditRequest> mTagEditRequest;
         private TaskHandler<IEnumerable<UiTag>>             mTaskHandler;
@@ -33,10 +36,12 @@ namespace Noise.UI.ViewModels {
         public IInteractionRequest          TagEditRequest => mTagEditRequest;
 
         public TagListViewModel( IUserTagManager tagManager, ITagProvider tagProvider, IDatabaseInfo databaseInfo, IPlayCommand playCommand,
-                                 IEventAggregator eventAggregator, IUiLog log ) {
+                                 IDataExchangeManager exchangeManager, IDialogService dialogService, IEventAggregator eventAggregator, IUiLog log ) {
             mTagManager = tagManager;
             mTagProvider = tagProvider;
             mPlayCommand = playCommand;
+            mDataExchangeManager = exchangeManager;
+            mDialogService = dialogService;
             mEventAggregator = eventAggregator;
             mLog = log;
             mTagAddRequest = new InteractionRequest<TagEditRequest>();
@@ -93,10 +98,14 @@ namespace Noise.UI.ViewModels {
         private void SetTags( IEnumerable<UiTag> list ) {
             TagList.Clear();
             TagList.AddRange( list );
+
+            RaiseCanExecuteChangedEvent( "CanExecute_ExportTags" );
         }
 
         private void ClearTags() {
             TagList.Clear();
+
+            RaiseCanExecuteChangedEvent( "CanExecute_ExportTags" );
         }
 
         private void OnPlayTag( UiTag tag ) {
@@ -144,6 +153,22 @@ namespace Noise.UI.ViewModels {
 
                 LoadTags();
             }
+        }
+
+        public void Execute_ExportTags() {
+            if( mDialogService.SaveFileDialog( "Export Tags", Constants.ExportFileExtension, "Export Tags|*" + Constants.ExportFileExtension, out var fileName ) == true ) {
+                mDataExchangeManager.ExportUserTags( fileName );
+            }
+        }
+
+        public bool CanExecute_ExportTags() {
+            return( TagList.Count > 0 );
+        }
+
+        public void Execute_ImportTags() {
+            GlobalCommands.ImportUserTags.Execute( null );
+
+            LoadTags();
         }
     }
 }

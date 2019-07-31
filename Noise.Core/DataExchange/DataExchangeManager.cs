@@ -1,11 +1,13 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml.Linq;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.DataExchange {
 	internal enum eExchangeType {
 		Favorites,
-		Streams
+		Streams,
+        UserTags
 	}
 
 	internal class DataExchangeManager : IDataExchangeManager {
@@ -13,15 +15,21 @@ namespace Noise.Core.DataExchange {
 		private readonly IAlbumProvider				mAlbumProvider;
 		private readonly ITrackProvider				mTrackProvider;
 		private readonly IInternetStreamProvider	mStreamProvider;
+        private readonly IUserTagManager            mTagManager;
+        private readonly ITagProvider               mTagProvider;
+        private readonly ITagAssociationProvider    mAssociationProvider;
 		private readonly IRatings					mRatings;
 		private readonly INoiseLog					mLog;
 
 		public DataExchangeManager( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IInternetStreamProvider streamProvider,
-									IRatings ratings, INoiseLog log ) {
+									IUserTagManager tagManager, ITagProvider tagProvider, ITagAssociationProvider associationProvider, IRatings ratings, INoiseLog log ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
 			mStreamProvider = streamProvider;
+            mTagManager = tagManager;
+            mTagProvider = tagProvider;
+            mAssociationProvider = associationProvider;
 			mRatings = ratings;
 			mLog = log;
 		}
@@ -34,13 +42,23 @@ namespace Noise.Core.DataExchange {
 			return( Export( eExchangeType.Streams, fileName ));
 		}
 
+        public bool ExportUserTags( string fileName ) {
+            return Export( eExchangeType.UserTags, fileName );
+        }
+
 		private bool Export( eExchangeType exportType, string fileName ) {
 			var retValue = false;
-			var	exporter = CreateExporter( exportType );
 
-			if( exporter != null ) {
-				retValue = exporter.Export( fileName );
-			}
+            try {
+                var	exporter = CreateExporter( exportType );
+
+                if( exporter != null ) {
+                    retValue = exporter.Export( fileName );
+                }
+            }
+            catch( Exception ex ) {
+                mLog.LogException( $"Exporting {exportType} to '{fileName}'", ex );
+            }
 
 			return( retValue );
 		}
@@ -48,30 +66,39 @@ namespace Noise.Core.DataExchange {
 		public int Import( string fileName, bool eliminateDuplicates ) {
 			var retValue = 0;
 
-			if((!string.IsNullOrWhiteSpace( fileName )) &&
-			   ( File.Exists( fileName ))) {
-				var importDoc = XDocument.Load( fileName );
+            try {
+                if((!string.IsNullOrWhiteSpace( fileName )) &&
+                   ( File.Exists( fileName ))) {
+                    var importDoc = XDocument.Load( fileName );
 
-				foreach( var listNode in importDoc.Elements()) {
-					if( listNode.Name.LocalName.Equals( ExchangeConstants.cStreamList )) {
-						retValue += Import( eExchangeType.Streams, listNode, eliminateDuplicates  );
-					}
-					else if( listNode.Name.LocalName.Equals( ExchangeConstants.cFavoriteList )) {
-						retValue += Import( eExchangeType.Favorites, listNode, eliminateDuplicates  );
-					}
-				}
-			}
+                    foreach( var listNode in importDoc.Elements()) {
+                        if( listNode.Name.LocalName.Equals( ExchangeConstants.cStreamList )) {
+                            retValue += Import( eExchangeType.Streams, listNode, eliminateDuplicates  );
+                        }
+                        else if( listNode.Name.LocalName.Equals( ExchangeConstants.cFavoriteList )) {
+                            retValue += Import( eExchangeType.Favorites, listNode, eliminateDuplicates  );
+                        }
+                        else if( listNode.Name.LocalName.Equals( ExchangeConstants.cTagsList )) {
+                            retValue += Import( eExchangeType.UserTags, listNode, eliminateDuplicates  );
+                        }
+                    }
+                }
+            }
+            catch( Exception ex ) {
+                mLog.LogException( $"Importing '{fileName}'", ex );
+            }
 
 			return( retValue );
 		}
 
 		private int Import( eExchangeType importType, XElement rootNode, bool eliminateDuplicates ) {
 			var retValue = 0;
-			var importer = CreateImporter( importType );
 
-			if( importer != null ) {
-				retValue = importer.Import( rootNode, eliminateDuplicates );
-			}
+            var importer = CreateImporter( importType );
+
+            if( importer != null ) {
+                retValue = importer.Import( rootNode, eliminateDuplicates );
+            }
 
 			return( retValue );
 		}
@@ -87,6 +114,10 @@ namespace Noise.Core.DataExchange {
 				case eExchangeType.Streams:
 					retValue = new ExportStreams( mStreamProvider, mLog );
 					break;
+
+                case eExchangeType.UserTags:
+                    retValue = new ExportTags( mTagManager, mArtistProvider, mAlbumProvider, mTrackProvider, mLog );
+                    break;
 			}
 
 			return( retValue );
@@ -103,6 +134,10 @@ namespace Noise.Core.DataExchange {
 				case eExchangeType.Streams:
 					retValue = new ImportStreams( mStreamProvider );
 					break;
+
+                case eExchangeType.UserTags:
+                    retValue = new ImportTags( mTagManager, mTagProvider, mAssociationProvider, mArtistProvider, mAlbumProvider, mTrackProvider );
+                    break;
 			}
 
 			return( retValue );

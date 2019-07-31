@@ -63,6 +63,7 @@ namespace Noise.UI.ViewModels {
 			mImportCommand = new DelegateCommand( OnImport );
 			GlobalCommands.ImportFavorites.RegisterCommand( mImportCommand );
 			GlobalCommands.ImportRadioStreams.RegisterCommand( mImportCommand );
+            GlobalCommands.ImportUserTags.RegisterCommand( mImportCommand );
 		}
 
 		public void Execute_Options() {

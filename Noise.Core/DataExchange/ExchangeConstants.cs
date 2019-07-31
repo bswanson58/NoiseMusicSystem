@@ -19,6 +19,12 @@
 		public const string		cStreamItem			= "stream";
 		public const string		cValue				= "value";
 
+        public const string     cTagsList           = "tags";
+        public const string     cTagAssociation     = "tagAssociation";
+        public const string     cUserTag            = "userTag";
+        public const string     cUserTagName        = "tagName";
+        public const string     cUserTagDescription = "tagDescription";
+
 		public const string		cXmlDeclVersion		= "1.0";
 		public const string		cXmlDeclEncoding	= "utf-8";
 		public const string		cXmlDeclStandalone	= "yes";
