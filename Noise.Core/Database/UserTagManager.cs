@@ -10,8 +10,10 @@ namespace Noise.Core.Database {
         private readonly IEventAggregator           mEventAggregator; 
         private readonly ITagAssociationProvider    mAssociationProvider;
         private readonly ITagProvider               mTagProvider;
+        private readonly IAlbumProvider             mAlbumProvider;
 
-        public UserTagManager( ITagProvider tagProvider, ITagAssociationProvider associationProvider, IEventAggregator eventAggregator ) {
+        public UserTagManager( IAlbumProvider albumProvider, ITagProvider tagProvider, ITagAssociationProvider associationProvider, IEventAggregator eventAggregator ) {
+            mAlbumProvider = albumProvider;
             mEventAggregator = eventAggregator;
             mTagProvider = tagProvider;
             mAssociationProvider = associationProvider;
@@ -39,22 +41,22 @@ namespace Noise.Core.Database {
             return retValue;
         }
 
-        public void UpdateAssociations( long forEntity, IEnumerable<DbTag> tags ) {
+        public void UpdateAssociations( DbTrack forTrack, IEnumerable<DbTag> tags ) {
             var newTags = tags.ToList();
-            var currentTags = GetAssociatedTags( forEntity ).ToList();
+            var currentTags = GetAssociatedTags( forTrack.DbId ).ToList();
             var updates = false;
 
             foreach( var tag in newTags ) {
                 var current = currentTags.FirstOrDefault( t => t.DbId.Equals( tag.DbId ));
 
                 if( current == null ) {
-                    mAssociationProvider.AddAssociation( new DbTagAssociation( eTagGroup.User, tag.DbId, forEntity, 0L ));
+                    mAssociationProvider.AddAssociation( new DbTagAssociation( eTagGroup.User, tag.DbId, forTrack.DbId, Constants.cDatabaseNullOid ));
 
                     updates = true;
                 }
             }
 
-            using( var currentAssociations = mAssociationProvider.GetArtistTagList( forEntity, eTagGroup.User )) {
+            using( var currentAssociations = mAssociationProvider.GetArtistTagList( forTrack.DbId, eTagGroup.User )) {
                 foreach( var tag in currentTags ) {
                     var current = newTags.FirstOrDefault( t => t.DbId.Equals( tag.DbId ));
 
@@ -71,6 +73,13 @@ namespace Noise.Core.Database {
             }
 
             if( updates ) {
+                // bump the version so the sidecar gets an update
+                using( var album = mAlbumProvider.GetAlbumForUpdate( forTrack.Album )) {
+                    album.Item.UpdateVersion();
+
+                    album.Update();
+                }
+
                 mEventAggregator.PublishOnUIThread( new Events.UserTagsChanged());
             }
         }

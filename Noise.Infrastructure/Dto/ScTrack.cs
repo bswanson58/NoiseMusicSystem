@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Noise.Infrastructure.Dto {
-	[DebuggerDisplay("ScAlbum = {TrackName}")]
+	[DebuggerDisplay("ScAlbum = {" + nameof( TrackName ) + "}")]
 	public class ScTrack {
 		public string			TrackName { get; set; }
 		public Int16			TrackNumber { get; set; }
 		public string			VolumeName { get; set; }
 		public Int16			Rating { get; set; }
 		public bool				IsFavorite { get; set; }
+        public List<String>     Tags { get; set; }
 		public float			ReplayGainAlbumGain { get; set; }
 		public float			ReplayGainAlbumPeak { get; set; }
 		public float			ReplayGainTrackGain { get; set; }
@@ -18,6 +20,7 @@ namespace Noise.Infrastructure.Dto {
 		public ScTrack() {
 			TrackName = string.Empty;
 			VolumeName = string.Empty;
+            Tags = new List<string>();
 		}
 
 		public ScTrack( DbTrack track ) :
@@ -44,7 +47,7 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public override string ToString() {
-			return( string.Format( "ScTrack \"{0}\", Track #{1}, Volume \"{2}\"", TrackName, TrackNumber, VolumeName ));
+			return( $"ScTrack \"{TrackName}\", Track #{TrackNumber}, Volume \"{VolumeName}\"" );
 		}
 	}
 }

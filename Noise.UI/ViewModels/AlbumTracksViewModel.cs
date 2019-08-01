@@ -122,7 +122,7 @@ namespace Noise.UI.ViewModels {
 			set => mTrackRetrievalTaskHandler = value;
         }
 
-		private CancellationToken GenerateCanellationToken() {
+		private CancellationToken GenerateCancellationToken() {
 			mCancellationTokenSource = new CancellationTokenSource();
 
 			return( mCancellationTokenSource.Token );
@@ -142,7 +142,7 @@ namespace Noise.UI.ViewModels {
 		private void RetrieveTracks( long forAlbumId ) {
 			CancelRetrievalTask();
 	
-			var cancellationToken = GenerateCanellationToken();
+			var cancellationToken = GenerateCancellationToken();
 
 			TracksRetrievalTaskHandler.StartTask( () => LoadTracks( forAlbumId, cancellationToken ),
 												albumList => UpdateUi( albumList, forAlbumId ),
@@ -256,7 +256,7 @@ namespace Noise.UI.ViewModels {
 
         private void OnTagEdited( TagEditInfo confirmation ) {
             if( confirmation.Confirmed ) {
-                mTagManager.UpdateAssociations( confirmation.ViewModel.Track.DbId, confirmation.ViewModel.GetSelectedTags());
+                mTagManager.UpdateAssociations( confirmation.ViewModel.Track, confirmation.ViewModel.GetSelectedTags());
 
                 SetTrackTags( TrackList.FirstOrDefault( t => t.DbId.Equals( confirmation.ViewModel.Track.DbId )));
             }

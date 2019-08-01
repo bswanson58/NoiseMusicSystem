@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Noise.Infrastructure.Dto {
-	[DebuggerDisplay("ScAlbum = {AlbumName}")]
+	[DebuggerDisplay("ScAlbum = {" + nameof( AlbumName ) + "}")]
 	public class ScAlbum {
 		public string			AlbumName { get; set; }
 		public bool				IsFavorite { get; set; }
@@ -42,7 +42,7 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public override string ToString() {
-			return( string.Format( "ScAlbum \"{0}\", Version:{1}", AlbumName, Version ));
+			return( $"ScAlbum \"{AlbumName}\", Version:{Version}" );
 		}
 	}
 }
