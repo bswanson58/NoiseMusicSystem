@@ -77,7 +77,9 @@ namespace Noise.BlobStorage.BlobStore {
 			return( this );
 		}
 
-		public bool BlobExists( string blobId ) {
+        public bool IsInPlace => false;
+
+        public bool BlobExists( string blobId ) {
 			var retValue = false;
 			var	blobPath = ResolveBlobId( blobId );
 

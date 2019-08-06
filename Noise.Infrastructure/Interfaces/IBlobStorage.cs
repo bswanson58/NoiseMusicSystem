@@ -4,6 +4,7 @@ namespace Noise.Infrastructure.Interfaces {
     public interface IInPlaceStorage : IBlobStorage { }
 
 	public interface IBlobStorage {
+        bool    IsInPlace { get; }
 		bool	BlobExists( string blobId );
 
 		void	Insert( long blobId, string fromFile );

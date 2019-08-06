@@ -51,7 +51,11 @@ namespace Noise.RavenDatabase.DataProviders {
 			Database.Delete( file );
 		}
 
-		public StorageFile GetPhysicalFile( DbTrack forTrack ) {
+        public StorageFile GetFile( long dbId ) {
+            return Database.Get( dbId );
+        }
+
+        public StorageFile GetPhysicalFile( DbTrack forTrack ) {
 			return( Database.Get( track => track.MetaDataPointer == forTrack.DbId ));
 		}
 

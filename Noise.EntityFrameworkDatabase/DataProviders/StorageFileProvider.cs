@@ -22,6 +22,10 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 			RemoveItem( file );
 		}
 
+        public StorageFile GetFile( long dbId ) {
+            return GetItemByKey( dbId );
+        }
+
 		public StorageFile GetPhysicalFile( DbTrack forTrack ) {
 			StorageFile	retValue;
 

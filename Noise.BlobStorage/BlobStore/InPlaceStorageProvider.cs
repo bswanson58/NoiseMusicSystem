@@ -25,6 +25,8 @@ namespace Noise.BlobStorage.BlobStore {
             return retValue;
         }
 
+        public bool IsInPlace => true;
+
         public bool BlobExists( string blobId ) {
             return true;
         }
