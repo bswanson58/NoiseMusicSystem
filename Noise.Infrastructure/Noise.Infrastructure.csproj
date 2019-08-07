@@ -168,6 +168,7 @@
     <Compile Include="Configuration\UserInterfacePreferences.cs" />
     <Compile Include="Dto\AlbumArtworkInfo.cs" />
     <Compile Include="Dto\CommandRequest.cs" />
+    <Compile Include="Dto\ExhaustedStrategySpecification.cs" />
     <Compile Include="Dto\PlaybackContext.cs" />
     <Compile Include="Dto\PlayingItem.cs" />
     <Compile Include="Dto\ScAlbum.cs" />
@@ -245,6 +246,7 @@
     <Compile Include="Interfaces\IDataUpdateShell.cs" />
     <Compile Include="Interfaces\IDbBaseProvider.cs" />
     <Compile Include="Interfaces\IEqManager.cs" />
+    <Compile Include="Interfaces\IExhaustedStrategyPlayManager.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IGenreProvider.cs" />
     <Compile Include="Interfaces\IIoc.cs" />

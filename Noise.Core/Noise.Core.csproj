@@ -288,6 +288,14 @@
     <Compile Include="Logging\LogPlayStrategy.cs" />
     <Compile Include="Logging\LogUserStatus.cs" />
     <Compile Include="PlayQueue\RandomTrackSelector.cs" />
+    <Compile Include="PlayStrategies\Exhausted\ExhaustedContextFactory.cs" />
+    <Compile Include="PlayStrategies\Exhausted\ExhaustedSelectionContext.cs" />
+    <Compile Include="PlayStrategies\Exhausted\ExhaustedStrategyFactory.cs" />
+    <Compile Include="PlayStrategies\Exhausted\ExhaustedStrategyPlayManager.cs" />
+    <Compile Include="PlayStrategies\Exhausted\IExhaustedContextFactory.cs" />
+    <Compile Include="PlayStrategies\Exhausted\IExhaustedPlayHandler.cs" />
+    <Compile Include="PlayStrategies\Exhausted\IExhaustedSelectionContext.cs" />
+    <Compile Include="PlayStrategies\Exhausted\IExhaustedStrategyFactory.cs" />
     <Compile Include="PlayStrategies\PlayExhaustedStrategyFavoritesPlus.cs" />
     <Compile Include="PlayStrategies\PlayExhaustedStrategyUserTags.cs" />
     <Compile Include="PlayStrategies\PlayStrategyBase.cs" />

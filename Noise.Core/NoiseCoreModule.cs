@@ -14,6 +14,7 @@ using Noise.Core.Logging;
 using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
 using Noise.Core.PlayStrategies;
+using Noise.Core.PlayStrategies.Exhausted;
 using Noise.Core.PlaySupport;
 using Noise.Core.Sidecars;
 using Noise.Core.Support;
@@ -107,6 +108,8 @@ namespace Noise.Core {
 				mContainer.RegisterType<IBackgroundTask, AlbumSidecarSync>( "AlbumSidecarSyncTask" );
 			}
 			mContainer.RegisterType<IEnumerable<IBackgroundTask>, IBackgroundTask[]>();
+
+            mContainer.RegisterType<IExhaustedStrategyPlayManager, ExhaustedStrategyPlayManager>( new HierarchicalLifetimeManager());
 
 			mContainer.RegisterType<IPlayStrategy, PlayStrategyFeaturedArtists>( ePlayStrategy.FeaturedArtists.ToString());
 			mContainer.RegisterType<IPlayStrategy, PlayStrategyNewReleases>( ePlayStrategy.NewReleases.ToString());
