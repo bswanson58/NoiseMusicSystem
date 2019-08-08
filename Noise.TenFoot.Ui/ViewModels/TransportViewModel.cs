@@ -22,7 +22,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			mArtistProvider = artistProvider;
 			mPlayQueue = playQueue;
 
-			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy;
+//			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy;
 			FormatPlayStrategy( Constants.cDatabaseNullOid );
 
 			mEventAggregator.Subscribe( this );
@@ -66,7 +66,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 		}
 
 		public void Handle( Infrastructure.Events.PlayExhaustedStrategyChanged args ) {
-			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy;
+//			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy;
 
 			if( args.StrategyParameters is PlayStrategyParameterDbId ) {
 				var dbParam = args.StrategyParameters as PlayStrategyParameterDbId;

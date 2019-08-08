@@ -11,6 +11,8 @@ namespace Noise.Core.PlayStrategies.Exhausted {
         private readonly List<IExhaustedPlayHandler>    mPlayDisqualifiers;
         private readonly List<IExhaustedPlayHandler>    mPlayBonusHandlers;
 
+        public  IItemDescription                        CurrentStrategy => mPlaySuggesters.FirstOrDefault();
+
         public ExhaustedStrategyPlayManager( IExhaustedContextFactory contextFactory, IExhaustedStrategyFactory strategyFactory ) {
             mContextFactory = contextFactory;
             mStrategyFactory = strategyFactory;

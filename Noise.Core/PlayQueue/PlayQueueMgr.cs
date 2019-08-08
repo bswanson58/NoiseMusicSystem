@@ -673,7 +673,7 @@ namespace Noise.Core.PlayQueue {
 			Condition.Requires( mPlayStrategy ).IsNotNull();
 		}
 
-		public IPlayExhaustedStrategy PlayExhaustedStrategy => null; // mPlayExhaustedStrategy;
+		public IItemDescription PlayExhaustedStrategy => mExhaustedStrategyPlay.CurrentStrategy;
 
         public void SetPlayExhaustedStrategy( ePlayExhaustedStrategy strategy, IPlayStrategyParameters parameters ) {
 /*

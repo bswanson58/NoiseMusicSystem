@@ -7,16 +7,24 @@ namespace Noise.Core.PlayStrategies.Exhausted {
     abstract class ExhaustedHandlerBase : IExhaustedPlayHandler {
         private readonly Random     mRandom;
 
-        public  string              HandlerEnum { get; }
+        public  string              ItemIdentity { get; }
+        public  string              Name { get; }
+        public  string              Description { get; }
 
-        protected ExhaustedHandlerBase( eTrackPlaySuggesters handlerId ) {
-            HandlerEnum = handlerId.ToString();
+        private ExhaustedHandlerBase( string identity, string name, string description ) {
+            ItemIdentity = identity;
+            Name = name;
+            Description = description;
 
             mRandom = new Random( DateTime.Now.Millisecond );
         }
 
-        protected ExhaustedHandlerBase( eTrackPlayDisqualifiers handlerId ) {
-            HandlerEnum = handlerId.ToString();
+        protected ExhaustedHandlerBase( eTrackPlaySuggesters handlerId, string name, string description ) :
+            this( handlerId.ToString(), name, description ) {
+        }
+
+        protected ExhaustedHandlerBase( eTrackPlayDisqualifiers handlerId, string name, string description ) :
+            this( handlerId.ToString(), name, description ) {
         }
 
         public abstract void SelectTrack( IExhaustedSelectionContext context );

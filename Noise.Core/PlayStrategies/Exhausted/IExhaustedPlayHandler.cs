@@ -1,7 +1,7 @@
-﻿namespace Noise.Core.PlayStrategies.Exhausted {
-    interface IExhaustedPlayHandler {
-        string  HandlerEnum { get; }
+﻿using Noise.Infrastructure.Interfaces;
 
+namespace Noise.Core.PlayStrategies.Exhausted {
+    interface IExhaustedPlayHandler : IItemDescription {
         void    SelectTrack( IExhaustedSelectionContext context );
     }
 }

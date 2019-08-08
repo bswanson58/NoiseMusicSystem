@@ -3,7 +3,7 @@
 namespace Noise.Core.PlayStrategies.Exhausted.Suggesters {
     class StopPlay : ExhaustedHandlerBase {
         public StopPlay() :
-            base( eTrackPlaySuggesters.Stop ) { }
+            base( eTrackPlaySuggesters.Stop, "Stop Playing", "play is stopped." ) { }
 
         public override void SelectTrack( IExhaustedSelectionContext context ) { }
     }

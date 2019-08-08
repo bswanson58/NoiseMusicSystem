@@ -42,7 +42,7 @@ namespace Noise.Infrastructure.Interfaces {
 		void			ReorderQueueItem( int fromIndex, int toIndex );
 
 		IPlayStrategy			PlayStrategy { get; }
-		IPlayExhaustedStrategy	PlayExhaustedStrategy { get; }
+		IItemDescription    	PlayExhaustedStrategy { get; }
 		void					SetPlayStrategy( ePlayStrategy strategyId, IPlayStrategyParameters parameters );
 		void					SetPlayExhaustedStrategy( ePlayExhaustedStrategy strategy, IPlayStrategyParameters parameters );
 

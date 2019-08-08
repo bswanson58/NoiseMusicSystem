@@ -18,15 +18,15 @@ namespace Noise.Core.PlayStrategies.Exhausted {
             bonusHandlers.Clear();
 
             foreach( var handler in specification.TrackSuggesters ) {
-                suggesters.Add( mStrategies.FirstOrDefault( h => h.HandlerEnum.Equals( handler.ToString())));
+                suggesters.Add( mStrategies.FirstOrDefault( h => h.ItemIdentity.Equals( handler.ToString())));
             }
 
             foreach( var handler in specification.TrackDisqualifiers ) {
-                disqualifiers.Add( mStrategies.FirstOrDefault( h => h.HandlerEnum.Equals( handler.ToString())));
+                disqualifiers.Add( mStrategies.FirstOrDefault( h => h.ItemIdentity.Equals( handler.ToString())));
             }
 
             foreach( var handler in specification.TrackBonusSuggesters ) {
-                bonusHandlers.Add( mStrategies.FirstOrDefault( h => h.HandlerEnum.Equals( handler.ToString())));
+                bonusHandlers.Add( mStrategies.FirstOrDefault( h => h.ItemIdentity.Equals( handler.ToString())));
             }
 
             Condition.Requires( suggesters.All( h => h != null )).IsTrue( "Track play suggester not set." );

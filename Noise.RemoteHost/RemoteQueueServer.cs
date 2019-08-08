@@ -247,11 +247,11 @@ namespace Noise.RemoteHost {
 
 			var exhaustedStrategy = mPlayQueue.PlayExhaustedStrategy;
 			if( exhaustedStrategy != null ) {
-				retValue.StrategyInformation.ExhaustedStrategy = (int)exhaustedStrategy.StrategyId;
+//				retValue.StrategyInformation.ExhaustedStrategy = (int)exhaustedStrategy.StrategyId;
 
-				if( exhaustedStrategy.Parameters is PlayStrategyParameterDbId ) {
-					retValue.StrategyInformation.ExhaustedStrategyParameter = ( exhaustedStrategy.Parameters as PlayStrategyParameterDbId ).DbItemId;
-				}
+//				if( exhaustedStrategy.Parameters is PlayStrategyParameterDbId ) {
+//					retValue.StrategyInformation.ExhaustedStrategyParameter = ( exhaustedStrategy.Parameters as PlayStrategyParameterDbId ).DbItemId;
+//				}
 			}
 
 			retValue.StrategyInformation.PlayStrategies = mPlayStrategyFactory.AvailableStrategies.Select( strategy => new RoQueueStrategy( strategy )).ToArray();
