@@ -141,6 +141,7 @@ namespace Noise.Core {
             mContainer.RegisterType<IExhaustedStrategyFactory, ExhaustedStrategyFactory>( new HierarchicalLifetimeManager());
 
             mContainer.RegisterType<IExhaustedPlayHandler, StopPlay>( eTrackPlaySuggesters.Stop.ToString());
+            mContainer.RegisterType<IExhaustedPlayHandler, FavoriteTracks>( eTrackPlaySuggesters.PlayFavorites.ToString());
 
             mContainer.RegisterType<IExhaustedPlayHandler, AlreadyQueuedTracks>( eTrackPlayDisqualifiers.AlreadyQueuedTracks.ToString());
             mContainer.RegisterType<IEnumerable<IExhaustedPlayHandler>, IExhaustedPlayHandler[]>();

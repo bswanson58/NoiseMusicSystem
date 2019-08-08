@@ -37,7 +37,7 @@ namespace Noise.Infrastructure.Dto {
             get {
                 var retValue = new ExhaustedStrategySpecification();
 
-                retValue.TrackSuggesters.Add( eTrackPlaySuggesters.Stop );
+                retValue.TrackSuggesters.Add( eTrackPlaySuggesters.PlayFavorites );
 
                 retValue.TrackDisqualifiers.Add( eTrackPlayDisqualifiers.AlreadyQueuedTracks );
 

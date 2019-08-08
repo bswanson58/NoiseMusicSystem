@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Noise.Infrastructure.Dto;
+﻿using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies.Exhausted.Suggesters {
@@ -15,10 +14,6 @@ namespace Noise.Core.PlayStrategies.Exhausted.Suggesters {
             using( var favoriteTracks = mTrackProvider.GetFavoriteTracks()) {
                 context.SelectedTracks.Add( SelectRandomTrack( favoriteTracks.List ));
             }
-        }
-
-        private DbTrack SelectRandomTrack( IEnumerable<DbTrack> fromList ) {
-            return null;
         }
     }
 }
