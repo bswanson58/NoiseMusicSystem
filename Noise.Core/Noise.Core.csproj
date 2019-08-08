@@ -288,6 +288,7 @@
     <Compile Include="Logging\LogPlayStrategy.cs" />
     <Compile Include="Logging\LogUserStatus.cs" />
     <Compile Include="PlayQueue\RandomTrackSelector.cs" />
+    <Compile Include="PlayStrategies\Exhausted\Disqualifiers\AlreadyQueuedTracks.cs" />
     <Compile Include="PlayStrategies\Exhausted\ExhaustedContextFactory.cs" />
     <Compile Include="PlayStrategies\Exhausted\ExhaustedSelectionContext.cs" />
     <Compile Include="PlayStrategies\Exhausted\ExhaustedStrategyFactory.cs" />
@@ -296,6 +297,7 @@
     <Compile Include="PlayStrategies\Exhausted\IExhaustedPlayHandler.cs" />
     <Compile Include="PlayStrategies\Exhausted\IExhaustedSelectionContext.cs" />
     <Compile Include="PlayStrategies\Exhausted\IExhaustedStrategyFactory.cs" />
+    <Compile Include="PlayStrategies\Exhausted\Suggesters\StopPlay.cs" />
     <Compile Include="PlayStrategies\PlayExhaustedStrategyFavoritesPlus.cs" />
     <Compile Include="PlayStrategies\PlayExhaustedStrategyUserTags.cs" />
     <Compile Include="PlayStrategies\PlayStrategyBase.cs" />
@@ -369,6 +371,7 @@
     <Content Include="Resources\EQPresets.xml" />
     <Content Include="Resources\LicenseKeys.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

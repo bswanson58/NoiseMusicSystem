@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Noise.Infrastructure.Dto {
     public enum eTrackPlaySuggesters {
@@ -28,9 +29,21 @@ namespace Noise.Infrastructure.Dto {
     }
 
     public class ExhaustedStrategySpecification {
-        public  IEnumerable<eTrackPlaySuggesters>       TrackSuggesters { get; }
-        public  IEnumerable<eTrackPlayDisqualifiers>    TrackDisqualifiers { get; }
-        public  IEnumerable<eTrackPlayBonus>            TrackBonusSuggesters { get; }
+        public  IList<eTrackPlaySuggesters>     TrackSuggesters { get; }
+        public  IList<eTrackPlayDisqualifiers>  TrackDisqualifiers { get; }
+        public  IList<eTrackPlayBonus>          TrackBonusSuggesters { get; }
+
+        public static ExhaustedStrategySpecification    Default {
+            get {
+                var retValue = new ExhaustedStrategySpecification();
+
+                retValue.TrackSuggesters.Add( eTrackPlaySuggesters.Stop );
+
+                retValue.TrackDisqualifiers.Add( eTrackPlayDisqualifiers.AlreadyQueuedTracks );
+
+                return retValue;
+            }
+        }
 
         public ExhaustedStrategySpecification() {
             TrackSuggesters = new List<eTrackPlaySuggesters>();

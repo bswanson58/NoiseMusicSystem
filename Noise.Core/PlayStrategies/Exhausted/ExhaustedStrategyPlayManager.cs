@@ -5,15 +5,13 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies.Exhausted {
     class ExhaustedStrategyPlayManager : IExhaustedStrategyPlayManager {
-        private readonly IPlayQueue                     mPlayQueue;
         private readonly IExhaustedContextFactory       mContextFactory;
         private readonly IExhaustedStrategyFactory      mStrategyFactory;
         private readonly List<IExhaustedPlayHandler>    mPlaySuggesters;
         private readonly List<IExhaustedPlayHandler>    mPlayDisqualifiers;
         private readonly List<IExhaustedPlayHandler>    mPlayBonusHandlers;
 
-        public ExhaustedStrategyPlayManager( IPlayQueue playQueue, IExhaustedContextFactory contextFactory, IExhaustedStrategyFactory strategyFactory ) {
-            mPlayQueue = playQueue;
+        public ExhaustedStrategyPlayManager( IExhaustedContextFactory contextFactory, IExhaustedStrategyFactory strategyFactory ) {
             mContextFactory = contextFactory;
             mStrategyFactory = strategyFactory;
 
@@ -30,9 +28,9 @@ namespace Noise.Core.PlayStrategies.Exhausted {
             return mPlaySuggesters.Any();
         }
 
-        public IEnumerable<DbTrack> SelectTracks( int minCount ) {
+        public IEnumerable<DbTrack> SelectTracks( IPlayQueue playQueue, int minCount ) {
             if( StrategyHasBeenSet()) {
-                var context = mContextFactory.CreateContext( mPlayQueue );
+                var context = mContextFactory.CreateContext( playQueue );
                 var circuitBreaker = 5;
 
                 do {

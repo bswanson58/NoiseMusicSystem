@@ -19,7 +19,7 @@ namespace Noise.UI.ViewModels {
 			mConfigurationDialog = configurationDialog;
 
 			PlayStrategyDescription = mPlayQueue.PlayStrategy.ConfiguredDescription;
-			PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.ConfiguredDescription;
+//			PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.ConfiguredDescription;
 
 			mEventAggregator.Subscribe( this );
 		}
