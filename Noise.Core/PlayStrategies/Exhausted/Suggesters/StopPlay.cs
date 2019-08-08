@@ -1,9 +1,10 @@
 ﻿using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.PlayStrategies.Exhausted.Suggesters {
-    class StopPlay : IExhaustedPlayHandler {
-        public string HandlerEnum => eTrackPlaySuggesters.Stop.ToString();
+    class StopPlay : ExhaustedHandlerBase {
+        public StopPlay() :
+            base( eTrackPlaySuggesters.Stop ) { }
 
-        public void SelectTrack( IExhaustedSelectionContext context ) { }
+        public override void SelectTrack( IExhaustedSelectionContext context ) { }
     }
 }

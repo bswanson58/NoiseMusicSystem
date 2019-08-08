@@ -548,7 +548,7 @@ namespace Noise.Core.PlayQueue {
             var tracks = mExhaustedStrategyPlay.SelectTracks( this, 1 );
 
             foreach( var track in tracks ) {
-                AddTrack( track, eStrategySource.ExhaustedStrategy );
+                StrategyAdd( track );
 
                 retValue = true;
             }

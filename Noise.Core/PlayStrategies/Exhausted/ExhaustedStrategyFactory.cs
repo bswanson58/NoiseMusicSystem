@@ -12,13 +12,13 @@ namespace Noise.Core.PlayStrategies.Exhausted {
         }
 
         public void BuildStrategy( ExhaustedStrategySpecification specification,
-                                   IList<IExhaustedPlayHandler> suggestors, IList<IExhaustedPlayHandler> disqualifiers, IList<IExhaustedPlayHandler> bonusHandlers ) {
-            suggestors.Clear();
+                                   IList<IExhaustedPlayHandler> suggesters, IList<IExhaustedPlayHandler> disqualifiers, IList<IExhaustedPlayHandler> bonusHandlers ) {
+            suggesters.Clear();
             disqualifiers.Clear();
             bonusHandlers.Clear();
 
             foreach( var handler in specification.TrackSuggesters ) {
-                suggestors.Add( mStrategies.FirstOrDefault( h => h.HandlerEnum.Equals( handler.ToString())));
+                suggesters.Add( mStrategies.FirstOrDefault( h => h.HandlerEnum.Equals( handler.ToString())));
             }
 
             foreach( var handler in specification.TrackDisqualifiers ) {
@@ -29,7 +29,7 @@ namespace Noise.Core.PlayStrategies.Exhausted {
                 bonusHandlers.Add( mStrategies.FirstOrDefault( h => h.HandlerEnum.Equals( handler.ToString())));
             }
 
-            Condition.Requires( suggestors.All( h => h != null )).IsTrue( "Track play suggester not set." );
+            Condition.Requires( suggesters.All( h => h != null )).IsTrue( "Track play suggester not set." );
             Condition.Requires( disqualifiers.All( h => h != null )).IsTrue( "Track play disqualifier not set." );
             Condition.Requires( bonusHandlers.All( h => h != null )).IsTrue( "Track bonus handler not set." );
         }

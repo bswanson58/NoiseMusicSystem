@@ -2,10 +2,11 @@
 using Noise.Infrastructure.Dto;
 
 namespace Noise.Core.PlayStrategies.Exhausted.Disqualifiers {
-    class AlreadyQueuedTracks : IExhaustedPlayHandler {
-        public string HandlerEnum => eTrackPlayDisqualifiers.AlreadyQueuedTracks.ToString();
+    class AlreadyQueuedTracks : ExhaustedHandlerBase {
+        public AlreadyQueuedTracks() : 
+            base ( eTrackPlayDisqualifiers.AlreadyQueuedTracks ) { }
 
-        public void SelectTrack( IExhaustedSelectionContext context ) {
+        public override void SelectTrack( IExhaustedSelectionContext context ) {
             var tracks = context.SelectedTracks.ToArray();
 
             foreach( var track in tracks ) {
