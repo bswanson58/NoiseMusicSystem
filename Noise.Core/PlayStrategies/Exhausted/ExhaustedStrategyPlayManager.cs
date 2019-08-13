@@ -24,7 +24,7 @@ namespace Noise.Core.PlayStrategies.Exhausted {
         }
 
         public ExhaustedStrategySpecification StrategySpecification {
-            get => mStrategySpecification;
+            get => new ExhaustedStrategySpecification( mStrategySpecification ); // prevent changes to our copy
             set {
                 mStrategySpecification = value;
 
@@ -33,12 +33,13 @@ namespace Noise.Core.PlayStrategies.Exhausted {
         }
 
         private bool StrategyHasBeenSet() {
-            return mPlaySuggesters.Any();
+            return (( StrategySpecification != null ) &&
+                    ( mPlaySuggesters.Any()));
         }
 
         public IEnumerable<DbTrack> SelectTracks( IPlayQueue playQueue, int minCount ) {
             if( StrategyHasBeenSet()) {
-                var context = mContextFactory.CreateContext( playQueue );
+                var context = mContextFactory.CreateContext( playQueue, StrategySpecification.SuggesterParameter );
                 var circuitBreaker = 5;
 
                 do {

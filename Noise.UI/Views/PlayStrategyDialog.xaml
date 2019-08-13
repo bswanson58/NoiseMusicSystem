@@ -26,7 +26,7 @@
 						<ComboBox Width="150" DisplayMemberPath="Title" Style="{StaticResource GeneralComboStyle}"
 								  ItemsSource="{Binding Path=PlayStrategyList}" SelectedValue="{Binding Path=SelectedPlayStrategy}"/>
 
-						<Grid Width="240" Visibility="{Binding PlayParameterRequired, Converter={StaticResource HideIfFalse}}">
+						<Grid Visibility="{Binding PlayParameterRequired, Converter={StaticResource HideIfFalse}}">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="*"/>
 								<ColumnDefinition Width="Auto"/>
@@ -34,13 +34,13 @@
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
 
-							<TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding PlayParameterName}"/>
+							<TextBlock Grid.Column="1" VerticalAlignment="Center" Width="150" TextAlignment="Right" Text="{Binding PlayParameterName}"/>
 							<TextBlock Grid.Column="2" VerticalAlignment="Center" Text=": "/>
 
 							<Grid Grid.Column="3">
 								<ComboBox x:Name="_playParameters" Width="150" DisplayMemberPath="Name" Style="{StaticResource GeneralComboStyle}"
 										  ItemsSource="{Binding Path=PlayParameterList}" SelectedValue="{Binding Path=SelectedPlayParameter}"/>
-								<TextBlock x:Name="_playSelect" VerticalAlignment="Center" Margin="17,0" Foreground="Red" FontStyle="Italic" 
+								<TextBlock x:Name="_playSelect" VerticalAlignment="Center" Margin="10,0,25,0" Foreground="Red" FontStyle="Italic" 
 										   IsHitTestVisible="False" Visibility="Hidden" Text="Select a parameter..." />
 							</Grid>
 						</Grid>
@@ -59,7 +59,7 @@
 						<ComboBox Width="150" DisplayMemberPath="Name" Style="{StaticResource GeneralComboStyle}"
 								  ItemsSource="{Binding Path=ExhaustedStrategyList}" SelectedValue="{Binding Path=SelectedExhaustedStrategy}"/>
 
-						<Grid Width="240" Visibility="{Binding ExhaustedParameterRequired, Converter={StaticResource HideIfFalse}}">
+						<Grid Visibility="{Binding ExhaustedParameterRequired, Converter={StaticResource HideIfFalse}}">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="*"/>
 								<ColumnDefinition Width="Auto"/>
@@ -67,13 +67,13 @@
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
 
-							<TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding ExhaustedParameterName}"/>
+							<TextBlock Grid.Column="1" VerticalAlignment="Center" Width="150" TextAlignment="Right" Text="{Binding ExhaustedParameterName}"/>
 							<TextBlock Grid.Column="2" VerticalAlignment="Center" Text=": "/>
 
 							<Grid Grid.Column="3">
 								<ComboBox x:Name="_exhaustedParameters" Width="150" DisplayMemberPath="Name" Style="{StaticResource GeneralComboStyle}"
 										  ItemsSource="{Binding Path=ExhaustedParameterList}" SelectedValue="{Binding Path=SelectedExhaustedParameter}"/>
-								<TextBlock x:Name="_exhaustedSelect" VerticalAlignment="Center" Margin="17,0" Foreground="Red" FontStyle="Italic" 
+								<TextBlock x:Name="_exhaustedSelect" VerticalAlignment="Center" Margin="10,0,25,0" Foreground="Red" FontStyle="Italic" 
 										   IsHitTestVisible="False" Visibility="Hidden" Text="Select a parameter..." />
 							</Grid>
 						</Grid>

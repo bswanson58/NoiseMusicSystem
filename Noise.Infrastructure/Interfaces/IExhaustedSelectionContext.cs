@@ -9,5 +9,7 @@ namespace Noise.Infrastructure.Interfaces {
         DbAlbum         Album { get; set; }
         IList<DbTrack>  AlbumTracks { get; }
         IList<DbTrack>  SelectedTracks { get; }
+
+        long            SuggesterParameter { get; }
     }
 }

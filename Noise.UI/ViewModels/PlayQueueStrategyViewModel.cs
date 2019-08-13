@@ -40,12 +40,6 @@ namespace Noise.UI.ViewModels {
 			set {  Set( () => PlayExhaustedDescription, value ); }
 		}
 
-		private void SetPlayStrategy( ePlayStrategy strategy, IPlayStrategyParameters parameters ) {
-			mPlayQueue.SetPlayStrategy( strategy, parameters );
-		
-			PlayStrategyDescription = mPlayQueue.PlayStrategy.ConfiguredDescription;
-		}
-
 		public string PlayStrategyDescription {
 			get {  return( Get( () => PlayStrategyDescription )); }
 			set {  Set( () => PlayStrategyDescription, value ); }
@@ -59,10 +53,12 @@ namespace Noise.UI.ViewModels {
 
 			if( mDialogService.ShowDialog( DialogNames.PlayStrategyConfiguration, mConfigurationDialog ) == true ) {
 				if( mConfigurationDialog.IsConfigurationValid ) {
-					SetPlayStrategy( mConfigurationDialog.PlayStrategy, mConfigurationDialog.PlayStrategyParameter );
 					mPlayQueue.ExhaustedPlayStrategy = mConfigurationDialog.ExhaustedStrategySpecification;
-
 					mPlayQueue.DeletedPlayedTracks = mConfigurationDialog.DeletePlayedTracks;
+                    mPlayQueue.SetPlayStrategy( mConfigurationDialog.PlayStrategy, mConfigurationDialog.PlayStrategyParameter );
+		
+                    PlayStrategyDescription = mPlayQueue.PlayStrategy.ConfiguredDescription;
+                    PlayExhaustedDescription = mPlayQueue.PlayExhaustedStrategy.Description;
 
 					RaiseCanExecuteChangedEvent( "CanExecute_StartStrategy" );
 				}

@@ -96,6 +96,7 @@ namespace Noise.UI.ViewModels {
                     var suggester = mExhaustedStrategySpecification.TrackSuggesters.First();
 
                     SelectedExhaustedStrategy = mExhaustedStrategyFactory.ExhaustedStrategies.FirstOrDefault( s => s.Identifier.Equals( suggester ));
+                    SelectedExhaustedParameter = ExhaustedParameterList.FirstOrDefault( p => p.Id.Equals( mExhaustedStrategySpecification.SuggesterParameter ));
                 }
             }
         }
@@ -178,6 +179,7 @@ namespace Noise.UI.ViewModels {
 				Set( () => SelectedExhaustedStrategy, value );
 
 				mSelectedExhaustedStrategy = value;
+                mExhaustedStrategySpecification.SetPrimarySuggester( mSelectedExhaustedStrategy.Identifier );
 
 				if( mSelectedExhaustedStrategy != null ) {
 					SetupExhaustedParameters( mSelectedExhaustedStrategy, mExhaustedParameters );
@@ -190,17 +192,15 @@ namespace Noise.UI.ViewModels {
 			set {  Set( () => ExhaustedStrategyDescription, value ); }
 		}
 
-		public BindableCollection<NameIdPair> ExhaustedParameterList {
-			get {  return( mExhaustedParameters ); }
-		}
+		public BindableCollection<NameIdPair> ExhaustedParameterList => mExhaustedParameters;
 
-		public NameIdPair SelectedExhaustedParameter {
+        public NameIdPair SelectedExhaustedParameter {
 			get { return( Get( () => SelectedExhaustedParameter )); }
 			set {
-				Set( () => SelectedExhaustedParameter, value );
+                Set( () => SelectedExhaustedParameter, value );
 
-                ExhaustedStrategySpecification.SuggesterParameter = SelectedExhaustedParameter.Id;
-			}
+                ExhaustedStrategySpecification.SuggesterParameter = SelectedExhaustedParameter?.Id ?? Constants.cDatabaseNullOid;
+            }
 		}
 
 		public string ExhaustedParameterName {
@@ -229,7 +229,7 @@ namespace Noise.UI.ViewModels {
 
 		private void SetupExhaustedParameters( IStrategyDescription strategy, BindableCollection<NameIdPair> collection ) {
 			ExhaustedParameterRequired = strategy.RequiresParameters;
-//			ExhaustedParameterName = strategy.ParameterName;
+			ExhaustedParameterName = strategy.Name;
 			ExhaustedStrategyDescription = strategy.Description;
 
 			if( strategy.RequiresParameters ) {

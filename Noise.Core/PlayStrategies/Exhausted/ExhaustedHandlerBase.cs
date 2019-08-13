@@ -26,14 +26,22 @@ namespace Noise.Core.PlayStrategies.Exhausted {
 
         public abstract void SelectTrack( IExhaustedSelectionContext context );
 
+        protected int NextRandom( int maxValue ) {
+            var	retValue = 0;
+
+            if( maxValue > 0 ) {
+                retValue = mRandom.Next( maxValue );
+            }
+
+            return( retValue );
+        }
+
         protected DbTrack SelectRandomTrack( IEnumerable<DbTrack> fromList ) {
             return( SelectRandomTrack( fromList.ToList()));
         }
 
         protected DbTrack SelectRandomTrack( IList<DbTrack> fromList ) {
-            var next = mRandom.Next( fromList.Count - 1 );
-
-            return fromList.Skip( next ).FirstOrDefault();
+            return fromList.Skip( NextRandom( fromList.Count - 1 )).FirstOrDefault();
         }
     }
 }

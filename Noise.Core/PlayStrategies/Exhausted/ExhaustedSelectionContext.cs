@@ -12,11 +12,15 @@ namespace Noise.Core.PlayStrategies.Exhausted {
 
         public  IList<DbTrack>  SelectedTracks { get; }
 
-        public ExhaustedSelectionContext( IPlayQueue playQueue ) {
+        public  long            SuggesterParameter { get; }
+
+        public ExhaustedSelectionContext( IPlayQueue playQueue, long parameter ) {
             PlayQueue = playQueue;
 
             AlbumTracks = new List<DbTrack>();
             SelectedTracks = new List<DbTrack>();
+
+            SuggesterParameter = parameter;
         }
     }
 }

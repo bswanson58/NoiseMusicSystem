@@ -58,5 +58,17 @@ namespace Noise.Infrastructure.Dto {
 
             SuggesterParameter = Constants.cDatabaseNullOid;
         }
+
+        public ExhaustedStrategySpecification( ExhaustedStrategySpecification copy ) {
+            TrackSuggesters = new List<eTrackPlayHandlers>( copy.TrackSuggesters );
+            TrackDisqualifiers = new List<eTrackPlayHandlers>( copy.TrackDisqualifiers );
+            TrackBonusSuggesters = new List<eTrackPlayHandlers>( copy.TrackBonusSuggesters );
+            SuggesterParameter = copy.SuggesterParameter;
+        }
+
+        public void SetPrimarySuggester( eTrackPlayHandlers suggester ) {
+            TrackSuggesters.Clear();
+            TrackSuggesters.Add( suggester );
+        }
     }
 }
