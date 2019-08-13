@@ -9,7 +9,7 @@ namespace Noise.Core.PlayStrategies.Exhausted {
         private readonly Random     mRandom;
 
         public  eTrackPlayHandlers  Identifier { get; }
-        public eTrackPlayStrategy   StrategyType { get; }
+        public  eTrackPlayStrategy  StrategyType { get; }
         public  string              Name { get; }
         public  string              Description { get; private set; }
         public  bool                RequiresParameters { get; protected set; }
