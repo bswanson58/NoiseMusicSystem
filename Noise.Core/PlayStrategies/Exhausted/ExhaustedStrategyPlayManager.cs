@@ -10,8 +10,9 @@ namespace Noise.Core.PlayStrategies.Exhausted {
         private readonly List<IExhaustedPlayHandler>    mPlaySuggesters;
         private readonly List<IExhaustedPlayHandler>    mPlayDisqualifiers;
         private readonly List<IExhaustedPlayHandler>    mPlayBonusHandlers;
+        private ExhaustedStrategySpecification          mStrategySpecification;
 
-        public  IItemDescription                        CurrentStrategy => mPlaySuggesters.FirstOrDefault();
+        public  IStrategyDescription                    CurrentStrategy => mPlaySuggesters.FirstOrDefault();
 
         public ExhaustedStrategyPlayManager( IExhaustedContextFactory contextFactory, IExhaustedStrategyFactory strategyFactory ) {
             mContextFactory = contextFactory;
@@ -22,8 +23,13 @@ namespace Noise.Core.PlayStrategies.Exhausted {
             mPlayBonusHandlers = new List<IExhaustedPlayHandler>();
         }
 
-        public void SetExhaustedStrategy( ExhaustedStrategySpecification specification ) {
-            mStrategyFactory.BuildStrategy( specification, mPlaySuggesters, mPlayDisqualifiers, mPlayBonusHandlers );
+        public ExhaustedStrategySpecification StrategySpecification {
+            get => mStrategySpecification;
+            set {
+                mStrategySpecification = value;
+
+                mStrategyFactory.BuildStrategy( mStrategySpecification, mPlaySuggesters, mPlayDisqualifiers, mPlayBonusHandlers );
+            }
         }
 
         private bool StrategyHasBeenSet() {

@@ -297,7 +297,7 @@ namespace Noise.RemoteHost {
 				if( exhaustedStrategy != null ) {
 					var exhaustedParameters = new PlayStrategyParameterDbId( exhaustedStrategy.StrategyId ) { DbItemId = exhaustedStrategyParameter };
 	
-					mPlayQueue.SetPlayExhaustedStrategy( exhaustedStrategy.StrategyId, exhaustedParameters );
+//					mPlayQueue.SetPlayExhaustedStrategy( exhaustedStrategy.StrategyId, exhaustedParameters );
 				}
 
 				retValue.Success = true;

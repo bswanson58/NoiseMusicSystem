@@ -112,8 +112,8 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		protected override void EnqueueItem() {
 			if( SelectedItem != null ) {
-				mPlayQueue.SetPlayExhaustedStrategy( ePlayExhaustedStrategy.PlayArtist,
-														new PlayStrategyParameterDbId( ePlayExhaustedStrategy.PlayArtist ) { DbItemId = SelectedItem.DbId });
+//				mPlayQueue.SetPlayExhaustedStrategy( ePlayExhaustedStrategy.PlayArtist,
+//														new PlayStrategyParameterDbId( ePlayExhaustedStrategy.PlayArtist ) { DbItemId = SelectedItem.DbId });
 				if( mPlayQueue.CanStartPlayStrategy ) {
 					mPlayQueue.StartPlayStrategy();
 				}

@@ -6,7 +6,7 @@ namespace Noise.Core.PlayStrategies.Exhausted.Suggesters {
         private readonly ITrackProvider     mTrackProvider;
 
         public FavoriteTracks( ITrackProvider trackProvider ) :
-            base( eTrackPlaySuggesters.PlayFavorites, "Play Favorites", "play tracks from the list of favorites." ) {
+            base( eTrackPlayHandlers.PlayFavorites, eTrackPlayStrategy.Suggester, "Play Favorites", "play tracks from the list of favorites" ) {
             mTrackProvider = trackProvider;
         }
 

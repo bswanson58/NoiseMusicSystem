@@ -246,11 +246,13 @@
     <Compile Include="Interfaces\IDataUpdateShell.cs" />
     <Compile Include="Interfaces\IDbBaseProvider.cs" />
     <Compile Include="Interfaces\IEqManager.cs" />
+    <Compile Include="Interfaces\IExhaustedPlayHandler.cs" />
+    <Compile Include="Interfaces\IExhaustedSelectionContext.cs" />
+    <Compile Include="Interfaces\IExhaustedStrategyFactory.cs" />
     <Compile Include="Interfaces\IExhaustedStrategyPlayManager.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IGenreProvider.cs" />
     <Compile Include="Interfaces\IIoc.cs" />
-    <Compile Include="Interfaces\IItemDescription.cs" />
     <Compile Include="Interfaces\ILibraryBuilder.cs" />
     <Compile Include="Interfaces\IDbBase.cs" />
     <Compile Include="Interfaces\ILibraryConfiguration.cs" />

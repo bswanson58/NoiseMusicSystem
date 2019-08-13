@@ -140,10 +140,10 @@ namespace Noise.Core {
             mContainer.RegisterType<IExhaustedContextFactory, ExhaustedContextFactory>( new HierarchicalLifetimeManager());
             mContainer.RegisterType<IExhaustedStrategyFactory, ExhaustedStrategyFactory>( new HierarchicalLifetimeManager());
 
-            mContainer.RegisterType<IExhaustedPlayHandler, StopPlay>( eTrackPlaySuggesters.Stop.ToString());
-            mContainer.RegisterType<IExhaustedPlayHandler, FavoriteTracks>( eTrackPlaySuggesters.PlayFavorites.ToString());
+            mContainer.RegisterType<IExhaustedPlayHandler, StopPlay>( eTrackPlayHandlers.Stop.ToString());
+            mContainer.RegisterType<IExhaustedPlayHandler, FavoriteTracks>( eTrackPlayHandlers.PlayFavorites.ToString());
 
-            mContainer.RegisterType<IExhaustedPlayHandler, AlreadyQueuedTracks>( eTrackPlayDisqualifiers.AlreadyQueuedTracks.ToString());
+            mContainer.RegisterType<IExhaustedPlayHandler, AlreadyQueuedTracks>( eTrackPlayHandlers.AlreadyQueuedTracks.ToString());
             mContainer.RegisterType<IEnumerable<IExhaustedPlayHandler>, IExhaustedPlayHandler[]>();
 
 			mContainer.RegisterType<IPlayQueueSupport, PlayQueueRandomTracks>( "PlayQueueRandomTracks" );

@@ -111,7 +111,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 					break;
 			}
 
-			mPlayQueue.SetPlayExhaustedStrategy( mCurrentStrategy, null );
+//			mPlayQueue.SetPlayExhaustedStrategy( mCurrentStrategy, null );
 		}
 
 		public void Handle( InputEvent input ) {

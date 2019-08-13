@@ -2,10 +2,14 @@
 using System.Linq;
 using CuttingEdge.Conditions;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies.Exhausted {
     class ExhaustedStrategyFactory : IExhaustedStrategyFactory {
         private readonly List<IExhaustedPlayHandler>    mStrategies; 
+
+        public IEnumerable<IStrategyDescription>        ExhaustedStrategies => mStrategies;
+        public IStrategyDescription                     StrategyDescription( ePlayExhaustedStrategy forStrategy ) => mStrategies.FirstOrDefault( s => s.Identifier.Equals( forStrategy ));
 
         public ExhaustedStrategyFactory( IEnumerable<IExhaustedPlayHandler> strategyList  ) {
             mStrategies = new List<IExhaustedPlayHandler>( strategyList );
@@ -18,15 +22,15 @@ namespace Noise.Core.PlayStrategies.Exhausted {
             bonusHandlers.Clear();
 
             foreach( var handler in specification.TrackSuggesters ) {
-                suggesters.Add( mStrategies.FirstOrDefault( h => h.ItemIdentity.Equals( handler.ToString())));
+                suggesters.Add( mStrategies.FirstOrDefault( h => h.Identifier.Equals( handler )));
             }
 
             foreach( var handler in specification.TrackDisqualifiers ) {
-                disqualifiers.Add( mStrategies.FirstOrDefault( h => h.ItemIdentity.Equals( handler.ToString())));
+                disqualifiers.Add( mStrategies.FirstOrDefault( h => h.Identifier.Equals( handler )));
             }
 
             foreach( var handler in specification.TrackBonusSuggesters ) {
-                bonusHandlers.Add( mStrategies.FirstOrDefault( h => h.ItemIdentity.Equals( handler.ToString())));
+                bonusHandlers.Add( mStrategies.FirstOrDefault( h => h.Identifier.Equals( handler )));
             }
 
             Condition.Requires( suggesters.All( h => h != null )).IsTrue( "Track play suggester not set." );

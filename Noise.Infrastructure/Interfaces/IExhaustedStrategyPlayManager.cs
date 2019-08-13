@@ -3,9 +3,9 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
     public interface IExhaustedStrategyPlayManager {
-        void                    SetExhaustedStrategy( ExhaustedStrategySpecification specification );
-        IItemDescription        CurrentStrategy { get; }
+        ExhaustedStrategySpecification  StrategySpecification { get; set; }
+        IStrategyDescription            CurrentStrategy { get; }
 
-        IEnumerable<DbTrack>    SelectTracks( IPlayQueue playQueue, int minCount );
+        IEnumerable<DbTrack>            SelectTracks( IPlayQueue playQueue, int minCount );
     }
 }

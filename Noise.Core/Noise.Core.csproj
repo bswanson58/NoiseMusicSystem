@@ -295,9 +295,6 @@
     <Compile Include="PlayStrategies\Exhausted\ExhaustedStrategyFactory.cs" />
     <Compile Include="PlayStrategies\Exhausted\ExhaustedStrategyPlayManager.cs" />
     <Compile Include="PlayStrategies\Exhausted\IExhaustedContextFactory.cs" />
-    <Compile Include="PlayStrategies\Exhausted\IExhaustedPlayHandler.cs" />
-    <Compile Include="PlayStrategies\Exhausted\IExhaustedSelectionContext.cs" />
-    <Compile Include="PlayStrategies\Exhausted\IExhaustedStrategyFactory.cs" />
     <Compile Include="PlayStrategies\Exhausted\Suggesters\FavoriteTracks.cs" />
     <Compile Include="PlayStrategies\Exhausted\Suggesters\StopPlay.cs" />
     <Compile Include="PlayStrategies\PlayExhaustedStrategyFavoritesPlus.cs" />

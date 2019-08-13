@@ -2,29 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using Noise.Infrastructure.Dto;
+using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies.Exhausted {
     abstract class ExhaustedHandlerBase : IExhaustedPlayHandler {
         private readonly Random     mRandom;
 
-        public  string              ItemIdentity { get; }
+        public  eTrackPlayHandlers  Identifier { get; }
+        public eTrackPlayStrategy   StrategyType { get; }
         public  string              Name { get; }
         public  string              Description { get; }
+        public  bool                RequiresParameters { get; protected set; }
 
-        private ExhaustedHandlerBase( string identity, string name, string description ) {
-            ItemIdentity = identity;
+        protected ExhaustedHandlerBase( eTrackPlayHandlers handlerId, eTrackPlayStrategy type, string name, string description ) {
+            Identifier = handlerId;
+            StrategyType = type;
             Name = name;
             Description = description;
 
+            RequiresParameters = false;
             mRandom = new Random( DateTime.Now.Millisecond );
-        }
-
-        protected ExhaustedHandlerBase( eTrackPlaySuggesters handlerId, string name, string description ) :
-            this( handlerId.ToString(), name, description ) {
-        }
-
-        protected ExhaustedHandlerBase( eTrackPlayDisqualifiers handlerId, string name, string description ) :
-            this( handlerId.ToString(), name, description ) {
         }
 
         public abstract void SelectTrack( IExhaustedSelectionContext context );

@@ -56,7 +56,7 @@
 
 					<StackPanel Orientation="Horizontal">
 						<TextBlock VerticalAlignment="Center" TextAlignment="Right" Width="120" Text="When Exhausted: "/>
-						<ComboBox Width="150" DisplayMemberPath="Title" Style="{StaticResource GeneralComboStyle}"
+						<ComboBox Width="150" DisplayMemberPath="Name" Style="{StaticResource GeneralComboStyle}"
 								  ItemsSource="{Binding Path=ExhaustedStrategyList}" SelectedValue="{Binding Path=SelectedExhaustedStrategy}"/>
 
 						<Grid Width="240" Visibility="{Binding ExhaustedParameterRequired, Converter={StaticResource HideIfFalse}}">

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using Noise.Infrastructure.Dto;
-using Noise.Infrastructure.Interfaces;
 
-namespace Noise.Core.PlayStrategies.Exhausted {
-    interface IExhaustedSelectionContext {
+namespace Noise.Infrastructure.Interfaces {
+    public interface IExhaustedSelectionContext {
         IPlayQueue      PlayQueue { get; }
 
         DbArtist        Artist { get; set; }

@@ -61,9 +61,7 @@ namespace Noise.Core.PlayQueue {
 			mPlayQueueSupporters = new List<IPlayQueueSupport>( playQueueSupporters );
 
 			mPlayStrategy = mPlayStrategyFactory.ProvidePlayStrategy( ePlayStrategy.Next );
-//			mPlayExhaustedStrategy = mPlayExhaustedFactory.ProvideExhaustedStrategy( ePlayExhaustedStrategy.Stop );
-
-            mExhaustedStrategyPlay.SetExhaustedStrategy( ExhaustedStrategySpecification.Default );
+            mExhaustedStrategyPlay.StrategySpecification = ExhaustedStrategySpecification.Default;
 
 			mDeleteUnplayedTracks = false;
 			mMaximumPlayedTracks = 15;
@@ -88,7 +86,7 @@ namespace Noise.Core.PlayQueue {
 			var preferences = mPreferences.Load<NoiseCorePreferences>();
 
 			try {
-				SetPlayExhaustedStrategy( preferences.PlayExhaustedStrategy, PlayStrategyParametersFactory.FromString( preferences.PlayExhaustedParameters ));
+//				SetPlayExhaustedStrategy( preferences.PlayExhaustedStrategy, PlayStrategyParametersFactory.FromString( preferences.PlayExhaustedParameters ));
 				SetPlayStrategy( preferences.PlayStrategy, PlayStrategyParametersFactory.FromString( preferences.PlayStrategyParameters ));
 
 				mDeleteUnplayedTracks = preferences.DeletePlayedTracks;
@@ -673,27 +671,12 @@ namespace Noise.Core.PlayQueue {
 			Condition.Requires( mPlayStrategy ).IsNotNull();
 		}
 
-		public IItemDescription PlayExhaustedStrategy => mExhaustedStrategyPlay.CurrentStrategy;
+		public IStrategyDescription PlayExhaustedStrategy => mExhaustedStrategyPlay.CurrentStrategy;
 
-        public void SetPlayExhaustedStrategy( ePlayExhaustedStrategy strategy, IPlayStrategyParameters parameters ) {
-/*
-			mPlayExhaustedStrategy = mPlayExhaustedFactory.ProvideExhaustedStrategy( strategy );
-			if( mPlayExhaustedStrategy != null ) {
-				mPlayExhaustedStrategy.Initialize( this, parameters );
-
-				mEventAggregator.PublishOnUIThread( new Events.PlayExhaustedStrategyChanged( mPlayExhaustedStrategy.StrategyId, parameters ));
-			}
-
-			var preferences = mPreferences.Load<NoiseCorePreferences>();
-
-			preferences.PlayExhaustedStrategy = strategy;
-			preferences.PlayExhaustedParameters = PlayStrategyParametersFactory.ToString( parameters );
-			mPreferences.Save( preferences );
-
-			mLog.StrategySet( strategy, parameters );
-
-			Condition.Requires( mPlayExhaustedStrategy ).IsNotNull();
-*/		}
+        public ExhaustedStrategySpecification ExhaustedPlayStrategy {
+            get => mExhaustedStrategyPlay.StrategySpecification;
+            set => mExhaustedStrategyPlay.StrategySpecification = value;
+        }
 
         private void FirePlayQueueChanged() {
 			mEventAggregator.PublishOnUIThread( new Events.PlayQueueChanged( this ));

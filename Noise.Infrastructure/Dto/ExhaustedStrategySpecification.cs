@@ -1,54 +1,62 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace Noise.Infrastructure.Dto {
-    public enum eTrackPlaySuggesters {
-        Stop = 1,
-        Replay = 2,
-        PlayList = 3,
-        PlayArtist = 4,
-        PlaySimilar = 5,
-        PlayFavorites = 6,
-        PlayGenre = 7,
-        PlayArtistGenre = 8,
-        PlayCategory = 9,
-        SeldomPlayedArtists = 10,
-        PlayUserTags = 11
+    public enum eTrackPlayStrategy {
+        Suggester,
+        Disqualifier,
+        BonusSuggester
     }
 
-    public enum eTrackPlayDisqualifiers {
-        ShortTracks = 1,
-        AlreadyQueuedTracks = 2,
-        BadlyRatedTracks = 3,
-        DoNotPlayTracks = 4
-    }
+    public enum eTrackPlayHandlers {
+        // Suggesters
+        Unknown = 0,
+        Stop = 100,
+        Replay = 102,
+        PlayList = 103,
+        PlayArtist = 104,
+        PlaySimilar = 105,
+        PlayFavorites = 106,
+        PlayGenre = 107,
+        PlayArtistGenre = 108,
+        PlayCategory = 109,
+        SeldomPlayedArtists = 110,
+        PlayUserTags = 111,
 
-    public enum eTrackPlayBonus {
-        HighlyRatedTracks = 1,
-        PlayNextTrack = 2
+        // Disqualifiers
+        ShortTracks = 201,
+        AlreadyQueuedTracks = 202,
+        BadlyRatedTracks = 203,
+        DoNotPlayTracks = 204,
+
+        // Bonus handlers
+        HighlyRatedTracks = 301,
+        PlayNextTrack = 302
     }
 
     public class ExhaustedStrategySpecification {
-        public  IList<eTrackPlaySuggesters>     TrackSuggesters { get; }
-        public  IList<eTrackPlayDisqualifiers>  TrackDisqualifiers { get; }
-        public  IList<eTrackPlayBonus>          TrackBonusSuggesters { get; }
+        public  IList<eTrackPlayHandlers>   TrackSuggesters { get; }
+        public  IList<eTrackPlayHandlers>   TrackDisqualifiers { get; }
+        public  IList<eTrackPlayHandlers>   TrackBonusSuggesters { get; }
+        public  long                        SuggesterParameter { get; set; }
 
         public static ExhaustedStrategySpecification    Default {
             get {
                 var retValue = new ExhaustedStrategySpecification();
 
-                retValue.TrackSuggesters.Add( eTrackPlaySuggesters.PlayFavorites );
+                retValue.TrackSuggesters.Add( eTrackPlayHandlers.PlayFavorites );
 
-                retValue.TrackDisqualifiers.Add( eTrackPlayDisqualifiers.AlreadyQueuedTracks );
+                retValue.TrackDisqualifiers.Add( eTrackPlayHandlers.AlreadyQueuedTracks );
 
                 return retValue;
             }
         }
 
         public ExhaustedStrategySpecification() {
-            TrackSuggesters = new List<eTrackPlaySuggesters>();
-            TrackDisqualifiers = new List<eTrackPlayDisqualifiers>();
-            TrackBonusSuggesters = new List<eTrackPlayBonus>();
+            TrackSuggesters = new List<eTrackPlayHandlers>();
+            TrackDisqualifiers = new List<eTrackPlayHandlers>();
+            TrackBonusSuggesters = new List<eTrackPlayHandlers>();
+
+            SuggesterParameter = Constants.cDatabaseNullOid;
         }
     }
 }
