@@ -17,7 +17,7 @@ namespace Noise.Core.PlayStrategies {
         private string                          mTagName;
 
         public PlayExhaustedStrategyUserTags( IUserTagManager tagManager, ITagProvider tagProvider, ITrackProvider trackProvider, ILogPlayStrategy log, IEventAggregator eventAggregator ) :
-            base( ePlayExhaustedStrategy.PlayUserTags, "Play Tagged Tracks", "Play tracks associated with a tag.", "Tag", null, null, log ) {
+            base( ePlayExhaustedStrategy.PlayUserTags, "Play Tagged Tracks", "Play tracks associated with a tag", "Tag", null, null, log ) {
             mEventAggregator = eventAggregator;
             mTagManager = tagManager;
             mTagProvider = tagProvider;

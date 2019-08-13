@@ -29,6 +29,8 @@ namespace Noise.Core.PlayStrategies.Exhausted {
                 mStrategySpecification = value;
 
                 mStrategyFactory.BuildStrategy( mStrategySpecification, mPlaySuggesters, mPlayDisqualifiers, mPlayBonusHandlers );
+
+                mPlaySuggesters.ForEach( s => s.InitialConfiguration( mStrategySpecification ));
             }
         }
 

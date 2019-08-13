@@ -11,7 +11,7 @@ namespace Noise.Core.PlayStrategies.Exhausted {
         public  eTrackPlayHandlers  Identifier { get; }
         public eTrackPlayStrategy   StrategyType { get; }
         public  string              Name { get; }
-        public  string              Description { get; }
+        public  string              Description { get; private set; }
         public  bool                RequiresParameters { get; protected set; }
 
         protected ExhaustedHandlerBase( eTrackPlayHandlers handlerId, eTrackPlayStrategy type, string name, string description ) {
@@ -24,7 +24,12 @@ namespace Noise.Core.PlayStrategies.Exhausted {
             mRandom = new Random( DateTime.Now.Millisecond );
         }
 
+        public virtual void InitialConfiguration( ExhaustedStrategySpecification specification ) { }
         public abstract void SelectTrack( IExhaustedSelectionContext context );
+
+        protected void SetDescription( string description ) {
+            Description = description;
+        }
 
         protected int NextRandom( int maxValue ) {
             var	retValue = 0;

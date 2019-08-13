@@ -11,6 +11,8 @@ namespace Noise.Infrastructure.Interfaces {
     }
 
     public interface IExhaustedPlayHandler : IStrategyDescription {
+        void    InitialConfiguration( ExhaustedStrategySpecification specification );
+
         void    SelectTrack( IExhaustedSelectionContext context );
     }
 }
