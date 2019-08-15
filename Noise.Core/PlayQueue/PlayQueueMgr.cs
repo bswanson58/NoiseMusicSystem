@@ -543,12 +543,15 @@ namespace Noise.Core.PlayQueue {
 
         private bool SelectExhaustedTracks() {
             var retValue = false;
-            var tracks = mExhaustedStrategyPlay.SelectTracks( this, 1 );
 
-            foreach( var track in tracks ) {
-                StrategyAdd( track );
+            if( UnplayedTrackCount < 2 ) {
+                var tracks = mExhaustedStrategyPlay.SelectTracks( this, 2 - UnplayedTrackCount );
 
-                retValue = true;
+                foreach( var track in tracks ) {
+                    StrategyAdd( track );
+
+                    retValue = true;
+                }
             }
 
             return retValue;

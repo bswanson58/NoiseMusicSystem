@@ -47,7 +47,7 @@
 
 					</StackPanel>
 
-					<TextBlock Margin="125,3,0,0" Style="{StaticResource ControlTitleStyle}" Text="{Binding PlayStrategyDescription}"/>
+					<TextBlock Margin="130,3,0,0" Style="{StaticResource ControlTitleStyle}" Text="{Binding PlayStrategyDescription}"/>
 
 					<Rectangle Margin="3,15" Height="1" StrokeThickness="0" Fill="LightGray" />
 
@@ -79,7 +79,7 @@
 						</Grid>
 					</StackPanel>
 
-					<TextBlock Margin="125,3,0,0" Style="{StaticResource ControlTitleStyle}" Text="{Binding ExhaustedStrategyDescription}"/>
+					<TextBlock Margin="130,3,0,0" Style="{StaticResource ControlTitleStyle}" Text="{Binding ExhaustedStrategyDescription}"/>
 
 					<Rectangle Margin="3,15" Height="1" StrokeThickness="0" Fill="LightGray" />
 					
