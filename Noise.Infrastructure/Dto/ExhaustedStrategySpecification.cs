@@ -46,6 +46,7 @@ namespace Noise.Infrastructure.Dto {
                 retValue.TrackSuggesters.Add( eTrackPlayHandlers.PlayFavorites );
 
                 retValue.TrackDisqualifiers.Add( eTrackPlayHandlers.AlreadyQueuedTracks );
+                retValue.TrackDisqualifiers.Add( eTrackPlayHandlers.ShortTracks );
 
                 return retValue;
             }

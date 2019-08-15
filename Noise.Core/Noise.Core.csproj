@@ -289,6 +289,7 @@
     <Compile Include="Logging\LogUserStatus.cs" />
     <Compile Include="PlayQueue\RandomTrackSelector.cs" />
     <Compile Include="PlayStrategies\Exhausted\Disqualifiers\AlreadyQueuedTracks.cs" />
+    <Compile Include="PlayStrategies\Exhausted\Disqualifiers\ShortTracks.cs" />
     <Compile Include="PlayStrategies\Exhausted\ExhaustedContextFactory.cs" />
     <Compile Include="PlayStrategies\Exhausted\ExhaustedHandlerBase.cs" />
     <Compile Include="PlayStrategies\Exhausted\ExhaustedSelectionContext.cs" />
