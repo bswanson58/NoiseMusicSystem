@@ -48,5 +48,18 @@ namespace Noise.Core.PlayStrategies.Exhausted {
         protected DbTrack SelectRandomTrack( IList<DbTrack> fromList ) {
             return fromList.Skip( NextRandom( fromList.Count - 1 )).FirstOrDefault();
         }
+
+        protected bool AddSuggestedTrack( DbTrack track, IExhaustedSelectionContext context ) {
+            var retValue = false;
+
+            if(( track != null ) &&
+               ( context.SelectedTracks.All( t => t.DbId != track.DbId ))) {
+                context.SelectedTracks.Add( track );
+
+                retValue = true;
+            }
+
+            return retValue;
+        }
     }
 }

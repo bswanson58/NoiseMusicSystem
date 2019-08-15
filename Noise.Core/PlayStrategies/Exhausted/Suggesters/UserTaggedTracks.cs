@@ -53,7 +53,7 @@ namespace Noise.Core.PlayStrategies.Exhausted.Suggesters {
                 var association = mAssociationList.Skip( NextRandom( mAssociationList.Count )).Take( 1 ).FirstOrDefault();
 
                 if( association != null ) {
-                    context.SelectedTracks.Add( mTrackProvider.GetTrack( association.ArtistId ));
+                    AddSuggestedTrack( mTrackProvider.GetTrack( association.ArtistId ), context );
                 }
             }
         }

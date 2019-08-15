@@ -12,7 +12,7 @@ namespace Noise.Core.PlayStrategies.Exhausted.Suggesters {
 
         public override void SelectTrack( IExhaustedSelectionContext context ) {
             using( var favoriteTracks = mTrackProvider.GetFavoriteTracks()) {
-                context.SelectedTracks.Add( SelectRandomTrack( favoriteTracks.List ));
+                AddSuggestedTrack( SelectRandomTrack( favoriteTracks.List ), context );
             }
         }
     }
