@@ -57,7 +57,7 @@ namespace Noise.Core.PlayStrategies.Exhausted {
 
                     circuitBreaker--;
                 } while(( circuitBreaker > 0 ) &&
-                        (!context.SelectedTracks.Any()));
+                        ( context.SelectedTracks.Count < minCount ));
 
                 return context.SelectedTracks;
             }

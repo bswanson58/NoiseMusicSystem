@@ -542,10 +542,11 @@ namespace Noise.Core.PlayQueue {
 		}
 
         private bool SelectExhaustedTracks() {
+            const int suggestionCount = 3;
             var retValue = false;
 
-            if( UnplayedTrackCount < 2 ) {
-                var tracks = mExhaustedStrategyPlay.SelectTracks( this, 2 - UnplayedTrackCount );
+            if( UnplayedTrackCount < suggestionCount ) {
+                var tracks = mExhaustedStrategyPlay.SelectTracks( this, suggestionCount - UnplayedTrackCount );
 
                 foreach( var track in tracks ) {
                     StrategyAdd( track );
