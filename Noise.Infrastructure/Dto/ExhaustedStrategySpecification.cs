@@ -26,7 +26,7 @@ namespace Noise.Infrastructure.Dto {
         ShortTracks = 201,
         AlreadyQueuedTracks = 202,
         BadRatingTracks = 203,
-        DoNotPlayTracks = 204,
+        TalkingTracks = 204,
 
         // Bonus handlers
         HighlyRatedTracks = 301,
@@ -48,6 +48,7 @@ namespace Noise.Infrastructure.Dto {
                 retValue.TrackDisqualifiers.Add( eTrackPlayHandlers.AlreadyQueuedTracks );
                 retValue.TrackDisqualifiers.Add( eTrackPlayHandlers.ShortTracks );
                 retValue.TrackDisqualifiers.Add( eTrackPlayHandlers.BadRatingTracks );
+                retValue.TrackDisqualifiers.Add( eTrackPlayHandlers.TalkingTracks );
 
                 return retValue;
             }
