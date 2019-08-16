@@ -8,7 +8,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              d:DesignHeight="100"
-             d:DesignWidth="500"
+             d:DesignWidth="530"
              mc:Ignorable="d">
 
     <UserControl.DataContext>
@@ -23,6 +23,9 @@
         <Behaviours:InteractionRequestDialogBehavior DialogClass="TagAssociationDialog"
                                                      DialogService="{Binding Source={StaticResource DialogService}}"
                                                      InteractionRequest="{Binding Path=TagEditRequest}" />
+        <Behaviours:InteractionRequestDialogBehavior DialogClass="TrackStrategyOptionsDialog"
+                                                     DialogService="{Binding Source={StaticResource DialogService}}"
+                                                     InteractionRequest="{Binding Path=StrategyEditRequest}" />
     </i:Interaction.Behaviors>
 
     <GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}" Header=" Tracks ">
@@ -135,6 +138,26 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
+                    <GridViewColumn Width="29" HeaderTemplate="{StaticResource TagColumnHeaderTemplate}">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentControl x:Name="StrategyContainer" Opacity="0.3">
+                                    <Button x:Name="StrategyOptions" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
+                                            Command="{Binding Path=StrategyOptions}" Content="{StaticResource Path_Categories}" ToolTip="{Binding TagsTooltip}" Focusable="False"/>
+                                </ContentControl>
+                                <DataTemplate.Triggers>
+                                    <Trigger SourceName="StrategyOptions" Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="StrategyContainer" Property="Opacity" Value="1.0"/>
+                                    </Trigger>
+                                    <DataTrigger Binding="{Binding HasStrategyOptions}" Value="True">
+                                        <Setter TargetName="StrategyOptions" Property="Opacity" Value="1.0"/>
+                                        <Setter TargetName="StrategyOptions" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
                 </GridView>
             </ListView.View>
         </ListView>

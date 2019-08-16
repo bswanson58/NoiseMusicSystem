@@ -23,5 +23,6 @@
         public const string     TagAddDialog                = "TagAddDialog";
         public const string     TagEditDialog               = "TagEditDialog";
         public const string     TagAssociationDialog        = "TagAssociationDialog";
+        public const string     TrackStrategyOptionsDialog  = "TrackStrategyOptionsDialog";
 	}
 }
