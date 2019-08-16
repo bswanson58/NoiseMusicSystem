@@ -3,13 +3,11 @@ using Noise.Infrastructure.Dto;
 
 namespace Noise.Infrastructure.Interfaces {
     public interface IExhaustedSelectionContext {
-        IPlayQueue      PlayQueue { get; }
+        IPlayQueue                          PlayQueue { get; }
 
-        DbArtist        Artist { get; set; }
-        DbAlbum         Album { get; set; }
-        IList<DbTrack>  AlbumTracks { get; }
-        IList<DbTrack>  SelectedTracks { get; }
+        IList<DbTrack>                      SelectedTracks { get; }
+        IDictionary<long, IList<string>>    BreadCrumbs { get; }
 
-        long            SuggesterParameter { get; }
+        long                                SuggesterParameter { get; }
     }
 }

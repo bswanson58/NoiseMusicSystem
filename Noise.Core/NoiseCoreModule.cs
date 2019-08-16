@@ -15,6 +15,7 @@ using Noise.Core.PlayHistory;
 using Noise.Core.PlayQueue;
 using Noise.Core.PlayStrategies;
 using Noise.Core.PlayStrategies.Exhausted;
+using Noise.Core.PlayStrategies.Exhausted.BonusSuggesters;
 using Noise.Core.PlayStrategies.Exhausted.Disqualifiers;
 using Noise.Core.PlayStrategies.Exhausted.Suggesters;
 using Noise.Core.PlaySupport;
@@ -149,6 +150,8 @@ namespace Noise.Core {
             mContainer.RegisterType<IExhaustedPlayHandler, ShortTracks>( eTrackPlayHandlers.ShortTracks.ToString());
             mContainer.RegisterType<IExhaustedPlayHandler, BadRatingTracks>( eTrackPlayHandlers.BadRatingTracks.ToString());
             mContainer.RegisterType<IExhaustedPlayHandler, TalkingTracks>( eTrackPlayHandlers.TalkingTracks.ToString());
+
+            mContainer.RegisterType<IExhaustedPlayHandler, HighlyRatedTracks>( eTrackPlayHandlers.HighlyRatedTracks.ToString());
             mContainer.RegisterType<IEnumerable<IExhaustedPlayHandler>, IExhaustedPlayHandler[]>();
 
 			mContainer.RegisterType<IPlayQueueSupport, PlayQueueRandomTracks>( "PlayQueueRandomTracks" );

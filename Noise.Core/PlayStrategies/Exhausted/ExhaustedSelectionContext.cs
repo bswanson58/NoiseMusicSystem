@@ -4,20 +4,17 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies.Exhausted {
     class ExhaustedSelectionContext : IExhaustedSelectionContext {
-        public  IPlayQueue      PlayQueue { get; }
+        public  IPlayQueue                          PlayQueue { get; }
 
-        public  DbArtist        Artist { get; set; }
-        public  DbAlbum         Album { get; set; }
-        public  IList<DbTrack>  AlbumTracks { get; }
+        public  IDictionary<long, IList<string>>    BreadCrumbs { get; }
+        public  IList<DbTrack>                      SelectedTracks { get; }
 
-        public  IList<DbTrack>  SelectedTracks { get; }
-
-        public  long            SuggesterParameter { get; }
+        public  long                                SuggesterParameter { get; }
 
         public ExhaustedSelectionContext( IPlayQueue playQueue, long parameter ) {
             PlayQueue = playQueue;
 
-            AlbumTracks = new List<DbTrack>();
+            BreadCrumbs = new Dictionary<long, IList<string>>();
             SelectedTracks = new List<DbTrack>();
 
             SuggesterParameter = parameter;

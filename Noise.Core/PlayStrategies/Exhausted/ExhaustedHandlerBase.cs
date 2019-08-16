@@ -49,11 +49,15 @@ namespace Noise.Core.PlayStrategies.Exhausted {
             return fromList.Skip( NextRandom( fromList.Count - 1 )).FirstOrDefault();
         }
 
+        protected bool CanSuggestTrack( DbTrack track, IExhaustedSelectionContext context ) {
+            return ( track != null ) &&
+                   ( context.SelectedTracks.All( t => t.DbId != track.DbId ));
+        }
+
         protected bool AddSuggestedTrack( DbTrack track, IExhaustedSelectionContext context ) {
             var retValue = false;
 
-            if(( track != null ) &&
-               ( context.SelectedTracks.All( t => t.DbId != track.DbId ))) {
+            if( CanSuggestTrack( track, context )) {
                 context.SelectedTracks.Add( track );
 
                 retValue = true;

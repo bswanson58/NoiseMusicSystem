@@ -50,6 +50,8 @@ namespace Noise.Infrastructure.Dto {
                 retValue.TrackDisqualifiers.Add( eTrackPlayHandlers.BadRatingTracks );
                 retValue.TrackDisqualifiers.Add( eTrackPlayHandlers.TalkingTracks );
 
+                retValue.TrackBonusSuggesters.Add( eTrackPlayHandlers.HighlyRatedTracks );
+
                 return retValue;
             }
         }
