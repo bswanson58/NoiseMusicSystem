@@ -292,6 +292,7 @@
     <Compile Include="PlayStrategies\Exhausted\BonusSuggesters\PlayAdjacentTrack.cs" />
     <Compile Include="PlayStrategies\Exhausted\Disqualifiers\AlreadyQueuedTracks.cs" />
     <Compile Include="PlayStrategies\Exhausted\Disqualifiers\BadRatingTracks.cs" />
+    <Compile Include="PlayStrategies\Exhausted\Disqualifiers\DoNotPlayTracks.cs" />
     <Compile Include="PlayStrategies\Exhausted\Disqualifiers\ShortTracks.cs" />
     <Compile Include="PlayStrategies\Exhausted\Disqualifiers\TalkingTracks.cs" />
     <Compile Include="PlayStrategies\Exhausted\ExhaustedContextFactory.cs" />
