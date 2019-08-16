@@ -152,6 +152,7 @@ namespace Noise.Core {
             mContainer.RegisterType<IExhaustedPlayHandler, TalkingTracks>( eTrackPlayHandlers.TalkingTracks.ToString());
 
             mContainer.RegisterType<IExhaustedPlayHandler, HighlyRatedTracks>( eTrackPlayHandlers.HighlyRatedTracks.ToString());
+            mContainer.RegisterType<IExhaustedPlayHandler, PlayAdjacentTrack>( eTrackPlayHandlers.PlayAdjacentTracks.ToString());
             mContainer.RegisterType<IEnumerable<IExhaustedPlayHandler>, IExhaustedPlayHandler[]>();
 
 			mContainer.RegisterType<IPlayQueueSupport, PlayQueueRandomTracks>( "PlayQueueRandomTracks" );

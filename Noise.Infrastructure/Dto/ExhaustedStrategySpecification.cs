@@ -30,7 +30,7 @@ namespace Noise.Infrastructure.Dto {
 
         // Bonus handlers
         HighlyRatedTracks = 301,
-        PlayNextTrack = 302
+        PlayAdjacentTracks = 302
     }
 
     public class ExhaustedStrategySpecification {
@@ -51,6 +51,7 @@ namespace Noise.Infrastructure.Dto {
                 retValue.TrackDisqualifiers.Add( eTrackPlayHandlers.TalkingTracks );
 
                 retValue.TrackBonusSuggesters.Add( eTrackPlayHandlers.HighlyRatedTracks );
+                retValue.TrackBonusSuggesters.Add( eTrackPlayHandlers.PlayAdjacentTracks );
 
                 return retValue;
             }
