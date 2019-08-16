@@ -171,6 +171,7 @@
     <Compile Include="Dto\ExhaustedStrategySpecification.cs" />
     <Compile Include="Dto\PlaybackContext.cs" />
     <Compile Include="Dto\PlayingItem.cs" />
+    <Compile Include="Dto\PlayStrategyOptions.cs" />
     <Compile Include="Dto\ScAlbum.cs" />
     <Compile Include="Dto\AlbumSupportInfo.cs" />
     <Compile Include="Dto\Artwork.cs" />
