@@ -143,6 +143,7 @@ namespace Noise.Core {
 
             mContainer.RegisterType<IExhaustedPlayHandler, StopPlay>( eTrackPlayHandlers.Stop.ToString());
             mContainer.RegisterType<IExhaustedPlayHandler, FavoriteTracks>( eTrackPlayHandlers.PlayFavorites.ToString());
+            mContainer.RegisterType<IExhaustedPlayHandler, PlayArtistTracks>( eTrackPlayHandlers.PlayArtist.ToString());
             mContainer.RegisterType<IExhaustedPlayHandler, ReplayQueue>( eTrackPlayHandlers.Replay.ToString());
             mContainer.RegisterType<IExhaustedPlayHandler, UserTaggedTracks>( eTrackPlayHandlers.PlayUserTags.ToString());
 
