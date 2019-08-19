@@ -12,13 +12,10 @@ namespace Noise.UI.ViewModels {
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IGenreProvider             mGenreProvider;
 		private readonly ITagProvider               mTagProvider;
-		private readonly IPlayListProvider          mPlayListProvider;
 		private readonly IPlayStrategyFactory       mPlayStrategyFactory;
 		private readonly IExhaustedStrategyFactory  mExhaustedStrategyFactory;
 		private readonly List<DbArtist>				mArtistList;
 		private readonly List<DbGenre>				mArtistGenreList;
-		private readonly List<DbPlayList>			mPlayLists; 
-		private readonly List<DbTag>				mCategoryList;
         private readonly List<DbTag>                mUserTags;
 		private IPlayStrategy						mSelectedPlayStrategy;
 		private IPlayStrategyParameters				mPlayStrategyParameters;
@@ -34,12 +31,10 @@ namespace Noise.UI.ViewModels {
         public  BindableCollection<IStrategyDescription>            ExhaustedStrategyList => mExhaustedStrategies;
 
 		public PlayStrategyDialogModel( IArtistProvider artistProvider, IGenreProvider genreProvider, ITagProvider tagProvider,
-										IPlayListProvider playListProvider,
 										IPlayStrategyFactory strategyFactory, IExhaustedStrategyFactory exhaustedFactory ) {
 			mArtistProvider = artistProvider;
 			mGenreProvider = genreProvider;
 			mTagProvider = tagProvider;
-			mPlayListProvider = playListProvider;
 			mPlayStrategyFactory = strategyFactory;
 			mExhaustedStrategyFactory = exhaustedFactory;
 
@@ -53,9 +48,7 @@ namespace Noise.UI.ViewModels {
 			mExhaustedParameters = new BindableCollection<NameIdPair>();
 
 			mArtistList = new List<DbArtist>();
-			mCategoryList = new List<DbTag>();
 			mArtistGenreList = new List<DbGenre>();
-			mPlayLists = new List<DbPlayList>();
             mUserTags = new List<DbTag>();
 		}
 
@@ -238,17 +231,8 @@ namespace Noise.UI.ViewModels {
 						FillCollectionWithArtists( collection );
 						break;
 
-					case eTrackPlayHandlers.PlayArtistGenre:
 					case eTrackPlayHandlers.PlayGenre:
 						FillCollectionWithGenres( collection );
-						break;
-
-					case eTrackPlayHandlers.PlayCategory:
-						FillCollectionWithCategories( collection );
-						break;
-
-					case eTrackPlayHandlers.PlayList:
-						FillCollectionWithPlayLists( collection );
 						break;
 
                     case eTrackPlayHandlers.PlayUserTags:
@@ -280,24 +264,6 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void FillCollectionWithCategories( BindableCollection<NameIdPair> collection ) {
-			if( !mCategoryList.Any() ) {
-				using( var categoryList = mTagProvider.GetTagList( eTagGroup.User )) {
-					mCategoryList.AddRange( from DbTag tag in categoryList.List orderby tag.Name ascending  select tag );
-				}
-			}
-
-			collection.IsNotifying = false;
-			collection.Clear();
-
-			foreach( var category in mCategoryList ) {
-				collection.Add( new NameIdPair( category.DbId, category.Name ));
-			}
-
-			collection.IsNotifying = true;
-			collection.Refresh();
-		}
-
 		private void FillCollectionWithGenres( BindableCollection<NameIdPair> collection ) {
 			FillArtistList();
 
@@ -314,24 +280,6 @@ namespace Noise.UI.ViewModels {
 
 			foreach( var genre in mArtistGenreList ) {
 				collection.Add( new NameIdPair( genre.DbId, genre.Name ));
-			}
-
-			collection.IsNotifying = true;
-			collection.Refresh();
-		}
-
-		private void FillCollectionWithPlayLists( BindableCollection<NameIdPair> collection ) {
-			if(!mPlayLists.Any()) {
-				using( var playLists = mPlayListProvider.GetPlayLists() ) {
-					mPlayLists.AddRange( from playList in playLists.List orderby playList.Name select playList);
-				}
-			}
-
-			collection.IsNotifying = false;
-			collection.Clear();
-
-			foreach( var playtList in mPlayLists ) {
-				collection.Add( new NameIdPair( playtList.DbId, playtList.Name ));
 			}
 
 			collection.IsNotifying = true;
