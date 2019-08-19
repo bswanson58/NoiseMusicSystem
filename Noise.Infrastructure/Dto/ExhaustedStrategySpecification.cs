@@ -11,13 +11,13 @@ namespace Noise.Infrastructure.Dto {
         // Suggesters
         Unknown = 0,
         Stop = 100,
-        Replay = 102,
-        PlayArtist = 103,
-        PlaySimilar = 104,
-        PlayFavorites = 105,
-        PlayGenre = 106,
-        SeldomPlayedArtists = 108,
-        PlayUserTags = 109,
+        Replay = 101,
+        PlayArtist = 102,
+        PlaySimilar = 103,
+        PlayFavorites = 104,
+        PlayGenre = 105,
+        SeldomPlayedArtists = 106,
+        PlayUserTags = 107,
 
         // Disqualifiers
         ShortTracks = 201,
