@@ -32,7 +32,7 @@ namespace Noise.Core.PlayStrategies.Exhausted.Suggesters {
 
                     if( album != null ) {
                         using( var trackList = mTrackProvider.GetTrackList( album )) {
-                            AddSuggestedTrack( SelectRandomTrack( trackList.List ), context  );
+                            AddSuggestedTrack( SelectRandomTrack( trackList.List ), context );
                         }
                     }
                 }
