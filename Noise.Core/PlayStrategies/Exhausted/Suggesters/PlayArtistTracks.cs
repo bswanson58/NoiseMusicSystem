@@ -9,7 +9,7 @@ namespace Noise.Core.PlayStrategies.Exhausted.Suggesters {
         private readonly ITrackProvider     mTrackProvider;
 
         public PlayArtistTracks( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider ) :
-            base( eTrackPlayHandlers.PlayArtist, eTrackPlayStrategy.Suggester, "Play Artist...", "Play random tracks from the selected artist." ) {
+            base( eTrackPlayHandlers.PlayArtist, eTrackPlayStrategy.Suggester, "Play Artist... ", "play random tracks from the selected artist" ) {
             mArtistProvider = artistProvider;
             mAlbumProvider = albumProvider;
             mTrackProvider = trackProvider;

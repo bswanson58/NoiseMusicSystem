@@ -9,7 +9,7 @@ namespace Noise.Core.PlayStrategies.Exhausted.BonusSuggesters {
         private readonly ITrackProvider     mTrackProvider;
 
         public HighlyRatedTracks( ITrackProvider trackProvider ) :
-            base( eTrackPlayHandlers.HighlyRatedTracks, eTrackPlayStrategy.BonusSuggester, "Highly Rated Tracks", "Add some highly rated tracks from the same album" ) {
+            base( eTrackPlayHandlers.HighlyRatedTracks, eTrackPlayStrategy.BonusSuggester, "Highly Rated Tracks", "Add some highly rated tracks from the same album." ) {
             mTrackProvider = trackProvider;
         }
 

@@ -10,7 +10,7 @@ namespace Noise.Core.PlayStrategies.Exhausted.Suggesters {
         private readonly IGenreProvider		mGenreProvider;
 
         public PlayGenre( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IGenreProvider genreProvider ) :
-            base( eTrackPlayHandlers.PlayGenre, eTrackPlayStrategy.Suggester, "Play Genre...", "Play random tracks from the chosen genre." ) {
+            base( eTrackPlayHandlers.PlayGenre, eTrackPlayStrategy.Suggester, "Play Genre... ", "play random tracks from the chosen genre" ) {
             mArtistProvider = artistProvider;
             mAlbumProvider = albumProvider;
             mTrackProvider = trackProvider;

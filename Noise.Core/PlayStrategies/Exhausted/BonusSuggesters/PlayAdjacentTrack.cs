@@ -7,7 +7,7 @@ namespace Noise.Core.PlayStrategies.Exhausted.BonusSuggesters {
         private readonly ITrackProvider     mTrackProvider;
 
         public PlayAdjacentTrack( ITrackProvider trackProvider )
-            : base( eTrackPlayHandlers.PlayAdjacentTracks, eTrackPlayStrategy.BonusSuggester, "Play Next/Previous", "Play tracks set to be included in suggestions" ) {
+            : base( eTrackPlayHandlers.PlayAdjacentTracks, eTrackPlayStrategy.BonusSuggester, "Play Adjacent Tracks", "Play indicated tracks adjacent to suggestions." ) {
             mTrackProvider = trackProvider;
         }
 

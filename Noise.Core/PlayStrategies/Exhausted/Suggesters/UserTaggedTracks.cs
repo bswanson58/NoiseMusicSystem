@@ -17,7 +17,7 @@ namespace Noise.Core.PlayStrategies.Exhausted.Suggesters {
         private long                            mTagId;
 
         public UserTaggedTracks( IUserTagManager tagManager, ITagProvider tagProvider, ITrackProvider trackProvider, IEventAggregator eventAggregator )
-            : base( eTrackPlayHandlers.PlayUserTags, eTrackPlayStrategy.Suggester, "Play Tagged Tracks", "Play tracks associated with a tag" ) {
+            : base( eTrackPlayHandlers.PlayUserTags, eTrackPlayStrategy.Suggester, "Play Tagged Tracks... ", "play tracks associated with a tag" ) {
             mTagManager = tagManager;
             mTagProvider = tagProvider;
             mTrackProvider = trackProvider;

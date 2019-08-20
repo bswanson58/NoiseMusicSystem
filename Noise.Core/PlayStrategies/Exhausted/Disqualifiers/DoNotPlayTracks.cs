@@ -5,7 +5,7 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Core.PlayStrategies.Exhausted.Disqualifiers {
     class DoNotPlayTracks : ExhaustedHandlerBase {
-        public DoNotPlayTracks() : base( eTrackPlayHandlers.DoNotPlayTracks, eTrackPlayStrategy.Disqualifier, "Do Not Play Tracks", "Eliminate tracks marked as not to be suggested" ) { }
+        public DoNotPlayTracks() : base( eTrackPlayHandlers.DoNotPlayTracks, eTrackPlayStrategy.Disqualifier, "Do Not Play Tracks", "Eliminate tracks marked as not to be suggested." ) { }
 
         public override void SelectTrack( IExhaustedSelectionContext context ) {
             var tracks = context.SelectedTracks.ToArray();
