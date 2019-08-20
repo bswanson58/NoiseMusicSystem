@@ -26,7 +26,7 @@ namespace Noise.Core.PlayStrategies.Exhausted {
         public ExhaustedStrategySpecification StrategySpecification {
             get => new ExhaustedStrategySpecification( mStrategySpecification ); // prevent changes to our copy
             set {
-                mStrategySpecification = value;
+                mStrategySpecification = new ExhaustedStrategySpecification( value );
 
                 mStrategyFactory.BuildStrategy( mStrategySpecification, mPlaySuggesters, mPlayDisqualifiers, mPlayBonusHandlers );
 

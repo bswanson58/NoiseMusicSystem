@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
+using Microsoft.Practices.ObjectBuilder2;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -22,15 +23,16 @@ namespace Noise.UI.ViewModels {
         private ExhaustedStrategySpecification      mExhaustedStrategySpecification;
         private IStrategyDescription                mSelectedExhaustedStrategy;
 
-		private	readonly BindableCollection<IStrategyDescription>	mExhaustedStrategies;
-		private readonly BindableCollection<NameIdPair>				mExhaustedParameters; 
+        private readonly BindableCollection<NameIdPair>				mExhaustedParameters; 
 		private readonly BindableCollection<PlayStrategyItem>		mPlayStrategies;
 		private readonly BindableCollection<NameIdPair>				mPlayParameters;
 
         public  BindableCollection<PlayStrategyItem>                PlayStrategyList => mPlayStrategies;
-        public  BindableCollection<IStrategyDescription>            ExhaustedStrategyList => mExhaustedStrategies;
+        public  BindableCollection<IStrategyDescription>            ExhaustedStrategyList { get; }
+        public  BindableCollection<UiStrategyDescription>           DisqualifierList { get; }
+        public  BindableCollection<UiStrategyDescription>           BonusStrategyList { get; }
 
-		public PlayStrategyDialogModel( IArtistProvider artistProvider, IGenreProvider genreProvider, ITagProvider tagProvider,
+        public PlayStrategyDialogModel( IArtistProvider artistProvider, IGenreProvider genreProvider, ITagProvider tagProvider,
 										IPlayStrategyFactory strategyFactory, IExhaustedStrategyFactory exhaustedFactory ) {
 			mArtistProvider = artistProvider;
 			mGenreProvider = genreProvider;
@@ -41,8 +43,14 @@ namespace Noise.UI.ViewModels {
 			mPlayStrategies = new BindableCollection<PlayStrategyItem>( from strategy in mPlayStrategyFactory.AvailableStrategies orderby strategy.StrategyName
 																		select new PlayStrategyItem( strategy.StrategyId, strategy.StrategyName ));
 
-			mExhaustedStrategies = new BindableCollection<IStrategyDescription>( from strategy in mExhaustedStrategyFactory.ExhaustedStrategies
+			ExhaustedStrategyList = new BindableCollection<IStrategyDescription>( from strategy in mExhaustedStrategyFactory.ExhaustedStrategies
                                                                                  where strategy.StrategyType == eTrackPlayStrategy.Suggester orderby strategy.Name select strategy);
+            DisqualifierList = new BindableCollection<UiStrategyDescription>( from strategy in mExhaustedStrategyFactory.ExhaustedStrategies
+                                                                           where strategy.StrategyType == eTrackPlayStrategy.Disqualifier orderby strategy.Name 
+                                                                           select new UiStrategyDescription( strategy ));
+            BonusStrategyList = new BindableCollection<UiStrategyDescription>( from strategy in mExhaustedStrategyFactory.ExhaustedStrategies
+                                                                             where strategy.StrategyType == eTrackPlayStrategy.BonusSuggester orderby strategy.Name 
+                                                                             select new UiStrategyDescription( strategy));
 
 			mPlayParameters = new BindableCollection<NameIdPair>();
 			mExhaustedParameters = new BindableCollection<NameIdPair>();
@@ -71,21 +79,50 @@ namespace Noise.UI.ViewModels {
             set {
 				mPlayStrategyParameters = value;
 
-				if( mPlayStrategyParameters is PlayStrategyParameterDbId ) {
-					var dbParms = mPlayStrategyParameters as PlayStrategyParameterDbId;
-
-					SelectedPlayParameter = mPlayParameters.FirstOrDefault( parameter => parameter.Id == dbParms.DbItemId );
+				if( mPlayStrategyParameters is PlayStrategyParameterDbId dbParms ) {
+                    SelectedPlayParameter = mPlayParameters.FirstOrDefault( parameter => parameter.Id == dbParms.DbItemId );
 				}
 			}
 		}
 
         public ExhaustedStrategySpecification ExhaustedStrategySpecification {
-            get => mExhaustedStrategySpecification;
+            get {
+                UpdateStrategySpecification();
+
+                return mExhaustedStrategySpecification;
+            }
             set {
                 mExhaustedStrategySpecification = value;
 
-                if(( mExhaustedStrategySpecification != null ) &&
-                   ( mExhaustedStrategySpecification.TrackSuggesters.Any())) {
+                LoadStrategySpecification();
+            }
+        }
+
+        private void UpdateStrategySpecification() {
+            mExhaustedStrategySpecification.TrackDisqualifiers.Clear();
+            DisqualifierList.ForEach( d => {
+                if( d.IsSelected ) {
+                    mExhaustedStrategySpecification.TrackDisqualifiers.Add( d.StrategyId );
+                }
+            });
+
+            mExhaustedStrategySpecification.TrackBonusSuggesters.Clear();
+            BonusStrategyList.ForEach( h => {
+                if( h.IsSelected ) {
+                    mExhaustedStrategySpecification.TrackBonusSuggesters.Add( h.StrategyId );
+                }
+            });
+
+            mExhaustedStrategySpecification.SetPrimarySuggester( mSelectedExhaustedStrategy.Identifier );
+            mExhaustedStrategySpecification.SuggesterParameter = SelectedExhaustedParameter?.Id ?? Constants.cDatabaseNullOid;
+        }
+
+        private void LoadStrategySpecification() {
+            if( mExhaustedStrategySpecification != null ) {
+                DisqualifierList.ForEach( d => d.IsSelected = mExhaustedStrategySpecification.TrackDisqualifiers.Contains( d.StrategyId ));
+                BonusStrategyList.ForEach( b => b.IsSelected = mExhaustedStrategySpecification.TrackBonusSuggesters.Contains( b.StrategyId ));
+
+                if( mExhaustedStrategySpecification.TrackSuggesters.Any()) {
                     var suggester = mExhaustedStrategySpecification.TrackSuggesters.First();
 
                     SelectedExhaustedStrategy = mExhaustedStrategyFactory.ExhaustedStrategies.FirstOrDefault( s => s.Identifier.Equals( suggester ));
@@ -111,9 +148,7 @@ namespace Noise.UI.ViewModels {
 
 				if( mSelectedExhaustedStrategy != null ) {
 					if( mSelectedExhaustedStrategy.RequiresParameters ) {
-						if( mExhaustedStrategySpecification.SuggesterParameter == Constants.cDatabaseNullOid ) {
-							retValue = false;
-						}
+						retValue = SelectedExhaustedParameter != null;
 					}
 				}
 				else {
@@ -172,7 +207,6 @@ namespace Noise.UI.ViewModels {
 				Set( () => SelectedExhaustedStrategy, value );
 
 				mSelectedExhaustedStrategy = value;
-                mExhaustedStrategySpecification.SetPrimarySuggester( mSelectedExhaustedStrategy.Identifier );
 
 				if( mSelectedExhaustedStrategy != null ) {
 					SetupExhaustedParameters( mSelectedExhaustedStrategy, mExhaustedParameters );
@@ -189,11 +223,7 @@ namespace Noise.UI.ViewModels {
 
         public NameIdPair SelectedExhaustedParameter {
 			get { return( Get( () => SelectedExhaustedParameter )); }
-			set {
-                Set( () => SelectedExhaustedParameter, value );
-
-                ExhaustedStrategySpecification.SuggesterParameter = SelectedExhaustedParameter?.Id ?? Constants.cDatabaseNullOid;
-            }
+			set { Set( () => SelectedExhaustedParameter, value ); }
 		}
 
 		public string ExhaustedParameterName {

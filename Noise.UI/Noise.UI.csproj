@@ -281,6 +281,7 @@
     <Compile Include="Dto\UiEqBand.cs" />
     <Compile Include="Dto\UiInternetStream.cs" />
     <Compile Include="Dto\UiPlayQueueTrack.cs" />
+    <Compile Include="Dto\UiStrategyDescription.cs" />
     <Compile Include="Dto\UiTag.cs" />
     <Compile Include="Dto\UiTagAssociation.cs" />
     <Compile Include="Dto\UiTimeExplorerAlbum.cs" />
