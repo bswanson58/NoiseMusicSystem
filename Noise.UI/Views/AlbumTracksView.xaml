@@ -31,12 +31,16 @@
         <DataTemplate x:Key="PlayAdjacentNeitherTemplate">
             <ContentPresenter Height="15" Width="15" Content="{StaticResource Path_PlayAdjacentNeither}"/>
         </DataTemplate>
+        <DataTemplate x:Key="DoNotPlayTemplate">
+            <ContentPresenter Height="15" Width="15" Content="{StaticResource Path_NoPlay}"/>
+        </DataTemplate>
 
         <Views:AdjacentPlaySelector x:Key="AdjacentPlaySelector"
                                     BothTemplate="{StaticResource PlayAdjacentBothTemplate}"
                                     NextTemplate="{StaticResource PlayAdjacentNextTemplate}"
                                     PreviousTemplate="{StaticResource PlayAdjacentPreviousTemplate}"
-                                    NeitherTemplate="{StaticResource PlayAdjacentNeitherTemplate}"/>
+                                    NeitherTemplate="{StaticResource PlayAdjacentNeitherTemplate}"
+                                    DoNotPlayTemplate="{StaticResource DoNotPlayTemplate}"/>
     </UserControl.Resources>
 
     <i:Interaction.Behaviors>
@@ -163,7 +167,7 @@
                             <DataTemplate>
                                 <ContentControl x:Name="StrategyContainer" Opacity="0.3">
                                     <Button x:Name="StrategyOptions" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
-                                            Command="{Binding Path=StrategyOptions}" Content="{Binding PlayStrategyOptions}" ContentTemplateSelector="{StaticResource AdjacentPlaySelector}" 
+                                            Command="{Binding Path=StrategyOptions}" Content="{Binding CombinedPlayStrategy}" ContentTemplateSelector="{StaticResource AdjacentPlaySelector}" 
                                             ToolTip="Play Adjacent Tracks" Focusable="False"/>
                                 </ContentControl>
                                 <DataTemplate.Triggers>

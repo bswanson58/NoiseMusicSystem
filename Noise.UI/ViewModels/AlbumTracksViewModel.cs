@@ -295,9 +295,11 @@ namespace Noise.UI.ViewModels {
                             track.Item.PlayStrategyOptions = ePlayAdjacentStrategy.None;
                         }
 
+                        track.Item.DoNotStrategyPlay = dialogInfo.ViewModel.DoNotPlay;
+
                         track.Update();
 
-                        TrackList.FirstOrDefault( t => t.DbId.Equals( track.Item.DbId ))?.SetStrategyOption( track.Item.PlayStrategyOptions );
+                        TrackList.FirstOrDefault( t => t.DbId.Equals( track.Item.DbId ))?.SetStrategyOption( track.Item.PlayStrategyOptions, track.Item.DoNotStrategyPlay );
                     }
                 }
             }

@@ -270,6 +270,7 @@
       <DependentUpon>VuMeter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\VuMeterBar.cs" />
+    <Compile Include="Dto\CombinedPlayStrategy.cs" />
     <Compile Include="Dto\NameIdPair.cs" />
     <Compile Include="Dto\PlayStrategyItem.cs" />
     <Compile Include="Dto\UiAlbum.cs" />
