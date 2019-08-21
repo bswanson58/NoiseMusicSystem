@@ -39,7 +39,7 @@ namespace Noise.Infrastructure.Dto {
 			ReplayGainTrackGain = track.ReplayGainTrackGain;
 			ReplayGainTrackPeak = track.ReplayGainTrackPeak;
 
-            PlayAdjacentStrategy = track.PlayStrategyOptions;
+            PlayAdjacentStrategy = track.PlayAdjacentStrategy;
             DoNotStrategyPlay = track.DoNotStrategyPlay;
 		}
 
@@ -51,7 +51,7 @@ namespace Noise.Infrastructure.Dto {
 			track.ReplayGainTrackGain = ReplayGainTrackGain;
 			track.ReplayGainTrackPeak = ReplayGainTrackPeak;
 
-            track.PlayStrategyOptions = PlayAdjacentStrategy;
+            track.PlayAdjacentStrategy = PlayAdjacentStrategy;
             track.DoNotStrategyPlay = DoNotStrategyPlay;
 		}
 

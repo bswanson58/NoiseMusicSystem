@@ -26,14 +26,14 @@ namespace Noise.UI.Dto {
 		public string			        UserGenre { get; set; }
 		public bool				        IsFavorite { get; set; }
 		public DbGenre			        DisplayGenre { get; set; }
-        public ePlayAdjacentStrategy    PlayStrategyOptions { get; set; }
+        public ePlayAdjacentStrategy    PlayAdjacentStrategy { get; set; }
         public bool                     DoNotStrategyPlay { get; set; }
 
         public string                   Genre => DisplayGenre != null ? DisplayGenre.Name : String.Empty;
         public bool                     HasTags => mTags.Any();
-        public bool                     HasStrategyOptions => ( PlayStrategyOptions != ePlayAdjacentStrategy.None ) || DoNotStrategyPlay;
+        public bool                     HasStrategyOptions => ( PlayAdjacentStrategy != ePlayAdjacentStrategy.None ) || DoNotStrategyPlay;
         public string                   TagsTooltip => mTags.Any() ? string.Join( Environment.NewLine, mTags ) : "Associate File Tags";
-        public CombinedPlayStrategy     CombinedPlayStrategy => new CombinedPlayStrategy( PlayStrategyOptions, DoNotStrategyPlay );
+        public CombinedPlayStrategy     CombinedPlayStrategy => new CombinedPlayStrategy( PlayAdjacentStrategy, DoNotStrategyPlay );
 
         private readonly List<string>   mTags;
 		private readonly Action<long>	mPlayAction;
@@ -98,11 +98,11 @@ namespace Noise.UI.Dto {
         }
 
         public void SetStrategyOption( ePlayAdjacentStrategy strategy, bool doNotPlay ) {
-            PlayStrategyOptions = strategy;
+            PlayAdjacentStrategy = strategy;
             DoNotStrategyPlay = doNotPlay;
 
             RaisePropertyChanged( () => CombinedPlayStrategy );
-            RaisePropertyChanged( () => PlayStrategyOptions );
+            RaisePropertyChanged( () => PlayAdjacentStrategy );
             RaisePropertyChanged( () => HasStrategyOptions );
         }
 

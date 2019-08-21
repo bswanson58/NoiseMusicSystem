@@ -283,23 +283,23 @@ namespace Noise.UI.ViewModels {
                 using( var track = mTrackProvider.GetTrackForUpdate( dialogInfo.ViewModel.Track.DbId ) ) {
                     if( track.Item != null ) {
                         if( dialogInfo.ViewModel.PlayNext  && !dialogInfo.ViewModel.PlayPrevious ) {
-                            track.Item.PlayStrategyOptions = ePlayAdjacentStrategy.PlayNext;
+                            track.Item.PlayAdjacentStrategy = ePlayAdjacentStrategy.PlayNext;
                         }
                         else if( dialogInfo.ViewModel.PlayPrevious && !dialogInfo.ViewModel.PlayNext ) {
-                            track.Item.PlayStrategyOptions = ePlayAdjacentStrategy.PlayPrevious;
+                            track.Item.PlayAdjacentStrategy = ePlayAdjacentStrategy.PlayPrevious;
                         }
                         else if( dialogInfo.ViewModel.PlayPrevious && dialogInfo.ViewModel.PlayNext ) {
-                            track.Item.PlayStrategyOptions = ePlayAdjacentStrategy.PlayNextPrevious;
+                            track.Item.PlayAdjacentStrategy = ePlayAdjacentStrategy.PlayNextPrevious;
                         }
                         else if(!dialogInfo.ViewModel.PlayPrevious && !dialogInfo.ViewModel.PlayNext ) {
-                            track.Item.PlayStrategyOptions = ePlayAdjacentStrategy.None;
+                            track.Item.PlayAdjacentStrategy = ePlayAdjacentStrategy.None;
                         }
 
                         track.Item.DoNotStrategyPlay = dialogInfo.ViewModel.DoNotPlay;
 
                         track.Update();
 
-                        TrackList.FirstOrDefault( t => t.DbId.Equals( track.Item.DbId ))?.SetStrategyOption( track.Item.PlayStrategyOptions, track.Item.DoNotStrategyPlay );
+                        TrackList.FirstOrDefault( t => t.DbId.Equals( track.Item.DbId ))?.SetStrategyOption( track.Item.PlayAdjacentStrategy, track.Item.DoNotStrategyPlay );
                     }
                 }
             }

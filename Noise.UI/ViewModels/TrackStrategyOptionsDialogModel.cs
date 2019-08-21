@@ -16,7 +16,7 @@ namespace Noise.UI.ViewModels {
 
             DoNotPlay = Track.DoNotStrategyPlay;
 
-            switch( Track.PlayStrategyOptions ) {
+            switch( Track.PlayAdjacentStrategy ) {
                 case ePlayAdjacentStrategy.PlayNext:
                     PlayNext = true;
                     break;

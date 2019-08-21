@@ -21,16 +21,16 @@ namespace Noise.Core.PlayStrategies.Exhausted.BonusSuggesters {
 
                 trackList.ForEach( 
                     track => {
-                        if(( track.PlayStrategyOptions == ePlayAdjacentStrategy.PlayNext ) ||
-                           ( track.PlayStrategyOptions == ePlayAdjacentStrategy.PlayNextPrevious )) {
+                        if(( track.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNext ) ||
+                           ( track.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNextPrevious )) {
                             tracksWereAdded |= CheckNext( track, context );
                         }
                     });
 
                 trackList.ForEach( 
                     track => {
-                        if(( track.PlayStrategyOptions == ePlayAdjacentStrategy.PlayPrevious ) ||
-                           ( track.PlayStrategyOptions == ePlayAdjacentStrategy.PlayNextPrevious )) {
+                        if(( track.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayPrevious ) ||
+                           ( track.PlayAdjacentStrategy == ePlayAdjacentStrategy.PlayNextPrevious )) {
                             tracksWereAdded |= CheckPrevious( track, context );
                         }
                     });

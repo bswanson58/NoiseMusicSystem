@@ -29,7 +29,7 @@ namespace Noise.Infrastructure.Dto {
 		public float			        ReplayGainAlbumPeak { get; set; }
 		public float			        ReplayGainTrackGain { get; set; }
 		public float			        ReplayGainTrackPeak { get; set; }
-        public ePlayAdjacentStrategy    PlayStrategyOptions { get; set; }
+        public ePlayAdjacentStrategy    PlayAdjacentStrategy { get; set; }
         public bool                     DoNotStrategyPlay { get; set; }
 
 		public DbTrack() {
@@ -44,7 +44,7 @@ namespace Noise.Infrastructure.Dto {
 			Performer = string.Empty;
 			VolumeName = string.Empty;
 
-            PlayStrategyOptions = ePlayAdjacentStrategy.None;
+            PlayAdjacentStrategy = ePlayAdjacentStrategy.None;
 		}
 
 		public TimeSpan Duration => ( new TimeSpan( 0, 0, 0, 0, DurationMilliseconds ));
