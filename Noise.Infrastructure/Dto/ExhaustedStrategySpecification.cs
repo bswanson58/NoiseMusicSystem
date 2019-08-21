@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Noise.Infrastructure.Dto {
     public enum eTrackPlayStrategy {
@@ -41,7 +42,7 @@ namespace Noise.Infrastructure.Dto {
             get {
                 var retValue = new ExhaustedStrategySpecification();
 
-                retValue.TrackSuggesters.Add( eTrackPlayHandlers.PlayFavorites );
+                retValue.TrackSuggesters.Add( eTrackPlayHandlers.Stop );
 
                 retValue.TrackDisqualifiers.Add( eTrackPlayHandlers.AlreadyQueuedTracks );
                 retValue.TrackDisqualifiers.Add( eTrackPlayHandlers.ShortTracks );
@@ -49,8 +50,8 @@ namespace Noise.Infrastructure.Dto {
                 retValue.TrackDisqualifiers.Add( eTrackPlayHandlers.TalkingTracks );
                 retValue.TrackDisqualifiers.Add( eTrackPlayHandlers.DoNotPlayTracks );
 
-                retValue.TrackBonusSuggesters.Add( eTrackPlayHandlers.HighlyRatedTracks );
-                retValue.TrackBonusSuggesters.Add( eTrackPlayHandlers.PlayAdjacentTracks );
+//                retValue.TrackBonusSuggesters.Add( eTrackPlayHandlers.HighlyRatedTracks );
+//                retValue.TrackBonusSuggesters.Add( eTrackPlayHandlers.PlayAdjacentTracks );
 
                 return retValue;
             }
@@ -74,6 +75,16 @@ namespace Noise.Infrastructure.Dto {
         public void SetPrimarySuggester( eTrackPlayHandlers suggester ) {
             TrackSuggesters.Clear();
             TrackSuggesters.Add( suggester );
+        }
+
+        public eTrackPlayHandlers PrimarySuggester() {
+            var retValue = eTrackPlayHandlers.Unknown;
+
+            if( TrackSuggesters.Any()) {
+                retValue = TrackSuggesters.FirstOrDefault();
+            }
+
+            return retValue;
         }
     }
 }

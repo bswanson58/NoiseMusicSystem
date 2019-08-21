@@ -6,6 +6,7 @@ namespace Noise.Infrastructure.Interfaces {
         ExhaustedStrategySpecification  StrategySpecification { get; set; }
         IStrategyDescription            CurrentStrategy { get; }
 
+        bool                            CanQueueTracks();
         IEnumerable<DbTrack>            SelectTracks( IPlayQueue playQueue, int minCount );
     }
 }

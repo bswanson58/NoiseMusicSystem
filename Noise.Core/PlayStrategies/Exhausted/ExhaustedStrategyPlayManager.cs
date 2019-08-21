@@ -21,17 +21,41 @@ namespace Noise.Core.PlayStrategies.Exhausted {
             mPlaySuggesters = new List<IExhaustedPlayHandler>();
             mPlayDisqualifiers = new List<IExhaustedPlayHandler>();
             mPlayBonusHandlers = new List<IExhaustedPlayHandler>();
+
+            mStrategySpecification = ExhaustedStrategySpecification.Default;
         }
 
         public ExhaustedStrategySpecification StrategySpecification {
             get => new ExhaustedStrategySpecification( mStrategySpecification ); // prevent changes to our copy
             set {
-                mStrategySpecification = new ExhaustedStrategySpecification( value );
+                if(( value == null ) ||
+                   ( value.PrimarySuggester() == eTrackPlayHandlers.Unknown )) {
+                    mStrategySpecification = ExhaustedStrategySpecification.Default;
+                }
+                else {
+                    mStrategySpecification = value;
+                }
 
                 mStrategyFactory.BuildStrategy( mStrategySpecification, mPlaySuggesters, mPlayDisqualifiers, mPlayBonusHandlers );
 
                 mPlaySuggesters.ForEach( s => s.InitialConfiguration( mStrategySpecification ));
             }
+        }
+
+        public bool CanQueueTracks() {
+            var retValue = false;
+
+            if( StrategyHasBeenSet()) {
+                var strategy = CurrentStrategy;
+
+                if(( strategy != null ) &&
+                  (( strategy.Identifier != eTrackPlayHandlers.Stop ) ||
+                   ( strategy.Identifier != eTrackPlayHandlers.Replay ))) {
+                    retValue = true;
+                }
+            }
+
+            return retValue;
         }
 
         private bool StrategyHasBeenSet() {
