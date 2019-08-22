@@ -55,7 +55,7 @@ namespace Noise.Infrastructure.Dto {
 			DatabaseUser = string.Empty;
 			DatabasePassword = string.Empty;
             BlobDatabaseLocation = string.Empty;
-            IsMetadataInPlace = false;
+            IsMetadataInPlace = true;
 		}
 
 		public static LibraryConfiguration LoadConfiguration( string fromPath ) {
