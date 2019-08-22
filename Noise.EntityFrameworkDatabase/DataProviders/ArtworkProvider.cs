@@ -9,9 +9,9 @@ using Noise.Infrastructure.Interfaces;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
 	internal class ArtworkProvider : BaseProvider<DbArtwork>, IArtworkProvider {
-        private readonly ITagArtworkProvider    mArtworkProvider;
+        private readonly Lazy<ITagArtworkProvider>  mArtworkProvider;
 
-		public ArtworkProvider( IContextProvider contextProvider, ILogDatabase log, ITagArtworkProvider artworkProvider ) :
+		public ArtworkProvider( IContextProvider contextProvider, ILogDatabase log, Lazy<ITagArtworkProvider> artworkProvider ) :
 			base( contextProvider, log ) {
             mArtworkProvider = artworkProvider;
         }
@@ -21,7 +21,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 
             if(( retValue.Source == InfoSource.Tag ) &&
                ( BlobStorage.IsInPlace )) {
-                retValue.Image = mArtworkProvider.GetArtwork( artwork.AssociatedItem, artwork.Name );
+                retValue.Image = mArtworkProvider.Value.GetArtwork( artwork.AssociatedItem, artwork.Name );
             }
             else {
                 retValue.Image = BlobStorage.RetrieveBytes( artwork.DbId );
