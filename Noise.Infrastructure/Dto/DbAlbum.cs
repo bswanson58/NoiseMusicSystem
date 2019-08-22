@@ -4,7 +4,7 @@ using System.Diagnostics;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure.Dto {
-	[DebuggerDisplay("Album = {Name}")]
+	[DebuggerDisplay("Album = {" + nameof( Name ) + "}")]
 	public class DbAlbum : DbBase, IUserSettings, IVersionable {
 		public string			Name { get; set; }
 		public long				Artist { get; set; }
@@ -27,6 +27,9 @@ namespace Noise.Infrastructure.Dto {
 		public float			ReplayGainAlbumPeak { get; set; }
 		public long				Version { get; set; }
 
+        public bool             IsUserRating => UserRating != 0;
+        public DateTime         DateAdded => new DateTime( DateAddedTicks );
+
 		public DbAlbum() {
 			Name = string.Empty;
 			CalculatedGenre = Constants.cDatabaseNullOid;
@@ -37,24 +40,16 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public long Genre {
-			get{ return( UserGenre == Constants.cDatabaseNullOid ? ExternalGenre == Constants.cDatabaseNullOid ? CalculatedGenre : ExternalGenre : UserGenre ); }
-			set{ UserGenre = value; }
-		}
+			get => ( UserGenre == Constants.cDatabaseNullOid ? ExternalGenre == Constants.cDatabaseNullOid ? CalculatedGenre : ExternalGenre : UserGenre );
+            set => UserGenre = value;
+        }
 
 		public Int16 Rating {
-			get{ return( IsUserRating ? UserRating : CalculatedRating ); }
-			set{ UserRating = value; }
-		}
+			get => ( IsUserRating ? UserRating : CalculatedRating );
+            set => UserRating = value;
+        }
 
-		public bool IsUserRating {
-			get{ return( UserRating != 0 ); }
-		}
-
-		public DateTime DateAdded {
-			get{ return( new DateTime( DateAddedTicks )); }
-		}
-
-		public void UpdateLastPlayed() {
+        public void UpdateLastPlayed() {
 			PlayCount++;
 			LastPlayedTicks = DateTime.Now.Ticks;
 		}
@@ -77,7 +72,7 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public override string ToString() {
-			return( string.Format( "Album \"{0}\", Id:{1}, Artist:{2}", Name, DbId, Artist ));
+			return( $"Album \"{Name}\", Id:{DbId}, Artist:{Artist}" );
 		}
 	}
 }
