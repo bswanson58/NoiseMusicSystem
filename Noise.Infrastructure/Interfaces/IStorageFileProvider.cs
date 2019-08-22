@@ -8,6 +8,7 @@ namespace Noise.Infrastructure.Interfaces {
 
 		void							DeleteFile( StorageFile file );
 
+        StorageFile                     GetFile( long dbId );
 		StorageFile						GetPhysicalFile( DbTrack forTrack );
 		StorageFile						GetFileForMetadata( long metadataId );
 

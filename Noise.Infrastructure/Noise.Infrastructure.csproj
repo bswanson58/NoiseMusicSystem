@@ -237,6 +237,8 @@
     <Compile Include="Interfaces\IAudioPlayer.cs" />
     <Compile Include="Interfaces\IBlendableViewModelFactory.cs" />
     <Compile Include="Interfaces\IBlobStorage.cs" />
+    <Compile Include="Interfaces\IBlobStorageManager.cs" />
+    <Compile Include="Interfaces\IBlobStorageProvider.cs" />
     <Compile Include="Interfaces\IBlobStorageResolver.cs" />
     <Compile Include="Interfaces\IDatabaseInfo.cs" />
     <Compile Include="Interfaces\IDatabaseManager.cs" />
@@ -291,6 +293,7 @@
     <Compile Include="Interfaces\IStorageFileProvider.cs" />
     <Compile Include="Interfaces\IStorageFolderProvider.cs" />
     <Compile Include="Interfaces\IStorageFolderSupport.cs" />
+    <Compile Include="Interfaces\ITagArtworkProvider.cs" />
     <Compile Include="Interfaces\ITagAssociationProvider.cs" />
     <Compile Include="Interfaces\ITagManager.cs" />
     <Compile Include="Interfaces\ITagProvider.cs" />

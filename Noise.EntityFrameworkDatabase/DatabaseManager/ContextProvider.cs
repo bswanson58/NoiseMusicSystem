@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Noise.BlobStorage.BlobStore;
 using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure;
@@ -11,22 +10,18 @@ namespace Noise.EntityFrameworkDatabase.DatabaseManager {
 		public	const string					cInvalidContextName = "_invalid_context_";
 
 		private readonly ILogDatabase			mLog;
-		private readonly IBlobStorageManager	mBlobStorageManager;
+        private readonly IBlobStorageProvider   mBlobStorageProvider;
 		private readonly ILibraryConfiguration	mLibraryConfiguration;
 
-		public ContextProvider( ILibraryConfiguration libraryConfiguration, ILogDatabase log,
-								IBlobStorageManager blobStorageManager, IBlobStorageResolver storageResolver ) {
+        public IBlobStorage                     BlobStorage => mBlobStorageProvider.BlobStorage;
+
+		public ContextProvider( ILibraryConfiguration libraryConfiguration, ILogDatabase log, IBlobStorageProvider blobStorageProvider ) {
 			mLog = log;
 			mLibraryConfiguration = libraryConfiguration;
-			mBlobStorageManager = blobStorageManager;
-			mBlobStorageManager.SetResolver( storageResolver );
+            mBlobStorageProvider = blobStorageProvider;
 		}
 
-		public IBlobStorageManager BlobStorageManager {
-			get{ return( mBlobStorageManager ); }
-		}
-
-		public IDbContext	CreateContext() {
+        public IDbContext	CreateContext() {
 			var databaseName = cInvalidContextName;
 			var connectionString = string.Empty;
 

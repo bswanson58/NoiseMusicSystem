@@ -1,9 +1,9 @@
-﻿using Noise.Infrastructure.Interfaces;
+﻿namespace Noise.Infrastructure.Interfaces {
+    public interface IInPlaceStorageManager : IBlobStorageManager { }
 
-namespace Noise.BlobStorage.BlobStore {
 	public interface IBlobStorageManager {
 		void			SetResolver( IBlobStorageResolver resolver );
-		bool			Initialize( string rootStoragePath );
+		bool			Initialize( ILibraryConfiguration libraryConfiguration );
 
 		bool			OpenStorage();
 		bool			CreateStorage();

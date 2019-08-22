@@ -4,7 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 mc:Ignorable="d" 
-			 Height="265" Width="600"
+			 Height="290" Width="600"
 			 Tag="Library Configuration"
 		>
 	<Grid>
@@ -34,7 +34,8 @@
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
@@ -54,9 +55,10 @@
 							<Button Grid.Column="1" Margin="3" Content=" ... " Command="{Binding Path=Browse}"/>
 						</Grid>
 
-						<CheckBox Grid.Column="1" Grid.Row="3" Margin="3" Content="Is Default Library" IsChecked="{Binding IsDefaultLibrary}"/>
+                        <CheckBox Grid.Column="1" Grid.Row="3" Margin="3" Content="Is Default Library" IsChecked="{Binding IsDefaultLibrary}"/>
+                        <CheckBox Grid.Column="1" Grid.Row="4" Margin="3" Content="Copy Artwork To Database" IsChecked="{Binding CopyMetadata}"/>
 
-						<Button Grid.Column="1" Grid.Row="4" Style="{StaticResource GeneralButtonStyle}" Margin="0,5,0,0" Width="65" HorizontalAlignment="Right"
+                        <Button Grid.Column="1" Grid.Row="5" Style="{StaticResource GeneralButtonStyle}" Margin="0,5,0,0" Width="65" HorizontalAlignment="Right"
 							Content="Update" Command="{Binding UpdateConfiguration}"/>
 					</Grid>
 				</GroupBox>

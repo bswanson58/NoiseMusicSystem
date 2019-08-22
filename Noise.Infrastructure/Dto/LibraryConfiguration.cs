@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -24,6 +25,7 @@ namespace Noise.Infrastructure.Dto {
 		}
 	}
 
+    [DebuggerDisplay("Library = {" + nameof(LibraryName) + "}")]
 	public class LibraryConfiguration {
 		private string				mConfigurationPath;
 		public	long				LibraryId { get; set; }
@@ -34,6 +36,7 @@ namespace Noise.Infrastructure.Dto {
 		public	string				DatabaseUser { get; set; }
 		public	string				DatabasePassword { get; set; }
 		public	bool				IsDefaultLibrary { get; set; }
+        public  bool                IsMetadataInPlace { get; set; }
 		public	List<MediaLocation>	MediaLocations { get; set; }
 
         public  string              BlobDatabasePath => !String.IsNullOrWhiteSpace( BlobDatabaseLocation ) ? BlobDatabaseLocation : 
@@ -52,6 +55,7 @@ namespace Noise.Infrastructure.Dto {
 			DatabaseUser = string.Empty;
 			DatabasePassword = string.Empty;
             BlobDatabaseLocation = string.Empty;
+            IsMetadataInPlace = false;
 		}
 
 		public static LibraryConfiguration LoadConfiguration( string fromPath ) {
@@ -60,11 +64,9 @@ namespace Noise.Infrastructure.Dto {
 			var retValue = serializer.ReadObject( stream ) as LibraryConfiguration;
 			stream.Close();
 
-			if( retValue != null ) {
-				retValue.SetConfigurationPath( Path.GetDirectoryName( fromPath ));
-			}
+            retValue?.SetConfigurationPath( Path.GetDirectoryName( fromPath ));
 
-			return( retValue );
+            return( retValue );
 		}
 
 		public void SetConfigurationPath( string path ) {

@@ -18,6 +18,7 @@ namespace Noise.UI.ViewModels {
 		private string												mDatabaseName;
 		private string												mMediaPath;
 		private bool												mIsDefaultLibrary;
+        private bool                                                mCopyMetadata;
 		private bool												mLibraryDirty;
 
 		public LibraryConfigurationDialogModel( IEventAggregator eventAggregator, IDialogService dialogService,
@@ -47,19 +48,18 @@ namespace Noise.UI.ViewModels {
 			SelectedLibrary = selectedLibrary;
 		}
 
-		public IObservableCollection<LibraryConfiguration> LibraryList {
-			get{ return( mLibraries ); }
-		} 
+		public IObservableCollection<LibraryConfiguration> LibraryList => ( mLibraries );
 
-		public LibraryConfiguration SelectedLibrary {
-			get{ return( mSelectedLibrary ); }
-			set {
+        public LibraryConfiguration SelectedLibrary {
+			get => mSelectedLibrary;
+            set {
 				mSelectedLibrary = value;
 
 				if( mSelectedLibrary != null ) {
 					mLibraryName = mSelectedLibrary.LibraryName;
 					mDatabaseName = mSelectedLibrary.DatabaseName;
 					mIsDefaultLibrary = mSelectedLibrary.IsDefaultLibrary;
+                    mCopyMetadata = !mSelectedLibrary.IsMetadataInPlace;
 
 					if( mSelectedLibrary.MediaLocations.Any()) {
 						mMediaPath = mSelectedLibrary.MediaLocations[0].Path;
@@ -70,6 +70,7 @@ namespace Noise.UI.ViewModels {
 					mDatabaseName = string.Empty;
 					mMediaPath = string.Empty;
 					mIsDefaultLibrary = false;
+                    mCopyMetadata = true;
 				}
 
 				RaisePropertyChanged( () => SelectedLibrary );
@@ -78,8 +79,8 @@ namespace Noise.UI.ViewModels {
 
 		[DependsUpon( "SelectedLibrary")]
 		public string DatabaseName {
-			get { return( mDatabaseName ); }
-			set {
+			get => mDatabaseName;
+            set {
 				mDatabaseName = value;
 				mLibraryDirty = true;
 
@@ -89,8 +90,8 @@ namespace Noise.UI.ViewModels {
 
 		[DependsUpon( "SelectedLibrary")]
 		public string LibraryName {
-			get { return( mLibraryName ); }
-			set {
+			get => mLibraryName;
+            set {
 				mLibraryName = value;
 				mLibraryDirty = true;
 
@@ -100,8 +101,8 @@ namespace Noise.UI.ViewModels {
 
 		[DependsUpon( "SelectedLibrary" )]
 		public string MediaPath {
-			get{ return( mMediaPath ); }
-			set {
+			get => mMediaPath;
+            set {
 				mMediaPath = value;
 				mLibraryDirty = true;
 
@@ -111,8 +112,8 @@ namespace Noise.UI.ViewModels {
 
 		[DependsUpon( "SelectedLibrary" )]
 		public bool IsDefaultLibrary {
-			get{ return( mIsDefaultLibrary ); }
-			set {
+			get => mIsDefaultLibrary;
+            set {
 				mIsDefaultLibrary = value;
 				mLibraryDirty = true;
 
@@ -120,12 +121,24 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+        [DependsUpon( "SelectedLibrary" )]
+        public bool CopyMetadata {
+            get => mCopyMetadata;
+            set {
+                mCopyMetadata = value;
+                mLibraryDirty = true;
+
+                RaisePropertyChanged( () => CopyMetadata );
+            }
+        }
+
 		public void Execute_UpdateConfiguration() {
 			if(( mLibraryDirty ) &&
 			   ( mSelectedLibrary != null )) {
 				mSelectedLibrary.LibraryName = mLibraryName;
 				mSelectedLibrary.DatabaseName = mDatabaseName;
 				mSelectedLibrary.IsDefaultLibrary = mIsDefaultLibrary;
+                mSelectedLibrary.IsMetadataInPlace = !mCopyMetadata;
 
 				if(!mSelectedLibrary.MediaLocations.Any()) {
 					var mediaLocation = new MediaLocation{ PreferFolderStrategy = true };
@@ -148,7 +161,8 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "MediaPath" )]
 		[DependsUpon( "LibraryName" )]
 		[DependsUpon( "DatabaseName" )]
-		[DependsUpon( "IsDefaultLibrary" )]
+        [DependsUpon( "IsDefaultLibrary" )]
+        [DependsUpon( "CopyMetadata" )]
 		public bool CanExecute_UpdateConfiguration() {
 			return(( mSelectedLibrary != null ) &&
 				   ( mLibraryDirty ));
@@ -178,6 +192,7 @@ namespace Noise.UI.ViewModels {
 		[DependsUpon( "DatabaseName" )]
 		[DependsUpon( "SelectedLibrary" )]
 		[DependsUpon( "IsDefaultLibrary" )]
+        [DependsUpon( "CopyMetadata" )]
 		public bool CanExecute_CreateLibrary() {
 			return(!mLibraryDirty );
 		}

@@ -31,9 +31,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		public FavoritesListViewModel(IEventAggregator eventAggregator, IDatabaseInfo databaseInfo, IPlayCommand playCommand, IPlayQueue playQueue, IRandomTrackSelector trackSelector,
 									  IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, ISelectionState selectionState,
-									  IDataExchangeManager dataExchangeManager, IDialogService dialogService, IPlayingItemHandler platingItem, IUiLog log ) :
+                                      IDataExchangeManager dataExchangeManager, IDialogService dialogService, IPlayingItemHandler playingItem, IUiLog log ) :
 			base( eventAggregator, databaseInfo, playCommand, playQueue, trackSelector, artistProvider, albumProvider, trackProvider, 
-                                   selectionState, dataExchangeManager, dialogService, platingItem, log ) {
+                                   selectionState, dataExchangeManager, dialogService, playingItem, log ) {
 			mPlayCommand = playCommand;
 
 			ScreenTitle = "Favorites";
