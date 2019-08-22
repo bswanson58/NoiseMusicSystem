@@ -121,22 +121,6 @@ namespace Noise.Core {
 			mContainer.RegisterType<IEnumerable<IPlayStrategy>, IPlayStrategy[]>();
 			mContainer.RegisterType<IPlayStrategyFactory, PlayStrategyFactory>();
 
-			mContainer.RegisterType<IPlayExhaustedFactory, PlayExhaustedFactory>();
-/*			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyCategory>( ePlayExhaustedStrategy.PlayCategory.ToString());
-		    mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyFavorites>( ePlayExhaustedStrategy.PlayFavorites.ToString());
-		    mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyFavoritesPlus>( ePlayExhaustedStrategy.PlayFavoritesPlus.ToString());
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyArtist>( ePlayExhaustedStrategy.PlayArtist.ToString());
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyArtistGenre>( ePlayExhaustedStrategy.PlayArtistGenre.ToString());
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyPlayList>( ePlayExhaustedStrategy.PlayList.ToString());
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyReplay>( ePlayExhaustedStrategy.Replay.ToString());
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategySimilar>( ePlayExhaustedStrategy.PlaySimilar.ToString());
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyStop>( ePlayExhaustedStrategy.Stop.ToString());
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyStream>( ePlayExhaustedStrategy.PlayStream.ToString());
-			mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategySeldomPlayedArtists>( ePlayExhaustedStrategy.SeldomPlayedArtists.ToString());
-            mContainer.RegisterType<IPlayExhaustedStrategy, PlayExhaustedStrategyUserTags>( ePlayExhaustedStrategy.PlayUserTags.ToString());
-*/
-            mContainer.RegisterType<IEnumerable<IPlayExhaustedStrategy>, IPlayExhaustedStrategy[]>();
-
             mContainer.RegisterType<IExhaustedStrategyPlayManager, ExhaustedStrategyPlayManager>( new HierarchicalLifetimeManager());
             mContainer.RegisterType<IExhaustedContextFactory, ExhaustedContextFactory>( new HierarchicalLifetimeManager());
             mContainer.RegisterType<IExhaustedStrategyFactory, ExhaustedStrategyFactory>( new HierarchicalLifetimeManager());

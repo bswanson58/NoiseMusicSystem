@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Caliburn.Micro;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.TenFoot.Ui.Input;
 using Noise.TenFoot.Ui.Interfaces;
@@ -11,7 +12,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 	public class QueueListViewModel : PlayQueueListViewModel, IHomeScreen, IActivate, IDeactivate,
 									  IHandle<InputEvent>, IHandle<Events.DequeueTrack>, IHandle<Events.DequeueAlbum> {
 		private readonly IPlayQueue		mPlayQueue;
-		private ePlayExhaustedStrategy	mCurrentStrategy;
+		private eTrackPlayHandlers  	mCurrentStrategy;
 
 		public	event EventHandler<ActivationEventArgs>		Activated = delegate { };
 		public	event EventHandler<DeactivationEventArgs>	AttemptingDeactivation = delegate { };
@@ -94,20 +95,20 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 		private void ChangeExhaustedStrategy() {
 			switch( mCurrentStrategy ) {
-				case ePlayExhaustedStrategy.PlayFavorites:
-					mCurrentStrategy = ePlayExhaustedStrategy.Replay;
+				case eTrackPlayHandlers.PlayFavorites:
+					mCurrentStrategy = eTrackPlayHandlers.Replay;
 					break;
 
-				case ePlayExhaustedStrategy.Replay:
-					mCurrentStrategy = ePlayExhaustedStrategy.Stop;
+				case eTrackPlayHandlers.Replay:
+					mCurrentStrategy = eTrackPlayHandlers.Stop;
 					break;
 
-				case ePlayExhaustedStrategy.Stop:
-					mCurrentStrategy = ePlayExhaustedStrategy.PlayFavorites;
+				case eTrackPlayHandlers.Stop:
+					mCurrentStrategy = eTrackPlayHandlers.PlayFavorites;
 					break;
 
 				default:
-					mCurrentStrategy = ePlayExhaustedStrategy.Stop;
+					mCurrentStrategy = eTrackPlayHandlers.Stop;
 					break;
 			}
 

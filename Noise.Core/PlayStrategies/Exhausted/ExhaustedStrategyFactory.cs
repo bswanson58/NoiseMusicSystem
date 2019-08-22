@@ -9,7 +9,6 @@ namespace Noise.Core.PlayStrategies.Exhausted {
         private readonly List<IExhaustedPlayHandler>    mStrategies; 
 
         public IEnumerable<IStrategyDescription>        ExhaustedStrategies => mStrategies;
-        public IStrategyDescription                     StrategyDescription( ePlayExhaustedStrategy forStrategy ) => mStrategies.FirstOrDefault( s => s.Identifier.Equals( forStrategy ));
 
         public ExhaustedStrategyFactory( IEnumerable<IExhaustedPlayHandler> strategyList  ) {
             mStrategies = new List<IExhaustedPlayHandler>( strategyList );

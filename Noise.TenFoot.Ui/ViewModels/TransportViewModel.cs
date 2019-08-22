@@ -8,12 +8,14 @@ using Noise.UI.ViewModels;
 
 namespace Noise.TenFoot.Ui.ViewModels {
 	public class TransportViewModel : PlayerViewModel,
-									  IHandle<InputEvent>, IHandle<Infrastructure.Events.PlayExhaustedStrategyChanged> {
+									  IHandle<InputEvent> { //, IHandle<Infrastructure.Events.PlayExhaustedStrategyChanged> {
 		private readonly IEventAggregator	mEventAggregator;
 		private readonly IArtistProvider	mArtistProvider;
 		private readonly IPlayQueue			mPlayQueue;
-		private IPlayExhaustedStrategy		mCurrentStrategy;
+		private IStrategyDescription		mCurrentStrategy;
 		private string						mCurrentStrategyTitle;
+
+        public  string                      CurrentStrategy => ( mCurrentStrategyTitle );
 
 		public TransportViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider,
 								   IPlayQueue playQueue, IPlayController playController, IAudioController audioController ) :
@@ -37,23 +39,19 @@ namespace Noise.TenFoot.Ui.ViewModels {
 			}
 		}
 
-		public string CurrentStrategy {
-			get{ return( mCurrentStrategyTitle ); }
-		}
-
-		private void FormatPlayStrategy( long strategyId ) {
-			switch( mCurrentStrategy.StrategyId ) {
-				case ePlayExhaustedStrategy.PlayArtist:
+        private void FormatPlayStrategy( long strategyId ) {
+			switch( mCurrentStrategy.Identifier ) {
+				case eTrackPlayHandlers.PlayArtist:
 					var artist = mArtistProvider.GetArtist( strategyId );
 					mCurrentStrategyTitle = artist != null ? string.Format( "continuing play with tracks from '{0}'", artist.Name ) :
 															 "continuing play with tracks from artist";
 					break;
 
-				case ePlayExhaustedStrategy.PlayFavorites:
+				case eTrackPlayHandlers.PlayFavorites:
 					mCurrentStrategyTitle = "continuing play with favorite tracks";
 					break;
 
-				case ePlayExhaustedStrategy.Replay:
+				case eTrackPlayHandlers.Replay:
 					mCurrentStrategyTitle = "continuing play by replaying queue";
 					break;
 
@@ -64,9 +62,9 @@ namespace Noise.TenFoot.Ui.ViewModels {
 
 			RaisePropertyChanged( () => CurrentStrategy );
 		}
-
+/*
 		public void Handle( Infrastructure.Events.PlayExhaustedStrategyChanged args ) {
-//			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy;
+			mCurrentStrategy = mPlayQueue.PlayExhaustedStrategy;
 
 			if( args.StrategyParameters is PlayStrategyParameterDbId ) {
 				var dbParam = args.StrategyParameters as PlayStrategyParameterDbId;
@@ -74,7 +72,7 @@ namespace Noise.TenFoot.Ui.ViewModels {
 				FormatPlayStrategy( dbParam.DbItemId );
 			}
 		}
-
+*/
 		public void Handle( InputEvent input ) {
 			switch( input.Command ) {
 				case InputCommand.Play:

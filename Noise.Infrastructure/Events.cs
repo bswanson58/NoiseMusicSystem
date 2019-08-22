@@ -138,16 +138,6 @@ namespace Noise.Infrastructure {
 			}
 		}
 
-		public class PlayExhaustedStrategyChanged {
-			public ePlayExhaustedStrategy	ExhaustedStrategy { get; private set; }
-			public IPlayStrategyParameters	StrategyParameters { get; private set; }
-
-			public PlayExhaustedStrategyChanged( ePlayExhaustedStrategy strategy, IPlayStrategyParameters parameters ) {
-				ExhaustedStrategy = strategy;
-				StrategyParameters = parameters;
-			}
-		}
-
 		public class PlayHistoryChanged {
 			public IPlayHistory	PlayHistory { get; private set; }
 

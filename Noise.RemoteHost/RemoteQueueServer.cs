@@ -11,20 +11,20 @@ using Noise.Infrastructure.RemoteHost;
 namespace Noise.RemoteHost {
 	[ServiceBehavior( InstanceContextMode = InstanceContextMode.Single )]
 	public class RemoteQueueServer : INoiseRemoteQueue {
-		private readonly IArtistProvider		mArtistProvider;
-		private readonly IAlbumProvider			mAlbumProvider;
-		private readonly ITrackProvider			mTrackProvider;
-		private readonly IGenreProvider			mGenreProvider;
-		private readonly IPlayCommand			mPlayCommand;
-		private readonly IPlayController		mPlayController;
-		private readonly IPlayQueue				mPlayQueue;
-		private readonly IPlayStrategyFactory	mPlayStrategyFactory;
-		private readonly IPlayExhaustedFactory	mPlayExhaustedFactory;
-		private readonly INoiseLog				mLog;
+		private readonly IArtistProvider		    mArtistProvider;
+		private readonly IAlbumProvider			    mAlbumProvider;
+		private readonly ITrackProvider			    mTrackProvider;
+		private readonly IGenreProvider			    mGenreProvider;
+		private readonly IPlayCommand			    mPlayCommand;
+		private readonly IPlayController		    mPlayController;
+		private readonly IPlayQueue				    mPlayQueue;
+		private readonly IPlayStrategyFactory	    mPlayStrategyFactory;
+		private readonly IExhaustedStrategyFactory	mPlayExhaustedFactory;
+		private readonly INoiseLog				    mLog;
 
 		public RemoteQueueServer( IArtistProvider artistProvider, IAlbumProvider albumProvider, ITrackProvider trackProvider, IGenreProvider genreProvider,
 								  IPlayController playController, IPlayQueue playQueue,IPlayCommand playCommand,
-								  IPlayStrategyFactory playStrategyFactory, IPlayExhaustedFactory playExhaustedFactory, INoiseLog log ) {
+								  IPlayStrategyFactory playStrategyFactory, IExhaustedStrategyFactory playExhaustedFactory, INoiseLog log ) {
 			mArtistProvider = artistProvider;
 			mAlbumProvider = albumProvider;
 			mTrackProvider = trackProvider;
@@ -255,7 +255,7 @@ namespace Noise.RemoteHost {
 			}
 
 			retValue.StrategyInformation.PlayStrategies = mPlayStrategyFactory.AvailableStrategies.Select( strategy => new RoQueueStrategy( strategy )).ToArray();
-			retValue.StrategyInformation.ExhaustedStrategies = mPlayExhaustedFactory.AvailableStrategies.Select( strategy => new RoQueueStrategy( strategy )).ToArray();
+			retValue.StrategyInformation.ExhaustedStrategies = mPlayExhaustedFactory.ExhaustedStrategies.Select( strategy => new RoQueueStrategy( strategy )).ToArray();
 
 			// Add the possible strategy parameters.
 			using( var artistList = mArtistProvider.GetArtistList()) {
@@ -288,14 +288,14 @@ namespace Noise.RemoteHost {
 			try {
 				var playStrategy = mPlayStrategyFactory.AvailableStrategies.FirstOrDefault( strategy => strategy.StrategyId == (ePlayStrategy)playStrategyId );
 				if( playStrategy != null ) {
-					var playParameters = new PlayStrategyParameterDbId( ePlayExhaustedStrategy.PlayArtist ) { DbItemId = playStrategyParameter };
+					var playParameters = new PlayStrategyParameterDbId( eTrackPlayHandlers.PlayArtist ) { DbItemId = playStrategyParameter };
 
 					mPlayQueue.SetPlayStrategy( playStrategy.StrategyId, playParameters );
 				}
 
-				var exhaustedStrategy = mPlayExhaustedFactory.AvailableStrategies.FirstOrDefault( strategy => strategy.StrategyId == (ePlayExhaustedStrategy)exhaustedStrategyId );
+				var exhaustedStrategy = mPlayExhaustedFactory.ExhaustedStrategies.FirstOrDefault( strategy => strategy.Identifier == (eTrackPlayHandlers)exhaustedStrategyId );
 				if( exhaustedStrategy != null ) {
-					var exhaustedParameters = new PlayStrategyParameterDbId( exhaustedStrategy.StrategyId ) { DbItemId = exhaustedStrategyParameter };
+					var exhaustedParameters = new PlayStrategyParameterDbId( exhaustedStrategy.Identifier ) { DbItemId = exhaustedStrategyParameter };
 	
 //					mPlayQueue.SetPlayExhaustedStrategy( exhaustedStrategy.StrategyId, exhaustedParameters );
 				}

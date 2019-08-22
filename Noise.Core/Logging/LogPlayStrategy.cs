@@ -19,7 +19,7 @@ namespace Noise.Core.Logging {
 			LogMessage( cModuleName, cPhaseName, format, parameters );
 		}
 
-		public void LogTrackQueued( ePlayExhaustedStrategy strategy, DbTrack track ) {
+		public void LogTrackQueued( eTrackPlayHandlers strategy, DbTrack track ) {
 			LogOnCondition( mPreferences.PlayQueueStrategy, () => LogStrategyMessage( "Strategy {0} has queued {1}", strategy, track ));
 		}
 

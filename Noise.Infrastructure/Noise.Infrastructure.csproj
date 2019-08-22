@@ -167,11 +167,13 @@
     <Compile Include="Configuration\NoiseCorePreferences.cs" />
     <Compile Include="Configuration\UserInterfacePreferences.cs" />
     <Compile Include="Dto\AlbumArtworkInfo.cs" />
+    <Compile Include="Dto\BasePlayStrategyParameters.cs" />
     <Compile Include="Dto\CommandRequest.cs" />
     <Compile Include="Dto\ExhaustedStrategySpecification.cs" />
     <Compile Include="Dto\PlaybackContext.cs" />
     <Compile Include="Dto\PlayingItem.cs" />
     <Compile Include="Dto\PlayStrategyOptions.cs" />
+    <Compile Include="Dto\PlayStrategyParameterDbId.cs" />
     <Compile Include="Dto\ScAlbum.cs" />
     <Compile Include="Dto\AlbumSupportInfo.cs" />
     <Compile Include="Dto\Artwork.cs" />
@@ -179,7 +181,6 @@
     <Compile Include="Dto\AudioDevice.cs" />
     <Compile Include="Dto\AudioLevels.cs" />
     <Compile Include="Dto\BaseCommandArgs.cs" />
-    <Compile Include="Dto\BasePlayStrategyParameters.cs" />
     <Compile Include="Dto\ContentType.cs" />
     <Compile Include="Dto\DatabaseChangeSummary.cs" />
     <Compile Include="Dto\DatabaseFileInfo.cs" />
@@ -210,7 +211,6 @@
     <Compile Include="Dto\ObjectTypes.cs" />
     <Compile Include="Dto\ParametricEqualizer.cs" />
     <Compile Include="Dto\PlaybackStatus.cs" />
-    <Compile Include="Dto\PlayStrategyParameterDbId.cs" />
     <Compile Include="Dto\PlayQueueTrack.cs" />
     <Compile Include="Dto\ReplayGainFile.cs" />
     <Compile Include="Dto\RootFolder.cs" />
@@ -269,16 +269,14 @@
     <Compile Include="Interfaces\IPlaybackContextWriter.cs" />
     <Compile Include="Interfaces\IPlayCommand.cs" />
     <Compile Include="Interfaces\IPlayController.cs" />
-    <Compile Include="Interfaces\IPlayExhaustedFactory.cs" />
-    <Compile Include="Interfaces\IPlayExhaustedStrategy.cs" />
     <Compile Include="Interfaces\IPlayingItem.cs" />
     <Compile Include="Interfaces\IPlayStrategy.cs" />
     <Compile Include="Interfaces\IPlayStrategyFactory.cs" />
-    <Compile Include="Interfaces\IPlayStrategyParameters.cs" />
     <Compile Include="Interfaces\IPlayHistory.cs" />
     <Compile Include="Interfaces\IPlayHistoryProvider.cs" />
     <Compile Include="Interfaces\IPlayListProvider.cs" />
     <Compile Include="Interfaces\IPlayQueue.cs" />
+    <Compile Include="Interfaces\IPlayStrategyParameters.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
     <Compile Include="Interfaces\IRandomTrackSelector.cs" />
     <Compile Include="Interfaces\IRatings.cs" />

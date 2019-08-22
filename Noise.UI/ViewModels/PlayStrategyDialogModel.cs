@@ -186,7 +186,7 @@ namespace Noise.UI.ViewModels {
 
 				mPlayStrategyParameters = null;
 				if( value != null ) {
-					mPlayStrategyParameters = new PlayStrategyParameterDbId( ePlayExhaustedStrategy.PlayArtist ) { DbItemId = SelectedPlayParameter.Id };
+					mPlayStrategyParameters = new PlayStrategyParameterDbId( eTrackPlayHandlers.PlayArtist ) { DbItemId = SelectedPlayParameter.Id };
 				}
 			}
 		}
