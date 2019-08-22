@@ -288,8 +288,25 @@
     <Compile Include="Logging\LogPlayStrategy.cs" />
     <Compile Include="Logging\LogUserStatus.cs" />
     <Compile Include="PlayQueue\RandomTrackSelector.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedStrategyFavoritesPlus.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedStrategyUserTags.cs" />
+    <Compile Include="PlayStrategies\Exhausted\BonusSuggesters\HighlyRatedTracks.cs" />
+    <Compile Include="PlayStrategies\Exhausted\BonusSuggesters\PlayAdjacentTrack.cs" />
+    <Compile Include="PlayStrategies\Exhausted\Disqualifiers\AlreadyQueuedTracks.cs" />
+    <Compile Include="PlayStrategies\Exhausted\Disqualifiers\BadRatingTracks.cs" />
+    <Compile Include="PlayStrategies\Exhausted\Disqualifiers\DoNotPlayTracks.cs" />
+    <Compile Include="PlayStrategies\Exhausted\Disqualifiers\ShortTracks.cs" />
+    <Compile Include="PlayStrategies\Exhausted\Disqualifiers\TalkingTracks.cs" />
+    <Compile Include="PlayStrategies\Exhausted\ExhaustedContextFactory.cs" />
+    <Compile Include="PlayStrategies\Exhausted\ExhaustedHandlerBase.cs" />
+    <Compile Include="PlayStrategies\Exhausted\ExhaustedSelectionContext.cs" />
+    <Compile Include="PlayStrategies\Exhausted\ExhaustedStrategyFactory.cs" />
+    <Compile Include="PlayStrategies\Exhausted\ExhaustedStrategyPlayManager.cs" />
+    <Compile Include="PlayStrategies\Exhausted\IExhaustedContextFactory.cs" />
+    <Compile Include="PlayStrategies\Exhausted\Suggesters\FavoriteTracks.cs" />
+    <Compile Include="PlayStrategies\Exhausted\Suggesters\PlayArtistTracks.cs" />
+    <Compile Include="PlayStrategies\Exhausted\Suggesters\PlayGenre.cs" />
+    <Compile Include="PlayStrategies\Exhausted\Suggesters\ReplayQueue.cs" />
+    <Compile Include="PlayStrategies\Exhausted\Suggesters\StopPlay.cs" />
+    <Compile Include="PlayStrategies\Exhausted\Suggesters\UserTaggedTracks.cs" />
     <Compile Include="PlayStrategies\PlayStrategyBase.cs" />
     <Compile Include="PlaySupport\AudioController.cs" />
     <Compile Include="PlaySupport\PlaybackContextManager.cs" />
@@ -302,20 +319,6 @@
     <Compile Include="PlayHistory\PlayHistoryMgr.cs" />
     <Compile Include="PlayHistory\PlayScrobbler.cs" />
     <Compile Include="PlayQueue\IPlayQueueSupport.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedFactory.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedListBase.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedStrategyRandomBase.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedStrategyArtist.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedStrategyArtistGenre.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedStrategyBase.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedStrategyCategory.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedStrategyFavorites.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedStrategyPlayList.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedStrategySeldomPlayedArtists.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedStrategySimilar.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedStrategyStop.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedStrategyReplay.cs" />
-    <Compile Include="PlayStrategies\PlayExhaustedStrategyStream.cs" />
     <Compile Include="PlayQueue\PlayQueueRandomTracks.cs" />
     <Compile Include="PlayQueue\PlayQueueMgr.cs" />
     <Compile Include="PlayStrategies\PlayStrategyFactory.cs" />
@@ -361,6 +364,7 @@
     <Content Include="Resources\EQPresets.xml" />
     <Content Include="Resources\LicenseKeys.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

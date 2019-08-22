@@ -40,10 +40,6 @@ namespace Noise.Core.Logging {
 			LogOnCondition( mPreferences.PlayQueueAddRemove, () => LogQueueMessage( "Playback strategy set: {0}", strategy ));
 		}
 
-		public void StrategySet( ePlayExhaustedStrategy strategy, IPlayStrategyParameters parameters ) {
-			LogOnCondition( mPreferences.PlayQueueAddRemove, () => LogQueueMessage( "Exhausted strategy set: {0}", strategy ));
-		}
-
 		public void LogQueueException( string message, Exception exception, string callerName = "" ) {
 			LogOnCondition( mPreferences.LogExceptions, () => LogException( cModuleName, cPhaseName, exception, callerName, "{0}", message ));
 		}

@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 
 namespace Noise.Infrastructure.RemoteDto {
@@ -35,27 +36,27 @@ namespace Noise.Infrastructure.RemoteDto {
 			}
 		}
 
-		public RoQueueStrategy( IPlayExhaustedStrategy strategy ) {
-			StrategyId = (int)strategy.StrategyId;
-			StrategyName = strategy.StrategyName;
-			StrategyDescription = strategy.StrategyDescription;
+		public RoQueueStrategy( IStrategyDescription strategy ) {
+			StrategyId = (int)strategy.Identifier;
+			StrategyName = strategy.Name;
+			StrategyDescription = strategy.Description;
 			RequiresParameter = strategy.RequiresParameters;
-			ParameterTitle = strategy.ParameterName;
+//			ParameterTitle = strategy.ParameterName;
 
-			switch( strategy.StrategyId ) {
-				case ePlayExhaustedStrategy.PlayArtist:
+			switch( strategy.Identifier ) {
+				case eTrackPlayHandlers.PlayArtist:
 					ParameterType = (int)RoStrategyParameterType.Artist;
 					break;
 
-				case ePlayExhaustedStrategy.PlayArtistGenre:
-				case ePlayExhaustedStrategy.PlayGenre:
+				case eTrackPlayHandlers.PlayGenre:
 					ParameterType = (int)RoStrategyParameterType.Genre;
 					break;
 
-				case ePlayExhaustedStrategy.PlayCategory:
-					ParameterType = (int)RoStrategyParameterType.Category;
-					break;
+//				case eTrackPlayHandlers.PlayCategory:
+//					ParameterType = (int)RoStrategyParameterType.Category;
+//					break;
 			}
 		}
+
 	}
 }

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
+using Microsoft.Practices.ObjectBuilder2;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.UI.Dto;
@@ -11,51 +13,50 @@ namespace Noise.UI.ViewModels {
 		private readonly IArtistProvider			mArtistProvider;
 		private readonly IGenreProvider             mGenreProvider;
 		private readonly ITagProvider               mTagProvider;
-		private readonly IPlayListProvider          mPlayListProvider;
-		private readonly IInternetStreamProvider	mStreamProvider;
 		private readonly IPlayStrategyFactory       mPlayStrategyFactory;
-		private readonly IPlayExhaustedFactory		mPlayExhaustedFactory;
+		private readonly IExhaustedStrategyFactory  mExhaustedStrategyFactory;
 		private readonly List<DbArtist>				mArtistList;
 		private readonly List<DbGenre>				mArtistGenreList;
-		private readonly List<DbInternetStream>		mStreamList;
-		private readonly List<DbPlayList>			mPlayLists; 
-		private readonly List<DbTag>				mCategoryList;
         private readonly List<DbTag>                mUserTags;
 		private IPlayStrategy						mSelectedPlayStrategy;
 		private IPlayStrategyParameters				mPlayStrategyParameters;
-		private IPlayExhaustedStrategy				mSelectedExhaustedStrategy;
-		private IPlayStrategyParameters				mPlayExhaustedParameters;
+        private ExhaustedStrategySpecification      mExhaustedStrategySpecification;
+        private IStrategyDescription                mSelectedExhaustedStrategy;
 
-		private	readonly BindableCollection<ExhaustedStrategyItem>	mExhaustedStrategies;
-		private readonly BindableCollection<NameIdPair>				mExhaustedParameters; 
+        private readonly BindableCollection<NameIdPair>				mExhaustedParameters; 
 		private readonly BindableCollection<PlayStrategyItem>		mPlayStrategies;
 		private readonly BindableCollection<NameIdPair>				mPlayParameters;
 
-		public PlayStrategyDialogModel( IArtistProvider artistProvider, IGenreProvider genreProvider, ITagProvider tagProvider,
-										IPlayListProvider playListProvider, IInternetStreamProvider streamProvider,
-										IPlayStrategyFactory strategyFactory, IPlayExhaustedFactory exhaustedFactory ) {
+        public  BindableCollection<PlayStrategyItem>                PlayStrategyList => mPlayStrategies;
+        public  BindableCollection<IStrategyDescription>            ExhaustedStrategyList { get; }
+        public  BindableCollection<UiStrategyDescription>           DisqualifierList { get; }
+        public  BindableCollection<UiStrategyDescription>           BonusStrategyList { get; }
+
+        public PlayStrategyDialogModel( IArtistProvider artistProvider, IGenreProvider genreProvider, ITagProvider tagProvider,
+										IPlayStrategyFactory strategyFactory, IExhaustedStrategyFactory exhaustedFactory ) {
 			mArtistProvider = artistProvider;
 			mGenreProvider = genreProvider;
 			mTagProvider = tagProvider;
-			mPlayListProvider = playListProvider;
-			mStreamProvider = streamProvider;
 			mPlayStrategyFactory = strategyFactory;
-			mPlayExhaustedFactory = exhaustedFactory;
+			mExhaustedStrategyFactory = exhaustedFactory;
 
 			mPlayStrategies = new BindableCollection<PlayStrategyItem>( from strategy in mPlayStrategyFactory.AvailableStrategies orderby strategy.StrategyName
 																		select new PlayStrategyItem( strategy.StrategyId, strategy.StrategyName ));
 
-			mExhaustedStrategies = new BindableCollection<ExhaustedStrategyItem>( from strategy in mPlayExhaustedFactory.AvailableStrategies orderby strategy.StrategyName
-																					  select new ExhaustedStrategyItem( strategy.StrategyId, strategy.StrategyName ));
+			ExhaustedStrategyList = new BindableCollection<IStrategyDescription>( from strategy in mExhaustedStrategyFactory.ExhaustedStrategies
+                                                                                 where strategy.StrategyType == eTrackPlayStrategy.Suggester orderby strategy.Name select strategy);
+            DisqualifierList = new BindableCollection<UiStrategyDescription>( from strategy in mExhaustedStrategyFactory.ExhaustedStrategies
+                                                                           where strategy.StrategyType == eTrackPlayStrategy.Disqualifier orderby strategy.Name 
+                                                                           select new UiStrategyDescription( strategy ));
+            BonusStrategyList = new BindableCollection<UiStrategyDescription>( from strategy in mExhaustedStrategyFactory.ExhaustedStrategies
+                                                                             where strategy.StrategyType == eTrackPlayStrategy.BonusSuggester orderby strategy.Name 
+                                                                             select new UiStrategyDescription( strategy));
 
 			mPlayParameters = new BindableCollection<NameIdPair>();
 			mExhaustedParameters = new BindableCollection<NameIdPair>();
 
 			mArtistList = new List<DbArtist>();
-			mCategoryList = new List<DbTag>();
 			mArtistGenreList = new List<DbGenre>();
-			mPlayLists = new List<DbPlayList>();
-			mStreamList = new List<DbInternetStream>();
             mUserTags = new List<DbTag>();
 		}
 
@@ -65,8 +66,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public ePlayStrategy PlayStrategy {
-			get {  return( mSelectedPlayStrategy.StrategyId ); }
-			set {
+			get => ( mSelectedPlayStrategy.StrategyId );
+            set {
 				mSelectedPlayStrategy = mPlayStrategyFactory.ProvidePlayStrategy( value );
 
 				SelectedPlayStrategy = mPlayStrategies.FirstOrDefault( strategy => strategy.StrategyId == mSelectedPlayStrategy.StrategyId );
@@ -74,39 +75,61 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public IPlayStrategyParameters PlayStrategyParameter {
-			get {  return( mPlayStrategyParameters ); }
-			set {
+			get => ( mPlayStrategyParameters );
+            set {
 				mPlayStrategyParameters = value;
 
-				if( mPlayStrategyParameters is PlayStrategyParameterDbId ) {
-					var dbParms = mPlayStrategyParameters as PlayStrategyParameterDbId;
-
-					SelectedPlayParameter = mPlayParameters.FirstOrDefault( parameter => parameter.Id == dbParms.DbItemId );
+				if( mPlayStrategyParameters is PlayStrategyParameterDbId dbParms ) {
+                    SelectedPlayParameter = mPlayParameters.FirstOrDefault( parameter => parameter.Id == dbParms.DbItemId );
 				}
 			}
 		}
 
-		public ePlayExhaustedStrategy ExhaustedStrategy {
-			get {  return( mSelectedExhaustedStrategy.StrategyId); }
-			set {
-				mSelectedExhaustedStrategy = mPlayExhaustedFactory.ProvideExhaustedStrategy( value );
+        public ExhaustedStrategySpecification ExhaustedStrategySpecification {
+            get {
+                UpdateStrategySpecification();
 
-				SelectedExhaustedStrategy = mExhaustedStrategies.FirstOrDefault( strategy => strategy.Strategy == mSelectedExhaustedStrategy.StrategyId );
-			}
-		}
+                return mExhaustedStrategySpecification;
+            }
+            set {
+                mExhaustedStrategySpecification = value;
 
-		public IPlayStrategyParameters ExhaustedStrategyParameter {
-			get {  return( mPlayExhaustedParameters ); }
-			set {
-				mPlayExhaustedParameters = value;
+                LoadStrategySpecification();
+            }
+        }
 
-				if( mPlayExhaustedParameters is PlayStrategyParameterDbId ) {
-					var dbParams = mPlayExhaustedParameters as PlayStrategyParameterDbId;
+        private void UpdateStrategySpecification() {
+            mExhaustedStrategySpecification.TrackDisqualifiers.Clear();
+            DisqualifierList.ForEach( d => {
+                if( d.IsSelected ) {
+                    mExhaustedStrategySpecification.TrackDisqualifiers.Add( d.StrategyId );
+                }
+            });
 
-					SelectedExhaustedParameter = mExhaustedParameters.FirstOrDefault( parameter => parameter.Id == dbParams.DbItemId );
-				}
-			}
-		}
+            mExhaustedStrategySpecification.TrackBonusSuggesters.Clear();
+            BonusStrategyList.ForEach( h => {
+                if( h.IsSelected ) {
+                    mExhaustedStrategySpecification.TrackBonusSuggesters.Add( h.StrategyId );
+                }
+            });
+
+            mExhaustedStrategySpecification.SetPrimarySuggester( mSelectedExhaustedStrategy.Identifier );
+            mExhaustedStrategySpecification.SuggesterParameter = SelectedExhaustedParameter?.Id ?? Constants.cDatabaseNullOid;
+        }
+
+        private void LoadStrategySpecification() {
+            if( mExhaustedStrategySpecification != null ) {
+                DisqualifierList.ForEach( d => d.IsSelected = mExhaustedStrategySpecification.TrackDisqualifiers.Contains( d.StrategyId ));
+                BonusStrategyList.ForEach( b => b.IsSelected = mExhaustedStrategySpecification.TrackBonusSuggesters.Contains( b.StrategyId ));
+
+                if( mExhaustedStrategySpecification.TrackSuggesters.Any()) {
+                    var suggester = mExhaustedStrategySpecification.TrackSuggesters.First();
+
+                    SelectedExhaustedStrategy = mExhaustedStrategyFactory.ExhaustedStrategies.FirstOrDefault( s => s.Identifier.Equals( suggester ));
+                    SelectedExhaustedParameter = ExhaustedParameterList.FirstOrDefault( p => p.Id.Equals( mExhaustedStrategySpecification.SuggesterParameter ));
+                }
+            }
+        }
 
 		public bool IsConfigurationValid {
 			get {
@@ -125,9 +148,7 @@ namespace Noise.UI.ViewModels {
 
 				if( mSelectedExhaustedStrategy != null ) {
 					if( mSelectedExhaustedStrategy.RequiresParameters ) {
-						if( ExhaustedStrategyParameter == null ) {
-							retValue = false;
-						}
+						retValue = SelectedExhaustedParameter != null;
 					}
 				}
 				else {
@@ -138,11 +159,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public BindableCollection<PlayStrategyItem> PlayStrategyList {
-			get{ return( mPlayStrategies ); }
-		}
-
-		public PlayStrategyItem SelectedPlayStrategy {
+        public PlayStrategyItem SelectedPlayStrategy {
 			get {  return( Get( () => SelectedPlayStrategy )); }
 			set {
 				Set( () => SelectedPlayStrategy, value );
@@ -160,18 +177,16 @@ namespace Noise.UI.ViewModels {
 			set {  Set( () => PlayStrategyDescription, value ); }
 		}
 
-		public BindableCollection<NameIdPair> PlayParameterList {
-			get {  return( mPlayParameters ); }
-		}
+		public BindableCollection<NameIdPair> PlayParameterList => mPlayParameters;
 
-		public NameIdPair SelectedPlayParameter {
+        public NameIdPair SelectedPlayParameter {
 			get { return( Get( () => SelectedPlayParameter )); }
 			set {
 				Set( () => SelectedPlayParameter, value );
 
 				mPlayStrategyParameters = null;
 				if( value != null ) {
-					mPlayStrategyParameters = new PlayStrategyParameterDbId( ePlayExhaustedStrategy.PlayArtist ) { DbItemId = SelectedPlayParameter.Id };
+					mPlayStrategyParameters = new PlayStrategyParameterDbId( eTrackPlayHandlers.PlayArtist ) { DbItemId = SelectedPlayParameter.Id };
 				}
 			}
 		}
@@ -186,16 +201,12 @@ namespace Noise.UI.ViewModels {
 			set { Set( () => PlayParameterRequired, value ); }
 		}
 
-		public BindableCollection<ExhaustedStrategyItem> ExhaustedStrategyList {
-			get{ return( mExhaustedStrategies ); }
-		}
-
-		public ExhaustedStrategyItem SelectedExhaustedStrategy {
+        public IStrategyDescription SelectedExhaustedStrategy {
 			get {  return( Get( () => SelectedExhaustedStrategy )); }
 			set {
 				Set( () => SelectedExhaustedStrategy, value );
 
-				mSelectedExhaustedStrategy = mPlayExhaustedFactory.ProvideExhaustedStrategy( value.Strategy );
+				mSelectedExhaustedStrategy = value;
 
 				if( mSelectedExhaustedStrategy != null ) {
 					SetupExhaustedParameters( mSelectedExhaustedStrategy, mExhaustedParameters );
@@ -208,21 +219,11 @@ namespace Noise.UI.ViewModels {
 			set {  Set( () => ExhaustedStrategyDescription, value ); }
 		}
 
-		public BindableCollection<NameIdPair> ExhaustedParameterList {
-			get {  return( mExhaustedParameters ); }
-		}
+		public BindableCollection<NameIdPair> ExhaustedParameterList => mExhaustedParameters;
 
-		public NameIdPair SelectedExhaustedParameter {
+        public NameIdPair SelectedExhaustedParameter {
 			get { return( Get( () => SelectedExhaustedParameter )); }
-			set {
-				Set( () => SelectedExhaustedParameter, value );
-
-				mPlayExhaustedParameters = null;
-
-				if( value != null ) {
-					mPlayExhaustedParameters = new PlayStrategyParameterDbId( SelectedExhaustedStrategy.Strategy ) { DbItemId = SelectedExhaustedParameter.Id };
-				}
-			}
+			set { Set( () => SelectedExhaustedParameter, value ); }
 		}
 
 		public string ExhaustedParameterName {
@@ -249,35 +250,22 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void SetupExhaustedParameters( IPlayExhaustedStrategy strategy, BindableCollection<NameIdPair> collection ) {
+		private void SetupExhaustedParameters( IStrategyDescription strategy, BindableCollection<NameIdPair> collection ) {
 			ExhaustedParameterRequired = strategy.RequiresParameters;
-			ExhaustedParameterName = strategy.ParameterName;
-			ExhaustedStrategyDescription = strategy.StrategyDescription;
+			ExhaustedParameterName = strategy.Name;
+			ExhaustedStrategyDescription = strategy.Description;
 
 			if( strategy.RequiresParameters ) {
-				switch( strategy.StrategyId ) {
-					case ePlayExhaustedStrategy.PlayArtist:
+				switch( strategy.Identifier ) {
+					case eTrackPlayHandlers.PlayArtist:
 						FillCollectionWithArtists( collection );
 						break;
 
-					case ePlayExhaustedStrategy.PlayArtistGenre:
-					case ePlayExhaustedStrategy.PlayGenre:
+					case eTrackPlayHandlers.PlayGenre:
 						FillCollectionWithGenres( collection );
 						break;
 
-					case ePlayExhaustedStrategy.PlayCategory:
-						FillCollectionWithCategories( collection );
-						break;
-
-					case ePlayExhaustedStrategy.PlayStream:
-						FillCollectionWithStreams( collection );
-						break;
-
-					case ePlayExhaustedStrategy.PlayList:
-						FillCollectionWithPlayLists( collection );
-						break;
-
-                    case ePlayExhaustedStrategy.PlayUserTags:
+                    case eTrackPlayHandlers.PlayUserTags:
                         FillCollectionWithUserTags( collection );
                         break;
 				}
@@ -306,24 +294,6 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		private void FillCollectionWithCategories( BindableCollection<NameIdPair> collection ) {
-			if( !mCategoryList.Any() ) {
-				using( var categoryList = mTagProvider.GetTagList( eTagGroup.User )) {
-					mCategoryList.AddRange( from DbTag tag in categoryList.List orderby tag.Name ascending  select tag );
-				}
-			}
-
-			collection.IsNotifying = false;
-			collection.Clear();
-
-			foreach( var category in mCategoryList ) {
-				collection.Add( new NameIdPair( category.DbId, category.Name ));
-			}
-
-			collection.IsNotifying = true;
-			collection.Refresh();
-		}
-
 		private void FillCollectionWithGenres( BindableCollection<NameIdPair> collection ) {
 			FillArtistList();
 
@@ -340,42 +310,6 @@ namespace Noise.UI.ViewModels {
 
 			foreach( var genre in mArtistGenreList ) {
 				collection.Add( new NameIdPair( genre.DbId, genre.Name ));
-			}
-
-			collection.IsNotifying = true;
-			collection.Refresh();
-		}
-
-		private void FillCollectionWithPlayLists( BindableCollection<NameIdPair> collection ) {
-			if(!mPlayLists.Any()) {
-				using( var playLists = mPlayListProvider.GetPlayLists() ) {
-					mPlayLists.AddRange( from playList in playLists.List orderby playList.Name select playList);
-				}
-			}
-
-			collection.IsNotifying = false;
-			collection.Clear();
-
-			foreach( var playtList in mPlayLists ) {
-				collection.Add( new NameIdPair( playtList.DbId, playtList.Name ));
-			}
-
-			collection.IsNotifying = true;
-			collection.Refresh();
-		}
-
-		private void FillCollectionWithStreams( BindableCollection<NameIdPair> collection ) {
-			if(!mStreamList.Any()) {
-				using( var streamList = mStreamProvider.GetStreamList() ) {
-					mStreamList.AddRange( from stream in streamList.List orderby stream.Name select stream );
-				}
-			}
-
-			collection.IsNotifying = false;
-			collection.Clear();
-
-			foreach( var stream in mStreamList ) {
-				collection.Add( new NameIdPair( stream.DbId, stream.Name ));
 			}
 
 			collection.IsNotifying = true;

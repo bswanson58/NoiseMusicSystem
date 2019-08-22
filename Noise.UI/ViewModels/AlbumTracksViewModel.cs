@@ -22,6 +22,10 @@ namespace Noise.UI.ViewModels {
         public TagEditInfo( TagAssociationDialogModel viewModel ) : base( viewModel ) { }
     }
 
+    internal class PlayStrategyInfo : InteractionRequestData<TrackStrategyOptionsDialogModel> {
+        public PlayStrategyInfo( TrackStrategyOptionsDialogModel viewModel ) : base( viewModel ) { }
+    }
+
 	internal class AlbumTracksViewModel : AutomaticPropertyBase,
 										  IHandle<Events.DatabaseClosing>, IHandle<Events.TrackUserUpdate>, IHandle<Events.UserTagsChanged> {
 		private readonly IEventAggregator				mEventAggregator;
@@ -40,6 +44,7 @@ namespace Noise.UI.ViewModels {
 
         public BindableCollection<UiTrack>              TrackList => mTracks;
         public InteractionRequest<TagEditInfo>          TagEditRequest { get; }
+        public InteractionRequest<PlayStrategyInfo>     StrategyEditRequest {  get; }
 
 		public AlbumTracksViewModel( IEventAggregator eventAggregator, IRatings ratings, ISelectionState selectionState, IPlayingItemHandler playingItemHandler,
 									 ITrackProvider trackProvider, IPlayCommand playCommand, IUserTagManager tagManager, IUiLog log ) {
@@ -61,6 +66,7 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnNodeChanged );
 
             TagEditRequest = new InteractionRequest<TagEditInfo>();
+            StrategyEditRequest = new InteractionRequest<PlayStrategyInfo>();
 
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
             mSelectionState.CurrentAlbumVolumeChanged.Subscribe( OnVolumeChanged );
@@ -181,7 +187,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiTrack TransformTrack( DbTrack dbTrack ) {
-			var retValue = new UiTrack( OnTrackPlay, OnTagEdit  );
+			var retValue = new UiTrack( OnTrackPlay, OnTagEdit, OnStrategyOptions  );
 
 			if( dbTrack != null ) {
 				Mapper.Map( dbTrack, retValue );
@@ -259,6 +265,43 @@ namespace Noise.UI.ViewModels {
                 mTagManager.UpdateAssociations( confirmation.ViewModel.Track, confirmation.ViewModel.GetSelectedTags());
 
                 SetTrackTags( TrackList.FirstOrDefault( t => t.DbId.Equals( confirmation.ViewModel.Track.DbId )));
+            }
+        }
+
+        private void OnStrategyOptions( long trackId ) {
+            var track = mTrackProvider.GetTrack( trackId );
+
+            if( track != null ) {
+                var dialogModel = new TrackStrategyOptionsDialogModel( track );
+
+                StrategyEditRequest.Raise( new PlayStrategyInfo( dialogModel ), OnStrategyEdited );
+            }
+        }
+
+        private void OnStrategyEdited( PlayStrategyInfo dialogInfo ) {
+            if( dialogInfo.Confirmed ) {
+                using( var track = mTrackProvider.GetTrackForUpdate( dialogInfo.ViewModel.Track.DbId ) ) {
+                    if( track.Item != null ) {
+                        if( dialogInfo.ViewModel.PlayNext  && !dialogInfo.ViewModel.PlayPrevious ) {
+                            track.Item.PlayAdjacentStrategy = ePlayAdjacentStrategy.PlayNext;
+                        }
+                        else if( dialogInfo.ViewModel.PlayPrevious && !dialogInfo.ViewModel.PlayNext ) {
+                            track.Item.PlayAdjacentStrategy = ePlayAdjacentStrategy.PlayPrevious;
+                        }
+                        else if( dialogInfo.ViewModel.PlayPrevious && dialogInfo.ViewModel.PlayNext ) {
+                            track.Item.PlayAdjacentStrategy = ePlayAdjacentStrategy.PlayNextPrevious;
+                        }
+                        else if(!dialogInfo.ViewModel.PlayPrevious && !dialogInfo.ViewModel.PlayNext ) {
+                            track.Item.PlayAdjacentStrategy = ePlayAdjacentStrategy.None;
+                        }
+
+                        track.Item.DoNotStrategyPlay = dialogInfo.ViewModel.DoNotPlay;
+
+                        track.Update();
+
+                        TrackList.FirstOrDefault( t => t.DbId.Equals( track.Item.DbId ))?.SetStrategyOption( track.Item.PlayAdjacentStrategy, track.Item.DoNotStrategyPlay );
+                    }
+                }
             }
         }
 	}

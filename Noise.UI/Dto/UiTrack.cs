@@ -8,38 +8,44 @@ using Noise.Infrastructure.Interfaces;
 namespace Noise.UI.Dto {
 	[DebuggerDisplay("Track = {" + nameof( Name ) + "}")]
 	public class UiTrack : UiBase, IPlayingItem {
-		public string			Name { get; set; }
-		public string			Performer { get; set; }
-		public long				Album { get; set; }
-		public TimeSpan			Duration { get; set; }
-		public Int32			Bitrate { get; set; }
-		public Int32			SampleRate { get; set; }
-		public Int16			Channels { get; set; }
-		public Int16			Rating { get; set; }
-		public Int16			TrackNumber { get; set; }
-		public string			VolumeName { get; set; }
-		public Int32			PublishedYear { get; set; }
-		public DateTime			DateAdded { get; set; }
-		public eAudioEncoding	Encoding { get; set; }
-		public string			CalculatedGenre { get; set; }
-		public string			ExternalGenre { get; set; }
-		public string			UserGenre { get; set; }
-		public bool				IsFavorite { get; set; }
-		public DbGenre			DisplayGenre { get; set; }
+		public string			        Name { get; set; }
+		public string			        Performer { get; set; }
+		public long				        Album { get; set; }
+		public TimeSpan			        Duration { get; set; }
+		public Int32			        Bitrate { get; set; }
+		public Int32			        SampleRate { get; set; }
+		public Int16			        Channels { get; set; }
+		public Int16			        Rating { get; set; }
+		public Int16			        TrackNumber { get; set; }
+		public string			        VolumeName { get; set; }
+		public Int32			        PublishedYear { get; set; }
+		public DateTime			        DateAdded { get; set; }
+		public eAudioEncoding	        Encoding { get; set; }
+		public string			        CalculatedGenre { get; set; }
+		public string			        ExternalGenre { get; set; }
+		public string			        UserGenre { get; set; }
+		public bool				        IsFavorite { get; set; }
+		public DbGenre			        DisplayGenre { get; set; }
+        public ePlayAdjacentStrategy    PlayAdjacentStrategy { get; set; }
+        public bool                     DoNotStrategyPlay { get; set; }
 
-        public string           Genre => DisplayGenre != null ? DisplayGenre.Name : String.Empty;
-        public bool             HasTags => mTags.Any();
-        public string           TagsTooltip => mTags.Any() ? string.Join( Environment.NewLine, mTags ) : "Associate File Tags";
+        public string                   Genre => DisplayGenre != null ? DisplayGenre.Name : String.Empty;
+        public bool                     HasTags => mTags.Any();
+        public bool                     HasStrategyOptions => ( PlayAdjacentStrategy != ePlayAdjacentStrategy.None ) || DoNotStrategyPlay;
+        public string                   TagsTooltip => mTags.Any() ? string.Join( Environment.NewLine, mTags ) : "Associate File Tags";
+        public CombinedPlayStrategy     CombinedPlayStrategy => new CombinedPlayStrategy( PlayAdjacentStrategy, DoNotStrategyPlay );
 
         private readonly List<string>   mTags;
 		private readonly Action<long>	mPlayAction;
 		private readonly Action<long>	mEditAction;
+        private readonly Action<long>   mStrategyAction;
 
         protected UiTrack() { }
 
-		public UiTrack( Action<long> playAction, Action<long> editAction ) {
+		public UiTrack( Action<long> playAction, Action<long> editAction, Action<long> strategyEdit ) {
 			mPlayAction = playAction;
 			mEditAction = editAction;
+            mStrategyAction = strategyEdit;
 
             mTags = new List<string>();
 		}
@@ -75,12 +81,29 @@ namespace Noise.UI.Dto {
 			return( mEditAction != null );
 		}
 
+        public void Execute_StrategyOptions() {
+            mStrategyAction?.Invoke( DbId );
+        }
+
+        public bool CanExecute_StrategyOptions() {
+            return mStrategyAction != null;
+        }
+
         public void SetTags( IEnumerable<string> tags ) {
             mTags.Clear();
             mTags.AddRange( tags );
 
             RaisePropertyChanged( () => HasTags );
             RaisePropertyChanged( () => TagsTooltip );
+        }
+
+        public void SetStrategyOption( ePlayAdjacentStrategy strategy, bool doNotPlay ) {
+            PlayAdjacentStrategy = strategy;
+            DoNotStrategyPlay = doNotPlay;
+
+            RaisePropertyChanged( () => CombinedPlayStrategy );
+            RaisePropertyChanged( () => PlayAdjacentStrategy );
+            RaisePropertyChanged( () => HasStrategyOptions );
         }
 
         public void SetPlayingStatus( PlayingItem item ) {

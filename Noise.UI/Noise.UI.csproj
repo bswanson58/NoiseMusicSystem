@@ -270,7 +270,7 @@
       <DependentUpon>VuMeter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\VuMeterBar.cs" />
-    <Compile Include="Dto\ExhaustedStrategyItem.cs" />
+    <Compile Include="Dto\CombinedPlayStrategy.cs" />
     <Compile Include="Dto\NameIdPair.cs" />
     <Compile Include="Dto\PlayStrategyItem.cs" />
     <Compile Include="Dto\UiAlbum.cs" />
@@ -282,6 +282,7 @@
     <Compile Include="Dto\UiEqBand.cs" />
     <Compile Include="Dto\UiInternetStream.cs" />
     <Compile Include="Dto\UiPlayQueueTrack.cs" />
+    <Compile Include="Dto\UiStrategyDescription.cs" />
     <Compile Include="Dto\UiTag.cs" />
     <Compile Include="Dto\UiTagAssociation.cs" />
     <Compile Include="Dto\UiTimeExplorerAlbum.cs" />
@@ -373,8 +374,10 @@
     <Compile Include="ViewModels\TimeExplorerViewModel.cs" />
     <Compile Include="ViewModels\TimeExplorerYearViewModel.cs" />
     <Compile Include="ViewModels\TrackEditDialogModel.cs" />
+    <Compile Include="ViewModels\TrackStrategyOptionsDialogModel.cs" />
     <Compile Include="ViewModels\TransportViewModel.cs" />
     <Compile Include="ViewModels\WindowCommandsViewModel.cs" />
+    <Compile Include="Views\AdjacentPlaySelector.cs" />
     <Compile Include="Views\AlbumArtworkView.xaml.cs">
       <DependentUpon>AlbumArtworkView.xaml</DependentUpon>
     </Compile>
@@ -488,6 +491,9 @@
     </Compile>
     <Compile Include="Views\TagsView.xaml.cs">
       <DependentUpon>TagsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TrackStrategyOptionsDialog.xaml.cs">
+      <DependentUpon>TrackStrategyOptionsDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TransportView.xaml.cs">
       <DependentUpon>TransportView.xaml</DependentUpon>
@@ -808,6 +814,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\TagsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TrackStrategyOptionsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
