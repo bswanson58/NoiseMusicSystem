@@ -52,7 +52,8 @@ namespace Noise.Core.Sidecars {
 						var albumSidecar = mSidecarCreator.CreateFrom( album );
 
 						if(( dbSideCar != null ) &&
-						   ( albumSidecar != null )) {
+						   ( albumSidecar != null ) &&
+                           ( albumSidecar.Version != dbSideCar.Version )) {
 							if( albumSidecar.Version > dbSideCar.Version ) {
 								mSidecarWriter.WriteSidecar( album, albumSidecar );
 								mSidecarWriter.UpdateSidecarVersion( album, dbSideCar );
