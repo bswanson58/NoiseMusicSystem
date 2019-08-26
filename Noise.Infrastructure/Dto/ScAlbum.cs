@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Noise.Infrastructure.Dto {
-	[DebuggerDisplay("ScAlbum = {" + nameof( AlbumName ) + "}")]
+	[DebuggerDisplay( "{" + nameof( Description ) + "}" )]
 	public class ScAlbum {
 		public string			AlbumName { get; set; }
 		public bool				IsFavorite { get; set; }
@@ -14,6 +14,8 @@ namespace Noise.Infrastructure.Dto {
 		public long				Version { get; set; }
 		public List<ScTrack>	TrackList { get; set; }
 		public ScPlayContext	PlaybackContext {  get; set; }
+
+        private string          Description => $"Album Sidecar: '{AlbumName}', Version: {Version}";
 
 		public ScAlbum() {
 			AlbumName = string.Empty;
@@ -42,7 +44,7 @@ namespace Noise.Infrastructure.Dto {
 		}
 
 		public override string ToString() {
-			return( $"ScAlbum \"{AlbumName}\", Version:{Version}" );
+			return Description;
 		}
 	}
 }
