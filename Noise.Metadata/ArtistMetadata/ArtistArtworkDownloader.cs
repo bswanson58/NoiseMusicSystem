@@ -49,9 +49,12 @@ namespace Noise.Metadata.ArtistMetadata {
 					var resultsList = await UriDownloader.DownloadFileListAsync( downloadList );
 
 					foreach( var result in resultsList ) {
-						if(( result != null ) &&
-						   ( result.Item3 != null )) {
-							mLog.LogException( string.Format( "Artwork download failed for artist '{0}'", artistName ), result.Item3 );
+						if( result != null ) {
+                            InsureArtworkIsValid( result.Item2 );
+
+                            if( result.Item3 != null ) {
+                                mLog.LogException( $"Artwork download failed for artist '{artistName}'", result.Item3 );
+                            }
 						}
 					}
 
@@ -62,6 +65,18 @@ namespace Noise.Metadata.ArtistMetadata {
 				}
 			}
 		}
+
+        private void InsureArtworkIsValid( string path ) {
+            if( File.Exists( path )) {
+                var info = new FileInfo( path );
+
+                if( info.Length < 100 ) {
+                    File.Delete( path );
+
+                    mLog.LogException( $"Artwork download failed for file:'{path}'", null );
+                }
+            }
+        }
 
 		private IEnumerable<DownloadFileDetails> BuildDownloadList( IEnumerable<string> artworkList, string artworkPath ) {
 			var downloadList = from item in artworkList select new DownloadFileDetails( item, ComposeLocalNameFromUri( item, artworkPath ));
