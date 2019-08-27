@@ -75,8 +75,6 @@ namespace Noise.Core.Database {
             if( updates ) {
                 // bump the version so the sidecar gets an update
                 using( var album = mAlbumProvider.GetAlbumForUpdate( forTrack.Album )) {
-                    album.Item.UpdateVersion();
-
                     album.Update();
                 }
 
