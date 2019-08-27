@@ -297,7 +297,7 @@ namespace Noise.UI.ViewModels {
 
                         track.Item.DoNotStrategyPlay = dialogInfo.ViewModel.DoNotPlay;
 
-                        track.Update();
+                        track.UpdateTrackAndAlbum();
 
                         TrackList.FirstOrDefault( t => t.DbId.Equals( track.Item.DbId ))?.SetStrategyOption( track.Item.PlayAdjacentStrategy, track.Item.DoNotStrategyPlay );
                     }

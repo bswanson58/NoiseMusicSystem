@@ -65,8 +65,8 @@ namespace Noise.RavenDatabase.DataProviders {
 			return( playList.TrackIds.Select( GetTrack ).ToList());
 		}
 
-		public IDataUpdateShell<DbTrack> GetTrackForUpdate( long trackId ) {
-			return( new RavenDataUpdateShell<DbTrack>( track => Database.Update( track ), Database.Get( trackId )));
+		public ITrackUpdateShell GetTrackForUpdate( long trackId ) {
+			return( new RavenTrackUpdateShell( track => Database.Update( track ), Database.Get( trackId )));
 		}
 
 		public long GetItemCount() {

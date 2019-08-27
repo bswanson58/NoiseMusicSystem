@@ -186,6 +186,7 @@
     <Compile Include="DataProviders\EfProviderShell.cs" />
     <Compile Include="DataProviders\EfUpdateShell.cs" />
     <Compile Include="DatabaseManager\EntityFrameworkDatabaseManager.cs" />
+    <Compile Include="DataProviders\TrackUpdateShell.cs" />
     <Compile Include="EntityFrameworkDatabaseModule.cs" />
     <Compile Include="Interfaces\IContextProvider.cs" />
     <Compile Include="Interfaces\IDatabaseInitializeStrategy.cs" />
