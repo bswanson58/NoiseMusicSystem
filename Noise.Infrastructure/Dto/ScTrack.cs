@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Noise.Infrastructure.Dto {
-	[DebuggerDisplay("ScAlbum = {" + nameof( TrackName ) + "}")]
+	[DebuggerDisplay("ScTrack = {" + nameof( TrackName ) + "}")]
 	public class ScTrack {
 		public string			        TrackName { get; set; }
 		public Int16			        TrackNumber { get; set; }
