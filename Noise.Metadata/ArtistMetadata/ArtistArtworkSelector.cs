@@ -36,9 +36,15 @@ namespace Noise.Metadata.ArtistMetadata {
                                 var files = Directory.GetFiles( artworkPath );
 
                                 if( files.Any()) {
-                                    var fileToPick = mRandom.Next( files.Length );
+                                    var circuitBreaker = 5;
 
-                                    forArtist.Image = File.ReadAllBytes( files[fileToPick]);
+                                    do {
+                                        var fileToPick = mRandom.Next( files.Length );
+
+                                        forArtist.Image = File.ReadAllBytes( files[fileToPick]);
+                                        circuitBreaker--;
+                                    } while((!forArtist.HaveValidImage ) &&
+                                            ( circuitBreaker >= 0 ));
                                 }
                             }
                         }
