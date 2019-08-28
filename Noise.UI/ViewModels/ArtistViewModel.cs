@@ -39,6 +39,11 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler						mTopTracksTaskHandler;
 		private IDisposable						mArtistSelectionSubscription;
 		private bool							mIsActive;
+
+        [DependsUpon( "Artist" )]
+        public  bool                            ArtistValid => Artist != null;
+        public  UiArtist                        Artist => mCurrentArtist;
+        public  LinkNode                        ArtistWebsite => mArtistWebsite;
 		public	event EventHandler				IsActiveChanged  = delegate { };
 
 		private readonly InteractionRequest<ArtistEditRequest>		mArtistEditRequest;
@@ -65,8 +70,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public bool IsActive {
-			get{ return( mIsActive ); }
-			set {
+			get => ( mIsActive );
+            set {
 				if( mIsActive ) {
 					if( mArtistSelectionSubscription != null ) {
 						mArtistSelectionSubscription.Dispose();
@@ -84,16 +89,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public UiArtist Artist {
-			get{ return( mCurrentArtist ); }
-		}
-
-		[DependsUpon( "Artist" )]
-		public bool ArtistValid {
-			get{ return( Artist != null ); }
-		}
-
-		private UiArtist TransformArtist( DbArtist dbArtist ) {
+        private UiArtist TransformArtist( DbArtist dbArtist ) {
 			var retValue = new UiArtist();
 
 			if( dbArtist != null ) {
@@ -138,8 +134,8 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiArtist CurrentArtist {
-			get{ return( mCurrentArtist ); }
-			set {
+			get => ( mCurrentArtist );
+            set {
 				ClearCurrentArtist();
 
 				if( value != null ) {
@@ -190,8 +186,8 @@ namespace Noise.UI.ViewModels {
 				return( mArtistTaskHandler );
 			}
 
-			set { mArtistTaskHandler = value; }
-		}
+			set => mArtistTaskHandler = value;
+        }
  
 		private void RequestArtistAndContent( long artistId ) {
 			ClearCurrentArtist();
@@ -221,8 +217,8 @@ namespace Noise.UI.ViewModels {
 				return( mArtworkTaskHandler );
 			}
 
-			set { mArtworkTaskHandler = value; }
-		}
+			set => mArtworkTaskHandler = value;
+        }
 
 		private void RetrieveArtwork( string artistName ) {
 			ArtworkTaskHandler.StartTask( () => mMetadataManager.GetArtistArtwork( artistName ),
@@ -238,10 +234,8 @@ namespace Noise.UI.ViewModels {
 
 				return( mTopTracksTaskHandler );
 			}
-			set {
-				mTopTracksTaskHandler = value;
-			}
-		}
+			set => mTopTracksTaskHandler = value;
+        }
 
 		private void SetArtwork( Artwork artwork ) {
 			mArtistImage = artwork;
@@ -250,9 +244,7 @@ namespace Noise.UI.ViewModels {
 		}
  
 		private void OnArtistChanged( PropertyChangeNotification changeNotification ) {
-			var notifier = changeNotification.Source as UiArtist;
-
-			if( notifier != null ) {
+            if( changeNotification.Source is UiArtist notifier ) {
 				var artist = mArtistProvider.GetArtist( notifier.DbId );
 
 				if( changeNotification.PropertyName == "UiRating" ) {
@@ -284,11 +276,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public LinkNode ArtistWebsite {
-			get{ return( mArtistWebsite ); }
-		}
-
-		public void Execute_PlayRandomTracks() {
+        public void Execute_PlayRandomTracks() {
 			if( CurrentArtist != null ) {
 				mPlayCommand.PlayRandomArtistTracks( mArtistProvider.GetArtist( CurrentArtist.DbId ));
 			}
@@ -310,11 +298,9 @@ namespace Noise.UI.ViewModels {
 			return( CurrentArtist != null );
 		}
 
-		public IInteractionRequest ArtistEditRequest {
-			get{ return( mArtistEditRequest ); }
-		}
+		public IInteractionRequest ArtistEditRequest => ( mArtistEditRequest );
 
-		public void Execute_EditArtist() {
+        public void Execute_EditArtist() {
 			if( mCurrentArtist != null ) {
 				mArtistEditRequest.Raise( new ArtistEditRequest( mCurrentArtist ), OnArtistEdited );
 			}
