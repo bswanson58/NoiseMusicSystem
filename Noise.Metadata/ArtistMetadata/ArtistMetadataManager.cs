@@ -1,4 +1,5 @@
-﻿using Noise.Infrastructure;
+﻿using System.Collections.Generic;
+using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
 using Noise.Metadata.Dto;
@@ -29,7 +30,11 @@ namespace Noise.Metadata.ArtistMetadata {
 		public void ArtistForgotten( string artistName ) {
 		}
 
-		public IArtistMetadata GetArtistBiography( string forArtist ) {
+        public bool ArtistPortfolioAvailable( string forArtist ) {
+            return mArtworkSelector.ArtistPortfolioAvailable( forArtist );
+        }
+
+        public IArtistMetadata GetArtistBiography( string forArtist ) {
 			return( GetOrCreateArtistBiography( forArtist ));
 		}
 
@@ -54,7 +59,11 @@ namespace Noise.Metadata.ArtistMetadata {
 			return( retValue );
 		}
 
-		private void InsureArtistStatus( string forArtist ) {
+        public IEnumerable<Artwork> GetArtistPortfolio( string forArtist ) {
+            return mArtworkSelector.ArtworkPortfolio( forArtist );
+        }
+
+        private void InsureArtistStatus( string forArtist ) {
 			if(( mDocumentStore != null ) &&
 			   (!mDocumentStore.WasDisposed )) {
 				using( var session = mDocumentStore.OpenSession()) {

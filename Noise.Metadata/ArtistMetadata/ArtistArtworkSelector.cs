@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Noise.Infrastructure;
@@ -24,36 +25,73 @@ namespace Noise.Metadata.ArtistMetadata {
         public void SelectArtwork( string artistName, Artwork forArtist ) {
             if(!string.IsNullOrWhiteSpace( artistName )) {
                 try {
-                    var artist = mArtistProvider.FindArtist( artistName );
+                    var files = GetMetadataFiles( artistName );
 
-                    if( artist != null ) {
-                        var artistPath = mFolderSupport.GetArtistPath( artist.DbId );
+                    if( files.Any()) {
+                        var circuitBreaker = 5;
 
-                        if( Directory.Exists( artistPath )) {
-                            var artworkPath = Path.Combine( artistPath, Constants.LibraryMetadataFolder );
+                        do {
+                            var fileToPick = mRandom.Next( files.Length );
 
-                            if( Directory.Exists( artworkPath )) {
-                                var files = Directory.GetFiles( artworkPath );
+                            forArtist.Image = File.ReadAllBytes( files[fileToPick]);
+                            circuitBreaker--;
+                        } while((!forArtist.HaveValidImage ) &&
+                                ( circuitBreaker >= 0 ));
+                    }
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( "ArtistArtworkSelector:SelectArtwork", ex );
+                }
+            }
+        }
 
-                                if( files.Any()) {
-                                    var circuitBreaker = 5;
+        public IEnumerable<Artwork> ArtworkPortfolio( string artistName ) {
+            var retValue = new List<Artwork>();
 
-                                    do {
-                                        var fileToPick = mRandom.Next( files.Length );
+            if(!string.IsNullOrWhiteSpace( artistName )) {
+                try {
+                    var files = GetMetadataFiles( artistName );
 
-                                        forArtist.Image = File.ReadAllBytes( files[fileToPick]);
-                                        circuitBreaker--;
-                                    } while((!forArtist.HaveValidImage ) &&
-                                            ( circuitBreaker >= 0 ));
-                                }
-                            }
+                    foreach( var file in files ) {
+                        var fileInfo = new FileInfo( file );
+
+                        if( fileInfo.Length > 100 ) {
+                            var artwork = new Artwork( new DbArtwork( Constants.cDatabaseNullOid, ContentType.ArtistPrimaryImage ) { Name = file });
+
+                            artwork.Image = File.ReadAllBytes( file );
+                            retValue.Add( artwork );
                         }
                     }
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( "SelectArtwork", ex );
+                    mLog.LogException( "ArtistArtworkSelector:ArtistPortfolio", ex );
                 }
             }
+
+            return retValue;
+        }
+
+        public bool ArtistPortfolioAvailable( string forArtist ) {
+            return GetMetadataFiles( forArtist ).Any();
+        }
+
+        private string[] GetMetadataFiles( string forArtist ) {
+            var retValue = new string[0];
+            var artist = mArtistProvider.FindArtist( forArtist );
+
+            if( artist != null ) {
+                var artistPath = mFolderSupport.GetArtistPath( artist.DbId );
+
+                if( Directory.Exists( artistPath )) {
+                    var artworkPath = Path.Combine( artistPath, Constants.LibraryMetadataFolder );
+
+                    if( Directory.Exists( artworkPath )) {
+                        retValue = Directory.GetFiles( artworkPath );
+                    }
+                }
+            }
+
+            return retValue;
         }
     }
 }

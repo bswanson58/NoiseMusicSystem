@@ -19,6 +19,10 @@ namespace Noise.UI.ViewModels {
 		public ArtistEditRequest(UiArtist artist ) : base( artist ) { } 
 	}
 
+    internal class ArtistArtworkDisplayInfo : InteractionRequestData<ArtistArtworkViewModel> {
+        public ArtistArtworkDisplayInfo( ArtistArtworkViewModel viewModel ) : base( viewModel ) { }
+    }
+
 	internal class ArtistViewModel : AutomaticCommandBase, IActiveAware,
 									 IHandle<Events.DatabaseClosing>,
 									 IHandle<Events.ArtistContentUpdated>, IHandle<Events.ArtistUserUpdate> {
@@ -39,6 +43,7 @@ namespace Noise.UI.ViewModels {
 		private TaskHandler						mTopTracksTaskHandler;
 		private IDisposable						mArtistSelectionSubscription;
 		private bool							mIsActive;
+        private bool                            mPortfolioAvailable;
 
         [DependsUpon( "Artist" )]
         public  bool                            ArtistValid => Artist != null;
@@ -46,7 +51,8 @@ namespace Noise.UI.ViewModels {
         public  LinkNode                        ArtistWebsite => mArtistWebsite;
 		public	event EventHandler				IsActiveChanged  = delegate { };
 
-		private readonly InteractionRequest<ArtistEditRequest>		mArtistEditRequest;
+		private readonly InteractionRequest<ArtistEditRequest>		    mArtistEditRequest;
+        private readonly InteractionRequest<ArtistArtworkDisplayInfo>   mArtistArtworkDisplayRequest;
 
 		public ArtistViewModel( IEventAggregator eventAggregator, IArtistProvider artistProvider, IRatings ratings, ISelectionState selectionState,
 								ITagManager tagManager, IMetadataManager metadataManager, IPlayCommand playCommand, IUiLog log ) {
@@ -65,6 +71,7 @@ namespace Noise.UI.ViewModels {
 			mChangeObserver.Extend( new PropertyChangedExtension()).WhenPropertyChanges( OnArtistChanged );
 
 			mArtistEditRequest = new InteractionRequest<ArtistEditRequest>();
+            mArtistArtworkDisplayRequest = new InteractionRequest<ArtistArtworkDisplayInfo>();
  
 			OnArtistRequested( mSelectionState.CurrentArtist );
 		}
@@ -89,6 +96,14 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
+        public bool ArtistPortfolioAvailable {
+            get => mPortfolioAvailable;
+            set {
+                mPortfolioAvailable = value;
+                RaisePropertyChanged( () => ArtistPortfolioAvailable );
+            }
+        }
+
         private UiArtist TransformArtist( DbArtist dbArtist ) {
 			var retValue = new UiArtist();
 
@@ -112,6 +127,8 @@ namespace Noise.UI.ViewModels {
 
 				mCurrentArtist = null;
 				mArtistWebsite = null;
+
+                ArtistPortfolioAvailable = false;
 
 				RaisePropertyChanged( () => Artist );
 				RaisePropertyChanged( () => ArtistWebsite );
@@ -221,9 +238,13 @@ namespace Noise.UI.ViewModels {
         }
 
 		private void RetrieveArtwork( string artistName ) {
-			ArtworkTaskHandler.StartTask( () => mMetadataManager.GetArtistArtwork( artistName ),
-										   SetArtwork,
-										   exception => mLog.LogException( string.Format( "GetArtistArtwork for \"{0}\"", artistName ), exception ));
+            ArtistPortfolioAvailable = mMetadataManager.ArtistPortfolioAvailable( artistName );
+
+            if( ArtistPortfolioAvailable ) { 
+                ArtworkTaskHandler.StartTask( () => mMetadataManager.GetArtistArtwork( artistName ),
+                                              SetArtwork,
+                                              exception => mLog.LogException( $"GetArtistArtwork for '{artistName}'", exception ));
+            }
 		}
 
 		internal TaskHandler TopTracksTaskHandler {
@@ -364,5 +385,22 @@ namespace Noise.UI.ViewModels {
 
 			ArtistTracksViewOpen = request.ViewWasOpened;
 		}
+
+        public IInteractionRequest ArtistArtworkDisplayRequest => ( mArtistArtworkDisplayRequest );
+
+        [DependsUpon( "ArtistPortfolioAvailable" )]
+        public bool CanExecute_DisplayPortfolio() {
+            return( CurrentArtist != null ) && ArtistPortfolioAvailable;
+        }
+
+        public void Execute_DisplayPortfolio() {
+            if( CanExecute_DisplayPortfolio()) {
+                var vm = new ArtistArtworkViewModel( mMetadataManager, CurrentArtist, mLog );
+
+                mArtistArtworkDisplayRequest.Raise( new ArtistArtworkDisplayInfo( vm ), AfterArtworkDisplayed );
+            }
+        }
+
+        private void AfterArtworkDisplayed( ArtistArtworkDisplayInfo confirmation ) { }
 	}
 }

@@ -14,6 +14,7 @@
 		public const string		AlbumEdit					= "AlbumEdit";
 		public const string		TrackEdit					= "TrackEdit";
 		public const string		AlbumArtworkDisplay			= "AlbumArtworkDisplay";
+        public const string     ArtistArtworkDisplay        = "ArtistArtworkDisplay";
 		public const string		ArtistAlbumConfiguration	= "ArtistAlbumConfiguration";
 		public const string		CategorySelection			= "CategorySelection";
 		public const string		CategoryEdit				= "CategoryEdit";

@@ -338,6 +338,7 @@
     <Compile Include="ViewModels\ArtistAlbumConfigViewModel.cs" />
     <Compile Include="ViewModels\AlbumArtworkViewModel.cs" />
     <Compile Include="ViewModels\AlbumViewModel.cs" />
+    <Compile Include="ViewModels\ArtistArtworkViewModel.cs" />
     <Compile Include="ViewModels\ArtistInfoViewModel.cs" />
     <Compile Include="ViewModels\ArtistListViewModel.cs" />
     <Compile Include="ViewModels\ArtistTracksViewModel.cs" />
@@ -398,6 +399,9 @@
     </Compile>
     <Compile Include="Views\ArtistAlbumConfigurationDialog.xaml.cs">
       <DependentUpon>ArtistAlbumConfigurationDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ArtistArtworkView.xaml.cs">
+      <DependentUpon>ArtistArtworkView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ArtistEditDialog.xaml.cs">
       <DependentUpon>ArtistEditDialog.xaml</DependentUpon>
@@ -690,6 +694,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ArtistAlbumConfigurationDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ArtistArtworkView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

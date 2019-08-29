@@ -30,6 +30,9 @@
 		<Behaviours:InteractionRequestDialogBehavior DialogClass="ArtistEdit"
 													 DialogService="{Binding Source={StaticResource DialogService}}"
 													 InteractionRequest="{Binding Path=ArtistEditRequest}" />
+        <Behaviours:InteractionRequestDialogBehavior DialogClass="ArtistArtworkDisplay"
+                                                     DialogService="{Binding Source={StaticResource DialogService}}"
+                                                     InteractionRequest="{Binding Path=ArtistArtworkDisplayRequest}" />
 	</i:Interaction.Behaviors>
 
 	<GroupBox Margin="1,0,0,0" Style="{StaticResource SectionBorderStyle}" Header=" Artist ">
@@ -132,8 +135,10 @@
 									Command="{Binding DisplayArtistInfoPanel}" Content="{StaticResource Path_Artist}" ToolTip="Display Artist Information" />
 							<Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}"
 									Command="{Binding DisplayAlbumInfoPanel}" Content="{StaticResource Path_Album}" ToolTip="Display Album Information" />
-							<Button Margin="0,0,11,0" Style="{StaticResource PathButtonStyle}"
+							<Button Margin="0,0,5,0" Style="{StaticResource PathButtonStyle}"
 									Command="{Binding DisplayArtistTracksPanel}" Content="{StaticResource Path_Music}" ToolTip="Display All Artist Tracks" />
+                            <Button Margin="0,0,11,0" Padding="4,5" Style="{StaticResource PathButtonStyle}"
+                                    Command="{Binding DisplayPortfolio}" Content="{StaticResource Path_Pictures}" ToolTip="Display Artist Artwork" />
 							<Button Style="{StaticResource PathButtonStyle}"
 									Command="{Binding EditArtist}" Content="{StaticResource Path_Edit}" ToolTip="Edit Artist Properties" />
 						</StackPanel>
