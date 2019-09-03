@@ -13,15 +13,17 @@ namespace Noise.UI.ViewModels {
         private readonly IUiLog                     mLog;
         private readonly UiArtist                   mArtist;
         private readonly IMetadataManager           mMetadataManager;
+        private readonly string                     mInitialArtworkName;
         private TaskHandler<IEnumerable<Artwork>>   mArtworkTask;
         private Artwork                             mCurrentArtwork;
 
         public  BindableCollection<Artwork>         Portfolio { get; }
 
-        public ArtistArtworkViewModel( IMetadataManager metadataManager, UiArtist artist, IUiLog log ) {
+        public ArtistArtworkViewModel( IMetadataManager metadataManager, UiArtist artist, IUiLog log, string currentArtworkName ) {
             mMetadataManager = metadataManager;
             mArtist = artist;
             mLog = log;
+            mInitialArtworkName = currentArtworkName;
 
             Portfolio = new BindableCollection<Artwork>();
             LoadArtwork();
@@ -59,7 +61,13 @@ namespace Noise.UI.ViewModels {
             Portfolio.Clear();
             Portfolio.AddRange( artworkList );
 
-            CurrentArtwork = Portfolio.FirstOrDefault();
+            if(!string.IsNullOrWhiteSpace( mInitialArtworkName )) {
+                CurrentArtwork = Portfolio.FirstOrDefault( a => a.Name.Equals( mInitialArtworkName ));
+            }
+
+            if( CurrentArtwork == null ) {
+                CurrentArtwork = Portfolio.FirstOrDefault();
+            }
         }
     }
 }

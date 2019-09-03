@@ -395,7 +395,7 @@ namespace Noise.UI.ViewModels {
 
         public void Execute_DisplayPortfolio() {
             if( CanExecute_DisplayPortfolio()) {
-                var vm = new ArtistArtworkViewModel( mMetadataManager, CurrentArtist, mLog );
+                var vm = new ArtistArtworkViewModel( mMetadataManager, CurrentArtist, mLog, mArtistImage?.Name );
 
                 mArtistArtworkDisplayRequest.Raise( new ArtistArtworkDisplayInfo( vm ), AfterArtworkDisplayed );
             }

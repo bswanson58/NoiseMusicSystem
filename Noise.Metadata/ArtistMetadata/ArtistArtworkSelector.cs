@@ -34,6 +34,8 @@ namespace Noise.Metadata.ArtistMetadata {
                             var fileToPick = mRandom.Next( files.Length );
 
                             forArtist.Image = File.ReadAllBytes( files[fileToPick]);
+                            forArtist.Name = Path.GetFileName( files[fileToPick]);
+
                             circuitBreaker--;
                         } while((!forArtist.HaveValidImage ) &&
                                 ( circuitBreaker >= 0 ));
