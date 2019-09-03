@@ -205,6 +205,10 @@
       <Project>{2C697760-1B66-4DED-B57A-B3438D5A75FC}</Project>
       <Name>Noise.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ReusableBits\ReusableBits.csproj">
+      <Project>{0522b043-a04a-4669-90db-204c96d52224}</Project>
+      <Name>ReusableBits</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

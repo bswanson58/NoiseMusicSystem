@@ -6,6 +6,7 @@ using Noise.EntityFrameworkDatabase.Interfaces;
 using Noise.EntityFrameworkDatabase.Logging;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
+using ReusableBits.ExtensionClasses.MoreLinq;
 
 namespace Noise.EntityFrameworkDatabase.DataProviders {
 	internal class ArtworkProvider : BaseProvider<DbArtwork>, IArtworkProvider {
@@ -112,7 +113,7 @@ namespace Noise.EntityFrameworkDatabase.DataProviders {
 	                artworkList = Set( context ).Where( entity => ((entity.Album == albumId) && (entity.DbContentType == (int)ofType)) );
 	            }
 
-	            retValue = artworkList.ToArray();
+	            retValue = artworkList.AsEnumerable().DistinctBy( a => a.Name ).ToArray();
 	        }
 
 	        return retValue;
