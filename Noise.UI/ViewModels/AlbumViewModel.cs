@@ -287,6 +287,10 @@ namespace Noise.UI.ViewModels {
 							}
 						}
 					}
+
+                    if(!cancellationToken.IsCancellationRequested ) {
+                        SupportInfo = mAlbumProvider.GetAlbumSupportInfo( albumId );
+                    }
 				},
 				() => { },
 				ex => mLog.LogException( $"Retrieving Album:{albumId}", ex ),
