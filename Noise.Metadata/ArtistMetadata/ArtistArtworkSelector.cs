@@ -56,7 +56,7 @@ namespace Noise.Metadata.ArtistMetadata {
                         var fileInfo = new FileInfo( file );
 
                         if( fileInfo.Length > 100 ) {
-                            var artwork = new Artwork( new DbArtwork( Constants.cDatabaseNullOid, ContentType.ArtistPrimaryImage ) { Name = file });
+                            var artwork = new Artwork( new DbArtwork( Constants.cDatabaseNullOid, ContentType.ArtistPrimaryImage ) { Name = Path.GetFileName( file )});
 
                             artwork.Image = File.ReadAllBytes( file );
                             retValue.Add( artwork );
