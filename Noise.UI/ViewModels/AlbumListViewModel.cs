@@ -70,7 +70,7 @@ namespace Noise.UI.ViewModels {
 
 			mAlbumSorts = new List<ViewSortStrategy> { new ViewSortStrategy( "Album Name", new List<SortDescription> { new SortDescription( "Name", ListSortDirection.Ascending ) }),
 			                                           new ViewSortStrategy( "Unprefixed Album Name", new List<SortDescription> { new SortDescription( "SortName", ListSortDirection.Ascending ) }),
-                                                       new ViewSortStrategy( "Published Year", new List<SortDescription> { new SortDescription( "PublishedYear", ListSortDirection.Ascending ),
+                                                       new ViewSortStrategy( "Published Year", new List<SortDescription> { new SortDescription( "PublishedYear", ListSortDirection.Descending ),
 																														   new SortDescription( "SortName", ListSortDirection.Ascending ) }),
 			                                           new ViewSortStrategy( "Rating", new List<SortDescription> { new SortDescription("SortRating", ListSortDirection.Descending ),
 			                                                                                                       new SortDescription( "SortName", ListSortDirection.Ascending ) }) };
