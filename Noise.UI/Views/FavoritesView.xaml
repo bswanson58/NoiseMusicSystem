@@ -42,7 +42,7 @@
 						<GridViewColumn Header="Name" Behaviours:GridViewSort.PropertyName="Title">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
-									<TextBlock x:Name="Title" Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Title}"
+									<TextBlock x:Name="Title" Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=DisplayName}"
 									           ReusableBehaviours:FadeTrimming.IsEnabled="True" ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
                                     <DataTemplate.Triggers>
                                         <DataTrigger Binding="{Binding IsPlaying}" Value="True">

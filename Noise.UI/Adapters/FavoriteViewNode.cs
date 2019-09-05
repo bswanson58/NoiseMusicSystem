@@ -5,9 +5,13 @@ using Noise.Infrastructure.Support;
 
 namespace Noise.UI.Adapters {
 	public class FavoriteViewNode : ViewModelBase, IPlayingItem {
-		public	DbArtist		Artist {get; private set; }
-		public	DbAlbum			Album { get; private set; }
-		public	DbTrack			Track { get; private set; }
+		public	DbArtist		Artist {get; }
+		public	DbAlbum			Album { get; }
+		public	DbTrack			Track { get; }
+
+        public  string          DisplayName { get; set; }
+        public  string          SortingName { get; set; }
+
 		private readonly Action<FavoriteViewNode>	mPlayAction;
 
 		public FavoriteViewNode( DbArtist artist, Action<FavoriteViewNode> playAction ) :
@@ -30,10 +34,10 @@ namespace Noise.UI.Adapters {
 				var retValue = string.Empty;
 
 				if( Track != null ) {
-					retValue = string.Format( "{0} ({1})", Track.Name, Artist.Name );
+					retValue = $"{Track.Name} ({Artist.Name})";
 				}
 				else if( Album != null ) {
-					retValue = string.Format( "{0} ({1})", Album.Name, Artist.Name );
+					retValue = $"{Album.Name} ({Artist.Name})";
 				}
 				else if( Artist != null ) {
 					retValue = Artist.Name;
