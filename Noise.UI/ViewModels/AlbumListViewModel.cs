@@ -34,10 +34,9 @@ namespace Noise.UI.ViewModels {
 		private readonly IPlayCommand					mPlayCommand;
 		private readonly ISelectionState				mSelectionState;
         private readonly IPlayingItemHandler            mPlayingItemHandler;
+        private readonly IPrefixedNameHandler           mPrefixedNameHandler;
 		private	readonly Observal.Observer				mChangeObserver;
 		private readonly IObservableCollection<UiAlbum>	mAlbumList;
-	    private readonly List<string>                   mSortPrefixes;
-	    private readonly bool                           mEnableSortPrefixes;
 		private ICollectionView							mAlbumView;
 		private readonly List<ViewSortStrategy>			mAlbumSorts;
 		private DbArtist								mCurrentArtist;
@@ -51,7 +50,7 @@ namespace Noise.UI.ViewModels {
 	    public  IEnumerable<ViewSortStrategy>           SortDescriptions => mAlbumSorts;
 
         public AlbumListViewModel( IEventAggregator eventAggregator, IPreferences preferences, IAlbumProvider albumProvider, IPlayCommand playCommand, IRatings ratings,
-								   ISelectionState selectionState, IPlayingItemHandler playingItemHandler, IUiLog log ) {
+								   IPrefixedNameHandler nameHandler, ISelectionState selectionState, IPlayingItemHandler playingItemHandler, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
 			mPreferences = preferences;
@@ -60,9 +59,9 @@ namespace Noise.UI.ViewModels {
 			mSelectionState = selectionState;
 			mPlayCommand = playCommand;
             mPlayingItemHandler = playingItemHandler;
+            mPrefixedNameHandler = nameHandler;
 
 			mAlbumList = new BindableCollection<UiAlbum>();
-		    mSortPrefixes = new List<string>();
 			VisualStateName = cHideSortDescriptions;
 
 			mChangeObserver = new Observal.Observer();
@@ -79,16 +78,11 @@ namespace Noise.UI.ViewModels {
 			if( configuration != null ) {
 				var sortConfiguration = ( from config in mAlbumSorts where config.DisplayName == configuration.AlbumListSortOrder select config ).FirstOrDefault();
 
-			    mEnableSortPrefixes = configuration.EnableSortPrefixes;
-			    if (mEnableSortPrefixes) {
-			        mSortPrefixes.AddRange( from p in configuration.SortPrefixes.Split('|') select p.Trim());
-			    }
-
                 if ( sortConfiguration != null ) {
                     SelectedSortDescription = sortConfiguration;
                 }
                 else {
-                    SelectedSortDescription = mEnableSortPrefixes ? mAlbumSorts[1] : mAlbumSorts[0];
+                    SelectedSortDescription = mPrefixedNameHandler.ArePrefixesEnabled ? mAlbumSorts[1] : mAlbumSorts[0];
                 }
 			}
             else {
@@ -368,25 +362,15 @@ namespace Noise.UI.ViewModels {
 			if( dbAlbum != null ) {
 				Mapper.Map( dbAlbum, retValue );
 
-			    if( mEnableSortPrefixes ) {
-			        FormatSortPrefix( retValue );
-			    }
+                FormatSortPrefix( retValue );
 			}
 
             return ( retValue );
 		}
 
 	    private void FormatSortPrefix( UiAlbum album ) {
-	        if( mSortPrefixes != null ) {
-	            foreach( string prefix in mSortPrefixes ) {
-	                if( album.Name.StartsWith( prefix + " ", StringComparison.CurrentCultureIgnoreCase )) {
-	                    album.SortName = album.Name.Remove( 0, prefix.Length ).Trim();
-	                    album.DisplayName = "(" + album.Name.Insert( prefix.Length, ")" );
-
-	                    break;
-	                }
-	            }
-	        }
+            album.DisplayName = mPrefixedNameHandler.FormatPrefixedName( album.Name );
+            album.SortName = mPrefixedNameHandler.FormatSortingName( album.Name );
 	    }
 
 	    private void UpdateUi( IEnumerable<UiAlbum> albumList, DbArtist artist ) {

@@ -288,6 +288,7 @@
     <Compile Include="Dto\UiTimeExplorerAlbum.cs" />
     <Compile Include="Dto\UiTrack.cs" />
     <Compile Include="Dto\ViewSortStrategy.cs" />
+    <Compile Include="Interfaces\IPrefixedNameHandler.cs" />
     <Compile Include="Interfaces\ISelectionState.cs" />
     <Compile Include="Logging\IUiLog.cs" />
     <Compile Include="Logging\UiLogger.cs" />
@@ -319,6 +320,7 @@
     </Compile>
     <Compile Include="Support\IDialogService.cs" />
     <Compile Include="Support\MouseUtilities.cs" />
+    <Compile Include="Support\PrefixedNameHandler.cs" />
     <Compile Include="Support\ViewModelResolver.cs" />
     <Compile Include="ValueConverters\DateOnlyConverter.cs" />
     <Compile Include="ValueConverters\HtmlTextConverter.cs" />
