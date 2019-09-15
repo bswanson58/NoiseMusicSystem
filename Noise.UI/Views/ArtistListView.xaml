@@ -115,7 +115,7 @@
 							<EasingDoubleKeyFrame KeyTime="0" Value="1" />
 						</DoubleAnimationUsingKeyFrames>
 						<DoubleAnimationUsingKeyFrames Storyboard.TargetName="_sortList" Storyboard.TargetProperty="(FrameworkElement.Height)">
-							<EasingDoubleKeyFrame KeyTime="0" Value="140" />
+							<EasingDoubleKeyFrame KeyTime="0" Value="160" />
 						</DoubleAnimationUsingKeyFrames>
 					</Storyboard>
 				</VisualState>
