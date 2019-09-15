@@ -23,7 +23,17 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="1" Grid.Row="1" Style="{StaticResource StartupTextStyle}" Text="The Noise Music System is warming up..."/>
+        <TextBlock x:Name="_textBlock" Grid.Column="1" Grid.Row="1" Style="{StaticResource StartupTextStyle}" Text="The Noise Music System is warming up...">
+            <TextBlock.Triggers>
+                <EventTrigger RoutedEvent="TextBlock.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="{DynamicResource SignatureColor}" Duration="0:0:2.5" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </TextBlock.Triggers>        
+        </TextBlock>
         
         <ProgressBar Grid.Column="1" Grid.Row="2" Margin="0,10" IsIndeterminate="True"/>
     </Grid>
