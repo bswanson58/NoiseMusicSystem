@@ -39,9 +39,7 @@
 		</Style>
 
 		<DataTemplate x:Key="ArtistTemplate" DataType="{x:Type Dto:UiArtist}">
-			<Border x:Name="ArtistPanel"
-				Background="Transparent"
-				CornerRadius="3">
+			<Border x:Name="ArtistPanel" Background="Transparent" CornerRadius="3" Padding="3">
 				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
@@ -69,12 +67,13 @@
 												 Style="{DynamicResource NoiseRatingStyle}" />
 					</StackPanel>
 
-					<StackPanel Grid.Row="1" Grid.Column="0" Margin="11,0,0,0" Orientation="Horizontal">
+					<StackPanel Grid.Row="1" Grid.Column="0" Margin="11,-3,0,0" Opacity="0.75" Orientation="Horizontal">
 						<TextBlock Style="{StaticResource ExplorerSubtitleStyle}" Text="Albums: " />
 						<TextBlock x:Name="AlbumCount" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding AlbumCount, StringFormat={}{0:N0}}" />
 					</StackPanel>
 
-					<TextBlock x:Name="Genre" Grid.Row="1" Grid.Column="1" Margin="0,0,3,0" Style="{StaticResource ExplorerSubtitleStyle}" HorizontalAlignment="Right" Text="{Binding Genre}" />
+					<TextBlock x:Name="Genre" Grid.Row="1" Grid.Column="1" Margin="0,-3,3,0" Opacity="0.75"
+                               Style="{StaticResource ExplorerSubtitleStyle}" HorizontalAlignment="Right" Text="{Binding Genre}" />
 				</Grid>
 			</Border>
 

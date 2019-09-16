@@ -28,8 +28,8 @@
 		</ControlTemplate>
 
 		<DataTemplate x:Key="AlbumTemplate" DataType="{x:Type Dto:UiAlbum}">
-			<Border x:Name="AlbumPanel" Background="Transparent" CornerRadius="3">
-				<Grid Margin="0,0,3,0">
+			<Border x:Name="AlbumPanel" Background="Transparent" CornerRadius="3" Margin="3">
+				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
@@ -48,7 +48,7 @@
 						</Viewbox>
 					</Grid>
 
-					<Grid Grid.Row="1" Margin="7,0,0,0">
+					<Grid Grid.Row="1" Margin="7,-3,0,0" Opacity="0.75">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="23" />
 							<ColumnDefinition Width="Auto" />
@@ -77,7 +77,7 @@
 										Opacity="{Binding Path=FavoriteValue, Converter={StaticResource OpaqueIfFalse}}"
 										IsChecked="{Binding FavoriteValue, Mode=TwoWay}"
 										Style="{DynamicResource FavoriteCheckBoxStyle}" />
-							<Controls:RatingControl x:Name="AlbumRating" Margin="0,0,3,0"
+							<Controls:RatingControl x:Name="AlbumRating"
 													Opacity="{Binding Path=UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"
 													Rating="{Binding Path=UiRating, Mode=TwoWay}"
 													UseAlternate="{Binding UseAlternateRating}"
