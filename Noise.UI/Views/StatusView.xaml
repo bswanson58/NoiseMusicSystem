@@ -41,7 +41,7 @@
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 
-			<TextBlock Grid.Column="0" Margin="5,0" FontSize="12" Foreground="LightGray" Text="{Binding Version}"/>
+			<TextBlock Grid.Column="0" Margin="5,0" FontSize="12" Foreground="LightGray" Text="{Binding VersionString}"/>
 			<Separator Grid.Column="1" Margin ="3,0"/>
 			<Controls:StatusPresenter Grid.Column="2" Margin="5,0" StatusMessage="{Binding StatusMessage}"/>
 		</Grid>

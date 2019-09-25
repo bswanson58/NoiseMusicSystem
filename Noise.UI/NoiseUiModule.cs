@@ -6,6 +6,7 @@ using Noise.UI.Logging;
 using Noise.UI.Models;
 using Noise.UI.Support;
 using ReusableBits.Interfaces;
+using ReusableBits.Mvvm.VersionSpinner;
 using ReusableBits.Support;
 
 namespace Noise.UI {
@@ -24,6 +25,8 @@ namespace Noise.UI {
             mContainer.RegisterType<IPlayingItemHandler, PlayingItemHandler>( new TransientLifetimeManager());
 
 			mContainer.RegisterType<IUiLog, UiLogger>( new HierarchicalLifetimeManager());
+
+            mContainer.RegisterType<IVersionFormatter, VersionSpinnerViewModel>( new HierarchicalLifetimeManager());
 
 			var resourceLoader = new ResourceProvider( "Noise.UI", "Resources" );
 			mContainer.RegisterInstance<IResourceProvider>( resourceLoader );
