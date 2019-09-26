@@ -41,6 +41,10 @@
                                     PreviousTemplate="{StaticResource PlayAdjacentPreviousTemplate}"
                                     NeitherTemplate="{StaticResource PlayAdjacentNeitherTemplate}"
                                     DoNotPlayTemplate="{StaticResource DoNotPlayTemplate}"/>
+
+        <Style x:Key="RightAlignedHeader" TargetType="GridViewColumnHeader" BasedOn="{StaticResource MetroGridViewColumnHeader}">
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
     </UserControl.Resources>
 
     <i:Interaction.Behaviors>
@@ -74,17 +78,15 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="33"
-                                    Behaviours:GridViewSort.PropertyName="TrackNumber"
-                                    Header="#">
+                    <GridViewColumn Width="33" Header="# " HeaderContainerStyle="{StaticResource RightAlignedHeader}"
+                                    Behaviours:GridViewSort.PropertyName="TrackNumber">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=TrackNumber}" TextAlignment="Right" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Behaviours:GridViewSort.PropertyName="Name"
-                                    Header="Track Name">
+                    <GridViewColumn Header=" Track Name" Behaviours:GridViewSort.PropertyName="Name">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock x:Name="TrackName" Text="{Binding Path=Name}" />
@@ -100,18 +102,16 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="75"
-                                    Behaviours:GridViewSort.PropertyName="Duration"
-                                    Header="Duration">
+                    <GridViewColumn Width="75" Header="Duration " HeaderContainerStyle="{StaticResource RightAlignedHeader}"
+                                    Behaviours:GridViewSort.PropertyName="Duration">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="27"
-                                    Behaviours:GridViewSort.PropertyName="UiIsFavorite"
-                                    HeaderTemplate="{StaticResource FavoriteColumnHeaderTemplate}">
+                    <GridViewColumn Width="27" HeaderTemplate="{StaticResource FavoriteColumnHeaderTemplate}"
+                                    Behaviours:GridViewSort.PropertyName="UiIsFavorite">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox x:Name="IsFavorite"  HorizontalAlignment="Center"
@@ -126,9 +126,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="115"
-                                    Behaviours:GridViewSort.PropertyName="UiRating"
-                                    Header="Rating">
+                    <GridViewColumn Width="115"  Header=" Rating" Behaviours:GridViewSort.PropertyName="UiRating">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Controls:RatingControl x:Name="Rating" HorizontalAlignment="Center"
