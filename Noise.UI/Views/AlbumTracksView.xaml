@@ -79,15 +79,14 @@
                                     Header="#">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=TrackNumber}" TextAlignment="Right" />
+                                <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=TrackNumber}" TextAlignment="Right" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Behaviours:GridViewSort.PropertyName="Name"
-                                    Header="Track Name">
+                    <GridViewColumn Behaviours:GridViewSort.PropertyName="Name" Header="Track Name">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock x:Name="TrackName" Text="{Binding Path=Name}" />
+                                <TextBlock x:Name="TrackName" Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Name}" />
 
                                 <DataTemplate.Triggers>
                                     <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
@@ -105,7 +104,7 @@
                                     Header="Duration">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" />
+                                <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -182,7 +181,6 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-
                 </GridView>
             </ListView.View>
         </ListView>
