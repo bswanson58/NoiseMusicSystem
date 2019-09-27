@@ -45,21 +45,21 @@
 
         <!-- Header Styles -->
         <Style x:Key="NormalHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
-            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
             <Setter Property="Cursor" Value="Arrow"/>
         </Style>
 
         <Style x:Key="CenteredHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Padding" Value="5,0,0,0"/>
-            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
             <Setter Property="Cursor" Value="Arrow"/>
         </Style>
 
         <Style x:Key="RightAlignHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
             <Setter Property="HorizontalContentAlignment" Value="Right"/>
             <Setter Property="Padding" Value="1,0"/>
-            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
             <Setter Property="Cursor" Value="Arrow"/>
         </Style>
 
@@ -168,7 +168,7 @@
 
     <GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}" Header=" Tracks ">
 
-        <DataGrid ItemsSource="{Binding TrackList}" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="False">
+        <DataGrid ItemsSource="{Binding TrackList}" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True">
             <DataGrid.Columns>
                 <!-- Play -->
                 <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" 
