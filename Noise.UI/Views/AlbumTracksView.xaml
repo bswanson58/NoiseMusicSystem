@@ -8,6 +8,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ReusableConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              xmlns:Views="clr-namespace:Noise.UI.Views"
+             xmlns:Dto="clr-namespace:Noise.UI.Dto"
              d:DesignHeight="100"
              d:DesignWidth="530"
              mc:Ignorable="d">
@@ -63,7 +64,7 @@
         </Style>
 
         <!-- Play -->
-        <DataTemplate x:Key="PlayTemplate">
+        <DataTemplate x:Key="PlayTemplate" DataType="Dto:UiTrack">
             <Button Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}" />
         </DataTemplate>
 
@@ -71,12 +72,12 @@
         <DataTemplate x:Key="TrackNumberColumnHeader">
             <TextBlock Text="#" HorizontalAlignment="Right"/>
         </DataTemplate>
-        <DataTemplate x:Key="TrackNumberTemplate">
+        <DataTemplate x:Key="TrackNumberTemplate" DataType="Dto:UiTrack">
             <TextBlock Text="{Binding TrackNumber}" Style="{StaticResource ListViewTextStyle}" TextAlignment="Right" Margin="5,0"/>
         </DataTemplate>
         
         <!-- Track Name -->
-        <DataTemplate x:Key="TrackNameTemplate">
+        <DataTemplate x:Key="TrackNameTemplate" DataType="Dto:UiTrack">
             <TextBlock x:Name="TrackName" Style="{StaticResource ListViewTextStyle}" Margin="5,0" Text="{Binding Path=Name}" />
 
             <DataTemplate.Triggers>
@@ -90,15 +91,15 @@
         </DataTemplate>
         
         <!-- Duration -->
-        <DataTemplate x:Key="DurationTemplate">
+        <DataTemplate x:Key="DurationTemplate" DataType="Dto:UiTrack">
             <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" Margin="5,0"/>
         </DataTemplate>
         
         <!-- Favorite -->
-        <DataTemplate x:Key="FavoriteTemplate">
+        <DataTemplate x:Key="FavoriteTemplate" DataType="Dto:UiTrack">
             <CheckBox x:Name="IsFavorite"  HorizontalAlignment="Center"
                       Opacity="{Binding Path=UiIsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
-                      IsChecked="{Binding Path=UiIsFavorite, Mode=TwoWay}"
+                      IsChecked="{Binding Path=UiIsFavorite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       Style="{StaticResource FavoriteCheckBoxStyle}" />
             <DataTemplate.Triggers>
                 <Trigger SourceName="IsFavorite" Property="IsMouseOver" Value="True">
@@ -108,10 +109,10 @@
         </DataTemplate>
         
         <!-- Rating Template -->
-        <DataTemplate x:Key="RatingTemplate">
+        <DataTemplate x:Key="RatingTemplate" DataType="Dto:UiTrack">
             <Controls:RatingControl x:Name="Rating" HorizontalAlignment="Center"
                                     Opacity="{Binding Path=UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"
-                                    Rating="{Binding Path=UiRating, Mode=TwoWay}"
+                                    Rating="{Binding Path=UiRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     Style="{StaticResource NoiseRatingStyle}" />
             <DataTemplate.Triggers>
                 <Trigger SourceName="Rating" Property="IsMouseOver" Value="True">
@@ -121,7 +122,7 @@
         </DataTemplate>
 
         <!-- Tags Template -->
-        <DataTemplate x:Key="TagsTemplate">
+        <DataTemplate x:Key="TagsTemplate" DataType="Dto:UiTrack">
             <ContentControl x:Name="TagContainer" Opacity="0.3">
                 <Button x:Name="TrackEdit" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
                         Command="{Binding Path=Edit}" Content="{StaticResource Path_Categories}" ToolTip="{Binding TagsTooltip}" Focusable="False"/>
@@ -138,7 +139,7 @@
         </DataTemplate>
         
         <!-- Adjacent Play -->
-        <DataTemplate x:Key="AdjacentPlayTemplate">
+        <DataTemplate x:Key="AdjacentPlayTemplate" DataType="Dto:UiTrack">
             <ContentControl x:Name="StrategyContainer" Opacity="0.3">
                 <Button x:Name="StrategyOptions" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
                         Command="{Binding Path=StrategyOptions}" Content="{Binding CombinedPlayStrategy}" ContentTemplateSelector="{StaticResource AdjacentPlaySelector}" 
@@ -185,7 +186,7 @@
                 <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource FavoriteColumnHeaderTemplate}"
                                         HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource FavoriteTemplate}"/>
                 <!-- Rating -->
-                <DataGridTemplateColumn Width="115"  Header=" Rating" HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource RatingTemplate}"/>
+                <DataGridTemplateColumn Width="115"  Header="Rating" HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource RatingTemplate}"/>
 
                 <!-- Tags -->
                 <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource TagColumnHeaderTemplate}" 
