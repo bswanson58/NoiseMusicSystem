@@ -187,7 +187,7 @@ namespace Noise.UI.ViewModels {
 		}
 
 		private UiTrack TransformTrack( DbTrack dbTrack ) {
-			var retValue = new UiTrack( OnTrackPlay, OnTagEdit, OnStrategyOptions  );
+			var retValue = new UiTrack( OnTrackPlay, OnTagEdit, OnStrategyOptions );
 
 			if( dbTrack != null ) {
 				Mapper.Map( dbTrack, retValue );

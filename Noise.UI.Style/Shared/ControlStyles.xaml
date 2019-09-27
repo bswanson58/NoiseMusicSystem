@@ -164,9 +164,9 @@
 
     <!-- User tags header style -->
     <DataTemplate x:Key="TagColumnHeaderTemplate">
-        <Viewbox Height="15" Width="15" Margin="3,0,0,0" Opacity="0.7">
+        <Viewbox Height="15" Width="15" Opacity="0.7" Margin="0,0,0,2">
             <Canvas Width="100" Height="100" ClipToBounds="True">
-                <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=ListView}}">
+                <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}}">
                     <Path.Data>
                         <PathGeometry Figures="M0,18.952L0,37.904 60.135,98.039C62.752,100.655,66.994,100.655,69.611,98.039L98.038,69.61C100.654,66.994,100.654,62.752,98.038,60.134L37.903,0 18.952,0 0,18.952z M31.398,31.056C28.781,33.673 24.539,33.673 21.922,31.056 19.305,28.439 19.305,24.197 21.922,21.58 24.538,18.963 28.78,18.963 31.398,21.58 34.015,24.197 34.015,28.439 31.398,31.056z" FillRule="Nonzero" />
                     </Path.Data>
@@ -177,14 +177,17 @@
 
     <!-- Play adjacent tracks header style -->
     <DataTemplate x:Key="AdjacentPlayHeaderTemplate">
-        <Viewbox Height="15" Width="15" Margin="3,0,0,0" Opacity="0.7">
+        <Viewbox Height="15" Width="15" Opacity="0.7" Margin="0,0,0,2">
             <Canvas Width="53.325" Height="51.977">
                 <Canvas>
                     <!-- Layer 1/<Path> -->
-                    <Path StrokeThickness="2.0" Stroke="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=ListView}}" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=ListView}}"
+                    <Path StrokeThickness="2.0" 
+                          Stroke="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}}" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" 
+                          Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}}"
                       Data="F1 M 0.988,34.735 C 0.988,34.671 1.022,34.596 1.059,34.547 L 4.490,30.008 C 4.564,29.910 4.683,29.910 4.757,30.008 L 9.663,36.499 L 9.663,1.741 C 9.663,1.329 9.920,0.988 10.232,0.988 L 15.938,0.988 C 16.249,0.988 16.489,1.329 16.489,1.741 L 16.489,37.063 L 21.821,30.008 C 21.895,29.910 22.014,29.910 22.088,30.008 L 25.519,34.547 C 25.593,34.645 25.593,34.825 25.519,34.923 L 16.915,46.282 C 16.906,46.312 16.881,46.352 16.862,46.376 L 13.431,50.915 C 13.357,51.013 13.221,51.013 13.147,50.915 L 9.716,46.376 C 9.698,46.352 9.672,46.312 9.663,46.282 L 1.059,34.923 C 1.022,34.875 0.988,34.799 0.988,34.735 L 0.988,34.735 Z"/>
                     <!-- Layer 1/<Path> -->
-                    <Path StrokeThickness="2.0" Stroke="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=ListView}}" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=ListView}}"
+                    <Path StrokeThickness="2.0" Stroke="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}}" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" 
+                          Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}}"
                       Data="F1 M 27.751,17.241 C 27.751,17.305 27.785,17.381 27.822,17.430 L 31.253,21.968 C 31.327,22.066 31.445,22.066 31.519,21.968 L 36.426,15.478 L 36.426,50.236 C 36.426,50.648 36.683,50.988 36.994,50.988 L 42.700,50.988 C 43.012,50.988 43.251,50.648 43.251,50.236 L 43.251,14.913 L 48.584,21.968 C 48.658,22.066 48.777,22.066 48.851,21.968 L 52.282,17.430 C 52.356,17.332 52.356,17.151 52.282,17.053 L 43.678,5.695 C 43.669,5.665 43.643,5.625 43.625,5.601 L 40.194,1.062 C 40.120,0.964 39.984,0.964 39.910,1.062 L 36.479,5.601 C 36.460,5.625 36.435,5.664 36.426,5.695 L 27.822,17.053 C 27.785,17.102 27.751,17.177 27.751,17.241 L 27.751,17.241 Z"/>
                 </Canvas>
             </Canvas>

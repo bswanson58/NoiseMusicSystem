@@ -42,9 +42,118 @@
                                     NeitherTemplate="{StaticResource PlayAdjacentNeitherTemplate}"
                                     DoNotPlayTemplate="{StaticResource DoNotPlayTemplate}"/>
 
-        <Style x:Key="RightAlignedHeader" TargetType="GridViewColumnHeader" BasedOn="{StaticResource MetroGridViewColumnHeader}">
-            <Setter Property="HorizontalAlignment" Value="Right"/>
+        <!-- Header Styles -->
+        <Style x:Key="NormalHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="Cursor" Value="Arrow"/>
         </Style>
+
+        <Style x:Key="CenteredHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="5,0,0,0"/>
+            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="Cursor" Value="Arrow"/>
+        </Style>
+
+        <Style x:Key="RightAlignHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+            <Setter Property="Padding" Value="1,0"/>
+            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="Cursor" Value="Arrow"/>
+        </Style>
+
+        <!-- Play -->
+        <DataTemplate x:Key="PlayTemplate">
+            <Button Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}" />
+        </DataTemplate>
+
+        <!-- Track Number -->
+        <DataTemplate x:Key="TrackNumberColumnHeader">
+            <TextBlock Text="#" HorizontalAlignment="Right"/>
+        </DataTemplate>
+        <DataTemplate x:Key="TrackNumberTemplate">
+            <TextBlock Text="{Binding TrackNumber}" Style="{StaticResource ListViewTextStyle}" TextAlignment="Right" Margin="5,0"/>
+        </DataTemplate>
+        
+        <!-- Track Name -->
+        <DataTemplate x:Key="TrackNameTemplate">
+            <TextBlock x:Name="TrackName" Style="{StaticResource ListViewTextStyle}" Margin="5,0" Text="{Binding Path=Name}" />
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
+                    <Setter TargetName="TrackName" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                    <Setter TargetName="TrackName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+        
+        <!-- Duration -->
+        <DataTemplate x:Key="DurationTemplate">
+            <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" Margin="5,0"/>
+        </DataTemplate>
+        
+        <!-- Favorite -->
+        <DataTemplate x:Key="FavoriteTemplate">
+            <CheckBox x:Name="IsFavorite"  HorizontalAlignment="Center"
+                      Opacity="{Binding Path=UiIsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
+                      IsChecked="{Binding Path=UiIsFavorite, Mode=TwoWay}"
+                      Style="{StaticResource FavoriteCheckBoxStyle}" />
+            <DataTemplate.Triggers>
+                <Trigger SourceName="IsFavorite" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="IsFavorite" Property="Opacity" Value="1.0"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+        
+        <!-- Rating Template -->
+        <DataTemplate x:Key="RatingTemplate">
+            <Controls:RatingControl x:Name="Rating" HorizontalAlignment="Center"
+                                    Opacity="{Binding Path=UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"
+                                    Rating="{Binding Path=UiRating, Mode=TwoWay}"
+                                    Style="{StaticResource NoiseRatingStyle}" />
+            <DataTemplate.Triggers>
+                <Trigger SourceName="Rating" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Rating" Property="Opacity" Value="1.0"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- Tags Template -->
+        <DataTemplate x:Key="TagsTemplate">
+            <ContentControl x:Name="TagContainer" Opacity="0.3">
+                <Button x:Name="TrackEdit" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
+                        Command="{Binding Path=Edit}" Content="{StaticResource Path_Categories}" ToolTip="{Binding TagsTooltip}" Focusable="False"/>
+            </ContentControl>
+            <DataTemplate.Triggers>
+                <Trigger SourceName="TrackEdit" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="TagContainer" Property="Opacity" Value="1.0"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding HasTags}" Value="True">
+                    <Setter TargetName="TrackEdit" Property="Opacity" Value="1.0"/>
+                    <Setter TargetName="TrackEdit" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+        
+        <!-- Adjacent Play -->
+        <DataTemplate x:Key="AdjacentPlayTemplate">
+            <ContentControl x:Name="StrategyContainer" Opacity="0.3">
+                <Button x:Name="StrategyOptions" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
+                        Command="{Binding Path=StrategyOptions}" Content="{Binding CombinedPlayStrategy}" ContentTemplateSelector="{StaticResource AdjacentPlaySelector}" 
+                        ToolTip="Play Adjacent Tracks" Focusable="False"/>
+            </ContentControl>
+            <DataTemplate.Triggers>
+                <Trigger SourceName="StrategyOptions" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="StrategyContainer" Property="Opacity" Value="1.0"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding HasStrategyOptions}" Value="True">
+                    <Setter TargetName="StrategyOptions" Property="Opacity" Value="1.0"/>
+                    <Setter TargetName="StrategyOptions" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
     </UserControl.Resources>
 
     <i:Interaction.Behaviors>
@@ -58,130 +167,33 @@
 
     <GroupBox Margin="0" Style="{StaticResource SectionBorderStyle}" Header=" Tracks ">
 
-        <ListView Behaviours:GridViewSort.AutoSort="True"
-                  Behaviours:ListViewColumns.Stretch="true"
-                  Behaviours:ListViewFirstItemVisible.ChangeTrigger="{Binding Path=AlbumPlayTime, Mode=OneWay}"
-                  BorderThickness="0"
-                  ItemsSource="{Binding Path=TrackList}">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MetroListViewItem}">
-                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="27" HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Command="{Binding Path=Play}" Style="{StaticResource PlayButtonStyle}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Width="33" Header="# " HeaderContainerStyle="{StaticResource RightAlignedHeader}"
-                                    Behaviours:GridViewSort.PropertyName="TrackNumber">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=TrackNumber}" TextAlignment="Right" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header=" Track Name" Behaviours:GridViewSort.PropertyName="Name">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock x:Name="TrackName" Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Name}" />
+        <DataGrid ItemsSource="{Binding TrackList}" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="False">
+            <DataGrid.Columns>
+                <!-- Play -->
+                <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" 
+                                        HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource PlayTemplate}"/>
+                <!-- Track Number -->
+                <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource TrackNumberColumnHeader}" 
+                                        HeaderStyle="{StaticResource RightAlignHeaderStyle}" CellTemplate="{StaticResource TrackNumberTemplate}"/>
+                <!-- Track Name -->
+                <DataGridTemplateColumn Width="*" Header="Name" CellTemplate="{StaticResource TrackNameTemplate}" HeaderStyle="{StaticResource NormalHeaderStyle}"/>
 
-                                <DataTemplate.Triggers>
-                                    <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
-                                        <Setter TargetName="TrackName" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsPlaying}" Value="True">
-                                        <Setter TargetName="TrackName" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
-                                    </DataTrigger>
-                                </DataTemplate.Triggers>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Width="75" Header="Duration " HeaderContainerStyle="{StaticResource RightAlignedHeader}"
-                                    Behaviours:GridViewSort.PropertyName="Duration">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Duration, Converter={StaticResource TimeSpanConverter}}" TextAlignment="Right" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Width="27" HeaderTemplate="{StaticResource FavoriteColumnHeaderTemplate}"
-                                    Behaviours:GridViewSort.PropertyName="UiIsFavorite">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox x:Name="IsFavorite"  HorizontalAlignment="Center"
-                                          Opacity="{Binding Path=UiIsFavorite, Converter={StaticResource DefaultValueOpacityConverter}}"
-                                          IsChecked="{Binding Path=UiIsFavorite, Mode=TwoWay}"
-                                          Style="{StaticResource FavoriteCheckBoxStyle}" />
-                                <DataTemplate.Triggers>
-                                    <Trigger SourceName="IsFavorite" Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="IsFavorite" Property="Opacity" Value="1.0"/>
-                                    </Trigger>
-                                </DataTemplate.Triggers>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Width="115"  Header=" Rating" Behaviours:GridViewSort.PropertyName="UiRating">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Controls:RatingControl x:Name="Rating" HorizontalAlignment="Center"
-                                                        Opacity="{Binding Path=UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"
-                                                        Rating="{Binding Path=UiRating, Mode=TwoWay}"
-                                                        Style="{StaticResource NoiseRatingStyle}" />
-                                <DataTemplate.Triggers>
-                                    <Trigger SourceName="Rating" Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="Rating" Property="Opacity" Value="1.0"/>
-                                    </Trigger>
-                                </DataTemplate.Triggers>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Width="29" HeaderTemplate="{StaticResource TagColumnHeaderTemplate}">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <ContentControl x:Name="TagContainer" Opacity="0.3">
-                                    <Button x:Name="TrackEdit" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
-                                            Command="{Binding Path=Edit}" Content="{StaticResource Path_Categories}" ToolTip="{Binding TagsTooltip}" Focusable="False"/>
-                                </ContentControl>
-                                <DataTemplate.Triggers>
-                                    <Trigger SourceName="TrackEdit" Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="TagContainer" Property="Opacity" Value="1.0"/>
-                                    </Trigger>
-                                    <DataTrigger Binding="{Binding HasTags}" Value="True">
-                                        <Setter TargetName="TrackEdit" Property="Opacity" Value="1.0"/>
-                                        <Setter TargetName="TrackEdit" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
-                                    </DataTrigger>
-                                </DataTemplate.Triggers>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Width="29" HeaderTemplate="{StaticResource AdjacentPlayHeaderTemplate}">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <ContentControl x:Name="StrategyContainer" Opacity="0.3">
-                                    <Button x:Name="StrategyOptions" Width="17" Height="17" Margin="1,0,0,0" Opacity="0.1" BorderThickness="0" Padding="0" Background="Transparent"
-                                            Command="{Binding Path=StrategyOptions}" Content="{Binding CombinedPlayStrategy}" ContentTemplateSelector="{StaticResource AdjacentPlaySelector}" 
-                                            ToolTip="Play Adjacent Tracks" Focusable="False"/>
-                                </ContentControl>
-                                <DataTemplate.Triggers>
-                                    <Trigger SourceName="StrategyOptions" Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="StrategyContainer" Property="Opacity" Value="1.0"/>
-                                    </Trigger>
-                                    <DataTrigger Binding="{Binding HasStrategyOptions}" Value="True">
-                                        <Setter TargetName="StrategyOptions" Property="Opacity" Value="1.0"/>
-                                        <Setter TargetName="StrategyOptions" Property="Foreground" Value="{DynamicResource SignatureBrush}"/>
-                                    </DataTrigger>
-                                </DataTemplate.Triggers>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
+                <!-- Duration -->
+                <DataGridTemplateColumn Width="83" Header="Duration" HeaderStyle="{StaticResource RightAlignHeaderStyle}" CellTemplate="{StaticResource DurationTemplate}"/>
+
+                <!-- Favorite -->
+                <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource FavoriteColumnHeaderTemplate}"
+                                        HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource FavoriteTemplate}"/>
+                <!-- Rating -->
+                <DataGridTemplateColumn Width="115"  Header=" Rating" HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource RatingTemplate}"/>
+
+                <!-- Tags -->
+                <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource TagColumnHeaderTemplate}" 
+                                        HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource TagsTemplate}"/>
+                <!-- Adjacent Play -->
+                <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource AdjacentPlayHeaderTemplate}"
+                                        HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource AdjacentPlayTemplate}"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </GroupBox>
 </UserControl>
