@@ -6,17 +6,49 @@
 			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
 			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 			 xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+			 xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
 			 mc:Ignorable="d"
 			 Tag="Favorites"
 			 DataContext="{Binding FavoritesViewModel, Source={StaticResource ViewModelLocator}}"
 			 d:DesignHeight="300" d:DesignWidth="500">
 	
 	<UserControl.Resources>
-		<ControlTemplate TargetType="ListBox" x:Key="EmptyListBoxTemplate">
+		<ControlTemplate TargetType="ItemsControl" x:Key="EmptyListBoxTemplate">
 			<Grid Margin="5,35,5,0">
                 <TextBlock Style="{StaticResource EmptyListTextStyle}" Text="what!? you have no favorites???" />
 			</Grid>
 		</ControlTemplate>
+
+	    <!-- Header Styles -->
+	    <Style x:Key="NormalHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+	        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+	        <Setter Property="Opacity" Value="0.7"/>
+	        <Setter Property="Cursor" Value="Arrow"/>
+	    </Style>
+
+	    <Style x:Key="CenteredHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+	        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+	        <Setter Property="Padding" Value="5,0,0,0"/>
+	        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+	        <Setter Property="Opacity" Value="0.7"/>
+	        <Setter Property="Cursor" Value="Arrow"/>
+	    </Style>
+
+	    <!-- Play -->
+	    <DataTemplate x:Key="PlayTemplate" DataType="Adapters:FavoriteViewNode">
+	        <Button Margin="5,0" Command="{Binding Path=PlayFavorite}" Style="{StaticResource PlayButtonStyle}" />
+	    </DataTemplate>
+
+	    <DataTemplate x:Key="NameTemplate" DataType="Adapters:FavoriteViewNode">
+            <TextBlock x:Name="Title" Style="{StaticResource ListViewTextStyle}" Margin="5,0" Text="{Binding Path=DisplayName}"
+	                   ReusableBehaviours:FadeTrimming.IsEnabled="True" ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
+	        <DataTemplate.Triggers>
+	            <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+	                <Setter TargetName="Title" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
+	            </DataTrigger>
+	        </DataTemplate.Triggers>
+	    </DataTemplate>
+
 	</UserControl.Resources>
 
 	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Favorites ">
@@ -26,39 +58,21 @@
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
-			
-			<ListView Grid.Row="0" BorderThickness="0" ItemContainerStyle="{StaticResource ListViewItemStretch}"
-					  ItemsSource="{Binding Path=FavoritesList}" SelectedItem="{Binding SelectedNode}"
-					  Behaviours:ListViewColumns.Stretch="true" Behaviours:GridViewSort.AutoSort="True">
-				<ListView.View>
-					<GridView>
-						<GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=PlayFavorite}"/>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
-						<GridViewColumn Header="Name" Behaviours:GridViewSort.PropertyName="Title">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<TextBlock x:Name="Title" Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=DisplayName}"
-									           ReusableBehaviours:FadeTrimming.IsEnabled="True" ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
-                                    <DataTemplate.Triggers>
-                                        <DataTrigger Binding="{Binding IsPlaying}" Value="True">
-                                            <Setter TargetName="Title" Property="Foreground" Value="{StaticResource PlayingBrush}"/>
-                                        </DataTrigger>
-                                    </DataTemplate.Triggers>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
-						
-					</GridView>
-				</ListView.View>
+
+            <DataGrid Grid.Row="0" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True" 
+					  ItemsSource="{Binding Path=FavoritesList}" SelectedItem="{Binding SelectedNode}">
+				<DataGrid.Columns>
+				    <!-- Play -->
+                    <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}"
+				                            HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource PlayTemplate}"/>
+				    <!-- Track Name -->
+				    <DataGridTemplateColumn Width="*" Header="Title" CellTemplate="{StaticResource NameTemplate}" HeaderStyle="{StaticResource NormalHeaderStyle}"/>
+				</DataGrid.Columns>
+
 				<i:Interaction.Behaviors>
 					<ReusableBehaviours:EmptyListBehavior EmptyTemplate="{StaticResource EmptyListBoxTemplate}"/>
 				</i:Interaction.Behaviors>
-			</ListView>
+			</DataGrid>
 
 			<Rectangle Grid.Row="1" Margin="3,7,3,3" Height="1" Fill="{StaticResource DoubleFadedBrush}" Opacity="0.3" />
 
