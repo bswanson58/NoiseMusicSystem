@@ -12,8 +12,8 @@ using ReusableBits;
 
 namespace Noise.UI.ViewModels {
 	public class SearchType {
-		public eSearchItemType	ItemType { get; private set; }
-		public string			DisplayName { get; private set; }
+		public eSearchItemType	ItemType { get; }
+		public string			DisplayName { get; }
 
 		public SearchType( eSearchItemType itemType, string displayName ) {
 			ItemType = itemType;
@@ -37,8 +37,12 @@ namespace Noise.UI.ViewModels {
 		private readonly List<DbTrack>							mPlayList;
 		private readonly List<DbTrack>							mApprovalList; 
 		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
+        private SearchViewNode                                  mSelectedNode;
 
-		public SearchViewModel( IEventAggregator eventAggregator, ISearchProvider searchProvider, IRandomTrackSelector trackSelector,
+	    public  ObservableCollectionEx<SearchViewNode>          SearchResults => mSearchResults;
+	    public  IEnumerable<SearchType>                         SearchTypes => mSearchTypes;
+
+        public SearchViewModel( IEventAggregator eventAggregator, ISearchProvider searchProvider, IRandomTrackSelector trackSelector,
 								IPlayCommand playCommand, IPlayQueue playQueue, IUiLog log ) {
 			mEventAggregator = eventAggregator;
 			mLog = log;
@@ -65,18 +69,14 @@ namespace Noise.UI.ViewModels {
 		}
 
 		public SearchType CurrentSearchType {
-			get{ return( mCurrentSearchType ); }
-			set{ 
+			get => ( mCurrentSearchType );
+		    set{ 
 				mCurrentSearchType = value;
 				RaisePropertyChanged( () => CurrentSearchType );
 			}
 		}
 
-		public IEnumerable<SearchType> SearchTypes {
-			get{ return( mSearchTypes ); }
-		}
-
-		public string SearchText {
+	    public string SearchText {
 			get{ return( Get( () => SearchText )); }
 			set{ Set( () => SearchText, value  ); }
 		}
@@ -103,13 +103,13 @@ namespace Noise.UI.ViewModels {
 
 				return( mSearchTask );
 			}
-			set {  mSearchTask = value; }
+			set => mSearchTask = value;
 		} 
 
 		private void BuildSearchList() {
 			SearchTask.StartTask( () => mSearchProvider.Search( CurrentSearchType.ItemType, SearchText, cMaxSearchResults ),
 								  UpdateSearchList,
-								  error => mLog.LogException( string.Format( "Building Search List for \"{0}\"", SearchText ), error ));
+								  error => mLog.LogException( $"Building Search List for \"{SearchText}\"", error ));
 		}
 
 		private void UpdateSearchList( IEnumerable<SearchResultItem> searchList ) {
@@ -120,7 +120,7 @@ namespace Noise.UI.ViewModels {
 				var searchResultItems = searchList.ToList();
 
 				mSearchResults.SuspendNotification();
-				mSearchResults.AddRange( from searchItem in searchResultItems select new SearchViewNode( searchItem, OnNodeSelected, OnPlay ));
+				mSearchResults.AddRange( from searchItem in searchResultItems select new SearchViewNode( searchItem, OnPlay ));
 				mSearchResults.ResumeNotification();
 			}
 
@@ -147,14 +147,19 @@ namespace Noise.UI.ViewModels {
 			return( retValue );
 		}
 
-		private void OnNodeSelected( SearchViewNode node ) {
-			if( node.Artist != null ) {
-				mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( node.Artist.DbId ));
-			}
-			if( node.Album != null ) {
-				mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( node.Album ));
-			}
-		}
+	    public SearchViewNode SelectedSearchNode {
+            get => mSelectedNode;
+            set {
+                mSelectedNode = value;
+
+                if( mSelectedNode?.Artist != null ) {
+                    mEventAggregator.PublishOnUIThread(new Events.ArtistFocusRequested( mSelectedNode.Artist.DbId ));
+                }
+                if( mSelectedNode?.Album != null ) {
+                    mEventAggregator.PublishOnUIThread(new Events.AlbumFocusRequested( mSelectedNode.Album ));
+                }
+            }
+        }
 
 		private void OnPlay( SearchViewNode node ) {
 			if( node.Track != null ) {
@@ -163,10 +168,6 @@ namespace Noise.UI.ViewModels {
 			else if( node.Album != null ) {
 				mPlayCommand.Play( node.Album );
 			}
-		}
-
-		public ObservableCollectionEx<SearchViewNode> SearchResults {
-			get{ return( mSearchResults ); }
 		}
 	}
 }

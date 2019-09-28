@@ -24,8 +24,11 @@ namespace Noise.UI.ViewModels {
 		private readonly IPlayCommand		mPlayCommand;
 		private readonly BackgroundWorker	mBackgroundWorker;
 		private readonly ObservableCollectionEx<SearchViewNode>	mSearchResults;
+        private SearchViewNode              mSelectedNode;
 
-		public SimilarSongViewModel( IEventAggregator eventAggregator, IPlayCommand playCommand,
+	    public  ObservableCollectionEx<SearchViewNode> SearchResults => mSearchResults;
+
+	    public SimilarSongViewModel( IEventAggregator eventAggregator, IPlayCommand playCommand,
 									 ITrackProvider trackProvider, ISearchProvider searchProvider ) {
 			mEventAggregator = eventAggregator;
 			mTrackProvider = trackProvider;
@@ -69,7 +72,7 @@ namespace Noise.UI.ViewModels {
 			if( track != null ) {
 				retValue.AddRange( from SearchResultItem item
 								   in mSearchProvider.Search( eSearchItemType.Track, string.Format( "\"{0}\"", track.Name ), cMaxSearchResults ) 
-								   select new SearchViewNode( item, OnNodeSelected, OnPlay ));
+								   select new SearchViewNode( item, OnPlay ));
 
 				var ourTrack = retValue.Find( node => node.Track.DbId == trackId );
 				if( ourTrack != null ) {
@@ -107,14 +110,19 @@ namespace Noise.UI.ViewModels {
 			});
 		}
 
-		private void OnNodeSelected( SearchViewNode node ) {
-			if( node.Artist != null ) {
-				mEventAggregator.PublishOnUIThread( new Events.ArtistFocusRequested( node.Artist.DbId ));
-			}
-			if( node.Album != null ) {
-				mEventAggregator.PublishOnUIThread( new Events.AlbumFocusRequested( node.Album ));
-			}
-		}
+	    public SearchViewNode SelectedSearchNode {
+	        get => mSelectedNode;
+	        set {
+	            mSelectedNode = value;
+
+	            if( mSelectedNode?.Artist != null ) {
+	                mEventAggregator.PublishOnUIThread(new Events.ArtistFocusRequested( mSelectedNode.Artist.DbId ));
+	            }
+	            if( mSelectedNode?.Album != null ) {
+	                mEventAggregator.PublishOnUIThread(new Events.AlbumFocusRequested( mSelectedNode.Album ));
+	            }
+	        }
+	    }
 
 		private void OnPlay( SearchViewNode node ) {
 			if( node.Track != null ) {
@@ -125,11 +133,7 @@ namespace Noise.UI.ViewModels {
 			}
 		}
 
-		public ObservableCollectionEx<SearchViewNode> SearchResults {
-			get{ return( mSearchResults ); }
-		}
-
-		public void Execute_Close() {
+	    public void Execute_Close() {
 			Close();
 		}
 	}

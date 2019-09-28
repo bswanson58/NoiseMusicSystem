@@ -4,11 +4,39 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
+			 xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="300"
 			 Tag="Search"
 			 DataContext="{Binding SearchViewModel, Source={StaticResource ViewModelLocator}}"
 			 >
+    <UserControl.Resources>
+        <!-- Header Styles -->
+        <Style x:Key="NormalHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="Cursor" Value="Arrow"/>
+        </Style>
+
+        <Style x:Key="CenteredHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="5,0,0,0"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="Cursor" Value="Arrow"/>
+        </Style>
+
+        <!-- Play -->
+        <DataTemplate x:Key="PlayTemplate" DataType="Adapters:SearchViewNode">
+            <Button Margin="5,0" Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=Play}" 
+                    Visibility="{Binding CanPlay, Converter={StaticResource BooleanVisibilityConverter}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="NameTemplate">
+            <TextBlock Margin="5,0" Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Title}"/>
+        </DataTemplate>
+    </UserControl.Resources>
+
 	<GroupBox Style="{StaticResource SectionBorderStyle}" Header=" Search ">
 		<Grid>
 			<Grid.RowDefinitions>
@@ -35,35 +63,16 @@
 				<Button Grid.Column="4" Margin="3" Style="{StaticResource GeneralButtonStyle}" Command="{Binding Path=Search}">Search</Button>
 			</Grid>
 
-			<ListView Grid.Row="1" BorderThickness="0"
-					  ItemsSource="{Binding Path=SearchResults}"
-					  Behaviours:ListViewColumns.Stretch="true"
-					  Behaviours:GridViewSort.AutoSort="True">
-				<ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MetroListViewItem}">
-						<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-						<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-					</Style>
-				</ListView.ItemContainerStyle>
-				<ListView.View>
-					<GridView>
-						<GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Path=Play}" Visibility="{Binding CanPlay, Converter={StaticResource BooleanVisibilityConverter}}" />
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
-						<GridViewColumn Header="Name" Behaviours:GridViewSort.PropertyName="Title">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<TextBlock Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Title}"/>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
-					</GridView>
-				</ListView.View>
-			</ListView>
+		    <DataGrid Grid.Row="1" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True" 
+		              ItemsSource="{Binding Path=SearchResults}" SelectedItem="{Binding SelectedSearchNode}">
+		        <DataGrid.Columns>
+		            <!-- Play -->
+		            <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}"
+		                                    HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource PlayTemplate}"/>
+		            <!-- Track Name -->
+		            <DataGridTemplateColumn Width="*" Header="Title" CellTemplate="{StaticResource NameTemplate}" HeaderStyle="{StaticResource NormalHeaderStyle}"/>
+		        </DataGrid.Columns>
+		    </DataGrid>
 			
 			<Grid Grid.Row="2" Margin="5,10,0,5">
 				<Grid.ColumnDefinitions>

@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Behaviours="clr-namespace:Noise.UI.Behaviours"
              xmlns:ReusableBehaviours="clr-namespace:ReusableBits.Ui.Behaviours;assembly=ReusableBits.Ui"
+             xmlns:Adapters="clr-namespace:Noise.UI.Adapters"
              ReusableBehaviours:VisualStateAdapter.VisualState="{Binding VisualStateName}"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="450" 
@@ -13,6 +14,33 @@
     <UserControl.DataContext>
         <Binding Path="SimilarSongViewModel" Source="{StaticResource ViewModelLocator}"/>
     </UserControl.DataContext>
+    
+    <UserControl.Resources>
+        <!-- Header Styles -->
+        <Style x:Key="NormalHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="Cursor" Value="Arrow"/>
+        </Style>
+
+        <Style x:Key="CenteredHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="5,0,0,0"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="Cursor" Value="Arrow"/>
+        </Style>
+
+        <!-- Play -->
+        <DataTemplate x:Key="PlayTemplate" DataType="Adapters:SearchViewNode">
+            <Button Margin="5,0" Style="{StaticResource PlayButtonStyle}" Command="{Binding Play}" 
+                    Visibility="{Binding CanPlay, Converter={StaticResource BooleanVisibilityConverter}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="NameTemplate">
+            <TextBlock Margin="5,0" Style="{StaticResource ListViewTextStyle}" Text="{Binding Path=Title}"/>
+        </DataTemplate>
+    </UserControl.Resources>
 
     <Grid x:Name="LayoutRoot">
         <VisualStateManager.VisualStateGroups>
@@ -61,28 +89,17 @@
                 <TextBlock x:Name="SearchingText" Grid.Column="0" Text="Searching for similar tracks..." HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,15,0,0" Opacity="0"/>
                 
                 <TextBlock x:Name="NoResultsText" Grid.Column="0" Text="Only the current track was found." VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,15,0,0" Opacity="0"/>
-                
-                <ListView x:Name="ResultsList" Grid.Column="0" BorderThickness="0" ItemsSource="{Binding SearchResults}"
-                      Behaviours:ListViewColumns.Stretch="true" Behaviours:GridViewSort.AutoSort="True" Opacity="0">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MetroListViewItem}">
-                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}" Width="27">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Style="{StaticResource PlayButtonStyle}" Command="{Binding Play}" Visibility="{Binding CanPlay, Converter={StaticResource BooleanVisibilityConverter}}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Similarly Named Tracks" DisplayMemberBinding="{Binding Title}" Behaviours:GridViewSort.PropertyName="Title"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+
+                <DataGrid x:Name="ResultsList" Grid.Column="0" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False" IsReadOnly="True" 
+                          ItemsSource="{Binding Path=SearchResults}" SelectedItem="{Binding SelectedSearchNode}">
+                    <DataGrid.Columns>
+                        <!-- Play -->
+                        <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource PlayColumnHeaderTemplate}"
+                                                HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource PlayTemplate}"/>
+                        <!-- Track Name -->
+                        <DataGridTemplateColumn Width="*" Header="Simarly Named Tracks" CellTemplate="{StaticResource NameTemplate}" HeaderStyle="{StaticResource NormalHeaderStyle}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
 
                 <Button Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Width="17" Height="17" Margin="5,1,1,0"
                         Content="{StaticResource Path_BalloonClose}" Command="{Binding Close}" />
