@@ -46,6 +46,7 @@
         <!-- Header Styles -->
         <Style x:Key="NormalHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Opacity" Value="0.7"/>
             <Setter Property="Cursor" Value="Arrow"/>
         </Style>
 
@@ -53,6 +54,7 @@
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Padding" Value="5,0,0,0"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Opacity" Value="0.7"/>
             <Setter Property="Cursor" Value="Arrow"/>
         </Style>
 
@@ -60,6 +62,7 @@
             <Setter Property="HorizontalContentAlignment" Value="Right"/>
             <Setter Property="Padding" Value="1,0"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Opacity" Value="0.7"/>
             <Setter Property="Cursor" Value="Arrow"/>
         </Style>
 
