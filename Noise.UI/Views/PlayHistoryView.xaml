@@ -40,7 +40,7 @@
 							   Text="{Binding Path=PlayedOn, Converter={StaticResource RelativeTimeConverter}}"/>
 				</Grid>
 
-				<TextBlock Grid.Row="1" Grid.Column="1" Margin="5,0" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding Path=AlbumName}"
+				<TextBlock Grid.Row="1" Grid.Column="1" Margin="5,0" Style="{StaticResource ExplorerSubtitleStyle}" Text="{Binding Path=AlbumName}" Foreground="Gray"
 						   ReusableBehaviours:FadeTrimming.IsEnabled="True"
 						   ReusableBehaviours:FadeTrimming.ShowTextInToolTipWhenTrimmed="True"/>
 			</Grid>
