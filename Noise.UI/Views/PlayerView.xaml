@@ -16,6 +16,7 @@
 		<Noise_UI_ViewModels:PlayerViewModel x:Key="PlayerViewModelDataSource" d:IsDataSource="True" />
 		<ReusableConverters:DefaultValueOpacityConverter x:Key="DefaultValueOpacityConverter" StandardOpacity="1.0" DefaultOpacity="0.15"/>
 	    <ReusableConverters:EmptyStringVisibilityConverter x:Key="DisplayIfNotEmptyString" HideOnEmpty="True" IsHidden="True"/>
+        <ReusableConverters:EmptyStringVisibilityConverter x:Key="DisplayIfEmptyString" HideOnEmpty="False" IsHidden="True"/>
 	</UserControl.Resources>
 
 	<UserControl.DataContext>
@@ -56,7 +57,7 @@
 							</Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0" VerticalAlignment="Bottom" Margin="3,-1,0,5" Style="{StaticResource MediumTitleStyle}" Foreground="{StaticResource BorderTextColor}"
-                                       Text="Now Playing:" Visibility="{Binding TrackName, Converter={StaticResource EmptyStringVisibilityConverter}}" />
+                                       Text="Now Playing:" Visibility="{Binding TrackName, Converter={StaticResource DisplayIfNotEmptyString}}" />
 
 							<Grid Grid.Column="1" Margin="5,-1,0,5" VerticalAlignment="Center">
 								<Grid.ColumnDefinitions>
@@ -71,6 +72,10 @@
                                            ReusableBehaviours:FadeTrimming.ForegroundColor="{DynamicResource SignatureColor}"
                                            Text="{Binding ArtistAlbumName}" />
 							</Grid>
+
+                            <TextBlock Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="30,0,0,0" Style="{StaticResource EmptyListTextStyle}"
+                                       Text="I exist to play music... Press a play button to queue music and get me started!"
+                                       Visibility="{Binding TrackName, Converter={StaticResource DisplayIfEmptyString}}"/>
 						</Grid>
 					</Grid>
 
