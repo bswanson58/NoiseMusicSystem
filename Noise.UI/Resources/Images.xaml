@@ -440,4 +440,19 @@
             </Canvas>
         </Canvas>
     </Viewbox>
+
+    <Viewbox x:Key="Path_ClearData" x:Shared="False">
+        <Canvas Width="100" Height="100">
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
+                <Path.Data>
+                    <PathGeometry FillRule="Nonzero" Figures="M50,100C22.43,100 0,77.57 0,50 0,22.43 22.43,0 50,0 77.57,0 100,22.43 100,50 100,77.57 77.57,100 50,100L50,100z M50,17.54C32.101,17.54 17.54,32.101 17.54,50 17.54,67.898 32.102,82.46 50,82.46 67.898,82.46 82.46,67.899 82.46,50 82.46,32.101 67.899,17.54 50,17.54L50,17.54z" />
+                </Path.Data>
+            </Path>
+            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
+                <Path.Data>
+                    <EllipseGeometry RadiusX="11.664" RadiusY="11.664" Center="50,50" />
+                </Path.Data>
+            </Path>
+        </Canvas>
+    </Viewbox>
 </ResourceDictionary>

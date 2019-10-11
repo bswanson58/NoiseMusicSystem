@@ -112,6 +112,20 @@
         </DataTemplate>
         
         <!-- Rating Template -->
+        <DataTemplate x:Key="RatingHeaderTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="20"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="10,0" Text="RATING"/>
+                <Button Grid.Column="2" Width="17" Height="17" VerticalAlignment="Center" BorderThickness="0" HorizontalAlignment="Right" Focusable="False" Padding="4" 
+                        Background="Transparent" Opacity="0.4" Content="{StaticResource Path_ClearData}" ToolTip="Clear All Track Ratings"
+                        Command="{Binding Path=DataContext.ClearTrackRatings, RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"/>
+            </Grid>
+        </DataTemplate>
         <DataTemplate x:Key="RatingTemplate" DataType="Dto:UiTrack">
             <Controls:RatingControl x:Name="Rating" HorizontalAlignment="Center"
                                     Opacity="{Binding Path=UiRating, Converter={StaticResource DefaultValueOpacityConverter}}"
@@ -189,8 +203,8 @@
                 <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource FavoriteColumnHeaderTemplate}"
                                         HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource FavoriteTemplate}"/>
                 <!-- Rating -->
-                <DataGridTemplateColumn Width="115"  Header="Rating" HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource RatingTemplate}"/>
-
+                <DataGridTemplateColumn Width="115"  HeaderTemplate="{StaticResource RatingHeaderTemplate}"
+                                        HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource RatingTemplate}"/>
                 <!-- Tags -->
                 <DataGridTemplateColumn Width="33" HeaderTemplate="{StaticResource TagColumnHeaderTemplate}" 
                                         HeaderStyle="{StaticResource CenteredHeaderStyle}" CellTemplate="{StaticResource TagsTemplate}"/>

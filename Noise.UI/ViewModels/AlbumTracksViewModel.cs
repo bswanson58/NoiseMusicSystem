@@ -5,6 +5,7 @@ using System.Threading;
 using AutoMapper;
 using Caliburn.Micro;
 using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.Prism.Commands;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Noise.Infrastructure;
 using Noise.Infrastructure.Dto;
@@ -45,6 +46,7 @@ namespace Noise.UI.ViewModels {
         public BindableCollection<UiTrack>              TrackList => mTracks;
         public InteractionRequest<TagEditInfo>          TagEditRequest { get; }
         public InteractionRequest<PlayStrategyInfo>     StrategyEditRequest {  get; }
+        public DelegateCommand                          ClearTrackRatings { get; }
 
 		public AlbumTracksViewModel( IEventAggregator eventAggregator, IRatings ratings, ISelectionState selectionState, IPlayingItemHandler playingItemHandler,
 									 ITrackProvider trackProvider, IPlayCommand playCommand, IUserTagManager tagManager, IUiLog log ) {
@@ -67,6 +69,8 @@ namespace Noise.UI.ViewModels {
 
             TagEditRequest = new InteractionRequest<TagEditInfo>();
             StrategyEditRequest = new InteractionRequest<PlayStrategyInfo>();
+
+            ClearTrackRatings = new DelegateCommand( OnClearRatings );
 
 			mSelectionState.CurrentAlbumChanged.Subscribe( OnAlbumChanged );
             mSelectionState.CurrentAlbumVolumeChanged.Subscribe( OnVolumeChanged );
@@ -229,6 +233,14 @@ namespace Noise.UI.ViewModels {
 				}
 			}
 		}
+
+        private void OnClearRatings() {
+            mTracks.ForEach( track => {
+                if( track.UiRating > 0 ) {
+                    track.UiRating = 0;
+                }
+            });
+        }
 
 		public void Handle( Events.TrackUserUpdate eventArgs ) {
 			var track = ( from UiTrack node in mTracks where node.DbId == eventArgs.Track.DbId select node ).FirstOrDefault();
