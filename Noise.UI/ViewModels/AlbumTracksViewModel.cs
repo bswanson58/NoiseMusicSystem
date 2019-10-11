@@ -235,11 +235,7 @@ namespace Noise.UI.ViewModels {
 		}
 
         private void OnClearRatings() {
-            mTracks.ForEach( track => {
-                if( track.UiRating > 0 ) {
-                    track.UiRating = 0;
-                }
-            });
+            mTracks.ForEach( track => track.UiRating = 0 );
         }
 
 		public void Handle( Events.TrackUserUpdate eventArgs ) {
