@@ -57,7 +57,11 @@ namespace Noise.RavenDatabase.DataProviders {
 			return( Database.Find( track => track.IsFavorite ));
 		}
 
-		public IDataProviderList<DbTrack> GetNewlyAddedTracks() {
+        public IDataProviderList<DbTrack> GetRatedTracks( int ratedAtLeast ) {
+            return( Database.Find( track => track.Rating >= ratedAtLeast ));
+        }
+
+        public IDataProviderList<DbTrack> GetNewlyAddedTracks() {
 			return( new RavenDataProviderList<DbTrack>( Database.FindAll().List.OrderBy( track => track.DateAddedTicks )));
 		}
 
