@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Noise.Infrastructure.Dto;
 using Noise.Infrastructure.Interfaces;
@@ -39,7 +40,7 @@ namespace Noise.Core.PlayStrategies.Exhausted.BonusSuggesters {
                     var ratedTracks = albumTracks.List.Where( t => t.Rating >= 4 ).ToList();
 
                     if( ratedTracks.Any()) {
-                        var tracksToAdd = NextRandom( ratedTracks.Count );
+                        var tracksToAdd = Math.Min( NextRandom( ratedTracks.Count ), 5 );
 
                         for( var c = 0; c < tracksToAdd; c++ ) {
                             var track = SelectRandomTrack( ratedTracks );
