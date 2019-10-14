@@ -339,11 +339,17 @@ namespace Noise.UI.ViewModels {
         }
 
         private void FillCollectionWithRatings( BindableCollection<NameIdPair> collection ) {
+            collection.IsNotifying = false;
+            collection.Clear();
+
             collection.Add( new NameIdPair( 5, "5 Stars or greater" ));
             collection.Add( new NameIdPair( 4, "4 Stars or greater" ));
             collection.Add( new NameIdPair( 3, "3 Stars or greater" ));
             collection.Add( new NameIdPair( 2, "2 Stars or greater" ));
             collection.Add( new NameIdPair( 1, "1 Star or greater" ));
+
+            collection.IsNotifying = true;
+            collection.Refresh();
         }
 	}
 }
