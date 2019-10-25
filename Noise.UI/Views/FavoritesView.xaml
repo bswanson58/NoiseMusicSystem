@@ -92,9 +92,9 @@
                          Behaviours:TextBoxHelper.Watermark="enter filter text..." Behaviours:TextBoxHelper.ClearTextButton="True"
                          Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <Button Grid.Column="3" Style="{StaticResource GeneralButtonStyle}" Content="Play Random" Command="{Binding Path=PlayRandom}"/>
-				<Button Grid.Column="4" Margin="7,0,0,0" Style="{StaticResource GeneralButtonStyle}" Content="Export" Command="{Binding Path=ExportFavorites}"/>
-				<Button Grid.Column="5" Margin="7,0,0,0" Style="{StaticResource GeneralButtonStyle}" Content="Import" Command="{Binding Path=ImportFavorites}"/>
+                <Button Grid.Column="3" Opacity="0.7" Style="{StaticResource GeneralButtonStyle}" Content="Play Random" Command="{Binding Path=PlayRandom}"/>
+				<Button Grid.Column="4" Margin="7,0,0,0" Opacity="0.7" Style="{StaticResource GeneralButtonStyle}" Content="Export" Command="{Binding Path=ExportFavorites}"/>
+				<Button Grid.Column="5" Margin="7,0,0,0" Opacity="0.7" Style="{StaticResource GeneralButtonStyle}" Content="Import" Command="{Binding Path=ImportFavorites}"/>
 			</Grid>
 		</Grid>
 	</GroupBox>
