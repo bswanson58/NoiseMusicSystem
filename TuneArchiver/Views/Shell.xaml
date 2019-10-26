@@ -1,0 +1,21 @@
+﻿<Mah:MetroWindow x:Class="TuneArchiver.Views.Shell"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:Mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:Mvvm="http://prismlibrary.com/"
+                 xmlns:Views="clr-namespace:TuneArchiver.Views"
+                 Mvvm:ViewModelLocator.AutoWireViewModel="True"
+                 ResizeMode="CanResizeWithGrip"
+                 Title="Tune Archivist" >
+
+    <Mah:MetroWindow.RightWindowCommands>
+        <Mah:WindowCommands>
+            <Button Content="for sale" />
+        </Mah:WindowCommands>
+    </Mah:MetroWindow.RightWindowCommands>
+
+    <Grid>
+        <Views:ArchiveCreatorView/>
+    </Grid>
+</Mah:MetroWindow>
+

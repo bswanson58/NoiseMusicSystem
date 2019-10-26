@@ -1,0 +1,177 @@
+﻿<UserControl x:Class="TuneArchiver.Views.ArchiveCreatorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Mvvm="http://prismlibrary.com/"
+             Mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <Grid Margin="15">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Margin="0,0,10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" MinHeight="50"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" MinHeight="100"/>
+            </Grid.RowDefinitions>
+            
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="Staging Directory:"/>
+                <TextBox Grid.Column="0" Grid.Row="1" Margin="0,3,5,0"/>
+                <Button Grid.Column="1" Grid.Row="1" Content="..."/>
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="0,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <TextBlock Grid.Row="0" Text="Staged Albums:"/>
+                <ListBox BorderThickness="1" Grid.Row="1"/>
+            </Grid>
+            
+            <Grid Grid.Row="2" Margin="0,0,10,0" VerticalAlignment="Bottom">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Text="Album Count: "/>
+                    <TextBlock Width="25" Text="35"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Text="Total Size: "/>
+                    <TextBlock Width="25" Text="7.8G"/>
+                </StackPanel>
+                
+                <Button Grid.Row="2" HorizontalAlignment="Left" Content="Rescan"/>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Column="1" Margin="0,0,10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" MinHeight="50"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" MinHeight="100"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <TextBlock Grid.Row="0" Text="Selected Set:"/>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Text="Archive Size: "/>
+                    <ComboBox Width="150"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="0,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Selected Albums:"/>
+                <ListBox BorderThickness="1" Grid.Row="1"/>
+            </Grid>
+
+            <Grid Grid.Row="2" Margin="0,0,10,0" VerticalAlignment="Bottom">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Text="Set Count: "/>
+                    <TextBlock Width="25" Text="17"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Text="Set Size: "/>
+                    <TextBlock Width="25" Text="4.33G"/>
+                </StackPanel>
+
+                <Button Grid.Row="2" HorizontalAlignment="Left" Content="Select Set"/>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" MinHeight="50"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" MinHeight="100"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="Burn Directory:"/>
+                <TextBox Grid.Column="0" Grid.Row="1" Margin="0,3,5,0"/>
+                <Button Grid.Column="1" Grid.Row="1" Content="..."/>
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="0,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Burn List:"/>
+                <ListBox BorderThickness="1" Grid.Row="1"/>
+            </Grid>
+
+            <Grid Grid.Row="2" VerticalAlignment="Bottom">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <TextBlock Text="Label Format: "/>
+                    <TextBox Width="100" Text="DVD_{#}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <TextBlock Text="Archive Number: "/>
+                    <TextBox Width="50" Text="1266"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <TextBlock Text="Final Label: "/>
+                    <TextBlock Text="DVD_1266"/>
+                </StackPanel>
+                
+                <Button Grid.Row="3" HorizontalAlignment="Left" Content="Create Archive"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>
