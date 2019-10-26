@@ -7,7 +7,7 @@ namespace TuneArchiver.Models {
     class SetCreator : ISetCreator {
         private const long  cDvd9Size = 4692251770;
 
-        public IEnumerable<Album> GetBestAlbumSet( List<Album> albumList ) {
+        public IEnumerable<Album> GetBestAlbumSet( IList<Album> albumList ) {
             var retValue = new List<Album>();
             var totalSetSize = albumList.Sum( album => album.Size );
 

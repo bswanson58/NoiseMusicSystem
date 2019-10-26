@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using ReusableBits.Mvvm.ViewModelSupport;
 using TuneArchiver.Interfaces;
@@ -9,27 +9,96 @@ namespace TuneArchiver.ViewModels {
         private readonly IDirectoryScanner  mDirectoryScanner;
         private readonly ISetCreator        mSetCreator;
         private readonly IArchiveBuilder    mArchiveBuilder;
-        private readonly List<Album>        mDirectoryList;
-        private readonly List<Album>        mSelectedSet;
-        private long                        mSelectedSetSize;
+
+        public  ObservableCollection<Album> StagingList { get; }
+        public  int                         StagingCount { get; private set; }
+        public  long                        StagingSize { get; private set; }
+
+        public  ObservableCollection<Album> SelectedList { get; }
+        public  int                         SelectedCount { get; private set; }
+        public  long                        SelectedSize { get; private set; }
+
+        public  ObservableCollection<Album> ArchiveList { get; }
+        public  string                      ArchiveLabelFormat { get; set; }
+        public  string                      ArchiveLabelIdentifier { get; set; }
+        public  string                      ArchiveLabel { get; private set; }
 
         public ArchiveCreatorViewModel( IDirectoryScanner directoryScanner, ISetCreator setCreator, IArchiveBuilder archiveBuilder ) {
             mDirectoryScanner = directoryScanner;
             mSetCreator = setCreator;
             mArchiveBuilder = archiveBuilder;
 
-            mDirectoryList = new List<Album>();
-            mSelectedSet = new List<Album>();
+            StagingList = new ObservableCollection<Album>();
+            SelectedList = new ObservableCollection<Album>();
+            ArchiveList = new ObservableCollection<Album>();
+
+            ArchiveLabelFormat = "DVD_{#}";
+            ArchiveLabelIdentifier = "1277";
+            FormatArchiveLabel();
+
+            UpdateStagingDirectory();
+            UpdateBurnDirectory();
+        }
+
+        private void UpdateStagingDirectory() {
+            StagingList.Clear();
+            StagingCount = 0;
+            StagingSize = 0;
+
+            RaisePropertyChanged(() => StagingCount);
+            RaisePropertyChanged(() => StagingSize);
+
+            ClearSelectedSet();
+
+            StagingList.AddRange(mDirectoryScanner.ScanStagingDirectory());
+            StagingCount = StagingList.Count;
+            StagingSize = StagingList.Sum(album => album.Size);
+
+            RaisePropertyChanged(() => StagingCount);
+            RaisePropertyChanged(() => StagingSize);
+        }
+
+        private void UpdateBurnDirectory() {
+            ArchiveList.Clear();
+            ArchiveList.AddRange( mDirectoryScanner.ScanArchiveDirectory());
+        }
+
+        private void ClearSelectedSet() {
+            SelectedList.Clear();
+            SelectedCount = 0;
+            SelectedSize = 0;
+
+            RaisePropertyChanged(() => StagingCount);
+            RaisePropertyChanged(() => StagingSize);
+        }
+
+        private void FormatArchiveLabel() {
+            ArchiveLabel = ArchiveLabelFormat.Replace( "{#}", ArchiveLabelIdentifier );
+
+            RaisePropertyChanged( () => ArchiveLabel );
         }
 
         public void Execute_ScanDirectory() {
-            mDirectoryList.Clear();
-            mSelectedSet.Clear();
-            mSelectedSetSize = 0L;
+            UpdateStagingDirectory();
+        }
 
-            mDirectoryList.AddRange( mDirectoryScanner.ScanStagingArea());
-            mSelectedSet.AddRange( mSetCreator.GetBestAlbumSet( mDirectoryList ));
-            mSelectedSetSize = mSelectedSet.Sum( album => album.Size );
+        public void Execute_SelectSet() {
+            ClearSelectedSet();
+
+            SelectedList.AddRange( mSetCreator.GetBestAlbumSet( StagingList ));
+            SelectedCount = SelectedList.Count;
+            SelectedSize = SelectedList.Sum( album => album.Size );
+
+            RaisePropertyChanged(() => SelectedCount);
+            RaisePropertyChanged(() => SelectedSize);
+        }
+
+        public void Execute_CreateArchive() {
+            mArchiveBuilder.ArchiveAlbums( SelectedList, ArchiveLabel );
+
+            ClearSelectedSet();
+            UpdateStagingDirectory();
+            UpdateBurnDirectory();
         }
     }
 }

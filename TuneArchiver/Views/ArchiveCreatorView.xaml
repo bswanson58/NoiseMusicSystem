@@ -4,9 +4,16 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Mvvm="http://prismlibrary.com/"
+             xmlns:Models="clr-namespace:TuneArchiver.Models"
              Mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="AlbumEntry" DataType="Models:Album">
+            <TextBlock Text="{Binding DisplayName}"/>
+        </DataTemplate>
+    </UserControl.Resources>
 
     <Grid Margin="15">
         <Grid.ColumnDefinitions>
@@ -44,7 +51,7 @@
                 </Grid.RowDefinitions>
                 
                 <TextBlock Grid.Row="0" Text="Staged Albums:"/>
-                <ListBox BorderThickness="1" Grid.Row="1"/>
+                <ListBox BorderThickness="1" Grid.Row="1" ItemsSource="{Binding StagingList}" ItemTemplate="{StaticResource AlbumEntry}"/>
             </Grid>
             
             <Grid Grid.Row="2" Margin="0,0,10,0" VerticalAlignment="Bottom">
@@ -56,14 +63,14 @@
                 
                 <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBlock Text="Album Count: "/>
-                    <TextBlock Width="25" Text="35"/>
+                    <TextBlock Width="25" Text="{Binding StagingCount}"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBlock Text="Total Size: "/>
-                    <TextBlock Width="25" Text="7.8G"/>
+                    <TextBlock Width="25" Text="{Binding StagingSize}"/>
                 </StackPanel>
                 
-                <Button Grid.Row="2" HorizontalAlignment="Left" Content="Rescan"/>
+                <Button Grid.Row="2" HorizontalAlignment="Left" Content="Rescan" Command="{Binding ScanDirectory}"/>
             </Grid>
         </Grid>
 
@@ -94,7 +101,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Text="Selected Albums:"/>
-                <ListBox BorderThickness="1" Grid.Row="1"/>
+                <ListBox BorderThickness="1" Grid.Row="1" ItemsSource="{Binding SelectedList}" ItemTemplate="{StaticResource AlbumEntry}"/>
             </Grid>
 
             <Grid Grid.Row="2" Margin="0,0,10,0" VerticalAlignment="Bottom">
@@ -106,14 +113,14 @@
 
                 <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBlock Text="Set Count: "/>
-                    <TextBlock Width="25" Text="17"/>
+                    <TextBlock Width="25" Text="{Binding SelectedCount}"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBlock Text="Set Size: "/>
-                    <TextBlock Width="25" Text="4.33G"/>
+                    <TextBlock Width="25" Text="{Binding SelectedSize}"/>
                 </StackPanel>
 
-                <Button Grid.Row="2" HorizontalAlignment="Left" Content="Select Set"/>
+                <Button Grid.Row="2" HorizontalAlignment="Left" Content="Select Set" Command="{Binding SelectSet}"/>
             </Grid>
         </Grid>
 
@@ -146,7 +153,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Text="Burn List:"/>
-                <ListBox BorderThickness="1" Grid.Row="1"/>
+                <ListBox BorderThickness="1" Grid.Row="1" ItemsSource="{Binding ArchiveList}" ItemTemplate="{StaticResource AlbumEntry}"/>
             </Grid>
 
             <Grid Grid.Row="2" VerticalAlignment="Bottom">
@@ -159,18 +166,18 @@
 
                 <StackPanel Grid.Row="0" Orientation="Horizontal">
                     <TextBlock Text="Label Format: "/>
-                    <TextBox Width="100" Text="DVD_{#}"/>
+                    <TextBox Width="100" Text="{Binding ArchiveLabelFormat}"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
                     <TextBlock Text="Archive Number: "/>
-                    <TextBox Width="50" Text="1266"/>
+                    <TextBox Width="50" Text="{Binding ArchiveLabelIdentifier}"/>
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
                     <TextBlock Text="Final Label: "/>
-                    <TextBlock Text="DVD_1266"/>
+                    <TextBlock Text="{Binding ArchiveLabel}"/>
                 </StackPanel>
                 
-                <Button Grid.Row="3" HorizontalAlignment="Left" Content="Create Archive"/>
+                <Button Grid.Row="3" HorizontalAlignment="Left" Content="Create Archive" Command="{Binding CreateArchive}"/>
             </Grid>
         </Grid>
     </Grid>

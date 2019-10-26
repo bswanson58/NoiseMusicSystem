@@ -7,15 +7,22 @@ using TuneArchiver.Support;
 namespace TuneArchiver.Models {
     class DirectoryScanner : IDirectoryScanner {
 
-        public IEnumerable<Album> ScanStagingArea() {
-            return ScanStagingDirectory( @"D:\Music" );
+        public IEnumerable<Album> ScanStagingDirectory() {
+            return ScanRootDirectory( @"D:\Music" );
         }
 
-        private IEnumerable<Album> ScanStagingDirectory( string rootPath ) {
-            var retValue = new List<Album>();
-            var directories = FileSearcher.Search( rootPath, null, SearchOptions.Directories, 0 );
+        public IEnumerable<Album> ScanArchiveDirectory() {
+            return ScanRootDirectory( @"D:\Burn" );
+        }
 
-            directories.ForEach( directory => ScanDirectory( retValue, directory.FileName, directory.Path ));
+        private IEnumerable<Album> ScanRootDirectory( string rootPath ) {
+            var retValue = new List<Album>();
+
+            if ( Directory.Exists( rootPath )) {
+                var directories = FileSearcher.Search(rootPath, null, SearchOptions.Directories, 0);
+
+                directories.ForEach(directory => ScanDirectory(retValue, directory.FileName, directory.Path));
+            }
 
             return retValue;
         }

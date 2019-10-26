@@ -3,6 +3,6 @@ using TuneArchiver.Models;
 
 namespace TuneArchiver.Interfaces {
     interface ISetCreator {
-        IEnumerable<Album>  GetBestAlbumSet( List<Album> albumList );
+        IEnumerable<Album>  GetBestAlbumSet( IList<Album> albumList );
     }
 }
