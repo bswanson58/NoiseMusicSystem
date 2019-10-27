@@ -9,8 +9,10 @@ namespace TuneArchiver.ViewModels {
         private readonly IDirectoryScanner  mDirectoryScanner;
         private readonly ISetCreator        mSetCreator;
         private readonly IArchiveBuilder    mArchiveBuilder;
+        private readonly IPreferences       mPreferences;
 
         public  ObservableCollection<Album> StagingList { get; }
+        public  string                      StagingPath {get; set; }
         public  int                         StagingCount { get; private set; }
         public  long                        StagingSize { get; private set; }
 
@@ -19,14 +21,16 @@ namespace TuneArchiver.ViewModels {
         public  long                        SelectedSize { get; private set; }
 
         public  ObservableCollection<Album> ArchiveList { get; }
+        public  string                      ArchivePath { get; set; }
         public  string                      ArchiveLabelFormat { get; set; }
         public  string                      ArchiveLabelIdentifier { get; set; }
         public  string                      ArchiveLabel { get; private set; }
 
-        public ArchiveCreatorViewModel( IDirectoryScanner directoryScanner, ISetCreator setCreator, IArchiveBuilder archiveBuilder ) {
+        public ArchiveCreatorViewModel( IDirectoryScanner directoryScanner, ISetCreator setCreator, IArchiveBuilder archiveBuilder, IPreferences preferences ) {
             mDirectoryScanner = directoryScanner;
             mSetCreator = setCreator;
             mArchiveBuilder = archiveBuilder;
+            mPreferences = preferences;
 
             StagingList = new ObservableCollection<Album>();
             SelectedList = new ObservableCollection<Album>();
@@ -35,6 +39,16 @@ namespace TuneArchiver.ViewModels {
             ArchiveLabelFormat = "DVD_{#}";
             ArchiveLabelIdentifier = "1277";
             FormatArchiveLabel();
+
+            var archivePreferences = mPreferences.Load<ArchiverPreferences>();
+
+            archivePreferences.StagingDirectory = @"D:\Music";
+            archivePreferences.ArchiveRootPath = @"D:\Burn";
+
+            mPreferences.Save( archivePreferences );
+
+            StagingPath = archivePreferences.StagingDirectory;
+            ArchivePath = archivePreferences.ArchiveRootPath;
 
             UpdateStagingDirectory();
             UpdateBurnDirectory();

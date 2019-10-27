@@ -6,13 +6,22 @@ using TuneArchiver.Support;
 
 namespace TuneArchiver.Models {
     class DirectoryScanner : IDirectoryScanner {
+        private readonly IPreferences   mPreferences;
+
+        public DirectoryScanner( IPreferences preferences ) {
+            mPreferences = preferences;
+        }
 
         public IEnumerable<Album> ScanStagingDirectory() {
-            return ScanRootDirectory( @"D:\Music" );
+            var preferences = mPreferences.Load<ArchiverPreferences>();
+
+            return ScanRootDirectory( preferences.StagingDirectory );
         }
 
         public IEnumerable<Album> ScanArchiveDirectory() {
-            return ScanRootDirectory( @"D:\Burn" );
+            var preferences = mPreferences.Load<ArchiverPreferences>();
+
+            return ScanRootDirectory( preferences.ArchiveRootPath );
         }
 
         private IEnumerable<Album> ScanRootDirectory( string rootPath ) {

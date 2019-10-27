@@ -137,6 +137,7 @@
     <Compile Include="Interfaces\ISetCreator.cs" />
     <Compile Include="Models\Album.cs" />
     <Compile Include="Models\ArchiveBuilder.cs" />
+    <Compile Include="Models\ArchiverPreferences.cs" />
     <Compile Include="Models\DirectoryScanner.cs" />
     <Compile Include="Models\SetCreator.cs" />
     <Compile Include="Platform\JsonObjectWriter.cs" />
