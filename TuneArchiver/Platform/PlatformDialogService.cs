@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
 
 namespace TuneArchiver.Platform {
-	public class DialogService : IDialogService {
+	public class PlatformDialogService : IPlatformDialogService {
 		public bool? OpenFileDialog( string title, string extensions, string filter, out string fileName ) {
 			fileName = "";
 

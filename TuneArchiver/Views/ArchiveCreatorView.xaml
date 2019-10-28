@@ -40,8 +40,8 @@
                 </Grid.ColumnDefinitions>
                 
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="Staging Directory:"/>
-                <TextBox Grid.Column="0" Grid.Row="1" Margin="0,3,5,0" Text="{Binding StagingPath}"/>
-                <Button Grid.Column="1" Grid.Row="1" Content="..."/>
+                <TextBox Grid.Column="0" Grid.Row="1" Margin="0,3,5,0" Text="{Binding StagingPath, UpdateSourceTrigger=PropertyChanged}"/>
+                <Button Grid.Column="1" Grid.Row="1" Content="..." Command="{Binding BrowseForStagingDirectory}"/>
             </Grid>
 
             <Grid Grid.Row="1" Margin="0,5">
@@ -142,8 +142,8 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="Burn Directory:"/>
-                <TextBox Grid.Column="0" Grid.Row="1" Margin="0,3,5,0" Text="{Binding ArchivePath}"/>
-                <Button Grid.Column="1" Grid.Row="1" Content="..."/>
+                <TextBox Grid.Column="0" Grid.Row="1" Margin="0,3,5,0" Text="{Binding ArchivePath, UpdateSourceTrigger=PropertyChanged}"/>
+                <Button Grid.Column="1" Grid.Row="1" Content="..." Command="{Binding BrowseForBurnDirectory}"/>
             </Grid>
 
             <Grid Grid.Row="1" Margin="0,5">

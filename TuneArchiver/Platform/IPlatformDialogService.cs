@@ -1,5 +1,5 @@
 ﻿namespace TuneArchiver.Platform {
-	public interface IDialogService {
+	public interface IPlatformDialogService {
 		bool?	OpenFileDialog( string title, string extensions, string filter, out string fileName );
 		bool?	SaveFileDialog( string title, string extensions, string filter, out string fileName );
 		bool?	SelectFolderDialog( string title, ref string path );

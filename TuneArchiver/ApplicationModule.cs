@@ -12,6 +12,7 @@ namespace TuneArchiver {
             containerRegistry.Register<IFileWriter, JsonObjectWriter>();
             containerRegistry.Register<IPlatformLog, SeriLogAdapter>();
             containerRegistry.Register<IPreferences, PreferencesManager>();
+            containerRegistry.Register<IPlatformDialogService, PlatformDialogService>();
 
             containerRegistry.Register<IArchiveBuilder, ArchiveBuilder>();
             containerRegistry.Register<IDirectoryScanner, DirectoryScanner>();
