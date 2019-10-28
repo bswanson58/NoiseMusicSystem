@@ -4,6 +4,6 @@ using TuneArchiver.Models;
 namespace TuneArchiver.Interfaces {
     interface IDirectoryScanner {
         IEnumerable<Album>  ScanStagingDirectory();
-        IEnumerable<Album>  ScanArchiveDirectory();
+        IEnumerable<string> ScanArchiveDirectory();
     }
 }

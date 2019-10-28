@@ -15,6 +15,10 @@
         <DataTemplate x:Key="AlbumEntry" DataType="Models:Album">
             <TextBlock Text="{Binding DisplayName}"/>
         </DataTemplate>
+
+        <DataTemplate x:Key="ArchiveEntry">
+            <TextBlock Text="{Binding}"/>
+        </DataTemplate>
     </UserControl.Resources>
 
     <Grid Margin="20">
@@ -171,7 +175,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Margin="0,0,0,3" Style="{StaticResource ControlTitleStyle}" Text="Archive List:"/>
-                <ListBox BorderThickness="1" Grid.Row="1" ItemsSource="{Binding ArchiveList}" ItemTemplate="{StaticResource AlbumEntry}"/>
+                <ListBox BorderThickness="1" Grid.Row="1" ItemsSource="{Binding ArchiveList}" ItemTemplate="{StaticResource ArchiveEntry}"/>
             </Grid>
 
             <Grid Grid.Row="2">

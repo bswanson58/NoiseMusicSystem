@@ -24,7 +24,7 @@ namespace TuneArchiver.ViewModels {
         public  int                             SelectedCount { get; private set; }
         public  long                            SelectedSize { get; private set; }
 
-        public  ObservableCollection<Album>     ArchiveList { get; }
+        public  ObservableCollection<string>    ArchiveList { get; }
         private string                          mArchivePath;
         public  string                          ArchiveLabelFormat { get; set; }
         public  string                          ArchiveLabelIdentifier { get; set; }
@@ -39,7 +39,7 @@ namespace TuneArchiver.ViewModels {
 
             StagingList = new ObservableCollection<Album>();
             SelectedList = new ObservableCollection<Album>();
-            ArchiveList = new ObservableCollection<Album>();
+            ArchiveList = new ObservableCollection<string>();
 
             ArchiveLabelFormat = "DVD_{#}";
             ArchiveLabelIdentifier = "1277";

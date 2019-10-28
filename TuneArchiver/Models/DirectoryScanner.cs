@@ -18,10 +18,17 @@ namespace TuneArchiver.Models {
             return ScanRootDirectory( preferences.StagingDirectory );
         }
 
-        public IEnumerable<Album> ScanArchiveDirectory() {
+        public IEnumerable<string> ScanArchiveDirectory() {
+            var retValue = new List<string>();
             var preferences = mPreferences.Load<ArchiverPreferences>();
 
-            return ScanRootDirectory( preferences.ArchiveRootPath );
+            if ( Directory.Exists( preferences.ArchiveRootPath )) {
+                var directories = FileSearcher.Search( preferences.ArchiveRootPath, null, SearchOptions.Directories, 0 );
+
+                directories.ForEach( directory => retValue.Add( directory.File ));
+            }
+
+            return retValue;
         }
 
         private IEnumerable<Album> ScanRootDirectory( string rootPath ) {
