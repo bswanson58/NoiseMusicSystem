@@ -5,32 +5,35 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Mvvm="http://prismlibrary.com/"
              xmlns:Models="clr-namespace:TuneArchiver.Models"
+             xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
              Mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
+        <ValueConverters:NumericTextMultitudeConverter x:Key="MultitudeConverter"/>
         <DataTemplate x:Key="AlbumEntry" DataType="Models:Album">
             <TextBlock Text="{Binding DisplayName}"/>
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid Margin="15">
+    <Grid Margin="20">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0" Margin="0,0,10,0">
+        <Grid Grid.Column="0" Margin="0,0,20,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" MinHeight="50"/>
+                <RowDefinition Height="Auto" MinHeight="75"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto" MinHeight="100"/>
+                <RowDefinition Height="Auto" MinHeight="90"/>
             </Grid.RowDefinitions>
             
             <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
@@ -38,10 +41,11 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                
-                <TextBlock Grid.Column="0" Grid.Row="0" Text="Staging Directory:"/>
-                <TextBox Grid.Column="0" Grid.Row="1" Margin="0,3,5,0" Text="{Binding StagingPath, UpdateSourceTrigger=PropertyChanged}"/>
-                <Button Grid.Column="1" Grid.Row="1" Content="..." Command="{Binding BrowseForStagingDirectory}"/>
+
+                <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" Style="{StaticResource ExplorerHeaderStyle}" Text="Staging List"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource ControlTitleStyle}" Text="Staging Directory:"/>
+                <TextBox Grid.Column="0" Grid.Row="2" Margin="0,3,5,0" Text="{Binding StagingPath, UpdateSourceTrigger=PropertyChanged}"/>
+                <Button Grid.Column="1" Grid.Row="2" Style="{StaticResource GeneralButtonStyle}" Content="..." Height="25" VerticalAlignment="Bottom" Command="{Binding BrowseForStagingDirectory}"/>
             </Grid>
 
             <Grid Grid.Row="1" Margin="0,5">
@@ -50,46 +54,49 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 
-                <TextBlock Grid.Row="0" Text="Staged Albums:"/>
+                <TextBlock Grid.Row="0" Margin="0,0,0,3" Style="{StaticResource ControlTitleStyle}" Text="Staged Albums:"/>
                 <ListBox BorderThickness="1" Grid.Row="1" ItemsSource="{Binding StagingList}" ItemTemplate="{StaticResource AlbumEntry}"/>
             </Grid>
             
-            <Grid Grid.Row="2" Margin="0,0,10,0" VerticalAlignment="Bottom">
+            <Grid Grid.Row="2" Margin="0,0,10,0" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 
                 <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBlock Text="Album Count: "/>
-                    <TextBlock Width="25" Text="{Binding StagingCount}"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Album Count: "/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Width="45" Text="{Binding StagingCount}"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBlock Text="Total Size: "/>
-                    <TextBlock Width="25" Text="{Binding StagingSize}"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Total Size: "/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Width="45" Text="{Binding StagingSize, Converter={StaticResource MultitudeConverter}}"/>
                 </StackPanel>
                 
-                <Button Grid.Row="2" HorizontalAlignment="Left" Content="Rescan" Command="{Binding ScanDirectory}"/>
+                <Button Grid.Row="3" Margin="5,0,0,0" HorizontalAlignment="Left" Content="Rescan" Style="{StaticResource GeneralButtonStyle}" Command="{Binding ScanDirectory}"/>
             </Grid>
         </Grid>
 
-        <Grid Grid.Column="1" Margin="0,0,10,0">
+        <Grid Grid.Column="1" Margin="0,0,20,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" MinHeight="50"/>
+                <RowDefinition Height="Auto" MinHeight="75"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto" MinHeight="100"/>
+                <RowDefinition Height="Auto" MinHeight="90"/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 
-                <TextBlock Grid.Row="0" Text="Selected Set:"/>
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <TextBlock VerticalAlignment="Center" Text="Archive Size: "/>
+                <TextBlock Grid.Row="0" HorizontalAlignment="Center" Style="{StaticResource ExplorerHeaderStyle}" Text="Selected Set"/>
+                <TextBlock Grid.Row="1" Text=""/>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Archive Size: "/>
                     <ComboBox Width="150"/>
                 </StackPanel>
             </Grid>
@@ -100,39 +107,41 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="Selected Albums:"/>
+                <TextBlock Grid.Row="0" Margin="0,0,0,3" Style="{StaticResource ControlTitleStyle}" Text="Selected Albums:"/>
                 <ListBox BorderThickness="1" Grid.Row="1" ItemsSource="{Binding SelectedList}" ItemTemplate="{StaticResource AlbumEntry}"/>
             </Grid>
 
-            <Grid Grid.Row="2" Margin="0,0,10,0" VerticalAlignment="Bottom">
+            <Grid Grid.Row="2" Margin="0,0,10,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBlock Text="Set Count: "/>
-                    <TextBlock Width="25" Text="{Binding SelectedCount}"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Set Count: "/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Width="45" Text="{Binding SelectedCount}"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBlock Text="Set Size: "/>
-                    <TextBlock Width="25" Text="{Binding SelectedSize}"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Set Size: "/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Width="45" Text="{Binding SelectedSize, Converter={StaticResource MultitudeConverter}}"/>
                 </StackPanel>
 
-                <Button Grid.Row="2" HorizontalAlignment="Left" Content="Select Set" Command="{Binding SelectSet}"/>
+                <Button Grid.Row="3" Margin="5,0,0,0" HorizontalAlignment="Left" Content="Select Set" Style="{StaticResource GeneralButtonStyle}" Command="{Binding SelectSet}"/>
             </Grid>
         </Grid>
 
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" MinHeight="50"/>
+                <RowDefinition Height="Auto" MinHeight="75"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto" MinHeight="100"/>
+                <RowDefinition Height="Auto" MinHeight="90"/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
@@ -141,9 +150,10 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Grid.Row="0" Text="Burn Directory:"/>
-                <TextBox Grid.Column="0" Grid.Row="1" Margin="0,3,5,0" Text="{Binding ArchivePath, UpdateSourceTrigger=PropertyChanged}"/>
-                <Button Grid.Column="1" Grid.Row="1" Content="..." Command="{Binding BrowseForBurnDirectory}"/>
+                <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" Style="{StaticResource ExplorerHeaderStyle}" Text="Archive List"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource ControlTitleStyle}" Text="Burn Directory:"/>
+                <TextBox Grid.Column="0" Grid.Row="2" Margin="0,3,5,0" Text="{Binding ArchivePath, UpdateSourceTrigger=PropertyChanged}"/>
+                <Button Grid.Column="1" Grid.Row="2" Style="{StaticResource GeneralButtonStyle}" Height="25" VerticalAlignment="Bottom" Content="..." Command="{Binding BrowseForBurnDirectory}"/>
             </Grid>
 
             <Grid Grid.Row="1" Margin="0,5">
@@ -152,32 +162,30 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="Burn List:"/>
+                <TextBlock Grid.Row="0" Margin="0,0,0,3" Style="{StaticResource ControlTitleStyle}" Text="Burn List:"/>
                 <ListBox BorderThickness="1" Grid.Row="1" ItemsSource="{Binding ArchiveList}" ItemTemplate="{StaticResource AlbumEntry}"/>
             </Grid>
 
-            <Grid Grid.Row="2" VerticalAlignment="Bottom">
+            <Grid Grid.Row="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Orientation="Horizontal">
-                    <TextBlock Text="Label Format: "/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Label Format: "/>
                     <TextBox Width="100" Text="{Binding ArchiveLabelFormat}"/>
-                </StackPanel>
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <TextBlock Text="Archive Number: "/>
+                    <TextBlock Margin="15,0,0,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Archive Number: "/>
                     <TextBox Width="50" Text="{Binding ArchiveLabelIdentifier}"/>
                 </StackPanel>
-                <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <TextBlock Text="Final Label: "/>
+                <StackPanel Grid.Row="1" Margin="0,5,0,0" Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Final Label: "/>
                     <TextBlock Text="{Binding ArchiveLabel}"/>
                 </StackPanel>
                 
-                <Button Grid.Row="3" HorizontalAlignment="Left" Content="Create Archive" Command="{Binding CreateArchive}"/>
+                <Button Grid.Row="3" Margin="5,0,0,0" HorizontalAlignment="Left" Content="Create Archive" Style="{StaticResource GeneralButtonStyle}" Command="{Binding CreateArchive}"/>
             </Grid>
         </Grid>
     </Grid>
