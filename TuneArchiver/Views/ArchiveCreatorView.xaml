@@ -187,13 +187,13 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Orientation="Horizontal">
-                    <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Label Format: "/>
-                    <TextBox Width="100" Text="{Binding ArchiveLabelFormat}"/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Archive Label Format: "/>
+                    <TextBox Width="100" Text="{Binding ArchiveLabelFormat, UpdateSourceTrigger=PropertyChanged}"/>
                     <TextBlock Margin="15,0,0,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Archive Number: "/>
-                    <TextBox Width="50" Text="{Binding ArchiveLabelIdentifier}"/>
+                    <TextBox Width="50" Text="{Binding ArchiveLabelIdentifier, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Margin="0,5,0,0" Orientation="Horizontal">
-                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Final Label: "/>
+                    <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Formatted Archive Label: "/>
                     <TextBlock Text="{Binding ArchiveLabel}"/>
                 </StackPanel>
                 

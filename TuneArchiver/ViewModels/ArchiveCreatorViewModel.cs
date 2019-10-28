@@ -27,9 +27,9 @@ namespace TuneArchiver.ViewModels {
 
         public  ObservableCollection<string>    ArchiveList { get; }
         private string                          mArchivePath;
-        public  string                          ArchiveLabelFormat { get; set; }
-        public  string                          ArchiveLabelIdentifier { get; set; }
         public  string                          ArchiveLabel { get; private set; }
+        private string                          mArchiveLabelFormat;
+        private string                          mArchiveLabelIdentifier;
 
         public ArchiveCreatorViewModel( IDirectoryScanner directoryScanner, ISetCreator setCreator, IArchiveBuilder archiveBuilder, IPreferences preferences, 
                                         IPlatformDialogService dialogService, IPlatformLog log ) {
@@ -44,15 +44,14 @@ namespace TuneArchiver.ViewModels {
             SelectedList = new ObservableCollection<Album>();
             ArchiveList = new ObservableCollection<string>();
 
-            ArchiveLabelFormat = "DVD_{#}";
-            ArchiveLabelIdentifier = "1277";
-            FormatArchiveLabel();
-
             var archivePreferences = mPreferences.Load<ArchiverPreferences>();
 
             mStagingPath = archivePreferences.StagingDirectory;
             mArchivePath = archivePreferences.ArchiveRootPath;
+            mArchiveLabelFormat = archivePreferences.ArchiveLabelFormat;
+            mArchiveLabelIdentifier = archivePreferences.ArchiveLabelIdentifier;
 
+            FormatArchiveLabel();
             UpdateStagingDirectory();
             UpdateBurnDirectory();
         }
@@ -91,12 +90,6 @@ namespace TuneArchiver.ViewModels {
             RaiseCanExecuteChangedEvent( "CanExecute_CreateArchive" );
         }
 
-        private void FormatArchiveLabel() {
-            ArchiveLabel = ArchiveLabelFormat.Replace( "{#}", ArchiveLabelIdentifier );
-
-            RaisePropertyChanged( () => ArchiveLabel );
-        }
-
         public string StagingPath {
             get => mStagingPath;
             set {
@@ -123,6 +116,42 @@ namespace TuneArchiver.ViewModels {
 
                 RaisePropertyChanged( () => ArchivePath );
             }
+        }
+
+        public string ArchiveLabelFormat {
+            get => mArchiveLabelFormat;
+            set {
+                mArchiveLabelFormat = value;
+
+                var preferences = mPreferences.Load<ArchiverPreferences>();
+
+                preferences.ArchiveLabelFormat = mArchiveLabelFormat;
+                mPreferences.Save( preferences );
+
+                RaisePropertyChanged( () => ArchiveLabelFormat );
+                FormatArchiveLabel();
+            }
+        }
+
+        public string ArchiveLabelIdentifier {
+            get => mArchiveLabelIdentifier;
+            set {
+                mArchiveLabelIdentifier = value;
+
+                var preferences = mPreferences.Load<ArchiverPreferences>();
+
+                preferences.ArchiveLabelIdentifier = mArchiveLabelIdentifier;
+                mPreferences.Save( preferences );
+
+                RaisePropertyChanged( () => ArchiveLabelIdentifier );
+                FormatArchiveLabel();
+            }
+        }
+
+        private void FormatArchiveLabel() {
+            ArchiveLabel = ArchiveLabelFormat.Replace( "{#}", ArchiveLabelIdentifier );
+
+            RaisePropertyChanged( () => ArchiveLabel );
         }
 
         public void Execute_ScanDirectory() {
@@ -158,8 +187,9 @@ namespace TuneArchiver.ViewModels {
         }
 
         [DependsUpon( "ArchivePath" )]
+        [DependsUpon( "ArchiveLabel" )]
         public bool CanExecute_CreateArchive() {
-            return !string.IsNullOrWhiteSpace( ArchivePath ) && SelectedList.Any();
+            return !string.IsNullOrWhiteSpace( ArchivePath ) && !String.IsNullOrWhiteSpace( ArchiveLabel ) && SelectedList.Any();
         }
 
         public void Execute_BrowseForStagingDirectory() {
