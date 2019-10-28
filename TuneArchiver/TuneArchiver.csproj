@@ -87,6 +87,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Wpf.7.1.0.123-pre\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -140,7 +141,12 @@
     <Compile Include="Models\ArchiverPreferences.cs" />
     <Compile Include="Models\DirectoryScanner.cs" />
     <Compile Include="Models\SetCreator.cs" />
+    <Compile Include="Platform\FolderBrowserDialogEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Platform\IPlatformDialogService.cs" />
     <Compile Include="Platform\JsonObjectWriter.cs" />
+    <Compile Include="Platform\PlatformDialogService.cs" />
     <Compile Include="Platform\PreferencesManager.cs" />
     <Compile Include="Properties\ApplicationConstants.cs" />
     <Compile Include="Interfaces\IEnvironment.cs" />
