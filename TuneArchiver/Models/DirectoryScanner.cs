@@ -28,9 +28,9 @@ namespace TuneArchiver.Models {
             var retValue = new List<Album>();
 
             if ( Directory.Exists( rootPath )) {
-                var directories = FileSearcher.Search(rootPath, null, SearchOptions.Directories, 0);
+                var directories = FileSearcher.Search( rootPath, null, SearchOptions.Directories, 0 );
 
-                directories.ForEach(directory => ScanDirectory(retValue, directory.FileName, directory.Path));
+                directories.ForEach(directory => ScanDirectory( retValue, directory.File, directory.Path ));
             }
 
             return retValue;
@@ -39,7 +39,8 @@ namespace TuneArchiver.Models {
         private void ScanDirectory( IList<Album> directoryList, string name, string path ) {
             var directories = FileSearcher.Search( path, null, SearchOptions.Directories, 0 );
 
-            directories.ForEach( directory => { directoryList.Add( CollectDirectory( name, directory.FileName, directory.Path )); });
+            directories.ForEach( directory => { directoryList.Add( CollectDirectory( name, directory.File, directory.Path ));
+            });
         }
 
         private Album CollectDirectory( string artist, string album, string path ) {
