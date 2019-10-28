@@ -159,6 +159,7 @@
     <Compile Include="ValueConverters\DefaultValueOpacityConverter.cs" />
     <Compile Include="ValueConverters\EmptyStringVisibilityConverter.cs" />
     <Compile Include="ValueConverters\NumericRangeValueConverter.cs" />
+    <Compile Include="ValueConverters\NumericTextMultitudeConverter.cs" />
     <Compile Include="ValueConverters\NumericValueVisibilityConverter.cs" />
     <Compile Include="ValueConverters\TimeFormatter.cs" />
     <Compile Include="Xaml\ColorHelperExtension.cs" />

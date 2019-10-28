@@ -5,7 +5,6 @@
 
 	<ValueConverters:PublishedYearConverter x:Key="PublishedYearConverter" />
     <ValueConverters:LevelConverter x:Key="LevelConverter" />
-    <ValueConverters:NumericTextMultitudeConverter x:Key="NumericTextMultitudeConverter" />
     <ValueConverters:RelativeTimeConverter x:Key="RelativeTimeConverter" />
     <ValueConverters:StringTruncateConverter x:Key="StringTruncateConverter" />
     <ValueConverters:TimeSpanConverter x:Key="TimeSpanConverter" />
@@ -16,6 +15,7 @@
     <ReusableConverters:EmptyStringVisibilityConverter x:Key="EmptyStringVisibilityConverter" />
     <ReusableConverters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
     <ReusableConverters:ByteImageConverter x:Key="ByteImageConverter" />
+    <ReusableConverters:NumericTextMultitudeConverter x:Key="NumericTextMultitudeConverter" />
     <ReusableConverters:TimeFormatter x:Key="TimeFormatter" />
 
 </ResourceDictionary>

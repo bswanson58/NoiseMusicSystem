@@ -326,7 +326,6 @@
     <Compile Include="ValueConverters\HtmlTextConverter.cs" />
     <Compile Include="ValueConverters\LevelConverter.cs" />
     <Compile Include="ValueConverters\NumberToWordsConverter.cs" />
-    <Compile Include="ValueConverters\NumericTextMultitudeConverter.cs" />
     <Compile Include="ValueConverters\PlayQueueTrackNameConverter.cs" />
     <Compile Include="ValueConverters\PublishedYearConverter.cs" />
     <Compile Include="ValueConverters\RelativeTimeConverter.cs" />
