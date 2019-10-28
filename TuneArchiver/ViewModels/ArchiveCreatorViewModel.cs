@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using ReusableBits.Mvvm.ViewModelSupport;
 using TuneArchiver.Interfaces;
@@ -104,6 +106,7 @@ namespace TuneArchiver.ViewModels {
 
                 RaisePropertyChanged( () => StagingPath );
                 RaiseCanExecuteChangedEvent( "CanExecute_ScanDirectory" );
+                RaiseCanExecuteChangedEvent( "CanExecute_OpenStagingFolder" );
             }
         }
 
@@ -118,7 +121,8 @@ namespace TuneArchiver.ViewModels {
                 mPreferences.Save( preferences );
 
                 RaisePropertyChanged( () => ArchivePath );
-                RaiseCanExecuteChangedEvent( "CanExecuteCreateArchive" );
+                RaiseCanExecuteChangedEvent( "CanExecute_CreateArchive" );
+                RaiseCanExecuteChangedEvent( "CanExecute_OpenArchiveFolder" );
             }
         }
 
@@ -171,6 +175,36 @@ namespace TuneArchiver.ViewModels {
             if( mDialogService.SelectFolderDialog( "Select Archive Directory", ref path ).GetValueOrDefault( false )) {
                 ArchivePath = path;
             }
+        }
+
+        public void Execute_OpenStagingFolder() {
+            if( Directory.Exists( StagingPath )) {
+                try {
+                    System.Diagnostics.Process.Start( StagingPath );
+                }
+                catch( Exception ex ) {
+//                mLog.LogException( "OnLaunchRequest:", ex );
+                }
+            }
+        }
+
+        public bool CanExecute_OpenStagingFolder() {
+            return !String.IsNullOrWhiteSpace( StagingPath ) && Directory.Exists( StagingPath );
+        }
+
+        public void Execute_OpenArchiveFolder() {
+            if( Directory.Exists( ArchivePath )) {
+                try {
+                    System.Diagnostics.Process.Start( ArchivePath );
+                }
+                catch( Exception ex ) {
+//                mLog.LogException( "OnLaunchRequest:", ex );
+                }
+            }
+        }
+
+        public bool CanExecute_OpenArchiveFolder() {
+            return !String.IsNullOrWhiteSpace( ArchivePath ) && Directory.Exists( ArchivePath );
         }
     }
 }

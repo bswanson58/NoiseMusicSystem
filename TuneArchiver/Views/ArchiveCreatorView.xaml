@@ -45,7 +45,11 @@
                 <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" Style="{StaticResource ExplorerHeaderStyle}" Text="Staging List"/>
                 <TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource ControlTitleStyle}" Text="Staging Directory:"/>
                 <TextBox Grid.Column="0" Grid.Row="2" Margin="0,3,5,0" Text="{Binding StagingPath, UpdateSourceTrigger=PropertyChanged}"/>
-                <Button Grid.Column="1" Grid.Row="2" Style="{StaticResource GeneralButtonStyle}" Content="..." Height="25" VerticalAlignment="Bottom" Command="{Binding BrowseForStagingDirectory}"/>
+                <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
+                    <Button Style="{StaticResource GeneralButtonStyle}" Content="..." Height="25" VerticalAlignment="Bottom" Command="{Binding BrowseForStagingDirectory}"/>
+                    <Button Style="{StaticResource PathButtonStyle}" Margin="5,0,0,0" Height="25" VerticalAlignment="Bottom" Command="{Binding Path=OpenStagingFolder}" 
+                            Content="{StaticResource Path_Folder}" ToolTip="Open Staging Folder" />
+                </StackPanel>
             </Grid>
 
             <Grid Grid.Row="1" Margin="0,5">
@@ -151,9 +155,13 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" Style="{StaticResource ExplorerHeaderStyle}" Text="Archive List"/>
-                <TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource ControlTitleStyle}" Text="Burn Directory:"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource ControlTitleStyle}" Text="Archive Directory:"/>
                 <TextBox Grid.Column="0" Grid.Row="2" Margin="0,3,5,0" Text="{Binding ArchivePath, UpdateSourceTrigger=PropertyChanged}"/>
-                <Button Grid.Column="1" Grid.Row="2" Style="{StaticResource GeneralButtonStyle}" Height="25" VerticalAlignment="Bottom" Content="..." Command="{Binding BrowseForBurnDirectory}"/>
+                <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
+                    <Button Style="{StaticResource GeneralButtonStyle}" Height="25" VerticalAlignment="Bottom" Content="..." Command="{Binding BrowseForBurnDirectory}"/>
+                    <Button Style="{StaticResource PathButtonStyle}" Margin="5,0,0,0" Height="25" VerticalAlignment="Bottom" Command="{Binding Path=OpenArchiveFolder}" 
+                            Content="{StaticResource Path_Folder}" ToolTip="Open Archive Folder" />
+                </StackPanel>
             </Grid>
 
             <Grid Grid.Row="1" Margin="0,5">
@@ -162,7 +170,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Margin="0,0,0,3" Style="{StaticResource ControlTitleStyle}" Text="Burn List:"/>
+                <TextBlock Grid.Row="0" Margin="0,0,0,3" Style="{StaticResource ControlTitleStyle}" Text="Archive List:"/>
                 <ListBox BorderThickness="1" Grid.Row="1" ItemsSource="{Binding ArchiveList}" ItemTemplate="{StaticResource AlbumEntry}"/>
             </Grid>
 
