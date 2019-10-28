@@ -14,6 +14,7 @@ namespace TuneArchiver.ViewModels {
         private readonly IArchiveBuilder        mArchiveBuilder;
         private readonly IPreferences           mPreferences;
         private readonly IPlatformDialogService mDialogService;
+        private readonly IPlatformLog           mLog;
 
         public  ObservableCollection<Album>     StagingList { get; }
         private string                          mStagingPath;
@@ -30,12 +31,14 @@ namespace TuneArchiver.ViewModels {
         public  string                          ArchiveLabelIdentifier { get; set; }
         public  string                          ArchiveLabel { get; private set; }
 
-        public ArchiveCreatorViewModel( IDirectoryScanner directoryScanner, ISetCreator setCreator, IArchiveBuilder archiveBuilder, IPreferences preferences, IPlatformDialogService dialogService ) {
+        public ArchiveCreatorViewModel( IDirectoryScanner directoryScanner, ISetCreator setCreator, IArchiveBuilder archiveBuilder, IPreferences preferences, 
+                                        IPlatformDialogService dialogService, IPlatformLog log ) {
             mDirectoryScanner = directoryScanner;
             mSetCreator = setCreator;
             mArchiveBuilder = archiveBuilder;
             mPreferences = preferences;
             mDialogService = dialogService;
+            mLog = log;
 
             StagingList = new ObservableCollection<Album>();
             SelectedList = new ObservableCollection<Album>();
@@ -181,7 +184,7 @@ namespace TuneArchiver.ViewModels {
                     System.Diagnostics.Process.Start( StagingPath );
                 }
                 catch( Exception ex ) {
-//                mLog.LogException( "OnLaunchRequest:", ex );
+                    mLog.LogException( "OnLaunchRequest:Staging Directory", ex );
                 }
             }
         }
@@ -197,7 +200,7 @@ namespace TuneArchiver.ViewModels {
                     System.Diagnostics.Process.Start( ArchivePath );
                 }
                 catch( Exception ex ) {
-//                mLog.LogException( "OnLaunchRequest:", ex );
+                    mLog.LogException( "OnLaunchRequest:Archive Directory", ex );
                 }
             }
         }
