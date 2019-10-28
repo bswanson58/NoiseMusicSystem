@@ -105,8 +105,6 @@ namespace TuneArchiver.ViewModels {
                 mPreferences.Save( preferences );
 
                 RaisePropertyChanged( () => StagingPath );
-                RaiseCanExecuteChangedEvent( "CanExecute_ScanDirectory" );
-                RaiseCanExecuteChangedEvent( "CanExecute_OpenStagingFolder" );
             }
         }
 
@@ -121,8 +119,6 @@ namespace TuneArchiver.ViewModels {
                 mPreferences.Save( preferences );
 
                 RaisePropertyChanged( () => ArchivePath );
-                RaiseCanExecuteChangedEvent( "CanExecute_CreateArchive" );
-                RaiseCanExecuteChangedEvent( "CanExecute_OpenArchiveFolder" );
             }
         }
 
@@ -130,8 +126,9 @@ namespace TuneArchiver.ViewModels {
             UpdateStagingDirectory();
         }
 
+        [DependsUpon( "StagingPath" )]
         public bool CanExecute_ScanDirectory() {
-            return !string.IsNullOrWhiteSpace( StagingPath );
+            return !string.IsNullOrWhiteSpace( StagingPath ) && Directory.Exists( StagingPath );
         }
 
         public void Execute_SelectSet() {
@@ -157,6 +154,7 @@ namespace TuneArchiver.ViewModels {
             UpdateBurnDirectory();
         }
 
+        [DependsUpon( "ArchivePath" )]
         public bool CanExecute_CreateArchive() {
             return !string.IsNullOrWhiteSpace( ArchivePath ) && SelectedList.Any();
         }
@@ -188,6 +186,7 @@ namespace TuneArchiver.ViewModels {
             }
         }
 
+        [DependsUpon( "StagingPath" )]
         public bool CanExecute_OpenStagingFolder() {
             return !String.IsNullOrWhiteSpace( StagingPath ) && Directory.Exists( StagingPath );
         }
@@ -203,6 +202,7 @@ namespace TuneArchiver.ViewModels {
             }
         }
 
+        [DependsUpon( "ArchivePath")]
         public bool CanExecute_OpenArchiveFolder() {
             return !String.IsNullOrWhiteSpace( ArchivePath ) && Directory.Exists( ArchivePath );
         }
