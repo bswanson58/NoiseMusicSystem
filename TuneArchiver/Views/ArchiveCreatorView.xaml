@@ -123,6 +123,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
@@ -136,7 +137,11 @@
                     <TextBlock Style="{StaticResource ControlTitleStyle}" Width="45" Text="{Binding SelectedSize, Converter={StaticResource MultitudeConverter}}"/>
                 </StackPanel>
 
-                <Button Grid.Row="3" Margin="5,0,0,0" HorizontalAlignment="Left" Content="Select Set" Style="{StaticResource GeneralButtonStyle}" Command="{Binding SelectSet}"/>
+                <Grid Grid.Row="2">
+                    <ProgressBar Maximum="{Binding ArchiveSetSize}" Value="{Binding CurrentSetSize}"/>
+                </Grid>
+
+                <Button Grid.Row="4" Margin="5,0,0,0" HorizontalAlignment="Left" Content="Select Set" Style="{StaticResource GeneralButtonStyle}" Command="{Binding SelectSet}"/>
             </Grid>
         </Grid>
 

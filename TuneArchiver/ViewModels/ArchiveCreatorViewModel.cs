@@ -31,6 +31,10 @@ namespace TuneArchiver.ViewModels {
         private string                          mArchiveLabelFormat;
         private string                          mArchiveLabelIdentifier;
 
+        public  bool                            CreatingSet { get; private set; }
+        public  double                          ArchiveSetSize {  get; private set; }
+        public  double                          CurrentSetSize {  get; set; }
+
         public ArchiveCreatorViewModel( IDirectoryScanner directoryScanner, ISetCreator setCreator, IArchiveBuilder archiveBuilder, IPreferences preferences, 
                                         IPlatformDialogService dialogService, IPlatformLog log ) {
             mDirectoryScanner = directoryScanner;
@@ -163,15 +167,32 @@ namespace TuneArchiver.ViewModels {
             return !string.IsNullOrWhiteSpace( StagingPath ) && Directory.Exists( StagingPath );
         }
 
-        public void Execute_SelectSet() {
+        public async void Execute_SelectSet() {
             ClearSelectedSet();
 
-            SelectedList.AddRange( mSetCreator.GetBestAlbumSet( StagingList ));
+            var progressReporter = new Progress<SetCreatorProgress>();
+            progressReporter.ProgressChanged += OnSetCreatorProgress;
+
+            CreatingSet = true;
+            RaisePropertyChanged( () => CreatingSet );
+
+            SelectedList.AddRange( await mSetCreator.GetBestAlbumSet( StagingList, progressReporter ));
             SelectedCount = SelectedList.Count;
             SelectedSize = SelectedList.Sum( album => album.Size );
 
-            RaisePropertyChanged(() => SelectedCount);
-            RaisePropertyChanged(() => SelectedSize);
+            CreatingSet = false;
+
+            RaisePropertyChanged( () => CreatingSet );
+            RaisePropertyChanged( () => SelectedCount);
+            RaisePropertyChanged( () => SelectedSize);
+        }
+
+        private void OnSetCreatorProgress( object sender, SetCreatorProgress progress ) {
+            ArchiveSetSize = progress.ArchiveSize;
+            CurrentSetSize = progress.CurrentSetSize;
+
+            RaisePropertyChanged( () => ArchiveSetSize );
+            RaisePropertyChanged( () => CurrentSetSize );
         }
 
         public bool CanExecute_SelectSet() {
