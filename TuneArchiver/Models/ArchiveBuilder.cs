@@ -112,11 +112,21 @@ namespace TuneArchiver.Models {
 
         private void CleanSourceDirectories( IEnumerable<Album>  albums ) {
             albums.ForEach( album => {
+                var path = album.Path;
+
                 try {
-                    Directory.Delete( album.Path, true );
+                    Directory.Delete( path, true );
+
+                    // delete the artist directory if it is empty.
+                    path = new DirectoryInfo( album.Path ).Parent?.FullName;
+
+                    if((!string.IsNullOrWhiteSpace( path )) &&
+                       (!Directory.EnumerateFileSystemEntries( path ).Any())) {
+                        Directory.Delete( path );
+                    }
                 }
                 catch( Exception ex ) {
-                    mLog.LogException( $"Deleting original directory: '{album.Path}'", ex );
+                    mLog.LogException( $"Deleting original directory: '{path}'", ex );
                 }
             });
         }
