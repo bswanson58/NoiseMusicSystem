@@ -25,17 +25,17 @@ namespace TuneArchiver.ViewModels {
         public  ObservableCollection<Album>     SelectedList { get; }
         public  int                             SelectedCount { get; private set; }
         public  long                            SelectedSize { get; private set; }
+        public  bool                            CreatingSet { get; private set; }
+        public  long                            ArchiveSetSize {  get; private set; }
+        public  bool                            SelectionLevelLow => ( SelectedSize > 0 ) && ((float)SelectedSize / ArchiveSetSize ) < 0.99;
+        public  bool                            SelectionLevelAdequate => ( SelectedSize > 0 ) && ((float)SelectedSize / ArchiveSetSize ) > 0.99;
+        private CancellationTokenSource         mSetCreationCancellation;
 
         public  ObservableCollection<string>    ArchiveList { get; }
         private string                          mArchivePath;
         public  string                          ArchiveLabel { get; private set; }
         private string                          mArchiveLabelFormat;
         private string                          mArchiveLabelIdentifier;
-
-        public  bool                            CreatingSet { get; private set; }
-        public  double                          ArchiveSetSize {  get; private set; }
-        public  double                          CurrentSetSize {  get; set; }
-        private CancellationTokenSource         mSetCreationCancellation;
 
         public  bool                            CreatingArchive {  get; private set; }
         public  long                            ArchiveAlbumCount { get; private set; }
@@ -98,6 +98,10 @@ namespace TuneArchiver.ViewModels {
 
             RaisePropertyChanged(() => StagingCount );
             RaisePropertyChanged(() => StagingSize );
+            RaisePropertyChanged( () => SelectedSize );
+            RaisePropertyChanged( () => SelectedCount );
+            RaisePropertyChanged( () => SelectionLevelAdequate );
+            RaisePropertyChanged( () => SelectionLevelLow );
             RaiseCanExecuteChangedEvent( "CanExecute_CreateArchive" );
         }
 
@@ -194,6 +198,8 @@ namespace TuneArchiver.ViewModels {
             RaisePropertyChanged( () => CreatingSet );
             RaisePropertyChanged( () => SelectedCount);
             RaisePropertyChanged( () => SelectedSize);
+            RaisePropertyChanged( () => SelectionLevelLow );
+            RaisePropertyChanged( () => SelectionLevelAdequate );
             RaiseCanExecuteChangedEvent( "CanExecute_CreateArchive" );
         }
 
@@ -203,10 +209,12 @@ namespace TuneArchiver.ViewModels {
 
         private void OnSetCreatorProgress( object sender, SetCreatorProgress progress ) {
             ArchiveSetSize = progress.ArchiveSize;
-            CurrentSetSize = progress.CurrentSetSize;
+            SelectedSize = progress.CurrentSetSize;
 
             RaisePropertyChanged( () => ArchiveSetSize );
-            RaisePropertyChanged( () => CurrentSetSize );
+            RaisePropertyChanged( () => SelectedSize );
+            RaisePropertyChanged( () => SelectionLevelLow );
+            RaisePropertyChanged( () => SelectionLevelAdequate );
         }
 
         public bool CanExecute_SelectSet() {

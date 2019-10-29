@@ -20,6 +20,18 @@
         <DataTemplate x:Key="ArchiveEntry">
             <TextBlock Text="{Binding}"/>
         </DataTemplate>
+
+        <DataTemplate x:Key="ColoredSize">
+            <TextBlock x:Name="_selectionSize" Style="{StaticResource ControlTitleStyle}" Width="45" Text="{Binding SelectedSize, Converter={StaticResource MultitudeConverter}}"/>
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding SelectionLevelLow}" Value="True">
+                        <Setter TargetName="_selectionSize" Property="Foreground" Value="Red"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding SelectionLevelAdequate}" Value="True">
+                        <Setter TargetName="_selectionSize" Property="Foreground" Value="LimeGreen"/>
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+        </DataTemplate>
     </UserControl.Resources>
 
     <Grid Margin="20">
@@ -135,7 +147,7 @@
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Set Size: "/>
-                    <TextBlock Style="{StaticResource ControlTitleStyle}" Width="45" Text="{Binding SelectedSize, Converter={StaticResource MultitudeConverter}}"/>
+                    <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource ColoredSize}"/>
                 </StackPanel>
 
                 <Grid Grid.Row="2" Visibility="{Binding CreatingSet, Converter={StaticResource VisibleIfTrue}}">
