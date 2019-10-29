@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TuneArchiver.Interfaces;
 
@@ -22,11 +23,11 @@ namespace TuneArchiver.Models {
     class SetCreator : ISetCreator {
         private const long  cDvd9Size = 4692251770;
 
-        async Task<IEnumerable<Album>> ISetCreator.GetBestAlbumSet( IList<Album> albumList, IProgress<SetCreatorProgress> progressReporter ) {
-            return await Task.Run(() => GetBestAlbumSet( albumList, progressReporter ) );
+        async Task<IEnumerable<Album>> ISetCreator.GetBestAlbumSet( IList<Album> albumList, IProgress<SetCreatorProgress> progressReporter, CancellationTokenSource cancellation ) {
+            return await Task.Run(() => GetBestAlbumSet( albumList, progressReporter, cancellation ));
         }
 
-        private IEnumerable<Album> GetBestAlbumSet( IList<Album> albumList, IProgress<SetCreatorProgress> progressReporter ) {
+        private IEnumerable<Album> GetBestAlbumSet( IList<Album> albumList, IProgress<SetCreatorProgress> progressReporter, CancellationTokenSource cancellation ) {
             var retValue = new List<Album>();
             var totalSetSize = albumList.Sum( album => album.Size );
 
@@ -46,12 +47,16 @@ namespace TuneArchiver.Models {
 
                         selectedSize = setSize;
 
-                        if( selectedSize > ( cDvd9Size * 0.99 )) {
+                        if( selectedSize > ( cDvd9Size * 0.995 )) {
                             break;
                         }
                     }
 
                     iteration++;
+
+                    if( cancellation.IsCancellationRequested ) {
+                        break;
+                    }
 
                     if(( maxIterations < 64000 ) ||
                        ( iteration % 1000 == 0 )) {

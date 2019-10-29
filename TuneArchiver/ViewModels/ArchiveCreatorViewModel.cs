@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using ReusableBits.Mvvm.ViewModelSupport;
 using TuneArchiver.Interfaces;
 using TuneArchiver.Models;
@@ -34,6 +35,7 @@ namespace TuneArchiver.ViewModels {
         public  bool                            CreatingSet { get; private set; }
         public  double                          ArchiveSetSize {  get; private set; }
         public  double                          CurrentSetSize {  get; set; }
+        private CancellationTokenSource         mSetCreationCancellation;
 
         public ArchiveCreatorViewModel( IDirectoryScanner directoryScanner, ISetCreator setCreator, IArchiveBuilder archiveBuilder, IPreferences preferences, 
                                         IPlatformDialogService dialogService, IPlatformLog log ) {
@@ -173,10 +175,12 @@ namespace TuneArchiver.ViewModels {
             var progressReporter = new Progress<SetCreatorProgress>();
             progressReporter.ProgressChanged += OnSetCreatorProgress;
 
+            mSetCreationCancellation = new CancellationTokenSource();
+
             CreatingSet = true;
             RaisePropertyChanged( () => CreatingSet );
 
-            SelectedList.AddRange( await mSetCreator.GetBestAlbumSet( StagingList, progressReporter ));
+            SelectedList.AddRange( await mSetCreator.GetBestAlbumSet( StagingList, progressReporter, mSetCreationCancellation ));
             SelectedCount = SelectedList.Count;
             SelectedSize = SelectedList.Sum( album => album.Size );
 
@@ -185,6 +189,10 @@ namespace TuneArchiver.ViewModels {
             RaisePropertyChanged( () => CreatingSet );
             RaisePropertyChanged( () => SelectedCount);
             RaisePropertyChanged( () => SelectedSize);
+        }
+
+        public void Execute_CancelSetCreation() {
+            mSetCreationCancellation?.Cancel();
         }
 
         private void OnSetCreatorProgress( object sender, SetCreatorProgress progress ) {

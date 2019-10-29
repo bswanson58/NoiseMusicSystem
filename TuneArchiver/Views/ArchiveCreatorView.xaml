@@ -12,6 +12,7 @@
 
     <UserControl.Resources>
         <ValueConverters:NumericTextMultitudeConverter x:Key="MultitudeConverter"/>
+        <ValueConverters:BooleanVisibilityConverter x:Key="VisibleIfTrue" IsHidden="True" TriggerValue="False"/>
         <DataTemplate x:Key="AlbumEntry" DataType="Models:Album">
             <TextBlock Text="{Binding DisplayName}"/>
         </DataTemplate>
@@ -137,8 +138,14 @@
                     <TextBlock Style="{StaticResource ControlTitleStyle}" Width="45" Text="{Binding SelectedSize, Converter={StaticResource MultitudeConverter}}"/>
                 </StackPanel>
 
-                <Grid Grid.Row="2">
-                    <ProgressBar Maximum="{Binding ArchiveSetSize}" Value="{Binding CurrentSetSize}"/>
+                <Grid Grid.Row="2" Visibility="{Binding CreatingSet, Converter={StaticResource VisibleIfTrue}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Good Enough" Command="{Binding CancelSetCreation}"/>
+                    <ProgressBar Grid.Column="1" VerticalAlignment="Center" Maximum="{Binding ArchiveSetSize}" Value="{Binding CurrentSetSize}"/>
                 </Grid>
 
                 <Button Grid.Row="4" Margin="5,0,0,0" HorizontalAlignment="Left" Content="Select Set" Style="{StaticResource GeneralButtonStyle}" Command="{Binding SelectSet}"/>

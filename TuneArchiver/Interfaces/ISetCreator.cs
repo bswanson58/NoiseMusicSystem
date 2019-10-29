@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using TuneArchiver.Models;
 
 namespace TuneArchiver.Interfaces {
     interface ISetCreator {
-        Task<IEnumerable<Album>>  GetBestAlbumSet( IList<Album> albumList, IProgress<SetCreatorProgress> progressReporter );
+        Task<IEnumerable<Album>>  GetBestAlbumSet( IList<Album> albumList, IProgress<SetCreatorProgress> progressReporter, CancellationTokenSource cancellation );
     }
 }
