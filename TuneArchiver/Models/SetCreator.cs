@@ -63,10 +63,15 @@ namespace TuneArchiver.Models {
                         progressReporter.Report( new SetCreatorProgress( maxIterations, iteration, cDvd9Size, selectedSize ));
                     }
                 }
+
+                // issue a final report.
+                progressReporter.Report( new SetCreatorProgress( maxIterations, iteration, cDvd9Size, selectedSize ));
             }
             else {
                 retValue.Clear();
                 retValue.AddRange( albumList );
+
+                progressReporter.Report( new SetCreatorProgress( 0, 0, cDvd9Size, totalSetSize ));
             }
 
             return retValue;
