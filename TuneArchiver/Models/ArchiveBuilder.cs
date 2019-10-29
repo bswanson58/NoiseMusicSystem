@@ -1,50 +1,139 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using TuneArchiver.Interfaces;
 using Unity.Interception.Utilities;
 
 namespace TuneArchiver.Models {
+    public class ArchiveBuilderProgress {
+        public  long    AlbumCount { get; }
+        public  long    AlbumsCompleted { get; }
+        public  string  CurrentAlbum { get; }
+
+        public ArchiveBuilderProgress( long albumCount, long albumsCompleted, string currentAlbum ) {
+            AlbumCount = albumCount;
+            AlbumsCompleted = albumsCompleted;
+            CurrentAlbum = currentAlbum;
+        }
+    }
+
     class ArchiveBuilder : IArchiveBuilder {
         private readonly IPreferences   mPreferences;
+        private readonly IPlatformLog   mLog;
 
-        public ArchiveBuilder( IPreferences preferences ) {
+        public ArchiveBuilder( IPreferences preferences, IPlatformLog log ) {
             mPreferences = preferences;
+            mLog = log;
         }
 
-        public void ArchiveAlbums( IEnumerable<Album> albums, string archiveTitle ) {
+        Task IArchiveBuilder.ArchiveAlbums( IEnumerable<Album> albums, string archiveTitle, IProgress<ArchiveBuilderProgress> progressReporter, CancellationTokenSource cancellation ) {
+            return Task.Run( () => ArchiveAlbums( albums, archiveTitle, progressReporter, cancellation ));
+        }
+
+        private void ArchiveAlbums( IEnumerable<Album> albums, string archiveTitle, IProgress<ArchiveBuilderProgress> progressReporter, CancellationTokenSource cancellation ) {
             var archiveRootPath = CreateArchiveRoot( archiveTitle );
 
-            CopyAlbums( albums, archiveRootPath );
+            if(!String.IsNullOrWhiteSpace( archiveRootPath )) {
+                CleanSourceDirectories( CopyAlbums( albums.ToList(), archiveRootPath, progressReporter, cancellation ));
+            }
         }
 
-        private void CopyAlbums( IEnumerable<Album>  albums, string archiveRootPath ) {
-            albums.ForEach( album => {
-                var albumPath = Path.Combine( archiveRootPath, album.ArtistName, album.AlbumName );
+        private IEnumerable<Album> CopyAlbums( IList<Album> albums, string archiveRootPath, IProgress<ArchiveBuilderProgress> progressReporter, CancellationTokenSource cancellation ) {
+            var retValue = new List<Album>();
+            var albumCount = albums.Count();
+            var currentAlbum = 0;
 
-                if(!Directory.Exists( albumPath )) {
-                    Directory.CreateDirectory( albumPath );
+            foreach( var album in albums ) {
+                try {
+                    var albumPath = Path.Combine( archiveRootPath, album.ArtistName, album.AlbumName );
 
-                    CopyFilesRecursively( new DirectoryInfo( album.Path ), new DirectoryInfo( albumPath ));
+                    if(!Directory.Exists( albumPath )) {
+                        Directory.CreateDirectory( albumPath );
+
+                        if(!CopyFilesRecursively( new DirectoryInfo( album.Path ), new DirectoryInfo( albumPath ), cancellation )) {
+                            break;
+                        }
+
+                        retValue.Add( album );
+                    }
+
+                    if( cancellation.IsCancellationRequested ) {
+                        break;
+                    }
+
+                    currentAlbum++;
+
+                    progressReporter.Report( new ArchiveBuilderProgress( albumCount, currentAlbum, album.DisplayName ));
                 }
-            });
+                catch( Exception ex ) {
+                    mLog.LogException( $"Copying album '{album.Path}' to archive.", ex );
+
+                    break;
+                }
+            }
+
+            return retValue;
         }
 
-        public static void CopyFilesRecursively( DirectoryInfo source, DirectoryInfo target ) {
+        private bool CopyFilesRecursively( DirectoryInfo source, DirectoryInfo target, CancellationTokenSource cancellation ) {
+            var retValue = true;
+
             foreach( var directory in source.GetDirectories()) {
-                CopyFilesRecursively( directory, target.CreateSubdirectory( directory.Name ));
+                if(!CopyFilesRecursively( directory, target.CreateSubdirectory( directory.Name ), cancellation )) {
+                    retValue = false;
+
+                    break;
+                }
             }
 
             foreach( var file in source.GetFiles()) {
-                file.CopyTo( Path.Combine( target.FullName, file.Name ));
+                try {
+                    file.MoveTo( Path.Combine( target.FullName, file.Name ));
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( $"Copying file '{file.Name}' to '{target.FullName}'.", ex );
+
+                    retValue = false;
+                    break;
+                }
+
+                if( cancellation.IsCancellationRequested ) {
+                    retValue = false;
+
+                    break;
+                }
             }
+
+            return retValue;
+        }
+
+        private void CleanSourceDirectories( IEnumerable<Album>  albums ) {
+            albums.ForEach( album => {
+                try {
+                    Directory.Delete( album.Path, true );
+                }
+                catch( Exception ex ) {
+                    mLog.LogException( $"Deleting original directory: '{album.Path}'", ex );
+                }
+            });
         }
 
         private string CreateArchiveRoot( string archiveTitle ) {
             var preferences = mPreferences.Load<ArchiverPreferences>();
             var archivePath = Path.Combine( preferences.ArchiveRootPath, archiveTitle );
 
-            if(!Directory.Exists( archivePath )) {
-                Directory.CreateDirectory( archivePath );
+            try {
+                if(!Directory.Exists( archivePath )) {
+                    Directory.CreateDirectory( archivePath );
+                }
+            }
+            catch( Exception ex ) {
+                mLog.LogException( $"Creating archive root: '{archivePath}'", ex );
+
+                archivePath = String.Empty;
             }
 
             return archivePath;

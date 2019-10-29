@@ -37,6 +37,11 @@ namespace TuneArchiver.ViewModels {
         public  double                          CurrentSetSize {  get; set; }
         private CancellationTokenSource         mSetCreationCancellation;
 
+        public  bool                            CreatingArchive {  get; private set; }
+        public  long                            ArchiveAlbumCount { get; private set; }
+        public  long                            ArchiveAlbumsCompleted { get; set; }
+        private CancellationTokenSource         mArchiveBuilderCancellation;
+
         public ArchiveCreatorViewModel( IDirectoryScanner directoryScanner, ISetCreator setCreator, IArchiveBuilder archiveBuilder, IPreferences preferences, 
                                         IPlatformDialogService dialogService, IPlatformLog log ) {
             mDirectoryScanner = directoryScanner;
@@ -189,6 +194,7 @@ namespace TuneArchiver.ViewModels {
             RaisePropertyChanged( () => CreatingSet );
             RaisePropertyChanged( () => SelectedCount);
             RaisePropertyChanged( () => SelectedSize);
+            RaiseCanExecuteChangedEvent( "CanExecute_CreateArchive" );
         }
 
         public void Execute_CancelSetCreation() {
@@ -207,12 +213,35 @@ namespace TuneArchiver.ViewModels {
             return StagingList.Any();
         }
 
-        public void Execute_CreateArchive() {
-            mArchiveBuilder.ArchiveAlbums( SelectedList, ArchiveLabel );
+        public async void Execute_CreateArchive() {
+            CreatingArchive = true;
+            RaisePropertyChanged( () => CreatingArchive );
+
+            var progressReporter = new Progress<ArchiveBuilderProgress>();
+            progressReporter.ProgressChanged += OnArchiveBuilderProgress;
+
+            mArchiveBuilderCancellation = new CancellationTokenSource();
+
+            await mArchiveBuilder.ArchiveAlbums( SelectedList, ArchiveLabel, progressReporter, mArchiveBuilderCancellation );
 
             ClearSelectedSet();
             UpdateStagingDirectory();
             UpdateBurnDirectory();
+
+            CreatingArchive = false;
+            RaisePropertyChanged( () => CreatingArchive );
+        }
+
+        private void OnArchiveBuilderProgress( object sender, ArchiveBuilderProgress progress ) {
+            ArchiveAlbumCount = progress.AlbumCount;
+            ArchiveAlbumsCompleted = Math.Min( ArchiveAlbumsCompleted, ArchiveAlbumCount );
+
+            RaisePropertyChanged( () => ArchiveAlbumCount );
+            RaisePropertyChanged( () => ArchiveAlbumsCompleted );
+        }
+
+        public void Execute_CancelArchiveBuilding() {
+            mArchiveBuilderCancellation?.Cancel();
         }
 
         [DependsUpon( "ArchivePath" )]

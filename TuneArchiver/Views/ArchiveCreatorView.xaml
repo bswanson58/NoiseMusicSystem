@@ -33,7 +33,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" MinHeight="75"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto" MinHeight="90"/>
+                <RowDefinition Height="Auto" MinHeight="105"/>
             </Grid.RowDefinitions>
             
             <Grid Grid.Row="0">
@@ -92,7 +92,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" MinHeight="75"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto" MinHeight="90"/>
+                <RowDefinition Height="Auto" MinHeight="105"/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
@@ -156,7 +156,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" MinHeight="75"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto" MinHeight="90"/>
+                <RowDefinition Height="Auto" MinHeight="105"/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
@@ -194,6 +194,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
@@ -208,8 +209,17 @@
                     <TextBlock Style="{StaticResource ControlTitleStyle}" Text="Formatted Archive Label: "/>
                     <TextBlock Text="{Binding ArchiveLabel}"/>
                 </StackPanel>
+                <Grid Grid.Row="2" Visibility="{Binding CreatingArchive, Converter={StaticResource VisibleIfTrue}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Content="Cancel" Command="{Binding CancelArchiveBuilding}"/>
+                    <ProgressBar Grid.Column="1" VerticalAlignment="Center" Maximum="{Binding ArchiveAlbumCount}" Value="{Binding ArchiveAlbumsCompleted}"/>
+                </Grid>
                 
-                <Button Grid.Row="3" Margin="5,0,0,0" HorizontalAlignment="Left" Content="Create Archive" Style="{StaticResource GeneralButtonStyle}" Command="{Binding CreateArchive}"/>
+                <Button Grid.Row="4" Margin="5,0,0,0" HorizontalAlignment="Left" Content="Create Archive" Style="{StaticResource GeneralButtonStyle}" Command="{Binding CreateArchive}"/>
             </Grid>
         </Grid>
     </Grid>
