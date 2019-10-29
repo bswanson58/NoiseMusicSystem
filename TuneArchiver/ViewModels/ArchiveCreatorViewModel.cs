@@ -188,6 +188,7 @@ namespace TuneArchiver.ViewModels {
 
             CreatingSet = true;
             RaisePropertyChanged( () => CreatingSet );
+            RaiseCanExecuteChangedEvent( "CanExecute_SelectSet" );
 
             SelectedList.AddRange( await mSetCreator.GetBestAlbumSet( StagingList, progressReporter, mSetCreationCancellation ));
             SelectedCount = SelectedList.Count;
@@ -200,6 +201,7 @@ namespace TuneArchiver.ViewModels {
             RaisePropertyChanged( () => SelectedSize);
             RaisePropertyChanged( () => SelectionLevelLow );
             RaisePropertyChanged( () => SelectionLevelAdequate );
+            RaiseCanExecuteChangedEvent( "CanExecute_SelectSet" );
             RaiseCanExecuteChangedEvent( "CanExecute_CreateArchive" );
         }
 
@@ -218,7 +220,7 @@ namespace TuneArchiver.ViewModels {
         }
 
         public bool CanExecute_SelectSet() {
-            return StagingList.Any();
+            return StagingList.Any() && !CreatingSet;
         }
 
         public async void Execute_CreateArchive() {
