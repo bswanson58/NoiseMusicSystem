@@ -190,7 +190,9 @@ namespace TuneArchiver.ViewModels {
             RaisePropertyChanged( () => CreatingSet );
             RaiseCanExecuteChangedEvent( "CanExecute_SelectSet" );
 
-            SelectedList.AddRange( await mSetCreator.GetBestAlbumSet( StagingList, progressReporter, mSetCreationCancellation ));
+            var selectedList = await mSetCreator.GetBestAlbumSet( StagingList, progressReporter, mSetCreationCancellation );
+
+            SelectedList.AddRange( selectedList.OrderBy( a => a.DisplayName ));
             SelectedCount = SelectedList.Count;
             SelectedSize = SelectedList.Sum( album => album.Size );
 
