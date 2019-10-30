@@ -118,7 +118,7 @@
                 <TextBlock Grid.Row="1" Text=""/>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
                     <TextBlock VerticalAlignment="Center" Style="{StaticResource ControlTitleStyle}" Text="Archive Size: "/>
-                    <ComboBox Width="150"/>
+                    <ComboBox Width="110" ItemsSource="{Binding MediaList}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedMedia}"/>
                 </StackPanel>
             </Grid>
 

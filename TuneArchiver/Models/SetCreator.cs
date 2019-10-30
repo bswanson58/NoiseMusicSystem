@@ -21,7 +21,13 @@ namespace TuneArchiver.Models {
     }
 
     class SetCreator : ISetCreator {
-        private const long  cDvd9Size = 4692251770;
+        private readonly IPreferences   mPreferences;
+        private readonly IArchiveMedia  mArchiveMedia;
+
+        public SetCreator( IPreferences preferences, IArchiveMedia archiveMedia ) {
+            mPreferences = preferences;
+            mArchiveMedia = archiveMedia;
+        }
 
         async Task<IEnumerable<Album>> ISetCreator.GetBestAlbumSet( IList<Album> albumList, IProgress<SetCreatorProgress> progressReporter, CancellationTokenSource cancellation ) {
             var random = new Random( DateTime.Now.Millisecond );
@@ -33,8 +39,11 @@ namespace TuneArchiver.Models {
         private IEnumerable<Album> GetBestAlbumSet( IList<Album> albumList, IProgress<SetCreatorProgress> progressReporter, CancellationTokenSource cancellation ) {
             var retValue = new List<Album>();
             var totalSetSize = albumList.Sum( album => album.Size );
+            var archivePreferences = mPreferences.Load<ArchiverPreferences>();
+            var mediaSize = mArchiveMedia.SizeOfMediaType( archivePreferences.ArchiveMediaType );
 
-            if( totalSetSize > cDvd9Size ) {
+            if(( mediaSize > 0 ) &&
+               ( totalSetSize > mediaSize )) {
                 var powerSet = Subsets( albumList );
                 var maxIterations = (long)Math.Pow( 2, albumList.Count );
                 var iteration = 0;
@@ -44,13 +53,13 @@ namespace TuneArchiver.Models {
                     var setSize = set.Sum( album => album.Size );
 
                     if(( setSize > selectedSize ) &&
-                       ( setSize <= cDvd9Size )) {
+                       ( setSize <= mediaSize )) {
                         retValue.Clear();
                         retValue.AddRange( set );
 
                         selectedSize = setSize;
 
-                        if( selectedSize > ( cDvd9Size * 0.995 )) {
+                        if( selectedSize > ( mediaSize * 0.995 )) {
                             break;
                         }
                     }
@@ -63,18 +72,18 @@ namespace TuneArchiver.Models {
 
                     if(( maxIterations < 64000 ) ||
                        ( iteration % 1000 == 0 )) {
-                        progressReporter.Report( new SetCreatorProgress( maxIterations, iteration, cDvd9Size, selectedSize ));
+                        progressReporter.Report( new SetCreatorProgress( maxIterations, iteration, mediaSize, selectedSize ));
                     }
                 }
 
                 // issue a final report.
-                progressReporter.Report( new SetCreatorProgress( maxIterations, iteration, cDvd9Size, selectedSize ));
+                progressReporter.Report( new SetCreatorProgress( maxIterations, iteration, mediaSize, selectedSize ));
             }
             else {
                 retValue.Clear();
                 retValue.AddRange( albumList );
 
-                progressReporter.Report( new SetCreatorProgress( 0, 0, cDvd9Size, totalSetSize ));
+                progressReporter.Report( new SetCreatorProgress( 0, 0, mediaSize, totalSetSize ));
             }
 
             return retValue;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace TuneArchiver.ViewModels {
         private readonly IPreferences           mPreferences;
         private readonly IPlatformDialogService mDialogService;
         private readonly IPlatformLog           mLog;
+        private readonly IArchiveMedia          mArchiveMedia;
 
         public  ObservableCollection<Album>     StagingList { get; }
         private string                          mStagingPath;
@@ -42,14 +44,19 @@ namespace TuneArchiver.ViewModels {
         public  long                            ArchiveAlbumsCompleted { get; set; }
         private CancellationTokenSource         mArchiveBuilderCancellation;
 
+        public  IList<ArchiveMedia>             MediaList => mArchiveMedia.MediaTypes;
+        private ArchiveMedia                    mSelectedMedia;
+
+
         public ArchiveCreatorViewModel( IDirectoryScanner directoryScanner, ISetCreator setCreator, IArchiveBuilder archiveBuilder, IPreferences preferences, 
-                                        IPlatformDialogService dialogService, IPlatformLog log ) {
+                                        IPlatformDialogService dialogService, IPlatformLog log, IArchiveMedia archiveMedia ) {
             mDirectoryScanner = directoryScanner;
             mSetCreator = setCreator;
             mArchiveBuilder = archiveBuilder;
             mPreferences = preferences;
             mDialogService = dialogService;
             mLog = log;
+            mArchiveMedia = archiveMedia;
 
             StagingList = new ObservableCollection<Album>();
             SelectedList = new ObservableCollection<Album>();
@@ -61,6 +68,7 @@ namespace TuneArchiver.ViewModels {
             mArchivePath = archivePreferences.ArchiveRootPath;
             mArchiveLabelFormat = archivePreferences.ArchiveLabelFormat;
             mArchiveLabelIdentifier = archivePreferences.ArchiveLabelIdentifier;
+            mSelectedMedia = MediaList.FirstOrDefault( media => media.Name.Equals( archivePreferences.ArchiveMediaType ));
 
             FormatArchiveLabel();
             UpdateStagingDirectory();
@@ -172,6 +180,18 @@ namespace TuneArchiver.ViewModels {
             RaisePropertyChanged( () => ArchiveLabel );
         }
 
+        public ArchiveMedia SelectedMedia {
+            get => mSelectedMedia;
+            set {
+                mSelectedMedia = value;
+
+                var preferences = mPreferences.Load<ArchiverPreferences>();
+
+                preferences.ArchiveMediaType = mSelectedMedia.Name;
+                mPreferences.Save( preferences );
+            }
+        }
+
         private void UpdateArchiveIdentifier() {
             if( Int32.TryParse( ArchiveLabelIdentifier, out var identifier )) {
                 identifier++;
@@ -233,7 +253,7 @@ namespace TuneArchiver.ViewModels {
         }
 
         public bool CanExecute_SelectSet() {
-            return StagingList.Any() && !CreatingSet;
+            return StagingList.Any() && !CreatingSet && ( mSelectedMedia != null );
         }
 
         public async void Execute_CreateArchive() {

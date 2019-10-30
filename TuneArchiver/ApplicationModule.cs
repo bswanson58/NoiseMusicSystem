@@ -17,6 +17,7 @@ namespace TuneArchiver {
             containerRegistry.Register<IArchiveBuilder, ArchiveBuilder>();
             containerRegistry.Register<IDirectoryScanner, DirectoryScanner>();
             containerRegistry.Register<ISetCreator, SetCreator>();
+            containerRegistry.Register<IArchiveMedia, ArchiveWiki>();
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {
