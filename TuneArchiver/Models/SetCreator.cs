@@ -29,11 +29,11 @@ namespace TuneArchiver.Models {
             mArchiveMedia = archiveMedia;
         }
 
-        async Task<IEnumerable<Album>> ISetCreator.GetBestAlbumSet( IList<Album> albumList, IProgress<SetCreatorProgress> progressReporter, CancellationTokenSource cancellation ) {
+        Task<IEnumerable<Album>> ISetCreator.GetBestAlbumSet( IList<Album> albumList, IProgress<SetCreatorProgress> progressReporter, CancellationTokenSource cancellation ) {
             var random = new Random( DateTime.Now.Millisecond );
             var limitedList = albumList.OrderBy( a => random.Next( Int32.MaxValue)).Take( 150 ).ToList();
 
-            return await Task.Run(() => GetBestAlbumSet( limitedList, progressReporter, cancellation ));
+            return Task.Run(() => GetBestAlbumSet( limitedList, progressReporter, cancellation ));
         }
 
         private IEnumerable<Album> GetBestAlbumSet( IList<Album> albumList, IProgress<SetCreatorProgress> progressReporter, CancellationTokenSource cancellation ) {
