@@ -24,7 +24,10 @@ namespace TuneArchiver.Models {
         private const long  cDvd9Size = 4692251770;
 
         async Task<IEnumerable<Album>> ISetCreator.GetBestAlbumSet( IList<Album> albumList, IProgress<SetCreatorProgress> progressReporter, CancellationTokenSource cancellation ) {
-            return await Task.Run(() => GetBestAlbumSet( albumList, progressReporter, cancellation ));
+            var random = new Random( DateTime.Now.Millisecond );
+            var limitedList = albumList.OrderBy( a => random.Next( Int32.MaxValue)).Take( 150 ).ToList();
+
+            return await Task.Run(() => GetBestAlbumSet( limitedList, progressReporter, cancellation ));
         }
 
         private IEnumerable<Album> GetBestAlbumSet( IList<Album> albumList, IProgress<SetCreatorProgress> progressReporter, CancellationTokenSource cancellation ) {
@@ -78,7 +81,7 @@ namespace TuneArchiver.Models {
         }
 
         public static IEnumerable<IList<T>> Subsets<T>( IList<T> list) {
-            var max = (long)Math.Pow( 2, list.Count );
+            var max = Math.Pow( 2, list.Count );
 
             for( var count = 0; count < max; count++ ) {
                 var subset = new List<T>();
