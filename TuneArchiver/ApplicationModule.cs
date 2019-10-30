@@ -4,15 +4,16 @@ using TuneArchiver.Interfaces;
 using TuneArchiver.Logging;
 using TuneArchiver.Models;
 using TuneArchiver.Platform;
+using Unity.Lifetime;
 
 namespace TuneArchiver {
     class ApplicationModule : IModule {
         public void RegisterTypes( IContainerRegistry containerRegistry ) {
-            containerRegistry.Register<IEnvironment, OperatingEnvironment>();
-            containerRegistry.Register<IFileWriter, JsonObjectWriter>();
-            containerRegistry.Register<IPlatformLog, SeriLogAdapter>();
-            containerRegistry.Register<IPreferences, PreferencesManager>();
-            containerRegistry.Register<IPlatformDialogService, PlatformDialogService>();
+            containerRegistry.RegisterSingleton<IEnvironment, OperatingEnvironment>();
+            containerRegistry.RegisterSingleton<IFileWriter, JsonObjectWriter>();
+            containerRegistry.RegisterSingleton<IPlatformLog, SeriLogAdapter>();
+            containerRegistry.RegisterSingleton<IPreferences, PreferencesManager>();
+            containerRegistry.RegisterSingleton<IPlatformDialogService, PlatformDialogService>();
 
             containerRegistry.Register<IArchiveBuilder, ArchiveBuilder>();
             containerRegistry.Register<IDirectoryScanner, DirectoryScanner>();
