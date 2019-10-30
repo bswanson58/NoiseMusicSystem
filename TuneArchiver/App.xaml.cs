@@ -5,22 +5,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
 using Prism.Ioc;
+using Serilog.Events;
 using TuneArchiver.Interfaces;
+using TuneArchiver.Logging;
 using TuneArchiver.Views;
 
 namespace TuneArchiver {
     public partial class App {
         private IPlatformLog    mLog;
 
-        protected override void OnStartup( StartupEventArgs e ) {
-            // Caliburn Micro dispatcher initialize.
-            PlatformProvider.Current = new XamlPlatformProvider();
-
-            base.OnStartup( e );
-
-            mLog = Container.Resolve<IPlatformLog>();
-            mLog.LogMessage( "+++ Application Started +++" );
-
+        public App() {
             DispatcherUnhandledException += AppDispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException +=CurrentDomainUnhandledException;
             TaskScheduler.UnobservedTaskException += TaskSchedulerUnobservedTaskException;
@@ -37,6 +31,13 @@ namespace TuneArchiver {
             var module = new ApplicationModule();
 
             module.RegisterTypes( containerRegistry );
+
+            mLog = Container.Resolve<IPlatformLog>();
+            mLog.AddLoggingSink( new MessageBoxSink(), LogEventLevel.Error );
+            mLog.LogMessage( "+++ Application Started +++" );
+
+            // Caliburn Micro dispatcher initialize.
+            PlatformProvider.Current = new XamlPlatformProvider();
         }
 
         protected override Window CreateShell() {

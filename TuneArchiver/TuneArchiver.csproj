@@ -137,6 +137,7 @@
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
     <Compile Include="Interfaces\ISetCreator.cs" />
+    <Compile Include="Logging\MessageBoxSink.cs" />
     <Compile Include="Models\Album.cs" />
     <Compile Include="Models\ArchiveBuilder.cs" />
     <Compile Include="Models\ArchiverPreferences.cs" />
