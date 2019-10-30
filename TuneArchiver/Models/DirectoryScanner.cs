@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Recls;
@@ -8,9 +9,11 @@ using TuneArchiver.Support;
 namespace TuneArchiver.Models {
     class DirectoryScanner : IDirectoryScanner {
         private readonly IPreferences   mPreferences;
+        private readonly IPlatformLog   mLog;
 
-        public DirectoryScanner( IPreferences preferences ) {
+        public DirectoryScanner( IPreferences preferences, IPlatformLog log ) {
             mPreferences = preferences;
+            mLog = log;
         }
 
         public Task<IEnumerable<Album>> ScanStagingDirectory() {
@@ -28,10 +31,15 @@ namespace TuneArchiver.Models {
         private IEnumerable<string> ScanDirectory( string path ) {
             var retValue = new List<string>();
 
-            if ( Directory.Exists( path )) {
-                var directories = FileSearcher.Search( path, null, SearchOptions.Directories, 0 );
+            try {
+                if ( Directory.Exists( path )) {
+                    var directories = FileSearcher.Search( path, null, SearchOptions.Directories, 0 );
 
-                directories.ForEach( directory => retValue.Add( directory.File ));
+                    directories.ForEach( directory => retValue.Add( directory.File ));
+                }
+            } 
+            catch( Exception ex ) {
+                mLog.LogException( $"Scanning directory: '{path}'", ex );
             }
 
             return retValue;
@@ -40,10 +48,15 @@ namespace TuneArchiver.Models {
         private IEnumerable<Album> ScanRootDirectory( string rootPath ) {
             var retValue = new List<Album>();
 
-            if ( Directory.Exists( rootPath )) {
-                var directories = FileSearcher.Search( rootPath, null, SearchOptions.Directories, 0 );
+            try {
+                if ( Directory.Exists( rootPath )) {
+                    var directories = FileSearcher.Search( rootPath, null, SearchOptions.Directories, 0 );
 
-                directories.ForEach(directory => ScanDirectory( retValue, directory.File, directory.Path ));
+                    directories.ForEach(directory => ScanDirectory( retValue, directory.File, directory.Path ));
+                }
+            }
+            catch( Exception ex ) {
+                mLog.LogException( $"ScanRootDirectory: '{rootPath}'", ex );
             }
 
             return retValue;
