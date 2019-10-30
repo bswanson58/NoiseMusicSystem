@@ -172,6 +172,14 @@ namespace TuneArchiver.ViewModels {
             RaisePropertyChanged( () => ArchiveLabel );
         }
 
+        private void UpdateArchiveIdentifier() {
+            if( Int32.TryParse( ArchiveLabelIdentifier, out var identifier )) {
+                identifier++;
+
+                ArchiveLabelIdentifier = identifier.ToString();
+            }
+        }
+
         public void Execute_ScanDirectory() {
             UpdateStagingDirectory();
         }
@@ -242,6 +250,7 @@ namespace TuneArchiver.ViewModels {
             ClearSelectedSet();
             UpdateStagingDirectory();
             UpdateBurnDirectory();
+            UpdateArchiveIdentifier();
 
             CreatingArchive = false;
             RaisePropertyChanged( () => CreatingArchive );
