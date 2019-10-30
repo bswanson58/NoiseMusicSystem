@@ -67,7 +67,7 @@ namespace TuneArchiver.ViewModels {
             UpdateBurnDirectory();
         }
 
-        private void UpdateStagingDirectory() {
+        private async void UpdateStagingDirectory() {
             StagingList.Clear();
             StagingCount = 0;
             StagingSize = 0;
@@ -77,7 +77,8 @@ namespace TuneArchiver.ViewModels {
 
             ClearSelectedSet();
 
-            StagingList.AddRange(mDirectoryScanner.ScanStagingDirectory());
+            var stagingList = await mDirectoryScanner.ScanStagingDirectory();
+            StagingList.AddRange( stagingList.OrderBy( a => a.DisplayName ));
             StagingCount = StagingList.Count;
             StagingSize = StagingList.Sum( album => album.Size );
 
@@ -86,9 +87,11 @@ namespace TuneArchiver.ViewModels {
             RaiseCanExecuteChangedEvent( "CanExecute_SelectSet" );
         }
 
-        private void UpdateBurnDirectory() {
+        private async void UpdateBurnDirectory() {
             ArchiveList.Clear();
-            ArchiveList.AddRange( mDirectoryScanner.ScanArchiveDirectory());
+
+            var directoryList = await mDirectoryScanner.ScanArchiveDirectory();
+            ArchiveList.AddRange( directoryList.OrderBy( d => d ));
         }
 
         private void ClearSelectedSet() {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Recls;
 using TuneArchiver.Interfaces;
 using TuneArchiver.Support;
@@ -12,18 +13,23 @@ namespace TuneArchiver.Models {
             mPreferences = preferences;
         }
 
-        public IEnumerable<Album> ScanStagingDirectory() {
+        public Task<IEnumerable<Album>> ScanStagingDirectory() {
             var preferences = mPreferences.Load<ArchiverPreferences>();
 
-            return ScanRootDirectory( preferences.StagingDirectory );
+            return Task.Run(() => ScanRootDirectory( preferences.StagingDirectory ));
         }
 
-        public IEnumerable<string> ScanArchiveDirectory() {
-            var retValue = new List<string>();
+        public Task<IEnumerable<string>> ScanArchiveDirectory() {
             var preferences = mPreferences.Load<ArchiverPreferences>();
 
-            if ( Directory.Exists( preferences.ArchiveRootPath )) {
-                var directories = FileSearcher.Search( preferences.ArchiveRootPath, null, SearchOptions.Directories, 0 );
+            return Task.Run( () => ScanDirectory( preferences.ArchiveRootPath ));
+        }
+
+        private IEnumerable<string> ScanDirectory( string path ) {
+            var retValue = new List<string>();
+
+            if ( Directory.Exists( path )) {
+                var directories = FileSearcher.Search( path, null, SearchOptions.Directories, 0 );
 
                 directories.ForEach( directory => retValue.Add( directory.File ));
             }
