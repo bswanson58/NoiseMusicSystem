@@ -10,12 +10,17 @@
 
     <Mah:MetroWindow.RightWindowCommands>
         <Mah:WindowCommands>
-            <Button Content="for sale" />
         </Mah:WindowCommands>
     </Mah:MetroWindow.RightWindowCommands>
 
     <Grid>
-        <Views:ArchiveCreatorView/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Views:ArchiveCreatorView Grid.Row="0"/>
+        <Views:StatusView Grid.Row="1"/>
     </Grid>
 </Mah:MetroWindow>
 

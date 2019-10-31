@@ -131,6 +131,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ApplicationModule.cs" />
+    <Compile Include="Dto\Events.cs" />
     <Compile Include="Interfaces\IArchiveBuilder.cs" />
     <Compile Include="Interfaces\IArchiveMedia.cs" />
     <Compile Include="Interfaces\IDirectoryScanner.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Support\WindowPlacement.cs" />
     <Compile Include="ViewModels\ArchiveCreatorViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
+    <Compile Include="ViewModels\StatusViewModel.cs" />
     <Compile Include="Views\ArchiveCreatorView.xaml.cs">
       <DependentUpon>ArchiveCreatorView.xaml</DependentUpon>
     </Compile>
@@ -172,6 +174,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Views\StatusView.xaml.cs">
+      <DependentUpon>StatusView.xaml</DependentUpon>
+    </Compile>
     <Page Include="Resources\Images.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -181,6 +186,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Shell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\StatusView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -224,6 +233,10 @@
     <ProjectReference Include="..\ReusableBits.Ui\ReusableBits.Ui.csproj">
       <Project>{704bd4a9-2fc2-4716-ab94-d3714a6acc39}</Project>
       <Name>ReusableBits.Ui</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReusableBits\ReusableBits.csproj">
+      <Project>{0522b043-a04a-4669-90db-204c96d52224}</Project>
+      <Name>ReusableBits</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
