@@ -5,9 +5,9 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle( "ForRent" )]
-[assembly: AssemblyDescription( "" )]
-[assembly: AssemblyProduct( "ForRent" )]
+[assembly: AssemblyTitle( "Tune Archivist" )]
+[assembly: AssemblyDescription( "Utility to best fit fill archive media." )]
+[assembly: AssemblyProduct( "Noise Music System" )]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
