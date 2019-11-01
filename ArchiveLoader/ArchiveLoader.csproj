@@ -168,6 +168,7 @@
     <Compile Include="Interfaces\IDriveEjector.cs" />
     <Compile Include="Interfaces\IDriveManager.cs" />
     <Compile Include="Interfaces\IDriveNotifier.cs" />
+    <Compile Include="Interfaces\IFileCopier.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
     <Compile Include="Interfaces\IProcessManager.cs" />
@@ -175,6 +176,7 @@
     <Compile Include="Models\ProcessManager.cs" />
     <Compile Include="Platform\DriveEjector.cs" />
     <Compile Include="Platform\DriveNotifier.cs" />
+    <Compile Include="Platform\FileCopier.cs" />
     <Compile Include="Platform\FolderBrowserDialogEx.cs">
       <SubType>Component</SubType>
     </Compile>
