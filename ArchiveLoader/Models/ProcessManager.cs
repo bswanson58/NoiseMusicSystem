@@ -1,21 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Threading;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
 
 namespace ArchiveLoader.Models {
     class ProcessManager : IProcessManager {
-        private readonly IDriveEjector  mDriveEjector;
-        private readonly IDriveManager  mDriveManager;
-        private readonly IFileCopier    mFileCopier;
-        private readonly IPreferences   mPreferences;
-        private readonly IPlatformLog   mLog;
-        private DriveInfo               mSourceDrive;
-        private string                  mTargetDirectory;
-        private string                  mDriveNotificationKey;
-        private CancellationTokenSource mFileCopyCancellation;
+        private readonly IDriveEjector              mDriveEjector;
+        private readonly IDriveManager              mDriveManager;
+        private readonly IFileCopier                mFileCopier;
+        private readonly IPreferences               mPreferences;
+        private readonly IPlatformLog               mLog;
+        private DriveInfo                           mSourceDrive;
+        private string                              mTargetDirectory;
+        private string                              mDriveNotificationKey;
+        private CancellationTokenSource             mFileCopyCancellation;
+        private readonly List<ProcessItem>          mProcessList;
+
+        private readonly Subject<ProcessItemEvent>  mSubject;
+        public  IObservable<ProcessItemEvent>       OnProcessingItemChanged => mSubject;
 
         public ProcessManager( IFileCopier fileCopier, IDriveManager driveManager, IDriveEjector driveEjector, IPreferences preferences, IPlatformLog log ) {
             mDriveManager = driveManager;
@@ -23,6 +29,9 @@ namespace ArchiveLoader.Models {
             mFileCopier = fileCopier;
             mPreferences = preferences;
             mLog = log;
+
+            mProcessList = new List<ProcessItem>();
+            mSubject = new Subject<ProcessItemEvent>();
         }
 
         public async void StartProcessing() {
@@ -59,6 +68,14 @@ namespace ArchiveLoader.Models {
         private async void OnFileCopied( object sender, FileCopyStatus status ) {
             if( status.CopyCompleted ) {
                 await mDriveEjector.OpenDrive( mSourceDrive.Name[0]);
+            }
+            else {
+                if (status.Success) {
+                    var item = new ProcessItem( status.FileName );
+
+                    mProcessList.Add( item );
+                    mSubject.OnNext( new ProcessItemEvent( item, EventReason.Add ));
+                }
             }
         }
 
