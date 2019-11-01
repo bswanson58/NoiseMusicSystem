@@ -7,7 +7,6 @@ using ArchiveLoader.Interfaces;
 using ArchiveLoader.Views;
 using Caliburn.Micro;
 using Prism.Ioc;
-using Prism.Modularity;
 
 namespace ArchiveLoader {
     public partial class App {

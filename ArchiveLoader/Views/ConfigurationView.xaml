@@ -6,8 +6,24 @@
              xmlns:Mvvm="http://prismlibrary.com/"
              Mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
+             Height="45" d:DesignWidth="800">
+
+    <Grid Margin="15,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        
+        <TextBlock Grid.Column="0" Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Archive Device:"/>
+        <ComboBox Grid.Column="1" VerticalAlignment="Center" Width="120"/>
+        
+        <TextBlock Grid.Column="2" Margin="15,0,3,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Target Directory:"/>
+        <TextBox Grid.Column="3" Width="250" VerticalAlignment="Center" Text="{Binding TargetDirectory, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button Grid.Column="4" Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Height="16" VerticalAlignment="Center" Content="..." Command="{Binding BrowseTargetDirectory}"/>
+        <Button Grid.Column="5" Style="{StaticResource PathButtonStyle}" Height="16" Content="{StaticResource Path_Folder}" Command="{Binding OpenTargetDirectory}"/>
     </Grid>
 </UserControl>
