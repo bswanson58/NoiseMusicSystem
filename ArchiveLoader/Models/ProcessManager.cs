@@ -12,6 +12,7 @@ namespace ArchiveLoader.Models {
         private readonly IPlatformLog   mLog;
         private DriveInfo               mSourceDrive;
         private string                  mTargetDirectory;
+        private string                  mDriveNotificationKey;
 
         public ProcessManager( IDriveManager driveManager, IDriveEjector driveEjector, IPreferences preferences, IPlatformLog log ) {
             mDriveManager = driveManager;
@@ -36,7 +37,24 @@ namespace ArchiveLoader.Models {
         }
 
         private void InitializeProcessing() {
+            mDriveNotificationKey = mDriveManager.AddDriveNotification( mSourceDrive, OnDriveNotification );
+        }
 
+        private void OnDriveNotification( DriveInfo drive ) {
+            if(( drive.Name.Equals( mSourceDrive.Name )) &&
+               ( drive.IsReady )) {
+
+            }
+        }
+
+        public void Dispose() {
+            if(!String.IsNullOrWhiteSpace( mDriveNotificationKey )) {
+                mDriveManager?.RemoveDriveNotification( mDriveNotificationKey );
+
+                mDriveNotificationKey = String.Empty;
+            }
+
+            mDriveManager?.Dispose();
         }
     }
 }

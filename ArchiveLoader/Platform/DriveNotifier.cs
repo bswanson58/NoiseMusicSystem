@@ -13,6 +13,7 @@ namespace ArchiveLoader.Platform {
 
     public class DriveNotifier : IDriveNotifier {
         private readonly Dictionary<string, DriveInfo> mDrives;
+        private readonly Dictionary<string, bool>      mDriveState;
         private Timer                   mDriveTimer;
         private bool                    mHaveDisk;
 
@@ -29,6 +30,7 @@ namespace ArchiveLoader.Platform {
 
         public DriveNotifier() {
             mDrives = new Dictionary<string, DriveInfo>();
+            mDriveState = new Dictionary<string, bool>();
         }
 
         private void OnOpticalDiskArrived( OpticalDiskArrivedEventArgs e ) {
@@ -42,6 +44,7 @@ namespace ArchiveLoader.Platform {
 
             foreach( var drive in DriveInfo.GetDrives().Where( driveInfo => driveInfo.DriveType.Equals( DriveType.CDRom ))) {
                 mDrives.Add( drive.Name, drive );
+                mDriveState.Add( drive.Name, drive.IsReady );
             }
 
             mDriveTimer = new Timer { Interval = Interval * 1000 };
@@ -63,9 +66,9 @@ namespace ArchiveLoader.Platform {
                     foreach( var drive in from drive in DriveInfo.GetDrives()
                                           where drive.DriveType.Equals( DriveType.CDRom )
                                           where mDrives.ContainsKey( drive.Name )
-                                          where !mDrives[drive.Name].IsReady.Equals( drive.IsReady )
+                                          where !mDriveState[drive.Name].Equals( drive.IsReady )
                                           select drive ) {
-                        mDrives[drive.Name] = drive;
+                        mDriveState[drive.Name] = drive.IsReady;
 
                         OnOpticalDiskArrived( new OpticalDiskArrivedEventArgs { Drive = drive });
                     }
