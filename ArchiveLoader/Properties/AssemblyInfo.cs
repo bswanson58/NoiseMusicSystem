@@ -6,7 +6,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle( "ArchiveLoader" )]
-[assembly: AssemblyDescription( "" )]
+[assembly: AssemblyDescription( "Archive Loader - the utility to load and process audio files." )]
 [assembly: AssemblyProduct( "Noise Music System" )]
 
 // Setting ComVisible to false makes the types in this assembly not visible
