@@ -2,10 +2,12 @@
 
 namespace ArchiveLoader.Dto {
     class ArchiveLoaderPreferences {
-        public  string      TargetDirectory { get; set; }
+        public string      SourceDrive { get; set; }
+        public string      TargetDirectory { get; set; }
 
         public ArchiveLoaderPreferences() {
-            TargetDirectory = String.Empty;;
+            SourceDrive = String.Empty;
+            TargetDirectory = String.Empty;
         }
     }
 }

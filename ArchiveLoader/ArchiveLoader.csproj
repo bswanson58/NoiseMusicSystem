@@ -165,8 +165,12 @@
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="Dto\ArchiveLoaderPreferences.cs" />
     <Compile Include="Dto\Events.cs" />
+    <Compile Include="Interfaces\IDriveManager.cs" />
+    <Compile Include="Interfaces\IDriveNotifier.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
+    <Compile Include="Models\DriveManager.cs" />
+    <Compile Include="Platform\DriveNotifier.cs" />
     <Compile Include="Platform\FolderBrowserDialogEx.cs">
       <SubType>Component</SubType>
     </Compile>

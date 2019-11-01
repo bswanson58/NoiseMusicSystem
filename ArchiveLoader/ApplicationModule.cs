@@ -1,5 +1,6 @@
 ﻿using ArchiveLoader.Interfaces;
 using ArchiveLoader.Logging;
+using ArchiveLoader.Models;
 using ArchiveLoader.Platform;
 using Caliburn.Micro;
 using Prism.Ioc;
@@ -16,6 +17,9 @@ namespace ArchiveLoader {
             containerRegistry.RegisterSingleton<IPlatformLog, SeriLogAdapter>();
             containerRegistry.RegisterSingleton<IPreferences, PreferencesManager>();
             containerRegistry.RegisterSingleton<IPlatformDialogService, PlatformDialogService>();
+
+            containerRegistry.RegisterSingleton<IDriveManager, DriveManager>();
+            containerRegistry.RegisterSingleton<IDriveNotifier, DriveNotifier>();
 
             containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
         }

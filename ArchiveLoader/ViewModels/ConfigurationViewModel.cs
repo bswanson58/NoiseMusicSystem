@@ -1,18 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
 using ArchiveLoader.Platform;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace ArchiveLoader.ViewModels {
-    class ConfigurationViewModel : AutomaticCommandBase {
+    class ConfigurationViewModel : AutomaticCommandBase, IDisposable {
+        private readonly IDriveManager          mDriveManager;
         private readonly IPreferences           mPreferences;
         private readonly IPlatformDialogService mDialogService;
         private readonly IPlatformLog           mLog;
         private string                          mTargetDirectory;
+        private DriveInfo                       mSelectedDrive;
 
-        public ConfigurationViewModel( IPreferences preferences, IPlatformDialogService dialogService, IPlatformLog log ) {
+        public  IEnumerable<DriveInfo>          DriveList => mDriveManager.AvailableDrives;
+
+        public ConfigurationViewModel( IDriveManager driveManager, IPreferences preferences, IPlatformDialogService dialogService, IPlatformLog log ) {
+            mDriveManager = driveManager;
             mPreferences = preferences;
             mDialogService = dialogService;
             mLog = log;
@@ -20,8 +27,20 @@ namespace ArchiveLoader.ViewModels {
             var loaderPreferences = mPreferences.Load<ArchiveLoaderPreferences>();
 
             mTargetDirectory = loaderPreferences.TargetDirectory;
+            mSelectedDrive = DriveList.FirstOrDefault( drive => drive.Name.Equals( loaderPreferences.SourceDrive ));
         }
 
+        public DriveInfo SelectedDrive {
+            get => mSelectedDrive;
+            set {
+                mSelectedDrive = value;
+
+                var loaderPreferences = mPreferences.Load<ArchiveLoaderPreferences>();
+
+                loaderPreferences.SourceDrive = mSelectedDrive?.Name;
+                mPreferences.Save( loaderPreferences );
+            }
+        }
         public string TargetDirectory {
             get => mTargetDirectory;
             set {
@@ -58,6 +77,10 @@ namespace ArchiveLoader.ViewModels {
         [DependsUpon("TargetDirectory")]
         public bool CanExecute_OpenStagingFolder() {
             return !String.IsNullOrWhiteSpace( TargetDirectory ) && Directory.Exists( TargetDirectory );
+        }
+
+        public void Dispose() {
+            mDriveManager?.Dispose();
         }
     }
 }
