@@ -2,6 +2,8 @@
 using ArchiveLoader.Logging;
 using ArchiveLoader.Models;
 using ArchiveLoader.Platform;
+using ArchiveLoader.ViewModels;
+using ArchiveLoader.Views;
 using Caliburn.Micro;
 using Prism.Ioc;
 using Prism.Modularity;
@@ -26,6 +28,8 @@ namespace ArchiveLoader {
             containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
 
             containerRegistry.RegisterSingleton<IProcessManager, ProcessManager>();
+
+            containerRegistry.RegisterDialog<FileHandlerDialogView, FileHandlerDialogModel>();
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {

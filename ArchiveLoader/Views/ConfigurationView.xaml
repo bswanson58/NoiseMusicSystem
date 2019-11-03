@@ -16,6 +16,7 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         
         <TextBlock Grid.Column="0" Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Archive Device:"/>
@@ -25,5 +26,7 @@
         <TextBox Grid.Column="3" Width="250" VerticalAlignment="Center" Text="{Binding TargetDirectory, UpdateSourceTrigger=PropertyChanged}"/>
         <Button Grid.Column="4" Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Height="16" VerticalAlignment="Center" Content="..." Command="{Binding BrowseTargetDirectory}"/>
         <Button Grid.Column="5" Style="{StaticResource PathButtonStyle}" Height="16" Content="{StaticResource Path_Folder}" Command="{Binding OpenTargetDirectory}"/>
+        
+        <Button Grid.Column="6" Margin="15,0,0,0" VerticalAlignment="Center" Style="{StaticResource GeneralButtonStyle}" Content="File Handlers..." Command="{Binding EditFileHandlers}"/>
     </Grid>
 </UserControl>

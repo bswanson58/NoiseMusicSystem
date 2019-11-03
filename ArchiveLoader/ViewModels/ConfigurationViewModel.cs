@@ -2,26 +2,36 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ArchiveLoader.Behaviours;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
 using ArchiveLoader.Platform;
+using ArchiveLoader.Views;
+using Prism.Services.Dialogs;
 using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace ArchiveLoader.ViewModels {
+    internal class FileHandlerEditRequest : InteractionRequestData<FileHandlerDialogModel> {
+        public FileHandlerEditRequest(FileHandlerDialogModel viewModel) : base(viewModel) { }
+    }
+
     class ConfigurationViewModel : AutomaticCommandBase, IDisposable {
         private readonly IDriveManager          mDriveManager;
         private readonly IPreferences           mPreferences;
-        private readonly IPlatformDialogService mDialogService;
+        private readonly IPlatformDialogService mPlatformDialogService;
+        private readonly IDialogService         mDialogService;
         private readonly IPlatformLog           mLog;
         private string                          mTargetDirectory;
         private DriveInfo                       mSelectedDrive;
 
         public  IEnumerable<DriveInfo>          DriveList => mDriveManager.AvailableDrives;
 
-        public ConfigurationViewModel( IDriveManager driveManager, IPreferences preferences, IPlatformDialogService dialogService, IPlatformLog log ) {
+        public ConfigurationViewModel( IDriveManager driveManager, IPreferences preferences, IPlatformDialogService platformDialogService, IPlatformLog log, IDialogService dialogService ) {
             mDriveManager = driveManager;
             mPreferences = preferences;
+            mPlatformDialogService = platformDialogService;
             mDialogService = dialogService;
+
             mLog = log;
 
             var loaderPreferences = mPreferences.Load<ArchiveLoaderPreferences>();
@@ -58,7 +68,7 @@ namespace ArchiveLoader.ViewModels {
         public void Execute_BrowseTargetDirectory() {
             var path = TargetDirectory;
 
-            if( mDialogService.SelectFolderDialog( "Select Target Directory", ref path ).GetValueOrDefault( false )) {
+            if( mPlatformDialogService.SelectFolderDialog( "Select Target Directory", ref path ).GetValueOrDefault( false )) {
                 TargetDirectory = path;
             }
         }
@@ -78,6 +88,12 @@ namespace ArchiveLoader.ViewModels {
         public bool CanExecute_OpenStagingFolder() {
             return !String.IsNullOrWhiteSpace( TargetDirectory ) && Directory.Exists( TargetDirectory );
         }
+
+        public void Execute_EditFileHandlers() {
+            mDialogService.ShowDialog( typeof( FileHandlerDialogView ).Name, new DialogParameters( "foo=boo" ), OnFileHandlerEditCompleted );
+        }
+
+        private void OnFileHandlerEditCompleted( IDialogResult result ) {}
 
         public void Dispose() {
             mDriveManager?.Dispose();

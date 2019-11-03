@@ -167,6 +167,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ApplicationModule.cs" />
+    <Compile Include="Behaviours\InteractionRequestData.cs" />
     <Compile Include="Dto\ArchiveLoaderPreferences.cs" />
     <Compile Include="Dto\DisplayedProcessItem.cs" />
     <Compile Include="Dto\Events.cs" />
@@ -206,11 +207,15 @@
     <Compile Include="Support\BindingErrorListener.cs" />
     <Compile Include="Support\WindowPlacement.cs" />
     <Compile Include="ViewModels\ConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\FileHandlerDialogModel.cs" />
     <Compile Include="ViewModels\ProcessViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
     <Compile Include="Views\ConfigurationView.xaml.cs">
       <DependentUpon>ConfigurationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FileHandlerDialogView.xaml.cs">
+      <DependentUpon>FileHandlerDialogView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ProcessView.xaml.cs">
       <DependentUpon>ProcessView.xaml</DependentUpon>
@@ -230,6 +235,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ConfigurationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FileHandlerDialogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
