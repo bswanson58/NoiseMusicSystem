@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace ArchiveLoader.Dto {
     public enum EventReason {
@@ -11,9 +12,13 @@ namespace ArchiveLoader.Dto {
         public  string      Name { get; }
         public  string      FileName { get; }
 
+        public  IList<ProcessHandler>   ProcessList { get; }
+
         public ProcessItem( string path ) {
             FileName = path;
             Name = Path.GetFileName( path );
+
+            ProcessList = new List<ProcessHandler>();
         }
     }
 

@@ -170,6 +170,8 @@
     <Compile Include="Dto\ArchiveLoaderPreferences.cs" />
     <Compile Include="Dto\DisplayedProcessItem.cs" />
     <Compile Include="Dto\Events.cs" />
+    <Compile Include="Dto\FileTypeHandler.cs" />
+    <Compile Include="Dto\ProcessHandler.cs" />
     <Compile Include="Dto\ProcessItem.cs" />
     <Compile Include="Interfaces\IDriveEjector.cs" />
     <Compile Include="Interfaces\IDriveManager.cs" />
