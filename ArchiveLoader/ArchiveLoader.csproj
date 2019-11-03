@@ -180,6 +180,7 @@
     <Compile Include="Interfaces\IProcessManager.cs" />
     <Compile Include="Models\DriveManager.cs" />
     <Compile Include="Models\ProcessManager.cs" />
+    <Compile Include="Platform\ProcessRunner\Check.cs" />
     <Compile Include="Platform\DriveEjector.cs" />
     <Compile Include="Platform\DriveNotifier.cs" />
     <Compile Include="Platform\FileCopier.cs" />
@@ -187,9 +188,13 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Platform\IPlatformDialogService.cs" />
+    <Compile Include="Platform\ProcessRunner\IProcessRunner.cs" />
     <Compile Include="Platform\JsonObjectWriter.cs" />
     <Compile Include="Platform\PlatformDialogService.cs" />
     <Compile Include="Platform\PreferencesManager.cs" />
+    <Compile Include="Platform\ProcessRunner\ProcessExitedEventHandler.cs" />
+    <Compile Include="Platform\ProcessRunner\ProcessOutputEventHandler.cs" />
+    <Compile Include="Platform\ProcessRunner\ProcessRunner.cs" />
     <Compile Include="Properties\ApplicationConstants.cs" />
     <Compile Include="Interfaces\IEnvironment.cs" />
     <Compile Include="Interfaces\IPlatformLog.cs" />
