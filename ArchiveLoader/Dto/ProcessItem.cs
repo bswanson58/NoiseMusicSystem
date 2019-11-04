@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace ArchiveLoader.Dto {
     public enum EventReason {
@@ -19,6 +20,15 @@ namespace ArchiveLoader.Dto {
             Name = Path.GetFileName( path );
 
             ProcessList = new List<ProcessHandler>();
+        }
+
+        public ProcessHandler FindRunnableProcess() {
+            var retValue = default( ProcessHandler );
+
+            if( ProcessList.All( i => i.ProcessState != ProcessState.Running ) ) {
+                retValue = ProcessList.FirstOrDefault( i => i.ProcessState == ProcessState.Pending );
+            }
+            return retValue;
         }
     }
 

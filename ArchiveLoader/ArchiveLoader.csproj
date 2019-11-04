@@ -181,8 +181,10 @@
     <Compile Include="Interfaces\IFileCopier.cs" />
     <Compile Include="Interfaces\IFileWriter.cs" />
     <Compile Include="Interfaces\IPreferences.cs" />
+    <Compile Include="Interfaces\IProcessBuilder.cs" />
     <Compile Include="Interfaces\IProcessManager.cs" />
     <Compile Include="Models\DriveManager.cs" />
+    <Compile Include="Models\ProcessBuilder.cs" />
     <Compile Include="Models\ProcessManager.cs" />
     <Compile Include="Platform\ProcessRunner\Check.cs" />
     <Compile Include="Platform\DriveEjector.cs" />

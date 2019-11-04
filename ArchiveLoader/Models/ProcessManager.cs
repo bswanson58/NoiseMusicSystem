@@ -12,6 +12,7 @@ namespace ArchiveLoader.Models {
         private readonly IDriveEjector              mDriveEjector;
         private readonly IDriveManager              mDriveManager;
         private readonly IFileCopier                mFileCopier;
+        private readonly IProcessBuilder            mProcessBuilder;
         private readonly IPreferences               mPreferences;
         private readonly IPlatformLog               mLog;
         private DriveInfo                           mSourceDrive;
@@ -23,7 +24,8 @@ namespace ArchiveLoader.Models {
         private readonly Subject<ProcessItemEvent>  mSubject;
         public  IObservable<ProcessItemEvent>       OnProcessingItemChanged => mSubject;
 
-        public ProcessManager( IFileCopier fileCopier, IDriveManager driveManager, IDriveEjector driveEjector, IPreferences preferences, IPlatformLog log ) {
+        public ProcessManager( IProcessBuilder processBuilder, IFileCopier fileCopier, IDriveManager driveManager, IDriveEjector driveEjector, IPreferences preferences, IPlatformLog log ) {
+            mProcessBuilder = processBuilder;
             mDriveManager = driveManager;
             mDriveEjector = driveEjector;
             mFileCopier = fileCopier;
@@ -73,10 +75,32 @@ namespace ArchiveLoader.Models {
                 if (status.Success) {
                     var item = new ProcessItem( status.FileName );
 
+                    mProcessBuilder.BuildProcessList( item );
                     mProcessList.Add( item );
+
                     mSubject.OnNext( new ProcessItemEvent( item, EventReason.Add ));
+
+                    PumpProcessHandling();
                 }
             }
+        }
+
+        private ProcessHandler FindRunnableItem() {
+            var retValue = default( ProcessHandler );
+
+            foreach( var item in mProcessList ) {
+                retValue = item.FindRunnableProcess();
+
+                if( retValue != null ) {
+                    break;
+                }
+            }
+
+            return retValue;
+        }
+
+        private void PumpProcessHandling() {
+
         }
 
         public void Dispose() {
