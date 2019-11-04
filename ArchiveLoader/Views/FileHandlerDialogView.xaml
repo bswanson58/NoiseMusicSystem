@@ -22,10 +22,15 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Margin="3" Style="{StaticResource ControlTitleStyle}" Text="File Handlers:"/>
-            <ListBox Grid.Row="1" Margin="3" BorderThickness="1"/>
+            <ListBox Grid.Row="1" Margin="3" BorderThickness="1" ItemsSource="{Binding Handlers}" SelectedItem="{Binding CurrentHandler}" DisplayMemberPath="HandlerName"/>
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <Button Margin="3" Style="{StaticResource GeneralButtonStyle}" Content="Add Handler" Command="{Binding AddHandler}"/>
+                <Button Margin="3" Style="{StaticResource GeneralButtonStyle}" Content="Delete Handler" Command="{Binding DeleteHandler}"/>
+            </StackPanel>
         </Grid>
 
         <Grid Grid.Row="0" Grid.Column="1" Margin="5,25,15,5">
@@ -46,13 +51,13 @@
             <TextBlock Grid.Column="1" Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Handler Properties:"/>
 
             <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="3" Style="{StaticResource ControlTitleStyle}" Text="Name:"/>
-            <TextBox Grid.Column="1" Grid.Row="1" Margin="0,3,15,3"/>
+            <TextBox Grid.Column="1" Grid.Row="1" Margin="0,3,15,3" Text="{Binding HandlerName, UpdateSourceTrigger=PropertyChanged}"/>
 
             <TextBlock Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="3" Style="{StaticResource ControlTitleStyle}" Text="Input Extension:"/>
-            <TextBox Grid.Column="1" Grid.Row="2" Margin="0,3,15,3"/>
+            <TextBox Grid.Column="1" Grid.Row="2" Margin="0,3,15,3" Text="{Binding InputExtension, UpdateSourceTrigger=PropertyChanged}"/>
 
             <TextBlock Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="3" Style="{StaticResource ControlTitleStyle}" Text="Output Extension:"/>
-            <TextBox Grid.Column="1" Grid.Row="3" Margin="0,3,15,3"/>
+            <TextBox Grid.Column="1" Grid.Row="3" Margin="0,3,15,3" Text="{Binding OutputExtension, UpdateSourceTrigger=PropertyChanged}"/>
 
             <TextBlock Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="3" Style="{StaticResource ControlTitleStyle}" Text="Command:"/>
             <Grid Grid.Column="1" Grid.Row="4">
@@ -61,12 +66,12 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Column="0" Margin="0,3,5,3"/>
-                <Button Grid.Column="1" Margin="0,0,15,3" Height="16" Content="..."/>
+                <TextBox Grid.Column="0" Margin="0,3,5,3" Text="{Binding ExePath, UpdateSourceTrigger=PropertyChanged}"/>
+                <Button Grid.Column="1" Margin="0,0,15,3" Height="16" Content="..." Command="{Binding BrowseExe}"/>
             </Grid>
 
             <TextBlock Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="3" Style="{StaticResource ControlTitleStyle}" Text="Parameters:"/>
-            <TextBox Grid.Column="1" Grid.Row="5" Margin="0,3,15,3"/>
+            <TextBox Grid.Column="1" Grid.Row="5" Margin="0,3,15,3" Text="{Binding CommandArguments, UpdateSourceTrigger=PropertyChanged}"/>
 
             <CheckBox Grid.Column="1" Grid.Row="6" Margin="3" Content="Delete Input File On Success"/>
         </Grid>
