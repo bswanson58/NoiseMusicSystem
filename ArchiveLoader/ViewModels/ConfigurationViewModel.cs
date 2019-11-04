@@ -90,7 +90,7 @@ namespace ArchiveLoader.ViewModels {
         }
 
         public void Execute_EditFileHandlers() {
-            mDialogService.ShowDialog( typeof( FileHandlerDialogView ).Name, new DialogParameters( "foo=boo" ), OnFileHandlerEditCompleted );
+            mDialogService.ShowDialog( typeof( FileHandlerDialogView ).Name, new DialogParameters(), OnFileHandlerEditCompleted );
         }
 
         private void OnFileHandlerEditCompleted( IDialogResult result ) {}
