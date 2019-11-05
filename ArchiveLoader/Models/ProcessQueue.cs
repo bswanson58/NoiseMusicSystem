@@ -62,7 +62,7 @@ namespace ArchiveLoader.Models {
         private readonly IPlatformLog               mLog;
         private readonly List<ProcessShell>         mProcessList;
         private readonly Subject<ProcessHandler>    mProcessCompletedSubject;
-        private int                                 mProcessLimit;
+        private readonly int                        mProcessLimit;
 
         public  IObservable<ProcessHandler>         OnProcessCompleted => mProcessCompletedSubject;
 
