@@ -17,6 +17,8 @@ namespace ArchiveLoader.Models {
         private readonly IPreferences               mPreferences;
         private readonly IPlatformLog               mLog;
         private DriveInfo                           mSourceDrive;
+        private string                              mSourceDirectory;
+        private bool                                mSourceIsDrive;
         private string                              mTargetDirectory;
         private string                              mDriveNotificationKey;
         private CancellationTokenSource             mFileCopyCancellation;
@@ -42,15 +44,28 @@ namespace ArchiveLoader.Models {
         public async void StartProcessing() {
             var preferences = mPreferences.Load<ArchiveLoaderPreferences>();
 
-            mSourceDrive = mDriveManager.AvailableDrives.FirstOrDefault( drive => drive.Name.Equals( preferences.SourceDrive ));
             mTargetDirectory = preferences.TargetDirectory;
 
-            if(( mSourceDrive != null ) &&
-               (!String.IsNullOrWhiteSpace( mTargetDirectory )) &&
-               ( Directory.Exists( mTargetDirectory ))) {
-                await mDriveEjector.OpenDrive( mSourceDrive.Name[0]);
+            if((!String.IsNullOrWhiteSpace( preferences.SourceDirectory )) &&
+               ( Directory.Exists( preferences.SourceDirectory ))) {
+                mSourceDirectory = preferences.SourceDirectory;
+                mSourceIsDrive = false;
 
-                InitializeProcessing();
+                OnSourceAvailable();
+            }
+            else {
+                mSourceDrive = mDriveManager.AvailableDrives.FirstOrDefault( drive => drive.Name.Equals( preferences.SourceDrive ));
+                mSourceIsDrive = true;
+
+                if(( mSourceDrive != null ) &&
+                   (!String.IsNullOrWhiteSpace( mTargetDirectory )) &&
+                   ( Directory.Exists( mTargetDirectory ))) {
+                    mSourceDirectory = mSourceDrive.Name;
+
+                    await mDriveEjector.OpenDrive( mSourceDrive.Name[0]);
+
+                    InitializeProcessing();
+                }
             }
         }
 
@@ -61,18 +76,24 @@ namespace ArchiveLoader.Models {
         private void OnDriveNotification( DriveInfo drive ) {
             if(( drive.Name.Equals( mSourceDrive.Name )) &&
                ( drive.IsReady )) {
-                var progress = new Progress<FileCopyStatus>();
-
-                progress.ProgressChanged += OnFileCopied;
-
-                mFileCopyCancellation = new CancellationTokenSource();
-                mFileCopier.CopyFiles( drive.RootDirectory.FullName, mTargetDirectory, progress, mFileCopyCancellation );
+                OnSourceAvailable();
             }
+        }
+
+        private void OnSourceAvailable() {
+            var progress = new Progress<FileCopyStatus>();
+
+            progress.ProgressChanged += OnFileCopied;
+
+            mFileCopyCancellation = new CancellationTokenSource();
+            mFileCopier.CopyFiles( mSourceDirectory, mTargetDirectory, progress, mFileCopyCancellation );
         }
 
         private async void OnFileCopied( object sender, FileCopyStatus status ) {
             if( status.CopyCompleted ) {
-                await mDriveEjector.OpenDrive( mSourceDrive.Name[0]);
+                if( mSourceIsDrive ) {
+                    await mDriveEjector.OpenDrive( mSourceDrive.Name[0]);
+                }
             }
             else {
                 if (status.Success) {
@@ -103,7 +124,13 @@ namespace ArchiveLoader.Models {
         }
 
         private void PumpProcessHandling() {
+            if( mProcessQueue.CanAddProcessItem()) {
+                var handler = FindRunnableItem();
 
+                if( handler != null ) {
+                    mProcessQueue.AddProcessItem( handler );
+                }
+            }
         }
 
         public void Dispose() {
