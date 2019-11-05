@@ -76,7 +76,7 @@ namespace ArchiveLoader.Models {
         }
 
         private int DetermineProcessLimit() {
-            return 1;
+            return 3;
         }
 
         public bool CanAddProcessItem() {

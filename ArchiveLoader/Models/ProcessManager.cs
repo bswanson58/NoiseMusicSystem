@@ -104,7 +104,10 @@ namespace ArchiveLoader.Models {
                     var item = new ProcessItem( status.FileName );
 
                     mProcessBuilder.BuildProcessList( item );
-                    mProcessList.Add( item );
+
+                    lock( mProcessList ) {
+                        mProcessList.Add( item );
+                    }
 
                     mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Add ));
 
@@ -113,6 +116,9 @@ namespace ArchiveLoader.Models {
                     }
 
                     PumpProcessHandling();
+                }
+                else {
+                    mLog.LogMessage( $"File was not copied successfully: '{status.FileName}' - Error: '{status.ErrorMessage}'" );
                 }
             }
         }
