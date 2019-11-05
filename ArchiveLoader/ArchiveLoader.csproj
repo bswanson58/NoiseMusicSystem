@@ -183,9 +183,11 @@
     <Compile Include="Interfaces\IPreferences.cs" />
     <Compile Include="Interfaces\IProcessBuilder.cs" />
     <Compile Include="Interfaces\IProcessManager.cs" />
+    <Compile Include="Interfaces\IProcessQueue.cs" />
     <Compile Include="Models\DriveManager.cs" />
     <Compile Include="Models\ProcessBuilder.cs" />
     <Compile Include="Models\ProcessManager.cs" />
+    <Compile Include="Models\ProcessQueue.cs" />
     <Compile Include="Platform\ProcessRunner\Check.cs" />
     <Compile Include="Platform\DriveEjector.cs" />
     <Compile Include="Platform\DriveNotifier.cs" />

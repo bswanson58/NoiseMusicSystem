@@ -13,6 +13,7 @@ namespace ArchiveLoader.Models {
         private readonly IDriveManager              mDriveManager;
         private readonly IFileCopier                mFileCopier;
         private readonly IProcessBuilder            mProcessBuilder;
+        private readonly IProcessQueue              mProcessQueue;
         private readonly IPreferences               mPreferences;
         private readonly IPlatformLog               mLog;
         private DriveInfo                           mSourceDrive;
@@ -24,7 +25,9 @@ namespace ArchiveLoader.Models {
         private readonly Subject<ProcessItemEvent>  mSubject;
         public  IObservable<ProcessItemEvent>       OnProcessingItemChanged => mSubject;
 
-        public ProcessManager( IProcessBuilder processBuilder, IFileCopier fileCopier, IDriveManager driveManager, IDriveEjector driveEjector, IPreferences preferences, IPlatformLog log ) {
+        public ProcessManager( IProcessQueue processQueue, IProcessBuilder processBuilder, IFileCopier fileCopier,
+                               IDriveManager driveManager, IDriveEjector driveEjector, IPreferences preferences, IPlatformLog log ) {
+            mProcessQueue = processQueue;
             mProcessBuilder = processBuilder;
             mDriveManager = driveManager;
             mDriveEjector = driveEjector;
