@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reactive.Subjects;
-using System.Windows.Controls.Primitives;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
 using CSharpTest.Net.Processes;
@@ -77,7 +76,7 @@ namespace ArchiveLoader.Models {
         }
 
         private int DetermineProcessLimit() {
-            return 3;
+            return 1;
         }
 
         public bool CanAddProcessItem() {

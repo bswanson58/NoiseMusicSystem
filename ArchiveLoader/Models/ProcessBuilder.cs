@@ -24,6 +24,7 @@ namespace ArchiveLoader.Models {
 
         public void BuildProcessList( ProcessItem item ) {
             var fileExtension = GetExtension( Path.GetExtension( item.FileName ));
+            var inputFileName = item.FileName;
 
             LoadFileHandlers();
 
@@ -31,9 +32,10 @@ namespace ArchiveLoader.Models {
                 var handler = mFileTypeHandlers.FirstOrDefault( h => h.InputExtension.Equals( GetExtension( fileExtension )));
 
                 if( handler != null ) {
-                    var outputFile = Path.ChangeExtension( item.FileName, handler.OutputExtension );
+                    var outputFileName = Path.ChangeExtension( inputFileName, handler.OutputExtension );
 
-                    item.ProcessList.Add( new ProcessHandler( handler, item.FileName, outputFile ));
+                    item.ProcessList.Add( new ProcessHandler( item.Key, handler, inputFileName, outputFileName ));
+                    inputFileName = outputFileName;
 
                     fileExtension = GetExtension( handler.OutputExtension );
                 }

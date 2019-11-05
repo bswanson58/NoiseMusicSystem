@@ -10,6 +10,7 @@ namespace ArchiveLoader.Dto {
 
     [DebuggerDisplay("Handler: {" + nameof( DebugString ) + "}" )]
     public class ProcessHandler {
+        public  string              ParentKey {  get; }
         public  FileTypeHandler     Handler { get; }
         public  string              InputFile { get; }
         public  string              OutputFile {  get; }
@@ -19,11 +20,10 @@ namespace ArchiveLoader.Dto {
         public  string              ProcessErrOut { get; private set; }
         public  int                 ExitCode {  get; private set; }
 
-        public  bool                IsRunnable => ProcessState == ProcessState.Pending;
-
         public  string              DebugString => $"{Handler.HandlerName} - {ProcessState}";
 
-        public ProcessHandler( FileTypeHandler handler, string inputFile, string outputFile ) {
+        public ProcessHandler( string parentKey, FileTypeHandler handler, string inputFile, string outputFile ) {
+            ParentKey = parentKey;
             Handler = handler;
             InputFile = inputFile;
             OutputFile = outputFile;

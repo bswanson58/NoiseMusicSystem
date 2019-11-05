@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
 using Caliburn.Micro;
@@ -24,6 +25,18 @@ namespace ArchiveLoader.ViewModels {
                 case EventReason.Add:
                     ProcessItems.Add( new DisplayedProcessItem( itemEvent.Item ));
                     break;
+
+                case EventReason.Completed:
+                    DeleteItem( itemEvent.Item );
+                    break;
+            }
+        }
+
+        private void DeleteItem( ProcessItem item ) {
+            var displayItem = ProcessItems.FirstOrDefault( i => i.Key.Equals( item.Key ));
+
+            if( displayItem != null ) {
+                ProcessItems.Remove( displayItem );
             }
         }
 

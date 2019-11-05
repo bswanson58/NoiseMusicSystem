@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,12 +13,14 @@ namespace ArchiveLoader.Dto {
 
     [DebuggerDisplay("ProcessItem: {" + nameof( Name ) + "}" )]
     public class ProcessItem {
+        public  string      Key {  get; }
         public  string      Name { get; }
         public  string      FileName { get; }
 
         public  IList<ProcessHandler>   ProcessList { get; }
 
         public ProcessItem( string path ) {
+            Key = Guid.NewGuid().ToString( "N" );
             FileName = path;
             Name = Path.GetFileName( path );
 
@@ -30,7 +33,12 @@ namespace ArchiveLoader.Dto {
             if( ProcessList.All( i => i.ProcessState != ProcessState.Running ) ) {
                 retValue = ProcessList.FirstOrDefault( i => i.ProcessState == ProcessState.Pending );
             }
+
             return retValue;
+        }
+
+        public bool HasCompletedProcessing() {
+            return !ProcessList.Any() || ProcessList.All( h => h.ProcessState == ProcessState.Completed );
         }
     }
 

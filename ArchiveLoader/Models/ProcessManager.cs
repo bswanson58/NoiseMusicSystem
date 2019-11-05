@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
+using System.Threading.Tasks;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
 
@@ -25,8 +26,8 @@ namespace ArchiveLoader.Models {
         private IDisposable                         mProcessQueueSubscription;
         private readonly List<ProcessItem>          mProcessList;
 
-        private readonly Subject<ProcessItemEvent>  mSubject;
-        public  IObservable<ProcessItemEvent>       OnProcessingItemChanged => mSubject;
+        private readonly Subject<ProcessItemEvent>  mProcessingEventSubject;
+        public  IObservable<ProcessItemEvent>       OnProcessingItemChanged => mProcessingEventSubject;
 
         public ProcessManager( IProcessQueue processQueue, IProcessBuilder processBuilder, IFileCopier fileCopier,
                                IDriveManager driveManager, IDriveEjector driveEjector, IPreferences preferences, IPlatformLog log ) {
@@ -39,9 +40,9 @@ namespace ArchiveLoader.Models {
             mLog = log;
 
             mProcessList = new List<ProcessItem>();
-            mSubject = new Subject<ProcessItemEvent>();
+            mProcessingEventSubject = new Subject<ProcessItemEvent>();
 
-            mProcessQueue.OnProcessCompleted.Subscribe( OnProcessQueueItemCompleted );
+            mProcessQueueSubscription = mProcessQueue.OnProcessCompleted.Subscribe( OnProcessQueueItemCompleted );
         }
 
         public async void StartProcessing() {
@@ -99,13 +100,17 @@ namespace ArchiveLoader.Models {
                 }
             }
             else {
-                if (status.Success) {
+                if( status.Success ) {
                     var item = new ProcessItem( status.FileName );
 
                     mProcessBuilder.BuildProcessList( item );
                     mProcessList.Add( item );
 
-                    mSubject.OnNext( new ProcessItemEvent( item, EventReason.Add ));
+                    mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Add ));
+
+                    if( item.HasCompletedProcessing()) {
+                        DeleteProcessingItem( item );
+                    }
 
                     PumpProcessHandling();
                 }
@@ -137,7 +142,27 @@ namespace ArchiveLoader.Models {
         }
 
         private void OnProcessQueueItemCompleted( ProcessHandler handler ) {
+            var processItem = mProcessList.FirstOrDefault( i => i.Key.Equals( handler.ParentKey ));
 
+            if( processItem != null ) {
+                if( processItem.HasCompletedProcessing()) {
+                    DeleteProcessingItem( processItem );
+                }
+            }
+
+            PumpProcessHandling();
+        }
+
+        private void DeleteProcessingItem( ProcessItem item ) {
+            Task.Run( async () => {
+                await Task.Delay( 500 );
+
+                lock( mProcessList ) {
+                    mProcessList.Remove( item );
+                }
+
+                mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Completed ));
+            });
         }
 
         public void Dispose() {
@@ -146,6 +171,9 @@ namespace ArchiveLoader.Models {
 
                 mDriveNotificationKey = String.Empty;
             }
+
+            mProcessQueueSubscription?.Dispose();
+            mProcessQueueSubscription = null;
 
             mDriveManager?.Dispose();
         }
