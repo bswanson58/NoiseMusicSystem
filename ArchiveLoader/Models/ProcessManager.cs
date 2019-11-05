@@ -22,6 +22,7 @@ namespace ArchiveLoader.Models {
         private string                              mTargetDirectory;
         private string                              mDriveNotificationKey;
         private CancellationTokenSource             mFileCopyCancellation;
+        private IDisposable                         mProcessQueueSubscription;
         private readonly List<ProcessItem>          mProcessList;
 
         private readonly Subject<ProcessItemEvent>  mSubject;
@@ -39,6 +40,8 @@ namespace ArchiveLoader.Models {
 
             mProcessList = new List<ProcessItem>();
             mSubject = new Subject<ProcessItemEvent>();
+
+            mProcessQueue.OnProcessCompleted.Subscribe( OnProcessQueueItemCompleted );
         }
 
         public async void StartProcessing() {
@@ -131,6 +134,10 @@ namespace ArchiveLoader.Models {
                     mProcessQueue.AddProcessItem( handler );
                 }
             }
+        }
+
+        private void OnProcessQueueItemCompleted( ProcessHandler handler ) {
+
         }
 
         public void Dispose() {

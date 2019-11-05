@@ -31,7 +31,9 @@ namespace ArchiveLoader.Models {
                 var handler = mFileTypeHandlers.FirstOrDefault( h => h.InputExtension.Equals( GetExtension( fileExtension )));
 
                 if( handler != null ) {
-                    item.ProcessList.Add( new ProcessHandler( handler ));
+                    var outputFile = Path.ChangeExtension( item.FileName, handler.OutputExtension );
+
+                    item.ProcessList.Add( new ProcessHandler( handler, item.FileName, outputFile ));
 
                     fileExtension = GetExtension( handler.OutputExtension );
                 }

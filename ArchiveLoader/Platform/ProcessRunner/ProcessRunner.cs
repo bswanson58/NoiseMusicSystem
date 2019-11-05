@@ -181,7 +181,11 @@ namespace CSharpTest.Net.Processes {
         public void Start(params string[] moreArguments) {
             List<string> args = new List<string>(_arguments);
             args.AddRange(moreArguments ?? EmptyArgList);
-            InternalStart(args.ToArray());
+            InternalStart(EscapeArguments(args.ToArray()));
+        }
+
+        public void StartWithFormattedArgs( string arguments ) {
+            InternalStart( arguments );
         }
 
         /// <summary> 
@@ -194,12 +198,12 @@ namespace CSharpTest.Net.Processes {
             List<string> args = new List<string>();
             foreach (string arg in _arguments)
                 args.Add(String.Format(arg, formatArgs));
-            InternalStart(args.ToArray());
+            InternalStart(EscapeArguments(args.ToArray()));
         }
         #endregion Run, Start, & Overloads
 
         private int InternalRun(TextReader input, string[] arguments) {
-            InternalStart(arguments);
+            InternalStart(EscapeArguments(arguments));
             if (input != null) {
                 char[] buffer = new char[1024];
                 int count;
@@ -210,7 +214,7 @@ namespace CSharpTest.Net.Processes {
             return ExitCode;
         }
 
-        private void InternalStart(params string[] arguments) {
+        private void InternalStart(string arguments) {
             if (IsRunning)
                 throw new InvalidOperationException("The running process must first exit.");
 
@@ -223,8 +227,8 @@ namespace CSharpTest.Net.Processes {
             _stdIn = null;
             _running = new Process();
 
-            string stringArgs = EscapeArguments(arguments);
-            ProcessStartInfo psi = new ProcessStartInfo(_executable, stringArgs);
+//            string stringArgs = EscapeArguments(arguments);
+            ProcessStartInfo psi = new ProcessStartInfo(_executable, arguments);
             psi.WorkingDirectory = this.WorkingDirectory;
 
             psi.RedirectStandardInput = true;

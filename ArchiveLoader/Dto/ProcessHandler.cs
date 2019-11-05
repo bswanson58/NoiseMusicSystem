@@ -11,6 +11,9 @@ namespace ArchiveLoader.Dto {
     [DebuggerDisplay("Handler: {" + nameof( DebugString ) + "}" )]
     public class ProcessHandler {
         public  FileTypeHandler     Handler { get; }
+        public  string              InputFile { get; }
+        public  string              OutputFile {  get; }
+        public  string              InstanceArguments {  get; }
         public  ProcessState        ProcessState { get; private set; }
         public  string              ProcessStdOut { get; private set; }
         public  string              ProcessErrOut { get; private set; }
@@ -20,8 +23,12 @@ namespace ArchiveLoader.Dto {
 
         public  string              DebugString => $"{Handler.HandlerName} - {ProcessState}";
 
-        public ProcessHandler( FileTypeHandler handler ) {
+        public ProcessHandler( FileTypeHandler handler, string inputFile, string outputFile ) {
             Handler = handler;
+            InputFile = inputFile;
+            OutputFile = outputFile;
+
+            InstanceArguments = handler.CommandArguments.Replace( "{input}", InputFile ).Replace( "{output}", OutputFile );
 
             ProcessState = ProcessState.Pending;
             ProcessStdOut = String.Empty;
