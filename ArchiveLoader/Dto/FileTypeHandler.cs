@@ -1,4 +1,7 @@
-﻿namespace ArchiveLoader.Dto {
+﻿using System.Diagnostics;
+
+namespace ArchiveLoader.Dto {
+    [DebuggerDisplay("Handler: {" + nameof( HandlerName ) + "}" )]
     public class FileTypeHandler {
         public  string  HandlerName { get; set; }
         public  string  InputExtension { get; set; }

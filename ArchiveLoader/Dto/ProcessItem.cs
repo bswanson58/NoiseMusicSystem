@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -9,6 +10,7 @@ namespace ArchiveLoader.Dto {
         Update
     }
 
+    [DebuggerDisplay("ProcessItem: {" + nameof( Name ) + "}" )]
     public class ProcessItem {
         public  string      Name { get; }
         public  string      FileName { get; }

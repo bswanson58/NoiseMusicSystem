@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace ArchiveLoader.Dto {
     public enum ProcessState {
@@ -7,6 +8,7 @@ namespace ArchiveLoader.Dto {
         Completed
     }
 
+    [DebuggerDisplay("Handler: {" + nameof( DebugString ) + "}" )]
     public class ProcessHandler {
         public  FileTypeHandler     Handler { get; }
         public  ProcessState        ProcessState { get; private set; }
@@ -15,6 +17,8 @@ namespace ArchiveLoader.Dto {
         public  int                 ExitCode {  get; private set; }
 
         public  bool                IsRunnable => ProcessState == ProcessState.Pending;
+
+        public  string              DebugString => $"{Handler.HandlerName} - {ProcessState}";
 
         public ProcessHandler( FileTypeHandler handler ) {
             Handler = handler;
