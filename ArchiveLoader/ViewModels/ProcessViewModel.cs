@@ -48,11 +48,7 @@ namespace ArchiveLoader.ViewModels {
             var displayItem = GetDisplayedItem( item );
 
             if( displayItem != null ) {
-                ProcessHandler  handler;
-
-                lock( item.ProcessList ) {
-                    handler = item.ProcessList.FirstOrDefault( i => i.ProcessState == ProcessState.Pending || i.ProcessState == ProcessState.Running );
-                }
+                var handler = item.ProcessList.FirstOrDefault( i => i.ProcessState == ProcessState.Pending || i.ProcessState == ProcessState.Running );
 
                 displayItem.CurrentHandler = handler != null ? handler.Handler.HandlerName : "Completed";
                 displayItem.CurrentState = handler?.ProcessState ?? ProcessState.Completed;
