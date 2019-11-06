@@ -101,20 +101,15 @@ namespace ArchiveLoader.Models {
             }
             else {
                 if( status.Success ) {
-                    var item = new ProcessItem( status.FileName );
+                    switch( status.Status ) {
+                        case FileCopyState.Discovered:
+                            NewFileDiscovered( status.FileName );
+                            break;
 
-                    mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Add ));
-                    
-                    mProcessBuilder.BuildProcessList( item );
-
-                    mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Update ));
-
-                    lock( mProcessList ) {
-                        mProcessList.Add( item );
-                    }
-
-                    if( item.HasCompletedProcessing()) {
-                        DeleteProcessingItem( item );
+                        case FileCopyState.Copying:
+                        case FileCopyState.Completed:
+                            UpdateCopyStatus( status.FileName, status.Status );
+                            break;
                     }
 
                     PumpProcessHandling();
@@ -124,6 +119,49 @@ namespace ArchiveLoader.Models {
                 }
             }
         }
+
+        private void NewFileDiscovered( string fileName ) {
+            var item = new ProcessItem( fileName );
+
+            mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Add ));
+                    
+            mProcessBuilder.BuildProcessList( item );
+
+            mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Update ));
+
+            lock( mProcessList ) {
+                mProcessList.Add( item );
+            }
+        }
+
+        private void UpdateCopyStatus( string fileName, FileCopyState state ) {
+            ProcessItem processItem;
+
+            lock( mProcessList ) {
+                processItem = mProcessList.FirstOrDefault( i => i.FileName.Equals( fileName ));
+            }
+
+            var fileCopyHandler = processItem?.ProcessList.FirstOrDefault();
+
+            if( fileCopyHandler != null ) {
+                switch( state ) {
+                    case FileCopyState.Copying:
+                        fileCopyHandler.SetProcessRunning();
+                        break;
+
+                    case FileCopyState.Completed:
+                        fileCopyHandler.SetProcessOutput( String.Empty, String.Empty, 0 );
+                        break;
+                }
+
+                mProcessingEventSubject.OnNext( new ProcessItemEvent( processItem, EventReason.Update ));
+
+                if( processItem.HasCompletedProcessing()) {
+                    DeleteProcessingItem( processItem );
+                }
+            }
+        }
+
 
         private ProcessHandler FindRunnableItem() {
             var retValue = default( ProcessHandler );

@@ -28,6 +28,8 @@ namespace ArchiveLoader.Models {
 
             LoadFileHandlers();
 
+            item.ProcessList.Add( new ProcessHandler( item.Key, new FileTypeHandler { HandlerName = "File Copy" }, inputFileName, inputFileName ));
+
             do {
                 var handler = mFileTypeHandlers.FirstOrDefault( h => h.InputExtension.Equals( GetExtension( fileExtension )));
 

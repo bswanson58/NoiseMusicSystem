@@ -1,5 +1,4 @@
-﻿using System;
-using ReusableBits.Mvvm.ViewModelSupport;
+﻿using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace ArchiveLoader.Dto {
     class DisplayedProcessItem : PropertyChangeBase {

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace ArchiveLoader.Dto {
     [DebuggerDisplay("Handler: {" + nameof( HandlerName ) + "}" )]
@@ -9,5 +10,14 @@ namespace ArchiveLoader.Dto {
         public  string  ExePath { get; set; }
         public  string  CommandArguments { get; set; }
         public  bool    DeleteInputFileOnSuccess { get; set; }
+
+        public FileTypeHandler() {
+            HandlerName = String.Empty;
+            InputExtension = String.Empty;
+            OutputExtension = String.Empty;
+            ExePath = String.Empty;
+            CommandArguments = String.Empty;
+            DeleteInputFileOnSuccess = false;
+        }
     }
 }

@@ -38,18 +38,23 @@ namespace ArchiveLoader.Platform {
                 try {
                     var destinationPath = Path.Combine(target.FullName, file.Name);
 
+                    onFileCopied?.Report( new FileCopyStatus( destinationPath, FileCopyState.Discovered ));
+
                     if( File.Exists( destinationPath )) {
                         File.SetAttributes( destinationPath, FileAttributes.Normal );
                         File.Delete( destinationPath );
                     }
+
+                    onFileCopied?.Report( new FileCopyStatus( destinationPath, FileCopyState.Copying ));
+
                     file.CopyTo( destinationPath );
 
-                    onFileCopied?.Report( new FileCopyStatus( destinationPath ));
+                    onFileCopied?.Report( new FileCopyStatus( destinationPath, FileCopyState.Completed ));
                 }
                 catch( Exception ex ) {
                     mLog.LogException( $"Copying file '{file.Name}' to '{target.FullName}'.", ex );
 
-                    onFileCopied?.Report( new FileCopyStatus( ex ));
+                    onFileCopied?.Report( new FileCopyStatus( file.Name, ex ));
 
                     retValue = false;
                     break;

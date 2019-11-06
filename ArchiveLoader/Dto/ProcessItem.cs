@@ -30,8 +30,8 @@ namespace ArchiveLoader.Dto {
         public ProcessHandler FindRunnableProcess() {
             var retValue = default( ProcessHandler );
 
-            if( ProcessList.All( i => i.ProcessState != ProcessState.Running ) ) {
-                retValue = ProcessList.FirstOrDefault( i => i.ProcessState == ProcessState.Pending );
+            if( ProcessList.All( i => i.ProcessState != ProcessState.Running )) {
+                retValue = ProcessList.FirstOrDefault( i => i.ProcessState == ProcessState.Pending && !String.IsNullOrWhiteSpace( i.Handler.ExePath ));
             }
 
             return retValue;
