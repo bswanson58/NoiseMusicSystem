@@ -21,19 +21,21 @@ namespace ArchiveLoader.ViewModels {
         }
 
         private void OnProcessingItemEvent( ProcessItemEvent itemEvent ) {
-            switch( itemEvent.Reason ) {
-                case EventReason.Add:
-                    AddItem( itemEvent.Item );
-                    break;
+            Execute.OnUIThread( () => {
+                switch( itemEvent.Reason ) {
+                    case EventReason.Add:
+                        AddItem( itemEvent.Item );
+                        break;
 
-                case EventReason.Update:
-                    UpdateItemStatus( itemEvent.Item );
-                    break;
+                    case EventReason.Update:
+                        UpdateItemStatus( itemEvent.Item );
+                        break;
 
-                case EventReason.Completed:
-                    DeleteItem( itemEvent.Item );
-                    break;
-            }
+                    case EventReason.Completed:
+                        DeleteItem( itemEvent.Item );
+                        break;
+                }
+            });
         }
 
         private void AddItem( ProcessItem item ) {
