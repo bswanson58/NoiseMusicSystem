@@ -36,6 +36,7 @@ namespace ArchiveLoader.ViewModels {
                 RaisePropertyChanged( () => OutputExtension );
                 RaisePropertyChanged( () => ExePath );
                 RaisePropertyChanged( () => CommandArguments );
+                RaisePropertyChanged( () => DeleteInputOnSuccess );
 
                 RaiseCanExecuteChangedEvent( "CanExecute_DeleteHandler" );
                 RaiseCanExecuteChangedEvent( "CanExecute_BrowseExe" );
@@ -85,6 +86,15 @@ namespace ArchiveLoader.ViewModels {
             set {
                 if( mCurrentHandler != null ) {
                     mCurrentHandler.CommandArguments = value;
+                }
+            }
+        }
+
+        public bool DeleteInputOnSuccess {
+            get => mCurrentHandler?.DeleteInputFileOnSuccess == true;
+            set {
+                if( mCurrentHandler != null ) {
+                    mCurrentHandler.DeleteInputFileOnSuccess = value;
                 }
             }
         }
