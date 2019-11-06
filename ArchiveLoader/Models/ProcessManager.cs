@@ -103,13 +103,15 @@ namespace ArchiveLoader.Models {
                 if( status.Success ) {
                     var item = new ProcessItem( status.FileName );
 
+                    mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Add ));
+                    
                     mProcessBuilder.BuildProcessList( item );
+
+                    mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Update ));
 
                     lock( mProcessList ) {
                         mProcessList.Add( item );
                     }
-
-                    mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Add ));
 
                     if( item.HasCompletedProcessing()) {
                         DeleteProcessingItem( item );
@@ -126,11 +128,13 @@ namespace ArchiveLoader.Models {
         private ProcessHandler FindRunnableItem() {
             var retValue = default( ProcessHandler );
 
-            foreach( var item in mProcessList ) {
-                retValue = item.FindRunnableProcess();
+            lock( mProcessList ) {
+                foreach( var item in mProcessList ) {
+                    retValue = item.FindRunnableProcess();
 
-                if( retValue != null ) {
-                    break;
+                    if( retValue != null ) {
+                        break;
+                    }
                 }
             }
 
@@ -143,14 +147,26 @@ namespace ArchiveLoader.Models {
 
                 if( handler != null ) {
                     mProcessQueue.AddProcessItem( handler );
+
+                    var item = FindProcessForHandler( handler );
+
+                    if( item != null ) {
+                        mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Update ));
+                    }
                 }
             }
         }
 
         private void OnProcessQueueItemCompleted( ProcessHandler handler ) {
-            var processItem = mProcessList.FirstOrDefault( i => i.Key.Equals( handler.ParentKey ));
+            ProcessItem processItem;
+            
+            lock( mProcessList ) {
+                processItem = mProcessList.FirstOrDefault( i => i.Key.Equals( handler.ParentKey ));
+            }
 
             if( processItem != null ) {
+                mProcessingEventSubject.OnNext( new ProcessItemEvent( processItem, EventReason.Update ));
+
                 if( processItem.HasCompletedProcessing()) {
                     DeleteProcessingItem( processItem );
                 }
@@ -161,7 +177,7 @@ namespace ArchiveLoader.Models {
 
         private void DeleteProcessingItem( ProcessItem item ) {
             Task.Run( async () => {
-                await Task.Delay( 500 );
+                await Task.Delay( 750 );
 
                 lock( mProcessList ) {
                     mProcessList.Remove( item );
@@ -169,6 +185,16 @@ namespace ArchiveLoader.Models {
 
                 mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Completed ));
             });
+        }
+
+        private ProcessItem FindProcessForHandler( ProcessHandler handler ) {
+            ProcessItem retValue;
+
+            lock( mProcessList ) {
+                retValue = mProcessList.FirstOrDefault( i => i.Key.Equals( handler.ParentKey ));
+            }
+
+            return retValue;
         }
 
         public void Dispose() {

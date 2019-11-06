@@ -36,6 +36,10 @@ namespace ArchiveLoader.Dto {
             ExitCode = 0;
         }
 
+        public void SetProcessRunning() {
+            ProcessState = ProcessState.Running;
+        }
+
         public void SetProcessOutput( string stdOutput, string errOutput, int exitCode ) {
             ProcessStdOut = stdOutput;
             ProcessErrOut = errOutput;

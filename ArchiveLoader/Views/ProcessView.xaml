@@ -17,9 +17,31 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Style="{StaticResource ListViewTextStyle}" Text="{Binding Name}"/>
+                    <TextBlock Grid.Column="2" x:Name="HandlerName" Margin="0,0,15,0" Style="{StaticResource ListViewTextStyle}" Text="{Binding CurrentHandler}"/>
+                </Grid>
+
                 <TextBlock Grid.Row="1" Margin="10,0,0,0" Text="{Binding FileName}"/>
             </Grid>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                    <Setter TargetName="HandlerName" Property="Foreground" Value="LawnGreen"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsPending}" Value="True">
+                    <Setter TargetName="HandlerName" Property="Foreground" Value="Yellow"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding HasCompleted}" Value="True">
+                    <Setter TargetName="HandlerName" Property="Foreground" Value="Green"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
 

@@ -30,6 +30,8 @@ namespace ArchiveLoader.Models {
 
         public void StartProcess() {
             ProcessRunner.StartWithFormattedArgs( ProcessHandler.InstanceArguments );
+
+            ProcessHandler.SetProcessRunning();
         }
 
         private void OnOutputReceived( object sender, ProcessOutputEventArgs args ) {
