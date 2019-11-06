@@ -7,9 +7,11 @@ using ArchiveLoader.Interfaces;
 namespace ArchiveLoader.Models {
     class ProcessBuilder : IProcessBuilder {
         private readonly    IPreferences            mPreferences;
+        private readonly    IExitHandlerFactory     mExitHandlerFactory;
         private readonly    List<FileTypeHandler>   mFileTypeHandlers;
 
-        public ProcessBuilder( IPreferences preferences ) {
+        public ProcessBuilder( IExitHandlerFactory exitHandlerFactory, IPreferences preferences ) {
+            mExitHandlerFactory = exitHandlerFactory;
             mPreferences = preferences;
 
             mFileTypeHandlers = new List<FileTypeHandler>();
@@ -28,7 +30,9 @@ namespace ArchiveLoader.Models {
 
             LoadFileHandlers();
 
-            item.ProcessList.Add( new ProcessHandler( item.Key, new FileTypeHandler { HandlerName = "File Copy" }, inputFileName, inputFileName ));
+            var copyHandler = new CopyFileHandler();
+
+            item.ProcessList.Add( new ProcessHandler( item.Key, copyHandler, inputFileName, inputFileName, mExitHandlerFactory.GetExitHandler( copyHandler )));
 
             do {
                 var handler = mFileTypeHandlers.FirstOrDefault( h => h.InputExtension.Equals( GetExtension( fileExtension )));
@@ -36,7 +40,7 @@ namespace ArchiveLoader.Models {
                 if( handler != null ) {
                     var outputFileName = Path.ChangeExtension( inputFileName, handler.OutputExtension );
 
-                    item.ProcessList.Add( new ProcessHandler( item.Key, handler, inputFileName, outputFileName ));
+                    item.ProcessList.Add( new ProcessHandler( item.Key, handler, inputFileName, outputFileName, mExitHandlerFactory.GetExitHandler( handler )));
                     inputFileName = outputFileName;
 
                     fileExtension = GetExtension( handler.OutputExtension );

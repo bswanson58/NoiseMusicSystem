@@ -1,32 +1,37 @@
 ﻿using System;
 using System.Diagnostics;
+using ArchiveLoader.Interfaces;
+using ControlzEx.Standard;
 
 namespace ArchiveLoader.Dto {
     public enum ProcessState {
         Pending,
         Running,
-        Completed
+        Completed,
+        Error
     }
 
     [DebuggerDisplay("Handler: {" + nameof( DebugString ) + "}" )]
     public class ProcessHandler {
-        public  string              ParentKey {  get; }
+        public  string              ParentKey { get; }
         public  FileTypeHandler     Handler { get; }
         public  string              InputFile { get; }
-        public  string              OutputFile {  get; }
+        public  string              OutputFile { get; }
         public  string              InstanceArguments {  get; }
         public  ProcessState        ProcessState { get; private set; }
         public  string              ProcessStdOut { get; private set; }
         public  string              ProcessErrOut { get; private set; }
-        public  int                 ExitCode {  get; private set; }
+        public  int                 ExitCode { get; private set; }
+        public  IProcessExitHandler ExitHandler { get; }
 
         public  string              DebugString => $"{Handler.HandlerName} - {ProcessState}";
 
-        public ProcessHandler( string parentKey, FileTypeHandler handler, string inputFile, string outputFile ) {
+        public ProcessHandler( string parentKey, FileTypeHandler handler, string inputFile, string outputFile, IProcessExitHandler exitHandler ) {
             ParentKey = parentKey;
             Handler = handler;
             InputFile = inputFile;
             OutputFile = outputFile;
+            ExitHandler = exitHandler;
 
             InstanceArguments = handler.CommandArguments.Replace( "{input}", InputFile ).Replace( "{output}", OutputFile );
 
@@ -45,7 +50,7 @@ namespace ArchiveLoader.Dto {
             ProcessErrOut = errOutput;
             ExitCode = exitCode;
 
-            ProcessState = ProcessState.Completed;
+            ProcessState = ExitHandler?.HandleProcessExitState( this ) ?? ProcessState.Completed;
         }
     }
 }

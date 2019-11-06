@@ -20,4 +20,10 @@ namespace ArchiveLoader.Dto {
             DeleteInputFileOnSuccess = false;
         }
     }
+
+    public class CopyFileHandler : FileTypeHandler {
+        public CopyFileHandler() { 
+            HandlerName = "Copy File";
+        }
+    }
 }

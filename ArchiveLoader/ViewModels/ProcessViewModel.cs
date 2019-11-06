@@ -43,10 +43,14 @@ namespace ArchiveLoader.ViewModels {
         }
 
         private void UpdateItemStatus( ProcessItem item ) {
-            var displayItem = ProcessItems.FirstOrDefault( i => i.Key.Equals( item.Key ));
+            var displayItem = GetDisplayedItem( item );
 
             if( displayItem != null ) {
-                var handler = item.ProcessList.FirstOrDefault( i => i.ProcessState == ProcessState.Pending || i.ProcessState == ProcessState.Running );
+                ProcessHandler  handler;
+
+                lock( item.ProcessList ) {
+                    handler = item.ProcessList.FirstOrDefault( i => i.ProcessState == ProcessState.Pending || i.ProcessState == ProcessState.Running );
+                }
 
                 displayItem.CurrentHandler = handler != null ? handler.Handler.HandlerName : "Completed";
                 displayItem.CurrentState = handler?.ProcessState ?? ProcessState.Completed;
@@ -54,13 +58,23 @@ namespace ArchiveLoader.ViewModels {
         }
 
         private void DeleteItem( ProcessItem item ) {
-            lock( ProcessItems ) {
-                var displayItem = ProcessItems.FirstOrDefault( i => i.Key.Equals( item.Key ));
+            var displayItem = GetDisplayedItem( item );
 
-                if( displayItem != null ) {
+            if( displayItem != null ) {
+                lock( ProcessItems ) {
                     ProcessItems.Remove( displayItem );
                 }
             }
+        }
+
+        private DisplayedProcessItem GetDisplayedItem( ProcessItem forItem ) {
+            DisplayedProcessItem    retValue;
+
+            lock( ProcessItems ) {
+                retValue = ProcessItems.FirstOrDefault( i => i.Key.Equals( forItem.Key ));
+            }
+
+            return retValue;
         }
 
         public void Execute_StartProcessing() {
