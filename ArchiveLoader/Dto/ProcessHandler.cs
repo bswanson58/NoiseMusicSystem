@@ -14,9 +14,6 @@ namespace ArchiveLoader.Dto {
     public class ProcessHandler {
         public  string              ParentKey { get; }
         public  FileTypeHandler     Handler { get; }
-        public  string              Artist { get; }
-        public  string              Album { get; }
-        public  string              TrackName { get; }
         public  string              InputFile { get; }
         public  string              OutputFile { get; }
         public  string              InstanceArguments {  get; }
@@ -30,19 +27,15 @@ namespace ArchiveLoader.Dto {
 
         public ProcessHandler( ProcessItem item, FileTypeHandler handler, string inputFile, string outputFile, IProcessExitHandler exitHandler ) {
             ParentKey = item.Key;
-            Artist = item.Artist;
-            Album = item.Album;
-            TrackName = item.TrackName;
             Handler = handler;
             InputFile = inputFile;
             OutputFile = outputFile;
             ExitHandler = exitHandler;
 
-            InstanceArguments = handler.CommandArguments.Replace( "{input}", InputFile )
-                                                        .Replace( "{output}", OutputFile )
-                                                        .Replace( "{artist}", Artist )
-                                                        .Replace( "{album}", Album )
-                                                        .Replace( "{track}", TrackName );
+            InstanceArguments = handler.CommandArguments.Replace( "{input}", InputFile ).Replace( "{output}", OutputFile );
+            foreach( var key in item.Metadata ) {
+                InstanceArguments = InstanceArguments.Replace( key.Key, item.Metadata[key.Key]);
+            }
 
             ProcessState = ProcessState.Pending;
             ProcessStdOut = String.Empty;

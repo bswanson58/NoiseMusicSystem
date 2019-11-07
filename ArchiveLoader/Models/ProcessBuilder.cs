@@ -8,9 +8,11 @@ namespace ArchiveLoader.Models {
     class ProcessBuilder : IProcessBuilder {
         private readonly    IPreferences            mPreferences;
         private readonly    IExitHandlerFactory     mExitHandlerFactory;
+        private readonly    IFileMetadata           mFileMetadata;
         private readonly    List<FileTypeHandler>   mFileTypeHandlers;
 
-        public ProcessBuilder( IExitHandlerFactory exitHandlerFactory, IPreferences preferences ) {
+        public ProcessBuilder( IFileMetadata metadata, IExitHandlerFactory exitHandlerFactory, IPreferences preferences ) {
+            mFileMetadata = metadata;
             mExitHandlerFactory = exitHandlerFactory;
             mPreferences = preferences;
 
@@ -31,6 +33,12 @@ namespace ArchiveLoader.Models {
             LoadFileHandlers();
 
             var copyHandler = new CopyFileHandler();
+
+            item.Metadata.Add( FileMetadata.cArtistMetadataTag, mFileMetadata.GetAlbumNameFromAlbum( item.ArtistFolder ));
+            item.Metadata.Add( FileMetadata.cAlbumMetadataTag, mFileMetadata.GetAlbumNameFromAlbum( item.AlbumFolder ));
+            item.Metadata.Add( FileMetadata.cPublishedMetadataTag, mFileMetadata.GetPublishedYearFromAlbum( item.AlbumFolder ).ToString());
+            item.Metadata.Add( FileMetadata.cTrackMetadataTag, mFileMetadata.GetTrackNameFromFileName( item.FileName ));
+            item.Metadata.Add( FileMetadata.cTrackNumberMetadataTag, mFileMetadata.GetTrackNumberFromFileName( item.FileName ).ToString());
 
             item.ProcessList.Add( new ProcessHandler( item, copyHandler, inputFileName, inputFileName, mExitHandlerFactory.GetExitHandler( copyHandler )));
 

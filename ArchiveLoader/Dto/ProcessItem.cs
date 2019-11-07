@@ -16,22 +16,22 @@ namespace ArchiveLoader.Dto {
     public class ProcessItem {
         public  string      Key {  get; }
         public  string      Name { get; }
-        public  string      Artist { get; }
-        public  string      Album { get; }
-        public  string      TrackName { get; }
+        public  string      ArtistFolder { get; }
+        public  string      AlbumFolder { get; }
         public  string      FileName { get; }
 
-        public  IList<ProcessHandler>   ProcessList { get; }
+        public  IDictionary<string, string> Metadata { get; }
+        public  IList<ProcessHandler>       ProcessList { get; }
 
         public ProcessItem( FileCopyStatus fromStatus ) {
             Key = Guid.NewGuid().ToString( "N" );
             FileName = fromStatus.FileName;
-            Artist = fromStatus.Artist;
-            Album = fromStatus.Album;
+            ArtistFolder = fromStatus.ArtistFolder;
+            AlbumFolder = fromStatus.AlbumFolder;
             Name = Path.GetFileName( FileName );
-            TrackName = Path.GetFileNameWithoutExtension( Name );
 
             ProcessList = new List<ProcessHandler>();
+            Metadata = new Dictionary<string, string>();
         }
 
         public ProcessHandler FindRunnableProcess() {

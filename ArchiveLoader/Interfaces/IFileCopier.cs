@@ -12,8 +12,8 @@ namespace ArchiveLoader.Interfaces {
 
     public class FileCopyStatus {
         public string           FileName { get; }
-        public string           Artist { get; }
-        public string           Album { get; }
+        public string           ArtistFolder { get; }
+        public string           AlbumFolder { get; }
         public FileCopyState    Status { get; }
         public bool             Success { get; }
         public string           ErrorMessage { get; }
@@ -21,8 +21,8 @@ namespace ArchiveLoader.Interfaces {
 
         public FileCopyStatus( string fileName ) {
             FileName = fileName;
-            Artist = String.Empty;
-            Album = String.Empty;
+            ArtistFolder = String.Empty;
+            AlbumFolder = String.Empty;
             Status = FileCopyState.Discovered;
             Success = true;
             CopyCompleted = false;
@@ -33,8 +33,8 @@ namespace ArchiveLoader.Interfaces {
             Status = state;
 
             if( directoryList.Count > 1 ) {
-                Artist = directoryList[0];
-                Album = directoryList[1];
+                ArtistFolder = directoryList[0];
+                AlbumFolder = directoryList[1];
             }
         }
 

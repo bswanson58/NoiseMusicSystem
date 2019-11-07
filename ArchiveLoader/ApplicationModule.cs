@@ -27,6 +27,7 @@ namespace ArchiveLoader {
             containerRegistry.Register<IProcessBuilder, ProcessBuilder>();
             containerRegistry.Register<IProcessQueue, ProcessQueue>();
             containerRegistry.Register<IExitHandlerFactory, ExitHandlerFactory>();
+            containerRegistry.Register<IFileMetadata, FileMetadata>();
 
             containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
 
