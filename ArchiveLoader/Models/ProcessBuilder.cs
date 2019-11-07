@@ -32,7 +32,7 @@ namespace ArchiveLoader.Models {
 
             var copyHandler = new CopyFileHandler();
 
-            item.ProcessList.Add( new ProcessHandler( item.Key, copyHandler, inputFileName, inputFileName, mExitHandlerFactory.GetExitHandler( copyHandler )));
+            item.ProcessList.Add( new ProcessHandler( item, copyHandler, inputFileName, inputFileName, mExitHandlerFactory.GetExitHandler( copyHandler )));
 
             do {
                 var handler = mFileTypeHandlers.FirstOrDefault( h => h.InputExtension.Equals( GetExtension( fileExtension )));
@@ -40,7 +40,7 @@ namespace ArchiveLoader.Models {
                 if( handler != null ) {
                     var outputFileName = Path.ChangeExtension( inputFileName, handler.OutputExtension );
 
-                    item.ProcessList.Add( new ProcessHandler( item.Key, handler, inputFileName, outputFileName, mExitHandlerFactory.GetExitHandler( handler )));
+                    item.ProcessList.Add( new ProcessHandler( item, handler, inputFileName, outputFileName, mExitHandlerFactory.GetExitHandler( handler )));
                     inputFileName = outputFileName;
 
                     fileExtension = GetExtension( handler.OutputExtension );

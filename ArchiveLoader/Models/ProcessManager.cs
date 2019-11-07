@@ -103,7 +103,7 @@ namespace ArchiveLoader.Models {
                 if( status.Success ) {
                     switch( status.Status ) {
                         case FileCopyState.Discovered:
-                            NewFileDiscovered( status.FileName );
+                            NewFileDiscovered( status );
                             break;
 
                         case FileCopyState.Copying:
@@ -120,8 +120,8 @@ namespace ArchiveLoader.Models {
             }
         }
 
-        private void NewFileDiscovered( string fileName ) {
-            var item = new ProcessItem( fileName );
+        private void NewFileDiscovered( FileCopyStatus status ) {
+            var item = new ProcessItem( status );
 
             mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Add ));
                     

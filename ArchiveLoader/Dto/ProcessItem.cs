@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using ArchiveLoader.Interfaces;
 
 namespace ArchiveLoader.Dto {
     public enum EventReason {
@@ -15,14 +16,20 @@ namespace ArchiveLoader.Dto {
     public class ProcessItem {
         public  string      Key {  get; }
         public  string      Name { get; }
+        public  string      Artist { get; }
+        public  string      Album { get; }
+        public  string      TrackName { get; }
         public  string      FileName { get; }
 
         public  IList<ProcessHandler>   ProcessList { get; }
 
-        public ProcessItem( string path ) {
+        public ProcessItem( FileCopyStatus fromStatus ) {
             Key = Guid.NewGuid().ToString( "N" );
-            FileName = path;
-            Name = Path.GetFileName( path );
+            FileName = fromStatus.FileName;
+            Artist = fromStatus.Artist;
+            Album = fromStatus.Album;
+            Name = Path.GetFileName( FileName );
+            TrackName = Path.GetFileNameWithoutExtension( Name );
 
             ProcessList = new List<ProcessHandler>();
         }

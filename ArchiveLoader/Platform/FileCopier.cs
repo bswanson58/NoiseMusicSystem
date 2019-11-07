@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ArchiveLoader.Interfaces;
@@ -16,18 +18,22 @@ namespace ArchiveLoader.Platform {
             return Task.Run( () => {
                 if(( Directory.Exists( sourceDirectory )) &&
                    ( Directory.Exists( targetDirectory ))) {
-                    CopyFilesRecursively( new DirectoryInfo( sourceDirectory ), new DirectoryInfo( targetDirectory ), onFileCopied, cancellation );
+                    var directoryList = new List<string>();
+
+                    CopyFilesRecursively( new DirectoryInfo( sourceDirectory ), new DirectoryInfo( targetDirectory ), onFileCopied, cancellation, directoryList );
 
                     onFileCopied?.Report( new FileCopyStatus( true ));
                 }
             });
         }
 
-        private bool CopyFilesRecursively( DirectoryInfo source, DirectoryInfo target, IProgress<FileCopyStatus> onFileCopied, CancellationTokenSource cancellation ) {
+        private bool CopyFilesRecursively( DirectoryInfo source, DirectoryInfo target, IProgress<FileCopyStatus> onFileCopied, CancellationTokenSource cancellation, IList<string> directoryList ) {
             var retValue = true;
 
             foreach( var directory in source.GetDirectories()) {
-                if(!CopyFilesRecursively( directory, target.CreateSubdirectory( directory.Name ), onFileCopied, cancellation )) {
+                directoryList.Add( directory.Name );
+
+                if(!CopyFilesRecursively( directory, target.CreateSubdirectory( directory.Name ), onFileCopied, cancellation, directoryList )) {
                     retValue = false;
 
                     break;
@@ -38,18 +44,18 @@ namespace ArchiveLoader.Platform {
                 try {
                     var destinationPath = Path.Combine(target.FullName, file.Name);
 
-                    onFileCopied?.Report( new FileCopyStatus( destinationPath, FileCopyState.Discovered ));
+                    onFileCopied?.Report( new FileCopyStatus( destinationPath, FileCopyState.Discovered, directoryList ));
 
                     if( File.Exists( destinationPath )) {
                         File.SetAttributes( destinationPath, FileAttributes.Normal );
                         File.Delete( destinationPath );
                     }
 
-                    onFileCopied?.Report( new FileCopyStatus( destinationPath, FileCopyState.Copying ));
+                    onFileCopied?.Report( new FileCopyStatus( destinationPath, FileCopyState.Copying, directoryList ));
 
                     file.CopyTo( destinationPath );
 
-                    onFileCopied?.Report( new FileCopyStatus( destinationPath, FileCopyState.Completed ));
+                    onFileCopied?.Report( new FileCopyStatus( destinationPath, FileCopyState.Completed, directoryList ));
                 }
                 catch( Exception ex ) {
                     mLog.LogException( $"Copying file '{file.Name}' to '{target.FullName}'.", ex );
@@ -66,6 +72,10 @@ namespace ArchiveLoader.Platform {
 
                     break;
                 }
+            }
+
+            if( directoryList.Any()) {
+                directoryList.Remove( directoryList.Last());
             }
 
             return retValue;

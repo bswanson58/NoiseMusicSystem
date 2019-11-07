@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using ArchiveLoader.Interfaces;
-using ControlzEx.Standard;
 
 namespace ArchiveLoader.Dto {
     public enum ProcessState {
@@ -15,6 +14,9 @@ namespace ArchiveLoader.Dto {
     public class ProcessHandler {
         public  string              ParentKey { get; }
         public  FileTypeHandler     Handler { get; }
+        public  string              Artist { get; }
+        public  string              Album { get; }
+        public  string              TrackName { get; }
         public  string              InputFile { get; }
         public  string              OutputFile { get; }
         public  string              InstanceArguments {  get; }
@@ -26,14 +28,21 @@ namespace ArchiveLoader.Dto {
 
         public  string              DebugString => $"{Handler.HandlerName} - {ProcessState}";
 
-        public ProcessHandler( string parentKey, FileTypeHandler handler, string inputFile, string outputFile, IProcessExitHandler exitHandler ) {
-            ParentKey = parentKey;
+        public ProcessHandler( ProcessItem item, FileTypeHandler handler, string inputFile, string outputFile, IProcessExitHandler exitHandler ) {
+            ParentKey = item.Key;
+            Artist = item.Artist;
+            Album = item.Album;
+            TrackName = item.TrackName;
             Handler = handler;
             InputFile = inputFile;
             OutputFile = outputFile;
             ExitHandler = exitHandler;
 
-            InstanceArguments = handler.CommandArguments.Replace( "{input}", InputFile ).Replace( "{output}", OutputFile );
+            InstanceArguments = handler.CommandArguments.Replace( "{input}", InputFile )
+                                                        .Replace( "{output}", OutputFile )
+                                                        .Replace( "{artist}", Artist )
+                                                        .Replace( "{album}", Album )
+                                                        .Replace( "{track}", TrackName );
 
             ProcessState = ProcessState.Pending;
             ProcessStdOut = String.Empty;
