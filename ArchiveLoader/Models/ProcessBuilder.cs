@@ -30,17 +30,20 @@ namespace ArchiveLoader.Models {
             var fileExtension = GetExtension( Path.GetExtension( item.FileName ));
             var inputFileName = item.FileName;
 
+            item.Metadata.Add(FileMetadata.cArtistMetadataTag, mFileMetadata.GetAlbumNameFromAlbum(item.ArtistFolder));
+            item.Metadata.Add(FileMetadata.cAlbumMetadataTag, mFileMetadata.GetAlbumNameFromAlbum(item.AlbumFolder));
+            item.Metadata.Add(FileMetadata.cPublishedMetadataTag, mFileMetadata.GetPublishedYearFromAlbum(item.AlbumFolder).ToString());
+            item.Metadata.Add(FileMetadata.cTrackMetadataTag, mFileMetadata.GetTrackNameFromFileName(item.FileName));
+            item.Metadata.Add(FileMetadata.cTrackNumberMetadataTag, mFileMetadata.GetTrackNumberFromFileName(item.FileName).ToString());
+
             LoadFileHandlers();
 
+            // Create the dummy copy process and assume it starts running.
             var copyHandler = new CopyFileHandler();
+            var copyHandlerProcess = new ProcessHandler( item, copyHandler, inputFileName, inputFileName, mExitHandlerFactory.GetExitHandler( copyHandler ));
 
-            item.Metadata.Add( FileMetadata.cArtistMetadataTag, mFileMetadata.GetAlbumNameFromAlbum( item.ArtistFolder ));
-            item.Metadata.Add( FileMetadata.cAlbumMetadataTag, mFileMetadata.GetAlbumNameFromAlbum( item.AlbumFolder ));
-            item.Metadata.Add( FileMetadata.cPublishedMetadataTag, mFileMetadata.GetPublishedYearFromAlbum( item.AlbumFolder ).ToString());
-            item.Metadata.Add( FileMetadata.cTrackMetadataTag, mFileMetadata.GetTrackNameFromFileName( item.FileName ));
-            item.Metadata.Add( FileMetadata.cTrackNumberMetadataTag, mFileMetadata.GetTrackNumberFromFileName( item.FileName ).ToString());
-
-            item.ProcessList.Add( new ProcessHandler( item, copyHandler, inputFileName, inputFileName, mExitHandlerFactory.GetExitHandler( copyHandler )));
+            copyHandlerProcess.SetProcessRunning();
+            item.ProcessList.Add( copyHandlerProcess );
 
             do {
                 var handler = mFileTypeHandlers.FirstOrDefault( h => h.InputExtension.Equals( GetExtension( fileExtension )));
