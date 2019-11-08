@@ -10,6 +10,7 @@ namespace ArchiveLoader.Dto {
         public  string  ExePath { get; set; }
         public  string  CommandArguments { get; set; }
         public  bool    DeleteInputFileOnSuccess { get; set; }
+        public  bool    IsExecutable { get; protected set; }
 
         public FileTypeHandler() {
             HandlerName = String.Empty;
@@ -18,12 +19,15 @@ namespace ArchiveLoader.Dto {
             ExePath = String.Empty;
             CommandArguments = String.Empty;
             DeleteInputFileOnSuccess = false;
+            IsExecutable = true;
         }
     }
 
     public class CopyFileHandler : FileTypeHandler {
         public CopyFileHandler() { 
             HandlerName = "Copy File";
+
+            IsExecutable = false;
         }
     }
 }
