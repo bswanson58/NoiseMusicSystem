@@ -52,6 +52,6 @@ namespace ArchiveLoader.Interfaces {
     }
 
     interface IFileCopier {
-        Task    CopyFiles( string sourceDirectory, string targetDirectory, IProgress<FileCopyStatus> onFileCopied, CancellationTokenSource cancellation );
+        Task    CopyFiles( string sourceDirectory, string targetDirectory, Action<FileCopyStatus> onFileCopied, CancellationTokenSource cancellation );
     }
 }

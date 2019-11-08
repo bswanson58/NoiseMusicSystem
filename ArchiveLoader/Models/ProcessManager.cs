@@ -89,15 +89,11 @@ namespace ArchiveLoader.Models {
         }
 
         private void OnSourceAvailable() {
-            var progress = new Progress<FileCopyStatus>();
-
-            progress.ProgressChanged += OnFileCopied;
-
             mFileCopyCancellation = new CancellationTokenSource();
-            mFileCopier.CopyFiles( mSourceDirectory, mTargetDirectory, progress, mFileCopyCancellation );
+            mFileCopier.CopyFiles( mSourceDirectory, mTargetDirectory, OnFileCopied, mFileCopyCancellation );
         }
 
-        private async void OnFileCopied( object sender, FileCopyStatus status ) {
+        private async void OnFileCopied( FileCopyStatus status ) {
             if( status.CopyCompleted ) {
                 if( mSourceIsDrive ) {
                     await mDriveEjector.OpenDrive( mSourceDrive.Name[0]);
@@ -131,15 +127,13 @@ namespace ArchiveLoader.Models {
         private void NewFileDiscovered( FileCopyStatus status ) {
             var item = new ProcessItem( status );
 
-            mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Add ));
-                    
             mProcessBuilder.BuildProcessList( item );
-
-            mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Update ));
 
             lock( mProcessList ) {
                 mProcessList.Add( item );
             }
+
+            mProcessingEventSubject.OnNext( new ProcessItemEvent( item, EventReason.Add ));
         }
 
         private void UpdateCopyStatus( string fileName, FileCopyState state ) {
@@ -167,6 +161,9 @@ namespace ArchiveLoader.Models {
                 if( processItem.HasCompletedProcessing()) {
                     DeleteProcessingItem( processItem );
                 }
+            }
+            else {
+                mLog.LogMessage( $"Copy handler could not be found for: '{fileName}'" );
             }
         }
 
