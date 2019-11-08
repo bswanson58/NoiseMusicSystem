@@ -20,7 +20,7 @@
         </Grid.ColumnDefinitions>
         
         <TextBlock Grid.Column="0" Margin="0,0,3,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Archive Device:"/>
-        <ComboBox Grid.Column="1" VerticalAlignment="Center" Width="60" ItemsSource="{Binding DriveList}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedDrive}"/>
+        <ComboBox Grid.Column="1" VerticalAlignment="Center" Width="60" ItemsSource="{Binding DriveList}" SelectedItem="{Binding SelectedDrive}"/>
         
         <TextBlock Grid.Column="2" Margin="15,0,3,0" Style="{StaticResource ControlTitleStyle}" VerticalAlignment="Center" Text="Target Directory:"/>
         <TextBox Grid.Column="3" Width="250" VerticalAlignment="Center" Text="{Binding TargetDirectory, UpdateSourceTrigger=PropertyChanged}"/>

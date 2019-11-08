@@ -100,8 +100,8 @@ namespace ArchiveLoader.Models {
                 mProcessList.Add( shell );
             }
 
+//            mLog.LogMessage( "ProcessQueue: Started " + shell.ProcessRunner + shell.ProcessHandler.InstanceArguments );
             shell.StartProcess();
-            mLog.LogMessage( "Started process: " + shell.ProcessRunner + shell.ProcessHandler.InstanceArguments );
         }
 
         private void OnShellCompleted( ProcessShell item ) {
@@ -109,6 +109,7 @@ namespace ArchiveLoader.Models {
                 mProcessList.Remove( item );
             }
 
+//            mLog.LogMessage( $"ProcessQueue: Completed {item.ProcessHandler.Handler.HandlerName} with exit code: '{item.ProcessHandler.ExitCode}' - {item.ProcessHandler.ProcessErrOut}" );
             mProcessCompletedSubject.OnNext( item.ProcessHandler );
 
             item.OnProcessCompleted -= OnShellCompleted;

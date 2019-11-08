@@ -58,28 +58,32 @@ namespace ArchiveLoader.Models {
                 OnSourceAvailable();
             }
             else {
-                mSourceDrive = mDriveManager.AvailableDrives.FirstOrDefault( drive => drive.Name.Equals( preferences.SourceDrive ));
+                var drive = DriveInfo.GetDrives().FirstOrDefault( d => d.Name.Equals( preferences.SourceDrive ));
                 mSourceIsDrive = true;
 
-                if(( mSourceDrive != null ) &&
+                if(( drive != null ) &&
                    (!String.IsNullOrWhiteSpace( mTargetDirectory )) &&
                    ( Directory.Exists( mTargetDirectory ))) {
-                    mSourceDirectory = mSourceDrive.Name;
+                    mSourceDirectory = drive.Name;
 
-                    await mDriveEjector.OpenDrive( mSourceDrive.Name[0]);
+                    await mDriveEjector.OpenDrive( drive.Name[0]);
 
                     InitializeProcessing();
+                }
+                else {
+                    mLog.LogMessage( "ProcessManager: Cannot start processing." );
                 }
             }
         }
 
         private void InitializeProcessing() {
-            mDriveNotificationKey = mDriveManager.AddDriveNotification( mSourceDrive, OnDriveNotification );
+            mDriveNotificationKey = mDriveManager.AddDriveNotification( mSourceDirectory, OnDriveNotification );
         }
 
         private void OnDriveNotification( DriveInfo drive ) {
-            if(( drive.Name.Equals( mSourceDrive.Name )) &&
+            if(( drive.Name.Equals( mSourceDirectory )) &&
                ( drive.IsReady )) {
+                mSourceDrive = drive;
                 OnSourceAvailable();
             }
         }
@@ -107,12 +111,16 @@ namespace ArchiveLoader.Models {
                             break;
 
                         case FileCopyState.Copying:
-                        case FileCopyState.Completed:
                             UpdateCopyStatus( status.FileName, status.Status );
                             break;
-                    }
 
-                    PumpProcessHandling();
+                        case FileCopyState.Completed:
+                            UpdateCopyStatus( status.FileName, status.Status );
+                            mLog.LogMessage( $"File Copy Completed: {status.FileName}" );
+
+                            PumpProcessHandling();
+                            break;
+                    }
                 }
                 else {
                     mLog.LogMessage( $"File was not copied successfully: '{status.FileName}' - Error: '{status.ErrorMessage}'" );
@@ -171,6 +179,7 @@ namespace ArchiveLoader.Models {
                     retValue = item.FindRunnableProcess();
 
                     if( retValue != null ) {
+                        mLog.LogMessage( $"Runnable Item: '{retValue.InputFile}' is {retValue.ProcessState}" );
                         break;
                     }
                 }

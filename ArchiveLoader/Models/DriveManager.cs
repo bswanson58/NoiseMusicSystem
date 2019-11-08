@@ -7,23 +7,25 @@ using ArchiveLoader.Platform;
 namespace ArchiveLoader.Models {
     internal class DriveNotification {
         public string               Key { get; }
-        public DriveInfo            Drive { get; }
+        public string               Drive { get; }
         public Action<DriveInfo>    Callback { get; }
 
-        public DriveNotification( DriveInfo forDrive, Action<DriveInfo> callback ) {
-            Key = new Guid().ToString();
+        public DriveNotification( string forDrive, Action<DriveInfo> callback ) {
+            Key = Guid.NewGuid().ToString();
             Drive = forDrive;
             Callback = callback;
         }
     }
 
     class DriveManager : IDriveManager {
+        private readonly IPlatformLog               mLog;
         private readonly IDriveNotifier             mDriveNotifier;
         private readonly List<DriveNotification>    mNotificationList;
 
-        public  IEnumerable<DriveInfo>  AvailableDrives => mDriveNotifier.DriveList;
+        public  IEnumerable<string>     AvailableDrives => mDriveNotifier.DriveList;
 
-        public DriveManager( IDriveNotifier driveNotifier ) {
+        public DriveManager( IDriveNotifier driveNotifier, IPlatformLog log ) {
+            mLog = log;
             mDriveNotifier = driveNotifier;
 
             mNotificationList = new List<DriveNotification>();
@@ -32,13 +34,15 @@ namespace ArchiveLoader.Models {
             mDriveNotifier.Start();
         }
 
-        public string AddDriveNotification( DriveInfo forDrive, Action<DriveInfo> callback ) {
-            var notification = new DriveNotification(forDrive, callback);
+        public string AddDriveNotification( string driveName, Action<DriveInfo> callback ) {
+            var notification = new DriveNotification( driveName, callback );
             var retValue = notification.Key;
 
-            lock ( mNotificationList ) {
+            lock( mNotificationList ) {
                 mNotificationList.Add( notification );
             }
+
+//            mLog.LogMessage( $"DriveManager: Waiting for drive {driveName} to be ready." );
 
             return retValue;
         }
@@ -50,17 +54,17 @@ namespace ArchiveLoader.Models {
         }
 
         private void OnOpticalDiskArrived( object sender, OpticalDiskArrivedEventArgs opticalDiskArrivedEventArgs ) {
-            var notificationList = new List<DriveNotification>();
+            var notificationList = new List<Action>();
 
             lock( mNotificationList ) {
                 mNotificationList.ForEach( i => {
-                    if( i.Drive.Name.Equals( opticalDiskArrivedEventArgs.Drive.Name )) {
-                        notificationList.Add( i );
+                    if( i.Drive.Equals( opticalDiskArrivedEventArgs.Drive.Name )) {
+                        notificationList.Add( () => { i.Callback?.Invoke( opticalDiskArrivedEventArgs.Drive );});
                     }
                 });
             }
 
-            notificationList.ForEach( n => n.Callback( n.Drive ));
+            notificationList.ForEach( callback => { callback(); });
         }
 
         public void Dispose() {

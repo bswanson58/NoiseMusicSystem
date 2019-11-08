@@ -12,7 +12,7 @@ namespace ArchiveLoader.Platform {
     }
 
     public class DriveNotifier : IDriveNotifier {
-        private readonly Dictionary<string, DriveInfo> mDrives;
+        private readonly IPlatformLog   mLog;
         private readonly Dictionary<string, bool>      mDriveState;
         private Timer                   mDriveTimer;
         private bool                    mHaveDisk;
@@ -21,30 +21,30 @@ namespace ArchiveLoader.Platform {
         ///     Gets or sets the time, in seconds, before the drive watcher checks for new media insertion relative to the last occurance of check.
         /// </summary>
         public  int                     Interval = 1;
-        public  IEnumerable<DriveInfo>  DriveList => mDrives.Values;
+        public  IEnumerable<string>     DriveList => mDriveState.Keys;
 
         /// <summary>
         ///     Occurs when a new optical disk is inserted or ejected.
         /// </summary>
         public event OpticalDiskArrivedEventHandler OpticalDiskArrived;
 
-        public DriveNotifier() {
-            mDrives = new Dictionary<string, DriveInfo>();
+        public DriveNotifier( IPlatformLog log ) {
+            mLog = log;
+
             mDriveState = new Dictionary<string, bool>();
         }
 
         private void OnOpticalDiskArrived( OpticalDiskArrivedEventArgs e ) {
-            var handler = OpticalDiskArrived;
-
-            handler?.Invoke( this, e );
+            OpticalDiskArrived?.Invoke( this, e );
         }
 
         public void Start() {
-            mDrives.Clear();
+            mDriveState.Clear();
 
-            foreach( var drive in DriveInfo.GetDrives().Where( driveInfo => driveInfo.DriveType.Equals( DriveType.CDRom ))) {
-                mDrives.Add( drive.Name, drive );
+            foreach ( var drive in DriveInfo.GetDrives().Where( driveInfo => driveInfo.DriveType.Equals( DriveType.CDRom ))) {
                 mDriveState.Add( drive.Name, drive.IsReady );
+
+//                mLog.LogMessage( $"DriveNotifier: Drive: '{drive.Name}' IsReady = {drive.IsReady}" );
             }
 
             mDriveTimer = new Timer { Interval = Interval * 1000 };
@@ -65,12 +65,15 @@ namespace ArchiveLoader.Platform {
                     mHaveDisk = true;
                     foreach( var drive in from drive in DriveInfo.GetDrives()
                                           where drive.DriveType.Equals( DriveType.CDRom )
-                                          where mDrives.ContainsKey( drive.Name )
-                                          where !mDriveState[drive.Name].Equals( drive.IsReady )
+                                          where mDriveState.ContainsKey( drive.Name )
                                           select drive ) {
-                        mDriveState[drive.Name] = drive.IsReady;
+                        if(!mDriveState[drive.Name].Equals( drive.IsReady )) {
+                            mDriveState[drive.Name] = drive.IsReady;
 
-                        OnOpticalDiskArrived( new OpticalDiskArrivedEventArgs { Drive = drive });
+                            OnOpticalDiskArrived(new OpticalDiskArrivedEventArgs { Drive = drive });
+
+//                            mLog.LogMessage($"DriveNotifier: Drive: '{drive.Name}' IsReady = {drive.IsReady}");
+                        }
                     }
                 }
                 catch( Exception exception ) {

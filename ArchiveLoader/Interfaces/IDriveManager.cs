@@ -4,9 +4,9 @@ using System.IO;
 
 namespace ArchiveLoader.Interfaces {
     interface IDriveManager : IDisposable {
-        IEnumerable<DriveInfo>  AvailableDrives { get; }
+        IEnumerable<string>     AvailableDrives { get; }
 
-        string                  AddDriveNotification( DriveInfo forDrive, Action<DriveInfo> callback );
+        string                  AddDriveNotification( string forDrive, Action<DriveInfo> callback );
         void                    RemoveDriveNotification( string key );
     }
 }

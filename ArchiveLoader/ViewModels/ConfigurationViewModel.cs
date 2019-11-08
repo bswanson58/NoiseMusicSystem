@@ -22,9 +22,9 @@ namespace ArchiveLoader.ViewModels {
         private readonly IDialogService         mDialogService;
         private readonly IPlatformLog           mLog;
         private string                          mTargetDirectory;
-        private DriveInfo                       mSelectedDrive;
+        private string                          mSelectedDrive;
 
-        public  IEnumerable<DriveInfo>          DriveList => mDriveManager.AvailableDrives;
+        public  IEnumerable<string>             DriveList => mDriveManager.AvailableDrives;
 
         public ConfigurationViewModel( IDriveManager driveManager, IPreferences preferences, IPlatformDialogService platformDialogService, IPlatformLog log, IDialogService dialogService ) {
             mDriveManager = driveManager;
@@ -37,17 +37,17 @@ namespace ArchiveLoader.ViewModels {
             var loaderPreferences = mPreferences.Load<ArchiveLoaderPreferences>();
 
             mTargetDirectory = loaderPreferences.TargetDirectory;
-            mSelectedDrive = DriveList.FirstOrDefault( drive => drive.Name.Equals( loaderPreferences.SourceDrive ));
+            mSelectedDrive = DriveList.FirstOrDefault( drive => drive.Equals( loaderPreferences.SourceDrive ));
         }
 
-        public DriveInfo SelectedDrive {
+        public string SelectedDrive {
             get => mSelectedDrive;
             set {
                 mSelectedDrive = value;
 
                 var loaderPreferences = mPreferences.Load<ArchiveLoaderPreferences>();
 
-                loaderPreferences.SourceDrive = mSelectedDrive?.Name;
+                loaderPreferences.SourceDrive = mSelectedDrive;
                 mPreferences.Save( loaderPreferences );
             }
         }
