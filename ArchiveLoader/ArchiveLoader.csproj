@@ -175,6 +175,7 @@
     <Compile Include="Dto\FileTypeHandler.cs" />
     <Compile Include="Dto\ProcessHandler.cs" />
     <Compile Include="Dto\ProcessItem.cs" />
+    <Compile Include="Interfaces\ICopyProcessor.cs" />
     <Compile Include="Interfaces\IDriveEjector.cs" />
     <Compile Include="Interfaces\IDriveManager.cs" />
     <Compile Include="Interfaces\IDriveNotifier.cs" />
@@ -187,6 +188,8 @@
     <Compile Include="Interfaces\IProcessExitHandler.cs" />
     <Compile Include="Interfaces\IProcessManager.cs" />
     <Compile Include="Interfaces\IProcessQueue.cs" />
+    <Compile Include="Interfaces\IProcessReadyNotifier.cs" />
+    <Compile Include="Models\CopyProcessor.cs" />
     <Compile Include="Models\DriveManager.cs" />
     <Compile Include="Models\ExitHandlerFactory.cs" />
     <Compile Include="Models\FileMetadata.cs" />
@@ -194,6 +197,7 @@
     <Compile Include="Models\ProcessExitHandler.cs" />
     <Compile Include="Models\ProcessManager.cs" />
     <Compile Include="Models\ProcessQueue.cs" />
+    <Compile Include="Models\ProcessReadyNotifier.cs" />
     <Compile Include="Platform\ProcessRunner\Check.cs" />
     <Compile Include="Platform\DriveEjector.cs" />
     <Compile Include="Platform\DriveNotifier.cs" />

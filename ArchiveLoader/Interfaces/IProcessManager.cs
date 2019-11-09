@@ -3,7 +3,7 @@ using ArchiveLoader.Dto;
 
 namespace ArchiveLoader.Interfaces {
     public interface IProcessManager : IDisposable {
-        IObservable<ProcessItemEvent>    OnProcessingItemChanged { get; }
+        IObservable<Events.ProcessItemEvent>    OnProcessingItemChanged { get; }
 
         void    StartProcessing();
     }

@@ -20,18 +20,18 @@ namespace ArchiveLoader.ViewModels {
             mProcessingItemChangedSubscription = mProcessManager.OnProcessingItemChanged.Subscribe( OnProcessingItemEvent );
         }
 
-        private void OnProcessingItemEvent( ProcessItemEvent itemEvent ) {
+        private void OnProcessingItemEvent( Events.ProcessItemEvent itemEvent ) {
             Execute.OnUIThread( () => {
                 switch( itemEvent.Reason ) {
-                    case EventReason.Add:
+                    case CopyProcessEventReason.Add:
                         AddItem( itemEvent.Item );
                         break;
 
-                    case EventReason.Update:
+                    case CopyProcessEventReason.Update:
                         UpdateItemStatus( itemEvent.Item );
                         break;
 
-                    case EventReason.Completed:
+                    case CopyProcessEventReason.Completed:
                         DeleteItem( itemEvent.Item );
                         break;
                 }

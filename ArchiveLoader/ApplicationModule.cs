@@ -22,6 +22,9 @@ namespace ArchiveLoader {
 
             containerRegistry.RegisterSingleton<IDriveManager, DriveManager>();
             containerRegistry.RegisterSingleton<IDriveNotifier, DriveNotifier>();
+            containerRegistry.RegisterSingleton<ICopyProcessor, CopyProcessor>();
+            containerRegistry.RegisterSingleton<IProcessReadyNotifier, ProcessReadyNotifier>();
+            containerRegistry.RegisterSingleton<IProcessManager, ProcessManager>();
             containerRegistry.Register<IDriveEjector, DriveEjector>();
             containerRegistry.Register<IFileCopier, FileCopier>();
             containerRegistry.Register<IProcessBuilder, ProcessBuilder>();
@@ -31,7 +34,6 @@ namespace ArchiveLoader {
 
             containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
 
-            containerRegistry.RegisterSingleton<IProcessManager, ProcessManager>();
 
             containerRegistry.RegisterDialog<FileHandlerDialogView, FileHandlerDialogModel>();
         }

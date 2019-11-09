@@ -6,10 +6,11 @@ using System.Linq;
 using ArchiveLoader.Interfaces;
 
 namespace ArchiveLoader.Dto {
-    public enum EventReason {
+    public enum CopyProcessEventReason {
         Add,
         Completed,
-        Update
+        Update,
+        CopyCompleted
     }
 
     [DebuggerDisplay("ProcessItem: {" + nameof( Name ) + "}" )]
@@ -46,16 +47,6 @@ namespace ArchiveLoader.Dto {
 
         public bool HasCompletedProcessing() {
             return !ProcessList.Any() || ProcessList.All( h => h.ProcessState == ProcessState.Completed );
-        }
-    }
-
-    public class ProcessItemEvent {
-        public  EventReason     Reason { get; }
-        public  ProcessItem     Item { get; }
-
-        public ProcessItemEvent( ProcessItem item, EventReason reason ) {
-            Reason = reason;
-            Item = item;
         }
     }
 }
