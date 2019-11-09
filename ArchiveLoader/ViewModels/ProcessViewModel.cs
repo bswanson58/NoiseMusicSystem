@@ -75,10 +75,6 @@ namespace ArchiveLoader.ViewModels {
             return retValue;
         }
 
-        public void Execute_StartProcessing() {
-            mProcessManager.StartProcessing();
-        }
-
         public void Dispose() {
             mProcessManager?.Dispose();
             mProcessingItemChangedSubscription?.Dispose();

@@ -226,6 +226,7 @@
     <Compile Include="Support\WindowPlacement.cs" />
     <Compile Include="ViewModels\ConfigurationViewModel.cs" />
     <Compile Include="ViewModels\FileHandlerDialogModel.cs" />
+    <Compile Include="ViewModels\ProcessControlViewModel.cs" />
     <Compile Include="ViewModels\ProcessRecorderViewModel.cs" />
     <Compile Include="ViewModels\ProcessViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
@@ -235,6 +236,9 @@
     </Compile>
     <Compile Include="Views\FileHandlerDialogView.xaml.cs">
       <DependentUpon>FileHandlerDialogView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProcessControlView.xaml.cs">
+      <DependentUpon>ProcessControlView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ProcessRecorderView.xaml.cs">
       <DependentUpon>ProcessRecorderView.xaml</DependentUpon>
@@ -261,6 +265,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FileHandlerDialogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ProcessControlView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
