@@ -47,9 +47,11 @@
 
     <Grid Margin="15,5">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
-        <ListBox Grid.Row="0" ItemsSource="{Binding ProcessItems}" ItemTemplate="{StaticResource ProcessItemTemplate}"/>
+
+        <TextBlock Grid.Row="0" Margin="3" Style="{StaticResource ControlTitleStyle}" Text="Items Being Processed:"/>
+        <ListBox Grid.Row="1" BorderThickness="1" BorderBrush="{StaticResource BorderColor}" ItemsSource="{Binding ProcessItems}" ItemTemplate="{StaticResource ProcessItemTemplate}"/>
     </Grid>
 </UserControl>
