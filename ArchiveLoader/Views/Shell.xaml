@@ -16,13 +16,15 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="2*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
         <Views:ConfigurationView Grid.Row="0"/>
         <Views:ProcessView Grid.Row="1"/>
-        <Views:StatusView Grid.Row="2"/>
+        <Views:ProcessRecorderView Grid.Row="2"/>
+        <Views:StatusView Grid.Row="3"/>
     </Grid>
 </Mah:MetroWindow>
 

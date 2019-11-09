@@ -25,6 +25,7 @@ namespace ArchiveLoader {
             containerRegistry.RegisterSingleton<ICopyProcessor, CopyProcessor>();
             containerRegistry.RegisterSingleton<IProcessReadyNotifier, ProcessReadyNotifier>();
             containerRegistry.RegisterSingleton<IProcessManager, ProcessManager>();
+            containerRegistry.RegisterSingleton<IProcessRecorder, ProcessRecorder>();
             containerRegistry.Register<IDriveEjector, DriveEjector>();
             containerRegistry.Register<IFileCopier, FileCopier>();
             containerRegistry.Register<IProcessBuilder, ProcessBuilder>();

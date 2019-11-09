@@ -45,7 +45,7 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Margin="15,5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>

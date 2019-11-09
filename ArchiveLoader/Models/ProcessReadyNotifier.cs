@@ -14,6 +14,7 @@ namespace ArchiveLoader.Models {
         private readonly Subject<Events.JobTargets> mJobSubject;
         private string                              mSourceDirectory;
         private string                              mTargetDirectory;
+        private string                              mSourceVolumeName;
         private string                              mDriveNotificationKey;
         private IDisposable                         mProcessQueueSubscription;
 
@@ -36,6 +37,7 @@ namespace ArchiveLoader.Models {
             if((!String.IsNullOrWhiteSpace(preferences.SourceDirectory )) &&
                ( Directory.Exists(preferences.SourceDirectory ))) {
                 mSourceDirectory = preferences.SourceDirectory;
+                mSourceVolumeName = preferences.SourceDirectory;
 
                 OnSourceAvailable();
             }
@@ -60,12 +62,14 @@ namespace ArchiveLoader.Models {
         private void OnDriveNotification( DriveInfo drive ) {
             if(( drive.Name.Equals( mSourceDirectory )) &&
                ( drive.IsReady )) {
+                mSourceVolumeName = drive.VolumeLabel;
+
                 OnSourceAvailable();
             }
         }
 
         private void OnSourceAvailable() {
-            mJobSubject.OnNext( new Events.JobTargets( mSourceDirectory, mTargetDirectory ));
+            mJobSubject.OnNext( new Events.JobTargets( mSourceVolumeName, mSourceDirectory, mTargetDirectory ));
         }
 
         public void Dispose() {

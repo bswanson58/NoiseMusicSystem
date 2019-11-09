@@ -16,6 +16,7 @@ namespace ArchiveLoader.Models {
         private readonly IDisposable        mProcessQueueSubscription;
         private readonly List<ProcessItem>  mProcessList;
         private string                      mSourceDirectory;
+        private string                      mSourceVolumeName;
         private string                      mTargetDirectory;
         private CancellationTokenSource     mFileCopyCancellation;
 
@@ -36,6 +37,7 @@ namespace ArchiveLoader.Models {
 
         public void StartCopyProcess( Events.JobTargets targets ) {
             mSourceDirectory = targets.SourceDirectory;
+            mSourceVolumeName = targets.SourceVolumeName;
             mTargetDirectory = targets.TargetDirectory;
             mFileCopyCancellation = new CancellationTokenSource();
 
@@ -44,7 +46,7 @@ namespace ArchiveLoader.Models {
 
         private void OnFileCopied( FileCopyStatus status ) {
             if( status.CopyCompleted ) {
-                mProcessingEventSubject.OnNext( new Events.ProcessItemEvent( null, CopyProcessEventReason.CopyCompleted ));
+                mProcessingEventSubject.OnNext( new Events.ProcessItemEvent( new ProcessItem( mSourceVolumeName, new FileCopyStatus( true )), CopyProcessEventReason.CopyCompleted ));
             }
             else {
                 if( status.Success ) {
@@ -72,7 +74,7 @@ namespace ArchiveLoader.Models {
         }
 
         private void NewFileDiscovered( FileCopyStatus status ) {
-            var item = new ProcessItem( status );
+            var item = new ProcessItem( mSourceVolumeName, status );
 
             mProcessBuilder.BuildProcessList( item );
 

@@ -1,20 +1,22 @@
 ﻿namespace ArchiveLoader.Dto {
     public class Events {
         public class JobTargets {
-            public string SourceDirectory { get; }
-            public string TargetDirectory { get; }
+            public string   SourceVolumeName { get; }
+            public string   SourceDirectory { get; }
+            public string   TargetDirectory { get; }
 
-            public JobTargets(string source, string target) {
+            public JobTargets( string sourceVolumeName, string source, string target ) {
+                SourceVolumeName = sourceVolumeName;
                 SourceDirectory = source;
                 TargetDirectory = target;
             }
         }
 
         public class ProcessItemEvent {
-            public CopyProcessEventReason  Reason { get; }
-            public ProcessItem  Item { get; }
+            public CopyProcessEventReason   Reason { get; }
+            public ProcessItem              Item { get; }
 
-            public ProcessItemEvent(ProcessItem item, CopyProcessEventReason reason) {
+            public ProcessItemEvent( ProcessItem item, CopyProcessEventReason reason ) {
                 Reason = reason;
                 Item = item;
             }

@@ -17,6 +17,7 @@ namespace ArchiveLoader.Dto {
     public class ProcessItem {
         public  string      Key {  get; }
         public  string      Name { get; }
+        public  string      VolumeName { get; }
         public  string      ArtistFolder { get; }
         public  string      AlbumFolder { get; }
         public  string      FileName { get; }
@@ -24,7 +25,8 @@ namespace ArchiveLoader.Dto {
         public  IDictionary<string, string> Metadata { get; }
         public  IList<ProcessHandler>       ProcessList { get; }
 
-        public ProcessItem( FileCopyStatus fromStatus ) {
+        public ProcessItem( string volumeName, FileCopyStatus fromStatus ) {
+            VolumeName = volumeName;
             Key = Guid.NewGuid().ToString( "N" );
             FileName = fromStatus.FileName;
             ArtistFolder = fromStatus.ArtistFolder;
