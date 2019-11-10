@@ -4,6 +4,8 @@ using System.Linq;
 namespace ArchiveLoader.Dto {
     public class CompletedProcessItem {
         public  string      Name { get; }
+        public  string      Artist { get; }
+        public  string      Album { get; }
         public  string      FileName {get; }
         public  string      VolumeName { get; }
         public  string      ProcessNames { get; }
@@ -12,6 +14,8 @@ namespace ArchiveLoader.Dto {
             Name = fromItem.Name;
             FileName = fromItem.FileName;
             VolumeName = fromItem.VolumeName;
+            Artist = fromItem.ArtistFolder;
+            Album = fromItem.AlbumFolder;
 
             if( fromItem.ProcessList.Any()) {
                 ProcessNames = fromItem.ProcessList.Count > 1 ? 

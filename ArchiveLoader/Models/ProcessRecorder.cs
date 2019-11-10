@@ -5,11 +5,17 @@ using Caliburn.Micro;
 
 namespace ArchiveLoader.Models {
     class ProcessRecorder : IProcessRecorder {
+        private readonly ICatalogWriter     mCatalogWriter;
+        private readonly IReportWriter      mReportWriter;
+
         private readonly IDictionary<string, BindableCollection<CompletedProcessItem>>    mCompletedItems;
 
         public BindableCollection<string>   AvailableVolumes { get; }
 
-        public ProcessRecorder() {
+        public ProcessRecorder( ICatalogWriter catalogWriter, IReportWriter reportWriter ) {
+            mCatalogWriter = catalogWriter;
+            mReportWriter = reportWriter;
+
             mCompletedItems = new Dictionary<string, BindableCollection<CompletedProcessItem>>();
             AvailableVolumes = new BindableCollection<string>();
         }
@@ -37,6 +43,8 @@ namespace ArchiveLoader.Models {
         }
 
         public void JobCompleted( string volumeName ) {
+            mCatalogWriter.CreateCatalog( volumeName, GetItemsForVolume( volumeName ));
+            mReportWriter.CreateReport( volumeName, GetItemsForVolume( volumeName ));
         }
     }
 }

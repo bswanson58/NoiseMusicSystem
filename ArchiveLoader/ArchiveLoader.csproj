@@ -176,6 +176,7 @@
     <Compile Include="Dto\FileTypeHandler.cs" />
     <Compile Include="Dto\ProcessHandler.cs" />
     <Compile Include="Dto\ProcessItem.cs" />
+    <Compile Include="Interfaces\ICatalogWriter.cs" />
     <Compile Include="Interfaces\ICopyProcessor.cs" />
     <Compile Include="Interfaces\IDriveEjector.cs" />
     <Compile Include="Interfaces\IDriveManager.cs" />
@@ -191,6 +192,8 @@
     <Compile Include="Interfaces\IProcessQueue.cs" />
     <Compile Include="Interfaces\IProcessReadyNotifier.cs" />
     <Compile Include="Interfaces\IProcessRecorder.cs" />
+    <Compile Include="Interfaces\IReportWriter.cs" />
+    <Compile Include="Models\CatalogWriter.cs" />
     <Compile Include="Models\CopyProcessor.cs" />
     <Compile Include="Models\DriveManager.cs" />
     <Compile Include="Models\ExitHandlerFactory.cs" />
@@ -201,6 +204,7 @@
     <Compile Include="Models\ProcessQueue.cs" />
     <Compile Include="Models\ProcessReadyNotifier.cs" />
     <Compile Include="Models\ProcessRecorder.cs" />
+    <Compile Include="Models\ReportWriter.cs" />
     <Compile Include="Platform\ProcessRunner\Check.cs" />
     <Compile Include="Platform\DriveEjector.cs" />
     <Compile Include="Platform\DriveNotifier.cs" />

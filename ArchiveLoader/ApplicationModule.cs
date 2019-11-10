@@ -26,15 +26,16 @@ namespace ArchiveLoader {
             containerRegistry.RegisterSingleton<IProcessReadyNotifier, ProcessReadyNotifier>();
             containerRegistry.RegisterSingleton<IProcessManager, ProcessManager>();
             containerRegistry.RegisterSingleton<IProcessRecorder, ProcessRecorder>();
+            containerRegistry.Register<ICatalogWriter, CatalogWriter>();
             containerRegistry.Register<IDriveEjector, DriveEjector>();
+            containerRegistry.Register<IExitHandlerFactory, ExitHandlerFactory>();
             containerRegistry.Register<IFileCopier, FileCopier>();
+            containerRegistry.Register<IFileMetadata, FileMetadata>();
             containerRegistry.Register<IProcessBuilder, ProcessBuilder>();
             containerRegistry.Register<IProcessQueue, ProcessQueue>();
-            containerRegistry.Register<IExitHandlerFactory, ExitHandlerFactory>();
-            containerRegistry.Register<IFileMetadata, FileMetadata>();
+            containerRegistry.Register<IReportWriter, ReportWriter>();
 
             containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
-
 
             containerRegistry.RegisterDialog<FileHandlerDialogView, FileHandlerDialogModel>();
         }

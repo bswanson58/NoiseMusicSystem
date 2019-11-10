@@ -19,6 +19,7 @@ namespace ArchiveLoader.Models {
         private string                      mSourceVolumeName;
         private string                      mTargetDirectory;
         private CancellationTokenSource     mFileCopyCancellation;
+        private bool                        mCopyCompleted;
 
         private readonly Subject<Events.ProcessItemEvent>   mProcessingEventSubject;
         public  IObservable<Events.ProcessItemEvent>        OnProcessingItemChanged => mProcessingEventSubject;
@@ -40,13 +41,14 @@ namespace ArchiveLoader.Models {
             mSourceVolumeName = targets.SourceVolumeName;
             mTargetDirectory = targets.TargetDirectory;
             mFileCopyCancellation = new CancellationTokenSource();
+            mCopyCompleted = false;
 
             mFileCopier.CopyFiles( mSourceDirectory, mTargetDirectory, OnFileCopied, mFileCopyCancellation );
         }
 
         private void OnFileCopied( FileCopyStatus status ) {
             if( status.CopyCompleted ) {
-                mProcessingEventSubject.OnNext( new Events.ProcessItemEvent( new ProcessItem( mSourceVolumeName, new FileCopyStatus( true )), CopyProcessEventReason.CopyCompleted ));
+                mCopyCompleted = true;
             }
             else {
                 if( status.Success ) {
@@ -170,13 +172,22 @@ namespace ArchiveLoader.Models {
 
         private void DeleteProcessingItem( ProcessItem item ) {
             Task.Run(async () => {
-                await Task.Delay(750);
+                bool processListEmpty;
 
-                lock (mProcessList) {
-                    mProcessList.Remove(item);
+                await Task.Delay( 750 );
+
+                lock( mProcessList ) {
+                    mProcessList.Remove( item );
+
+                    processListEmpty = !mProcessList.Any();
                 }
 
                 mProcessingEventSubject.OnNext( new Events.ProcessItemEvent( item, CopyProcessEventReason.Completed ));
+
+                if(( mCopyCompleted ) &&
+                   ( processListEmpty )) {
+                    mProcessingEventSubject.OnNext( new Events.ProcessItemEvent( new ProcessItem( mSourceVolumeName, new FileCopyStatus( true )), CopyProcessEventReason.CopyCompleted ));
+                }
             });
         }
 
