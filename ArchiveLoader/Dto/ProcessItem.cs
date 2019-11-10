@@ -20,6 +20,7 @@ namespace ArchiveLoader.Dto {
         public  string      VolumeName { get; }
         public  string      ArtistFolder { get; }
         public  string      AlbumFolder { get; }
+        public  string      Subdirectory { get; }
         public  string      FileName { get; }
 
         public  IDictionary<string, string> Metadata { get; }
@@ -31,6 +32,7 @@ namespace ArchiveLoader.Dto {
             FileName = fromStatus.FileName;
             ArtistFolder = fromStatus.ArtistFolder;
             AlbumFolder = fromStatus.AlbumFolder;
+            Subdirectory = fromStatus.Subdirectory;
             Name = Path.GetFileName( FileName );
 
             ProcessList = new List<ProcessHandler>();

@@ -6,6 +6,7 @@ namespace ArchiveLoader.Dto {
         public  string      Name { get; }
         public  string      Artist { get; }
         public  string      Album { get; }
+        public  string      Subdirectory { get; }
         public  string      FileName {get; }
         public  string      VolumeName { get; }
         public  string      ProcessNames { get; }
@@ -16,6 +17,7 @@ namespace ArchiveLoader.Dto {
             VolumeName = fromItem.VolumeName;
             Artist = fromItem.ArtistFolder;
             Album = fromItem.AlbumFolder;
+            Subdirectory = fromItem.Subdirectory;
 
             if( fromItem.ProcessList.Any()) {
                 ProcessNames = fromItem.ProcessList.Count > 1 ? 

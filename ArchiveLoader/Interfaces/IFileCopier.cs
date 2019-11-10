@@ -14,6 +14,7 @@ namespace ArchiveLoader.Interfaces {
         public string           FileName { get; }
         public string           ArtistFolder { get; }
         public string           AlbumFolder { get; }
+        public string           Subdirectory { get; }
         public FileCopyState    Status { get; }
         public bool             Success { get; }
         public string           ErrorMessage { get; }
@@ -23,6 +24,7 @@ namespace ArchiveLoader.Interfaces {
             FileName = fileName;
             ArtistFolder = String.Empty;
             AlbumFolder = String.Empty;
+            Subdirectory = String.Empty;
             Status = FileCopyState.Discovered;
             Success = true;
             CopyCompleted = false;
@@ -35,6 +37,10 @@ namespace ArchiveLoader.Interfaces {
             if( directoryList.Count > 1 ) {
                 ArtistFolder = directoryList[0];
                 AlbumFolder = directoryList[1];
+
+                if( directoryList.Count > 2 ) {
+                    Subdirectory = directoryList[2];
+                }
             }
         }
 

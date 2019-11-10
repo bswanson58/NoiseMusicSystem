@@ -37,13 +37,7 @@ namespace ArchiveLoader.Models {
                     Directory.CreateDirectory( directory );
                 }
 
-                var settings = new XmlWriterSettings{
-//                    OmitXmlDeclaration = true,
-                    Indent = true,
-//                    NewLineOnAttributes = true
-                };
-
-                using ( var xmlWriter = XmlWriter.Create( toFile, settings )) {
+                using ( var xmlWriter = XmlWriter.Create( toFile, new XmlWriterSettings { Indent = true, })) {
                     xmlWriter.WriteStartElement( "Catalog" );
 
                     OutputArtists( xmlWriter, items.ToList());
@@ -76,9 +70,26 @@ namespace ArchiveLoader.Models {
                 xmlWriter.WriteStartElement( "Album" );
                 xmlWriter.WriteAttributeString( "name", album );
 
-                OutputFiles( xmlWriter, ( from i in items where i.Album.Equals( album ) select i ));
+                OutputVolumes( xmlWriter, ( from i in items where i.Album.Equals( album ) select i ).ToList());
 
                 xmlWriter.WriteEndElement(); // Album
+            }
+        }
+
+        private void OutputVolumes( XmlWriter xmlWriter, IList<CompletedProcessItem> items ) {
+            var volumes = items.GroupBy( i => i.Subdirectory ).Select( g => g.First().Subdirectory );
+
+            foreach( var volume in volumes ) {
+                if( String.IsNullOrWhiteSpace( volume )) {
+                    OutputFiles( xmlWriter, from i in items where i.Subdirectory.Equals( volume ) select i );
+                }
+                else {
+                    xmlWriter.WriteStartElement( "Volume" );
+                    xmlWriter.WriteAttributeString( "name", volume );
+
+                    OutputFiles( xmlWriter, from i in items where i.Subdirectory.Equals( volume ) select i );
+                    xmlWriter.WriteEndElement(); // Volume
+                }
             }
         }
 
