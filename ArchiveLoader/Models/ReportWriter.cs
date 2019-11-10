@@ -58,7 +58,7 @@ namespace ArchiveLoader.Models {
         }
 
         private void WriteItem( StreamWriter writer, CompletedProcessItem item ) {
-            writer.WriteLine( item.Name + new string(' ', 80 - ( item.Name.Length + item.ProcessNames.Length )) + item.ProcessNames );
+            writer.WriteLine( item.Name + new string( ' ', Math.Max( 2, 80 - ( item.Name.Length + item.ProcessNames.Length ))) + item.ProcessNames );
             writer.WriteLine( "     " + item.FileName );
         }
     }
