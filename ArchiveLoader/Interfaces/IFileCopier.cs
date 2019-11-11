@@ -16,6 +16,7 @@ namespace ArchiveLoader.Interfaces {
         public string           AlbumFolder { get; }
         public string           Subdirectory { get; }
         public FileCopyState    Status { get; }
+        public long             FileSize { get; }
         public bool             Success { get; }
         public string           ErrorMessage { get; }
         public bool             CopyCompleted {  get; }
@@ -44,6 +45,11 @@ namespace ArchiveLoader.Interfaces {
             }
         }
 
+        public FileCopyStatus( string fileName, FileCopyState state, IList<string> directoryList, long fileSize ) :
+            this( fileName, state, directoryList ) {
+            FileSize = fileSize;
+        }
+
         public FileCopyStatus( string fileName, Exception ex ) :
             this( fileName ) {
             Status = FileCopyState.Completed;
@@ -58,6 +64,7 @@ namespace ArchiveLoader.Interfaces {
     }
 
     interface IFileCopier {
-        Task    CopyFiles( string sourceDirectory, string targetDirectory, Action<FileCopyStatus> onFileCopied, CancellationTokenSource cancellation );
+        Task<long>  GetDirectorySize( string directory );
+        Task        CopyFiles( string sourceDirectory, string targetDirectory, Action<FileCopyStatus> onFileCopied, CancellationTokenSource cancellation );
     }
 }

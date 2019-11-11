@@ -227,6 +227,7 @@
     <Compile Include="Platform\OperatingEnvironment.cs" />
     <Compile Include="Properties\GlobalAssemblyInfo.cs" />
     <Compile Include="Support\BindingErrorListener.cs" />
+    <Compile Include="Support\DirectoryInfoEx.cs" />
     <Compile Include="Support\WindowPlacement.cs" />
     <Compile Include="ViewModels\ConfigurationViewModel.cs" />
     <Compile Include="ViewModels\FileHandlerDialogModel.cs" />
