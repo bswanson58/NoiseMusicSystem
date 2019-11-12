@@ -12,6 +12,7 @@ namespace ArchiveLoader.ViewModels {
         public  string                      CurrentFile {  get; private set; }
         public  long                        TotalFileSize { get; private set; }
         public  long                        CurrentFileSize { get; set; }
+        public  int                         CurrentPercent { get; private set; }
         public  bool                        IsActive { get; private set; }
 
         public ProgressViewModel( IEventAggregator eventAggregator ) {
@@ -29,10 +30,12 @@ namespace ArchiveLoader.ViewModels {
 
             CurrentFile = String.Empty;
             CurrentFileSize = 0L;
+            CurrentPercent = 0;
             IsActive = true;
 
             RaisePropertyChanged( () => CurrentVolume );
             RaisePropertyChanged( () => CurrentFile );
+            RaisePropertyChanged( () => CurrentPercent );
             RaisePropertyChanged( () => TotalFileSize );
             RaisePropertyChanged( () => CurrentFileSize );
             RaisePropertyChanged( () => IsActive );
@@ -46,8 +49,11 @@ namespace ArchiveLoader.ViewModels {
                 CurrentFileSize = TotalFileSize;
             }
 
+            CurrentPercent = (int)(((float)CurrentFileSize / TotalFileSize ) * 100 );
+
             RaisePropertyChanged( () => CurrentFile );
             RaisePropertyChanged( () => CurrentFileSize );
+            RaisePropertyChanged( () => CurrentPercent );
         }
 
         public void Handle( Events.VolumeCompleted message ) {
