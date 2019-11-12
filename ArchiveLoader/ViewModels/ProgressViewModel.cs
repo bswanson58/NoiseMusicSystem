@@ -5,7 +5,7 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace ArchiveLoader.ViewModels {
     class ProgressViewModel : PropertyChangeBase, IDisposable,
-                              IHandle<Events.VolumeStarted>, IHandle<Events.FileCopied>, IHandle<Events.VolumeCompleted> {
+                              IHandle<Events.VolumeDetected>, IHandle<Events.VolumeStarted>, IHandle<Events.FileCopied>, IHandle<Events.VolumeCompleted> {
         private readonly IEventAggregator   mEventAggregator;
 
         public  string                      CurrentVolume { get; private set; }
@@ -24,9 +24,26 @@ namespace ArchiveLoader.ViewModels {
             mEventAggregator.Subscribe( this );
         }
 
-        public void Handle( Events.VolumeStarted args ) {
-            CurrentVolume = args.VolumeName;
-            TotalFileSize = args.VolumeSize;
+        public void Handle( Events.VolumeDetected message ) {
+            CurrentVolume = message.VolumeName;
+
+            TotalFileSize = 1;
+            CurrentFileSize = 0;
+            CurrentPercent = 0;
+            CurrentFile = String.Empty;
+            IsActive = true;
+
+            RaisePropertyChanged( () => CurrentVolume );
+            RaisePropertyChanged( () => CurrentFile );
+            RaisePropertyChanged( () => CurrentPercent );
+            RaisePropertyChanged( () => TotalFileSize );
+            RaisePropertyChanged( () => CurrentFileSize );
+            RaisePropertyChanged( () => IsActive );
+        }
+
+        public void Handle( Events.VolumeStarted message ) {
+            CurrentVolume = message.VolumeName;
+            TotalFileSize = message.VolumeSize;
 
             CurrentFile = String.Empty;
             CurrentFileSize = 0L;
@@ -45,15 +62,18 @@ namespace ArchiveLoader.ViewModels {
             CurrentFile = message.FileName;
             CurrentFileSize += message.FileSize;
 
-            if( CurrentFileSize > TotalFileSize ) {
-                CurrentFileSize = TotalFileSize;
+            if( TotalFileSize > 1 ) {
+                if( CurrentFileSize > TotalFileSize ) {
+                    CurrentFileSize = TotalFileSize;
+                }
+
+                CurrentPercent = (int)(((float)CurrentFileSize / TotalFileSize ) * 100 );
+
+                RaisePropertyChanged( () => CurrentFileSize );
+                RaisePropertyChanged( () => CurrentPercent );
             }
 
-            CurrentPercent = (int)(((float)CurrentFileSize / TotalFileSize ) * 100 );
-
             RaisePropertyChanged( () => CurrentFile );
-            RaisePropertyChanged( () => CurrentFileSize );
-            RaisePropertyChanged( () => CurrentPercent );
         }
 
         public void Handle( Events.VolumeCompleted message ) {

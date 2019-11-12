@@ -53,6 +53,8 @@ namespace ArchiveLoader.Models {
         }
 
         private async void PublishVolume( string volumeRoot, string volumeName ) {
+            mEventAggregator.PublishOnUIThread( new Events.VolumeDetected( volumeName ));
+
             var volumeSize = await mFileCopier.GetDirectorySize( volumeRoot );
 
             mEventAggregator.PublishOnUIThread( new Events.VolumeStarted( volumeName, volumeSize ));

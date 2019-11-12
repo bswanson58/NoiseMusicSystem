@@ -31,6 +31,14 @@
             }
         }
 
+        public class VolumeDetected {
+            public  string  VolumeName { get; }
+
+            public VolumeDetected( string name ) {
+                VolumeName = name;
+            }
+        }
+
         public class VolumeStarted {
             public  string  VolumeName { get; }
             public  long    VolumeSize { get; }

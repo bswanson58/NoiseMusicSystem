@@ -28,8 +28,8 @@
 
         <ProgressBar Grid.Row="1" Grid.Column="1" Margin="0,0,15,0" Maximum="{Binding TotalFileSize}" Value="{Binding CurrentFileSize}"/>
         <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
-            <TextBlock Style="{StaticResource ControlTitleStyle}" Text="{Binding CurrentPercent}"/>
-            <TextBlock Style="{StaticResource ControlTitleStyle}" Margin="3,0,0,0" Text="%"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Foreground="Black" Text="{Binding CurrentPercent}"/>
+            <TextBlock Style="{StaticResource ControlTitleStyle}" Foreground="Black" Margin="3,0,0,0" Text="%"/>
         </StackPanel>
     </Grid>
 </UserControl>
