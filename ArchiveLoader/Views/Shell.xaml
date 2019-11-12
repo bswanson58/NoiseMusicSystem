@@ -25,7 +25,15 @@
         <Views:ConfigurationView Grid.Row="0"/>
         <Views:ProcessView Grid.Row="1"/>
         <Views:ProcessRecorderView Grid.Row="2"/>
-        <Views:ProcessControlView Grid.Row="3"/>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <Views:ProcessControlView Grid.Column="0"/>
+            <Views:ProgressView Grid.Column="1"/>
+        </Grid>
         <Views:StatusView Grid.Row="4"/>
     </Grid>
 </Mah:MetroWindow>

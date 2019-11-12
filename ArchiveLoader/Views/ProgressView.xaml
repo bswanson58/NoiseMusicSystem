@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="ArchiveLoader.Views.ProgressView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Mvvm="http://prismlibrary.com/"
+             xmlns:ValueConverters="clr-namespace:ReusableBits.Ui.ValueConverters;assembly=ReusableBits.Ui"
+             Mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <ValueConverters:BooleanVisibilityConverter x:Key="VisibleIfTrue" IsHidden="True" TriggerValue="False"/>
+    </UserControl.Resources>
+
+    <Grid Visibility="{Binding IsActive, Converter={StaticResource VisibleIfTrue}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="5" VerticalAlignment="Center" Text="Copy Progress:"/>
+        <ProgressBar Grid.Row="1" Grid.Column="1" Margin="0,0,10,0" Maximum="{Binding TotalFileSize}" Value="{Binding CurrentFileSize}"/>
+    </Grid>
+</UserControl>

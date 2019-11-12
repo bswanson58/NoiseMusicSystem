@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Subjects;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
+using Caliburn.Micro;
 
 namespace ArchiveLoader.Models {
     class CopyProcessor : ICopyProcessor {
+        private readonly IEventAggregator   mEventAggregator;
         private readonly IFileCopier        mFileCopier;
         private readonly IProcessBuilder    mProcessBuilder;
         private readonly IProcessQueue      mProcessQueue;
@@ -24,10 +27,11 @@ namespace ArchiveLoader.Models {
         private readonly Subject<Events.ProcessItemEvent>   mProcessingEventSubject;
         public  IObservable<Events.ProcessItemEvent>        OnProcessingItemChanged => mProcessingEventSubject;
 
-        public CopyProcessor( IProcessQueue processQueue, IProcessBuilder processBuilder, IFileCopier fileCopier, IPlatformLog log ) {
+        public CopyProcessor( IProcessQueue processQueue, IProcessBuilder processBuilder, IFileCopier fileCopier, IEventAggregator eventAggregator, IPlatformLog log ) {
             mProcessQueue = processQueue;
             mProcessBuilder = processBuilder;
             mFileCopier = fileCopier;
+            mEventAggregator = eventAggregator;
             mLog = log;
 
             mProcessList = new List<ProcessItem>();
@@ -44,11 +48,21 @@ namespace ArchiveLoader.Models {
             mCopyCompleted = false;
 
             mFileCopier.CopyFiles( mSourceDirectory, mTargetDirectory, OnFileCopied, mFileCopyCancellation );
+
+            PublishVolume( mSourceDirectory, mSourceVolumeName );
+        }
+
+        private async void PublishVolume( string volumeRoot, string volumeName ) {
+            var volumeSize = await mFileCopier.GetDirectorySize( volumeRoot );
+
+            mEventAggregator.PublishOnUIThread( new Events.VolumeStarted( volumeName, volumeSize ));
         }
 
         private void OnFileCopied( FileCopyStatus status ) {
             if( status.CopyCompleted ) {
                 mCopyCompleted = true;
+
+                mEventAggregator.PublishOnUIThread( new Events.VolumeCompleted( mSourceVolumeName ));
             }
             else {
                 if( status.Success ) {
@@ -63,7 +77,9 @@ namespace ArchiveLoader.Models {
 
                         case FileCopyState.Completed:
                             UpdateCopyStatus( status.FileName, status.Status );
+
                             mLog.LogMessage( $"File Copy Completed: {status.FileName}" );
+                            mEventAggregator.PublishOnUIThread( new Events.FileCopied( status.FileName, status.FileSize ));
 
                             PumpProcessHandling();
                             break;

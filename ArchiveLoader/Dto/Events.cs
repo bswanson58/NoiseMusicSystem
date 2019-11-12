@@ -31,5 +31,32 @@
             }
         }
 
+        public class VolumeStarted {
+            public  string  VolumeName { get; }
+            public  long    VolumeSize { get; }
+
+            public VolumeStarted( string name, long size ) {
+                VolumeName = name;
+                VolumeSize = size;
+            }
+        }
+
+        public class FileCopied {
+            public  string  FileName { get; }
+            public  long    FileSize { get; }
+
+            public FileCopied( string fileName, long fileSize ) {
+                FileName = fileName;
+                FileSize = fileSize;
+            }
+        }
+
+        public class VolumeCompleted {
+            public  string  VolumeName { get; }
+
+            public VolumeCompleted( string volumeName ) {
+                VolumeName = volumeName;
+            }
+        }
     }
 }
