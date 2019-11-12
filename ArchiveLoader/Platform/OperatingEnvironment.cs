@@ -16,9 +16,7 @@ namespace ArchiveLoader.Platform {
         }
 
         public string ApplicationDirectory() {
-            var retValue = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData ),
-                ApplicationConstants.CompanyName,
-                ApplicationConstants.ApplicationName );
+            var retValue = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData ), ApplicationConstants.CompanyName, mApplicationName );
 
             if(!Directory.Exists( retValue )) {
                 Directory.CreateDirectory( retValue );
@@ -38,7 +36,7 @@ namespace ArchiveLoader.Platform {
         }
 
         public string PreferencesDirectory() {
-            var retValue = Path.Combine( ApplicationDirectory(), ApplicationConstants.ConfigurationDirectory, mApplicationName );
+            var retValue = Path.Combine( ApplicationDirectory(), ApplicationConstants.ConfigurationDirectory );
 
             if(!Directory.Exists( retValue )) {
                 Directory.CreateDirectory( retValue );
