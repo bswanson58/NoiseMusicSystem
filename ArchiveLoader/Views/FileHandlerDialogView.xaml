@@ -46,6 +46,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Column="1" Grid.Row="0" Style="{StaticResource ControlTitleStyle}" Text="Handler Properties:"/>
@@ -74,6 +75,8 @@
             <TextBox Grid.Column="1" Grid.Row="5" Margin="0,3,15,3" Text="{Binding CommandArguments, UpdateSourceTrigger=PropertyChanged}"/>
 
             <CheckBox Grid.Column="1" Grid.Row="6" Margin="3" Content="Delete Input File On Success" IsChecked="{Binding DeleteInputOnSuccess}"/>
+
+            <CheckBox Grid.Column="1" Grid.Row="7" Margin="3" Content="Treat Stdout As Error condition" IsChecked="{Binding TreatStdOutAsError}"/>
         </Grid>
 
         <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">

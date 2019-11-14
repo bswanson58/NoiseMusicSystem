@@ -11,6 +11,7 @@ namespace ArchiveLoader.Dto {
         public  string  CommandArguments { get; set; }
         public  bool    DeleteInputFileOnSuccess { get; set; }
         public  bool    IsExecutable { get; protected set; }
+        public  bool    TreatStdOutAsError { get; set; }
 
         public FileTypeHandler() {
             HandlerName = String.Empty;
@@ -20,6 +21,7 @@ namespace ArchiveLoader.Dto {
             CommandArguments = String.Empty;
             DeleteInputFileOnSuccess = false;
             IsExecutable = true;
+            TreatStdOutAsError = false;
         }
     }
 
