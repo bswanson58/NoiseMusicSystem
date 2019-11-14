@@ -41,6 +41,9 @@
                 <DataTrigger Binding="{Binding HasCompleted}" Value="True">
                     <Setter TargetName="HandlerName" Property="Foreground" Value="Green"/>
                 </DataTrigger>
+                <DataTrigger Binding="{Binding HasError}" Value="True">
+                    <Setter TargetName="HandlerName" Property="Foreground" Value="OrangeRed"/>
+                </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reactive.Subjects;
+using System.Text;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
 using CSharpTest.Net.Processes;
@@ -9,20 +10,23 @@ using CSharpTest.Net.Processes;
 namespace ArchiveLoader.Models {
     [DebuggerDisplay("Handler: {" + nameof( DebugString ) + "}" )]
     internal class ProcessShell : IDisposable {
-        private string          mStdOutput;
-        private string          mStdError;
+        private readonly StringBuilder  mStdOutput;
+        private readonly StringBuilder  mStdError;
 
-        public  ProcessHandler  ProcessHandler { get; }
-        public  ProcessRunner   ProcessRunner { get; private set; }
+        public  ProcessHandler          ProcessHandler { get; }
+        public  ProcessRunner           ProcessRunner { get; private set; }
 
-        public  delegate        void ProcessCompleteEvent( ProcessShell item );
-        public  event           ProcessCompleteEvent OnProcessCompleted;
+        public  delegate                void ProcessCompleteEvent( ProcessShell item );
+        public  event                   ProcessCompleteEvent OnProcessCompleted;
 
-        public  string          DebugString => $"{ProcessHandler.Handler.HandlerName} - {ProcessRunner.IsRunning}";
+        public  string                  DebugString => $"{ProcessHandler.Handler.HandlerName} - {ProcessRunner.IsRunning}";
 
         public ProcessShell( ProcessHandler handler, ProcessRunner runner ) {
             ProcessHandler = handler;
             ProcessRunner = runner;
+
+            mStdOutput = new StringBuilder();
+            mStdError = new StringBuilder();
 
             ProcessRunner.ProcessExited += OnProcessExited;
             ProcessRunner.OutputReceived += OnOutputReceived;
@@ -36,15 +40,15 @@ namespace ArchiveLoader.Models {
 
         private void OnOutputReceived( object sender, ProcessOutputEventArgs args ) {
             if( args.Error ) {
-                mStdError = args.Data;
+                mStdError.Append( args.Data );
             }
             else {
-                mStdOutput = args.Data;
+                mStdOutput.Append( args.Data );
             }
         }
 
         private void OnProcessExited( object sender, ProcessExitedEventArgs args ) {
-            ProcessHandler.SetProcessOutput( mStdOutput, mStdError, args.ExitCode );
+            ProcessHandler.SetProcessOutput( mStdOutput.ToString(), mStdError.ToString(), args.ExitCode );
 
             OnProcessCompleted?.Invoke( this );
         }

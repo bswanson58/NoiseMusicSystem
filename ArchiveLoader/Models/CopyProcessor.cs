@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Subjects;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using ArchiveLoader.Dto;
@@ -125,7 +124,7 @@ namespace ArchiveLoader.Models {
                         break;
                 }
 
-                mProcessingEventSubject.OnNext( new Events.ProcessItemEvent(processItem, CopyProcessEventReason.Update ));
+                mProcessingEventSubject.OnNext( new Events.ProcessItemEvent( processItem, CopyProcessEventReason.Update ));
 
                 if( processItem.HasCompletedProcessing()) {
                     DeleteProcessingItem( processItem );

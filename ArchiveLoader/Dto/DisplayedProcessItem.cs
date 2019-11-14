@@ -12,6 +12,7 @@ namespace ArchiveLoader.Dto {
         public  bool            IsRunning => CurrentState == ProcessState.Running;
         public  bool            IsPending => CurrentState == ProcessState.Pending;
         public  bool            HasCompleted => CurrentState == ProcessState.Completed;
+        public  bool            HasError => CurrentState == ProcessState.Error;
 
         public DisplayedProcessItem( ProcessItem item ) {
             Key = item.Key;
@@ -40,6 +41,7 @@ namespace ArchiveLoader.Dto {
                 RaisePropertyChanged( () => IsPending );
                 RaisePropertyChanged( () => IsRunning );
                 RaisePropertyChanged( () => HasCompleted );
+                RaisePropertyChanged( () => HasError );
             }
         }
     }
