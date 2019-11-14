@@ -43,7 +43,19 @@ namespace ArchiveLoader.Models {
 
     class ProcessExitCodeHandler : BaseProcessExitHandler {
         protected override ProcessState DetermineExitState( ProcessHandler handler ) {
-            return handler.ExitCode == 0 ? ProcessState.Completed : ProcessState.Error;
+            var retValue = ProcessState.Error;
+
+            if(( handler.ExitCode == 0 ) &&
+               ( String.IsNullOrWhiteSpace( handler.ProcessErrOut ))) {
+                retValue = ProcessState.Completed;
+            }
+
+            if(( handler.Handler.TreatStdOutAsError ) &&
+               (!String.IsNullOrWhiteSpace( handler.ProcessStdOut ))) {
+                retValue = ProcessState.Error;
+            }
+
+            return retValue;
         }
     }
 }
