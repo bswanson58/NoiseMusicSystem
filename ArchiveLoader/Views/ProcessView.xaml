@@ -15,6 +15,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0">
@@ -29,6 +30,10 @@
                 </Grid>
 
                 <TextBlock Grid.Row="1" Margin="10,0,0,0" Text="{Binding FileName}"/>
+
+                <Grid Grid.Row="2" Visibility="Collapsed" x:Name="ErrorStatus">
+                    <TextBlock Margin="10,0,0,0" Style="{StaticResource ListViewTextStyle}" Foreground="OrangeRed" Text="{Binding ProcessOutput}"/>
+                </Grid>
             </Grid>
 
             <DataTemplate.Triggers>
@@ -43,6 +48,7 @@
                 </DataTrigger>
                 <DataTrigger Binding="{Binding HasError}" Value="True">
                     <Setter TargetName="HandlerName" Property="Foreground" Value="OrangeRed"/>
+                    <Setter TargetName="ErrorStatus" Property="Visibility" Value="Visible"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>

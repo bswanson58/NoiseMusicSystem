@@ -40,10 +40,10 @@ namespace ArchiveLoader.Models {
 
         private void OnOutputReceived( object sender, ProcessOutputEventArgs args ) {
             if( args.Error ) {
-                mStdError.Append( args.Data );
+                mStdError.AppendLine( args.Data );
             }
             else {
-                mStdOutput.Append( args.Data );
+                mStdOutput.AppendLine( args.Data );
             }
         }
 
