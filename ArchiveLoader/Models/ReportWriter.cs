@@ -47,6 +47,7 @@ namespace ArchiveLoader.Models {
                         WriteItem( outputFile, item );
 
                         filesCopied++;
+                        errors += item.Errors;
                     }
 
                     outputFile.WriteLine( $"Summary: {filesCopied} files copied, {errors} errors." );
@@ -60,6 +61,12 @@ namespace ArchiveLoader.Models {
         private void WriteItem( StreamWriter writer, CompletedProcessItem item ) {
             writer.WriteLine( item.Name + new string( ' ', Math.Max( 2, 80 - ( item.Name.Length + item.ProcessNames.Length ))) + item.ProcessNames );
             writer.WriteLine( "     " + item.FileName );
+
+            if(!string.IsNullOrWhiteSpace( item.Output )) {
+                writer.Write( item.Output );
+            }
+
+            writer.WriteLine( "-----" );
         }
     }
 }

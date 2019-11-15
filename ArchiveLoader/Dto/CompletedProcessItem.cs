@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace ArchiveLoader.Dto {
     public class CompletedProcessItem {
@@ -10,6 +11,8 @@ namespace ArchiveLoader.Dto {
         public  string      FileName { get; }
         public  string      VolumeName { get; }
         public  string      ProcessNames { get; }
+        public  string      Output { get; }
+        public  int         Errors { get; }
 
         public CompletedProcessItem( ProcessItem fromItem ) {
             Name = fromItem.Name;
@@ -24,6 +27,23 @@ namespace ArchiveLoader.Dto {
                                     String.Join( ", ", from handler in fromItem.ProcessList select handler.Handler.HandlerName ) : 
                                     fromItem.ProcessList[0].Handler.HandlerName;
             }
+
+            var output = new StringBuilder();
+
+            foreach( var handler in fromItem.ProcessList ) {
+                if(!String.IsNullOrWhiteSpace( handler.ProcessStdOut)) {
+                    output.Append( $"{handler.Handler.HandlerName} - Std Out: " );
+                    output.AppendLine( handler.ProcessStdOut );
+                }
+                if(!String.IsNullOrWhiteSpace( handler.ProcessErrOut )) {
+                    output.Append( $"{handler.Handler.HandlerName} - Err Out: " );
+                    output.AppendLine( handler.ProcessErrOut );
+
+                    Errors++;
+                }
+            }
+
+            Output = output.ToString();
         }
     }
 }
