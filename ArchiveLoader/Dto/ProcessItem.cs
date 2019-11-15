@@ -42,7 +42,7 @@ namespace ArchiveLoader.Dto {
         public ProcessHandler FindRunnableProcess() {
             var retValue = default( ProcessHandler );
 
-            if( ProcessList.All( i => i.ProcessState != ProcessState.Running )) {
+            if( ProcessList.All( i => i.ProcessState != ProcessState.Running && i.ProcessState != ProcessState.Error )) {
                 retValue = ProcessList.FirstOrDefault( i => i.ProcessState == ProcessState.Pending && i.Handler.IsExecutable && !String.IsNullOrWhiteSpace( i.Handler.ExePath ));
             }
 

@@ -33,6 +33,7 @@
 
                 <Grid Grid.Row="2" Visibility="Collapsed" x:Name="ErrorStatus">
                     <TextBlock Margin="10,0,0,0" Style="{StaticResource ListViewTextStyle}" Foreground="OrangeRed" Text="{Binding ProcessOutput}"/>
+                    <Button Margin="0,3,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource GeneralButtonStyle}" Content="Continue" Command="{Binding OnContinue}"/>
                 </Grid>
             </Grid>
 

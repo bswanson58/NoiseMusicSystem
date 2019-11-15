@@ -29,6 +29,10 @@ namespace ArchiveLoader.Models {
             mReadyNotifier.StartProcessing();
         }
 
+        public void ContinueErroredProcess( string processKey, string handlerName ) {
+            mCopyProcessor.ContinueErroredProcess( processKey, handlerName );
+        }
+
         private void OnJobReady( Events.JobTargets targets ) {
             mProcessRecorder.JobStarted( targets );
             mCopyProcessor.StartCopyProcess( targets );

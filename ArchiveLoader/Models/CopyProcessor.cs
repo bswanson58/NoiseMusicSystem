@@ -51,6 +51,28 @@ namespace ArchiveLoader.Models {
             PublishVolume( mSourceDirectory, mSourceVolumeName );
         }
 
+        public void ContinueErroredProcess( string processKey, string handlerName ) {
+            ProcessItem processItem;
+
+            lock( mProcessList ) {
+                processItem = mProcessList.FirstOrDefault( i => i.Key.Equals( processKey ));
+                var handler = processItem?.ProcessList.FirstOrDefault( h => h.Handler.HandlerName.Equals( handlerName ));
+
+                handler?.SetProcessToCompleted();
+            }
+
+            if( processItem != null ) {
+                mProcessingEventSubject.OnNext(new Events.ProcessItemEvent( processItem, CopyProcessEventReason.Update ));
+
+                if( processItem.HasCompletedProcessing()) {
+                    DeleteProcessingItem( processItem );
+                }
+                else {
+                    PumpProcessHandling();
+                }
+            }
+        }
+
         private async void PublishVolume( string volumeRoot, string volumeName ) {
             mEventAggregator.PublishOnUIThread( new Events.VolumeDetected( volumeName ));
 

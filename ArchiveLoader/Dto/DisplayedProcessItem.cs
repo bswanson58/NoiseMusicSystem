@@ -1,7 +1,10 @@
-﻿using ReusableBits.Mvvm.ViewModelSupport;
+﻿using System;
+using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace ArchiveLoader.Dto {
-    class DisplayedProcessItem : PropertyChangeBase {
+    class DisplayedProcessItem : AutomaticCommandBase {
+        private readonly Action<DisplayedProcessItem>   mContinueOnError;
+
         private string          mCurrentHandler;
         private ProcessState    mCurrentState;
 
@@ -15,10 +18,11 @@ namespace ArchiveLoader.Dto {
         public  bool            HasCompleted => CurrentState == ProcessState.Completed;
         public  bool            HasError => CurrentState == ProcessState.Error;
 
-        public DisplayedProcessItem( ProcessItem item ) {
+        public DisplayedProcessItem( ProcessItem item, Action<DisplayedProcessItem> onContinuation ) {
             Key = item.Key;
             Name = item.Name;
             FileName = item.FileName;
+            mContinueOnError = onContinuation;
 
             CurrentHandler = "File Copied";
             CurrentState = ProcessState.Pending;
@@ -50,6 +54,10 @@ namespace ArchiveLoader.Dto {
             ProcessOutput = output;
 
             RaisePropertyChanged( () => ProcessOutput );
+        }
+
+        public void Execute_OnContinue() {
+            mContinueOnError?.Invoke( this );
         }
     }
 }

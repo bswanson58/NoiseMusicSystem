@@ -8,7 +8,17 @@ namespace ArchiveLoader.Models {
         public ProcessState HandleProcessExitState( ProcessHandler handler ) {
             var retValue = DetermineExitState( handler );
 
-            if(( retValue == ProcessState.Completed ) &&
+            return HandleInputFile( handler, retValue );
+        }
+
+        public ProcessState OverrideExitState( ProcessHandler handler, ProcessState toState ) {
+            return HandleInputFile( handler, toState );
+        }
+
+        private ProcessState HandleInputFile( ProcessHandler handler, ProcessState forState ) {
+            var retValue = forState;
+
+            if(( forState == ProcessState.Completed ) &&
                ( handler.Handler.DeleteInputFileOnSuccess )) {
                 retValue = DeleteInputFile( handler );
             }

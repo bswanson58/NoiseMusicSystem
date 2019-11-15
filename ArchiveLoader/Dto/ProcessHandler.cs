@@ -54,5 +54,9 @@ namespace ArchiveLoader.Dto {
 
             ProcessState = ExitHandler?.HandleProcessExitState( this ) ?? ProcessState.Completed;
         }
+
+        public void SetProcessToCompleted() {
+            ProcessState = ExitHandler?.OverrideExitState( this, ProcessState.Completed ) ?? ProcessState.Completed;
+        }
     }
 }

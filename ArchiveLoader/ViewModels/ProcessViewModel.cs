@@ -40,8 +40,12 @@ namespace ArchiveLoader.ViewModels {
 
         private void AddItem( ProcessItem item ) {
             lock( ProcessItems ) {
-                ProcessItems.Add( new DisplayedProcessItem( item ));
+                ProcessItems.Add( new DisplayedProcessItem( item, OnProcessContinue ));
             }
+        }
+
+        private void OnProcessContinue( DisplayedProcessItem item ) {
+            mProcessManager.ContinueErroredProcess( item.Key, item.CurrentHandler );
         }
 
         private void UpdateItemStatus( ProcessItem item ) {

@@ -6,5 +6,6 @@ namespace ArchiveLoader.Interfaces {
         IObservable<Events.ProcessItemEvent>    OnProcessingItemChanged { get; }
 
         void    StartProcessing();
+        void    ContinueErroredProcess( string processKey, string handlerName );
     }
 }
