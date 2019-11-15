@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
 using Caliburn.Micro;
@@ -43,8 +44,8 @@ namespace ArchiveLoader.Models {
         }
 
         public void JobCompleted( string volumeName ) {
-            mCatalogWriter.CreateCatalog( volumeName, GetItemsForVolume( volumeName ));
-            mReportWriter.CreateReport( volumeName, GetItemsForVolume( volumeName ));
+            mCatalogWriter.CreateCatalog( volumeName, GetItemsForVolume( volumeName ).OrderBy( i => i.FileName ));
+            mReportWriter.CreateReport( volumeName, GetItemsForVolume( volumeName ).OrderBy( i => i.FileName ));
         }
     }
 }

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
-using ArchiveLoader.Dto;
+using System.Windows.Data;
 using ArchiveLoader.Interfaces;
 using Caliburn.Micro;
 using ReusableBits.Mvvm.ViewModelSupport;
@@ -11,8 +12,8 @@ namespace ArchiveLoader.ViewModels {
         private readonly IProcessRecorder       mProcessRecorder;
         private string                          mCurrentVolume;
 
-        public  BindableCollection<string>                  VolumeList => mProcessRecorder.AvailableVolumes;
-        public  BindableCollection<CompletedProcessItem>    ProcessList { get; private set; }
+        public BindableCollection<string>       VolumeList => mProcessRecorder.AvailableVolumes;
+        public ICollectionView                  ProcessList { get; private set; }
 
         public ProcessRecorderViewModel( IProcessRecorder processRecorder ) {
             mProcessRecorder = processRecorder;
@@ -33,7 +34,9 @@ namespace ArchiveLoader.ViewModels {
                 mCurrentVolume = value;
 
                 if(!String.IsNullOrWhiteSpace( mCurrentVolume )) {
-                    ProcessList = mProcessRecorder.GetItemsForVolume( mCurrentVolume );
+                    ProcessList = CollectionViewSource.GetDefaultView( mProcessRecorder.GetItemsForVolume( mCurrentVolume ));
+                    ProcessList.SortDescriptions.Clear();
+                    ProcessList.SortDescriptions.Add( new SortDescription( "FileName", ListSortDirection.Ascending ));
 
                     RaisePropertyChanged( () => ProcessList );
                     RaisePropertyChanged( () => CurrentVolume );

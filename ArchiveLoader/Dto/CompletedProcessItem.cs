@@ -7,7 +7,7 @@ namespace ArchiveLoader.Dto {
         public  string      Artist { get; }
         public  string      Album { get; }
         public  string      Subdirectory { get; }
-        public  string      FileName {get; }
+        public  string      FileName { get; }
         public  string      VolumeName { get; }
         public  string      ProcessNames { get; }
 

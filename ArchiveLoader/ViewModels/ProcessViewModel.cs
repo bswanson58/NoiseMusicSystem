@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows.Data;
 using ArchiveLoader.Dto;
 using ArchiveLoader.Interfaces;
 using Caliburn.Micro;
@@ -9,13 +11,16 @@ namespace ArchiveLoader.ViewModels {
     class ProcessViewModel : AutomaticCommandBase, IDisposable {
         private readonly IProcessManager    mProcessManager;
         private readonly IDisposable        mProcessingItemChangedSubscription;
+        private readonly BindableCollection<DisplayedProcessItem> mProcessItems;
 
-        public  BindableCollection<DisplayedProcessItem> ProcessItems { get; }
+        public  ICollectionView             ProcessItems { get; }
 
         public ProcessViewModel( IProcessManager processManager ) {
             mProcessManager = processManager;
 
-            ProcessItems = new BindableCollection<DisplayedProcessItem>();
+            mProcessItems = new BindableCollection<DisplayedProcessItem>();
+            ProcessItems = CollectionViewSource.GetDefaultView( mProcessItems );
+            ProcessItems.SortDescriptions.Add( new SortDescription( "FileName", ListSortDirection.Ascending ));
 
             mProcessingItemChangedSubscription = mProcessManager.OnProcessingItemChanged.Subscribe( OnProcessingItemEvent );
         }
@@ -39,8 +44,8 @@ namespace ArchiveLoader.ViewModels {
         }
 
         private void AddItem( ProcessItem item ) {
-            lock( ProcessItems ) {
-                ProcessItems.Add( new DisplayedProcessItem( item, OnProcessContinue ));
+            lock( mProcessItems ) {
+                mProcessItems.Add( new DisplayedProcessItem( item, OnProcessContinue ));
             }
         }
 
@@ -67,8 +72,8 @@ namespace ArchiveLoader.ViewModels {
             var displayItem = GetDisplayedItem( item );
 
             if( displayItem != null ) {
-                lock( ProcessItems ) {
-                    ProcessItems.Remove( displayItem );
+                lock( mProcessItems ) {
+                    mProcessItems.Remove( displayItem );
                 }
             }
         }
@@ -76,8 +81,8 @@ namespace ArchiveLoader.ViewModels {
         private DisplayedProcessItem GetDisplayedItem( ProcessItem forItem ) {
             DisplayedProcessItem    retValue;
 
-            lock( ProcessItems ) {
-                retValue = ProcessItems.FirstOrDefault( i => i.Key.Equals( forItem.Key ));
+            lock( mProcessItems ) {
+                retValue = mProcessItems.FirstOrDefault( i => i.Key.Equals( forItem.Key ));
             }
 
             return retValue;
