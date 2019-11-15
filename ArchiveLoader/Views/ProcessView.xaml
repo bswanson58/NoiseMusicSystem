@@ -33,8 +33,11 @@
 
                 <Grid Grid.Row="2" Visibility="Collapsed" x:Name="ErrorStatus">
                     <TextBlock Margin="10,0,0,0" Style="{StaticResource ListViewTextStyle}" Foreground="OrangeRed" Text="{Binding ProcessOutput}"/>
-                    <Button x:Name="ContinueButton" Margin="0,0,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource GeneralButtonStyle}"
-                            Content="Continue" Command="{Binding OnContinue}"/>
+                    
+                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,10,0" Orientation="Horizontal">
+                        <Button Style="{StaticResource GeneralButtonStyle}" Content="{StaticResource Path_Folder}" Margin="6,0" Height="25" Padding="5" Command="{Binding OpenFolder}"/>
+                        <Button x:Name="ContinueButton" Style="{StaticResource GeneralButtonStyle}" Content="Continue" Command="{Binding OnContinue}"/>
+                    </StackPanel>
                 </Grid>
             </Grid>
 

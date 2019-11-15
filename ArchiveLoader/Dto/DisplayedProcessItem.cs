@@ -3,7 +3,8 @@ using ReusableBits.Mvvm.ViewModelSupport;
 
 namespace ArchiveLoader.Dto {
     class DisplayedProcessItem : AutomaticCommandBase {
-        private readonly Action<DisplayedProcessItem>   mContinueOnError;
+        private readonly Action<DisplayedProcessItem> mContinueOnError;
+        private readonly Action<DisplayedProcessItem> mOpenAction;
 
         private string          mCurrentHandler;
         private ProcessState    mCurrentState;
@@ -19,11 +20,12 @@ namespace ArchiveLoader.Dto {
         public  bool            HasCompleted => CurrentState == ProcessState.Completed;
         public  bool            HasError => CurrentState == ProcessState.Error;
 
-        public DisplayedProcessItem( ProcessItem item, Action<DisplayedProcessItem> onContinuation ) {
+        public DisplayedProcessItem( ProcessItem item, Action<DisplayedProcessItem> onContinuation, Action<DisplayedProcessItem> openAction ) {
             Key = item.Key;
             Name = item.Name;
             FileName = item.FileName;
             mContinueOnError = onContinuation;
+            mOpenAction = openAction;
 
             CurrentHandler = "File Copied";
             CurrentState = ProcessState.Pending;
@@ -62,6 +64,10 @@ namespace ArchiveLoader.Dto {
 
         public void Execute_OnContinue() {
             mContinueOnError?.Invoke( this );
+        }
+
+        public void Execute_OpenFolder() {
+            mOpenAction?.Invoke( this );
         }
     }
 }

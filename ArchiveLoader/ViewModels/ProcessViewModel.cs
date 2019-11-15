@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows.Data;
 using ArchiveLoader.Dto;
@@ -11,12 +12,14 @@ namespace ArchiveLoader.ViewModels {
     class ProcessViewModel : AutomaticCommandBase, IDisposable {
         private readonly IProcessManager    mProcessManager;
         private readonly IDisposable        mProcessingItemChangedSubscription;
+        private readonly IPlatformLog       mLog;
         private readonly BindableCollection<DisplayedProcessItem> mProcessItems;
 
         public  ICollectionView             ProcessItems { get; }
 
-        public ProcessViewModel( IProcessManager processManager ) {
+        public ProcessViewModel( IProcessManager processManager, IPlatformLog log ) {
             mProcessManager = processManager;
+            mLog = log;
 
             mProcessItems = new BindableCollection<DisplayedProcessItem>();
             ProcessItems = CollectionViewSource.GetDefaultView( mProcessItems );
@@ -45,12 +48,25 @@ namespace ArchiveLoader.ViewModels {
 
         private void AddItem( ProcessItem item ) {
             lock( mProcessItems ) {
-                mProcessItems.Add( new DisplayedProcessItem( item, OnProcessContinue ));
+                mProcessItems.Add( new DisplayedProcessItem( item, OnProcessContinue, OnOpenFolder ));
             }
         }
 
         private void OnProcessContinue( DisplayedProcessItem item ) {
             mProcessManager.ContinueErroredProcess( item.Key, item.CurrentHandler );
+        }
+
+        private void OnOpenFolder( DisplayedProcessItem item ) {
+            try {
+                var path = Path.GetDirectoryName( item.FileName );
+
+                if(!String.IsNullOrWhiteSpace( path )) {
+                    System.Diagnostics.Process.Start( path );
+                }
+            }
+            catch (Exception ex) {
+                mLog.LogException( "ProcessViewModel:Open file location", ex );
+            }
         }
 
         private void UpdateItemStatus( ProcessItem item ) {
@@ -62,7 +78,7 @@ namespace ArchiveLoader.ViewModels {
                 displayItem.CurrentHandler = handler != null ? handler.Handler.HandlerName : "Completed";
                 displayItem.CurrentState = handler?.ProcessState ?? ProcessState.Completed;
 
-                if( displayItem?.CurrentState == ProcessState.Error ) {
+                if( displayItem.CurrentState == ProcessState.Error ) {
                     displayItem.SetProcessOutput( handler?.ProcessErrOut, handler?.OutputFileCreated == true );
                 }
             }
