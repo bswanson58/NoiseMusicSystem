@@ -95,6 +95,12 @@ namespace ArchiveLoader.ViewModels {
 
         private void OnFileHandlerEditCompleted( IDialogResult result ) {}
 
+        public void Execute_EditPreferences() {
+            mDialogService.ShowDialog( typeof( PreferencesDialogView ).Name, new DialogParameters(), OnPreferencesEditCompleted );
+        }
+
+        private void OnPreferencesEditCompleted( IDialogResult result ) {}
+
         public void Dispose() {
             mDriveManager?.Dispose();
         }

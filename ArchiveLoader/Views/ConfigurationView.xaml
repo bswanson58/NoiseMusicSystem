@@ -16,6 +16,8 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         
@@ -26,7 +28,8 @@
         <TextBox Grid.Column="3" Width="250" VerticalAlignment="Center" Text="{Binding TargetDirectory, UpdateSourceTrigger=PropertyChanged}"/>
         <Button Grid.Column="4" Margin="5,0" Style="{StaticResource GeneralButtonStyle}" Height="16" VerticalAlignment="Center" Content="..." Command="{Binding BrowseTargetDirectory}"/>
         <Button Grid.Column="5" Style="{StaticResource PathButtonStyle}" Height="16" Content="{StaticResource Path_Folder}" Command="{Binding OpenTargetDirectory}"/>
-        
-        <Button Grid.Column="6" Margin="15,0,0,0" VerticalAlignment="Center" Style="{StaticResource GeneralButtonStyle}" Content="File Handlers..." Command="{Binding EditFileHandlers}"/>
+
+        <Button Grid.Column="7" Margin="0,0,10,0" VerticalAlignment="Center" Style="{StaticResource GeneralButtonStyle}" Content="File Handlers" Command="{Binding EditFileHandlers}"/>
+        <Button Grid.Column="8" VerticalAlignment="Center" Style="{StaticResource GeneralButtonStyle}" Content="Preferences" Command="{Binding EditPreferences}"/>
     </Grid>
 </UserControl>

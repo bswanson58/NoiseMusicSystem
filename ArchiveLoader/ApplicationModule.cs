@@ -38,6 +38,7 @@ namespace ArchiveLoader {
             containerRegistry.Register<IVersionFormatter, VersionSpinnerViewModel>();
 
             containerRegistry.RegisterDialog<FileHandlerDialogView, FileHandlerDialogModel>();
+            containerRegistry.RegisterDialog<PreferencesDialogView, PreferencesDialogModel>();
         }
 
         public void OnInitialized( IContainerProvider containerProvider ) {
